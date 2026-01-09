@@ -470,4 +470,93 @@ describe('ag-grid hierarchical tree filter sort', () => {
             · · └── 5 LEAF id:5 ag-Grid-AutoColumn:"5" k:"E" value:11 x:0
         `);
     });
+
+    test('delta sorting keeps hierarchical tree data stable after targeted updates', async () => {
+        type HierarchyNode = {
+            id: string;
+            label: string;
+            value: number;
+            children?: HierarchyNode[];
+        };
+
+        cachedJSONObjects.clear();
+
+        const baseRowData: HierarchyNode[] = cachedJSONObjects.array([
+            {
+                id: 'alpha',
+                label: 'Alpha',
+                value: 40,
+                children: [
+                    { id: 'alpha-design', label: 'Alpha Design', value: 35 },
+                    { id: 'alpha-build', label: 'Alpha Build', value: 20 },
+                ],
+            },
+            {
+                id: 'beta',
+                label: 'Beta',
+                value: 15,
+                children: [
+                    { id: 'beta-design', label: 'Beta Design', value: 5 },
+                    { id: 'beta-build', label: 'Beta Build', value: 18 },
+                ],
+            },
+        ]);
+
+        const updatedRowData: HierarchyNode[] = cachedJSONObjects.array([
+            {
+                id: 'alpha',
+                label: 'Alpha',
+                value: 5,
+                children: [
+                    { id: 'alpha-design', label: 'Alpha Design', value: 35 },
+                    { id: 'alpha-build', label: 'Alpha Build', value: 12 },
+                ],
+            },
+            {
+                id: 'beta',
+                label: 'Beta',
+                value: 15,
+                children: [
+                    { id: 'beta-design', label: 'Beta Design', value: 5 },
+                    { id: 'beta-build', label: 'Beta Build', value: 1 },
+                ],
+            },
+        ]);
+
+        const api = gridsManager.createGrid('hierarchicalDeltaSort', {
+            columnDefs: [{ field: 'value' }],
+            autoGroupColumnDef: { headerName: 'Hierarchy', cellRendererParams: { suppressCount: true } },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            rowData: baseRowData,
+            treeData: true,
+            deltaSort: true,
+            treeDataChildrenField: 'children',
+            getRowId: ({ data }) => data.id,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+
+        await new GridRows(api, 'hierarchical tree data initial order').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ beta GROUP id:beta ag-Grid-AutoColumn:"beta" value:15
+            │ ├── beta-design LEAF id:beta-design ag-Grid-AutoColumn:"beta-design" value:5
+            │ └── beta-build LEAF id:beta-build ag-Grid-AutoColumn:"beta-build" value:18
+            └─┬ alpha GROUP id:alpha ag-Grid-AutoColumn:"alpha" value:40
+            · ├── alpha-build LEAF id:alpha-build ag-Grid-AutoColumn:"alpha-build" value:20
+            · └── alpha-design LEAF id:alpha-design ag-Grid-AutoColumn:"alpha-design" value:35
+        `);
+
+        api.setGridOption('rowData', updatedRowData);
+
+        await new GridRows(api, 'hierarchical tree data updated order').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ alpha GROUP id:alpha ag-Grid-AutoColumn:"alpha" value:5
+            │ ├── alpha-build LEAF id:alpha-build ag-Grid-AutoColumn:"alpha-build" value:12
+            │ └── alpha-design LEAF id:alpha-design ag-Grid-AutoColumn:"alpha-design" value:35
+            └─┬ beta GROUP id:beta ag-Grid-AutoColumn:"beta" value:15
+            · ├── beta-build LEAF id:beta-build ag-Grid-AutoColumn:"beta-build" value:1
+            · └── beta-design LEAF id:beta-design ag-Grid-AutoColumn:"beta-design" value:5
+        `);
+    });
 });

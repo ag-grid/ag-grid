@@ -3,18 +3,16 @@ import type {
     AgEventTypeParams,
     AgGridCommon,
     BeanCollection,
-    CellRange,
-    CellSelectionChangedEvent,
     GridOptionsService,
     GridOptionsWithDefaults,
 } from 'ag-grid-community';
-import { AgContentEditableField, KeyCode, _createElement, _last } from 'ag-grid-community';
+import { AgContentEditableField, _createElement } from 'ag-grid-community';
 
 import { agFormulaInputFieldCSS } from './agFormulaInputField.css-GENERATED';
+import { FormulaInputRangeSyncFeature } from './formulaInputRangeSyncFeature';
+import { CELL_OR_RANGE_REGEX, getColorClassesForRef } from './formulaRangeUtils';
 
-// Allow partial ranges (eg "A1:") so we keep typing within the same token until a breaking operator is entered.
-const CELL_OR_RANGE_REGEX = /\$?[A-Za-z]+\$?[0-9]+(?::\$?[A-Za-z]+\$?[0-9]+)?:?/g;
-const FORMULA_TOKEN_COLOR_COUNT = 6;
+const FORMULA_TOKEN_COLOR_COUNT = 7;
 const DISPLAY_OPERATOR_LOOKUP: Record<string, string> = {
     '/': '÷',
     '*': '×',
@@ -23,6 +21,12 @@ const VALUE_OPERATOR_LOOKUP: Record<string, string> = {
     '÷': '/',
     '×': '*',
 };
+type RangeInsertAction = 'insert' | 'replace' | 'none';
+type TokenMatch = { ref: string; start: number; end: number; index: number };
+type TokenInsertResult = { previousRef?: string; tokenIndex?: number | null };
+
+// Only insert new refs after operators/argument separators; otherwise treat clicks as normal edit completion.
+const TOKEN_INSERT_AFTER_CHARS = new Set(['=', '+', '-', '*', '/', '^', ',', '(', ';', '<', '>', '&']);
 
 export class AgFormulaInputField extends AgContentEditableField<
     BeanCollection,
@@ -34,21 +38,14 @@ export class AgFormulaInputField extends AgContentEditableField<
     string
 > {
     private currentValue: string = '';
-    private editingCellRef?: string;
     // Caret / token bookkeeping so range updates can re-render without losing position.
     private selectionCaretOffset: number | null = null;
     private lastTokenValueOffset: number | null = null;
     private lastTokenValueLength: number | null = null;
     private lastTokenCaretOffset: number | null = null;
     private lastTokenRef?: string;
-    // All ranges created by this editor (used to clean up on destroy).
-    private readonly trackedRangeRefs = new Set<string>();
-    private readonly trackedRanges = new Map<CellRange, string>();
-    // Used to skip token logic when we dispatch synthetic refresh events.
-    private ignoreNextRangeEvent = false;
-    // Stops programmatic range updates from re-entering our range event handler.
-    private suppressRangeEvents = false;
-    // Stable color assignment per token/ref so resizes keep their original hue.
+    private rangeSyncFeature?: FormulaInputRangeSyncFeature;
+    // Fallback color assignment per ref when a token index is unavailable.
     private readonly formulaColorByRef = new Map<string, number>();
 
     constructor() {
@@ -62,16 +59,26 @@ export class AgFormulaInputField extends AgContentEditableField<
 
         this.addManagedElementListeners(this.getContentElement(), {
             input: this.onContentInput.bind(this),
-            keydown: this.onTokenKeyDown.bind(this),
         });
 
-        this.addManagedEventListeners({
-            cellSelectionChanged: this.cellSelectionChanged.bind(this),
-        });
+        this.rangeSyncFeature = this.createManagedBean(new FormulaInputRangeSyncFeature(this));
     }
 
     public override setValue(value?: string | null, silent?: boolean): this {
-        const text = value ?? '';
+        const text = value == null ? '' : String(value);
+        const { isFormula, hasFormulaPrefix } = this.getFormulaState(text);
+
+        if (!isFormula) {
+            // Plain values: render as simple text with no token parsing or range syncing.
+            this.formulaColorByRef.clear();
+            this.renderPlainValue(text);
+            const res = this.setEditorValue(text, silent);
+            this.dispatchLocalEvent({ type: 'fieldValueChanged' as any });
+            this.rangeSyncFeature?.onValueUpdated(text, hasFormulaPrefix);
+            return res;
+        }
+
+        this.updateFormulaColorsFromValue(text);
         this.renderFormula({
             value: text,
             currentValue: this.getCurrentValue(),
@@ -79,16 +86,8 @@ export class AgFormulaInputField extends AgContentEditableField<
         // We render tokens ourselves, so avoid the base class' setValue (which would re-render)
         // and delegate that task to setEditorValue to keep our cached value and the superclass in sync.
         const res = this.setEditorValue(text, silent);
-        this.syncRangesFromFormula(text);
+        this.rangeSyncFeature?.onValueUpdated(text, hasFormulaPrefix);
         return res;
-    }
-
-    public override destroy(): void {
-        super.destroy();
-        // Remove any ranges we created while editing so they don't linger after the editor closes.
-        this.trackedRangeRefs.forEach((ref) => this.removeRangeForRef(ref));
-        this.trackedRangeRefs.clear();
-        this.trackedRanges.clear();
     }
 
     public getCurrentValue(): string {
@@ -120,13 +119,20 @@ export class AgFormulaInputField extends AgContentEditableField<
 
     public setEditingCellRef(column: any, rowIndex: number | null | undefined): void {
         const colRef = column ? this.beans.formula?.getColRef(column as any) : undefined;
+        const editingCellRef =
+            colRef && rowIndex != null && rowIndex !== undefined ? `${colRef}${rowIndex + 1}` : undefined;
 
-        if (!colRef || rowIndex == null || rowIndex === undefined) {
-            this.editingCellRef = undefined;
+        if (!editingCellRef) {
+            this.rangeSyncFeature?.setEditingCellRef(undefined, undefined, undefined);
             return;
         }
 
-        this.editingCellRef = `${colRef}${rowIndex + 1}`;
+        this.rangeSyncFeature?.setEditingCellRef(column, rowIndex, editingCellRef);
+    }
+
+    public rememberCaret(): void {
+        const caretOffset = getCaretOffset(this.getContentElement(), this.getCurrentValue());
+        this.selectionCaretOffset = caretOffset ?? this.currentValue.length;
     }
 
     private setEditorValue(value: string, silent: boolean = false): this {
@@ -138,12 +144,20 @@ export class AgFormulaInputField extends AgContentEditableField<
     private renderFormula(params: { value: string; currentValue: string; caret?: number | null }): void {
         renderFormula({
             contentElement: this.getContentElement(),
-            getColorIndexForRef: this.getColorIndexForRef.bind(this),
+            getColorIndexForToken: this.getColorIndexForToken.bind(this),
             ...params,
         });
     }
 
-    private getColorIndexForRef(ref: string): number | null {
+    private renderPlainValue(value: string, caret?: number | null): void {
+        const contentElement = this.getContentElement();
+        const caretOffset = caret ?? getCaretOffset(contentElement, this.currentValue);
+        contentElement.textContent = value ?? '';
+        const targetCaret = caretOffset != null ? Math.min(caretOffset, value.length) : null;
+        restoreCaret(contentElement, targetCaret);
+    }
+
+    public getColorIndexForRef(ref: string): number | null {
         if (!shouldUseTokenColors(this.beans)) {
             return null;
         }
@@ -153,16 +167,27 @@ export class AgFormulaInputField extends AgContentEditableField<
             return existing;
         }
 
-        const next = getFormulaColorIndex(ref);
+        const next = this.formulaColorByRef.size % FORMULA_TOKEN_COLOR_COUNT;
         this.formulaColorByRef.set(ref, next);
         return next;
     }
 
-    private moveColorToRef(fromRef: string | undefined, toRef: string, fallback?: number): number | null {
+    public getColorIndexForToken(tokenIndex?: number | null): number | null {
+        if (!shouldUseTokenColors(this.beans) || tokenIndex == null) {
+            return null;
+        }
+        return tokenIndex % FORMULA_TOKEN_COLOR_COUNT;
+    }
+
+    public hasColorForRef(ref: string): boolean {
+        return this.formulaColorByRef.has(ref);
+    }
+
+    public moveColorToRef(fromRef: string | undefined, toRef: string, fallback?: number): number | null {
         const colorIndex =
             fromRef && this.formulaColorByRef.has(fromRef)
                 ? this.getColorIndexForRef(fromRef)
-                : fallback ?? this.formulaColorByRef.get(toRef) ?? getFormulaColorIndex(toRef);
+                : fallback ?? this.formulaColorByRef.get(toRef) ?? this.getColorIndexForRef(toRef);
 
         if (fromRef && fromRef !== toRef) {
             this.formulaColorByRef.delete(fromRef);
@@ -176,115 +201,127 @@ export class AgFormulaInputField extends AgContentEditableField<
         return colorIndex;
     }
 
+    private updateFormulaColorsFromValue(value: string): void {
+        value = value == null ? '' : String(value);
+        if (!shouldUseTokenColors(this.beans)) {
+            this.formulaColorByRef.clear();
+            return;
+        }
+
+        const refsInOrder = getOrderedRefs(value);
+        let changed = refsInOrder.length !== this.formulaColorByRef.size;
+        const nextColors = new Map<string, number>();
+        refsInOrder.forEach((ref, index) => {
+            const colorIndex = index % FORMULA_TOKEN_COLOR_COUNT;
+            nextColors.set(ref, colorIndex);
+            if (this.formulaColorByRef.get(ref) !== colorIndex) {
+                changed = true;
+            }
+        });
+
+        if (!changed) {
+            return;
+        }
+
+        this.formulaColorByRef.clear();
+        nextColors.forEach((colorIndex, ref) => this.formulaColorByRef.set(ref, colorIndex));
+    }
+
     private onContentInput(): void {
         const contentElement = this.getContentElement();
         const currentValue = this.getCurrentValue();
         const caret = getCaretOffset(contentElement, currentValue);
         const serialized = serializeContent(contentElement);
+        const { isFormula, hasFormulaPrefix } = this.getFormulaState(serialized);
 
+        if (!isFormula) {
+            this.formulaColorByRef.clear();
+            this.renderPlainValue(serialized, caret);
+            this.setEditorValue(serialized);
+            this.dispatchLocalEvent({ type: 'fieldValueChanged' as any });
+            this.rangeSyncFeature?.onValueUpdated(serialized, hasFormulaPrefix);
+            return;
+        }
+
+        this.updateFormulaColorsFromValue(serialized);
         this.renderFormula({
             currentValue,
             value: serialized,
             caret: caret ?? undefined,
         });
         this.setEditorValue(serialized);
-        this.syncRangesFromFormula(serialized);
+        this.dispatchLocalEvent({ type: 'fieldValueChanged' as any });
+        this.rangeSyncFeature?.onValueUpdated(serialized, hasFormulaPrefix);
     }
 
-    private cellSelectionChanged(event: CellSelectionChangedEvent): void {
-        if (this.ignoreNextRangeEvent) {
-            this.ignoreNextRangeEvent = false;
-            return;
-        }
-
-        const retagged = this.ensureTrackedRangeColors();
-
-        if (this.suppressRangeEvents && !retagged) {
-            return;
-        }
-
-        if (this.suppressRangeEvents && retagged) {
-            this.refreshRangeStyling();
-            return;
-        }
-
-        // If a tracked range was resized (e.g. via handle drag), update the existing token instead of adding a new one.
-        if (this.updateTrackedRangeTokens()) {
-            return;
-        }
-
-        const ref = getLatestRangeRef(this.beans);
-
-        if (!ref || ref === this.editingCellRef) {
-            return;
-        }
-
-        this.tagLatestRangeForRef(ref);
-
-        if (event.started) {
-            // Remember caret to reapply after range selection inserts a token.
-            this.selectionCaretOffset =
-                getCaretOffset(this.getContentElement(), this.getCurrentValue()) ?? this.currentValue.length;
-        }
-
-        if (event.started && event.finished) {
-            this.insertOrReplaceToken(ref, true, true);
-            this.restoreCaretAfterToken();
-            return;
-        }
-
-        if (!event.started && !event.finished) {
-            this.insertOrReplaceToken(ref, false, false);
-            return;
-        }
-
-        if (event.finished) {
-            this.restoreCaretAfterToken();
-        }
-    }
-
-    private insertOrReplaceToken(ref: string, isNew: boolean, manageRanges: boolean): void {
+    public insertOrReplaceToken(ref: string, isNew: boolean): TokenInsertResult {
         const offsets = this.getTokenInsertOffsets(isNew);
 
         if (!offsets) {
-            return;
+            return {};
         }
 
         const { caretOffset, valueOffset } = offsets;
         const replaceLen = isNew || this.lastTokenValueLength == null ? 0 : this.lastTokenValueLength;
         const value = this.getCurrentValue();
         const updatedValue = value.slice(0, valueOffset) + ref + value.slice(valueOffset + replaceLen);
-
+        const tokenIndex = getTokenMatchAtOffset(updatedValue, valueOffset)?.index ?? null;
         const previousRef = this.updateLastTokenTracking(ref, caretOffset, valueOffset);
 
+        this.updateFormulaColorsFromValue(updatedValue);
         this.setEditorValue(updatedValue);
         this.renderFormula({
             currentValue: value,
             value: updatedValue,
-            caret: caretOffset + 1,
+            caret: caretOffset + ref.length,
         });
         this.dispatchLocalEvent({ type: 'fieldValueChanged' as any });
-        if (manageRanges) {
-            if (!isNew && previousRef && previousRef !== ref) {
-                this.removeRangeForRef(previousRef);
-            }
-            this.addRangeForRef(ref, true);
-        } else {
-            // When dragging a range, we only track the latest ref; ranges will be reconciled later.
-            if (!isNew && previousRef && previousRef !== ref) {
-                this.trackedRangeRefs.delete(previousRef);
-            }
-            this.trackedRangeRefs.add(ref);
-        }
 
-        this.refreshRangeStyling();
+        return { previousRef, tokenIndex };
     }
 
-    private restoreCaretAfterToken(): void {
-        const caret =
-            (this.lastTokenCaretOffset ??
-                getCaretOffset(this.getContentElement(), this.getCurrentValue()) ??
-                this.currentValue.length) + 1;
+    public applyRangeInsert(ref: string): {
+        action: RangeInsertAction;
+        previousRef?: string;
+        tokenIndex?: number | null;
+    } {
+        const value = this.getCurrentValue();
+        const caretOffsets = this.getCaretOffsets(value);
+
+        if (!caretOffsets) {
+            // Fall back to standard insert if we cannot resolve caret offsets.
+            const { previousRef, tokenIndex } = this.insertOrReplaceToken(ref, true);
+            return { action: 'insert', previousRef, tokenIndex };
+        }
+
+        // If the caret is inside/adjacent to a token, replace that token.
+        const tokenMatch = getTokenMatchAtOffset(value, caretOffsets.valueOffset);
+
+        if (tokenMatch) {
+            // If the user is completing a partial range like "A1:", keep the range and insert the end ref.
+            if (tokenMatch.ref.endsWith(':') && caretOffsets.valueOffset === tokenMatch.end) {
+                const { previousRef, tokenIndex } = this.insertOrReplaceToken(ref, true);
+                return { action: 'insert', previousRef, tokenIndex };
+            }
+            const { previousRef, tokenIndex } = this.replaceTokenAtMatch(tokenMatch, ref);
+            return { action: 'replace', previousRef, tokenIndex };
+        }
+
+        // Only insert new refs after operator-like chars; otherwise we end the edit on click.
+        if (!shouldInsertTokenAtOffset(value, caretOffsets.valueOffset)) {
+            return { action: 'none' };
+        }
+
+        const { previousRef, tokenIndex } = this.insertOrReplaceToken(ref, true);
+        return { action: 'insert', previousRef, tokenIndex };
+    }
+
+    public restoreCaretAfterToken(): void {
+        const caretBase =
+            this.lastTokenCaretOffset ??
+            getCaretOffset(this.getContentElement(), this.getCurrentValue()) ??
+            this.currentValue.length;
+        const caret = caretBase + (this.lastTokenValueLength ?? 0);
         this.selectionCaretOffset = null;
 
         setTimeout(() => {
@@ -296,7 +333,26 @@ export class AgFormulaInputField extends AgContentEditableField<
         });
     }
 
+    private replaceTokenAtMatch(token: TokenMatch, nextRef: string): TokenInsertResult {
+        // Replace the exact token span so we don't accidentally touch adjacent text.
+        const value = this.getCurrentValue();
+        const updated = value.slice(0, token.start) + nextRef + value.slice(token.end);
+
+        this.updateFormulaColorsFromValue(updated);
+        this.updateLastTokenTracking(nextRef, token.start, token.start);
+        this.setEditorValue(updated);
+        this.renderFormula({
+            currentValue: value,
+            value: updated,
+            caret: token.start + nextRef.length,
+        });
+        this.dispatchLocalEvent({ type: 'fieldValueChanged' as any });
+
+        return { previousRef: token.ref, tokenIndex: token.index };
+    }
+
     private getValueOffsetFromCaret(caretOffset: number): number | null {
+        // Convert caret units (tokens count as 1) into value offsets (tokens count as their length).
         const container = this.getContentElement();
         let caretRemaining = caretOffset;
         let valueOffset = 0;
@@ -318,6 +374,7 @@ export class AgFormulaInputField extends AgContentEditableField<
     }
 
     private getTokenInsertOffsets(isNew: boolean): { caretOffset: number; valueOffset: number } | null {
+        // Use cached offsets while dragging ranges so caret doesn't jump between events.
         const contentElement = this.getContentElement();
         const caretOffset =
             this.selectionCaretOffset ??
@@ -335,6 +392,21 @@ export class AgFormulaInputField extends AgContentEditableField<
         return { caretOffset, valueOffset };
     }
 
+    private getCaretOffsets(value: string): { caretOffset: number; valueOffset: number } | null {
+        // Snapshot the caret position in both caret units and raw string offsets.
+        const caretOffset = getCaretOffset(this.getContentElement(), value);
+        if (caretOffset == null) {
+            return null;
+        }
+
+        const valueOffset = this.getValueOffsetFromCaret(caretOffset);
+        if (valueOffset == null) {
+            return null;
+        }
+
+        return { caretOffset, valueOffset };
+    }
+
     private updateLastTokenTracking(ref: string, caretOffset: number, valueOffset: number): string | undefined {
         const previousRef = this.lastTokenRef;
         this.lastTokenValueOffset = valueOffset;
@@ -344,308 +416,49 @@ export class AgFormulaInputField extends AgContentEditableField<
         return previousRef;
     }
 
-    private addRangeForRef(ref: string, skipAddCellRange?: boolean): void {
-        if (this.trackedRangeRefs.has(ref)) {
-            const existing = this.beans.rangeSvc
-                ?.getCellRanges()
-                .find((range) => rangeToRef(this.beans, range) === ref);
-
-            if (existing) {
-                const colorIndex = this.getColorIndexForRef(ref) ?? undefined;
-                tagRangeWithFormulaColor(existing, ref, colorIndex);
-                this.refreshRangeStyling();
-            }
-
-            return;
-        }
-
-        const beans = this.beans;
-
-        const params = getCellRangeParams(beans, ref);
-        const rangeSvc = beans.rangeSvc;
-
-        if (!params || !rangeSvc) {
-            return;
-        }
-
-        let created: CellRange | undefined;
-
-        if (!skipAddCellRange) {
-            this.suppressRangeEvents = true;
-            created = rangeSvc.addCellRange(params);
-            this.suppressRangeEvents = false;
-        } else {
-            created = rangeSvc
-                .getCellRanges()
-                .find((range) => rangeToRef(beans, range) === ref && range.startRow != null && range.endRow != null);
-        }
-
-        if (created) {
-            const colorIndex = this.getColorIndexForRef(ref);
-            tagRangeWithFormulaColor(created, ref, colorIndex);
-            this.trackedRangeRefs.add(ref);
-            this.trackedRanges.set(created, ref);
-            this.refreshRangeStyling();
-        }
+    private getFormulaState(text: string): { isFormula: boolean; hasFormulaPrefix: boolean } {
+        // Keep "=" as a plain value for commit/validation, but still enable range selection
+        // when it appears so clicking a cell can insert a token.
+        const hasFormulaPrefix = text.trimStart().startsWith('=');
+        const isFormula = this.beans.formula?.isFormula(text) ?? hasFormulaPrefix;
+        return { isFormula, hasFormulaPrefix };
     }
 
-    private tagLatestRangeForRef(ref: string): void {
-        const latest = _last(this.beans.rangeSvc?.getCellRanges() ?? []);
+    public replaceTokenRef(
+        previousRef: string,
+        nextRef: string,
+        colorIndex?: number | null,
+        tokenIndex?: number | null
+    ): number | null {
+        const contentElement = this.getContentElement();
+        let token: HTMLElement | undefined;
 
-        if (latest) {
-            const colorIndex = this.getColorIndexForRef(ref);
-            tagRangeWithFormulaColor(latest, ref, colorIndex);
-            this.refreshRangeStyling();
-        }
-    }
+        if (tokenIndex != null) {
+            token =
+                contentElement.querySelector<HTMLElement>(
+                    `.ag-formula-token[data-formula-token-index="${tokenIndex}"]`
+                ) ?? undefined;
 
-    private ensureTrackedRangeColors(): boolean {
-        const rangeSvc = this.beans.rangeSvc;
-
-        if (!rangeSvc) {
-            return false;
-        }
-
-        const ranges = rangeSvc.getCellRanges();
-        let retagged = false;
-
-        for (const range of ranges) {
-            const ref = rangeToRef(this.beans, range);
-            if (!ref || !this.trackedRangeRefs.has(ref)) {
-                continue;
-            }
-
-            const existingColorIndex = this.formulaColorByRef.get(ref);
-            const inferredColorIndex = getColorIndexFromClass(range.colorClass);
-            const colorIndex = existingColorIndex ?? inferredColorIndex ?? this.getColorIndexForRef(ref);
-            const { rangeClass } = getFormulaColorClasses(ref, colorIndex);
-
-            if (colorIndex == null) {
-                continue;
-            }
-
-            this.formulaColorByRef.set(ref, colorIndex);
-
-            if (range.colorClass !== rangeClass) {
-                tagRangeWithFormulaColor(range, ref, colorIndex);
-                retagged = true;
-            }
-
-            if (!this.trackedRanges.has(range)) {
-                this.trackedRanges.set(range, ref);
+            if (token && getTokenRef(token) !== previousRef) {
+                token = undefined;
             }
         }
-
-        return retagged;
-    }
-
-    private refreshRangeStyling(): void {
-        const { eventSvc } = this.beans;
-        if (!eventSvc) {
-            return;
-        }
-
-        // Re-tag in case the range objects were replaced by the grid.
-        this.ensureTrackedRangeColors();
-        this.ignoreNextRangeEvent = true;
-        eventSvc.dispatchEvent({
-            type: 'cellSelectionChanged',
-            started: false,
-            finished: false,
-        });
-    }
-
-    private removeRangeForRef(ref: string | undefined): void {
-        if (!ref || !this.trackedRangeRefs.has(ref)) {
-            return;
-        }
-
-        const beans = this.beans;
-        const { rangeSvc } = beans;
-
-        if (!rangeSvc) {
-            this.trackedRangeRefs.delete(ref);
-            return;
-        }
-
-        const ranges = rangeSvc.getCellRanges();
-        if (!ranges?.length) {
-            this.trackedRangeRefs.delete(ref);
-            for (const [range, storedRef] of this.trackedRanges.entries()) {
-                if (storedRef === ref) {
-                    this.trackedRanges.delete(range);
-                }
-            }
-            return;
-        }
-
-        const remaining = ranges.filter((range) => rangeToRef(beans, range) !== ref);
-
-        if (remaining.length === ranges.length) {
-            this.trackedRangeRefs.delete(ref);
-            for (const [range, storedRef] of this.trackedRanges.entries()) {
-                if (storedRef === ref) {
-                    this.trackedRanges.delete(range);
-                }
-            }
-            return;
-        }
-
-        this.suppressRangeEvents = true;
-        rangeSvc.setCellRanges(remaining);
-        this.suppressRangeEvents = false;
-        this.trackedRangeRefs.delete(ref);
-        for (const [range, storedRef] of this.trackedRanges.entries()) {
-            if (storedRef === ref) {
-                this.trackedRanges.delete(range);
-            }
-        }
-    }
-
-    private syncRangesFromFormula(value?: string | null): void {
-        const text = value ?? this.getCurrentValue() ?? '';
-        const refs = getRefsFromText(text);
-
-        const toRemove: string[] = [];
-        for (const tracked of this.trackedRangeRefs) {
-            if (!refs.has(tracked)) {
-                toRemove.push(tracked);
-            }
-        }
-
-        toRemove.forEach((ref) => this.removeRangeForRef(ref));
-
-        refs.forEach((ref) => {
-            if (ref !== this.editingCellRef) {
-                this.addRangeForRef(ref);
-            }
-        });
-
-        // Drop any range mappings that no longer exist after syncing.
-        for (const [range, storedRef] of this.trackedRanges.entries()) {
-            const rangeWasReplaced = !this.beans.rangeSvc?.getCellRanges().includes(range);
-            if (!this.trackedRangeRefs.has(storedRef) || rangeWasReplaced) {
-                // Remove stale mapping when the ref was removed or the grid replaced the range object.
-                this.trackedRanges.delete(range);
-            }
-        }
-    }
-
-    private onTokenKeyDown(event: KeyboardEvent): void {
-        const token = getTokenElement(event.target);
 
         if (!token) {
-            return;
-        }
-
-        const contentElement = this.getContentElement();
-        const caretOffset = getOffsetBeforeNode(contentElement, token);
-        const valueOffset = getOffsetBeforeNode(contentElement, token, true);
-        if (caretOffset == null || valueOffset == null) {
-            return;
-        }
-
-        const tokenRef = getTokenRef(token);
-        const value = this.getCurrentValue();
-        const tokenLength = tokenRef.length || 1;
-
-        switch (event.key) {
-            case KeyCode.BACKSPACE:
-            case KeyCode.DELETE: {
-                event.preventDefault();
-                const updated = value.slice(0, valueOffset) + value.slice(valueOffset + tokenLength);
-                this.setEditorValue(updated);
-                this.renderFormula({
-                    currentValue: value,
-                    value: updated,
-                    caret: caretOffset,
-                });
-                this.removeRangeForRef(tokenRef);
-                this.syncRangesFromFormula(updated);
-                break;
-            }
-            case KeyCode.LEFT:
-            case KeyCode.RIGHT: {
-                break;
-            }
-            default: {
-                if (event.key.length === 1 && !event.metaKey && !event.ctrlKey && !event.altKey) {
-                    event.preventDefault();
-                    const replacement = formatForValue(event.key);
-                    const updated = value.slice(0, valueOffset) + replacement + value.slice(valueOffset + tokenLength);
-                    const nextCaret = caretOffset + replacement.length;
-                    this.setEditorValue(updated);
-                    this.renderFormula({
-                        currentValue: value,
-                        value: updated,
-                        caret: nextCaret,
-                    });
-                    this.syncRangesFromFormula(updated);
-                }
-                break;
-            }
-        }
-    }
-
-    private updateTrackedRangeTokens(): boolean {
-        const rangeSvc = this.beans.rangeSvc;
-        if (!rangeSvc) {
-            return false;
-        }
-
-        const ranges = rangeSvc.getCellRanges();
-        let updated = false;
-
-        for (const range of ranges) {
-            const previousRef = this.trackedRanges.get(range);
-            if (!previousRef) {
-                continue;
-            }
-
-            const nextRef = rangeToRef(this.beans, range);
-            if (!nextRef || nextRef === previousRef || nextRef === this.editingCellRef) {
-                continue;
-            }
-
-            const colorIndex = this.moveColorToRef(
-                previousRef,
-                nextRef,
-                getColorIndexFromClass(range.colorClass) ?? undefined
+            token = Array.from(contentElement.querySelectorAll<HTMLElement>('.ag-formula-token')).find(
+                (node) => getTokenRef(node) === previousRef
             );
-
-            if (!this.replaceTokenRef(previousRef, nextRef, colorIndex)) {
-                continue;
-            }
-
-            tagRangeWithFormulaColor(range, nextRef, colorIndex);
-            this.trackedRanges.set(range, nextRef);
-            this.trackedRangeRefs.delete(previousRef);
-            this.trackedRangeRefs.add(nextRef);
-            updated = true;
         }
-
-        if (updated) {
-            this.refreshRangeStyling();
-        }
-
-        return updated;
-    }
-
-    private replaceTokenRef(previousRef: string, nextRef: string, colorIndex?: number | null): boolean {
-        const contentElement = this.getContentElement();
-        const token = Array.from(contentElement.querySelectorAll<HTMLElement>('.ag-formula-token')).find(
-            (node) => getTokenRef(node) === previousRef
-        );
 
         if (!token) {
-            return false;
+            return null;
         }
 
         const caretOffset = getOffsetBeforeNode(contentElement, token);
         const valueOffset = getOffsetBeforeNode(contentElement, token, true);
 
         if (caretOffset == null || valueOffset == null) {
-            return false;
+            return null;
         }
 
         const value = this.getCurrentValue();
@@ -653,6 +466,9 @@ export class AgFormulaInputField extends AgContentEditableField<
             this.formulaColorByRef.set(nextRef, colorIndex);
         }
         const updated = value.slice(0, valueOffset) + nextRef + value.slice(valueOffset + previousRef.length);
+        this.updateFormulaColorsFromValue(updated);
+        const resolvedIndex = getTokenIndex(token);
+        this.updateLastTokenTracking(nextRef, caretOffset, valueOffset);
         this.setEditorValue(updated);
         this.renderFormula({
             currentValue: value,
@@ -661,11 +477,11 @@ export class AgFormulaInputField extends AgContentEditableField<
         });
         this.dispatchLocalEvent({ type: 'fieldValueChanged' });
 
-        return true;
+        return resolvedIndex ?? tokenIndex ?? null;
     }
 }
 
-// Color helpers
+// Token/range color helpers
 const shouldUseTokenColors = (beans: BeanCollection): boolean => {
     const { editSvc, rangeSvc } = beans;
     const canCreateRanges = !!rangeSvc && !!editSvc?.isRangeSelectionEnabledWhileEditing?.();
@@ -673,57 +489,66 @@ const shouldUseTokenColors = (beans: BeanCollection): boolean => {
     return canCreateRanges;
 };
 
-const getFormulaColorIndex = (ref: string): number => {
-    let hash = 0;
-
-    for (let i = 0; i < ref.length; i++) {
-        hash = (hash << 5) - hash + ref.charCodeAt(i);
-        hash |= 0;
+// Walk the formula left-to-right, capture the first occurrence of each distinct ref,
+// and assign colors in encounter order so token colors stay stable every time the
+// user re-enters the editor (A1 -> color1, next ref -> color2, etc.).
+const getOrderedRefs = (value: string): string[] => {
+    // Collect unique refs in their first-seen order to keep colors stable across re-entry.
+    const refsInOrder: string[] = [];
+    const seen = new Set<string>();
+    CELL_OR_RANGE_REGEX.lastIndex = 0;
+    let match: RegExpExecArray | null;
+    while ((match = CELL_OR_RANGE_REGEX.exec(value)) != null) {
+        const ref = match[0];
+        if (seen.has(ref)) {
+            continue;
+        }
+        seen.add(ref);
+        refsInOrder.push(ref);
     }
-
-    return Math.abs(hash) % FORMULA_TOKEN_COLOR_COUNT;
+    return refsInOrder;
 };
 
-const getFormulaColorClasses = (
-    ref: string,
-    colorIndexOverride?: number | null
-): { tokenClass: string; rangeClass: string; colorIndex: number } => {
-    const index = (colorIndexOverride ?? getFormulaColorIndex(ref)) + 1;
-
-    return {
-        tokenClass: `ag-formula-token-color-${index}`,
-        rangeClass: `ag-formula-range-color-${index}`,
-        colorIndex: index - 1,
-    };
-};
-const getColorIndexFromClass = (colorClass?: string | null): number | null => {
-    if (!colorClass) {
-        return null;
+const getTokenMatchAtOffset = (value: string, offset: number): TokenMatch | null => {
+    // Locate the token (if any) that covers the given value offset.
+    CELL_OR_RANGE_REGEX.lastIndex = 0;
+    let match: RegExpExecArray | null;
+    let index = 0;
+    while ((match = CELL_OR_RANGE_REGEX.exec(value)) != null) {
+        const ref = match[0];
+        const start = match.index ?? 0;
+        const end = start + ref.length;
+        if (offset >= start && offset <= end) {
+            return { ref, start, end, index };
+        }
+        index += 1;
     }
-
-    const match = /ag-formula-range-color-(\d+)/.exec(colorClass);
-
-    if (!match) {
-        return null;
-    }
-
-    const parsed = parseInt(match[1], 10);
-    return Number.isFinite(parsed) ? parsed - 1 : null;
+    return null;
 };
 
-const tagRangeWithFormulaColor = (range: CellRange | undefined, ref: string, colorIndex?: number | null): void => {
-    if (!range) {
-        return;
-    }
+const shouldInsertTokenAtOffset = (value: string, offset: number): boolean => {
+    // Insert only after an operator or at the beginning to avoid hijacking plain values.
+    const previousChar = getPreviousNonSpaceChar(value, offset);
+    return previousChar == null || TOKEN_INSERT_AFTER_CHARS.has(previousChar);
+};
 
-    const { rangeClass } = getFormulaColorClasses(ref, colorIndex);
-    range.colorClass = rangeClass;
+const getPreviousNonSpaceChar = (value: string, offset: number): string | null => {
+    // Skip whitespace to detect the meaningful character before the caret.
+    for (let i = offset - 1; i >= 0; i--) {
+        const char = value[i];
+        if (char != null && char.trim() !== '') {
+            return char;
+        }
+    }
+    return null;
 };
 
 // Rendering & caret helpers
-const tokenize = (value: string, getColorIndexForRef: (ref: string) => number | null): Node[] => {
+const tokenize = (value: string, getColorIndexForToken: (tokenIndex: number) => number | null): Node[] => {
+    // Split the formula into text + token nodes while preserving operators for display.
     const nodes: Node[] = [];
     let lastIndex = 0;
+    let tokenIndex = 0;
     CELL_OR_RANGE_REGEX.lastIndex = 0;
 
     let match: RegExpExecArray | null;
@@ -736,8 +561,9 @@ const tokenize = (value: string, getColorIndexForRef: (ref: string) => number | 
             nodes.push(document.createTextNode(formatForDisplay(value.slice(lastIndex, index))));
         }
 
-        const colorIndex = getColorIndexForRef(text) ?? null;
-        nodes.push(createReferenceNode(text, colorIndex, colorIndex != null));
+        const colorIndex = getColorIndexForToken(tokenIndex);
+        nodes.push(createReferenceNode(text, colorIndex, colorIndex != null, tokenIndex));
+        tokenIndex += 1;
         lastIndex = index + text.length;
     }
 
@@ -752,16 +578,20 @@ const tokenize = (value: string, getColorIndexForRef: (ref: string) => number | 
     return nodes;
 };
 
-const createReferenceNode = (ref: string, colorIndex: number | null, useTokenColors: boolean): HTMLElement => {
+const createReferenceNode = (
+    ref: string,
+    colorIndex: number | null,
+    useTokenColors: boolean,
+    tokenIndex: number
+): HTMLElement => {
     const attrs: Record<string, string> = {
-        contenteditable: 'false',
         'aria-label': ref,
-        tabIndex: '-1',
         'data-formula-ref': ref,
+        'data-formula-token-index': tokenIndex.toString(),
     };
     let tokenClass: string | undefined;
     if (useTokenColors && colorIndex != null) {
-        const classes = getFormulaColorClasses(ref, colorIndex);
+        const classes = getColorClassesForRef(ref, colorIndex);
         tokenClass = classes.tokenClass;
         attrs['data-formula-range-class'] = classes.rangeClass;
     }
@@ -783,16 +613,17 @@ const renderFormula = (params: {
     contentElement: HTMLElement;
     currentValue: string;
     value: string;
-    getColorIndexForRef: (ref: string) => number | null;
+    getColorIndexForToken: (tokenIndex: number) => number | null;
     caret?: number | null;
 }): void => {
-    const { contentElement, currentValue, value, getColorIndexForRef, caret } = params;
+    // Rebuild the DOM and restore the caret to the same logical position.
+    const { contentElement, currentValue, value, getColorIndexForToken, caret } = params;
     const caretOffset = caret ?? getCaretOffset(contentElement, currentValue);
     const maxCaret = value.length;
 
     contentElement.textContent = '';
 
-    for (const node of tokenize(value, getColorIndexForRef)) {
+    for (const node of tokenize(value, getColorIndexForToken)) {
         contentElement.append(node);
     }
 
@@ -801,6 +632,7 @@ const renderFormula = (params: {
 };
 
 const getCaretOffset = (contentElement: HTMLElement, currentValue: string): number | null => {
+    // Translate the DOM selection into a caret offset that counts tokens as one unit.
     const selection = window.getSelection();
 
     if (!selection || selection.rangeCount === 0) {
@@ -841,6 +673,7 @@ const getCaretOffset = (contentElement: HTMLElement, currentValue: string): numb
 };
 
 const restoreCaret = (contentElement: HTMLElement, offset: number | null): void => {
+    // Place the DOM caret at a logical offset within the tokenized content.
     if (offset == null) {
         return;
     }
@@ -864,6 +697,7 @@ const restoreCaret = (contentElement: HTMLElement, offset: number | null): void 
 };
 
 const findNodeAtOffset = (root: Node, offset: number): { node: Node | null; localOffset: number } => {
+    // Walk the tokenized tree and return the node/offset for a logical caret position.
     let remaining = offset;
 
     for (let i = 0; i < root.childNodes.length; i++) {
@@ -879,12 +713,6 @@ const findNodeAtOffset = (root: Node, offset: number): { node: Node | null; loca
             return { node: child, localOffset: remaining };
         }
 
-        if (child.nodeType === Node.ELEMENT_NODE && isTokenElement(child)) {
-            const parent = child.parentNode;
-            const position = remaining === 0 ? i : i + 1;
-            return { node: parent, localOffset: position };
-        }
-
         return findNodeAtOffset(child, remaining);
     }
 
@@ -892,6 +720,7 @@ const findNodeAtOffset = (root: Node, offset: number): { node: Node | null; loca
 };
 
 const getOffsetBeforeNode = (container: HTMLElement, node: Node, useValueLength: boolean = false): number | null => {
+    // Compute caret/value offsets before a specific node in the tokenized DOM.
     if (!container.contains(node)) {
         return null;
     }
@@ -909,6 +738,7 @@ const getOffsetBeforeNode = (container: HTMLElement, node: Node, useValueLength:
 
 // Serialization helpers
 const serializeContent = (contentElement: HTMLElement): string => {
+    // Read the tokenized DOM back into the raw formula text.
     let output = '';
 
     contentElement.childNodes.forEach((child) => {
@@ -919,18 +749,12 @@ const serializeContent = (contentElement: HTMLElement): string => {
 };
 
 const getNodeText = (node: Node): string => {
+    // Convert DOM nodes back into value text, undoing display-only operator substitutions.
     if (node.nodeType === Node.TEXT_NODE) {
         return formatForValue(node.textContent ?? '');
     }
 
     if (node.nodeType === Node.ELEMENT_NODE) {
-        const el = node as HTMLElement;
-
-        if (isTokenElement(el)) {
-            // Token nodes serialize back to their stored ref string (not the placeholder).
-            return getTokenRef(el);
-        }
-
         return Array.from(node.childNodes)
             .map((child) => getNodeText(child))
             .join('');
@@ -940,125 +764,29 @@ const getNodeText = (node: Node): string => {
 };
 
 const getNodeTextLength = (node: Node): number => {
+    // Measure text length for caret math (tokens count as their displayed text).
     if (node.nodeType === Node.TEXT_NODE) {
         return node.textContent?.length ?? 0;
     }
 
     if (node.nodeType === Node.ELEMENT_NODE) {
-        const el = node as HTMLElement;
-
-        if (isTokenElement(el)) {
-            return 1;
-        }
-
         return Array.from(node.childNodes).reduce((sum, child) => sum + getNodeTextLength(child), 0);
     }
 
     return 0;
 };
 
-// Range helpers
-const getCellRangeParams = (beans: BeanCollection, ref: string) => {
-    const match = /^\$?([A-Za-z]+)\$?(\d+)(?::\$?([A-Za-z]+)\$?(\d+))?$/.exec(ref);
-    if (!match) {
-        return null;
-    }
-
-    const { formula } = beans;
-
-    const [, startColRef, startRowStr, endColRef, endRowStr] = match;
-    const startCol = formula?.getColByRef(startColRef);
-    const endCol = formula?.getColByRef(endColRef ?? startColRef);
-
-    if (!startCol || !endCol) {
-        return null;
-    }
-
-    const rowStartIndex = parseInt(startRowStr, 10) - 1;
-    const rowEndIndex = endRowStr ? parseInt(endRowStr, 10) - 1 : rowStartIndex;
-
-    return {
-        rowStartIndex,
-        rowEndIndex,
-        columnStart: startCol,
-        columnEnd: endCol,
-    };
-};
-
-const getLatestRangeRef = (beans: BeanCollection): string | null => {
-    const ranges = beans.rangeSvc?.getCellRanges();
-    const latest = ranges?.length ? _last(ranges) : null;
-
-    if (!latest) {
-        return null;
-    }
-
-    return rangeToRef(beans, latest);
-};
-
-const rangeToRef = (beans: BeanCollection, range: CellRange): string | null => {
-    const { rangeSvc, formula } = beans;
-
-    if (!rangeSvc || !formula) {
-        return null;
-    }
-
-    const startRow = rangeSvc.getRangeStartRow(range);
-    const endRow = rangeSvc.getRangeEndRow(range);
-
-    if (!startRow || !endRow || startRow.rowPinned || endRow.rowPinned) {
-        return null;
-    }
-
-    const rowStartIndex = Math.min(startRow.rowIndex!, endRow.rowIndex!) + 1;
-    const rowEndIndex = Math.max(startRow.rowIndex!, endRow.rowIndex!) + 1;
-
-    const columns = range.columns;
-
-    if (!columns?.length) {
-        return null;
-    }
-
-    const sorted = [...columns];
-    const startCol = sorted[0];
-    const endCol = sorted[sorted.length - 1];
-
-    const colStartRef = formula.getColRef(startCol as any);
-    const colEndRef = formula.getColRef(endCol as any);
-
-    if (!colStartRef || !colEndRef) {
-        return null;
-    }
-
-    const sameCol = colStartRef === colEndRef;
-    const sameRow = rowStartIndex === rowEndIndex;
-
-    if (sameCol && sameRow) {
-        return `${colStartRef}${rowStartIndex}`;
-    }
-
-    return `${colStartRef}${rowStartIndex}:${colEndRef}${rowEndIndex}`;
-};
-
-const getRefsFromText = (text: string): Set<string> => {
-    // Extract all A1-style refs/ranges from raw text to keep grid ranges in sync.
-    const refs = new Set<string>();
-    let match: RegExpExecArray | null;
-    CELL_OR_RANGE_REGEX.lastIndex = 0;
-    while ((match = CELL_OR_RANGE_REGEX.exec(text)) != null) {
-        refs.add(match[0]);
-    }
-    return refs;
-};
-
 // Token helpers
-const getTokenElement = (target: EventTarget | null): HTMLElement | null =>
-    (target as HTMLElement | null)?.closest?.('.ag-formula-token') ?? null;
-
-const isTokenElement = (node: Node | null): node is HTMLElement =>
-    !!node && node instanceof HTMLElement && node.classList.contains('ag-formula-token');
-
-const getTokenRef = (tokenEl: HTMLElement): string => tokenEl.dataset.formulaRef ?? tokenEl.textContent ?? '';
+const getTokenRef = (tokenEl: HTMLElement): string =>
+    formatForValue(tokenEl.textContent ?? tokenEl.dataset.formulaRef ?? '');
+const getTokenIndex = (tokenEl: HTMLElement): number | null => {
+    const raw = tokenEl.dataset.formulaTokenIndex;
+    if (!raw) {
+        return null;
+    }
+    const parsed = parseInt(raw, 10);
+    return Number.isFinite(parsed) ? parsed : null;
+};
 
 // Text formatting helpers
 const formatForDisplay = (text: string): string =>

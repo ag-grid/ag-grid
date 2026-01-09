@@ -78,7 +78,7 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowN
             }
         };
 
-        changedPath!.forEachChangedNodeDepthFirst(isAggFilterActive ? filterChildren : preserveChildren, true);
+        changedPath.forEachChangedNodeDepthFirst(isAggFilterActive ? filterChildren : preserveChildren, true);
     }
 
     /** for tree data, we include all children, groups and leafs */

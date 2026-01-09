@@ -5,7 +5,7 @@ import { _toStringOrNull } from '../agStack/utils/generic';
 import { _getValueUsingField } from '../agStack/utils/value';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection } from '../context/context';
+import type { BeanCollection, UserComponentName } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, SuppressKeyboardEventParams, ValueFormatterFunc, ValueFormatterParams } from '../entities/colDef';
 import type {
@@ -210,10 +210,13 @@ export class DataTypeService extends BeanStub implements NamedBean {
         colId: string
     ): string | string[] | undefined {
         let { cellDataType } = userColDef;
-        const { field } = userColDef;
+
         if (cellDataType === undefined) {
             cellDataType = colDef.cellDataType;
         }
+
+        const { field, allowFormula } = userColDef;
+
         if (cellDataType == null || cellDataType === true) {
             cellDataType = this.canInferCellDataType(colDef, userColDef) ? this.inferCellDataType(field, colId) : false;
         }
@@ -226,7 +229,10 @@ export class DataTypeService extends BeanStub implements NamedBean {
             _warn(47, { cellDataType });
             return undefined;
         }
+
         colDef.cellDataType = cellDataType;
+        colDef.allowFormula ??= allowFormula;
+
         if (dataTypeDefinition.groupSafeValueFormatter) {
             colDef.valueFormatter = dataTypeDefinition.groupSafeValueFormatter;
         }
@@ -582,6 +588,20 @@ export class DataTypeService extends BeanStub implements NamedBean {
             formatValue,
         });
         Object.assign(colDef, partialColDef);
+
+        const { cellEditor, allowFormula } = colDef;
+
+        if (allowFormula) {
+            const supportedEditors: UserComponentName[] = [
+                'agFormulaCellEditor',
+                'agTextCellEditor',
+                'agLargeTextCellEditor',
+            ];
+
+            if (!supportedEditors.includes(cellEditor)) {
+                colDef.cellEditor = 'agFormulaCellEditor';
+            }
+        }
     }
 
     private getDateObjectTypeDef<T extends 'date' | 'dateTime'>(baseDataType: T) {

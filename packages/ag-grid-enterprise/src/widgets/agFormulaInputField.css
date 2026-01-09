@@ -1,42 +1,33 @@
 .ag-formula-token {
-    padding: 0 0.25rem;
-    margin: 0 0.25rem;
-    border-radius: var(--ag-border-radius, 2px);
-    background-color: var(--ag-selected-row-background-color, rgb(64 139 251 / 12%));
-    border: var(--ag-formula-token-border);
     line-height: var(--ag-line-height, 1.6);
-    cursor: default;
-    user-select: all;
 }
 
 .ag-formula-token-color-1 {
-    background-color: var(--ag-formula-token-1-background-color);
-    border: var(--ag-formula-token-1-border);
+    color: var(--ag-formula-token-1-color);
 }
 
 .ag-formula-token-color-2 {
-    background-color: var(--ag-formula-token-2-background-color);
-    border: var(--ag-formula-token-2-border);
+    color: var(--ag-formula-token-2-color);
 }
 
 .ag-formula-token-color-3 {
-    background-color: var(--ag-formula-token-3-background-color);
-    border: var(--ag-formula-token-3-border);
+    color: var(--ag-formula-token-3-color);
 }
 
 .ag-formula-token-color-4 {
-    background-color: var(--ag-formula-token-4-background-color);
-    border: var(--ag-formula-token-4-border);
+    color: var(--ag-formula-token-4-color);
 }
 
 .ag-formula-token-color-5 {
-    background-color: var(--ag-formula-token-5-background-color);
-    border: var(--ag-formula-token-5-border);
+    color: var(--ag-formula-token-5-color);
 }
 
 .ag-formula-token-color-6 {
-    background-color: var(--ag-formula-token-6-background-color);
-    border: var(--ag-formula-token-6-border);
+    color: var(--ag-formula-token-6-color);
+}
+
+.ag-formula-token-color-7 {
+    color: var(--ag-formula-token-6-color);
 }
 
 .ag-formula-range-color-1 {
@@ -67,6 +58,11 @@
 .ag-formula-range-color-6 {
     --ag-range-selection-border-color: var(--ag-formula-token-6-color);
     --ag-range-selection-background-color: var(--ag-formula-token-6-background-color);
+}
+
+.ag-formula-range-color-7 {
+    --ag-range-selection-border-color: var(--ag-formula-token-7-color);
+    --ag-range-selection-background-color: var(--ag-formula-token-7-background-color);
 }
 
 /* stylelint-disable selector-max-specificity */
