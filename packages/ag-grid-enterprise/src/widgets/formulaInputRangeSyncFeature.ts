@@ -36,8 +36,6 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
     }
 
     public postConstruct(): void {
-        // Clear any pre-existing selection so formula ranges start from a clean state.
-        this.beans.rangeSvc?.removeAllCellRanges();
         this.addManagedEventListeners({
             cellSelectionChanged: this.onCellSelectionChanged.bind(this),
         });
