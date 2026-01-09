@@ -7,13 +7,12 @@ import type { FilterDisplayParams } from '../../../interfaces/iFilter';
 import { _createElement } from '../../../utils/element';
 import { _warn } from '../../../validation/logging';
 import type { FilterLocaleTextKey } from '../../filterLocaleText';
-import type { ICombinedSimpleModel, ISimpleFilterModelPresetType, Tuple } from '../iSimpleFilter';
+import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
 import { removeItems } from '../simpleFilterUtils';
 import { DateCompWrapper } from './dateCompWrapper';
 import { DEFAULT_DATE_FILTER_OPTIONS } from './dateFilterConstants';
-import type { DateFilterHandler } from './dateFilterHandler';
-import { mapValuesFromDateFilterModel, presetDateFilterTypeRelativeFromToMap } from './dateFilterUtils';
+import { mapValuesFromDateFilterModel } from './dateFilterUtils';
 import type { DateFilterModel, IDateFilterParams } from './iDateFilter';
 
 const DEFAULT_MIN_YEAR = 1000;
@@ -294,14 +293,6 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         }
         if (values.length > 1) {
             model.dateTo = _serialiseDate(values[1], true, separator);
-        }
-
-        const presetDateRangeFn = presetDateFilterTypeRelativeFromToMap[type as ISimpleFilterModelPresetType];
-        if (presetDateRangeFn) {
-            const { beanCreationTime } = params.getHandler() as DateFilterHandler;
-            const { from, to } = presetDateRangeFn(new Date(beanCreationTime), new Date(beanCreationTime));
-            model.dateFrom = _serialiseDate(from, true, separator);
-            model.dateTo = _serialiseDate(to, true, separator);
         }
 
         return {
