@@ -234,7 +234,7 @@ This feature is not included by default. To enable it, you must add the options 
 
 
 {% note %}
-`startOfToday`, `startOfTomorrow`, `startOfXXX` point to the beginning of the corresponding day, e.g. `00:00:00.000` in browser local timezone.   
+`Start Of Today`, `Start Of Tomorrow`, `Start Of XXX` point to the beginning of the corresponding day, e.g. `00:00:00.000` in browser local timezone.
 {% /note %}
 {% note %}
 `[A, B)` means including `A`, but excluding `B`. `[today, tomorrow)` corresponds to a range `00:00:00.000` - `23:59:59.999` 
@@ -259,8 +259,15 @@ const dateFilterParams = {
     // Other filter settings...
 };
 ``` 
- 
-TODO: VICTOR, ADD AN EXAMPLE HERE
+
+{% gridExampleRunner title="Built-in Date Ranges" name="built-in-date-ranges" /%}
+
+## Range Input Validation and Error States
+
+When using the `inRange` filter type, the grid performs input validation to ensure the bounds of the range produce a valid filter; that is, where the start date is earlier than the end date.
+
+Where this is not the case, the last edited input will display a red border and a hover tooltip directing the user to enter a valid date. While the filter is in an invalid state, the filter will not be applied.
+Screen readers that respond to the `aria-invalid` attribute or the `ValidityState` of the input will detect the input as invalid.
 
 ## Filter Values
 
