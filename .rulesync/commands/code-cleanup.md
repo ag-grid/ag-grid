@@ -1,0 +1,1 @@
+../../external/ag-shared/prompts/commands/code/cleanup.md
