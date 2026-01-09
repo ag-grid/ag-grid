@@ -42,8 +42,12 @@ function formatDiff(diff) {
 }
 
 function getChangeEmoji(diff) {
-    if (diff > 0) return '📈';
-    if (diff < 0) return '📉';
+    if (diff > 0) {
+        return '📈';
+    }
+    if (diff < 0) {
+        return '📉';
+    }
     return '➖';
 }
 
@@ -211,13 +215,18 @@ console.log(`Comparison report written to ${outputFile}`);
 // Output summary for CI
 console.log('\n--- Summary ---');
 console.log(`Significant changes (>= ${THRESHOLD_KB} KB): ${significantChanges.length}`);
-if (maxIncrease && maxIncrease.selfSizeDiff > 0) {
-    console.log(
-        `Largest increase: ${maxIncrease.modules.join(', ') || 'Base'} (${formatDiff(maxIncrease.selfSizeDiff)} KB)`
-    );
+const hasIncrease = maxIncrease && maxIncrease.selfSizeDiff > 0;
+const hasDecrease = maxDecrease && maxDecrease.selfSizeDiff < 0;
+if (hasIncrease) {
+    const moduleName = maxIncrease.modules.length === 0 ? 'Base (no modules)' : maxIncrease.modules.join(', ');
+    report += `📈 **Largest Increase:** ${moduleName}\n`;
+    report += `   - Self Size: ${formatSize(maxIncrease.baseSelfSize)} KB → ${formatSize(maxIncrease.prSelfSize)} KB (**${formatDiff(maxIncrease.selfSizeDiff)} KB**)\n\n`;
 }
-if (maxDecrease && maxDecrease.selfSizeDiff < 0) {
-    console.log(
-        `Largest decrease: ${maxDecrease.modules.join(', ') || 'Base'} (${formatDiff(maxDecrease.selfSizeDiff)} KB)`
-    );
+if (hasDecrease) {
+    const moduleName = maxDecrease.modules.length === 0 ? 'Base (no modules)' : maxDecrease.modules.join(', ');
+    report += `📉 **Largest Decrease:** ${moduleName}\n`;
+    report += `   - Self Size: ${formatSize(maxDecrease.baseSelfSize)} KB → ${formatSize(maxDecrease.prSelfSize)} KB (**${formatDiff(maxDecrease.selfSizeDiff)} KB**)\n\n`;
+}
+if (!hasIncrease && !hasDecrease) {
+    report += '✅ No module size changes detected.\n\n';
 }
