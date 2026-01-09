@@ -55,7 +55,7 @@ export class DateFilterHandler extends ScalarFilterHandler<DateFilterModel, Date
         const presetDateRangeFn = presetDateFilterTypeRelativeFromToMap[type as ISimpleFilterModelPresetType];
         if (presetDateRangeFn) {
             const { from, to } = presetDateRangeFn(new Date(this.beanCreationTime), new Date(this.beanCreationTime));
-            return comparator(from, cellValue) > 0 && comparator(to, cellValue) < 0;
+            return comparator(from, cellValue) >= 0 && comparator(to, cellValue) < 0;
         }
 
         return super.evaluateNonNullValue(values, cellValue, filterModel);
