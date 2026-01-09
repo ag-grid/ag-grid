@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 'rowData',
                 data.map((d: IOlympicData) => ({
                     ...d,
-                    date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000 * (Math.random() * 0.5 - Math.random())), // Random date [-6 month, +6 month]
+                    date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000 * (Math.random() * 0.5 - Math.random())),
                 }))
             )
         );
