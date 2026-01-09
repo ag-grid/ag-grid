@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
 
-const THRESHOLD_KB = 3; // Report modules with size changes >= 3KB
+const THRESHOLD_KB = 1; // Report modules with size changes
 
 /**
  * Compare two module-size-results.json files and generate a diff report
@@ -135,7 +135,7 @@ diffs.sort((a, b) => Math.abs(b.selfSizeDiff) - Math.abs(a.selfSizeDiff));
 const maxIncrease = diffs.reduce((max, d) => (d.selfSizeDiff > max.selfSizeDiff ? d : max), diffs[0]);
 const maxDecrease = diffs.reduce((min, d) => (d.selfSizeDiff < min.selfSizeDiff ? d : min), diffs[0]);
 
-// Filter significant changes (>= 3KB)
+// Filter significant changes
 const significantChanges = diffs.filter((d) => Math.abs(d.selfSizeDiff) >= THRESHOLD_KB);
 
 // Generate markdown report
