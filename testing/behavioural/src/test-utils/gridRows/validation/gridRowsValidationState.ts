@@ -33,50 +33,48 @@ export class GridRowsValidationState {
     }
 
     public get showRowGroupColumns(): AgColumn[] {
-        if (this._showRowGroupColumns === undefined) {
-            const api = this.gridRows.api;
-            const columns = api.getColumns() ?? [];
-            const displayedColumns = api.getAllDisplayedColumns?.() ?? [];
-            const displayedSet = new Set(displayedColumns as AgColumn[]);
-            const showRowGroupColumns: AgColumn[] = [];
-            for (let i = 0; i < columns.length; ++i) {
-                const column = columns[i] as AgColumn;
-                if (!displayedSet.has(column)) {
-                    continue;
-                }
-                const showRowGroup = column.getColDef().showRowGroup;
-                if (showRowGroup === undefined || showRowGroup === null || showRowGroup === false) {
-                    continue;
-                }
-                showRowGroupColumns.push(column);
-            }
-            this._showRowGroupColumns = showRowGroupColumns;
+        let result = this._showRowGroupColumns;
+        if (result !== undefined) {
+            return result;
         }
-        return this._showRowGroupColumns;
+        const api = this.gridRows.api;
+        const columns = api.getColumns() ?? [];
+        const displayedColumns = api.getAllDisplayedColumns?.() ?? [];
+        const displayedSet = new Set(displayedColumns as AgColumn[]);
+        result = [];
+        for (let i = 0; i < columns.length; ++i) {
+            const column = columns[i] as AgColumn;
+            if (!displayedSet.has(column)) {
+                continue;
+            }
+            const showRowGroup = column.getColDef().showRowGroup;
+            if (showRowGroup === undefined || showRowGroup === null || showRowGroup === false) {
+                continue;
+            }
+            result.push(column);
+        }
+        this._showRowGroupColumns = result;
+        return result;
     }
 
     public get groupSelectsDescendants(): boolean {
-        if (this._groupSelectsDescendants !== undefined) {
-            return this._groupSelectsDescendants;
+        let result = this._groupSelectsDescendants;
+        if (result !== undefined) {
+            return result;
         }
-
         const api = this.gridRows.api;
         const selection = api.getGridOption('rowSelection');
-
         if (selection == null) {
-            return (this._groupSelectsDescendants = false);
+            result = false;
+        } else if (typeof selection === 'string') {
+            result = !!api.getGridOption('groupSelectsChildren');
+        } else if (selection.mode !== 'multiRow') {
+            result = false;
+        } else {
+            const groupSelects = selection.groupSelects;
+            result = groupSelects === 'descendants' || groupSelects === 'filteredDescendants';
         }
-
-        if (typeof selection === 'string') {
-            return (this._groupSelectsDescendants = !!api.getGridOption('groupSelectsChildren'));
-        }
-
-        if (selection.mode !== 'multiRow') {
-            return (this._groupSelectsDescendants = false);
-        }
-
-        const groupSelects = selection.groupSelects;
-        return (this._groupSelectsDescendants =
-            groupSelects === 'descendants' || groupSelects === 'filteredDescendants');
+        this._groupSelectsDescendants = result;
+        return result;
     }
 }
