@@ -6,7 +6,7 @@ import type {
 
 export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, number> = {
     AlignedGridsModule: 6.88,
-    AllCommunityModule: 496.14,
+    AllCommunityModule: 501.39,
     CellApiModule: 0.28,
     CellSpanModule: 8.08,
     CellStyleModule: 2.24,
@@ -30,7 +30,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     LargeTextEditorModule: 70.13,
     LocaleModule: 0.43,
     NumberEditorModule: 73.6,
-    NumberFilterModule: 128.72,
+    NumberFilterModule: 133.03,
     PaginationModule: 42.74,
     PinnedRowModule: 19.31,
     QuickFilterModule: 17.3,
@@ -64,7 +64,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     FindModule: 31,
     FormulaModule: 85.09,
     GridChartsModule: 76.93,
-    GroupFilterModule: 115.18,
+    GroupFilterModule: 118.66,
     IntegratedChartsModule: 412.18,
     MasterDetailModule: 87.16,
     MenuModule: 166.7,
