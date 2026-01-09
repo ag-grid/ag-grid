@@ -1,0 +1,214 @@
+name: Module Size Comparison
+
+on:
+  pull_request:
+    branches:
+      - 'latest'
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to compare (for debugging)'
+        type: number
+        required: false
+
+env:
+  NX_NO_CLOUD: true
+  NX_BRANCH: ${{ github.ref }}
+  SHARP_IGNORE_GLOBAL_LIBVIPS: true
+  YARN_REGISTRY: "https://registry.ag-grid.com"
+  CI: true
+  SHARD_COUNT: 3
+
+concurrency:
+  group: module-size-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  # Build and run module size tests on the PR branch (sharded)
+  module-size-pr:
+    name: Module Size PR (${{ matrix.shard }}/${{ strategy.job-total }})
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    strategy:
+      matrix:
+        shard: [1, 2, 3]
+      fail-fast: false
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
+
+      - name: Setup
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: ro
+
+      - name: Build dependencies
+        run: |
+          yarn nx run-many -t build --projects=ag-grid-community,ag-grid-enterprise,ag-grid-react
+
+      - name: Run module size tests (shard ${{ matrix.shard }})
+        working-directory: testing/module-size
+        run: |
+          npm run module-combinations -- --shard=${{ matrix.shard }}/${{ strategy.job-total }}
+          mv module-size-results.json module-size-results-shard-${{ matrix.shard }}.json
+
+      - name: Upload PR shard results
+        uses: actions/upload-artifact@v4
+        with:
+          name: module-size-pr-shard-${{ matrix.shard }}-${{ github.event.pull_request.number }}
+          path: testing/module-size/module-size-results-shard-${{ matrix.shard }}.json
+          retention-days: 1
+
+  # Build and run module size tests on the latest branch (sharded)
+  module-size-base:
+    name: Module Size Base (${{ matrix.shard }}/${{ strategy.job-total }})
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    strategy:
+      matrix:
+        shard: [1, 2, 3]
+      fail-fast: false
+    steps:
+      - name: Checkout latest
+        uses: actions/checkout@v4
+        with:
+          ref: latest
+          fetch-depth: 1
+
+      - name: Setup
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: ro
+          base_ref: latest
+
+      - name: Build dependencies
+        run: |
+          yarn nx run-many -t build --projects=ag-grid-community,ag-grid-enterprise,ag-grid-react
+
+      - name: Run module size tests (shard ${{ matrix.shard }})
+        working-directory: testing/module-size
+        run: |
+          npm run module-combinations -- --shard=${{ matrix.shard }}/${{ strategy.job-total }}
+          mv module-size-results.json module-size-results-shard-${{ matrix.shard }}.json
+
+      - name: Upload base shard results
+        uses: actions/upload-artifact@v4
+        with:
+          name: module-size-base-shard-${{ matrix.shard }}-${{ github.event.pull_request.number }}
+          path: testing/module-size/module-size-results-shard-${{ matrix.shard }}.json
+          retention-days: 1
+
+  # Compare results and post PR comment
+  compare-and-report:
+    name: Compare & Report
+    runs-on: ubuntu-latest
+    needs: [module-size-pr, module-size-base]
+    if: always() && needs.module-size-pr.result == 'success' && needs.module-size-base.result == 'success'
+    env:
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            scripts/ci/compare-module-sizes.mjs
+            scripts/ci/merge-module-size-results.mjs
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Download all PR shard results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: module-size-pr-shard-*-${{ github.event.pull_request.number }}
+          path: ./pr-shards
+          merge-multiple: true
+
+      - name: Download all base shard results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: module-size-base-shard-*-${{ github.event.pull_request.number }}
+          path: ./base-shards
+          merge-multiple: true
+
+      - name: Merge shard results
+        run: |
+          node scripts/ci/merge-module-size-results.mjs ./pr-shards ./pr-results.json
+          node scripts/ci/merge-module-size-results.mjs ./base-shards ./base-results.json
+
+      - name: Compare module sizes
+        id: compare
+        run: |
+          node scripts/ci/compare-module-sizes.mjs \
+            ./base-results.json \
+            ./pr-results.json \
+            ./comparison-report.md
+
+      - name: Find existing comment
+        id: find-comment
+        uses: actions/github-script@v7
+        with:
+          result-encoding: string
+          script: |
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: parseInt(process.env.PR_NUMBER, 10),
+            });
+
+            const botComment = comments.find(comment =>
+              comment.user.type === 'Bot' &&
+              comment.body.includes('## Module Size Comparison')
+            );
+
+            return botComment ? botComment.id : '';
+
+      - name: Post or update comment
+        uses: actions/github-script@v7
+        env:
+          COMMENT_ID: ${{ steps.find-comment.outputs.result }}
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('./comparison-report.md', 'utf8');
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const issue_number = parseInt(process.env.PR_NUMBER, 10);
+            const comment_id = process.env.COMMENT_ID;
+
+            const body = report + '\n\n---\n*Updated: ' + new Date().toISOString() + '*';
+
+            if (comment_id) {
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: parseInt(comment_id, 10),
+                body
+              });
+              console.log(`Updated comment ${comment_id}`);
+            } else {
+              const { data: comment } = await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body
+              });
+              console.log(`Created comment ${comment.id}`);
+            }
+
+      - name: Upload comparison report
+        uses: actions/upload-artifact@v4
+        with:
+          name: module-size-comparison-${{ github.event.pull_request.number }}
+          path: ./comparison-report.md
+          retention-days: 30
