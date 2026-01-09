@@ -116,33 +116,20 @@ jobs:
         shard: ${{ fromJSON(needs.prepare.outputs.shard-matrix) }}
       fail-fast: false
     steps:
-      - name: Checkout PR
+      - name: Checkout for actions
         uses: actions/checkout@v4
         with:
+          sparse-checkout: .github/actions
           ref: ${{ needs.prepare.outputs.head-sha }}
-          fetch-depth: 1
 
-      - name: Setup
-        uses: ./.github/actions/setup-nx
+      - name: Run module size tests
+        uses: ./.github/actions/module-size-test
         with:
-          cache_mode: ro
-
-      - name: Build dependencies
-        run: |
-          yarn nx run-many -t build --projects=ag-grid-community,ag-grid-enterprise,ag-grid-react
-
-      - name: Run module size tests (shard ${{ matrix.shard }})
-        working-directory: testing/module-size
-        run: |
-          npm run module-combinations -- --shard=${{ matrix.shard }}/${{ strategy.job-total }}
-          mv module-size-results.json module-size-results-shard-${{ matrix.shard }}.json
-
-      - name: Upload PR shard results
-        uses: actions/upload-artifact@v4
-        with:
-          name: module-size-pr-shard-${{ matrix.shard }}-${{ needs.prepare.outputs.pr-number }}
-          path: testing/module-size/module-size-results-shard-${{ matrix.shard }}.json
-          retention-days: 1
+          ref: ${{ needs.prepare.outputs.head-sha }}
+          shard: ${{ matrix.shard }}
+          total-shards: ${{ strategy.job-total }}
+          artifact-prefix: module-size-pr
+          artifact-suffix: ${{ needs.prepare.outputs.pr-number }}
 
   # Build and run module size tests on the latest branch (sharded) - only if cache miss
   module-size-base:
@@ -155,34 +142,21 @@ jobs:
         shard: ${{ fromJSON(needs.prepare.outputs.shard-matrix) }}
       fail-fast: false
     steps:
-      - name: Checkout latest
+      - name: Checkout for actions
         uses: actions/checkout@v4
         with:
+          sparse-checkout: .github/actions
+          ref: ${{ needs.prepare.outputs.head-sha }}
+
+      - name: Run module size tests
+        uses: ./.github/actions/module-size-test
+        with:
           ref: latest
-          fetch-depth: 1
-
-      - name: Setup
-        uses: ./.github/actions/setup-nx
-        with:
-          cache_mode: ro
-          base_ref: latest
-
-      - name: Build dependencies
-        run: |
-          yarn nx run-many -t build --projects=ag-grid-community,ag-grid-enterprise,ag-grid-react
-
-      - name: Run module size tests (shard ${{ matrix.shard }})
-        working-directory: testing/module-size
-        run: |
-          npm run module-combinations -- --shard=${{ matrix.shard }}/${{ strategy.job-total }}
-          mv module-size-results.json module-size-results-shard-${{ matrix.shard }}.json
-
-      - name: Upload base shard results
-        uses: actions/upload-artifact@v4
-        with:
-          name: module-size-base-shard-${{ matrix.shard }}-${{ needs.prepare.outputs.pr-number }}
-          path: testing/module-size/module-size-results-shard-${{ matrix.shard }}.json
-          retention-days: 1
+          shard: ${{ matrix.shard }}
+          total-shards: ${{ strategy.job-total }}
+          artifact-prefix: module-size-base
+          artifact-suffix: ${{ needs.prepare.outputs.pr-number }}
+          base-ref: latest
 
   # Merge base shards and save to cache (only when we had to build)
   cache-base-results:
