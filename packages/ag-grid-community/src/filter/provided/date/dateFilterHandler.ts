@@ -223,7 +223,21 @@ const tomorrow: RelativeRangeFn = (from: Date, to: Date) => {
  * Last 24 months          last24Months        [startOfToday − 24 months, startOfTomorrow)
  */
 const presetDateFilterTypeRelativeFromToMap: Record<
-    ISimpleFilterModelPresetType | string,
+    | ISimpleFilterModelPresetType
+    | 'setStartOfDay'
+    | 'setStartOfWeek'
+    | 'setStartOfNextDay'
+    | 'setStartOfNextWeek'
+    | 'setStartOfMonth'
+    | 'setStartOfNextMonth'
+    | 'setStartOfQuarter'
+    | 'setStartOfNextQuarter'
+    | 'setStartOfYear'
+    | 'setStartOfNextYear'
+    | 'setPreviousDay'
+    | 'setPreviousWeek'
+    | 'setPreviousMonth'
+    | 'setPreviousQuarter',
     RelativeRangeFn | RelativeDateFn
 > = {
     today,
