@@ -1,0 +1,260 @@
+{
+    "meta": {
+        "title": "AG Grid: A Fast, Powerful, and Flexible Angular Data Grid",
+        "description": "Explore AG Grid's fast, powerful, and customisable Angular Data Grid library. Add high-performance Angular Data Grids to your Angular applications in minutes, for free."
+    },
+    "framework": "angular",
+    "packageName": "ag-grid-angular",
+    "docsPath": "angular-data-grid",
+    "analyticsPrefix": "angular-data-grid",
+
+    "sections": [
+        {
+            "type": "hero",
+            "tag": "Angular Data Grid",
+            "heading": "Fast, Powerful and Flexible Angular Data Grids",
+            "subHeading": "Angular Data Grids",
+            "subHeadingHtml": "Add <b>high-performance</b>, <b>feature rich</b>, and <b>fully customisable</b> Angular Data Grids to your application in <b>minutes</b>, all for <b>free</b>.",
+            "showVersionBadge": true,
+            "primaryCta": {
+                "text": "Get Started"
+            },
+            "secondaryCta": {
+                "text": "View All Demos",
+                "url": "./example"
+            },
+            "demo": {
+                "gridHeight": 600
+            }
+        },
+        {
+            "type": "features",
+            "tag": "Why Use AG Grid to Build Angular Data Grids?",
+            "heading": "Amazingly Fast and Fully Customisable with an Unbeatable Feature Set",
+            "subHeading": "Get started in minutes and access 1000s of features without compromising on performance. Customise your Angular Data Grid with your own styles and components or upgrade to enterprise to use our advanced features.",
+            "items": [
+                {
+                    "id": "showing-data",
+                    "title": "Showing Data",
+                    "isEnterprise": false,
+                    "example": {
+                        "pageName": "key-features",
+                        "exampleName": "showing-data-example"
+                    },
+                    "features": [
+                        {
+                            "heading": "Value Mapping",
+                            "detail": "Map data to columns using field or valueGetter. Format values with valueFormatter for display.",
+                            "link": "./angular-data-grid/column-definitions/"
+                        },
+                        {
+                            "heading": "Cell Components",
+                            "detail": "Add buttons, checkboxes, or images to cells with custom cell renderers.",
+                            "link": "./angular-data-grid/component-cell-renderer/"
+                        },
+                        {
+                            "heading": "Column Resizing",
+                            "detail": "Resize columns by dragging header edges. Use flex values for responsive column widths.",
+                            "link": "./angular-data-grid/column-sizing/"
+                        }
+                    ],
+                    "docsLink": "./angular-data-grid/key-features/#showing-data"
+                },
+                {
+                    "id": "working-with-data",
+                    "title": "Working with Data",
+                    "isEnterprise": false,
+                    "example": {
+                        "pageName": "key-features",
+                        "exampleName": "working-with-data-example"
+                    },
+                    "features": [
+                        {
+                            "heading": "Filtering",
+                            "detail": "Built-in column filters with text, number, and date types. Add floating filters for quick access.",
+                            "link": "./angular-data-grid/filtering/"
+                        },
+                        {
+                            "heading": "Cell Editing",
+                            "detail": "Enable inline editing with text, number, date, and select editors. Supports undo/redo.",
+                            "link": "./angular-data-grid/cell-editing/"
+                        },
+                        {
+                            "heading": "Row Selection & Pagination",
+                            "detail": "Select single or multiple rows with checkbox selection. Paginate large datasets with configurable page sizes.",
+                            "link": "./angular-data-grid/row-selection/"
+                        }
+                    ],
+                    "docsLink": "./angular-data-grid/key-features/#working-with-data"
+                },
+                {
+                    "id": "themes-style",
+                    "title": "Themes & Style",
+                    "isEnterprise": false,
+                    "example": {
+                        "pageName": "key-features",
+                        "exampleName": "cell-row-style"
+                    },
+                    "features": [
+                        {
+                            "heading": "Theming",
+                            "detail": "Choose from built-in themes (Quartz, Alpine, Balham) or create custom themes with the Theming API.",
+                            "link": "./angular-data-grid/theming/"
+                        },
+                        {
+                            "heading": "Cell Styles",
+                            "detail": "Apply dynamic styles to cells based on values using cellClassRules for conditional formatting.",
+                            "link": "./angular-data-grid/cell-styles/"
+                        },
+                        {
+                            "heading": "Row Styles",
+                            "detail": "Style entire rows based on data values with rowClassRules for visual indicators.",
+                            "link": "./angular-data-grid/row-styles/"
+                        }
+                    ],
+                    "docsLink": "./angular-data-grid/key-features/#themes--style"
+                },
+                {
+                    "id": "enterprise-features",
+                    "title": "Enterprise Features",
+                    "isEnterprise": true,
+                    "example": {
+                        "pageName": "key-features",
+                        "exampleName": "enterprise-features-example"
+                    },
+                    "features": [
+                        {
+                            "heading": "Integrated Charts",
+                            "detail": "Create and customize charts directly from grid data. Users can build their own visualizations.",
+                            "link": "./angular-data-grid/integrated-charts/"
+                        },
+                        {
+                            "heading": "Row Grouping & Aggregation",
+                            "detail": "Group rows by columns with automatic aggregations. Users can drag columns to group dynamically.",
+                            "link": "./angular-data-grid/grouping/"
+                        },
+                        {
+                            "heading": "Tool Panels",
+                            "detail": "Side panels for columns and filters let users customize their view without code changes.",
+                            "link": "./angular-data-grid/tool-panel/"
+                        }
+                    ],
+                    "docsLink": "./angular-data-grid/community-vs-enterprise/"
+                }
+            ]
+        },
+        {
+            "type": "showcase",
+            "tag": "Where Can I See AG Grid Angular Data Grids Being Used?",
+            "heading": "Used in Every Industry, for All Types of Data",
+            "subHeading": "Trusted by 90% of Fortune 500 industries from Finance and AI, to DevTools and Aeronautics. Most of these uses are private, but we've hand-picked a few open-source examples:"
+        },
+        {
+            "type": "customers",
+            "tag": "Who Builds Angular Data Grids with AG Grid?",
+            "headingHtml": "Loved By Developers<br />Trusted By The Worlds Largest Enterprises",
+            "subHeadingHtml": "<span>Over <b>90% of the Fortune 500</b> build Angular Data Grids using AG Grid, with <a href=\"https://www.npmjs.com/package/ag-grid-community\" target=\"_blank\"> 1,000,000+</a> npm downloads per week and over <a href=\"https://github.com/ag-grid/ag-grid/tree/latest\" target=\"_blank\"> 12,000</a> Stars on GitHub.</span>"
+        },
+        {
+            "type": "examples",
+            "tag": "How Do I Build an Angular Data Grid with AG Grid?",
+            "heading": "Get Started with Angular Data Grid Examples",
+            "subHeading": "We have a range of examples, tutorials and documentation to help you start building your first Angular Data Grid with AG Grid.",
+            "showBackgroundGradient": true,
+            "items": [
+                {
+                    "img": "quick-start.png",
+                    "imgAlt": "Quick start guide for creating an Angular Data Grid in minutes",
+                    "title": "Quick Start",
+                    "content": "Create your first Angular Data Grid and learn the basics in just a few minutes.",
+                    "docs": "./angular-data-grid/getting-started",
+                    "demo": "./examples/getting-started/quick-start-example/angular/"
+                },
+                {
+                    "img": "beginner-tutorial.png",
+                    "imgAlt": "Beginner tutorial for building an Angular Data Grid with key functionality",
+                    "title": "Beginner Tutorial",
+                    "content": "Learn key concepts by building an Angular Data Grid with common functionality & customisations.",
+                    "docs": "./angular-data-grid/deep-dive/",
+                    "demo": "./examples/deep-dive/testing-example/angular"
+                },
+                {
+                    "img": "custom-themes.png",
+                    "imgAlt": "Learn how to customise an Angular Data Grid with unique CSS themes",
+                    "title": "Custom Styles",
+                    "content": "Customise your Angular Data Grid with the Theming API to create a unique theme for your brand.",
+                    "docs": "./angular-data-grid/theming/",
+                    "demo": "./examples/theming-colors/color-customisation/angular"
+                },
+                {
+                    "img": "integrated-charts.png",
+                    "imgAlt": "Create and style Integrated Charts from your Angular Data Grid",
+                    "title": "Integrated Charts",
+                    "content": "Build & style charts programatically, or let users create their own from the grid.",
+                    "docs": "./angular-data-grid/integrated-charts/",
+                    "demo": "./examples/integrated-charts-chart-tool-panels/chart-tool-panels/angular"
+                }
+            ]
+        },
+        {
+            "type": "faq",
+            "tag": "Angular Data Grid FAQs",
+            "heading": "Frequently Asked Questions",
+            "subHeading": "Answers to some commonly asked questions when building Angular Data Grids with AG Grid",
+            "items": [
+                {
+                    "question": "What is the difference between AG Grid Community and Enterprise?",
+                    "answer": "[AG Grid Community](./getting-started/) is the free version with basic features, while [AG Grid Enterprise](/license-pricing/) offers additional advanced features and support."
+                },
+                {
+                    "question": "Can I create an Angular Data Grid for free?",
+                    "answer": "Yes, you can create an Angular Data Grid for free using our open-source library, [AG Grid Community](./getting-started/)."
+                },
+                {
+                    "question": "Will my Angular Data Grids be compatible with AG Charts?",
+                    "answer": "Yes, AG Grid is designed to be compatible with AG Charts, allowing seamless integration between Angular Data Grids and [Angular Charts](https://www.ag-grid.com/charts/angular/quick-start/)."
+                },
+                {
+                    "question": "Can I customise the Angular Data Grid?",
+                    "answer": "Yes, you can customise AG Grid [themes](./themes/) with CSS, create your own custom themes, and use your own components in cells. Visit our [Theme Builder](/theme-builder/) to start customising themes."
+                },
+                {
+                    "question": "AG Grid vs. Angular Material Table",
+                    "answer": "AG Grid is a feature-rich data grid offering advanced capabilities like grouping, pivoting, and server-side row model, while Angular Material Table provides a simpler table component as part of its UI library."
+                },
+                {
+                    "question": "Why use AG Grid over PrimeNG Table?",
+                    "answer": "AG Grid offers superior performance with millions of rows, more advanced features like integrated charts and Excel export, and better TypeScript support compared to PrimeNG Table."
+                },
+                {
+                    "question": "How Many Rows Can AG Grid Handle?",
+                    "answer": "AG Grid can easily handle millions of rows and thousands of columns, with no performance degradation, by using row & column virtualisation."
+                },
+                {
+                    "question": "What is AG Grid Enterprise?",
+                    "answer": "[AG Grid Community](./getting-started/) is the free version with basic features, while [AG Grid Enterprise](/license-pricing/) offers additional advanced features and support."
+                },
+                {
+                    "question": "What is an AG Grid licence?",
+                    "answer": "An AG Grid licence is required to use [AG Grid Enterprise](/license-pricing/) in production. Try it for free, or [request a trial licence](./community-vs-enterprise/#request-a-30-day-enterprise-bundle-trial-licence) to remove the watermark & console messages."
+                },
+                {
+                    "question": "How much does AG Grid cost?",
+                    "answer": "[AG Grid Community](./getting-started/) is free forever. [AG Grid Enterprise](/license-pricing/) costs $999 USD per licence. Visit the [Pricing page](/license-pricing/) for more information."
+                }
+            ]
+        },
+        {
+            "type": "contact",
+            "tag": "Get In Touch",
+            "heading": "Contact Our Team",
+            "subHeading": "Have questions about AG Grid? Get in touch with our team",
+            "features": [
+                "Expert technical guidance",
+                "Demos & technical walkthroughs",
+                "Licencing and pricing information",
+                "Response within 24 hours"
+            ]
+        }
+    ]
+}

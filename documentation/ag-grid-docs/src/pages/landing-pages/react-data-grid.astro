@@ -1,14 +1,14 @@
 ---
 /**
- * React Table Landing Page
+ * React Data Grid Landing Page
  *
- * Content is defined in: src/content/landing-pages/react-table.json
+ * Content is defined in: src/content/landing-pages/react-data-grid.json
  */
 
 import LandingPage from '@components/landing-pages/LandingPage.astro';
 import { getEntry } from 'astro:content';
 
-const contentEntry = await getEntry('landingPages', 'react-table');
+const contentEntry = await getEntry('landingPages', 'react-data-grid');
 const versionsEntry = await getEntry('versions', 'ag-grid-versions');
 
 const content = contentEntry?.data;

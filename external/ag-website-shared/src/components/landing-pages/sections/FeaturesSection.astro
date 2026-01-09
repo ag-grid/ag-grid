@@ -1,0 +1,39 @@
+---
+import type { FeaturesSection, LandingPageContent } from '../types';
+import { LandingPageSection } from '../LandingPageSection';
+
+interface Props {
+    section: FeaturesSection;
+    pageContent: LandingPageContent;
+}
+
+const { section } = Astro.props;
+---
+
+<LandingPageSection
+    id="features"
+    tag={section.tag}
+    heading={section.heading}
+    headingHtml={section.headingHtml}
+    subHeading={section.subHeading}
+>
+    <slot>
+        <!-- Fallback: simple feature list without live examples -->
+        <div class="features-fallback">
+            {
+                section.items.map((item) => (
+                    <div class="feature-item">
+                        <h4>{item.title}</h4>
+                        <ul>
+                            {item.features.map((f) => (
+                                <li>
+                                    <strong>{f.heading}</strong>: {f.detail}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                ))
+            }
+        </div>
+    </slot>
+</LandingPageSection>
