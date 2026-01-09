@@ -29,6 +29,30 @@ permissions:
   pull-requests: write
 
 jobs:
+  # Check for cached base results
+  check-base-cache:
+    name: Check Base Cache
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    outputs:
+      cache-hit: ${{ steps.cache-check.outputs.cache-hit }}
+      latest-sha: ${{ steps.get-sha.outputs.sha }}
+    steps:
+      - name: Get latest branch SHA
+        id: get-sha
+        run: |
+          SHA=$(git ls-remote https://github.com/${{ github.repository }} refs/heads/latest | cut -f1)
+          echo "sha=${SHA}" >> $GITHUB_OUTPUT
+          echo "Latest branch SHA: ${SHA}"
+
+      - name: Check cache for base results
+        id: cache-check
+        uses: actions/cache/restore@v4
+        with:
+          path: ./base-results.json
+          key: module-size-base-${{ steps.get-sha.outputs.sha }}
+          lookup-only: true
+
   # Build and run module size tests on the PR branch (sharded)
   module-size-pr:
     name: Module Size PR (${{ matrix.shard }}/${{ strategy.job-total }})
@@ -67,11 +91,12 @@ jobs:
           path: testing/module-size/module-size-results-shard-${{ matrix.shard }}.json
           retention-days: 1
 
-  # Build and run module size tests on the latest branch (sharded)
+  # Build and run module size tests on the latest branch (sharded) - only if cache miss
   module-size-base:
     name: Module Size Base (${{ matrix.shard }}/${{ strategy.job-total }})
     runs-on: ubuntu-latest
-    if: github.event.pull_request.draft == false
+    needs: check-base-cache
+    if: github.event.pull_request.draft == false && needs.check-base-cache.outputs.cache-hit != 'true'
     strategy:
       matrix:
         shard: [1, 2, 3]
@@ -106,14 +131,55 @@ jobs:
           path: testing/module-size/module-size-results-shard-${{ matrix.shard }}.json
           retention-days: 1
 
+  # Merge base shards and save to cache (only when we had to build)
+  cache-base-results:
+    name: Cache Base Results
+    runs-on: ubuntu-latest
+    needs: [check-base-cache, module-size-base]
+    if: always() && needs.module-size-base.result == 'success'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            scripts/ci/merge-module-size-results.mjs
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Download all base shard results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: module-size-base-shard-*-${{ github.event.pull_request.number }}
+          path: ./base-shards
+          merge-multiple: true
+
+      - name: Merge shard results
+        run: |
+          node scripts/ci/merge-module-size-results.mjs ./base-shards ./base-results.json
+
+      - name: Save to cache
+        uses: actions/cache/save@v4
+        with:
+          path: ./base-results.json
+          key: module-size-base-${{ needs.check-base-cache.outputs.latest-sha }}
+
   # Compare results and post PR comment
   compare-and-report:
     name: Compare & Report
     runs-on: ubuntu-latest
-    needs: [module-size-pr, module-size-base]
-    if: always() && needs.module-size-pr.result == 'success' && needs.module-size-base.result == 'success'
+    needs: [check-base-cache, module-size-pr, module-size-base, cache-base-results]
+    # Run if PR tests succeeded AND either cache hit OR base tests succeeded
+    if: |
+      always() &&
+      needs.module-size-pr.result == 'success' &&
+      (needs.check-base-cache.outputs.cache-hit == 'true' || needs.module-size-base.result == 'success')
     env:
       PR_NUMBER: ${{ github.event.pull_request.number }}
+      CACHE_HIT: ${{ needs.check-base-cache.outputs.cache-hit }}
+      LATEST_SHA: ${{ needs.check-base-cache.outputs.latest-sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -134,16 +200,31 @@ jobs:
           path: ./pr-shards
           merge-multiple: true
 
+      - name: Merge PR shard results
+        run: |
+          node scripts/ci/merge-module-size-results.mjs ./pr-shards ./pr-results.json
+
+      # If cache hit, restore from cache
+      - name: Restore base results from cache
+        if: env.CACHE_HIT == 'true'
+        uses: actions/cache/restore@v4
+        with:
+          path: ./base-results.json
+          key: module-size-base-${{ env.LATEST_SHA }}
+          fail-on-cache-miss: true
+
+      # If cache miss, download artifacts and merge
       - name: Download all base shard results
+        if: env.CACHE_HIT != 'true'
         uses: actions/download-artifact@v4
         with:
           pattern: module-size-base-shard-*-${{ github.event.pull_request.number }}
           path: ./base-shards
           merge-multiple: true
 
-      - name: Merge shard results
+      - name: Merge base shard results
+        if: env.CACHE_HIT != 'true'
         run: |
-          node scripts/ci/merge-module-size-results.mjs ./pr-shards ./pr-results.json
           node scripts/ci/merge-module-size-results.mjs ./base-shards ./base-results.json
 
       - name: Compare module sizes
