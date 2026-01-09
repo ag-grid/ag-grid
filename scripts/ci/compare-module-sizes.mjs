@@ -52,12 +52,12 @@ const prResults = loadResults(prFile);
 
 // Create maps for easy lookup
 const baseMap = new Map();
-baseResults.forEach(result => {
+baseResults.forEach((result) => {
     baseMap.set(getModuleKey(result.modules), result);
 });
 
 const prMap = new Map();
-prResults.forEach(result => {
+prResults.forEach((result) => {
     prMap.set(getModuleKey(result.modules), result);
 });
 
@@ -87,7 +87,7 @@ for (const key of allKeys) {
             prGzipSize: pr.gzipSize,
             gzipSizeDiff,
             isNew: false,
-            isRemoved: false
+            isRemoved: false,
         });
     } else if (pr && !base) {
         diffs.push({
@@ -103,7 +103,7 @@ for (const key of allKeys) {
             prGzipSize: pr.gzipSize,
             gzipSizeDiff: pr.gzipSize,
             isNew: true,
-            isRemoved: false
+            isRemoved: false,
         });
     } else if (base && !pr) {
         diffs.push({
@@ -119,7 +119,7 @@ for (const key of allKeys) {
             prGzipSize: 0,
             gzipSizeDiff: -base.gzipSize,
             isNew: false,
-            isRemoved: true
+            isRemoved: true,
         });
     }
 }
@@ -128,26 +128,17 @@ for (const key of allKeys) {
 diffs.sort((a, b) => Math.abs(b.selfSizeDiff) - Math.abs(a.selfSizeDiff));
 
 // Find extremes
-const maxIncrease = diffs.reduce((max, d) => d.selfSizeDiff > max.selfSizeDiff ? d : max, diffs[0]);
-const maxDecrease = diffs.reduce((min, d) => d.selfSizeDiff < min.selfSizeDiff ? d : min, diffs[0]);
+const maxIncrease = diffs.reduce((max, d) => (d.selfSizeDiff > max.selfSizeDiff ? d : max), diffs[0]);
+const maxDecrease = diffs.reduce((min, d) => (d.selfSizeDiff < min.selfSizeDiff ? d : min), diffs[0]);
 
 // Filter significant changes (>= 3KB)
-const significantChanges = diffs.filter(d => Math.abs(d.selfSizeDiff) >= THRESHOLD_KB);
-
-// Calculate totals
-const totalBaseSelfSize = baseResults.reduce((sum, r) => sum + r.selfSize, 0);
-const totalPrSelfSize = prResults.reduce((sum, r) => sum + r.selfSize, 0);
-const totalSelfSizeDiff = totalPrSelfSize - totalBaseSelfSize;
+const significantChanges = diffs.filter((d) => Math.abs(d.selfSizeDiff) >= THRESHOLD_KB);
 
 // Generate markdown report
 let report = '';
 
 // Header
 report += '## Module Size Comparison\n\n';
-
-// Summary
-const overallEmoji = totalSelfSizeDiff > 0 ? '📈' : totalSelfSizeDiff < 0 ? '📉' : '✅';
-report += `${overallEmoji} **Overall Change:** ${formatDiff(totalSelfSizeDiff)} KB\n\n`;
 
 // Extremes section
 report += '### Extreme Values\n\n';
@@ -184,8 +175,8 @@ if (significantChanges.length > 0) {
 }
 
 // New/Removed modules
-const newModules = diffs.filter(d => d.isNew);
-const removedModules = diffs.filter(d => d.isRemoved);
+const newModules = diffs.filter((d) => d.isNew);
+const removedModules = diffs.filter((d) => d.isRemoved);
 
 if (newModules.length > 0) {
     report += '### New Modules\n\n';
@@ -208,11 +199,9 @@ if (removedModules.length > 0) {
 // Stats
 report += '<details>\n<summary>📊 Full Statistics</summary>\n\n';
 report += `- **Modules compared:** ${diffs.length}\n`;
-report += `- **Total base size:** ${formatSize(totalBaseSelfSize)} KB\n`;
-report += `- **Total PR size:** ${formatSize(totalPrSelfSize)} KB\n`;
-report += `- **Modules with increases:** ${diffs.filter(d => d.selfSizeDiff > 0).length}\n`;
-report += `- **Modules with decreases:** ${diffs.filter(d => d.selfSizeDiff < 0).length}\n`;
-report += `- **Modules unchanged:** ${diffs.filter(d => d.selfSizeDiff === 0).length}\n`;
+report += `- **Modules with increases:** ${diffs.filter((d) => d.selfSizeDiff > 0).length}\n`;
+report += `- **Modules with decreases:** ${diffs.filter((d) => d.selfSizeDiff < 0).length}\n`;
+report += `- **Modules unchanged:** ${diffs.filter((d) => d.selfSizeDiff === 0).length}\n`;
 report += '</details>\n';
 
 // Write report
@@ -221,11 +210,14 @@ console.log(`Comparison report written to ${outputFile}`);
 
 // Output summary for CI
 console.log('\n--- Summary ---');
-console.log(`Overall change: ${formatDiff(totalSelfSizeDiff)} KB`);
 console.log(`Significant changes (>= ${THRESHOLD_KB} KB): ${significantChanges.length}`);
 if (maxIncrease && maxIncrease.selfSizeDiff > 0) {
-    console.log(`Largest increase: ${maxIncrease.modules.join(', ') || 'Base'} (${formatDiff(maxIncrease.selfSizeDiff)} KB)`);
+    console.log(
+        `Largest increase: ${maxIncrease.modules.join(', ') || 'Base'} (${formatDiff(maxIncrease.selfSizeDiff)} KB)`
+    );
 }
 if (maxDecrease && maxDecrease.selfSizeDiff < 0) {
-    console.log(`Largest decrease: ${maxDecrease.modules.join(', ') || 'Base'} (${formatDiff(maxDecrease.selfSizeDiff)} KB)`);
+    console.log(
+        `Largest decrease: ${maxDecrease.modules.join(', ') || 'Base'} (${formatDiff(maxDecrease.selfSizeDiff)} KB)`
+    );
 }
