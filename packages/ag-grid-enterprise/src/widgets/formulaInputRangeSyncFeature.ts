@@ -265,6 +265,8 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
 
             this.tagLatestRangeForRef(ref, tokenIndex);
             this.handleRangeTokenUpdate(previousRef, ref, true, action === 'insert', tokenIndex);
+            // Refresh token indices for existing ranges so their colors match the new token order.
+            this.syncRangesFromFormula(this.field.getCurrentValue());
             this.field.restoreCaretAfterToken();
             this.refocusEditingCell();
             return;
