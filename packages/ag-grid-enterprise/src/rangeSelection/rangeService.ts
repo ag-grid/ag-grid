@@ -155,7 +155,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
         // Dragging to select text inside the formula editor should not start range selection.
-        if (target?.closest?.('.ag-formula-input-field')) {
+        if (isEventWithinFormulaEditor(target)) {
             return;
         }
 
@@ -386,6 +386,12 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
     public handleCellMouseDown(event: MouseEvent, cell: CellPosition): void {
         const { beans } = this;
+        const target = event.target as HTMLElement | null;
+
+        // Clicking inside the formula editor should not create a new range for the edited cell.
+        if (isEventWithinFormulaEditor(target)) {
+            return;
+        }
 
         const isRowNumber = isRowNumberCol(cell.column);
         if (isRowNumber) {
@@ -1539,4 +1545,8 @@ function replaceEdgeRow(range: CellRange, row: RowPosition | null, topOrBottom: 
         key = !range.startRow || !range.endRow || _isRowBefore(range.startRow, range.endRow) ? 'endRow' : 'startRow';
     }
     range[key] = row ?? undefined;
+}
+
+function isEventWithinFormulaEditor(target: HTMLElement | null): boolean {
+    return !!target?.closest?.('.ag-formula-input-field');
 }
