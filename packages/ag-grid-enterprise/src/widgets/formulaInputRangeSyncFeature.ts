@@ -137,6 +137,14 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
         return this.field.getColorIndexForToken(tokenIndex ?? null) ?? this.field.getColorIndexForRef(ref);
     }
 
+    private normaliseRefForComparison(ref: string | null | undefined): string | null {
+        if (!ref) {
+            return null;
+        }
+        const trimmed = ref.endsWith(':') ? ref.slice(0, -1) : ref;
+        return trimmed.replace(/\$/g, '').toUpperCase();
+    }
+
     private tagRangeColor(range: CellRange, ref: string, colorIndex: number | null): boolean {
         const { rangeClass } = getColorClassesForRef(ref, colorIndex);
         if (range.colorClass === rangeClass) {
@@ -548,9 +556,7 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
             return false;
         }
 
-        removals.sort(
-            (a, b) => (b.tracked.tokenIndex ?? -1) - (a.tracked.tokenIndex ?? -1)
-        );
+        removals.sort((a, b) => (b.tracked.tokenIndex ?? -1) - (a.tracked.tokenIndex ?? -1));
 
         let removed = false;
         for (const { range, tracked } of removals) {
@@ -658,6 +664,7 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
         }
 
         const ranges = this.getLiveRanges();
+        const editingRef = this.normaliseRefForComparison(this.editingCellRef);
         let updated = false;
 
         for (const range of ranges) {
@@ -668,7 +675,9 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
 
             const previousRef = tracked.ref;
             const nextRef = rangeToRef(this.beans, range);
-            if (!nextRef || nextRef === previousRef || nextRef === this.editingCellRef) {
+            const normalisedPrevious = this.normaliseRefForComparison(previousRef);
+            const normalisedNext = this.normaliseRefForComparison(nextRef);
+            if (!nextRef || !normalisedNext || normalisedNext === normalisedPrevious || normalisedNext === editingRef) {
                 continue;
             }
 
