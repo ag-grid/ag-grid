@@ -227,6 +227,17 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
             return;
         }
 
+        if (event.started) {
+            // Remember caret so we can restore it after any selection-driven edits.
+            this.field.rememberCaret();
+        }
+
+        if (this.handleRemovedRangeTokens()) {
+            this.field.restoreCaretAfterToken();
+            this.refocusEditingCell();
+            return;
+        }
+
         // If an existing range was resized, update its token instead of inserting a new one.
         if (this.updateTrackedRangeTokens()) {
             return;
@@ -237,11 +248,6 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
         if (!ref || ref === this.editingCellRef) {
             this.refocusEditingCell();
             return;
-        }
-
-        if (event.started) {
-            // Remember caret so we can restore it after inserting/replacing tokens.
-            this.field.rememberCaret();
         }
 
         if (event.started && event.finished) {
@@ -467,6 +473,84 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
         }
 
         return reTagged;
+    }
+
+    private handleRemovedRangeTokens(): boolean {
+        // If a tracked range was removed via selection (e.g. Ctrl/Cmd click), drop its token.
+        const rangeSvc = this.beans.rangeSvc;
+        if (!rangeSvc || this.trackedRanges.size === 0) {
+            return false;
+        }
+
+        const value = this.field.getCurrentValue();
+        const tokens = getRefTokensFromText(value).filter((token) => token.ref !== this.editingCellRef);
+        if (!tokens.length) {
+            return false;
+        }
+
+        const liveRanges = rangeSvc.getCellRanges();
+        const liveSet = new Set(liveRanges);
+        const liveCounts = new Map<string, number>();
+
+        for (const range of liveRanges) {
+            const ref = rangeToRef(this.beans, range);
+            if (!ref || ref === this.editingCellRef) {
+                continue;
+            }
+            liveCounts.set(ref, (liveCounts.get(ref) ?? 0) + 1);
+        }
+
+        const pendingRemovals = new Map<string, number>();
+        for (const token of tokens) {
+            pendingRemovals.set(token.ref, (pendingRemovals.get(token.ref) ?? 0) + 1);
+        }
+        for (const [ref, tokenCount] of Array.from(pendingRemovals.entries())) {
+            const liveCount = liveCounts.get(ref) ?? 0;
+            const remaining = tokenCount - liveCount;
+            if (remaining > 0) {
+                pendingRemovals.set(ref, remaining);
+            } else {
+                pendingRemovals.delete(ref);
+            }
+        }
+
+        if (!pendingRemovals.size) {
+            return false;
+        }
+
+        const removals: Array<{ range: CellRange; tracked: TrackedRange }> = [];
+        for (const [range, tracked] of Array.from(this.trackedRanges.entries())) {
+            if (liveSet.has(range)) {
+                continue;
+            }
+            const remaining = pendingRemovals.get(tracked.ref) ?? 0;
+            if (remaining <= 0) {
+                continue;
+            }
+            pendingRemovals.set(tracked.ref, remaining - 1);
+            removals.push({ range, tracked });
+        }
+
+        if (!removals.length) {
+            return false;
+        }
+
+        removals.sort(
+            (a, b) => (b.tracked.tokenIndex ?? -1) - (a.tracked.tokenIndex ?? -1)
+        );
+
+        let removed = false;
+        for (const { range, tracked } of removals) {
+            removed = this.field.removeTokenRef(tracked.ref, tracked.tokenIndex ?? null) || removed;
+            this.trackedRanges.delete(range);
+            this.removeTrackedRef(tracked.ref);
+        }
+
+        if (removed) {
+            this.syncRangesFromFormula(this.field.getCurrentValue());
+        }
+
+        return removed;
     }
 
     private refreshRangeStyling(): void {

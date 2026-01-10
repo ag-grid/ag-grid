@@ -281,6 +281,47 @@ export class AgFormulaInputField extends AgContentEditableField<
         return { previousRef, tokenIndex };
     }
 
+    public removeTokenRef(ref: string, tokenIndex?: number | null): boolean {
+        const value = this.getCurrentValue();
+        const matches = getRefTokenMatches(value);
+        let token: TokenMatch | undefined;
+
+        if (tokenIndex != null) {
+            token = matches.find((match) => match.index === tokenIndex);
+            if (token && token.ref !== ref) {
+                token = undefined;
+            }
+        }
+
+        if (!token) {
+            token = matches.find((match) => match.ref === ref);
+        }
+
+        if (!token) {
+            return false;
+        }
+
+        const updated = value.slice(0, token.start) + value.slice(token.end);
+        this.updateFormulaColorsFromValue(updated);
+
+        const caretBase = this.selectionCaretOffset ?? token.start;
+        const caret = Math.min(caretBase, updated.length);
+        this.lastTokenValueOffset = null;
+        this.lastTokenValueLength = null;
+        this.lastTokenCaretOffset = caret;
+        this.lastTokenRef = undefined;
+
+        this.setEditorValue(updated);
+        this.renderFormula({
+            currentValue: value,
+            value: updated,
+            caret,
+        });
+        this.dispatchLocalEvent({ type: 'fieldValueChanged' as any });
+
+        return true;
+    }
+
     public applyRangeInsert(ref: string): {
         action: RangeInsertAction;
         previousRef?: string;
