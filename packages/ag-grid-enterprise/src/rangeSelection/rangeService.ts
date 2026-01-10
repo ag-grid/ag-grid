@@ -771,7 +771,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                     rowIndex: startRow.rowIndex,
                     rowPinned: startRow.rowPinned,
                     column: cellRange.columns[0],
-                    });
+                });
             }
 
             if (
