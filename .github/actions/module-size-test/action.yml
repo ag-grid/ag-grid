@@ -21,15 +21,35 @@ inputs:
   base-ref:
     description: 'Base ref for nx setup (defaults to input ref)'
     required: false
+  actions-ref:
+    description: 'Git ref to get .github/actions from (for testing older refs that lack these actions)'
+    required: false
+    default: ''
 
 runs:
   using: composite
   steps:
-    - name: Checkout
+    - name: Checkout source
       uses: actions/checkout@v4
       with:
         ref: ${{ inputs.ref }}
         fetch-depth: 1
+
+    - name: Checkout actions from actions-ref
+      if: inputs.actions-ref != '' && inputs.actions-ref != inputs.ref
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.actions-ref }}
+        sparse-checkout: .github/actions
+        path: .actions-temp
+
+    - name: Copy actions from actions-ref
+      if: inputs.actions-ref != '' && inputs.actions-ref != inputs.ref
+      shell: bash
+      run: |
+        rm -rf .github/actions
+        cp -r .actions-temp/.github/actions .github/actions
+        rm -rf .actions-temp
 
     - name: Setup
       uses: ./.github/actions/setup-nx
