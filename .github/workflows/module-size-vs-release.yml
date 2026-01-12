@@ -135,6 +135,7 @@ jobs:
           total-shards: ${{ strategy.job-total }}
           artifact-prefix: module-size-release
           base-ref: ${{ needs.prepare.outputs.release-tag }}
+          actions-ref: latest
 
   # Cache release results (only when we had to build)
   cache-release-results:
@@ -146,6 +147,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          ref: latest
           sparse-checkout: |
             scripts/ci/merge-module-size-results.mjs
 
@@ -187,6 +189,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          ref: latest
           sparse-checkout: |
             scripts/ci/compare-module-sizes.mjs
             scripts/ci/merge-module-size-results.mjs
