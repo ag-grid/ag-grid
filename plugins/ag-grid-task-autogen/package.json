@@ -3,8 +3,8 @@
   "version": "35.0.0-beta.20260111.2037",
   "private": true,
   "dependencies": {
-    "@nx/devkit": "18.3.4",
-    "nx": "18.3.4",
+    "@nx/devkit": "20.3.1",
+    "nx": "20.3.1",
     "tslib": "^2.3.0"
   },
   "type": "module",
