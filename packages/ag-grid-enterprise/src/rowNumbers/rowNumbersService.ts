@@ -23,8 +23,8 @@ import {
 import type {
     CellClassParams,
     CellCtrl,
-    CellRange,
     CellPosition,
+    CellRange,
     ColDef,
     IRowNumbersRowResizeFeature,
     IRowNumbersService,
@@ -39,8 +39,11 @@ import type {
     _HeaderComp,
 } from 'ag-grid-community';
 
+import type {
+    RangeSelectionExtension,
+    RangeSelectionExtensionRegistry,
+} from '../rangeSelection/rangeSelectionExtensions';
 import { RowNumbersRowResizeFeature, _isRowNumbersResizerEnabled } from './rowNumbersRowResizeFeature';
-import type { RangeSelectionExtension, RangeSelectionExtensionRegistry } from '../rangeSelection/rangeSelectionExtensions';
 
 export class RowNumbersService extends BeanStub implements NamedBean, IRowNumbersService, RangeSelectionExtension {
     beanName = 'rowNumbersSvc' as const;
@@ -86,7 +89,9 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         if (!_isRowNumbers(this.beans) || allColumns.length === 0) {
             return false;
         }
-        return range.columns.length === allColumns.length && allColumns.every((column) => range.columns.includes(column));
+        return (
+            range.columns.length === allColumns.length && allColumns.every((column) => range.columns.includes(column))
+        );
     }
 
     private registerRangeSelectionExtension(): void {

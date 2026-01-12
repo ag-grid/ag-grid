@@ -159,9 +159,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
     }
 
     private shouldSuppressRangeSelection(eventTarget: EventTarget | null): boolean {
-        return this.rangeSelectionExtensions.some((extension) =>
-            extension.shouldSuppressRangeSelection?.(eventTarget)
-        );
+        return this.rangeSelectionExtensions.some((extension) => extension.shouldSuppressRangeSelection?.(eventTarget));
     }
 
     private shouldSkipColumn(column: AgColumn): boolean {
@@ -169,9 +167,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
     }
 
     private isAllColumnsSelectionCell(cellPosition: CellPosition): boolean {
-        return this.rangeSelectionExtensions.some((extension) =>
-            extension.isAllColumnsSelectionCell?.(cellPosition)
-        );
+        return this.rangeSelectionExtensions.some((extension) => extension.isAllColumnsSelectionCell?.(cellPosition));
     }
 
     private isAllColumnsRange(range: CellRange, allColumns: AgColumn[]): boolean {
