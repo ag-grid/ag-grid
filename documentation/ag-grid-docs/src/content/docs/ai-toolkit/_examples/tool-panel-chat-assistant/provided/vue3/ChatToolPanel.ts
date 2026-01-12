@@ -5,6 +5,11 @@ import { GridApi, IToolPanelParams } from 'ag-grid-community';
 import { callChatGPT } from './chatgptApi';
 import { ChatMessage } from './types';
 
+export interface ChatMessage {
+    role: 'system' | 'user' | 'assistant';
+    content: string;
+}
+
 // Store conversation history outside the component to persist across grid state changes
 let conversationHistory: ChatMessage[] = [];
 
@@ -40,19 +45,14 @@ export const ChatToolPanel = defineComponent({
             const userMessage = inputValue.value.trim();
             if (!userMessage || isLoading.value || !gridApi.value) return;
 
-            // Add user message to conversation
-            conversationHistory.push({
-                role: 'user',
-                content: userMessage,
-            });
-            messages.value = [...conversationHistory];
+            // Render user message
+            messages.value = [...messages.value, { role: 'user', content: userMessage }];
             inputValue.value = '';
             isLoading.value = true;
             scrollToBottom();
 
             try {
-                const currentState = gridApi.value.getState();
-                const response = await callChatGPT(userMessage, currentState, gridApi.value, conversationHistory);
+                const response = await callChatGPT(userMessage, gridApi.value, conversationHistory);
 
                 // Log the LLM response
                 console.log('Explanation:', response.explanation);
@@ -63,24 +63,23 @@ export const ChatToolPanel = defineComponent({
                     console.log('Properties Ignored:', response.propertiesToIgnore);
                 }
 
-                // Add assistant response to conversation BEFORE setState
-                conversationHistory.push({
-                    role: 'assistant',
-                    content: response.explanation,
-                });
-                messages.value = [...conversationHistory];
+                // Add both messages to history after successful response
+                conversationHistory.push(
+                    { role: 'user', content: userMessage },
+                    { role: 'assistant', content: response.explanation }
+                );
 
-                // Apply grid state changes if any
+                // Apply grid state changes if any (this will destroy and recreate the tool panel)
+                // Messages will be automatically added when the tool panel reloads
                 if (response.gridState && Object.keys(response.gridState).length > 0) {
                     gridApi.value.setState(response.gridState, response.propertiesToIgnore);
+                } else {
+                    // If no state change, manually update messages
+                    messages.value = [...conversationHistory];
                 }
             } catch (error) {
                 const errorMessage = `Error: ${error instanceof Error ? error.message : String(error)}`;
-                conversationHistory.push({
-                    role: 'assistant',
-                    content: errorMessage,
-                });
-                messages.value = [...conversationHistory];
+                messages.value = [...messages.value, { role: 'assistant', content: errorMessage }];
             } finally {
                 isLoading.value = false;
                 scrollToBottom();
@@ -94,21 +93,29 @@ export const ChatToolPanel = defineComponent({
             }
         };
 
-        const resetConversation = () => {
+        const reset = () => {
+            // Reset conversation
             conversationHistory = [];
             messages.value = [];
             inputValue.value = '';
-        };
 
-        const resetGrid = () => {
+            // Reset grid state
             if (!gridApi.value) return;
             gridApi.value.setState({
-                columnVisibility: { hiddenColIds: [] },
+                columnVisibility: {
+                    hiddenColIds: [
+                        'ag-Grid-HierarchyColumn-transactionDate-year',
+                        'ag-Grid-HierarchyColumn-transactionDate-year',
+                        'ag-Grid-HierarchyColumn-transactionDate-formattedMonth',
+                        'ag-Grid-HierarchyColumn-transactionDate-formattedMonth',
+                        'currency',
+                    ],
+                },
                 columnPinning: { leftColIds: [], rightColIds: [] },
                 sort: { sortModel: [] },
                 filter: { filterModel: {} },
                 rowGroup: { groupColIds: [] },
-                pagination: { page: 0, pageSize: 20 },
+                pagination: { page: 0, pageSize: 100 },
             });
         };
 
@@ -119,8 +126,7 @@ export const ChatToolPanel = defineComponent({
             chatMessagesRef,
             handleSubmit,
             handleKeyDown,
-            resetConversation,
-            resetGrid,
+            reset,
         };
     },
     template: `
@@ -129,26 +135,7 @@ export const ChatToolPanel = defineComponent({
                 <div class="chat-title-row">
                     <h3 class="chat-title">AI Assistant</h3>
                     <div class="chat-actions">
-                        <button class="icon-btn reset-chat" title="Clear Chat" aria-label="Clear Chat" @click="resetConversation">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <path d="M3 6h18" />
-                                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-                                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-                                <line x1="10" x2="10" y1="11" y2="17" />
-                                <line x1="14" x2="14" y1="11" y2="17" />
-                            </svg>
-                        </button>
-                        <button class="icon-btn reset-grid" title="Reset Grid" aria-label="Reset Grid" @click="resetGrid">
+                        <button class="icon-btn reset-btn" title="Reset" aria-label="Reset" @click="reset">
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="16"

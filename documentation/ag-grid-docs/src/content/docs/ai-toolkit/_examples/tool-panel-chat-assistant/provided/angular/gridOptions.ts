@@ -1,164 +1,82 @@
-import { GridOptions } from 'ag-grid-community';
+import { GridOptions, ValueFormatterParams } from 'ag-grid-community';
 
 import { ChatToolPanel } from './ChatToolPanel';
 import { CountryFlagCellRenderer } from './CountryFlagCellRenderer';
-import { TransactionResultCellRenderer } from './TransactionResultCellRenderer';
 import { ITransaction } from './generateTransactions';
 
 export const gridOptions: GridOptions<ITransaction> = {
     columnDefs: [
         {
-            field: 'transaction_id',
-            headerName: 'Transaction ID',
-            minWidth: 140,
-            filter: 'agTextColumnFilter',
-            enableRowGroup: false,
-            enablePivot: false,
+            field: 'transactionDate',
+            filter: 'agDateColumnFilter',
+            groupHierarchy: ['formattedMonth'],
+            enablePivot: true,
+            enableRowGroup: true,
+            valueFormatter: (params: ValueFormatterParams) => {
+                if (params.value == null) return;
+                return params.value.toLocaleDateString('en-GB', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                });
+            },
         },
         {
             field: 'country',
-            headerName: 'Country',
-            width: 120,
             filter: 'agSetColumnFilter',
             cellRenderer: CountryFlagCellRenderer,
-            enableRowGroup: true,
             enablePivot: true,
+            enableRowGroup: true,
         },
         {
             field: 'status',
-            headerName: 'Status',
-            width: 110,
             filter: 'agSetColumnFilter',
-            enableRowGroup: true,
             enablePivot: true,
-            cellRenderer: TransactionResultCellRenderer,
-        },
-        {
-            field: 'signed_amount',
-            headerName: 'Signed Amount',
-            width: 140,
-            filter: 'agNumberColumnFilter',
-            enableValue: true,
-            aggFunc: 'sum',
-            valueFormatter: (params) => {
-                if (params.value == null) return '';
-                return `£${params.value.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-            },
-            cellStyle: (params) => {
-                if (params.value == null) return null;
-                return { color: params.value < 0 ? '#dc3545' : '#28a745' };
-            },
-        },
-        {
-            field: 'account_type',
-            headerName: 'Account Type',
-            minWidth: 130,
-            filter: 'agSetColumnFilter',
             enableRowGroup: true,
-            enablePivot: true,
-        },
-        {
-            field: 'transaction_date',
-            headerName: 'Transaction Date',
-            minWidth: 160,
-            filter: 'agDateColumnFilter',
-            enableRowGroup: false,
-            enablePivot: false,
-            valueFormatter: (params) => {
-                if (!params.value) return '';
-                return new Date(params.value).toLocaleDateString();
-            },
-        },
-        {
-            field: 'settlement_date',
-            headerName: 'Settlement Date',
-            minWidth: 160,
-            filter: 'agDateColumnFilter',
-            enableRowGroup: false,
-            enablePivot: false,
-            valueFormatter: (params) => {
-                if (!params.value) return '';
-                return new Date(params.value).toLocaleDateString();
-            },
         },
         {
             field: 'amount',
-            headerName: 'Amount',
-            width: 120,
             filter: 'agNumberColumnFilter',
+            valueFormatter: (params) => {
+                if (params.value == null) return;
+                return params.value.toLocaleString(`en-${params?.data?.country || 'GB'}`, {
+                    style: 'currency',
+                    currency: params.data?.currency || 'GBP',
+                });
+            },
+            cellStyle: (params) => ({ color: params?.value < 0 ? '#dc3545' : '#28a745' }),
             enableValue: true,
             aggFunc: 'sum',
-            valueFormatter: (params) => {
-                if (params.value == null) return '';
-                return params.value.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            },
-        },
-        {
-            field: 'currency',
-            headerName: 'Currency',
-            width: 100,
-            filter: 'agSetColumnFilter',
-            enableRowGroup: true,
-            enablePivot: true,
-        },
-        {
-            field: 'type',
-            headerName: 'Type',
-            width: 100,
-            filter: 'agSetColumnFilter',
-            enableRowGroup: true,
-            enablePivot: true,
-        },
-        {
-            field: 'category',
-            headerName: 'Category',
-            minWidth: 130,
-            filter: 'agSetColumnFilter',
-            enableRowGroup: true,
-            enablePivot: true,
         },
         {
             field: 'merchant',
-            headerName: 'Merchant',
-            minWidth: 150,
             filter: 'agSetColumnFilter',
-            enableRowGroup: true,
             enablePivot: true,
-        },
-        {
-            field: 'account_id',
-            headerName: 'Account ID',
-            minWidth: 120,
-            filter: 'agTextColumnFilter',
             enableRowGroup: true,
-            enablePivot: false,
         },
         {
-            field: 'month',
-            headerName: 'Month',
-            width: 110,
+            field: 'category',
             filter: 'agSetColumnFilter',
-            enableRowGroup: true,
             enablePivot: true,
+            enableRowGroup: true,
         },
         {
-            field: 'year',
-            headerName: 'Year',
-            width: 90,
-            filter: 'agNumberColumnFilter',
-            enableRowGroup: true,
+            field: 'currency',
+            filter: 'agSetColumnFilter',
             enablePivot: true,
+            enableRowGroup: true,
+            hide: true,
         },
     ],
     autoSizeStrategy: {
         type: 'fitCellContents',
     },
     defaultColDef: {
-        minWidth: 100,
         filter: true,
         sortable: true,
         resizable: true,
     },
+    pagination: true,
     enableFilterHandlers: true,
     sideBar: {
         toolPanels: [

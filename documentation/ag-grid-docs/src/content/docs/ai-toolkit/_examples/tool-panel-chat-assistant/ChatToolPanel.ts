@@ -3,6 +3,11 @@ import type { GridApi, IToolPanel, IToolPanelParams } from 'ag-grid-community';
 import { callChatGPT } from './chatgptApi';
 import type { ChatMessage } from './types';
 
+export interface ChatMessage {
+    role: 'system' | 'user' | 'assistant';
+    content: string;
+}
+
 // Store conversation history outside the component to persist across grid state changes
 let conversationHistory: ChatMessage[] = [];
 
@@ -13,14 +18,12 @@ export class ChatToolPanel implements IToolPanel {
     private inputElement!: HTMLTextAreaElement;
     private submitButton!: HTMLButtonElement;
     private formElement!: HTMLFormElement;
-    private resetChatBtn!: HTMLButtonElement;
-    private resetGridBtn!: HTMLButtonElement;
+    private resetButton!: HTMLButtonElement;
 
     // Event handler references for cleanup
     private handleSubmitBound = (e: Event) => this.handleSubmit(e);
     private handleKeydownBound = (e: KeyboardEvent) => this.handleKeydown(e);
-    private resetConversationBound = () => this.resetConversation();
-    private resetGridBound = () => this.resetGrid();
+    private resetBound = () => this.reset();
 
     init(params: IToolPanelParams): void {
         this.gridApi = params.api;
@@ -45,10 +48,7 @@ export class ChatToolPanel implements IToolPanel {
                 <div class="chat-title-row">
                     <h3 class="chat-title">AI Assistant</h3>
                     <div class="chat-actions">
-                        <button class="icon-btn reset-chat" title="Clear Chat" aria-label="Clear Chat">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
-                        </button>
-                        <button class="icon-btn reset-grid" title="Reset Grid" aria-label="Reset Grid">
+                        <button class="icon-btn reset-btn" title="Reset" aria-label="Reset">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
                         </button>
                     </div>
@@ -72,14 +72,12 @@ export class ChatToolPanel implements IToolPanel {
         this.inputElement = container.querySelector('.chat-input')!;
         this.submitButton = container.querySelector('.chat-submit')!;
         this.formElement = container.querySelector('.chat-input-form')!;
-        this.resetChatBtn = container.querySelector('.reset-chat')!;
-        this.resetGridBtn = container.querySelector('.reset-grid')!;
+        this.resetButton = container.querySelector('.reset-btn')!;
 
         // Add event listeners using bound handlers for cleanup
         this.formElement.addEventListener('submit', this.handleSubmitBound);
         this.inputElement.addEventListener('keydown', this.handleKeydownBound);
-        this.resetChatBtn.addEventListener('click', this.resetConversationBound);
-        this.resetGridBtn.addEventListener('click', this.resetGridBound);
+        this.resetButton.addEventListener('click', this.resetBound);
 
         return container;
     }
@@ -98,12 +96,6 @@ export class ChatToolPanel implements IToolPanel {
         const userMessage = this.inputElement.value.trim();
         if (!userMessage) return;
 
-        // Add user message to conversation
-        conversationHistory.push({
-            role: 'user',
-            content: userMessage,
-        });
-
         // Render user message
         this.renderMessage('user', userMessage);
 
@@ -116,8 +108,7 @@ export class ChatToolPanel implements IToolPanel {
         const loadingId = this.showLoadingMessage();
 
         try {
-            const currentState = this.gridApi.getState();
-            const response = await callChatGPT(userMessage, currentState, this.gridApi, conversationHistory);
+            const response = await callChatGPT(userMessage, this.gridApi, conversationHistory);
 
             // Log the LLM response
             console.log('Explanation:', response.explanation);
@@ -131,11 +122,11 @@ export class ChatToolPanel implements IToolPanel {
             // Remove loading indicator
             this.removeLoadingMessage(loadingId);
 
-            // Add assistant response to conversation BEFORE setState
-            conversationHistory.push({
-                role: 'assistant',
-                content: response.explanation,
-            });
+            // Add both messages to history after successful response
+            conversationHistory.push(
+                { role: 'user', content: userMessage },
+                { role: 'assistant', content: response.explanation }
+            );
 
             // Apply grid state changes if any (this will destroy and recreate the tool panel)
             // Messages will be automatically added when the tool panel reloads
@@ -202,13 +193,6 @@ export class ChatToolPanel implements IToolPanel {
         }
     }
 
-    private resetConversation(): void {
-        conversationHistory = [];
-        this.chatMessagesContainer.innerHTML = '';
-        this.inputElement.value = '';
-        this.inputElement.focus();
-    }
-
     private renderExistingMessages(): void {
         // Re-render all messages from conversation history when tool panel is recreated
         for (const message of conversationHistory) {
@@ -222,15 +206,29 @@ export class ChatToolPanel implements IToolPanel {
         this.chatMessagesContainer.scrollTop = this.chatMessagesContainer.scrollHeight;
     };
 
-    private resetGrid(): void {
+    private reset(): void {
+        // Reset conversation
+        conversationHistory = [];
+        this.chatMessagesContainer.innerHTML = '';
+        this.inputElement.value = '';
+        this.inputElement.focus();
+
         // Reset grid state
         this.gridApi.setState({
-            columnVisibility: { hiddenColIds: [] },
+            columnVisibility: {
+                hiddenColIds: [
+                    'ag-Grid-HierarchyColumn-transactionDate-year',
+                    'ag-Grid-HierarchyColumn-transactionDate-year',
+                    'ag-Grid-HierarchyColumn-transactionDate-formattedMonth',
+                    'ag-Grid-HierarchyColumn-transactionDate-formattedMonth',
+                    'currency',
+                ],
+            },
             columnPinning: { leftColIds: [], rightColIds: [] },
             sort: { sortModel: [] },
             filter: { filterModel: {} },
             rowGroup: { groupColIds: [] },
-            pagination: { page: 0, pageSize: 20 },
+            pagination: { page: 0, pageSize: 100 },
         });
     }
 
@@ -238,7 +236,6 @@ export class ChatToolPanel implements IToolPanel {
         // Clean up event listeners
         this.formElement.removeEventListener('submit', this.handleSubmitBound);
         this.inputElement.removeEventListener('keydown', this.handleKeydownBound);
-        this.resetChatBtn.removeEventListener('click', this.resetConversationBound);
-        this.resetGridBtn.removeEventListener('click', this.resetGridBound);
+        this.resetButton.removeEventListener('click', this.resetBound);
     }
 }

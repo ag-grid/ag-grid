@@ -6,6 +6,11 @@ import type { CustomToolPanelProps } from 'ag-grid-react';
 import { callChatGPT } from './chatgptApi';
 import type { ChatMessage } from './types';
 
+export interface ChatMessage {
+    role: 'system' | 'user' | 'assistant';
+    content: string;
+}
+
 // Store conversation history outside the component to persist across grid state changes
 let conversationHistory: ChatMessage[] = [];
 
@@ -35,18 +40,13 @@ export const ChatToolPanel = (props: CustomToolPanelProps & IToolPanelParams) =>
             const userMessage = inputValue.trim();
             if (!userMessage || isLoading) return;
 
-            // Add user message to conversation
-            conversationHistory.push({
-                role: 'user',
-                content: userMessage,
-            });
-            setMessages([...conversationHistory]);
+            // Render user message
+            setMessages((prev) => [...prev, { role: 'user', content: userMessage }]);
             setInputValue('');
             setIsLoading(true);
 
             try {
-                const currentState = gridApi.getState();
-                const response = await callChatGPT(userMessage, currentState, gridApi, conversationHistory);
+                const response = await callChatGPT(userMessage, gridApi, conversationHistory);
 
                 // Log the LLM response
                 console.log('Explanation:', response.explanation);
@@ -57,11 +57,13 @@ export const ChatToolPanel = (props: CustomToolPanelProps & IToolPanelParams) =>
                     console.log('Properties Ignored:', response.propertiesToIgnore);
                 }
 
-                // Add assistant response to conversation BEFORE setState
-                conversationHistory.push({
-                    role: 'assistant',
-                    content: response.explanation,
-                });
+                // Add both messages to history after successful response
+                conversationHistory.push(
+                    { role: 'user', content: userMessage },
+                    { role: 'assistant', content: response.explanation }
+                );
+
+                // Always update messages state to render the assistant response
                 setMessages([...conversationHistory]);
 
                 // Apply grid state changes if any
@@ -70,11 +72,7 @@ export const ChatToolPanel = (props: CustomToolPanelProps & IToolPanelParams) =>
                 }
             } catch (error) {
                 const errorMessage = `Error: ${error instanceof Error ? error.message : String(error)}`;
-                conversationHistory.push({
-                    role: 'assistant',
-                    content: errorMessage,
-                });
-                setMessages([...conversationHistory]);
+                setMessages((prev) => [...prev, { role: 'assistant', content: errorMessage }]);
             } finally {
                 setIsLoading(false);
             }
@@ -92,20 +90,28 @@ export const ChatToolPanel = (props: CustomToolPanelProps & IToolPanelParams) =>
         [handleSubmit]
     );
 
-    const resetConversation = useCallback(() => {
+    const reset = useCallback(() => {
+        // Reset conversation
         conversationHistory = [];
         setMessages([]);
         setInputValue('');
-    }, []);
 
-    const resetGrid = useCallback(() => {
+        // Reset grid state
         gridApi.setState({
-            columnVisibility: { hiddenColIds: [] },
+            columnVisibility: {
+                hiddenColIds: [
+                    'ag-Grid-HierarchyColumn-transactionDate-year',
+                    'ag-Grid-HierarchyColumn-transactionDate-year',
+                    'ag-Grid-HierarchyColumn-transactionDate-formattedMonth',
+                    'ag-Grid-HierarchyColumn-transactionDate-formattedMonth',
+                    'currency',
+                ],
+            },
             columnPinning: { leftColIds: [], rightColIds: [] },
             sort: { sortModel: [] },
             filter: { filterModel: {} },
             rowGroup: { groupColIds: [] },
-            pagination: { page: 0, pageSize: 20 },
+            pagination: { page: 0, pageSize: 100 },
         });
     }, [gridApi]);
 
@@ -115,36 +121,7 @@ export const ChatToolPanel = (props: CustomToolPanelProps & IToolPanelParams) =>
                 <div className="chat-title-row">
                     <h3 className="chat-title">AI Assistant</h3>
                     <div className="chat-actions">
-                        <button
-                            className="icon-btn reset-chat"
-                            title="Clear Chat"
-                            aria-label="Clear Chat"
-                            onClick={resetConversation}
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            >
-                                <path d="M3 6h18" />
-                                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-                                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-                                <line x1="10" x2="10" y1="11" y2="17" />
-                                <line x1="14" x2="14" y1="11" y2="17" />
-                            </svg>
-                        </button>
-                        <button
-                            className="icon-btn reset-grid"
-                            title="Reset Grid"
-                            aria-label="Reset Grid"
-                            onClick={resetGrid}
-                        >
+                        <button className="icon-btn reset-btn" title="Reset" aria-label="Reset" onClick={reset}>
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="16"

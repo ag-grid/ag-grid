@@ -262,56 +262,7 @@ If you choose to do this, make sure that the result is still a valid `GridState`
 
 This example demonstrates an AI chat assistant embedded within the grid's [Side Bar](./side-bar/) as a [Custom Tool Panel](./component-tool-panel/). The assistant maintains conversation history, enabling multi-turn interactions where users can reference previous responses and refine their requests.
 
-### Tool Panel Integration
-
-The chat interface is implemented as a custom tool panel component that integrates directly into the grid's side bar. See [Custom Tool Panel Components](./component-tool-panel/) for details on creating your own tool panel components.
-
-### Conversation History
-
-Whenever a message is sent by the user or received from the assistant, it is appended to a `conversationHistory` array which is stored outside the component, ensuring it persists when the tool panel is destroyed and recreated when new messages are sent/received.
-
-These messages are then included in subsequent requests to the LLM, allowing it to maintain context across multiple interactions, for example:
-
-```ts
-// Store conversation history outside the component to persist across grid state changes
-const conversationHistory = [];
-
-const callLLMWithHistory = async (userRequest) => {
-    const messages = [];
-
-    // Add user's latest request to conversation history
-    conversationHistory.push({
-        role: 'user',
-        content: userRequest,
-    });
-
-    // Add conversation history to messages array for LLM
-    for (let i = 0; i < conversationHistory.length - 1; i++) {
-        messages.push({
-            role: conversationHistory[i].role,
-            content: conversationHistory[i].content,
-        });
-    }
-
-    // Send to LLM with conversation history
-    result = await llmRequest({
-        schema, // Generated Schema from AI Toolkit
-        messages, // Conversation history
-    });
-
-    // Add assistant's response to conversation history
-    conversationHistory.push({
-        role: 'assistant',
-        content: response.explanation,
-    });
-}
-```
-
-View the example source code below for a full implementation.
-
-### Multi-Turn Interactions
-
-With conversation history enabled, users can have natural, flowing conversations with the assistant. Try the following sequence of prompts to see how the assistant remembers context:
+Try the following sequence of prompts to see how the assistant remembers context:
 
 1. **"Suggest 3 different ways to analyse spending patterns in this data"** 
 2. **"Apply suggestion 2"**

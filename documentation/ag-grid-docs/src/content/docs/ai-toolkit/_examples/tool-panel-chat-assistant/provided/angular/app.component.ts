@@ -18,7 +18,7 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
         <div style="width: 100%; height: 100%;">
             <ag-grid-angular
                 style="width: 100%; height: 100%;"
-                [columnDefs]="columnDefs"
+                [columnDefs]="gridOptions.columnDefs"
                 [rowData]="rowData()"
                 [defaultColDef]="gridOptions.defaultColDef"
                 [autoSizeStrategy]="gridOptions.autoSizeStrategy"
@@ -30,7 +30,6 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
     `,
 })
 export class AppComponent implements OnInit {
-    columnDefs = gridOptions.columnDefs;
     gridOptions = gridOptions;
     rowData = signal<ITransaction[]>([]);
 

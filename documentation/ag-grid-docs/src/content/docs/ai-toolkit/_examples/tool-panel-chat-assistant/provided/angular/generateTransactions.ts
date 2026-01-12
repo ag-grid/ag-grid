@@ -1,33 +1,49 @@
-// synthetic-transactions.ts
-// Usage:
-//   const rows = generateTransactions({ count: 50000, seed: 42 });
+/**
+ * Generates an array of mock financial transaction data for testing and demonstration purposes.
+ */
 
 export interface ITransaction {
-    transaction_id: string;
-    account_id: string;
-    account_type: string;
-    transaction_date: string;
-    settlement_date: string | null;
+    transactionDate: Date;
     amount: number;
-    signed_amount: number;
     currency: string;
-    type: string;
     category: string;
     merchant: string;
-    status: string;
+    status: boolean;
     country: string;
-    month: string;
-    year: number;
 }
 
-export function generateTransactions({
-    count = 10000,
-    seed = 1,
-    startDate = '2024-01-01',
-    endDate = '2025-12-31',
-    accountCount = 200,
-    defaultCurrency = 'GBP',
-} = {}): ITransaction[] {
+const countries = ['GB', 'IE', 'FR', 'DE', 'ES', 'NL', 'US'];
+const countryCurrencyMap: Record<string, string> = {
+    GB: 'GBP',
+    IE: 'EUR',
+    FR: 'EUR',
+    DE: 'EUR',
+    ES: 'EUR',
+    NL: 'EUR',
+    US: 'USD',
+};
+
+const statuses: { value: boolean; w: number }[] = [
+    { value: true, w: 75 },
+    { value: false, w: 25 },
+];
+
+const categories: { value: string; w: number; merchants: string[] }[] = [
+    { value: 'Groceries', w: 14, merchants: ['Tesco', "Sainsbury's", 'Aldi', 'Lidl', 'Waitrose'] },
+    { value: 'Rent', w: 6, merchants: ['Landlord Ltd', 'Lettings Co'] },
+    { value: 'Utilities', w: 8, merchants: ['British Gas', 'Octopus Energy', 'Thames Water'] },
+    { value: 'Dining', w: 10, merchants: ['Pret', "Nando's", 'PizzaExpress', 'Local Cafe'] },
+    { value: 'Transport', w: 10, merchants: ['TfL', 'Uber', 'Bolt', 'National Rail'] },
+    { value: 'Shopping', w: 12, merchants: ['Amazon', 'John Lewis', 'Argos', 'ASOS'] },
+    { value: 'Travel', w: 6, merchants: ['easyJet', 'British Airways', 'Booking.com', 'Trainline'] },
+    { value: 'Health', w: 5, merchants: ['Boots', 'NHS', 'Bupa'] },
+    { value: 'Salary', w: 6, merchants: ['Acme Corp Payroll', 'Globex Payroll'] },
+    { value: 'Transfers', w: 8, merchants: ['Internal Transfer', 'External Transfer'] },
+    { value: 'Insurance', w: 5, merchants: ['Aviva', 'AXA', 'Direct Line'] },
+    { value: 'Entertainment', w: 10, merchants: ['Netflix', 'Spotify', 'Cinema', 'Steam'] },
+];
+
+export function generateTransactions({ count = 10000, seed = 1 } = {}): ITransaction[] {
     // --- seeded RNG (Mulberry32) for repeatable demos ---
     function mulberry32(a: number) {
         return function () {
@@ -38,7 +54,6 @@ export function generateTransactions({
         };
     }
     const rand = mulberry32(seed);
-
     const pick = <T>(arr: T[]): T => arr[Math.floor(rand() * arr.length)];
     const weightedPick = <T>(items: { value: T; w: number }[]): T => {
         const total = items.reduce((s, x) => s + x.w, 0);
@@ -49,55 +64,19 @@ export function generateTransactions({
         }
         return items[items.length - 1].value;
     };
-    const pad = (n: number) => String(n).padStart(2, '0');
 
-    const start = new Date(startDate).getTime();
-    const end = new Date(endDate).getTime();
+    // Generate random date between startDate and endDate
+    const year = new Date().getFullYear() - 1;
+    const start = new Date(year, 0, 1).getTime(); // Jan 1, previous year
+    const end = new Date(year, 11, 31).getTime(); // Dec 31, previous year
     const randomDate = () => new Date(start + Math.floor(rand() * (end - start)));
-
-    // --- dimensions geared for NL → grid operations ---
-    const countries = ['GB', 'IE', 'FR', 'DE', 'ES', 'NL', 'US'];
-    const currencies: { value: string; w: number }[] = [
-        { value: 'GBP', w: 60 },
-        { value: 'EUR', w: 25 },
-        { value: 'USD', w: 15 },
-    ];
-
-    const statuses: { value: string; w: number }[] = [
-        { value: 'Completed', w: 75 },
-        { value: 'Failed', w: 25 },
-    ];
-
-    const categories: { value: string; w: number; merchants: string[] }[] = [
-        { value: 'Groceries', w: 14, merchants: ['Tesco', "Sainsbury's", 'Aldi', 'Lidl', 'Waitrose'] },
-        { value: 'Rent', w: 6, merchants: ['Landlord Ltd', 'Lettings Co'] },
-        { value: 'Utilities', w: 8, merchants: ['British Gas', 'Octopus Energy', 'Thames Water'] },
-        { value: 'Dining', w: 10, merchants: ['Pret', "Nando's", 'PizzaExpress', 'Local Cafe'] },
-        { value: 'Transport', w: 10, merchants: ['TfL', 'Uber', 'Bolt', 'National Rail'] },
-        { value: 'Shopping', w: 12, merchants: ['Amazon', 'John Lewis', 'Argos', 'ASOS'] },
-        { value: 'Travel', w: 6, merchants: ['easyJet', 'British Airways', 'Booking.com', 'Trainline'] },
-        { value: 'Health', w: 5, merchants: ['Boots', 'NHS', 'Bupa'] },
-        { value: 'Salary', w: 6, merchants: ['Acme Corp Payroll', 'Globex Payroll'] },
-        { value: 'Transfers', w: 8, merchants: ['Internal Transfer', 'External Transfer'] },
-        { value: 'Insurance', w: 5, merchants: ['Aviva', 'AXA', 'Direct Line'] },
-        { value: 'Entertainment', w: 10, merchants: ['Netflix', 'Spotify', 'Cinema', 'Steam'] },
-    ];
-
-    const accountTypes: { value: string; w: number }[] = [
-        { value: 'Checking', w: 55 },
-        { value: 'Savings', w: 30 },
-        { value: 'Credit Card', w: 15 },
-    ];
-
-    // Pre-generate accounts so grouping by account is meaningful
-    const accounts = Array.from({ length: accountCount }, (_, i) => {
-        const type = weightedPick(accountTypes);
-        const id = `${String(i + 1).padStart(4, '0')}`;
-        return { account_id: id, account_type: type };
-    });
 
     // Amount model by category (simple but plausible)
     function amountForCategory(cat: string): number {
+        const round2 = (x: number): number => {
+            return Math.round(x * 100) / 100;
+        };
+
         switch (cat) {
             case 'Rent':
                 return round2(600 + rand() * 1600);
@@ -128,67 +107,26 @@ export function generateTransactions({
         }
     }
 
-    function round2(x: number): number {
-        return Math.round(x * 100) / 100;
-    }
-
-    // Decide debit/credit biased by category
-    function typeForCategory(cat: string): string {
-        if (cat === 'Salary') return 'Credit';
-        if (cat === 'Transfers') return rand() < 0.5 ? 'Debit' : 'Credit';
-        return 'Debit';
-    }
-
     const rows: ITransaction[] = new Array(count);
     for (let i = 0; i < count; i++) {
-        const acct = pick(accounts);
-
         const catObj = weightedPick(categories.map((c) => ({ value: c, w: c.w })));
         const category = catObj.value;
         const merchant = pick(catObj.merchants);
-
         const txnDate = randomDate();
-        const isoDate = txnDate.toISOString();
-        const year = txnDate.getUTCFullYear();
-        const month = `${year}-${pad(txnDate.getUTCMonth() + 1)}`;
-
-        const txnType = typeForCategory(category);
-        const currency = weightedPick(currencies);
         const status = weightedPick(statuses);
         const country = pick(countries);
-
+        const currency = countryCurrencyMap[country];
         const magnitude = amountForCategory(category);
-
-        // signed_amount: Debit negative, Credit positive (nice for SUMs)
-        const signed_amount = txnType === 'Debit' ? -magnitude : magnitude;
-
-        // settlement: 0–2 days after transaction, but Failed has none
-        const settlement_date =
-            status === 'Failed' ? null : new Date(txnDate.getTime() + Math.floor(rand() * 3) * 86400000).toISOString();
+        const amount = rand() < 0.5 ? -magnitude : magnitude;
 
         rows[i] = {
-            transaction_id: `TX-${String(i + 1).padStart(4, '0')}`,
-            account_id: acct.account_id,
-            account_type: acct.account_type,
-
-            transaction_date: isoDate,
-            settlement_date,
-
-            // measures
-            amount: magnitude,
-            signed_amount,
-
-            // dimensions
-            currency: currency ?? defaultCurrency,
-            type: txnType,
+            transactionDate: txnDate,
+            amount,
+            currency,
             category,
             merchant,
             status,
             country,
-
-            // derived bucket fields for grouping/pivoting
-            month,
-            year,
         };
     }
 

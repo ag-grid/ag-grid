@@ -1,6 +1,4 @@
-import { CommonModule } from '@angular/common';
-import { Component, ElementRef, ViewChild, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, ElementRef, afterRenderEffect, signal, viewChild } from '@angular/core';
 
 import { IToolPanelAngularComp } from 'ag-grid-angular';
 import { GridApi, IToolPanelParams } from 'ag-grid-community';
@@ -8,13 +6,17 @@ import { GridApi, IToolPanelParams } from 'ag-grid-community';
 import { callChatGPT } from './chatgptApi';
 import { ChatMessage } from './types';
 
+export interface ChatMessage {
+    role: 'system' | 'user' | 'assistant';
+    content: string;
+}
+
 // Store conversation history outside the component to persist across grid state changes
 let conversationHistory: ChatMessage[] = [];
 
 @Component({
     selector: 'chat-tool-panel',
     standalone: true,
-    imports: [CommonModule, FormsModule],
     styles: [
         `
             :host {
@@ -54,36 +56,7 @@ let conversationHistory: ChatMessage[] = [];
                 <div class="chat-title-row">
                     <h3 class="chat-title">AI Assistant</h3>
                     <div class="chat-actions">
-                        <button
-                            class="icon-btn reset-chat"
-                            title="Clear Chat"
-                            aria-label="Clear Chat"
-                            (click)="resetConversation()"
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <path d="M3 6h18" />
-                                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-                                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-                                <line x1="10" x2="10" y1="11" y2="17" />
-                                <line x1="14" x2="14" y1="11" y2="17" />
-                            </svg>
-                        </button>
-                        <button
-                            class="icon-btn reset-grid"
-                            title="Reset Grid"
-                            aria-label="Reset Grid"
-                            (click)="resetGrid()"
-                        >
+                        <button class="icon-btn reset-btn" title="Reset" aria-label="Reset" (click)="reset()">
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="16"
@@ -109,30 +82,35 @@ let conversationHistory: ChatMessage[] = [];
             </div>
 
             <div class="chat-messages" #chatMessages>
-                <div *ngFor="let message of messages()" class="chat-message {{ message.role }}-message">
-                    <div class="message-bubble">{{ message.content }}</div>
-                </div>
-                <div *ngIf="isLoading()" class="chat-message assistant-message loading-message">
-                    <div class="message-bubble">
-                        <span class="loading-dots">Thinking<span>.</span><span>.</span><span>.</span></span>
+                @for (message of messages(); track $index) {
+                    <div class="chat-message" [class]="message.role + '-message'">
+                        <div class="message-bubble">{{ message.content }}</div>
                     </div>
-                    <div class="loading-disclaimer">
-                        <span class="info-icon">i</span> This demo uses a proxy, so responses may take up to 30 seconds
+                }
+                @if (isLoading()) {
+                    <div class="chat-message assistant-message loading-message">
+                        <div class="message-bubble">
+                            <span class="loading-dots">Thinking<span>.</span><span>.</span><span>.</span></span>
+                        </div>
+                        <div class="loading-disclaimer">
+                            <span class="info-icon">i</span> This demo uses a proxy, so responses may take up to 30
+                            seconds
+                        </div>
                     </div>
-                </div>
+                }
             </div>
 
-            <form class="chat-input-form" (ngSubmit)="handleSubmit($event)">
+            <form class="chat-input-form" (submit)="handleSubmit($event)">
                 <textarea
+                    #inputRef
                     rows="4"
                     class="chat-input"
                     placeholder='Ask me anything, e.g. "show only failed transactions"...'
                     autocomplete="off"
-                    [ngModel]="inputValue()"
-                    (ngModelChange)="inputValue.set($event)"
+                    [value]="inputValue()"
+                    (input)="inputValue.set(inputRef.value)"
                     (keydown)="handleKeyDown($event)"
                     [disabled]="isLoading()"
-                    name="chatInput"
                 ></textarea>
                 <button type="submit" class="chat-submit" [disabled]="isLoading()">→</button>
             </form>
@@ -140,13 +118,26 @@ let conversationHistory: ChatMessage[] = [];
     `,
 })
 export class ChatToolPanel implements IToolPanelAngularComp {
-    @ViewChild('chatMessages') chatMessagesRef!: ElementRef<HTMLDivElement>;
-
+    private readonly chatMessagesRef = viewChild<ElementRef<HTMLDivElement>>('chatMessages');
     private gridApi!: GridApi;
-
     messages = signal<ChatMessage[]>([]);
     inputValue = signal('');
     isLoading = signal(false);
+
+    constructor() {
+        afterRenderEffect({
+            write: () => {
+                this.messages();
+                this.isLoading();
+
+                // Scroll to bottom after render
+                const element = this.chatMessagesRef()?.nativeElement;
+                if (element) {
+                    element.scrollTop = element.scrollHeight;
+                }
+            },
+        });
+    }
 
     agInit(params: IToolPanelParams): void {
         this.gridApi = params.api;
@@ -159,25 +150,19 @@ export class ChatToolPanel implements IToolPanelAngularComp {
         this.messages.set([...conversationHistory]);
     }
 
-    async handleSubmit(event?: Event): Promise<void> {
-        event?.preventDefault();
+    async handleSubmit(event: Event): Promise<void> {
+        event.preventDefault();
 
         const userMessage = this.inputValue().trim();
         if (!userMessage || this.isLoading()) return;
 
-        // Add user message to conversation
-        conversationHistory.push({
-            role: 'user',
-            content: userMessage,
-        });
-        this.messages.set([...conversationHistory]);
+        // Render user message
+        this.messages.set([...this.messages(), { role: 'user', content: userMessage }]);
         this.inputValue.set('');
         this.isLoading.set(true);
-        this.scrollToBottom();
 
         try {
-            const currentState = this.gridApi.getState();
-            const response = await callChatGPT(userMessage, currentState, this.gridApi, conversationHistory);
+            const response = await callChatGPT(userMessage, this.gridApi, conversationHistory);
 
             // Log the LLM response
             console.log('Explanation:', response.explanation);
@@ -188,59 +173,58 @@ export class ChatToolPanel implements IToolPanelAngularComp {
                 console.log('Properties Ignored:', response.propertiesToIgnore);
             }
 
-            // Add assistant response to conversation BEFORE setState
-            conversationHistory.push({
-                role: 'assistant',
-                content: response.explanation,
-            });
-            this.messages.set([...conversationHistory]);
+            // Add both messages to history after successful response
+            conversationHistory.push(
+                { role: 'user', content: userMessage },
+                { role: 'assistant', content: response.explanation }
+            );
 
-            // Apply grid state changes if any
+            // Apply grid state changes if any (this will destroy and recreate the tool panel)
+            // Messages will be automatically added when the tool panel reloads
             if (response.gridState && Object.keys(response.gridState).length > 0) {
                 this.gridApi.setState(response.gridState, response.propertiesToIgnore);
+            } else {
+                // If no state change, manually update messages
+                this.messages.set([...conversationHistory]);
             }
         } catch (error) {
             const errorMessage = `Error: ${error instanceof Error ? error.message : String(error)}`;
-            conversationHistory.push({
-                role: 'assistant',
-                content: errorMessage,
-            });
-            this.messages.set([...conversationHistory]);
+            this.messages.set([...this.messages(), { role: 'assistant', content: errorMessage }]);
         } finally {
             this.isLoading.set(false);
-            this.scrollToBottom();
         }
     }
 
+    // Send message on Enter, allow new lines with Shift+Enter
     handleKeyDown(event: KeyboardEvent): void {
         if (event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault();
-            this.handleSubmit();
+            this.handleSubmit(event);
         }
     }
 
-    resetConversation(): void {
+    reset(): void {
+        // Reset conversation
         conversationHistory = [];
         this.messages.set([]);
         this.inputValue.set('');
-    }
 
-    resetGrid(): void {
+        // Reset grid state
         this.gridApi.setState({
-            columnVisibility: { hiddenColIds: [] },
+            columnVisibility: {
+                hiddenColIds: [
+                    'ag-Grid-HierarchyColumn-transactionDate-year',
+                    'ag-Grid-HierarchyColumn-transactionDate-year',
+                    'ag-Grid-HierarchyColumn-transactionDate-formattedMonth',
+                    'ag-Grid-HierarchyColumn-transactionDate-formattedMonth',
+                    'currency',
+                ],
+            },
             columnPinning: { leftColIds: [], rightColIds: [] },
             sort: { sortModel: [] },
             filter: { filterModel: {} },
             rowGroup: { groupColIds: [] },
-            pagination: { page: 0, pageSize: 20 },
+            pagination: { page: 0, pageSize: 100 },
         });
-    }
-
-    private scrollToBottom(): void {
-        setTimeout(() => {
-            if (this.chatMessagesRef?.nativeElement) {
-                this.chatMessagesRef.nativeElement.scrollTop = this.chatMessagesRef.nativeElement.scrollHeight;
-            }
-        }, 0);
     }
 }
