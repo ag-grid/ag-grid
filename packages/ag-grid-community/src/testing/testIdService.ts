@@ -409,11 +409,13 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
 
         const filterClass = spec.source === 'floating-filter' ? '.ag-floating-filter-body' : '.ag-filter-body';
 
-        filterRoot.querySelectorAll(`${filterClass} input[type="number"]`).forEach((numberInput, i, array) => {
-            const setIndex = array.length > 1;
-            const filterSpec = setIndex ? { ...(spec as ColumnFilterSpec), index: i } : spec;
-            setTestId(numberInput, agTestIdFor.numberFilterInstanceInput(filterSpec));
-        });
+        filterRoot
+            .querySelectorAll(`${filterClass} .ag-filter-filter:not(.ag-hidden) input[type="number"]`)
+            .forEach((numberInput, i, array) => {
+                const setIndex = array.length > 1;
+                const filterSpec = setIndex ? { ...(spec as ColumnFilterSpec), index: i } : spec;
+                setTestId(numberInput, agTestIdFor.numberFilterInstanceInput(filterSpec));
+            });
 
         filterRoot.querySelectorAll(`${filterClass} input[type="text"]`).forEach((textInput, i, array) => {
             const setIndex = array.length > 1;

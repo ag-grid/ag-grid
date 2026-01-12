@@ -29,6 +29,10 @@ interface FloatingFilterSpec {
 
 export type FilterSpec = FilterToolpanelSpec | ColumnFilterSpec | FloatingFilterSpec;
 
+function stripSource(obj: Record<string, any>): Record<string, any> {
+    return Object.fromEntries(Object.entries(obj).filter(([k]) => k != 'source'));
+}
+
 export const agTestIdFor = {
     grid(gridId: string): string {
         return formatTestId('ag-grid-root', { gridId });
@@ -66,27 +70,25 @@ export const agTestIdFor = {
     filterInstancePickerDisplay(spec: FilterSpec): string {
         return formatTestId(
             `ag-${spec.source}-picker-display`,
-            spec.source === 'filter-toolpanel' ? { label: spec.colLabel } : { colId: spec.colId }
+            spec.source === 'filter-toolpanel' ? { label: spec.colLabel } : stripSource(spec)
         );
     },
     numberFilterInstanceInput(spec: FilterSpec): string {
         return formatTestId(
             `ag-${spec.source}-number-input`,
-            spec.source === 'filter-toolpanel'
-                ? { label: spec.colLabel }
-                : { colId: spec.colId, index: 'index' in spec ? spec.index : undefined }
+            spec.source === 'filter-toolpanel' ? { label: spec.colLabel } : stripSource(spec)
         );
     },
     textFilterInstanceInput(spec: FilterSpec): string {
         return formatTestId(
             `ag-${spec.source}-text-input`,
-            spec.source === 'filter-toolpanel' ? { label: spec.colLabel } : { colId: spec.colId }
+            spec.source === 'filter-toolpanel' ? { label: spec.colLabel } : stripSource(spec)
         );
     },
     dateFilterInstanceInput(spec: FilterSpec): string {
         return formatTestId(
             `ag-${spec.source}-date-input`,
-            spec.source === 'filter-toolpanel' ? { label: spec.colLabel } : { colId: spec.colId }
+            spec.source === 'filter-toolpanel' ? { label: spec.colLabel } : stripSource(spec)
         );
     },
     setFilterInstanceMiniFilterInput(spec: FilterSpec): string {
