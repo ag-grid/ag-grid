@@ -267,10 +267,7 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
         const latestRange = liveRanges.length ? _last(liveRanges) : null;
         const latestRef = latestRange ? rangeToRef(this.beans, latestRange) : null;
         const hasInsertCandidate =
-            !!latestRange &&
-            !this.trackedRanges.has(latestRange) &&
-            !!latestRef &&
-            latestRef !== this.editingCellRef;
+            !!latestRange && !this.trackedRanges.has(latestRange) && !!latestRef && latestRef !== this.editingCellRef;
         const shouldInsert = event.finished && (event.started || hasInsertCandidate);
 
         // Re-tag ranges if their colors are out of sync with the formula tokens.
