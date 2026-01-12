@@ -54,7 +54,7 @@ import { warnReactiveCustomComponents } from '../shared/customComp/util';
 import type { AgGridReactProps, InternalAgGridReactProps } from '../shared/interfaces';
 import { PortalManager } from '../shared/portalManager';
 import { ReactComponent } from '../shared/reactComponent';
-import { AgGridContext, findModuleByName } from './agGridProvider';
+import { LicenseContext, ModulesContext, findEnterpriseCoreModule } from './agGridProvider';
 import { BeansContext, RenderModeContext } from './beansContext';
 import GridComp from './gridComp';
 import { RenderStatusService } from './renderStatusService';
@@ -82,7 +82,8 @@ const excludeReactCompProps = new Set(Object.keys(reactPropsNotGridOptions));
 const deprecatedReactCompProps = new Set(Object.keys(deprecatedProps));
 
 export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) => {
-    const agContext = useContext(AgGridContext);
+    const modulesFromContext = useContext(ModulesContext);
+    const licenseKeyFromContext = useContext(LicenseContext);
 
     const apiRef = useRef<GridApi<TData>>();
     const eGui = useRef<HTMLDivElement | null>(null);
@@ -137,15 +138,11 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
             return;
         }
 
-        const modules: Module[] = [...(props.modules ?? []), ...(agContext.modules ?? [])];
-        if (agContext.licenseKey) {
-            // find the EnterpriseCore module recursively and get the LicenseManager bean to initialise licensing
-            const enterpriseCoreModule = findModuleByName('EnterpriseCore', modules);
-            if (enterpriseCoreModule) {
-                // look for static method to set license key
-                const licenseManager = enterpriseCoreModule.beans?.find((bean: any) => bean.setLicenseKey) as any;
-                licenseManager?.setLicenseKey(agContext.licenseKey);
-            }
+        const modules: Module[] = [...(props.modules ?? []), ...(modulesFromContext ?? [])];
+        if (licenseKeyFromContext) {
+            // find the EnterpriseCore module which implements _ModuleWithLicenseManager
+            // if found, set the license key
+            findEnterpriseCoreModule(modules)?.setLicenseKey(licenseKeyFromContext);
         }
 
         if (!portalManager.current) {

@@ -1,17 +1,7 @@
-import React, { useContext, useMemo, useRef } from 'react';
+import type { _ModuleWithLicenseManager } from 'packages/ag-grid-community/dist/types/src/main-internal';
+import React, { useContext, useRef } from 'react';
 
 import type { Module } from 'ag-grid-community';
-
-export interface AgGridContextValue {
-    /**
-     * The AG Grid modules to be used by all grid instances within this context.
-     */
-    modules: Module[];
-    /**
-     * The AG Grid license key to be used by all grid instances within this context when Enterprise features are used.
-     */
-    licenseKey?: string;
-}
 
 export interface AgGridProviderProps {
     /**
@@ -28,38 +18,39 @@ export interface AgGridProviderProps {
     children: React.ReactNode;
 }
 
-export const AgGridContext = React.createContext<AgGridContextValue>({ modules: [] });
+export const ModulesContext = React.createContext<Module[]>([]);
+export const LicenseContext = React.createContext<string | undefined>(undefined);
 
 /**
  * Compares two module arrays to determine if they contain the same modules.
  * Uses module names for comparison to avoid reference equality issues.
+ * Order-independent: [A, B] is considered equal to [B, A].
  */
 function areModulesEqual(prevModules: Module[], nextModules: Module[]): boolean {
     if (prevModules.length !== nextModules.length) {
         return false;
     }
-    for (let i = 0; i < prevModules.length; i++) {
-        if (prevModules[i].moduleName !== nextModules[i].moduleName) {
-            return false;
-        }
+    if (prevModules === nextModules) {
+        return true;
     }
-    return true;
+    const prevNames = new Set(prevModules.map((m) => m.moduleName));
+    return nextModules.every((m) => prevNames.has(m.moduleName));
 }
 
 /**
  * Provider component that supplies AG Grid modules and license key to all grid instances within its scope.
- * This component memoizes the modules array to prevent unnecessary re-renders when the array reference
+ * This component stabilizes the modules array to prevent unnecessary re-renders when the array reference
  * changes but the contents remain the same.
  *
  * When nested, child providers inherit modules from parent providers. The merged modules are deduplicated
  * by module name, with child modules taking precedence.
  */
 export function AgGridProvider({ modules, licenseKey, children }: AgGridProviderProps) {
-    const parentContext = useContext(AgGridContext);
+    const parentModules = useContext(ModulesContext);
+    const parentLicenseKey = useContext(LicenseContext);
 
     // The grid handles duplicated modules so no need to worry about that here
-    const mergedModules = useMemo(() => [...parentContext.modules, ...modules], [parentContext.modules, modules]);
-
+    const mergedModules = [...parentModules, ...modules];
     const modulesRef = useRef<Module[]>(mergedModules);
 
     // Only update the ref if modules have actually changed
@@ -67,38 +58,32 @@ export function AgGridProvider({ modules, licenseKey, children }: AgGridProvider
         modulesRef.current = mergedModules;
     }
 
-    const stableModules = modulesRef.current;
     // Use this provider's licenseKey if provided, otherwise inherit from parent
-    const effectiveLicenseKey = licenseKey ?? parentContext.licenseKey;
+    const effectiveLicenseKey = licenseKey ?? parentLicenseKey;
 
-    const contextValue = useMemo<AgGridContextValue>(
-        () => ({
-            modules: stableModules,
-            licenseKey: effectiveLicenseKey,
-        }),
-        [stableModules, effectiveLicenseKey]
+    return (
+        <ModulesContext.Provider value={modulesRef.current}>
+            <LicenseContext.Provider value={effectiveLicenseKey}>{children}</LicenseContext.Provider>
+        </ModulesContext.Provider>
     );
-
-    return <AgGridContext.Provider value={contextValue}>{children}</AgGridContext.Provider>;
 }
 
-export function findModuleByName(
-    moduleName: string,
+export function findEnterpriseCoreModule(
     modules: Module[],
     visited: Set<string> = new Set()
-): Module | undefined {
+): _ModuleWithLicenseManager | undefined {
     for (const module of modules) {
         if (visited.has(module.moduleName)) {
             return undefined;
         }
         visited.add(module.moduleName);
 
-        if (module.moduleName === moduleName) {
-            return module;
+        if ('setLicenseKey' in module) {
+            return module as _ModuleWithLicenseManager;
         }
 
         if (module.dependsOn) {
-            const found = findModuleByName(moduleName, module.dependsOn, visited);
+            const found = findEnterpriseCoreModule(module.dependsOn, visited);
             if (found) {
                 return found;
             }

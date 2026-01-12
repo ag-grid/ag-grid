@@ -552,6 +552,7 @@ export {
     _ModuleWithApi,
     _ModuleWithoutApi,
     ValidationModuleName as _ValidationModuleName,
+    _ModuleWithLicenseManager,
 } from './interfaces/iModule';
 export { SharedMenuModule as _SharedMenuModule } from './misc/menu/sharedMenuModule';
 export { KeyboardNavigationModule as _KeyboardNavigationModule } from './navigation/navigationModule';
