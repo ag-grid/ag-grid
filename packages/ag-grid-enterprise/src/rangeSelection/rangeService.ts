@@ -433,13 +433,26 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
     private isMultiRange(event: MouseEvent): boolean {
         const { ctrlKey, metaKey } = event;
-        const { editSvc, gos } = this.beans;
-        const editingWithRanges = !!editSvc?.isEditing() && !!editSvc?.isRangeSelectionEnabledWhileEditing();
+        const { editingWithRanges, allowMulti } = this.getMultiRangeContext();
 
         // ctrlKey for windows, metaKey for Apple
         const isMultiKey = ctrlKey || metaKey;
-        const allowMulti = !_getSuppressMultiRanges(gos);
         return editingWithRanges || (allowMulti ? isMultiKey : false);
+    }
+
+    private getMultiRangeContext(): {
+        editingWithRanges: boolean;
+        suppressMultiRanges: boolean;
+        allowMulti: boolean;
+    } {
+        const { gos, editSvc } = this.beans;
+        const editingWithRanges = !!editSvc?.isEditing() && !!editSvc?.isRangeSelectionEnabledWhileEditing();
+        const suppressMultiRanges = _getSuppressMultiRanges(gos) && !editingWithRanges;
+        return {
+            editingWithRanges,
+            suppressMultiRanges,
+            allowMulti: !suppressMultiRanges,
+        };
     }
 
     private removeRowFromRowNumberRange(cell: CellPosition, containingRange: CellRange): void {
@@ -500,10 +513,10 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
 
-        const suppressMultiRangeSelections = _getSuppressMultiRanges(gos);
+        const { suppressMultiRanges } = this.getMultiRangeContext();
 
         // if not appending, then clear previous range selections
-        if (suppressMultiRangeSelections || !appendRange || _missing(this.cellRanges)) {
+        if (suppressMultiRanges || !appendRange || _missing(this.cellRanges)) {
             this.removeAllCellRanges(true);
         }
 
@@ -1079,18 +1092,11 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         // when ranges are created due to a mouse click without drag (happens in cellMouseListener)
         // this method will be called with `fromMouseClick=true`.
         // Formula editing relies on overlapping ranges to keep token colors accurate.
-        if (this.beans.editSvc?.isRangeSelectionEnabledWhileEditing?.()) {
+        const { editingWithRanges, suppressMultiRanges } = this.getMultiRangeContext();
+        if (editingWithRanges || suppressMultiRanges || (fromMouseClick && this.dragging) || this.isEmpty()) {
             return;
         }
-        if (fromMouseClick && this.dragging) {
-            return;
-        }
-        if (_getSuppressMultiRanges(this.gos)) {
-            return;
-        }
-        if (this.isEmpty()) {
-            return;
-        }
+
         const lastRange = _last(this.cellRanges);
         const intersectionStartRow = this.getRangeStartRow(lastRange);
         const intersectionEndRow = this.getRangeEndRow(lastRange);
@@ -1232,7 +1238,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     private verifyCellRanges(gos: GridOptionsService): boolean {
-        const invalid = _isUsingNewCellSelectionAPI(gos) && _getSuppressMultiRanges(gos) && this.cellRanges.length > 1;
+        const { suppressMultiRanges } = this.getMultiRangeContext();
+        const invalid = _isUsingNewCellSelectionAPI(gos) && suppressMultiRanges && this.cellRanges.length > 1;
         if (invalid) {
             _warn(93);
         }
@@ -1421,7 +1428,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
 
-        const suppressMultiRanges = _getSuppressMultiRanges(gos);
+        const { suppressMultiRanges } = this.getMultiRangeContext();
         const hasRanges = cellRanges.length > 0;
         const isMeta = event.ctrlKey || event.metaKey;
 
