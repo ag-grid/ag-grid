@@ -263,6 +263,16 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
             return;
         }
 
+        const liveRanges = this.getLiveRanges();
+        const latestRange = liveRanges.length ? _last(liveRanges) : null;
+        const latestRef = latestRange ? rangeToRef(this.beans, latestRange) : null;
+        const hasInsertCandidate =
+            !!latestRange &&
+            !this.trackedRanges.has(latestRange) &&
+            !!latestRef &&
+            latestRef !== this.editingCellRef;
+        const shouldInsert = event.finished && (event.started || hasInsertCandidate);
+
         // Re-tag ranges if their colors are out of sync with the formula tokens.
         const reTagged = this.ensureTrackedRangeColors();
 
@@ -273,12 +283,12 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
             return;
         }
 
-        if (event.started) {
+        if (event.started || hasInsertCandidate) {
             // Remember caret so we can restore it after any selection-driven edits.
             this.field.rememberCaret();
         }
 
-        if (this.handleRemovedRangeTokens()) {
+        if (!hasInsertCandidate && this.handleRemovedRangeTokens()) {
             this.field.restoreCaretAfterToken();
             this.refocusEditingCell();
             return;
@@ -296,7 +306,7 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
             return;
         }
 
-        if (event.started && event.finished) {
+        if (shouldInsert) {
             const { action, previousRef, tokenIndex } = this.field.applyRangeInsert(ref);
 
             if (action === 'none') {
