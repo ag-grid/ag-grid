@@ -156,7 +156,6 @@ jobs:
           total-shards: ${{ strategy.job-total }}
           artifact-prefix: module-size-base
           artifact-suffix: ${{ needs.prepare.outputs.pr-number }}
-          base-ref: latest
 
   # Merge base shards and save to cache (only when we had to build)
   cache-base-results:

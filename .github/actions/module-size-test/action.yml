@@ -3,7 +3,7 @@ description: Build and run module size tests for a given git ref
 
 inputs:
   ref:
-    description: 'Git ref to checkout (branch, tag, or SHA)'
+    description: 'Git ref to get source code from (branch, tag, or SHA)'
     required: true
   shard:
     description: 'Current shard number'
@@ -18,44 +18,44 @@ inputs:
     description: 'Optional suffix for artifact name (e.g., PR number)'
     required: false
     default: ''
-  base-ref:
-    description: 'Base ref for nx setup (defaults to input ref)'
-    required: false
-  actions-ref:
-    description: 'Git ref to get .github/actions from (for testing older refs that lack these actions)'
-    required: false
-    default: ''
 
 runs:
   using: composite
   steps:
-    - name: Checkout source
+    # Always checkout latest for tooling (actions, scripts, nx config, etc.)
+    - name: Checkout latest for tooling
+      uses: actions/checkout@v4
+      with:
+        ref: latest
+        fetch-depth: 1
+
+    # If ref is not latest, overlay the source packages from the target ref
+    - name: Checkout source packages from target ref
+      if: inputs.ref != 'latest'
       uses: actions/checkout@v4
       with:
         ref: ${{ inputs.ref }}
-        fetch-depth: 1
+        sparse-checkout: |
+          packages/ag-grid-community
+          packages/ag-grid-enterprise
+          packages/ag-grid-react
+        path: .source-overlay
 
-    - name: Checkout actions from actions-ref
-      if: inputs.actions-ref != '' && inputs.actions-ref != inputs.ref
-      uses: actions/checkout@v4
-      with:
-        ref: ${{ inputs.actions-ref }}
-        sparse-checkout: .github/actions
-        path: .actions-temp
-
-    - name: Copy actions from actions-ref
-      if: inputs.actions-ref != '' && inputs.actions-ref != inputs.ref
+    - name: Overlay source packages
+      if: inputs.ref != 'latest'
       shell: bash
       run: |
-        rm -rf .github/actions
-        cp -r .actions-temp/.github/actions .github/actions
-        rm -rf .actions-temp
+        rm -rf packages/ag-grid-community packages/ag-grid-enterprise packages/ag-grid-react
+        mv .source-overlay/packages/ag-grid-community packages/
+        mv .source-overlay/packages/ag-grid-enterprise packages/
+        mv .source-overlay/packages/ag-grid-react packages/
+        rm -rf .source-overlay
 
     - name: Setup
       uses: ./.github/actions/setup-nx
       with:
         cache_mode: ro
-        base_ref: ${{ inputs.base-ref || inputs.ref }}
+        base_ref: latest
 
     - name: Build dependencies
       shell: bash
