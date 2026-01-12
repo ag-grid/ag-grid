@@ -119,7 +119,8 @@ jobs:
       - name: Checkout for actions
         uses: actions/checkout@v4
         with:
-          sparse-checkout: .github/actions
+          sparse-checkout: |
+            .github/actions
           ref: ${{ needs.prepare.outputs.head-sha }}
 
       - name: Run module size tests
@@ -145,7 +146,8 @@ jobs:
       - name: Checkout for actions
         uses: actions/checkout@v4
         with:
-          sparse-checkout: .github/actions
+          sparse-checkout: |
+            .github/actions
           ref: ${{ needs.prepare.outputs.head-sha }}
 
       - name: Run module size tests
@@ -320,3 +322,52 @@ jobs:
           name: module-size-comparison-${{ env.PR_NUMBER }}
           path: ./comparison-report.md
           retention-days: 30
+
+  # Status check job - this is what branch protection should require
+  # It ensures the workflow properly blocks PRs when jobs fail
+  status:
+    name: Module Size Status
+    runs-on: ubuntu-latest
+    needs: [prepare, check-base-cache, module-size-pr, module-size-base, compare-and-report]
+    if: always() && needs.prepare.outputs.is-draft != 'true'
+    steps:
+      - name: Check job results
+        run: |
+          echo "Checking job results..."
+          echo "prepare: ${{ needs.prepare.result }}"
+          echo "check-base-cache: ${{ needs.check-base-cache.result }}"
+          echo "module-size-pr: ${{ needs.module-size-pr.result }}"
+          echo "module-size-base: ${{ needs.module-size-base.result }}"
+          echo "compare-and-report: ${{ needs.compare-and-report.result }}"
+
+          # prepare must succeed
+          if [[ "${{ needs.prepare.result }}" != "success" ]]; then
+            echo "::error::prepare job failed"
+            exit 1
+          fi
+
+          # check-base-cache must succeed
+          if [[ "${{ needs.check-base-cache.result }}" != "success" ]]; then
+            echo "::error::check-base-cache job failed"
+            exit 1
+          fi
+
+          # module-size-pr must succeed
+          if [[ "${{ needs.module-size-pr.result }}" != "success" ]]; then
+            echo "::error::module-size-pr job failed"
+            exit 1
+          fi
+
+          # module-size-base must succeed or be skipped (skipped when cache hit)
+          if [[ "${{ needs.module-size-base.result }}" != "success" && "${{ needs.module-size-base.result }}" != "skipped" ]]; then
+            echo "::error::module-size-base job failed"
+            exit 1
+          fi
+
+          # compare-and-report must succeed
+          if [[ "${{ needs.compare-and-report.result }}" != "success" ]]; then
+            echo "::error::compare-and-report job failed"
+            exit 1
+          fi
+
+          echo "All required jobs completed successfully!"
