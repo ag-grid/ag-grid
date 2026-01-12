@@ -14,6 +14,7 @@ function formatTestId(name: string, attributes: Record<string, string | number |
 interface FilterToolpanelSpec {
     source: 'filter-toolpanel';
     colLabel?: string | null;
+    index?: number;
 }
 
 export interface ColumnFilterSpec {
@@ -28,10 +29,6 @@ interface FloatingFilterSpec {
 }
 
 export type FilterSpec = FilterToolpanelSpec | ColumnFilterSpec | FloatingFilterSpec;
-
-function stripSource(obj: Record<string, any>): Record<string, any> {
-    return Object.fromEntries(Object.entries(obj).filter(([k]) => k != 'source'));
-}
 
 export const agTestIdFor = {
     grid(gridId: string): string {
@@ -68,34 +65,19 @@ export const agTestIdFor = {
     /** Column Filters */
 
     filterInstancePickerDisplay(spec: FilterSpec): string {
-        return formatTestId(
-            `ag-${spec.source}-picker-display`,
-            spec.source === 'filter-toolpanel' ? { label: spec.colLabel } : stripSource(spec)
-        );
+        return formatTestId(`ag-${spec.source}-picker-display`, prepFilterSpec(spec));
     },
     numberFilterInstanceInput(spec: FilterSpec): string {
-        return formatTestId(
-            `ag-${spec.source}-number-input`,
-            spec.source === 'filter-toolpanel' ? { label: spec.colLabel } : stripSource(spec)
-        );
+        return formatTestId(`ag-${spec.source}-number-input`, prepFilterSpec(spec));
     },
     textFilterInstanceInput(spec: FilterSpec): string {
-        return formatTestId(
-            `ag-${spec.source}-text-input`,
-            spec.source === 'filter-toolpanel' ? { label: spec.colLabel } : stripSource(spec)
-        );
+        return formatTestId(`ag-${spec.source}-text-input`, prepFilterSpec(spec));
     },
     dateFilterInstanceInput(spec: FilterSpec): string {
-        return formatTestId(
-            `ag-${spec.source}-date-input`,
-            spec.source === 'filter-toolpanel' ? { label: spec.colLabel } : stripSource(spec)
-        );
+        return formatTestId(`ag-${spec.source}-date-input`, prepFilterSpec(spec));
     },
     setFilterInstanceMiniFilterInput(spec: FilterSpec): string {
-        return formatTestId(
-            `ag-${spec.source}-set-filter-mini-filter-input`,
-            spec.source === 'filter-toolpanel' ? { label: spec.colLabel } : { colId: spec.colId }
-        );
+        return formatTestId(`ag-${spec.source}-set-filter-mini-filter-input`, prepFilterSpec(spec));
     },
     setFilterInstanceItem(spec: FilterSpec, itemLabel?: string | null): string {
         return formatTestId(
@@ -370,3 +352,25 @@ export const wrapAgTestIdFor = <TLocator>(fn: (str: string) => TLocator): Locato
 
     return locators as Locators<TLocator>;
 };
+
+function mapKeys(obj: Record<string, any>, keys: Partial<Record<string, string | null>>): Record<string, any> {
+    return Object.fromEntries(
+        Object.entries(obj).reduce(
+            (acc, [k, v]) => {
+                if (keys[k] !== null) {
+                    acc.push([keys[k] ?? k, v]);
+                }
+                return acc;
+            },
+            [] as [string, string][]
+        )
+    );
+}
+
+function applySpecDefaults(obj: FilterSpec): FilterSpec {
+    return obj.source !== 'floating-filter' ? { index: 0, ...obj } : obj;
+}
+
+function prepFilterSpec(obj: FilterSpec): Partial<Record<string, string>> {
+    return mapKeys(applySpecDefaults(obj), { colLabel: 'label' });
+}
