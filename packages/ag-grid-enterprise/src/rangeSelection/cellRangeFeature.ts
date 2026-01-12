@@ -262,10 +262,12 @@ export class CellRangeFeature implements ICellRangeFeature {
     private applyRangeColor(nextClass: string | null): void {
         if (this.rangeColorClass && this.rangeColorClass !== nextClass) {
             this.cellComp.toggleCss(this.rangeColorClass, false);
+            this.cellComp.toggleCss('ag-formula-range', false);
         }
 
         if (nextClass) {
             this.cellComp.toggleCss(nextClass, true);
+            this.cellComp.toggleCss('ag-formula-range', nextClass.startsWith('ag-formula-range'));
         }
 
         this.rangeColorClass = nextClass ?? null;

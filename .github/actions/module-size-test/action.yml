@@ -1,0 +1,57 @@
+name: Module Size Test
+description: Build and run module size tests for a given git ref
+
+inputs:
+  ref:
+    description: 'Git ref to checkout (branch, tag, or SHA)'
+    required: true
+  shard:
+    description: 'Current shard number'
+    required: true
+  total-shards:
+    description: 'Total number of shards'
+    required: true
+  artifact-prefix:
+    description: 'Prefix for the uploaded artifact name'
+    required: true
+  artifact-suffix:
+    description: 'Optional suffix for artifact name (e.g., PR number)'
+    required: false
+    default: ''
+  base-ref:
+    description: 'Base ref for nx setup (defaults to input ref)'
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.ref }}
+        fetch-depth: 1
+
+    - name: Setup
+      uses: ./.github/actions/setup-nx
+      with:
+        cache_mode: ro
+        base_ref: ${{ inputs.base-ref || inputs.ref }}
+
+    - name: Build dependencies
+      shell: bash
+      run: |
+        yarn nx run-many -t build --projects=ag-grid-community,ag-grid-enterprise,ag-grid-react
+
+    - name: Run module size tests
+      shell: bash
+      working-directory: testing/module-size
+      run: |
+        npm run module-combinations -- --shard=${{ inputs.shard }}/${{ inputs.total-shards }}
+        mv module-size-results.json module-size-results-shard-${{ inputs.shard }}.json
+
+    - name: Upload shard results
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.artifact-prefix }}-shard-${{ inputs.shard }}${{ inputs.artifact-suffix && format('-{0}', inputs.artifact-suffix) || '' }}
+        path: testing/module-size/module-size-results-shard-${{ inputs.shard }}.json
+        retention-days: 1
