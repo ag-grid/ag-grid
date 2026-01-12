@@ -97,8 +97,9 @@ jobs:
       - name: Checkout for actions
         uses: actions/checkout@v4
         with:
-          sparse-checkout: .github/actions
           ref: latest
+          fetch-depth: 1
+
 
       - name: Run module size tests
         uses: ./.github/actions/module-size-test
@@ -123,8 +124,8 @@ jobs:
       - name: Checkout for actions
         uses: actions/checkout@v4
         with:
-          sparse-checkout: .github/actions
           ref: latest
+          fetch-depth: 1
 
       - name: Run module size tests
         uses: ./.github/actions/module-size-test
