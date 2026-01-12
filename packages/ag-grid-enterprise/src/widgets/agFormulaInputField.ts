@@ -8,9 +8,10 @@ import type {
 } from 'ag-grid-community';
 import { AgContentEditableField, _createElement } from 'ag-grid-community';
 
+import { getRefTokenMatches } from '../formula/refUtils';
 import { agFormulaInputFieldCSS } from './agFormulaInputField.css-GENERATED';
 import { FormulaInputRangeSyncFeature } from './formulaInputRangeSyncFeature';
-import { CELL_OR_RANGE_REGEX, getColorClassesForRef } from './formulaRangeUtils';
+import { getColorClassesForRef } from './formulaRangeUtils';
 
 const FORMULA_TOKEN_COLOR_COUNT = 7;
 const DISPLAY_OPERATOR_LOOKUP: Record<string, string> = {
@@ -70,24 +71,14 @@ export class AgFormulaInputField extends AgContentEditableField<
 
         if (!isFormula) {
             // Plain values: render as simple text with no token parsing or range syncing.
-            this.formulaColorByRef.clear();
-            this.renderPlainValue(text);
-            const res = this.setEditorValue(text, silent);
-            this.dispatchLocalEvent({ type: 'fieldValueChanged' as any });
+            this.applyPlainValue(text, { silent, dispatch: true });
             this.rangeSyncFeature?.onValueUpdated(text, hasFormulaPrefix);
-            return res;
+            return this;
         }
 
-        this.updateFormulaColorsFromValue(text);
-        this.renderFormula({
-            value: text,
-            currentValue: this.getCurrentValue(),
-        });
-        // We render tokens ourselves, so avoid the base class' setValue (which would re-render)
-        // and delegate that task to setEditorValue to keep our cached value and the superclass in sync.
-        const res = this.setEditorValue(text, silent);
+        this.applyFormulaValue(text, { currentValue: this.getCurrentValue(), silent });
         this.rangeSyncFeature?.onValueUpdated(text, hasFormulaPrefix);
-        return res;
+        return this;
     }
 
     public getCurrentValue(): string {
@@ -235,22 +226,12 @@ export class AgFormulaInputField extends AgContentEditableField<
         const { isFormula, hasFormulaPrefix } = this.getFormulaState(serialized);
 
         if (!isFormula) {
-            this.formulaColorByRef.clear();
-            this.renderPlainValue(serialized, caret);
-            this.setEditorValue(serialized);
-            this.dispatchLocalEvent({ type: 'fieldValueChanged' as any });
+            this.applyPlainValue(serialized, { caret, dispatch: true });
             this.rangeSyncFeature?.onValueUpdated(serialized, hasFormulaPrefix);
             return;
         }
 
-        this.updateFormulaColorsFromValue(serialized);
-        this.renderFormula({
-            currentValue,
-            value: serialized,
-            caret: caret ?? undefined,
-        });
-        this.setEditorValue(serialized);
-        this.dispatchLocalEvent({ type: 'fieldValueChanged' as any });
+        this.applyFormulaValue(serialized, { currentValue, caret: caret ?? undefined, dispatch: true });
         this.rangeSyncFeature?.onValueUpdated(serialized, hasFormulaPrefix);
     }
 
@@ -266,18 +247,55 @@ export class AgFormulaInputField extends AgContentEditableField<
         const value = this.getCurrentValue();
         const updatedValue = value.slice(0, valueOffset) + ref + value.slice(valueOffset + replaceLen);
         const tokenIndex = getTokenMatchAtOffset(updatedValue, valueOffset)?.index ?? null;
-        const previousRef = this.updateLastTokenTracking(ref, caretOffset, valueOffset);
-
-        this.updateFormulaColorsFromValue(updatedValue);
-        this.setEditorValue(updatedValue);
-        this.renderFormula({
+        let previousRef: string | undefined;
+        this.applyFormulaValueChange({
             currentValue: value,
-            value: updatedValue,
+            nextValue: updatedValue,
             caret: caretOffset + ref.length,
+            updateTracking: () => {
+                previousRef = this.updateLastTokenTracking(ref, caretOffset, valueOffset);
+            },
         });
-        this.dispatchLocalEvent({ type: 'fieldValueChanged' as any });
 
         return { previousRef, tokenIndex };
+    }
+
+    public removeTokenRef(ref: string, tokenIndex?: number | null): boolean {
+        const value = this.getCurrentValue();
+        const matches = getRefTokenMatches(value);
+        let token: TokenMatch | undefined;
+
+        if (tokenIndex != null) {
+            token = matches.find((match) => match.index === tokenIndex);
+            if (token && token.ref !== ref) {
+                token = undefined;
+            }
+        }
+
+        if (!token) {
+            token = matches.find((match) => match.ref === ref);
+        }
+
+        if (!token) {
+            return false;
+        }
+
+        const updated = value.slice(0, token.start) + value.slice(token.end);
+        const caretBase = this.selectionCaretOffset ?? token.start;
+        const caret = Math.min(caretBase, updated.length);
+        this.applyFormulaValueChange({
+            currentValue: value,
+            nextValue: updated,
+            caret,
+            updateTracking: () => {
+                this.lastTokenValueOffset = null;
+                this.lastTokenValueLength = null;
+                this.lastTokenCaretOffset = caret;
+                this.lastTokenRef = undefined;
+            },
+        });
+
+        return true;
     }
 
     public applyRangeInsert(ref: string): {
@@ -338,15 +356,14 @@ export class AgFormulaInputField extends AgContentEditableField<
         const value = this.getCurrentValue();
         const updated = value.slice(0, token.start) + nextRef + value.slice(token.end);
 
-        this.updateFormulaColorsFromValue(updated);
-        this.updateLastTokenTracking(nextRef, token.start, token.start);
-        this.setEditorValue(updated);
-        this.renderFormula({
+        this.applyFormulaValueChange({
             currentValue: value,
-            value: updated,
+            nextValue: updated,
             caret: token.start + nextRef.length,
+            updateTracking: () => {
+                this.updateLastTokenTracking(nextRef, token.start, token.start);
+            },
         });
-        this.dispatchLocalEvent({ type: 'fieldValueChanged' as any });
 
         return { previousRef: token.ref, tokenIndex: token.index };
     }
@@ -375,31 +392,33 @@ export class AgFormulaInputField extends AgContentEditableField<
 
     private getTokenInsertOffsets(isNew: boolean): { caretOffset: number; valueOffset: number } | null {
         // Use cached offsets while dragging ranges so caret doesn't jump between events.
-        const contentElement = this.getContentElement();
-        const caretOffset =
-            this.selectionCaretOffset ??
-            getCaretOffset(contentElement, this.getCurrentValue()) ??
-            this.currentValue.length;
-        const valueOffset =
-            isNew || this.lastTokenValueOffset == null
-                ? this.getValueOffsetFromCaret(caretOffset)
-                : this.lastTokenValueOffset;
-
-        if (valueOffset == null) {
-            return null;
-        }
-
-        return { caretOffset, valueOffset };
+        return this.getCaretOffsets(this.getCurrentValue(), {
+            useCachedCaret: true,
+            useCachedValueOffset: !isNew,
+        });
     }
 
-    private getCaretOffsets(value: string): { caretOffset: number; valueOffset: number } | null {
+    private getCaretOffsets(
+        value: string,
+        options: { useCachedCaret: boolean; useCachedValueOffset: boolean } = {
+            useCachedCaret: false,
+            useCachedValueOffset: false,
+        }
+    ): { caretOffset: number; valueOffset: number } | null {
         // Snapshot the caret position in both caret units and raw string offsets.
-        const caretOffset = getCaretOffset(this.getContentElement(), value);
+        const contentElement = this.getContentElement();
+        const caretOffset = options.useCachedCaret
+            ? this.selectionCaretOffset ?? getCaretOffset(contentElement, value) ?? this.currentValue.length
+            : getCaretOffset(contentElement, value);
         if (caretOffset == null) {
             return null;
         }
 
-        const valueOffset = this.getValueOffsetFromCaret(caretOffset);
+        const valueOffset =
+            options.useCachedValueOffset && this.lastTokenValueOffset != null
+                ? this.lastTokenValueOffset
+                : this.getValueOffsetFromCaret(caretOffset);
+
         if (valueOffset == null) {
             return null;
         }
@@ -422,6 +441,57 @@ export class AgFormulaInputField extends AgContentEditableField<
         const hasFormulaPrefix = text.trimStart().startsWith('=');
         const isFormula = this.beans.formula?.isFormula(text) ?? hasFormulaPrefix;
         return { isFormula, hasFormulaPrefix };
+    }
+
+    private dispatchValueChanged(): void {
+        this.dispatchLocalEvent({ type: 'fieldValueChanged' as any });
+    }
+
+    private applyPlainValue(
+        value: string,
+        params: { caret?: number | null; silent?: boolean; dispatch?: boolean }
+    ): void {
+        this.formulaColorByRef.clear();
+        this.renderPlainValue(value, params.caret);
+        this.setEditorValue(value, params.silent);
+        if (params.dispatch) {
+            this.dispatchValueChanged();
+        }
+    }
+
+    private applyFormulaValue(
+        value: string,
+        params: { currentValue?: string; caret?: number | null; silent?: boolean; dispatch?: boolean }
+    ): void {
+        this.updateFormulaColorsFromValue(value);
+        this.renderFormula({
+            value,
+            currentValue: params.currentValue ?? this.getCurrentValue(),
+            caret: params.caret ?? undefined,
+        });
+        // We render tokens ourselves, so avoid the base class' setValue (which would re-render)
+        // and delegate that task to setEditorValue to keep our cached value and the superclass in sync.
+        this.setEditorValue(value, params.silent);
+        if (params.dispatch) {
+            this.dispatchValueChanged();
+        }
+    }
+
+    private applyFormulaValueChange(params: {
+        currentValue: string;
+        nextValue: string;
+        caret: number;
+        updateTracking?: () => void;
+    }): void {
+        this.updateFormulaColorsFromValue(params.nextValue);
+        params.updateTracking?.();
+        this.setEditorValue(params.nextValue);
+        this.renderFormula({
+            currentValue: params.currentValue,
+            value: params.nextValue,
+            caret: params.caret,
+        });
+        this.dispatchValueChanged();
     }
 
     public replaceTokenRef(
@@ -466,16 +536,15 @@ export class AgFormulaInputField extends AgContentEditableField<
             this.formulaColorByRef.set(nextRef, colorIndex);
         }
         const updated = value.slice(0, valueOffset) + nextRef + value.slice(valueOffset + previousRef.length);
-        this.updateFormulaColorsFromValue(updated);
         const resolvedIndex = getTokenIndex(token);
-        this.updateLastTokenTracking(nextRef, caretOffset, valueOffset);
-        this.setEditorValue(updated);
-        this.renderFormula({
+        this.applyFormulaValueChange({
             currentValue: value,
-            value: updated,
+            nextValue: updated,
             caret: caretOffset + nextRef.length,
+            updateTracking: () => {
+                this.updateLastTokenTracking(nextRef, caretOffset, valueOffset);
+            },
         });
-        this.dispatchLocalEvent({ type: 'fieldValueChanged' });
 
         return resolvedIndex ?? tokenIndex ?? null;
     }
@@ -496,10 +565,8 @@ const getOrderedRefs = (value: string): string[] => {
     // Collect unique refs in their first-seen order to keep colors stable across re-entry.
     const refsInOrder: string[] = [];
     const seen = new Set<string>();
-    CELL_OR_RANGE_REGEX.lastIndex = 0;
-    let match: RegExpExecArray | null;
-    while ((match = CELL_OR_RANGE_REGEX.exec(value)) != null) {
-        const ref = match[0];
+    for (const match of getRefTokenMatches(value)) {
+        const ref = match.ref;
         if (seen.has(ref)) {
             continue;
         }
@@ -511,17 +578,10 @@ const getOrderedRefs = (value: string): string[] => {
 
 const getTokenMatchAtOffset = (value: string, offset: number): TokenMatch | null => {
     // Locate the token (if any) that covers the given value offset.
-    CELL_OR_RANGE_REGEX.lastIndex = 0;
-    let match: RegExpExecArray | null;
-    let index = 0;
-    while ((match = CELL_OR_RANGE_REGEX.exec(value)) != null) {
-        const ref = match[0];
-        const start = match.index ?? 0;
-        const end = start + ref.length;
-        if (offset >= start && offset <= end) {
-            return { ref, start, end, index };
+    for (const match of getRefTokenMatches(value)) {
+        if (offset >= match.start && offset <= match.end) {
+            return { ref: match.ref, start: match.start, end: match.end, index: match.index };
         }
-        index += 1;
     }
     return null;
 };
@@ -548,23 +608,16 @@ const tokenize = (value: string, getColorIndexForToken: (tokenIndex: number) => 
     // Split the formula into text + token nodes while preserving operators for display.
     const nodes: Node[] = [];
     let lastIndex = 0;
-    let tokenIndex = 0;
-    CELL_OR_RANGE_REGEX.lastIndex = 0;
+    const matches = getRefTokenMatches(value);
 
-    let match: RegExpExecArray | null;
-
-    while ((match = CELL_OR_RANGE_REGEX.exec(value)) != null) {
-        const [text] = match;
-        const index = match.index ?? 0;
-
-        if (index > lastIndex) {
-            nodes.push(document.createTextNode(formatForDisplay(value.slice(lastIndex, index))));
+    for (const match of matches) {
+        if (match.start > lastIndex) {
+            nodes.push(document.createTextNode(formatForDisplay(value.slice(lastIndex, match.start))));
         }
 
-        const colorIndex = getColorIndexForToken(tokenIndex);
-        nodes.push(createReferenceNode(text, colorIndex, colorIndex != null, tokenIndex));
-        tokenIndex += 1;
-        lastIndex = index + text.length;
+        const colorIndex = getColorIndexForToken(match.index);
+        nodes.push(createReferenceNode(match.ref, colorIndex, colorIndex != null, match.index));
+        lastIndex = match.end;
     }
 
     if (lastIndex < value.length) {

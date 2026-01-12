@@ -73,7 +73,8 @@ function validateSizes() {
     }
 
     // testSuites.print();
-    process.exit(testSuites.hasFailures() ? 1 : 0); // Return a non-zero exit code
+    // Disable exit code so that CI does not fail on size warnings as these should now be reviewed on the PR
+    // process.exit(testSuites.hasFailures() ? 1 : 0); // Return a non-zero exit code
 }
 
 validateSizes();

@@ -155,7 +155,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
         // Dragging to select text inside the formula editor should not start range selection.
-        if (target?.closest?.('.ag-formula-input-field')) {
+        if (isEventWithinFormulaEditor(target)) {
             return;
         }
 
@@ -386,6 +386,12 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
     public handleCellMouseDown(event: MouseEvent, cell: CellPosition): void {
         const { beans } = this;
+        const target = event.target as HTMLElement | null;
+
+        // Clicking inside the formula editor should not create a new range for the edited cell.
+        if (isEventWithinFormulaEditor(target)) {
+            return;
+        }
 
         const isRowNumber = isRowNumberCol(cell.column);
         if (isRowNumber) {
@@ -408,13 +414,17 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
 
-        const containingRange = this.findContainingRange({
-            columns,
-            startRow: cell,
-            endRow: cell,
-        });
+        const containingRange = isRowNumber
+            ? this.findContainingRange({
+                  columns,
+                  startRow: cell,
+                  endRow: cell,
+              })
+            : undefined;
+        const isMultiRangeRemoval =
+            isRowNumber && !!containingRange && isMultiRange && (event.ctrlKey || event.metaKey);
 
-        if (isRowNumber && isMultiRange && containingRange) {
+        if (isMultiRangeRemoval && containingRange) {
             this.removeRowFromRowNumberRange(cell, containingRange);
         } else {
             this.setRangeToCell(cell, isMultiRange);
@@ -738,7 +748,13 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
 
+        // Normalize the selection mode so explicit column lists are respected.
+        this.setSelectionMode(false);
+
         this.removeAllCellRanges(true);
+        const rowNumbersEnabled = _isRowNumbers(this.beans);
+        const allDataColumns = rowNumbersEnabled ? this.getColumnsFromModel(this.visibleCols.allCols) ?? [] : [];
+        let hasAllColumnsRange = false;
 
         for (const cellRange of cellRanges) {
             if (cellRange.columns && cellRange.startRow) {
@@ -758,8 +774,21 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                 });
             }
 
+            if (
+                rowNumbersEnabled &&
+                !hasAllColumnsRange &&
+                allDataColumns.length > 0 &&
+                cellRange.columns &&
+                cellRange.columns.length === allDataColumns.length
+            ) {
+                hasAllColumnsRange = allDataColumns.every((column) => cellRange.columns!.includes(column));
+            }
+
             this.cellRanges.push(cellRange);
         }
+
+        // Restore row-number selection mode if any range spans all data columns.
+        this.setSelectionMode(rowNumbersEnabled && hasAllColumnsRange);
 
         this.dispatchChangedEvent(false, true);
     }
@@ -1539,4 +1568,8 @@ function replaceEdgeRow(range: CellRange, row: RowPosition | null, topOrBottom: 
         key = !range.startRow || !range.endRow || _isRowBefore(range.startRow, range.endRow) ? 'endRow' : 'startRow';
     }
     range[key] = row ?? undefined;
+}
+
+function isEventWithinFormulaEditor(target: HTMLElement | null): boolean {
+    return !!target?.closest?.('.ag-formula-input-field');
 }
