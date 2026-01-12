@@ -83,7 +83,9 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowN
 
         changedPath.forEachChangedNodeDepthFirst(isAggFilterActive ? filterChildren : preserveChildren, true);
 
-        this.aggregateGrandTotalRow();
+        if (isPivotMode) {
+            this.aggregateGrandTotalRow();
+        }
     }
 
     /** for tree data, we include all children, groups and leafs */
