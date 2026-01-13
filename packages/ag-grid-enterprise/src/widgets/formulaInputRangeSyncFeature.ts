@@ -15,14 +15,12 @@ import {
 type TrackedRange = { ref: string; tokenIndex?: number | null };
 
 export class FormulaInputRangeSyncFeature extends BeanStub {
-    // Track the active editor instance per grid/cell to avoid overlapping syncs on editor restarts.
-    private static readonly activeEditorsByContext = new WeakMap<object, Map<string, FormulaInputRangeSyncFeature>>();
     // Local mirror of editSvc range selection state while formula editing is active.
     private rangeSelectionEnabled = false;
     private editingCellRef?: string;
     private editingColumn?: Column;
     private editingRowIndex?: number;
-    private activeEditorKey?: string;
+
     // Refs found in the formula that should have matching grid ranges (counts handle duplicates).
     private readonly trackedRangeRefs = new Map<string, number>();
     // Ranges we are actively tracking and their current ref string.
@@ -78,66 +76,37 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
         this.registerActiveEditor();
     }
 
-    private getActiveEditorsMap(createIfMissing: boolean): Map<string, FormulaInputRangeSyncFeature> | null {
-        const context = this.beans?.context as object | undefined;
-        if (!context) {
-            return null;
-        }
-        let map = FormulaInputRangeSyncFeature.activeEditorsByContext.get(context);
-        if (!map && createIfMissing) {
-            map = new Map<string, FormulaInputRangeSyncFeature>();
-            FormulaInputRangeSyncFeature.activeEditorsByContext.set(context, map);
-        }
-        return map ?? null;
-    }
-
-    private getActiveEditorKey(): string | null {
-        if (this.editingCellRef) {
-            return this.editingCellRef;
-        }
-        if (!this.editingColumn || this.editingRowIndex == null) {
-            return null;
-        }
-        return `${this.editingRowIndex}.${this.editingColumn.getId()}`;
-    }
-
     private registerActiveEditor(): void {
-        const key = this.getActiveEditorKey();
-        const map = this.getActiveEditorsMap(true);
+        const fieldId = this.field.getCompId();
+        const { formula } = this.beans;
 
-        if (!key || !map) {
-            this.unregisterActiveEditor();
+        if (!formula) {
             return;
         }
 
-        if (this.activeEditorKey && this.activeEditorKey !== key) {
-            const previousMap = this.getActiveEditorsMap(false);
-            if (previousMap?.get(this.activeEditorKey) === this) {
-                previousMap.delete(this.activeEditorKey);
-            }
+        if (formula.activeEditor !== fieldId) {
+            formula.activeEditor = fieldId;
         }
-
-        map.set(key, this);
-        this.activeEditorKey = key;
     }
 
     private unregisterActiveEditor(): void {
-        if (!this.activeEditorKey) {
+        const fieldId = this.field.getCompId();
+        const { formula } = this.beans;
+
+        if (!formula) {
             return;
         }
-        const map = this.getActiveEditorsMap(false);
-        if (map?.get(this.activeEditorKey) === this) {
-            map.delete(this.activeEditorKey);
+
+        if (formula.activeEditor === fieldId) {
+            formula.activeEditor = null;
         }
-        this.activeEditorKey = undefined;
     }
 
     private isActiveEditor(): boolean {
-        if (!this.activeEditorKey) {
-            return true;
-        }
-        const map = this.getActiveEditorsMap(false);
-        return map?.get(this.activeEditorKey) === this;
+        const fieldId = this.field.getCompId();
+        const { formula } = this.beans;
+
+        return !!formula && formula.activeEditor === fieldId;
     }
 
     private getTrackedRefCount(ref: string): number {
