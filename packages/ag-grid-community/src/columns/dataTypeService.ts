@@ -482,7 +482,8 @@ export class DataTypeService extends BeanStub implements NamedBean {
             if (colDef.valueFormatter === object.groupSafeValueFormatter && !this.hasObjectValueFormatter) {
                 warning('Formatter');
             }
-            if (colDef.editable && colDef.valueParser === object.valueParser && !this.hasObjectValueParser) {
+            const allowsEditing = !!colDef.editable || !!colDef.groupRowEditable;
+            if (allowsEditing && colDef.valueParser === object.valueParser && !this.hasObjectValueParser) {
                 warning('Parser');
             }
         }
@@ -531,7 +532,8 @@ export class DataTypeService extends BeanStub implements NamedBean {
                 cellRenderer: 'agCheckboxCellRenderer',
                 getFindText: () => null,
                 suppressKeyboardEvent: (params: SuppressKeyboardEventParams<any, boolean>) =>
-                    !!params.colDef.editable && params.event.key === KeyCode.SPACE,
+                    !!(params.colDef.editable || params.colDef.groupRowEditable) &&
+                    params.event.key === KeyCode.SPACE,
             };
         },
         date({ formatValue }) {

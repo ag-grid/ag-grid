@@ -385,9 +385,15 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
 
     /**
      * Set to `true` if this column is editable, otherwise `false`. Can also be a function to have different rows editable.
+     * When grouping, see `groupRowEditable` instead for group rows.
      * @default false
      */
     editable?: boolean | EditableCallback<TData, TValue>;
+    /**
+     * Works like `editable`, but is evaluated only for group rows. When provided, group rows use this property instead of `editable`.
+     * Set to `true` if this column is editable, otherwise `false`. Can also be a function to have different rows editable.
+     */
+    groupRowEditable?: boolean | GroupRowEditableCallback<TData, TValue>;
     /** Function or expression. Sets the value into your data for saving. Return `true` if the data changed. */
     valueSetter?: string | ValueSetterFunc<TData, TValue>;
     /** Function or expression. Parses the value for saving. */
@@ -954,6 +960,11 @@ export interface EditableCallbackParams<TData = any, TValue = any, TContext = an
     extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}
 export type EditableCallback<TData = any, TValue = any, TContext = any> = (
     params: EditableCallbackParams<TData, TValue, TContext>
+) => boolean;
+export interface GroupRowEditableCallbackParams<TData = any, TValue = any, TContext = any>
+    extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}
+export type GroupRowEditableCallback<TData = any, TValue = any, TContext = any> = (
+    params: GroupRowEditableCallbackParams<TData, TValue, TContext>
 ) => boolean;
 export interface SuppressPasteCallbackParams<TData = any, TValue = any, TContext = any>
     extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}

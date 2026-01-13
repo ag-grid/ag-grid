@@ -68,14 +68,15 @@ function deriveClickCount(gos: GridOptionsService, colDef?: ColDef): number {
 
 export function isCellEditable(
     beans: BeanCollection,
-    { rowNode, column }: Required<EditPosition>,
+    editPosition: Required<EditPosition>,
     _source: 'api' | 'ui' = 'ui'
 ): boolean {
-    const editable = column.getColDef().editable;
-    const editModelSvc = beans.editModelSvc;
+    const { rowNode, column } = editPosition;
+    const { editable, groupRowEditable } = column.getColDef();
+    const editableValue = groupRowEditable != null && rowNode?.group ? groupRowEditable : editable;
     return (
-        (column as AgColumn).isColumnFunc(rowNode, editable) ||
-        (!!editModelSvc && editModelSvc.hasEdits({ rowNode, column }, { withOpenEditor: true }))
+        (column as AgColumn).isColumnFunc(rowNode, editableValue) ||
+        !!beans.editModelSvc?.hasEdits(editPosition, { withOpenEditor: true })
     );
 }
 

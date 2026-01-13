@@ -549,30 +549,45 @@ function dispatchEditingStopped(
     }
 }
 
+const _colDefsHaveValidationRules = (columnDefs: ColDef[]): boolean => {
+    for (let i = 0, len = columnDefs.length; i < len; ++i) {
+        const colDef = columnDefs[i];
+        const params = colDef.cellEditorParams;
+        if (!params || (!colDef.editable && !colDef.groupRowEditable)) {
+            continue;
+        }
+        if (
+            params.minLength !== undefined ||
+            params.maxLength !== undefined ||
+            params.getValidationErrors !== undefined ||
+            params.min !== undefined ||
+            params.max !== undefined
+        ) {
+            return true;
+        }
+    }
+    return false;
+};
+
 function _hasValidationRules(beans: BeanCollection): boolean {
-    const { gos, colModel } = beans;
-    const getFullRowEditValidationErrors = !!gos.get('getFullRowEditValidationErrors');
-    const columnsHaveRules = colModel
-        .getColumnDefs()
-        ?.filter((c: ColDef) => c.editable)
-        .some(({ cellEditorParams }: ColDef) => {
-            const { minLength, maxLength, getValidationErrors, min, max } = cellEditorParams || {};
+    if (beans.gos.get('getFullRowEditValidationErrors')) {
+        return true;
+    }
 
-            return (
-                minLength !== undefined ||
-                maxLength !== undefined ||
-                getValidationErrors !== undefined ||
-                min !== undefined ||
-                max !== undefined
-            );
-        });
+    const colDefs = beans.colModel.getColumnDefs();
+    if (colDefs && _colDefsHaveValidationRules(colDefs)) {
+        return true;
+    }
 
-    const editorsHaveRules = beans.gridApi
-        .getCellEditorInstances()
-        // Check if either method was provided in the editor
-        .some((editor) => editor.getValidationElement || editor.getValidationErrors);
+    const editorInstances = getCellEditorInstances(beans);
+    for (let i = 0, len = editorInstances.length; i < len; ++i) {
+        const editor = editorInstances[i];
+        if (editor.getValidationElement || editor.getValidationErrors) {
+            return true;
+        }
+    }
 
-    return columnsHaveRules || getFullRowEditValidationErrors || editorsHaveRules;
+    return false;
 }
 
 export function _populateModelValidationErrors(beans: BeanCollection, force?: boolean): void {

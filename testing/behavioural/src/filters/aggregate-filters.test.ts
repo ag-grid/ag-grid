@@ -1,11 +1,11 @@
 import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
-import { RowGroupingModule } from 'ag-grid-enterprise';
+import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager } from '../test-utils';
 
 describe('Aggregate Filters', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, TextFilterModule, NumberFilterModule, RowGroupingModule],
+        modules: [ClientSideRowModelModule, TextFilterModule, NumberFilterModule, RowGroupingModule, PivotModule],
     });
 
     const rowData = [
