@@ -74,4 +74,17 @@ ignore:
                   developer machines
               expires: 2026-06-08T00:00:00.000Z
               created: 2025-01-05T10:10:00.000Z
+    SNYK-JS-ANGULARCOMPILER-14908872:
+        - '@angular/compiler@18.2.14':
+              reason: >-
+                  @angular/compiler is only used during development so an attack would only affect
+                  developer machines
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2025-01-12T10:10:00.000Z
+    SNYK-JS-ANGULARCORE-14908871:
+        - '@angular/core@18.2.14':
+              reason: >-
+                  @angular/core is not used for SVG elements
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2025-01-12T10:10:00.000Z
 patch: {}

@@ -41,4 +41,9 @@ ignore:
                   qs is not used on the server
               expires: 2026-06-08T00:00:00.000Z
               created: 2025-01-05T10:10:00.000Z
+    SNYK-JS-PREACT-14897824:
+        - 'react-instantsearch@7.22.1 > instantsearch.js@4.86.1 > preact@10.27.2':
+              reason: We don't use preact
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2025-01-12T10:00:00.000Z
 patch: {}

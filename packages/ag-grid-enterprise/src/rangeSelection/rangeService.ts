@@ -414,13 +414,17 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
 
-        const containingRange = this.findContainingRange({
-            columns,
-            startRow: cell,
-            endRow: cell,
-        });
+        const containingRange = isRowNumber
+            ? this.findContainingRange({
+                  columns,
+                  startRow: cell,
+                  endRow: cell,
+              })
+            : undefined;
+        const isMultiRangeRemoval =
+            isRowNumber && !!containingRange && isMultiRange && (event.ctrlKey || event.metaKey);
 
-        if (isRowNumber && isMultiRange && containingRange) {
+        if (isMultiRangeRemoval && containingRange) {
             this.removeRowFromRowNumberRange(cell, containingRange);
         } else {
             this.setRangeToCell(cell, isMultiRange);
@@ -744,7 +748,13 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
 
+        // Normalize the selection mode so explicit column lists are respected.
+        this.setSelectionMode(false);
+
         this.removeAllCellRanges(true);
+        const rowNumbersEnabled = _isRowNumbers(this.beans);
+        const allDataColumns = rowNumbersEnabled ? this.getColumnsFromModel(this.visibleCols.allCols) ?? [] : [];
+        let hasAllColumnsRange = false;
 
         for (const cellRange of cellRanges) {
             if (cellRange.columns && cellRange.startRow) {
@@ -764,8 +774,21 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                 });
             }
 
+            if (
+                rowNumbersEnabled &&
+                !hasAllColumnsRange &&
+                allDataColumns.length > 0 &&
+                cellRange.columns &&
+                cellRange.columns.length === allDataColumns.length
+            ) {
+                hasAllColumnsRange = allDataColumns.every((column) => cellRange.columns!.includes(column));
+            }
+
             this.cellRanges.push(cellRange);
         }
+
+        // Restore row-number selection mode if any range spans all data columns.
+        this.setSelectionMode(rowNumbersEnabled && hasAllColumnsRange);
 
         this.dispatchChangedEvent(false, true);
     }

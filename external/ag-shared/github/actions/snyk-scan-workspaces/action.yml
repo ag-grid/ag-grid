@@ -43,6 +43,7 @@ runs:
           env:
               SNYK_TOKEN: ${{ inputs.snyk_token }}
           with:
+              # NOTE: Keep this in sync with `all/project.json`
               args: --yarn-workspaces --dev --strict-out-of-sync=false --severity-threshold=${{ inputs.severity_threshold }} --exclude=${{ inputs.exclude }} --remote-repo-url=${{ inputs.remote_repo_url }} --json > ${{ inputs.output_dir }}${{ inputs.snyk_file }}
 
         - name: Convert snyk report to CTRF report

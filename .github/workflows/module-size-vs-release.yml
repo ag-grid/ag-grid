@@ -97,8 +97,9 @@ jobs:
       - name: Checkout for actions
         uses: actions/checkout@v4
         with:
-          sparse-checkout: .github/actions
           ref: latest
+          fetch-depth: 1
+
 
       - name: Run module size tests
         uses: ./.github/actions/module-size-test
@@ -110,6 +111,7 @@ jobs:
           base-ref: latest
 
   # Build and run module size tests on release tag (sharded) - only if cache miss
+  # Uses latest branch tooling with source code from the release tag
   module-size-release:
     name: Module Size Release (${{ matrix.shard }}/${{ strategy.job-total }})
     runs-on: ubuntu-latest
@@ -123,17 +125,18 @@ jobs:
       - name: Checkout for actions
         uses: actions/checkout@v4
         with:
-          sparse-checkout: .github/actions
           ref: latest
+          fetch-depth: 1
 
       - name: Run module size tests
         uses: ./.github/actions/module-size-test
         with:
-          ref: ${{ needs.prepare.outputs.release-tag }}
+          ref: latest
           shard: ${{ matrix.shard }}
           total-shards: ${{ strategy.job-total }}
           artifact-prefix: module-size-release
-          base-ref: ${{ needs.prepare.outputs.release-tag }}
+          base-ref: latest
+          source-ref: ${{ needs.prepare.outputs.release-tag }}
 
   # Cache release results (only when we had to build)
   cache-release-results:
@@ -145,13 +148,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          ref: latest
           sparse-checkout: |
             scripts/ci/merge-module-size-results.mjs
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Download all release shard results
         uses: actions/download-artifact@v4
@@ -186,6 +190,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          ref: latest
           sparse-checkout: |
             scripts/ci/compare-module-sizes.mjs
             scripts/ci/merge-module-size-results.mjs
@@ -193,7 +198,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Download all latest shard results
         uses: actions/download-artifact@v4

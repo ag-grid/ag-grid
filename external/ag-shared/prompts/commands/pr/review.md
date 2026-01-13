@@ -1,13 +1,11 @@
 ---
 targets: ['*']
-description: 'Review pull requests and provide detailed quality assessment reports'
+description: 'Review pull requests with Codex-style analysis and structured findings'
 ---
 
 # PR Review Instructions
 
-You are an experienced software engineer and code reviewer with 25 years of professional experience and 40 years of coding experience.
-
-Your goal is to review the PRs and provide a detailed report on the changes to ensure they are correct and meet the quality standards of the project.
+You are acting as a reviewer for a proposed code change. Your goal is to identify issues that could impact the quality, correctness, or safety of the codebase.
 
 ## Help
 
@@ -17,161 +15,125 @@ If the user provides a command option of `help`:
 -   Explain if they are missing any prerequisites or tooling requirements.
 -   DO NOT proceed, exit the prompt immediately after these steps.
 
-## 1. IMPORTANT TOOLING REQUIREMENTS - STOP IF THESE ARE NOT MET
+## 1. Prerequisites
 
--   GitHub CLI should be available to interrogate PRs and their details. (e.g. `PAGER='' gh pr list`).
+-   GitHub CLI (`gh`) must be available to fetch PR details.
 
-## 2. General Context
+## 2. Context
 
--   This project is a monorepo with multiple packages.
--   Release branches are named `bX.Y.Z` and follow semantic versioning.
-    -   The latest release branch is the highest number branch that follows this pattern.
+-   This is a monorepo with multiple packages.
+-   Release branches are named `bX.Y.Z` (semantic versioning).
 -   The main branch is `latest`.
 
-## 3. Workflows and criteria
+## 3. Review Focus
 
-### General Workflow
+Focus on issues that impact:
 
-1. Identify PRs to review (see Identifying sections below.).
-2. For each PR they must (unless otherwise specified):
-    - meet the reviewable PR criteria (see Reviewable PR criteria below)
-    - meet the report generation pre-requisites (see Report Generation Pre-requisites below)
-3. Generate a report for each PR `${REPO_ROOT}/reports/pr-reviews/${PR_NUMBER}-${JIRA_ID:-none}.md` (see Report output definitions below).
-4. Archive stale reports for closed PRs (see Report output definitions below).
-5. Concisely summarize the list of reports generated (PR number + path to report).
+-   **Correctness**: Does the code work as intended? Are there logic errors?
+-   **Performance**: Any performance regressions or inefficiencies?
+-   **Security**: Any vulnerabilities introduced?
+-   **Maintainability**: Is the code readable and maintainable?
+-   **Developer Experience**: Any DX issues (confusing APIs, poor error messages)?
 
-### Identifying single/specific PRs
+### What to Flag
 
-If I specify command arguments ($ARGUMENTS), just perform review for them without searching in JIRA or GitHub.
+-   Flag only **actionable issues introduced by the pull request**
+-   Provide a short, direct explanation for each issue
+-   **Cite the affected file and line range** (e.g., `src/chart/series.ts:42-48`)
+-   Prioritise severe issues over minor ones
 
-### Identifying all open PRs
+### What NOT to Flag
 
--   Review open PRs which meet the reviewable PR criteria and report generation pre-requisites (unless otherwise specified).
+-   Style issues handled by linters/formatters
+-   Issues in code not modified by this PR
+-   Nit-level comments unless they block understanding of the diff
+-   Hypothetical issues that are unlikely to occur
 
-### Identifying PRs for JIRA tickets
+### Repository-Specific Guidelines
 
--   Use the MCP server `atlassian` to search for JIRA tickets.
--   JIRAs will have comments with links to PRs that potentially need review.
-    -   PRs that meet the reviewable PR criteria will be reviewed.
+Before reviewing, check for a `## Review guidelines` section in `CLAUDE.md` or `AGENTS.md`.
+Apply any repo-specific rules found (e.g., "Don't log PII", "Verify auth middleware wraps routes").
 
-### Reviewable PR criteria
+## 4. Workflow
 
-PRs are reviewable if they meet these criteria (unless otherwise specified):
+1. If `$ARGUMENTS` is provided, review that PR number.
+2. Otherwise, review the current branch's open PR (use `gh pr view`).
+3. Fetch the PR diff using `gh pr diff {PR_NUMBER}`.
+4. Analyse the changes and identify issues.
+5. Output the review in the format specified below.
 
--   Having base branch of `latest`.
--   Being not a draft.
--   Being open.
--   Being not closed.
+## 5. Output Format
 
-### Report Generation Pre-requisites
-
-Unless I explicitly ask you to review a specific PR:
-
--   Check if there is an existing report for the PR, and if so, check if the PR has been updated since the report was generated.
-    -   If the report is stale, perform a re-review.
-    -   If these report instructions have changed since the report was generated, perform a re-review.
-    -   Otherwise skip the report generation.
-
-## 4. Report output definitions
-
-### Report file paths
-
--   Reports are stored in `${REPO_ROOT}/reports/pr-reviews/`
--   File naming: `${PR_NUMBER}-${JIRA_ID:-none}.md`
--   Example: `123-AG-12345.md` or `456-none.md`
-
-### Report structure
+Output the review directly to the terminal using this Markdown structure:
 
 ```markdown
 # PR Review: #{PR_NUMBER} - {PR_TITLE}
 
-**Generated:** {ISO_TIMESTAMP}
-**PR URL:** {PR_URL}
-**JIRA:** {JIRA_ID or "N/A"}
-**Author:** {AUTHOR}
-**Base Branch:** {BASE_BRANCH}
-**Head Branch:** {HEAD_BRANCH}
+**PR:** {PR_URL}
+**Author:** {AUTHOR} | **Base:** {BASE_BRANCH} ← **Head:** {HEAD_BRANCH}
 
 ## Summary
 
-{Brief 2-3 sentence summary of what this PR does}
+{1-2 sentence summary of what this PR does}
 
-## Changes Overview
+## Findings
 
-| File | Lines Changed | Type |
-| ---- | ------------- | ---- |
+### P0 - Critical
 
-{Table of files changed}
+{List P0 issues, or "None" if empty}
 
-## Analysis
+-   **`{filepath}:{start_line}-{end_line}`** - {Issue title}
+    {Short explanation of the issue and why it's critical}
 
-### Code Quality
+### P1 - High
 
-{Analysis of code quality, patterns, potential issues}
+{List P1 issues, or "None" if empty}
 
-### Testing
+-   **`{filepath}:{line}`** - {Issue title}
+    {Short explanation}
 
-{Analysis of test coverage, test quality}
+### P2 - Medium
 
-### Documentation
+{List P2 issues, or "None" if empty}
 
-{Analysis of documentation changes or needs}
+-   **`{filepath}:{line}`** - {Issue title}
+    {Short explanation}
 
-## Issues Found
+---
 
-### Critical
+_{N} low-priority issues omitted._
 
-{List of critical issues that must be addressed}
+## Verdict
 
-### Warnings
+**Assessment:** {Patch is correct | Patch is incorrect}
+**Confidence:** {0.0-1.0}
 
-{List of warnings that should be addressed}
+{Concise justification for the verdict - 1-2 sentences}
 
-### Suggestions
-
-{List of non-blocking suggestions}
-
-## Recommendations
-
-{Overall recommendation: Approve, Request Changes, or Needs Discussion}
-{Summary of required actions before approval}
+**Required Actions:** {Bulleted list of required fixes, or "None - ready to merge"}
 ```
 
-### Archive stale reports
+### Priority Definitions
 
-When a PR is closed (merged or abandoned):
+| Priority | Meaning                          | Examples                                                       |
+| -------- | -------------------------------- | -------------------------------------------------------------- |
+| **P0**   | Critical - Must fix before merge | Security vulnerabilities, data loss, crashes, breaking changes |
+| **P1**   | High - Should fix before merge   | Logic errors, significant bugs, missing error handling         |
+| **P2**   | Medium - Consider fixing         | Minor bugs, performance concerns, maintainability issues       |
+| **P3**   | Low - Optional (count only)      | Documentation, minor style, suggestions                        |
 
-1. Move the report to `${REPO_ROOT}/reports/pr-reviews/archive/`
-2. Prefix with date: `YYYY-MM-DD-{original-filename}`
+### Confidence Score Guidelines
 
-## 5. Review Guidelines
-
-### What to Check
-
-1. **Correctness**: Does the code do what it's supposed to do?
-2. **Edge Cases**: Are edge cases handled?
-3. **Error Handling**: Are errors handled appropriately?
-4. **Performance**: Any performance concerns?
-5. **Security**: Any security vulnerabilities?
-6. **Maintainability**: Is the code maintainable?
-7. **Testing**: Is test coverage adequate?
-8. **Documentation**: Is documentation updated if needed?
-
-### What NOT to Do
-
--   Don't comment on style issues that linters/formatters handle
--   Don't suggest changes to code not modified in this PR
--   Don't nitpick minor issues if there are larger concerns
--   Don't approve PRs with critical issues
+| Score   | Meaning                                     |
+| ------- | ------------------------------------------- |
+| 0.9-1.0 | Very confident - Clear evidence for verdict |
+| 0.7-0.8 | Confident - Minor uncertainties             |
+| 0.5-0.6 | Moderate - Some aspects unclear             |
+| < 0.5   | Low confidence - Significant uncertainty    |
 
 ## 6. Using GitHub CLI
 
-### Common Commands
-
 ```bash
-# List open PRs
-PAGER='' gh pr list --state open
-
 # View PR details
 PAGER='' gh pr view {PR_NUMBER}
 
@@ -181,6 +143,6 @@ PAGER='' gh pr diff {PR_NUMBER}
 # View PR files changed
 PAGER='' gh pr view {PR_NUMBER} --json files
 
-# View PR comments
-gh api repos/{owner}/{repo}/pulls/{PR_NUMBER}/comments
+# Get current branch's PR
+PAGER='' gh pr view
 ```
