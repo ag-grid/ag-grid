@@ -465,6 +465,13 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     // focus is disabled on the Row Numbers cells, when a click happens on it,
     // it should focus the first cell of that row or first cell of the grid (from header).
     private focusFirstRenderedCellAtRowPosition(rowPosition?: RowPosition | null) {
+        const editSvc = this.beans.editSvc;
+
+        if (editSvc?.isEditing() && editSvc.isRangeSelectionEnabledWhileEditing?.()) {
+            // Let the formula editor keep focus when range selection is enabled during editing.
+            return;
+        }
+
         if (!rowPosition) {
             rowPosition = _getFirstRow(this.beans);
             if (!rowPosition) {
