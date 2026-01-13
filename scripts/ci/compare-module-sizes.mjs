@@ -205,7 +205,25 @@ report += '<details>\n<summary>📊 Full Statistics</summary>\n\n';
 report += `- **Modules compared:** ${diffs.length}\n`;
 report += `- **Modules with increases:** ${diffs.filter((d) => d.selfSizeDiff > 0).length}\n`;
 report += `- **Modules with decreases:** ${diffs.filter((d) => d.selfSizeDiff < 0).length}\n`;
-report += `- **Modules unchanged:** ${diffs.filter((d) => d.selfSizeDiff === 0).length}\n`;
+report += `- **Modules unchanged:** ${diffs.filter((d) => d.selfSizeDiff === 0).length}\n\n`;
+
+// All changes table
+const allChanges = diffs.filter((d) => d.selfSizeDiff !== 0);
+if (allChanges.length > 0) {
+    report += '#### All Module Changes\n\n';
+    report += '| Module(s) | Base (KB) | PR (KB) | Diff (KB) | Gzip Diff (KB) |\n';
+    report += '|-----------|-----------|---------|-----------|----------------|\n';
+
+    for (const diff of allChanges) {
+        const moduleName = diff.modules.length === 0 ? 'Base (no modules)' : diff.modules.join(', ');
+        const emoji = getChangeEmoji(diff.selfSizeDiff);
+        const status = diff.isNew ? ' 🆕' : diff.isRemoved ? ' 🗑️' : '';
+
+        report += `| ${emoji} ${moduleName}${status} | ${formatSize(diff.baseSelfSize)} | ${formatSize(diff.prSelfSize)} | **${formatDiff(diff.selfSizeDiff)}** | ${formatDiff(diff.gzipSizeDiff)} |\n`;
+    }
+    report += '\n';
+}
+
 report += '</details>\n';
 
 // Write report
