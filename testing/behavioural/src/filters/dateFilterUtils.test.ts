@@ -1,8 +1,9 @@
 import { DateFilterModule } from 'ag-grid-community';
 
 describe('presetDateFilterTypeRelativeFromToMap', () => {
-    const { _presetDateFilterTypeRelativeFromToMap: presetFns } =
-        new DateFilterModule.dynamicBeans!.agDateColumnFilterHandler()!;
+    const presetFns = new DateFilterModule.dynamicBeans!.agDateColumnFilterHandler!()![
+        '_presetDateFilterTypeRelativeFromToMap'
+    ];
     const BASE = 'Wed Apr 08 2020 12:34:56 GMT+0000 (Coordinated Universal Time)';
 
     const ANSWERS = {

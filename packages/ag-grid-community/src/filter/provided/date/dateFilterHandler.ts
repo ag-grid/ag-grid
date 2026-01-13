@@ -24,10 +24,6 @@ export class DateFilterHandler extends ScalarFilterHandler<DateFilterModel, Date
     public readonly filterType = 'date' as const;
     protected readonly FilterModelFormatterClass = DateFilterModelFormatter;
     private readonly _presetDateFilterTypeRelativeFromToMap = presetDateFilterTypeRelativeFromToMap;
-    /**
-     * This is used to prevent desync when user scrolls in SSRM, and to materialise time into a grid state
-     */
-    public readonly beanCreationTime = new Date();
 
     constructor() {
         super(mapValuesFromDateFilterModel, DEFAULT_DATE_FILTER_OPTIONS);
@@ -57,7 +53,8 @@ export class DateFilterHandler extends ScalarFilterHandler<DateFilterModel, Date
             type as ISimpleFilterModelPresetType
         ] as RelativeRangeFn;
         if (presetDateRangeFn) {
-            const [from, to] = presetDateRangeFn(new Date(this.beanCreationTime), new Date(this.beanCreationTime));
+            const now = new Date();
+            const [from, to] = presetDateRangeFn(now, now);
             return comparator(from, cellValue) >= 0 && comparator(to, cellValue) < 0;
         }
 
