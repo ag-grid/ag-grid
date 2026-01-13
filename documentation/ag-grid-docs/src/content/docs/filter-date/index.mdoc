@@ -199,11 +199,29 @@ When providing filter options, the default filter option (or the first option if
 
 ## Built-in Named & Relative Date Ranges
 
-Date Filter includes a set of **predefined named and relative date ranges** to make common filtering tasks easier. These ranges are relative to the browser local time. These are ideal for users who want to filter by familiar time periods like "Last Week", "Year to Date", or "Next 30 Days" without extending a grid with a custom solution.
+Date Filter supports a set of **predefined named and relative date ranges** to make common filtering tasks easier. These ranges are relative to the browser local time. These are ideal for users who want to filter by familiar time periods like "Last Week", "Year to Date", or "Next 30 Days" without extending a grid with a custom solution.
 
-{% note %}
-This feature is not included by default. To enable it, you must add the options to `filterOptions` in your date filter configuration.
-{% /note %}
+### Enabling Built-in Date Ranges
+
+To enable the built-in date ranges, add them to the `filterOptions` array in your date filter configuration. The options are not included by default.
+
+#### Example: Enable Built-in Date Ranges
+```ts
+// Enable built-in date ranges
+const dateFilterParams = {
+    filterOptions: [
+        'empty', // optional: show 'Choose one' option first
+        'today',
+        'yesterday',
+        'last7Days',
+        'thisMonth',
+        'yearToDate'
+    ],
+    // Other filter settings...
+};
+``` 
+
+{% gridExampleRunner title="Built-in Date Ranges" name="built-in-date-ranges" /%}
 
 ### Available Built-in Date Filter Options
 
@@ -236,31 +254,6 @@ This feature is not included by default. To enable it, you must add the options 
 {% note %}
 `Start Of Today`, `Start Of Tomorrow`, `Start Of XXX` point to the beginning of the corresponding day, e.g. `00:00:00.000` in browser local timezone.
 {% /note %}
-{% note %}
-`[A, B)` means including `A`, but excluding `B`. `[today, tomorrow)` corresponds to a range `00:00:00.000` - `23:59:59.999` 
-{% /note %}
-
-### Enabling Built-in Date Ranges
-
-To enable the built-in date ranges, add them to the `filterOptions` array in your date filter configuration. The options are not included by default.
-
-#### Example: Enable Built-in Date Ranges
-```ts
-// Enable built-in date ranges
-const dateFilterParams = {
-    filterOptions: [
-        'empty', // optional: show 'Choose one' option first
-        'today',
-        'yesterday',
-        'last7Days',
-        'thisMonth',
-        'yearToDate'
-    ],
-    // Other filter settings...
-};
-``` 
-
-{% gridExampleRunner title="Built-in Date Ranges" name="built-in-date-ranges" /%}
 
 ## Range Input Validation and Error States
 

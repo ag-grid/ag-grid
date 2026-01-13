@@ -3,6 +3,7 @@ import {
     ClientSideRowModelModule,
     DateFilterModule,
     ModuleRegistry,
+    TextFilterModule,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
@@ -10,6 +11,7 @@ import {
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     DateFilterModule,
+    TextFilterModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
@@ -63,7 +65,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 
 // Setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    const gridDiv: HTMLElement | null = document.querySelector('#myGrid');
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then((response) => response.json())
