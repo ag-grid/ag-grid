@@ -9,11 +9,27 @@ export interface HeroCta {
     useTrialButton?: boolean;
 }
 
+export interface HeroGalleryExample {
+    /** Display title shown in the gallery */
+    title: string;
+    /** Gallery example name or docs example reference */
+    exampleName: string;
+    /** Optional: docs page name if this is a docs example (not gallery) */
+    pageName?: string;
+    /** Thumbnail image URL for navigation */
+    thumbnail?: string;
+}
+
 export interface HeroSection {
     type: 'hero';
     variant?: 'default' | 'enterprise';
     tag: string;
     heading: string;
+    /**
+     * HTML heading with formatting. If provided, takes precedence over heading.
+     * Use for framework pages that need framework logos in headings.
+     */
+    headingHtml?: string;
     /** Plain text subheading */
     subHeading: string;
     /**
@@ -22,15 +38,21 @@ export interface HeroSection {
      */
     subHeadingHtml?: string;
     showVersionBadge?: boolean;
+    /** Whether to show customer logos in the hero section (default: true) */
+    showCustomerLogos?: boolean;
     /** Primary CTA button (e.g., "Get Started" or "Start Free Trial") */
     primaryCta?: HeroCta;
     /** Secondary CTA link below the demo (e.g., "View All Demos") */
     secondaryCta?: HeroCta;
-    /** Demo grid configuration */
+    /** Demo grid configuration (AG Grid specific) */
     demo?: {
         enableRowGroup?: boolean;
         gridHeight?: number;
     };
+    /** Gallery examples for sliding gallery (AG Charts specific) */
+    galleryExamples?: HeroGalleryExample[];
+    /** Height of the hero demo */
+    demoHeight?: number;
 }
 
 export interface FeatureItem {
@@ -117,7 +139,8 @@ export interface IntegratedChartsSection {
     tag: string;
     heading?: string;
     headingHtml?: string;
-    subHeading: string;
+    subHeading?: string;
+    subHeadingHtml?: string;
     showBackgroundGradient?: boolean;
 }
 
@@ -180,6 +203,8 @@ export interface LandingPageContent {
         title: string;
         description: string;
     };
+    /** Product name for display (e.g., 'AG Grid', 'AG Charts') */
+    productName?: string;
     /** Framework identifier for examples (e.g., 'reactFunctionalTs', 'angular', 'vue3') */
     framework?: string;
     packageName?: string;

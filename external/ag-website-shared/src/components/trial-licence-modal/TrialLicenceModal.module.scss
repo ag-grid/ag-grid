@@ -46,23 +46,23 @@
     top: $spacing-size-4;
     right: $spacing-size-4;
     background: transparent;
-    border: none;
+    border: 1px solid var(--color-button-secondary-border);
     cursor: pointer;
     padding: $spacing-size-2;
     border-radius: var(--radius-md);
-    color: var(--color-fg-secondary);
     transition:
         background-color 0.15s ease,
         color 0.15s ease;
 
     &:hover {
-        background: var(--color-bg-secondary);
+        background: var(--color-button-primary-bg-hover);
         color: var(--color-fg-primary);
     }
 
     svg {
         width: 20px;
         height: 20px;
+        fill: var(--color-button-secondary-border);
     }
 }
 

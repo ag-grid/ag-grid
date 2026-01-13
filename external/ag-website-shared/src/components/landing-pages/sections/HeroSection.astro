@@ -41,6 +41,12 @@ const primaryCtaAnalytics = section.primaryCta?.useTrialButton
     : `${pageContent.analyticsPrefix}-get-started`;
 
 const secondaryCtaAnalytics = `${pageContent.analyticsPrefix}-view-demos`;
+
+// Product name for version badge (defaults to 'AG Grid' for backwards compatibility)
+const productName = pageContent.productName ?? 'AG Grid';
+
+// Whether to show customer logos (defaults to true)
+const showCustomerLogos = section.showCustomerLogos !== false;
 ---
 
 <div class={styles.heroSection}>
@@ -57,7 +63,9 @@ const secondaryCtaAnalytics = `${pageContent.analyticsPrefix}-view-demos`;
                                 `plausible-event-name=${pageContent.analyticsPrefix}-whats-new`,
                             ]}
                         >
-                            <span class={styles.heroSectionVersion}>AG Grid v{latestVersion.version}</span>
+                            <span class={styles.heroSectionVersion}>
+                                {productName} v{latestVersion.version}
+                            </span>
                             {latestVersion.landingPageHighlight && (
                                 <span class={styles.heroSectionFeatureHighlight}>
                                     <span>{latestVersion.landingPageHighlight}</span>
@@ -128,7 +136,7 @@ const secondaryCtaAnalytics = `${pageContent.analyticsPrefix}-view-demos`;
                     </a>
                 )
             }
-            <slot name="hero-logos" />
+            {showCustomerLogos && <slot name="hero-logos" />}
         </div>
     </div>
 </div>
