@@ -37,7 +37,7 @@ function getModuleImports(
     const imports = [
         "import React, { useCallback, useMemo, useRef, useState, StrictMode } from 'react';",
         "import { createRoot } from 'react-dom/client';",
-        "import { AgGridReact, AgGridContext} from 'ag-grid-react';",
+        "import { AgGridReact, AgGridProvider } from 'ag-grid-react';",
     ];
 
     if (allStylesheets && allStylesheets.length > 0) {
@@ -67,7 +67,8 @@ function getModuleImports(
     imports.push(getEnableAGTestIdLogic());
 
     if (bindings.moduleRegistration) {
-        imports.push(bindings.moduleRegistration);
+        // TODO: convert from ModuleRegistry.registerModules([_MODS_]) to const modules = [_MODS_]
+        imports.push(bindings.moduleRegistration.replace('ModuleRegistry.registerModules', 'const modules = '));
     }
 
     return removeCreateGridImport(imports);
@@ -375,11 +376,11 @@ ${gridReady}${useFetchHook ?? ''}${darkModeWithGridRef ? '\n' + darkModeWithGrid
 ${[].concat(eventHandlers, externalEventHandlers, instanceMethods).join('\n\n   ')}
 
     return  (
-            <AgGridContext.Provider value={{modules: []}}>
+            <AgGridProvider modules={modules}>
                 <div ${containerStyle}>
                     ${template}
                 </div>
-            </AgGridContext.Provider>
+            </AgGridProvider>
         );
 
 }
