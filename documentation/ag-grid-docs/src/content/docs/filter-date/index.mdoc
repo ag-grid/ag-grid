@@ -206,22 +206,30 @@ Date Filter supports a set of **predefined named and relative date ranges** to m
 To enable the built-in date ranges, add them to the `filterOptions` array in your date filter configuration. The options are not included by default.
 
 #### Example: Enable Built-in Date Ranges
+
+{% gridExampleRunner title="Built-in Date Ranges" name="built-in-date-ranges" /%}
+
+Example above uses following configuration:
+
 ```ts
 // Enable built-in date ranges
 const dateFilterParams = {
     filterOptions: [
-        'empty', // optional: show 'Choose one' option first
-        'today',
-        'yesterday',
-        'last7Days',
-        'thisMonth',
-        'yearToDate'
+      'empty', // optional: show 'Choose one' option first
+      'yesterday',
+      'today',
+      'tomorrow',
+      'last7Days',
+      'lastWeek',
+      'thisWeek',
+      'nextWeek',
+      'last30Days',
+      'lastMonth',
+      // ... All other preset ranges 
     ],
     // Other filter settings...
 };
 ``` 
-
-{% gridExampleRunner title="Built-in Date Ranges" name="built-in-date-ranges" /%}
 
 ### Available Built-in Date Filter Options
 
