@@ -722,7 +722,7 @@ const getNodeText = (node: Node): string => {
     return '';
 };
 
-export const _getNodeTextLength = (node: Node): number => {
+const _getNodeTextLength = (node: Node): number => {
     // Measure text length for caret math (tokens count as their displayed text).
     if (node.nodeType === Node.TEXT_NODE) {
         return node.textContent?.length ?? 0;
