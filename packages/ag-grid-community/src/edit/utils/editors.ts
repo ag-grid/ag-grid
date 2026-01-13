@@ -33,7 +33,8 @@ export const getCellEditorInstances = <TData = any>(
     const ctrls = beans.rowRenderer.getCellCtrls(params.rowNodes, params.columns as AgColumn[]);
     const editors: ICellEditor[] = new Array(ctrls.length);
     let count = 0;
-    for (const ctrl of ctrls) {
+    for (let i = 0, len = ctrls.length; i < len; ++i) {
+        const ctrl = ctrls[i];
         const cellEditor = ctrl.comp?.getCellEditor();
         if (cellEditor) {
             editors[count++] = _unwrapUserComp(cellEditor);
@@ -565,7 +566,8 @@ function _columnDefsRequireValidation(columnDefs?: ColDef[]): boolean {
 
 function _editorsRequireValidation(beans: BeanCollection): boolean {
     const ctrls = beans.rowRenderer.getCellCtrls();
-    for (const ctrl of ctrls) {
+    for (let i = 0, len = ctrls.length; i < len; ++i) {
+        const ctrl = ctrls[i];
         const cellEditor = ctrl.comp?.getCellEditor();
         if (cellEditor) {
             const editor = _unwrapUserComp(cellEditor);
