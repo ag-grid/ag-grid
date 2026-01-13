@@ -27,7 +27,7 @@ If the user provides a command option of `help`:
 -   This project is an Nx monorepo with multiple packages.
 -   Release branches are named `bX.Y.Z` and follow semantic versioning.
 -   The main branch is `latest`.
--   Code quality standards are documented in `tools/prompts/guides/code-quality.md` or `external/ag-shared/prompts/guides/code-quality.md`.
+-   Code quality standards are documented in `external/ag-shared/prompts/guides/code-quality.md`.
 
 ## 3. Workflow
 

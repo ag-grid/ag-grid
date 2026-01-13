@@ -9,6 +9,10 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, _convertColumnEventSourceType, _isExpressionString, _warn } from 'ag-grid-community';
 
+import type {
+    RangeSelectionExtension,
+    RangeSelectionExtensionRegistry,
+} from '../rangeSelection/rangeSelectionExtensions';
 import { parseFormula } from './ast/parsers';
 import { serializeFormula } from './ast/serializer';
 import type { FormulaNode } from './ast/utils';
@@ -91,7 +95,7 @@ interface FormulaFrame {
     ast: FormulaNode;
     unresolvedDepIterator: Generator<Addr>;
 }
-export class FormulaService extends BeanStub implements IFormulaService, NamedBean {
+export class FormulaService extends BeanStub implements IFormulaService, NamedBean, RangeSelectionExtension {
     public readonly beanName = 'formula' as const;
 
     /** Cache: row -> (column -> CellFormula) */
@@ -150,6 +154,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
 
     public postConstruct(): void {
         this.setupFunctions();
+        this.registerRangeSelectionExtension();
 
         const refreshFormulas = () => {
             if (this.active) {
@@ -179,6 +184,19 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             newColumnsLoaded: resetColMap,
             columnMoved: resetColMap,
         });
+    }
+
+    public shouldSuppressRangeSelection(eventTarget: EventTarget | null): boolean {
+        return !!(eventTarget as HTMLElement | null)?.closest?.('.ag-formula-input-field');
+    }
+
+    private registerRangeSelectionExtension(): void {
+        const rangeSvc = this.beans.rangeSvc as RangeSelectionExtensionRegistry | undefined;
+        if (!rangeSvc) {
+            return;
+        }
+        rangeSvc.registerRangeSelectionExtension(this);
+        this.addDestroyFunc(() => rangeSvc.unregisterRangeSelectionExtension?.(this));
     }
 
     public updateFormulaByOffset(params: {

@@ -24,6 +24,7 @@ import type {
     CellClassParams,
     CellCtrl,
     CellPosition,
+    CellRange,
     ColDef,
     IRowNumbersRowResizeFeature,
     IRowNumbersService,
@@ -38,9 +39,13 @@ import type {
     _HeaderComp,
 } from 'ag-grid-community';
 
+import type {
+    RangeSelectionExtension,
+    RangeSelectionExtensionRegistry,
+} from '../rangeSelection/rangeSelectionExtensions';
 import { RowNumbersRowResizeFeature, _isRowNumbersResizerEnabled } from './rowNumbersRowResizeFeature';
 
-export class RowNumbersService extends BeanStub implements NamedBean, IRowNumbersService {
+export class RowNumbersService extends BeanStub implements NamedBean, IRowNumbersService, RangeSelectionExtension {
     beanName = 'rowNumbersSvc' as const;
 
     public columns: _ColumnCollections | null;
@@ -69,6 +74,33 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         });
 
         this.refreshSelectionIntegration();
+        this.registerRangeSelectionExtension();
+    }
+
+    public shouldSkipColumn(column: AgColumn): boolean {
+        return _isRowNumbers(this.beans) && isRowNumberCol(column);
+    }
+
+    public isAllColumnsSelectionCell(cellPosition: CellPosition): boolean {
+        return _isRowNumbers(this.beans) && isRowNumberCol(cellPosition.column);
+    }
+
+    public isAllColumnsRange(range: CellRange, allColumns: AgColumn[]): boolean {
+        if (!_isRowNumbers(this.beans) || allColumns.length === 0) {
+            return false;
+        }
+        return (
+            range.columns.length === allColumns.length && allColumns.every((column) => range.columns.includes(column))
+        );
+    }
+
+    private registerRangeSelectionExtension(): void {
+        const rangeSvc = this.beans.rangeSvc as RangeSelectionExtensionRegistry | undefined;
+        if (!rangeSvc) {
+            return;
+        }
+        rangeSvc.registerRangeSelectionExtension(this);
+        this.addDestroyFunc(() => rangeSvc.unregisterRangeSelectionExtension?.(this));
     }
 
     public addColumns(cols: _ColumnCollections): void {

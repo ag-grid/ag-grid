@@ -14,7 +14,7 @@
   },
   "private": true,
   "engines": {
-    "node": "^20.19.4",
+    "node": "^22.21.1",
     "yarn": "^1.22.21"
   },
   "dependencies": {
