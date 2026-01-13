@@ -1,0 +1,10 @@
+{
+    "mcpServers": {
+        "sequential-thinking": {
+            "type": "stdio",
+            "command": "yarn",
+            "args": ["run", "--silent", "mcp-server-sequential-thinking"],
+            "env": {}
+        }
+    }
+}

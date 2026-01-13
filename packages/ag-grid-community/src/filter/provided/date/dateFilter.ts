@@ -7,12 +7,11 @@ import type { FilterDisplayParams } from '../../../interfaces/iFilter';
 import { _createElement } from '../../../utils/element';
 import { _warn } from '../../../validation/logging';
 import type { FilterLocaleTextKey } from '../../filterLocaleText';
-import type { ICombinedSimpleModel, ISimpleFilterModelPresetType, Tuple } from '../iSimpleFilter';
+import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
-import { presetDateFilterTypeRelativeFromToMap, removeItems } from '../simpleFilterUtils';
+import { removeItems } from '../simpleFilterUtils';
 import { DateCompWrapper } from './dateCompWrapper';
 import { DEFAULT_DATE_FILTER_OPTIONS } from './dateFilterConstants';
-import type { DateFilterHandler } from './dateFilterHandler';
 import { mapValuesFromDateFilterModel } from './dateFilterUtils';
 import type { DateFilterModel, IDateFilterParams } from './iDateFilter';
 
@@ -294,16 +293,6 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         }
         if (values.length > 1) {
             model.dateTo = _serialiseDate(values[1], true, separator);
-        }
-
-        if (type && type in presetDateFilterTypeRelativeFromToMap) {
-            const { beanCreationTime } = params.getHandler() as DateFilterHandler;
-            const { from, to } = presetDateFilterTypeRelativeFromToMap[type as ISimpleFilterModelPresetType](
-                new Date(beanCreationTime),
-                new Date(beanCreationTime)
-            );
-            model.dateFrom = _serialiseDate(from, true, separator);
-            model.dateTo = _serialiseDate(to, true, separator);
         }
 
         return {

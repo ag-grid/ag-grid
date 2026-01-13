@@ -8,7 +8,7 @@ import { FormulaDataService } from './formulaDataService';
 import { FormulaService } from './formulaService';
 
 /**
- * @feature FormulaModule
+ * @feature Formulas
  */
 export const FormulaModule: _ModuleWithoutApi = {
     moduleName: 'Formula',

@@ -150,10 +150,12 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     // Drag And Drop Target Methods
     public onDragStart(mouseEvent: MouseEvent): void {
         const gos = this.gos;
-        if (
-            !_isCellSelectionEnabled(gos) ||
-            _getRowCtrlForEventTarget(gos, mouseEvent.target)?.isSuppressMouseEvent(mouseEvent)
-        ) {
+        const target = mouseEvent.target as HTMLElement | null;
+        if (!_isCellSelectionEnabled(gos) || _getRowCtrlForEventTarget(gos, target)?.isSuppressMouseEvent(mouseEvent)) {
+            return;
+        }
+        // Dragging to select text inside the formula editor should not start range selection.
+        if (isEventWithinFormulaEditor(target)) {
             return;
         }
 
@@ -384,6 +386,12 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
     public handleCellMouseDown(event: MouseEvent, cell: CellPosition): void {
         const { beans } = this;
+        const target = event.target as HTMLElement | null;
+
+        // Clicking inside the formula editor should not create a new range for the edited cell.
+        if (isEventWithinFormulaEditor(target)) {
+            return;
+        }
 
         const isRowNumber = isRowNumberCol(cell.column);
         if (isRowNumber) {
@@ -1047,6 +1055,10 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     public intersectLastRange(fromMouseClick?: boolean) {
         // when ranges are created due to a mouse click without drag (happens in cellMouseListener)
         // this method will be called with `fromMouseClick=true`.
+        // Formula editing relies on overlapping ranges to keep token colors accurate.
+        if (this.beans.editSvc?.isRangeSelectionEnabledWhileEditing?.()) {
+            return;
+        }
         if (fromMouseClick && this.dragging) {
             return;
         }
@@ -1533,4 +1545,8 @@ function replaceEdgeRow(range: CellRange, row: RowPosition | null, topOrBottom: 
         key = !range.startRow || !range.endRow || _isRowBefore(range.startRow, range.endRow) ? 'endRow' : 'startRow';
     }
     range[key] = row ?? undefined;
+}
+
+function isEventWithinFormulaEditor(target: HTMLElement | null): boolean {
+    return !!target?.closest?.('.ag-formula-input-field');
 }

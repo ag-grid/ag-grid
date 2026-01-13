@@ -210,10 +210,13 @@ export class DataTypeService extends BeanStub implements NamedBean {
         colId: string
     ): string | string[] | undefined {
         let { cellDataType } = userColDef;
-        const { field } = userColDef;
+
         if (cellDataType === undefined) {
             cellDataType = colDef.cellDataType;
         }
+
+        const { field, allowFormula } = userColDef;
+
         if (cellDataType == null || cellDataType === true) {
             cellDataType = this.canInferCellDataType(colDef, userColDef) ? this.inferCellDataType(field, colId) : false;
         }
@@ -226,7 +229,10 @@ export class DataTypeService extends BeanStub implements NamedBean {
             _warn(47, { cellDataType });
             return undefined;
         }
+
         colDef.cellDataType = cellDataType;
+        colDef.allowFormula ??= allowFormula;
+
         if (dataTypeDefinition.groupSafeValueFormatter) {
             colDef.valueFormatter = dataTypeDefinition.groupSafeValueFormatter;
         }

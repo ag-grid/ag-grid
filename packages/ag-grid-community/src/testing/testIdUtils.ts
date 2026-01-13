@@ -11,19 +11,23 @@ function formatTestId(name: string, attributes: Record<string, string | number |
     return [name, params].filter((s) => s.length > 0).join(':');
 }
 
-export type FilterSpec =
-    | {
-          source: 'filter-toolpanel';
-          colLabel?: string | null;
-      }
-    | {
-          source: 'column-filter';
-          colId?: string | null;
-      }
-    | {
-          source: 'floating-filter';
-          colId?: string | null;
-      };
+interface FilterToolpanelSpec {
+    source: 'filter-toolpanel';
+    colLabel?: string | null;
+}
+
+export interface ColumnFilterSpec {
+    source: 'column-filter';
+    colId?: string | null;
+    index?: number;
+}
+
+interface FloatingFilterSpec {
+    source: 'floating-filter';
+    colId?: string | null;
+}
+
+export type FilterSpec = FilterToolpanelSpec | ColumnFilterSpec | FloatingFilterSpec;
 
 export const agTestIdFor = {
     grid(gridId: string): string {
@@ -68,7 +72,9 @@ export const agTestIdFor = {
     numberFilterInstanceInput(spec: FilterSpec): string {
         return formatTestId(
             `ag-${spec.source}-number-input`,
-            spec.source === 'filter-toolpanel' ? { label: spec.colLabel } : { colId: spec.colId }
+            spec.source === 'filter-toolpanel'
+                ? { label: spec.colLabel }
+                : { colId: spec.colId, index: 'index' in spec ? spec.index : undefined }
         );
     },
     textFilterInstanceInput(spec: FilterSpec): string {
