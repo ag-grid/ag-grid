@@ -38,11 +38,6 @@
             "WebFetch(domain:localhost)",
             "WebFetch(domain:www.npmjs.com)",
             "mcp__ide__getDiagnostics",
-            "mcp__puppeteer__puppeteer_click",
-            "mcp__puppeteer__puppeteer_evaluate",
-            "mcp__puppeteer__puppeteer_hover",
-            "mcp__puppeteer__puppeteer_navigate",
-            "mcp__puppeteer__puppeteer_screenshot",
             "mcp__sequential-thinking__sequentialthinking"
         ],
         "deny": []
