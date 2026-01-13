@@ -25,32 +25,22 @@ import { _getCellCtrl } from './controllers';
 
 export const UNEDITED = Symbol('unedited');
 
-function getCellEditorInstanceMap<TData = any>(
-    beans: BeanCollection,
-    params: GetCellEditorInstancesParams<TData> = {}
-): { ctrl: CellCtrl; editor: ICellEditor }[] {
-    const res: { ctrl: CellCtrl; editor: ICellEditor }[] = [];
-
-    const ctrls = beans.rowRenderer.getCellCtrls(params.rowNodes, params.columns as AgColumn[]);
-
-    for (const ctrl of ctrls) {
-        const cellEditor = ctrl.comp?.getCellEditor();
-
-        if (cellEditor) {
-            res.push({
-                ctrl,
-                editor: _unwrapUserComp(cellEditor),
-            });
-        }
-    }
-
-    return res;
-}
-
 export const getCellEditorInstances = <TData = any>(
     beans: BeanCollection,
     params: GetCellEditorInstancesParams<TData> = {}
-): ICellEditor[] => getCellEditorInstanceMap(beans, params).map((res) => res.editor);
+): ICellEditor[] => {
+    const ctrls = beans.rowRenderer.getCellCtrls(params.rowNodes, params.columns as AgColumn[]);
+    const editors: ICellEditor[] = new Array(ctrls.length);
+    let count = 0;
+    for (const ctrl of ctrls) {
+        const cellEditor = ctrl.comp?.getCellEditor();
+        if (cellEditor) {
+            editors[count++] = _unwrapUserComp(cellEditor);
+        }
+    }
+    editors.length = count;
+    return editors;
+};
 
 export function _setupEditors(
     beans: BeanCollection,
@@ -549,7 +539,10 @@ function dispatchEditingStopped(
     }
 }
 
-const _colDefsHaveValidationRules = (columnDefs: ColDef[]): boolean => {
+function _columnDefsRequireValidation(columnDefs?: ColDef[]): boolean {
+    if (!columnDefs) {
+        return false;
+    }
     for (let i = 0, len = columnDefs.length; i < len; ++i) {
         const colDef = columnDefs[i];
         const params = colDef.cellEditorParams;
@@ -567,27 +560,28 @@ const _colDefsHaveValidationRules = (columnDefs: ColDef[]): boolean => {
         }
     }
     return false;
-};
+}
 
-function _hasValidationRules(beans: BeanCollection): boolean {
-    if (beans.gos.get('getFullRowEditValidationErrors')) {
-        return true;
-    }
-
-    const colDefs = beans.colModel.getColumnDefs();
-    if (colDefs && _colDefsHaveValidationRules(colDefs)) {
-        return true;
-    }
-
-    const editorInstances = getCellEditorInstances(beans);
-    for (let i = 0, len = editorInstances.length; i < len; ++i) {
-        const editor = editorInstances[i];
-        if (editor.getValidationElement || editor.getValidationErrors) {
-            return true;
+function _editorsRequireValidation(beans: BeanCollection): boolean {
+    const ctrls = beans.rowRenderer.getCellCtrls();
+    for (const ctrl of ctrls) {
+        const cellEditor = ctrl.comp?.getCellEditor();
+        if (cellEditor) {
+            const editor = _unwrapUserComp(cellEditor);
+            if (editor.getValidationElement || editor.getValidationErrors) {
+                return true;
+            }
         }
     }
-
     return false;
+}
+
+function _hasValidationRules(beans: BeanCollection): boolean {
+    return (
+        !!beans.gos.get('getFullRowEditValidationErrors') ||
+        _columnDefsRequireValidation(beans.colModel.getColumnDefs()) ||
+        _editorsRequireValidation(beans)
+    );
 }
 
 export function _populateModelValidationErrors(beans: BeanCollection, force?: boolean): void {
@@ -595,16 +589,20 @@ export function _populateModelValidationErrors(beans: BeanCollection, force?: bo
         return;
     }
 
-    const mappedEditors = getCellEditorInstanceMap(beans);
     const cellValidationModel = new EditCellValidationModel();
 
     const { ariaAnnounce, localeSvc, editModelSvc, gos } = beans;
     const includeRows = gos.get('editType') === 'fullRow';
     const translate = _getLocaleTextFunc(localeSvc);
     const ariaValidationErrorPrefix = translate('ariaValidationErrorPrefix', 'Cell Editor Validation');
+    const rowCtrlSet = new Set<RowCtrl>();
+    for (const ctrl of beans.rowRenderer.getCellCtrls()) {
+        const cellEditorComp = ctrl.comp?.getCellEditor();
+        if (!cellEditorComp) {
+            continue;
+        }
 
-    for (const mappedEditor of mappedEditors) {
-        const { ctrl, editor } = mappedEditor;
+        const editor = _unwrapUserComp(cellEditorComp);
         const { rowNode, column } = ctrl;
         const errorMessages = editor.getValidationErrors?.() ?? [];
         const el = editor.getValidationElement?.(false) || (!editor.isPopup?.() && ctrl.eGui);
@@ -636,6 +634,7 @@ export function _populateModelValidationErrors(beans: BeanCollection, force?: bo
                 }
             );
         }
+        rowCtrlSet.add(ctrl.rowCtrl);
     }
 
     _syncFromEditors(beans, { persist: false });
@@ -643,12 +642,6 @@ export function _populateModelValidationErrors(beans: BeanCollection, force?: bo
     // the cellValidationModel should probably be reused to avoid
     // the second loop over mappedEditor below
     editModelSvc?.setCellValidationModel(cellValidationModel);
-
-    const rowCtrlSet = new Set<RowCtrl>();
-
-    for (const { ctrl } of mappedEditors) {
-        rowCtrlSet.add(ctrl.rowCtrl);
-    }
 
     if (includeRows) {
         const rowValidations = _generateRowValidationErrors(beans);
