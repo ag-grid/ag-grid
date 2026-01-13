@@ -410,7 +410,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
         const filterClass = spec.source === 'floating-filter' ? '.ag-floating-filter-body' : '.ag-filter-body';
 
         filterRoot
-            .querySelectorAll(`${filterClass} .ag-filter-filter:not(.ag-hidden) input[type="number"]`)
+            .querySelectorAll(`${filterClass} .ag-input-field:not(.ag-hidden) input[type="number"]`)
             .forEach((numberInput, i, array) => {
                 const setIndex = array.length > 1;
                 const filterSpec = setIndex ? { ...(spec as ColumnFilterSpec), index: i } : spec;
@@ -418,7 +418,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
             });
 
         filterRoot
-            .querySelectorAll(`${filterClass} .ag-filter-filter:not(.ag-hidden) input[type="text"]`)
+            .querySelectorAll(`${filterClass} .ag-input-field:not(.ag-hidden) input[type="text"]`)
             .forEach((textInput, i, array) => {
                 const setIndex = array.length > 1;
                 const filterSpec = setIndex ? { ...(spec as ColumnFilterSpec), index: i } : spec;
@@ -426,7 +426,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
             });
 
         filterRoot
-            .querySelectorAll(`${filterClass} .ag-filter-filter:not(.ag-hidden) input[type="date"]`)
+            .querySelectorAll(`${filterClass} .ag-input-field:not(.ag-hidden) input[type="date"]`)
             .forEach((dateInput, i, array) => {
                 const setIndex = array.length > 1;
                 const filterSpec = setIndex ? { ...(spec as ColumnFilterSpec), index: i } : spec;

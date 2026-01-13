@@ -77,7 +77,10 @@ export const agTestIdFor = {
         return formatTestId(`ag-${spec.source}-date-input`, prepFilterSpec(spec));
     },
     setFilterInstanceMiniFilterInput(spec: FilterSpec): string {
-        return formatTestId(`ag-${spec.source}-set-filter-mini-filter-input`, prepFilterSpec(spec));
+        return formatTestId(
+            `ag-${spec.source}-set-filter-mini-filter-input`,
+            spec.source === 'filter-toolpanel' ? { label: spec.colLabel } : { colId: spec.colId }
+        );
     },
     setFilterInstanceItem(spec: FilterSpec, itemLabel?: string | null): string {
         return formatTestId(
