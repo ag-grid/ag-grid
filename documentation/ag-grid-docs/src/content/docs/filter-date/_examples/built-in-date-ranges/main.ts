@@ -24,7 +24,6 @@ const columnDefs: ColDef[] = [
             // Enable built-in named & relative date ranges
             filterOptions: [
                 'empty',
-                'equals',
                 'yesterday',
                 'today',
                 'tomorrow',

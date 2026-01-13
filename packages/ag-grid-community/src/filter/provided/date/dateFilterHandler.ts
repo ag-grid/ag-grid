@@ -53,8 +53,7 @@ export class DateFilterHandler extends ScalarFilterHandler<DateFilterModel, Date
             type as ISimpleFilterModelPresetType
         ] as RelativeRangeFn;
         if (presetDateRangeFn) {
-            const now = new Date();
-            const [from, to] = presetDateRangeFn(now, now);
+            const [from, to] = presetDateRangeFn(new Date(), new Date());
             return comparator(from, cellValue) >= 0 && comparator(to, cellValue) < 0;
         }
 
