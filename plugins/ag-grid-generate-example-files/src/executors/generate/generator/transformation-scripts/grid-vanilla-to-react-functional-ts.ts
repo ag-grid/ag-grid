@@ -66,11 +66,6 @@ function getModuleImports(
 
     imports.push(getEnableAGTestIdLogic());
 
-    if (bindings.moduleRegistration) {
-        // TODO: convert from ModuleRegistry.registerModules([_MODS_]) to const modules = [_MODS_]
-        imports.push(bindings.moduleRegistration.replace('ModuleRegistry.registerModules', 'const modules = '));
-    }
-
     return removeCreateGridImport(imports);
 }
 
@@ -92,6 +87,16 @@ function getImports(
 
     if (useFetchHook) {
         imports.push(`import { useFetchJson } from './useFetchJson';`);
+    }
+
+    if (bindings.moduleRegistration) {
+        // Modules registration is different in React - we just export the modules array and pass it to AgGridProvider
+        const reactModuleRegistration = bindings.moduleRegistration.replace(
+            /ModuleRegistry\.registerModules\(\s*\[([\s\S]*?)\]\s*\);/,
+            'const modules = [$1];'
+        );
+        imports.push('\n');
+        imports.push(reactModuleRegistration);
     }
     return imports;
 }
