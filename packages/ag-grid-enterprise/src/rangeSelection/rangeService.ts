@@ -27,6 +27,7 @@ import type {
 import {
     AutoScrollService,
     BeanStub,
+    KeyCode,
     _areCellsEqual,
     _areEqual,
     _exists,
@@ -1437,6 +1438,10 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         if (!firstRow || !lastRow) {
             // No rows yet
             return;
+        }
+
+        if ((event as KeyboardEvent).key === KeyCode.ENTER) {
+            event.preventDefault();
         }
 
         if (event.shiftKey) {
