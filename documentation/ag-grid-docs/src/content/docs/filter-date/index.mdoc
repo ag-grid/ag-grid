@@ -199,7 +199,7 @@ When providing filter options, the default filter option (or the first option if
 
 ## Built-in Named & Relative Date Ranges
 
-Date Filter supports a set of **predefined named and relative date ranges** to make common filtering tasks easier. These ranges are relative to the browser local time. These are ideal for users who want to filter by familiar time periods like "Last Week", "Year to Date", or "Next 30 Days" without extending a grid with a custom solution.
+Date Filter supports a set of predefined named and relative date ranges to make common filtering tasks easier. These ranges are relative to the browser local time. These are ideal for users who want to filter by familiar time periods like "Last Week", "Year to Date", or "Next 30 Days" without extending a grid with a custom solution.
 
 ### Enabling Built-in Date Ranges
 
@@ -213,22 +213,28 @@ Example above uses following configuration:
 
 ```ts
 // Enable built-in date ranges
-const dateFilterParams = {
-    filterOptions: [
-      'empty', // optional: show 'Choose one' option first
-      'yesterday',
-      'today',
-      'tomorrow',
-      'last7Days',
-      'lastWeek',
-      'thisWeek',
-      'nextWeek',
-      'last30Days',
-      'lastMonth',
-      // ... All other preset ranges 
-    ],
-    // Other filter settings...
-};
+const columnDefs: ColDef[] = [
+  {
+    filter: 'agDateColumnFilter',
+    filterParams: {
+      // Enable built-in named & relative date ranges
+      filterOptions: [
+        'empty', // optional: show 'Choose one' option first
+        'yesterday',
+        'today',
+        'tomorrow',
+        'last7Days',
+        'lastWeek',
+        'thisWeek',
+        'nextWeek',
+        'last30Days',
+        'lastMonth',
+        // ... All other preset ranges 
+      ],
+      // Other filter settings...
+    },
+  },
+];
 ``` 
 
 ### Available Built-in Date Filter Options
