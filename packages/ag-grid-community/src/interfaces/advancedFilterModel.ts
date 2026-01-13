@@ -1,4 +1,4 @@
-import type { CheckDataTypes } from '../entities/dataType';
+import type { BigIntDataTypeDefinition, CheckDataTypes } from '../entities/dataType';
 
 export type AdvancedFilterModel = JoinAdvancedFilterModel | ColumnAdvancedFilterModel;
 
@@ -97,6 +97,17 @@ export interface ObjectAdvancedFilterModel {
     type: TextAdvancedFilterModelType;
 }
 
+/** Represents a single filter condition for BigInt columns */
+export interface BigIntAdvancedFilterModel {
+    filterType: 'bigint';
+    /** The ID of the column being filtered. */
+    colId: string;
+    /** The value to filter on. This is the same value as displayed in the input. */
+    filter?: string;
+    /** The filter option that is being applied. */
+    type: TextAdvancedFilterModelType;
+}
+
 export interface DateTimeAdvancedFilterModel {
     filterType: 'dateTime';
     /** The ID of the column being filtered. */
@@ -121,6 +132,7 @@ export interface DateTimeStringAdvancedFilterModel {
 export type ColumnAdvancedFilterModel =
     | BooleanAdvancedFilterModel
     | ObjectAdvancedFilterModel
+    | BigIntAdvancedFilterModel
     | DateAdvancedFilterModel
     | DateStringAdvancedFilterModel
     | DateTimeAdvancedFilterModel

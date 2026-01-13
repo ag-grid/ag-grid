@@ -19,6 +19,7 @@ export const buildAdvancedFilterFeatureSchema = ({ colModel, dataTypeSvc }: Bean
         dateTimeString: [],
         number: [],
         text: [],
+        bigint: [],
     };
 
     for (const col of columns) {
@@ -77,6 +78,27 @@ const buildObjectFilterSchema = (colIds: string[]) => {
         type: s.enum(
             ['equals', 'notEqual', 'contains', 'notContains', 'startsWith', 'endsWith', 'blank', 'notBlank'],
             'Object filter operation type'
+        ),
+    });
+};
+
+const buildBigIntFilterSchema = (colIds: string[]) => {
+    return s.object({
+        filterType: s.literal('bigint', 'Filter type identifier for BigInt column filters'),
+        colId: s.enum(colIds, 'Column identifier for the BigInt column to filter'),
+        filter: s.string('Filter value to compare against BigInt column values').nullable(),
+        type: s.enum(
+            [
+                'equals',
+                'notEqual',
+                'lessThan',
+                'lessThanOrEqual',
+                'greaterThan',
+                'greaterThanOrEqual',
+                'blank',
+                'notBlank',
+            ],
+            'BigInt filter operation type'
         ),
     });
 };
@@ -213,6 +235,7 @@ const buildTextFilterSchema = (colIds: string[]) => {
 };
 
 const DataTypeSchemaBuilders: Record<BaseCellDataType, (colIds: string[]) => any> = {
+    bigint: buildBigIntFilterSchema,
     boolean: buildBooleanFilterSchema,
     object: buildObjectFilterSchema,
     date: buildDateFilterSchema,

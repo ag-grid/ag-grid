@@ -36,6 +36,7 @@ export interface DataTypeFilterExpressionOperators<ConvertedTValue, TValue = Con
 export abstract class FilterExpressionOperators
     implements Record<BaseCellDataType, DataTypeFilterExpressionOperators<any>>
 {
+    bigint: DataTypeFilterExpressionOperators<bigint, string>;
     dateTime: DataTypeFilterExpressionOperators<Date>;
     dateTimeString: DataTypeFilterExpressionOperators<Date, string>;
     text: DataTypeFilterExpressionOperators<string>;
@@ -177,7 +178,7 @@ interface ScalarFilterExpressionOperatorsParams<ConvertedTValue> extends FilterE
     equals: (value: ConvertedTValue, operand: ConvertedTValue) => boolean;
 }
 
-export class ScalarFilterExpressionOperators<ConvertedTValue extends number | Date, TValue = ConvertedTValue>
+export class ScalarFilterExpressionOperators<ConvertedTValue extends number | Date | bigint, TValue = ConvertedTValue>
     implements DataTypeFilterExpressionOperators<ConvertedTValue, TValue>
 {
     public operators: { [operator: string]: FilterExpressionOperator<ConvertedTValue, TValue> };

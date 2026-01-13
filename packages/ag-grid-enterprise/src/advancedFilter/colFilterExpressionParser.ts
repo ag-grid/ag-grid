@@ -184,10 +184,14 @@ class OperandParser implements Parser {
     public endPosition: number | undefined;
     private quotes: `'` | `"` | undefined;
     private operand = '';
-    private modelValue: number | string;
+    private modelValue: number | string | bigint;
     private validationMessage: string | null = null;
 
-    private readonly filterValidationSetters: Record<BaseCellDataType, (modelValue: string | number | null) => any> = {
+    private readonly filterValidationSetters: Record<
+        BaseCellDataType,
+        (modelValue: string | number | bigint | null) => any
+    > = {
+        bigint(): void {},
         number: () => {
             if (this.quotes || isNaN(this.modelValue as number)) {
                 this.valid = false;
@@ -259,7 +263,7 @@ class OperandParser implements Parser {
         return this.operand;
     }
 
-    public getModelValue(): string | number {
+    public getModelValue(): string | bigint | number {
         return this.modelValue;
     }
 
@@ -296,6 +300,7 @@ export class ColFilterExpressionParser {
     private operandParser: OperandParser | undefined;
 
     private readonly operandValueGetters: Record<BaseCellDataType, (operand: any) => any> = {
+        bigint: BigInt,
         number: Number,
         date: (operand) => this.params.valueSvc.parseValue(this.columnParser!.column!, null, operand, undefined),
         dateString: (...args) => this.operandValueGetters.date(...args),

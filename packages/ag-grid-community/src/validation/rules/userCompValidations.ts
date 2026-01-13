@@ -4,6 +4,8 @@ import type { ValidationModuleName } from '../../interfaces/iModule';
 export const USER_COMP_MODULES: Record<UserComponentName, ValidationModuleName> = {
     agSetColumnFilter: 'SetFilter',
     agSetColumnFloatingFilter: 'SetFilter',
+    agBigIntColumnFloatingFilter: 'BigIntFilter',
+    agBigIntColumnFilter: 'BigIntFilter',
     agMultiColumnFilter: 'MultiFilter',
     agMultiColumnFloatingFilter: 'MultiFilter',
     agGroupColumnFilter: 'GroupFilter',

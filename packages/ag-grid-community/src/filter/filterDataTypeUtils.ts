@@ -79,10 +79,12 @@ type FilterParamsDefMap = CheckDataTypes<{
     dateTimeString: FilterParamCallback<IDateFilterParams>;
     text: FilterParamCallback<ITextFilterParams>;
     object: FilterParamCallback<ITextFilterParams, any>;
+    bigint: FilterParamCallback<ITextFilterParams, bigint>;
 }>;
 
 // using an object here to enforce dev to not forget to implement new types as they are added
 const filterParamsForEachDataType: FilterParamsDefMap = {
+    bigint: () => undefined,
     number: () => undefined,
     boolean: () => ({
         maxNumConditions: 1,
@@ -183,6 +185,12 @@ const setFilterParamsForEachDataType: FilterParamsDefMap = {
             return _exists(valueFormatted) ? valueFormatted : t('blanks', '(Blanks)');
         },
     }),
+    bigint: ({ formatValue, t }) => ({
+        valueFormatter: (params: ValueFormatterParams) => {
+            const valueFormatted = formatValue(params);
+            return _exists(valueFormatted) ? valueFormatted : t('blanks', '(Blanks)');
+        },
+    }),
     text: () => undefined,
 };
 
@@ -216,6 +224,7 @@ export function _getFilterParamsForDataType(
 }
 
 const defaultFilters: Record<BaseCellDataType, UserComponentName> = {
+    bigint: 'agBigIntColumnFilter',
     boolean: 'agTextColumnFilter',
     date: 'agDateColumnFilter',
     dateString: 'agDateColumnFilter',
@@ -227,6 +236,7 @@ const defaultFilters: Record<BaseCellDataType, UserComponentName> = {
 };
 
 const defaultFloatingFilters: Record<BaseCellDataType, UserComponentName> = {
+    bigint: 'agBigIntColumnFloatingFilter',
     boolean: 'agTextColumnFloatingFilter',
     date: 'agDateColumnFloatingFilter',
     dateString: 'agDateColumnFloatingFilter',

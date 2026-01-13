@@ -120,6 +120,7 @@ type InternalModuleName =
 export type CommunityModuleName =
     | 'AlignedGrids'
     | 'AllCommunity'
+    | 'BigIntFilter'
     | 'CellApi'
     | 'CellStyle'
     | 'CheckboxEditor'
@@ -255,6 +256,7 @@ export type AgModuleName =
     | 'ContextMenuModule'
     | 'ExcelExportModule'
     | 'FiltersToolPanelModule'
+    | 'BigIntFilterModule'
     | 'FindModule'
     | 'GridChartsModule'
     | 'IntegratedChartsModule'

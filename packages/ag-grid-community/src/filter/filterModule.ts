@@ -26,6 +26,9 @@ import { FilterManager } from './filterManager';
 import { FilterMenuFactory } from './filterMenuFactory';
 import { FilterValueService } from './filterValueService';
 import { ReadOnlyFloatingFilter } from './floating/provided/readOnlyFloatingFilter';
+import { BigIntFilter } from './provided/bigint/bigintFilter';
+import { BigIntFilterHandler } from './provided/bigint/bigintFilterHandler';
+import { BigIntFloatingFilter } from './provided/bigint/bigintFloatingFilter';
 import { DateFilter } from './provided/date/dateFilter';
 import { DateFilterHandler } from './provided/date/dateFilterHandler';
 import { DateFloatingFilter } from './provided/date/dateFloatingFilter';
@@ -152,6 +155,24 @@ export const NumberFilterModule: _ModuleWithoutApi = {
     },
     dynamicBeans: {
         agNumberColumnFilterHandler: NumberFilterHandler,
+    },
+};
+
+export const BigIntFilterModule: _ModuleWithoutApi = {
+    moduleName: 'BigIntFilter',
+    version: VERSION,
+    dependsOn: [ColumnFilterModule],
+    userComponents: {
+        agBigIntColumnFilter: {
+            classImp: BigIntFilter,
+            params: {
+                useForm: true,
+            } as FilterWrapperParams,
+        },
+        agBigIntColumnFloatingFilter: BigIntFloatingFilter,
+    },
+    dynamicBeans: {
+        agNumberColumnFilterHandler: BigIntFilterHandler,
     },
 };
 

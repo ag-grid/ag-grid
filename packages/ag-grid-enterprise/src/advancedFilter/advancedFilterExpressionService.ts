@@ -36,6 +36,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     private dataTypeSvc?: DataTypeService;
 
     private readonly filterOperandGetters: Record<BaseCellDataType, (model: any) => string | null> = {
+        bigint: (model) => _toStringOrNull(model.filter) ?? '',
         number: (model) => _toStringOrNull(model.filter) ?? '',
         date: (model) => {
             const column = this.colModel.getColDefCol(model.colId);
@@ -63,8 +64,9 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
 
     private readonly operandModelValueGetters: Record<
         BaseCellDataType,
-        (op: string, cln: AgColumn, dt: BaseCellDataType) => number | string | null
+        (op: string, cln: AgColumn, dt: BaseCellDataType) => number | string | bigint | null
     > = {
+        bigint: (operand) => (_exists(operand) ? BigInt(operand) : null),
         number: (operand) => (_exists(operand) ? Number(operand) : null),
         date: (operand, column, baseCellDataType) =>
             _serialiseDate(
@@ -133,7 +135,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         operand: string,
         baseCellDataType: BaseCellDataType,
         column: AgColumn
-    ): string | number | null {
+    ): string | number | bigint | null {
         return this.operandModelValueGetters[baseCellDataType](operand, column, baseCellDataType);
     }
 
@@ -346,6 +348,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         };
 
         return {
+            bigint: new ScalarFilterExpressionOperators<bigint, string>({ translate, equals: (a, b) => a === b }),
             text: new TextFilterExpressionOperators({ translate }),
             boolean: new BooleanFilterExpressionOperators({ translate }),
             object: new TextFilterExpressionOperators<any>({ translate }),

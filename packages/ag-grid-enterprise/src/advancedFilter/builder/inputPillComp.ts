@@ -33,6 +33,7 @@ type SupportedInstances = InstanceType<SupportedComponent>;
 const inputComponentDescriptors: {
     [S in BaseCellDataType]: [SupportedComponent] | [SupportedComponent, (instance: SupportedInstances) => void];
 } = {
+    bigint: [AgInputTextField],
     number: [AgInputNumberField],
     boolean: [AgInputTextField],
     object: [AgInputTextField],

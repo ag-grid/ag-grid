@@ -52,6 +52,7 @@ const SORTED_CELL_DATA_TYPES_FOR_MATCHING: readonly Exclude<BaseCellDataType, 'd
     'number',
     'boolean',
     'date',
+    'bigint',
 ] as const;
 
 export class DataTypeService extends BeanStub implements NamedBean {
@@ -522,6 +523,22 @@ export class DataTypeService extends BeanStub implements NamedBean {
             formatValue: DataTypeFormatValueFunc;
         }) => Partial<ColDef>
     > = {
+        bigint({ formatValue, colModel, colId }): Partial<ColDef> {
+            return {
+                cellEditorParams: {
+                    useFormatter: true,
+                },
+                comparator: (a: any, b: any) => {
+                    const column = colModel.getColDefCol(colId);
+                    const colDef = column?.getColDef();
+                    if (!column || !colDef) {
+                        return 0;
+                    }
+                    return a > b ? 1 : -1;
+                },
+                keyCreator: formatValue,
+            };
+        },
         number() {
             return { cellEditor: 'agNumberCellEditor' };
         },
@@ -642,6 +659,22 @@ export class DataTypeService extends BeanStub implements NamedBean {
         const translate = this.getLocaleTextFunc();
 
         return {
+            bigint: {
+                baseDataType: 'bigint',
+                valueParser: (params: ValueParserLiteParams<any, bigint>) => {
+                    return params.newValue && BigInt(params.newValue);
+                },
+                valueFormatter: (params: ValueFormatterLiteParams<any, unknown>) => {
+                    if (params.value == null) {
+                        return '';
+                    }
+                    if (typeof params.value !== 'bigint') {
+                        return translate('invalidBigInt', 'Invalid BigInt');
+                    }
+                    return params.value.toString();
+                },
+                dataTypeMatcher: (value: any) => typeof value === 'bigint' || value instanceof BigInt,
+            },
             number: {
                 baseDataType: 'number',
                 // can be empty space with legacy copy

@@ -935,6 +935,7 @@ export {
     DateFilterModule,
     ExternalFilterModule,
     NumberFilterModule,
+    BigIntFilterModule,
     QuickFilterModule,
     TextFilterModule,
 } from './filter/filterModule';
