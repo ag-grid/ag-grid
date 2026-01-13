@@ -25,6 +25,10 @@ inputs:
     description: 'Git ref to get .github/actions from (for testing older refs that lack these actions)'
     required: false
     default: ''
+  source-ref:
+    description: 'Git ref to get source code from (swaps src folders for ag-grid-community, ag-grid-enterprise, ag-grid-react). When set, uses ref for tooling but source-ref for actual source code.'
+    required: false
+    default: ''
 
 runs:
   using: composite
@@ -50,6 +54,54 @@ runs:
         rm -rf .github/actions
         cp -r .actions-temp/.github/actions .github/actions
         rm -rf .actions-temp
+
+    - name: Checkout source from source-ref
+      if: inputs.source-ref != '' && inputs.source-ref != inputs.ref
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.source-ref }}
+        sparse-checkout: |
+          packages/ag-grid-community/src
+          packages/ag-grid-enterprise/src
+          packages/ag-grid-react/src
+        path: .source-temp
+
+    - name: Swap src folders from source-ref
+      if: inputs.source-ref != '' && inputs.source-ref != inputs.ref
+      shell: bash
+      run: |
+        echo "Swapping src folders from ${{ inputs.source-ref }} into ${{ inputs.ref }} tooling..."
+
+        # Swap ag-grid-community/src
+        if [ -d ".source-temp/packages/ag-grid-community/src" ]; then
+          rm -rf packages/ag-grid-community/src
+          cp -r .source-temp/packages/ag-grid-community/src packages/ag-grid-community/src
+          echo "✓ Swapped ag-grid-community/src"
+        else
+          echo "⚠ Warning: ag-grid-community/src not found in source-ref"
+        fi
+
+        # Swap ag-grid-enterprise/src
+        if [ -d ".source-temp/packages/ag-grid-enterprise/src" ]; then
+          rm -rf packages/ag-grid-enterprise/src
+          cp -r .source-temp/packages/ag-grid-enterprise/src packages/ag-grid-enterprise/src
+          echo "✓ Swapped ag-grid-enterprise/src"
+        else
+          echo "⚠ Warning: ag-grid-enterprise/src not found in source-ref"
+        fi
+
+        # Swap ag-grid-react/src
+        if [ -d ".source-temp/packages/ag-grid-react/src" ]; then
+          rm -rf packages/ag-grid-react/src
+          cp -r .source-temp/packages/ag-grid-react/src packages/ag-grid-react/src
+          echo "✓ Swapped ag-grid-react/src"
+        else
+          echo "⚠ Warning: ag-grid-react/src not found in source-ref"
+        fi
+
+        # Clean up
+        rm -rf .source-temp
+        echo "Source swap complete."
 
     - name: Setup
       uses: ./.github/actions/setup-nx
