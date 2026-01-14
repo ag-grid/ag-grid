@@ -130,7 +130,7 @@ export class BigIntFilter extends SimpleFilter<BigIntFilterModel, bigint, GridIn
         fromTo: string,
         allowedCharPattern: string | null
     ): GridInputTextField {
-        const eValue = this.createManagedBean(
+        const eValue = this.createManagedBean<GridInputTextField>(
             allowedCharPattern ? new AgInputTextField({ allowedCharPattern }) : new AgInputTextField()
         );
         eValue.addCss(`ag-filter-${fromTo}`);
@@ -253,7 +253,7 @@ function getNormalisedValue(
     bigintParser: IBigIntFilterParams['bigintParser'],
     input: GridInputTextField
 ): bigint | null {
-    return processBigIntFilterValue(stringToBigInt(bigintParser, input.getValue(true)));
+    return processBigIntFilterValue(stringToBigInt(bigintParser, input.getValue()));
 }
 
 function getValidityMessageKey(

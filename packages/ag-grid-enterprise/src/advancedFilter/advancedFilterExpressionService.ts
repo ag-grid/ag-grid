@@ -37,6 +37,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
 
     private readonly filterOperandGetters: Record<BaseCellDataType, (model: any) => string | null> = {
         number: (model) => _toStringOrNull(model.filter) ?? '',
+        bigint: (model) => _toStringOrNull(model.filter) ?? '',
         date: (model) => {
             const column = this.colModel.getColDefCol(model.colId);
             if (!column) {
@@ -63,9 +64,23 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
 
     private readonly operandModelValueGetters: Record<
         BaseCellDataType,
-        (op: string, cln: AgColumn, dt: BaseCellDataType) => number | string | null
+        (op: string, cln: AgColumn, dt: BaseCellDataType) => number | string | bigint | null
     > = {
         number: (operand) => (_exists(operand) ? Number(operand) : null),
+        bigint: (operand) => {
+            if (!_exists(operand)) {
+                return null;
+            }
+            const trimmed = operand.trim();
+            if (trimmed === '' || trimmed === '-' || trimmed === '+') {
+                return null;
+            }
+            try {
+                return BigInt(trimmed);
+            } catch {
+                return null;
+            }
+        },
         date: (operand, column, baseCellDataType) =>
             _serialiseDate(
                 this.valueSvc.parseValue(column, null, operand, undefined),
@@ -133,7 +148,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         operand: string,
         baseCellDataType: BaseCellDataType,
         column: AgColumn
-    ): string | number | null {
+    ): string | number | bigint | null {
         return this.operandModelValueGetters[baseCellDataType](operand, column, baseCellDataType);
     }
 
@@ -144,7 +159,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
             return '';
         }
         let operand1 = this.filterOperandGetters[model.filterType](model);
-        if (model.filterType !== 'number') {
+        if (model.filterType !== 'number' && model.filterType !== 'bigint') {
             operand1 ??= _toStringOrNull(filter) ?? '';
             if (!skipFormatting) {
                 operand1 = `"${operand1}"`;
@@ -350,6 +365,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
             boolean: new BooleanFilterExpressionOperators({ translate }),
             object: new TextFilterExpressionOperators<any>({ translate }),
             number: new ScalarFilterExpressionOperators<number>({ translate, equals: (v, o) => v === o }),
+            bigint: new ScalarFilterExpressionOperators<bigint>({ translate, equals: (v, o) => v === o }),
             date: new ScalarFilterExpressionOperators<Date>(dateOperatorsParams),
             dateString: new ScalarFilterExpressionOperators<Date, string>(dateOperatorsParams),
             dateTime: new ScalarFilterExpressionOperators<Date>(dateOperatorsParams),
