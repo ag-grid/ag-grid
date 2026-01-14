@@ -9,8 +9,6 @@ import { type IOlympicData, gridOptions } from './gridOptions';
 import './styles.css';
 import { useFetchJson } from './useFetchJson';
 
-const modules = [AllEnterpriseModule];
-
 interface ChatMessage {
     prompt: string;
     response: string;
@@ -122,7 +120,7 @@ const GridExample = () => {
     }, []);
 
     return (
-        <AgGridProvider modules={modules}>
+        <AgGridProvider modules={[AllEnterpriseModule]}>
             <div className="example-wrapper">
                 <div className="example-controls">
                     <div className="request-container">

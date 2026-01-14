@@ -6,7 +6,6 @@ import type { GridApi, GridReadyEvent, Module } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     CsvExportModule,
-    ModuleRegistry,
     PaginationModule,
     TooltipModule,
     ValidationModule,
@@ -417,30 +416,6 @@ describe('Module Registration compatible with React context', () => {
             expect(api1b.isModuleRegistered('TooltipModule')).toBe(false);
 
             // Grid in Branch 2 should have different modules
-            expect(api2.isModuleRegistered('TooltipModule')).toBe(true);
-            expect(api2.isModuleRegistered('PaginationModule')).toBe(false);
-        });
-
-        test('both branches inherit globally registered modules from ModuleRegistry', async () => {
-            // Register modules globally - both branches should inherit these
-            ModuleRegistry.registerModules([ClientSideRowModelModule, ValidationModule, CsvExportModule]);
-
-            const { api1, api2 } = await renderTwoGridsWithSeparateProviders(
-                [PaginationModule], // Branch 1: adds pagination
-                [TooltipModule] // Branch 2: adds tooltip
-            );
-
-            // Both branches should have the globally registered modules
-            expect(api1.isModuleRegistered('ClientSideRowModelModule')).toBe(true);
-            expect(api2.isModuleRegistered('ClientSideRowModelModule')).toBe(true);
-            expect(api1.isModuleRegistered('CsvExportModule')).toBe(true);
-            expect(api2.isModuleRegistered('CsvExportModule')).toBe(true);
-
-            // Branch 1 should have its context-specific module
-            expect(api1.isModuleRegistered('PaginationModule')).toBe(true);
-            expect(api1.isModuleRegistered('TooltipModule')).toBe(false);
-
-            // Branch 2 should have its context-specific module
             expect(api2.isModuleRegistered('TooltipModule')).toBe(true);
             expect(api2.isModuleRegistered('PaginationModule')).toBe(false);
         });

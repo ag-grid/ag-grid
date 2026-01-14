@@ -1,7 +1,6 @@
-import type { _ModuleWithLicenseManager } from 'packages/ag-grid-community/dist/types/src/main-internal';
 import React, { useContext, useRef } from 'react';
 
-import type { Module } from 'ag-grid-community';
+import type { Module, _ModuleWithLicenseManager } from 'ag-grid-community';
 
 export interface AgGridProviderProps {
     /**
@@ -22,9 +21,7 @@ export const ModulesContext = React.createContext<Module[]>([]);
 export const LicenseContext = React.createContext<string | undefined>(undefined);
 
 /**
- * Compares two module arrays to determine if they contain the same modules.
- * Uses module names for comparison to avoid reference equality issues.
- * Order-independent: [A, B] is considered equal to [B, A].
+ * Compares two arrays of AG Grid Modules for equality based on their module names.
  */
 function areModulesEqual(prevModules: Module[], nextModules: Module[]): boolean {
     if (prevModules.length !== nextModules.length) {
