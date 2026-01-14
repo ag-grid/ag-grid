@@ -1,9 +1,6 @@
 import type { BeanCollection, CellRange } from 'ag-grid-community';
 
-// Allow partial ranges (eg "A1:") so we keep typing within the same token until a breaking operator is entered.
-export const CELL_OR_RANGE_REGEX = /\$?[A-Za-z]+\$?[0-9]+(?::\$?[A-Za-z]+\$?[0-9]+)?:?/g;
-// Parses a complete A1 reference or range like "A1" or "A1:B2" (no trailing colon).
-const FULL_CELL_OR_RANGE_REGEX = /^\$?([A-Za-z]+)\$?(\d+)(?::\$?([A-Za-z]+)\$?(\d+))?$/;
+import { getRefTokenMatches, parseA1Ref } from '../formula/refUtils';
 
 const FORMULA_TOKEN_COLOR_CLASS = 'ag-formula-token-color';
 const FORMULA_RANGE_COLOR_CLASS = 'ag-formula-range-color';
@@ -54,30 +51,30 @@ export const tagRangeWithFormulaColor = (
 // Range helpers
 export const getCellRangeParams = (beans: BeanCollection, ref: string) => {
     // Allow a trailing ":" while the user is still typing a range (e.g. "A1:").
-    const normalizedRef = ref.endsWith(':') ? ref.slice(0, -1) : ref;
-    const match = FULL_CELL_OR_RANGE_REGEX.exec(normalizedRef);
-    if (!match) {
+    const parsed = parseA1Ref(ref, { allowTrailingColon: true });
+    if (!parsed) {
         return null;
     }
 
     const { formula } = beans;
+    const { startCol, startRow, endCol, endRow } = parsed;
+    const startColRef = startCol;
+    const endColRef = endCol ?? startCol;
+    const startColMatch = formula?.getColByRef(startColRef);
+    const endColMatch = formula?.getColByRef(endColRef);
 
-    const [, startColRef, startRowStr, endColRef, endRowStr] = match;
-    const startCol = formula?.getColByRef(startColRef);
-    const endCol = formula?.getColByRef(endColRef ?? startColRef);
-
-    if (!startCol || !endCol) {
+    if (!startColMatch || !endColMatch) {
         return null;
     }
 
-    const rowStartIndex = parseInt(startRowStr, 10) - 1;
-    const rowEndIndex = endRowStr ? parseInt(endRowStr, 10) - 1 : rowStartIndex;
+    const rowStartIndex = parseInt(startRow, 10) - 1;
+    const rowEndIndex = endRow ? parseInt(endRow, 10) - 1 : rowStartIndex;
 
     return {
         rowStartIndex,
         rowEndIndex,
-        columnStart: startCol,
-        columnEnd: endCol,
+        columnStart: startColMatch,
+        columnEnd: endColMatch,
     };
 };
 
@@ -140,13 +137,5 @@ type RefToken = { ref: string; index: number };
 
 export const getRefTokensFromText = (text: string): RefToken[] => {
     // Extract A1-style refs/ranges with their occurrence index (left-to-right).
-    const tokens: RefToken[] = [];
-    let match: RegExpExecArray | null;
-    let index = 0;
-    CELL_OR_RANGE_REGEX.lastIndex = 0;
-    while ((match = CELL_OR_RANGE_REGEX.exec(text)) != null) {
-        tokens.push({ ref: match[0], index });
-        index += 1;
-    }
-    return tokens;
+    return getRefTokenMatches(text).map(({ ref, index }) => ({ ref, index }));
 };

@@ -1,5 +1,5 @@
 import type { ICellEditorParams } from 'ag-grid-community';
-import { AgAbstractCellEditor, KeyCode, RefPlaceholder, _isBrowserSafari } from 'ag-grid-community';
+import { AgAbstractCellEditor, KeyCode, RefPlaceholder, _isBrowserSafari, _placeCaretAtEnd } from 'ag-grid-community';
 
 import { AgFormulaInputField } from '../../widgets/agFormulaInputField';
 
@@ -55,10 +55,11 @@ export class FormulaCellEditor extends AgAbstractCellEditor<ICellEditorParams> {
             return;
         }
 
+        const { beans, eEditor } = this;
         if (!_isBrowserSafari()) {
             this.focusIn();
         }
-        this.eEditor.placeCaretAtEnd();
+        _placeCaretAtEnd(beans, eEditor.getContentElement());
     }
 
     public focusIn(): void {

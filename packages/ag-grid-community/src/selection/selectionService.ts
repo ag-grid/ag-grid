@@ -758,11 +758,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         }
 
         if (!isSelectAll) {
-            const detailSelected = this.detailSelection.get(node.id!) ?? new Set();
-            for (const n of detailApi.getSelectedNodes()) {
-                detailSelected.add(n.id!);
-            }
-            this.detailSelection.set(node.id!, detailSelected);
+            this.detailSelection.set(node.id!, new Set(detailApi.getSelectedNodes().map((n) => n.id!)));
         }
     }
 
