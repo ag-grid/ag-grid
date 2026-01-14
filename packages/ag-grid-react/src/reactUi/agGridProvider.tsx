@@ -5,7 +5,7 @@ import type { Module } from 'ag-grid-community';
 
 export interface AgGridProviderProps {
     /**
-     * The AG Grid modules to be used by all grid instances within this provider.
+     * The AG Grid Modules to be used by all grid instances within this provider.
      */
     modules: Module[];
     /**
@@ -38,12 +38,9 @@ function areModulesEqual(prevModules: Module[], nextModules: Module[]): boolean 
 }
 
 /**
- * Provider component that supplies AG Grid modules and license key to all grid instances within its scope.
- * This component stabilizes the modules array to prevent unnecessary re-renders when the array reference
- * changes but the contents remain the same.
+ * Provider component that supplies AG Grid Modules and license key to all grid instances within its scope.
  *
- * When nested, child providers inherit modules from parent providers. The merged modules are deduplicated
- * by module name, with child modules taking precedence.
+ * When nested, modules are accumulated from all providers and provided to each AgGridReact instance.
  */
 export function AgGridProvider({ modules, licenseKey, children }: AgGridProviderProps) {
     const parentModules = useContext(ModulesContext);
