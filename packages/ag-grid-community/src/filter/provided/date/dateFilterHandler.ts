@@ -34,10 +34,7 @@ export class DateFilterHandler extends ScalarFilterHandler<DateFilterModel, Date
 
     private refreshFilterBaseDate(): void {
         if (this.isAlive()) {
-            this.filterTypeToRangeCache.forEach((_, type) => {
-                const presetDateRangeFn = presetDateFilterTypeRelativeFromToMap[type] as RelativeRangeFn;
-                this.filterTypeToRangeCache.set(type, presetDateRangeFn(new Date(), new Date()));
-            });
+            this.filterTypeToRangeCache.clear();
             const filterBaseDateTimeout = setTimeout(
                 () => this.refreshFilterBaseDate(),
                 12 * 60 * 60 * 1000 // 12 hours
@@ -70,8 +67,11 @@ export class DateFilterHandler extends ScalarFilterHandler<DateFilterModel, Date
         const presetDateRangeFn = presetDateFilterTypeRelativeFromToMap[typeAsPreset] as RelativeRangeFn;
         if (presetDateRangeFn) {
             // indicates we are in preset time ranges space
-            const cache = this.filterTypeToRangeCache.get(typeAsPreset) || presetDateRangeFn(new Date(), new Date());
-            this.filterTypeToRangeCache.set(typeAsPreset, cache);
+            let cache = this.filterTypeToRangeCache.get(typeAsPreset);
+            if (!cache) {
+                cache = presetDateRangeFn(new Date(), new Date());
+                this.filterTypeToRangeCache.set(typeAsPreset, cache);
+            }
             const [from, to] = cache;
             return comparator(from, cellValue) >= 0 && comparator(to, cellValue) < 0;
         }
