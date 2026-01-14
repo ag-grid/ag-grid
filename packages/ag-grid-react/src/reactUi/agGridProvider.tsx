@@ -38,9 +38,11 @@ function areModulesEqual(prevModules: Module[], nextModules: Module[]): boolean 
 }
 
 /**
- * Provider component that supplies AG Grid Modules and license key to all grid instances within its scope.
+ * Provider component that supplies AG Grid Modules and license key to all grid instances within its scope via React Context.
  *
  * When nested, modules are accumulated from all providers and provided to each AgGridReact instance.
+ *
+ * This is an alternative to providing modules globally via `ModuleRegistry.registerModules()` and setting the license key via `LicenseManager.setLicenseKey()`.
  */
 export function AgGridProvider({ modules, licenseKey, children }: AgGridProviderProps) {
     const parentModules = useContext(ModulesContext);
