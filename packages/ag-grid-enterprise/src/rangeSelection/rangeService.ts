@@ -1442,14 +1442,14 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
      */
     public handleColumnSelection(clickedColumn: AgColumn | AgColumnGroup, event: MouseEvent | KeyboardEvent): void {
         const { gos, beans, columnRangeSelectionCtx: ctx, cellRanges } = this;
-        const enableColumnSelection = _getEnableColumnSelection(gos);
-        if (!enableColumnSelection) {
+        if (!_getEnableColumnSelection(gos)) {
             return;
         }
 
-        const { suppressMultiRanges } = this.getMultiRangeContext();
+        const { suppressMultiRanges, editingWithRanges } = this.getMultiRangeContext();
         const hasRanges = cellRanges.length > 0;
         const isMeta = event.ctrlKey || event.metaKey;
+        const allowToggle = !editingWithRanges || isMeta;
 
         const firstRow = _getFirstRow(beans);
         const lastRow = _getLastRow(beans);
@@ -1463,7 +1463,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         }
 
         if (event.shiftKey) {
-            // doing range selection
+            // Extend a column range from the stored root to the clicked column.
             const root = ctx.root;
             if (!root) {
                 return;
@@ -1481,44 +1481,35 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
             }
 
             this.updateRangeRowBoundary({ cellRange: range, boundary: 'end', cellPosition: { column, ...lastRow } });
-        } else if (clickedColumn.isColumn) {
-            if (hasRanges && (suppressMultiRanges || !isMeta)) {
-                this.removeAllCellRanges(true);
-            }
-            const foundRange = this.findContainingRange(
-                { columns: [clickedColumn], startRow: firstRow, endRow: lastRow },
-                true
-            );
+            return;
+        }
 
-            const lastCellRange = foundRange
-                ? this.deselectColumnsFromRange(foundRange, [clickedColumn])
-                : this.selectColumns([clickedColumn], firstRow, lastRow);
+        // Clicking a header selects or toggles a full-column range (all rows).
+        if (hasRanges && (suppressMultiRanges || (!isMeta && !editingWithRanges))) {
+            this.removeAllCellRanges(true);
+        }
 
-            if (lastCellRange) {
-                ctx.lastCellRange = lastCellRange;
-            }
-            ctx.root = clickedColumn;
-        } else {
-            if (hasRanges && (suppressMultiRanges || !isMeta)) {
-                this.removeAllCellRanges(true);
-            }
-            // clicked a column group so we want to select all leaf columns of the group
-            const leafCols = clickedColumn.getDisplayedLeafColumns();
-            const foundRange = this.findContainingRange(
-                { columns: leafCols, startRow: firstRow, endRow: lastRow },
-                true
-            );
+        const toggleColumns = (columns: AgColumn[], root: AgColumn): void => {
+            const foundRange = this.findContainingRange({ columns, startRow: firstRow, endRow: lastRow }, true);
 
-            if (foundRange) {
-                this.deselectColumnsFromRange(foundRange, leafCols);
-                ctx.root = leafCols[0];
+            if (foundRange && allowToggle) {
+                this.deselectColumnsFromRange(foundRange, columns);
             } else {
-                const addedRange = this.selectColumns(leafCols, firstRow, lastRow);
-                ctx.root = leafCols[0];
+                const addedRange = this.selectColumns(columns, firstRow, lastRow);
                 if (addedRange) {
                     ctx.lastCellRange = addedRange;
                 }
             }
+
+            ctx.root = root;
+        };
+
+        if (clickedColumn.isColumn) {
+            toggleColumns([clickedColumn], clickedColumn);
+        } else {
+            // Column groups select all leaf columns as a single range.
+            const leafCols = clickedColumn.getDisplayedLeafColumns();
+            toggleColumns(leafCols, leafCols[0]);
         }
     }
 
