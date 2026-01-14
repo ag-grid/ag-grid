@@ -37,7 +37,7 @@ export class DateFilterHandler extends ScalarFilterHandler<DateFilterModel, Date
             this.filterTypeToRangeCache.clear();
             const filterBaseDateTimeout = setTimeout(
                 () => this.refreshFilterBaseDate(),
-                12 * 60 * 60 * 1000 // 12 hours
+                setStartOfNextDay(new Date()).getTime() - Date.now() - 60 * 1000
             );
             this.addDestroyFunc(() => clearTimeout(filterBaseDateTimeout));
         }
