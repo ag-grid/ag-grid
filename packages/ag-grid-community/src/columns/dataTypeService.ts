@@ -527,7 +527,13 @@ export class DataTypeService extends BeanStub implements NamedBean {
             return { cellEditor: 'agNumberCellEditor' };
         },
         bigint() {
-            return { cellEditor: 'agTextCellEditor' };
+            return {
+                cellEditor: 'agTextCellEditor',
+                comparator: {
+                    default: bigintComparator,
+                    absolute: bigintAbsoluteComparator,
+                },
+            };
         },
         boolean() {
             return {
@@ -851,6 +857,68 @@ function doesColDefPropPreventInference(
     } else {
         return comparisonValue === undefined ? !!value : value === comparisonValue;
     }
+}
+
+function bigintComparator(valueA: any, valueB: any): number {
+    if (valueA == null) {
+        return valueB == null ? 0 : -1;
+    }
+    if (valueB == null) {
+        return 1;
+    }
+    const bigA = toBigIntOrNull(valueA);
+    const bigB = toBigIntOrNull(valueB);
+    if (bigA != null && bigB != null) {
+        if (bigA === bigB) {
+            return 0;
+        }
+        return bigA > bigB ? 1 : -1;
+    }
+    return String(valueA).localeCompare(String(valueB));
+}
+
+function bigintAbsoluteComparator(valueA: any, valueB: any): number {
+    if (valueA == null) {
+        return valueB == null ? 0 : -1;
+    }
+    if (valueB == null) {
+        return 1;
+    }
+    const bigA = toAbsoluteBigInt(valueA);
+    const bigB = toAbsoluteBigInt(valueB);
+    if (bigA != null && bigB != null) {
+        if (bigA === bigB) {
+            return 0;
+        }
+        return bigA > bigB ? 1 : -1;
+    }
+    return String(valueA).localeCompare(String(valueB));
+}
+
+export function toBigIntOrNull(value: any): bigint | null {
+    if (typeof value === 'bigint') {
+        return value;
+    }
+    if (typeof value !== 'string') {
+        return null;
+    }
+    const trimmed = value.trim();
+    if (trimmed === '' || trimmed === '-' || trimmed === '+') {
+        return null;
+    }
+    try {
+        return BigInt(trimmed);
+    } catch {
+        return null;
+    }
+}
+
+function toAbsoluteBigInt(value: any): bigint | null {
+    const bigIntValue = toBigIntOrNull(value);
+    if (bigIntValue == null) {
+        return null;
+    }
+    return bigIntValue < 0n ? -bigIntValue : bigIntValue;
 }
 
 function doColDefPropsPreventInference(

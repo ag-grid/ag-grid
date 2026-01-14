@@ -1,6 +1,7 @@
 import type { LocaleTextFunc } from '../agStack/interfaces/iLocaleService';
 import { _getDateParts } from '../agStack/utils/date';
 import { _exists } from '../agStack/utils/generic';
+import { toBigIntOrNull } from '../columns/dataTypeService';
 import type { BeanCollection, UserComponentName } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { ValueFormatterParams, ValueGetterFunc, ValueGetterParams } from '../entities/colDef';
@@ -64,8 +65,8 @@ function setFilterBigIntComparator<TValue = any>(a: TValue | null, b: TValue | n
     if (b == null) {
         return 1;
     }
-    const valueA = toBigIntForSetFilter(a);
-    const valueB = toBigIntForSetFilter(b);
+    const valueA = toBigIntOrNull(a);
+    const valueB = toBigIntOrNull(b);
     if (valueA != null && valueB != null) {
         if (valueA === valueB) {
             return 0;
@@ -75,23 +76,6 @@ function setFilterBigIntComparator<TValue = any>(a: TValue | null, b: TValue | n
     return String(a).localeCompare(String(b));
 }
 
-function toBigIntForSetFilter(value: any): bigint | null {
-    if (typeof value === 'bigint') {
-        return value;
-    }
-    if (typeof value !== 'string') {
-        return null;
-    }
-    const trimmed = value.trim();
-    if (trimmed === '' || trimmed === '-' || trimmed === '+') {
-        return null;
-    }
-    try {
-        return BigInt(trimmed);
-    } catch {
-        return null;
-    }
-}
 function isValidDate(value: any): boolean {
     return value instanceof Date && !isNaN(value.getTime());
 }

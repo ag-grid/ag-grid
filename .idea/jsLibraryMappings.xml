@@ -15,7 +15,6 @@
     <excludedPredefinedLibrary name="ag-grid/packages/ag-grid-react/node_modules" />
     <excludedPredefinedLibrary name="ag-grid/packages/ag-grid-vue3/node_modules" />
     <excludedPredefinedLibrary name="ag-grid/plugins/ag-grid-generate-code-reference-files/node_modules" />
-    <excludedPredefinedLibrary name="ag-grid/plugins/ag-grid-generate-example-files/dist/node_modules" />
     <excludedPredefinedLibrary name="ag-grid/plugins/ag-grid-generate-example-files/node_modules" />
     <excludedPredefinedLibrary name="ag-grid/plugins/ag-grid-task-autogen/node_modules" />
     <excludedPredefinedLibrary name="ag-grid/testing/accessibility/node_modules" />

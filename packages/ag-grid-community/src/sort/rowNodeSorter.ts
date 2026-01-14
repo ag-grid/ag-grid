@@ -194,9 +194,12 @@ const defaultGetLeaf = (row: RowNode): RowNode | undefined => {
     }
 };
 
-const absoluteValueTransformer = (value: any): number | null => {
+const absoluteValueTransformer = (value: any): number | bigint | null => {
     if (!value) {
         return value;
+    }
+    if (typeof value === 'bigint') {
+        return value < 0n ? -value : value;
     }
     const numberValue = Number(value);
     return isNaN(numberValue) ? value : Math.abs(numberValue);
