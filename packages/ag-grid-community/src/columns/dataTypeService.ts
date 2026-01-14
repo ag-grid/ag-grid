@@ -50,6 +50,7 @@ const SORTED_CELL_DATA_TYPES_FOR_MATCHING: readonly Exclude<BaseCellDataType, 'd
     'dateString',
     'text',
     'number',
+    'bigint',
     'boolean',
     'date',
 ] as const;
@@ -525,6 +526,9 @@ export class DataTypeService extends BeanStub implements NamedBean {
         number() {
             return { cellEditor: 'agNumberCellEditor' };
         },
+        bigint() {
+            return { cellEditor: 'agTextCellEditor' };
+        },
         boolean() {
             return {
                 cellEditor: 'agCheckboxCellEditor',
@@ -657,6 +661,35 @@ export class DataTypeService extends BeanStub implements NamedBean {
                     return String(params.value);
                 },
                 dataTypeMatcher: (value: any) => typeof value === 'number',
+            },
+            bigint: {
+                baseDataType: 'bigint',
+                valueParser: (params: ValueParserLiteParams<any, bigint>) => {
+                    if (params.newValue == null) {
+                        return params.newValue;
+                    }
+                    if (params.newValue?.trim?.() === '') {
+                        return null;
+                    }
+                    if (typeof params.newValue === 'bigint') {
+                        return params.newValue;
+                    }
+                    try {
+                        return BigInt(String(params.newValue));
+                    } catch {
+                        return null;
+                    }
+                },
+                valueFormatter: (params: ValueFormatterLiteParams<any, bigint>) => {
+                    if (params.value == null) {
+                        return '';
+                    }
+                    if (typeof params.value !== 'bigint') {
+                        return translate('invalidBigInt', 'Invalid BigInt');
+                    }
+                    return String(params.value);
+                },
+                dataTypeMatcher: (value: any) => typeof value === 'bigint',
             },
             text: {
                 baseDataType: 'text',
