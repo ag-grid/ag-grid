@@ -3,20 +3,20 @@ import React, { StrictMode, useCallback, useEffect, useMemo, useRef, useState } 
 import { createRoot } from 'react-dom/client';
 
 import type { ChartRef, ColDef, GridReadyEvent } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, ValidationModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
 import { ColumnMenuModule, ContextMenuModule, IntegratedChartsModule, RowGroupingModule } from 'ag-grid-enterprise';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     ClientSideRowModelModule,
     IntegratedChartsModule.with(AgChartsEnterpriseModule),
     ColumnMenuModule,
     ContextMenuModule,
     RowGroupingModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
@@ -66,36 +66,38 @@ const GridExample = () => {
     }, [chartRef]);
 
     return (
-        <div style={containerStyle}>
-            <div id="container">
-                <div style={gridStyle}>
-                    <AgGridReact
-                        rowData={rowData}
-                        columnDefs={columnDefs}
-                        defaultColDef={defaultColDef}
-                        cellSelection={true}
-                        enableCharts={true}
-                        popupParent={popupParent}
-                        createChartContainer={updateChartParams}
-                        onGridReady={onGridReady}
-                    />
-                    <div ref={chartPlaceholderRef} className="chart-wrapper">
-                        {chartRef ? (
-                            <div key={chartRef.chartId}>
-                                <div className="chart-wrapper-top">
-                                    <h2 className="chart-wrapper-title">
-                                        Chart created at {new Date().toLocaleString()}
-                                    </h2>
-                                    <button onClick={() => updateChartParams(undefined)}>Destroy Chart</button>
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div id="container">
+                    <div style={gridStyle}>
+                        <AgGridReact
+                            rowData={rowData}
+                            columnDefs={columnDefs}
+                            defaultColDef={defaultColDef}
+                            cellSelection={true}
+                            enableCharts={true}
+                            popupParent={popupParent}
+                            createChartContainer={updateChartParams}
+                            onGridReady={onGridReady}
+                        />
+                        <div ref={chartPlaceholderRef} className="chart-wrapper">
+                            {chartRef ? (
+                                <div key={chartRef.chartId}>
+                                    <div className="chart-wrapper-top">
+                                        <h2 className="chart-wrapper-title">
+                                            Chart created at {new Date().toLocaleString()}
+                                        </h2>
+                                        <button onClick={() => updateChartParams(undefined)}>Destroy Chart</button>
+                                    </div>
                                 </div>
-                            </div>
-                        ) : (
-                            <div className="chart-placeholder">Chart will be displayed here.</div>
-                        )}
+                            ) : (
+                                <div className="chart-placeholder">Chart will be displayed here.</div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

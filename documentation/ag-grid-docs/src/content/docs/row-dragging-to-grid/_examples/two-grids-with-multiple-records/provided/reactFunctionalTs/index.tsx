@@ -12,25 +12,24 @@ import type {
 import {
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
-    ModuleRegistry,
     RowDragModule,
     RowSelectionModule,
     TextFilterModule,
     ValidationModule,
 } from 'ag-grid-community';
 import type { CustomCellRendererProps } from 'ag-grid-react';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     ClientSideRowModelApiModule,
     TextFilterModule,
     RowDragModule,
     RowSelectionModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const SportRenderer = (props: CustomCellRendererProps) => {
     return (
@@ -225,13 +224,15 @@ const GridExample = () => {
     );
 
     return (
-        <div className="top-container">
-            {getTopToolBar()}
-            <div className="grid-wrapper">
-                {getGridWrapper(0)}
-                {getGridWrapper(1)}
+        <AgGridProvider modules={modules}>
+            <div className="top-container">
+                {getTopToolBar()}
+                <div className="grid-wrapper">
+                    {getGridWrapper(0)}
+                    {getGridWrapper(1)}
+                </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

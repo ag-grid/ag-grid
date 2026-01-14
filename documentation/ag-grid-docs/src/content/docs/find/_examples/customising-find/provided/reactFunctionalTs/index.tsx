@@ -3,23 +3,14 @@
 import React, { ChangeEvent, KeyboardEvent, StrictMode, useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import {
-    ClientSideRowModelModule,
-    ColDef,
-    FindChangedEvent,
-    FindOptions,
-    GridReadyEvent,
-    ModuleRegistry,
-    PaginationModule,
-    PinnedRowModule,
-    ValidationModule,
-} from 'ag-grid-community';
+import type { ColDef, FindChangedEvent, FindOptions, GridReadyEvent } from 'ag-grid-community';
+import { ClientSideRowModelModule, PaginationModule, PinnedRowModule, ValidationModule } from 'ag-grid-community';
 import { FindModule, RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     FindModule,
     RowGroupingModule,
     RowGroupingPanelModule,
@@ -27,7 +18,7 @@ ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     PaginationModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const GridExample = () => {
     const gridRef = useRef<AgGridReact>(null);
@@ -137,64 +128,66 @@ const GridExample = () => {
     }, []);
 
     return (
-        <div style={containerStyle}>
-            <div className="example-wrapper">
-                <div className="example-header">
-                    <div className="example-controls">
-                        <label>
-                            <span>caseSensitive:</span>
-                            <input
-                                id="caseSensitive"
-                                type="checkbox"
-                                onChange={toggleCaseSensitive}
-                                checked={findOptions.caseSensitive}
-                            />
-                        </label>
-                        <label>
-                            <span>currentPageOnly:</span>
-                            <input
-                                id="currentPageOnly"
-                                type="checkbox"
-                                onChange={toggleCurrentPageOnly}
-                                checked={findOptions.currentPageOnly}
-                            />
-                        </label>
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div className="example-wrapper">
+                    <div className="example-header">
+                        <div className="example-controls">
+                            <label>
+                                <span>caseSensitive:</span>
+                                <input
+                                    id="caseSensitive"
+                                    type="checkbox"
+                                    onChange={toggleCaseSensitive}
+                                    checked={findOptions.caseSensitive}
+                                />
+                            </label>
+                            <label>
+                                <span>currentPageOnly:</span>
+                                <input
+                                    id="currentPageOnly"
+                                    type="checkbox"
+                                    onChange={toggleCurrentPageOnly}
+                                    checked={findOptions.currentPageOnly}
+                                />
+                            </label>
+                        </div>
+                        <div className="example-controls">
+                            <span>Find:</span>
+                            <input type="text" onInput={onInput} onKeyDown={onKeyDown} />
+                            <button onClick={previous}>Previous</button>
+                            <button onClick={next}>Next</button>
+                            <span>{activeMatchNum}</span>
+                        </div>
+                        <div className="example-controls">
+                            <span>Go to match:</span>
+                            <input type="number" ref={goToRef} />
+                            <button onClick={goToFind}>Go To</button>
+                        </div>
+                        <div>{activeMatch}</div>
                     </div>
-                    <div className="example-controls">
-                        <span>Find:</span>
-                        <input type="text" onInput={onInput} onKeyDown={onKeyDown} />
-                        <button onClick={previous}>Previous</button>
-                        <button onClick={next}>Next</button>
-                        <span>{activeMatchNum}</span>
-                    </div>
-                    <div className="example-controls">
-                        <span>Go to match:</span>
-                        <input type="number" ref={goToRef} />
-                        <button onClick={goToFind}>Go To</button>
-                    </div>
-                    <div>{activeMatch}</div>
-                </div>
 
-                <div style={gridStyle}>
-                    <AgGridReact
-                        ref={gridRef}
-                        rowData={rowData}
-                        pinnedTopRowData={pinnedTopRowData}
-                        pinnedBottomRowData={pinnedBottomRowData}
-                        columnDefs={columnDefs}
-                        defaultColDef={defaultColDef}
-                        rowGroupPanelShow={'always'}
-                        pagination={true}
-                        paginationPageSize={5}
-                        paginationPageSizeSelector={paginationPageSizeSelector}
-                        findSearchValue={findSearchValue}
-                        findOptions={findOptions}
-                        onGridReady={onGridReady}
-                        onFindChanged={onFindChanged}
-                    />
+                    <div style={gridStyle}>
+                        <AgGridReact
+                            ref={gridRef}
+                            rowData={rowData}
+                            pinnedTopRowData={pinnedTopRowData}
+                            pinnedBottomRowData={pinnedBottomRowData}
+                            columnDefs={columnDefs}
+                            defaultColDef={defaultColDef}
+                            rowGroupPanelShow={'always'}
+                            pagination={true}
+                            paginationPageSize={5}
+                            paginationPageSizeSelector={paginationPageSizeSelector}
+                            findSearchValue={findSearchValue}
+                            findOptions={findOptions}
+                            onGridReady={onGridReady}
+                            onFindChanged={onFindChanged}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

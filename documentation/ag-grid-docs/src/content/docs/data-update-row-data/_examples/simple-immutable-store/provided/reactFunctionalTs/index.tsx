@@ -5,15 +5,14 @@ import type { ColDef, GetRowIdParams, GridApi, GridReadyEvent, RowSelectionOptio
 import {
     ClientSideRowModelModule,
     ColumnApiModule,
-    ModuleRegistry,
     RowSelectionModule,
     TextFilterModule,
     ValidationModule,
 } from 'ag-grid-community';
 import { CellSelectionModule, RowGroupingModule, StatusBarModule } from 'ag-grid-enterprise';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-ModuleRegistry.registerModules([
+const modules = [
     ColumnApiModule,
     TextFilterModule,
     RowSelectionModule,
@@ -22,7 +21,7 @@ ModuleRegistry.registerModules([
     StatusBarModule,
     CellSelectionModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 // creates a unique symbol, eg 'ADG' or 'ZJD'
 function createUniqueRandomSymbol(data: any[]) {
@@ -206,47 +205,49 @@ const GridExample = () => {
     }, [rowData]);
 
     return (
-        <div style={containerStyle}>
-            <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column' }}>
-                <div>
-                    <div style={{ marginBottom: '5px', minHeight: '30px' }}>
-                        <button onClick={reverseItems}>Reverse</button>
-                        <button onClick={() => addFiveItems(true)}>Append</button>
-                        <button onClick={() => addFiveItems(false)}>Prepend</button>
-                        <button onClick={removeSelected}>Remove Selected</button>
-                        <button onClick={updatePrices}>Update Prices</button>
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column' }}>
+                    <div>
+                        <div style={{ marginBottom: '5px', minHeight: '30px' }}>
+                            <button onClick={reverseItems}>Reverse</button>
+                            <button onClick={() => addFiveItems(true)}>Append</button>
+                            <button onClick={() => addFiveItems(false)}>Prepend</button>
+                            <button onClick={removeSelected}>Remove Selected</button>
+                            <button onClick={updatePrices}>Update Prices</button>
+                        </div>
+                        <div style={{ marginBottom: '5px', minHeight: '30px' }}>
+                            <button id="groupingOn" onClick={() => onGroupingEnabled(true)}>
+                                Grouping On
+                            </button>
+                            <button id="groupingOff" onClick={() => onGroupingEnabled(false)}>
+                                Grouping Off
+                            </button>
+                            <button onClick={() => setSelectedToGroup('A')}>Move to Group A</button>
+                            <button onClick={() => setSelectedToGroup('B')}>Move to Group B</button>
+                            <button onClick={() => setSelectedToGroup('C')}>Move to Group C</button>
+                        </div>
                     </div>
-                    <div style={{ marginBottom: '5px', minHeight: '30px' }}>
-                        <button id="groupingOn" onClick={() => onGroupingEnabled(true)}>
-                            Grouping On
-                        </button>
-                        <button id="groupingOff" onClick={() => onGroupingEnabled(false)}>
-                            Grouping Off
-                        </button>
-                        <button onClick={() => setSelectedToGroup('A')}>Move to Group A</button>
-                        <button onClick={() => setSelectedToGroup('B')}>Move to Group B</button>
-                        <button onClick={() => setSelectedToGroup('C')}>Move to Group C</button>
-                    </div>
-                </div>
-                <div style={{ flex: '1 1 0px' }}>
-                    <div style={gridStyle}>
-                        <AgGridReact
-                            ref={gridRef}
-                            rowData={rowData}
-                            columnDefs={columnDefs}
-                            defaultColDef={defaultColDef}
-                            rowSelection={rowSelection}
-                            cellSelection={true}
-                            autoGroupColumnDef={autoGroupColumnDef}
-                            statusBar={statusBar}
-                            groupDefaultExpanded={1}
-                            getRowId={getRowId}
-                            onGridReady={onGridReady}
-                        />
+                    <div style={{ flex: '1 1 0px' }}>
+                        <div style={gridStyle}>
+                            <AgGridReact
+                                ref={gridRef}
+                                rowData={rowData}
+                                columnDefs={columnDefs}
+                                defaultColDef={defaultColDef}
+                                rowSelection={rowSelection}
+                                cellSelection={true}
+                                autoGroupColumnDef={autoGroupColumnDef}
+                                statusBar={statusBar}
+                                groupDefaultExpanded={1}
+                                getRowId={getRowId}
+                                onGridReady={onGridReady}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

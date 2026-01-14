@@ -1,24 +1,18 @@
-import React, { StrictMode, useCallback, useMemo, useState } from 'react';
+import React, { StrictMode, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef, INumberFilterParams } from 'ag-grid-community';
-import {
-    ClientSideRowModelModule,
-    ModuleRegistry,
-    NumberFilterModule,
-    TextFilterModule,
-    ValidationModule,
-} from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
+import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, ValidationModule } from 'ag-grid-community';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import SliderFloatingFilter from './sliderFloatingFilter';
 
-ModuleRegistry.registerModules([
+const modules = [
     TextFilterModule,
     NumberFilterModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const filterParams: INumberFilterParams = {
     filterOptions: ['greaterThan'],
@@ -77,19 +71,21 @@ const GridExample = () => {
     const { data, loading } = useFetchJson<IOlympicData>('https://www.ag-grid.com/example-assets/olympic-winners.json');
 
     return (
-        <div style={containerStyle}>
-            <div style={{ height: '100%', boxSizing: 'border-box' }}>
-                <div style={gridStyle}>
-                    <AgGridReact
-                        rowData={data}
-                        loading={loading}
-                        columnDefs={columnDefs}
-                        defaultColDef={defaultColDef}
-                        alwaysShowVerticalScroll
-                    />
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div style={{ height: '100%', boxSizing: 'border-box' }}>
+                    <div style={gridStyle}>
+                        <AgGridReact
+                            rowData={data}
+                            loading={loading}
+                            columnDefs={columnDefs}
+                            defaultColDef={defaultColDef}
+                            alwaysShowVerticalScroll
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

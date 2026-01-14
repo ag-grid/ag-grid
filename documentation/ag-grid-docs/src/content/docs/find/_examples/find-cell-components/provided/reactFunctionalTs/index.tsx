@@ -1,28 +1,29 @@
 'use client';
 
-import React, { type ChangeEvent, KeyboardEvent, StrictMode, useCallback, useMemo, useRef, useState } from 'react';
+import React, {
+    type ChangeEvent,
+    type KeyboardEventHandler,
+    StrictMode,
+    useCallback,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 import { createRoot } from 'react-dom/client';
 
-import {
-    ClientSideRowModelModule,
-    ColDef,
-    FindChangedEvent,
-    GetFindTextParams,
-    GridReadyEvent,
-    ModuleRegistry,
-    ValidationModule,
-} from 'ag-grid-community';
+import type { ColDef, FindChangedEvent, GetFindTextParams, GridReadyEvent } from 'ag-grid-community';
+import { ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
 import { FindModule } from 'ag-grid-enterprise';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import FindRenderer from './findRenderer';
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     FindModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const GridExample = () => {
     const gridRef = useRef<AgGridReact>(null);
@@ -68,7 +69,7 @@ const GridExample = () => {
         setFindSearchValue(event.target.value);
     }, []);
 
-    const onKeyDown = useCallback((event: KeyboardEvent) => {
+    const onKeyDown = useCallback<KeyboardEventHandler<HTMLInputElement>>((event) => {
         if (event.key === 'Enter') {
             event.preventDefault();
             const backwards = event.shiftKey;
@@ -89,31 +90,33 @@ const GridExample = () => {
     }, []);
 
     return (
-        <div style={containerStyle}>
-            <div className="example-wrapper">
-                <div className="example-header">
-                    <div className="example-controls">
-                        <span>Find:</span>
-                        <input type="text" defaultValue="e" onInput={onInput} onKeyDown={onKeyDown} />
-                        <button onClick={previous}>Previous</button>
-                        <button onClick={next}>Next</button>
-                        <span>{activeMatchNum}</span>
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div className="example-wrapper">
+                    <div className="example-header">
+                        <div className="example-controls">
+                            <span>Find:</span>
+                            <input type="text" defaultValue="e" onInput={onInput} onKeyDown={onKeyDown} />
+                            <button onClick={previous}>Previous</button>
+                            <button onClick={next}>Next</button>
+                            <span>{activeMatchNum}</span>
+                        </div>
+                    </div>
+
+                    <div style={gridStyle}>
+                        <AgGridReact
+                            ref={gridRef}
+                            rowData={rowData}
+                            columnDefs={columnDefs}
+                            findSearchValue={findSearchValue}
+                            onGridReady={onGridReady}
+                            onFindChanged={onFindChanged}
+                            onFirstDataRendered={onFirstDataRendered}
+                        />
                     </div>
                 </div>
-
-                <div style={gridStyle}>
-                    <AgGridReact
-                        ref={gridRef}
-                        rowData={rowData}
-                        columnDefs={columnDefs}
-                        findSearchValue={findSearchValue}
-                        onGridReady={onGridReady}
-                        onFindChanged={onFindChanged}
-                        onFirstDataRendered={onFirstDataRendered}
-                    />
-                </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

@@ -6,7 +6,6 @@ import {
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
     EventApiModule,
-    ModuleRegistry,
     NumberEditorModule,
     NumberFilterModule,
     RowApiModule,
@@ -17,12 +16,12 @@ import {
     themeQuartz,
 } from 'ag-grid-community';
 import { ColumnsToolPanelModule, FiltersToolPanelModule, SetFilterModule } from 'ag-grid-enterprise';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import CustomStatsToolPanel from './customStatsToolPanel';
 import type { IOlympicData } from './interfaces';
 
-ModuleRegistry.registerModules([
+const modules = [
     ClientSideRowModelApiModule,
     NumberEditorModule,
     TextEditorModule,
@@ -35,7 +34,7 @@ ModuleRegistry.registerModules([
     RowApiModule,
     EventApiModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const myTheme = themeQuartz.withPart(
     iconOverrides({
@@ -119,22 +118,24 @@ const GridExample = () => {
     }, []);
 
     return (
-        <div style={containerStyle}>
-            <div style={{ height: '100%', boxSizing: 'border-box' }}>
-                <div style={gridStyle}>
-                    <AgGridReact<IOlympicData>
-                        theme={myTheme}
-                        rowData={data}
-                        loading={loading}
-                        columnDefs={columnDefs}
-                        defaultColDef={defaultColDef}
-                        icons={icons}
-                        sideBar={sideBar}
-                        onCellValueChanged={onCellValueChanged}
-                    />
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div style={{ height: '100%', boxSizing: 'border-box' }}>
+                    <div style={gridStyle}>
+                        <AgGridReact<IOlympicData>
+                            theme={myTheme}
+                            rowData={data}
+                            loading={loading}
+                            columnDefs={columnDefs}
+                            defaultColDef={defaultColDef}
+                            icons={icons}
+                            sideBar={sideBar}
+                            onCellValueChanged={onCellValueChanged}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

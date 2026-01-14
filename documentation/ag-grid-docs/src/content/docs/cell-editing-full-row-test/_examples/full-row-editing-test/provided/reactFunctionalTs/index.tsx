@@ -6,7 +6,6 @@ import {
     ClientSideRowModelModule,
     ColumnApiModule,
     CustomEditorModule,
-    ModuleRegistry,
     NumberEditorModule,
     RenderApiModule,
     SelectEditorModule,
@@ -14,13 +13,13 @@ import {
     ValidationModule,
 } from 'ag-grid-community';
 import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule } from 'ag-grid-enterprise';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 
 const { StrictMode, useCallback, useMemo, useRef, useState } = React;
 
-ModuleRegistry.registerModules([
+const modules = [
     ClientSideRowModelModule,
     ColumnsToolPanelModule,
     ColumnMenuModule,
@@ -32,7 +31,7 @@ ModuleRegistry.registerModules([
     ColumnApiModule,
     RenderApiModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 function getRowData(): any[] {
     const rowData: any[] = [];
@@ -122,26 +121,28 @@ const GridExample = () => {
     }, []);
 
     return (
-        <div style={containerStyle}>
-            <div className="example-wrapper">
-                <div style={{ marginBottom: '5px' }}>
-                    <button style={{ fontSize: '12px' }} onClick={onBtStartEditing}>
-                        Start Editing Line 2
-                    </button>
-                    <button style={{ fontSize: '12px' }} onClick={onBtStopEditing}>
-                        Stop Editing
-                    </button>
-                </div>
-                <div style={gridStyle}>
-                    <AgGridReact
-                        ref={gridRef}
-                        rowData={rowData}
-                        columnDefs={columnDefs}
-                        defaultColDef={defaultColDef}
-                    />
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div className="example-wrapper">
+                    <div style={{ marginBottom: '5px' }}>
+                        <button style={{ fontSize: '12px' }} onClick={onBtStartEditing}>
+                            Start Editing Line 2
+                        </button>
+                        <button style={{ fontSize: '12px' }} onClick={onBtStopEditing}>
+                            Stop Editing
+                        </button>
+                    </div>
+                    <div style={gridStyle}>
+                        <AgGridReact
+                            ref={gridRef}
+                            rowData={rowData}
+                            columnDefs={columnDefs}
+                            defaultColDef={defaultColDef}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 
