@@ -1,9 +1,6 @@
-import { DateFilterModule } from 'ag-grid-community';
+import { presetDateFilterTypeRelativeFromToMap } from './dateFilterHandler';
 
 describe('presetDateFilterTypeRelativeFromToMap', () => {
-    const presetFns = new DateFilterModule.dynamicBeans!.agDateColumnFilterHandler!()![
-        '_presetDateFilterTypeRelativeFromToMap'
-    ];
     const BASE = 'Wed Apr 08 2020 12:34:56 GMT+0000 (Coordinated Universal Time)';
 
     const ANSWERS = {
@@ -43,11 +40,8 @@ describe('presetDateFilterTypeRelativeFromToMap', () => {
     let TO: Date;
 
     beforeEach(() => {
-        vi.stubEnv('TZ', 'UTC');
-        return ([FROM, TO] = [new Date(BASE), new Date(BASE)]);
+        [FROM, TO] = [new Date(BASE), new Date(BASE)];
     });
-
-    afterEach(() => vi.unstubAllEnvs());
 
     it('validate answers', () =>
         Object.values(ANSWERS).forEach((date, index, arr) => {
@@ -81,7 +75,9 @@ describe('presetDateFilterTypeRelativeFromToMap', () => {
         ['last24Months', [ANSWERS.startOfTodayMinus24months, ANSWERS.startOfTomorrow]],
     ])('%s', (fnName, expected) =>
         it('returns correct from/to', () =>
-            expect(presetFns[fnName](FROM, TO).map((d: Date) => d.toString())).toStrictEqual(expected))
+            expect(
+                presetDateFilterTypeRelativeFromToMap[fnName](FROM, TO).map((d: Date) => d.toString())
+            ).toStrictEqual(expected))
     );
     describe.each([
         ['setStartOfDay', ANSWERS.startOfToday],
@@ -98,5 +94,7 @@ describe('presetDateFilterTypeRelativeFromToMap', () => {
         ['setPreviousWeek', ANSWERS.previousWeek],
         ['setPreviousMonth', ANSWERS.previousMonth],
         ['setPreviousQuarter', ANSWERS.previousQuarter],
-    ])('%s', (fnName, expected) => it('works', () => expect(presetFns[fnName](FROM).toString()).toContain(expected)));
+    ])('%s', (fnName, expected) =>
+        it('works', () => expect(presetDateFilterTypeRelativeFromToMap[fnName](FROM).toString()).toContain(expected))
+    );
 });

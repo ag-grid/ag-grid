@@ -23,8 +23,6 @@ function defaultDateComparator(filterDate: Date, cellValue: any): number {
 export class DateFilterHandler extends ScalarFilterHandler<DateFilterModel, Date, IDateFilterParams> {
     public readonly filterType = 'date' as const;
     protected readonly FilterModelFormatterClass = DateFilterModelFormatter;
-    // noinspection JSUnusedLocalSymbols used in testing
-    private readonly _presetDateFilterTypeRelativeFromToMap = presetDateFilterTypeRelativeFromToMap;
     private readonly filterTypeToRangeCache = new Map<ISimpleFilterModelPresetType, [Date, Date]>();
 
     constructor() {
@@ -237,7 +235,7 @@ const tomorrow: RelativeRangeFn = (from: Date, to: Date) => {
  * Last 12 months          last12Months        [startOfToday − 12 months, startOfTomorrow)
  * Last 24 months          last24Months        [startOfToday − 24 months, startOfTomorrow)
  */
-const presetDateFilterTypeRelativeFromToMap: Record<
+export const presetDateFilterTypeRelativeFromToMap: Record<
     | ISimpleFilterModelPresetType
     | 'setStartOfDay'
     | 'setStartOfWeek'
