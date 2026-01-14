@@ -372,9 +372,7 @@ describe('Module Registration compatible with React context', () => {
             render(
                 <div>
                     {/* Branch 1 with two grids sharing the same provider */}
-                    <AgGridProvider
-                        modules={[ClientSideRowModelModule, ValidationModule, PaginationModule]}
-                    >
+                    <AgGridProvider modules={[ClientSideRowModelModule, ValidationModule, PaginationModule]}>
                         <div style={{ width: 600, height: 400 }} data-testid="grid-wrapper-1a">
                             <AgGridReact
                                 columnDefs={[{ field: 'value' }]}
@@ -396,9 +394,7 @@ describe('Module Registration compatible with React context', () => {
                     </AgGridProvider>
 
                     {/* Branch 2 with different provider */}
-                    <AgGridProvider
-                        modules={[ClientSideRowModelModule, ValidationModule, TooltipModule]}
-                    >
+                    <AgGridProvider modules={[ClientSideRowModelModule, ValidationModule, TooltipModule]}>
                         <div style={{ width: 600, height: 400 }} data-testid="grid-wrapper-2">
                             <AgGridReact
                                 columnDefs={[{ field: 'value' }]}
@@ -462,9 +458,7 @@ describe('Module Registration compatible with React context', () => {
             render(
                 <div>
                     {/* Branch 1: provider provides Pagination, props provide CsvExport */}
-                    <AgGridProvider
-                        modules={[ClientSideRowModelModule, ValidationModule, PaginationModule]}
-                    >
+                    <AgGridProvider modules={[ClientSideRowModelModule, ValidationModule, PaginationModule]}>
                         <div style={{ width: 600, height: 400 }} data-testid="grid-wrapper-1">
                             <AgGridReact
                                 columnDefs={[{ field: 'value' }]}
@@ -478,9 +472,7 @@ describe('Module Registration compatible with React context', () => {
                     </AgGridProvider>
 
                     {/* Branch 2: provider provides Tooltip, props provide CsvExport */}
-                    <AgGridProvider
-                        modules={[ClientSideRowModelModule, ValidationModule, TooltipModule]}
-                    >
+                    <AgGridProvider modules={[ClientSideRowModelModule, ValidationModule, TooltipModule]}>
                         <div style={{ width: 600, height: 400 }} data-testid="grid-wrapper-2">
                             <AgGridReact
                                 columnDefs={[{ field: 'value' }]}
@@ -521,10 +513,7 @@ describe('Module Registration compatible with React context', () => {
             });
 
             render(
-                <AgGridProvider
-                    modules={[ClientSideRowModelModule, ValidationModule]}
-                    licenseKey="some-license-key"
-                >
+                <AgGridProvider modules={[ClientSideRowModelModule, ValidationModule]} licenseKey="some-license-key">
                     <div style={{ width: 600, height: 400 }} data-testid="grid-wrapper">
                         <AgGridReact
                             columnDefs={[{ field: 'value' }]}
@@ -626,10 +615,7 @@ describe('Module Registration compatible with React context', () => {
             });
 
             render(
-                <AgGridProvider
-                    modules={[ClientSideRowModelModule, ValidationModule]}
-                    licenseKey="some-license-key"
-                >
+                <AgGridProvider modules={[ClientSideRowModelModule, ValidationModule]} licenseKey="some-license-key">
                     {/* Child provider adds enterprise module but doesn't specify license key */}
                     <AgGridProvider modules={[ClipboardModule]}>
                         <div style={{ width: 600, height: 400 }} data-testid="grid-wrapper">
