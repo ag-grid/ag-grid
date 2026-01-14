@@ -58,7 +58,7 @@ export abstract class SimpleFilter<
     extends ProvidedFilter<M | ICombinedSimpleModel<M>, V, P>
     implements ISimpleFilter
 {
-    public abstract override readonly filterType: 'number' | 'text' | 'date';
+    public abstract override readonly filterType: 'number' | 'bigint' | 'text' | 'date';
 
     protected readonly eTypes: GridSelect[] = [];
     protected readonly eJoinPanels: HTMLElement[] = [];

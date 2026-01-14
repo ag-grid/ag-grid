@@ -8,6 +8,7 @@ const FILTER_LOCALE_TEXT = {
     cancelFilter: 'Cancel',
     textFilter: 'Text Filter',
     numberFilter: 'Number Filter',
+    bigintFilter: 'BigInt Filter',
     dateFilter: 'Date Filter',
     setFilter: 'Set Filter',
     filterOoo: 'Filter...',

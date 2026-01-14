@@ -152,6 +152,7 @@ export type DynamicBeanName =
     | 'agMultiColumnFilterHandler'
     | 'agGroupColumnFilterHandler'
     | 'agNumberColumnFilterHandler'
+    | 'agBigIntColumnFilterHandler'
     | 'agDateColumnFilterHandler'
     | 'agTextColumnFilterHandler';
 
@@ -180,10 +181,12 @@ export type UserComponentName =
     | 'agReadOnlyFloatingFilter'
     | 'agTextColumnFilter'
     | 'agNumberColumnFilter'
+    | 'agBigIntColumnFilter'
     | 'agDateColumnFilter'
     | 'agDateInput'
     | 'agTextColumnFloatingFilter'
     | 'agNumberColumnFloatingFilter'
+    | 'agBigIntColumnFloatingFilter'
     | 'agDateColumnFloatingFilter'
     | 'agMultiColumnFilter'
     | 'agMultiColumnFloatingFilter'

@@ -12,6 +12,7 @@ import type {
     DateStringDataTypeDefinition,
 } from '../entities/dataType';
 import type { ISetFilterParams } from '../interfaces/iSetFilter';
+import type { IBigIntFilterParams } from './provided/bigInt/iBigIntFilter';
 import type { IDateFilterParams } from './provided/date/iDateFilter';
 import type { ISimpleFilterParams } from './provided/iSimpleFilter';
 import type { INumberFilterParams } from './provided/number/iNumberFilter';
@@ -56,6 +57,41 @@ function setFilterNumberComparator<TValue = any>(a: TValue | null, b: TValue | n
     return Number.parseFloat(a as string) - Number.parseFloat(b as string);
 }
 
+function setFilterBigIntComparator<TValue = any>(a: TValue | null, b: TValue | null): number {
+    if (a == null) {
+        return -1;
+    }
+    if (b == null) {
+        return 1;
+    }
+    const valueA = toBigIntForSetFilter(a);
+    const valueB = toBigIntForSetFilter(b);
+    if (valueA != null && valueB != null) {
+        if (valueA === valueB) {
+            return 0;
+        }
+        return valueA > valueB ? 1 : -1;
+    }
+    return String(a).localeCompare(String(b));
+}
+
+function toBigIntForSetFilter(value: any): bigint | null {
+    if (typeof value === 'bigint') {
+        return value;
+    }
+    if (typeof value !== 'string') {
+        return null;
+    }
+    const trimmed = value.trim();
+    if (trimmed === '' || trimmed === '-' || trimmed === '+') {
+        return null;
+    }
+    try {
+        return BigInt(trimmed);
+    } catch {
+        return null;
+    }
+}
 function isValidDate(value: any): boolean {
     return value instanceof Date && !isNaN(value.getTime());
 }
@@ -72,6 +108,7 @@ type FilterParamCallback<P extends ISimpleFilterParams, V = string> = (
 
 type FilterParamsDefMap = CheckDataTypes<{
     number: FilterParamCallback<INumberFilterParams, number>;
+    bigint: FilterParamCallback<IBigIntFilterParams, bigint>;
     boolean: FilterParamCallback<ITextFilterParams, boolean>;
     date: FilterParamCallback<IDateFilterParams, Date>;
     dateString: FilterParamCallback<IDateFilterParams>;
@@ -84,6 +121,7 @@ type FilterParamsDefMap = CheckDataTypes<{
 // using an object here to enforce dev to not forget to implement new types as they are added
 const filterParamsForEachDataType: FilterParamsDefMap = {
     number: () => undefined,
+    bigint: () => undefined,
     boolean: () => ({
         maxNumConditions: 1,
         debounceMs: 0,
@@ -128,6 +166,7 @@ const filterParamsForEachDataType: FilterParamsDefMap = {
 // using an object here to enforce dev to not forget to implement new types as they are added
 const setFilterParamsForEachDataType: FilterParamsDefMap = {
     number: () => ({ comparator: setFilterNumberComparator }),
+    bigint: () => ({ comparator: setFilterBigIntComparator }),
     boolean: ({ t }) => ({
         valueFormatter: (params: ValueFormatterParams<any, boolean>) =>
             _exists(params.value) ? t(String(params.value), params.value ? 'True' : 'False') : t('blanks', '(Blanks)'),
@@ -221,6 +260,7 @@ const defaultFilters: Record<BaseCellDataType, UserComponentName> = {
     dateString: 'agDateColumnFilter',
     dateTime: 'agDateColumnFilter',
     dateTimeString: 'agDateColumnFilter',
+    bigint: 'agBigIntColumnFilter',
     number: 'agNumberColumnFilter',
     object: 'agTextColumnFilter',
     text: 'agTextColumnFilter',
@@ -232,6 +272,7 @@ const defaultFloatingFilters: Record<BaseCellDataType, UserComponentName> = {
     dateString: 'agDateColumnFloatingFilter',
     dateTime: 'agDateColumnFloatingFilter',
     dateTimeString: 'agDateColumnFloatingFilter',
+    bigint: 'agBigIntColumnFloatingFilter',
     number: 'agNumberColumnFloatingFilter',
     object: 'agTextColumnFloatingFilter',
     text: 'agTextColumnFloatingFilter',

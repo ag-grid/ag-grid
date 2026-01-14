@@ -5,6 +5,7 @@ import { _debounce } from '../../../agStack/utils/function';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { ElementParams } from '../../../utils/element';
 import type { ISimpleFilterModelType, ISimpleFilterParams } from '../../provided/iSimpleFilter';
+import type { BigIntFilterModel } from '../../provided/bigInt/iBigIntFilter';
 import type { NumberFilterModel } from '../../provided/number/iNumberFilter';
 import { _isUseApplyButton, getDebounceMs, getPlaceholderText } from '../../provided/providedFilterUtils';
 import type {
@@ -17,7 +18,7 @@ import type { FloatingFilterDisplayParams } from '../floatingFilter';
 import type { FloatingFilterInputService } from './iFloatingFilterInputService';
 import { SimpleFloatingFilter } from './simpleFloatingFilter';
 
-type ModelUnion = TextFilterModel | NumberFilterModel;
+type ModelUnion = TextFilterModel | NumberFilterModel | BigIntFilterModel;
 
 const TextInputFloatingFilterElement: ElementParams = {
     tag: 'div',

@@ -22,6 +22,7 @@ export const FILTER_HANDLER_MAP = {
     agMultiColumnFilter: 'agMultiColumnFilterHandler',
     agGroupColumnFilter: 'agGroupColumnFilterHandler',
     agNumberColumnFilter: 'agNumberColumnFilterHandler',
+    agBigIntColumnFilter: 'agBigIntColumnFilterHandler',
     agDateColumnFilter: 'agDateColumnFilterHandler',
     agTextColumnFilter: 'agTextColumnFilterHandler',
 } as const;

@@ -21,6 +21,7 @@ export function _getDefaultFloatingFilterType(
             agMultiColumnFilter: 'agMultiColumnFloatingFilter',
             agGroupColumnFilter: 'agGroupColumnFloatingFilter',
             agNumberColumnFilter: 'agNumberColumnFloatingFilter',
+            agBigIntColumnFilter: 'agBigIntColumnFloatingFilter',
             agDateColumnFilter: 'agDateColumnFloatingFilter',
             agTextColumnFilter: 'agTextColumnFloatingFilter',
         };

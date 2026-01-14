@@ -33,7 +33,7 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
 
     protected reactive: boolean;
 
-    protected abstract readonly filterType: 'text' | 'number' | 'date';
+    protected abstract readonly filterType: 'text' | 'number' | 'bigint' | 'date';
 
     protected abstract readonly FilterModelFormatterClass: new (
         optionsFactory: OptionsFactory,

@@ -71,7 +71,7 @@ export abstract class ProvidedFilter<
     protected abstract areNonNullModelsEqual(a: M, b: M): boolean;
 
     /** Used to get the filter type for filter models. */
-    public abstract readonly filterType: 'text' | 'number' | 'date' | 'set' | 'multi';
+    public abstract readonly filterType: 'text' | 'number' | 'bigint' | 'date' | 'set' | 'multi';
 
     public postConstruct(): void {
         const element: ElementParams = {

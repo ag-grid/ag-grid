@@ -95,7 +95,7 @@ export type FilterHandlers<TData = any, TValue = any, TContext = any, TModel = a
 export interface ColumnFilter<TData = any, TValue = any, TContext = any, TModel = any, TCustomParams = any> {
     /**
      * Filter component to use for this column.
-     * - Set to the name of a provided filter: `agNumberColumnFilter`, `agTextColumnFilter`, `agDateColumnFilter`, `agMultiColumnFilter`, `agSetColumnFilter`.
+     * - Set to the name of a provided filter: `agNumberColumnFilter`, `agBigIntColumnFilter`, `agTextColumnFilter`, `agDateColumnFilter`, `agMultiColumnFilter`, `agSetColumnFilter`.
      * - Set to a custom filter `FilterDisplay`
      */
     component: any;
@@ -124,7 +124,7 @@ export interface IFilterDef {
     /**
      * Filter to use for this column.
      * - Set to `true` to use the default filter.
-     * - Set to the name of a provided filter: `agNumberColumnFilter`, `agTextColumnFilter`, `agDateColumnFilter`, `agMultiColumnFilter`, `agSetColumnFilter`.
+     * - Set to the name of a provided filter: `agNumberColumnFilter`, `agBigIntColumnFilter`, `agTextColumnFilter`, `agDateColumnFilter`, `agMultiColumnFilter`, `agSetColumnFilter`.
      * - Set to a custom filter `IFilterComp` when `enableFilterHandlers = false`.
      * - Set to a `ColumnFilter` when `enableFilterHandlers = true`
      */

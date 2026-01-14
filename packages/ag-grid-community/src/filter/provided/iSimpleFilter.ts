@@ -18,7 +18,7 @@ export type JoinOperator = 'AND' | 'OR';
 /** Interface contract for the public aspects of the SimpleFilter implementation(s). */
 
 export interface ISimpleFilter extends IProvidedFilter, IFloatingFilterParent {
-    readonly filterType: 'text' | 'number' | 'date';
+    readonly filterType: 'text' | 'number' | 'bigint' | 'date';
 }
 
 export interface IFilterPlaceholderFunctionParams {

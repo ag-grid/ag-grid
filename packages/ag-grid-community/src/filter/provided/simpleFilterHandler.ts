@@ -27,7 +27,7 @@ export abstract class SimpleFilterHandler<
     implements FilterHandler<any, any, TModel | ICombinedSimpleModel<TModel>, TParams>
 {
     /** Used to get the filter type for filter models. */
-    public abstract readonly filterType: 'text' | 'number' | 'date';
+    public abstract readonly filterType: 'text' | 'number' | 'bigint' | 'date';
 
     protected abstract readonly FilterModelFormatterClass: new (
         optionsFactory: OptionsFactory,

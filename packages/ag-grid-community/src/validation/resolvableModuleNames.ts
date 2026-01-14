@@ -9,6 +9,7 @@ import type { RowModelType } from '../interfaces/iRowModel';
 const ALL_COLUMN_FILTERS = [
     'TextFilter',
     'NumberFilter',
+    'BigIntFilter',
     'DateFilter',
     'SetFilter',
     'MultiFilter',

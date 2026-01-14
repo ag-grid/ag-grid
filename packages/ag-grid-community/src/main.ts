@@ -193,6 +193,13 @@ export {
     NumberFilterParams,
 } from './filter/provided/number/iNumberFilter';
 export type { NumberFilter } from './filter/provided/number/numberFilter';
+export {
+    IBigIntFilterParams,
+    IBigIntFloatingFilterParams,
+    BigIntFilterModel,
+    BigIntFilterParams,
+} from './filter/provided/bigInt/iBigIntFilter';
+export type { BigIntFilter } from './filter/provided/bigInt/bigIntFilter';
 export { ProvidedFilter } from './filter/provided/providedFilter';
 export {
     ITextFilterParams,
@@ -934,6 +941,7 @@ export {
     CustomFilterModule,
     DateFilterModule,
     ExternalFilterModule,
+    BigIntFilterModule,
     NumberFilterModule,
     QuickFilterModule,
     TextFilterModule,
