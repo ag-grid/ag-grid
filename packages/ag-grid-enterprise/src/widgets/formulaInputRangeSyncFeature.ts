@@ -407,6 +407,10 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
             const { action, previousRef, tokenIndex } = this.field.applyRangeInsert(ref);
 
             if (action === 'none') {
+                // Range selection while editing appends ranges, so collapse to the latest selection
+                // before stopping the edit to avoid leaving the previous cell highlighted.
+                this.keepLatestSelectionOnly(latestRange);
+
                 // Treat the click as an edit completion when not in a formula context.
                 this.beans.editSvc?.stopEditing(undefined, { source: 'edit' });
                 return;
@@ -444,6 +448,14 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
             this.field.restoreCaretAfterToken();
             this.refocusEditingCell();
         }
+    }
+
+    private keepLatestSelectionOnly(latestRange: CellRange | null): void {
+        if (!latestRange || this.getLiveRanges().length <= 1) {
+            return;
+        }
+
+        this.setCellRangesSilently([latestRange]);
     }
 
     private handleRangeTokenUpdate(
