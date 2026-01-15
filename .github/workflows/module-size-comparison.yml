@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - 'latest'
+      - 'b[0-9][0-9]?.[0-9][0-9]?.[0-9][0-9]?'
     types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
     inputs:
@@ -36,6 +37,7 @@ jobs:
       pr-number: ${{ steps.resolve.outputs.pr-number }}
       head-sha: ${{ steps.resolve.outputs.head-sha }}
       is-draft: ${{ steps.resolve.outputs.is-draft }}
+      base-ref: ${{ steps.resolve.outputs.base-ref }}
       shard-matrix: ${{ steps.resolve.outputs.shard-matrix }}
     steps:
       - name: Resolve PR details
@@ -55,6 +57,7 @@ jobs:
               core.setOutput('pr-number', pr.number.toString());
               core.setOutput('head-sha', pr.head.sha);
               core.setOutput('is-draft', pr.draft ? 'true' : 'false');
+              core.setOutput('base-ref', pr.base.ref);
               return;
             }
 
@@ -79,6 +82,7 @@ jobs:
             core.setOutput('pr-number', pr.number.toString());
             core.setOutput('head-sha', pr.head.sha);
             core.setOutput('is-draft', pr.draft ? 'true' : 'false');
+            core.setOutput('base-ref', pr.base.ref);
 
   # Check for cached base results
   check-base-cache:
@@ -88,14 +92,15 @@ jobs:
     if: needs.prepare.outputs.is-draft != 'true'
     outputs:
       cache-hit: ${{ steps.cache-check.outputs.cache-hit }}
-      latest-sha: ${{ steps.get-sha.outputs.sha }}
+      base-sha: ${{ steps.get-sha.outputs.sha }}
     steps:
-      - name: Get latest branch SHA
+      - name: Get base branch SHA
         id: get-sha
         run: |
-          SHA=$(git ls-remote https://github.com/${{ github.repository }} refs/heads/latest | cut -f1)
+          BASE_REF="${{ needs.prepare.outputs.base-ref }}"
+          SHA=$(git ls-remote https://github.com/${{ github.repository }} refs/heads/${BASE_REF} | cut -f1)
           echo "sha=${SHA}" >> $GITHUB_OUTPUT
-          echo "Latest branch SHA: ${SHA}"
+          echo "Base branch (${BASE_REF}) SHA: ${SHA}"
 
       - name: Check cache for base results
         id: cache-check
@@ -131,7 +136,7 @@ jobs:
           artifact-prefix: module-size-pr
           artifact-suffix: ${{ needs.prepare.outputs.pr-number }}
 
-  # Build and run module size tests on the latest branch (sharded) - only if cache miss
+  # Build and run module size tests on the base branch (sharded) - only if cache miss
   module-size-base:
     name: Module Size Base (${{ matrix.shard }}/${{ strategy.job-total }})
     runs-on: ubuntu-latest
@@ -151,12 +156,12 @@ jobs:
       - name: Run module size tests
         uses: ./.github/actions/module-size-test
         with:
-          ref: latest
+          ref: ${{ needs.prepare.outputs.base-ref }}
           shard: ${{ matrix.shard }}
           total-shards: ${{ strategy.job-total }}
           artifact-prefix: module-size-base
           artifact-suffix: ${{ needs.prepare.outputs.pr-number }}
-          base-ref: latest
+          base-ref: ${{ needs.prepare.outputs.base-ref }}
 
   # Merge base shards and save to cache (only when we had to build)
   cache-base-results:
@@ -191,7 +196,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: ./base-results.json
-          key: module-size-base-${{ needs.check-base-cache.outputs.latest-sha }}
+          key: module-size-base-${{ needs.check-base-cache.outputs.base-sha }}
 
   # Compare results and post PR comment
   compare-and-report:
@@ -206,7 +211,7 @@ jobs:
     env:
       PR_NUMBER: ${{ needs.prepare.outputs.pr-number }}
       CACHE_HIT: ${{ needs.check-base-cache.outputs.cache-hit }}
-      LATEST_SHA: ${{ needs.check-base-cache.outputs.latest-sha }}
+      BASE_SHA: ${{ needs.check-base-cache.outputs.base-sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -237,7 +242,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: ./base-results.json
-          key: module-size-base-${{ env.LATEST_SHA }}
+          key: module-size-base-${{ env.BASE_SHA }}
           fail-on-cache-miss: true
 
       # If cache miss, download artifacts and merge

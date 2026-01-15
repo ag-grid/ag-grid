@@ -81,6 +81,30 @@ export interface ISimpleFilterParams extends IProvidedFilterParams {
     filterPlaceholder?: FilterPlaceholderFunction | string;
 }
 
+export type ISimpleFilterModelPresetType =
+    | 'today'
+    | 'yesterday'
+    | 'tomorrow'
+    | 'thisWeek'
+    | 'lastWeek'
+    | 'nextWeek'
+    | 'thisMonth'
+    | 'lastMonth'
+    | 'nextMonth'
+    | 'thisQuarter'
+    | 'lastQuarter'
+    | 'nextQuarter'
+    | 'thisYear'
+    | 'lastYear'
+    | 'nextYear'
+    | 'yearToDate'
+    | 'last7Days'
+    | 'last30Days'
+    | 'last90Days'
+    | 'last6Months'
+    | 'last12Months'
+    | 'last24Months';
+
 export type ISimpleFilterModelType =
     | 'empty'
     | 'equals'
@@ -95,7 +119,9 @@ export type ISimpleFilterModelType =
     | 'startsWith'
     | 'endsWith'
     | 'blank'
-    | 'notBlank';
+    | 'notBlank'
+    | ISimpleFilterModelPresetType;
+
 export interface ISimpleFilterModel extends ProvidedFilterModel {
     /** One of the filter options, e.g. `'equals'` */
     type?: ISimpleFilterModelType | null;

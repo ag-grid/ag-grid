@@ -1,0 +1,94 @@
+@use 'design-system' as *;
+
+.backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: $spacing-size-4;
+
+    #{$selector-darkmode} & {
+        background: rgba(0, 0, 0, 0.7);
+    }
+}
+
+.modal {
+    position: relative;
+    background: var(--color-bg-primary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: modalSlideIn 0.2s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.closeButton {
+    position: absolute;
+    top: $spacing-size-4;
+    right: $spacing-size-4;
+    background: transparent;
+    border: 1px solid var(--color-button-secondary-border);
+    cursor: pointer;
+    padding: $spacing-size-2;
+    border-radius: var(--radius-md);
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
+
+    &:hover {
+        background: var(--color-button-primary-bg-hover);
+        color: var(--color-fg-primary);
+    }
+
+    svg {
+        width: 20px;
+        height: 20px;
+        fill: var(--color-button-secondary-border);
+    }
+}
+
+.content {
+    padding: $spacing-size-8;
+
+    @media screen and (max-width: $breakpoint-landing-page-small) {
+        padding: $spacing-size-6;
+    }
+}
+
+.title {
+    font-size: var(--text-fs-2xl);
+    font-weight: var(--text-bold);
+    color: var(--color-fg-primary);
+    margin: 0 0 $spacing-size-2 0;
+    padding-right: $spacing-size-8;
+}
+
+.description {
+    font-size: var(--text-fs-md);
+    color: var(--color-fg-secondary);
+    margin: 0 0 $spacing-size-6 0;
+    line-height: 1.5;
+}
+
+.formContainer {
+    // The TrialLicenceForm component styles itself
+}

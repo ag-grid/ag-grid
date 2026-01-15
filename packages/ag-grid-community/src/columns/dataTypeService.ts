@@ -6,7 +6,7 @@ import { _toStringOrNull } from '../agStack/utils/generic';
 import { _getValueUsingField } from '../agStack/utils/value';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, UserComponentName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, SuppressKeyboardEventParams, ValueFormatterFunc, ValueFormatterParams } from '../entities/colDef';
 import type {
@@ -217,11 +217,14 @@ export class DataTypeService extends BeanStub implements NamedBean {
             cellDataType = colDef.cellDataType;
         }
 
-        const { field, allowFormula } = userColDef;
+        const { field } = userColDef;
 
         if (cellDataType == null || cellDataType === true) {
             cellDataType = this.canInferCellDataType(colDef, userColDef) ? this.inferCellDataType(field, colId) : false;
         }
+
+        this.addFormulaCellEditorToColDef(colDef, userColDef);
+
         if (!cellDataType) {
             colDef.cellDataType = false;
             return undefined;
@@ -233,7 +236,6 @@ export class DataTypeService extends BeanStub implements NamedBean {
         }
 
         colDef.cellDataType = cellDataType;
-        colDef.allowFormula ??= allowFormula;
 
         if (dataTypeDefinition.groupSafeValueFormatter) {
             colDef.valueFormatter = dataTypeDefinition.groupSafeValueFormatter;
@@ -245,6 +247,16 @@ export class DataTypeService extends BeanStub implements NamedBean {
             this.setColDefPropertiesForBaseDataType(colDef, cellDataType, dataTypeDefinition, colId);
         }
         return dataTypeDefinition.columnTypes;
+    }
+
+    private addFormulaCellEditorToColDef(colDef: ColDef, userColDef: ColDef): void {
+        const allowFormula = userColDef.allowFormula ?? colDef.allowFormula;
+
+        if (!allowFormula || userColDef.cellEditor) {
+            return;
+        }
+
+        colDef.cellEditor = 'agFormulaCellEditor';
     }
 
     public addColumnListeners(column: AgColumn): void {
@@ -598,21 +610,14 @@ export class DataTypeService extends BeanStub implements NamedBean {
             colId,
             formatValue,
         });
-        Object.assign(colDef, partialColDef);
 
-        const { cellEditor, allowFormula } = colDef;
-
-        if (allowFormula) {
-            const supportedEditors: UserComponentName[] = [
-                'agFormulaCellEditor',
-                'agTextCellEditor',
-                'agLargeTextCellEditor',
-            ];
-
-            if (!supportedEditors.includes(cellEditor)) {
-                colDef.cellEditor = 'agFormulaCellEditor';
-            }
+        // if the user enabled formula and did not manually provide an editor
+        // we should keep `agFormulaCellEditor` as the default editor.
+        if (colDef.cellEditor === 'agFormulaCellEditor' && partialColDef.cellEditor !== colDef.cellEditor) {
+            partialColDef.cellEditor = colDef.cellEditor;
         }
+
+        Object.assign(colDef, partialColDef);
     }
 
     private getDateObjectTypeDef<T extends 'date' | 'dateTime'>(baseDataType: T) {

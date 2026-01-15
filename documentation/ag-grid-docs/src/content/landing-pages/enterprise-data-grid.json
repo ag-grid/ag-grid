@@ -1,0 +1,374 @@
+{
+    "meta": {
+        "title": "AG Grid Enterprise: Advanced Data Grid Features for Professional Applications",
+        "description": "Unlock AG Grid's full potential with Enterprise features including AI Toolkit, Server-Side Row Model, Row Grouping, Master/Detail, and Integrated Charts. Start your free trial today."
+    },
+    "framework": "react",
+    "packageName": "ag-grid-enterprise",
+    "docsPath": "data-grid",
+    "analyticsPrefix": "enterprise",
+
+    "sections": [
+        {
+            "type": "hero",
+            "variant": "enterprise",
+            "tag": "Enterprise Data Grid",
+            "heading": "Enterprise Grade Data Grid for Web Apps",
+            "subHeading": "Fast, secure and accessible, AG Grid Enterprise handles millions of rows and comes with advanced features, including an AI Toolkit, Integrated Charts, Grouping, and Pivoting.",
+            "showVersionBadge": true,
+            "primaryCta": {
+                "text": "Start Free Trial",
+                "useTrialButton": true
+            },
+            "secondaryCta": {
+                "text": "View All Demos",
+                "url": "./example"
+            },
+            "demo": {
+                "enableRowGroup": true,
+                "gridHeight": 600
+            }
+        },
+        {
+            "type": "features",
+            "tag": "Why Upgrade to AG Grid Enterprise?",
+            "heading": "Advanced Features for Complex Data Requirements",
+            "subHeading": "Handle millions of rows with server-side processing, build interactive charts, enable AI-powered grid interactions, and create hierarchical data views - all with simple configuration.",
+            "items": [
+                {
+                    "id": "grouping-aggregation",
+                    "title": "Grouping & Aggregation",
+                    "isEnterprise": true,
+                    "example": {
+                        "pageName": "grouping",
+                        "exampleName": "kitchen-sink"
+                    },
+                    "features": [
+                        {
+                            "heading": "Multi-Level Grouping",
+                            "detail": "Group rows by one or more columns to create hierarchical data views. Users can expand and collapse groups interactively.",
+                            "link": "./data-grid/grouping/"
+                        },
+                        {
+                            "heading": "Automatic Aggregations",
+                            "detail": "Calculate aggregations automatically with built-in functions (sum, avg, count, min, max) or create custom aggregation functions.",
+                            "link": "./data-grid/aggregation/"
+                        },
+                        {
+                            "heading": "Drag & Drop Grouping",
+                            "detail": "Enable row group panel to let users drag columns to group data dynamically without code changes.",
+                            "link": "./data-grid/grouping-group-panel/"
+                        }
+                    ],
+                    "docsLink": "./data-grid/grouping/"
+                },
+                {
+                    "id": "tree-data",
+                    "title": "Tree Data",
+                    "isEnterprise": true,
+                    "example": {
+                        "pageName": "tree-data",
+                        "exampleName": "kitchen-sink"
+                    },
+                    "features": [
+                        {
+                            "heading": "Hierarchical Data",
+                            "detail": "Display hierarchical data with parent-child relationships. Perfect for file browsers, org charts, and nested categories.",
+                            "link": "./data-grid/tree-data/"
+                        },
+                        {
+                            "heading": "Expand & Collapse",
+                            "detail": "Users can expand and collapse tree nodes interactively. Control expansion state programmatically via the API."
+                        },
+                        {
+                            "heading": "Aggregation Support",
+                            "detail": "Apply aggregations to tree data to roll up values from child nodes to parent nodes automatically."
+                        }
+                    ],
+                    "docsLink": "./data-grid/tree-data/"
+                },
+                {
+                    "id": "ssrm",
+                    "title": "Server-Side Row Model",
+                    "isEnterprise": true,
+                    "example": {
+                        "pageName": "server-side-model-configuration",
+                        "exampleName": "cache-configurations"
+                    },
+                    "features": [
+                        {
+                            "heading": "Lazy Loading",
+                            "detail": "Handle millions of rows by loading data on-demand as users scroll. Perfect for large datasets that cannot fit in browser memory.",
+                            "link": "./data-grid/server-side-model/"
+                        },
+                        {
+                            "heading": "Server-Side Operations",
+                            "detail": "Perform sorting, filtering, and grouping on your server for optimal performance.",
+                            "link": "./data-grid/server-side-model-sorting/"
+                        },
+                        {
+                            "heading": "Infinite Scrolling",
+                            "detail": "Combine with infinite scrolling for seamless data loading. Reduces memory footprint and improves initial load times.",
+                            "link": "./data-grid/infinite-scrolling/"
+                        }
+                    ],
+                    "docsLink": "./data-grid/server-side-model/"
+                },
+                {
+                    "id": "excel-export",
+                    "title": "Excel Export",
+                    "isEnterprise": true,
+                    "example": {
+                        "pageName": "excel-export-styles",
+                        "exampleName": "excel-export-with-styles"
+                    },
+                    "features": [
+                        {
+                            "heading": "Native Excel Files",
+                            "detail": "Export grid data to native Excel files (.xlsx) with full formatting support. No server-side processing required.",
+                            "link": "./data-grid/excel-export/"
+                        },
+                        {
+                            "heading": "Style & Format Export",
+                            "detail": "Export with cell styles, fonts, and colors. Preserve your grid's appearance in the exported spreadsheet.",
+                            "link": "./data-grid/excel-export-styles/"
+                        },
+                        {
+                            "heading": "Multiple Sheets",
+                            "detail": "Export to multiple sheets in a single workbook. Include charts, images, and custom content.",
+                            "link": "./data-grid/excel-export-multiple-sheets/"
+                        }
+                    ],
+                    "docsLink": "./data-grid/excel-export/"
+                },
+                {
+                    "id": "ai-toolkit",
+                    "title": "AI Toolkit",
+                    "isEnterprise": true,
+                    "example": {
+                        "pageName": "ai-toolkit",
+                        "exampleName": "natural-language-grid-state"
+                    },
+                    "features": [
+                        {
+                            "heading": "Natural Language Control",
+                            "detail": "Integrate your LLM with AG Grid to let users control grid state via natural language.",
+                            "link": "./data-grid/ai-toolkit/"
+                        },
+                        {
+                            "heading": "Structured Schema Generation",
+                            "detail": "Use getStructuredSchema() to generate LLM-compatible schemas. Works with any LLM supporting structured outputs."
+                        },
+                        {
+                            "heading": "Full State Manipulation",
+                            "detail": "Apply LLM responses directly to the grid with setState(). Supports filtering, sorting, aggregation, pivoting, and more."
+                        }
+                    ],
+                    "docsLink": "./data-grid/ai-toolkit/"
+                },
+                {
+                    "id": "set-filter",
+                    "title": "Set Filter",
+                    "isEnterprise": true,
+                    "example": {
+                        "pageName": "filter-set",
+                        "exampleName": "enabling-set-filters"
+                    },
+                    "features": [
+                        {
+                            "heading": "Excel-Style Filtering",
+                            "detail": "Provide users with an Excel-like filter experience with checkboxes for each unique value in a column.",
+                            "link": "./data-grid/filter-set/"
+                        },
+                        {
+                            "heading": "Search & Select",
+                            "detail": "Built-in search box lets users quickly find values in large lists. Select all, select none, and invert selection with one click."
+                        },
+                        {
+                            "heading": "Async Values",
+                            "detail": "Load filter values asynchronously from your server. Perfect for columns with thousands of unique values.",
+                            "link": "./data-grid/filter-set-filter-list/"
+                        }
+                    ],
+                    "docsLink": "./data-grid/filter-set/"
+                },
+                {
+                    "id": "master-detail",
+                    "title": "Master/Detail",
+                    "isEnterprise": true,
+                    "example": {
+                        "pageName": "master-detail",
+                        "exampleName": "simple"
+                    },
+                    "features": [
+                        {
+                            "heading": "Nested Grids",
+                            "detail": "Display hierarchical data with expandable rows. Each detail row contains a fully featured grid with its own columns and features.",
+                            "link": "./data-grid/master-detail/"
+                        },
+                        {
+                            "heading": "Custom Detail Panels",
+                            "detail": "Use custom detail renderers to display any content in the detail section - forms, charts, or custom components.",
+                            "link": "./data-grid/master-detail-custom-detail/"
+                        },
+                        {
+                            "heading": "Lazy Loading Details",
+                            "detail": "Load detail data on-demand when rows are expanded. Independent configuration for each detail grid."
+                        }
+                    ],
+                    "docsLink": "./data-grid/master-detail/"
+                },
+                {
+                    "id": "context-menu",
+                    "title": "Context Menu",
+                    "isEnterprise": true,
+                    "example": {
+                        "pageName": "context-menu",
+                        "exampleName": "context-menu"
+                    },
+                    "features": [
+                        {
+                            "heading": "Right-Click Menu",
+                            "detail": "Provide a right-click context menu with built-in actions like copy, paste, export, and chart creation.",
+                            "link": "./data-grid/context-menu/"
+                        },
+                        {
+                            "heading": "Custom Menu Items",
+                            "detail": "Add custom menu items with icons, submenus, and keyboard shortcuts. Full control over menu structure.",
+                            "link": "./data-grid/context-menu/#configuring-the-context-menu"
+                        },
+                        {
+                            "heading": "Dynamic Menus",
+                            "detail": "Show different menu items based on the clicked cell, row, or column. Context-aware menus for better user experience."
+                        }
+                    ],
+                    "docsLink": "./data-grid/context-menu/"
+                }
+            ]
+        },
+        {
+            "type": "integrated-charts",
+            "tag": "Built-in Charting",
+            "headingHtml": "Integrated Charts, Powered by <a href='https://www.ag-grid.com/charts/'>AG Charts</a>",
+            "subHeading": "Let your users visualise data with charts directly from the Grid. Select cells, right-click, and create beautiful charts instantly.",
+            "showBackgroundGradient": true
+        },
+        {
+            "type": "comparison",
+            "tag": "Community vs Enterprise",
+            "heading": "Choose the Right Edition for Your Needs",
+            "subHeading": "AG Grid Community is free forever and includes powerful features. Enterprise unlocks advanced capabilities for professional applications.",
+            "showBackgroundGradient": true
+        },
+        {
+            "type": "customers",
+            "tag": "Who Uses AG Grid Enterprise?",
+            "headingHtml": "Trusted By The World's Leading Companies",
+            "subHeadingHtml": "<span>Over <b>90% of the Fortune 500</b> use AG Grid Enterprise, with <a href=\"https://www.npmjs.com/package/ag-grid-enterprise\" target=\"_blank\">2,500,000+</a> npm downloads per month.</span>",
+            "displayLogos": false
+        },
+        {
+            "type": "pricing",
+            "tag": "Ready to Get Started?",
+            "heading": "Simple, Transparent Pricing",
+            "subHeading": "One-time perpetual licence with 1 years of support and updates. Volume & renewal discounts available.",
+            "showBackgroundGradient": true,
+            "cards": [
+                {
+                    "title": "Community",
+                    "price": "Free",
+                    "priceNote": "forever",
+                    "features": ["Core grid functionality", "Sorting, filtering & pagination", "MIT licensed"],
+                    "ctaText": "Get Started",
+                    "ctaUrl": "./data-grid/getting-started/"
+                },
+                {
+                    "title": "Enterprise",
+                    "price": "$999",
+                    "priceNote": "per developer, perpetual licence",
+                    "features": ["All Enterprise features", "Buy once, use forever", "1 year of support & updates"],
+                    "ctaText": "Buy Now",
+                    "ctaUrl": "https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=both",
+                    "isPrimary": true,
+                    "ctaId": "buy-now"
+                },
+                {
+                    "title": "Enterprise Bundle",
+                    "price": "$1,498",
+                    "priceNote": "per developer, perpetual licence",
+                    "features": [
+                        "All Grid & Charts Enterprise Features",
+                        "Buy once, use forever",
+                        "1 year of support & updates"
+                    ],
+                    "ctaText": "Buy Now",
+                    "ctaUrl": "https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=both",
+                    "ctaId": "bundle-buy-now",
+                    "showTrialButton": true
+                }
+            ]
+        },
+        {
+            "type": "faq",
+            "tag": "Enterprise FAQs",
+            "heading": "Frequently Asked Questions",
+            "subHeading": "Common questions about AG Grid Enterprise features and licensing",
+            "items": [
+                {
+                    "question": "Can I try AG Grid Enterprise for free?",
+                    "answer": "Yes! You can install and test all AG Grid Enterprise features locally for free. A watermark and console message will appear until you add a licence key. You can also [request a trial licence](./community-vs-enterprise/#request-a-30-day-enterprise-bundle-trial-licence/) to remove these during your evaluation period."
+                },
+                {
+                    "question": "What is the difference between AG Grid Community and Enterprise?",
+                    "answer": "[AG Grid Community](./getting-started/) is free and open-source with powerful core features. [AG Grid Enterprise](/license-pricing/) adds advanced capabilities like Row Grouping, Server-Side Row Model, AI Toolkit, Integrated Charts, Master/Detail, and dedicated support."
+                },
+                {
+                    "question": "How much does AG Grid Enterprise cost?",
+                    "answer": "AG Grid Enterprise costs $999 USD per developer for a perpetual licence. This includes 1 year of support and updates. Volume discounts are available. Visit the [Pricing page](/license-pricing/) for full details."
+                },
+                {
+                    "question": "What is included in the Enterprise Bundle?",
+                    "answer": "The Enterprise Bundle includes both AG Grid Enterprise and AG Charts Enterprise for $1,598 per developer. This is ideal if you need both advanced grid features and charting capabilities."
+                },
+                {
+                    "question": "What does the AI Toolkit do?",
+                    "answer": "The [AI Toolkit](./ai-toolkit/) allows you to integrate AG Grid with any LLM (like ChatGPT or Gemini) to enable natural language grid control. Users can filter, sort, group, and manipulate data using conversational queries."
+                },
+                {
+                    "question": "What is the Server-Side Row Model?",
+                    "answer": "The [Server-Side Row Model](./server-side-model/) loads data on-demand from your server as users scroll. It's designed for large datasets that cannot be loaded entirely into the browser, supporting server-side sorting, filtering, and grouping."
+                },
+                {
+                    "question": "How many rows can AG Grid Enterprise handle?",
+                    "answer": "With the Server-Side Row Model, AG Grid Enterprise can handle virtually unlimited rows since data is loaded on-demand. The Client-Side Row Model can comfortably handle hundreds of thousands of rows with excellent performance."
+                },
+                {
+                    "question": "What support is included with an Enterprise licence?",
+                    "answer": "Enterprise licences include access to our dedicated [support portal](https://ag-grid.zendesk.com/hc/en-us), monitored 365 days a year. You'll receive priority support from our engineering team, plus access to all updates and new features during your support period."
+                },
+                {
+                    "question": "Is the Enterprise licence perpetual?",
+                    "answer": "Yes, AG Grid Enterprise licences are perpetual. You can use the version you licensed forever. The annual support and updates subscription is optional for renewal, but recommended to access new features and fixes."
+                },
+                {
+                    "question": "Can I upgrade from Community to Enterprise?",
+                    "answer": "Yes, upgrading is simple. Just install `ag-grid-enterprise` alongside your existing AG Grid packages and add your licence key. All your existing code will continue to work, and Enterprise features become available immediately."
+                }
+            ]
+        },
+        {
+            "type": "contact",
+            "variant": "sales",
+            "tag": "Get In Touch",
+            "heading": "Contact Our Sales Team",
+            "subHeading": "Get help with pricing, explore use-cases for your team, and more",
+            "features": [
+                "Custom pricing for large teams",
+                "Dedicated technical support",
+                "Multi-year discounts available",
+                "Response within 24 hours",
+                "Demos & Technical Walkthroughs"
+            ]
+        }
+    ]
+}

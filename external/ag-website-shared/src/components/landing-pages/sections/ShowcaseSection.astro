@@ -1,0 +1,15 @@
+---
+import type { ShowcaseSection, LandingPageContent } from '../types';
+import { LandingPageSection } from '../LandingPageSection';
+
+interface Props {
+    section: ShowcaseSection;
+    pageContent: LandingPageContent;
+}
+
+const { section } = Astro.props;
+---
+
+<LandingPageSection id="showcase" tag={section.tag} heading={section.heading} subHeading={section.subHeading}>
+    <slot />
+</LandingPageSection>
