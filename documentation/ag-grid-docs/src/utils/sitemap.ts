@@ -34,10 +34,10 @@ export const isTestPage = (page: string) => {
 const isRedirectPage = (page: string) => {
     return (
         page.endsWith('/documentation/') ||
-        page.endsWith('/react-data-grid/') ||
-        page.endsWith('/angular-data-grid/') ||
-        page.endsWith('/javascript-data-grid/') ||
-        page.endsWith('/vue-data-grid/') ||
+        (!page.endsWith('/landing-pages/react-data-grid/') && page.endsWith('/react-data-grid/')) ||
+        (!page.endsWith('/landing-pages/angular-data-grid/') && page.endsWith('/angular-data-grid/')) ||
+        (!page.endsWith('/landing-pages/javascript-data-grid/') && page.endsWith('/javascript-data-grid/')) ||
+        (!page.endsWith('/landing-pages/vue-data-grid/') && page.endsWith('/vue-data-grid/')) ||
         page.includes(`/${FRAMEWORK_REDIRECT_PATH}/`)
     );
 };
