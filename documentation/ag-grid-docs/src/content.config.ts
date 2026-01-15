@@ -238,20 +238,6 @@ const seedProjects = defineCollection({
     ),
 });
 
-const reactLandingPage = defineCollection({
-    loader: glob({ base: './src/content/react-landing-page', pattern: 'examples.json' }),
-    schema: z.array(
-        z.object({
-            title: z.string(),
-            img: z.string(),
-            imgAlt: z.string(),
-            content: z.string(),
-            docs: z.string(),
-            demo: z.string(),
-        })
-    ),
-});
-
 const aboutPage = defineCollection({
     loader: glob({ base: './src/content/about', pattern: 'about.json' }),
     schema: z.object({
@@ -286,6 +272,192 @@ const contactResults = defineCollection({
     ),
 });
 
+// ============================================================================
+// Unified Landing Pages Collection
+// All landing page content is defined in a single JSON file per page
+// ============================================================================
+
+const featureItemSchema = z.object({
+    id: z.string(),
+    title: z.string(),
+    isEnterprise: z.boolean().optional(),
+    example: z.object({
+        pageName: z.string(),
+        exampleName: z.string(),
+    }),
+    features: z.array(
+        z.object({
+            heading: z.string(),
+            detail: z.string(),
+            link: z.string().optional(),
+        })
+    ),
+    docsLink: z.string(),
+});
+
+const exampleItemSchema = z.object({
+    img: z.string(),
+    imgAlt: z.string(),
+    title: z.string(),
+    content: z.string(),
+    docs: z.string(),
+    demo: z.string(),
+});
+
+const faqItemSchema = z.object({
+    question: z.string(),
+    answer: z.string(),
+});
+
+const pricingCardSchema = z.object({
+    title: z.string(),
+    price: z.string(),
+    priceNote: z.string(),
+    features: z.array(z.string()),
+    ctaText: z.string(),
+    ctaUrl: z.string(),
+    ctaId: z.string().optional(),
+    isPrimary: z.boolean().optional(),
+    showTrialButton: z.boolean().optional(),
+});
+
+const landingPages = defineCollection({
+    loader: glob({ base: './src/content/landing-pages', pattern: '*.json' }),
+    schema: z.object({
+        meta: z.object({
+            title: z.string(),
+            description: z.string(),
+        }),
+        framework: z.string().optional(),
+        packageName: z.string().optional(),
+        docsPath: z.string(),
+        analyticsPrefix: z.string(),
+
+        sections: z.array(
+            z.discriminatedUnion('type', [
+                // Hero section
+                z.object({
+                    type: z.literal('hero'),
+                    variant: z.enum(['default', 'enterprise']).optional(),
+                    tag: z.string(),
+                    heading: z.string(),
+                    subHeading: z.string(),
+                    subHeadingHtml: z.string().optional(),
+                    showVersionBadge: z.boolean().optional(),
+                    primaryCta: z
+                        .object({
+                            text: z.string(),
+                            url: z.string().optional(),
+                            useTrialButton: z.boolean().optional(),
+                        })
+                        .optional(),
+                    secondaryCta: z
+                        .object({
+                            text: z.string(),
+                            url: z.string().optional(),
+                        })
+                        .optional(),
+                    demo: z
+                        .object({
+                            enableRowGroup: z.boolean().optional(),
+                            gridHeight: z.number().optional(),
+                        })
+                        .optional(),
+                }),
+
+                // Features section
+                z.object({
+                    type: z.literal('features'),
+                    tag: z.string(),
+                    heading: z.string(),
+                    subHeading: z.string(),
+                    items: z.array(featureItemSchema),
+                }),
+
+                // Showcase section
+                z.object({
+                    type: z.literal('showcase'),
+                    tag: z.string(),
+                    heading: z.string(),
+                    subHeading: z.string(),
+                }),
+
+                // Customers section
+                z.object({
+                    type: z.literal('customers'),
+                    tag: z.string(),
+                    headingHtml: z.string(),
+                    subHeadingHtml: z.string(),
+                    displayLogos: z.boolean().optional(),
+                }),
+
+                // Examples section
+                z.object({
+                    type: z.literal('examples'),
+                    tag: z.string(),
+                    heading: z.string(),
+                    subHeading: z.string(),
+                    showBackgroundGradient: z.boolean().optional(),
+                    items: z.array(exampleItemSchema),
+                }),
+
+                // FAQ section
+                z.object({
+                    type: z.literal('faq'),
+                    tag: z.string(),
+                    heading: z.string(),
+                    subHeading: z.string(),
+                    items: z.array(faqItemSchema),
+                }),
+
+                // Contact section
+                z.object({
+                    type: z.literal('contact'),
+                    variant: z.enum(['default', 'sales']).optional(),
+                    tag: z.string(),
+                    heading: z.string(),
+                    subHeading: z.string(),
+                    features: z.array(z.string()),
+                }),
+
+                // Enterprise-specific sections
+                z.object({
+                    type: z.literal('integrated-charts'),
+                    tag: z.string(),
+                    heading: z.string().optional(),
+                    headingHtml: z.string().optional(),
+                    subHeading: z.string(),
+                    showBackgroundGradient: z.boolean().optional(),
+                }),
+
+                z.object({
+                    type: z.literal('theme-builder'),
+                    tag: z.string(),
+                    heading: z.string(),
+                    subHeading: z.string(),
+                }),
+
+                z.object({
+                    type: z.literal('comparison'),
+                    tag: z.string(),
+                    heading: z.string(),
+                    subHeading: z.string(),
+                    showBackgroundGradient: z.boolean().optional(),
+                }),
+
+                z.object({
+                    type: z.literal('pricing'),
+                    tag: z.string(),
+                    heading: z.string(),
+                    subHeading: z.string(),
+                    showBackgroundGradient: z.boolean().optional(),
+                    cards: z.array(pricingCardSchema),
+                }),
+            ])
+        ),
+    }),
+});
+
 export const collections = {
     docs,
     apiDocumentation,
@@ -302,7 +474,7 @@ export const collections = {
     faqs,
     siteHeader,
     seedProjects,
-    reactLandingPage,
     aboutPage,
     contactResults,
+    landingPages,
 };

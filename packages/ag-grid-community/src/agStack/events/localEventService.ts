@@ -153,7 +153,12 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
             const flush = () => {
                 window.setTimeout(this.flushAsyncQueue.bind(this), 0);
             };
-            this.frameworkOverrides ? this.frameworkOverrides.wrapIncoming(flush) : flush();
+            const frameworkOverrides = this.frameworkOverrides;
+            if (frameworkOverrides) {
+                frameworkOverrides.wrapIncoming(flush);
+            } else {
+                flush();
+            }
             // mark that it is scheduled
             this.scheduled = true;
         }

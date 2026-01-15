@@ -72,9 +72,11 @@ export class AgTabGuardFeature<
         const compProxy: ITabGuard = {
             setTabIndex: (tabIndex) => {
                 for (const tabGuard of tabGuards) {
-                    tabIndex == null
-                        ? tabGuard.removeAttribute('tabindex')
-                        : tabGuard.setAttribute('tabindex', tabIndex);
+                    if (tabIndex == null) {
+                        tabGuard.removeAttribute('tabindex');
+                    } else {
+                        tabGuard.setAttribute('tabindex', tabIndex);
+                    }
                 }
             },
         };

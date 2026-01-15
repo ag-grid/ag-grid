@@ -586,7 +586,11 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 checked = column.isVisible();
             }
 
-            checked ? checkedCount++ : uncheckedCount++;
+            if (checked) {
+                checkedCount++;
+            } else {
+                uncheckedCount++;
+            }
         });
 
         if (checkedCount > 0 && uncheckedCount > 0) {

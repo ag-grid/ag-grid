@@ -1,0 +1,42 @@
+[
+    {
+        "question": "Can I try AG Grid Enterprise for free?",
+        "answer": "Yes! You can install and test all AG Grid Enterprise features locally for free. A watermark and console message will appear until you add a licence key. You can also [request a trial licence](/trial-licence/) to remove these during your evaluation period."
+    },
+    {
+        "question": "What is the difference between AG Grid Community and Enterprise?",
+        "answer": "[AG Grid Community](./getting-started/) is free and open-source with powerful core features. [AG Grid Enterprise](/license-pricing/) adds advanced capabilities like Row Grouping, Server-Side Row Model, AI Toolkit, Integrated Charts, Master/Detail, and dedicated support."
+    },
+    {
+        "question": "How much does AG Grid Enterprise cost?",
+        "answer": "AG Grid Enterprise costs $999 USD per developer for a perpetual licence. This includes 1 year of support and updates. Volume discounts are available. Visit the [Pricing page](/license-pricing/) for full details."
+    },
+    {
+        "question": "What is included in the Enterprise Bundle?",
+        "answer": "The Enterprise Bundle includes both AG Grid Enterprise and AG Charts Enterprise for $1,598 per developer. This is ideal if you need both advanced grid features and charting capabilities."
+    },
+    {
+        "question": "What does the AI Toolkit do?",
+        "answer": "The [AI Toolkit](./data-grid/ai-toolkit/) allows you to integrate AG Grid with any LLM (like ChatGPT or Gemini) to enable natural language grid control. Users can filter, sort, group, and manipulate data using conversational queries."
+    },
+    {
+        "question": "What is the Server-Side Row Model?",
+        "answer": "The [Server-Side Row Model](./data-grid/server-side-model/) loads data on-demand from your server as users scroll. It's designed for large datasets that cannot be loaded entirely into the browser, supporting server-side sorting, filtering, and grouping."
+    },
+    {
+        "question": "How many rows can AG Grid Enterprise handle?",
+        "answer": "With the Server-Side Row Model, AG Grid Enterprise can handle virtually unlimited rows since data is loaded on-demand. The Client-Side Row Model can comfortably handle hundreds of thousands of rows with excellent performance."
+    },
+    {
+        "question": "What support is included with an Enterprise licence?",
+        "answer": "Enterprise licences include access to our dedicated [support portal](https://ag-grid.zendesk.com/hc/en-us), monitored 365 days a year. You'll receive priority support from our engineering team, plus access to all updates and new features during your support period."
+    },
+    {
+        "question": "Is the Enterprise licence perpetual?",
+        "answer": "Yes, AG Grid Enterprise licences are perpetual. You can use the version you licensed forever. The annual support and updates subscription is optional for renewal, but recommended to access new features and fixes."
+    },
+    {
+        "question": "Can I upgrade from Community to Enterprise?",
+        "answer": "Yes, upgrading is simple. Just install `ag-grid-enterprise` alongside your existing AG Grid packages and add your licence key. All your existing code will continue to work, and Enterprise features become available immediately."
+    }
+]
