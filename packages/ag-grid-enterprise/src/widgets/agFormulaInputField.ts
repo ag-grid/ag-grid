@@ -355,6 +355,8 @@ export class AgFormulaInputField extends AgContentEditableField<
                 autocompleteEntries: entries,
                 onConfirmed: () => this.confirmFunctionAutocomplete(),
                 useStartsWithSearch: true,
+                autoSizeList: true,
+                maxVisibleItems: 10,
             })
         );
 

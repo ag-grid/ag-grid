@@ -50,6 +50,8 @@ export class AgAutocompleteList extends AgPopupComponent<
             onConfirmed: () => void;
             useFuzzySearch?: boolean;
             useStartsWithSearch?: boolean;
+            autoSizeList?: boolean;
+            maxVisibleItems?: number;
             forceLastSelection?: (lastSelection: AutocompleteEntry, searchString: string) => boolean;
         }
     ) {
@@ -76,6 +78,7 @@ export class AgAutocompleteList extends AgPopupComponent<
         });
 
         this.setSelectedValue(0);
+        this.updateListHeight();
     }
 
     public onNavigationKeyDown(event: any, key: string): void {
@@ -96,6 +99,7 @@ export class AgAutocompleteList extends AgPopupComponent<
             this.autocompleteEntries = this.params.autocompleteEntries;
             this.virtualList.refresh();
             this.checkSetSelectedValue(0);
+            this.updateListHeight();
         }
         this.updateSearchInList();
     }
@@ -192,6 +196,7 @@ export class AgAutocompleteList extends AgPopupComponent<
         }
         this.autocompleteEntries = filteredEntries;
         this.virtualList.refresh();
+        this.updateListHeight();
 
         if (!topSuggestion) {
             return;
@@ -204,6 +209,24 @@ export class AgAutocompleteList extends AgPopupComponent<
 
     private updateSearchInList(): void {
         this.virtualList.forEachRenderedRow((row: AgAutocompleteRow) => row.setSearchString(this.searchString));
+    }
+
+    private updateListHeight(): void {
+        if (!this.params.autoSizeList) {
+            return;
+        }
+
+        const rowCount = this.autocompleteEntries.length;
+        const rowHeight = this.virtualList.getRowHeight();
+        const maxItems = this.params.maxVisibleItems ?? rowCount;
+        const visibleCount = Math.min(rowCount, maxItems);
+        let height = visibleCount * rowHeight;
+
+        if (rowCount === 0) {
+            height = rowHeight;
+        }
+
+        this.eList.style.height = `${height}px`;
     }
 
     private checkSetSelectedValue(index: number): void {
