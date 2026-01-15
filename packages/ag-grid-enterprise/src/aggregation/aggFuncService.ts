@@ -114,14 +114,21 @@ function aggSum(params: IAggFuncParams): number | bigint | null {
             if (!useBigInt) {
                 useBigInt = true;
                 if (typeof result === 'number') {
-                    result = BigInt(Math.trunc(result));
+                    const coercedResult = toBigIntFromNumber(result);
+                    if (coercedResult == null) {
+                        return null;
+                    }
+                    result = coercedResult;
                 }
             }
             result = result === null ? value : (result as bigint) + value;
         } else if (!useBigInt) {
             result = result === null ? value : (result as number) + value;
         } else {
-            const coercedValue = BigInt(Math.trunc(value));
+            const coercedValue = toBigIntFromNumber(value);
+            if (coercedValue == null) {
+                return null;
+            }
             result = result === null ? coercedValue : (result as bigint) + coercedValue;
         }
     }
@@ -154,7 +161,11 @@ function aggMin(params: IAggFuncParams): number | bigint | null {
             if (!useBigInt) {
                 useBigInt = true;
                 if (typeof result === 'number') {
-                    result = BigInt(Math.trunc(result));
+                    const coercedResult = toBigIntFromNumber(result);
+                    if (coercedResult == null) {
+                        return null;
+                    }
+                    result = coercedResult;
                 }
             }
             if (result === null || (result as bigint) > value) {
@@ -165,7 +176,10 @@ function aggMin(params: IAggFuncParams): number | bigint | null {
                 result = value;
             }
         } else {
-            const coercedValue = BigInt(Math.trunc(value));
+            const coercedValue = toBigIntFromNumber(value);
+            if (coercedValue == null) {
+                return null;
+            }
             if (result === null || (result as bigint) > coercedValue) {
                 result = coercedValue;
             }
@@ -192,7 +206,11 @@ function aggMax(params: IAggFuncParams): number | bigint | null {
             if (!useBigInt) {
                 useBigInt = true;
                 if (typeof result === 'number') {
-                    result = BigInt(Math.trunc(result));
+                    const coercedResult = toBigIntFromNumber(result);
+                    if (coercedResult == null) {
+                        return null;
+                    }
+                    result = coercedResult;
                 }
             }
             if (result === null || (result as bigint) < value) {
@@ -203,7 +221,10 @@ function aggMax(params: IAggFuncParams): number | bigint | null {
                 result = value;
             }
         } else {
-            const coercedValue = BigInt(Math.trunc(value));
+            const coercedValue = toBigIntFromNumber(value);
+            if (coercedValue == null) {
+                return null;
+            }
             if (result === null || (result as bigint) < coercedValue) {
                 result = coercedValue;
             }
@@ -279,7 +300,11 @@ function aggAvg(params: IAggFuncParams): { value: number | bigint | null; count:
         if (typeof currentValue === 'bigint') {
             if (!useBigInt) {
                 useBigInt = true;
-                sumBigInt = BigInt(Math.trunc(sum));
+                const coercedSum = toBigIntFromNumber(sum);
+                if (coercedSum == null) {
+                    return null;
+                }
+                sumBigInt = coercedSum;
             }
             sumBigInt += currentValue;
             count++;
@@ -288,7 +313,11 @@ function aggAvg(params: IAggFuncParams): { value: number | bigint | null; count:
 
         if (typeof currentValue === 'number') {
             if (useBigInt) {
-                sumBigInt += BigInt(Math.trunc(currentValue));
+                const coercedValue = toBigIntFromNumber(currentValue);
+                if (coercedValue == null) {
+                    return null;
+                }
+                sumBigInt += coercedValue;
             } else {
                 sum += currentValue;
             }
@@ -304,11 +333,20 @@ function aggAvg(params: IAggFuncParams): { value: number | bigint | null; count:
             if (typeof currentValue.value === 'bigint') {
                 if (!useBigInt) {
                     useBigInt = true;
-                    sumBigInt = BigInt(Math.trunc(sum));
+                    const coercedSum = toBigIntFromNumber(sum);
+                    if (coercedSum == null) {
+                        return null;
+                    }
+                    sumBigInt = coercedSum;
                 }
                 sumBigInt += currentValue.value * BigInt(currentValue.count);
             } else if (useBigInt) {
-                sumBigInt += BigInt(Math.trunc(currentValue.value * currentValue.count));
+                const weightedValue = currentValue.value * currentValue.count;
+                const coercedValue = toBigIntFromNumber(weightedValue);
+                if (coercedValue == null) {
+                    return null;
+                }
+                sumBigInt += coercedValue;
             } else {
                 sum += currentValue.value * currentValue.count;
             }
@@ -334,4 +372,11 @@ function aggAvg(params: IAggFuncParams): { value: number | bigint | null; count:
     result.count = count;
     result.value = value;
     return result;
+}
+
+function toBigIntFromNumber(value: number): bigint | null {
+    if (!isFinite(value) || !Number.isInteger(value)) {
+        return null;
+    }
+    return BigInt(value);
 }
