@@ -17,10 +17,10 @@ import {
     UndoRedoEditModule,
 } from './edit/editModule';
 import {
+    BigIntFilterModule,
     CustomFilterModule,
     DateFilterModule,
     ExternalFilterModule,
-    BigIntFilterModule,
     NumberFilterModule,
     QuickFilterModule,
     TextFilterModule,

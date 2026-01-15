@@ -1,9 +1,9 @@
 import type { Comparator } from '../iScalarFilter';
 import { ScalarFilterHandler } from '../scalarFilterHandler';
-import type { BigIntFilterModel, IBigIntFilterParams } from './iBigIntFilter';
 import { DEFAULT_BIGINT_FILTER_OPTIONS } from './bigIntFilterConstants';
 import { BigIntFilterModelFormatter } from './bigIntFilterModelFormatter';
 import { mapValuesFromBigIntFilterModel } from './bigIntFilterUtils';
+import type { BigIntFilterModel, IBigIntFilterParams } from './iBigIntFilter';
 
 export class BigIntFilterHandler extends ScalarFilterHandler<BigIntFilterModel, bigint, IBigIntFilterParams> {
     public readonly filterType = 'bigint' as const;

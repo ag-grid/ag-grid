@@ -4,8 +4,8 @@ import { _clearElement } from '../../../agStack/utils/dom';
 import { _debounce } from '../../../agStack/utils/function';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { ElementParams } from '../../../utils/element';
-import type { ISimpleFilterModelType, ISimpleFilterParams } from '../../provided/iSimpleFilter';
 import type { BigIntFilterModel } from '../../provided/bigInt/iBigIntFilter';
+import type { ISimpleFilterModelType, ISimpleFilterParams } from '../../provided/iSimpleFilter';
 import type { NumberFilterModel } from '../../provided/number/iNumberFilter';
 import { _isUseApplyButton, getDebounceMs, getPlaceholderText } from '../../provided/providedFilterUtils';
 import type {

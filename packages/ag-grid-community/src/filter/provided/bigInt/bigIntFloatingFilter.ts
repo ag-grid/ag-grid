@@ -4,8 +4,8 @@ import type { FloatingFilterInputService } from '../../floating/provided/iFloati
 import { TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
 import { DEFAULT_BIGINT_FILTER_OPTIONS } from './bigIntFilterConstants';
 import { BigIntFilterModelFormatter } from './bigIntFilterModelFormatter';
-import type { BigIntFilterModel, BigIntFilterParams, IBigIntFloatingFilterParams } from './iBigIntFilter';
 import { getAllowedCharPattern } from './bigIntFilterUtils';
+import type { BigIntFilterModel, BigIntFilterParams, IBigIntFloatingFilterParams } from './iBigIntFilter';
 
 export class BigIntFloatingFilter extends TextInputFloatingFilter<IBigIntFloatingFilterParams, BigIntFilterModel> {
     protected readonly FilterModelFormatterClass = BigIntFilterModelFormatter;
