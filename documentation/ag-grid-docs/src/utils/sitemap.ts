@@ -60,8 +60,9 @@ const filterIgnoredPages = (page: string) => {
     );
 };
 
-export function getSitemapConfig() {
+export function getSitemapConfig({ chartsSitemap }: { chartsSitemap?: string }) {
     return {
+        customSitemaps: chartsSitemap ? [chartsSitemap] : [],
         filter: filterIgnoredPages,
         changefreq: 'daily',
         priority: 0.7,
