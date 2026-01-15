@@ -15,6 +15,7 @@ import type {
     DataTypeDefinition,
     DataTypeFormatValueFunc,
     DateStringDataTypeDefinition,
+    ValueFormatterLiteFunc,
     ValueFormatterLiteParams,
     ValueParserLiteParams,
 } from '../entities/dataType';
@@ -806,8 +807,15 @@ function createGroupSafeValueFormatter(
                     return dataTypeDefinition.valueFormatter!(params);
                 }
 
-                if (dataTypeDefinition.baseDataType === 'number' && aggFunc !== 'count') {
+                if (
+                    (dataTypeDefinition.baseDataType === 'number' || dataTypeDefinition.baseDataType === 'bigint') &&
+                    aggFunc !== 'count'
+                ) {
                     if (typeof params.value === 'number') {
+                        return dataTypeDefinition.valueFormatter!(params);
+                    }
+
+                    if (typeof params.value === 'bigint') {
                         return dataTypeDefinition.valueFormatter!(params);
                     }
 
@@ -816,7 +824,7 @@ function createGroupSafeValueFormatter(
                             return undefined;
                         }
 
-                        if ('toNumber' in params.value) {
+                        if (dataTypeDefinition.baseDataType === 'number' && 'toNumber' in params.value) {
                             return dataTypeDefinition.valueFormatter!({
                                 ...params,
                                 value: params.value.toNumber(),
@@ -824,10 +832,18 @@ function createGroupSafeValueFormatter(
                         }
 
                         if ('value' in params.value) {
-                            return dataTypeDefinition.valueFormatter!({
-                                ...params,
-                                value: params.value.value,
-                            });
+                            const innerValue = params.value.value;
+                                if (
+                                    (dataTypeDefinition.baseDataType === 'number' && typeof innerValue === 'number') ||
+                                    (dataTypeDefinition.baseDataType === 'bigint' && typeof innerValue === 'bigint')
+                                ) {
+                                return (dataTypeDefinition.valueFormatter as ValueFormatterLiteFunc<any, number | bigint>)(
+                                    {
+                                        ...(params as ValueFormatterLiteParams<any, number | bigint>),
+                                        value: innerValue,
+                                    }
+                                );
+                                }
                         }
                     }
                 }

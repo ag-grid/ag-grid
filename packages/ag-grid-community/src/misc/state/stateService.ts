@@ -1,5 +1,5 @@
-import { _debounce } from '../../agStack/utils/function';
 import { _parseBigIntOrNull, _serialiseBigIntValues } from '../../agStack/utils/bigInt';
+import { _debounce } from '../../agStack/utils/function';
 import { _jsonEquals } from '../../agStack/utils/generic';
 import { _applyColumnState, _getColumnState } from '../../columns/columnStateUtils';
 import type { ColumnState, ColumnStateParams } from '../../columns/columnStateUtils';
@@ -8,6 +8,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
 import { _isCellSelectionEnabled, _isClientSideRowModel } from '../../gridOptionsUtils';
 import type { CellRange } from '../../interfaces/IRangeService';
+import type { AdvancedFilterModel } from '../../interfaces/advancedFilterModel';
 import type {
     AggregationState,
     CellSelectionState,
@@ -29,7 +30,6 @@ import type {
     SortState,
 } from '../../interfaces/gridState';
 import type { RowGroupBulkExpansionState, RowGroupExpansionState } from '../../interfaces/iExpansionService';
-import type { AdvancedFilterModel } from '../../interfaces/advancedFilterModel';
 import type { ColumnFilterState, FilterModel } from '../../interfaces/iFilter';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../../interfaces/selectionState';
 import { migrateGridStateModel } from './stateModelMigration';
@@ -137,16 +137,7 @@ export class StateService extends BeanStub implements NamedBean {
         if (this.staleStateKeys.size) {
             this.refreshStaleState();
         }
-        if (this.isClientSideRowModel) {
-            const scrollState = this.getScrollState();
-            if (scrollState && !_jsonEquals(scrollState, this.cachedState.scroll)) {
-                this.setCachedStateValue('scroll', scrollState);
-            }
-            const focusedCellState = this.getFocusedCellState();
-            if (focusedCellState && !_jsonEquals(focusedCellState, this.cachedState.focusedCell)) {
-                this.setCachedStateValue('focusedCell', focusedCellState);
-            }
-        }
+
         return this.cachedState;
     }
 
@@ -641,9 +632,7 @@ export class StateService extends BeanStub implements NamedBean {
         }
         const columnFilterState = filterManager?.getFilterState();
         const advancedFilterModel = filterManager?.getAdvFilterModel() ?? undefined;
-        const serialisedFilterModel = filterModel
-            ? (_serialiseBigIntValues(filterModel) as FilterModel)
-            : filterModel;
+        const serialisedFilterModel = filterModel ? (_serialiseBigIntValues(filterModel) as FilterModel) : filterModel;
         const serialisedColumnFilterState = columnFilterState
             ? (_serialiseBigIntValues(columnFilterState) as ColumnFilterState)
             : columnFilterState;
@@ -651,7 +640,10 @@ export class StateService extends BeanStub implements NamedBean {
             ? (_serialiseBigIntValues(advancedFilterModel) as AdvancedFilterModel)
             : advancedFilterModel;
         const selectableFilters = selectableFilter?.getState();
-        return serialisedFilterModel || serialisedAdvancedFilterModel || serialisedColumnFilterState || selectableFilters
+        return serialisedFilterModel ||
+            serialisedAdvancedFilterModel ||
+            serialisedColumnFilterState ||
+            selectableFilters
             ? {
                   filterModel: serialisedFilterModel,
                   columnFilterState: serialisedColumnFilterState,
@@ -743,7 +735,9 @@ export class StateService extends BeanStub implements NamedBean {
         if (model.filterType === 'join') {
             return {
                 ...model,
-                conditions: model.conditions.map((condition) => this.rehydrateBigIntAdvancedFilterModel(condition) as any),
+                conditions: model.conditions.map(
+                    (condition) => this.rehydrateBigIntAdvancedFilterModel(condition) as any
+                ),
             };
         }
         if (model.filterType === 'bigint' && typeof model.filter === 'string') {
