@@ -1,6 +1,6 @@
 import { userEvent } from '@testing-library/user-event';
 
-import { ClientSideRowModelModule, GROUP_AUTO_COLUMN_ID, UndoRedoEditModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, UndoRedoEditModule } from 'ag-grid-community';
 import type { GridOptions } from 'ag-grid-community';
 import { BatchEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -152,16 +152,15 @@ describe('cell editing with refreshAfterGroupEdit', () => {
         expect(api.getRowNode('3')?.parent?.key).toBe('A');
     });
 
-    test('aggregation columns refresh when rows move and undo/redo restores values', async () => {
+    test('aggregation columns refresh when rows move', async () => {
         const gridOptions: GridOptions = {
             animateRows: true,
             columnDefs: [
-                { field: 'group', rowGroup: true, hide: true, editable: true },
+                { field: 'group', rowGroup: true, editable: true },
                 { field: 'value', aggFunc: 'sum' },
             ],
             autoGroupColumnDef: {
                 field: 'group',
-                editable: true,
                 cellRendererParams: {
                     suppressDoubleClickExpand: true,
                 },
@@ -183,7 +182,7 @@ describe('cell editing with refreshAfterGroupEdit', () => {
 
         const gridDiv = TestGridsManager.getHTMLElement(api)!;
         const editGroupCell = async (rowId: string, value: string) => {
-            const cell = gridDiv.querySelector<HTMLElement>(`[row-id="${rowId}"] [col-id="${GROUP_AUTO_COLUMN_ID}"]`);
+            const cell = gridDiv.querySelector<HTMLElement>(`[row-id="${rowId}"] [col-id="group"]`);
             expect(cell).not.toBeNull();
 
             await userEvent.dblClick(cell!);

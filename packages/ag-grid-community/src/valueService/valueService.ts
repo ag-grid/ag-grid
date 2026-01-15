@@ -8,6 +8,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type {
+    ColDef,
     KeyCreatorParams,
     ValueFormatterParams,
     ValueGetterParams,
@@ -401,9 +402,13 @@ export class ValueService extends BeanStub implements NamedBean {
         if (!rowNode || !column) {
             return false;
         }
-        this.ensureRowData(rowNode);
 
         const colDef = column.getColDef();
+
+        if (!rowNode.data && this.canCreateRowNodeData(rowNode, colDef)) {
+            rowNode.data = {}; // enableGroupEdit allows editing group rows without data.
+        }
+
         if (!this.isSetValueSupported({ column, newValue, colDef })) {
             return false;
         }
@@ -455,6 +460,19 @@ export class ValueService extends BeanStub implements NamedBean {
         return this.finishValueChange(rowNode, column, params, eventSource);
     }
 
+    private canCreateRowNodeData(rowNode: IRowNode = {} as IRowNode, colDef: ColDef): boolean {
+        if (!rowNode.group) {
+            return true; // not a group row
+        }
+
+        if (colDef.groupRowEditable != null) {
+            // group row with groupRowEditable specified (true, or false, or fn) does not allow data
+            return false;
+        }
+
+        return true; // group row with no groupRowEditable specified
+    }
+
     private finishValueChange(
         rowNode: IRowNode,
         column: AgColumn,
@@ -474,13 +492,6 @@ export class ValueService extends BeanStub implements NamedBean {
         }
 
         return true;
-    }
-
-    private ensureRowData(rowNode: IRowNode): void {
-        // enableGroupEdit allows editing group rows without data.
-        if (_missing(rowNode.data)) {
-            rowNode.data = {};
-        }
     }
 
     private isSetValueSupported(params: {

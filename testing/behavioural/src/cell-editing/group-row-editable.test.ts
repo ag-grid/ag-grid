@@ -99,6 +99,8 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
             }
             if (params.data && params.colDef.field) {
                 (params.data as Record<string, any>)[params.colDef.field] = params.newValue;
+            } else if (params.node?.groupData) {
+                params.node.groupData.group = params.newValue;
             }
             return true;
         };
@@ -138,6 +140,7 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
         const groupRowNode = api.getDisplayedRowAtIndex(0);
         expect(groupRowNode).toBeDefined();
         expect(groupRowNode!.group).toBe(true);
+        expect(groupRowNode!.data).toBeUndefined();
         const originalGroupValue = getGroupColumnDisplayValue(groupRowNode!);
 
         groupRowEditableCalls.length = 0;
@@ -154,6 +157,7 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
             await asyncSetTimeout(0);
         }
         expect(getGroupColumnDisplayValue(groupRowNode!)).toBe('Edited Group');
+        expect(groupRowNode!.data).toBeUndefined();
 
         const groupRowEditableCallsForGroup = callsForRowNode(groupRowEditableCalls, groupRowNode!.id);
         const editableCallsForGroup = callsForRowNode(editableCalls, groupRowNode!.id);
@@ -169,6 +173,7 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
             api.undoCellEditing();
             await asyncSetTimeout(0);
             expect(getGroupColumnDisplayValue(groupRowNode!)).toBe(originalGroupValue);
+            expect(groupRowNode!.data).toBeUndefined();
             expect(committedValues.get(groupRowNode!.id!)).toBe(originalGroupValue);
         }
 
@@ -218,11 +223,8 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
         const valueSetterCalls: Parameters<ValueSetterCallback>[] = [];
         const valueSetter: ValueSetterCallback = (params) => {
             valueSetterCalls.push([params]);
-            if (params.node?.groupData) {
+            if (!params.data && params.node?.groupData) {
                 params.node.groupData.group = params.newValue;
-            }
-            if (params.data && params.colDef.field) {
-                (params.data as Record<string, any>)[params.colDef.field] = params.newValue;
             }
             return true;
         };
@@ -274,6 +276,7 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
             await asyncSetTimeout(0);
         }
         expect(getGroupColumnDisplayValue(fillerRowNode!)).toBe('Edited Filler');
+        expect(fillerRowNode!.data).toBeUndefined();
 
         const groupRowEditableCallsForFiller = callsForRowNode(groupRowEditableCalls, fillerRowNode!.id);
         const editableCallsForFiller = callsForRowNode(editableCalls, fillerRowNode!.id);
@@ -288,6 +291,7 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
             api.undoCellEditing();
             await asyncSetTimeout(0);
             expect(getGroupColumnDisplayValue(fillerRowNode!)).toBe(originalFillerValue);
+            expect(fillerRowNode!.data).toBeUndefined();
         }
     });
 
@@ -311,7 +315,7 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
         const valueSetter: ValueSetterCallback = (params) => {
             valueSetterCalls.push([params]);
             if (params.data) {
-                params.data.label = params.newValue;
+                (params.data as { label?: string }).label = params.newValue;
             }
             return true;
         };
@@ -389,7 +393,7 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
         const valueSetter: ValueSetterCallback = (params) => {
             valueSetterCalls.push([params]);
             if (params.data) {
-                params.data.label = params.newValue;
+                (params.data as { label?: string }).label = params.newValue;
             }
             return true;
         };
@@ -576,6 +580,7 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
 
         const europeNode = api.getRowNode('row-group-region-Europe');
         expect(europeNode).toBeDefined();
+        expect(europeNode!.data).toBeUndefined();
 
         const amountColId = 'amount';
         if (editMode === 'ui') {
@@ -586,6 +591,7 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
         }
         await asyncSetTimeout(0);
         expect(distributedValues.length).toBeGreaterThan(0);
+        expect(europeNode!.data).toBeUndefined();
 
         const afterEditSnapshot = `
             ROOT id:ROOT_NODE_ID
@@ -618,6 +624,7 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
             }
 
             await new GridRows(api, 'after undo').check(beforeEditSnapshot);
+            expect(europeNode!.data).toBeUndefined();
         }
     });
 });
