@@ -538,7 +538,7 @@ export class AgFormulaInputField extends AgContentEditableField<
     }
 }
 
-// token/range color helpers
+// Token/range color helpers
 const shouldUseTokenColors = (beans: BeanCollection): boolean => {
     const { editSvc, rangeSvc } = beans;
     const canCreateRanges = !!rangeSvc && !!editSvc?.isRangeSelectionEnabledWhileEditing?.();
@@ -591,7 +591,7 @@ const getPreviousNonSpaceChar = (value: string, offset: number): string | null =
     return null;
 };
 
-// rendering & caret helpers
+// Rendering & caret helpers
 const tokenize = (
     beans: BeanCollection,
     value: string,
@@ -695,7 +695,7 @@ const getOffsetBeforeNode = (container: HTMLElement, node: Node, useValueLength:
     return null;
 };
 
-// serialisation helpers
+// Serialisation helpers
 const serializeContent = (contentElement: HTMLElement): string => {
     // read the tokenised DOM back into the raw formula text.
     let output = '';
@@ -826,7 +826,7 @@ const getCaretOffset = (beans: BeanCollection, contentElement: HTMLElement, curr
     return offset;
 };
 
-// token helpers
+// Token helpers
 const getTokenRef = (tokenEl: HTMLElement): string =>
     formatForValue(tokenEl.textContent ?? tokenEl.dataset.formulaRef ?? '');
 const getTokenIndex = (tokenEl: HTMLElement): number | null => {
