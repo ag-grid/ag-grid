@@ -110,7 +110,7 @@ function aggSum(params: IAggFuncParams): number | bigint | null {
             continue;
         }
 
-        const valueType = typeof value;
+        const valueType = typeof value as 'number' | 'bigint';
         if (seenType && seenType !== valueType) {
             return null;
         }
@@ -151,7 +151,7 @@ function aggMin(params: IAggFuncParams): number | bigint | null {
             continue;
         }
 
-        const valueType = typeof value;
+        const valueType = typeof value as 'number' | 'bigint';
         if (seenType && seenType !== valueType) {
             return null;
         }
@@ -180,7 +180,7 @@ function aggMax(params: IAggFuncParams): number | bigint | null {
             continue;
         }
 
-        const valueType = typeof value;
+        const valueType = typeof value as 'number' | 'bigint';
         if (seenType && seenType !== valueType) {
             return null;
         }
