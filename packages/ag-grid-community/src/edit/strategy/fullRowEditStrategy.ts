@@ -2,7 +2,12 @@ import type { BeanName } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { EditValue } from '../../interfaces/iEditModelService';
-import type { EditPosition, EditRowPosition, StartEditWithPositionParams } from '../../interfaces/iEditService';
+import type {
+    EditPosition,
+    EditRowPosition,
+    StartEditParams,
+    StartEditWithPositionParams,
+} from '../../interfaces/iEditService';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getCellCtrl, _getRowCtrl } from '../utils/controllers';
@@ -268,13 +273,15 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             if (suppressStartEditOnTab) {
                 nextCell.focusCell(true, event);
             } else {
-                this.editSvc.startEditing(nextCell, {
+                const startParams: StartEditParams = {
                     startedEdit: true,
                     event,
                     source,
                     ignoreEventKey: true,
-                    editable: nextEditable,
-                });
+                    editable: nextEditable || undefined,
+                };
+
+                this.editSvc.startEditing(nextCell, startParams);
             }
         }
 
