@@ -26,7 +26,7 @@ type RangeInsertAction = 'insert' | 'replace' | 'none';
 type TokenMatch = { ref: string; start: number; end: number; index: number };
 type TokenInsertResult = { previousRef?: string; tokenIndex?: number | null };
 
-// Only insert new refs after operators/argument separators; otherwise treat clicks as normal edit completion.
+// only insert new refs after operators/argument separators; otherwise treat clicks as normal edit completion.
 const TOKEN_INSERT_AFTER_CHARS = new Set(['=', '+', '-', '*', '/', '^', ',', '(', ';', '<', '>', '&']);
 
 export class AgFormulaInputField extends AgContentEditableField<
@@ -39,18 +39,18 @@ export class AgFormulaInputField extends AgContentEditableField<
     string
 > {
     private currentValue: string = '';
-    // Caret / token bookkeeping so range updates can re-render without losing position.
+    // caret / token bookkeeping so range updates can re-render without losing position.
     private selectionCaretOffset: number | null = null;
     private lastTokenValueOffset: number | null = null;
     private lastTokenValueLength: number | null = null;
     private lastTokenCaretOffset: number | null = null;
     private lastTokenRef?: string;
     private rangeSyncFeature?: FormulaInputRangeSyncFeature;
-    // Fallback color assignment per ref when a token index is unavailable.
+    // fallback color assignment per ref when a token index is unavailable.
     private readonly formulaColorByRef = new Map<string, number>();
 
     constructor() {
-        // Keep renderValueToElement false so we fully control DOM rendering.
+        // keep renderValueToElement false so we fully control DOM rendering.
         super({ renderValueToElement: false, className: 'ag-formula-input-field' } as any);
         this.registerCSS(agFormulaInputFieldCSS);
     }
@@ -70,7 +70,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         const { isFormula, hasFormulaPrefix } = this.getFormulaState(text);
 
         if (!isFormula) {
-            // Plain values: render as simple text with no token parsing or range syncing.
+            // plain values: render as simple text with no token parsing or range syncing.
             this.applyPlainValue(text, { silent, dispatch: true });
             this.rangeSyncFeature?.onValueUpdated(text, hasFormulaPrefix);
             return this;
@@ -82,7 +82,7 @@ export class AgFormulaInputField extends AgContentEditableField<
     }
 
     public getCurrentValue(): string {
-        // Validation can run before our input handler updates `currentValue`, so always
+        // validation can run before our input handler updates `currentValue`, so always
         // re-serialise the DOM to stay in sync with what the user currently sees.
         const liveValue = serializeContent(this.getContentElement());
 
@@ -293,16 +293,16 @@ export class AgFormulaInputField extends AgContentEditableField<
         const caretOffsets = this.getCaretOffsets(value);
 
         if (!caretOffsets) {
-            // Fall back to standard insert if we cannot resolve caret offsets.
+            // fall back to standard insert if we cannot resolve caret offsets.
             const { previousRef, tokenIndex } = this.insertOrReplaceToken(ref, true);
             return { action: 'insert', previousRef, tokenIndex };
         }
 
-        // If the caret is inside/adjacent to a token, replace that token.
+        // if the caret is inside/adjacent to a token, replace that token.
         const tokenMatch = getTokenMatchAtOffset(value, caretOffsets.valueOffset);
 
         if (tokenMatch) {
-            // If the user is completing a partial range like "A1:", keep the range and insert the end ref.
+            // if the user is completing a partial range like "A1:", keep the range and insert the end ref.
             if (tokenMatch.ref.endsWith(':') && caretOffsets.valueOffset === tokenMatch.end) {
                 const { previousRef, tokenIndex } = this.insertOrReplaceToken(ref, true);
                 return { action: 'insert', previousRef, tokenIndex };
@@ -311,7 +311,7 @@ export class AgFormulaInputField extends AgContentEditableField<
             return { action: 'replace', previousRef, tokenIndex };
         }
 
-        // Only insert new refs after operator-like chars; otherwise we end the edit on click.
+        // only insert new refs after operator-like chars; otherwise we end the edit on click.
         if (!shouldInsertTokenAtOffset(value, caretOffsets.valueOffset)) {
             return { action: 'none' };
         }
@@ -338,7 +338,7 @@ export class AgFormulaInputField extends AgContentEditableField<
     }
 
     private replaceTokenAtMatch(token: TokenMatch, nextRef: string): TokenInsertResult {
-        // Replace the exact token span so we don't accidentally touch adjacent text.
+        // replace the exact token span so we don't accidentally touch adjacent text.
         const value = this.getCurrentValue();
         const updated = value.slice(0, token.start) + nextRef + value.slice(token.end);
 
@@ -355,7 +355,7 @@ export class AgFormulaInputField extends AgContentEditableField<
     }
 
     private getValueOffsetFromCaret(caretOffset: number): number | null {
-        // Convert caret units (tokens count as 1) into value offsets (tokens count as their length).
+        // convert caret units (tokens count as 1) into value offsets (tokens count as their length).
         const container = this.getContentElement();
         let caretRemaining = caretOffset;
         let valueOffset = 0;
@@ -365,7 +365,7 @@ export class AgFormulaInputField extends AgContentEditableField<
             const valueLen = getNodeText(child).length;
 
             if (caretRemaining <= caretLen) {
-                // Tokens count as 1 caret unit but multiple value units.
+                // tokens count as 1 caret unit but multiple value units.
                 return valueOffset + (caretLen === valueLen ? caretRemaining : 0);
             }
 
@@ -377,7 +377,7 @@ export class AgFormulaInputField extends AgContentEditableField<
     }
 
     private getTokenInsertOffsets(isNew: boolean): { caretOffset: number; valueOffset: number } | null {
-        // Use cached offsets while dragging ranges so caret doesn't jump between events.
+        // use cached offsets while dragging ranges so caret doesn't jump between events.
         return this.getCaretOffsets(this.getCurrentValue(), {
             useCachedCaret: true,
             useCachedValueOffset: !isNew,
@@ -391,7 +391,7 @@ export class AgFormulaInputField extends AgContentEditableField<
             useCachedValueOffset: false,
         }
     ): { caretOffset: number; valueOffset: number } | null {
-        // Snapshot the caret position in both caret units and raw string offsets.
+        // snapshot the caret position in both caret units and raw string offsets.
         const { beans } = this;
         const contentElement = this.getContentElement();
         const caretOffset = options.useCachedCaret
@@ -424,7 +424,7 @@ export class AgFormulaInputField extends AgContentEditableField<
     }
 
     private getFormulaState(text: string): { isFormula: boolean; hasFormulaPrefix: boolean } {
-        // Keep "=" as a plain value for commit/validation, but still enable range selection
+        // keep "=" as a plain value for commit/validation, but still enable range selection
         // when it appears so clicking a cell can insert a token.
         const hasFormulaPrefix = text.trimStart().startsWith('=');
         const isFormula = this.beans.formula?.isFormula(text) ?? hasFormulaPrefix;
@@ -457,7 +457,7 @@ export class AgFormulaInputField extends AgContentEditableField<
             currentValue: params.currentValue ?? this.getCurrentValue(),
             caret: params.caret ?? undefined,
         });
-        // We render tokens ourselves, so avoid the base class' setValue (which would re-render)
+        // we render tokens ourselves, so avoid the base class' setValue (which would re-render)
         // and delegate that task to setEditorValue to keep our cached value and the superclass in sync.
         this.setEditorValue(value, params.silent);
         if (params.dispatch) {
@@ -538,7 +538,7 @@ export class AgFormulaInputField extends AgContentEditableField<
     }
 }
 
-// Token/range color helpers
+// token/range color helpers
 const shouldUseTokenColors = (beans: BeanCollection): boolean => {
     const { editSvc, rangeSvc } = beans;
     const canCreateRanges = !!rangeSvc && !!editSvc?.isRangeSelectionEnabledWhileEditing?.();
@@ -546,11 +546,11 @@ const shouldUseTokenColors = (beans: BeanCollection): boolean => {
     return canCreateRanges;
 };
 
-// Walk the formula left-to-right, capture the first occurrence of each distinct ref,
+// walk the formula left-to-right, capture the first occurrence of each distinct ref,
 // and assign colors in encounter order so token colors stay stable every time the
 // user re-enters the editor (A1 -> color1, next ref -> color2, etc.).
 const getOrderedRefs = (value: string): string[] => {
-    // Collect unique refs in their first-seen order to keep colors stable across re-entry.
+    // collect unique refs in their first-seen order to keep colors stable across re-entry.
     const refsInOrder: string[] = [];
     const seen = new Set<string>();
     for (const match of getRefTokenMatches(value)) {
@@ -565,7 +565,7 @@ const getOrderedRefs = (value: string): string[] => {
 };
 
 const getTokenMatchAtOffset = (value: string, offset: number): TokenMatch | null => {
-    // Locate the token (if any) that covers the given value offset.
+    // locate the token (if any) that covers the given value offset.
     for (const match of getRefTokenMatches(value)) {
         if (offset >= match.start && offset <= match.end) {
             return { ref: match.ref, start: match.start, end: match.end, index: match.index };
@@ -575,13 +575,13 @@ const getTokenMatchAtOffset = (value: string, offset: number): TokenMatch | null
 };
 
 const shouldInsertTokenAtOffset = (value: string, offset: number): boolean => {
-    // Insert only after an operator or at the beginning to avoid hijacking plain values.
+    // insert only after an operator or at the beginning to avoid hijacking plain values.
     const previousChar = getPreviousNonSpaceChar(value, offset);
     return previousChar == null || TOKEN_INSERT_AFTER_CHARS.has(previousChar);
 };
 
 const getPreviousNonSpaceChar = (value: string, offset: number): string | null => {
-    // Skip whitespace to detect the meaningful character before the caret.
+    // skip whitespace to detect the meaningful character before the caret.
     for (let i = offset - 1; i >= 0; i--) {
         const char = value[i];
         if (char != null && char.trim() !== '') {
@@ -591,13 +591,13 @@ const getPreviousNonSpaceChar = (value: string, offset: number): string | null =
     return null;
 };
 
-// Rendering & caret helpers
+// rendering & caret helpers
 const tokenize = (
     beans: BeanCollection,
     value: string,
     getColorIndexForToken: (tokenIndex: number) => number | null
 ): Node[] => {
-    // Split the formula into text + token nodes while preserving operators for display.
+    // split the formula into text + token nodes while preserving operators for display.
     const nodes: Node[] = [];
     let lastIndex = 0;
     const matches = getRefTokenMatches(value);
@@ -663,7 +663,7 @@ const renderFormula = (params: {
     getColorIndexForToken: (tokenIndex: number) => number | null;
     caret?: number | null;
 }): void => {
-    // Rebuild the DOM and restore the caret to the same logical position.
+    // rebuild the DOM and restore the caret to the same logical position.
     const { beans, contentElement, currentValue, value, getColorIndexForToken, caret } = params;
     const caretOffset = caret ?? getCaretOffset(beans, contentElement, currentValue);
     const maxCaret = value.length;
@@ -679,7 +679,7 @@ const renderFormula = (params: {
 };
 
 const getOffsetBeforeNode = (container: HTMLElement, node: Node, useValueLength: boolean = false): number | null => {
-    // Compute caret/value offsets before a specific node in the tokenized DOM.
+    // compute caret/value offsets before a specific node in the tokenised DOM.
     if (!container.contains(node)) {
         return null;
     }
@@ -695,9 +695,9 @@ const getOffsetBeforeNode = (container: HTMLElement, node: Node, useValueLength:
     return null;
 };
 
-// Serialization helpers
+// serialisation helpers
 const serializeContent = (contentElement: HTMLElement): string => {
-    // Read the tokenized DOM back into the raw formula text.
+    // read the tokenised DOM back into the raw formula text.
     let output = '';
 
     contentElement.childNodes.forEach((child) => {
@@ -708,7 +708,7 @@ const serializeContent = (contentElement: HTMLElement): string => {
 };
 
 const getNodeText = (node: Node): string => {
-    // Convert DOM nodes back into value text, undoing display-only operator substitutions.
+    // convert DOM nodes back into value text, undoing display-only operator substitutions.
     if (node.nodeType === Node.TEXT_NODE) {
         return formatForValue(node.textContent ?? '');
     }
@@ -723,7 +723,7 @@ const getNodeText = (node: Node): string => {
 };
 
 const _getNodeTextLength = (node: Node): number => {
-    // Measure text length for caret math (tokens count as their displayed text).
+    // measure text length for caret math (tokens count as their displayed text).
     if (node.nodeType === Node.TEXT_NODE) {
         return node.textContent?.length ?? 0;
     }
@@ -736,7 +736,7 @@ const _getNodeTextLength = (node: Node): number => {
 };
 
 const findNodeAtOffset = (root: Node, offset: number): { node: Node | null; localOffset: number } => {
-    // Walk the tokenized tree and return the node/offset for a logical caret position.
+    // walk the tokenised tree and return the node/offset for a logical caret position.
     let remaining = offset;
 
     for (let i = 0; i < root.childNodes.length; i++) {
@@ -759,7 +759,7 @@ const findNodeAtOffset = (root: Node, offset: number): { node: Node | null; loca
 };
 
 const restoreCaret = (beans: BeanCollection, contentElement: HTMLElement, offset: number | null): void => {
-    // Place the DOM caret at a logical offset within the tokenized content.
+    // place the DOM caret at a logical offset within the tokenised content.
     if (offset == null) {
         return;
     }
@@ -780,12 +780,12 @@ const restoreCaret = (beans: BeanCollection, contentElement: HTMLElement, offset
     try {
         selection.addRange(range);
     } catch {
-        // Ignore invalid ranges when the editor is detached from the document.
+        // ignore invalid ranges when the editor is detached from the document.
     }
 };
 
 const getCaretOffset = (beans: BeanCollection, contentElement: HTMLElement, currentValue: string): number | null => {
-    // Translate the DOM selection into a caret offset that counts tokens as one unit.
+    // translate the DOM selection into a caret offset that counts tokens as one unit.
     const win = _getWindow(beans);
     const selection = win.getSelection();
 
@@ -799,7 +799,7 @@ const getCaretOffset = (beans: BeanCollection, contentElement: HTMLElement, curr
         return currentValue?.length ?? null;
     }
 
-    // If the caret is directly on the container (between child nodes), the range offset is a
+    // if the caret is directly on the container (between child nodes), the range offset is a
     // child index, so convert it to caret units by summing preceding child lengths.
     if (range.startContainer === contentElement) {
         let offset = 0;
@@ -826,7 +826,7 @@ const getCaretOffset = (beans: BeanCollection, contentElement: HTMLElement, curr
     return offset;
 };
 
-// Token helpers
+// token helpers
 const getTokenRef = (tokenEl: HTMLElement): string =>
     formatForValue(tokenEl.textContent ?? tokenEl.dataset.formulaRef ?? '');
 const getTokenIndex = (tokenEl: HTMLElement): number | null => {
@@ -838,7 +838,7 @@ const getTokenIndex = (tokenEl: HTMLElement): number | null => {
     return Number.isFinite(parsed) ? parsed : null;
 };
 
-// Text formatting helpers
+// text formatting helpers
 const formatForDisplay = (text: string): string =>
     text.replace(/[/*]/g, (match) => DISPLAY_OPERATOR_LOOKUP[match] ?? match);
 

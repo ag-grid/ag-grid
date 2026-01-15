@@ -15,21 +15,21 @@ import {
 type TrackedRange = { ref: string; tokenIndex?: number | null };
 
 export class FormulaInputRangeSyncFeature extends BeanStub {
-    // Local mirror of editSvc range selection state while formula editing is active.
+    // local mirror of editSvc range selection state while formula editing is active.
     private rangeSelectionEnabled = false;
     private editingCellRef?: string;
     private editingColumn?: Column;
     private editingRowIndex?: number;
 
-    // Refs found in the formula that should have matching grid ranges (counts handle duplicates).
+    // refs found in the formula that should have matching grid ranges (counts handle duplicates).
     private readonly trackedRangeRefs = new Map<string, number>();
-    // Ranges we are actively tracking and their current ref string.
+    // ranges we are actively tracking and their current ref string.
     private readonly trackedRanges = new Map<CellRange, TrackedRange>();
-    // Prevents our own range changes from re-entering the selection handler.
+    // prevents our own range changes from re-entering the selection handler.
     private suppressRangeEvents = false;
-    // Skips the synthetic refresh event we dispatch after re-tagging ranges.
+    // skips the synthetic refresh event we dispatch after re-tagging ranges.
     private ignoreNextRangeEvent = false;
-    // Avoids a value update loop when we re-render on enabling range selection.
+    // avoids a value update loop when we re-render on enabling range selection.
     private skipNextValueUpdate = false;
 
     constructor(private readonly field: AgFormulaInputField) {
@@ -55,10 +55,10 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
         }
 
         if (hasFormulaPrefix) {
-            // Enable range selection once the user is building a formula (even if it is just "=").
+            // enable range selection once the user is building a formula (even if it is just "=").
             const newlyEnabled = this.enableRangeSelectionWhileEditing();
             if (newlyEnabled) {
-                // Re-render with colors now that range selection is on.
+                // re-render with colors now that range selection is on.
                 this.skipNextValueUpdate = true;
                 this.field.setValue(value, true);
             }
@@ -253,7 +253,7 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
         }
 
         const refTokens = getRefTokensFromText(text);
-        // Group token indices by ref so duplicates map to distinct ranges.
+        // group token indices by ref so duplicates map to distinct ranges.
         const desiredByRef = new Map<string, number[]>();
 
         for (const token of refTokens) {
@@ -370,7 +370,7 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
             !!latestRange && !this.trackedRanges.has(latestRange) && !!latestRef && latestRef !== this.editingCellRef;
         const shouldInsert = event.finished && (event.started || hasInsertCandidate);
 
-        // Re-tag ranges if their colors are out of sync with the formula tokens.
+        // re-tag ranges if their colors are out of sync with the formula tokens.
         const reTagged = this.ensureTrackedRangeColors();
 
         if (this.suppressRangeEvents) {
@@ -381,7 +381,7 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
         }
 
         if (event.started || hasInsertCandidate) {
-            // Remember caret so we can restore it after any selection-driven edits.
+            // remember caret so we can restore it after any selection-driven edits.
             this.field.rememberCaret();
         }
 
@@ -391,7 +391,7 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
             return;
         }
 
-        // If an existing range was resized, update its token instead of inserting a new one.
+        // if an existing range was resized, update its token instead of inserting a new one.
         if (this.updateTrackedRangeTokens()) {
             return;
         }
@@ -407,17 +407,17 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
             const { action, previousRef, tokenIndex } = this.field.applyRangeInsert(ref);
 
             if (action === 'none') {
-                // Range selection while editing appends ranges, so collapse to the latest selection
+                // range selection while editing appends ranges, so collapse to the latest selection
                 // before stopping the edit to avoid leaving the previous cell highlighted.
                 this.keepLatestSelectionOnly(latestRange);
 
-                // Treat the click as an edit completion when not in a formula context.
+                // treat the click as edit completion when we are not inserting a token.
                 this.beans.editSvc?.stopEditing(undefined, { source: 'edit' });
                 return;
             }
 
             if (action === 'replace' && previousRef === ref) {
-                // Clicking the same ref should not leave a duplicate range behind.
+                // clicking the same ref should not leave a duplicate range behind.
                 this.discardLatestRangeForRef(ref);
                 this.field.restoreCaretAfterToken();
                 this.refocusEditingCell();
@@ -426,7 +426,7 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
 
             this.tagLatestRangeForRef(ref, tokenIndex);
             this.handleRangeTokenUpdate(previousRef, ref, true, action === 'insert', tokenIndex);
-            // Refresh token indices for existing ranges so their colors match the new token order.
+            // refresh token indices for existing ranges so their colors match the new token order.
             this.syncRangesFromFormula(this.field.getCurrentValue());
             this.field.restoreCaretAfterToken();
             this.refocusEditingCell();
@@ -434,7 +434,7 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
         }
 
         if (!event.started && !event.finished) {
-            // Drag updates should rewrite the active token as the range grows/shrinks.
+            // drag updates should rewrite the active token as the range grows/shrinks.
             const { previousRef, tokenIndex } = this.field.insertOrReplaceToken(ref, false);
             this.tagLatestRangeForRef(ref, tokenIndex);
             this.handleRangeTokenUpdate(previousRef, ref, false, false);
@@ -491,7 +491,7 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
     }
 
     private addRangeForRef(ref: string, skipAddCellRange?: boolean, tokenIndex?: number | null): CellRange | undefined {
-        // Create or re-tag an existing range for the given ref.
+        // create or re-tag an existing range for the given ref.
         const rangeSvc = this.beans.rangeSvc;
 
         if (!rangeSvc) {
@@ -538,7 +538,7 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
     }
 
     private tagLatestRangeForRef(ref: string, tokenIndex?: number | null): void {
-        // The newest range is the one the user just clicked/dragged.
+        // the newest range is the one the user just clicked/dragged.
 
         const { trackedRanges } = this;
         const ranges = this.getLiveRanges();
@@ -617,7 +617,7 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
     }
 
     private handleRemovedRangeTokens(): boolean {
-        // If a tracked range was removed via selection (e.g. Ctrl/Cmd click), drop its token.
+        // if a tracked range was removed via selection (e.g. Ctrl/Cmd click), drop its token.
         if (!this.beans.rangeSvc || this.trackedRanges.size === 0) {
             return false;
         }
@@ -692,7 +692,7 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
     }
 
     private refreshRangeStyling(): void {
-        // Trigger a lightweight refresh so overlays pick up any updated classes.
+        // trigger a lightweight refresh so overlays pick up any updated classes.
         const { eventSvc } = this.beans;
         if (!eventSvc) {
             return;
@@ -708,7 +708,7 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
     }
 
     private refocusEditingCell(): void {
-        // Keep focus on the edited cell so keyboard editing continues.
+        // keep focus on the edited cell so keyboard editing continues.
         const { focusSvc } = this.beans;
         if (!focusSvc || this.editingColumn == null || this.editingRowIndex == null) {
             return;
@@ -738,7 +738,7 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
     }
 
     private removeRangeForRef(ref: string | undefined, tokenIndex?: number | null): void {
-        // Drop ranges that no longer exist in the formula and clean our tracking maps.
+        // drop ranges that no longer exist in the formula and clean our tracking maps.
         if (!ref || !this.hasTrackedRef(ref)) {
             return;
         }
@@ -777,7 +777,7 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
     }
 
     private updateTrackedRangeTokens(): boolean {
-        // When a tracked range changes, update the corresponding token text.
+        // when a tracked range changes, update the corresponding token text.
         if (!this.beans.rangeSvc) {
             return false;
         }
