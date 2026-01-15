@@ -46,7 +46,7 @@ describe('ag-grid groupCellRenderer', () => {
         api.ensureIndexVisible(2);
         await new Promise((resolve) => setTimeout(resolve, 0));
 
-        const totalValueCell = div.querySelector<HTMLElement>('.ag-row-total [col-id="amount"]');
+        const totalValueCell = div.querySelector<HTMLElement>('.ag-row-footer [col-id="amount"]');
         expect(totalValueCell?.textContent ?? '').toContain('formatted-12');
     });
 });

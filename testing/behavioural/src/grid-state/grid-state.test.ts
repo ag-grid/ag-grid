@@ -418,6 +418,8 @@ describe('StateService - Grid State Management', () => {
                 rowData: defaultRowData,
             });
 
+            await asyncSetTimeout(20);
+
             // Focus a cell
             api.setFocusedCell(0, 'name');
 

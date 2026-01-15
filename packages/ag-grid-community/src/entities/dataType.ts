@@ -115,7 +115,7 @@ export interface NumberDataTypeDefinition<TData = any, TContext = any>
     extends BaseDataTypeDefinition<'number', TData, number, TContext> {}
 
 /** Represents a `'bigint'` data type (type `bigint`). */
-export interface BigIntDataTypeDefinition<TData = any, TContext = any>
+interface BigIntDataTypeDefinition<TData = any, TContext = any>
     extends BaseDataTypeDefinition<'bigint', TData, bigint, TContext> {}
 
 /** Represents a `'boolean'` data type (type `boolean`). */

@@ -56,7 +56,7 @@ export interface NumberAdvancedFilterModel {
 }
 
 /** Represents a single filter condition for a bigint column */
-export interface BigIntAdvancedFilterModel {
+interface BigIntAdvancedFilterModel {
     filterType: 'bigint';
     /** The ID of the column being filtered. */
     colId: string;
