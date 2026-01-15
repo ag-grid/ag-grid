@@ -161,7 +161,13 @@ describe('Sorting', () => {
 
     test('sorts bigint values ascending, descending, and absolute', async () => {
         const api = gridMgr.createGrid('bigintSort', {
-            columnDefs: [{ field: 'value', cellDataType: 'bigint' }],
+            columnDefs: [
+                {
+                    field: 'value',
+                    cellDataType: 'bigint',
+                    valueFormatter: (params) => (params.value == null ? '' : `${params.value}n`),
+                },
+            ],
             rowData: [
                 { id: 'a', value: 9007199254740993n },
                 { id: 'b', value: -5n },
@@ -172,27 +178,27 @@ describe('Sorting', () => {
 
         await new GridRows(api, 'bigint initial').check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:a value:9007199254740993
-            ├── LEAF id:b value:-5
-            └── LEAF id:c value:10
+            ├── LEAF id:a value:"9007199254740993n"
+            ├── LEAF id:b value:"-5n"
+            └── LEAF id:c value:"10n"
         `);
 
         api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
 
         await new GridRows(api, 'bigint asc').check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:b value:-5
-            ├── LEAF id:c value:10
-            └── LEAF id:a value:9007199254740993
+            ├── LEAF id:b value:"-5n"
+            ├── LEAF id:c value:"10n"
+            └── LEAF id:a value:"9007199254740993n"
         `);
 
         api.applyColumnState({ state: [{ colId: 'value', sort: 'desc' }] });
 
         await new GridRows(api, 'bigint desc').check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:a value:9007199254740993
-            ├── LEAF id:c value:10
-            └── LEAF id:b value:-5
+            ├── LEAF id:a value:"9007199254740993n"
+            ├── LEAF id:c value:"10n"
+            └── LEAF id:b value:"-5n"
         `);
 
         api.applyColumnState({
@@ -201,9 +207,9 @@ describe('Sorting', () => {
 
         await new GridRows(api, 'bigint absolute asc').check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:b value:-5
-            ├── LEAF id:c value:10
-            └── LEAF id:a value:9007199254740993
+            ├── LEAF id:b value:"-5n"
+            ├── LEAF id:c value:"10n"
+            └── LEAF id:a value:"9007199254740993n"
         `);
     });
 

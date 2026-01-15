@@ -46,7 +46,7 @@ describe('BigInt value parser and formatter', () => {
                 {
                     field: 'value',
                     cellDataType: 'bigint',
-                    valueFormatter: (params) => `formatted-${params.value}`,
+                    valueFormatter: (params) => (params.value == null ? '' : `formatted-${params.value}`),
                 },
             ],
             rowData: [{ id: 'r1', value: 12n }],

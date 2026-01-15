@@ -341,7 +341,11 @@ export class GridRowsDiagramTree {
 
                 const diagramColumnId = isRowNumberCol(columnId) ? 'row-number' : columnId;
                 if (value !== undefined || formattedValue) {
-                    result += ' ' + diagramColumnId + ':' + JSON.stringify(formattedValue || value);
+                    const serialisedValue =
+                        typeof (formattedValue || value) === 'bigint'
+                            ? JSON.stringify(`${formattedValue || value}n`)
+                            : JSON.stringify(formattedValue || value);
+                    result += ' ' + diagramColumnId + ':' + serialisedValue;
                 } else if (!omitUndefined && row.data != null) {
                     result += ' ' + diagramColumnId + ':undefined';
                 }
@@ -352,7 +356,8 @@ export class GridRowsDiagramTree {
         if (dataProps?.length) {
             for (const prop of dataProps) {
                 const dataValue = (row.data as any)?.[prop];
-                const serialised = JSON.stringify(dataValue ?? '');
+                const serialised =
+                    typeof dataValue === 'bigint' ? JSON.stringify(`${dataValue}n`) : JSON.stringify(dataValue ?? '');
                 result += ` data.${prop}:${serialised}`;
             }
         }
