@@ -142,24 +142,7 @@ export class AgAutocompleteList extends AgPopupComponent<
         const allMatches = searchStrings.filter((string) =>
             string.toLocaleLowerCase().startsWith(lowerCaseSearchString)
         );
-        let topMatch: string | undefined;
-
-        if (allMatches.length) {
-            topMatch = allMatches.reduce(
-                (best, candidate) => {
-                    if (!best || candidate.length < best.length) {
-                        return candidate;
-                    }
-                    return best;
-                },
-                undefined as string | undefined
-            );
-        }
-
-        if (!topMatch && allMatches.length) {
-            topMatch = allMatches[0];
-        }
-
+        const topMatch = allMatches[0];
         return { topMatch, allMatches };
     }
 
