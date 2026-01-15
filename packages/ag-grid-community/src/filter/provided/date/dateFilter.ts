@@ -284,9 +284,10 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
     protected createCondition(position: number): DateFilterModel {
         const type = this.getConditionType(position);
         const model: Partial<DateFilterModel> = {};
-
+        const { params, filterType } = this;
         const values = this.getValues(position);
-        const separator = this.params.useIsoSeparator ? 'T' : ' ';
+
+        const separator = params.useIsoSeparator ? 'T' : ' ';
         if (values.length > 0) {
             model.dateFrom = _serialiseDate(values[0], true, separator);
         }
@@ -297,7 +298,7 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         return {
             dateFrom: null,
             dateTo: null,
-            filterType: this.filterType,
+            filterType,
             type,
             ...model,
         };

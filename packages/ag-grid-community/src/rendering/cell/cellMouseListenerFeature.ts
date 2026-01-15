@@ -144,9 +144,10 @@ export class CellMouseListenerFeature extends BeanStub {
 
         if (editSvc?.shouldStartEditing(cellCtrl, event) && editModelSvc?.getState(cellCtrl) !== 'editing') {
             const editing = editSvc?.isEditing();
+            const isRangeSelectionEnabledWhileEditing = editSvc?.isRangeSelectionEnabledWhileEditing();
             const cellValidations = editModelSvc?.getCellValidationModel().getCellValidationMap().size ?? 0;
             const rowValidations = editModelSvc?.getRowValidationModel().getRowValidationMap().size ?? 0;
-            if (editing && (cellValidations > 0 || rowValidations > 0)) {
+            if (editing && (isRangeSelectionEnabledWhileEditing || cellValidations > 0 || rowValidations > 0)) {
                 return;
             }
 

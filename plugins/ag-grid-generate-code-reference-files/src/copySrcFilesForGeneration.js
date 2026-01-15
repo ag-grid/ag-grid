@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const fs = require('fs');
 
 function copyFileWithTSNoCheck(sourceFile, destinationDir, destinationFile) {
@@ -24,7 +25,6 @@ function copyFileWithTSNoCheck(sourceFile, destinationDir, destinationFile) {
             (err) => {
                 if (err) {
                     console.error(`Error writing file: ${err}`);
-                    return;
                 }
             }
         );

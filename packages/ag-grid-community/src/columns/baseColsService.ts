@@ -123,7 +123,9 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
             columnCallback(column, added, source);
         }
 
-        autoGroupsNeedBuilding && this.colModel.refreshCols(false, source);
+        if (autoGroupsNeedBuilding) {
+            this.colModel.refreshCols(false, source);
+        }
 
         this.visibleCols.refresh(source);
 
@@ -256,7 +258,11 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
 
             if (include) {
                 const useIndex = colIsNew ? index != null || initialIndex != null : index != null;
-                useIndex ? colsWithIndex.push(col) : colsWithValue.push(col);
+                if (useIndex) {
+                    colsWithIndex.push(col);
+                } else {
+                    colsWithValue.push(col);
+                }
             }
         }
 

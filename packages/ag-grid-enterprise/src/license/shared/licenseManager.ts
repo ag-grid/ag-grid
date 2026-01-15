@@ -14,8 +14,11 @@ export interface ILicenseManager {
 }
 
 export class LicenseManager {
+    // eslint-disable-next-line no-restricted-syntax
     private static readonly RELEASE_INFORMATION: string = 'MTc2NTM1OTQ2ODIzOA==';
+    // eslint-disable-next-line no-restricted-syntax
     private static licenseKey: string;
+    // eslint-disable-next-line no-restricted-syntax
     private static chartsLicenseManager?: ILicenseManager;
     private watermarkMessage: string | undefined = undefined;
 

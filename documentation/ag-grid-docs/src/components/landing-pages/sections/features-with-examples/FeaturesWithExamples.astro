@@ -1,0 +1,111 @@
+---
+import type { InternalFramework } from '@ag-grid-types';
+import ExampleRunner from '../example-runner/ExampleRunner.astro';
+import { FeaturesWithExamplesContent, type FeatureConfig } from './FeaturesWithExamplesContent';
+import styles from './FeaturesWithExamples.module.scss';
+
+interface Props {
+    features: FeatureConfig[];
+    framework: InternalFramework;
+}
+
+const { features, framework } = Astro.props;
+---
+
+<div class={styles.container}>
+    <!-- Tabs at top -->
+    <div class="landing-page-features-tabs">
+        <FeaturesWithExamplesContent client:load features={features} framework={framework} />
+    </div>
+
+    <!-- Side by side layout: content left, example right -->
+    <div class="landing-page-features-layout">
+        <!-- Content column (controlled by React component via portal/slot) -->
+        <div class="landing-page-content-column" id="landing-page-features-content-target">
+            <!-- Content is rendered by LandingPageFeaturesContent via portal -->
+        </div>
+
+        <!-- Example runners column -->
+        <div class="landing-page-examples-column">
+            {
+                features.map((feature, index) => (
+                    <div
+                        class={`landing-page-example-panel ${index === 0 ? 'active' : ''}`}
+                        data-feature-id={feature.id}
+                        data-index={index}
+                    >
+                        <ExampleRunner
+                            title={feature.title}
+                            name={feature.example.exampleName}
+                            pageName={feature.example.pageName}
+                            exampleHeight={450}
+                            framework={framework}
+                        />
+                    </div>
+                ))
+            }
+        </div>
+    </div>
+</div>
+
+<style lang="scss">
+    @use 'design-system' as *;
+
+    .landing-page-features-tabs {
+        width: 100%;
+        margin-bottom: $spacing-size-8;
+    }
+
+    .landing-page-features-layout {
+        display: flex;
+        flex-direction: row;
+        gap: $spacing-size-8;
+        width: 100%;
+
+        @media screen and (max-width: $breakpoint-landing-page-medium) {
+            flex-direction: column;
+        }
+    }
+
+    .landing-page-content-column {
+        flex: 0 0 40%;
+        min-width: 0;
+
+        @media screen and (max-width: $breakpoint-landing-page-medium) {
+            flex: 1;
+        }
+    }
+
+    .landing-page-examples-column {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .landing-page-example-panel {
+        display: none;
+    }
+
+    .landing-page-example-panel.active {
+        display: block;
+    }
+</style>
+
+<script>
+    // Listen for tab changes from the React component
+    document.addEventListener('landing-page-feature-tab-change', ((
+        event: CustomEvent<{ index: number; featureId: string }>
+    ) => {
+        const { index } = event.detail;
+
+        // Hide all panels
+        document.querySelectorAll('.landing-page-example-panel').forEach((panel) => {
+            panel.classList.remove('active');
+        });
+
+        // Show the selected panel
+        const activePanel = document.querySelector(`.landing-page-example-panel[data-index="${index}"]`);
+        if (activePanel) {
+            activePanel.classList.add('active');
+        }
+    }) as EventListener);
+</script>

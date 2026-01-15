@@ -1,0 +1,38 @@
+---
+import type { ContactSection, LandingPageContent } from '../types';
+import { LandingPageSection } from '../LandingPageSection';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { ContactForm } from '@ag-website-shared/components/contact-form/ContactForm';
+
+interface Props {
+    section: ContactSection;
+    pageContent: LandingPageContent;
+    styles: Record<string, string>;
+}
+
+const { section, styles } = Astro.props;
+---
+
+<LandingPageSection id="contact" tag={section.tag} heading={section.heading} subHeading={section.subHeading}>
+    <div class={styles.contactSection}>
+        <div class={styles.contactInfo}>
+            <div class={styles.contactFeatures}>
+                {
+                    section.features.map((feature) => (
+                        <div class={styles.contactFeature}>
+                            <Icon name="tick" svgClasses={styles.contactFeatureIcon} />
+                            <span>{feature}</span>
+                        </div>
+                    ))
+                }
+            </div>
+            <div class={styles.contactLogos}>
+                <p class={styles.contactLogosLabel}>Trusted by millions of developers:</p>
+                <slot name="contact-logos" />
+            </div>
+        </div>
+        <div class:list={[styles.contactFormWrapper, 'trial-licence-form']}>
+            <ContactForm client:load formLocation="Grid pricing page" />
+        </div>
+    </div>
+</LandingPageSection>

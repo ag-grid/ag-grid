@@ -269,14 +269,15 @@ jobs:
         with:
           cache_mode: ro
 
-      - name: module-size tests (non-sharded)
-        if: matrix.shard == 0
-        id: test-no-shard
-        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e -c staging --exclude '!tag:module-size' --exclude 'tag:sharding' --exclude all
-      - name: module-size tests
-        if: matrix.shard != 0
-        id: test
-        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }}  -t test:e2e -c staging --exclude '!tag:module-size' --exclude 'tag:non-sharding' --exclude all --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
+      # Disable now that module size tests are reported on PRs
+      # - name: module-size tests (non-sharded)
+      #   if: matrix.shard == 0
+      #   id: test-no-shard
+      #   run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e -c staging --exclude '!tag:module-size' --exclude 'tag:sharding' --exclude all
+      # - name: module-size tests
+      #   if: matrix.shard != 0
+      #   id: test
+      #   run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }}  -t test:e2e -c staging --exclude '!tag:module-size' --exclude 'tag:non-sharding' --exclude all --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
 
       - name: Persist test results
         if: always() && matrix.shard != 0

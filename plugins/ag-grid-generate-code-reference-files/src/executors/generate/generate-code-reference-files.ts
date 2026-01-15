@@ -112,7 +112,9 @@ function extractNestedTypes<T extends ts.Node>(
 
     if (ts.isPropertySignature(node)) {
         results[node.name.getText()] = getJsDoc(node);
-        node.type && extractNestedTypes(node.type, srcFile, includeQuestionMark, results, visited);
+        if (node.type) {
+            extractNestedTypes(node.type, srcFile, includeQuestionMark, results, visited);
+        }
         return;
     }
 

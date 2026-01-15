@@ -23,7 +23,7 @@ const updateHtml = (darkmode: boolean | undefined) => {
     htmlEl.classList.add('no-transitions');
     htmlEl.dataset.darkMode = darkmode === true ? 'true' : 'false';
     htmlEl.dataset.agThemeMode = htmlEl.dataset.darkMode === 'true' ? 'dark-blue' : 'light';
-    htmlEl.offsetHeight; // Trigger a reflow, flushing the CSS changes
+    void htmlEl.offsetHeight; // Trigger a reflow, flushing the CSS changes
     htmlEl.classList.remove('no-transitions');
 
     const darkModeEvent = { type: 'color-scheme-change', darkmode };

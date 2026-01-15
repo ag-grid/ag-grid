@@ -1,5 +1,5 @@
 import type { ICellEditorParams } from 'ag-grid-community';
-import { AgAbstractCellEditor, KeyCode, RefPlaceholder, _isBrowserSafari } from 'ag-grid-community';
+import { AgAbstractCellEditor, KeyCode, RefPlaceholder, _isBrowserSafari, _placeCaretAtEnd } from 'ag-grid-community';
 
 import { AgFormulaInputField } from '../../widgets/agFormulaInputField';
 
@@ -20,7 +20,7 @@ export class FormulaCellEditor extends AgAbstractCellEditor<ICellEditorParams> {
 
         const { eventKey, cellStartedEdit } = params;
 
-        // Replicate the provided editors’ behavior: if we started from a printable key, seed with that;
+        // replicate the provided editors’ behaviour: if we started from a printable key, seed with that;
         // backspace/delete clears; otherwise use the existing value.
         let startValue: string | null | undefined;
         if (cellStartedEdit) {
@@ -55,10 +55,11 @@ export class FormulaCellEditor extends AgAbstractCellEditor<ICellEditorParams> {
             return;
         }
 
+        const { beans, eEditor } = this;
         if (!_isBrowserSafari()) {
             this.focusIn();
         }
-        this.eEditor.placeCaretAtEnd();
+        _placeCaretAtEnd(beans, eEditor.getContentElement());
     }
 
     public focusIn(): void {
@@ -69,7 +70,7 @@ export class FormulaCellEditor extends AgAbstractCellEditor<ICellEditorParams> {
         const rawValue = this.eEditor.getCurrentValue();
         const { value, parseValue } = this.params;
 
-        // Preserve formulas exactly as typed; otherwise delegate to the column parser so numbers/strings
+        // preserve formulas exactly as typed; otherwise delegate to the column parser so numbers/strings
         // commit in their intended type.
         if (typeof rawValue === 'string' && this.isFormulaText(rawValue)) {
             return rawValue;

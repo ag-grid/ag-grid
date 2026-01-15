@@ -58,6 +58,10 @@ export default [
                     message:
                         'Empty imports are not allowed. i.e import "ag-grid-community"; as it will cause warnings about being sideEffect free',
                 },
+                {
+                    selector: 'PropertyDefinition[static=true]',
+                    message: 'Static class properties prevent tree-shaking. Use an alternative if possible.',
+                },
             ],
             'no-restricted-imports': [
                 'error',

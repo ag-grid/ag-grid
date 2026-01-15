@@ -1,10 +1,10 @@
 import type { MockInstance } from 'vitest';
 
-import type { GetDetailRowDataParams, GridApi, GridOptions } from 'ag-grid-community';
+import type { DetailGridInfo, GetDetailRowDataParams, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { MasterDetailModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, assertSelectedRowsByIndex, waitForEvent } from '../test-utils';
+import { TestGridsManager, assertSelectedRowsByIndex, asyncSetTimeout, waitForEvent } from '../test-utils';
 import { GridActions } from './utils';
 
 describe('Row Selection Grid Options', () => {
@@ -207,5 +207,90 @@ describe('Row Selection Grid Options', () => {
 
         assertSelectedRowsByIndex([], info.api!);
         expect(node.isSelected()).toBe(false);
+    });
+
+    test('detail state properly tracked and restored when collapsing and re-expanding detail grid', async () => {
+        const [api, actions] = await createGridAndWait({
+            columnDefs,
+            rowData,
+            rowSelection: { mode: 'multiRow', masterSelects: 'detail' },
+            masterDetail: true,
+            detailCellRendererParams: {
+                detailGridOptions: {
+                    columnDefs: detailColumnDefs,
+                    rowSelection: { mode: 'multiRow' },
+                },
+                getDetailRowData(params: GetDetailRowDataParams) {
+                    params.successCallback(params.data.detail);
+                },
+            },
+        });
+
+        let info: DetailGridInfo | undefined;
+        let detailActions: GridActions;
+        let wait: Promise<void>;
+
+        //////////
+        // Round 1
+        //////////
+
+        await actions.expandGroupRowByIndex(1, { count: 1 });
+
+        info = api.getDetailGridInfo('detail_1')!;
+        expect(info).not.toBeUndefined();
+
+        await waitForEvent('firstDataRendered', info.api!);
+
+        detailActions = new GridActions(info.api!, '[row-id="detail_1"]');
+
+        wait = waitForEvent('rowSelected', info.api!, 2);
+        detailActions.toggleCheckboxByIndex(0);
+        detailActions.toggleCheckboxByIndex(1);
+        await wait;
+
+        // Detail rows selected
+        assertSelectedRowsByIndex([0, 1], info.api!);
+
+        // Master indeterminate
+        const node = api.getRowNode('1')!;
+        expect(node).not.toBeUndefined();
+        expect(node.isSelected()).toBeUndefined();
+
+        //////////
+        // Round 2
+        //////////
+
+        // Collapse and re-expand master row to hide/show detail grid
+        await actions.collapseGroupRowByIndex(1, { count: 1 });
+        await actions.expandGroupRowByIndex(1, { count: 1 });
+        await asyncSetTimeout(10);
+
+        info = api.getDetailGridInfo('detail_1')!;
+        detailActions = new GridActions(info.api!, '[row-id="detail_1"]');
+
+        // Detail grid should have same rows selected
+        assertSelectedRowsByIndex([0, 1], info.api!);
+
+        // Deselect a detail row
+        wait = waitForEvent('rowSelected', info.api!);
+        detailActions.toggleCheckboxByIndex(1);
+        await wait;
+
+        assertSelectedRowsByIndex([0], info.api!);
+
+        //////////
+        // Round 3
+        //////////
+
+        // Collapse and re-expand master row again
+        await actions.collapseGroupRowByIndex(1, { count: 1 });
+        await actions.expandGroupRowByIndex(1, { count: 1 });
+        await asyncSetTimeout(10);
+
+        info = api.getDetailGridInfo('detail_1')!;
+        detailActions = new GridActions(info.api!, '[row-id="detail_1"]');
+
+        // Detail grid should have same rows selected
+        assertSelectedRowsByIndex([0], info.api!);
     });
 });

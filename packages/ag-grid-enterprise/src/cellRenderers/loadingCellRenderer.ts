@@ -18,7 +18,11 @@ export class LoadingCellRenderer extends Component implements ILoadingCellRender
     }
 
     public init(params: ILoadingCellRendererParams): void {
-        params.node.failedLoad ? this.setupFailed() : this.setupLoading();
+        if (params.node.failedLoad) {
+            this.setupFailed();
+        } else {
+            this.setupLoading();
+        }
     }
 
     private setupFailed(): void {

@@ -2,7 +2,9 @@ import type { GridOptions } from './entities/gridOptions';
 import { _mergeDeep } from './utils/mergeDeep';
 
 export class GlobalGridOptions {
+    // eslint-disable-next-line no-restricted-syntax
     static gridOptions: GridOptions | undefined = undefined;
+    // eslint-disable-next-line no-restricted-syntax
     static mergeStrategy: GlobalGridOptionsMergeStrategy = 'shallow';
 
     /**

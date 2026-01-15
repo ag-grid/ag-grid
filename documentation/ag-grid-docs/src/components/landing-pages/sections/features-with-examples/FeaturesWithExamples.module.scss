@@ -1,0 +1,216 @@
+@use 'design-system' as *;
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    @media screen and (max-width: $breakpoint-landing-page-medium) {
+        align-items: unset;
+    }
+}
+
+.tabContainer {
+    display: flex;
+    justify-content: flex-start;
+    gap: $spacing-size-2;
+    margin-bottom: $spacing-size-8;
+    width: 100%;
+    border-bottom: 1px solid var(--color-border-secondary);
+
+    @media screen and (max-width: $breakpoint-landing-page-medium) {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+}
+
+.tab {
+    // Reset default button styling from style guide
+    --icon-size: unset;
+    --icon-color: unset;
+    padding: $spacing-size-2 $spacing-size-4;
+    min-width: 120px;
+    height: 44px;
+    color: var(--color-fg-secondary);
+    opacity: 0.6;
+    border: none;
+    border-bottom: 2px solid transparent;
+    appearance: none;
+    background-color: transparent;
+    box-shadow: none;
+    font-weight: var(--text-semibold);
+    font-size: 16px;
+    white-space: nowrap;
+    border-radius: 0;
+    cursor: pointer;
+    outline: none;
+    transition:
+        color 0.3s ease,
+        border-bottom-color 0.3s ease,
+        opacity 0.3s ease;
+
+    &:hover {
+        background: transparent;
+        color: var(--color-fg-primary);
+        border-bottom-color: var(--color-border-secondary);
+        opacity: 0.8;
+    }
+
+    @media screen and (max-width: $breakpoint-landing-page-medium) {
+        min-width: auto;
+        padding: $spacing-size-2 $spacing-size-3;
+    }
+}
+
+.activeTab {
+    // Reset default button styling from style guide
+    --icon-size: unset;
+    --icon-color: unset;
+    padding: $spacing-size-2 $spacing-size-4;
+    min-width: 120px;
+    height: 44px;
+    color: var(--color-brand-500);
+    opacity: 1;
+    border: none;
+    border-bottom: 2px solid var(--color-brand-500);
+    appearance: none;
+    background-color: var(--color-bg-primary) !important;
+    box-shadow: none;
+    font-weight: var(--text-semibold);
+    font-size: 16px;
+    white-space: nowrap;
+    border-radius: 0;
+    cursor: pointer;
+    outline: none;
+    transition: border-bottom-color 0.3s ease;
+
+    #{$selector-darkmode} & {
+        color: var(--color-link);
+        border-bottom-color: var(--color-link);
+    }
+
+    &:hover {
+        background-color: var(--color-bg-primary) !important;
+        color: var(--color-brand-500) !important;
+
+        #{$selector-darkmode} & {
+            color: var(--color-link) !important;
+        }
+    }
+
+    @media screen and (max-width: $breakpoint-landing-page-medium) {
+        min-width: auto;
+        padding: $spacing-size-2 $spacing-size-3;
+    }
+}
+
+.contentContainer {
+    width: 100%;
+}
+
+.columnContainer {
+    display: flex;
+    justify-content: space-between;
+    gap: $spacing-size-8;
+
+    @media screen and (max-width: $breakpoint-landing-page-medium) {
+        flex-direction: column;
+    }
+}
+
+.column {
+    width: var(--layout-width-2-4);
+
+    @media screen and (max-width: $breakpoint-landing-page-medium) {
+        width: 100%;
+    }
+}
+
+.featureContainer {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-4;
+    margin-bottom: $spacing-size-4;
+}
+
+.title {
+    font-size: var(--text-fs-2xl);
+    font-weight: var(--text-bold);
+    color: var(--color-fg-primary);
+    margin: 0 0 $spacing-size-4 0;
+}
+
+.feature {
+    display: flex;
+    flex-direction: column;
+}
+
+.featureHeading {
+    display: flex;
+    flex-grow: 1;
+    font-size: var(--text-fs-lg);
+    font-weight: var(--text-semibold);
+    margin-bottom: $spacing-size-2;
+    color: var(--color-fg-primary);
+}
+
+.featureDetail {
+    font-size: var(--text-fs-md);
+    margin-bottom: $spacing-size-2;
+    color: var(--color-fg-secondary);
+    line-height: 1.5;
+
+    a {
+        color: var(--color-link);
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+.docsLink {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-size-2;
+    margin-top: $spacing-size-4;
+    color: var(--color-link);
+    font-weight: var(--text-medium);
+    font-size: var(--text-fs-md);
+    text-decoration: none;
+    transition: color 0.2s ease;
+
+    &:hover {
+        color: var(--color-link-hover);
+        text-decoration: underline;
+    }
+}
+
+.buttonContainer {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $spacing-size-4;
+    margin-top: $spacing-size-6;
+}
+
+.trialCta {
+    flex-shrink: 0;
+}
+
+.navButtons {
+    display: flex;
+    gap: $spacing-size-2;
+}
+
+.featureNavIcon {
+    --icon-color: var(--color-fg-secondary);
+
+    cursor: pointer;
+
+    &:hover {
+        --icon-color: var(--color-link-hover);
+    }
+}

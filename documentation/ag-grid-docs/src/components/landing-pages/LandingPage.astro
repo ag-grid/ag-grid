@@ -1,0 +1,307 @@
+---
+/**
+ * LandingPage.astro - Content-driven landing page template
+ *
+ * This component renders a landing page based on a JSON content definition.
+ * Each section in the content.sections array is rendered in order.
+ *
+ * Usage:
+ * ```astro
+ * ---
+ * import LandingPage from '@components/landing-pages/LandingPage.astro';
+ * import { getEntry } from 'astro:content';
+ *
+ * const { data: content } = await getEntry('landingPages', 'react-data-grid');
+ * const { data: versions } = await getEntry('versions', 'ag-grid-versions');
+ * ---
+ * <LandingPage content={content} versions={versions} />
+ * ```
+ */
+
+import type {
+    LandingPageContent,
+    HeroSection as HeroSectionType,
+} from '@ag-website-shared/components/landing-pages/types';
+import Layout from '@layouts/Layout.astro';
+import frameworkStyles from '@pages-styles/framework-landing-page.module.scss';
+import enterpriseStyles from '@pages-styles/enterprise.module.scss';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import { getPageImages } from '@components/docs/utils/filesData';
+
+// Shared section components from @ag-website-shared
+import HeroSection from '@ag-website-shared/components/landing-pages/sections/HeroSection.astro';
+import FeaturesSection from '@ag-website-shared/components/landing-pages/sections/FeaturesSection.astro';
+import ShowcaseSection from '@ag-website-shared/components/landing-pages/sections/ShowcaseSection.astro';
+import CustomersSection from '@ag-website-shared/components/landing-pages/sections/CustomersSection.astro';
+import ExamplesSection from '@ag-website-shared/components/landing-pages/sections/ExamplesSection.astro';
+import FAQSection from '@ag-website-shared/components/landing-pages/sections/FAQSection.astro';
+import ContactSection from '@ag-website-shared/components/landing-pages/sections/ContactSection.astro';
+import { LandingPageSection } from '@ag-website-shared/components/landing-pages/LandingPageSection';
+import { Video } from '@ag-website-shared/components/video/Video';
+import { InstallText } from '@ag-website-shared/components/install-text';
+import { AutomatedIntegratedCharts } from '@ag-website-shared/components/automated-examples/AutomatedIntegratedCharts';
+import { TrialButton } from '@ag-website-shared/components/trial-licence-modal/TrialButton';
+import { EnterpriseTrial } from '@ag-website-shared/components/license-pricing/EnterpriseTrial';
+
+// Site-specific components
+import { getHeadingWithLogo } from '@utils/framework-landing-page-utils';
+import { Finance } from '@components/demos/examples/finance';
+import { CustomerLogos } from '@components/customer-logos/CustomerLogos';
+import Showcase from '@components/showcase/Showcase';
+import Customers from '@components/customers/Customers';
+import FeaturesWithExamples from './sections/features-with-examples/FeaturesWithExamples.astro';
+import ComparisonTable from './sections/comparison/ComparisonTable';
+
+interface Props {
+    content: LandingPageContent;
+    versions?: Array<{
+        version: string;
+        landingPageHighlight?: string;
+    }>;
+}
+
+const { content, versions } = Astro.props;
+const latestVersion = versions?.find((v) => v.landingPageHighlight);
+
+// Determine if this is an enterprise page based on hero variant
+const heroSection = content.sections.find((s) => s.type === 'hero') as HeroSectionType | undefined;
+const isEnterprise = heroSection?.variant === 'enterprise';
+const styles = isEnterprise ? enterpriseStyles : frameworkStyles;
+
+// For framework pages, add logo to headings (only for specific framework landing pages)
+const frameworkLandingPageSlugs = ['react-data-grid', 'javascript-data-grid', 'vue-data-grid', 'angular-data-grid'];
+const isFrameworkLandingPage =
+    !isEnterprise && content.framework && frameworkLandingPageSlugs.includes(content.docsPath);
+const frameworkKey = isFrameworkLandingPage ? content.framework || '' : '';
+
+// Get theme builder video for enterprise pages
+const themeBuilderVideo = isEnterprise
+    ? await getPageImages({
+          pageName: 'key-features',
+          imagePath: 'resources/theme-builder-demo.mp4',
+      })
+    : null;
+---
+
+<Layout title={content.meta.title} description={content.meta.description} showDocsNav={false} showSearchBar={true}>
+    {
+        content.sections.map((section) => {
+            switch (section.type) {
+                case 'hero':
+                    // Unified hero section for both enterprise and framework variants
+                    // All content comes from JSON - no hardcoded text
+                    // Add logo to heading for framework landing pages only
+                    const heroSectionWithLogo =
+                        isFrameworkLandingPage && frameworkKey
+                            ? {
+                                  ...section,
+                                  headingHtml: getHeadingWithLogo(frameworkKey, section.heading, urlWithBaseUrl),
+                              }
+                            : section;
+                    return (
+                        <HeroSection
+                            section={heroSectionWithLogo}
+                            pageContent={content}
+                            latestVersion={latestVersion}
+                            urlWithBaseUrl={urlWithBaseUrl}
+                            styles={styles}
+                        >
+                            <Finance
+                                slot="hero-demo"
+                                client:only="react"
+                                gridHeight={section.demo?.gridHeight ?? 600}
+                                enableRowGroup={section.demo?.enableRowGroup}
+                            />
+                            <InstallText slot="hero-install" client:load packageName={content.packageName} />
+                            {section.primaryCta?.useTrialButton && (
+                                <TrialButton
+                                    slot="hero-trial-button"
+                                    client:load
+                                    className={`button-secondary ${styles.heroSectionCta1} plausible-event-name=${content.analyticsPrefix}-trial-cta`}
+                                >
+                                    {section.primaryCta.text}
+                                </TrialButton>
+                            )}
+                            <CustomerLogos slot="hero-logos" client:load />
+                        </HeroSection>
+                    );
+
+                case 'features':
+                    // Add logo to heading for framework landing pages only
+                    const featuresSectionWithLogo =
+                        isFrameworkLandingPage && frameworkKey
+                            ? {
+                                  ...section,
+                                  headingHtml: getHeadingWithLogo(
+                                      frameworkKey,
+                                      section.heading || 'Build, Customise and Expand your Data Grid',
+                                      urlWithBaseUrl
+                                  ),
+                              }
+                            : section;
+                    return (
+                        <FeaturesSection section={featuresSectionWithLogo} pageContent={content}>
+                            <FeaturesWithExamples features={section.items} framework={content.framework} />
+                        </FeaturesSection>
+                    );
+
+                case 'showcase':
+                    return (
+                        <ShowcaseSection section={section} pageContent={content}>
+                            <Showcase client:load />
+                        </ShowcaseSection>
+                    );
+
+                case 'customers':
+                    return (
+                        <CustomersSection section={section} pageContent={content}>
+                            <Customers client:load displayLogos={section.displayLogos !== false} />
+                        </CustomersSection>
+                    );
+
+                case 'examples':
+                    return (
+                        <ExamplesSection
+                            section={section}
+                            pageContent={content}
+                            urlWithBaseUrl={urlWithBaseUrl}
+                            styles={styles}
+                        />
+                    );
+
+                case 'faq':
+                    return <FAQSection section={section} pageContent={content} />;
+
+                case 'contact':
+                    return (
+                        <ContactSection section={section} pageContent={content} styles={styles}>
+                            <CustomerLogos slot="contact-logos" client:load />
+                        </ContactSection>
+                    );
+
+                case 'integrated-charts':
+                    return (
+                        <LandingPageSection
+                            id="integrated-charts"
+                            tag={section.tag}
+                            headingHtml={section.headingHtml}
+                            heading={section.heading}
+                            subHeading={section.subHeading}
+                            showBackgroundGradient={section.showBackgroundGradient}
+                        >
+                            <div class={styles.integratedChartsContainer}>
+                                <AutomatedIntegratedCharts client:visible visibilityThreshold={0.8} />
+                            </div>
+                        </LandingPageSection>
+                    );
+
+                case 'theme-builder':
+                    return (
+                        <LandingPageSection
+                            id="theme-builder"
+                            tag={section.tag}
+                            heading={section.heading}
+                            subHeading={section.subHeading}
+                        >
+                            <div class={styles.themeBuilderContainer}>
+                                {themeBuilderVideo && (
+                                    <div class={styles.themeBuilderVideoWrapper}>
+                                        <Video
+                                            client:load
+                                            videoSrc={themeBuilderVideo.imageSrc!}
+                                            darkModeVideoSrc={themeBuilderVideo.darkModeImageSrc}
+                                            autoplay={true}
+                                            showPlayPauseButtons={true}
+                                            centered={false}
+                                        />
+                                    </div>
+                                )}
+                                <a
+                                    class:list={[
+                                        'button-tertiary',
+                                        styles.themeBuilderCta,
+                                        'plausible-event-name=enterprise-theme-builder-cta',
+                                    ]}
+                                    href={urlWithBaseUrl('./theme-builder/')}
+                                >
+                                    Open Theme Builder
+                                </a>
+                            </div>
+                        </LandingPageSection>
+                    );
+
+                case 'comparison':
+                    return (
+                        <LandingPageSection
+                            id="comparison"
+                            tag={section.tag}
+                            heading={section.heading}
+                            subHeading={section.subHeading}
+                            showBackgroundGradient={section.showBackgroundGradient}
+                        >
+                            <ComparisonTable client:load />
+                        </LandingPageSection>
+                    );
+
+                case 'pricing':
+                    return (
+                        <LandingPageSection
+                            id="pricing"
+                            tag={section.tag}
+                            heading={section.heading}
+                            subHeading={section.subHeading}
+                            showBackgroundGradient={section.showBackgroundGradient}
+                        >
+                            <div class={styles.pricingContainer}>
+                                {section.cards.map((card) => (
+                                    <div class={styles.pricingCard}>
+                                        <h3>{card.title}</h3>
+                                        <div
+                                            class={
+                                                card.price === 'Free' ? styles.pricingPriceFree : styles.pricingPrice
+                                            }
+                                        >
+                                            {card.price}
+                                        </div>
+                                        <p class={styles.pricingPriceNote}>{card.priceNote}</p>
+                                        <ul class={styles.pricingFeatures}>
+                                            {card.features.map((feature) => (
+                                                <li>{feature}</li>
+                                            ))}
+                                        </ul>
+                                        <a
+                                            id={card.ctaId}
+                                            class:list={[
+                                                card.isPrimary ? 'button-tertiary' : 'button-secondary',
+                                                styles.pricingCta,
+                                                `plausible-event-name=${content.analyticsPrefix}-${card.title.toLowerCase().replace(/\s+/g, '-')}-cta`,
+                                            ]}
+                                            href={
+                                                card.ctaUrl.startsWith('http')
+                                                    ? card.ctaUrl
+                                                    : urlWithBaseUrl(card.ctaUrl)
+                                            }
+                                        >
+                                            {card.ctaText}
+                                        </a>
+                                        {card.showTrialButton && (
+                                            <TrialButton
+                                                client:load
+                                                className={`button-secondary ${styles.pricingTrialCta} plausible-event-name=${content.analyticsPrefix}-${card.title.toLowerCase().replace(/\s+/g, '-')}-trial-cta`}
+                                            >
+                                                Free Trial
+                                            </TrialButton>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </LandingPageSection>
+                    );
+
+                default:
+                    // Unknown section type - skip
+                    return null;
+            }
+        })
+    }
+</Layout>
