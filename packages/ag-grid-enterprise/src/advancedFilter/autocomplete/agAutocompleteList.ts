@@ -49,6 +49,7 @@ export class AgAutocompleteList extends AgPopupComponent<
             autocompleteEntries: AutocompleteEntry[];
             onConfirmed: () => void;
             useFuzzySearch?: boolean;
+            useStartsWithSearch?: boolean;
             forceLastSelection?: (lastSelection: AutocompleteEntry, searchString: string) => boolean;
         }
     ) {
@@ -129,8 +130,37 @@ export class AgAutocompleteList extends AgPopupComponent<
         return { topMatch, allMatches };
     }
 
+    private runStartsWithSearch(
+        searchString: string,
+        searchStrings: string[]
+    ): { topMatch: string | undefined; allMatches: string[] } {
+        const lowerCaseSearchString = searchString.toLocaleLowerCase();
+        const allMatches = searchStrings.filter((string) =>
+            string.toLocaleLowerCase().startsWith(lowerCaseSearchString)
+        );
+        let topMatch: string | undefined;
+
+        if (allMatches.length) {
+            topMatch = allMatches.reduce(
+                (best, candidate) => {
+                    if (!best || candidate.length < best.length) {
+                        return candidate;
+                    }
+                    return best;
+                },
+                undefined as string | undefined
+            );
+        }
+
+        if (!topMatch && allMatches.length) {
+            topMatch = allMatches[0];
+        }
+
+        return { topMatch, allMatches };
+    }
+
     private runSearch() {
-        const { autocompleteEntries, useFuzzySearch, forceLastSelection } = this.params;
+        const { autocompleteEntries, useFuzzySearch, useStartsWithSearch, forceLastSelection } = this.params;
         const searchStrings = autocompleteEntries.map((v) => v.displayValue ?? v.key);
 
         let matchingStrings: string[];
@@ -143,9 +173,11 @@ export class AgAutocompleteList extends AgPopupComponent<
             }).values;
             topSuggestion = matchingStrings.length ? matchingStrings[0] : undefined;
         } else {
-            const containsMatches = this.runContainsSearch(this.searchString, searchStrings);
-            matchingStrings = containsMatches.allMatches;
-            topSuggestion = containsMatches.topMatch;
+            const matches = useStartsWithSearch
+                ? this.runStartsWithSearch(this.searchString, searchStrings)
+                : this.runContainsSearch(this.searchString, searchStrings);
+            matchingStrings = matches.allMatches;
+            topSuggestion = matches.topMatch;
         }
 
         let filteredEntries = autocompleteEntries.filter(({ key, displayValue }) =>

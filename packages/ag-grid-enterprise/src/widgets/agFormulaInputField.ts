@@ -1,14 +1,19 @@
 import type {
+    AgComponentPopupPositionParams,
     AgComponentSelectorType,
     AgEventTypeParams,
     AgGridCommon,
     BeanCollection,
     GridOptionsService,
     GridOptionsWithDefaults,
+    PopupPositionParams,
 } from 'ag-grid-community';
-import { AgContentEditableField, _createElement, _getDocument, _getWindow } from 'ag-grid-community';
+import { AgContentEditableField, KeyCode, _createElement, _getDocument, _getWindow } from 'ag-grid-community';
 
-import { getRefTokenMatches } from '../formula/refUtils';
+import { agAutocompleteCSS } from '../advancedFilter/autocomplete/agAutocomplete.css-GENERATED';
+import { AgAutocompleteList } from '../advancedFilter/autocomplete/agAutocompleteList';
+import type { AutocompleteEntry } from '../advancedFilter/autocomplete/autocompleteParams';
+import { getRefTokenMatches, isFormulaIdentChar, isFormulaIdentStart } from '../formula/refUtils';
 import { agFormulaInputFieldCSS } from './agFormulaInputField.css-GENERATED';
 import { FormulaInputRangeSyncFeature } from './formulaInputRangeSyncFeature';
 import { getColorClassesForRef } from './formulaRangeUtils';
@@ -25,6 +30,7 @@ const VALUE_OPERATOR_LOOKUP: Record<string, string> = {
 type RangeInsertAction = 'insert' | 'replace' | 'none';
 type TokenMatch = { ref: string; start: number; end: number; index: number };
 type TokenInsertResult = { previousRef?: string; tokenIndex?: number | null };
+type FunctionTokenMatch = { start: number; end: number; prefix: string };
 
 // only insert new refs after operators/argument separators; otherwise treat clicks as normal edit completion.
 const TOKEN_INSERT_AFTER_CHARS = new Set(['=', '+', '-', '*', '/', '^', ',', '(', ';', '<', '>', '&']);
@@ -46,13 +52,21 @@ export class AgFormulaInputField extends AgContentEditableField<
     private lastTokenCaretOffset: number | null = null;
     private lastTokenRef?: string;
     private rangeSyncFeature?: FormulaInputRangeSyncFeature;
+
+    private functionAutocompleteList: AgAutocompleteList | null = null;
+    private functionAutocompleteHidePopup?: () => void;
+    private functionAutocompleteToken: FunctionTokenMatch | null = null;
+    private functionAutocompleteEntries: AutocompleteEntry[] | null = null;
+    private functionAutocompleteSearch: string | null = null;
     // fallback color assignment per ref when a token index is unavailable.
+
     private readonly formulaColorByRef = new Map<string, number>();
 
     constructor() {
         // keep renderValueToElement false so we fully control DOM rendering.
         super({ renderValueToElement: false, className: 'ag-formula-input-field' } as any);
         this.registerCSS(agFormulaInputFieldCSS);
+        this.registerCSS(agAutocompleteCSS);
     }
 
     public override postConstruct(): void {
@@ -60,9 +74,14 @@ export class AgFormulaInputField extends AgContentEditableField<
 
         this.addManagedElementListeners(this.getContentElement(), {
             input: this.onContentInput.bind(this),
+            keydown: this.onContentKeyDown.bind(this),
+            mouseup: this.updateFunctionAutocomplete.bind(this),
+            focusin: this.updateFunctionAutocomplete.bind(this),
+            focusout: this.closeFunctionAutocomplete.bind(this),
         });
 
         this.rangeSyncFeature = this.createManagedBean(new FormulaInputRangeSyncFeature(this));
+        this.addDestroyFunc(() => this.closeFunctionAutocomplete());
     }
 
     public override setValue(value?: string | null, silent?: boolean): this {
@@ -219,6 +238,194 @@ export class AgFormulaInputField extends AgContentEditableField<
 
         this.applyFormulaValue(serialized, { currentValue, caret: caret ?? undefined, dispatch: true });
         this.rangeSyncFeature?.onValueUpdated(serialized, hasFormulaPrefix);
+    }
+
+    private onContentKeyDown(event: KeyboardEvent): void {
+        if (this.functionAutocompleteList) {
+            switch (event.key) {
+                case KeyCode.ENTER:
+                case KeyCode.TAB:
+                    event.preventDefault();
+                    event.stopPropagation();
+                    this.confirmFunctionAutocomplete();
+                    return;
+                case KeyCode.ESCAPE:
+                    event.preventDefault();
+                    event.stopPropagation();
+                    this.closeFunctionAutocomplete();
+                    return;
+                case KeyCode.UP:
+                case KeyCode.DOWN:
+                    this.functionAutocompleteList.onNavigationKeyDown(event, event.key);
+                    return;
+            }
+        }
+
+        switch (event.key) {
+            case KeyCode.LEFT:
+            case KeyCode.RIGHT:
+            case KeyCode.PAGE_HOME:
+            case KeyCode.PAGE_END:
+                this.scheduleFunctionAutocompleteUpdate();
+                break;
+        }
+    }
+
+    private scheduleFunctionAutocompleteUpdate(): void {
+        setTimeout(() => {
+            if (!this.isAlive()) {
+                return;
+            }
+            this.updateFunctionAutocomplete();
+        });
+    }
+
+    private updateFunctionAutocomplete(): void {
+        if (!this.isContentFocused()) {
+            this.closeFunctionAutocomplete();
+            return;
+        }
+
+        const value = this.getCurrentValue();
+        const { hasFormulaPrefix } = this.getFormulaState(value);
+
+        if (!hasFormulaPrefix) {
+            this.closeFunctionAutocomplete();
+            return;
+        }
+
+        const caretOffsets = this.getCaretOffsets(value);
+        if (!caretOffsets) {
+            this.closeFunctionAutocomplete();
+            return;
+        }
+
+        const token = getFunctionTokenAtOffset(value, caretOffsets.valueOffset);
+        if (!token) {
+            this.closeFunctionAutocomplete();
+            return;
+        }
+
+        const entries = this.getFunctionAutocompleteEntries();
+        if (!entries.length) {
+            this.closeFunctionAutocomplete();
+            return;
+        }
+
+        const searchLower = token.prefix.toLocaleLowerCase();
+        const hasMatch = entries.some((entry) => entry.key.toLocaleLowerCase().startsWith(searchLower));
+
+        if (!hasMatch) {
+            this.closeFunctionAutocomplete();
+            return;
+        }
+
+        this.functionAutocompleteToken = token;
+        this.openFunctionAutocomplete(entries);
+
+        if (this.functionAutocompleteList && this.functionAutocompleteSearch !== token.prefix) {
+            this.functionAutocompleteList.setSearch(token.prefix);
+            this.functionAutocompleteSearch = token.prefix;
+        }
+    }
+
+    private getFunctionAutocompleteEntries(): AutocompleteEntry[] {
+        const formula = this.beans.formula;
+        const names = formula?.active ? formula.getFunctionNames?.() ?? [] : [];
+
+        if (!this.functionAutocompleteEntries || this.functionAutocompleteEntries.length !== names.length) {
+            this.functionAutocompleteEntries = names.map((name) => ({ key: name }));
+        }
+
+        return this.functionAutocompleteEntries;
+    }
+
+    private openFunctionAutocomplete(entries: AutocompleteEntry[]): void {
+        if (this.functionAutocompleteList || !entries.length) {
+            return;
+        }
+
+        const popupSvc = this.beans.popupSvc;
+        if (!popupSvc) {
+            return;
+        }
+
+        this.functionAutocompleteList = this.createManagedBean(
+            new AgAutocompleteList({
+                autocompleteEntries: entries,
+                onConfirmed: () => this.confirmFunctionAutocomplete(),
+                useStartsWithSearch: true,
+            })
+        );
+
+        const ePopupGui = this.functionAutocompleteList.getGui();
+
+        const positionParams: AgComponentPopupPositionParams<PopupPositionParams> = {
+            ePopup: ePopupGui,
+            type: 'autocomplete',
+            eventSource: this.getGui(),
+            position: 'under',
+            alignSide: this.gos.get('enableRtl') ? 'right' : 'left',
+            keepWithinBounds: true,
+        };
+
+        const addPopupRes = popupSvc.addPopup({
+            eChild: ePopupGui,
+            anchorToElement: this.getGui(),
+            positionCallback: () => popupSvc.positionPopupByComponent(positionParams),
+            ariaLabel: this.getFunctionAutocompleteAriaLabel(),
+        });
+
+        this.functionAutocompleteHidePopup = addPopupRes.hideFunc;
+        this.functionAutocompleteList.afterGuiAttached();
+    }
+
+    private closeFunctionAutocomplete(): void {
+        this.functionAutocompleteToken = null;
+        this.functionAutocompleteSearch = null;
+
+        if (!this.functionAutocompleteList) {
+            return;
+        }
+
+        this.functionAutocompleteHidePopup?.();
+        this.functionAutocompleteHidePopup = undefined;
+        this.destroyBean(this.functionAutocompleteList);
+        this.functionAutocompleteList = null;
+    }
+
+    private confirmFunctionAutocomplete(): void {
+        const token = this.functionAutocompleteToken;
+        const selected = this.functionAutocompleteList?.getSelectedValue();
+
+        if (!token || !selected) {
+            this.closeFunctionAutocomplete();
+            return;
+        }
+
+        const value = this.getCurrentValue();
+        const functionName = selected.key;
+        const baseValue = value.slice(0, token.start) + functionName + value.slice(token.end);
+        const insertPos = token.start + functionName.length;
+        const nextValue =
+            baseValue[insertPos] === '(' ? baseValue : baseValue.slice(0, insertPos) + '(' + baseValue.slice(insertPos);
+
+        this.getContentElement().focus({ preventScroll: true });
+        this.applyFormulaValueChange({
+            currentValue: value,
+            nextValue,
+            caret: insertPos + 1,
+        });
+
+        this.closeFunctionAutocomplete();
+    }
+
+    private getFunctionAutocompleteAriaLabel(): string {
+        return 'Formula functions';
+    }
+
+    private isContentFocused(): boolean {
+        return _getDocument(this.beans).activeElement === this.getContentElement();
     }
 
     public insertOrReplaceToken(ref: string, isNew: boolean): TokenInsertResult {
@@ -445,6 +652,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         if (params.dispatch) {
             this.dispatchValueChanged();
         }
+        this.closeFunctionAutocomplete();
     }
 
     private applyFormulaValue(
@@ -463,6 +671,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         if (params.dispatch) {
             this.dispatchValueChanged();
         }
+        this.updateFunctionAutocomplete();
     }
 
     private applyFormulaValueChange(params: {
@@ -480,6 +689,7 @@ export class AgFormulaInputField extends AgContentEditableField<
             caret: params.caret,
         });
         this.dispatchValueChanged();
+        this.updateFunctionAutocomplete();
     }
 
     public replaceTokenRef(
@@ -578,6 +788,63 @@ const shouldInsertTokenAtOffset = (value: string, offset: number): boolean => {
     // insert only after an operator or at the beginning to avoid hijacking plain values.
     const previousChar = getPreviousNonSpaceChar(value, offset);
     return previousChar == null || TOKEN_INSERT_AFTER_CHARS.has(previousChar);
+};
+
+const getFunctionTokenAtOffset = (value: string, caretOffset: number): FunctionTokenMatch | null => {
+    // show functions only when the caret is at the end of a formula identifier.
+    if (caretOffset < 0 || caretOffset > value.length || isInsideStringLiteral(value, caretOffset)) {
+        return null;
+    }
+
+    let start = caretOffset;
+    while (start > 0 && isFormulaIdentChar(value[start - 1])) {
+        start--;
+    }
+
+    let end = caretOffset;
+    while (end < value.length && isFormulaIdentChar(value[end])) {
+        end++;
+    }
+
+    if (start === end || caretOffset !== end) {
+        return null;
+    }
+
+    const token = value.slice(start, end);
+    if (!token || !isFormulaIdentStart(token[0])) {
+        return null;
+    }
+
+    if (value[start - 1] === '$') {
+        return null;
+    }
+
+    const previousChar = getPreviousNonSpaceChar(value, start);
+    if (previousChar != null && !TOKEN_INSERT_AFTER_CHARS.has(previousChar)) {
+        return null;
+    }
+
+    return {
+        start,
+        end,
+        prefix: value.slice(start, caretOffset),
+    };
+};
+
+const isInsideStringLiteral = (value: string, offset: number): boolean => {
+    // treat doubled quotes as escaped quotes when scanning.
+    let inString = false;
+    for (let i = 0; i < offset && i < value.length; i++) {
+        if (value[i] !== '"') {
+            continue;
+        }
+        if (value[i + 1] === '"') {
+            i++;
+            continue;
+        }
+        inString = !inString;
+    }
+    return inString;
 };
 
 const getPreviousNonSpaceChar = (value: string, offset: number): string | null => {

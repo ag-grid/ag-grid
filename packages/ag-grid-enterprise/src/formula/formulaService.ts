@@ -21,6 +21,7 @@ import type { Addr } from './functions/resolver';
 import { evalAst, unresolvedDeps } from './functions/resolver';
 import SUPPORTED_FUNCTIONS from './functions/supportedFuncs';
 import { shiftNode } from './functions/utils';
+import { isFormulaIdentChar, isFormulaIdentStart } from './refUtils';
 
 /**
  * Cell Formula Cache
@@ -106,6 +107,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
 
     /** Built-in operations (extendable via gridOptions.formulaFuncs). */
     private supportedOperations: Map<string, (params: FormulaFunctionParams) => unknown>;
+    private functionNames: string[] | null = null;
 
     // Track the active editor instance per grid/cell to avoid overlapping syncs on editor restarts.
     public activeEditor: number | null = null;
@@ -224,6 +226,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     private setupFunctions() {
         // eslint-disable-next-line no-restricted-properties
         this.supportedOperations = new Map(Object.entries(SUPPORTED_FUNCTIONS));
+        this.functionNames = null;
 
         // Register custom functions, not reactive.
         const customFuncs = this.gos.get('formulaFuncs');
@@ -232,6 +235,28 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
                 this.supportedOperations.set(name.toUpperCase(), customFuncs[name].func);
             });
         }
+    }
+
+    public getFunctionNames(): string[] {
+        if (this.functionNames) {
+            return this.functionNames;
+        }
+
+        const names: string[] = [];
+
+        for (const name of this.supportedOperations.keys()) {
+            if (!isFormulaIdentStart(name[0])) {
+                continue;
+            }
+            if (![...name].every((char) => isFormulaIdentChar(char))) {
+                continue;
+            }
+            names.push(name);
+        }
+
+        names.sort((a, b) => a.localeCompare(b));
+        this.functionNames = names;
+        return names;
     }
 
     private setupColRefMap() {

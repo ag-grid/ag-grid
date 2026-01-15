@@ -89,4 +89,5 @@ export interface IFormulaService extends Bean {
     }): string;
     refreshFormulas(refreshRows: boolean): void;
     getFunction(name: string): ((params: FormulaFunctionParams) => unknown) | undefined;
+    getFunctionNames(): string[];
 }
