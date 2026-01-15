@@ -2,6 +2,7 @@
 import fs from 'node:fs';
 
 const THRESHOLD_PERCENT = 0.5; // Ignore changes below this percentage
+const HIGHLIGHT_PERCENT = 5; // Highlight table rows when change exceeds this percentage
 
 /**
  * Compare two module-size-results.json files and generate a diff report
@@ -51,6 +52,10 @@ function calcPercent(base, diff) {
 function formatPercent(percent) {
     const sign = percent >= 0 ? '+' : '';
     return `${sign}${percent.toFixed(1)}%`;
+}
+
+function applyHighlight(text, shouldHighlight) {
+    return shouldHighlight ? `<mark>${text}</mark>` : text;
 }
 
 function getChangeEmoji(diff) {
@@ -197,7 +202,18 @@ if (significantChanges.length > 0) {
         const emoji = getChangeEmoji(diff.selfSizeDiff);
         const status = diff.isNew ? ' 🆕' : diff.isRemoved ? ' 🗑️' : '';
 
-        report += `| ${emoji} ${moduleName}${status} | ${formatSize(diff.baseSelfSize)} | ${formatSize(diff.prSelfSize)} | **${formatDiff(diff.selfSizeDiff)}** | ${formatPercent(diff.selfSizePercent)} | ${formatDiff(diff.gzipSizeDiff)} | ${formatPercent(diff.gzipSizePercent)} |\n`;
+        const shouldHighlight = Math.abs(diff.selfSizePercent) >= HIGHLIGHT_PERCENT;
+        const cells = [
+            applyHighlight(`${emoji} ${moduleName}${status}`, shouldHighlight),
+            applyHighlight(formatSize(diff.baseSelfSize), shouldHighlight),
+            applyHighlight(formatSize(diff.prSelfSize), shouldHighlight),
+            applyHighlight(`**${formatDiff(diff.selfSizeDiff)}**`, shouldHighlight),
+            applyHighlight(formatPercent(diff.selfSizePercent), shouldHighlight),
+            applyHighlight(formatDiff(diff.gzipSizeDiff), shouldHighlight),
+            applyHighlight(formatPercent(diff.gzipSizePercent), shouldHighlight),
+        ];
+
+        report += `| ${cells.join(' | ')} |\n`;
     }
     report += '\n';
 } else {
@@ -246,7 +262,18 @@ if (allChanges.length > 0) {
         const emoji = getChangeEmoji(diff.selfSizeDiff);
         const status = diff.isNew ? ' 🆕' : diff.isRemoved ? ' 🗑️' : '';
 
-        report += `| ${emoji} ${moduleName}${status} | ${formatSize(diff.baseSelfSize)} | ${formatSize(diff.prSelfSize)} | **${formatDiff(diff.selfSizeDiff)}** | ${formatPercent(diff.selfSizePercent)} | ${formatDiff(diff.gzipSizeDiff)} | ${formatPercent(diff.gzipSizePercent)} |\n`;
+        const shouldHighlight = Math.abs(diff.selfSizePercent) >= HIGHLIGHT_PERCENT;
+        const cells = [
+            applyHighlight(`${emoji} ${moduleName}${status}`, shouldHighlight),
+            applyHighlight(formatSize(diff.baseSelfSize), shouldHighlight),
+            applyHighlight(formatSize(diff.prSelfSize), shouldHighlight),
+            applyHighlight(`**${formatDiff(diff.selfSizeDiff)}**`, shouldHighlight),
+            applyHighlight(formatPercent(diff.selfSizePercent), shouldHighlight),
+            applyHighlight(formatDiff(diff.gzipSizeDiff), shouldHighlight),
+            applyHighlight(formatPercent(diff.gzipSizePercent), shouldHighlight),
+        ];
+
+        report += `| ${cells.join(' | ')} |\n`;
     }
     report += '\n';
 }
