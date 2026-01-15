@@ -163,9 +163,9 @@ export abstract class BaseEditStrategy extends BeanStub {
             if (actions.keep.length > 0) {
                 for (const cell of actions.keep) {
                     const cellCtrl = _getCellCtrl(this.beans, cell);
-
-                    if (!this.editSvc?.cellEditingInvalidCommitBlocks()) {
-                        cellCtrl && this.editSvc.revertSingleCellEdit(cellCtrl);
+                    const editSvc = this.editSvc;
+                    if (!editSvc?.cellEditingInvalidCommitBlocks() && cellCtrl) {
+                        editSvc.revertSingleCellEdit(cellCtrl);
                     }
                 }
             }

@@ -98,7 +98,11 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
         }
         const pivotModeActive = this.colModel.isPivotMode();
         const shouldSyncColumnLayoutWithGrid = !this.params.suppressSyncLayoutWithGrid && !pivotModeActive;
-        shouldSyncColumnLayoutWithGrid ? this.syncFilterLayout() : this.buildTreeFromProvidedColumnDefs();
+        if (shouldSyncColumnLayoutWithGrid) {
+            this.syncFilterLayout();
+        } else {
+            this.buildTreeFromProvidedColumnDefs();
+        }
         this.refreshAriaLabel();
     }
 
@@ -384,7 +388,11 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
             const updateFilterExpandState = !colIds || colIds.includes(colId);
 
             if (updateFilterExpandState) {
-                expand ? filterComp.expand() : filterComp.collapse();
+                if (expand) {
+                    filterComp.expand();
+                } else {
+                    filterComp.collapse();
+                }
                 updatedColIds.push(colId);
             }
 
@@ -421,7 +429,11 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
                 return;
             }
 
-            filterGroup.isExpanded() ? expandedCount++ : notExpandedCount++;
+            if (filterGroup.isExpanded()) {
+                expandedCount++;
+            } else {
+                notExpandedCount++;
+            }
 
             for (const child of filterGroup.getChildren()) {
                 if (child instanceof ToolPanelFilterGroupComp) {

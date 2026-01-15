@@ -271,7 +271,9 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         const res = this.shouldStartEditing(position, event, startedEdit, source);
 
         if (res === false && source !== 'api') {
-            this.isEditing(position) && this.stopEditing();
+            if (this.isEditing(position)) {
+                this.stopEditing();
+            }
             return;
         }
 
@@ -757,13 +759,17 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             if (this.cellEditingInvalidCommitBlocks()) {
                 (event as Event)?.preventDefault?.();
                 if (focus) {
-                    !cellCtrl?.hasBrowserFocus() && cellCtrl?.focusCell();
+                    if (cellCtrl && !cellCtrl.hasBrowserFocus()) {
+                        cellCtrl.focusCell();
+                    }
                     cellCtrl?.comp?.getCellEditor()?.focusIn?.();
                 }
                 return 'block-stop';
             }
 
-            cellCtrl && this.revertSingleCellEdit(cellCtrl);
+            if (cellCtrl) {
+                this.revertSingleCellEdit(cellCtrl);
+            }
 
             return 'revert-continue';
         }
