@@ -154,8 +154,5 @@
     "**/.nx/**": true,
     "**/dist/**": true,
     "**/node_modules/**": true
-  },
-  "chat.tools.terminal.autoApprove": {
-    "yarn nx": true
   }
 }
