@@ -1,7 +1,7 @@
 import { KeyCode } from '../agStack/constants/keyCode';
 import type { IEventListener } from '../agStack/interfaces/iEventEmitter';
-import { _isValidDate, _isValidDateTime, _parseDateTimeFromString, _serialiseDate } from '../agStack/utils/date';
 import { _parseBigIntOrNull } from '../agStack/utils/bigInt';
+import { _isValidDate, _isValidDateTime, _parseDateTimeFromString, _serialiseDate } from '../agStack/utils/date';
 import { _toStringOrNull } from '../agStack/utils/generic';
 import { _getValueUsingField } from '../agStack/utils/value';
 import type { NamedBean } from '../context/bean';
@@ -833,17 +833,17 @@ function createGroupSafeValueFormatter(
 
                         if ('value' in params.value) {
                             const innerValue = params.value.value;
-                                if (
-                                    (dataTypeDefinition.baseDataType === 'number' && typeof innerValue === 'number') ||
-                                    (dataTypeDefinition.baseDataType === 'bigint' && typeof innerValue === 'bigint')
-                                ) {
-                                return (dataTypeDefinition.valueFormatter as ValueFormatterLiteFunc<any, number | bigint>)(
-                                    {
-                                        ...(params as ValueFormatterLiteParams<any, number | bigint>),
-                                        value: innerValue,
-                                    }
-                                );
-                                }
+                            if (
+                                (dataTypeDefinition.baseDataType === 'number' && typeof innerValue === 'number') ||
+                                (dataTypeDefinition.baseDataType === 'bigint' && typeof innerValue === 'bigint')
+                            ) {
+                                return (
+                                    dataTypeDefinition.valueFormatter as ValueFormatterLiteFunc<any, number | bigint>
+                                )({
+                                    ...(params as ValueFormatterLiteParams<any, number | bigint>),
+                                    value: innerValue,
+                                });
+                            }
                         }
                     }
                 }
