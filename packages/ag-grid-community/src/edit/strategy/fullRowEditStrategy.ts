@@ -273,7 +273,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
                     event,
                     source,
                     ignoreEventKey: true,
-                    editable: nextEditable,
+                    editable: nextEditable || undefined,
                 });
             }
         }

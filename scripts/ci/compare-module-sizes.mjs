@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
 
-const THRESHOLD_KB = 1; // Report modules with size changes
+const THRESHOLD_PERCENT = 0.5; // Ignore changes below this percentage
+const HIGHLIGHT_PERCENT = 5; // Highlight table rows when change exceeds this percentage
 
 /**
  * Compare two module-size-results.json files and generate a diff report
@@ -41,12 +42,28 @@ function formatDiff(diff) {
     return `${sign}${diff.toFixed(2)}`;
 }
 
+function calcPercent(base, diff) {
+    if (base === 0) {
+        return diff === 0 ? 0 : 100;
+    }
+    return (diff / base) * 100;
+}
+
+function formatPercent(percent) {
+    const sign = percent >= 0 ? '+' : '';
+    return `${sign}${percent.toFixed(1)}%`;
+}
+
+function applyHighlight(text, shouldHighlight) {
+    return shouldHighlight ? `<mark>${text}</mark>` : text;
+}
+
 function getChangeEmoji(diff) {
     if (diff > 0) {
-        return '📈';
+        return '🔺';
     }
     if (diff < 0) {
-        return '📉';
+        return '🟢';
     }
     return '➖';
 }
@@ -77,6 +94,8 @@ for (const key of allKeys) {
         const selfSizeDiff = pr.selfSize - base.selfSize;
         const fileSizeDiff = pr.fileSize - base.fileSize;
         const gzipSizeDiff = pr.gzipSize - base.gzipSize;
+        const selfSizePercent = calcPercent(base.selfSize, selfSizeDiff);
+        const gzipSizePercent = calcPercent(base.gzipSize, gzipSizeDiff);
 
         diffs.push({
             modules: pr.modules,
@@ -84,12 +103,14 @@ for (const key of allKeys) {
             baseSelfSize: base.selfSize,
             prSelfSize: pr.selfSize,
             selfSizeDiff,
+            selfSizePercent,
             baseFileSize: base.fileSize,
             prFileSize: pr.fileSize,
             fileSizeDiff,
             baseGzipSize: base.gzipSize,
             prGzipSize: pr.gzipSize,
             gzipSizeDiff,
+            gzipSizePercent,
             isNew: false,
             isRemoved: false,
         });
@@ -100,12 +121,14 @@ for (const key of allKeys) {
             baseSelfSize: 0,
             prSelfSize: pr.selfSize,
             selfSizeDiff: pr.selfSize,
+            selfSizePercent: 100,
             baseFileSize: 0,
             prFileSize: pr.fileSize,
             fileSizeDiff: pr.fileSize,
             baseGzipSize: 0,
             prGzipSize: pr.gzipSize,
             gzipSizeDiff: pr.gzipSize,
+            gzipSizePercent: 100,
             isNew: true,
             isRemoved: false,
         });
@@ -116,12 +139,14 @@ for (const key of allKeys) {
             baseSelfSize: base.selfSize,
             prSelfSize: 0,
             selfSizeDiff: -base.selfSize,
+            selfSizePercent: -100,
             baseFileSize: base.fileSize,
             prFileSize: 0,
             fileSizeDiff: -base.fileSize,
             baseGzipSize: base.gzipSize,
             prGzipSize: 0,
             gzipSizeDiff: -base.gzipSize,
+            gzipSizePercent: -100,
             isNew: false,
             isRemoved: true,
         });
@@ -136,7 +161,7 @@ const maxIncrease = diffs.reduce((max, d) => (d.selfSizeDiff > max.selfSizeDiff 
 const maxDecrease = diffs.reduce((min, d) => (d.selfSizeDiff < min.selfSizeDiff ? d : min), diffs[0]);
 
 // Filter significant changes
-const significantChanges = diffs.filter((d) => Math.abs(d.selfSizeDiff) >= THRESHOLD_KB);
+const significantChanges = diffs.filter((d) => Math.abs(d.selfSizePercent) >= THRESHOLD_PERCENT);
 
 // Generate markdown report
 let report = '';
@@ -144,38 +169,56 @@ let report = '';
 // Header
 report += '## Module Size Comparison\n\n';
 
-// Extremes section
+// Extremes section - only show if change is >= THRESHOLD_PERCENT
 report += '### Extreme Values\n\n';
 
-if (maxIncrease && maxIncrease.selfSizeDiff > 0) {
+const showMaxIncrease = maxIncrease && maxIncrease.selfSizePercent >= THRESHOLD_PERCENT;
+const showMaxDecrease = maxDecrease && maxDecrease.selfSizePercent <= -THRESHOLD_PERCENT;
+
+if (showMaxIncrease) {
     const moduleName = maxIncrease.modules.length === 0 ? 'Base (no modules)' : maxIncrease.modules.join(', ');
-    report += `📈 **Largest Increase:** ${moduleName}\n`;
-    report += `   - Self Size: ${formatSize(maxIncrease.baseSelfSize)} KB → ${formatSize(maxIncrease.prSelfSize)} KB (**${formatDiff(maxIncrease.selfSizeDiff)} KB**)\n\n`;
+    report += `🔺 **Largest Increase:** ${moduleName}\n`;
+    report += `   - Self Size: ${formatSize(maxIncrease.baseSelfSize)} KB → ${formatSize(maxIncrease.prSelfSize)} KB (**${formatDiff(maxIncrease.selfSizeDiff)} KB**, ${formatPercent(maxIncrease.selfSizePercent)})\n\n`;
 }
 
-if (maxDecrease && maxDecrease.selfSizeDiff < 0) {
+if (showMaxDecrease) {
     const moduleName = maxDecrease.modules.length === 0 ? 'Base (no modules)' : maxDecrease.modules.join(', ');
-    report += `📉 **Largest Decrease:** ${moduleName}\n`;
-    report += `   - Self Size: ${formatSize(maxDecrease.baseSelfSize)} KB → ${formatSize(maxDecrease.prSelfSize)} KB (**${formatDiff(maxDecrease.selfSizeDiff)} KB**)\n\n`;
+    report += `🟢 **Largest Decrease:** ${moduleName}\n`;
+    report += `   - Self Size: ${formatSize(maxDecrease.baseSelfSize)} KB → ${formatSize(maxDecrease.prSelfSize)} KB (**${formatDiff(maxDecrease.selfSizeDiff)} KB**, ${formatPercent(maxDecrease.selfSizePercent)})\n\n`;
+}
+
+if (!showMaxIncrease && !showMaxDecrease) {
+    report += `✅ No significant changes (all changes < ${THRESHOLD_PERCENT}%)\n\n`;
 }
 
 // Significant changes table
 if (significantChanges.length > 0) {
-    report += `### Significant Changes (≥ ${THRESHOLD_KB} KB)\n\n`;
-    report += '| Module(s) | Base (KB) | PR (KB) | Diff (KB) | Gzip Diff (KB) |\n';
-    report += '|-----------|-----------|---------|-----------|----------------|\n';
+    report += `### Significant Changes (≥ ${THRESHOLD_PERCENT}%)\n\n`;
+    report += '| Module(s) | Base (KB) | PR (KB) | Diff (KB) | Diff % | Gzip Diff (KB) | Gzip % |\n';
+    report += '|-----------|-----------|---------|-----------|--------|----------------|--------|\n';
 
     for (const diff of significantChanges) {
         const moduleName = diff.modules.length === 0 ? 'Base (no modules)' : diff.modules.join(', ');
         const emoji = getChangeEmoji(diff.selfSizeDiff);
         const status = diff.isNew ? ' 🆕' : diff.isRemoved ? ' 🗑️' : '';
 
-        report += `| ${emoji} ${moduleName}${status} | ${formatSize(diff.baseSelfSize)} | ${formatSize(diff.prSelfSize)} | **${formatDiff(diff.selfSizeDiff)}** | ${formatDiff(diff.gzipSizeDiff)} |\n`;
+        const shouldHighlight = Math.abs(diff.selfSizePercent) >= HIGHLIGHT_PERCENT;
+        const cells = [
+            applyHighlight(`${emoji} ${moduleName}${status}`, shouldHighlight),
+            applyHighlight(formatSize(diff.baseSelfSize), shouldHighlight),
+            applyHighlight(formatSize(diff.prSelfSize), shouldHighlight),
+            applyHighlight(`**${formatDiff(diff.selfSizeDiff)}**`, shouldHighlight),
+            applyHighlight(formatPercent(diff.selfSizePercent), shouldHighlight),
+            applyHighlight(formatDiff(diff.gzipSizeDiff), shouldHighlight),
+            applyHighlight(formatPercent(diff.gzipSizePercent), shouldHighlight),
+        ];
+
+        report += `| ${cells.join(' | ')} |\n`;
     }
     report += '\n';
 } else {
     report += '### Significant Changes\n\n';
-    report += `✅ No modules changed by more than ${THRESHOLD_KB} KB.\n\n`;
+    report += `✅ No modules changed by more than ${THRESHOLD_PERCENT}%.\n\n`;
 }
 
 // New/Removed modules
@@ -211,15 +254,26 @@ report += `- **Modules unchanged:** ${diffs.filter((d) => d.selfSizeDiff === 0).
 const allChanges = diffs.filter((d) => d.selfSizeDiff !== 0);
 if (allChanges.length > 0) {
     report += '#### All Module Changes\n\n';
-    report += '| Module(s) | Base (KB) | PR (KB) | Diff (KB) | Gzip Diff (KB) |\n';
-    report += '|-----------|-----------|---------|-----------|----------------|\n';
+    report += '| Module(s) | Base (KB) | PR (KB) | Diff (KB) | Diff % | Gzip Diff (KB) | Gzip % |\n';
+    report += '|-----------|-----------|---------|-----------|--------|----------------|--------|\n';
 
     for (const diff of allChanges) {
         const moduleName = diff.modules.length === 0 ? 'Base (no modules)' : diff.modules.join(', ');
         const emoji = getChangeEmoji(diff.selfSizeDiff);
         const status = diff.isNew ? ' 🆕' : diff.isRemoved ? ' 🗑️' : '';
 
-        report += `| ${emoji} ${moduleName}${status} | ${formatSize(diff.baseSelfSize)} | ${formatSize(diff.prSelfSize)} | **${formatDiff(diff.selfSizeDiff)}** | ${formatDiff(diff.gzipSizeDiff)} |\n`;
+        const shouldHighlight = Math.abs(diff.selfSizePercent) >= HIGHLIGHT_PERCENT;
+        const cells = [
+            applyHighlight(`${emoji} ${moduleName}${status}`, shouldHighlight),
+            applyHighlight(formatSize(diff.baseSelfSize), shouldHighlight),
+            applyHighlight(formatSize(diff.prSelfSize), shouldHighlight),
+            applyHighlight(`**${formatDiff(diff.selfSizeDiff)}**`, shouldHighlight),
+            applyHighlight(formatPercent(diff.selfSizePercent), shouldHighlight),
+            applyHighlight(formatDiff(diff.gzipSizeDiff), shouldHighlight),
+            applyHighlight(formatPercent(diff.gzipSizePercent), shouldHighlight),
+        ];
+
+        report += `| ${cells.join(' | ')} |\n`;
     }
     report += '\n';
 }
@@ -232,18 +286,19 @@ console.log(`Comparison report written to ${outputFile}`);
 
 // Output summary for CI
 console.log('\n--- Summary ---');
-console.log(`Significant changes (>= ${THRESHOLD_KB} KB): ${significantChanges.length}`);
-let hasChanges = false;
-if (maxIncrease && maxIncrease.selfSizeDiff > 0) {
+console.log(`Significant changes (>= ${THRESHOLD_PERCENT}%): ${significantChanges.length}`);
+if (showMaxIncrease) {
     const moduleName = maxIncrease.modules.length === 0 ? 'Base (no modules)' : maxIncrease.modules.join(', ');
-    console.log(`Largest increase: ${moduleName} (+${formatSize(maxIncrease.selfSizeDiff)} KB)`);
-    hasChanges = true;
+    console.log(
+        `Largest increase: ${moduleName} (+${formatSize(maxIncrease.selfSizeDiff)} KB, ${formatPercent(maxIncrease.selfSizePercent)})`
+    );
 }
-if (maxDecrease && maxDecrease.selfSizeDiff < 0) {
+if (showMaxDecrease) {
     const moduleName = maxDecrease.modules.length === 0 ? 'Base (no modules)' : maxDecrease.modules.join(', ');
-    console.log(`Largest decrease: ${moduleName} (${formatSize(maxDecrease.selfSizeDiff)} KB)`);
-    hasChanges = true;
+    console.log(
+        `Largest decrease: ${moduleName} (${formatSize(maxDecrease.selfSizeDiff)} KB, ${formatPercent(maxDecrease.selfSizePercent)})`
+    );
 }
-if (!hasChanges) {
-    console.log('No module size changes detected.');
+if (!showMaxIncrease && !showMaxDecrease) {
+    console.log(`No significant module size changes detected (all < ${THRESHOLD_PERCENT}%).`);
 }
