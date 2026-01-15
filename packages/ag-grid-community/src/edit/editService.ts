@@ -256,7 +256,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         this.strategy ??= this.createStrategy();
 
-        if (!this.isCellEditable(position, 'api')) {
+        const editable = params.editable ?? this.isCellEditable(position, 'api');
+        if (!editable) {
             return;
         }
 
@@ -264,6 +265,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         // yet to initialise the cell, so we re-schedule this operation for when celLComp is attached
         const cellCtrl = _getCellCtrl(this.beans, position)!;
         if (cellCtrl && !cellCtrl.comp) {
+            params.editable = undefined; // So we re-evaluate editable later
             cellCtrl.onCompAttachedFuncs.push(() => this.startEditing(position, params));
             return;
         }

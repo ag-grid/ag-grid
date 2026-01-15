@@ -30,6 +30,8 @@ export type StartEditParams = {
     ignoreEventKey?: boolean;
     silent?: boolean;
     continueEditing?: boolean;
+    /** If true, skip checking if the cell is editable by invoking the editable user callback */
+    editable?: boolean;
 };
 
 export type StopEditParams = {
