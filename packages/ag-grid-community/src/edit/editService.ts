@@ -256,7 +256,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         this.strategy ??= this.createStrategy();
 
-        if (!this.isCellEditable(position, 'api')) {
+        if (!params.editable && !this.isCellEditable(position, 'api')) {
             return;
         }
 
@@ -270,8 +270,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         const res = this.shouldStartEditing(position, event, startedEdit, source);
 
-        if (res === false && source !== 'api') {
-            this.isEditing(position) && this.stopEditing();
+        if (res === false && source !== 'api' && this.isEditing(position)) {
+            this.stopEditing();
             return;
         }
 
