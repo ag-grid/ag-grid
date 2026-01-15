@@ -1,6 +1,6 @@
+import type { GridOptions } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-import type { GridOptions } from 'ag-grid-community';
 import { TestGridsManager } from '../../../../test-utils';
 
 describe('ag-grid groupCellRenderer', () => {
