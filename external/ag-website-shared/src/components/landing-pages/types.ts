@@ -75,6 +75,7 @@ export interface FeaturesSection {
     type: 'features';
     tag: string;
     heading: string;
+    headingHtml?: string;
     subHeading: string;
     items: FeatureItem[];
 }
