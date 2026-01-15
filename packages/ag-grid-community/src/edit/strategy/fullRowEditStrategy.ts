@@ -2,12 +2,7 @@ import type { BeanName } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { EditValue } from '../../interfaces/iEditModelService';
-import type {
-    EditPosition,
-    EditRowPosition,
-    StartEditParams,
-    StartEditWithPositionParams,
-} from '../../interfaces/iEditService';
+import type { EditPosition, EditRowPosition, StartEditWithPositionParams } from '../../interfaces/iEditService';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getCellCtrl, _getRowCtrl } from '../utils/controllers';
