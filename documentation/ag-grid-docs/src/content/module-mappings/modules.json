@@ -149,6 +149,11 @@
                             "path": "filter-date"
                         },
                         {
+                            "moduleName": "BigIntFilterModule",
+                            "name": "BigInt Filter",
+                            "path": "filter-bigint"
+                        },
+                        {
                             "moduleName": "SetFilterModule",
                             "name": "Set Filter",
                             "path": "filter-set",
