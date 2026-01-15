@@ -5,7 +5,7 @@ import type {
     BooleanAdvancedFilterModel,
     ColumnAdvancedFilterModel,
 } from 'ag-grid-community';
-import { Component, _exists, _removeFromParent, _toStringOrNull } from 'ag-grid-community';
+import { Component, _exists, _parseBigIntOrNull, _removeFromParent, _toStringOrNull } from 'ag-grid-community';
 
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
@@ -209,11 +209,7 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
             parsedOperand = _exists(operand) ? Number(operand) : '';
         } else if (this.baseCellDataType === 'bigint') {
             if (_exists(operand)) {
-                try {
-                    parsedOperand = BigInt(operand);
-                } catch {
-                    parsedOperand = '';
-                }
+                parsedOperand = _parseBigIntOrNull(operand) ?? '';
             } else {
                 parsedOperand = '';
             }

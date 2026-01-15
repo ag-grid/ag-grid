@@ -1,3 +1,4 @@
+import { _parseBigIntOrNull } from '../../../agStack/utils/bigInt';
 import { FloatingFilterTextInputService } from '../../floating/provided/floatingFilterTextInputService';
 import type { FloatingFilterInputService } from '../../floating/provided/iFloatingFilterInputService';
 import { TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
@@ -40,16 +41,6 @@ export class BigIntFloatingFilter extends TextInputFloatingFilter<IBigIntFloatin
         if (this.bigintParser) {
             return this.bigintParser(value) as TValue | null;
         }
-
-        const trimmed = value.trim();
-        if (trimmed === '' || trimmed === '-' || trimmed === '+') {
-            return null;
-        }
-
-        try {
-            return BigInt(trimmed) as TValue;
-        } catch {
-            return null;
-        }
+        return _parseBigIntOrNull(value) as TValue | null;
     }
 }

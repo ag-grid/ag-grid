@@ -10,7 +10,14 @@ import type {
     NamedBean,
     ValueService,
 } from 'ag-grid-community';
-import { BeanStub, _exists, _parseDateTimeFromString, _serialiseDate, _toStringOrNull } from 'ag-grid-community';
+import {
+    BeanStub,
+    _exists,
+    _parseBigIntOrNull,
+    _parseDateTimeFromString,
+    _serialiseDate,
+    _toStringOrNull,
+} from 'ag-grid-community';
 
 import { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
@@ -71,15 +78,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
             if (!_exists(operand)) {
                 return null;
             }
-            const trimmed = operand.trim();
-            if (trimmed === '' || trimmed === '-' || trimmed === '+') {
-                return null;
-            }
-            try {
-                return BigInt(trimmed);
-            } catch {
-                return null;
-            }
+            return _parseBigIntOrNull(operand);
         },
         date: (operand, column, baseCellDataType) =>
             _serialiseDate(

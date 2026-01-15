@@ -12,7 +12,7 @@ import type {
     ValueService,
     _IRowNodePivotStage,
 } from 'ag-grid-community';
-import { BeanStub, _missing } from 'ag-grid-community';
+import { BeanStub, _missing, _safeJsonStringify } from 'ag-grid-community';
 
 import type { PivotColDefService } from './pivotColDefService';
 
@@ -166,8 +166,8 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
     }
 
     private setUniqueValues(newValues: Map<string, any>): boolean {
-        const json1 = JSON.stringify(mapToObject(this.uniqueValues));
-        const json2 = JSON.stringify(mapToObject(newValues));
+        const json1 = _safeJsonStringify(mapToObject(this.uniqueValues));
+        const json2 = _safeJsonStringify(mapToObject(newValues));
 
         const uniqueValuesChanged = json1 !== json2;
 

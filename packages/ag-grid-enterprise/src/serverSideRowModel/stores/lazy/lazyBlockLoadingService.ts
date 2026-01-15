@@ -7,7 +7,12 @@ import type {
     RowNode,
     RowRenderer,
 } from 'ag-grid-community';
-import { BeanStub, _addGridCommonParams, _getMaxConcurrentDatasourceRequests } from 'ag-grid-community';
+import {
+    BeanStub,
+    _addGridCommonParams,
+    _getMaxConcurrentDatasourceRequests,
+    _serialiseBigIntValues,
+} from 'ag-grid-community';
 
 import type { ServerSideRowModel } from '../../serverSideRowModel';
 import type { LazyCache } from './lazyCache';
@@ -125,6 +130,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
 
     private executeLoad(cache: LazyCache, startRow: number, endRow: number) {
         const ssrmParams = cache.getSsrmParams();
+        const groupKeys = (cache as any).store.getParentNode().getRoute() ?? [];
         const request: IServerSideGetRowsRequest = {
             startRow,
             endRow,
@@ -132,8 +138,8 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
             valueCols: ssrmParams.valueCols,
             pivotCols: ssrmParams.pivotCols,
             pivotMode: ssrmParams.pivotMode,
-            groupKeys: (cache as any).store.getParentNode().getRoute() ?? [],
-            filterModel: ssrmParams.filterModel,
+            groupKeys: _serialiseBigIntValues(groupKeys) as any,
+            filterModel: _serialiseBigIntValues(ssrmParams.filterModel) as any,
             sortModel: ssrmParams.sortModel,
         };
 

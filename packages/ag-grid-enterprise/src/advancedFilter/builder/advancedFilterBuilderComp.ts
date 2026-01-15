@@ -9,7 +9,14 @@ import type {
     IAdvancedFilterBuilderParams,
     JoinAdvancedFilterModel,
 } from 'ag-grid-community';
-import { Component, FilterButtonComp, RefPlaceholder, _exists, _removeFromParent } from 'ag-grid-community';
+import {
+    Component,
+    FilterButtonComp,
+    RefPlaceholder,
+    _exists,
+    _removeFromParent,
+    _safeJsonStringify,
+} from 'ag-grid-community';
 
 import type { VirtualListDragItem } from '../../agStack/iVirtualListDragFeature';
 import { VirtualList } from '../../widgets/virtualList';
@@ -288,7 +295,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
 
     private setupFilterModel(): AdvancedFilterModel {
         const filterModel = this.formatFilterModel(this.advancedFilter.getModel());
-        this.stringifiedModel = JSON.stringify(filterModel);
+        this.stringifiedModel = _safeJsonStringify(filterModel);
         return filterModel;
     }
 
@@ -558,7 +565,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
         let isValid = this.items.every(({ valid }) => valid);
         let validationMessage = null;
         if (isValid) {
-            isValid = JSON.stringify(this.filterModel) !== this.stringifiedModel;
+            isValid = _safeJsonStringify(this.filterModel) !== this.stringifiedModel;
             if (!isValid) {
                 validationMessage = this.advFilterExpSvc.translate('advancedFilterBuilderValidationAlreadyApplied');
             }

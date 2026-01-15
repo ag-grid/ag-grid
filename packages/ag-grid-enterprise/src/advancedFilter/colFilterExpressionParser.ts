@@ -1,3 +1,4 @@
+import { _parseBigIntOrNull } from 'ag-grid-community';
 import type { AdvancedFilterModel, AgColumn, BaseCellDataType } from 'ag-grid-community';
 
 import type { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
@@ -307,18 +308,7 @@ export class ColFilterExpressionParser {
     private readonly operandValueGetters: Record<BaseCellDataType, (operand: any) => any> = {
         number: Number,
         bigint: (operand) => {
-            if (operand == null) {
-                return operand;
-            }
-            const trimmed = String(operand).trim();
-            if (trimmed === '' || trimmed === '-' || trimmed === '+') {
-                return null;
-            }
-            try {
-                return BigInt(trimmed);
-            } catch {
-                return null;
-            }
+            return _parseBigIntOrNull(operand);
         },
         date: (operand) => this.params.valueSvc.parseValue(this.columnParser!.column!, null, operand, undefined),
         dateString: (...args) => this.operandValueGetters.date(...args),

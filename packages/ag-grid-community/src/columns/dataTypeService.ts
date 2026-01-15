@@ -1,6 +1,7 @@
 import { KeyCode } from '../agStack/constants/keyCode';
 import type { IEventListener } from '../agStack/interfaces/iEventEmitter';
 import { _isValidDate, _isValidDateTime, _parseDateTimeFromString, _serialiseDate } from '../agStack/utils/date';
+import { _parseBigIntOrNull } from '../agStack/utils/bigInt';
 import { _toStringOrNull } from '../agStack/utils/generic';
 import { _getValueUsingField } from '../agStack/utils/value';
 import type { NamedBean } from '../context/bean';
@@ -680,11 +681,10 @@ export class DataTypeService extends BeanStub implements NamedBean {
                     if (typeof params.newValue === 'bigint') {
                         return params.newValue;
                     }
-                    try {
-                        return BigInt(String(params.newValue));
-                    } catch {
+                    if (typeof params.newValue !== 'string') {
                         return null;
                     }
+                    return _parseBigIntOrNull(params.newValue);
                 },
                 valueFormatter: (params: ValueFormatterLiteParams<any, bigint>) => {
                     if (params.value == null) {
@@ -896,21 +896,7 @@ function bigintAbsoluteComparator(valueA: any, valueB: any): number {
 }
 
 export function toBigIntOrNull(value: any): bigint | null {
-    if (typeof value === 'bigint') {
-        return value;
-    }
-    if (typeof value !== 'string') {
-        return null;
-    }
-    const trimmed = value.trim();
-    if (trimmed === '' || trimmed === '-' || trimmed === '+') {
-        return null;
-    }
-    try {
-        return BigInt(trimmed);
-    } catch {
-        return null;
-    }
+    return _parseBigIntOrNull(value);
 }
 
 function toAbsoluteBigInt(value: any): bigint | null {

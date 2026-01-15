@@ -97,26 +97,33 @@ export class AggFuncService extends BeanStub implements NamedBean, IAggFuncServi
     }
 }
 
-function aggSum(params: IAggFuncParams): number | bigint {
+function aggSum(params: IAggFuncParams): number | bigint | null {
     const { values } = params;
-    let result: any = null; // the logic ensures that we never combine bigint arithmetic with numbers, but TS is hard to please
+    let result: number | bigint | null = null;
+    let seenType: 'number' | 'bigint' | null = null;
 
     // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
     for (let i = 0; i < values.length; i++) {
         const value = values[i];
 
-        if (typeof value === 'number') {
-            if (result === null) {
-                result = value;
-            } else {
-                result += typeof result === 'number' ? value : BigInt(value);
-            }
-        } else if (typeof value === 'bigint') {
-            if (result === null) {
-                result = value;
-            } else {
-                result = (typeof result === 'bigint' ? result : BigInt(result)) + value;
-            }
+        if (typeof value !== 'number' && typeof value !== 'bigint') {
+            continue;
+        }
+
+        const valueType = typeof value;
+        if (seenType && seenType !== valueType) {
+            return null;
+        }
+        if (!seenType) {
+            seenType = valueType;
+        }
+
+        if (result === null) {
+            result = value;
+        } else if (seenType === 'number') {
+            result = (result as number) + (value as number);
+        } else {
+            result = (result as bigint) + (value as bigint);
         }
     }
 
@@ -134,12 +141,25 @@ function aggLast(params: IAggFuncParams): any {
 function aggMin(params: IAggFuncParams): number | bigint | null {
     const { values } = params;
     let result: number | bigint | null = null;
+    let seenType: 'number' | 'bigint' | null = null;
 
     // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
     for (let i = 0; i < values.length; i++) {
         const value = values[i];
 
-        if ((typeof value === 'number' || typeof value === 'bigint') && (result === null || result > value)) {
+        if (typeof value !== 'number' && typeof value !== 'bigint') {
+            continue;
+        }
+
+        const valueType = typeof value;
+        if (seenType && seenType !== valueType) {
+            return null;
+        }
+        if (!seenType) {
+            seenType = valueType;
+        }
+
+        if (result === null || result > value) {
             result = value;
         }
     }
@@ -150,12 +170,25 @@ function aggMin(params: IAggFuncParams): number | bigint | null {
 function aggMax(params: IAggFuncParams): number | bigint | null {
     const { values } = params;
     let result: number | bigint | null = null;
+    let seenType: 'number' | 'bigint' | null = null;
 
     // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
     for (let i = 0; i < values.length; i++) {
         const value = values[i];
 
-        if ((typeof value === 'number' || typeof value === 'bigint') && (result === null || result < value)) {
+        if (typeof value !== 'number' && typeof value !== 'bigint') {
+            continue;
+        }
+
+        const valueType = typeof value;
+        if (seenType && seenType !== valueType) {
+            return null;
+        }
+        if (!seenType) {
+            seenType = valueType;
+        }
+
+        if (result === null || result < value) {
             result = value;
         }
     }
@@ -216,12 +249,9 @@ const AVERAGE_PROTO = Object.freeze({
 
 // the average function is tricky as the multiple levels require weighted averages
 // for the non-leaf node aggregations.
-function aggAvg(params: IAggFuncParams): {
-    value: number | bigint | null;
-    count: number;
-} {
+function aggAvg(params: IAggFuncParams): { value: number | null; count: number } | null {
     const { values } = params;
-    let sum: any = 0; // the logic ensures that we never combine bigint arithmetic with numbers, but TS is hard to please
+    let sum = 0;
     let count = 0;
 
     // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
@@ -229,7 +259,10 @@ function aggAvg(params: IAggFuncParams): {
         const currentValue = values[i];
         let valueToAdd: number | bigint | null = null;
 
-        if (typeof currentValue === 'number' || typeof currentValue === 'bigint') {
+        if (typeof currentValue === 'bigint') {
+            return null;
+        }
+        if (typeof currentValue === 'number') {
             valueToAdd = currentValue;
             count++;
         } else if (
@@ -237,17 +270,16 @@ function aggAvg(params: IAggFuncParams): {
             (typeof currentValue.value === 'number' || typeof currentValue.value === 'bigint') &&
             typeof currentValue.count === 'number'
         ) {
+            if (typeof currentValue.value === 'bigint') {
+                return null;
+            }
             // we are aggregating groups, so we take the aggregated values to calculated a weighted average
-            valueToAdd =
-                currentValue.value *
-                (typeof currentValue.value === 'number' ? currentValue.count : BigInt(currentValue.count));
+            valueToAdd = currentValue.value * currentValue.count;
             count += currentValue.count;
         }
 
         if (typeof valueToAdd === 'number') {
-            sum += typeof sum === 'number' ? valueToAdd : BigInt(valueToAdd);
-        } else if (typeof valueToAdd === 'bigint') {
-            sum = (typeof sum === 'bigint' ? sum : BigInt(sum)) + valueToAdd;
+            sum += valueToAdd;
         }
     }
 
@@ -255,7 +287,7 @@ function aggAvg(params: IAggFuncParams): {
 
     // avoid divide by zero error
     if (count > 0) {
-        value = sum / ((typeof sum === 'number' ? count : BigInt(count)) as any);
+        value = sum / count;
     }
 
     // the previous aggregation data

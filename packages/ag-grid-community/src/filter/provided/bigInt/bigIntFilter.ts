@@ -1,4 +1,5 @@
 import { _isBrowserFirefox } from '../../../agStack/utils/browser';
+import { _parseBigIntOrNull } from '../../../agStack/utils/bigInt';
 import { _makeNull } from '../../../agStack/utils/generic';
 import { AgInputTextField } from '../../../agStack/widgets/agInputTextField';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
@@ -237,16 +238,7 @@ function stringToBigInt(
         return null;
     }
 
-    const trimmed = filterText.trim();
-    if (trimmed === '-' || trimmed === '+') {
-        return null;
-    }
-
-    try {
-        return BigInt(trimmed);
-    } catch {
-        return null;
-    }
+    return _parseBigIntOrNull(filterText);
 }
 
 function getNormalisedValue(

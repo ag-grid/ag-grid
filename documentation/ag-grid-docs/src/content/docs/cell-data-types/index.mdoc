@@ -101,6 +101,13 @@ The following properties are set:
 * When the [Set Filter](./filter-set/) is used, `filterParams.comparator` is set to sort the filter list using `bigint` comparisons.
 * A `comparator` is defined to allow [Custom Sorting](./row-sorting/#custom-sorting) using `bigint` values, including absolute sort.
 
+BigInt behaviour and limitations:
+
+* Inputs must be decimal integers. Both `500` and `500n` are accepted, but hex, binary, decimals, and scientific notation are rejected.
+* Values are displayed as plain strings by default. Use a Value Formatter to add separators or custom formatting.
+* Aggregation and pivoting support integer-preserving functions only (`sum`, `min`, `max`, `count`). Functions such as `avg` are not supported for `bigint` values.
+* CSV and clipboard export use the exact integer string. Excel export defaults to Text to avoid precision loss; you can opt into Number via Excel export styles, but large values may lose precision.
+
 If you need a custom input format, provide a custom Value Parser/Formatter by [Overriding the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions).
 
 ### Boolean
