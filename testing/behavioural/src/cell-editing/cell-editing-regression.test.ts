@@ -70,7 +70,6 @@ describe('Cell Editing Regression', () => {
         });
     });
 
-    // AG-16541 - ensure row editing restarts even when focus lands on a read-only cell
     test('full-row editing tab to next row starts editors when focusing read-only cell', async () => {
         const api = await gridMgr.createGridAndWait('myGrid', {
             columnDefs: [

@@ -273,15 +273,13 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             if (suppressStartEditOnTab) {
                 nextCell.focusCell(true, event);
             } else {
-                const startParams: StartEditParams = {
+                this.editSvc.startEditing(nextCell, {
                     startedEdit: true,
                     event,
                     source,
                     ignoreEventKey: true,
                     editable: nextEditable || undefined,
-                };
-
-                this.editSvc.startEditing(nextCell, startParams);
+                });
             }
         }
 
