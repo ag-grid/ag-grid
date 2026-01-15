@@ -22,9 +22,9 @@ export const ModulesContext = React.createContext<Module[]>([]);
 export const LicenseContext = React.createContext<string | undefined>(undefined);
 
 /**
- * Provider component that supplies AG Grid Modules and license key to all grid instances within its scope via React Context.
+ * Provide AG Grid Modules to all grid instances within this scope via React Context. If nested, modules are accumulated from all providers and provided to each AgGridReact instance.
  *
- * When nested, modules are accumulated from all providers and provided to each AgGridReact instance.
+ * If a licenseKey is provided it will be passed to the global `LicenseManager.setLicenseKey(licenseKey)`.
  *
  * This is an alternative to providing modules globally via `ModuleRegistry.registerModules()` and setting the license key via `LicenseManager.setLicenseKey()`.
  */
