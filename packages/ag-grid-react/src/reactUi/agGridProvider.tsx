@@ -1,5 +1,6 @@
 import React, { useContext, useRef } from 'react';
 
+import { _areEqual } from 'ag-grid-community';
 import type { Module } from 'ag-grid-community';
 
 export interface AgGridProviderProps {
@@ -21,20 +22,6 @@ export const ModulesContext = React.createContext<Module[]>([]);
 export const LicenseContext = React.createContext<string | undefined>(undefined);
 
 /**
- * Compares two arrays of AG Grid Modules for equality based on their module names.
- */
-function areModulesEqual(prevModules: Module[], nextModules: Module[]): boolean {
-    if (prevModules === nextModules) {
-        return true;
-    }
-    if (prevModules.length !== nextModules.length) {
-        return false;
-    }
-    const prevNames = new Set(prevModules.map((m) => m.moduleName));
-    return nextModules.every((m) => prevNames.has(m.moduleName));
-}
-
-/**
  * Provider component that supplies AG Grid Modules and license key to all grid instances within its scope via React Context.
  *
  * When nested, modules are accumulated from all providers and provided to each AgGridReact instance.
@@ -45,13 +32,24 @@ export function AgGridProvider({ modules, licenseKey, children }: Readonly<AgGri
     const parentModules = useContext(ModulesContext);
     const parentLicenseKey = useContext(LicenseContext);
 
-    // The grid handles duplicated modules so no need to worry about that here
-    const mergedModules = [...parentModules, ...modules];
-    const modulesRef = useRef<Module[]>(mergedModules);
+    const modulesRef = useRef<Module[]>(modules);
+    const parentModulesRef = useRef<Module[]>(parentModules);
+    const mergedModules = useRef<Module[]>([...parentModules, ...modules]);
 
-    // Only update the ref if modules have actually changed
-    if (!areModulesEqual(modulesRef.current, mergedModules)) {
-        modulesRef.current = mergedModules;
+    const parentModulesChanged = !_areEqual(parentModulesRef.current, parentModules);
+    if (parentModulesChanged) {
+        parentModulesRef.current = parentModules;
+    }
+    const modulesChanged = !_areEqual(modulesRef.current, modules);
+    if (modulesChanged) {
+        modulesRef.current = modules;
+    }
+
+    // The grid handles duplicated modules so no need to worry about that here
+    // Only update the ref if modules have changed.
+    // Assuming that the order of modules will be stable between renders so not going to do any sorting here.
+    if (parentModulesChanged || modulesChanged) {
+        mergedModules.current = [...parentModulesRef.current, ...modulesRef.current];
     }
 
     // Use this provider's licenseKey if provided, otherwise inherit from parent
@@ -61,7 +59,7 @@ export function AgGridProvider({ modules, licenseKey, children }: Readonly<AgGri
     const effectiveLicenseKey = licenseKey ?? parentLicenseKey;
 
     return (
-        <ModulesContext.Provider value={modulesRef.current}>
+        <ModulesContext.Provider value={mergedModules.current}>
             <LicenseContext.Provider value={effectiveLicenseKey}>{children}</LicenseContext.Provider>
         </ModulesContext.Provider>
     );
