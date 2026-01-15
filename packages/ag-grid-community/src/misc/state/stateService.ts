@@ -142,6 +142,10 @@ export class StateService extends BeanStub implements NamedBean {
             if (scrollState && !_jsonEquals(scrollState, this.cachedState.scroll)) {
                 this.setCachedStateValue('scroll', scrollState);
             }
+            const focusedCellState = this.getFocusedCellState();
+            if (focusedCellState && !_jsonEquals(focusedCellState, this.cachedState.focusedCell)) {
+                this.setCachedStateValue('focusedCell', focusedCellState);
+            }
         }
         return this.cachedState;
     }

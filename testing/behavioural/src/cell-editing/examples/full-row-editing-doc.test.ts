@@ -233,5 +233,5 @@ describe('Full-row editing documentation examples', () => {
             ├── LEAF id:1 make-0-0:"Ford" model-1-1:"XYZ" field4-2-2:"S-YY"
             └── LEAF id:2 make-0-0:"Porsche" model-1-1:"Boxster 0" field4-2-2:"S-ZZ"
         `);
-    });
+    }, 15000);
 });

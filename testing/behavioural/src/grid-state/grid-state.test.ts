@@ -377,6 +377,37 @@ describe('StateService - Grid State Management', () => {
                 selectableFilters: {},
             });
         });
+
+        test('should serialise bigint filter state and rehydrate on setState', async () => {
+            const columnDefs = [{ field: 'id', cellDataType: 'bigint', filter: 'agBigIntColumnFilter' }];
+            const rowData = [{ id: 1n }, { id: 2n }, { id: 3n }];
+
+            const api = gridsManager.createGrid('bigIntStateSource', {
+                columnDefs,
+                rowData,
+            });
+
+            api.setFilterModel({
+                id: { filterType: 'bigint', type: 'equals', filter: 2n },
+            });
+
+            await asyncSetTimeout(20);
+
+            const savedState = api.getState();
+            expect(savedState.filter?.filterModel?.id?.filter).toBe('2');
+
+            const api2 = gridsManager.createGrid('bigIntStateTarget', {
+                columnDefs,
+                rowData,
+            });
+
+            api2.setState(savedState as GridState);
+
+            await asyncSetTimeout(20);
+
+            const restoredFilterModel = api2.getFilterModel();
+            expect(restoredFilterModel?.id?.filter).toBe(2n);
+        });
     });
 
     // ===== CELL STATE TESTS =====
@@ -666,6 +697,8 @@ describe('StateService - Grid State Management', () => {
                 columnDefs: defaultColumnDefs,
                 rowData: defaultRowData,
             });
+
+            await asyncSetTimeout(20);
 
             let eventFired = false;
             let eventState: any;
