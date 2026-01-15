@@ -28,6 +28,7 @@ import {
     GridCoreCreator,
     VanillaFrameworkOverrides,
     _combineAttributesAndGridOptions,
+    _findEnterpriseCoreModule,
     _getGridOption,
     _getGridRegisteredModules,
     _isClientSideRowModel,
@@ -54,7 +55,7 @@ import { warnReactiveCustomComponents } from '../shared/customComp/util';
 import type { AgGridReactProps, InternalAgGridReactProps } from '../shared/interfaces';
 import { PortalManager } from '../shared/portalManager';
 import { ReactComponent } from '../shared/reactComponent';
-import { LicenseContext, ModulesContext, findEnterpriseCoreModule } from './agGridProvider';
+import { LicenseContext, ModulesContext } from './agGridProvider';
 import { BeansContext, RenderModeContext } from './beansContext';
 import GridComp from './gridComp';
 import { RenderStatusService } from './renderStatusService';
@@ -142,7 +143,7 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
         if (licenseKeyFromContext) {
             // find the EnterpriseCore module which implements _ModuleWithLicenseManager
             // if found, set the license key
-            findEnterpriseCoreModule(modules)?.setLicenseKey(licenseKeyFromContext);
+            _findEnterpriseCoreModule(modules)?.setLicenseKey(licenseKeyFromContext);
         }
 
         if (!portalManager.current) {

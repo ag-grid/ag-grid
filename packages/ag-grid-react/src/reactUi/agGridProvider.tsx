@@ -1,6 +1,6 @@
 import React, { useContext, useRef } from 'react';
 
-import type { Module, _ModuleWithLicenseManager } from 'ag-grid-community';
+import type { Module } from 'ag-grid-community';
 
 export interface AgGridProviderProps {
     /**
@@ -24,11 +24,11 @@ export const LicenseContext = React.createContext<string | undefined>(undefined)
  * Compares two arrays of AG Grid Modules for equality based on their module names.
  */
 function areModulesEqual(prevModules: Module[], nextModules: Module[]): boolean {
-    if (prevModules.length !== nextModules.length) {
-        return false;
-    }
     if (prevModules === nextModules) {
         return true;
+    }
+    if (prevModules.length !== nextModules.length) {
+        return false;
     }
     const prevNames = new Set(prevModules.map((m) => m.moduleName));
     return nextModules.every((m) => prevNames.has(m.moduleName));
@@ -41,7 +41,7 @@ function areModulesEqual(prevModules: Module[], nextModules: Module[]): boolean 
  *
  * This is an alternative to providing modules globally via `ModuleRegistry.registerModules()` and setting the license key via `LicenseManager.setLicenseKey()`.
  */
-export function AgGridProvider({ modules, licenseKey, children }: AgGridProviderProps) {
+export function AgGridProvider({ modules, licenseKey, children }: Readonly<AgGridProviderProps>) {
     const parentModules = useContext(ModulesContext);
     const parentLicenseKey = useContext(LicenseContext);
 
@@ -55,6 +55,9 @@ export function AgGridProvider({ modules, licenseKey, children }: AgGridProvider
     }
 
     // Use this provider's licenseKey if provided, otherwise inherit from parent
+    // We cannot safely set the licenseKey here as enterprise modules my have been provided to the
+    // AGGridReact component directly and so the list of modules we have access to here may not have the
+    // license manager on them.
     const effectiveLicenseKey = licenseKey ?? parentLicenseKey;
 
     return (
@@ -62,28 +65,4 @@ export function AgGridProvider({ modules, licenseKey, children }: AgGridProvider
             <LicenseContext.Provider value={effectiveLicenseKey}>{children}</LicenseContext.Provider>
         </ModulesContext.Provider>
     );
-}
-
-export function findEnterpriseCoreModule(
-    modules: Module[],
-    visited: Set<string> = new Set()
-): _ModuleWithLicenseManager | undefined {
-    for (const module of modules) {
-        if (visited.has(module.moduleName)) {
-            return undefined;
-        }
-        visited.add(module.moduleName);
-
-        if ('setLicenseKey' in module) {
-            return module as _ModuleWithLicenseManager;
-        }
-
-        if (module.dependsOn) {
-            const found = findEnterpriseCoreModule(module.dependsOn, visited);
-            if (found) {
-                return found;
-            }
-        }
-    }
-    return undefined;
 }

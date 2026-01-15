@@ -428,7 +428,12 @@ export type { AnimationFrameService } from './misc/animationFrameService';
 export { LocaleService } from './misc/locale/localeService';
 export { _setColMenuVisible } from './misc/menu/menuService';
 export type { MenuService } from './misc/menu/menuService';
-export { _getGridRegisteredModules, _registerModule, _setUmd } from './modules/moduleRegistry';
+export {
+    _getGridRegisteredModules,
+    _registerModule,
+    _setUmd,
+    _findEnterpriseCoreModule,
+} from './modules/moduleRegistry';
 export type { CellNavigationService } from './navigation/cellNavigationService';
 export type { HeaderNavigationService } from './navigation/headerNavigationService';
 export type { NavigationService } from './navigation/navigationService';
