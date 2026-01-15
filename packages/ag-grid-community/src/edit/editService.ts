@@ -718,8 +718,9 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     }
 
     public isCellEditable(position: Required<EditPosition>, source: 'api' | 'ui' = 'ui'): boolean {
-        const { rowNode } = position;
         const { gos, beans } = this;
+
+        const rowNode = position.rowNode;
         if (rowNode.group) {
             // This is a group - it could be a tree group or a grouping group...
             if (gos.get('treeData')) {
@@ -738,7 +739,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         const isEditable =
             getEditType(gos) === 'fullRow'
                 ? isFullRowCellEditable(beans, position, source)
-                : isCellEditable(beans, position, source);
+                : isCellEditable(beans, position);
 
         if (isEditable) {
             this.strategy ??= this.createStrategy();
