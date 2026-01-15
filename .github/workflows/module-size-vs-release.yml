@@ -1,15 +1,16 @@
 name: Module Size vs Release
 
 on:
+  push:
+    branches:
+      - 'latest'
+      - 'b[0-9][0-9]?.[0-9][0-9]?.[0-9][0-9]?'
   workflow_dispatch:
     inputs:
       release_tag:
         description: 'Release tag to compare against (e.g., b35.1.0)'
         type: string
         required: true
-  schedule:
-    # Run weekly on Monday at 9am UTC
-    - cron: '0 9 * * 1'
 
 env:
   NX_NO_CLOUD: true
