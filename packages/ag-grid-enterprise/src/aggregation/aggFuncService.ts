@@ -100,7 +100,7 @@ export class AggFuncService extends BeanStub implements NamedBean, IAggFuncServi
 function aggSum(params: IAggFuncParams): number | bigint | null {
     const { values } = params;
     let result: number | bigint | null = null;
-    let seenType: 'number' | 'bigint' | null = null;
+    let useBigInt = false;
 
     // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
     for (let i = 0; i < values.length; i++) {
@@ -110,20 +110,19 @@ function aggSum(params: IAggFuncParams): number | bigint | null {
             continue;
         }
 
-        const valueType = typeof value as 'number' | 'bigint';
-        if (seenType && seenType !== valueType) {
-            return null;
-        }
-        if (!seenType) {
-            seenType = valueType;
-        }
-
-        if (result === null) {
-            result = value;
-        } else if (seenType === 'number') {
-            result = (result as number) + (value as number);
+        if (typeof value === 'bigint') {
+            if (!useBigInt) {
+                useBigInt = true;
+                if (typeof result === 'number') {
+                    result = BigInt(Math.trunc(result));
+                }
+            }
+            result = result === null ? value : (result as bigint) + value;
+        } else if (!useBigInt) {
+            result = result === null ? value : (result as number) + value;
         } else {
-            result = (result as bigint) + (value as bigint);
+            const coercedValue = BigInt(Math.trunc(value));
+            result = result === null ? coercedValue : (result as bigint) + coercedValue;
         }
     }
 
@@ -141,7 +140,7 @@ function aggLast(params: IAggFuncParams): any {
 function aggMin(params: IAggFuncParams): number | bigint | null {
     const { values } = params;
     let result: number | bigint | null = null;
-    let seenType: 'number' | 'bigint' | null = null;
+    let useBigInt = false;
 
     // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
     for (let i = 0; i < values.length; i++) {
@@ -151,16 +150,25 @@ function aggMin(params: IAggFuncParams): number | bigint | null {
             continue;
         }
 
-        const valueType = typeof value as 'number' | 'bigint';
-        if (seenType && seenType !== valueType) {
-            return null;
-        }
-        if (!seenType) {
-            seenType = valueType;
-        }
-
-        if (result === null || result > value) {
-            result = value;
+        if (typeof value === 'bigint') {
+            if (!useBigInt) {
+                useBigInt = true;
+                if (typeof result === 'number') {
+                    result = BigInt(Math.trunc(result));
+                }
+            }
+            if (result === null || (result as bigint) > value) {
+                result = value;
+            }
+        } else if (!useBigInt) {
+            if (result === null || (result as number) > value) {
+                result = value;
+            }
+        } else {
+            const coercedValue = BigInt(Math.trunc(value));
+            if (result === null || (result as bigint) > coercedValue) {
+                result = coercedValue;
+            }
         }
     }
 
@@ -170,7 +178,7 @@ function aggMin(params: IAggFuncParams): number | bigint | null {
 function aggMax(params: IAggFuncParams): number | bigint | null {
     const { values } = params;
     let result: number | bigint | null = null;
-    let seenType: 'number' | 'bigint' | null = null;
+    let useBigInt = false;
 
     // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
     for (let i = 0; i < values.length; i++) {
@@ -180,16 +188,25 @@ function aggMax(params: IAggFuncParams): number | bigint | null {
             continue;
         }
 
-        const valueType = typeof value as 'number' | 'bigint';
-        if (seenType && seenType !== valueType) {
-            return null;
-        }
-        if (!seenType) {
-            seenType = valueType;
-        }
-
-        if (result === null || result < value) {
-            result = value;
+        if (typeof value === 'bigint') {
+            if (!useBigInt) {
+                useBigInt = true;
+                if (typeof result === 'number') {
+                    result = BigInt(Math.trunc(result));
+                }
+            }
+            if (result === null || (result as bigint) < value) {
+                result = value;
+            }
+        } else if (!useBigInt) {
+            if (result === null || (result as number) < value) {
+                result = value;
+            }
+        } else {
+            const coercedValue = BigInt(Math.trunc(value));
+            if (result === null || (result as bigint) < coercedValue) {
+                result = coercedValue;
+            }
         }
     }
 
@@ -249,45 +266,61 @@ const AVERAGE_PROTO = Object.freeze({
 
 // the average function is tricky as the multiple levels require weighted averages
 // for the non-leaf node aggregations.
-function aggAvg(params: IAggFuncParams): { value: number | null; count: number } | null {
+function aggAvg(params: IAggFuncParams): { value: number | bigint | null; count: number } | null {
     const { values } = params;
     let sum = 0;
+    let sumBigInt = 0n;
     let count = 0;
+    let useBigInt = false;
 
     // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
     for (let i = 0; i < values.length; i++) {
         const currentValue = values[i];
-        let valueToAdd: number | bigint | null = null;
-
         if (typeof currentValue === 'bigint') {
-            return null;
-        }
-        if (typeof currentValue === 'number') {
-            valueToAdd = currentValue;
+            if (!useBigInt) {
+                useBigInt = true;
+                sumBigInt = BigInt(Math.trunc(sum));
+            }
+            sumBigInt += currentValue;
             count++;
-        } else if (
+            continue;
+        }
+
+        if (typeof currentValue === 'number') {
+            if (useBigInt) {
+                sumBigInt += BigInt(Math.trunc(currentValue));
+            } else {
+                sum += currentValue;
+            }
+            count++;
+            continue;
+        }
+
+        if (
             currentValue != null &&
             (typeof currentValue.value === 'number' || typeof currentValue.value === 'bigint') &&
             typeof currentValue.count === 'number'
         ) {
             if (typeof currentValue.value === 'bigint') {
-                return null;
+                if (!useBigInt) {
+                    useBigInt = true;
+                    sumBigInt = BigInt(Math.trunc(sum));
+                }
+                sumBigInt += currentValue.value * BigInt(currentValue.count);
+            } else if (useBigInt) {
+                sumBigInt += BigInt(Math.trunc(currentValue.value * currentValue.count));
+            } else {
+                sum += currentValue.value * currentValue.count;
             }
-            // we are aggregating groups, so we take the aggregated values to calculated a weighted average
-            valueToAdd = currentValue.value * currentValue.count;
             count += currentValue.count;
-        }
-
-        if (typeof valueToAdd === 'number') {
-            sum += valueToAdd;
         }
     }
 
-    let value: null | number = null;
+    let value: null | number | bigint = null;
 
     // avoid divide by zero error
     if (count > 0) {
-        value = sum / count;
+        value = useBigInt ? sumBigInt / BigInt(count) : sum / count;
     }
 
     // the previous aggregation data

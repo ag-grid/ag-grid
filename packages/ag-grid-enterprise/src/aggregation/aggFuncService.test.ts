@@ -43,7 +43,7 @@ describe('aggSum', () => {
     it('returns sum of mixture of numbers and bigints', () => {
         const result = sum(createParams([20, BigInt(30), 40]));
 
-        expect(result).toBeNull();
+        expect(result).toBe(BigInt(90));
     });
 
     it('returns sum of valid numbers', () => {
@@ -119,7 +119,7 @@ describe('aggMin', () => {
     it('returns min of mixture of numbers and bigints', () => {
         const result = min(createParams([BigInt(234), -435345, BigInt(-15345435), 34565]));
 
-        expect(result).toBeNull();
+        expect(result).toBe(BigInt(-15345435));
     });
 
     it('returns min of valid numbers', () => {
@@ -159,7 +159,7 @@ describe('aggMax', () => {
     it('returns max of mixture of numbers and bigints', () => {
         const result = max(createParams([BigInt(234), BigInt(5645723), -435345, 34565]));
 
-        expect(result).toBeNull();
+        expect(result).toBe(BigInt(5645723));
     });
 
     it('returns max of valid numbers', () => {
@@ -214,7 +214,7 @@ describe('aggAvg', () => {
     it('returns average of bigint elements', () => {
         const result = avg(createParams([BigInt(53242342), BigInt(2565645), BigInt(1153456746)]));
 
-        expect(result).toBeNull();
+        expect(result.toNumber()).toBe(BigInt(403088244));
     });
 
     it('returns average of valid elements', () => {
@@ -232,7 +232,7 @@ describe('aggAvg', () => {
     it('calculates average from group aggregation objects with bigints', () => {
         const result = avg(createParams([16, { count: 3, value: 12 }, { count: 4, value: BigInt(32) }]));
 
-        expect(result).toBeNull();
+        expect(result.toNumber()).toBe(BigInt(22));
     });
 
     it('returns null for empty array', () => {
