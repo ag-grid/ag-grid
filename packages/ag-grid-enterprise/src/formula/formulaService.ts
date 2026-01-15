@@ -107,6 +107,9 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     /** Built-in operations (extendable via gridOptions.formulaFuncs). */
     private supportedOperations: Map<string, (params: FormulaFunctionParams) => unknown>;
 
+    // Track the active editor instance per grid/cell to avoid overlapping syncs on editor restarts.
+    public activeEditor: number | null = null;
+
     public active = false;
 
     public setFormulasActive(cols: _ColumnCollections): void {

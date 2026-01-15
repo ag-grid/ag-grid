@@ -6,7 +6,7 @@ import type {
     GridOptionsService,
     GridOptionsWithDefaults,
 } from 'ag-grid-community';
-import { AgContentEditableField, _createElement } from 'ag-grid-community';
+import { AgContentEditableField, _createElement, _getDocument, _getWindow } from 'ag-grid-community';
 
 import { getRefTokenMatches } from '../formula/refUtils';
 import { agFormulaInputFieldCSS } from './agFormulaInputField.css-GENERATED';
@@ -93,21 +93,6 @@ export class AgFormulaInputField extends AgContentEditableField<
         return this.currentValue;
     }
 
-    public placeCaretAtEnd(): void {
-        const contentEl = this.getContentElement();
-        const selection = window.getSelection();
-
-        if (!selection) {
-            return;
-        }
-
-        const range = document.createRange();
-        range.selectNodeContents(contentEl);
-        range.collapse(false);
-        selection.removeAllRanges();
-        selection.addRange(range);
-    }
-
     public setEditingCellRef(column: any, rowIndex: number | null | undefined): void {
         const colRef = column ? this.beans.formula?.getColRef(column as any) : undefined;
         const editingCellRef =
@@ -122,7 +107,7 @@ export class AgFormulaInputField extends AgContentEditableField<
     }
 
     public rememberCaret(): void {
-        const caretOffset = getCaretOffset(this.getContentElement(), this.getCurrentValue());
+        const caretOffset = getCaretOffset(this.beans, this.getContentElement(), this.getCurrentValue());
         this.selectionCaretOffset = caretOffset ?? this.currentValue.length;
     }
 
@@ -134,6 +119,7 @@ export class AgFormulaInputField extends AgContentEditableField<
 
     private renderFormula(params: { value: string; currentValue: string; caret?: number | null }): void {
         renderFormula({
+            beans: this.beans,
             contentElement: this.getContentElement(),
             getColorIndexForToken: this.getColorIndexForToken.bind(this),
             ...params,
@@ -142,10 +128,10 @@ export class AgFormulaInputField extends AgContentEditableField<
 
     private renderPlainValue(value: string, caret?: number | null): void {
         const contentElement = this.getContentElement();
-        const caretOffset = caret ?? getCaretOffset(contentElement, this.currentValue);
+        const caretOffset = caret ?? getCaretOffset(this.beans, contentElement, this.currentValue);
         contentElement.textContent = value ?? '';
         const targetCaret = caretOffset != null ? Math.min(caretOffset, value.length) : null;
-        restoreCaret(contentElement, targetCaret);
+        restoreCaret(this.beans, contentElement, targetCaret);
     }
 
     public getColorIndexForRef(ref: string): number | null {
@@ -221,7 +207,7 @@ export class AgFormulaInputField extends AgContentEditableField<
     private onContentInput(): void {
         const contentElement = this.getContentElement();
         const currentValue = this.getCurrentValue();
-        const caret = getCaretOffset(contentElement, currentValue);
+        const caret = getCaretOffset(this.beans, contentElement, currentValue);
         const serialized = serializeContent(contentElement);
         const { isFormula, hasFormulaPrefix } = this.getFormulaState(serialized);
 
@@ -337,7 +323,7 @@ export class AgFormulaInputField extends AgContentEditableField<
     public restoreCaretAfterToken(): void {
         const caretBase =
             this.lastTokenCaretOffset ??
-            getCaretOffset(this.getContentElement(), this.getCurrentValue()) ??
+            getCaretOffset(this.beans, this.getContentElement(), this.getCurrentValue()) ??
             this.currentValue.length;
         const caret = caretBase + (this.lastTokenValueLength ?? 0);
         this.selectionCaretOffset = null;
@@ -347,7 +333,7 @@ export class AgFormulaInputField extends AgContentEditableField<
                 return;
             }
             this.getContentElement().focus({ preventScroll: true });
-            restoreCaret(this.getContentElement(), caret);
+            restoreCaret(this.beans, this.getContentElement(), caret);
         });
     }
 
@@ -375,7 +361,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         let valueOffset = 0;
 
         for (const child of Array.from(container.childNodes)) {
-            const caretLen = getNodeTextLength(child);
+            const caretLen = _getNodeTextLength(child);
             const valueLen = getNodeText(child).length;
 
             if (caretRemaining <= caretLen) {
@@ -406,10 +392,12 @@ export class AgFormulaInputField extends AgContentEditableField<
         }
     ): { caretOffset: number; valueOffset: number } | null {
         // Snapshot the caret position in both caret units and raw string offsets.
+        const { beans } = this;
         const contentElement = this.getContentElement();
         const caretOffset = options.useCachedCaret
-            ? this.selectionCaretOffset ?? getCaretOffset(contentElement, value) ?? this.currentValue.length
-            : getCaretOffset(contentElement, value);
+            ? this.selectionCaretOffset ?? getCaretOffset(beans, contentElement, value) ?? this.currentValue.length
+            : getCaretOffset(beans, contentElement, value);
+
         if (caretOffset == null) {
             return null;
         }
@@ -604,15 +592,20 @@ const getPreviousNonSpaceChar = (value: string, offset: number): string | null =
 };
 
 // Rendering & caret helpers
-const tokenize = (value: string, getColorIndexForToken: (tokenIndex: number) => number | null): Node[] => {
+const tokenize = (
+    beans: BeanCollection,
+    value: string,
+    getColorIndexForToken: (tokenIndex: number) => number | null
+): Node[] => {
     // Split the formula into text + token nodes while preserving operators for display.
     const nodes: Node[] = [];
     let lastIndex = 0;
     const matches = getRefTokenMatches(value);
+    const doc = _getDocument(beans);
 
     for (const match of matches) {
         if (match.start > lastIndex) {
-            nodes.push(document.createTextNode(formatForDisplay(value.slice(lastIndex, match.start))));
+            nodes.push(doc.createTextNode(formatForDisplay(value.slice(lastIndex, match.start))));
         }
 
         const colorIndex = getColorIndexForToken(match.index);
@@ -621,11 +614,11 @@ const tokenize = (value: string, getColorIndexForToken: (tokenIndex: number) => 
     }
 
     if (lastIndex < value.length) {
-        nodes.push(document.createTextNode(formatForDisplay(value.slice(lastIndex))));
+        nodes.push(doc.createTextNode(formatForDisplay(value.slice(lastIndex))));
     }
 
     if (!nodes.length) {
-        nodes.push(document.createTextNode(''));
+        nodes.push(doc.createTextNode(''));
     }
 
     return nodes;
@@ -663,6 +656,7 @@ const createReferenceNode = (
 };
 
 const renderFormula = (params: {
+    beans: BeanCollection;
     contentElement: HTMLElement;
     currentValue: string;
     value: string;
@@ -670,106 +664,18 @@ const renderFormula = (params: {
     caret?: number | null;
 }): void => {
     // Rebuild the DOM and restore the caret to the same logical position.
-    const { contentElement, currentValue, value, getColorIndexForToken, caret } = params;
-    const caretOffset = caret ?? getCaretOffset(contentElement, currentValue);
+    const { beans, contentElement, currentValue, value, getColorIndexForToken, caret } = params;
+    const caretOffset = caret ?? getCaretOffset(beans, contentElement, currentValue);
     const maxCaret = value.length;
 
     contentElement.textContent = '';
 
-    for (const node of tokenize(value, getColorIndexForToken)) {
+    for (const node of tokenize(beans, value, getColorIndexForToken)) {
         contentElement.append(node);
     }
 
     const targetCaret = caretOffset != null ? Math.min(caretOffset, maxCaret) : null;
-    restoreCaret(contentElement, targetCaret);
-};
-
-const getCaretOffset = (contentElement: HTMLElement, currentValue: string): number | null => {
-    // Translate the DOM selection into a caret offset that counts tokens as one unit.
-    const selection = window.getSelection();
-
-    if (!selection || selection.rangeCount === 0) {
-        return currentValue?.length ?? null;
-    }
-
-    const range = selection.getRangeAt(0);
-
-    if (!contentElement.contains(range.startContainer)) {
-        return currentValue?.length ?? null;
-    }
-
-    // If the caret is directly on the container (between child nodes), the range offset is a
-    // child index, so convert it to caret units by summing preceding child lengths.
-    if (range.startContainer === contentElement) {
-        let offset = 0;
-        for (let i = 0; i < range.startOffset; i++) {
-            offset += getNodeTextLength(contentElement.childNodes[i]);
-        }
-        return offset;
-    }
-
-    let offset = range.startOffset;
-    let node: Node | null = range.startContainer;
-
-    while (node && node !== contentElement) {
-        let sibling = node.previousSibling;
-
-        while (sibling) {
-            offset += getNodeTextLength(sibling);
-            sibling = sibling.previousSibling;
-        }
-
-        node = node.parentNode;
-    }
-
-    return offset;
-};
-
-const restoreCaret = (contentElement: HTMLElement, offset: number | null): void => {
-    // Place the DOM caret at a logical offset within the tokenized content.
-    if (offset == null) {
-        return;
-    }
-
-    const selection = window.getSelection();
-    const range = document.createRange();
-    const { node, localOffset } = findNodeAtOffset(contentElement, offset);
-
-    if (!node || !selection || !contentElement.isConnected || !node.isConnected) {
-        return;
-    }
-
-    range.setStart(node, localOffset);
-    range.collapse(true);
-    selection.removeAllRanges();
-    try {
-        selection.addRange(range);
-    } catch {
-        // Ignore invalid ranges when the editor is detached from the document.
-    }
-};
-
-const findNodeAtOffset = (root: Node, offset: number): { node: Node | null; localOffset: number } => {
-    // Walk the tokenized tree and return the node/offset for a logical caret position.
-    let remaining = offset;
-
-    for (let i = 0; i < root.childNodes.length; i++) {
-        const child = root.childNodes[i];
-        const length = getNodeTextLength(child);
-
-        if (remaining > length) {
-            remaining -= length;
-            continue;
-        }
-
-        if (child.nodeType === Node.TEXT_NODE) {
-            return { node: child, localOffset: remaining };
-        }
-
-        return findNodeAtOffset(child, remaining);
-    }
-
-    return { node: root, localOffset: root.childNodes.length };
+    restoreCaret(beans, contentElement, targetCaret);
 };
 
 const getOffsetBeforeNode = (container: HTMLElement, node: Node, useValueLength: boolean = false): number | null => {
@@ -783,7 +689,7 @@ const getOffsetBeforeNode = (container: HTMLElement, node: Node, useValueLength:
         if (child === node) {
             return offset;
         }
-        offset += useValueLength ? getNodeText(child).length : getNodeTextLength(child);
+        offset += useValueLength ? getNodeText(child).length : _getNodeTextLength(child);
     }
 
     return null;
@@ -816,17 +722,108 @@ const getNodeText = (node: Node): string => {
     return '';
 };
 
-const getNodeTextLength = (node: Node): number => {
+const _getNodeTextLength = (node: Node): number => {
     // Measure text length for caret math (tokens count as their displayed text).
     if (node.nodeType === Node.TEXT_NODE) {
         return node.textContent?.length ?? 0;
     }
 
     if (node.nodeType === Node.ELEMENT_NODE) {
-        return Array.from(node.childNodes).reduce((sum, child) => sum + getNodeTextLength(child), 0);
+        return Array.from(node.childNodes).reduce((sum, child) => sum + _getNodeTextLength(child), 0);
     }
 
     return 0;
+};
+
+const findNodeAtOffset = (root: Node, offset: number): { node: Node | null; localOffset: number } => {
+    // Walk the tokenized tree and return the node/offset for a logical caret position.
+    let remaining = offset;
+
+    for (let i = 0; i < root.childNodes.length; i++) {
+        const child = root.childNodes[i];
+        const length = _getNodeTextLength(child);
+
+        if (remaining > length) {
+            remaining -= length;
+            continue;
+        }
+
+        if (child.nodeType === Node.TEXT_NODE) {
+            return { node: child, localOffset: remaining };
+        }
+
+        return findNodeAtOffset(child, remaining);
+    }
+
+    return { node: root, localOffset: root.childNodes.length };
+};
+
+const restoreCaret = (beans: BeanCollection, contentElement: HTMLElement, offset: number | null): void => {
+    // Place the DOM caret at a logical offset within the tokenized content.
+    if (offset == null) {
+        return;
+    }
+
+    const win = _getWindow(beans);
+    const doc = _getDocument(beans);
+    const selection = win.getSelection();
+    const range = doc.createRange();
+    const { node, localOffset } = findNodeAtOffset(contentElement, offset);
+
+    if (!node || !selection || !contentElement.isConnected || !node.isConnected) {
+        return;
+    }
+
+    range.setStart(node, localOffset);
+    range.collapse(true);
+    selection.removeAllRanges();
+    try {
+        selection.addRange(range);
+    } catch {
+        // Ignore invalid ranges when the editor is detached from the document.
+    }
+};
+
+const getCaretOffset = (beans: BeanCollection, contentElement: HTMLElement, currentValue: string): number | null => {
+    // Translate the DOM selection into a caret offset that counts tokens as one unit.
+    const win = _getWindow(beans);
+    const selection = win.getSelection();
+
+    if (!selection || selection.rangeCount === 0) {
+        return currentValue?.length ?? null;
+    }
+
+    const range = selection.getRangeAt(0);
+
+    if (!contentElement.contains(range.startContainer)) {
+        return currentValue?.length ?? null;
+    }
+
+    // If the caret is directly on the container (between child nodes), the range offset is a
+    // child index, so convert it to caret units by summing preceding child lengths.
+    if (range.startContainer === contentElement) {
+        let offset = 0;
+        for (let i = 0; i < range.startOffset; i++) {
+            offset += _getNodeTextLength(contentElement.childNodes[i]);
+        }
+        return offset;
+    }
+
+    let offset = range.startOffset;
+    let node: Node | null = range.startContainer;
+
+    while (node && node !== contentElement) {
+        let sibling = node.previousSibling;
+
+        while (sibling) {
+            offset += _getNodeTextLength(sibling);
+            sibling = sibling.previousSibling;
+        }
+
+        node = node.parentNode;
+    }
+
+    return offset;
 };
 
 // Token helpers

@@ -130,6 +130,7 @@ export { MONTHS as _MONTHS, _getDateParts, _parseDateTimeFromString, _serialiseD
 export {
     _getActiveDomElement,
     _getDocument,
+    _getWindow,
     _getPageBody,
     _getRootNode,
     _isNothingFocused,
@@ -155,6 +156,7 @@ export {
     _setFixedWidth,
     _setVisible,
     _isFocusableFormField,
+    _placeCaretAtEnd,
 } from './agStack/utils/dom';
 export { _anchorElementToMouseMoveEvent, _isElementInEventPath } from './agStack/utils/event';
 export {

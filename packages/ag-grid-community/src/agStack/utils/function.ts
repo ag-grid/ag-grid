@@ -65,7 +65,7 @@ export function _batchCall(
 }
 
 /**
- * Creates a debounced function a function, and attach it to a bean for lifecycle
+ * Creates a debounced function, and attach it to a bean for lifecycle
  * @param {Function} func The function to be debounced
  * @param {number} delay The time in ms to debounce
  * @returns {Function} The debounced function
