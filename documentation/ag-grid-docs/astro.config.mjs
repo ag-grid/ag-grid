@@ -12,7 +12,6 @@ import agLinkChecker from '../../external/ag-website-shared/plugins/agLinkChecke
 import buildTime from './plugins/agBuildTime';
 import agHotModuleReload from './plugins/agHotModuleReload';
 import agHtaccessGen from './plugins/agHtaccessGen';
-import agMergeSitemap from './plugins/agMergeSitemap';
 import agRedirectsChecker from './plugins/agRedirectsChecker';
 import { getSitemapConfig } from './src/utils/sitemap';
 import { urlWithBaseUrl } from './src/utils/urlWithBaseUrl';
@@ -198,15 +197,11 @@ export default defineConfig({
         buildTime(),
         react(),
         markdoc(),
-        sitemap(getSitemapConfig()),
+        sitemap(getSitemapConfig({ chartsSitemap: CHARTS_SITEMAP_INDEX_URL })),
         agHtaccessGen({ include: HTACCESS === 'true' }),
         agRedirectsChecker({
             skip: CHECK_REDIRECTS !== 'true',
         }),
         agLinkChecker({ include: CHECK_LINKS === 'true' }),
-        agMergeSitemap({
-            // Merge charts sitemap
-            sitemapIndexUrl: CHARTS_SITEMAP_INDEX_URL,
-        }),
     ],
 });
