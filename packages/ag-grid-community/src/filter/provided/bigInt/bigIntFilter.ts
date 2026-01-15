@@ -1,5 +1,5 @@
-import { _isBrowserFirefox } from '../../../agStack/utils/browser';
 import { _parseBigIntOrNull } from '../../../agStack/utils/bigInt';
+import { _isBrowserFirefox } from '../../../agStack/utils/browser';
 import { _makeNull } from '../../../agStack/utils/generic';
 import { AgInputTextField } from '../../../agStack/widgets/agInputTextField';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
@@ -11,14 +11,19 @@ import type { ProvidedFilterParams } from '../iProvidedFilter';
 import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
 import { DEFAULT_BIGINT_FILTER_OPTIONS } from './bigIntFilterConstants';
-import type { BigIntFilterModel, IBigIntFilterParams } from './iBigIntFilter';
 import { getAllowedCharPattern, mapValuesFromBigIntFilterModel, processBigIntFilterValue } from './bigIntFilterUtils';
+import type { BigIntFilterModel, IBigIntFilterParams } from './iBigIntFilter';
 
 /** temporary type until `BigIntFilterParams` is updated as breaking change */
 type BigIntFilterDisplayParams = IBigIntFilterParams &
     FilterDisplayParams<any, any, BigIntFilterModel | ICombinedSimpleModel<BigIntFilterModel>>;
 
-export class BigIntFilter extends SimpleFilter<BigIntFilterModel, bigint, GridInputTextField, BigIntFilterDisplayParams> {
+export class BigIntFilter extends SimpleFilter<
+    BigIntFilterModel,
+    bigint,
+    GridInputTextField,
+    BigIntFilterDisplayParams
+> {
     private readonly eValuesFrom: GridInputTextField[] = [];
     private readonly eValuesTo: GridInputTextField[] = [];
 

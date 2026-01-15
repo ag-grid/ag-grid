@@ -678,16 +678,11 @@ export class DataTypeService extends BeanStub implements NamedBean {
             bigint: {
                 baseDataType: 'bigint',
                 valueParser: (params: ValueParserLiteParams<any, bigint>) => {
-                    if (params.newValue == null) {
-                        return params.newValue;
-                    }
-                    if (params.newValue?.trim?.() === '') {
-                        return null;
-                    }
-                    if (typeof params.newValue === 'bigint') {
-                        return params.newValue;
-                    }
-                    if (typeof params.newValue !== 'string') {
+                    if (
+                        params.newValue == null ||
+                        params.newValue?.trim?.() === '' ||
+                        typeof params.newValue !== 'string'
+                    ) {
                         return null;
                     }
                     return _parseBigIntOrNull(params.newValue);
@@ -895,7 +890,7 @@ function bigintComparator(valueA: any, valueB: any): number {
         }
         return bigA > bigB ? 1 : -1;
     }
-    return String(valueA).localeCompare(String(valueB));
+    return 0;
 }
 
 function bigintAbsoluteComparator(valueA: any, valueB: any): number {
@@ -913,7 +908,7 @@ function bigintAbsoluteComparator(valueA: any, valueB: any): number {
         }
         return bigA > bigB ? 1 : -1;
     }
-    return String(valueA).localeCompare(String(valueB));
+    return 0;
 }
 
 export function toBigIntOrNull(value: any): bigint | null {
