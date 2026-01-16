@@ -986,7 +986,7 @@ export interface GroupRowValueSetterParams<TData = any, TValue = any, TContext =
 }
 export type GroupRowValueSetterFunc<TData = any, TValue = any, TContext = any> = (
     params: GroupRowValueSetterParams<TData, TValue, TContext>
-) => void;
+) => void | boolean | undefined;
 export interface SuppressPasteCallbackParams<TData = any, TValue = any, TContext = any>
     extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}
 export type SuppressPasteCallback<TData = any, TValue = any, TContext = any> = (

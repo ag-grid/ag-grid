@@ -464,7 +464,7 @@ export class ValueService extends BeanStub implements NamedBean {
         }
 
         if (groupRowValueSetter && valueWasDifferent) {
-            groupRowValueSetter(
+            const result = groupRowValueSetter(
                 _addGridCommonParams(this.gos, {
                     node: rowNode,
                     data: rowNode.data,
@@ -475,6 +475,10 @@ export class ValueService extends BeanStub implements NamedBean {
                     eventSource,
                 })
             );
+
+            if (result) {
+                valueWasDifferent = true;
+            }
         }
 
         if (!valueWasDifferent) {
