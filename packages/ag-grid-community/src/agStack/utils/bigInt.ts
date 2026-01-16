@@ -12,6 +12,9 @@ export const _parseBigIntOrNull = (value: unknown): bigint | null => {
     if (trimmed.endsWith('n')) {
         trimmed = trimmed.slice(0, -1);
     }
+    /**
+     * For v1, we only support decimal BigInt literals.
+     */
     if (!/^[+-]?\d+$/.test(trimmed)) {
         return null;
     }
@@ -20,29 +23,4 @@ export const _parseBigIntOrNull = (value: unknown): bigint | null => {
     } catch {
         return null;
     }
-};
-
-const isPlainObject = (value: unknown): value is Record<string, any> => {
-    if (!value || typeof value !== 'object') {
-        return false;
-    }
-    const proto = Object.getPrototypeOf(value);
-    return proto === Object.prototype || proto === null;
-};
-
-export const _serialiseBigIntValues = (value: unknown): unknown => {
-    if (typeof value === 'bigint') {
-        return value.toString();
-    }
-    if (Array.isArray(value)) {
-        return value.map((item) => _serialiseBigIntValues(item));
-    }
-    if (isPlainObject(value)) {
-        const result: Record<string, any> = {};
-        for (const key of Object.keys(value)) {
-            result[key] = _serialiseBigIntValues((value as any)[key]);
-        }
-        return result;
-    }
-    return value;
 };

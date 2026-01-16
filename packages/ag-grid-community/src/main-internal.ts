@@ -126,7 +126,7 @@ export {
 } from './agStack/utils/aria';
 export { _EmptyArray, _areEqual, _flatten, _last, _removeAllFromArray, _removeFromArray } from './agStack/utils/array';
 export { _isBrowserFirefox, _isBrowserSafari, _isIOSUserAgent } from './agStack/utils/browser';
-export { _parseBigIntOrNull, _serialiseBigIntValues } from './agStack/utils/bigInt';
+export { _parseBigIntOrNull } from './agStack/utils/bigInt';
 export { MONTHS as _MONTHS, _getDateParts, _parseDateTimeFromString, _serialiseDate } from './agStack/utils/date';
 export {
     _getActiveDomElement,

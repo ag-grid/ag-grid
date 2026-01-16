@@ -1,4 +1,3 @@
-import { _serialiseBigIntValues } from '../../agStack/utils/bigInt';
 import { _debounce } from '../../agStack/utils/function';
 import { _jsonEquals } from '../../agStack/utils/generic';
 import { _applyColumnState, _getColumnState } from '../../columns/columnStateUtils';
@@ -8,7 +7,6 @@ import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
 import { _isCellSelectionEnabled, _isClientSideRowModel } from '../../gridOptionsUtils';
 import type { CellRange } from '../../interfaces/IRangeService';
-import type { AdvancedFilterModel } from '../../interfaces/advancedFilterModel';
 import type {
     AggregationState,
     CellSelectionState,
@@ -30,7 +28,6 @@ import type {
     SortState,
 } from '../../interfaces/gridState';
 import type { RowGroupBulkExpansionState, RowGroupExpansionState } from '../../interfaces/iExpansionService';
-import type { ColumnFilterState, FilterModel } from '../../interfaces/iFilter';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../../interfaces/selectionState';
 import { migrateGridStateModel } from './stateModelMigration';
 import { _convertColumnGroupState, convertColumnState } from './stateUtils';
@@ -626,30 +623,16 @@ export class StateService extends BeanStub implements NamedBean {
 
     private getFilterState(): FilterState | undefined {
         const { filterManager, selectableFilter } = this.beans;
-        let filterModel: FilterModel | undefined = filterManager?.getFilterModel();
+        let filterModel = filterManager?.getFilterModel();
         if (filterModel && Object.keys(filterModel).length === 0) {
             filterModel = undefined;
         }
         const columnFilterState = filterManager?.getFilterState();
         const advancedFilterModel = filterManager?.getAdvFilterModel() ?? undefined;
-        const serialisedFilterModel = filterModel ? (_serialiseBigIntValues(filterModel) as FilterModel) : filterModel;
-        const serialisedColumnFilterState = columnFilterState
-            ? (_serialiseBigIntValues(columnFilterState) as ColumnFilterState)
-            : columnFilterState;
-        const serialisedAdvancedFilterModel = advancedFilterModel
-            ? (_serialiseBigIntValues(advancedFilterModel) as AdvancedFilterModel)
-            : advancedFilterModel;
         const selectableFilters = selectableFilter?.getState();
-        return serialisedFilterModel ||
-            serialisedAdvancedFilterModel ||
-            serialisedColumnFilterState ||
-            selectableFilters
-            ? {
-                  filterModel: serialisedFilterModel,
-                  columnFilterState: serialisedColumnFilterState,
-                  advancedFilterModel: serialisedAdvancedFilterModel,
-                  selectableFilters,
-              }
+
+        return filterModel || columnFilterState || advancedFilterModel || selectableFilters
+            ? { filterModel, columnFilterState, advancedFilterModel, selectableFilters }
             : undefined;
     }
 

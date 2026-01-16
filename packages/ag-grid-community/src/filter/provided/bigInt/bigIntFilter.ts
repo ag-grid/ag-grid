@@ -1,6 +1,5 @@
 import { _parseBigIntOrNull } from '../../../agStack/utils/bigInt';
 import { _isBrowserFirefox } from '../../../agStack/utils/browser';
-import { _makeNull } from '../../../agStack/utils/generic';
 import { AgInputTextField } from '../../../agStack/widgets/agInputTextField';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import type { FilterDisplayParams } from '../../../interfaces/iFilter';
@@ -11,7 +10,7 @@ import type { ProvidedFilterParams } from '../iProvidedFilter';
 import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
 import { DEFAULT_BIGINT_FILTER_OPTIONS } from './bigIntFilterConstants';
-import { getAllowedCharPattern, mapValuesFromBigIntFilterModel, processBigIntFilterValue } from './bigIntFilterUtils';
+import { getAllowedCharPattern, mapValuesFromBigIntFilterModel } from './bigIntFilterUtils';
 import type { BigIntFilterModel, IBigIntFilterParams } from './iBigIntFilter';
 
 /** temporary type until `BigIntFilterParams` is updated as breaking change */
@@ -54,11 +53,8 @@ export class BigIntFilter extends SimpleFilter<
     }
 
     private refreshInputPairValidation(from: GridInputTextField, to: GridInputTextField, isFrom = false): void {
-        const parser = this.params.bigintParser;
-        const fromValue = getNormalisedValue(parser, from);
-        const toValue = getNormalisedValue(parser, to);
-        const localeKey = getValidityMessageKey(fromValue, toValue, isFrom);
-        const validityMessage = localeKey ? this.translate(localeKey, [String(isFrom ? toValue : fromValue)]) : '';
+        const localeKey = getValidityMessageKey(_parseBigIntOrNull(from), _parseBigIntOrNull(to), isFrom);
+        const validityMessage = localeKey ? this.translate(localeKey, [String(isFrom ? to : from)]) : '';
         (isFrom ? from : to).setCustomValidity(validityMessage);
         (isFrom ? to : from).setCustomValidity('');
         if (validityMessage.length > 0) {
@@ -99,10 +95,8 @@ export class BigIntFilter extends SimpleFilter<
         value: bigint | null,
         fromFloatingFilter?: boolean
     ): void {
-        const { bigintFormatter } = this.params;
-        const valueToSet = !fromFloatingFilter && bigintFormatter ? bigintFormatter(value ?? null) : value;
-        super.setElementValue(element, valueToSet as any);
-        if (valueToSet === null) {
+        super.setElementValue(element, value as any, fromFloatingFilter);
+        if (value === null) {
             element.setCustomValidity('');
         }
     }
@@ -157,7 +151,7 @@ export class BigIntFilter extends SimpleFilter<
         const result: Tuple<bigint> = [];
         this.forEachPositionInput(position, (element, index, _elPosition, numberOfInputs) => {
             if (index < numberOfInputs) {
-                result.push(processBigIntFilterValue(stringToBigInt(this.params.bigintParser, element.getValue())));
+                result.push(_parseBigIntOrNull(element.getValue() ?? null));
             }
         });
 
@@ -179,10 +173,10 @@ export class BigIntFilter extends SimpleFilter<
 
         const values = this.getValues(position);
         if (values.length > 0) {
-            model.filter = values[0];
+            model.filter = String(values[0]);
         }
         if (values.length > 1) {
-            model.filterTo = values[1];
+            model.filterTo = String(values[1]);
         }
 
         return model;
@@ -219,38 +213,6 @@ export class BigIntFilter extends SimpleFilter<
     protected override canApply(_model: BigIntFilterModel | ICombinedSimpleModel<BigIntFilterModel> | null): boolean {
         return !this.hasInvalidInputs();
     }
-}
-
-function stringToBigInt(
-    bigintParser: IBigIntFilterParams['bigintParser'],
-    value?: string | bigint | null
-): bigint | null {
-    if (typeof value === 'bigint') {
-        return value;
-    }
-
-    let filterText = _makeNull(value);
-
-    if (filterText != null && filterText.trim() === '') {
-        filterText = null;
-    }
-
-    if (bigintParser) {
-        return bigintParser(filterText);
-    }
-
-    if (filterText == null) {
-        return null;
-    }
-
-    return _parseBigIntOrNull(filterText);
-}
-
-function getNormalisedValue(
-    bigintParser: IBigIntFilterParams['bigintParser'],
-    input: GridInputTextField
-): bigint | null {
-    return processBigIntFilterValue(stringToBigInt(bigintParser, input.getValue()));
 }
 
 function getValidityMessageKey(

@@ -22,7 +22,6 @@ export class BigIntFilterHandler extends ScalarFilterHandler<BigIntFilterModel, 
             return left < right ? 1 : -1;
         };
     }
-
     protected override isValid(value: bigint): boolean {
         return typeof value === 'bigint';
     }

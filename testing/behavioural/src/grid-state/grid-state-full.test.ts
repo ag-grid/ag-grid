@@ -33,7 +33,7 @@ describe('Grid State Full Snapshot', () => {
         });
         await asyncSetTimeout(1);
 
-        expect({
+        expect(api.getState()).toEqual({
             aggregation: undefined,
             cellSelection: undefined,
             columnGroup: undefined,
@@ -95,7 +95,7 @@ describe('Grid State Full Snapshot', () => {
             sort: undefined,
             ssrmRowGroupExpansion: undefined,
             version: VERSION,
-        }).toEqual(api.getState());
+        });
     });
 
     test('should get state with multiple features active', async () => {

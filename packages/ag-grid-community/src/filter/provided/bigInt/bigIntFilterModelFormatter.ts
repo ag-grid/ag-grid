@@ -1,3 +1,4 @@
+import { _parseBigIntOrNull } from '../../../agStack/utils/bigInt';
 import type { OptionsFactory } from '../optionsFactory';
 import { SCALAR_FILTER_TYPE_KEYS, SimpleFilterModelFormatter } from '../simpleFilterModelFormatter';
 import type { BigIntFilterModel, IBigIntFilterParams } from './iBigIntFilter';
@@ -21,15 +22,16 @@ export class BigIntFilterModelFormatter extends SimpleFilterModelFormatter<
         customDisplayName: string | undefined
     ): string {
         const { filter, filterTo, type } = condition;
+        const format = this.formatValue.bind(this);
 
-        const formatValue = this.formatValue.bind(this);
-
+        const parsedFrom = _parseBigIntOrNull(filter);
+        const parsedTo = _parseBigIntOrNull(filterTo);
         if (forToolPanel) {
             const valueForToolPanel = this.conditionForToolPanel(
                 type,
                 isRange,
-                () => formatValue(filter),
-                () => formatValue(filterTo),
+                () => format(parsedFrom),
+                () => format(parsedTo),
                 customDisplayKey,
                 customDisplayName
             );
@@ -39,11 +41,11 @@ export class BigIntFilterModelFormatter extends SimpleFilterModelFormatter<
         }
 
         if (isRange) {
-            return `${formatValue(filter)}-${formatValue(filterTo)}`;
+            return `${format(parsedFrom)}-${format(parsedTo)}`;
         }
 
         if (filter != null) {
-            return formatValue(filter);
+            return format(parsedFrom);
         }
 
         return `${type}`;

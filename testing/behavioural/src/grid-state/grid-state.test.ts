@@ -388,13 +388,13 @@ describe('StateService - Grid State Management', () => {
             });
 
             api.setFilterModel({
-                id: { filterType: 'bigint', type: 'equals', filter: 2n },
+                id: { filterType: 'bigint', type: 'equals', filter: '2n' },
             });
 
             await asyncSetTimeout(20);
 
             const savedState = api.getState();
-            expect(savedState.filter?.filterModel?.id?.filter).toBe('2');
+            expect(savedState.filter?.filterModel?.id?.filter).toBe('2n');
 
             const api2 = gridsManager.createGrid('bigIntStateTarget', {
                 columnDefs,
@@ -406,7 +406,7 @@ describe('StateService - Grid State Management', () => {
             await asyncSetTimeout(20);
 
             const restoredFilterModel = api2.getFilterModel();
-            expect(restoredFilterModel?.id?.filter).toBe('2');
+            expect(restoredFilterModel?.id?.filter).toBe('2n');
         });
     });
 
