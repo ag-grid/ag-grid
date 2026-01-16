@@ -7,7 +7,6 @@ import type {
     GetGroupRowAggParams,
     GridOptions,
     IColsService,
-    IPivotResultColsService,
     NamedBean,
     RowNode,
     ValueService,
@@ -43,13 +42,11 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
     private valueSvc: ValueService;
     private pivotColsSvc?: IColsService;
     private valueColsSvc?: IColsService;
-    private pivotResultCols?: IPivotResultColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.colModel = beans.colModel;
         this.pivotColsSvc = beans.pivotColsSvc;
         this.valueColsSvc = beans.valueColsSvc;
-        this.pivotResultCols = beans.pivotResultCols;
         this.valueSvc = beans.valueSvc;
     }
 
