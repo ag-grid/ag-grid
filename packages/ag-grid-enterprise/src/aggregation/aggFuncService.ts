@@ -97,9 +97,36 @@ export class AggFuncService extends BeanStub implements NamedBean, IAggFuncServi
     }
 }
 
-function isBigIntColumn(params: IAggFuncParams): boolean {
+function isBigIntColumn(params: IAggFuncParams, includeGroupValues = false): boolean {
     const cellDataType = params.colDef?.cellDataType ?? params.column?.getColDef()?.cellDataType;
-    return cellDataType === 'bigint';
+    if (cellDataType === 'bigint') {
+        return true;
+    }
+    if (cellDataType != null) {
+        return false;
+    }
+
+    const { values } = params;
+    let hasBigInt = false;
+    for (let i = 0; i < values.length; i++) {
+        const value = values[i];
+        if (typeof value === 'number') {
+            return false;
+        }
+        if (typeof value === 'bigint') {
+            hasBigInt = true;
+            continue;
+        }
+        if (includeGroupValues && value != null && typeof value.count === 'number') {
+            if (typeof value.value === 'number') {
+                return false;
+            }
+            if (typeof value.value === 'bigint') {
+                hasBigInt = true;
+            }
+        }
+    }
+    return hasBigInt;
 }
 
 function aggSum(params: IAggFuncParams): number | bigint | null {
@@ -266,7 +293,7 @@ function aggAvg(params: IAggFuncParams): { value: number | bigint | null; count:
     let sum = 0;
     let sumBigInt = 0n;
     let count = 0;
-    const useBigInt = isBigIntColumn(params);
+    const useBigInt = isBigIntColumn(params, true);
 
     // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
     if (useBigInt) {

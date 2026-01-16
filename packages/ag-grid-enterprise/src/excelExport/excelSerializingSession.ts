@@ -679,7 +679,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
 
     private isNumerical(value: any): boolean {
         if (typeof value === 'bigint') {
-            return false;
+            return true;
         }
         return isFinite(value) && value !== '' && !isNaN(parseFloat(value));
     }
