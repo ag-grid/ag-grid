@@ -1,54 +1,16 @@
 ---
-import { promises as fs } from 'node:fs';
-import path from 'node:path';
 import { Sitemap } from '@ag-website-shared/components/sitemap/Sitemap';
 import parseSitemap from '@ag-website-shared/components/sitemap/utils/sitemaputils';
-import { getGitHash } from '@ag-website-shared/utils/gitUtils';
+import { getSitemapXml } from '@ag-website-shared/utils/getSitemapXml';
 import Layout from '../layouts/Layout.astro';
 import { PRODUCTION_SITE_URL } from '@constants';
 import { SITEMAP_CACHE_DIR } from '@ag-website-shared/constants';
 
-const cacheFolder = path.resolve(SITEMAP_CACHE_DIR);
-const cachedSitemapPath = path.join(cacheFolder, 'sitemap-0.xml');
-const cachedMetaPath = path.join(cacheFolder, 'debug', 'meta.json');
-const currentHash = getGitHash();
-
-const readCachedHash = async () => {
-    try {
-        const raw = await fs.readFile(cachedMetaPath, 'utf8');
-        const cachedMeta = JSON.parse(raw);
-        return cachedMeta?.git?.hash ?? null;
-    } catch (error) {
-        if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
-            return null;
-        }
-
-        throw error;
-    }
-};
-
-let xmlSitemap: string | null = null;
-try {
-    await fs.access(cachedSitemapPath);
-    const cachedHash = await readCachedHash();
-    if (cachedHash === currentHash) {
-        xmlSitemap = await fs.readFile(cachedSitemapPath, 'utf8');
-        console.info(`Sitemap cache hash match. Using '${cachedSitemapPath}' for hash '${currentHash}'`);
-    } else {
-        console.warn(`Sitemap cache hash mismatch. Current: ${currentHash}, cached: ${cachedHash ?? 'unknown'}.`);
-    }
-} catch (error) {
-    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
-        throw error;
-    }
-}
-
-if (xmlSitemap == null) {
-    const sitemapUrl = path.join(PRODUCTION_SITE_URL, 'sitemap-0.xml');
-    const response = await fetch(sitemapUrl);
-    xmlSitemap = await response.text();
-    console.log('No cached sitemap found, fetched from live site.');
-}
+const sitemapUrl = `${PRODUCTION_SITE_URL.replace(/\/$/, '')}/sitemap-0.xml`;
+const xmlSitemap = await getSitemapXml({
+    cacheDir: SITEMAP_CACHE_DIR,
+    sitemapUrl,
+});
 
 const parsedSitemap = parseSitemap(xmlSitemap);
 ---
