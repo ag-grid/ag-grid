@@ -98,7 +98,7 @@ export class AggFuncService extends BeanStub implements NamedBean, IAggFuncServi
 }
 
 function isBigIntColumn(params: IAggFuncParams): boolean {
-    const cellDataType = params.colDef.cellDataType ?? params.column.getColDef().cellDataType;
+    const cellDataType = params.colDef?.cellDataType ?? params.column?.getColDef()?.cellDataType;
     return cellDataType === 'bigint';
 }
 

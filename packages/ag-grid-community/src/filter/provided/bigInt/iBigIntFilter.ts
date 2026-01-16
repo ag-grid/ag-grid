@@ -11,11 +11,11 @@ export interface BigIntFilterModel extends ISimpleFilterModel {
      * Custom filters can have no values (hence both are optional).
      * Range filter has two values (from and to), where `filter` acts as a `from` value.
      */
-    filter?: bigint | null;
+    filter?: string | null;
     /**
      * Range filter `to` value.
      */
-    filterTo?: bigint | null;
+    filterTo?: string | null;
 }
 
 /**

@@ -664,89 +664,13 @@ export class StateService extends BeanStub implements NamedBean {
             selectableFilter?.setState(selectableFilters ?? {});
         }
         if (filterModel !== undefined || columnFilterState !== undefined) {
-            const rehydratedModel = this.rehydrateBigIntFilterModel(filterModel ?? null);
+            const rehydratedModel = filterModel ?? null;
             filterManager?.setFilterState(rehydratedModel, columnFilterState ?? null, 'columnFilter');
         }
         if (advancedFilterModel !== undefined) {
-            const rehydratedAdvancedModel = this.rehydrateBigIntAdvancedFilterModel(advancedFilterModel ?? null);
+            const rehydratedAdvancedModel = advancedFilterModel ?? null;
             filterManager?.setAdvFilterModel(rehydratedAdvancedModel, 'advancedFilter');
         }
-    }
-
-    private rehydrateBigIntFilterModel(model: FilterModel | null): FilterModel | null {
-        if (!model) {
-            return model;
-        }
-        const updated: FilterModel = { ...model };
-        for (const [colId, colModel] of Object.entries(model)) {
-            if (!colModel) {
-                continue;
-            }
-            const column = this.beans.colModel.getColDefCol(colId);
-            if (!column) {
-                continue;
-            }
-            const baseDataType =
-                this.beans.dataTypeSvc?.getBaseDataType?.(column) ?? (column.getColDef().cellDataType as any);
-            if (baseDataType !== 'bigint') {
-                continue;
-            }
-            updated[colId] = this.rehydrateBigIntFilterModelValue(colModel);
-        }
-        return updated;
-    }
-
-    private rehydrateBigIntFilterModelValue(model: any): any {
-        if (!model || typeof model !== 'object') {
-            return model;
-        }
-        const filterType = model.filterType;
-        if (filterType === 'bigint') {
-            const nextModel = { ...model };
-            if (typeof nextModel.filter === 'string') {
-                nextModel.filter = _parseBigIntOrNull(nextModel.filter);
-            }
-            if (typeof nextModel.filterTo === 'string') {
-                nextModel.filterTo = _parseBigIntOrNull(nextModel.filterTo);
-            }
-            return nextModel;
-        }
-        if (filterType === 'set' && Array.isArray(model.values)) {
-            const nextModel = { ...model };
-            nextModel.values = model.values.map((value: any) =>
-                typeof value === 'string' ? _parseBigIntOrNull(value) ?? value : value
-            );
-            return nextModel;
-        }
-        if (filterType === 'multi' && Array.isArray(model.filterModels)) {
-            const nextModel = { ...model };
-            nextModel.filterModels = model.filterModels.map((subModel: any) =>
-                this.rehydrateBigIntFilterModelValue(subModel)
-            );
-            return nextModel;
-        }
-        return model;
-    }
-
-    private rehydrateBigIntAdvancedFilterModel(model: AdvancedFilterModel | null): AdvancedFilterModel | null {
-        if (!model) {
-            return model;
-        }
-        if (model.filterType === 'join') {
-            return {
-                ...model,
-                conditions: model.conditions.map(
-                    (condition) => this.rehydrateBigIntAdvancedFilterModel(condition) as any
-                ),
-            };
-        }
-        if (model.filterType === 'bigint' && typeof model.filter === 'string') {
-            return {
-                ...model,
-                filter: _parseBigIntOrNull(model.filter) ?? undefined,
-            };
-        }
-        return model;
     }
 
     private getRangeSelectionState(): CellSelectionState | undefined {

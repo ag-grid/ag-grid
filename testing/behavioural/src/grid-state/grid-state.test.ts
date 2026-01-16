@@ -406,7 +406,7 @@ describe('StateService - Grid State Management', () => {
             await asyncSetTimeout(20);
 
             const restoredFilterModel = api2.getFilterModel();
-            expect(restoredFilterModel?.id?.filter).toBe(2n);
+            expect(restoredFilterModel?.id?.filter).toBe('2');
         });
     });
 
