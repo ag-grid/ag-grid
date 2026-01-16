@@ -1,7 +1,6 @@
 import type { _FindApi, _ModuleWithApi, _ModuleWithoutApi } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
-import { PivotModule } from '../pivot/pivotModule';
 import { VERSION } from '../version';
 import { findCSS } from './find.css-GENERATED';
 import {
@@ -50,5 +49,5 @@ export const FindModule: _ModuleWithApi<_FindApi<any>> = {
         findClearActive,
         findRefresh,
     },
-    dependsOn: [EnterpriseCoreModule, FindCoreModule, PivotModule],
+    dependsOn: [EnterpriseCoreModule, FindCoreModule],
 };
