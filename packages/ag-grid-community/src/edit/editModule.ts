@@ -140,7 +140,7 @@ export const LargeTextEditorModule: _ModuleWithoutApi = {
 };
 
 /**
- * @feature Editing
+ * @feature Editing -> Custom Editor
  */
 export const CustomEditorModule: _ModuleWithoutApi = {
     moduleName: 'CustomEditor',

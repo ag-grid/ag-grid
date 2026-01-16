@@ -1,0 +1,2 @@
+# Needed to avoid nx format failing on symlinks.
+.rulesync/

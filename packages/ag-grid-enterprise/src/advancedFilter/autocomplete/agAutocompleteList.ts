@@ -49,6 +49,9 @@ export class AgAutocompleteList extends AgPopupComponent<
             autocompleteEntries: AutocompleteEntry[];
             onConfirmed: () => void;
             useFuzzySearch?: boolean;
+            useStartsWithSearch?: boolean;
+            autoSizeList?: boolean;
+            maxVisibleItems?: number;
             forceLastSelection?: (lastSelection: AutocompleteEntry, searchString: string) => boolean;
         }
     ) {
@@ -75,6 +78,7 @@ export class AgAutocompleteList extends AgPopupComponent<
         });
 
         this.setSelectedValue(0);
+        this.updateListHeight();
     }
 
     public onNavigationKeyDown(event: any, key: string): void {
@@ -95,6 +99,7 @@ export class AgAutocompleteList extends AgPopupComponent<
             this.autocompleteEntries = this.params.autocompleteEntries;
             this.virtualList.refresh();
             this.checkSetSelectedValue(0);
+            this.updateListHeight();
         }
         this.updateSearchInList();
     }
@@ -129,8 +134,20 @@ export class AgAutocompleteList extends AgPopupComponent<
         return { topMatch, allMatches };
     }
 
+    private runStartsWithSearch(
+        searchString: string,
+        searchStrings: string[]
+    ): { topMatch: string | undefined; allMatches: string[] } {
+        const lowerCaseSearchString = searchString.toLocaleLowerCase();
+        const allMatches = searchStrings.filter((string) =>
+            string.toLocaleLowerCase().startsWith(lowerCaseSearchString)
+        );
+        const topMatch = allMatches[0];
+        return { topMatch, allMatches };
+    }
+
     private runSearch() {
-        const { autocompleteEntries, useFuzzySearch, forceLastSelection } = this.params;
+        const { autocompleteEntries, useFuzzySearch, useStartsWithSearch, forceLastSelection } = this.params;
         const searchStrings = autocompleteEntries.map((v) => v.displayValue ?? v.key);
 
         let matchingStrings: string[];
@@ -143,9 +160,11 @@ export class AgAutocompleteList extends AgPopupComponent<
             }).values;
             topSuggestion = matchingStrings.length ? matchingStrings[0] : undefined;
         } else {
-            const containsMatches = this.runContainsSearch(this.searchString, searchStrings);
-            matchingStrings = containsMatches.allMatches;
-            topSuggestion = containsMatches.topMatch;
+            const matches = useStartsWithSearch
+                ? this.runStartsWithSearch(this.searchString, searchStrings)
+                : this.runContainsSearch(this.searchString, searchStrings);
+            matchingStrings = matches.allMatches;
+            topSuggestion = matches.topMatch;
         }
 
         let filteredEntries = autocompleteEntries.filter(({ key, displayValue }) =>
@@ -160,6 +179,7 @@ export class AgAutocompleteList extends AgPopupComponent<
         }
         this.autocompleteEntries = filteredEntries;
         this.virtualList.refresh();
+        this.updateListHeight();
 
         if (!topSuggestion) {
             return;
@@ -172,6 +192,24 @@ export class AgAutocompleteList extends AgPopupComponent<
 
     private updateSearchInList(): void {
         this.virtualList.forEachRenderedRow((row: AgAutocompleteRow) => row.setSearchString(this.searchString));
+    }
+
+    private updateListHeight(): void {
+        if (!this.params.autoSizeList) {
+            return;
+        }
+
+        const rowCount = this.autocompleteEntries.length;
+        const rowHeight = this.virtualList.getRowHeight();
+        const maxItems = this.params.maxVisibleItems ?? rowCount;
+        const visibleCount = Math.min(rowCount, maxItems);
+        let height = visibleCount * rowHeight;
+
+        if (rowCount === 0) {
+            height = rowHeight;
+        }
+
+        this.eList.style.height = `${height}px`;
     }
 
     private checkSetSelectedValue(index: number): void {

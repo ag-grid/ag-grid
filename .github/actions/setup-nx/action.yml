@@ -143,7 +143,7 @@ runs:
           id: setup_node
           uses: actions/setup-node@v4
           with:
-              node-version: '20'
+              node-version: '22'
 
         - name: yarn install
           if: inputs.cache_mode == 'rw' && inputs.yarn_postinstall == 'true'

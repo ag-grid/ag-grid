@@ -94,6 +94,15 @@ export default [
                     varsIgnorePattern: '^_+$',
                 },
             ],
+            // Disallow using logical short-circuit expressions as control flow (eg. `a && fn()`).
+            '@typescript-eslint/no-unused-expressions': [
+                'error',
+                {
+                    allowShortCircuit: false,
+                    allowTernary: false,
+                    allowTaggedTemplates: false,
+                },
+            ],
             'no-undef': 'warn',
             'no-lonely-if': 'error',
             curly: 'error',

@@ -8,7 +8,7 @@ import type { ClientSideRowModelStage } from '../interfaces/iClientSideRowModel'
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowNodeSortStage } from '../interfaces/iRowNodeStage';
 import type { SortOption } from '../interfaces/iSortOption';
-import type { RowNodeSorter, SortedRowNode } from '../sort/rowNodeSorter';
+import type { RowNodeSorter } from '../sort/rowNodeSorter';
 import type { ChangedPath } from '../utils/changedPath';
 import type { ChangedRowNodes } from './changedRowNodes';
 
@@ -99,10 +99,13 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage 
             } else if (useDeltaSort && changedRowNodes) {
                 newChildrenAfterSort = doDeltaSort(rowNodeSorter!, rowNode, changedRowNodes, changedPath, sortOptions);
             } else {
-                newChildrenAfterSort = rowNodeSorter!.doFullSort(rowNode.childrenAfterAggFilter!, sortOptions);
+                newChildrenAfterSort = rowNodeSorter!.doFullSortInPlace(
+                    rowNode.childrenAfterAggFilter!.slice(),
+                    sortOptions
+                );
             }
 
-            newChildrenAfterSort ||= rowNode.childrenAfterAggFilter?.slice(0) ?? [];
+            newChildrenAfterSort ||= rowNode.childrenAfterAggFilter?.slice() ?? [];
 
             hasAnyFirstChildChanged ||= rowNode.childrenAfterSort?.[0] !== newChildrenAfterSort[0];
 
@@ -154,6 +157,11 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage 
     }
 }
 
+interface RowNodeWithIndex {
+    index: number;
+    node: RowNode;
+}
+
 const doDeltaSort = (
     rowNodeSorter: RowNodeSorter,
     rowNode: RowNode,
@@ -164,72 +172,75 @@ const doDeltaSort = (
     const unsortedRows = rowNode.childrenAfterAggFilter!;
     const oldSortedRows = rowNode.childrenAfterSort;
     if (!oldSortedRows) {
-        return rowNodeSorter.doFullSort(unsortedRows, sortOptions);
+        return rowNodeSorter.doFullSortInPlace(unsortedRows.slice(), sortOptions);
     }
 
-    const untouchedRows = new Set<RowNode>();
-    const touchedRows: SortedRowNode[] = [];
+    const touchedRows: RowNodeWithIndex[] = [];
+    const untouchedRows: RowNodeWithIndex[] = [];
 
     const { updates, adds } = changedRowNodes;
     for (let i = 0, len = unsortedRows.length; i < len; ++i) {
-        const row = unsortedRows[i];
-        if (updates.has(row) || adds.has(row) || (changedPath && !changedPath.canSkip(row))) {
-            touchedRows.push({
-                currentPos: touchedRows.length,
-                rowNode: row,
-            });
+        const node = unsortedRows[i];
+        if (updates.has(node) || adds.has(node) || (changedPath && !changedPath.canSkip(node))) {
+            touchedRows.push({ index: i, node });
         } else {
-            untouchedRows.add(row);
+            untouchedRows.push({ index: i, node });
         }
     }
 
-    const sortedUntouchedRows = oldSortedRows
-        .filter((child) => untouchedRows.has(child))
-        .map((rowNode: RowNode, currentPos: number): SortedRowNode => ({ currentPos, rowNode }));
+    touchedRows.sort((a, b) => rowNodeSorter.compareRowNodes(sortOptions, a.node, b.node));
 
-    touchedRows.sort((a, b) => rowNodeSorter.compareRowNodes(sortOptions, a, b));
-
-    return mergeSortedArrays(rowNodeSorter, sortOptions, touchedRows, sortedUntouchedRows);
+    return mergeSortedArrays(rowNodeSorter, sortOptions, touchedRows, untouchedRows);
 };
 
-// Merge two sorted arrays into each other
+/** Merge two sorted arrays into each other. See https://en.wikipedia.org/wiki/Merge_algorithm */
 const mergeSortedArrays = (
     rowNodeSorter: RowNodeSorter,
     sortOptions: SortOption[],
-    arr1: SortedRowNode[],
-    arr2: SortedRowNode[]
+    arr1: RowNodeWithIndex[],
+    arr2: RowNodeWithIndex[]
 ): RowNode[] => {
     let i = 0;
     let j = 0;
     const arr1Length = arr1.length;
     const arr2Length = arr2.length;
-    const res = new Array<RowNode>(arr1Length + arr2Length);
+
+    const result = new Array<RowNode>(arr1Length + arr2Length);
     let k = 0;
 
     // Traverse both arrays, adding them in order
     while (i < arr1Length && j < arr2Length) {
         const a = arr1[i];
         const b = arr2[j];
-        if (rowNodeSorter.compareRowNodes(sortOptions, a, b) < 0) {
-            res[k++] = a.rowNode;
+
+        const c = rowNodeSorter.compareRowNodes(sortOptions, a.node, b.node) || a.index - b.index;
+
+        if (c < 0) {
+            result[k] = a.node;
+            ++k;
             ++i;
         } else {
-            res[k++] = b.rowNode;
+            result[k] = b.node;
+            ++k;
             ++j;
         }
     }
 
     // add remaining from arr1
     while (i < arr1Length) {
-        res[k++] = arr1[i++].rowNode;
+        result[k] = arr1[i].node;
+        ++k;
+        ++i;
     }
 
     // add remaining from arr2
     while (j < arr2Length) {
-        res[k++] = arr2[j++].rowNode;
+        result[k] = arr2[j].node;
+        ++k;
+        ++j;
     }
 
-    return res;
+    return result;
 };
 
 /**

@@ -466,15 +466,14 @@ export class ChartDatasource extends BeanStub {
         this.gridRowModel.forEachNode((rowNode: RowNode) => {
             allRowNodes.push(rowNode);
         });
-        return this.sortRowNodes(allRowNodes, sortModel);
-    }
-
-    /** cross filtering only */
-    private sortRowNodes(rowNodes: RowNode[], sortModel: SortOption[] | boolean): RowNode[] {
-        const sortOptions = sortModel === true ? this.sortSvc?.getSortOptions() : sortModel;
-        if (!sortOptions || sortOptions.length == 0 || !this.rowNodeSorter) {
-            return rowNodes;
+        const rowNodeSorter = this.rowNodeSorter;
+        if (!rowNodeSorter) {
+            return allRowNodes;
         }
-        return this.rowNodeSorter.doFullSort(rowNodes, sortOptions);
+        const sortOptions = sortModel === true ? this.sortSvc?.getSortOptions() : sortModel;
+        if (!sortOptions || sortOptions.length == 0) {
+            return allRowNodes;
+        }
+        return rowNodeSorter.doFullSortInPlace(allRowNodes, sortOptions);
     }
 }

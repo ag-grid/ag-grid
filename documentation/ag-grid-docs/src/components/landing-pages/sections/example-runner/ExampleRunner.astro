@@ -1,0 +1,61 @@
+---
+/**
+ * ExampleRunner for landing pages
+ *
+ * A wrapper around DocsExampleRunner that accepts pageName as a prop
+ * instead of deriving it from the URL.
+ */
+import type { InternalFramework } from '@ag-grid-types';
+import ExampleRunnerContainer from '@components/example-runner/components/ExampleRunnerContainer.astro';
+import { getIsDev } from '@utils/env';
+import { DocsExampleRunner } from '@components/docs/components/DocsExampleRunner';
+import { DISABLE_EXAMPLE_RUNNER } from '@constants';
+import { getGeneratedContents, type GeneratedExampleParams } from '@components/example-generator';
+
+interface Props {
+    title: string;
+    name: string;
+    pageName: string;
+    exampleHeight?: number;
+    framework?: InternalFramework;
+}
+
+const { title, name, pageName, exampleHeight = 450, framework } = Astro.props;
+const isDev = getIsDev();
+
+const generatedExampleParams: GeneratedExampleParams = {
+    type: 'docs',
+    framework: framework || 'reactFunctionalTs',
+    pageName,
+    exampleName: name,
+};
+
+let hasExampleConsoleLog = false;
+try {
+    const contents = await getGeneratedContents(generatedExampleParams);
+    hasExampleConsoleLog = Boolean(contents?.hasExampleConsoleLog);
+} catch (error) {
+    console.error('Error generating contents for:', generatedExampleParams);
+}
+---
+
+{
+    !DISABLE_EXAMPLE_RUNNER && (
+        <ExampleRunnerContainer
+            exampleHeight={exampleHeight}
+            pageName={pageName}
+            exampleName={name}
+            hasExampleConsoleLog={hasExampleConsoleLog}
+        >
+            <DocsExampleRunner
+                client:only="react"
+                title={title}
+                name={name}
+                exampleHeight={exampleHeight}
+                pageName={pageName}
+                isDev={isDev}
+                hasExampleConsoleLog={hasExampleConsoleLog}
+            />
+        </ExampleRunnerContainer>
+    )
+}

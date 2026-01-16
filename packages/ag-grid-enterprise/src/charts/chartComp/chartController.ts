@@ -143,7 +143,11 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
 
         // if the chart should be unlinked or chart ranges suppressed, remove all cell ranges; otherwise, set the chart range
         const removeChartCellRanges = chartModelParams.unlinkChart || chartModelParams.suppressChartRanges;
-        removeChartCellRanges ? this.rangeSvc?.setCellRanges([]) : this.setChartRange();
+        if (removeChartCellRanges) {
+            this.rangeSvc?.setCellRanges([]);
+        } else {
+            this.setChartRange();
+        }
     }
 
     public updateForGridChange(params?: { maintainColState?: boolean; setColsFromRange?: boolean }): void {

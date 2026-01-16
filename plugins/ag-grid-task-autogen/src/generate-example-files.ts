@@ -45,10 +45,14 @@ export const createDependencies: CreateDependencies = (opts, ctx) => {
 
     const result: ReturnType<CreateDependencies> = [];
     for (const [name, config] of Object.entries(projects)) {
-        if (!config.tags?.includes('type:generated-example')) continue;
+        if (!config.tags?.includes('type:generated-example')) {
+            continue;
+        }
 
         const parent = config.tags?.find((t) => t.startsWith('scope:'))?.split(':')[1];
-        if (!parent) continue;
+        if (!parent) {
+            continue;
+        }
 
         const dependency: RawProjectGraphDependency = {
             source: `${parent}`,

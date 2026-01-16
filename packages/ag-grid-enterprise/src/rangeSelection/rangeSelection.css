@@ -19,6 +19,7 @@
 
 .ag-cell-range-selected-1:not(.ag-cell-focus),
 .ag-cell-range-selected-1.ag-cell-range-chart,
+.ag-cell-range-selected-1.ag-formula-range,
 .ag-root:not(.ag-context-menu-open)
     .ag-body-viewport:not(.ag-has-focus)
     .ag-cell-range-selected-1:not(.ag-cell-inline-editing) {
@@ -26,7 +27,8 @@
 }
 
 .ag-cell-range-selected-2:not(.ag-cell-focus),
-.ag-cell-range-selected-2.ag-cell-range-chart {
+.ag-cell-range-selected-2.ag-cell-range-chart,
+.ag-cell-range-selected-2.ag-formula-range {
     /* use background-image to overlay a semi transparent color over the background-color */
     background-image: linear-gradient(
         var(--ag-range-selection-background-color),
@@ -35,7 +37,8 @@
 }
 
 .ag-cell-range-selected-3:not(.ag-cell-focus),
-.ag-cell-range-selected-3.ag-cell-range-chart {
+.ag-cell-range-selected-3.ag-cell-range-chart,
+.ag-cell-range-selected-3.ag-formula-range {
     /* use background-image to overlay 2 layers of a semi transparent color over the background-color */
     background-image: linear-gradient(
             var(--ag-range-selection-background-color),
@@ -45,7 +48,8 @@
 }
 
 .ag-cell-range-selected-4:not(.ag-cell-focus),
-.ag-cell-range-selected-4.ag-cell-range-chart {
+.ag-cell-range-selected-4.ag-cell-range-chart,
+.ag-cell-range-selected-4.ag-formula-range {
     /* use background-image to overlay 3 layers of a semi transparent color over the background-color */
     background-image: linear-gradient(
             var(--ag-range-selection-background-color),

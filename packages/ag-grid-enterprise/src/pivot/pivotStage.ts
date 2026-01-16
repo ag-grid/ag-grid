@@ -207,7 +207,7 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
         return uniqueValues;
     }
 
-    private bucketRowNode(rowNode: RowNode, uniqueValues: any): void {
+    private bucketRowNode(rowNode: RowNode, uniqueValues: Map<string, any>): void {
         const pivotColumns = this.pivotColsSvc?.columns;
 
         if (pivotColumns?.length === 0) {
@@ -229,12 +229,13 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
         pivotIndex: number,
         uniqueValues: Map<string, any>
     ): Map<string, any> {
-        const mappedChildren: Map<string, RowNode[]> = new Map();
+        const mappedChildren = new Map<string, RowNode[]>();
         const pivotColumn = pivotColumns[pivotIndex];
+        const doesGeneratedColMaxExist = this.maxUniqueValues !== -1;
 
         // map the children out based on the pivot column
         children.forEach((child: RowNode) => {
-            let key: string = this.valueSvc.getKeyForNode(pivotColumn, child);
+            let key: string | null | undefined = this.valueSvc.getKeyForNode(pivotColumn, child);
 
             if (_missing(key)) {
                 key = '';
@@ -244,7 +245,6 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
                 this.currentUniqueCount += 1;
                 uniqueValues.set(key, new Map());
 
-                const doesGeneratedColMaxExist = this.maxUniqueValues !== -1;
                 const hasExceededColMax = this.currentUniqueCount > this.maxUniqueValues;
                 if (doesGeneratedColMaxExist && hasExceededColMax) {
                     // throw an error to prevent all additional execution and escape the loops.
@@ -263,7 +263,7 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
             return mappedChildren;
         }
 
-        const result: Map<string, any> = new Map();
+        const result = new Map<string, any>();
 
         for (const key of mappedChildren.keys()) {
             result.set(

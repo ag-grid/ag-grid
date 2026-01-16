@@ -65,6 +65,8 @@ export class ColumnDelayRenderService extends BeanStub implements NamedBean {
 }
 
 /**
+ * @internal
+ *
  * @feature Columns -> Column Sizing
  * @gridOption autoSizeStrategy, colDef.flex, initialState
  */

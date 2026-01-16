@@ -256,7 +256,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         this.strategy ??= this.createStrategy();
 
-        if (!this.isCellEditable(position, 'api')) {
+        const editable = params.editable ?? this.isCellEditable(position, 'api');
+        if (!editable) {
             return;
         }
 
@@ -264,6 +265,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         // yet to initialise the cell, so we re-schedule this operation for when celLComp is attached
         const cellCtrl = _getCellCtrl(this.beans, position)!;
         if (cellCtrl && !cellCtrl.comp) {
+            params.editable = undefined; // So we re-evaluate editable later
             cellCtrl.onCompAttachedFuncs.push(() => this.startEditing(position, params));
             return;
         }
@@ -271,7 +273,9 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         const res = this.shouldStartEditing(position, event, startedEdit, source);
 
         if (res === false && source !== 'api') {
-            this.isEditing(position) && this.stopEditing();
+            if (this.isEditing(position)) {
+                this.stopEditing();
+            }
             return;
         }
 
@@ -757,13 +761,17 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             if (this.cellEditingInvalidCommitBlocks()) {
                 (event as Event)?.preventDefault?.();
                 if (focus) {
-                    !cellCtrl?.hasBrowserFocus() && cellCtrl?.focusCell();
+                    if (cellCtrl && !cellCtrl.hasBrowserFocus()) {
+                        cellCtrl.focusCell();
+                    }
                     cellCtrl?.comp?.getCellEditor()?.focusIn?.();
                 }
                 return 'block-stop';
             }
 
-            cellCtrl && this.revertSingleCellEdit(cellCtrl);
+            if (cellCtrl) {
+                this.revertSingleCellEdit(cellCtrl);
+            }
 
             return 'revert-continue';
         }

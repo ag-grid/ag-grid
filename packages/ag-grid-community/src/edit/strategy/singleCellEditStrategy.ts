@@ -208,7 +208,13 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             if (suppressStartEditOnTab) {
                 nextCell.focusCell(true, event);
             } else {
-                this.editSvc.startEditing(nextCell, { startedEdit: true, event, source, ignoreEventKey: true });
+                this.editSvc.startEditing(nextCell, {
+                    startedEdit: true,
+                    event,
+                    source,
+                    ignoreEventKey: true,
+                    editable: nextEditable,
+                });
             }
         }
 

@@ -8,6 +8,7 @@ inputs:
         options:
             - grid
             - charts
+            - studio
     SLACK_BOT_OAUTH_TOKEN:
         description: 'Slack OAuth token for sending messages'
         required: true

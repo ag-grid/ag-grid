@@ -130,6 +130,7 @@ export { MONTHS as _MONTHS, _getDateParts, _parseDateTimeFromString, _serialiseD
 export {
     _getActiveDomElement,
     _getDocument,
+    _getWindow,
     _getPageBody,
     _getRootNode,
     _isNothingFocused,
@@ -155,6 +156,7 @@ export {
     _setFixedWidth,
     _setVisible,
     _isFocusableFormField,
+    _placeCaretAtEnd,
 } from './agStack/utils/dom';
 export { _anchorElementToMouseMoveEvent, _isElementInEventPath } from './agStack/utils/event';
 export {
@@ -448,7 +450,6 @@ export type { IRowComp, RowCtrl } from './rendering/row/rowCtrl';
 export type { RowRenderer } from './rendering/rowRenderer';
 export { BaseSelectionService } from './selection/baseSelectionService';
 export type { RowRangeSelectionContext } from './selection/rowRangeSelectionContext';
-export { SortedRowNode } from './sort/rowNodeSorter';
 export type { RowNodeSorter } from './sort/rowNodeSorter';
 export type { SortService } from './sort/sortService';
 export type { CellStyleService } from './styling/cellStyleService';
