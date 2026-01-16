@@ -32,12 +32,14 @@ Set `groupRowEditable` on any column that should accept edits on group nodes.
 Provide either a boolean or a callback; callbacks only run for nodes where `rowNode.group === true`,
 while leaf rows continue to honour `editable`.
 
-`groupRowValueSetter` mirrors `valueSetter`, but it only fires for group rows. It runs whenever a
-group row cell changes through the UI, `rowNode.setDataValue`, or another API call, making it the
-right place to cascade edits to child nodes.
+`groupRowValueSetter` mirrors the regular `valueSetter`, but it only fires for group rows. It runs
+whenever a group row cell changes through the UI, `rowNode.setDataValue`, or another API call,
+making it the right place to cascade edits to child nodes.
 
-When users edit cells via the UI, the grid runs the full value pipeline—`valueParser`,
-`valueSetter`, `valueGetter`, and any formatters—before re-rendering the cell.
+Most grouped rows (and filler nodes in tree data) do not own `rowNode.data`, so their column
+`valueSetter` never runs even if `groupRowEditable` is enabled. Provide a `groupRowValueSetter`
+whenever the edit needs to persist or update aggregates; only group rows that own real data objects
+run the normal value pipeline.
 
 When a column defines both `groupRowEditable` and `editable`, AG Grid only evaluates the property
 that matches the current node type, enabling separate rules for group rows and leaves.
