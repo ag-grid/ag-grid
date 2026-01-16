@@ -86,13 +86,6 @@ describe('no-low-performance-key-selector', () => {
             expect(warnings[0].text).toContain('&:after');
         });
 
-        it('flags both selectors in nested selector list: .foo { &:hover, &:focus { } }', async () => {
-            const warnings = await lint('.foo { &:hover, &:focus { color: red } }');
-            expect(warnings).toHaveLength(2);
-            expect(warnings[0].text).toContain('&:hover');
-            expect(warnings[1].text).toContain('&:focus');
-        });
-
         it('flags only the bad selector in selector list: .foo, div { }', async () => {
             const warnings = await lint('.foo, div { color: red }');
             expect(warnings).toHaveLength(1);

@@ -6,6 +6,7 @@
   "targets": {
     "test": {
       "executor": "@nx/jest:jest",
+      "inputs": ["default", "{projectRoot}/**/*.js"],
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "{projectRoot}/jest.config.js"
