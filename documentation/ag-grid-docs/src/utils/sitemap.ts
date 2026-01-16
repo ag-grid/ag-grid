@@ -46,7 +46,12 @@ const isRedirectPage = (page: string) => {
  * Exclude specific pages
  */
 const isNonPublicContent = (page: string) => {
-    return page.endsWith('/style-guide/');
+    return (
+        page.endsWith('/style-guide/') ||
+        // Contact form result pages
+        page.endsWith('/contact/failure/') ||
+        page.endsWith('/contact/success/')
+    );
 };
 
 const filterIgnoredPages = (page: string) => {
