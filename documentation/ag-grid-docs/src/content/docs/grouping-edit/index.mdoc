@@ -53,7 +53,7 @@ Key points:
 
 - Use `groupRowValueSetter` to redistribute committed values to descendants. The callback receives the
 	group row node and column, runs whether the edit came from the UI, `setDataValue`, or a read-only
-	edit request, and can return `false` to cancel the commit after validation.
+	edit request, and should mutate child rows directly rather than signalling cancellation.
 - Call `rowNode.setDataValue` on children to push the updated figures down. This triggers normal
 	aggregation to refresh parent totals and recurses further when a child is also a group that defines
 	its own `groupRowValueSetter`.

@@ -2,7 +2,7 @@ import type { NumberFilterModel, SetFilterModel } from 'ag-grid-community';
 
 import { GridRows } from '../../test-utils';
 import { expect } from '../../test-utils/matchers';
-import type { GroupRowValueSetterCallback, ValueSetterCallback } from './group-edit-test-utils';
+import type { ValueSetterCallback } from './group-edit-test-utils';
 import {
     EDIT_MODES,
     asyncSetTimeout,
@@ -117,64 +117,6 @@ describe.each(EDIT_MODES)('groupRowEditable cascading edits (%s)', (editMode) =>
             await new GridRows(api, 'after undo').check(baselineSnapshot);
             expect(europeNode!.aggData?.amount ?? 0).toBe(180);
         }
-    });
-
-    test('returning false from groupRowValueSetter cancels the commit', async () => {
-        const rowData = createRowData();
-        let invocationCount = 0;
-        const blockingGroupRowValueSetter: GroupRowValueSetterCallback = ({ node }) => {
-            invocationCount += 1;
-            expect(node.group).toBe(true);
-            return false;
-        };
-
-        const api = await gridsManager.createGridAndWait('group-row-editable-blocked', {
-            defaultColDef: {
-                cellEditor: 'agTextCellEditor',
-            },
-            enableGroupEdit: true,
-            undoRedoCellEditing: true,
-            groupDisplayType: 'custom',
-            columnDefs: [
-                {
-                    colId: 'group',
-                    headerName: 'Group',
-                    cellRenderer: 'agGroupCellRenderer',
-                },
-                { field: 'region', rowGroup: true, hide: true },
-                { field: 'country', rowGroup: true, hide: true },
-                {
-                    colId: 'amount',
-                    field: 'amount',
-                    aggFunc: 'sum',
-                    editable: true,
-                    groupRowEditable: true,
-                    groupRowValueSetter: blockingGroupRowValueSetter,
-                },
-            ],
-            rowData,
-            groupDefaultExpanded: -1,
-            getRowId: (params) => params.data?.id,
-        });
-
-        await new GridRows(api, 'before blocked edit').check(baselineSnapshot);
-
-        const europeNode = api.getRowNode('row-group-region-Europe');
-        expect(europeNode).toBeDefined();
-
-        const amountColId = 'amount';
-        if (editMode === 'ui') {
-            await editCell(api, europeNode!, amountColId, '600');
-        } else {
-            europeNode!.setDataValue(amountColId, 600, 'ui');
-            await asyncSetTimeout(0);
-        }
-        await asyncSetTimeout(0);
-
-        expect(invocationCount).toBe(1);
-        await new GridRows(api, 'after blocked edit').check(baselineSnapshot);
-        expect(api.getRowNode('row-group-region-Europe')?.aggData?.amount ?? 0).toBe(180);
-        expect(api.getRowNode('fr-paris')?.data?.amount).toBe(30);
     });
 
     test('group edits invoke the column valueSetter for every affected descendant', async () => {
