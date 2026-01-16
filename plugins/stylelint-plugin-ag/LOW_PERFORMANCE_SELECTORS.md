@@ -93,7 +93,7 @@ Browsers aren't very smart here, so it's often possible to take a low-performanc
 :where(.bar),
 :where(.baz) {
     color: red;
-} /* I've found some fairly unintuitive things about how Chrome's CSS selector matching engine works, such as for example this.HIGH PERFORMANCE - each has single class */
+} /* HIGH PERFORMANCE - each has single class */
 ```
 
 ---
@@ -155,7 +155,9 @@ These are always low performance on their own because they require checking ever
 } /* key: :not(.disabled) - LOW PERFORMANCE */
 ```
 
-**Fix:** Try to include a class name in the selector
+**Fix:** This is a hidden universal selector - `:not(.disabled)` is effectively
+`*:not(.disabled)`, and the fix is the same - include a class in addition to
+`:not` so that it doesn't first match everything and then narrow down:
 
 ```css
 .list .item:not(.disabled) {

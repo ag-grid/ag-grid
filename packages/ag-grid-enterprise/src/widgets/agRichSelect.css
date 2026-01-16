@@ -108,9 +108,9 @@
     border: none;
     padding: 0;
     margin-left: var(--ag-spacing);
+}
 
-    &:hover {
-        cursor: pointer;
-        color: var(--ag-accent-color);
-    }
+.ag-pill-button:hover {
+    cursor: pointer;
+    color: var(--ag-accent-color);
 }

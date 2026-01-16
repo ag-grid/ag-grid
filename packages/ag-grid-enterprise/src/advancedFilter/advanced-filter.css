@@ -35,10 +35,10 @@
     font-weight: 600;
     padding: var(--ag-spacing);
 
-    &:where(:not(:disabled)) {
+    &:where(.ag-standard-button):where(:not(:disabled)) {
         cursor: pointer;
 
-        &:hover {
+        &:where(.ag-standard-button):hover {
             background-color: var(--ag-row-hover-color);
         }
     }
@@ -89,17 +89,17 @@
     position: absolute;
 }
 
-.ag-advanced-filter-builder-item-tree-lines > * {
+.ag-advanced-filter-builder-item-tree-line {
     width: var(--ag-advanced-filter-builder-indent-size);
 }
 
 .ag-advanced-filter-builder-item-tree-line-root {
     width: var(--ag-icon-size);
+}
 
-    &::before {
-        top: 50%;
-        height: 50%;
-    }
+.ag-advanced-filter-builder-item-tree-line-root::before {
+    top: 50%;
+    height: 50%;
 }
 
 .ag-advanced-filter-builder-item-tree-line-horizontal,
@@ -110,13 +110,19 @@
     height: 100%;
     display: flex;
     align-items: center;
+}
 
-    &::before,
-    &::after {
-        content: '';
-        position: absolute;
-        height: 100%;
-    }
+.ag-advanced-filter-builder-item-tree-line-horizontal::before,
+.ag-advanced-filter-builder-item-tree-line-horizontal::after,
+.ag-advanced-filter-builder-item-tree-line-vertical::before,
+.ag-advanced-filter-builder-item-tree-line-vertical::after,
+.ag-advanced-filter-builder-item-tree-line-vertical-top::before,
+.ag-advanced-filter-builder-item-tree-line-vertical-top::after,
+.ag-advanced-filter-builder-item-tree-line-vertical-bottom::before,
+.ag-advanced-filter-builder-item-tree-line-vertical-bottom::after {
+    content: '';
+    position: absolute;
+    height: 100%;
 }
 
 .ag-advanced-filter-builder-item-tree-line-horizontal::after {
@@ -225,8 +231,10 @@
     }
 }
 
-.ag-advanced-filter-builder-item-buttons > * {
-    margin: 0 calc(var(--ag-spacing) * 0.5);
+.ag-advanced-filter-builder-item-buttons {
+    display: flex;
+    gap: var(--ag-spacing);
+    padding: 0 calc(var(--ag-spacing) * 0.5);
 }
 
 .ag-advanced-filter-builder-item-button {
@@ -255,13 +263,13 @@
     display: flex;
     cursor: default;
     height: var(--ag-list-item-height);
+}
 
-    &:hover {
-        background-color: var(--ag-row-hover-color);
+.ag-advanced-filter-builder-virtual-list-item:hover {
+    background-color: var(--ag-row-hover-color);
 
-        :where(.ag-advanced-filter-builder-item-button) {
-            opacity: 1;
-        }
+    :where(.ag-advanced-filter-builder-item-button) {
+        opacity: 1;
     }
 }
 

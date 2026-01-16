@@ -35,12 +35,6 @@
     padding: var(--ag-button-vertical-padding) var(--ag-button-horizontal-padding);
     cursor: pointer;
 
-    &:hover {
-        color: var(--ag-button-hover-text-color);
-        background-color: var(--ag-button-hover-background-color);
-        border: var(--ag-button-hover-border);
-    }
-
     &:active {
         color: var(--ag-button-active-text-color);
         background-color: var(--ag-button-active-background-color);
@@ -52,4 +46,10 @@
         background-color: var(--ag-button-disabled-background-color);
         border: var(--ag-button-disabled-border);
     }
+}
+
+.ag-standard-button:hover {
+    color: var(--ag-button-hover-text-color);
+    background-color: var(--ag-button-hover-background-color);
+    border: var(--ag-button-hover-border);
 }

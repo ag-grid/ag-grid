@@ -24,6 +24,7 @@ const getAgListElement = <TComponentSelectorType extends string>(
     children: [
         {
             tag: 'span',
+            cls: `ag-list-item-text ag-${cssIdentifier}-list-item-text`,
             ref: 'eText',
             children: label,
         },

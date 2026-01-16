@@ -1,9 +1,8 @@
 .ag-popup-child {
     z-index: 5;
     top: 0;
+}
 
-    /* use :where to avoid increasing specificity */
-    &:where(:not(.ag-tooltip-custom)) {
-        box-shadow: var(--ag-popup-shadow);
-    }
+.ag-popup-child:where(:not(.ag-tooltip-custom)) {
+    box-shadow: var(--ag-popup-shadow);
 }

@@ -138,6 +138,9 @@
     align-items: center;
     padding-left: calc(var(--ag-indentation-level) * var(--ag-row-group-indent-size));
 
+    /* stylelint-disable-next-line ag/no-low-performance-key-selector --
+        Requires a slow selector because we allow custom cell editor components
+        as direct children of the wrapper, so we can't control the class name */
     > *:where(:not(.ag-cell-value, .ag-group-value)) {
         /* cell widgets like checkboxes don't respond to line-height, so set their
                height to vertically centre them */
@@ -285,8 +288,11 @@
     background-image: linear-gradient(var(--ag-selected-row-background-color), var(--ag-selected-row-background-color));
 }
 
-/* Default the content position to relative so that it doesn't appear under the background */
+/* stylelint-disable-next-line ag/no-low-performance-key-selector -- Requires a
+    slow selector because the child might be a custom component so we can't
+    control the class name. */
 .ag-row.ag-full-width-row.ag-row-group > * {
+    /* Default the content position to relative so that it doesn't appear under the background */
     position: relative;
 }
 

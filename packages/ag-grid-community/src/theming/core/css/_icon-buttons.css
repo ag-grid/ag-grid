@@ -18,27 +18,46 @@
     border-radius: var(--ag-icon-button-border-radius);
     background-color: var(--ag-icon-button-background-color);
     box-shadow: 0 0 0 var(--ag-icon-button-background-spread) var(--ag-icon-button-background-color);
-
-    &:hover {
-        background-color: var(--ag-icon-button-hover-background-color);
-        box-shadow: 0 0 0 var(--ag-icon-button-background-spread) var(--ag-icon-button-hover-background-color);
-        color: var(--ag-icon-button-hover-color);
-    }
 }
 
-:where(.ag-filter-active, .ag-filter-toolpanel-group-instance-header-icon, .ag-filter-toolpanel-instance-header-icon) {
-    position: relative;
+.ag-header-cell-menu-button:hover,
+.ag-header-cell-filter-button:hover,
+.ag-panel-title-bar-button:hover,
+.ag-header-expand-icon:hover,
+.ag-column-group-icons:hover,
+.ag-set-filter-group-icons:hover,
+:where(.ag-group-expanded) .ag-icon:hover,
+:where(.ag-group-contracted) .ag-icon:hover,
+.ag-chart-settings-prev:hover,
+.ag-chart-settings-next:hover,
+.ag-group-title-bar-icon:hover,
+.ag-column-select-header-icon:hover,
+.ag-floating-filter-button-button:hover,
+.ag-filter-toolpanel-expand:hover,
+.ag-panel-title-bar-button-icon:hover,
+.ag-chart-menu-icon:hover {
+    background-color: var(--ag-icon-button-hover-background-color);
+    box-shadow: 0 0 0 var(--ag-icon-button-background-spread) var(--ag-icon-button-hover-background-color);
+    color: var(--ag-icon-button-hover-color);
+}
 
-    &::after {
-        content: '';
-        position: absolute;
-        width: 6px;
-        height: 6px;
-        top: -1px;
-        right: -1px;
-        border-radius: 50%;
-        background-color: var(--ag-icon-button-active-indicator-color);
-    }
+:where(.ag-filter-active),
+:where(.ag-filter-toolpanel-group-instance-header-icon),
+:where(.ag-filter-toolpanel-instance-header-icon) {
+    position: relative;
+}
+
+:where(.ag-filter-active)::after,
+:where(.ag-filter-toolpanel-group-instance-header-icon)::after,
+:where(.ag-filter-toolpanel-instance-header-icon)::after {
+    content: '';
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    top: -1px;
+    right: -1px;
+    border-radius: 50%;
+    background-color: var(--ag-icon-button-active-indicator-color);
 }
 
 .ag-filter-active {
