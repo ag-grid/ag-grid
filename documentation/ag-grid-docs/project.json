@@ -19,6 +19,7 @@
         "!{projectRoot}/vitest.config.ts",
         "{workspaceRoot}/external/ag-website-shared/**",
         "charts",
+        "{projectRoot}/.astro/cache/sitemap/**",
         { "env": "PUBLIC_PACKAGE_VERSION" }
       ],
       "cache": true,
