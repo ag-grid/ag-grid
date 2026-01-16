@@ -8,9 +8,12 @@ import type {
 } from 'ag-grid-community';
 import { AgContentEditableField, _createElement, _getDocument, _getWindow } from 'ag-grid-community';
 
+import { agAutocompleteCSS } from '../advancedFilter/autocomplete/agAutocomplete.css-GENERATED';
 import { getRefTokenMatches } from '../formula/refUtils';
 import { agFormulaInputFieldCSS } from './agFormulaInputField.css-GENERATED';
+import { FormulaInputAutocompleteFeature } from './formulaInputAutocompleteFeature';
 import { FormulaInputRangeSyncFeature } from './formulaInputRangeSyncFeature';
+import { TOKEN_INSERT_AFTER_CHARS, getPreviousNonSpaceChar } from './formulaInputTokenUtils';
 import { getColorClassesForRef } from './formulaRangeUtils';
 
 const FORMULA_TOKEN_COLOR_COUNT = 7;
@@ -25,9 +28,6 @@ const VALUE_OPERATOR_LOOKUP: Record<string, string> = {
 type RangeInsertAction = 'insert' | 'replace' | 'none';
 type TokenMatch = { ref: string; start: number; end: number; index: number };
 type TokenInsertResult = { previousRef?: string; tokenIndex?: number | null };
-
-// only insert new refs after operators/argument separators; otherwise treat clicks as normal edit completion.
-const TOKEN_INSERT_AFTER_CHARS = new Set(['=', '+', '-', '*', '/', '^', ',', '(', ';', '<', '>', '&']);
 
 export class AgFormulaInputField extends AgContentEditableField<
     BeanCollection,
@@ -46,13 +46,16 @@ export class AgFormulaInputField extends AgContentEditableField<
     private lastTokenCaretOffset: number | null = null;
     private lastTokenRef?: string;
     private rangeSyncFeature?: FormulaInputRangeSyncFeature;
+    private autocompleteFeature?: FormulaInputAutocompleteFeature;
     // fallback color assignment per ref when a token index is unavailable.
+
     private readonly formulaColorByRef = new Map<string, number>();
 
     constructor() {
         // keep renderValueToElement false so we fully control DOM rendering.
         super({ renderValueToElement: false, className: 'ag-formula-input-field' } as any);
         this.registerCSS(agFormulaInputFieldCSS);
+        this.registerCSS(agAutocompleteCSS);
     }
 
     public override postConstruct(): void {
@@ -63,6 +66,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         });
 
         this.rangeSyncFeature = this.createManagedBean(new FormulaInputRangeSyncFeature(this));
+        this.autocompleteFeature = this.createManagedBean(new FormulaInputAutocompleteFeature(this));
     }
 
     public override setValue(value?: string | null, silent?: boolean): this {
@@ -384,6 +388,10 @@ export class AgFormulaInputField extends AgContentEditableField<
         });
     }
 
+    public getCaretOffsetsForAutocomplete(value: string): { caretOffset: number; valueOffset: number } | null {
+        return this.getCaretOffsets(value);
+    }
+
     private getCaretOffsets(
         value: string,
         options: { useCachedCaret: boolean; useCachedValueOffset: boolean } = {
@@ -445,6 +453,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         if (params.dispatch) {
             this.dispatchValueChanged();
         }
+        this.autocompleteFeature?.onPlainValueUpdated();
     }
 
     private applyFormulaValue(
@@ -463,9 +472,10 @@ export class AgFormulaInputField extends AgContentEditableField<
         if (params.dispatch) {
             this.dispatchValueChanged();
         }
+        this.autocompleteFeature?.onFormulaValueUpdated();
     }
 
-    private applyFormulaValueChange(params: {
+    public applyFormulaValueChange(params: {
         currentValue: string;
         nextValue: string;
         caret: number;
@@ -480,6 +490,7 @@ export class AgFormulaInputField extends AgContentEditableField<
             caret: params.caret,
         });
         this.dispatchValueChanged();
+        this.autocompleteFeature?.onFormulaValueUpdated();
     }
 
     public replaceTokenRef(
@@ -578,17 +589,6 @@ const shouldInsertTokenAtOffset = (value: string, offset: number): boolean => {
     // insert only after an operator or at the beginning to avoid hijacking plain values.
     const previousChar = getPreviousNonSpaceChar(value, offset);
     return previousChar == null || TOKEN_INSERT_AFTER_CHARS.has(previousChar);
-};
-
-const getPreviousNonSpaceChar = (value: string, offset: number): string | null => {
-    // skip whitespace to detect the meaningful character before the caret.
-    for (let i = offset - 1; i >= 0; i--) {
-        const char = value[i];
-        if (char != null && char.trim() !== '') {
-            return char;
-        }
-    }
-    return null;
 };
 
 // Rendering & caret helpers

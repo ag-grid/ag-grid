@@ -4,9 +4,17 @@ const fs = require('fs');
 const { exec } = require('child_process');
 const path = require('path');
 
-const results: { modules: string[]; expectedSize: number; selfSize: number; fileSize: number; gzipSize: number }[] = [];
+const results: {
+    modules: string[];
+    expectedSize: number;
+    selfSize: number;
+    gzipSelfSize: number;
+    fileSize: number;
+    gzipSize: number;
+}[] = [];
 const updateModulesScript = path.join(__dirname, 'moduleUpdater.ts');
 let baseSize = 0;
+let baseGzipSize = 0;
 
 let moduleCombinationsToProcess = moduleCombinations;
 
@@ -74,16 +82,21 @@ function runCombination(index) {
             const gzipSize = parseFloat(gzipSizeMatch[1]);
 
             let selfSize = 0;
+            let gzipSelfSize = 0;
             if (modules.length === 0) {
                 baseSize = fileSize;
+                baseGzipSize = gzipSize;
                 selfSize = fileSize;
+                gzipSelfSize = gzipSize;
             } else {
                 selfSize = parseFloat((fileSize - baseSize).toFixed(2));
+                gzipSelfSize = parseFloat((gzipSize - baseGzipSize).toFixed(2));
             }
 
             results.push({
                 modules,
                 selfSize,
+                gzipSelfSize,
                 fileSize,
                 gzipSize,
                 expectedSize,
