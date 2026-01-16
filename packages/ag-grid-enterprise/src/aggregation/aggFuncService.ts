@@ -97,38 +97,35 @@ export class AggFuncService extends BeanStub implements NamedBean, IAggFuncServi
     }
 }
 
+function isBigIntColumn(params: IAggFuncParams): boolean {
+    const cellDataType = params.colDef.cellDataType ?? params.column.getColDef().cellDataType;
+    return cellDataType === 'bigint';
+}
+
 function aggSum(params: IAggFuncParams): number | bigint | null {
     const { values } = params;
     let result: number | bigint | null = null;
-    let useBigInt = false;
 
     // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
-    for (let i = 0; i < values.length; i++) {
-        const value = values[i];
+    if (isBigIntColumn(params)) {
+        for (let i = 0; i < values.length; i++) {
+            const value = values[i];
 
-        if (typeof value !== 'number' && typeof value !== 'bigint') {
-            continue;
-        }
-
-        if (typeof value === 'bigint') {
-            if (!useBigInt) {
-                useBigInt = true;
-                if (typeof result === 'number') {
-                    if (!isFinite(result) || !Number.isInteger(result)) {
-                        return null;
-                    }
-                    result = BigInt(result);
-                }
+            if (typeof value !== 'bigint') {
+                continue;
             }
+
             result = result === null ? value : (result as bigint) + value;
-        } else if (!useBigInt) {
-            result = result === null ? value : (result as number) + value;
-        } else {
-            if (!isFinite(value) || !Number.isInteger(value)) {
-                return null;
+        }
+    } else {
+        for (let i = 0; i < values.length; i++) {
+            const value = values[i];
+
+            if (typeof value !== 'number') {
+                continue;
             }
-            const coercedValue = BigInt(value);
-            result = result === null ? coercedValue : (result as bigint) + coercedValue;
+
+            result = result === null ? value : (result as number) + value;
         }
     }
 
@@ -146,40 +143,30 @@ function aggLast(params: IAggFuncParams): any {
 function aggMin(params: IAggFuncParams): number | bigint | null {
     const { values } = params;
     let result: number | bigint | null = null;
-    let useBigInt = false;
 
     // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
-    for (let i = 0; i < values.length; i++) {
-        const value = values[i];
+    if (isBigIntColumn(params)) {
+        for (let i = 0; i < values.length; i++) {
+            const value = values[i];
 
-        if (typeof value !== 'number' && typeof value !== 'bigint') {
-            continue;
-        }
-
-        if (typeof value === 'bigint') {
-            if (!useBigInt) {
-                useBigInt = true;
-                if (typeof result === 'number') {
-                    if (!isFinite(result) || !Number.isInteger(result)) {
-                        return null;
-                    }
-                    result = BigInt(result);
-                }
+            if (typeof value !== 'bigint') {
+                continue;
             }
+
             if (result === null || (result as bigint) > value) {
                 result = value;
             }
-        } else if (!useBigInt) {
+        }
+    } else {
+        for (let i = 0; i < values.length; i++) {
+            const value = values[i];
+
+            if (typeof value !== 'number') {
+                continue;
+            }
+
             if (result === null || (result as number) > value) {
                 result = value;
-            }
-        } else {
-            if (!isFinite(value) || !Number.isInteger(value)) {
-                return null;
-            }
-            const coercedValue = BigInt(value);
-            if (result === null || (result as bigint) > coercedValue) {
-                result = coercedValue;
             }
         }
     }
@@ -190,40 +177,30 @@ function aggMin(params: IAggFuncParams): number | bigint | null {
 function aggMax(params: IAggFuncParams): number | bigint | null {
     const { values } = params;
     let result: number | bigint | null = null;
-    let useBigInt = false;
 
     // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
-    for (let i = 0; i < values.length; i++) {
-        const value = values[i];
+    if (isBigIntColumn(params)) {
+        for (let i = 0; i < values.length; i++) {
+            const value = values[i];
 
-        if (typeof value !== 'number' && typeof value !== 'bigint') {
-            continue;
-        }
-
-        if (typeof value === 'bigint') {
-            if (!useBigInt) {
-                useBigInt = true;
-                if (typeof result === 'number') {
-                    if (!isFinite(result) || !Number.isInteger(result)) {
-                        return null;
-                    }
-                    result = BigInt(result);
-                }
+            if (typeof value !== 'bigint') {
+                continue;
             }
+
             if (result === null || (result as bigint) < value) {
                 result = value;
             }
-        } else if (!useBigInt) {
+        }
+    } else {
+        for (let i = 0; i < values.length; i++) {
+            const value = values[i];
+
+            if (typeof value !== 'number') {
+                continue;
+            }
+
             if (result === null || (result as number) < value) {
                 result = value;
-            }
-        } else {
-            if (!isFinite(value) || !Number.isInteger(value)) {
-                return null;
-            }
-            const coercedValue = BigInt(value);
-            if (result === null || (result as bigint) < coercedValue) {
-                result = coercedValue;
             }
         }
     }
@@ -289,61 +266,46 @@ function aggAvg(params: IAggFuncParams): { value: number | bigint | null; count:
     let sum = 0;
     let sumBigInt = 0n;
     let count = 0;
-    let useBigInt = false;
+    const useBigInt = isBigIntColumn(params);
 
     // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
-    for (let i = 0; i < values.length; i++) {
-        const currentValue = values[i];
-        if (typeof currentValue === 'bigint') {
-            if (!useBigInt) {
-                useBigInt = true;
-                if (!isFinite(sum) || !Number.isInteger(sum)) {
-                    return null;
-                }
-                sumBigInt = BigInt(sum);
-            }
-            sumBigInt += currentValue;
-            count++;
-            continue;
-        }
+    if (useBigInt) {
+        for (let i = 0; i < values.length; i++) {
+            const currentValue = values[i];
 
-        if (typeof currentValue === 'number') {
-            if (useBigInt) {
-                if (!isFinite(currentValue) || !Number.isInteger(currentValue)) {
-                    return null;
-                }
-                sumBigInt += BigInt(currentValue);
-            } else {
-                sum += currentValue;
+            if (typeof currentValue === 'bigint') {
+                sumBigInt += currentValue;
+                count++;
+                continue;
             }
-            count++;
-            continue;
-        }
 
-        if (
-            currentValue != null &&
-            (typeof currentValue.value === 'number' || typeof currentValue.value === 'bigint') &&
-            typeof currentValue.count === 'number'
-        ) {
-            if (typeof currentValue.value === 'bigint') {
-                if (!useBigInt) {
-                    useBigInt = true;
-                    if (!isFinite(sum) || !Number.isInteger(sum)) {
-                        return null;
-                    }
-                    sumBigInt = BigInt(sum);
-                }
+            if (
+                currentValue != null &&
+                typeof currentValue.value === 'bigint' &&
+                typeof currentValue.count === 'number'
+            ) {
                 sumBigInt += currentValue.value * BigInt(currentValue.count);
-            } else if (useBigInt) {
-                const weightedValue = currentValue.value * currentValue.count;
-                if (!isFinite(weightedValue) || !Number.isInteger(weightedValue)) {
-                    return null;
-                }
-                sumBigInt += BigInt(weightedValue);
-            } else {
-                sum += currentValue.value * currentValue.count;
+                count += currentValue.count;
             }
-            count += currentValue.count;
+        }
+    } else {
+        for (let i = 0; i < values.length; i++) {
+            const currentValue = values[i];
+
+            if (typeof currentValue === 'number') {
+                sum += currentValue;
+                count++;
+                continue;
+            }
+
+            if (
+                currentValue != null &&
+                typeof currentValue.value === 'number' &&
+                typeof currentValue.count === 'number'
+            ) {
+                sum += currentValue.value * currentValue.count;
+                count += currentValue.count;
+            }
         }
     }
 
