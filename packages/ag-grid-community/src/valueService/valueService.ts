@@ -465,7 +465,12 @@ export class ValueService extends BeanStub implements NamedBean {
                     eventSource,
                 })
             );
-        } else if (!valueWasDifferent) {
+        }
+
+        if (!valueWasDifferent && !groupRowValueSetter) {
+            // if no change to the value, then no need to do the updating, or notifying via events.
+            // otherwise the user could be tabbing around the grid, and cellValueChange would get called
+            // all the time.
             return false;
         }
 
