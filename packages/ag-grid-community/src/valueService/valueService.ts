@@ -431,7 +431,7 @@ export class ValueService extends BeanStub implements NamedBean {
         // group rows only persist through row data or a custom groupRowValueSetter; without either we intentionally skip writes
         // this will be addressed by providing a default groupRowValueSetter for group columns, auto group columns, aggregation columns
         const canUpdateValue =
-            !rowNode.group || rowNode.data || groupRowValueSetter == null || colDef.groupRowEditable == null;
+            !rowNode.group || rowNode.data || (groupRowValueSetter == null && colDef.groupRowEditable == null);
 
         if (canUpdateValue) {
             const externalFormulaResult = this.handleExternalFormulaChange({
