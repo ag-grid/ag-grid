@@ -397,7 +397,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * Runs after a group row value changes so custom code can push edits down to descendant rows.
      * Fires for every `setDataValue` call when defined, regardless of `groupRowEditable`.
-     * Return `false` to cancel the grid's default update and stop the value from being committed.
+     * Use this to mutate descendants directly; the grid always commits the group row value afterwards.
      */
     groupRowValueSetter?: GroupRowValueSetterFunc<TData, TValue>;
     /** Function or expression. Sets the value into your data for saving. Return `true` if the data changed. */
@@ -973,11 +973,14 @@ export type GroupRowEditableCallback<TData = any, TValue = any, TContext = any> 
     params: GroupRowEditableCallbackParams<TData, TValue, TContext>
 ) => boolean;
 export interface GroupRowValueSetterParams<TData = any, TValue = any, TContext = any>
-    extends ChangedValueParams<TData, TValue, TContext> {
+    extends Omit<
+        ChangedValueParams<TData, TValue | null | undefined, TValue | null | undefined, TContext>,
+        'node' | 'data'
+    > {
     /** Group row that triggered the callback. */
     node: IRowNode<TData>;
-    /** Column backing the edit. */
-    column: Column<TValue>;
+    /** Data associated with the group row. Undefined when the row does not own data. */
+    data?: TData | null;
     /** Source string provided to `rowNode.setDataValue`. */
     eventSource?: string;
 }
