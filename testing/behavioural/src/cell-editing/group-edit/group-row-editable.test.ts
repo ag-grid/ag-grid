@@ -410,9 +410,6 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
         };
 
         const api = await gridsManager.createGridAndWait('tree-data-groupRowEditable-fallback', {
-            defaultColDef: {
-                cellEditor: 'agTextCellEditor',
-            },
             enableGroupEdit: true,
             undoRedoCellEditing: true,
             groupDisplayType: 'custom',
