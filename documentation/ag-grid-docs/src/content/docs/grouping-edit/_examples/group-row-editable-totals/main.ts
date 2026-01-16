@@ -85,7 +85,6 @@ const gridOptions: GridOptions<SalesRecord> = {
         resizable: true,
     },
     rowData: getData(),
-    enableGroupEdit: true,
     groupAggFiltering: true,
     groupDefaultExpanded: -1,
     animateRows: true,
