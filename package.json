@@ -79,6 +79,7 @@
     "patch-package": "^8.0.0",
     "postcss-import": "^16.1.0",
     "postcss-rtlcss": "^5.3.1",
+    "postcss-selector-parser": "^7.1.0",
     "postcss-url": "^10.1.3",
     "prettier": "3.2.5",
     "prompts": "^2.4.2",
