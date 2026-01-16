@@ -24,13 +24,13 @@ export abstract class AbstractSelectionHandle extends Component {
     protected rangeStartRow: RowPosition;
     protected rangeEndRow: RowPosition;
 
-    protected changedCalculatedValues: boolean = false;
+    protected changedCalculatedValues = false;
     private lastCellHovered: CellPosition | null | undefined;
-    private dragging: boolean = false;
+    private dragging = false;
 
     protected abstract type: SelectionHandleType;
     protected abstract shouldSkipCell(cell: CellPosition): boolean;
-    protected shouldDestroyOnEndDragging: boolean = false;
+    protected shouldDestroyOnEndDragging = false;
 
     public postConstruct() {
         this.beans.dragSvc!.addDragSource({
@@ -152,10 +152,7 @@ export abstract class AbstractSelectionHandle extends Component {
 
         if (oldCellComp !== cellCtrl || !_isVisible(eGui)) {
             this.cellCtrl = cellCtrl;
-            const eParentOfValue = cellCtrl.comp.getParentOfValue();
-            if (eParentOfValue) {
-                eParentOfValue.appendChild(eGui);
-            }
+            cellCtrl.comp.getParentOfValue()?.appendChild(eGui);
         }
 
         this.cellRange = cellRangeToUse;
