@@ -10,7 +10,7 @@ import {
 } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, getGridHTMLElement, waitForEvent } from '../test-utils';
+import { GridRows, TestGridsManager, asyncSetTimeout, getGridHTMLElement, waitForEvent } from '../test-utils';
 
 describe('Aggregate Filters', () => {
     const gridsManager = new TestGridsManager({
@@ -18,12 +18,12 @@ describe('Aggregate Filters', () => {
     });
 
     const rowData = [
-        { athlete: 'Michael Phelps', gold: 8, silver: 1, total: 9 },
-        { athlete: 'Michael Phelps', gold: 6, silver: 0, total: 6 },
-        { athlete: 'Michael Phelps', gold: 4, silver: 3, total: 7 },
-        { athlete: 'Natalie Coughlin', gold: 1, silver: 3, total: 4 },
-        { athlete: 'Natalie Coughlin', gold: 2, silver: 10, total: 12 },
-        { athlete: 'Natalie Coughlin', gold: 0, silver: 0, total: 0 },
+        { athlete: 'Michael Phelps', gold: 8, silver: 1, total: 9, sport: 'Swimming' },
+        { athlete: 'Michael Phelps', gold: 6, silver: 0, total: 6, sport: 'Swimming' },
+        { athlete: 'Michael Phelps', gold: 4, silver: 3, total: 7, sport: 'Swimming' },
+        { athlete: 'Natalie Coughlin', gold: 1, silver: 3, total: 4, sport: 'Swimming' },
+        { athlete: 'Natalie Coughlin', gold: 2, silver: 10, total: 12, sport: 'Swimming' },
+        { athlete: 'Natalie Coughlin', gold: 0, silver: 0, total: 0, sport: 'Swimming' },
     ];
 
     beforeAll(() => setupAgTestIds());
@@ -148,6 +148,63 @@ describe('Aggregate Filters', () => {
             │ ├── LEAF hidden id:0 athlete:"Michael Phelps" gold:8 silver:1 total:9
             │ └── LEAF hidden id:1 athlete:"Michael Phelps" gold:6 silver:0 total:6
             └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " gold:14 silver:1 total:15
+        `);
+    });
+
+    test('Grand total row displays correct aggregates for pivot result columns when no filter and when filter is applied', async () => {
+        const userSession = userEvent.setup();
+
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                { field: 'athlete', rowGroup: true, hide: true },
+                { field: 'sport', pivot: true },
+                { field: 'gold', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
+            ],
+            defaultColDef: {
+                floatingFilter: true,
+                filterParams: {
+                    filterOptions: ['greaterThan'],
+                },
+            },
+            grandTotalRow: 'bottom',
+            pivotMode: true,
+            rowData,
+        });
+
+        await asyncSetTimeout(0);
+
+        const gridDiv = getGridHTMLElement(api)!;
+
+        await new GridRows(api, 'before filter').check(`
+            ROOT id:ROOT_NODE_ID pivot_sport_Swimming_gold:21
+            ├─┬ LEAF_GROUP collapsed id:"row-group-athlete-Michael Phelps" ag-Grid-AutoColumn:"Michael Phelps" pivot_sport_Swimming_gold:18
+            │ ├── LEAF hidden id:0
+            │ ├── LEAF hidden id:1
+            │ └── LEAF hidden id:2
+            ├─┬ LEAF_GROUP collapsed id:"row-group-athlete-Natalie Coughlin" ag-Grid-AutoColumn:"Natalie Coughlin" pivot_sport_Swimming_gold:3
+            │ ├── LEAF hidden id:3
+            │ ├── LEAF hidden id:4
+            │ └── LEAF hidden id:5
+            └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " pivot_sport_Swimming_gold:21
+        `);
+
+        const modelUpdated = waitForEvent('modelUpdated', api);
+        await userSession.type(
+            getByTestId(
+                gridDiv,
+                agTestIdFor.numberFilterInstanceInput({ source: 'floating-filter', colId: 'pivot_sport_Swimming_gold' })
+            ),
+            '5'
+        );
+        await modelUpdated;
+
+        await new GridRows(api, 'after filter').check(`
+            ROOT id:ROOT_NODE_ID pivot_sport_Swimming_gold:21
+            ├─┬ LEAF_GROUP collapsed id:"row-group-athlete-Michael Phelps" ag-Grid-AutoColumn:"Michael Phelps" pivot_sport_Swimming_gold:18
+            │ ├── LEAF hidden id:0
+            │ ├── LEAF hidden id:1
+            │ └── LEAF hidden id:2
+            └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " pivot_sport_Swimming_gold:18
         `);
     });
 });

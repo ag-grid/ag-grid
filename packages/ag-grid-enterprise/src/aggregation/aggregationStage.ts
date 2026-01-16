@@ -16,7 +16,7 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, _getGrandTotalRow, _getGroupAggFiltering } from 'ag-grid-community';
 
-import { _aggregateValues, getValuesNormal, setAggData } from './aggUtils';
+import { _aggregateValues, aggregateRowNodeUsingValuesAndPivot, getValuesNormal, setAggData } from './aggUtils';
 
 interface AggregationDetails {
     alwaysAggregateAtRootLevel: boolean;
@@ -138,7 +138,7 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         } else if (pivotColumnsMissing) {
             aggResult = this.aggregateRowNodeUsingValuesOnly(rowNode, aggDetails);
         } else {
-            aggResult = this.aggregateRowNodeUsingValuesAndPivot(rowNode);
+            aggResult = aggregateRowNodeUsingValuesAndPivot(this.beans, rowNode);
         }
 
         setAggData(this.colModel, rowNode, aggResult);
@@ -154,70 +154,6 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
                 setAggData(this.colModel, rowNode.sibling.pinnedSibling, aggResult);
             }
         }
-    }
-
-    private aggregateRowNodeUsingValuesAndPivot(rowNode: RowNode): any {
-        const result: any = {};
-
-        const secondaryColumns = this.pivotResultCols?.getPivotResultCols()?.list ?? [];
-        let canSkipTotalColumns = true;
-        const beans = this.beans;
-        for (let i = 0; i < secondaryColumns.length; i++) {
-            const secondaryCol = secondaryColumns[i];
-            const colDef = secondaryCol.getColDef();
-
-            if (colDef.pivotTotalColumnIds != null) {
-                canSkipTotalColumns = false;
-                continue;
-            }
-
-            const keys: string[] = colDef.pivotKeys ?? [];
-            let values: any[];
-
-            if (rowNode.leafGroup) {
-                // lowest level group, get the values from the mapped set
-                values = this.getValuesFromMappedSet(rowNode.childrenMapped, keys, colDef.pivotValueColumn as AgColumn);
-            } else {
-                // value columns and pivot columns, non-leaf group
-                values = this.getValuesPivotNonLeaf(rowNode, colDef.colId!);
-            }
-
-            // bit of a memory drain storing null/undefined, but seems to speed up performance.
-            result[colDef.colId!] = _aggregateValues(
-                beans,
-                values,
-                colDef.pivotValueColumn!.getAggFunc()!,
-                colDef.pivotValueColumn as AgColumn,
-                rowNode,
-                secondaryCol
-            );
-        }
-
-        if (!canSkipTotalColumns) {
-            for (let i = 0; i < secondaryColumns.length; i++) {
-                const secondaryCol = secondaryColumns[i];
-                const colDef = secondaryCol.getColDef();
-
-                if (!colDef.pivotTotalColumnIds?.length) {
-                    continue;
-                }
-
-                const aggResults: any[] = colDef.pivotTotalColumnIds.map(
-                    (currentColId: string) => result[currentColId]
-                );
-                // bit of a memory drain storing null/undefined, but seems to speed up performance.
-                result[colDef.colId!] = _aggregateValues(
-                    beans,
-                    aggResults,
-                    colDef.pivotValueColumn!.getAggFunc()!,
-                    colDef.pivotValueColumn as AgColumn,
-                    rowNode,
-                    secondaryCol
-                );
-            }
-        }
-
-        return result;
     }
 
     private aggregateRowNodeUsingValuesOnly(rowNode: RowNode, aggDetails: AggregationDetails): any {
@@ -259,23 +195,5 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         }
 
         return result;
-    }
-
-    private getValuesPivotNonLeaf(rowNode: RowNode, colId: string): any[] {
-        return rowNode.childrenAfterFilter!.map((childNode: RowNode) => childNode.aggData[colId]);
-    }
-
-    private getValuesFromMappedSet(mappedSet: any, keys: string[], valueColumn: AgColumn): any[] {
-        let mapPointer = mappedSet;
-        for (let i = 0; i < keys.length; i++) {
-            const key = keys[i];
-            mapPointer = mapPointer ? mapPointer[key] : null;
-        }
-
-        if (!mapPointer) {
-            return [];
-        }
-
-        return mapPointer.map((rowNode: RowNode) => this.valueSvc.getValue(valueColumn, rowNode, false, 'api'));
     }
 }

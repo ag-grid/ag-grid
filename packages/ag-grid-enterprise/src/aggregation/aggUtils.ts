@@ -103,3 +103,87 @@ export function setAggData(colModel: ColumnModel, rowNode: RowNode, newAggData: 
         }
     }
 }
+
+export function aggregateRowNodeUsingValuesAndPivot(
+    beans: BeanCollection,
+    rowNode: RowNode,
+    children?: RowNode[] | null
+): any {
+    const result: any = {};
+
+    const secondaryColumns = beans.pivotResultCols?.getPivotResultCols()?.list ?? [];
+    let canSkipTotalColumns = true;
+    for (let i = 0; i < secondaryColumns.length; i++) {
+        const secondaryCol = secondaryColumns[i];
+        const colDef = secondaryCol.getColDef();
+
+        if (colDef.pivotTotalColumnIds != null) {
+            canSkipTotalColumns = false;
+            continue;
+        }
+
+        const keys: string[] = colDef.pivotKeys ?? [];
+        let values: any[];
+
+        if (rowNode.leafGroup) {
+            // lowest level group, get the values from the mapped set
+            values = getValuesFromMappedSet(beans, rowNode.childrenMapped, keys, colDef.pivotValueColumn as AgColumn);
+        } else {
+            // value columns and pivot columns, non-leaf group
+            values = (children ?? rowNode.childrenAfterFilter!).map((childNode) => childNode.aggData[colDef.colId!]);
+        }
+
+        // bit of a memory drain storing null/undefined, but seems to speed up performance.
+        result[colDef.colId!] = _aggregateValues(
+            beans,
+            values,
+            colDef.pivotValueColumn!.getAggFunc()!,
+            colDef.pivotValueColumn as AgColumn,
+            rowNode,
+            secondaryCol
+        );
+    }
+
+    if (!canSkipTotalColumns) {
+        for (let i = 0; i < secondaryColumns.length; i++) {
+            const secondaryCol = secondaryColumns[i];
+            const colDef = secondaryCol.getColDef();
+
+            if (!colDef.pivotTotalColumnIds?.length) {
+                continue;
+            }
+
+            const aggResults: any[] = colDef.pivotTotalColumnIds.map((currentColId: string) => result[currentColId]);
+            // bit of a memory drain storing null/undefined, but seems to speed up performance.
+            result[colDef.colId!] = _aggregateValues(
+                beans,
+                aggResults,
+                colDef.pivotValueColumn!.getAggFunc()!,
+                colDef.pivotValueColumn as AgColumn,
+                rowNode,
+                secondaryCol
+            );
+        }
+    }
+
+    return result;
+}
+
+function getValuesFromMappedSet(
+    { valueSvc }: BeanCollection,
+    mappedSet: any,
+    keys: string[],
+    valueColumn: AgColumn
+): any[] {
+    let mapPointer = mappedSet;
+    for (let i = 0; i < keys.length; i++) {
+        const key = keys[i];
+        mapPointer = mapPointer ? mapPointer[key] : null;
+    }
+
+    if (!mapPointer) {
+        return [];
+    }
+
+    return mapPointer.map((rowNode: RowNode) => valueSvc.getValue(valueColumn, rowNode, false, 'api'));
+}

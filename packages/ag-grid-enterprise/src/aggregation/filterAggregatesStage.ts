@@ -11,7 +11,7 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, _getGroupAggFiltering } from 'ag-grid-community';
 
-import { _aggregateValues, getValuesNormal, setAggData } from './aggUtils';
+import { _aggregateValues, aggregateRowNodeUsingValuesAndPivot, getValuesNormal, setAggData } from './aggUtils';
 
 export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowNodeFilterAggregateStage {
     beanName = 'filterAggStage' as const;
@@ -139,17 +139,35 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowN
         if (!grandTotalNode) {
             return;
         }
-        // have to re-aggregate the grand total row using `childrenAfterAggFilter`
-        const valueColumns = valueColsSvc?.columns ?? [];
 
-        const values2d = getValuesNormal(valueSvc, grandTotalNode.childrenAfterAggFilter, valueColumns);
+        if (colModel.isPivotActive()) {
+            // when pivot is active, have to aggregate over secondary columns
+            const result = aggregateRowNodeUsingValuesAndPivot(
+                this.beans,
+                grandTotalNode,
+                grandTotalNode.childrenAfterAggFilter
+            );
 
-        const result: Record<string, any> = {};
+            setAggData(colModel, grandTotalNode, result);
+        } else {
+            // when no secondary cols are added, re-aggregate over values of `childrenAfterAggFilter`
+            const valueColumns = valueColsSvc?.columns ?? [];
 
-        valueColumns.forEach((col, i) => {
-            result[col.getColId()] = _aggregateValues(this.beans, values2d[i], col.getAggFunc()!, col, grandTotalNode);
-        });
+            const values2d = getValuesNormal(valueSvc, grandTotalNode.childrenAfterAggFilter, valueColumns);
 
-        setAggData(colModel, grandTotalNode, result);
+            const result: Record<string, any> = {};
+
+            valueColumns.forEach((col, i) => {
+                result[col.getColId()] = _aggregateValues(
+                    this.beans,
+                    values2d[i],
+                    col.getAggFunc()!,
+                    col,
+                    grandTotalNode
+                );
+            });
+
+            setAggData(colModel, grandTotalNode, result);
+        }
     }
 }
