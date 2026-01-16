@@ -63,9 +63,8 @@ jobs:
                 core.setFailed('Could not find a valid release tag');
                 return;
               }
-              // Convert release tag (release-35.0.0) to branch name (b35.0.0)
-              const version = release.tag_name.replace('release-', '');
-              releaseTag = `b${version}`;
+              // Use the latest release tag
+              releaseTag = release.tag_name;
               console.log(`Using latest release tag: ${releaseTag}`);
             }
 
