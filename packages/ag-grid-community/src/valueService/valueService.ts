@@ -477,7 +477,7 @@ export class ValueService extends BeanStub implements NamedBean {
         return this.finishValueChange(rowNode, column, params, eventSource);
     }
 
-    private canCreateRowNodeData(rowNode: IRowNode = {} as IRowNode, colDef: ColDef): boolean {
+    private canCreateRowNodeData(rowNode: IRowNode, colDef: ColDef): boolean {
         if (!rowNode.group) {
             return true; // not a group row
         }
