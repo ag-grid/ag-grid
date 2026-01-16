@@ -1,7 +1,7 @@
+import type { AstroIntegration } from 'astro';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { AstroIntegration } from 'astro';
 
 import { getGitHash } from '../src/utils/gitUtils';
 

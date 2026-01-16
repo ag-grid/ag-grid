@@ -6,8 +6,9 @@ import parseSitemap from '@ag-website-shared/components/sitemap/utils/sitemaputi
 import { getGitHash } from '@ag-website-shared/utils/gitUtils';
 import Layout from '../layouts/Layout.astro';
 import { PRODUCTION_SITE_URL } from '@constants';
+import { SITEMAP_CACHE_DIR } from '@ag-website-shared/constants';
 
-const cacheFolder = path.resolve('./.astro/cache/sitemap');
+const cacheFolder = path.resolve(SITEMAP_CACHE_DIR);
 const cachedSitemapPath = path.join(cacheFolder, 'sitemap-0.xml');
 const cachedMetaPath = path.join(cacheFolder, 'debug', 'meta.json');
 const currentHash = getGitHash();
