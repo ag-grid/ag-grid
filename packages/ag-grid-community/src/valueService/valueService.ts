@@ -424,50 +424,50 @@ export class ValueService extends BeanStub implements NamedBean {
             column: column,
         });
 
-        params.newValue = newValue;
+        let valueWasDifferent: boolean | undefined = undefined;
 
-        const externalFormulaResult = this.handleExternalFormulaChange({
-            column,
-            eventSource,
-            newValue,
-            setterParams: params,
-            rowNode,
-        });
-        if (externalFormulaResult !== null) {
-            return externalFormulaResult;
+        const groupRowValueSetter = rowNode.group ? colDef.groupRowValueSetter : undefined;
+
+        if (!groupRowValueSetter || rowNode.data) {
+            const externalFormulaResult = this.handleExternalFormulaChange({
+                column,
+                eventSource,
+                newValue,
+                setterParams: params,
+                rowNode,
+            });
+            if (externalFormulaResult !== null) {
+                return externalFormulaResult;
+            }
+
+            valueWasDifferent = this.computeValueChange({
+                column,
+                rowNode,
+                newValue,
+                params,
+                rowData: rowNode.data,
+                valueSetter: colDef.valueSetter,
+                field: colDef.field,
+            });
         }
-
-        let valueWasDifferent = this.computeValueChange({
-            column,
-            rowNode,
-            newValue,
-            params,
-            rowData: rowNode.data,
-            valueSetter: colDef.valueSetter,
-            field: colDef.field,
-        });
 
         // in case user forgot to return something (possible if they are not using TypeScript
         // and just forgot we default the return value to true, so we always refresh.
         valueWasDifferent ??= true;
 
-        const groupRowValueSetter = rowNode.group ? colDef.groupRowValueSetter : undefined;
+        groupRowValueSetter?.(
+            _addGridCommonParams(this.gos, {
+                node: rowNode,
+                data: rowNode.data,
+                oldValue,
+                newValue,
+                colDef,
+                column,
+                eventSource,
+            })
+        );
 
-        if (groupRowValueSetter) {
-            groupRowValueSetter(
-                _addGridCommonParams(this.gos, {
-                    node: rowNode,
-                    data: rowNode.data,
-                    oldValue,
-                    newValue,
-                    colDef,
-                    column,
-                    eventSource,
-                })
-            );
-        }
-
-        if (!valueWasDifferent && !groupRowValueSetter) {
+        if (!valueWasDifferent) {
             // if no change to the value, then no need to do the updating, or notifying via events.
             // otherwise the user could be tabbing around the grid, and cellValueChange would get called
             // all the time.
