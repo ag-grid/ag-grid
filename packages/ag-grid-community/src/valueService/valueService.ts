@@ -426,7 +426,7 @@ export class ValueService extends BeanStub implements NamedBean {
 
         const groupRowValueSetter = rowNode.group ? colDef.groupRowValueSetter : undefined;
 
-        let valueWasDifferent: boolean | undefined;
+        let valueChanged: boolean | undefined;
 
         if (rowNode.data) {
             const externalFormulaResult = this.handleExternalFormulaChange({
@@ -440,7 +440,7 @@ export class ValueService extends BeanStub implements NamedBean {
                 return externalFormulaResult;
             }
 
-            valueWasDifferent = this.computeValueChange({
+            valueChanged = this.computeValueChange({
                 column,
                 rowNode,
                 newValue,
@@ -451,10 +451,14 @@ export class ValueService extends BeanStub implements NamedBean {
             });
         } else {
             // when we cannot update backing data we rely solely on the legacy groupRowValueSetter path
-            valueWasDifferent = newValue !== oldValue;
+            valueChanged = newValue !== oldValue;
         }
 
-        if (groupRowValueSetter && valueWasDifferent) {
+        // in case user forgot to return something (possible if they are not using TypeScript
+        // and just forgot we default the return value to true, so we always refresh.
+        valueChanged ??= true;
+
+        if (groupRowValueSetter) {
             let result = groupRowValueSetter(
                 _addGridCommonParams(this.gos, {
                     node: rowNode,
@@ -464,6 +468,7 @@ export class ValueService extends BeanStub implements NamedBean {
                     colDef,
                     column,
                     eventSource,
+                    valueChanged,
                 })
             );
 
@@ -472,15 +477,11 @@ export class ValueService extends BeanStub implements NamedBean {
             result ??= true;
 
             if (result) {
-                valueWasDifferent = result;
+                valueChanged = true;
             }
         }
 
-        // in case user forgot to return something (possible if they are not using TypeScript
-        // and just forgot we default the return value to true, so we always refresh.
-        valueWasDifferent ??= true;
-
-        if (!valueWasDifferent) {
+        if (!valueChanged) {
             // if no change to the value, then no need to do the updating, or notifying via events.
             // otherwise the user could be tabbing around the grid, and cellValueChange would get called
             // all the time.

@@ -983,6 +983,8 @@ export interface GroupRowValueSetterParams<TData = any, TValue = any, TContext =
     data?: TData | null;
     /** Source string provided to `rowNode.setDataValue`. */
     eventSource?: string;
+    /** Whether the value actually changed. */
+    valueChanged: boolean;
 }
 export type GroupRowValueSetterFunc<TData = any, TValue = any, TContext = any> = (
     params: GroupRowValueSetterParams<TData, TValue, TContext>
