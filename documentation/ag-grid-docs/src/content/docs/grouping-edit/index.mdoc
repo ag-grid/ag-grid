@@ -3,23 +3,65 @@ title: "Row Grouping - Editing Groups"
 enterprise: true
 ---
 
-The Grid supports editing of grouped data when using the [Client-Side Row Model](./row-models/#client-side).
-When users edit values in grouped columns, the grid can automatically refresh the grouping hierarchy to reflect the changes.
+The Grid supports editing of grouped data when using the
+[Client-Side Row Model](./row-models/#client-side). When users edit values in grouped columns,
+the grid can automatically refresh the grouping hierarchy to reflect the changes.
 
 ## Refreshing Groups After Editing
 
-When grouped columns are editable, enable `refreshAfterGroupEdit=true` to update the row data and regroup after each group field edit.
+When grouped columns are editable, enable `refreshAfterGroupEdit=true` to update the row data and
+regroup after each group field edit.
 
 {% gridExampleRunner title="Refresh After Group Edit" name="refresh-after-group-edit" exampleHeight=600 /%}
 
-In the example above, changing the `region` causes the grid to re-evaluate the grouping and move the row to the correct group instantly.
-Double click on a `region` cell to edit it.
+In the example above, changing the `region` causes the grid to re-evaluate the grouping and move
+the row to the correct group instantly. Double click on a `region` cell to edit it.
 
-By default, without `refreshAfterGroupEdit` enabled, the row data updates but the grouping does not get updated until the next full refresh.
+By default, without `refreshAfterGroupEdit` enabled, the row data updates but the grouping does not
+get updated until the next full refresh.
 
-When enabling `refreshAfterGroupEdit`, it is recommended to also set `getRowId` so that the grid can track rows by stable IDs while rebuilding the grouping hierarchy.
+When enabling `refreshAfterGroupEdit`, it is recommended to also set `getRowId` so that the grid can
+track rows by stable IDs while rebuilding the grouping hierarchy.
 
-See also [Read Only Edit](./value-setters/#read-only-edit) for configuring immutable grouped data or connecting the grid with a store.
+See also [Read Only Edit](./value-setters/#read-only-edit) for configuring immutable grouped data or
+connecting the grid with a store.
+
+## Editing Group Row Cells
+
+Add `groupRowEditable` to any column that should accept edits on group nodes. The callback (or
+boolean) only runs for nodes where `rowNode.group === true`, while leaf rows continue to rely on
+`editable`. During UI editing (double click, Enter, `startEditingCell`) AG Grid checks the relevant
+flag, runs the editor, calls `valueParser` (if present) followed by `valueSetter`, and finally
+stores the parsed value inside `rowNode.groupData` so the renderer updates immediately.
+
+Programmatic updates via `rowNode.setDataValue(colId, value, source)` skip that UI pipeline. The
+grid invokes `valueSetter` directly with the provided value, so this route suits already validated
+input, whereas the UI workflow remains preferable when parser logic or undo/redo behaviour is
+needed.
+
+When a column defines both `groupRowEditable` and `editable`, AG Grid only evaluates the property
+that matches the current node type, enabling separate rules for group rows and leaves.
+
+## Custom Aggregation Value Setters
+
+Aggregated columns can stay editable by providing a `valueSetter` that pushes committed values
+down to descendants and lets the normal aggregation rebuild the totals. Pair this with
+`groupAggFiltering=true` so group rows track the same filtered subset the grid displays. The example
+below shows the full pattern, including a `valueParser`, recursion guard, and filter-aware
+distribution.
+
+{% gridExampleRunner title="Editable Group Totals" name="group-row-editable-totals" exampleHeight=620 /%}
+
+Key points:
+
+- `childrenAfterFilter` lists only descendants that pass the current filters (and respects
+	`groupAggFiltering`), so filtered edits
+	adjust exactly the rows the user can see, and clearing the filters leaves untouched nodes as-is.
+- `rowNode.setDataValue` on children reuses the usual `valueSetter`/`valueParser` logic. The setter
+	can short-circuit when `node.group === false`, updating the leaf data directly and returning
+	`true`, so only group nodes recurse and there is no infinite loop.
+- Parent aggregates refresh automatically because the children’s `data` changes trigger the column
+	`aggFunc`, so typing £600 at “Europe” rebalances the filtered countries to reach that total.
 
 ## Next Up
 Continue to the next section to learn [Row Dragging with Row Groups](./grouping-row-dragging/).

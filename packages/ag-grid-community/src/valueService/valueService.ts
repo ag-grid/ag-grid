@@ -23,6 +23,7 @@ import type { IEditService } from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _warn } from '../validation/logging';
 import type { ExpressionService } from './expressionService';
+import { SetterCascadeTracker } from './setterCascadeTracker';
 import type { ValueCache } from './valueCache';
 
 export class ValueService extends BeanStub implements NamedBean {
@@ -35,6 +36,7 @@ export class ValueService extends BeanStub implements NamedBean {
     private editSvc?: IEditService;
     private hasEditSvc: boolean = false;
     private formulaDataSvc?: IFormulaDataService;
+    private setterCascadeTracker: SetterCascadeTracker | null = null;
 
     public wireBeans(beans: BeanCollection): void {
         this.expressionSvc = beans.expressionSvc;
@@ -437,6 +439,7 @@ export class ValueService extends BeanStub implements NamedBean {
 
         let valueWasDifferent = this.computeValueChange({
             column,
+            rowNode,
             newValue,
             params,
             rowData: rowNode.data,
@@ -551,6 +554,7 @@ export class ValueService extends BeanStub implements NamedBean {
                 const computedParams: ValueSetterParams = { ...setterParams, newValue: computedValue };
                 this.computeValueChange({
                     column,
+                    rowNode,
                     newValue: computedValue,
                     params: computedParams,
                     rowData: rowNode.data,
@@ -574,19 +578,60 @@ export class ValueService extends BeanStub implements NamedBean {
         params: ValueSetterParams;
         rowData: any;
         field: string | undefined;
+        rowNode: IRowNode;
         column: AgColumn;
         newValue: any;
     }): boolean | undefined {
         const { valueSetter, params: setterParams, rowData, field, column, newValue } = params;
 
-        if (_exists(valueSetter)) {
-            if (typeof valueSetter === 'function') {
-                return valueSetter(setterParams);
+        const colDef = column.getColDef();
+        const groupRowEditable = colDef.groupRowEditable != null;
+        const isGroupNode = !!setterParams.node?.group;
+        const shouldUseValueSetter = _exists(valueSetter) && (!groupRowEditable || isGroupNode);
+        const columnId = column.getColId();
+
+        if (shouldUseValueSetter) {
+            const activeTracker = this.setterCascadeTracker;
+            const shouldSkipGroupRowValueSetter =
+                groupRowEditable && !!activeTracker && activeTracker.shouldBypass(columnId, setterParams.node ?? null);
+            if (shouldSkipGroupRowValueSetter) {
+                return this.setValueUsingField(rowData, field, newValue, column.isFieldContainsDots());
             }
-            return this.expressionSvc?.evaluate(valueSetter, setterParams);
+
+            const trackGroupCascade = groupRowEditable && isGroupNode;
+            if (trackGroupCascade) {
+                return this.runCascadeValueSetter(columnId, setterParams.node!, valueSetter, setterParams);
+            }
+
+            return this.invokeValueSetter(valueSetter, setterParams);
         }
 
         return this.setValueUsingField(rowData, field, newValue, column.isFieldContainsDots());
+    }
+
+    private runCascadeValueSetter(
+        columnId: string,
+        groupNode: IRowNode,
+        valueSetter: ValueSetterParams['colDef']['valueSetter'],
+        setterParams: ValueSetterParams
+    ): boolean {
+        const cascadeTracker = (this.setterCascadeTracker ??= new SetterCascadeTracker());
+        cascadeTracker.begin(columnId, groupNode);
+        try {
+            return this.invokeValueSetter(valueSetter, setterParams) ?? true;
+        } finally {
+            cascadeTracker.end(columnId, groupNode);
+        }
+    }
+
+    private invokeValueSetter(
+        valueSetter: ValueSetterParams['colDef']['valueSetter'],
+        setterParams: ValueSetterParams
+    ): boolean | undefined {
+        if (typeof valueSetter === 'function') {
+            return valueSetter(setterParams);
+        }
+        return this.expressionSvc?.evaluate(valueSetter, setterParams);
     }
 
     private dispatchCellValueChangedEvent(
