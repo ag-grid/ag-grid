@@ -49,19 +49,25 @@ const amountValueParser = (params: ValueParserParams): number | null => {
 const amountValueSetter = ({ node, newValue }: ValueSetterParams<SalesRecord>): boolean => {
     const numericValue = Number(newValue);
     if (!Number.isFinite(numericValue)) {
-        return true; // reject invalid values
+        return false; // reject invalid values
     }
 
-    if (node?.group) {
-        const children = node.childrenAfterFilter ?? node.childrenAfterGroup ?? [];
+    // Updates the current node. Passing 'set-raw-data-field' as the source to avoid
+    // re-entering this setter when the grid updates group totals.
+    let updated = node.setDataValue('amount', numericValue, 'set-raw-data-field');
+
+    const children = node.childrenAfterFilter ?? node.childrenAfterGroup;
+    if (children) {
         const perChild = newValue / children.length;
         for (const child of children) {
             // set value, this will recursively update group totals if the child is a group
-            child.setDataValue('amount', perChild);
+            if (child.setDataValue('amount', perChild)) {
+                updated = true;
+            }
         }
     }
 
-    return false; // continue with default setting of value
+    return updated;
 };
 
 const gridOptions: GridOptions<SalesRecord> = {

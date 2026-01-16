@@ -550,11 +550,13 @@ export class RowNode<TData = any>
 
         const valueChanged = valueSvc.setValue(this, column, newValue, eventSource);
 
-        this.dispatchCellChangedEvent(column, newValue, oldValue);
+        if (eventSource !== 'set-raw-data-field') {
+            this.dispatchCellChangedEvent(column, newValue, oldValue);
 
-        if (valueChanged) {
-            // pinned sibling shares a reference to the same data object as the
-            this.pinnedSibling?.dispatchCellChangedEvent(column, newValue, oldValue);
+            if (valueChanged) {
+                // pinned sibling shares a reference to the same data object as the
+                this.pinnedSibling?.dispatchCellChangedEvent(column, newValue, oldValue);
+            }
         }
 
         return valueChanged;

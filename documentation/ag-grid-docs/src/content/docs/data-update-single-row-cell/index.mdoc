@@ -23,6 +23,11 @@ To have the grid update its sort, filter or grouping call the Grid API `refreshC
 
 If you want the grid to automatically update sorting, filter or grouping then you should consider using [Transaction Updates](./data-update-transactions/).
 
+## Raw Field Updates
+
+The optional `source` argument on `rowNode.setDataValue(colId, value, source)` can describe how an update was produced. Supplying `'set-raw-data-field'` writes the raw value directly into the data object, bypasses the column `valueSetter`, and skips both the `cellValueChanged` event and the visual refresh cycle.
+This mode suits custom workflows (for example group-edit cascades) that already manage their own propagation and refresh.
+
 ## Updating Rows / Cells Example
 
 The example below demonstrates the following:

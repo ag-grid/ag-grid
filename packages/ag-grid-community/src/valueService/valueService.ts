@@ -23,7 +23,6 @@ import type { IEditService } from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _warn } from '../validation/logging';
 import type { ExpressionService } from './expressionService';
-import { SetterCascadeTracker } from './setterCascadeTracker';
 import type { ValueCache } from './valueCache';
 
 export class ValueService extends BeanStub implements NamedBean {
@@ -36,7 +35,6 @@ export class ValueService extends BeanStub implements NamedBean {
     private editSvc?: IEditService;
     private hasEditSvc: boolean = false;
     private formulaDataSvc?: IFormulaDataService;
-    private setterCascadeTracker: SetterCascadeTracker | null = null;
 
     public wireBeans(beans: BeanCollection): void {
         this.expressionSvc = beans.expressionSvc;
@@ -445,6 +443,7 @@ export class ValueService extends BeanStub implements NamedBean {
             rowData: rowNode.data,
             valueSetter: colDef.valueSetter,
             field: colDef.field,
+            eventSource,
         });
 
         // in case user forgot to return something (possible if they are not using TypeScript
@@ -489,9 +488,16 @@ export class ValueService extends BeanStub implements NamedBean {
 
         const savedValue = this.getValue(column, rowNode);
 
-        this.dispatchCellValueChangedEvent(rowNode, params, savedValue, eventSource);
-        if ((rowNode as RowNode).pinnedSibling) {
-            this.dispatchCellValueChangedEvent((rowNode as RowNode).pinnedSibling!, params, savedValue, eventSource);
+        if (eventSource !== 'set-raw-data-field') {
+            this.dispatchCellValueChangedEvent(rowNode, params, savedValue, eventSource);
+            if ((rowNode as RowNode).pinnedSibling) {
+                this.dispatchCellValueChangedEvent(
+                    (rowNode as RowNode).pinnedSibling!,
+                    params,
+                    savedValue,
+                    eventSource
+                );
+            }
         }
 
         return true;
@@ -560,6 +566,7 @@ export class ValueService extends BeanStub implements NamedBean {
                     rowData: rowNode.data,
                     valueSetter: colDef.valueSetter,
                     field: colDef.field,
+                    eventSource,
                 });
             }
 
@@ -581,58 +588,34 @@ export class ValueService extends BeanStub implements NamedBean {
         rowNode: IRowNode;
         column: AgColumn;
         newValue: any;
+        eventSource?: string;
     }): boolean | undefined {
-        const { valueSetter, params: setterParams, rowData, field, column, newValue } = params;
+        const { valueSetter, params: setterParams, rowData, field, column, newValue, eventSource } = params;
 
-        const colDef = column.getColDef();
-        const groupRowEditable = colDef.groupRowEditable != null;
-        const isGroupNode = !!setterParams.node?.group;
-        const shouldUseValueSetter = _exists(valueSetter) && (!groupRowEditable || isGroupNode);
-        const columnId = column.getColId();
-
-        if (shouldUseValueSetter) {
-            const activeTracker = this.setterCascadeTracker;
-            const shouldSkipGroupRowValueSetter =
-                groupRowEditable && !!activeTracker && activeTracker.shouldBypass(columnId, setterParams.node ?? null);
-            if (shouldSkipGroupRowValueSetter) {
-                return this.setValueUsingField(rowData, field, newValue, column.isFieldContainsDots());
+        if (_exists(valueSetter) && eventSource !== 'set-raw-data-field') {
+            if (typeof valueSetter === 'function') {
+                return valueSetter(setterParams);
             }
-
-            const trackGroupCascade = groupRowEditable && isGroupNode;
-            if (trackGroupCascade) {
-                return this.runCascadeValueSetter(columnId, setterParams.node!, valueSetter, setterParams);
-            }
-
-            return this.invokeValueSetter(valueSetter, setterParams);
+            return this.expressionSvc?.evaluate(valueSetter, setterParams);
         }
 
-        return this.setValueUsingField(rowData, field, newValue, column.isFieldContainsDots());
+        return !!rowData && this.setValueUsingField(rowData, field, newValue, column.isFieldContainsDots());
     }
 
-    private runCascadeValueSetter(
-        columnId: string,
-        groupNode: IRowNode,
-        valueSetter: ValueSetterParams['colDef']['valueSetter'],
-        setterParams: ValueSetterParams
-    ): boolean {
-        const cascadeTracker = (this.setterCascadeTracker ??= new SetterCascadeTracker());
-        cascadeTracker.begin(columnId, groupNode);
-        try {
-            return this.invokeValueSetter(valueSetter, setterParams) ?? true;
-        } finally {
-            cascadeTracker.end(columnId, groupNode);
-        }
-    }
-
-    private invokeValueSetter(
-        valueSetter: ValueSetterParams['colDef']['valueSetter'],
-        setterParams: ValueSetterParams
-    ): boolean | undefined {
-        if (typeof valueSetter === 'function') {
-            return valueSetter(setterParams);
-        }
-        return this.expressionSvc?.evaluate(valueSetter, setterParams);
-    }
+    // private runCascadeValueSetter(
+    //     columnId: string,
+    //     groupNode: IRowNode,
+    //     valueSetter: ValueSetterParams['colDef']['valueSetter'],
+    //     setterParams: ValueSetterParams
+    // ): boolean {
+    //     const cascadeTracker = (this.setterCascadeTracker ??= new SetterCascadeTracker());
+    //     cascadeTracker.begin(columnId, groupNode);
+    //     try {
+    //         return this.invokeValueSetter(valueSetter, setterParams) ?? true;
+    //     } finally {
+    //         cascadeTracker.end(columnId, groupNode);
+    //     }
+    // }
 
     private dispatchCellValueChangedEvent(
         rowNode: IRowNode,

@@ -37,7 +37,10 @@ stores the parsed value inside `rowNode.groupData` so the renderer updates immed
 Programmatic updates via `rowNode.setDataValue(colId, value, source)` skip that UI pipeline. The
 grid invokes `valueSetter` directly with the provided value, so this route suits already validated
 input, whereas the UI workflow remains preferable when parser logic or undo/redo behaviour is
-needed.
+needed. When that setter would recurse or the logic needs to write to the underlying data object
+directly, pass `'set-raw-data-field'` as the `source`. This bypasses the column `valueSetter` and
+prevents the `cellValueChanged` event from firing, keeping the change invisible to undo/redo while
+custom propagation code runs.
 
 When a column defines both `groupRowEditable` and `editable`, AG Grid only evaluates the property
 that matches the current node type, enabling separate rules for group rows and leaves.
@@ -60,6 +63,9 @@ Key points:
 - `rowNode.setDataValue` on children reuses the usual `valueSetter`/`valueParser` logic. The setter
 	can short-circuit when `node.group === false`, updating the leaf data directly and returning
 	`true`, so only group nodes recurse and there is no infinite loop.
+- Passing `'set-raw-data-field'` as the optional `source` argument when updating the group value
+	writes straight to `node.data`, skips the column `valueSetter`, and suppresses
+	`cellValueChanged`, which is ideal when a custom cascade already distributes values to children.
 - Parent aggregates refresh automatically because the children’s `data` changes trigger the column
 	`aggFunc`, so typing £600 at “Europe” rebalances the filtered countries to reach that total.
 
