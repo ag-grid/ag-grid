@@ -91,11 +91,15 @@ for (const key of allKeys) {
     const pr = prMap.get(key);
 
     if (base && pr) {
+        // Not available on latest so default to 0 for now
+        pr.gzipSelfSize = pr.gzipSelfSize || 0;
+        base.gzipSelfSize = base.gzipSelfSize || 0;
+
         const selfSizeDiff = pr.selfSize - base.selfSize;
         const fileSizeDiff = pr.fileSize - base.fileSize;
-        const gzipSizeDiff = pr.gzipSize - base.gzipSize;
+        const gzipSelfSizeDiff = pr.gzipSelfSize - base.gzipSelfSize;
         const selfSizePercent = calcPercent(base.selfSize, selfSizeDiff);
-        const gzipSizePercent = calcPercent(base.gzipSize, gzipSizeDiff);
+        const gzipSelfSizePercent = calcPercent(base.gzipSelfSize, gzipSelfSizeDiff);
 
         diffs.push({
             modules: pr.modules,
@@ -107,14 +111,16 @@ for (const key of allKeys) {
             baseFileSize: base.fileSize,
             prFileSize: pr.fileSize,
             fileSizeDiff,
-            baseGzipSize: base.gzipSize,
-            prGzipSize: pr.gzipSize,
-            gzipSizeDiff,
-            gzipSizePercent,
+            baseGzipSelfSize: base.gzipSelfSize,
+            prGzipSelfSize: pr.gzipSelfSize,
+            gzipSelfSizeDiff,
+            gzipSelfSizePercent,
             isNew: false,
             isRemoved: false,
         });
     } else if (pr && !base) {
+        // Not available on latest so default to 0 for now
+        pr.gzipSelfSize = pr.gzipSelfSize || 0;
         diffs.push({
             modules: pr.modules,
             key,
@@ -125,14 +131,16 @@ for (const key of allKeys) {
             baseFileSize: 0,
             prFileSize: pr.fileSize,
             fileSizeDiff: pr.fileSize,
-            baseGzipSize: 0,
-            prGzipSize: pr.gzipSize,
-            gzipSizeDiff: pr.gzipSize,
-            gzipSizePercent: 100,
+            baseGzipSelfSize: 0,
+            prGzipSelfSize: pr.gzipSelfSize,
+            gzipSelfSizeDiff: pr.gzipSelfSize,
+            gzipSelfSizePercent: 100,
             isNew: true,
             isRemoved: false,
         });
     } else if (base && !pr) {
+        // Not available on latest so default to 0 for now
+        base.gzipSelfSize = base.gzipSelfSize || 0;
         diffs.push({
             modules: base.modules,
             key,
@@ -143,10 +151,10 @@ for (const key of allKeys) {
             baseFileSize: base.fileSize,
             prFileSize: 0,
             fileSizeDiff: -base.fileSize,
-            baseGzipSize: base.gzipSize,
-            prGzipSize: 0,
-            gzipSizeDiff: -base.gzipSize,
-            gzipSizePercent: -100,
+            baseGzipSelfSize: base.gzipSelfSize,
+            prGzipSelfSize: 0,
+            gzipSelfSizeDiff: -base.gzipSelfSize,
+            gzipSelfSizePercent: -100,
             isNew: false,
             isRemoved: true,
         });
@@ -194,8 +202,10 @@ if (!showMaxIncrease && !showMaxDecrease) {
 // Significant changes table
 if (significantChanges.length > 0) {
     report += `### Significant Changes (≥ ${THRESHOLD_PERCENT}%)\n\n`;
-    report += '| Module(s) | Base (KB) | PR (KB) | Diff (KB) | Diff % | Gzip Diff (KB) | Gzip % |\n';
-    report += '|-----------|-----------|---------|-----------|--------|----------------|--------|\n';
+    report +=
+        '| Module(s) | Base (KB) | PR (KB) | Diff (KB) | Diff % | Base Gzip (KB) | PR Gzip (KB) | Gzip Diff (KB) | Gzip % |\n';
+    report +=
+        '|-----------|-----------|---------|-----------|--------|----------------|--------------|----------------|--------|\n';
 
     for (const diff of significantChanges) {
         const moduleName = diff.modules.length === 0 ? 'Base (no modules)' : diff.modules.join(', ');
@@ -209,8 +219,10 @@ if (significantChanges.length > 0) {
             applyHighlight(formatSize(diff.prSelfSize), shouldHighlight),
             applyHighlight(`**${formatDiff(diff.selfSizeDiff)}**`, shouldHighlight),
             applyHighlight(formatPercent(diff.selfSizePercent), shouldHighlight),
-            applyHighlight(formatDiff(diff.gzipSizeDiff), shouldHighlight),
-            applyHighlight(formatPercent(diff.gzipSizePercent), shouldHighlight),
+            applyHighlight(formatSize(diff.baseGzipSelfSize), shouldHighlight),
+            applyHighlight(formatSize(diff.prGzipSelfSize), shouldHighlight),
+            applyHighlight(formatDiff(diff.gzipSelfSizeDiff), shouldHighlight),
+            applyHighlight(formatPercent(diff.gzipSelfSizePercent), shouldHighlight),
         ];
 
         report += `| ${cells.join(' | ')} |\n`;
@@ -254,8 +266,10 @@ report += `- **Modules unchanged:** ${diffs.filter((d) => d.selfSizeDiff === 0).
 const allChanges = diffs.filter((d) => d.selfSizeDiff !== 0);
 if (allChanges.length > 0) {
     report += '#### All Module Changes\n\n';
-    report += '| Module(s) | Base (KB) | PR (KB) | Diff (KB) | Diff % | Gzip Diff (KB) | Gzip % |\n';
-    report += '|-----------|-----------|---------|-----------|--------|----------------|--------|\n';
+    report +=
+        '| Module(s) | Base (KB) | PR (KB) | Diff (KB) | Diff % | Base Gzip (KB) | PR Gzip (KB) | Gzip Diff (KB) | Gzip % |\n';
+    report +=
+        '|-----------|-----------|---------|-----------|--------|----------------|--------------|----------------|--------|\n';
 
     for (const diff of allChanges) {
         const moduleName = diff.modules.length === 0 ? 'Base (no modules)' : diff.modules.join(', ');
@@ -269,8 +283,10 @@ if (allChanges.length > 0) {
             applyHighlight(formatSize(diff.prSelfSize), shouldHighlight),
             applyHighlight(`**${formatDiff(diff.selfSizeDiff)}**`, shouldHighlight),
             applyHighlight(formatPercent(diff.selfSizePercent), shouldHighlight),
-            applyHighlight(formatDiff(diff.gzipSizeDiff), shouldHighlight),
-            applyHighlight(formatPercent(diff.gzipSizePercent), shouldHighlight),
+            applyHighlight(formatSize(diff.baseGzipSelfSize), shouldHighlight),
+            applyHighlight(formatSize(diff.prGzipSelfSize), shouldHighlight),
+            applyHighlight(formatDiff(diff.gzipSelfSizeDiff), shouldHighlight),
+            applyHighlight(formatPercent(diff.gzipSelfSizePercent), shouldHighlight),
         ];
 
         report += `| ${cells.join(' | ')} |\n`;

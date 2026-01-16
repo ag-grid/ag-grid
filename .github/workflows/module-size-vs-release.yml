@@ -8,9 +8,9 @@ on:
   workflow_dispatch:
     inputs:
       release_tag:
-        description: 'Release tag to compare against (e.g., b35.1.0)'
+        description: 'Release tag to compare against (e.g., b35.1.0) or leave empty to auto-detect latest release'
         type: string
-        required: true
+        required: false
 
 env:
   NX_NO_CLOUD: true
@@ -57,12 +57,13 @@ jobs:
                 per_page: 10
               });
 
-              // Find the latest non-prerelease tag matching bXX.X.X pattern
-              const release = releases.find(r => !r.prerelease && /^b\d+\.\d+\.\d+$/.test(r.tag_name));
+              // Find the latest non-prerelease tag matching release-XX.X.X pattern
+              const release = releases.find(r => !r.prerelease && /^release-\d+\.\d+\.\d+$/.test(r.tag_name));
               if (!release) {
                 core.setFailed('Could not find a valid release tag');
                 return;
               }
+              // Use the latest release tag
               releaseTag = release.tag_name;
               console.log(`Using latest release tag: ${releaseTag}`);
             }
