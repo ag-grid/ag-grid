@@ -721,7 +721,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         const { gos, beans } = this;
 
         const rowNode = position.rowNode;
-        if (rowNode.group) {
+        if (rowNode.group && position.column.getColDef().groupRowEditable == null) {
             // This is a group - it could be a tree group or a grouping group...
             if (gos.get('treeData')) {
                 // tree - allow editing of groups with data by default.
