@@ -494,8 +494,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
             if (colDef.valueFormatter === object.groupSafeValueFormatter && !this.hasObjectValueFormatter) {
                 warning('Formatter');
             }
-            const allowsEditing = !!colDef.editable || !!colDef.groupRowEditable;
-            if (allowsEditing && colDef.valueParser === object.valueParser && !this.hasObjectValueParser) {
+            if (colDef.editable && colDef.valueParser === object.valueParser && !this.hasObjectValueParser) {
                 warning('Parser');
             }
         }
