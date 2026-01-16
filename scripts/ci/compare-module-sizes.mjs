@@ -34,7 +34,7 @@ function getModuleKey(modules) {
 }
 
 function formatSize(size) {
-    return size.toFixed(2);
+    return size?.toFixed(2) ?? '0.00';
 }
 
 function formatDiff(diff) {
