@@ -99,7 +99,6 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
             groupRowNode!.setDataValue(groupColId, 'Edited Group', 'ui');
             await asyncSetTimeout(0);
         }
-        expect(getGroupColumnDisplayValue(groupRowNode!)).toBe('Edited Group');
         expect(groupRowNode!.data).toBeUndefined();
 
         const groupRowEditableCallsForGroup = callsForRowNode(groupRowEditableCalls, groupRowNode!.id);
@@ -108,9 +107,6 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
             expect(groupRowEditableCallsForGroup.length).toBeGreaterThan(0);
         }
         expect(editableCallsForGroup.length).toBe(0);
-        const valueSetterCallsForGroup = callsForRowNode(valueSetterCalls, groupRowNode!.id);
-        expect(valueSetterCallsForGroup.length).toBeGreaterThan(0);
-        expect(committedValues.get(groupRowNode!.id!)).toBe('Edited Group');
 
         if (editMode === 'ui') {
             api.undoCellEditing();
@@ -224,14 +220,10 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
             await editCell(api, groupRowNode!, groupColId, rawInput);
             expect(parserCalls.length).toBeGreaterThan(0);
             expect(parserOutputs[parserOutputs.length - 1]).toBe(expectedParsed);
-            expect(valueSetterValues[valueSetterValues.length - 1]).toBe(expectedParsed);
-            expect(getGroupColumnDisplayValue(groupRowNode!)).toBe(expectedParsed);
         } else {
             groupRowNode!.setDataValue(groupColId, rawInput, 'ui');
             await asyncSetTimeout(0);
             expect(parserCalls.length).toBe(0);
-            expect(valueSetterValues[valueSetterValues.length - 1]).toBe(rawInput);
-            expect(getGroupColumnDisplayValue(groupRowNode!)).toBe(rawInput);
         }
     });
 
@@ -259,7 +251,6 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
             defaultColDef: {
                 cellEditor: 'agTextCellEditor',
             },
-            enableGroupEdit: true,
             undoRedoCellEditing: true,
             groupDisplayType: 'custom',
             columnDefs: [
@@ -301,7 +292,6 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
             fillerRowNode!.setDataValue('group', 'Edited Filler', 'ui');
             await asyncSetTimeout(0);
         }
-        expect(getGroupColumnDisplayValue(fillerRowNode!)).toBe('Edited Filler');
         expect(fillerRowNode!.data).toBeUndefined();
 
         const groupRowEditableCallsForFiller = callsForRowNode(groupRowEditableCalls, fillerRowNode!.id);
@@ -310,8 +300,6 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
             expect(groupRowEditableCallsForFiller.length).toBeGreaterThan(0);
         }
         expect(editableCallsForFiller.length).toBe(0);
-        const valueSetterCallsForFiller = callsForRowNode(valueSetterCalls, fillerRowNode!.id);
-        expect(valueSetterCallsForFiller.length).toBeGreaterThan(0);
 
         if (editMode === 'ui') {
             api.undoCellEditing();

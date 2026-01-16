@@ -428,12 +428,7 @@ export class ValueService extends BeanStub implements NamedBean {
 
         let valueWasDifferent: boolean | undefined;
 
-        // group rows only persist through row data or a custom groupRowValueSetter; without either we intentionally skip writes
-        // this will be addressed by providing a default groupRowValueSetter for group columns, auto group columns, aggregation columns
-        const canUpdateValue =
-            !rowNode.group || rowNode.data || (groupRowValueSetter == null && colDef.groupRowEditable == null);
-
-        if (canUpdateValue) {
+        if (rowNode.data) {
             const externalFormulaResult = this.handleExternalFormulaChange({
                 column,
                 eventSource,
@@ -454,17 +449,13 @@ export class ValueService extends BeanStub implements NamedBean {
                 valueSetter: colDef.valueSetter,
                 field: colDef.field,
             });
-
-            // in case user forgot to return something (possible if they are not using TypeScript
-            // and just forgot we default the return value to true, so we always refresh.
-            valueWasDifferent ??= true;
         } else {
             // when we cannot update backing data we rely solely on the legacy groupRowValueSetter path
             valueWasDifferent = newValue !== oldValue;
         }
 
         if (groupRowValueSetter && valueWasDifferent) {
-            const result = groupRowValueSetter(
+            let result = groupRowValueSetter(
                 _addGridCommonParams(this.gos, {
                     node: rowNode,
                     data: rowNode.data,
@@ -476,10 +467,18 @@ export class ValueService extends BeanStub implements NamedBean {
                 })
             );
 
+            // in case user forgot to return something (possible if they are not using TypeScript
+            // and just forgot we default the return value to true, so we always refresh.
+            result ??= true;
+
             if (result) {
-                valueWasDifferent = true;
+                valueWasDifferent = result;
             }
         }
+
+        // in case user forgot to return something (possible if they are not using TypeScript
+        // and just forgot we default the return value to true, so we always refresh.
+        valueWasDifferent ??= true;
 
         if (!valueWasDifferent) {
             // if no change to the value, then no need to do the updating, or notifying via events.
