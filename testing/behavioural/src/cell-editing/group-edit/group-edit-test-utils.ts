@@ -22,6 +22,7 @@ export const EDIT_MODES = ['ui', 'setDataValue'] as const;
 
 export type EditableCallback = Exclude<NonNullable<ColDef['editable']>, boolean>;
 export type GroupRowEditableCallback = Exclude<NonNullable<ColDef['groupRowEditable']>, boolean>;
+export type GroupRowValueSetterCallback = Extract<NonNullable<ColDef['groupRowValueSetter']>, (...args: any[]) => any>;
 export type ValueSetterCallback = Extract<NonNullable<ColDef['valueSetter']>, (...args: any[]) => any>;
 export type ValueParserCallback = Extract<NonNullable<ColDef['valueParser']>, (...args: any[]) => any>;
 
@@ -81,5 +82,35 @@ export function callsForRowNode(calls: CallbackArgs[], rowId?: string | null) {
     }
     return calls.filter(([params]) => params?.node?.id === rowId);
 }
+
+export function createGroupRowData() {
+    return [
+        { id: 'fr-paris', region: 'Europe', country: 'France', amount: 30 },
+        { id: 'fr-lyon', region: 'Europe', country: 'France', amount: 30 },
+        { id: 'de-berlin', region: 'Europe', country: 'Germany', amount: 30 },
+        { id: 'de-hamburg', region: 'Europe', country: 'Germany', amount: 30 },
+        { id: 'it-rome', region: 'Europe', country: 'Italy', amount: 30 },
+        { id: 'it-milan', region: 'Europe', country: 'Italy', amount: 30 },
+        { id: 'us-nyc', region: 'Americas', country: 'USA', amount: 70 },
+        { id: 'us-la', region: 'Americas', country: 'USA', amount: 30 },
+        { id: 'ca-toronto', region: 'Americas', country: 'Canada', amount: 35 },
+        { id: 'ca-vancouver', region: 'Americas', country: 'Canada', amount: 25 },
+    ];
+}
+
+export const cascadeGroupRowValueSetter: GroupRowValueSetterCallback = ({ node, column, newValue, eventSource }) => {
+    const numericValue = Number(newValue);
+    if (!Number.isFinite(numericValue)) {
+        return;
+    }
+
+    const children = node.childrenAfterSort;
+    if (children) {
+        const perChild = numericValue / children.length;
+        for (const child of children) {
+            child.setDataValue(column, perChild, eventSource);
+        }
+    }
+};
 
 export { asyncSetTimeout };

@@ -413,10 +413,12 @@ export class ValueService extends BeanStub implements NamedBean {
             return false;
         }
 
+        const oldValue = this.getValue(column, rowNode, undefined, eventSource);
+
         const params: ValueSetterParams = _addGridCommonParams(this.gos, {
             node: rowNode,
             data: rowNode.data,
-            oldValue: this.getValue(column, rowNode, undefined, eventSource),
+            oldValue,
             newValue: newValue,
             colDef,
             column: column,
@@ -443,19 +445,27 @@ export class ValueService extends BeanStub implements NamedBean {
             rowData: rowNode.data,
             valueSetter: colDef.valueSetter,
             field: colDef.field,
-            eventSource,
         });
 
         // in case user forgot to return something (possible if they are not using TypeScript
         // and just forgot we default the return value to true, so we always refresh.
-        if (valueWasDifferent === undefined) {
-            valueWasDifferent = true;
-        }
+        valueWasDifferent ??= true;
 
-        // if no change to the value, then no need to do the updating, or notifying via events.
-        // otherwise the user could be tabbing around the grid, and cellValueChange would get called
-        // all the time.
-        if (!valueWasDifferent) {
+        const groupRowValueSetter = rowNode.group ? colDef.groupRowValueSetter : undefined;
+
+        if (groupRowValueSetter) {
+            groupRowValueSetter(
+                _addGridCommonParams(this.gos, {
+                    node: rowNode,
+                    data: rowNode.data,
+                    oldValue,
+                    newValue,
+                    colDef,
+                    column,
+                    eventSource,
+                })
+            );
+        } else if (!valueWasDifferent) {
             return false;
         }
 
@@ -467,12 +477,11 @@ export class ValueService extends BeanStub implements NamedBean {
             return true; // not a group row
         }
 
-        if (colDef.groupRowEditable != null) {
-            // group row with groupRowEditable specified (true, or false, or fn) does not allow data
-            return false;
+        if (colDef.groupRowEditable != null || colDef.groupRowValueSetter != null) {
+            return false; // Do not create the row data for a group row automatically
         }
 
-        return true; // group row with no groupRowEditable specified
+        return true; // create the rowData for groupRowEditable (default legacy behaviour)
     }
 
     private finishValueChange(
@@ -488,16 +497,9 @@ export class ValueService extends BeanStub implements NamedBean {
 
         const savedValue = this.getValue(column, rowNode);
 
-        if (eventSource !== 'set-raw-data-field') {
-            this.dispatchCellValueChangedEvent(rowNode, params, savedValue, eventSource);
-            if ((rowNode as RowNode).pinnedSibling) {
-                this.dispatchCellValueChangedEvent(
-                    (rowNode as RowNode).pinnedSibling!,
-                    params,
-                    savedValue,
-                    eventSource
-                );
-            }
+        this.dispatchCellValueChangedEvent(rowNode, params, savedValue, eventSource);
+        if ((rowNode as RowNode).pinnedSibling) {
+            this.dispatchCellValueChangedEvent((rowNode as RowNode).pinnedSibling!, params, savedValue, eventSource);
         }
 
         return true;
@@ -566,7 +568,6 @@ export class ValueService extends BeanStub implements NamedBean {
                     rowData: rowNode.data,
                     valueSetter: colDef.valueSetter,
                     field: colDef.field,
-                    eventSource,
                 });
             }
 
@@ -588,11 +589,10 @@ export class ValueService extends BeanStub implements NamedBean {
         rowNode: IRowNode;
         column: AgColumn;
         newValue: any;
-        eventSource?: string;
     }): boolean | undefined {
-        const { valueSetter, params: setterParams, rowData, field, column, newValue, eventSource } = params;
+        const { valueSetter, params: setterParams, rowData, field, column, newValue } = params;
 
-        if (_exists(valueSetter) && eventSource !== 'set-raw-data-field') {
+        if (_exists(valueSetter)) {
             if (typeof valueSetter === 'function') {
                 return valueSetter(setterParams);
             }
@@ -601,21 +601,6 @@ export class ValueService extends BeanStub implements NamedBean {
 
         return !!rowData && this.setValueUsingField(rowData, field, newValue, column.isFieldContainsDots());
     }
-
-    // private runCascadeValueSetter(
-    //     columnId: string,
-    //     groupNode: IRowNode,
-    //     valueSetter: ValueSetterParams['colDef']['valueSetter'],
-    //     setterParams: ValueSetterParams
-    // ): boolean {
-    //     const cascadeTracker = (this.setterCascadeTracker ??= new SetterCascadeTracker());
-    //     cascadeTracker.begin(columnId, groupNode);
-    //     try {
-    //         return this.invokeValueSetter(valueSetter, setterParams) ?? true;
-    //     } finally {
-    //         cascadeTracker.end(columnId, groupNode);
-    //     }
-    // }
 
     private dispatchCellValueChangedEvent(
         rowNode: IRowNode,

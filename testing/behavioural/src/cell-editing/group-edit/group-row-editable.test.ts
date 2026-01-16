@@ -4,6 +4,7 @@ import { expect } from '../../test-utils/matchers';
 import type {
     EditableCallback,
     GroupRowEditableCallback,
+    GroupRowValueSetterCallback,
     ValueParserCallback,
     ValueSetterCallback,
 } from './group-edit-test-utils';
@@ -11,6 +12,8 @@ import {
     EDIT_MODES,
     asyncSetTimeout,
     callsForRowNode,
+    cascadeGroupRowValueSetter,
+    createGroupRowData,
     editCell,
     getGroupColumnDisplayValue,
     gridsManager,
@@ -403,6 +406,65 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
         }
     });
 
+    test('groupRowValueSetter without groupRowEditable keeps group row data undefined', async () => {
+        const rowData = createGroupRowData();
+
+        const api = await gridsManager.createGridAndWait('group-row-set-value-without-group-row-editable', {
+            defaultColDef: {
+                cellEditor: 'agTextCellEditor',
+            },
+            enableGroupEdit: true,
+            undoRedoCellEditing: true,
+            groupDisplayType: 'custom',
+            columnDefs: [
+                {
+                    colId: 'group',
+                    headerName: 'Group',
+                    cellRenderer: 'agGroupCellRenderer',
+                },
+                { field: 'region', rowGroup: true, hide: true },
+                { field: 'country', rowGroup: true, hide: true },
+                {
+                    colId: 'amount',
+                    field: 'amount',
+                    aggFunc: 'sum',
+                    editable: true,
+                    groupRowValueSetter: cascadeGroupRowValueSetter,
+                },
+            ],
+            rowData,
+            groupDefaultExpanded: -1,
+            getRowId: (params) => params.data?.id,
+        });
+
+        const europeNode = api.getRowNode('row-group-region-Europe');
+        expect(europeNode).toBeDefined();
+        expect(europeNode!.group).toBe(true);
+        expect(europeNode!.data).toBeUndefined();
+
+        const amountColId = 'amount';
+        const cascadedValue = 420;
+        if (editMode === 'ui') {
+            await editCell(api, europeNode!, amountColId, `${cascadedValue}`);
+        } else {
+            europeNode!.setDataValue(amountColId, cascadedValue, 'ui');
+            await asyncSetTimeout(0);
+        }
+        await asyncSetTimeout(0);
+
+        expect(europeNode!.data).toBeUndefined();
+        expect(europeNode!.aggData?.amount ?? 0).toBe(cascadedValue);
+        expect(api.getRowNode('fr-paris')?.data?.amount).toBe(70);
+
+        if (editMode === 'ui') {
+            api.undoCellEditing();
+            await asyncSetTimeout(0);
+            expect(europeNode!.aggData?.amount ?? 0).toBe(180);
+            expect(api.getRowNode('fr-paris')?.data?.amount).toBe(30);
+            expect(europeNode!.data).toBeUndefined();
+        }
+    });
+
     test('tree data group rows with data fall back to editable when groupRowEditable missing', async () => {
         const editableCalls: Parameters<EditableCallback>[] = [];
         const editable: EditableCallback = (...args) => {
@@ -475,5 +537,125 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
             await asyncSetTimeout(0);
             expect(rowData[0].label).toBe(originalEarthLabel);
         }
+    });
+
+    test('groupRowValueSetter runs after valueSetter for group rows', async () => {
+        const callSequence: string[] = [];
+        let lastGroupRowValueSetterArgs: { nodeId?: string | null; newValue: any; oldValue: any } | undefined;
+        const valueSetter: ValueSetterCallback = (params) => {
+            callSequence.push(`valueSetter:${params.node?.id ?? 'unknown'}`);
+            if (params.node?.group) {
+                const groupData = params.node.groupData ?? {};
+                groupData.group = params.newValue;
+                params.node.groupData = groupData;
+            } else if (params.data && params.colDef.field) {
+                (params.data as Record<string, any>)[params.colDef.field] = params.newValue;
+            }
+            return true;
+        };
+        const groupRowValueSetter: GroupRowValueSetterCallback = (params) => {
+            expect(params.node.group).toBe(true);
+            expect(params.column).toBeDefined();
+            callSequence.push(`groupRowValueSetter:${params.node.id ?? 'unknown'}`);
+            lastGroupRowValueSetterArgs = {
+                nodeId: params.node.id,
+                newValue: params.newValue,
+                oldValue: params.oldValue,
+            };
+        };
+
+        const api = await gridsManager.createGridAndWait('group-row-set-value-order', {
+            defaultColDef: {
+                cellEditor: 'agTextCellEditor',
+            },
+            enableGroupEdit: true,
+            undoRedoCellEditing: true,
+            groupDisplayType: 'custom',
+            columnDefs: [
+                {
+                    colId: 'group',
+                    headerName: 'Group',
+                    cellRenderer: 'agGroupCellRenderer',
+                    editable: true,
+                    groupRowEditable: true,
+                    valueSetter,
+                    groupRowValueSetter,
+                },
+                { field: 'category', rowGroup: true, hide: true },
+            ],
+            rowData: [
+                { id: 'a-1', category: 'A', label: 'A1' },
+                { id: 'a-2', category: 'A', label: 'A2' },
+            ],
+            groupDefaultExpanded: -1,
+            getRowId: (params) => params.data.id,
+        });
+
+        const groupRowNode = api.getDisplayedRowAtIndex(0);
+        expect(groupRowNode?.group).toBe(true);
+        const groupColId = api.getDisplayedCenterColumns()[0]!.getColId();
+        const newValue = 'Edited Group';
+
+        if (editMode === 'ui') {
+            await editCell(api, groupRowNode!, groupColId, newValue);
+        } else {
+            groupRowNode!.setDataValue(groupColId, newValue, 'ui');
+            await asyncSetTimeout(0);
+        }
+
+        expect(callSequence[0]).toBe(`valueSetter:${groupRowNode?.id ?? 'unknown'}`);
+        expect(callSequence[1]).toBe(`groupRowValueSetter:${groupRowNode?.id ?? 'unknown'}`);
+        expect(lastGroupRowValueSetterArgs?.newValue).toBe(newValue);
+
+        if (editMode === 'ui') {
+            api.undoCellEditing();
+            await asyncSetTimeout(0);
+        }
+    });
+
+    test('groupRowValueSetter fires even when groupRowEditable is false', async () => {
+        let invocationCount = 0;
+        const valueSetter: ValueSetterCallback = (params) => {
+            if (params.node?.group) {
+                const groupData = params.node.groupData ?? {};
+                groupData.group = params.newValue;
+                params.node.groupData = groupData;
+            }
+            return true;
+        };
+        const groupRowValueSetter: GroupRowValueSetterCallback = () => {
+            invocationCount += 1;
+        };
+
+        const api = await gridsManager.createGridAndWait('group-row-set-value-without-editable', {
+            columnDefs: [
+                {
+                    colId: 'group',
+                    headerName: 'Group',
+                    cellRenderer: 'agGroupCellRenderer',
+                    editable: false,
+                    groupRowEditable: false,
+                    valueSetter,
+                    groupRowValueSetter,
+                },
+                { field: 'category', rowGroup: true, hide: true },
+            ],
+            rowData: [
+                { id: 'a-1', category: 'A', label: 'A1' },
+                { id: 'a-2', category: 'A', label: 'A2' },
+            ],
+            groupDefaultExpanded: -1,
+            getRowId: (params) => params.data.id,
+        });
+
+        const groupRowNode = api.getDisplayedRowAtIndex(0);
+        expect(groupRowNode?.group).toBe(true);
+        const targetColumn = api.getColumns()?.find((col) => col.getColId() === 'group');
+        expect(targetColumn).toBeDefined();
+
+        groupRowNode!.setDataValue(targetColumn!, 'Edited Group', 'ui');
+        await asyncSetTimeout(0);
+
+        expect(invocationCount).toBe(1);
     });
 });

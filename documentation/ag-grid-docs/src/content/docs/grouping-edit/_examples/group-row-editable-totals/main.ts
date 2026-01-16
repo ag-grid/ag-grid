@@ -1,10 +1,4 @@
-import type {
-    GridOptions,
-    IRowNode,
-    ValueFormatterParams,
-    ValueParserParams,
-    ValueSetterParams,
-} from 'ag-grid-community';
+import type { GridOptions, GroupRowValueSetterFunc, ValueFormatterParams, ValueParserParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -46,28 +40,19 @@ const amountValueParser = (params: ValueParserParams): number | null => {
     return Number.isFinite(numericValue) ? numericValue : params.oldValue ?? null;
 };
 
-const amountValueSetter = ({ node, newValue }: ValueSetterParams<SalesRecord>): boolean => {
+const amountGroupRowValueSetter: GroupRowValueSetterFunc<SalesRecord> = ({ node, newValue }) => {
     const numericValue = Number(newValue);
     if (!Number.isFinite(numericValue)) {
-        return false; // reject invalid values
+        return;
     }
 
-    // Updates the current node. Passing 'set-raw-data-field' as the source to avoid
-    // re-entering this setter when the grid updates group totals.
-    let updated = node.setDataValue('amount', numericValue, 'set-raw-data-field');
-
-    const children = node.childrenAfterFilter ?? node.childrenAfterGroup;
+    const children = node.childrenAfterSort;
     if (children) {
-        const perChild = newValue / children.length;
+        const perChild = numericValue / children.length;
         for (const child of children) {
-            // set value, this will recursively update group totals if the child is a group
-            if (child.setDataValue('amount', perChild)) {
-                updated = true;
-            }
+            child.setDataValue('amount', perChild);
         }
     }
-
-    return updated;
 };
 
 const gridOptions: GridOptions<SalesRecord> = {
@@ -83,7 +68,7 @@ const gridOptions: GridOptions<SalesRecord> = {
             groupRowEditable: true,
             filter: 'agNumberColumnFilter',
             valueParser: amountValueParser,
-            valueSetter: amountValueSetter,
+            groupRowValueSetter: amountGroupRowValueSetter,
             valueFormatter: amountValueFormatter,
         },
     ],

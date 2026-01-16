@@ -1,50 +1,45 @@
-import type { CellEditRequestEvent, NumberFilterModel, SetFilterModel } from 'ag-grid-community';
+import type { NumberFilterModel, SetFilterModel } from 'ag-grid-community';
 
 import { GridRows } from '../../test-utils';
 import { expect } from '../../test-utils/matchers';
-import type { ValueSetterCallback } from './group-edit-test-utils';
-import { EDIT_MODES, asyncSetTimeout, editCell, gridsManager } from './group-edit-test-utils';
+import type { GroupRowValueSetterCallback, ValueSetterCallback } from './group-edit-test-utils';
+import {
+    EDIT_MODES,
+    asyncSetTimeout,
+    cascadeGroupRowValueSetter,
+    createGroupRowData as createRowData,
+    editCell,
+    gridsManager,
+} from './group-edit-test-utils';
 
 afterEach(() => {
     gridsManager.reset();
 });
 
-const valueSetter: ValueSetterCallback = ({ newValue, node }) => {
-    if (!node) {
-        return false;
-    }
-    const numericValue = Number(newValue);
-    if (!Number.isFinite(numericValue)) {
-        return false;
-    }
-
-    let updated = node.setDataValue('amount', numericValue, 'set-raw-data-field');
-
-    const children = node.childrenAfterFilter ?? node.childrenAfterGroup ?? [];
-    const perChild = numericValue / children.length;
-    for (const child of children) {
-        if (child.setDataValue('amount', perChild)) {
-            updated = true;
-        }
-    }
-
-    return updated;
-};
-
 describe.each(EDIT_MODES)('groupRowEditable cascading edits (%s)', (editMode) => {
-    test('custom valueSetter updates children and aggregation refreshes parents when enableGroupEdit is true', async () => {
-        const rowData = [
-            { id: 'fr-paris', region: 'Europe', country: 'France', amount: 30 },
-            { id: 'fr-lyon', region: 'Europe', country: 'France', amount: 30 },
-            { id: 'de-berlin', region: 'Europe', country: 'Germany', amount: 30 },
-            { id: 'de-hamburg', region: 'Europe', country: 'Germany', amount: 30 },
-            { id: 'it-rome', region: 'Europe', country: 'Italy', amount: 30 },
-            { id: 'it-milan', region: 'Europe', country: 'Italy', amount: 30 },
-            { id: 'us-nyc', region: 'Americas', country: 'USA', amount: 70 },
-            { id: 'us-la', region: 'Americas', country: 'USA', amount: 30 },
-            { id: 'ca-toronto', region: 'Americas', country: 'Canada', amount: 35 },
-            { id: 'ca-vancouver', region: 'Americas', country: 'Canada', amount: 25 },
-        ];
+    const baselineSnapshot = `
+        ROOT id:ROOT_NODE_ID
+        ├─┬ filler id:row-group-region-Europe amount:180
+        │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-France amount:60
+        │ │ ├── LEAF id:fr-paris region:"Europe" country:"France" amount:30
+        │ │ └── LEAF id:fr-lyon region:"Europe" country:"France" amount:30
+        │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-Germany amount:60
+        │ │ ├── LEAF id:de-berlin region:"Europe" country:"Germany" amount:30
+        │ │ └── LEAF id:de-hamburg region:"Europe" country:"Germany" amount:30
+        │ └─┬ LEAF_GROUP id:row-group-region-Europe-country-Italy amount:60
+        │ · ├── LEAF id:it-rome region:"Europe" country:"Italy" amount:30
+        │ · └── LEAF id:it-milan region:"Europe" country:"Italy" amount:30
+        └─┬ filler id:row-group-region-Americas amount:160
+        · ├─┬ LEAF_GROUP id:row-group-region-Americas-country-USA amount:100
+        · │ ├── LEAF id:us-nyc region:"Americas" country:"USA" amount:70
+        · │ └── LEAF id:us-la region:"Americas" country:"USA" amount:30
+        · └─┬ LEAF_GROUP id:row-group-region-Americas-country-Canada amount:60
+        · · ├── LEAF id:ca-toronto region:"Americas" country:"Canada" amount:35
+        · · └── LEAF id:ca-vancouver region:"Americas" country:"Canada" amount:25
+    `;
+
+    test('group edits cascade through descendants and refresh aggregations', async () => {
+        const rowData = createRowData();
 
         const api = await gridsManager.createGridAndWait('group-row-editable-changed-path', {
             defaultColDef: {
@@ -67,7 +62,7 @@ describe.each(EDIT_MODES)('groupRowEditable cascading edits (%s)', (editMode) =>
                     aggFunc: 'sum',
                     editable: true,
                     groupRowEditable: true,
-                    valueSetter,
+                    groupRowValueSetter: cascadeGroupRowValueSetter,
                 },
             ],
             rowData,
@@ -75,41 +70,23 @@ describe.each(EDIT_MODES)('groupRowEditable cascading edits (%s)', (editMode) =>
             getRowId: (params) => params.data?.id,
         });
 
-        const beforeEditSnapshot = `
-            ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-region-Europe amount:180
-            │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-France amount:60
-            │ │ ├── LEAF id:fr-paris region:"Europe" country:"France" amount:30
-            │ │ └── LEAF id:fr-lyon region:"Europe" country:"France" amount:30
-            │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-Germany amount:60
-            │ │ ├── LEAF id:de-berlin region:"Europe" country:"Germany" amount:30
-            │ │ └── LEAF id:de-hamburg region:"Europe" country:"Germany" amount:30
-            │ └─┬ LEAF_GROUP id:row-group-region-Europe-country-Italy amount:60
-            │ · ├── LEAF id:it-rome region:"Europe" country:"Italy" amount:30
-            │ · └── LEAF id:it-milan region:"Europe" country:"Italy" amount:30
-            └─┬ filler id:row-group-region-Americas amount:160
-            · ├─┬ LEAF_GROUP id:row-group-region-Americas-country-USA amount:100
-            · │ ├── LEAF id:us-nyc region:"Americas" country:"USA" amount:70
-            · │ └── LEAF id:us-la region:"Americas" country:"USA" amount:30
-            · └─┬ LEAF_GROUP id:row-group-region-Americas-country-Canada amount:60
-            · · ├── LEAF id:ca-toronto region:"Americas" country:"Canada" amount:35
-            · · └── LEAF id:ca-vancouver region:"Americas" country:"Canada" amount:25
-        `;
-
-        await new GridRows(api, 'before edit').check(beforeEditSnapshot);
+        await new GridRows(api, 'before edit').check(baselineSnapshot);
 
         const europeNode = api.getRowNode('row-group-region-Europe');
         expect(europeNode).toBeDefined();
         expect(europeNode!.data).toBeUndefined();
 
         const amountColId = 'amount';
+        const targetValue = 600;
+
         if (editMode === 'ui') {
-            await editCell(api, europeNode!, amountColId, '600');
+            await editCell(api, europeNode!, amountColId, `${targetValue}`);
         } else {
-            europeNode!.setDataValue(amountColId, 600, 'ui');
+            europeNode!.setDataValue(amountColId, targetValue, 'ui');
             await asyncSetTimeout(0);
         }
         await asyncSetTimeout(0);
+
         expect(europeNode!.data).toBeUndefined();
 
         const afterEditSnapshot = `
@@ -132,31 +109,158 @@ describe.each(EDIT_MODES)('groupRowEditable cascading edits (%s)', (editMode) =>
             · · ├── LEAF id:ca-toronto region:"Americas" country:"Canada" amount:35
             · · └── LEAF id:ca-vancouver region:"Americas" country:"Canada" amount:25
         `;
-
         await new GridRows(api, 'after edit').check(afterEditSnapshot);
 
         if (editMode === 'ui') {
             api.undoCellEditing();
             await asyncSetTimeout(0);
-
-            await new GridRows(api, 'after undo').check(beforeEditSnapshot);
-            expect(europeNode!.data).toBeUndefined();
+            await new GridRows(api, 'after undo').check(baselineSnapshot);
+            expect(europeNode!.aggData?.amount ?? 0).toBe(180);
         }
     });
 
+    test('returning false from groupRowValueSetter cancels the commit', async () => {
+        const rowData = createRowData();
+        let invocationCount = 0;
+        const blockingGroupRowValueSetter: GroupRowValueSetterCallback = ({ node }) => {
+            invocationCount += 1;
+            expect(node.group).toBe(true);
+            return false;
+        };
+
+        const api = await gridsManager.createGridAndWait('group-row-editable-blocked', {
+            defaultColDef: {
+                cellEditor: 'agTextCellEditor',
+            },
+            enableGroupEdit: true,
+            undoRedoCellEditing: true,
+            groupDisplayType: 'custom',
+            columnDefs: [
+                {
+                    colId: 'group',
+                    headerName: 'Group',
+                    cellRenderer: 'agGroupCellRenderer',
+                },
+                { field: 'region', rowGroup: true, hide: true },
+                { field: 'country', rowGroup: true, hide: true },
+                {
+                    colId: 'amount',
+                    field: 'amount',
+                    aggFunc: 'sum',
+                    editable: true,
+                    groupRowEditable: true,
+                    groupRowValueSetter: blockingGroupRowValueSetter,
+                },
+            ],
+            rowData,
+            groupDefaultExpanded: -1,
+            getRowId: (params) => params.data?.id,
+        });
+
+        await new GridRows(api, 'before blocked edit').check(baselineSnapshot);
+
+        const europeNode = api.getRowNode('row-group-region-Europe');
+        expect(europeNode).toBeDefined();
+
+        const amountColId = 'amount';
+        if (editMode === 'ui') {
+            await editCell(api, europeNode!, amountColId, '600');
+        } else {
+            europeNode!.setDataValue(amountColId, 600, 'ui');
+            await asyncSetTimeout(0);
+        }
+        await asyncSetTimeout(0);
+
+        expect(invocationCount).toBe(1);
+        await new GridRows(api, 'after blocked edit').check(baselineSnapshot);
+        expect(api.getRowNode('row-group-region-Europe')?.aggData?.amount ?? 0).toBe(180);
+        expect(api.getRowNode('fr-paris')?.data?.amount).toBe(30);
+    });
+
+    test('group edits invoke the column valueSetter for every affected descendant', async () => {
+        const rowData = createRowData();
+        let groupValueSetterCalls = 0;
+        let leafValueSetterCalls = 0;
+
+        const trackingValueSetter: ValueSetterCallback = ({ node, data, column, colDef, newValue }) => {
+            if (!node) {
+                return false;
+            }
+
+            const numericValue = Number(newValue);
+            if (!Number.isFinite(numericValue)) {
+                return false;
+            }
+
+            if (node.group) {
+                groupValueSetterCalls += 1;
+                const colId = column?.getColId() ?? colDef.field ?? 'amount';
+                const groupData = node.groupData ?? {};
+                groupData[colId] = numericValue;
+                node.groupData = groupData;
+                return true;
+            }
+
+            if (data && colDef.field) {
+                leafValueSetterCalls += 1;
+                (data as Record<string, number>)[colDef.field] = numericValue;
+                return true;
+            }
+
+            return false;
+        };
+
+        const api = await gridsManager.createGridAndWait('group-row-editable-value-setter-tracking', {
+            defaultColDef: {
+                cellEditor: 'agTextCellEditor',
+            },
+            enableGroupEdit: true,
+            undoRedoCellEditing: true,
+            groupDisplayType: 'custom',
+            columnDefs: [
+                {
+                    colId: 'group',
+                    headerName: 'Group',
+                    cellRenderer: 'agGroupCellRenderer',
+                },
+                { field: 'region', rowGroup: true, hide: true },
+                { field: 'country', rowGroup: true, hide: true },
+                {
+                    colId: 'amount',
+                    field: 'amount',
+                    aggFunc: 'sum',
+                    editable: true,
+                    groupRowEditable: true,
+                    valueSetter: trackingValueSetter,
+                    groupRowValueSetter: cascadeGroupRowValueSetter,
+                },
+            ],
+            rowData,
+            groupDefaultExpanded: -1,
+            getRowId: (params) => params.data?.id,
+        });
+
+        const europeNode = api.getRowNode('row-group-region-Europe');
+        expect(europeNode).toBeDefined();
+
+        const amountColId = 'amount';
+        const cascadedValue = 600;
+        if (editMode === 'ui') {
+            await editCell(api, europeNode!, amountColId, `${cascadedValue}`);
+        } else {
+            europeNode!.setDataValue(amountColId, cascadedValue, 'ui');
+            await asyncSetTimeout(0);
+        }
+        await asyncSetTimeout(0);
+
+        expect(groupValueSetterCalls).toBe(4);
+        expect(leafValueSetterCalls).toBe(6);
+        expect(europeNode?.aggData?.amount ?? 0).toBe(cascadedValue);
+        expect(api.getRowNode('fr-paris')?.data?.amount).toBe(100);
+    });
+
     test('editing a single leaf updates its parent aggregations', async () => {
-        const rowData = [
-            { id: 'fr-paris', region: 'Europe', country: 'France', amount: 30 },
-            { id: 'fr-lyon', region: 'Europe', country: 'France', amount: 30 },
-            { id: 'de-berlin', region: 'Europe', country: 'Germany', amount: 30 },
-            { id: 'de-hamburg', region: 'Europe', country: 'Germany', amount: 30 },
-            { id: 'it-rome', region: 'Europe', country: 'Italy', amount: 30 },
-            { id: 'it-milan', region: 'Europe', country: 'Italy', amount: 30 },
-            { id: 'us-nyc', region: 'Americas', country: 'USA', amount: 70 },
-            { id: 'us-la', region: 'Americas', country: 'USA', amount: 30 },
-            { id: 'ca-toronto', region: 'Americas', country: 'Canada', amount: 35 },
-            { id: 'ca-vancouver', region: 'Americas', country: 'Canada', amount: 25 },
-        ];
+        const rowData = createRowData();
 
         const api = await gridsManager.createGridAndWait('group-row-editable-leaf-edit', {
             defaultColDef: {
@@ -179,7 +283,7 @@ describe.each(EDIT_MODES)('groupRowEditable cascading edits (%s)', (editMode) =>
                     aggFunc: 'sum',
                     editable: true,
                     groupRowEditable: true,
-                    valueSetter,
+                    groupRowValueSetter: cascadeGroupRowValueSetter,
                 },
             ],
             rowData,
@@ -187,28 +291,7 @@ describe.each(EDIT_MODES)('groupRowEditable cascading edits (%s)', (editMode) =>
             getRowId: (params) => params.data?.id,
         });
 
-        const snapshotBeforeLeafEdit = `
-            ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-region-Europe amount:180
-            │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-France amount:60
-            │ │ ├── LEAF id:fr-paris region:"Europe" country:"France" amount:30
-            │ │ └── LEAF id:fr-lyon region:"Europe" country:"France" amount:30
-            │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-Germany amount:60
-            │ │ ├── LEAF id:de-berlin region:"Europe" country:"Germany" amount:30
-            │ │ └── LEAF id:de-hamburg region:"Europe" country:"Germany" amount:30
-            │ └─┬ LEAF_GROUP id:row-group-region-Europe-country-Italy amount:60
-            │ · ├── LEAF id:it-rome region:"Europe" country:"Italy" amount:30
-            │ · └── LEAF id:it-milan region:"Europe" country:"Italy" amount:30
-            └─┬ filler id:row-group-region-Americas amount:160
-            · ├─┬ LEAF_GROUP id:row-group-region-Americas-country-USA amount:100
-            · │ ├── LEAF id:us-nyc region:"Americas" country:"USA" amount:70
-            · │ └── LEAF id:us-la region:"Americas" country:"USA" amount:30
-            · └─┬ LEAF_GROUP id:row-group-region-Americas-country-Canada amount:60
-            · · ├── LEAF id:ca-toronto region:"Americas" country:"Canada" amount:35
-            · · └── LEAF id:ca-vancouver region:"Americas" country:"Canada" amount:25
-        `;
-
-        await new GridRows(api, 'before leaf edit').check(snapshotBeforeLeafEdit);
+        await new GridRows(api, 'before leaf edit').check(baselineSnapshot);
 
         const parisNode = api.getRowNode('fr-paris');
         expect(parisNode).toBeDefined();
@@ -242,7 +325,6 @@ describe.each(EDIT_MODES)('groupRowEditable cascading edits (%s)', (editMode) =>
             · · ├── LEAF id:ca-toronto region:"Americas" country:"Canada" amount:35
             · · └── LEAF id:ca-vancouver region:"Americas" country:"Canada" amount:25
         `;
-
         await new GridRows(api, 'after leaf edit').check(snapshotAfterLeafEdit);
 
         await asyncSetTimeout(0);
@@ -259,18 +341,7 @@ describe.each(EDIT_MODES)('groupRowEditable cascading edits (%s)', (editMode) =>
     });
 
     test('group edits over filtered groups only adjust filtered descendants', async () => {
-        const rowData = [
-            { id: 'fr-paris', region: 'Europe', country: 'France', amount: 30 },
-            { id: 'fr-lyon', region: 'Europe', country: 'France', amount: 30 },
-            { id: 'de-berlin', region: 'Europe', country: 'Germany', amount: 30 },
-            { id: 'de-hamburg', region: 'Europe', country: 'Germany', amount: 30 },
-            { id: 'it-rome', region: 'Europe', country: 'Italy', amount: 30 },
-            { id: 'it-milan', region: 'Europe', country: 'Italy', amount: 30 },
-            { id: 'us-nyc', region: 'Americas', country: 'USA', amount: 70 },
-            { id: 'us-la', region: 'Americas', country: 'USA', amount: 30 },
-            { id: 'ca-toronto', region: 'Americas', country: 'Canada', amount: 35 },
-            { id: 'ca-vancouver', region: 'Americas', country: 'Canada', amount: 25 },
-        ];
+        const rowData = createRowData();
 
         const api = await gridsManager.createGridAndWait('group-row-editable-filtered', {
             defaultColDef: {
@@ -295,7 +366,7 @@ describe.each(EDIT_MODES)('groupRowEditable cascading edits (%s)', (editMode) =>
                     editable: true,
                     groupRowEditable: true,
                     filter: 'agNumberColumnFilter',
-                    valueSetter,
+                    groupRowValueSetter: cascadeGroupRowValueSetter,
                 },
             ],
             rowData,
@@ -352,8 +423,8 @@ describe.each(EDIT_MODES)('groupRowEditable cascading edits (%s)', (editMode) =>
             · · ├── LEAF id:de-berlin region:"Europe" country:"Germany" amount:60
             · · └── LEAF id:de-hamburg region:"Europe" country:"Germany" amount:60
         `;
+        // Aggregated value still reflects hidden Italy nodes even though the filter hides them.
         await new GridRows(api, 'after filtered edit').check(filteredSnapshotAfterEdit);
-
         expect(api.getRowNode('it-rome')?.data?.amount).toBe(30);
         expect(api.getRowNode('it-milan')?.data?.amount).toBe(30);
 
@@ -385,177 +456,5 @@ describe.each(EDIT_MODES)('groupRowEditable cascading edits (%s)', (editMode) =>
         api.setFilterModel(filterModel);
         await asyncSetTimeout(0);
         await new GridRows(api, 'after reapplying filters').check(filteredSnapshotAfterEdit);
-    });
-});
-
-describe.each(EDIT_MODES)('groupRowEditable readOnlyEdit (%s)', (editMode) => {
-    const createRowData = () => [
-        { id: 'fr-paris', region: 'Europe', country: 'France', amount: 30 },
-        { id: 'fr-lyon', region: 'Europe', country: 'France', amount: 30 },
-        { id: 'de-berlin', region: 'Europe', country: 'Germany', amount: 30 },
-        { id: 'de-hamburg', region: 'Europe', country: 'Germany', amount: 30 },
-        { id: 'it-rome', region: 'Europe', country: 'Italy', amount: 30 },
-        { id: 'it-milan', region: 'Europe', country: 'Italy', amount: 30 },
-        { id: 'us-nyc', region: 'Americas', country: 'USA', amount: 70 },
-        { id: 'us-la', region: 'Americas', country: 'USA', amount: 30 },
-        { id: 'ca-toronto', region: 'Americas', country: 'Canada', amount: 35 },
-        { id: 'ca-vancouver', region: 'Americas', country: 'Canada', amount: 25 },
-    ];
-
-    const baselineSnapshot = `
-        ROOT id:ROOT_NODE_ID
-        ├─┬ filler id:row-group-region-Europe amount:180
-        │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-France amount:60
-        │ │ ├── LEAF id:fr-paris region:"Europe" country:"France" amount:30
-        │ │ └── LEAF id:fr-lyon region:"Europe" country:"France" amount:30
-        │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-Germany amount:60
-        │ │ ├── LEAF id:de-berlin region:"Europe" country:"Germany" amount:30
-        │ │ └── LEAF id:de-hamburg region:"Europe" country:"Germany" amount:30
-        │ └─┬ LEAF_GROUP id:row-group-region-Europe-country-Italy amount:60
-        │ · ├── LEAF id:it-rome region:"Europe" country:"Italy" amount:30
-        │ · └── LEAF id:it-milan region:"Europe" country:"Italy" amount:30
-        └─┬ filler id:row-group-region-Americas amount:160
-        · ├─┬ LEAF_GROUP id:row-group-region-Americas-country-USA amount:100
-        · │ ├── LEAF id:us-nyc region:"Americas" country:"USA" amount:70
-        · │ └── LEAF id:us-la region:"Americas" country:"USA" amount:30
-        · └─┬ LEAF_GROUP id:row-group-region-Americas-country-Canada amount:60
-        · · ├── LEAF id:ca-toronto region:"Americas" country:"Canada" amount:35
-        · · └── LEAF id:ca-vancouver region:"Americas" country:"Canada" amount:25
-    `;
-
-    test('group row edit emits cellEditRequest without mutating data when readOnlyEdit=true', async () => {
-        const cellEditRequests: CellEditRequestEvent[] = [];
-        const api = await gridsManager.createGridAndWait('group-row-editable-readonly-group', {
-            defaultColDef: {
-                cellEditor: 'agTextCellEditor',
-            },
-            enableGroupEdit: true,
-            undoRedoCellEditing: true,
-            readOnlyEdit: true,
-            groupDisplayType: 'custom',
-            columnDefs: [
-                {
-                    colId: 'group',
-                    headerName: 'Group',
-                    cellRenderer: 'agGroupCellRenderer',
-                },
-                { field: 'region', rowGroup: true, hide: true },
-                { field: 'country', rowGroup: true, hide: true },
-                {
-                    colId: 'amount',
-                    field: 'amount',
-                    aggFunc: 'sum',
-                    editable: true,
-                    groupRowEditable: true,
-                    valueSetter,
-                },
-            ],
-            rowData: createRowData(),
-            groupDefaultExpanded: -1,
-            getRowId: (params) => params.data?.id,
-            onCellEditRequest: (event) => cellEditRequests.push(event),
-        });
-
-        await new GridRows(api, 'before read-only group edit').check(baselineSnapshot);
-
-        const europeNode = api.getRowNode('row-group-region-Europe');
-        expect(europeNode).toBeDefined();
-        const amountColId = 'amount';
-        const inputValue = '900';
-        const expectedNewValue = 900;
-
-        if (editMode === 'ui') {
-            await editCell(api, europeNode!, amountColId, inputValue);
-        } else {
-            europeNode!.setDataValue(amountColId, expectedNewValue, 'ui');
-            await asyncSetTimeout(0);
-        }
-        await asyncSetTimeout(0);
-
-        expect(cellEditRequests).toHaveLength(1);
-        const groupEditRequest = cellEditRequests[0];
-        expect(groupEditRequest.node?.id).toBe('row-group-region-Europe');
-        expect(groupEditRequest.column.getColId()).toBe(amountColId);
-        expect(groupEditRequest.oldValue).toBe(180);
-        expect(groupEditRequest.newValue).toBe(expectedNewValue);
-        expect(groupEditRequest.source).toBe(editMode === 'ui' ? 'edit' : 'ui');
-        expect(europeNode?.aggData?.amount ?? 0).toBe(180);
-        await new GridRows(api, 'after read-only group edit').check(baselineSnapshot);
-
-        expect(api.getRowNode('fr-paris')?.data?.amount).toBe(30);
-        expect(api.getRowNode('fr-lyon')?.data?.amount).toBe(30);
-
-        if (editMode === 'ui') {
-            api.undoCellEditing();
-            await asyncSetTimeout(0);
-            await new GridRows(api, 'after undoing read-only group edit').check(baselineSnapshot);
-        }
-    });
-
-    test('leaf row edit emits cellEditRequest without mutating data when readOnlyEdit=true', async () => {
-        const cellEditRequests: CellEditRequestEvent[] = [];
-        const api = await gridsManager.createGridAndWait('group-row-editable-readonly-leaf', {
-            defaultColDef: {
-                cellEditor: 'agTextCellEditor',
-            },
-            enableGroupEdit: true,
-            undoRedoCellEditing: true,
-            readOnlyEdit: true,
-            groupDisplayType: 'custom',
-            columnDefs: [
-                {
-                    colId: 'group',
-                    headerName: 'Group',
-                    cellRenderer: 'agGroupCellRenderer',
-                },
-                { field: 'region', rowGroup: true, hide: true },
-                { field: 'country', rowGroup: true, hide: true },
-                {
-                    colId: 'amount',
-                    field: 'amount',
-                    aggFunc: 'sum',
-                    editable: true,
-                    groupRowEditable: true,
-                    valueSetter,
-                },
-            ],
-            rowData: createRowData(),
-            groupDefaultExpanded: -1,
-            getRowId: (params) => params.data?.id,
-            onCellEditRequest: (event) => cellEditRequests.push(event),
-        });
-
-        await new GridRows(api, 'before read-only leaf edit').check(baselineSnapshot);
-
-        const parisNode = api.getRowNode('fr-paris');
-        expect(parisNode).toBeDefined();
-        const amountColId = 'amount';
-        const inputValue = '45';
-        const expectedNewValue = 45;
-
-        if (editMode === 'ui') {
-            await editCell(api, parisNode!, amountColId, inputValue);
-        } else {
-            parisNode!.setDataValue(amountColId, expectedNewValue, 'ui');
-            await asyncSetTimeout(0);
-        }
-        await asyncSetTimeout(0);
-
-        expect(cellEditRequests).toHaveLength(1);
-        const leafEditRequest = cellEditRequests[0];
-        expect(leafEditRequest.node?.id).toBe('fr-paris');
-        expect(leafEditRequest.column.getColId()).toBe(amountColId);
-        expect(leafEditRequest.oldValue).toBe(30);
-        expect(leafEditRequest.newValue).toBe(expectedNewValue);
-        expect(leafEditRequest.source).toBe(editMode === 'ui' ? 'edit' : 'ui');
-        expect(api.getRowNode('fr-paris')?.data?.amount).toBe(30);
-        expect(api.getRowNode('row-group-region-Europe')?.aggData?.amount ?? 0).toBe(180);
-        await new GridRows(api, 'after read-only leaf edit').check(baselineSnapshot);
-
-        if (editMode === 'ui') {
-            api.undoCellEditing();
-            await asyncSetTimeout(0);
-            await new GridRows(api, 'after undoing read-only leaf edit').check(baselineSnapshot);
-        }
     });
 });

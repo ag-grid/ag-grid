@@ -366,6 +366,7 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     defaultAggFunc: undefined,
     aggFunc: undefined,
     groupRowEditable: undefined,
+    groupRowValueSetter: undefined,
     pinned: undefined,
     initialPinned: undefined,
     chartDataType: undefined,

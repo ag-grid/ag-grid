@@ -28,19 +28,14 @@ connecting the grid with a store.
 
 ## Editing Group Row Cells
 
-Add `groupRowEditable` to any column that should accept edits on group nodes. The callback (or
-boolean) only runs for nodes where `rowNode.group === true`, while leaf rows continue to rely on
-`editable`. During UI editing (double click, Enter, `startEditingCell`) AG Grid checks the relevant
-flag, runs the editor, calls `valueParser` (if present) followed by `valueSetter`, and finally
-stores the parsed value inside `rowNode.groupData` so the renderer updates immediately.
+Add `groupRowEditable` to any column that should accept edits on group nodes.
+This value can be a boolean (true or false) or a callback that will only be called for nodes where `rowNode.group === true`, while leaf rows continue to rely on
+`editable`.
 
-Programmatic updates via `rowNode.setDataValue(colId, value, source)` skip that UI pipeline. The
-grid invokes `valueSetter` directly with the provided value, so this route suits already validated
-input, whereas the UI workflow remains preferable when parser logic or undo/redo behaviour is
-needed. When that setter would recurse or the logic needs to write to the underlying data object
-directly, pass `'set-raw-data-field'` as the `source`. This bypasses the column `valueSetter` and
-prevents the `cellValueChanged` event from firing, keeping the change invisible to undo/redo while
-custom propagation code runs.
+`groupRowValueSetter` is a callback similar to `valueSetter`, but specifically for group rows.
+It is called whenever a group row cell is edited, whether via the UI, `rowNode.setDataValue` and can be used to cascade the edit to child rows.
+
+When users edit cells via the UI, the grid runs the full value pipeline: `valueParser`, `valueSetter`,
 
 When a column defines both `groupRowEditable` and `editable`, AG Grid only evaluates the property
 that matches the current node type, enabling separate rules for group rows and leaves.
@@ -57,15 +52,13 @@ distribution.
 
 Key points:
 
-- `childrenAfterFilter` lists only descendants that pass the current filters (and respects
-	`groupAggFiltering`), so filtered edits
+- Use `groupRowValueSetter` to redistribute committed values to descendants. The callback receives the
+	group row node and column, runs whether the edit originated from the UI, `setDataValue`, or a
+	read-only edit request, and can return `false` to cancel the commit after performing validation.
+- `rowNode.setDataValue` on children to update a child value, this triggers normal aggregation to refresh the parent totals and recurses further down if is a group invoking its own
+	`groupRowValueSetter`.
+- `rowNode.childrenAfterSort` lists only descendants in the node to update. This can contain groups or leafs.
 	adjust exactly the rows the user can see, and clearing the filters leaves untouched nodes as-is.
-- `rowNode.setDataValue` on children reuses the usual `valueSetter`/`valueParser` logic. The setter
-	can short-circuit when `node.group === false`, updating the leaf data directly and returning
-	`true`, so only group nodes recurse and there is no infinite loop.
-- Passing `'set-raw-data-field'` as the optional `source` argument when updating the group value
-	writes straight to `node.data`, skips the column `valueSetter`, and suppresses
-	`cellValueChanged`, which is ideal when a custom cascade already distributes values to children.
 - Parent aggregates refresh automatically because the children’s `data` changes trigger the column
 	`aggFunc`, so typing £600 at “Europe” rebalances the filtered countries to reach that total.
 

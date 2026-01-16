@@ -394,6 +394,12 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * Set to `true` if this column is editable, otherwise `false`. Can also be a function to have different rows editable.
      */
     groupRowEditable?: boolean | GroupRowEditableCallback<TData, TValue>;
+    /**
+     * Runs after a group row value changes so custom code can push edits down to descendant rows.
+     * Fires for every `setDataValue` call when defined, regardless of `groupRowEditable`.
+     * Return `false` to cancel the grid's default update and stop the value from being committed.
+     */
+    groupRowValueSetter?: GroupRowValueSetterFunc<TData, TValue>;
     /** Function or expression. Sets the value into your data for saving. Return `true` if the data changed. */
     valueSetter?: string | ValueSetterFunc<TData, TValue>;
     /** Function or expression. Parses the value for saving. */
@@ -966,6 +972,18 @@ export interface GroupRowEditableCallbackParams<TData = any, TValue = any, TCont
 export type GroupRowEditableCallback<TData = any, TValue = any, TContext = any> = (
     params: GroupRowEditableCallbackParams<TData, TValue, TContext>
 ) => boolean;
+export interface GroupRowValueSetterParams<TData = any, TValue = any, TContext = any>
+    extends ChangedValueParams<TData, TValue, TContext> {
+    /** Group row that triggered the callback. */
+    node: IRowNode<TData>;
+    /** Column backing the edit. */
+    column: Column<TValue>;
+    /** Source string provided to `rowNode.setDataValue`. */
+    eventSource?: string;
+}
+export type GroupRowValueSetterFunc<TData = any, TValue = any, TContext = any> = (
+    params: GroupRowValueSetterParams<TData, TValue, TContext>
+) => void;
 export interface SuppressPasteCallbackParams<TData = any, TValue = any, TContext = any>
     extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}
 export type SuppressPasteCallback<TData = any, TValue = any, TContext = any> = (
