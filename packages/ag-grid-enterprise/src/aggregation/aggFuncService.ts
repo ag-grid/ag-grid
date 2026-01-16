@@ -114,21 +114,20 @@ function aggSum(params: IAggFuncParams): number | bigint | null {
             if (!useBigInt) {
                 useBigInt = true;
                 if (typeof result === 'number') {
-                    const coercedResult = toBigIntFromNumber(result);
-                    if (coercedResult == null) {
+                    if (!isFinite(result) || !Number.isInteger(result)) {
                         return null;
                     }
-                    result = coercedResult;
+                    result = BigInt(result);
                 }
             }
             result = result === null ? value : (result as bigint) + value;
         } else if (!useBigInt) {
             result = result === null ? value : (result as number) + value;
         } else {
-            const coercedValue = toBigIntFromNumber(value);
-            if (coercedValue == null) {
+            if (!isFinite(value) || !Number.isInteger(value)) {
                 return null;
             }
+            const coercedValue = BigInt(value);
             result = result === null ? coercedValue : (result as bigint) + coercedValue;
         }
     }
@@ -161,11 +160,10 @@ function aggMin(params: IAggFuncParams): number | bigint | null {
             if (!useBigInt) {
                 useBigInt = true;
                 if (typeof result === 'number') {
-                    const coercedResult = toBigIntFromNumber(result);
-                    if (coercedResult == null) {
+                    if (!isFinite(result) || !Number.isInteger(result)) {
                         return null;
                     }
-                    result = coercedResult;
+                    result = BigInt(result);
                 }
             }
             if (result === null || (result as bigint) > value) {
@@ -176,10 +174,10 @@ function aggMin(params: IAggFuncParams): number | bigint | null {
                 result = value;
             }
         } else {
-            const coercedValue = toBigIntFromNumber(value);
-            if (coercedValue == null) {
+            if (!isFinite(value) || !Number.isInteger(value)) {
                 return null;
             }
+            const coercedValue = BigInt(value);
             if (result === null || (result as bigint) > coercedValue) {
                 result = coercedValue;
             }
@@ -206,11 +204,10 @@ function aggMax(params: IAggFuncParams): number | bigint | null {
             if (!useBigInt) {
                 useBigInt = true;
                 if (typeof result === 'number') {
-                    const coercedResult = toBigIntFromNumber(result);
-                    if (coercedResult == null) {
+                    if (!isFinite(result) || !Number.isInteger(result)) {
                         return null;
                     }
-                    result = coercedResult;
+                    result = BigInt(result);
                 }
             }
             if (result === null || (result as bigint) < value) {
@@ -221,10 +218,10 @@ function aggMax(params: IAggFuncParams): number | bigint | null {
                 result = value;
             }
         } else {
-            const coercedValue = toBigIntFromNumber(value);
-            if (coercedValue == null) {
+            if (!isFinite(value) || !Number.isInteger(value)) {
                 return null;
             }
+            const coercedValue = BigInt(value);
             if (result === null || (result as bigint) < coercedValue) {
                 result = coercedValue;
             }
@@ -300,11 +297,10 @@ function aggAvg(params: IAggFuncParams): { value: number | bigint | null; count:
         if (typeof currentValue === 'bigint') {
             if (!useBigInt) {
                 useBigInt = true;
-                const coercedSum = toBigIntFromNumber(sum);
-                if (coercedSum == null) {
+                if (!isFinite(sum) || !Number.isInteger(sum)) {
                     return null;
                 }
-                sumBigInt = coercedSum;
+                sumBigInt = BigInt(sum);
             }
             sumBigInt += currentValue;
             count++;
@@ -313,11 +309,10 @@ function aggAvg(params: IAggFuncParams): { value: number | bigint | null; count:
 
         if (typeof currentValue === 'number') {
             if (useBigInt) {
-                const coercedValue = toBigIntFromNumber(currentValue);
-                if (coercedValue == null) {
+                if (!isFinite(currentValue) || !Number.isInteger(currentValue)) {
                     return null;
                 }
-                sumBigInt += coercedValue;
+                sumBigInt += BigInt(currentValue);
             } else {
                 sum += currentValue;
             }
@@ -333,20 +328,18 @@ function aggAvg(params: IAggFuncParams): { value: number | bigint | null; count:
             if (typeof currentValue.value === 'bigint') {
                 if (!useBigInt) {
                     useBigInt = true;
-                    const coercedSum = toBigIntFromNumber(sum);
-                    if (coercedSum == null) {
+                    if (!isFinite(sum) || !Number.isInteger(sum)) {
                         return null;
                     }
-                    sumBigInt = coercedSum;
+                    sumBigInt = BigInt(sum);
                 }
                 sumBigInt += currentValue.value * BigInt(currentValue.count);
             } else if (useBigInt) {
                 const weightedValue = currentValue.value * currentValue.count;
-                const coercedValue = toBigIntFromNumber(weightedValue);
-                if (coercedValue == null) {
+                if (!isFinite(weightedValue) || !Number.isInteger(weightedValue)) {
                     return null;
                 }
-                sumBigInt += coercedValue;
+                sumBigInt += BigInt(weightedValue);
             } else {
                 sum += currentValue.value * currentValue.count;
             }
@@ -372,11 +365,4 @@ function aggAvg(params: IAggFuncParams): { value: number | bigint | null; count:
     result.count = count;
     result.value = value;
     return result;
-}
-
-function toBigIntFromNumber(value: number): bigint | null {
-    if (!isFinite(value) || !Number.isInteger(value)) {
-        return null;
-    }
-    return BigInt(value);
 }
