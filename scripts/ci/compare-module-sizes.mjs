@@ -34,7 +34,7 @@ function getModuleKey(modules) {
 }
 
 function formatSize(size) {
-    return size?.toFixed(2) ?? '0.00';
+    return size.toFixed(2);
 }
 
 function formatDiff(diff) {
@@ -91,6 +91,10 @@ for (const key of allKeys) {
     const pr = prMap.get(key);
 
     if (base && pr) {
+        // Not available on latest so default to 0 for now
+        pr.gzipSelfSize = pr.gzipSelfSize || 0;
+        base.gzipSelfSize = base.gzipSelfSize || 0;
+
         const selfSizeDiff = pr.selfSize - base.selfSize;
         const fileSizeDiff = pr.fileSize - base.fileSize;
         const gzipSelfSizeDiff = pr.gzipSelfSize - base.gzipSelfSize;
@@ -115,6 +119,8 @@ for (const key of allKeys) {
             isRemoved: false,
         });
     } else if (pr && !base) {
+        // Not available on latest so default to 0 for now
+        pr.gzipSelfSize = pr.gzipSelfSize || 0;
         diffs.push({
             modules: pr.modules,
             key,
@@ -133,6 +139,8 @@ for (const key of allKeys) {
             isRemoved: false,
         });
     } else if (base && !pr) {
+        // Not available on latest so default to 0 for now
+        base.gzipSelfSize = base.gzipSelfSize || 0;
         diffs.push({
             modules: base.modules,
             key,
