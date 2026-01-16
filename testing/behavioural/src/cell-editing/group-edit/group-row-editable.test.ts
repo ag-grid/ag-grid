@@ -52,7 +52,6 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
             defaultColDef: {
                 cellEditor: 'agTextCellEditor',
             },
-            enableGroupEdit: true,
             undoRedoCellEditing: true,
             groupDisplayType: 'custom',
             columnDefs: [
@@ -176,7 +175,6 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
             defaultColDef: {
                 cellEditor: 'agTextCellEditor',
             },
-            enableGroupEdit: true,
             undoRedoCellEditing: true,
             groupDisplayType: 'custom',
             columnDefs: [
@@ -338,7 +336,6 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
             defaultColDef: {
                 cellEditor: 'agTextCellEditor',
             },
-            enableGroupEdit: true,
             undoRedoCellEditing: true,
             groupDisplayType: 'custom',
             columnDefs: [

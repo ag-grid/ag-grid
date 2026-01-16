@@ -44,7 +44,6 @@ describe.each(EDIT_MODES)('groupRowEditable cascading edits (%s)', (editMode) =>
             defaultColDef: {
                 cellEditor: 'agTextCellEditor',
             },
-            enableGroupEdit: true,
             undoRedoCellEditing: true,
             groupDisplayType: 'custom',
             columnDefs: [
@@ -125,7 +124,6 @@ describe.each(EDIT_MODES)('groupRowEditable cascading edits (%s)', (editMode) =>
             defaultColDef: {
                 cellEditor: 'agTextCellEditor',
             },
-            enableGroupEdit: true,
             undoRedoCellEditing: true,
             groupDisplayType: 'custom',
             columnDefs: [
@@ -206,7 +204,6 @@ describe.each(EDIT_MODES)('groupRowEditable cascading edits (%s)', (editMode) =>
             defaultColDef: {
                 cellEditor: 'agTextCellEditor',
             },
-            enableGroupEdit: true,
             undoRedoCellEditing: true,
             groupDisplayType: 'custom',
             groupAggFiltering: true,
