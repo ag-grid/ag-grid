@@ -12,8 +12,7 @@ import type {
     ValueService,
     _IRowNodePivotStage,
 } from 'ag-grid-community';
-import { _jsonEquals } from 'ag-grid-community';
-import { BeanStub, _missing, _safeJsonStringify } from 'ag-grid-community';
+import { BeanStub, _jsonEquals, _missing } from 'ag-grid-community';
 
 import type { PivotColDefService } from './pivotColDefService';
 
