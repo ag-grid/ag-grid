@@ -1,5 +1,6 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
+
 import { getGitHash } from './gitUtils';
 
 type Logger = Pick<Console, 'info' | 'warn' | 'log'>;
@@ -40,11 +41,12 @@ export const getSitemapXml = async ({
     try {
         await fs.access(cachedSitemapPath);
         const cachedHash = await readCachedHash(cachedMetaPath);
+
+        xmlSitemap = await fs.readFile(cachedSitemapPath, 'utf8');
         if (cachedHash === currentHash) {
-            xmlSitemap = await fs.readFile(cachedSitemapPath, 'utf8');
-            logger.info(`Sitemap cache hash match. Using '${cachedSitemapPath}' for hash '${currentHash}'`);
+            logger.info(`✅ Sitemap cache hash match. Using '${cachedSitemapPath}' for hash '${currentHash}'`);
         } else {
-            logger.warn(`Sitemap cache hash mismatch. Current: ${currentHash}, cached: ${cachedHash ?? 'unknown'}.`);
+            logger.warn(`⚠️ Sitemap cache hash mismatch. Current: ${currentHash}, cached: ${cachedHash ?? 'unknown'}.`);
         }
     } catch (error) {
         if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
@@ -55,7 +57,7 @@ export const getSitemapXml = async ({
     if (xmlSitemap == null) {
         const response = await fetch(sitemapUrl);
         xmlSitemap = await response.text();
-        logger.log('No cached sitemap found, fetched from live site.');
+        logger.log('⚠️ No cached sitemap found, fetched from live site.');
     }
 
     return xmlSitemap;
