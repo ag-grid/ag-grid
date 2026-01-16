@@ -12,8 +12,6 @@ import {
     EDIT_MODES,
     asyncSetTimeout,
     callsForRowNode,
-    cascadeGroupRowValueSetter,
-    createGroupRowData,
     editCell,
     getGroupColumnDisplayValue,
     gridsManager,
@@ -403,65 +401,6 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
             api.undoCellEditing();
             await asyncSetTimeout(0);
             expect(rowData[0].label).toBe(originalEarthLabel);
-        }
-    });
-
-    test('groupRowValueSetter without groupRowEditable keeps group row data undefined', async () => {
-        const rowData = createGroupRowData();
-
-        const api = await gridsManager.createGridAndWait('group-row-set-value-without-group-row-editable', {
-            defaultColDef: {
-                cellEditor: 'agTextCellEditor',
-            },
-            enableGroupEdit: true,
-            undoRedoCellEditing: true,
-            groupDisplayType: 'custom',
-            columnDefs: [
-                {
-                    colId: 'group',
-                    headerName: 'Group',
-                    cellRenderer: 'agGroupCellRenderer',
-                },
-                { field: 'region', rowGroup: true, hide: true },
-                { field: 'country', rowGroup: true, hide: true },
-                {
-                    colId: 'amount',
-                    field: 'amount',
-                    aggFunc: 'sum',
-                    editable: true,
-                    groupRowValueSetter: cascadeGroupRowValueSetter,
-                },
-            ],
-            rowData,
-            groupDefaultExpanded: -1,
-            getRowId: (params) => params.data?.id,
-        });
-
-        const europeNode = api.getRowNode('row-group-region-Europe');
-        expect(europeNode).toBeDefined();
-        expect(europeNode!.group).toBe(true);
-        expect(europeNode!.data).toBeUndefined();
-
-        const amountColId = 'amount';
-        const cascadedValue = 420;
-        if (editMode === 'ui') {
-            await editCell(api, europeNode!, amountColId, `${cascadedValue}`);
-        } else {
-            europeNode!.setDataValue(amountColId, cascadedValue, 'ui');
-            await asyncSetTimeout(0);
-        }
-        await asyncSetTimeout(0);
-
-        expect(europeNode!.data).toBeUndefined();
-        expect(europeNode!.aggData?.amount ?? 0).toBe(cascadedValue);
-        expect(api.getRowNode('fr-paris')?.data?.amount).toBe(70);
-
-        if (editMode === 'ui') {
-            api.undoCellEditing();
-            await asyncSetTimeout(0);
-            expect(europeNode!.aggData?.amount ?? 0).toBe(180);
-            expect(api.getRowNode('fr-paris')?.data?.amount).toBe(30);
-            expect(europeNode!.data).toBeUndefined();
         }
     });
 

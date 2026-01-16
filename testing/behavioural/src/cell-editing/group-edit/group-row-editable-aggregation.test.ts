@@ -2,7 +2,6 @@ import type { NumberFilterModel, SetFilterModel } from 'ag-grid-community';
 
 import { GridRows } from '../../test-utils';
 import { expect } from '../../test-utils/matchers';
-import type { ValueSetterCallback } from './group-edit-test-utils';
 import {
     EDIT_MODES,
     asyncSetTimeout,
