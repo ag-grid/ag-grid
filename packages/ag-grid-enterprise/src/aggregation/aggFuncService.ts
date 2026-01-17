@@ -97,64 +97,29 @@ export class AggFuncService extends BeanStub implements NamedBean, IAggFuncServi
     }
 }
 
-function isBigIntColumn(params: IAggFuncParams, includeGroupValues = false): boolean {
-    const cellDataType = params.colDef?.cellDataType ?? params.column?.getColDef()?.cellDataType;
-    if (cellDataType === 'bigint') {
-        return true;
-    }
-    if (cellDataType != null) {
-        return false;
-    }
-
+function aggSum(params: IAggFuncParams): number | bigint {
     const { values } = params;
-    let hasBigInt = false;
-    for (let i = 0; i < values.length; i++) {
-        const value = values[i];
-        if (typeof value === 'number') {
-            return false;
-        }
-        if (typeof value === 'bigint') {
-            hasBigInt = true;
-            continue;
-        }
-        if (includeGroupValues && value != null && typeof value.count === 'number') {
-            if (typeof value.value === 'number') {
-                return false;
-            }
-            if (typeof value.value === 'bigint') {
-                hasBigInt = true;
-            }
-        }
-    }
-    return hasBigInt;
-}
-
-function aggSum(params: IAggFuncParams): number | bigint | null {
-    const { values } = params;
-    let result: number | bigint | null = null;
+    let result: any = null; // the logic ensures that we never combine bigint arithmetic with numbers, but TS is hard to please
 
     // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
     for (let i = 0; i < values.length; i++) {
         const value = values[i];
 
-        if (typeof value !== 'number' && typeof value !== 'bigint') {
-            continue;
+        if (typeof value === 'number') {
+            if (result === null) {
+                result = value;
+            } else {
+                result += typeof result === 'number' ? value : BigInt(value);
+            }
+        } else if (typeof value === 'bigint') {
+            if (result === null) {
+                result = value;
+            } else {
+                result = (typeof result === 'bigint' ? result : BigInt(result)) + value;
+            }
         }
-
-        if (result === null) {
-            result = value;
-            continue;
-        }
-
-        if (typeof result === typeof value) {
-            (result as bigint) += value as bigint;
-            continue;
-        }
-        // mixing number and bigint, convert both to bigint
-        result =
-            (typeof result === 'bigint' ? result : BigInt(result as number)) +
-            (typeof value === 'bigint' ? value : BigInt(value as number));
     }
+
     return result;
 }
 
@@ -171,29 +136,11 @@ function aggMin(params: IAggFuncParams): number | bigint | null {
     let result: number | bigint | null = null;
 
     // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
-    if (isBigIntColumn(params)) {
-        for (let i = 0; i < values.length; i++) {
-            const value = values[i];
+    for (let i = 0; i < values.length; i++) {
+        const value = values[i];
 
-            if (typeof value !== 'bigint') {
-                continue;
-            }
-
-            if (result === null || (result as bigint) > value) {
-                result = value;
-            }
-        }
-    } else {
-        for (let i = 0; i < values.length; i++) {
-            const value = values[i];
-
-            if (typeof value !== 'number') {
-                continue;
-            }
-
-            if (result === null || (result as number) > value) {
-                result = value;
-            }
+        if ((typeof value === 'number' || typeof value === 'bigint') && (result === null || result > value)) {
+            result = value;
         }
     }
 
@@ -205,29 +152,11 @@ function aggMax(params: IAggFuncParams): number | bigint | null {
     let result: number | bigint | null = null;
 
     // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
-    if (isBigIntColumn(params)) {
-        for (let i = 0; i < values.length; i++) {
-            const value = values[i];
+    for (let i = 0; i < values.length; i++) {
+        const value = values[i];
 
-            if (typeof value !== 'bigint') {
-                continue;
-            }
-
-            if (result === null || (result as bigint) < value) {
-                result = value;
-            }
-        }
-    } else {
-        for (let i = 0; i < values.length; i++) {
-            const value = values[i];
-
-            if (typeof value !== 'number') {
-                continue;
-            }
-
-            if (result === null || (result as number) < value) {
-                result = value;
-            }
+        if ((typeof value === 'number' || typeof value === 'bigint') && (result === null || result < value)) {
+            result = value;
         }
     }
 
@@ -287,59 +216,46 @@ const AVERAGE_PROTO = Object.freeze({
 
 // the average function is tricky as the multiple levels require weighted averages
 // for the non-leaf node aggregations.
-function aggAvg(params: IAggFuncParams): { value: number | bigint | null; count: number } | null {
+function aggAvg(params: IAggFuncParams): {
+    value: number | bigint | null;
+    count: number;
+} {
     const { values } = params;
-    let sum = 0;
-    let sumBigInt = 0n;
+    let sum: any = 0; // the logic ensures that we never combine bigint arithmetic with numbers, but TS is hard to please
     let count = 0;
-    const useBigInt = isBigIntColumn(params, true);
 
     // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
-    if (useBigInt) {
-        for (let i = 0; i < values.length; i++) {
-            const currentValue = values[i];
+    for (let i = 0; i < values.length; i++) {
+        const currentValue = values[i];
+        let valueToAdd: number | bigint | null = null;
 
-            if (typeof currentValue === 'bigint') {
-                sumBigInt += currentValue;
-                count++;
-                continue;
-            }
-
-            if (
-                currentValue != null &&
-                typeof currentValue.value === 'bigint' &&
-                typeof currentValue.count === 'number'
-            ) {
-                sumBigInt += currentValue.value * BigInt(currentValue.count);
-                count += currentValue.count;
-            }
+        if (typeof currentValue === 'number' || typeof currentValue === 'bigint') {
+            valueToAdd = currentValue;
+            count++;
+        } else if (
+            currentValue != null &&
+            (typeof currentValue.value === 'number' || typeof currentValue.value === 'bigint') &&
+            typeof currentValue.count === 'number'
+        ) {
+            // we are aggregating groups, so we take the aggregated values to calculated a weighted average
+            valueToAdd =
+                currentValue.value *
+                (typeof currentValue.value === 'number' ? currentValue.count : BigInt(currentValue.count));
+            count += currentValue.count;
         }
-    } else {
-        for (let i = 0; i < values.length; i++) {
-            const currentValue = values[i];
 
-            if (typeof currentValue === 'number') {
-                sum += currentValue;
-                count++;
-                continue;
-            }
-
-            if (
-                currentValue != null &&
-                typeof currentValue.value === 'number' &&
-                typeof currentValue.count === 'number'
-            ) {
-                sum += currentValue.value * currentValue.count;
-                count += currentValue.count;
-            }
+        if (typeof valueToAdd === 'number') {
+            sum += typeof sum === 'number' ? valueToAdd : BigInt(valueToAdd);
+        } else if (typeof valueToAdd === 'bigint') {
+            sum = (typeof sum === 'bigint' ? sum : BigInt(sum)) + valueToAdd;
         }
     }
 
-    let value: null | number | bigint = null;
+    let value: null | number = null;
 
     // avoid divide by zero error
     if (count > 0) {
-        value = useBigInt ? sumBigInt / BigInt(count) : sum / count;
+        value = sum / ((typeof sum === 'number' ? count : BigInt(count)) as any);
     }
 
     // the previous aggregation data
