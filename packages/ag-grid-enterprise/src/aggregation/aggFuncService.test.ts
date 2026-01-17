@@ -1,5 +1,6 @@
-import type { GridOptionsService, IAggFuncParams } from 'ag-grid-community';
+import type { IAggFuncParams } from 'packages/ag-grid-community/src/entities/colDef';
 
+import type { GridOptionsService } from '../../../ag-grid-community/src/gridOptionsService';
 import { mock } from '../test-utils/mock';
 import { AggFuncService } from './aggFuncService';
 
@@ -215,6 +216,7 @@ describe('aggAvg', () => {
         const result = avg(createParams([BigInt(53242342), BigInt(2565645), BigInt(1153456746)]));
 
         expect(result.toNumber()).toBe(BigInt(403088244));
+        expect(result.toString()).toBe('403088244');
     });
 
     it('returns average of valid elements', () => {
