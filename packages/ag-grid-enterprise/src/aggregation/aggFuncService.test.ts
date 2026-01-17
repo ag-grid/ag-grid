@@ -37,15 +37,13 @@ describe('aggSum', () => {
             createParams([BigInt(3245234), BigInt(6654432), BigInt(67468456345), BigInt(-4657563), BigInt(45745456)])
         );
 
-        expect(typeof result).toBe('bigint');
-        expect(result.toString()).toBe('67519443904');
+        expect(result).toBe(BigInt(67519443904));
     });
 
     it('returns sum of mixture of numbers and bigints', () => {
         const result = sum(createParams([20, BigInt(30), 40]));
 
-        expect(typeof result).toBe('bigint');
-        expect(result.toString()).toBe('90');
+        expect(result).toBe(BigInt(90));
     });
 
     it('returns sum of valid numbers', () => {
@@ -115,15 +113,13 @@ describe('aggMin', () => {
     it('returns min of bigints', () => {
         const result = min(createParams([BigInt(3124123), BigInt(622543), BigInt(-15234123), BigInt(85678543)]));
 
-        expect(typeof result).toBe('bigint');
-        expect(result.toString()).toBe('-15234123');
+        expect(result).toBe(BigInt(-15234123));
     });
 
     it('returns min of mixture of numbers and bigints', () => {
         const result = min(createParams([BigInt(234), -435345, BigInt(-15345435), 34565]));
 
-        expect(typeof result).toBe('bigint');
-        expect(result.toString()).toBe('-15345435');
+        expect(result).toBe(BigInt(-15345435));
     });
 
     it('returns min of valid numbers', () => {
@@ -157,15 +153,13 @@ describe('aggMax', () => {
     it('returns max of bigints', () => {
         const result = max(createParams([BigInt(4543), BigInt(5464524), BigInt(-435312), BigInt(453)]));
 
-        expect(typeof result).toBe('bigint');
-        expect(result.toString()).toBe('5464524');
+        expect(result).toBe(BigInt(5464524));
     });
 
     it('returns max of mixture of numbers and bigints', () => {
         const result = max(createParams([BigInt(234), BigInt(5645723), -435345, 34565]));
 
-        expect(typeof result).toBe('bigint');
-        expect(result.toString()).toBe('5645723');
+        expect(result).toBe(BigInt(5645723));
     });
 
     it('returns max of valid numbers', () => {
@@ -220,8 +214,7 @@ describe('aggAvg', () => {
     it('returns average of bigint elements', () => {
         const result = avg(createParams([BigInt(53242342), BigInt(2565645), BigInt(1153456746)]));
 
-        expect(typeof result.toNumber()).toBe('bigint');
-        expect(result.toNumber().toString()).toBe('403088244');
+        expect(result.toNumber()).toBe(BigInt(403088244));
         expect(result.toString()).toBe('403088244');
     });
 
@@ -240,11 +233,10 @@ describe('aggAvg', () => {
     it('calculates average from group aggregation objects with bigints', () => {
         const result = avg(createParams([16, { count: 3, value: 12 }, { count: 4, value: BigInt(32) }]));
 
-        expect(typeof result.toNumber()).toBe('bigint');
-        expect(result.toNumber().toString()).toBe('22');
+        expect(result.toNumber()).toBe(BigInt(22));
     });
 
     it('returns null for empty array', () => {
-        expect(avg(createParams([]))?.toNumber()).toBeNull();
+        expect(avg(createParams([])).toNumber()).toBeNull();
     });
 });
