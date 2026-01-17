@@ -54,7 +54,9 @@ export class BigIntFilter extends SimpleFilter<
 
     private refreshInputPairValidation(from: GridInputTextField, to: GridInputTextField, isFrom = false): void {
         const localeKey = getValidityMessageKey(_parseBigIntOrNull(from), _parseBigIntOrNull(to), isFrom);
-        const validityMessage = localeKey ? this.translate(localeKey, [String(isFrom ? to : from)]) : '';
+        const validityMessage = localeKey
+            ? this.translate(localeKey, [String(isFrom ? to.getValue() : from.getValue())])
+            : '';
         (isFrom ? from : to).setCustomValidity(validityMessage);
         (isFrom ? to : from).setCustomValidity('');
         if (validityMessage.length > 0) {
