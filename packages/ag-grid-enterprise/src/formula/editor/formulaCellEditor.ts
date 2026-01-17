@@ -63,9 +63,7 @@ export class FormulaCellEditor extends AgAbstractCellEditor<ICellEditorParams> {
             const { rowIndex: prevRowIndex, rowPinned: prevRowPinned, column: prevColumn } = prevFocus;
             const { rowIndex: nextRowIndex, rowPinned: nextRowPinned, column: nextColumn } = nextFocus;
             focusChanged =
-                prevRowIndex !== nextRowIndex ||
-                prevRowPinned !== nextRowPinned ||
-                prevColumn !== nextColumn;
+                prevRowIndex !== nextRowIndex || prevRowPinned !== nextRowPinned || prevColumn !== nextColumn;
         }
 
         const { defaultPrevented } = event;
