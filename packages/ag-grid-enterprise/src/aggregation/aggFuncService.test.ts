@@ -1,6 +1,5 @@
-import type { IAggFuncParams } from 'packages/ag-grid-community/src/entities/colDef';
+import type { GridOptionsService, IAggFuncParams } from 'ag-grid-community';
 
-import type { GridOptionsService } from '../../../ag-grid-community/src/gridOptionsService';
 import { mock } from '../test-utils/mock';
 import { AggFuncService } from './aggFuncService';
 
