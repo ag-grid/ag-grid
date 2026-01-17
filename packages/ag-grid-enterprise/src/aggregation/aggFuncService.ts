@@ -134,28 +134,27 @@ function aggSum(params: IAggFuncParams): number | bigint | null {
     let result: number | bigint | null = null;
 
     // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
-    if (isBigIntColumn(params)) {
-        for (let i = 0; i < values.length; i++) {
-            const value = values[i];
+    for (let i = 0; i < values.length; i++) {
+        const value = values[i];
 
-            if (typeof value !== 'bigint') {
-                continue;
-            }
-
-            result = result === null ? value : (result as bigint) + value;
+        if (typeof value !== 'number' && typeof value !== 'bigint') {
+            continue;
         }
-    } else {
-        for (let i = 0; i < values.length; i++) {
-            const value = values[i];
 
-            if (typeof value !== 'number') {
-                continue;
-            }
-
-            result = result === null ? value : (result as number) + value;
+        if (result === null) {
+            result = value;
+            continue;
         }
+
+        if (typeof result === typeof value) {
+            (result as bigint) += value as bigint;
+            continue;
+        }
+        // mixing number and bigint, convert both to bigint
+        result =
+            (typeof result === 'bigint' ? result : BigInt(result as number)) +
+            (typeof value === 'bigint' ? value : BigInt(value as number));
     }
-
     return result;
 }
 
