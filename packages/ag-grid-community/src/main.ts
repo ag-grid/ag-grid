@@ -905,6 +905,7 @@ export {
     GetFormulaParams,
     IFormulaDataService,
     IFormulaService,
+    IFormulaInputManagerService,
     RangeParam,
     SetFormulaParams,
     ValueParam,
