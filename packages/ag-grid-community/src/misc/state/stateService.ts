@@ -28,6 +28,7 @@ import type {
     SortState,
 } from '../../interfaces/gridState';
 import type { RowGroupBulkExpansionState, RowGroupExpansionState } from '../../interfaces/iExpansionService';
+import type { FilterModel } from '../../interfaces/iFilter';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../../interfaces/selectionState';
 import { migrateGridStateModel } from './stateModelMigration';
 import { _convertColumnGroupState, convertColumnState } from './stateUtils';
@@ -623,7 +624,7 @@ export class StateService extends BeanStub implements NamedBean {
 
     private getFilterState(): FilterState | undefined {
         const { filterManager, selectableFilter } = this.beans;
-        let filterModel = filterManager?.getFilterModel();
+        let filterModel: FilterModel | undefined = filterManager?.getFilterModel();
         if (filterModel && Object.keys(filterModel).length === 0) {
             filterModel = undefined;
         }
@@ -647,12 +648,10 @@ export class StateService extends BeanStub implements NamedBean {
             selectableFilter?.setState(selectableFilters ?? {});
         }
         if (filterModel !== undefined || columnFilterState !== undefined) {
-            const rehydratedModel = filterModel ?? null;
-            filterManager?.setFilterState(rehydratedModel, columnFilterState ?? null, 'columnFilter');
+            filterManager?.setFilterState(filterModel ?? null, columnFilterState ?? null, 'columnFilter');
         }
         if (advancedFilterModel !== undefined) {
-            const rehydratedAdvancedModel = advancedFilterModel ?? null;
-            filterManager?.setAdvFilterModel(rehydratedAdvancedModel, 'advancedFilter');
+            filterManager?.setAdvFilterModel(advancedFilterModel ?? null, 'advancedFilter');
         }
     }
 
