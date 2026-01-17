@@ -463,13 +463,9 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         return this.workbook.addWorksheet(excelStyles, data, config);
     }
 
-    private getDataTypeForValue(valueForCell?: any): ExcelOOXMLDataType {
+    private getDataTypeForValue(valueForCell?: string): ExcelOOXMLDataType {
         if (valueForCell === undefined) {
             return 'empty';
-        }
-
-        if (typeof valueForCell === 'bigint') {
-            return 's';
         }
 
         let dataType: ExcelOOXMLDataType = 's';
