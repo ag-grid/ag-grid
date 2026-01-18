@@ -5,12 +5,26 @@
 
     --left-margin: #{$spacing-size-16};
 
+    --link-color: var(--color-util-gray-500);
+    --active-color: var(--color-util-brand-500);
+    --active-border: var(--color-util-brand-400);
+    --hover-background: var(--color-util-brand-50);
+    --active-background: var(--color-util-brand-50);
+
     display: none;
     width: calc(var(--layout-width-3-12) - var(--left-margin));
     margin-left: $spacing-size-8;
     padding-top: $spacing-size-8 + 2px; // Tweak top docs page vertical alignment (+ 2px)
     padding-bottom: $spacing-size-16;
     line-height: var(--text-lh-sm);
+
+    #{$selector-darkmode} & {
+        --link-color: var(--color-gray-400);
+        --active-color: var(--color-brand-300);
+        --active-border: var(--color-brand-300);
+        --hover-background: rgba(56, 146, 249, 0.06);
+        --active-background: rgba(56, 146, 249, 0.09);
+    }
 
     @supports (position: sticky) {
         padding-top: 0;
@@ -44,12 +58,9 @@
     position: relative;
     flex-direction: column;
     padding-left: 0;
+    padding-bottom: $spacing-size-32;
     list-style: none;
     z-index: -2;
-
-    > li:last-child {
-        min-height: $spacing-size-48;
-    }
 
     #{$selector-darkmode} & {
         --nav-line-color: var(--color-border-primary);
@@ -60,69 +71,36 @@
     --item-gap: 0.875em;
 
     position: relative;
-    padding-left: $spacing-size-4;
-    margin: var(--item-gap) 0;
     margin-bottom: 0;
+    padding-top: calc(var(--item-gap) / 2);
+    padding-right: $spacing-size-2;
+    padding-bottom: calc(var(--item-gap) / 2);
+    padding-left: $spacing-size-4;
+    border-left: 1px solid var(--color-util-brand-200);
+    transition:
+        border-color $transition-default-timing,
+        background-color $transition-default-timing;
+
+    &:has(:global(.active)) {
+        border-left-color: var(--active-border);
+    }
+
+    &:has(:global(.active)):not(:first-child) {
+        background-color: var(--active-background);
+    }
 }
 
 .sideNav a {
-    --active-color: var(--color-util-brand-500);
-    --active-border: var(--color-util-brand-400);
-    --hover-background: var(--color-util-brand-50);
-    --active-background: var(--color-util-brand-50);
-
     display: inline-block;
     padding: 0;
-    color: var(--color-util-gray-500);
+    color: var(--link-color);
     transition: color $transition-default-timing;
     font-weight: var(--text-regular);
     font-size: var(--text-fs-regular);
 
-    #{$selector-darkmode} & {
-        --active-color: var(--color-brand-300);
-        --active-border: var(--color-brand-300);
-        --hover-background: rgba(56, 146, 249, 0.06);
-        --active-background: rgba(56, 146, 249, 0.09);
-
-        color: var(--color-gray-400);
-    }
-
     &:hover,
     &:global(.active) {
         color: var(--active-color);
-    }
-
-    &:hover {
-        #{$selector-darkmode} & {
-            color: var(--color-fg-primary);
-        }
-    }
-
-    &:global(.active) {
-        cursor: default;
-    }
-
-    &::before {
-        content: '';
-        position: absolute;
-        width: 100%;
-        top: -$spacing-size-1;
-        bottom: -$spacing-size-1;
-        left: 0;
-        opacity: 0;
-        z-index: -1;
-        transition:
-            color 0.33s ease-in-out,
-            border-color 0.33s ease-in-out,
-            background-color 0.33s ease-in-out;
-    }
-
-    &:hover::before {
-        opacity: 1;
-    }
-
-    &:global(.active)::before {
-        opacity: 1;
     }
 }
 
@@ -132,16 +110,9 @@
 }
 
 .sideNav .level3 {
-    --item-gap: 0.5em;
+    --item-gap: calc(0.5em + #{$spacing-size-1});
 
-    padding-top: $spacing-size-1;
-    padding-bottom: $spacing-size-1;
     font-weight: var(--text-regular);
-}
-
-.sideNav .level1 + .level3,
-.sideNav .level2 + .level3 {
-    margin-top: var(--item-gap);
 }
 
 .sideNav .level3,
