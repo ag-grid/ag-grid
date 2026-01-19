@@ -232,22 +232,6 @@
     color: var(--color-text-secondary) !important;
 }
 
-.level1Icon {
-    flex-shrink: 0;
-    display: inline-flex;
-    align-items: center;
-    width: 12px;
-    height: 12px;
-    vertical-align: middle;
-
-    :global(svg) {
-        width: 12px;
-        height: 12px;
-        color: currentColor;
-        stroke: currentColor;
-    }
-}
-
 .backToTop {
     margin-top: 0;
     padding-top: 16px;
@@ -273,11 +257,6 @@
             .backToTopIcon {
                 color: var(--color-fg-primary);
                 fill: var(--color-fg-primary);
-
-                svg {
-                    color: var(--color-fg-primary);
-                    fill: var(--color-fg-primary);
-                }
             }
         }
     }
@@ -295,16 +274,6 @@
     transition:
         color $transition-default-timing,
         fill $transition-default-timing;
-
-    svg {
-        width: 20px;
-        height: 20px;
-        color: var(--color-util-gray-500);
-        fill: var(--color-util-gray-500);
-        transition:
-            color $transition-default-timing,
-            fill $transition-default-timing;
-    }
 }
 
 .sideNav .level3 {
