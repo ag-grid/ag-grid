@@ -1,5 +1,6 @@
 @use 'design-system' as *;
 
+// Right side navigation (page level headings) - not to be confused with left DocsNav
 .sideNav {
     $top-bar-height: 8px;
 
@@ -76,13 +77,36 @@
     padding-right: $spacing-size-2;
     padding-bottom: calc(var(--item-gap) / 2);
     padding-left: $spacing-size-4;
-    border-left: 1px solid var(--color-util-brand-200);
+    // Always reserve 2px space to prevent jumping
+    border-left: 2px solid transparent;
     transition:
         border-color $transition-default-timing,
         background-color $transition-default-timing;
 
+    // Visual 1px border for inactive items using pseudo-element
+    &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 1px;
+        background-color: var(--color-util-brand-200);
+        transition: width $transition-default-timing, background-color $transition-default-timing;
+    }
+
+    // Dark mode: use primary border colour for inactive line
+    #{$selector-darkmode} &::before {
+        background-color: var(--color-border-primary);
+    }
+
+    // Active items: show full 2px border and hide pseudo-element
     &:has(:global(.active)) {
         border-left-color: var(--active-border);
+        
+        &::before {
+            width: 0;
+        }
     }
 
     &:has(:global(.active)):not(:first-child) {
@@ -95,7 +119,7 @@
     padding: 0;
     color: var(--link-color);
     transition: color $transition-default-timing;
-    font-weight: var(--text-regular);
+    font-weight: 600;
     font-size: var(--text-fs-regular);
 
     &:hover,
@@ -105,8 +129,51 @@
 }
 
 .sideNav .level1 {
-    font-size: var(--text-fs-lg);
     margin-top: 0;
+    padding-bottom: 16px;
+    padding-left: 0 !important; // Override padding-left
+    // No border for level 1 items, even when active
+    border-left: none !important;
+
+    // Hide pseudo-element border for level 1
+    &::before {
+        display: none !important;
+    }
+
+    // Override active border styling for level 1
+    &:has(:global(.active)) {
+        border-left-color: transparent !important;
+        border-left: none !important;
+    }
+
+    a {
+        display: inline-flex;
+        align-items: center;
+        gap: $spacing-size-2;
+        padding-left: 0;
+
+        // No active-color on level 1 (doc title)
+        &:hover,
+        &:global(.active) {
+            color: var(--link-color);
+        }
+    }
+}
+
+.level1Icon {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+
+    :global(svg) {
+        width: 16px;
+        height: 16px;
+        color: currentColor;
+        stroke: currentColor;
+    }
 }
 
 .sideNav .level3 {
