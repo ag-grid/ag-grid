@@ -1,8 +1,6 @@
 import { navigate, scrollIntoViewById } from '@ag-website-shared/utils/navigation';
 import { useScrollSpy } from '@components/pages-navigation/hooks/useScrollSpy';
 import { addNonBreakingSpaceBetweenLastWords } from '@utils/addNonBreakingSpaceBetweenLastWords';
-import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
-import { useEffect, useState } from 'react';
 import type { MarkdownHeading } from 'astro';
 
 import styles from './SideNavigation.module.scss';
@@ -12,18 +10,25 @@ interface Props {
     delayedScrollSpy?: boolean;
 }
 
+const OnThisPageIcon = () => (
+    <svg
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        xmlns="http://www.w3.org/2000/svg"
+        className={styles.level1Icon}
+    >
+        <path d="M2.44434 12.6665H13.5554" strokeLinecap="round" strokeLinejoin="round"></path>
+        <path d="M2.44434 3.3335H13.5554" strokeLinecap="round" strokeLinejoin="round"></path>
+        <path d="M2.44434 8H7.33323" strokeLinecap="round" strokeLinejoin="round"></path>
+    </svg>
+);
+
 export function SideNavigation({ headings, delayedScrollSpy }: Props) {
     const menuRef = useScrollSpy({ headings, delayedScrollSpy });
-    const [iconSvg, setIconSvg] = useState<string>('');
-
-    useEffect(() => {
-        fetch(urlWithBaseUrl('/images/on-this-page-icon.svg'))
-            .then((res) => res.text())
-            .then((svg) => setIconSvg(svg))
-            .catch(() => {
-                // Fallback if fetch fails
-            });
-    }, []);
 
     if (headings.length < 2) {
         return null;
@@ -44,12 +49,7 @@ export function SideNavigation({ headings, delayedScrollSpy }: Props) {
                                     navigate({ search: window.location.search, hash: slug });
                                 }}
                             >
-                                {depth === 1 && iconSvg && (
-                                    <span
-                                        className={styles.level1Icon}
-                                        dangerouslySetInnerHTML={{ __html: iconSvg }}
-                                    />
-                                )}
+                                {depth === 1 && <OnThisPageIcon />}
                                 {depth === 1 ? 'On this page' : addNonBreakingSpaceBetweenLastWords(text)}
                             </a>
                         </li>

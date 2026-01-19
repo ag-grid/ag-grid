@@ -151,11 +151,13 @@
         align-items: center;
         gap: $spacing-size-2;
         padding-left: 0;
+        color: var(--color-text-secondary);
+        font-size: 15px;
 
         // No active-color on level 1 (doc title)
         &:hover,
         &:global(.active) {
-            color: var(--link-color);
+            color: var(--color-text-secondary);
         }
     }
 }
@@ -164,13 +166,13 @@
     flex-shrink: 0;
     display: inline-flex;
     align-items: center;
-    width: 16px;
-    height: 16px;
+    width: 12px;
+    height: 12px;
     vertical-align: middle;
 
     :global(svg) {
-        width: 16px;
-        height: 16px;
+        width: 12px;
+        height: 12px;
         color: currentColor;
         stroke: currentColor;
     }
