@@ -175,7 +175,6 @@ export {
     _jsonEquals,
     _makeNull,
     _missing,
-    _safeJsonStringify,
     _toStringOrNull,
 } from './agStack/utils/generic';
 export { _isEventFromPrintableCharacter } from './agStack/utils/keyboard';

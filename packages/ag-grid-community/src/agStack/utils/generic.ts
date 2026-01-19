@@ -26,20 +26,11 @@ export const _toStringOrNull = (value: any): string | null => {
 };
 
 export const _jsonEquals = <T1, T2>(val1: T1, val2: T2): boolean => {
-    const val1Json = val1 ? _safeJsonStringify(val1) : null;
-    const val2Json = val2 ? _safeJsonStringify(val2) : null;
+    const val1Json = val1 ? JSON.stringify(val1) : null;
+    const val2Json = val2 ? JSON.stringify(val2) : null;
 
     return val1Json === val2Json;
 };
-
-const bigintJsonReplacer = (_key: string, value: any): any => {
-    if (typeof value === 'bigint') {
-        return value.toString();
-    }
-    return value;
-};
-
-export const _safeJsonStringify = (value: any): string => JSON.stringify(value, bigintJsonReplacer);
 
 export const _defaultComparator = (valueA: any, valueB: any, accentedCompare: boolean = false): number => {
     if (valueA == null) {
