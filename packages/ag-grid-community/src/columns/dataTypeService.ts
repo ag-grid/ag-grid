@@ -678,14 +678,14 @@ export class DataTypeService extends BeanStub implements NamedBean {
             bigint: {
                 baseDataType: 'bigint',
                 valueParser: (params: ValueParserLiteParams<any, bigint>) => {
-                    if (
-                        params.newValue == null ||
-                        params.newValue?.trim?.() === '' ||
-                        typeof params.newValue !== 'string'
-                    ) {
+                    const { newValue } = params;
+                    if (newValue == null) {
                         return null;
                     }
-                    return _parseBigIntOrNull(params.newValue);
+                    if (typeof newValue === 'string' && newValue.trim() === '') {
+                        return null;
+                    }
+                    return _parseBigIntOrNull(newValue);
                 },
                 valueFormatter: (params: ValueFormatterLiteParams<any, bigint>) => {
                     if (params.value == null) {
