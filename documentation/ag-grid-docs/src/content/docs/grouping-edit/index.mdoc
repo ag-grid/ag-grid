@@ -3,9 +3,8 @@ title: "Row Grouping - Editing Groups"
 enterprise: true
 ---
 
-The grid supports editing grouped data when using the
-[Client-Side Row Model](./row-models/#client-side). This page explains how to keep the grouping
-hierarchy synchronised with edits and how to allow group rows themselves to be editable.
+The grid supports editing grouped data when using the [Client-Side Row Model](./row-models/#client-side).
+This page explains how to keep the grouping hierarchy synchronised with edits and how to allow group rows themselves to be editable.
 
 ## Refreshing Groups After Editing
 
@@ -48,8 +47,8 @@ that matches the current node type, enabling separate rules for group rows and l
 
 ## Custom Distribution of Edits
 
-In this example, we show how to use `groupRowValueSetter` to distribute edits on group rows to their descendant rows.
-The example uses a simple strategy of dividing the committed value equally among all visible children.
+In this example, `groupRowValueSetter` is used to distribute edits on group rows to their descendant rows.
+The example uses a simple strategy of dividing the value equally among all visible children and sub groups.
 
 {% gridExampleRunner title="Editable Group Totals" name="group-row-editable-totals" exampleHeight=620 /%}
 

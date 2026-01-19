@@ -47,10 +47,13 @@ const amountGroupRowValueSetter: GroupRowValueSetterFunc<SalesRecord> = ({ node,
     }
 
     let result = false;
+    // distribute the new value equally amongst all filtered children
     const children = node.childrenAfterSort;
     if (children?.length) {
         const perChild = numericValue / children.length;
         for (const child of children) {
+            // If child is a leaf, setDataValue will update the underlying data item
+            // If child is a group, setDataValue will recursively call this value setter down the tree to update group values
             if (child.setDataValue('amount', perChild, eventSource)) {
                 result = true;
             }
