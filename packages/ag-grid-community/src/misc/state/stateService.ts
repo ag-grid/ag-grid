@@ -135,7 +135,6 @@ export class StateService extends BeanStub implements NamedBean {
         if (this.staleStateKeys.size) {
             this.refreshStaleState();
         }
-
         return this.cachedState;
     }
 
@@ -631,8 +630,7 @@ export class StateService extends BeanStub implements NamedBean {
         const columnFilterState = filterManager?.getFilterState();
         const advancedFilterModel = filterManager?.getAdvFilterModel() ?? undefined;
         const selectableFilters = selectableFilter?.getState();
-
-        return filterModel || columnFilterState || advancedFilterModel || selectableFilters
+        return filterModel || advancedFilterModel || columnFilterState || selectableFilters
             ? { filterModel, columnFilterState, advancedFilterModel, selectableFilters }
             : undefined;
     }
