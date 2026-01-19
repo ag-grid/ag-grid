@@ -42,7 +42,11 @@ export function processClassRules(
             }
 
             forEachSingleClass(className, (singleClass) => {
-                resultOfRule ? (classesToApply[singleClass] = true) : (classesToRemove[singleClass] = true);
+                if (resultOfRule) {
+                    classesToApply[singleClass] = true;
+                } else {
+                    classesToRemove[singleClass] = true;
+                }
             });
         }
     }

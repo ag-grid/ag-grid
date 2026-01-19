@@ -253,7 +253,9 @@ function forEach<T extends { id: string | undefined }>(
 ): void {
     cache.order.forEach((id, index) => {
         const node = getById(cache, id);
-        node && callback(node, index);
+        if (node) {
+            callback(node, index);
+        }
     });
 }
 

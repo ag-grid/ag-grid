@@ -1,0 +1,26 @@
+{
+  "name": "stylelint-plugin-ag",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "plugins/stylelint-plugin-ag",
+  "projectType": "library",
+  "targets": {
+    "test": {
+      "executor": "nx:run-commands",
+      "inputs": ["default", "{projectRoot}/**/*.mjs"],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "command": "npx jest --config {projectRoot}/jest.config.js",
+        "env": {
+          "NODE_OPTIONS": "--experimental-vm-modules"
+        }
+      }
+    },
+    "lint": {
+      "command": "eslint",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    }
+  },
+  "tags": []
+}

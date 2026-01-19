@@ -210,7 +210,11 @@ export abstract class CartesianChartProxy<
     }
 
     private crossFilteringAddSelectedPoint(multiSelection: boolean, value: string): void {
-        multiSelection ? this.crossFilteringSelectedPoints.push(value) : (this.crossFilteringSelectedPoints = [value]);
+        if (multiSelection) {
+            this.crossFilteringSelectedPoints.push(value);
+        } else {
+            this.crossFilteringSelectedPoints = [value];
+        }
     }
 
     protected isHorizontal(commonChartOptions: AgCartesianChartOptions): boolean {

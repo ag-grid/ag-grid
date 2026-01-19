@@ -1,0 +1,20 @@
+---
+import type { CustomersSection, LandingPageContent } from '../types';
+import { LandingPageSection } from '../LandingPageSection';
+
+interface Props {
+    section: CustomersSection;
+    pageContent: LandingPageContent;
+}
+
+const { section } = Astro.props;
+---
+
+<LandingPageSection
+    id="customers"
+    tag={section.tag}
+    headingHtml={section.headingHtml}
+    subHeadingHtml={section.subHeadingHtml}
+>
+    <slot />
+</LandingPageSection>

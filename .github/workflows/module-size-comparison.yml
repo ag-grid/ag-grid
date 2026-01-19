@@ -92,22 +92,37 @@ jobs:
     if: needs.prepare.outputs.is-draft != 'true'
     outputs:
       cache-hit: ${{ steps.cache-check.outputs.cache-hit }}
-      base-sha: ${{ steps.get-sha.outputs.sha }}
+      base-sha: ${{ steps.get-merge-base.outputs.sha }}
     steps:
-      - name: Get base branch SHA
-        id: get-sha
+      - name: Checkout to find merge base
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare.outputs.head-sha }}
+          fetch-depth: 0
+
+      - name: Get merge base SHA
+        id: get-merge-base
         run: |
           BASE_REF="${{ needs.prepare.outputs.base-ref }}"
-          SHA=$(git ls-remote https://github.com/${{ github.repository }} refs/heads/${BASE_REF} | cut -f1)
-          echo "sha=${SHA}" >> $GITHUB_OUTPUT
-          echo "Base branch (${BASE_REF}) SHA: ${SHA}"
+          HEAD_SHA="${{ needs.prepare.outputs.head-sha }}"
+
+          # Fetch the base branch
+          git fetch origin ${BASE_REF}
+
+          # Find the merge base (common ancestor)
+          MERGE_BASE=$(git merge-base origin/${BASE_REF} ${HEAD_SHA})
+
+          echo "sha=${MERGE_BASE}" >> $GITHUB_OUTPUT
+          echo "Base branch: ${BASE_REF}"
+          echo "PR head: ${HEAD_SHA}"
+          echo "Merge base SHA: ${MERGE_BASE}"
 
       - name: Check cache for base results
         id: cache-check
         uses: actions/cache/restore@v4
         with:
           path: ./base-results.json
-          key: module-size-base-${{ steps.get-sha.outputs.sha }}
+          key: module-size-base-${{ steps.get-merge-base.outputs.sha }}
           lookup-only: true
 
   # Build and run module size tests on the PR branch (sharded)
@@ -136,7 +151,7 @@ jobs:
           artifact-prefix: module-size-pr
           artifact-suffix: ${{ needs.prepare.outputs.pr-number }}
 
-  # Build and run module size tests on the base branch (sharded) - only if cache miss
+  # Build and run module size tests on the merge base (sharded) - only if cache miss
   module-size-base:
     name: Module Size Base (${{ matrix.shard }}/${{ strategy.job-total }})
     runs-on: ubuntu-latest
@@ -156,7 +171,7 @@ jobs:
       - name: Run module size tests
         uses: ./.github/actions/module-size-test
         with:
-          ref: ${{ needs.prepare.outputs.base-ref }}
+          ref: ${{ needs.check-base-cache.outputs.base-sha }}
           shard: ${{ matrix.shard }}
           total-shards: ${{ strategy.job-total }}
           artifact-prefix: module-size-base

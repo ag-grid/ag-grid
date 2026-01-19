@@ -9,10 +9,6 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, _convertColumnEventSourceType, _isExpressionString, _warn } from 'ag-grid-community';
 
-import type {
-    RangeSelectionExtension,
-    RangeSelectionExtensionRegistry,
-} from '../rangeSelection/rangeSelectionExtensions';
 import { parseFormula } from './ast/parsers';
 import { serializeFormula } from './ast/serializer';
 import type { FormulaNode } from './ast/utils';
@@ -21,6 +17,7 @@ import type { Addr } from './functions/resolver';
 import { evalAst, unresolvedDeps } from './functions/resolver';
 import SUPPORTED_FUNCTIONS from './functions/supportedFuncs';
 import { shiftNode } from './functions/utils';
+import { isFormulaIdentChar, isFormulaIdentStart } from './refUtils';
 
 /**
  * Cell Formula Cache
@@ -95,7 +92,7 @@ interface FormulaFrame {
     ast: FormulaNode;
     unresolvedDepIterator: Generator<Addr>;
 }
-export class FormulaService extends BeanStub implements IFormulaService, NamedBean, RangeSelectionExtension {
+export class FormulaService extends BeanStub implements IFormulaService, NamedBean {
     public readonly beanName = 'formula' as const;
 
     /** Cache: row -> (column -> CellFormula) */
@@ -106,9 +103,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
 
     /** Built-in operations (extendable via gridOptions.formulaFuncs). */
     private supportedOperations: Map<string, (params: FormulaFunctionParams) => unknown>;
-
-    // Track the active editor instance per grid/cell to avoid overlapping syncs on editor restarts.
-    public activeEditor: number | null = null;
+    private functionNames: string[] | null = null;
 
     public active = false;
 
@@ -157,7 +152,6 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
 
     public postConstruct(): void {
         this.setupFunctions();
-        this.registerRangeSelectionExtension();
 
         const refreshFormulas = () => {
             if (this.active) {
@@ -176,7 +170,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             const { colModel } = this.beans;
             const formulaColumnsPresent = colModel.cols?.list.some((col) => col.isAllowFormula());
             if (formulaColumnsPresent) {
-                this.beans.colModel.refreshAll(_convertColumnEventSourceType(e.source));
+                colModel.refreshAll(_convertColumnEventSourceType(e.source));
             }
         });
 
@@ -189,19 +183,6 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         });
     }
 
-    public shouldSuppressRangeSelection(eventTarget: EventTarget | null): boolean {
-        return !!(eventTarget as HTMLElement | null)?.closest?.('.ag-formula-input-field');
-    }
-
-    private registerRangeSelectionExtension(): void {
-        const rangeSvc = this.beans.rangeSvc as RangeSelectionExtensionRegistry | undefined;
-        if (!rangeSvc) {
-            return;
-        }
-        rangeSvc.registerRangeSelectionExtension(this);
-        this.addDestroyFunc(() => rangeSvc.unregisterRangeSelectionExtension?.(this));
-    }
-
     public updateFormulaByOffset(params: {
         value: string;
         rowDelta?: number;
@@ -209,13 +190,14 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         useRefFormat?: boolean;
     }): string {
         const { value, rowDelta = 0, columnDelta = 0, useRefFormat = true } = params;
+        const { beans } = this;
         try {
             const unsafe = !useRefFormat;
-            const ast = parseFormula(this.beans, value, unsafe);
-            shiftNode(this.beans, ast, rowDelta, columnDelta, unsafe);
+            const ast = parseFormula(beans, value, unsafe);
+            shiftNode(beans, ast, rowDelta, columnDelta, unsafe);
 
             // Serialize back to a formula string (REF format)
-            return serializeFormula(this.beans, ast, /*useRefFormat*/ useRefFormat, unsafe);
+            return serializeFormula(beans, ast, /*useRefFormat*/ useRefFormat, unsafe);
         } catch {
             return value;
         }
@@ -224,6 +206,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     private setupFunctions() {
         // eslint-disable-next-line no-restricted-properties
         this.supportedOperations = new Map(Object.entries(SUPPORTED_FUNCTIONS));
+        this.functionNames = null;
 
         // Register custom functions, not reactive.
         const customFuncs = this.gos.get('formulaFuncs');
@@ -232,6 +215,28 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
                 this.supportedOperations.set(name.toUpperCase(), customFuncs[name].func);
             });
         }
+    }
+
+    public getFunctionNames(): string[] {
+        if (this.functionNames) {
+            return this.functionNames;
+        }
+
+        const names: string[] = [];
+
+        for (const name of this.supportedOperations.keys()) {
+            if (!isFormulaIdentStart(name[0])) {
+                continue;
+            }
+            if (![...name].every((char) => isFormulaIdentChar(char))) {
+                continue;
+            }
+            names.push(name);
+        }
+
+        names.sort((a, b) => a.localeCompare(b));
+        this.functionNames = names;
+        return names;
     }
 
     private setupColRefMap() {
@@ -312,9 +317,10 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
      * @returns null if the formula is invalid.
      */
     public normaliseFormula(value: string, shorthand: boolean = false): string | null {
+        const { beans } = this;
         try {
-            const parsedAST = parseFormula(this.beans, value);
-            const serialized = serializeFormula(this.beans, parsedAST, !shorthand, false);
+            const parsedAST = parseFormula(beans, value);
+            const serialized = serializeFormula(beans, parsedAST, !shorthand, false);
             return serialized;
         } catch {
             return null;

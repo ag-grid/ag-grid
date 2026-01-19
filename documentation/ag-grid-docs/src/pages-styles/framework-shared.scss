@@ -1,0 +1,151 @@
+// Shared SCSS for framework-related landing pages and enterprise hero:
+// - Framework landing pages (e.g. /react-data-grid, /angular-data-grid, /vue-data-grid)
+//   via styles in framework-landing-page.module.scss
+// - Enterprise landing page (/enterprise-data-grid)
+//   via styles in enterprise.module.scss
+
+@use 'design-system' as *;
+
+@mixin hero-section-subheading {
+    font-size: var(--text-fs-lg);
+    font-weight: var(--text-base);
+    color: var(--color-text-primary);
+    max-width: 600px;
+    margin: 16px auto;
+    line-height: 1.5;
+    text-align: center;
+    animation: subHeadingFadeInUp 0.7s ease 600ms;
+    opacity: 0;
+    animation-fill-mode: forwards;
+
+    @media screen and (max-width: $breakpoint-landing-page-medium) {
+        margin: 0;
+        padding: 0;
+    }
+}
+
+@keyframes subHeadingFadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@mixin hero-section-cta2 {
+    display: flex;
+    align-items: center;
+    gap: $spacing-size-2;
+    padding: $spacing-size-2;
+    border-radius: var(--radius-md);
+    background-color: var(--color-brand-200);
+    color: var(--color-gray-900);
+    font-family: var(--text-monospace-font-family);
+    justify-content: center;
+
+    #{$selector-darkmode} & {
+        background-color: var(--color-button-tertiary-bg-hover);
+
+        svg:hover {
+            fill: var(--color-brand-100) !important;
+        }
+    }
+
+    @media screen and (max-width: $breakpoint-landing-page-medium) {
+        min-width: auto;
+        width: 100%;
+    }
+}
+
+@mixin hero-section-button-container {
+    display: flex;
+    justify-content: center;
+    min-height: 48px;
+    gap: $spacing-size-4;
+    animation: fadeIn 0.7s ease 1300ms;
+    opacity: 0;
+    animation-fill-mode: forwards;
+
+    @media screen and (min-width: $breakpoint-landing-page-medium) {
+        margin-bottom: 48px;
+    }
+
+    @media screen and (max-width: $breakpoint-landing-page-medium) {
+        flex-direction: column;
+    }
+}
+
+@mixin hero-section-demo-container {
+    display: flex;
+    flex-direction: column;
+    height: 600px;
+    animation: fadeIn 0.7s ease 2000ms;
+    opacity: 0;
+    animation-fill-mode: forwards;
+    z-index: 0;
+
+    // Ensure Finance component doesn't cause layout shift
+    > * {
+        opacity: 1;
+    }
+}
+
+// Framework logo styling for headings
+@mixin framework-logo-heading {
+    img {
+        display: inline-block;
+        vertical-align: middle;
+        height: 56px;
+        width: auto;
+        margin: 0 0.2em;
+    }
+
+    span[style*='display: inline-block'] {
+        display: inline-block;
+        white-space: nowrap;
+        vertical-align: baseline;
+    }
+}
+
+// Framework logo styling for hero section headings (larger logo)
+@mixin framework-logo-hero-heading {
+    img {
+        display: inline-block;
+        vertical-align: middle;
+        height: 56px;
+        width: auto;
+        margin: 0 0.2em;
+        animation: logoFadeInScale 300ms ease;
+        opacity: 0;
+        animation-fill-mode: forwards;
+    }
+
+    .frameworkLogoGroup {
+        display: inline-block;
+        white-space: nowrap;
+        vertical-align: baseline;
+    }
+}
+
+@keyframes logoFadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.7);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

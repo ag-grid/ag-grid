@@ -268,7 +268,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
                 return;
             }
 
-            editSvc?.startEditing(cellCtrl, { startedEdit: true, event, source: 'api' });
+            editSvc?.startEditing(cellCtrl, { startedEdit: true, event, source: 'api', editable: true });
             // if we don't prevent default, then the event also gets applied to the text field
             // (at least when doing the default editor), but we need to allow the editor to decide
             // what it wants to do. we only do this IF editing was started - otherwise it messes

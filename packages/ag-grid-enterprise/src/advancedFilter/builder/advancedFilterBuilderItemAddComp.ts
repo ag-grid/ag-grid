@@ -36,7 +36,7 @@ const ItemAddElement: ElementParams = {
                     children: [
                         {
                             tag: 'div',
-                            cls: 'ag-advanced-filter-builder-item-tree-line-vertical-top ag-advanced-filter-builder-item-tree-line-horizontal',
+                            cls: 'ag-advanced-filter-builder-item-tree-line ag-advanced-filter-builder-item-tree-line-vertical-top ag-advanced-filter-builder-item-tree-line-horizontal',
                         },
                     ],
                 },
