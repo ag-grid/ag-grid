@@ -58,7 +58,6 @@ export function SideNavigation({ headings, delayedScrollSpy }: Props) {
                                     navigate({ search: window.location.search, hash: slug });
                                 }}
                             >
-                                {depth === 1 && <OnThisPageIcon />}
                                 {depth === 1 ? 'On this page' : addNonBreakingSpaceBetweenLastWords(text)}
                             </a>
                         </li>
@@ -66,10 +65,12 @@ export function SideNavigation({ headings, delayedScrollSpy }: Props) {
                 </ul>
                 <div className={styles.backToTop}>
                     <a
-                        href="#"
+                        href="#top"
+                        className="nav-link"
                         onClick={(event) => {
                             event.preventDefault();
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                            scrollIntoViewById('top');
+                            navigate({ search: window.location.search, hash: 'top' });
                         }}
                     >
                         <BackToTopIcon />
