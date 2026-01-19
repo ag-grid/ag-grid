@@ -1,7 +1,7 @@
 import type { LocaleTextFunc } from '../agStack/interfaces/iLocaleService';
+import { _parseBigIntOrNull } from '../agStack/utils/bigInt';
 import { _getDateParts } from '../agStack/utils/date';
 import { _exists } from '../agStack/utils/generic';
-import { toBigIntOrNull } from '../columns/dataTypeService';
 import type { BeanCollection, UserComponentName } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { ValueFormatterParams, ValueGetterFunc, ValueGetterParams } from '../entities/colDef';
@@ -65,8 +65,8 @@ function setFilterBigIntComparator<TValue = any>(a: TValue | null, b: TValue | n
     if (b == null) {
         return 1;
     }
-    const valueA = toBigIntOrNull(a);
-    const valueB = toBigIntOrNull(b);
+    const valueA = _parseBigIntOrNull(a);
+    const valueB = _parseBigIntOrNull(b);
     if (valueA != null && valueB != null) {
         if (valueA === valueB) {
             return 0;

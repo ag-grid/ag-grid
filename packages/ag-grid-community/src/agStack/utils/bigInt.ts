@@ -13,6 +13,10 @@ export const _parseBigIntOrNull = (value: unknown): bigint | null => {
         if (trimmed.endsWith('n')) {
             trimmed = trimmed.slice(0, -1);
         }
+        // we don't support binary, octal, or hex notations for bigint for v1
+        if (!/^[+-]?\d+$/.test(trimmed)) {
+            return null;
+        }
     }
     if (trimmed == null) {
         return null;

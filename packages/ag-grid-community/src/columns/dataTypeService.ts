@@ -535,12 +535,18 @@ export class DataTypeService extends BeanStub implements NamedBean {
             dataTypeDefinition: (DataTypeDefinition | CoreDataTypeDefinition) & GroupSafeValueFormatter;
             colId: string;
             formatValue: DataTypeFormatValueFunc;
+            filterModuleBean: BeanCollection['filterManager'];
         }) => Partial<ColDef>
     > = {
         number() {
             return { cellEditor: 'agNumberCellEditor' };
         },
-        bigint() {
+        bigint({ filterModuleBean }) {
+            if (filterModuleBean) {
+                return {
+                    cellEditor: 'agTextCellEditor',
+                };
+            }
             return {
                 cellEditor: 'agTextCellEditor',
                 comparator: {
@@ -610,6 +616,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
             dataTypeDefinition,
             colId,
             formatValue,
+            filterModuleBean: this.beans.filterManager,
         });
 
         // if the user enabled formula and did not manually provide an editor
@@ -874,8 +881,8 @@ function bigintComparator(valueA: any, valueB: any): number {
     if (valueB == null) {
         return 1;
     }
-    const bigA = toBigIntOrNull(valueA);
-    const bigB = toBigIntOrNull(valueB);
+    const bigA = _parseBigIntOrNull(valueA);
+    const bigB = _parseBigIntOrNull(valueB);
     if (bigA != null && bigB != null) {
         if (bigA === bigB) {
             return 0;
@@ -903,12 +910,8 @@ function bigintAbsoluteComparator(valueA: any, valueB: any): number {
     return 0;
 }
 
-export function toBigIntOrNull(value: any): bigint | null {
-    return _parseBigIntOrNull(value);
-}
-
 function toAbsoluteBigInt(value: any): bigint | null {
-    const bigIntValue = toBigIntOrNull(value);
+    const bigIntValue = _parseBigIntOrNull(value);
     if (bigIntValue == null) {
         return null;
     }

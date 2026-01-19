@@ -74,12 +74,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         (op: string, cln: AgColumn, dt: BaseCellDataType) => number | string | bigint | null
     > = {
         number: (operand) => (_exists(operand) ? Number(operand) : null),
-        bigint: (operand) => {
-            if (!_exists(operand)) {
-                return null;
-            }
-            return _parseBigIntOrNull(operand);
-        },
+        bigint: (operand) => _parseBigIntOrNull(operand),
         date: (operand, column, baseCellDataType) =>
             _serialiseDate(
                 this.valueSvc.parseValue(column, null, operand, undefined),

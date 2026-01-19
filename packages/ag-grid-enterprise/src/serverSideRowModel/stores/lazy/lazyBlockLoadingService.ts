@@ -125,8 +125,6 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
 
     private executeLoad(cache: LazyCache, startRow: number, endRow: number) {
         const ssrmParams = cache.getSsrmParams();
-        // todo: store is private, figure out a better api to get access
-        const groupKeys = (cache as any).store.getParentNode().getRoute() ?? [];
         const request: IServerSideGetRowsRequest = {
             startRow,
             endRow,
@@ -134,7 +132,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
             valueCols: ssrmParams.valueCols,
             pivotCols: ssrmParams.pivotCols,
             pivotMode: ssrmParams.pivotMode,
-            groupKeys: groupKeys,
+            groupKeys: (cache as any).store.getParentNode().getRoute() ?? [],
             filterModel: ssrmParams.filterModel,
             sortModel: ssrmParams.sortModel,
         };
