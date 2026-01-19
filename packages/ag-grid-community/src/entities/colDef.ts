@@ -982,7 +982,7 @@ export interface GroupRowValueSetterParams<TData = any, TValue = any, TContext =
     /** Data associated with the group row. Undefined when the row does not own data. */
     data?: TData | null;
     /** Source string provided to `rowNode.setDataValue`. */
-    eventSource?: string;
+    eventSource: string | undefined;
     /** Whether the value actually changed. */
     valueChanged: boolean;
 }

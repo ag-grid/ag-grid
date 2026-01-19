@@ -40,17 +40,17 @@ const amountValueParser = (params: ValueParserParams): number | null => {
     return Number.isFinite(numericValue) ? numericValue : params.oldValue ?? null;
 };
 
-const amountGroupRowValueSetter: GroupRowValueSetterFunc<SalesRecord> = ({ node, newValue }) => {
+const amountGroupRowValueSetter: GroupRowValueSetterFunc<SalesRecord> = ({ node, newValue, eventSource }) => {
     const numericValue = Number(newValue);
     if (!Number.isFinite(numericValue)) {
         return;
     }
 
     const children = node.childrenAfterSort;
-    if (children) {
+    if (children?.length) {
         const perChild = numericValue / children.length;
         for (const child of children) {
-            child.setDataValue('amount', perChild);
+            child.setDataValue('amount', perChild, eventSource);
         }
     }
 };
