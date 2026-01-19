@@ -95,7 +95,9 @@
         bottom: 0;
         width: 1px;
         background-color: var(--color-util-brand-200);
-        transition: width $transition-default-timing, background-color $transition-default-timing;
+        transition:
+            width $transition-default-timing,
+            background-color $transition-default-timing;
     }
 
     // Dark mode: use primary border colour for inactive line
@@ -106,7 +108,7 @@
     // Active items: show full 2px border and hide pseudo-element
     &:has(:global(.active)) {
         border-left-color: var(--active-border);
-        
+
         &::before {
             width: 0;
         }
@@ -123,7 +125,7 @@
 .sideNav ul:has(li.level1 a:global(.active)):not(:has(li:not(.level1) a:global(.active))) li:nth-child(2) {
     border-left-color: var(--active-border);
     background-color: var(--active-background);
-    
+
     &::before {
         width: 0;
     }
@@ -134,12 +136,12 @@
 .sideNav ul:has(li:not(.level1) a:global(.active)) li:nth-child(2):not(:has(:global(.active))) {
     border-left-color: transparent !important;
     background-color: transparent !important;
-    
+
     &::before {
         width: 1px !important;
         background-color: var(--color-util-brand-200);
     }
-    
+
     #{$selector-darkmode} &::before {
         background-color: var(--color-border-primary);
     }
@@ -202,7 +204,7 @@
         &:global(.active) {
             color: var(--color-fg-primary);
         }
-        
+
         &:hover {
             color: var(--color-text-secondary);
         }
@@ -213,11 +215,11 @@
 // This ensures only one item is highlighted at a time
 // Use multiple selectors to catch different scenarios
 .sideNav ul:has(li:nth-child(2) a:global(.active)) li.level1,
-.sideNav ul:has(li:nth-child(n+2) a:global(.active)) li.level1 {
+.sideNav ul:has(li:nth-child(n + 2) a:global(.active)) li.level1 {
     // Remove any active styling from first item when another item is active
     background-color: transparent !important;
     border-left-color: transparent !important;
-    
+
     // Ensure no border shows
     &::before {
         display: none !important;
@@ -290,14 +292,18 @@
     vertical-align: middle;
     color: var(--color-util-gray-500);
     fill: var(--color-util-gray-500);
-    transition: color $transition-default-timing, fill $transition-default-timing;
+    transition:
+        color $transition-default-timing,
+        fill $transition-default-timing;
 
     svg {
         width: 20px;
         height: 20px;
         color: var(--color-util-gray-500);
         fill: var(--color-util-gray-500);
-        transition: color $transition-default-timing, fill $transition-default-timing;
+        transition:
+            color $transition-default-timing,
+            fill $transition-default-timing;
     }
 }
 
