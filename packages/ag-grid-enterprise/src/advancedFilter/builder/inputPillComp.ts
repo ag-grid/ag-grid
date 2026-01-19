@@ -181,7 +181,8 @@ export class InputPillComp extends Component<InputPillCompEvent> {
 
     private renderValue(): void {
         let value: string;
-        const { displayValue, eLabel } = this;
+        const { displayValue, eLabel, params } = this;
+        const { type } = params;
         const { classList } = eLabel;
         classList.remove(
             'ag-advanced-filter-builder-value-empty',
@@ -191,7 +192,7 @@ export class InputPillComp extends Component<InputPillCompEvent> {
         if (!_exists(displayValue)) {
             value = this.advFilterExpSvc.translate('advancedFilterBuilderEnterValue');
             classList.add('ag-advanced-filter-builder-value-empty');
-        } else if (this.params.type === 'number' || this.params.type === 'bigint') {
+        } else if (type === 'number' || type === 'bigint') {
             value = displayValue;
             classList.add('ag-advanced-filter-builder-value-number');
         } else {
