@@ -134,8 +134,32 @@ export const rangeToRef = (beans: BeanCollection, range: CellRange): string | nu
 };
 
 type RefToken = { ref: string; index: number };
+type RefTokenMatch = { ref: string; start: number; end: number; index: number };
 
-export const getRefTokensFromText = (text: string): RefToken[] => {
+export const getRefTokenMatchesForFormula = (beans: BeanCollection, text: string): RefTokenMatch[] => {
+    const matches = getRefTokenMatches(text);
+    const { formula } = beans;
+
+    if (!formula) {
+        return matches;
+    }
+
+    const valid: RefTokenMatch[] = [];
+    let index = 0;
+
+    for (const match of matches) {
+        if (!getCellRangeParams(beans, match.ref)) {
+            continue;
+        }
+        valid.push({ ...match, index });
+        index += 1;
+    }
+
+    return valid;
+};
+
+export const getRefTokensFromText = (beans: BeanCollection, text: string): RefToken[] => {
     // Extract A1-style refs/ranges with their occurrence index (left-to-right).
-    return getRefTokenMatches(text).map(({ ref, index }) => ({ ref, index }));
+    const matches = getRefTokenMatchesForFormula(beans, text);
+    return matches.map(({ ref, index }) => ({ ref, index }));
 };

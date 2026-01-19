@@ -8,7 +8,7 @@ import type {
     GridOptionsService,
     GridOptionsWithDefaults,
 } from 'ag-grid-community';
-import { AgPopupComponent, KeyCode, RefPlaceholder, _exists, _fuzzySuggestions } from 'ag-grid-community';
+import { AgPopupComponent, KeyCode, RefPlaceholder, _exists, _fuzzySuggestions, _isVisible } from 'ag-grid-community';
 
 import { VirtualList } from '../../widgets/virtualList';
 import { AgAutocompleteRow } from './agAutocompleteRow';
@@ -43,6 +43,7 @@ export class AgAutocompleteList extends AgPopupComponent<
     private selectedValue: AutocompleteEntry;
 
     private searchString = '';
+    private lastAutoListHeight: number | null = null;
 
     constructor(
         private readonly params: {
@@ -52,6 +53,7 @@ export class AgAutocompleteList extends AgPopupComponent<
             useStartsWithSearch?: boolean;
             autoSizeList?: boolean;
             maxVisibleItems?: number;
+            onListHeightChanged?: () => void;
             forceLastSelection?: (lastSelection: AutocompleteEntry, searchString: string) => boolean;
         }
     ) {
@@ -209,7 +211,16 @@ export class AgAutocompleteList extends AgPopupComponent<
             height = rowHeight;
         }
 
+        if (this.lastAutoListHeight === height) {
+            return;
+        }
+
+        this.lastAutoListHeight = height;
         this.eList.style.height = `${height}px`;
+
+        if (_isVisible(this.eList)) {
+            this.params.onListHeightChanged?.();
+        }
     }
 
     private checkSetSelectedValue(index: number): void {
@@ -254,6 +265,7 @@ export class AgAutocompleteList extends AgPopupComponent<
 
     public afterGuiAttached(): void {
         this.virtualList.refresh();
+        this.updateListHeight();
     }
 
     public getSelectedValue(): AutocompleteEntry | null {

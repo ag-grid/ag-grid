@@ -303,7 +303,7 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
             return;
         }
 
-        const refTokens = getRefTokensFromText(text);
+        const refTokens = getRefTokensFromText(this.beans, text);
         // group token indices by ref so duplicates map to distinct ranges.
         const desiredByRef = new Map<string, number[]>();
 
@@ -678,7 +678,7 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
         }
 
         const value = this.field.getCurrentValue();
-        const tokens = getRefTokensFromText(value).filter(({ ref }) => ref !== this.editingCellRef);
+        const tokens = getRefTokensFromText(this.beans, value).filter(({ ref }) => ref !== this.editingCellRef);
         if (!tokens.length) {
             return false;
         }

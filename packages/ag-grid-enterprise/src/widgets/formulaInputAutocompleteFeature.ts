@@ -1,11 +1,17 @@
-import type { AgComponentPopupPositionParams, PopupPositionParams } from 'ag-grid-community';
+import type {
+    AgComponentPopupPositionParams,
+    BeanCollection,
+    IFormulaService,
+    PopupPositionParams,
+} from 'ag-grid-community';
 import { BeanStub, KeyCode, _getDocument } from 'ag-grid-community';
 
 import { AgAutocompleteList } from '../advancedFilter/autocomplete/agAutocompleteList';
 import type { AutocompleteEntry } from '../advancedFilter/autocomplete/autocompleteParams';
-import { isFormulaIdentChar, isFormulaIdentStart } from '../formula/refUtils';
+import { isFormulaIdentChar, isFormulaIdentStart, parseA1Ref } from '../formula/refUtils';
 import type { AgFormulaInputField } from './agFormulaInputField';
 import { TOKEN_INSERT_AFTER_CHARS, getPreviousNonSpaceChar } from './formulaInputTokenUtils';
+import { getRefTokenMatchesForFormula } from './formulaRangeUtils';
 
 type FunctionTokenMatch = { start: number; end: number; prefix: string };
 
@@ -98,7 +104,12 @@ export class FormulaInputAutocompleteFeature extends BeanStub {
             return;
         }
 
-        const token = getFunctionTokenAtOffset(value, caretOffsets.valueOffset);
+        if (isCaretInsideRefToken(this.beans, value, caretOffsets.valueOffset)) {
+            this.closeFunctionAutocomplete();
+            return;
+        }
+
+        const token = getFunctionTokenAtOffset(value, caretOffsets.valueOffset, this.beans.formula ?? null);
         if (!token) {
             this.closeFunctionAutocomplete();
             return;
@@ -148,6 +159,13 @@ export class FormulaInputAutocompleteFeature extends BeanStub {
             return;
         }
 
+        let positionParams: AgComponentPopupPositionParams<PopupPositionParams> | null = null;
+        const repositionList = () => {
+            if (this.functionAutocompleteList && positionParams) {
+                popupSvc.positionPopupByComponent(positionParams);
+            }
+        };
+
         this.functionAutocompleteList = this.createManagedBean(
             new AgAutocompleteList({
                 autocompleteEntries: entries,
@@ -155,12 +173,13 @@ export class FormulaInputAutocompleteFeature extends BeanStub {
                 useStartsWithSearch: true,
                 autoSizeList: true,
                 maxVisibleItems: 10,
+                onListHeightChanged: repositionList,
             })
         );
 
         const ePopupGui = this.functionAutocompleteList.getGui();
 
-        const positionParams: AgComponentPopupPositionParams<PopupPositionParams> = {
+        positionParams = {
             ePopup: ePopupGui,
             type: 'autocomplete',
             eventSource: this.field.getGui(),
@@ -172,7 +191,7 @@ export class FormulaInputAutocompleteFeature extends BeanStub {
         const addPopupRes = popupSvc.addPopup({
             eChild: ePopupGui,
             anchorToElement: this.field.getGui(),
-            positionCallback: () => popupSvc.positionPopupByComponent(positionParams),
+            positionCallback: repositionList,
             ariaLabel: 'Formula functions',
         });
 
@@ -225,8 +244,12 @@ export class FormulaInputAutocompleteFeature extends BeanStub {
     }
 }
 
-const getFunctionTokenAtOffset = (value: string, caretOffset: number): FunctionTokenMatch | null => {
-    // show functions only when the caret is at the end of a formula identifier.
+const getFunctionTokenAtOffset = (
+    value: string,
+    caretOffset: number,
+    formula: IFormulaService | null
+): FunctionTokenMatch | null => {
+    // show functions when the caret is within a formula identifier.
     if (caretOffset < 0 || caretOffset > value.length || isInsideStringLiteral(value, caretOffset)) {
         return null;
     }
@@ -241,11 +264,22 @@ const getFunctionTokenAtOffset = (value: string, caretOffset: number): FunctionT
         end++;
     }
 
-    if (start === end || caretOffset !== end) {
+    if (start === end) {
         return null;
     }
 
-    const token = value.slice(start, end);
+    let tokenEnd = end;
+    if (caretOffset !== end) {
+        // allow typing a function name immediately before an existing ref (e.g. "*COUNT|C2").
+        const suffix = value.slice(caretOffset, end);
+        const parsed = parseA1Ref(suffix);
+        const isRefSuffix = !!parsed && (!formula || !!formula.getColByRef(parsed.startCol));
+        if (isRefSuffix) {
+            tokenEnd = caretOffset;
+        }
+    }
+
+    const token = value.slice(start, tokenEnd);
     if (!token || !isFormulaIdentStart(token[0])) {
         return null;
     }
@@ -261,9 +295,18 @@ const getFunctionTokenAtOffset = (value: string, caretOffset: number): FunctionT
 
     return {
         start,
-        end,
+        end: tokenEnd,
         prefix: value.slice(start, caretOffset),
     };
+};
+
+const isCaretInsideRefToken = (beans: BeanCollection, value: string, caretOffset: number): boolean => {
+    for (const match of getRefTokenMatchesForFormula(beans, value)) {
+        if (caretOffset >= match.start && caretOffset <= match.end) {
+            return true;
+        }
+    }
+    return false;
 };
 
 const isInsideStringLiteral = (value: string, offset: number): boolean => {
