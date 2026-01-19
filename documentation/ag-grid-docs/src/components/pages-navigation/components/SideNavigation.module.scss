@@ -198,11 +198,11 @@
         padding-left: 0;
         padding-bottom: 8px;
         color: var(--color-text-secondary);
-        font-size: 18px;
+        font-size: 19px;
 
-        // Use primary foreground color when active
+        // Use secondary foreground color when active
         &:global(.active) {
-            color: var(--color-fg-primary);
+            color: var(--color-fg-secondary);
         }
 
         &:hover {
@@ -261,7 +261,7 @@
         align-items: center;
         gap: $spacing-size-2;
         padding-left: 0;
-        color: var(--color-text-secondary);
+        color: var(--color-text-secondary) !important;
         font-size: 15px;
         font-weight: 500;
         text-decoration: none;
