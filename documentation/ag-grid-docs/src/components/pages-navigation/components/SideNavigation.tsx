@@ -65,7 +65,7 @@ export function SideNavigation({ headings, delayedScrollSpy }: Props) {
                                 }}
                             >
                                 {depth === 1 && <OnThisPageIcon />}
-                                {depth === 1 ? text : addNonBreakingSpaceBetweenLastWords(text)}
+                                {depth === 1 ? 'On this page' : addNonBreakingSpaceBetweenLastWords(text)}
                             </a>
                         </li>
                     ))}
