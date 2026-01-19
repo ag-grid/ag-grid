@@ -426,7 +426,7 @@ export class ValueService extends BeanStub implements NamedBean {
 
         const groupRowValueSetter = rowNode.group ? colDef.groupRowValueSetter : undefined;
 
-        let valueChanged: boolean | undefined;
+        let valueChanged = false;
 
         if (rowNode.data) {
             const externalFormulaResult = this.handleExternalFormulaChange({
@@ -440,7 +440,7 @@ export class ValueService extends BeanStub implements NamedBean {
                 return externalFormulaResult;
             }
 
-            valueChanged = this.computeValueChange({
+            const result = this.computeValueChange({
                 column,
                 rowNode,
                 newValue,
@@ -449,17 +449,16 @@ export class ValueService extends BeanStub implements NamedBean {
                 valueSetter: colDef.valueSetter,
                 field: colDef.field,
             });
-        } else {
-            // when we cannot update backing data we rely solely on the legacy groupRowValueSetter path
-            valueChanged = newValue !== oldValue;
+
+            // we check for undefined in case user forgot to return something (possible if they are not using TypeScript
+            // and just forgot we default the return value to true, so we always refresh.
+            if (result || result === undefined) {
+                valueChanged = true;
+            }
         }
 
-        // in case user forgot to return something (possible if they are not using TypeScript
-        // and just forgot we default the return value to true, so we always refresh.
-        valueChanged ??= true;
-
         if (groupRowValueSetter) {
-            let result = groupRowValueSetter(
+            const result = groupRowValueSetter(
                 _addGridCommonParams(this.gos, {
                     node: rowNode,
                     data: rowNode.data,
@@ -468,15 +467,13 @@ export class ValueService extends BeanStub implements NamedBean {
                     colDef,
                     column,
                     eventSource,
-                    valueChanged,
+                    valueChanged: valueChanged || newValue !== oldValue,
                 })
             );
 
-            // in case user forgot to return something (possible if they are not using TypeScript
+            // we check for undefined in case user forgot to return something (possible if they are not using TypeScript
             // and just forgot we default the return value to true, so we always refresh.
-            result ??= true;
-
-            if (result) {
+            if (result || result === undefined) {
                 valueChanged = true;
             }
         }
