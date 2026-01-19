@@ -15,7 +15,6 @@ import type {
     DataTypeDefinition,
     DataTypeFormatValueFunc,
     DateStringDataTypeDefinition,
-    ValueFormatterLiteFunc,
     ValueFormatterLiteParams,
     ValueParserLiteParams,
 } from '../entities/dataType';
@@ -800,8 +799,10 @@ function createGroupSafeValueFormatter(
     if (!dataTypeDefinition.valueFormatter) {
         return undefined;
     }
+    const numberOrBigint = (v: unknown) => typeof v === 'bigint' || typeof v === 'number';
     return (params: ValueFormatterParams) => {
         const { node, colDef, column, value } = params;
+
         if (node?.group) {
             const aggFunc = (colDef.pivotValueColumn ?? column).getAggFunc();
             if (aggFunc) {
@@ -811,34 +812,24 @@ function createGroupSafeValueFormatter(
                 }
 
                 const { baseDataType } = dataTypeDefinition;
-                if ((baseDataType === 'number' || baseDataType === 'bigint') && aggFunc !== 'count') {
-                    if (typeof value === baseDataType) {
+                if (numberOrBigint(baseDataType) && aggFunc !== 'count') {
+                    if (numberOrBigint(value)) {
                         return dataTypeDefinition.valueFormatter!(params);
                     }
 
-                    if (typeof value === 'object') {
-                        if (!value) {
-                            return undefined;
-                        }
-
-                        if (baseDataType === 'number' && 'toNumber' in value) {
-                            return dataTypeDefinition.valueFormatter!({
-                                ...params,
-                                value: value.toNumber(),
-                            });
-                        }
-
-                        if ('value' in value) {
-                            const innerValue = value.value;
-                            if (typeof innerValue === baseDataType || innerValue == null) {
-                                return (
-                                    dataTypeDefinition.valueFormatter as ValueFormatterLiteFunc<any, number | bigint>
-                                )({
-                                    ...(params as ValueFormatterLiteParams<any, number | bigint>),
-                                    value: innerValue,
-                                });
-                            }
-                        }
+                    if (typeof value !== 'object' || !value) {
+                        return undefined;
+                    }
+                    let val = value.value;
+                    if (typeof value.toNumber === 'function') {
+                        val = value.toNumber();
+                    } else if ('value' in value && (numberOrBigint(val) || val == null)) {
+                        val = value.value;
+                    } else {
+                        val = null;
+                    }
+                    if (val) {
+                        return dataTypeDefinition.valueFormatter!({ ...params, value: val });
                     }
                 }
 
