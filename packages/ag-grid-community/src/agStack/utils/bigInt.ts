@@ -13,9 +13,6 @@ export const _parseBigIntOrNull = (value: unknown): bigint | null => {
         if (trimmed.endsWith('n')) {
             trimmed = trimmed.slice(0, -1);
         }
-        if (!/^[+-]?\d+$/.test(trimmed)) {
-            return null;
-        }
     }
     if (trimmed == null) {
         return null;
