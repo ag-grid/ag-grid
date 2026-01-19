@@ -33,7 +33,7 @@ export function SideNavigation({ headings, delayedScrollSpy }: Props) {
                                     navigate({ search: window.location.search, hash: slug });
                                 }}
                             >
-                                {depth === 1 ? 'On this page' : addNonBreakingSpaceBetweenLastWords(text)}
+                                {addNonBreakingSpaceBetweenLastWords(text)}
                             </a>
                         </li>
                     ))}
