@@ -16,7 +16,8 @@
     width: calc(var(--layout-width-3-12) - var(--left-margin));
     margin-left: $spacing-size-8;
     padding-top: $spacing-size-8 + 2px; // Tweak top docs page vertical alignment (+ 2px)
-    padding-bottom: $spacing-size-16;
+    padding-bottom: $spacing-size-4;
+    padding-left: $spacing-size-2;
     line-height: var(--text-lh-sm);
 
     #{$selector-darkmode} & {
@@ -39,6 +40,7 @@
     > div {
         @supports (position: sticky) {
             display: flex;
+            flex-direction: column;
             margin-right: calc(var(--layout-horizontal-margins) * -1); // Improve scrollbar position
             padding-top: $spacing-size-8 + 2px; // Tweak top docs page vertical alignment (+ 2px)
             padding-right: $spacing-size-8;
@@ -59,7 +61,8 @@
     position: relative;
     flex-direction: column;
     padding-left: 0;
-    padding-bottom: $spacing-size-32;
+    padding-bottom: 0;
+    margin-bottom: 0;
     list-style: none;
     z-index: -2;
 
@@ -119,7 +122,7 @@
     padding: 0;
     color: var(--link-color);
     transition: color $transition-default-timing;
-    font-weight: 600;
+    font-weight: 500;
     font-size: var(--text-fs-regular);
 
     &:hover,
@@ -152,7 +155,7 @@
         gap: $spacing-size-2;
         padding-left: 0;
         color: var(--color-text-secondary);
-        font-size: 15px;
+        font-size: 17px;
 
         // No active-color on level 1 (doc title)
         &:hover,
@@ -175,6 +178,61 @@
         height: 12px;
         color: currentColor;
         stroke: currentColor;
+    }
+}
+
+.backToTop {
+    margin-top: 0;
+    padding-top: 16px;
+    padding-bottom: calc(0.875em / 2);
+    padding-right: $spacing-size-2;
+    border-left: none;
+    align-self: flex-start;
+
+    a {
+        display: inline-flex;
+        align-items: center;
+        gap: $spacing-size-2;
+        padding-left: 0;
+        color: var(--color-text-secondary);
+        font-size: 15px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: color $transition-default-timing;
+
+        &:hover {
+            color: var(--color-fg-primary);
+
+            .backToTopIcon {
+                color: var(--color-fg-primary);
+                fill: var(--color-fg-primary);
+
+                svg {
+                    color: var(--color-fg-primary);
+                    fill: var(--color-fg-primary);
+                }
+            }
+        }
+    }
+}
+
+.backToTopIcon {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    color: var(--color-util-gray-500);
+    fill: var(--color-util-gray-500);
+    transition: color $transition-default-timing, fill $transition-default-timing;
+
+    svg {
+        width: 20px;
+        height: 20px;
+        color: var(--color-util-gray-500);
+        fill: var(--color-util-gray-500);
+        transition: color $transition-default-timing, fill $transition-default-timing;
     }
 }
 
