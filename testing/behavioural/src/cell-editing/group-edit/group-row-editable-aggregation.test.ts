@@ -313,4 +313,52 @@ describe.each(EDIT_MODES)('groupRowEditable cascading edits (%s)', (editMode) =>
         await asyncSetTimeout(0);
         await new GridRows(api, 'after reapplying filters').check(filteredSnapshotAfterEdit);
     });
+
+    test('groupRowValueSetter returning false cancels the edit', async () => {
+        const rowData = createRowData();
+
+        const api = await gridsManager.createGridAndWait('group-row-editable-cancelled', {
+            defaultColDef: {
+                cellEditor: 'agTextCellEditor',
+            },
+            undoRedoCellEditing: true,
+            groupDisplayType: 'custom',
+            columnDefs: [
+                {
+                    colId: 'group',
+                    headerName: 'Group',
+                    cellRenderer: 'agGroupCellRenderer',
+                },
+                { field: 'region', rowGroup: true, hide: true },
+                { field: 'country', rowGroup: true, hide: true },
+                {
+                    colId: 'amount',
+                    field: 'amount',
+                    aggFunc: 'sum',
+                    editable: true,
+                    groupRowEditable: true,
+                    groupRowValueSetter: () => false,
+                },
+            ],
+            rowData,
+            groupDefaultExpanded: -1,
+            getRowId: (params) => params.data?.id,
+        });
+
+        await new GridRows(api, 'before cancelled edit').check(baselineSnapshot);
+
+        const europeNode = api.getRowNode('row-group-region-Europe');
+        expect(europeNode).toBeDefined();
+
+        const amountColId = 'amount';
+        if (editMode === 'ui') {
+            await editCell(api, europeNode!, amountColId, '999');
+        } else {
+            europeNode!.setDataValue(amountColId, 999, 'ui');
+            await asyncSetTimeout(0);
+        }
+        await asyncSetTimeout(0);
+
+        await new GridRows(api, 'after cancelled edit').check(baselineSnapshot);
+    });
 });

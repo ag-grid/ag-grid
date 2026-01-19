@@ -36,6 +36,8 @@ while leaf rows continue to honour `editable`.
 whenever a group row cell changes through the UI, `rowNode.setDataValue`, or another API call,
 making it the right place to cascade edits to child nodes.
 
+Return `true` from the callback to inform the grid that the value changed and refresh is needed.
+
 Most grouped rows (and filler nodes in tree data) do not own `rowNode.data`, so their column
 `valueSetter` never runs even if `groupRowEditable` is enabled. Provide a `groupRowValueSetter`
 whenever the edit needs to persist or update aggregates; only group rows that own real data objects
@@ -53,15 +55,12 @@ The example uses a simple strategy of dividing the committed value equally among
 
 Key points:
 
-- Use `groupRowValueSetter` to redistribute committed values to descendants. The callback receives the
-	group row node and column, runs whether the edit came from the UI, `setDataValue`, or a read-only
-	edit request, and should mutate child rows directly rather than signalling cancellation.
+- Use `groupRowValueSetter` to redistribute committed values to descendants.
+	The callback receives the group row node and column.
 - Call `rowNode.setDataValue` on children to push the updated figures down. This triggers normal
 	aggregation to refresh parent totals and recurses further when a child is also a group that defines
 	its own `groupRowValueSetter`.
-- `rowNode.childrenAfterSort` contains the precise descendants visible in the node, whether groups or
-	leaf rows, letting you adjust exactly what the user can currently see while leaving filtered-out
-	rows untouched.
+- `rowNode.childrenAfterSort` contains the descendants in the node, groups or leaf rows.
 - Parent aggregates refresh automatically because child `data` changes re-run the column `aggFunc`,
 	so typing £600 into “Europe” instantly rebalances the filtered countries to reach that total.
 

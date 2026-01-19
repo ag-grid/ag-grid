@@ -43,16 +43,20 @@ const amountValueParser = (params: ValueParserParams): number | null => {
 const amountGroupRowValueSetter: GroupRowValueSetterFunc<SalesRecord> = ({ node, newValue, eventSource }) => {
     const numericValue = Number(newValue);
     if (!Number.isFinite(numericValue)) {
-        return;
+        return false;
     }
 
+    let result = false;
     const children = node.childrenAfterSort;
     if (children?.length) {
         const perChild = numericValue / children.length;
         for (const child of children) {
-            child.setDataValue('amount', perChild, eventSource);
+            if (child.setDataValue('amount', perChild, eventSource)) {
+                result = true;
+            }
         }
     }
+    return result;
 };
 
 const gridOptions: GridOptions<SalesRecord> = {

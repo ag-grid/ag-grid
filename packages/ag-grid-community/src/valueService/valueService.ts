@@ -426,7 +426,8 @@ export class ValueService extends BeanStub implements NamedBean {
 
         const groupRowValueSetter = rowNode.group ? colDef.groupRowValueSetter : undefined;
 
-        let valueChanged = false;
+        let valueSetterChanged = false;
+        let groupRowValueSetterChanged = false;
 
         if (rowNode.data) {
             const externalFormulaResult = this.handleExternalFormulaChange({
@@ -450,11 +451,8 @@ export class ValueService extends BeanStub implements NamedBean {
                 field: colDef.field,
             });
 
-            // we check for undefined in case user forgot to return something (possible if they are not using TypeScript
-            // and just forgot we default the return value to true, so we always refresh.
-            if (result || result === undefined) {
-                valueChanged = true;
-            }
+            // default to true if user forgot to return a value (possible without TypeScript)
+            valueSetterChanged = result ?? true;
         }
 
         if (groupRowValueSetter) {
@@ -467,18 +465,15 @@ export class ValueService extends BeanStub implements NamedBean {
                     colDef,
                     column,
                     eventSource,
-                    valueChanged: valueChanged || newValue !== oldValue,
+                    valueChanged: valueSetterChanged || newValue !== oldValue,
                 })
             );
 
-            // we check for undefined in case user forgot to return something (possible if they are not using TypeScript
-            // and just forgot we default the return value to true, so we always refresh.
-            if (result || result === undefined) {
-                valueChanged = true;
-            }
+            // default to true if user forgot to return a value (possible without TypeScript)
+            groupRowValueSetterChanged = result ?? true;
         }
 
-        if (!valueChanged) {
+        if (!valueSetterChanged && !groupRowValueSetterChanged) {
             // if no change to the value, then no need to do the updating, or notifying via events.
             // otherwise the user could be tabbing around the grid, and cellValueChange would get called
             // all the time.
