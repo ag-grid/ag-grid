@@ -1,5 +1,5 @@
-const stylelint = require('stylelint');
-const selectorParser = require('postcss-selector-parser');
+import selectorParser from 'postcss-selector-parser';
+import stylelint from 'stylelint';
 
 const {
     createPlugin,
@@ -192,6 +192,8 @@ const ruleFunction = (primary) => {
     };
 };
 
-module.exports = createPlugin(ruleName, Object.assign(ruleFunction, { ruleName, messages, meta }));
-module.exports.ruleName = ruleName;
-module.exports.messages = messages;
+ruleFunction.ruleName = ruleName;
+ruleFunction.messages = messages;
+ruleFunction.meta = meta;
+
+export default createPlugin(ruleName, ruleFunction);

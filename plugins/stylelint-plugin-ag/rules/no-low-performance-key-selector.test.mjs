@@ -1,12 +1,11 @@
-const stylelint = require('stylelint');
-const plugin = require('./no-low-performance-key-selector');
+import stylelint from 'stylelint';
 
-const { ruleName } = plugin;
+import plugin from './no-low-performance-key-selector.mjs';
 
 const config = {
     plugins: [plugin],
     rules: {
-        [ruleName]: true,
+        'ag/no-low-performance-key-selector': true,
     },
 };
 

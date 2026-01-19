@@ -1,6 +1,6 @@
 module.exports = {
     extends: 'stylelint-config-standard',
-    plugins: ['./plugins/stylelint-plugin-ag'],
+    plugins: ['./plugins/stylelint-plugin-ag/index.mjs'],
     rules: {
         'ag/no-low-performance-key-selector': true,
         'comment-empty-line-before': [
