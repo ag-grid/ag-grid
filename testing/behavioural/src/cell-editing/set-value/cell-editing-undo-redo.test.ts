@@ -1,0 +1,131 @@
+import { getByTestId, waitFor } from '@testing-library/dom';
+import '@testing-library/jest-dom';
+import { userEvent } from '@testing-library/user-event';
+
+import { TextEditorModule, UndoRedoEditModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import { BatchEditModule } from 'ag-grid-enterprise';
+
+import { TestGridsManager, asyncSetTimeout, waitForInput } from '../../test-utils';
+
+describe('Cell Editing: undo/redo', () => {
+    const gridMgr = new TestGridsManager({
+        modules: [BatchEditModule, UndoRedoEditModule, TextEditorModule],
+    });
+
+    beforeAll(() => {
+        setupAgTestIds();
+    });
+
+    afterEach(() => {
+        gridMgr.reset();
+    });
+
+    test('undo/redo uses single setValue per action', async () => {
+        let valueSetterCalls = 0;
+        const valueSetterTargets: string[] = [];
+        const valueSetter = ({ data, newValue }: { data: { id: string; field: string }; newValue: string }) => {
+            valueSetterCalls += 1;
+            valueSetterTargets.push(data.id);
+            data.field = newValue;
+            return true;
+        };
+
+        const api = await gridMgr.createGridAndWait('cellEditingUndoRedo', {
+            undoRedoCellEditing: true,
+            defaultColDef: {
+                editable: true,
+            },
+            columnDefs: [
+                {
+                    field: 'field',
+                    editable: true,
+                    valueSetter,
+                },
+            ],
+            rowData: [{ id: 'ROW_0', field: 'Initial Value' }],
+            getRowId: (params) => params.data.id,
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const user = userEvent.setup({ skipHover: true });
+        await asyncSetTimeout(0);
+        const cell = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'field'));
+
+        api.startEditingCell({ rowIndex: 0, colKey: 'field' });
+        const input = await waitForInput(gridDiv, cell);
+        await user.clear(input);
+        await user.type(input, 'Updated Value');
+        await user.keyboard('{Enter}');
+        await asyncSetTimeout(0);
+
+        expect(api.getDisplayedRowAtIndex(0)?.data?.field).toBe('Updated Value');
+        expect(valueSetterCalls).toBe(1);
+
+        api.undoCellEditing();
+        await asyncSetTimeout(0);
+
+        expect(api.getDisplayedRowAtIndex(0)?.data?.field).toBe('Initial Value');
+        expect(valueSetterCalls).toBe(2);
+
+        api.redoCellEditing();
+        await asyncSetTimeout(0);
+
+        expect(api.getDisplayedRowAtIndex(0)?.data?.field).toBe('Updated Value');
+        expect(valueSetterCalls).toBe(3);
+        expect(valueSetterTargets).toEqual(['ROW_0', 'ROW_0', 'ROW_0']);
+    });
+
+    test.each([false, true])(
+        'full-row editing undo/redo fires rowValueChanged once per row (batch=%s)',
+        async (batchEnabled) => {
+            const rowValueChangedNodes: string[] = [];
+            const api = await gridMgr.createGridAndWait(`cellEditingFullRowUndoRedo-${batchEnabled}`, {
+                editType: 'fullRow',
+                undoRedoCellEditing: true,
+                defaultColDef: {
+                    editable: true,
+                },
+                columnDefs: [
+                    { field: 'a', editable: true },
+                    { field: 'b', editable: true },
+                ],
+                rowData: [{ id: 'ROW_0', a: 'A0', b: 'B0' }],
+                getRowId: (params) => params.data.id,
+                onRowValueChanged: (event) => {
+                    if (event.node?.id) {
+                        rowValueChangedNodes.push(String(event.node.id));
+                    }
+                },
+            });
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            const user = userEvent.setup({ skipHover: true });
+            await asyncSetTimeout(0);
+
+            if (batchEnabled) {
+                api.startBatchEdit();
+            }
+
+            const cell = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'));
+            await user.click(cell);
+            api.startEditingCell({ rowIndex: 0, colKey: 'a' });
+            const input = await waitForInput(gridDiv, cell);
+            await user.clear(input);
+            await user.type(input, 'A1');
+            await user.keyboard('{Enter}');
+
+            if (batchEnabled) {
+                api.commitBatchEdit();
+                await asyncSetTimeout(0);
+            }
+
+            await waitFor(() => expect(new Set(rowValueChangedNodes)).toEqual(new Set(['ROW_0'])));
+
+            api.undoCellEditing();
+            await waitFor(() => expect(new Set(rowValueChangedNodes)).toEqual(new Set(['ROW_0'])));
+
+            api.redoCellEditing();
+            await waitFor(() => expect(new Set(rowValueChangedNodes)).toEqual(new Set(['ROW_0'])));
+        }
+    );
+});
