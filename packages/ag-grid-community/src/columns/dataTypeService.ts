@@ -792,6 +792,8 @@ function validateDataTypeDefinition(
     return true;
 }
 
+const numberOrBigint = (v: unknown) => typeof v === 'bigint' || typeof v === 'number';
+
 function createGroupSafeValueFormatter(
     dataTypeDefinition: DataTypeDefinition | CoreDataTypeDefinition,
     gos: GridOptionsService
@@ -799,7 +801,7 @@ function createGroupSafeValueFormatter(
     if (!dataTypeDefinition.valueFormatter) {
         return undefined;
     }
-    const numberOrBigint = (v: unknown) => typeof v === 'bigint' || typeof v === 'number';
+
     return (params: ValueFormatterParams) => {
         const { node, colDef, column, value } = params;
 
