@@ -794,44 +794,36 @@ function createGroupSafeValueFormatter(
         return undefined;
     }
     return (params: ValueFormatterParams) => {
-        if (params.node?.group) {
-            const aggFunc = (params.colDef.pivotValueColumn ?? params.column).getAggFunc();
+        const { node, colDef, column, value } = params;
+        if (node?.group) {
+            const aggFunc = (colDef.pivotValueColumn ?? column).getAggFunc();
             if (aggFunc) {
                 // the resulting type of these will be the same, so we call valueFormatter anyway
                 if (aggFunc === 'first' || aggFunc === 'last') {
                     return dataTypeDefinition.valueFormatter!(params);
                 }
 
-                if (
-                    (dataTypeDefinition.baseDataType === 'number' || dataTypeDefinition.baseDataType === 'bigint') &&
-                    aggFunc !== 'count'
-                ) {
-                    if (typeof params.value === 'number') {
+                const { baseDataType } = dataTypeDefinition;
+                if ((baseDataType === 'number' || baseDataType === 'bigint') && aggFunc !== 'count') {
+                    if (typeof value === baseDataType) {
                         return dataTypeDefinition.valueFormatter!(params);
                     }
 
-                    if (typeof params.value === 'bigint') {
-                        return dataTypeDefinition.valueFormatter!(params);
-                    }
-
-                    if (typeof params.value === 'object') {
-                        if (!params.value) {
+                    if (typeof value === 'object') {
+                        if (!value) {
                             return undefined;
                         }
 
-                        if (dataTypeDefinition.baseDataType === 'number' && 'toNumber' in params.value) {
+                        if (baseDataType === 'number' && 'toNumber' in value) {
                             return dataTypeDefinition.valueFormatter!({
                                 ...params,
-                                value: params.value.toNumber(),
+                                value: value.toNumber(),
                             });
                         }
 
-                        if ('value' in params.value) {
-                            const innerValue = params.value.value;
-                            if (
-                                (dataTypeDefinition.baseDataType === 'number' && typeof innerValue === 'number') ||
-                                (dataTypeDefinition.baseDataType === 'bigint' && typeof innerValue === 'bigint')
-                            ) {
+                        if ('value' in value) {
+                            const innerValue = value.value;
+                            if (typeof innerValue === baseDataType || innerValue == null) {
                                 return (
                                     dataTypeDefinition.valueFormatter as ValueFormatterLiteFunc<any, number | bigint>
                                 )({

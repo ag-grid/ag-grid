@@ -1,3 +1,4 @@
+import { _parseBigIntOrNull } from '../../../agStack/utils/bigInt';
 import type { Comparator } from '../iScalarFilter';
 import { ScalarFilterHandler } from '../scalarFilterHandler';
 import { DEFAULT_BIGINT_FILTER_OPTIONS } from './bigIntFilterConstants';
@@ -22,7 +23,8 @@ export class BigIntFilterHandler extends ScalarFilterHandler<BigIntFilterModel, 
             return left < right ? 1 : -1;
         };
     }
+
     protected override isValid(value: bigint): boolean {
-        return typeof value === 'bigint';
+        return _parseBigIntOrNull(value) !== null;
     }
 }
