@@ -3,8 +3,8 @@ import { useScrollSpy } from '@components/pages-navigation/hooks/useScrollSpy';
 import { addNonBreakingSpaceBetweenLastWords } from '@utils/addNonBreakingSpaceBetweenLastWords';
 import type { MarkdownHeading } from 'astro';
 
-import styles from './SideNavigation.module.scss';
 import BackToTopIcon from '../../../images/back-to-top-icon.svg?react';
+import styles from './SideNavigation.module.scss';
 
 interface Props {
     headings: MarkdownHeading[];
