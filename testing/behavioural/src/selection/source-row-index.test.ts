@@ -19,7 +19,7 @@ describe('sourceRowIndex in isRowSelectable', () => {
         gridMgr.reset();
     });
 
-    test('sourceRowIndex and rowIndex should be populated in isRowSelectable', () => {
+    test('sourceRowIndex should be populated in isRowSelectable', () => {
         const nodeLog: { id: string | undefined; sourceRowIndex: number; rowIndex: number | null }[] = [];
 
         const gridOptions: GridOptions = {
@@ -65,14 +65,6 @@ describe('sourceRowIndex in isRowSelectable', () => {
                 expect(log.sourceRowIndex).toBeGreaterThanOrEqual(0);
                 expect(log.sourceRowIndex).toBeLessThan(3);
             });
-
-            // At least one call for this node should have a non-null rowIndex
-            const hasPopulatedRowIndex = logs.some((log) => log.rowIndex !== null);
-            expect(hasPopulatedRowIndex).toBe(true);
-
-            // The last call for this node should have the correct rowIndex (if it was called after setRowIndex)
-            const lastLog = logs[logs.length - 1];
-            expect(lastLog.rowIndex).not.toBeNull();
         });
     });
 });

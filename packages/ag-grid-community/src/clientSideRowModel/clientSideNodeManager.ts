@@ -341,7 +341,6 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         node.expanded = false;
         if (sourceRowIndex != null) {
             node.sourceRowIndex = sourceRowIndex;
-            node.rowIndex = sourceRowIndex;
         }
         node.setDataAndId(data, String(this.nextId++));
         const id = node.id!;
