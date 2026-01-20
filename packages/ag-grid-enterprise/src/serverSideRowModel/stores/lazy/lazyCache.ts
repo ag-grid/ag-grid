@@ -343,7 +343,7 @@ export class LazyCache extends BeanStub {
         }
 
         // need to skip rows until the end of this store
-        const numberOfRowsToSkip = this.numberOfRows - 1 - lastIndex;
+        const numberOfRowsToSkip = Math.max(this.numberOfRows - 1 - lastIndex, 0);
         this.skipDisplayIndexes(numberOfRowsToSkip, displayIndexSeq, nextRowTop);
 
         // this is not terribly efficient, and could probs be improved
@@ -1183,15 +1183,19 @@ export class LazyCache extends BeanStub {
             });
         }
 
-        this.numberOfRows -= deletedNodeCount;
+        let isLastRowKnown = this.isLastRowIndexKnown();
 
         if (remainingIdsToRemove.length > 0) {
-            _warn(298, { ids: remainingIdsToRemove });
             if (nodesToVerify.length > 0) {
                 nodesToVerify.forEach((node) => (node.__needsRefreshWhenVisible = true));
                 this.lazyBlockLoadingSvc.queueLoadCheck();
+            } else {
+                _warn(298, { ids: remainingIdsToRemove });
+                isLastRowKnown = false;
             }
         }
+
+        this.numberOfRows -= isLastRowKnown ? idsToRemove.length : deletedNodeCount;
 
         return removedNodes;
     }

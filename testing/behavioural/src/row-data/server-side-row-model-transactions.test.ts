@@ -1,3 +1,4 @@
+import type { GridOptions } from 'ag-grid-community';
 import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, waitForEvent } from '../test-utils';
@@ -12,15 +13,18 @@ describe('Server Side Row Model Transactions', () => {
     });
 
     test('repeated remove transaction does not remove unrelated rows', async () => {
-        const rowData = Array.from({ length: 100 }, (_, i) => ({ id: i, value: `Row ${i}` }));
+        const totalRows = 10000;
+        const toRemove = 10;
+        const rowData = Array.from({ length: totalRows }, (_, i) => ({ id: i, value: `Row ${i}` }));
 
-        const gridOptions = {
+        const gridOptions: GridOptions = {
             columnDefs: [{ field: 'id' }, { field: 'value' }],
             rowModelType: 'serverSide' as const,
             getRowId: (params: any) => params.data.id.toString(),
             serverSideDatasource: {
                 getRows: (params: any) => {
-                    params.success({ rowData, rowCount: rowData.length });
+                    const rowDataS = rowData.slice(params.request.startRow, params.request.endRow);
+                    params.success({ rowData: rowDataS, rowCount: rowDataS.length });
                 },
             },
         };
@@ -30,24 +34,24 @@ describe('Server Side Row Model Transactions', () => {
         await waitForEvent('firstDataRendered', api);
         expect(api.getDisplayedRowCount()).toBe(100);
 
-        // Remove top 10 rows
-        const rowsToRemove = rowData.slice(0, 10);
+        // Remove top toRemove rows
+        const rowsToRemove = rowData.slice(0, toRemove);
         api.applyServerSideTransaction({ remove: rowsToRemove });
 
-        expect(api.getDisplayedRowCount()).toBe(90);
-        expect(api.getDisplayedRowAtIndex(0)?.data.id).toBe(10);
+        expect(api.getDisplayedRowCount()).toBe(100 - toRemove);
+        expect(api.getDisplayedRowAtIndex(0)?.data.id).toBe(toRemove);
 
-        // Remove the same 10 rows again (they are already removed)
+        // Remove the same toRemove rows again (they are already removed)
         const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         api.applyServerSideTransaction({ remove: rowsToRemove });
 
         expect(warnSpy).toHaveBeenCalled();
         const lastCall = warnSpy.mock.calls[0][0];
-        expect(lastCall).toContain('298');
+        expect(lastCall).toContain('298'); // warning id
         warnSpy.mockRestore();
 
-        expect(api.getDisplayedRowCount()).toBe(90);
+        expect(api.getDisplayedRowCount()).toBe(100 - toRemove);
 
-        expect(api.getDisplayedRowAtIndex(89)?.data.id).toBe(99);
-    });
+        expect(api.getDisplayedRowAtIndex(99 - toRemove)?.data.id).toBe(99);
+    }, 30000);
 });
