@@ -22,21 +22,25 @@ export function SideNavigation({ headings, delayedScrollSpy }: Props) {
         <nav ref={menuRef} className={styles.sideNav}>
             <div>
                 <ul>
-                    {headings.map(({ slug, depth, text }) => (
-                        <li key={slug} className={styles[`level${depth}`]}>
-                            <a
-                                href={`#${slug}`}
-                                className="nav-link"
-                                onClick={(event) => {
-                                    event.preventDefault();
-                                    scrollIntoViewById(slug);
-                                    navigate({ search: window.location.search, hash: slug });
-                                }}
-                            >
-                                {addNonBreakingSpaceBetweenLastWords(text)}
-                            </a>
-                        </li>
-                    ))}
+                    {headings.map(({ slug, depth, text }, index) => {
+                        const displayText = index === 0 ? 'On this page' : text;
+
+                        return (
+                            <li key={slug} className={styles[`level${depth}`]}>
+                                <a
+                                    href={`#${slug}`}
+                                    className="nav-link"
+                                    onClick={(event) => {
+                                        event.preventDefault();
+                                        scrollIntoViewById(slug);
+                                        navigate({ search: window.location.search, hash: slug });
+                                    }}
+                                >
+                                    {addNonBreakingSpaceBetweenLastWords(displayText)}
+                                </a>
+                            </li>
+                        );
+                    })}
                 </ul>
                 <div className={styles.backToTop}>
                     <a
