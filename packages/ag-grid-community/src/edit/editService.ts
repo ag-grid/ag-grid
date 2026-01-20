@@ -904,15 +904,16 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 return; // Ignore non-edit edits that are not treated as API sources.
             }
 
-            const { beans } = this;
+            if (!editing && !this.batch && eventSource === 'paste') {
+                return; // Paste on non editable cells and not batching
+            }
+
+            const beans = this.beans;
 
             this.strategy ??= this.createStrategy();
             const source = this.batch ? 'ui' : this.committing ? eventSource ?? 'api' : 'api';
 
             if (!eventSource || KEEP_EDITOR_SOURCES.has(eventSource)) {
-                if (!editing && !this.batch && eventSource === 'paste') {
-                    return; // Paste on non editable cells and not batching
-                }
                 // editApi or undoRedoApi apply change without involving the editor
                 _syncFromEditor(beans, position, newValue, eventSource, undefined, { persist: true });
 
