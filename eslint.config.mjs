@@ -112,7 +112,7 @@ export default [
         // cypress uses a global API based on undefined variables
         files: [
             '**/*.spec.{ts,js}',
-            '**/*test.{ts,js}',
+            '**/*test.{ts,js,mjs}',
             '**/{cypress,_copiedFromCore,__tests__}/**',
             '**/test-utils/**',
         ],

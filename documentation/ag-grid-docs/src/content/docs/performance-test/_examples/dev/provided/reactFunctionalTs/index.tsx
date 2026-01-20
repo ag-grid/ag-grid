@@ -2,10 +2,8 @@ import React, { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef } from 'ag-grid-community';
-import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
-
-ModuleRegistry.registerModules([AllCommunityModule]);
+import { AllCommunityModule } from 'ag-grid-community';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 // Row Data Interface
 interface IRow {
@@ -41,9 +39,11 @@ const GridExample = () => {
 
     // Container: Defines the grid's theme & dimensions.
     return (
-        <div style={{ width: '100%', height: '100%' }}>
-            <AgGridReact rowData={rowData} columnDefs={colDefs} defaultColDef={defaultColDef} />
-        </div>
+        <AgGridProvider modules={[AllCommunityModule]}>
+            <div style={{ width: '100%', height: '100%' }}>
+                <AgGridReact rowData={rowData} columnDefs={colDefs} defaultColDef={defaultColDef} />
+            </div>
+        </AgGridProvider>
     );
 };
 

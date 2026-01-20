@@ -6,18 +6,17 @@ import {
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
     DragAndDropModule,
-    ModuleRegistry,
     RowApiModule,
     RowDragModule,
     RowStyleModule,
     TextFilterModule,
     ValidationModule,
 } from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     DragAndDropModule,
     ClientSideRowModelApiModule,
     RowApiModule,
@@ -26,7 +25,7 @@ ModuleRegistry.registerModules([
     RowStyleModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const baseDefaultColDef: ColDef = {
     flex: 1,
@@ -171,52 +170,54 @@ const GridExample = () => {
     };
 
     return (
-        <div className="outer">
-            <div
-                style={{ height: '100%' }}
-                className="inner-col"
-                onDragOver={gridDragOver}
-                onDrop={(e) => gridDrop('left', e)}
-            >
-                <AgGridReact ref={leftGridRef} gridOptions={leftGridOptions} onGridReady={onLeftGridReady} />
-            </div>
+        <AgGridProvider modules={modules}>
+            <div className="outer">
+                <div
+                    style={{ height: '100%' }}
+                    className="inner-col"
+                    onDragOver={gridDragOver}
+                    onDrop={(e) => gridDrop('left', e)}
+                >
+                    <AgGridReact ref={leftGridRef} gridOptions={leftGridOptions} onGridReady={onLeftGridReady} />
+                </div>
 
-            <div className="inner-col factory-panel">
-                <span id="eBin" onDragOver={binDragOver} onDrop={binDrop} className="factory factory-bin">
-                    <i className="far fa-trash-alt">
-                        <span className="filename"> Trash - </span>
-                    </i>
-                    Drop target to destroy row
-                </span>
-                <span draggable="true" onDragStart={(e) => dragStart('Red', e)} className="factory factory-red">
-                    <i className="far fa-plus-square">
-                        <span className="filename"> Create - </span>
-                    </i>
-                    Drag source for new red item
-                </span>
-                <span draggable="true" onDragStart={(e) => dragStart('Green', e)} className="factory factory-green">
-                    <i className="far fa-plus-square">
-                        <span className="filename"> Create - </span>
-                    </i>
-                    Drag source for new green item
-                </span>
-                <span draggable="true" onDragStart={(e) => dragStart('Blue', e)} className="factory factory-blue">
-                    <i className="far fa-plus-square">
-                        <span className="filename"> Create - </span>
-                    </i>
-                    Drag source for new blue item
-                </span>
-            </div>
+                <div className="inner-col factory-panel">
+                    <span id="eBin" onDragOver={binDragOver} onDrop={binDrop} className="factory factory-bin">
+                        <i className="far fa-trash-alt">
+                            <span className="filename"> Trash - </span>
+                        </i>
+                        Drop target to destroy row
+                    </span>
+                    <span draggable="true" onDragStart={(e) => dragStart('Red', e)} className="factory factory-red">
+                        <i className="far fa-plus-square">
+                            <span className="filename"> Create - </span>
+                        </i>
+                        Drag source for new red item
+                    </span>
+                    <span draggable="true" onDragStart={(e) => dragStart('Green', e)} className="factory factory-green">
+                        <i className="far fa-plus-square">
+                            <span className="filename"> Create - </span>
+                        </i>
+                        Drag source for new green item
+                    </span>
+                    <span draggable="true" onDragStart={(e) => dragStart('Blue', e)} className="factory factory-blue">
+                        <i className="far fa-plus-square">
+                            <span className="filename"> Create - </span>
+                        </i>
+                        Drag source for new blue item
+                    </span>
+                </div>
 
-            <div
-                style={{ height: '100%' }}
-                className="inner-col"
-                onDragOver={gridDragOver}
-                onDrop={(e) => gridDrop('right', e)}
-            >
-                <AgGridReact ref={rightGridRef} gridOptions={rightGridOptions} onGridReady={onRightGridReady} />
+                <div
+                    style={{ height: '100%' }}
+                    className="inner-col"
+                    onDragOver={gridDragOver}
+                    onDrop={(e) => gridDrop('right', e)}
+                >
+                    <AgGridReact ref={rightGridRef} gridOptions={rightGridOptions} onGridReady={onRightGridReady} />
+                </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

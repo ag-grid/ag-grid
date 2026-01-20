@@ -20,6 +20,7 @@ import type {
     IDetailCellRenderer,
     IDetailCellRendererCtrl,
     IDetailCellRendererParams,
+    Module,
     WrappableInterface,
 } from 'ag-grid-community';
 import {
@@ -27,6 +28,7 @@ import {
     GridCoreCreator,
     VanillaFrameworkOverrides,
     _combineAttributesAndGridOptions,
+    _findEnterpriseCoreModule,
     _getGridOption,
     _getGridRegisteredModules,
     _isClientSideRowModel,
@@ -53,6 +55,7 @@ import { warnReactiveCustomComponents } from '../shared/customComp/util';
 import type { AgGridReactProps, InternalAgGridReactProps } from '../shared/interfaces';
 import { PortalManager } from '../shared/portalManager';
 import { ReactComponent } from '../shared/reactComponent';
+import { LicenseContext, ModulesContext } from './agGridProvider';
 import { BeansContext, RenderModeContext } from './beansContext';
 import GridComp from './gridComp';
 import { RenderStatusService } from './renderStatusService';
@@ -80,6 +83,9 @@ const excludeReactCompProps = new Set(Object.keys(reactPropsNotGridOptions));
 const deprecatedReactCompProps = new Set(Object.keys(deprecatedProps));
 
 export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) => {
+    const modulesFromContext = useContext(ModulesContext);
+    const licenseKeyFromContext = useContext(LicenseContext);
+
     const apiRef = useRef<GridApi<TData>>();
     const eGui = useRef<HTMLDivElement | null>(null);
     const portalManager = useRef<PortalManager | null>(null);
@@ -133,7 +139,12 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
             return;
         }
 
-        const modules = props.modules || [];
+        const modules: Module[] = [...(props.modules ?? []), ...(modulesFromContext ?? [])];
+        if (licenseKeyFromContext) {
+            // find the EnterpriseCore module which implements _ModuleWithLicenseManager
+            // if found, set the license key
+            _findEnterpriseCoreModule(modules)?.setLicenseKey(licenseKeyFromContext);
+        }
 
         if (!portalManager.current) {
             portalManager.current = new PortalManager(

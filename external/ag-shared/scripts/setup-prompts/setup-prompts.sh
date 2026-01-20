@@ -24,6 +24,63 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+# Get the main repo root (handles worktrees)
+# In a worktree, .git is a file containing "gitdir: /path/to/main/.git/worktrees/name"
+get_main_repo_root() {
+    local git_path="$REPO_ROOT/.git"
+
+    if [[ -f "$git_path" ]]; then
+        # We're in a worktree - parse the gitdir to find main repo
+        local gitdir
+        gitdir=$(cat "$git_path" | sed 's/gitdir: //')
+        # gitdir is like /path/to/main/.git/worktrees/name
+        # Go up twice to get /path/to/main/.git, then dirname for main repo
+        local main_git_dir
+        main_git_dir=$(dirname "$(dirname "$gitdir")")
+        dirname "$main_git_dir"
+    else
+        # Normal checkout - current directory is the repo root
+        echo "$REPO_ROOT"
+    fi
+}
+
+# Detect if we're in a worktree
+is_worktree() {
+    [[ -f "$REPO_ROOT/.git" ]]
+}
+
+# Detect CI environment
+is_ci() {
+    [[ -n "${CI:-}" || -n "${GITHUB_ACTIONS:-}" || -n "${JENKINS_URL:-}" || -n "${BUILDKITE:-}" || -n "${CIRCLECI:-}" || -n "${TRAVIS:-}" ]]
+}
+
+# Detect if running in interactive terminal
+is_interactive() {
+    [[ -t 0 ]]
+}
+
+# Check if user has access to the prompts repo
+has_repo_access() {
+    git ls-remote "$PROMPTS_REPO" HEAD >/dev/null 2>&1
+}
+
+# Prompt user with yes/no (returns 0 for yes, 1 for no)
+prompt_yes_no() {
+    local message="$1"
+    if ! is_interactive; then
+        return 1  # Non-interactive: default to no
+    fi
+    read -p "$message [Y/n] " -n 1 -r
+    echo
+    [[ ! $REPLY =~ ^[Nn]$ ]]
+}
+
+# Configuration for prompts repository
+PROMPTS_REPO="${AG_PROMPTS_REPO:-git@github.com:ag-grid/ag-charts-prompts.git}"
+PROMPTS_DIR_NAME="${AG_PROMPTS_DIR_NAME:-ag-charts-prompts}"
+MAIN_REPO_ROOT=$(get_main_repo_root)
+PROMPTS_DIR="$MAIN_REPO_ROOT/../$PROMPTS_DIR_NAME"
+
 # Tool detection functions
 # Each function returns 0 if tool is detected, 1 otherwise
 
@@ -145,6 +202,97 @@ kiro:Kiro IDE:detect_kiro
 # Use --targets=agentsmd explicitly if needed
 EXCLUDED_TOOLS="agentsmd"
 
+# Check if prompts checkout is behind remote
+is_prompts_behind() {
+    (
+        cd "$PROMPTS_DIR"
+        git fetch origin --quiet 2>/dev/null || return 1
+        local LOCAL=$(git rev-parse HEAD)
+        local REMOTE=$(git rev-parse origin/latest 2>/dev/null || git rev-parse origin/main 2>/dev/null || echo "")
+        [[ -n "$REMOTE" && "$LOCAL" != "$REMOTE" ]]
+    ) 2>/dev/null
+}
+
+# Setup worktree symlink for prompts
+# In worktrees, create a symlink in the parent directory pointing to the real prompts
+# This allows the version-controlled relative symlink (external/prompts) to work
+setup_worktree_prompts_symlink() {
+    if is_worktree; then
+        local worktree_parent
+        worktree_parent=$(dirname "$REPO_ROOT")
+        local parent_prompts_link="$worktree_parent/$PROMPTS_DIR_NAME"
+        local real_prompts
+        real_prompts=$(cd "$PROMPTS_DIR" && pwd)
+
+        if [[ ! -e "$parent_prompts_link" ]]; then
+            ln -sf "$real_prompts" "$parent_prompts_link" || true
+        elif [[ -L "$parent_prompts_link" ]]; then
+            local current_target
+            current_target=$(readlink "$parent_prompts_link")
+            if [[ "$current_target" != "$real_prompts" ]]; then
+                ln -sf "$real_prompts" "$parent_prompts_link" || true
+            fi
+        fi
+    fi
+}
+
+# Check and setup prompts repository
+# Returns 0 if prompts are available or not needed, 1 if needed but not available
+setup_prompts_repo() {
+    # Only run if this repo has an external/prompts symlink (e.g., ag-charts)
+    # Other repos (e.g., ag-grid) don't use this mechanism
+    if [[ ! -L "$REPO_ROOT/external/prompts" ]]; then
+        return 0
+    fi
+
+    # Skip in CI - prompts are optional
+    if is_ci; then
+        return 0
+    fi
+
+    # Check if prompts directory exists
+    if [[ -d "$PROMPTS_DIR" ]]; then
+        # Prompts exist - check if we should update
+        if is_prompts_behind; then
+            echo -e "${YELLOW}$PROMPTS_DIR_NAME is out of date.${NC}"
+            if is_interactive && prompt_yes_no "Update now?"; then
+                echo "Updating $PROMPTS_DIR_NAME..."
+                if ! (cd "$PROMPTS_DIR" && git pull --ff-only); then
+                    echo -e "${YELLOW}Warning: Failed to update $PROMPTS_DIR_NAME, continuing with current version${NC}"
+                fi
+            fi
+        fi
+
+        # Setup worktree symlink if needed
+        setup_worktree_prompts_symlink
+        return 0
+    fi
+
+    # Prompts directory doesn't exist
+    if is_interactive; then
+        # Interactive: offer to clone
+        if has_repo_access; then
+            echo -e "${YELLOW}$PROMPTS_DIR_NAME not found at $PROMPTS_DIR${NC}"
+            if prompt_yes_no "Clone it now?"; then
+                echo "Cloning $PROMPTS_DIR_NAME..."
+                if git clone "$PROMPTS_REPO" "$PROMPTS_DIR"; then
+                    setup_worktree_prompts_symlink
+                    return 0
+                else
+                    echo -e "${YELLOW}Warning: Failed to clone $PROMPTS_DIR_NAME${NC}"
+                fi
+            fi
+        else
+            echo -e "${YELLOW}No access to $PROMPTS_DIR_NAME repository${NC}"
+        fi
+    else
+        # Non-interactive: just warn
+        echo -e "${YELLOW}Warning: $PROMPTS_DIR_NAME not found - rulesync may not have completely setup tooling${NC}"
+    fi
+
+    return 1
+}
+
 # Detect all installed tools
 detect_tools() {
     local detected=""
@@ -251,33 +399,36 @@ generate_config() {
     if [[ "$verbose" == "true" ]]; then
         echo -e "${BLUE}Generating configurations for: ${NC}$targets"
         echo ""
+    fi
 
-        # Run rulesync with detected targets (verbose)
-        npx rulesync generate \
-            --targets="$targets" \
-            --features="rules,ignore,mcp,commands,subagents" \
-            --delete
+    # Run rulesync and capture output + exit code
+    local output
+    local exit_code=0
+    output=$(npx rulesync generate \
+        --targets="$targets" \
+        --features="rules,ignore,mcp,commands,subagents" \
+        --delete 2>&1) || exit_code=$?
 
-        # Copy extra configs
+    if [[ $exit_code -eq 0 ]]; then
         copy_extra_configs "$verbose" "$targets"
 
-        echo ""
-        echo -e "${GREEN}✓ Configuration generated successfully${NC}"
+        if [[ "$verbose" == "true" ]]; then
+            echo "$output"
+            echo ""
+            echo -e "${GREEN}✓ Configuration generated successfully${NC}"
+        else
+            local summary
+            summary=$(echo "$output" | grep -o '🎉.*' || echo "Configuration generated")
+            echo -e "${GREEN}✓${NC} $summary"
+        fi
     else
-        # Run rulesync quietly and capture output for summary
-        local output
-        output=$(npx rulesync generate \
-            --targets="$targets" \
-            --features="rules,ignore,mcp,commands,subagents" \
-            --delete 2>&1)
-
-        # Copy extra configs
-        copy_extra_configs "$verbose" "$targets"
-
-        # Extract the summary line from rulesync output
-        local summary
-        summary=$(echo "$output" | grep -o '🎉.*' || echo "Configuration generated")
-        echo -e "${GREEN}✓${NC} $summary"
+        echo -e "${YELLOW}Warning: rulesync failed - some configuration may be incomplete${NC}"
+        if [[ "$verbose" == "true" ]]; then
+            echo "$output"
+            echo -e "${YELLOW}This may be due to missing external/prompts (ag-charts-prompts not cloned)${NC}"
+        else
+            echo "$output" | grep -i "error" | head -3 || true
+        fi
     fi
 }
 
@@ -345,6 +496,9 @@ main() {
                 ;;
         esac
     done
+
+    # Setup prompts repository (graceful - doesn't fail on errors)
+    setup_prompts_repo || true
 
     case $mode in
         list)

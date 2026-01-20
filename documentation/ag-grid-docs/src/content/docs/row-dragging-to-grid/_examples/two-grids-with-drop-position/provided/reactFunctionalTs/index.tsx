@@ -12,18 +12,17 @@ import type {
 import {
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
-    ModuleRegistry,
     RowApiModule,
     RowDragModule,
     RowStyleModule,
     TextFilterModule,
     ValidationModule,
 } from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     ClientSideRowModelApiModule,
     RowApiModule,
     TextFilterModule,
@@ -31,7 +30,7 @@ ModuleRegistry.registerModules([
     RowStyleModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const columns: ColDef[] = [
     { field: 'id', rowDrag: true },
@@ -212,22 +211,24 @@ const GridExample = () => {
                     suppressMoveWhenRowDragging={true}
                     rowData={side === 'Left' ? leftRowData : rightRowData}
                     columnDefs={[...columns]}
-                    onGridReady={(params) => onGridReady(side, params)}
+                    onGridReady={(params: GridReadyEvent) => onGridReady(side, params)}
                 />
             </div>
         </div>
     );
 
     return (
-        <div className="example-wrapper">
-            {getInnerGridCol('Left')}
-            <div className="inner-col vertical-toolbar">
-                <span className="bin" ref={eBin}>
-                    <i className="far fa-trash-alt fa-3x" ref={eBinIcon}></i>
-                </span>
+        <AgGridProvider modules={modules}>
+            <div className="example-wrapper">
+                {getInnerGridCol('Left')}
+                <div className="inner-col vertical-toolbar">
+                    <span className="bin" ref={eBin}>
+                        <i className="far fa-trash-alt fa-3x" ref={eBinIcon}></i>
+                    </span>
+                </div>
+                {getInnerGridCol('Right')}
             </div>
-            {getInnerGridCol('Right')}
-        </div>
+        </AgGridProvider>
     );
 };
 

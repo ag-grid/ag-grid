@@ -1,6 +1,6 @@
 import { userEvent } from '@testing-library/user-event';
 
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, UndoRedoEditModule } from 'ag-grid-community';
 import type { GridOptions } from 'ag-grid-community';
 import { BatchEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -8,7 +8,7 @@ import { GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../te
 
 describe('cell editing with refreshAfterGroupEdit', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, BatchEditModule],
+        modules: [ClientSideRowModelModule, RowGroupingModule, BatchEditModule, UndoRedoEditModule],
     });
 
     beforeEach(() => {
@@ -150,5 +150,71 @@ describe('cell editing with refreshAfterGroupEdit', () => {
 
         expect(api.getRowNode('2')?.parent?.key).toBe('B');
         expect(api.getRowNode('3')?.parent?.key).toBe('A');
+    });
+
+    test('aggregation columns refresh when rows move', async () => {
+        const gridOptions: GridOptions = {
+            animateRows: true,
+            columnDefs: [
+                { field: 'group', rowGroup: true, editable: true },
+                { field: 'value', aggFunc: 'sum' },
+            ],
+            autoGroupColumnDef: {
+                field: 'group',
+                cellRendererParams: {
+                    suppressDoubleClickExpand: true,
+                },
+            },
+            rowData: [
+                { id: '1', group: 'A', value: 10 },
+                { id: '2', group: 'A', value: 15 },
+                { id: '3', group: 'B', value: 7 },
+            ],
+            refreshAfterGroupEdit: true,
+            undoRedoCellEditing: true,
+            enableGroupEdit: true,
+            groupDefaultExpanded: -1,
+            getRowId: (params) => params.data.id,
+        };
+
+        const api = gridsManager.createGrid('cell-edit-refresh-group-aggregation', gridOptions);
+        await asyncSetTimeout(0);
+
+        const gridDiv = TestGridsManager.getHTMLElement(api)!;
+        const editGroupCell = async (rowId: string, value: string) => {
+            const cell = gridDiv.querySelector<HTMLElement>(`[row-id="${rowId}"] [col-id="group"]`);
+            expect(cell).not.toBeNull();
+
+            await userEvent.dblClick(cell!);
+            const input = await waitForInput(gridDiv, cell!);
+            await userEvent.clear(input);
+            await userEvent.type(input, `${value}{Enter}`);
+            await asyncSetTimeout(0);
+        };
+
+        const initialSnapshot = `
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A" value:25
+            │ ├── LEAF id:1 ag-Grid-AutoColumn:"A" group:"A" value:10
+            │ └── LEAF id:2 ag-Grid-AutoColumn:"A" group:"A" value:15
+            └─┬ LEAF_GROUP id:row-group-group-B ag-Grid-AutoColumn:"B" value:7
+            · └── LEAF id:3 ag-Grid-AutoColumn:"B" group:"B" value:7
+        `;
+
+        const afterEditSnapshot = `
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A" value:10
+            │ └── LEAF id:1 ag-Grid-AutoColumn:"A" group:"A" value:10
+            └─┬ LEAF_GROUP id:row-group-group-B ag-Grid-AutoColumn:"B" value:22
+            · ├── LEAF id:2 ag-Grid-AutoColumn:"B" group:"B" value:15
+            · └── LEAF id:3 ag-Grid-AutoColumn:"B" group:"B" value:7
+        `;
+
+        await new GridRows(api, 'aggregation initial', { useFormatter: false }).check(initialSnapshot);
+
+        await editGroupCell('2', 'B');
+        await asyncSetTimeout(2);
+
+        await new GridRows(api, 'aggregation after edit', { useFormatter: false }).check(afterEditSnapshot);
     });
 });

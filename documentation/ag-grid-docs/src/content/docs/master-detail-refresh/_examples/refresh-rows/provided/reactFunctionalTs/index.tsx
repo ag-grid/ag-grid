@@ -12,15 +12,14 @@ import {
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
     HighlightChangesModule,
-    ModuleRegistry,
     RowApiModule,
     RowSelectionModule,
     ValidationModule,
 } from 'ag-grid-community';
 import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule, MasterDetailModule } from 'ag-grid-enterprise';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-ModuleRegistry.registerModules([
+const modules = [
     ClientSideRowModelApiModule,
     RowSelectionModule,
     RowApiModule,
@@ -31,7 +30,7 @@ ModuleRegistry.registerModules([
     ContextMenuModule,
     ColumnsToolPanelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 let allRowData: any[];
 
@@ -126,21 +125,23 @@ const GridExample = () => {
     }, []);
 
     return (
-        <div style={containerStyle}>
-            <div style={gridStyle}>
-                <AgGridReact
-                    ref={gridRef}
-                    rowData={rowData}
-                    columnDefs={columnDefs}
-                    defaultColDef={defaultColDef}
-                    getRowId={getRowId}
-                    masterDetail={true}
-                    detailCellRendererParams={detailCellRendererParams}
-                    onGridReady={onGridReady}
-                    onFirstDataRendered={onFirstDataRendered}
-                />
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div style={gridStyle}>
+                    <AgGridReact
+                        ref={gridRef}
+                        rowData={rowData}
+                        columnDefs={columnDefs}
+                        defaultColDef={defaultColDef}
+                        getRowId={getRowId}
+                        masterDetail={true}
+                        detailCellRendererParams={detailCellRendererParams}
+                        onGridReady={onGridReady}
+                        onFirstDataRendered={onFirstDataRendered}
+                    />
+                </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

@@ -1,6 +1,8 @@
 module.exports = {
     extends: 'stylelint-config-standard',
+    plugins: ['./plugins/stylelint-plugin-ag/index.mjs'],
     rules: {
+        'ag/no-low-performance-key-selector': true,
         'comment-empty-line-before': [
             'always',
             {
@@ -46,20 +48,6 @@ module.exports = {
                     '.ag-layout-normal',
                     '.ag-layout-auto-height',
                 ],
-            },
-        ],
-
-        // NOTE: In general we want to avoid targeting grid elements using
-        // [class^='ag-'] as customer applications can have elements with that
-        // prefix too. Sometimes it is unavoidable, e.g. for global style
-        // resets, in which case scope the selector so it is only applied within
-        // the grid root.
-        'selector-disallowed-list': [
-            ['/.*class\\^=.*/'],
-            {
-                message:
-                    'Avoid selectors that target partial classnames unless absolutely necessary - see note in .stylelintrc.js',
-                severity: 'error',
             },
         ],
     },

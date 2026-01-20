@@ -2,7 +2,7 @@ import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, ValidationModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
 import {
     ColumnMenuModule,
     ColumnsToolPanelModule,
@@ -10,11 +10,11 @@ import {
     FiltersToolPanelModule,
     PivotModule,
 } from 'ag-grid-enterprise';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     ClientSideRowModelModule,
     ColumnsToolPanelModule,
 
@@ -23,7 +23,7 @@ ModuleRegistry.registerModules([
     ContextMenuModule,
     PivotModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 interface IOlympicData {
     athlete: string;
@@ -68,34 +68,36 @@ const GridExample = () => {
     }, []);
 
     return (
-        <div style={containerStyle}>
-            <div className="example-wrapper">
-                <div className="example-header">
-                    <label>
-                        <span>removePivotHeaderRowWhenSingleValueColumn:</span>
-                        <input
-                            type="checkbox"
-                            id="removePivotHeaderRowWhenSingleValueColumn"
-                            onChange={togglePivotHeader}
-                            defaultChecked
-                        />
-                    </label>
-                </div>
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div className="example-wrapper">
+                    <div className="example-header">
+                        <label>
+                            <span>removePivotHeaderRowWhenSingleValueColumn:</span>
+                            <input
+                                type="checkbox"
+                                id="removePivotHeaderRowWhenSingleValueColumn"
+                                onChange={togglePivotHeader}
+                                defaultChecked
+                            />
+                        </label>
+                    </div>
 
-                <div style={gridStyle}>
-                    <AgGridReact<IOlympicData>
-                        ref={gridRef}
-                        rowData={data}
-                        loading={loading}
-                        columnDefs={columnDefs}
-                        defaultColDef={defaultColDef}
-                        autoGroupColumnDef={autoGroupColumnDef}
-                        pivotMode={true}
-                        removePivotHeaderRowWhenSingleValueColumn={true}
-                    />
+                    <div style={gridStyle}>
+                        <AgGridReact<IOlympicData>
+                            ref={gridRef}
+                            rowData={data}
+                            loading={loading}
+                            columnDefs={columnDefs}
+                            defaultColDef={defaultColDef}
+                            autoGroupColumnDef={autoGroupColumnDef}
+                            pivotMode={true}
+                            removePivotHeaderRowWhenSingleValueColumn={true}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

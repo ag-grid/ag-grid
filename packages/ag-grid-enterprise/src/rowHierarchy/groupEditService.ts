@@ -462,7 +462,7 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         if (maxLevel < 0) {
             return false;
         }
-        const { valueSvc, editSvc } = this.beans;
+        const { valueSvc } = this.beans;
         let changed = false;
         for (let level = 0; level < columns.length; ++level) {
             const column = columns[level];
@@ -479,8 +479,7 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
             if (parsedValue !== undefined) {
                 valueToSet = parsedValue;
             }
-            const result = editSvc?.setDataValue({ rowNode: row, column }, valueToSet, 'rowDrag');
-            const updated = result != null ? !!result : row.setDataValue(column, valueToSet, 'rowDrag');
+            const updated = row.setDataValue(column, valueToSet, 'rowDrag');
             if (updated) {
                 changed = true;
             }

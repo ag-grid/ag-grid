@@ -2,10 +2,8 @@ import React, { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef, ColGroupDef, ValueGetterParams } from 'ag-grid-community';
-import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
-
-ModuleRegistry.registerModules([AllCommunityModule]);
+import { AllCommunityModule } from 'ag-grid-community';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 const CustomButtonComponent = () => {
     return <button onClick={() => console.log('clicked')}>Push Me!</button>;
@@ -31,11 +29,13 @@ const GridExample = () => {
         { field: 'button', cellRenderer: CustomButtonComponent, flex: 1 },
     ]);
     return (
-        <div style={{ width: '100%', height: '100%' }}>
+        <AgGridProvider modules={[AllCommunityModule]}>
             <div style={{ width: '100%', height: '100%' }}>
-                <AgGridReact rowData={rowData} columnDefs={columnDefs} />
+                <div style={{ width: '100%', height: '100%' }}>
+                    <AgGridReact rowData={rowData} columnDefs={columnDefs} />
+                </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

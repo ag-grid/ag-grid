@@ -256,6 +256,9 @@ jobs:
         with:
           fetch-depth: 1 # shallow copy
 
+      - name: Verify rulesync configuration
+        run: ./external/ag-shared/scripts/sync-rulesync/sync-rulesync.sh --check
+
       - name: Setup
         id: setup
         uses: ./.github/actions/setup-nx

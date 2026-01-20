@@ -3,19 +3,11 @@
 import React, { StrictMode, useCallback, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import {
-    ClientSideRowModelModule,
-    type ColDef,
-    type GridReadyEvent,
-    ModuleRegistry,
-    ValidationModule,
-} from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
+import type { ColDef, GetRowIdParams, GridReadyEvent } from 'ag-grid-community';
+import { ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+const modules = [ClientSideRowModelModule, ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : [])];
 
 let startTime: any = undefined;
 let endTime: any = undefined;
@@ -116,35 +108,37 @@ const GridExample = () => {
     };
 
     return (
-        <div style={containerStyle}>
-            <div style={{ marginBottom: '10px' }}>
-                <button onClick={toggleRenderingMode}>
-                    Switch to {renderingMode === 'legacy' ? 'Default' : 'Legacy'} Mode
-                </button>
-                <button onClick={toggleGetRowId} style={{ marginLeft: '10px' }}>
-                    {useGetRowId ? 'Remove' : 'Add'} getRowId
-                </button>
-            </div>
-            <div style={{ marginBottom: '10px', fontSize: '14px', color: '#666' }}>
-                <div>
-                    Current Rendering Mode: <strong>{renderingMode}</strong>
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div style={{ marginBottom: '10px' }}>
+                    <button onClick={toggleRenderingMode}>
+                        Switch to {renderingMode === 'legacy' ? 'Default' : 'Legacy'} Mode
+                    </button>
+                    <button onClick={toggleGetRowId} style={{ marginLeft: '10px' }}>
+                        {useGetRowId ? 'Remove' : 'Add'} getRowId
+                    </button>
                 </div>
-                <div>
-                    Current getRowId: <strong>{useGetRowId ? 'Enabled' : 'Disabled'}</strong>
+                <div style={{ marginBottom: '10px', fontSize: '14px', color: '#666' }}>
+                    <div>
+                        Current Rendering Mode: <strong>{renderingMode}</strong>
+                    </div>
+                    <div>
+                        Current getRowId: <strong>{useGetRowId ? 'Enabled' : 'Disabled'}</strong>
+                    </div>
+                </div>
+                <div style={gridStyle}>
+                    <AgGridReact<IOlympicData>
+                        key={`${renderingMode}-${useGetRowId}`}
+                        rowData={rowData}
+                        columnDefs={columnDefs}
+                        onGridReady={onGridReady}
+                        suppressScrollOnNewData
+                        renderingMode={renderingMode}
+                        getRowId={useGetRowId ? (params: GetRowIdParams) => String(params.data.id) : undefined}
+                    />
                 </div>
             </div>
-            <div style={gridStyle}>
-                <AgGridReact<IOlympicData>
-                    key={`${renderingMode}-${useGetRowId}`}
-                    rowData={rowData}
-                    columnDefs={columnDefs}
-                    onGridReady={onGridReady}
-                    suppressScrollOnNewData
-                    renderingMode={renderingMode}
-                    getRowId={useGetRowId ? (params) => String(params.data.id) : undefined}
-                />
-            </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

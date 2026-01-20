@@ -2,7 +2,7 @@ import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef, FirstDataRenderedEvent } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, ValidationModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
 import {
     ColumnMenuModule,
     ColumnsToolPanelModule,
@@ -11,9 +11,9 @@ import {
     SetFilterModule,
 } from 'ag-grid-enterprise';
 import type { CustomCellRendererProps } from 'ag-grid-react';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-ModuleRegistry.registerModules([
+const modules = [
     ClientSideRowModelModule,
     SetFilterModule,
 
@@ -22,7 +22,7 @@ ModuleRegistry.registerModules([
     ColumnsToolPanelModule,
     FiltersToolPanelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const colourCellRenderer = (props: CustomCellRendererProps) => {
     if (!props.value || props.value === '(Select All)') {
@@ -39,10 +39,12 @@ const colourCellRenderer = (props: CustomCellRendererProps) => {
         backgroundColor: props.value.toLowerCase(),
     };
     return (
-        <React.Fragment>
-            <div style={styles} />
-            {props.value}
-        </React.Fragment>
+        <AgGridProvider modules={modules}>
+            <React.Fragment>
+                <div style={styles} />
+                {props.value}
+            </React.Fragment>
+        </AgGridProvider>
     );
 };
 

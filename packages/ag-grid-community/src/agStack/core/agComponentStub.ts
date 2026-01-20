@@ -56,7 +56,7 @@ export class AgComponentStub<
     // if false, then CSS class "ag-invisible" is applied, which sets "visibility: hidden"
     private visible = true;
 
-    private css: string[] | undefined;
+    private css: string[] | undefined | typeof globalCssAdded;
 
     protected parentComponent: AgComponent<TBeanCollection, TProperties, TGlobalEvents, any> | undefined;
 
@@ -83,10 +83,7 @@ export class AgComponentStub<
 
     public preConstruct(): void {
         this.wireTemplate(this.getGui());
-        const debugId = 'component-' + Object.getPrototypeOf(this)?.constructor?.name;
-        for (const css of this.css ?? []) {
-            this.beans.environment.addGlobalCSS(css, debugId);
-        }
+        this.addGlobalCss();
     }
 
     private wireTemplate(element: HTMLElement | undefined, paramsMap?: { [key: string]: any }): void {
@@ -413,7 +410,24 @@ export class AgComponentStub<
     }
 
     protected registerCSS(css: string): void {
-        this.css ||= [];
-        this.css.push(css);
+        if (this.css === globalCssAdded) {
+            this.css = [css];
+            this.addGlobalCss();
+        } else {
+            this.css ||= [];
+            this.css.push(css);
+        }
+    }
+
+    private addGlobalCss(): void {
+        if (Array.isArray(this.css)) {
+            const debugId = 'component-' + Object.getPrototypeOf(this)?.constructor?.name;
+            for (const css of this.css ?? []) {
+                this.beans.environment.addGlobalCSS(css, debugId);
+            }
+        }
+        this.css = globalCssAdded;
     }
 }
+
+const globalCssAdded: unique symbol = Symbol();

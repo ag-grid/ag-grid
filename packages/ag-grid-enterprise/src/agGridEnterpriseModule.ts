@@ -1,4 +1,4 @@
-import type { _ModuleWithoutApi } from 'ag-grid-community';
+import type { _ModuleWithLicenseManager, _ModuleWithoutApi } from 'ag-grid-community';
 
 import { GridLicenseManager as LicenseManager } from './license/gridLicenseManager';
 import { VERSION } from './version';
@@ -6,7 +6,7 @@ import { VERSION } from './version';
 /**
  * @internal
  */
-export const EnterpriseCoreModule: _ModuleWithoutApi = {
+export const EnterpriseCoreModule: _ModuleWithoutApi & _ModuleWithLicenseManager = {
     moduleName: 'EnterpriseCore',
     version: VERSION,
     beans: [LicenseManager],
@@ -30,4 +30,5 @@ export const EnterpriseCoreModule: _ModuleWithoutApi = {
         columnDrag: 'grip',
     },
     dependsOn: [],
+    setLicenseKey: LicenseManager.setLicenseKey,
 };

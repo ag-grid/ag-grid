@@ -66,17 +66,36 @@ function deriveClickCount(gos: GridOptionsService, colDef?: ColDef): number {
     return 2;
 }
 
-export function isCellEditable(
-    beans: BeanCollection,
-    { rowNode, column }: Required<EditPosition>,
-    _source: 'api' | 'ui' = 'ui'
-): boolean {
-    const editable = column.getColDef().editable;
-    const editModelSvc = beans.editModelSvc;
-    return (
-        (column as AgColumn).isColumnFunc(rowNode, editable) ||
-        (!!editModelSvc && editModelSvc.hasEdits({ rowNode, column }, { withOpenEditor: true }))
-    );
+function existingEditing(beans: BeanCollection, editPosition: Required<EditPosition>): boolean {
+    return beans.editModelSvc?.hasEdits(editPosition, { withOpenEditor: true }) ?? false;
+}
+
+export function isCellEditable(beans: BeanCollection, editPosition: Required<EditPosition>): boolean {
+    const column = editPosition.column as AgColumn;
+    const rowNode = editPosition.rowNode;
+    const colDef = column.getColDef();
+
+    if (!rowNode) {
+        return existingEditing(beans, editPosition);
+    }
+
+    const editable = colDef.editable;
+
+    if (rowNode.group) {
+        const groupRowEditable = colDef.groupRowEditable;
+        if (groupRowEditable != null) {
+            if (column.isColumnFunc(rowNode, groupRowEditable)) {
+                return true;
+            }
+            return existingEditing(beans, editPosition);
+        }
+    }
+
+    if (column.isColumnFunc(rowNode, editable)) {
+        return true;
+    }
+
+    return existingEditing(beans, editPosition);
 }
 
 export function isFullRowCellEditable(
@@ -84,13 +103,18 @@ export function isFullRowCellEditable(
     position: Required<EditPosition>,
     source: 'api' | 'ui' = 'ui'
 ): boolean {
-    const editable = isCellEditable(beans, position, source);
-
-    if (editable === true || source === 'ui') {
+    const editable = isCellEditable(beans, position);
+    if (editable || source === 'ui') {
         return editable;
     }
 
     // check if other cells in row are editable, so starting edit on uneditable cell will still work
-    const columns = beans.colModel.getCols();
-    return columns.some((col: AgColumn) => isCellEditable(beans, { rowNode: position.rowNode, column: col }, source));
+    const { rowNode, column } = position;
+    for (const col of beans.colModel.getCols()) {
+        if (col !== column && isCellEditable(beans, { rowNode, column: col })) {
+            return true;
+        }
+    }
+
+    return false;
 }

@@ -542,8 +542,8 @@ export class DataTypeService extends BeanStub implements NamedBean {
                 cellEditor: 'agCheckboxCellEditor',
                 cellRenderer: 'agCheckboxCellRenderer',
                 getFindText: () => null,
-                suppressKeyboardEvent: (params: SuppressKeyboardEventParams<any, boolean>) =>
-                    !!params.colDef.editable && params.event.key === KeyCode.SPACE,
+                suppressKeyboardEvent: ({ node, event, column }: SuppressKeyboardEventParams<any, boolean>) =>
+                    event.key === KeyCode.SPACE && column.isCellEditable(node),
             };
         },
         date({ formatValue }) {

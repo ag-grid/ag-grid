@@ -2,6 +2,7 @@ import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react
 import { createRoot } from 'react-dom/client';
 
 import type {
+    AutoGroupColumnDef,
     ColDef,
     GridPreDestroyedEvent,
     GridReadyEvent,
@@ -12,7 +13,6 @@ import type {
 import {
     ClientSideRowModelModule,
     GridStateModule,
-    ModuleRegistry,
     NumberFilterModule,
     PaginationModule,
     RowSelectionModule,
@@ -25,12 +25,12 @@ import {
     PivotModule,
     SetFilterModule,
 } from 'ag-grid-enterprise';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import type { IOlympicData } from './interfaces';
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     NumberFilterModule,
     RowSelectionModule,
     GridStateModule,
@@ -42,7 +42,7 @@ ModuleRegistry.registerModules([
     CellSelectionModule,
     PivotModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const GridExample = () => {
     const gridRef = useRef<AgGridReact<IOlympicData>>(null);
@@ -71,7 +71,7 @@ const GridExample = () => {
             enableValue: true,
         };
     }, []);
-    const autoGroupColumnDef = useMemo<ColDef>(() => {
+    const autoGroupColumnDef = useMemo<AutoGroupColumnDef>(() => {
         return { minWidth: 200 };
     }, []);
     const rowSelection = useMemo<RowSelectionOptions>(
@@ -125,36 +125,38 @@ const GridExample = () => {
     }, [savedState]);
 
     return (
-        <div style={containerStyle}>
-            <div className="example-wrapper">
-                <div>
-                    <span className="button-group">
-                        <button onClick={saveState}>Save State</button>
-                        <button onClick={reloadGrid}>Recreate Grid with No State</button>
-                        <button onClick={setState}>Set State</button>
-                        <button onClick={printState}>Print State</button>
-                    </span>
-                </div>
-                <div style={gridStyle}>
-                    {gridVisible && (
-                        <AgGridReact<IOlympicData>
-                            ref={gridRef}
-                            rowData={rowData}
-                            columnDefs={columnDefs}
-                            defaultColDef={defaultColDef}
-                            autoGroupColumnDef={autoGroupColumnDef}
-                            sideBar={true}
-                            pagination={true}
-                            rowSelection={rowSelection}
-                            suppressColumnMoveAnimation={true}
-                            onGridReady={onGridReady}
-                            onGridPreDestroyed={onGridPreDestroyed}
-                            onStateUpdated={onStateUpdated}
-                        />
-                    )}
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div className="example-wrapper">
+                    <div>
+                        <span className="button-group">
+                            <button onClick={saveState}>Save State</button>
+                            <button onClick={reloadGrid}>Recreate Grid with No State</button>
+                            <button onClick={setState}>Set State</button>
+                            <button onClick={printState}>Print State</button>
+                        </span>
+                    </div>
+                    <div style={gridStyle}>
+                        {gridVisible && (
+                            <AgGridReact<IOlympicData>
+                                ref={gridRef}
+                                rowData={rowData}
+                                columnDefs={columnDefs}
+                                defaultColDef={defaultColDef}
+                                autoGroupColumnDef={autoGroupColumnDef}
+                                sideBar={true}
+                                pagination={true}
+                                rowSelection={rowSelection}
+                                suppressColumnMoveAnimation={true}
+                                onGridReady={onGridReady}
+                                onGridPreDestroyed={onGridPreDestroyed}
+                                onStateUpdated={onStateUpdated}
+                            />
+                        )}
+                    </div>
                 </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

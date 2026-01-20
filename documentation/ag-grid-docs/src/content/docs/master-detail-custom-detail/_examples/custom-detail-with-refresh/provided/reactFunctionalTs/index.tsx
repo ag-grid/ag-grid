@@ -6,17 +6,16 @@ import {
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
     HighlightChangesModule,
-    ModuleRegistry,
     ValidationModule,
 } from 'ag-grid-community';
 import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule, MasterDetailModule } from 'ag-grid-enterprise';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import DetailCellRenderer from './detailCellRenderer';
 import type { IAccount } from './interfaces';
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     ClientSideRowModelApiModule,
     HighlightChangesModule,
     ClientSideRowModelModule,
@@ -25,7 +24,7 @@ ModuleRegistry.registerModules([
     ContextMenuModule,
     ColumnsToolPanelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 let allRowData: any[];
 
@@ -89,21 +88,23 @@ const GridExample = () => {
     );
 
     return (
-        <div style={containerStyle}>
-            <div style={gridStyle}>
-                <AgGridReact<IAccount>
-                    rowData={rowData}
-                    columnDefs={columnDefs}
-                    defaultColDef={defaultColDef}
-                    masterDetail={true}
-                    detailCellRenderer={detailCellRenderer}
-                    detailRowHeight={70}
-                    groupDefaultExpanded={1}
-                    onGridReady={onGridReady}
-                    onFirstDataRendered={onFirstDataRendered}
-                />
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div style={gridStyle}>
+                    <AgGridReact<IAccount>
+                        rowData={rowData}
+                        columnDefs={columnDefs}
+                        defaultColDef={defaultColDef}
+                        masterDetail={true}
+                        detailCellRenderer={detailCellRenderer}
+                        detailRowHeight={70}
+                        groupDefaultExpanded={1}
+                        onGridReady={onGridReady}
+                        onFirstDataRendered={onFirstDataRendered}
+                    />
+                </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

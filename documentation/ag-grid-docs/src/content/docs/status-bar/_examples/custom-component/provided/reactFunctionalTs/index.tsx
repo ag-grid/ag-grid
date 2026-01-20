@@ -5,7 +5,6 @@ import type { ColDef, RowSelectionOptions, StatusPanelDef } from 'ag-grid-commun
 import {
     ClientSideRowModelModule,
     EventApiModule,
-    ModuleRegistry,
     RowApiModule,
     RowSelectionModule,
     TextEditorModule,
@@ -13,13 +12,13 @@ import {
     ValidationModule,
 } from 'ag-grid-community';
 import { CellSelectionModule, StatusBarModule } from 'ag-grid-enterprise';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import ClickableStatusBarComponent from './clickableStatusBarComponent';
 import CountStatusBarComponent from './countStatusBarComponent';
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     EventApiModule,
     TextEditorModule,
     TextFilterModule,
@@ -29,7 +28,7 @@ ModuleRegistry.registerModules([
     StatusBarModule,
     CellSelectionModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const rowSelection: RowSelectionOptions = {
     mode: 'multiRow',
@@ -92,17 +91,19 @@ const GridExample = () => {
     }, []);
 
     return (
-        <div style={containerStyle}>
-            <div style={gridStyle}>
-                <AgGridReact
-                    rowData={rowData}
-                    columnDefs={columnDefs}
-                    defaultColDef={defaultColDef}
-                    rowSelection={rowSelection}
-                    statusBar={statusBar}
-                />
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div style={gridStyle}>
+                    <AgGridReact
+                        rowData={rowData}
+                        columnDefs={columnDefs}
+                        defaultColDef={defaultColDef}
+                        rowSelection={rowSelection}
+                        statusBar={statusBar}
+                    />
+                </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

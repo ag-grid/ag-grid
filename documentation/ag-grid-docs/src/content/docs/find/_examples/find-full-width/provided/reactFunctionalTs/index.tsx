@@ -3,29 +3,27 @@
 import React, { type ChangeEvent, type KeyboardEvent, StrictMode, useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import {
-    ClientSideRowModelModule,
+import type {
     ColDef,
     FindChangedEvent,
     FindFullWidthCellRendererParams,
     GetFindMatchesParams,
     IsFullWidthRowParams,
-    ModuleRegistry,
     RowHeightParams,
-    ValidationModule,
 } from 'ag-grid-community';
+import { ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
 import { FindModule } from 'ag-grid-enterprise';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import { getData, getLatinText } from './data';
 import FullWidthCellRenderer from './fullWidthCellRenderer';
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     FindModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const GridExample = () => {
     const gridRef = useRef<AgGridReact>(null);
@@ -121,39 +119,41 @@ const GridExample = () => {
     }, []);
 
     return (
-        <div style={containerStyle}>
-            <div className="example-wrapper">
-                <div className="example-header">
-                    <div className="example-controls">
-                        <span>Find:</span>
-                        <input type="text" onInput={onInput} onKeyDown={onKeyDown} />
-                        <button onClick={previous}>Previous</button>
-                        <button onClick={next}>Next</button>
-                        <span>{activeMatchNum}</span>
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div className="example-wrapper">
+                    <div className="example-header">
+                        <div className="example-controls">
+                            <span>Find:</span>
+                            <input type="text" onInput={onInput} onKeyDown={onKeyDown} />
+                            <button onClick={previous}>Previous</button>
+                            <button onClick={next}>Next</button>
+                            <span>{activeMatchNum}</span>
+                        </div>
+                        <div className="example-controls">
+                            <span>Go to match:</span>
+                            <input type="number" ref={goToRef} />
+                            <button onClick={goToFind}>Go To</button>
+                        </div>
                     </div>
-                    <div className="example-controls">
-                        <span>Go to match:</span>
-                        <input type="number" ref={goToRef} />
-                        <button onClick={goToFind}>Go To</button>
-                    </div>
-                </div>
 
-                <div style={gridStyle}>
-                    <AgGridReact
-                        ref={gridRef}
-                        rowData={rowData}
-                        columnDefs={columnDefs}
-                        defaultColDef={defaultColDef}
-                        getRowHeight={getRowHeight}
-                        isFullWidthRow={isFullWidthRow}
-                        fullWidthCellRenderer={fullWidthCellRenderer}
-                        fullWidthCellRendererParams={fullWidthCellRendererParams}
-                        findSearchValue={findSearchValue}
-                        onFindChanged={onFindChanged}
-                    />
+                    <div style={gridStyle}>
+                        <AgGridReact
+                            ref={gridRef}
+                            rowData={rowData}
+                            columnDefs={columnDefs}
+                            defaultColDef={defaultColDef}
+                            getRowHeight={getRowHeight}
+                            isFullWidthRow={isFullWidthRow}
+                            fullWidthCellRenderer={fullWidthCellRenderer}
+                            fullWidthCellRendererParams={fullWidthCellRendererParams}
+                            findSearchValue={findSearchValue}
+                            onFindChanged={onFindChanged}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

@@ -5,24 +5,23 @@ import type { ColDef, EditableCallbackParams, GetRowIdParams, RowEditingStoppedE
 import {
     ClientSideRowModelModule,
     ColumnApiModule,
-    ModuleRegistry,
     NumberEditorModule,
     PinnedRowModule,
     TextEditorModule,
     ValidationModule,
 } from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import { getData } from './data';
 
-ModuleRegistry.registerModules([
+const modules = [
     ColumnApiModule,
     ClientSideRowModelModule,
     TextEditorModule,
     NumberEditorModule,
     PinnedRowModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const GridExample = () => {
     const gridRef = useRef<AgGridReact>(null);
@@ -77,29 +76,31 @@ const GridExample = () => {
     );
 
     return (
-        <div style={containerStyle}>
-            <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column' }}>
-                <div>
-                    <div style={{ marginBottom: '5px', minHeight: '30px' }}>
-                        <button onClick={addNewRow}>Add New Row</button>
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column' }}>
+                    <div>
+                        <div style={{ marginBottom: '5px', minHeight: '30px' }}>
+                            <button onClick={addNewRow}>Add New Row</button>
+                        </div>
                     </div>
-                </div>
-                <div style={{ flex: '1 1 0px' }}>
-                    <div style={gridStyle}>
-                        <AgGridReact
-                            ref={gridRef}
-                            rowData={rowData}
-                            columnDefs={columnDefs}
-                            defaultColDef={defaultColDef}
-                            editType={'fullRow'}
-                            getRowId={getRowId}
-                            pinnedBottomRowData={pinnedBottomRowData}
-                            onRowEditingStopped={onRowEditingStopped}
-                        />
+                    <div style={{ flex: '1 1 0px' }}>
+                        <div style={gridStyle}>
+                            <AgGridReact
+                                ref={gridRef}
+                                rowData={rowData}
+                                columnDefs={columnDefs}
+                                defaultColDef={defaultColDef}
+                                editType={'fullRow'}
+                                getRowId={getRowId}
+                                pinnedBottomRowData={pinnedBottomRowData}
+                                onRowEditingStopped={onRowEditingStopped}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

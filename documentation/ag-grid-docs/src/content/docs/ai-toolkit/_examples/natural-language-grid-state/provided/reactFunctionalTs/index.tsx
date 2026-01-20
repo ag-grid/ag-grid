@@ -1,16 +1,13 @@
 import React, { StrictMode, useCallback, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { ModuleRegistry } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import { callChatGPT } from './chatgptApi';
 import { type IOlympicData, gridOptions } from './gridOptions';
 import './styles.css';
 import { useFetchJson } from './useFetchJson';
-
-ModuleRegistry.registerModules([AllEnterpriseModule]);
 
 interface ChatMessage {
     prompt: string;
@@ -123,71 +120,73 @@ const GridExample = () => {
     }, []);
 
     return (
-        <div className="example-wrapper">
-            <div className="example-controls">
-                <div className="request-container">
-                    <form className="input-group" onSubmit={processRequest}>
-                        <input
-                            type="text"
-                            value={naturalLanguageInput}
-                            onChange={(e) => setNaturalLanguageInput(e.target.value)}
-                            disabled={processingState.isProcessing}
-                            placeholder="Your prompt e.g. 'hide age column'"
-                        />
-                        <button type="submit" disabled={processingState.isProcessing}>
-                            →
-                        </button>
-                    </form>
+        <AgGridProvider modules={[AllEnterpriseModule]}>
+            <div className="example-wrapper">
+                <div className="example-controls">
+                    <div className="request-container">
+                        <form className="input-group" onSubmit={processRequest}>
+                            <input
+                                type="text"
+                                value={naturalLanguageInput}
+                                onChange={(e) => setNaturalLanguageInput(e.target.value)}
+                                disabled={processingState.isProcessing}
+                                placeholder="Your prompt e.g. 'hide age column'"
+                            />
+                            <button type="submit" disabled={processingState.isProcessing}>
+                                →
+                            </button>
+                        </form>
 
-                    {processingState.message && (
-                        <div id="processingStatus">
-                            <code
-                                className={`
-                                    ${processingState.status === 'processing' ? 'process' : ''}
-                                    ${processingState.status === 'success' ? 'success' : ''}
-                                    ${processingState.status === 'error' ? 'error' : ''}
-                                `.trim()}
-                            >
-                                {processingState.message}
-                                {processingState.status === 'processing' && <b> ⧖</b>}
-                                {processingState.status === 'success' && <b> ✓</b>}
-                                {processingState.status === 'error' && <b> ✗</b>}
-                            </code>
+                        {processingState.message && (
+                            <div id="processingStatus">
+                                <code
+                                    className={`
+                                        ${processingState.status === 'processing' ? 'process' : ''}
+                                        ${processingState.status === 'success' ? 'success' : ''}
+                                        ${processingState.status === 'error' ? 'error' : ''}
+                                    `.trim()}
+                                >
+                                    {processingState.message}
+                                    {processingState.status === 'processing' && <b> ⧖</b>}
+                                    {processingState.status === 'success' && <b> ✓</b>}
+                                    {processingState.status === 'error' && <b> ✗</b>}
+                                </code>
+                            </div>
+                        )}
+
+                        <div>
+                            <button onClick={resetGrid}>Reset Grid</button>
                         </div>
-                    )}
+                    </div>
 
-                    <div>
-                        <button onClick={resetGrid}>Reset Grid</button>
+                    <div className="response-container">
+                        {chatMessage && (
+                            <div id="aiResponse">
+                                <i className="prompt">Prompt</i>
+                                <p className="msg prompt">{chatMessage.prompt}</p>
+                                <i className="response">Response</i>
+                                <p className="msg response">{chatMessage.response}</p>
+                            </div>
+                        )}
+
+                        {currentState && (
+                            <div id="currentState">
+                                <h4>Current Grid State:</h4>
+                                <pre>{currentState}</pre>
+                            </div>
+                        )}
                     </div>
                 </div>
 
-                <div className="response-container">
-                    {chatMessage && (
-                        <div id="aiResponse">
-                            <i className="prompt">Prompt</i>
-                            <p className="msg prompt">{chatMessage.prompt}</p>
-                            <i className="response">Response</i>
-                            <p className="msg response">{chatMessage.response}</p>
-                        </div>
-                    )}
-
-                    {currentState && (
-                        <div id="currentState">
-                            <h4>Current Grid State:</h4>
-                            <pre>{currentState}</pre>
-                        </div>
-                    )}
-                </div>
+                <AgGridReact
+                    ref={gridRef}
+                    columnDefs={gridOptions.columnDefs}
+                    rowData={rowData}
+                    gridOptions={gridOptions}
+                    loading={loading}
+                />
             </div>
-
-            <AgGridReact
-                ref={gridRef}
-                columnDefs={gridOptions.columnDefs}
-                rowData={rowData}
-                gridOptions={gridOptions}
-                loading={loading}
-            />
-        </div>
+        </AgGridProvider>
     );
 };
 

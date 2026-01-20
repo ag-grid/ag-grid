@@ -2,17 +2,17 @@ import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef, SizeColumnsToFitGridStrategy } from 'ag-grid-community';
-import { ClientSideRowModelModule, ColumnAutoSizeModule, ModuleRegistry, ValidationModule } from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
+import { ClientSideRowModelModule, ColumnAutoSizeModule, ValidationModule } from 'ag-grid-community';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import type { IOlympicData } from './interfaces';
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     ColumnAutoSizeModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const columnDefinitions: ColDef[] = [{ field: 'athlete' }, { field: 'age' }, { field: 'country' }, { field: 'sport' }];
 
@@ -48,23 +48,25 @@ const GridExample = () => {
     }, []);
 
     return (
-        <div style={containerStyle}>
-            <div className="test-container">
-                <div className="test-header">
-                    <button onClick={onBtUpdateHeaders}>Update Header Names</button>
-                    <button onClick={onBtRestoreHeaders}>Restore Original Column Definitions</button>
-                </div>
-                <div style={gridStyle}>
-                    <AgGridReact<IOlympicData>
-                        ref={gridRef}
-                        rowData={data}
-                        loading={loading}
-                        columnDefs={columnDefs}
-                        autoSizeStrategy={autoSizeStrategy}
-                    />
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div className="test-container">
+                    <div className="test-header">
+                        <button onClick={onBtUpdateHeaders}>Update Header Names</button>
+                        <button onClick={onBtRestoreHeaders}>Restore Original Column Definitions</button>
+                    </div>
+                    <div style={gridStyle}>
+                        <AgGridReact<IOlympicData>
+                            ref={gridRef}
+                            rowData={data}
+                            loading={loading}
+                            columnDefs={columnDefs}
+                            autoSizeStrategy={autoSizeStrategy}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

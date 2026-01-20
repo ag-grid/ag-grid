@@ -8,15 +8,21 @@
     margin-left: var(--ag-spacing);
 }
 
-.ag-label-align-right > * {
-    flex: none;
+:where(.ag-label-align-right) {
+    .ag-label,
+    .ag-wrapper {
+        flex: none;
+    }
 }
 
 .ag-label-align-top {
     flex-direction: column;
     align-items: flex-start;
+}
 
-    > * {
+:where(.ag-label-align-top) {
+    .ag-label,
+    .ag-wrapper {
         align-self: stretch;
     }
 }

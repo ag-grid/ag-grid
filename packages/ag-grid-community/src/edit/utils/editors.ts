@@ -548,7 +548,7 @@ function _columnDefsRequireValidation(columnDefs?: ColDef[]): boolean {
     for (let i = 0, len = columnDefs.length; i < len; ++i) {
         const colDef = columnDefs[i];
         const params = colDef.cellEditorParams;
-        if (!params || !colDef.editable) {
+        if (!params || (!colDef.editable && !colDef.groupRowEditable)) {
             continue;
         }
         if (

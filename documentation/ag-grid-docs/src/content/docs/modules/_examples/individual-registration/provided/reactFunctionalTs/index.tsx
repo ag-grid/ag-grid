@@ -4,7 +4,6 @@ import { createRoot } from 'react-dom/client';
 import {
     ClientSideRowModelModule,
     CsvExportModule,
-    ModuleRegistry,
     NumberFilterModule,
     TextFilterModule,
     ValidationModule,
@@ -17,7 +16,7 @@ import {
     ExcelExportModule,
     SetFilterModule,
 } from 'ag-grid-enterprise';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 
@@ -29,9 +28,6 @@ const sharedModules = [
 ];
 const leftModules = [SetFilterModule, ClipboardModule, CsvExportModule];
 const rightModules = [TextFilterModule, NumberFilterModule, CsvExportModule, ExcelExportModule];
-
-// Register shared Modules globally
-ModuleRegistry.registerModules(sharedModules);
 
 const columns: ColDef[] = [{ field: 'id' }, { field: 'color' }, { field: 'value1' }];
 
@@ -72,29 +68,31 @@ const GridExample = () => {
     }, []);
 
     return (
-        <div className="example-wrapper">
-            <div className="inner-col">
-                <AgGridReact
-                    gridId="Left"
-                    defaultColDef={defaultColDef}
-                    rowData={leftRowData}
-                    modules={leftModules}
-                    columnDefs={columns}
-                    onGridReady={onGridReady}
-                />
-            </div>
+        <AgGridProvider modules={sharedModules}>
+            <div className="example-wrapper">
+                <div className="inner-col">
+                    <AgGridReact
+                        gridId="Left"
+                        defaultColDef={defaultColDef}
+                        rowData={leftRowData}
+                        modules={leftModules}
+                        columnDefs={columns}
+                        onGridReady={onGridReady}
+                    />
+                </div>
 
-            <div className="inner-col">
-                <AgGridReact
-                    gridId="Right"
-                    defaultColDef={defaultColDef}
-                    rowData={rightRowData}
-                    modules={rightModules}
-                    columnDefs={columns}
-                    onGridReady={onGridReady}
-                />
+                <div className="inner-col">
+                    <AgGridReact
+                        gridId="Right"
+                        defaultColDef={defaultColDef}
+                        rowData={rightRowData}
+                        modules={rightModules}
+                        columnDefs={columns}
+                        onGridReady={onGridReady}
+                    />
+                </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

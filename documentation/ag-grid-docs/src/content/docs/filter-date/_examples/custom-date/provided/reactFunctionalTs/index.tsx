@@ -2,25 +2,19 @@ import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef } from 'ag-grid-community';
-import {
-    ClientSideRowModelModule,
-    DateFilterModule,
-    ModuleRegistry,
-    TextFilterModule,
-    ValidationModule,
-} from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
+import { ClientSideRowModelModule, DateFilterModule, TextFilterModule, ValidationModule } from 'ag-grid-community';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import CustomDateComponent from './customDateComponent';
 import type { IOlympicData } from './interfaces';
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     DateFilterModule,
     TextFilterModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
@@ -63,16 +57,18 @@ const GridExample = () => {
     }, []);
 
     return (
-        <div style={containerStyle}>
-            <div style={gridStyle}>
-                <AgGridReact<IOlympicData>
-                    rowData={rowData}
-                    columnDefs={columnDefs}
-                    defaultColDef={defaultColDef}
-                    onGridReady={onGridReady}
-                />
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div style={gridStyle}>
+                    <AgGridReact<IOlympicData>
+                        rowData={rowData}
+                        columnDefs={columnDefs}
+                        defaultColDef={defaultColDef}
+                        onGridReady={onGridReady}
+                    />
+                </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

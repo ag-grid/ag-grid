@@ -257,7 +257,8 @@
     "testing/behavioural",
     "testing/accessibility",
     "testing/csp",
-    "ag-grid-generate-example-files"
+    "ag-grid-generate-example-files",
+    "stylelint-plugin-ag"
   ],
   "tags": []
 }

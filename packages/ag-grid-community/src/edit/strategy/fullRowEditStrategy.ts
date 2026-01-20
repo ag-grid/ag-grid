@@ -165,6 +165,11 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             return;
         }
 
+        // allow range selection while editing without ending the row edit.
+        if (this.beans.editSvc?.isRangeSelectionEnabledWhileEditing()) {
+            return;
+        }
+
         const prevCell = _getCellCtrl(this.beans, prev);
 
         const isBlock = this.gos.get('invalidEditValueMode') === 'block';

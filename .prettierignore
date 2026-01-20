@@ -41,3 +41,12 @@ testing/ag-grid-docs/test-results/
 testing/angular-package-tests/project.base.json
 
 documentation/ag-grid-docs/src/components/ZoomInfo.astro
+
+# Files without Prettier parsers
+*.patch
+*.sh
+.gitrepo
+.nxignore
+
+# External subrepo (managed separately)
+external/ag-shared/

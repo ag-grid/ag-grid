@@ -3,16 +3,13 @@ import { createRoot } from 'react-dom/client';
 
 import {
     AllCommunityModule,
-    ModuleRegistry,
     colorSchemeDarkBlue,
     colorSchemeDarkWarm,
     colorSchemeLightCold,
     colorSchemeLightWarm,
     themeQuartz,
 } from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
-
-ModuleRegistry.registerModules([AllCommunityModule]);
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 const themeLightWarm = themeQuartz.withPart(colorSchemeLightWarm);
 const themeLightCold = themeQuartz.withPart(colorSchemeLightCold);
@@ -21,60 +18,62 @@ const themeDarkBlue = themeQuartz.withPart(colorSchemeDarkBlue);
 
 const GridExample = () => {
     return (
-        <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <div style={{ display: 'flex', gap: 16 }}>
-                <p style={{ flex: 1 }}>colorSchemeLightWarm:</p>
-                <p style={{ flex: 1 }}>colorSchemeLightCold:</p>
-            </div>
-            <div style={{ flex: 1, display: 'flex', gap: 16 }}>
-                <div style={{ flex: 1 }}>
-                    {
-                        <AgGridReact
-                            theme={themeLightWarm}
-                            columnDefs={columnDefs}
-                            rowData={rowData}
-                            defaultColDef={defaultColDef}
-                        />
-                    }
+        <AgGridProvider modules={[AllCommunityModule]}>
+            <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', gap: 16 }}>
+                    <p style={{ flex: 1 }}>colorSchemeLightWarm:</p>
+                    <p style={{ flex: 1 }}>colorSchemeLightCold:</p>
                 </div>
-                <div style={{ flex: 1 }}>
-                    {
-                        <AgGridReact
-                            theme={themeLightCold}
-                            columnDefs={columnDefs}
-                            rowData={rowData}
-                            defaultColDef={defaultColDef}
-                        />
-                    }
+                <div style={{ flex: 1, display: 'flex', gap: 16 }}>
+                    <div style={{ flex: 1 }}>
+                        {
+                            <AgGridReact
+                                theme={themeLightWarm}
+                                columnDefs={columnDefs}
+                                rowData={rowData}
+                                defaultColDef={defaultColDef}
+                            />
+                        }
+                    </div>
+                    <div style={{ flex: 1 }}>
+                        {
+                            <AgGridReact
+                                theme={themeLightCold}
+                                columnDefs={columnDefs}
+                                rowData={rowData}
+                                defaultColDef={defaultColDef}
+                            />
+                        }
+                    </div>
+                </div>
+                <div style={{ display: 'flex', gap: 16 }}>
+                    <p style={{ flex: 1 }}>colorSchemeDarkWarm:</p>
+                    <p style={{ flex: 1 }}>colorSchemeDarkBlue:</p>
+                </div>
+                <div style={{ flex: 1, display: 'flex', gap: 16 }}>
+                    <div style={{ flex: 1 }}>
+                        {
+                            <AgGridReact
+                                theme={themeDarkWarm}
+                                columnDefs={columnDefs}
+                                rowData={rowData}
+                                defaultColDef={defaultColDef}
+                            />
+                        }
+                    </div>
+                    <div style={{ flex: 1 }}>
+                        {
+                            <AgGridReact
+                                theme={themeDarkBlue}
+                                columnDefs={columnDefs}
+                                rowData={rowData}
+                                defaultColDef={defaultColDef}
+                            />
+                        }
+                    </div>
                 </div>
             </div>
-            <div style={{ display: 'flex', gap: 16 }}>
-                <p style={{ flex: 1 }}>colorSchemeDarkWarm:</p>
-                <p style={{ flex: 1 }}>colorSchemeDarkBlue:</p>
-            </div>
-            <div style={{ flex: 1, display: 'flex', gap: 16 }}>
-                <div style={{ flex: 1 }}>
-                    {
-                        <AgGridReact
-                            theme={themeDarkWarm}
-                            columnDefs={columnDefs}
-                            rowData={rowData}
-                            defaultColDef={defaultColDef}
-                        />
-                    }
-                </div>
-                <div style={{ flex: 1 }}>
-                    {
-                        <AgGridReact
-                            theme={themeDarkBlue}
-                            columnDefs={columnDefs}
-                            rowData={rowData}
-                            defaultColDef={defaultColDef}
-                        />
-                    }
-                </div>
-            </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

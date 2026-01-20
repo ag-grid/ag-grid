@@ -2,22 +2,22 @@ import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef, FirstDataRenderedEvent, SetFilterHandler } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, ValidationModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
 import { ColumnMenuModule, ContextMenuModule, FiltersToolPanelModule, SetFilterModule } from 'ag-grid-enterprise';
 import type { CustomCellRendererProps } from 'ag-grid-react';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import { getData } from './data';
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     ClientSideRowModelModule,
     SetFilterModule,
     ColumnMenuModule,
     ContextMenuModule,
     FiltersToolPanelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const colourCellRenderer = (props: CustomCellRendererProps) => {
     if (!props.value || props.value === '(Select All)') {
@@ -115,43 +115,45 @@ const GridExample = () => {
     }, []);
 
     return (
-        <div style={containerStyle}>
-            <div className="example-wrapper">
-                <div className="example-header">
-                    <div>
-                        Case Insensitive:
-                        <button onClick={() => setModel('insensitive')}>API: setModel() - mismatching case</button>
-                        <button onClick={() => getModel('insensitive')}>API: getModel()</button>
-                        <button onClick={() => setFilterValues('insensitive')}>
-                            API: setFilterValues() - mismatching case
-                        </button>
-                        <button onClick={() => getValues('insensitive')}>API: getFilterValues()</button>
-                        <button onClick={() => reset('insensitive')}>Reset</button>
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div className="example-wrapper">
+                    <div className="example-header">
+                        <div>
+                            Case Insensitive:
+                            <button onClick={() => setModel('insensitive')}>API: setModel() - mismatching case</button>
+                            <button onClick={() => getModel('insensitive')}>API: getModel()</button>
+                            <button onClick={() => setFilterValues('insensitive')}>
+                                API: setFilterValues() - mismatching case
+                            </button>
+                            <button onClick={() => getValues('insensitive')}>API: getFilterValues()</button>
+                            <button onClick={() => reset('insensitive')}>Reset</button>
+                        </div>
+                        <div style={{ paddingTop: '10px' }}>
+                            Case Sensitive:
+                            <button onClick={() => setModel('sensitive')}>API: setModel() - mismatching case</button>
+                            <button onClick={() => getModel('sensitive')}>API: getModel()</button>
+                            <button onClick={() => setFilterValues('sensitive')}>
+                                API: setFilterValues() - mismatching case
+                            </button>
+                            <button onClick={() => getValues('sensitive')}>API: getFilterValues()</button>
+                            <button onClick={() => reset('sensitive')}>Reset</button>
+                        </div>
                     </div>
-                    <div style={{ paddingTop: '10px' }}>
-                        Case Sensitive:
-                        <button onClick={() => setModel('sensitive')}>API: setModel() - mismatching case</button>
-                        <button onClick={() => getModel('sensitive')}>API: getModel()</button>
-                        <button onClick={() => setFilterValues('sensitive')}>
-                            API: setFilterValues() - mismatching case
-                        </button>
-                        <button onClick={() => getValues('sensitive')}>API: getFilterValues()</button>
-                        <button onClick={() => reset('sensitive')}>Reset</button>
-                    </div>
-                </div>
 
-                <div style={gridStyle}>
-                    <AgGridReact
-                        ref={gridRef}
-                        rowData={rowData}
-                        columnDefs={columnDefs}
-                        defaultColDef={defaultColDef}
-                        sideBar={'filters'}
-                        onFirstDataRendered={onFirstDataRendered}
-                    />
+                    <div style={gridStyle}>
+                        <AgGridReact
+                            ref={gridRef}
+                            rowData={rowData}
+                            columnDefs={columnDefs}
+                            defaultColDef={defaultColDef}
+                            sideBar={'filters'}
+                            onFirstDataRendered={onFirstDataRendered}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 
