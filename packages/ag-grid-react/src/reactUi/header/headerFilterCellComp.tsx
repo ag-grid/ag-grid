@@ -49,7 +49,7 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
             return;
         }
 
-        userCompResolve.current && userCompResolve.current(value);
+        userCompResolve.current?.(value);
     };
 
     const setRef = useCallback((eRef: HTMLDivElement | null) => {

@@ -1,2 +1,11 @@
 # Needed to avoid nx format failing on symlinks.
 .rulesync/
+.patches/
+patches/
+
+# Files without Prettier parsers
+*.sh
+*.patch
+.gitrepo
+.nxignore
+.prettierignore

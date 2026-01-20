@@ -30,14 +30,14 @@
 
 .ag-measurement-element-border {
     display: inline-block;
+}
 
-    /* ResizeObserver measures the content box of an element so i order to get
-       it to pick up a border width, the border needs to be on a child of the
-       mesasurement element */
-    &::before {
-        content: '';
-        display: block;
-        /* rtl:ignore */
-        border-left: var(--ag-internal-measurement-border);
-    }
+/* ResizeObserver measures the content box of an element so in order to get
+   it to pick up a border width, the border needs to be on a child of the
+   measurement element */
+.ag-measurement-element-border::before {
+    content: '';
+    display: block;
+    /* rtl:ignore */
+    border-left: var(--ag-internal-measurement-border);
 }

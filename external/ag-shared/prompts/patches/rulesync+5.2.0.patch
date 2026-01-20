@@ -1,0 +1,71 @@
+diff --git a/node_modules/rulesync/dist/index.js b/node_modules/rulesync/dist/index.js
+index 23dce30..0d9de20 100755
+--- a/node_modules/rulesync/dist/index.js
++++ b/node_modules/rulesync/dist/index.js
+@@ -86,7 +86,7 @@ import { resolve as resolve2 } from "path";
+ import { parse as parseJsonc } from "jsonc-parser";
+ 
+ // src/utils/file.ts
+-import { globSync } from "fs";
++import { globSync, statSync } from "fs";
+ import { mkdir, readdir, readFile, rm, stat, writeFile } from "fs/promises";
+ import os from "os";
+ import { dirname, join, relative, resolve } from "path";
+@@ -171,13 +171,28 @@ async function listDirectoryFiles(dir) {
+ async function findFilesByGlobs(globs, options = {}) {
+   const { type = "all" } = options;
+   const items = globSync(globs, { withFileTypes: true });
++  // Filter out broken symlinks - they exist as symlinks but their target doesn't exist
++  const validItems = items.filter((item) => {
++    if (item.isSymbolicLink()) {
++      try {
++        statSync(join(item.parentPath, item.name));
++        return true;
++      } catch (err) {
++        if (err.code === "ENOENT") {
++          return false;
++        }
++        throw err;
++      }
++    }
++    return true;
++  });
+   switch (type) {
+     case "file":
+-      return items.filter((item) => item.isFile()).map((item) => join(item.parentPath, item.name));
++      return validItems.filter((item) => item.isFile()).map((item) => join(item.parentPath, item.name));
+     case "dir":
+-      return items.filter((item) => item.isDirectory()).map((item) => join(item.parentPath, item.name));
++      return validItems.filter((item) => item.isDirectory()).map((item) => join(item.parentPath, item.name));
+     case "all":
+-      return items.map((item) => join(item.parentPath, item.name));
++      return validItems.map((item) => join(item.parentPath, item.name));
+     default:
+       throw new Error(`Invalid type: ${type}`);
+   }
+@@ -10595,12 +10610,7 @@ var toolRuleFactories = /* @__PURE__ */ new Map([
+       meta: {
+         extension: "md",
+         supportsGlobal: false,
+-        ruleDiscoveryMode: "toon",
+-        additionalConventions: {
+-          commands: { commandClass: AgentsmdCommand },
+-          subagents: { subagentClass: AgentsmdSubagent },
+-          skills: { skillClass: AgentsmdSkill }
+-        }
++        ruleDiscoveryMode: "auto"
+       }
+     }
+   ],
+@@ -10653,10 +10663,7 @@ var toolRuleFactories = /* @__PURE__ */ new Map([
+       meta: {
+         extension: "md",
+         supportsGlobal: true,
+-        ruleDiscoveryMode: "toon",
+-        additionalConventions: {
+-          subagents: { subagentClass: CodexCliSubagent }
+-        }
++        ruleDiscoveryMode: "auto"
+       }
+     }
+   ],

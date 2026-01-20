@@ -3,7 +3,7 @@
     display: flex;
     width: 100%;
 
-    > * {
+    > :where(.ag-text-field) {
         flex: 1 1 auto;
     }
 }
@@ -35,10 +35,10 @@
     &:focus-visible::after {
         content: none;
     }
+}
 
-    &:hover {
-        background-color: var(--ag-row-hover-color);
-    }
+.ag-autocomplete-virtual-list-item:hover {
+    background-color: var(--ag-row-hover-color);
 }
 
 .ag-autocomplete-row {

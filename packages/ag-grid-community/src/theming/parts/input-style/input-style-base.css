@@ -61,14 +61,12 @@
 }
 
 /* icon for search inputs */
-:where(
-        .ag-column-select-header-filter-wrapper,
-        .ag-filter-toolpanel-search,
-        .ag-mini-filter,
-        .ag-filter-filter,
-        .ag-filter-add-select,
-        .ag-floating-filter-search-icon
-    ) {
+:where(.ag-column-select-header-filter-wrapper),
+:where(.ag-filter-toolpanel-search),
+:where(.ag-mini-filter),
+:where(.ag-filter-filter),
+:where(.ag-filter-add-select),
+:where(.ag-floating-filter-search-icon) {
     .ag-input-wrapper::before {
         position: absolute;
         display: block;

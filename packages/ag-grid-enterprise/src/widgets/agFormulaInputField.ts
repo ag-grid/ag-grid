@@ -6,11 +6,14 @@ import type {
     GridOptionsService,
     GridOptionsWithDefaults,
 } from 'ag-grid-community';
-import { AgContentEditableField, _createElement, _getDocument, _getWindow } from 'ag-grid-community';
+import { AgContentEditableField, _createElement, _getDocument, _getWindow, _placeCaretAtEnd } from 'ag-grid-community';
 
+import { agAutocompleteCSS } from '../advancedFilter/autocomplete/agAutocomplete.css-GENERATED';
 import { getRefTokenMatches } from '../formula/refUtils';
 import { agFormulaInputFieldCSS } from './agFormulaInputField.css-GENERATED';
+import { FormulaInputAutocompleteFeature } from './formulaInputAutocompleteFeature';
 import { FormulaInputRangeSyncFeature } from './formulaInputRangeSyncFeature';
+import { TOKEN_INSERT_AFTER_CHARS, getPreviousNonSpaceChar } from './formulaInputTokenUtils';
 import { getColorClassesForRef } from './formulaRangeUtils';
 
 const FORMULA_TOKEN_COLOR_COUNT = 7;
@@ -25,9 +28,6 @@ const VALUE_OPERATOR_LOOKUP: Record<string, string> = {
 type RangeInsertAction = 'insert' | 'replace' | 'none';
 type TokenMatch = { ref: string; start: number; end: number; index: number };
 type TokenInsertResult = { previousRef?: string; tokenIndex?: number | null };
-
-// only insert new refs after operators/argument separators; otherwise treat clicks as normal edit completion.
-const TOKEN_INSERT_AFTER_CHARS = new Set(['=', '+', '-', '*', '/', '^', ',', '(', ';', '<', '>', '&']);
 
 export class AgFormulaInputField extends AgContentEditableField<
     BeanCollection,
@@ -46,23 +46,34 @@ export class AgFormulaInputField extends AgContentEditableField<
     private lastTokenCaretOffset: number | null = null;
     private lastTokenRef?: string;
     private rangeSyncFeature?: FormulaInputRangeSyncFeature;
+    private autocompleteFeature?: FormulaInputAutocompleteFeature;
+    // record mouse focus so we don't jump the caret to the end after a click.
+    private focusFromMouseTime: number | null = null;
+    // skip auto-caret placement when we are restoring a caret programmatically.
+    private suppressNextFocusCaretPlacement = false;
     // fallback color assignment per ref when a token index is unavailable.
+
     private readonly formulaColorByRef = new Map<string, number>();
 
     constructor() {
         // keep renderValueToElement false so we fully control DOM rendering.
         super({ renderValueToElement: false, className: 'ag-formula-input-field' } as any);
         this.registerCSS(agFormulaInputFieldCSS);
+        this.registerCSS(agAutocompleteCSS);
     }
 
     public override postConstruct(): void {
         super.postConstruct();
 
+        this.rangeSyncFeature = this.createManagedBean(new FormulaInputRangeSyncFeature(this));
+        this.autocompleteFeature = this.createManagedBean(new FormulaInputAutocompleteFeature(this));
+
         this.addManagedElementListeners(this.getContentElement(), {
             input: this.onContentInput.bind(this),
+            focus: this.onContentFocus.bind(this),
+            blur: this.onContentBlur.bind(this),
+            mousedown: this.onContentMouseDown.bind(this),
         });
-
-        this.rangeSyncFeature = this.createManagedBean(new FormulaInputRangeSyncFeature(this));
     }
 
     public override setValue(value?: string | null, silent?: boolean): this {
@@ -132,6 +143,15 @@ export class AgFormulaInputField extends AgContentEditableField<
         contentElement.textContent = value ?? '';
         const targetCaret = caretOffset != null ? Math.min(caretOffset, value.length) : null;
         restoreCaret(this.beans, contentElement, targetCaret);
+    }
+
+    public withSelectionChangeHandlingSuppressed(action: () => void): void {
+        if (!this.rangeSyncFeature) {
+            action();
+            return;
+        }
+        // proxy to the range sync feature so tab navigation doesn't rewrite formulas.
+        this.rangeSyncFeature.withSelectionChangeHandlingSuppressed(action);
     }
 
     public getColorIndexForRef(ref: string): number | null {
@@ -221,6 +241,39 @@ export class AgFormulaInputField extends AgContentEditableField<
         this.rangeSyncFeature?.onValueUpdated(serialized, hasFormulaPrefix);
     }
 
+    private onContentFocus(): void {
+        this.rangeSyncFeature?.setEditorActive(true);
+        // avoid overriding caret placement after token updates.
+        if (this.suppressNextFocusCaretPlacement) {
+            this.suppressNextFocusCaretPlacement = false;
+            return;
+        }
+        const { focusFromMouseTime } = this;
+        const focusFromMouse = focusFromMouseTime != null;
+        this.focusFromMouseTime = null;
+        if (focusFromMouse) {
+            return;
+        }
+        // keyboard focus should land at the end for fast append editing.
+        _placeCaretAtEnd(this.beans, this.getContentElement());
+    }
+
+    private onContentBlur(event: FocusEvent): void {
+        this.focusFromMouseTime = null;
+        const nextTarget = event.relatedTarget as HTMLElement | null;
+        // only deactivate when moving to another cell editor inside the grid.
+        const editorTarget = nextTarget?.closest('.ag-cell-editor');
+        const cellTarget = nextTarget?.closest('.ag-cell');
+        if (!nextTarget || this.getGui().contains(nextTarget) || !editorTarget || !cellTarget) {
+            return;
+        }
+        this.rangeSyncFeature?.deactivateForFocusLoss();
+    }
+
+    private onContentMouseDown(): void {
+        this.focusFromMouseTime = Date.now();
+    }
+
     public insertOrReplaceToken(ref: string, isNew: boolean): TokenInsertResult {
         const offsets = this.getTokenInsertOffsets(isNew);
 
@@ -298,12 +351,14 @@ export class AgFormulaInputField extends AgContentEditableField<
             return { action: 'insert', previousRef, tokenIndex };
         }
 
+        const { valueOffset } = caretOffsets;
         // if the caret is inside/adjacent to a token, replace that token.
-        const tokenMatch = getTokenMatchAtOffset(value, caretOffsets.valueOffset);
+        const tokenMatch = getTokenMatchAtOffset(value, valueOffset);
 
         if (tokenMatch) {
+            const { end: tokenEnd, ref: tokenRef } = tokenMatch;
             // if the user is completing a partial range like "A1:", keep the range and insert the end ref.
-            if (tokenMatch.ref.endsWith(':') && caretOffsets.valueOffset === tokenMatch.end) {
+            if (tokenRef.endsWith(':') && valueOffset === tokenEnd) {
                 const { previousRef, tokenIndex } = this.insertOrReplaceToken(ref, true);
                 return { action: 'insert', previousRef, tokenIndex };
             }
@@ -312,7 +367,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         }
 
         // only insert new refs after operator-like chars; otherwise we end the edit on click.
-        if (!shouldInsertTokenAtOffset(value, caretOffsets.valueOffset)) {
+        if (!shouldInsertTokenAtOffset(value, valueOffset)) {
             return { action: 'none' };
         }
 
@@ -327,12 +382,17 @@ export class AgFormulaInputField extends AgContentEditableField<
             this.currentValue.length;
         const caret = caretBase + (this.lastTokenValueLength ?? 0);
         this.selectionCaretOffset = null;
+        // avoid onFocus forcing the caret to the end while we restore its position.
+        this.suppressNextFocusCaretPlacement = true;
 
         setTimeout(() => {
             if (!this.isAlive()) {
                 return;
             }
             this.getContentElement().focus({ preventScroll: true });
+            if (_getDocument(this.beans).activeElement === this.getContentElement()) {
+                this.suppressNextFocusCaretPlacement = false;
+            }
             restoreCaret(this.beans, this.getContentElement(), caret);
         });
     }
@@ -384,6 +444,10 @@ export class AgFormulaInputField extends AgContentEditableField<
         });
     }
 
+    public getCaretOffsetsForAutocomplete(value: string): { caretOffset: number; valueOffset: number } | null {
+        return this.getCaretOffsets(value);
+    }
+
     private getCaretOffsets(
         value: string,
         options: { useCachedCaret: boolean; useCachedValueOffset: boolean } = {
@@ -393,8 +457,9 @@ export class AgFormulaInputField extends AgContentEditableField<
     ): { caretOffset: number; valueOffset: number } | null {
         // snapshot the caret position in both caret units and raw string offsets.
         const { beans } = this;
+        const { useCachedCaret, useCachedValueOffset } = options;
         const contentElement = this.getContentElement();
-        const caretOffset = options.useCachedCaret
+        const caretOffset = useCachedCaret
             ? this.selectionCaretOffset ?? getCaretOffset(beans, contentElement, value) ?? this.currentValue.length
             : getCaretOffset(beans, contentElement, value);
 
@@ -403,7 +468,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         }
 
         const valueOffset =
-            options.useCachedValueOffset && this.lastTokenValueOffset != null
+            useCachedValueOffset && this.lastTokenValueOffset != null
                 ? this.lastTokenValueOffset
                 : this.getValueOffsetFromCaret(caretOffset);
 
@@ -445,6 +510,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         if (params.dispatch) {
             this.dispatchValueChanged();
         }
+        this.autocompleteFeature?.onPlainValueUpdated();
     }
 
     private applyFormulaValue(
@@ -463,23 +529,28 @@ export class AgFormulaInputField extends AgContentEditableField<
         if (params.dispatch) {
             this.dispatchValueChanged();
         }
+        this.autocompleteFeature?.onFormulaValueUpdated();
     }
 
-    private applyFormulaValueChange(params: {
+    public applyFormulaValueChange(params: {
         currentValue: string;
         nextValue: string;
         caret: number;
         updateTracking?: () => void;
     }): void {
-        this.updateFormulaColorsFromValue(params.nextValue);
+        const { currentValue, nextValue, caret } = params;
+        this.updateFormulaColorsFromValue(nextValue);
+
         params.updateTracking?.();
-        this.setEditorValue(params.nextValue);
+
+        this.setEditorValue(nextValue);
         this.renderFormula({
-            currentValue: params.currentValue,
-            value: params.nextValue,
-            caret: params.caret,
+            currentValue,
+            value: nextValue,
+            caret,
         });
         this.dispatchValueChanged();
+        this.autocompleteFeature?.onFormulaValueUpdated();
     }
 
     public replaceTokenRef(
@@ -540,8 +611,8 @@ export class AgFormulaInputField extends AgContentEditableField<
 
 // Token/range color helpers
 const shouldUseTokenColors = (beans: BeanCollection): boolean => {
-    const { editSvc, rangeSvc } = beans;
-    const canCreateRanges = !!rangeSvc && !!editSvc?.isRangeSelectionEnabledWhileEditing?.();
+    const { gos, rangeSvc } = beans;
+    const canCreateRanges = !!rangeSvc && !!gos.get('cellSelection');
 
     return canCreateRanges;
 };
@@ -578,17 +649,6 @@ const shouldInsertTokenAtOffset = (value: string, offset: number): boolean => {
     // insert only after an operator or at the beginning to avoid hijacking plain values.
     const previousChar = getPreviousNonSpaceChar(value, offset);
     return previousChar == null || TOKEN_INSERT_AFTER_CHARS.has(previousChar);
-};
-
-const getPreviousNonSpaceChar = (value: string, offset: number): string | null => {
-    // skip whitespace to detect the meaningful character before the caret.
-    for (let i = offset - 1; i >= 0; i--) {
-        const char = value[i];
-        if (char != null && char.trim() !== '') {
-            return char;
-        }
-    }
-    return null;
 };
 
 // Rendering & caret helpers

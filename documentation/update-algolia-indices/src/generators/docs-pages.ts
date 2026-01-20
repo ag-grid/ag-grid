@@ -85,7 +85,7 @@ export const parseDocPage = async (item: FlattenedMenuItem) => {
 
             objectID: hashPath,
             breadcrumb,
-            title,
+            title: pageTitle || title,
             heading,
             subHeading,
             path: hashPath,

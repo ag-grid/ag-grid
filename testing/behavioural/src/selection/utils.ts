@@ -49,14 +49,22 @@ export class GridActions {
 
     selectRowsByIndex(indices: number[], click: boolean): void {
         for (const i of indices) {
-            click ? this.clickRowByIndex(i, { ctrlKey: true }) : this.toggleCheckboxByIndex(i);
+            if (click) {
+                this.clickRowByIndex(i, { ctrlKey: true });
+            } else {
+                this.toggleCheckboxByIndex(i);
+            }
         }
         assertSelectedRowsByIndex(indices, this.api);
     }
 
     selectRowsById(ids: string[], click: boolean): void {
         for (const i of ids) {
-            click ? this.clickRowById(i, { ctrlKey: true }) : this.toggleCheckboxById(i);
+            if (click) {
+                this.clickRowById(i, { ctrlKey: true });
+            } else {
+                this.toggleCheckboxById(i);
+            }
         }
         assertSelectedRowElementsById(ids, this.api);
     }

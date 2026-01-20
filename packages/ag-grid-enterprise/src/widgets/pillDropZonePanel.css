@@ -63,10 +63,6 @@
     padding-bottom: var(--ag-spacing);
     padding-right: var(--ag-spacing);
     padding-left: var(--ag-spacing);
-
-    > * {
-        flex: none;
-    }
 }
 
 :where(.ag-column-drop-empty) .ag-column-drop-vertical-list {
@@ -78,10 +74,10 @@
     margin-right: calc(var(--ag-spacing) / 4);
     min-width: 0;
     opacity: 0.75;
+}
 
-    &:hover {
-        opacity: 1;
-    }
+.ag-column-drop-cell-button:hover {
+    opacity: 1;
 }
 
 .ag-column-drop-cell-drag-handle {
@@ -135,10 +131,10 @@
 .ag-select-agg-func-virtual-list-item {
     cursor: default;
     padding-left: calc(var(--ag-spacing) * 2);
+}
 
-    &:hover {
-        background-color: var(--ag-selected-row-background-color);
-    }
+.ag-select-agg-func-virtual-list-item:hover {
+    background-color: var(--ag-selected-row-background-color);
 }
 
 .ag-column-drop-horizontal-half-width:where(:not(:last-child)) {

@@ -8,6 +8,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type {
+    ColDef,
     KeyCreatorParams,
     ValueFormatterParams,
     ValueGetterParams,
@@ -401,58 +402,97 @@ export class ValueService extends BeanStub implements NamedBean {
         if (!rowNode || !column) {
             return false;
         }
-        this.ensureRowData(rowNode);
 
         const colDef = column.getColDef();
+
+        if (!rowNode.data && this.canCreateRowNodeData(rowNode, colDef)) {
+            rowNode.data = {}; // enableGroupEdit allows editing group rows without data.
+        }
+
         if (!this.isSetValueSupported({ column, newValue, colDef })) {
             return false;
         }
 
+        const oldValue = this.getValue(column, rowNode, undefined, eventSource);
+
         const params: ValueSetterParams = _addGridCommonParams(this.gos, {
             node: rowNode,
             data: rowNode.data,
-            oldValue: this.getValue(column, rowNode, undefined, eventSource),
+            oldValue,
             newValue: newValue,
             colDef,
             column: column,
         });
 
-        params.newValue = newValue;
+        const groupRowValueSetter = rowNode.group ? colDef.groupRowValueSetter : undefined;
 
-        const externalFormulaResult = this.handleExternalFormulaChange({
-            column,
-            eventSource,
-            newValue,
-            setterParams: params,
-            rowNode,
-        });
-        if (externalFormulaResult !== null) {
-            return externalFormulaResult;
+        let valueSetterChanged = false;
+        let groupRowValueSetterChanged = false;
+
+        if (rowNode.data) {
+            const externalFormulaResult = this.handleExternalFormulaChange({
+                column,
+                eventSource,
+                newValue,
+                setterParams: params,
+                rowNode,
+            });
+            if (externalFormulaResult !== null) {
+                return externalFormulaResult;
+            }
+
+            const result = this.computeValueChange({
+                column,
+                rowNode,
+                newValue,
+                params,
+                rowData: rowNode.data,
+                valueSetter: colDef.valueSetter,
+                field: colDef.field,
+            });
+
+            // default to true if user forgot to return a value (possible without TypeScript)
+            valueSetterChanged = result ?? true;
         }
 
-        let valueWasDifferent = this.computeValueChange({
-            column,
-            newValue,
-            params,
-            rowData: rowNode.data,
-            valueSetter: colDef.valueSetter,
-            field: colDef.field,
-        });
+        if (groupRowValueSetter) {
+            const result = groupRowValueSetter(
+                _addGridCommonParams(this.gos, {
+                    node: rowNode,
+                    data: rowNode.data,
+                    oldValue,
+                    newValue,
+                    colDef,
+                    column,
+                    eventSource,
+                    valueChanged: valueSetterChanged || newValue !== oldValue,
+                })
+            );
 
-        // in case user forgot to return something (possible if they are not using TypeScript
-        // and just forgot we default the return value to true, so we always refresh.
-        if (valueWasDifferent === undefined) {
-            valueWasDifferent = true;
+            // default to true if user forgot to return a value (possible without TypeScript)
+            groupRowValueSetterChanged = result ?? true;
         }
 
-        // if no change to the value, then no need to do the updating, or notifying via events.
-        // otherwise the user could be tabbing around the grid, and cellValueChange would get called
-        // all the time.
-        if (!valueWasDifferent) {
+        if (!valueSetterChanged && !groupRowValueSetterChanged) {
+            // if no change to the value, then no need to do the updating, or notifying via events.
+            // otherwise the user could be tabbing around the grid, and cellValueChange would get called
+            // all the time.
             return false;
         }
 
         return this.finishValueChange(rowNode, column, params, eventSource);
+    }
+
+    private canCreateRowNodeData(rowNode: IRowNode, colDef: ColDef): boolean {
+        if (!rowNode.group) {
+            return true; // not a group row
+        }
+
+        if (colDef.groupRowEditable != null || colDef.groupRowValueSetter != null) {
+            return false; // Do not create the row data for a group row automatically
+        }
+
+        return true; // create the rowData for groupRowEditable (default legacy behaviour)
     }
 
     private finishValueChange(
@@ -474,13 +514,6 @@ export class ValueService extends BeanStub implements NamedBean {
         }
 
         return true;
-    }
-
-    private ensureRowData(rowNode: IRowNode): void {
-        // enableGroupEdit allows editing group rows without data.
-        if (_missing(rowNode.data)) {
-            rowNode.data = {};
-        }
     }
 
     private isSetValueSupported(params: {
@@ -540,6 +573,7 @@ export class ValueService extends BeanStub implements NamedBean {
                 const computedParams: ValueSetterParams = { ...setterParams, newValue: computedValue };
                 this.computeValueChange({
                     column,
+                    rowNode,
                     newValue: computedValue,
                     params: computedParams,
                     rowData: rowNode.data,
@@ -563,6 +597,7 @@ export class ValueService extends BeanStub implements NamedBean {
         params: ValueSetterParams;
         rowData: any;
         field: string | undefined;
+        rowNode: IRowNode;
         column: AgColumn;
         newValue: any;
     }): boolean | undefined {
@@ -575,7 +610,7 @@ export class ValueService extends BeanStub implements NamedBean {
             return this.expressionSvc?.evaluate(valueSetter, setterParams);
         }
 
-        return this.setValueUsingField(rowData, field, newValue, column.isFieldContainsDots());
+        return !!rowData && this.setValueUsingField(rowData, field, newValue, column.isFieldContainsDots());
     }
 
     private dispatchCellValueChangedEvent(

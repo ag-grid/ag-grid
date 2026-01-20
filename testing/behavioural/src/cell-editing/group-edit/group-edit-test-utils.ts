@@ -1,0 +1,116 @@
+import { userEvent } from '@testing-library/user-event';
+
+import type { ColDef, GridApi, IRowNode } from 'ag-grid-community';
+import { AllCommunityModule, ClientSideRowModelModule, UndoRedoEditModule } from 'ag-grid-community';
+import { RowGroupingModule, SetFilterModule, TreeDataModule } from 'ag-grid-enterprise';
+
+import { TestGridsManager, asyncSetTimeout, waitForInput } from '../../test-utils';
+import { expect } from '../../test-utils/matchers';
+
+export const gridsManager = new TestGridsManager({
+    modules: [
+        AllCommunityModule,
+        ClientSideRowModelModule,
+        RowGroupingModule,
+        TreeDataModule,
+        UndoRedoEditModule,
+        SetFilterModule,
+    ],
+});
+
+export const EDIT_MODES = ['ui', 'setDataValue'] as const;
+
+export type EditableCallback = Exclude<NonNullable<ColDef['editable']>, boolean>;
+export type GroupRowEditableCallback = Exclude<NonNullable<ColDef['groupRowEditable']>, boolean>;
+export type GroupRowValueSetterCallback = Extract<NonNullable<ColDef['groupRowValueSetter']>, (...args: any[]) => any>;
+export type ValueSetterCallback = Extract<NonNullable<ColDef['valueSetter']>, (...args: any[]) => any>;
+export type ValueParserCallback = Extract<NonNullable<ColDef['valueParser']>, (...args: any[]) => any>;
+
+function locateCellElements(api: GridApi, rowNode: IRowNode, colId: string) {
+    const gridDiv = TestGridsManager.getHTMLElement(api);
+    expect(gridDiv).not.toBeNull();
+
+    const rowId = rowNode.id;
+    expect(rowId).toBeDefined();
+
+    const rowIndex = rowNode.rowIndex;
+    expect(rowIndex).not.toBeNull();
+
+    let cell = gridDiv!.querySelector<HTMLElement>(`[row-id="${rowId}"] [col-id="${colId}"]`);
+    if (!cell && rowIndex != null) {
+        const rowElement = gridDiv!.querySelector<HTMLElement>(`.ag-row[aria-rowindex="${rowIndex + 1}"]`);
+        cell = rowElement?.querySelector<HTMLElement>(`[col-id="${colId}"]`) ?? null;
+    }
+    expect(cell).not.toBeNull();
+
+    return { gridDiv: gridDiv!, cell: cell!, rowIndex: rowIndex! };
+}
+
+export async function editCell(api: GridApi, rowNode: IRowNode, colId: string, newValue: string) {
+    const { gridDiv, cell, rowIndex } = locateCellElements(api, rowNode, colId);
+
+    await userEvent.click(cell);
+
+    api.setFocusedCell(rowIndex, colId);
+    api.startEditingCell({ rowIndex, rowPinned: rowNode.rowPinned, colKey: colId });
+
+    const input = await waitForInput(gridDiv, cell ?? gridDiv);
+    await userEvent.clear(input);
+    await userEvent.type(input, `${newValue}{Enter}`);
+    await asyncSetTimeout(0);
+
+    return cell;
+}
+
+export function getGroupColumnDisplayValue(rowNode: IRowNode): string | undefined {
+    const groupValue = rowNode.groupData?.group;
+    if (groupValue !== undefined) {
+        return groupValue;
+    }
+    const data = rowNode.data as { label?: string } | undefined;
+    return data?.label;
+}
+
+export type CallbackArgs =
+    | Parameters<EditableCallback>
+    | Parameters<GroupRowEditableCallback>
+    | Parameters<ValueSetterCallback>;
+
+export function callsForRowNode(calls: CallbackArgs[], rowId?: string | null) {
+    if (!rowId) {
+        return [] as CallbackArgs[];
+    }
+    return calls.filter(([params]) => params?.node?.id === rowId);
+}
+
+export function createGroupRowData() {
+    return [
+        { id: 'fr-paris', region: 'Europe', country: 'France', amount: 30 },
+        { id: 'fr-lyon', region: 'Europe', country: 'France', amount: 30 },
+        { id: 'de-berlin', region: 'Europe', country: 'Germany', amount: 30 },
+        { id: 'de-hamburg', region: 'Europe', country: 'Germany', amount: 30 },
+        { id: 'it-rome', region: 'Europe', country: 'Italy', amount: 30 },
+        { id: 'it-milan', region: 'Europe', country: 'Italy', amount: 30 },
+        { id: 'us-nyc', region: 'Americas', country: 'USA', amount: 70 },
+        { id: 'us-la', region: 'Americas', country: 'USA', amount: 30 },
+        { id: 'ca-toronto', region: 'Americas', country: 'Canada', amount: 35 },
+        { id: 'ca-vancouver', region: 'Americas', country: 'Canada', amount: 25 },
+    ];
+}
+
+export const cascadeGroupRowValueSetter: GroupRowValueSetterCallback = ({ node, column, newValue, eventSource }) => {
+    const numericValue = Number(newValue);
+    if (!Number.isFinite(numericValue)) {
+        return;
+    }
+
+    const children = node.childrenAfterSort;
+    if (children) {
+        const perChild = numericValue / children.length;
+        for (const child of children) {
+            child.setDataValue(column, perChild, eventSource);
+        }
+    }
+};
+
+export { asyncSetTimeout };

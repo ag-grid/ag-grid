@@ -73,7 +73,6 @@ export interface IFormulaDataService extends Bean {
 
 export interface IFormulaService extends Bean {
     active: boolean;
-    activeEditor: number | null;
     isFormula(value: unknown): value is `=${string}`;
     setFormulasActive(cols: ColumnCollections): void;
     resolveValue(col: AgColumn, row: RowNode): unknown;
@@ -89,4 +88,11 @@ export interface IFormulaService extends Bean {
     }): string;
     refreshFormulas(refreshRows: boolean): void;
     getFunction(name: string): ((params: FormulaFunctionParams) => unknown) | undefined;
+    getFunctionNames(): string[];
+}
+
+export interface IFormulaInputManagerService extends Bean {
+    registerActiveEditor(editorId: number, onDeactivate: () => void): boolean;
+    unregisterActiveEditor(editorId: number, onDeactivate: () => void): void;
+    isActiveEditor(editorId: number): boolean;
 }
