@@ -41,7 +41,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
                 if (!data) {
                     continue;
                 }
-                const node = this.createRowNode(data, level);
+                const node = this.createRowNode(data, level, writeIdx);
                 node.sourceRowIndex = writeIdx;
                 allLeafs[writeIdx++] = node;
                 if (processedNested && !processedNested.has(data)) {
@@ -302,7 +302,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         const addedNodes: RowNode<TData>[] = new Array(addLength);
         const adds = changedRowNodes.adds;
         for (let i = 0; i < addLength; i++) {
-            const node = this.createRowNode(add[i], 0);
+            const node = this.createRowNode(add[i], 0, addIndex);
             adds.add(node);
             node.sourceRowIndex = addIndex;
             allLeafs[addIndex] = node;
@@ -335,12 +335,15 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         }
     }
 
-    private createRowNode(data: TData, level: number): RowNode<TData> {
+    private createRowNode(data: TData, level: number, sourceRowIndex?: number): RowNode<TData> {
         const node = new RowNode<TData>(this.beans);
         node.parent = this.rootNode;
         node.level = level;
         node.group = false;
         node.expanded = false;
+        if (sourceRowIndex != null) {
+            node.sourceRowIndex = sourceRowIndex;
+        }
         node.setDataAndId(data, String(this.nextId++));
         const id = node.id!;
         const allNodesMap = this.allNodesMap;
