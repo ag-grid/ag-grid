@@ -5,7 +5,14 @@ import { GridRows, TestGridsManager } from '../test-utils';
 
 describe('Aggregate Filters', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, TextFilterModule, PivotModule, NumberFilterModule, RowGroupingModule, PivotModule],
+        modules: [
+            ClientSideRowModelModule,
+            TextFilterModule,
+            PivotModule,
+            NumberFilterModule,
+            RowGroupingModule,
+            PivotModule,
+        ],
     });
 
     const rowData = [
