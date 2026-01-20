@@ -2,15 +2,12 @@ import React, { StrictMode, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, ValidationModule } from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
+import { ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+const modules = [ClientSideRowModelModule, ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : [])];
 
 const GridExample = () => {
     const gridRef = useRef<AgGridReact>(null);
@@ -57,18 +54,20 @@ const GridExample = () => {
     };
 
     return (
-        <div className="example-wrapper">
-            <div style={{ marginBottom: '5px' }}>
-                <button onClick={() => fillLarge()}>Fill 100%</button>
-                <button onClick={() => fillMedium()}>Fill 60%</button>
-                <button onClick={() => fillExact()}>Exactly 400 x 400 pixels</button>
-            </div>
-            <div className="grid-wrapper">
-                <div style={style}>
-                    <AgGridReact ref={gridRef} rowData={data} loading={loading} columnDefs={columnDefs} />
+        <AgGridProvider modules={modules}>
+            <div className="example-wrapper">
+                <div style={{ marginBottom: '5px' }}>
+                    <button onClick={() => fillLarge()}>Fill 100%</button>
+                    <button onClick={() => fillMedium()}>Fill 60%</button>
+                    <button onClick={() => fillExact()}>Exactly 400 x 400 pixels</button>
+                </div>
+                <div className="grid-wrapper">
+                    <div style={style}>
+                        <AgGridReact ref={gridRef} rowData={data} loading={loading} columnDefs={columnDefs} />
+                    </div>
                 </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

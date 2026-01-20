@@ -94,6 +94,15 @@ export default [
                     varsIgnorePattern: '^_+$',
                 },
             ],
+            // Disallow using logical short-circuit expressions as control flow (eg. `a && fn()`).
+            '@typescript-eslint/no-unused-expressions': [
+                'error',
+                {
+                    allowShortCircuit: false,
+                    allowTernary: false,
+                    allowTaggedTemplates: false,
+                },
+            ],
             'no-undef': 'warn',
             'no-lonely-if': 'error',
             curly: 'error',
@@ -103,7 +112,7 @@ export default [
         // cypress uses a global API based on undefined variables
         files: [
             '**/*.spec.{ts,js}',
-            '**/*test.{ts,js}',
+            '**/*test.{ts,js,mjs}',
             '**/{cypress,_copiedFromCore,__tests__}/**',
             '**/test-utils/**',
         ],

@@ -1,6 +1,7 @@
 import { _getClientSideRowModel, _isExpressionString } from 'ag-grid-community';
 import type { BeanCollection } from 'ag-grid-community';
 
+import { isFormulaIdentChar, isFormulaIdentStart, isStandaloneRefToken, parseA1Ref } from '../refUtils';
 import { OP_BY_SYMBOL, OP_SYMBOLS_DESC } from './operators';
 import type { OperatorDef } from './operators';
 import type { Cell, CellRef, FormulaNode, FormulaOperation } from './utils';
@@ -48,11 +49,19 @@ const parseOperand = (
 
     // cell/range
     // Matches: $A$1, A1, $A1, A$1, $A$1:$B10 etc.
-    const cellRegex = /^(\$?)([A-Z]+)(\$?)([0-9]+)(?::(\$?)([A-Z]+)(\$?)([0-9]+))?$/i;
-    const match = trimmed.match(cellRegex);
+    const parsed = parseA1Ref(trimmed);
 
-    if (match) {
-        const [, absCol1, col1, absRow1, row1, absCol2, col2, absRow2, row2] = match;
+    if (parsed) {
+        const {
+            startCol,
+            startRow,
+            startColAbsolute,
+            startRowAbsolute,
+            endCol,
+            endRow,
+            endColAbsolute,
+            endRowAbsolute,
+        } = parsed;
 
         const toCell = (colAbs: boolean, colStr: string, rowAbs: boolean, rowStr: string, unsafe: boolean): Cell => {
             const col = colAbs || unsafe ? colStr.toUpperCase() : beans.formula?.getColByRef(colStr)?.colId;
@@ -69,10 +78,10 @@ const parseOperand = (
             };
         };
 
-        const start: Cell = toCell(absCol1 === '$', col1, absRow1 === '$', row1, unsafe);
+        const start: Cell = toCell(startColAbsolute, startCol, startRowAbsolute, startRow, unsafe);
 
-        if (col2 && row2) {
-            const end: Cell = toCell(absCol2 === '$', col2, absRow2 === '$', row2, unsafe);
+        if (endCol && endRow) {
+            const end: Cell = toCell(endColAbsolute ?? false, endCol, endRowAbsolute ?? false, endRow, unsafe);
             start.endColumn = end.column;
             start.endRow = end.row;
         }
@@ -145,6 +154,11 @@ function tokenize(expr: string): string[] {
             }
         }
 
+        const ref = s.slice(start, j);
+        if (!isStandaloneRefToken(s, start, ref)) {
+            return 0;
+        }
+
         return j - start; // length of cell or range token
     };
 
@@ -183,7 +197,7 @@ function tokenize(expr: string): string[] {
         }
 
         // cell / range with $ support (e.g., $A1, A$1, $A$1:$B10)
-        if (ch === '$' || /[A-Za-z]/.test(ch)) {
+        if (ch === '$' || isFormulaIdentStart(ch)) {
             const len = lexCellRange(expr, i);
             if (len > 0) {
                 tokens.push(expr.slice(i, i + len));
@@ -192,7 +206,7 @@ function tokenize(expr: string): string[] {
             }
             // fall back to IDENT (function names, named refs)
             let j = i + 1;
-            while (j < expr.length && /[A-Za-z0-9]/.test(expr[j])) {
+            while (j < expr.length && isFormulaIdentChar(expr[j])) {
                 j++;
             }
             tokens.push(expr.slice(i, j));
@@ -337,7 +351,7 @@ function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean): 
         const token = tokens[i];
 
         // Function start: IDENT '('
-        if (/[A-Za-z]/.test(token[0] || '') && tokens[i + 1] === '(') {
+        if (isFormulaIdentStart(token[0]) && tokens[i + 1] === '(') {
             const name = token;
             ops.push({ kind: 'function', name, args: [] });
             ops.push({ kind: 'parenthesis', outLen: output.length });

@@ -45,10 +45,12 @@ describe('Floating Filters', () => {
             // Wait for next tick, filters are async
             await asyncSetTimeout(0);
 
-            const textFilter = getByTestId(
-                gridDiv,
-                agTestIdFor.textFilterInstanceInput({ source: 'floating-filter', colId: 'country' })
-            );
+            const getTestId =
+                filter === 'agNumberColumnFilter'
+                    ? agTestIdFor.numberFilterInstanceInput
+                    : agTestIdFor.textFilterInstanceInput;
+
+            const textFilter = getByTestId(gridDiv, getTestId({ source: 'floating-filter', colId: 'country' }));
 
             expect(textFilter.getAttribute('placeholder')).toBeNull();
         });
@@ -79,10 +81,12 @@ describe('Floating Filters', () => {
             // Wait for next tick, filters are async
             await asyncSetTimeout(0);
 
-            const textFilter = getByTestId(
-                gridDiv,
-                agTestIdFor.textFilterInstanceInput({ source: 'floating-filter', colId: 'country' })
-            );
+            const getTestId =
+                filter === 'agNumberColumnFilter'
+                    ? agTestIdFor.numberFilterInstanceInput
+                    : agTestIdFor.textFilterInstanceInput;
+
+            const textFilter = getByTestId(gridDiv, getTestId({ source: 'floating-filter', colId: 'country' }));
 
             expect(textFilter.getAttribute('placeholder')).toBe('type here');
         });
@@ -113,10 +117,12 @@ describe('Floating Filters', () => {
             // Wait for next tick, filters are async
             await asyncSetTimeout(0);
 
-            const textFilter = getByTestId(
-                gridDiv,
-                agTestIdFor.textFilterInstanceInput({ source: 'floating-filter', colId: 'country' })
-            );
+            const getTestId =
+                filter === 'agNumberColumnFilter'
+                    ? agTestIdFor.numberFilterInstanceInput
+                    : agTestIdFor.textFilterInstanceInput;
+
+            const textFilter = getByTestId(gridDiv, getTestId({ source: 'floating-filter', colId: 'country' }));
 
             expect(textFilter.getAttribute('placeholder')).toBe('Filter...');
         });

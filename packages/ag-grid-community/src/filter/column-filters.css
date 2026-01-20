@@ -21,7 +21,9 @@
     display: block;
     margin-right: var(--ag-widget-container-horizontal-padding);
 
-    > * {
+    :where(.ag-set-filter-group-closed-icon),
+    :where(.ag-set-filter-group-opened-icon),
+    :where(.ag-set-filter-group-indeterminate-icon) {
         cursor: pointer;
     }
 }
@@ -33,8 +35,7 @@
 
 /* Add a minimum width for the filter menu to avoid having zero width when the
    content tries to size itself to the menu */
-:where(.ag-menu:not(.ag-tabs) .ag-filter) .ag-filter-body-wrapper,
-:where(.ag-menu:not(.ag-tabs) .ag-filter) > *:not(.ag-filter-wrapper) {
+:where(.ag-menu:not(.ag-tabs) .ag-filter) .ag-filter-body-wrapper {
     min-width: 180px;
 }
 
@@ -63,16 +64,17 @@
     overflow: hidden;
 }
 
-:where(.ag-floating-filter-full-body) > div {
-    flex: 1 1 auto;
-}
-
 .ag-floating-filter-input {
     align-items: center;
     display: flex;
     width: 100%;
 
-    > * {
+    /* most filters */
+    > :where(.ag-input-field),
+    /* date filters */
+    > :where(.ag-date-floating-filter-wrapper),
+    /* nested multi filters */
+    > :where(.ag-floating-filter-input) {
         flex: 1 1 auto;
     }
 
@@ -94,7 +96,7 @@
     display: flex;
 }
 
-.ag-set-floating-filter-input :where(input)[disabled] {
+.ag-set-floating-filter-input :where(.ag-input-field-input)[disabled] {
     pointer-events: none;
 }
 
@@ -197,16 +199,13 @@
 .ag-simple-filter-body-wrapper {
     display: flex;
     flex-direction: column;
+    gap: var(--ag-widget-vertical-spacing);
     padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
     padding-bottom: calc(var(--ag-widget-container-vertical-padding) - var(--ag-widget-vertical-spacing));
     overflow-y: auto;
     min-height: calc(
         var(--ag-list-item-height) + var(--ag-widget-container-vertical-padding) + var(--ag-widget-vertical-spacing)
     );
-
-    & > * {
-        margin-bottom: var(--ag-widget-vertical-spacing);
-    }
 
     :where(.ag-resizer-wrapper) {
         margin: 0;

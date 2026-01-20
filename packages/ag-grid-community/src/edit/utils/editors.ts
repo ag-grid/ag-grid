@@ -2,7 +2,7 @@ import { _setAriaInvalid } from '../../agStack/utils/aria';
 import { _getLocaleTextFunc } from '../../agStack/utils/locale';
 import { _unwrapUserComp } from '../../components/framework/unwrapUserComp';
 import { _getCellEditorDetails } from '../../components/framework/userCompUtils';
-import type { BeanCollection, UserComponentName } from '../../context/context';
+import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ColDef } from '../../entities/colDef';
 import type { CellEditingStoppedEvent } from '../../events';
@@ -25,32 +25,24 @@ import { _getCellCtrl } from './controllers';
 
 export const UNEDITED = Symbol('unedited');
 
-function getCellEditorInstanceMap<TData = any>(
-    beans: BeanCollection,
-    params: GetCellEditorInstancesParams<TData> = {}
-): { ctrl: CellCtrl; editor: ICellEditor }[] {
-    const res: { ctrl: CellCtrl; editor: ICellEditor }[] = [];
-
-    const ctrls = beans.rowRenderer.getCellCtrls(params.rowNodes, params.columns as AgColumn[]);
-
-    for (const ctrl of ctrls) {
-        const cellEditor = ctrl.comp?.getCellEditor();
-
-        if (cellEditor) {
-            res.push({
-                ctrl,
-                editor: _unwrapUserComp(cellEditor),
-            });
-        }
-    }
-
-    return res;
-}
-
+/** public api getCellEditorInstances */
 export const getCellEditorInstances = <TData = any>(
     beans: BeanCollection,
     params: GetCellEditorInstancesParams<TData> = {}
-): ICellEditor[] => getCellEditorInstanceMap(beans, params).map((res) => res.editor);
+): ICellEditor[] => {
+    const ctrls = beans.rowRenderer.getCellCtrls(params.rowNodes, params.columns as AgColumn[]);
+    const editors: ICellEditor[] = new Array(ctrls.length);
+    let count = 0;
+    for (let i = 0, len = ctrls.length; i < len; ++i) {
+        const ctrl = ctrls[i];
+        const cellEditor = ctrl.comp?.getCellEditor();
+        if (cellEditor) {
+            editors[count++] = _unwrapUserComp(cellEditor);
+        }
+    }
+    editors.length = count;
+    return editors;
+};
 
 export function _setupEditors(
     beans: BeanCollection,
@@ -134,8 +126,6 @@ export function _setupEditor(
     const editorComp = cellCtrl?.comp?.getCellEditor();
 
     const editorParams = _createEditorParams(beans, position, key, cellStartedEdit && !silent);
-    const isAllowFormula = position.column.isAllowFormula();
-
     const previousEdit = editModelSvc?.getEdit(position);
 
     const newValue = editorParams.value ?? previousEdit?.sourceValue;
@@ -151,23 +141,7 @@ export function _setupEditor(
     }
 
     const colDef = position.column.getColDef();
-    let cellEditorParams = colDef;
-
-    if (isAllowFormula) {
-        cellEditorParams = { ...colDef };
-        const supportedEditors: UserComponentName[] = [
-            'agFormulaCellEditor',
-            'agTextCellEditor',
-            'agLargeTextCellEditor',
-        ];
-
-        const { cellEditor } = cellEditorParams;
-        if (!supportedEditors.includes(cellEditor)) {
-            cellEditorParams.cellEditor = 'agFormulaCellEditor';
-        }
-    }
-
-    const compDetails = _getCellEditorDetails(userCompFactory, cellEditorParams, editorParams);
+    const compDetails = _getCellEditorDetails(userCompFactory, colDef, editorParams);
 
     if (!compDetails) {
         return;
@@ -567,30 +541,50 @@ function dispatchEditingStopped(
     }
 }
 
+function _columnDefsRequireValidation(columnDefs?: ColDef[]): boolean {
+    if (!columnDefs) {
+        return false;
+    }
+    for (let i = 0, len = columnDefs.length; i < len; ++i) {
+        const colDef = columnDefs[i];
+        const params = colDef.cellEditorParams;
+        if (!params || (!colDef.editable && !colDef.groupRowEditable)) {
+            continue;
+        }
+        if (
+            params.minLength !== undefined ||
+            params.maxLength !== undefined ||
+            params.getValidationErrors !== undefined ||
+            params.min !== undefined ||
+            params.max !== undefined
+        ) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function _editorsRequireValidation(beans: BeanCollection): boolean {
+    const ctrls = beans.rowRenderer.getCellCtrls();
+    for (let i = 0, len = ctrls.length; i < len; ++i) {
+        const ctrl = ctrls[i];
+        const cellEditor = ctrl.comp?.getCellEditor();
+        if (cellEditor) {
+            const editor = _unwrapUserComp(cellEditor);
+            if (editor.getValidationElement || editor.getValidationErrors) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 function _hasValidationRules(beans: BeanCollection): boolean {
-    const { gos, colModel } = beans;
-    const getFullRowEditValidationErrors = !!gos.get('getFullRowEditValidationErrors');
-    const columnsHaveRules = colModel
-        .getColumnDefs()
-        ?.filter((c: ColDef) => c.editable)
-        .some(({ cellEditorParams }: ColDef) => {
-            const { minLength, maxLength, getValidationErrors, min, max } = cellEditorParams || {};
-
-            return (
-                minLength !== undefined ||
-                maxLength !== undefined ||
-                getValidationErrors !== undefined ||
-                min !== undefined ||
-                max !== undefined
-            );
-        });
-
-    const editorsHaveRules = beans.gridApi
-        .getCellEditorInstances()
-        // Check if either method was provided in the editor
-        .some((editor) => editor.getValidationElement || editor.getValidationErrors);
-
-    return columnsHaveRules || getFullRowEditValidationErrors || editorsHaveRules;
+    return (
+        !!beans.gos.get('getFullRowEditValidationErrors') ||
+        _columnDefsRequireValidation(beans.colModel.getColumnDefs()) ||
+        _editorsRequireValidation(beans)
+    );
 }
 
 export function _populateModelValidationErrors(beans: BeanCollection, force?: boolean): void {
@@ -598,16 +592,20 @@ export function _populateModelValidationErrors(beans: BeanCollection, force?: bo
         return;
     }
 
-    const mappedEditors = getCellEditorInstanceMap(beans);
     const cellValidationModel = new EditCellValidationModel();
 
     const { ariaAnnounce, localeSvc, editModelSvc, gos } = beans;
     const includeRows = gos.get('editType') === 'fullRow';
     const translate = _getLocaleTextFunc(localeSvc);
     const ariaValidationErrorPrefix = translate('ariaValidationErrorPrefix', 'Cell Editor Validation');
+    const rowCtrlSet = new Set<RowCtrl>();
+    for (const ctrl of beans.rowRenderer.getCellCtrls()) {
+        const cellEditorComp = ctrl.comp?.getCellEditor();
+        if (!cellEditorComp) {
+            continue;
+        }
 
-    for (const mappedEditor of mappedEditors) {
-        const { ctrl, editor } = mappedEditor;
+        const editor = _unwrapUserComp(cellEditorComp);
         const { rowNode, column } = ctrl;
         const errorMessages = editor.getValidationErrors?.() ?? [];
         const el = editor.getValidationElement?.(false) || (!editor.isPopup?.() && ctrl.eGui);
@@ -639,6 +637,7 @@ export function _populateModelValidationErrors(beans: BeanCollection, force?: bo
                 }
             );
         }
+        rowCtrlSet.add(ctrl.rowCtrl);
     }
 
     _syncFromEditors(beans, { persist: false });
@@ -646,12 +645,6 @@ export function _populateModelValidationErrors(beans: BeanCollection, force?: bo
     // the cellValidationModel should probably be reused to avoid
     // the second loop over mappedEditor below
     editModelSvc?.setCellValidationModel(cellValidationModel);
-
-    const rowCtrlSet = new Set<RowCtrl>();
-
-    for (const { ctrl } of mappedEditors) {
-        rowCtrlSet.add(ctrl.rowCtrl);
-    }
 
     if (includeRows) {
         const rowValidations = _generateRowValidationErrors(beans);

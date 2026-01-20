@@ -70,6 +70,42 @@ describe('Cell Editing Regression', () => {
         });
     });
 
+    test('full-row editing tab to next row starts editors when focusing read-only cell', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'readOnly', headerName: 'Read Only', editable: false },
+                { field: 'make' },
+                { field: 'model' },
+            ],
+            defaultColDef: {
+                editable: true,
+            },
+            editType: 'fullRow',
+            rowData: [
+                { readOnly: 'RO-0', make: 'Toyota', model: 'Celica' },
+                { readOnly: 'RO-1', make: 'Ford', model: 'Mondeo' },
+            ],
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(1);
+
+        const makeCellRow0 = getByTestId(gridDiv, agTestIdFor.cell('0', 'make'));
+        await userEvent.dblClick(makeCellRow0);
+        await waitForInput(gridDiv, makeCellRow0, { popup: false });
+
+        await userEvent.keyboard('{Tab}{Tab}');
+        await asyncSetTimeout(1);
+
+        const modelCellRow1 = getByTestId(gridDiv, agTestIdFor.cell('1', 'model'));
+        const editor = await waitForInput(gridDiv, modelCellRow1, { popup: false });
+        await userEvent.clear(editor);
+        await userEvent.type(editor, 'Updated');
+        await userEvent.keyboard('{Enter}');
+
+        expect(modelCellRow1).toHaveTextContent('Updated');
+    });
+
     // AG-15698 - row doesn't rerender after value is selected in rich select editor
     test('cell not refreshed after richSelectEditor select', async () => {
         // virtualList doesn't add option elements if the offsetHeight is 0, so we need to fake it

@@ -44,6 +44,10 @@ export default [
                     message:
                         "Prefer unicode characters as they don't have to be parsed into HTML to display correctly.",
                 },
+                {
+                    selector: 'PropertyDefinition[static=true]',
+                    message: 'Static class properties prevent tree-shaking. Use an alternative if possible.',
+                },
             ],
             'no-restricted-properties': [
                 'warn',

@@ -149,7 +149,11 @@ export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
     }
 
     public toggleExpanded(): void {
-        this.expanded ? this.collapse() : this.expand();
+        if (this.expanded) {
+            this.collapse();
+        } else {
+            this.expand();
+        }
     }
 
     public expand(): void {

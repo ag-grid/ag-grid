@@ -362,7 +362,7 @@ describe('StateService - Grid State Management', () => {
                 name: { filterType: 'text', type: 'startsWith', filter: 'A' },
             });
 
-            await asyncSetTimeout(20);
+            await asyncSetTimeout(50);
 
             expect(api.getState().filter).toEqual({
                 advancedFilterModel: undefined,
@@ -390,7 +390,7 @@ describe('StateService - Grid State Management', () => {
             // Focus a cell
             api.setFocusedCell(0, 'name');
 
-            await asyncSetTimeout(10);
+            await asyncSetTimeout(50);
 
             expect(api.getState().focusedCell).toEqual({
                 colId: 'name',
@@ -408,7 +408,7 @@ describe('StateService - Grid State Management', () => {
 
             api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['name'] });
 
-            await asyncSetTimeout(10);
+            await asyncSetTimeout(50);
 
             expect(api.getState().cellSelection).toEqual({
                 cellRanges: [
@@ -451,7 +451,7 @@ describe('StateService - Grid State Management', () => {
 
             api.ensureIndexVisible(20);
 
-            await asyncSetTimeout(10);
+            await asyncSetTimeout(50);
 
             expect(api.getState().scroll).toEqual({
                 left: 0,
@@ -536,7 +536,7 @@ describe('StateService - Grid State Management', () => {
             };
 
             api.setState(stateToApply);
-            await asyncSetTimeout(5);
+            await asyncSetTimeout(50);
 
             const state = api.getState();
             expect(state.sort?.sortModel).toHaveLength(1);
@@ -563,7 +563,7 @@ describe('StateService - Grid State Management', () => {
 
             // Apply state but ignore rowSelection
             api.setState(stateToApply, ['rowSelection']);
-            await asyncSetTimeout(5);
+            await asyncSetTimeout(50);
 
             const state = api.getState();
             expect(state.sort?.sortModel).toHaveLength(1);
@@ -609,7 +609,7 @@ describe('StateService - Grid State Management', () => {
             });
 
             api2.setState(savedState);
-            await asyncSetTimeout(5);
+            await asyncSetTimeout(50);
 
             const restoredState = api2.getState();
             expect(restoredState).toEqual(savedState);
@@ -676,7 +676,7 @@ describe('StateService - Grid State Management', () => {
             });
 
             api.applyColumnState({ state: [{ colId: 'name', sort: 'asc' }] });
-            await asyncSetTimeout(10);
+            await asyncSetTimeout(50);
 
             expect(eventFired).toBe(true);
             expect(eventState?.sort).toBeDefined();

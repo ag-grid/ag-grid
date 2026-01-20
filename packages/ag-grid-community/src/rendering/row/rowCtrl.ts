@@ -1848,7 +1848,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private setRowTopStyle(topPx: string): void {
         for (const gui of this.allRowGuis) {
-            this.suppressRowTransform ? gui.rowComp.setTop(topPx) : gui.rowComp.setTransform(`translateY(${topPx})`);
+            if (this.suppressRowTransform) {
+                gui.rowComp.setTop(topPx);
+            } else {
+                gui.rowComp.setTransform(`translateY(${topPx})`);
+            }
         }
     }
 

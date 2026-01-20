@@ -5,23 +5,22 @@ import type { ColDef } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     CustomEditorModule,
-    ModuleRegistry,
     TextEditorModule,
     TextFilterModule,
     ValidationModule,
 } from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import NumericEditor from './numericEditor';
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     TextEditorModule,
     TextFilterModule,
     CustomEditorModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const GridExample = () => {
     const [rowData] = useState([
@@ -69,16 +68,18 @@ const GridExample = () => {
     );
 
     return (
-        <div style={{ width: '100%', height: '100%' }}>
-            <div
-                style={{
-                    height: '100%',
-                    width: '100%',
-                }}
-            >
-                <AgGridReact columnDefs={columnDefs} rowData={rowData} defaultColDef={defaultColDef} />
+        <AgGridProvider modules={modules}>
+            <div style={{ width: '100%', height: '100%' }}>
+                <div
+                    style={{
+                        height: '100%',
+                        width: '100%',
+                    }}
+                >
+                    <AgGridReact columnDefs={columnDefs} rowData={rowData} defaultColDef={defaultColDef} />
+                </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

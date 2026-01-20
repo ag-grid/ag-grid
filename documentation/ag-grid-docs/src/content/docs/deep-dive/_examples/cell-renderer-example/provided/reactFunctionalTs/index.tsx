@@ -1,15 +1,11 @@
 // React Grid Logic
-import React, { StrictMode, useEffect, useMemo, useState } from 'react';
+import React, { StrictMode, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-// Theme
 import type { ColDef, ValueFormatterParams } from 'ag-grid-community';
-import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
-// Core CSS
+import { AllCommunityModule } from 'ag-grid-community';
 import type { CustomCellRendererProps } from 'ag-grid-react';
-import { AgGridReact } from 'ag-grid-react';
-
-ModuleRegistry.registerModules([AllCommunityModule]);
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 // Custom Cell Renderer (Display logos based on cell value)
 const CompanyLogoRenderer = (params: CustomCellRendererProps) => (
@@ -82,16 +78,18 @@ const GridExample = () => {
 
     // Container: Defines the grid's theme & dimensions.
     return (
-        <div style={{ width: '100%', height: '100%' }}>
-            {/* The AG Grid component, with Row Data & Column Definition props */}
-            <AgGridReact
-                rowData={data}
-                loading={loading}
-                columnDefs={colDefs}
-                defaultColDef={defaultColDef}
-                pagination={true}
-            />
-        </div>
+        <AgGridProvider modules={[AllCommunityModule]}>
+            <div style={{ width: '100%', height: '100%' }}>
+                {/* The AG Grid component, with Row Data & Column Definition props */}
+                <AgGridReact
+                    rowData={data}
+                    loading={loading}
+                    columnDefs={colDefs}
+                    defaultColDef={defaultColDef}
+                    pagination={true}
+                />
+            </div>
+        </AgGridProvider>
     );
 };
 

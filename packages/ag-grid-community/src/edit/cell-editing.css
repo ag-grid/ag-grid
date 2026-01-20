@@ -36,7 +36,7 @@
     padding: var(--ag-cell-horizontal-padding);
 }
 
-:where(.ag-rtl .ag-large-text-input) textarea {
+:where(.ag-rtl .ag-large-text-input) .ag-text-area-input {
     resize: none;
 }
 

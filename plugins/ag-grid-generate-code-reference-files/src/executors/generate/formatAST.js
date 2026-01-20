@@ -34,7 +34,7 @@ function findInNodeTree(ts) {
 // }
 const printer = (ts) => ts.createPrinter({ removeComments: true, omitTrailingSemicolon: true });
 
-function getFullJsDoc(ts) {
+function getFullJsDoc(_ts) {
     return function (node) {
         if (node.jsDoc) {
             const result = node.jsDoc.map((j) => {
@@ -46,7 +46,7 @@ function getFullJsDoc(ts) {
     };
 }
 
-function getJsDoc(ts) {
+function getJsDoc(_ts) {
     return function (node) {
         if (node.jsDoc && node.jsDoc.length === 1) {
             const j = node.jsDoc[0];

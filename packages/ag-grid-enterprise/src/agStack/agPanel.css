@@ -20,6 +20,8 @@
     align-items: center;
     cursor: default;
     color: var(--ag-panel-title-bar-text-color);
+    font-family: var(--ag-panel-title-bar-font-family);
+    font-size: var(--ag-panel-title-bar-font-size);
     font-weight: var(--ag-panel-title-bar-font-weight);
     background-color: var(--ag-panel-title-bar-background-color);
     height: var(--ag-panel-title-bar-height);

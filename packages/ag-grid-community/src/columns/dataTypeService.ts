@@ -210,13 +210,19 @@ export class DataTypeService extends BeanStub implements NamedBean {
         colId: string
     ): string | string[] | undefined {
         let { cellDataType } = userColDef;
-        const { field } = userColDef;
+
         if (cellDataType === undefined) {
             cellDataType = colDef.cellDataType;
         }
+
+        const { field } = userColDef;
+
         if (cellDataType == null || cellDataType === true) {
             cellDataType = this.canInferCellDataType(colDef, userColDef) ? this.inferCellDataType(field, colId) : false;
         }
+
+        this.addFormulaCellEditorToColDef(colDef, userColDef);
+
         if (!cellDataType) {
             colDef.cellDataType = false;
             return undefined;
@@ -226,7 +232,9 @@ export class DataTypeService extends BeanStub implements NamedBean {
             _warn(47, { cellDataType });
             return undefined;
         }
+
         colDef.cellDataType = cellDataType;
+
         if (dataTypeDefinition.groupSafeValueFormatter) {
             colDef.valueFormatter = dataTypeDefinition.groupSafeValueFormatter;
         }
@@ -237,6 +245,16 @@ export class DataTypeService extends BeanStub implements NamedBean {
             this.setColDefPropertiesForBaseDataType(colDef, cellDataType, dataTypeDefinition, colId);
         }
         return dataTypeDefinition.columnTypes;
+    }
+
+    private addFormulaCellEditorToColDef(colDef: ColDef, userColDef: ColDef): void {
+        const allowFormula = userColDef.allowFormula ?? colDef.allowFormula;
+
+        if (!allowFormula || userColDef.cellEditor) {
+            return;
+        }
+
+        colDef.cellEditor = 'agFormulaCellEditor';
     }
 
     public addColumnListeners(column: AgColumn): void {
@@ -360,11 +378,11 @@ export class DataTypeService extends BeanStub implements NamedBean {
             const columnStateUpdates = this.columnStateUpdatesPendingInference[colId];
             const column = this.colModel.getCol(colId);
             if (!column) {
-                return;
+                continue;
             }
             const oldColDef = column.getColDef();
             if (!this.resetColDefIntoCol(column, 'cellDataTypeInferred')) {
-                return;
+                continue;
             }
             const newColDef = column.getColDef();
             if (columnTypeOverridesExist && newColDef.type && newColDef.type !== oldColDef.type) {
@@ -524,8 +542,8 @@ export class DataTypeService extends BeanStub implements NamedBean {
                 cellEditor: 'agCheckboxCellEditor',
                 cellRenderer: 'agCheckboxCellRenderer',
                 getFindText: () => null,
-                suppressKeyboardEvent: (params: SuppressKeyboardEventParams<any, boolean>) =>
-                    !!params.colDef.editable && params.event.key === KeyCode.SPACE,
+                suppressKeyboardEvent: ({ node, event, column }: SuppressKeyboardEventParams<any, boolean>) =>
+                    event.key === KeyCode.SPACE && column.isCellEditable(node),
             };
         },
         date({ formatValue }) {
@@ -581,6 +599,13 @@ export class DataTypeService extends BeanStub implements NamedBean {
             colId,
             formatValue,
         });
+
+        // if the user enabled formula and did not manually provide an editor
+        // we should keep `agFormulaCellEditor` as the default editor.
+        if (colDef.cellEditor === 'agFormulaCellEditor' && partialColDef.cellEditor !== colDef.cellEditor) {
+            partialColDef.cellEditor = colDef.cellEditor;
+        }
+
         Object.assign(colDef, partialColDef);
     }
 

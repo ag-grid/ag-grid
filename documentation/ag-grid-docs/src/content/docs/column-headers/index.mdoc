@@ -178,6 +178,8 @@ You can provide an HTML template to the Default Header Component for simple layo
         <span data-ref="eSortOrder" class="ag-header-icon ag-header-label-icon ag-sort-order" aria-hidden="true"></span>
         <span data-ref="eSortAsc" class="ag-header-icon ag-header-label-icon ag-sort-ascending-icon" aria-hidden="true"></span>
         <span data-ref="eSortDesc" class="ag-header-icon ag-header-label-icon ag-sort-descending-icon" aria-hidden="true"></span>
+        <span data-ref="eSortAbsoluteAsc" class="ag-header-icon ag-header-label-icon ag-sort-absolute-ascending-icon ag-hidden"></span>
+        <span data-ref="eSortAbsoluteDesc" class="ag-header-icon ag-header-label-icon ag-sort-absolute-descending-icon ag-hidden"></span>
         <span data-ref="eSortNone" class="ag-header-icon ag-header-label-icon ag-sort-none-icon" aria-hidden="true"></span>
     </div>
 </div>
@@ -195,9 +197,9 @@ When you provide your own template, everything should work as expected as long a
 | `eSortOrder`        | If multiple columns are sorted, this shows the index that represents the position of this column in the order.                                                 |
 | `eSortAsc`          | If the column is sorted ascending, this shows the ascending icon.                                                                                              |
 | `eSortDesc`         | If the column is sorted descending, this shows the descending icon.                                                                                            |
-| `eSortNone`         | If no sort is applied, this shows the no sort icon. Note this icon by default is empty.                                                                        |
 | `eSortAbsoluteAsc`  | If the column is sorted absolute ascending, this shows the absolute ascending icon.                                                                            |
 | `eSortAbsoluteDesc` | If the column is sorted absolute descending, this shows the absolute descending icon.                                                                          |
+| `eSortNone`         | If no sort is applied, this shows the no sort icon. Note this icon by default is empty.                                                                        |
 
 The `data-ref` parameters are used by the grid to identify elements to add functionality to. If you leave an element out of your template, the functionality will not be added. For example if you do not specify `eLabel` then the column will not react to click events for sorting.
 

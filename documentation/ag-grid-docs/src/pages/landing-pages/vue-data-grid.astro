@@ -1,0 +1,18 @@
+---
+/**
+ * Vue Data Grid Landing Page
+ *
+ * Content is defined in: src/content/landing-pages/vue-data-grid.json
+ */
+
+import LandingPage from '@components/landing-pages/LandingPage.astro';
+import { getEntry } from 'astro:content';
+
+const contentEntry = await getEntry('landingPages', 'vue-data-grid');
+const versionsEntry = await getEntry('versions', 'ag-grid-versions');
+
+const content = contentEntry?.data;
+const versions = versionsEntry?.data;
+---
+
+{content && <LandingPage content={content} versions={versions} />}

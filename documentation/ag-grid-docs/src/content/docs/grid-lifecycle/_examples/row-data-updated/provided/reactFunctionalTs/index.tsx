@@ -1,18 +1,15 @@
-import React, { StrictMode, useCallback, useEffect, useRef, useState } from 'react';
+import React, { StrictMode, useCallback, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { ClientSideRowModelModule, ModuleRegistry, ValidationModule } from 'ag-grid-community';
-import type { ColDef, FirstDataRenderedEvent, RowDataUpdatedEvent } from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
+import { ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
+import type { FirstDataRenderedEvent, RowDataUpdatedEvent } from 'ag-grid-community';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import { fetchDataAsync } from './data';
 import type { TAthlete } from './data';
 import './styles.css';
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+const modules = [ClientSideRowModelModule, ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : [])];
 
 const updateRowCount = (id: string) => {
     const element = document.querySelector(`#${id} > .value`);
@@ -58,31 +55,33 @@ const GridExample = () => {
     useEffect(reloadData, []);
 
     return (
-        <div className="test-container">
-            <div className="test-header">
-                <div id="firstDataRendered">
-                    First Data Rendered: <span className="value">-</span>
+        <AgGridProvider modules={modules}>
+            <div className="test-container">
+                <div className="test-header">
+                    <div id="firstDataRendered">
+                        First Data Rendered: <span className="value">-</span>
+                    </div>
+                    <div id="rowDataUpdated">
+                        Row Data Updated: <span className="value">-</span>
+                    </div>
+                    <div>
+                        <button disabled={loading} onClick={reloadData}>
+                            Reload Data
+                        </button>
+                    </div>
                 </div>
-                <div id="rowDataUpdated">
-                    Row Data Updated: <span className="value">-</span>
-                </div>
-                <div>
-                    <button disabled={loading} onClick={reloadData}>
-                        Reload Data
-                    </button>
-                </div>
-            </div>
 
-            <div style={{ height: '100%' }}>
-                <AgGridReact
-                    loading={loading}
-                    rowData={rowData}
-                    columnDefs={columnDefs}
-                    onFirstDataRendered={onFirstDataRendered}
-                    onRowDataUpdated={onRowDataUpdated}
-                />
+                <div style={{ height: '100%' }}>
+                    <AgGridReact
+                        loading={loading}
+                        rowData={rowData}
+                        columnDefs={columnDefs}
+                        onFirstDataRendered={onFirstDataRendered}
+                        onRowDataUpdated={onRowDataUpdated}
+                    />
+                </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

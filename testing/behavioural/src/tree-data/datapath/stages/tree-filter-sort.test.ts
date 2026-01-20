@@ -1,7 +1,13 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, cachedJSONObjects, setRowDataChecked } from '../../../test-utils';
+import {
+    GridRows,
+    TestGridsManager,
+    applyTransactionChecked,
+    cachedJSONObjects,
+    setRowDataChecked,
+} from '../../../test-utils';
 
 describe('ag-grid tree filter sort', () => {
     const gridsManager = new TestGridsManager({
@@ -354,6 +360,62 @@ describe('ag-grid tree filter sort', () => {
             · │ └── G LEAF id:6 ag-Grid-AutoColumn:"G" value:10 x:0
             · └─┬ B GROUP id:2 ag-Grid-AutoColumn:"B" value:17 x:1
             · · └── E LEAF id:5 ag-Grid-AutoColumn:"E" value:11 x:0
+        `);
+    });
+
+    test('delta sorting keeps tree data with data paths ordered after updates', async () => {
+        const rowData = [
+            { id: 'home', value: 15, orgHierarchy: ['Home'] },
+            { id: 'garden', value: 12, orgHierarchy: ['Home', 'Garden'] },
+            { id: 'kitchen', value: 25, orgHierarchy: ['Home', 'Kitchen'] },
+            { id: 'electronics', value: 30, orgHierarchy: ['Electronics'] },
+            { id: 'phones', value: 5, orgHierarchy: ['Electronics', 'Phones'] },
+            { id: 'laptops', value: 40, orgHierarchy: ['Electronics', 'Laptops'] },
+        ];
+
+        const rowById = Object.fromEntries(rowData.map((row) => [row.id, row])) as Record<
+            string,
+            (typeof rowData)[number]
+        >;
+
+        const api = gridsManager.createGrid('treeDataDeltaSort', {
+            columnDefs: [{ field: 'value' }],
+            autoGroupColumnDef: { headerName: 'Hierarchy', cellRendererParams: { suppressCount: true } },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            rowData,
+            treeData: true,
+            deltaSort: true,
+            getDataPath: (data) => data.orgHierarchy,
+            getRowId: (params) => params.data?.id,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+
+        await new GridRows(api, 'tree data delta sort initial').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ Home GROUP id:home ag-Grid-AutoColumn:"Home" value:15
+            │ ├── Garden LEAF id:garden ag-Grid-AutoColumn:"Garden" value:12
+            │ └── Kitchen LEAF id:kitchen ag-Grid-AutoColumn:"Kitchen" value:25
+            └─┬ Electronics GROUP id:electronics ag-Grid-AutoColumn:"Electronics" value:30
+            · ├── Phones LEAF id:phones ag-Grid-AutoColumn:"Phones" value:5
+            · └── Laptops LEAF id:laptops ag-Grid-AutoColumn:"Laptops" value:40
+        `);
+
+        const updateRow = (id: string, value: number) => ({ ...rowById[id], value });
+
+        applyTransactionChecked(api, {
+            update: [updateRow('electronics', 5), updateRow('phones', 60), updateRow('kitchen', 1)],
+        });
+
+        await new GridRows(api, 'tree data delta sort updated').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ Electronics GROUP id:electronics ag-Grid-AutoColumn:"Electronics" value:5
+            │ ├── Laptops LEAF id:laptops ag-Grid-AutoColumn:"Laptops" value:40
+            │ └── Phones LEAF id:phones ag-Grid-AutoColumn:"Phones" value:60
+            └─┬ Home GROUP id:home ag-Grid-AutoColumn:"Home" value:15
+            · ├── Kitchen LEAF id:kitchen ag-Grid-AutoColumn:"Kitchen" value:1
+            · └── Garden LEAF id:garden ag-Grid-AutoColumn:"Garden" value:12
         `);
     });
 });

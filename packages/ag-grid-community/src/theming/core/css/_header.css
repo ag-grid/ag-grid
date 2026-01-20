@@ -31,10 +31,8 @@
 }
 
 .ag-header-row:where(:not(:first-child)) {
-    :where(
-            .ag-header-cell:not(.ag-header-span-height.ag-header-span-total, .ag-header-parent-hidden),
-            .ag-header-group-cell.ag-header-group-cell-with-group
-        ) {
+    :where(.ag-header-cell:not(.ag-header-span-height.ag-header-span-total, .ag-header-parent-hidden)),
+    :where(.ag-header-group-cell.ag-header-group-cell-with-group) {
         border-top: var(--ag-header-row-border);
     }
 }
@@ -86,40 +84,46 @@
 /* Implement header cell hover and moving background colors as a pseudo element,
    because some applications set the color of the header cells and we want the
    hover effect to overlay on top of this color rather than replacing it. */
-.ag-header-cell:where(:not(.ag-floating-filter)),
-.ag-header-group-cell {
-    &::before {
-        content: '';
-        position: absolute;
-        inset: 0;
 
-        /* Use two stacked background-images so that hover and moving colors can
+.ag-header-cell:where(:not(.ag-floating-filter))::before,
+.ag-header-group-cell::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+
+    /* Use two stacked background-images so that hover and moving colors can
            be individually controlled and overlaid on top of each other.
            background-image can't be smoothly animated so instead define the
            colors as internal vars and transition them */
-        background-image: linear-gradient(var(--ag-internal-hover-color), var(--ag-internal-hover-color)),
-            linear-gradient(var(--ag-internal-moving-color), var(--ag-internal-moving-color));
+    background-image: linear-gradient(var(--ag-internal-hover-color), var(--ag-internal-hover-color)),
+        linear-gradient(var(--ag-internal-moving-color), var(--ag-internal-moving-color));
 
-        --ag-internal-moving-color: transparent;
-        --ag-internal-hover-color: transparent;
+    --ag-internal-moving-color: transparent;
+    --ag-internal-hover-color: transparent;
 
-        transition:
-            --ag-internal-moving-color var(--ag-header-cell-background-transition-duration),
-            --ag-internal-hover-color var(--ag-header-cell-background-transition-duration);
-    }
-
-    &:where(:hover)::before {
-        --ag-internal-hover-color: var(--ag-header-cell-hover-background-color);
-    }
-
-    &:where(.ag-header-cell-moving)::before {
-        --ag-internal-moving-color: var(--ag-header-cell-moving-background-color);
-        --ag-internal-hover-color: var(--ag-header-cell-hover-background-color);
-    }
+    transition:
+        --ag-internal-moving-color var(--ag-header-cell-background-transition-duration),
+        --ag-internal-hover-color var(--ag-header-cell-background-transition-duration);
 }
 
-/* Ensure cell content shows above cell hover background */
-:where(.ag-header-cell:not(.ag-floating-filter) *, .ag-header-group-cell *) {
+.ag-header-cell:where(:not(.ag-floating-filter)):where(:hover)::before,
+.ag-header-group-cell:where(:hover)::before {
+    --ag-internal-hover-color: var(--ag-header-cell-hover-background-color);
+}
+
+.ag-header-cell:where(:not(.ag-floating-filter)):where(.ag-header-cell-moving)::before,
+.ag-header-group-cell:where(.ag-header-cell-moving)::before {
+    --ag-internal-moving-color: var(--ag-header-cell-moving-background-color);
+    --ag-internal-hover-color: var(--ag-header-cell-hover-background-color);
+}
+
+/* stylelint-disable-next-line ag/no-low-performance-key-selector -- Any child
+    of these components needs to be relative to appear above the hover
+    background. It seemed worth the slow selector in this case to make it more
+    maintainable and have low risk of regressions compared to maintaining a list
+    of children that can appear here */
+:where(.ag-header-cell:not(.ag-floating-filter) > *, .ag-header-group-cell > *) {
+    /* Ensure cell content shows above cell hover background */
     position: relative;
     z-index: 1;
 }
@@ -189,6 +193,9 @@
     white-space: normal;
 }
 
+/* stylelint-disable-next-line ag/no-low-performance-key-selector -- Requires a
+    slow selector because we allow custom header cell components as direct
+    children of the wrapper, so we can't control the class name */
 .ag-header-cell-comp-wrapper-limited-height > * {
     overflow: hidden;
 }
@@ -273,17 +280,17 @@
 
     /* unpinned headers get their rezise handle on the right in normal mode and left in RTL mode */
     right: -3px;
+}
 
-    &::after {
-        content: '';
-        position: absolute;
-        z-index: 1;
-        top: calc(50% - var(--ag-header-column-resize-handle-height) * 0.5);
-        left: calc(50% - var(--ag-header-column-resize-handle-width));
-        width: var(--ag-header-column-resize-handle-width);
-        height: var(--ag-header-column-resize-handle-height);
-        background-color: var(--ag-header-column-resize-handle-color);
-    }
+.ag-header-cell-resize::after {
+    content: '';
+    position: absolute;
+    z-index: 1;
+    top: calc(50% - var(--ag-header-column-resize-handle-height) * 0.5);
+    left: calc(50% - var(--ag-header-column-resize-handle-width));
+    width: var(--ag-header-column-resize-handle-width);
+    height: var(--ag-header-column-resize-handle-height);
+    background-color: var(--ag-header-column-resize-handle-color);
 }
 
 :where(.ag-header-cell.ag-header-span-height) .ag-header-cell-resize::after {

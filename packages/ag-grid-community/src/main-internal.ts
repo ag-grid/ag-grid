@@ -79,7 +79,11 @@ export {
 } from './agStack/rendering/agPositionableFeature';
 export { AutoScrollService } from './agStack/rendering/autoScrollService';
 export { CssClassManager } from './agStack/rendering/cssClassManager';
-export { _asThemeImpl } from './agStack/theming/themeImpl';
+export {
+    SharedThemeParams as _SharedThemeParams,
+    sharedDefaults as _sharedThemeDefaults,
+} from './agStack/theming/shared/shared-css';
+export { _asThemeImpl, createSharedTheme as _createSharedTheme } from './agStack/theming/themeImpl';
 export { ThemeLogger as _ThemeLogger } from './agStack/theming/themeLogger';
 export { getParamType as _getParamType, paramValueToCss as _paramValueToCss } from './agStack/theming/themeTypeUtils';
 export { paramToVariableName as _paramToVariableName } from './agStack/theming/themeUtils';
@@ -118,6 +122,7 @@ export {
     _setAriaSelected,
     _setAriaSetSize,
     _setAriaSort,
+    _setAriaOrientation,
 } from './agStack/utils/aria';
 export { _EmptyArray, _areEqual, _flatten, _last, _removeAllFromArray, _removeFromArray } from './agStack/utils/array';
 export { _isBrowserFirefox, _isBrowserSafari, _isIOSUserAgent } from './agStack/utils/browser';
@@ -125,6 +130,7 @@ export { MONTHS as _MONTHS, _getDateParts, _parseDateTimeFromString, _serialiseD
 export {
     _getActiveDomElement,
     _getDocument,
+    _getWindow,
     _getPageBody,
     _getRootNode,
     _isNothingFocused,
@@ -149,6 +155,8 @@ export {
     _setDisplayed,
     _setFixedWidth,
     _setVisible,
+    _isFocusableFormField,
+    _placeCaretAtEnd,
 } from './agStack/utils/dom';
 export { _anchorElementToMouseMoveEvent, _isElementInEventPath } from './agStack/utils/event';
 export {
@@ -171,7 +179,7 @@ export {
 export { _isEventFromPrintableCharacter } from './agStack/utils/keyboard';
 export { _getLocaleTextFromFunc, _getLocaleTextFromMap, _getLocaleTextFunc, _translate } from './agStack/utils/locale';
 export { _isPromise } from './agStack/utils/promise';
-export { _escapeString, _isExpressionString, _toString } from './agStack/utils/string';
+export { _escapeString, _isExpressionString, _toString, _camelCaseToHumanText } from './agStack/utils/string';
 export { AgWidgetSelectorType as _AgWidgetSelectorType } from './agStack/widgets/agWidgetSelectorType';
 export {
     _AdvancedFilterGridApi,
@@ -262,6 +270,7 @@ export {
     _isSortTypeValid,
     _normalizeSortDirection,
     _normalizeSortType,
+    _getDisplaySortForColumn,
 } from './entities/agColumn';
 export { AgColumnGroup } from './entities/agColumnGroup';
 export { AgProvidedColumnGroup } from './entities/agProvidedColumnGroup';
@@ -421,7 +430,12 @@ export type { AnimationFrameService } from './misc/animationFrameService';
 export { LocaleService } from './misc/locale/localeService';
 export { _setColMenuVisible } from './misc/menu/menuService';
 export type { MenuService } from './misc/menu/menuService';
-export { _getGridRegisteredModules, _registerModule, _setUmd } from './modules/moduleRegistry';
+export {
+    _getGridRegisteredModules,
+    _registerModule,
+    _setUmd,
+    _findEnterpriseCoreModule,
+} from './modules/moduleRegistry';
 export type { CellNavigationService } from './navigation/cellNavigationService';
 export type { HeaderNavigationService } from './navigation/headerNavigationService';
 export type { NavigationService } from './navigation/navigationService';
@@ -441,10 +455,17 @@ export type { IRowComp, RowCtrl } from './rendering/row/rowCtrl';
 export type { RowRenderer } from './rendering/rowRenderer';
 export { BaseSelectionService } from './selection/baseSelectionService';
 export type { RowRangeSelectionContext } from './selection/rowRangeSelectionContext';
-export { SortedRowNode } from './sort/rowNodeSorter';
 export type { RowNodeSorter } from './sort/rowNodeSorter';
 export type { SortService } from './sort/sortService';
 export type { CellStyleService } from './styling/cellStyleService';
+export { gridThemeLogger as _gridThemeLogger } from './theming/createTheme';
+export { coreDefaults as _coreThemeDefaults } from './theming/core/core-css';
+export {
+    themeAlpineParams as _themeAlpineParams,
+    themeBalhamParams as _themeBalhamParams,
+    themeMaterialParams as _themeMaterialParams,
+    themeQuartzParams as _themeQuartzParams,
+} from './theming/parts/theme/themes';
 export {
     ITooltipCtrl,
     ITooltipCtrlParams,
@@ -538,6 +559,7 @@ export {
     _ModuleWithApi,
     _ModuleWithoutApi,
     ValidationModuleName as _ValidationModuleName,
+    _ModuleWithLicenseManager,
 } from './interfaces/iModule';
 export { SharedMenuModule as _SharedMenuModule } from './misc/menu/sharedMenuModule';
 export { KeyboardNavigationModule as _KeyboardNavigationModule } from './navigation/navigationModule';

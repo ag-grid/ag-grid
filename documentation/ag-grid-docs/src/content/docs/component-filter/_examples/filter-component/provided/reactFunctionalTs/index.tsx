@@ -5,24 +5,23 @@ import type { ColDef, ColGroupDef, DoesFilterPassParams, FilterDisplay } from 'a
 import {
     ClientSideRowModelModule,
     CustomFilterModule,
-    ModuleRegistry,
     TextEditorModule,
     TextFilterModule,
     ValidationModule,
 } from 'ag-grid-community';
-import { AgGridReact, getInstance } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact, getInstance } from 'ag-grid-react';
 
 import { getData } from './data';
 import PartialMatchFilter from './partialMatchFilter';
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     TextFilterModule,
     TextEditorModule,
     CustomFilterModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 function doesFilterPass({ model, node, handlerParams }: DoesFilterPassParams<any, any, string>): boolean {
     const value = handlerParams.getValue(node).toString().toLowerCase();
@@ -67,23 +66,25 @@ const GridExample = () => {
     }, []);
 
     return (
-        <div style={containerStyle}>
-            <div className="example-wrapper">
-                <button style={{ marginBottom: '5px' }} onClick={onClicked} className="btn btn-primary">
-                    Invoke Filter Instance Method
-                </button>
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div className="example-wrapper">
+                    <button style={{ marginBottom: '5px' }} onClick={onClicked} className="btn btn-primary">
+                        Invoke Filter Instance Method
+                    </button>
 
-                <div style={gridStyle}>
-                    <AgGridReact
-                        ref={gridRef}
-                        rowData={rowData}
-                        columnDefs={columnDefs}
-                        defaultColDef={defaultColDef}
-                        enableFilterHandlers
-                    />
+                    <div style={gridStyle}>
+                        <AgGridReact
+                            ref={gridRef}
+                            rowData={rowData}
+                            columnDefs={columnDefs}
+                            defaultColDef={defaultColDef}
+                            enableFilterHandlers
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

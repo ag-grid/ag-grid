@@ -1999,6 +1999,29 @@
         }
     }
 
+    .ag-content-editable-field {
+        display: flex;
+        align-items: center;
+    }
+
+    .ag-content-editable-field-input {
+        cursor: text;
+        display: block;
+        flex: 1 1 auto;
+        outline: none;
+        white-space: nowrap;
+        line-height: normal;
+        overflow: auto;
+        overflow-y: hidden;
+
+        &::-webkit-scrollbar {
+            display: none !important;
+        }
+
+        -ms-overflow-style: none !important;
+        scrollbar-width: none !important;
+    }
+
     .ag-ltr {
         direction: ltr;
         .ag-body,

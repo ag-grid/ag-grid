@@ -10,7 +10,7 @@ import { OverlayService } from './overlayService';
 
 /**
  * @feature Accessories -> Overlays
- * @gridOption loading, overlayLoadingTemplate, loadingOverlayComponent, overlayNoRowsTemplate, noRowsOverlayComponent
+ * @gridOption loading, activeOverlay, overlayComponent, overlayComponentSelector
  */
 export const OverlayModule: _ModuleWithApi<_OverlayGridApi> = {
     moduleName: 'Overlay',

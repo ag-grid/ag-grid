@@ -144,9 +144,10 @@ export class CellMouseListenerFeature extends BeanStub {
 
         if (editSvc?.shouldStartEditing(cellCtrl, event) && editModelSvc?.getState(cellCtrl) !== 'editing') {
             const editing = editSvc?.isEditing();
+            const isRangeSelectionEnabledWhileEditing = editSvc?.isRangeSelectionEnabledWhileEditing();
             const cellValidations = editModelSvc?.getCellValidationModel().getCellValidationMap().size ?? 0;
             const rowValidations = editModelSvc?.getRowValidationModel().getRowValidationMap().size ?? 0;
-            if (editing && (cellValidations > 0 || rowValidations > 0)) {
+            if (editing && (isRangeSelectionEnabledWhileEditing || cellValidations > 0 || rowValidations > 0)) {
                 return;
             }
 
@@ -214,21 +215,24 @@ export class CellMouseListenerFeature extends BeanStub {
             const focusedCell = focusSvc.getFocusedCell();
             if (focusedCell) {
                 const { column, rowIndex, rowPinned } = focusedCell;
+                const allowRangesWhileEditing = !!editSvc?.isRangeSelectionEnabledWhileEditing?.();
 
                 // if the focused cell is editing, need to stop editing first
-                if (editSvc?.isEditing(focusedCell)) {
+                if (editSvc?.isEditing(focusedCell) && !allowRangesWhileEditing) {
                     editSvc?.stopEditing(focusedCell);
                 }
 
                 // focus could have been lost, so restore it to the starting cell in the range if needed
-                focusSvc.setFocusedCell({
-                    column,
-                    rowIndex,
-                    rowPinned,
-                    forceBrowserFocus: true,
-                    preventScrollOnBrowserFocus: true,
-                    sourceEvent: mouseEvent,
-                });
+                if (!allowRangesWhileEditing) {
+                    focusSvc.setFocusedCell({
+                        column,
+                        rowIndex,
+                        rowPinned,
+                        forceBrowserFocus: true,
+                        preventScrollOnBrowserFocus: true,
+                        sourceEvent: mouseEvent,
+                    });
+                }
             }
         }
 

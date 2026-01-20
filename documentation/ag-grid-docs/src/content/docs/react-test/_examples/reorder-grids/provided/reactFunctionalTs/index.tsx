@@ -3,10 +3,9 @@
 import React, { StrictMode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { ModuleRegistry } from 'ag-grid-community';
 import type { ColDef, GetRowIdParams, GridReadyEvent } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 // Type definitions
 interface RowData {
@@ -29,7 +28,6 @@ interface GridComponentProps {
     index: number;
 }
 
-ModuleRegistry.registerModules([AllEnterpriseModule]);
 const queryParamsFromUrl = new URLSearchParams(window.location.search);
 console.log('React Version', React.version, queryParamsFromUrl.get('version'), 'Prod:', queryParamsFromUrl.get('prod'));
 
@@ -107,23 +105,25 @@ const GridComponent = React.memo<GridComponentProps>(({ id, title, data, index }
         };
     }, []);
     return (
-        <div style={{ border: '1px solid #ccc', margin: '10px 0', padding: '10px' }}>
-            <h3>
-                {title} (Position: {index + 1})
-            </h3>
-            <div style={{ height: '150px', width: '100%' }}>
-                <AgGridReact
-                    ref={gridRef}
-                    rowData={data}
-                    rowSelection={rowSelection}
-                    columnDefs={colDefs}
-                    defaultColDef={defaultColDef}
-                    getRowId={getRowId}
-                    onGridReady={onGridReady}
-                    onGridPreDestroyed={onGridPreDestroyed}
-                />
+        <AgGridProvider modules={[AllEnterpriseModule]}>
+            <div style={{ border: '1px solid #ccc', margin: '10px 0', padding: '10px' }}>
+                <h3>
+                    {title} (Position: {index + 1})
+                </h3>
+                <div style={{ height: '150px', width: '100%' }}>
+                    <AgGridReact
+                        ref={gridRef}
+                        rowData={data}
+                        rowSelection={rowSelection}
+                        columnDefs={colDefs}
+                        defaultColDef={defaultColDef}
+                        getRowId={getRowId}
+                        onGridReady={onGridReady}
+                        onGridPreDestroyed={onGridPreDestroyed}
+                    />
+                </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 });
 

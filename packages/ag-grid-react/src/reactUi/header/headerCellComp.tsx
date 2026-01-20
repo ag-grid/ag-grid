@@ -58,7 +58,11 @@ const HeaderCellComp = ({ ctrl }: { ctrl: HeaderCellCtrl }) => {
             setUserStyles: (styles: HeaderStyle) => setUserStyles(styles),
             setAriaSort: (sort?: AriaSortState) => {
                 if (eGui.current) {
-                    sort ? _setAriaSort(eGui.current, sort) : _removeAriaSort(eGui.current);
+                    if (sort) {
+                        _setAriaSort(eGui.current, sort);
+                    } else {
+                        _removeAriaSort(eGui.current);
+                    }
                 }
             },
             setUserCompDetails: (compDetails: UserCompDetails) => setUserCompDetails(compDetails),

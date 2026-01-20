@@ -695,6 +695,10 @@ export {
     ValueParserParams,
     ValueSetterFunc,
     ValueSetterParams,
+    GroupRowEditableCallback,
+    GroupRowEditableCallbackParams,
+    GroupRowValueSetterParams,
+    GroupRowValueSetterFunc,
 } from './entities/colDef';
 export {
     BaseCellDataType,
@@ -905,6 +909,7 @@ export {
     GetFormulaParams,
     IFormulaDataService,
     IFormulaService,
+    IFormulaInputManagerService,
     RangeParam,
     SetFormulaParams,
     ValueParam,
@@ -977,6 +982,7 @@ export type {
     LengthValue,
     ScaleValue,
     ShadowValue,
+    ShadowValueParams,
     WithParamTypes,
 } from './agStack/theming/themeTypes';
 
@@ -1005,6 +1011,7 @@ export { columnDropStyleBordered, columnDropStylePlain } from './theming/parts/c
 export {
     iconOverrides,
     iconSetAlpine,
+    iconSetBalham,
     iconSetMaterial,
     iconSetQuartz,
     iconSetQuartzBold,

@@ -79,13 +79,18 @@
 .ag-sticky-top-viewport,
 .ag-sticky-bottom-viewport {
     overflow-x: auto;
-
-    &::-webkit-scrollbar {
-        display: none !important;
-    }
-
     -ms-overflow-style: none !important;
     scrollbar-width: none !important;
+}
+
+.ag-body-viewport::-webkit-scrollbar,
+.ag-center-cols-viewport::-webkit-scrollbar,
+.ag-header-viewport::-webkit-scrollbar,
+.ag-floating-top-viewport::-webkit-scrollbar,
+.ag-floating-bottom-viewport::-webkit-scrollbar,
+.ag-sticky-top-viewport::-webkit-scrollbar,
+.ag-sticky-bottom-viewport::-webkit-scrollbar {
+    display: none !important;
 }
 
 .ag-body-viewport {
@@ -232,7 +237,8 @@ always be 0 and then making a row sticky causes the grid to scroll. */
             transition: opacity 400ms;
             visibility: hidden;
 
-            &:where(.ag-scrollbar-scrolling, .ag-scrollbar-active) {
+            &:where(.ag-scrollbar-scrolling),
+            &:where(.ag-scrollbar-active) {
                 visibility: visible;
                 opacity: 1;
             }
@@ -437,7 +443,9 @@ always be 0 and then making a row sticky causes the grid to scroll. */
 .ag-sticky-bottom {
     box-sizing: content-box !important;
 
-    :where(.ag-pinned-left-sticky-bottom, .ag-sticky-bottom-container, .ag-pinned-right-sticky-bottom) {
+    :where(.ag-pinned-left-sticky-bottom),
+    :where(.ag-sticky-bottom-container),
+    :where(.ag-pinned-right-sticky-bottom) {
         border-top: var(--ag-row-border);
     }
 }
@@ -474,7 +482,8 @@ always be 0 and then making a row sticky causes the grid to scroll. */
 .ag-column-group-icons {
     display: block;
 
-    > * {
+    :where(.ag-column-group-closed-icon),
+    :where(.ag-column-group-opened-icon) {
         cursor: pointer;
     }
 }

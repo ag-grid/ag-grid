@@ -1,4 +1,4 @@
-import type { Module, ModuleName } from '../interfaces/iModule';
+import type { Module, ModuleName, _ModuleWithLicenseManager } from '../interfaces/iModule';
 import type { RowModelType } from '../interfaces/iRowModel';
 import { _errorOnce } from '../utils/log';
 
@@ -144,4 +144,20 @@ export class ModuleRegistry {
             _registerModule(module, undefined);
         }
     }
+}
+
+export function _findEnterpriseCoreModule(modules: Module[]): _ModuleWithLicenseManager | undefined {
+    for (const module of modules) {
+        if ('setLicenseKey' in module) {
+            return module as _ModuleWithLicenseManager;
+        }
+
+        if (module.dependsOn) {
+            const found = _findEnterpriseCoreModule(module.dependsOn);
+            if (found) {
+                return found;
+            }
+        }
+    }
+    return undefined;
 }

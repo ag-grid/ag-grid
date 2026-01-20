@@ -1,9 +1,10 @@
 import { RowNode } from 'ag-grid-community';
-import type { AgColumn, IRowNode } from 'ag-grid-community';
+import type { IRowNode } from 'ag-grid-community';
 
 import { rowIdAndIndexToString } from '../../grid-test-utils';
 import type { GridRows } from '../gridRows';
 import type { GridRowsErrors } from '../gridRowsErrors';
+import { GridRowsValidationState } from './gridRowsValidationState';
 
 type RowChildrenField =
     | 'childrenAfterGroup'
@@ -19,17 +20,6 @@ interface RowAllLeafs {
     allLeafChildren: Set<RowNode>;
 }
 
-interface ValidationState {
-    gridRows: GridRows;
-    csrm: boolean;
-    ssrm: boolean;
-    pivotMode: boolean;
-    groupHideOpenParents: boolean;
-    groupHideParentOfSingleChild: string | boolean;
-    groupAllowUnbalanced: boolean;
-    showRowGroupColumns: AgColumn[];
-}
-
 export class GridRowsValidator {
     public validatedRows = new Set<IRowNode>();
     #allLeafsMap = new Map<IRowNode, RowAllLeafs>();
@@ -37,21 +27,7 @@ export class GridRowsValidator {
     public constructor(public readonly errors: GridRowsErrors) {}
 
     public validate(gridRows: GridRows): this {
-        const api = gridRows.api;
-        const rowModelType = api.getGridOption('rowModelType');
-        const csrm = rowModelType === 'clientSide';
-        const ssrm = rowModelType === 'serverSide';
-
-        const state: ValidationState = {
-            gridRows,
-            csrm,
-            ssrm,
-            pivotMode: !!api.getGridOption('pivotMode'),
-            groupHideOpenParents: !!api.getGridOption('groupHideOpenParents'),
-            groupHideParentOfSingleChild: api.getGridOption('groupHideParentOfSingleChild') ?? false,
-            groupAllowUnbalanced: !!api.getGridOption('groupAllowUnbalanced'),
-            showRowGroupColumns: this.collectShowRowGroupColumns(api),
-        };
+        const state = new GridRowsValidationState(gridRows);
 
         if (gridRows.rootRowNodes.length > 1) {
             this.errors.default.add(
@@ -71,12 +47,12 @@ export class GridRowsValidator {
         this.validateRowNodes(state);
         this.validateDisplayedRows(state);
         if (gridRows.options.checkSelectedNodes ?? true) {
-            this.validateSelectedRows(gridRows);
+            this.validateSelectedRows(state);
         }
         return this;
     }
 
-    private validateRootNode({ csrm, gridRows }: ValidationState, root: RowNode): void {
+    private validateRootNode({ csrm, gridRows }: GridRowsValidationState, root: RowNode): void {
         const rowErrors = this.errors.get(root);
         rowErrors.expectValueEqual('id', root.id, csrm ? 'ROOT_NODE_ID' : undefined);
         rowErrors.expectValueEqual('level', root.level, -1);
@@ -103,7 +79,7 @@ export class GridRowsValidator {
         }
     }
 
-    private validateRowNodes(state: ValidationState): void {
+    private validateRowNodes(state: GridRowsValidationState): void {
         const { csrm, gridRows } = state;
         const rowNodes = gridRows.rowNodes;
         for (let index = 0; index < rowNodes.length; ++index) {
@@ -156,7 +132,7 @@ export class GridRowsValidator {
         }
     }
 
-    private validateDisplayedRows(state: ValidationState): void {
+    private validateDisplayedRows(state: GridRowsValidationState): void {
         const { csrm, gridRows } = state;
         const displayedRows = gridRows.displayedRows;
         for (let index = 0; index < displayedRows.length; ++index) {
@@ -182,7 +158,7 @@ export class GridRowsValidator {
         }
     }
 
-    private validateRow(state: ValidationState, row: RowNode): void {
+    private validateRow(state: GridRowsValidationState, row: RowNode): void {
         const { csrm, gridRows } = state;
         if (this.validatedRows.has(row)) {
             return;
@@ -285,25 +261,6 @@ export class GridRowsValidator {
             this.validate(detailGrid);
         }
     }
-    private collectShowRowGroupColumns(api: GridRows['api']): AgColumn[] {
-        const columns = api.getColumns() ?? [];
-        const displayedColumns = api.getAllDisplayedColumns?.() ?? [];
-        const displayedSet = new Set(displayedColumns as AgColumn[]);
-        const showRowGroupColumns: AgColumn[] = [];
-        for (let i = 0; i < columns.length; ++i) {
-            const column = columns[i] as AgColumn;
-            if (!displayedSet.has(column)) {
-                continue;
-            }
-            const showRowGroup = column.getColDef().showRowGroup;
-            if (showRowGroup === undefined || showRowGroup === null || showRowGroup === false) {
-                continue;
-            }
-            showRowGroupColumns.push(column);
-        }
-        return showRowGroupColumns;
-    }
-
     private validateSibling(row: RowNode<any>) {
         const sibling = row.sibling;
         if (!sibling) {
@@ -357,7 +314,7 @@ export class GridRowsValidator {
     }
 
     private validateChildren(
-        state: ValidationState,
+        state: GridRowsValidationState,
         parentRow: RowNode,
         name: RowChildrenField,
         superset: (ReadonlySet<IRowNode> & { readonly name?: string }) | null
@@ -428,7 +385,8 @@ export class GridRowsValidator {
         return set as any;
     }
 
-    private validateSelectedRows(gridRows: GridRows): void {
+    private validateSelectedRows(state: GridRowsValidationState): void {
+        const gridRows = state.gridRows;
         const selectedRows = gridRows.api.getSelectedNodes();
         const selectedRowsSet = new Set();
         let duplicates = 0;
@@ -454,13 +412,20 @@ export class GridRowsValidator {
                         .join(', ')
             );
         }
+
         for (const row of this.validatedRows) {
             const rowErrors = this.errors.get(row);
             const selected = !!row.isSelected();
             if (selected && !row.selectable) {
                 rowErrors.add('Non-selectable node is selected');
             }
-            if (selected !== selectedRowsSet.has(row)) {
+            const selectedRowSetHasRow = selectedRowsSet.has(row);
+            if (selected !== selectedRowSetHasRow) {
+                // Group rows are not part of the selection state when `groupSelects: 'descendants'` or `groupSelects: 'filteredDescendants'`
+                // So we ignore the case where we have a missing group row in this case.
+                if (!selectedRowSetHasRow && row.group && state.groupSelectsDescendants) {
+                    continue;
+                }
                 rowErrors.add(
                     selectedRowsSet.has(row)
                         ? 'Selected node is not in getSelectedNodes()'
@@ -470,7 +435,7 @@ export class GridRowsValidator {
         }
     }
 
-    private computeUiLevel(state: ValidationState, row: RowNode): number {
+    private computeUiLevel(state: GridRowsValidationState, row: RowNode): number {
         if (state.ssrm) {
             return this.computeSsrmUiLevel(state, row);
         }
@@ -518,7 +483,7 @@ export class GridRowsValidator {
         return level;
     }
 
-    private computeSsrmUiLevel(state: ValidationState, row: RowNode): number {
+    private computeSsrmUiLevel(state: GridRowsValidationState, row: RowNode): number {
         if (row.level == null || row.level < 0) {
             return 0;
         }
@@ -537,7 +502,7 @@ export class GridRowsValidator {
         return expected;
     }
 
-    private countUnbalancedAncestors(state: ValidationState, row: RowNode): number {
+    private countUnbalancedAncestors(state: GridRowsValidationState, row: RowNode): number {
         if (!state.groupAllowUnbalanced) {
             return 0;
         }
@@ -725,7 +690,7 @@ export class GridRowsValidator {
         }
     }
 
-    private validateLeafGroup(state: ValidationState, row: RowNode): void {
+    private validateLeafGroup(state: GridRowsValidationState, row: RowNode): void {
         if (!state.csrm) {
             return;
         }
@@ -753,7 +718,7 @@ export class GridRowsValidator {
         }
     }
 
-    private validatePivotLeafRow({ gridRows }: ValidationState, row: RowNode): void {
+    private validatePivotLeafRow({ gridRows }: GridRowsValidationState, row: RowNode): void {
         // In pivot mode, leaf rows should typically not be displayed directly
         // They should be aggregated into group rows
         if (gridRows.isRowDisplayed(row)) {

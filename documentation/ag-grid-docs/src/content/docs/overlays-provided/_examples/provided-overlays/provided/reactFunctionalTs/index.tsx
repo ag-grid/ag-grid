@@ -1,24 +1,18 @@
 import React, { StrictMode, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import {
-    ClientSideRowModelModule,
-    CsvExportModule,
-    ModuleRegistry,
-    TextFilterModule,
-    ValidationModule,
-} from 'ag-grid-community';
+import { ClientSideRowModelModule, CsvExportModule, TextFilterModule, ValidationModule } from 'ag-grid-community';
 import type { ColDef } from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     ClientSideRowModelModule,
     TextFilterModule,
     CsvExportModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 interface IAthlete {
     athlete: string;
@@ -42,39 +36,45 @@ const GridExample = () => {
     const gridRef = useRef<AgGridReact>(null);
 
     return (
-        <div className="example-wrapper">
-            <div>
-                <label className="checkbox">
-                    <input type="checkbox" onChange={(e) => setLoading(e.target.checked)} defaultChecked={loading} />
-                    loading
-                </label>
+        <AgGridProvider modules={modules}>
+            <div className="example-wrapper">
+                <div>
+                    <label className="checkbox">
+                        <input
+                            type="checkbox"
+                            onChange={(e) => setLoading(e.target.checked)}
+                            defaultChecked={loading}
+                        />
+                        loading
+                    </label>
 
-                <button onClick={() => setRowData(rawRowData)}>Set Row Data</button>
-                <button onClick={() => setRowData([])}>Clear Row Data</button>
-                <button
-                    onClick={() => {
-                        setRowData(rawRowData);
-                        gridRef.current?.api.setFilterModel({
-                            country: { filterType: 'text', type: 'equals', filter: 'Spain' },
-                        });
-                    }}
-                >
-                    Set Non Matching Filter
-                </button>
-                <button onClick={() => gridRef.current?.api.setFilterModel(null)}>Clear Filter</button>
-                <button onClick={() => gridRef.current?.api.exportDataAsCsv()}>Export CSV</button>
-            </div>
+                    <button onClick={() => setRowData(rawRowData)}>Set Row Data</button>
+                    <button onClick={() => setRowData([])}>Clear Row Data</button>
+                    <button
+                        onClick={() => {
+                            setRowData(rawRowData);
+                            gridRef.current?.api.setFilterModel({
+                                country: { filterType: 'text', type: 'equals', filter: 'Spain' },
+                            });
+                        }}
+                    >
+                        Set Non Matching Filter
+                    </button>
+                    <button onClick={() => gridRef.current?.api.setFilterModel(null)}>Clear Filter</button>
+                    <button onClick={() => gridRef.current?.api.exportDataAsCsv()}>Export CSV</button>
+                </div>
 
-            <div style={{ height: '100%' }}>
-                <AgGridReact
-                    ref={gridRef}
-                    loading={loading}
-                    rowData={rowData}
-                    columnDefs={columnDefs}
-                    defaultColDef={defaultColDef}
-                />
+                <div style={{ height: '100%' }}>
+                    <AgGridReact
+                        ref={gridRef}
+                        loading={loading}
+                        rowData={rowData}
+                        columnDefs={columnDefs}
+                        defaultColDef={defaultColDef}
+                    />
+                </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

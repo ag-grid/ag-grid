@@ -5,26 +5,25 @@ import type { ColDef } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     CustomEditorModule,
-    ModuleRegistry,
     NumberEditorModule,
     TextEditorModule,
     ValidationModule,
 } from 'ag-grid-community';
 import { RichSelectModule } from 'ag-grid-enterprise';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import { getData } from './data';
 import PhoneEditor from './phoneEditor';
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     NumberEditorModule,
     TextEditorModule,
     CustomEditorModule,
     ClientSideRowModelModule,
     RichSelectModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
@@ -47,11 +46,13 @@ const GridExample = () => {
     }, []);
 
     return (
-        <div style={containerStyle}>
-            <div style={gridStyle}>
-                <AgGridReact rowData={rowData} columnDefs={columnDefs} defaultColDef={defaultColDef} />
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div style={gridStyle}>
+                    <AgGridReact rowData={rowData} columnDefs={columnDefs} defaultColDef={defaultColDef} />
+                </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

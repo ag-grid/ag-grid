@@ -7,22 +7,21 @@ import {
     ClientSideRowModelModule,
     ColumnApiModule,
     ColumnAutoSizeModule,
-    ModuleRegistry,
     TextFilterModule,
     ValidationModule,
 } from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     TextFilterModule,
     ColumnAutoSizeModule,
     ColumnApiModule,
     AlignedGridsModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const GridExample = () => {
     const topGridRef = useRef<AgGridReact>(null);
@@ -82,33 +81,35 @@ const GridExample = () => {
     };
 
     return (
-        <div className="container">
-            <div className="grid">
-                <AgGridReact
-                    ref={topGridRef}
-                    rowData={data}
-                    loading={loading}
-                    columnDefs={columnDefs}
-                    defaultColDef={defaultColDef}
-                    onFirstDataRendered={onFirstDataRendered}
-                    alignedGrids={[bottomGridRef]}
-                    autoSizeStrategy={autoSizeStrategy}
-                />
-            </div>
+        <AgGridProvider modules={modules}>
+            <div className="container">
+                <div className="grid">
+                    <AgGridReact
+                        ref={topGridRef}
+                        rowData={data}
+                        loading={loading}
+                        columnDefs={columnDefs}
+                        defaultColDef={defaultColDef}
+                        onFirstDataRendered={onFirstDataRendered}
+                        alignedGrids={[bottomGridRef]}
+                        autoSizeStrategy={autoSizeStrategy}
+                    />
+                </div>
 
-            <div className="divider"></div>
+                <div className="divider"></div>
 
-            <div className="grid">
-                <AgGridReact
-                    ref={bottomGridRef}
-                    rowData={data}
-                    loading={loading}
-                    columnDefs={columnDefs}
-                    defaultColDef={defaultColDef}
-                    alignedGrids={[topGridRef]}
-                />
+                <div className="grid">
+                    <AgGridReact
+                        ref={bottomGridRef}
+                        rowData={data}
+                        loading={loading}
+                        columnDefs={columnDefs}
+                        defaultColDef={defaultColDef}
+                        alignedGrids={[topGridRef]}
+                    />
+                </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

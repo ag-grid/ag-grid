@@ -1,11 +1,9 @@
 import React, { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { ModuleRegistry, themeAlpine, themeBalham, themeMaterial, themeQuartz } from 'ag-grid-community';
+import { themeAlpine, themeBalham, themeMaterial, themeQuartz } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
-import { AgGridReact } from 'ag-grid-react';
-
-ModuleRegistry.registerModules([AllEnterpriseModule]);
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 const themes = [
     { id: 'themeQuartz', theme: themeQuartz },
@@ -18,20 +16,22 @@ const GridExample = () => {
     const [theme, setBaseTheme] = useState(themes[0]);
 
     return (
-        <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <p style={{ flex: 0 }}>
-                Theme: <PartSelector options={themes} value={theme} setValue={setBaseTheme} />
-            </p>
-            <div style={{ flex: 1 }}>
-                <AgGridReact
-                    theme={theme.theme}
-                    columnDefs={columnDefs}
-                    rowData={rowData}
-                    defaultColDef={defaultColDef}
-                    sideBar
-                />
+        <AgGridProvider modules={[AllEnterpriseModule]}>
+            <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <p style={{ flex: 0 }}>
+                    Theme: <PartSelector options={themes} value={theme} setValue={setBaseTheme} />
+                </p>
+                <div style={{ flex: 1 }}>
+                    <AgGridReact
+                        theme={theme.theme}
+                        columnDefs={columnDefs}
+                        rowData={rowData}
+                        defaultColDef={defaultColDef}
+                        sideBar
+                    />
+                </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

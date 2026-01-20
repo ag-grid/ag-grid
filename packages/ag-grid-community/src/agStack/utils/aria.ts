@@ -206,3 +206,11 @@ export function _getAriaCheckboxStateName(translate: LocaleTextFunc, state?: boo
           ? translate('ariaChecked', 'checked')
           : translate('ariaUnchecked', 'unchecked');
 }
+
+export function _setAriaOrientation(element: Element, orientation?: 'horizontal' | 'vertical'): void {
+    if (orientation) {
+        _setAriaAttribute(element, 'orientation', orientation);
+    } else {
+        _removeAriaAttribute(element, 'orientation');
+    }
+}

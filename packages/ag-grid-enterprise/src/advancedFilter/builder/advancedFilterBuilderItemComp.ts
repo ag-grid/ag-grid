@@ -137,7 +137,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
         if (level === 0) {
             const eTreeLine = _createElement({
                 tag: 'div',
-                cls: 'ag-advanced-filter-builder-item-tree-line-vertical-bottom ag-advanced-filter-builder-item-tree-line-root',
+                cls: 'ag-advanced-filter-builder-item-tree-line ag-advanced-filter-builder-item-tree-line-vertical-bottom ag-advanced-filter-builder-item-tree-line-root',
             });
             this.eTreeLines.appendChild(eTreeLine);
 
@@ -212,7 +212,9 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
 
     private setupTreeLines(level: number): void {
         for (let i = 0; i < level; i++) {
-            this.eTreeLines.appendChild(_createElement({ tag: 'div' }));
+            this.eTreeLines.appendChild(
+                _createElement({ tag: 'div', cls: 'ag-advanced-filter-builder-item-tree-line' })
+            );
         }
     }
 

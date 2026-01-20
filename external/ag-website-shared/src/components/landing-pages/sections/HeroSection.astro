@@ -1,0 +1,142 @@
+---
+/**
+ * HeroSection - Landing page hero section component
+ *
+ * All content comes from the JSON content file. No hardcoded text.
+ *
+ * Uses named slots to allow site-specific components to be passed in:
+ * - hero-demo: The main demo component (Finance grid, etc.)
+ * - hero-install: Package install text component
+ * - hero-trial-button: Trial button component (when primaryCta.useTrialButton is true)
+ * - hero-logos: Customer logos component
+ */
+import type { HeroSection, LandingPageContent } from '../types';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+
+interface Props {
+    section: HeroSection;
+    pageContent: LandingPageContent;
+    latestVersion?: {
+        version: string;
+        landingPageHighlight?: string;
+    };
+    urlWithBaseUrl: (url: string) => string;
+    styles: Record<string, string>;
+}
+
+const { section, pageContent, latestVersion, urlWithBaseUrl, styles } = Astro.props;
+
+// Resolve URLs with defaults
+const primaryCtaUrl = section.primaryCta?.url
+    ? urlWithBaseUrl(section.primaryCta.url)
+    : urlWithBaseUrl(`./${pageContent.docsPath}/getting-started/`);
+
+const secondaryCtaUrl = section.secondaryCta?.url
+    ? urlWithBaseUrl(section.secondaryCta.url)
+    : urlWithBaseUrl('./example');
+
+// Analytics event names
+const primaryCtaAnalytics = section.primaryCta?.useTrialButton
+    ? `${pageContent.analyticsPrefix}-trial-cta`
+    : `${pageContent.analyticsPrefix}-get-started`;
+
+const secondaryCtaAnalytics = `${pageContent.analyticsPrefix}-view-demos`;
+
+// Product name for version badge (defaults to 'AG Grid' for backwards compatibility)
+const productName = pageContent.productName ?? 'AG Grid';
+
+// Whether to show customer logos (defaults to true)
+const showCustomerLogos = section.showCustomerLogos !== false;
+---
+
+<div class={styles.heroSection}>
+    <div class={styles.blueRectangle}></div>
+    <div class={styles.heroSectionInner}>
+        <div class={styles.heroSectionContainer}>
+            <div class={styles.heroSectionHeadingContainer}>
+                {
+                    section.showVersionBadge && latestVersion && (
+                        <a
+                            href={urlWithBaseUrl('./whats-new')}
+                            class:list={[
+                                styles.heroSectionVersionTagContainer,
+                                `plausible-event-name=${pageContent.analyticsPrefix}-whats-new`,
+                            ]}
+                        >
+                            <span class={styles.heroSectionVersion}>
+                                {productName} v{latestVersion.version}
+                            </span>
+                            {latestVersion.landingPageHighlight && (
+                                <span class={styles.heroSectionFeatureHighlight}>
+                                    <span>{latestVersion.landingPageHighlight}</span>
+                                    <Icon svgClasses={styles.heroSectionFeatureArrow} name="arrowRight" />
+                                </span>
+                            )}
+                        </a>
+                    )
+                }
+                <h1 class={styles.heroSectionTag}>{section.tag}</h1>
+                {
+                    section.headingHtml ? (
+                        <h2 class={styles.heroSectionHeading} set:html={section.headingHtml} />
+                    ) : (
+                        <h2 class={styles.heroSectionHeading}>{section.heading}</h2>
+                    )
+                }
+                {
+                    section.subHeadingHtml ? (
+                        <h3 class={styles.heroSectionSubHeading} set:html={section.subHeadingHtml} />
+                    ) : (
+                        <h3 class={styles.heroSectionSubHeading}>{section.subHeading}</h3>
+                    )
+                }
+            </div>
+            <div class={styles.heroSectionButtonContainer}>
+                {
+                    section.primaryCta?.useTrialButton ? (
+                        <slot name="hero-trial-button" />
+                    ) : section.primaryCta ? (
+                        <a
+                            id="get-started"
+                            class:list={[
+                                'button-secondary',
+                                styles.heroSectionCta1,
+                                `plausible-event-name=${primaryCtaAnalytics}`,
+                            ]}
+                            href={primaryCtaUrl}
+                        >
+                            {section.primaryCta.text}
+                        </a>
+                    ) : null
+                }
+                {
+                    pageContent.packageName && (
+                        <div class={styles.heroSectionCta2}>
+                            <slot name="hero-install" />
+                        </div>
+                    )
+                }
+            </div>
+            <div class={styles.heroSectionDemoContainer}>
+                <slot name="hero-demo" />
+            </div>
+            {
+                section.secondaryCta && (
+                    <a
+                        id="view-demos"
+                        class:list={[
+                            'button-tertiary',
+                            styles.heroSectionViewAllDemosLink,
+                            `plausible-event-name=${secondaryCtaAnalytics}`,
+                        ]}
+                        href={secondaryCtaUrl}
+                    >
+                        {section.secondaryCta.text}
+                        <Icon svgClasses={styles.heroSectionDemosArrow} name="arrowRight" />
+                    </a>
+                )
+            }
+            {showCustomerLogos && <slot name="hero-logos" />}
+        </div>
+    </div>
+</div>

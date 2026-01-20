@@ -1,6 +1,6 @@
 import type { UtilBeanCollection } from '../interfaces/agCoreBeanCollection';
 import { _setAriaHidden } from './aria';
-import { _getWindow } from './document';
+import { _getDocument, _getWindow } from './document';
 
 /**
  * This method adds a class to an element and remove that class from all siblings.
@@ -393,6 +393,23 @@ export function _addOrRemoveAttribute(element: HTMLElement, name: string, value:
     }
 }
 
+export function _placeCaretAtEnd(beans: UtilBeanCollection, contentElement: HTMLElement): void {
+    if (!contentElement.isContentEditable) {
+        return;
+    }
+    const selection = _getWindow(beans).getSelection();
+
+    if (!selection) {
+        return;
+    }
+
+    const range = _getDocument(beans).createRange();
+    range.selectNodeContents(contentElement);
+    range.collapse(false);
+    selection.removeAllRanges();
+    selection.addRange(range);
+}
+
 export function _observeResize(
     beans: UtilBeanCollection,
     element: HTMLElement,
@@ -425,6 +442,7 @@ type RoleType =
     | 'columnheader'
     | 'gridcell'
     | 'heading'
+    | 'listbox'
     | 'menu'
     | 'option'
     | 'presentation'

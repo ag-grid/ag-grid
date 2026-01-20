@@ -1,7 +1,7 @@
 import { RefPlaceholder } from '../agStack/interfaces/agComponent';
 import { _clearElement, _setDisplayed } from '../agStack/utils/dom';
 import type { AgColumn } from '../entities/agColumn';
-import { _normalizeSortDirection, _normalizeSortType } from '../entities/agColumn';
+import { _getDisplaySortForColumn } from '../entities/agColumn';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
 import type { ElementParams } from '../utils/element';
 import type { IconName } from '../utils/icon';
@@ -118,16 +118,15 @@ export class SortIndicatorComp extends Component {
     private updateIcons(): void {
         const { eSortAsc, eSortDesc, eSortAbsoluteAsc, eSortAbsoluteDesc, eSortNone, column, gos, beans } = this;
 
-        const sortDef = beans.sortSvc!.getDisplaySortForColumn(column);
-        const type = _normalizeSortType(sortDef?.type);
-        const direction = _normalizeSortDirection(sortDef?.direction);
-        const allowedSortTypes = column.getAvailableSortTypes();
-        const isDefaultSortAllowed = allowedSortTypes.has('default');
-        const isAbsoluteSortAllowed = allowedSortTypes.has('absolute');
-        const isAbsoluteSort = type === 'absolute';
-        const isDefaultSort = type === 'default';
-        const isAscending = direction === 'asc';
-        const isDescending = direction === 'desc';
+        const {
+            isDefaultSortAllowed,
+            isAbsoluteSortAllowed,
+            isAbsoluteSort,
+            isDefaultSort,
+            isAscending,
+            isDescending,
+            direction,
+        } = _getDisplaySortForColumn(column, beans);
 
         if (eSortAsc) {
             _setDisplayed(eSortAsc, isAscending && isDefaultSort && isDefaultSortAllowed, { skipAriaHidden: true });

@@ -3,6 +3,7 @@ import { Component, signal } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
 import type {
+    AutoGroupColumnDef,
     ColDef,
     GridApi,
     GridOptions,
@@ -102,7 +103,7 @@ export class AppComponent {
         enablePivot: true,
         enableValue: true,
     };
-    public autoGroupColumnDef: ColDef = { minWidth: 200 };
+    public autoGroupColumnDef: AutoGroupColumnDef = { minWidth: 200 };
     public rowSelection: RowSelectionOptions = {
         mode: 'multiRow',
     };

@@ -19,18 +19,28 @@
         "!{projectRoot}/vitest.config.ts",
         "{workspaceRoot}/external/ag-website-shared/**",
         "charts",
+        "{projectRoot}/.astro/cache/sitemap/**",
         { "env": "PUBLIC_PACKAGE_VERSION" }
       ],
       "cache": true,
-      "command": "astro build",
+      "command": "tsx ../../external/ag-website-shared/scripts/buildWithSitemapCache.ts",
       "options": {
         "cwd": "{projectRoot}",
         "silent": true
       },
       "configurations": {
-        "staging": {},
-        "archive": {},
-        "production": {},
+        "staging": {
+          "silent": true,
+          "clean-cache": true
+        },
+        "archive": {
+          "silent": true,
+          "clean-cache": true
+        },
+        "production": {
+          "silent": true,
+          "clean-cache": true
+        },
         "verbose": {
           "silent": null
         }

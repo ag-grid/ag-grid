@@ -5,6 +5,7 @@ import { _exists, _missing } from '../agStack/utils/generic';
 import { _escapeString } from '../agStack/utils/string';
 import type { ColumnState } from '../columns/columnStateUtils';
 import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
 import type { ColumnEvent, ColumnEventType } from '../events';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type {
@@ -258,18 +259,7 @@ export class AgColumn<TValue = any>
     }
 
     private calculateColInitialWidth(colDef: ColDef): number {
-        let width: number;
-        const colDefWidth = colDef.width;
-        const colDefInitialWidth = colDef.initialWidth;
-
-        if (colDefWidth != null) {
-            width = colDefWidth;
-        } else if (colDefInitialWidth != null) {
-            width = colDefInitialWidth;
-        } else {
-            width = 200;
-        }
-
+        const width = colDef.width ?? colDef.initialWidth ?? 200;
         return Math.max(Math.min(width, this.maxWidth), this.minWidth);
     }
 
@@ -856,4 +846,26 @@ export function _normalizeSortDirection(sortDirectionLike?: unknown): SortDirect
 
 export function _normalizeSortType(sortTypeLike?: unknown): SortType {
     return _isSortTypeValid(sortTypeLike) ? sortTypeLike : 'default';
+}
+
+export function _getDisplaySortForColumn(column: AgColumn, beans: BeanCollection) {
+    const sortDef = beans.sortSvc!.getDisplaySortForColumn(column);
+    const type = _normalizeSortType(sortDef?.type);
+    const direction = _normalizeSortDirection(sortDef?.direction);
+    const allowedSortTypes = column.getAvailableSortTypes();
+    const isDefaultSortAllowed = allowedSortTypes.has('default');
+    const isAbsoluteSortAllowed = allowedSortTypes.has('absolute');
+    const isAbsoluteSort = type === 'absolute';
+    const isDefaultSort = type === 'default';
+    const isAscending = direction === 'asc';
+    const isDescending = direction === 'desc';
+    return {
+        isDefaultSortAllowed,
+        isAbsoluteSortAllowed,
+        isAbsoluteSort,
+        isDefaultSort,
+        isAscending,
+        isDescending,
+        direction,
+    };
 }

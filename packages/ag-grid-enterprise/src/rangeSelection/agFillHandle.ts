@@ -505,17 +505,23 @@ export class AgFillHandle extends AbstractSelectionHandle {
             const { value: cyclicValue, column: sourceCol, rowNode: sourceRowNode } = values[idx % values.length];
 
             let processedValue: any;
+            const fromFormula = sourceCol.isAllowFormula() && formula?.isFormula(valueForFunctions);
 
-            if (sourceCol.isAllowFormula() && formula?.isFormula(valueForFunctions)) {
+            if (fromFormula) {
                 // Compute the row and column delta based on drag direction
                 const rowDelta = direction === 'up' ? -1 : direction === 'down' ? 1 : 0;
                 const columnDelta = direction === 'left' ? -1 : direction === 'right' ? 1 : 0;
-                processedValue = formula.updateFormulaByOffset({ value: valueForFunctions, rowDelta, columnDelta });
+                processedValue = formula!.updateFormulaByOffset({ value: valueForFunctions, rowDelta, columnDelta });
             } else {
                 processedValue = cyclicValue;
             }
 
-            return { value: processedValue, fromUserFunction: false, sourceCol, sourceRowNode };
+            return {
+                value: processedValue,
+                fromUserFunction: false,
+                sourceCol: fromFormula ? undefined : sourceCol,
+                sourceRowNode,
+            };
         }
 
         return {

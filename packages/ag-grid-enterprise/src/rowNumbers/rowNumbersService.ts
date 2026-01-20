@@ -24,6 +24,7 @@ import type {
     CellClassParams,
     CellCtrl,
     CellPosition,
+    CellRange,
     ColDef,
     IRowNumbersRowResizeFeature,
     IRowNumbersService,
@@ -38,9 +39,13 @@ import type {
     _HeaderComp,
 } from 'ag-grid-community';
 
+import type {
+    RangeSelectionExtension,
+    RangeSelectionExtensionRegistry,
+} from '../rangeSelection/rangeSelectionExtensions';
 import { RowNumbersRowResizeFeature, _isRowNumbersResizerEnabled } from './rowNumbersRowResizeFeature';
 
-export class RowNumbersService extends BeanStub implements NamedBean, IRowNumbersService {
+export class RowNumbersService extends BeanStub implements NamedBean, IRowNumbersService, RangeSelectionExtension {
     beanName = 'rowNumbersSvc' as const;
 
     public columns: _ColumnCollections | null;
@@ -69,6 +74,33 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         });
 
         this.refreshSelectionIntegration();
+        this.registerRangeSelectionExtension();
+    }
+
+    public shouldSkipColumn(column: AgColumn): boolean {
+        return _isRowNumbers(this.beans) && isRowNumberCol(column);
+    }
+
+    public isAllColumnsSelectionCell(cellPosition: CellPosition): boolean {
+        return _isRowNumbers(this.beans) && isRowNumberCol(cellPosition.column);
+    }
+
+    public isAllColumnsRange(range: CellRange, allColumns: AgColumn[]): boolean {
+        if (!_isRowNumbers(this.beans) || allColumns.length === 0) {
+            return false;
+        }
+        return (
+            range.columns.length === allColumns.length && allColumns.every((column) => range.columns.includes(column))
+        );
+    }
+
+    private registerRangeSelectionExtension(): void {
+        const rangeSvc = this.beans.rangeSvc as RangeSelectionExtensionRegistry | undefined;
+        if (!rangeSvc) {
+            return;
+        }
+        rangeSvc.registerRangeSelectionExtension(this);
+        this.addDestroyFunc(() => rangeSvc.unregisterRangeSelectionExtension?.(this));
     }
 
     public addColumns(cols: _ColumnCollections): void {
@@ -130,7 +162,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     }
 
     public handleMouseDownOnCell(cellPosition: CellPosition, mouseEvent: MouseEvent): boolean {
-        // If click interaction can't produce an outcome (i.e. no cell selection, no row-resizing), do nothing
+        // if click interaction can't produce an outcome (i.e. no cell selection, no row-resizing), do nothing
         if (
             !this.isIntegratedWithSelection ||
             (mouseEvent.target as HTMLElement).classList.contains('ag-row-numbers-resizer')
@@ -142,7 +174,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
             return false;
         }
 
-        // If we're not extending the range, focus the first cell
+        // if we're not extending the range, focus the first cell
         if (!mouseEvent.shiftKey && !_interpretAsRightClick(this.beans, mouseEvent)) {
             this.focusFirstRenderedCellAtRowPosition(cellPosition);
         }
@@ -357,7 +389,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         const node = params.node as RowNode | null;
         const isFormulasActive = this.beans.formula?.active;
 
-        // Rows that are in the pinned container take the row numbers of their pinned sibling rows
+        // rows that are in the pinned container take the row numbers of their pinned sibling rows
         const pinnedSibling = node?.pinnedSibling;
         if (node?.rowPinned && pinnedSibling) {
             const rowIndex = isFormulasActive ? pinnedSibling.formulaRowIndex : pinnedSibling.rowIndex;
@@ -431,9 +463,16 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         return [col];
     }
 
-    // focus is disabled on the Row Numbers cells, when a click happens on it,
+    // focus is disabled on the row numbers cells, when a click happens on it,
     // it should focus the first cell of that row or first cell of the grid (from header).
     private focusFirstRenderedCellAtRowPosition(rowPosition?: RowPosition | null) {
+        const editSvc = this.beans.editSvc;
+
+        if (editSvc?.isEditing() && editSvc.isRangeSelectionEnabledWhileEditing?.()) {
+            // let the formula editor keep focus when range selection is enabled during editing.
+            return;
+        }
+
         if (!rowPosition) {
             rowPosition = _getFirstRow(this.beans);
             if (!rowPosition) {

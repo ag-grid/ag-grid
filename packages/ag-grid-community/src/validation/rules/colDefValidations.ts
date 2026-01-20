@@ -39,8 +39,9 @@ export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGro
     autoHeight: 'RowAutoHeight',
     cellClass: 'CellStyle',
     cellClassRules: 'CellStyle',
-    cellEditor: ({ cellEditor, editable }: ColDef) => {
-        if (!editable) {
+    cellEditor: ({ cellEditor, editable, groupRowEditable }: ColDef) => {
+        const editingEnabled = !!editable || !!groupRowEditable;
+        if (!editingEnabled) {
             return null;
         }
         if (typeof cellEditor === 'string') {
@@ -61,6 +62,12 @@ export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGro
     dndSourceOnRowDrag: 'DragAndDrop',
     editable: ({ editable, cellEditor }: ColDef) => {
         if (editable && !cellEditor) {
+            return 'TextEditor';
+        }
+        return null;
+    },
+    groupRowEditable: ({ groupRowEditable, cellEditor }: ColDef) => {
+        if (groupRowEditable && !cellEditor) {
             return 'TextEditor';
         }
         return null;
@@ -253,6 +260,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
         spanRows: {
             dependencies: {
                 editable: { required: [false, undefined] },
+                groupRowEditable: { required: [false, undefined] },
                 rowDrag: { required: [false, undefined] },
                 colSpan: { required: [undefined] },
                 rowSpan: { required: [undefined] },
@@ -357,6 +365,8 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     initialAggFunc: undefined,
     defaultAggFunc: undefined,
     aggFunc: undefined,
+    groupRowEditable: undefined,
+    groupRowValueSetter: undefined,
     pinned: undefined,
     initialPinned: undefined,
     chartDataType: undefined,

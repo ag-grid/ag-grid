@@ -2,14 +2,10 @@
 import React, { StrictMode, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-// Theme
 import type { ColDef, RowSelectionOptions, ValueFormatterParams } from 'ag-grid-community';
-import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
-// Core CSS
+import { AllCommunityModule } from 'ag-grid-community';
 import type { CustomCellRendererProps } from 'ag-grid-react';
-import { AgGridReact } from 'ag-grid-react';
-
-ModuleRegistry.registerModules([AllCommunityModule]);
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 // Custom Cell Renderer (Display logos based on cell value)
 const CompanyLogoRenderer = (params: CustomCellRendererProps) => (
@@ -121,18 +117,20 @@ const GridExample = () => {
 
     // Container: Defines the grid's theme & dimensions.
     return (
-        <div style={{ width: '100%', height: '100%' }}>
-            <AgGridReact
-                rowData={data}
-                loading={loading}
-                columnDefs={colDefs}
-                defaultColDef={defaultColDef}
-                pagination={true}
-                rowSelection={rowSelection}
-                onSelectionChanged={(event) => console.log('Row Selected!')}
-                onCellValueChanged={(event) => console.log(`New Cell Value: ${event.value}`)}
-            />
-        </div>
+        <AgGridProvider modules={[AllCommunityModule]}>
+            <div style={{ width: '100%', height: '100%' }}>
+                <AgGridReact
+                    rowData={data}
+                    loading={loading}
+                    columnDefs={colDefs}
+                    defaultColDef={defaultColDef}
+                    pagination={true}
+                    rowSelection={rowSelection}
+                    onSelectionChanged={(event) => console.log('Row Selected!')}
+                    onCellValueChanged={(event) => console.log(`New Cell Value: ${event.value}`)}
+                />
+            </div>
+        </AgGridProvider>
     );
 };
 

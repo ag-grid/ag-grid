@@ -11,6 +11,7 @@ import { Component } from '../widgets/component';
 import type { FilterDisplayWrapper } from './columnFilterService';
 import { FilterWrapperComp } from './filterWrapperComp';
 import type { FilterRequestSource } from './iColumnFilter';
+import { legacyFilterCSS } from './legacyFilter.css-GENERATED';
 
 const FilterElement: ElementParams = { tag: 'div', cls: 'ag-filter' };
 
@@ -91,6 +92,7 @@ export class FilterComp extends Component {
                 this.comp = displayComp;
                 filterGui = displayComp.getGui();
             } else {
+                this.registerCSS(legacyFilterCSS);
                 filterGui = comp.getGui();
 
                 if (!_exists(filterGui)) {

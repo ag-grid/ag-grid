@@ -317,7 +317,11 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
 
             // add total colDef to group and pivot colDefs array
             const children = (groupDef as ColGroupDef).children;
-            insertAfter ? children.push(totalColDef) : children.unshift(totalColDef);
+            if (insertAfter) {
+                children.push(totalColDef);
+            } else {
+                children.unshift(totalColDef);
+            }
             pivotColumnDefs.push(totalColDef);
         }
 
@@ -366,7 +370,11 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
                 : colDef;
 
             pivotColumnDefs.push(colDef);
-            insertAtEnd ? pivotColumnGroupDefs.push(valueGroup) : pivotColumnGroupDefs.unshift(valueGroup);
+            if (insertAtEnd) {
+                pivotColumnGroupDefs.push(valueGroup);
+            } else {
+                pivotColumnGroupDefs.unshift(valueGroup);
+            }
         }
     }
 

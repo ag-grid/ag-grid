@@ -1,6 +1,6 @@
 import { _setAriaColIndex } from '../../agStack/utils/aria';
 import { _getActiveDomElement } from '../../agStack/utils/document';
-import { _addOrRemoveAttribute, _requestAnimationFrame } from '../../agStack/utils/dom';
+import { _addOrRemoveAttribute, _placeCaretAtEnd, _requestAnimationFrame } from '../../agStack/utils/dom';
 import { _findFocusableElements } from '../../agStack/utils/focus';
 import { _makeNull } from '../../agStack/utils/generic';
 import { AgPromise } from '../../agStack/utils/promise';
@@ -274,15 +274,16 @@ export class CellCtrl extends BeanStub {
         this.rangeFeature?.setComp(comp);
         this.rowResizeFeature?.refreshRowResizer();
 
-        if (
-            (startEditing && this.isCellEditable()) ||
-            (this.hasEdit && this.editSvc?.isEditing(this, { withOpenEditor: true }))
-        ) {
+        const editable = startEditing ? this.isCellEditable() : undefined;
+        const continuingEdit = !editable && this.hasEdit && this.editSvc?.isEditing(this, { withOpenEditor: true });
+
+        if (editable || continuingEdit) {
             this.editSvc?.startEditing(this, {
                 startedEdit: false,
                 source: 'api',
                 silent: true,
                 continueEditing: true,
+                editable,
             });
         } else {
             // We can skip refreshing the range handle as this is done in this.rangeFeature.setComp above
@@ -909,6 +910,7 @@ export class CellCtrl extends BeanStub {
             }
 
             focusEl.focus({ preventScroll: !!event.preventScrollOnBrowserFocus });
+            _placeCaretAtEnd(beans, focusEl);
         }
 
         // require event to announce so we only announce

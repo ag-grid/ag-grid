@@ -9,7 +9,6 @@ import {
     type GetRowIdFunc,
     type GetRowIdParams,
     type GridSizeChangedEvent,
-    ModuleRegistry,
     type ValueFormatterFunc,
     type ValueGetterParams,
 } from 'ag-grid-community';
@@ -30,7 +29,7 @@ import {
     SparklinesModule,
     StatusBarModule,
 } from 'ag-grid-enterprise';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import styles from './FinanceExample.module.css';
 import { getData } from './data';
@@ -93,7 +92,7 @@ const BREAKPOINT_CONFIG: Record<
     },
 };
 
-ModuleRegistry.registerModules([
+const modules = [
     AllCommunityModule,
     ClientSideRowModelModule,
     AdvancedFilterModule,
@@ -111,7 +110,7 @@ ModuleRegistry.registerModules([
     IntegratedChartsModule.with(AgChartsEnterpriseModule),
     SparklinesModule.with(AgChartsEnterpriseModule),
     ClipboardModule,
-]);
+];
 
 const numberFormatter: ValueFormatterFunc = ({ value }) => {
     const formatter = new Intl.NumberFormat('en-US', {
@@ -317,26 +316,28 @@ export const FinanceExample: React.FC<Props> = ({
     const chartThemes = useMemo(() => (isDarkMode ? ['ag-default-dark'] : ['ag-default']), [isDarkMode]);
 
     return (
-        <div
-            ref={gridWrapperRef}
-            style={gridHeight ? { height: gridHeight } : {}}
-            className={`${themeClass} ${styles.grid} ${gridHeight ? '' : styles.gridHeight}`}
-        >
-            <AgGridReact
-                chartThemes={chartThemes}
-                ref={gridRef}
-                getRowId={getRowId}
-                rowData={rowData}
-                columnDefs={colDefs}
-                defaultColDef={defaultColDef}
-                cellSelection={true}
-                enableCharts
-                rowGroupPanelShow={enableRowGroup ? 'always' : 'never'}
-                suppressAggFuncInHeader
-                groupDefaultExpanded={-1}
-                statusBar={statusBar}
-                onGridSizeChanged={onGridSizeChanged}
-            />
-        </div>
+        <AgGridProvider modules={modules}>
+            <div
+                ref={gridWrapperRef}
+                style={gridHeight ? { height: gridHeight } : {}}
+                className={`${themeClass} ${styles.grid} ${gridHeight ? '' : styles.gridHeight}`}
+            >
+                <AgGridReact
+                    chartThemes={chartThemes}
+                    ref={gridRef}
+                    getRowId={getRowId}
+                    rowData={rowData}
+                    columnDefs={colDefs}
+                    defaultColDef={defaultColDef}
+                    cellSelection={true}
+                    enableCharts
+                    rowGroupPanelShow={enableRowGroup ? 'always' : 'never'}
+                    suppressAggFuncInHeader
+                    groupDefaultExpanded={-1}
+                    statusBar={statusBar}
+                    onGridSizeChanged={onGridSizeChanged}
+                />
+            </div>
+        </AgGridProvider>
     );
 };

@@ -25,9 +25,11 @@ if (library === 'grid') {
         'ag-charts-angular': 'angular',
         'ag-charts-react': 'react',
         'ag-charts-vue3': 'vue',
+        'ag-charts-server-side': 'server-side',
         'angular-package-tests': 'angular',
         'react-package-tests': 'react',
         'vue-package-tests': 'vue',
+        'server-side-package-tests': 'server-side',
     };
     affectedProjectsCmd = 'yarn nx show projects --affected -t pack -t test:package';
 }

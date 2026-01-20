@@ -126,6 +126,7 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
         {
             event: key ? new KeyboardEvent('keydown', { key }) : undefined,
             source: 'api',
+            editable: true,
         }
     );
 }
