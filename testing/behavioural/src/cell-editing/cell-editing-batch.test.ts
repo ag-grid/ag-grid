@@ -5,7 +5,7 @@ import { userEvent } from '@testing-library/user-event';
 import { agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
+import { GridRows, TestGridsManager, asyncSetTimeout, waitForEvent, waitForInput } from '../test-utils';
 import { expect } from '../test-utils/matchers';
 
 describe('Cell Editing Batch', () => {
@@ -216,10 +216,14 @@ describe('Cell Editing Batch', () => {
         const cellB = getByTestId(gridDiv, agTestIdFor.cell('0', 'b'));
         expect(cellB).toHaveTextContent('initial');
 
-        await userEvent.dblClick(cellA);
-        const editor = await waitForInput(gridDiv, cellA, { popup: false });
+        api.startEditingCell({ rowIndex: 0, colKey: 'a' });
+        await asyncSetTimeout(1);
+        const editor = gridDiv.querySelector<HTMLInputElement>('input');
+        if (!editor) {
+            throw new Error('Editor input not found');
+        }
         await userEvent.clear(editor);
-        await userEvent.type(editor, 'xx{Enter}');
+        await userEvent.keyboard('xx{Enter}');
         await asyncSetTimeout(1);
 
         api.refreshCells({ columns: ['b'], force: true });
@@ -249,5 +253,61 @@ describe('Cell Editing Batch', () => {
         await asyncSetTimeout(1);
 
         expect(cellB).toHaveTextContent('xx');
+    });
+
+    test('setDataValue during batch edit is staged for new cells', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'number', editable: true, cellEditor: 'agNumberCellEditor' },
+                { field: 'string1', editable: true, cellEditor: 'agTextCellEditor' },
+            ],
+            rowData: [{ number: 10, string1: 'test' }],
+        });
+
+        api.startBatchEdit();
+
+        const beforeRows = new GridRows(api, 'before batch setDataValue');
+        await beforeRows.check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 number:10 string1:"test"
+        `);
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(1);
+        const numberCell = getByTestId(gridDiv, agTestIdFor.cell('0', 'number'));
+        const stringCell = getByTestId(gridDiv, agTestIdFor.cell('0', 'string1'));
+
+        await userEvent.dblClick(numberCell);
+        await asyncSetTimeout(1);
+        await userEvent.keyboard('100{Enter}');
+        await asyncSetTimeout(1);
+
+        expect(numberCell).toHaveTextContent('100');
+        expect(numberCell).toHaveClass(/ag-cell-batch-edit/);
+
+        const rowNode = api.getDisplayedRowAtIndex(0);
+        rowNode?.setDataValue('string1', 'pending', 'ui');
+        await asyncSetTimeout(1);
+
+        await new GridRows(api, 'after batch setDataValue ui').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 number:100 string1:"pending"
+        `);
+
+        expect(stringCell).toHaveTextContent('pending');
+
+        api.cancelBatchEdit();
+        await asyncSetTimeout(1);
+
+        await new GridRows(api, 'after cancel batch setDataValue').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 number:10 string1:"test"
+        `);
+
+        expect(numberCell).toHaveTextContent('10');
+        expect(stringCell).toHaveTextContent('test');
+        expect(numberCell).not.toHaveClass(/ag-cell-batch-edit/);
+        expect(stringCell).not.toHaveClass(/ag-cell-batch-edit/);
+        expect(api.getDisplayedRowAtIndex(0)?.data?.string1).toBe('test');
     });
 });
