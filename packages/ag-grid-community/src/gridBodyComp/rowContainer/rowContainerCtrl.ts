@@ -461,9 +461,17 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     }
 
     public isHorizontalScrollShowing(): boolean {
-        const isAlwaysShowHorizontalScroll = this.gos.get('alwaysShowHorizontalScroll');
-        const verticalScrollElement = this.beans.ctrlsSvc.getGridBodyCtrl()?.eBodyViewport;
-        return isAlwaysShowHorizontalScroll || _shouldShowHorizontalScroll(this.eViewport, verticalScrollElement);
+        const { beans, gos, eViewport } = this;
+        const isAlwaysShowHorizontalScroll = gos.get('alwaysShowHorizontalScroll');
+        const { ctrlsSvc } = beans;
+        const verticalScrollElement = ctrlsSvc.getGridBodyCtrl()?.eBodyViewport;
+        const hScrollEl = ctrlsSvc.get('fakeHScrollComp')?.getGui();
+        const vScrollEl = ctrlsSvc.get('fakeVScrollComp')?.getGui();
+
+        return (
+            isAlwaysShowHorizontalScroll ||
+            _shouldShowHorizontalScroll(eViewport, verticalScrollElement, undefined, hScrollEl, vScrollEl)
+        );
     }
 
     public setHorizontalScroll(offset: number): void {

@@ -289,12 +289,22 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     public isVerticalScrollShowing(): boolean {
-        const show = this.gos.get('alwaysShowVerticalScroll');
+        const { gos, comp, ctrlsSvc } = this;
+        const show = gos.get('alwaysShowVerticalScroll');
+
         const cssClass = show ? CSS_CLASS_FORCE_VERTICAL_SCROLL : null;
-        const allowVerticalScroll = _isDomLayout(this.gos, 'normal');
-        this.comp.setAlwaysVerticalScrollClass(cssClass, show);
-        const horizontalScrollElement = this.ctrlsSvc.get('center')?.eViewport;
-        return show || (allowVerticalScroll && _shouldShowVerticalScroll(this.eBodyViewport, horizontalScrollElement));
+        const allowVerticalScroll = _isDomLayout(gos, 'normal');
+
+        comp.setAlwaysVerticalScrollClass(cssClass, show);
+        const horizontalScrollElement = ctrlsSvc.get('center')?.eViewport;
+        const hScrollEl = ctrlsSvc.get('fakeHScrollComp')?.getGui();
+        const vScrollEl = ctrlsSvc.get('fakeVScrollComp')?.getGui();
+
+        return (
+            show ||
+            (allowVerticalScroll &&
+                _shouldShowVerticalScroll(this.eBodyViewport, horizontalScrollElement, undefined, vScrollEl, hScrollEl))
+        );
     }
 
     private setupRowAnimationCssClass(): void {
