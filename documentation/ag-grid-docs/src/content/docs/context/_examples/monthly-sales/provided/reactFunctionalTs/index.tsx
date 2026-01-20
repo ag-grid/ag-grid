@@ -6,7 +6,6 @@ import {
     CellStyleModule,
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
-    ModuleRegistry,
     QuickFilterModule,
     RenderApiModule,
     RowSelectionModule,
@@ -14,11 +13,11 @@ import {
 } from 'ag-grid-community';
 import { FiltersToolPanelModule, RowGroupingModule, SetFilterModule } from 'ag-grid-enterprise';
 import type { CustomCellRendererProps } from 'ag-grid-react';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     ClientSideRowModelApiModule,
     RenderApiModule,
     RowSelectionModule,
@@ -29,7 +28,7 @@ ModuleRegistry.registerModules([
     SetFilterModule,
     FiltersToolPanelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const monthValueGetter =
     '(ctx.month < ctx.months.indexOf(colDef.field)) ? data[colDef.field + "_bud"] : data[colDef.field + "_act"]';
@@ -191,52 +190,54 @@ const GridExample = () => {
     }, []);
 
     return (
-        <div style={containerStyle}>
-            <div className="test-container">
-                <div className="test-header">
-                    <input
-                        type="text"
-                        id="filter-text-box"
-                        style={{ width: '100px' }}
-                        onChange={(e) => onQuickFilterChanged(e.target.value)}
-                        placeholder="Filter..."
-                    />
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div className="test-container">
+                    <div className="test-header">
+                        <input
+                            type="text"
+                            id="filter-text-box"
+                            style={{ width: '100px' }}
+                            onChange={(e) => onQuickFilterChanged(e.target.value)}
+                            placeholder="Filter..."
+                        />
 
-                    <span style={{ paddingLeft: '20px' }}>
-                        <b>Period:</b>
-                        <button onClick={() => onChangeMonth(-1)}>
-                            <i className="fa fa-chevron-left"></i>
-                        </button>
-                        <button onClick={() => onChangeMonth(1)}>
-                            <i className="fa fa-chevron-right"></i>
-                        </button>
-                        <span id="monthName" style={{ width: '100px', display: 'inline-block' }}>
-                            Year to Jan
+                        <span style={{ paddingLeft: '20px' }}>
+                            <b>Period:</b>
+                            <button onClick={() => onChangeMonth(-1)}>
+                                <i className="fa fa-chevron-left"></i>
+                            </button>
+                            <button onClick={() => onChangeMonth(1)}>
+                                <i className="fa fa-chevron-right"></i>
+                            </button>
+                            <span id="monthName" style={{ width: '100px', display: 'inline-block' }}>
+                                Year to Jan
+                            </span>
                         </span>
-                    </span>
 
-                    <span style={{ paddingLeft: '20px' }}>
-                        <b>Legend:</b>&nbsp;&nbsp;
-                        <div className="cell-bud legend-box"></div> Actual&nbsp;&nbsp;
-                        <div className="cell-act legend-box"></div> Budget
-                    </span>
-                </div>
+                        <span style={{ paddingLeft: '20px' }}>
+                            <b>Legend:</b>&nbsp;&nbsp;
+                            <div className="cell-bud legend-box"></div> Actual&nbsp;&nbsp;
+                            <div className="cell-act legend-box"></div> Budget
+                        </span>
+                    </div>
 
-                <div style={gridStyle}>
-                    <AgGridReact
-                        ref={gridRef}
-                        rowData={data}
-                        loading={loading}
-                        columnDefs={columnDefs}
-                        suppressMovableColumns={true}
-                        context={context.current}
-                        defaultColDef={defaultColDef}
-                        autoGroupColumnDef={autoGroupColumnDef}
-                        rowSelection={rowSelection}
-                    />
+                    <div style={gridStyle}>
+                        <AgGridReact
+                            ref={gridRef}
+                            rowData={data}
+                            loading={loading}
+                            columnDefs={columnDefs}
+                            suppressMovableColumns={true}
+                            context={context.current}
+                            defaultColDef={defaultColDef}
+                            autoGroupColumnDef={autoGroupColumnDef}
+                            rowSelection={rowSelection}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

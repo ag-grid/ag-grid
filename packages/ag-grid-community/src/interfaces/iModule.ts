@@ -57,6 +57,11 @@ export type _ModuleWithoutApi = Module & {
     apiFunctions?: never;
 };
 
+/** Used by React to set the license key via React context if an enterprise module has been provided. */
+export type _ModuleWithLicenseManager = {
+    setLicenseKey: (licenseKey: string) => void;
+};
+
 type InternalModuleName =
     | 'Aggregation'
     | 'AnimationFrame'

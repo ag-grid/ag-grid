@@ -28,3 +28,24 @@ export function _escapeString(toEscape?: string | null): string | null {
 export function _isExpressionString(value: unknown): value is `=${string}` {
     return typeof value === 'string' && value.startsWith('=') && value.length > 1;
 }
+
+/**
+ * Converts a camelCase string into startCase
+ * @param {string} camelCase
+ * @returns {string}
+ */
+export function _camelCaseToHumanText(camelCase: string | undefined): string | null {
+    if (!camelCase || camelCase == null) {
+        return null;
+    }
+
+    // either split on a lowercase followed by uppercase ie  asHereTo -> as Here To
+    const rex = /([a-z])([A-Z])/g;
+    // or starts with uppercase and we take all expect the last which is assumed to be part of next word if followed by lowercase HEREToThere -> HERE To There
+    const rexCaps = /([A-Z]+)([A-Z])([a-z])/g;
+    const words: string[] = camelCase.replace(rex, '$1 $2').replace(rexCaps, '$1 $2$3').replace(/\./g, ' ').split(' ');
+
+    return words
+        .map((word) => word.substring(0, 1).toUpperCase() + (word.length > 1 ? word.substring(1, word.length) : ''))
+        .join(' ');
+}

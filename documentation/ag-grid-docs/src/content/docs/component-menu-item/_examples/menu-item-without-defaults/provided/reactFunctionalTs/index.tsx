@@ -1,14 +1,8 @@
 import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import type { ColDef, GetMainMenuItemsParams } from 'ag-grid-community';
-import {
-    ClientSideRowModelModule,
-    ModuleRegistry,
-    NumberFilterModule,
-    TextFilterModule,
-    ValidationModule,
-} from 'ag-grid-community';
+import type { ColDef, GetMainMenuItems } from 'ag-grid-community';
+import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, ValidationModule } from 'ag-grid-community';
 import {
     CellSelectionModule,
     ClipboardModule,
@@ -16,13 +10,13 @@ import {
     ContextMenuModule,
     ExcelExportModule,
 } from 'ag-grid-enterprise';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import type { IOlympicData } from './interfaces';
 import MenuItem from './menuItem';
 import './style.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     TextFilterModule,
     NumberFilterModule,
     ClientSideRowModelModule,
@@ -32,7 +26,7 @@ ModuleRegistry.registerModules([
     CellSelectionModule,
     ClipboardModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
@@ -58,7 +52,7 @@ const GridExample = () => {
 
     const { data, loading } = useFetchJson<IOlympicData>('https://www.ag-grid.com/example-assets/olympic-winners.json');
 
-    const getMainMenuItems = useCallback((params: GetMainMenuItemsParams) => {
+    const getMainMenuItems = useCallback<GetMainMenuItems>((params) => {
         return [
             ...params.defaultItems.filter((item) => item !== 'columnFilter'),
             'separator',
@@ -73,17 +67,19 @@ const GridExample = () => {
     }, []);
 
     return (
-        <div style={containerStyle}>
-            <div style={gridStyle}>
-                <AgGridReact<IOlympicData>
-                    rowData={data}
-                    loading={loading}
-                    columnDefs={columnDefs}
-                    defaultColDef={defaultColDef}
-                    getMainMenuItems={getMainMenuItems}
-                />
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div style={gridStyle}>
+                    <AgGridReact<IOlympicData>
+                        rowData={data}
+                        loading={loading}
+                        columnDefs={columnDefs}
+                        defaultColDef={defaultColDef}
+                        getMainMenuItems={getMainMenuItems}
+                    />
+                </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

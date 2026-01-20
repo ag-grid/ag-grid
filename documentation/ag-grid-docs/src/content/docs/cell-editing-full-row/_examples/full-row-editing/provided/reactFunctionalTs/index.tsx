@@ -5,18 +5,17 @@ import type { CellValueChangedEvent, ColDef, RowValueChangedEvent } from 'ag-gri
 import {
     ClientSideRowModelModule,
     CustomEditorModule,
-    ModuleRegistry,
     SelectEditorModule,
     TextEditorModule,
     ValidationModule,
 } from 'ag-grid-community';
 import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule } from 'ag-grid-enterprise';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import NumericCellEditor from './numericCellEditor';
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     SelectEditorModule,
     ClientSideRowModelModule,
     ColumnsToolPanelModule,
@@ -25,7 +24,7 @@ ModuleRegistry.registerModules([
     CustomEditorModule,
     TextEditorModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 function getRowData(): any[] {
     const rowData: any[] = [];
@@ -114,29 +113,31 @@ const GridExample = () => {
     }, []);
 
     return (
-        <div style={containerStyle}>
-            <div className="example-wrapper">
-                <div style={{ marginBottom: '5px' }}>
-                    <button style={{ fontSize: '12px' }} onClick={onBtStartEditing}>
-                        Start Editing Line 2
-                    </button>
-                    <button style={{ fontSize: '12px' }} onClick={onBtStopEditing}>
-                        Stop Editing
-                    </button>
-                </div>
-                <div style={gridStyle}>
-                    <AgGridReact
-                        ref={gridRef}
-                        rowData={rowData}
-                        columnDefs={columnDefs}
-                        defaultColDef={defaultColDef}
-                        editType={'fullRow'}
-                        onCellValueChanged={onCellValueChanged}
-                        onRowValueChanged={onRowValueChanged}
-                    />
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div className="example-wrapper">
+                    <div style={{ marginBottom: '5px' }}>
+                        <button style={{ fontSize: '12px' }} onClick={onBtStartEditing}>
+                            Start Editing Line 2
+                        </button>
+                        <button style={{ fontSize: '12px' }} onClick={onBtStopEditing}>
+                            Stop Editing
+                        </button>
+                    </div>
+                    <div style={gridStyle}>
+                        <AgGridReact
+                            ref={gridRef}
+                            rowData={rowData}
+                            columnDefs={columnDefs}
+                            defaultColDef={defaultColDef}
+                            editType={'fullRow'}
+                            onCellValueChanged={onCellValueChanged}
+                            onRowValueChanged={onRowValueChanged}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

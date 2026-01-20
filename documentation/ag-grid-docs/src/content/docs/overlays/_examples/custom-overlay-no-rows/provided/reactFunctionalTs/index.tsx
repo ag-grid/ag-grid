@@ -2,14 +2,8 @@ import React, { StrictMode, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef } from 'ag-grid-community';
-import {
-    ClientSideRowModelModule,
-    ModuleRegistry,
-    TextEditorModule,
-    TextFilterModule,
-    ValidationModule,
-} from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
+import { ClientSideRowModelModule, TextEditorModule, TextFilterModule, ValidationModule } from 'ag-grid-community';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import CustomNoRowsOverlay from './customNoRowsOverlay';
 import './styles.css';
@@ -31,12 +25,12 @@ const defaultColDef = {
     filter: true,
 };
 
-ModuleRegistry.registerModules([
+const modules = [
     TextEditorModule,
     TextFilterModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const GridExample = () => {
     const [rowData, setRowData] = useState<IAthlete[]>([]);
@@ -48,22 +42,26 @@ const GridExample = () => {
     }, []);
 
     return (
-        <div className="example-wrapper">
-            <div>
-                <button onClick={() => setRowData([])}>Clear rowData</button>
-                <button onClick={() => setRowData([{ athlete: 'Michael Phelps', country: 'US' }])}>Set rowData</button>
-            </div>
+        <AgGridProvider modules={modules}>
+            <div className="example-wrapper">
+                <div>
+                    <button onClick={() => setRowData([])}>Clear rowData</button>
+                    <button onClick={() => setRowData([{ athlete: 'Michael Phelps', country: 'US' }])}>
+                        Set rowData
+                    </button>
+                </div>
 
-            <div style={{ height: '100%' }}>
-                <AgGridReact<IAthlete>
-                    rowData={rowData}
-                    columnDefs={columnDefs}
-                    defaultColDef={defaultColDef}
-                    noRowsOverlayComponent={CustomNoRowsOverlay}
-                    noRowsOverlayComponentParams={noRowsOverlayComponentParams}
-                />
+                <div style={{ height: '100%' }}>
+                    <AgGridReact<IAthlete>
+                        rowData={rowData}
+                        columnDefs={columnDefs}
+                        defaultColDef={defaultColDef}
+                        noRowsOverlayComponent={CustomNoRowsOverlay}
+                        noRowsOverlayComponentParams={noRowsOverlayComponentParams}
+                    />
+                </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

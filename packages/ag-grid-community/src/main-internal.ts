@@ -180,7 +180,7 @@ export {
 export { _isEventFromPrintableCharacter } from './agStack/utils/keyboard';
 export { _getLocaleTextFromFunc, _getLocaleTextFromMap, _getLocaleTextFunc, _translate } from './agStack/utils/locale';
 export { _isPromise } from './agStack/utils/promise';
-export { _escapeString, _isExpressionString, _toString } from './agStack/utils/string';
+export { _escapeString, _isExpressionString, _toString, _camelCaseToHumanText } from './agStack/utils/string';
 export { AgWidgetSelectorType as _AgWidgetSelectorType } from './agStack/widgets/agWidgetSelectorType';
 export {
     _AdvancedFilterGridApi,
@@ -431,7 +431,12 @@ export type { AnimationFrameService } from './misc/animationFrameService';
 export { LocaleService } from './misc/locale/localeService';
 export { _setColMenuVisible } from './misc/menu/menuService';
 export type { MenuService } from './misc/menu/menuService';
-export { _getGridRegisteredModules, _registerModule, _setUmd } from './modules/moduleRegistry';
+export {
+    _getGridRegisteredModules,
+    _registerModule,
+    _setUmd,
+    _findEnterpriseCoreModule,
+} from './modules/moduleRegistry';
 export type { CellNavigationService } from './navigation/cellNavigationService';
 export type { HeaderNavigationService } from './navigation/headerNavigationService';
 export type { NavigationService } from './navigation/navigationService';
@@ -555,6 +560,7 @@ export {
     _ModuleWithApi,
     _ModuleWithoutApi,
     ValidationModuleName as _ValidationModuleName,
+    _ModuleWithLicenseManager,
 } from './interfaces/iModule';
 export { SharedMenuModule as _SharedMenuModule } from './misc/menu/sharedMenuModule';
 export { KeyboardNavigationModule as _KeyboardNavigationModule } from './navigation/navigationModule';

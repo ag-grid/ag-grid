@@ -1,37 +1,33 @@
 'use client';
 
-import React, { StrictMode, useCallback, useMemo, useState } from 'react';
+import { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import {
-    type CellClickedEvent,
-    type CellDoubleClickedEvent,
-    type CellMouseDownEvent,
-    ClientSideRowModelModule,
+import type {
+    CellClickedEvent,
+    CellDoubleClickedEvent,
+    CellMouseDownEvent,
     ColDef,
     EventCellRendererParams,
-    ModuleRegistry,
-    NumberEditorModule,
-    type RowClickedEvent,
-    type RowDoubleClickedEvent,
-    RowSelectionModule,
+    RowClickedEvent,
+    RowDoubleClickedEvent,
     RowSelectionOptions,
     SuppressMouseEventHandlingParams,
-    TextEditorModule,
 } from 'ag-grid-community';
+import { ClientSideRowModelModule, NumberEditorModule, RowSelectionModule, TextEditorModule } from 'ag-grid-community';
 import { CellSelectionModule } from 'ag-grid-enterprise';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import CustomButtonComponent from './customButtonComponent';
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     ClientSideRowModelModule,
     CellSelectionModule,
     RowSelectionModule,
     TextEditorModule,
     NumberEditorModule,
-]);
+];
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
@@ -87,29 +83,35 @@ const GridExample = () => {
     );
 
     return (
-        <div style={containerStyle}>
-            <div className="example-wrapper">
-                <div style={{ marginBottom: '5px' }}>
-                    <button onClick={toggleCellSelection}>{cellSelection ? 'Disable' : 'Enable'} Cell Selection</button>
-                    <button onClick={toggleRowSelection}>{rowSelection ? 'Disable' : 'Enable'} Row Selection</button>
-                </div>
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div className="example-wrapper">
+                    <div style={{ marginBottom: '5px' }}>
+                        <button onClick={toggleCellSelection}>
+                            {cellSelection ? 'Disable' : 'Enable'} Cell Selection
+                        </button>
+                        <button onClick={toggleRowSelection}>
+                            {rowSelection ? 'Disable' : 'Enable'} Row Selection
+                        </button>
+                    </div>
 
-                <div style={gridStyle}>
-                    <AgGridReact
-                        rowData={rowData}
-                        defaultColDef={defaultColDef}
-                        columnDefs={columnDefs}
-                        cellSelection={cellSelection}
-                        rowSelection={rowSelection}
-                        onCellClicked={onMouseEvent}
-                        onCellMouseDown={onMouseEvent}
-                        onCellDoubleClicked={onMouseEvent}
-                        onRowClicked={onMouseEvent}
-                        onRowDoubleClicked={onMouseEvent}
-                    />
+                    <div style={gridStyle}>
+                        <AgGridReact
+                            rowData={rowData}
+                            defaultColDef={defaultColDef}
+                            columnDefs={columnDefs}
+                            cellSelection={cellSelection}
+                            rowSelection={rowSelection}
+                            onCellClicked={onMouseEvent}
+                            onCellMouseDown={onMouseEvent}
+                            onCellDoubleClicked={onMouseEvent}
+                            onRowClicked={onMouseEvent}
+                            onRowDoubleClicked={onMouseEvent}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

@@ -1,28 +1,27 @@
-import React, { StrictMode, useCallback, useMemo, useState } from 'react';
+import React, { StrictMode, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     CustomFilterModule,
-    ModuleRegistry,
     NumberFilterModule,
     TextFilterModule,
     ValidationModule,
 } from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import type { IOlympicData } from './interfaces';
 import NumberFilterComponent from './numberFilterComponent';
 import NumberFloatingFilterComponent from './numberFloatingFilterComponent';
 
-ModuleRegistry.registerModules([
+const modules = [
     TextFilterModule,
     CustomFilterModule,
     NumberFilterModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
@@ -67,16 +66,18 @@ const GridExample = () => {
     const { data, loading } = useFetchJson<IOlympicData>('https://www.ag-grid.com/example-assets/olympic-winners.json');
 
     return (
-        <div style={containerStyle}>
-            <div style={gridStyle}>
-                <AgGridReact<IOlympicData>
-                    rowData={data}
-                    loading={loading}
-                    columnDefs={columnDefs}
-                    defaultColDef={defaultColDef}
-                />
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div style={gridStyle}>
+                    <AgGridReact<IOlympicData>
+                        rowData={data}
+                        loading={loading}
+                        columnDefs={columnDefs}
+                        defaultColDef={defaultColDef}
+                    />
+                </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

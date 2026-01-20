@@ -5,26 +5,25 @@ import type { ColDef, GridReadyEvent, ICellEditor } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     CustomEditorModule,
-    ModuleRegistry,
     NumberEditorModule,
     TextEditorModule,
     TextFilterModule,
     ValidationModule,
 } from 'ag-grid-community';
-import { AgGridReact, getInstance } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact, getInstance } from 'ag-grid-react';
 
 import type { MySimpleInterface } from './mySimpleEditor';
 import MySimpleEditor from './mySimpleEditor';
 import './style.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     NumberEditorModule,
     TextEditorModule,
     TextFilterModule,
     CustomEditorModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const createRowData = () => {
     const cloneObject = (obj: any) => JSON.parse(JSON.stringify(obj));
@@ -160,22 +159,24 @@ const GridExample = () => {
     );
 
     return (
-        <div style={{ width: '100%', height: '100%' }}>
-            <div
-                style={{
-                    height: '100%',
-                    width: '100%',
-                }}
-            >
-                <AgGridReact
-                    ref={gridRef}
-                    defaultColDef={defaultColDef}
-                    rowData={rowData}
-                    columnDefs={columnDefs}
-                    onGridReady={onGridReady}
-                />
+        <AgGridProvider modules={modules}>
+            <div style={{ width: '100%', height: '100%' }}>
+                <div
+                    style={{
+                        height: '100%',
+                        width: '100%',
+                    }}
+                >
+                    <AgGridReact
+                        ref={gridRef}
+                        defaultColDef={defaultColDef}
+                        rowData={rowData}
+                        columnDefs={columnDefs}
+                        onGridReady={onGridReady}
+                    />
+                </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

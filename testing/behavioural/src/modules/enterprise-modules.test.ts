@@ -1,36 +1,9 @@
 import type { Module } from 'ag-grid-community';
-import { AllCommunityModule } from 'ag-grid-community';
+import { AllCommunityModule, _findEnterpriseCoreModule } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 function collectAllModuleNames(modules: Module[] | undefined): Set<string> {
     return new Set<string>([...(modules?.map((m) => m.moduleName) ?? [])]);
-}
-
-/**
- * Recursively checks if a module has EnterpriseCoreModule in its dependency chain.
- * @param module - The module to check
- * @param visited - Set of visited module names to avoid infinite loops
- * @returns true if EnterpriseCoreModule is found in the dependency chain
- */
-function hasEnterpriseCoreModuleDependency(module: Module, visited: Set<string> = new Set()): boolean {
-    if (visited.has(module.moduleName)) {
-        return false;
-    }
-    visited.add(module.moduleName);
-
-    if (module.moduleName === 'EnterpriseCore') {
-        return true;
-    }
-
-    if (module.dependsOn && module.dependsOn.length > 0) {
-        for (const dep of module.dependsOn) {
-            if (hasEnterpriseCoreModuleDependency(dep, visited)) {
-                return true;
-            }
-        }
-    }
-
-    return false;
 }
 
 /**
@@ -85,12 +58,35 @@ describe('Enterprise Modules', () => {
             const module = findModuleByName(moduleName, AllEnterpriseModule);
 
             expect(module).toBeDefined();
-            expect(hasEnterpriseCoreModuleDependency(module!)).toBe(true);
+            const entCore = _findEnterpriseCoreModule([module!]);
+            expect(entCore).toBeDefined();
+            expect(entCore?.setLicenseKey).toBeDefined();
         });
 
         test('EnterpriseCoreModule exists in AllEnterpriseModule dependency tree', () => {
-            const enterpriseCoreModule = findModuleByName('EnterpriseCore', AllEnterpriseModule);
-            expect(enterpriseCoreModule).toBeDefined();
+            const entCore = _findEnterpriseCoreModule([AllEnterpriseModule]);
+            expect(entCore).toBeDefined();
+            expect(entCore?.setLicenseKey).toBeDefined();
+        });
+
+        test('Find EnterpriseCoreModule when lots of modules provided', () => {
+            const entCore = _findEnterpriseCoreModule([
+                ...AllCommunityModule.dependsOn!,
+                ...AllEnterpriseModule.dependsOn!,
+            ]);
+            expect(entCore).toBeDefined();
+            expect(entCore?.setLicenseKey).toBeDefined();
+        });
+
+        test('Find EnterpriseCoreModule when duplicate modules', () => {
+            const entCore = _findEnterpriseCoreModule([
+                ...AllCommunityModule.dependsOn!,
+                ...AllCommunityModule.dependsOn!,
+                ...AllEnterpriseModule.dependsOn!,
+                ...AllEnterpriseModule.dependsOn!,
+            ]);
+            expect(entCore).toBeDefined();
+            expect(entCore?.setLicenseKey).toBeDefined();
         });
     });
 });

@@ -2,20 +2,14 @@ import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef, GetRowIdParams, GridReadyEvent, IDatasource, RowSelectionOptions } from 'ag-grid-community';
-import {
-    InfiniteRowModelModule,
-    ModuleRegistry,
-    NumberFilterModule,
-    RowSelectionModule,
-    ValidationModule,
-} from 'ag-grid-community';
+import { InfiniteRowModelModule, NumberFilterModule, RowSelectionModule, ValidationModule } from 'ag-grid-community';
 import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule, SetFilterModule } from 'ag-grid-enterprise';
 import type { CustomCellRendererProps } from 'ag-grid-react';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import { getCountries } from './countries';
 
-ModuleRegistry.registerModules([
+const modules = [
     NumberFilterModule,
     RowSelectionModule,
     InfiniteRowModelModule,
@@ -24,7 +18,7 @@ ModuleRegistry.registerModules([
     ContextMenuModule,
     ColumnsToolPanelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const filterParams = { values: getCountries() };
 
@@ -206,23 +200,25 @@ const GridExample = () => {
     }, []);
 
     return (
-        <div style={containerStyle}>
-            <div style={gridStyle}>
-                <AgGridReact
-                    columnDefs={columnDefs}
-                    defaultColDef={defaultColDef}
-                    rowSelection={rowSelection}
-                    rowModelType={'infinite'}
-                    cacheBlockSize={100}
-                    cacheOverflowSize={2}
-                    maxConcurrentDatasourceRequests={2}
-                    infiniteInitialRowCount={1}
-                    maxBlocksInCache={2}
-                    getRowId={getRowId}
-                    onGridReady={onGridReady}
-                />
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div style={gridStyle}>
+                    <AgGridReact
+                        columnDefs={columnDefs}
+                        defaultColDef={defaultColDef}
+                        rowSelection={rowSelection}
+                        rowModelType={'infinite'}
+                        cacheBlockSize={100}
+                        cacheOverflowSize={2}
+                        maxConcurrentDatasourceRequests={2}
+                        infiniteInitialRowCount={1}
+                        maxBlocksInCache={2}
+                        getRowId={getRowId}
+                        onGridReady={onGridReady}
+                    />
+                </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

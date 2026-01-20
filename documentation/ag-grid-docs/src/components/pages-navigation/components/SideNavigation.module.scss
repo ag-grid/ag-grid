@@ -1,16 +1,32 @@
 @use 'design-system' as *;
 
+// Right side navigation (page level headings) - not to be confused with left DocsNav
 .sideNav {
     $top-bar-height: 8px;
 
     --left-margin: #{$spacing-size-16};
 
+    --link-color: var(--color-util-gray-500);
+    --active-color: var(--color-brand-500);
+    --active-border: var(--color-brand-500);
+    --hover-background: var(--color-util-brand-50);
+    --active-background: var(--color-util-brand-50);
+
     display: none;
     width: calc(var(--layout-width-3-12) - var(--left-margin));
     margin-left: $spacing-size-8;
     padding-top: $spacing-size-8 + 2px; // Tweak top docs page vertical alignment (+ 2px)
-    padding-bottom: $spacing-size-16;
+    padding-bottom: $spacing-size-4;
+    padding-left: $spacing-size-2;
     line-height: var(--text-lh-sm);
+
+    #{$selector-darkmode} & {
+        --link-color: var(--color-gray-400);
+        --active-color: var(--color-brand-300);
+        --active-border: var(--color-brand-300);
+        --hover-background: rgba(56, 146, 249, 0.06);
+        --active-background: rgba(56, 146, 249, 0.09);
+    }
 
     @supports (position: sticky) {
         padding-top: 0;
@@ -24,6 +40,7 @@
     > div {
         @supports (position: sticky) {
             display: flex;
+            flex-direction: column;
             margin-right: calc(var(--layout-horizontal-margins) * -1); // Improve scrollbar position
             padding-top: $spacing-size-8 + 2px; // Tweak top docs page vertical alignment (+ 2px)
             padding-right: $spacing-size-8;
@@ -44,104 +61,157 @@
     position: relative;
     flex-direction: column;
     padding-left: 0;
+    padding-bottom: 0;
+    margin-bottom: 0;
     list-style: none;
     z-index: -2;
-
-    > li:last-child {
-        min-height: $spacing-size-48;
-    }
 
     #{$selector-darkmode} & {
         --nav-line-color: var(--color-border-primary);
     }
 }
 
-.sideNav li {
+.sideNav li:not(.level1) {
     --item-gap: 0.875em;
 
     position: relative;
-    padding-left: $spacing-size-4;
-    margin: var(--item-gap) 0;
     margin-bottom: 0;
+    padding-top: calc(var(--item-gap) / 2);
+    padding-right: $spacing-size-2;
+    padding-bottom: calc(var(--item-gap) / 2);
+    padding-left: $spacing-size-4;
+    transition: background-color $transition-default-timing;
+
+    // Visual 1px border for inactive items using pseudo-element
+    &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 1px;
+        background-color: var(--color-util-brand-200);
+        transition:
+            width $transition-default-timing,
+            background-color $transition-default-timing;
+    }
+
+    // Dark mode: use primary border colour for inactive line
+    #{$selector-darkmode} &::before {
+        background-color: var(--color-border-primary);
+    }
+
+    &:has(:global(.active)) {
+        background-color: var(--active-background);
+    }
+
+    // Active items: show full 2px line using pseudo-element
+    &:has(:global(.active))::before {
+        width: 2px;
+        background-color: var(--active-border);
+    }
+}
+
+// If first item has active class apply active styles to second item
+.sideNav li:first-child:has(:global(.active)) + li {
+    background-color: var(--active-background);
+
+    &::before {
+        width: 2px;
+        background-color: var(--active-border);
+    }
+
+    a {
+        color: var(--active-color);
+    }
 }
 
 .sideNav a {
-    --active-color: var(--color-util-brand-500);
-    --active-border: var(--color-util-brand-400);
-    --hover-background: var(--color-util-brand-50);
-    --active-background: var(--color-util-brand-50);
-
     display: inline-block;
     padding: 0;
-    color: var(--color-util-gray-500);
+    color: var(--link-color);
     transition: color $transition-default-timing;
-    font-weight: var(--text-regular);
+    font-weight: 500;
     font-size: var(--text-fs-regular);
-
-    #{$selector-darkmode} & {
-        --active-color: var(--color-brand-300);
-        --active-border: var(--color-brand-300);
-        --hover-background: rgba(56, 146, 249, 0.06);
-        --active-background: rgba(56, 146, 249, 0.09);
-
-        color: var(--color-gray-400);
-    }
 
     &:hover,
     &:global(.active) {
         color: var(--active-color);
     }
-
-    &:hover {
-        #{$selector-darkmode} & {
-            color: var(--color-fg-primary);
-        }
-    }
-
-    &:global(.active) {
-        cursor: default;
-    }
-
-    &::before {
-        content: '';
-        position: absolute;
-        width: 100%;
-        top: -$spacing-size-1;
-        bottom: -$spacing-size-1;
-        left: 0;
-        opacity: 0;
-        z-index: -1;
-        transition:
-            color 0.33s ease-in-out,
-            border-color 0.33s ease-in-out,
-            background-color 0.33s ease-in-out;
-    }
-
-    &:hover::before {
-        opacity: 1;
-    }
-
-    &:global(.active)::before {
-        opacity: 1;
-    }
 }
 
 .sideNav .level1 {
-    font-size: var(--text-fs-lg);
     margin-top: 0;
+    padding-bottom: 16px;
+
+    a {
+        display: inline-flex;
+        align-items: center;
+        gap: $spacing-size-2;
+        padding-left: 0;
+        padding-bottom: 8px;
+        color: var(--color-text-secondary);
+        font-size: 19px;
+
+        // Use secondary foreground color when active
+        &:global(.active) {
+            color: var(--color-fg-secondary);
+        }
+
+        &:hover {
+            color: var(--color-text-secondary);
+        }
+    }
+}
+
+.backToTop {
+    margin-top: 0;
+    padding-top: 16px;
+    padding-bottom: calc(0.875em / 2);
+    padding-right: $spacing-size-2;
+    border-left: none;
+    align-self: flex-start;
+
+    a {
+        display: inline-flex;
+        align-items: center;
+        gap: $spacing-size-2;
+        padding-left: 0;
+        color: var(--color-text-secondary) !important;
+        font-size: 15px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: color $transition-default-timing;
+
+        &:hover {
+            color: var(--color-fg-primary);
+
+            .backToTopIcon {
+                color: var(--color-fg-primary);
+                fill: var(--color-fg-primary);
+            }
+        }
+    }
+}
+
+.backToTopIcon {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    color: var(--color-util-gray-500);
+    fill: var(--color-util-gray-500);
+    transition:
+        color $transition-default-timing,
+        fill $transition-default-timing;
 }
 
 .sideNav .level3 {
-    --item-gap: 0.5em;
+    --item-gap: calc(0.5em + #{$spacing-size-1});
 
-    padding-top: $spacing-size-1;
-    padding-bottom: $spacing-size-1;
     font-weight: var(--text-regular);
-}
-
-.sideNav .level1 + .level3,
-.sideNav .level2 + .level3 {
-    margin-top: var(--item-gap);
 }
 
 .sideNav .level3,

@@ -1,10 +1,9 @@
 import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import type { ColDef, GridReadyEvent, ValueGetterParams } from 'ag-grid-community';
+import type { ColDef, ValueGetterParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
-    ModuleRegistry,
     NumberEditorModule,
     NumberFilterModule,
     RenderApiModule,
@@ -13,13 +12,13 @@ import {
     TextFilterModule,
     ValidationModule,
 } from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import type { IOlympicData } from './interfaces';
 import MedalCellRenderer from './medalCellRenderer';
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     RenderApiModule,
     NumberEditorModule,
     TextEditorModule,
@@ -28,7 +27,7 @@ ModuleRegistry.registerModules([
     RowApiModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const GridExample = () => {
     const gridRef = useRef<AgGridReact<IOlympicData>>(null);
@@ -91,25 +90,27 @@ const GridExample = () => {
     }, []);
 
     return (
-        <div style={containerStyle}>
-            <div className="example-wrapper">
-                <div style={{ marginBottom: '5px' }}>
-                    <button onClick={onCallGold}>Gold</button>
-                    <button onClick={onFirstRowGold}>First Row Gold</button>
-                    <button onClick={onCallAllCells}>All Cells</button>
-                </div>
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div className="example-wrapper">
+                    <div style={{ marginBottom: '5px' }}>
+                        <button onClick={onCallGold}>Gold</button>
+                        <button onClick={onFirstRowGold}>First Row Gold</button>
+                        <button onClick={onCallAllCells}>All Cells</button>
+                    </div>
 
-                <div style={gridStyle}>
-                    <AgGridReact<IOlympicData>
-                        ref={gridRef}
-                        rowData={data}
-                        loading={loading}
-                        columnDefs={columnDefs}
-                        defaultColDef={defaultColDef}
-                    />
+                    <div style={gridStyle}>
+                        <AgGridReact<IOlympicData>
+                            ref={gridRef}
+                            rowData={data}
+                            loading={loading}
+                            columnDefs={columnDefs}
+                            defaultColDef={defaultColDef}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 
