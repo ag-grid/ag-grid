@@ -179,7 +179,7 @@ export {
 export { _isEventFromPrintableCharacter } from './agStack/utils/keyboard';
 export { _getLocaleTextFromFunc, _getLocaleTextFromMap, _getLocaleTextFunc, _translate } from './agStack/utils/locale';
 export { _isPromise } from './agStack/utils/promise';
-export { _escapeString, _isExpressionString, _toString } from './agStack/utils/string';
+export { _escapeString, _isExpressionString, _toString, _camelCaseToHumanText } from './agStack/utils/string';
 export { AgWidgetSelectorType as _AgWidgetSelectorType } from './agStack/widgets/agWidgetSelectorType';
 export {
     _AdvancedFilterGridApi,
