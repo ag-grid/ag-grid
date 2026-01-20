@@ -7,8 +7,8 @@
     --left-margin: #{$spacing-size-16};
 
     --link-color: var(--color-util-gray-500);
-    --active-color: var(--color-util-brand-500);
-    --active-border: var(--color-util-brand-400);
+    --active-color: var(--color-brand-500);
+    --active-border: var(--color-brand-500);
     --hover-background: var(--color-util-brand-50);
     --active-background: var(--color-util-brand-50);
 
@@ -70,39 +70,36 @@
         --nav-line-color: var(--color-border-primary);
     }
 
-    // Default active styling for second item (first navigation item after the top-level header)
-    // This is the baseline state when the page loads or when only the top-level heading is active
+    // Default highlight for second item (first navigation link after the top-level heading)
     li:nth-child(2) {
-        border-left-color: var(--active-border);
         background-color: var(--active-background);
 
         &::before {
-            width: 0;
+            width: 2px;
+            background-color: var(--active-border);
         }
     }
 
-    // Remove default styling from second item when ANY item after the first has .active
-    // This ensures the default styling is removed as soon as scroll spy activates any item after the top-level header
+    // Clear default highlight on second item when any later item becomes active
     &:has(li:nth-child(n + 2) a:global(.active)) li:nth-child(2):not(:has(:global(.active))) {
-        border-left-color: transparent !important;
         background-color: transparent !important;
 
         &::before {
             width: 1px !important;
             background-color: var(--color-util-brand-200);
-        }
 
-        #{$selector-darkmode} &::before {
-            background-color: var(--color-border-primary);
+            #{$selector-darkmode} & {
+                background-color: var(--color-border-primary);
+            }
         }
     }
 
-    // Default active link colour for second item
+    // Default highlight colour for second item link
     li:nth-child(2) a {
         color: var(--active-color);
     }
 
-    // Remove default active color from second item when ANY item after the first has .active
+    // Clear default highlight colour on second item link when any later item becomes active
     &:has(li:nth-child(n + 2) a:global(.active)) li:nth-child(2):not(:has(:global(.active))) a {
         color: var(--link-color) !important;
     }
@@ -117,11 +114,7 @@
     padding-right: $spacing-size-2;
     padding-bottom: calc(var(--item-gap) / 2);
     padding-left: $spacing-size-4;
-    // Always reserve 2px space to prevent jumping
-    border-left: 2px solid transparent;
-    transition:
-        border-color $transition-default-timing,
-        background-color $transition-default-timing;
+    transition: background-color $transition-default-timing;
 
     // Visual 1px border for inactive items using pseudo-element
     &::before {
@@ -142,13 +135,10 @@
         background-color: var(--color-border-primary);
     }
 
-    // Active items: show full 2px border and hide pseudo-element
-    &:has(:global(.active)) {
-        border-left-color: var(--active-border);
-
-        &::before {
-            width: 0;
-        }
+    // Active items: show full 2px line using pseudo-element
+    &:has(:global(.active))::before {
+        width: 2px;
+        background-color: var(--active-border);
     }
 
     &:has(:global(.active)):not(:first-child) {
@@ -223,8 +213,7 @@
     }
 }
 
-// Override link color for first item when any item after the first has .active
-// Only apply when first item's link doesn't have .active (to preserve active color when it is active)
+// Keep first item un-highlighted when any later item is active
 .sideNav ul:has(li:nth-child(n + 2) a:global(.active)) li.level1 a:not(:global(.active)) {
     color: var(--color-text-secondary) !important;
 }
