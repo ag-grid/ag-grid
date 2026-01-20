@@ -766,7 +766,6 @@ export class RowNode<TData = any>
         if (this.rowIndex !== rowIndex) {
             this.rowIndex = rowIndex;
             this.dispatchRowEvent('rowIndexChanged');
-            this.beans.selectionSvc?.updateRowSelectable(this, true);
         }
     }
 
