@@ -42,7 +42,6 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
                     continue;
                 }
                 const node = this.createRowNode(data, level, writeIdx);
-                node.sourceRowIndex = writeIdx;
                 allLeafs[writeIdx++] = node;
                 if (processedNested && !processedNested.has(data)) {
                     processedNested.add(data);
@@ -304,7 +303,6 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         for (let i = 0; i < addLength; i++) {
             const node = this.createRowNode(add[i], 0, addIndex);
             adds.add(node);
-            node.sourceRowIndex = addIndex;
             allLeafs[addIndex] = node;
             addedNodes[i] = node; // Write new nodes
             addIndex++;
