@@ -71,7 +71,7 @@
     }
 }
 
-.sideNav li:not(.level1) {
+.sideNav li:where(:not(.level1)) {
     --item-gap: 0.875em;
 
     position: relative;
