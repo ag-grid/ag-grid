@@ -912,7 +912,14 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             const beans = this.beans;
 
             this.strategy ??= this.createStrategy();
-            const source = batch ? 'ui' : this.committing ? eventSource ?? 'api' : 'api';
+            let source: string;
+            if (batch) {
+                source = 'ui';
+            } else if (this.committing) {
+                source = eventSource ?? 'api';
+            } else {
+                source = 'api';
+            }
 
             if (!eventSource || KEEP_EDITOR_SOURCES.has(eventSource)) {
                 // editApi or undoRedoApi apply change without involving the editor

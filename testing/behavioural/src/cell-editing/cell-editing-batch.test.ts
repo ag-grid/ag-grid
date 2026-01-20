@@ -5,7 +5,7 @@ import { userEvent } from '@testing-library/user-event';
 import { agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout, waitForEvent, waitForInput } from '../test-utils';
+import { GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
 import { expect } from '../test-utils/matchers';
 
 describe('Cell Editing Batch', () => {
