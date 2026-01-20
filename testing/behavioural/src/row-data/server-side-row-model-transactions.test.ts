@@ -38,7 +38,13 @@ describe('Server Side Row Model Transactions', () => {
         expect(api.getDisplayedRowAtIndex(0)?.data.id).toBe(10);
 
         // Remove the same 10 rows again (they are already removed)
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         api.applyServerSideTransaction({ remove: rowsToRemove });
+
+        expect(warnSpy).toHaveBeenCalled();
+        const lastCall = warnSpy.mock.calls[0][0];
+        expect(lastCall).toContain('298');
+        warnSpy.mockRestore();
 
         expect(api.getDisplayedRowCount()).toBe(90);
 

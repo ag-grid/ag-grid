@@ -1183,11 +1183,14 @@ export class LazyCache extends BeanStub {
             });
         }
 
-        this.numberOfRows -= this.isLastRowIndexKnown() ? idsToRemove.length : deletedNodeCount;
+        this.numberOfRows -= deletedNodeCount;
 
-        if (remainingIdsToRemove.length > 0 && nodesToVerify.length > 0) {
-            nodesToVerify.forEach((node) => (node.__needsRefreshWhenVisible = true));
-            this.lazyBlockLoadingSvc.queueLoadCheck();
+        if (remainingIdsToRemove.length > 0) {
+            _warn(298, { ids: remainingIdsToRemove });
+            if (nodesToVerify.length > 0) {
+                nodesToVerify.forEach((node) => (node.__needsRefreshWhenVisible = true));
+                this.lazyBlockLoadingSvc.queueLoadCheck();
+            }
         }
 
         return removedNodes;
