@@ -70,6 +70,20 @@ export const getCellRangeParams = (beans: BeanCollection, ref: string) => {
     const rowStartIndex = parseInt(startRow, 10) - 1;
     const rowEndIndex = endRow ? parseInt(endRow, 10) - 1 : rowStartIndex;
 
+    // guard against invalid rows so we don't tokenise refs outside the known row set.
+    if (rowStartIndex < 0 || rowEndIndex < 0) {
+        return null;
+    }
+
+    const rowModel = beans.rowModel;
+    // if the row model knows its size, reject refs beyond the last row.
+    if (rowModel?.isLastRowIndexKnown?.()) {
+        const rowCount = rowModel.getRowCount();
+        if (rowStartIndex >= rowCount || rowEndIndex >= rowCount) {
+            return null;
+        }
+    }
+
     return {
         rowStartIndex,
         rowEndIndex,

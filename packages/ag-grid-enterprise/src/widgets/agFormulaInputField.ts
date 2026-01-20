@@ -9,6 +9,7 @@ import type {
 import { AgContentEditableField, _createElement, _getDocument, _getWindow, _placeCaretAtEnd } from 'ag-grid-community';
 
 import { agAutocompleteCSS } from '../advancedFilter/autocomplete/agAutocomplete.css-GENERATED';
+import { getRefTokenMatches } from '../formula/refUtils';
 import { agFormulaInputFieldCSS } from './agFormulaInputField.css-GENERATED';
 import { FormulaInputAutocompleteFeature } from './formulaInputAutocompleteFeature';
 import { FormulaInputRangeSyncFeature } from './formulaInputRangeSyncFeature';
@@ -365,6 +366,15 @@ export class AgFormulaInputField extends AgContentEditableField<
             return { action: 'replace', previousRef, tokenIndex };
         }
 
+        // allow replacement for A1-like refs even when they are invalid for the current grid state.
+        const rawTokenMatch = getRawTokenMatchAtOffset(value, valueOffset);
+        if (rawTokenMatch) {
+            const updated = value.slice(0, rawTokenMatch.start) + ref + value.slice(rawTokenMatch.end);
+            const tokenIndex = getTokenMatchAtOffset(this.beans, updated, rawTokenMatch.start)?.index ?? null;
+            const { previousRef } = this.replaceTokenAtMatch(rawTokenMatch, ref, tokenIndex);
+            return { action: 'replace', previousRef, tokenIndex };
+        }
+
         // only insert new refs after operator-like chars; otherwise we end the edit on click.
         if (!shouldInsertTokenAtOffset(value, valueOffset)) {
             return { action: 'none' };
@@ -396,7 +406,11 @@ export class AgFormulaInputField extends AgContentEditableField<
         });
     }
 
-    private replaceTokenAtMatch(token: TokenMatch, nextRef: string): TokenInsertResult {
+    private replaceTokenAtMatch(
+        token: TokenMatch,
+        nextRef: string,
+        tokenIndexOverride?: number | null
+    ): TokenInsertResult {
         // replace the exact token span so we don't accidentally touch adjacent text.
         const value = this.getCurrentValue();
         const updated = value.slice(0, token.start) + nextRef + value.slice(token.end);
@@ -410,7 +424,8 @@ export class AgFormulaInputField extends AgContentEditableField<
             },
         });
 
-        return { previousRef: token.ref, tokenIndex: token.index };
+        // preserve the caller's token index if it was recomputed for the updated value.
+        return { previousRef: token.ref, tokenIndex: tokenIndexOverride ?? token.index };
     }
 
     private getValueOffsetFromCaret(caretOffset: number): number | null {
@@ -637,6 +652,16 @@ const getOrderedRefs = (beans: BeanCollection, value: string): string[] => {
 const getTokenMatchAtOffset = (beans: BeanCollection, value: string, offset: number): TokenMatch | null => {
     // locate the token (if any) that covers the given value offset.
     for (const match of getRefTokenMatchesForFormula(beans, value)) {
+        if (offset >= match.start && offset <= match.end) {
+            return { ref: match.ref, start: match.start, end: match.end, index: match.index };
+        }
+    }
+    return null;
+};
+
+const getRawTokenMatchAtOffset = (value: string, offset: number): TokenMatch | null => {
+    // match any A1-like token so invalid refs can still be replaced.
+    for (const match of getRefTokenMatches(value)) {
         if (offset >= match.start && offset <= match.end) {
             return { ref: match.ref, start: match.start, end: match.end, index: match.index };
         }
