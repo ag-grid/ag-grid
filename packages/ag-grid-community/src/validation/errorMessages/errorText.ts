@@ -732,7 +732,7 @@ export const AG_GRID_ERRORS = {
     298: ({ ids }: { ids: string[] }) =>
         [
             'Server Side Row Model: remove transaction ignored for the following IDs as they could not be resolved:',
-            (ids?.length ?? 0) > 10 ? `[${ids.slice(0, 10).join(', ')}, ..., ${ids.length - 10} more]` : (ids ?? []),
+            (ids?.length ?? 0) > 10 ? `[${ids.slice(0, 10).join(', ')}, ..., ${ids.length - 10} more]` : ids ?? [],
         ] as const,
 };
 
