@@ -729,11 +729,6 @@ export const AG_GRID_ERRORS = {
         'Since v35, `api.hideOverlay()` does not hide the overlay when `activeOverlay` is set. Set `activeOverlay=null` instead.' as const,
     297: () =>
         '`api.hideOverlay()` does not hide the no matching rows overlay as it is only controlled by grid state. Set `suppressOverlays=["noMatchingRows"] to not show it.' as const,
-    298: ({ ids }: { ids: string[] }) =>
-        [
-            'Server Side Row Model: remove transaction ignored for the following IDs as they could not be resolved:',
-            (ids?.length ?? 0) > 10 ? `[${ids.slice(0, 10).join(', ')}, ..., ${ids.length - 10} more]` : ids ?? [],
-        ] as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

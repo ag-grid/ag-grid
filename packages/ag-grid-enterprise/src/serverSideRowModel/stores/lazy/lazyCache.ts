@@ -1190,7 +1190,6 @@ export class LazyCache extends BeanStub {
                 nodesToVerify.forEach((node) => (node.__needsRefreshWhenVisible = true));
                 this.lazyBlockLoadingSvc.queueLoadCheck();
             } else {
-                _warn(298, { ids: remainingIdsToRemove });
                 isLastRowKnown = false;
             }
         }
