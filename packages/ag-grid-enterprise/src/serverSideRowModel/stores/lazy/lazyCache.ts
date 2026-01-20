@@ -343,7 +343,7 @@ export class LazyCache extends BeanStub {
         }
 
         // need to skip rows until the end of this store
-        const numberOfRowsToSkip = Math.max(this.numberOfRows - 1 - lastIndex, 0);
+        const numberOfRowsToSkip = this.numberOfRows - 1 - lastIndex;
         this.skipDisplayIndexes(numberOfRowsToSkip, displayIndexSeq, nextRowTop);
 
         // this is not terribly efficient, and could probs be improved
