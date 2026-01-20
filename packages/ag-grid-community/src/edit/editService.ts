@@ -899,7 +899,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     public setDataValue(position: Required<EditPosition>, newValue: any, eventSource?: string): boolean | undefined {
         try {
             const batch = this.batch;
-            const editing = this.isEditing(batch ? undefined : position); // check if the cell is being edited
+            const editing = this.isEditing(batch ? undefined : position);
 
             if ((!editing || this.committing) && !SET_DATA_SOURCE_AS_API.has(eventSource)) {
                 return; // Ignore non-edit edits that are not treated as API sources.
