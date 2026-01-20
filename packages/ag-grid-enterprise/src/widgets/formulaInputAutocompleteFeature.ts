@@ -90,7 +90,9 @@ export class FormulaInputAutocompleteFeature extends BeanStub {
             return;
         }
 
-        const value = this.field.getCurrentValue();
+        const { field, beans } = this;
+
+        const value = field.getCurrentValue();
         const hasFormulaPrefix = value.trimStart().startsWith('=');
 
         if (!hasFormulaPrefix) {
@@ -98,19 +100,26 @@ export class FormulaInputAutocompleteFeature extends BeanStub {
             return;
         }
 
-        const caretOffsets = this.field.getCaretOffsetsForAutocomplete(value);
+        const caretOffsets = field.getCaretOffsetsForAutocomplete(value);
         if (!caretOffsets) {
             this.closeFunctionAutocomplete();
             return;
         }
 
-        if (isCaretInsideRefToken(this.beans, value, caretOffsets.valueOffset)) {
+        if (isCaretInsideRefToken(beans, value, caretOffsets.valueOffset)) {
             this.closeFunctionAutocomplete();
             return;
         }
 
-        const token = getFunctionTokenAtOffset(value, caretOffsets.valueOffset, this.beans.formula ?? null);
+        const token = getFunctionTokenAtOffset(value, caretOffsets.valueOffset, beans.formula ?? null);
         if (!token) {
+            this.closeFunctionAutocomplete();
+            return;
+        }
+
+        const { prefix } = token;
+
+        if (!prefix.length) {
             this.closeFunctionAutocomplete();
             return;
         }
@@ -121,8 +130,8 @@ export class FormulaInputAutocompleteFeature extends BeanStub {
             return;
         }
 
-        const searchLower = token.prefix.toLocaleLowerCase();
-        const hasMatch = entries.some((entry) => entry.key.toLocaleLowerCase().startsWith(searchLower));
+        const searchLower = prefix.toLocaleLowerCase();
+        const hasMatch = entries.some(({ key }) => key.toLocaleLowerCase().startsWith(searchLower));
 
         if (!hasMatch) {
             this.closeFunctionAutocomplete();
@@ -132,9 +141,9 @@ export class FormulaInputAutocompleteFeature extends BeanStub {
         this.functionAutocompleteToken = token;
         this.openFunctionAutocomplete(entries);
 
-        if (this.functionAutocompleteList && this.functionAutocompleteSearch !== token.prefix) {
-            this.functionAutocompleteList.setSearch(token.prefix);
-            this.functionAutocompleteSearch = token.prefix;
+        if (this.functionAutocompleteList && this.functionAutocompleteSearch !== prefix) {
+            this.functionAutocompleteList.setSearch(prefix);
+            this.functionAutocompleteSearch = prefix;
         }
     }
 
@@ -222,15 +231,16 @@ export class FormulaInputAutocompleteFeature extends BeanStub {
             return;
         }
 
-        const value = this.field.getCurrentValue();
+        const { field } = this;
+        const value = field.getCurrentValue();
         const functionName = selected.key;
         const baseValue = value.slice(0, token.start) + functionName + value.slice(token.end);
         const insertPos = token.start + functionName.length;
         const nextValue =
             baseValue[insertPos] === '(' ? baseValue : baseValue.slice(0, insertPos) + '(' + baseValue.slice(insertPos);
 
-        this.field.getContentElement().focus({ preventScroll: true });
-        this.field.applyFormulaValueChange({
+        field.getContentElement().focus({ preventScroll: true });
+        field.applyFormulaValueChange({
             currentValue: value,
             nextValue,
             caret: insertPos + 1,
