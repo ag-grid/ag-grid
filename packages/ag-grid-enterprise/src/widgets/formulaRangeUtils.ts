@@ -1,4 +1,4 @@
-import type { BeanCollection, CellRange } from 'ag-grid-community';
+import type { BeanCollection, CellRange, IClientSideRowModel } from 'ag-grid-community';
 
 import { getRefTokenMatches, parseA1Ref } from '../formula/refUtils';
 
@@ -75,13 +75,10 @@ export const getCellRangeParams = (beans: BeanCollection, ref: string) => {
         return null;
     }
 
-    const rowModel = beans.rowModel;
-    // if the row model knows its size, reject refs beyond the last row.
-    if (rowModel?.isLastRowIndexKnown?.()) {
-        const rowCount = rowModel.getRowCount();
-        if (rowStartIndex >= rowCount || rowEndIndex >= rowCount) {
-            return null;
-        }
+    const rowModel = beans.rowModel as IClientSideRowModel | null;
+    // formulas run on the client-side row model, so use formula rows to validate.
+    if (!rowModel?.getFormulaRow(rowStartIndex) || !rowModel.getFormulaRow(rowEndIndex)) {
+        return null;
     }
 
     return {
