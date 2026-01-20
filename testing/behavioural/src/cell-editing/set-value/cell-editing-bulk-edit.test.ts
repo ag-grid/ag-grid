@@ -5,7 +5,7 @@ import { userEvent } from '@testing-library/user-event';
 import { TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule, CellSelectionModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../../test-utils';
+import { EditEventTracker, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../../test-utils';
 
 describe('Cell Editing: bulk edit', () => {
     const gridMgr = new TestGridsManager({
@@ -55,6 +55,7 @@ describe('Cell Editing: bulk edit', () => {
             ],
             getRowId: (params) => params.data.id,
         });
+        const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -97,6 +98,14 @@ describe('Cell Editing: bulk edit', () => {
             api.commitBatchEdit();
             await asyncSetTimeout(0);
         }
+
+        expect(eventTracker.counts).toEqual({
+            cellEditingStarted: 1,
+            cellEditingStopped: batchEnabled ? 9 : 5,
+            cellValueChanged: valueSetterCalls,
+            rowValueChanged: 0,
+            cellEditRequest: 0,
+        });
 
         expect(api.getDisplayedRowAtIndex(0)?.data?.a).toBe('Bulk Value');
         expect(api.getDisplayedRowAtIndex(0)?.data?.b).toBe('Bulk Value');

@@ -77,3 +77,53 @@ export async function firePointerLikeClick(element: string | HTMLElement | null 
 
     return clickNotCancelled;
 }
+
+export type EditEventCounts = {
+    cellEditingStarted: number;
+    cellEditingStopped: number;
+    cellValueChanged: number;
+    rowValueChanged: number;
+    cellEditRequest: number;
+};
+
+const DEFAULT_EDIT_EVENT_COUNTS = {
+    cellEditingStarted: 0,
+    cellEditingStopped: 0,
+    cellValueChanged: 0,
+    rowValueChanged: 0,
+    cellEditRequest: 0,
+};
+
+export class EditEventTracker {
+    public readonly counts: EditEventCounts = { ...DEFAULT_EDIT_EVENT_COUNTS };
+
+    private readonly listeners: Array<{ event: AgPublicEventType; listener: () => void }> = [];
+
+    constructor(private readonly api: GridApi) {
+        this.track('cellEditingStarted');
+        this.track('cellEditingStopped');
+        this.track('cellValueChanged');
+        this.track('rowValueChanged');
+        this.track('cellEditRequest');
+    }
+
+    private track(event: AgPublicEventType): void {
+        const listener = () => {
+            this.counts[event] += 1;
+        };
+
+        this.listeners.push({ event, listener });
+        this.api.addEventListener(event, listener);
+    }
+
+    public destroy(): void {
+        for (const { event, listener } of this.listeners) {
+            this.api.removeEventListener(event, listener);
+        }
+        this.listeners.length = 0;
+    }
+
+    public reset(): void {
+        Object.assign(this.counts, DEFAULT_EDIT_EVENT_COUNTS);
+    }
+}

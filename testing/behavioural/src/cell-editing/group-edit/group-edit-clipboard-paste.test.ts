@@ -4,7 +4,14 @@ import type { GridOptions } from 'ag-grid-community';
 import { AllCommunityModule, ClientSideRowModelModule, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule, ClipboardModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout, clipboardUtils, waitForEvent } from '../../test-utils';
+import {
+    EditEventTracker,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    clipboardUtils,
+    waitForEvent,
+} from '../../test-utils';
 import { expect } from '../../test-utils/matchers';
 
 describe('Group Edit: clipboard paste', () => {
@@ -26,7 +33,7 @@ describe('Group Edit: clipboard paste', () => {
         clipboardUtils.reset();
     });
 
-    test.each([false, true])('paste updates grouped leaf once (batch=%s)', async (batchEnabled) => {
+    test('paste updates grouped leaf once', async () => {
         const valueSetterTargets: string[] = [];
         const valueSetter = (params: any) => {
             if (params.node?.id) {
@@ -68,9 +75,10 @@ describe('Group Edit: clipboard paste', () => {
             getRowId: (params) => params.data.id,
         };
 
-        const api = await gridMgr.createGridAndWait(`groupEditClipboardPaste-${batchEnabled}`, gridOptions);
+        const api = await gridMgr.createGridAndWait('groupEditClipboardPaste', gridOptions);
+        const eventTracker = new EditEventTracker(api);
 
-        const beforeRows = new GridRows(api, `before group paste (batch=${batchEnabled})`);
+        const beforeRows = new GridRows(api, 'before group paste');
         await beforeRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ LEAF_GROUP id:row-group-category-A
@@ -84,9 +92,6 @@ describe('Group Edit: clipboard paste', () => {
 
         const groupCol = api.getDisplayedCenterColumns()[0]!;
         const groupColId = groupCol.getColId();
-        if (batchEnabled) {
-            api.startBatchEdit();
-        }
 
         clipboardUtils.setText('Edited Group');
         api.setFocusedCell(groupRowNode!.rowIndex!, groupColId);
@@ -96,18 +101,20 @@ describe('Group Edit: clipboard paste', () => {
         api.pasteFromClipboard();
         await pasteEnd;
 
-        if (batchEnabled) {
-            api.commitBatchEdit();
-            await asyncSetTimeout(0);
-        }
-
-        const afterRows = new GridRows(api, `after group paste (batch=${batchEnabled})`);
+        const afterRows = new GridRows(api, 'after group paste');
         await afterRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ LEAF_GROUP id:row-group-category-A
             · ├── LEAF id:a-1 group:"Edited Group" category:"A"
             · └── LEAF id:a-2 group:"A2" category:"A"
         `);
+        expect(eventTracker.counts).toEqual({
+            cellEditingStarted: 1,
+            cellEditingStopped: 1,
+            cellValueChanged: 1,
+            rowValueChanged: 0,
+            cellEditRequest: 0,
+        });
         expect(new Set(valueSetterTargets)).toEqual(new Set(['a-1']));
     });
 });

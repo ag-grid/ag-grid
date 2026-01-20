@@ -5,7 +5,14 @@ import { userEvent } from '@testing-library/user-event';
 import { TextEditorModule, UndoRedoEditModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule, CellSelectionModule, ClipboardModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout, clipboardUtils, waitForEvent } from '../../test-utils';
+import {
+    EditEventTracker,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    clipboardUtils,
+    waitForEvent,
+} from '../../test-utils';
 
 describe('Clipboard Paste Behaviour: fill handle', () => {
     const gridMgr = new TestGridsManager({
@@ -59,6 +66,8 @@ describe('Clipboard Paste Behaviour: fill handle', () => {
             getRowId: (params) => params.data.id,
         });
 
+        const eventTracker = new EditEventTracker(api);
+
         const gridDiv = getGridElement(api)! as HTMLElement;
 
         const beforeRows = new GridRows(api, 'before fill handle paste');
@@ -82,6 +91,14 @@ describe('Clipboard Paste Behaviour: fill handle', () => {
             ├── LEAF id:ROW_1 field:"Top Value"
             └── LEAF id:ROW_2 field:"Bottom Value 2"
         `);
+
+        expect(eventTracker.counts).toEqual({
+            cellEditingStarted: 0,
+            cellEditingStopped: 0,
+            cellValueChanged: 1,
+            rowValueChanged: 0,
+            cellEditRequest: 0,
+        });
 
         await asyncSetTimeout(1);
         const cell = getByTestId(gridDiv, agTestIdFor.cell('ROW_1', 'field'));

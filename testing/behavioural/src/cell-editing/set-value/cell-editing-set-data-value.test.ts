@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
+import { EditEventTracker, GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 
 describe('Cell Editing: setDataValue sources', () => {
     const gridMgr = new TestGridsManager({
@@ -34,6 +34,7 @@ describe('Cell Editing: setDataValue sources', () => {
                 rowData: [{ id: 'ROW_0', field: 'Initial Value' }],
                 getRowId: (params) => params.data.id,
             });
+            const eventTracker = new EditEventTracker(api);
 
             const beforeRows = new GridRows(api, `before ${source} setDataValue`);
             await beforeRows.check(`
@@ -50,6 +51,14 @@ describe('Cell Editing: setDataValue sources', () => {
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:ROW_0 field:"${source}-value"
             `);
+
+            expect(eventTracker.counts).toEqual({
+                cellEditingStarted: 0,
+                cellEditingStopped: source === 'cellClear' ? 1 : 0,
+                cellValueChanged: 1,
+                rowValueChanged: 0,
+                cellEditRequest: 0,
+            });
 
             expect(valueSetterTargets).toEqual(['ROW_0']);
             expect(valueSetterCalls).toBe(1);

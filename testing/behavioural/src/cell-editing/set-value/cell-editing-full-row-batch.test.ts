@@ -5,7 +5,7 @@ import { userEvent } from '@testing-library/user-event';
 import { TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout, waitForInput } from '../../test-utils';
+import { EditEventTracker, TestGridsManager, asyncSetTimeout, waitForInput } from '../../test-utils';
 
 describe('Cell Editing: full-row batch', () => {
     const gridMgr = new TestGridsManager({
@@ -51,6 +51,7 @@ describe('Cell Editing: full-row batch', () => {
             rowData: [{ id: 'ROW_0', a: 'A0', b: 'B0' }],
             getRowId: (params) => params.data.id,
         });
+        const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         const user = userEvent.setup({ skipHover: true });
@@ -73,6 +74,14 @@ describe('Cell Editing: full-row batch', () => {
             api.cancelBatchEdit();
         }
         await asyncSetTimeout(0);
+
+        expect(eventTracker.counts).toEqual({
+            cellEditingStarted: 2,
+            cellEditingStopped: 3,
+            cellValueChanged: action === 'commit' ? 1 : 0,
+            rowValueChanged: action === 'commit' ? 1 : 0,
+            cellEditRequest: 0,
+        });
 
         const row = api.getDisplayedRowAtIndex(0)?.data as { a: string; b: string } | undefined;
         if (action === 'commit') {

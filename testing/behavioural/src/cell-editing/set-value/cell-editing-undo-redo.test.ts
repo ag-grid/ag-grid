@@ -5,7 +5,7 @@ import { userEvent } from '@testing-library/user-event';
 import { TextEditorModule, UndoRedoEditModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout, waitForInput } from '../../test-utils';
+import { EditEventTracker, TestGridsManager, asyncSetTimeout, waitForInput } from '../../test-utils';
 
 describe('Cell Editing: undo/redo', () => {
     const gridMgr = new TestGridsManager({
@@ -45,6 +45,7 @@ describe('Cell Editing: undo/redo', () => {
             rowData: [{ id: 'ROW_0', field: 'Initial Value' }],
             getRowId: (params) => params.data.id,
         });
+        const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         const user = userEvent.setup({ skipHover: true });
@@ -69,6 +70,14 @@ describe('Cell Editing: undo/redo', () => {
 
         api.redoCellEditing();
         await asyncSetTimeout(0);
+
+        expect(eventTracker.counts).toEqual({
+            cellEditingStarted: 1,
+            cellEditingStopped: 1,
+            cellValueChanged: valueSetterCalls,
+            rowValueChanged: 0,
+            cellEditRequest: 0,
+        });
 
         expect(api.getDisplayedRowAtIndex(0)?.data?.field).toBe('Updated Value');
         expect(valueSetterCalls).toBe(3);
@@ -97,6 +106,7 @@ describe('Cell Editing: undo/redo', () => {
                     }
                 },
             });
+            const eventTracker = new EditEventTracker(api);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
             const user = userEvent.setup({ skipHover: true });
@@ -126,6 +136,14 @@ describe('Cell Editing: undo/redo', () => {
 
             api.redoCellEditing();
             await waitFor(() => expect(new Set(rowValueChangedNodes)).toEqual(new Set(['ROW_0'])));
+
+            expect(eventTracker.counts).toEqual({
+                cellEditingStarted: 2,
+                cellEditingStopped: batchEnabled ? 3 : 2,
+                cellValueChanged: 1,
+                rowValueChanged: 1,
+                cellEditRequest: 0,
+            });
         }
     );
 });

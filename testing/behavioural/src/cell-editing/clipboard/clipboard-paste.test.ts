@@ -5,7 +5,14 @@ import { userEvent } from '@testing-library/user-event';
 import { TextEditorModule, UndoRedoEditModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule, CellSelectionModule, ClipboardModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout, clipboardUtils, waitForEvent } from '../../test-utils';
+import {
+    EditEventTracker,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    clipboardUtils,
+    waitForEvent,
+} from '../../test-utils';
 
 describe('Clipboard Paste Behaviour: paste flows', () => {
     const gridMgr = new TestGridsManager({
@@ -52,6 +59,8 @@ describe('Clipboard Paste Behaviour: paste flows', () => {
             ],
         });
 
+        const eventTracker = new EditEventTracker(api);
+
         const gridDiv = getGridElement(api)! as HTMLElement;
 
         const beforeRows = new GridRows(api, 'before paste');
@@ -80,6 +89,13 @@ describe('Clipboard Paste Behaviour: paste flows', () => {
             ├── LEAF id:0 field:"Top Value"
             └── LEAF id:1 field:"Top Value"
         `);
+        expect(eventTracker.counts).toEqual({
+            cellEditingStarted: 0,
+            cellEditingStopped: 0,
+            cellValueChanged: 1,
+            rowValueChanged: 0,
+            cellEditRequest: 0,
+        });
         expect(lastSetValue).toBe('Top Value');
         expect(valueSetterTargets).toEqual(['ROW_1']);
         expect(valueSetterCalls).toBe(1);
@@ -111,6 +127,8 @@ describe('Clipboard Paste Behaviour: paste flows', () => {
             ],
         });
 
+        const eventTracker = new EditEventTracker(api);
+
         const beforeRows = new GridRows(api, 'before api paste');
         await beforeRows.check(`
             ROOT id:ROOT_NODE_ID
@@ -131,6 +149,13 @@ describe('Clipboard Paste Behaviour: paste flows', () => {
             └── LEAF id:1 field:"Top Value"
         `);
 
+        expect(eventTracker.counts).toEqual({
+            cellEditingStarted: 0,
+            cellEditingStopped: 0,
+            cellValueChanged: 1,
+            rowValueChanged: 0,
+            cellEditRequest: 0,
+        });
         expect(lastSetValue).toBe('Top Value');
         expect(valueSetterTargets).toEqual(['ROW_1']);
         expect(valueSetterCalls).toBe(1);

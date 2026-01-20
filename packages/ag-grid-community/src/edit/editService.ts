@@ -898,17 +898,10 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
     public setDataValue(position: Required<EditPosition>, newValue: any, eventSource?: string): boolean | undefined {
         try {
-            if (!this.isEditing(position) || this.committing) {
-                if (!this.batch && eventSource === 'paste' && !this.isEditing(position)) {
-                    // allow non-editing paste to fall back to the row node value service
-                    return;
-                }
+            const editing = this.isEditing(position); // check if the cell is being edited
 
-                // Batch edits and API sources should always be handled by the edit service.
-                if (!SET_DATA_SOURCE_AS_API.has(eventSource) && !this.isEditing(position)) {
-                    // only intercept when the target cell already has an edit
-                    return;
-                }
+            if ((!editing || this.committing) && !SET_DATA_SOURCE_AS_API.has(eventSource)) {
+                return; // Ignore non-edit edits that are not treated as API sources.
             }
 
             const { beans } = this;
@@ -917,6 +910,9 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             const source = this.batch ? 'ui' : this.committing ? eventSource ?? 'api' : 'api';
 
             if (!eventSource || KEEP_EDITOR_SOURCES.has(eventSource)) {
+                if (!editing && !this.batch && eventSource === 'paste') {
+                    return; // Paste on non editable cells and not batching
+                }
                 // editApi or undoRedoApi apply change without involving the editor
                 _syncFromEditor(beans, position, newValue, eventSource, undefined, { persist: true });
 

@@ -5,7 +5,7 @@ import { userEvent } from '@testing-library/user-event';
 import { TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule, CellSelectionModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../../test-utils';
+import { EditEventTracker, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../../test-utils';
 
 describe('Cell Editing: delete and range clearing', () => {
     const gridMgr = new TestGridsManager({
@@ -41,6 +41,7 @@ describe('Cell Editing: delete and range clearing', () => {
             rowData: [{ id: 'ROW_0', field: 'Initial Value' }],
             getRowId: (params) => params.data.id,
         });
+        const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -74,6 +75,14 @@ describe('Cell Editing: delete and range clearing', () => {
             api.commitBatchEdit();
             await asyncSetTimeout(0);
         }
+
+        expect(eventTracker.counts).toEqual({
+            cellEditingStarted: 0,
+            cellEditingStopped: 1,
+            cellValueChanged: valueSetterCalls,
+            rowValueChanged: 0,
+            cellEditRequest: 0,
+        });
 
         expect(api.getDisplayedRowAtIndex(0)?.data?.field ?? null).toBeNull();
         expect(valueSetterTargets).toEqual(['ROW_0']);
@@ -110,6 +119,7 @@ describe('Cell Editing: delete and range clearing', () => {
             rowData: [{ id: 'ROW_0', field: 'Initial Value' }],
             getRowId: (params) => params.data.id,
         });
+        const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -142,6 +152,14 @@ describe('Cell Editing: delete and range clearing', () => {
             await asyncSetTimeout(0);
         }
 
+        expect(eventTracker.counts).toEqual({
+            cellEditingStarted: 0,
+            cellEditingStopped: 0,
+            cellValueChanged: 0,
+            rowValueChanged: 0,
+            cellEditRequest: 0,
+        });
+
         expect(api.getDisplayedRowAtIndex(0)?.data?.field).toBe('Initial Value');
         expect(valueSetterTargets).toEqual([]);
         expect(valueSetterCalls).toBe(0);
@@ -172,6 +190,7 @@ describe('Cell Editing: delete and range clearing', () => {
             ],
             getRowId: (params) => params.data.id,
         });
+        const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -208,6 +227,14 @@ describe('Cell Editing: delete and range clearing', () => {
             api.commitBatchEdit();
             await asyncSetTimeout(0);
         }
+
+        expect(eventTracker.counts).toEqual({
+            cellEditingStarted: 0,
+            cellEditingStopped: batchEnabled ? 5 : 0,
+            cellValueChanged: valueSetterCalls,
+            rowValueChanged: 0,
+            cellEditRequest: 0,
+        });
 
         expect(api.getDisplayedRowAtIndex(0)?.data?.field ?? null).toBeNull();
         expect(api.getDisplayedRowAtIndex(1)?.data?.field ?? null).toBeNull();
@@ -247,6 +274,7 @@ describe('Cell Editing: delete and range clearing', () => {
             ],
             getRowId: (params) => params.data.id,
         });
+        const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -285,6 +313,14 @@ describe('Cell Editing: delete and range clearing', () => {
             api.commitBatchEdit();
             await asyncSetTimeout(0);
         }
+
+        expect(eventTracker.counts).toEqual({
+            cellEditingStarted: 0,
+            cellEditingStopped: batchEnabled ? 14 : 0,
+            cellValueChanged: valueSetterCalls,
+            rowValueChanged: 0,
+            cellEditRequest: 0,
+        });
 
         expect(api.getDisplayedRowAtIndex(0)?.data?.a ?? null).toBeNull();
         expect(api.getDisplayedRowAtIndex(0)?.data?.b ?? null).toBeNull();
