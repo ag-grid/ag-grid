@@ -5,7 +5,7 @@ import type {
     BooleanAdvancedFilterModel,
     ColumnAdvancedFilterModel,
 } from 'ag-grid-community';
-import { Component, _exists, _parseBigIntOrNull, _removeFromParent, _toStringOrNull } from 'ag-grid-community';
+import { Component, _exists, _removeFromParent, _toStringOrNull } from 'ag-grid-community';
 
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
@@ -193,7 +193,7 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
                 this.destroyOperandPill();
             } else {
                 this.createOperandPill();
-                if (this.baseCellDataType !== 'number' && this.baseCellDataType !== 'bigint') {
+                if (this.baseCellDataType !== 'number') {
                     this.setOperand('');
                 }
             }
@@ -203,16 +203,10 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
     }
 
     private setOperand(operand: string): void {
-        let parsedOperand: string | number | bigint = operand;
+        let parsedOperand: string | number = operand;
         // Number comes back as string from input, so convert. Dates are already in iso string format
         if (this.baseCellDataType === 'number') {
             parsedOperand = _exists(operand) ? Number(operand) : '';
-        } else if (this.baseCellDataType === 'bigint') {
-            if (_exists(operand)) {
-                parsedOperand = _parseBigIntOrNull(operand) ?? '';
-            } else {
-                parsedOperand = '';
-            }
         }
         (this.filterModel as any).filter = parsedOperand;
         this.validate();

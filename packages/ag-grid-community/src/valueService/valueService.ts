@@ -305,12 +305,17 @@ export class ValueService extends BeanStub implements NamedBean {
         return undefined;
     }
 
-    public parseValue(column: AgColumn, rowNode: IRowNode | null, newValue: any, oldValue: any): any {
+    public parseValue<TValueNew = any, TValueOld = any, TValue = any>(
+        column: AgColumn,
+        rowNode: IRowNode | null,
+        newValue: TValueNew,
+        oldValue: TValueOld
+    ): TValue {
         const colDef = column.getColDef();
 
         // we do not allow parsing of formulas
         if (colDef.allowFormula && this.beans.formula?.isFormula(newValue)) {
-            return newValue;
+            return newValue as TValue;
         }
 
         const valueParser = colDef.valueParser;
@@ -320,7 +325,7 @@ export class ValueService extends BeanStub implements NamedBean {
                 node: rowNode,
                 data: rowNode?.data,
                 oldValue,
-                newValue,
+                newValue: newValue as any,
                 colDef,
                 column,
             });
@@ -329,7 +334,7 @@ export class ValueService extends BeanStub implements NamedBean {
             }
             return this.expressionSvc?.evaluate(valueParser, params);
         }
-        return newValue;
+        return newValue as unknown as TValue;
     }
 
     public getDeleteValue(column: AgColumn, rowNode: IRowNode): any {

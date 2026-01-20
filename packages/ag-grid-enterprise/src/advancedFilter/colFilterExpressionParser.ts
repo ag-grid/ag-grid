@@ -1,5 +1,5 @@
-import { _parseBigIntOrNull } from 'ag-grid-community';
 import type { AdvancedFilterModel, AgColumn, BaseCellDataType } from 'ag-grid-community';
+import { _parseBigIntOrNull } from 'ag-grid-community';
 
 import type { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
@@ -185,7 +185,7 @@ class OperandParser implements Parser {
     public endPosition: number | undefined;
     private quotes: `'` | `"` | undefined;
     private operand = '';
-    private modelValue: number | string | bigint;
+    private modelValue: number | string;
     private validationMessage: string | null = null;
 
     private readonly filterValidationSetters: Record<
@@ -199,9 +199,9 @@ class OperandParser implements Parser {
             }
         },
         bigint: () => {
-            if (this.quotes || typeof this.modelValue !== 'bigint') {
+            if (this.quotes || _parseBigIntOrNull(this.modelValue) === null) {
                 this.valid = false;
-                this.validationMessage = this.params.advFilterExpSvc.translate('advancedFilterValidationNotANumber');
+                this.validationMessage = this.params.advFilterExpSvc.translate('advancedFilterValidationNotABigInt');
             }
         },
         date: (modelValue) => {
@@ -269,7 +269,7 @@ class OperandParser implements Parser {
         return this.operand;
     }
 
-    public getModelValue(): string | number | bigint {
+    public getModelValue(): string | number {
         return this.modelValue;
     }
 
@@ -305,15 +305,24 @@ export class ColFilterExpressionParser {
     private operatorParser: OperatorParser | undefined;
     private operandParser: OperandParser | undefined;
 
-    private readonly operandValueGetters: Record<BaseCellDataType, (operand: any) => any> = {
+    private readonly operandValueGetters: {
+        number: (a: string) => number;
+        bigint: (a: string) => bigint;
+        date: (a: string) => Date;
+        dateString: (a: string) => Date;
+        dateTime: (a: string) => Date;
+        dateTimeString: (a: string) => Date;
+        boolean: (a: string) => string;
+        object: (a: string) => string;
+        text: (a: string) => string;
+    } = {
         number: Number,
-        bigint: (operand) => {
-            return _parseBigIntOrNull(operand);
-        },
-        date: (operand) => this.params.valueSvc.parseValue(this.columnParser!.column!, null, operand, undefined),
-        dateString: (...args) => this.operandValueGetters.date(...args),
-        dateTime: (...args) => this.operandValueGetters.date(...args),
-        dateTimeString: (...args) => this.operandValueGetters.date(...args),
+        bigint: (operand) => _parseBigIntOrNull(operand)!,
+        date: (operand) =>
+            this.params.valueSvc.parseValue(this.columnParser!.column!, null, operand, undefined) as Date,
+        dateString: (operand) => this.operandValueGetters.date(operand),
+        dateTime: (operand) => this.operandValueGetters.date(operand),
+        dateTimeString: (operand) => this.operandValueGetters.date(operand),
         boolean: (operand) => operand,
         object: (operand) => operand,
         text: (operand) => operand,

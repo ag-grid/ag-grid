@@ -63,7 +63,7 @@ interface BigIntAdvancedFilterModel {
     /** The filter option that is being applied. */
     type: ScalarAdvancedFilterModelType;
     /** The value to filter on. */
-    filter?: bigint;
+    filter?: string;
 }
 
 /** Represents a single filter condition for a date column */

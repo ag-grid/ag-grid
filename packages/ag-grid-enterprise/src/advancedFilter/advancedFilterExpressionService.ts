@@ -2,6 +2,7 @@ import type {
     AgColumn,
     BaseCellDataType,
     BeanCollection,
+    BooleanAdvancedFilterModel,
     ColumnAdvancedFilterModel,
     ColumnModel,
     ColumnNameService,
@@ -10,14 +11,7 @@ import type {
     NamedBean,
     ValueService,
 } from 'ag-grid-community';
-import {
-    BeanStub,
-    _exists,
-    _parseBigIntOrNull,
-    _parseDateTimeFromString,
-    _serialiseDate,
-    _toStringOrNull,
-} from 'ag-grid-community';
+import { BeanStub, _exists, _parseDateTimeFromString, _serialiseDate, _toStringOrNull } from 'ag-grid-community';
 
 import { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
@@ -42,7 +36,10 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     private colNames: ColumnNameService;
     private dataTypeSvc?: DataTypeService;
 
-    private readonly filterOperandGetters: Record<BaseCellDataType, (model: any) => string | null> = {
+    private readonly filterOperandGetters: Record<
+        BaseCellDataType,
+        (model: { filter?: string | number; colId: string }) => string | null
+    > = {
         number: (model) => _toStringOrNull(model.filter) ?? '',
         bigint: (model) => _toStringOrNull(model.filter) ?? '',
         date: (model) => {
@@ -50,7 +47,11 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
             if (!column) {
                 return null;
             }
-            return this.valueSvc.formatValue(column, null, _parseDateTimeFromString(model.filter));
+            return this.valueSvc.formatValue(
+                column,
+                null,
+                _parseDateTimeFromString(_toStringOrNull(model.filter) ?? '')
+            );
         },
         dateTime: (model) => this.filterOperandGetters.date(model),
         dateString: (model) => {
@@ -60,7 +61,8 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
             }
             const { filter } = model;
             const dateFormatFn = this.dataTypeSvc?.getDateFormatterFunction(column);
-            const dateStringStringValue = dateFormatFn?.(_parseDateTimeFromString(filter) ?? undefined) ?? filter;
+            const dateStringStringValue =
+                dateFormatFn?.(_parseDateTimeFromString(_toStringOrNull(model.filter) ?? '') ?? undefined) ?? filter;
             return this.valueSvc.formatValue(column, null, dateStringStringValue);
         },
         dateTimeString: (model) => this.filterOperandGetters.dateString(model),
@@ -71,13 +73,13 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
 
     private readonly operandModelValueGetters: Record<
         BaseCellDataType,
-        (op: string, cln: AgColumn, dt: BaseCellDataType) => number | string | bigint | null
+        (op: string, cln: AgColumn, dt: BaseCellDataType) => number | string | null
     > = {
         number: (operand) => (_exists(operand) ? Number(operand) : null),
-        bigint: (operand) => _parseBigIntOrNull(operand),
+        bigint: (operand) => operand,
         date: (operand, column, baseCellDataType) =>
             _serialiseDate(
-                this.valueSvc.parseValue(column, null, operand, undefined),
+                this.valueSvc.parseValue(column, null, operand, undefined) as Date,
                 !!this.dataTypeSvc?.getDateIncludesTimeFlag(baseCellDataType)
             ),
         dateTime: (...args) => this.operandModelValueGetters.date(...args),
@@ -142,18 +144,20 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         operand: string,
         baseCellDataType: BaseCellDataType,
         column: AgColumn
-    ): string | number | bigint | null {
+    ): string | number | null {
         return this.operandModelValueGetters[baseCellDataType](operand, column, baseCellDataType);
     }
 
     public getOperandDisplayValue(model: ColumnAdvancedFilterModel, skipFormatting?: boolean): string {
-        const { filter } = model as any;
+        const { filter, filterType } = model as Exclude<ColumnAdvancedFilterModel, BooleanAdvancedFilterModel>;
 
         if (filter == null) {
             return '';
         }
-        let operand1 = this.filterOperandGetters[model.filterType](model);
-        if (model.filterType !== 'number' && model.filterType !== 'bigint') {
+        let operand1 = this.filterOperandGetters[filterType](
+            model as Exclude<ColumnAdvancedFilterModel, BooleanAdvancedFilterModel>
+        );
+        if (filterType !== 'number' && filterType !== 'bigint') {
             operand1 ??= _toStringOrNull(filter) ?? '';
             if (!skipFormatting) {
                 operand1 = `"${operand1}"`;
