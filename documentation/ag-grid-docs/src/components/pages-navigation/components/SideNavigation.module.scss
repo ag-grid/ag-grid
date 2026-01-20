@@ -69,43 +69,9 @@
     #{$selector-darkmode} & {
         --nav-line-color: var(--color-border-primary);
     }
-
-    // Default highlight for second item (first navigation link after the top-level heading)
-    li:nth-child(2) {
-        background-color: var(--active-background);
-
-        &::before {
-            width: 2px;
-            background-color: var(--active-border);
-        }
-    }
-
-    // Clear default highlight on second item when any later item becomes active
-    &:has(li:nth-child(n + 2) a:global(.active)) li:nth-child(2):not(:has(:global(.active))) {
-        background-color: transparent !important;
-
-        &::before {
-            width: 1px !important;
-            background-color: var(--color-util-brand-200);
-
-            #{$selector-darkmode} & {
-                background-color: var(--color-border-primary);
-            }
-        }
-    }
-
-    // Default highlight colour for second item link
-    li:nth-child(2) a {
-        color: var(--active-color);
-    }
-
-    // Clear default highlight colour on second item link when any later item becomes active
-    &:has(li:nth-child(n + 2) a:global(.active)) li:nth-child(2):not(:has(:global(.active))) a {
-        color: var(--link-color) !important;
-    }
 }
 
-.sideNav li {
+.sideNav li:not(.level1) {
     --item-gap: 0.875em;
 
     position: relative;
@@ -135,14 +101,28 @@
         background-color: var(--color-border-primary);
     }
 
+    &:has(:global(.active)) {
+        background-color: var(--active-background);
+    }
+
     // Active items: show full 2px line using pseudo-element
     &:has(:global(.active))::before {
         width: 2px;
         background-color: var(--active-border);
     }
+}
 
-    &:has(:global(.active)):not(:first-child) {
-        background-color: var(--active-background);
+// If first item has active class apply active styles to second item
+.sideNav li:first-child:has(:global(.active)) + li {
+    background-color: var(--active-background);
+
+    &::before {
+        width: 2px;
+        background-color: var(--active-border);
+    }
+
+    a {
+        color: var(--active-color);
     }
 }
 
@@ -163,20 +143,6 @@
 .sideNav .level1 {
     margin-top: 0;
     padding-bottom: 16px;
-    padding-left: 0 !important; // Override padding-left
-    // No border for level 1 items, even when active
-    border-left: none !important;
-
-    // Hide pseudo-element border for level 1
-    &::before {
-        display: none !important;
-    }
-
-    // Override active border styling for level 1
-    &:has(:global(.active)) {
-        border-left-color: transparent !important;
-        border-left: none !important;
-    }
 
     a {
         display: inline-flex;
@@ -196,26 +162,6 @@
             color: var(--color-text-secondary);
         }
     }
-}
-
-// Remove active styling from first item when any item after the first (second, third, etc.) has .active
-// This ensures only one item is highlighted at a time
-// Use multiple selectors to catch different scenarios
-.sideNav ul:has(li:nth-child(2) a:global(.active)) li.level1,
-.sideNav ul:has(li:nth-child(n + 2) a:global(.active)) li.level1 {
-    // Remove any active styling from first item when another item is active
-    background-color: transparent !important;
-    border-left-color: transparent !important;
-
-    // Ensure no border shows
-    &::before {
-        display: none !important;
-    }
-}
-
-// Keep first item un-highlighted when any later item is active
-.sideNav ul:has(li:nth-child(n + 2) a:global(.active)) li.level1 a:not(:global(.active)) {
-    color: var(--color-text-secondary) !important;
 }
 
 .backToTop {
