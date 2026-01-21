@@ -57,7 +57,7 @@ export const getSitemapXml = async ({
     if (xmlSitemap == null) {
         const response = await fetch(sitemapUrl);
         xmlSitemap = await response.text();
-        logger.log('⚠️ No cached sitemap found, fetched from live site.');
+        logger.log(`⚠️ No cached sitemap found, fetched from live site: ${sitemapUrl}`);
     }
 
     return xmlSitemap;

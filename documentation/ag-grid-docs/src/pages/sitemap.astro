@@ -3,15 +3,14 @@ import { Sitemap } from '@ag-website-shared/components/sitemap/Sitemap';
 import parseSitemap from '@ag-website-shared/components/sitemap/utils/sitemaputils';
 import { getSitemapXml } from '@ag-website-shared/utils/getSitemapXml';
 import Layout from '../layouts/Layout.astro';
-import { PRODUCTION_SITE_URL } from '@constants';
+import { LIVE_SITEMAP_URL, PRODUCTION_GRID_SITE_URL } from '@constants';
 import { SITEMAP_CACHE_DIR } from '@ag-website-shared/constants';
 
-const sitemapUrl = `${PRODUCTION_SITE_URL.replace(/\/$/, '')}/sitemap-0.xml`;
+const sitemapUrl = LIVE_SITEMAP_URL || `${PRODUCTION_GRID_SITE_URL}/sitemap-0.xml`;
 const xmlSitemap = await getSitemapXml({
     cacheDir: SITEMAP_CACHE_DIR,
     sitemapUrl,
 });
-
 const parsedSitemap = parseSitemap(xmlSitemap);
 ---
 

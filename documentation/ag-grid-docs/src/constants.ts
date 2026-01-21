@@ -171,6 +171,8 @@ function calculateGridUrl() {
 
 export const GRID_URL = calculateGridUrl();
 
+export const LIVE_SITEMAP_URL = import.meta.env?.LIVE_SITEMAP_URL;
+
 export const EXAMPLE_RANDOM_SEED = 'AG Grid Random Seed';
 
 export const TRIAL_LICENCE_FORM_URL = import.meta.env?.PUBLIC_TRIAL_LICENCE_FORM_URL;
