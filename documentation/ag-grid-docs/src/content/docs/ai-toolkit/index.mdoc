@@ -258,6 +258,19 @@ If you choose to do this, make sure that the result is still a valid `GridState`
 
 - Monitor total prompt size; keep within your model’s context window with a buffer for the model’s response.
 
+## Example: AI Chat Assistant
+
+This example demonstrates an AI chat assistant embedded within the grid's [Side Bar](./side-bar/) as a [Custom Tool Panel](./component-tool-panel/). The assistant maintains conversation history, enabling multi-turn interactions where users can reference previous responses and refine their requests.
+
+Try the following sequence of prompts to see how the assistant remembers context:
+
+1. **"Suggest 3 different ways to analyse spending patterns in this data"** 
+2. **"Apply suggestion 2"**
+3. **"Actually, undo that and try suggestion 3 instead"**
+4. **"Now add a filter to only show transactions over £100"**
+
+{% gridExampleRunner title="AI Chat Assistant Embedded within Tool Panel" name="tool-panel-chat-assistant" exampleHeight=600 /%}
+
 ## API
 
 {% apiDocumentation source="grid-api/api.json" section="ai-toolkit" names=["getStructuredSchema"] /%}
