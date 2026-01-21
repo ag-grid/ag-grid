@@ -5,6 +5,31 @@ enterprise: true
 
 This section shows how to install Integrated Charts.
 
+{% if isFramework("react") %}
+The Integrated Enterprise Charts module, which includes AG Charts Enterprise, can be provided via `AgGridProvider` as follows:
+
+```jsx
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import { IntegratedChartsModule } from 'ag-grid-enterprise';
+import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
+
+const modules = [
+    ClientSideRowModelModule,
+    IntegratedChartsModule.with(AgChartsEnterpriseModule),
+];
+
+function App() {
+    return (
+        <AgGridProvider modules={modules}>
+            <AgGridReact /* ... props */ />
+        </AgGridProvider>
+    );
+}
+```
+{% /if %}
+
+{% if isFramework("javascript", "angular", "vue") %}
 The Integrated Enterprise Charts module, which includes AG Charts Enterprise, can be imported as follows:
 
 ```ts
@@ -18,6 +43,7 @@ ModuleRegistry.registerModules([
     IntegratedChartsModule.with(AgChartsEnterpriseModule)
 ]);
 ```
+{% /if %}
 
 {% note %}
 AG Charts Community (`AgChartsCommunityModule`) is available from the `ag-charts-community` package.

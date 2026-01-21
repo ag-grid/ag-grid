@@ -168,11 +168,13 @@ const gridOptions = {
 
 ```js
 import { AllCommunityModule } from 'ag-grid-community';
-import { AgGridProvider } from 'ag-grid-react';  
+import { AgGridProvider } from 'ag-grid-react';
+
+const modules = [AllCommunityModule];
 
 function App() {
     return (
-        <AgGridProvider modules={[AllCommunityModule]}>
+        <AgGridProvider modules={modules}>
             {/* Your AgGridReact components go here */}
         </AgGridProvider>
     );
@@ -220,17 +222,21 @@ const GridExample = () => {
 
 {% numberHeading number="5" title="React Data Grid Component" level="h3" %}
 
-Return the `AgGridReact` component, wrapped in a parent container `div` with a fixed height. Set Rows and Columns as `AgGridReact` component attributes:
+Return the `AgGridReact` component inside `AgGridProvider`, wrapped in a parent container `div` with a fixed height:
 
 ```jsx
+const modules = [AllCommunityModule];
+
 return (
-    // Data Grid will fill the size of the parent container
-    <div style={{ height: 500 }}>
-        <AgGridReact
-            rowData={rowData}
-            columnDefs={colDefs}
-        />
-    </div>
+    <AgGridProvider modules={modules}>
+        {/* Data Grid will fill the size of the parent container */}
+        <div style={{ height: 500 }}>
+            <AgGridReact
+                rowData={rowData}
+                columnDefs={colDefs}
+            />
+        </div>
+    </AgGridProvider>
 )
 ```
 {% /numberHeading %}

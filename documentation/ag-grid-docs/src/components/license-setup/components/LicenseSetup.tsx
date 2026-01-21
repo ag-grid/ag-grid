@@ -81,7 +81,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
         () =>
             getBootstrapSnippet({
                 framework,
-                license: (licenseState.chartsNoGridEnterpriseError ? '' : userLicense) || 'your License Key',
+                license: (licenseState.chartsNoGridEnterpriseError ? '' : userLicense) || 'YOUR_LICENSE_KEY',
                 isIntegratedCharts,
             }),
         [framework, licenseState, userLicense, isIntegratedCharts]
