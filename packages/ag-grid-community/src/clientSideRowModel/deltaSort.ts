@@ -25,43 +25,15 @@ export const doDeltaSort = (
     }
 
     const oldSortedLen = oldSortedRows.length;
-
-    const { updates, adds } = changedRowNodes;
-    // Rows that were added, updated, or affected by changed path
-    const touchedRows: RowNode[] = [];
-    // Map stores current index. Sign encodes touched state: negative = touched, non-negative = untouched.
     const indexByNode = new Map<RowNode, number>();
-
-    // Collect touched rows and build index map in one pass.
-    for (let i = 0; i < unsortedRowsLen; ++i) {
-        const node = unsortedRows[i];
-        if (updates.has(node) || adds.has(node) || (changedPath && !changedPath.canSkip(node))) {
-            touchedRows.push(node);
-            indexByNode.set(node, ~i); // Bitwise NOT for touched (negative)
-        } else {
-            indexByNode.set(node, i); // Non-negative for untouched
-        }
-    }
-
-    // Build untouched array from previous sorted order
+    const touchedRows = classifyAndIndexRows(unsortedRows, indexByNode, changedRowNodes, changedPath);
     const touchedRowsLen = touchedRows.length;
-    const untouchedRows: RowNode[] = new Array(unsortedRowsLen - touchedRowsLen);
-    let untouchedIdx = 0;
-    for (let i = 0; i < oldSortedLen; i++) {
-        const node = oldSortedRows[i];
-        const idx = indexByNode.get(node);
-        if (idx !== undefined && idx >= 0) {
-            untouchedRows[untouchedIdx++] = node;
-        }
-    }
 
-    if (untouchedIdx < untouchedRows.length) {
-        untouchedRows.length = untouchedIdx; // Trim if duplicates caused size mismatch
-    }
+    const untouchedRows = buildUntouchedArray(oldSortedRows, indexByNode, unsortedRowsLen - touchedRowsLen);
 
     if (!touchedRowsLen) {
         // No touched rows: return oldSortedRows if nothing removed, otherwise return untouched
-        return untouchedIdx === oldSortedLen ? oldSortedRows : untouchedRows;
+        return untouchedRows.length === oldSortedLen ? oldSortedRows : untouchedRows;
     }
 
     // Sort touched rows and keep a stable tie-breaker based on current index.
@@ -74,6 +46,56 @@ export const doDeltaSort = (
     }
 
     return mergeDeltaSortedArrays(rowNodeSorter, sortOptions, touchedRows, untouchedRows, indexByNode);
+};
+
+/**
+ * Classify rows as touched or untouched and build an index map.
+ * Map stores current index with sign encoding: negative = touched, non-negative = untouched.
+ */
+const classifyAndIndexRows = (
+    unsortedRows: RowNode[],
+    indexByNode: Map<RowNode, number>,
+    changedRowNodes: ChangedRowNodes,
+    changedPath: ChangedPath | undefined
+): RowNode[] => {
+    const { updates, adds } = changedRowNodes;
+    const touchedRows: RowNode[] = [];
+    for (let i = 0, len = unsortedRows.length; i < len; ++i) {
+        const node = unsortedRows[i];
+        if (updates.has(node) || adds.has(node) || (changedPath && !changedPath.canSkip(node))) {
+            touchedRows.push(node);
+            indexByNode.set(node, ~i); // Bitwise NOT for touched (negative)
+        } else {
+            indexByNode.set(node, i); // Non-negative for untouched
+        }
+    }
+    return touchedRows;
+};
+
+/**
+ * Extract untouched rows from previous sorted order, preserving that order.
+ */
+const buildUntouchedArray = (
+    oldSortedRows: RowNode[],
+    indexByNode: ReadonlyMap<RowNode, number>,
+    expectedSize: number
+): RowNode[] => {
+    const untouchedRows: RowNode[] = new Array(expectedSize);
+    let untouchedIdx = 0;
+
+    for (let i = 0, len = oldSortedRows.length; i < len; i++) {
+        const node = oldSortedRows[i];
+        const idx = indexByNode.get(node);
+        if (idx !== undefined && idx >= 0) {
+            untouchedRows[untouchedIdx++] = node;
+        }
+    }
+
+    if (untouchedIdx < untouchedRows.length) {
+        untouchedRows.length = untouchedIdx; // Trim if duplicates caused size mismatch
+    }
+
+    return untouchedRows;
 };
 
 /**
