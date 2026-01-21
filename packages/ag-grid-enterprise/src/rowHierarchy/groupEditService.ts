@@ -148,7 +148,8 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
 
         const rootNode = rowsDrop.rootNode as IRowNode;
         const rowModel = this.beans.rowModel;
-        const canStartGroup = target ? this.canDropStartGroup(target) : false;
+
+        const canStartGroup = this.canStartGroup(target, treeData);
 
         this.updateDropTarget(canStartGroup ? target : null, fromNudge, rowsDrop);
 
@@ -164,12 +165,7 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
                 newParent = target?.parent ?? rootNode;
             }
 
-            if (
-                !fromNudge &&
-                target &&
-                canStartGroup &&
-                (!newParent || (!target.expanded && !!target.childrenAfterSort?.length))
-            ) {
+            if (!fromNudge && target && canStartGroup) {
                 this.startDropGroupDelay(target);
             }
         } else if (!fromNudge && target && canStartGroup) {
@@ -403,14 +399,16 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         return true;
     }
 
-    public canDropStartGroup(candidate: IRowNode | null | undefined) {
-        return (
-            !!candidate &&
-            candidate.level >= 0 &&
-            !candidate.footer &&
-            !candidate.detail &&
-            (candidate.isExpandable?.() || !!candidate.childrenAfterSort?.length)
-        );
+    private canStartGroup(target: IRowNode | null, treeData: boolean): boolean {
+        if (!target || target.level < 0 || target.footer || target.detail) {
+            return false;
+        }
+
+        if (target.group) {
+            return !target.expanded || !!target.childrenAfterSort?.length;
+        }
+
+        return treeData;
     }
 
     /** Flushes any pending group edits for batch processing */

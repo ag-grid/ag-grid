@@ -182,6 +182,14 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
             });
         }
 
+        if (suppressMoveWhenRowDragging) {
+            await waitFor(() => {
+                const indicator = api.getRowDropPositionIndicator();
+                expect(indicator.dropIndicatorPosition).not.toBe('none');
+                expect(['root-ops', 'root-ops-logs']).toContain(indicator.row?.id);
+            });
+        }
+
         await asyncSetTimeout(10);
         await dispatcher.move(targetRowId, { clientX, clientY });
         await dispatcher.finish();
@@ -262,5 +270,69 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
         expect(dropInfo?.pointerPos).toBe('inside');
         expect(dropInfo?.rows?.length ?? 0).toBeGreaterThan(0);
         expect(dropInfo?.newParent?.id ?? dropInfo?.overNode?.id).toBe('inbox');
+    });
+
+    test('rowDragInsertDelay promotes leaf targets without a validator', async () => {
+        const rowData = [
+            {
+                id: 'root',
+                name: 'Root',
+                type: 'folder',
+                children: [
+                    { id: 'inbox', name: 'Inbox', type: 'folder', children: [] },
+                    { id: 'incoming', name: 'Incoming', type: 'file', children: [] },
+                ],
+            },
+        ];
+
+        const api = createGrid('tree-managed-insert-promote-default', rowData, {
+            rowDragInsertDelay: 60,
+        });
+
+        const initialRows = new GridRows(api, 'insert promote default initial');
+        await initialRows.check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ root GROUP id:root ag-Grid-AutoColumn:"Root" type:"folder"
+            · ├── inbox LEAF id:inbox ag-Grid-AutoColumn:"Inbox" type:"folder"
+            · └── incoming LEAF id:incoming ag-Grid-AutoColumn:"Incoming" type:"file"
+        `);
+
+        const sourceRowId = 'incoming';
+        const targetRowId = 'inbox';
+        expect(getRowHtmlElement(api, sourceRowId)).toBeTruthy();
+        expect(getRowHtmlElement(api, targetRowId)).toBeTruthy();
+
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start(sourceRowId);
+        await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('Incoming'));
+        await dispatcher.move(targetRowId, { yOffsetPercent: 0.45 });
+        await asyncSetTimeout(80);
+        await dispatcher.move(targetRowId, { center: true });
+
+        if (suppressMoveWhenRowDragging) {
+            await waitFor(() => {
+                const indicator = api.getRowDropPositionIndicator();
+                expect(indicator.dropIndicatorPosition).toBe('inside');
+                expect(indicator.row?.id).toBe('inbox');
+            });
+        }
+
+        await dispatcher.finish();
+        await asyncSetTimeout(0);
+
+        const dropInfo = dispatcher.rowDragEndEvents[0]?.rowsDrop;
+
+        const finalRows = new GridRows(api, 'insert promote default after');
+        await finalRows.check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ root GROUP id:root ag-Grid-AutoColumn:"Root" type:"folder"
+            · └─┬ inbox GROUP id:inbox ag-Grid-AutoColumn:"Inbox" type:"folder"
+            · · └── incoming LEAF id:incoming ag-Grid-AutoColumn:"Incoming" type:"file"
+        `);
+
+        expect(api.getRowNode('incoming')?.parent?.id).toBe('inbox');
+        expect(api.getRowNode('inbox')?.childrenAfterSort?.some((node) => node.id === 'incoming')).toBe(true);
+        expect(dropInfo?.newParent?.id ?? dropInfo?.overNode?.id).toBe('inbox');
+        expect(dropInfo?.position).toBe('inside');
     });
 });
