@@ -76,10 +76,14 @@ export class PinnedRows {
         const { sortSvc, rowNodeSorter, gos } = this.beans;
         const sortOptions = sortSvc?.getSortOptions() ?? [];
         // first remove the grand total row so it doesn't get sorted
-        const grandTotalNode = _removeGrandTotalRow(this.order);
+        const order = this.order;
+        const grandTotalNode = _removeGrandTotalRow(order);
         // pre-sort by existing row-index otherwise we'll fall back to order in which rows are pinned
-        this.order.sort((a, b) => (a.pinnedSibling?.rowIndex ?? 0) - (b.pinnedSibling?.rowIndex ?? 0));
-        this.order = rowNodeSorter?.doFullSort(this.order, sortOptions) ?? this.order;
+        order.sort(
+            (a, b) =>
+                rowNodeSorter?.compareRowNodes(sortOptions, a, b) ||
+                (a.pinnedSibling?.rowIndex ?? 0) - (b.pinnedSibling?.rowIndex ?? 0)
+        );
         // post-sort re-insert the grand total row in the correct place
         if (!grandTotalNode) {
             return;

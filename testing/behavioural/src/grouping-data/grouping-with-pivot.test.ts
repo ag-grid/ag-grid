@@ -230,6 +230,68 @@ describe('ag-grid grouping with pivot', () => {
         `);
     });
 
+    test('delta sorting reorders pivot groups when value columns change', async () => {
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                { field: 'region', rowGroup: true, hide: true },
+                { field: 'year', pivot: true, hide: true },
+                { field: 'sales', aggFunc: 'sum', hide: true },
+            ],
+            pivotMode: true,
+            deltaSort: true,
+            groupDefaultExpanded: -1,
+            getRowId: ({ data }) => data.id,
+        };
+
+        const api = gridsManager.createGrid('pivotDeltaSort', gridOptions);
+
+        const rowData = [
+            { id: 'na-2020', region: 'North America', year: 2020, sales: 1000 },
+            { id: 'na-2021', region: 'North America', year: 2021, sales: 1100 },
+            { id: 'eu-2020', region: 'Europe', year: 2020, sales: 900 },
+            { id: 'eu-2021', region: 'Europe', year: 2021, sales: 950 },
+            { id: 'asia-2020', region: 'Asia', year: 2020, sales: 800 },
+            { id: 'asia-2021', region: 'Asia', year: 2021, sales: 700 },
+        ];
+
+        const rowById = Object.fromEntries(rowData.map((row) => [row.id, row])) as Record<
+            string,
+            (typeof rowData)[number]
+        >;
+
+        applyTransactionChecked(api, { add: rowData });
+
+        api.applyColumnState({
+            state: [{ colId: 'pivot_year_2021_sales', sort: 'desc' }],
+            defaultState: { sort: null },
+        });
+
+        const gridRowsOptions: GridRowsOptions = {
+            forcedColumns: ['ag-Grid-AutoColumn', 'pivot_year_2020_sales', 'pivot_year_2021_sales'],
+            printHiddenRows: false,
+        };
+
+        await new GridRows(api, 'pivot delta sort initial', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID pivot_year_2020_sales:2700 pivot_year_2021_sales:2750
+            ├── LEAF_GROUP collapsed id:"row-group-region-North America" ag-Grid-AutoColumn:"North America" pivot_year_2020_sales:1000 pivot_year_2021_sales:1100
+            ├── LEAF_GROUP collapsed id:row-group-region-Europe ag-Grid-AutoColumn:"Europe" pivot_year_2020_sales:900 pivot_year_2021_sales:950
+            └── LEAF_GROUP collapsed id:row-group-region-Asia ag-Grid-AutoColumn:"Asia" pivot_year_2020_sales:800 pivot_year_2021_sales:700
+        `);
+
+        const updateRow = (id: string, sales: number) => ({ ...rowById[id], sales });
+
+        applyTransactionChecked(api, {
+            update: [updateRow('eu-2021', 1500), updateRow('na-2021', 600)],
+        });
+
+        await new GridRows(api, 'pivot delta sort updated', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID pivot_year_2020_sales:2700 pivot_year_2021_sales:2800
+            ├── LEAF_GROUP collapsed id:row-group-region-Europe ag-Grid-AutoColumn:"Europe" pivot_year_2020_sales:900 pivot_year_2021_sales:1500
+            ├── LEAF_GROUP collapsed id:row-group-region-Asia ag-Grid-AutoColumn:"Asia" pivot_year_2020_sales:800 pivot_year_2021_sales:700
+            └── LEAF_GROUP collapsed id:"row-group-region-North America" ag-Grid-AutoColumn:"North America" pivot_year_2020_sales:1000 pivot_year_2021_sales:600
+        `);
+    });
+
     test('pivot with data changes affecting aggregations', async () => {
         const gridOptions: GridOptions = {
             columnDefs: [
