@@ -1,6 +1,6 @@
 'use client';
 
-import { StrictMode, useCallback, useMemo, useState } from 'react';
+import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import type {

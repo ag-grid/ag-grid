@@ -109,20 +109,22 @@ const GridExample = () => {
     }, []);
 
     return (
-        <div style={containerStyle}>
-            <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                <div style={gridStyle}>
-                    <AgGridReact
-                        ref={gridRef}
-                        rowData={rowData}
-                        columnDefs={columnDefs}
-                        defaultColDef={defaultColDef}
-                        sideBar={'filters'}
-                        onFirstDataRendered={onFirstDataRendered}
-                    />
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                    <div style={gridStyle}>
+                        <AgGridReact
+                            ref={gridRef}
+                            rowData={rowData}
+                            columnDefs={columnDefs}
+                            defaultColDef={defaultColDef}
+                            sideBar={'filters'}
+                            onFirstDataRendered={onFirstDataRendered}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 
