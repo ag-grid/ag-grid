@@ -473,6 +473,42 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
         await dispatcher.finish();
     });
 
+    test('rowDragInsertDelay skips expanded group targets', async () => {
+        const gridOptions: GridOptions = {
+            animateRows: true,
+            columnDefs: [
+                { field: 'group', rowGroup: true, hide: true },
+                { field: 'value', rowDrag: true },
+            ],
+            autoGroupColumnDef: { headerName: 'Group' },
+            rowData: [
+                { id: '1', group: 'A', value: 'A1' },
+                { id: '2', group: 'A', value: 'A2' },
+                { id: '3', group: 'B', value: 'B1' },
+            ],
+            rowDragManaged: true,
+            suppressMoveWhenRowDragging,
+            refreshAfterGroupEdit: true,
+            rowDragInsertDelay: 10000,
+            groupDefaultExpanded: -1,
+            getRowId: (params) => params.data.id,
+        };
+
+        const api = gridsManager.createGrid('row-group-edit-insert-delay-expanded', gridOptions);
+
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start('2');
+        await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('A2'));
+        await dispatcher.move('row-group-group-B', { center: true });
+        await dispatcher.finish();
+        await asyncSetTimeout(0);
+
+        const dropInfo = dispatcher.rowDragEndEvents[0]?.rowsDrop;
+        expect(dropInfo?.position).toBe('above');
+        expect(dropInfo?.newParent?.id).toBe('row-group-group-B');
+        expect(api.getRowNode('2')?.data.group).toBe('B');
+    });
+
     test.each([0, -0.9, 0.9] as const)('moves a leaf in collapsed sibling group immediately y=%f', async (y) => {
         const gridOptions: GridOptions = {
             animateRows: true,

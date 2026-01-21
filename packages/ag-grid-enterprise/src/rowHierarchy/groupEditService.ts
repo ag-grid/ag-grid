@@ -116,11 +116,13 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         }
 
         const sourceLevel = rowNode.group ? rowNode.level : currentParent.level ?? -1;
-        const targetLevel = target
-            ? target.group
-                ? target.level
-                : target.parent?.level ?? -1
-            : comparisonParent?.level ?? -1;
+
+        let targetLevel = -1;
+        if (target) {
+            targetLevel = target.group ? target.level : target.parent?.level ?? -1;
+        } else if (comparisonParent) {
+            targetLevel = comparisonParent.level;
+        }
 
         if (sourceLevel >= 0 && targetLevel >= 0 && targetLevel !== sourceLevel) {
             return false;

@@ -335,4 +335,48 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
         expect(dropInfo?.newParent?.id ?? dropInfo?.overNode?.id).toBe('inbox');
         expect(dropInfo?.position).toBe('inside');
     });
+
+    test('rowDragInsertDelay skips already expanded groups', async () => {
+        const rowData = [
+            {
+                id: 'root',
+                name: 'Root',
+                type: 'folder',
+                children: [
+                    {
+                        id: 'alpha',
+                        name: 'Alpha',
+                        type: 'folder',
+                        children: [{ id: 'alpha-item', name: 'Alpha Item', type: 'file', children: [] }],
+                    },
+                    {
+                        id: 'beta',
+                        name: 'Beta',
+                        type: 'folder',
+                        children: [{ id: 'beta-item', name: 'Beta Item', type: 'file', children: [] }],
+                    },
+                ],
+            },
+        ];
+
+        const api = createGrid('tree-managed-insert-expanded', rowData, {
+            rowDragInsertDelay: 10000,
+            groupDefaultExpanded: -1,
+        });
+
+        await asyncSetTimeout(0);
+        expect(api.getRowNode('beta')?.expanded).toBe(true);
+
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start('alpha-item');
+        await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('Alpha Item'));
+        await dispatcher.move('beta', { center: true });
+        await dispatcher.finish();
+        await asyncSetTimeout(0);
+
+        const dropInfo = dispatcher.rowDragEndEvents[0]?.rowsDrop;
+        expect(dropInfo?.position).toBe('above');
+        expect(dropInfo?.newParent?.id).toBe('beta');
+        expect(api.getRowNode('alpha-item')?.parent?.id).toBe('beta');
+    });
 });
