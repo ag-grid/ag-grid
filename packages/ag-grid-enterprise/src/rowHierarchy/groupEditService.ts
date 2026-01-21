@@ -150,8 +150,7 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         const rowModel = this.beans.rowModel;
 
         const canStartGroup = this.canStartGroup(target, treeData);
-
-        this.updateDropTarget(canStartGroup ? target : null, fromNudge, rowsDrop);
+        this.updateDropTarget(rowsDrop, fromNudge, canStartGroup);
 
         const lastRowIndex = this.beans.pageBounds?.getLastRow?.() ?? rowModel.getRowCount() - 1;
         if (canSetParent) {
@@ -165,7 +164,7 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
                 newParent = target?.parent ?? rootNode;
             }
 
-            if (!fromNudge && target && canStartGroup) {
+            if (!fromNudge && target && canStartGroup && !(target.group && target.expanded)) {
                 this.startDropGroupDelay(target);
             }
         } else if (!fromNudge && target && canStartGroup) {
@@ -205,7 +204,9 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         }
     }
 
-    private updateDropTarget(target: IRowNode | null, canExpand: boolean, rowsDrop: _RowsDrop): void {
+    private updateDropTarget(rowsDrop: _RowsDrop, fromNudge: boolean, canStartGroup: boolean): void {
+        const target = canStartGroup ? rowsDrop.target : null;
+
         if (this.dropGroupTarget && this.dropGroupTarget !== target) {
             this.resetDragGroup();
         }
@@ -214,7 +215,7 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
             return;
         }
 
-        if (canExpand && this.dropGroupThrottled && !target.expanded && target.isExpandable?.()) {
+        if (fromNudge && this.dropGroupThrottled && !target.expanded && target.isExpandable?.()) {
             target.setExpanded(true, undefined, true);
         }
 
@@ -401,11 +402,11 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
 
     private canStartGroup(target: IRowNode | null, treeData: boolean): boolean {
         if (!target || target.level < 0 || target.footer || target.detail) {
-            return false; // cannot start group on root, footers, or detail rows
+            return false; // cannot group into root, footer, or detail rows
         }
 
         if (target.group) {
-            return !target.expanded; // can start if group is collapsed to expand it
+            return true;
         }
 
         return treeData; // in tree data any leaf can become a group

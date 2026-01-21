@@ -405,6 +405,33 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
 
         const api = gridsManager.createGrid('row-group-edit-basic', gridOptions);
 
+        let gridRows = new GridRows(api, 'initial');
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A"
+            │ ├── LEAF id:1 group:"A" value:"A1"
+            │ └── LEAF id:2 group:"A" value:"A2"
+            └─┬ LEAF_GROUP id:row-group-group-B ag-Grid-AutoColumn:"B"
+            · └── LEAF id:3 group:"B" value:"B1"
+        `);
+
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start('2');
+        await dispatcher.move('3', { yOffsetPercent: 0.1 });
+        await dispatcher.finish();
+
+        gridRows = new GridRows(api, 'after move');
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A"
+            │ └── LEAF id:1 group:"A" value:"A1"
+            └─┬ LEAF_GROUP id:row-group-group-B ag-Grid-AutoColumn:"B"
+            · ├── LEAF id:2 group:"B" value:"A2"
+            · └── LEAF id:3 group:"B" value:"B1"
+        `);
+        expect(api.getRowNode('2')?.data.group).toBe('B');
+    });
+
     test('rowDragInsertDelay does not promote leaf targets in row grouping', async () => {
         const gridOptions: GridOptions = {
             animateRows: true,
@@ -444,33 +471,6 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
         }
 
         await dispatcher.finish();
-    });
-
-        let gridRows = new GridRows(api, 'initial');
-        await gridRows.check(`
-            ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A"
-            │ ├── LEAF id:1 group:"A" value:"A1"
-            │ └── LEAF id:2 group:"A" value:"A2"
-            └─┬ LEAF_GROUP id:row-group-group-B ag-Grid-AutoColumn:"B"
-            · └── LEAF id:3 group:"B" value:"B1"
-        `);
-
-        const dispatcher = new RowDragDispatcher({ api });
-        await dispatcher.start('2');
-        await dispatcher.move('3', { yOffsetPercent: 0.1 });
-        await dispatcher.finish();
-
-        gridRows = new GridRows(api, 'after move');
-        await gridRows.check(`
-            ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A"
-            │ └── LEAF id:1 group:"A" value:"A1"
-            └─┬ LEAF_GROUP id:row-group-group-B ag-Grid-AutoColumn:"B"
-            · ├── LEAF id:2 group:"B" value:"A2"
-            · └── LEAF id:3 group:"B" value:"B1"
-        `);
-        expect(api.getRowNode('2')?.data.group).toBe('B');
     });
 
     test.each([0, -0.9, 0.9] as const)('moves a leaf in collapsed sibling group immediately y=%f', async (y) => {
