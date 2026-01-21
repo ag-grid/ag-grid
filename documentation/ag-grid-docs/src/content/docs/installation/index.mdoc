@@ -87,24 +87,37 @@ You can test AG Grid Enterprise locally without a licence. To test in production
 ### Registering Modules
 {% /if %}
 
-Register the `AllCommunityModule` to access all Community features:
+{% if isFramework("react") %}
+Use `AgGridProvider` to provide modules to all grid instances. Provide `AllCommunityModule` to access all Community features or `AllEnterpriseModule` to access all Community ***and*** Enterprise features:
+
+```jsx
+import { AllCommunityModule } from 'ag-grid-community';
+// import { AllEnterpriseModule } from 'ag-grid-enterprise';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
+
+function App() {
+    return (
+        <AgGridProvider modules={[AllCommunityModule]}>
+            <AgGridReact /* ... props */ />
+        </AgGridProvider>
+    );
+}
+```
+
+{% /if %}
+
+{% if isFramework("javascript", "angular", "vue") %}
+Register the `AllCommunityModule` to access all Community features or `AllEnterpriseModule` to access all Community ***and*** Enterprise features:
 
 ```js
-import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community'; 
+import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
+// import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 // Register all Community features
 ModuleRegistry.registerModules([AllCommunityModule]);
 ```
 
-Register the `AllEnterpriseBundle` to access all Community ***and*** Enterprise features:
-
-```js
-import { ModuleRegistry } from 'ag-grid-community'; 
-import { AllEnterpriseModule } from 'ag-grid-enterprise';
-
-// Register all Community and Enterprise features
-ModuleRegistry.registerModules([AllEnterpriseModule]);
-```
+{% /if %}
 
 {% note %}
 To minimize bundle size, only register the modules you want to use. See the [Selecting Modules](./modules/) docs for more information.
@@ -119,10 +132,10 @@ To minimize bundle size, only register the modules you want to use. See the [Sel
 {% /if %}
 
 {% if isFramework("react") %}
-Import the `AgGridReact` component from the `ag-grid-react` package:
+Import `AgGridProvider` and `AgGridReact` from the `ag-grid-react` package:
 
 ```js
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 ```
 {% /if %}
 
