@@ -8,9 +8,9 @@ import type { ClientSideRowModelStage } from '../interfaces/iClientSideRowModel'
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowNodeSortStage } from '../interfaces/iRowNodeStage';
 import type { SortOption } from '../interfaces/iSortOption';
-import type { RowNodeSorter } from '../sort/rowNodeSorter';
 import type { ChangedPath } from '../utils/changedPath';
 import type { ChangedRowNodes } from './changedRowNodes';
+import { doDeltaSort } from './deltaSortUtils';
 
 export const updateRowNodeAfterSort = (rowNode: RowNode): void => {
     const childrenAfterSort = rowNode.childrenAfterSort;
@@ -156,92 +156,6 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage 
         return false;
     }
 }
-
-interface RowNodeWithIndex {
-    index: number;
-    node: RowNode;
-}
-
-const doDeltaSort = (
-    rowNodeSorter: RowNodeSorter,
-    rowNode: RowNode,
-    changedRowNodes: ChangedRowNodes,
-    changedPath: ChangedPath | undefined,
-    sortOptions: SortOption[]
-): RowNode[] => {
-    const unsortedRows = rowNode.childrenAfterAggFilter!;
-    const oldSortedRows = rowNode.childrenAfterSort;
-    if (!oldSortedRows) {
-        return rowNodeSorter.doFullSortInPlace(unsortedRows.slice(), sortOptions);
-    }
-
-    const touchedRows: RowNodeWithIndex[] = [];
-    const untouchedRows: RowNodeWithIndex[] = [];
-
-    const { updates, adds } = changedRowNodes;
-    for (let i = 0, len = unsortedRows.length; i < len; ++i) {
-        const node = unsortedRows[i];
-        if (updates.has(node) || adds.has(node) || (changedPath && !changedPath.canSkip(node))) {
-            touchedRows.push({ index: i, node });
-        } else {
-            untouchedRows.push({ index: i, node });
-        }
-    }
-
-    touchedRows.sort((a, b) => rowNodeSorter.compareRowNodes(sortOptions, a.node, b.node));
-
-    return mergeSortedArrays(rowNodeSorter, sortOptions, touchedRows, untouchedRows);
-};
-
-/** Merge two sorted arrays into each other. See https://en.wikipedia.org/wiki/Merge_algorithm */
-const mergeSortedArrays = (
-    rowNodeSorter: RowNodeSorter,
-    sortOptions: SortOption[],
-    arr1: RowNodeWithIndex[],
-    arr2: RowNodeWithIndex[]
-): RowNode[] => {
-    let i = 0;
-    let j = 0;
-    const arr1Length = arr1.length;
-    const arr2Length = arr2.length;
-
-    const result = new Array<RowNode>(arr1Length + arr2Length);
-    let k = 0;
-
-    // Traverse both arrays, adding them in order
-    while (i < arr1Length && j < arr2Length) {
-        const a = arr1[i];
-        const b = arr2[j];
-
-        const c = rowNodeSorter.compareRowNodes(sortOptions, a.node, b.node) || a.index - b.index;
-
-        if (c < 0) {
-            result[k] = a.node;
-            ++k;
-            ++i;
-        } else {
-            result[k] = b.node;
-            ++k;
-            ++j;
-        }
-    }
-
-    // add remaining from arr1
-    while (i < arr1Length) {
-        result[k] = arr1[i].node;
-        ++k;
-        ++i;
-    }
-
-    // add remaining from arr2
-    while (j < arr2Length) {
-        result[k] = arr2[j].node;
-        ++k;
-        ++j;
-    }
-
-    return result;
-};
 
 /**
  * O(n) merge preserving previous visual order and appending new items in current order.

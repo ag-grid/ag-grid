@@ -400,6 +400,217 @@ describe('Sorting', () => {
         `);
     });
 
+    test('delta sort preserves prior order for untouched rows', async () => {
+        const api = gridMgr.createGrid('deltaSortUntouchedOrder', {
+            columnDefs: [{ field: 'value' }],
+            deltaSort: true,
+            rowData: [
+                { id: 'delta-a', value: 2 },
+                { id: 'delta-b', value: 1 },
+                { id: 'delta-c', value: 3 },
+                { id: 'delta-d', value: 4 },
+            ],
+            getRowId: (params) => params.data?.id,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+
+        await new GridRows(api, 'initial sort').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:delta-b value:1
+            ├── LEAF id:delta-a value:2
+            ├── LEAF id:delta-c value:3
+            └── LEAF id:delta-d value:4
+        `);
+
+        applyTransactionChecked(api, { update: [{ id: 'delta-c', value: 0 }] });
+
+        await new GridRows(api, 'delta sort single update').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:delta-c value:0
+            ├── LEAF id:delta-b value:1
+            ├── LEAF id:delta-a value:2
+            └── LEAF id:delta-d value:4
+        `);
+    });
+
+    test('delta sort handles adds and removes', async () => {
+        const api = gridMgr.createGrid('deltaSortAddsRemoves', {
+            columnDefs: [{ field: 'value' }],
+            deltaSort: true,
+            rowData: [
+                { id: 'delta-1', value: 1 },
+                { id: 'delta-2', value: 2 },
+                { id: 'delta-3', value: 3 },
+                { id: 'delta-4', value: 4 },
+                { id: 'delta-6', value: 6 },
+                { id: 'delta-7', value: 7 },
+            ],
+            getRowId: (params) => params.data?.id,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+
+        applyTransactionChecked(api, {
+            remove: [{ id: 'delta-2' }, { id: 'delta-7' }],
+            update: [{ id: 'delta-3', value: 0 }],
+            add: [{ id: 'delta-5', value: 2.5 }],
+        });
+
+        await new GridRows(api, 'delta sort adds removes').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:delta-3 value:0
+            ├── LEAF id:delta-1 value:1
+            ├── LEAF id:delta-5 value:2.5
+            ├── LEAF id:delta-4 value:4
+            └── LEAF id:delta-6 value:6
+        `);
+    });
+
+    test('delta sort keeps stable order on equal values with new rows', async () => {
+        const api = gridMgr.createGrid('deltaSortEqualValues', {
+            columnDefs: [{ field: 'value' }],
+            deltaSort: true,
+            rowData: [
+                { id: 'delta-e1', value: 1 },
+                { id: 'delta-e2', value: 1 },
+                { id: 'delta-e3', value: 1 },
+                { id: 'delta-e4', value: 1 },
+                { id: 'delta-e5', value: 1 },
+            ],
+            getRowId: (params) => params.data?.id,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+
+        applyTransactionChecked(api, {
+            update: [{ id: 'delta-e2', value: 1 }],
+            add: [{ id: 'delta-e6', value: 1 }],
+        });
+
+        await new GridRows(api, 'delta sort equal values').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:delta-e1 value:1
+            ├── LEAF id:delta-e2 value:1
+            ├── LEAF id:delta-e3 value:1
+            ├── LEAF id:delta-e4 value:1
+            ├── LEAF id:delta-e5 value:1
+            └── LEAF id:delta-e6 value:1
+        `);
+    });
+
+    test('delta sort handles removes without updates', async () => {
+        const api = gridMgr.createGrid('deltaSortRemovesOnly', {
+            columnDefs: [{ field: 'value' }],
+            deltaSort: true,
+            rowData: [
+                { id: 'delta-r1', value: 1 },
+                { id: 'delta-r2', value: 2 },
+                { id: 'delta-r3', value: 3 },
+                { id: 'delta-r4', value: 4 },
+                { id: 'delta-r5', value: 5 },
+                { id: 'delta-r6', value: 6 },
+            ],
+            getRowId: (params) => params.data?.id,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+
+        applyTransactionChecked(api, { remove: [{ id: 'delta-r2' }, { id: 'delta-r5' }] });
+
+        await new GridRows(api, 'delta sort removes only').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:delta-r1 value:1
+            ├── LEAF id:delta-r3 value:3
+            ├── LEAF id:delta-r4 value:4
+            └── LEAF id:delta-r6 value:6
+        `);
+    });
+
+    test('delta sort handles adds without updates', async () => {
+        const api = gridMgr.createGrid('deltaSortAddsOnly', {
+            columnDefs: [{ field: 'value' }],
+            deltaSort: true,
+            rowData: [
+                { id: 'delta-a1', value: 1 },
+                { id: 'delta-a2', value: 3 },
+                { id: 'delta-a3', value: 5 },
+            ],
+            getRowId: (params) => params.data?.id,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+
+        applyTransactionChecked(api, {
+            add: [
+                { id: 'delta-a4', value: 2 },
+                { id: 'delta-a5', value: 4 },
+            ],
+        });
+
+        await new GridRows(api, 'delta sort adds only').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:delta-a1 value:1
+            ├── LEAF id:delta-a4 value:2
+            ├── LEAF id:delta-a2 value:3
+            ├── LEAF id:delta-a5 value:4
+            └── LEAF id:delta-a3 value:5
+        `);
+    });
+
+    test('delta sort short-circuits when no changes', async () => {
+        const api = gridMgr.createGrid('deltaSortNoChanges', {
+            columnDefs: [{ field: 'value' }],
+            deltaSort: true,
+            rowData: [
+                { id: 'delta-n1', value: 1 },
+                { id: 'delta-n2', value: 2 },
+                { id: 'delta-n3', value: 3 },
+            ],
+            getRowId: (params) => params.data?.id,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+
+        applyTransactionChecked(api, { add: [], remove: [], update: [] });
+
+        await new GridRows(api, 'delta sort no changes').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:delta-n1 value:1
+            ├── LEAF id:delta-n2 value:2
+            └── LEAF id:delta-n3 value:3
+        `);
+    });
+
+    test('delta sort handles adds and removes without updates', async () => {
+        const api = gridMgr.createGrid('deltaSortAddsRemovesNoUpdates', {
+            columnDefs: [{ field: 'value' }],
+            deltaSort: true,
+            rowData: [
+                { id: 'delta-ar1', value: 1 },
+                { id: 'delta-ar2', value: 2 },
+                { id: 'delta-ar3', value: 3 },
+                { id: 'delta-ar4', value: 4 },
+            ],
+            getRowId: (params) => params.data?.id,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+
+        applyTransactionChecked(api, {
+            remove: [{ id: 'delta-ar2' }],
+            add: [{ id: 'delta-ar5', value: 2.5 }],
+        });
+
+        await new GridRows(api, 'delta sort adds removes no updates').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:delta-ar1 value:1
+            ├── LEAF id:delta-ar5 value:2.5
+            ├── LEAF id:delta-ar3 value:3
+            └── LEAF id:delta-ar4 value:4
+        `);
+    });
+
     test('absolute sort orders by magnitude', async () => {
         const api = gridMgr.createGrid('absoluteSort', {
             columnDefs: [{ field: 'amount', sortIndex: 0 }],
