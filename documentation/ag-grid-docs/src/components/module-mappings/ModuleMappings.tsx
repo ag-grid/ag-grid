@@ -38,7 +38,7 @@ ModuleRegistry.registerModules([
 
 export const ModuleMappings: FunctionComponent<Props> = ({ framework, modules }) => {
     const gridRef = useRef<AgGridReact>(null);
-    const moduleConfig = useModuleConfig(gridRef);
+    const moduleConfig = useModuleConfig(gridRef, framework);
     const { selectedDependenciesSnippet, setSelectedModules, bundleOption, rowModelOption } = moduleConfig;
 
     const rowData = useMemo(() => {
