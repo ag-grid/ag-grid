@@ -10,7 +10,7 @@ import type { IRowNodeSortStage } from '../interfaces/iRowNodeStage';
 import type { SortOption } from '../interfaces/iSortOption';
 import type { ChangedPath } from '../utils/changedPath';
 import type { ChangedRowNodes } from './changedRowNodes';
-import { doDeltaSort } from './deltaSortUtils';
+import { doDeltaSort } from './deltaSort';
 
 export const updateRowNodeAfterSort = (rowNode: RowNode): void => {
     const childrenAfterSort = rowNode.childrenAfterSort;
