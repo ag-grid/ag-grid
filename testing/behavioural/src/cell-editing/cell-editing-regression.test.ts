@@ -18,6 +18,7 @@ import {
     asyncSetTimeout,
     fakeElementAttribute,
     getAllRows,
+    getRowHtmlElement,
     waitForInput,
     waitForPopup,
 } from '../test-utils';
@@ -155,6 +156,9 @@ describe('Cell Editing Regression', () => {
         const makeCellRow0 = getByTestId(gridDiv, agTestIdFor.cell('0', 'make'));
         await userEvent.dblClick(makeCellRow0);
         await waitForInput(gridDiv, makeCellRow0, { popup: false });
+        expect(getRowHtmlElement(api, '0')?.classList.contains('ag-row-editing')).toBe(true);
+        expect(getRowHtmlElement(api, '1')?.classList.contains('ag-row-editing')).toBe(false);
+        expect(api.isEditing({ rowIndex: 0, rowPinned: undefined, column: api.getColumn('model3')! })).toBe(true);
 
         await userEvent.keyboard('{Tab}{Tab}{Tab}');
         const makeCellRow1 = getByTestId(gridDiv, agTestIdFor.cell('1', 'make'));
@@ -165,6 +169,10 @@ describe('Cell Editing Regression', () => {
             expect(editingCells.length).toBeGreaterThan(0);
             expect(editingCells.every((cell) => cell.rowIndex === 1)).toBe(true);
         });
+        expect(getRowHtmlElement(api, '0')?.classList.contains('ag-row-editing')).toBe(false);
+        expect(getRowHtmlElement(api, '1')?.classList.contains('ag-row-editing')).toBe(true);
+        expect(api.isEditing({ rowIndex: 0, rowPinned: undefined, column: api.getColumn('model3')! })).toBe(false);
+        expect(api.isEditing({ rowIndex: 1, rowPinned: undefined, column: api.getColumn('model3')! })).toBe(true);
 
         const emptyCellRow0 = getByTestId(gridDiv, agTestIdFor.cell('0', 'model3'));
         expect(emptyCellRow0.querySelector('input')).toBeNull();
@@ -189,6 +197,10 @@ describe('Cell Editing Regression', () => {
         const makeCellRow1 = getByTestId(gridDiv, agTestIdFor.cell('1', 'make'));
         await userEvent.dblClick(makeCellRow1);
         await waitForInput(gridDiv, makeCellRow1, { popup: false });
+        expect(getRowHtmlElement(api, '1')?.classList.contains('ag-row-editing')).toBe(true);
+        expect(getRowHtmlElement(api, '0')?.classList.contains('ag-row-editing')).toBe(false);
+        expect(api.isEditing({ rowIndex: 0, rowPinned: undefined, column: api.getColumn('model3')! })).toBe(false);
+        expect(api.isEditing({ rowIndex: 1, rowPinned: undefined, column: api.getColumn('model3')! })).toBe(true);
 
         await userEvent.keyboard('{Shift>}{Tab}{/Shift}');
         const model3CellRow0 = getByTestId(gridDiv, agTestIdFor.cell('0', 'model3'));
@@ -199,6 +211,10 @@ describe('Cell Editing Regression', () => {
             expect(editingCells.length).toBeGreaterThan(0);
             expect(editingCells.every((cell) => cell.rowIndex === 0)).toBe(true);
         });
+        expect(getRowHtmlElement(api, '0')?.classList.contains('ag-row-editing')).toBe(true);
+        expect(getRowHtmlElement(api, '1')?.classList.contains('ag-row-editing')).toBe(false);
+        expect(api.isEditing({ rowIndex: 0, rowPinned: undefined, column: api.getColumn('model3')! })).toBe(true);
+        expect(api.isEditing({ rowIndex: 1, rowPinned: undefined, column: api.getColumn('model3')! })).toBe(false);
 
         const emptyCellRow1 = getByTestId(gridDiv, agTestIdFor.cell('1', 'model3'));
         expect(emptyCellRow1.querySelector('input')).toBeNull();

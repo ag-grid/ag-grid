@@ -471,7 +471,7 @@ export function _destroyEditor(
     }
 
     if (_hasValidationRules(beans)) {
-        const errorMessages = cellEditor?.getValidationErrors?.();
+        const errorMessages = edit && cellEditor?.getValidationErrors?.();
         const cellValidationModel = editModelSvc?.getCellValidationModel();
 
         if (errorMessages?.length) {
@@ -481,7 +481,9 @@ export function _destroyEditor(
         }
     }
 
-    editModelSvc?.setEdit(position, { state: 'changed' });
+    if (edit) {
+        editModelSvc?.setEdit(position, { state: 'changed' });
+    }
 
     comp?.setEditDetails(); // passing nothing stops editing
     comp?.refreshEditStyles(false, false);
