@@ -1,0 +1,21 @@
+---
+title: "Formula Editor Component"
+enterprise: true
+---
+The Formula Cell Editor is the default editor for columns with `allowFormula: true`. It tokenises cell references, highlights ranges, and provides function autocomplete while you type.
+
+## Default Formula Editor
+
+If a column enables formulas and does not specify a `cellEditor`, the grid automatically uses the Formula Cell Editor.
+
+{% gridExampleRunner title="Formula Editor" name="formula-editor-component" exampleHeight=320 /%}
+
+{% note %}
+Range highlights and range handle editing require `cellSelection` to be enabled. Without it, the editor still works but range highlights and handles are not shown.
+{% /note %}
+
+## Disabling Formulas Cell Editor
+
+Providing a `cellEditor` opts the column out of the Formula Cell Editor. Formulas still evaluate, but range highlighting, handles, and function autocomplete are disabled because a different editor is in use.
+
+{% gridExampleRunner title="Formula Editor Disabled" name="formula-editor-component-disabled" exampleHeight=320 /%}

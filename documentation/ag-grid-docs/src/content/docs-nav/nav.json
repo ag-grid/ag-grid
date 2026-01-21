@@ -713,7 +713,15 @@
                             "type": "item",
                             "title": "Formulas",
                             "path": "formulas",
-                            "isEnterprise": true
+                            "isEnterprise": true,
+                            "children": [
+                                {
+                                    "type": "item",
+                                    "title": "Formula Editor",
+                                    "path": "formula-editor-component",
+                                    "isEnterprise": true
+                                }
+                            ]
                         },
                         {
                             "type": "item",

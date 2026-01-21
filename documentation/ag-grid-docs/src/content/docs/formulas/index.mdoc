@@ -8,8 +8,6 @@ Formula strings can be provided to cells in the grid, allowing for dynamic calcu
 
 To enable formulas, set the column property `allowFormula = true` on one or more columns and ensure that your rows have [Row IDs](./row-ids/#row-ids). In the example below, the values in columns Subtotal, Tax and Total are computed using formulas which can be modified by the end-user.
 
-{% gridExampleRunner title="Formulas" name="formulas" exampleHeight=390 /%}
-
 ```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
@@ -20,12 +18,31 @@ const gridOptions = {
         { field: 'tax', allowFormula: true },
         { field: 'total', allowFormula: true },
     ],
+    cellSelection: {
+        handle: {
+            mode: 'fill',
+        },
+    },
     getRowId: (params) => String(params.data.rid),
 }
 ```
 
-When using formulas, the following features are enabled by default:
-- [Row Numbers](./row-numbers/)
+{% gridExampleRunner title="Formulas" name="formulas" exampleHeight=390 /%}
+
+
+## Formula Editor Component
+
+The Formula Cell Editor provides range highlighting, range handles, and function autocomplete while you edit formula-enabled 
+cells. It appears automatically for columns with `allowFormula: true` unless you supply a `cellEditor`. See 
+[Formula Editor Component](./formula-editor-component/) for behaviour details and how to disable it.
+
+Range highlights and range handle editing require `cellSelection` to be enabled.
+
+## Feature Interactions
+
+When using formulas, the following feature integrations apply:
+- [Fill Handle](./cell-selection-fill-handle/): Dragging to fill from a formula offsets relative references (for example `=B1+C2` becomes `=B2+C3` on the next row). Absolute references (`$A$1`, `A$1`, `$A1`) remain fixed.
+- [Row Numbers](./row-numbers/): Enabled by default.
 
 Certain features do not work in conjunction with formulas:
 - [Cell Expressions](./cell-expressions/#cell-expressions)
@@ -51,14 +68,12 @@ Constants can be numbers (e.g. `3.14`, `42`, `-7`), strings (e.g. `"Hello"`, `"W
 
 ### Cell references
 
-Cell references are used to refer to the value of another cell in the grid and are symbolised by an alphabetical column identifier followed by a numerical row identifier.
+Cell references are used to refer to the value of another cell in the grid and are symbolised by an alphabetical column identifier followed by a numerical row identifier (e.g. `A1`).
 After the 26th column, the columns continue with two letters (e.g. AA, AB, AC, etc.). Rows are numbered starting from 1.
 
 {% note %}
 Column letters are assigned for every column in the grid, including columns that are hidden or not displayed due to column groups being collapsed.
 {% /note %}
-
-Formulas can reference other cells using their column letter and row number. Columns are labelled alphabetically (A, B, C, ..., Z, AA, AB, etc.), and rows are numbered starting from 1.
 
 Examples of cell references:
 - `=A1` refers to the cell in column A, row 1.
@@ -71,13 +86,12 @@ To instead always refer to the same position, use absolute references by prefixi
 - `=$A1` always refers to column A, but the row can change.
 
 #### Long-Form References
-When saving cell references, the grid converts these into a long hand format using column and row IDs to ensure that changes in the source data allow the grid to continue to refer to the correct cells when the data changes without
-the grid being open.
+When saving cell references, the grid converts these into a long-hand format using column and row IDs. This ensures the formula continues to refer to the correct cells even if rows or columns move while the grid is not open.
 
 For example, if the column with ID `athlete` is in column A, and the row with ID `a` is in row 1, then the formula `=A1` becomes `=REF(COLUMN('athlete'), ROW('a'))`.
-When this is a static reference, for example $A$1, the long hand format uses A and 1 in place of IDs, but adds a true to indicate the value is absolute (e.g `=$A$1` becomes `=REF(COLUMN('a', true), ROW('1', true))`).
+When this is a static reference, for example `$A$1`, the long-hand format uses A and 1 in place of IDs but adds `true` to indicate the value is absolute (e.g. `=$A$1` becomes `=REF(COLUMN('a', true), ROW('1', true))`).
 
-This long hand format can be used directly in your data source or application via a valueGetter, and will be converted to the short hand format when the user opens a cell editor.
+This long-hand format can be used directly in your data source or application via a `valueGetter`, and will be converted to the shorthand format when the user opens a cell editor.
 
 {% note %}
 As cell formulas are not immediately parsed when the grid opens, we suggest using the long hand format when providing formulas directly in your data source or application as any row positional changes may impact the relative cell when resolved.
@@ -267,7 +281,7 @@ Formulas can be stored outside of the grid's `rowData` by providing a `formulaDa
 
 The snippet and example below illustrate an example of storing formulae in a `Map` object, external to the grid. 
 
-In the example, the "Total" column contains editable formulas which are stored in an external `Map`. The contents of the map and the row data can be visualised with the provided buttons.
+In the example, the "Total" column contains editable formulas which are stored in an external `Map`. The contents of the map and the row data can be visualised with the provided buttons. This example intentionally omits `cellSelection` to show that formulas work without range highlights.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -297,7 +311,7 @@ const gridOptions = {
 
 {% gridExampleRunner title="Formula Data Source" name="formulas-formula-data-source" exampleHeight=440 /%}
 
-A user provided datasource should provide the following interface:
+A user-provided data source should provide the following interface:
 
 {% interfaceDocumentation interfaceName="FormulaDataSource" config={ "description": "" } /%}
 
@@ -367,3 +381,7 @@ When performing an [Excel Export](./excel-export), the grid will export the form
 | `COUNTA(arg1, arg2, ...)` | Returns the count of non-empty values among the arguments. |
 | `COUNTBLANK(arg1, arg2, ...)` | Returns the count of empty values among the arguments. |
 | `COUNTIF(range, criteria)` | Returns the count of values in the range that meet the criteria. |
+
+## Next Up
+
+Continue to the next section: [Formula Editor Component](./formula-editor-component/).
