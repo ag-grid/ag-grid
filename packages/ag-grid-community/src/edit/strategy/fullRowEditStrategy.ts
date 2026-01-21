@@ -6,7 +6,12 @@ import type { EditPosition, EditRowPosition, StartEditWithPositionParams } from 
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getCellCtrl, _getRowCtrl } from '../utils/controllers';
-import { _populateModelValidationErrors, _setupEditor, _sourceAndPendingDiffer } from '../utils/editors';
+import {
+    _destroyEditor,
+    _populateModelValidationErrors,
+    _setupEditor,
+    _sourceAndPendingDiffer,
+} from '../utils/editors';
 import type { EditValidationAction, EditValidationResult } from './baseEditStrategy';
 import { BaseEditStrategy } from './baseEditStrategy';
 
@@ -188,10 +193,39 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
     public override cleanupEditors(position: EditRowPosition = {}, includeEditing?: boolean): void {
         super.cleanupEditors(position, includeEditing);
+
         for (const rowNode of this.startedRows) {
             this.dispatchRowEvent({ rowNode }, 'rowEditingStopped');
+            this.destroyEditorsForRow(rowNode);
         }
         this.startedRows.length = 0;
+    }
+
+    /**
+     * Destroys all editors for a row that started full row editing, including editors
+     * that are not represented in the edit model (e.g. empty/unedited editors).
+     */
+    private destroyEditorsForRow(rowNode: IRowNode): void {
+        const rowCtrl = _getRowCtrl(this.beans, { rowNode });
+        if (!rowCtrl) {
+            return; // Row not rendered, no editors to destroy.
+        }
+
+        const destroyedColumns = new Set<AgColumn>();
+        for (const cellCtrl of rowCtrl.getAllCellCtrls()) {
+            const column = cellCtrl.column;
+            if (destroyedColumns.has(column)) {
+                continue; // Column editor already processed.
+            }
+            destroyedColumns.add(column);
+
+            if (!cellCtrl.comp?.getCellEditor()) {
+                continue; // No editor to destroy.
+            }
+
+            // Destroy every editor created for this row, including those without edit model entries.
+            _destroyEditor(this.beans, cellCtrl, undefined, cellCtrl);
+        }
     }
 
     // returns null if no navigation should be performed
