@@ -16,16 +16,7 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
     imports: [AgGridAngular],
     template: `
         <div style="width: 100%; height: 100%;">
-            <ag-grid-angular
-                style="width: 100%; height: 100%;"
-                [columnDefs]="gridOptions.columnDefs"
-                [rowData]="rowData()"
-                [defaultColDef]="gridOptions.defaultColDef"
-                [autoSizeStrategy]="gridOptions.autoSizeStrategy"
-                [enableFilterHandlers]="gridOptions.enableFilterHandlers"
-                [sideBar]="gridOptions.sideBar"
-                [icons]="gridOptions.icons"
-            />
+            <ag-grid-angular style="width: 100%; height: 100%;" [rowData]="rowData()" [gridOptions]="gridOptions" />
         </div>
     `,
 })

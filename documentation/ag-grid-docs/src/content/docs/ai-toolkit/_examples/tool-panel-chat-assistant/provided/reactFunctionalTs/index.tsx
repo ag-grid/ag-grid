@@ -19,16 +19,7 @@ const GridExample = () => {
 
     return (
         <div style={{ width: '100%', height: '100%' }}>
-            <AgGridReact<ITransaction>
-                ref={gridRef}
-                columnDefs={gridOptions.columnDefs}
-                rowData={rowData}
-                defaultColDef={gridOptions.defaultColDef}
-                autoSizeStrategy={gridOptions.autoSizeStrategy}
-                enableFilterHandlers={gridOptions.enableFilterHandlers}
-                sideBar={gridOptions.sideBar}
-                icons={gridOptions.icons}
-            />
+            <AgGridReact<ITransaction> ref={gridRef} rowData={rowData} gridOptions={gridOptions} />
         </div>
     );
 };

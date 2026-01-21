@@ -20,25 +20,15 @@ const App = {
 
         return {
             rowData,
-            columnDefs: gridOptions.columnDefs,
-            defaultColDef: gridOptions.defaultColDef,
-            autoSizeStrategy: gridOptions.autoSizeStrategy,
-            enableFilterHandlers: gridOptions.enableFilterHandlers,
-            sideBar: gridOptions.sideBar,
-            icons: gridOptions.icons,
+            gridOptions: gridOptions,
         };
     },
     template: `
         <div style="width: 100%; height: 100%;">
             <ag-grid-vue
                 style="width: 100%; height: 100%;"
-                :columnDefs="columnDefs"
                 :rowData="rowData"
-                :defaultColDef="defaultColDef"
-                :autoSizeStrategy="autoSizeStrategy"
-                :enableFilterHandlers="enableFilterHandlers"
-                :sideBar="sideBar"
-                :icons="icons"
+                :gridOptions="gridOptions"
             />
         </div>
     `,
