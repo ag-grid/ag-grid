@@ -161,20 +161,26 @@ const gridOptions = {
 {% metaTag tags=["aggridreact"] /%}
 <!-- Create React -->
 
-{% numberHeading number="2" title="Register Modules" level="h3" %}
+{% numberHeading number="2" title="Provide Modules" level="h3" %}
 
 
- Register the `AllCommunityModule` to access all Community features:
+ Pass the `AllCommunityModule` to the `AgGridProvider` to access all Community features:
 
 ```js
-import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community'; 
+import { AllCommunityModule } from 'ag-grid-community';
+import { AgGridProvider } from 'ag-grid-react';  
 
-// Register all Community features
-ModuleRegistry.registerModules([AllCommunityModule]);
+function App() {
+    return (
+        <AgGridProvider modules={[AllCommunityModule]}>
+            {/* Your AgGridReact components go here */}
+        </AgGridProvider>
+    );
+}
 ```
 
 {% note %}
-To minimize bundle size, only register the modules you want to use. See the [Modules](./modules/) docs for more information.
+To minimize bundle size, only provide the modules you want to use. See the [Modules](./modules/) docs for more information.
 {% /note %}
 {% /numberHeading %}
 
