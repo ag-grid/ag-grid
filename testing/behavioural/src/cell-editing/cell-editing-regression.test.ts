@@ -18,6 +18,7 @@ import {
     asyncSetTimeout,
     fakeElementAttribute,
     getAllRows,
+    getRowHtmlElement,
     waitForInput,
     waitForPopup,
 } from '../test-utils';
@@ -68,6 +69,155 @@ describe('Cell Editing Regression', () => {
             expect(inputElement).toHaveValue(expected as any);
             expect(valueFormatter).toHaveBeenCalled();
         });
+    });
+
+    test('full-row editing tab to next row starts editors when focusing read-only cell', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'readOnly', headerName: 'Read Only', editable: false },
+                { field: 'make' },
+                { field: 'model' },
+            ],
+            defaultColDef: {
+                editable: true,
+            },
+            editType: 'fullRow',
+            rowData: [
+                { readOnly: 'RO-0', make: 'Toyota', model: 'Celica' },
+                { readOnly: 'RO-1', make: 'Ford', model: 'Mondeo' },
+            ],
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(1);
+
+        const makeCellRow0 = getByTestId(gridDiv, agTestIdFor.cell('0', 'make'));
+        await userEvent.dblClick(makeCellRow0);
+        await waitForInput(gridDiv, makeCellRow0, { popup: false });
+
+        await userEvent.keyboard('{Tab}{Tab}');
+        await asyncSetTimeout(1);
+
+        const modelCellRow1 = getByTestId(gridDiv, agTestIdFor.cell('1', 'model'));
+        const editor = await waitForInput(gridDiv, modelCellRow1, { popup: false });
+        await userEvent.clear(editor);
+        await userEvent.type(editor, 'Updated');
+        await userEvent.keyboard('{Enter}');
+
+        expect(modelCellRow1).toHaveTextContent('Updated');
+    });
+
+    test('full-row editing fires rowEditingStopped on stopEditing', async () => {
+        const onRowEditingStopped = vi.fn();
+
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [{ field: 'make' }, { field: 'model' }],
+            defaultColDef: {
+                editable: true,
+            },
+            editType: 'fullRow',
+            rowData: [
+                { make: 'Toyota', model: 'Celica' },
+                { make: 'Ford', model: 'Mondeo' },
+            ],
+            onRowEditingStopped,
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(1);
+
+        const makeCellRow0 = getByTestId(gridDiv, agTestIdFor.cell('0', 'make'));
+        await userEvent.dblClick(makeCellRow0);
+        await waitForInput(gridDiv, makeCellRow0, { popup: false });
+
+        api.stopEditing();
+        await asyncSetTimeout(1);
+
+        expect(onRowEditingStopped).toHaveBeenCalledTimes(1);
+        expect(onRowEditingStopped.mock.calls[0][0].rowIndex).toBe(0);
+    });
+
+    test('full-row editing closes empty editors when tabbing to next row', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [{ field: 'make' }, { field: 'model' }, { field: 'model3' }],
+            defaultColDef: {
+                editable: true,
+            },
+            editType: 'fullRow',
+            rowData: [
+                { make: 'Toyota', model: 'Celica', model3: undefined },
+                { make: 'Ford', model: 'Mondeo', model3: undefined },
+            ],
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(1);
+
+        const makeCellRow0 = getByTestId(gridDiv, agTestIdFor.cell('0', 'make'));
+        await userEvent.dblClick(makeCellRow0);
+        await waitForInput(gridDiv, makeCellRow0, { popup: false });
+        expect(getRowHtmlElement(api, '0')?.classList.contains('ag-row-editing')).toBe(true);
+        expect(getRowHtmlElement(api, '1')?.classList.contains('ag-row-editing')).toBe(false);
+        expect(api.isEditing({ rowIndex: 0, rowPinned: undefined, column: api.getColumn('model3')! })).toBe(true);
+
+        await userEvent.keyboard('{Tab}{Tab}{Tab}');
+        const makeCellRow1 = getByTestId(gridDiv, agTestIdFor.cell('1', 'make'));
+        await waitForInput(gridDiv, makeCellRow1, { popup: false });
+
+        await waitFor(() => {
+            const editingCells = api.getEditingCells();
+            expect(editingCells.length).toBeGreaterThan(0);
+            expect(editingCells.every((cell) => cell.rowIndex === 1)).toBe(true);
+        });
+        expect(getRowHtmlElement(api, '0')?.classList.contains('ag-row-editing')).toBe(false);
+        expect(getRowHtmlElement(api, '1')?.classList.contains('ag-row-editing')).toBe(true);
+        expect(api.isEditing({ rowIndex: 0, rowPinned: undefined, column: api.getColumn('model3')! })).toBe(false);
+        expect(api.isEditing({ rowIndex: 1, rowPinned: undefined, column: api.getColumn('model3')! })).toBe(true);
+
+        const emptyCellRow0 = getByTestId(gridDiv, agTestIdFor.cell('0', 'model3'));
+        expect(emptyCellRow0.querySelector('input')).toBeNull();
+    });
+
+    test('full-row editing closes empty editors when shift-tabbing to previous row', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [{ field: 'make' }, { field: 'model' }, { field: 'model3' }],
+            defaultColDef: {
+                editable: true,
+            },
+            editType: 'fullRow',
+            rowData: [
+                { make: 'Toyota', model: 'Celica', model3: undefined },
+                { make: 'Ford', model: 'Mondeo', model3: undefined },
+            ],
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(1);
+
+        const makeCellRow1 = getByTestId(gridDiv, agTestIdFor.cell('1', 'make'));
+        await userEvent.dblClick(makeCellRow1);
+        await waitForInput(gridDiv, makeCellRow1, { popup: false });
+        expect(getRowHtmlElement(api, '1')?.classList.contains('ag-row-editing')).toBe(true);
+        expect(getRowHtmlElement(api, '0')?.classList.contains('ag-row-editing')).toBe(false);
+        expect(api.isEditing({ rowIndex: 0, rowPinned: undefined, column: api.getColumn('model3')! })).toBe(false);
+        expect(api.isEditing({ rowIndex: 1, rowPinned: undefined, column: api.getColumn('model3')! })).toBe(true);
+
+        await userEvent.keyboard('{Shift>}{Tab}{/Shift}');
+        const model3CellRow0 = getByTestId(gridDiv, agTestIdFor.cell('0', 'model3'));
+        await waitForInput(gridDiv, model3CellRow0, { popup: false });
+
+        await waitFor(() => {
+            const editingCells = api.getEditingCells();
+            expect(editingCells.length).toBeGreaterThan(0);
+            expect(editingCells.every((cell) => cell.rowIndex === 0)).toBe(true);
+        });
+        expect(getRowHtmlElement(api, '0')?.classList.contains('ag-row-editing')).toBe(true);
+        expect(getRowHtmlElement(api, '1')?.classList.contains('ag-row-editing')).toBe(false);
+        expect(api.isEditing({ rowIndex: 0, rowPinned: undefined, column: api.getColumn('model3')! })).toBe(true);
+        expect(api.isEditing({ rowIndex: 1, rowPinned: undefined, column: api.getColumn('model3')! })).toBe(false);
+
+        const emptyCellRow1 = getByTestId(gridDiv, agTestIdFor.cell('1', 'model3'));
+        expect(emptyCellRow1.querySelector('input')).toBeNull();
     });
 
     // AG-15698 - row doesn't rerender after value is selected in rich select editor
