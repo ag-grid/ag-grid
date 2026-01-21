@@ -211,20 +211,11 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             return; // Row not rendered, no editors to destroy.
         }
 
-        const destroyedColumns = new Set<AgColumn>();
+        // Destroy every editor created for this row, including those without edit model entries.
         for (const cellCtrl of rowCtrl.getAllCellCtrls()) {
-            const column = cellCtrl.column;
-            if (destroyedColumns.has(column)) {
-                continue; // Column editor already processed.
+            if (cellCtrl.comp?.getCellEditor()) {
+                _destroyEditor(this.beans, cellCtrl, undefined, cellCtrl);
             }
-            destroyedColumns.add(column);
-
-            if (!cellCtrl.comp?.getCellEditor()) {
-                continue; // No editor to destroy.
-            }
-
-            // Destroy every editor created for this row, including those without edit model entries.
-            _destroyEditor(this.beans, cellCtrl, undefined, cellCtrl);
         }
     }
 
