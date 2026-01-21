@@ -405,6 +405,47 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
 
         const api = gridsManager.createGrid('row-group-edit-basic', gridOptions);
 
+    test('rowDragInsertDelay does not promote leaf targets in row grouping', async () => {
+        const gridOptions: GridOptions = {
+            animateRows: true,
+            columnDefs: [
+                { field: 'group', rowGroup: true, hide: true },
+                { field: 'value', rowDrag: true },
+            ],
+            autoGroupColumnDef: { headerName: 'Group' },
+            rowData: [
+                { id: '1', group: 'A', value: 'A1' },
+                { id: '2', group: 'B', value: 'B1' },
+            ],
+            rowDragManaged: true,
+            suppressMoveWhenRowDragging,
+            refreshAfterGroupEdit: true,
+            rowDragInsertDelay: 60,
+            groupDefaultExpanded: -1,
+            getRowId: (params) => params.data.id,
+        };
+
+        const api = gridsManager.createGrid('row-group-edit-insert-delay-leaf', gridOptions);
+
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start('1');
+        await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('A1'));
+        await dispatcher.move('2', { center: true });
+        await asyncSetTimeout(80);
+        await dispatcher.move('2', { center: true });
+
+        const lastMove = dispatcher.rowDragMoveEvents[dispatcher.rowDragMoveEvents.length - 1];
+        expect(lastMove?.rowsDrop?.position).not.toBe('inside');
+        expect(lastMove?.rowsDrop?.newParent?.id).toBe('row-group-group-B');
+
+        if (suppressMoveWhenRowDragging) {
+            const indicator = api.getRowDropPositionIndicator();
+            expect(indicator.dropIndicatorPosition).not.toBe('inside');
+        }
+
+        await dispatcher.finish();
+    });
+
         let gridRows = new GridRows(api, 'initial');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID

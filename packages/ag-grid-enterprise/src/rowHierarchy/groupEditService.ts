@@ -401,14 +401,14 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
 
     private canStartGroup(target: IRowNode | null, treeData: boolean): boolean {
         if (!target || target.level < 0 || target.footer || target.detail) {
-            return false;
+            return false; // cannot start group on root, footers, or detail rows
         }
 
         if (target.group) {
-            return !target.expanded || !!target.childrenAfterSort?.length;
+            return !target.expanded; // can start if group is collapsed to expand it
         }
 
-        return treeData;
+        return treeData; // in tree data any leaf can become a group
     }
 
     /** Flushes any pending group edits for batch processing */
