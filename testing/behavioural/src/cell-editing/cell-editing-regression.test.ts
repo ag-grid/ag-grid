@@ -106,6 +106,36 @@ describe('Cell Editing Regression', () => {
         expect(modelCellRow1).toHaveTextContent('Updated');
     });
 
+    test('full-row editing fires rowEditingStopped on stopEditing', async () => {
+        const onRowEditingStopped = vi.fn();
+
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [{ field: 'make' }, { field: 'model' }],
+            defaultColDef: {
+                editable: true,
+            },
+            editType: 'fullRow',
+            rowData: [
+                { make: 'Toyota', model: 'Celica' },
+                { make: 'Ford', model: 'Mondeo' },
+            ],
+            onRowEditingStopped,
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(1);
+
+        const makeCellRow0 = getByTestId(gridDiv, agTestIdFor.cell('0', 'make'));
+        await userEvent.dblClick(makeCellRow0);
+        await waitForInput(gridDiv, makeCellRow0, { popup: false });
+
+        api.stopEditing();
+        await asyncSetTimeout(1);
+
+        expect(onRowEditingStopped).toHaveBeenCalledTimes(1);
+        expect(onRowEditingStopped.mock.calls[0][0].rowIndex).toBe(0);
+    });
+
     test('full-row editing closes empty editors when tabbing to next row', async () => {
         const api = await gridMgr.createGridAndWait('myGrid', {
             columnDefs: [{ field: 'make' }, { field: 'model' }, { field: 'model3' }],
