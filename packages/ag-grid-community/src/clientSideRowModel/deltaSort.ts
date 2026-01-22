@@ -10,6 +10,22 @@ import type { ChangedRowNodes } from './changedRowNodes';
  */
 const MIN_DELTA_SORT_ROWS = 4;
 
+/**
+ * Performs an incremental (delta) sort that avoids re-sorting unchanged rows.
+ *
+ * Algorithm outline:
+ * 1. Handle edge cases: empty input or single element - return early
+ * 2. Fall back to full sort if no previous sorted result or too few rows
+ * 3. Classify rows as "touched" (updated, added, or in changed path) vs "untouched"
+ * 4. If no rows are touched, return previous sorted array (filtering removed nodes if needed)
+ * 5. Sort only the touched rows using a stable sort with original index as tie-breaker
+ * 6. If all rows are touched, return the sorted touched rows directly
+ * 7. Merge the sorted touched rows with untouched rows from previous sort order
+ *    using a two-pointer merge algorithm (similar to merge sort's merge step)
+ *
+ * Time complexity: O(t log t + n) where t = touched rows, n = total rows
+ * This is faster than full sort O(n log n) when t << n
+ */
 export const doDeltaSort = (
     rowNodeSorter: RowNodeSorter,
     rowNode: RowNode,
@@ -25,10 +41,11 @@ export const doDeltaSort = (
 
     const unsortedRowsLen = unsortedRows.length;
     if (unsortedRowsLen <= 1) {
-        if (oldSortedRows && oldSortedRows.length === unsortedRowsLen) {
-            if (unsortedRowsLen === 0 || oldSortedRows[0] === unsortedRows[0]) {
-                return oldSortedRows; // Same content, reuse old array
-            }
+        if (
+            oldSortedRows?.length === unsortedRowsLen &&
+            (unsortedRowsLen === 0 || oldSortedRows[0] === unsortedRows[0])
+        ) {
+            return oldSortedRows; // Same content, reuse old array
         }
         return unsortedRows.slice(); // Different content, need new reference
     }
