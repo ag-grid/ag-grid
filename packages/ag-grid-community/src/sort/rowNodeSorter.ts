@@ -27,12 +27,14 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
             this.updateOptions.bind(this)
         );
 
+        const updatePivotModeState = this.updatePivotModeState.bind(this);
         this.addManagedEventListeners({
-            columnPivotModeChanged: this.updatePivotModeState.bind(this),
+            columnPivotModeChanged: updatePivotModeState,
+            columnPivotChanged: updatePivotModeState,
         });
 
         this.updateOptions();
-        this.updatePivotModeState();
+        updatePivotModeState();
     }
 
     private updateOptions(): void {
