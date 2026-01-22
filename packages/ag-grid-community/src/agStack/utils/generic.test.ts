@@ -6,7 +6,7 @@ describe('_makeNull', () => {
     });
 
     it('converts undefined to null', () => {
-        expect(_makeNull(undefined)).toBeNull();
+        expect(_makeNull()).toBeNull();
     });
 
     it('converts empty string to null', () => {

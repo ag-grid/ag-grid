@@ -1010,7 +1010,6 @@ export {
 } from './gridOptionsUtils';
 export { IEventService } from './interfaces/iEventService';
 export type { RowNodeSorter } from './sort/rowNodeSorter';
-export { SortedRowNode } from './sort/rowNodeSorter';
 export { SortOption } from './interfaces/iSortOption';
 export type { CtrlsService } from './ctrlsService';
 export { GridCtrl, IGridComp } from './gridComp/gridCtrl';

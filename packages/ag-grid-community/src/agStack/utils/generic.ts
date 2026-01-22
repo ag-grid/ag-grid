@@ -3,12 +3,12 @@
  * @param {T} value
  * @returns {T | null}
  */
-export function _makeNull<T>(value?: T): T | null {
+export const _makeNull = <T>(value?: T): T | null => {
     if (value == null || value === '') {
         return null;
     }
     return value;
-}
+};
 
 export function _exists(value: string | null | undefined): value is string;
 export function _exists<T>(value: T): value is NonNullable<T>;
@@ -21,72 +21,47 @@ export function _missing(value: any): boolean {
     return !_exists(value);
 }
 
-export function _toStringOrNull(value: any): string | null {
+export const _toStringOrNull = (value: any): string | null => {
     return value != null && typeof value.toString === 'function' ? value.toString() : null;
-}
+};
 
-export function _jsonEquals<T1, T2>(val1: T1, val2: T2): boolean {
+export const _jsonEquals = <T1, T2>(val1: T1, val2: T2): boolean => {
     const val1Json = val1 ? JSON.stringify(val1) : null;
     const val2Json = val2 ? JSON.stringify(val2) : null;
 
     return val1Json === val2Json;
-}
-
-export type DefaultComparatorOptions = {
-    accentedCompare?: boolean;
-    transform?: (val: any) => any;
 };
 
-export function _defaultComparator(valueA: any, valueB: any, options: DefaultComparatorOptions = {}): number {
-    if (options.transform) {
-        valueA = options.transform(valueA);
-        valueB = options.transform(valueB);
+export const _defaultComparator = (valueA: any, valueB: any, accentedCompare: boolean = false): number => {
+    if (valueA == null) {
+        return valueB == null ? 0 : -1;
     }
 
-    const valueAMissing = valueA == null;
-    const valueBMissing = valueB == null;
+    if (valueB == null) {
+        return 1;
+    }
 
     // this is for aggregations sum and avg, where the result can be a number that is wrapped.
     // if we didn't do this, then the toString() value would be used, which would result in
     // the strings getting used instead of the numbers.
-    if (valueA?.toNumber) {
+    if (typeof valueA === 'object' && valueA.toNumber) {
         valueA = valueA.toNumber();
     }
 
-    if (valueB?.toNumber) {
+    if (typeof valueB === 'object' && valueB.toNumber) {
         valueB = valueB.toNumber();
     }
 
-    if (valueAMissing && valueBMissing) {
+    if (!accentedCompare || typeof valueA !== 'string') {
+        if (valueA > valueB) {
+            return 1;
+        }
+        if (valueA < valueB) {
+            return -1;
+        }
         return 0;
     }
 
-    if (valueAMissing) {
-        return -1;
-    }
-
-    if (valueBMissing) {
-        return 1;
-    }
-
-    function doQuickCompare<T>(a: T, b: T): number {
-        return a > b ? 1 : a < b ? -1 : 0;
-    }
-
-    if (typeof valueA !== 'string') {
-        return doQuickCompare(valueA, valueB);
-    }
-
-    if (!options.accentedCompare) {
-        return doQuickCompare(valueA, valueB);
-    }
-
-    try {
-        // using local compare also allows chinese comparisons
-        return valueA.localeCompare(valueB);
-    } catch (e) {
-        // if something wrong with localeCompare, eg not supported
-        // by browser, then just continue with the quick one
-        return doQuickCompare(valueA, valueB);
-    }
-}
+    // using locale compare also allows chinese comparisons
+    return valueA.localeCompare(valueB);
+};

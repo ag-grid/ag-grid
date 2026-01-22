@@ -8,9 +8,9 @@ import type { ClientSideRowModelStage } from '../interfaces/iClientSideRowModel'
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowNodeSortStage } from '../interfaces/iRowNodeStage';
 import type { SortOption } from '../interfaces/iSortOption';
-import type { RowNodeSorter, SortedRowNode } from '../sort/rowNodeSorter';
 import type { ChangedPath } from '../utils/changedPath';
 import type { ChangedRowNodes } from './changedRowNodes';
+import { doDeltaSort } from './deltaSort';
 
 export const updateRowNodeAfterSort = (rowNode: RowNode): void => {
     const childrenAfterSort = rowNode.childrenAfterSort;
@@ -97,12 +97,15 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage 
             } else if (!sortOptions.length || skipSortingPivotLeafs) {
                 // if there's no sort to make, skip this step
             } else if (useDeltaSort && changedRowNodes) {
-                newChildrenAfterSort = doDeltaSort(rowNodeSorter!, rowNode, changedRowNodes, changedPath, sortOptions);
+                newChildrenAfterSort = doDeltaSort(rowNodeSorter!, rowNode, changedRowNodes, changedPath!, sortOptions);
             } else {
-                newChildrenAfterSort = rowNodeSorter!.doFullSort(rowNode.childrenAfterAggFilter!, sortOptions);
+                newChildrenAfterSort = rowNodeSorter!.doFullSortInPlace(
+                    rowNode.childrenAfterAggFilter!.slice(),
+                    sortOptions
+                );
             }
 
-            newChildrenAfterSort ||= rowNode.childrenAfterAggFilter?.slice(0) ?? [];
+            newChildrenAfterSort ||= rowNode.childrenAfterAggFilter?.slice() ?? [];
 
             hasAnyFirstChildChanged ||= rowNode.childrenAfterSort?.[0] !== newChildrenAfterSort[0];
 
@@ -153,84 +156,6 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage 
         return false;
     }
 }
-
-const doDeltaSort = (
-    rowNodeSorter: RowNodeSorter,
-    rowNode: RowNode,
-    changedRowNodes: ChangedRowNodes,
-    changedPath: ChangedPath | undefined,
-    sortOptions: SortOption[]
-): RowNode[] => {
-    const unsortedRows = rowNode.childrenAfterAggFilter!;
-    const oldSortedRows = rowNode.childrenAfterSort;
-    if (!oldSortedRows) {
-        return rowNodeSorter.doFullSort(unsortedRows, sortOptions);
-    }
-
-    const untouchedRows = new Set<RowNode>();
-    const touchedRows: SortedRowNode[] = [];
-
-    const { updates, adds } = changedRowNodes;
-    for (let i = 0, len = unsortedRows.length; i < len; ++i) {
-        const row = unsortedRows[i];
-        if (updates.has(row) || adds.has(row) || (changedPath && !changedPath.canSkip(row))) {
-            touchedRows.push({
-                currentPos: touchedRows.length,
-                rowNode: row,
-            });
-        } else {
-            untouchedRows.add(row);
-        }
-    }
-
-    const sortedUntouchedRows = oldSortedRows
-        .filter((child) => untouchedRows.has(child))
-        .map((rowNode: RowNode, currentPos: number): SortedRowNode => ({ currentPos, rowNode }));
-
-    touchedRows.sort((a, b) => rowNodeSorter.compareRowNodes(sortOptions, a, b));
-
-    return mergeSortedArrays(rowNodeSorter, sortOptions, touchedRows, sortedUntouchedRows);
-};
-
-// Merge two sorted arrays into each other
-const mergeSortedArrays = (
-    rowNodeSorter: RowNodeSorter,
-    sortOptions: SortOption[],
-    arr1: SortedRowNode[],
-    arr2: SortedRowNode[]
-): RowNode[] => {
-    let i = 0;
-    let j = 0;
-    const arr1Length = arr1.length;
-    const arr2Length = arr2.length;
-    const res = new Array<RowNode>(arr1Length + arr2Length);
-    let k = 0;
-
-    // Traverse both arrays, adding them in order
-    while (i < arr1Length && j < arr2Length) {
-        const a = arr1[i];
-        const b = arr2[j];
-        if (rowNodeSorter.compareRowNodes(sortOptions, a, b) < 0) {
-            res[k++] = a.rowNode;
-            ++i;
-        } else {
-            res[k++] = b.rowNode;
-            ++j;
-        }
-    }
-
-    // add remaining from arr1
-    while (i < arr1Length) {
-        res[k++] = arr1[i++].rowNode;
-    }
-
-    // add remaining from arr2
-    while (j < arr2Length) {
-        res[k++] = arr2[j++].rowNode;
-    }
-
-    return res;
-};
 
 /**
  * O(n) merge preserving previous visual order and appending new items in current order.
