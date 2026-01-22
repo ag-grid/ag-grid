@@ -50,7 +50,7 @@ export const doDeltaSort = (
         return unsortedRows.slice(); // Different content, need new reference
     }
 
-    if (!oldSortedRows || oldSortedRows.length <= MIN_DELTA_SORT_ROWS) {
+    if (!oldSortedRows || unsortedRowsLen <= MIN_DELTA_SORT_ROWS) {
         // No previous sort, or just too few elements, do full sort
         return rowNodeSorter.doFullSortInPlace(unsortedRows.slice(), sortOptions);
     }
