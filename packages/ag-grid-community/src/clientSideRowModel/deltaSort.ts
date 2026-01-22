@@ -1,4 +1,3 @@
-import { _areEqual } from '../agStack/utils/array';
 import type { RowNode } from '../entities/rowNode';
 import type { SortOption } from '../interfaces/iSortOption';
 import type { RowNodeSorter } from '../sort/rowNodeSorter';
@@ -36,8 +35,7 @@ export const doDeltaSort = (
 
     if (!oldSortedRows || oldSortedRows.length <= MIN_DELTA_SORT_ROWS) {
         // No previous sort, or just too few elements, do full sort
-        const sorted = rowNodeSorter.doFullSortInPlace(unsortedRows.slice(), sortOptions);
-        return oldSortedRows && _areEqual(sorted, oldSortedRows) ? oldSortedRows : sorted;
+        return rowNodeSorter.doFullSortInPlace(unsortedRows.slice(), sortOptions);
     }
 
     const indexByNode = new Map<RowNode, number>();
