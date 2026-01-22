@@ -141,9 +141,6 @@ If using the bundles (`AllCommunityModule`/`AllEnterpriseModule`), the `Validati
 {% if isFramework("react") %}
 When including AG Grid in your application the required modules must be registered with the grid before it is instantiated. You can either register them globally, via the `ModuleRegistry`, via the `AgGridProvider` or pass them directly to each grid.
 
-{% note %}
-If using server-side rendering, ensure modules are registered in the client side of your application.
-{% /note %}
 
 {% /if %}
 
@@ -152,14 +149,13 @@ If using server-side rendering, ensure modules are registered in the client side
 When including AG Grid in your application the required modules must be registered with the grid before it is instantiated. You can either register them globally, via the `ModuleRegistry` or pass them directly to each grid.
 {% /if %}
 
-### Providing Modules Globally
-
-You can import and register modules globally, but you need to ensure that this is done before **_any_** grids are instantiated. Any modules registered globally will be available to all grids.
-
-A real-world example might be that we wish to use the `Client-Side Row Model` (the default row model) together with the `CSV`, `Excel` and `Master/Detail` features.
-
 {% if isFramework("react") %}
-Wrap your application (or the part that uses AG Grid) with `AgGridProvider` and pass the modules:
+
+### Providing Modules via AgGridProvider
+
+Since v35.1 use the `AgGridProvider` component to provide modules to all `AgGridReact` components within the scope of the provider.
+
+As an example to use the `Client-Side Row Model` (the default row model) together with the `CSV`, `Excel` and `Master/Detail` features, you would do the following:
 
 ```jsx
 import { ClientSideRowModelModule, CsvExportModule } from 'ag-grid-community';
@@ -183,15 +179,13 @@ function App() {
 }
 ```
 
-
-
-{% note %}
-As an alternative, you can register modules globally using `ModuleRegistry.registerModules([modules])` outside of the React component tree.
-{% /note %}
 {% /if %}
 
-{% if isFramework("javascript", "angular", "vue") %}
-We need to register the grid modules we wish to use via the `ModuleRegistry`.
+### Providing Modules Globally
+
+You can import and register modules globally, but you need to ensure that this is done before **_any_** grids are instantiated. Any modules registered globally will be available to all grids.
+
+As an example to use the `Client-Side Row Model` (the default row model) together with the `CSV`, `Excel` and `Master/Detail` features, you would do the following:
 
 ```js
 import { ModuleRegistry, ClientSideRowModelModule, CsvExportModule } from 'ag-grid-community';
@@ -204,6 +198,11 @@ ModuleRegistry.registerModules([
     MasterDetailModule
 ]);
 ```
+
+{% if isFramework("react") %}
+{% note %}
+If using server-side rendering, ensure modules are registered in the client side of your application.
+{% /note %}
 {% /if %}
 
 ### Providing Modules To Individual Grids
@@ -217,7 +216,7 @@ The steps required are:
 * Import Modules
 * Pass to Grid
 
-Using the same real-world example from above (the `Client-Side Row Model` together with the `CSV`, `Excel` and `Master/Detail` features), how we register the modules is now different.
+Using the same example from above (the `Client-Side Row Model` together with the `CSV`, `Excel` and `Master/Detail` features), how we register the modules is now different.
 
 {% if isFramework("javascript") %}
 We pass the modules to createGrid via the `modules` property of the `params`.
