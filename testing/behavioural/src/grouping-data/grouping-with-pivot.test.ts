@@ -252,6 +252,10 @@ describe('ag-grid grouping with pivot', () => {
             { id: 'eu-2021', region: 'Europe', year: 2021, sales: 950 },
             { id: 'asia-2020', region: 'Asia', year: 2020, sales: 800 },
             { id: 'asia-2021', region: 'Asia', year: 2021, sales: 700 },
+            { id: 'sa-2020', region: 'South America', year: 2020, sales: 850 },
+            { id: 'sa-2021', region: 'South America', year: 2021, sales: 920 },
+            { id: 'africa-2020', region: 'Africa', year: 2020, sales: 750 },
+            { id: 'africa-2021', region: 'Africa', year: 2021, sales: 780 },
         ];
 
         const rowById = Object.fromEntries(rowData.map((row) => [row.id, row])) as Record<
@@ -267,28 +271,31 @@ describe('ag-grid grouping with pivot', () => {
         });
 
         const gridRowsOptions: GridRowsOptions = {
-            forcedColumns: ['ag-Grid-AutoColumn', 'pivot_year_2020_sales', 'pivot_year_2021_sales'],
             printHiddenRows: false,
         };
 
         await new GridRows(api, 'pivot delta sort initial', gridRowsOptions).check(`
-            ROOT id:ROOT_NODE_ID pivot_year_2020_sales:2700 pivot_year_2021_sales:2750
+            ROOT id:ROOT_NODE_ID pivot_year_2020_sales:4300 pivot_year_2021_sales:4450
             ├── LEAF_GROUP collapsed id:"row-group-region-North America" ag-Grid-AutoColumn:"North America" pivot_year_2020_sales:1000 pivot_year_2021_sales:1100
             ├── LEAF_GROUP collapsed id:row-group-region-Europe ag-Grid-AutoColumn:"Europe" pivot_year_2020_sales:900 pivot_year_2021_sales:950
+            ├── LEAF_GROUP collapsed id:"row-group-region-South America" ag-Grid-AutoColumn:"South America" pivot_year_2020_sales:850 pivot_year_2021_sales:920
+            ├── LEAF_GROUP collapsed id:row-group-region-Africa ag-Grid-AutoColumn:"Africa" pivot_year_2020_sales:750 pivot_year_2021_sales:780
             └── LEAF_GROUP collapsed id:row-group-region-Asia ag-Grid-AutoColumn:"Asia" pivot_year_2020_sales:800 pivot_year_2021_sales:700
         `);
 
         const updateRow = (id: string, sales: number) => ({ ...rowById[id], sales });
 
         applyTransactionChecked(api, {
-            update: [updateRow('eu-2021', 1500), updateRow('na-2021', 600)],
+            update: [updateRow('eu-2021', 1500), updateRow('na-2021', 600), updateRow('africa-2021', 400)],
         });
 
         await new GridRows(api, 'pivot delta sort updated', gridRowsOptions).check(`
-            ROOT id:ROOT_NODE_ID pivot_year_2020_sales:2700 pivot_year_2021_sales:2800
+            ROOT id:ROOT_NODE_ID pivot_year_2020_sales:4300 pivot_year_2021_sales:4120
             ├── LEAF_GROUP collapsed id:row-group-region-Europe ag-Grid-AutoColumn:"Europe" pivot_year_2020_sales:900 pivot_year_2021_sales:1500
+            ├── LEAF_GROUP collapsed id:"row-group-region-South America" ag-Grid-AutoColumn:"South America" pivot_year_2020_sales:850 pivot_year_2021_sales:920
             ├── LEAF_GROUP collapsed id:row-group-region-Asia ag-Grid-AutoColumn:"Asia" pivot_year_2020_sales:800 pivot_year_2021_sales:700
-            └── LEAF_GROUP collapsed id:"row-group-region-North America" ag-Grid-AutoColumn:"North America" pivot_year_2020_sales:1000 pivot_year_2021_sales:600
+            ├── LEAF_GROUP collapsed id:"row-group-region-North America" ag-Grid-AutoColumn:"North America" pivot_year_2020_sales:1000 pivot_year_2021_sales:600
+            └── LEAF_GROUP collapsed id:row-group-region-Africa ag-Grid-AutoColumn:"Africa" pivot_year_2020_sales:750 pivot_year_2021_sales:400
         `);
     });
 

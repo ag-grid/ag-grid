@@ -4,39 +4,65 @@ import type { RowNodeSorter } from '../sort/rowNodeSorter';
 import type { ChangedPath } from '../utils/changedPath';
 import type { ChangedRowNodes } from './changedRowNodes';
 
+/**
+ * Minimum number of rows changed to enable delta sort.
+ * Below this threshold, full sort is much faster due to lower overhead.
+ */
+const MIN_DELTA_SORT_ROWS = 4;
+
 export const doDeltaSort = (
     rowNodeSorter: RowNodeSorter,
     rowNode: RowNode,
     changedRowNodes: ChangedRowNodes,
-    changedPath: ChangedPath | undefined,
+    changedPath: ChangedPath,
     sortOptions: SortOption[]
 ): RowNode[] => {
-    const unsortedRows = rowNode.childrenAfterAggFilter!;
-    const unsortedRowsLen = unsortedRows.length;
-
-    if (unsortedRowsLen <= 1) {
-        return unsortedRows.slice(); // Empty or single element is already sorted
+    const oldSortedRows = rowNode.childrenAfterSort;
+    const unsortedRows = rowNode.childrenAfterAggFilter;
+    if (!unsortedRows) {
+        return oldSortedRows && oldSortedRows.length > 0 ? oldSortedRows : [];
     }
 
-    const oldSortedRows = rowNode.childrenAfterSort;
-    if (!oldSortedRows || oldSortedRows.length === 0) {
-        // No previous sort, do full sort
+    const unsortedRowsLen = unsortedRows.length;
+    if (unsortedRowsLen <= 1) {
+        if (oldSortedRows && oldSortedRows.length === unsortedRowsLen) {
+            if (unsortedRowsLen === 0 || oldSortedRows[0] === unsortedRows[0]) {
+                return oldSortedRows; // Same content, reuse old array
+            }
+        }
+        return unsortedRows.slice(); // Different content, need new reference
+    }
+
+    if (!oldSortedRows || oldSortedRows.length <= MIN_DELTA_SORT_ROWS) {
+        // No previous sort, or just too few elements, do full sort
         return rowNodeSorter.doFullSortInPlace(unsortedRows.slice(), sortOptions);
     }
 
-    const oldSortedLen = oldSortedRows.length;
     const indexByNode = new Map<RowNode, number>();
-    const touchedRows = classifyAndIndexRows(unsortedRows, indexByNode, changedRowNodes, changedPath);
-    const touchedRowsLen = touchedRows.length;
 
-    const untouchedRows = buildUntouchedArray(oldSortedRows, indexByNode, unsortedRowsLen - touchedRowsLen);
-
-    if (!touchedRowsLen) {
-        // No touched rows: return oldSortedRows if nothing removed, otherwise return untouched
-        return untouchedRows.length === oldSortedLen ? oldSortedRows : untouchedRows;
+    // Classify rows as touched or untouched and build an index map.
+    // Map stores current index with sign encoding: negative = touched, non-negative = untouched.
+    const { updates, adds } = changedRowNodes;
+    const touchedRows: RowNode[] = [];
+    for (let i = 0; i < unsortedRowsLen; ++i) {
+        const node = unsortedRows[i];
+        if (updates.has(node) || adds.has(node) || !changedPath.canSkip(node)) {
+            indexByNode.set(node, ~i); // Bitwise NOT for touched (negative)
+            touchedRows.push(node);
+        } else {
+            indexByNode.set(node, i); // Non-negative for untouched
+        }
     }
 
-    // Sort touched rows and keep a stable tie-breaker based on current index.
+    const touchedRowsLen = touchedRows.length;
+    if (touchedRowsLen === 0) {
+        // No touched rows: return oldSortedRows if nothing removed, otherwise filter out removed nodes
+        return unsortedRowsLen === oldSortedRows.length
+            ? oldSortedRows // Nothing removed
+            : filterRemovedNodes(oldSortedRows, indexByNode, touchedRows);
+    }
+
+    // Sort touched rows with stable tie-breaker based on current index
     touchedRows.sort(
         (a, b) => rowNodeSorter.compareRowNodes(sortOptions, a, b) || ~indexByNode.get(a)! - ~indexByNode.get(b)!
     );
@@ -45,109 +71,96 @@ export const doDeltaSort = (
         return touchedRows; // All touched: no merge needed, return sorted touched rows directly.
     }
 
-    return mergeDeltaSortedArrays(rowNodeSorter, sortOptions, touchedRows, untouchedRows, indexByNode);
+    return mergeDeltaSortedArrays(rowNodeSorter, sortOptions, touchedRows, oldSortedRows, indexByNode, unsortedRowsLen);
 };
 
 /**
- * Classify rows as touched or untouched and build an index map.
- * Map stores current index with sign encoding: negative = touched, non-negative = untouched.
- */
-const classifyAndIndexRows = (
-    unsortedRows: RowNode[],
-    indexByNode: Map<RowNode, number>,
-    changedRowNodes: ChangedRowNodes,
-    changedPath: ChangedPath | undefined
-): RowNode[] => {
-    const { updates, adds } = changedRowNodes;
-    const touchedRows: RowNode[] = [];
-    for (let i = 0, len = unsortedRows.length; i < len; ++i) {
-        const node = unsortedRows[i];
-        if (updates.has(node) || adds.has(node) || (changedPath && !changedPath.canSkip(node))) {
-            touchedRows.push(node);
-            indexByNode.set(node, ~i); // Bitwise NOT for touched (negative)
-        } else {
-            indexByNode.set(node, i); // Non-negative for untouched
-        }
-    }
-    return touchedRows;
-};
-
-/**
- * Extract untouched rows from previous sorted order, preserving that order.
- */
-const buildUntouchedArray = (
-    oldSortedRows: RowNode[],
-    indexByNode: ReadonlyMap<RowNode, number>,
-    expectedSize: number
-): RowNode[] => {
-    const untouchedRows: RowNode[] = new Array(expectedSize);
-    let untouchedIdx = 0;
-
-    for (let i = 0, len = oldSortedRows.length; i < len; i++) {
-        const node = oldSortedRows[i];
-        const idx = indexByNode.get(node);
-        if (idx !== undefined && idx >= 0) {
-            untouchedRows[untouchedIdx++] = node;
-        }
-    }
-
-    if (untouchedIdx < untouchedRows.length) {
-        untouchedRows.length = untouchedIdx; // Trim if duplicates caused size mismatch
-    }
-
-    return untouchedRows;
-};
-
-/**
- * Merge touched rows with untouched rows in previous order.
+ * Merge touched rows with untouched rows from previous sorted order.
+ * Optimized version: caches untouched index to avoid repeated map lookups in hot loop.
  * See https://en.wikipedia.org/wiki/Merge_algorithm
  */
 const mergeDeltaSortedArrays = (
     rowNodeSorter: RowNodeSorter,
     sortOptions: SortOption[],
     touchedRows: RowNode[],
-    untouched: RowNode[],
-    indexByNode: ReadonlyMap<RowNode, number>
+    oldSortedRows: RowNode[],
+    indexByNode: ReadonlyMap<RowNode, number>,
+    resultSize: number
 ): RowNode[] => {
-    const touchedLength = touchedRows.length;
-    const untouchedLength = untouched.length;
-    const result = new Array<RowNode>(touchedLength + untouchedLength);
+    // Result array - size equals total number of rows to output
+    const result = new Array<RowNode>(resultSize);
+
     let touchedIdx = 0;
-    let untouchedIdx = 0;
+    let touchedNode = touchedRows[touchedIdx];
+    let untouchedNode: RowNode | undefined;
+    let untouchedIdx = -1;
+    let oldIdx = 0;
     let resultIdx = 0;
-
-    // Merge touched and untouched nodes - cache node references to avoid repeated array access
-    let touchedNode = touchedRows[0];
-    let untouchedNode = untouched[0];
-
+    const touchedLength = touchedRows.length;
+    const oldSortedLength = oldSortedRows.length;
     while (true) {
+        // Advance to next valid untouched node if needed
+        if (untouchedIdx < 0) {
+            if (oldIdx >= oldSortedLength) {
+                break; // No more untouched nodes
+            }
+            untouchedNode = oldSortedRows[oldIdx++];
+            untouchedIdx = indexByNode.get(untouchedNode) ?? -1;
+            if (untouchedIdx < 0) {
+                continue; // Skip touched/removed nodes
+            }
+        }
+
         const orderDelta =
-            rowNodeSorter.compareRowNodes(sortOptions, touchedNode, untouchedNode) ||
-            ~indexByNode.get(touchedNode)! - indexByNode.get(untouchedNode)!;
+            rowNodeSorter.compareRowNodes(sortOptions, touchedNode, untouchedNode!) ||
+            ~indexByNode.get(touchedNode)! - untouchedIdx;
 
         if (orderDelta < 0) {
-            result[resultIdx++] = touchedNode;
+            result[resultIdx++] = touchedNode; // Touched node comes next
             if (++touchedIdx >= touchedLength) {
                 break; // No more touched nodes
             }
             touchedNode = touchedRows[touchedIdx];
         } else {
-            result[resultIdx++] = untouchedNode;
-            if (++untouchedIdx >= untouchedLength) {
-                break; // No more untouched nodes
-            }
-            untouchedNode = untouched[untouchedIdx];
+            result[resultIdx++] = untouchedNode!; // Untouched node comes next
+            untouchedIdx = -1; // Will be fetched on next iteration
         }
     }
 
-    // Copy remaining elements
+    // Copy remaining touched nodes
     while (touchedIdx < touchedLength) {
         result[resultIdx++] = touchedRows[touchedIdx++];
     }
 
-    while (untouchedIdx < untouchedLength) {
-        result[resultIdx++] = untouched[untouchedIdx++];
+    // If no pending untouched node, we already searched through remaining nodes
+    if (untouchedIdx < 0) {
+        return result;
     }
 
+    // Add pending untouched node
+    result[resultIdx++] = untouchedNode!;
+
+    // Copy remaining untouched nodes
+    while (oldIdx < oldSortedLength) {
+        const node = oldSortedRows[oldIdx++];
+        if (indexByNode.get(node)! >= 0) {
+            result[resultIdx++] = node;
+        }
+    }
+
+    return result;
+};
+
+/** Filter out removed nodes from oldSortedRows using preallocated array for performance. */
+const filterRemovedNodes = (rows: RowNode[], map: ReadonlyMap<RowNode, number>, result: RowNode[]): RowNode[] => {
+    let count = 0;
+    result.length = map.size;
+    for (let i = 0, len = rows.length; i < len; ++i) {
+        const node = rows[i];
+        if (map.has(node)) {
+            result[count++] = node;
+        }
+    }
+    result.length = count;
     return result;
 };
