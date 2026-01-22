@@ -446,11 +446,11 @@ type DestroyEditorParams = { event?: Event | null; silent?: boolean; cancel?: bo
 export function _destroyEditor(
     beans: BeanCollection,
     position: Required<EditPosition>,
-    params?: DestroyEditorParams
+    params?: DestroyEditorParams,
+    cellCtrl = _getCellCtrl(beans, position)
 ): void {
     const enableGroupEditing = beans.gos.get('enableGroupEdit');
-    const { editModelSvc } = beans;
-    const cellCtrl = _getCellCtrl(beans, position);
+    const editModelSvc = beans.editModelSvc;
 
     const edit = editModelSvc?.getEdit(position, true);
 
@@ -462,10 +462,11 @@ export function _destroyEditor(
         return;
     }
 
-    const { comp } = cellCtrl;
+    const comp = cellCtrl.comp;
+    const cellEditor = comp?.getCellEditor();
 
     // editor already cleaned up, refresh cell (React usually)
-    if (comp && !comp.getCellEditor()) {
+    if (comp && !cellEditor) {
         cellCtrl?.refreshCell();
 
         if (edit) {
@@ -484,7 +485,7 @@ export function _destroyEditor(
     }
 
     if (_hasValidationRules(beans)) {
-        const errorMessages = comp?.getCellEditor()?.getValidationErrors?.();
+        const errorMessages = edit && cellEditor?.getValidationErrors?.();
         const cellValidationModel = editModelSvc?.getCellValidationModel();
 
         if (errorMessages?.length) {
@@ -494,7 +495,9 @@ export function _destroyEditor(
         }
     }
 
-    editModelSvc?.setEdit(position, { state: 'changed' });
+    if (edit) {
+        editModelSvc?.setEdit(position, { state: 'changed' });
+    }
 
     comp?.setEditDetails(); // passing nothing stops editing
     comp?.refreshEditStyles(false, false);
