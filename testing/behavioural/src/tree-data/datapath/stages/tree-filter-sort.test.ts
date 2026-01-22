@@ -368,9 +368,32 @@ describe('ag-grid tree filter sort', () => {
             { id: 'home', value: 15, orgHierarchy: ['Home'] },
             { id: 'garden', value: 12, orgHierarchy: ['Home', 'Garden'] },
             { id: 'kitchen', value: 25, orgHierarchy: ['Home', 'Kitchen'] },
+            { id: 'bathroom', value: 8, orgHierarchy: ['Home', 'Bathroom'] },
             { id: 'electronics', value: 30, orgHierarchy: ['Electronics'] },
             { id: 'phones', value: 5, orgHierarchy: ['Electronics', 'Phones'] },
             { id: 'laptops', value: 40, orgHierarchy: ['Electronics', 'Laptops'] },
+            { id: 'tablets', value: 20, orgHierarchy: ['Electronics', 'Tablets'] },
+            { id: 'cameras', value: 33, orgHierarchy: ['Electronics', 'Cameras'] },
+            { id: 'tvs', value: 45, orgHierarchy: ['Electronics', 'TVs'] },
+            { id: 'headphones', value: 15, orgHierarchy: ['Electronics', 'Headphones'] },
+            { id: 'furniture', value: 18, orgHierarchy: ['Furniture'] },
+            { id: 'chairs', value: 10, orgHierarchy: ['Furniture', 'Chairs'] },
+            { id: 'tables', value: 35, orgHierarchy: ['Furniture', 'Tables'] },
+            { id: 'sofas', value: 22, orgHierarchy: ['Furniture', 'Sofas'] },
+            { id: 'clothing', value: 14, orgHierarchy: ['Clothing'] },
+            { id: 'shirts', value: 6, orgHierarchy: ['Clothing', 'Shirts'] },
+            { id: 'pants', value: 28, orgHierarchy: ['Clothing', 'Pants'] },
+            { id: 'jackets', value: 16, orgHierarchy: ['Clothing', 'Jackets'] },
+            { id: 'shoes', value: 32, orgHierarchy: ['Clothing', 'Shoes'] },
+            { id: 'hats', value: 9, orgHierarchy: ['Clothing', 'Hats'] },
+            { id: 'socks', value: 4, orgHierarchy: ['Clothing', 'Socks'] },
+            { id: 'books', value: 22, orgHierarchy: ['Books'] },
+            { id: 'fiction', value: 11, orgHierarchy: ['Books', 'Fiction'] },
+            { id: 'nonfiction', value: 38, orgHierarchy: ['Books', 'Nonfiction'] },
+            { id: 'magazines', value: 19, orgHierarchy: ['Books', 'Magazines'] },
+            { id: 'comics', value: 13, orgHierarchy: ['Books', 'Comics'] },
+            { id: 'textbooks', value: 42, orgHierarchy: ['Books', 'Textbooks'] },
+            { id: 'cookbooks', value: 24, orgHierarchy: ['Books', 'Cookbooks'] },
         ];
 
         const rowById = Object.fromEntries(rowData.map((row) => [row.id, row])) as Record<
@@ -394,28 +417,80 @@ describe('ag-grid tree filter sort', () => {
 
         await new GridRows(api, 'tree data delta sort initial').check(`
             ROOT id:ROOT_NODE_ID
+            ├─┬ Clothing GROUP id:clothing ag-Grid-AutoColumn:"Clothing" value:14
+            │ ├── Socks LEAF id:socks ag-Grid-AutoColumn:"Socks" value:4
+            │ ├── Shirts LEAF id:shirts ag-Grid-AutoColumn:"Shirts" value:6
+            │ ├── Hats LEAF id:hats ag-Grid-AutoColumn:"Hats" value:9
+            │ ├── Jackets LEAF id:jackets ag-Grid-AutoColumn:"Jackets" value:16
+            │ ├── Pants LEAF id:pants ag-Grid-AutoColumn:"Pants" value:28
+            │ └── Shoes LEAF id:shoes ag-Grid-AutoColumn:"Shoes" value:32
             ├─┬ Home GROUP id:home ag-Grid-AutoColumn:"Home" value:15
+            │ ├── Bathroom LEAF id:bathroom ag-Grid-AutoColumn:"Bathroom" value:8
             │ ├── Garden LEAF id:garden ag-Grid-AutoColumn:"Garden" value:12
             │ └── Kitchen LEAF id:kitchen ag-Grid-AutoColumn:"Kitchen" value:25
+            ├─┬ Furniture GROUP id:furniture ag-Grid-AutoColumn:"Furniture" value:18
+            │ ├── Chairs LEAF id:chairs ag-Grid-AutoColumn:"Chairs" value:10
+            │ ├── Sofas LEAF id:sofas ag-Grid-AutoColumn:"Sofas" value:22
+            │ └── Tables LEAF id:tables ag-Grid-AutoColumn:"Tables" value:35
+            ├─┬ Books GROUP id:books ag-Grid-AutoColumn:"Books" value:22
+            │ ├── Fiction LEAF id:fiction ag-Grid-AutoColumn:"Fiction" value:11
+            │ ├── Comics LEAF id:comics ag-Grid-AutoColumn:"Comics" value:13
+            │ ├── Magazines LEAF id:magazines ag-Grid-AutoColumn:"Magazines" value:19
+            │ ├── Cookbooks LEAF id:cookbooks ag-Grid-AutoColumn:"Cookbooks" value:24
+            │ ├── Nonfiction LEAF id:nonfiction ag-Grid-AutoColumn:"Nonfiction" value:38
+            │ └── Textbooks LEAF id:textbooks ag-Grid-AutoColumn:"Textbooks" value:42
             └─┬ Electronics GROUP id:electronics ag-Grid-AutoColumn:"Electronics" value:30
             · ├── Phones LEAF id:phones ag-Grid-AutoColumn:"Phones" value:5
-            · └── Laptops LEAF id:laptops ag-Grid-AutoColumn:"Laptops" value:40
+            · ├── Headphones LEAF id:headphones ag-Grid-AutoColumn:"Headphones" value:15
+            · ├── Tablets LEAF id:tablets ag-Grid-AutoColumn:"Tablets" value:20
+            · ├── Cameras LEAF id:cameras ag-Grid-AutoColumn:"Cameras" value:33
+            · ├── Laptops LEAF id:laptops ag-Grid-AutoColumn:"Laptops" value:40
+            · └── TVs LEAF id:tvs ag-Grid-AutoColumn:"TVs" value:45
         `);
 
         const updateRow = (id: string, value: number) => ({ ...rowById[id], value });
 
         applyTransactionChecked(api, {
-            update: [updateRow('electronics', 5), updateRow('phones', 60), updateRow('kitchen', 1)],
+            update: [
+                updateRow('electronics', 5),
+                updateRow('phones', 60),
+                updateRow('kitchen', 1),
+                updateRow('books', 3),
+                updateRow('nonfiction', 2),
+            ],
         });
 
         await new GridRows(api, 'tree data delta sort updated').check(`
             ROOT id:ROOT_NODE_ID
+            ├─┬ Books GROUP id:books ag-Grid-AutoColumn:"Books" value:3
+            │ ├── Nonfiction LEAF id:nonfiction ag-Grid-AutoColumn:"Nonfiction" value:2
+            │ ├── Fiction LEAF id:fiction ag-Grid-AutoColumn:"Fiction" value:11
+            │ ├── Comics LEAF id:comics ag-Grid-AutoColumn:"Comics" value:13
+            │ ├── Magazines LEAF id:magazines ag-Grid-AutoColumn:"Magazines" value:19
+            │ ├── Cookbooks LEAF id:cookbooks ag-Grid-AutoColumn:"Cookbooks" value:24
+            │ └── Textbooks LEAF id:textbooks ag-Grid-AutoColumn:"Textbooks" value:42
             ├─┬ Electronics GROUP id:electronics ag-Grid-AutoColumn:"Electronics" value:5
+            │ ├── Headphones LEAF id:headphones ag-Grid-AutoColumn:"Headphones" value:15
+            │ ├── Tablets LEAF id:tablets ag-Grid-AutoColumn:"Tablets" value:20
+            │ ├── Cameras LEAF id:cameras ag-Grid-AutoColumn:"Cameras" value:33
             │ ├── Laptops LEAF id:laptops ag-Grid-AutoColumn:"Laptops" value:40
+            │ ├── TVs LEAF id:tvs ag-Grid-AutoColumn:"TVs" value:45
             │ └── Phones LEAF id:phones ag-Grid-AutoColumn:"Phones" value:60
-            └─┬ Home GROUP id:home ag-Grid-AutoColumn:"Home" value:15
-            · ├── Kitchen LEAF id:kitchen ag-Grid-AutoColumn:"Kitchen" value:1
-            · └── Garden LEAF id:garden ag-Grid-AutoColumn:"Garden" value:12
+            ├─┬ Clothing GROUP id:clothing ag-Grid-AutoColumn:"Clothing" value:14
+            │ ├── Socks LEAF id:socks ag-Grid-AutoColumn:"Socks" value:4
+            │ ├── Shirts LEAF id:shirts ag-Grid-AutoColumn:"Shirts" value:6
+            │ ├── Hats LEAF id:hats ag-Grid-AutoColumn:"Hats" value:9
+            │ ├── Jackets LEAF id:jackets ag-Grid-AutoColumn:"Jackets" value:16
+            │ ├── Pants LEAF id:pants ag-Grid-AutoColumn:"Pants" value:28
+            │ └── Shoes LEAF id:shoes ag-Grid-AutoColumn:"Shoes" value:32
+            ├─┬ Home GROUP id:home ag-Grid-AutoColumn:"Home" value:15
+            │ ├── Kitchen LEAF id:kitchen ag-Grid-AutoColumn:"Kitchen" value:1
+            │ ├── Bathroom LEAF id:bathroom ag-Grid-AutoColumn:"Bathroom" value:8
+            │ └── Garden LEAF id:garden ag-Grid-AutoColumn:"Garden" value:12
+            └─┬ Furniture GROUP id:furniture ag-Grid-AutoColumn:"Furniture" value:18
+            · ├── Chairs LEAF id:chairs ag-Grid-AutoColumn:"Chairs" value:10
+            · ├── Sofas LEAF id:sofas ag-Grid-AutoColumn:"Sofas" value:22
+            · └── Tables LEAF id:tables ag-Grid-AutoColumn:"Tables" value:35
         `);
     });
 });

@@ -356,7 +356,7 @@ describe('Delta Sorting', () => {
     });
 
     test('delta sort with duplicate node IDs', async () => {
-        const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
+        const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
         // Note: Duplicate IDs result in Map key collision - last duplicate wins in indexByNode
         // This means sort order for duplicates is undefined and may not be stable
@@ -418,7 +418,7 @@ describe('Delta Sorting', () => {
     });
 
     test('delta sort with duplicate rowData instances', async () => {
-        const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
+        const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
         const sharedData = { id: 'shared', value: 90 };
         const api = gridMgr.createGrid('deltaSortDuplicateInstances', {

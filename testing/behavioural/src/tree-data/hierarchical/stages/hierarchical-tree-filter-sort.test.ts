@@ -489,6 +489,10 @@ describe('ag-grid hierarchical tree filter sort', () => {
                 children: [
                     { id: 'alpha-design', label: 'Alpha Design', value: 35 },
                     { id: 'alpha-build', label: 'Alpha Build', value: 20 },
+                    { id: 'alpha-test', label: 'Alpha Test', value: 50 },
+                    { id: 'alpha-deploy', label: 'Alpha Deploy', value: 28 },
+                    { id: 'alpha-monitor', label: 'Alpha Monitor', value: 12 },
+                    { id: 'alpha-maintain', label: 'Alpha Maintain', value: 42 },
                 ],
             },
             {
@@ -498,6 +502,43 @@ describe('ag-grid hierarchical tree filter sort', () => {
                 children: [
                     { id: 'beta-design', label: 'Beta Design', value: 5 },
                     { id: 'beta-build', label: 'Beta Build', value: 18 },
+                    { id: 'beta-test', label: 'Beta Test', value: 12 },
+                    { id: 'beta-deploy', label: 'Beta Deploy', value: 22 },
+                    { id: 'beta-monitor', label: 'Beta Monitor', value: 8 },
+                    { id: 'beta-maintain', label: 'Beta Maintain', value: 16 },
+                ],
+            },
+            {
+                id: 'gamma',
+                label: 'Gamma',
+                value: 25,
+                children: [
+                    { id: 'gamma-design', label: 'Gamma Design', value: 8 },
+                    { id: 'gamma-build', label: 'Gamma Build', value: 30 },
+                    { id: 'gamma-test', label: 'Gamma Test', value: 22 },
+                    { id: 'gamma-deploy', label: 'Gamma Deploy', value: 35 },
+                    { id: 'gamma-monitor', label: 'Gamma Monitor', value: 15 },
+                    { id: 'gamma-maintain', label: 'Gamma Maintain', value: 25 },
+                ],
+            },
+            {
+                id: 'delta',
+                label: 'Delta',
+                value: 32,
+                children: [
+                    { id: 'delta-design', label: 'Delta Design', value: 28 },
+                    { id: 'delta-build', label: 'Delta Build', value: 45 },
+                    { id: 'delta-test', label: 'Delta Test', value: 15 },
+                ],
+            },
+            {
+                id: 'epsilon',
+                label: 'Epsilon',
+                value: 38,
+                children: [
+                    { id: 'epsilon-design', label: 'Epsilon Design', value: 42 },
+                    { id: 'epsilon-build', label: 'Epsilon Build', value: 25 },
+                    { id: 'epsilon-test', label: 'Epsilon Test', value: 55 },
                 ],
             },
         ]);
@@ -510,6 +551,10 @@ describe('ag-grid hierarchical tree filter sort', () => {
                 children: [
                     { id: 'alpha-design', label: 'Alpha Design', value: 35 },
                     { id: 'alpha-build', label: 'Alpha Build', value: 12 },
+                    { id: 'alpha-test', label: 'Alpha Test', value: 50 },
+                    { id: 'alpha-deploy', label: 'Alpha Deploy', value: 28 },
+                    { id: 'alpha-monitor', label: 'Alpha Monitor', value: 10 },
+                    { id: 'alpha-maintain', label: 'Alpha Maintain', value: 42 },
                 ],
             },
             {
@@ -519,6 +564,43 @@ describe('ag-grid hierarchical tree filter sort', () => {
                 children: [
                     { id: 'beta-design', label: 'Beta Design', value: 5 },
                     { id: 'beta-build', label: 'Beta Build', value: 1 },
+                    { id: 'beta-test', label: 'Beta Test', value: 12 },
+                    { id: 'beta-deploy', label: 'Beta Deploy', value: 22 },
+                    { id: 'beta-monitor', label: 'Beta Monitor', value: 8 },
+                    { id: 'beta-maintain', label: 'Beta Maintain', value: 16 },
+                ],
+            },
+            {
+                id: 'gamma',
+                label: 'Gamma',
+                value: 25,
+                children: [
+                    { id: 'gamma-design', label: 'Gamma Design', value: 8 },
+                    { id: 'gamma-build', label: 'Gamma Build', value: 30 },
+                    { id: 'gamma-test', label: 'Gamma Test', value: 22 },
+                    { id: 'gamma-deploy', label: 'Gamma Deploy', value: 35 },
+                    { id: 'gamma-monitor', label: 'Gamma Monitor', value: 15 },
+                    { id: 'gamma-maintain', label: 'Gamma Maintain', value: 25 },
+                ],
+            },
+            {
+                id: 'delta',
+                label: 'Delta',
+                value: 32,
+                children: [
+                    { id: 'delta-design', label: 'Delta Design', value: 28 },
+                    { id: 'delta-build', label: 'Delta Build', value: 45 },
+                    { id: 'delta-test', label: 'Delta Test', value: 15 },
+                ],
+            },
+            {
+                id: 'epsilon',
+                label: 'Epsilon',
+                value: 38,
+                children: [
+                    { id: 'epsilon-design', label: 'Epsilon Design', value: 42 },
+                    { id: 'epsilon-build', label: 'Epsilon Build', value: 25 },
+                    { id: 'epsilon-test', label: 'Epsilon Test', value: 55 },
                 ],
             },
         ]);
@@ -541,10 +623,33 @@ describe('ag-grid hierarchical tree filter sort', () => {
             ROOT id:ROOT_NODE_ID
             ├─┬ beta GROUP id:beta ag-Grid-AutoColumn:"beta" value:15
             │ ├── beta-design LEAF id:beta-design ag-Grid-AutoColumn:"beta-design" value:5
-            │ └── beta-build LEAF id:beta-build ag-Grid-AutoColumn:"beta-build" value:18
+            │ ├── beta-monitor LEAF id:beta-monitor ag-Grid-AutoColumn:"beta-monitor" value:8
+            │ ├── beta-test LEAF id:beta-test ag-Grid-AutoColumn:"beta-test" value:12
+            │ ├── beta-maintain LEAF id:beta-maintain ag-Grid-AutoColumn:"beta-maintain" value:16
+            │ ├── beta-build LEAF id:beta-build ag-Grid-AutoColumn:"beta-build" value:18
+            │ └── beta-deploy LEAF id:beta-deploy ag-Grid-AutoColumn:"beta-deploy" value:22
+            ├─┬ gamma GROUP id:gamma ag-Grid-AutoColumn:"gamma" value:25
+            │ ├── gamma-design LEAF id:gamma-design ag-Grid-AutoColumn:"gamma-design" value:8
+            │ ├── gamma-monitor LEAF id:gamma-monitor ag-Grid-AutoColumn:"gamma-monitor" value:15
+            │ ├── gamma-test LEAF id:gamma-test ag-Grid-AutoColumn:"gamma-test" value:22
+            │ ├── gamma-maintain LEAF id:gamma-maintain ag-Grid-AutoColumn:"gamma-maintain" value:25
+            │ ├── gamma-build LEAF id:gamma-build ag-Grid-AutoColumn:"gamma-build" value:30
+            │ └── gamma-deploy LEAF id:gamma-deploy ag-Grid-AutoColumn:"gamma-deploy" value:35
+            ├─┬ delta GROUP id:delta ag-Grid-AutoColumn:"delta" value:32
+            │ ├── delta-test LEAF id:delta-test ag-Grid-AutoColumn:"delta-test" value:15
+            │ ├── delta-design LEAF id:delta-design ag-Grid-AutoColumn:"delta-design" value:28
+            │ └── delta-build LEAF id:delta-build ag-Grid-AutoColumn:"delta-build" value:45
+            ├─┬ epsilon GROUP id:epsilon ag-Grid-AutoColumn:"epsilon" value:38
+            │ ├── epsilon-build LEAF id:epsilon-build ag-Grid-AutoColumn:"epsilon-build" value:25
+            │ ├── epsilon-design LEAF id:epsilon-design ag-Grid-AutoColumn:"epsilon-design" value:42
+            │ └── epsilon-test LEAF id:epsilon-test ag-Grid-AutoColumn:"epsilon-test" value:55
             └─┬ alpha GROUP id:alpha ag-Grid-AutoColumn:"alpha" value:40
+            · ├── alpha-monitor LEAF id:alpha-monitor ag-Grid-AutoColumn:"alpha-monitor" value:12
             · ├── alpha-build LEAF id:alpha-build ag-Grid-AutoColumn:"alpha-build" value:20
-            · └── alpha-design LEAF id:alpha-design ag-Grid-AutoColumn:"alpha-design" value:35
+            · ├── alpha-deploy LEAF id:alpha-deploy ag-Grid-AutoColumn:"alpha-deploy" value:28
+            · ├── alpha-design LEAF id:alpha-design ag-Grid-AutoColumn:"alpha-design" value:35
+            · ├── alpha-maintain LEAF id:alpha-maintain ag-Grid-AutoColumn:"alpha-maintain" value:42
+            · └── alpha-test LEAF id:alpha-test ag-Grid-AutoColumn:"alpha-test" value:50
         `);
 
         api.setGridOption('rowData', updatedRowData);
@@ -552,11 +657,34 @@ describe('ag-grid hierarchical tree filter sort', () => {
         await new GridRows(api, 'hierarchical tree data updated order').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ alpha GROUP id:alpha ag-Grid-AutoColumn:"alpha" value:5
+            │ ├── alpha-monitor LEAF id:alpha-monitor ag-Grid-AutoColumn:"alpha-monitor" value:10
             │ ├── alpha-build LEAF id:alpha-build ag-Grid-AutoColumn:"alpha-build" value:12
-            │ └── alpha-design LEAF id:alpha-design ag-Grid-AutoColumn:"alpha-design" value:35
-            └─┬ beta GROUP id:beta ag-Grid-AutoColumn:"beta" value:15
-            · ├── beta-build LEAF id:beta-build ag-Grid-AutoColumn:"beta-build" value:1
-            · └── beta-design LEAF id:beta-design ag-Grid-AutoColumn:"beta-design" value:5
+            │ ├── alpha-deploy LEAF id:alpha-deploy ag-Grid-AutoColumn:"alpha-deploy" value:28
+            │ ├── alpha-design LEAF id:alpha-design ag-Grid-AutoColumn:"alpha-design" value:35
+            │ ├── alpha-maintain LEAF id:alpha-maintain ag-Grid-AutoColumn:"alpha-maintain" value:42
+            │ └── alpha-test LEAF id:alpha-test ag-Grid-AutoColumn:"alpha-test" value:50
+            ├─┬ beta GROUP id:beta ag-Grid-AutoColumn:"beta" value:15
+            │ ├── beta-build LEAF id:beta-build ag-Grid-AutoColumn:"beta-build" value:1
+            │ ├── beta-design LEAF id:beta-design ag-Grid-AutoColumn:"beta-design" value:5
+            │ ├── beta-monitor LEAF id:beta-monitor ag-Grid-AutoColumn:"beta-monitor" value:8
+            │ ├── beta-test LEAF id:beta-test ag-Grid-AutoColumn:"beta-test" value:12
+            │ ├── beta-maintain LEAF id:beta-maintain ag-Grid-AutoColumn:"beta-maintain" value:16
+            │ └── beta-deploy LEAF id:beta-deploy ag-Grid-AutoColumn:"beta-deploy" value:22
+            ├─┬ gamma GROUP id:gamma ag-Grid-AutoColumn:"gamma" value:25
+            │ ├── gamma-design LEAF id:gamma-design ag-Grid-AutoColumn:"gamma-design" value:8
+            │ ├── gamma-monitor LEAF id:gamma-monitor ag-Grid-AutoColumn:"gamma-monitor" value:15
+            │ ├── gamma-test LEAF id:gamma-test ag-Grid-AutoColumn:"gamma-test" value:22
+            │ ├── gamma-maintain LEAF id:gamma-maintain ag-Grid-AutoColumn:"gamma-maintain" value:25
+            │ ├── gamma-build LEAF id:gamma-build ag-Grid-AutoColumn:"gamma-build" value:30
+            │ └── gamma-deploy LEAF id:gamma-deploy ag-Grid-AutoColumn:"gamma-deploy" value:35
+            ├─┬ delta GROUP id:delta ag-Grid-AutoColumn:"delta" value:32
+            │ ├── delta-test LEAF id:delta-test ag-Grid-AutoColumn:"delta-test" value:15
+            │ ├── delta-design LEAF id:delta-design ag-Grid-AutoColumn:"delta-design" value:28
+            │ └── delta-build LEAF id:delta-build ag-Grid-AutoColumn:"delta-build" value:45
+            └─┬ epsilon GROUP id:epsilon ag-Grid-AutoColumn:"epsilon" value:38
+            · ├── epsilon-build LEAF id:epsilon-build ag-Grid-AutoColumn:"epsilon-build" value:25
+            · ├── epsilon-design LEAF id:epsilon-design ag-Grid-AutoColumn:"epsilon-design" value:42
+            · └── epsilon-test LEAF id:epsilon-test ag-Grid-AutoColumn:"epsilon-test" value:55
         `);
     });
 });
