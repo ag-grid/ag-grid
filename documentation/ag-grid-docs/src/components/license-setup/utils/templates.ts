@@ -19,6 +19,12 @@ function App() {
         </AgGridProvider>
     );
 }
+
+// For versions <35.1 use the LicenseManager and ModuleRegistry directly
+
+// import { LicenseManager, ModuleRegistry } from "ag-grid-enterprise";
+// ModuleRegistry.registerModules([${isIntegratedCharts ? '\n//   AllEnterpriseModule,\n//   IntegratedChartsModule.with(AgChartsEnterpriseModule)\n// ' : 'AllEnterpriseModule'}]);
+// LicenseManager.setLicenseKey("${license}");
 `,
     angular: ({ license, isIntegratedCharts }) => {
         return `import { ModuleRegistry } from "ag-grid-community";
