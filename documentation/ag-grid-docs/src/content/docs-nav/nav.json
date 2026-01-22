@@ -56,6 +56,10 @@
                             "path": "deep-dive"
                         },
                         {
+                            "title": "Styling a Grid",
+                            "path": "styling-tutorial"
+                        },
+                        {
                             "title": "Best Practices",
                             "path": "react-hooks",
                             "frameworks": ["react"]

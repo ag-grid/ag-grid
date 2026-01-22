@@ -1,0 +1,64 @@
+/* Custom header styling */
+.ag-header-cell-text {
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    font-size: 0.85em;
+}
+
+/* Accent border under header */
+.ag-header-cell {
+    border-bottom: 2px solid var(--ag-accent-color) !important;
+}
+
+/* Row styles - sales performance */
+.high-sales {
+    background-color: rgba(76, 175, 80, 0.15) !important;
+}
+
+.low-sales {
+    background-color: rgba(244, 67, 54, 0.1) !important;
+}
+
+/* Cell styles - profit margin */
+.high-margin {
+    font-weight: 600;
+}
+
+/* Cell styles - status badges */
+.status-delivered {
+    color: #2e7d32;
+}
+
+.status-pending {
+    color: #ed6c02;
+}
+
+.status-cancelled {
+    color: #d32f2f;
+}
+
+/* Style first column (product name) */
+.ag-cell[col-id='productName'] {
+    font-weight: 500;
+}
+
+/* Button styling */
+.ag-toggleButton {
+    appearance: none;
+    background-color: #0d4491;
+    border: 1px solid #0d4491;
+    border-radius: 6px;
+    height: 36px;
+    color: white;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    padding: 0.375em 1em 0.4em;
+    white-space: nowrap;
+    margin-right: 6px;
+    margin-bottom: 8px;
+    transition: background-color 0.25s ease-in-out;
+}
