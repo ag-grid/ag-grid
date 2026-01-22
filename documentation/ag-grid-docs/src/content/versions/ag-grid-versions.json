@@ -1,5 +1,9 @@
 [
     {
+        "version": "35.0.1",
+        "date": "22nd January 2026"
+    },
+    {
         "version": "35.0.0",
         "date": "10th December 2025",
         "landingPageHighlight": "Formulas, Row Group Dragging, Absolute Sorting, Column Selection, Filtering & Export Overlays",
