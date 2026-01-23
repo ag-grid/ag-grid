@@ -1,4 +1,4 @@
-import type { ColDef, GetRowIdParams, GridApi, GridOptions, ValueFormatterParams } from 'ag-grid-community';
+import type { GetRowIdParams, GridApi, GridOptions, ValueFormatterParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -21,18 +21,15 @@ ModuleRegistry.registerModules([
 let gridApi: GridApi;
 
 const valueFormatter = ({ value }: ValueFormatterParams) => `$ ${Number(value).toFixed(2)}`;
-const getRowId = (params: GetRowIdParams) => String(params.data.id);
-
-const columnDefs: ColDef[] = [
-    { field: 'item' },
-    { field: 'price', valueFormatter },
-    { field: 'qty' },
-    { field: 'total', allowFormula: true, valueFormatter },
-];
 
 const gridOptions: GridOptions = {
-    columnDefs,
-    getRowId,
+    columnDefs: [
+        { field: 'item' },
+        { field: 'price', valueFormatter },
+        { field: 'qty' },
+        { field: 'total', allowFormula: true, valueFormatter },
+    ],
+    getRowId: (params: GetRowIdParams) => String(params.data.id),
     cellSelection: {
         handle: {
             mode: 'fill',
