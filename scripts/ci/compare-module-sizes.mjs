@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
 
-const THRESHOLD_PERCENT = 0.5; // Ignore changes below this percentage
+const THRESHOLD = 0.5; // Ignore changes below this size change
 const HIGHLIGHT_PERCENT = 5; // Highlight table rows when change exceeds this percentage
 
 /**
@@ -169,7 +169,7 @@ const maxIncrease = diffs.reduce((max, d) => (d.selfSizeDiff > max.selfSizeDiff 
 const maxDecrease = diffs.reduce((min, d) => (d.selfSizeDiff < min.selfSizeDiff ? d : min), diffs[0]);
 
 // Filter significant changes
-const significantChanges = diffs.filter((d) => Math.abs(d.selfSizePercent) >= THRESHOLD_PERCENT);
+const significantChanges = diffs.filter((d) => Math.abs(d.selfSizeDiff) >= THRESHOLD);
 
 // Generate markdown report
 let report = '';
@@ -180,8 +180,8 @@ report += '## Module Size Comparison\n\n';
 // Extremes section - only show if change is >= THRESHOLD_PERCENT
 report += '### Extreme Values\n\n';
 
-const showMaxIncrease = maxIncrease && maxIncrease.selfSizePercent >= THRESHOLD_PERCENT;
-const showMaxDecrease = maxDecrease && maxDecrease.selfSizePercent <= -THRESHOLD_PERCENT;
+const showMaxIncrease = maxIncrease && maxIncrease.selfSizeDiff >= THRESHOLD;
+const showMaxDecrease = maxDecrease && maxDecrease.selfSizeDiff <= -THRESHOLD;
 
 if (showMaxIncrease) {
     const moduleName = maxIncrease.modules.length === 0 ? 'Base (no modules)' : maxIncrease.modules.join(', ');
@@ -196,12 +196,12 @@ if (showMaxDecrease) {
 }
 
 if (!showMaxIncrease && !showMaxDecrease) {
-    report += `✅ No significant changes (all changes < ${THRESHOLD_PERCENT}%)\n\n`;
+    report += `✅ No significant changes (all changes < ${THRESHOLD}KB)\n\n`;
 }
 
 // Significant changes table
 if (significantChanges.length > 0) {
-    report += `### Significant Changes (≥ ${THRESHOLD_PERCENT}%)\n\n`;
+    report += `### Significant Changes (≥ ${THRESHOLD}KB)\n\n`;
     report +=
         '| Module(s) | Base (KB) | PR (KB) | Diff (KB) | Diff % | Base Gzip (KB) | PR Gzip (KB) | Gzip Diff (KB) | Gzip % |\n';
     report +=
@@ -230,7 +230,7 @@ if (significantChanges.length > 0) {
     report += '\n';
 } else {
     report += '### Significant Changes\n\n';
-    report += `✅ No modules changed by more than ${THRESHOLD_PERCENT}%.\n\n`;
+    report += `✅ No modules changed by more than ${THRESHOLD}KB.\n\n`;
 }
 
 // New/Removed modules
@@ -302,7 +302,7 @@ console.log(`Comparison report written to ${outputFile}`);
 
 // Output summary for CI
 console.log('\n--- Summary ---');
-console.log(`Significant changes (>= ${THRESHOLD_PERCENT}%): ${significantChanges.length}`);
+console.log(`Significant changes (>= ${THRESHOLD}KB): ${significantChanges.length}`);
 if (showMaxIncrease) {
     const moduleName = maxIncrease.modules.length === 0 ? 'Base (no modules)' : maxIncrease.modules.join(', ');
     console.log(
@@ -316,5 +316,5 @@ if (showMaxDecrease) {
     );
 }
 if (!showMaxIncrease && !showMaxDecrease) {
-    console.log(`No significant module size changes detected (all < ${THRESHOLD_PERCENT}%).`);
+    console.log(`No significant module size changes detected (all < ${THRESHOLD}KB).`);
 }
