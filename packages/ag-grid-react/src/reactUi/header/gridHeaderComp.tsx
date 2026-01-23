@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { IGridHeaderComp } from 'ag-grid-community';
 import { GridHeaderCtrl } from 'ag-grid-community';
@@ -14,10 +14,29 @@ const GridHeaderComp = () => {
     const { context } = useContext(BeansContext);
     const eGui = useRef<HTMLDivElement | null>(null);
     const gridCtrlRef = useRef<GridHeaderCtrl>();
+    const prevERef = useRef<HTMLDivElement | null>(null);
 
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
         eGui.current = eRef;
-        if (!eRef || context.isDestroyed()) {
+
+        if (!eRef) {
+            // Don't destroy yet - StrictMode may remount with same element
+            return;
+        }
+
+        // Same element and valid ctrl? Reuse it (StrictMode remount)
+        if (eRef === prevERef.current && gridCtrlRef.current && !context.isDestroyed()) {
+            return;
+        }
+
+        // Different element means different instance - destroy old first
+        if (prevERef.current && prevERef.current !== eRef) {
+            gridCtrlRef.current = context.destroyBean(gridCtrlRef.current);
+        }
+
+        prevERef.current = eRef;
+
+        if (context.isDestroyed()) {
             gridCtrlRef.current = context.destroyBean(gridCtrlRef.current);
             return;
         }
@@ -30,6 +49,16 @@ const GridHeaderComp = () => {
         };
 
         gridCtrlRef.current!.setComp(compProxy, eRef, eRef);
+    }, []);
+
+    // Handle cleanup on true unmount (not StrictMode's simulated unmount)
+    useEffect(() => {
+        return () => {
+            // Only destroy if element is truly gone from DOM
+            if (prevERef.current && !document.contains(prevERef.current)) {
+                gridCtrlRef.current = context.destroyBean(gridCtrlRef.current);
+            }
+        };
     }, []);
 
     const className = useMemo(() => {

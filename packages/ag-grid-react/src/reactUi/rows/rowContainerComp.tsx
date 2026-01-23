@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { IRowContainerComp, RowContainerName, RowCtrl } from 'ag-grid-community';
 import {
@@ -33,6 +33,9 @@ const RowContainerComp = ({ name }: { name: RowContainerName }) => {
 
     const domOrderRef = useRef<boolean>(false);
     const rowContainerCtrlRef = useRef<RowContainerCtrl>();
+    const prevViewportRef = useRef<HTMLDivElement | null>(null);
+    const prevContainerRef = useRef<HTMLDivElement | null>(null);
+    const prevSpanContainerRef = useRef<HTMLDivElement | null>(null);
 
     const viewportClasses = useMemo(() => classesList('ag-viewport', _getRowViewportClass(name)), [name]);
     const containerClasses = useMemo(() => classesList(_getRowContainerClass(name)), [name]);
@@ -49,6 +52,13 @@ const RowContainerComp = ({ name }: { name: RowContainerName }) => {
         const containerReady = eContainer.current != null;
         const spanContainerReady = !isSpanning || eSpanContainer.current != null;
         return viewportReady && containerReady && spanContainerReady;
+    }, [shouldRenderViewport, isSpanning]);
+
+    const areElementsSame = useCallback(() => {
+        const viewportSame = eViewport.current === prevViewportRef.current;
+        const containerSame = eContainer.current === prevContainerRef.current;
+        const spanContainerSame = eSpanContainer.current === prevSpanContainerRef.current;
+        return viewportSame && containerSame && spanContainerSame;
     }, []);
 
     const areElementsRemoved = useCallback(() => {
@@ -57,13 +67,30 @@ const RowContainerComp = ({ name }: { name: RowContainerName }) => {
 
     const setRef = useCallback(() => {
         if (areElementsRemoved()) {
-            rowContainerCtrlRef.current = context.destroyBean(rowContainerCtrlRef.current);
+            // Don't destroy yet - StrictMode may remount with same elements
+            return;
         }
+
         if (context.isDestroyed()) {
+            rowContainerCtrlRef.current = context.destroyBean(rowContainerCtrlRef.current);
             return;
         }
 
         if (areElementsReady()) {
+            // Same elements and valid ctrl? Reuse it (StrictMode remount)
+            if (areElementsSame() && rowContainerCtrlRef.current) {
+                return;
+            }
+
+            // Different elements means different instance - destroy old first
+            if (!areElementsSame() && rowContainerCtrlRef.current) {
+                rowContainerCtrlRef.current = context.destroyBean(rowContainerCtrlRef.current);
+            }
+
+            // Update previous refs
+            prevViewportRef.current = eViewport.current;
+            prevContainerRef.current = eContainer.current;
+            prevSpanContainerRef.current = eSpanContainer.current;
             const updateRowCtrlsOrdered = (useFlushSync: boolean) => {
                 const next = getNextValueIfDifferent(
                     prevRowCtrlsRef.current,
@@ -137,7 +164,20 @@ const RowContainerComp = ({ name }: { name: RowContainerName }) => {
                 eViewport.current!
             );
         }
-    }, [areElementsReady, areElementsRemoved]);
+    }, [areElementsReady, areElementsRemoved, areElementsSame]);
+
+    // Handle cleanup on true unmount (not StrictMode's simulated unmount)
+    useEffect(() => {
+        return () => {
+            // Only destroy if elements are truly gone from DOM
+            const containerGone = prevContainerRef.current && !document.contains(prevContainerRef.current);
+            const viewportGone = prevViewportRef.current && !document.contains(prevViewportRef.current);
+            const spanGone = prevSpanContainerRef.current && !document.contains(prevSpanContainerRef.current);
+            if (containerGone || viewportGone || spanGone) {
+                rowContainerCtrlRef.current = context.destroyBean(rowContainerCtrlRef.current);
+            }
+        };
+    }, []);
 
     const setContainerRef = useCallback(
         (e: HTMLDivElement | null) => {

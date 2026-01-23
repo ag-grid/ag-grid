@@ -1,5 +1,5 @@
 import type { ForwardRefRenderFunction } from 'react';
-import React, { forwardRef, memo, useCallback, useContext, useImperativeHandle, useRef } from 'react';
+import React, { forwardRef, memo, useCallback, useContext, useEffect, useImperativeHandle, useRef } from 'react';
 
 import type { GridCtrl, ITabGuard } from 'ag-grid-community';
 import { TabGuardClassNames, TabGuardCtrl } from 'ag-grid-community';
@@ -29,6 +29,8 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
     const topTabGuardRef = useRef<HTMLDivElement | null>(null);
     const bottomTabGuardRef = useRef<HTMLDivElement | null>(null);
     const tabGuardCtrlRef = useRef<TabGuardCtrl>();
+    const prevTopRef = useRef<HTMLDivElement | null>(null);
+    const prevBottomRef = useRef<HTMLDivElement | null>(null);
 
     const setTabIndex = (value?: string | null) => {
         const processedValue = value == null ? undefined : parseInt(value, 10).toString();
@@ -51,8 +53,34 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
     const setupCtrl = useCallback(() => {
         const topTabGuard = topTabGuardRef.current;
         const bottomTabGuard = bottomTabGuardRef.current;
-        if ((!topTabGuard && !bottomTabGuard) || context.isDestroyed()) {
-            // Clean up after both refs have been removed or the context is destroyed
+
+        if (!topTabGuard && !bottomTabGuard) {
+            // Don't destroy yet - StrictMode may remount with same elements
+            return;
+        }
+
+        // Same elements and valid ctrl? Reuse it (StrictMode remount)
+        if (
+            topTabGuard === prevTopRef.current &&
+            bottomTabGuard === prevBottomRef.current &&
+            tabGuardCtrlRef.current &&
+            !context.isDestroyed()
+        ) {
+            return;
+        }
+
+        // Different elements means different instance - destroy old first
+        if (
+            (prevTopRef.current && prevTopRef.current !== topTabGuard) ||
+            (prevBottomRef.current && prevBottomRef.current !== bottomTabGuard)
+        ) {
+            tabGuardCtrlRef.current = context.destroyBean(tabGuardCtrlRef.current);
+        }
+
+        prevTopRef.current = topTabGuard;
+        prevBottomRef.current = bottomTabGuard;
+
+        if (context.isDestroyed()) {
             tabGuardCtrlRef.current = context.destroyBean(tabGuardCtrlRef.current);
             return;
         }
@@ -91,6 +119,18 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
         },
         [setupCtrl]
     );
+
+    // Handle cleanup on true unmount (not StrictMode's simulated unmount)
+    useEffect(() => {
+        return () => {
+            // Only destroy if elements are truly gone from DOM
+            const topGone = prevTopRef.current && !document.contains(prevTopRef.current);
+            const bottomGone = prevBottomRef.current && !document.contains(prevBottomRef.current);
+            if (topGone || bottomGone) {
+                tabGuardCtrlRef.current = context.destroyBean(tabGuardCtrlRef.current);
+            }
+        };
+    }, []);
 
     const createTabGuard = (side: 'top' | 'bottom') => {
         const className = side === 'top' ? TabGuardClassNames.TAB_GUARD_TOP : TabGuardClassNames.TAB_GUARD_BOTTOM;

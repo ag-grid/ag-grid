@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { ComponentSelector, IGridBodyComp, RowContainerName } from 'ag-grid-community';
 import {
@@ -65,6 +65,7 @@ const GridBodyComp = () => {
 
     const beansToDestroy = useRef<any[]>([]);
     const destroyFuncs = useRef<(() => void)[]>([]);
+    const prevERef = useRef<HTMLDivElement | null>(null);
 
     useReactCommentEffect(' AG Grid Body ', eRoot);
     useReactCommentEffect(' AG Pinned Top ', eTop);
@@ -74,13 +75,29 @@ const GridBodyComp = () => {
 
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
         eRoot.current = eRef;
-        if (!eRef || context.isDestroyed()) {
+
+        if (!eRef) {
+            // Don't destroy yet - StrictMode may remount with same element
+            return;
+        }
+
+        // Same element and beans still valid? Reuse them (StrictMode remount)
+        if (eRef === prevERef.current && beansToDestroy.current.length > 0 && !context.isDestroyed()) {
+            return;
+        }
+
+        // Different element means different instance - destroy old first
+        if (prevERef.current && prevERef.current !== eRef) {
             beansToDestroy.current = context.destroyBeans(beansToDestroy.current);
             for (const f of destroyFuncs.current) {
                 f();
             }
             destroyFuncs.current = [];
+        }
 
+        prevERef.current = eRef;
+
+        if (context.isDestroyed()) {
             return;
         }
 
@@ -159,6 +176,20 @@ const GridBodyComp = () => {
             eStickyTop.current!,
             eStickyBottom.current!
         );
+    }, []);
+
+    // Handle cleanup on true unmount (not StrictMode's simulated unmount)
+    useEffect(() => {
+        return () => {
+            // Only destroy if element is truly gone from DOM
+            if (prevERef.current && !document.contains(prevERef.current)) {
+                beansToDestroy.current = context.destroyBeans(beansToDestroy.current);
+                for (const f of destroyFuncs.current) {
+                    f();
+                }
+                destroyFuncs.current = [];
+            }
+        };
     }, []);
 
     const rootClasses = useMemo(() => classesList('ag-root', 'ag-unselectable', layoutClass), [layoutClass]);

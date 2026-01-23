@@ -94,6 +94,8 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
     const prevProps = useRef<AgGridReactProps<any>>(props);
     const frameworkOverridesRef = useRef<ReactFrameworkOverrides>();
     const gridIdRef = useRef<string | undefined>();
+    const contextRef = useRef<Context>();
+    const prevERef = useRef<HTMLDivElement | null>(null);
 
     const ready = useRef<boolean>(false);
 
@@ -132,12 +134,25 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
         eGui.current = eRef;
         updateClassName(props.className);
         if (!eRef) {
+            // Don't destroy yet - StrictMode may remount with same element
+            return;
+        }
+
+        // Same element and valid context? Reuse it (StrictMode remount)
+        if (eRef === prevERef.current && contextRef.current && !contextRef.current.isDestroyed()) {
+            setContext(contextRef.current);
+            return;
+        }
+
+        // Different element means different grid instance - destroy old first
+        if (prevERef.current && prevERef.current !== eRef) {
             for (const f of destroyFuncs.current) {
                 f();
             }
             destroyFuncs.current.length = 0;
-            return;
         }
+
+        prevERef.current = eRef;
 
         const modules: Module[] = [...(props.modules ?? []), ...(modulesFromContext ?? [])];
         if (licenseKeyFromContext) {
@@ -190,6 +205,7 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
         };
 
         const createUiCallback = (ctx: Context) => {
+            contextRef.current = ctx;
             setContext(ctx);
             ctx.createBean(renderStatus);
 
@@ -253,6 +269,19 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
         if (apiRef.current) {
             gridIdRef.current = apiRef.current.getGridId();
         }
+    }, []);
+
+    // Handle cleanup on true unmount (not StrictMode's simulated unmount)
+    useEffect(() => {
+        return () => {
+            // Only destroy if element is truly gone from DOM
+            if (prevERef.current && !document.contains(prevERef.current)) {
+                for (const f of destroyFuncs.current) {
+                    f();
+                }
+                destroyFuncs.current.length = 0;
+            }
+        };
     }, []);
 
     const style = useMemo(() => {

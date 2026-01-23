@@ -38,6 +38,8 @@ const GridComp = ({ context }: GridCompProps) => {
     const focusInnerElementRef = useRef<(fromBottom?: boolean) => void>(() => undefined);
     const paginationCompRef = useRef<JsTabGuardComp | undefined>();
     const focusableContainersRef = useRef<Component[]>([]);
+    const prevERef = useRef<HTMLDivElement | null>(null);
+    const prevGridBodyParentRef = useRef<HTMLDivElement | null>(null);
 
     const onTabKeyDown = useCallback(() => undefined, []);
 
@@ -45,6 +47,18 @@ const GridComp = ({ context }: GridCompProps) => {
 
     const setRef = useCallback((eRef: HTMLDivElement) => {
         eRootWrapperRef.current = eRef;
+
+        // Same element and valid ctrl? Reuse it (StrictMode remount)
+        if (eRef === prevERef.current && gridCtrlRef.current && !context.isDestroyed()) {
+            return;
+        }
+
+        // Different element means different instance - destroy old first
+        if (prevERef.current && prevERef.current !== eRef) {
+            gridCtrlRef.current = context.destroyBean(gridCtrlRef.current);
+        }
+
+        prevERef.current = eRef;
         gridCtrlRef.current = eRef ? context.createBean(new GridCtrl()) : context.destroyBean(gridCtrlRef.current);
 
         if (!eRef || context.isDestroyed()) {
@@ -88,12 +102,28 @@ const GridComp = ({ context }: GridCompProps) => {
         setInitialised(true);
     }, []);
 
+    // Track beans for optional components to handle StrictMode properly
+    const optionalBeansRef = useRef<any[]>([]);
+    const optionalElementsRef = useRef<HTMLElement[]>([]);
+
     // initialise the extra components
     useEffect(() => {
         const gridCtrl = gridCtrlRef.current;
         const eRootWrapper = eRootWrapperRef.current;
         if (!tabGuardReady || !gridCtrl || !eGridBodyParent || !eRootWrapper || context.isDestroyed()) {
             return;
+        }
+
+        // Clean up any existing beans from previous render
+        if (optionalBeansRef.current.length > 0) {
+            context.destroyBeans(optionalBeansRef.current);
+            optionalBeansRef.current = [];
+        }
+        if (optionalElementsRef.current.length > 0) {
+            for (const el of optionalElementsRef.current) {
+                el.remove();
+            }
+            optionalElementsRef.current = [];
         }
 
         const beansToDestroy: any[] = [];
@@ -152,10 +182,20 @@ const GridComp = ({ context }: GridCompProps) => {
             addComponentToDom(watermarkSelector.component);
         }
 
+        // Store refs for cleanup
+        optionalBeansRef.current = beansToDestroy;
+        optionalElementsRef.current = additionalEls;
+
         return () => {
-            context.destroyBeans(beansToDestroy);
-            for (const el of additionalEls) {
-                el.remove();
+            // Only destroy if elements are truly gone from DOM
+            const anyElementGone = additionalEls.some((el) => !document.contains(el));
+            if (anyElementGone) {
+                context.destroyBeans(beansToDestroy);
+                for (const el of additionalEls) {
+                    el.remove();
+                }
+                optionalBeansRef.current = [];
+                optionalElementsRef.current = [];
             }
         };
     }, [tabGuardReady, eGridBodyParent, context]);
@@ -185,9 +225,23 @@ const GridComp = ({ context }: GridCompProps) => {
 
     const isFocusable = useCallback(() => !gridCtrlRef.current?.isFocusable(), []);
 
+    const setGridBodyParentRef = useCallback((eRef: HTMLDivElement | null) => {
+        // Same element? Don't update state (StrictMode remount)
+        if (eRef === prevGridBodyParentRef.current) {
+            return;
+        }
+        const wasPreviousSet = prevGridBodyParentRef.current != null;
+        prevGridBodyParentRef.current = eRef;
+        if (!wasPreviousSet) {
+            setGridBodyParent(eRef);
+        } else {
+            console.log('Skipping setting grid body parent due to StrictMode remount');
+        }
+    }, []);
+
     return (
         <div ref={setRef} className={rootWrapperClasses} style={topStyle} role="presentation">
-            <div className={rootWrapperBodyClasses} ref={setGridBodyParent} role="presentation">
+            <div className={rootWrapperBodyClasses} ref={setGridBodyParentRef} role="presentation">
                 {initialised && eGridBodyParent && !context.isDestroyed() && (
                     <BeansContext.Provider value={context.getBeans()}>
                         <TabGuardComp

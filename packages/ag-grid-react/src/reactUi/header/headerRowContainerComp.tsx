@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useContext, useRef, useState } from 'react';
+import React, { memo, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 import type { ColumnPinnedType, HeaderRowCtrl, IHeaderRowContainerComp } from 'ag-grid-community';
 import { HeaderRowContainerCtrl } from 'ag-grid-community';
@@ -14,6 +14,7 @@ const HeaderRowContainerComp = ({ pinned }: { pinned: ColumnPinnedType }) => {
     const eGui = useRef<HTMLDivElement | null>(null);
     const eCenterContainer = useRef<HTMLDivElement>(null);
     const headerRowCtrlRef = useRef<HeaderRowContainerCtrl>();
+    const prevERef = useRef<HTMLDivElement | null>(null);
 
     const pinnedLeft = pinned === 'left';
     const pinnedRight = pinned === 'right';
@@ -22,7 +23,24 @@ const HeaderRowContainerComp = ({ pinned }: { pinned: ColumnPinnedType }) => {
     const setRef = useCallback((eRef: HTMLDivElement) => {
         eGui.current = eRef;
 
-        if (!eRef || context.isDestroyed()) {
+        if (!eRef) {
+            // Don't destroy yet - StrictMode may remount with same element
+            return;
+        }
+
+        // Same element and valid ctrl? Reuse it (StrictMode remount)
+        if (eRef === prevERef.current && headerRowCtrlRef.current && !context.isDestroyed()) {
+            return;
+        }
+
+        // Different element means different instance - destroy old first
+        if (prevERef.current && prevERef.current !== eRef) {
+            headerRowCtrlRef.current = context.destroyBean(headerRowCtrlRef.current);
+        }
+
+        prevERef.current = eRef;
+
+        if (context.isDestroyed()) {
             headerRowCtrlRef.current = context.destroyBean(headerRowCtrlRef.current);
             return;
         }
@@ -56,6 +74,16 @@ const HeaderRowContainerComp = ({ pinned }: { pinned: ColumnPinnedType }) => {
         };
 
         headerRowCtrlRef.current!.setComp(compProxy, eGui.current);
+    }, []);
+
+    // Handle cleanup on true unmount (not StrictMode's simulated unmount)
+    useEffect(() => {
+        return () => {
+            // Only destroy if element is truly gone from DOM
+            if (prevERef.current && !document.contains(prevERef.current)) {
+                headerRowCtrlRef.current = context.destroyBean(headerRowCtrlRef.current);
+            }
+        };
     }, []);
 
     const className = !displayed ? 'ag-hidden' : '';
