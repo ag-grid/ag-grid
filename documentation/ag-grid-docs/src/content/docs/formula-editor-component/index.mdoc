@@ -24,7 +24,7 @@ Providing a `cellEditor` opts the column out of the Formula Cell Editor. Formula
 
 Invalid formulas already surface via the formula engine: the cell displays the error and shows a tooltip based on the grid's formula error state. Because of this, the Formula Cell Editor does not validate on every change by default.
 
-To opt into validation while editing, set `validateFormulas: true` on the editor params. Validation will also run if you provide a custom [getValidationErrors](./cell-editing-validation/#overriding-validation) callback. For more on validation behaviour and presentation, see [Cell Editing Validation](./cell-editing-validation/).
+To opt into validation while editing, set `validateFormulas: true` on the editor params. Validation will also run if you provide a custom [getValidationErrors](./cell-editing-validation/#overriding-validation) callback. For more details on validation behaviour and presentation, see [Cell Editing Validation](./cell-editing-validation/).
 
 ```js
 const columnDefs = [
