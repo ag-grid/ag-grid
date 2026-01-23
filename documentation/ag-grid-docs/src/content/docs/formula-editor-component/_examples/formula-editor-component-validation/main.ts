@@ -68,7 +68,7 @@ const gridOptions: GridOptions = {
             item: 'Bananas',
             price: 0.5,
             qty: 6,
-            total: '=REF(COLUMN("price"),ROW(2))*',
+            total: '=B2*',
         },
         {
             id: 3,
