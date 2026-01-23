@@ -173,6 +173,14 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
 
         await dispatcher.move(targetRowId, { clientX, clientY });
 
+        if (suppressMoveWhenRowDragging) {
+            await waitFor(() => {
+                const indicator = api.getRowDropPositionIndicator();
+                expect(indicator.dropIndicatorPosition).not.toBe('none');
+                expect(['root-ops', 'root-ops-logs']).toContain(indicator.row?.id);
+            });
+        }
+
         for (let i = 0; i < 30 && !expandedBeforeDrop; ++i) {
             await asyncSetTimeout(20);
             api.forEachNode((node: IRowNode) => {
