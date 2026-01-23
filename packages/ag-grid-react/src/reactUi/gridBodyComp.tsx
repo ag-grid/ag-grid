@@ -15,7 +15,7 @@ import { BeansContext } from './beansContext';
 import GridHeaderComp from './header/gridHeaderComp';
 import useReactCommentEffect from './reactComment';
 import RowContainerComp from './rows/rowContainerComp';
-import { classesList } from './utils';
+import { classesList, isElementHiddenInDom } from './utils';
 
 interface SectionProperties {
     section: React.RefObject<HTMLDivElement>;
@@ -65,6 +65,7 @@ const GridBodyComp = () => {
 
     const beansToDestroy = useRef<any[]>([]);
     const destroyFuncs = useRef<(() => void)[]>([]);
+    const pendingDestroyTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
     useReactCommentEffect(' AG Grid Body ', eRoot);
     useReactCommentEffect(' AG Pinned Top ', eTop);
@@ -73,14 +74,32 @@ const GridBodyComp = () => {
     useReactCommentEffect(' AG Pinned Bottom ', eBottom);
 
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
+        const previousEGui = eRoot.current;
         eRoot.current = eRef;
-        if (!eRef || context.isDestroyed()) {
-            beansToDestroy.current = context.destroyBeans(beansToDestroy.current);
-            for (const f of destroyFuncs.current) {
-                f();
-            }
-            destroyFuncs.current = [];
 
+        if (!eRef) {
+            // Schedule destruction to allow Activity hiding check.
+            pendingDestroyTimeoutRef.current = setTimeout(() => {
+                if (previousEGui && isElementHiddenInDom(previousEGui)) {
+                    return;
+                }
+                beansToDestroy.current = context.destroyBeans(beansToDestroy.current);
+                for (const f of destroyFuncs.current) {
+                    f();
+                }
+                destroyFuncs.current = [];
+            }, 0);
+            return;
+        }
+
+        // Cancel any pending destruction
+        if (pendingDestroyTimeoutRef.current) {
+            clearTimeout(pendingDestroyTimeoutRef.current);
+            pendingDestroyTimeoutRef.current = undefined;
+        }
+
+        // If already initialized (Activity case), reuse
+        if (beansToDestroy.current.length > 0 || context.isDestroyed()) {
             return;
         }
 

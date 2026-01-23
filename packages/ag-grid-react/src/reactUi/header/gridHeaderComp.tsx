@@ -4,7 +4,7 @@ import type { IGridHeaderComp } from 'ag-grid-community';
 import { GridHeaderCtrl } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
-import { CssClasses } from '../utils';
+import { CssClasses, isElementHiddenInDom } from '../utils';
 import HeaderRowContainerComp from './headerRowContainerComp';
 
 const GridHeaderComp = () => {
@@ -14,11 +14,31 @@ const GridHeaderComp = () => {
     const { context } = useContext(BeansContext);
     const eGui = useRef<HTMLDivElement | null>(null);
     const gridCtrlRef = useRef<GridHeaderCtrl>();
+    const pendingDestroyTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
+        const previousEGui = eGui.current;
         eGui.current = eRef;
-        if (!eRef || context.isDestroyed()) {
-            gridCtrlRef.current = context.destroyBean(gridCtrlRef.current);
+
+        if (!eRef) {
+            // Schedule destruction to allow Activity hiding check.
+            pendingDestroyTimeoutRef.current = setTimeout(() => {
+                if (previousEGui && isElementHiddenInDom(previousEGui)) {
+                    return;
+                }
+                gridCtrlRef.current = context.destroyBean(gridCtrlRef.current);
+            }, 0);
+            return;
+        }
+
+        // Cancel any pending destruction
+        if (pendingDestroyTimeoutRef.current) {
+            clearTimeout(pendingDestroyTimeoutRef.current);
+            pendingDestroyTimeoutRef.current = undefined;
+        }
+
+        // If already initialized (Activity case), reuse
+        if (gridCtrlRef.current || context.isDestroyed()) {
             return;
         }
 

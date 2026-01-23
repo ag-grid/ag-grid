@@ -60,7 +60,7 @@ import { BeansContext, RenderModeContext } from './beansContext';
 import GridComp from './gridComp';
 import { RenderStatusService } from './renderStatusService';
 import { useIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect';
-import { CssClasses, isReact19, runWithoutFlushSync } from './utils';
+import { CssClasses, isElementHiddenInDom, isReact19, runWithoutFlushSync } from './utils';
 
 const deprecatedProps: Pick<InternalAgGridReactProps, 'setGridApi' | 'children' | 'maxComponentCreationTimeMs'> = {
     setGridApi: undefined,
@@ -94,6 +94,8 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
     const prevProps = useRef<AgGridReactProps<any>>(props);
     const frameworkOverridesRef = useRef<ReactFrameworkOverrides>();
     const gridIdRef = useRef<string | undefined>();
+    const pendingDestroyRef = useRef<boolean>(false);
+    const pendingDestroyTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
     const ready = useRef<boolean>(false);
 
@@ -129,13 +131,37 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
     }, [props.className]);
 
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
+        const previousEGui = eGui.current;
         eGui.current = eRef;
         updateClassName(props.className);
+
         if (!eRef) {
-            for (const f of destroyFuncs.current) {
-                f();
-            }
-            destroyFuncs.current.length = 0;
+            // Schedule destruction instead of immediate execution.
+            // This allows StrictMode remounts to cancel destruction.
+            pendingDestroyRef.current = true;
+            pendingDestroyTimeoutRef.current = setTimeout(() => {
+                if (previousEGui && isElementHiddenInDom(previousEGui)) {
+                    return;
+                }
+
+                if (pendingDestroyRef.current) {
+                    // Actually destroy - this is a real unmount
+                    for (const f of destroyFuncs.current) {
+                        f();
+                    }
+                    destroyFuncs.current.length = 0;
+                    ready.current = false;
+                    pendingDestroyRef.current = false;
+                }
+            }, 0);
+            return;
+        }
+
+        // Cancel any pending destruction - component is remounting (e.g., StrictMode)
+        if (pendingDestroyRef.current) {
+            clearTimeout(pendingDestroyTimeoutRef.current);
+            pendingDestroyRef.current = false;
+            // Grid already exists, reuse it
             return;
         }
 

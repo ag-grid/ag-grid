@@ -5,6 +5,7 @@ import type { GridCtrl, ITabGuard } from 'ag-grid-community';
 import { TabGuardClassNames, TabGuardCtrl } from 'ag-grid-community';
 
 import { BeansContext } from './beansContext';
+import { isElementHiddenInDom } from './utils';
 
 export interface TabGuardCompCallback {
     forceFocusOutOfContainer(up?: boolean): void;
@@ -29,6 +30,7 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
     const topTabGuardRef = useRef<HTMLDivElement | null>(null);
     const bottomTabGuardRef = useRef<HTMLDivElement | null>(null);
     const tabGuardCtrlRef = useRef<TabGuardCtrl>();
+    const pendingDestroyTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
     const setTabIndex = (value?: string | null) => {
         const processedValue = value == null ? undefined : parseInt(value, 10).toString();
@@ -48,12 +50,29 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
         },
     }));
 
-    const setupCtrl = useCallback(() => {
+    const setupCtrl = useCallback((previousElement: HTMLDivElement | null) => {
         const topTabGuard = topTabGuardRef.current;
         const bottomTabGuard = bottomTabGuardRef.current;
-        if ((!topTabGuard && !bottomTabGuard) || context.isDestroyed()) {
-            // Clean up after both refs have been removed or the context is destroyed
-            tabGuardCtrlRef.current = context.destroyBean(tabGuardCtrlRef.current);
+
+        if (!topTabGuard && !bottomTabGuard) {
+            // Schedule destruction to allow Activity hiding check.
+            pendingDestroyTimeoutRef.current = setTimeout(() => {
+                if (previousElement && isElementHiddenInDom(previousElement)) {
+                    return;
+                }
+                tabGuardCtrlRef.current = context.destroyBean(tabGuardCtrlRef.current);
+            }, 0);
+            return;
+        }
+
+        // Cancel any pending destruction
+        if (pendingDestroyTimeoutRef.current) {
+            clearTimeout(pendingDestroyTimeoutRef.current);
+            pendingDestroyTimeoutRef.current = undefined;
+        }
+
+        // If already initialized (Activity case), reuse
+        if (tabGuardCtrlRef.current || context.isDestroyed()) {
             return;
         }
 
@@ -79,15 +98,17 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
 
     const setTopRef = useCallback(
         (e: HTMLDivElement | null) => {
+            const previous = topTabGuardRef.current;
             topTabGuardRef.current = e;
-            setupCtrl();
+            setupCtrl(previous);
         },
         [setupCtrl]
     );
     const setBottomRef = useCallback(
         (e: HTMLDivElement | null) => {
+            const previous = bottomTabGuardRef.current;
             bottomTabGuardRef.current = e;
-            setupCtrl();
+            setupCtrl(previous);
         },
         [setupCtrl]
     );

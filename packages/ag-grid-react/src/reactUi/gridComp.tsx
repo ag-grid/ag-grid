@@ -15,7 +15,7 @@ import GridBodyComp from './gridBodyComp';
 import useReactCommentEffect from './reactComment';
 import type { TabGuardCompCallback } from './tabGuardComp';
 import TabGuardComp from './tabGuardComp';
-import { classesList } from './utils';
+import { classesList, isElementHiddenInDom } from './utils';
 
 interface GridCompProps {
     context: Context;
@@ -31,9 +31,12 @@ const GridComp = ({ context }: GridCompProps) => {
 
     const gridCtrlRef = useRef<GridCtrl>();
     const eRootWrapperRef = useRef<HTMLDivElement | null>(null);
+    const pendingDestroyTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
     const tabGuardRef = useRef<TabGuardCompCallback>();
     // eGridBodyParent is state as we use it in render
-    const [eGridBodyParent, setGridBodyParent] = useState<HTMLDivElement | null>(null);
+    const [eGridBodyParent, setEGridBodyParent] = useState<HTMLDivElement | null>(null);
+    const eGridBodyParentRef = useRef<HTMLDivElement | null>(null);
+    const pendingBodyParentNullTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
     const focusInnerElementRef = useRef<(fromBottom?: boolean) => void>(() => undefined);
     const paginationCompRef = useRef<JsTabGuardComp | undefined>();
@@ -44,12 +47,33 @@ const GridComp = ({ context }: GridCompProps) => {
     useReactCommentEffect(' AG Grid ', eRootWrapperRef);
 
     const setRef = useCallback((eRef: HTMLDivElement) => {
+        const previousEGui = eRootWrapperRef.current;
         eRootWrapperRef.current = eRef;
-        gridCtrlRef.current = eRef ? context.createBean(new GridCtrl()) : context.destroyBean(gridCtrlRef.current);
 
-        if (!eRef || context.isDestroyed()) {
+        if (!eRef) {
+            // Schedule destruction to allow Activity hiding check.
+            // This allows React Activity component to hide the grid without destroying it.
+            pendingDestroyTimeoutRef.current = setTimeout(() => {
+                if (previousEGui && isElementHiddenInDom(previousEGui)) {
+                    return;
+                }
+                gridCtrlRef.current = context.destroyBean(gridCtrlRef.current);
+            }, 0);
             return;
         }
+
+        // Cancel any pending destruction - component is remounting or Activity is showing
+        if (pendingDestroyTimeoutRef.current) {
+            clearTimeout(pendingDestroyTimeoutRef.current);
+            pendingDestroyTimeoutRef.current = undefined;
+        }
+
+        // If gridCtrl already exists (Activity case), reuse it
+        if (gridCtrlRef.current || context.isDestroyed()) {
+            return;
+        }
+
+        gridCtrlRef.current = context.createBean(new GridCtrl());
 
         const gridCtrl = gridCtrlRef.current!;
 
@@ -181,6 +205,32 @@ const GridComp = ({ context }: GridCompProps) => {
     const setTabGuardCompRef = useCallback((ref: TabGuardCompCallback) => {
         tabGuardRef.current = ref;
         setTabGuardReady(ref !== null);
+    }, []);
+
+    const setGridBodyParent = useCallback((eRef: HTMLDivElement | null) => {
+        const previousEGui = eGridBodyParentRef.current;
+        eGridBodyParentRef.current = eRef;
+
+        if (!eRef) {
+            // Schedule state update to allow Activity hiding check.
+            // Don't set state to null if element is just hidden (Activity case).
+            pendingBodyParentNullTimeoutRef.current = setTimeout(() => {
+                if (previousEGui && isElementHiddenInDom(previousEGui)) {
+                    return;
+                }
+                setEGridBodyParent(null);
+            }, 0);
+            return;
+        }
+
+        // Cancel any pending null state update
+        if (pendingBodyParentNullTimeoutRef.current) {
+            clearTimeout(pendingBodyParentNullTimeoutRef.current);
+            pendingBodyParentNullTimeoutRef.current = undefined;
+        }
+
+        // Update state with the element
+        setEGridBodyParent(eRef);
     }, []);
 
     const isFocusable = useCallback(() => !gridCtrlRef.current?.isFocusable(), []);

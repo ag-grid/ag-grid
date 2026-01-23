@@ -4,6 +4,7 @@ import type { ColumnPinnedType, HeaderRowCtrl, IHeaderRowContainerComp } from 'a
 import { HeaderRowContainerCtrl } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
+import { isElementHiddenInDom } from '../utils';
 import HeaderRowComp from './headerRowComp';
 
 const HeaderRowContainerComp = ({ pinned }: { pinned: ColumnPinnedType }) => {
@@ -14,16 +15,35 @@ const HeaderRowContainerComp = ({ pinned }: { pinned: ColumnPinnedType }) => {
     const eGui = useRef<HTMLDivElement | null>(null);
     const eCenterContainer = useRef<HTMLDivElement>(null);
     const headerRowCtrlRef = useRef<HeaderRowContainerCtrl>();
+    const pendingDestroyTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
     const pinnedLeft = pinned === 'left';
     const pinnedRight = pinned === 'right';
     const centre = !pinnedLeft && !pinnedRight;
 
     const setRef = useCallback((eRef: HTMLDivElement) => {
+        const previousEGui = eGui.current;
         eGui.current = eRef;
 
-        if (!eRef || context.isDestroyed()) {
-            headerRowCtrlRef.current = context.destroyBean(headerRowCtrlRef.current);
+        if (!eRef) {
+            // Schedule destruction to allow Activity hiding check.
+            pendingDestroyTimeoutRef.current = setTimeout(() => {
+                if (previousEGui && isElementHiddenInDom(previousEGui)) {
+                    return;
+                }
+                headerRowCtrlRef.current = context.destroyBean(headerRowCtrlRef.current);
+            }, 0);
+            return;
+        }
+
+        // Cancel any pending destruction
+        if (pendingDestroyTimeoutRef.current) {
+            clearTimeout(pendingDestroyTimeoutRef.current);
+            pendingDestroyTimeoutRef.current = undefined;
+        }
+
+        // If already initialized (Activity case), reuse
+        if (headerRowCtrlRef.current || context.isDestroyed()) {
             return;
         }
 

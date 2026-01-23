@@ -117,6 +117,27 @@ export function agUseSyncExternalStore<T>(
  * @param maintainOrder If we want to maintain the order of the elements in the dom in line with the next array
  * @returns
  */
+/**
+ * Checks if an element is still in the DOM but hidden because an ancestor has display:none.
+ * This is used to detect when React Activity component hides the grid rather than unmounting it.
+ */
+export function isElementHiddenInDom(element: HTMLElement): boolean {
+    // Check if element is still in the document
+    if (!document.body.contains(element)) {
+        return false;
+    }
+
+    // Check if element or any ancestor has display:none
+    let current: HTMLElement | null = element;
+    while (current) {
+        if (getComputedStyle(current).display === 'none') {
+            return true;
+        }
+        current = current.parentElement;
+    }
+    return false;
+}
+
 export function getNextValueIfDifferent<T extends { instanceId: string }>(
     prev: T[] | null,
     next: T[] | null,
