@@ -31,12 +31,12 @@ const getRowId = (params: GetRowIdParams) => String(params.data.id);
 
 const columnDefs: ColDef[] = [
     { field: 'item' },
-    { field: 'price', valueFormatter },
+    { field: 'price', valueFormatter: valueFormatter },
     { field: 'qty' },
     {
         field: 'total',
         allowFormula: true,
-        valueFormatter,
+        valueFormatter: valueFormatter,
         cellEditorParams: {
             validateFormulas: true,
         },
