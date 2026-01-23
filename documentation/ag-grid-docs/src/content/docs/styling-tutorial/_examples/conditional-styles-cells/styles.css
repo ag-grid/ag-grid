@@ -6,12 +6,20 @@
     font-size: 0.85em;
 }
 
-/* Custom row hover effect */
-.ag-row-hover {
-    background-color: rgba(14, 68, 145, 0.08) !important;
+/* Cell styles - status badges */
+.status-delivered {
+    color: #2e7d32;
 }
 
-/* Style first column differently */
+.status-pending {
+    color: #ed6c02;
+}
+
+.status-cancelled {
+    color: #d32f2f;
+}
+
+/* Style first column (product name) */
 .ag-cell[col-id='productName'] {
     font-weight: 500;
 }

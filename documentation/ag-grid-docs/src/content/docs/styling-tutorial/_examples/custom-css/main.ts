@@ -1,16 +1,24 @@
 import type { ColDef, GridOptions, ValueFormatterParams } from 'ag-grid-community';
-import { AllCommunityModule, ModuleRegistry, createGrid, iconSetMaterial, themeQuartz } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    ModuleRegistry,
+    NumberFilterModule,
+    RowSelectionModule,
+    TextFilterModule,
+    createGrid,
+    iconSetMaterial,
+    themeQuartz,
+} from 'ag-grid-community';
 
 import { type IProduct, getData } from './data';
 
-ModuleRegistry.registerModules([AllCommunityModule]);
+ModuleRegistry.registerModules([RowSelectionModule, TextFilterModule, NumberFilterModule, ClientSideRowModelModule]);
 
 // Create a theme with light and dark modes
 const myTheme = themeQuartz
     .withPart(iconSetMaterial)
     .withParams(
         {
-            accentColor: '#0e4491',
             backgroundColor: '#ffffff',
             foregroundColor: '#1a1a1a',
             headerBackgroundColor: '#faf8f5',
@@ -23,7 +31,6 @@ const myTheme = themeQuartz
     )
     .withParams(
         {
-            accentColor: '#6ea8fe',
             backgroundColor: '#1e1e2f',
             foregroundColor: '#e2e8f0',
             headerBackgroundColor: '#2d2d44',
@@ -63,6 +70,9 @@ const gridOptions: GridOptions<IProduct> = {
     columnDefs,
     defaultColDef,
     rowData: getData(),
+    rowSelection: {
+        mode: 'multiRow',
+    },
 };
 
 // Dark mode toggle logic

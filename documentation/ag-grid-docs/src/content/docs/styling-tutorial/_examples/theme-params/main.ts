@@ -1,13 +1,21 @@
 import type { ColDef, GridOptions, ValueFormatterParams } from 'ag-grid-community';
-import { AllCommunityModule, ModuleRegistry, createGrid, iconSetMaterial, themeQuartz } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    ModuleRegistry,
+    NumberFilterModule,
+    RowSelectionModule,
+    TextFilterModule,
+    createGrid,
+    iconSetMaterial,
+    themeQuartz,
+} from 'ag-grid-community';
 
 import { type IProduct, getData } from './data';
 
-ModuleRegistry.registerModules([AllCommunityModule]);
+ModuleRegistry.registerModules([RowSelectionModule, TextFilterModule, NumberFilterModule, ClientSideRowModelModule]);
 
 // Customise the theme with parameters
 const myTheme = themeQuartz.withPart(iconSetMaterial).withParams({
-    accentColor: '#0e4491',
     backgroundColor: '#ffffff',
     foregroundColor: '#1a1a1a',
     headerBackgroundColor: '#faf8f5',
@@ -44,6 +52,9 @@ const gridOptions: GridOptions<IProduct> = {
     columnDefs,
     defaultColDef,
     rowData: getData(),
+    rowSelection: {
+        mode: 'multiRow',
+    },
 };
 
 createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);

@@ -1,11 +1,9 @@
-import type { CellClassRules, ColDef, GridOptions, RowClassRules, ValueFormatterParams } from 'ag-grid-community';
+import type { CellClassRules, ColDef, GridOptions, ValueFormatterParams } from 'ag-grid-community';
 import {
-    CellStyleModule,
     ClientSideRowModelModule,
     ModuleRegistry,
     NumberFilterModule,
     RowSelectionModule,
-    RowStyleModule,
     TextFilterModule,
     createGrid,
     iconSetMaterial,
@@ -14,21 +12,13 @@ import {
 
 import { type IProduct, getData } from './data';
 
-ModuleRegistry.registerModules([
-    CellStyleModule,
-    ClientSideRowModelModule,
-    NumberFilterModule,
-    RowSelectionModule,
-    TextFilterModule,
-    RowStyleModule,
-]);
+ModuleRegistry.registerModules([RowSelectionModule, TextFilterModule, NumberFilterModule, ClientSideRowModelModule]);
 
 // Create a theme with light and dark modes
 const myTheme = themeQuartz
     .withPart(iconSetMaterial)
     .withParams(
         {
-            accentColor: '#0e4491',
             backgroundColor: '#ffffff',
             foregroundColor: '#1a1a1a',
             headerBackgroundColor: '#faf8f5',
@@ -41,7 +31,6 @@ const myTheme = themeQuartz
     )
     .withParams(
         {
-            accentColor: '#6ea8fe',
             backgroundColor: '#1e1e2f',
             foregroundColor: '#e2e8f0',
             headerBackgroundColor: '#2d2d44',
@@ -60,17 +49,6 @@ const statusCellClassRules: CellClassRules = {
     'status-cancelled': (params) => params.value === 'Cancelled',
 };
 
-// Cell class rules for profit margin column
-const profitMarginCellClassRules: CellClassRules = {
-    'high-margin': (params) => params.value > 0.2,
-};
-
-// Row class rules for highlighting sales performance
-const salesRowClassRules: RowClassRules<IProduct> = {
-    'high-sales': (params) => (params.data?.salesRevenue ?? 0) > 10000,
-    'low-sales': (params) => (params.data?.salesRevenue ?? 0) < 1000,
-};
-
 const columnDefs: ColDef<IProduct>[] = [
     { field: 'productName', headerName: 'Product', minWidth: 180 },
     {
@@ -84,7 +62,6 @@ const columnDefs: ColDef<IProduct>[] = [
         headerName: 'Margin',
         valueFormatter: (params: ValueFormatterParams) =>
             params.value != null ? `${(params.value * 100).toFixed(0)}%` : '',
-        cellClassRules: profitMarginCellClassRules,
     },
     {
         field: 'status',
@@ -101,9 +78,8 @@ const defaultColDef: ColDef = {
 const gridOptions: GridOptions<IProduct> = {
     theme: myTheme,
     columnDefs,
-    rowData: getData(),
     defaultColDef,
-    rowClassRules: salesRowClassRules,
+    rowData: getData(),
     rowSelection: {
         mode: 'multiRow',
     },

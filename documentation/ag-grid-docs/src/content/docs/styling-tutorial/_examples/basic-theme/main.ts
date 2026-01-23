@@ -1,9 +1,19 @@
 import type { ColDef, GridOptions, ValueFormatterParams } from 'ag-grid-community';
-import { AllCommunityModule, ModuleRegistry, createGrid, themeQuartz } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    ModuleRegistry,
+    NumberFilterModule,
+    RowSelectionModule,
+    TextFilterModule,
+    createGrid,
+    themeQuartz,
+} from 'ag-grid-community';
 
 import { type IProduct, getData } from './data';
 
-ModuleRegistry.registerModules([AllCommunityModule]);
+ModuleRegistry.registerModules([RowSelectionModule, TextFilterModule, NumberFilterModule, ClientSideRowModelModule]);
+
+const myTheme = themeQuartz;
 
 const columnDefs: ColDef<IProduct>[] = [
     { field: 'productName', headerName: 'Product', minWidth: 180 },
@@ -29,10 +39,13 @@ const defaultColDef: ColDef = {
 };
 
 const gridOptions: GridOptions<IProduct> = {
-    theme: themeQuartz,
+    theme: myTheme,
     columnDefs,
     defaultColDef,
     rowData: getData(),
+    rowSelection: {
+        mode: 'multiRow',
+    },
 };
 
 createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);

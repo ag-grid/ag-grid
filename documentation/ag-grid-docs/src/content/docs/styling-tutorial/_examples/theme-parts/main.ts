@@ -1,7 +1,10 @@
 import type { ColDef, GridOptions, ValueFormatterParams } from 'ag-grid-community';
 import {
-    AllCommunityModule,
+    ClientSideRowModelModule,
     ModuleRegistry,
+    NumberFilterModule,
+    RowSelectionModule,
+    TextFilterModule,
     createGrid,
     iconSetMaterial,
     themeQuartz,
@@ -9,7 +12,7 @@ import {
 
 import { type IProduct, getData } from './data';
 
-ModuleRegistry.registerModules([AllCommunityModule]);
+ModuleRegistry.registerModules([RowSelectionModule, TextFilterModule, NumberFilterModule, ClientSideRowModelModule]);
 
 // Apply icon set using withPart()
 const myTheme = themeQuartz.withPart(iconSetMaterial);
@@ -42,6 +45,9 @@ const gridOptions: GridOptions<IProduct> = {
     columnDefs,
     defaultColDef,
     rowData: getData(),
+    rowSelection: {
+        mode: 'multiRow',
+    },
 };
 
 createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
