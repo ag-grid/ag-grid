@@ -1,9 +1,9 @@
-import type { ICellEditorParams } from 'ag-grid-community';
 import { AgAbstractCellEditor, KeyCode, RefPlaceholder, _isBrowserSafari, _placeCaretAtEnd } from 'ag-grid-community';
+import type { IFormulaCellEditorParams } from 'ag-grid-community';
 
 import { AgFormulaInputField } from '../../widgets/agFormulaInputField';
 
-export class FormulaCellEditor extends AgAbstractCellEditor<ICellEditorParams> {
+export class FormulaCellEditor extends AgAbstractCellEditor<IFormulaCellEditorParams> {
     protected eEditor: AgFormulaInputField = RefPlaceholder;
     private focusAfterAttached = false;
 
@@ -11,7 +11,7 @@ export class FormulaCellEditor extends AgAbstractCellEditor<ICellEditorParams> {
         super({ tag: 'div', cls: 'ag-cell-edit-wrapper' });
     }
 
-    public initialiseEditor(params: ICellEditorParams): void {
+    public initialiseEditor(params: IFormulaCellEditorParams): void {
         const formulaInputField = this.createManagedBean(new AgFormulaInputField());
 
         this.eEditor = formulaInputField;
@@ -75,7 +75,7 @@ export class FormulaCellEditor extends AgAbstractCellEditor<ICellEditorParams> {
         event.stopPropagation();
     }
 
-    private getStartValue(params: ICellEditorParams): string | null | undefined {
+    private getStartValue(params: IFormulaCellEditorParams): string | null | undefined {
         const { value } = params;
         return value?.toString() ?? value;
     }
@@ -125,11 +125,12 @@ export class FormulaCellEditor extends AgAbstractCellEditor<ICellEditorParams> {
         const { params } = this;
         const value = this.eEditor.getCurrentValue();
         const translate = this.getLocaleTextFunc();
-        const { getValidationErrors } = params;
+        const { getValidationErrors, validateFormulas } = params;
 
         let internalErrors: string[] | null = null;
+        const shouldValidate = validateFormulas === true || !!getValidationErrors;
 
-        if (typeof value === 'string' && this.isFormulaText(value)) {
+        if (shouldValidate && typeof value === 'string' && this.isFormulaText(value)) {
             const normalised = this.beans.formula?.normaliseFormula(value, true);
 
             if (!normalised) {

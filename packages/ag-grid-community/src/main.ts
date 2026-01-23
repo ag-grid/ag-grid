@@ -342,6 +342,7 @@ export type { DateCellEditor } from './edit/cellEditors/dateCellEditor';
 export type { DateStringCellEditor } from './edit/cellEditors/dateStringCellEditor';
 export { IDateCellEditorParams } from './edit/cellEditors/iDateCellEditor';
 export { IDateStringCellEditorParams } from './edit/cellEditors/iDateStringCellEditor';
+export { IFormulaCellEditorParams } from './edit/cellEditors/iFormulaCellEditor';
 export { ILargeTextEditorParams } from './edit/cellEditors/iLargeTextCellEditor';
 export { INumberCellEditorParams } from './edit/cellEditors/iNumberCellEditor';
 export { ISelectCellEditorParams } from './edit/cellEditors/iSelectCellEditor';
