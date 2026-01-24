@@ -1,5 +1,6 @@
 import type {
     AgColumn,
+    ExcelCustomMetadata,
     ExcelExportParams,
     ExcelFactoryMode,
     ExcelHeaderFooterImage,
@@ -23,6 +24,7 @@ import { createXmlPart, setExcelImageTotalHeight, setExcelImageTotalWidth } from
 import type { ExcelGridSerializingParams } from './excelSerializingSession';
 import contentTypesFactory, { _normaliseImageExtension } from './files/ooxml/contentTypes';
 import coreFactory from './files/ooxml/core';
+import customPropertiesFactory from './files/ooxml/customProperties';
 import drawingFactory from './files/ooxml/drawing';
 import relationshipsFactory from './files/ooxml/relationships';
 import sharedStringsFactory from './files/ooxml/sharedStrings';
@@ -321,12 +323,16 @@ export function createXlsxCore(author: string): string {
     return createXmlPart(coreFactory.getTemplate(author));
 }
 
-export function createXlsxContentTypes(sheetLen: number): string {
-    return createXmlPart(contentTypesFactory.getTemplate(sheetLen));
+export function createXlsxCustomProperties(metadata: ExcelCustomMetadata): string {
+    return createXmlPart(customPropertiesFactory.getTemplate(metadata));
 }
 
-export function createXlsxRels(): string {
-    const rs = relationshipsFactory.getTemplate([
+export function createXlsxContentTypes(sheetLen: number, hasCustomProperties?: boolean): string {
+    return createXmlPart(contentTypesFactory.getTemplate({ sheetLen, hasCustomProperties }));
+}
+
+export function createXlsxRels(hasCustomProperties?: boolean): string {
+    const relationships: ExcelRelationship[] = [
         {
             Id: 'rId1',
             Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument',
@@ -337,7 +343,17 @@ export function createXlsxRels(): string {
             Type: 'http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties',
             Target: 'docProps/core.xml',
         },
-    ]);
+    ];
+
+    if (hasCustomProperties) {
+        relationships.push({
+            Id: 'rId3',
+            Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/custom-properties',
+            Target: 'docProps/custom.xml',
+        });
+    }
+
+    const rs = relationshipsFactory.getTemplate(relationships);
 
     return createXmlPart(rs);
 }

@@ -7,6 +7,9 @@
         "prependContent": {
             "description": "Content to put at the bottom of the exported sheet. An array of ExcelRow objects, see [Extra Content section](./excel-export-extra-content/)."
         },
+        "excelCustomMetadata": {
+            "description": "Custom metadata to be written to in the exported file. Values are serialised as strings."
+        },
         "fileName": {
             "default": "export.xlsx"
         }

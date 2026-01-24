@@ -1,6 +1,6 @@
 import type { ExcelGridSerializingParams } from './excelSerializingSession';
 import { ExcelSerializingSession } from './excelSerializingSession';
-import { Workbook } from './excelXlsxFactory';
+import { Workbook, createXlsxContentTypes, createXlsxCustomProperties, createXlsxRels } from './excelXlsxFactory';
 
 const stubParams = (
     overrides: Partial<ExcelGridSerializingParams> = {},
@@ -148,6 +148,42 @@ describe('excelXlsxFactory Workbook', () => {
         const worksheetXml = workbook.addWorksheet([], basicWorksheet('Images'), stubParams({}, workbook));
 
         expect(worksheetXml).toContain('<drawing');
+    });
+});
+
+describe('excelXlsxFactory custom metadata', () => {
+    afterEach(() => {
+        new Workbook().reset();
+    });
+
+    it('writes custom properties using stringified values', () => {
+        const xml = createXlsxCustomProperties({
+            'MSIP_Label_8f3c2a91-bd44-4e6a-9d7c-5e3b9c2f1a84_Enabled': true,
+            'MSIP_Label_8f3c2a91-bd44-4e6a-9d7c-5e3b9c2f1a84_SetDate': '2026-01-01T12:00:00Z',
+            'MSIP_Label_8f3c2a91-bd44-4e6a-9d7c-5e3b9c2f1a84_Method': 'Privileged',
+            'MSIP_Label_8f3c2a91-bd44-4e6a-9d7c-5e3b9c2f1a84_Name': 'Confidential',
+            'MSIP_Label_8f3c2a91-bd44-4e6a-9d7c-5e3b9c2f1a84_SiteId': '2c6d7f14-91e8-4a2f-b0b5-9c1d3e4f6a72',
+            'MSIP_Label_8f3c2a91-bd44-4e6a-9d7c-5e3b9c2f1a84_ActionId': 'a17d9c6b-43f5-4c82-9a8e-6b2f1e3c9d40',
+            'MSIP_Label_8f3c2a91-bd44-4e6a-9d7c-5e3b9c2f1a84_ContentBits': 2,
+        });
+
+        expect(xml).toContain('custom-properties');
+        expect(xml).toContain('MSIP_Label_8f3c2a91-bd44-4e6a-9d7c-5e3b9c2f1a84_Enabled');
+        expect(xml).toContain('<vt:lpwstr>true</vt:lpwstr>');
+        expect(xml).toContain('<vt:lpwstr>2026-01-01T12:00:00Z</vt:lpwstr>');
+        expect(xml).toContain('<vt:lpwstr>Confidential</vt:lpwstr>');
+        expect(xml).toContain('<vt:lpwstr>2c6d7f14-91e8-4a2f-b0b5-9c1d3e4f6a72</vt:lpwstr>');
+        expect(xml).toContain('<vt:lpwstr>a17d9c6b-43f5-4c82-9a8e-6b2f1e3c9d40</vt:lpwstr>');
+        expect(xml).toContain('<vt:lpwstr>2</vt:lpwstr>');
+    });
+
+    it('adds custom properties parts to rels and content types', () => {
+        const rels = createXlsxRels(true);
+        const contentTypes = createXlsxContentTypes(1, true);
+
+        expect(rels).toContain('custom-properties');
+        expect(contentTypes).toContain('custom-properties');
+        expect(contentTypes).toContain('/docProps/custom.xml');
     });
 });
 

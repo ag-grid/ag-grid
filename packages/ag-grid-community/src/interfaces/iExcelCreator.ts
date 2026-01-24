@@ -575,6 +575,9 @@ export interface ExcelWorksheetConfigParams {
     ) => { image: ExcelImage; value?: string } | undefined;
 }
 
+export type ExcelCustomMetadataValue = string | number | boolean;
+export type ExcelCustomMetadata = Record<string, ExcelCustomMetadataValue>;
+
 interface ExcelFileParams {
     /**
      * String to use as the file name or a function that returns a string.
@@ -596,6 +599,12 @@ interface ExcelFileParams {
      * @default 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
      */
     mimeType?: string;
+
+    /**
+     * Custom metadata to write to `docProps/custom.xml` in the exported file.
+     * Values are serialised as strings.
+     */
+    excelCustomMetadata?: ExcelCustomMetadata;
 }
 
 export interface ExcelExportParams extends ExcelFileParams, ExcelWorksheetConfigParams, ExportParams<ExcelRow[]> {}

@@ -84,6 +84,8 @@ export {
     ExcelCell,
     ExcelColumn,
     ExcelContentType,
+    ExcelCustomMetadata,
+    ExcelCustomMetadataValue,
     ExcelData,
     ExcelDataType,
     ExcelExportMultipleSheetParams,

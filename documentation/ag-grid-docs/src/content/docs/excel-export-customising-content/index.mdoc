@@ -58,6 +58,32 @@ The following example shows Excel customisations where the exported document has
 
 {% gridExampleRunner title="Excel Export - Customising Column Group Headers" name="excel-export-customising-column-group-headers" /%}
 
+## Custom Metadata
+
+Use `excelCustomMetadata` to write custom document properties to the exported file. The values are added as metadata to the Excel file and serialised as strings.
+
+This is useful for attaching internal identifiers, workflow hints, or metadata consumed by downstream systems.
+
+```{% frameworkTransform=true %}
+gridApi.exportDataAsExcel({
+    excelCustomMetadata: {
+        'ExportID': '12345',
+        'GeneratedBy': 'AgGrid',
+        'ExpirationDate': '2025-01-01T12:00:00Z',
+    },
+});
+```
+
+{% interfaceDocumentation interfaceName="ExcelExportParams" names=["excelCustomMetadata"] /%}
+
+The following example adds custom properties during export. Some labelling workflows read custom properties (for example, Microsoft Purview uses `MSIP_Label_*` keys). 
+
+{% note %}
+The Grid does not interpret these values or apply labels; it only writes the custom properties that are provide in the `excelCustomMetadata` parameter.
+{% /note %}
+
+{% gridExampleRunner title="Excel Export - Custom Metadata" name="excel-export-customising-custom-metadata" /%}
+
 ## Next Up
 
 Continue to the next section: [Images](./excel-export-images/).

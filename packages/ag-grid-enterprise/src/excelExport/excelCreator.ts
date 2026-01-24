@@ -1,6 +1,7 @@
 import type {
     AgColumn,
     AgColumnGroup,
+    ExcelCustomMetadata,
     ExcelExportMultipleSheetParams,
     ExcelExportParams,
     ExcelFactoryMode,
@@ -28,6 +29,7 @@ import {
     XLSX_WORKSHEET_IMAGES,
     createXlsxContentTypes,
     createXlsxCore,
+    createXlsxCustomProperties,
     createXlsxDrawing,
     createXlsxDrawingRel,
     createXlsxRelationships,
@@ -151,16 +153,25 @@ const createExcelXmlCoreSheets = (
     fontSize: number,
     author: string,
     sheetLen: number,
-    activeTab: number
+    activeTab: number,
+    customMetadata?: ExcelCustomMetadata
 ): void => {
+    const hasCustomMetadata =
+        !!customMetadata && Object.keys(customMetadata).some((key) => customMetadata[key] != null);
+
     zipContainer.addFile('xl/workbook.xml', createXlsxWorkbook(activeTab));
     zipContainer.addFile('xl/styles.xml', createXlsxStylesheet(fontSize));
     zipContainer.addFile('xl/sharedStrings.xml', createXlsxSharedStrings());
     zipContainer.addFile('xl/theme/theme1.xml', createXlsxTheme());
     zipContainer.addFile('xl/_rels/workbook.xml.rels', createXlsxWorkbookRels(sheetLen));
     zipContainer.addFile('docProps/core.xml', createXlsxCore(author));
-    zipContainer.addFile('[Content_Types].xml', createXlsxContentTypes(sheetLen));
-    zipContainer.addFile('_rels/.rels', createXlsxRels());
+
+    if (hasCustomMetadata) {
+        zipContainer.addFile('docProps/custom.xml', createXlsxCustomProperties(customMetadata));
+    }
+
+    zipContainer.addFile('[Content_Types].xml', createXlsxContentTypes(sheetLen, hasCustomMetadata));
+    zipContainer.addFile('_rels/.rels', createXlsxRels(hasCustomMetadata));
 };
 
 const createExcelFileForExcel = (
@@ -172,6 +183,7 @@ const createExcelFileForExcel = (
         fontSize?: number;
         author?: string;
         activeTab?: number;
+        customMetadata?: ExcelCustomMetadata;
     } = {},
     workbook: Workbook
 ): boolean => {
@@ -183,7 +195,7 @@ const createExcelFileForExcel = (
 
     workbook.syncOrderWithSheetData(data);
 
-    const { fontSize = 11, author = 'AG Grid', activeTab = 0 } = options;
+    const { fontSize = 11, author = 'AG Grid', activeTab = 0, customMetadata } = options;
 
     const len = data.length;
     const activeTabWithinBounds = Math.max(Math.min(activeTab, len - 1), 0);
@@ -191,7 +203,7 @@ const createExcelFileForExcel = (
     createExcelXMLCoreFolderStructure(zipContainer);
     createExcelXmlTables(zipContainer);
     createExcelXmlWorksheets(zipContainer, data);
-    createExcelXmlCoreSheets(zipContainer, fontSize, author, len, activeTabWithinBounds);
+    createExcelXmlCoreSheets(zipContainer, fontSize, author, len, activeTabWithinBounds, customMetadata);
 
     workbook.reset();
 
@@ -202,7 +214,7 @@ const getMultipleSheetsAsExcelCompressed = (
     params: ExcelExportMultipleSheetParams,
     workbook: Workbook = new Workbook()
 ): Promise<Blob | undefined> => {
-    const { data, fontSize, author, activeSheetIndex } = params;
+    const { data, fontSize, author, activeSheetIndex, excelCustomMetadata } = params;
     const mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
     const zipContainer = new ZipContainer();
 
@@ -214,6 +226,7 @@ const getMultipleSheetsAsExcelCompressed = (
                 author,
                 fontSize,
                 activeTab: activeSheetIndex,
+                customMetadata: excelCustomMetadata,
             },
             workbook
         )
@@ -228,7 +241,7 @@ export const getMultipleSheetsAsExcel = (
     params: ExcelExportMultipleSheetParams,
     workbook: Workbook = new Workbook()
 ): Blob | undefined => {
-    const { data, fontSize, author, activeSheetIndex } = params;
+    const { data, fontSize, author, activeSheetIndex: activeTab, excelCustomMetadata: customMetadata } = params;
     const mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
     const zipContainer = new ZipContainer();
 
@@ -239,7 +252,8 @@ export const getMultipleSheetsAsExcel = (
             {
                 author,
                 fontSize,
-                activeTab: activeSheetIndex,
+                activeTab,
+                customMetadata,
             },
             workbook
         )
@@ -285,11 +299,14 @@ export class ExcelCreator
             const mergedParams = this.getMergedParams(userParams);
             const data = this.getData(mergedParams);
 
+            const { fontSize, author, mimeType, excelCustomMetadata } = mergedParams;
+
             const exportParams: ExcelExportMultipleSheetParams = {
                 data: [data],
-                fontSize: mergedParams.fontSize,
-                author: mergedParams.author,
-                mimeType: mergedParams.mimeType,
+                fontSize,
+                author,
+                mimeType,
+                excelCustomMetadata,
             };
 
             this.packageCompressedFile(exportParams).then((packageFile) => {
@@ -318,11 +335,14 @@ export class ExcelCreator
         const mergedParams = this.getMergedParams(params);
         const data = this.getData(mergedParams);
 
+        const { fontSize, author, mimeType, excelCustomMetadata } = mergedParams;
+
         const exportParams: ExcelExportMultipleSheetParams = {
             data: [data],
-            fontSize: mergedParams.fontSize,
-            author: mergedParams.author,
-            mimeType: mergedParams.mimeType,
+            fontSize,
+            author,
+            mimeType,
+            excelCustomMetadata,
         };
 
         return this.packageFile(exportParams);
