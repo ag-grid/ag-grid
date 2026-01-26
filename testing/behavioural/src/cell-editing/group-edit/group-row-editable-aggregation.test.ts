@@ -1,6 +1,8 @@
+import { userEvent } from '@testing-library/user-event';
+
 import type { NumberFilterModel, SetFilterModel } from 'ag-grid-community';
 
-import { GridRows } from '../../test-utils';
+import { GridRows, TestGridsManager } from '../../test-utils';
 import { expect } from '../../test-utils/matchers';
 import {
     EDIT_MODES,
@@ -360,5 +362,380 @@ describe.each(EDIT_MODES)('groupRowEditable cascading edits (%s)', (editMode) =>
         await asyncSetTimeout(0);
 
         await new GridRows(api, 'after cancelled edit').check(baselineSnapshot);
+    });
+});
+
+describe('AG-16448: valueGetter using getValue() during editing', () => {
+    test('Total column using getValue() should not update while typing to start editing', async () => {
+        const api = await gridsManager.createGridAndWait('valueGetter-getValue-during-edit', {
+            columnDefs: [
+                { field: 'group', rowGroup: true, editable: true },
+                { field: 'a', aggFunc: 'sum', editable: true },
+                { field: 'b', aggFunc: 'sum', editable: true },
+                { field: 'c', aggFunc: 'sum', editable: true },
+                { field: 'd', aggFunc: 'sum', editable: true },
+                {
+                    headerName: 'Total',
+                    colId: 'total',
+                    aggFunc: 'sum',
+                    // Use getValue() to read other columns - this is where the bug manifests
+                    // getValue() was returning the editing value during editing, causing immediate updates
+                    valueGetter: (params) => {
+                        if (!params.data) {
+                            return null;
+                        }
+                        const a = params.getValue('a') ?? 0;
+                        const b = params.getValue('b') ?? 0;
+                        const c = params.getValue('c') ?? 0;
+                        const d = params.getValue('d') ?? 0;
+                        return a + b + c + d;
+                    },
+                },
+            ],
+            defaultColDef: {
+                flex: 1,
+            },
+            autoGroupColumnDef: {
+                minWidth: 100,
+            },
+            rowData: [
+                { group: 'A', a: 10, b: 20, c: 30, d: 40 },
+                { group: 'A', a: 5, b: 10, c: 15, d: 20 },
+            ],
+            groupDefaultExpanded: 1,
+            suppressAggFuncInHeader: true,
+        });
+
+        const gridDiv = TestGridsManager.getHTMLElement(api)!;
+        await asyncSetTimeout(1);
+
+        // Get the first data row's cells (row-index="1" because row 0 is the group row)
+        const rowElement = gridDiv.querySelector<HTMLElement>('[row-index="1"]')!;
+        const cellA = rowElement.querySelector<HTMLElement>('[col-id="a"]')!;
+        const totalCell = rowElement.querySelector<HTMLElement>('[col-id="total"]')!;
+
+        // Verify initial values: a=10, total=10+20+30+40=100
+        expect(cellA).toHaveTextContent('10');
+        expect(totalCell).toHaveTextContent('100');
+
+        // Click on cell A to select it
+        await userEvent.click(cellA);
+        await asyncSetTimeout(1);
+        expect(api.getEditingCells()).toHaveLength(0);
+
+        // Type a number to start editing (this replaces cell value with typed character)
+        await userEvent.keyboard('5');
+        await asyncSetTimeout(1);
+
+        // Editing should have started
+        expect(api.getEditingCells()).toHaveLength(1);
+
+        // BUG: While editing, the total should NOT have updated yet
+        // Actual (buggy): Total shows 95 (5+20+30+40) - getValue() returns editing value
+        // Expected: Total should still show 100 until editing is finished
+        expect(totalCell).toHaveTextContent('100');
+
+        // Press Enter to finish editing
+        await userEvent.keyboard('{Enter}');
+        await asyncSetTimeout(1);
+
+        // Now editing has finished, the value should be updated
+        expect(api.getEditingCells()).toHaveLength(0);
+        expect(cellA).toHaveTextContent('5');
+        // Total should now be updated: 5+20+30+40=95
+        expect(totalCell).toHaveTextContent('95');
+    });
+
+    test('Total column should not update while double-click editing, only after commit', async () => {
+        const api = await gridsManager.createGridAndWait('valueGetter-dblClick-edit', {
+            columnDefs: [
+                { field: 'group', rowGroup: true, editable: true },
+                { field: 'a', aggFunc: 'sum', editable: true },
+                { field: 'b', aggFunc: 'sum', editable: true },
+                {
+                    headerName: 'Total',
+                    colId: 'total',
+                    aggFunc: 'sum',
+                    valueGetter: (params) => {
+                        if (!params.data) {
+                            return null;
+                        }
+                        return (params.getValue('a') ?? 0) + (params.getValue('b') ?? 0);
+                    },
+                },
+            ],
+            defaultColDef: {
+                flex: 1,
+            },
+            rowData: [{ group: 'A', a: 10, b: 20 }],
+            groupDefaultExpanded: 1,
+        });
+
+        const gridDiv = TestGridsManager.getHTMLElement(api)!;
+        await asyncSetTimeout(1);
+
+        const rowElement = gridDiv.querySelector<HTMLElement>('[row-index="1"]')!;
+        const cellA = rowElement.querySelector<HTMLElement>('[col-id="a"]')!;
+        const totalCell = rowElement.querySelector<HTMLElement>('[col-id="total"]')!;
+
+        expect(cellA).toHaveTextContent('10');
+        expect(totalCell).toHaveTextContent('30');
+
+        // Double-click to start editing
+        await userEvent.dblClick(cellA);
+        await asyncSetTimeout(1);
+        expect(api.getEditingCells()).toHaveLength(1);
+
+        // Type new value
+        const input = cellA.querySelector<HTMLInputElement>('input')!;
+        await userEvent.clear(input);
+        await userEvent.type(input, '25');
+        await asyncSetTimeout(1);
+
+        // Force refresh to see if total updates during edit
+        api.refreshCells({ columns: ['total'], force: true });
+        await asyncSetTimeout(1);
+
+        // Total should still show original value
+        expect(totalCell).toHaveTextContent('30');
+
+        // Commit the edit
+        await userEvent.keyboard('{Enter}');
+        await asyncSetTimeout(1);
+
+        // Now total should be updated: 25+20=45
+        expect(cellA).toHaveTextContent('25');
+        expect(totalCell).toHaveTextContent('45');
+    });
+
+    test('Total column should not update during edit and should revert when cancelled', async () => {
+        const api = await gridsManager.createGridAndWait('valueGetter-cancel-edit', {
+            columnDefs: [
+                { field: 'group', rowGroup: true, editable: true },
+                { field: 'a', aggFunc: 'sum', editable: true },
+                { field: 'b', aggFunc: 'sum', editable: true },
+                {
+                    headerName: 'Total',
+                    colId: 'total',
+                    aggFunc: 'sum',
+                    valueGetter: (params) => {
+                        if (!params.data) {
+                            return null;
+                        }
+                        return (params.getValue('a') ?? 0) + (params.getValue('b') ?? 0);
+                    },
+                },
+            ],
+            defaultColDef: {
+                flex: 1,
+            },
+            rowData: [{ group: 'A', a: 10, b: 20 }],
+            groupDefaultExpanded: 1,
+        });
+
+        const gridDiv = TestGridsManager.getHTMLElement(api)!;
+        await asyncSetTimeout(1);
+
+        const rowElement = gridDiv.querySelector<HTMLElement>('[row-index="1"]')!;
+        const cellA = rowElement.querySelector<HTMLElement>('[col-id="a"]')!;
+        const totalCell = rowElement.querySelector<HTMLElement>('[col-id="total"]')!;
+
+        expect(cellA).toHaveTextContent('10');
+        expect(totalCell).toHaveTextContent('30');
+
+        // Double-click to start editing
+        await userEvent.dblClick(cellA);
+        await asyncSetTimeout(1);
+        expect(api.getEditingCells()).toHaveLength(1);
+
+        // Type new value
+        const input = cellA.querySelector<HTMLInputElement>('input')!;
+        await userEvent.clear(input);
+        await userEvent.type(input, '999');
+        await asyncSetTimeout(1);
+
+        // Total should still show original value during edit
+        expect(totalCell).toHaveTextContent('30');
+
+        // Cancel the edit with Escape
+        await userEvent.keyboard('{Escape}');
+        await asyncSetTimeout(1);
+
+        // Total should remain unchanged
+        expect(cellA).toHaveTextContent('10');
+        expect(totalCell).toHaveTextContent('30');
+    });
+
+    test('Re-editing and committing different values updates Total correctly', async () => {
+        const api = await gridsManager.createGridAndWait('valueGetter-re-edit', {
+            columnDefs: [
+                { field: 'group', rowGroup: true, editable: true },
+                { field: 'a', aggFunc: 'sum', editable: true },
+                { field: 'b', aggFunc: 'sum', editable: true },
+                {
+                    headerName: 'Total',
+                    colId: 'total',
+                    aggFunc: 'sum',
+                    valueGetter: (params) => {
+                        if (!params.data) {
+                            return null;
+                        }
+                        return (params.getValue('a') ?? 0) + (params.getValue('b') ?? 0);
+                    },
+                },
+            ],
+            defaultColDef: {
+                flex: 1,
+            },
+            rowData: [{ group: 'A', a: 10, b: 20 }],
+            groupDefaultExpanded: 1,
+        });
+
+        const gridDiv = TestGridsManager.getHTMLElement(api)!;
+        await asyncSetTimeout(1);
+
+        const rowElement = gridDiv.querySelector<HTMLElement>('[row-index="1"]')!;
+        const cellA = rowElement.querySelector<HTMLElement>('[col-id="a"]')!;
+        const totalCell = rowElement.querySelector<HTMLElement>('[col-id="total"]')!;
+
+        expect(totalCell).toHaveTextContent('30'); // Initial: 10+20
+
+        // First edit: 10 -> 50
+        await userEvent.dblClick(cellA);
+        await asyncSetTimeout(1);
+        let input = cellA.querySelector<HTMLInputElement>('input')!;
+        await userEvent.clear(input);
+        await userEvent.type(input, '50{Enter}');
+        await asyncSetTimeout(1);
+
+        expect(cellA).toHaveTextContent('50');
+        expect(totalCell).toHaveTextContent('70'); // 50+20
+
+        // Second edit: 50 -> 100
+        await userEvent.dblClick(cellA);
+        await asyncSetTimeout(1);
+        input = cellA.querySelector<HTMLInputElement>('input')!;
+        await userEvent.clear(input);
+        await userEvent.type(input, '100{Enter}');
+        await asyncSetTimeout(1);
+
+        expect(cellA).toHaveTextContent('100');
+        expect(totalCell).toHaveTextContent('120'); // 100+20
+
+        // Third edit and cancel: 100 -> 200 (cancelled)
+        await userEvent.dblClick(cellA);
+        await asyncSetTimeout(1);
+        input = cellA.querySelector<HTMLInputElement>('input')!;
+        await userEvent.clear(input);
+        await userEvent.type(input, '200');
+        await asyncSetTimeout(1);
+
+        // Total should still show 120 during edit
+        expect(totalCell).toHaveTextContent('120');
+
+        // Cancel edit
+        await userEvent.keyboard('{Escape}');
+        await asyncSetTimeout(1);
+
+        // Values should remain at last committed state
+        expect(cellA).toHaveTextContent('100');
+        expect(totalCell).toHaveTextContent('120');
+
+        // Fourth edit and commit: 100 -> 5
+        await userEvent.dblClick(cellA);
+        await asyncSetTimeout(1);
+        input = cellA.querySelector<HTMLInputElement>('input')!;
+        await userEvent.clear(input);
+        await userEvent.type(input, '5{Enter}');
+        await asyncSetTimeout(1);
+
+        expect(cellA).toHaveTextContent('5');
+        expect(totalCell).toHaveTextContent('25'); // 5+20
+    });
+
+    test('Editing multiple cells in sequence updates Total correctly', async () => {
+        const api = await gridsManager.createGridAndWait('valueGetter-multi-cell-edit', {
+            columnDefs: [
+                { field: 'group', rowGroup: true, editable: true },
+                { field: 'a', aggFunc: 'sum', editable: true },
+                { field: 'b', aggFunc: 'sum', editable: true },
+                {
+                    headerName: 'Total',
+                    colId: 'total',
+                    aggFunc: 'sum',
+                    valueGetter: (params) => {
+                        if (!params.data) {
+                            return null;
+                        }
+                        return (params.getValue('a') ?? 0) + (params.getValue('b') ?? 0);
+                    },
+                },
+            ],
+            defaultColDef: {
+                flex: 1,
+            },
+            rowData: [{ group: 'A', a: 10, b: 20 }],
+            groupDefaultExpanded: 1,
+        });
+
+        const gridDiv = TestGridsManager.getHTMLElement(api)!;
+        await asyncSetTimeout(1);
+
+        const rowElement = gridDiv.querySelector<HTMLElement>('[row-index="1"]')!;
+        const cellA = rowElement.querySelector<HTMLElement>('[col-id="a"]')!;
+        const cellB = rowElement.querySelector<HTMLElement>('[col-id="b"]')!;
+        const totalCell = rowElement.querySelector<HTMLElement>('[col-id="total"]')!;
+
+        expect(totalCell).toHaveTextContent('30'); // Initial: 10+20
+
+        // Edit cell A: 10 -> 15
+        await userEvent.dblClick(cellA);
+        await asyncSetTimeout(1);
+        let input = cellA.querySelector<HTMLInputElement>('input')!;
+        await userEvent.clear(input);
+        await userEvent.type(input, '15{Enter}');
+        await asyncSetTimeout(1);
+
+        expect(cellA).toHaveTextContent('15');
+        expect(totalCell).toHaveTextContent('35'); // 15+20
+
+        // Edit cell B: 20 -> 25
+        await userEvent.dblClick(cellB);
+        await asyncSetTimeout(1);
+        input = cellB.querySelector<HTMLInputElement>('input')!;
+        await userEvent.clear(input);
+        await userEvent.type(input, '25{Enter}');
+        await asyncSetTimeout(1);
+
+        expect(cellB).toHaveTextContent('25');
+        expect(totalCell).toHaveTextContent('40'); // 15+25
+
+        // Edit both cells (A first, then B) without finishing A
+        await userEvent.dblClick(cellA);
+        await asyncSetTimeout(1);
+        input = cellA.querySelector<HTMLInputElement>('input')!;
+        await userEvent.clear(input);
+        await userEvent.type(input, '999');
+        await asyncSetTimeout(1);
+
+        // During edit of A, total should still show last committed
+        expect(totalCell).toHaveTextContent('40');
+
+        // Click on B to move there (should auto-commit A's edit)
+        await userEvent.dblClick(cellB);
+        await asyncSetTimeout(1);
+
+        // A's edit should be committed now
+        expect(cellA).toHaveTextContent('999');
+        expect(totalCell).toHaveTextContent('1024'); // 999+25
+
+        // Type in B
+        input = cellB.querySelector<HTMLInputElement>('input')!;
+        await userEvent.clear(input);
+        await userEvent.type(input, '1{Enter}');
+        await asyncSetTimeout(1);
+
+        expect(cellB).toHaveTextContent('1');
+        expect(totalCell).toHaveTextContent('1000'); // 999+1
     });
 });

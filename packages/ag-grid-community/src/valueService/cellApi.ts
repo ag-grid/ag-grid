@@ -2,6 +2,7 @@ import { _missing } from '../agStack/utils/generic';
 import { _toString } from '../agStack/utils/string';
 import type { BeanCollection } from '../context/context';
 import type { Column } from '../interfaces/iColumn';
+import type { CellValueResolveFrom } from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
 
 export interface GetCellValueParams<TValue = any> {
@@ -11,6 +12,13 @@ export interface GetCellValueParams<TValue = any> {
     colKey: string | Column<TValue>;
     /** If `true` formatted value will be returned. */
     useFormatter?: boolean;
+    /**
+     * Specifies how to resolve the cell value when edits are pending.
+     * - `'editing'` (default): Returns the current editing value, including live editor typing and pending batch values
+     * - `'pending'`: Returns pending batch values but excludes live editor typing (useful for dependent calculations in valueGetters)
+     * - `'data'`: Returns the actual stored data value, ignoring all edit state
+     */
+    resolveFrom?: CellValueResolveFrom;
 }
 
 export function expireValueCache(beans: BeanCollection): void {
@@ -18,13 +26,18 @@ export function expireValueCache(beans: BeanCollection): void {
 }
 
 export function getCellValue<TValue = any>(beans: BeanCollection, params: GetCellValueParams<TValue>): any {
-    const { colKey, rowNode, useFormatter } = params;
+    const { colKey, rowNode, useFormatter, resolveFrom = 'editing' } = params;
 
     const column = beans.colModel.getColDefCol(colKey) ?? beans.colModel.getCol(colKey);
     if (_missing(column)) {
         return null;
     }
-    const result = beans.valueSvc.getValueForDisplay({ column, node: rowNode, includeValueFormatted: useFormatter });
+    const result = beans.valueSvc.getValueForDisplay({
+        column,
+        node: rowNode,
+        includeValueFormatted: useFormatter,
+        resolveFrom,
+    });
     if (useFormatter) {
         return result.valueFormatted ?? _toString(result.value);
     }

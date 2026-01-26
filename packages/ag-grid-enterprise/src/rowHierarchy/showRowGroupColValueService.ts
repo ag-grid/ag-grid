@@ -1,4 +1,12 @@
-import type { AgColumn, IRowNode, IShowRowGroupColsValueService, NamedBean, RowNode } from 'ag-grid-community';
+import type {
+    AgColumn,
+    CellValueResolveFrom,
+    GroupValueResult,
+    IRowNode,
+    IShowRowGroupColsValueService,
+    NamedBean,
+    RowNode,
+} from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
 /**
@@ -11,7 +19,12 @@ export class ShowRowGroupColValueService extends BeanStub implements NamedBean, 
      * Get the value for format in the group column, also returns the displayedNode from which the value was
      * taken in cases of groupHideOpenParents and showOpenedGroup.
      */
-    public getGroupValue(node: IRowNode, column?: AgColumn): { displayedNode: IRowNode; value: any } | null {
+    public getGroupValue(
+        node: IRowNode,
+        column: AgColumn | undefined,
+        resolveFrom: CellValueResolveFrom,
+        ignoreAggData: boolean
+    ): GroupValueResult | null {
         // full width row
         if (!column) {
             if (!node.group) {
@@ -43,28 +56,25 @@ export class ShowRowGroupColValueService extends BeanStub implements NamedBean, 
             if (hideOpenParentsNode) {
                 return {
                     displayedNode: hideOpenParentsNode,
-                    value: valueSvc.getValue(column, hideOpenParentsNode),
+                    value: valueSvc.getValue(column, hideOpenParentsNode, resolveFrom, ignoreAggData),
                 };
             }
         }
 
         // cell value > showOpenedGroup
-        const value = valueSvc.getValue(column, node);
+        const value = valueSvc.getValue(column, node, resolveFrom, ignoreAggData);
         if (value == null) {
             // showOpenedGroup
             const displayedNode = this.getDisplayedNode(node, column);
             if (displayedNode) {
                 return {
                     displayedNode,
-                    value: valueSvc.getValue(column, displayedNode),
+                    value: valueSvc.getValue(column, displayedNode, resolveFrom, ignoreAggData),
                 };
             }
         }
 
-        return {
-            displayedNode: node,
-            value,
-        };
+        return { displayedNode: node, value };
     }
 
     /**

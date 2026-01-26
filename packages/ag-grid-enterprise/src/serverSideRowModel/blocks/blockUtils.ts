@@ -117,7 +117,8 @@ export class BlockUtils extends BeanStub implements NamedBean {
     }
 
     private setRowGroupInfo(rowNode: RowNode): void {
-        rowNode.key = this.valueSvc.getValue(rowNode.rowGroupColumn!, rowNode);
+        // Use 'data' - group keys should be based on committed data, not pending edits
+        rowNode.key = this.valueSvc.getValue(rowNode.rowGroupColumn!, rowNode, 'data');
 
         if (rowNode.key === null || rowNode.key === undefined) {
             _doOnce(() => {
@@ -255,7 +256,8 @@ export class BlockUtils extends BeanStub implements NamedBean {
             if (usingTreeData) {
                 groupData[col.getColId()] = key;
             } else if (col.isRowGroupDisplayed(rowNode.rowGroupColumn!.getId())) {
-                const groupValue = this.valueSvc.getValue(rowNode.rowGroupColumn!, rowNode);
+                // Use 'data' - group keys should be based on committed data, not pending edits
+                const groupValue = this.valueSvc.getValue(rowNode.rowGroupColumn!, rowNode, 'data');
                 groupData[col.getColId()] = groupValue;
             }
         }

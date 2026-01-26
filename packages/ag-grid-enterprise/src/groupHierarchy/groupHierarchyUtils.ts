@@ -13,7 +13,9 @@ const getDate = (
     sourceCol: AgColumn,
     node: IRowNode | null
 ): Date | null => {
-    const innerValue = valueSvc.getValue(sourceCol, node);
+    // Use 'pending' - this reads from another column, so it should see batch-pending values
+    // but not live typing from the source date column (consistent with AG-16448).
+    const innerValue = valueSvc.getValue(sourceCol, node, 'pending');
     let date: Date | null = null;
     if (innerValue instanceof Date) {
         date = innerValue;

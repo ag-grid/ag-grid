@@ -419,7 +419,7 @@ export type {
 } from './interfaces/iRowNodeStage';
 export { ISelectionService, ISetNodesSelectedParams } from './interfaces/iSelectionService';
 export { IShowRowGroupColsService } from './interfaces/iShowRowGroupColsService';
-export { IShowRowGroupColsValueService } from './interfaces/iShowRowGroupColsValueService';
+export { GroupValueResult, IShowRowGroupColsValueService } from './interfaces/iShowRowGroupColsValueService';
 export { ISideBar, ISideBarService } from './interfaces/iSideBar';
 export { SortOption } from './interfaces/iSortOption';
 export { IStickyRowFeature, IStickyRowService } from './interfaces/iStickyRows';

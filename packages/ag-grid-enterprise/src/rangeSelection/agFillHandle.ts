@@ -350,10 +350,12 @@ export class AgFillHandle extends AbstractSelectionHandle {
             let skipValue: boolean = false;
 
             if (withinInitialRange) {
-                currentValue = valueSvc.getValue(col, rowNode);
+                currentValue = valueSvc.getValue(col, rowNode, 'editing');
                 initialValues.push(currentValue);
-                initialNonAggregatedValues.push(valueSvc.getValue(col, rowNode, true));
-                initialFormattedValues.push(valueSvc.getValueForDisplay({ column: col, node: rowNode }).valueFormatted);
+                initialNonAggregatedValues.push(valueSvc.getValue(col, rowNode, 'editing', true));
+                initialFormattedValues.push(
+                    valueSvc.getValueForDisplay({ column: col, node: rowNode, resolveFrom: 'editing' }).valueFormatted
+                );
                 withinInitialRange = updateInitialSet();
             } else {
                 const { value, fromUserFunction, sourceCol, sourceRowNode } = this.processValues({
@@ -369,7 +371,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
                 currentValue = value;
                 if (col.isCellEditable(rowNode)) {
-                    const cellValue = valueSvc.getValue(col, rowNode);
+                    const cellValue = valueSvc.getValue(col, rowNode, 'editing');
 
                     if (!fromUserFunction) {
                         if (sourceCol) {
@@ -379,6 +381,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
                                     column: sourceCol,
                                     node: sourceRowNode!,
                                     includeValueFormatted: true,
+                                    resolveFrom: 'editing',
                                 }).valueFormatted;
 
                                 if (formattedValue != null) {
@@ -467,7 +470,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
                 initialNonAggregatedValues,
                 initialFormattedValues,
                 currentIndex: idx,
-                currentCellValue: valueSvc.getValue(col, rowNode),
+                currentCellValue: valueSvc.getValue(col, rowNode, 'editing'),
                 direction,
                 column: col,
                 rowNode: rowNode,

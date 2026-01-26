@@ -519,7 +519,7 @@ export class CellCtrl extends BeanStub {
         const res: ICellRendererParams = _addGridCommonParams(gos, {
             value: value,
             valueFormatted: valueFormatted,
-            getValue: () => valueSvc.getValueForDisplay({ column, node: rowNode }).value,
+            getValue: () => valueSvc.getValueForDisplay({ column, node: rowNode, resolveFrom: 'editing' }).value,
             setValue: (value: any) =>
                 editSvc?.setDataValue({ rowNode, column }, value) || rowNode.setDataValue(column, value),
             formatValue: this.formatValue.bind(this),
@@ -670,6 +670,7 @@ export class CellCtrl extends BeanStub {
             column: this.column,
             node: this.rowNode,
             includeValueFormatted: true,
+            resolveFrom: 'editing',
         });
         this.value = value;
         this.valueFormatted = valueFormatted;

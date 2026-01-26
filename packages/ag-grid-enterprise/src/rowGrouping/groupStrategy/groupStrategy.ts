@@ -74,7 +74,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
             if (col.isRowGroupDisplayed(rowGroupColId)) {
                 // if maintain group value type, get the value from any leaf node.
-                groupData[col.getColId()] = valueSvc.getValue(rowGroupCol, leafNode);
+                groupData[col.getColId()] = valueSvc.getValue(rowGroupCol, leafNode, 'data');
             }
         }
 
@@ -517,7 +517,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
         groupsById.set(id, groupNode);
 
-        groupNode.groupValue = leafNode && this.beans.valueSvc.getValue(col, leafNode);
+        groupNode.groupValue = leafNode && this.beans.valueSvc.getValue(col, leafNode, 'data');
 
         // why is this done here? we are not updating the children count as we go,
         // i suspect this is updated in the filter stage
@@ -548,7 +548,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             groupNode._groupData = undefined;
             const rowGroupColumn = groupNode.rowGroupColumn;
             const leafNode = rowGroupColumn && _csrmFirstLeaf(groupNode);
-            groupNode.groupValue = leafNode && valueSvc.getValue(rowGroupColumn, leafNode);
+            groupNode.groupValue = leafNode && valueSvc.getValue(rowGroupColumn, leafNode, 'data');
         }
 
         const allLeafs = rowModel.rootNode?._leafs;

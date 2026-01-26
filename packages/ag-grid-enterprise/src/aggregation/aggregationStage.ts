@@ -272,7 +272,7 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
             return [];
         }
 
-        return mapPointer.map((rowNode: RowNode) => this.valueSvc.getValue(valueColumn, rowNode, false, 'api'));
+        return mapPointer.map((rowNode: RowNode) => this.valueSvc.getValue(valueColumn, rowNode, 'pending'));
     }
 
     private getValuesNormal(rowNode: RowNode, valueColumns: AgColumn[], filteredOnly: boolean): any[][] {
@@ -291,7 +291,7 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
                 const valueColumn = valueColumns[j];
                 // if the row is a group, then it will only have an agg result value,
                 // which means valueGetter is never used.
-                const value = this.valueSvc.getValue(valueColumn, childNode, false, 'api');
+                const value = this.valueSvc.getValue(valueColumn, childNode, 'pending');
                 values[j].push(value);
             }
         }

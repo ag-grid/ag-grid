@@ -308,7 +308,7 @@ describe('Cell Editing Start', () => {
         });
     });
 
-    test('valueGetter reads live value from another cell editor', async () => {
+    test('valueGetter does not read live value from another cell editor (AG-16448)', async () => {
         const api = await gridMgr.createGridAndWait('myGrid', {
             columnDefs: [
                 { field: 'a', editable: true },
@@ -339,11 +339,15 @@ describe('Cell Editing Start', () => {
         api.refreshCells({ columns: ['b'], force: true });
         await asyncSetTimeout(1);
 
-        expect(cellB).toHaveTextContent('xx');
+        // AG-16448: valueGetter should NOT see live editing value - should still show original value
+        expect(cellB).toHaveTextContent('initial');
 
         // Commit first edit and start a new edit session to test cancel
         await userEvent.keyboard('{Enter}');
         await asyncSetTimeout(1);
+
+        // After commit, cellB should update to the committed value
+        expect(cellB).toHaveTextContent('xx');
 
         await userEvent.dblClick(cellA);
         await asyncSetTimeout(1);
@@ -355,12 +359,246 @@ describe('Cell Editing Start', () => {
         api.refreshCells({ columns: ['b'], force: true });
         await asyncSetTimeout(1);
 
-        expect(cellB).toHaveTextContent('yy');
+        // AG-16448: valueGetter should NOT see live editing value - should show last committed value
+        expect(cellB).toHaveTextContent('xx');
 
-        // Cancel edit by pressing ESC, should revert to last committed value
+        // Cancel edit by pressing ESC, should stay at last committed value
         await userEvent.keyboard('{Escape}');
         await asyncSetTimeout(1);
 
         expect(cellB).toHaveTextContent('xx');
+    });
+
+    test('valueCache does not store editing values (AG-16448)', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'a', editable: true },
+                {
+                    field: 'b',
+                    valueGetter: (params) => {
+                        return params.getValue('a');
+                    },
+                },
+            ],
+            rowData: [{ id: '0', a: 'initial' }],
+            getRowId: (params) => params.data.id,
+            valueCache: true, // Enable value caching
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(1);
+
+        const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+        const cellB = getByTestId(gridDiv, agTestIdFor.cell('0', 'b'));
+        expect(cellB).toHaveTextContent('initial');
+
+        // Start editing
+        await userEvent.dblClick(cellA);
+        await asyncSetTimeout(1);
+        const input = await waitForInput(gridDiv, cellA, { popup: false });
+        await userEvent.clear(input);
+        await userEvent.type(input, 'edited');
+        await asyncSetTimeout(1);
+
+        // Force refresh to trigger valueGetter evaluation during edit
+        api.refreshCells({ columns: ['b'], force: true });
+        await asyncSetTimeout(1);
+
+        // Should still show 'initial' - not the editing value
+        expect(cellB).toHaveTextContent('initial');
+
+        // Cancel the edit
+        await userEvent.keyboard('{Escape}');
+        await asyncSetTimeout(1);
+
+        // After cancel, refresh again
+        api.refreshCells({ columns: ['b'], force: true });
+        await asyncSetTimeout(1);
+
+        // Value should still be 'initial' (from original data, not from any cached edited value)
+        expect(cellB).toHaveTextContent('initial');
+
+        // Now do an edit that commits
+        await userEvent.dblClick(cellA);
+        await asyncSetTimeout(1);
+        const input2 = await waitForInput(gridDiv, cellA, { popup: false });
+        await userEvent.clear(input2);
+        await userEvent.type(input2, 'committed{Enter}');
+        await asyncSetTimeout(1);
+
+        // After commit, value should update (cache expires on data change)
+        expect(cellB).toHaveTextContent('committed');
+
+        // Refresh again - cached value should be correct
+        api.refreshCells({ columns: ['b'], force: true });
+        await asyncSetTimeout(1);
+
+        expect(cellB).toHaveTextContent('committed');
+    });
+
+    test('valueCache does not cache editing values even during edit (AG-16448)', async () => {
+        // This test verifies that while editing, the valueGetter using getValue() on the edited
+        // column does NOT cache the editing value. The cache should only ever contain
+        // committed data values.
+        let valueGetterValues: string[] = [];
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'a', editable: true },
+                {
+                    field: 'b',
+                    valueGetter: (params) => {
+                        const value = params.getValue('a');
+                        valueGetterValues.push(value);
+                        return `Computed: ${value}`;
+                    },
+                },
+            ],
+            rowData: [{ id: '0', a: 'initial' }],
+            getRowId: (params) => params.data.id,
+            valueCache: true,
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(1);
+
+        const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+        const cellB = getByTestId(gridDiv, agTestIdFor.cell('0', 'b'));
+        expect(cellB).toHaveTextContent('Computed: initial');
+
+        // Reset tracking
+        valueGetterValues = [];
+
+        // Start editing and type something
+        await userEvent.dblClick(cellA);
+        await asyncSetTimeout(1);
+        const input = await waitForInput(gridDiv, cellA, { popup: false });
+        await userEvent.clear(input);
+        await userEvent.type(input, 'typing');
+        await asyncSetTimeout(1);
+
+        // Force multiple refreshes during editing
+        api.refreshCells({ columns: ['b'], force: true });
+        await asyncSetTimeout(1);
+        api.refreshCells({ columns: ['b'], force: true });
+        await asyncSetTimeout(1);
+
+        // All valueGetter calls during edit should have returned 'initial', not 'typing'
+        // This proves the editing value was never passed to the valueGetter
+        expect(valueGetterValues.every((v) => v === 'initial')).toBe(true);
+
+        // Cell B should show 'initial', not the typing value
+        expect(cellB).toHaveTextContent('Computed: initial');
+
+        // Commit the edit
+        await userEvent.keyboard('{Enter}');
+        await asyncSetTimeout(1);
+
+        // Now the value should update
+        expect(cellB).toHaveTextContent('Computed: typing');
+    });
+
+    test('edited cell shows editing value while dependent valueGetter shows committed value (AG-16448)', async () => {
+        // This test verifies BOTH:
+        // 1. The cell being edited shows its editing value (UI feedback)
+        // 2. A dependent column using valueGetter with getValue() shows committed value
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'a', editable: true },
+                {
+                    colId: 'computed',
+                    headerName: 'Computed',
+                    valueGetter: (params) => `Echo: ${params.getValue('a')}`,
+                },
+            ],
+            rowData: [{ id: '0', a: 'original' }],
+            getRowId: (params) => params.data.id,
+            valueCache: true,
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(1);
+
+        const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+        const cellComputed = getByTestId(gridDiv, agTestIdFor.cell('0', 'computed'));
+
+        // Initial state
+        expect(cellA).toHaveTextContent('original');
+        expect(cellComputed).toHaveTextContent('Echo: original');
+
+        // Start editing cell A
+        await userEvent.dblClick(cellA);
+        await asyncSetTimeout(1);
+        const input = await waitForInput(gridDiv, cellA, { popup: false });
+        await userEvent.clear(input);
+        await userEvent.type(input, 'editing');
+        await asyncSetTimeout(1);
+
+        // Refresh to update computed column
+        api.refreshCells({ columns: ['computed'], force: true });
+        await asyncSetTimeout(1);
+
+        // Cell A (the editor) should show the editing value 'editing'
+        expect(input.value).toBe('editing');
+
+        // Cell Computed should still show 'original' (not the editing value)
+        expect(cellComputed).toHaveTextContent('Echo: original');
+
+        // Commit the edit
+        await userEvent.keyboard('{Enter}');
+        await asyncSetTimeout(1);
+
+        // Now both should be updated
+        expect(cellA).toHaveTextContent('editing');
+        expect(cellComputed).toHaveTextContent('Echo: editing');
+    });
+
+    test('valueCache is actually caching values (AG-16448)', async () => {
+        // This test verifies that the value cache is actually active and caching
+        let valueGetterCallCount = 0;
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'a', editable: true },
+                {
+                    colId: 'computed',
+                    valueGetter: () => {
+                        valueGetterCallCount++;
+                        return `call-${valueGetterCallCount}`;
+                    },
+                },
+            ],
+            rowData: [{ id: '0', a: 'test' }],
+            getRowId: (params) => params.data.id,
+            valueCache: true,
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(1);
+
+        const cellComputed = getByTestId(gridDiv, agTestIdFor.cell('0', 'computed'));
+        const initialCallCount = valueGetterCallCount;
+
+        // Multiple refreshes should use cached value (no new calls)
+        api.refreshCells({ columns: ['computed'], force: true });
+        await asyncSetTimeout(1);
+        api.refreshCells({ columns: ['computed'], force: true });
+        await asyncSetTimeout(1);
+
+        // With valueCache enabled, the call count should NOT have increased
+        // because the cached value is being reused
+        expect(valueGetterCallCount).toBe(initialCallCount);
+
+        // The cell should show the first computed value (cached)
+        expect(cellComputed).toHaveTextContent('call-1');
+
+        // Now expire the cache by making a data change
+        const rowNode = api.getDisplayedRowAtIndex(0)!;
+        rowNode.setDataValue('a', 'changed');
+        await asyncSetTimeout(1);
+
+        // After data change, cache should expire and valueGetter should be called again
+        api.refreshCells({ columns: ['computed'], force: true });
+        await asyncSetTimeout(1);
+
+        expect(valueGetterCallCount).toBeGreaterThan(initialCallCount);
     });
 });

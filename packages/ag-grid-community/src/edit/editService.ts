@@ -16,10 +16,10 @@ import type { RefreshCellsParams } from '../interfaces/iCellsParams';
 import type { Column } from '../interfaces/iColumn';
 import type { EditMap, EditRow, EditValue, IEditModelService } from '../interfaces/iEditModelService';
 import type {
+    CellValueResolveFrom,
     EditNavOnValidationResult,
     EditPosition,
     EditSource,
-    IEditService,
     IsEditingParams,
     StartEditParams,
     StopEditParams,
@@ -98,7 +98,7 @@ const CHECK_SIBLING = { checkSiblings: true };
 
 const FORCE_REFRESH = { force: true, suppressFlash: true };
 
-export class EditService extends BeanStub implements NamedBean, IEditService {
+export class EditService extends BeanStub implements NamedBean {
     public beanName = 'editSvc' as const;
 
     public committing = false;
@@ -865,30 +865,52 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         return res;
     }
 
-    /** Gets the pending edit value for display (used by ValueService). Returns undefined to fallback to valueGetter. */
-    public getCellValueForDisplay(rowNode: IRowNode, column: Column, source: 'ui' | 'api' | string): any {
-        if (source !== 'ui') {
-            return undefined; // only show edit values for UI operations
+    /**
+     * Gets the pending edit value for display (used by ValueService).
+     * Returns undefined to fallback to data/valueGetter.
+     *
+     * @param resolveFrom - How to resolve the value:
+     *   - 'editing': Returns editorValue (live typing) or pendingValue
+     *   - 'pending': Returns only pendingValue, excludes live editor typing
+     *   - 'data': Always returns undefined (use committed data)
+     */
+    public getCellValueForDisplay(rowNode: IRowNode, column: Column, resolveFrom: CellValueResolveFrom): any {
+        // 'data' mode: always use committed data, never edit values
+        if (resolveFrom === 'data') {
+            return undefined;
+        }
+
+        // 'pending' mode outside batch: valueGetters should use committed data
+        // (AG-16448 fix - prevents valueGetters from seeing edit state in non-batch mode)
+        if (resolveFrom === 'pending' && !this.batch) {
+            return undefined;
         }
 
         const edit = this.model.getEdit({ rowNode, column }, CHECK_SIBLING);
-
-        // Skip if no edit, or during stopEditing when value was already committed (non-batch, no editor opened)
-        if (!edit || (this.stopping && !this.batch && !edit.editorState?.cellStartedEditing)) {
-            return undefined; // no edit or value already committed
+        if (!edit) {
+            return undefined;
         }
 
-        const editorValue = edit.editorValue;
-        if (editorValue != null && editorValue !== UNEDITED) {
-            return editorValue; // live value from editor component
+        // Skip during stopEditing when value was already committed (non-batch, no editor opened)
+        if (this.stopping && !this.batch && !edit.editorState?.cellStartedEditing) {
+            return undefined;
         }
 
+        // For 'editing' mode: return editorValue (live typing) if available
+        if (resolveFrom === 'editing') {
+            const editorValue = edit.editorValue;
+            if (editorValue != null && editorValue !== UNEDITED) {
+                return editorValue;
+            }
+        }
+
+        // Return pendingValue if available
         const pendingValue = edit.pendingValue;
         if (pendingValue !== UNEDITED) {
-            return pendingValue; // synced pending value
+            return pendingValue;
         }
 
-        return undefined; // fallback to valueGetter
+        return undefined;
     }
 
     public getCellDataValue(position: Required<EditPosition>): any {
@@ -905,7 +927,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         }
 
         // fallback to getting value from ValueService
-        return this.valueSvc.getValue(position.column as AgColumn, position.rowNode, false, 'api');
+        return this.valueSvc.getValue(position.column as AgColumn, position.rowNode, 'data');
     }
 
     public addStopEditingWhenGridLosesFocus(viewports: HTMLElement[]): void {
@@ -1109,7 +1131,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                     const isFormulaForColumn = !!isFormula && column.isAllowFormula();
 
                     if (this.isCellEditable({ rowNode, column }, 'api')) {
-                        const sourceValue = valueSvc.getValue(column as AgColumn, rowNode, true, 'api');
+                        // Use resolveFrom: 'data' to get actual data value, not pending edit value
+                        const sourceValue = valueSvc.getValue(column as AgColumn, rowNode, 'data', true);
                         let pendingValue = valueSvc.parseValue(
                             column as AgColumn,
                             rowNode ?? null,
@@ -1199,7 +1222,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             if (!rowNode) {
                 continue;
             }
-            const sourceValue = valueSvc.getValue(col as AgColumn, rowNode, true, 'api');
+            const sourceValue = valueSvc.getValue(col as AgColumn, rowNode, 'data', true);
 
             if (
                 !params?.forceRefreshOfEditCellsOnly &&

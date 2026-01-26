@@ -545,7 +545,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                         const value = this.processCell(
                             rowNode,
                             column,
-                            valueSvc.getValue(column, rowNode),
+                            valueSvc.getValue(column, rowNode, 'editing'),
                             EXPORT_TYPE_DRAG_COPY,
                             processCellForClipboardFunc,
                             false,
@@ -1094,6 +1094,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 column: column as AgColumn,
                 node,
                 includeValueFormatted: true,
+                resolveFrom: 'editing',
             });
 
             const val = valueFormatted ?? value ?? '';
@@ -1158,14 +1159,19 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 formatValue: (valueToFormat: any) =>
                     valueSvc.formatValue(column, rowNode ?? null, valueToFormat) ?? valueToFormat,
                 parseValue: (valueToParse: string) =>
-                    valueSvc.parseValue(column, rowNode ?? null, valueToParse, valueSvc.getValue(column, rowNode)),
+                    valueSvc.parseValue(
+                        column,
+                        rowNode ?? null,
+                        valueToParse,
+                        valueSvc.getValue(column, rowNode, 'editing')
+                    ),
             };
 
             return func(params);
         }
 
         if (canParse && column.getColDef().useValueParserForImport !== false) {
-            return valueSvc.parseValue(column, rowNode ?? null, value, valueSvc.getValue(column, rowNode));
+            return valueSvc.parseValue(column, rowNode ?? null, value, valueSvc.getValue(column, rowNode, 'editing'));
         }
 
         if (canFormat && column.getColDef().useValueFormatterForExport !== false) {

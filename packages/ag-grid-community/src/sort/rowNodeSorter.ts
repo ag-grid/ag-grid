@@ -151,7 +151,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
             }
         }
 
-        const value = beans.valueSvc.getValue(column, node, false, 'api');
+        const value = beans.valueSvc.getValue(column, node, 'data');
         if (column.isAllowFormula()) {
             const formula = beans.formula;
             if (formula?.isFormula(value)) {
@@ -166,7 +166,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
         // instead delegate to getting value from leaf child.
         if (_isGroupUseEntireRow(this.gos, this.pivotActive)) {
             const leafChild = this.firstLeaf(node);
-            return leafChild && this.beans.valueSvc.getValue(column, leafChild, false, 'api');
+            return leafChild && this.beans.valueSvc.getValue(column, leafChild, 'data');
         }
 
         const displayCol = this.beans.showRowGroupCols?.getShowRowGroupCol(column.getId());

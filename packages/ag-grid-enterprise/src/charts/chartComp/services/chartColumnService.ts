@@ -119,7 +119,7 @@ export class ChartColumnService extends BeanStub {
             return this.valueColsWithoutSeriesType.has(colId);
         }
 
-        let cellValue = this.valueSvc.getValue(col, row);
+        let cellValue = this.valueSvc.getValue(col, row, 'data');
 
         if (cellValue == null) {
             cellValue = this.extractLeafData(row, col);
@@ -149,7 +149,7 @@ export class ChartColumnService extends BeanStub {
     }
 
     private extractLeafData(row: RowNode, col: AgColumn): any {
-        const value = row.data && this.valueSvc.getValue(col, row);
+        const value = row.data && this.valueSvc.getValue(col, row, 'data');
         if (value != null) {
             return value;
         }

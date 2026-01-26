@@ -1320,6 +1320,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
                 const { value, valueFormatted } = this.beans.valueSvc.getValueForDisplay({
                     node: this.rowNode,
                     includeValueFormatted: true,
+                    resolveFrom: 'editing',
                 });
                 params.value = value;
                 params.valueFormatted = valueFormatted;

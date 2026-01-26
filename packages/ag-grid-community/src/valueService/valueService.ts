@@ -19,7 +19,7 @@ import type { RowNode } from '../entities/rowNode';
 import type { CellValueChangedEvent } from '../events';
 import { _addGridCommonParams, _isServerSideRowModel } from '../gridOptionsUtils';
 import type { IFormulaDataService } from '../interfaces/formulas';
-import type { IEditService } from '../interfaces/iEditService';
+import type { CellValueResolveFrom, IEditService } from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _warn } from '../validation/logging';
 import type { ExpressionService } from './expressionService';
@@ -58,7 +58,8 @@ export class ValueService extends BeanStub implements NamedBean {
         valueGetter: string | Function,
         data: any,
         column: AgColumn,
-        rowNode: IRowNode
+        rowNode: IRowNode,
+        resolveFrom: CellValueResolveFrom
     ) => any;
 
     public postConstruct(): void {
@@ -97,12 +98,18 @@ export class ValueService extends BeanStub implements NamedBean {
         includeValueFormatted?: boolean;
         useRawFormula?: boolean;
         exporting?: boolean;
-        source?: 'ui' | 'api';
+        /**
+         * Specifies how to resolve the cell value when edits are pending.
+         * - `'editing'`: Returns the current editing value, including live editor typing and pending batch values
+         * - `'pending'`: Returns pending batch values but excludes live editor typing (useful for dependent calculations)
+         * - `'data'`: Returns the actual stored data value, ignoring all edit state
+         */
+        resolveFrom: CellValueResolveFrom;
     }): {
         value: any;
         valueFormatted: string | null;
     } {
-        const { column, node, includeValueFormatted, useRawFormula, exporting, source = 'ui' } = params;
+        const { column, node, includeValueFormatted, useRawFormula, exporting, resolveFrom } = params;
         const { showRowGroupColValueSvc } = this.beans;
         const isFullWidthGroup = !column && node.group;
         const isGroupCol = column?.colDef.showRowGroup;
@@ -113,7 +120,12 @@ export class ValueService extends BeanStub implements NamedBean {
 
         // handle group cell value
         if (showRowGroupColValueSvc && processTreeDataAsGroup && (isFullWidthGroup || isGroupCol)) {
-            const groupValue = showRowGroupColValueSvc.getGroupValue(node, column);
+            const groupValue = showRowGroupColValueSvc.getGroupValue(
+                node,
+                column,
+                resolveFrom,
+                this.displayIgnoresAggData(node)
+            );
             if (groupValue == null) {
                 return {
                     value: null,
@@ -143,16 +155,7 @@ export class ValueService extends BeanStub implements NamedBean {
             };
         }
 
-        // when in pivot mode, leafGroups cannot be expanded
-        const isPivotLeaf = node.leafGroup && this.colModel.isPivotMode();
-        const isOpenedGroup = node.group && node.expanded && !node.footer && !isPivotLeaf;
-        // checks if we show header data
-        const groupShowsAggData = this.gos.get('groupSuppressBlankHeader') || !node.sibling;
-
-        // if doing grouping and footers, we don't want to include the agg value
-        // in the header when the group is open
-        const ignoreAggData = isOpenedGroup && !groupShowsAggData;
-        let value = this.getValue(column, node, ignoreAggData, source);
+        let value = this.getValue(column, node, resolveFrom, this.displayIgnoresAggData(node));
         let valueToFormat = value;
 
         const { formula } = this.beans;
@@ -175,9 +178,15 @@ export class ValueService extends BeanStub implements NamedBean {
 
     public getValue(
         column: AgColumn,
-        rowNode?: IRowNode | null,
-        ignoreAggData = false,
-        source: 'ui' | 'api' | 'edit' | string = 'ui'
+        rowNode: IRowNode | null | undefined,
+        /**
+         * Specifies how to resolve the cell value when edits are pending.
+         * - `'editing'`: Returns the current editing value, including live editor typing and pending batch values
+         * - `'pending'`: Returns pending batch values but excludes live editor typing (useful for dependent calculations in valueGetters)
+         * - `'data'`: Returns the actual stored data value, ignoring all edit state
+         */
+        resolveFrom: CellValueResolveFrom,
+        ignoreAggData: boolean = false
     ): any {
         // hack - the grid is getting refreshed before this bean gets initialised, race condition.
         // really should have a way so they get initialised in the right order???
@@ -189,8 +198,8 @@ export class ValueService extends BeanStub implements NamedBean {
             return;
         }
 
-        // If editing, return the pending value if available
-        const pending = this.editSvc?.getCellValueForDisplay(rowNode, column, source);
+        // Check for edit/pending values if not requesting committed data
+        const pending = this.editSvc?.getCellValueForDisplay(rowNode, column, resolveFrom);
         if (pending !== undefined) {
             return pending;
         }
@@ -206,12 +215,12 @@ export class ValueService extends BeanStub implements NamedBean {
             }
         }
 
-        let result = this.resolveValue(column, rowNode, ignoreAggData);
+        let result = this.resolveValue(column, rowNode, ignoreAggData, resolveFrom);
 
         // the result could be an expression itself, if we are allowing cell values to be expressions
         if (this.cellExpressions && _isExpressionString(result)) {
             const cellValueGetter = result.substring(1);
-            result = this.executeValueGetter(cellValueGetter, rowNode.data, column, rowNode);
+            result = this.executeValueGetter(cellValueGetter, rowNode.data, column, rowNode, resolveFrom);
         }
 
         return result;
@@ -227,7 +236,33 @@ export class ValueService extends BeanStub implements NamedBean {
         return _isExpressionString(formula) ? formula : undefined;
     }
 
-    private resolveValue(column: AgColumn, rowNode: IRowNode, ignoreAggData: boolean): any {
+    /** Computes whether to ignore aggregation data for display purposes. */
+    private displayIgnoresAggData(node: IRowNode): boolean {
+        // If doing grouping and footers, we don't want to include the agg value
+        // in the header when the group is open.
+        // Result is: isOpenedGroup && !groupShowsAggData
+
+        // Check isOpenedGroup conditions: node.group && node.expanded && !node.footer && !isPivotLeaf
+        if (!node.group || !node.expanded || node.footer) {
+            return false;
+        }
+        // When in pivot mode, leafGroups cannot be expanded
+        if (node.leafGroup && this.colModel.isPivotMode()) {
+            return false; // isPivotLeaf - not an opened group
+        }
+
+        // isOpenedGroup is true. Now check if groupShowsAggData.
+        // groupShowsAggData = this.gos.get('groupSuppressBlankHeader') || !node.sibling
+        // We return true only if !groupShowsAggData, i.e., !groupSuppressBlankHeader && node.sibling
+        return !!node.sibling && !this.gos.get('groupSuppressBlankHeader');
+    }
+
+    private resolveValue(
+        column: AgColumn,
+        rowNode: IRowNode,
+        ignoreAggData: boolean,
+        resolveFrom: CellValueResolveFrom
+    ): any {
         const colDef = column.getColDef();
         const colId = column.getColId();
 
@@ -247,7 +282,7 @@ export class ValueService extends BeanStub implements NamedBean {
         const data = rowNode.data;
         const field = colDef.field;
         if (isTreeData && colDef.valueGetter) {
-            return this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
+            return this.executeValueGetter(colDef.valueGetter, data, column, rowNode, resolveFrom);
         }
         if (isTreeData && field && data) {
             return _getValueUsingField(data, field, column.isFieldContainsDots());
@@ -278,7 +313,7 @@ export class ValueService extends BeanStub implements NamedBean {
             if (!allowUserValuesForCell) {
                 return undefined;
             }
-            return this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
+            return this.executeValueGetter(colDef.valueGetter, data, column, rowNode, resolveFrom);
         }
         if (ssrmFooterGroupCol) {
             // this is for group footers in SSRM, as the SSRM row won't have groupData, need to extract
@@ -330,7 +365,12 @@ export class ValueService extends BeanStub implements NamedBean {
     public getDeleteValue(column: AgColumn, rowNode: IRowNode): any {
         if (_exists(column.getColDef().valueParser)) {
             return (
-                this.parseValue(column, rowNode, '', this.getValueForDisplay({ column, node: rowNode }).value) ?? null
+                this.parseValue(
+                    column,
+                    rowNode,
+                    '',
+                    this.getValueForDisplay({ column, node: rowNode, resolveFrom: 'editing' }).value
+                ) ?? null
             );
         }
         return null;
@@ -408,7 +448,8 @@ export class ValueService extends BeanStub implements NamedBean {
             return false;
         }
 
-        const oldValue = this.getValue(column, rowNode, undefined, eventSource);
+        // Get old value from stored data, ignoring any pending edit state
+        const oldValue = this.getValue(column, rowNode, 'data');
 
         const params: ValueSetterParams = _addGridCommonParams(this.gos, {
             node: rowNode,
@@ -501,7 +542,7 @@ export class ValueService extends BeanStub implements NamedBean {
 
         this.valueCache?.onDataChanged();
 
-        const savedValue = this.getValue(column, rowNode);
+        const savedValue = this.getValue(column, rowNode, 'editing');
 
         this.dispatchCellValueChangedEvent(rowNode, params, savedValue, eventSource);
         if ((rowNode as RowNode).pinnedSibling) {
@@ -689,21 +730,28 @@ export class ValueService extends BeanStub implements NamedBean {
         valueGetter: string | Function,
         data: any,
         column: AgColumn,
-        rowNode: IRowNode
+        rowNode: IRowNode,
+        resolveFrom: CellValueResolveFrom
     ): any {
         const colId = column.getColId();
 
-        // if inside the same turn, just return back the value we got last time
-        const valueFromCache = this.valueCache!.getValue(rowNode as RowNode, colId);
+        // Cache is safe when requesting committed data ('data') or when not in batch edit mode.
+        // During batch editing with 'editing'/'pending', valueGetters may depend on pending values
+        // from other cells, so we skip cache to ensure correct results.
+        const canUseCache = resolveFrom === 'data' || !this.editSvc?.isBatchEditing();
 
-        if (valueFromCache !== undefined) {
-            return valueFromCache;
+        if (canUseCache) {
+            const valueFromCache = this.valueCache!.getValue(rowNode as RowNode, colId);
+            if (valueFromCache !== undefined) {
+                return valueFromCache;
+            }
         }
 
-        const result = this.executeValueGetterWithoutValueCache(valueGetter, data, column, rowNode);
+        const result = this.executeValueGetterWithoutValueCache(valueGetter, data, column, rowNode, resolveFrom);
 
-        // if a turn is active, store the value in case the grid asks for it again
-        this.valueCache!.setValue(rowNode as RowNode, colId, result);
+        if (canUseCache) {
+            this.valueCache!.setValue(rowNode as RowNode, colId, result);
+        }
 
         return result;
     }
@@ -713,14 +761,20 @@ export class ValueService extends BeanStub implements NamedBean {
         valueGetter: string | Function,
         data: any,
         column: AgColumn,
-        rowNode: IRowNode
+        rowNode: IRowNode,
+        resolveFrom: CellValueResolveFrom
     ): any {
+        // AG-16448: When creating the getValue callback for valueGetters, use 'pending' instead of 'editing'.
+        // This ensures that when a valueGetter calls getValue() for OTHER columns, it sees batch-pending
+        // values but NOT live typing from other cells being edited.
+        const callbackResolveFrom = resolveFrom === 'editing' ? 'pending' : resolveFrom;
+
         const params: ValueGetterParams = _addGridCommonParams(this.gos, {
             data: data,
             node: rowNode,
             column: column,
             colDef: column.getColDef(),
-            getValue: this.getValueCallback.bind(this, rowNode),
+            getValue: (field) => this.getValueCallback(rowNode, callbackResolveFrom, field),
         });
 
         let result;
@@ -733,11 +787,11 @@ export class ValueService extends BeanStub implements NamedBean {
         return result;
     }
 
-    public getValueCallback(node: IRowNode, field: string | AgColumn): any {
+    public getValueCallback(node: IRowNode, resolveFrom: CellValueResolveFrom, field: string | AgColumn): any {
         const otherColumn = this.colModel.getColDefCol(field);
 
         if (otherColumn) {
-            return this.getValue(otherColumn, node);
+            return this.getValue(otherColumn, node, resolveFrom);
         }
 
         return null;
@@ -745,7 +799,9 @@ export class ValueService extends BeanStub implements NamedBean {
 
     // used by row grouping and pivot, to get key for a row. col can be a pivot col or a row grouping col
     public getKeyForNode(col: AgColumn, rowNode: IRowNode): any {
-        const value = this.getValue(col, rowNode);
+        // Use 'data' - grouping keys should be based on committed data, not pending edits.
+        // Row structure should remain stable during editing; rows only move groups when edits are committed.
+        const value = this.getValue(col, rowNode, 'data');
         const keyCreator = col.getColDef().keyCreator;
 
         let result = value;

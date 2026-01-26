@@ -300,7 +300,7 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
             map.set(column, {
                 editorValue: undefined,
                 pendingValue: UNEDITED,
-                sourceValue: this.beans.valueSvc.getValue(column as AgColumn, rowNode, false, 'api'),
+                sourceValue: this.beans.valueSvc.getValue(column as AgColumn, rowNode, 'data'),
                 state: 'editing',
                 editorState: {
                     isCancelAfterEnd: undefined,
