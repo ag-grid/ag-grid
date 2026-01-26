@@ -9,6 +9,10 @@ This section show how rows can be added, removed and updated using the Server-Si
 Server-Side Transactions require [Row IDs](./server-side-model-configuration/#providing-row-ids) to be supplied to grid.
 {% /note %}
 
+{% warning %}
+When the server-side store has a known last row index, remove transactions only delete rows that are currently in cache. If a delete is repeated or targets a row outside the loaded range, the grid ignores it and keeps the current store size rather than assuming a smaller one.
+{% /warning %}
+
 ## Transaction API
 
 The SSRM Transaction API allows rows to be added, removed or updated in the grid:
