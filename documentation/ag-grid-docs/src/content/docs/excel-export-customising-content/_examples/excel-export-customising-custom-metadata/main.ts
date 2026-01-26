@@ -32,9 +32,9 @@ const rowData: ReportRow[] = [
 ];
 
 const customMetadata = {
-    ExportID: '12345',
-    GeneratedBy: 'AgGrid',
+    ExportID: 'EXP-2026-001',
     ExpirationDate: '2025-01-01T12:00:00Z',
+    Disclaimer: 'Preliminary data; subject to audit',
 };
 
 let gridApi: GridApi<ReportRow>;

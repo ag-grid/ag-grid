@@ -64,22 +64,28 @@ Use `customMetadata` to write custom document properties to the exported file. T
 
 This is useful for attaching internal identifiers, workflow hints, or metadata consumed by downstream systems.
 
+Use cases for custom metadata may include:
+
+- Internal workflow tagging (for example, adding `ExportID` or `GeneratedBy` for tracking in automation scripts).
+- Integration with document management systems (for example, embedding `ContractType` or `ExpirationDate` for indexing in SharePoint or similar tools).
+- Data lineage and provenance (for example, recording `OriginalDataset` or `AppliedFilters` for audit trails).
+- Custom reporting annotations (for example, adding `AsOfDate` or `Currency` for contextual notes in shared reports).
+- Integration with third-party analytics tools (for example, passing `CampaignID` for BI dashboard automation).
+
 ```{% frameworkTransform=true %}
 gridApi.exportDataAsExcel({
     customMetadata: {
-        'ExportID': '12345',
-        'GeneratedBy': 'AgGrid',
-        'ExpirationDate': '2025-01-01T12:00:00Z',
+        ExportID: 'EXP-2026-001',
+        ExpirationDate: '2025-01-01T12:00:00Z',
+        Disclaimer: 'Preliminary data; subject to audit',
     },
 });
 ```
 
 {% interfaceDocumentation interfaceName="ExcelExportParams" names=["customMetadata"] /%}
 
-The following example adds custom properties during export. Some labelling workflows read custom properties (for example, Microsoft Purview uses `MSIP_Label_*` keys). 
-
 {% note %}
-The Grid does not interpret these values or apply labels; it only writes the custom properties that are provide in the `customMetadata` parameter.
+The Grid does not interpret these values or apply labels; it only writes the custom properties provided in the `customMetadata` parameter. This feature does not replace or integrate with officially endorsed labelling systems, such as Microsoft Purview Sensitivity Labels, which require specific SDKs or APIs for enforcement, encryption, and compliance.
 {% /note %}
 
 {% gridExampleRunner title="Excel Export - Custom Metadata" name="excel-export-customising-custom-metadata" /%}
