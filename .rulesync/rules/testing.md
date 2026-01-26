@@ -35,7 +35,9 @@ packages/ag-grid-community/src/
 
 ## Running Tests
 
-### Unit Tests
+### Unit Tests (Jest)
+
+Unit tests in `packages/` use Jest. Use `--testPathPattern` and `--testNamePattern`:
 
 ```bash
 # Run all tests for a package
@@ -55,12 +57,22 @@ yarn nx test ag-grid-community --testPathPattern="featureName" --testNamePattern
 yarn nx e2e ag-grid-docs
 ```
 
-### Behavioural Tests
+### Behavioural Tests (Vitest)
+
+Behavioural tests in `testing/behavioural/` use Vitest via Nx. Use `--run` to execute once (without watch mode):
 
 ```bash
-# Run behavioural test suite
-yarn nx test ag-behavioural-testing
+# Run all behavioural tests
+yarn nx test ag-behavioural-testing --run
+
+# Run specific test file
+yarn nx test ag-behavioural-testing --run "cell-editing-regression"
+
+# Run specific test by name
+yarn nx test ag-behavioural-testing --run "cell-editing-regression" -t "should handle"
 ```
+
+**Note:** Vitest does not support `--testPathPattern` or `--testNamePattern`. Use positional arguments for file matching and `-t` for test name filtering.
 
 ## Test Patterns
 

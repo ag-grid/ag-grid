@@ -93,6 +93,7 @@ const CANCEL_PARAMS: StopEditParams = { cancel: true, source: 'api' };
 
 const COMMIT_PARAMS: StopEditParams = { cancel: false, source: 'api' };
 
+/** Params to also check the pinnedSibling row when looking up edits (pinned rows share edit state with their unpinned counterpart). */
 const CHECK_SIBLING = { checkSiblings: true };
 
 const FORCE_REFRESH = { force: true, suppressFlash: true };
@@ -867,27 +868,27 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     /** Gets the pending edit value for display (used by ValueService). Returns undefined to fallback to valueGetter. */
     public getCellValueForDisplay(rowNode: IRowNode, column: Column, source: 'ui' | 'api' | string): any {
         if (source !== 'ui') {
-            return undefined;
+            return undefined; // only show edit values for UI operations
         }
 
         const edit = this.model.getEdit({ rowNode, column }, CHECK_SIBLING);
 
         // Skip if no edit, or during stopEditing when value was already committed (non-batch, no editor opened)
         if (!edit || (this.stopping && !this.batch && !edit.editorState?.cellStartedEditing)) {
-            return undefined;
+            return undefined; // no edit or value already committed
         }
 
         const editorValue = edit.editorValue;
         if (editorValue !== undefined && editorValue !== UNEDITED) {
-            return editorValue;
+            return editorValue; // live value from editor component
         }
 
         const pendingValue = edit.pendingValue;
         if (pendingValue !== UNEDITED) {
-            return pendingValue;
+            return pendingValue; // synced pending value
         }
 
-        return undefined;
+        return undefined; // fallback to valueGetter
     }
 
     public getCellDataValue(position: Required<EditPosition>, preferEditor: boolean = true): any {
