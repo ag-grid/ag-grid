@@ -214,7 +214,7 @@ const getMultipleSheetsAsExcelCompressed = (
     params: ExcelExportMultipleSheetParams,
     workbook: Workbook = new Workbook()
 ): Promise<Blob | undefined> => {
-    const { data, fontSize, author, activeSheetIndex, excelCustomMetadata } = params;
+    const { data, fontSize, author, activeSheetIndex, customMetadata } = params;
     const mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
     const zipContainer = new ZipContainer();
 
@@ -226,7 +226,7 @@ const getMultipleSheetsAsExcelCompressed = (
                 author,
                 fontSize,
                 activeTab: activeSheetIndex,
-                customMetadata: excelCustomMetadata,
+                customMetadata,
             },
             workbook
         )
@@ -241,7 +241,7 @@ export const getMultipleSheetsAsExcel = (
     params: ExcelExportMultipleSheetParams,
     workbook: Workbook = new Workbook()
 ): Blob | undefined => {
-    const { data, fontSize, author, activeSheetIndex: activeTab, excelCustomMetadata: customMetadata } = params;
+    const { data, fontSize, author, activeSheetIndex: activeTab, customMetadata } = params;
     const mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
     const zipContainer = new ZipContainer();
 
@@ -299,14 +299,14 @@ export class ExcelCreator
             const mergedParams = this.getMergedParams(userParams);
             const data = this.getData(mergedParams);
 
-            const { fontSize, author, mimeType, excelCustomMetadata } = mergedParams;
+            const { fontSize, author, mimeType, customMetadata } = mergedParams;
 
             const exportParams: ExcelExportMultipleSheetParams = {
                 data: [data],
                 fontSize,
                 author,
                 mimeType,
-                excelCustomMetadata,
+                customMetadata,
             };
 
             this.packageCompressedFile(exportParams).then((packageFile) => {
@@ -335,14 +335,14 @@ export class ExcelCreator
         const mergedParams = this.getMergedParams(params);
         const data = this.getData(mergedParams);
 
-        const { fontSize, author, mimeType, excelCustomMetadata } = mergedParams;
+        const { fontSize, author, mimeType, customMetadata } = mergedParams;
 
         const exportParams: ExcelExportMultipleSheetParams = {
             data: [data],
             fontSize,
             author,
             mimeType,
-            excelCustomMetadata,
+            customMetadata,
         };
 
         return this.packageFile(exportParams);

@@ -604,7 +604,7 @@ interface ExcelFileParams {
      * Custom metadata to write to `docProps/custom.xml` in the exported file.
      * Values are serialised as strings.
      */
-    excelCustomMetadata?: ExcelCustomMetadata;
+    customMetadata?: ExcelCustomMetadata;
 }
 
 export interface ExcelExportParams extends ExcelFileParams, ExcelWorksheetConfigParams, ExportParams<ExcelRow[]> {}
