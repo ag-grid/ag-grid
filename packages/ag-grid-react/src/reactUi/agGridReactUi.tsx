@@ -58,6 +58,7 @@ import { ReactComponent } from '../shared/reactComponent';
 import { LicenseContext, ModulesContext } from './agGridProvider';
 import { BeansContext, RenderModeContext } from './beansContext';
 import GridComp from './gridComp';
+import { gridContextStore } from './gridContextStore';
 import { RenderStatusService } from './renderStatusService';
 import { useIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect';
 import { CssClasses, isReact19, runWithoutFlushSync } from './utils';
@@ -94,8 +95,6 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
     const prevProps = useRef<AgGridReactProps<any>>(props);
     const frameworkOverridesRef = useRef<ReactFrameworkOverrides>();
     const gridIdRef = useRef<string | undefined>();
-    const contextRef = useRef<Context>();
-    const prevERef = useRef<HTMLDivElement | null>(null);
 
     const ready = useRef<boolean>(false);
 
@@ -131,28 +130,28 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
     }, [props.className]);
 
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
+        const prevElement = eGui.current;
         eGui.current = eRef;
         updateClassName(props.className);
+
         if (!eRef) {
-            // Don't destroy yet - StrictMode may remount with same element
-            return;
-        }
-
-        // Same element and valid context? Reuse it (StrictMode remount)
-        if (eRef === prevERef.current && contextRef.current && !contextRef.current.isDestroyed()) {
-            setContext(contextRef.current);
-            return;
-        }
-
-        // Different element means different grid instance - destroy old first
-        if (prevERef.current && prevERef.current !== eRef) {
-            for (const f of destroyFuncs.current) {
-                f();
+            // React signaled unmount - start periodic check for ancestor removal
+            // (MutationObserver only catches direct removal from parent)
+            if (prevElement) {
+                gridContextStore.scheduleCleanupCheck(prevElement);
             }
-            destroyFuncs.current.length = 0;
+            return;
         }
 
-        prevERef.current = eRef;
+        // Cancel any pending cleanup check (StrictMode remount)
+        gridContextStore.cancelCleanupCheck(eRef);
+
+        // Reuse existing context for this element (StrictMode remount)
+        const existing = gridContextStore.get(eRef);
+        if (existing && !existing.context.isDestroyed()) {
+            setContext(existing.context);
+            return;
+        }
 
         const modules: Module[] = [...(props.modules ?? []), ...(modulesFromContext ?? [])];
         if (licenseKeyFromContext) {
@@ -204,8 +203,10 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
             setThemeOnGridDiv: true,
         };
 
+        let createdContext: Context | undefined;
+
         const createUiCallback = (ctx: Context) => {
-            contextRef.current = ctx;
+            createdContext = ctx;
             setContext(ctx);
             ctx.createBean(renderStatus);
 
@@ -269,19 +270,12 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
         if (apiRef.current) {
             gridIdRef.current = apiRef.current.getGridId();
         }
-    }, []);
 
-    // Handle cleanup on true unmount (not StrictMode's simulated unmount)
-    useEffect(() => {
-        return () => {
-            // Only destroy if element is truly gone from DOM
-            if (prevERef.current && !document.contains(prevERef.current)) {
-                for (const f of destroyFuncs.current) {
-                    f();
-                }
-                destroyFuncs.current.length = 0;
-            }
-        };
+        // Register with external store for DOM-based lifecycle management
+        // This handles cleanup for StrictMode, Activity hidden→unmount, etc.
+        if (createdContext) {
+            gridContextStore.register(eRef, createdContext, destroyFuncs.current);
+        }
     }, []);
 
     const style = useMemo(() => {
