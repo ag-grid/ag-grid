@@ -114,11 +114,26 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
 
     public getEdit(position: EditPosition, params?: GetEditsParams): EditValue | undefined {
         const { rowNode, column } = position;
-        if (this.suspendEdits || this.edits.size === 0 || !rowNode || !column) {
-            return undefined;
+        const edits = this.edits;
+        if (this.suspendEdits || edits.size === 0 || !rowNode || !column) {
+            return undefined; // no edits or incomplete position
         }
 
-        return this.getEditRow(rowNode, params)?.get(column);
+        // Check the row's edits first
+        const edit = edits.get(rowNode)?.get(column);
+        if (edit) {
+            return edit; // found edit for the cell
+        }
+
+        // If checkSiblings, also check the pinned sibling for the column
+        if (params?.checkSiblings) {
+            const pinnedSibling = (rowNode as RowNode).pinnedSibling;
+            if (pinnedSibling) {
+                return edits.get(pinnedSibling)?.get(column); // return edit from pinned sibling if found
+            }
+        }
+
+        return undefined;
     }
 
     public getEditMap(copy = true): EditMap {
