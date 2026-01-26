@@ -33,7 +33,6 @@ export class ValueService extends BeanStub implements NamedBean {
     private valueCache?: ValueCache;
     private dataTypeSvc?: DataTypeService;
     private editSvc?: IEditService;
-    private hasEditSvc: boolean = false;
     private formulaDataSvc?: IFormulaDataService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -42,7 +41,6 @@ export class ValueService extends BeanStub implements NamedBean {
         this.valueCache = beans.valueCache;
         this.dataTypeSvc = beans.dataTypeSvc;
         this.editSvc = beans.editSvc;
-        this.hasEditSvc = !!beans.editSvc;
         this.formulaDataSvc = beans.formulaDataSvc;
     }
 
@@ -193,16 +191,10 @@ export class ValueService extends BeanStub implements NamedBean {
 
         // pull these out to make code below easier to read
 
-        if (this.hasEditSvc && source === 'ui') {
-            const editSvc = this.editSvc!;
-
-            // if the row is editing, we want to return the new value, if available
-            if (editSvc.isEditing()) {
-                const newValue = editSvc.getCellDataValue({ rowNode, column }, true);
-                if (newValue !== undefined) {
-                    return newValue;
-                }
-            }
+        // if the row is editing, we want to return the new value, if available
+        const pending = this.editSvc?.getCellValueForDisplay(rowNode, column, source);
+        if (pending !== undefined) {
+            return pending;
         }
 
         const colDef = column.getColDef();

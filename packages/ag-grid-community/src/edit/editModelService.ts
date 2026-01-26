@@ -112,21 +112,13 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         return data;
     }
 
-    public getEdit(position: EditPosition, copy?: false): Readonly<EditValue> | undefined {
-        const edit = this._getEdit(position);
-        return copy && edit ? { ...edit } : edit;
-    }
-
-    private _getEdit(position: EditPosition): EditValue | undefined {
-        if (this.suspendEdits) {
+    public getEdit(position: EditPosition, params?: GetEditsParams): EditValue | undefined {
+        const { rowNode, column } = position;
+        if (this.suspendEdits || this.edits.size === 0 || !rowNode || !column) {
             return undefined;
         }
 
-        if (this.edits.size === 0) {
-            return undefined;
-        }
-
-        return position.rowNode && position.column && this.getEditRow(position.rowNode)?.get(position.column);
+        return this.getEditRow(rowNode, params)?.get(column);
     }
 
     public getEditMap(copy = true): EditMap {
@@ -168,7 +160,7 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
             edits.set(position.rowNode, new Map());
         }
 
-        const currentEdit = this._getEdit(position);
+        const currentEdit = this.getEdit(position);
 
         const updatedEdit = Object.assign({
             editorState: {
@@ -188,7 +180,7 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         const { rowNode, column } = position;
         if (rowNode) {
             if (column) {
-                const edit = this._getEdit(position);
+                const edit = this.getEdit(position);
                 if (edit) {
                     edit.editorValue = undefined;
                     edit.pendingValue = edit.sourceValue;

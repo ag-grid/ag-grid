@@ -171,7 +171,7 @@ export function _setupEditor(
     comp?.setEditDetails(compDetails, popup, popupLocation, gos.get('reactiveCustomComponents'));
     rowCtrl?.refreshRow({ suppressFlash: true });
 
-    const edit = editModelSvc?.getEdit(position, true);
+    const edit = editModelSvc?.getEdit(position);
 
     if (!silent && !edit?.editorState?.cellStartedEditing) {
         editSvc?.dispatchCellEvent(position, event, 'cellEditingStarted', { value: newValue });
@@ -364,7 +364,7 @@ export function _syncFromEditor(
         return;
     }
 
-    let edit = editModelSvc.getEdit(position, true);
+    let edit = editModelSvc.getEdit(position);
 
     if (!edit?.sourceValue) {
         // sourceValue not set means sync called without corresponding startEdit - from API call
@@ -405,7 +405,7 @@ function getNormalisedFormula(beans: BeanCollection, value: any, forEditing: boo
 function _persistEditorValue(beans: BeanCollection, position: Required<EditPosition>): void {
     const { editModelSvc } = beans;
 
-    const edit = editModelSvc?.getEdit(position, true);
+    const edit = editModelSvc?.getEdit(position);
 
     // propagate the editor value to pending.
     editModelSvc?.setEdit(position, {
@@ -438,7 +438,7 @@ export function _destroyEditor(
     const enableGroupEditing = beans.gos.get('enableGroupEdit');
     const editModelSvc = beans.editModelSvc;
 
-    const edit = editModelSvc?.getEdit(position, true);
+    const edit = editModelSvc?.getEdit(position);
 
     if (!cellCtrl) {
         if (edit) {

@@ -40,7 +40,7 @@ export interface IEditModelService {
     suspend(suspend: boolean): void;
     removeEdits({ rowNode, column }: EditPosition): void;
 
-    getEdit(position: EditPosition, copy?: boolean): Readonly<EditValue> | undefined;
+    getEdit(position: EditPosition, params?: GetEditsParams): EditValue | undefined;
     getEditPositions(editMap?: EditMap): EditPositionValue[];
     getEditRow(rowNode: IRowNode, params?: GetEditsParams): EditRow | undefined;
     getEditRowDataValue(rowNode: IRowNode, params?: GetEditsParams): any;

@@ -749,4 +749,72 @@ describe('Cell Editing Regression', () => {
             });
         });
     });
+
+    test('Delete key on cell with valueGetter passes correct oldValue to valueSetter', async () => {
+        const valueSetterCalls: Array<{ oldValue: any; newValue: any }> = [];
+
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'name' },
+                {
+                    headerName: 'Total Medals',
+                    colId: 'totalMedals',
+                    editable: true,
+                    valueGetter: (params) => {
+                        return params.data.medals;
+                    },
+                    valueSetter: (params) => {
+                        valueSetterCalls.push({
+                            oldValue: structuredClone(params.oldValue),
+                            newValue: params.newValue,
+                        });
+                        if (params.newValue == null) {
+                            params.data.medals.gold = 0;
+                            return true;
+                        }
+                        return false;
+                    },
+                    valueFormatter: ({ value }) => {
+                        return value.gold + value.silver + value.bronze;
+                    },
+                },
+            ],
+            defaultColDef: {
+                flex: 1,
+                editable: true,
+                cellDataType: false,
+            },
+            rowData: [
+                {
+                    name: 'Michael Phelps',
+                    medals: { gold: 8, silver: 2, bronze: 0 },
+                },
+            ],
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(1);
+
+        // Verify initial state - cell should show total medals (10)
+        const cell = getByTestId(gridDiv, agTestIdFor.cell('0', 'totalMedals'));
+        expect(cell).toHaveTextContent('10');
+
+        // Click to focus the cell (NOT edit mode)
+        await userEvent.click(cell);
+        await asyncSetTimeout(1);
+
+        // Verify we're not in edit mode
+        expect(api.getEditingCells()).toHaveLength(0);
+
+        // Press Delete to trigger cellClear (not edit mode)
+        await userEvent.keyboard('{Delete}');
+        await asyncSetTimeout(1);
+
+        // Verify valueSetter was called with correct values
+        expect(valueSetterCalls).toHaveLength(1);
+        // newValue should be null when using cellClear
+        expect(valueSetterCalls[0].newValue).toBeNull();
+        // The oldValue should be the result from valueGetter, not null
+        expect(valueSetterCalls[0].oldValue).toEqual({ gold: 8, silver: 2, bronze: 0 });
+    });
 });
