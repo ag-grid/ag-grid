@@ -19,14 +19,14 @@ ModuleRegistry.registerModules([
 
 let gridApi: GridApi;
 
-const currencyFormatter = ({ value }: ValueFormatterParams) => `$ ${Number(value).toFixed(2)}`;
+const valueFormatter = ({ value }: ValueFormatterParams) => `$ ${Number(value).toFixed(2)}`;
 
 const gridOptions: GridOptions = {
     columnDefs: [
         { field: 'item' },
-        { field: 'price', valueFormatter: currencyFormatter },
+        { field: 'price', valueFormatter },
         { field: 'qty' },
-        { field: 'total', allowFormula: true, cellEditor: 'agTextCellEditor', valueFormatter: currencyFormatter },
+        { field: 'total', allowFormula: true, cellEditor: 'agTextCellEditor', valueFormatter },
     ],
     getRowId: (params: GetRowIdParams) => String(params.data.id),
     defaultColDef: {
