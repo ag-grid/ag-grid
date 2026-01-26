@@ -71,7 +71,7 @@ export function _setupEditors(
 
                 const newValue =
                     cellStartValue ??
-                    editSvc?.getCellDataValue(cellPosition, false) ??
+                    editSvc?.getCellDataValue(cellPosition) ??
                     valueSvc.getValueForDisplay({ column: cellColumn as AgColumn, node: cellRowNode })?.value ??
                     oldValue ??
                     UNEDITED;
@@ -230,7 +230,7 @@ function _createEditorParams(
 
     const editor = cellCtrl.comp?.getCellEditor();
 
-    const cellDataValue = editSvc?.getCellDataValue(position, false);
+    const cellDataValue = editSvc?.getCellDataValue(position);
     const initialNewValue =
         cellDataValue === undefined
             ? editor

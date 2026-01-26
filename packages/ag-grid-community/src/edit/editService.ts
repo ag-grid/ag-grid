@@ -888,14 +888,21 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         return undefined; // fallback to valueGetter
     }
 
-    public getCellDataValue(position: Required<EditPosition>, preferEditor: boolean = true): any {
+    public getCellDataValue(position: Required<EditPosition>): any {
         const edit = this.model.getEdit(position, CHECK_SIBLING);
-
-        const newValue = preferEditor ? edit?.editorValue ?? edit?.pendingValue : edit?.pendingValue;
-        if (newValue !== UNEDITED && edit) {
-            return newValue;
+        if (edit) {
+            const newValue = edit.pendingValue;
+            if (newValue !== UNEDITED) {
+                return newValue; // return edit value if exists
+            }
+            const sourceValue = edit.sourceValue;
+            if (sourceValue != null) {
+                return sourceValue; // return source value if no edit value
+            }
         }
-        return edit?.sourceValue ?? this.valueSvc.getValue(position.column as AgColumn, position.rowNode, false, 'api');
+
+        // fallback to getting value from ValueService
+        return this.valueSvc.getValue(position.column as AgColumn, position.rowNode, false, 'api');
     }
 
     public addStopEditingWhenGridLosesFocus(viewports: HTMLElement[]): void {
