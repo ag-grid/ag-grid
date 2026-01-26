@@ -864,32 +864,40 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         return res;
     }
 
-    /** Gets the pending edit value for display in the cell (used by valueService). */
+    /** Gets the pending edit value for display (used by ValueService). Returns undefined to fallback to valueGetter. */
     public getCellValueForDisplay(rowNode: IRowNode, column: Column, source: 'ui' | 'api' | string): any {
         if (source !== 'ui') {
-            return undefined; // only show edit values for UI operations
+            return undefined;
         }
 
         const edit = this.model.getEdit({ rowNode, column }, CHECK_SIBLING);
 
-        // When stopping without editor opened, use valueGetter for display
+        // Skip if no edit, or during stopEditing when value was already committed (non-batch, no editor opened)
         if (!edit || (this.stopping && !this.batch && !edit.editorState?.cellStartedEditing)) {
-            return undefined; // no edit present
+            return undefined;
         }
 
-        const value = edit.editorValue ?? edit.pendingValue;
-        return value !== UNEDITED ? value : undefined;
+        const editorValue = edit.editorValue;
+        if (editorValue !== undefined && editorValue !== UNEDITED) {
+            return editorValue;
+        }
+
+        const pendingValue = edit.pendingValue;
+        if (pendingValue !== UNEDITED) {
+            return pendingValue;
+        }
+
+        return undefined;
     }
 
-    public getCellDataValue(position: Required<EditPosition>, preferEditor: boolean): any {
+    public getCellDataValue(position: Required<EditPosition>, preferEditor: boolean = true): any {
         const edit = this.model.getEdit(position, CHECK_SIBLING);
 
         const newValue = preferEditor ? edit?.editorValue ?? edit?.pendingValue : edit?.pendingValue;
         if (newValue !== UNEDITED && edit) {
             return newValue;
         }
-        const { rowNode, column } = position;
-        return edit?.sourceValue ?? this.valueSvc.getValue(column as AgColumn, rowNode, false, 'api');
+        return edit?.sourceValue ?? this.valueSvc.getValue(position.column as AgColumn, position.rowNode, false, 'api');
     }
 
     public addStopEditingWhenGridLosesFocus(viewports: HTMLElement[]): void {
