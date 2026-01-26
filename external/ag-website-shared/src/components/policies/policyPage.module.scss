@@ -59,6 +59,10 @@
         font-size: var(--text-fs-xl);
     }
 
+    ul {
+        list-style-type: disc;
+    }
+
     @media screen and (min-width: $breakpoint-policy-page-extra-large) {
         list-style: decimal;
         padding-left: unset;
