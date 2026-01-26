@@ -189,9 +189,7 @@ export class ValueService extends BeanStub implements NamedBean {
             return;
         }
 
-        // pull these out to make code below easier to read
-
-        // if the row is editing, we want to return the new value, if available
+        // If editing, return the pending value if available
         const pending = this.editSvc?.getCellValueForDisplay(rowNode, column, source);
         if (pending !== undefined) {
             return pending;

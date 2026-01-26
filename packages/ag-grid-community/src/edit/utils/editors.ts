@@ -435,7 +435,6 @@ export function _destroyEditor(
     params?: DestroyEditorParams,
     cellCtrl = _getCellCtrl(beans, position)
 ): void {
-    const enableGroupEditing = beans.gos.get('enableGroupEdit');
     const editModelSvc = beans.editModelSvc;
 
     const edit = editModelSvc?.getEdit(position);
@@ -457,8 +456,8 @@ export function _destroyEditor(
 
         if (edit) {
             editModelSvc?.setEdit(position, { state: 'changed' });
-            const args = enableGroupEditing
-                ? groupEditOverrides(params, edit)
+            const args = beans.gos.get('enableGroupEdit')
+                ? _enabledGroupEditStoppedArgs(edit, params?.cancel)
                 : {
                       valueChanged: false,
                       newValue: undefined,
@@ -493,37 +492,60 @@ export function _destroyEditor(
     const latest = editModelSvc?.getEdit(position);
 
     if (latest && latest.state === 'changed') {
-        const args = enableGroupEditing
-            ? groupEditOverrides(params, latest)
-            : {
-                  valueChanged: _sourceAndPendingDiffer(latest) && !params?.cancel,
-                  newValue:
-                      params?.cancel || latest.editorState.isCancelAfterEnd
-                          ? undefined
-                          : latest?.editorValue ?? edit?.pendingValue,
-                  oldValue: latest?.sourceValue,
-              };
-
+        const cancel = params?.cancel;
+        const args = beans.gos.get('enableGroupEdit')
+            ? _enabledGroupEditStoppedArgs(latest, cancel)
+            : _cellEditStoppedArgs(latest, edit, cancel);
         dispatchEditingStopped(beans, position, args, params);
     }
 }
 
 type EditingStoppedArgs = Partial<Pick<CellEditingStoppedEvent, 'valueChanged' | 'newValue' | 'oldValue' | 'value'>>;
 
-function groupEditOverrides(params: DestroyEditorParams | undefined, latest: Readonly<EditValue>): EditingStoppedArgs {
-    return params?.cancel
-        ? {
-              valueChanged: false,
-              oldValue: latest.sourceValue,
-              newValue: undefined,
-              value: latest.sourceValue,
-          }
-        : {
-              valueChanged: _sourceAndPendingDiffer(latest),
-              oldValue: latest.sourceValue,
-              newValue: latest.pendingValue,
-              value: latest.sourceValue,
-          };
+/** Group editing event args (AG-15792): uses sourceValue for oldValue/value, does not check isCancelAfterEnd. */
+function _enabledGroupEditStoppedArgs(latest: Readonly<EditValue>, cancel: boolean | undefined): EditingStoppedArgs {
+    const { sourceValue, pendingValue } = latest;
+
+    let newValue: any;
+    if (!cancel && pendingValue !== UNEDITED) {
+        newValue = pendingValue;
+    }
+
+    return {
+        valueChanged: !cancel && _sourceAndPendingDiffer(latest),
+        newValue,
+        oldValue: sourceValue,
+        value: sourceValue,
+    };
+}
+
+/** Standard cell editing event args: newValue from editorValue (fallback to pendingValue), value is newValue. */
+function _cellEditStoppedArgs(
+    latest: Readonly<EditValue>,
+    edit: Readonly<EditValue> | undefined,
+    cancel: boolean | undefined
+): EditingStoppedArgs {
+    if (cancel || latest.editorState.isCancelAfterEnd) {
+        return {
+            valueChanged: false,
+            newValue: undefined,
+            oldValue: latest.sourceValue,
+        };
+    }
+
+    let newValue: any = latest.editorValue;
+    if (newValue == null || newValue === UNEDITED) {
+        newValue = edit?.pendingValue;
+    }
+    if (newValue === UNEDITED) {
+        newValue = undefined;
+    }
+
+    return {
+        valueChanged: _sourceAndPendingDiffer(latest),
+        newValue,
+        oldValue: latest.sourceValue,
+    };
 }
 
 function dispatchEditingStopped(

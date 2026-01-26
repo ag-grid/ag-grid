@@ -878,16 +878,13 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             return undefined; // no edit or value already committed
         }
 
-        const editorValue = edit.editorValue;
-        if (editorValue !== undefined && editorValue !== UNEDITED) {
-            return editorValue; // live value from editor component
-        }
+        // Check editorValue first (live value from editor), then pendingValue (synced value)
+        // Use nullish coalescing to properly handle null/undefined but preserve other falsy values like 0 or ''
+        const value = edit.editorValue ?? edit.pendingValue;
 
-        const pendingValue = edit.pendingValue;
-        if (pendingValue !== UNEDITED) {
-            return pendingValue; // synced pending value
+        if (value !== UNEDITED) {
+            return value; // return the edit value for display
         }
-
         return undefined; // fallback to valueGetter
     }
 
