@@ -1,9 +1,8 @@
-import { _getScrollLeft } from '../../../agStack/utils/dom';
 import { BeanStub } from '../../../context/beanStub';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
+import type { BodyScrollEvent } from '../../../events';
 
 export class GroupStickyLabelFeature extends BeanStub {
-    private eViewport: HTMLElement | null = null;
     private isSticky = false;
     private left: number | null = null;
     private right: number | null = null;
@@ -19,18 +18,15 @@ export class GroupStickyLabelFeature extends BeanStub {
         const { columnGroup, beans } = this;
         const { ctrlsSvc } = beans;
         ctrlsSvc.whenReady(this, () => {
-            const headerRowContainer = ctrlsSvc.getHeaderRowContainerCtrl(columnGroup.getPinned());
-            if (!headerRowContainer) {
-                return;
-            }
-
-            this.eViewport = headerRowContainer.eViewport;
             const refreshPosition = this.refreshPosition.bind(this);
-            const updateSticky = this.updateSticky.bind(this);
 
             if (columnGroup.getPinned() == null) {
-                this.addManagedElementListeners(this.eViewport, {
-                    scroll: updateSticky,
+                this.addManagedEventListeners({
+                    bodyScroll: (event: BodyScrollEvent) => {
+                        if (event.direction === 'horizontal') {
+                            this.updateSticky(event.left);
+                        }
+                    },
                 });
             }
 
@@ -47,7 +43,7 @@ export class GroupStickyLabelFeature extends BeanStub {
     }
 
     private refreshPosition(): void {
-        const { columnGroup } = this;
+        const { columnGroup, beans } = this;
         const left = columnGroup.getLeft();
         const width = columnGroup.getActualWidth();
 
@@ -60,14 +56,15 @@ export class GroupStickyLabelFeature extends BeanStub {
 
         this.left = left;
         this.right = left + width;
-        this.updateSticky();
+
+        const scrollPosition = beans.colViewport.getScrollPosition();
+        if (scrollPosition != null) {
+            this.updateSticky(scrollPosition);
+        }
     }
 
-    private updateSticky(): void {
-        const { beans, eViewport, left, right } = this;
-        if (!eViewport) {
-            return;
-        }
+    private updateSticky(scrollLeft: number): void {
+        const { beans, left, right } = this;
 
         if (left == null || right == null) {
             this.setSticky(false);
@@ -76,7 +73,6 @@ export class GroupStickyLabelFeature extends BeanStub {
 
         const { gos, visibleCols } = beans;
         const isRtl = gos.get('enableRtl');
-        const scrollLeft = _getScrollLeft(eViewport, isRtl);
         const viewportEdge = isRtl ? visibleCols.bodyWidth - scrollLeft : scrollLeft;
         this.setSticky(left < viewportEdge && right > viewportEdge);
     }
