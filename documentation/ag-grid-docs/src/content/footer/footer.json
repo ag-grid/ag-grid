@@ -71,6 +71,10 @@
                 "url": "/cookies"
             },
             {
+                "name": "Modern Slavery",
+                "url": "/modern-slavery"
+            },
+            {
                 "name": "Sitemap",
                 "url": "/sitemap"
             }
