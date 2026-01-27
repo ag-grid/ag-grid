@@ -460,6 +460,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `TooltipModule`
      */
     @Input() public tooltipShowDelay: number | undefined = undefined;
+    /** The delay in milliseconds that it takes for tooltips to show when switching between tooltip-enabled elements
+     * shortly after another tooltip hides.
+     *     **Note:** This property does not work if `enableBrowserTooltips` is `true`.
+     * @default 200
+     * @agModule `TooltipModule`
+     */
+    @Input() public tooltipSwitchShowDelay: number | undefined = undefined;
     /** The delay in milliseconds that it takes for tooltips to hide once they have been displayed.
      *     **Note:** This property does not work if `enableBrowserTooltips` is `true` and `tooltipHideTriggers` includes `timeout`.
      * @default 10000

@@ -12,6 +12,7 @@ export const GRID_OPTION_DEFAULTS = {
     enableBrowserTooltips: false,
     tooltipTrigger: 'hover',
     tooltipShowDelay: 2000,
+    tooltipSwitchShowDelay: 200,
     tooltipHideDelay: 10000,
     tooltipMouseTrack: false,
     tooltipShowMode: 'standard',

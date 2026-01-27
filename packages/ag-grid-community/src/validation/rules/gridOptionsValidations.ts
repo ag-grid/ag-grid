@@ -457,6 +457,14 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 return null;
             },
         },
+        tooltipSwitchShowDelay: {
+            validate: (options) => {
+                if (options.tooltipSwitchShowDelay && options.tooltipSwitchShowDelay < 0) {
+                    return 'tooltipSwitchShowDelay should not be lower than 0';
+                }
+                return null;
+            },
+        },
         treeData: {
             supportedRowModels: ['clientSide', 'serverSide'],
             validate: (options) => {

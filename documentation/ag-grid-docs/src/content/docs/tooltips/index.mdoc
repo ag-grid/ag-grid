@@ -18,7 +18,24 @@ It's possible to configure tooltips to show only when the items hovered are trun
 
 ## Show and Hide Delay
 
-Tooltips show after 2 seconds and hide after 10 seconds. Set `tooltipShowDelay` and `tooltipHideDelay` to override these values. The example below has `tooltipShowDelay=0` (shows immediately) and `tooltipHideDelay=2000` (hides in 2,000 milliseconds, or 2 seconds).
+By default, tooltips show after 2 seconds and hide after 10 seconds. These delays can be configured in milliseconds:
+
+- `tooltipShowDelay` - Time (in ms) before a tooltip is shown on first hover.
+- `tooltipSwitchShowDelay` - Time (in ms) before a tooltip is shown when moving the pointer from one tooltip-enabled element to another while the previous tooltip is still visible or pending hide.
+- `tooltipHideDelay` - Time (in ms) before a tooltip hides after being displayed.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    // Shows immediately on first hover
+    tooltipShowDelay: 0,
+
+    // Shorter delay when moving between tooltip-enabled elements
+    tooltipSwitchShowDelay: 1000,
+
+    // Hides 2 seconds after hover ends
+    tooltipHideDelay: 2000,
+};
+```
 
 {% gridExampleRunner title="Show Hide Delay" name="show-hide-delay" /%}
 

@@ -149,6 +149,7 @@ export const _NUMBER_GRID_OPTIONS: KeysWithType<number>[] = [
     'maxBlocksInCache',
     'maxConcurrentDatasourceRequests',
     'tooltipShowDelay',
+    'tooltipSwitchShowDelay',
     'tooltipHideDelay',
     'cacheOverflowSize',
     'paginationPageSize',

@@ -2065,6 +2065,12 @@
                 "url": "./tooltips/#show-and-hide-delay"
             }
         },
+        "tooltipSwitchShowDelay": {
+            "more": {
+                "name": "Tooltip Show and Hide Delay",
+                "url": "./tooltips/#show-and-hide-delay"
+            }
+        },
         "tooltipHideDelay": {
             "more": {
                 "name": "Tooltip Show and Hide Delay",

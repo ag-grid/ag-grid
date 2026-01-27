@@ -20,7 +20,7 @@ export enum TooltipTrigger {
     FOCUS,
 }
 
-const SHOW_QUICK_TOOLTIP_DIFF = 1000;
+const SHOW_SWITCH_TOOLTIP_DIFF = 1000;
 const FADE_OUT_TOOLTIP_TIMEOUT = 1000;
 const INTERACTIVE_HIDE_DELAY = 100;
 
@@ -131,19 +131,18 @@ export abstract class BaseTooltipStateManager<
         }
     }
 
-    private getGridOptionsTooltipDelay(delayOption: 'tooltipShowDelay' | 'tooltipHideDelay'): number {
+    private getGridOptionsTooltipDelay(
+        delayOption: 'tooltipShowDelay' | 'tooltipHideDelay' | 'tooltipSwitchShowDelay'
+    ): number {
         const delay = this.gos.get(delayOption)!;
         return Math.max(200, delay);
     }
 
-    private getTooltipDelay(type: 'show' | 'hide'): number {
-        if (type === 'show') {
-            return (
-                this.tooltipCtrl.getTooltipShowDelayOverride?.() ?? this.getGridOptionsTooltipDelay('tooltipShowDelay')
-            );
-        }
-
-        return this.tooltipCtrl.getTooltipHideDelayOverride?.() ?? this.getGridOptionsTooltipDelay('tooltipHideDelay');
+    private getTooltipDelay(type: 'Show' | 'Hide' | 'SwitchShow'): number {
+        return (
+            this.tooltipCtrl[`getTooltip${type}DelayOverride`]?.() ??
+            this.getGridOptionsTooltipDelay(`tooltip${type}Delay`)
+        );
     }
 
     public override destroy(): void {
@@ -252,10 +251,12 @@ export abstract class BaseTooltipStateManager<
         }
 
         // if we are showing the tooltip because of focus, no delay at all
-        // if another tooltip was hidden very recently, we only wait 200ms to show, not the normal waiting time
+        // if another tooltip was hidden very recently, use the switch show delay instead of the normal delay
         let delay = 0;
         if (mouseEvent) {
-            delay = this.isLastTooltipHiddenRecently() ? 200 : this.getTooltipDelay('show');
+            delay = this.isLastTooltipHiddenRecently()
+                ? this.getTooltipDelay('SwitchShow')
+                : this.getTooltipDelay('Show');
         }
 
         this.lastMouseEvent = mouseEvent || null;
@@ -269,7 +270,7 @@ export abstract class BaseTooltipStateManager<
         const now = Date.now();
         const then = lastTooltipHideTime;
 
-        return now - then < SHOW_QUICK_TOOLTIP_DIFF;
+        return now - then < SHOW_SWITCH_TOOLTIP_DIFF;
     }
 
     private setToDoNothing(fromHideTooltip?: boolean): void {
@@ -544,7 +545,7 @@ export abstract class BaseTooltipStateManager<
 
     private startHideTimeout(): void {
         this.clearHideTimeout();
-        this.hideTooltipTimeoutId = window.setTimeout(this.hideTooltip.bind(this), this.getTooltipDelay('hide'));
+        this.hideTooltipTimeoutId = window.setTimeout(this.hideTooltip.bind(this), this.getTooltipDelay('Hide'));
     }
 
     private clearShowTimeout(): void {

@@ -14,6 +14,7 @@ export interface BaseProperties {
     enableBrowserTooltips?: boolean;
     tooltipTrigger?: 'hover' | 'focus';
     tooltipShowDelay?: number;
+    tooltipSwitchShowDelay?: number;
     tooltipHideDelay?: number;
     tooltipMouseTrack?: boolean;
     tooltipInteraction?: boolean;

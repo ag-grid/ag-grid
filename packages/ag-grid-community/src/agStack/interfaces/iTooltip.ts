@@ -16,6 +16,7 @@ export interface TooltipCtrl<TLocation extends string, TParams> {
     getLocation?(): TLocation | 'UNKNOWN';
 
     getTooltipShowDelayOverride?(): number;
+    getTooltipSwitchShowDelayOverride?(): number;
     getTooltipHideDelayOverride?(): number;
     shouldDisplayTooltip?(): boolean;
 
