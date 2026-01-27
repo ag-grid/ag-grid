@@ -20,26 +20,34 @@ function defaultDateComparator(filterDate: Date, cellValue: any): number {
     return 0;
 }
 
+type Range = { from: Date; to: Date };
+
+interface RangeCacheItem extends Range {
+    expires: number;
+}
+
 export class DateFilterHandler extends ScalarFilterHandler<DateFilterModel, Date, IDateFilterParams> {
     public readonly filterType = 'date' as const;
     protected readonly FilterModelFormatterClass = DateFilterModelFormatter;
-    private readonly filterTypeToRangeCache = new Map<ISimpleFilterModelPresetType, [Date, Date]>();
+    private readonly filterTypeToRangeCache = new Map<ISimpleFilterModelPresetType, RangeCacheItem>();
 
     constructor() {
         super(mapValuesFromDateFilterModel, DEFAULT_DATE_FILTER_OPTIONS);
-        this.refreshFilterBaseDate();
     }
 
-    private refreshFilterBaseDate(): void {
-        if (this.isAlive()) {
-            this.filterTypeToRangeCache.clear();
-            const filterBaseDateTimeout = setTimeout(
-                () => this.refreshFilterBaseDate(),
-                // this evaluates to a number of ms between NOW and beginning of tomorrow MINUS 1 minute
-                setStartOfNextDay(new Date()).getTime() - Date.now() - 60 * 1000
-            );
-            this.addDestroyFunc(() => clearTimeout(filterBaseDateTimeout));
+    getOrRefreshRangeCacheItem(key: ISimpleFilterModelPresetType, rangeFn: (s: Date, e: Date) => [Date, Date]): Range {
+        const { filterTypeToRangeCache } = this;
+        const now = Date.now();
+        let cache = filterTypeToRangeCache.get(key);
+        if (cache && cache.expires < now) {
+            cache = undefined;
         }
+        if (!cache) {
+            const [from, to] = rangeFn(new Date(now), new Date(now));
+            cache = { from, to, expires: setStartOfNextDay(new Date(now)).getTime() - now };
+            filterTypeToRangeCache.set(key, cache);
+        }
+        return cache;
     }
 
     protected override comparator(): Comparator<Date> {
@@ -62,16 +70,13 @@ export class DateFilterHandler extends ScalarFilterHandler<DateFilterModel, Date
         if (!this.isValid(cellValue)) {
             return type === 'notEqual' || type === 'notBlank';
         }
-        const typeAsPreset = type as ISimpleFilterModelPresetType;
-        const presetDateRangeFn = presetDateFilterTypeRelativeFromToMap[typeAsPreset] as RelativeRangeFn;
+        const maybeTypeAsPreset = type as ISimpleFilterModelPresetType;
+        const presetDateRangeFn = presetDateFilterTypeRelativeFromToMap[maybeTypeAsPreset] as
+            | RelativeRangeFn
+            | undefined;
         if (presetDateRangeFn) {
-            // indicates we are in preset time ranges space
-            let cache = this.filterTypeToRangeCache.get(typeAsPreset);
-            if (!cache) {
-                cache = presetDateRangeFn(new Date(), new Date());
-                this.filterTypeToRangeCache.set(typeAsPreset, cache);
-            }
-            const [from, to] = cache;
+            // user selected a preset, calculate what they mean
+            const { from, to } = this.getOrRefreshRangeCacheItem(maybeTypeAsPreset, presetDateRangeFn);
             return comparator(from, cellValue) >= 0 && comparator(to, cellValue) < 0;
         }
 

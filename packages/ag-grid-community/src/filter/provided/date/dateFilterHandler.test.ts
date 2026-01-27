@@ -1,4 +1,5 @@
-import { presetDateFilterTypeRelativeFromToMap } from './dateFilterHandler';
+import type { ISimpleFilterModelPresetType } from '../iSimpleFilter';
+import { DateFilterHandler, presetDateFilterTypeRelativeFromToMap } from './dateFilterHandler';
 
 describe('presetDateFilterTypeRelativeFromToMap', () => {
     const BASE = 'Wed Apr 08 2020 12:34:56 GMT+0000 (Coordinated Universal Time)';
@@ -97,4 +98,62 @@ describe('presetDateFilterTypeRelativeFromToMap', () => {
     ])('%s', (fnName, expected) =>
         it('works', () => expect(presetDateFilterTypeRelativeFromToMap[fnName](FROM).toString()).toContain(expected))
     );
+});
+
+describe('getOrRefreshRangeCacheItem', () => {
+    const key = 'today' as ISimpleFilterModelPresetType;
+
+    beforeEach(() => {
+        jest.useFakeTimers();
+        jest.setSystemTime(new Date(0));
+    });
+
+    afterEach(() => {
+        jest.useRealTimers();
+    });
+
+    it('returns cached range for the same key before expiry', () => {
+        const handler = new DateFilterHandler();
+        const rangeFn = jest.fn(() => [new Date(1), new Date(2)] as [Date, Date]);
+
+        const first = handler.getOrRefreshRangeCacheItem(key, rangeFn);
+        const second = handler.getOrRefreshRangeCacheItem(key, rangeFn);
+
+        expect(rangeFn).toHaveBeenCalledTimes(1);
+        expect(first[0]).toBe(second[0]);
+        expect(first[1]).toBe(second[1]);
+    });
+
+    it('refreshes the cache when expired', () => {
+        const handler = new DateFilterHandler();
+        const rangeFn = jest
+            .fn()
+            .mockImplementationOnce(() => [new Date(1), new Date(2)] as [Date, Date])
+            .mockImplementationOnce(() => [new Date(3), new Date(4)] as [Date, Date]);
+
+        const first = handler.getOrRefreshRangeCacheItem(key, rangeFn);
+
+        jest.setSystemTime(new Date(86_400_001));
+
+        const second = handler.getOrRefreshRangeCacheItem(key, rangeFn);
+
+        expect(rangeFn).toHaveBeenCalledTimes(2);
+        expect(first.from).not.toBe(second.from);
+        expect(first.to).not.toBe(second.to);
+        expect([second.from, second.to].map((date) => date.getTime())).toStrictEqual([3, 4]);
+    });
+
+    it('keeps separate caches per key', () => {
+        const handler = new DateFilterHandler();
+        const rangeFnToday = jest.fn(() => [new Date(10), new Date(20)] as [Date, Date]);
+        const rangeFnYesterday = jest.fn(() => [new Date(30), new Date(40)] as [Date, Date]);
+
+        const today = handler.getOrRefreshRangeCacheItem('today', rangeFnToday);
+        const yesterday = handler.getOrRefreshRangeCacheItem('yesterday', rangeFnYesterday);
+
+        expect(rangeFnToday).toHaveBeenCalledTimes(1);
+        expect(rangeFnYesterday).toHaveBeenCalledTimes(1);
+        expect([today.from, today.to].map((date) => date.getTime())).toStrictEqual([10, 20]);
+        expect([yesterday.from, yesterday.to].map((date) => date.getTime())).toStrictEqual([30, 40]);
+    });
 });
