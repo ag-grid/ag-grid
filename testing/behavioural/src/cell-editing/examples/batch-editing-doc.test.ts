@@ -256,6 +256,7 @@ describe('Batch editing documentation examples', () => {
             defaultColDef: { editable: true, flex: 1 },
         });
 
+        await asyncSetTimeout(1);
         const gridElement = getGridElement(api)! as HTMLElement;
         const getCell = (rowId: string, colId: string) => getByTestId(gridElement, agTestIdFor.cell(rowId, colId));
         const user = userEvent.setup();
@@ -279,6 +280,7 @@ describe('Batch editing documentation examples', () => {
         const cellB0 = getCell('0', 'b');
         expect(cellB0.querySelector('input')).toBeTruthy();
         await user.keyboard('edited-b0');
+        await asyncSetTimeout(1);
 
         // Tab to next cell
         await user.keyboard('{Tab}');
@@ -293,6 +295,7 @@ describe('Batch editing documentation examples', () => {
         const cellC0 = getCell('0', 'c');
         expect(cellC0.querySelector('input')).toBeTruthy();
         await user.keyboard('edited-c0');
+        await asyncSetTimeout(1);
 
         // Press Enter to close editor
         await user.keyboard('{Enter}');
