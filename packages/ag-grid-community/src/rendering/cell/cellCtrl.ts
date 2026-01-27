@@ -9,6 +9,7 @@ import { _getCellRendererDetails, _getLoadingCellRendererDetails } from '../../c
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { RowDragComp } from '../../dragAndDrop/rowDragComp';
+import type { EditService } from '../../edit/editService';
 import { _populateModelValidationErrors } from '../../edit/utils/editors';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellStyle, CheckboxSelectionCallback, ColDef } from '../../entities/colDef';
@@ -29,7 +30,6 @@ import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { ICellRangeFeature } from '../../interfaces/iCellRangeFeature';
 import type { ICellStyleFeature } from '../../interfaces/iCellStyleFeature';
 import type { RefreshCellsParams } from '../../interfaces/iCellsParams';
-import type { IEditService } from '../../interfaces/iEditService';
 import type { CellChangedEvent } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
@@ -129,7 +129,7 @@ export class CellCtrl extends BeanStub {
     // if cell has been focused, check if it's focused when destroyed
     private hasBeenFocused = false;
 
-    private readonly editSvc?: IEditService;
+    private readonly editSvc?: EditService;
     private readonly hasEdit: boolean = false;
 
     public tooltipFeature: TooltipFeature | undefined = undefined;

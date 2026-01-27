@@ -1,16 +1,16 @@
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { ICellStyleFeature } from '../../interfaces/iCellStyleFeature';
-import type { IEditModelService } from '../../interfaces/iEditModelService';
-import type { IEditService } from '../../interfaces/iEditService';
 import type { CellCtrl, ICellComp } from '../../rendering/cell/cellCtrl';
+import type { EditModelService } from '../editModelService';
+import type { EditService } from '../editService';
 import { _hasEdits, _hasLeafEdits, _hasPinnedEdits } from './style-utils';
 
 export class CellEditStyleFeature extends BeanStub implements ICellStyleFeature {
     private cellComp: ICellComp;
 
-    private readonly editSvc?: IEditService;
-    private readonly editModelSvc?: IEditModelService;
+    private readonly editSvc?: EditService;
+    private readonly editModelSvc?: EditModelService;
 
     constructor(
         private readonly cellCtrl: CellCtrl,

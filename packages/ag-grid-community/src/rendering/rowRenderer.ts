@@ -7,6 +7,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
+import type { EditService } from '../edit/editService';
 import type { AgColumn } from '../entities/agColumn';
 import { _getRowAbove } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
@@ -24,7 +25,6 @@ import { getFocusHeaderRowCount } from '../headerRendering/headerUtils';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { RefreshCellsParams, RefreshRowsParams } from '../interfaces/iCellsParams';
-import type { IEditService } from '../interfaces/iEditService';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
@@ -57,7 +57,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private focusSvc: FocusService;
     private rowContainerHeight: RowContainerHeightService;
     private ctrlsSvc: CtrlsService;
-    private editSvc?: IEditService;
+    private editSvc?: EditService;
 
     public wireBeans(beans: BeanCollection): void {
         this.pageBounds = beans.pageBounds;

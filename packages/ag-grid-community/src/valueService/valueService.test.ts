@@ -1,8 +1,8 @@
+import type { EditService } from '../edit/editService';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, ValueFormatterParams } from '../entities/colDef';
 import { RowNode } from '../entities/rowNode';
 import type { GridOptionsService } from '../gridOptionsService';
-import type { IEditService } from '../interfaces/iEditService';
 import { mock } from '../test-utils/mock';
 import type { ExpressionService } from './expressionService';
 import { ValueService } from './valueService';
@@ -26,7 +26,7 @@ describe('formatValue', () => {
         (valueSvc as any).gos = gos;
         (valueSvc as any).expressionSvc = expressionSvc;
         (valueSvc as any).beans = {
-            editSvc: mock<IEditService>('isEditing'),
+            editSvc: mock<EditService>('isEditing'),
             expressionSvc,
         };
     });

@@ -29,6 +29,8 @@ import type { DragService } from '../dragAndDrop/dragService';
 import type { HorizontalResizeService } from '../dragAndDrop/horizontalResizeService';
 import type { RowDragService } from '../dragAndDrop/rowDragService';
 import type { RowDropHighlightService } from '../dragAndDrop/rowDropHighlightService';
+import type { EditModelService } from '../edit/editModelService';
+import type { EditService } from '../edit/editService';
 import type { GridOptions } from '../entities/gridOptions';
 import type { Environment } from '../environment';
 import type { AgEventTypeParams, AgGlobalEventListener } from '../events';
@@ -56,8 +58,6 @@ import type { IColumnCollectionService } from '../interfaces/iColumnCollectionSe
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IContextMenuService } from '../interfaces/iContextMenu';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
-import type { IEditModelService } from '../interfaces/iEditModelService';
-import type { IEditService } from '../interfaces/iEditService';
 import type { IExcelCreator } from '../interfaces/iExcelCreator';
 import type { IExpansionService } from '../interfaces/iExpansionService';
 import type { IFindService } from '../interfaces/iFind';
@@ -321,8 +321,8 @@ interface CoreBeanCollection
     filterMenuFactory?: IMenuFactory;
     enterpriseMenuFactory?: IMenuFactory;
     contextMenuSvc?: IContextMenuService;
-    editSvc?: IEditService;
-    editModelSvc?: IEditModelService;
+    editSvc?: EditService;
+    editModelSvc?: EditModelService;
     alignedGridsSvc?: AlignedGridsService;
     paginationAutoPageSizeSvc?: PaginationAutoPageSizeService;
     pagination?: PaginationService;

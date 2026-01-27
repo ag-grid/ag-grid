@@ -2,14 +2,14 @@ import type { BeanCollection } from '../context/context';
 import type { EditingCellPosition } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { Column } from '../interfaces/iColumn';
-import type { EditMap, EditRow, IEditModelService } from '../interfaces/iEditModelService';
-import type { IEditService } from '../interfaces/iEditService';
+import type { EditMap, EditRow } from '../interfaces/iEditModelService';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { RowRenderer } from '../rendering/rowRenderer';
 import type { ValueService } from '../valueService/valueService';
 import { getEditingCells } from './editApi';
+import type { EditModelService } from './editModelService';
 import { EditService } from './editService';
 import { SingleCellEditStrategy } from './strategy/singleCellEditStrategy';
 import { UNEDITED } from './utils/editors';
@@ -53,7 +53,7 @@ describe('Edit API', () => {
     let editMap: EditMap | undefined;
     let beans: BeanCollection;
 
-    let editSvc: IEditService;
+    let editSvc: EditService;
     let setEditingCells: (beans: BeanCollection, cells: EditingCellPosition[], params?: { update?: boolean }) => void;
 
     beforeEach(() => {
@@ -66,7 +66,7 @@ describe('Edit API', () => {
                     em.forEach((value, key) => editMap!.set(key, value));
                 }),
                 hasEdits: jest.fn(() => editMap && editMap.size > 0),
-            } as unknown as IEditModelService,
+            } as unknown as EditModelService,
             colModel: {
                 getCol: jest.fn((col: Column | string) => {
                     const colId = typeof col === 'string' ? col : col.getColId();

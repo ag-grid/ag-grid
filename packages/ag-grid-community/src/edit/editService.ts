@@ -14,7 +14,7 @@ import type { EditingCellPosition, ICellEditorParams, ICellEditorValidationError
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { RefreshCellsParams } from '../interfaces/iCellsParams';
 import type { Column } from '../interfaces/iColumn';
-import type { EditMap, EditRow, EditValue, IEditModelService } from '../interfaces/iEditModelService';
+import type { EditMap, EditModelService, EditRow, EditValue } from '../interfaces/iEditModelService';
 import type {
     CellValueResolveFrom,
     EditNavOnValidationResult,
@@ -104,7 +104,7 @@ export class EditService extends BeanStub implements NamedBean {
     public committing = false;
 
     private batch: boolean = false;
-    private model: IEditModelService;
+    private model: EditModelService;
     private valueSvc: ValueService;
     private rangeSvc: IRangeService;
     private strategy?: BaseEditStrategy;

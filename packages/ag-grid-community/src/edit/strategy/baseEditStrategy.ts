@@ -5,17 +5,18 @@ import type { AgColumn } from '../../entities/agColumn';
 import { _getRowNode } from '../../entities/positionUtils';
 import type { AgEventType } from '../../eventTypes';
 import type { CellFocusClearedEvent, CellFocusedEvent, CommonCellFocusParams } from '../../events';
-import type { EditMap, EditValue, IEditModelService } from '../../interfaces/iEditModelService';
+import type { EditMap, EditValue } from '../../interfaces/iEditModelService';
 import type {
     EditInputEvents,
     EditPosition,
     EditRowPosition,
     EditSource,
-    IEditService,
     StartEditWithPositionParams,
     _SetEditingCellsParams,
 } from '../../interfaces/iEditService';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
+import type { EditModelService } from '../editModelService';
+import type { EditService } from '../editService';
 import { _getCellCtrl, _getRowCtrl } from '../utils/controllers';
 import {
     UNEDITED,
@@ -39,8 +40,8 @@ export type EditValidationAction<T extends Required<EditPosition> = Required<Edi
 
 export abstract class BaseEditStrategy extends BeanStub {
     beanName: BeanName | undefined;
-    protected model: IEditModelService;
-    protected editSvc: IEditService;
+    protected model: EditModelService;
+    protected editSvc: EditService;
 
     public postConstruct(): void {
         this.model = this.beans.editModelSvc!;

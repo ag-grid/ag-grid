@@ -6,6 +6,7 @@ import type { DataTypeService } from '../columns/dataTypeService';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
+import type { EditService } from '../edit/editService';
 import type { AgColumn } from '../entities/agColumn';
 import type {
     ColDef,
@@ -19,7 +20,7 @@ import type { RowNode } from '../entities/rowNode';
 import type { CellValueChangedEvent } from '../events';
 import { _addGridCommonParams, _isServerSideRowModel } from '../gridOptionsUtils';
 import type { IFormulaDataService } from '../interfaces/formulas';
-import type { CellValueResolveFrom, IEditService } from '../interfaces/iEditService';
+import type { CellValueResolveFrom } from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _warn } from '../validation/logging';
 import type { ExpressionService } from './expressionService';
@@ -32,7 +33,7 @@ export class ValueService extends BeanStub implements NamedBean {
     private colModel: ColumnModel;
     private valueCache?: ValueCache;
     private dataTypeSvc?: DataTypeService;
-    private editSvc?: IEditService;
+    private editSvc?: EditService;
     private formulaDataSvc?: IFormulaDataService;
 
     public wireBeans(beans: BeanCollection): void {

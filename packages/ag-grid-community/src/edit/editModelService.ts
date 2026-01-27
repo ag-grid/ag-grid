@@ -13,8 +13,6 @@ import type {
     EditValidationMap,
     EditValue,
     GetEditsParams,
-    IEditCellValidationModel,
-    IEditRowValidationModel,
 } from '../interfaces/iEditModelService';
 import type { EditPosition, EditRowPosition } from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
@@ -24,8 +22,8 @@ export class EditModelService extends BeanStub implements NamedBean {
     public beanName = 'editModelSvc' as const;
 
     private readonly edits: EditMap = new Map();
-    private cellValidations: IEditCellValidationModel = new EditCellValidationModel();
-    private rowValidations: IEditRowValidationModel = new EditRowValidationModel();
+    private cellValidations: EditCellValidationModel = new EditCellValidationModel();
+    private rowValidations: EditRowValidationModel = new EditRowValidationModel();
 
     // during some operations, we want to always return false from `hasEdits`
     private suspendEdits = false;
@@ -329,19 +327,19 @@ export class EditModelService extends BeanStub implements NamedBean {
         this.edits.clear();
     }
 
-    public getCellValidationModel(): IEditCellValidationModel {
+    public getCellValidationModel(): EditCellValidationModel {
         return this.cellValidations;
     }
 
-    public getRowValidationModel(): IEditRowValidationModel {
+    public getRowValidationModel(): EditRowValidationModel {
         return this.rowValidations;
     }
 
-    public setCellValidationModel(model: IEditCellValidationModel): void {
+    public setCellValidationModel(model: EditCellValidationModel): void {
         this.cellValidations = model;
     }
 
-    public setRowValidationModel(model: IEditRowValidationModel): void {
+    public setRowValidationModel(model: EditRowValidationModel): void {
         this.rowValidations = model;
     }
 

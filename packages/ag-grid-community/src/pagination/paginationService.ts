@@ -1,7 +1,7 @@
 import { _exists } from '../agStack/utils/generic';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { IEditService } from '../interfaces/iEditService';
+import type { EditService } from '../edit/editService';
 import type { Component, ComponentSelector } from '../widgets/component';
 import { PaginationSelector } from './paginationComp';
 
@@ -30,7 +30,7 @@ export class PaginationService extends BeanStub implements NamedBean {
 
     private masterRowCount: number = 0;
 
-    private readonly editSvc?: IEditService;
+    private readonly editSvc?: EditService;
 
     public postConstruct() {
         const gos = this.gos;

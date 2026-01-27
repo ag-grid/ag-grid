@@ -2,10 +2,10 @@ import { KeyCode, _normaliseQwertyAzerty } from '../../agStack/constants/keyCode
 import { _isEventFromThisInstance, _isEventSupported } from '../../agStack/utils/event';
 import { _isEventFromPrintableCharacter } from '../../agStack/utils/keyboard';
 import { BeanStub } from '../../context/beanStub';
+import type { EditService } from '../../edit/editService';
 import type { AgColumn } from '../../entities/agColumn';
 import { _getCtrlASelectsRows, _getSelectAll, _isCellSelectionEnabled } from '../../gridOptionsUtils';
 import type { IClipboardService } from '../../interfaces/iClipboardService';
-import type { IEditService } from '../../interfaces/iEditService';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getCellCtrlForEventTarget, _getRowCtrlForEventTarget } from '../../rendering/renderUtils';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
@@ -15,7 +15,7 @@ import { _isUserSuppressingKeyboardEvent } from '../../utils/keyboardEvent';
 import { _selectAllCells } from '../../utils/selection';
 
 export class RowContainerEventsFeature extends BeanStub {
-    private editSvc?: IEditService;
+    private editSvc?: EditService;
 
     constructor(public readonly element: HTMLElement) {
         super();

@@ -1,4 +1,3 @@
-import type { EditCellValidationModel, EditModelService, EditRowValidationModel } from '../edit/editModelService';
 import type { ICellEditor } from './iCellEditor';
 import type { Column } from './iColumn';
 import type { EditPosition } from './iEditService';
@@ -36,7 +35,3 @@ export type GetEditsParams = {
     includeParents?: boolean;
     withOpenEditor?: boolean;
 };
-
-export type IEditModelService = EditModelService;
-export type IEditCellValidationModel = EditCellValidationModel;
-export type IEditRowValidationModel = EditRowValidationModel;

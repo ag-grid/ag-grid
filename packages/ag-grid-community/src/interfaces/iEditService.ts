@@ -1,4 +1,3 @@
-import type { EditService } from '../edit/editService';
 import type { Column } from './iColumn';
 import type { IRowNode } from './iRowNode';
 
@@ -59,5 +58,3 @@ export interface _SetEditingCellsParams {
     /** Force the cells that are being marked as edited to be refreshed and only these cells not others */
     forceRefreshOfEditCellsOnly?: boolean;
 }
-
-export type IEditService = EditService;
