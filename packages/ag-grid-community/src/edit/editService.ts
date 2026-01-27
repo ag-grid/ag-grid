@@ -14,7 +14,7 @@ import type { EditingCellPosition, ICellEditorParams, ICellEditorValidationError
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { RefreshCellsParams } from '../interfaces/iCellsParams';
 import type { Column } from '../interfaces/iColumn';
-import type { EditMap, EditModelService, EditRow, EditValue } from '../interfaces/iEditModelService';
+import type { EditMap, EditPositionValue, EditRow, EditValue } from '../interfaces/iEditModelService';
 import type {
     CellValueResolveFrom,
     EditNavOnValidationResult,
@@ -33,6 +33,7 @@ import { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { ValueService } from '../valueService/valueService';
 import { PopupEditorWrapper } from './cellEditors/popupEditorWrapper';
+import type { EditModelService } from './editModelService';
 import type { BaseEditStrategy } from './strategy/baseEditStrategy';
 import { isCellEditable, isFullRowCellEditable, shouldStartEditing } from './strategy/strategyUtils';
 import { CellEditStyleFeature } from './styles/cellEditStyleFeature';
@@ -1075,7 +1076,7 @@ export class EditService extends BeanStub implements NamedBean {
     }
 
     private toEventChangeList(edits: EditMap): CellValueChange[] {
-        return this.model.getEditPositions(edits).map((edit) => ({
+        return this.model.getEditPositions(edits).map((edit: EditPositionValue) => ({
             rowIndex: edit.rowNode.rowIndex!,
             rowPinned: edit.rowNode.rowPinned,
             columnId: edit.column.getColId(),
