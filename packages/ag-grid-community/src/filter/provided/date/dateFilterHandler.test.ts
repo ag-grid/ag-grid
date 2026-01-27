@@ -1,4 +1,4 @@
-import { presetDateFilterTypeRelativeFromToMap } from './dateFilterHandler';
+import { DateFilterHandler, presetDateFilterTypeRelativeFromToMap } from './dateFilterHandler';
 
 describe('presetDateFilterTypeRelativeFromToMap', () => {
     const BASE = 'Wed Apr 08 2020 12:34:56 GMT+0000 (Coordinated Universal Time)';
@@ -97,4 +97,42 @@ describe('presetDateFilterTypeRelativeFromToMap', () => {
     ])('%s', (fnName, expected) =>
         it('works', () => expect(presetDateFilterTypeRelativeFromToMap[fnName](FROM).toString()).toContain(expected))
     );
+});
+
+describe('DateFilterHandler refresh scheduling', () => {
+    const BASE_TIME = new Date(2020, 3, 8, 23, 59, 10, 0);
+
+    beforeEach(() => {
+        jest.useFakeTimers();
+        jest.setSystemTime(BASE_TIME);
+    });
+
+    afterEach(() => {
+        jest.useRealTimers();
+        jest.restoreAllMocks();
+    });
+
+    it('schedules refresh at the start of the next day', () => {
+        const setTimeoutSpy = jest.spyOn(globalThis, 'setTimeout');
+
+        // eslint-disable-next-line sonarjs/constructor-for-side-effects
+        new DateFilterHandler();
+
+        expect(setTimeoutSpy).toHaveBeenCalledTimes(1);
+        const [, delay] = setTimeoutSpy.mock.calls[0];
+        expect(delay).toBe(50 * 1000);
+    });
+
+    it('reschedules for the next midnight after running', () => {
+        const setTimeoutSpy = jest.spyOn(globalThis, 'setTimeout');
+
+        // eslint-disable-next-line sonarjs/constructor-for-side-effects
+        new DateFilterHandler();
+
+        jest.advanceTimersByTime(50 * 1000);
+
+        expect(setTimeoutSpy).toHaveBeenCalledTimes(2);
+        const [, delay] = setTimeoutSpy.mock.calls[1];
+        expect(delay).toBe(24 * 60 * 60 * 1000);
+    });
 });
