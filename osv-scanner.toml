@@ -181,3 +181,26 @@ reason = "mdast-util-to-hast is only used in dev files we control"
 [[IgnoredVulns]]
 id = "GHSA-6rw7-vpxm-498p"
 reason = "qs is not used on the server"
+
+[[IgnoredVulns]]
+id = "GHSA-jrmj-c5cx-3cw6"
+reason = "Angular version used determined by end user"
+
+[[IgnoredVulns]]
+id = "GHSA-xxjr-mmjv-4gpg"
+reason = "Lodash not used directly and not accessible to end users/external users"
+
+[[IgnoredVulns]]
+id = "GHSA-36hm-qxxp-pg3m"
+reason = "Preact not used directly and not accessible to end users/external users"
+
+[[IgnoredVulns]]
+id = "GHSA-8qq5-rm4j-mr97"
+reason = "tar not used directly and not accessible to end users/external users"
+
+[[IgnoredVulns]]
+id = "GHSA-r6q2-hw4h-h46w"
+reason = "tar not used directly and not accessible to end users/external users"
+
+
+
