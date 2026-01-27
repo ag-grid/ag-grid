@@ -294,8 +294,8 @@ export interface Props<TData> {
          * @agModule `TooltipModule`
          */
     tooltipShowDelay?: number,
-    /** The delay in milliseconds that it takes for tooltips to show when switching between tooltip-enabled elements
-         * shortly after another tooltip hides.
+    /** The delay in milliseconds before a tooltip is shown when moving the pointer from one tooltip-enabled element to
+         * another while the previous tooltip is still visible or pending hide.
          *     **Note:** This property does not work if `enableBrowserTooltips` is `true`.
          * @default 200
          * @agModule `TooltipModule`
