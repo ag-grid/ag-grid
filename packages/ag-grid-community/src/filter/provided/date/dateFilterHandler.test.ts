@@ -1,3 +1,4 @@
+import type { ISimpleFilterModelPresetType } from '../iSimpleFilter';
 import { DateFilterHandler, presetDateFilterTypeRelativeFromToMap } from './dateFilterHandler';
 
 describe('presetDateFilterTypeRelativeFromToMap', () => {
@@ -99,40 +100,60 @@ describe('presetDateFilterTypeRelativeFromToMap', () => {
     );
 });
 
-describe('DateFilterHandler refresh scheduling', () => {
-    const BASE_TIME = new Date(2020, 3, 8, 23, 59, 10, 0);
+describe('getOrRefreshRangeCacheItem', () => {
+    const key = 'today' as ISimpleFilterModelPresetType;
 
     beforeEach(() => {
         jest.useFakeTimers();
-        jest.setSystemTime(BASE_TIME);
+        jest.setSystemTime(new Date(0));
     });
 
     afterEach(() => {
         jest.useRealTimers();
-        jest.restoreAllMocks();
     });
 
-    it('schedules refresh at the start of the next day', () => {
-        const setTimeoutSpy = jest.spyOn(globalThis, 'setTimeout');
+    it('returns cached range for the same key before expiry', () => {
+        const handler = new DateFilterHandler();
+        const rangeFn = jest.fn(() => [new Date(1), new Date(2)] as [Date, Date]);
 
-        // eslint-disable-next-line sonarjs/constructor-for-side-effects
-        new DateFilterHandler();
+        const first = handler.getOrRefreshRangeCacheItem(key, rangeFn);
+        const second = handler.getOrRefreshRangeCacheItem(key, rangeFn);
 
-        expect(setTimeoutSpy).toHaveBeenCalledTimes(1);
-        const [, delay] = setTimeoutSpy.mock.calls[0];
-        expect(delay).toBe(50 * 1000);
+        expect(rangeFn).toHaveBeenCalledTimes(1);
+        expect(first[0]).toBe(second[0]);
+        expect(first[1]).toBe(second[1]);
     });
 
-    it('reschedules for the next midnight after running', () => {
-        const setTimeoutSpy = jest.spyOn(globalThis, 'setTimeout');
+    it('refreshes the cache when expired', () => {
+        const handler = new DateFilterHandler();
+        const rangeFn = jest
+            .fn()
+            .mockImplementationOnce(() => [new Date(1), new Date(2)] as [Date, Date])
+            .mockImplementationOnce(() => [new Date(3), new Date(4)] as [Date, Date]);
 
-        // eslint-disable-next-line sonarjs/constructor-for-side-effects
-        new DateFilterHandler();
+        const first = handler.getOrRefreshRangeCacheItem(key, rangeFn);
 
-        jest.advanceTimersByTime(50 * 1000);
+        jest.setSystemTime(new Date(86_400_001));
 
-        expect(setTimeoutSpy).toHaveBeenCalledTimes(2);
-        const [, delay] = setTimeoutSpy.mock.calls[1];
-        expect(delay).toBe(24 * 60 * 60 * 1000);
+        const second = handler.getOrRefreshRangeCacheItem(key, rangeFn);
+
+        expect(rangeFn).toHaveBeenCalledTimes(2);
+        expect(first[0]).not.toBe(second[0]);
+        expect(first[1]).not.toBe(second[1]);
+        expect(second.map((date) => date.getTime())).toStrictEqual([3, 4]);
+    });
+
+    it('keeps separate caches per key', () => {
+        const handler = new DateFilterHandler();
+        const rangeFnToday = jest.fn(() => [new Date(10), new Date(20)] as [Date, Date]);
+        const rangeFnYesterday = jest.fn(() => [new Date(30), new Date(40)] as [Date, Date]);
+
+        const today = handler.getOrRefreshRangeCacheItem('today', rangeFnToday);
+        const yesterday = handler.getOrRefreshRangeCacheItem('yesterday', rangeFnYesterday);
+
+        expect(rangeFnToday).toHaveBeenCalledTimes(1);
+        expect(rangeFnYesterday).toHaveBeenCalledTimes(1);
+        expect(today.map((date) => date.getTime())).toStrictEqual([10, 20]);
+        expect(yesterday.map((date) => date.getTime())).toStrictEqual([30, 40]);
     });
 });
