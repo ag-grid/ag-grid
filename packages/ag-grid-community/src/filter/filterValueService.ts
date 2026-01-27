@@ -44,7 +44,7 @@ export class FilterValueService extends BeanStub implements NamedBean {
             node,
             column,
             colDef,
-            getValue: valueSvc.getValueCallback.bind(valueSvc, node, 'data'),
+            getValue: valueSvc.getValueCallback.bind(valueSvc, node),
         });
 
         if (typeof valueGetter === 'function') {
