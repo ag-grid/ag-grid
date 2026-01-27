@@ -20,7 +20,11 @@ function defaultDateComparator(filterDate: Date, cellValue: any): number {
     return 0;
 }
 
-type RangeCacheItem = { start: Date; end: Date; expires: number };
+type Range = { from: Date; to: Date };
+
+interface RangeCacheItem extends Range {
+    expires: number;
+}
 
 export class DateFilterHandler extends ScalarFilterHandler<DateFilterModel, Date, IDateFilterParams> {
     public readonly filterType = 'date' as const;
@@ -31,21 +35,19 @@ export class DateFilterHandler extends ScalarFilterHandler<DateFilterModel, Date
         super(mapValuesFromDateFilterModel, DEFAULT_DATE_FILTER_OPTIONS);
     }
 
-    getOrRefreshRangeCacheItem(
-        key: ISimpleFilterModelPresetType,
-        rangeFn: (s: Date, e: Date) => [Date, Date]
-    ): [Date, Date] {
+    getOrRefreshRangeCacheItem(key: ISimpleFilterModelPresetType, rangeFn: (s: Date, e: Date) => [Date, Date]): Range {
         const { filterTypeToRangeCache } = this;
+        const now = Date.now();
         let cache = filterTypeToRangeCache.get(key);
-        if (cache && cache.expires < Date.now()) {
+        if (cache && cache.expires < now) {
             cache = undefined;
         }
         if (!cache) {
-            const [start, end] = rangeFn(new Date(), new Date());
-            cache = { start, end, expires: setStartOfNextDay(new Date()).getTime() - Date.now() };
+            const [from, to] = rangeFn(new Date(now), new Date(now));
+            cache = { from, to, expires: setStartOfNextDay(new Date(now)).getTime() - now };
             filterTypeToRangeCache.set(key, cache);
         }
-        return [cache.start, cache.end];
+        return cache;
     }
 
     protected override comparator(): Comparator<Date> {
@@ -74,7 +76,7 @@ export class DateFilterHandler extends ScalarFilterHandler<DateFilterModel, Date
             | undefined;
         if (presetDateRangeFn) {
             // user selected a preset, calculate what they mean
-            const [from, to] = this.getOrRefreshRangeCacheItem(maybeTypeAsPreset, presetDateRangeFn);
+            const { from, to } = this.getOrRefreshRangeCacheItem(maybeTypeAsPreset, presetDateRangeFn);
             return comparator(from, cellValue) >= 0 && comparator(to, cellValue) < 0;
         }
 

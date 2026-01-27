@@ -138,9 +138,9 @@ describe('getOrRefreshRangeCacheItem', () => {
         const second = handler.getOrRefreshRangeCacheItem(key, rangeFn);
 
         expect(rangeFn).toHaveBeenCalledTimes(2);
-        expect(first[0]).not.toBe(second[0]);
-        expect(first[1]).not.toBe(second[1]);
-        expect(second.map((date) => date.getTime())).toStrictEqual([3, 4]);
+        expect(first.from).not.toBe(second.from);
+        expect(first.to).not.toBe(second.to);
+        expect([second.from, second.to].map((date) => date.getTime())).toStrictEqual([3, 4]);
     });
 
     it('keeps separate caches per key', () => {
@@ -153,7 +153,7 @@ describe('getOrRefreshRangeCacheItem', () => {
 
         expect(rangeFnToday).toHaveBeenCalledTimes(1);
         expect(rangeFnYesterday).toHaveBeenCalledTimes(1);
-        expect(today.map((date) => date.getTime())).toStrictEqual([10, 20]);
-        expect(yesterday.map((date) => date.getTime())).toStrictEqual([30, 40]);
+        expect([today.from, today.to].map((date) => date.getTime())).toStrictEqual([10, 20]);
+        expect([yesterday.from, yesterday.to].map((date) => date.getTime())).toStrictEqual([30, 40]);
     });
 });
