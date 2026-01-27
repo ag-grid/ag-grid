@@ -437,7 +437,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 let valueToFind: string | null;
                 const getFindText = (groupRowRendererParams as FindGroupRowRendererParams)?.getFindText;
                 if (getFindText) {
-                    const value = valueSvc.getValueForDisplay({ node, resolveFrom: 'data' }).value;
+                    const value = valueSvc.getValueForDisplay({ node, from: 'data' }).value;
                     valueToFind = getFindText(
                         _addGridCommonParams(gos, {
                             value,
@@ -449,7 +449,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                                 const { valueFormatted } = valueSvc.getValueForDisplay({
                                     node,
                                     includeValueFormatted: true,
-                                    resolveFrom: 'data',
+                                    from: 'data',
                                 });
                                 return valueFormatted;
                             },
@@ -459,7 +459,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                     const { value, valueFormatted } = valueSvc.getValueForDisplay({
                         node,
                         includeValueFormatted: true,
-                        resolveFrom: 'data',
+                        from: 'data',
                     });
                     valueToFind = valueFormatted ?? value;
                 }
@@ -495,7 +495,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 const colDef = column.colDef;
                 const getFindText = colDef.getFindText;
                 if (getFindText) {
-                    const value = valueSvc.getValueForDisplay({ column, node, resolveFrom: 'data' }).value;
+                    const value = valueSvc.getValueForDisplay({ column, node, from: 'data' }).value;
                     valueToFind = getFindText(
                         _addGridCommonParams(gos, {
                             value,
@@ -508,7 +508,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                                     column,
                                     node,
                                     includeValueFormatted: true,
-                                    resolveFrom: 'data',
+                                    from: 'data',
                                 });
                                 return valueFormatted;
                             },
@@ -519,7 +519,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                         column,
                         node,
                         includeValueFormatted: true,
-                        resolveFrom: 'data',
+                        from: 'data',
                     });
                     valueToFind = valueFormatted ?? value;
                 }

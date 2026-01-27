@@ -545,7 +545,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                         const value = this.processCell(
                             rowNode,
                             column,
-                            valueSvc.getValue(column, rowNode, 'editing'),
+                            valueSvc.getValue(column, rowNode, 'edit'),
                             EXPORT_TYPE_DRAG_COPY,
                             processCellForClipboardFunc,
                             false,
@@ -1094,7 +1094,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 column: column as AgColumn,
                 node,
                 includeValueFormatted: true,
-                resolveFrom: 'editing',
+                from: 'data',
             });
 
             const val = valueFormatted ?? value ?? '';
@@ -1163,7 +1163,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                         column,
                         rowNode ?? null,
                         valueToParse,
-                        valueSvc.getValue(column, rowNode, 'editing')
+                        valueSvc.getValue(column, rowNode, 'edit')
                     ),
             };
 
@@ -1171,7 +1171,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         }
 
         if (canParse && column.getColDef().useValueParserForImport !== false) {
-            return valueSvc.parseValue(column, rowNode ?? null, value, valueSvc.getValue(column, rowNode, 'editing'));
+            return valueSvc.parseValue(column, rowNode ?? null, value, valueSvc.getValue(column, rowNode, 'edit'));
         }
 
         if (canFormat && column.getColDef().useValueFormatterForExport !== false) {

@@ -72,7 +72,11 @@ export function _setupEditors(
                 const newValue =
                     cellStartValue ??
                     editSvc?.getCellDataValue(cellPosition) ??
-                    valueSvc.getValueForDisplay({ column: cellColumn as AgColumn, node: cellRowNode, resolveFrom: 'editing' })?.value ??
+                    valueSvc.getValueForDisplay({
+                        column: cellColumn as AgColumn,
+                        node: cellRowNode,
+                        from: 'edit',
+                    })?.value ??
                     oldValue ??
                     UNEDITED;
 
@@ -240,7 +244,7 @@ function _createEditorParams(
 
     const value =
         initialNewValue === UNEDITED
-            ? valueSvc.getValueForDisplay({ column: agColumn, node: rowNode, resolveFrom: 'editing' })?.value
+            ? valueSvc.getValueForDisplay({ column: agColumn, node: rowNode, from: 'edit' })?.value
             : initialNewValue;
 
     // if formula, normalise the value to shorthand for users.

@@ -140,12 +140,12 @@ export class RowSpanCache extends BeanStub {
                 node.footer ||
                 (spanData && node.rowIndex - 1 !== spanData?.getLastNode().rowIndex) // no span if rows not contiguous (SSRM)
             ) {
-                setNewHead(node, valueSvc.getValue(column, node, 'pending'));
+                setNewHead(node, valueSvc.getValue(column, node, 'data'));
                 return;
             }
 
             // check value is equal, if not, no span
-            const value = valueSvc.getValue(column, node, 'pending');
+            const value = valueSvc.getValue(column, node, 'data');
             if (isCustomCompare) {
                 const params: SpanRowsParams = _addGridCommonParams(gos, {
                     valueA: lastValue,

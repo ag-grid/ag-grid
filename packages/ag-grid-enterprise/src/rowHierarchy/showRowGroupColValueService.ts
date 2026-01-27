@@ -1,6 +1,5 @@
 import type {
     AgColumn,
-    CellValueResolveFrom,
     GroupValueResult,
     IRowNode,
     IShowRowGroupColsValueService,
@@ -16,13 +15,16 @@ export class ShowRowGroupColValueService extends BeanStub implements NamedBean, 
     beanName = 'showRowGroupColValueSvc' as const;
 
     /**
-     * Get the value for format in the group column, also returns the displayedNode from which the value was
+     * Get the value for display in the group column. Also returns the displayedNode from which the value was
      * taken in cases of groupHideOpenParents and showOpenedGroup.
+     *
+     * Always uses 'data' mode because group column values represent structural position in the row hierarchy.
+     * The actual grouping (via getKeyForNode) uses committed data, so the display should match - showing
+     * a different group value while the row is still in its original group would be misleading.
      */
     public getGroupValue(
         node: IRowNode,
         column: AgColumn | undefined,
-        resolveFrom: CellValueResolveFrom,
         ignoreAggData: boolean
     ): GroupValueResult | null {
         // full width row
@@ -56,20 +58,20 @@ export class ShowRowGroupColValueService extends BeanStub implements NamedBean, 
             if (hideOpenParentsNode) {
                 return {
                     displayedNode: hideOpenParentsNode,
-                    value: valueSvc.getValue(column, hideOpenParentsNode, resolveFrom, ignoreAggData),
+                    value: valueSvc.getValue(column, hideOpenParentsNode, 'data', ignoreAggData),
                 };
             }
         }
 
         // cell value > showOpenedGroup
-        const value = valueSvc.getValue(column, node, resolveFrom, ignoreAggData);
+        const value = valueSvc.getValue(column, node, 'data', ignoreAggData);
         if (value == null) {
             // showOpenedGroup
             const displayedNode = this.getDisplayedNode(node, column);
             if (displayedNode) {
                 return {
                     displayedNode,
-                    value: valueSvc.getValue(column, displayedNode, resolveFrom, ignoreAggData),
+                    value: valueSvc.getValue(column, displayedNode, 'data', ignoreAggData),
                 };
             }
         }

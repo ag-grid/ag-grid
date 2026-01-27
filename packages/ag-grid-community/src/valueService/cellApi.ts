@@ -14,11 +14,11 @@ export interface GetCellValueParams<TValue = any> {
     useFormatter?: boolean;
     /**
      * Specifies how to resolve the cell value when edits are pending.
-     * - `'editing'` (default): Returns the current editing value, including live editor typing and pending batch values
-     * - `'pending'`: Returns pending batch values but excludes live editor typing (useful for dependent calculations in valueGetters)
+     * - `'edit'` (default): Returns the current editing value, including live editor typing and pending batch values
+     * - `'batch'`: Returns pending batch values but excludes live editor typing (useful for dependent calculations in valueGetters)
      * - `'data'`: Returns the actual stored data value, ignoring all edit state
      */
-    resolveFrom?: CellValueResolveFrom;
+    from?: CellValueResolveFrom;
 }
 
 export function expireValueCache(beans: BeanCollection): void {
@@ -26,7 +26,7 @@ export function expireValueCache(beans: BeanCollection): void {
 }
 
 export function getCellValue<TValue = any>(beans: BeanCollection, params: GetCellValueParams<TValue>): any {
-    const { colKey, rowNode, useFormatter, resolveFrom = 'editing' } = params;
+    const { colKey, rowNode, useFormatter, from = 'edit' } = params;
 
     const column = beans.colModel.getColDefCol(colKey) ?? beans.colModel.getCol(colKey);
     if (_missing(column)) {
@@ -36,7 +36,7 @@ export function getCellValue<TValue = any>(beans: BeanCollection, params: GetCel
         column,
         node: rowNode,
         includeValueFormatted: useFormatter,
-        resolveFrom,
+        from,
     });
     if (useFormatter) {
         return result.valueFormatted ?? _toString(result.value);

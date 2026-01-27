@@ -190,7 +190,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                             return;
                         }
 
-                        let value = valueSvc.getValue(col, rowNode, 'editing');
+                        let value = valueSvc.getValue(col, rowNode, 'data');
 
                         // if empty cell, skip it, doesn't impact count or anything
                         if (_missing(value) || value === '') {

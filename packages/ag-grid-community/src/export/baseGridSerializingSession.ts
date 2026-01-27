@@ -94,14 +94,14 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                             accumulatedRowIndex,
                             column,
                             node,
-                            value: this.valueSvc.getValueForDisplay({ column, node, resolveFrom: 'data' }).value,
+                            value: this.valueSvc.getValueForDisplay({ column, node, from: 'data' }).value,
                             type,
                             parseValue: (valueToParse: string) =>
                                 this.valueSvc.parseValue(
                                     column,
                                     node,
                                     valueToParse,
-                                    this.valueSvc.getValue(column, node, 'pending')
+                                    this.valueSvc.getValue(column, node, 'data')
                                 ),
                             formatValue: (valueToFormat: any) =>
                                 this.valueSvc.formatValue(column, node, valueToFormat) ?? valueToFormat,
@@ -125,7 +125,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                     node: pointer,
                     includeValueFormatted: true,
                     exporting: true,
-                    resolveFrom: 'data',
+                    from: 'data',
                 });
                 concatenatedGroupValue = ` -> ${valueFormatted ?? value ?? ''}${concatenatedGroupValue}`;
                 pointer = pointer.parent;
@@ -143,7 +143,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             includeValueFormatted: true,
             exporting: true,
             useRawFormula,
-            resolveFrom: 'data',
+            from: 'data',
         });
         return {
             value: value ?? '',

@@ -229,8 +229,8 @@ export class EditService extends BeanStub implements NamedBean {
         return _validateEdit(this.beans);
     }
 
-    public isEditing(position?: EditPosition, params?: IsEditingParams): boolean {
-        return this.model.hasEdits(position, params ?? CHECK_SIBLING);
+    public isEditing(position?: EditPosition | null, params?: IsEditingParams): boolean {
+        return this.model.hasEdits(position ?? undefined, params ?? CHECK_SIBLING);
     }
 
     public isRowEditing(rowNode?: IRowNode, params?: IsEditingParams): boolean {
@@ -868,22 +868,14 @@ export class EditService extends BeanStub implements NamedBean {
     /**
      * Gets the pending edit value for display (used by ValueService).
      * Returns undefined to fallback to data/valueGetter.
-     *
-     * @param resolveFrom - How to resolve the value:
-     *   - 'editing': Returns editorValue (live typing) or pendingValue
-     *   - 'pending': Returns only pendingValue, excludes live editor typing
-     *   - 'data': Always returns undefined (use committed data)
      */
-    public getCellValueForDisplay(rowNode: IRowNode, column: Column, resolveFrom: CellValueResolveFrom): any {
-        // 'data' mode: always use committed data, never edit values
-        if (resolveFrom === 'data') {
-            return undefined;
+    public getCellValueForDisplay(rowNode: IRowNode, column: Column, from: CellValueResolveFrom): any {
+        if (from === 'data') {
+            return undefined; // 'data' mode: always use committed data, never edit values
         }
 
-        // 'pending' mode outside batch: valueGetters should use committed data
-        // (AG-16448 fix - prevents valueGetters from seeing edit state in non-batch mode)
-        if (resolveFrom === 'pending' && !this.batch) {
-            return undefined;
+        if (from === 'batch' && !this.batch) {
+            return undefined; // 'batch' mode: only return edit values when batch editing is active
         }
 
         const edit = this.model.getEdit({ rowNode, column }, CHECK_SIBLING);
@@ -896,18 +888,16 @@ export class EditService extends BeanStub implements NamedBean {
             return undefined;
         }
 
-        // For 'editing' mode: return editorValue (live typing) if available
-        if (resolveFrom === 'editing') {
+        if (from === 'edit') {
             const editorValue = edit.editorValue;
             if (editorValue != null && editorValue !== UNEDITED) {
-                return editorValue;
+                return editorValue; // For 'edit' mode: return editorValue (live typing) if available
             }
         }
 
-        // Return pendingValue if available
         const pendingValue = edit.pendingValue;
         if (pendingValue !== UNEDITED) {
-            return pendingValue;
+            return pendingValue; // Return batch pending value if available
         }
 
         return undefined;
@@ -1131,7 +1121,6 @@ export class EditService extends BeanStub implements NamedBean {
                     const isFormulaForColumn = !!isFormula && column.isAllowFormula();
 
                     if (this.isCellEditable({ rowNode, column }, 'api')) {
-                        // Use resolveFrom: 'data' to get actual data value, not pending edit value
                         const sourceValue = valueSvc.getValue(column as AgColumn, rowNode, 'data', true);
                         let pendingValue = valueSvc.parseValue(
                             column as AgColumn,

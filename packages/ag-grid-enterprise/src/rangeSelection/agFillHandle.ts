@@ -350,11 +350,11 @@ export class AgFillHandle extends AbstractSelectionHandle {
             let skipValue: boolean = false;
 
             if (withinInitialRange) {
-                currentValue = valueSvc.getValue(col, rowNode, 'editing');
+                currentValue = valueSvc.getValue(col, rowNode, 'edit');
                 initialValues.push(currentValue);
-                initialNonAggregatedValues.push(valueSvc.getValue(col, rowNode, 'editing', true));
+                initialNonAggregatedValues.push(valueSvc.getValue(col, rowNode, 'edit', true));
                 initialFormattedValues.push(
-                    valueSvc.getValueForDisplay({ column: col, node: rowNode, resolveFrom: 'editing' }).valueFormatted
+                    valueSvc.getValueForDisplay({ column: col, node: rowNode, from: 'edit' }).valueFormatted
                 );
                 withinInitialRange = updateInitialSet();
             } else {
@@ -371,7 +371,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
                 currentValue = value;
                 if (col.isCellEditable(rowNode)) {
-                    const cellValue = valueSvc.getValue(col, rowNode, 'editing');
+                    const cellValue = valueSvc.getValue(col, rowNode, 'edit');
 
                     if (!fromUserFunction) {
                         if (sourceCol) {
@@ -381,7 +381,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
                                     column: sourceCol,
                                     node: sourceRowNode!,
                                     includeValueFormatted: true,
-                                    resolveFrom: 'editing',
+                                    from: 'edit',
                                 }).valueFormatted;
 
                                 if (formattedValue != null) {
@@ -470,7 +470,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
                 initialNonAggregatedValues,
                 initialFormattedValues,
                 currentIndex: idx,
-                currentCellValue: valueSvc.getValue(col, rowNode, 'editing'),
+                currentCellValue: valueSvc.getValue(col, rowNode, 'edit'),
                 direction,
                 column: col,
                 rowNode: rowNode,

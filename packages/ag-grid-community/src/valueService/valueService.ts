@@ -58,8 +58,7 @@ export class ValueService extends BeanStub implements NamedBean {
         valueGetter: string | Function,
         data: any,
         column: AgColumn,
-        rowNode: IRowNode,
-        resolveFrom: CellValueResolveFrom
+        rowNode: IRowNode
     ) => any;
 
     public postConstruct(): void {
@@ -98,18 +97,12 @@ export class ValueService extends BeanStub implements NamedBean {
         includeValueFormatted?: boolean;
         useRawFormula?: boolean;
         exporting?: boolean;
-        /**
-         * Specifies how to resolve the cell value when edits are pending.
-         * - `'editing'`: Returns the current editing value, including live editor typing and pending batch values
-         * - `'pending'`: Returns pending batch values but excludes live editor typing (useful for dependent calculations)
-         * - `'data'`: Returns the actual stored data value, ignoring all edit state
-         */
-        resolveFrom: CellValueResolveFrom;
+        from: CellValueResolveFrom;
     }): {
         value: any;
         valueFormatted: string | null;
     } {
-        const { column, node, includeValueFormatted, useRawFormula, exporting, resolveFrom } = params;
+        const { column, node, includeValueFormatted, useRawFormula, exporting, from } = params;
         const { showRowGroupColValueSvc } = this.beans;
         const isFullWidthGroup = !column && node.group;
         const isGroupCol = column?.colDef.showRowGroup;
@@ -120,12 +113,7 @@ export class ValueService extends BeanStub implements NamedBean {
 
         // handle group cell value
         if (showRowGroupColValueSvc && processTreeDataAsGroup && (isFullWidthGroup || isGroupCol)) {
-            const groupValue = showRowGroupColValueSvc.getGroupValue(
-                node,
-                column,
-                resolveFrom,
-                this.displayIgnoresAggData(node)
-            );
+            const groupValue = showRowGroupColValueSvc.getGroupValue(node, column, this.displayIgnoresAggData(node));
             if (groupValue == null) {
                 return {
                     value: null,
@@ -155,7 +143,7 @@ export class ValueService extends BeanStub implements NamedBean {
             };
         }
 
-        let value = this.getValue(column, node, resolveFrom, this.displayIgnoresAggData(node));
+        let value = this.getValue(column, node, from, this.displayIgnoresAggData(node));
         let valueToFormat = value;
 
         const { formula } = this.beans;
@@ -181,11 +169,11 @@ export class ValueService extends BeanStub implements NamedBean {
         rowNode: IRowNode | null | undefined,
         /**
          * Specifies how to resolve the cell value when edits are pending.
-         * - `'editing'`: Returns the current editing value, including live editor typing and pending batch values
-         * - `'pending'`: Returns pending batch values but excludes live editor typing (useful for dependent calculations in valueGetters)
+         * - `'edit'`: Returns the current editing value, including live editor typing and pending batch values
+         * - `'batch'`: Returns pending batch values but excludes live editor typing (useful for dependent calculations in valueGetters)
          * - `'data'`: Returns the actual stored data value, ignoring all edit state
          */
-        resolveFrom: CellValueResolveFrom,
+        from: CellValueResolveFrom,
         ignoreAggData: boolean = false
     ): any {
         // hack - the grid is getting refreshed before this bean gets initialised, race condition.
@@ -199,7 +187,7 @@ export class ValueService extends BeanStub implements NamedBean {
         }
 
         // Check for edit/pending values if not requesting committed data
-        const pending = this.editSvc?.getCellValueForDisplay(rowNode, column, resolveFrom);
+        const pending = this.editSvc?.getCellValueForDisplay(rowNode, column, from);
         if (pending !== undefined) {
             return pending;
         }
@@ -215,12 +203,12 @@ export class ValueService extends BeanStub implements NamedBean {
             }
         }
 
-        let result = this.resolveValue(column, rowNode, ignoreAggData, resolveFrom);
+        let result = this.resolveValue(column, rowNode, ignoreAggData);
 
         // the result could be an expression itself, if we are allowing cell values to be expressions
         if (this.cellExpressions && _isExpressionString(result)) {
             const cellValueGetter = result.substring(1);
-            result = this.executeValueGetter(cellValueGetter, rowNode.data, column, rowNode, resolveFrom);
+            result = this.executeValueGetter(cellValueGetter, rowNode.data, column, rowNode);
         }
 
         return result;
@@ -257,12 +245,7 @@ export class ValueService extends BeanStub implements NamedBean {
         return !!node.sibling && !this.gos.get('groupSuppressBlankHeader');
     }
 
-    private resolveValue(
-        column: AgColumn,
-        rowNode: IRowNode,
-        ignoreAggData: boolean,
-        resolveFrom: CellValueResolveFrom
-    ): any {
+    private resolveValue(column: AgColumn, rowNode: IRowNode, ignoreAggData: boolean): any {
         const colDef = column.getColDef();
         const colId = column.getColId();
 
@@ -282,7 +265,7 @@ export class ValueService extends BeanStub implements NamedBean {
         const data = rowNode.data;
         const field = colDef.field;
         if (isTreeData && colDef.valueGetter) {
-            return this.executeValueGetter(colDef.valueGetter, data, column, rowNode, resolveFrom);
+            return this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
         }
         if (isTreeData && field && data) {
             return _getValueUsingField(data, field, column.isFieldContainsDots());
@@ -313,7 +296,7 @@ export class ValueService extends BeanStub implements NamedBean {
             if (!allowUserValuesForCell) {
                 return undefined;
             }
-            return this.executeValueGetter(colDef.valueGetter, data, column, rowNode, resolveFrom);
+            return this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
         }
         if (ssrmFooterGroupCol) {
             // this is for group footers in SSRM, as the SSRM row won't have groupData, need to extract
@@ -369,7 +352,7 @@ export class ValueService extends BeanStub implements NamedBean {
                     column,
                     rowNode,
                     '',
-                    this.getValueForDisplay({ column, node: rowNode, resolveFrom: 'editing' }).value
+                    this.getValueForDisplay({ column, node: rowNode, from: 'edit' }).value
                 ) ?? null
             );
         }
@@ -542,7 +525,7 @@ export class ValueService extends BeanStub implements NamedBean {
 
         this.valueCache?.onDataChanged();
 
-        const savedValue = this.getValue(column, rowNode, 'editing');
+        const savedValue = this.getValue(column, rowNode, 'edit');
 
         this.dispatchCellValueChangedEvent(rowNode, params, savedValue, eventSource);
         if ((rowNode as RowNode).pinnedSibling) {
@@ -730,28 +713,18 @@ export class ValueService extends BeanStub implements NamedBean {
         valueGetter: string | Function,
         data: any,
         column: AgColumn,
-        rowNode: IRowNode,
-        resolveFrom: CellValueResolveFrom
+        rowNode: IRowNode
     ): any {
         const colId = column.getColId();
 
-        // Cache is safe when requesting committed data ('data') or when not in batch edit mode.
-        // During batch editing with 'editing'/'pending', valueGetters may depend on pending values
-        // from other cells, so we skip cache to ensure correct results.
-        const canUseCache = resolveFrom === 'data' || !this.editSvc?.isBatchEditing();
-
-        if (canUseCache) {
-            const valueFromCache = this.valueCache!.getValue(rowNode as RowNode, colId);
-            if (valueFromCache !== undefined) {
-                return valueFromCache;
-            }
+        const valueFromCache = this.valueCache!.getValue(rowNode as RowNode, colId);
+        if (valueFromCache !== undefined) {
+            return valueFromCache;
         }
 
-        const result = this.executeValueGetterWithoutValueCache(valueGetter, data, column, rowNode, resolveFrom);
+        const result = this.executeValueGetterWithoutValueCache(valueGetter, data, column, rowNode);
 
-        if (canUseCache) {
-            this.valueCache!.setValue(rowNode as RowNode, colId, result);
-        }
+        this.valueCache!.setValue(rowNode as RowNode, colId, result);
 
         return result;
     }
@@ -761,20 +734,14 @@ export class ValueService extends BeanStub implements NamedBean {
         valueGetter: string | Function,
         data: any,
         column: AgColumn,
-        rowNode: IRowNode,
-        resolveFrom: CellValueResolveFrom
+        rowNode: IRowNode
     ): any {
-        // AG-16448: When creating the getValue callback for valueGetters, use 'pending' instead of 'editing'.
-        // This ensures that when a valueGetter calls getValue() for OTHER columns, it sees batch-pending
-        // values but NOT live typing from other cells being edited.
-        const callbackResolveFrom = resolveFrom === 'editing' ? 'pending' : resolveFrom;
-
         const params: ValueGetterParams = _addGridCommonParams(this.gos, {
             data: data,
             node: rowNode,
             column: column,
             colDef: column.getColDef(),
-            getValue: (field) => this.getValueCallback(rowNode, callbackResolveFrom, field),
+            getValue: (field) => this.getValueCallback(rowNode, field),
         });
 
         let result;
@@ -787,11 +754,11 @@ export class ValueService extends BeanStub implements NamedBean {
         return result;
     }
 
-    public getValueCallback(node: IRowNode, resolveFrom: CellValueResolveFrom, field: string | AgColumn): any {
+    public getValueCallback(node: IRowNode, field: string | AgColumn): any {
         const otherColumn = this.colModel.getColDefCol(field);
 
         if (otherColumn) {
-            return this.getValue(otherColumn, node, resolveFrom);
+            return this.getValue(otherColumn, node, 'data');
         }
 
         return null;

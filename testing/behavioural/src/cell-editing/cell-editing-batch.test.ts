@@ -195,7 +195,8 @@ describe('Cell Editing Batch', () => {
         commitButton.remove();
     });
 
-    test('valueGetter sees pending edits during batch edit', async () => {
+    test('valueGetter sees committed data during batch edit, updates after commit', async () => {
+        // valueGetter using params.getValue() sees COMMITTED data only, not pending batch values
         const api = await gridMgr.createGridAndWait('myGrid', {
             columnDefs: [
                 { field: 'a', editable: true, cellEditor: 'agTextCellEditor' },
@@ -229,11 +230,13 @@ describe('Cell Editing Batch', () => {
         api.refreshCells({ columns: ['b'], force: true });
         await asyncSetTimeout(1);
 
-        expect(cellB).toHaveTextContent('xx');
+        // valueGetter sees committed data, not pending value
+        expect(cellB).toHaveTextContent('initial');
 
         api.commitBatchEdit();
         await asyncSetTimeout(1);
 
+        // After commit, valueGetter sees the newly committed value
         expect(cellB).toHaveTextContent('xx');
 
         api.startBatchEdit();
@@ -247,11 +250,13 @@ describe('Cell Editing Batch', () => {
         api.refreshCells({ columns: ['b'], force: true });
         await asyncSetTimeout(1);
 
-        expect(cellB).toHaveTextContent('yy');
+        // valueGetter sees committed data (xx), not pending value (yy)
+        expect(cellB).toHaveTextContent('xx');
 
         api.cancelBatchEdit();
         await asyncSetTimeout(1);
 
+        // After cancel, still shows committed value (xx)
         expect(cellB).toHaveTextContent('xx');
     });
 

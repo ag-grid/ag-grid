@@ -130,11 +130,11 @@ describe('Edit API', () => {
         beans.editSvc = editSvc;
         editSvc['beans'] = beans;
         editSvc['gos'] = beans.gos;
-        editSvc['model'] = beans.editModelSvc;
+        editSvc['model'] = beans.editModelSvc!;
         editSvc['strategy'] = new SingleCellEditStrategy();
-        editSvc['strategy'].model = beans.editModelSvc;
-        editSvc['strategy'].editSvc = editSvc;
-        editSvc['strategy'].beans = beans;
+        editSvc['strategy']['model'] = beans.editModelSvc!;
+        editSvc['strategy']['editSvc'] = editSvc;
+        editSvc['strategy']['beans'] = beans;
         editSvc['strategy'].start = jest.fn();
 
         setEditingCells = (beans, cells: any[], params?: any) => editSvc.setEditingCells(cells, params);

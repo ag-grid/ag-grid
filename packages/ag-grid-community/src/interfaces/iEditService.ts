@@ -10,11 +10,11 @@ export type EditSource = 'api' | 'ui' | 'paste' | 'rangeSvc' | 'fillHandle' | 'c
 
 /**
  * Specifies how to resolve the cell value when edits are pending.
- * - `'editing'`: Returns the current editing value, including live editor typing and pending batch values. This is the default value.
- * - `'pending'`: Returns pending batch values but excludes live editor typing (useful for dependent calculations in valueGetters)
+ * - `'edit'`: Returns the current editing value, including live editor typing and pending batch values. This is the default value.
+ * - `'batch'`: Returns pending batch values but excludes live editor typing (useful for dependent calculations in valueGetters)
  * - `'data'`: Returns the actual stored data value, ignoring all edit state
  */
-export type CellValueResolveFrom = 'editing' | 'pending' | 'data';
+export type CellValueResolveFrom = 'edit' | 'batch' | 'data';
 
 export interface StartEditWithPositionParams extends StartEditParams {
     position: Required<EditPosition>;
