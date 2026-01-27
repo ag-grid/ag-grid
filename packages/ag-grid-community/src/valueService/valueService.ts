@@ -168,12 +168,6 @@ export class ValueService extends BeanStub implements NamedBean {
     public getValue(
         column: AgColumn,
         rowNode: IRowNode | null | undefined,
-        /**
-         * Specifies how to resolve the cell value when edits are pending.
-         * - `'edit'`: Returns the current editing value, including live editor typing and pending batch values
-         * - `'batch'`: Returns pending batch values but excludes live editor typing (useful for dependent calculations in valueGetters)
-         * - `'data'`: Returns the actual stored data value, ignoring all edit state
-         */
         from: CellValueResolveFrom,
         ignoreAggData: boolean = false
     ): any {
