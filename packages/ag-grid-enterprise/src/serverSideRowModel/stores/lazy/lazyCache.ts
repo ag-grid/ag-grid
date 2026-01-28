@@ -1193,8 +1193,6 @@ export class LazyCache extends BeanStub {
          */
         if (isNewRowCountValid) {
             this.numberOfRows = newRowCount;
-        } else if (this.isLastRowKnown && (!remainingIdsToRemove.length || nodesToVerify.length > 0)) {
-            this.numberOfRows -= idsToRemove.length; // i suspect in this case this is equal to removednodes.length
         } else {
             this.numberOfRows -= removedNodes.length;
         }
