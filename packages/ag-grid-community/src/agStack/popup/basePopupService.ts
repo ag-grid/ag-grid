@@ -304,20 +304,18 @@ export abstract class BasePopupService<
         const lastPosition = { x: 0, y: 0 };
 
         const updatePopupPosition = (fromResizeObserver: boolean = false) => {
-            let { x, y } = updatePosition!();
-
+            // Check size before calling updatePosition to avoid unnecessary CSS class changes
             const sizeChanged =
                 ePopup.clientWidth !== lastSize.width || ePopup.clientHeight !== lastSize.height;
 
-            if (
-                fromResizeObserver &&
-                !sizeChanged
-            ) {
+            if (fromResizeObserver && !sizeChanged) {
                 return;
             }
 
             lastSize.width = ePopup.clientWidth;
             lastSize.height = ePopup.clientHeight;
+
+            let { x, y } = updatePosition!();
 
             if (nudgeX) {
                 x += nudgeX;
