@@ -4,11 +4,14 @@ import type {
     ClientSideRowModelStage,
     FilterManager,
     GridOptions,
+    IClientSideRowModel,
     NamedBean,
     RowNode,
     _IRowNodeFilterAggregateStage,
 } from 'ag-grid-community';
 import { BeanStub, _getGroupAggFiltering } from 'ag-grid-community';
+
+import { _aggregateValues, aggregateRowNodeUsingValuesAndPivot, getValuesNormal, setAggData } from './aggUtils';
 
 export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowNodeFilterAggregateStage {
     beanName = 'filterAggStage' as const;
@@ -79,6 +82,10 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowN
         };
 
         changedPath.forEachChangedNodeDepthFirst(isAggFilterActive ? filterChildren : preserveChildren, true);
+
+        if (isPivotMode) {
+            this.aggregateGrandTotalRow();
+        }
     }
 
     /** for tree data, we include all children, groups and leafs */
@@ -123,6 +130,44 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowN
             this.setAllChildrenCountTreeData(rowNode);
         } else {
             this.setAllChildrenCountGridGrouping(rowNode);
+        }
+    }
+
+    private aggregateGrandTotalRow() {
+        const { rowModel, valueSvc, valueColsSvc, colModel } = this.beans;
+        const grandTotalNode = (rowModel as IClientSideRowModel).rootNode?.sibling;
+        if (!grandTotalNode) {
+            return;
+        }
+
+        if (colModel.isPivotActive()) {
+            // when pivot is active, have to aggregate over secondary columns
+            const result = aggregateRowNodeUsingValuesAndPivot(
+                this.beans,
+                grandTotalNode,
+                grandTotalNode.childrenAfterAggFilter
+            );
+
+            setAggData(colModel, grandTotalNode, result);
+        } else {
+            // when no secondary cols are added, re-aggregate over values of `childrenAfterAggFilter`
+            const valueColumns = valueColsSvc?.columns ?? [];
+
+            const values2d = getValuesNormal(valueSvc, grandTotalNode.childrenAfterAggFilter, valueColumns);
+
+            const result: Record<string, any> = {};
+
+            valueColumns.forEach((col, i) => {
+                result[col.getColId()] = _aggregateValues(
+                    this.beans,
+                    values2d[i],
+                    col.getAggFunc()!,
+                    col,
+                    grandTotalNode
+                );
+            });
+
+            setAggData(colModel, grandTotalNode, result);
         }
     }
 }

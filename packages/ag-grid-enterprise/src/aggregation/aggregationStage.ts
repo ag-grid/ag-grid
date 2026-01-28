@@ -7,7 +7,6 @@ import type {
     GetGroupRowAggParams,
     GridOptions,
     IColsService,
-    IPivotResultColsService,
     NamedBean,
     RowNode,
     ValueService,
@@ -16,7 +15,7 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, _getGrandTotalRow, _getGroupAggFiltering } from 'ag-grid-community';
 
-import { _aggregateValues } from './aggUtils';
+import { _aggregateValues, aggregateRowNodeUsingValuesAndPivot, getValuesNormal, setAggData } from './aggUtils';
 
 interface AggregationDetails {
     alwaysAggregateAtRootLevel: boolean;
@@ -43,13 +42,11 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
     private valueSvc: ValueService;
     private pivotColsSvc?: IColsService;
     private valueColsSvc?: IColsService;
-    private pivotResultCols?: IPivotResultColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.colModel = beans.colModel;
         this.pivotColsSvc = beans.pivotColsSvc;
         this.valueColsSvc = beans.valueColsSvc;
-        this.pivotResultCols = beans.pivotResultCols;
         this.valueSvc = beans.valueSvc;
     }
 
@@ -103,7 +100,7 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
                 // this check is needed for TreeData, in case the node is no longer a child,
                 // but it was a child previously.
                 if (rowNode.aggData) {
-                    this.setAggData(rowNode, null);
+                    setAggData(this.colModel, rowNode, null);
                 }
                 // never agg data for leaf nodes
                 return;
@@ -115,7 +112,7 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
             if (isRootNode && !aggDetails.groupIncludeTotalFooter) {
                 const notPivoting = !this.colModel.isPivotMode();
                 if (!aggDetails.alwaysAggregateAtRootLevel && notPivoting) {
-                    this.setAggData(rowNode, null);
+                    setAggData(this.colModel, rowNode, null);
                     return;
                 }
             }
@@ -138,90 +135,26 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         } else if (pivotColumnsMissing) {
             aggResult = this.aggregateRowNodeUsingValuesOnly(rowNode, aggDetails);
         } else {
-            aggResult = this.aggregateRowNodeUsingValuesAndPivot(rowNode);
+            aggResult = aggregateRowNodeUsingValuesAndPivot(this.beans, rowNode);
         }
 
-        this.setAggData(rowNode, aggResult);
+        setAggData(this.colModel, rowNode, aggResult);
 
         // if we are grouping, then it's possible there is a sibling footer
         // to the group, so update the data here also if there is one
         if (rowNode.sibling) {
-            this.setAggData(rowNode.sibling, aggResult);
+            setAggData(this.colModel, rowNode.sibling, aggResult);
 
             // Similarly for pinned siblings. A pinned grand total row is a `pinnedSibling` of
             // the `sibling` of the root node.
             if (rowNode.sibling.pinnedSibling) {
-                this.setAggData(rowNode.sibling.pinnedSibling, aggResult);
+                setAggData(this.colModel, rowNode.sibling.pinnedSibling, aggResult);
             }
         }
-    }
-
-    private aggregateRowNodeUsingValuesAndPivot(rowNode: RowNode): any {
-        const result: any = {};
-
-        const secondaryColumns = this.pivotResultCols?.getPivotResultCols()?.list ?? [];
-        let canSkipTotalColumns = true;
-        const beans = this.beans;
-        for (let i = 0; i < secondaryColumns.length; i++) {
-            const secondaryCol = secondaryColumns[i];
-            const colDef = secondaryCol.getColDef();
-
-            if (colDef.pivotTotalColumnIds != null) {
-                canSkipTotalColumns = false;
-                continue;
-            }
-
-            const keys: string[] = colDef.pivotKeys ?? [];
-            let values: any[];
-
-            if (rowNode.leafGroup) {
-                // lowest level group, get the values from the mapped set
-                values = this.getValuesFromMappedSet(rowNode.childrenMapped, keys, colDef.pivotValueColumn as AgColumn);
-            } else {
-                // value columns and pivot columns, non-leaf group
-                values = this.getValuesPivotNonLeaf(rowNode, colDef.colId!);
-            }
-
-            // bit of a memory drain storing null/undefined, but seems to speed up performance.
-            result[colDef.colId!] = _aggregateValues(
-                beans,
-                values,
-                colDef.pivotValueColumn!.getAggFunc()!,
-                colDef.pivotValueColumn as AgColumn,
-                rowNode,
-                secondaryCol
-            );
-        }
-
-        if (!canSkipTotalColumns) {
-            for (let i = 0; i < secondaryColumns.length; i++) {
-                const secondaryCol = secondaryColumns[i];
-                const colDef = secondaryCol.getColDef();
-
-                if (!colDef.pivotTotalColumnIds?.length) {
-                    continue;
-                }
-
-                const aggResults: any[] = colDef.pivotTotalColumnIds.map(
-                    (currentColId: string) => result[currentColId]
-                );
-                // bit of a memory drain storing null/undefined, but seems to speed up performance.
-                result[colDef.colId!] = _aggregateValues(
-                    beans,
-                    aggResults,
-                    colDef.pivotValueColumn!.getAggFunc()!,
-                    colDef.pivotValueColumn as AgColumn,
-                    rowNode,
-                    secondaryCol
-                );
-            }
-        }
-
-        return result;
     }
 
     private aggregateRowNodeUsingValuesOnly(rowNode: RowNode, aggDetails: AggregationDetails): any {
-        const result: any = {};
+        const result: Record<string, any> = {};
 
         const { changedPath, valueColumns, filteredOnly } = aggDetails;
 
@@ -233,7 +166,11 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
             ? changedPath.getNotValueColumnsForNode(rowNode, valueColumns)
             : null;
 
-        const values2d = this.getValuesNormal(rowNode, changedValueColumns, filteredOnly);
+        const values2d = getValuesNormal(
+            this.valueSvc,
+            filteredOnly ? rowNode.childrenAfterFilter : rowNode.childrenAfterGroup,
+            changedValueColumns
+        );
         const oldValues = rowNode.aggData;
 
         const beans = this.beans;
@@ -255,84 +192,5 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         }
 
         return result;
-    }
-
-    private getValuesPivotNonLeaf(rowNode: RowNode, colId: string): any[] {
-        return rowNode.childrenAfterFilter!.map((childNode: RowNode) => childNode.aggData[colId]);
-    }
-
-    private getValuesFromMappedSet(mappedSet: any, keys: string[], valueColumn: AgColumn): any[] {
-        let mapPointer = mappedSet;
-        for (let i = 0; i < keys.length; i++) {
-            const key = keys[i];
-            mapPointer = mapPointer ? mapPointer[key] : null;
-        }
-
-        if (!mapPointer) {
-            return [];
-        }
-
-        return mapPointer.map((rowNode: RowNode) => this.valueSvc.getValue(valueColumn, rowNode, false, 'api'));
-    }
-
-    private getValuesNormal(rowNode: RowNode, valueColumns: AgColumn[], filteredOnly: boolean): any[][] {
-        // create 2d array, of all values for all valueColumns
-        const values: any[][] = [];
-        valueColumns.forEach(() => values.push([]));
-
-        const valueColumnCount = valueColumns.length;
-
-        const nodeList = filteredOnly ? rowNode.childrenAfterFilter : rowNode.childrenAfterGroup;
-        const rowCount = nodeList!.length;
-
-        for (let i = 0; i < rowCount; i++) {
-            const childNode = nodeList![i];
-            for (let j = 0; j < valueColumnCount; j++) {
-                const valueColumn = valueColumns[j];
-                // if the row is a group, then it will only have an agg result value,
-                // which means valueGetter is never used.
-                const value = this.valueSvc.getValue(valueColumn, childNode, false, 'api');
-                values[j].push(value);
-            }
-        }
-
-        return values;
-    }
-    private setAggData(rowNode: RowNode, newAggData: any): void {
-        const oldAggData = rowNode.aggData;
-        rowNode.aggData = newAggData;
-
-        // if no event service, nobody has registered for events, so no need fire event
-        if (rowNode.__localEventService) {
-            const eventFunc = (colId: string) => {
-                const value = rowNode.aggData ? rowNode.aggData[colId] : undefined;
-                const oldValue = oldAggData ? oldAggData[colId] : undefined;
-
-                if (value === oldValue) {
-                    return;
-                }
-
-                // do a quick lookup - despite the event it's possible the column no longer exists
-                const column = this.colModel.getColById(colId);
-                if (!column) {
-                    return;
-                }
-
-                rowNode.dispatchCellChangedEvent(column, value, oldValue);
-            };
-
-            if (oldAggData) {
-                for (const key of Object.keys(oldAggData)) {
-                    eventFunc(key); // raise for old keys
-                }
-            }
-            if (newAggData) {
-                for (const key of Object.keys(newAggData)) {
-                    if (!oldAggData || !(key in oldAggData)) {
-                        eventFunc(key); // new key, event not yet raised
-                    }
-                }
-            }
-        }
     }
 }
