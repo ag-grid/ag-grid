@@ -306,10 +306,12 @@ export abstract class BasePopupService<
         const updatePopupPosition = (fromResizeObserver: boolean = false) => {
             let { x, y } = updatePosition!();
 
+            const sizeChanged =
+                ePopup.clientWidth !== lastSize.width || ePopup.clientHeight !== lastSize.height;
+
             if (
                 fromResizeObserver &&
-                ePopup.clientWidth === lastSize.width &&
-                ePopup.clientHeight === lastSize.height
+                !sizeChanged
             ) {
                 return;
             }
@@ -330,19 +332,19 @@ export abstract class BasePopupService<
                 y = this.keepXYWithinBounds(ePopup, y, Direction.Vertical);
             }
 
-            // Only update position and trigger callbacks if position actually changed
-            // This prevents unnecessary repositioning from internal content changes
-            if (fromResizeObserver && x === lastPosition.x && y === lastPosition.y) {
-                return;
+            const positionChanged = x !== lastPosition.x || y !== lastPosition.y;
+
+            // Only update DOM position if it actually changed
+            if (positionChanged) {
+                lastPosition.x = x;
+                lastPosition.y = y;
+                ePopup.style.left = `${x}px`;
+                ePopup.style.top = `${y}px`;
             }
 
-            lastPosition.x = x;
-            lastPosition.y = y;
-
-            ePopup.style.left = `${x}px`;
-            ePopup.style.top = `${y}px`;
-
-            if (params.postProcessCallback) {
+            // Always call postProcessCallback if position or size changed
+            // Users rely on this to adjust positioning based on popup's current size
+            if (params.postProcessCallback && (positionChanged || sizeChanged)) {
                 params.postProcessCallback();
             }
         };

@@ -63,39 +63,55 @@ Every resize triggers `updatePosition()`, which:
 
 ### What Changed
 
-Modified `basePopupService.ts:positionPopup()` to track last calculated position:
+Modified `basePopupService.ts:positionPopup()` to track both size and position changes separately:
 
 ```typescript
+const lastSize = { width: 0, height: 0 };
 const lastPosition = { x: 0, y: 0 };
 
 const updatePopupPosition = (fromResizeObserver: boolean = false) => {
     let { x, y } = updatePosition!();
     
-    // ... size check, nudge calculations ...
+    const sizeChanged = 
+        ePopup.clientWidth !== lastSize.width || 
+        ePopup.clientHeight !== lastSize.height;
     
-    // NEW: Skip updates if position hasn't changed
-    if (fromResizeObserver && x === lastPosition.x && y === lastPosition.y) {
+    // Early return only if size hasn't changed
+    if (fromResizeObserver && !sizeChanged) {
         return;
     }
     
-    lastPosition.x = x;
-    lastPosition.y = y;
+    lastSize.width = ePopup.clientWidth;
+    lastSize.height = ePopup.clientHeight;
     
-    ePopup.style.left = `${x}px`;
-    ePopup.style.top = `${y}px`;
+    // ... nudge calculations ...
     
-    if (params.postProcessCallback) {
-        params.postProcessCallback();  // Only called if position changed
+    const positionChanged = x !== lastPosition.x || y !== lastPosition.y;
+    
+    // Only update DOM position if it actually changed
+    if (positionChanged) {
+        lastPosition.x = x;
+        lastPosition.y = y;
+        ePopup.style.left = `${x}px`;
+        ePopup.style.top = `${y}px`;
+    }
+    
+    // Call postProcessCallback if position OR size changed
+    // Users rely on this to adjust positioning based on popup's current size
+    if (params.postProcessCallback && (positionChanged || sizeChanged)) {
+        params.postProcessCallback();
     }
 };
 ```
 
 ### Why This Works
 
-1. **Prevents Redundant Updates**: When virtual list content changes but popup position stays the same, no DOM updates occur
-2. **Stops CSS Class Thrashing**: `setAlignedStyles()` (called via `postProcessCallback`) only runs when position actually changes
-3. **Maintains Functionality**: Still responds to genuine position changes (scroll, window resize, etc.)
-4. **Performance**: Reduces layout recalculations in SSR environments
+1. **Prevents Redundant Updates**: When neither size nor position changes, no DOM updates occur
+2. **Preserves postProcessCallback for Size Changes**: Even when position stays the same (e.g., `position='under'`), users' custom size-based adjustments still run
+3. **Optimizes DOM Updates**: Only sets `left`/`top` styles when position actually changes
+4. **Stops CSS Class Thrashing**: `setAlignedStyles()` (called via `postProcessCallback`) only runs when position or size actually changes
+5. **Maintains Functionality**: Still responds to genuine position changes (scroll, window resize, etc.)
+6. **Performance**: Reduces unnecessary layout recalculations in SSR environments
 
 ## Impact Areas
 
