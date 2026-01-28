@@ -1191,15 +1191,14 @@ export class LazyCache extends BeanStub {
          * else subtract 'known' + 'out-of-bounds' nodes when last index is known and all deleted nodes were in cache, this is an optimistic approach;
          * else subtract 'known' nodes when last index is unknown, this is a pessimistic approach.
          */
-        let delta;
         if (isNewRowCountValid) {
-            delta = this.numberOfRows - newRowCount;
+            this.numberOfRows = newRowCount;
         } else if (this.isLastRowKnown && (!remainingIdsToRemove.length || nodesToVerify.length > 0)) {
-            delta = idsToRemove.length;
+            this.numberOfRows -= idsToRemove.length;
         } else {
-            delta = removedNodes.length;
+            this.numberOfRows -= removedNodes.length;
         }
-        this.numberOfRows -= delta;
+
         this.isLastRowKnown = isNewRowCountValid || this.isLastRowKnown;
 
         if (remainingIdsToRemove.length > 0 && nodesToVerify.length > 0) {
