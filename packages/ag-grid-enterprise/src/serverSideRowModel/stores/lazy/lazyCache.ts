@@ -1138,9 +1138,11 @@ export class LazyCache extends BeanStub {
     }
 
     public removeRowNodes(idsToRemove: string[], newRowCount?: number): RowNode[] {
-        const { nodeMap, lazyBlockLoadingSvc } = this;
         const removedNodes: RowNode[] = [];
         const nodesToVerify: RowNode[] = [];
+
+        // track how many nodes have been deleted, as when we pass other nodes we need to shift them up
+        let deletedNodeCount = 0;
 
         const remainingIdsToRemove = [...idsToRemove];
 
@@ -1158,11 +1160,12 @@ export class LazyCache extends BeanStub {
 
                 this.destroyRowAtIndex(Number(stringIndex));
                 removedNodes.push(node.node);
+                deletedNodeCount += 1;
                 continue;
             }
 
             // no nodes removed and this node doesn't match, so no need to shift
-            if (removedNodes.length === 0) {
+            if (deletedNodeCount === 0) {
                 continue;
             }
 
@@ -1172,11 +1175,11 @@ export class LazyCache extends BeanStub {
             }
 
             // shift normal node up by number of deleted prior to this point
-            nodeMap.delete(node);
-            nodeMap.set({
+            this.nodeMap.delete(node);
+            this.nodeMap.set({
                 id: node.id,
                 node: node.node,
-                index: numericStoreIndex - removedNodes.length,
+                index: numericStoreIndex - deletedNodeCount,
             });
         }
 
@@ -1193,15 +1196,14 @@ export class LazyCache extends BeanStub {
          */
         if (isNewRowCountValid) {
             this.numberOfRows = newRowCount;
+            this.isLastRowKnown = true;
         } else {
-            this.numberOfRows -= removedNodes.length;
+            this.numberOfRows -= deletedNodeCount;
         }
-
-        this.isLastRowKnown = isNewRowCountValid || this.isLastRowKnown;
 
         if (remainingIdsToRemove.length > 0 && nodesToVerify.length > 0) {
             nodesToVerify.forEach((node) => (node.__needsRefreshWhenVisible = true));
-            lazyBlockLoadingSvc.queueLoadCheck();
+            this.lazyBlockLoadingSvc.queueLoadCheck();
         }
 
         return removedNodes;
