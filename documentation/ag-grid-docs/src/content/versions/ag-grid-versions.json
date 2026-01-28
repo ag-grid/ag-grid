@@ -308,7 +308,7 @@
             },
             {
                 "text": "Default Column Header Customization",
-                "path": "./column-headers/#inner-header-component"
+                "path": "./column-headers-components/#inner-header-component"
             },
             {
                 "text": "Native Support for Vue 3 Composition API"

@@ -217,31 +217,31 @@
         "headerHeight": {
             "more": {
                 "name": "Header Height",
-                "url": "./column-headers/#header-height"
+                "url": "./column-headers-styling/#header-height"
             }
         },
         "groupHeaderHeight": {
             "more": {
                 "name": "Header Height",
-                "url": "./column-headers/#header-height"
+                "url": "./column-headers-styling/#header-height"
             }
         },
         "floatingFiltersHeight": {
             "more": {
                 "name": "Header Height",
-                "url": "./column-headers/#header-height"
+                "url": "./column-headers-styling/#header-height"
             }
         },
         "pivotHeaderHeight": {
             "more": {
                 "name": "Header Height",
-                "url": "./column-headers/#header-height"
+                "url": "./column-headers-styling/#header-height"
             }
         },
         "pivotGroupHeaderHeight": {
             "more": {
                 "name": "Header Height",
-                "url": "./column-headers/#header-height"
+                "url": "./column-headers-styling/#header-height"
             }
         },
         "hidePaddedHeaderRows": {
