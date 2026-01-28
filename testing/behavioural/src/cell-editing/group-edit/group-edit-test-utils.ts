@@ -74,13 +74,14 @@ export function getGroupColumnDisplayValue(rowNode: IRowNode): string | undefine
 export type CallbackArgs =
     | Parameters<EditableCallback>
     | Parameters<GroupRowEditableCallback>
-    | Parameters<ValueSetterCallback>;
+    | Parameters<ValueSetterCallback>
+    | Parameters<GroupRowValueSetterCallback>;
 
 export function callsForRowNode(calls: CallbackArgs[], rowId?: string | null) {
     if (!rowId) {
         return [] as CallbackArgs[];
     }
-    return calls.filter(([params]) => params?.node?.id === rowId);
+    return calls.filter(([params]) => (params as { node?: { id?: string } })?.node?.id === rowId);
 }
 
 export function createGroupRowData() {

@@ -1,7 +1,21 @@
 import type { AgEvent } from '../agStack/interfaces/agEvent';
+import type { ColKey } from '../entities/colDef';
 import type { BuildEventTypeMap } from '../eventTypes';
 import type { SelectionEventSourceType } from '../events';
 import type { Column } from '../interfaces/iColumn';
+
+/**
+ * Options for `getAggregatedChildren` method on `IRowNode`.
+ */
+export interface GetAggregatedChildrenParams<TData = any, TValue = any> {
+    /**
+     * Optional column key (string colId, ColDef, or Column instance) to get children for.
+     * If a pivot column with `pivotKeys`, only children matching those pivot keys are returned.
+     * If a value column that is used as a `pivotValueColumn`, and the grid is in pivot mode,
+     * the method will attempt to find an associated pivot column.
+     */
+    colKey?: ColKey<TData, TValue>;
+}
 
 export type RowNodeEventType =
     | 'rowSelected'
@@ -293,6 +307,24 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
 
     /** Perform a depth-first search of this node and its children. */
     depthFirstSearch(callback: (rowNode: IRowNode<TData>) => void): void;
+
+    /**
+     * Returns the immediate child rows that contribute to the aggregated value of this group row.
+     * This respects the current aggregation settings including `suppressAggFilteredOnly` and `groupAggFiltering`.
+     *
+     * For pivot columns, this returns only the children that match the column's pivot keys.
+     * For non-pivot columns, this returns all children used for aggregation.
+     *
+     * **Warning:** The returned array is a direct reference to internal grid data and must not be modified.
+     * Modifying this array will cause undefined behaviour.
+     *
+     * Note: This returns immediate children only. For leaf rows, recurse via `setDataValue` or call
+     * this method on child groups. Leaf rows (non-group rows) return an empty array.
+     *
+     * @param params - Optional parameters to configure which children to return.
+     * @returns Array of child row nodes that contribute to aggregation. Do not modify this array.
+     */
+    getAggregatedChildren(params?: Readonly<GetAggregatedChildrenParams<TData>>): IRowNode<TData>[];
 
     /**
      * Sets the row height.

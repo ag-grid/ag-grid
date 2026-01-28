@@ -4,6 +4,7 @@ import type {
     ChangedPath,
     ClientSideRowModelStage,
     ColumnModel,
+    GetAggregatedChildrenParams,
     GetGroupRowAggParams,
     GridOptions,
     IColsService,
@@ -261,18 +262,65 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         return rowNode.childrenAfterFilter!.map((childNode: RowNode) => childNode.aggData[colId]);
     }
 
-    private getValuesFromMappedSet(mappedSet: any, keys: string[], valueColumn: AgColumn): any[] {
+    /**
+     * Traverses the childrenMapped nested structure using pivot keys to get the leaf RowNode array.
+     * childrenMapped structure: { [pivotValue]: { [pivotValue]: ... : RowNode[] } }
+     */
+    private getNodesFromMappedSet(mappedSet: any, keys: string[]): RowNode[] {
         let mapPointer = mappedSet;
         for (let i = 0; i < keys.length; i++) {
             const key = keys[i];
             mapPointer = mapPointer ? mapPointer[key] : null;
         }
+        return mapPointer ?? [];
+    }
 
-        if (!mapPointer) {
+    private getValuesFromMappedSet(mappedSet: any, keys: string[], valueColumn: AgColumn): any[] {
+        const nodes = this.getNodesFromMappedSet(mappedSet, keys);
+        return nodes.map((rowNode: RowNode) => this.valueSvc.getValue(valueColumn, rowNode, 'data'));
+    }
+
+    /**
+     * Used by RowNode.
+     * Returns the immediate child rows that contribute to the aggregated value of a group row.
+     * This respects the current aggregation settings including `suppressAggFilteredOnly` and `groupAggFiltering`.
+     *
+     * For pivot columns on leaf groups, this returns only the children that match the column's pivot keys.
+     * For non-pivot columns or non-leaf groups, this returns all children used for aggregation.
+     *
+     * Warning: The returned array is a direct reference to internal grid data and must not be modified.
+     */
+    public getAggregatedChildren(rowNode: RowNode, params?: GetAggregatedChildrenParams): RowNode[] {
+        if (!rowNode.group) {
             return [];
         }
 
-        return mapPointer.map((rowNode: RowNode) => this.valueSvc.getValue(valueColumn, rowNode, 'data'));
+        // For pivot columns on leaf groups, use childrenMapped to filter by pivot keys.
+        const { childrenMapped } = rowNode;
+        if (childrenMapped && rowNode.leafGroup) {
+            const colKey = params?.colKey;
+            if (colKey != null) {
+                const { colModel, pivotResultCols } = this.beans;
+                const column =
+                    typeof colKey === 'string'
+                        ? pivotResultCols?.getPivotResultCol(colKey) ??
+                          colModel.getCol(colKey) ??
+                          colModel.getColDefCol(colKey)
+                        : (colKey as AgColumn);
+                const pivotKeys = column?.getColDef().pivotKeys;
+                if (pivotKeys?.length) {
+                    return this.getNodesFromMappedSet(childrenMapped, pivotKeys);
+                }
+            }
+        }
+
+        // Determine whether to use filtered children or all children based on grid options.
+        // If groupAggFiltering is enabled or suppressAggFilteredOnly is set, use all children.
+        const { gos } = this.beans;
+        if (_getGroupAggFiltering(gos) !== undefined || gos.get('suppressAggFilteredOnly')) {
+            return rowNode.childrenAfterGroup ?? [];
+        }
+        return rowNode.childrenAfterFilter ?? rowNode.childrenAfterGroup ?? [];
     }
 
     private getValuesNormal(rowNode: RowNode, valueColumns: AgColumn[], filteredOnly: boolean): any[][] {

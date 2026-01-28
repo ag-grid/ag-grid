@@ -9,6 +9,7 @@ import type {
     AgRowNodeEventListener,
     CellChangedEvent,
     DataChangedEvent,
+    GetAggregatedChildrenParams,
     IRowNode,
     RowNodeEvent,
     RowNodeEventType,
@@ -510,10 +511,21 @@ export class RowNode<TData = any>
         const { colModel, valueSvc, gos, editSvc } = this.beans;
 
         // if in pivot mode, grid columns wont include primary columns
-        const column = typeof colKey !== 'string' ? colKey : colModel.getCol(colKey) ?? colModel.getColDefCol(colKey);
+        let column = typeof colKey !== 'string' ? colKey : colModel.getCol(colKey) ?? colModel.getColDefCol(colKey);
         if (!column) {
             return false;
         }
+
+        // For leaf data rows with pivot result columns, resolve to the underlying value column.
+        // The pivot column doesn't map to real data on leaf rows - only the source value column does.
+        // However, if the pivot column has a valueSetter, respect it (user may have configured it via processPivotResultColDef).
+        if (!this.group) {
+            const colDef = column.getColDef();
+            if (colDef.pivotValueColumn && !colDef.valueSetter) {
+                column = colDef.pivotValueColumn as AgColumn;
+            }
+        }
+
         const oldValue = valueSvc.getValueForDisplay({ column, node: this, from: 'data' }).value;
 
         if (gos.get('readOnlyEdit')) {
@@ -638,6 +650,34 @@ export class RowNode<TData = any>
             }
         }
         callback(this);
+    }
+
+    /**
+     * Returns the immediate child rows that contribute to the aggregated value of this group row.
+     * This respects the current aggregation settings including `suppressAggFilteredOnly` and `groupAggFiltering`.
+     *
+     * For pivot columns, this returns only the children that match the column's pivot keys.
+     * For non-pivot columns, this returns all children used for aggregation.
+     *
+     * **Warning:** The returned array is a direct reference to internal grid data and must not be modified.
+     * Modifying this array will cause undefined behaviour.
+     *
+     * Note: This returns immediate children only. For leaf rows, recurse via `setDataValue` or call
+     * this method on child groups. Leaf rows (non-group rows) return an empty array.
+     *
+     * @param params - Optional parameters to configure which children to return.
+     * @returns Array of child row nodes that contribute to aggregation. Do not modify this array.
+     */
+    public getAggregatedChildren(params?: GetAggregatedChildrenParams): RowNode<TData>[] {
+        const { aggStage } = this.beans;
+        if (aggStage) {
+            return aggStage.getAggregatedChildren(this, params) as RowNode<TData>[];
+        }
+        // Fallback when aggregation module is not present: return children based on group status
+        if (!this.group) {
+            return [];
+        }
+        return this.childrenAfterFilter ?? this.childrenAfterGroup ?? [];
     }
 
     public dispatchRowEvent<T extends RowNodeEventType>(type: T): void {

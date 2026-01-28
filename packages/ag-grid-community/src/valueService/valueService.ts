@@ -404,18 +404,12 @@ export class ValueService extends BeanStub implements NamedBean {
     /**
      * Sets the value of a GridCell
      * @param rowNode The `RowNode` to be updated
-     * @param colKey The `Column` to be updated
+     * @param column The `Column` to be updated
      * @param newValue The new value to be set
      * @param eventSource The event source
      * @returns `True` if the value has been updated, otherwise`False`.
      */
-    public setValue(rowNode: IRowNode, colKey: string | AgColumn, newValue: any, eventSource?: string): boolean {
-        const column = this.colModel.getColDefCol(colKey);
-
-        if (!rowNode || !column) {
-            return false;
-        }
-
+    public setValue(rowNode: IRowNode, column: AgColumn, newValue: any, eventSource?: string): boolean {
         const colDef = column.getColDef();
 
         if (!rowNode.data && this.canCreateRowNodeData(rowNode, colDef)) {
