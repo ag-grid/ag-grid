@@ -66,16 +66,7 @@ export class MultiFilterHandler
 
         this.handlerWrappers.forEach((wrapper, index) => {
             if (wrapper) {
-                const handlerParams = this.updateHandlerParams(params, index, false);
-                const originalFilterParams = handlerParams.filterParams;
-                const providedFilterParams = filters?.[index].filterParams;
-                const filterParamsForFilter = providedFilterParams
-                    ? { ...originalFilterParams, ...providedFilterParams }
-                    : originalFilterParams;
-                const updatedParams = {
-                    ...handlerParams,
-                    filterParams: filterParamsForFilter,
-                };
+                const updatedParams = this.updateHandlerParams(params, index, false, filters?.[index].filterParams);
                 wrapper.handlerParams = updatedParams;
                 wrapper.handler.refresh?.({
                     ...updatedParams,
@@ -95,7 +86,8 @@ export class MultiFilterHandler
     private updateHandlerParams(
         params: FilterHandlerBaseParams,
         index: number,
-        isInit: boolean
+        isInit: boolean,
+        providedFilterParams?: any
     ): FilterHandlerBaseParams {
         const { onModelChange, doesRowPassOtherFilter, getValue } = params;
         const handlerParams: FilterHandlerBaseParams = {
@@ -109,14 +101,28 @@ export class MultiFilterHandler
                 doesRowPassOtherFilter(node) &&
                 this.doesFilterPass({ node, data: node.data, model: this.params.model, handlerParams }, index),
             getValue: updateGetValue(this.beans, params.column as AgColumn, this.filterDefs[index], getValue),
+            filterParams: this.updateFilterParams(params, isInit, providedFilterParams),
         };
-        if (handlerParams.filterParams.buttons) {
-            if (isInit) {
-                _warn(292, { colId: params.column.getColId() });
-            }
-            delete handlerParams.filterParams.buttons;
-        }
         return handlerParams;
+    }
+
+    private updateFilterParams(params: FilterHandlerBaseParams, isInit: boolean, providedFilterParams?: any): any {
+        const originalFilterParams = params.filterParams;
+        if (providedFilterParams?.buttons && isInit) {
+            _warn(292, { colId: params.column.getColId() });
+        }
+        const filterParamsForFilter = providedFilterParams
+            ? { ...originalFilterParams, ...providedFilterParams }
+            : originalFilterParams;
+        if (!filterParamsForFilter.buttons) {
+            return filterParamsForFilter;
+        }
+        if (providedFilterParams) {
+            delete filterParamsForFilter.buttons;
+            return filterParamsForFilter;
+        }
+        const { buttons: _, ...filterParamsForFilterWithoutButtons } = filterParamsForFilter;
+        return filterParamsForFilterWithoutButtons;
     }
 
     public doesFilterPass(params: DoesFilterPassParams<any, IMultiFilterModel>, indexToSkip?: number): boolean {
