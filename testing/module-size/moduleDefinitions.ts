@@ -4,7 +4,7 @@ import type {
     ModuleName,
 } from '../../packages/ag-grid-community/src/interfaces/iModule';
 
-export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, number> = {
+export const AllGridCommunityModules: Record<`${CommunityModuleName}Module` | 'BigIntFilterModule', number> = {
     AlignedGridsModule: 6.88,
     AllCommunityModule: 511.54,
     CellApiModule: 0.28,
