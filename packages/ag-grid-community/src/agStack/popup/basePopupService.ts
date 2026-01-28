@@ -301,6 +301,7 @@ export abstract class BasePopupService<
     public positionPopup(params: AgPopupPositionParams<TPopupPositionParams>): void {
         const { ePopup, keepWithinBounds, nudgeX, nudgeY, skipObserver, updatePosition } = params;
         const lastSize = { width: 0, height: 0 };
+        const lastPosition = { x: 0, y: 0 };
 
         const updatePopupPosition = (fromResizeObserver: boolean = false) => {
             let { x, y } = updatePosition!();
@@ -328,6 +329,15 @@ export abstract class BasePopupService<
                 x = this.keepXYWithinBounds(ePopup, x, Direction.Horizontal);
                 y = this.keepXYWithinBounds(ePopup, y, Direction.Vertical);
             }
+
+            // Only update position and trigger callbacks if position actually changed
+            // This prevents unnecessary repositioning from internal content changes
+            if (fromResizeObserver && x === lastPosition.x && y === lastPosition.y) {
+                return;
+            }
+
+            lastPosition.x = x;
+            lastPosition.y = y;
 
             ePopup.style.left = `${x}px`;
             ePopup.style.top = `${y}px`;
