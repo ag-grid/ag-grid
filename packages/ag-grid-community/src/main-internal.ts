@@ -38,7 +38,10 @@ export {
 } from './agStack/interfaces/agComponent';
 export { AgCoreBean as _AgCoreBean } from './agStack/interfaces/agCoreBean';
 export { AgCoreBeanCollection as _AgCoreBeanCollection } from './agStack/interfaces/agCoreBeanCollection';
-export { FrameworkOverridesIncomingSource } from './agStack/interfaces/agFrameworkOverrides';
+export {
+    FrameworkOverridesIncomingSource,
+    AgFrameworkOverrides as _AgFrameworkOverrides,
+} from './agStack/interfaces/agFrameworkOverrides';
 export {
     AgStylesChangedEvent as _AgStylesChangedEvent,
     BaseEvents as _BaseEvents,
