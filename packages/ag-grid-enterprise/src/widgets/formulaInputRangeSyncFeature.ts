@@ -1,4 +1,4 @@
-import { BeanStub, _last } from 'ag-grid-community';
+import { BeanStub, _last, isSpecialCol } from 'ag-grid-community';
 import type { CellRange, CellSelectionChangedEvent, Column } from 'ag-grid-community';
 
 import type { AgFormulaInputField } from './agFormulaInputField';
@@ -423,6 +423,15 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
 
         const { finished, started } = event;
         const liveRanges = this.getLiveRanges();
+        // drop selection/row-number ranges while editing formulas as they can't map to refs
+        const nonSpecialRanges = liveRanges.filter((range) => !this.isSpecialOnlyRange(range));
+
+        if (nonSpecialRanges.length !== liveRanges.length) {
+            this.setCellRangesSilently(nonSpecialRanges);
+            this.refocusEditingCell();
+            return;
+        }
+
         const latestRange = liveRanges.length ? _last(liveRanges) : null;
         const latestRef = latestRange ? rangeToRef(this.beans, latestRange) : null;
         const hasInsertCandidate =
@@ -515,6 +524,11 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
         }
 
         this.setCellRangesSilently([latestRange]);
+    }
+
+    private isSpecialOnlyRange(range: CellRange): boolean {
+        const columns = range.columns;
+        return !!columns?.length && columns.every((col) => isSpecialCol(col));
     }
 
     private handleRangeTokenUpdate(
