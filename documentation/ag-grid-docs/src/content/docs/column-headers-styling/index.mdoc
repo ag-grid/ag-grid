@@ -104,15 +104,6 @@ The example below demonstrates using the `autoHeaderHeight` property in conjunct
 
 {% gridExampleRunner title="Auto Header Height" name="auto-height" /%}
 
-## Hide Padded Column Headers
-
-When using column groups the grid adds padding to columns to ensure the column tree is balanced. When a column with a deeper tree is hidden, this can lead to
-header rows consisting entirely of padding. Set the `hidePaddedHeaderRows` grid option to `true` to hide rows consisting of only padding.
-
-{% gridExampleRunner title="Hide Padded Header Rows" name="hide-padded-header-rows" /%}
-
-The example above demonstrates a grid with hidden column groups, causing the grid headers to be taller than necessary when the parent group is collapsed.
-
 ## Text Orientation
 
 By default, the text label for the header is display horizontally, i.e. as normal readable text. To display the text in another orientation you have to provide your own CSS to change the orientation and also provide the adequate header heights using the appropriate grid property.

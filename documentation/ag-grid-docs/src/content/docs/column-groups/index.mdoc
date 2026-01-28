@@ -194,6 +194,14 @@ Note the following:
 
 {% gridExampleRunner title="Padded Header" name="padded-header"  exampleHeight=300 /%}
 
+## Hide Padded Header Rows
+
+When using column groups the grid adds padding to columns to ensure the column tree is balanced. When a column with a deeper tree is hidden, this can lead to header rows consisting entirely of padding. Set the `hidePaddedHeaderRows` grid option to `true` to hide rows consisting of only padding.
+
+{% gridExampleRunner title="Hide Padded Header Rows" name="hide-padded-header-rows" /%}
+
+The example above demonstrates a grid with hidden column groups, causing the grid headers to be taller than necessary when the parent group is collapsed.
+
 ## Tooltips
 
 Tooltips can be added to the Column Group Headers by using the `headerTooltip` property of the `ColGroupDef`.
