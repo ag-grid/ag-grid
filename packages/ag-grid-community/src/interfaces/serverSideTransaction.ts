@@ -15,6 +15,11 @@ export interface ServerSideTransaction<TData = any> {
     remove?: TData[];
     /** Rows to update */
     update?: TData[];
+    /**
+     * Optional total row count, mirroring the getRows success response `rowCount`.
+     * Use this when a transaction updates the known total row count.
+     */
+    rowCount?: number;
 }
 
 export interface ServerSideTransactionResult<TData = any> {

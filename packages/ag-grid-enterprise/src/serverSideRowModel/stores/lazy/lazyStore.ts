@@ -179,6 +179,11 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             this.cache.clientSideSortRows();
         }
 
+        if (transaction.rowCount != null && transaction.rowCount >= 0) {
+            // trust user on this one
+            this.setRowCount(transaction.rowCount, true);
+        }
+
         this.updateSelectionAfterTransaction(updatedNodes, removedNodes);
         return {
             status: ServerSideTransactionResultStatus.Applied,
