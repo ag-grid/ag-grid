@@ -33,7 +33,7 @@ AG Grid provides three main approaches to styling:
 
 Each of these approaches can be used to customise our built-in themes: [Quartz](https://www.ag-grid.com/example), [Alpine](https://www.ag-grid.com/example?theme=alpine), [Balham](https://www.ag-grid.com/example?theme=balham), and [Material](https://www.ag-grid.com/example?theme=material).
 
-Our themes are simply JavaScript objects that define colours, spacing, fonts, and other design tokens. By default, the Quartz theme is applied; to use a custom theme, create a copy of the desired theme and pass it to the grid options:
+Our themes are simply JavaScript objects that define colours, spacing, fonts, and other design tokens. By default, the Quartz theme is applied; to use a custom theme, create a reference to the desired theme and pass it to the grid options:
 
 {% if isFramework("javascript") %}
 ```js
@@ -48,7 +48,72 @@ const gridOptions = {
 ```
 {% /if %}
 
-// TODO: Angular, React, Vue snippets
+{% if isFramework("react") %}
+```jsx
+import { themeQuartz } from 'ag-grid-community';
+import { AgGridReact } from 'ag-grid-react';
+
+const myTheme = themeQuartz;
+
+const GridExample = () => {
+    // ... rowData, columnDefs, etc.
+
+    return (
+        <AgGridReact
+            theme={myTheme}
+            // ... other props
+        />
+    );
+};
+```
+{% /if %}
+
+{% if isFramework("angular") %}
+```ts
+import { Component } from '@angular/core';
+import { AgGridAngular } from 'ag-grid-angular';
+import { themeQuartz } from 'ag-grid-community';
+
+@Component({
+    selector: 'app-root',
+    template: `
+        <ag-grid-angular
+            [theme]="theme"
+            <!-- other options -->
+        />
+    `,
+})
+export class AppComponent {
+    theme = themeQuartz;
+}
+```
+{% /if %}
+
+{% if isFramework("vue") %}
+```js
+import { ref } from 'vue';
+import { AgGridVue } from 'ag-grid-vue3';
+import { themeQuartz } from 'ag-grid-community';
+
+const myTheme = themeQuartz;
+
+export default {
+    components: { AgGridVue },
+    setup() {
+        return {
+            theme: myTheme,
+            // ... rowData, columnDefs, etc.
+        };
+    },
+    template: `
+        <ag-grid-vue
+            :theme="theme"
+            <!-- other options -->
+        />
+    `,
+};
+```
+{% /if %}
 
 The example below demonstrates an AG Grid data grid with an unmodified Quartz theme. Open the example in CodeSandbox or Plunkr to follow this tutorial:
 
@@ -86,7 +151,74 @@ const gridOptions = {
 ```
 {% /if %}
 
-// TODO: React, Angular and Vue snippets
+{% if isFramework("react") %}
+```jsx
+import { themeQuartz, iconSetMaterial } from 'ag-grid-community';
+import { AgGridReact } from 'ag-grid-react';
+
+// Quartz theme that uses Material icons
+const myTheme = themeQuartz.withPart(iconSetMaterial);
+
+const GridExample = () => {
+    // ... rowData, columnDefs, etc.
+
+    return (
+        <AgGridReact
+            theme={myTheme}
+            // ... other props
+        />
+    );
+};
+```
+{% /if %}
+
+{% if isFramework("angular") %}
+```ts
+import { Component } from '@angular/core';
+import { AgGridAngular } from 'ag-grid-angular';
+import { themeQuartz, iconSetMaterial } from 'ag-grid-community';
+
+@Component({
+    selector: 'app-root',
+    template: `
+        <ag-grid-angular
+            [theme]="theme"
+            <!-- other options -->
+        />
+    `,
+})
+export class AppComponent {
+    // Quartz theme that uses Material icons
+    theme = themeQuartz.withPart(iconSetMaterial);
+}
+```
+{% /if %}
+
+{% if isFramework("vue") %}
+```js
+import { AgGridVue } from 'ag-grid-vue3';
+import { themeQuartz, iconSetMaterial } from 'ag-grid-community';
+
+// Quartz theme that uses Material icons
+const myTheme = themeQuartz.withPart(iconSetMaterial);
+
+export default {
+    components: { AgGridVue },
+    setup() {
+        return {
+            theme: myTheme,
+            // ... rowData, columnDefs, etc.
+        };
+    },
+    template: `
+        <ag-grid-vue
+            :theme="theme"
+            <!-- other options -->
+        />
+    `,
+};
+```
+{% /if %}
 
 When you run your application, you should see the Material icons in the grid:
 
@@ -104,17 +236,17 @@ For example, to customise your theme with specific colours, spacing, and font si
 
 {% if isFramework("javascript") %}
 ```js
-import { themeQuartz, createGrid } from 'ag-grid-community';
-
 // Custom theme with Material icons and custom parameters
-const myTheme = themeQuartz.withPart(iconSetMaterial).withParams({
-    backgroundColor: '#ffffff',
-    foregroundColor: '#1a1a1a',
-    headerBackgroundColor: '#faf8f5',
-    spacing: 10,
-    fontSize: 12,
-    headerFontSize: 14,
-});
+const myTheme = themeQuartz
+    .withPart(iconSetMaterial)
+    .withParams({
+        backgroundColor: '#ffffff',
+        foregroundColor: '#1a1a1a',
+        headerBackgroundColor: '#faf8f5',
+        spacing: 10,
+        fontSize: 12,
+        headerFontSize: 14,
+    });
 
 const gridOptions = {
     theme: myTheme,
@@ -123,7 +255,80 @@ const gridOptions = {
 ```
 {% /if %}
 
-When you run your application, you should see the new theme applied to the grid: 
+{% if isFramework("react") %}
+```jsx
+// Custom theme with Material icons and custom parameters
+const myTheme = themeQuartz
+    .withPart(iconSetMaterial)
+    .withParams({
+        backgroundColor: '#ffffff',
+        foregroundColor: '#1a1a1a',
+        headerBackgroundColor: '#faf8f5',
+        spacing: 10,
+        fontSize: 12,
+        headerFontSize: 14,
+    });
+
+const GridExample = () => {
+    return (
+        <AgGridReact
+            theme={myTheme}
+            // ... other props
+        />
+    );
+};
+```
+{% /if %}
+
+{% if isFramework("angular") %}
+```ts
+// Custom theme with Material icons and custom parameters
+const myTheme = themeQuartz
+    .withPart(iconSetMaterial)
+    .withParams({
+        backgroundColor: '#ffffff',
+        foregroundColor: '#1a1a1a',
+        headerBackgroundColor: '#faf8f5',
+        spacing: 10,
+        fontSize: 12,
+        headerFontSize: 14,
+    });
+
+@Component({
+    selector: 'app-root',
+    template: `<ag-grid-angular [theme]="theme" />`,
+})
+export class AppComponent {
+    theme = myTheme;
+}
+```
+{% /if %}
+
+{% if isFramework("vue") %}
+```js
+// Custom theme with Material icons and custom parameters
+const myTheme = themeQuartz
+    .withPart(iconSetMaterial)
+    .withParams({
+        backgroundColor: '#ffffff',
+        foregroundColor: '#1a1a1a',
+        headerBackgroundColor: '#faf8f5',
+        spacing: 10,
+        fontSize: 12,
+        headerFontSize: 14,
+    });
+
+export default {
+    components: { AgGridVue },
+    setup() {
+        return { theme: myTheme };
+    },
+    template: `<ag-grid-vue :theme="theme" />`,
+};
+```
+{% /if %}
+
+When you run your application, you should see the new theme applied to the grid, with slightly smaller text, and an off-white header background colour: 
 
 {% gridExampleRunner title="Theme Parameters" name="theme-params" suppressDarkMode=true  /%}
 
@@ -139,8 +344,10 @@ To make this simpler, we provide Theme Modes, which allow you to define multiple
 
 To use Theme Modes, you first need to create light and dark colour schemes within your `myTheme` definition, passing an additional string parameter to name the scheme:
 
+{% if isFramework("javascript") %}
 ```js
 const myTheme = themeQuartz
+    .withPart(iconSetMaterial)
     .withParams(
         {
             backgroundColor: '#ffffff',
@@ -150,7 +357,8 @@ const myTheme = themeQuartz
             spacing: 10,
             fontSize: 12,
             headerFontSize: 14,
-        }, 'light' // Light scheme name, used as value of data-ag-theme-mode attribute
+        },
+        'light' // Light scheme name, used as value of data-ag-theme-mode attribute
     )
     .withParams(
         {
@@ -160,20 +368,138 @@ const myTheme = themeQuartz
             selectedRowBackgroundColor: 'rgba(110, 168, 254, 0.2)',
             spacing: 10,
             fontSize: 12,
-        }, 
+        },
         'dark' // Dark scheme name, used as value of data-ag-theme-mode attribute
     );
+
+const gridOptions = {
+    theme: myTheme,
+    // ... other options
+};
 ```
+{% /if %}
+
+{% if isFramework("react") %}
+```jsx
+const myTheme = themeQuartz
+    .withPart(iconSetMaterial)
+    .withParams(
+        {
+            backgroundColor: '#ffffff',
+            foregroundColor: '#1a1a1a',
+            headerBackgroundColor: '#faf8f5',
+            selectedRowBackgroundColor: 'rgba(14, 68, 145, 0.15)',
+            spacing: 10,
+            fontSize: 12,
+            headerFontSize: 14,
+        },
+        'light' // Light scheme name
+    )
+    .withParams(
+        {
+            backgroundColor: '#1e1e2f',
+            foregroundColor: '#e2e8f0',
+            headerBackgroundColor: '#2d2d44',
+            selectedRowBackgroundColor: 'rgba(110, 168, 254, 0.2)',
+            spacing: 10,
+            fontSize: 12,
+        },
+        'dark' // Dark scheme name
+    );
+
+const GridExample = () => {
+    return (
+        <AgGridReact
+            theme={myTheme}
+            // ... other props
+        />
+    );
+};
+```
+{% /if %}
+
+{% if isFramework("angular") %}
+```ts
+const myTheme = themeQuartz
+    .withPart(iconSetMaterial)
+    .withParams(
+        {
+            backgroundColor: '#ffffff',
+            foregroundColor: '#1a1a1a',
+            headerBackgroundColor: '#faf8f5',
+            selectedRowBackgroundColor: 'rgba(14, 68, 145, 0.15)',
+            spacing: 10,
+            fontSize: 12,
+            headerFontSize: 14,
+        },
+        'light' // Light scheme name
+    )
+    .withParams(
+        {
+            backgroundColor: '#1e1e2f',
+            foregroundColor: '#e2e8f0',
+            headerBackgroundColor: '#2d2d44',
+            selectedRowBackgroundColor: 'rgba(110, 168, 254, 0.2)',
+            spacing: 10,
+            fontSize: 12,
+        },
+        'dark' // Dark scheme name
+    );
+
+@Component({
+    selector: 'app-root',
+    template: `<ag-grid-angular [theme]="theme" />`,
+})
+export class AppComponent {
+    theme = myTheme;
+}
+```
+{% /if %}
+
+{% if isFramework("vue") %}
+```js
+const myTheme = themeQuartz
+    .withPart(iconSetMaterial)
+    .withParams(
+        {
+            backgroundColor: '#ffffff',
+            foregroundColor: '#1a1a1a',
+            headerBackgroundColor: '#faf8f5',
+            selectedRowBackgroundColor: 'rgba(14, 68, 145, 0.15)',
+            spacing: 10,
+            fontSize: 12,
+            headerFontSize: 14,
+        },
+        'light' // Light scheme name
+    )
+    .withParams(
+        {
+            backgroundColor: '#1e1e2f',
+            foregroundColor: '#e2e8f0',
+            headerBackgroundColor: '#2d2d44',
+            selectedRowBackgroundColor: 'rgba(110, 168, 254, 0.2)',
+            spacing: 10,
+            fontSize: 12,
+        },
+        'dark' // Dark scheme name
+    );
+
+export default {
+    components: { AgGridVue },
+    setup() {
+        return { theme: myTheme };
+    },
+    template: `<ag-grid-vue :theme="theme" />`,
+};
+```
+{% /if %}
 
 The active colour scheme can be controlled by setting the `data-ag-theme-mode="mode"` attribute on any parent element of the grid, commonly the html or body elements:
 
 {% if isFramework("javascript") %}
 ```js
-
 // Index.html - Button to control colour scheme
-<body data-ag-theme-mode="light">
-    <button id="toggle" onclick="setThemeMode()">Enable Dark Mode</button>
-</body>
+<button id="toggle" onclick="setThemeMode()">Enable Dark Mode</button>
 
 // Main.ts - Colour Scheme toggle logic
 const toggleButton = document.querySelector<HTMLElement>('#toggle')!;
@@ -185,6 +511,94 @@ function setThemeMode() {
     document.body.dataset.agThemeMode = nextMode;
     toggleButton.innerText = nextMode === 'dark' ? 'Enable Light Mode' : 'Enable Dark Mode';
 }
+
+// Set initial mode
+document.body.dataset.agThemeMode = 'light';
+```
+{% /if %}
+
+{% if isFramework("react") %}
+```jsx
+const GridExample = () => {
+    const [isDarkMode, setIsDarkMode] = useState(false);
+
+    const toggleThemeMode = () => {
+        const nextMode = isDarkMode ? 'light' : 'dark';
+        document.body.dataset.agThemeMode = nextMode;
+        setIsDarkMode(!isDarkMode);
+    };
+
+    // Set initial mode
+    useEffect(() => {
+        document.body.dataset.agThemeMode = 'light';
+    }, []);
+
+    return (
+        <>
+            <button onClick={toggleThemeMode}>
+                {isDarkMode ? 'Enable Light Mode' : 'Enable Dark Mode'}
+            </button>
+            <AgGridReact theme={myTheme} /* ... other props */ />
+        </>
+    );
+};
+```
+{% /if %}
+
+{% if isFramework("angular") %}
+```ts
+@Component({
+    selector: 'app-root',
+    template: `
+        <button (click)="toggleThemeMode()">{{ buttonText }}</button>
+        <ag-grid-angular [theme]="theme" />
+    `,
+})
+export class AppComponent implements OnInit {
+    theme = myTheme;
+    isDarkMode = false;
+    buttonText = 'Enable Dark Mode';
+
+    ngOnInit() {
+        document.body.dataset['agThemeMode'] = 'light';
+    }
+
+    toggleThemeMode() {
+        this.isDarkMode = !this.isDarkMode;
+        const nextMode = this.isDarkMode ? 'dark' : 'light';
+        document.body.dataset['agThemeMode'] = nextMode;
+        this.buttonText = this.isDarkMode ? 'Enable Light Mode' : 'Enable Dark Mode';
+    }
+}
+```
+{% /if %}
+
+{% if isFramework("vue") %}
+```js
+export default {
+    components: { AgGridVue },
+    setup() {
+        const isDarkMode = ref(false);
+        const buttonText = ref('Enable Dark Mode');
+
+        onMounted(() => {
+            document.body.dataset.agThemeMode = 'light';
+        });
+
+        const toggleThemeMode = () => {
+            isDarkMode.value = !isDarkMode.value;
+            const nextMode = isDarkMode.value ? 'dark' : 'light';
+            document.body.dataset.agThemeMode = nextMode;
+            buttonText.value = isDarkMode.value ? 'Enable Light Mode' : 'Enable Dark Mode';
+        };
+
+        return { theme: myTheme, toggleThemeMode, buttonText };
+    },
+    template: `
+        <button @click="toggleThemeMode">{{ buttonText }}</button>
+        <ag-grid-vue :theme="theme" />
+    `,
+};
 ```
 {% /if %}
 
@@ -286,6 +700,57 @@ const columnDefs = [
 ```
 {% /if %}
 
+{% if isFramework("react") %}
+```jsx
+// Column Definition with Cell Class Rules
+const [columnDefs] = useState([
+    {
+        field: 'status',
+        cellClassRules: {
+            'status-delivered': (params) => params.value === 'Delivered',
+            'status-pending': (params) => params.value === 'Pending',
+            'status-cancelled': (params) => params.value === 'Cancelled',
+        },
+    },
+    // Other columns...
+]);
+```
+{% /if %}
+
+{% if isFramework("angular") %}
+```ts
+// Column Definition with Cell Class Rules
+colDefs: ColDef[] = [
+    {
+        field: 'status',
+        cellClassRules: {
+            'status-delivered': (params) => params.value === 'Delivered',
+            'status-pending': (params) => params.value === 'Pending',
+            'status-cancelled': (params) => params.value === 'Cancelled',
+        },
+    },
+    // Other columns...
+];
+```
+{% /if %}
+
+{% if isFramework("vue") %}
+```js
+// Column Definition with Cell Class Rules
+const columnDefs = ref([
+    {
+        field: 'status',
+        cellClassRules: {
+            'status-delivered': (params) => params.value === 'Delivered',
+            'status-pending': (params) => params.value === 'Pending',
+            'status-cancelled': (params) => params.value === 'Cancelled',
+        },
+    },
+    // Other columns...
+]);
+```
+{% /if %}
+
 And then add the relevant styles to your CSS:
 
 ```css
@@ -318,11 +783,57 @@ For example, to apply a `high-sales` class to rows where the `salesRevenue` is g
 
 {% if isFramework("javascript") %}
 ```js
-// main.ts - Grid Options with Row Class Rules
 const gridOptions = {
     rowClassRules: {
         'high-sales': params => params.data.salesRevenue > 10000,
     }
+};
+```
+{% /if %}
+
+{% if isFramework("react") %}
+```jsx
+const rowClassRules = useMemo(() => ({
+    'high-sales': params => params.data.salesRevenue > 10000,
+}), []);
+
+const GridExample = () => {
+    return (
+        <AgGridReact
+            rowClassRules={rowClassRules}
+            // ... other props
+        />
+    );
+};
+```
+{% /if %}
+
+{% if isFramework("angular") %}
+```ts
+@Component({
+    selector: 'app-root',
+    template: `<ag-grid-angular [rowClassRules]="rowClassRules" />`,
+})
+export class AppComponent {
+    rowClassRules: RowClassRules = {
+        'high-sales': params => params.data.salesRevenue > 10000,
+    };
+}
+```
+{% /if %}
+
+{% if isFramework("vue") %}
+```js
+export default {
+    components: { AgGridVue },
+    setup() {
+        const rowClassRules = {
+            'high-sales': params => params.data.salesRevenue > 10000,
+        };
+
+        return { rowClassRules };
+    },
+    template: `<ag-grid-vue :rowClassRules="rowClassRules" />`,
 };
 ```
 {% /if %}
