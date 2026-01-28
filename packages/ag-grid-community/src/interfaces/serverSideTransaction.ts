@@ -15,10 +15,7 @@ export interface ServerSideTransaction<TData = any> {
     remove?: TData[];
     /** Rows to update */
     update?: TData[];
-    /**
-     * Optional total row count, mirroring the getRows success response `rowCount`.
-     * Use this when a transaction updates the known total row count.
-     */
+    /** Optional new total row count. Use this when a transaction deletes rows that are not currently in cache. */
     rowCount?: number;
 }
 
