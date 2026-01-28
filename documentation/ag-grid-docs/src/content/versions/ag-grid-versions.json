@@ -115,7 +115,7 @@
             },
             {
                 "text": "Compact Column Headers",
-                "path": "./column-headers/#hide-padded-column-headers"
+                "path": "./column-groups/#hide-padded-header-rows"
             },
             {
                 "text": "Grid Context in Integrated Charts",

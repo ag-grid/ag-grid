@@ -247,7 +247,7 @@
         "hidePaddedHeaderRows": {
             "more": {
                 "name": "Hiding Additional Header Rows",
-                "url": "./column-headers/#hide-padded-column-headers"
+                "url": "./column-groups/#hide-padded-header-rows"
             }
         }
     },
