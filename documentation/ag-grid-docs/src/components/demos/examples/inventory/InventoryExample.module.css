@@ -121,10 +121,6 @@
     padding: 16px;
 }
 
-:global(.ag-theme-quartz .ag-paging-panel) {
-    height: 40px;
-}
-
 :global(.ag-theme-quartz .ag-paging-panel > span:last-child) {
     margin-right: 0;
 }

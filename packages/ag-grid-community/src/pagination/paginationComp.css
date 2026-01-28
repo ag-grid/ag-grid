@@ -48,3 +48,8 @@
 .ag-paging-row-summary-panel-number {
     font-weight: 500;
 }
+
+.ag-paging-description {
+    /* avoids misalignment of buttons and text */
+    line-height: 0;
+}
