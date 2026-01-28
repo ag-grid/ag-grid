@@ -1138,7 +1138,7 @@ export class LazyCache extends BeanStub {
     }
 
     public removeRowNodes(idsToRemove: string[], newRowCount?: number): RowNode[] {
-        const { nodeMap, numberOfRows, isLastRowKnown, lazyBlockLoadingSvc } = this;
+        const { nodeMap, lazyBlockLoadingSvc } = this;
         const removedNodes: RowNode[] = [];
         const nodesToVerify: RowNode[] = [];
 
@@ -1188,19 +1188,19 @@ export class LazyCache extends BeanStub {
          *    These can be either nodes out of cached blocks or nodes that just were in cache and were deleted via a transaction
          *
          * If available, set new row count using user supplied number;
-         * else subtract 'known' + 'out-of-bounds' nodes when last index is known, and user doesn't give us the new row count;
-         * else subtract 'known' nodes when last index is unknown, and we do pessimistic approach.
+         * else subtract 'known' + 'out-of-bounds' nodes when last index is known and all deleted nodes were in cache, this is an optimistic approach;
+         * else subtract 'known' nodes when last index is unknown, this is a pessimistic approach.
          */
         let delta;
         if (isNewRowCountValid) {
-            delta = numberOfRows - newRowCount;
-        } else if (isLastRowKnown && (!remainingIdsToRemove.length || nodesToVerify.length > 0)) {
+            delta = this.numberOfRows - newRowCount;
+        } else if (this.isLastRowKnown && (!remainingIdsToRemove.length || nodesToVerify.length > 0)) {
             delta = idsToRemove.length;
         } else {
             delta = removedNodes.length;
         }
         this.numberOfRows -= delta;
-        this.isLastRowKnown = isNewRowCountValid || isLastRowKnown;
+        this.isLastRowKnown = isNewRowCountValid || this.isLastRowKnown;
 
         if (remainingIdsToRemove.length > 0 && nodesToVerify.length > 0) {
             nodesToVerify.forEach((node) => (node.__needsRefreshWhenVisible = true));
