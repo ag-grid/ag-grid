@@ -22,10 +22,7 @@ export const _injectGlobalCSS = (
     nonce: string | undefined,
     isParams: boolean = false
 ) => {
-    if (IS_SSR) {
-        return;
-    }
-    if (FORCE_LEGACY_THEMES) {
+    if (IS_SSR || FORCE_LEGACY_THEMES) {
         return;
     }
 
@@ -86,17 +83,22 @@ export const _injectCoreAndModuleCSS = (
 };
 
 export const _unregisterInstanceUsingThemingAPI = (environment: IEnvironment) => {
-    const gridState = injectionState.grids.get(environment);
-    if (!gridState) {
+    const styleContainer = injectionState.grids.get(environment)?.styleContainer;
+    if (!styleContainer) {
         return;
     }
     injectionState.grids.delete(environment);
-    removeStaleParamsCss(gridState.styleContainer);
-    if (injectionState.grids.size === 0) {
-        injectionState.map = new WeakMap();
-        for (const style of document.head.querySelectorAll('style[data-ag-global-css]')) {
+
+    const containerStillInUse = Array.from(injectionState.grids.values()).some(
+        (gs) => gs.styleContainer === styleContainer
+    );
+    if (containerStillInUse) {
+        removeStaleParamsCss(styleContainer);
+    } else {
+        for (const style of styleContainer.querySelectorAll('style[data-ag-global-css]')) {
             style.remove();
         }
+        injectionState.map.delete(styleContainer);
     }
 };
 
@@ -127,11 +129,12 @@ export const _useParamsCss = (
 };
 
 const removeStaleParamsCss = (styleContainer: HTMLElement) => {
-    const neededCss = new Set(
-        Array.from(injectionState.grids.values())
-            .filter((gs) => gs.styleContainer === styleContainer)
-            .map((gs) => gs.paramsCss)
-    );
+    const neededCss = new Set();
+    for (const gs of injectionState.grids.values()) {
+        if (gs.styleContainer === styleContainer) {
+            neededCss.add(gs.paramsCss);
+        }
+    }
 
     const injections = injectionState.map.get(styleContainer) ?? [];
     for (let i = injections.length - 1; i >= 0; i--) {
