@@ -4,11 +4,10 @@ import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IEnvironment } from '../interfaces/iEnvironment';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import {
-    IS_SSR,
     _injectCoreAndModuleCSS,
     _injectGlobalCSS,
-    _registerInstanceUsingThemingAPI,
     _unregisterInstanceUsingThemingAPI,
+    _useParamsCss,
 } from '../theming/inject';
 import type { Theme } from '../theming/theme';
 import { ThemeImpl } from '../theming/themeImpl';
@@ -16,8 +15,6 @@ import type { ParamType } from '../theming/themeTypeUtils';
 import { paramToVariableName } from '../theming/themeUtils';
 import { _createAgElement, _isInDOM, _observeResize } from '../utils/dom';
 import { AgBeanStub } from './agBeanStub';
-
-let paramsId = 0;
 
 const LIST_ITEM_HEIGHT: CssVariable<BaseCssChangeKeys> = {
     changeKey: 'listItemHeight',
@@ -52,9 +49,7 @@ export abstract class BaseEnvironment<
         this.eRootDiv = beans.eRootDiv;
     }
 
-    private readonly paramsClass = `ag-theme-params-${++paramsId}`;
     private theme: ThemeImpl | undefined;
-    private eParamsStyle: HTMLStyleElement | undefined;
     private readonly globalCSS: [string, string][] = [];
 
     protected abstract initVariables(): void;
@@ -100,13 +95,7 @@ export abstract class BaseEnvironment<
 
     public applyThemeClasses(el: HTMLElement, extraClasses: string[] = []): void {
         const { theme } = this;
-        let themeClass: string;
-        if (theme) {
-            // Theming API mode
-            themeClass = `${this.paramsClass} ${theme._getCssClass()}`;
-        } else {
-            themeClass = this.applyLegacyThemeClasses();
-        }
+        const themeClass = theme ? theme._getCssClass() : this.applyLegacyThemeClasses();
 
         for (const className of Array.from(el.classList)) {
             if (className.startsWith('ag-theme-')) {
@@ -276,7 +265,6 @@ export abstract class BaseEnvironment<
         const { gos, eRootDiv, globalCSS } = this;
         const additionalCss = this.getAdditionalCss();
         if (newTheme) {
-            _registerInstanceUsingThemingAPI(this);
             _injectCoreAndModuleCSS(this.eStyleContainer, this.cssLayer, this.styleNonce, additionalCss);
             for (const [css, debugId] of globalCSS) {
                 _injectGlobalCSS(css, this.eStyleContainer, debugId, this.cssLayer, 0, this.styleNonce);
@@ -291,18 +279,15 @@ export abstract class BaseEnvironment<
             nonce: this.styleNonce,
             moduleCss: additionalCss,
         });
-        let eParamsStyle = this.eParamsStyle;
-        if (!eParamsStyle) {
-            eParamsStyle = this.eParamsStyle = _createAgElement<HTMLStyleElement>({ tag: 'style' });
-            const styleNonce = gos.get('styleNonce');
-            if (styleNonce) {
-                eParamsStyle.setAttribute('nonce', styleNonce);
-            }
-            eRootDiv.appendChild(eParamsStyle);
-        }
-        if (!IS_SSR) {
-            eParamsStyle.textContent = newTheme?._getPerInstanceCss(this.paramsClass) || '';
-        }
+
+        _useParamsCss(
+            this,
+            newTheme?._getParamsCss() ?? null,
+            newTheme?._getParamsClassName() ?? null,
+            this.eStyleContainer,
+            this.cssLayer,
+            this.styleNonce
+        );
 
         this.applyThemeClasses(eRootDiv);
         this.fireStylesChangedEvent('theme');

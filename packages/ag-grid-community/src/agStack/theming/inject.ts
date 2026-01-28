@@ -10,6 +10,7 @@ type InjectedStyle = {
     css: string;
     el: HTMLStyleElement;
     priority: number;
+    isParams: boolean;
 };
 
 export const _injectGlobalCSS = (
@@ -18,7 +19,8 @@ export const _injectGlobalCSS = (
     debugId: string,
     layer: string | undefined,
     priority: number,
-    nonce: string | undefined
+    nonce: string | undefined,
+    isParams: boolean = false
 ) => {
     if (IS_SSR) {
         return;
@@ -48,7 +50,7 @@ export const _injectGlobalCSS = (
     }
     el.dataset.agGlobalCss = debugId;
     el.textContent = css;
-    const newInjection = { css, el, priority };
+    const newInjection: InjectedStyle = { css, el, priority, isParams };
 
     let insertAfter: InjectedStyle | undefined;
     for (const injection of injections) {
@@ -83,11 +85,13 @@ export const _injectCoreAndModuleCSS = (
     );
 };
 
-export const _registerInstanceUsingThemingAPI = (environment: IEnvironment) => {
-    injectionState.grids.add(environment);
-};
 export const _unregisterInstanceUsingThemingAPI = (environment: IEnvironment) => {
+    const gridState = injectionState.grids.get(environment);
+    if (!gridState) {
+        return;
+    }
     injectionState.grids.delete(environment);
+    removeStaleParamsCss(gridState.styleContainer);
     if (injectionState.grids.size === 0) {
         injectionState.map = new WeakMap();
         for (const style of document.head.querySelectorAll('style[data-ag-global-css]')) {
@@ -96,11 +100,58 @@ export const _unregisterInstanceUsingThemingAPI = (environment: IEnvironment) =>
     }
 };
 
+export const _useParamsCss = (
+    environment: IEnvironment,
+    paramsCss: string | null,
+    paramsDebugId: string | null,
+    styleContainer: HTMLElement,
+    layer: string | undefined,
+    nonce: string | undefined
+) => {
+    if (IS_SSR || FORCE_LEGACY_THEMES) {
+        return;
+    }
+
+    const gridState = injectionState.grids.get(environment);
+    if (!gridState) {
+        injectionState.grids.set(environment, { styleContainer, paramsCss });
+    } else {
+        gridState.paramsCss = paramsCss;
+    }
+
+    removeStaleParamsCss(styleContainer);
+
+    if (paramsCss && paramsDebugId) {
+        _injectGlobalCSS(paramsCss, styleContainer, paramsDebugId, layer, 2, nonce, true);
+    }
+};
+
+const removeStaleParamsCss = (styleContainer: HTMLElement) => {
+    const neededCss = new Set(
+        Array.from(injectionState.grids.values())
+            .filter((gs) => gs.styleContainer === styleContainer)
+            .map((gs) => gs.paramsCss)
+    );
+
+    const injections = injectionState.map.get(styleContainer) ?? [];
+    for (let i = injections.length - 1; i >= 0; i--) {
+        if (injections[i].isParams && !neededCss.has(injections[i].css)) {
+            injections[i].el.remove();
+            injections.splice(i, 1);
+        }
+    }
+};
+
+type InjectedGridCssState = {
+    styleContainer: HTMLElement;
+    paramsCss: string | null;
+};
+
 type InjectionState = {
-    // Set of grids that are using the theming API
-    grids: Set<object>;
     // Map of style containers to injected styles
     map: WeakMap<HTMLElement, InjectedStyle[]>;
+    // Map of environments to their grid state
+    grids: Map<IEnvironment, InjectedGridCssState>;
 };
 
 type WindowState = {
@@ -117,5 +168,5 @@ const injectionState: InjectionState = ((typeof window === 'object'
     : {}
 ).agStyleInjectionState ??= {
     map: new WeakMap(),
-    grids: new Set(),
+    grids: new Map(),
 });
