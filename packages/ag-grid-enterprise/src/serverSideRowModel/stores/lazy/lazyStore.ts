@@ -167,7 +167,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
                 idFunc({ level: this.level, parentKeys: this.parentRowNode.getRoute() ?? [], data })
             );
             const allUniqueIdsToRemove = [...new Set(allIdsToRemove)];
-            removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove);
+            removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove, transaction.rowCount);
         }
 
         const isClientSideSortingEnabled = this.gos.get('serverSideEnableClientSideSort');
@@ -177,11 +177,6 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         if (isClientSideSort && isUpdateOrAdd) {
             // if client side sorting, we need to sort the rows after the transaction
             this.cache.clientSideSortRows();
-        }
-
-        if (transaction.rowCount != null && transaction.rowCount >= 0) {
-            // trust user on this one
-            this.setRowCount(transaction.rowCount, true);
         }
 
         this.updateSelectionAfterTransaction(updatedNodes, removedNodes);

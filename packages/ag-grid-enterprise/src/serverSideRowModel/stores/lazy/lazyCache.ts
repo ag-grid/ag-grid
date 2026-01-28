@@ -1137,12 +1137,10 @@ export class LazyCache extends BeanStub {
         );
     }
 
-    public removeRowNodes(idsToRemove: string[]): RowNode[] {
+    public removeRowNodes(idsToRemove: string[], newRowCount?: number): RowNode[] {
+        const { nodeMap, numberOfRows, isLastRowKnown, lazyBlockLoadingSvc } = this;
         const removedNodes: RowNode[] = [];
         const nodesToVerify: RowNode[] = [];
-
-        // track how many nodes have been deleted, as when we pass other nodes we need to shift them up
-        let deletedNodeCount = 0;
 
         const remainingIdsToRemove = [...idsToRemove];
 
@@ -1160,12 +1158,11 @@ export class LazyCache extends BeanStub {
 
                 this.destroyRowAtIndex(Number(stringIndex));
                 removedNodes.push(node.node);
-                deletedNodeCount += 1;
                 continue;
             }
 
             // no nodes removed and this node doesn't match, so no need to shift
-            if (deletedNodeCount === 0) {
+            if (removedNodes.length === 0) {
                 continue;
             }
 
@@ -1175,26 +1172,40 @@ export class LazyCache extends BeanStub {
             }
 
             // shift normal node up by number of deleted prior to this point
-            this.nodeMap.delete(node);
-            this.nodeMap.set({
+            nodeMap.delete(node);
+            nodeMap.set({
                 id: node.id,
                 node: node.node,
-                index: numericStoreIndex - deletedNodeCount,
+                index: numericStoreIndex - removedNodes.length,
             });
         }
 
-        let isLastRowKnown = this.isLastRowIndexKnown();
+        const isNewRowCountValid = newRowCount != null && newRowCount >= 0;
 
-        if (remainingIdsToRemove.length > 0) {
-            if (nodesToVerify.length > 0) {
-                nodesToVerify.forEach((node) => (node.__needsRefreshWhenVisible = true));
-                this.lazyBlockLoadingSvc.queueLoadCheck();
-            } else {
-                isLastRowKnown = false;
-            }
+        /**
+         * 'known' nodes are ones in lazy cache
+         * 'unknown' or 'out-of-bounds' nodes are nodes that are not in cache currently.
+         *    These can be either nodes out of cached blocks or nodes that just were in cache and were deleted via a transaction
+         *
+         * If available, set new row count using user supplied number;
+         * else subtract 'known' + 'out-of-bounds' nodes when last index is known, and user doesn't give us the new row count;
+         * else subtract 'known' nodes when last index is unknown, and we do pessimistic approach.
+         */
+        let delta;
+        if (isNewRowCountValid) {
+            delta = numberOfRows - newRowCount;
+        } else if (isLastRowKnown && (!remainingIdsToRemove.length || nodesToVerify.length > 0)) {
+            delta = idsToRemove.length;
+        } else {
+            delta = removedNodes.length;
         }
+        this.numberOfRows -= delta;
+        this.isLastRowKnown = isNewRowCountValid || isLastRowKnown;
 
-        this.numberOfRows -= isLastRowKnown ? idsToRemove.length : deletedNodeCount;
+        if (remainingIdsToRemove.length > 0 && nodesToVerify.length > 0) {
+            nodesToVerify.forEach((node) => (node.__needsRefreshWhenVisible = true));
+            lazyBlockLoadingSvc.queueLoadCheck();
+        }
 
         return removedNodes;
     }
