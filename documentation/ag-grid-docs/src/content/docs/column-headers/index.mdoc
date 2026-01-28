@@ -7,7 +7,9 @@ Each Column has a Column Header providing a Header Name and typically functions 
 
 ## Header Name
 
-When no header name is provided, the grid will derive the header name from the provided `field`. The grid expects the field value to use Camel Case and will insert spaces between word breaks to build a readable header name.
+When no header name is provided, the grid will derive the header name from the provided `field`. The grid expects the field value to use Camel Case and will insert spaces between word breaks to build a readable header name. Alternatively, you can provide your own header name using the `headerName` property of the `ColDef`.
+
+{% apiDocumentation source="column-properties/properties.json" section="header" names=["headerName"] /%}
 
 ```{% frameworkTransform=true suppressFrameworkContext=true spaceBetweenProperties=true %}
 const gridOptions = {
