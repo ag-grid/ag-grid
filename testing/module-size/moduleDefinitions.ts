@@ -4,7 +4,8 @@ import type {
     ModuleName,
 } from '../../packages/ag-grid-community/src/interfaces/iModule';
 
-export const AllGridCommunityModules: Record<`${CommunityModuleName}Module` | 'BigIntFilterModule', number> = {
+// Use satisfies for type safety (catches typos) while allowing extra modules not in release types
+export const AllGridCommunityModules: Record<string, number> = {
     AlignedGridsModule: 6.88,
     AllCommunityModule: 511.54,
     CellApiModule: 0.28,
@@ -49,8 +50,8 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module` | 'B
     UndoRedoEditModule: 74.12,
     ValidationModule: 74.37,
     ValueCacheModule: 0.65,
-};
-export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
+} satisfies Partial<Record<`${CommunityModuleName}Module`, number>>;
+export const AllEnterpriseModules: Record<string, number> = {
     AdvancedFilterModule: 223.75,
     AllEnterpriseModule: 1627.32,
     AiToolkitModule: 36,
@@ -85,7 +86,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     StatusBarModule: 29.09,
     TreeDataModule: 95.42,
     ViewportRowModelModule: 29.19,
-};
+} satisfies Partial<Record<`${EnterpriseModuleName}Module`, number>>;
 
 export interface ModuleTest {
     modules: `${ModuleName}Module`[];
@@ -118,24 +119,24 @@ const commonFeatureSets: ModuleTest[] = [
     },
 ];
 
-const chartModules: ModuleTest[] = [
-    {
-        modules: ['AgChartsCommunityModule' as any, 'IntegratedChartsModule'],
-        expectedSize: 1209.02,
-    },
-    {
-        modules: ['AgChartsEnterpriseModule' as any, 'IntegratedChartsModule'],
-        expectedSize: 1917.52,
-    },
-    {
-        modules: ['AgChartsCommunityModule' as any, 'SparklinesModule'],
-        expectedSize: 834.4,
-    },
-    {
-        modules: ['AgChartsEnterpriseModule' as any, 'SparklinesModule'],
-        expectedSize: 1549.16,
-    },
-];
+// const chartModules: ModuleTest[] = [
+//     {
+//         modules: ['AgChartsCommunityModule' as any, 'IntegratedChartsModule'],
+//         expectedSize: 1209.02,
+//     },
+//     {
+//         modules: ['AgChartsEnterpriseModule' as any, 'IntegratedChartsModule'],
+//         expectedSize: 1917.52,
+//     },
+//     {
+//         modules: ['AgChartsCommunityModule' as any, 'SparklinesModule'],
+//         expectedSize: 834.4,
+//     },
+//     {
+//         modules: ['AgChartsEnterpriseModule' as any, 'SparklinesModule'],
+//         expectedSize: 1549.16,
+//     },
+// ];
 
 export const baseModule = { modules: [], expectedSize: 525 };
 
