@@ -36,6 +36,9 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
     /** Whether the model is currently refreshing */
     readonly isRefreshing: boolean;
 
+    /** Whether the model is currently refreshing */
+    readonly refreshingModel: boolean;
+
     updateRowData(rowDataTran: RowDataTransaction<TData>): RowNodeTransaction<TData> | null;
     refreshModel(params: RefreshModelParams): void;
     forEachLeafNode(callback: ForEachNodeCallback<TData>): void;

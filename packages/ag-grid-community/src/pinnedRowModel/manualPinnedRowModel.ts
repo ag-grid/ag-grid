@@ -404,7 +404,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
 
     /** Refreshes CSRM if not already refreshing */
     private refreshCSRM(): void {
-        if (this.csrm && !this.csrm.isRefreshing) {
+        if (this.csrm && !this.csrm.refreshingModel) {
             this.csrm.refreshModel({ step: 'map' });
         }
     }
