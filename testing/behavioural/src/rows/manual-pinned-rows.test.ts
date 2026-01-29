@@ -234,8 +234,12 @@ describe('Manual pinned rows', () => {
             enableRowPinning: true,
             isRowPinned: (node) => {
                 const sport = node.data?.sport;
-                if (sport === 'rugby' || sport === 'tennis') return 'top';
-                if (sport === 'golf') return 'bottom';
+                if (sport === 'rugby' || sport === 'tennis') {
+                    return 'top';
+                }
+                if (sport === 'golf') {
+                    return 'bottom';
+                }
                 return null;
             },
             getRowId(params) {
@@ -315,3 +319,4 @@ describe('Manual pinned rows', () => {
         assertPinnedRows(api, 'top', ['t-top-0-rugby']);
     });
 });
+
