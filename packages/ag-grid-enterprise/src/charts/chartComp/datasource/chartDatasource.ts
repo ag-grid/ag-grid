@@ -351,7 +351,15 @@ export class ChartDatasource extends BeanStub {
                             .filter((child: any) => typeof child[colId] !== 'undefined')
                             .map((child: any) => child[colId]);
 
-                        const aggResult: any = _aggregateValues(this.beans, dataToAgg, params.aggFunc, col);
+                        const aggResult: any = _aggregateValues({
+                            beans: this.beans,
+                            values: dataToAgg,
+                            aggFuncOrString: params.aggFunc,
+                            column: col,
+                            rowNode: undefined,
+                            pivotResultColumn: undefined,
+                            aggregatedChildren: [],
+                        });
                         groupItem[colId] =
                             aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
 
@@ -361,19 +369,30 @@ export class ChartDatasource extends BeanStub {
                             .filter((child: any) => typeof child[filteredOutColId] !== 'undefined')
                             .map((child: any) => child[filteredOutColId]);
 
-                        const aggResultFiltered: any = _aggregateValues(
-                            this.beans,
-                            dataToAggFiltered,
-                            params.aggFunc,
-                            col
-                        );
+                        const aggResultFiltered: any = _aggregateValues({
+                            beans: this.beans,
+                            values: dataToAggFiltered,
+                            aggFuncOrString: params.aggFunc,
+                            column: col,
+                            rowNode: undefined,
+                            pivotResultColumn: undefined,
+                            aggregatedChildren: [],
+                        });
                         groupItem[filteredOutColId] =
                             aggResultFiltered && typeof aggResultFiltered.value !== 'undefined'
                                 ? aggResultFiltered.value
                                 : aggResultFiltered;
                     } else {
                         const dataToAgg = groupItem.__children.map((child: any) => child[colId]);
-                        const aggResult = _aggregateValues(this.beans, dataToAgg, params.aggFunc, col);
+                        const aggResult = _aggregateValues({
+                            beans: this.beans,
+                            values: dataToAgg,
+                            aggFuncOrString: params.aggFunc,
+                            column: col,
+                            rowNode: undefined,
+                            pivotResultColumn: undefined,
+                            aggregatedChildren: [],
+                        });
 
                         groupItem[colId] =
                             aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;

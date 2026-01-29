@@ -521,8 +521,7 @@ export class RowNode<TData = any>
         // This allows groupRowValueSetter to cascade edits using the same column reference for both
         // group and leaf rows. Skip resolution if the pivot column has a custom valueSetter, since the
         // user may have configured custom edit handling via processPivotResultColDef.
-        // Pinned rows are excluded too as they may have different data structures.
-        if (!this.group && !this.rowPinned) {
+        if (!this.group) {
             const colDef = column.getColDef();
             if (colDef.pivotValueColumn && !colDef.valueSetter) {
                 column = colDef.pivotValueColumn as AgColumn;
@@ -821,11 +820,10 @@ export class RowNode<TData = any>
         }
 
         // Unpin any pinned sibling when this source row is destroyed.
-        // Only do this when destroying the source row (not the pinned row itself).
-        // We check if pinnedSibling.rowPinned is set to determine if this is the source row.
-        // (When _destroyRowNodeSibling destroys a pinned row, it sets rowPinned=null before calling _destroy)
+        // Only do this when destroying the source row (not the pinned row itself,
+        // since pinnedSibling of a pinned row points back to the source row).
         const pinnedSibling = this.pinnedSibling;
-        if (pinnedSibling?.rowPinned) {
+        if (pinnedSibling && !this.rowPinned) {
             this.beans.pinnedRowModel?.pinRow(pinnedSibling, null);
         }
 

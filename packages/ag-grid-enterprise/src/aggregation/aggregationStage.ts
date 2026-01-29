@@ -181,15 +181,15 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
             }
 
             // bit of a memory drain storing null/undefined, but seems to speed up performance.
-            result[colDef.colId!] = _aggregateValues(
+            result[colDef.colId!] = _aggregateValues({
                 beans,
                 values,
-                pivotValueColumn.getAggFunc()!,
-                pivotValueColumn,
+                aggFuncOrString: pivotValueColumn.getAggFunc()!,
+                column: pivotValueColumn,
                 rowNode,
-                secondaryCol,
-                aggregatedChildren
-            );
+                pivotResultColumn: secondaryCol,
+                aggregatedChildren: aggregatedChildren ?? [],
+            });
         }
 
         if (!canSkipTotalColumns) {
@@ -206,15 +206,15 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
                 );
                 // bit of a memory drain storing null/undefined, but seems to speed up performance.
                 // For total columns, aggregatedChildren is the same as the parent node's children
-                result[colDef.colId!] = _aggregateValues(
+                result[colDef.colId!] = _aggregateValues({
                     beans,
-                    aggResults,
-                    colDef.pivotValueColumn!.getAggFunc()!,
-                    colDef.pivotValueColumn as AgColumn,
+                    values: aggResults,
+                    aggFuncOrString: colDef.pivotValueColumn!.getAggFunc()!,
+                    column: colDef.pivotValueColumn as AgColumn,
                     rowNode,
-                    secondaryCol,
-                    rowNode.childrenAfterFilter
-                );
+                    pivotResultColumn: secondaryCol,
+                    aggregatedChildren: rowNode.childrenAfterFilter ?? [],
+                });
             }
         }
 
@@ -242,15 +242,15 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         const beans = this.beans;
 
         changedValueColumns.forEach((valueColumn, index) => {
-            result[valueColumn.getId()] = _aggregateValues(
+            result[valueColumn.getId()] = _aggregateValues({
                 beans,
-                values2d[index],
-                valueColumn.getAggFunc()!,
-                valueColumn,
+                values: values2d[index],
+                aggFuncOrString: valueColumn.getAggFunc()!,
+                column: valueColumn,
                 rowNode,
-                undefined,
-                aggregatedChildren
-            );
+                pivotResultColumn: undefined,
+                aggregatedChildren,
+            });
         });
 
         if (notChangedValueColumns && oldValues) {
@@ -271,7 +271,11 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         // Pinned siblings copy children references at creation time, but those references become stale
         // when filtering/sorting updates the source row's children arrays.
         if (rowNode.rowPinned) {
-            rowNode = rowNode.pinnedSibling ?? rowNode;
+            const sourceRow = rowNode.pinnedSibling;
+            if (!sourceRow) {
+                return [];
+            }
+            rowNode = sourceRow;
         }
 
         const colDef = col?.getColDef();
