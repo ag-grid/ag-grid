@@ -379,8 +379,8 @@ const getNodesFromMappedSet = (mappedSet: any, keys: string[] | null | undefined
         return undefined;
     }
     let mapPointer = mappedSet;
-    for (let i = 0; i < keys.length; i++) {
-        mapPointer = mapPointer?.[keys[i]];
+    for (let i = 0; i < keys.length && mapPointer; i++) {
+        mapPointer = mapPointer[keys[i]];
     }
     // Only return if we reached an array of RowNodes. If keys is empty or traversal
     // ends at a non-array (e.g., intermediate map object), return undefined.
