@@ -5,7 +5,7 @@ import type {
 } from '../../packages/ag-grid-community/src/interfaces/iModule';
 
 // Use satisfies for type safety (catches typos) while allowing extra modules not in release types
-export const AllGridCommunityModules: Record<string, number> = {
+export const AllGridCommunityModules: Record<`${CommunityModuleName}Module` | 'BigIntFilterModule', number> = {
     AlignedGridsModule: 6.88,
     AllCommunityModule: 511.54,
     CellApiModule: 0.28,
@@ -50,8 +50,8 @@ export const AllGridCommunityModules: Record<string, number> = {
     UndoRedoEditModule: 74.12,
     ValidationModule: 74.37,
     ValueCacheModule: 0.65,
-} satisfies Partial<Record<`${CommunityModuleName}Module` | 'BigIntFilterModule', number>>;
-export const AllEnterpriseModules: Record<string, number> = {
+};
+export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 223.75,
     AllEnterpriseModule: 1627.32,
     AiToolkitModule: 36,
@@ -86,7 +86,7 @@ export const AllEnterpriseModules: Record<string, number> = {
     StatusBarModule: 29.09,
     TreeDataModule: 95.42,
     ViewportRowModelModule: 29.19,
-} satisfies Partial<Record<`${EnterpriseModuleName}Module`, number>>;
+};
 
 export interface ModuleTest {
     modules: `${ModuleName}Module`[];
