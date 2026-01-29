@@ -135,9 +135,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             if (level === -1) {
                 this._grandTotalPinned = float;
                 // Skip refresh if already refreshing or processing a model update event
-                if (!this._processingModelUpdate) {
-                    this.refreshCSRM();
-                }
+                this.refreshCSRM();
                 return;
             }
         }
@@ -399,6 +397,10 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
 
     /** Refreshes CSRM if not already refreshing */
     private refreshCSRM(): void {
+        if (this._processingModelUpdate) {
+            return; // prevent refreshing while processing model update
+        }
+
         const csrm = this.csrm;
         if (csrm && !csrm.refreshingModel) {
             csrm.refreshModel({ step: 'map' });
