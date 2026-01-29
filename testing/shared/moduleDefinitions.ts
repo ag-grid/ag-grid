@@ -50,7 +50,7 @@ export const AllGridCommunityModules: Record<string, number> = {
     UndoRedoEditModule: 74.12,
     ValidationModule: 74.37,
     ValueCacheModule: 0.65,
-} satisfies Partial<Record<`${CommunityModuleName}Module`, number>>;
+} satisfies Partial<Record<`${CommunityModuleName}Module` | 'BigIntFilterModule', number>>;
 export const AllEnterpriseModules: Record<string, number> = {
     AdvancedFilterModule: 223.75,
     AllEnterpriseModule: 1627.32,
