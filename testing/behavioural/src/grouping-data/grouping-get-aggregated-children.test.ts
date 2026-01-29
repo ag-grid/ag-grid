@@ -634,5 +634,81 @@ describe('IRowNode.getAggregatedChildren()', () => {
             children2020 = irelandGroup!.getAggregatedChildren(pivot2020Col!);
             expect(children2020.map((n) => n.data?.id)).toEqual(['1']);
         });
+
+        test('in pivot mode with non-leaf groups, getAggregatedChildren uses childrenAfterFilter regardless of suppressAggFilteredOnly', async () => {
+            // This test verifies that for pivot columns on non-leaf groups, getAggregatedChildren
+            // always returns childrenAfterFilter to match the actual aggregation behaviour.
+            // aggregateRowNodeUsingValuesAndPivot always uses childrenAfterFilter for non-leaf groups,
+            // so getAggregatedChildren must do the same even when suppressAggFilteredOnly=true.
+            //
+            // To properly test this, we need filtering to REMOVE an entire child group from
+            // childrenAfterFilter while keeping it in childrenAfterGroup.
+            const gridOptions: GridOptions = {
+                columnDefs: [
+                    { field: 'region', rowGroup: true, hide: true },
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'year', pivot: true, hide: true },
+                    { field: 'status', filter: 'agSetColumnFilter' },
+                    { field: 'sales', aggFunc: 'sum', hide: true },
+                ],
+                pivotMode: true,
+                suppressAggFilteredOnly: true, // For pivot non-leaf groups, this should be ignored
+                groupDefaultExpanded: -1,
+                getRowId: ({ data }) => data.id,
+            };
+
+            const api = gridsManager.createGrid('myGrid', gridOptions);
+
+            applyTransactionChecked(api, {
+                add: [
+                    // Ireland: all rows are 'active'
+                    { id: '1', region: 'Europe', country: 'Ireland', year: 2020, status: 'active', sales: 1000 },
+                    { id: '2', region: 'Europe', country: 'Ireland', year: 2020, status: 'active', sales: 500 },
+                    // France: all rows are 'pending' - will be filtered out entirely
+                    { id: '3', region: 'Europe', country: 'France', year: 2020, status: 'pending', sales: 800 },
+                    { id: '4', region: 'Europe', country: 'France', year: 2020, status: 'pending', sales: 200 },
+                ],
+            });
+
+            const europeGroup = api.getRowNode('row-group-region-Europe');
+            expect(europeGroup).toBeDefined();
+            expect(europeGroup!.leafGroup).toBe(false); // non-leaf group
+
+            const pivotColumns = api.getPivotResultColumns();
+            expect(pivotColumns).not.toBeNull();
+            const pivot2020Col = pivotColumns!.find((col) => col.getColId() === 'pivot_year_2020_sales');
+            expect(pivot2020Col).toBeDefined();
+
+            // Before filter: Europe has 2 country subgroups, aggregated sum = 2500
+            expect(europeGroup!.aggData?.['pivot_year_2020_sales']).toBe(2500);
+            let europeChildren = europeGroup!.getAggregatedChildren(pivot2020Col!);
+            expect(europeChildren.length).toBe(2); // Ireland and France subgroups
+
+            // Apply filter to show only active status - this will remove France entirely
+            await api.setColumnFilterModel('status', { values: ['active'] });
+            api.onFilterChanged();
+
+            // After filter: France is completely filtered out
+            // Aggregation uses childrenAfterFilter which now only has Ireland
+            // Ireland: 1000 + 500 = 1500
+            expect(europeGroup!.aggData?.['pivot_year_2020_sales']).toBe(1500);
+
+            // getAggregatedChildren for pivot column on non-leaf group should return childrenAfterFilter
+            // NOT childrenAfterGroup, even though suppressAggFilteredOnly=true
+            // childrenAfterFilter has 1 group (Ireland), childrenAfterGroup has 2 (Ireland + France)
+            europeChildren = europeGroup!.getAggregatedChildren(pivot2020Col!);
+
+            // This is the critical assertion - if we incorrectly use childrenAfterGroup,
+            // we would get 2 children. The correct answer is 1 (only Ireland).
+            expect(europeChildren.length).toBe(1);
+            expect(europeChildren[0].key).toBe('Ireland');
+
+            // Verify that getAggregatedChildren matches what was used for aggregation
+            const childrenSum = europeChildren.reduce(
+                (sum, child) => sum + (child.aggData?.['pivot_year_2020_sales'] ?? 0),
+                0
+            );
+            expect(childrenSum).toBe(europeGroup!.aggData?.['pivot_year_2020_sales']);
+        });
     });
 });

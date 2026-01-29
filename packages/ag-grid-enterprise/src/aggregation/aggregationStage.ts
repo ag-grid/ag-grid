@@ -277,18 +277,25 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
             return []; // only group nodes have aggregated children, and only supported in CSRM
         }
 
-        // For pivot columns on leaf groups, use childrenMapped to filter by pivot keys.
-        // Guard with pivotKeys.length so empty keys (pivot row totals) fall back to the normal children list.
-        const pivotKeys = col?.getColDef().pivotKeys;
-        const pivotChildrenMapped = pivotKeys?.length && rowNode.leafGroup && rowNode.childrenMapped;
-        if (pivotChildrenMapped) {
-            return getNodesFromMappedSet(pivotChildrenMapped, pivotKeys) ?? [];
+        const pivotKeys = col?.getColDef().pivotKeys; // undefined for non-pivot columns
+        if (pivotKeys?.length) {
+            // For pivot columns on leaf groups, use childrenMapped to filter by pivot keys.
+            if (rowNode.leafGroup) {
+                return getNodesFromMappedSet(rowNode.childrenMapped, pivotKeys) ?? [];
+            }
+
+            // For pivot columns on non-leaf groups, aggregation always uses childrenAfterFilter
+            // (see aggregateRowNodeUsingValuesAndPivot), regardless of suppressAggFilteredOnly.
+            return rowNode.childrenAfterFilter ?? rowNode.childrenAfterGroup ?? [];
         }
 
-        // Return the same children that aggregation uses: filtered children by default,
+        // For non-pivot columns, return the children that aggregation uses: filtered children by default,
         // or all children when suppressAggFilteredOnly is true or groupAggFiltering is defined.
-        const filteredOnly = !this.isSuppressAggFilteredOnly();
-        return (filteredOnly ? rowNode.childrenAfterFilter : rowNode.childrenAfterGroup) ?? [];
+        if (this.isSuppressAggFilteredOnly()) {
+            return rowNode.childrenAfterGroup ?? [];
+        }
+
+        return rowNode.childrenAfterFilter ?? rowNode.childrenAfterGroup ?? [];
     }
 
     private setAggData(rowNode: RowNode, newAggData: any): void {
