@@ -797,6 +797,15 @@ export class RowNode<TData = any>
             return false;
         }
         this.destroyed = true;
+
+        // Unpin any pinned sibling when this source row is destroyed.
+        // Only do this when destroying the source row (not the pinned row itself,
+        // since pinnedSibling of a pinned row points back to the source row).
+        const pinnedSibling = this.pinnedSibling;
+        if (pinnedSibling && !this.rowPinned) {
+            this.beans.pinnedRowModel?.pinRow(pinnedSibling, null);
+        }
+
         if (fadeOut) {
             this.clearRowTopAndRowIndex(); // so row renderer knows to fade row out (and not reposition it)
         } else {
