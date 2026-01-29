@@ -52,6 +52,8 @@ export class GridRows<TData = any> {
     public readonly treeData: boolean;
     public readonly rowNodes: RowNode<TData>[];
     public readonly displayedRows: RowNode<TData>[];
+    public readonly pinnedTopRows: RowNode<TData>[];
+    public readonly pinnedBottomRows: RowNode<TData>[];
     public readonly rootRowNodes: RowNode<TData>[];
     public readonly rootRowNode: RowNode<TData> | null;
     public readonly rootAllLeafChildren: RowNode<TData>[];
@@ -116,6 +118,36 @@ export class GridRows<TData = any> {
         this.rootRowNodes = Array.from(rootNodesSet);
         this.rootRowNode = this.rootRowNodes[0] ?? null;
         this.rootAllLeafChildren = this.rootRowNode?.allLeafChildren ?? [];
+
+        const { pinnedTopRows, pinnedBottomRows } = this.#collectPinnedRows();
+        this.pinnedTopRows = pinnedTopRows;
+        this.pinnedBottomRows = pinnedBottomRows;
+    }
+
+    #collectPinnedRows(): { pinnedTopRows: RowNode<TData>[]; pinnedBottomRows: RowNode<TData>[] } {
+        const pinnedTopRows: RowNode<TData>[] = [];
+        const pinnedBottomRows: RowNode<TData>[] = [];
+
+        if (!this.api.isModuleRegistered('PinnedRowModule')) {
+            return { pinnedTopRows, pinnedBottomRows };
+        }
+
+        const pinnedTopCount = this.api.getPinnedTopRowCount();
+        const pinnedBottomCount = this.api.getPinnedBottomRowCount();
+        for (let i = 0; i < pinnedTopCount; ++i) {
+            const row = this.api.getPinnedTopRow(i) as RowNode<TData> | undefined;
+            if (row) {
+                pinnedTopRows.push(row);
+            }
+        }
+        for (let i = 0; i < pinnedBottomCount; ++i) {
+            const row = this.api.getPinnedBottomRow(i) as RowNode<TData> | undefined;
+            if (row) {
+                pinnedBottomRows.push(row);
+            }
+        }
+
+        return { pinnedTopRows, pinnedBottomRows };
     }
 
     public getDetailGridRows(row: IRowNode<TData> | GridApi | null | undefined): GridRows<any> | undefined {

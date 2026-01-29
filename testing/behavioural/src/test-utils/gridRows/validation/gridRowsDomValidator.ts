@@ -22,6 +22,23 @@ export class GridRowsDomValidator {
         let domRowIdx = 0;
         const displayedRows = gridRows.displayedRows;
 
+        // Validate pinned top rows
+        for (const row of gridRows.pinnedTopRows) {
+            if (this.validatedRows.has(row)) {
+                continue;
+            }
+            this.validatedRows.add(row);
+            const stringId = String(row.id);
+            const rowElements = getRowHtmlElements(gridRows.api, stringId);
+            if (!rowElements.length) {
+                if (row.id !== undefined) {
+                    this.errors.get(row).add('Row HTMLElement row-id=' + JSON.stringify(stringId) + ' not found');
+                }
+                continue;
+            }
+            gridContext.validateRow(row, rowElements);
+        }
+
         for (let index = 0; index < displayedRows.length; index++) {
             const row = displayedRows[index];
             if (gridRows.isDuplicateIdRow(row) || this.validatedRows.has(row)) {
@@ -45,6 +62,23 @@ export class GridRowsDomValidator {
 
             gridContext.validateRow(row, rowElements);
             this.validateDetailGridRows(row, gridRows);
+        }
+
+        // Validate pinned bottom rows
+        for (const row of gridRows.pinnedBottomRows) {
+            if (this.validatedRows.has(row)) {
+                continue;
+            }
+            this.validatedRows.add(row);
+            const stringId = String(row.id);
+            const rowElements = getRowHtmlElements(gridRows.api, stringId);
+            if (!rowElements.length) {
+                if (row.id !== undefined) {
+                    this.errors.get(row).add('Row HTMLElement row-id=' + JSON.stringify(stringId) + ' not found');
+                }
+                continue;
+            }
+            gridContext.validateRow(row, rowElements);
         }
 
         ensureDomRowsBelongToGrid(gridRows);

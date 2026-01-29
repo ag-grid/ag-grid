@@ -215,9 +215,11 @@ describe('Cell editing start/stop documentation examples', () => {
         expect(editableFirstNameCell).toHaveTextContent('Freddy');
 
         await new GridRows(api, 'cell editing start stop').check(`
+            PINNED_TOP id:t-0 firstName:"##" lastName:"##" gender:"##" mood:"##" country:"##" address:"##"
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:0 firstName:"Freddy" lastName:"Harrison" gender:"Male" age:21 mood:"Happy" country:"Ireland" address:"1197 Thunder Rd"
             └── LEAF id:1 firstName:"Mary" lastName:"Wilson" gender:"Female" age:19 mood:"Sad" country:"Ireland" address:"3685 Rocky Gld"
+            PINNED_BOTTOM id:b-1 firstName:"##" lastName:"##" gender:"##" mood:"##" country:"##" address:"##"
         `);
 
         const makeEventRows = (): EventRow[] => [

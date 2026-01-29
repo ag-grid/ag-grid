@@ -521,7 +521,8 @@ export class RowNode<TData = any>
         // This allows groupRowValueSetter to cascade edits using the same column reference for both
         // group and leaf rows. Skip resolution if the pivot column has a custom valueSetter, since the
         // user may have configured custom edit handling via processPivotResultColDef.
-        if (!this.group) {
+        // Pinned rows are excluded too as they may have different data structures.
+        if (!this.group && !this.rowPinned) {
             const colDef = column.getColDef();
             if (colDef.pivotValueColumn && !colDef.valueSetter) {
                 column = colDef.pivotValueColumn as AgColumn;
