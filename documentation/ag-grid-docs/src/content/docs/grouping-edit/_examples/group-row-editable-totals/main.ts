@@ -42,26 +42,49 @@ const amountValueParser = (params: ValueParserParams): number | null => {
     return Number.isFinite(numericValue) ? numericValue : params.oldValue ?? null;
 };
 
-const amountGroupRowValueSetter: GroupRowValueSetterFunc<SalesRecord> = ({ node, newValue, eventSource }) => {
-    const numericValue = Number(newValue);
-    if (!Number.isFinite(numericValue)) {
+/**
+ * Distributes a new group total to children proportionally.
+ *
+ * When editing a group cell, cascades the change to `aggregatedChildren` based on
+ * each child's current contribution:
+ *
+ * - Children with values [30, 70] (sum=100), new total 200 → [60, 140]
+ * - If sum is zero, distributes equally among all children
+ *
+ * `aggregatedChildren` contains:
+ * - For leaf groups: the data rows that contribute to the aggregation
+ * - For non-leaf groups: the child groups (cascade continues via recursive setDataValue)
+ *
+ * `setDataValue` on a child group triggers `groupRowValueSetter` again, enabling
+ * full tree traversal from any group level.
+ */
+const cascadeGroupTotal: GroupRowValueSetterFunc<SalesRecord> = ({
+    api,
+    column,
+    newValue,
+    eventSource,
+    aggregatedChildren,
+}) => {
+    const total = Number(newValue);
+    if (!Number.isFinite(total) || !aggregatedChildren.length) {
         return false;
     }
 
-    let result = false;
-    // distribute the new value equally amongst all filtered children
-    const children = node.childrenAfterSort;
-    if (children?.length) {
-        const perChild = numericValue / children.length;
-        for (const child of children) {
-            // If child is a leaf, setDataValue will update the underlying data item
-            // If child is a group, setDataValue will recursively call this value setter down the tree to update group values
-            if (child.setDataValue('amount', perChild, eventSource)) {
-                result = true;
-            }
+    // Get current values using api.getValue (works for both leaf data and group aggData)
+    const values = aggregatedChildren.map((child) => Number(api.getValue(column, child)) || 0);
+    const sum = values.reduce((a, b) => a + b, 0);
+
+    // Distribute proportionally, or equally if sum is zero
+    let changed = false;
+    for (let i = 0; i < aggregatedChildren.length; i++) {
+        const share = sum ? (values[i] / sum) * total : total / aggregatedChildren.length;
+        const rounded = Math.round(share * 100) / 100;
+        // setDataValue on groups triggers groupRowValueSetter recursively
+        if (aggregatedChildren[i].setDataValue(column, rounded, eventSource)) {
+            changed = true;
         }
     }
-    return result;
+    return changed;
 };
 
 const gridOptions: GridOptions<SalesRecord> = {
@@ -77,7 +100,7 @@ const gridOptions: GridOptions<SalesRecord> = {
             groupRowEditable: true,
             filter: 'agNumberColumnFilter',
             valueParser: amountValueParser,
-            groupRowValueSetter: amountGroupRowValueSetter,
+            groupRowValueSetter: cascadeGroupTotal,
             valueFormatter: amountValueFormatter,
         },
     ],

@@ -511,7 +511,7 @@ export class RowNode<TData = any>
         const { colModel, valueSvc, gos, editSvc } = this.beans;
 
         // if in pivot mode, grid columns wont include primary columns
-        let column = typeof colKey !== 'string' ? colKey : colModel.getCol(colKey) ?? colModel.getColDefCol(colKey);
+        let column = typeof colKey === 'string' ? colModel.getCol(colKey) ?? colModel.getColDefCol(colKey) : colKey;
         if (!column) {
             return false;
         }
@@ -652,7 +652,7 @@ export class RowNode<TData = any>
         callback(this);
     }
 
-    public getAggregatedChildren(colKey?: ColKey | null): RowNode<TData>[] {
+    public getAggregatedChildren(colKey: ColKey | null | undefined): RowNode<TData>[] {
         const beans = this.beans;
         return beans.aggStage?.getAggregatedChildren(this, beans.colModel.getCol(colKey)) ?? [];
     }

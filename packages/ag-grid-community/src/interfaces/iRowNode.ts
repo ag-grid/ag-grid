@@ -334,10 +334,16 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
 
     /**
      * Returns the immediate children that contribute to the aggregation of this group RowNode.
-     * For pivot columns on leaf groups, only children matching the pivot keys are returned.
-     * Leaf (non-group) RowNodes return an empty array.
+     *
+     * - For leaf groups (groups containing data rows): returns the data rows.
+     *   With pivot columns, only rows matching the pivot keys are included.
+     * - For non-leaf groups (groups containing other groups): returns the child groups.
+     * - For leaf (non-group) RowNodes: returns an empty array.
      *
      * **Note:** Only supported with the Client-Side Row Model.
+     *
+     * @param colKey - The column key. Pass the pivot column to filter by pivot keys, or `null` to get all children.
+     * @returns An array of child `IRowNode` instances contributing to this group's aggregation. Warning: the returned array must not be modified.
      */
-    getAggregatedChildren(colKey?: ColKey<TData> | null): IRowNode<TData>[];
+    getAggregatedChildren(colKey: ColKey<TData> | null | undefined): IRowNode<TData>[];
 }

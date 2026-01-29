@@ -169,7 +169,10 @@ export interface IAggFuncParams<TData = any, TValue = any, TContext = any> exten
     data: TData;
     /**
      * The immediate children of rowNode that contribute to the aggregation.
-     * For pivot columns on leaf groups, only children matching the pivot keys.
+     *
+     * - For leaf groups (groups containing data rows): returns the data rows.
+     *   With pivot columns, only rows matching the pivot keys are included.
+     * - For non-leaf groups (groups containing other groups): returns the child groups.
      */
     aggregatedChildren: IRowNode<TData>[];
 }
@@ -992,7 +995,11 @@ export interface GroupRowValueSetterParams<TData = any, TValue = any, TContext =
     valueChanged: boolean;
     /**
      * The immediate children that contribute to the aggregation.
-     * For pivot columns on leaf groups, only children matching the pivot keys.
+     *
+     * - For leaf groups (groups containing data rows): returns the data rows.
+     *   With pivot columns, only rows matching the pivot keys are included.
+     * - For non-leaf groups (groups containing other groups): returns the child groups.
+     *   Use `setDataValue` on child groups to cascade recursively.
      *
      * **Note:** Only supported with the Client-Side Row Model.
      */
