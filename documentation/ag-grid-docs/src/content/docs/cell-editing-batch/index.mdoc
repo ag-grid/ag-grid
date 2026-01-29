@@ -51,6 +51,12 @@ As in default editing, cell and row editing events get fired as normal when edit
 
 When in Batch Editing, the `cellValueChanged`, `rowValueChanged` events are fired **after** the batch edit is committed.
 
+### Pending Values
+
+When Batch Editing is active, edits made to cells are stored as **pending values**. These pending values are not immediately applied to the underlying data model. Instead, they are held in a temporary state until the batch is either committed or canceled.
+
+Pending values are used by display features such as cell rendering and copy/paste but they are not used for data based features such as sorting, filtering, grouping or aggregation until the batch is committed.
+
 ## Customisation
 
 ### Custom Renderers & Editors
