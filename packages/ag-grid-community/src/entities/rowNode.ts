@@ -656,6 +656,7 @@ export class RowNode<TData = any>
 
     public getAggregatedChildren(colKey: ColKey | null | undefined): RowNode<TData>[] {
         const beans = this.beans;
+        // Note - we are using getCol only here as we are really interested just in pivot columns
         return beans.aggStage?.getAggregatedChildren(this, beans.colModel.getCol(colKey)) ?? [];
     }
 

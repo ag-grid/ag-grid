@@ -25,7 +25,8 @@ export function _aggregateValues(
         pivotResultColumn,
         rowNode: rowNode!, // this is typed incorrectly. Within CSRM, this will always be defined. When called from integrated charts, this will never be defined.
         data: rowNode?.data,
-        aggregatedChildren: aggregatedChildren ?? beans.aggStage?.getAggregatedChildren(rowNode, column) ?? [],
+        aggregatedChildren:
+            aggregatedChildren ?? beans.aggStage?.getAggregatedChildren(rowNode, pivotResultColumn ?? column) ?? [],
     });
 
     return aggFunc(params);
