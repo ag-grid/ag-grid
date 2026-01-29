@@ -266,7 +266,12 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     public getPinnedState(): RowPinningState {
         const buildState = (floating: NonNullable<RowPinnedType>) => {
             const list: string[] = [];
-            this.forEachPinnedRow(floating, (node) => list.push(node.pinnedSibling!.id!));
+            this.forEachPinnedRow(floating, (node) => {
+                const id = node.pinnedSibling?.id;
+                if (id != null) {
+                    list.push(id);
+                }
+            });
             return list;
         };
 
