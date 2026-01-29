@@ -319,4 +319,3 @@ describe('Manual pinned rows', () => {
         assertPinnedRows(api, 'top', ['t-top-0-rugby']);
     });
 });
-
