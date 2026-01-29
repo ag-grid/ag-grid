@@ -22,7 +22,6 @@ interface SalesRecord {
 }
 
 ModuleRegistry.registerModules([
-    CellApiModule,
     RowGroupingModule,
     ClientSideRowModelModule,
     NumberFilterModule,
