@@ -408,7 +408,13 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * Use this to mutate descendants directly; the grid always commits the group row value afterwards.
      */
     groupRowValueSetter?: GroupRowValueSetterFunc<TData, TValue>;
-    /** Function or expression. Sets the value into your data for saving. Return `true` if the data changed. */
+    /**
+     * Function or expression. Sets the value into your data for saving. Return `true` if the data changed.
+     *
+     * **Pivot mode:** For leaf (non-group) rows, `setDataValue` auto-resolves pivot result columns to the
+     * underlying value column. Define a `valueSetter` on the pivot column (via `processPivotResultColDef`)
+     * to override this behaviour and handle the edit yourself.
+     */
     valueSetter?: string | ValueSetterFunc<TData, TValue>;
     /** Function or expression. Parses the value for saving. */
     valueParser?: string | ValueParserFunc<TData, TValue>;
