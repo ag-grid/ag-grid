@@ -120,13 +120,7 @@ describe('ag-grid tree data pinned rows', () => {
 
         // Remove France and Japan with all their children
         api.applyTransaction({
-            remove: [
-                { id: 'france' },
-                { id: 'paris' },
-                { id: 'lyon' },
-                { id: 'japan' },
-                { id: 'tokyo' },
-            ],
+            remove: [{ id: 'france' }, { id: 'paris' }, { id: 'lyon' }, { id: 'japan' }, { id: 'tokyo' }],
         });
         await asyncSetTimeout(10);
 
