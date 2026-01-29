@@ -710,5 +710,77 @@ describe('IRowNode.getAggregatedChildren()', () => {
             );
             expect(childrenSum).toBe(europeGroup!.aggData?.['pivot_year_2020_sales']);
         });
+
+        test('pivot row total columns (pivotKeys: []) use childrenAfterFilter regardless of suppressAggFilteredOnly', async () => {
+            // Pivot row total columns are created with pivotKeys: [] (empty array, not undefined).
+            // They aggregate across all pivot columns for a given row, and must use childrenAfterFilter
+            // to match the actual aggregation behavior in aggregateRowNodeUsingValuesAndPivot.
+            //
+            // This test ensures that columns with pivotKeys: [] are correctly identified as pivot columns
+            // and don't fall through to the non-pivot branch which might use childrenAfterGroup.
+            const gridOptions: GridOptions = {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'year', pivot: true, hide: true },
+                    { field: 'status', filter: 'agSetColumnFilter' },
+                    { field: 'sales', aggFunc: 'sum', hide: true },
+                ],
+                pivotMode: true,
+                pivotRowTotals: 'after', // Enable pivot row totals - these will have pivotKeys: []
+                suppressAggFilteredOnly: true, // Should be ignored for pivot row totals
+                groupDefaultExpanded: -1,
+                getRowId: ({ data }) => data.id,
+            };
+
+            const api = gridsManager.createGrid('myGrid', gridOptions);
+
+            applyTransactionChecked(api, {
+                add: [
+                    { id: '1', country: 'Ireland', year: 2020, status: 'active', sales: 1000 },
+                    { id: '2', country: 'Ireland', year: 2020, status: 'pending', sales: 500 },
+                    { id: '3', country: 'Ireland', year: 2021, status: 'active', sales: 1200 },
+                ],
+            });
+
+            const irelandGroup = api.getRowNode('row-group-country-Ireland');
+            expect(irelandGroup).toBeDefined();
+            expect(irelandGroup!.leafGroup).toBe(true);
+
+            // Find the pivot row total column (should have pivotKeys: [])
+            const pivotColumns = api.getPivotResultColumns();
+            expect(pivotColumns).not.toBeNull();
+
+            // The total column should have pivotKeys: [] (empty array, not undefined)
+            const totalCol = pivotColumns!.find((col) => {
+                const colDef = col.getColDef();
+                return Array.isArray(colDef.pivotKeys) && colDef.pivotKeys.length === 0;
+            });
+            expect(totalCol).toBeDefined();
+            expect(totalCol!.getColDef().pivotKeys).toEqual([]);
+
+            // Before filter: total should be 2700 (1000 + 500 + 1200)
+            const totalColId = totalCol!.getColId();
+            expect(irelandGroup!.aggData?.[totalColId]).toBe(2700);
+
+            // getAggregatedChildren should return all 3 leaf rows
+            let children = irelandGroup!.getAggregatedChildren(totalCol!);
+            expect(children.length).toBe(3);
+            expect(children.map((n) => n.data?.id).sort()).toEqual(['1', '2', '3']);
+
+            // Apply filter to show only active status
+            await api.setColumnFilterModel('status', { values: ['active'] });
+            api.onFilterChanged();
+
+            // After filter: total should only include active rows (1000 + 1200 = 2200)
+            // Even with suppressAggFilteredOnly=true, pivot totals must use filtered children
+            expect(irelandGroup!.aggData?.[totalColId]).toBe(2200);
+
+            // getAggregatedChildren for pivot row total should return filtered children
+            // This is the key assertion: pivotKeys: [] must be treated as a pivot column
+            // and use childrenAfterFilter, not childrenAfterGroup
+            children = irelandGroup!.getAggregatedChildren(totalCol!);
+            expect(children.length).toBe(2);
+            expect(children.map((n) => n.data?.id).sort()).toEqual(['1', '3']);
+        });
     });
 });

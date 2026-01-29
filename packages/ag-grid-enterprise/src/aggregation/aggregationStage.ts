@@ -278,14 +278,15 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         }
 
         const pivotKeys = col?.getColDef().pivotKeys; // undefined for non-pivot columns
-        if (pivotKeys?.length) {
-            // For pivot columns on leaf groups, use childrenMapped to filter by pivot keys.
-            if (rowNode.leafGroup) {
+        if (pivotKeys) {
+            // For pivot columns on leaf groups with specific pivot keys, use childrenMapped to filter by pivot keys.
+            if (rowNode.leafGroup && pivotKeys.length) {
                 return getNodesFromMappedSet(rowNode.childrenMapped, pivotKeys) ?? [];
             }
 
-            // For pivot columns on non-leaf groups, aggregation always uses childrenAfterFilter
-            // (see aggregateRowNodeUsingValuesAndPivot), regardless of suppressAggFilteredOnly.
+            // For pivot columns on non-leaf groups (or pivot total columns with empty pivotKeys),
+            // aggregation always uses childrenAfterFilter (see aggregateRowNodeUsingValuesAndPivot),
+            // regardless of suppressAggFilteredOnly.
             return rowNode.childrenAfterFilter ?? rowNode.childrenAfterGroup ?? [];
         }
 
