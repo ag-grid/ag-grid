@@ -38,20 +38,14 @@ const amountValueParser = (params: ValueParserParams): number | null => {
 };
 
 /**
- * Distributes a new group total to children proportionally.
+ * Distributes a new group total equally among children.
  *
- * When editing a group cell, cascades the change to `aggregatedChildren` based on
- * each child's current contribution:
+ * `aggregatedChildren` contains the immediate children used for aggregation:
+ * - For leaf groups: the data rows
+ * - For non-leaf groups: the child groups
  *
- * - Children with values [30, 70] (sum=100), new total 200 → [60, 140]
- * - If sum is zero, distributes equally among all children
- *
- * `aggregatedChildren` contains:
- * - For leaf groups: the data rows that contribute to the aggregation
- * - For non-leaf groups: the child groups (cascade continues via recursive setDataValue)
- *
- * `setDataValue` on a child group triggers `groupRowValueSetter` again, enabling
- * full tree traversal from any group level.
+ * Calling `setDataValue` on a child group triggers `groupRowValueSetter` again,
+ * enabling recursive cascade through the entire group hierarchy.
  */
 const cascadeGroupTotal: GroupRowValueSetterFunc<SalesRecord> = ({
     column,

@@ -39,21 +39,14 @@ const amountValueParser = (params: ValueParserParams): number | null => {
 };
 
 /**
- * Distributes a new group/pivot total to children proportionally.
+ * Distributes a new pivot total equally among children.
  *
- * When editing a pivot cell (e.g., "Electronics 2024"), cascades the change to
- * `aggregatedChildren` based on each child's current contribution:
+ * In pivot mode, `aggregatedChildren` contains only rows matching the pivot keys.
+ * For example, editing the "Electronics 2024" cell returns only rows where
+ * product="Electronics" AND year=2024.
  *
- * - Children with values [30, 70] (sum=100), new total 200 → [60, 140]
- * - If sum is zero, distributes equally among all children
- *
- * `aggregatedChildren` contains:
- * - For leaf groups: only rows matching the pivot keys (e.g., product="Electronics", year=2024)
- * - For non-leaf groups: the child groups (cascade continues via recursive setDataValue)
- *
- * `setDataValue` behaviour:
- * - On leaf rows with pivot columns: auto-resolves to the underlying value column
- * - On group rows: triggers `groupRowValueSetter` again for recursive cascade
+ * `setDataValue` on leaf rows with pivot columns auto-resolves to the underlying
+ * value column. On group rows, it triggers `groupRowValueSetter` for recursive cascade.
  */
 const cascadeGroupTotal: GroupRowValueSetterFunc<SalesRecord> = ({
     column,
