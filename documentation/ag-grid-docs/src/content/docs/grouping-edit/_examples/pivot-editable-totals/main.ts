@@ -22,7 +22,6 @@ interface SalesRecord {
 let gridApi: GridApi<SalesRecord>;
 
 ModuleRegistry.registerModules([
-    CellApiModule,
     RowGroupingModule,
     ClientSideRowModelModule,
     NumberFilterModule,
