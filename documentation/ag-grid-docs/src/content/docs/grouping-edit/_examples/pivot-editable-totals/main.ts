@@ -1,12 +1,5 @@
-import type {
-    GridApi,
-    GridOptions,
-    GroupRowValueSetterFunc,
-    ValueFormatterParams,
-    ValueParserParams,
-} from 'ag-grid-community';
+import type { GridApi, GridOptions, GroupRowValueSetterFunc, ValueParserParams } from 'ag-grid-community';
 import {
-    CellApiModule,
     ClientSideRowModelModule,
     ModuleRegistry,
     NumberFilterModule,
@@ -40,18 +33,10 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
-const currencyFormatter = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    maximumFractionDigits: 0,
-});
-
-const amountValueFormatter = (params: ValueFormatterParams): string =>
-    typeof params.value === 'number' ? currencyFormatter.format(params.value) : params.value ?? '';
-
+// Parse input to integer
 const amountValueParser = (params: ValueParserParams): number | null => {
     const numericValue = Number(params.newValue);
-    return Number.isFinite(numericValue) ? numericValue : params.oldValue ?? null;
+    return Number.isFinite(numericValue) ? Math.round(numericValue) : params.oldValue ?? null;
 };
 
 /**
@@ -72,7 +57,6 @@ const amountValueParser = (params: ValueParserParams): number | null => {
  * - On group rows: triggers `groupRowValueSetter` again for recursive cascade
  */
 const cascadeGroupTotal: GroupRowValueSetterFunc<SalesRecord> = ({
-    api,
     column,
     newValue,
     eventSource,
@@ -83,20 +67,21 @@ const cascadeGroupTotal: GroupRowValueSetterFunc<SalesRecord> = ({
         return false;
     }
 
-    // Get current values using api.getCellValue (works for both leaf data and group aggData)
-    // Use from: 'data' to read actual stored values, not pending edits
-    const values = aggregatedChildren.map(
-        (child) => Number(api.getCellValue({ colKey: column, rowNode: child, from: 'data' })) || 0
-    );
-    const sum = values.reduce((a, b) => a + b, 0);
+    // Distribute equally among children
+    // https://en.wikipedia.org/wiki/Largest_remainder_method
+    const count = aggregatedChildren.length;
+    const base = Math.floor(total / count);
+    let remainder = Math.round(total) - base * count;
 
-    // Distribute proportionally, or equally if sum is zero
+    // Apply the distributed values
     let changed = false;
-    for (let i = 0; i < aggregatedChildren.length; i++) {
-        const share = sum ? (values[i] / sum) * total : total / aggregatedChildren.length;
-        const rounded = Math.round(share * 100) / 100;
-        // setDataValue on groups triggers groupRowValueSetter recursively
-        if (aggregatedChildren[i].setDataValue(column, rounded, eventSource)) {
+    for (const child of aggregatedChildren) {
+        let value = base;
+        if (remainder > 0) {
+            value++;
+            remainder--;
+        }
+        if (child.setDataValue(column, value, eventSource)) {
             changed = true;
         }
     }
@@ -109,14 +94,13 @@ const gridOptions: GridOptions<SalesRecord> = {
         { field: 'country', rowGroup: true, hide: true },
         { field: 'product', pivot: true },
         {
-            headerName: 'Sales',
+            headerName: 'Amount',
             field: 'amount',
             aggFunc: 'sum',
             editable: true,
             groupRowEditable: true,
             valueParser: amountValueParser,
             groupRowValueSetter: cascadeGroupTotal,
-            valueFormatter: amountValueFormatter,
         },
     ],
     autoGroupColumnDef: {

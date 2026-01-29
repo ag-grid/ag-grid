@@ -79,7 +79,7 @@ Key points for implementing cascading edits:
   aggregation to refresh parent totals.
 - When a child is also a group that defines its own `groupRowValueSetter`, the cascade recurses further.
 - Parent aggregates refresh automatically because child `data` changes re-run the column `aggFunc`,
-  so typing £600 into "Europe" instantly rebalances the filtered countries to reach that total.
+  so typing a new total into "Europe" instantly rebalances the children to reach that value.
 
 {% note %}
 The `aggregatedChildren` parameter and `rowNode.getAggregatedChildren()` method are only supported
