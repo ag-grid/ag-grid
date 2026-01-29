@@ -278,8 +278,9 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         }
 
         // For pivot columns on leaf groups, use childrenMapped to filter by pivot keys.
+        // Guard with pivotKeys.length so empty keys (pivot row totals) fall back to the normal children list.
         const pivotKeys = col?.getColDef().pivotKeys;
-        const pivotChildrenMapped = pivotKeys && rowNode.leafGroup && rowNode.childrenMapped;
+        const pivotChildrenMapped = pivotKeys?.length && rowNode.leafGroup && rowNode.childrenMapped;
         if (pivotChildrenMapped) {
             return getNodesFromMappedSet(pivotChildrenMapped, pivotKeys) ?? [];
         }
@@ -381,5 +382,10 @@ const getNodesFromMappedSet = (mappedSet: any, keys: string[] | null | undefined
     for (let i = 0; i < keys.length; i++) {
         mapPointer = mapPointer?.[keys[i]];
     }
-    return mapPointer;
+    // Only return if we reached an array of RowNodes. If keys is empty or traversal
+    // ends at a non-array (e.g., intermediate map object), return undefined.
+    if (Array.isArray(mapPointer)) {
+        return mapPointer;
+    }
+    return undefined;
 };
