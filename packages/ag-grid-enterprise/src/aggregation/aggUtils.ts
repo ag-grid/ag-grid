@@ -1,7 +1,7 @@
 import type { AgColumn, BeanCollection, IAggFunc, IAggFuncParams, RowNode } from 'ag-grid-community';
 import { _addGridCommonParams, _warn } from 'ag-grid-community';
 
-export interface AggregateValuesParams {
+interface AggregateValuesParams {
     beans: BeanCollection;
     values: any[];
     aggFuncOrString: string | IAggFunc;
