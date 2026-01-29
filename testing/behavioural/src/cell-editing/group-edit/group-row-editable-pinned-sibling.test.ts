@@ -1,10 +1,9 @@
 import type { GridOptions, RowNode, ValueSetterParams } from 'ag-grid-community';
-import { ClientSideRowModelModule, UndoRedoEditModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, PinnedRowModule, UndoRedoEditModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import type { GridRowsOptions } from '../../test-utils';
 import { GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
-import { EDIT_MODES, editCell } from './group-edit-test-utils';
+import { EDIT_MODES, cascadeGroupRowValueSetter, editCell } from './group-edit-test-utils';
 
 /**
  * Tests for editing cells in manually pinned rows (pinnedSibling).
@@ -13,7 +12,7 @@ import { EDIT_MODES, editCell } from './group-edit-test-utils';
  */
 describe('editing with pinned sibling rows', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, PivotModule, UndoRedoEditModule],
+        modules: [ClientSideRowModelModule, RowGroupingModule, PivotModule, UndoRedoEditModule, PinnedRowModule],
     });
 
     beforeEach(() => {
@@ -168,6 +167,180 @@ describe('editing with pinned sibling rows', () => {
                     ├── LEAF id:5 country:"USA" year:2020 sales:2000 region:"Americas"
                     └── LEAF id:6 country:"USA" year:2021 sales:2200 region:"Americas"
                     PINNED_BOTTOM id:b-bottom-1 country:"France" year:2020 sales:1111 region:"Europe"
+                `);
+            });
+        });
+    });
+
+    describe('group row pinned sibling with groupRowValueSetter', () => {
+        function createGroupRowData() {
+            return [
+                { id: 'fr-paris', region: 'Europe', country: 'France', amount: 100 },
+                { id: 'fr-lyon', region: 'Europe', country: 'France', amount: 200 },
+                { id: 'de-berlin', region: 'Europe', country: 'Germany', amount: 150 },
+                { id: 'de-hamburg', region: 'Europe', country: 'Germany', amount: 250 },
+            ];
+        }
+
+        describe.each(EDIT_MODES)('edit mode: %s', (editMode) => {
+            test('editing pinned group row cascades to children via groupRowValueSetter', async () => {
+                // Use isRowPinned callback to pin the France group
+                const api = await gridsManager.createGridAndWait('pinned-group-edit', {
+                    defaultColDef: {
+                        cellEditor: 'agTextCellEditor',
+                    },
+                    undoRedoCellEditing: true,
+                    enableRowPinning: true,
+                    isRowPinned: (node) => {
+                        // Pin the France group row to top
+                        return node.key === 'France' && node.group ? 'top' : null;
+                    },
+                    groupDisplayType: 'custom',
+                    columnDefs: [
+                        {
+                            colId: 'group',
+                            headerName: 'Group',
+                            cellRenderer: 'agGroupCellRenderer',
+                        },
+                        { field: 'country', rowGroup: true, hide: true },
+                        {
+                            colId: 'amount',
+                            field: 'amount',
+                            aggFunc: 'sum',
+                            editable: true,
+                            groupRowEditable: true,
+                            groupRowValueSetter: cascadeGroupRowValueSetter,
+                        },
+                    ],
+                    rowData: createGroupRowData(),
+                    groupDefaultExpanded: -1,
+                    getRowId: (params) => params.data?.id,
+                });
+
+                // Get the France group row and the pinned version
+                const franceGroup = api.getRowNode('row-group-country-France') as RowNode;
+                expect(franceGroup).toBeDefined();
+                expect(franceGroup.group).toBe(true);
+                expect(franceGroup.aggData?.amount).toBe(300); // 100 + 200
+
+                // Get the pinned group row
+                const pinnedGroup = api.getPinnedTopRow(0) as RowNode;
+                expect(pinnedGroup).toBeDefined();
+                expect(pinnedGroup.group).toBe(true);
+                expect(pinnedGroup.pinnedSibling).toBe(franceGroup);
+                expect(franceGroup.pinnedSibling).toBe(pinnedGroup);
+
+                let gridRows = new GridRows(api, 'before edit');
+                await gridRows.check(`
+                    PINNED_TOP id:t-top-row-group-country-France amount:300
+                    ROOT id:ROOT_NODE_ID
+                    ├─┬ LEAF_GROUP id:row-group-country-France amount:300
+                    │ ├── LEAF id:fr-paris country:"France" amount:100
+                    │ └── LEAF id:fr-lyon country:"France" amount:200
+                    └─┬ LEAF_GROUP id:row-group-country-Germany amount:400
+                    · ├── LEAF id:de-berlin country:"Germany" amount:150
+                    · └── LEAF id:de-hamburg country:"Germany" amount:250
+                `);
+
+                // Edit the pinned group row - should cascade to children
+                if (editMode === 'ui') {
+                    await editCell(api, pinnedGroup, 'amount', '600');
+                } else {
+                    pinnedGroup.setDataValue('amount', 600, 'ui');
+                    await asyncSetTimeout(0);
+                }
+                await asyncSetTimeout(50);
+
+                // Verify the edit cascaded to children (600 / 2 = 300 each)
+                expect(api.getRowNode('fr-paris')?.data?.amount).toBe(300);
+                expect(api.getRowNode('fr-lyon')?.data?.amount).toBe(300);
+
+                // Verify aggregations updated
+                expect(franceGroup.aggData?.amount).toBe(600);
+                expect(pinnedGroup.aggData?.amount).toBe(600);
+
+                // Verify grid state
+                gridRows = new GridRows(api, 'after edit');
+                await gridRows.check(`
+                    PINNED_TOP id:t-top-row-group-country-France amount:600
+                    ROOT id:ROOT_NODE_ID
+                    ├─┬ LEAF_GROUP id:row-group-country-France amount:600
+                    │ ├── LEAF id:fr-paris country:"France" amount:300
+                    │ └── LEAF id:fr-lyon country:"France" amount:300
+                    └─┬ LEAF_GROUP id:row-group-country-Germany amount:400
+                    · ├── LEAF id:de-berlin country:"Germany" amount:150
+                    · └── LEAF id:de-hamburg country:"Germany" amount:250
+                `);
+            });
+
+            test('editing source group row updates pinned sibling aggregation', async () => {
+                // Use isRowPinned callback to pin the France group to bottom
+                const api = await gridsManager.createGridAndWait('source-group-edit', {
+                    defaultColDef: {
+                        cellEditor: 'agTextCellEditor',
+                    },
+                    undoRedoCellEditing: true,
+                    enableRowPinning: true,
+                    isRowPinned: (node) => {
+                        return node.key === 'France' && node.group ? 'bottom' : null;
+                    },
+                    groupDisplayType: 'custom',
+                    columnDefs: [
+                        {
+                            colId: 'group',
+                            headerName: 'Group',
+                            cellRenderer: 'agGroupCellRenderer',
+                        },
+                        { field: 'country', rowGroup: true, hide: true },
+                        {
+                            colId: 'amount',
+                            field: 'amount',
+                            aggFunc: 'sum',
+                            editable: true,
+                            groupRowEditable: true,
+                            groupRowValueSetter: cascadeGroupRowValueSetter,
+                        },
+                    ],
+                    rowData: createGroupRowData(),
+                    groupDefaultExpanded: -1,
+                    getRowId: (params) => params.data?.id,
+                });
+
+                // Get the France group row
+                const franceGroup = api.getRowNode('row-group-country-France') as RowNode;
+                expect(franceGroup).toBeDefined();
+
+                const pinnedGroup = api.getPinnedBottomRow(0) as RowNode;
+                expect(pinnedGroup).toBeDefined();
+                expect(pinnedGroup.pinnedSibling).toBe(franceGroup);
+
+                // Edit the SOURCE group row (not the pinned one)
+                if (editMode === 'ui') {
+                    await editCell(api, franceGroup, 'amount', '400');
+                } else {
+                    franceGroup.setDataValue('amount', 400, 'ui');
+                    await asyncSetTimeout(0);
+                }
+                await asyncSetTimeout(50);
+
+                // Verify the edit cascaded to children (400 / 2 = 200 each)
+                expect(api.getRowNode('fr-paris')?.data?.amount).toBe(200);
+                expect(api.getRowNode('fr-lyon')?.data?.amount).toBe(200);
+
+                // Verify both source and pinned group have updated aggregation
+                expect(franceGroup.aggData?.amount).toBe(400);
+                expect(pinnedGroup.aggData?.amount).toBe(400);
+
+                const gridRows = new GridRows(api, 'after edit');
+                await gridRows.check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├─┬ LEAF_GROUP id:row-group-country-France amount:400
+                    │ ├── LEAF id:fr-paris country:"France" amount:200
+                    │ └── LEAF id:fr-lyon country:"France" amount:200
+                    └─┬ LEAF_GROUP id:row-group-country-Germany amount:400
+                    · ├── LEAF id:de-berlin country:"Germany" amount:150
+                    · └── LEAF id:de-hamburg country:"Germany" amount:250
+                    PINNED_BOTTOM id:b-bottom-row-group-country-France amount:400
                 `);
             });
         });

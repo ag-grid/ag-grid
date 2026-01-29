@@ -362,10 +362,6 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         if (allNodesMap[id] === node) {
             delete allNodesMap[id];
         }
-        const pinnedSibling = node.pinnedSibling;
-        if (pinnedSibling) {
-            this.beans.pinnedRowModel?.pinRow(pinnedSibling, null);
-        }
         return true;
     }
 

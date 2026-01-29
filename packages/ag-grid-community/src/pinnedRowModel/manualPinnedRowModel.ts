@@ -100,22 +100,29 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     }
 
     public pinRow(rowNode: RowNode, float: RowPinnedType, column?: AgColumn | null): void {
-        // Forbid pinning group footers
-        if (rowNode.footer && rowNode.level > -1) {
-            return;
+        if (float != null && rowNode.destroyed) {
+            return; // Don't pin destroyed nodes (but allow unpinning)
         }
 
-        // Pinning grand total row is the only case in which pinned rows are not duplicates of rows
-        // in the main viewport. So we have to handle them differently:
-        // 1. We first set `_grandTotalPinned` to mark the location the grand total row should be pinned to.
-        // 2. Then we refresh the row model to hide the sticky footer.
-        // 3. We then react to the `modelUpdated` event (above) to actually add the footer to the pinned row model.
-        // Otherwise we would run into either an infinite recursion of `modelUpdated` events, or be missing the `sibling`
-        // on the root node.
-        if (rowNode.footer && rowNode.level === -1) {
-            this._grandTotalPinned = float;
-            refreshCSRM(this.beans);
-            return;
+        if (rowNode.footer) {
+            const level = rowNode.level;
+
+            if (level > -1) {
+                return; // Forbid pinning group footers
+            }
+
+            // Pinning grand total row is the only case in which pinned rows are not duplicates of rows
+            // in the main viewport. So we have to handle them differently:
+            // 1. We first set `_grandTotalPinned` to mark the location the grand total row should be pinned to.
+            // 2. Then we refresh the row model to hide the sticky footer.
+            // 3. We then react to the `modelUpdated` event (above) to actually add the footer to the pinned row model.
+            // Otherwise we would run into either an infinite recursion of `modelUpdated` events, or be missing the `sibling`
+            // on the root node.
+            if (level === -1) {
+                this._grandTotalPinned = float;
+                refreshCSRM(this.beans);
+                return;
+            }
         }
 
         // May have been called on either the pinned row or the source row, check both
@@ -244,7 +251,12 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     public getPinnedState(): RowPinningState {
         const buildState = (floating: NonNullable<RowPinnedType>) => {
             const list: string[] = [];
-            this.forEachPinnedRow(floating, (node) => list.push(node.pinnedSibling!.id!));
+            this.forEachPinnedRow(floating, (node) => {
+                const id = node.pinnedSibling?.id;
+                if (id != null) {
+                    list.push(id);
+                }
+            });
             return list;
         };
 

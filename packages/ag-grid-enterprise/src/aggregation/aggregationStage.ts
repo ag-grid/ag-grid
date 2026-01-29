@@ -105,7 +105,7 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
                 // this check is needed for TreeData, in case the node is no longer a child,
                 // but it was a child previously.
                 if (rowNode.aggData) {
-                    this.setAggData(rowNode, null);
+                    this.setAggDataWithSiblings(rowNode, null);
                 }
                 // never agg data for leaf nodes
                 return;
@@ -117,6 +117,8 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
             if (isRootNode && !aggDetails.groupIncludeTotalFooter) {
                 const notPivoting = !this.colModel.isPivotMode();
                 if (!aggDetails.alwaysAggregateAtRootLevel && notPivoting) {
+                    // Root node has no siblings here: no footer (groupIncludeTotalFooter is false)
+                    // and root cannot be manually pinned, so just clear the root node's aggData.
                     this.setAggData(rowNode, null);
                     return;
                 }
@@ -143,19 +145,7 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
             aggResult = this.aggregateRowNodeUsingValuesAndPivot(rowNode);
         }
 
-        this.setAggData(rowNode, aggResult);
-
-        // if we are grouping, then it's possible there is a sibling footer
-        // to the group, so update the data here also if there is one
-        if (rowNode.sibling) {
-            this.setAggData(rowNode.sibling, aggResult);
-
-            // Similarly for pinned siblings. A pinned grand total row is a `pinnedSibling` of
-            // the `sibling` of the root node.
-            if (rowNode.sibling.pinnedSibling) {
-                this.setAggData(rowNode.sibling.pinnedSibling, aggResult);
-            }
-        }
+        this.setAggDataWithSiblings(rowNode, aggResult);
     }
 
     private aggregateRowNodeUsingValuesAndPivot(rowNode: RowNode): any {
@@ -297,6 +287,34 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         }
 
         return rowNode.childrenAfterFilter ?? rowNode.childrenAfterGroup ?? [];
+    }
+
+    /**
+     * Sets aggData on a row node and all its siblings (footer sibling and pinned siblings).
+     * This ensures all related nodes stay in sync when aggregation data changes.
+     */
+    private setAggDataWithSiblings(rowNode: RowNode, newAggData: any): void {
+        this.setAggData(rowNode, newAggData);
+
+        // Update pinnedSibling of the group row (for manually pinned group rows)
+        const pinnedSibling = rowNode.pinnedSibling;
+        if (pinnedSibling) {
+            this.setAggData(pinnedSibling, newAggData);
+        }
+
+        // if we are grouping, then it's possible there is a sibling footer
+        // to the group, so update the data here also if there is one
+        const sibling = rowNode.sibling;
+        if (sibling) {
+            this.setAggData(sibling, newAggData);
+
+            // Similarly for pinned siblings. A pinned grand total row is a `pinnedSibling` of
+            // the `sibling` of the root node.
+            const siblingPinnedSibling = sibling.pinnedSibling;
+            if (siblingPinnedSibling) {
+                this.setAggData(siblingPinnedSibling, newAggData);
+            }
+        }
     }
 
     private setAggData(rowNode: RowNode, newAggData: any): void {
