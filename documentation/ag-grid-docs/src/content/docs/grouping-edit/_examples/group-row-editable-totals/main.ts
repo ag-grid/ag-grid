@@ -1,5 +1,12 @@
-import type { GridOptions, GroupRowValueSetterFunc, ValueFormatterParams, ValueParserParams } from 'ag-grid-community';
+import type {
+    GridApi,
+    GridOptions,
+    GroupRowValueSetterFunc,
+    ValueFormatterParams,
+    ValueParserParams,
+} from 'ag-grid-community';
 import {
+    CellApiModule,
     ClientSideRowModelModule,
     ModuleRegistry,
     NumberFilterModule,
@@ -11,6 +18,8 @@ import { RowGroupingModule, SetFilterModule } from 'ag-grid-enterprise';
 
 import { getData } from './data';
 
+let gridApi: GridApi<SalesRecord>;
+
 interface SalesRecord {
     id: string;
     region: string;
@@ -20,6 +29,7 @@ interface SalesRecord {
 }
 
 ModuleRegistry.registerModules([
+    CellApiModule,
     RowGroupingModule,
     ClientSideRowModelModule,
     NumberFilterModule,
@@ -70,8 +80,11 @@ const cascadeGroupTotal: GroupRowValueSetterFunc<SalesRecord> = ({
         return false;
     }
 
-    // Get current values using api.getValue (works for both leaf data and group aggData)
-    const values = aggregatedChildren.map((child) => Number(api.getValue(column, child)) || 0);
+    // Get current values using api.getCellValue (works for both leaf data and group aggData)
+    // Use from: 'data' to read actual stored values, not pending edits
+    const values = aggregatedChildren.map(
+        (child) => Number(api.getCellValue({ colKey: column, rowNode: child, from: 'data' })) || 0
+    );
     const sum = values.reduce((a, b) => a + b, 0);
 
     // Distribute proportionally, or equally if sum is zero
@@ -125,9 +138,6 @@ const gridOptions: GridOptions<SalesRecord> = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid');
-    if (!gridDiv) {
-        return;
-    }
-    createGrid(gridDiv, gridOptions);
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    gridApi = createGrid(gridDiv, gridOptions);
 });

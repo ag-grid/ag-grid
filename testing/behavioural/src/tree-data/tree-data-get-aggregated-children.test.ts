@@ -49,7 +49,8 @@ describe('IRowNode.getAggregatedChildren() with tree data', () => {
         expect(documentsNode).toBeDefined();
 
         // getAggregatedChildren returns direct children (Work and Personal folders)
-        const docChildren = documentsNode!.getAggregatedChildren();
+        // Pass 'size' column to verify column parameter works (non-pivot column returns all children)
+        const docChildren = documentsNode!.getAggregatedChildren('size');
         expect(docChildren.length).toBe(2);
         expect(docChildren.map((n) => n.data?.name).sort()).toEqual(['Personal', 'Work']);
 
@@ -58,7 +59,9 @@ describe('IRowNode.getAggregatedChildren() with tree data', () => {
         expect(workNode).toBeDefined();
 
         // getAggregatedChildren returns leaf files
-        const workChildren = workNode!.getAggregatedChildren();
+        // Pass Column object to verify it works with Column instances
+        const sizeCol = api.getColumn('size')!;
+        const workChildren = workNode!.getAggregatedChildren(sizeCol);
         expect(workChildren.length).toBe(2);
         expect(workChildren.map((n) => n.data?.name).sort()).toEqual(['data.xlsx', 'report.pdf']);
     });
@@ -91,7 +94,8 @@ describe('IRowNode.getAggregatedChildren() with tree data', () => {
         expect(folderNode).toBeDefined();
 
         // Before filter: 3 children
-        let children = folderNode!.getAggregatedChildren();
+        // Pass 'size' column to verify column parameter works with filtering
+        let children = folderNode!.getAggregatedChildren('size');
         expect(children.length).toBe(3);
 
         // Filter to only show .txt files
@@ -99,7 +103,7 @@ describe('IRowNode.getAggregatedChildren() with tree data', () => {
         api.onFilterChanged();
 
         // After filter: 2 children
-        children = folderNode!.getAggregatedChildren();
+        children = folderNode!.getAggregatedChildren(null);
         expect(children.length).toBe(2);
         expect(children.map((n) => n.data?.name).sort()).toEqual(['file1.txt', 'file2.txt']);
     });

@@ -1,4 +1,3 @@
-import { _missing } from '../agStack/utils/generic';
 import { _toString } from '../agStack/utils/string';
 import type { BeanCollection } from '../context/context';
 import type { Column } from '../interfaces/iColumn';
@@ -29,7 +28,7 @@ export function getCellValue<TValue = any>(beans: BeanCollection, params: GetCel
     const { colKey, rowNode, useFormatter, from = 'edit' } = params;
 
     const column = beans.colModel.getColDefCol(colKey) ?? beans.colModel.getCol(colKey);
-    if (_missing(column)) {
+    if (!column) {
         return null;
     }
     const result = beans.valueSvc.getValueForDisplay({

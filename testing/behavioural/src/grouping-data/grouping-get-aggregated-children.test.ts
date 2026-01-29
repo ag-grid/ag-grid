@@ -48,13 +48,16 @@ describe('IRowNode.getAggregatedChildren()', () => {
             expect(irelandGroup).toBeDefined();
             expect(irelandGroup!.group).toBe(true);
 
-            // Without column key, returns childrenAfterAggFilter (all children)
-            const children = irelandGroup!.getAggregatedChildren();
+            // With a non-pivot column key, returns childrenAfterAggFilter (all children)
+            // since pivot key filtering only applies to pivot columns
+            const children = irelandGroup!.getAggregatedChildren('gold');
             expect(children.map((n) => n.data?.id).sort()).toEqual(['1', '2', '3']);
 
             const italyGroup = api.getRowNode('row-group-country-Italy');
             expect(italyGroup).toBeDefined();
-            const italyChildren = italyGroup!.getAggregatedChildren();
+            // Pass Column object to verify it works
+            const goldCol = api.getColumn('gold')!;
+            const italyChildren = italyGroup!.getAggregatedChildren(goldCol);
             expect(italyChildren.map((n) => n.data?.id).sort()).toEqual(['4', '5']);
         });
 
@@ -85,7 +88,8 @@ describe('IRowNode.getAggregatedChildren()', () => {
             expect(europeGroup).toBeDefined();
 
             // getAggregatedChildren returns the childrenAfterAggFilter (country groups, not leaf nodes)
-            const europeChildren = europeGroup!.getAggregatedChildren();
+            // Pass 'gold' column to verify non-pivot column works
+            const europeChildren = europeGroup!.getAggregatedChildren('gold');
             expect(europeChildren.length).toBe(2);
             expect(europeChildren.every((n) => n.group)).toBe(true);
 
@@ -94,7 +98,7 @@ describe('IRowNode.getAggregatedChildren()', () => {
             expect(irelandGroup).toBeDefined();
 
             // getAggregatedChildren returns the leaf children
-            const irelandChildren = irelandGroup!.getAggregatedChildren();
+            const irelandChildren = irelandGroup!.getAggregatedChildren(null);
             expect(irelandChildren.map((n) => n.data?.id).sort()).toEqual(['1', '2']);
         });
 
@@ -123,7 +127,7 @@ describe('IRowNode.getAggregatedChildren()', () => {
             expect(irelandGroup).toBeDefined();
 
             // Before filter, should have all 3 children
-            let children = irelandGroup!.getAggregatedChildren();
+            let children = irelandGroup!.getAggregatedChildren(null);
             expect(children.length).toBe(3);
 
             // Apply filter to show only Soccer
@@ -131,7 +135,7 @@ describe('IRowNode.getAggregatedChildren()', () => {
             api.onFilterChanged();
 
             // After filter, should have only 1 child
-            children = irelandGroup!.getAggregatedChildren();
+            children = irelandGroup!.getAggregatedChildren(null);
             expect(children.length).toBe(1);
             expect(children[0].data?.id).toBe('2');
 
@@ -140,7 +144,7 @@ describe('IRowNode.getAggregatedChildren()', () => {
             api.onFilterChanged();
 
             // After clearing filter, should have all 3 again
-            children = irelandGroup!.getAggregatedChildren();
+            children = irelandGroup!.getAggregatedChildren(null);
             expect(children.length).toBe(3);
         });
 
@@ -164,7 +168,8 @@ describe('IRowNode.getAggregatedChildren()', () => {
             expect(leafNode).toBeDefined();
             expect(leafNode!.group).toBeFalsy();
 
-            const children = leafNode!.getAggregatedChildren();
+            // Leaf nodes return empty array regardless of column key
+            const children = leafNode!.getAggregatedChildren('gold');
             expect(children).toEqual([]);
         });
     });
@@ -250,7 +255,7 @@ describe('IRowNode.getAggregatedChildren()', () => {
             expect(irelandGroup).toBeDefined();
 
             // Without column key, returns all children
-            const allChildren = irelandGroup!.getAggregatedChildren();
+            const allChildren = irelandGroup!.getAggregatedChildren(null);
             expect(allChildren.map((n) => n.data?.id).sort()).toEqual(['1', '2', '3']);
         });
 
@@ -336,7 +341,7 @@ describe('IRowNode.getAggregatedChildren()', () => {
             expect(europeGroup).toBeDefined();
 
             // For the region (non-leaf) group, getAggregatedChildren returns country subgroups
-            const children = europeGroup!.getAggregatedChildren();
+            const children = europeGroup!.getAggregatedChildren(null);
             expect(children.length).toBe(2);
             expect(children.every((n) => n.group)).toBe(true);
 
@@ -514,8 +519,9 @@ describe('IRowNode.getAggregatedChildren()', () => {
             expect(irelandGroup).toBeDefined();
 
             // Before filter: 3 children, aggData should sum to 6
+            // Pass 'gold' column to verify column parameter works
             expect(irelandGroup!.aggData?.gold).toBe(6);
-            let children = irelandGroup!.getAggregatedChildren();
+            let children = irelandGroup!.getAggregatedChildren('gold');
             expect(children.length).toBe(3);
 
             // Apply filter to show only Soccer
@@ -524,7 +530,7 @@ describe('IRowNode.getAggregatedChildren()', () => {
 
             // After filter: 1 visible child, aggData should sum to 2 (only filtered values)
             expect(irelandGroup!.aggData?.gold).toBe(2);
-            children = irelandGroup!.getAggregatedChildren();
+            children = irelandGroup!.getAggregatedChildren(null);
             expect(children.length).toBe(1);
             expect(children[0].data?.id).toBe('2');
         });
@@ -555,8 +561,10 @@ describe('IRowNode.getAggregatedChildren()', () => {
             expect(irelandGroup).toBeDefined();
 
             // Before filter: 3 children, aggData should sum to 6
+            // Pass Column object to verify it works
+            const goldCol = api.getColumn('gold')!;
             expect(irelandGroup!.aggData?.gold).toBe(6);
-            let children = irelandGroup!.getAggregatedChildren();
+            let children = irelandGroup!.getAggregatedChildren(goldCol);
             expect(children.length).toBe(3);
 
             // Apply filter to show only Soccer
@@ -568,7 +576,7 @@ describe('IRowNode.getAggregatedChildren()', () => {
 
             // getAggregatedChildren should return ALL children (3, not 1)
             // because it returns the children used for aggregation
-            children = irelandGroup!.getAggregatedChildren();
+            children = irelandGroup!.getAggregatedChildren(null);
             expect(children.length).toBe(3);
             expect(children.map((n) => n.data?.id).sort()).toEqual(['1', '2', '3']);
         });

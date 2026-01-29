@@ -1,11 +1,3 @@
-export interface SalesRecord {
-    id: string;
-    region: string;
-    country: string;
-    product: string;
-    amount: number;
-}
-
 export const getData = (): SalesRecord[] => [
     // Europe - Electronics
     { id: 'eu-fr-elec', region: 'Europe', country: 'France', product: 'Electronics', amount: 120 },
