@@ -52,12 +52,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
      * which then triggers the listener here that calls refresh model again but at the filter stage
      * (which is about to be run by the original call).
      */
-    private refreshingModel: boolean = false;
+    public refreshingModel: boolean = false;
     private rowNodesCountReady: boolean = false;
-
-    public get isRefreshing(): boolean {
-        return this.refreshingModel;
-    }
 
     private stages: IRowNodeStage[] | null = null;
 
