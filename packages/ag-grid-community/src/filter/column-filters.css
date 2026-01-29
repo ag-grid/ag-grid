@@ -201,7 +201,7 @@
     flex-direction: column;
     gap: var(--ag-widget-vertical-spacing);
     padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
-    padding-bottom: calc(var(--ag-widget-container-vertical-padding) - var(--ag-widget-vertical-spacing));
+    padding-bottom: var(--ag-widget-container-vertical-padding);
     overflow-y: auto;
     min-height: calc(
         var(--ag-list-item-height) + var(--ag-widget-container-vertical-padding) + var(--ag-widget-vertical-spacing)
