@@ -55,6 +55,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private refreshingModel: boolean = false;
     private rowNodesCountReady: boolean = false;
 
+    public get isRefreshing(): boolean {
+        return this.refreshingModel;
+    }
+
     private stages: IRowNodeStage[] | null = null;
 
     /** Maps a property name to the index in this.stages array */
