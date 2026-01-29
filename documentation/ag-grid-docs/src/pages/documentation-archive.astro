@@ -1,19 +1,13 @@
 ---
-import { getCollection, getEntry } from 'astro:content';
+import { getEntry } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import { DocsNavFromLocalStorage } from '@ag-website-shared/components/docs-navigation/DocsNavFromLocalStorage';
-import { getDocsPages } from '../components/docs/utils/pageData';
 import { parseVersion } from '@ag-website-shared/utils/parseVersion';
 import { SideNavigation } from '@components/pages-navigation/components/SideNavigation';
 import MajorTable from '@ag-website-shared/components/major-table/MajorTable.astro';
 import docsStyles from '@ag-website-shared/components/page-styles/docs.module.scss';
 
 import type { CollectionEntry } from 'astro:content';
-
-export async function getStaticPaths() {
-    const pages = await getCollection('docs');
-    return getDocsPages(pages);
-}
 
 const { data: docsNavData } = (await getEntry('docsNav', 'nav')) as CollectionEntry<'docsNav'>;
 

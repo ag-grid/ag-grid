@@ -732,6 +732,18 @@
                                     "title": "Formula Editor",
                                     "path": "formula-editor-component",
                                     "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Formula Reference",
+                                    "path": "formula-reference",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Custom Functions",
+                                    "path": "formula-custom-functions",
+                                    "isEnterprise": true
                                 }
                             ]
                         },

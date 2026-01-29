@@ -2,11 +2,11 @@
 title: "Formulas"
 enterprise: true
 ---
-Formula strings can be provided to cells in the grid, allowing for dynamic calculations based on other cell values.
+Formulas let users enter spreadsheet-style expressions into grid cells so values update automatically when referenced data changes.
 
 ## Enabling Formulas
 
-To enable formulas, set the column property `allowFormula = true` on one or more columns and ensure that your rows have [Row IDs](./row-ids/#row-ids). In the example below, the values in columns Subtotal, Tax and Total are computed using formulas which can be modified by the end-user.
+To enable formulas, set the column property `allowFormula: true` on one or more columns and ensure your rows have [Row IDs](./row-ids/#row-ids).
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -24,106 +24,55 @@ const gridOptions = {
         },
     },
     getRowId: (params) => String(params.data.rid),
-}
+};
 ```
 
 {% gridExampleRunner title="Formulas" name="formulas" exampleHeight=390 /%}
 
-
 ## Formula Editor Component
 
-The Formula Cell Editor provides range highlighting, range handles, and function autocomplete while you edit formula-enabled 
-cells. It appears automatically for columns with `allowFormula: true` unless you supply a `cellEditor`. See 
-[Formula Editor Component](./formula-editor-component/) for behaviour details and how to disable it.
+The Formula Cell Editor is the default editor for `allowFormula: true` columns unless you provide a custom `cellEditor`. It tokenises references, highlights ranges, and provides function autocomplete while typing.
 
-Range highlights and range handle editing require `cellSelection` to be enabled.
+To opt out, set a `cellEditor` on the column. Formulas still evaluate, but the formula editor features are disabled.
 
-## Feature Interactions
-
-When using formulas, the following feature integrations apply:
-- [Fill Handle](./cell-selection-fill-handle/): Dragging to fill from a formula offsets relative references (for example `=B1+C2` becomes `=B2+C3` on the next row). Absolute references (`$A$1`, `A$1`, `$A1`) remain fixed.
-- [Row Numbers](./row-numbers/): Enabled by default.
-
-Certain features do not work in conjunction with formulas:
-- [Cell Expressions](./cell-expressions/#cell-expressions)
-- [Tree Data](./tree-data/) and [Row Grouping](./grouping/)
-- [Pivoting](./pivoting/) and [Aggregation](./aggregation/)
-- [Master Detail](./master-detail/)
-- [Server-Side Row Model](./server-side-model/), [Infinite Row Model](./infinite-scrolling/), and [Viewport Row Model](./viewport/)
+See [Formula Editor Component](./formula-editor-component/) for details and examples.
 
 ## Formula Syntax
 
-Formulas are a text string that starts with an equals sign (`=`) and can contain references to other cells, functions, operators, and constants.
+Formulas are text strings that start with an equals sign (`=`) and can contain references, functions, operators, and constants.
 
-Examples of valid formula strings:
+### Basics
 
-- Constants (e.g. `=3.14` or `="Hello"`)
-- Cell references (e.g. `=A1`)
-- Mathematical operations (e.g. `=A1 + 3`)
-- Functions (e.g. `=SUM(A1, 2)`)
-- Cell Ranges (e.g. `=SUM(A1:A10)`)
+- `=` prefix indicates a formula.
+- Constants can be numbers (e.g. `3.14`, `-7`), strings (e.g. `"Hello"`), or booleans (`TRUE`, `FALSE`).
+- Standard operator precedence applies (BODMAS/PEMDAS).
 
-### Constants
-Constants can be numbers (e.g. `3.14`, `42`, `-7`), strings (e.g. `"Hello"`, `"World"`), or boolean values (`TRUE`, `FALSE`).
+### Cell References
 
-### Cell references
+Cell references use column letters plus row numbers (e.g. `A1`, `B2`). Rows are 1-based and columns continue past `Z` with `AA`, `AB`, `AC`, and so on.
 
-Cell references are used to refer to the value of another cell in the grid and are symbolised by an alphabetical column identifier followed by a numerical row identifier (e.g. `A1`).
-After the 26th column, the columns continue with two letters (e.g. AA, AB, AC, etc.). Rows are numbered starting from 1.
-
-{% note %}
-Column letters are assigned for every column in the grid, including columns that are hidden or not displayed due to column groups being collapsed.
-{% /note %}
-
-Examples of cell references:
-- `=A1` refers to the cell in column A, row 1.
-- `=B2` refers to the cell in column B, row 2.
-
-If a cell moves, the formula will always refer to the same cell, not the same position. For example, if a formula in cell C1 is `=A1`, and a new row is inserted above row 1, the formula will automatically update to `=A2` to continue referencing the original cell.
-To instead always refer to the same position, use absolute references by prefixing the column letter and/or row number with a dollar sign (`$`):
-- `=$A$1` always refers to column A, row 1.
-- `=A$1` always refers to row 1, but the column can change.
-- `=$A1` always refers to column A, but the row can change.
+Relative references move as the grid changes. Absolute references stay fixed using `$`:
+- `=$A$1` locks column and row.
+- `=A$1` locks the row only.
+- `=$A1` locks the column only.
 
 #### Long-Form References
-When saving cell references, the grid converts these into a long-hand format using column and row IDs. This ensures the formula continues to refer to the correct cells even if rows or columns move while the grid is not open.
 
-For example, if the column with ID `athlete` is in column A, and the row with ID `a` is in row 1, then the formula `=A1` becomes `=REF(COLUMN('athlete'), ROW('a'))`.
-When this is a static reference, for example `$A$1`, the long-hand format uses A and 1 in place of IDs but adds `true` to indicate the value is absolute (e.g. `=$A$1` becomes `=REF(COLUMN('a', true), ROW('1', true))`).
+The grid stores formulas in a long-hand format using column and row IDs to preserve references across row/column changes while the grid is not open. The editor converts that back to shorthand when users edit a cell.
 
-This long-hand format can be used directly in your data source or application via a `valueGetter`, and will be converted to the shorthand format when the user opens a cell editor.
-
-{% note %}
-As cell formulas are not immediately parsed when the grid opens, we suggest using the long hand format when providing formulas directly in your data source or application as any row positional changes may impact the relative cell when resolved.
-{% /note %}
-
-### Mathematical Operations
-
-Formulas can be used to construct mathematical expressions using cell references, constants, functions, and operators. These expressions respect the standard order of operations (PEMDAS/BODMAS).
-
-The full list of available operators can be found below in [List of Mathematical Operators](#list-of-mathematical-operators).
-
-### Functions
-Formulas can use functions to perform calculations on values. Functions are a string of letters followed by parentheses containing the function arguments.
-Functions can take multiple arguments, which can be constants, cell references, cell ranges, or other functions.
-
-Examples of functions:
-- `=SUM(A1, 2)` returns the sum of the value in cell A1 and the constant value 2.
-- `=AVERAGE(A1:A10)` returns the average of every cell value in the range A1 to A10. (e.g A1, A2, A3, ..., A10)
-- `=CONCAT(A1, " ", B1)` returns the concatenation of the value in cell A1, a space, and the value in cell B1.
-- `=IF(A1 > 10, "High", "Low")` returns "High" if the value in cell A1 is greater than 10, otherwise returns "Low".
-- `=SUM(AVERAGE(A1:B1), 2)` returns the sum of the average of the values in the range A1 to B1 and the constant value 2.
-- `=TODAY()` returns a date object representing the current date.
-
-The full list of functions that are provided by the grid can be found below in [List of Provided Functions](#list-of-provided-functions).
+If you supply formulas directly in data, use the long-hand format to avoid row position drift. See the notes in [Formula Reference](./formula-reference/) for the conversion rules.
 
 ### Cell Ranges
-Cell ranges are used to refer to a rectangular block of cells in the grid and are symbolised by the top-left cell reference followed by a colon (`:`) and the bottom-right cell reference.
-For example, the range `A1:B2` refers to the cells in column A and B, and rows 1 and 2 (i.e. A1, A2, B1, B2).
+
+Ranges refer to a block of cells using a top-left and bottom-right reference separated by `:` (e.g. `A1:B2`).
+
+### Functions
+
+Formulas support built-in functions such as `SUM`, `AVERAGE`, and `CONCAT`. See [Formula Reference](./formula-reference/) for the full list of supported functions and operators.
 
 ### Error Codes
 
-If a formula results in an error, users will see the following error codes in the corresponding cell.
+If a formula results in an error, users will see one of these codes:
 
 | Error | Description |
 | -------- | ----------- |
@@ -135,168 +84,34 @@ If a formula results in an error, users will see the following error codes in th
 | `#DIV/0!` | Formula results in a division by zero |
 | `#ERROR!` | Formula contains some other kind of error |
 
+## Feature Interactions / Compatibility
 
-## Custom Functions
-
-Custom functions can be provided to formulas by providing the `gridOption` property `formulaFuncs`.
-
-{% apiDocumentation source="grid-options/properties.json" section="formulas" names=["formulaFuncs"] /%}
-
-The following example and snippet demonstrates how to write a custom function `CUSTOMSUM` which adds all of the provided values.
-
-It uses the `params.values` iterator to simplify navigating all of the values, including those provided in ranges by flattening
-them into one iterable.
-
-A user could then use this function in a formula such as:
-- `=CUSTOMSUM(A1:B2, 2)` which would add all of the values in the range A1 to B2, and the constant 2.
-- `=CUSTOMSUM(1, 2, 3, 4)` which would add the constant values 1, 2, 3, and 4.
-
-{% gridExampleRunner title="Simple Iterator" name="formulas-simple-iterator" exampleHeight=390 /%}
-
-In this snippet below, observe how the function uses the `params.values` iterator for navigating the values provided to the function, 
-which provides all of the values from the ranges and constants in one simple iterable, meaning any input such as `=CUSTOMSUM(A1:B2, 2)` will
- be streamed as `1 (A1) -> 1 (A2) -> 1 (B1) -> 2 (B2) -> 2` for the function to process.
-
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    columnDefs: [
-        { field: 'sales' },
-        // make all rows draggable
-        { field: 'calculated', allowFormula: true }
-
-    ],
-    formulaFuncs: {
-        CUSTOMSUM: {
-            func: (params) => {
-                let total = 0;
-                for (const value of params.values) {
-                    total += value;
-                }
-                return total;
-            },
-        },
-    },
-}
-```
-
-### Handling Errors
-
-It is the responsibility of the function implementation to throw errors when the arguments are not as expected.
-
-The example below demonstrates a custom function `ERRORIFONE` which errors when any of the arguments provided are `1`.
-
-{% note %}
-When a function (or a referenced cell) throws an error, the cell displays `#ERROR!` and hovering over the cell displays the thrown error message.
-
-Errors will also propagate to any other cells that reference these cells in their formulas, as demonstrated in cell `D9`.
-{% /note %}
-
-{% gridExampleRunner title="Custom Errors" name="formulas-custom-errors" exampleHeight=430 /%}
-
-
-The following snippet builds on our ADD function to throw an error if any of the provided arguments are not numbers, or when no arguments are provided.
-```{% frameworkTransform=true %}
-const gridOptions = {
-    columnDefs: [
-        { field: 'sales' },
-        // make all rows draggable
-        { field: 'calculated', allowFormula: true }
-
-    ],
-    formulaFuncs: {
-        ERRORIFONE: {
-            func: (params) => {
-                for (const value of params.values) {
-                    if (String(value) === '1') {
-                        throw 'Error, discovered a \'1\' in params';
-                    }
-                }
-                return 'SUCCESS, no \'1\' found.';
-            },
-        },
-    },
-}
-```
-
-
-### Complex Custom Functions
-
-Some custom functions may need explicit context about the ranges provided to them. For example, the `COUNTIF` function needs the first argument to be a range,
-and the second argument to be a criteria to apply to that range. If the `params.values` iterator was used, the range values would be flattened and hard to
-distinguish from the criteria.
-
-The grid provides an alternative iterator `params.args` which provides wrapped arguments as they were provided to the function, without any flattening or transformation.
-This means that ranges are provided as a `RangeParam` object, which is iterable for navigating the values in the range.
-
-The following example demonstrates how to implement a custom function `COUNTEQ` which counts the number of values in a range that match the second parameter. 
-In the example we use this function in the "Result" column to count the number of times the value "2" appears in the given range.
-
-{% gridExampleRunner title="Contextual Iterator" name="formulas-context-iterator" exampleHeight=390 /%}
-
-The following snippet demonstrates providing a custom function `COUNTEQ` which counts the number of values in a range that match the second parameter.
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    columnDefs: [
-        { field: 'sales' },
-        // make all rows draggable
-        { field: 'calculated', allowFormula: true }
-
-    ],
-    formulaFuncs: {
-        COUNTEQ: {
-            func: (params) => {
-                const argsArr = Array.from(params.args);
-                if (argsArr.length != 2) {
-                    throw 'COUNTEQ requires exactly 2 arguments';
-                }
-                const [range, criteria] = argsArr;
-                if (range.kind !== 'range') {
-                    throw 'First argument to COUNTEQ must be a range';
-                }
-                if (criteria.kind !== 'value' || typeof criteria.value === 'object') {
-                    throw 'Second argument to COUNTEQ must be a primitive value';
-                }
-                const isNumCriteria = typeof criteria.value === 'number';
-                let count = 0;
-                for (const value of range) {
-                    const coercedValue = isNumCriteria ? Number(value) : value;
-                    if (coercedValue === criteria.value) {
-                        count++;
-                    }
-                }
-                return count;
-            },
-        },
-    },
-}
-```
+| Feature | Status | Notes |
+| --- | --- | --- |
+| [Fill Handle](./cell-selection-fill-handle/) | Supported | Dragging from a formula offsets relative refs (e.g. `=B1+C2` becomes `=B2+C3`). Absolute refs remain fixed. |
+| [Cell Selection](./cell-selection/) | Supported | Required for range highlights and range handle editing in the formula editor. |
+| [Row Numbers](./row-numbers/) | Supported | Enabled by default; clicking a row number adds a row range to the formula. |
+| [Cell Expressions](./cell-expressions/#cell-expressions) | Not supported | |
+| [Tree Data](./tree-data/) and [Row Grouping](./grouping/) | Not supported | |
+| [Pivoting](./pivoting/) and [Aggregation](./aggregation/) | Not supported | |
+| [Master Detail](./master-detail/) | Not supported | |
+| [Server-Side](./server-side-model/), [Infinite](./infinite-scrolling/), and [Viewport](./viewport/) Row Models | Not supported | |
 
 ## Formula Data Source
 
-Formulas can be stored outside of the grid's `rowData` by providing a `formulaDataSource`. This is useful when you want to keep row data clean, or persist formulas separately (e.g. to local storage or your own API).
-
-{% apiDocumentation source="grid-options/properties.json" section="formulas" names=["formulaDataSource"] /%}
-
-The snippet and example below illustrate an example of storing formulae in a `Map` object, external to the grid. 
-
-In the example, the "Total" column contains editable formulas which are stored in an external `Map`. The contents of the map and the row data can be visualised with the provided buttons. This example intentionally omits `cellSelection` to show that formulas work without range highlights.
+You can back formulas with a custom data source. This example uses a Map-based store for formula values:
 
 ```{% frameworkTransform=true %}
+const formulaStore = new Map();
+const formulaKey = (rowId, colId) => `${rowId}-${colId}`;
+
 const gridOptions = {
     columnDefs: [
-        { field: 'product' },
-        { field: 'price' },
-        { field: 'quantity' },
-        { field: 'subtotal', allowFormula: true },
-        { field: 'total', allowFormula: true },
+        { field: 'sales' },
+        { field: 'tax', allowFormula: true },
     ],
-    getRowId: (params) => String(params.data.id),
     formulaDataSource: {
-        getFormula: ({ column, rowNode }) => {
-            return formulaStore.get(formulaKey(rowNode.id, column.getColId()));
-        },
+        getFormula: ({ column, rowNode }) => formulaStore.get(formulaKey(rowNode.id, column.getColId())),
         setFormula: ({ column, rowNode, formula }) => {
             const key = formulaKey(rowNode.id, column.getColId());
             if (formula === undefined) {
@@ -315,73 +130,12 @@ A user-provided data source should provide the following interface:
 
 {% interfaceDocumentation interfaceName="FormulaDataSource" config={ "description": "" } /%}
 
-## Exporting from Grids containing Formulas
+## Exporting
 
-When performing a [CSV Export](./csv-export), the grid will export the evaluated values of any formulas in the grid. 
+When performing a [CSV Export](./csv-export), the grid exports the evaluated values of any formulas. When performing an [Excel Export](./excel-export), the grid exports the formulas themselves so Excel can evaluate them.
 
-When performing an [Excel Export](./excel-export), the grid will export the formulas themselves, which should then be evaluated as normal when opening the exported file in Excel.
+## Next Steps
 
-## List of Mathematical Operators
-
-| Symbol | Description |
-| ------ | ----------- |
-| `+` | Addition, can be used to add two numbers, or add days to a Date |
-| `-` | Subtraction, can be used to subtract two numbers, or subtract days from a Date |
-| `*` | Multiplication, can be used to multiply two numbers |
-| `/` | Division, can be used to divide two numbers |
-| `^` | Exponentiation, can be used to raise a number to a power |
-| `&` | Concatenation, can be used to join two strings |
-| `=` | Equal to, can be used to compare two values |
-| `<>` | Not equal to, can be used to compare two values |
-| `>` | Greater than, can be used to compare two values |
-| `<` | Less than, can be used to compare two values |
-| `>=` | Greater than or equal to, can be used to compare two values |
-| `<=` | Less than or equal to, can be used to compare two values |
-
-## List of Provided Functions
-
-**Numeric Functions**
-
-| Function | Description |
-| -------- | ----------- |
-| `SUM(arg1, arg2, ...)` | Returns the sum of all arguments. |
-| `SUMIF(range, criteria, [sum_range])` | Returns the sum of values in `sum_range` where the corresponding values in `range` meet the `criteria`. If `sum_range` is not provided, `range` is used for summation. |
-| `PRODUCT(arg1, arg2, ...)` | Returns the product of all arguments. |
-| `MIN(arg1, arg2, ...)` | Returns the minimum value among the arguments. |
-| `MAX(arg1, arg2, ...)` | Returns the maximum value among the arguments. |
-| `AVERAGE(arg1, arg2, ...)` | Returns the average of all numeric values among the arguments. |
-| `MEDIAN(arg1, arg2, ...)` | Returns the median of all numeric values among the arguments. |
-| `POWER(arg1, arg2)` | Returns the result of raising the first argument to the power of the second argument. |
-| `RAND()` | Returns a random number between 0 and 1. |
-
-**Date Functions**
-
-| Function | Description |
-| -------- | ----------- |
-| `NOW()` | Returns a date object representing the current date and time. |
-| `TODAY()` | Returns a date object representing the current date with the time set to 00:00:00. |
-
-**Text Functions**
-
-| Function | Description |
-| -------- | ----------- |
-| `CONCAT(arg1, arg2, ...)` |
-
-**Logical Functions**
-
-| Function | Description |
-| -------- | ----------- |
-| `IF(condition, value_if_true, value_if_false)` | Returns `value_if_true` if the condition is true, otherwise returns `value_if_false`. |
-
-**Counting Functions**
-
-| Function | Description |
-| -------- | ----------- |
-| `COUNT(arg1, arg2, ...)` | Returns the count of numeric values among the arguments. |
-| `COUNTA(arg1, arg2, ...)` | Returns the count of non-empty values among the arguments. |
-| `COUNTBLANK(arg1, arg2, ...)` | Returns the count of empty values among the arguments. |
-| `COUNTIF(range, criteria)` | Returns the count of values in the range that meet the criteria. |
-
-## Next Up
-
-Continue to the next section: [Formula Editor Component](./formula-editor-component/).
+- [Explore the editor →](./formula-editor-component/)
+- [Full built-in functions & operators →](./formula-reference/)
+- [Write custom functions →](./formula-custom-functions/)

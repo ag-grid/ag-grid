@@ -1,0 +1,61 @@
+---
+title: "Custom Functions"
+enterprise: true
+---
+Custom formula functions let you extend the engine with domain-specific logic and reusable calculations.
+
+## Formula Functions API
+
+Custom functions are provided through the `formulaFuncs` grid option.
+
+{% apiDocumentation source="grid-options/properties.json" section="formulas" names=["formulaFuncs"] /%}
+
+## Simple Example
+
+The example below registers `CUSTOMSUM`, which iterates over all values passed to the function (including ranges) and returns their sum.
+
+{% gridExampleRunner title="Simple Iterator" name="formulas-simple-iterator" exampleHeight=390 /%}
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'sales' },
+        { field: 'calculated', allowFormula: true },
+    ],
+    formulaFuncs: {
+        CUSTOMSUM: {
+            func: (params) => {
+                let total = 0;
+                for (const value of params.values) {
+                    total += value;
+                }
+                return total;
+            },
+        },
+    },
+};
+```
+
+## Error Handling
+
+Your function should throw when arguments are invalid. Errors are surfaced in the grid and propagate through dependent formulas.
+
+{% gridExampleRunner title="Custom Errors" name="formulas-custom-errors" exampleHeight=430 /%}
+
+{% note %}
+When a function (or a referenced cell) throws an error, the cell displays `#ERROR!` and hovering over the cell displays the thrown error message. Errors also propagate to dependent formula cells.
+{% /note %}
+
+## Complex Example
+
+This example shows `COUNTEQ`, which receives a range and a value and counts matches. It uses `params.args` to validate argument types and handle ranges explicitly.
+
+{% gridExampleRunner title="Contextual Iterator" name="formulas-context-iterator" exampleHeight=390 /%}
+
+## Best Practices
+
+- Validate argument counts and types early.
+- Prefer iterators (`params.values`) for large ranges to avoid unnecessary allocations.
+- Keep functions pure and fast to avoid performance issues on large grids.
+
+See [Formula Reference](./formula-reference/) for built-in functions that can inspire custom implementations.

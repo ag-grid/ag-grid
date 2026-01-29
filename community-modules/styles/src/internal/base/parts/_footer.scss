@@ -30,6 +30,8 @@
     .ag-paging-button,
     .ag-paging-description {
         margin: 0 var(--ag-grid-size);
+        // avoids misalignment of buttons and text
+        line-height: 0;
     }
 
     .ag-status-bar {
