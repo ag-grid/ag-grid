@@ -166,11 +166,7 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
     }
 
     private isTypeEditable(type?: string | null): boolean {
-        return (
-            !!type &&
-            !this.readOnly &&
-            getNumberOfInputs(type as ISimpleFilterModelType, this.optionsFactory) === 1
-        );
+        return !!type && !this.readOnly && getNumberOfInputs(type as ISimpleFilterModelType, this.optionsFactory) === 1;
     }
 
     protected getAriaLabel(column: AgColumn): string {
