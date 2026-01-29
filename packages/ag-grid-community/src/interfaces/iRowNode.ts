@@ -4,19 +4,6 @@ import type { BuildEventTypeMap } from '../eventTypes';
 import type { SelectionEventSourceType } from '../events';
 import type { Column } from '../interfaces/iColumn';
 
-/**
- * Options for `getAggregatedChildren` method on `IRowNode`.
- */
-export interface GetAggregatedChildrenParams<TData = any, TValue = any> {
-    /**
-     * Optional column key (string colId, ColDef, or Column instance) to get children for.
-     * If a pivot column with `pivotKeys`, only children matching those pivot keys are returned.
-     * If a value column that is used as a `pivotValueColumn`, and the grid is in pivot mode,
-     * the method will attempt to find an associated pivot column.
-     */
-    colKey?: ColKey<TData, TValue>;
-}
-
 export type RowNodeEventType =
     | 'rowSelected'
     | 'rowPinned'
@@ -309,24 +296,6 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
     depthFirstSearch(callback: (rowNode: IRowNode<TData>) => void): void;
 
     /**
-     * Returns the immediate child rows that contribute to the aggregated value of this group row.
-     * This respects the current aggregation settings including `suppressAggFilteredOnly` and `groupAggFiltering`.
-     *
-     * For pivot columns, this returns only the children that match the column's pivot keys.
-     * For non-pivot columns, this returns all children used for aggregation.
-     *
-     * **Warning:** The returned array is a direct reference to internal grid data and must not be modified.
-     * Modifying this array will cause undefined behaviour.
-     *
-     * Note: This returns immediate children only. For leaf rows, recurse via `setDataValue` or call
-     * this method on child groups. Leaf rows (non-group rows) return an empty array.
-     *
-     * @param params - Optional parameters to configure which children to return.
-     * @returns Array of child row nodes that contribute to aggregation. Do not modify this array.
-     */
-    getAggregatedChildren(params?: Readonly<GetAggregatedChildrenParams<TData>>): IRowNode<TData>[];
-
-    /**
      * Sets the row height.
      * Call if you want to change the height initially assigned to the row.
      * After calling, you must call `api.onRowHeightChanged()` so the grid knows it needs to work out the placement of the rows.
@@ -362,4 +331,13 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
      * Returns the route of the row node. If the Row Node does not have a key (i.e it's a leaf row inside a row group) returns undefined
      */
     getRoute(): string[] | undefined;
+
+    /**
+     * Returns the immediate children that contribute to the aggregation of this group RowNode.
+     * For pivot columns on leaf groups, only children matching the pivot keys are returned.
+     * Leaf (non-group) RowNodes return an empty array.
+     *
+     * **Note:** Only supported with the Client-Side Row Model.
+     */
+    getAggregatedChildren(colKey?: ColKey<TData> | null): IRowNode<TData>[];
 }

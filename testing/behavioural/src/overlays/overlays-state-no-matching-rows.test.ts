@@ -138,6 +138,7 @@ describe('ag-grid overlays no matching rows', () => {
             expect(hasNoMatchingRowsOverlay()).toBeTruthy();
 
             await api.setColumnFilterModel('athlete', { type: 'contains', filter: 'Michael' });
+            api.onFilterChanged();
 
             expect(hasNoMatchingRowsOverlay()).toBeFalsy();
             expect(hasLoadingOverlay()).toBeFalsy();

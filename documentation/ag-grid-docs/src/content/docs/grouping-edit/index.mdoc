@@ -52,16 +52,58 @@ The example uses a simple strategy of dividing the value equally among all visib
 
 {% gridExampleRunner title="Editable Group Totals" name="group-row-editable-totals" exampleHeight=620 /%}
 
-Key points:
+### The aggregatedChildren Parameter
 
-- Use `groupRowValueSetter` to redistribute committed values to descendants.
-	The callback receives the group row node and column.
-- Call `rowNode.setDataValue` on children to push the updated figures down. This triggers normal
-	aggregation to refresh parent totals and recurses further when a child is also a group that defines
-	its own `groupRowValueSetter`.
-- `rowNode.childrenAfterSort` contains the descendants in the node, groups or leaf rows.
+The `groupRowValueSetter` callback receives an `aggregatedChildren` array containing the immediate children
+that contribute to the [Aggregation](./aggregation/) for the edited column. This array makes it easy to
+cascade edited values down to descendant rows without manually traversing the row hierarchy.
+
+The children returned by `aggregatedChildren` depend on the column and grid configuration:
+
+- **Regular value columns**: Returns direct children used for aggregation. This respects the
+  `suppressAggFilteredOnly` grid option and `groupAggFiltering` — when these cause aggregation to include
+  all children (not just filtered ones), `aggregatedChildren` returns all children accordingly.
+- **Pivot columns on leaf groups**: Returns only the children matching the column's pivot keys, since
+  pivot aggregation groups rows by pivot key values.
+- **Non-group rows**: Always returns an empty array — only group rows have aggregated children.
+
+Alternatively, use `rowNode.getAggregatedChildren(colKey)` anywhere in your code to retrieve the same
+children programmatically. See [Retrieving Aggregated Children](./aggregation/#retrieving-aggregated-children)
+for more details.
+
+### Cascading Edits
+
+Key points for implementing cascading edits:
+
+- Call `rowNode.setDataValue` on each child to push updated figures down. This triggers normal
+  aggregation to refresh parent totals.
+- When a child is also a group that defines its own `groupRowValueSetter`, the cascade recurses further.
 - Parent aggregates refresh automatically because child `data` changes re-run the column `aggFunc`,
-	so typing £600 into “Europe” instantly rebalances the filtered countries to reach that total.
+  so typing £600 into "Europe" instantly rebalances the filtered countries to reach that total.
+
+{% note %}
+The `aggregatedChildren` parameter and `rowNode.getAggregatedChildren()` method are only supported
+with the Client-Side Row Model. For other row models, `aggregatedChildren` is an empty array.
+{% /note %}
+
+## Editing Pivot Columns
+
+When using [Pivoting](./pivoting/), the `groupRowValueSetter` also works with pivot result columns.
+The key difference is that `aggregatedChildren` returns only the children matching the column's pivot keys,
+not all children of the group.
+
+{% gridExampleRunner title="Editable Pivot Totals" name="pivot-editable-totals" exampleHeight=500 /%}
+
+In this example:
+
+- The grid is pivoted by `product` (Electronics, Clothing, Food), grouped by `region` and `country`.
+- Double-click on any pivot column cell to edit the aggregated value.
+- When editing a pivot cell (e.g., "Electronics" column on "Europe" row), the `aggregatedChildren` array
+  contains only the European rows selling Electronics — not all European rows.
+- The edit is distributed equally among just those matching children, leaving other product categories unchanged.
+
+This behaviour ensures that edits on pivot columns affect only the data that contributes to that specific
+pivot value, making cascading edits work correctly with pivoted data.
 
 ## Next Up
 Continue to the next section to learn [Row Dragging with Row Groups](./grouping-row-dragging/).

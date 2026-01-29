@@ -4,7 +4,6 @@ import type {
     ChangedPath,
     ClientSideRowModelStage,
     ColumnModel,
-    GetAggregatedChildrenParams,
     GetGroupRowAggParams,
     GridOptions,
     IColsService,
@@ -15,7 +14,7 @@ import type {
     WithoutGridCommon,
     _IRowNodeAggregationStage,
 } from 'ag-grid-community';
-import { BeanStub, _getGrandTotalRow, _getGroupAggFiltering } from 'ag-grid-community';
+import { BeanStub, _getGrandTotalRow, _getGroupAggFiltering, _isClientSideRowModel } from 'ag-grid-community';
 
 import { _aggregateValues } from './aggUtils';
 
@@ -40,6 +39,7 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         'grandTotalRow',
     ];
 
+    private clientSide: boolean = false;
     private colModel: ColumnModel;
     private valueSvc: ValueService;
     private pivotColsSvc?: IColsService;
@@ -52,6 +52,7 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         this.valueColsSvc = beans.valueColsSvc;
         this.pivotResultCols = beans.pivotResultCols;
         this.valueSvc = beans.valueSvc;
+        this.clientSide = _isClientSideRowModel(beans.gos);
     }
 
     // it's possible to recompute the aggregate without doing the other parts
@@ -163,6 +164,8 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         const secondaryColumns = this.pivotResultCols?.getPivotResultCols()?.list ?? [];
         let canSkipTotalColumns = true;
         const beans = this.beans;
+        const valueSvc = this.valueSvc;
+
         for (let i = 0; i < secondaryColumns.length; i++) {
             const secondaryCol = secondaryColumns[i];
             const colDef = secondaryCol.getColDef();
@@ -172,25 +175,30 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
                 continue;
             }
 
-            const keys: string[] = colDef.pivotKeys ?? [];
             let values: any[];
+            let aggregatedChildren: RowNode[] | null | undefined;
+
+            const pivotValueColumn = colDef.pivotValueColumn as AgColumn;
 
             if (rowNode.leafGroup) {
                 // lowest level group, get the values from the mapped set
-                values = this.getValuesFromMappedSet(rowNode.childrenMapped, keys, colDef.pivotValueColumn as AgColumn);
+                aggregatedChildren = getNodesFromMappedSet(rowNode.childrenMapped, colDef.pivotKeys);
+                values = getValuesFromNodes(valueSvc, aggregatedChildren, pivotValueColumn);
             } else {
                 // value columns and pivot columns, non-leaf group
-                values = this.getValuesPivotNonLeaf(rowNode, colDef.colId!);
+                aggregatedChildren = rowNode.childrenAfterFilter;
+                values = getAggDataFromNodes(aggregatedChildren, secondaryCol.getId());
             }
 
             // bit of a memory drain storing null/undefined, but seems to speed up performance.
             result[colDef.colId!] = _aggregateValues(
                 beans,
                 values,
-                colDef.pivotValueColumn!.getAggFunc()!,
-                colDef.pivotValueColumn as AgColumn,
+                pivotValueColumn.getAggFunc()!,
+                pivotValueColumn,
                 rowNode,
-                secondaryCol
+                secondaryCol,
+                aggregatedChildren
             );
         }
 
@@ -207,13 +215,15 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
                     (currentColId: string) => result[currentColId]
                 );
                 // bit of a memory drain storing null/undefined, but seems to speed up performance.
+                // For total columns, aggregatedChildren is the same as the parent node's children
                 result[colDef.colId!] = _aggregateValues(
                     beans,
                     aggResults,
                     colDef.pivotValueColumn!.getAggFunc()!,
                     colDef.pivotValueColumn as AgColumn,
                     rowNode,
-                    secondaryCol
+                    secondaryCol,
+                    rowNode.childrenAfterFilter
                 );
             }
         }
@@ -234,7 +244,9 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
             ? changedPath.getNotValueColumnsForNode(rowNode, valueColumns)
             : null;
 
-        const values2d = this.getValuesNormal(rowNode, changedValueColumns, filteredOnly);
+        // Get aggregated children once and reuse for all columns
+        const aggregatedChildren = (filteredOnly ? rowNode.childrenAfterFilter : rowNode.childrenAfterGroup) ?? [];
+        const values2d = getValuesFromNodesMultiColumn(this.valueSvc, aggregatedChildren, changedValueColumns);
         const oldValues = rowNode.aggData;
 
         const beans = this.beans;
@@ -245,7 +257,9 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
                 values2d[index],
                 valueColumn.getAggFunc()!,
                 valueColumn,
-                rowNode
+                rowNode,
+                undefined,
+                aggregatedChildren
             );
         });
 
@@ -258,94 +272,24 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         return result;
     }
 
-    private getValuesPivotNonLeaf(rowNode: RowNode, colId: string): any[] {
-        return rowNode.childrenAfterFilter!.map((childNode: RowNode) => childNode.aggData[colId]);
-    }
-
-    /**
-     * Traverses the childrenMapped nested structure using pivot keys to get the leaf RowNode array.
-     * childrenMapped structure: { [pivotValue]: { [pivotValue]: ... : RowNode[] } }
-     */
-    private getNodesFromMappedSet(mappedSet: any, keys: string[]): RowNode[] {
-        let mapPointer = mappedSet;
-        for (let i = 0; i < keys.length; i++) {
-            const key = keys[i];
-            mapPointer = mapPointer ? mapPointer[key] : null;
-        }
-        return mapPointer ?? [];
-    }
-
-    private getValuesFromMappedSet(mappedSet: any, keys: string[], valueColumn: AgColumn): any[] {
-        const nodes = this.getNodesFromMappedSet(mappedSet, keys);
-        return nodes.map((rowNode: RowNode) => this.valueSvc.getValue(valueColumn, rowNode, 'data'));
-    }
-
-    /**
-     * Used by RowNode.
-     * Returns the immediate child rows that contribute to the aggregated value of a group row.
-     * This respects the current aggregation settings including `suppressAggFilteredOnly` and `groupAggFiltering`.
-     *
-     * For pivot columns on leaf groups, this returns only the children that match the column's pivot keys.
-     * For non-pivot columns or non-leaf groups, this returns all children used for aggregation.
-     *
-     * Warning: The returned array is a direct reference to internal grid data and must not be modified.
-     */
-    public getAggregatedChildren(rowNode: RowNode, params?: GetAggregatedChildrenParams): RowNode[] {
-        if (!rowNode.group) {
-            return [];
+    public getAggregatedChildren(rowNode: RowNode | null | undefined, col: AgColumn | null | undefined): RowNode[] {
+        if (!rowNode?.group || !this.clientSide) {
+            return []; // only group nodes have aggregated children, and only supported in CSRM
         }
 
         // For pivot columns on leaf groups, use childrenMapped to filter by pivot keys.
-        const { childrenMapped } = rowNode;
-        if (childrenMapped && rowNode.leafGroup) {
-            const colKey = params?.colKey;
-            if (colKey != null) {
-                const { colModel, pivotResultCols } = this.beans;
-                const column =
-                    typeof colKey === 'string'
-                        ? pivotResultCols?.getPivotResultCol(colKey) ??
-                          colModel.getCol(colKey) ??
-                          colModel.getColDefCol(colKey)
-                        : (colKey as AgColumn);
-                const pivotKeys = column?.getColDef().pivotKeys;
-                if (pivotKeys?.length) {
-                    return this.getNodesFromMappedSet(childrenMapped, pivotKeys);
-                }
-            }
+        const pivotKeys = col?.getColDef().pivotKeys;
+        const pivotChildrenMapped = pivotKeys && rowNode.leafGroup && rowNode.childrenMapped;
+        if (pivotChildrenMapped) {
+            return getNodesFromMappedSet(pivotChildrenMapped, pivotKeys) ?? [];
         }
 
-        // Determine whether to use filtered children or all children based on grid options.
-        // If groupAggFiltering is enabled or suppressAggFilteredOnly is set, use all children.
-        const { gos } = this.beans;
-        if (_getGroupAggFiltering(gos) !== undefined || gos.get('suppressAggFilteredOnly')) {
-            return rowNode.childrenAfterGroup ?? [];
-        }
-        return rowNode.childrenAfterFilter ?? rowNode.childrenAfterGroup ?? [];
+        // Return the same children that aggregation uses: filtered children by default,
+        // or all children when suppressAggFilteredOnly is true or groupAggFiltering is defined.
+        const filteredOnly = !this.isSuppressAggFilteredOnly();
+        return (filteredOnly ? rowNode.childrenAfterFilter : rowNode.childrenAfterGroup) ?? [];
     }
 
-    private getValuesNormal(rowNode: RowNode, valueColumns: AgColumn[], filteredOnly: boolean): any[][] {
-        // create 2d array, of all values for all valueColumns
-        const values: any[][] = [];
-        valueColumns.forEach(() => values.push([]));
-
-        const valueColumnCount = valueColumns.length;
-
-        const nodeList = filteredOnly ? rowNode.childrenAfterFilter : rowNode.childrenAfterGroup;
-        const rowCount = nodeList!.length;
-
-        for (let i = 0; i < rowCount; i++) {
-            const childNode = nodeList![i];
-            for (let j = 0; j < valueColumnCount; j++) {
-                const valueColumn = valueColumns[j];
-                // if the row is a group, then it will only have an agg result value,
-                // which means valueGetter is never used.
-                const value = this.valueSvc.getValue(valueColumn, childNode, 'data');
-                values[j].push(value);
-            }
-        }
-
-        return values;
-    }
     private setAggData(rowNode: RowNode, newAggData: any): void {
         const oldAggData = rowNode.aggData;
         rowNode.aggData = newAggData;
@@ -384,3 +328,58 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         }
     }
 }
+
+/** Extracts values from nodes for a single column. */
+const getValuesFromNodes = (valueSvc: ValueService, nodes: RowNode[] | null | undefined, column: AgColumn): any[] => {
+    if (!nodes) {
+        return [];
+    }
+    const len = nodes.length;
+    const result = new Array<any>(len);
+    for (let i = 0; i < len; ++i) {
+        result[i] = valueSvc.getValue(column, nodes[i], 'data');
+    }
+    return result;
+};
+
+/** Extracts values from nodes for multiple columns (returns 2D array). */
+const getValuesFromNodesMultiColumn = (valueSvc: ValueService, nodes: RowNode[], columns: AgColumn[]): any[][] => {
+    const columnCount = columns.length;
+    const values: any[][] = new Array(columnCount);
+    for (let j = 0; j < columnCount; j++) {
+        values[j] = [];
+    }
+    const rowCount = nodes.length;
+    for (let i = 0; i < rowCount; i++) {
+        const childNode = nodes[i];
+        for (let j = 0; j < columnCount; j++) {
+            values[j].push(valueSvc.getValue(columns[j], childNode, 'data'));
+        }
+    }
+    return values;
+};
+
+/** Extracts aggData values from nodes for a specific column ID. */
+const getAggDataFromNodes = (nodes: RowNode[] | null | undefined, columnId: string): any[] => {
+    if (!nodes) {
+        return [];
+    }
+    const len = nodes.length;
+    const result = new Array<any>(len);
+    for (let i = 0; i < len; i++) {
+        result[i] = nodes[i].aggData?.[columnId];
+    }
+    return result;
+};
+
+/** Traverses childrenMapped using pivot keys to get the matching RowNode array. */
+const getNodesFromMappedSet = (mappedSet: any, keys: string[] | null | undefined): RowNode[] | undefined => {
+    if (!keys) {
+        return undefined;
+    }
+    let mapPointer = mappedSet;
+    for (let i = 0; i < keys.length; i++) {
+        mapPointer = mapPointer?.[keys[i]];
+    }
+    return mapPointer;
+};

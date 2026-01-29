@@ -167,6 +167,11 @@ export interface IAggFuncParams<TData = any, TValue = any, TContext = any> exten
     rowNode: IRowNode<TData>;
     /** data (if any) of the parent RowNode */
     data: TData;
+    /**
+     * The immediate children of rowNode that contribute to the aggregation.
+     * For pivot columns on leaf groups, only children matching the pivot keys.
+     */
+    aggregatedChildren: IRowNode<TData>[];
 }
 
 export type PivotComparatorFunc = (valueA: string, valueB: string) => number;
@@ -985,6 +990,13 @@ export interface GroupRowValueSetterParams<TData = any, TValue = any, TContext =
     eventSource: string | undefined;
     /** Whether the value actually changed. */
     valueChanged: boolean;
+    /**
+     * The immediate children that contribute to the aggregation.
+     * For pivot columns on leaf groups, only children matching the pivot keys.
+     *
+     * **Note:** Only supported with the Client-Side Row Model.
+     */
+    aggregatedChildren: IRowNode<TData>[];
 }
 export type GroupRowValueSetterFunc<TData = any, TValue = any, TContext = any> = (
     params: GroupRowValueSetterParams<TData, TValue, TContext>

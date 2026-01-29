@@ -271,36 +271,40 @@ describe.each(EDIT_MODES)('groupRowEditable cascading edits (%s)', (editMode) =>
         }
         await asyncSetTimeout(0);
 
+        // With groupAggFiltering: true, aggregation uses ALL children (childrenAfterGroup),
+        // so the cascade goes to all 3 groups (France, Germany, Italy): 240/3 = 80 each.
+        // Each group has 2 leaves: 80/2 = 40 each.
         const filteredSnapshotAfterEdit = `
             ROOT id:ROOT_NODE_ID
-            └─┬ filler id:row-group-region-Europe amount:300
-            · ├─┬ LEAF_GROUP id:row-group-region-Europe-country-France amount:120
-            · │ ├── LEAF id:fr-paris region:"Europe" country:"France" amount:60
-            · │ └── LEAF id:fr-lyon region:"Europe" country:"France" amount:60
-            · └─┬ LEAF_GROUP id:row-group-region-Europe-country-Germany amount:120
-            · · ├── LEAF id:de-berlin region:"Europe" country:"Germany" amount:60
-            · · └── LEAF id:de-hamburg region:"Europe" country:"Germany" amount:60
+            └─┬ filler id:row-group-region-Europe amount:240
+            · ├─┬ LEAF_GROUP id:row-group-region-Europe-country-France amount:80
+            · │ ├── LEAF id:fr-paris region:"Europe" country:"France" amount:40
+            · │ └── LEAF id:fr-lyon region:"Europe" country:"France" amount:40
+            · └─┬ LEAF_GROUP id:row-group-region-Europe-country-Germany amount:80
+            · · ├── LEAF id:de-berlin region:"Europe" country:"Germany" amount:40
+            · · └── LEAF id:de-hamburg region:"Europe" country:"Germany" amount:40
         `;
-        // Aggregated value still reflects hidden Italy nodes even though the filter hides them.
+        // Cascades to all children used for aggregation, including hidden Italy.
         await new GridRows(api, 'after filtered edit').check(filteredSnapshotAfterEdit);
-        expect(api.getRowNode('it-rome')?.data?.amount).toBe(30);
-        expect(api.getRowNode('it-milan')?.data?.amount).toBe(30);
+        // Italy was also updated (hidden but still part of aggregation)
+        expect(api.getRowNode('it-rome')?.data?.amount).toBe(40);
+        expect(api.getRowNode('it-milan')?.data?.amount).toBe(40);
 
         api.setFilterModel(null);
         await asyncSetTimeout(0);
 
         const fullSnapshotAfterClearing = `
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-region-Europe amount:300
-            │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-France amount:120
-            │ │ ├── LEAF id:fr-paris region:"Europe" country:"France" amount:60
-            │ │ └── LEAF id:fr-lyon region:"Europe" country:"France" amount:60
-            │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-Germany amount:120
-            │ │ ├── LEAF id:de-berlin region:"Europe" country:"Germany" amount:60
-            │ │ └── LEAF id:de-hamburg region:"Europe" country:"Germany" amount:60
-            │ └─┬ LEAF_GROUP id:row-group-region-Europe-country-Italy amount:60
-            │ · ├── LEAF id:it-rome region:"Europe" country:"Italy" amount:30
-            │ · └── LEAF id:it-milan region:"Europe" country:"Italy" amount:30
+            ├─┬ filler id:row-group-region-Europe amount:240
+            │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-France amount:80
+            │ │ ├── LEAF id:fr-paris region:"Europe" country:"France" amount:40
+            │ │ └── LEAF id:fr-lyon region:"Europe" country:"France" amount:40
+            │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-Germany amount:80
+            │ │ ├── LEAF id:de-berlin region:"Europe" country:"Germany" amount:40
+            │ │ └── LEAF id:de-hamburg region:"Europe" country:"Germany" amount:40
+            │ └─┬ LEAF_GROUP id:row-group-region-Europe-country-Italy amount:80
+            │ · ├── LEAF id:it-rome region:"Europe" country:"Italy" amount:40
+            │ · └── LEAF id:it-milan region:"Europe" country:"Italy" amount:40
             └─┬ filler id:row-group-region-Americas amount:160
             · ├─┬ LEAF_GROUP id:row-group-region-Americas-country-USA amount:100
             · │ ├── LEAF id:us-nyc region:"Americas" country:"USA" amount:70

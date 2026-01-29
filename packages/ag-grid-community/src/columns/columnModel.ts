@@ -662,7 +662,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         return this.cols?.map[key] ?? null;
     }
 
-    public getColFromCollection(key: ColKey, cols?: ColumnCollections): AgColumn | null {
+    public getColFromCollection(key: ColKey, cols: ColumnCollections | null | undefined): AgColumn | null {
         if (cols == null) {
             return null;
         }

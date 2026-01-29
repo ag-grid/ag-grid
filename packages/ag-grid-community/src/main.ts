@@ -34,7 +34,6 @@ export {
     DraggingChangedEvent,
     ExpandedChangedEvent,
     FirstChildChangedEvent,
-    GetAggregatedChildrenParams,
     GroupChangedEvent,
     HasChildrenChangedEvent,
     HeightChangedEvent,

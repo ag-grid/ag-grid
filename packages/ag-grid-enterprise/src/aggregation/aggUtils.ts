@@ -7,7 +7,8 @@ export function _aggregateValues(
     aggFuncOrString: string | IAggFunc,
     column: AgColumn,
     rowNode?: RowNode,
-    pivotResultColumn?: AgColumn
+    pivotResultColumn?: AgColumn,
+    aggregatedChildren?: RowNode[] | null
 ): any {
     const aggFunc =
         typeof aggFuncOrString === 'string' ? beans.aggFuncSvc!.getAggFunc(aggFuncOrString) : aggFuncOrString;
@@ -24,6 +25,7 @@ export function _aggregateValues(
         pivotResultColumn,
         rowNode: rowNode!, // this is typed incorrectly. Within CSRM, this will always be defined. When called from integrated charts, this will never be defined.
         data: rowNode?.data,
+        aggregatedChildren: aggregatedChildren ?? beans.aggStage?.getAggregatedChildren(rowNode, column) ?? [],
     });
 
     return aggFunc(params);

@@ -78,9 +78,6 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
     }
 
     public getPivotResultCol(key: ColKey): AgColumn | null {
-        if (!this.pivotResultCols) {
-            return null;
-        }
         return this.colModel.getColFromCollection(key, this.pivotResultCols);
     }
 

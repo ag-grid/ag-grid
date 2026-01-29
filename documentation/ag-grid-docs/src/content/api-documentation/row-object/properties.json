@@ -123,6 +123,12 @@
         "allChildrenCount": {},
         "leafGroup": {},
         "sibling": {},
-        "depthFirstSearch": {}
+        "depthFirstSearch": {},
+        "getAggregatedChildren": {
+            "more": {
+                "name": "Retrieving Aggregated Children",
+                "url": "./aggregation/#retrieving-aggregated-children"
+            }
+        }
     }
 }

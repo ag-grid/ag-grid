@@ -9,7 +9,6 @@ import type {
     AgRowNodeEventListener,
     CellChangedEvent,
     DataChangedEvent,
-    GetAggregatedChildrenParams,
     IRowNode,
     RowNodeEvent,
     RowNodeEventType,
@@ -18,6 +17,7 @@ import type {
 import type { DetailGridInfo } from '../interfaces/masterDetail';
 import { _error, _warn } from '../validation/logging';
 import type { AgColumn } from './agColumn';
+import type { ColKey } from './colDef';
 
 export const ROW_ID_PREFIX_ROW_GROUP = 'row-group-';
 export const ROW_ID_PREFIX_TOP_PINNED = 't-';
@@ -652,32 +652,9 @@ export class RowNode<TData = any>
         callback(this);
     }
 
-    /**
-     * Returns the immediate child rows that contribute to the aggregated value of this group row.
-     * This respects the current aggregation settings including `suppressAggFilteredOnly` and `groupAggFiltering`.
-     *
-     * For pivot columns, this returns only the children that match the column's pivot keys.
-     * For non-pivot columns, this returns all children used for aggregation.
-     *
-     * **Warning:** The returned array is a direct reference to internal grid data and must not be modified.
-     * Modifying this array will cause undefined behaviour.
-     *
-     * Note: This returns immediate children only. For leaf rows, recurse via `setDataValue` or call
-     * this method on child groups. Leaf rows (non-group rows) return an empty array.
-     *
-     * @param params - Optional parameters to configure which children to return.
-     * @returns Array of child row nodes that contribute to aggregation. Do not modify this array.
-     */
-    public getAggregatedChildren(params?: GetAggregatedChildrenParams): RowNode<TData>[] {
-        const { aggStage } = this.beans;
-        if (aggStage) {
-            return aggStage.getAggregatedChildren(this, params) as RowNode<TData>[];
-        }
-        // Fallback when aggregation module is not present: return children based on group status
-        if (!this.group) {
-            return [];
-        }
-        return this.childrenAfterFilter ?? this.childrenAfterGroup ?? [];
+    public getAggregatedChildren(colKey?: ColKey | null): RowNode<TData>[] {
+        const beans = this.beans;
+        return beans.aggStage?.getAggregatedChildren(this, beans.colModel.getCol(colKey)) ?? [];
     }
 
     public dispatchRowEvent<T extends RowNodeEventType>(type: T): void {

@@ -474,6 +474,7 @@ export class ValueService extends BeanStub implements NamedBean {
                     column,
                     eventSource,
                     valueChanged: valueSetterChanged || newValue !== oldValue,
+                    aggregatedChildren: this.beans.aggStage?.getAggregatedChildren(rowNode as RowNode, column) ?? [],
                 })
             );
 

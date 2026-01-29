@@ -1,9 +1,9 @@
 import type { ChangedRowNodes } from '../clientSideRowModel/changedRowNodes';
 import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
+import type { AgColumn } from '../main-internal';
 import type { ChangedPath } from '../utils/changedPath';
 import type { ClientSideRowModelStage, RefreshModelParams } from './iClientSideRowModel';
-import type { GetAggregatedChildrenParams } from './iRowNode';
 
 export interface IRowNodeStage<TData = any> {
     readonly step: ClientSideRowModelStage;
@@ -26,19 +26,13 @@ export interface IRowNodeAggregationStage<TData = any> extends IRowNodeStage<TDa
     execute(changedPath: ChangedPath): void;
 
     /**
-     * Returns the immediate child rows that contribute to the aggregated value of a group row.
-     * This respects the current aggregation settings including `suppressAggFilteredOnly` and `groupAggFiltering`.
-     *
-     * For pivot columns, this returns only the children that match the column's pivot keys.
-     * For non-pivot columns, this returns all children used for aggregation.
-     *
-     * **Warning:** The returned array is a direct reference to internal grid data and must not be modified.
-     *
-     * @param rowNode - The group row node to get children for.
-     * @param params - Optional parameters to configure which children to return.
-     * @returns Array of child row nodes that contribute to aggregation. Do not modify this array.
+     * Returns the immediate children that contribute to the aggregation of a group RowNode.
+     * For pivot columns on leaf groups, only children matching the pivot keys are returned.
      */
-    getAggregatedChildren(rowNode: RowNode<TData>, params?: GetAggregatedChildrenParams): RowNode<TData>[];
+    getAggregatedChildren(
+        rowNode: RowNode<TData> | null | undefined,
+        col: AgColumn | null | undefined
+    ): RowNode<TData>[];
 }
 
 export interface IRowNodeFilterAggregateStage<TData = any> extends IRowNodeStage<TData> {

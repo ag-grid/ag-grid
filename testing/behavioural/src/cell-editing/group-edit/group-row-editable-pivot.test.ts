@@ -10,7 +10,7 @@ import type {
     GroupRowValueSetterCallback,
     ValueSetterCallback,
 } from './group-edit-test-utils';
-import { EDIT_MODES, callsForRowNode, editCell } from './group-edit-test-utils';
+import { EDIT_MODES, callsForRowNode, cascadeGroupRowValueSetter, editCell } from './group-edit-test-utils';
 
 describe('groupRowEditable with pivot mode', () => {
     const gridsManager = new TestGridsManager({
@@ -38,33 +38,6 @@ describe('groupRowEditable with pivot mode', () => {
         ];
     }
 
-    const cascadePivotGroupRowValueSetter: GroupRowValueSetterCallback = ({
-        node,
-        column,
-        newValue,
-        eventSource,
-    }) => {
-        const numericValue = Number(newValue);
-        if (!Number.isFinite(numericValue)) {
-            return;
-        }
-
-        // Use the getAggregatedChildren method which handles pivot keys filtering
-        const matchingChildren = node.getAggregatedChildren({ colKey: column });
-
-        if (matchingChildren.length === 0) {
-            return;
-        }
-
-        const perChild = numericValue / matchingChildren.length;
-
-        for (const child of matchingChildren) {
-            // setDataValue auto-resolves pivot columns to the underlying value column for leaf rows
-            // (when the pivot column has no custom valueSetter)
-            child.setDataValue(column, perChild, eventSource);
-        }
-    };
-
     describe.each(EDIT_MODES)('pivot leaf group editing (%s)', (editMode) => {
         test('editing pivot cell in leaf group invokes groupRowEditable and groupRowValueSetter', async () => {
             const groupRowEditableCalls: Parameters<GroupRowEditableCallback>[] = [];
@@ -76,7 +49,7 @@ describe('groupRowEditable with pivot mode', () => {
             const groupRowValueSetterCalls: Parameters<GroupRowValueSetterCallback>[] = [];
             const groupRowValueSetter: GroupRowValueSetterCallback = (params) => {
                 groupRowValueSetterCalls.push([params]);
-                cascadePivotGroupRowValueSetter(params);
+                cascadeGroupRowValueSetter(params);
             };
 
             const gridOptions: GridOptions = {
@@ -174,7 +147,7 @@ describe('groupRowEditable with pivot mode', () => {
                         hide: true,
                         editable: true,
                         groupRowEditable: true,
-                        groupRowValueSetter: cascadePivotGroupRowValueSetter,
+                        groupRowValueSetter: cascadeGroupRowValueSetter,
                     },
                 ],
                 pivotMode: true,
@@ -239,7 +212,7 @@ describe('groupRowEditable with pivot mode', () => {
                         hide: true,
                         editable: true,
                         groupRowEditable: true,
-                        groupRowValueSetter: cascadePivotGroupRowValueSetter,
+                        groupRowValueSetter: cascadeGroupRowValueSetter,
                     },
                 ],
                 pivotMode: true,
@@ -314,7 +287,7 @@ describe('groupRowEditable with pivot mode', () => {
                         hide: true,
                         editable: true,
                         groupRowEditable: true,
-                        groupRowValueSetter: cascadePivotGroupRowValueSetter,
+                        groupRowValueSetter: cascadeGroupRowValueSetter,
                     },
                 ],
                 pivotMode: true,
@@ -385,7 +358,7 @@ describe('groupRowEditable with pivot mode', () => {
                         hide: true,
                         editable: true,
                         groupRowEditable,
-                        groupRowValueSetter: cascadePivotGroupRowValueSetter,
+                        groupRowValueSetter: cascadeGroupRowValueSetter,
                     },
                 ],
                 pivotMode: true,
@@ -441,7 +414,7 @@ describe('groupRowEditable with pivot mode', () => {
                         hide: true,
                         editable: true,
                         groupRowEditable,
-                        groupRowValueSetter: cascadePivotGroupRowValueSetter,
+                        groupRowValueSetter: cascadeGroupRowValueSetter,
                     },
                 ],
                 pivotMode: true,
@@ -635,7 +608,7 @@ describe('groupRowEditable with pivot mode', () => {
                         hide: true,
                         editable: true,
                         groupRowEditable: true,
-                        groupRowValueSetter: cascadePivotGroupRowValueSetter,
+                        groupRowValueSetter: cascadeGroupRowValueSetter,
                     },
                 ],
                 pivotMode: true,
@@ -685,7 +658,7 @@ describe('groupRowEditable with pivot mode', () => {
                         hide: true,
                         editable: true,
                         groupRowEditable: true,
-                        groupRowValueSetter: cascadePivotGroupRowValueSetter,
+                        groupRowValueSetter: cascadeGroupRowValueSetter,
                     },
                 ],
                 pivotMode: true,
@@ -760,7 +733,7 @@ describe('groupRowEditable with pivot mode', () => {
             const groupRowValueSetterCalls: Parameters<GroupRowValueSetterCallback>[] = [];
             const groupRowValueSetter: GroupRowValueSetterCallback = (params) => {
                 groupRowValueSetterCalls.push([params]);
-                cascadePivotGroupRowValueSetter(params);
+                cascadeGroupRowValueSetter(params);
             };
 
             const gridOptions: GridOptions = {

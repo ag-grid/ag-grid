@@ -117,11 +117,7 @@ export function _convertColumnEventSourceType(source: AgPropertyChangedSource): 
 }
 
 export function _columnsMatch(column: AgColumn, key: ColKey): boolean {
-    const columnMatches = column === key;
-    const colDefMatches = column.getColDef() === key;
-    const idMatches = column.getColId() == key;
-
-    return columnMatches || colDefMatches || idMatches;
+    return column === key || column.colId == key || column.getColDef() === key;
 }
 
 export const getValueFactory =
