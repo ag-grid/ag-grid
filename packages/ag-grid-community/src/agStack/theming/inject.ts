@@ -82,26 +82,6 @@ export const _injectCoreAndModuleCSS = (
     );
 };
 
-export const _unregisterInstanceUsingThemingAPI = (environment: IEnvironment) => {
-    const styleContainer = injectionState.grids.get(environment)?.styleContainer;
-    if (!styleContainer) {
-        return;
-    }
-    injectionState.grids.delete(environment);
-
-    const containerStillInUse = Array.from(injectionState.grids.values()).some(
-        (gs) => gs.styleContainer === styleContainer
-    );
-    if (containerStillInUse) {
-        removeStaleParamsCss(styleContainer);
-    } else {
-        for (const style of styleContainer.querySelectorAll('style[data-ag-global-css]')) {
-            style.remove();
-        }
-        injectionState.map.delete(styleContainer);
-    }
-};
-
 export const _useParamsCss = (
     environment: IEnvironment,
     paramsCss: string | null,
@@ -128,7 +108,25 @@ export const _useParamsCss = (
     }
 };
 
-const removeStaleParamsCss = (styleContainer: HTMLElement) => {
+export const _unregisterInstanceUsingThemingAPI = (environment: IEnvironment) => {
+    const styleContainer = injectionState.grids.get(environment)?.styleContainer;
+    if (!styleContainer) {
+        return;
+    }
+    injectionState.grids.delete(environment);
+
+    const containerStillInUse = Array.from(injectionState.grids.values()).some(
+        (gs) => gs.styleContainer === styleContainer
+    );
+    if (containerStillInUse) {
+        removeStaleParamsCss(styleContainer);
+    } else {
+        removeStaleParamsCss(styleContainer, true);
+        injectionState.map.delete(styleContainer);
+    }
+};
+
+const removeStaleParamsCss = (styleContainer: HTMLElement, deleteAll = false) => {
     const neededCss = new Set();
     for (const gs of injectionState.grids.values()) {
         if (gs.styleContainer === styleContainer) {
@@ -138,7 +136,7 @@ const removeStaleParamsCss = (styleContainer: HTMLElement) => {
 
     const injections = injectionState.map.get(styleContainer) ?? [];
     for (let i = injections.length - 1; i >= 0; i--) {
-        if (injections[i].isParams && !neededCss.has(injections[i].css)) {
+        if (deleteAll || (injections[i].isParams && !neededCss.has(injections[i].css))) {
             injections[i].el.remove();
             injections.splice(i, 1);
         }
