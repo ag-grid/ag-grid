@@ -448,6 +448,88 @@ describe('ag-grid grouping pinned sibling aggregation', () => {
         });
     });
 
+    describe('getAggregatedChildren on pinned siblings', () => {
+        test('getAggregatedChildren on pinned group returns same children as source group', async () => {
+            const api = await gridsManager.createGridAndWait('myGrid', {
+                ...createGridOptions((country) => (country === 'France' ? 'top' : null)),
+                rowData: createRowData(),
+                getRowId: (params) => params.data.id,
+            });
+
+            const franceGroup = api.getRowNode('row-group-country-France');
+            const pinnedFrance = api.getPinnedTopRow(0);
+
+            expect(franceGroup).toBeDefined();
+            expect(pinnedFrance).toBeDefined();
+
+            // Both should return the same children
+            const sourceChildren = franceGroup!.getAggregatedChildren('amount');
+            const pinnedChildren = pinnedFrance!.getAggregatedChildren('amount');
+
+            expect(sourceChildren.length).toBe(2);
+            expect(pinnedChildren.length).toBe(2);
+            expect(sourceChildren.map((n) => n.id).sort()).toEqual(['fr-lyon', 'fr-paris']);
+            expect(pinnedChildren.map((n) => n.id).sort()).toEqual(['fr-lyon', 'fr-paris']);
+        });
+
+        test('getAggregatedChildren on pinned group reflects filtering', async () => {
+            const api = await gridsManager.createGridAndWait('myGrid', {
+                ...createGridOptions((country) => (country === 'France' ? 'top' : null)),
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'amount', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
+                ],
+                rowData: createRowData(),
+                getRowId: (params) => params.data.id,
+            });
+
+            const franceGroup = api.getRowNode('row-group-country-France');
+            const pinnedFrance = api.getPinnedTopRow(0);
+
+            // Before filter - both should have 2 children
+            let sourceChildren = franceGroup!.getAggregatedChildren('amount');
+            let pinnedChildren = pinnedFrance!.getAggregatedChildren('amount');
+            expect(sourceChildren.length).toBe(2);
+            expect(pinnedChildren.length).toBe(2);
+
+            // Apply filter to show only amount >= 150
+            await api.setColumnFilterModel('amount', { filterType: 'number', type: 'greaterThanOrEqual', filter: 150 });
+            api.onFilterChanged();
+
+            // After filter - both should have 1 child (fr-lyon with amount 200)
+            sourceChildren = franceGroup!.getAggregatedChildren('amount');
+            pinnedChildren = pinnedFrance!.getAggregatedChildren('amount');
+            expect(sourceChildren.length).toBe(1);
+            expect(pinnedChildren.length).toBe(1);
+            expect(sourceChildren[0].id).toBe('fr-lyon');
+            expect(pinnedChildren[0].id).toBe('fr-lyon');
+        });
+
+        test('getAggregatedChildren on pinned group after transaction add', async () => {
+            const api = await gridsManager.createGridAndWait('myGrid', {
+                ...createGridOptions((country) => (country === 'France' ? 'top' : null)),
+                rowData: createRowData(),
+                getRowId: (params) => params.data.id,
+            });
+
+            const pinnedFrance = api.getPinnedTopRow(0);
+
+            // Before add - 2 children
+            let pinnedChildren = pinnedFrance!.getAggregatedChildren('amount');
+            expect(pinnedChildren.length).toBe(2);
+
+            // Add a new France row
+            applyTransactionChecked(api, {
+                add: [{ id: 'fr-nice', country: 'France', amount: 150 }],
+            });
+
+            // After add - 3 children
+            pinnedChildren = pinnedFrance!.getAggregatedChildren('amount');
+            expect(pinnedChildren.length).toBe(3);
+            expect(pinnedChildren.map((n) => n.id).sort()).toEqual(['fr-lyon', 'fr-nice', 'fr-paris']);
+        });
+    });
+
     describe('aggregation cleared scenarios', () => {
         test('removing all children from pinned group removes pinned row', async () => {
             const api = await gridsManager.createGridAndWait('myGrid', {

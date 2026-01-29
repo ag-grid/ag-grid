@@ -267,14 +267,23 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
             return []; // only group nodes have aggregated children, and only supported in CSRM
         }
 
-        const pivotKeys = col?.getColDef().pivotKeys; // undefined for non-pivot columns
+        // For pinned siblings, delegate to the source row which has the actual children.
+        // Pinned siblings copy children references at creation time, but those references become stale
+        // when filtering/sorting updates the source row's children arrays.
+        if (rowNode.rowPinned) {
+            rowNode = rowNode.pinnedSibling ?? rowNode;
+        }
+
+        const colDef = col?.getColDef();
+        const pivotKeys = colDef?.pivotKeys; // undefined for non-pivot columns
         if (pivotKeys) {
-            // For pivot columns on leaf groups with specific pivot keys, use childrenMapped to filter by pivot keys.
-            if (rowNode.leafGroup && pivotKeys.length) {
+            // For regular pivot columns on leaf groups with specific pivot keys, use childrenMapped to filter by pivot keys.
+            // For pivot total columns (pivotColumnGroupTotals), aggregation uses childrenAfterFilter instead.
+            if (rowNode.leafGroup && pivotKeys.length && !colDef.pivotTotalColumnIds) {
                 return getNodesFromMappedSet(rowNode.childrenMapped, pivotKeys) ?? [];
             }
 
-            // For pivot columns on non-leaf groups (or pivot total columns with empty pivotKeys),
+            // For pivot columns on non-leaf groups, total columns, or pivot total columns with empty pivotKeys,
             // aggregation always uses childrenAfterFilter (see aggregateRowNodeUsingValuesAndPivot),
             // regardless of suppressAggFilteredOnly.
             return rowNode.childrenAfterFilter ?? rowNode.childrenAfterGroup ?? [];

@@ -1,6 +1,6 @@
-import type { GridOptions, RowNode, ValueSetterParams } from 'ag-grid-community';
+import type { GridOptions, GroupRowValueSetterParams, RowNode, ValueSetterParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, PinnedRowModule, UndoRedoEditModule } from 'ag-grid-community';
-import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
+import { PivotModule, RowGroupingModule, SetFilterModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 import { EDIT_MODES, cascadeGroupRowValueSetter, editCell } from './group-edit-test-utils';
@@ -12,7 +12,14 @@ import { EDIT_MODES, cascadeGroupRowValueSetter, editCell } from './group-edit-t
  */
 describe('editing with pinned sibling rows', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, PivotModule, UndoRedoEditModule, PinnedRowModule],
+        modules: [
+            ClientSideRowModelModule,
+            RowGroupingModule,
+            PivotModule,
+            UndoRedoEditModule,
+            PinnedRowModule,
+            SetFilterModule,
+        ],
     });
 
     beforeEach(() => {
@@ -343,6 +350,269 @@ describe('editing with pinned sibling rows', () => {
                     PINNED_BOTTOM id:b-bottom-row-group-country-France amount:400
                 `);
             });
+        });
+    });
+
+    describe('aggregatedChildren in groupRowValueSetter callback', () => {
+        function createGroupRowDataForCallback() {
+            return [
+                { id: 'fr-paris', region: 'Europe', country: 'France', amount: 100 },
+                { id: 'fr-lyon', region: 'Europe', country: 'France', amount: 200 },
+                { id: 'de-berlin', region: 'Europe', country: 'Germany', amount: 150 },
+                { id: 'de-hamburg', region: 'Europe', country: 'Germany', amount: 250 },
+            ];
+        }
+
+        describe.each(EDIT_MODES)('edit mode: %s', (editMode) => {
+            test('aggregatedChildren contains correct children when editing pinned group row', async () => {
+                const capturedParams: GroupRowValueSetterParams[] = [];
+
+                const customValueSetter = (params: GroupRowValueSetterParams) => {
+                    capturedParams.push(params);
+                    cascadeGroupRowValueSetter(params);
+                };
+
+                const api = await gridsManager.createGridAndWait('pinned-agg-children', {
+                    defaultColDef: { cellEditor: 'agTextCellEditor' },
+                    undoRedoCellEditing: true,
+                    enableRowPinning: true,
+                    isRowPinned: (node) => (node.key === 'France' && node.group ? 'top' : null),
+                    groupDisplayType: 'custom',
+                    columnDefs: [
+                        { colId: 'group', headerName: 'Group', cellRenderer: 'agGroupCellRenderer' },
+                        { field: 'country', rowGroup: true, hide: true },
+                        {
+                            colId: 'amount',
+                            field: 'amount',
+                            aggFunc: 'sum',
+                            editable: true,
+                            groupRowEditable: true,
+                            groupRowValueSetter: customValueSetter,
+                        },
+                    ],
+                    rowData: createGroupRowDataForCallback(),
+                    groupDefaultExpanded: -1,
+                    getRowId: (params) => params.data?.id,
+                });
+
+                const pinnedGroup = api.getPinnedTopRow(0) as RowNode;
+                expect(pinnedGroup).toBeDefined();
+
+                // Edit the pinned group row
+                if (editMode === 'ui') {
+                    await editCell(api, pinnedGroup, 'amount', '600');
+                } else {
+                    pinnedGroup.setDataValue('amount', 600, 'ui');
+                    await asyncSetTimeout(0);
+                }
+                await asyncSetTimeout(50);
+
+                // Verify the callback was called with correct aggregatedChildren
+                expect(capturedParams.length).toBe(1);
+                const params = capturedParams[0];
+
+                // aggregatedChildren should contain the France group's leaf children
+                expect(params.aggregatedChildren.length).toBe(2);
+                expect(params.aggregatedChildren.map((n) => n.id).sort()).toEqual(['fr-lyon', 'fr-paris']);
+
+                // The node in the callback should be the PINNED row (the row being edited)
+                // This is correct - the callback gets the actual edited node
+                expect(params.node.rowPinned).toBe('top');
+            });
+
+            test('aggregatedChildren reflects filtering when editing pinned group row', async () => {
+                const capturedParams: GroupRowValueSetterParams[] = [];
+
+                const customValueSetter = (params: GroupRowValueSetterParams) => {
+                    capturedParams.push(params);
+                    cascadeGroupRowValueSetter(params);
+                };
+
+                const api = await gridsManager.createGridAndWait('pinned-agg-children-filter', {
+                    defaultColDef: { cellEditor: 'agTextCellEditor' },
+                    undoRedoCellEditing: true,
+                    enableRowPinning: true,
+                    isRowPinned: (node) => (node.key === 'France' && node.group ? 'top' : null),
+                    groupDisplayType: 'custom',
+                    columnDefs: [
+                        { colId: 'group', headerName: 'Group', cellRenderer: 'agGroupCellRenderer' },
+                        { field: 'country', rowGroup: true, hide: true },
+                        {
+                            colId: 'amount',
+                            field: 'amount',
+                            aggFunc: 'sum',
+                            editable: true,
+                            groupRowEditable: true,
+                            groupRowValueSetter: customValueSetter,
+                            filter: 'agNumberColumnFilter',
+                        },
+                    ],
+                    rowData: createGroupRowDataForCallback(),
+                    groupDefaultExpanded: -1,
+                    getRowId: (params) => params.data?.id,
+                });
+
+                // Apply filter to show only rows with amount >= 150
+                await api.setColumnFilterModel('amount', {
+                    filterType: 'number',
+                    type: 'greaterThanOrEqual',
+                    filter: 150,
+                });
+                api.onFilterChanged();
+
+                const pinnedGroup = api.getPinnedTopRow(0) as RowNode;
+                expect(pinnedGroup).toBeDefined();
+                // France group should now only aggregate fr-lyon (200 >= 150)
+                expect(pinnedGroup.aggData?.amount).toBe(200);
+
+                // Edit the pinned group row
+                if (editMode === 'ui') {
+                    await editCell(api, pinnedGroup, 'amount', '400');
+                } else {
+                    pinnedGroup.setDataValue('amount', 400, 'ui');
+                    await asyncSetTimeout(0);
+                }
+                await asyncSetTimeout(50);
+
+                // Verify the callback was called with filtered aggregatedChildren
+                expect(capturedParams.length).toBe(1);
+                const params = capturedParams[0];
+
+                // aggregatedChildren should only contain the filtered child (fr-lyon)
+                expect(params.aggregatedChildren.length).toBe(1);
+                expect(params.aggregatedChildren[0].id).toBe('fr-lyon');
+            });
+
+            test('aggregatedChildren contains correct children for pinned filler group (multi-level)', async () => {
+                const capturedParams: GroupRowValueSetterParams[] = [];
+
+                const customValueSetter = (params: GroupRowValueSetterParams) => {
+                    capturedParams.push(params);
+                    cascadeGroupRowValueSetter(params);
+                };
+
+                const api = await gridsManager.createGridAndWait('pinned-filler-agg-children', {
+                    defaultColDef: { cellEditor: 'agTextCellEditor' },
+                    undoRedoCellEditing: true,
+                    enableRowPinning: true,
+                    isRowPinned: (node) => (node.key === 'Europe' && node.level === 0 ? 'top' : null),
+                    groupDisplayType: 'custom',
+                    columnDefs: [
+                        { colId: 'group', headerName: 'Group', cellRenderer: 'agGroupCellRenderer' },
+                        { field: 'region', rowGroup: true, hide: true },
+                        { field: 'country', rowGroup: true, hide: true },
+                        {
+                            colId: 'amount',
+                            field: 'amount',
+                            aggFunc: 'sum',
+                            editable: true,
+                            groupRowEditable: true,
+                            groupRowValueSetter: customValueSetter,
+                        },
+                    ],
+                    rowData: createGroupRowDataForCallback(),
+                    groupDefaultExpanded: -1,
+                    getRowId: (params) => params.data?.id,
+                });
+
+                const pinnedEurope = api.getPinnedTopRow(0) as RowNode;
+                expect(pinnedEurope).toBeDefined();
+                expect(pinnedEurope.key).toBe('Europe');
+                // Europe should aggregate France (300) + Germany (400) = 700
+                expect(pinnedEurope.aggData?.amount).toBe(700);
+
+                // Edit the pinned filler group row
+                if (editMode === 'ui') {
+                    await editCell(api, pinnedEurope, 'amount', '1400');
+                } else {
+                    pinnedEurope.setDataValue('amount', 1400, 'ui');
+                    await asyncSetTimeout(0);
+                }
+                await asyncSetTimeout(50);
+
+                // Verify the callback was called with correct aggregatedChildren
+                // For a filler group, children are the country groups (France, Germany)
+                expect(capturedParams.length).toBeGreaterThanOrEqual(1);
+                const europeParams = capturedParams[0];
+
+                // aggregatedChildren should contain the Europe group's direct children (country groups)
+                expect(europeParams.aggregatedChildren.length).toBe(2);
+                expect(europeParams.aggregatedChildren.every((n) => n.group)).toBe(true);
+                expect(europeParams.aggregatedChildren.map((n) => n.key).sort()).toEqual(['France', 'Germany']);
+            });
+        });
+    });
+
+    describe('getAggregatedChildren on pinned rows', () => {
+        function createGroupRowDataForAggChildren() {
+            return [
+                { id: 'fr-paris', region: 'Europe', country: 'France', amount: 100 },
+                { id: 'fr-lyon', region: 'Europe', country: 'France', amount: 200 },
+                { id: 'de-berlin', region: 'Europe', country: 'Germany', amount: 150 },
+            ];
+        }
+
+        test('getAggregatedChildren on pinned group returns same children as source', async () => {
+            const api = await gridsManager.createGridAndWait('pinned-get-agg-children', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'amount', aggFunc: 'sum' },
+                ],
+                enableRowPinning: true,
+                isRowPinned: (node) => (node.key === 'France' && node.group ? 'top' : null),
+                rowData: createGroupRowDataForAggChildren(),
+                groupDefaultExpanded: -1,
+                getRowId: (params) => params.data?.id,
+            });
+
+            const sourceGroup = api.getRowNode('row-group-country-France');
+            const pinnedGroup = api.getPinnedTopRow(0);
+
+            expect(sourceGroup).toBeDefined();
+            expect(pinnedGroup).toBeDefined();
+
+            // Both should return the same children
+            const sourceChildren = sourceGroup!.getAggregatedChildren('amount');
+            const pinnedChildren = pinnedGroup!.getAggregatedChildren('amount');
+
+            expect(sourceChildren.length).toBe(2);
+            expect(pinnedChildren.length).toBe(2);
+            expect(sourceChildren.map((n) => n.id).sort()).toEqual(['fr-lyon', 'fr-paris']);
+            expect(pinnedChildren.map((n) => n.id).sort()).toEqual(['fr-lyon', 'fr-paris']);
+        });
+
+        test('getAggregatedChildren on pinned group reflects filtering', async () => {
+            const api = await gridsManager.createGridAndWait('pinned-get-agg-children-filter', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'amount', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
+                ],
+                enableRowPinning: true,
+                isRowPinned: (node) => (node.key === 'France' && node.group ? 'top' : null),
+                rowData: createGroupRowDataForAggChildren(),
+                groupDefaultExpanded: -1,
+                getRowId: (params) => params.data?.id,
+            });
+
+            const pinnedGroup = api.getPinnedTopRow(0);
+            expect(pinnedGroup).toBeDefined();
+
+            // Before filter - 2 children
+            let pinnedChildren = pinnedGroup!.getAggregatedChildren('amount');
+            expect(pinnedChildren.length).toBe(2);
+
+            // Apply filter to show only amount >= 150
+            await api.setColumnFilterModel('amount', {
+                filterType: 'number',
+                type: 'greaterThanOrEqual',
+                filter: 150,
+            });
+            api.onFilterChanged();
+
+            // After filter - only 1 child (fr-lyon with 200)
+            pinnedChildren = pinnedGroup!.getAggregatedChildren('amount');
+            expect(pinnedChildren.length).toBe(1);
+            expect(pinnedChildren[0].id).toBe('fr-lyon');
         });
     });
 });

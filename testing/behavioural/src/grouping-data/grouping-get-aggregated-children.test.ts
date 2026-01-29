@@ -1,5 +1,5 @@
 import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, PinnedRowModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, SetFilterModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../test-utils';
@@ -8,7 +8,7 @@ import { expect } from '../test-utils/matchers';
 
 describe('IRowNode.getAggregatedChildren()', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, PivotModule, SetFilterModule],
+        modules: [ClientSideRowModelModule, RowGroupingModule, PivotModule, SetFilterModule, PinnedRowModule],
     });
 
     beforeEach(() => {
@@ -403,6 +403,70 @@ describe('IRowNode.getAggregatedChildren()', () => {
             expect(children2020.length).toBe(1);
             expect(children2020[0].data?.id).toBe('1');
         });
+
+        test('pivot column group totals return all children (not filtered by pivot keys)', async () => {
+            // When pivotColumnGroupTotals is enabled, total columns have pivotTotalColumnIds
+            // and their pivotKeys are a prefix (e.g., ['2020'] for year total in year/quarter pivot).
+            // These columns should return all filtered children, not just those matching the prefix key.
+            const gridOptions: GridOptions = {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'year', pivot: true, hide: true },
+                    { field: 'quarter', pivot: true, hide: true },
+                    { field: 'sales', aggFunc: 'sum', hide: true },
+                ],
+                pivotMode: true,
+                pivotColumnGroupTotals: 'after',
+                groupDefaultExpanded: -1,
+                getRowId: ({ data }) => data.id,
+            };
+
+            const api = gridsManager.createGrid('myGrid', gridOptions);
+
+            applyTransactionChecked(api, {
+                add: [
+                    { id: '1', country: 'Ireland', year: 2020, quarter: 'Q1', sales: 100 },
+                    { id: '2', country: 'Ireland', year: 2020, quarter: 'Q2', sales: 200 },
+                    { id: '3', country: 'Ireland', year: 2021, quarter: 'Q1', sales: 300 },
+                    { id: '4', country: 'Ireland', year: 2021, quarter: 'Q2', sales: 400 },
+                ],
+            });
+
+            const irelandGroup = api.getRowNode('row-group-country-Ireland');
+            expect(irelandGroup).toBeDefined();
+            expect(irelandGroup!.leafGroup).toBe(true);
+
+            // Get pivot columns from pivot result columns
+            const pivotColumns = api.getPivotResultColumns();
+            expect(pivotColumns).not.toBeNull();
+
+            // Find a specific pivot column (non-total) - e.g., 2020 Q1
+            const pivot2020Q1Col = pivotColumns!.find((col) => col.getColId() === 'pivot_year-quarter_2020-Q1_sales');
+            expect(pivot2020Q1Col).toBeDefined();
+            expect(pivot2020Q1Col!.getColDef().pivotTotalColumnIds).toBeUndefined();
+
+            // For regular pivot columns, getAggregatedChildren returns only matching children
+            const children2020Q1 = irelandGroup!.getAggregatedChildren(pivot2020Q1Col!);
+            expect(children2020Q1.length).toBe(1);
+            expect(children2020Q1[0].data?.id).toBe('1');
+
+            // Find a year total column (pivotColumnGroupTotals column)
+            // This column has pivotTotalColumnIds and pivotKeys that are a prefix ['2020']
+            const year2020TotalCol = pivotColumns!.find(
+                (col) =>
+                    col.getColDef().pivotTotalColumnIds !== undefined &&
+                    col.getColDef().pivotKeys?.length === 1 &&
+                    col.getColDef().pivotKeys?.[0] === '2020'
+            );
+            expect(year2020TotalCol).toBeDefined();
+
+            // For total columns, getAggregatedChildren should return ALL filtered children
+            // because the aggregation for total columns uses childrenAfterFilter, not childrenMapped
+            const children2020Total = irelandGroup!.getAggregatedChildren(year2020TotalCol!);
+            // Should return all 4 children (total columns aggregate all children, not just matching pivot keys)
+            expect(children2020Total.length).toBe(4);
+            expect(children2020Total.map((n) => n.data?.id).sort()).toEqual(['1', '2', '3', '4']);
+        });
     });
 
     describe('column key variations', () => {
@@ -781,6 +845,232 @@ describe('IRowNode.getAggregatedChildren()', () => {
             children = irelandGroup!.getAggregatedChildren(totalCol!);
             expect(children.length).toBe(2);
             expect(children.map((n) => n.data?.id).sort()).toEqual(['1', '3']);
+        });
+    });
+
+    describe('with pinned siblings', () => {
+        test('pinned sibling in non-pivot mode returns same children as source', async () => {
+            const gridOptions: GridOptions = {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'gold', aggFunc: 'sum' },
+                ],
+                rowData: [
+                    { id: '1', country: 'Ireland', gold: 1 },
+                    { id: '2', country: 'Ireland', gold: 2 },
+                    { id: '3', country: 'Italy', gold: 3 },
+                ],
+                groupDefaultExpanded: -1,
+                getRowId: ({ data }) => data.id,
+                enableRowPinning: true,
+                isRowPinned: (node) => (node.key === 'Ireland' && node.group ? 'top' : null),
+            };
+
+            const api = await gridsManager.createGridAndWait('myGrid', gridOptions);
+
+            const sourceGroup = api.getRowNode('row-group-country-Ireland');
+            const pinnedGroup = api.getPinnedTopRow(0);
+
+            expect(sourceGroup).toBeDefined();
+            expect(pinnedGroup).toBeDefined();
+            expect(pinnedGroup!.key).toBe('Ireland');
+
+            // Both should return the same children
+            const sourceChildren = sourceGroup!.getAggregatedChildren('gold');
+            const pinnedChildren = pinnedGroup!.getAggregatedChildren('gold');
+
+            expect(sourceChildren.length).toBe(2);
+            expect(pinnedChildren.length).toBe(2);
+            expect(sourceChildren.map((n) => n.data?.id).sort()).toEqual(['1', '2']);
+            expect(pinnedChildren.map((n) => n.data?.id).sort()).toEqual(['1', '2']);
+        });
+
+        test('pinned sibling reflects filtering after source is filtered', async () => {
+            const gridOptions: GridOptions = {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'gold', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
+                ],
+                rowData: [
+                    { id: '1', country: 'Ireland', gold: 1 },
+                    { id: '2', country: 'Ireland', gold: 5 },
+                    { id: '3', country: 'Ireland', gold: 3 },
+                ],
+                groupDefaultExpanded: -1,
+                getRowId: ({ data }) => data.id,
+                enableRowPinning: true,
+                isRowPinned: (node) => (node.key === 'Ireland' && node.group ? 'top' : null),
+            };
+
+            const api = await gridsManager.createGridAndWait('myGrid', gridOptions);
+
+            const pinnedGroup = api.getPinnedTopRow(0);
+            expect(pinnedGroup).toBeDefined();
+
+            // Before filter: all 3 children
+            let pinnedChildren = pinnedGroup!.getAggregatedChildren('gold');
+            expect(pinnedChildren.length).toBe(3);
+
+            // Apply filter to show only gold >= 3
+            await api.setColumnFilterModel('gold', {
+                filterType: 'number',
+                type: 'greaterThanOrEqual',
+                filter: 3,
+            });
+            api.onFilterChanged();
+
+            // After filter: only 2 children (gold >= 3)
+            pinnedChildren = pinnedGroup!.getAggregatedChildren('gold');
+            expect(pinnedChildren.length).toBe(2);
+            expect(pinnedChildren.map((n) => n.data?.id).sort()).toEqual(['2', '3']);
+        });
+
+        test('pinned sibling in pivot mode returns correct children for pivot column', async () => {
+            const gridOptions: GridOptions = {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'year', pivot: true, hide: true },
+                    { field: 'sales', aggFunc: 'sum', hide: true },
+                ],
+                rowData: [
+                    { id: '1', country: 'Ireland', year: 2020, sales: 1000 },
+                    { id: '2', country: 'Ireland', year: 2021, sales: 1200 },
+                    { id: '3', country: 'Ireland', year: 2020, sales: 500 },
+                ],
+                pivotMode: true,
+                groupDefaultExpanded: -1,
+                getRowId: ({ data }) => data.id,
+                enableRowPinning: true,
+                isRowPinned: (node) => (node.key === 'Ireland' && node.group ? 'top' : null),
+            };
+
+            const api = await gridsManager.createGridAndWait('myGrid', gridOptions);
+
+            const sourceGroup = api.getRowNode('row-group-country-Ireland');
+            const pinnedGroup = api.getPinnedTopRow(0);
+
+            expect(sourceGroup).toBeDefined();
+            expect(pinnedGroup).toBeDefined();
+
+            // Get the 2020 pivot column
+            const pivotColumns = api.getPivotResultColumns();
+            expect(pivotColumns).not.toBeNull();
+            const pivot2020Col = pivotColumns!.find((col) => col.getColId() === 'pivot_year_2020_sales');
+            expect(pivot2020Col).toBeDefined();
+
+            // Both source and pinned should return same children for 2020
+            const sourceChildren2020 = sourceGroup!.getAggregatedChildren(pivot2020Col!);
+            const pinnedChildren2020 = pinnedGroup!.getAggregatedChildren(pivot2020Col!);
+
+            expect(sourceChildren2020.length).toBe(2);
+            expect(pinnedChildren2020.length).toBe(2);
+            expect(sourceChildren2020.map((n) => n.data?.id).sort()).toEqual(['1', '3']);
+            expect(pinnedChildren2020.map((n) => n.data?.id).sort()).toEqual(['1', '3']);
+
+            // Get the 2021 pivot column
+            const pivot2021Col = pivotColumns!.find((col) => col.getColId() === 'pivot_year_2021_sales');
+            expect(pivot2021Col).toBeDefined();
+
+            // Both should return same children for 2021
+            const sourceChildren2021 = sourceGroup!.getAggregatedChildren(pivot2021Col!);
+            const pinnedChildren2021 = pinnedGroup!.getAggregatedChildren(pivot2021Col!);
+
+            expect(sourceChildren2021.length).toBe(1);
+            expect(pinnedChildren2021.length).toBe(1);
+            expect(sourceChildren2021.map((n) => n.data?.id)).toEqual(['2']);
+            expect(pinnedChildren2021.map((n) => n.data?.id)).toEqual(['2']);
+        });
+
+        test('pinned sibling in pivot mode reflects filtering for pivot column', async () => {
+            const gridOptions: GridOptions = {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'year', pivot: true, hide: true },
+                    { field: 'status', filter: 'agSetColumnFilter' },
+                    { field: 'sales', aggFunc: 'sum', hide: true },
+                ],
+                rowData: [
+                    { id: '1', country: 'Ireland', year: 2020, status: 'active', sales: 1000 },
+                    { id: '2', country: 'Ireland', year: 2020, status: 'pending', sales: 500 },
+                    { id: '3', country: 'Ireland', year: 2021, status: 'active', sales: 1200 },
+                ],
+                pivotMode: true,
+                groupDefaultExpanded: -1,
+                getRowId: ({ data }) => data.id,
+                enableRowPinning: true,
+                isRowPinned: (node) => (node.key === 'Ireland' && node.group ? 'top' : null),
+            };
+
+            const api = await gridsManager.createGridAndWait('myGrid', gridOptions);
+
+            const pinnedGroup = api.getPinnedTopRow(0);
+            expect(pinnedGroup).toBeDefined();
+
+            // Get the 2020 pivot column
+            const pivotColumns = api.getPivotResultColumns();
+            expect(pivotColumns).not.toBeNull();
+            const pivot2020Col = pivotColumns!.find((col) => col.getColId() === 'pivot_year_2020_sales');
+            expect(pivot2020Col).toBeDefined();
+
+            // Before filter: 2 children for 2020
+            let pinnedChildren = pinnedGroup!.getAggregatedChildren(pivot2020Col!);
+            expect(pinnedChildren.length).toBe(2);
+            expect(pinnedChildren.map((n) => n.data?.id).sort()).toEqual(['1', '2']);
+
+            // Apply filter to show only active status
+            await api.setColumnFilterModel('status', { values: ['active'] });
+            api.onFilterChanged();
+
+            // After filter: only 1 child for 2020 (the active one)
+            pinnedChildren = pinnedGroup!.getAggregatedChildren(pivot2020Col!);
+            expect(pinnedChildren.length).toBe(1);
+            expect(pinnedChildren.map((n) => n.data?.id)).toEqual(['1']);
+        });
+
+        test('pinned sibling reflects transaction updates to source', async () => {
+            const gridOptions: GridOptions = {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'gold', aggFunc: 'sum' },
+                ],
+                rowData: [
+                    { id: '1', country: 'Ireland', gold: 1 },
+                    { id: '2', country: 'Ireland', gold: 2 },
+                ],
+                groupDefaultExpanded: -1,
+                getRowId: ({ data }) => data.id,
+                enableRowPinning: true,
+                isRowPinned: (node) => (node.key === 'Ireland' && node.group ? 'top' : null),
+            };
+
+            const api = await gridsManager.createGridAndWait('myGrid', gridOptions);
+
+            const pinnedGroup = api.getPinnedTopRow(0);
+            expect(pinnedGroup).toBeDefined();
+
+            // Initial: 2 children
+            let pinnedChildren = pinnedGroup!.getAggregatedChildren('gold');
+            expect(pinnedChildren.length).toBe(2);
+
+            // Add a new row
+            applyTransactionChecked(api, {
+                add: [{ id: '3', country: 'Ireland', gold: 3 }],
+            });
+
+            // After add: 3 children
+            pinnedChildren = pinnedGroup!.getAggregatedChildren('gold');
+            expect(pinnedChildren.length).toBe(3);
+            expect(pinnedChildren.map((n) => n.data?.id).sort()).toEqual(['1', '2', '3']);
+
+            // Remove a row
+            applyTransactionChecked(api, {
+                remove: [{ id: '1' }],
+            });
+
+            // After remove: 2 children
+            pinnedChildren = pinnedGroup!.getAggregatedChildren('gold');
+            expect(pinnedChildren.length).toBe(2);
+            expect(pinnedChildren.map((n) => n.data?.id).sort()).toEqual(['2', '3']);
         });
     });
 });
