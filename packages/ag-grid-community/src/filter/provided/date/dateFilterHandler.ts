@@ -221,7 +221,7 @@ const tomorrow: RelativeRangeFn = (from: Date, to: Date) => {
  * Today                   today               [startOfToday, startOfTomorrow)
  * Yesterday               yesterday           [startOfYesterday, startOfToday)
  * Tomorrow                tomorrow            [startOfTomorrow, startOfDayAfterTomorrow)
- * This Week               thisWeek            [startOfCurrentWeek, startOfNextWeek)(locale-specific week start)
+ * This Week               thisWeek            [startOfCurrentWeek, startOfNextWeek)
  * Last Week               lastWeek            [startOfPreviousWeek, startOfCurrentWeek)
  * Next Week               nextWeek            [startOfNextWeek, startOfWeekAfterNext)
  * This Month              thisMonth           [startOfCurrentMonth, startOfNextMonth)

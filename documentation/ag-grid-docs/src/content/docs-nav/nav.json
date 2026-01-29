@@ -560,7 +560,19 @@
                         {
                             "type": "item",
                             "title": "Column Headers",
-                            "path": "column-headers"
+                            "path": "column-headers",
+                            "children": [
+                                {
+                                    "type": "item",
+                                    "title": "Styling & Height",
+                                    "path": "column-headers-styling"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Custom Components",
+                                    "path": "column-headers-components"
+                                }
+                            ]
                         },
                         {
                             "type": "item",

@@ -115,7 +115,7 @@
             },
             {
                 "text": "Compact Column Headers",
-                "path": "./column-headers/#hide-padded-column-headers"
+                "path": "./column-groups/#hide-padded-header-rows"
             },
             {
                 "text": "Grid Context in Integrated Charts",
@@ -308,7 +308,7 @@
             },
             {
                 "text": "Default Column Header Customization",
-                "path": "./column-headers/#inner-header-component"
+                "path": "./column-headers-components/#inner-header-component"
             },
             {
                 "text": "Native Support for Vue 3 Composition API"

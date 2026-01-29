@@ -1,4 +1,5 @@
-import type { BeanCollection, CellRange, IClientSideRowModel } from 'ag-grid-community';
+import { isSpecialCol } from 'ag-grid-community';
+import type { AgColumn, BeanCollection, CellRange, IClientSideRowModel } from 'ag-grid-community';
 
 import { getRefTokenMatches, parseA1Ref } from '../formula/refUtils';
 
@@ -117,8 +118,8 @@ export const rangeToRef = (beans: BeanCollection, range: CellRange): string | nu
     const rowStartIndex = Math.min(startRow.rowIndex!, endRow.rowIndex!) + 1;
     const rowEndIndex = Math.max(startRow.rowIndex!, endRow.rowIndex!) + 1;
 
-    const columns = range.columns;
-
+    // ignore selection/row-number columns and any columns without A1 refs
+    const columns = range.columns?.filter((col) => !isSpecialCol(col) && !!formula.getColRef(col as AgColumn));
     if (!columns?.length) {
         return null;
     }
@@ -127,8 +128,8 @@ export const rangeToRef = (beans: BeanCollection, range: CellRange): string | nu
     const startCol = sorted[0];
     const endCol = sorted[sorted.length - 1];
 
-    const colStartRef = formula.getColRef(startCol as any);
-    const colEndRef = formula.getColRef(endCol as any);
+    const colStartRef = formula.getColRef(startCol as AgColumn);
+    const colEndRef = formula.getColRef(endCol as AgColumn);
 
     if (!colStartRef || !colEndRef) {
         return null;

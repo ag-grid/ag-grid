@@ -11,6 +11,10 @@ on:
         description: 'Release tag to compare against (e.g., b35.1.0) or leave empty to auto-detect latest release'
         type: string
         required: false
+      test_branch:
+        description: 'Branch to test (defaults to latest for push events, current branch for workflow_dispatch)'
+        type: string
+        required: false
 
 env:
   NX_NO_CLOUD: true
@@ -34,18 +38,30 @@ jobs:
     outputs:
       release-tag: ${{ steps.resolve.outputs.release-tag }}
       shard-matrix: ${{ steps.resolve.outputs.shard-matrix }}
+      test-branch: ${{ steps.resolve.outputs.test-branch }}
     steps:
-      - name: Resolve release tag
+      - name: Resolve release tag and test branch
         id: resolve
         uses: actions/github-script@v7
         env:
           SHARD_COUNT: ${{ env.SHARD_COUNT }}
           INPUT_TAG: ${{ inputs.release_tag }}
+          INPUT_BRANCH: ${{ inputs.test_branch }}
+          EVENT_NAME: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref_name }}
         with:
           script: |
             const shardCount = parseInt(process.env.SHARD_COUNT, 10);
             const shards = Array.from({ length: shardCount }, (_, i) => i + 1);
             core.setOutput('shard-matrix', JSON.stringify(shards));
+
+            // Resolve test branch: input > current branch (for workflow_dispatch) > latest (for push)
+            let testBranch = process.env.INPUT_BRANCH;
+            if (!testBranch) {
+              testBranch = process.env.EVENT_NAME === 'workflow_dispatch' ? process.env.REF_NAME : 'latest';
+            }
+            core.setOutput('test-branch', testBranch);
+            console.log(`Using test branch: ${testBranch}`);
 
             let releaseTag = process.env.INPUT_TAG;
 
@@ -86,34 +102,35 @@ jobs:
           key: module-size-release-${{ needs.prepare.outputs.release-tag }}
           lookup-only: true
 
-  # Build and run module size tests on latest branch (sharded)
+  # Build and run module size tests on test branch (sharded)
   module-size-latest:
-    name: Module Size Latest (${{ matrix.shard }}/${{ strategy.job-total }})
+    name: Module Size ${{ needs.prepare.outputs.test-branch }} (${{ matrix.shard }}/${{ strategy.job-total }})
     runs-on: ubuntu-latest
     needs: prepare
     strategy:
       matrix:
         shard: ${{ fromJSON(needs.prepare.outputs.shard-matrix) }}
       fail-fast: false
+    env:
+      TEST_BRANCH: ${{ needs.prepare.outputs.test-branch }}
     steps:
       - name: Checkout for actions
         uses: actions/checkout@v4
         with:
-          ref: latest
+          ref: ${{ env.TEST_BRANCH }}
           fetch-depth: 1
-
 
       - name: Run module size tests
         uses: ./.github/actions/module-size-test
         with:
-          ref: latest
+          ref: ${{ env.TEST_BRANCH }}
           shard: ${{ matrix.shard }}
           total-shards: ${{ strategy.job-total }}
           artifact-prefix: module-size-latest
-          base-ref: latest
+          base-ref: ${{ env.TEST_BRANCH }}
 
   # Build and run module size tests on release tag (sharded) - only if cache miss
-  # Uses latest branch tooling with source code from the release tag
+  # Uses test branch tooling with source code from the release tag
   module-size-release:
     name: Module Size Release (${{ matrix.shard }}/${{ strategy.job-total }})
     runs-on: ubuntu-latest
@@ -123,21 +140,23 @@ jobs:
       matrix:
         shard: ${{ fromJSON(needs.prepare.outputs.shard-matrix) }}
       fail-fast: false
+    env:
+      TEST_BRANCH: ${{ needs.prepare.outputs.test-branch }}
     steps:
       - name: Checkout for actions
         uses: actions/checkout@v4
         with:
-          ref: latest
+          ref: ${{ env.TEST_BRANCH }}
           fetch-depth: 1
 
       - name: Run module size tests
         uses: ./.github/actions/module-size-test
         with:
-          ref: latest
+          ref: ${{ env.TEST_BRANCH }}
           shard: ${{ matrix.shard }}
           total-shards: ${{ strategy.job-total }}
           artifact-prefix: module-size-release
-          base-ref: latest
+          base-ref: ${{ env.TEST_BRANCH }}
           source-ref: ${{ needs.prepare.outputs.release-tag }}
 
   # Cache release results (only when we had to build)
@@ -146,11 +165,13 @@ jobs:
     runs-on: ubuntu-latest
     needs: [prepare, check-release-cache, module-size-release]
     if: always() && needs.module-size-release.result == 'success'
+    env:
+      TEST_BRANCH: ${{ needs.prepare.outputs.test-branch }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: latest
+          ref: ${{ env.TEST_BRANCH }}
           sparse-checkout: |
             scripts/ci/merge-module-size-results.mjs
 
@@ -188,11 +209,12 @@ jobs:
     env:
       RELEASE_TAG: ${{ needs.prepare.outputs.release-tag }}
       CACHE_HIT: ${{ needs.check-release-cache.outputs.cache-hit }}
+      TEST_BRANCH: ${{ needs.prepare.outputs.test-branch }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: latest
+          ref: ${{ env.TEST_BRANCH }}
           sparse-checkout: |
             scripts/ci/compare-module-sizes.mjs
             scripts/ci/merge-module-size-results.mjs
@@ -245,7 +267,7 @@ jobs:
 
       - name: Output report to summary
         run: |
-          echo "# Module Size Comparison: \`latest\` vs \`${{ env.RELEASE_TAG }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "# Module Size Comparison: \`${{ env.TEST_BRANCH }}\` vs \`${{ env.RELEASE_TAG }}\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           cat ./comparison-report.md >> $GITHUB_STEP_SUMMARY
 
@@ -266,6 +288,7 @@ jobs:
       needs.compare-and-report.result == 'skipped'
     env:
       RELEASE_TAG: ${{ needs.prepare.outputs.release-tag }}
+      TEST_BRANCH: ${{ needs.prepare.outputs.test-branch }}
       LATEST_RESULT: ${{ needs.module-size-latest.result }}
       RELEASE_RESULT: ${{ needs.module-size-release.result }}
       CACHE_HIT: ${{ needs.check-release-cache.outputs.cache-hit }}
@@ -273,7 +296,7 @@ jobs:
       - name: Report failure
         run: |
           if [[ "$LATEST_RESULT" != "success" ]]; then
-            REASON="Latest branch module size tests failed ($LATEST_RESULT)"
+            REASON="$TEST_BRANCH branch module size tests failed ($LATEST_RESULT)"
           elif [[ "$CACHE_HIT" != "true" && "$RELEASE_RESULT" != "success" ]]; then
             REASON="Release $RELEASE_TAG module size tests failed ($RELEASE_RESULT)"
           else
@@ -282,6 +305,7 @@ jobs:
 
           echo "# Module Size Comparison Failed" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Test branch:** $TEST_BRANCH" >> $GITHUB_STEP_SUMMARY
           echo "**Release tag:** $RELEASE_TAG" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Reason:** $REASON" >> $GITHUB_STEP_SUMMARY

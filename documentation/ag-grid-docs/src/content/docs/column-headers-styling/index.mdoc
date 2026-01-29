@@ -1,0 +1,179 @@
+---
+title: "Column Headers - Styling & Height"
+description: "Style Column Headers and configure header heights in the $framework Table. Apply CSS classes, inline styles, and control header row dimensions."
+---
+
+Column Headers can be styled using CSS classes and inline styles. Header row heights can be configured statically or set to adjust automatically based on content.
+
+## Header Style
+
+Used to provide CSS styles directly (not using a class) to the header. Can be either an object
+of CSS styles, or a function returning an object of CSS styles.
+
+{% interfaceDocumentation interfaceName="ColDef" names=["headerStyle" ] /%}
+
+```{% frameworkTransform=true spaceBetweenProperties=true %}
+const gridOptions = {
+    columnDefs: [
+        // applies to header and floating filter header
+        {
+            headerName: 'Static Styles',
+            field: 'static',
+            headerStyle: { color: 'red', 'background-color': 'green' }
+        },
+        {
+            headerName: 'Dynamic Styles',
+            field: 'dynamic',
+            headerStyle: params => {
+                // only style floating filter
+                if (params.floatingFilter) {
+                    return { backgroundColor: 'green' };
+                }
+                return null;
+            }
+        },
+    ]
+}
+```
+
+## Header Class
+
+Provides a class for the header. Can be a string (a class), array of strings
+(array of classes), or a function (that returns a string or an array of strings).
+
+{% interfaceDocumentation interfaceName="ColDef" names=["headerClass" ] /%}
+
+```{% frameworkTransform=true spaceBetweenProperties=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            headerName: 'Static Class',
+            field: 'static',
+            headerClass: 'my-class'
+        },
+        {
+            headerName: 'Static Array of Classes',
+            field: 'staticArray',
+            headerClass: ['my-class1','my-class2'],
+        },
+        {
+            headerName: 'Function Returns String',
+            field: 'function',
+            headerClass: params => {
+                return params.columnGroup ? 'my-custom-column-group' : 'my-custom-column';
+            },
+        }
+    ]
+}
+```
+
+### Header Class & Style Example
+
+Below shows both headerStyle and headerClass in a full working example. The example demonstrates the following:
+
+- **Athlete Details**: uses `headerStyle` static object.
+- **Athlete**: uses `headerStyle` static object functions. This also causes the floating filter to be styled.
+- **Country**: uses `headerStyle` function callback. This allows to set a different background color for the header and floating filter.
+- **Sport**: uses `headerClass` to add the `sport-header` class to the header.
+- **Medal Details**: uses `headerStyle` callback function to toggle different styles when the group is expanded or collapsed.
+
+
+{% gridExampleRunner title="Header Styling" name="header-styles" /%}
+
+## Header Height
+
+These properties can be used to change the different heights used in the headers.
+
+{% apiDocumentation source="grid-options/properties.json" section="headers" /%}
+
+As you can see in the example below, if you change any of the header heights, this change will be reflected automatically. Note how if the value is cleared (set to `undefined`), it might reuse other values. To see all the interactions check the properties descriptions at the top of the page.
+
+
+{% gridExampleRunner title="Dynamic Header Height" name="dynamic-height" /%}
+
+## Auto Header Height
+
+The column header row can have its height set automatically based on the content of the header cells. This is most useful when used together with [Custom Header Components](./column-headers-components/) or when using the `wrapHeaderText` column property.
+
+To enable this, set `autoHeaderHeight=true` on the column definition you want to adjust the header height for. If more than one column has this property enabled, then the header row will be sized to the maximum of these columns' header cells so no content overflows.
+
+The example below demonstrates using the `autoHeaderHeight` property in conjunction with the `wrapHeaderText` property, so that long column names are fully displayed.
+
+* Note that the long column header names wrap onto another line.
+* Try making a column smaller by dragging the resize handle on the column header, observe that the header will expand so the full header content is still visible.
+
+{% gridExampleRunner title="Auto Header Height" name="auto-height" /%}
+
+## Text Orientation
+
+By default, the text label for the header is display horizontally, i.e. as normal readable text. To display the text in another orientation you have to provide your own CSS to change the orientation and also provide the adequate header heights using the appropriate grid property.
+
+The following example shows how you can provide a unique look and feel to the headers. Note that:
+
+* The header heights have all been changed via grid options:
+
+```{% frameworkTransform=true  %}
+    const gridOptions = {
+        // Group columns
+        groupHeaderHeight: 75,
+        // Label columns
+        headerHeight: 150,
+        // Pivoting, requires turning on pivot mode. Label columns
+        pivotHeaderHeight: 100,
+        // Pivoting, requires turning on pivot mode. Group columns
+        pivotGroupHeaderHeight: 50,
+    }
+```
+
+* The grouped column header `Athlete Details` has a specific style applied to it to make it bigger. Note that the style is slightly different depending if pivoting or not:
+
+```css
+.ag-pivot-off .ag-header-group-cell {
+    font-size: 50px;
+    color: red;
+}
+
+.ag-pivot-on .ag-header-group-cell {
+    font-size: 25px;
+    color: green;
+}
+```
+
+* The column labels have CSS applied to them so they are displayed vertically.
+
+```css
+.ag-header-cell-label {
+    /* Necessary to allow for text to grow vertically */
+    height: 100%;
+    padding: 0 !important;
+}
+
+.ag-header-cell-label .ag-header-cell-text {
+    /* Force the width corresponding to how much width
+    we need once the text is laid out vertically */
+    width: 30px;
+    transform: rotate(90deg);
+    margin-top: 50px;
+    /* Since we are rotating a span */
+    display: inline-block;
+}
+```
+
+* The styling of the column labels have also been tweaked depending if pivoting or not.
+
+```css
+.ag-pivot-off .ag-header-cell-label {
+    color: #8a6d3b;
+}
+
+.ag-pivot-on .ag-header-cell-label {
+    color: #1b6d85;
+    font-weight: bold;
+}
+```
+
+{% gridExampleRunner title="Header Height and Text Orientation" name="text-orientation" /%}
+
+## Next Up
+
+Continue to the next section: [Custom Header Components](./column-headers-components/).

@@ -92,7 +92,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
     groupHeaderHeight: 75,
     headerHeight: 150,
-    floatingFiltersHeight: 50,
 };
 
 // setup the grid after the page has finished loading
