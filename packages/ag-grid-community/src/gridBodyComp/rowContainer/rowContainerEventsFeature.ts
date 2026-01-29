@@ -35,7 +35,11 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private addMouseListeners(): void {
-        const mouseDownEvent = _isEventSupported('touchstart') ? 'touchstart' : 'mousedown';
+        const mouseDownEvent = _isEventSupported('pointerdown')
+            ? 'pointerdown'
+            : _isEventSupported('touchstart')
+              ? 'touchstart'
+              : 'mousedown';
         const eventNames = ['dblclick', 'contextmenu', 'mouseover', 'mouseout', 'click', mouseDownEvent];
 
         for (const eventName of eventNames) {
