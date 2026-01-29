@@ -23,8 +23,6 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
      * an infinite recursion with CSRM.
      */
     private _grandTotalPinned: RowPinnedType;
-    /** Guard to prevent unnecessary CSRM refreshes during model update event handling */
-    private _processingModelUpdate = false;
 
     public postConstruct(): void {
         const { gos, beans } = this;
@@ -48,23 +46,18 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         this.addManagedEventListeners({
             stylesChanged: this.onGridStylesChanges.bind(this),
             modelUpdated: ({ keepRenderedRows }) => {
-                this._processingModelUpdate = true;
-                try {
-                    this.tryToEmptyQueues();
-                    this.pinGrandTotalRow();
+                this.tryToEmptyQueues();
+                this.pinGrandTotalRow();
 
-                    let visibilityChanged = false;
-                    this.forContainers((container) => {
-                        visibilityChanged ||= container.hide(shouldHide);
-                    });
+                let visibilityChanged = false;
+                this.forContainers((container) => {
+                    visibilityChanged ||= container.hide(shouldHide);
+                });
 
-                    const positionsChanged = this.refreshRowPositions();
+                const positionsChanged = this.refreshRowPositions();
 
-                    if (!keepRenderedRows || positionsChanged || visibilityChanged) {
-                        this.dispatchRowPinnedEvents();
-                    }
-                } finally {
-                    this._processingModelUpdate = false;
+                if (!keepRenderedRows || positionsChanged || visibilityChanged) {
+                    this.dispatchRowPinnedEvents();
                 }
             },
             columnRowGroupChanged: () => {
@@ -402,10 +395,6 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
 
     /** Refreshes CSRM if not already refreshing */
     private refreshCSRM(): void {
-        if (this._processingModelUpdate) {
-            return; // prevent refreshing while processing model update
-        }
-
         const csrm = this.csrm;
         if (csrm && !csrm.refreshingModel) {
             csrm.refreshModel({ step: 'map' });
