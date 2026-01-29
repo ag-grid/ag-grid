@@ -656,7 +656,9 @@ export class RowNode<TData = any>
 
     public getAggregatedChildren(colKey: ColKey | null | undefined): RowNode<TData>[] {
         const beans = this.beans;
-        // Note - we are using getCol only here as we are really interested just in pivot columns
+        // Use getCol() instead of fallback to getColDefCol() because we need just pivot result columns for performance.
+        // getCol() searches in cols (which includes pivot result columns), whereas getColDefCol()
+        // only searches in colDefCols (user-defined columns, excluding generated pivot columns).
         return beans.aggStage?.getAggregatedChildren(this, beans.colModel.getCol(colKey)) ?? [];
     }
 
