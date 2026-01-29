@@ -50,7 +50,7 @@ that matches the current node type, enabling separate rules for group rows and l
 In this example, `groupRowValueSetter` is used to distribute edits on group rows to their descendant rows.
 The example uses a simple strategy of dividing the value equally among all visible children and sub groups.
 
-{% gridExampleRunner title="Editable Group Totals" name="group-editable-totals" exampleHeight=620 /%}
+{% gridExampleRunner title="Custom Editable Group Totals" name="group-editable-totals-custom" exampleHeight=620 /%}
 
 ### The aggregatedChildren Parameter
 
@@ -92,7 +92,7 @@ When using [Pivoting](./pivoting/), the `groupRowValueSetter` also works with pi
 The key difference is that `aggregatedChildren` returns only the children matching the column's pivot keys,
 not all children of the group.
 
-{% gridExampleRunner title="Editable Pivot Totals" name="pivot-editable-totals" exampleHeight=500 /%}
+{% gridExampleRunner title="Custom Editable Pivot Totals" name="pivot-editable-totals-custom" exampleHeight=500 /%}
 
 In this example:
 
