@@ -516,14 +516,13 @@ export class RowNode<TData = any>
             return false;
         }
 
-        // For leaf (non-group) rows with pivot result columns, auto-resolve to the underlying value column.
+        // For leaf (non-group) rows with pivot result columns, resolve to the underlying value column.
         // Pivot columns don't map to real data fields on leaf rows — only the source value column does.
         // This allows groupRowValueSetter to cascade edits using the same column reference for both
-        // group and leaf rows. Skip resolution if the pivot column has a custom valueSetter, since the
-        // user may have configured custom edit handling via processPivotResultColDef.
+        // group and leaf rows.
         if (!this.group) {
             const colDef = column.getColDef();
-            if (colDef.pivotValueColumn && !colDef.valueSetter) {
+            if (colDef.pivotValueColumn) {
                 column = colDef.pivotValueColumn as AgColumn;
             }
         }
