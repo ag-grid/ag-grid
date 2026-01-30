@@ -572,9 +572,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             params.step = 'group'; // Ensure grouping runs
         }
 
-        this.updateRefreshParams(params); // Apply forced flags from any nested refresh calls
+        this.refreshingModel = true; // Prevent nested refreshModel calls
 
-        this.refreshingModel = true; // prevent nested refreshModel calls
+        this.updateRefreshParams(params); // Apply forced flags from any nested refresh calls
 
         beans.masterDetailSvc?.refreshModel(params);
         if (rowDataUpdated && params.step !== 'group') {
