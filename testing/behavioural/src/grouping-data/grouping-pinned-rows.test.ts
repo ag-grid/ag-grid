@@ -291,4 +291,62 @@ describe('ag-grid grouping pinned rows', () => {
         const franceGroup = api.getRowNode('row-group-country-France');
         expect(franceGroup).toBeDefined();
     });
+
+    test('sibling group removal via transaction does not affect pinned group', async () => {
+        // This test verifies that when a sibling group is removed via transaction,
+        // the pinned group remains correctly pinned and the grid state is valid.
+
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            groupDefaultExpanded: -1,
+            enableRowPinning: true,
+            isRowPinned: (node) => (node.group && node.key === 'France' ? 'top' : null),
+            getRowId: (params) => params.data.id,
+        });
+
+        // Verify initial state - France group is pinned
+        await new GridRows(api, 'initial', { checkDom: false }).check(`
+            PINNED_TOP id:t-top-row-group-country-France ag-Grid-AutoColumn:"France" amount:300
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" amount:300
+            │ ├── LEAF id:fr-paris country:"France" sport:"football" amount:100
+            │ └── LEAF id:fr-lyon country:"France" sport:"rugby" amount:200
+            ├─┬ LEAF_GROUP id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" amount:400
+            │ ├── LEAF id:de-berlin country:"Germany" sport:"tennis" amount:150
+            │ └── LEAF id:de-hamburg country:"Germany" sport:"cricket" amount:250
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" amount:300
+            · └── LEAF id:it-rome country:"Italy" sport:"golf" amount:300
+        `);
+
+        expect(api.getPinnedTopRowCount()).toBe(1);
+        const pinnedFrance = api.getPinnedTopRow(0);
+        expect(pinnedFrance?.key).toBe('France');
+        expect(pinnedFrance?.destroyed).toBe(false);
+
+        // Remove a sibling group (Germany) - this triggers a remap that should not
+        // affect the pinned France group
+        api.applyTransaction({
+            remove: [{ id: 'de-berlin' }, { id: 'de-hamburg' }],
+        });
+        await asyncSetTimeout(10);
+
+        // The Germany group should be destroyed, but the pinned France should remain
+        await new GridRows(api, 'after Germany removal', { checkDom: false }).check(`
+            PINNED_TOP id:t-top-row-group-country-France ag-Grid-AutoColumn:"France" amount:300
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" amount:300
+            │ ├── LEAF id:fr-paris country:"France" sport:"football" amount:100
+            │ └── LEAF id:fr-lyon country:"France" sport:"rugby" amount:200
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" amount:300
+            · └── LEAF id:it-rome country:"Italy" sport:"golf" amount:300
+        `);
+
+        expect(api.getPinnedTopRowCount()).toBe(1);
+        expect(api.getPinnedTopRow(0)?.key).toBe('France');
+        expect(api.getPinnedTopRow(0)?.destroyed).toBe(false);
+
+        // Verify the Germany group no longer exists
+        expect(api.getRowNode('row-group-country-Germany')).toBeUndefined();
+    });
 });
