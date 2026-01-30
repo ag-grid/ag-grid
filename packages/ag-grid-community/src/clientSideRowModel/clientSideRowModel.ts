@@ -32,20 +32,37 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     // top most node of the tree. the children are the user provided data.
     public rootNode: RowNode | null = null;
+
+    /** Public-readonly flag indicating row count is ready for external consumers. */
     public rowCountReady: boolean = false;
 
+    /** Manages the row nodes, including creation, update, and removal. */
     private nodeManager: ClientSideNodeManager<any> | undefined = undefined;
-    private rowsToDisplay: RowNode[] = []; // the rows mapped to rows to display
+
+    /** The rows mapped to rows to display, during the 'map' stage. */
+    private rowsToDisplay: RowNode[] = [];
+
+    /** Row nodes used for formula calculations when formula feature is active. */
     private formulaRows: RowNode[] = [];
 
-    /** Keep track if row data was updated. Important with suppressModelUpdateAfterUpdateTransaction and refreshModel api is called  */
-    private rowDataUpdatedPending: boolean = false;
+    /** The ordered list of row processing stages: group → filter → pivot → aggregate → filterAggregates → sort → flatten. */
+    private stages: IRowNodeStage[] | null = null;
 
+    /** Queued async transactions waiting to be processed. */
     private asyncTransactions: BatchTransactionItem[] | null = null;
+
+    /** Timer handle for batching async transactions. */
     private asyncTransactionsTimer: number = 0;
 
-    /** Has the start method been called */
+    /** Has the start() method been called. */
     private started: boolean = false;
+
+    /** Set to true when row data is being updated. Reset when model is fully refreshed. */
+    private refreshingData: boolean = false;
+
+    /** Keep track if row data was updated. Important with suppressModelUpdateAfterUpdateTransaction and refreshModel api is called. */
+    private rowDataUpdatedPending: boolean = false;
+
     /**
      * This is to prevent refresh model being called when it's already being called.
      * E.g. the group stage can trigger initial state filter model to be applied. This fires onFilterChanged,
@@ -53,9 +70,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
      * (which is about to be run by the original call).
      */
     public refreshingModel: boolean = false;
-    private rowNodesCountReady: boolean = false;
 
-    private stages: IRowNodeStage[] | null = null;
+    /** When true, the next modelUpdated event will have keepRenderedRows=false. Set by reMapRows(). */
+    private pendingRerender: boolean = false;
+
+    /** True after the first time row nodes have been created or data has been set. Used to determine when to fire rowCountReady. */
+    private rowNodesCountReady: boolean = false;
 
     /** Maps a property name to the index in this.stages array */
     private readonly stagesRefreshProps = new Map<keyof GridOptions, number>();
@@ -237,6 +257,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 gos.exists('getRowId') &&
                 // backward compatibility - for who want old behaviour of Row IDs but NOT Immutable Data.
                 !gos.get('resetRowDataOnUpdate');
+            this.refreshingData = true; // indicate row data update in progress, this flag will be reset when refreshModel completes
             if (immutable) {
                 params.keepRenderedRows = true;
                 params.animate = !gos.get('suppressAnimationFrame');
@@ -502,6 +523,16 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         return true; // Nothing changed, or only updates with no new rows and no removals
     }
 
+    public reMapRows(): void {
+        if (this.refreshingModel || this.refreshingData) {
+            // A refresh will happen. Mark that keepRenderedRows should be false.
+            this.pendingRerender = true;
+            return; // No need to trigger another refresh, we are doing one.
+        }
+        // No refresh in progress, so trigger one now with keepRenderedRows false.
+        this.refreshModel({ step: 'map', keepRenderedRows: false });
+    }
+
     public refreshModel(params: RefreshModelParams): void {
         const { nodeManager, beans, eventSvc, started, refreshingModel } = this;
         if (!nodeManager) {
@@ -567,12 +598,17 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.setRowTopAndRowIndex(displayedNodesMapped);
         this.clearRowTopAndRowIndex(changedPath, displayedNodesMapped);
 
+        const keepRenderedRows = !this.pendingRerender && params.keepRenderedRows;
+
+        // Reset pending rerender and refreshing flags
+        this.refreshingData = false;
         this.refreshingModel = false;
+        this.pendingRerender = false;
 
         eventSvc.dispatchEvent({
             type: 'modelUpdated',
             animate: params.animate,
-            keepRenderedRows: params.keepRenderedRows,
+            keepRenderedRows,
             newData: params.newData,
             newPage: false,
             keepUndoRedoStack: params.keepUndoRedoStack,
@@ -929,6 +965,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const animate = !this.gos.get('suppressAnimationFrame');
         for (const { rowDataTransaction, callback } of asyncTransactions ?? []) {
             this.rowNodesCountReady = true;
+            this.refreshingData = true; // indicate row data update in progress, this flag will be reset when refreshModel completes
             const rowNodeTransaction = nodeManager.updateRowData(rowDataTransaction, changedRowNodes, animate);
             rowNodeTrans.push(rowNodeTransaction);
             if (callback) {
@@ -967,6 +1004,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.rowNodesCountReady = true;
         const changedRowNodes = new ChangedRowNodes();
         const animate = !this.gos.get('suppressAnimationFrame');
+        this.refreshingData = true; // indicate row data update in progress, this flag will be reset when refreshModel completes
         const rowNodeTransaction = nodeManager.updateRowData(rowDataTran, changedRowNodes, animate);
         this.commitTransactions(changedRowNodes, animate);
         return rowNodeTransaction;
@@ -992,6 +1030,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         });
     }
 
+    /** 'map' stage */
     private doRowsToDisplay(): void {
         const { rootNode, beans } = this;
 

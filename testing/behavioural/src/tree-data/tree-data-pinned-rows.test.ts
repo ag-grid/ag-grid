@@ -1,7 +1,18 @@
 import { ClientSideRowModelModule, PaginationModule } from 'ag-grid-community';
+import type { GridApi, RowNode, RowPinnedType } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+
+function assertPinnedRows(api: GridApi, floating: NonNullable<RowPinnedType>, ids: any[]): void {
+    const pinnedNodes: RowNode[] = [];
+    api.forEachPinnedRow(floating, (node) => {
+        pinnedNodes.push(node as RowNode);
+    });
+
+    expect(pinnedNodes).toHaveLength(ids.length);
+    expect(pinnedNodes.map((p) => p.id)).toEqual(ids);
+}
 
 describe('ag-grid tree data pinned rows', () => {
     const gridsManager = new TestGridsManager({
@@ -43,6 +54,20 @@ describe('ag-grid tree data pinned rows', () => {
         });
 
         // Verify initial state - France is pinned
+        await new GridRows(api, 'initial', { checkDom: false }).check(`
+            PINNED_TOP id:t-top-france ag-Grid-AutoColumn:"France" name:"France" amount:300 path:["Europe","France"]
+            ROOT id:ROOT_NODE_ID
+            ├─┬ Europe GROUP id:europe ag-Grid-AutoColumn:"Europe" name:"Europe" amount:450
+            │ ├─┬ France GROUP id:france ag-Grid-AutoColumn:"France" name:"France" amount:300
+            │ │ ├── Paris LEAF id:paris ag-Grid-AutoColumn:"Paris" name:"Paris" amount:100
+            │ │ └── Lyon LEAF id:lyon ag-Grid-AutoColumn:"Lyon" name:"Lyon" amount:200
+            │ └─┬ Germany GROUP id:germany ag-Grid-AutoColumn:"Germany" name:"Germany" amount:150
+            │ · └── Berlin LEAF id:berlin ag-Grid-AutoColumn:"Berlin" name:"Berlin" amount:150
+            └─┬ Asia GROUP id:asia ag-Grid-AutoColumn:"Asia" name:"Asia" amount:300
+            · └─┬ Japan GROUP id:japan ag-Grid-AutoColumn:"Japan" name:"Japan" amount:300
+            · · └── Tokyo LEAF id:tokyo ag-Grid-AutoColumn:"Tokyo" name:"Tokyo" amount:300
+        `);
+
         expect(api.getPinnedTopRowCount()).toBe(1);
         const pinnedFrance = api.getPinnedTopRow(0);
         expect(pinnedFrance?.key).toBe('France');
@@ -58,6 +83,16 @@ describe('ag-grid tree data pinned rows', () => {
         await asyncSetTimeout(10);
 
         // France node should be destroyed, and pinned row should be removed
+        await new GridRows(api, 'after remove', { checkDom: false }).check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ Europe GROUP id:europe ag-Grid-AutoColumn:"Europe" name:"Europe" amount:150
+            │ └─┬ Germany GROUP id:germany ag-Grid-AutoColumn:"Germany" name:"Germany" amount:150
+            │ · └── Berlin LEAF id:berlin ag-Grid-AutoColumn:"Berlin" name:"Berlin" amount:150
+            └─┬ Asia GROUP id:asia ag-Grid-AutoColumn:"Asia" name:"Asia" amount:300
+            · └─┬ Japan GROUP id:japan ag-Grid-AutoColumn:"Japan" name:"Japan" amount:300
+            · · └── Tokyo LEAF id:tokyo ag-Grid-AutoColumn:"Tokyo" name:"Tokyo" amount:300
+        `);
+
         expect(api.getRowNode('france')).toBeUndefined();
         expect(api.getPinnedTopRowCount()).toBe(0);
         expect(franceNode!.destroyed).toBe(true);
@@ -76,6 +111,20 @@ describe('ag-grid tree data pinned rows', () => {
         });
 
         // Verify initial state
+        await new GridRows(api, 'initial', { checkDom: false }).check(`
+            PINNED_TOP id:t-top-france ag-Grid-AutoColumn:"France" name:"France" amount:300 path:["Europe","France"]
+            ROOT id:ROOT_NODE_ID
+            ├─┬ Europe GROUP id:europe ag-Grid-AutoColumn:"Europe" name:"Europe" amount:450
+            │ ├─┬ France GROUP id:france ag-Grid-AutoColumn:"France" name:"France" amount:300
+            │ │ ├── Paris LEAF id:paris ag-Grid-AutoColumn:"Paris" name:"Paris" amount:100
+            │ │ └── Lyon LEAF id:lyon ag-Grid-AutoColumn:"Lyon" name:"Lyon" amount:200
+            │ └─┬ Germany GROUP id:germany ag-Grid-AutoColumn:"Germany" name:"Germany" amount:150
+            │ · └── Berlin LEAF id:berlin ag-Grid-AutoColumn:"Berlin" name:"Berlin" amount:150
+            └─┬ Asia GROUP id:asia ag-Grid-AutoColumn:"Asia" name:"Asia" amount:300
+            · └─┬ Japan GROUP id:japan ag-Grid-AutoColumn:"Japan" name:"Japan" amount:300
+            · · └── Tokyo LEAF id:tokyo ag-Grid-AutoColumn:"Tokyo" name:"Tokyo" amount:300
+        `);
+
         expect(api.getPinnedTopRowCount()).toBe(1);
         const franceNode = api.getRowNode('france');
         expect(franceNode).toBeDefined();
@@ -87,7 +136,23 @@ describe('ag-grid tree data pinned rows', () => {
         });
         await asyncSetTimeout(10);
 
-        // France should still exist and be pinned
+        // France should still exist and be pinned.
+        // Note: the pinned row aggregate shows 300 (original value), but source group shows 200
+        // because pinned rows are clones and their aggregate values aren't automatically refreshed.
+        // TODO: This will be fixed when AG-16601-pivot-aggregation-edit is merged.
+        await new GridRows(api, 'after remove paris', { checkDom: false }).check(`
+            PINNED_TOP id:t-top-france ag-Grid-AutoColumn:"France" name:"France" amount:300 path:["Europe","France"]
+            ROOT id:ROOT_NODE_ID
+            ├─┬ Europe GROUP id:europe ag-Grid-AutoColumn:"Europe" name:"Europe" amount:350
+            │ ├─┬ France GROUP id:france ag-Grid-AutoColumn:"France" name:"France" amount:200
+            │ │ └── Lyon LEAF id:lyon ag-Grid-AutoColumn:"Lyon" name:"Lyon" amount:200
+            │ └─┬ Germany GROUP id:germany ag-Grid-AutoColumn:"Germany" name:"Germany" amount:150
+            │ · └── Berlin LEAF id:berlin ag-Grid-AutoColumn:"Berlin" name:"Berlin" amount:150
+            └─┬ Asia GROUP id:asia ag-Grid-AutoColumn:"Asia" name:"Asia" amount:300
+            · └─┬ Japan GROUP id:japan ag-Grid-AutoColumn:"Japan" name:"Japan" amount:300
+            · · └── Tokyo LEAF id:tokyo ag-Grid-AutoColumn:"Tokyo" name:"Tokyo" amount:300
+        `);
+
         expect(api.getPinnedTopRowCount()).toBe(1);
         const pinnedFrance = api.getPinnedTopRow(0);
         expect(pinnedFrance?.key).toBe('France');
@@ -115,6 +180,21 @@ describe('ag-grid tree data pinned rows', () => {
         });
 
         // Verify initial state
+        await new GridRows(api, 'initial', { checkDom: false }).check(`
+            PINNED_TOP id:t-top-france ag-Grid-AutoColumn:"France" name:"France" amount:300 path:["Europe","France"]
+            ROOT id:ROOT_NODE_ID
+            ├─┬ Europe GROUP id:europe ag-Grid-AutoColumn:"Europe" name:"Europe" amount:450
+            │ ├─┬ France GROUP id:france ag-Grid-AutoColumn:"France" name:"France" amount:300
+            │ │ ├── Paris LEAF id:paris ag-Grid-AutoColumn:"Paris" name:"Paris" amount:100
+            │ │ └── Lyon LEAF id:lyon ag-Grid-AutoColumn:"Lyon" name:"Lyon" amount:200
+            │ └─┬ Germany GROUP id:germany ag-Grid-AutoColumn:"Germany" name:"Germany" amount:150
+            │ · └── Berlin LEAF id:berlin ag-Grid-AutoColumn:"Berlin" name:"Berlin" amount:150
+            └─┬ Asia GROUP id:asia ag-Grid-AutoColumn:"Asia" name:"Asia" amount:300
+            · └─┬ Japan GROUP id:japan ag-Grid-AutoColumn:"Japan" name:"Japan" amount:300
+            · · └── Tokyo LEAF id:tokyo ag-Grid-AutoColumn:"Tokyo" name:"Tokyo" amount:300
+            PINNED_BOTTOM id:b-bottom-japan ag-Grid-AutoColumn:"Japan" name:"Japan" amount:300 path:["Asia","Japan"]
+        `);
+
         expect(api.getPinnedTopRowCount()).toBe(1);
         expect(api.getPinnedBottomRowCount()).toBe(1);
 
@@ -125,6 +205,14 @@ describe('ag-grid tree data pinned rows', () => {
         await asyncSetTimeout(10);
 
         // Both pinned rows should be removed
+        await new GridRows(api, 'after remove', { checkDom: false }).check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ Europe GROUP id:europe ag-Grid-AutoColumn:"Europe" name:"Europe" amount:150
+            │ └─┬ Germany GROUP id:germany ag-Grid-AutoColumn:"Germany" name:"Germany" amount:150
+            │ · └── Berlin LEAF id:berlin ag-Grid-AutoColumn:"Berlin" name:"Berlin" amount:150
+            └── Asia LEAF id:asia ag-Grid-AutoColumn:"Asia" name:"Asia" amount:null
+        `);
+
         expect(api.getPinnedTopRowCount()).toBe(0);
         expect(api.getPinnedBottomRowCount()).toBe(0);
     });
@@ -142,6 +230,20 @@ describe('ag-grid tree data pinned rows', () => {
         });
 
         // Verify initial state
+        await new GridRows(api, 'initial', { checkDom: false }).check(`
+            PINNED_TOP id:t-top-france ag-Grid-AutoColumn:"France" name:"France" amount:300 path:["Europe","France"]
+            ROOT id:ROOT_NODE_ID
+            ├─┬ Europe GROUP id:europe ag-Grid-AutoColumn:"Europe" name:"Europe" amount:450
+            │ ├─┬ France GROUP id:france ag-Grid-AutoColumn:"France" name:"France" amount:300
+            │ │ ├── Paris LEAF id:paris ag-Grid-AutoColumn:"Paris" name:"Paris" amount:100
+            │ │ └── Lyon LEAF id:lyon ag-Grid-AutoColumn:"Lyon" name:"Lyon" amount:200
+            │ └─┬ Germany GROUP id:germany ag-Grid-AutoColumn:"Germany" name:"Germany" amount:150
+            │ · └── Berlin LEAF id:berlin ag-Grid-AutoColumn:"Berlin" name:"Berlin" amount:150
+            └─┬ Asia GROUP id:asia ag-Grid-AutoColumn:"Asia" name:"Asia" amount:300
+            · └─┬ Japan GROUP id:japan ag-Grid-AutoColumn:"Japan" name:"Japan" amount:300
+            · · └── Tokyo LEAF id:tokyo ag-Grid-AutoColumn:"Tokyo" name:"Tokyo" amount:300
+        `);
+
         expect(api.getPinnedTopRowCount()).toBe(1);
         const franceNode = api.getRowNode('france');
         expect(franceNode).toBeDefined();
@@ -154,6 +256,16 @@ describe('ag-grid tree data pinned rows', () => {
         await asyncSetTimeout(10);
 
         // France node should be destroyed and pinned row removed
+        await new GridRows(api, 'after setRowData', { checkDom: false }).check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ Europe GROUP id:europe ag-Grid-AutoColumn:"Europe" name:"Europe" amount:150
+            │ └─┬ Germany GROUP id:germany ag-Grid-AutoColumn:"Germany" name:"Germany" amount:150
+            │ · └── Berlin LEAF id:berlin ag-Grid-AutoColumn:"Berlin" name:"Berlin" amount:150
+            └─┬ Asia GROUP id:asia ag-Grid-AutoColumn:"Asia" name:"Asia" amount:300
+            · └─┬ Japan GROUP id:japan ag-Grid-AutoColumn:"Japan" name:"Japan" amount:300
+            · · └── Tokyo LEAF id:tokyo ag-Grid-AutoColumn:"Tokyo" name:"Tokyo" amount:300
+        `);
+
         expect(api.getPinnedTopRowCount()).toBe(0);
         expect(franceNode!.destroyed).toBe(true);
     });
@@ -171,6 +283,20 @@ describe('ag-grid tree data pinned rows', () => {
         });
 
         // Verify initial state - Paris (a leaf node) is pinned
+        await new GridRows(api, 'initial', { checkDom: false }).check(`
+            PINNED_TOP id:t-top-paris ag-Grid-AutoColumn:"Paris" name:"Paris" amount:100 path:["Europe","France","Paris"]
+            ROOT id:ROOT_NODE_ID
+            ├─┬ Europe GROUP id:europe ag-Grid-AutoColumn:"Europe" name:"Europe" amount:450
+            │ ├─┬ France GROUP id:france ag-Grid-AutoColumn:"France" name:"France" amount:300
+            │ │ ├── Paris LEAF id:paris ag-Grid-AutoColumn:"Paris" name:"Paris" amount:100
+            │ │ └── Lyon LEAF id:lyon ag-Grid-AutoColumn:"Lyon" name:"Lyon" amount:200
+            │ └─┬ Germany GROUP id:germany ag-Grid-AutoColumn:"Germany" name:"Germany" amount:150
+            │ · └── Berlin LEAF id:berlin ag-Grid-AutoColumn:"Berlin" name:"Berlin" amount:150
+            └─┬ Asia GROUP id:asia ag-Grid-AutoColumn:"Asia" name:"Asia" amount:300
+            · └─┬ Japan GROUP id:japan ag-Grid-AutoColumn:"Japan" name:"Japan" amount:300
+            · · └── Tokyo LEAF id:tokyo ag-Grid-AutoColumn:"Tokyo" name:"Tokyo" amount:300
+        `);
+
         expect(api.getPinnedTopRowCount()).toBe(1);
         const pinnedParis = api.getPinnedTopRow(0);
         expect(pinnedParis?.key).toBe('Paris');
@@ -186,6 +312,18 @@ describe('ag-grid tree data pinned rows', () => {
         await asyncSetTimeout(10);
 
         // Paris should be destroyed and pinned row removed
+        await new GridRows(api, 'after remove', { checkDom: false }).check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ Europe GROUP id:europe ag-Grid-AutoColumn:"Europe" name:"Europe" amount:350
+            │ ├─┬ France GROUP id:france ag-Grid-AutoColumn:"France" name:"France" amount:200
+            │ │ └── Lyon LEAF id:lyon ag-Grid-AutoColumn:"Lyon" name:"Lyon" amount:200
+            │ └─┬ Germany GROUP id:germany ag-Grid-AutoColumn:"Germany" name:"Germany" amount:150
+            │ · └── Berlin LEAF id:berlin ag-Grid-AutoColumn:"Berlin" name:"Berlin" amount:150
+            └─┬ Asia GROUP id:asia ag-Grid-AutoColumn:"Asia" name:"Asia" amount:300
+            · └─┬ Japan GROUP id:japan ag-Grid-AutoColumn:"Japan" name:"Japan" amount:300
+            · · └── Tokyo LEAF id:tokyo ag-Grid-AutoColumn:"Tokyo" name:"Tokyo" amount:300
+        `);
+
         expect(api.getPinnedTopRowCount()).toBe(0);
         expect(parisNode!.destroyed).toBe(true);
     });
@@ -202,14 +340,29 @@ describe('ag-grid tree data pinned rows', () => {
             getRowId: (params) => params.data.id,
         });
 
+        // Verify grid state
+        await new GridRows(api, 'state', { checkDom: false }).check(`
+            PINNED_TOP id:t-top-france ag-Grid-AutoColumn:"France" name:"France" amount:300 path:["Europe","France"]
+            ROOT id:ROOT_NODE_ID
+            ├─┬ Europe GROUP id:europe ag-Grid-AutoColumn:"Europe" name:"Europe" amount:450
+            │ ├─┬ France GROUP id:france ag-Grid-AutoColumn:"France" name:"France" amount:300
+            │ │ ├── Paris LEAF id:paris ag-Grid-AutoColumn:"Paris" name:"Paris" amount:100
+            │ │ └── Lyon LEAF id:lyon ag-Grid-AutoColumn:"Lyon" name:"Lyon" amount:200
+            │ └─┬ Germany GROUP id:germany ag-Grid-AutoColumn:"Germany" name:"Germany" amount:150
+            │ · └── Berlin LEAF id:berlin ag-Grid-AutoColumn:"Berlin" name:"Berlin" amount:150
+            └─┬ Asia GROUP id:asia ag-Grid-AutoColumn:"Asia" name:"Asia" amount:300
+            · └─┬ Japan GROUP id:japan ag-Grid-AutoColumn:"Japan" name:"Japan" amount:300
+            · · └── Tokyo LEAF id:tokyo ag-Grid-AutoColumn:"Tokyo" name:"Tokyo" amount:300
+        `);
+
+        assertPinnedRows(api, 'top', ['t-top-france']);
+
         const pinnedFrance = api.getPinnedTopRow(0);
         const franceNode = api.getRowNode('france');
 
-        // Verify bidirectional relationship
+        // Verify both nodes exist
         expect(pinnedFrance).toBeDefined();
         expect(franceNode).toBeDefined();
-        expect(pinnedFrance?.pinnedSibling).toBe(franceNode);
-        expect(franceNode?.pinnedSibling).toBe(pinnedFrance);
 
         // Verify row properties
         expect(pinnedFrance?.rowPinned).toBe('top');

@@ -34,11 +34,16 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
     readonly rootNode: RowNode | null;
     readonly rowCountReady: boolean;
 
-    /** Whether the model is currently refreshing */
-    readonly refreshingModel: boolean;
-
     updateRowData(rowDataTran: RowDataTransaction<TData>): RowNodeTransaction<TData> | null;
+
     refreshModel(params: RefreshModelParams): void;
+
+    /**
+     * Executes the 'map' only if we are not already in the middle of a refresh or data update.
+     * Forces also that keepRenderedRows is set to false when 'map' is executed when refresh completes
+     */
+    reMapRows(): void;
+
     forEachLeafNode(callback: ForEachNodeCallback<TData>): void;
     forEachNodeAfterFilter(callback: ForEachNodeCallback<TData>, includeFooterNodes?: boolean): void;
     forEachNodeAfterFilterAndSort(callback: ForEachNodeCallback<TData>, includeFooterNodes?: boolean): void;
