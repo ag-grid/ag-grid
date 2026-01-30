@@ -153,6 +153,8 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         let numberCount = 0;
         let min: number | null = null;
         let max: number | null = null;
+        let hasNonIntegerNumber = false;
+        let hasNonIntegerNumber = false;
 
         let useBigIntAggregation = false;
         let bigIntSum: bigint | null = null;
@@ -189,16 +191,24 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                 return;
             }
 
-            useBigIntAggregation = true;
+            if (hasNonIntegerNumber) {
+                return;
+            }
 
             if (numberCount > 0) {
                 const minValue = min ?? 0;
                 const maxValue = max ?? 0;
+                if (!Number.isInteger(sum) || !Number.isInteger(minValue) || !Number.isInteger(maxValue)) {
+                    hasNonIntegerNumber = true;
+                    return;
+                }
+
                 bigIntSum = BigInt(sum);
                 bigIntMin = BigInt(minValue);
                 bigIntMax = BigInt(maxValue);
                 bigIntCount = numberCount;
             }
+            useBigIntAggregation = true;
         };
 
         if (cellRanges?.length && rangeSvc) {
@@ -260,7 +270,9 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
                         if (typeof value === 'bigint') {
                             enableBigIntAggregation();
-                            addBigIntValue(value);
+                            if (useBigIntAggregation) {
+                                addBigIntValue(value);
+                            }
                             return;
                         }
 
@@ -270,6 +282,10 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                                     addBigIntValue(BigInt(value));
                                 }
                                 return;
+                            }
+
+                            if (!Number.isInteger(value)) {
+                                hasNonIntegerNumber = true;
                             }
 
                             sum += value;
