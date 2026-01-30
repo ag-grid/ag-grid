@@ -40,6 +40,7 @@ const gridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 140,
+        editable: true,
     },
     rowData: getData(),
 };
