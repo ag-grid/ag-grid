@@ -1138,6 +1138,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             case 'click':
                 this.onRowClick(mouseEvent);
                 break;
+            case 'pointerdown':
             case 'touchstart':
             case 'mousedown':
                 this.onRowMouseDown(mouseEvent);

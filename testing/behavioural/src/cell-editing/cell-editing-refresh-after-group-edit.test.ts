@@ -135,6 +135,11 @@ describe('cell editing with refreshAfterGroupEdit', () => {
 
         expect(batchStoppedEvents).toHaveLength(1);
         expect(modelUpdatedEvents).toHaveLength(1);
+        expect(modelUpdatedEvents[0].animate).toBe(true);
+        expect(modelUpdatedEvents[0].keepRenderedRows).toBe(true);
+        expect(modelUpdatedEvents[0].newData).toBe(false);
+        expect(modelUpdatedEvents[0].newPage).toBe(false);
+        expect(modelUpdatedEvents[0].keepUndoRedoStack).toBe(false);
 
         const finalRows = new GridRows(api, 'after commit', {
             nodeDataProps: ['group'],

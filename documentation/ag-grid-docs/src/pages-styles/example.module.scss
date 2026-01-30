@@ -2,8 +2,17 @@
 
 $nav-height: 200px;
 
-.githubIcon {
-    padding: 4px;
+.githubIcon,
+.youtubeIcon {
+    padding: $spacing-size-1;
+}
+
+.youtubeIcon {
+    fill: red !important;
+
+    #{$selector-darkmode} & {
+        fill: white !important;
+    }
 }
 
 .headerHeading {
@@ -19,22 +28,26 @@ $nav-height: 200px;
     flex-wrap: wrap;
     gap: $spacing-size-3;
     padding-bottom: $spacing-size-1;
-    container-type: inline-size;
+    container-type: normal;
     container-name: header-title;
-
-    @media screen and (min-width: 700px) {
-        flex-wrap: nowrap;
-    }
 }
 
 .headerActions {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
     gap: $spacing-size-2;
 
     > a {
         white-space: nowrap;
+        display: flex;
+        align-items: center;
+        padding: $spacing-size-2 $spacing-size-4;
+
+        > * {
+            display: block;
+        }
     }
 }
 
@@ -46,6 +59,8 @@ $nav-height: 200px;
     width: 100%;
     margin: 0 auto $spacing-size-3;
     padding-top: $spacing-size-8;
+    container-type: inline-size;
+    container-name: top-header;
 
     @media screen and (max-width: 700px) {
         flex-direction: column;
@@ -62,8 +77,6 @@ $nav-height: 200px;
     }
 
     @media screen and (min-width: 720px) {
-        height: 148px;
-
         > div:first-child {
             width: auto;
         }
@@ -177,13 +190,5 @@ $nav-height: 200px;
         .tabWrapper {
             height: 80px;
         }
-    }
-}
-
-.youtubeIcon {
-    fill: red !important;
-
-    #{$selector-darkmode} & {
-        fill: white !important;
     }
 }

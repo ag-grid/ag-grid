@@ -2,6 +2,15 @@ import type { ISimpleFilterModelPresetType } from '../iSimpleFilter';
 import { DateFilterHandler, presetDateFilterTypeRelativeFromToMap } from './dateFilterHandler';
 
 describe('presetDateFilterTypeRelativeFromToMap', () => {
+    beforeAll(() => {
+        if (typeof navigator === 'undefined') {
+            return;
+        }
+
+        Object.defineProperty(navigator, 'language', { configurable: true, value: 'en-GB' });
+        Object.defineProperty(navigator, 'languages', { configurable: true, value: ['en-GB'] });
+    });
+
     const BASE = 'Wed Apr 08 2020 12:34:56 GMT+0000 (Coordinated Universal Time)';
 
     const ANSWERS = {

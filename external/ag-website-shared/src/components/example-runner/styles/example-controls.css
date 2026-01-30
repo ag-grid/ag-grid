@@ -214,32 +214,37 @@ body > #highlighter {
 
 .controls-row {
     display: flex;
+    justify-content: space-between;
+}
+
+.controls-left {
+    display: flex;
     align-items: center;
     flex-wrap: wrap;
     gap: var(--row-gap);
     font-variant: tabular-nums;
 }
 
-.controls-row + .controls-row {
+.controls-left + .controls-left {
     margin-top: var(--row-gap);
 }
 
-.controls-row.center {
+.controls-left.center {
     justify-content: center;
 }
 
-.controls-row .push-right {
+.controls-left .push-right {
     margin-left: auto;
 }
 
-.controls-row .push-left {
+.controls-left .push-left {
     margin-right: auto;
 }
 
-.controls-row .gap-right {
+.controls-left .gap-right {
     margin-right: calc(var(--row-gap) * 6);
 }
 
-.controls-row .gap-left {
+.controls-left .gap-left {
     margin-left: calc(var(--row-gap) * 6);
 }

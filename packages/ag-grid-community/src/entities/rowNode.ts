@@ -820,11 +820,11 @@ export class RowNode<TData = any>
         }
         this.destroyed = true;
 
-        // Unpin any pinned sibling when this source row is destroyed.
-        // Only do this when destroying the source row (not the pinned row itself,
-        // since pinnedSibling of a pinned row points back to the source row).
+        // Unpin the pinned sibling when this source row is destroyed.
+        // Check pinnedSibling.rowPinned to ensure we're the source row (not a pinned clone being destroyed).
+        // This also prevents re-entrance when _destroyRowNodeSibling clears rowPinned before calling _destroy.
         const pinnedSibling = this.pinnedSibling;
-        if (pinnedSibling && !this.rowPinned) {
+        if (pinnedSibling?.rowPinned && !this.rowPinned) {
             this.beans.pinnedRowModel?.pinRow(pinnedSibling, null);
         }
 

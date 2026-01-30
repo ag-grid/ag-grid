@@ -127,8 +127,8 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             // on the root node.
             if (level === -1) {
                 this._grandTotalPinned = float;
-                // Skip refresh if already refreshing or processing a model update event
-                this.refreshCSRM();
+                // We need to refresh the model, but only if we are not already refreshing.
+                this.csrm?.reMapRows();
                 return;
             }
         }
@@ -331,8 +331,8 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             if (!container) {
                 return;
             }
-            container.delete(pinnedSibling);
             _destroyRowNodeSibling(pinnedSibling);
+            container.delete(pinnedSibling);
         } else {
             // pin
             if (container && container.floating !== float) {

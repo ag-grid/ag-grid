@@ -18,15 +18,20 @@ import LogoMark from '@components/logo/LogoMark';
             <div class={styles.headerTitle}>
                 <h1 class={styles.headerHeading}>Performance</h1>
                 <div class={styles.headerActions}>
-                    <a class="button-secondary" href="https://github.com/ag-grid/ag-grid-demos/tree/main/performance">
+                    <a
+                        class="button-secondary"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        href="https://github.com/ag-grid/ag-grid-demos/tree/main/performance"
+                    >
                         <Icon name="github" svgClasses={styles.githubIcon} />
                         <span>See on GitHub</span>
                     </a>
                     <a
-                        class={`button-secondary ${styles.videoTour}`}
+                        class="button-secondary"
                         href="https://youtu.be/bcMvTUVbMvI"
                         target="_blank"
-                        rel="noreferrer"
+                        rel="noopener noreferrer"
                     >
                         <Icon alt={`Youtube logo`} name="youtube" svgClasses={styles.youtubeIcon} />
                         <span>See the video tour</span>
