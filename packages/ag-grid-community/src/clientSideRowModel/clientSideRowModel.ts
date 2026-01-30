@@ -577,6 +577,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             params.step = 'group'; // Ensure grouping runs
         }
 
+        this.updateParams(params); // Apply forced flags from any nested refresh calls
+
         this.refreshingModel = true; // prevent nested refreshModel calls
 
         beans.masterDetailSvc?.refreshModel(params);
@@ -614,12 +616,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.setRowTopAndRowIndex(displayedNodesMapped);
         this.clearRowTopAndRowIndex(changedPath, displayedNodesMapped);
 
-        // Apply forced flags from any nested refresh calls
-
-        const newData = this.pendingNewData || !!params.newData;
-        const keepRenderedRows = !this.noKeepRenderedRows && !!params.keepRenderedRows;
-        const keepUndoRedoStack = !this.noKeepUndoRedoStack && !!params.keepUndoRedoStack;
-        const animate = !this.noAnimate && !!params.animate;
+        this.updateParams(params); // Apply forced flags from any nested refresh calls
 
         // Reset pending flags
 
@@ -633,12 +630,20 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // finally dispatch the final model updated event with the correct values
         eventSvc.dispatchEvent({
             type: 'modelUpdated',
-            animate,
-            keepRenderedRows,
-            newData,
+            animate: params.animate,
+            keepRenderedRows: params.keepRenderedRows,
+            newData: params.newData,
             newPage: false,
-            keepUndoRedoStack,
+            keepUndoRedoStack: params.keepUndoRedoStack,
         });
+    }
+
+    /** Updates the params to reflect any forced flags from nested refresh calls. */
+    private updateParams(params: RefreshModelParams): void {
+        params.newData = this.pendingNewData || !!params.newData;
+        params.keepRenderedRows = !this.noKeepRenderedRows && !!params.keepRenderedRows;
+        params.keepUndoRedoStack = !this.noKeepUndoRedoStack && !!params.keepUndoRedoStack;
+        params.animate = !this.noAnimate && !!params.animate;
     }
 
     public isEmpty(): boolean {
