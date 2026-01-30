@@ -1,5 +1,36 @@
 ---
-globs: ['.rulesync/**/*.md', 'external/ag-shared/prompts/**/*.md', 'external/prompts/**/*.md']
+globs:
+    [
+        '.rulesync/**/*.md',
+        'external/ag-shared/prompts/**/*.md',
+        'external/prompts/**/*.md',
+        '**/AGENTS.md',
+        '**/.agent/**/*.md',
+        '**/.agents/**/*.md',
+        '**/.ai/**/*.md',
+        '**/.augment/rules/**/*.md',
+        '**/CLAUDE.md',
+        '**/.claude/**/*.md',
+        '**/.clinerules/**/*.md',
+        '**/.codex/**/*.md',
+        '**/.cursor/**/*.md',
+        '**/GEMINI.md',
+        '**/.gemini/**/*.md',
+        '**/.github/copilot-instructions.md',
+        '**/.github/instructions/**/*.md',
+        '**/.github/prompts/**/*.md',
+        '**/.github/agents/**/*.md',
+        '**/.github/skills/**/*.md',
+        '**/.junie/**/*.md',
+        '**/.kilocode/**/*.md',
+        '**/.kiro/steering/**/*.md',
+        '**/.opencode/**/*.md',
+        '**/QWEN.md',
+        '**/.qwen/**/*.md',
+        '**/.roo/**/*.md',
+        '**/.warp/**/*.md',
+        '**/WARP.md',
+    ]
 alwaysApply: false
 ---
 
@@ -113,6 +144,10 @@ ln -s ../../external/prompts/agents/visual-qa.md visual-qa.md
 
 # From .rulesync/rules/
 ln -s ../../external/ag-shared/prompts/guides/code-quality.md code-quality.md
+
+# From .rulesync/skills/ (NOTE: skills use directory symlinks, not file symlinks)
+ln -s ../../external/ag-shared/prompts/skills/estimate-jira/ estimate-jira
+ln -s ../../external/prompts/skills/spruce-example/ spruce-example
 ```
 
 ## Verification

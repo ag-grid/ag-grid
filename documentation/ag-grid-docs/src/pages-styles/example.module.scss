@@ -19,9 +19,22 @@ $nav-height: 200px;
     flex-wrap: wrap;
     gap: $spacing-size-3;
     padding-bottom: $spacing-size-1;
+    container-type: inline-size;
+    container-name: header-title;
 
     @media screen and (min-width: 700px) {
         flex-wrap: nowrap;
+    }
+}
+
+.headerActions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: $spacing-size-2;
+
+    > a {
+        white-space: nowrap;
     }
 }
 
@@ -84,6 +97,18 @@ $nav-height: 200px;
 
     h1 {
         line-height: var(--text-lh-1xl);
+    }
+}
+
+@container header-title (max-width: 300px) {
+    .headerActions {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+
+        > a {
+            width: 100%;
+        }
     }
 }
 

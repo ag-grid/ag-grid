@@ -3,11 +3,11 @@
     display: flex;
     justify-content: flex-end;
     gap: calc(var(--ag-spacing) * 4);
-    padding: 0 var(--ag-cell-horizontal-padding);
+    padding: calc(var(--ag-spacing) * 0.5) var(--ag-cell-horizontal-padding);
     min-height: var(--ag-pagination-panel-height);
     border-top: var(--ag-footer-row-border);
     flex-wrap: wrap-reverse;
-    row-gap: 0;
+    row-gap: calc(var(--ag-spacing) * 0.5);
 
     @container (width < 600px) {
         justify-content: center;
@@ -18,7 +18,6 @@
     min-width: 50px;
 }
 
-.ag-paging-page-size,
 .ag-paging-row-summary-panel,
 .ag-paging-page-summary-panel {
     margin: calc(var(--ag-spacing) * 0.5);

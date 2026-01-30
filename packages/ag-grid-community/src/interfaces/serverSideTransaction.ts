@@ -15,6 +15,8 @@ export interface ServerSideTransaction<TData = any> {
     remove?: TData[];
     /** Rows to update */
     update?: TData[];
+    /** Optional new total row count. Use this when a transaction deletes rows that are not currently in cache. */
+    rowCount?: number;
 }
 
 export interface ServerSideTransactionResult<TData = any> {

@@ -1,7 +1,7 @@
 ---
 targets: ['*']
-description: 'Technology choices and architectural constraints for AG Grid'
-globs: ['packages/*/src/**/*.ts']
+name: technology-stack
+description: 'Technology choices and architectural constraints for AG Grid. Use when choosing technologies, adding dependencies, or understanding zero-dependency requirements.'
 ---
 
 # Technology Stack

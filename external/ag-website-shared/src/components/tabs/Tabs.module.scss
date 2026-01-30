@@ -3,6 +3,13 @@
 .tabsOuter {
     margin-top: $spacing-size-4;
     margin-bottom: $spacing-size-4;
+    display: flex;
+    flex-direction: column;
+
+    :global(.tabs-content) {
+        flex: 1;
+        min-height: 0;
+    }
 }
 
 .snippetTabs {

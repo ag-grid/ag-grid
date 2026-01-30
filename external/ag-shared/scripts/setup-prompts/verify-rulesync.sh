@@ -270,11 +270,16 @@ build_expected_inventory() {
     done
 
     # Commands (claudecode only - goes to commands/)
+    # Skip files with _ prefix as they are internal helper files (e.g., _review-core.md)
     if [[ "$TARGET" == "claudecode" ]] && [[ -d "$REPO_ROOT/.rulesync/commands" ]]; then
         for cmd_file in "$REPO_ROOT/.rulesync/commands/"*.md; do
             if [[ -f "$cmd_file" ]]; then
                 local basename
                 basename=$(basename "$cmd_file")
+                # Skip internal helper files (prefixed with _)
+                if [[ "$basename" == _* ]]; then
+                    continue
+                fi
                 EXPECTED_FILES+=("commands/$basename")
             fi
         done
@@ -429,6 +434,7 @@ verify_content() {
     done
 
     # Verify commands content (claudecode only)
+    # Skip files with _ prefix as they are internal helper files (e.g., _review-core.md)
     if [[ "$TARGET" == "claudecode" ]] && [[ -d "$REPO_ROOT/.rulesync/commands" ]]; then
         for cmd_file in "$REPO_ROOT/.rulesync/commands/"*.md; do
             if [[ ! -f "$cmd_file" ]]; then
@@ -437,6 +443,10 @@ verify_content() {
 
             local basename
             basename=$(basename "$cmd_file")
+            # Skip internal helper files (prefixed with _)
+            if [[ "$basename" == _* ]]; then
+                continue
+            fi
             local source_file
             source_file=$(resolve_symlink "$cmd_file")
             local output_file="$temp_output/commands/$basename"

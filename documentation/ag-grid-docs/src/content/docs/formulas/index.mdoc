@@ -68,21 +68,7 @@ Ranges refer to a block of cells using a top-left and bottom-right reference sep
 
 ### Functions
 
-Formulas support built-in functions such as `SUM`, `AVERAGE`, and `CONCAT`. See [Formula Reference](./formula-reference/) for the full list of supported functions and operators.
-
-### Error Codes
-
-If a formula results in an error, users will see one of these codes:
-
-| Error | Description |
-| -------- | ----------- |
-| `#REF!` | Formula contains invalid cell reference |
-| `#NAME?` | Formula contains invalid operation |
-| `#CIRCREF!` | Formula contains circular reference |
-| `#PARSE!` | Could not parse formula value |
-| `#VALUE!` | Formula contains value of the wrong type (e.g. non-numeric arguments to functions) |
-| `#DIV/0!` | Formula results in a division by zero |
-| `#ERROR!` | Formula contains some other kind of error |
+Formulas support built-in functions such as `SUM`, `AVERAGE`, and `CONCAT`. See [Formula Reference](./formula-reference/) for the full list of supported functions, errors and operators.
 
 ## Feature Interactions / Compatibility
 
@@ -134,8 +120,8 @@ A user-provided data source should provide the following interface:
 
 When performing a [CSV Export](./csv-export), the grid exports the evaluated values of any formulas. When performing an [Excel Export](./excel-export), the grid exports the formulas themselves so Excel can evaluate them.
 
-## Next Steps
+## See also
 
-- [Explore the editor →](./formula-editor-component/)
-- [Full built-in functions & operators →](./formula-reference/)
-- [Write custom functions →](./formula-custom-functions/)
+- [Formula Editor Component](./formula-editor-component/) – The rich editing experience for formula cells, including autocomplete and range selection tools.
+- [Formula Reference](./formula-reference/) – Full reference for operators (+, -, *, /, ^, &, comparisons), provided functions and errors.
+- [Custom Functions](./formula-custom-functions/) – How to register and implement custom functions for formulas.

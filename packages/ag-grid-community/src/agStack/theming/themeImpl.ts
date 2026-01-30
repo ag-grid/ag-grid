@@ -9,6 +9,8 @@ import { paramValueToCss } from './themeTypeUtils';
 import type { WithParamTypes } from './themeTypes';
 import { paramToVariableName } from './themeUtils';
 
+let paramsId = 0;
+
 export const _asThemeImpl = <TParams>(theme: Theme<TParams>): ThemeImpl => {
     if (!(theme instanceof ThemeImpl)) {
         throw new Error('theme is not an object created by createTheme');
@@ -66,11 +68,6 @@ export class ThemeImpl {
         );
     }
 
-    /**
-     * Called by a grid instance when it starts using the theme. This installs
-     * the theme's parts into document head, or the shadow DOM if the provided
-     * container is within a shadow root.
-     */
     _startUse({ styleContainer, cssLayer, nonce, loadThemeGoogleFonts, moduleCss }: themeUseArgs): void {
         if (IS_SSR) {
             return;
@@ -99,10 +96,7 @@ export class ThemeImpl {
     }
 
     private _cssClassCache?: string;
-    /**
-     * Return CSS that that applies the params of this theme to elements with
-     * the provided class name
-     */
+
     _getCssClass(this: ThemeImpl): string {
         if (FORCE_LEGACY_THEMES) {
             return 'ag-theme-quartz';
@@ -111,7 +105,14 @@ export class ThemeImpl {
         return (this._cssClassCache ??= deduplicatePartsByFeature(this.parts)
             .map((part) => part.use(undefined, undefined, undefined))
             .filter(Boolean)
+            .concat(this._getParamsClassName())
             .join(' '));
+    }
+
+    private _paramsClassName?: string;
+
+    _getParamsClassName(): string {
+        return (this._paramsClassName ??= `ag-theme-params-${++paramsId}`);
     }
 
     private _paramsCache?: ModalParamValues;
@@ -165,17 +166,9 @@ export class ThemeImpl {
     }
 
     private _paramsCssCache?: string;
-    /**
-     * Return the CSS chunk that is inserted into the grid DOM, and will
-     * therefore be removed automatically when the grid is destroyed or it
-     * starts to use a new theme.
-     *
-     * @param className a unique class name on the grid wrapper used to scope the returned CSS to the grid instance
-     */
-    _getPerInstanceCss(className: string): string {
-        const selectorPlaceholder = '##SELECTOR##';
-        let innerParamsCss = this._paramsCssCache;
-        if (!innerParamsCss) {
+
+    _getParamsCss(): string {
+        if (!this._paramsCssCache) {
             // Ensure that every variable has a value set on root elements ("root"
             // elements are those containing grid UI, e.g. ag-root-wrapper and
             // ag-popup)
@@ -221,14 +214,15 @@ export class ThemeImpl {
                     inheritanceCss += '}\n';
                 }
             }
+            const selectorPlaceholder = `:where(.${this._getParamsClassName()})`;
             let css = `${selectorPlaceholder} {\n${variablesCss}}\n`;
             // Create --ag-inherited-foo variable values on the parent element, unless
             // the parent is itself a root (which can happen if popupParent is
             // ag-root-wrapper)
             css += `:has(> ${selectorPlaceholder}):not(${selectorPlaceholder}) {\n${inheritanceCss}}\n`;
-            this._paramsCssCache = innerParamsCss = css;
+            this._paramsCssCache = css;
         }
-        return innerParamsCss.replaceAll(selectorPlaceholder, `:where(.${className})`);
+        return this._paramsCssCache;
     }
 }
 type ParamValues = Record<string, unknown>;

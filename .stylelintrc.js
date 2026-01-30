@@ -2,7 +2,6 @@ module.exports = {
     extends: 'stylelint-config-standard',
     plugins: ['./plugins/stylelint-plugin-ag/index.mjs'],
     rules: {
-        'ag/no-low-performance-key-selector': true,
         'comment-empty-line-before': [
             'always',
             {
@@ -51,4 +50,12 @@ module.exports = {
             },
         ],
     },
+    overrides: [
+        {
+            files: ['packages/**/*.css'],
+            rules: {
+                'ag/no-low-performance-key-selector': true,
+            },
+        },
+    ],
 };

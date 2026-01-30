@@ -6,6 +6,7 @@ import { allParamModels } from './ParamModel';
 import type { PartModel } from './PartModel';
 import { FeatureModel } from './PartModel';
 import { enabledAdvancedParamsAtom } from './advanced-params';
+import { getReinterpretationElement } from './utils';
 
 export type RenderedThemeInfo = {
     theme: Theme;
@@ -40,9 +41,11 @@ const renderedThemeInfoAtom = atom((get): RenderedThemeInfo => {
 
     // globally install the theme CSS, because form widgets use reinterpretCSSValue
     // which requires that the CSS variable values are available
+    const themeImpl = _asThemeImpl(theme);
     const stylesheet = new CSSStyleSheet();
-    stylesheet.replaceSync(_asThemeImpl(theme)._getPerInstanceCss('apply-current-theme-params'));
+    stylesheet.replaceSync(themeImpl._getParamsCss());
     document.adoptedStyleSheets = [stylesheet];
+    getReinterpretationElement().className = themeImpl._getParamsClassName();
 
     return {
         theme,

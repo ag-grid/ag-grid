@@ -5,81 +5,102 @@ description: 'Guidelines for searching and creating JIRA tickets in AG products'
 
 # JIRA Guide
 
-This guide covers working with JIRA tickets in AG products.
+This guide covers working with JIRA tickets in AG products (Charts and Grid).
 
-## JIRA Ticket Search Guidelines
+**Product scope**: AG Charts (for AG Grid, change component to "Grid" and prefix to "[Grid]").
 
--   When searching for JIRA tickets using the MCP server `atlassian`, filter by the `AG` project.
--   Use the component appropriate for the product you're working on (e.g., `Grid` for ag-grid, `Charts` for ag-charts).
--   When searching for JIRA tickets that need review, we're usually interested in tickets with a status of `Needs Review`.
+## Quick Reference
 
-## JIRA Ticket Creation Guidelines
+-   **Search**: Project `AG`, Component `Charts`, Status `Needs Review` for review
+-   **Summary prefix**: `[Charts]` or `[Grid]`
+-   **Required fields**: Summary, Description, Component, Track
 
-When creating JIRA tickets in the AG project, ensure the following required fields are set:
+## Creating Tickets
 
-### Required Fields
+Use the `jira-create` skill for guided ticket creation. It will:
 
--   **Track** (`customfield_10501`): REQUIRED. Choose one:
-    -   `"Housekeeping"` - for tech-debt, refactoring, or infrastructure work
-    -   `"Feature Request"` - for new features
-    -   `"Bug"` - for bug fixes
-    -   `"Improvement"` - for enhancements to existing features
-    -   `"Doc change"` - for documentation updates
--   **Components**: REQUIRED. Set to the appropriate component for your product:
-    -   For ag-grid: `[{"name": "Grid"}]`
-    -   For ag-charts: `[{"name": "Charts"}]`
--   **Summary**: REQUIRED. Clear, concise title with appropriate prefix (e.g., `[Grid]` or `[Charts]`)
--   **Description**: REQUIRED. See format guidelines below
+1. Help you choose the right ticket type
+2. Load the appropriate template
+3. Guide you through required fields
 
-### Optional but Recommended Fields
+## Required Fields
 
--   **Priority**: Set appropriately (`"Critical"`, `"High"`, `"Medium"`, `"Low"`, `"None"`)
--   **Labels**: Use `["tech-debt"]` for technical debt tickets
--   **Fix versions**: Set target release version if known
+| Field       | API Name            | Format                                 |
+| ----------- | ------------------- | -------------------------------------- |
+| Project     | `projectKey`        | `"AG"`                                 |
+| Type        | `issueTypeName`     | `"Bug"` or `"Task"`                    |
+| Summary     | `summary`           | `"[Charts] Title"` or `"[Grid] Title"` |
+| Description | `description`       | See templates                          |
+| Component   | `components`        | `[{"name": "Charts"}]` (ID: 11061)     |
+| Track       | `customfield_10501` | See track values below                 |
 
-### Description Format
+## Track Values (`customfield_10501`)
 
-Keep descriptions concise (10-15 lines of content max) with clear sections:
+| Value           | ID    | Use For                |
+| --------------- | ----- | ---------------------- |
+| Bug             | 10401 | Bug fixes              |
+| Feature Request | 10400 | New features           |
+| Improvement     | 10403 | Enhancements           |
+| Housekeeping    | 10404 | Tech-debt, refactoring |
+| Doc change      | 10402 | Documentation updates  |
 
-```markdown
-## Context
+Format: `[{"value": "Bug"}]` or `[{"id": "10401"}]`
 
-Brief background on why this work is needed
+## Description Formatting
 
-## Problem
+-   Use plain numbered lists: `1. Item` (not `#` wiki markup)
+-   Indent sub-items with 4 spaces: `    1. Sub-item`
+-   **End numbered items with periods**
+-   Bold: `**text**`
+-   Code: backticks
+-   URLs: `[text](url)` for clickability
+-   Empty sections: Just `N/A`
+-   No comments - all info in description
 
-What issue or limitation exists
+## Bug Tickets
 
-## Proposed Solution
+**Template**: `templates/jira-bug-template.md`
 
-High-level approach to address the problem
+**Additional fields:**
 
-## Acceptance Criteria
+-   `versions` (Affects Version): `[{"name": "31.0.0"}]`
+-   Priority: `{"name": "Medium"}` (default for bugs)
 
--   Simple, testable criteria (not "Success Criteria")
--   Use bullet points with action verbs
--   Keep focused on outcomes
+**Version testing**: Test in browser (not code analysis). Charts v9 = Grid v31 (offset +22).
+
+When creating bug tickets, test affected versions **from the browser** (not by analysing code):
+
+1. Use the reproduction Plunker and change AG Charts version
+2. Binary search versions to find when the bug was introduced
+3. Set `versions` field to earliest affected version
+
+## Feature/Task Tickets
+
+**Template**: `templates/jira-template.md`
+
+Sections: Requirements, Problem, Use cases, API Design, Breaking changes, Acceptance criteria.
+
+## Troubleshooting
+
+### Discovering Required Fields
+
+```javascript
+mcp__atlassian__getJiraIssueTypeMetaWithFields({
+    cloudId: '1565837d-d6d1-4228-bcb2-4cb74df700f2',
+    projectIdOrKey: 'AG',
+    issueTypeId: '10105', // Task
+});
 ```
 
-### Linking Tickets
+### Common Errors
 
--   Link to design documents using `docs.ag-grid.com` URLs (not gists or GitHub links)
--   To link issues: Add comments to both tickets mentioning each other (e.g., "Relates to AG-12345")
--   The direct issue linking API may not work reliably via MCP
+-   **"Track is required"**: Add `customfield_10501`
+-   **"Components is required"**: Add `components` array
+-   **Unknown field IDs**: Use metadata API above
 
-### Example: Tech-Debt Ticket
+## Related
 
-```json
-{
-    "projectKey": "AG",
-    "issueTypeName": "Task",
-    "summary": "[Grid] Revisit column definition update architecture",
-    "description": "## Context\n\n...\n\n## Problem\n\n...\n\n## Proposed Solution\n\n...\n\n## Acceptance Criteria\n\n- Design alternative approaches\n- Prototype and benchmark\n- Maintain current functionality",
-    "additional_fields": {
-        "components": [{ "name": "Grid" }],
-        "labels": ["tech-debt"],
-        "priority": { "name": "Low" },
-        "customfield_10501": [{ "value": "Housekeeping" }]
-    }
-}
-```
+-   Create tickets: `skills/jira-create/SKILL.md`
+-   Estimate tickets: `skills/estimate-jira/SKILL.md`
+-   Bug template: `templates/jira-bug-template.md`
+-   Feature template: `templates/jira-template.md`

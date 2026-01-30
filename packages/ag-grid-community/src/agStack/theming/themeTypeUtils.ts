@@ -52,7 +52,7 @@ export const colorValueToCss = (value: ColorValue): string | false => {
     if (typeof value === 'string') {
         return value;
     }
-    if (value && 'ref' in value) {
+    if (typeof value === 'object' && value && 'ref' in value) {
         const colorExpr: string = paramToVariableExpression(value.ref);
         if (value.mix == null) {
             return colorExpr;
@@ -72,14 +72,14 @@ export const lengthValueToCss = (value: LengthValue): string | false => {
     if (typeof value === 'number') {
         return `${value}px`;
     }
-    if (value && 'calc' in value) {
+    if (typeof value === 'object' && value && 'calc' in value) {
         // ensure a space around operators other than `-` (which can be part of an identifier)
         const valueWithSpaces = value.calc.replace(/ ?[*/+] ?/g, ' $& ');
         // convert param names to variable expressions, e.g. "fooBar" -> "var(--ag-foo-bar)",
         // ignoring words that are part of function names "fooBar()" or variables "--fooBar"
         return `calc(${valueWithSpaces.replace(/-?\b[a-z][a-z0-9]*\b(?![-(])/gi, (p) => (p[0] === '-' ? p : ' ' + paramToVariableExpression(p) + ' '))})`;
     }
-    if (value && 'ref' in value) {
+    if (typeof value === 'object' && value && 'ref' in value) {
         return paramToVariableExpression(value.ref);
     }
     return false;
@@ -97,7 +97,7 @@ export const borderValueToCss = (value: BorderValue, param: string): string => {
     if (value === false) {
         return param === 'columnBorder' ? borderValueToCss({ color: 'transparent' }, param) : 'none';
     }
-    if (value && 'ref' in value) {
+    if (typeof value === 'object' && value && 'ref' in value) {
         return paramToVariableExpression(value.ref);
     }
     return (
@@ -127,7 +127,7 @@ export const shadowValueToCss = (value: ShadowValue): string | false => {
     if (value === false) {
         return 'none';
     }
-    if (value && 'ref' in value) {
+    if (typeof value === 'object' && value && 'ref' in value) {
         return paramToVariableExpression(value.ref);
     }
     if (Array.isArray(value)) {
@@ -148,10 +148,10 @@ export const fontFamilyValueToCss = (value: FontFamilyValue): string | false => 
         return value.includes(',') ? value : quoteUnsafeChars(value);
     }
 
-    if (value && 'googleFont' in value) {
+    if (typeof value === 'object' && value && 'googleFont' in value) {
         return fontFamilyValueToCss(value.googleFont);
     }
-    if (value && 'ref' in value) {
+    if (typeof value === 'object' && value && 'ref' in value) {
         return paramToVariableExpression(value.ref);
     }
     if (Array.isArray(value)) {
@@ -179,13 +179,13 @@ export const imageValueToCss = (value: ImageValue): string | false => {
     if (typeof value === 'string') {
         return value;
     }
-    if (value && 'url' in value) {
+    if (typeof value === 'object' && value && 'url' in value) {
         return `url(${JSON.stringify(value.url)})`;
     }
-    if (value && 'svg' in value) {
+    if (typeof value === 'object' && value && 'svg' in value) {
         return imageValueToCss({ url: `data:image/svg+xml,${encodeURIComponent(value.svg)}` });
     }
-    if (value && 'ref' in value) {
+    if (typeof value === 'object' && value && 'ref' in value) {
         return paramToVariableExpression(value.ref);
     }
     return false;
@@ -201,7 +201,7 @@ export const durationValueToCss = (value: DurationValue, param: string, themeLog
         }
         return `${value}s`;
     }
-    if (value && 'ref' in value) {
+    if (typeof value === 'object' && value && 'ref' in value) {
         return paramToVariableExpression(value.ref);
     }
     return false;

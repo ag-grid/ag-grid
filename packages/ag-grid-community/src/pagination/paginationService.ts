@@ -5,6 +5,8 @@ import type { EditService } from '../edit/editService';
 import type { Component, ComponentSelector } from '../widgets/component';
 import { PaginationSelector } from './paginationComp';
 
+const DEFAULT_PAGE_SIZE = 100;
+
 export class PaginationService extends BeanStub implements NamedBean {
     beanName = 'pagination' as const;
 
@@ -20,7 +22,6 @@ export class PaginationService extends BeanStub implements NamedBean {
     private pageSizeFromPageSizeSelector?: number; // When user selects page size from page size selector.
     private pageSizeFromInitialState?: number; // When the initial grid state is loaded, and a page size rehydrated
     private pageSizeFromGridOptions?: number; // When user sets gridOptions.paginationPageSize.
-    private readonly defaultPageSize: 100; // When nothing else set, default page size is 100.
 
     private totalPages: number;
     private currentPage = 0;
@@ -164,7 +165,7 @@ export class PaginationService extends BeanStub implements NamedBean {
         if (_exists(this.pageSizeFromGridOptions)) {
             return this.pageSizeFromGridOptions;
         }
-        return this.defaultPageSize;
+        return DEFAULT_PAGE_SIZE;
     }
 
     public calculatePages(): void {

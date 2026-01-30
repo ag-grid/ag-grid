@@ -1,0 +1,492 @@
+name: codex-pr-review
+description: Run a Codex PR review with complete log suppression - no LLM output appears in workflow logs
+inputs:
+    openai-api-key:
+        description: 'OpenAI API key for Codex CLI (alternative to codex-auth-json-b64)'
+        required: false
+        default: ''
+    codex-auth-json-b64:
+        description: 'Base64-encoded ~/.codex/auth.json for ChatGPT OAuth auth (alternative to openai-api-key)'
+        required: false
+        default: ''
+    pr-number:
+        description: 'PR number to review'
+        required: true
+    prompt-file:
+        description: 'Path to the prompt file'
+        required: false
+        default: 'external/ag-shared/prompts/commands/pr/review.md'
+    github-token:
+        description: 'GitHub token for PR access and commenting'
+        required: true
+    post-comment:
+        description: 'Whether to post the review as a PR comment'
+        required: false
+        default: 'true'
+    inline-comments:
+        description: 'Whether to post inline comments on specific files/lines (requires JSON prompt)'
+        required: false
+        default: 'false'
+    comment-id:
+        description: 'Comment ID to add reactions to (for issue_comment triggers)'
+        required: false
+        default: ''
+    base-ref:
+        description: 'Base branch ref for the PR (e.g., latest, main)'
+        required: false
+        default: ''
+    pr-title:
+        description: 'PR title for review output'
+        required: false
+        default: ''
+    pr-author:
+        description: 'PR author username'
+        required: false
+        default: ''
+    head-ref:
+        description: 'Head branch ref for the PR'
+        required: false
+        default: ''
+outputs:
+    success:
+        description: 'Whether the review completed successfully'
+        value: ${{ steps.verify.outputs.success }}
+    skipped:
+        description: 'Whether the review was skipped due to missing authentication'
+        value: ${{ steps.check-auth.outputs.skipped }}
+runs:
+    using: composite
+    steps:
+        - name: Check Authentication
+          id: check-auth
+          shell: bash
+          env:
+              CODEX_AUTH_JSON_B64: ${{ inputs.codex-auth-json-b64 }}
+              OPENAI_API_KEY: ${{ inputs.openai-api-key }}
+          run: |
+              if [ -z "${CODEX_AUTH_JSON_B64:-}" ] && [ -z "${OPENAI_API_KEY:-}" ]; then
+                echo "::warning::Skipping PR review - no authentication configured (set OPENAI_API_KEY or CODEX_AUTH_JSON_B64 secret)"
+                echo "skipped=true" >> $GITHUB_OUTPUT
+              else
+                echo "skipped=false" >> $GITHUB_OUTPUT
+              fi
+
+        - name: React Started
+          if: inputs.comment-id != '' && steps.check-auth.outputs.skipped != 'true'
+          uses: actions/github-script@v7
+          continue-on-error: true
+          env:
+              COMMENT_ID: ${{ inputs.comment-id }}
+          with:
+              github-token: ${{ inputs.github-token }}
+              script: |
+                  await github.rest.reactions.createForIssueComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    comment_id: parseInt(process.env.COMMENT_ID, 10),
+                    content: 'eyes'
+                  });
+
+        - name: Fetch PR refs
+          if: steps.check-auth.outputs.skipped != 'true'
+          shell: bash
+          env:
+              PR_NUMBER: ${{ inputs.pr-number }}
+              BASE_REF: ${{ inputs.base-ref }}
+          run: |
+              # Fetch PR head ref and base branch for git diff access
+              # This allows Codex to use git commands to analyze the PR changes
+
+              # Validate PR number is numeric to prevent shell injection
+              if ! [[ "$PR_NUMBER" =~ ^[0-9]+$ ]]; then
+                echo "::error::Invalid PR number: must be numeric"
+                exit 1
+              fi
+
+              echo "Fetching PR #${PR_NUMBER} refs..."
+              git fetch --no-tags origin \
+                "${BASE_REF}" \
+                "+refs/pull/${PR_NUMBER}/head:refs/remotes/origin/pr/${PR_NUMBER}"
+              echo "PR refs fetched successfully"
+
+        - name: Setup Node.js
+          if: steps.check-auth.outputs.skipped != 'true'
+          uses: actions/setup-node@v4
+          with:
+              node-version-file: package.json
+
+        - name: Install Codex CLI
+          if: steps.check-auth.outputs.skipped != 'true'
+          shell: bash
+          run: npm install -g @openai/codex@latest
+
+        - name: Install and Patch Rulesync
+          if: steps.check-auth.outputs.skipped != 'true'
+          shell: bash
+          run: |
+              # Install rulesync to isolated temp dir to apply patches (avoids workspace dependency conflicts)
+              PATCH_DIR="$(pwd)/external/ag-shared/prompts/patches"
+              if [ -d "$PATCH_DIR" ] && ls "$PATCH_DIR"/rulesync*.patch 1>/dev/null 2>&1; then
+                # Get rulesync version from patch filename (e.g., rulesync+5.2.0.patch -> 5.2.0)
+                PATCH_FILE=$(ls "$PATCH_DIR"/rulesync*.patch | head -1)
+                RULESYNC_VERSION=$(basename "$PATCH_FILE" | sed 's/rulesync+\(.*\)\.patch/\1/')
+                echo "Installing rulesync@$RULESYNC_VERSION with patches..."
+
+                # Create isolated temp directory for rulesync installation
+                RULESYNC_DIR="$(mktemp -d)"
+                cd "$RULESYNC_DIR"
+
+                # Initialize minimal package.json and install rulesync + patch-package
+                echo '{"name":"rulesync-patched","private":true}' > package.json
+                npm install "rulesync@$RULESYNC_VERSION" patch-package
+
+                # Copy patches to temp dir (patch-package requires relative path)
+                cp -r "$PATCH_DIR" ./patches
+                npx patch-package --patch-dir ./patches
+                echo "Patches applied successfully"
+
+                # Export path for setup-prompts.sh to find patched rulesync
+                echo "RULESYNC_BIN=$RULESYNC_DIR/node_modules/.bin/rulesync" >> $GITHUB_ENV
+
+                cd -
+              else
+                echo "No rulesync patches found, using npx default"
+              fi
+
+        - name: Setup Prompts
+          if: steps.check-auth.outputs.skipped != 'true'
+          shell: bash
+          run: |
+              # Generate Codex CLI config if setup script exists
+              if [ -f "./external/ag-shared/scripts/setup-prompts/setup-prompts.sh" ]; then
+                ./external/ag-shared/scripts/setup-prompts/setup-prompts.sh --targets=codexcli --verbose || true
+              fi
+
+        - name: Setup Authentication
+          if: steps.check-auth.outputs.skipped != 'true'
+          shell: bash
+          env:
+              CODEX_AUTH_JSON_B64: ${{ inputs.codex-auth-json-b64 }}
+              OPENAI_API_KEY: ${{ inputs.openai-api-key }}
+          run: |
+              # Prefer auth.json if provided, fall back to API key
+              if [ -n "${CODEX_AUTH_JSON_B64:-}" ]; then
+                echo "Using base64-encoded auth.json for authentication"
+                mkdir -p "$HOME/.codex"
+                echo "$CODEX_AUTH_JSON_B64" | base64 -d > "$HOME/.codex/auth.json"
+                chmod 600 "$HOME/.codex/auth.json"
+              elif [ -n "${OPENAI_API_KEY:-}" ]; then
+                echo "Using OpenAI API key for authentication"
+                # API key already set via env var - Codex will use it
+              fi
+
+        - name: Determine Prompt File
+          if: steps.check-auth.outputs.skipped != 'true'
+          id: prompt
+          shell: bash
+          run: |
+              # Use JSON prompt if inline comments enabled, otherwise use configured prompt
+              if [[ "${{ inputs.inline-comments }}" == "true" ]]; then
+                prompt_file="external/ag-shared/prompts/commands/pr/review-json.md"
+                output_ext="json"
+              else
+                prompt_file="${{ inputs.prompt-file }}"
+                output_ext="md"
+              fi
+              echo "prompt_file=${prompt_file}" >> $GITHUB_OUTPUT
+              echo "output_ext=${output_ext}" >> $GITHUB_OUTPUT
+
+        - name: Run Codex Review
+          if: steps.check-auth.outputs.skipped != 'true'
+          id: codex
+          shell: bash
+          env:
+              OPENAI_API_KEY: ${{ inputs.openai-api-key }}
+              ARGUMENTS: ${{ inputs.pr-number }}
+              BASE_REF: ${{ inputs.base-ref }}
+              HEAD_REF: ${{ inputs.head-ref }}
+              PR_TITLE: ${{ inputs.pr-title }}
+              PR_AUTHOR: ${{ inputs.pr-author }}
+              GITHUB_TOKEN: ${{ inputs.github-token }}
+              GH_TOKEN: ${{ inputs.github-token }}
+          run: |
+              # Output file paths (unique per PR to avoid conflicts)
+              output_file=".codex-review-${{ inputs.pr-number }}.${{ steps.prompt.outputs.output_ext }}"
+              error_file=".codex-error-${{ inputs.pr-number }}.log"
+
+              echo "output_file=${output_file}" >> $GITHUB_OUTPUT
+
+              # Run Codex with ALL output suppressed
+              # - stdin: Prompt file content piped in
+              # - stdout (>/dev/null): Suppresses reasoning/streaming output
+              # - stderr (2>file): Captured to file for debugging, not logged
+              set +e
+              cat "${{ steps.prompt.outputs.prompt_file }}" | codex exec \
+                --output-last-message "${output_file}" \
+                --sandbox read-only \
+                2>"${error_file}" \
+                >/dev/null
+              exit_code=$?
+              set -e
+
+              echo "exit_code=${exit_code}" >> $GITHUB_OUTPUT
+
+              if [ $exit_code -ne 0 ]; then
+                echo "::error::Codex review failed with exit code ${exit_code}"
+                # Show stderr for debugging - contains CLI errors, not review content
+                if [ -f "${error_file}" ] && [ -s "${error_file}" ]; then
+                  echo "::group::Codex CLI Error Output"
+                  cat "${error_file}"
+                  echo "::endgroup::"
+                fi
+              fi
+
+        - name: Verify Output Generated
+          if: steps.check-auth.outputs.skipped != 'true'
+          id: verify
+          shell: bash
+          run: |
+              output_file="${{ steps.codex.outputs.output_file }}"
+              if [ -f "${output_file}" ] && [ -s "${output_file}" ]; then
+                echo "success=true" >> $GITHUB_OUTPUT
+                echo "Review output generated successfully"
+              else
+                echo "success=false" >> $GITHUB_OUTPUT
+                echo "::error::Review output file is missing or empty"
+                exit 1
+              fi
+
+        - name: Post Review Comment
+          if: steps.check-auth.outputs.skipped != 'true' && steps.verify.outputs.success == 'true' && inputs.post-comment == 'true'
+          uses: actions/github-script@v7
+          env:
+              OUTPUT_FILE: ${{ steps.codex.outputs.output_file }}
+              PR_NUMBER: ${{ inputs.pr-number }}
+              INLINE_COMMENTS: ${{ inputs.inline-comments }}
+          with:
+              github-token: ${{ inputs.github-token }}
+              script: |
+                  const fs = require('fs');
+
+                  // Read file content - fs.readFileSync does NOT log content
+                  const rawContent = fs.readFileSync(process.env.OUTPUT_FILE, 'utf8');
+                  const prNumber = parseInt(process.env.PR_NUMBER, 10);
+                  const inlineComments = process.env.INLINE_COMMENTS === 'true';
+                  const commentMarker = '<!-- codex-pr-review -->';
+
+                  let reviewBody;
+                  let inlineReviewComments = [];
+
+                  if (inlineComments) {
+                    // Parse JSON output and create inline comments
+                    let review;
+                    try {
+                      // Handle potential markdown code fences around JSON
+                      let jsonContent = rawContent.trim();
+
+                      // Remove BOM if present
+                      if (jsonContent.charCodeAt(0) === 0xFEFF) {
+                        jsonContent = jsonContent.slice(1);
+                      }
+
+                      // Strip markdown code fences if present
+                      if (jsonContent.startsWith('```json')) {
+                        jsonContent = jsonContent.replace(/^```json\n?/, '').replace(/\n?```$/, '');
+                      } else if (jsonContent.startsWith('```')) {
+                        jsonContent = jsonContent.replace(/^```\n?/, '').replace(/\n?```$/, '');
+                      }
+
+                      // Find the JSON object boundaries (in case there's extra content)
+                      const jsonStart = jsonContent.indexOf('{');
+                      const jsonEnd = jsonContent.lastIndexOf('}');
+                      if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
+                        jsonContent = jsonContent.slice(jsonStart, jsonEnd + 1);
+                      }
+
+                      review = JSON.parse(jsonContent);
+                    } catch (e) {
+                      console.log(`Failed to parse JSON output: ${e.message}`);
+                      console.log(`Content length: ${rawContent.length}`);
+                      reviewBody = rawContent;
+                      review = null;
+                    }
+
+                    if (review) {
+                      // Log parsed review structure for debugging
+                      console.log(`Parsed review: pr_number=${review.pr_number}, findings=${review.findings?.length || 0}`);
+
+                      // Build inline comments for each finding
+                      for (const finding of review.findings || []) {
+                        if (finding.file && finding.line) {
+                          const priorityEmoji = {
+                            'P0': ':x:',
+                            'P1': ':warning:',
+                            'P2': ':information_source:',
+                            'P3': ':bulb:'
+                          }[finding.priority] || ':grey_question:';
+
+                          // GitHub API requires side: 'RIGHT' for inline comments on new file version
+                          const comment = {
+                            path: finding.file,
+                            line: finding.end_line || finding.line,
+                            side: 'RIGHT',
+                            body: `${priorityEmoji} **[${finding.priority}] ${finding.title}**\n\n${finding.description}`
+                          };
+
+                          // For multi-line comments, add start_line and start_side
+                          if (finding.end_line && finding.end_line > finding.line) {
+                            comment.start_line = finding.line;
+                            comment.start_side = 'RIGHT';
+                          }
+
+                          inlineReviewComments.push(comment);
+                        } else {
+                          console.log(`Skipped finding without file/line: ${JSON.stringify(finding)}`);
+                        }
+                      }
+
+                      // Build summary comment body from JSON
+                      const verdictEmoji = review.verdict?.assessment === 'correct' ? ':white_check_mark:' : ':x:';
+                      const totalFindings = (review.stats?.p0_count || 0) + (review.stats?.p1_count || 0) + (review.stats?.p2_count || 0) + (review.stats?.p3_count || 0);
+                      const statsLine = `P0: ${review.stats?.p0_count || 0} | P1: ${review.stats?.p1_count || 0} | P2: ${review.stats?.p2_count || 0} | P3: ${review.stats?.p3_count || 0}`;
+
+                      // Build summary line
+                      const summaryLine = totalFindings === 0
+                        ? `${verdictEmoji} Codex review complete; no issues found`
+                        : `${verdictEmoji} Codex review complete; ${totalFindings} issue${totalFindings === 1 ? '' : 's'} found (${statsLine})`;
+
+                      // Build collapsible details
+                      const requiredActions = review.verdict?.required_actions?.length > 0
+                        ? '**Required Actions:**\n' + review.verdict.required_actions.map(a => `- ${a}`).join('\n')
+                        : '**Required Actions:** None - ready to merge';
+
+                      const findingsNote = inlineReviewComments.length > 0
+                        ? `*${inlineReviewComments.length} inline comments posted.*`
+                        : (totalFindings > 0 ? '*See verdict for details.*' : '*No issues found.*');
+
+                      // Build diff stats line if available
+                      const diffStatsLine = review.diff_stats
+                        ? `**Diff:** ${review.diff_stats.files_changed} file${review.diff_stats.files_changed === 1 ? '' : 's'} changed, +${review.diff_stats.lines_added} -${review.diff_stats.lines_removed}`
+                        : '';
+
+                      // Build body using array join to avoid YAML parsing issues with angle brackets
+                      reviewBody = [
+                        summaryLine,
+                        '',
+                        '\x3Cdetails\x3E',
+                        '\x3Csummary\x3EView full review\x3C/summary\x3E',
+                        '',
+                        `# ${review.pr_title}`,
+                        '',
+                        `**PR:** ${review.pr_url}`,
+                        `**Author:** ${review.author} | **Base:** ${review.base_branch} \u2190 **Head:** ${review.head_branch}`,
+                        diffStatsLine,
+                        '',
+                        '# Summary',
+                        '',
+                        review.summary,
+                        '',
+                        '# Findings',
+                        '',
+                        statsLine,
+                        '',
+                        findingsNote,
+                        '',
+                        '# Verdict',
+                        '',
+                        `**Assessment:** ${review.verdict?.assessment || 'unknown'}`,
+                        `**Confidence:** ${review.verdict?.confidence || 'N/A'}`,
+                        '',
+                        review.verdict?.justification || '',
+                        '',
+                        requiredActions,
+                        '',
+                        '\x3C/details\x3E'
+                      ].join('\n');
+                    }
+                  } else {
+                    // Use raw markdown content
+                    reviewBody = rawContent;
+                  }
+
+                  // Post inline comments as a review if we have any
+                  if (inlineReviewComments.length > 0) {
+                    try {
+                      // Get the PR head SHA for the review
+                      const { data: pr } = await github.rest.pulls.get({
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        pull_number: prNumber
+                      });
+
+                      await github.rest.pulls.createReview({
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        pull_number: prNumber,
+                        commit_id: pr.head.sha,
+                        event: 'COMMENT',
+                        comments: inlineReviewComments
+                      });
+                      console.log(`Posted ${inlineReviewComments.length} inline comments on commit ${pr.head.sha}`);
+                    } catch (e) {
+                      console.log(`Failed to post inline comments: ${e.message}`);
+                      // Fall back to including findings in the summary comment
+                      reviewBody += '\n\n---\n\n**Note:** Failed to post inline comments. Findings listed above.';
+                    }
+                  }
+
+                  // Find existing bot comment to update (avoid duplicates)
+                  const { data: comments } = await github.rest.issues.listComments({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: prNumber,
+                    per_page: 100
+                  });
+
+                  const existingComment = comments.find(c =>
+                    c.user.type === 'Bot' && c.body.includes(commentMarker)
+                  );
+
+                  const body = `${commentMarker}\n${reviewBody}\n`;
+
+                  if (existingComment) {
+                    await github.rest.issues.updateComment({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      comment_id: existingComment.id,
+                      body: body
+                    });
+                    console.log('Updated existing review comment');
+                  } else {
+                    await github.rest.issues.createComment({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      issue_number: prNumber,
+                      body: body
+                    });
+                    console.log('Created new review comment');
+                  }
+
+        - name: React Success
+          if: steps.check-auth.outputs.skipped != 'true' && inputs.comment-id != '' && steps.verify.outputs.success == 'true'
+          uses: actions/github-script@v7
+          continue-on-error: true
+          env:
+              COMMENT_ID: ${{ inputs.comment-id }}
+          with:
+              github-token: ${{ inputs.github-token }}
+              script: |
+                  await github.rest.reactions.createForIssueComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    comment_id: parseInt(process.env.COMMENT_ID, 10),
+                    content: '+1'
+                  });
+
+        - name: Cleanup Sensitive Files
+          if: always()
+          shell: bash
+          run: |
+              rm -f ".codex-review-${{ inputs.pr-number }}.md" ".codex-review-${{ inputs.pr-number }}.json" ".codex-error-${{ inputs.pr-number }}.log"
+              # Also clean up auth.json if we created it
+              rm -f "$HOME/.codex/auth.json"

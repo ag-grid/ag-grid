@@ -1,0 +1,72 @@
+name: PR Review
+
+on:
+    # Initially disabled so we can test this independently of the main PR syncing ag-shared.
+    # pull_request:
+    #     types: [opened, ready_for_review]
+    issue_comment:
+        types: [created]
+    workflow_dispatch:
+        inputs:
+            pr_number:
+                description: 'PR number to review'
+                type: string
+                required: true
+
+env:
+    NX_NO_CLOUD: true
+
+permissions:
+    contents: read
+
+jobs:
+    # Check permissions for issue_comment events
+    check-permissions:
+        runs-on: ubuntu-latest
+        outputs:
+            allowed: ${{ steps.check.outputs.allowed }}
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Check user permissions
+              id: check
+              uses: ./external/ag-shared/github/actions/check-issue-comment-permissions
+              with:
+                  command: '/pr-review'
+
+    # Run the Codex PR review
+    pr-review:
+        runs-on: ubuntu-latest
+        needs: check-permissions
+        permissions:
+            contents: read
+            pull-requests: write
+            issues: write
+        # Only run if permissions check passed and PR is not a draft
+        # For issue_comment, also verify it's on a PR (not a regular issue)
+        if: |
+            needs.check-permissions.result == 'success' && (
+                (github.event_name == 'pull_request' && github.event.pull_request.draft == false) ||
+                github.event_name == 'workflow_dispatch' ||
+                (github.event_name == 'issue_comment' && needs.check-permissions.outputs.allowed == 'true' && github.event.issue.pull_request)
+            )
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Run Codex PR Review
+              uses: ./external/ag-shared/github/actions/codex-pr-review
+              with:
+                  openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+                  codex-auth-json-b64: ${{ secrets.CODEX_AUTH_JSON_B64 }}
+                  pr-number: ${{ github.event.pull_request.number || github.event.issue.number || inputs.pr_number }}
+                  base-ref: ${{ github.event.pull_request.base.ref || 'latest' }}
+                  head-ref: ${{ github.event.pull_request.head.ref || '' }}
+                  pr-title: ${{ github.event.pull_request.title || '' }}
+                  pr-author: ${{ github.event.pull_request.user.login || '' }}
+                  github-token: ${{ github.token }}
+                  comment-id: ${{ github.event.comment.id }}
+                  inline-comments: 'true'
