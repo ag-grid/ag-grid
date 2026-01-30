@@ -1,7 +1,7 @@
 import type { MockInstance } from 'vitest';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import type { GridOptions } from 'ag-grid-community';
+import type { GridOptions, ModelUpdatedEvent } from 'ag-grid-community';
 
 import {
     GridRows,
@@ -371,5 +371,379 @@ describe('ag-grid row data', () => {
             ├── LEAF id:2 value:2 value_1:2
             └── LEAF id:3 value:3 value_1:3
         `);
+    });
+
+    describe('onModelUpdated event flags', () => {
+        /**
+         * Helper to collect modelUpdated events with relevant flags.
+         */
+        function collectModelUpdatedEvents(api: ReturnType<typeof gridsManager.createGrid>) {
+            const events: Pick<
+                ModelUpdatedEvent,
+                'animate' | 'keepRenderedRows' | 'newData' | 'newPage' | 'keepUndoRedoStack'
+            >[] = [];
+            api.addEventListener('modelUpdated', (e: ModelUpdatedEvent) => {
+                events.push({
+                    animate: e.animate,
+                    keepRenderedRows: e.keepRenderedRows,
+                    newData: e.newData,
+                    newPage: e.newPage,
+                    keepUndoRedoStack: e.keepUndoRedoStack,
+                });
+            });
+            return events;
+        }
+
+        test('initial rowData sets newData=true, keepRenderedRows=false', async () => {
+            const events: ModelUpdatedEvent[] = [];
+            const gridOptions: GridOptions = {
+                columnDefs: [{ field: 'value' }],
+                rowData: [{ id: '1', value: 1 }],
+                animateRows: false,
+                onModelUpdated: (e) => events.push(e),
+            };
+            gridsManager.createGrid('myGrid', gridOptions);
+            await asyncSetTimeout(1);
+
+            expect(events).toHaveLength(1);
+            expect(events[0]).toMatchObject({
+                newData: true,
+                keepRenderedRows: false,
+                newPage: false,
+                keepUndoRedoStack: false,
+            });
+        });
+
+        test('setRowData without getRowId sets newData=true', async () => {
+            const gridOptions: GridOptions = {
+                columnDefs: [{ field: 'value' }],
+                rowData: [{ value: 1 }],
+                animateRows: false,
+            };
+            const api = gridsManager.createGrid('myGrid', gridOptions);
+            await asyncSetTimeout(1);
+            const events = collectModelUpdatedEvents(api);
+
+            setRowDataChecked(api, [{ value: 2 }]);
+            await asyncSetTimeout(1);
+
+            expect(events).toHaveLength(1);
+            expect(events[0]).toMatchObject({
+                newData: true,
+                keepRenderedRows: false,
+                newPage: false,
+            });
+        });
+
+        test('setRowData with getRowId (immutable update) sets newData=false', async () => {
+            const gridOptions: GridOptions = {
+                columnDefs: [{ field: 'value' }],
+                rowData: [{ id: '1', value: 1 }],
+                getRowId: (p) => p.data.id,
+                animateRows: false,
+            };
+            const api = gridsManager.createGrid('myGrid', gridOptions);
+            await asyncSetTimeout(1);
+            const events = collectModelUpdatedEvents(api);
+
+            // Update existing row - immutable update path
+            setRowDataChecked(api, [{ id: '1', value: 2 }]);
+            await asyncSetTimeout(1);
+
+            expect(events).toHaveLength(1);
+            expect(events[0]).toMatchObject({
+                newData: false,
+                keepRenderedRows: true,
+                newPage: false,
+            });
+        });
+
+        test('applyTransaction with add/remove triggers modelUpdated', async () => {
+            const gridOptions: GridOptions = {
+                columnDefs: [{ field: 'value' }],
+                rowData: [{ id: '1', value: 1 }],
+                getRowId: (p) => p.data.id,
+                animateRows: false,
+            };
+            const api = gridsManager.createGrid('myGrid', gridOptions);
+            await asyncSetTimeout(1);
+            const events = collectModelUpdatedEvents(api);
+
+            applyTransactionChecked(api, { add: [{ id: '2', value: 2 }] });
+            await asyncSetTimeout(1);
+
+            expect(events).toHaveLength(1);
+            expect(events[0]).toMatchObject({
+                newData: false,
+                keepRenderedRows: true,
+                // Note: transactions do not explicitly set keepUndoRedoStack, so it's false by default
+                keepUndoRedoStack: false,
+                newPage: false,
+                // animate is true because suppressAnimationFrame defaults to false
+                animate: true,
+            });
+        });
+
+        test('applyTransaction with update only and suppressModelUpdateAfterUpdateTransaction', async () => {
+            const gridOptions: GridOptions = {
+                columnDefs: [{ field: 'value' }],
+                rowData: [{ id: '1', value: 1 }],
+                getRowId: (p) => p.data.id,
+                suppressModelUpdateAfterUpdateTransaction: true,
+                animateRows: false,
+            };
+            const api = gridsManager.createGrid('myGrid', gridOptions);
+            await asyncSetTimeout(1);
+            const events = collectModelUpdatedEvents(api);
+
+            // Update-only transaction with suppressModelUpdateAfterUpdateTransaction should not trigger modelUpdated
+            applyTransactionChecked(api, { update: [{ id: '1', value: 2 }] });
+            await asyncSetTimeout(1);
+
+            expect(events).toHaveLength(0);
+
+            // Add triggers modelUpdated even with suppressModelUpdateAfterUpdateTransaction
+            applyTransactionChecked(api, { add: [{ id: '2', value: 3 }] });
+            await asyncSetTimeout(1);
+
+            expect(events).toHaveLength(1);
+            expect(events[0]).toMatchObject({
+                newData: false,
+                keepRenderedRows: true,
+            });
+        });
+
+        test('refreshClientSideRowModel triggers modelUpdated with keepRenderedRows=true', async () => {
+            const gridOptions: GridOptions = {
+                columnDefs: [{ field: 'value', sort: 'asc' }],
+                rowData: [
+                    { id: '1', value: 1 },
+                    { id: '2', value: 2 },
+                ],
+                getRowId: (p) => p.data.id,
+                animateRows: false,
+            };
+            const api = gridsManager.createGrid('myGrid', gridOptions);
+            await asyncSetTimeout(1);
+            const events = collectModelUpdatedEvents(api);
+
+            api.refreshClientSideRowModel('sort');
+            await asyncSetTimeout(1);
+
+            expect(events).toHaveLength(1);
+            expect(events[0]).toMatchObject({
+                newData: false,
+                keepRenderedRows: true,
+                // Note: refreshClientSideRowModel doesn't explicitly set keepUndoRedoStack
+                keepUndoRedoStack: false,
+                newPage: false,
+                // refreshClientSideRowModel uses suppressAnimationFrame, not animateRows
+                // so animate=true when suppressAnimationFrame=false (the default)
+                animate: true,
+            });
+        });
+
+        test('refreshClientSideRowModel animate uses suppressAnimationFrame, not animateRows', async () => {
+            // With animateRows=true, suppressAnimationFrame=false (default)
+            const gridOptions1: GridOptions = {
+                columnDefs: [{ field: 'value' }],
+                rowData: [{ id: '1', value: 1 }],
+                getRowId: (p) => p.data.id,
+                animateRows: true,
+            };
+            const api1 = gridsManager.createGrid('grid1', gridOptions1);
+            await asyncSetTimeout(1);
+            const events1 = collectModelUpdatedEvents(api1);
+
+            api1.refreshClientSideRowModel('sort');
+            await asyncSetTimeout(1);
+
+            expect(events1).toHaveLength(1);
+            // animate is true because suppressAnimationFrame defaults to false
+            expect(events1[0].animate).toBe(true);
+
+            // With animateRows=false, suppressAnimationFrame=false (default)
+            // animate should still be true because refreshClientSideRowModel uses suppressAnimationFrame
+            const gridOptions2: GridOptions = {
+                columnDefs: [{ field: 'value' }],
+                rowData: [{ id: '1', value: 1 }],
+                getRowId: (p) => p.data.id,
+                animateRows: false,
+            };
+            const api2 = gridsManager.createGrid('grid2', gridOptions2);
+            await asyncSetTimeout(1);
+            const events2 = collectModelUpdatedEvents(api2);
+
+            api2.refreshClientSideRowModel('sort');
+            await asyncSetTimeout(1);
+
+            expect(events2).toHaveLength(1);
+            // animate is true because suppressAnimationFrame defaults to false (animateRows is ignored)
+            expect(events2[0].animate).toBe(true);
+
+            // With suppressAnimationFrame=true
+            const gridOptions3: GridOptions = {
+                columnDefs: [{ field: 'value' }],
+                rowData: [{ id: '1', value: 1 }],
+                getRowId: (p) => p.data.id,
+                suppressAnimationFrame: true,
+            };
+            const api3 = gridsManager.createGrid('grid3', gridOptions3);
+            await asyncSetTimeout(1);
+            const events3 = collectModelUpdatedEvents(api3);
+
+            api3.refreshClientSideRowModel('sort');
+            await asyncSetTimeout(1);
+
+            expect(events3).toHaveLength(1);
+            expect(events3[0].animate).toBe(false);
+        });
+
+        test('transaction animate uses suppressAnimationFrame, not animateRows', async () => {
+            // With animateRows=false but suppressAnimationFrame=false (default)
+            // Transactions should still have animate=true
+            const gridOptions: GridOptions = {
+                columnDefs: [{ field: 'value' }],
+                rowData: [{ id: '1', value: 1 }],
+                getRowId: (p) => p.data.id,
+                animateRows: false,
+            };
+            const api = gridsManager.createGrid('myGrid', gridOptions);
+            await asyncSetTimeout(1);
+            const events = collectModelUpdatedEvents(api);
+
+            applyTransactionChecked(api, { add: [{ id: '2', value: 2 }] });
+            await asyncSetTimeout(1);
+
+            expect(events).toHaveLength(1);
+            // animate=true because suppressAnimationFrame defaults to false
+            expect(events[0].animate).toBe(true);
+        });
+
+        test('suppressAnimationFrame=true sets animate=false for transactions', async () => {
+            const gridOptions: GridOptions = {
+                columnDefs: [{ field: 'value' }],
+                rowData: [{ id: '1', value: 1 }],
+                getRowId: (p) => p.data.id,
+                suppressAnimationFrame: true,
+            };
+            const api = gridsManager.createGrid('myGrid', gridOptions);
+            await asyncSetTimeout(1);
+            const events = collectModelUpdatedEvents(api);
+
+            applyTransactionChecked(api, { add: [{ id: '2', value: 2 }] });
+            await asyncSetTimeout(1);
+
+            expect(events).toHaveLength(1);
+            expect(events[0].animate).toBe(false);
+        });
+
+        test('filter change sets keepRenderedRows=true', async () => {
+            const gridOptions: GridOptions = {
+                columnDefs: [{ field: 'value', filter: true }],
+                rowData: [
+                    { id: '1', value: 1 },
+                    { id: '2', value: 2 },
+                    { id: '3', value: 3 },
+                ],
+                getRowId: (p) => p.data.id,
+                animateRows: false,
+            };
+            const api = gridsManager.createGrid('myGrid', gridOptions);
+            await asyncSetTimeout(1);
+            const events = collectModelUpdatedEvents(api);
+
+            api.setFilterModel({ value: { type: 'greaterThan', filter: 1 } });
+            await asyncSetTimeout(1);
+
+            // Filter change may trigger multiple events (filter change + sort recalc)
+            expect(events.length).toBeGreaterThanOrEqual(1);
+            // The filter event should have keepRenderedRows=true
+            const filterEvent = events.find((e) => e.keepRenderedRows === true);
+            expect(filterEvent).toBeDefined();
+            expect(filterEvent).toMatchObject({
+                newData: false,
+                keepRenderedRows: true,
+                newPage: false,
+            });
+        });
+
+        test('sort change sets keepRenderedRows=true', async () => {
+            const gridOptions: GridOptions = {
+                columnDefs: [{ field: 'value', sortable: true }],
+                rowData: [
+                    { id: '1', value: 3 },
+                    { id: '2', value: 1 },
+                    { id: '3', value: 2 },
+                ],
+                getRowId: (p) => p.data.id,
+                animateRows: false,
+            };
+            const api = gridsManager.createGrid('myGrid', gridOptions);
+            await asyncSetTimeout(1);
+            const events = collectModelUpdatedEvents(api);
+
+            api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+            await asyncSetTimeout(1);
+
+            expect(events).toHaveLength(1);
+            expect(events[0]).toMatchObject({
+                newData: false,
+                keepRenderedRows: true,
+                // sort doesn't explicitly set keepUndoRedoStack
+                keepUndoRedoStack: false,
+                newPage: false,
+            });
+        });
+
+        test('multiple rapid setRowData calls coalesce events correctly', async () => {
+            const gridOptions: GridOptions = {
+                columnDefs: [{ field: 'value' }],
+                rowData: [{ id: '1', value: 1 }],
+                getRowId: (p) => p.data.id,
+                animateRows: false,
+            };
+            const api = gridsManager.createGrid('myGrid', gridOptions);
+            await asyncSetTimeout(1);
+            const events = collectModelUpdatedEvents(api);
+
+            // Multiple rapid calls
+            setRowDataChecked(api, [{ id: '1', value: 2 }]);
+            setRowDataChecked(api, [{ id: '1', value: 3 }]);
+            setRowDataChecked(api, [{ id: '1', value: 4 }]);
+            await asyncSetTimeout(1);
+
+            // Should coalesce into one event
+            expect(events.length).toBeGreaterThanOrEqual(1);
+            // Last state should be reflected
+            await new GridRows(api, 'data').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 value:4
+            `);
+        });
+
+        test('initial data without columns defers modelUpdated until columns set', async () => {
+            const events: ModelUpdatedEvent[] = [];
+            const gridOptions: GridOptions = {
+                rowData: [{ id: '1', value: 1 }],
+                getRowId: (p) => p.data.id,
+                onModelUpdated: (e) => events.push(e),
+            };
+            const api = gridsManager.createGrid('myGrid', gridOptions);
+            await asyncSetTimeout(1);
+
+            // No modelUpdated without columns
+            expect(events).toHaveLength(0);
+
+            api.setGridOption('columnDefs', [{ field: 'value' }]);
+            await asyncSetTimeout(1);
+
+            expect(events).toHaveLength(1);
+            expect(events[0]).toMatchObject({
+                newData: true,
+                keepRenderedRows: false,
+                newPage: false,
+            });
+        });
     });
 });

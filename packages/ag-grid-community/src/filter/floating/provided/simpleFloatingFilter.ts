@@ -11,6 +11,7 @@ import type {
 } from '../../provided/iSimpleFilter';
 import { OptionsFactory } from '../../provided/optionsFactory';
 import type { SimpleFilterModelFormatter } from '../../provided/simpleFilterModelFormatter';
+import { getNumberOfInputs } from '../../provided/simpleFilterUtils';
 import type { FloatingFilterDisplayParams, IFloatingFilterComp, IFloatingFilterParams } from '../floatingFilter';
 
 export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams<ISimpleFilter>>
@@ -164,19 +165,8 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
         this.onModelUpdated(model);
     }
 
-    private hasSingleInput(filterType: string) {
-        const numberOfInputs = this.optionsFactory.getCustomOption(filterType)?.numberOfInputs;
-        return numberOfInputs == null || numberOfInputs == 1;
-    }
-
     private isTypeEditable(type?: string | null): boolean {
-        const uneditableTypes: ISimpleFilterModelType[] = ['inRange', 'empty', 'blank', 'notBlank'];
-        return (
-            !!type &&
-            !this.readOnly &&
-            this.hasSingleInput(type) &&
-            uneditableTypes.indexOf(type as ISimpleFilterModelType) < 0
-        );
+        return !!type && !this.readOnly && getNumberOfInputs(type as ISimpleFilterModelType, this.optionsFactory) === 1;
     }
 
     protected getAriaLabel(column: AgColumn): string {

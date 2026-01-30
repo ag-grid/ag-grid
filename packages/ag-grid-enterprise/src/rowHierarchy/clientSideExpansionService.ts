@@ -125,7 +125,7 @@ export class ClientSideExpansionService
         // calling rowNode.setExpanded(boolean) - this way we do a 'keepRenderedRows=false' so that the whole
         // grid gets refreshed again - otherwise the row with the rowNodes that were changed won't get updated,
         // and thus the expand icon in the group cell won't get 'opened' or 'closed'.
-        (this.beans.rowModel as IClientSideRowModel).refreshModel({ step: 'map' });
+        (this.beans.rowModel as IClientSideRowModel).reMapRows();
     }
 
     public setDetailsExpansionState(detailGridApi: GridApi): void {

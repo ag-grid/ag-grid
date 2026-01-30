@@ -93,9 +93,11 @@ runs:
           env:
               PR_NUMBER: ${{ inputs.pr-number }}
               BASE_REF: ${{ inputs.base-ref }}
+              GH_TOKEN: ${{ inputs.github-token }}
           run: |
               # Fetch PR head ref and base branch for git diff access
               # This allows Codex to use git commands to analyze the PR changes
+              # Uses GitHub Compare API to determine exact fetch depth needed for merge-base
 
               # Validate PR number is numeric to prevent shell injection
               if ! [[ "$PR_NUMBER" =~ ^[0-9]+$ ]]; then
@@ -104,9 +106,58 @@ runs:
               fi
 
               echo "Fetching PR #${PR_NUMBER} refs..."
-              git fetch --no-tags origin \
+
+              # Query GitHub Compare API to get merge-base info and commit counts
+              # This tells us exactly how much history we need to fetch
+              COMPARE_URL="repos/${GITHUB_REPOSITORY}/compare/${BASE_REF}...pull/${PR_NUMBER}/head"
+              COMPARE_DATA=$(gh api "$COMPARE_URL" --jq '{
+                merge_base: .merge_base_commit.sha,
+                ahead: .ahead_by,
+                behind: .behind_by,
+                total: .total_commits
+              }')
+
+              MERGE_BASE_SHA=$(echo "$COMPARE_DATA" | jq -r '.merge_base')
+              AHEAD_BY=$(echo "$COMPARE_DATA" | jq -r '.ahead')
+              BEHIND_BY=$(echo "$COMPARE_DATA" | jq -r '.behind')
+              TOTAL_COMMITS=$(echo "$COMPARE_DATA" | jq -r '.total')
+
+              echo "Merge-base SHA: ${MERGE_BASE_SHA}"
+              echo "PR is ${AHEAD_BY} commits ahead, ${BEHIND_BY} behind (${TOTAL_COMMITS} total in diff)"
+
+              # Calculate fetch depth: max(ahead, behind) + buffer
+              # - ahead_by: commits in PR branch since merge-base
+              # - behind_by: commits on base branch since merge-base
+              # We need enough depth on both branches to reach the merge-base
+              if [ "$AHEAD_BY" -gt "$BEHIND_BY" ]; then
+                MAX_DISTANCE=$AHEAD_BY
+              else
+                MAX_DISTANCE=$BEHIND_BY
+              fi
+              FETCH_DEPTH=$((MAX_DISTANCE + 20))
+              echo "Fetching with depth ${FETCH_DEPTH} (max(${AHEAD_BY}, ${BEHIND_BY}) + 20 buffer)..."
+
+              git fetch --depth=${FETCH_DEPTH} --no-tags origin \
                 "${BASE_REF}" \
                 "+refs/pull/${PR_NUMBER}/head:refs/remotes/origin/pr/${PR_NUMBER}"
+
+              # Verify merge-base is available
+              if git merge-base origin/${BASE_REF} origin/pr/${PR_NUMBER} >/dev/null 2>&1; then
+                LOCAL_MERGE_BASE=$(git merge-base origin/${BASE_REF} origin/pr/${PR_NUMBER})
+                echo "Merge-base verified: ${LOCAL_MERGE_BASE}"
+              else
+                echo "::warning::Merge-base not found with calculated depth, deepening..."
+                # Fallback: iteratively deepen until merge-base is found
+                for i in {1..5}; do
+                  git fetch --deepen=50 origin "${BASE_REF}" "+refs/pull/${PR_NUMBER}/head:refs/remotes/origin/pr/${PR_NUMBER}"
+                  if git merge-base origin/${BASE_REF} origin/pr/${PR_NUMBER} >/dev/null 2>&1; then
+                    LOCAL_MERGE_BASE=$(git merge-base origin/${BASE_REF} origin/pr/${PR_NUMBER})
+                    echo "Merge-base found after deepening: ${LOCAL_MERGE_BASE}"
+                    break
+                  fi
+                done
+              fi
+
               echo "PR refs fetched successfully"
 
         - name: Setup Node.js

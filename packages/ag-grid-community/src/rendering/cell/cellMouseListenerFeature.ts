@@ -31,6 +31,7 @@ export class CellMouseListenerFeature extends BeanStub {
             case 'click':
                 this.onCellClicked(mouseEvent);
                 break;
+            case 'pointerdown':
             case 'mousedown':
             case 'touchstart':
                 this.onMouseDown(mouseEvent);

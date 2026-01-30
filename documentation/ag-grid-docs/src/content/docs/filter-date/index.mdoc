@@ -201,13 +201,19 @@ When providing filter options, the default filter option (or the first option if
 
 Date Filter supports a set of predefined named and relative date ranges to make common filtering tasks easier. These ranges are relative to the browser local time. These are ideal for users who want to filter by familiar time periods like "Last Week", "Year to Date", or "Next 30 Days" without extending a grid with a custom solution.
 
+{% note %}
+Built-in named and relative date ranges are evaluated using the browser’s local time zone, not server time. This means results can differ between users in different time zones, and results can change when the local date changes and the filter is re-applied.
+
+Week-based ranges (such as `thisWeek` and `lastWeek`) use the first day of the week from the browser’s locale settings. If the locale does not provide this information, Monday is used.
+{% /note %}
+
 ### Enabling Built-in Date Ranges
 
 To enable the built-in date ranges, add them to the `filterOptions` array in your date filter configuration. The options are not included by default.
 
 #### Example: Enable Built-in Date Ranges
 
-{% gridExampleRunner title="Built-in Date Ranges" name="built-in-date-ranges" /%}
+{% gridExampleRunner title="Built-in Date Ranges" name="built-in-date-ranges" exampleHeight=640 /%}
 
 Example above uses following configuration:
 
@@ -239,35 +245,41 @@ const columnDefs: ColDef[] = [
 
 ### Available Built-in Date Filter Options
 
-| Option Name        | Option Key     | Time Range Start >=              | Time Range End <              |
-|--------------------|----------------|----------------------------------|:------------------------------|
-| Today              | `today`        | `Start Of Today`                 | `Start Of Tomorrow`           |
-| Yesterday          | `yesterday`    | `Start Of Yesterday`             | `Start Of Today`              |
-| Tomorrow           | `tomorrow`     | `Start Of Tomorrow`              | `Start Of Day After Tomorrow` |
-| This Week          | `thisWeek`     | `Start Of Current Week`          | `Start Of Next Week`          |
-| Last Week          | `lastWeek`     | `Start Of Previous Week`         | `Start Of Current Week`       |
-| Next Week          | `nextWeek`     | `Start Of Next Week`             | `Start Of Week After Next`    |
-| This Month         | `thisMonth`    | `Start Of Current Month`         | `Start Of Next Month`         |
-| Last Month         | `lastMonth`    | `Start Of Previous Month`        | `Start Of Current Month`      |
-| Next Month         | `nextMonth`    | `Start Of Next Month`            | `Start Of Month After Next`   |
-| This Quarter       | `thisQuarter`  | `Start Of Current Quarter`       | `Start Of Next Quarter`       |
-| Last Quarter       | `lastQuarter`  | `Start Of Previous Quarter`      | `Start Of Current Quarter`    |
-| Next Quarter       | `nextQuarter`  | `Start Of Next Quarter`          | `Start Of Quarter After Next` |
-| This Year          | `thisYear`     | `Start Of Current Year`          | `Start Of Next Year`          |
-| Last Year          | `lastYear`     | `Start Of Previous Year`         | `Start Of Current Year`       |
-| Next Year          | `nextYear`     | `Start Of Next Year`             | `Start Of Year After Next`    |
-| Year to Date (YTD) | `yearToDate`   | `Start Of Current Year`          | `Start Of Tomorrow`           |
-| Last 7 Days        | `last7Days`    | `Start Of Today minus 7 days`    | `Start Of Tomorrow`           |
-| Last 30 Days       | `last30Days`   | `Start Of Today minus 30 days`   | `Start Of Tomorrow`           |
-| Last 90 Days       | `last90Days`   | `Start Of Today minus 90 days`   | `Start Of Tomorrow`           |
-| Last 6 Months      | `last6Months`  | `Start Of Today minus 6 months`  | `Start Of Tomorrow`           |
-| Last 12 Months     | `last12Months` | `Start Of Today minus 12 months` | `Start Of Tomorrow`           |
-| Last 24 Months     | `last24Months` | `Start Of Today minus 24 months` | `Start Of Tomorrow`           |
+| Option Name        | Option Key     | Time Range Start >=                    | Time Range End <              |
+|--------------------|----------------|----------------------------------------|:------------------------------|
+| Today              | `today`        | `Start Of Today`                       | `Start Of Tomorrow`           |
+| Yesterday          | `yesterday`    | `Start Of Yesterday`                   | `Start Of Today`              |
+| Tomorrow           | `tomorrow`     | `Start Of Tomorrow`                    | `Start Of Day After Tomorrow` |
+| This Week          | `thisWeek`     | `Start Of Current Week`                | `Start Of Next Week`          |
+| Last Week          | `lastWeek`     | `Start Of Previous Week`               | `Start Of Current Week`       |
+| Next Week          | `nextWeek`     | `Start Of Next Week`                   | `Start Of Week After Next`    |
+| This Month         | `thisMonth`    | `Start Of Current Month`               | `Start Of Next Month`         |
+| Last Month         | `lastMonth`    | `Start Of Previous Month`              | `Start Of Current Month`      |
+| Next Month         | `nextMonth`    | `Start Of Next Month`                  | `Start Of Month After Next`   |
+| This Quarter       | `thisQuarter`  | `Start Of Current Quarter`             | `Start Of Next Quarter`       |
+| Last Quarter       | `lastQuarter`  | `Start Of Previous Quarter`            | `Start Of Current Quarter`    |
+| Next Quarter       | `nextQuarter`  | `Start Of Next Quarter`                | `Start Of Quarter After Next` |
+| This Year          | `thisYear`     | `Start Of Current Year`                | `Start Of Next Year`          |
+| Last Year          | `lastYear`     | `Start Of Previous Year`               | `Start Of Current Year`       |
+| Next Year          | `nextYear`     | `Start Of Next Year`                   | `Start Of Year After Next`    |
+| Year to Date (YTD) | `yearToDate`   | `Start Of Current Year`                | `Start Of Tomorrow`           |
+| Last 7 Days        | `last7Days`    | `Start of the day 7 days before today` | `Start Of Tomorrow`           |
+| Last 30 Days       | `last30Days`   | `Start Of Today minus 30 days`         | `Start Of Tomorrow`           |
+| Last 90 Days       | `last90Days`   | `Start Of Today minus 90 days`         | `Start Of Tomorrow`           |
+| Last 6 Months      | `last6Months`  | `Start Of Today minus 6 months`        | `Start Of Tomorrow`           |
+| Last 12 Months     | `last12Months` | `Start Of Today minus 12 months`       | `Start Of Tomorrow`           |
+| Last 24 Months     | `last24Months` | `Start Of Today minus 24 months`       | `Start Of Tomorrow`           |
 
 
 {% note %}
-`Start Of Today`, `Start Of Tomorrow`, `Start Of XXX` point to the beginning of the corresponding day, e.g. `00:00:00.000` in browser local timezone.
+`Start Of Today`, `Start Of Tomorrow`, `Start Of XXX` point to the beginning of the corresponding day, e.g. `00:00:00.000` in the browser’s local time zone.
 {% /note %}
+
+### Server-Side Row Model (SSRM)
+
+When a user selects one of built-in date ranges, the filter model sent to the server includes the preset `type` (for example, `today` or `last7Days`) and leaves `dateFrom`/`dateTo` undefined. The server / user defined code is responsible for interpreting the preset and applying the equivalent date range logic using its own time zone and locale rules.
+
+See [SSRM Filtering](./server-side-model-filtering/) for the server-side filtering contract.
 
 ## Range Input Validation and Error States
 

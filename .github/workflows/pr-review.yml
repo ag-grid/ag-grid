@@ -1,9 +1,8 @@
 name: PR Review
 
 on:
-    # Initially disabled so we can test this independently of the main PR syncing ag-shared.
-    # pull_request:
-    #     types: [opened, ready_for_review]
+    pull_request:
+        types: [opened, ready_for_review]
     issue_comment:
         types: [created]
     workflow_dispatch:
@@ -55,7 +54,7 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v4
               with:
-                  fetch-depth: 0
+                  fetch-depth: 1
 
             - name: Run Codex PR Review
               uses: ./external/ag-shared/github/actions/codex-pr-review

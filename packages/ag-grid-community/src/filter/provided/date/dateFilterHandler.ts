@@ -87,6 +87,30 @@ export class DateFilterHandler extends ScalarFilterHandler<DateFilterModel, Date
 type RelativeDateFn = (date: Date) => Date;
 type RelativeRangeFn = (from: Date, to: Date) => [Date, Date];
 
+const DEFAULT_FIRST_DAY_OF_WEEK = 1;
+let cachedFirstDayOfWeek: number | null = null;
+
+const getFirstDayOfWeek = (): number => {
+    if (cachedFirstDayOfWeek != null) {
+        return cachedFirstDayOfWeek;
+    }
+
+    let firstDay: number | undefined;
+    const locale = typeof navigator === 'undefined' ? undefined : navigator.languages?.[0] ?? navigator.language;
+
+    if (locale && typeof Intl !== 'undefined' && typeof (Intl as any).Locale === 'function') {
+        try {
+            const weekInfo = new (Intl as any).Locale(locale).weekInfo;
+            firstDay = weekInfo?.firstDay;
+        } catch {
+            firstDay = undefined;
+        }
+    }
+
+    cachedFirstDayOfWeek = firstDay ? firstDay % 7 : DEFAULT_FIRST_DAY_OF_WEEK;
+    return cachedFirstDayOfWeek;
+};
+
 // Reusable fns
 const setStartOfDay: RelativeDateFn = (date: Date) => {
     date.setHours(0, 0, 0, 0);
@@ -95,7 +119,8 @@ const setStartOfDay: RelativeDateFn = (date: Date) => {
 
 const setStartOfWeek: RelativeDateFn = (date: Date) => {
     const day = date.getDay();
-    const diff = day === 0 ? 6 : day - 1;
+    const weekStart = getFirstDayOfWeek();
+    const diff = (day - weekStart + 7) % 7;
     date.setDate(date.getDate() - diff);
 
     return setStartOfDay(date);
