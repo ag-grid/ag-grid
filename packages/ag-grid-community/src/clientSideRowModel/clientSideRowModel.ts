@@ -533,8 +533,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     /**
-     * Performs a map-only refresh. Safe to call during an active refresh (e.g., from row destroy) -
-     * if a refresh is in progress, the flags are captured and applied to the outer refresh.
+     * Performs a map-only refresh. Safe to call during an active refresh.
+     * If a refresh is in progress, flags are captured and applied to the outer refresh.
+     * Flag accumulation is intentional - they persist until the next successful refreshModel().
      */
     public reMapRows(): void {
         if (this.refreshingModel || this.refreshingData) {
@@ -563,6 +564,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         if (this.deferRefresh(params)) {
             // Refresh is deferred. Capture flags to apply when refresh eventually occurs.
+            // Flag accumulation is intentional - they persist until the next successful refreshModel().
             this.setPendingRefreshFlags(params);
             this.rowDataUpdatedPending ||= rowDataUpdated;
             return;
