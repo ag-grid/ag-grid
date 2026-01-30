@@ -914,6 +914,192 @@ describe('ag-grid grouping expanded state', () => {
         expect(lastEvent.keepRenderedRows).toBe(false);
     });
 
+    test('updating autoGroupColumnDef during expandAll does not break grid state', async () => {
+        // This test verifies that updating autoGroupColumnDef reference during expandAll
+        // (which triggers a nested refresh) does not cause the grid to enter a broken state.
+        // This is a regression test for a bug where changing autoGroupColumnDef during
+        // expansion would cause issues due to nested refresh handling.
+
+        const modelUpdatedEvents: ModelUpdatedEvent[] = [];
+        let updateAutoGroupDuringRefresh = false;
+        const rowData = cachedJSONObjects.array([
+            { id: '1', country: 'Ireland', year: 2020, athlete: 'John Smith' },
+            { id: '2', country: 'Ireland', year: 2021, athlete: 'Jane Doe' },
+            { id: '3', country: 'Italy', year: 2020, athlete: 'Mario Rossi' },
+            { id: '4', country: 'Italy', year: 2021, athlete: 'Luigi Verdi' },
+        ]);
+
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', rowGroup: true, hide: true },
+                { field: 'athlete' },
+            ],
+            autoGroupColumnDef: { headerName: 'Country/Year', minWidth: 200 },
+            animateRows: false,
+            groupDefaultExpanded: 0, // All collapsed initially
+            rowData,
+            getRowId: (params) => params.data.id,
+            postSortRows: (params) => {
+                // postSortRows is called during the sort stage while refreshingModel is true
+                // Updating autoGroupColumnDef during this callback triggers a nested refresh
+                if (updateAutoGroupDuringRefresh) {
+                    updateAutoGroupDuringRefresh = false;
+                    // Update autoGroupColumnDef with a new object reference - this triggers column processing
+                    params.api.setGridOption('autoGroupColumnDef', { headerName: 'Group', minWidth: 250 });
+                    // Also call expandAll which triggers reMapRows
+                    params.api.expandAll();
+                }
+            },
+            onModelUpdated: (event) => {
+                modelUpdatedEvents.push(event);
+            },
+        };
+
+        const api = gridsManager.createGrid('myGrid', gridOptions);
+        await asyncSetTimeout(1);
+
+        await new GridRows(api, 'initial - all collapsed').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├─┬ LEAF_GROUP collapsed hidden id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
+            │ │ └── LEAF hidden id:1 country:"Ireland" year:2020 athlete:"John Smith"
+            │ └─┬ LEAF_GROUP collapsed hidden id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
+            │ · └── LEAF hidden id:2 country:"Ireland" year:2021 athlete:"Jane Doe"
+            └─┬ filler collapsed id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├─┬ LEAF_GROUP collapsed hidden id:row-group-country-Italy-year-2020 ag-Grid-AutoColumn:2020
+            · │ └── LEAF hidden id:3 country:"Italy" year:2020 athlete:"Mario Rossi"
+            · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-Italy-year-2021 ag-Grid-AutoColumn:2021
+            · · └── LEAF hidden id:4 country:"Italy" year:2021 athlete:"Luigi Verdi"
+        `);
+
+        // Verify initial autoGroupColumnDef
+        const autoGroupCol = api.getColumn('ag-Grid-AutoColumn');
+        expect(autoGroupCol?.getColDef().headerName).toBe('Country/Year');
+
+        // Clear events after initial grid creation
+        modelUpdatedEvents.length = 0;
+
+        // Set flag to trigger autoGroupColumnDef update + expandAll during the next refresh
+        updateAutoGroupDuringRefresh = true;
+
+        // Trigger a row data update - this will fire postSortRows during the refresh
+        // which will update autoGroupColumnDef and call expandAll() while refreshingModel is true
+        api.setGridOption(
+            'rowData',
+            cachedJSONObjects.array([
+                { id: '1', country: 'Ireland', year: 2020, athlete: 'John Smith Updated' },
+                { id: '2', country: 'Ireland', year: 2021, athlete: 'Jane Doe' },
+                { id: '3', country: 'Italy', year: 2020, athlete: 'Mario Rossi' },
+                { id: '4', country: 'Italy', year: 2021, athlete: 'Luigi Verdi' },
+            ])
+        );
+        await asyncSetTimeout(1);
+
+        // After the refresh, all groups should be expanded and the autoGroupColumnDef should be updated
+        await new GridRows(api, 'after autoGroupColumnDef update and expandAll during refresh').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
+            │ │ └── LEAF id:1 country:"Ireland" year:2020 athlete:"John Smith Updated"
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
+            │ · └── LEAF id:2 country:"Ireland" year:2021 athlete:"Jane Doe"
+            └─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2020 ag-Grid-AutoColumn:2020
+            · │ └── LEAF id:3 country:"Italy" year:2020 athlete:"Mario Rossi"
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2021 ag-Grid-AutoColumn:2021
+            · · └── LEAF id:4 country:"Italy" year:2021 athlete:"Luigi Verdi"
+        `);
+
+        // Verify autoGroupColumnDef was updated
+        expect(api.getColumn('ag-Grid-AutoColumn')?.getColDef().headerName).toBe('Group');
+        expect(api.getColumn('ag-Grid-AutoColumn')?.getColDef().minWidth).toBe(250);
+
+        // Verify the grid is in a valid state - should have correct row counts
+        expect(api.getDisplayedRowCount()).toBe(10); // 2 filler + 4 year groups + 4 leaves
+
+        // Verify each row node has correct state and is not duplicated/corrupted
+        const irelandNode = api.getRowNode('row-group-country-Ireland');
+        const italyNode = api.getRowNode('row-group-country-Italy');
+        const ireland2020Node = api.getRowNode('row-group-country-Ireland-year-2020');
+
+        expect(irelandNode).toBeDefined();
+        expect(irelandNode!.expanded).toBe(true);
+        expect(irelandNode!.destroyed).toBe(false);
+
+        expect(italyNode).toBeDefined();
+        expect(italyNode!.expanded).toBe(true);
+        expect(italyNode!.destroyed).toBe(false);
+
+        // Verify individual row collapse works - this is the key test for the broken state bug
+        // where some rows couldn't expand/collapse after the nested refresh
+        api.setRowNodeExpanded(irelandNode!, false, false, true);
+        await asyncSetTimeout(1);
+
+        await new GridRows(api, 'after collapsing Ireland individually').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├─┬ LEAF_GROUP hidden id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
+            │ │ └── LEAF hidden id:1 country:"Ireland" year:2020 athlete:"John Smith Updated"
+            │ └─┬ LEAF_GROUP hidden id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
+            │ · └── LEAF hidden id:2 country:"Ireland" year:2021 athlete:"Jane Doe"
+            └─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2020 ag-Grid-AutoColumn:2020
+            · │ └── LEAF id:3 country:"Italy" year:2020 athlete:"Mario Rossi"
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2021 ag-Grid-AutoColumn:2021
+            · · └── LEAF id:4 country:"Italy" year:2021 athlete:"Luigi Verdi"
+        `);
+
+        expect(api.getDisplayedRowCount()).toBe(6); // 1 collapsed + 1 expanded filler + 2 year groups + 2 leaves
+
+        // Verify we can expand the collapsed node again
+        api.setRowNodeExpanded(irelandNode!, true, false, true);
+        await asyncSetTimeout(1);
+
+        expect(irelandNode!.expanded).toBe(true);
+        expect(api.getDisplayedRowCount()).toBe(10);
+
+        // Now collapse a nested year group to verify nested expand/collapse works
+        api.setRowNodeExpanded(ireland2020Node!, false, false, true);
+        await asyncSetTimeout(1);
+
+        await new GridRows(api, 'after collapsing Ireland 2020 year group').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
+            │ │ └── LEAF hidden id:1 country:"Ireland" year:2020 athlete:"John Smith Updated"
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
+            │ · └── LEAF id:2 country:"Ireland" year:2021 athlete:"Jane Doe"
+            └─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2020 ag-Grid-AutoColumn:2020
+            · │ └── LEAF id:3 country:"Italy" year:2020 athlete:"Mario Rossi"
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2021 ag-Grid-AutoColumn:2021
+            · · └── LEAF id:4 country:"Italy" year:2021 athlete:"Luigi Verdi"
+        `);
+
+        expect(api.getDisplayedRowCount()).toBe(9); // 2 filler + 4 year groups + 3 leaves (1 hidden)
+
+        // Verify we can still interact with the grid - collapseAll
+        api.collapseAll();
+        await asyncSetTimeout(1);
+
+        await new GridRows(api, 'after collapseAll').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├─┬ LEAF_GROUP collapsed hidden id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
+            │ │ └── LEAF hidden id:1 country:"Ireland" year:2020 athlete:"John Smith Updated"
+            │ └─┬ LEAF_GROUP collapsed hidden id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
+            │ · └── LEAF hidden id:2 country:"Ireland" year:2021 athlete:"Jane Doe"
+            └─┬ filler collapsed id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├─┬ LEAF_GROUP collapsed hidden id:row-group-country-Italy-year-2020 ag-Grid-AutoColumn:2020
+            · │ └── LEAF hidden id:3 country:"Italy" year:2020 athlete:"Mario Rossi"
+            · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-Italy-year-2021 ag-Grid-AutoColumn:2021
+            · · └── LEAF hidden id:4 country:"Italy" year:2021 athlete:"Luigi Verdi"
+        `);
+
+        expect(api.getDisplayedRowCount()).toBe(2); // Only 2 collapsed filler groups visible
+    });
+
     test('expansion during transaction uses proper event flow', async () => {
         // This test verifies that expansion operations work correctly with transactions
 
@@ -1009,7 +1195,7 @@ describe('ag-grid grouping expanded state', () => {
             { id: '4', country: 'France', athlete: 'Jean Dupont' },
         ]);
 
-        const gridOptions: GridOptions = {
+        const api = await gridsManager.createGridAndWait('myGrid', {
             columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
             autoGroupColumnDef: { headerName: 'Country' },
             animateRows: false,
@@ -1021,10 +1207,7 @@ describe('ag-grid grouping expanded state', () => {
             onModelUpdated: (event) => {
                 modelUpdatedEvents.push(event);
             },
-        };
-
-        const api = gridsManager.createGrid('myGrid', gridOptions);
-        await asyncSetTimeout(1);
+        });
 
         await new GridRows(api, 'initial - Ireland pinned', { checkDom: false }).check(`
             PINNED_TOP id:t-top-row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
