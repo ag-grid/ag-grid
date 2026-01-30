@@ -392,14 +392,6 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         this.eventSvc.dispatchEvent({ type: 'pinnedRowsChanged' });
         node?.dispatchRowEvent('rowPinned');
     }
-
-    /** Refreshes CSRM if not already refreshing */
-    private refreshCSRM(): void {
-        const csrm = this.csrm;
-        if (csrm && !csrm.refreshingModel) {
-            csrm.refreshModel({ step: 'map' });
-        }
-    }
 }
 
 function refreshRowPositions(beans: BeanCollection, container: PinnedRows): boolean {
