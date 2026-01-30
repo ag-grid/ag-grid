@@ -626,10 +626,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         });
     }
 
-    /**
-     * Checks if the refresh should be deferred.
-     * Returns true if caller should set rowDataUpdatedPending and return early.
-     */
+    /** Checks if the refresh should be deferred, updates the pending flags if so and returns true. */
     private deferRefresh(params: RefreshModelParams): boolean {
         // Nested refresh - capture flags for the outer refresh to use
         if (this.refreshingModel) {

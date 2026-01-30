@@ -331,8 +331,8 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             if (!container) {
                 return;
             }
-            container.delete(pinnedSibling);
             _destroyRowNodeSibling(pinnedSibling);
+            container.delete(pinnedSibling);
         } else {
             // pin
             if (container && container.floating !== float) {
