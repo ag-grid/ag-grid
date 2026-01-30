@@ -570,11 +570,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 this.noKeepUndoRedoStack ||= !params.keepUndoRedoStack;
                 this.noAnimate ||= !params.animate;
             }
-            // When suppressModelUpdateAfterUpdateTransaction short-circuits refreshModel,
-            // we must clear refreshingData to avoid blocking later reMapRows() calls.
-            // Without this, reMapRows would just set pending flags and never trigger a refresh.
+            // Clear pending flags when refresh is suppressed to avoid blocking later refreshModel() calls.
             if (!refreshingModel) {
-                this.refreshingData = false;
+                this.clearPendingRefreshFlags();
             }
             return;
         }
@@ -584,7 +582,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             params.step = 'group'; // Ensure grouping runs
         }
 
-        this.updateParams(params); // Apply forced flags from any nested refresh calls
+        this.updateRefreshParams(params); // Apply forced flags from any nested refresh calls
 
         this.refreshingModel = true; // prevent nested refreshModel calls
 
@@ -623,15 +621,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.setRowTopAndRowIndex(displayedNodesMapped);
         this.clearRowTopAndRowIndex(changedPath, displayedNodesMapped);
 
-        this.updateParams(params); // Apply forced flags from any nested refresh calls
-
-        // Reset pending flags
-
-        this.pendingNewData = false;
-        this.noKeepRenderedRows = false;
-        this.noKeepUndoRedoStack = false;
-        this.noAnimate = false;
-        this.refreshingData = false;
+        this.updateRefreshParams(params); // Apply forced flags from any nested refresh calls
+        this.clearPendingRefreshFlags();
         this.refreshingModel = false;
 
         // finally dispatch the final model updated event with the correct values
@@ -645,8 +636,17 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         });
     }
 
+    /** Clears pending refresh flags. Called at the end of refreshModel or when a refresh is suppressed. */
+    private clearPendingRefreshFlags(): void {
+        this.refreshingData = false;
+        this.pendingNewData = false;
+        this.noKeepRenderedRows = false;
+        this.noKeepUndoRedoStack = false;
+        this.noAnimate = false;
+    }
+
     /** Updates the params to reflect any forced flags from nested refresh calls. */
-    private updateParams(params: RefreshModelParams): void {
+    private updateRefreshParams(params: RefreshModelParams): void {
         params.newData = this.pendingNewData || !!params.newData;
         params.keepRenderedRows = !this.noKeepRenderedRows && !!params.keepRenderedRows;
         params.keepUndoRedoStack = !this.noKeepUndoRedoStack && !!params.keepUndoRedoStack;

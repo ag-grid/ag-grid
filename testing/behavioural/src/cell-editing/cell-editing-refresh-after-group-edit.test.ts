@@ -135,8 +135,6 @@ describe('cell editing with refreshAfterGroupEdit', () => {
 
         expect(batchStoppedEvents).toHaveLength(1);
         expect(modelUpdatedEvents).toHaveLength(1);
-        // Note: animate is true because groupEditService.csrmRefresh uses suppressAnimationFrame (defaults to false),
-        // not animateRows. So animate=true even though we don't have an explicit setting.
         expect(modelUpdatedEvents[0].animate).toBe(true);
         expect(modelUpdatedEvents[0].keepRenderedRows).toBe(true);
         expect(modelUpdatedEvents[0].newData).toBe(false);
