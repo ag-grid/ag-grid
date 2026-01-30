@@ -214,37 +214,32 @@ body > #highlighter {
 
 .controls-row {
     display: flex;
-    justify-content: space-between;
-}
-
-.controls-left {
-    display: flex;
     align-items: center;
     flex-wrap: wrap;
     gap: var(--row-gap);
     font-variant: tabular-nums;
 }
 
-.controls-left + .controls-left {
+.controls-row + .controls-row {
     margin-top: var(--row-gap);
 }
 
-.controls-left.center {
+.controls-row.center {
     justify-content: center;
 }
 
-.controls-left .push-right {
+.controls-row .push-right {
     margin-left: auto;
 }
 
-.controls-left .push-left {
+.controls-row .push-left {
     margin-right: auto;
 }
 
-.controls-left .gap-right {
+.controls-row .gap-right {
     margin-right: calc(var(--row-gap) * 6);
 }
 
-.controls-left .gap-left {
+.controls-row .gap-left {
     margin-left: calc(var(--row-gap) * 6);
 }
