@@ -537,9 +537,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             // A refresh is in progress - set flags so the final modelUpdated event uses the right values
             this.noKeepRenderedRows = true;
             this.noKeepUndoRedoStack = true;
+            this.noAnimate = true;
             return;
         }
-        this.refreshModel({ step: 'map', keepRenderedRows: false, keepUndoRedoStack: false });
+        this.refreshModel({ step: 'map', keepRenderedRows: false, keepUndoRedoStack: false, animate: false });
     }
 
     public refreshModel(params: RefreshModelParams): void {
@@ -568,6 +569,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 this.noKeepRenderedRows ||= !params.keepRenderedRows;
                 this.noKeepUndoRedoStack ||= !params.keepUndoRedoStack;
                 this.noAnimate ||= !params.animate;
+            }
+            // When suppressModelUpdateAfterUpdateTransaction short-circuits refreshModel,
+            // we must clear refreshingData to avoid blocking later reMapRows() calls.
+            // Without this, reMapRows would just set pending flags and never trigger a refresh.
+            if (!refreshingModel) {
+                this.refreshingData = false;
             }
             return;
         }
