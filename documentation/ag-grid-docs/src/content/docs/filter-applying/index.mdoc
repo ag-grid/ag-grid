@@ -6,7 +6,7 @@ This section describes the different ways to apply column filters.
 
 ## Apply, Clear, Reset and Cancel Buttons
 
-By default, the four filters provided by the grid - [Text Filter](./filter-text/), [Number Filter](./filter-number/), [Date Filter](./filter-date/) and [Set Filter](./filter-set/) - support different action buttons. When `enableFilterHandlers = true`, the [Multi Filter](./filter-multi/#applying-multi-filters) and [Custom Filter Components](./component-filter/#using-buttons) can also support action buttons.
+By default, the provided filters - [Text Filter](./filter-text/), [Number Filter](./filter-number/), [BigInt Filter](./filter-bigint/), [Date Filter](./filter-date/) and [Set Filter](./filter-set/) - support different action buttons. When `enableFilterHandlers = true`, the [Multi Filter](./filter-multi/#applying-multi-filters) and [Custom Filter Components](./component-filter/#using-buttons) can also support action buttons.
 
 The four supported action buttons are:
 - **Apply** - When the Apply button is used, the filter is only applied once the Apply button is pressed. This is useful if the filtering operation will take a long time because the dataset is large, or if using server-side filtering (thus preventing unnecessary calls to the server). Pressing {% kbd "↵ Enter" /%} is equivalent to pressing the Apply button (except for the [Set Filter](./filter-set-mini-filter/#keyboard-shortcuts)).

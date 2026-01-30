@@ -68,7 +68,7 @@ const gridOptions = {
 
 Labels (e.g. "Rows", "Total Rows", "Average") and number formatting are changed using the grid's [Localisation](./localisation/).
 
-The Aggregation Panel `agAggregationComponent` will only work on number values.
+The Aggregation Panel `agAggregationComponent` works with number and `bigint` values. When `bigint` values are present, `avg` uses integer division and discards the fractional part.
 
 {% gridExampleRunner title="Status Bar Params" name="status-bar" /%}
 

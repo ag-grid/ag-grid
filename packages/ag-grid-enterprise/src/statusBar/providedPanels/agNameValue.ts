@@ -28,7 +28,12 @@ export class AgNameValue extends Component {
         this.eLabel.textContent = this.getLocaleTextFunc()(key, defaultValue);
     }
 
-    public setValue(value: number, totalRows: number): void {
+    public setValue(value: number | bigint | null, totalRows: number): void {
+        if (typeof value === 'bigint') {
+            this.eValue.textContent = value.toString();
+            return;
+        }
+
         this.eValue.textContent = this.valueFormatter(
             _addGridCommonParams(this.gos, { value, totalRows, key: this.key })
         );

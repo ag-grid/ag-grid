@@ -110,13 +110,13 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
     private setAggregationComponentValue(
         aggFuncName: AggregationStatusPanelAggFunc,
-        value: number | null,
+        value: number | bigint | null,
         visible: boolean
     ) {
         const statusBarValueComponent = this.getAllowedAggregationValueComponent(aggFuncName);
         const totalRow = _getTotalRowCount(this.beans.rowModel);
         if (_exists(statusBarValueComponent) && statusBarValueComponent) {
-            statusBarValueComponent.setValue(value!, totalRow);
+            statusBarValueComponent.setValue(value, totalRow);
             statusBarValueComponent.setDisplayed(visible);
         } else {
             // might have previously been visible, so hide now
@@ -154,7 +154,52 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         let min: number | null = null;
         let max: number | null = null;
 
+        let useBigIntAggregation = false;
+        let bigIntSum: bigint | null = null;
+        let bigIntMin: bigint | null = null;
+        let bigIntMax: bigint | null = null;
+        let bigIntCount = 0;
+
         const cellsSoFar: any = {};
+
+        const addBigIntValue = (value: bigint | null): void => {
+            if (value == null) {
+                return;
+            }
+
+            if (bigIntSum == null) {
+                bigIntSum = value;
+                bigIntMin = value;
+                bigIntMax = value;
+            } else {
+                bigIntSum += value;
+                if (bigIntMin == null || value < bigIntMin) {
+                    bigIntMin = value;
+                }
+                if (bigIntMax == null || value > bigIntMax) {
+                    bigIntMax = value;
+                }
+            }
+
+            bigIntCount++;
+        };
+
+        const enableBigIntAggregation = (): void => {
+            if (useBigIntAggregation) {
+                return;
+            }
+
+            useBigIntAggregation = true;
+
+            if (numberCount > 0) {
+                const minValue = min ?? 0;
+                const maxValue = max ?? 0;
+                bigIntSum = BigInt(sum);
+                bigIntMin = BigInt(minValue);
+                bigIntMax = BigInt(maxValue);
+                bigIntCount = numberCount;
+            }
+        };
 
         if (cellRanges?.length && rangeSvc) {
             for (let i = 0; i < cellRanges.length; i++) {
@@ -213,7 +258,20 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                             value = Number(value);
                         }
 
+                        if (typeof value === 'bigint') {
+                            enableBigIntAggregation();
+                            addBigIntValue(value);
+                            return;
+                        }
+
                         if (typeof value === 'number' && !isNaN(value)) {
+                            if (useBigIntAggregation) {
+                                if (Number.isInteger(value)) {
+                                    addBigIntValue(BigInt(value));
+                                }
+                                return;
+                            }
+
                             sum += value;
 
                             if (max === null || value > max) {
@@ -234,15 +292,24 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         }
 
         const gotResult = count > 1;
-        const gotNumberResult = numberCount > 1;
+        const gotNumberResult = !useBigIntAggregation && numberCount > 1;
+        const gotBigIntResult = useBigIntAggregation && bigIntCount > 1;
 
         // we show count even if no numbers
         this.setAggregationComponentValue('count', count, gotResult);
 
         // show if numbers found
-        this.setAggregationComponentValue('sum', sum, gotNumberResult);
-        this.setAggregationComponentValue('min', min, gotNumberResult);
-        this.setAggregationComponentValue('max', max, gotNumberResult);
-        this.setAggregationComponentValue('avg', sum / numberCount, gotNumberResult);
+        if (useBigIntAggregation) {
+            const avg = bigIntSum != null && bigIntCount > 0 ? bigIntSum / BigInt(bigIntCount) : null;
+            this.setAggregationComponentValue('sum', bigIntSum, gotBigIntResult);
+            this.setAggregationComponentValue('min', bigIntMin, gotBigIntResult);
+            this.setAggregationComponentValue('max', bigIntMax, gotBigIntResult);
+            this.setAggregationComponentValue('avg', avg, gotBigIntResult);
+        } else {
+            this.setAggregationComponentValue('sum', sum, gotNumberResult);
+            this.setAggregationComponentValue('min', min, gotNumberResult);
+            this.setAggregationComponentValue('max', max, gotNumberResult);
+            this.setAggregationComponentValue('avg', sum / numberCount, gotNumberResult);
+        }
     }
 }
