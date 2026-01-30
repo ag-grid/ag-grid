@@ -562,7 +562,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
 
         if (this.deferRefresh(params)) {
-            // Refresh is deferred - capture rowDataUpdated flag and exit
+            // Refresh is deferred - capture flags and exit
+            this.setPendingRefreshFlags(params);
             this.rowDataUpdatedPending ||= rowDataUpdated;
             return;
         }
@@ -626,31 +627,27 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         });
     }
 
-    /** Checks if the refresh should be deferred, updates the pending flags if so and returns true. */
+    /** Checks if the refresh should be deferred. Caller must call setPendingRefreshFlags when this returns true. */
     private deferRefresh(params: RefreshModelParams): boolean {
-        // Nested refresh - capture flags for the outer refresh to use
         if (this.refreshingModel) {
-            this.setPendingRefreshFlags(params);
-            return true;
+            return true; // Nested refresh
         }
 
-        // Suppressed update-only transaction - clear refreshingData flag when started (bugfix)
         if (this.isSuppressModelUpdateAfterUpdateTransaction(params)) {
+            // Suppressed update-only transaction - clear refreshingData when started
             if (this.started) {
                 this.refreshingData = false;
             }
             return true;
         }
 
-        // Columns being set up - capture flags, refresh will follow via newColumnsLoaded event
         if (this.beans.colModel.changeEventsDispatching) {
-            this.setPendingRefreshFlags(params);
+            // Columns being set up - refresh will follow via newColumnsLoaded event
             return true;
         }
 
-        // Not started yet - capture flags, start() will trigger the initial refresh
         if (!this.started) {
-            this.setPendingRefreshFlags(params);
+            // Not started yet - start() will trigger the initial refresh
             return true;
         }
 
