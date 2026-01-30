@@ -532,9 +532,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         return true; // Nothing changed, or only updates with no new rows and no removals
     }
 
+    /**
+     * Performs a map-only refresh. Safe to call during an active refresh (e.g., from row destroy) -
+     * if a refresh is in progress, the flags are captured and applied to the outer refresh.
+     */
     public reMapRows(): void {
         if (this.refreshingModel || this.refreshingData) {
-            // A refresh is in progress - set flags so the final modelUpdated event uses the right values
+            // A refresh is in progress - capture flags so the final modelUpdated event uses the right values.
+            // This is the intended behaviour when reMapRows is called during row destruction or user callbacks.
             this.noKeepRenderedRows = true;
             this.noKeepUndoRedoStack = true;
             this.noAnimate = true;

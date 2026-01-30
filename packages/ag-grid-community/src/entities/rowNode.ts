@@ -801,6 +801,8 @@ export class RowNode<TData = any>
         // Unpin any pinned sibling when this source row is destroyed.
         // Only do this when destroying the source row (not the pinned row itself,
         // since pinnedSibling of a pinned row points back to the source row).
+        // Note: If called during an active refresh, pinRow() may call reMapRows() which
+        // safely captures flags for the outer refresh rather than triggering nested calls.
         const pinnedSibling = this.pinnedSibling;
         if (pinnedSibling && !this.rowPinned) {
             this.beans.pinnedRowModel?.pinRow(pinnedSibling, null);
