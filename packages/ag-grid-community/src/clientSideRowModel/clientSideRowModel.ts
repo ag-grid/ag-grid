@@ -549,7 +549,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public refreshModel(params: RefreshModelParams): void {
-        const { nodeManager, beans, eventSvc, started, refreshingModel } = this;
+        const { nodeManager, beans, eventSvc, started } = this;
         if (!nodeManager) {
             return; // destroyed
         }
@@ -561,20 +561,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             eventSvc.dispatchEvent({ type: 'rowDataUpdated' });
         }
 
-        if (
-            !started ||
-            refreshingModel ||
-            beans.colModel.changeEventsDispatching ||
-            this.isSuppressModelUpdateAfterUpdateTransaction(params)
-        ) {
+        if (this.shouldDeferRefresh(params)) {
             this.rowDataUpdatedPending ||= rowDataUpdated;
-            if (refreshingModel || this.refreshingData) {
-                // Nested refresh - capture flags for the outer refresh to use
-                this.setPendingRefreshFlags(params);
-            } else if (started) {
-                // changeEventsDispatching or suppressedByUpdateTransaction - clear stale flags
-                this.clearPendingRefreshFlags();
-            }
             return;
         }
 
@@ -635,6 +623,37 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             newPage: false,
             keepUndoRedoStack: params.keepUndoRedoStack,
         });
+    }
+
+    /**
+     * Checks if the refresh should be deferred and handles flag capture/clear.
+     * Returns true if caller should set rowDataUpdatedPending and return early.
+     */
+    private shouldDeferRefresh(params: RefreshModelParams): boolean {
+        // Nested refresh - always capture flags for the outer refresh to use
+        if (this.refreshingModel) {
+            this.setPendingRefreshFlags(params);
+            return true;
+        }
+
+        const started = this.started;
+
+        // Suppressed transaction (only when started) - data update complete, clear all flags
+        if (started && this.isSuppressModelUpdateAfterUpdateTransaction(params)) {
+            this.clearPendingRefreshFlags();
+            return true;
+        }
+
+        // Deferred refresh - capture flags for when the refresh eventually runs:
+        // - changeEventsDispatching: refresh will follow via newColumnsLoaded event
+        // - refreshingData: waiting for start() or events to complete
+        if (this.refreshingData || this.beans.colModel.changeEventsDispatching) {
+            this.setPendingRefreshFlags(params);
+            return true;
+        }
+
+        // Not started yet - do nothing, start() will handle
+        return !started;
     }
 
     /** Captures flags from blocked refresh calls to apply to the final modelUpdated event. */
