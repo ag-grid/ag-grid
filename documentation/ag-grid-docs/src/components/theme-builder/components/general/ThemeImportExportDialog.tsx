@@ -75,7 +75,7 @@ export const ThemeImportExportDialog = ({ close, initialTab = 'Export' }: ThemeI
 const HelpText = () => (
     <Paragraph>
         View our{' '}
-        <a href={urlWithBaseUrl('/react-data-grid/theming-theme-builder/')} target="_blank">
+        <a href={urlWithBaseUrl('/data-grid/theming-theme-builder/')} target="_blank">
             <strong>Theme Builder Documentation</strong>
         </a>{' '}
         to learn about exporting and importing AG Grid themes directly from Theme Builder.
