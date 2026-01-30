@@ -549,7 +549,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public refreshModel(params: RefreshModelParams): void {
-        const { nodeManager, beans, eventSvc, started } = this;
+        const { nodeManager, eventSvc, started } = this;
         if (!nodeManager) {
             return; // destroyed
         }
@@ -561,9 +561,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             eventSvc.dispatchEvent({ type: 'rowDataUpdated' });
         }
 
+        // Capture flags from this call so if deferred or an error occurs, they are not lost.
+        this.setPendingRefreshFlags(params);
+
         if (this.deferRefresh(params)) {
-            // Refresh is deferred - capture flags and exit
-            this.setPendingRefreshFlags(params);
+            // Refresh is deferred
             this.rowDataUpdatedPending ||= rowDataUpdated;
             return;
         }
@@ -574,6 +576,31 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
 
         this.refreshingModel = true; // Prevent nested refreshModel calls
+        try {
+            this.executeRefresh(params, changedPath, rowDataUpdated);
+
+            // Clear accumulated state flags only on successful completion
+            this.clearPendingRefreshFlags();
+        } finally {
+            // Reset lock flags even on failure to prevent the grid from being stuck
+            this.refreshingData = false;
+            this.refreshingModel = false;
+        }
+
+        // finally dispatch the final model updated event with the correct values
+        eventSvc.dispatchEvent({
+            type: 'modelUpdated',
+            animate: params.animate,
+            keepRenderedRows: params.keepRenderedRows,
+            newData: params.newData,
+            newPage: false,
+            keepUndoRedoStack: params.keepUndoRedoStack,
+        });
+    }
+
+    /** Executes the refresh pipeline stages and updates row positions. */
+    private executeRefresh(params: RefreshModelParams, changedPath: ChangedPath, rowDataUpdated: boolean): void {
+        const { beans } = this;
 
         this.updateRefreshParams(params); // Apply forced flags from any nested refresh calls
 
@@ -613,18 +640,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.clearRowTopAndRowIndex(changedPath, displayedNodesMapped);
 
         this.updateRefreshParams(params); // Apply forced flags from any nested refresh calls
-        this.clearPendingRefreshFlags();
-        this.refreshingModel = false;
-
-        // finally dispatch the final model updated event with the correct values
-        eventSvc.dispatchEvent({
-            type: 'modelUpdated',
-            animate: params.animate,
-            keepRenderedRows: params.keepRenderedRows,
-            newData: params.newData,
-            newPage: false,
-            keepUndoRedoStack: params.keepUndoRedoStack,
-        });
     }
 
     /** Checks if the refresh should be deferred. Caller must call setPendingRefreshFlags when this returns true. */
@@ -633,16 +648,16 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             return true; // Nested refresh
         }
 
+        if (this.beans.colModel.changeEventsDispatching) {
+            // Columns being set up - refresh will follow via newColumnsLoaded event
+            return true;
+        }
+
         if (this.isSuppressModelUpdateAfterUpdateTransaction(params)) {
             // Suppressed update-only transaction - clear refreshingData when started
             if (this.started) {
                 this.refreshingData = false;
             }
-            return true;
-        }
-
-        if (this.beans.colModel.changeEventsDispatching) {
-            // Columns being set up - refresh will follow via newColumnsLoaded event
             return true;
         }
 
@@ -662,9 +677,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.noAnimate ||= !params.animate;
     }
 
-    /** Clears pending refresh flags. Called at the end of refreshModel or when a refresh is suppressed. */
+    /** Clears pending refresh flags. Called at the end of a successful refreshModel. */
     private clearPendingRefreshFlags(): void {
-        this.refreshingData = false;
         this.pendingNewData = false;
         this.noKeepRenderedRows = false;
         this.noKeepUndoRedoStack = false;
