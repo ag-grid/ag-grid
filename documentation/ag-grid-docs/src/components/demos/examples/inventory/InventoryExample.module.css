@@ -296,3 +296,7 @@
 .variantsText {
     opacity: 0.7;
 }
+
+.wrapper {
+    margin-bottom: 10px;
+}
