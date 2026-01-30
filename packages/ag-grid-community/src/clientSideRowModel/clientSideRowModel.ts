@@ -562,6 +562,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
 
         if (this.shouldDeferRefresh(params)) {
+            // Refresh is deferred - capture rowDataUpdated flag and exit
             this.rowDataUpdatedPending ||= rowDataUpdated;
             return;
         }
