@@ -15,6 +15,10 @@ The SSRM Transaction API allows rows to be added, removed or updated in the grid
 
 {% apiDocumentation source="grid-api/api.json" section="serverSideRowModel" names=["applyServerSideTransaction"] /%}
 
+{% note %}
+When the server-side store has a known last row index, remove transactions only delete rows that are currently in cache. If a delete is repeated or targets a row outside the loaded range, the grid ignores it and keeps the current store size. To explicitly set the new store size, provide `rowCount` on the transaction.
+{% /note %}
+
 These operations are shown in the snippet below:
 
 ```{% frameworkTransform=true %}
