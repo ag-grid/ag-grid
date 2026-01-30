@@ -185,29 +185,56 @@ export class AggregationComp extends Component implements IStatusPanelComp {
             bigIntCount++;
         };
 
+        const addNumberValue = (value: number): void => {
+            sum += value;
+
+            if (max === null || value > max) {
+                max = value;
+            }
+
+            if (min === null || value < min) {
+                min = value;
+            }
+
+            numberCount++;
+        };
+
         const enableBigIntAggregation = (): void => {
-            if (useBigIntAggregation) {
+            if (useBigIntAggregation || hasNonIntegerNumber) {
                 return;
             }
 
-            if (hasNonIntegerNumber) {
-                return;
-            }
+            useBigIntAggregation = true;
 
             if (numberCount > 0) {
                 const minValue = min ?? 0;
                 const maxValue = max ?? 0;
-                if (!Number.isInteger(sum) || !Number.isInteger(minValue) || !Number.isInteger(maxValue)) {
-                    hasNonIntegerNumber = true;
-                    return;
-                }
-
                 bigIntSum = BigInt(sum);
                 bigIntMin = BigInt(minValue);
                 bigIntMax = BigInt(maxValue);
                 bigIntCount = numberCount;
             }
-            useBigIntAggregation = true;
+        };
+
+        const disableBigIntAggregation = (): void => {
+            useBigIntAggregation = false;
+
+            if (bigIntCount > 0) {
+                sum = Number(bigIntSum ?? 0n);
+                min = bigIntMin == null ? null : Number(bigIntMin);
+                max = bigIntMax == null ? null : Number(bigIntMax);
+                numberCount = bigIntCount;
+            } else {
+                sum = 0;
+                min = null;
+                max = null;
+                numberCount = 0;
+            }
+
+            bigIntSum = null;
+            bigIntMin = null;
+            bigIntMax = null;
+            bigIntCount = 0;
         };
 
         if (cellRanges?.length && rangeSvc) {
@@ -268,9 +295,16 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                         }
 
                         if (typeof value === 'bigint') {
+                            if (hasNonIntegerNumber) {
+                                addNumberValue(Number(value));
+                                return;
+                            }
+
                             enableBigIntAggregation();
                             if (useBigIntAggregation) {
                                 addBigIntValue(value);
+                            } else {
+                                addNumberValue(Number(value));
                             }
                             return;
                         }
@@ -279,25 +313,20 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                             if (useBigIntAggregation) {
                                 if (Number.isInteger(value)) {
                                     addBigIntValue(BigInt(value));
+                                    return;
                                 }
+                                hasNonIntegerNumber = true;
+                                if (useBigIntAggregation) {
+                                    disableBigIntAggregation();
+                                }
+                                addNumberValue(value);
                                 return;
                             }
 
                             if (!Number.isInteger(value)) {
                                 hasNonIntegerNumber = true;
                             }
-
-                            sum += value;
-
-                            if (max === null || value > max) {
-                                max = value;
-                            }
-
-                            if (min === null || value < min) {
-                                min = value;
-                            }
-
-                            numberCount++;
+                            addNumberValue(value);
                         }
                     });
 
