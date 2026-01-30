@@ -253,6 +253,11 @@
                         },
                         {
                             "type": "item",
+                            "title": "Theme Builder",
+                            "path": "theming-theme-builder"
+                        },
+                        {
+                            "type": "item",
                             "title": "Distributing Shared Themes",
                             "path": "theming-distribution"
                         },
