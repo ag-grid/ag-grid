@@ -69,7 +69,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
      * which then triggers the listener here that calls refresh model again but at the filter stage
      * (which is about to be run by the original call).
      */
-    public refreshingModel: boolean = false;
+    private refreshingModel: boolean = false;
 
     /** Set by nested refresh calls to force newData=true in the final modelUpdated event. */
     private pendingNewData: boolean = false;
@@ -564,10 +564,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         ) {
             this.rowDataUpdatedPending ||= rowDataUpdated;
             if (refreshingModel || this.refreshingData) {
-                // Capture flags from blocked refresh calls to apply to the final modelUpdated event
+                // Nested refresh - capture flags for the outer refresh to use
                 this.setPendingRefreshFlags(params);
             } else if (started) {
-                // Not nested - must be changeEventsDispatching or suppressedByUpdateTransaction
+                // changeEventsDispatching or suppressedByUpdateTransaction - clear stale flags
                 this.clearPendingRefreshFlags();
             }
             return;
