@@ -561,11 +561,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             eventSvc.dispatchEvent({ type: 'rowDataUpdated' });
         }
 
-        // Capture flags from this call so if deferred or an error occurs, they are not lost.
-        this.setPendingRefreshFlags(params);
-
         if (this.deferRefresh(params)) {
-            // Refresh is deferred
+            // Refresh is deferred. Capture flags to apply when refresh eventually occurs.
+            this.setPendingRefreshFlags(params);
             this.rowDataUpdatedPending ||= rowDataUpdated;
             return;
         }
@@ -575,17 +573,27 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             params.step = 'group'; // Ensure grouping runs
         }
 
+        // Apply forced flags from any previous skipped refresh calls
+        this.updateRefreshParams(params);
+
+        let succeeded = false;
         this.refreshingModel = true; // Prevent nested refreshModel calls
         try {
             this.executeRefresh(params, changedPath, rowDataUpdated);
-
-            // Clear accumulated state flags only on successful completion
-            this.clearPendingRefreshFlags();
+            succeeded = true;
         } finally {
             // Reset lock flags even on failure to prevent the grid from being stuck
             this.refreshingData = false;
             this.refreshingModel = false;
+
+            if (!succeeded) {
+                // Capture flags so on error they are not lost.
+                this.setPendingRefreshFlags(params);
+            }
         }
+
+        // Clear accumulated state flags only on successful completion
+        this.clearPendingRefreshFlags();
 
         // finally dispatch the final model updated event with the correct values
         eventSvc.dispatchEvent({
@@ -601,8 +609,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     /** Executes the refresh pipeline stages and updates row positions. */
     private executeRefresh(params: RefreshModelParams, changedPath: ChangedPath, rowDataUpdated: boolean): void {
         const { beans } = this;
-
-        this.updateRefreshParams(params); // Apply forced flags from any nested refresh calls
 
         beans.masterDetailSvc?.refreshModel(params);
         if (rowDataUpdated && params.step !== 'group') {
