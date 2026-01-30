@@ -77,8 +77,8 @@ export const getRefTokenMatches = (text: string): RefTokenMatch[] => {
         let ref = match[0];
         const start = match.index ?? 0;
         const endIndex = start + ref.length;
-        // Allow partial ranges (e.g. "A1:") without relying on regex backtracking.
-        if (!ref.includes(':') && endIndex < text.length && text[endIndex] === ':') {
+        // Allow partial ranges (e.g. "A1:" or "A1:B2:") without relying on regex backtracking.
+        if (endIndex < text.length && text[endIndex] === ':') {
             ref += ':';
         }
         if (!isStandaloneRefToken(text, start, ref)) {
