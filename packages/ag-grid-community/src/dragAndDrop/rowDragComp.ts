@@ -1,5 +1,5 @@
 import type { LocaleTextFunc } from '../agStack/interfaces/iLocaleService';
-import { _isEventSupported } from '../agStack/utils/event';
+import { _isEventSupported, preventEventDefault } from '../agStack/utils/event';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import type { IRowDragItem } from '../interfaces/iRowDragItem';
@@ -171,13 +171,9 @@ export class RowDragComp extends Component {
         if (this.gos.get('enableCellTextSelection')) {
             this.removeMouseDownListener();
 
-            const preventDefault = (e?: MouseEvent | PointerEvent) => {
-                e?.preventDefault();
-            };
-
             const listeners: Record<string, (e: MouseEvent | PointerEvent) => void> = _isEventSupported('pointerdown')
-                ? { pointerdown: preventDefault }
-                : { mousedown: preventDefault };
+                ? { pointerdown: preventEventDefault }
+                : { mousedown: preventEventDefault };
 
             this.mouseDownListener = this.addManagedElementListeners(eGui, listeners)[0];
         }
