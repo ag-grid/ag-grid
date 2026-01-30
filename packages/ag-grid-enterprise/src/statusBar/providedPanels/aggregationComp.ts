@@ -154,7 +154,6 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         let min: number | null = null;
         let max: number | null = null;
         let hasNonIntegerNumber = false;
-        let hasNonIntegerNumber = false;
 
         let useBigIntAggregation = false;
         let bigIntSum: bigint | null = null;
