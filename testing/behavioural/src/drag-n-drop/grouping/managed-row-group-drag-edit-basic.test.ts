@@ -738,6 +738,11 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
 
         expect(api.getRowNode('2')?.data.group).toBe('B');
         expect(modelUpdatedEvents.length).toBe(1);
+        expect(modelUpdatedEvents[0].animate).toBe(true);
+        expect(modelUpdatedEvents[0].keepRenderedRows).toBe(true);
+        expect(modelUpdatedEvents[0].newData).toBe(false);
+        expect(modelUpdatedEvents[0].newPage).toBe(false);
+        expect(modelUpdatedEvents[0].keepUndoRedoStack).toBe(false);
 
         api.removeEventListener('modelUpdated', modelUpdatedListener);
     });

@@ -71,8 +71,17 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
      */
     public refreshingModel: boolean = false;
 
-    /** When true, the next modelUpdated event will have keepRenderedRows=false. Set by reMapRows(). */
-    private pendingRerender: boolean = false;
+    /** Set by nested refresh calls to force newData=true in the final modelUpdated event. */
+    private pendingNewData: boolean = false;
+
+    /** Set by nested reMapRows() or refreshModel() calls to force keepRenderedRows=false in the final modelUpdated event. */
+    private noKeepRenderedRows: boolean = false;
+
+    /** Set by nested reMapRows() or refreshModel() calls to force keepUndoRedoStack=false in the final modelUpdated event. */
+    private noKeepUndoRedoStack: boolean = false;
+
+    /** Set by nested refresh calls to prevent animate=true in the final modelUpdated event when any call didn't allow animation. */
+    private noAnimate: boolean = false;
 
     /** True after the first time row nodes have been created or data has been set. Used to determine when to fire rowCountReady. */
     private rowNodesCountReady: boolean = false;
@@ -525,12 +534,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     public reMapRows(): void {
         if (this.refreshingModel || this.refreshingData) {
-            // A refresh will happen. Mark that keepRenderedRows should be false.
-            this.pendingRerender = true;
-            return; // No need to trigger another refresh, we are doing one.
+            // A refresh is in progress - set flags so the final modelUpdated event uses the right values
+            this.noKeepRenderedRows = true;
+            this.noKeepUndoRedoStack = true;
+            return;
         }
-        // No refresh in progress, so trigger one now with keepRenderedRows false.
-        this.refreshModel({ step: 'map', keepRenderedRows: false });
+        this.refreshModel({ step: 'map', keepRenderedRows: false, keepUndoRedoStack: false });
     }
 
     public refreshModel(params: RefreshModelParams): void {
@@ -553,6 +562,13 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             this.isSuppressModelUpdateAfterUpdateTransaction(params)
         ) {
             this.rowDataUpdatedPending ||= rowDataUpdated;
+            if (refreshingModel || this.refreshingData) {
+                // Capture flags from blocked refresh calls to apply to the final modelUpdated event
+                this.pendingNewData ||= !!params.newData;
+                this.noKeepRenderedRows ||= !params.keepRenderedRows;
+                this.noKeepUndoRedoStack ||= !params.keepUndoRedoStack;
+                this.noAnimate ||= !params.animate;
+            }
             return;
         }
 
@@ -561,7 +577,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             params.step = 'group'; // Ensure grouping runs
         }
 
-        this.refreshingModel = true;
+        this.refreshingModel = true; // prevent nested refreshModel calls
 
         beans.masterDetailSvc?.refreshModel(params);
         if (rowDataUpdated && params.step !== 'group') {
@@ -598,20 +614,30 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.setRowTopAndRowIndex(displayedNodesMapped);
         this.clearRowTopAndRowIndex(changedPath, displayedNodesMapped);
 
-        const keepRenderedRows = !this.pendingRerender && params.keepRenderedRows;
+        // Apply forced flags from any nested refresh calls
 
-        // Reset pending rerender and refreshing flags
+        const newData = this.pendingNewData || !!params.newData;
+        const keepRenderedRows = !this.noKeepRenderedRows && !!params.keepRenderedRows;
+        const keepUndoRedoStack = !this.noKeepUndoRedoStack && !!params.keepUndoRedoStack;
+        const animate = !this.noAnimate && !!params.animate;
+
+        // Reset pending flags
+
+        this.pendingNewData = false;
+        this.noKeepRenderedRows = false;
+        this.noKeepUndoRedoStack = false;
+        this.noAnimate = false;
         this.refreshingData = false;
         this.refreshingModel = false;
-        this.pendingRerender = false;
 
+        // finally dispatch the final model updated event with the correct values
         eventSvc.dispatchEvent({
             type: 'modelUpdated',
-            animate: params.animate,
+            animate,
             keepRenderedRows,
-            newData: params.newData,
+            newData,
             newPage: false,
-            keepUndoRedoStack: params.keepUndoRedoStack,
+            keepUndoRedoStack,
         });
     }
 

@@ -819,8 +819,11 @@ describe('ag-grid grouping expanded state', () => {
         // which uses keepRenderedRows=true for performance optimisation
         expect(modelUpdatedEvents.length).toBe(1);
         const lastEvent = modelUpdatedEvents[0];
-        // The normal expansion path (via rowExpansionStateChanged) uses keepRenderedRows=true
+        expect(lastEvent.animate).toBe(false);
         expect(lastEvent.keepRenderedRows).toBe(true);
+        expect(lastEvent.newData).toBe(false);
+        expect(lastEvent.newPage).toBe(false);
+        expect(lastEvent.keepUndoRedoStack).toBe(false);
     });
 
     test('reMapRows during active refresh sets pendingRerender flag', async () => {
@@ -885,10 +888,10 @@ describe('ag-grid grouping expanded state', () => {
         api.setGridOption(
             'rowData',
             cachedJSONObjects.array([
-                { id: '1', country: 'Ireland', year: 2020, athlete: 'John Smith Updated' },
-                { id: '2', country: 'Ireland', year: 2021, athlete: 'Jane Doe' },
-                { id: '3', country: 'Italy', year: 2020, athlete: 'Mario Rossi' },
-                { id: '4', country: 'Italy', year: 2021, athlete: 'Luigi Verdi' },
+                { id: '1', country: 'Ireland', year: 2020, athlete: 'John Smith Updated 1' },
+                { id: '2', country: 'Ireland', year: 2021, athlete: 'Jane Doe 1' },
+                { id: '3', country: 'Italy', year: 2020, athlete: 'Mario Rossi 1' },
+                { id: '4', country: 'Italy', year: 2021, athlete: 'Luigi Verdi 1' },
             ])
         );
         await asyncSetTimeout(1);
@@ -898,20 +901,24 @@ describe('ag-grid grouping expanded state', () => {
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
-            │ │ └── LEAF id:1 country:"Ireland" year:2020 athlete:"John Smith Updated"
+            │ │ └── LEAF id:1 country:"Ireland" year:2020 athlete:"John Smith Updated 1"
             │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
-            │ · └── LEAF id:2 country:"Ireland" year:2021 athlete:"Jane Doe"
+            │ · └── LEAF id:2 country:"Ireland" year:2021 athlete:"Jane Doe 1"
             └─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
             · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2020 ag-Grid-AutoColumn:2020
-            · │ └── LEAF id:3 country:"Italy" year:2020 athlete:"Mario Rossi"
+            · │ └── LEAF id:3 country:"Italy" year:2020 athlete:"Mario Rossi 1"
             · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2021 ag-Grid-AutoColumn:2021
-            · · └── LEAF id:4 country:"Italy" year:2021 athlete:"Luigi Verdi"
+            · · └── LEAF id:4 country:"Italy" year:2021 athlete:"Luigi Verdi 1"
         `);
 
         // We expect only one modelUpdated event from the refresh also if we called expandAll during it
         expect(modelUpdatedEvents.length).toBe(1);
         const lastEvent = modelUpdatedEvents[modelUpdatedEvents.length - 1];
+        expect(lastEvent.animate).toBe(false);
         expect(lastEvent.keepRenderedRows).toBe(false);
+        expect(lastEvent.newData).toBe(false);
+        expect(lastEvent.newPage).toBe(false);
+        expect(lastEvent.keepUndoRedoStack).toBe(false);
     });
 
     test('updating autoGroupColumnDef during expandAll does not break grid state', async () => {
@@ -1113,7 +1120,6 @@ describe('ag-grid grouping expanded state', () => {
         const gridOptions: GridOptions = {
             columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
             autoGroupColumnDef: { headerName: 'Country' },
-            animateRows: false,
             groupDefaultExpanded: -1, // All expanded initially
             rowData,
             getRowId: (params) => params.data.id,
@@ -1156,6 +1162,11 @@ describe('ag-grid grouping expanded state', () => {
 
         // A single modelUpdated event should be fired for the transaction
         expect(modelUpdatedEvents.length).toBe(1);
+        expect(modelUpdatedEvents[0].animate).toBe(true);
+        expect(modelUpdatedEvents[0].keepRenderedRows).toBe(true);
+        expect(modelUpdatedEvents[0].newData).toBe(false);
+        expect(modelUpdatedEvents[0].newPage).toBe(false);
+        expect(modelUpdatedEvents[0].keepUndoRedoStack).toBe(false);
 
         modelUpdatedEvents.length = 0; // Clear events before next operation
 
@@ -1177,6 +1188,11 @@ describe('ag-grid grouping expanded state', () => {
 
         // A single modelUpdated event should be fired for the collapse
         expect(modelUpdatedEvents.length).toBe(1);
+        expect(modelUpdatedEvents[0].animate).toBe(false);
+        expect(modelUpdatedEvents[0].keepRenderedRows).toBe(true);
+        expect(modelUpdatedEvents[0].newData).toBe(false);
+        expect(modelUpdatedEvents[0].newPage).toBe(false);
+        expect(modelUpdatedEvents[0].keepUndoRedoStack).toBe(false);
 
         // Verify the grid state is correct
         expect(api.getDisplayedRowCount()).toBe(5); // 1 collapsed + 2 expanded groups + 2 visible leaves
@@ -1198,7 +1214,6 @@ describe('ag-grid grouping expanded state', () => {
         const api = await gridsManager.createGridAndWait('myGrid', {
             columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
             autoGroupColumnDef: { headerName: 'Country' },
-            animateRows: false,
             groupDefaultExpanded: -1, // All expanded initially
             rowData,
             getRowId: (params) => params.data.id,
@@ -1252,6 +1267,11 @@ describe('ag-grid grouping expanded state', () => {
 
         // A single modelUpdated event should have been triggered for the transaction
         expect(modelUpdatedEvents.length).toBe(1);
+        expect(modelUpdatedEvents[0].animate).toBe(true);
+        expect(modelUpdatedEvents[0].keepRenderedRows).toBe(true);
+        expect(modelUpdatedEvents[0].newData).toBe(false);
+        expect(modelUpdatedEvents[0].newPage).toBe(false);
+        expect(modelUpdatedEvents[0].keepUndoRedoStack).toBe(false);
 
         modelUpdatedEvents.length = 0;
 
@@ -1273,5 +1293,10 @@ describe('ag-grid grouping expanded state', () => {
 
         // A single modelUpdated event should have been triggered for the transaction
         expect(modelUpdatedEvents.length).toBe(1);
+        expect(modelUpdatedEvents[0].animate).toBe(true);
+        expect(modelUpdatedEvents[0].keepRenderedRows).toBe(true);
+        expect(modelUpdatedEvents[0].newData).toBe(false);
+        expect(modelUpdatedEvents[0].newPage).toBe(false);
+        expect(modelUpdatedEvents[0].keepUndoRedoStack).toBe(false);
     });
 });
