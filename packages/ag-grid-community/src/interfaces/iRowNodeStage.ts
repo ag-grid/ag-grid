@@ -1,7 +1,7 @@
 import type { ChangedRowNodes } from '../clientSideRowModel/changedRowNodes';
+import type { AgColumn } from '../entities/agColumn';
 import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
-import type { AgColumn } from '../main-internal';
 import type { ChangedPath } from '../utils/changedPath';
 import type { ClientSideRowModelStage, RefreshModelParams } from './iClientSideRowModel';
 
