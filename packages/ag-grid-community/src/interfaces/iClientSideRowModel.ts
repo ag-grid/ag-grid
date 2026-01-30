@@ -33,11 +33,6 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
     /** The root row containing all the rows */
     readonly rootNode: RowNode | null;
     readonly rowCountReady: boolean;
-    /** Whether the model is currently refreshing */
-    readonly isRefreshing: boolean;
-
-    /** Whether the model is currently refreshing */
-    readonly refreshingModel: boolean;
 
     updateRowData(rowDataTran: RowDataTransaction<TData>): RowNodeTransaction<TData> | null;
 
