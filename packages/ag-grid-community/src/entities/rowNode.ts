@@ -510,10 +510,13 @@ export class RowNode<TData = any>
     public setDataValue(colKey: string | AgColumn, newValue: any, eventSource?: string): boolean {
         const { colModel, valueSvc, gos, editSvc } = this.beans;
 
-        // if in pivot mode, grid columns wont include primary columns
-        let column = typeof colKey === 'string' ? colModel.getCol(colKey) ?? colModel.getColDefCol(colKey) : colKey;
+        if (colKey == null) {
+            return false; // no column
+        }
+
+        let column = colModel.getCol(colKey) ?? colModel.getColDefCol(colKey);
         if (!column) {
-            return false;
+            return false; // column not found
         }
 
         // For leaf (non-group) rows with pivot result columns, resolve to the underlying value column.

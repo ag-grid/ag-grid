@@ -407,7 +407,7 @@ export class ValueService extends BeanStub implements NamedBean {
      * @param column The `Column` to be updated
      * @param newValue The new value to be set
      * @param eventSource The event source
-     * @returns `True` if the value has been updated, otherwise`False`.
+     * @returns `true` if the value has been updated, otherwise `false`.
      */
     public setValue(rowNode: IRowNode, column: AgColumn, newValue: any, eventSource?: string): boolean {
         const colDef = column.getColDef();
