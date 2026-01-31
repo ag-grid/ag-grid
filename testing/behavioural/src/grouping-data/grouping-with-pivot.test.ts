@@ -1042,14 +1042,14 @@ describe('ag-grid grouping with pivot', () => {
             ROOT id:ROOT_NODE_ID pivot_year_2008_gold:11 pivot_year_2012_gold:4
             ├─┬ filler id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_year_2008_gold:8 pivot_year_2012_gold:2
             │ ├─┬ LEAF_GROUP collapsed id:row-group-country-USA-athlete-Michael ag-Grid-AutoColumn:"Michael" pivot_year_2008_gold:8 pivot_year_2012_gold:null
-            │ │ └── LEAF hidden id:1
+            │ │ └── LEAF hidden id:1 pivot_year_2008_gold:8 pivot_year_2012_gold:8
             │ └─┬ LEAF_GROUP collapsed id:row-group-country-USA-athlete-Ryan ag-Grid-AutoColumn:"Ryan" pivot_year_2008_gold:null pivot_year_2012_gold:2
-            │ · └── LEAF hidden id:2
+            │ · └── LEAF hidden id:2 pivot_year_2008_gold:2 pivot_year_2012_gold:2
             └─┬ filler id:"row-group-country-United Kingdom" ag-Grid-AutoColumn:"United Kingdom" pivot_year_2008_gold:3 pivot_year_2012_gold:2
             · ├─┬ LEAF_GROUP collapsed id:"row-group-country-United Kingdom-athlete-Chris" ag-Grid-AutoColumn:"Chris" pivot_year_2008_gold:3 pivot_year_2012_gold:null
-            · │ └── LEAF hidden id:3
+            · │ └── LEAF hidden id:3 pivot_year_2008_gold:3 pivot_year_2012_gold:3
             · └─┬ LEAF_GROUP collapsed id:"row-group-country-United Kingdom-athlete-Mo" ag-Grid-AutoColumn:"Mo" pivot_year_2008_gold:null pivot_year_2012_gold:2
-            · · └── LEAF hidden id:4
+            · · └── LEAF hidden id:4 pivot_year_2008_gold:2 pivot_year_2012_gold:2
         `);
 
         api.setGridOption('pivotMode', false);

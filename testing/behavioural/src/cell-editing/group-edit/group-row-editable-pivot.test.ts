@@ -92,12 +92,15 @@ describe('groupRowEditable with pivot mode', () => {
             `);
 
             const franceNode = api.getRowNode('row-group-country-France');
-            // ...existing code...
+            expect(franceNode).toBeDefined();
 
             // Get the pivot column for 2020 sales
             const pivotColumns = api.getPivotResultColumns();
             const pivotCol2020 = pivotColumns?.find((col) => col.getColId().includes('2020_sales'));
             const pivotColId = pivotCol2020!.getColId();
+
+            // Verify getCellValue before edit - group node returns aggregated value
+            expect(api.getCellValue({ rowNode: franceNode!, colKey: pivotColId })).toBe(1000);
 
             groupRowEditableCalls.length = 0;
             groupRowValueSetterCalls.length = 0;
@@ -110,7 +113,8 @@ describe('groupRowEditable with pivot mode', () => {
             }
             await asyncSetTimeout(0);
 
-            // ...existing code...
+            // Verify getCellValue after edit - group node returns new aggregated value
+            expect(api.getCellValue({ rowNode: franceNode!, colKey: pivotColId })).toBe(2000);
 
             // Verify the cascade distributed the value equally to children
             const afterEdit = new GridRows(api, 'after pivot leaf edit', gridRowsOptions);
@@ -162,6 +166,9 @@ describe('groupRowEditable with pivot mode', () => {
             const pivotCol2021 = pivotColumns?.find((col) => col.getColId().includes('2021_sales'));
             const pivotColId = pivotCol2021!.getColId();
 
+            // Verify getCellValue before edit
+            expect(api.getCellValue({ rowNode: usaNode!, colKey: pivotColId })).toBe(2200);
+
             if (editMode === 'ui') {
                 await editCell(api, usaNode!, pivotColId, '4000');
             } else {
@@ -169,6 +176,9 @@ describe('groupRowEditable with pivot mode', () => {
                 await asyncSetTimeout(0);
             }
             await asyncSetTimeout(0);
+
+            // Verify getCellValue after edit
+            expect(api.getCellValue({ rowNode: usaNode!, colKey: pivotColId })).toBe(4000);
 
             const afterEdit = new GridRows(api, 'after USA 2021 edit', gridRowsOptions);
             await afterEdit.check(`
@@ -234,6 +244,9 @@ describe('groupRowEditable with pivot mode', () => {
             const pivotCol2020 = pivotColumns?.find((col) => col.getColId().includes('2020_sales'));
             const pivotColId = pivotCol2020!.getColId();
 
+            // Verify getCellValue before edit on filler group node
+            expect(api.getCellValue({ rowNode: europeNode!, colKey: pivotColId })).toBe(2500);
+
             // Edit the Europe filler group to 5000 for 2020
             if (editMode === 'ui') {
                 await editCell(api, europeNode!, pivotColId, '5000');
@@ -242,6 +255,9 @@ describe('groupRowEditable with pivot mode', () => {
                 await asyncSetTimeout(0);
             }
             await asyncSetTimeout(0);
+
+            // Verify getCellValue after edit on filler group node
+            expect(api.getCellValue({ rowNode: europeNode!, colKey: pivotColId })).toBe(5000);
 
             // The cascade should distribute 5000 equally to France and Germany (2500 each)
             // Then each country distributes to its leaves
@@ -295,6 +311,12 @@ describe('groupRowEditable with pivot mode', () => {
             const pivotCol2021 = pivotColumns?.find((col) => col.getColId().includes('2021_sales'));
             const pivotColId = pivotCol2021!.getColId();
 
+            // Verify getCellValue before edit on nested leaf group
+            expect(api.getCellValue({ rowNode: franceNode!, colKey: pivotColId })).toBe(1200);
+            // Also verify parent filler group value
+            const europeNode = api.getRowNode('row-group-region-Europe');
+            expect(api.getCellValue({ rowNode: europeNode!, colKey: pivotColId })).toBe(3000);
+
             if (editMode === 'ui') {
                 await editCell(api, franceNode!, pivotColId, '3000');
             } else {
@@ -302,6 +324,11 @@ describe('groupRowEditable with pivot mode', () => {
                 await asyncSetTimeout(0);
             }
             await asyncSetTimeout(0);
+
+            // Verify getCellValue after edit - leaf group updated
+            expect(api.getCellValue({ rowNode: franceNode!, colKey: pivotColId })).toBe(3000);
+            // Parent filler group aggregation also updated
+            expect(api.getCellValue({ rowNode: europeNode!, colKey: pivotColId })).toBe(4800);
 
             // France 2021 changed from 1200 to 3000, Europe total should update
             const afterEdit = new GridRows(api, 'after nested leaf edit', gridRowsOptions);
@@ -314,9 +341,6 @@ describe('groupRowEditable with pivot mode', () => {
                 · ├── LEAF_GROUP collapsed id:row-group-region-Americas-country-USA ag-Grid-AutoColumn:"USA" pivot_year_2020_sales:2000 pivot_year_2021_sales:2200
                 · └── LEAF_GROUP collapsed id:row-group-region-Americas-country-Canada ag-Grid-AutoColumn:"Canada" pivot_year_2020_sales:800 pivot_year_2021_sales:900
             `);
-
-            // Verify parent aggregations
-            // ...existing code...
         });
     });
 
@@ -839,6 +863,167 @@ describe('groupRowEditable with pivot mode', () => {
                 ├── LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_year_2020_sales:2000 pivot_year_2021_sales:2200
                 └── LEAF_GROUP collapsed id:row-group-country-Canada ag-Grid-AutoColumn:"Canada" pivot_year_2020_sales:800 pivot_year_2021_sales:900
             `);
+        });
+    });
+
+    describe('getCellValue with pivot columns', () => {
+        test('getCellValue returns correct values for filler groups, leaf groups, and leaf data rows', async () => {
+            const gridOptions: GridOptions = {
+                columnDefs: [
+                    { field: 'region', rowGroup: true, hide: true },
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'year', pivot: true, hide: true },
+                    {
+                        field: 'sales',
+                        aggFunc: 'sum',
+                        hide: true,
+                    },
+                ],
+                pivotMode: true,
+                groupDefaultExpanded: -1,
+                getRowId: ({ data }) => data.id,
+                rowData: createPivotRowData(),
+            };
+
+            const api = await gridsManager.createGridAndWait('pivot-getCellValue', gridOptions);
+
+            const pivotColumns = api.getPivotResultColumns();
+            const pivotCol2020 = pivotColumns?.find((col) => col.getColId().includes('2020_sales'));
+            const pivotCol2021 = pivotColumns?.find((col) => col.getColId().includes('2021_sales'));
+            expect(pivotCol2020).toBeDefined();
+            expect(pivotCol2021).toBeDefined();
+            const pivotColId2020 = pivotCol2020!.getColId();
+            const pivotColId2021 = pivotCol2021!.getColId();
+
+            // Test filler group node (Europe region)
+            const europeNode = api.getRowNode('row-group-region-Europe');
+            expect(europeNode).toBeDefined();
+            expect(europeNode!.group).toBe(true);
+            expect(api.getCellValue({ rowNode: europeNode!, colKey: pivotColId2020 })).toBe(2500); // France 1000 + Germany 1500
+            expect(api.getCellValue({ rowNode: europeNode!, colKey: pivotColId2021 })).toBe(3000); // France 1200 + Germany 1800
+
+            // Test leaf group node (France country under Europe)
+            const franceLeafGroup = api.getRowNode('row-group-region-Europe-country-France');
+            expect(franceLeafGroup).toBeDefined();
+            expect(franceLeafGroup!.group).toBe(true);
+            expect(api.getCellValue({ rowNode: franceLeafGroup!, colKey: pivotColId2020 })).toBe(1000);
+            expect(api.getCellValue({ rowNode: franceLeafGroup!, colKey: pivotColId2021 })).toBe(1200);
+
+            // Test leaf data row (France 2020 sales data row)
+            const franceData2020 = api.getRowNode('1'); // id: '1', France, 2020, sales: 1000
+            expect(franceData2020).toBeDefined();
+            expect(franceData2020!.group).toBeFalsy();
+            // For leaf rows, getCellValue with pivot column resolves to the underlying value column
+            // Both pivot columns resolve to 'sales', returning the same underlying data value
+            expect(api.getCellValue({ rowNode: franceData2020!, colKey: pivotColId2020 })).toBe(1000);
+            expect(api.getCellValue({ rowNode: franceData2020!, colKey: pivotColId2021 })).toBe(1000);
+
+            // Test another leaf data row (France 2021)
+            const franceData2021 = api.getRowNode('2'); // id: '2', France, 2021, sales: 1200
+            expect(franceData2021).toBeDefined();
+            // Both pivot columns resolve to underlying 'sales' value
+            expect(api.getCellValue({ rowNode: franceData2021!, colKey: pivotColId2020 })).toBe(1200);
+            expect(api.getCellValue({ rowNode: franceData2021!, colKey: pivotColId2021 })).toBe(1200);
+
+            // Verify Americas filler group
+            const americasNode = api.getRowNode('row-group-region-Americas');
+            expect(api.getCellValue({ rowNode: americasNode!, colKey: pivotColId2020 })).toBe(2800); // USA 2000 + Canada 800
+            expect(api.getCellValue({ rowNode: americasNode!, colKey: pivotColId2021 })).toBe(3100); // USA 2200 + Canada 900
+        });
+
+        test('getCellValue with pivot columns returns aggregated values on group rows after edit', async () => {
+            const gridOptions: GridOptions = {
+                defaultColDef: {
+                    cellEditor: 'agTextCellEditor',
+                },
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'year', pivot: true, hide: true },
+                    {
+                        field: 'sales',
+                        aggFunc: 'sum',
+                        hide: true,
+                        editable: true,
+                        groupRowEditable: true,
+                        groupRowValueSetter: cascadeGroupRowValueSetter,
+                    },
+                ],
+                pivotMode: true,
+                groupDefaultExpanded: -1,
+                getRowId: ({ data }) => data.id,
+                rowData: createPivotRowData(),
+            };
+
+            const api = await gridsManager.createGridAndWait('pivot-getCellValue-after-edit', gridOptions);
+
+            const pivotColumns = api.getPivotResultColumns();
+            const pivotCol2020 = pivotColumns?.find((col) => col.getColId().includes('2020_sales'));
+            const pivotColId = pivotCol2020!.getColId();
+
+            // Get nodes
+            const germanyGroup = api.getRowNode('row-group-country-Germany');
+            const germanyLeaf2020 = api.getRowNode('3'); // Germany 2020
+            const germanyLeaf2021 = api.getRowNode('4'); // Germany 2021
+
+            // Verify initial values - leaf rows resolve pivot column to underlying 'sales' value
+            expect(api.getCellValue({ rowNode: germanyGroup!, colKey: pivotColId })).toBe(1500);
+            expect(api.getCellValue({ rowNode: germanyLeaf2020!, colKey: pivotColId })).toBe(1500); // Germany 2020 sales
+            expect(api.getCellValue({ rowNode: germanyLeaf2021!, colKey: pivotColId })).toBe(1800); // Germany 2021 sales (resolves to underlying column)
+
+            // Edit the group cell
+            germanyGroup!.setDataValue(pivotColId, 3000, 'ui');
+            await asyncSetTimeout(0);
+
+            // Verify values after edit
+            expect(api.getCellValue({ rowNode: germanyGroup!, colKey: pivotColId })).toBe(3000);
+            // Cascade distributed the value to the single 2020 leaf (only row matching pivot keys)
+            expect(api.getCellValue({ rowNode: germanyLeaf2020!, colKey: pivotColId })).toBe(3000);
+            // 2021 row wasn't edited (didn't match pivot keys), but getCellValue resolves to underlying sales value
+            expect(api.getCellValue({ rowNode: germanyLeaf2021!, colKey: pivotColId })).toBe(1800);
+        });
+
+        test('getCellValue on leaf row with pivot column resolves to underlying value column', async () => {
+            const gridOptions: GridOptions = {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'year', pivot: true, hide: true },
+                    {
+                        field: 'sales',
+                        aggFunc: 'sum',
+                        hide: true,
+                    },
+                ],
+                pivotMode: true,
+                groupDefaultExpanded: -1,
+                getRowId: ({ data }) => data.id,
+                rowData: createPivotRowData(),
+            };
+
+            const api = await gridsManager.createGridAndWait('pivot-getCellValue-leaf', gridOptions);
+
+            const pivotColumns = api.getPivotResultColumns();
+            const pivotCol2020 = pivotColumns?.find((col) => col.getColId().includes('2020_sales'));
+            const pivotCol2021 = pivotColumns?.find((col) => col.getColId().includes('2021_sales'));
+            const pivotColId2020 = pivotCol2020!.getColId();
+            const pivotColId2021 = pivotCol2021!.getColId();
+
+            // USA has two leaf rows: id '5' (2020, 2000) and id '6' (2021, 2200)
+            const usaLeaf2020 = api.getRowNode('5');
+            const usaLeaf2021 = api.getRowNode('6');
+
+            // getCellValue on leaf rows resolves pivot columns to underlying value column ('sales')
+            // Both pivot columns return the same underlying sales value for each row
+            expect(api.getCellValue({ rowNode: usaLeaf2020!, colKey: pivotColId2020 })).toBe(2000);
+            expect(api.getCellValue({ rowNode: usaLeaf2020!, colKey: pivotColId2021 })).toBe(2000);
+
+            // For 2021 leaf, both pivot columns resolve to its sales value
+            expect(api.getCellValue({ rowNode: usaLeaf2021!, colKey: pivotColId2020 })).toBe(2200);
+            expect(api.getCellValue({ rowNode: usaLeaf2021!, colKey: pivotColId2021 })).toBe(2200);
+
+            // The group row shows aggregated values for both
+            const usaGroup = api.getRowNode('row-group-country-USA');
+            expect(api.getCellValue({ rowNode: usaGroup!, colKey: pivotColId2020 })).toBe(2000);
+            expect(api.getCellValue({ rowNode: usaGroup!, colKey: pivotColId2021 })).toBe(2200);
         });
     });
 });

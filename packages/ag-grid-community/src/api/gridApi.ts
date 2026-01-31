@@ -401,6 +401,9 @@ export interface _ValueApi<TData> {
     /**
      * Gets the cell value for the given column and `rowNode` (row).
      * Based on params.useFormatter with either return the value as specified by the `field` or `valueGetter` on the column definition or the formatted value.
+     *
+     * **Pivot Mode**: On leaf data rows (non-group rows), pivot columns resolve to their underlying value column.
+     *
      * @agModule `CellApiModule`
      */
     getCellValue<TValue = any>(params: {

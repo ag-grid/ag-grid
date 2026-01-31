@@ -181,13 +181,24 @@ export class ValueService extends BeanStub implements NamedBean {
             return;
         }
 
+        const colDef = column.getColDef();
+
+        // For leaf (non-group) rows with pivot result columns, resolve to the underlying value column.
+        // Pivot columns don't map to real data fields on leaf rows — only the source value column does.
+        // This matches the behaviour of setDataValue which also resolves pivot columns for leaf rows.
+        if (!rowNode.group) {
+            const pivotValueColumn = colDef.pivotValueColumn as AgColumn | undefined;
+            if (pivotValueColumn) {
+                column = pivotValueColumn;
+            }
+        }
+
         // Check for edit/pending values if not requesting committed data
         const pending = this.editSvc?.getCellValueForDisplay(rowNode, column, from);
         if (pending !== undefined) {
             return pending;
         }
 
-        const colDef = column.getColDef();
         // when using multiple columns, the group column should have no value higher than its level
         const rowGroupColId = colDef.showRowGroup;
         if (typeof rowGroupColId === 'string') {
