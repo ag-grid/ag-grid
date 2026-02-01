@@ -116,12 +116,12 @@
     "ag-grid-community": "35.0.0-beta.20260201.2039"
   },
   "optionalDependencies": {
-    "ag-charts-community": "13.0.0-beta.20260201",
+    "ag-charts-community": "13.0.1",
     "ag-charts-enterprise": "13.0.0-beta.20260201"
   },
   "devDependencies": {
     "source-map-loader": "^5.0.0",
-    "ag-charts-community": "13.0.0-beta.20260201",
+    "ag-charts-community": "13.0.1",
     "ag-charts-enterprise": "13.0.0-beta.20260201",
     "ts-loader": "^9.5.1",
     "esbuild-loader": "^4.4.0",
