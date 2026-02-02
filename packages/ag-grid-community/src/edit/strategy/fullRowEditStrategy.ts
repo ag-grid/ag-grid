@@ -292,8 +292,13 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         }
 
         if (!rowsMatch && !preventNavigation) {
-            this.editSvc?.stopEditing({ rowNode: prevCell.rowNode }, { event });
-            this.cleanupEditors(nextCell, true);
+            // force a commit before row editing stops so cellValueChanged fires before rowEditingStopped.
+            this.editSvc?.stopEditing({ rowNode: prevCell.rowNode }, { event, forceStop: true });
+
+            // if nothing was committed, editors may still be open; close them to finish the row edit.
+            if (this.editSvc?.isRowEditing(prevCell.rowNode, { withOpenEditor: true })) {
+                this.cleanupEditors(nextCell, true);
+            }
 
             if (suppressStartEditOnTab) {
                 nextCell.focusCell(true, event);

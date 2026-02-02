@@ -146,4 +146,49 @@ describe('Cell Editing: undo/redo', () => {
             });
         }
     );
+
+    test('full-row tabbing to the next row captures undo actions', async () => {
+        const api = await gridMgr.createGridAndWait('cellEditingFullRowUndoOnTab', {
+            editType: 'fullRow',
+            undoRedoCellEditing: true,
+            defaultColDef: { editable: true, cellDataType: false },
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+            rowData: [
+                { id: 'ROW_0', a: 'A0', b: 'B0' },
+                { id: 'ROW_1', a: 'A1', b: 'B1' },
+            ],
+            getRowId: (params) => params.data.id,
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const user = userEvent.setup({ skipHover: true });
+        await asyncSetTimeout(0);
+
+        const row0CellA = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'));
+        await user.dblClick(row0CellA);
+        const input = await waitForInput(gridDiv, row0CellA);
+        await user.clear(input);
+        await user.type(input, 'A0-EDIT');
+
+        await user.keyboard('{Tab}{Tab}');
+
+        const row1CellA = getByTestId(gridDiv, agTestIdFor.cell('ROW_1', 'a'));
+        await waitForInput(gridDiv, row1CellA);
+        api.stopEditing();
+        await asyncSetTimeout(0);
+
+        expect(getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'))).toHaveTextContent('A0-EDIT');
+        expect(api.getCurrentUndoSize()).toBe(1);
+
+        api.undoCellEditing();
+        await asyncSetTimeout(0);
+        expect(getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'))).toHaveTextContent('A0');
+
+        expect(api.getCurrentUndoSize()).toBe(0);
+
+        api.redoCellEditing();
+        await asyncSetTimeout(0);
+        expect(getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'))).toHaveTextContent('A0-EDIT');
+        expect(api.getCurrentUndoSize()).toBe(1);
+    });
 });
