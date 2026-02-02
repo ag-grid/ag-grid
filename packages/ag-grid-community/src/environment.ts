@@ -15,7 +15,7 @@ import { coreCSS } from './theming/core/core.css-GENERATED';
 import { themeQuartz } from './theming/parts/theme/themes';
 import { _error, _warn } from './validation/logging';
 
-const cssVar = <K extends keyof CssChangeKeys>(
+const cssVariable = <K extends keyof CssChangeKeys>(
     changeKey: K,
     type: ParamType,
     defaultValue: number,
@@ -23,14 +23,14 @@ const cssVar = <K extends keyof CssChangeKeys>(
     cacheDefault?: boolean
 ): CssVariable<CssChangeKeys> => ({ changeKey, type, defaultValue, noWarn, cacheDefault });
 
-const CELL_HORIZONTAL_PADDING = cssVar('cellHorizontalPadding', 'length', 16);
-const INDENTATION_LEVEL = cssVar('indentationLevel', 'length', 0, true, true);
-const ROW_GROUP_INDENT_SIZE = cssVar('rowGroupIndentSize', 'length', 0);
-const ROW_HEIGHT = cssVar('rowHeight', 'length', 42);
-const HEADER_HEIGHT = cssVar('headerHeight', 'length', 48);
-const ROW_BORDER_WIDTH = cssVar('rowBorderWidth', 'border', 1);
-const PINNED_BORDER_WIDTH = cssVar('pinnedRowBorderWidth', 'border', 1);
-const HEADER_ROW_BORDER_WIDTH = cssVar('headerRowBorderWidth', 'border', 1);
+const CELL_HORIZONTAL_PADDING = cssVariable('cellHorizontalPadding', 'length', 16);
+const INDENTATION_LEVEL = cssVariable('indentationLevel', 'length', 0, true, true);
+const ROW_GROUP_INDENT_SIZE = cssVariable('rowGroupIndentSize', 'length', 0);
+const ROW_HEIGHT = cssVariable('rowHeight', 'length', 42);
+const HEADER_HEIGHT = cssVariable('headerHeight', 'length', 48);
+const ROW_BORDER_WIDTH = cssVariable('rowBorderWidth', 'border', 1);
+const PINNED_BORDER_WIDTH = cssVariable('pinnedRowBorderWidth', 'border', 1);
+const HEADER_ROW_BORDER_WIDTH = cssVariable('headerRowBorderWidth', 'border', 1);
 
 export function _addAdditionalCss(cssMap: Map<string, string[]>, modules: Module[]): void {
     for (const module of modules.sort((a, b) => a.moduleName.localeCompare(b.moduleName))) {
