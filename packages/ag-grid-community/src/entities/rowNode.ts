@@ -580,6 +580,28 @@ export class RowNode<TData = any>
         return valueChanged;
     }
 
+    public getDataValue<TValue = any>(colKey: ColKey<TValue>): TValue | null | undefined {
+        const { colModel, valueSvc, formula } = this.beans;
+
+        if (colKey == null) {
+            return undefined;
+        }
+
+        const column = colModel.getCol(colKey) ?? colModel.getColDefCol(colKey);
+        if (!column) {
+            return undefined;
+        }
+
+        let value = valueSvc.getValue(column, this, 'data');
+
+        // Resolve formulas to their computed value
+        if (formula && column.isAllowFormula() && formula.isFormula(value)) {
+            value = formula.resolveValue(column, this);
+        }
+
+        return value;
+    }
+
     public updateHasChildren(): void {
         // in CSRM, the group property is set before the childrenAfterGroup property, check both to prevent flickering
         let newValue: boolean | null = (this.group && !this.footer) || !!this.childrenAfterGroup?.length;

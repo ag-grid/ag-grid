@@ -320,16 +320,30 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
      *
      * **Note**: This method only fires `onCellEditRequest` when the Grid is in **Read Only** mode.
      *
-     * **Note**: This method defers to EditModule if available and batches the edit when `fullRow` or `batchEdit` is enabled.
-     *
      * **Pivot Mode**: On leaf data rows (non-group rows), pivot columns resolve to their underlying value column.
      *
      * @param colKey The column where the value should be updated
      * @param newValue The new value
-     * @param eventSource The source of the event
+     * @param eventSource The source of the event. Use `'api'` to indicate a programmatic change (default behaviour),
+     *   or `'ui'` to indicate a user-initiated change. This affects how the edit flows through the editing system.
      * @returns `true` if the value was changed, otherwise `false`.
      */
     setDataValue(colKey: string | Column, newValue: any, eventSource?: string): boolean;
+
+    /**
+     * Retrieves the data value from the `rowNode` for the specified column.
+     * Always returns the committed data value, ignoring any pending edit state.
+     * For group rows, returns aggregated values or the group key as appropriate.
+     * If the value is a formula, the computed result is returned.
+     *
+     * To get the displayed value (including pending edits and formatting), use `api.getCellValue()` instead.
+     *
+     * **Pivot Mode**: On leaf data rows (non-group rows), pivot columns resolve to their underlying value column.
+     *
+     * @param colKey The column to get the value from
+     * @returns The data value, `null` if the value is null, or `undefined` if the column is not found.
+     */
+    getDataValue<TValue = any>(colKey: ColKey<TValue>): TValue | null | undefined;
 
     /**
      * Returns the route of the row node. If the Row Node does not have a key (i.e it's a leaf row inside a row group) returns undefined

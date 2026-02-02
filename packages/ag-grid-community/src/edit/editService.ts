@@ -867,10 +867,10 @@ export class EditService extends BeanStub implements NamedBean {
     }
 
     /**
-     * Gets the pending edit value for display (used by ValueService).
-     * Returns undefined to fallback to data/valueGetter.
+     * Gets the pending edit value for a cell (used by ValueService).
+     * Returns undefined to fallback to committed data/valueGetter.
      */
-    public getCellValueForDisplay(rowNode: IRowNode, column: Column, from: CellValueResolveFrom): any {
+    public getPendingEditValue(rowNode: IRowNode, column: Column, from: CellValueResolveFrom): any {
         if (from === 'data') {
             return undefined; // 'data' mode: always use committed data, never edit values
         }
