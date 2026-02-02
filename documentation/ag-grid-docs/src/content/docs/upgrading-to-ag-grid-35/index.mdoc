@@ -10,62 +10,76 @@ Formulas, Row Group Dragging, Absolute Sorting, Column Selection, Filtering & Ex
 
 AG Grid {% migrationVersion() %} adds important new features – [Formulas](./formulas), [Row Group Dragging](./grouping-row-dragging), [Absolute Sorting](./row-sorting/#absolute-sorting), [Column Selection](./cell-selection/#selecting-cells-via-column-headers), [Filtering & Export Overlays](./overlays-overview/), as described in the [release post](https://blog.ag-grid.com/whats-new-in-ag-grid-35/).
 
-<!-- 
+<!--
 Documentation to the highest patch release of the major/minor
 NOTE: This will not show if the current library version is the same as the migration version
 -->
+
 {% documentationArchiveSection version=migrationVersionPatch() /%}
 
 ## Breaking Changes
 
 {% if isFramework("angular") %}
+
 ### Frameworks
+
 Angular 17 support removed due to end of life.
 {% /if %}
 
 ### Typing change
-* `cellDataType` - removed from the `columnTypes` type as its value was always ignored.
-* `colId` - removed from the `autoGroupColumnDef` type as its value was always ignored. Use the `autoGroupColumnDef.context` to store any auto-group column specific data.
+
+-   `cellDataType` - removed from the `columnTypes` type as its value was always ignored.
+-   `colId` - removed from the `autoGroupColumnDef` type as its value was always ignored. Use the `autoGroupColumnDef.context` to store any auto-group column specific data.
 
 ### Integrated Charts
 
-* Refer to [Upgrade to AG Charts 13](https://www.ag-grid.com/charts/r/upgrade-to-ag-charts-13/) for behaviour and breaking changes.
+-   Refer to [Upgrade to AG Charts 13](https://www.ag-grid.com/charts/r/upgrade-to-ag-charts-13/) for behaviour and breaking changes.
 
 ## Behaviour Changes
 
 ### Column Sizing
-* Setting `colDef.suppressAutoSize` now applies to all means of column auto-sizing (API, column menu & double click on column divider) .This is now in line with the `colDef.suppressSizeToFit` behavior.
+
+-   Setting `colDef.suppressAutoSize` now applies to all means of column auto-sizing (API, column menu & double click on column divider) .This is now in line with the `colDef.suppressSizeToFit` behavior.
 
 ### Overlays
-* When filtering the grid and no results are returned a default “No matching rows” overlay will be displayed. You can suppress this by setting grid option `suppressOverlays=['noMatchingRows']`.
-* When exporting the grid (Excel/CSV) via the UI an overlay will be displayed with a default message “Exporting”. You can suppress this by setting grid option `suppressOverlays=['exporting']`.
-* When using SSRM and Infinite row models “No rows” and “No matching rows” overlays have been added. You can suppress this by setting grid option `suppressOverlays=['noRows','noMatchingRows']`.
 
-### Column Filters 
-* The built-in Date, DateTime and Number filters validate in-range values, ensuring that the start value is smaller than the end value.
+-   When filtering the grid and no results are returned a default “No matching rows” overlay will be displayed. You can suppress this by setting grid option `suppressOverlays=['noMatchingRows']`.
+-   When exporting the grid (Excel/CSV) via the UI an overlay will be displayed with a default message “Exporting”. You can suppress this by setting grid option `suppressOverlays=['exporting']`.
+-   When using SSRM and Infinite row models “No rows” and “No matching rows” overlays have been added. You can suppress this by setting grid option `suppressOverlays=['noRows','noMatchingRows']`.
+
+### Column Filters
+
+-   The built-in Date, DateTime and Number filters validate in-range values, ensuring that the start value is smaller than the end value.
 
 ### Integrated Charts
-* Previously, Integrated Charts automatically used the group column as the chart category when the grid was row-grouped and values were added to leaf nodes. This implicit behaviour has been removed. A new chart option `useGroupColumnAsCategory` must now be set to `true` to display grouped categories.
+
+-   Previously, Integrated Charts automatically used the group column as the chart category when the grid was row-grouped and values were added to leaf nodes. This implicit behaviour has been removed. A new chart option `useGroupColumnAsCategory` must now be set to `true` to display grouped categories.
 
 ## Styling Changes
 
 ### Indicator line
-* Increased column insertion indicator line from 1px to 3px for better visibility.
-* Increased row insertion indicator line from 1px to 3px for better visibility.
+
+-   Increased column insertion indicator line from 1px to 3px for better visibility.
+-   Increased row insertion indicator line from 1px to 3px for better visibility.
 
 ### Column Filters
-* When a column has a filter applied the filtered icon state is shown in the filters tool panel.
+
+-   When a column has a filter applied the filtered icon state is shown in the filters tool panel.
 
 ### Loading
-* Loading states across the grid now show a spinner alongside the text.
- 
+
+-   Loading states across the grid now show a spinner alongside the text.
+
 ### Row Dragging
-* When sorting, filtering or pivoting in managed row dragging the row drag handle is shown as disabled instead of hidden.
+
+-   When sorting, filtering or pivoting in managed row dragging the row drag handle is shown as disabled instead of hidden.
 
 ## Removal of Deprecated APIs
+
 There are no deprecated API removals in AG Grid version {% migrationVersion() %}.
 
 ## Deprecations
+
 There are no deprecations in AG Grid version {% migrationVersion() %}.
 
 {% changelogSection version=$migrationVersion /%}

@@ -1,4 +1,5 @@
 {% if isFramework("vue") %}
+
 ```js
 <template>
     <ag-grid-vue :columnDefs="columnDefs" ...other properties>
@@ -33,7 +34,7 @@ export default {
                 {
                     headerName: "Colour 2",
                     field: "value",
-                    cellRenderer: 'ColourComponent',     
+                    cellRenderer: 'ColourComponent',
                     cellRendererParams: {
                         color: 'irishGreen'
                     }
@@ -45,4 +46,5 @@ export default {
 }
 </script>
 ```
+
 {% /if %}

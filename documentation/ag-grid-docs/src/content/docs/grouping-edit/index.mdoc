@@ -60,12 +60,12 @@ cascade edited values down to descendant rows without manually traversing the ro
 
 The children returned by `aggregatedChildren` depend on the column and grid configuration:
 
-- **Regular value columns**: Returns direct children used for aggregation. This respects the
-  `suppressAggFilteredOnly` grid option and `groupAggFiltering` — when these cause aggregation to include
-  all children (not just filtered ones), `aggregatedChildren` returns all children accordingly.
-- **Pivot columns on leaf groups**: Returns only the children matching the column's pivot keys, since
-  pivot aggregation groups rows by pivot key values.
-- **Non-group rows**: Always returns an empty array — only group rows have aggregated children.
+-   **Regular value columns**: Returns direct children used for aggregation. This respects the
+    `suppressAggFilteredOnly` grid option and `groupAggFiltering` — when these cause aggregation to include
+    all children (not just filtered ones), `aggregatedChildren` returns all children accordingly.
+-   **Pivot columns on leaf groups**: Returns only the children matching the column's pivot keys, since
+    pivot aggregation groups rows by pivot key values.
+-   **Non-group rows**: Always returns an empty array — only group rows have aggregated children.
 
 Alternatively, use `rowNode.getAggregatedChildren(colKey)` anywhere in your code to retrieve the same
 children programmatically. See [Retrieving Aggregated Children](./aggregation/#retrieving-aggregated-children)
@@ -75,11 +75,11 @@ for more details.
 
 Key points for implementing cascading edits:
 
-- Call `rowNode.setDataValue` on each child to push updated figures down. This triggers normal
-  aggregation to refresh parent totals.
-- When a child is also a group that defines its own `groupRowValueSetter`, the cascade recurses further.
-- Parent aggregates refresh automatically because child `data` changes re-run the column `aggFunc`,
-  so typing a new total into "Europe" instantly rebalances the children to reach that value.
+-   Call `rowNode.setDataValue` on each child to push updated figures down. This triggers normal
+    aggregation to refresh parent totals.
+-   When a child is also a group that defines its own `groupRowValueSetter`, the cascade recurses further.
+-   Parent aggregates refresh automatically because child `data` changes re-run the column `aggFunc`,
+    so typing a new total into "Europe" instantly rebalances the children to reach that value.
 
 {% note %}
 The `aggregatedChildren` parameter and `rowNode.getAggregatedChildren()` method are only supported
@@ -96,14 +96,15 @@ not all children of the group.
 
 In this example:
 
-- The grid is pivoted by `product` (Electronics, Clothing, Food), grouped by `region` and `country`.
-- Double-click on any pivot column cell to edit the aggregated value.
-- When editing a pivot cell (e.g., "Electronics" column on "Europe" row), the `aggregatedChildren` array
-  contains only the European rows selling Electronics — not all European rows.
-- The edit is distributed equally among just those matching children, leaving other product categories unchanged.
+-   The grid is pivoted by `product` (Electronics, Clothing, Food), grouped by `region` and `country`.
+-   Double-click on any pivot column cell to edit the aggregated value.
+-   When editing a pivot cell (e.g., "Electronics" column on "Europe" row), the `aggregatedChildren` array
+    contains only the European rows selling Electronics — not all European rows.
+-   The edit is distributed equally among just those matching children, leaving other product categories unchanged.
 
 This behaviour ensures that edits on pivot columns affect only the data that contributes to that specific
 pivot value, making cascading edits work correctly with pivoted data.
 
 ## Next Up
+
 Continue to the next section to learn [Row Dragging with Row Groups](./grouping-row-dragging/).

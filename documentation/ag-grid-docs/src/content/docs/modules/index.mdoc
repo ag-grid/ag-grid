@@ -21,12 +21,13 @@ Alternatively, if you are not concerned about bundle size and you want access to
 
 The grid provides two module bundles for ease of use:
 
- - `AllCommunityModule` bundle contains all of the modules available in AG Grid Community.
- - `AllEnterpriseModule` bundle contains `AllCommunityModule` and all modules available in AG Grid Enterprise. 
- 
- Registering one of these bundles replicates the behaviour of the package versions of AG Grid prior to version 33:
+-   `AllCommunityModule` bundle contains all of the modules available in AG Grid Community.
+-   `AllEnterpriseModule` bundle contains `AllCommunityModule` and all modules available in AG Grid Enterprise.
+
+Registering one of these bundles replicates the behaviour of the package versions of AG Grid prior to version 33:
 
 {% if isFramework("react") %}
+
 ```jsx
 import { AllCommunityModule } from 'ag-grid-community';
 // import { AllEnterpriseModule } from 'ag-grid-enterprise';
@@ -43,9 +44,11 @@ function App() {
     );
 }
 ```
+
 {% /if %}
 
 {% if isFramework("javascript", "angular", "vue") %}
+
 ```js
 import {
     ModuleRegistry,
@@ -58,11 +61,13 @@ ModuleRegistry.registerModules([
     AllCommunityModule, // or AllEnterpriseModule
 ]);
 ```
+
 {% /if %}
 
 If you are using [Integrated Charts](./integrated-charts/) or [Sparklines](./sparklines-overview/), then you need to provide the relevant module from AG Charts to `AllEnterpriseModule`, for example:
 
 {% if isFramework("react") %}
+
 ```jsx
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
@@ -79,9 +84,11 @@ function App() {
     );
 }
 ```
+
 {% /if %}
 
 {% if isFramework("javascript", "angular", "vue") %}
+
 ```js
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 import { ModuleRegistry } from 'ag-grid-community';
@@ -92,6 +99,7 @@ ModuleRegistry.registerModules([
     AllEnterpriseModule.with(AgChartsEnterpriseModule),
 ]);
 ```
+
 {% /if %}
 
 ## Selecting Modules
@@ -112,6 +120,7 @@ To work out which modules are required, select the features of the grid that you
 The `ValidationModule` adds helpful console warnings/errors that can help identify bad configuration during development. When using Modules it is recommended to only include it in your development build to ensure your production build is as small as possible.
 
 {% if isFramework("react") %}
+
 ```jsx
 import { ValidationModule } from 'ag-grid-community';
 
@@ -121,9 +130,11 @@ const modules = [
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ];
 ```
+
 {% /if %}
 
 {% if isFramework("javascript", "angular", "vue") %}
+
 ```js
 import { ModuleRegistry, ValidationModule } from 'ag-grid-community';
 
@@ -132,6 +143,7 @@ if(process.env.NODE_ENV !== 'production') {
     ModuleRegistry.registerModules([ValidationModule]);
 }
 ```
+
 {% /if %}
 
 If using the bundles (`AllCommunityModule`/`AllEnterpriseModule`), the `ValidationModule` is included by default.
@@ -141,9 +153,7 @@ If using the bundles (`AllCommunityModule`/`AllEnterpriseModule`), the `Validati
 {% if isFramework("react") %}
 When including AG Grid in your application the required modules must be registered with the grid before it is instantiated. You can either register them globally, via the `ModuleRegistry`, via the `AgGridProvider` or pass them directly to each grid.
 
-
 {% /if %}
-
 
 {% if isFramework("javascript", "angular", "vue") %}
 When including AG Grid in your application the required modules must be registered with the grid before it is instantiated. You can either register them globally, via the `ModuleRegistry` or pass them directly to each grid.
@@ -213,8 +223,8 @@ Individually registering modules is most useful when you have multiple grids in 
 
 The steps required are:
 
-* Import Modules
-* Pass to Grid
+-   Import Modules
+-   Pass to Grid
 
 Using the same example from above (the `Client-Side Row Model` together with the `CSV`, `Excel` and `Master/Detail` features), how we register the modules is now different.
 
@@ -223,6 +233,7 @@ We pass the modules to createGrid via the `modules` property of the `params`.
 {% /if %}
 
 {% if isFramework("javascript") %}
+
 ```js
 import { createGrid, ClientSideRowModelModule, CsvExportModule } from 'ag-grid-community';
 import { ExcelExportModule, MasterDetailModule } from 'ag-grid-enterprise';
@@ -234,9 +245,11 @@ createGrid(<dom element>, gridOptions, { modules: [
     MasterDetailModule
 ]});
 ```
+
 {% /if %}
 
 {% if isFramework("angular") %}
+
 ```js
 import { Component } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular'
@@ -247,7 +260,7 @@ import { ExcelExportModule, MasterDetailModule } from 'ag-grid-enterprise';
     selector: 'grid-example',
     standalone: true,
     imports: [AgGridAngular],
-    template: `<ag-grid-angular [modules]="modules" 
+    template: `<ag-grid-angular [modules]="modules"
         <!-- other properties -->
     />`
 })
@@ -262,6 +275,7 @@ export class GridExample {
     // ... rest of component ...
 }
 ```
+
 {% /if %}
 
 {% if isFramework("react") %}
@@ -290,9 +304,11 @@ function App() {
     );
 }
 ```
+
 {% /if %}
 
 {% if isFramework("vue") %}
+
 ```js
 import { createApp } from 'vue';
 import { AgGridVue } from 'ag-grid-vue3';
@@ -315,24 +331,30 @@ data() {
     // ... other properties
 />
 ```
+
 {% /if %}
 
 The following example shows how you can configure individual grids using a combination of shared modules as well as individual grid module registration. Note the following:
 
 {% if isFramework("react") %}
-* Shared modules via `AgGridProvider`:  `[ClientSideRowModelModule, ColumnMenuModule, ContextMenuModule]`.
+
+-   Shared modules via `AgGridProvider`: `[ClientSideRowModelModule, ColumnMenuModule, ContextMenuModule]`.
+
 {% /if %}
 {% if isFramework("javascript", "angular", "vue") %}
-* Globally registered modules:  `[ClientSideRowModelModule, ColumnMenuModule, ContextMenuModule]`.
+
+-   Globally registered modules: `[ClientSideRowModelModule, ColumnMenuModule, ContextMenuModule]`.
+
 {% /if %}
-* Left Grid individually registers: `[ClipboardModule, CsvExportModule, SetFilterModule]`
-* Right Grid individually registers: `[CsvExportModule, ExcelExportModule, NumberFilterModule, TextFilterModule]`
+
+-   Left Grid individually registers: `[ClipboardModule, CsvExportModule, SetFilterModule]`
+-   Right Grid individually registers: `[CsvExportModule, ExcelExportModule, NumberFilterModule, TextFilterModule]`
 
 To see the difference in features open the context menu and open the column filter:
 
-* The left grid has options for clipboard and CSV export.
-* The right grid has options for CSV and Excel export.
-* The left grid uses the Set Filter while the right grid uses the Text Filter or Number Filter depending on the cell data type.
+-   The left grid has options for clipboard and CSV export.
+-   The right grid has options for CSV and Excel export.
+-   The left grid uses the Set Filter while the right grid uses the Text Filter or Number Filter depending on the cell data type.
 
 {% gridExampleRunner title="Grids with Individual Registration" name="individual-registration" /%}
 
@@ -347,9 +369,9 @@ const isRegistered = api.isModuleRegistered('SetFilterModule');
 
 {% apiDocumentation source="grid-api/api.json" section="miscellaneous" names=["isModuleRegistered"] /%}
 
-
 {% if isFramework("angular") %}
+
 ## Angular CLI Builders
 
-The Angular CLI supports multiple builders as outlined in ([Building Angular apps](https://angular.dev/tools/cli/build)). It is recommended to compare the bundle size produced by each of the builders as the results can vary depending on the application. 
+The Angular CLI supports multiple builders as outlined in ([Building Angular apps](https://angular.dev/tools/cli/build)). It is recommended to compare the bundle size produced by each of the builders as the results can vary depending on the application.
 {% /if %}

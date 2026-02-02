@@ -5,6 +5,7 @@ To implement the filtering logic, a custom filter needs to implement the `doesFi
 {% /if %}
 
 {% if isFramework("react") %}
+
 ```jsx
 export default ({ model, onModelChange, getValue }) => {
     const doesFilterPass = useCallback(({ node }) => {
@@ -26,6 +27,7 @@ export default ({ model, onModelChange, getValue }) => {
     );
 }
 ```
+
 {% /if %}
 
 {% if isFramework("react") %}

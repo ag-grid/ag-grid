@@ -2,9 +2,11 @@
 title: "Aggregation - Filtering"
 enterprise: true
 ---
+
 Filtering can be configured to impact aggregate values in the grid.
 
 ## Ignore Filters when Aggregating
+
 When using [Filters](./filtering-overview/) and [Aggregations](./aggregation/) together, the aggregated values reflect
 only the rows which have passed the filter. This can be changed to instead ignore applied filters by using the
 `suppressAggFilteredOnly` grid option.
@@ -12,6 +14,7 @@ only the rows which have passed the filter. This can be changed to instead ignor
 {% gridExampleRunner title="Aggregation and Filters" name="filters" /%}
 
 The example above demonstrates the impact of the `suppressAggFilteredOnly` grid option. This can be enabled as shown:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     suppressAggFilteredOnly: true,
@@ -19,6 +22,7 @@ const gridOptions = {
 ```
 
 ## Filtering for Aggregated Values
+
 The grid only applies filters to leaf level rows, this can be toggled to instead also apply filtering
 to group rows by enabling the `groupAggFiltering` grid option, allowing filters to also apply against
 the aggregated values.
@@ -27,12 +31,15 @@ the aggregated values.
 
 {% note %}
 Take note of the following while using `groupAggFiltering`:
-- When a group row passes a filter, it also includes all of its descendent rows in the filtered results.
-- The `suppressAggFilteredOnly` grid option will be implicitly enabled.
-- [Set Filters](./filter-set/) will only work with leaf rows.
+
+-   When a group row passes a filter, it also includes all of its descendent rows in the filtered results.
+-   The `suppressAggFilteredOnly` grid option will be implicitly enabled.
+-   [Set Filters](./filter-set/) will only work with leaf rows.
+
 {% /note %}
 
 The following configuration demonstrates how to enable group aggregation filtering:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     groupAggFiltering: true,
@@ -40,6 +47,7 @@ const gridOptions = {
 ```
 
 ### Configure by Callback
+
 When filtering for aggregated values the filter applies to all group rows by default. This can be configured more
 granularly by instead providing the `groupAggFiltering` grid option with a callback function.
 
@@ -47,6 +55,7 @@ The example below demonstrates a grid configured to apply filters only to aggreg
 {% gridExampleRunner title="Group-Only Aggregate Filtering" name="agg-filtering-group" /%}
 
 The configuration below demonstrates how to only apply test filters against group rows, and not leaf rows:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     groupAggFiltering: (params) => !!params.node.group,

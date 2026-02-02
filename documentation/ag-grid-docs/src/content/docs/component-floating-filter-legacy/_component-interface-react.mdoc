@@ -3,6 +3,7 @@ Custom floating filter components are controlled components, which receive a fil
 {% /if %}
 
 {% if isFramework("react") %}
+
 ```jsx
 export default ({ model, onModelChange }) => {
     return (
@@ -16,6 +17,7 @@ export default ({ model, onModelChange }) => {
     );
 }
 ```
+
 {% /if %}
 
 {% if isFramework("react") %}
@@ -25,10 +27,13 @@ In previous versions of the grid, custom components were declared in an imperati
 {% /if %}
 
 {% if isFramework("react") %}
+
 ## Custom Floating Filter Parameters
+
 {% /if %}
 
 {% if isFramework("react") %}
+
 ### Floating Filter Props
 
 The following props are passed to the custom floating filter components (`CustomFloatingFilterProps` interface). If custom props are provided via the `colDef.floatingFilterParams` property, these will be additionally added to the props object, overriding items of the same name if a name clash exists.
@@ -39,6 +44,7 @@ The following props are passed to the custom floating filter components (`Custom
 {% /if %}
 
 {% if isFramework("react") %}
+
 ### Floating Filter Callbacks
 
 The following callbacks can be passed to the `useGridFloatingFilter` hook (`CustomFloatingFilterCallbacks` interface). All the callbacks are optional, and the hook only needs to be used if callbacks are provided.

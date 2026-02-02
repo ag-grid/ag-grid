@@ -2,6 +2,7 @@
 title: "Pivot Result Columns"
 enterprise: true
 ---
+
 The grid generates pivot result columns to display the aggregated values for each unique permutation of pivot values.
 
 {% gridExampleRunner title="Pivot Result Column Summary Example" name="pivot-result-summary"  /%}
@@ -65,6 +66,7 @@ application to intervene.
 In the example above, pivoting by the `Athlete` column will instead trigger the `pivotMaxColumnsExceeded` event, which logs an error in the browser console.
 
 The example above demonstrates the following configuration:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     pivotMode: true,

@@ -62,7 +62,7 @@ const myCheckboxStyle = createPart({
             box-shadow: 0 0 5px 4px var(--ag-checkbox-glow-color);
 
         ... css implementing the new checkbox style ...
-        
+
         `,
 });
 ```
@@ -73,9 +73,9 @@ const myCheckboxStyle = createPart({
 
 You have three options for `feature`:
 
-- `undefined`, or omit the feature property. In this case once added to a theme the part can not be removed. Many applications choose to bundle all the CSS for a custom theme in one part with no feature set. This is the simplest way of getting the CSS scoping benefits of using parts.
-- One of the built-in part features, like `checkboxStyle` or `iconSet`. See the [Parts](./theming-parts/) page for a full list. Adding the part to any theme will replace the built-in part with the same feature.
-- A string of your choice, in order to use the same part replacement semantics in your own design system. We recommend prefixing the part name with your organisation to prevent name clashes in future grid versions. For example, Acme Corp might have several typography styles, represented as parts with the feature `acmeCorpTypographyStyle`. Your custom theme can bundle a default typography style, and applications can replace it with a different one if they wish.
+-   `undefined`, or omit the feature property. In this case once added to a theme the part can not be removed. Many applications choose to bundle all the CSS for a custom theme in one part with no feature set. This is the simplest way of getting the CSS scoping benefits of using parts.
+-   One of the built-in part features, like `checkboxStyle` or `iconSet`. See the [Parts](./theming-parts/) page for a full list. Adding the part to any theme will replace the built-in part with the same feature.
+-   A string of your choice, in order to use the same part replacement semantics in your own design system. We recommend prefixing the part name with your organisation to prevent name clashes in future grid versions. For example, Acme Corp might have several typography styles, represented as parts with the feature `acmeCorpTypographyStyle`. Your custom theme can bundle a default typography style, and applications can replace it with a different one if they wish.
 
 #### Naming Of Parameters In Custom Parts
 

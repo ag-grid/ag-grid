@@ -1,5 +1,7 @@
 {% if isFramework("vue") %}
+
 ## Mixing JavaScript and Vue
+
 When providing Custom Components you have a choice of the following:
 
 1. Provide an AG Grid component in JavaScript.
@@ -12,9 +14,10 @@ The following code snippet shows how both JavaScript and Vue Components can be u
 {% /if %}
 
 {% if isFramework("vue") %}
+
 ```js
 <template>
-  <ag-grid-vue :components="components" 
+  <ag-grid-vue :components="components"
                ...other properties>
   </ag-grid-vue>
 </template>
@@ -37,7 +40,7 @@ export default {
           components: {
               // declare the javascript component
               'javascriptComponent': JavascriptComponent
-          },          
+          },
           columnDefs: [
                {
                   headerName: "JS Cell",
@@ -56,4 +59,5 @@ export default {
 }
 </script>
 ```
+
 {% /if %}

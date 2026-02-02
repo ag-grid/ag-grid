@@ -8,17 +8,18 @@ The grid data can be exported to CSV with an API call, or using the right-click 
 
 The same data that is in the grid gets exported, with some of the GUI representation of the data. What this means is:
 
-* The raw values, and not the result of cell renderer will get used, meaning:
-  * Value Getters will be used.
-  * Cell Renderers will **NOT** be used.
-  * Cell Formatters will be used by default via the [Use Value Formatter for Export](./value-formatters/#formatting-for-export) feature.
+-   The raw values, and not the result of cell renderer will get used, meaning:
 
-* Cell styles are not exported.
+    -   Value Getters will be used.
+    -   Cell Renderers will **NOT** be used.
+    -   Cell Formatters will be used by default via the [Use Value Formatter for Export](./value-formatters/#formatting-for-export) feature.
 
-* If row grouping:
+-   Cell styles are not exported.
 
-  * All data will be exported regardless of whether groups are open in the UI.
-  * By default, group names will be in the format "-> Parent Name -> Child Name" (use `processRowGroupCallback` to change this).
+-   If row grouping:
+
+    -   All data will be exported regardless of whether groups are open in the UI.
+    -   By default, group names will be in the format "-> Parent Name -> Child Name" (use `processRowGroupCallback` to change this).
 
 {% note %}
 The CSV export will be enabled by default. If you want to disable it, you can set the property `suppressCsvExport = true` in your gridOptions.
@@ -38,10 +39,10 @@ The example below shows the default behaviour when exporting the grid's data to 
 
 Note the following:
 
-* You can use the `Show CSV export content text` button, to preview the output.
-* You can use the `Download CSV export file` button to download a csv file.
-* The file will be exported using the default name: `export.csv`.
-* Community version supports api CSV Export but not Context Menu.
+-   You can use the `Show CSV export content text` button, to preview the output.
+-   You can use the `Download CSV export file` button to download a csv file.
+-   The file will be exported using the default name: `export.csv`.
+-   Community version supports api CSV Export but not Context Menu.
 
 {% gridExampleRunner title="CSV Export" name="csv-export"  exampleHeight=400 /%}
 
@@ -51,9 +52,9 @@ By default, a CSV file separates its columns using `,`. But this value `token` c
 
 Note the following:
 
-* You can use the select field at the top to switch the value of the `columnSeparator` param.
-* You can use the `Show CSV export content text` button, to preview the output.
-* Enterprise version enables CSV Export using right click via the Context Menu.
+-   You can use the select field at the top to switch the value of the `columnSeparator` param.
+-   You can use the `Show CSV export content text` button, to preview the output.
+-   Enterprise version enables CSV Export using right click via the Context Menu.
 
 {% gridExampleRunner title="CSV Export - Column Separator" name="csv-export-column-separator"  exampleHeight=400 /%}
 
@@ -63,10 +64,10 @@ By default cell values are encoded according to CSV format rules: values are wra
 
 Note the following:
 
-* You can use the select field at the top to switch the value of the `suppressQuotes` param.
-* You can edit the cells to preview the results with different inputs.
-* You can use the `Show CSV export content text` button, to preview the output.
-* You can use the `Download CSV export file` button to download a csv file.
+-   You can use the select field at the top to switch the value of the `suppressQuotes` param.
+-   You can edit the cells to preview the results with different inputs.
+-   You can use the `Show CSV export content text` button, to preview the output.
+-   You can use the `Download CSV export file` button to download a csv file.
 
 {% gridExampleRunner title="CSV Export - Suppress Quotes" name="csv-export-suppress-quotes"  exampleHeight=400 /%}
 
@@ -78,14 +79,15 @@ For compatibility with earlier versions of the Grid you can also pass a string, 
 
 Note the following:
 
-* You can use select fields at the top to switch the value of `prependContent` and `appendContent`.
-  * With `prependContent=CsvCell[][]` or `appendContent=CsvCell[][]`, custom content will be inserted containing
-    commas and quotes. These commas and quotes will be visible when opened in Excel because they have been escaped properly.
-  * With `prependContent=string` or `appendContent=string`, a string to be inserted into the CSV file without any processing, and without being affected by suppressQuotes and columnSeparator. It contains commas and quotes that will not be visible in Excel.
+-   You can use select fields at the top to switch the value of `prependContent` and `appendContent`.
 
-* You can use the `Show CSV export content text` button, to preview the output.
+    -   With `prependContent=CsvCell[][]` or `appendContent=CsvCell[][]`, custom content will be inserted containing
+        commas and quotes. These commas and quotes will be visible when opened in Excel because they have been escaped properly.
+    -   With `prependContent=string` or `appendContent=string`, a string to be inserted into the CSV file without any processing, and without being affected by suppressQuotes and columnSeparator. It contains commas and quotes that will not be visible in Excel.
 
-* You can use the `Download CSV export file` button to download a csv file.
+-   You can use the `Show CSV export content text` button, to preview the output.
+
+-   You can use the `Download CSV export file` button to download a csv file.
 
 {% gridExampleRunner title="CSV Export - Custom Header and Footer" name="csv-export-header-footer"  exampleHeight=400 /%}
 
@@ -95,9 +97,9 @@ In some situations, you could be interested in exporting only the grid data, wit
 
 Note the following:
 
-* Initially, grouped headers and header are exported.
-* Group Headers will be skipped if `Skip Column Group Headers` is checked.
-* Normal headers will be skipped if `Skip Column Headers` is checked.
+-   Initially, grouped headers and header are exported.
+-   Group Headers will be skipped if `Skip Column Group Headers` is checked.
+-   Normal headers will be skipped if `Skip Column Headers` is checked.
 
 {% gridExampleRunner title="CSV Export - Column Headers" name="csv-export-column-headers"  exampleHeight=400 /%}
 
@@ -107,9 +109,9 @@ If the pinned rows are not relevant to the data, they can be excluded from the e
 
 Note the following:
 
-* By default, all pinned rows are exported.
-* If `Skip Pinned Top Rows` is checked, the rows pinned at the top will be skipped.
-* If `Skip Pinned Bottom Rows` is checked, the rows pinned at the bottom will be skipped.
+-   By default, all pinned rows are exported.
+-   If `Skip Pinned Top Rows` is checked, the rows pinned at the top will be skipped.
+-   If `Skip Pinned Bottom Rows` is checked, the rows pinned at the bottom will be skipped.
 
 {% gridExampleRunner title="CSV Export - Pinned Rows" name="csv-export-pinned-rows"  exampleHeight=400 /%}
 
@@ -119,8 +121,8 @@ By default, hidden columns are not exported. If you would like all columns to be
 
 Note the following:
 
-* By default, only visible columns will be exported. The bronze, silver, and gold columns will not.
-* If `Export All Columns` is checked, the bronze, silver, and gold columns will be included in the export.
+-   By default, only visible columns will be exported. The bronze, silver, and gold columns will not.
+-   If `Export All Columns` is checked, the bronze, silver, and gold columns will be included in the export.
 
 {% gridExampleRunner title="CSV Export - Hidden Columns" name="csv-export-hidden-columns"  exampleHeight=400 /%}
 

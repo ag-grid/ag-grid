@@ -45,13 +45,13 @@ Date Filters are configured through the `filterParams` attribute of the column d
 
 The example below demonstrates configuring date range filtering in the Date Filter with minimum and maximum validation dates:
 
-* For the **Start Date** column:
-  * The `minValidDate` parameter is set to `'2000-01-01'` using a string.
-  * The `maxValidDate` is dynamically set to tomorrow's date using a `Date` object.
-* For the **End Date** column:
-  * The `minValidYear` parameter is set to `2010`.
-  * The `maxValidYear` parameter is set to `2030`.
-* Dates outside the valid ranges will be invalid.
+-   For the **Start Date** column:
+    -   The `minValidDate` parameter is set to `'2000-01-01'` using a string.
+    -   The `maxValidDate` is dynamically set to tomorrow's date using a `Date` object.
+-   For the **End Date** column:
+    -   The `minValidYear` parameter is set to `2010`.
+    -   The `maxValidYear` parameter is set to `2030`.
+-   Dates outside the valid ranges will be invalid.
 
 {% gridExampleRunner title="Setting Date Range For Filter" name="range-for-date-filter"  exampleHeight=520 /%}
 
@@ -71,9 +71,9 @@ If you are not using Cell Data Types (and the cell value is not a `Date` object,
 
 The `comparator` function takes two parameters. The first parameter is a JavaScript `Date` object for the selected date in the filter (with the time set to midnight). The second parameter is the current value of the cell in the row being evaluated. The function must return:
 
-* Any number < 0 if the cell value is less than the filter date.
-* 0 if the dates are the same.
-* Any number > 0 if the cell value is greater than the filter date.
+-   Any number < 0 if the cell value is less than the filter date.
+-   0 if the dates are the same.
+-   Any number > 0 if the cell value is greater than the filter date.
 
 This pattern is intended to be similar to the JavaScript `compareTo(a, b)` function.
 
@@ -181,7 +181,7 @@ The Date Filter presents a list of [Filter Options](./filter-conditions/#filter-
 The list of options is as follows:
 
 | Option Name    | Option Key    | Included by Default |
-|----------------|---------------|---------------------|
+| -------------- | ------------- | ------------------- |
 | Equals         | `equals`      | Yes                 |
 | Does not equal | `notEqual`    | Yes                 |
 | Before         | `lessThan`    | Yes                 |
@@ -235,18 +235,18 @@ const columnDefs: ColDef[] = [
         'nextWeek',
         'last30Days',
         'lastMonth',
-        // ... All other preset ranges 
+        // ... All other preset ranges
       ],
       // Other filter settings...
     },
   },
 ];
-``` 
+```
 
 ### Available Built-in Date Filter Options
 
 | Option Name        | Option Key     | Time Range Start >=                    | Time Range End <              |
-|--------------------|----------------|----------------------------------------|:------------------------------|
+| ------------------ | -------------- | -------------------------------------- | :---------------------------- |
 | Today              | `today`        | `Start Of Today`                       | `Start Of Tomorrow`           |
 | Yesterday          | `yesterday`    | `Start Of Yesterday`                   | `Start Of Today`              |
 | Tomorrow           | `tomorrow`     | `Start Of Tomorrow`                    | `Start Of Day After Tomorrow` |
@@ -269,7 +269,6 @@ const columnDefs: ColDef[] = [
 | Last 6 Months      | `last6Months`  | `Start Of Today minus 6 months`        | `Start Of Tomorrow`           |
 | Last 12 Months     | `last12Months` | `Start Of Today minus 12 months`       | `Start Of Tomorrow`           |
 | Last 24 Months     | `last24Months` | `Start Of Today minus 24 months`       | `Start Of Tomorrow`           |
-
 
 {% note %}
 `Start Of Today`, `Start Of Tomorrow`, `Start Of XXX` point to the beginning of the corresponding day, e.g. `00:00:00.000` in the browser’s local time zone.
@@ -322,8 +321,8 @@ The example below shows how to register a custom date component that contains an
 
 Applying the Date Filter is described in more detail in the following sections:
 
-* [Apply, Clear, Reset and Cancel Buttons](./filter-applying/#apply-clear-reset-and-cancel-buttons)
-* [Applying the UI Model](./filter-applying/#applying-the-ui-model)
+-   [Apply, Clear, Reset and Cancel Buttons](./filter-applying/#apply-clear-reset-and-cancel-buttons)
+-   [Applying the UI Model](./filter-applying/#applying-the-ui-model)
 
 ## Blank Cells
 
@@ -341,8 +340,8 @@ const filterParams = {
 
 In the following example you can filter by date and see how blank values are included. Note the following:
 
-* Column **Date** has both `null` and `undefined` values resulting in blank cells.
-* Toggle the controls on the top to see how `includeBlanksInEquals`, `includeBlanksInNotEqual`,  `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange` impact the search result.
+-   Column **Date** has both `null` and `undefined` values resulting in blank cells.
+-   Toggle the controls on the top to see how `includeBlanksInEquals`, `includeBlanksInNotEqual`, `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange` impact the search result.
 
 {% gridExampleRunner title="Date Null Filtering" name="date-null-filtering" exampleHeight=310 /%}
 

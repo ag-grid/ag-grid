@@ -24,8 +24,8 @@ See the [Row Dragging](./row-dragging/) documentation for more information about
 
 There are two approaches to enable Row Dragging:
 
-- [Managed Row Dragging](#enabling-managed-row-dragging): The grid handles row dragging automatically.
-- [Unmanaged Row Dragging](#unmanaged-row-dragging): Customized application-specific logic for row dragging.
+-   [Managed Row Dragging](#enabling-managed-row-dragging): The grid handles row dragging automatically.
+-   [Unmanaged Row Dragging](#unmanaged-row-dragging): Customized application-specific logic for row dragging.
 
 ## Enabling Managed Row Dragging
 
@@ -36,9 +36,9 @@ Moving a parent to be a child of itself is not allowed, as this would create a c
 
 To enable managed row dragging, set the following options:
 
-- `rowDragManaged: true` — Enables managed row dragging, so the grid handles row movement automatically.
-- `autoGroupColumnDef.rowDrag: true` — Enables the drag handle in the group column.
-- `suppressMoveWhenRowDragging: true` — Prevents the grid from moving rows while dragging, showing a highlight over the row instead.
+-   `rowDragManaged: true` — Enables managed row dragging, so the grid handles row movement automatically.
+-   `autoGroupColumnDef.rowDrag: true` — Enables the drag handle in the group column.
+-   `suppressMoveWhenRowDragging: true` — Prevents the grid from moving rows while dragging, showing a highlight over the row instead.
 
 {% note %}
 It is recommended to enable `suppressMoveWhenRowDragging` when using managed row dragging with Tree Data.
@@ -50,10 +50,10 @@ Enabling it provides a smoother and more predictable user experience by only hig
 
 Other relevant options used in the example above include:
 
-- `getRowId` — Provides a unique ID for each row, required for row movement.
-- `treeData: true` — Enables tree data mode, allowing hierarchical data structures.
-- `treeDataParentIdField: 'parentId'` — Specifies the field that defines parent-child relationships.
-- `groupDefaultExpanded: -1` — Expands all groups by default.
+-   `getRowId` — Provides a unique ID for each row, required for row movement.
+-   `treeData: true` — Enables tree data mode, allowing hierarchical data structures.
+-   `treeDataParentIdField: 'parentId'` — Specifies the field that defines parent-child relationships.
+-   `groupDefaultExpanded: -1` — Expands all groups by default.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -88,12 +88,12 @@ See the [Providing Data Paths](./tree-data-paths) for details about filler nodes
 
 Managed row dragging supports multi-row dragging, allowing users to select multiple rows and drag them together, including rows in different levels.
 
-To enable this, set the grid options `rowDragMultiRow = true` together with `rowSelection.mode = 'multiRow'`.  
+To enable this, set the grid options `rowDragMultiRow = true` together with `rowSelection.mode = 'multiRow'`.
 
 For this example note the following:
 
-* When you select multiple items and drag one of them, all items in the selection will be dragged.
-* When you drag an item that is not selected while other items are selected, only the unselected item will be dragged.
+-   When you select multiple items and drag one of them, all items in the selection will be dragged.
+-   When you drag an item that is not selected while other items are selected, only the unselected item will be dragged.
 
 {% gridExampleRunner title="Row Drag with Multi-Row Drag" name="tree-managed-multi-row-drag" /%}
 
@@ -114,8 +114,9 @@ This affects also the icon and label shown when dragging a row for both managed 
 {% apiDocumentation source="grid-options/properties.json" section="rowDragging" names=["isRowValidDropPosition"] /%}
 
 In the example below, note that:
-* A file cannot be converted to a folder, dropping a file or a folder into a file is blocked.
-* The `READONLY` folder cannot change parent, and drag and drop into or from it is not allowed.
+
+-   A file cannot be converted to a folder, dropping a file or a folder into a file is blocked.
+-   The `READONLY` folder cannot change parent, and drag and drop into or from it is not allowed.
 
 {% gridExampleRunner title="Managed Row Drag with Tree Data and isRowValidDropPosition" name="tree-managed-row-drag-filesystem"  /%}
 
@@ -135,7 +136,7 @@ Example with Data Paths:
 
 {% gridExampleRunner title="Extracting Managed Row Dragging Data with Data Paths" name="tree-managed-row-drag-extract-data-path" exampleHeight=400 /%}
 
-## Unmanaged Row Dragging 
+## Unmanaged Row Dragging
 
 In order to have full control over row dragging, it is possible to provide a customized implementation of row dragging using [Unmanaged Row Dragging](./row-dragging-unmanaged).
 In this case, the application is responsible for maintaining the rowData state, handling the dragging events and updating the rowData based on the drag events fired by the grid.
@@ -144,11 +145,11 @@ In this case, the application is responsible for maintaining the rowData state, 
 
 The example below shows [Tree Data](./tree-data/) and row dragging with getDataPath where the following can be noted:
 
-* The [Auto-Group Column](./grouping/) has row drag `true` for all rows.
-* The application moves the rows in the row data while the row drag is happening in the `onRowDragMove` event handler.
-* While row dragging, the row move operation can be reverted by pressing {% kbd "⎋ Escape" /%} key.
-* Is possible to reorder a row only inside its current parent by holding the {% kbd "⇧ Shift" /%} key and dragging it.  
-* The expanded/contracted state of a folder and all of its child folders is preserved when the folder is moved to a new parent.
+-   The [Auto-Group Column](./grouping/) has row drag `true` for all rows.
+-   The application moves the rows in the row data while the row drag is happening in the `onRowDragMove` event handler.
+-   While row dragging, the row move operation can be reverted by pressing {% kbd "⎋ Escape" /%} key.
+-   Is possible to reorder a row only inside its current parent by holding the {% kbd "⇧ Shift" /%} key and dragging it.
+-   The expanded/contracted state of a folder and all of its child folders is preserved when the folder is moved to a new parent.
 
 {% gridExampleRunner title="Unmanaged Row Drag with Tree Data" name="tree-unmanaged-row-drag"  exampleHeight=545  /%}
 
@@ -156,11 +157,11 @@ The example below shows [Tree Data](./tree-data/) and row dragging with getDataP
 
 The example above works, however it is not intuitive as the user is given no visual hint what folder will be the destination folder. The example below continues with the example above by providing hints to the user while the drag is in progress. From the example the following can be observed:
 
-* The example registers for `onRowDragMove` events and works out which folder the mouse is over as the drag is happening.
-* While the row is dragging, the application highlights the folder that is currently selected as the destination folder (called `potentialParent` in the example code).
-* The application does NOT rearrange the rows as the drag is happening. As with the previous example, it waits for the `onRowDragEnd` event before updating the data.
-* The example uses [Cell Class Rules](./cell-styles/#cell-class-rules) to highlight the destination folder. The example adds a CSS class `hover-over` to all the cells of the destination folder.
-* The example uses [Refresh Cells](./view-refresh/#refresh-cells) to get the grid to execute the Cell Class Rules again over the destination folder when the destination folder changes.
+-   The example registers for `onRowDragMove` events and works out which folder the mouse is over as the drag is happening.
+-   While the row is dragging, the application highlights the folder that is currently selected as the destination folder (called `potentialParent` in the example code).
+-   The application does NOT rearrange the rows as the drag is happening. As with the previous example, it waits for the `onRowDragEnd` event before updating the data.
+-   The example uses [Cell Class Rules](./cell-styles/#cell-class-rules) to highlight the destination folder. The example adds a CSS class `hover-over` to all the cells of the destination folder.
+-   The example uses [Refresh Cells](./view-refresh/#refresh-cells) to get the grid to execute the Cell Class Rules again over the destination folder when the destination folder changes.
 
 {% gridExampleRunner title="Highlighting Unmanaged Row Drag with Tree Data" name="tree-unmanaged-row-drag-highlight"  /%}
 
@@ -175,5 +176,5 @@ This example also demonstrates how to provide custom drop indicators using the [
 
 ## See Also
 
-- [Aggregation](./aggregation/) for aggregating values in tree data
-- [Editing Groups](./grouping-edit/) for editing aggregated values with cascading updates to children
+-   [Aggregation](./aggregation/) for aggregating values in tree data
+-   [Editing Groups](./grouping-edit/) for editing aggregated values with cascading updates to children

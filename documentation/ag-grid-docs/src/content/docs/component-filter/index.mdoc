@@ -25,8 +25,9 @@ If you do not enable the grid option `enableFilterHandlers`, it is still possibl
 {% /note %}
 
 Implementing a custom filter requires two parts:
-- The custom filter component which will be displayed to the user.
-- The the logic to run the filter.
+
+-   The custom filter component which will be displayed to the user.
+-   The the logic to run the filter.
 
 {% if isFramework("react") %}
 Custom filter components are controlled components, which receive a filter model as part of the props, and pass model updates back to the grid via the `onModelChange` callback.
@@ -42,7 +43,6 @@ A filter model of `null` means that no filter is applied (the filter displays as
 {% partial file="./_component-interface-angular.mdoc" /%}
 {% partial file="./_component-interface-react.mdoc" /%}
 {% partial file="./_component-interface-vue.mdoc" /%}
-
 
 ## Custom Filter Parameters
 
@@ -69,6 +69,7 @@ will be additionally added to the params object, overriding items of the same na
 {% /if %}
 
 {% if isFramework("react") %}
+
 ### Filter Props
 
 The following props are passed to the custom filter components (`CustomFilterDisplayProps` interface). If custom props are provided via the `colDef.filterParams` property, these will be additionally added to the props object, overriding items of the same name if a name clash exists.
@@ -79,6 +80,7 @@ The following props are passed to the custom filter components (`CustomFilterDis
 {% /if %}
 
 {% if isFramework("react") %}
+
 ### Filter Callbacks
 
 The following callbacks can be passed to the `useGridFilterDisplay` hook (`CustomFilterDisplayCallbacks` interface). All the callbacks are optional. The hook only needs to be used if callbacks are provided.
@@ -92,8 +94,9 @@ The following callbacks can be passed to the `useGridFilterDisplay` hook (`Custo
 ## Filter Logic
 
 The logic to run the filter can be provided in one of two ways:
-- As a `doesFilterPass` callback for simple filter cases.
-- As a filter handler object for more complex filter cases.
+
+-   As a `doesFilterPass` callback for simple filter cases.
+-   As a filter handler object for more complex filter cases.
 
 The logic is passed via the `filter` property along with the custom component as a `ColumnFilter` object.
 
@@ -165,9 +168,10 @@ It is possible to use the [Filter Buttons](./filter-applying/) for grid-provided
 {% gridExampleRunner title="Filter Buttons" name="custom-filter-buttons" /%}
 
 The example above demonstrates using filters with buttons via the same custom filter component:
-- The **Year Default** column does not use buttons.
-- The **Year Apply** column uses the apply button, and additionally closes the filter popup on apply.
-- The **Year Reset** column uses the reset button, which will set the filter back to the default model and apply it.
+
+-   The **Year Default** column does not use buttons.
+-   The **Year Apply** column uses the apply button, and additionally closes the filter popup on apply.
+-   The **Year Reset** column uses the reset button, which will set the filter back to the default model and apply it.
 
 The buttons are configured by passing additional parameters to the filter (interface `FilterWrapperParams`).
 
@@ -192,9 +196,9 @@ Sometimes you will need to create custom components for your filters that also c
 
 There are two ways you can get fix this problem:
 
-* Add a mouse click listener to your floating element and set it to `preventDefault()`. This way, the click event will not bubble up to the grid.
-  This is the best solution, but you can only do this if you are writing the component yourself.
-* Add the `ag-custom-component-popup` CSS class to your floating element. An example of this usage can be found here: [Custom Date Component](./filter-date/#custom-selection-component)
+-   Add a mouse click listener to your floating element and set it to `preventDefault()`. This way, the click event will not bubble up to the grid.
+    This is the best solution, but you can only do this if you are writing the component yourself.
+-   Add the `ag-custom-component-popup` CSS class to your floating element. An example of this usage can be found here: [Custom Date Component](./filter-date/#custom-selection-component)
 
 ## Using Custom Filters with Grid-Provided Filter Logic
 
@@ -215,10 +219,11 @@ const gridOptions = {
 ```
 
 The grid-provided handlers are:
-- `'agTextColumnFilterHandler'` - [Text Filter](./filter-text/) handler.
-- `'agNumberColumnFilterHandler'` - [Number Filter](./filter-number/) handler.
-- `'agBigIntColumnFilterHandler'` - [BigInt Filter](./filter-bigint/) handler.
-- `'agDateColumnFilterHandler'` - [Date Filter](./filter-date/) handler.
+
+-   `'agTextColumnFilterHandler'` - [Text Filter](./filter-text/) handler.
+-   `'agNumberColumnFilterHandler'` - [Number Filter](./filter-number/) handler.
+-   `'agBigIntColumnFilterHandler'` - [BigInt Filter](./filter-bigint/) handler.
+-   `'agDateColumnFilterHandler'` - [Date Filter](./filter-date/) handler.
 
 The example below demonstrates using the Number Filter handler with a custom filter component:
 
@@ -237,6 +242,7 @@ AG Grid allows you to get a reference to the filter component instances via `api
 Similarly, you can get a reference to the filter handler via `api.getColumnFilterHandler(colKey)`.
 
 {% if isFramework("angular") %}
+
 ```ts
 // let's assume an Angular component as follows
 @Component({
@@ -262,9 +268,11 @@ laterOnInYourApplicationSomewhere() {
     });
 }
 ```
+
 {% /if %}
 
 {% if isFramework("react") %}
+
 ```ts
 // let's assume a React component as follows
 export default forwardRef((props, ref) => {
@@ -294,9 +302,11 @@ laterOnInYourApplicationSomewhere() {
     });
 }
 ```
+
 {% /if %}
 
 {% if isFramework("vue") %}
+
 ```ts
 // let's assume a VueJS component as follows
 export default {
@@ -319,12 +329,12 @@ export default {
         });
     }
 ```
+
 {% /if %}
 
 The example below illustrates how a custom filter component can be accessed and methods on it invoked. If you click on the `Invoke Filter Instance Method` button, it will invoke the instance `componentMethod`, which logs to the developer console.
 
 {% gridExampleRunner title="Filter Component Instance" name="filter-component"  exampleHeight=445 /%}
-
 
 ## Next Up
 

@@ -4,7 +4,6 @@ title: "Testing AG Grid"
 
 Here we give some hints on testing AG Grid as part of your application.
 
-
 ## End to End (e2e) Testing
 
 {% idea %}
@@ -23,7 +22,7 @@ There are a number of end-to-end test examples available in the [AG Grid repo](h
 
 ### Enabling Test IDs
 
-Many testing libraries allow targeting the `data-testid` attribute to locate elements on the page to use for assertions or actions. 
+Many testing libraries allow targeting the `data-testid` attribute to locate elements on the page to use for assertions or actions.
 AG Grid provides support for attaching this attribute to many of the interactive elements in the grid. This is achieved by calling the `setupAgTestIds` function. This should only be used in a test or development environment, not in production.
 
 ```js
@@ -45,12 +44,13 @@ setupAgTestIds({ testIdAttribute: 'data-customattr' })
 
 ### Using Test IDs
 
-WIth Test IDs enabled on your application's grids it is then possible to query elements via the `agTestIdFor` helper methods. 
+WIth Test IDs enabled on your application's grids it is then possible to query elements via the `agTestIdFor` helper methods.
+
 ```js
 // Test code
 import { agTestIdFor } from 'ag-grid-community';
 
-// in your test case 
+// in your test case
 const rowId = 'toyota';
 const colId = 'make';
 const cellTestId = agTestIdFor.cell(rowId, colId);
@@ -58,7 +58,7 @@ const cellTestId = agTestIdFor.cell(rowId, colId);
 // Using Playwright
 const checkbox = page.getByTestId(cellTestId);
 
-// Testing Library 
+// Testing Library
 const checkbox = findByTestId(cellTestId);
 ```
 
@@ -68,7 +68,7 @@ When writing tests using Test IDs, the code can become verbose. To reduce boiler
 
 ```js
 // Test code
-import { agTestIdFor, wrapAgTestIdFor } from 'ag-grid-community';   
+import { agTestIdFor, wrapAgTestIdFor } from 'ag-grid-community';
 
  // Before
  await expect(page.getByTestId(agTestIdFor.headerCell('toyota'))).toBeVisible();
@@ -96,8 +96,9 @@ If you are using jsdom for testing, you may encounter issues that suggest the gr
 {% /warning %}
 
 The main limitations that can affect AG Grid are:
-   - No support for CSS layout - impacts column / row virtualisation
-   - No support for `innerText` property [Issue #1245](https://github.com/jsdom/jsdom/issues/1245) - impacts some grid components
+
+-   No support for CSS layout - impacts column / row virtualisation
+-   No support for `innerText` property [Issue #1245](https://github.com/jsdom/jsdom/issues/1245) - impacts some grid components
 
 If you wish to use jsdom for your tests you may find the following polyfill useful if you encounter issues with missing content due to the use of `innerText`:
 
@@ -109,6 +110,7 @@ Object.defineProperty(Element.prototype, 'innerText', {
     },
 });
 ```
+
 Where you implement this polyfill may vary depending on your testing setup.
 
 ## Retrieving References to Grid API and Grid Container Element
@@ -125,14 +127,14 @@ const api = getGridApi('#myGrid');
 const element = getGridElement(api);
 ```
 
-The `getGridApi` function returns a `GridApi` instance that is associated with the grid rendered in `gridElement`. 
+The `getGridApi` function returns a `GridApi` instance that is associated with the grid rendered in `gridElement`.
 The `gridElement` argument can be one of the following: the grid ID as determined by the `gridId` grid option, a DOM node, or a CSS selector string.
 {% if isFramework("angular", "react", "vue") %}
 It is recommended to use the `gridId` as the argument.
 {% /if %}
 {% if isFramework("javascript") %}
 When using a CSS selector, it must refer to the element passed to `createGrid`.
-If passing a DOM node as an argument, this DOM node must be an immediate child of the element passed to `createGrid`. 
+If passing a DOM node as an argument, this DOM node must be an immediate child of the element passed to `createGrid`.
 This is to support the case where multiple grids are instantiated in a single element.
 {% /if %}
 

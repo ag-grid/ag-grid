@@ -28,7 +28,7 @@ const gridOptions = {
 In the snippet above, the rows are [Grouped](./grouping) on the `Country` column and [Aggregated](./aggregation)
 to total the number of `Gold` medals won by each country. You must provide at least one aggregation column as only aggregated rows are shown when pivoting.
 
-Pivoting is then applied to the `Sport` column values which generates a [Pivot Result Column](./pivoting-result-columns/) 
+Pivoting is then applied to the `Sport` column values which generates a [Pivot Result Column](./pivoting-result-columns/)
 showing the total number of `Gold` medals won by each country in each sport, as seen in this example:
 
 {% gridExampleRunner title="Simple Example" name="simple" /%}
@@ -36,7 +36,6 @@ showing the total number of `Gold` medals won by each country in each sport, as 
 {% note %}
 Pivoting with [Tree Data](./tree-data) enabled is currently not supported. Pivoting can only be used with [Row Grouping](./grouping).
 {% /note %}
-
 
 ## Configuring via the UI
 
@@ -76,7 +75,7 @@ The example below demonstrates the pivot panel alongside a [Column Tool Panel](.
 
 This uses the following configuration to only show the pivot panel while pivoting is active:
 
-```{% frameworkTransform=true %} 
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         // ...other column definitions
@@ -100,7 +99,7 @@ Pivoting can be controlled using the following grid API methods:
 
 ## See Also
 
-- [Editing Groups](./grouping-edit/) for editing pivot aggregated values with cascading updates to children
+-   [Editing Groups](./grouping-edit/) for editing pivot aggregated values with cascading updates to children
 
 ## Next Up
 

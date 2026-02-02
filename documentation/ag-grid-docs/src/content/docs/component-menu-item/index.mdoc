@@ -14,6 +14,7 @@ Implement this interface to provide a custom menu item.
 {% /if %}
 
 {% if isFramework("angular") %}
+
 ```ts
 interface extends IMenuItemAngularComp {
     // mandatory methods
@@ -40,9 +41,11 @@ interface extends IMenuItemAngularComp {
     select(): void;
 }
 ```
+
 {% /if %}
 
 {% if isFramework("javascript") %}
+
 ```ts
 interface IMenuItemComp {
     // mandatory methods
@@ -72,9 +75,11 @@ interface IMenuItemComp {
     select(): void;
 }
 ```
+
 {% /if %}
 
 {% if isFramework("vue") %}
+
 ```ts
 interface IMenuItem {
     // optional methods
@@ -96,9 +101,11 @@ interface IMenuItem {
     select(): void;
 }
 ```
+
 {% /if %}
 
 {% if isFramework("react") %}
+
 ```jsx
 export default ({ name, icon, shortcut, subMenu }) => {
     useGridMenuItem(() => {
@@ -114,6 +121,7 @@ export default ({ name, icon, shortcut, subMenu }) => {
     );
 };
 ```
+
 {% /if %}
 
 {% if isFramework("react") %}
@@ -147,10 +155,13 @@ When a menu item is instantiated, the following will be made available on `this.
 {% /if %}
 
 {% if isFramework("react") %}
+
 ## Custom Menu Item Parameters
+
 {% /if %}
 
 {% if isFramework("react") %}
+
 ### Menu Item Props
 
 The following props are passed to the custom menu item components (`CustomMenuItemProps` interface).
@@ -161,6 +172,7 @@ The following props are passed to the custom menu item components (`CustomMenuIt
 {% /if %}
 
 {% if isFramework("react") %}
+
 ### Menu Item Callbacks
 
 The following callbacks can be passed to the `useGridMenuItem` hook (`CustomMenuItemCallbacks` interface). All the callbacks are optional, and the hook only needs to be used if callbacks are provided.

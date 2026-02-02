@@ -27,25 +27,27 @@ The default Excel export behaviour will export the grid as it is currently rende
 
 Note that the raw values, and not the result from a cell renderer will be used, meaning the results from:
 
-* Value Getters will be used.
-* Cell Renderers will **NOT** be used.
-* Value Formatters will be used by default via the [Use Value Formatter for Export](./value-formatters/#formatting-for-export) feature.
-* Cell styles will **NOT** be exported by default.
+-   Value Getters will be used.
+-   Cell Renderers will **NOT** be used.
+-   Value Formatters will be used by default via the [Use Value Formatter for Export](./value-formatters/#formatting-for-export) feature.
+-   Cell styles will **NOT** be exported by default.
 
 In the following example reorder some columns and apply some filter and sort operations - then export from the 'Excel Export' option
 in the context menu, or the 'Export to Excel' button provided. Note the following:
 
-* The current order of the columns is exported and any hidden columns will not be exported.
-* Filtered out rows are not included in the export, and the sort order is maintained.
+-   The current order of the columns is exported and any hidden columns will not be exported.
+-   Filtered out rows are not included in the export, and the sort order is maintained.
 
 {% gridExampleRunner title="Default Excel Export" name="excel-default-export"  exampleHeight=600 /%}
 
 {% note %}
+
 1. The column width in Excel will be the same as the actual width of the column in the application at the time that the export happens, or 75px, whichever is wider. "Actual width" may be different from the width in the column definition if column has been resized or uses flex sizing. This can be overridden using the `columnWidth` export parameter.
 
 1. The data types of your columns are passed to Excel as part of the export so that you can work with the data within Excel in the correct format.
 
 1. The cells of the column header groups are merged in the same manner as the group headers in AG Grid.
+
 {% /note %}
 
 ## Custom Excel Export
@@ -54,20 +56,20 @@ The [Default Excel Export](./excel-export/#default-excel-export) behaviour will 
 
 The sections below cover the various ways the exported Excel spreadsheets can be customised:
 
-* **[Styles](./excel-export-styles/)**: Apply custom styling to exported spreadsheets.
-* **[Formulas](./excel-export-formulas/)**: Export the grid's value getters to Excel formulas.
-* **[Extra Content](./excel-export-extra-content/)**: Add to the exported spreadsheets extra content not shown in the grid.
-* **[Images](./excel-export-images/)**: Export images as extra content or within grid cells.
-* **[Excel Tables](./excel-export-tables/)**: Export grid as an Excel Table with filtering, sorting, and other Excel features.
-* **[Multiple Sheets](./excel-export-multiple-sheets/)**: Export grid data across multiple sheets of an Excel workbook.
-* **[Rows](./excel-export-rows/)**: Set which rows are exported.
-* **[Columns](./excel-export-columns/)**: Set which columns are exported.
-* **[Freezing Content](./excel-export-freeze/)**: Freeze rows at the top or columns at the start.
-* **[Data Types](./excel-export-data-types/)**:  Export grid values to the Excel built-in data types.
-* **[Hyperlinks](./excel-export-hyperlinks/)**: Add hyperlinks to exported spreadsheets.
-* **[Master Detail](./excel-export-master-detail/)**: Export master detail grids to single or multiple sheets.
-* **[Page Setup](./excel-export-page-setup/)**: Customize the page setup of the exported spreadsheets.
-* **[Data Protection](./excel-export-data-protection/)**: Protect worksheets and unlock specific cells.
+-   **[Styles](./excel-export-styles/)**: Apply custom styling to exported spreadsheets.
+-   **[Formulas](./excel-export-formulas/)**: Export the grid's value getters to Excel formulas.
+-   **[Extra Content](./excel-export-extra-content/)**: Add to the exported spreadsheets extra content not shown in the grid.
+-   **[Images](./excel-export-images/)**: Export images as extra content or within grid cells.
+-   **[Excel Tables](./excel-export-tables/)**: Export grid as an Excel Table with filtering, sorting, and other Excel features.
+-   **[Multiple Sheets](./excel-export-multiple-sheets/)**: Export grid data across multiple sheets of an Excel workbook.
+-   **[Rows](./excel-export-rows/)**: Set which rows are exported.
+-   **[Columns](./excel-export-columns/)**: Set which columns are exported.
+-   **[Freezing Content](./excel-export-freeze/)**: Freeze rows at the top or columns at the start.
+-   **[Data Types](./excel-export-data-types/)**: Export grid values to the Excel built-in data types.
+-   **[Hyperlinks](./excel-export-hyperlinks/)**: Add hyperlinks to exported spreadsheets.
+-   **[Master Detail](./excel-export-master-detail/)**: Export master detail grids to single or multiple sheets.
+-   **[Page Setup](./excel-export-page-setup/)**: Customize the page setup of the exported spreadsheets.
+-   **[Data Protection](./excel-export-data-protection/)**: Protect worksheets and unlock specific cells.
 
 ## Next Up
 

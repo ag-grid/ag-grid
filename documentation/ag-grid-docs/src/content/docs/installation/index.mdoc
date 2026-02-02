@@ -25,6 +25,7 @@ Install the `ag-grid-react` package, which also installs `ag-grid-community`:
 ```bash
 npm install ag-grid-react
 ```
+
 {% /if %}
 
 {% if isFramework("angular") %}
@@ -33,6 +34,7 @@ Install the `ag-grid-angular` package, which also installs `ag-grid-community`:
 ```bash
 npm install ag-grid-angular
 ```
+
 {% /if %}
 
 {% if isFramework("vue") %}
@@ -41,6 +43,7 @@ Install the `ag-grid-vue3` package, which also installs `ag-grid-community`:
 ```bash
 npm install ag-grid-vue3
 ```
+
 {% /if %}
 
 {% if isFramework("javascript") %}
@@ -49,6 +52,7 @@ Install the `ag-grid-community` package:
 ```bash
 npm install ag-grid-community
 ```
+
 {% /if %}
 
 To use AG Grid Enterprise features, install the `ag-grid-enterprise` package:
@@ -80,15 +84,19 @@ You can test AG Grid Enterprise locally without a licence. To test in production
 {% /if %}
 
 {% if isFramework("react", "angular", "vue") %}
+
 ## Registering Modules
+
 {% /if %}
 
 {% if isFramework("javascript") %}
+
 ### Registering Modules
+
 {% /if %}
 
 {% if isFramework("react") %}
-Use `AgGridProvider` to provide modules to all grid instances. Provide `AllCommunityModule` to access all Community features or `AllEnterpriseModule` to access all Community ***and*** Enterprise features:
+Use `AgGridProvider` to provide modules to all grid instances. Provide `AllCommunityModule` to access all Community features or `AllEnterpriseModule` to access all Community **_and_** Enterprise features:
 
 ```jsx
 import { AllCommunityModule } from 'ag-grid-community';
@@ -109,7 +117,7 @@ function App() {
 {% /if %}
 
 {% if isFramework("javascript", "angular", "vue") %}
-Register the `AllCommunityModule` to access all Community features or `AllEnterpriseModule` to access all Community ***and*** Enterprise features:
+Register the `AllCommunityModule` to access all Community features or `AllEnterpriseModule` to access all Community **_and_** Enterprise features:
 
 ```js
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
@@ -126,11 +134,15 @@ To minimize bundle size, only register the modules you want to use. See the [Sel
 {% /note %}
 
 {% if isFramework("react", "angular", "vue") %}
+
 ## Importing
+
 {% /if %}
 
 {% if isFramework("javascript") %}
+
 ### Importing
+
 {% /if %}
 
 {% if isFramework("react") %}
@@ -139,6 +151,7 @@ Import `AgGridProvider` and `AgGridReact` from the `ag-grid-react` package:
 ```js
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 ```
+
 {% /if %}
 
 {% if isFramework("angular") %}
@@ -147,6 +160,7 @@ Import the `AgGridAngular` component from the `ag-grid-angular` package:
 ```js
 import { AgGridAngular } from 'ag-grid-angular';
 ```
+
 {% /if %}
 
 {% if isFramework("vue") %}
@@ -155,6 +169,7 @@ Import the `AgGridVue` component from the `ag-grid-vue3` package:
 ```js
 import { AgGridVue } from "ag-grid-vue3";
 ```
+
 {% /if %}
 
 {% if isFramework("javascript") %}
@@ -163,9 +178,11 @@ Import `createGrid` from the `ag-grid-community` package to create a new data gr
 ```js
 import { createGrid } from 'ag-grid-community';
 ```
+
 {% /if %}
 
 {% if isFramework("javascript") %}
+
 ## CDN Installation
 
 To install AG Grid Community, include the following script tags in your HTML file:
@@ -196,10 +213,10 @@ You can download AG Grid Community from {% link href="https://github.com/ag-grid
 
 Once unpacked you'll see four bundle files in within the `dist` folder:
 
-* `dist/ag-grid-community.js` — standard bundle containing JavaScript and CSS
-* `dist/ag-grid-community.min.js` — minified bundle containing JavaScript and CSS
-* `dist/ag-grid-community.noStyle.js` — standard bundle containing JavaScript without CSS
-* `dist/ag-grid-community.min.noStyle.js` — minified bundle containing JavaScript without CSS
+-   `dist/ag-grid-community.js` — standard bundle containing JavaScript and CSS
+-   `dist/ag-grid-community.min.js` — minified bundle containing JavaScript and CSS
+-   `dist/ag-grid-community.noStyle.js` — standard bundle containing JavaScript without CSS
+-   `dist/ag-grid-community.min.noStyle.js` — minified bundle containing JavaScript without CSS
 
 Should you decide to use the `noStyle` versions of the bundle, the style sheet files are present in the `styles` folder.
 
@@ -211,10 +228,10 @@ Once unpacked you'll see four bundle files in within the `dist` folder:
 
 Again there are four bundle files in the distribution:
 
-* `dist/ag-grid-enterprise.js` — standard bundle containing JavaScript and CSS
-* `dist/ag-grid-enterprise.min.js` — minified bundle containing JavaScript and CSS
-* `dist/ag-grid-enterprise.noStyle.js` — standard bundle containing JavaScript without CSS
-* `dist/ag-grid-enterprise.min.noStyle.js ` — minified bundle containing JavaScript without CSS
+-   `dist/ag-grid-enterprise.js` — standard bundle containing JavaScript and CSS
+-   `dist/ag-grid-enterprise.min.js` — minified bundle containing JavaScript and CSS
+-   `dist/ag-grid-enterprise.noStyle.js` — standard bundle containing JavaScript without CSS
+-   `dist/ag-grid-enterprise.min.noStyle.js ` — minified bundle containing JavaScript without CSS
 
 Should you decide to use the `noStyle` versions of the bundle, you should use the style files from
 the AG Grid bundle (all the styles needed for community and enterprise are in the community CSS files).

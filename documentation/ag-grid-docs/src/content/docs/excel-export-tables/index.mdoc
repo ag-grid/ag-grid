@@ -22,7 +22,6 @@ const gridOptions = {
 };
 ```
 
-
 The exported Excel file will contain a sheet with a table enclosing the exported data. When you select a cell
 within the table, the `Table` tab in the Excel tabs toolbar will appear, which provides options to filter, sort,
 and analyse the data.
@@ -35,14 +34,14 @@ This is how the exported Excel file with Table looks when opened in Excel:
 
 The following example demonstrates how to export the grid data as an Excel table.
 
-* We set the `exportAsExcelTable` property to `true` in the `defaultExcelExportParams` Grid Option.
+-   We set the `exportAsExcelTable` property to `true` in the `defaultExcelExportParams` Grid Option.
 
 Proceed as follows to see the Excel table:
 
-* You can trigger the export by clicking the `Export to Excel` button or via context menu.
-* Once your file is exported, open it in Excel and select a cell within the table to see the `Table` tab.
-* This example includes grouped columns, and thus only the leaf columns are included in the Excel table.
-* In this example, only Athlete, and Country columns can be filtered. This is also reflected in the Excel table.
+-   You can trigger the export by clicking the `Export to Excel` button or via context menu.
+-   Once your file is exported, open it in Excel and select a cell within the table to see the `Table` tab.
+-   This example includes grouped columns, and thus only the leaf columns are included in the Excel table.
+-   In this example, only Athlete, and Country columns can be filtered. This is also reflected in the Excel table.
 
 {% gridExampleRunner title="Excel Export - Exporting A Single Sheet as Excel Table" name="excel-export-table-single-sheet" /%}
 
@@ -75,18 +74,18 @@ The grid will be exported without an Excel table format.
 
 In the following example, we customise the Excel table as follows:
 
-* `showRowStripes` - Set to `true` to show row stripes in the Excel table.
-* `showColumnStripes` - Set to `true` to show column stripes in the Excel table.
-* `showFilterButton` - Set to `true` to show filter buttons for all columns in the Excel table.
-* `name` - Set to `Olympic Medals` to name the Excel table.
+-   `showRowStripes` - Set to `true` to show row stripes in the Excel table.
+-   `showColumnStripes` - Set to `true` to show column stripes in the Excel table.
+-   `showFilterButton` - Set to `true` to show filter buttons for all columns in the Excel table.
+-   `name` - Set to `Olympic Medals` to name the Excel table.
 
 Proceed as follows to see the Excel table:
 
-* Click the `Export to Excel` button to export the grid data as an Excel table.
-* Open the exported file in Excel and select a cell within the table to see the `Table` tab.
-* Notice that the stripes are only applied to the columns of the table.
-* Notice that the table name is set to `Olympic_Medals`.
-* Notice that the filter buttons are available for all columns in the table.
+-   Click the `Export to Excel` button to export the grid data as an Excel table.
+-   Open the exported file in Excel and select a cell within the table to see the `Table` tab.
+-   Notice that the stripes are only applied to the columns of the table.
+-   Notice that the table name is set to `Olympic_Medals`.
+-   Notice that the filter buttons are available for all columns in the table.
 
 {% gridExampleRunner title="Excel Export - Customising Excel Table Stripes" name="excel-export-table-stripes" /%}
 
@@ -94,13 +93,13 @@ Proceed as follows to see the Excel table:
 
 In the following example, we customise the Excel table as follows:
 
-* `highlightFirstColumn` - Set to `true` to highlight the first column in the Excel table.
-* `highlightLastColumn` - Set to `true` to highlight the last column in the Excel table.
+-   `highlightFirstColumn` - Set to `true` to highlight the first column in the Excel table.
+-   `highlightLastColumn` - Set to `true` to highlight the last column in the Excel table.
 
 Proceed as follows to see the Excel table:
 
-* Click the `Export to Excel` button to export the grid data as an Excel table.
-* Open the exported file in Excel and select a cell within the table to see the `Table` tab.
-* Notice that the `Athlete` and the `Total` columns are highlighted in the table.
+-   Click the `Export to Excel` button to export the grid data as an Excel table.
+-   Open the exported file in Excel and select a cell within the table to see the `Table` tab.
+-   Notice that the `Athlete` and the `Total` columns are highlighted in the table.
 
 {% gridExampleRunner title="Excel Export - Highlighting the First and Last Columns" name="excel-export-table-highlight-first-last" /%}

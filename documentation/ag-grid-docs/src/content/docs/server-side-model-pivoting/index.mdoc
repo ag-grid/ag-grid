@@ -103,8 +103,8 @@ const createDatasource = server => {
 
 The example below demonstrates this, note the following:
 
-* The pivot fields are returned from the server and then passed to the grid via the `getRows` success callback via the `pivotResultFields` property. These are logged to the console as a demonstration.
-* The grid splits the `pivotResultFields` by `_` and creates the pivot result columns and column groups where the generated columns use the provided fields to access the data from the rows.
+-   The pivot fields are returned from the server and then passed to the grid via the `getRows` success callback via the `pivotResultFields` property. These are logged to the console as a demonstration.
+-   The grid splits the `pivotResultFields` by `_` and creates the pivot result columns and column groups where the generated columns use the provided fields to access the data from the rows.
 
 {% gridExampleRunner title="Supplying Pivot Result Fields" name="supplying_pivot_result_fields"  exampleHeight=605 /%}
 
@@ -138,7 +138,7 @@ const createDatasource = server => {
 
             // add pivot result cols to the grid
             addPivotResultCols(response, params.api)
-            
+
             if (response.success) {
                 // supply rows for requested block to grid
                 params.success({
@@ -167,8 +167,8 @@ function addPivotResultCols(response, api) {
 In the code above, `addPivotColDefs` does not create column groups for simplicity. However, the example below shows a
 more complex implementation that creates column groups. Note the following:
 
-* Column definitions are created from the `pivotFields` are returned from the server.
-* These column definitions are then supplied to the grid via `api.setPivotResultColumns()`.
+-   Column definitions are created from the `pivotFields` are returned from the server.
+-   These column definitions are then supplied to the grid via `api.setPivotResultColumns()`.
 
 {% gridExampleRunner title="Creating Pivot Result Columns" name="creating_pivot_result_columns"  exampleHeight=605 /%}
 
@@ -180,13 +180,13 @@ The pivot result columns are displayed in the order they are supplied to `api.se
 
 The example below demonstrates server-side Pivoting with multiple row groups where there are multiple value columns ('gold', 'silver', 'bronze') under the 'year' pivot column group. Note the following:
 
-* Pivot mode is enabled through the grid option `pivotMode=true`.
-* A pivot is placed on the **Year** column via `pivot=true` defined on the column definition.
-* Rows are grouped by **Country** and **Sport** with `rowGroup=true` defined on their column definitions.
-* The **Gold**, **Silver** and **Bronze** value columns have `aggFunc='sum'` defined on their column definitions.
-* The `pivotCols` and `pivotMode` properties in the request are used by the server to perform pivoting.
-* New column group definitions are generated from the `pivotResultFields` provided by the success callback.
-* Open the browser's dev console to view the request supplied to the datasource.
+-   Pivot mode is enabled through the grid option `pivotMode=true`.
+-   A pivot is placed on the **Year** column via `pivot=true` defined on the column definition.
+-   Rows are grouped by **Country** and **Sport** with `rowGroup=true` defined on their column definitions.
+-   The **Gold**, **Silver** and **Bronze** value columns have `aggFunc='sum'` defined on their column definitions.
+-   The `pivotCols` and `pivotMode` properties in the request are used by the server to perform pivoting.
+-   New column group definitions are generated from the `pivotResultFields` provided by the success callback.
+-   Open the browser's dev console to view the request supplied to the datasource.
 
 {% gridExampleRunner title="Pivot Column Groups" name="pivot-column-groups"  exampleHeight=610 /%}
 
@@ -196,17 +196,17 @@ A mock data store running inside the browser is used in the example below. The p
 
 The example demonstrates the following:
 
-* Columns `Athlete, Age, Country, Year` and `Sport` all have `enableRowGroup=true` which means they can be grouped on. To group, you drag the columns to the row group panel section. By default the example is grouping by `Country` and then `Year` as these columns have `rowGroup=true`.
+-   Columns `Athlete, Age, Country, Year` and `Sport` all have `enableRowGroup=true` which means they can be grouped on. To group, you drag the columns to the row group panel section. By default the example is grouping by `Country` and then `Year` as these columns have `rowGroup=true`.
 
-* Columns `Gold, Silver` and `Bronze` all have `enableValue=true` which means they can be aggregated on. To aggregate, you drag the column to the `Values` section. When you are grouping, all columns in the `Values` section will be aggregated.
+-   Columns `Gold, Silver` and `Bronze` all have `enableValue=true` which means they can be aggregated on. To aggregate, you drag the column to the `Values` section. When you are grouping, all columns in the `Values` section will be aggregated.
 
-* You can turn the grid into **Pivot Mode**. To do this, you click the pivot mode checkbox. When the grid is in pivot mode, the grid behaves similarly to an Excel grid. This extra information is passed to your server as part of the request and it is your server's responsibility to return the data in the correct structure.
+-   You can turn the grid into **Pivot Mode**. To do this, you click the pivot mode checkbox. When the grid is in pivot mode, the grid behaves similarly to an Excel grid. This extra information is passed to your server as part of the request and it is your server's responsibility to return the data in the correct structure.
 
-* Columns `Age, Country, Year` and `Sport` all have `enablePivot=true` which means they can be pivoted on when **Pivot Mode** is active. To pivot, you drag the column to the **Pivot** section.
+-   Columns `Age, Country, Year` and `Sport` all have `enablePivot=true` which means they can be pivoted on when **Pivot Mode** is active. To pivot, you drag the column to the **Pivot** section.
 
-* Note that when you pivot, it is not possible to drill all the way down the leaf levels.
+-   Note that when you pivot, it is not possible to drill all the way down the leaf levels.
 
-* In addition to grouping, aggregation and pivot, the example also demonstrates filtering. The columns **Country** and **Year** have grid-provided filters. The column **Age** has an example-provided custom filter. You can use whatever filter you want, as long as your server knows what to do with it.
+-   In addition to grouping, aggregation and pivot, the example also demonstrates filtering. The columns **Country** and **Year** have grid-provided filters. The column **Age** has an example-provided custom filter. You can use whatever filter you want, as long as your server knows what to do with it.
 
 {% gridExampleRunner title="Slice And Dice" name="slice-and-dice"  exampleHeight=605 /%}
 

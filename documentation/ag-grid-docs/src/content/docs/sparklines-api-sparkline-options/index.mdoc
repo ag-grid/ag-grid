@@ -13,15 +13,16 @@ import { AgSparklineOptions, ... } from 'ag-charts-community'; // or ag-charts-e
 
 Per-type options for sparklines are available
 
-* [Area Sparkline Options](./sparklines-api-sparkline-area)
-* [Bar / Column Sparkline Options](./sparklines-api-sparkline-bar)
-* [Line Sparkline Options](./sparklines-api-sparkline-line)
+-   [Area Sparkline Options](./sparklines-api-sparkline-area)
+-   [Bar / Column Sparkline Options](./sparklines-api-sparkline-bar)
+-   [Line Sparkline Options](./sparklines-api-sparkline-line)
 
 ## Sparkline Item Styler
 
 Depending on series type, item stylers are either present on the main options object, or as a property of the markers object.
 
 The signature is generally the same for all series types
+
 ```ts
 function itemStyler(params: AgAreaSeriesMarkerItemStylerParams ): AgSeriesMarkerStyle {
     const { yValue } = params;
@@ -31,13 +32,14 @@ function itemStyler(params: AgAreaSeriesMarkerItemStylerParams ): AgSeriesMarker
 }
 ```
 
-* Bar / Column Item Styler: [Params](./sparklines-api-sparkline-bar/#item-styler-params) | [Result](./sparklines-api-sparkline-bar/#series-style)
-* Line Item Styler: [Params](./sparklines-api-sparkline-line/#item-styler-params) | [Result](./sparklines-api-sparkline-line/#series-style)
-* Area Item Styler: [Params](./sparklines-api-sparkline-area/#item-styler-params) | [Result](./sparklines-api-sparkline-area/#series-style)
+-   Bar / Column Item Styler: [Params](./sparklines-api-sparkline-bar/#item-styler-params) | [Result](./sparklines-api-sparkline-bar/#series-style)
+-   Line Item Styler: [Params](./sparklines-api-sparkline-line/#item-styler-params) | [Result](./sparklines-api-sparkline-line/#series-style)
+-   Area Item Styler: [Params](./sparklines-api-sparkline-area/#item-styler-params) | [Result](./sparklines-api-sparkline-area/#series-style)
 
 See AG Charts
-* [Series Markers](https://www.ag-grid.com/charts/javascript/markers/) for more information on marker options.
-* [Stylers](https://www.ag-grid.com/charts/javascript/stylers/) for more information on item stylers.
+
+-   [Series Markers](https://www.ag-grid.com/charts/javascript/markers/) for more information on marker options.
+-   [Stylers](https://www.ag-grid.com/charts/javascript/stylers/) for more information on item stylers.
 
 ## Sparkline Tooltip Renderer
 

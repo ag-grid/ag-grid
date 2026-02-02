@@ -26,19 +26,27 @@ AG Grid is a high-performance {% getFrameworkCapitalised() %} Data Grid library 
 {% /if %}
 
 {% if isFramework("react") %}
+
 ## Create a React Data Grid
+
 {% /if %}
 
 {% if isFramework("angular") %}
+
 ## Create an Angular Data Grid
+
 {% /if %}
 
 {% if isFramework("javascript") %}
+
 ## Create a JavaScript Data Grid
+
 {% /if %}
 
 {% if isFramework("vue") %}
+
 ## Create a Vue Data Grid
+
 {% /if %}
 
 Add AG Grid to your application in 60 seconds:
@@ -48,9 +56,10 @@ Add AG Grid to your application in 60 seconds:
 {% numberHeading number="1" title="NPM Install" level="h3" %}
 
 {% if isFramework("react") %}
+
 <!-- Install React -->
 
- Install the `ag-grid-react` package, which also installs `ag-grid-community`:
+Install the `ag-grid-react` package, which also installs `ag-grid-community`:
 
 ```bash
 npm install ag-grid-react
@@ -59,9 +68,10 @@ npm install ag-grid-react
 {% /if %}
 
 {% if isFramework("angular") %}
+
 <!-- Install Angular -->
 
- Install the `ag-grid-angular` package, which also installs `ag-grid-community`:
+Install the `ag-grid-angular` package, which also installs `ag-grid-community`:
 
 ```bash
 npm install ag-grid-angular
@@ -70,9 +80,10 @@ npm install ag-grid-angular
 {% /if %}
 
 {% if isFramework("vue") %}
+
 <!-- Install Vue3 -->
 
- Install the `ag-grid-vue3` package, which also installs `ag-grid-community`:
+Install the `ag-grid-vue3` package, which also installs `ag-grid-community`:
 
 ```bash
 npm install ag-grid-vue3
@@ -81,16 +92,16 @@ npm install ag-grid-vue3
 {% /if %}
 
 {% /numberHeading %}
-    
-{% /if %}
 
+{% /if %}
 
 {% if isFramework("javascript") %}
 {% metaTag tags=["createGrid"] /%}
 {% numberHeading number="1" title="Provide a Container" level="h3" %}
+
 <!-- Create JavaScript -->
 
- Load the AG Grid library and create a container div. The div should have a height because the Data Grid will fill the size of the parent container:
+Load the AG Grid library and create a container div. The div should have a height because the Data Grid will fill the size of the parent container:
 
 ```html
 <html lang="en">
@@ -106,17 +117,14 @@ npm install ag-grid-vue3
 ```
 
 {% note %}
-If you're using TypeScript you need to import and register the modules you want to use. See the [NPM Installation](./installation/#npm-installation) docs for more information. 
+If you're using TypeScript you need to import and register the modules you want to use. See the [NPM Installation](./installation/#npm-installation) docs for more information.
 {% /note %}
-
 
 {% /numberHeading %}
 {% /if %}
 
-
 {% if isFramework("javascript") %}
 {% numberHeading number="2" title="Instantiating the JavaScript Data Grid" level="h3" %}
-
 
 Create the Data Grid inside of your container div using `createGrid`.
 
@@ -131,7 +139,6 @@ agGrid.createGrid(myGridElement, gridOptions);
 
 {% /numberHeading %}
 {% /if %}
-
 
 {% if isFramework("javascript") %}
 {% numberHeading number="3" title="Define Rows and Columns" level="h3" %}
@@ -154,17 +161,18 @@ const gridOptions = {
     ]
 };
 ```
+
 {% /numberHeading %}
 {% /if %}
 
 {% if isFramework("react") %}
 {% metaTag tags=["aggridreact"] /%}
+
 <!-- Create React -->
 
 {% numberHeading number="2" title="Provide Modules" level="h3" %}
 
-
- Pass the `AllCommunityModule` to the `AgGridProvider` to access all Community features:
+Pass the `AllCommunityModule` to the `AgGridProvider` to access all Community features:
 
 ```js
 import { AllCommunityModule } from 'ag-grid-community';
@@ -186,14 +194,13 @@ To minimize bundle size, only provide the modules you want to use. See the [Modu
 {% /note %}
 {% /numberHeading %}
 
-
 {% numberHeading number="3" title="Import the React Data Grid" level="h3" %}
 
 ```js
 import { AgGridReact } from 'ag-grid-react'; // React Data Grid Component
 ```
-{% /numberHeading %}
 
+{% /numberHeading %}
 
 {% numberHeading number="4" title="Define Rows and Columns" level="h3" %}
 
@@ -239,6 +246,7 @@ return (
     </AgGridProvider>
 )
 ```
+
 {% /numberHeading %}
 {% /if %}
 
@@ -248,7 +256,7 @@ return (
 Register the `AllCommunityModule` to access all Community features:
 
 ```js
-import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community'; 
+import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 
 // Register all Community features
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -260,19 +268,16 @@ To minimize bundle size, only register the modules you want to use. See the [Mod
 {% /numberHeading %}
 {% /if %}
 
-
-
 {% if isFramework("angular") %}
 {% numberHeading number="3" title="Import the Angular Data Grid" level="h3" %}
-
 
 ```js
 import { AgGridAngular } from 'ag-grid-angular'; // Angular Data Grid Component
 import type { ColDef } from 'ag-grid-community'; // Column Definition Type Interface
 ```
+
 {% /numberHeading %}
 {% /if %}
-
 
 {% if isFramework("angular") %}
 {% numberHeading number="4" title="Define Rows and Columns" level="h3" %}
@@ -303,13 +308,12 @@ export class AppComponent {
     ];
 }
 ```
+
 {% /numberHeading %}
 {% /if %}
 
-
 {% if isFramework("angular") %}
 {% numberHeading number="5" title="Angular Data Grid Component" level="h3" %}
-
 
 Set Rows and Columns as `ag-grid-angular` component attributes:
 
@@ -322,16 +326,16 @@ template:
         [columnDefs]="colDefs" />
 `
 ```
+
 {% /numberHeading %}
 {% /if %}
-
 
 {% if isFramework("vue") %}
 {% numberHeading number="2" title="Register Modules" level="h3" %}
 Register the `AllCommunityModule` to access all Community features:
 
 ```js
-import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community'; 
+import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 
 // Register all Community features
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -343,8 +347,6 @@ To minimize bundle size, only register the modules you want to use. See the [Mod
 
 {% /numberHeading %}
 {% /if %}
-
-
 
 {% if isFramework("vue") %}
 {% numberHeading number="3" title="Import the Vue Data Grid" level="h3" %}
@@ -365,7 +367,6 @@ export default {
 
 {% /numberHeading %}
 {% /if %}
-
 
 {% if isFramework("vue") %}
 {% numberHeading number="4" title="Define Rows and Columns" level="h3" %}
@@ -397,7 +398,6 @@ setup() {
 {% /numberHeading %}
 {% /if %}
 
-
 {% if isFramework("vue") %}
 {% numberHeading number="5" title="Vue Data Grid Component" level="h3" %}
 
@@ -414,9 +414,9 @@ Set Rows and Columns as `ag-grid-vue` component attributes. Styling is applied t
     </ag-grid-vue>
 </template>
 ```
+
 {% /numberHeading %}
 {% /if %}
-
 
 {% if isFramework("angular") %}
 {% numberHeading number="6" title="Example Angular Data Grid" level="h3" %}
@@ -427,8 +427,6 @@ To live-edit the code, open the example in CodeSandbox or Plunker using the butt
 {% /note %}
 {% /numberHeading %}
 {% /if %}
-
-
 
 {% if isFramework("react") %}
 {% numberHeading number="6" title="Example React Data Grid" level="h3" %}
@@ -450,7 +448,6 @@ To live-edit the code, open the example in CodeSandbox or Plunker using the butt
 {% /numberHeading %}
 {% /if %}
 
-
 {% if isFramework("javascript") %}
 {% numberHeading number="4" title="Example JavaScript Data Grid" level="h3" %}
 Below is a live example of the application running. Click `</> Code` to see the code.
@@ -460,8 +457,6 @@ To live-edit the code, open the example in CodeSandbox or Plunker using the butt
 {% /note %}
 {% /numberHeading %}
 {% /if %}
-
-
 
 ## Next Steps
 
@@ -481,6 +476,4 @@ Now that you have a basic Vue Data Grid running, choose one of the following opt
 Now that you have a basic JavaScript Data Grid running, choose one of the following options to continue your learning journey:
 {% /if %}
 
-
 {% gettingStarted library="grid"/%}
-

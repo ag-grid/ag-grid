@@ -11,11 +11,11 @@ The default height of each detail section (ie the row containing the Detail Grid
 
 To change the height of the details section from the default you have the following options:
 
-* [Fixed Height](./master-detail-height/#fixed-height): a custom fixed height can be provided for all detail sections instead of the default `300px`.
+-   [Fixed Height](./master-detail-height/#fixed-height): a custom fixed height can be provided for all detail sections instead of the default `300px`.
 
-* [Auto Height](./master-detail-height/#auto-height): detail sections can auto-size to fit based off the contents.
+-   [Auto Height](./master-detail-height/#auto-height): detail sections can auto-size to fit based off the contents.
 
-* [Dynamic Height](./master-detail-height/#dynamic-height): different heights can be provided for each detail section.
+-   [Dynamic Height](./master-detail-height/#dynamic-height): different heights can be provided for each detail section.
 
 ## Fixed Height
 
@@ -57,10 +57,9 @@ Do not use Auto Height if you have many rows (eg 100+) in the Detail Grids. To k
 is a concern for your grid and dataset, try it out and check the performance.
 {% /note %}
 
-
 ### Auto Height with Custom Detail
 
-If you are providing your own [Detail Cell Renderer](./master-detail-custom-detail), set `detailRowAutoHeight: true` in the master-level gridOptions 
+If you are providing your own [Detail Cell Renderer](./master-detail-custom-detail), set `detailRowAutoHeight: true` in the master-level gridOptions
 and ensure the content nested inside the detail cell renderer component sets a height value.
 
 {% if isFramework("angular") %}
@@ -70,12 +69,14 @@ custom Angular tags will not inherit the height of their children. This can be f
 {% /if %}
 
 {% if isFramework("angular") %}
+
 ```js
 @Component({
   styles: [':host { display: inline-block; }'],
   // other items here
 }
 ```
+
 {% /if %}
 
 Here is an example of Auto Height being used with a Custom Detail Cell Renderer:

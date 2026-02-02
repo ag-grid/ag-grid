@@ -6,15 +6,15 @@ enterprise: true
 
 Easily integrate AG Grid with your own LLM, enabling end users to query and manipulate grid state via natural language.
 
-The example below demonstrates a chat application, built using the AI Toolkit APIs and integrated with ChatGPT's `gpt-5-mini` model, that allows for manipulation of grid state via natural language. 
+The example below demonstrates a chat application, built using the AI Toolkit APIs and integrated with ChatGPT's `gpt-5-mini` model, that allows for manipulation of grid state via natural language.
 
-This example does not maintain conversation state. If the LLM responds with a question, please update your initial query, instead of only answering the question. 
+This example does not maintain conversation state. If the LLM responds with a question, please update your initial query, instead of only answering the question.
 
-Suggested prompts: 
+Suggested prompts:
 
-- "Show me all the gold medals won by the USA"
-- "Sort the competitors with the youngest first"
-- "Group by country and show the total number of medals won"
+-   "Show me all the gold medals won by the USA"
+-   "Sort the competitors with the youngest first"
+-   "Group by country and show the total number of medals won"
 
 {% gridExampleRunner title="Natural Language Grid State Management" name="natural-language-grid-state" exampleHeight=600 /%}
 
@@ -26,13 +26,13 @@ The AI Toolkit provides a `getStructuredSchema` API that generates a structured 
 
 The schema is made up of a series of "features", each representing a different aspect of the grid that can be manipulated. The following features are currently supported:
 
-- [Filtering](./filtering/)
-- [Sorting](./row-sorting/)
-- [Aggregation](./aggregation/)
-- [Pivoting](./pivoting/)
-- [Row Grouping](./grouping/)
-- [Column Visibility](./column-properties/#reference-display-hide/)
-- [Column Sizing](./column-sizing/)
+-   [Filtering](./filtering/)
+-   [Sorting](./row-sorting/)
+-   [Aggregation](./aggregation/)
+-   [Pivoting](./pivoting/)
+-   [Row Grouping](./grouping/)
+-   [Column Visibility](./column-properties/#reference-display-hide/)
+-   [Column Sizing](./column-sizing/)
 
 ### Architecture
 
@@ -41,13 +41,14 @@ At a high level, the AI Toolkit works as follows:
 1. **User Input Capture:** End user enters a natural language query.
 
 2. **Prompt Construction (Client/Server):** The application gathers three elements:
-   1. The user query
-   2. The current grid state, via `gridApi.getState()`
-   3. The structured schema of grid state, via `gridApi.getStructuredSchema()`
+
+    1. The user query
+    2. The current grid state, via `gridApi.getState()`
+    3. The structured schema of grid state, via `gridApi.getStructuredSchema()`
 
 3. **LLM Service Request:** The complete prompt (including the structured schema) is sent to the LLM endpoint (e.g., OpenAI, Gemini).
 
-4. **Response Processing & Validation:** The LLM returns a JSON object conforming to the schema.  
+4. **Response Processing & Validation:** The LLM returns a JSON object conforming to the schema.
 
 5. **State Application:** The validated JSON is passed to `gridApi.setState()`.
 
@@ -61,12 +62,12 @@ If you wish to integrate with an LLM that does not support structured data nativ
 
 To get started you'll need:
 
-- API Key for your chosen LLM
-- Existing AG Grid implementation
-- Input for user queries 
-- Knowledge of making requests to an LLM
+-   API Key for your chosen LLM
+-   Existing AG Grid implementation
+-   Input for user queries
+-   Knowledge of making requests to an LLM
 
-### Creating a Schema 
+### Creating a Schema
 
 The `getStructuredSchema` API returns a structured [JSON Schema](https://json-schema.org/) representation of the [Grid State](./grid-state/) that can then be used to create a LLM compatible schema:
 
@@ -124,7 +125,7 @@ The `callLLM` function needs to be implemented in accordance with your chosen LL
 
 ### Updating Grid State
 
-Once the LLM has provided a response, it should be validated against your top-level schema. This is particularly important when using an LLM that does not support structured outputs. 
+Once the LLM has provided a response, it should be validated against your top-level schema. This is particularly important when using an LLM that does not support structured outputs.
 
 In this example, we're using `ajv` to validate the LLMs response, before calling `setState` to update the grid:
 
@@ -146,7 +147,7 @@ if (!ajvValidator(newGridState)) {
 gridApi.setState(newGridState, propertiesToIgnore);
 ```
 
-Passing `propertiesToIgnore` (the properties that are unchanged by the LLM) to `setState` ensures that these properties are not overridden after the grid state is updated. 
+Passing `propertiesToIgnore` (the properties that are unchanged by the LLM) to `setState` ensures that these properties are not overridden after the grid state is updated.
 
 ## Excluding Features
 
@@ -157,7 +158,7 @@ For example, if you do not want to allow users to manipulate column visibility a
 ```ts
 const gridStateStructuredSchema = gridApi.getStructuredSchema(
     {
-         exclude: ['columnVisibility', 'sorting'] 
+         exclude: ['columnVisibility', 'sorting']
     }
 );
 ```
@@ -166,8 +167,8 @@ const gridStateStructuredSchema = gridApi.getStructuredSchema(
 
 Occasionally the LLM will need more information than can be provided by the grid alone. As such, you can pass in options for each column defining extra context.
 
- - `description` - This provides a description of what the column contains to the LLM inline in the schema. This might include details such as the type or format of the data, to aid it when filtering or aggregating.
- - `includeSetValues` - When using the Set Filter, the LLM must be provided with the allowed values for it to correctly set those it wishes to filter. However, some Set Filters contain many values which lead to a schema which is too large for your LLM to process. By default we do not include the Set Filter values, however if you set this property to true then they will be included. Refer to the [Handling Schema Size Limits](#handling-schema-size-limits) for more information.
+-   `description` - This provides a description of what the column contains to the LLM inline in the schema. This might include details such as the type or format of the data, to aid it when filtering or aggregating.
+-   `includeSetValues` - When using the Set Filter, the LLM must be provided with the allowed values for it to correctly set those it wishes to filter. However, some Set Filters contain many values which lead to a schema which is too large for your LLM to process. By default we do not include the Set Filter values, however if you set this property to true then they will be included. Refer to the [Handling Schema Size Limits](#handling-schema-size-limits) for more information.
 
 ```ts
 const gridStateStructuredSchema = gridApi.getStructuredSchema({ columns: {
@@ -191,25 +192,25 @@ The AI Toolkit does not include any prompting logic, as this will vary depending
 
 In our testing we have found a few things that help get the best results from LLMs when prompting them to generate grid state changes:
 
-- Include the current state of the grid in the prompt. This helps the LLM understand what the grid currently looks like, and what changes are being requested.
-- Request the LLM to only return the grid state changes, and nothing else. This helps ensure that the response can be passed directly to `setState()`.
-- You may wish to provide the LLM with a few rows of data from the grid, to help it understand the data it is working with. This is especially useful if your grid contains domain-specific data that the LLM may not be familiar with. If you have a small dataset, you can even include the entire dataset in the prompt by using `exportToCsv()`.
-- If you have any domain specific knowledge or terminology that you want the LLM to be aware of, include that in the prompt as well. e.g. "In this dataset, a 'medal' refers to any of gold, silver or bronze medals won at the Olympic games".
-- Including a list of available features also helps the LLM understand what it can and cannot do.
+-   Include the current state of the grid in the prompt. This helps the LLM understand what the grid currently looks like, and what changes are being requested.
+-   Request the LLM to only return the grid state changes, and nothing else. This helps ensure that the response can be passed directly to `setState()`.
+-   You may wish to provide the LLM with a few rows of data from the grid, to help it understand the data it is working with. This is especially useful if your grid contains domain-specific data that the LLM may not be familiar with. If you have a small dataset, you can even include the entire dataset in the prompt by using `exportToCsv()`.
+-   If you have any domain specific knowledge or terminology that you want the LLM to be aware of, include that in the prompt as well. e.g. "In this dataset, a 'medal' refers to any of gold, silver or bronze medals won at the Olympic games".
+-   Including a list of available features also helps the LLM understand what it can and cannot do.
 
 Below is an example prompt you can use as a starting point:
 
 ```ts
 const prompt = `
-    You are an expert data analyst working with a data grid. 
+    You are an expert data analyst working with a data grid.
     The grid contains data about Olympic athletes and their achievements.
 
-    You should respond to user requests by generating a JSON object that 
-    represents their requested changes to the grid state. The response should 
-    include all their requested changes, along with any features that are 
+    You should respond to user requests by generating a JSON object that
+    represents their requested changes to the grid state. The response should
+    include all their requested changes, along with any features that are
     already applied to the grid that they have not requested to change.
 
-    The following is the current state of a data grid, represented as a 
+    The following is the current state of a data grid, represented as a
     JSON object. The grid contains data about Olympic athletes and their achievements.
 
     Current Grid State:
@@ -244,7 +245,7 @@ function applyCustomRules(schema) {
 const customSchema = applyCustomRules(baseSchema);
 ```
 
-If you choose to do this, make sure that the result is still a valid `GridState` object before passing it to `setState`. Be aware that the JSON schema supported by LLMs is a subset of the full JSON schema spec and build your schemas accordingly. 
+If you choose to do this, make sure that the result is still a valid `GridState` object before passing it to `setState`. Be aware that the JSON schema supported by LLMs is a subset of the full JSON schema spec and build your schemas accordingly.
 
 ## Handling Schema Size Limits
 
@@ -252,11 +253,11 @@ If you choose to do this, make sure that the result is still a valid `GridState`
 
 **Recommendations**:
 
-- Enable `includeSetValues` selectively on low-cardinality columns only.
+-   Enable `includeSetValues` selectively on low-cardinality columns only.
 
-- Consider truncating to the top N most frequent values plus an "OTHER" hint.
+-   Consider truncating to the top N most frequent values plus an "OTHER" hint.
 
-- Monitor total prompt size; keep within your model’s context window with a buffer for the model’s response.
+-   Monitor total prompt size; keep within your model’s context window with a buffer for the model’s response.
 
 ## Example: AI Chat Assistant
 
@@ -264,7 +265,7 @@ This example demonstrates an AI chat assistant embedded within the grid's [Side 
 
 Try the following sequence of prompts to see how the assistant remembers context:
 
-1. **"Suggest 3 different ways to analyse spending patterns in this data"** 
+1. **"Suggest 3 different ways to analyse spending patterns in this data"**
 2. **"Apply suggestion 2"**
 3. **"Actually, undo that and try suggestion 3 instead"**
 4. **"Now add a filter to only show transactions over £100"**
@@ -274,4 +275,3 @@ Try the following sequence of prompts to see how the assistant remembers context
 ## API
 
 {% apiDocumentation source="grid-api/api.json" section="ai-toolkit" names=["getStructuredSchema"] /%}
-

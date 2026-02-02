@@ -20,11 +20,11 @@ The example below shows the impact of change detection on value getters. The gri
 doing all the refresh by itself with no need for the client application explicitly requesting
 a refresh. Notice the following:
 
-* The 'Total' column uses a value getter to calculate the sum of all values in that row.
+-   The 'Total' column uses a value getter to calculate the sum of all values in that row.
 
-* Edit any of the values in columns A to F by double clicking a cell and entering a new value.
+-   Edit any of the values in columns A to F by double clicking a cell and entering a new value.
 
-* The 'Total' column gets automatically refreshed and flashes.
+-   The 'Total' column gets automatically refreshed and flashes.
 
 {% gridExampleRunner title="Change Detection and Value Getters" name="change-detection-value-getters"  exampleHeight=550 /%}
 
@@ -107,13 +107,13 @@ All examples on this page set `allowShowChangeAfterFilter` to `true` to clearly 
 
 The example below shows change detection impacting the result of groups. The grid is doing all the refresh by itself with no need for the client application explicitly requesting a refresh. Notice the following:
 
-* Column 'Group' is marked as a [Row Group](./grouping/) and columns A to D are marked as [Aggregation](./aggregation/) columns so that their values are summed into the group level.
+-   Column 'Group' is marked as a [Row Group](./grouping/) and columns A to D are marked as [Aggregation](./aggregation/) columns so that their values are summed into the group level.
 
-* Column 'Total' has a valueGetter which gives a sum of all columns A to D for the rows, and a `sum` aggregation for the groups.
+-   Column 'Total' has a valueGetter which gives a sum of all columns A to D for the rows, and a `sum` aggregation for the groups.
 
-* Columns A to D are editable. If you edit a cells value, then the aggregate value at the group level is also updated to reflect the change. This is because the grid is recalculating the aggregations as a result of the change.
+-   Columns A to D are editable. If you edit a cells value, then the aggregate value at the group level is also updated to reflect the change. This is because the grid is recalculating the aggregations as a result of the change.
 
-* All cells are configured to use one of the grids [animation cell renderer](./change-cell-renderers/) instead of flashing cells.
+-   All cells are configured to use one of the grids [animation cell renderer](./change-cell-renderers/) instead of flashing cells.
 
 {% gridExampleRunner title="Change Detection with Groups" name="change-detection-groups"  exampleHeight=590 /%}
 
@@ -150,14 +150,14 @@ To **manually** run aggregation change detection to re-compute the aggregated va
 
 When a value changes, the grid's automatic change detection will update:
 
-* Aggregated values.
-* Values displayed in cells.
+-   Aggregated values.
+-   Values displayed in cells.
 
 The grid will **not**:
 
-* Sort
-* Filter
-* Group
+-   Sort
+-   Filter
+-   Group
 
 The reason why sorting, filtering and grouping is not done automatically is that it would be considered bad user experience in most use cases to change the displayed rows while editing. For example, if a user edits a cell, then the row should not jump location (due to sorting and grouping) or even worse, disappear altogether (if the filter removes the row due to the new value failing the filter).
 
@@ -174,13 +174,13 @@ See [Editing Groups](./grouping-edit/) for more on editing grouped data and `ref
 
 From the example, the following can be noted:
 
-* As before, updating any value will update the total column and aggregated group columns.
+-   As before, updating any value will update the total column and aggregated group columns.
 
-* Updating a group cell will move the row to the new group. If the group does not exist, it will be created.
+-   Updating a group cell will move the row to the new group. If the group does not exist, it will be created.
 
-* If you order by a column (eg order by 'A') and then change the data so that the order is incorrect, the grid will fix itself so that the ordering is maintained. In other words, the updated row will move to the new sorted position.
+-   If you order by a column (eg order by 'A') and then change the data so that the order is incorrect, the grid will fix itself so that the ordering is maintained. In other words, the updated row will move to the new sorted position.
 
-* If you set a filter (eg filter 'A' to be 'less than 50') and then change the data so that a row no longer passes the filter, the grid will fix itself so that the filtering is maintained. In other words, the updated row will be removed if it no longer passes the filter.
+-   If you set a filter (eg filter 'A' to be 'less than 50') and then change the data so that a row no longer passes the filter, the grid will fix itself so that the filtering is maintained. In other words, the updated row will be removed if it no longer passes the filter.
 
 ## Aggregation Path Selection
 
@@ -210,11 +210,11 @@ To demonstrate this, the example installs it's own aggregation function for summ
 
 So with the example below, open up the console and notice the following:
 
-* When the grid initialises, the aggregation gets complete 48 times (4 columns \* 12 groups). That's all paths in the group tree and all columns.
+-   When the grid initialises, the aggregation gets complete 48 times (4 columns \* 12 groups). That's all paths in the group tree and all columns.
 
-* When one value changes (either via UI or via the first button 'Update One Value') then the grid recomputes the values for the impacted path only, and for the changed column only.
+-   When one value changes (either via UI or via the first button 'Update One Value') then the grid recomputes the values for the impacted path only, and for the changed column only.
 
-* When some values change via a transactions using any of the other buttons, then all columns are recomputed but only on the changed path.
+-   When some values change via a transactions using any of the other buttons, then all columns are recomputed but only on the changed path.
 
 {% gridExampleRunner title="Change Detection with Delta Aggregation" name="change-detection-delta-aggregation"  exampleHeight=590 /%}
 
@@ -226,18 +226,18 @@ When you click any of the buttons below, remember you are not changing the displ
 
 From the example, you can observe:
 
-* Uncheck '**Group & Pivot**' to see what the data looks like when it is flat. You can see it's a list of student records showing student scores and age. For seeing the impact of value changes on pivots, keep this checked while selecting the other buttons.
+-   Uncheck '**Group & Pivot**' to see what the data looks like when it is flat. You can see it's a list of student records showing student scores and age. For seeing the impact of value changes on pivots, keep this checked while selecting the other buttons.
 
-* Button '**Set One Value**' updates one value using `rowNode.setDataValue(col,value)`. The grid aggregates the new value for display.
+-   Button '**Set One Value**' updates one value using `rowNode.setDataValue(col,value)`. The grid aggregates the new value for display.
 
-* Button '**Update Points**' updates one record using `api.applyTransaction(transaction)`. The grid aggregates the new value for display.
+-   Button '**Update Points**' updates one record using `api.applyTransaction(transaction)`. The grid aggregates the new value for display.
 
-* Button '**Add Year 5**' adds one record for 'Year 5' using `api.applyTransaction(transaction)`. The grid does a delta change and adds one more row to represent this group while not touching the DOM with the remaining rows.
+-   Button '**Add Year 5**' adds one record for 'Year 5' using `api.applyTransaction(transaction)`. The grid does a delta change and adds one more row to represent this group while not touching the DOM with the remaining rows.
 
-* Button '**Add Physics Row**' adds one record with subject 'Physics' using `api.applyTransaction(transaction)`. This impacts the columns in the grid as we are pivoting on 'course', so a new column is added for 'Physics'. Again this is all done without touching the remaining columns or rows in the grid.
+-   Button '**Add Physics Row**' adds one record with subject 'Physics' using `api.applyTransaction(transaction)`. This impacts the columns in the grid as we are pivoting on 'course', so a new column is added for 'Physics'. Again this is all done without touching the remaining columns or rows in the grid.
 
-* Button '**Remove All Physics**' removes all 'Physics' records `api.applyTransaction(transaction)`. As before, this impacts the columns, all 'Physics' columns are removed.
+-   Button '**Remove All Physics**' removes all 'Physics' records `api.applyTransaction(transaction)`. As before, this impacts the columns, all 'Physics' columns are removed.
 
-* Button '**Move Course**' updates a row's course using `api.applyTransaction(transaction)`. This results in the aggregations changing in two locations, once where the course was removed, and another where the course was added.
+-   Button '**Move Course**' updates a row's course using `api.applyTransaction(transaction)`. This results in the aggregations changing in two locations, once where the course was removed, and another where the course was added.
 
 {% gridExampleRunner title="Change Detection Pivot" name="change-detection-pivot"  exampleHeight=590 /%}

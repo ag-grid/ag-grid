@@ -1,7 +1,6 @@
-
 ## AG Grid Modules
 
-AG Grid features are split into [Modules](./modules/) to help reduce application bundle size by enabling developers to cherry pick the features they require. This error occurs when a feature is used without the feature's module being registered first. 
+AG Grid features are split into [Modules](./modules/) to help reduce application bundle size by enabling developers to cherry pick the features they require. This error occurs when a feature is used without the feature's module being registered first.
 
 {% note %}
 For a comprehensive guide on AG Grid Modules please see [Modules](./modules/).
@@ -9,7 +8,7 @@ For a comprehensive guide on AG Grid Modules please see [Modules](./modules/).
 
 ### Minimized Bundle Size
 
-If you are concerned about bundle size, only import the modules for the features you require, i.e the missing module in the error above. 
+If you are concerned about bundle size, only import the modules for the features you require, i.e the missing module in the error above.
 
 We recommend using the [Module Selector Tool](./modules/#selecting-modules) to identify all the modules required for your application's features. The tool will generate the module registration code which can be copied into your application.
 
@@ -29,10 +28,9 @@ import { AllEnterpriseModule, ModuleRegistry } from 'ag-grid-enterprise';
 ModuleRegistry.registerModules([AllEnterpriseModule]);
 ```
 
-
 {% if isFramework("javascript") %}
 
-### UMD / CDN 
+### UMD / CDN
 
 If you are using AG Grid via a UMD file or CDN script tag then you do not need to register modules yourself. See [AG Grid CDN Installation](./installation/#cdn-installation) for more details.
 

@@ -18,8 +18,8 @@ This page describes the grid's legacy theming system that was the default in v32
 
 After grid size, the most common variables to change are:
 
-* `--ag-row-height` and `--ag-header-height` set the height of rows and headers.
-* `--ag-list-item-height` sets the height of items in lists of values, such as the [rich select editor](./provided-cell-editors-rich-select/) and [set filter](./filter-set/).
+-   `--ag-row-height` and `--ag-header-height` set the height of rows and headers.
+-   `--ag-list-item-height` sets the height of items in lists of values, such as the [rich select editor](./provided-cell-editors-rich-select/) and [set filter](./filter-set/).
 
 In the following example, classes are applied to the grid container that change compactness dynamically:
 
@@ -42,6 +42,6 @@ The grid contains thousands of elements. Most of them respond to `--ag-grid-size
 
 ### Setting the height of rows, headers and list items
 
-To change the height of rows, headers and list item heights, you *must* use the provided CSS variables (`--ag-row-height`, `--ag-header-height` and `--ag-list-item-height`). The grid uses [DOM virtualisation](./dom-virtualisation/) for rendering large amounts of data, and needs to know the height of virtualised elements in order to calculate their layout. It does this by measuring the values of CSS variables such as `--ag-row-height`.
+To change the height of rows, headers and list item heights, you _must_ use the provided CSS variables (`--ag-row-height`, `--ag-header-height` and `--ag-list-item-height`). The grid uses [DOM virtualisation](./dom-virtualisation/) for rendering large amounts of data, and needs to know the height of virtualised elements in order to calculate their layout. It does this by measuring the values of CSS variables such as `--ag-row-height`.
 
 Using CSS to set a height on a row element itself e.g. `.ag-row { height: 50px; }` is not supported.

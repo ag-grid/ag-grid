@@ -9,36 +9,37 @@ This section describes the different ways to apply column filters.
 By default, the provided filters - [Text Filter](./filter-text/), [Number Filter](./filter-number/), [BigInt Filter](./filter-bigint/), [Date Filter](./filter-date/) and [Set Filter](./filter-set/) - support different action buttons. When `enableFilterHandlers = true`, the [Multi Filter](./filter-multi/#applying-multi-filters) and [Custom Filter Components](./component-filter/#using-buttons) can also support action buttons.
 
 The four supported action buttons are:
-- **Apply** - When the Apply button is used, the filter is only applied once the Apply button is pressed. This is useful if the filtering operation will take a long time because the dataset is large, or if using server-side filtering (thus preventing unnecessary calls to the server). Pressing {% kbd "↵ Enter" /%} is equivalent to pressing the Apply button (except for the [Set Filter](./filter-set-mini-filter/#keyboard-shortcuts)).
-- **Clear** - The Clear button clears just the filter UI.
-- **Reset** - The Reset button clears the filter UI and removes any active filters for that column.
-- **Cancel** - The Cancel button will discard any changes that have been made in the UI, restoring the state of the filter to match the applied model.
+
+-   **Apply** - When the Apply button is used, the filter is only applied once the Apply button is pressed. This is useful if the filtering operation will take a long time because the dataset is large, or if using server-side filtering (thus preventing unnecessary calls to the server). Pressing {% kbd "↵ Enter" /%} is equivalent to pressing the Apply button (except for the [Set Filter](./filter-set-mini-filter/#keyboard-shortcuts)).
+-   **Clear** - The Clear button clears just the filter UI.
+-   **Reset** - The Reset button clears the filter UI and removes any active filters for that column.
+-   **Cancel** - The Cancel button will discard any changes that have been made in the UI, restoring the state of the filter to match the applied model.
 
 The buttons will be displayed in the order they are specified in the `buttons` array of the filter params (`FilterWrapperParams`).
 
 If the filter is in a popup, it can be closed after using a button via `closeOnApply`. Note the expected behaviour when clicking the filter popup buttons:
 
-* Apply closes popup only when `closeOnApply` set to `true`.
-* Reset closes popup only when `closeOnApply` set to `true` and Apply button is present.
-* Cancel closes popup only when `closeOnApply` set to `true`.
-* Clear never closes popup.
+-   Apply closes popup only when `closeOnApply` set to `true`.
+-   Reset closes popup only when `closeOnApply` set to `true` and Apply button is present.
+-   Cancel closes popup only when `closeOnApply` set to `true`.
+-   Clear never closes popup.
 
 ### Example: Using Buttons
 
 The example below demonstrates using the different buttons. It also demonstrates the relationship between the buttons and filter events. Note the following:
 
-* The **Athlete** and **Age** columns have filters with Apply and Reset buttons, but different orders.
-* The **Country** column has a filter with Apply and Clear buttons.
-* The **Year** column has a filter with Apply and Cancel buttons.
-* The **Age** and **Year** columns have `closeOnApply` set to `true`, so the filter popup will be closed immediately when the filter is applied or cancelled. Pressing {% kbd "↵ Enter" /%} will also apply the filter and close the popup.
-* In the **Age** column, Reset will close the filter popup due to the presence of Apply button.
+-   The **Athlete** and **Age** columns have filters with Apply and Reset buttons, but different orders.
+-   The **Country** column has a filter with Apply and Clear buttons.
+-   The **Year** column has a filter with Apply and Cancel buttons.
+-   The **Age** and **Year** columns have `closeOnApply` set to `true`, so the filter popup will be closed immediately when the filter is applied or cancelled. Pressing {% kbd "↵ Enter" /%} will also apply the filter and close the popup.
+-   In the **Age** column, Reset will close the filter popup due to the presence of Apply button.
 
 Note the following about filter events:
 
-* `onFilterOpened` is called when the filter is opened.
-* `onFilterModified` is called when the filter changes regardless of whether the Apply button is present.
-* `onFilterChanged` is called only after a new filter is applied.
-* Looking at the console, it can be noted when a filter is changed, the result of `getModel()` and `getModelFromUi()` are different. The first reflects the active filter, while the second reflects what is in the UI (and not yet applied).
+-   `onFilterOpened` is called when the filter is opened.
+-   `onFilterModified` is called when the filter changes regardless of whether the Apply button is present.
+-   `onFilterChanged` is called only after a new filter is applied.
+-   Looking at the console, it can be noted when a filter is changed, the result of `getModel()` and `getModelFromUi()` are different. The first reflects the active filter, while the second reflects what is in the UI (and not yet applied).
 
 {% gridExampleRunner title="Buttons and Filter Events" name="buttons-and-filter-events"  exampleHeight=560 /%}
 
