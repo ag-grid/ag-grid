@@ -144,7 +144,6 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         return (this as any)[refComponentName];
     }
 
-
     /**
      * Aggregation notes:
      * - Uses bigint aggregation when bigint values are present and all numeric values are safe integers.
@@ -160,7 +159,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
         let sum = 0;
         let sumBigint = 0n;
-        let seenBigInt = false;
+        let hasBigInt = false;
         let seenNonInteger = false;
         let count = 0;
         let numericCount = 0;
@@ -192,7 +191,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                     }
                 }
             } else {
-                seenBigInt = true;
+                hasBigInt = true;
                 sumBigint += value;
                 if (minBigint === null || value < minBigint) {
                     minBigint = value;
@@ -303,8 +302,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
         const moreThanOneValue = count > 1;
         const moreThanOneNum = numericCount > 1;
-
-        const useBigintAggregation = seenBigInt && !seenNonInteger;
+        const useBigintAggregation = hasBigInt && !seenNonInteger;
 
         let avg: bigint | number;
         if (useBigintAggregation) {

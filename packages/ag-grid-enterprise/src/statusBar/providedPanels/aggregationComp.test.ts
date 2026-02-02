@@ -20,7 +20,9 @@ class FakeAgNameValue {
     }
 }
 
-const createAggregationSnapshot = (values: any[]): Record<'sum' | 'min' | 'max' | 'avg' | 'count', AggregationSnapshot> => {
+const createAggregationSnapshot = (
+    values: any[]
+): Record<'sum' | 'min' | 'max' | 'avg' | 'count', AggregationSnapshot> => {
     const comp = new AggregationComp();
 
     const sumAggregationComp = new FakeAgNameValue();
