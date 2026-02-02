@@ -17,6 +17,7 @@ import {
     _getRowNode,
     _isRowBefore,
     _missing,
+    _parseBigIntOrNull,
 } from 'ag-grid-community';
 
 import type { AgNameValue } from './agNameValue';
@@ -143,100 +144,77 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         return (this as any)[refComponentName];
     }
 
+
+    /**
+     * Aggregation notes:
+     * - Uses bigint aggregation when bigint values are present and all numeric values are safe integers.
+     * - Non-integer or unsafe integer numbers fall back to number aggregation to avoid precision loss.
+     * - Avg uses integer division when bigint aggregation is active, discarding the fractional part.
+     * - String values are trimmed; finite numeric strings are aggregated as numbers, while integer strings beyond the
+     *   safe integer range are parsed as bigint.
+     */
     private onCellSelectionChanged(): void {
         const beans = this.beans;
         const { rangeSvc, valueSvc } = beans;
         const cellRanges = rangeSvc?.getCellRanges();
 
         let sum = 0;
+        let sumBigint = 0n;
+        let seenBigInt = false;
+        let seenNonInteger = false;
         let count = 0;
-        let numberCount = 0;
+        let numericCount = 0;
         let min: number | null = null;
         let max: number | null = null;
-        let hasNonIntegerNumber = false;
+        let minBigint: bigint | null = null;
+        let maxBigint: bigint | null = null;
 
-        let useBigIntAggregation = false;
-        let bigIntSum: bigint | null = null;
-        let bigIntMin: bigint | null = null;
-        let bigIntMax: bigint | null = null;
-        let bigIntCount = 0;
-
-        const cellsSoFar: any = {};
-
-        const addBigIntValue = (value: bigint | null): void => {
-            if (value == null) {
-                return;
-            }
-
-            if (bigIntSum == null) {
-                bigIntSum = value;
-                bigIntMin = value;
-                bigIntMax = value;
-            } else {
-                bigIntSum += value;
-                if (bigIntMin == null || value < bigIntMin) {
-                    bigIntMin = value;
+        const addValue = (value: number | bigint): void => {
+            if (typeof value === 'number') {
+                sum += value;
+                if (min === null || value < min) {
+                    min = value;
                 }
-                if (bigIntMax == null || value > bigIntMax) {
-                    bigIntMax = value;
+                if (max === null || value > max) {
+                    max = value;
+                }
+
+                if (!Number.isInteger(value) || !Number.isSafeInteger(value)) {
+                    seenNonInteger = true;
+                } else {
+                    const bigintValue = BigInt(value);
+                    sumBigint += bigintValue;
+                    if (minBigint === null || bigintValue < minBigint) {
+                        minBigint = bigintValue;
+                    }
+                    if (maxBigint === null || bigintValue > maxBigint) {
+                        maxBigint = bigintValue;
+                    }
+                }
+            } else {
+                seenBigInt = true;
+                sumBigint += value;
+                if (minBigint === null || value < minBigint) {
+                    minBigint = value;
+                }
+                if (maxBigint === null || value > maxBigint) {
+                    maxBigint = value;
+                }
+
+                const numberValue = Number(value);
+                sum += numberValue;
+                if (min === null || numberValue < min) {
+                    min = numberValue;
+                }
+                if (max === null || numberValue > max) {
+                    max = numberValue;
                 }
             }
 
-            bigIntCount++;
+            numericCount++;
         };
 
-        const addNumberValue = (value: number): void => {
-            sum += value;
-
-            if (max === null || value > max) {
-                max = value;
-            }
-
-            if (min === null || value < min) {
-                min = value;
-            }
-
-            numberCount++;
-        };
-
-        const enableBigIntAggregation = (): void => {
-            if (useBigIntAggregation || hasNonIntegerNumber) {
-                return;
-            }
-
-            useBigIntAggregation = true;
-
-            if (numberCount > 0) {
-                const minValue = min ?? 0;
-                const maxValue = max ?? 0;
-                bigIntSum = BigInt(sum);
-                bigIntMin = BigInt(minValue);
-                bigIntMax = BigInt(maxValue);
-                bigIntCount = numberCount;
-            }
-        };
-
-        const disableBigIntAggregation = (): void => {
-            useBigIntAggregation = false;
-
-            if (bigIntCount > 0) {
-                sum = Number(bigIntSum ?? 0n);
-                min = bigIntMin == null ? null : Number(bigIntMin);
-                max = bigIntMax == null ? null : Number(bigIntMax);
-                numberCount = bigIntCount;
-            } else {
-                sum = 0;
-                min = null;
-                max = null;
-                numberCount = 0;
-            }
-
-            bigIntSum = null;
-            bigIntMin = null;
-            bigIntMax = null;
-            bigIntCount = 0;
-        };
-
+        const cellsSoFar: Record<string, true> = {};
         if (cellRanges?.length && rangeSvc) {
             for (let i = 0; i < cellRanges.length; i++) {
                 const cellRange = cellRanges[i];
@@ -291,42 +269,30 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                         }
 
                         if (typeof value === 'string') {
-                            value = Number(value);
-                        }
-
-                        if (typeof value === 'bigint') {
-                            if (hasNonIntegerNumber) {
-                                addNumberValue(Number(value));
+                            const trimmedValue = value.trim();
+                            if (trimmedValue === '') {
                                 return;
                             }
 
-                            enableBigIntAggregation();
-                            if (useBigIntAggregation) {
-                                addBigIntValue(value);
+                            const asNumber = Number(trimmedValue);
+                            if (!Number.isFinite(asNumber)) {
+                                return;
+                            }
+                            if (
+                                sum + asNumber >= Number.MAX_SAFE_INTEGER ||
+                                sum + asNumber <= Number.MIN_SAFE_INTEGER
+                            ) {
+                                value = _parseBigIntOrNull(trimmedValue);
+                                if (value === null) {
+                                    value = asNumber;
+                                }
                             } else {
-                                addNumberValue(Number(value));
+                                value = asNumber;
                             }
-                            return;
                         }
 
-                        if (typeof value === 'number' && !isNaN(value)) {
-                            if (useBigIntAggregation) {
-                                if (Number.isInteger(value)) {
-                                    addBigIntValue(BigInt(value));
-                                    return;
-                                }
-                                hasNonIntegerNumber = true;
-                                if (useBigIntAggregation) {
-                                    disableBigIntAggregation();
-                                }
-                                addNumberValue(value);
-                                return;
-                            }
-
-                            if (!Number.isInteger(value)) {
-                                hasNonIntegerNumber = true;
-                            }
-                            addNumberValue(value);
+                        if ((typeof value === 'number' && !isNaN(value)) || typeof value === 'bigint') {
+                            addValue(value);
                         }
                     });
 
@@ -335,25 +301,29 @@ export class AggregationComp extends Component implements IStatusPanelComp {
             }
         }
 
-        const gotResult = count > 1;
-        const gotNumberResult = !useBigIntAggregation && numberCount > 1;
-        const gotBigIntResult = useBigIntAggregation && bigIntCount > 1;
+        const moreThanOneValue = count > 1;
+        const moreThanOneNum = numericCount > 1;
+
+        const useBigintAggregation = seenBigInt && !seenNonInteger;
+
+        let avg: bigint | number;
+        if (useBigintAggregation) {
+            avg = sumBigint / BigInt(numericCount);
+        } else {
+            avg = sum / numericCount;
+        }
+
+        const sumValue = moreThanOneNum ? (useBigintAggregation ? sumBigint : sum) : null;
+        const minValue = moreThanOneNum ? (useBigintAggregation ? minBigint : min) : null;
+        const maxValue = moreThanOneNum ? (useBigintAggregation ? maxBigint : max) : null;
+        const avgValue = moreThanOneNum ? avg : null;
+        const showAvg = moreThanOneNum;
 
         // we show count even if no numbers
-        this.setAggregationComponentValue('count', count, gotResult);
-
-        // show if numbers found
-        if (useBigIntAggregation) {
-            const avg = bigIntSum != null && bigIntCount > 0 ? bigIntSum / BigInt(bigIntCount) : null;
-            this.setAggregationComponentValue('sum', bigIntSum, gotBigIntResult);
-            this.setAggregationComponentValue('min', bigIntMin, gotBigIntResult);
-            this.setAggregationComponentValue('max', bigIntMax, gotBigIntResult);
-            this.setAggregationComponentValue('avg', avg, gotBigIntResult);
-        } else {
-            this.setAggregationComponentValue('sum', sum, gotNumberResult);
-            this.setAggregationComponentValue('min', min, gotNumberResult);
-            this.setAggregationComponentValue('max', max, gotNumberResult);
-            this.setAggregationComponentValue('avg', sum / numberCount, gotNumberResult);
-        }
+        this.setAggregationComponentValue('count', count, moreThanOneValue);
+        this.setAggregationComponentValue('sum', sumValue, moreThanOneNum);
+        this.setAggregationComponentValue('min', minValue, moreThanOneNum);
+        this.setAggregationComponentValue('max', maxValue, moreThanOneNum);
+        this.setAggregationComponentValue('avg', avgValue, showAvg);
     }
 }
