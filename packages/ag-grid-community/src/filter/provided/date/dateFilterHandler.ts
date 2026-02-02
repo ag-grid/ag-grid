@@ -100,7 +100,7 @@ const getFirstDayOfWeek = (): number => {
 
     if (locale && typeof Intl !== 'undefined' && typeof (Intl as any).Locale === 'function') {
         try {
-            const weekInfo = new (Intl as any).Locale(locale).getWeekInfo();
+            const weekInfo = new (Intl as any).Locale(locale).getWeekInfo?.();
             firstDay = weekInfo?.firstDay;
         } catch {
             firstDay = undefined;
