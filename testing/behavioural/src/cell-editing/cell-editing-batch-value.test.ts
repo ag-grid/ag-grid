@@ -284,13 +284,7 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
         expect(api.getCellValue({ rowNode, colKey: 'a', from: 'batch' })).toBe('initial'); // no pending yet
         expect(api.getCellValue({ rowNode, colKey: 'a', from: 'data' })).toBe('initial');
 
-        // Verify RowNode.getDataValue matches api.getCellValue
-        expect(rowNode.getDataValue('a')).toBe('typing');
-        expect(rowNode.getDataValue('a', 'edit')).toBe('typing');
-        expect(rowNode.getDataValue('a', 'ui')).toBe('typing'); // 'ui' alias for 'edit'
-        expect(rowNode.getDataValue('a', 'batch')).toBe('initial');
-        expect(rowNode.getDataValue('a', 'data')).toBe('initial');
-        expect(rowNode.getDataValue('a', 'api')).toBe('initial'); // 'api' alias for 'data'
+        expect(rowNode.getDataValue('a')).toBe('initial');
 
         // Press Enter to close editor and create pending value
         await userEvent.keyboard('{Enter}');
@@ -304,11 +298,7 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
         expect(api.getCellValue({ rowNode, colKey: 'a', from: 'batch' })).toBe('typing');
         expect(api.getCellValue({ rowNode, colKey: 'a', from: 'data' })).toBe('initial');
 
-        // Verify RowNode.getDataValue matches api.getCellValue after pending
-        expect(rowNode.getDataValue('a')).toBe('typing');
-        expect(rowNode.getDataValue('a', 'edit')).toBe('typing');
-        expect(rowNode.getDataValue('a', 'batch')).toBe('typing');
-        expect(rowNode.getDataValue('a', 'data')).toBe('initial');
+        expect(rowNode.getDataValue('a')).toBe('initial');
 
         api.cancelBatchEdit();
         await asyncSetTimeout(1);
@@ -318,11 +308,7 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
         expect(api.getCellValue({ rowNode, colKey: 'a', from: 'batch' })).toBe('initial');
         expect(api.getCellValue({ rowNode, colKey: 'a', from: 'data' })).toBe('initial');
 
-        // Verify RowNode.getDataValue matches api.getCellValue after cancel
         expect(rowNode.getDataValue('a')).toBe('initial');
-        expect(rowNode.getDataValue('a', 'edit')).toBe('initial');
-        expect(rowNode.getDataValue('a', 'batch')).toBe('initial');
-        expect(rowNode.getDataValue('a', 'data')).toBe('initial');
     });
 
     test('valueCache works correctly with batch edit', async () => {

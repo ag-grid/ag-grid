@@ -1049,4 +1049,150 @@ describe('groupRowEditable with pivot mode', () => {
             expect(api.getCellValue({ rowNode: usaGroup!, colKey: pivotColId2021 })).toBe(2200);
         });
     });
+
+    interface EditEvent {
+        type: 'cellEditingStarted' | 'cellEditingStopped';
+        value?: any;
+        newValue?: any;
+        oldValue?: any;
+        valueChanged?: boolean;
+    }
+
+    describe.each(EDIT_MODES)('pivot cell editing events (%s)', (editMode) => {
+        test('editing pivot cell fires correct event properties', async () => {
+            const events: EditEvent[] = [];
+
+            const api = await gridsManager.createGridAndWait('pivot-edit-events', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'year', pivot: true, hide: true },
+                    {
+                        field: 'sales',
+                        aggFunc: 'sum',
+                        hide: true,
+                        editable: true,
+                        groupRowEditable: true,
+                        groupRowValueSetter: cascadeGroupRowValueSetter,
+                    },
+                ],
+                pivotMode: true,
+                groupDefaultExpanded: 0,
+                getRowId: ({ data }) => data.id,
+                rowData: createPivotRowData(),
+                onCellEditingStarted: (event) => {
+                    events.push({
+                        type: 'cellEditingStarted',
+                        value: event.value,
+                    });
+                },
+                onCellEditingStopped: (event) => {
+                    events.push({
+                        type: 'cellEditingStopped',
+                        value: event.value,
+                        newValue: event.newValue,
+                        oldValue: event.oldValue,
+                        valueChanged: event.valueChanged,
+                    });
+                },
+            });
+
+            await asyncSetTimeout(1);
+
+            const pivotColumns = api.getPivotResultColumns();
+            const pivotCol2020 = pivotColumns?.find((col) => col.getColId().includes('2020_sales'));
+            const pivotColId = pivotCol2020!.getColId();
+
+            const franceNode = api.getRowNode('row-group-country-France');
+            expect(franceNode).toBeDefined();
+
+            if (editMode === 'ui') {
+                await editCell(api, franceNode!, pivotColId, '2000');
+            } else {
+                franceNode!.setDataValue(pivotColId, 2000, 'ui');
+                await asyncSetTimeout(0);
+            }
+            await asyncSetTimeout(0);
+
+            if (editMode === 'ui') {
+                expect(events[0]).toMatchObject({
+                    type: 'cellEditingStarted',
+                    value: 1000,
+                });
+
+                expect(events[1]).toMatchObject({
+                    type: 'cellEditingStopped',
+                    newValue: 2000,
+                    oldValue: 1000,
+                    valueChanged: true,
+                });
+            }
+        });
+    });
+
+    test('cancelling pivot cell edit sets valueChanged to false', async () => {
+        const events: EditEvent[] = [];
+
+        const api = await gridsManager.createGridAndWait('pivot-edit-cancel', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', pivot: true, hide: true },
+                {
+                    field: 'sales',
+                    aggFunc: 'sum',
+                    hide: true,
+                    editable: true,
+                    groupRowEditable: true,
+                },
+            ],
+            pivotMode: true,
+            groupDefaultExpanded: 0,
+            getRowId: ({ data }) => data.id,
+            rowData: createPivotRowData(),
+            onCellEditingStarted: (event) => {
+                events.push({
+                    type: 'cellEditingStarted',
+                    value: event.value,
+                });
+            },
+            onCellEditingStopped: (event) => {
+                events.push({
+                    type: 'cellEditingStopped',
+                    value: event.value,
+                    newValue: event.newValue,
+                    oldValue: event.oldValue,
+                    valueChanged: event.valueChanged,
+                });
+            },
+        });
+
+        await asyncSetTimeout(1);
+
+        const pivotColumns = api.getPivotResultColumns();
+        const pivotCol2020 = pivotColumns?.find((col) => col.getColId().includes('2020_sales'));
+        const pivotColId = pivotCol2020!.getColId();
+
+        const franceNode = api.getRowNode('row-group-country-France');
+        expect(franceNode).toBeDefined();
+
+        const rowIndex = franceNode!.rowIndex!;
+        api.setFocusedCell(rowIndex, pivotColId);
+        api.startEditingCell({ rowIndex, colKey: pivotColId });
+
+        await asyncSetTimeout(0);
+
+        // Cancel the edit
+        api.stopEditing(true);
+        await asyncSetTimeout(0);
+
+        expect(events[0]).toMatchObject({
+            type: 'cellEditingStarted',
+            value: 1000,
+        });
+
+        expect(events[1]).toMatchObject({
+            type: 'cellEditingStopped',
+            value: 1000,
+            valueChanged: false,
+        });
+    });
 });
