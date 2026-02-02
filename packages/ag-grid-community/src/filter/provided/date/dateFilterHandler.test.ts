@@ -121,23 +121,22 @@ describe('getFirstDayOfWeek', () => {
     afterEach(() => {
         (Intl as any).Locale = originalLocale;
         if (originalNavigator) {
-            Object.defineProperty(global, 'navigator', { configurable: true, value: originalNavigator });
+            Object.defineProperty(globalThis, 'navigator', { configurable: true, value: originalNavigator });
         } else {
-            delete (global as any).navigator;
+            delete (globalThis as any).navigator;
         }
     });
 
     it('uses Intl.Locale.getWeekInfo when available', () => {
         const getWeekInfo = jest.fn(() => ({ firstDay: 0 }));
         class MockLocale {
-            constructor(_locale?: string) {}
             getWeekInfo() {
                 return getWeekInfo();
             }
         }
 
         (Intl as any).Locale = MockLocale;
-        Object.defineProperty(global, 'navigator', {
+        Object.defineProperty(globalThis, 'navigator', {
             configurable: true,
             value: { language: 'en-US', languages: ['en-US'] },
         });

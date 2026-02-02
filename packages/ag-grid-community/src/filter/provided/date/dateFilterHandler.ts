@@ -107,7 +107,7 @@ const getFirstDayOfWeek = (): number => {
         }
     }
 
-    cachedFirstDayOfWeek = firstDay != null ? firstDay % 7 : DEFAULT_FIRST_DAY_OF_WEEK;
+    cachedFirstDayOfWeek = firstDay == null ? DEFAULT_FIRST_DAY_OF_WEEK : firstDay % 7;
     return cachedFirstDayOfWeek;
 };
 
