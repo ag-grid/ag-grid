@@ -320,12 +320,13 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
      *
      * **Note**: This method only fires `onCellEditRequest` when the Grid is in **Read Only** mode.
      *
+     * **Note**: This method defers to EditModule if available and batches the edit when `fullRow` or `batchEdit` is enabled.
+     *
      * **Pivot Mode**: On leaf data rows (non-group rows), pivot columns resolve to their underlying value column.
      *
      * @param colKey The column where the value should be updated
      * @param newValue The new value
-     * @param eventSource The source of the event. Use `'api'` to indicate a programmatic change (default behaviour),
-     *   or `'ui'` to indicate a user-initiated change. This affects how the edit flows through the editing system.
+     * @param eventSource The source of the event
      * @returns `true` if the value was changed, otherwise `false`.
      */
     setDataValue(colKey: string | Column, newValue: any, eventSource?: string): boolean;
