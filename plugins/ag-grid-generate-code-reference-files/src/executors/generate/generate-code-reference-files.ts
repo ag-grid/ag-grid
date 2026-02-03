@@ -337,7 +337,8 @@ function mergeRespectingChildOverrides(parent, child, pickFields = []) {
     // Normal spread merge to get the correct order wipes out child overrides
     // Hence the manual approach to the merge here.
     Object.entries(filteredParent).forEach(([k, v]) => {
-        if (!merged[k]) {
+        const optionalKey = k.endsWith('?') ? k.slice(0, -1) : `${k}?`;
+        if (!merged[k] && !merged[optionalKey]) {
             merged[k] = v;
         }
     });
