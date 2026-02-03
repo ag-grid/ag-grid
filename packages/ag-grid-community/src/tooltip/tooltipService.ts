@@ -105,7 +105,11 @@ const resolveCellTooltip = ({
     if (formula?.active && column.isAllowFormula()) {
         const error = formula.getFormulaError(column, rowNode);
         if (error) {
-            return { value: error.message, location: 'cellFormula' };
+            return {
+                value: error.message,
+                location: 'cellFormula',
+                shouldDisplay: () => !!formula?.getFormulaError(column, rowNode),
+            };
         }
     }
 
@@ -114,7 +118,11 @@ const resolveCellTooltip = ({
     if (!isEditing) {
         const errorMessages = getEditErrorsForPosition(beans, ctrl, translate);
         if (errorMessages) {
-            return { value: errorMessages, location: 'cellEditor' };
+            return {
+                value: errorMessages,
+                location: 'cellEditor',
+                shouldDisplay: () => !editSvc?.isEditing(ctrl) && !!getEditErrorsForPosition(beans, ctrl, translate),
+            };
         }
     }
 
