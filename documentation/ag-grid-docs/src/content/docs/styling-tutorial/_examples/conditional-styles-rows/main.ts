@@ -1,10 +1,12 @@
 import type { CellClassRules, ColDef, GridOptions, RowClassRules, ValueFormatterParams } from 'ag-grid-community';
 import {
-    AllCommunityModule,
     CellStyleModule,
+    ClientSideRowModelModule,
     ModuleRegistry,
+    NumberFilterModule,
     RowSelectionModule,
     RowStyleModule,
+    TextFilterModule,
     createGrid,
     iconSetMaterial,
     themeQuartz,
@@ -12,7 +14,14 @@ import {
 
 import { type IProduct, getData } from './data';
 
-ModuleRegistry.registerModules([AllCommunityModule, CellStyleModule, RowSelectionModule, RowStyleModule]);
+ModuleRegistry.registerModules([
+    CellStyleModule,
+    ClientSideRowModelModule,
+    NumberFilterModule,
+    RowSelectionModule,
+    RowStyleModule,
+    TextFilterModule,
+]);
 
 // Create a theme with light and dark modes
 const myTheme = themeQuartz

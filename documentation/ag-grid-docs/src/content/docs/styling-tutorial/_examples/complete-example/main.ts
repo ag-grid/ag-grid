@@ -113,7 +113,7 @@ const gridOptions: GridOptions<IProduct> = {
 const toggleButton = document.querySelector<HTMLElement>('#toggle')!;
 
 function setThemeMode() {
-    const isDark = document.body.dataset.agThemeMode === 'dark';
+    const isDark: boolean = document.body.dataset.agThemeMode === 'dark';
     const nextMode = isDark ? 'light' : 'dark';
 
     document.body.dataset.agThemeMode = nextMode;

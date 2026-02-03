@@ -125,11 +125,115 @@ Our [Built-in Themes](./themes/) docs provides a full overview of the available 
 
 ## Customising Themes
 
-Themes can be customised using the Theming API, which provides three main features:
+Themes can be customised directly using the Theming API, which provides three main features:
 
-- **Theme Parts:** Mix-and-match parts from different themes, such as light/dark schemes, inputs or icon sets.
 - **Theme Parameters:** Adjust colours, spacing, fonts, and other variables to create a unique theme.
+- **Theme Parts:** Mix-and-match parts from different themes, such as light/dark schemes, inputs or icon sets.
 - **Theme Modes:** Define multiple colour schemes (e.g. light and dark) within a single theme.
+
+### Theme Parameters
+
+Theme Parameters can be defined by passing an object with the relevant configuration parameters to the `withParams()` method.
+
+For example, to customise your theme with specific colours, spacing, and font sizes, add the following params to your `myTheme` definition:
+
+{% if isFramework("javascript") %}
+```js
+// Custom theme with Material icons and custom parameters
+const myTheme = themeQuartz
+    .withParams({
+        backgroundColor: '#ffffff',
+        foregroundColor: '#1a1a1a',
+        headerBackgroundColor: '#faf8f5',
+        spacing: 10,
+        fontSize: 12,
+        headerFontSize: 14,
+    });
+
+const gridOptions = {
+    theme: myTheme,
+    // ... other options
+};
+```
+{% /if %}
+
+{% if isFramework("react") %}
+```jsx
+// Custom theme with Material icons and custom parameters
+const myTheme = themeQuartz
+    .withParams({
+        backgroundColor: '#ffffff',
+        foregroundColor: '#1a1a1a',
+        headerBackgroundColor: '#faf8f5',
+        spacing: 10,
+        fontSize: 12,
+        headerFontSize: 14,
+    });
+
+const GridExample = () => {
+    return (
+        <AgGridReact
+            theme={myTheme}
+            // ... other props
+        />
+    );
+};
+```
+{% /if %}
+
+{% if isFramework("angular") %}
+```ts
+// Custom theme with Material icons and custom parameters
+const myTheme = themeQuartz
+    .withParams({
+        backgroundColor: '#ffffff',
+        foregroundColor: '#1a1a1a',
+        headerBackgroundColor: '#faf8f5',
+        spacing: 10,
+        fontSize: 12,
+        headerFontSize: 14,
+    });
+
+@Component({
+    selector: 'app-root',
+    template: `<ag-grid-angular [theme]="theme" />`,
+})
+export class AppComponent {
+    theme = myTheme;
+}
+```
+{% /if %}
+
+{% if isFramework("vue") %}
+```js
+// Custom theme with Material icons and custom parameters
+const myTheme = themeQuartz
+    .withParams({
+        backgroundColor: '#ffffff',
+        foregroundColor: '#1a1a1a',
+        headerBackgroundColor: '#faf8f5',
+        spacing: 10,
+        fontSize: 12,
+        headerFontSize: 14,
+    });
+
+export default {
+    components: { AgGridVue },
+    setup() {
+        return { theme: myTheme };
+    },
+    template: `<ag-grid-vue :theme="theme" />`,
+};
+```
+{% /if %}
+
+When you run your application, you should see the new theme applied to the grid, with slightly smaller text, and an off-white header background colour: 
+
+{% gridExampleRunner title="Theme Parameters" name="theme-params" suppressDarkMode=true  /%}
+
+{% note %}
+Our [Theme Parameters](./theming-parameters/) docs provides a full list of available parameters and how to use them.
+{% /note %}
 
 ### Theme Parts
 
@@ -141,8 +245,10 @@ For example, to use the Material icon set with the Quartz theme, add the `iconSe
 ```js
 import { themeQuartz, iconSetMaterial } from 'ag-grid-community';
 
-// Quartz theme that uses Material icons
-const myTheme = themeQuartz.withPart(iconSetMaterial);
+// Custom Quartz theme that uses Material icons
+const myTheme = themeQuartz
+    .withParams({ /*...*/ })
+    .withPart(iconSetMaterial);
 
 const gridOptions = {
     theme: myTheme,
@@ -156,8 +262,10 @@ const gridOptions = {
 import { themeQuartz, iconSetMaterial } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
-// Quartz theme that uses Material icons
-const myTheme = themeQuartz.withPart(iconSetMaterial);
+// Custom Quartz theme that uses Material icons
+const myTheme = themeQuartz
+    .withParams({ /*...*/ })
+    .withPart(iconSetMaterial);
 
 const GridExample = () => {
     // ... rowData, columnDefs, etc.
@@ -188,8 +296,10 @@ import { themeQuartz, iconSetMaterial } from 'ag-grid-community';
     `,
 })
 export class AppComponent {
-    // Quartz theme that uses Material icons
-    theme = themeQuartz.withPart(iconSetMaterial);
+    // Custom Quartz theme that uses Material icons
+    const myTheme = themeQuartz
+        .withParams({ /*...*/ })
+        .withPart(iconSetMaterial);
 }
 ```
 {% /if %}
@@ -199,8 +309,10 @@ export class AppComponent {
 import { AgGridVue } from 'ag-grid-vue3';
 import { themeQuartz, iconSetMaterial } from 'ag-grid-community';
 
-// Quartz theme that uses Material icons
-const myTheme = themeQuartz.withPart(iconSetMaterial);
+// Custom Quartz theme that uses Material icons
+const myTheme = themeQuartz
+    .withParams({ /*...*/ })
+    .withPart(iconSetMaterial);
 
 export default {
     components: { AgGridVue },
@@ -226,114 +338,6 @@ When you run your application, you should see the Material icons in the grid:
 
 {% note %}
 Our [Theming Parts](./theming-parts/) docs provides a full overview of the available theme parts and how to use them.
-{% /note %}
-
-### Theme Parameters
-
-Theme Parameters can be defined by passing an object to the `withParams()` method, which can be chained with other `withParams()` and `withPart()` calls.
-
-For example, to customise your theme with specific colours, spacing, and font sizes, add the following params to your `myTheme` definition:
-
-{% if isFramework("javascript") %}
-```js
-// Custom theme with Material icons and custom parameters
-const myTheme = themeQuartz
-    .withPart(iconSetMaterial)
-    .withParams({
-        backgroundColor: '#ffffff',
-        foregroundColor: '#1a1a1a',
-        headerBackgroundColor: '#faf8f5',
-        spacing: 10,
-        fontSize: 12,
-        headerFontSize: 14,
-    });
-
-const gridOptions = {
-    theme: myTheme,
-    // ... other options
-};
-```
-{% /if %}
-
-{% if isFramework("react") %}
-```jsx
-// Custom theme with Material icons and custom parameters
-const myTheme = themeQuartz
-    .withPart(iconSetMaterial)
-    .withParams({
-        backgroundColor: '#ffffff',
-        foregroundColor: '#1a1a1a',
-        headerBackgroundColor: '#faf8f5',
-        spacing: 10,
-        fontSize: 12,
-        headerFontSize: 14,
-    });
-
-const GridExample = () => {
-    return (
-        <AgGridReact
-            theme={myTheme}
-            // ... other props
-        />
-    );
-};
-```
-{% /if %}
-
-{% if isFramework("angular") %}
-```ts
-// Custom theme with Material icons and custom parameters
-const myTheme = themeQuartz
-    .withPart(iconSetMaterial)
-    .withParams({
-        backgroundColor: '#ffffff',
-        foregroundColor: '#1a1a1a',
-        headerBackgroundColor: '#faf8f5',
-        spacing: 10,
-        fontSize: 12,
-        headerFontSize: 14,
-    });
-
-@Component({
-    selector: 'app-root',
-    template: `<ag-grid-angular [theme]="theme" />`,
-})
-export class AppComponent {
-    theme = myTheme;
-}
-```
-{% /if %}
-
-{% if isFramework("vue") %}
-```js
-// Custom theme with Material icons and custom parameters
-const myTheme = themeQuartz
-    .withPart(iconSetMaterial)
-    .withParams({
-        backgroundColor: '#ffffff',
-        foregroundColor: '#1a1a1a',
-        headerBackgroundColor: '#faf8f5',
-        spacing: 10,
-        fontSize: 12,
-        headerFontSize: 14,
-    });
-
-export default {
-    components: { AgGridVue },
-    setup() {
-        return { theme: myTheme };
-    },
-    template: `<ag-grid-vue :theme="theme" />`,
-};
-```
-{% /if %}
-
-When you run your application, you should see the new theme applied to the grid, with slightly smaller text, and an off-white header background colour: 
-
-{% gridExampleRunner title="Theme Parameters" name="theme-params" suppressDarkMode=true  /%}
-
-{% note %}
-Our [Theme Parameters](./theming-parameters/) docs provides a full list of available parameters and how to use them.
 {% /note %}
 
 ### Theme Modes
@@ -520,18 +524,18 @@ document.body.dataset.agThemeMode = 'light';
 {% if isFramework("react") %}
 ```jsx
 const GridExample = () => {
-    const [isDarkMode, setIsDarkMode] = useState(false);
+    // Current theme mode
+    const [themeMode, setThemeMode] = useState<ThemeMode>('light');
 
-    const toggleThemeMode = () => {
-        const nextMode = isDarkMode ? 'light' : 'dark';
-        document.body.dataset.agThemeMode = nextMode;
-        setIsDarkMode(!isDarkMode);
-    };
-
-    // Set initial mode
+    // Set initial theme mode
     useEffect(() => {
-        document.body.dataset.agThemeMode = 'light';
-    }, []);
+        document.body.dataset.agThemeMode = themeMode;
+    }, [themeMode]);
+
+    // Toggle theme mode
+    const toggleThemeMode = () => {
+        setThemeMode((prev) => (prev === 'light' ? 'dark' : 'light'));
+    };
 
     return (
         <>
@@ -607,19 +611,8 @@ When you run your application, you should be able to toggle between light and da
 {% gridExampleRunner title="Dark Mode" name="dark-mode" suppressDarkMode=true  /%}
 
 {% note %}
-Our [Theme Modes](./theming-modes/) docs provides a full overview of how to use theme modes and best practices for implementing dark mode support.
+Our [Theme Modes](./theming-colors/#theme-modes) docs provide a full overview of how to use theme modes and best practices for implementing dark mode support.
 {% /note %}
-
-### Theme Builder
-
-The [Theme Builder](https://www.ag-grid.com/theme-builder/) is a visual tool for creating and customising themes. It allows you to:
-
-- Customise theme parameters via a user-friendly interface.
-- Preview theme changes in real-time.
-- Enable/disable grid features to accurately represent your configuration.
-- Generate code for a custom theme that can be copied into your project.
-
-{% video videoSrc="resources/theme-builder-demo.mp4" centered=true /%}
 
 ## Custom CSS for Fine-Tuning
 
@@ -679,9 +672,11 @@ Both of these features work in the same way, allowing you to specify when CSS cl
 
 ### Cell Class Rules
 
-Class Rules are defined by passing a JavaScript map to the `cellClassRules` column property where the keys are the class names and the values are expressions that if evaluated to true, the class gets used. These expressions access the cell's data via the `params` object, which includes things such as the cell value and row node.
+Class Rules are defined by passing a JavaScript map to the `cellClassRules` column property where the keys are the class names and the values are expressions that if evaluated to true, the class gets used. 
 
-For example, to apply different classes to cells in the `status` column based on their value, first define the following rules:
+These expressions access the cell's data via the `params` object, which includes information such as the cell value and row node.
+
+For example, to apply different classes to cells in the `status` column based on their value, first define the following `cellClassRules`:
 
 {% if isFramework("javascript") %}
 ```js
@@ -751,7 +746,9 @@ const columnDefs = ref([
 ```
 {% /if %}
 
-And then add the relevant styles to your CSS:
+Each time a cell is rendered within the status column, the `cellClassRules` function will be evaluated, and a CSS class applied to the cell based on its value.
+
+To style these cells, add the corresponding classes to your CSS:
 
 ```css
 .status-delivered {
@@ -838,7 +835,7 @@ export default {
 ```
 {% /if %}
 
-And then add the relevant style to your CSS:
+And then add the corresponding class to your CSS:
 
 ```css
 .high-sales {
@@ -853,6 +850,32 @@ When you run your application, you should see the conditional styles applied to 
 {% note %}
 Our [Row Styles](./row-styles/) docs provide a full overview of how to use class rules and best practices for conditional formatting.
 {% /note %}
+
+## Design tools
+
+Whilst this tutorial has been focused on customising themes from within your application, we also provide tools to help both developers and designers create custom themes.
+
+### Theme Builder
+
+The [Theme Builder](https://www.ag-grid.com/theme-builder/) is a visual tool for creating and customising themes. It allows you to:
+
+- Customise theme parameters via a user-friendly interface.
+- Preview theme changes in real-time.
+- Enable/disable grid features to accurately represent your configuration.
+
+You can then generate the resulting custom theme as code and copy it directly into your project.
+
+{% video videoSrc="resources/theme-builder-demo.mp4" centered=true /%}
+
+### Figma Design System
+
+{% videoSection id="Ymmm7wxLy7Y" title="Introducing the AG Grid Figma Design System" %}
+The AG Grid design system replicates the Quartz and Alpine themes within Figma, allowing you to customise them with [Figma variables](https://help.figma.com/hc/en-us/articles/15339657135383-Guide-to-variables-in-Figma) to match your brand and style. 
+
+Figma variables can also be used with the [Style Dictionary](https://styledictionary.com/) package to automatically generate an AG Grid compatible theme object. Visit our our [Design System](./theming-colors/#theme-modes) docs to learn more, or download the figma file using the button below to get started.
+{% /videoSection %}
+
+{% figmaCommunityButton /%}
 
 ## Test Your Knowledge
 

@@ -6,7 +6,6 @@ import {
     RowSelectionModule,
     TextFilterModule,
     createGrid,
-    iconSetMaterial,
     themeQuartz,
 } from 'ag-grid-community';
 
@@ -15,7 +14,7 @@ import { type IProduct, getData } from './data';
 ModuleRegistry.registerModules([RowSelectionModule, TextFilterModule, NumberFilterModule, ClientSideRowModelModule]);
 
 // Customise the theme with parameters
-const myTheme = themeQuartz.withPart(iconSetMaterial).withParams({
+const myTheme = themeQuartz.withParams({
     backgroundColor: '#ffffff',
     foregroundColor: '#1a1a1a',
     headerBackgroundColor: '#faf8f5',

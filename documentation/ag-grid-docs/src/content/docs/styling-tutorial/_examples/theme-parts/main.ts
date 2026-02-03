@@ -15,7 +15,16 @@ import { type IProduct, getData } from './data';
 ModuleRegistry.registerModules([RowSelectionModule, TextFilterModule, NumberFilterModule, ClientSideRowModelModule]);
 
 // Apply icon set using withPart()
-const myTheme = themeQuartz.withPart(iconSetMaterial);
+const myTheme = themeQuartz
+    .withParams({
+        backgroundColor: '#ffffff',
+        foregroundColor: '#1a1a1a',
+        headerBackgroundColor: '#faf8f5',
+        spacing: 10,
+        fontSize: 12,
+        headerFontSize: 14,
+    })
+    .withPart(iconSetMaterial);
 
 const columnDefs: ColDef<IProduct>[] = [
     { field: 'productName', headerName: 'Product', minWidth: 180 },

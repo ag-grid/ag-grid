@@ -6,7 +6,39 @@
     font-size: 0.85em;
 }
 
-/* Style first column differently */
+/* Accent border under header */
+.ag-header-cell {
+    border-bottom: 2px solid var(--ag-accent-color) !important;
+}
+
+/* Row styles - sales performance */
+.high-sales {
+    background-color: rgba(76, 175, 80, 0.15) !important;
+}
+
+.low-sales {
+    background-color: rgba(244, 67, 54, 0.1) !important;
+}
+
+/* Cell styles - profit margin */
+.high-margin {
+    font-weight: 600;
+}
+
+/* Cell styles - status badges */
+.status-delivered {
+    color: #2e7d32;
+}
+
+.status-pending {
+    color: #ed6c02;
+}
+
+.status-cancelled {
+    color: #d32f2f;
+}
+
+/* Style first column (product name) */
 .ag-cell[col-id='productName'] {
     font-weight: 500;
 }
