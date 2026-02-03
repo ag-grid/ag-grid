@@ -67,10 +67,10 @@ The `api.getCellValue()` method retrieves the display value for a cell. It can r
 
 {% apiDocumentation source="grid-api/api.json" section="miscellaneous" names=["getCellValue"] /%}
 
-Use `rowNode.getDataValue(colKey)` to retrieve the raw data value, ignoring pending edits. Unlike `getCellValue()`, which returns the display value, `getDataValue()` returns the value from the data model before any transformations.
+Use `rowNode.getDataValue(colKey)` to retrieve the committed data value, ignoring pending edits. Unlike `getCellValue()` with `from='edit'`, which returns the current editing value, `getDataValue()` returns the resolved value (including valueGetters, aggregation for group rows, and computed formulas) but excludes pending edits and display formatting.
 
 ```js
-// Returns the raw data value, ignoring pending edits and display transformations
+// Returns the committed data value, ignoring pending edits
 const dataValue = rowNode.getDataValue('price');
 ```
 

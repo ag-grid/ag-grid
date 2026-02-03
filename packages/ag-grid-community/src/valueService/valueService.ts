@@ -514,8 +514,8 @@ export class ValueService extends BeanStub implements NamedBean {
         // For pivot columns (identified by pivotValueColumn), preserve legacy behavior:
         // do not auto-create row data. In previous versions, pivot columns silently
         // skipped value changes on group rows because getColDefCol() couldn't find them.
-        if (colDef.pivotValueColumn && this.gos.get('enableGroupEdit')) {
-            return false; // Legacy behaviour
+        if (colDef.pivotValueColumn) {
+            return false; // Legacy behaviour - pivot leaf rows do not auto-create data
         }
 
         return true;
