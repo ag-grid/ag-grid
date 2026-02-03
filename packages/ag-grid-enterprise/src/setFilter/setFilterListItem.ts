@@ -413,13 +413,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
     }
 
     private getFormattedValue(column: AgColumn, value: any) {
-        return this.beans.valueSvc.formatValue(
-            column,
-            null,
-            value,
-            this.valueFormatter,
-            !!this.useFormatterFromColumn
-        );
+        return this.beans.valueSvc.formatValue(column, null, value, this.valueFormatter, !!this.useFormatterFromColumn);
     }
 
     private renderCell(): void {
