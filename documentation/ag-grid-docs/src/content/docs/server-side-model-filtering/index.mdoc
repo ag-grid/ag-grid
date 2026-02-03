@@ -70,6 +70,16 @@ The example below demonstrates filtering using Simple Column Filters, note the f
 
 {% gridExampleRunner title="Server-Side Filtering" name="infinite-simple" /%}
 
+## Date Filters
+
+For more details on Date Filter model properties and available options see [Date Filter](./filter-date/) and [Date Filter Model](./filter-date/#date-filter-model).
+
+### Date Range Filters
+
+When using a Date Filter with built-in date ranges (for example, Today or Last 7 Days), the Grid State model and the SSRM request model are identical. Both use the preset `type` and leave `dateFrom` and `dateTo` as `undefined`. Your server (or custom filtering code) must interpret the preset and apply the equivalent date range logic using its own time zone and locale rules.
+
+{% interfaceDocumentation interfaceName="PresetDateRangeFilterModel" config={"description":""} /%}
+
 ## Set Filtering
 
 Filtering using the [Set Filter](./filter-set/) has a few differences to filtering with Simple Filters.
