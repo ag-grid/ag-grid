@@ -15,6 +15,8 @@ type EditEvent = {
     oldValue?: any;
     valueChanged?: boolean;
     source?: string;
+    data?: any;
+    rowNodeData?: any;
 };
 
 describe('enableGroupEdit with pivot mode', () => {
@@ -55,7 +57,12 @@ describe('enableGroupEdit with pivot mode', () => {
                 { country: 'USA', year: 2004, gold: 1, silver: 2 },
             ],
             onCellEditingStarted: (event) => {
-                events.push({ type: 'cellEditingStarted', value: event.value });
+                events.push({
+                    type: 'cellEditingStarted',
+                    value: event.value,
+                    data: event.data ? JSON.parse(JSON.stringify(event.data)) : event.data,
+                    rowNodeData: event.node?.data ? JSON.parse(JSON.stringify(event.node.data)) : event.node?.data,
+                });
             },
             onCellValueChanged: (event) => {
                 events.push({
@@ -63,6 +70,8 @@ describe('enableGroupEdit with pivot mode', () => {
                     newValue: event.newValue,
                     oldValue: event.oldValue,
                     source: event.source,
+                    data: event.data ? JSON.parse(JSON.stringify(event.data)) : event.data,
+                    rowNodeData: event.node?.data ? JSON.parse(JSON.stringify(event.node.data)) : event.node?.data,
                 });
             },
             onCellEditingStopped: (event) => {
@@ -72,6 +81,8 @@ describe('enableGroupEdit with pivot mode', () => {
                     newValue: event.newValue,
                     oldValue: event.oldValue,
                     valueChanged: event.valueChanged,
+                    data: event.data ? JSON.parse(JSON.stringify(event.data)) : event.data,
+                    rowNodeData: event.node?.data ? JSON.parse(JSON.stringify(event.node.data)) : event.node?.data,
                 });
             },
         });
@@ -87,6 +98,18 @@ describe('enableGroupEdit with pivot mode', () => {
         );
         expect(pivotCol2000Gold).toBeDefined();
         expect(pivotCol2004Gold).toBeDefined();
+
+        // Debug: check pivot column colDef
+        const colDef = pivotCol2000Gold!.getColDef();
+        // eslint-disable-next-line no-console
+        console.log('Pivot col colDef:', {
+            colId: pivotCol2000Gold!.getColId(),
+            field: colDef.field,
+            valueSetter: colDef.valueSetter,
+            valueGetter: typeof colDef.valueGetter,
+            aggFunc: colDef.aggFunc,
+            pivotValueColumn: (colDef.pivotValueColumn as any)?.getColId?.(),
+        });
 
         const usaNode = api.getRowNode('row-group-country-USA');
         expect(usaNode).toBeDefined();
@@ -121,6 +144,9 @@ describe('enableGroupEdit with pivot mode', () => {
         // First edit - without groupRowValueSetter, cellValueChanged should NOT fire
         await editCell(api, usaNode, pivotCol2000GoldId, '1234');
         await asyncSetTimeout(0);
+
+        // eslint-disable-next-line no-console
+        console.log('Events after first edit:', JSON.stringify(events, null, 2));
 
         expect(events).toHaveLength(2);
         expect(events[0]).toMatchObject({ type: 'cellEditingStarted', value: 7 });
