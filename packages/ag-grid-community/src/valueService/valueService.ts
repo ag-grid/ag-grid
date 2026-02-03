@@ -533,7 +533,7 @@ export class ValueService extends BeanStub implements NamedBean {
 
         this.valueCache?.onDataChanged();
 
-        const savedValue = this.getValue(column, rowNode, 'edit');
+        const savedValue = this.getValue(column, rowNode, 'data');
 
         this.dispatchCellValueChangedEvent(rowNode, params, savedValue, eventSource);
         if ((rowNode as RowNode).pinnedSibling) {

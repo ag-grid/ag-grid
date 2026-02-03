@@ -837,4 +837,69 @@ describe('Cell Editing Regression', () => {
         expect(valueSetterCalls[1].oldValue).toBe(42);
         expect(scoreCell).toHaveTextContent('0');
     });
+
+    test.each(['ui', 'data'] as const)(
+        'onCellValueChanged receives transformed value from valueSetter via %s (AG-16586)',
+        async (source) => {
+            // This test verifies that when a valueSetter transforms the value (e.g., to uppercase),
+            // the onCellValueChanged event receives the transformed value, not the original input.
+            const cellValueChangedEvents: Array<{ oldValue: any; newValue: any }> = [];
+
+            const api = await gridMgr.createGridAndWait(`myGrid-${source}`, {
+                columnDefs: [
+                    {
+                        field: 'athlete',
+                        editable: true,
+                        valueSetter: (params) => {
+                            // Transform value to uppercase
+                            params.data.athlete = params.newValue.toUpperCase();
+                            return true;
+                        },
+                    },
+                    { field: 'age' },
+                    { field: 'country' },
+                ],
+                rowData: [{ athlete: 'Michael Phelps', age: 30, country: 'USA' }],
+                onCellValueChanged: (event) => {
+                    cellValueChangedEvents.push({
+                        oldValue: event.oldValue,
+                        newValue: event.newValue,
+                    });
+                },
+            });
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            await asyncSetTimeout(1);
+
+            if (source === 'ui') {
+                // Edit via UI: double-click and type
+                const athleteCell = getByTestId(gridDiv, agTestIdFor.cell('0', 'athlete'));
+                await userEvent.dblClick(athleteCell);
+                await asyncSetTimeout(1);
+
+                const input = await waitForInput(gridDiv, athleteCell, { popup: false });
+                await userEvent.clear(input);
+                await userEvent.type(input, 'usain bolt{Enter}');
+                await asyncSetTimeout(1);
+            } else {
+                // Edit via data: use rowNode.setDataValue
+                const rowNode = api.getDisplayedRowAtIndex(0)!;
+                rowNode.setDataValue('athlete', 'usain bolt');
+                await asyncSetTimeout(1);
+            }
+
+            // Verify the cell displays the uppercase value
+            const athleteCell = getByTestId(gridDiv, agTestIdFor.cell('0', 'athlete'));
+            expect(athleteCell).toHaveTextContent('USAIN BOLT');
+
+            // Verify the data was transformed
+            expect(api.getDisplayedRowAtIndex(0)?.data?.athlete).toBe('USAIN BOLT');
+
+            // Verify onCellValueChanged received the transformed (uppercase) value
+            expect(cellValueChangedEvents).toHaveLength(1);
+            expect(cellValueChangedEvents[0].oldValue).toBe('Michael Phelps');
+            // The newValue should be the transformed uppercase value, not the original lowercase input
+            expect(cellValueChangedEvents[0].newValue).toBe('USAIN BOLT');
+        }
+    );
 });
