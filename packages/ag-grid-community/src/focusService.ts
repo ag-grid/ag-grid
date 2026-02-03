@@ -597,6 +597,13 @@ export class FocusService extends BeanStub implements NamedBean {
 
             this.beans.rangeSvc?.setRangeToCell({ rowIndex, rowPinned, column });
 
+            // When focus is requested from outside the grid (e.g. tabbing into the grid),
+            // the target cell may not yet be rendered (SSRM loading). Mark focus for recovery
+            // so it is restored when the cell appears.
+            if (!this.doesRowOrCellHaveBrowserFocus()) {
+                this.attemptToRecoverFocus();
+            }
+
             return true;
         }
 
