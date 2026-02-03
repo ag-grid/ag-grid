@@ -109,6 +109,49 @@ describe('presetDateFilterTypeRelativeFromToMap', () => {
     );
 });
 
+describe('getFirstDayOfWeek', () => {
+    const base = new Date('2020-04-08T12:34:56.000Z');
+    const originalLocale = (Intl as any).Locale;
+    const originalNavigator = typeof navigator === 'undefined' ? undefined : navigator;
+
+    beforeEach(() => {
+        jest.resetModules();
+    });
+
+    afterEach(() => {
+        (Intl as any).Locale = originalLocale;
+        if (originalNavigator) {
+            Object.defineProperty(globalThis, 'navigator', { configurable: true, value: originalNavigator });
+        } else {
+            delete (globalThis as any).navigator;
+        }
+    });
+
+    it('uses Intl.Locale.getWeekInfo when available', () => {
+        const getWeekInfo = jest.fn(() => ({ firstDay: 0 }));
+        class MockLocale {
+            getWeekInfo() {
+                return getWeekInfo();
+            }
+        }
+
+        (Intl as any).Locale = MockLocale;
+        Object.defineProperty(globalThis, 'navigator', {
+            configurable: true,
+            value: { language: 'en-US', languages: ['en-US'] },
+        });
+
+        jest.isolateModules(() => {
+            // eslint-disable-next-line @typescript-eslint/no-var-requires
+            const { presetDateFilterTypeRelativeFromToMap: map } = require('./dateFilterHandler');
+            const result = map.setStartOfWeek(new Date(base));
+            expect(result.toUTCString()).toContain('Sun, 05 Apr 2020');
+        });
+
+        expect(getWeekInfo).toHaveBeenCalledTimes(1);
+    });
+});
+
 describe('getOrRefreshRangeCacheItem', () => {
     const key = 'today' as ISimpleFilterModelPresetType;
 

@@ -18,6 +18,7 @@ export class GridHeaderCtrl extends BeanStub {
     private comp: IGridHeaderComp;
     public eGui: HTMLElement;
     public headerHeight: number;
+    private headerHeightWithBorder: number;
 
     public setComp(comp: IGridHeaderComp, eGui: HTMLElement, eFocusableElement: HTMLElement): void {
         this.comp = comp;
@@ -91,21 +92,21 @@ export class GridHeaderCtrl extends BeanStub {
 
         totalHeaderHeight += groupHeight;
         totalHeaderHeight += headerHeight;
+        const headerBorderWidth = beans.environment.getHeaderRowBorderWidth();
+        const totalHeaderHeightWithBorder = totalHeaderHeight + headerBorderWidth;
 
-        if (this.headerHeight === totalHeaderHeight) {
-            return;
+        if (this.headerHeightWithBorder !== totalHeaderHeightWithBorder) {
+            this.headerHeightWithBorder = totalHeaderHeightWithBorder;
+            const px = `${totalHeaderHeightWithBorder}px`;
+            this.comp.setHeightAndMinHeight(px);
         }
 
-        this.headerHeight = totalHeaderHeight;
-
-        // one extra pixel is needed here to account for the
-        // height of the border
-        const px = `${totalHeaderHeight + 1}px`;
-        this.comp.setHeightAndMinHeight(px);
-
-        this.eventSvc.dispatchEvent({
-            type: 'headerHeightChanged',
-        });
+        if (this.headerHeight !== totalHeaderHeight) {
+            this.headerHeight = totalHeaderHeight;
+            this.eventSvc.dispatchEvent({
+                type: 'headerHeightChanged',
+            });
+        }
     }
 
     private onPivotModeChanged(beans: BeanCollection): void {

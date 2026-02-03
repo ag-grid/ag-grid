@@ -2,6 +2,7 @@ import type { BaseCssChangeKeys, CssVariable } from './agStack/core/baseEnvironm
 import { BaseEnvironment } from './agStack/core/baseEnvironment';
 import type { Theme } from './agStack/theming/theme';
 import type { ThemeImpl } from './agStack/theming/themeImpl';
+import type { ParamType } from './agStack/theming/themeTypeUtils';
 import type { NamedBean } from './context/bean';
 import type { BeanCollection } from './context/context';
 import type { AgEventTypeParams } from './events';
@@ -14,46 +15,22 @@ import { coreCSS } from './theming/core/core.css-GENERATED';
 import { themeQuartz } from './theming/parts/theme/themes';
 import { _error, _warn } from './validation/logging';
 
-const CELL_HORIZONTAL_PADDING: CssVariable<CssChangeKeys> = {
-    changeKey: 'cellHorizontalPadding',
-    type: 'length',
-    defaultValue: 16,
-};
+const cssVariable = <K extends keyof CssChangeKeys>(
+    changeKey: K,
+    type: ParamType,
+    defaultValue: number,
+    noWarn?: boolean,
+    cacheDefault?: boolean
+): CssVariable<CssChangeKeys> => ({ changeKey, type, defaultValue, noWarn, cacheDefault });
 
-const INDENTATION_LEVEL: CssVariable<CssChangeKeys> = {
-    changeKey: 'indentationLevel',
-    type: 'length',
-    defaultValue: 0,
-    noWarn: true,
-    cacheDefault: true,
-};
-
-const ROW_GROUP_INDENT_SIZE: CssVariable<CssChangeKeys> = {
-    changeKey: 'rowGroupIndentSize',
-    type: 'length',
-    defaultValue: 0,
-};
-
-const ROW_HEIGHT: CssVariable<CssChangeKeys> = {
-    changeKey: 'rowHeight',
-    type: 'length',
-    defaultValue: 42,
-};
-const HEADER_HEIGHT: CssVariable<CssChangeKeys> = {
-    changeKey: 'headerHeight',
-    type: 'length',
-    defaultValue: 48,
-};
-const ROW_BORDER_WIDTH: CssVariable<CssChangeKeys> = {
-    changeKey: 'rowBorderWidth',
-    type: 'border',
-    defaultValue: 1,
-};
-const PINNED_BORDER_WIDTH: CssVariable<CssChangeKeys> = {
-    changeKey: 'pinnedRowBorderWidth',
-    type: 'border',
-    defaultValue: 1,
-};
+const CELL_HORIZONTAL_PADDING = cssVariable('cellHorizontalPadding', 'length', 16);
+const INDENTATION_LEVEL = cssVariable('indentationLevel', 'length', 0, true, true);
+const ROW_GROUP_INDENT_SIZE = cssVariable('rowGroupIndentSize', 'length', 0);
+const ROW_HEIGHT = cssVariable('rowHeight', 'length', 42);
+const HEADER_HEIGHT = cssVariable('headerHeight', 'length', 48);
+const ROW_BORDER_WIDTH = cssVariable('rowBorderWidth', 'border', 1);
+const PINNED_BORDER_WIDTH = cssVariable('pinnedRowBorderWidth', 'border', 1);
+const HEADER_ROW_BORDER_WIDTH = cssVariable('headerRowBorderWidth', 'border', 1);
 
 export function _addAdditionalCss(cssMap: Map<string, string[]>, modules: Module[]): void {
     for (const module of modules.sort((a, b) => a.moduleName.localeCompare(b.moduleName))) {
@@ -91,6 +68,10 @@ export class Environment
 
     public getRowBorderWidth(): number {
         return this.getCSSVariablePixelValue(ROW_BORDER_WIDTH);
+    }
+
+    public getHeaderRowBorderWidth(): number {
+        return this.getCSSVariablePixelValue(HEADER_ROW_BORDER_WIDTH);
     }
 
     public getDefaultRowHeight(): number {
@@ -205,6 +186,7 @@ export class Environment
 
 interface CssChangeKeys extends BaseCssChangeKeys {
     headerHeight: true;
+    headerRowBorderWidth: true;
     rowHeight: true;
     rowBorderWidth: true;
     pinnedRowBorderWidth: true;
