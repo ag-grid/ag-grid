@@ -279,7 +279,9 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                             }
                             if (
                                 sum + asNumber >= Number.MAX_SAFE_INTEGER ||
-                                sum + asNumber <= Number.MIN_SAFE_INTEGER
+                                sum + asNumber <= Number.MIN_SAFE_INTEGER ||
+                                asNumber >= Number.MAX_SAFE_INTEGER ||
+                                asNumber <= Number.MIN_SAFE_INTEGER
                             ) {
                                 value = _parseBigIntOrNull(trimmedValue);
                                 if (value === null) {
