@@ -101,7 +101,8 @@ export class SetFilter<V = string>
                   this.beans.valueSvc,
                   () => this.handler.valueFormatter,
                   this.formatter,
-                  column as AgColumn
+                  column as AgColumn,
+                  () => this.handler.shouldUseValueFormatterFromColumn()
               ) as any);
 
         handler.valueModel.allKeys.then((values) => {
@@ -430,6 +431,7 @@ export class SetFilter<V = string>
             params: this.params,
             translate: (translateKey: any) => translateForSetFilter(this, translateKey),
             valueFormatter: this.handler.valueFormatter,
+            shouldUseFormatterFromColumn: this.handler.shouldUseValueFormatterFromColumn(),
             item,
             isSelected,
             isTree,
