@@ -33,9 +33,9 @@ const gridOptions = {
 
 Set the attribute `columnGroupShow` on the group's children to set the expand and collapse policy as follows:
 
-* **`'open'`:** The child is only shown when the group is open.
-* **`'closed'`:** The child is only shown when the group is closed.
-* **`null`, `undefined`:** The child is always shown.
+-   **`'open'`:** The child is only shown when the group is open.
+-   **`'closed'`:** The child is only shown when the group is closed.
+-   **`null`, `undefined`:** The child is always shown.
 
 See [Group Column Properties](./column-properties/#reference-columnGroups) for all available properties.
 
@@ -57,9 +57,9 @@ const gridOptions = {
 
 The example below demonstrates a grid with many column group header levels. Note the following:
 
-* The API is used to open and close groups. To do this, you will need to provide your groups with an ID during the definition, or look up the groups ID via the API (as an ID is generated if you don't provide one).
-* The `colDef.openByDefault` property is set on the E and F groups, resulting in these groups appearing as open by default.
-* `defaultColGroupDef` and `defaultColDef` are used to apply a class to some of the headers. Using this technique, you can apply style to any of the header sections.
+-   The API is used to open and close groups. To do this, you will need to provide your groups with an ID during the definition, or look up the groups ID via the API (as an ID is generated if you don't provide one).
+-   The `colDef.openByDefault` property is set on the E and F groups, resulting in these groups appearing as open by default.
+-   `defaultColGroupDef` and `defaultColDef` are used to apply a class to some of the headers. Using this technique, you can apply style to any of the header sections.
 
 {% gridExampleRunner title="Advanced Grouping" name="advanced-grouping"  exampleHeight=680 /%}
 
@@ -73,20 +73,18 @@ If you move columns so that columns in a group are no longer adjacent, then the 
 
 Sometimes you want columns of the group to always stick together. To achieve this, set the column group property `marryChildren=true`. The example below demonstrates the following:
 
-* Both 'Athlete Details' and 'Sports Results' have `marryChildren=true`.
-* If you move columns inside these groups, you will not be able to move the column out of the group. For example, if you drag 'Athlete', it is not possible to drag it out of the 'Athlete Details' group.
-* If you move a non group column, e.g. Age, it will not be possible to place it in the middle of a group and hence impossible to break the group apart.
-* It is possible to place a column between groups (e.g. you can place 'Age' between the 'Athlete Details' and 'Sports Results').
+-   Both 'Athlete Details' and 'Sports Results' have `marryChildren=true`.
+-   If you move columns inside these groups, you will not be able to move the column out of the group. For example, if you drag 'Athlete', it is not possible to drag it out of the 'Athlete Details' group.
+-   If you move a non group column, e.g. Age, it will not be possible to place it in the middle of a group and hence impossible to break the group apart.
+-   It is possible to place a column between groups (e.g. you can place 'Age' between the 'Athlete Details' and 'Sports Results').
 
 {% gridExampleRunner title="Marry Children" name="marry-children"  exampleHeight=560 /%}
-
 
 ## Resizing Groups
 
 If you grab the group resize bar, it resizes each child in the group evenly distributing the new additional width. If you grab the child resize bar, only that one column will be resized.
 
 {% imageCaption imagePath="resources/header-resize.png" alt="Header Resize" centered=true constrained=true width="30rem" /%}
-
 
 ## Auto Header Height
 
@@ -97,8 +95,8 @@ column groups' header cells to avoid content overflow.
 
 The example below demonstrates using the `autoHeaderHeight` property in conjunction with the `wrapHeaderText` property, so that long column group names are fully displayed.
 
-* Note that the long column group header names wrap onto another line
-* Resize a column group down by dragging the resize handle on the column group header or child column headers left. Observe that the group header row will expand so the header cell content is still fully visible as it's getting wrapped on multiple lines.
+-   Note that the long column group header names wrap onto another line
+-   Resize a column group down by dragging the resize handle on the column group header or child column headers left. Observe that the group header row will expand so the header cell content is still fully visible as it's getting wrapped on multiple lines.
 
 {% gridExampleRunner title="Auto Header Height" name="auto-height" /%}
 
@@ -130,8 +128,8 @@ The labels in the grouping headers are positioned with `display: flex`. To make 
 
 When Column Groups are too wide, the **Header Label** is always visible while scrolling the grid horizontally. To suppress this behaviour, set the column group property `suppressStickyLabel=true`. The example below demonstrates the following:
 
-* Both 'Athlete Details' and 'Sport Results' have `suppressStickyLabel=true`.
-* If you scroll the grid horizontally, the header label will not remain visible as the column is partially scrolled out of view.
+-   Both 'Athlete Details' and 'Sport Results' have `suppressStickyLabel=true`.
+-   If you scroll the grid horizontally, the header label will not remain visible as the column is partially scrolled out of view.
 
 {% gridExampleRunner title="Sticky Label" name="suppress-sticky-label"  exampleHeight=560 /%}
 
@@ -141,19 +139,19 @@ Similar to adding and removing columns, you can also add and remove column group
 
 The example below shows adding and removing groups to columns. Note the following:
 
-* Select **No Groups** to show all columns without any grouping.
-* Select **Participant in Group** to show all participant columns only in a group.
-* Select **Medals in Group** to show all medal columns only in a group.
-* Select **Participant and Medals in Group** to show participant and medal columns in groups.
-* As groups are added and removed, note that the state of the individual columns is preserved. To observe this, try moving, resizing, sorting, filtering etc and then add and remove groups, all the changed state will be preserved.
+-   Select **No Groups** to show all columns without any grouping.
+-   Select **Participant in Group** to show all participant columns only in a group.
+-   Select **Medals in Group** to show all medal columns only in a group.
+-   Select **Participant and Medals in Group** to show participant and medal columns in groups.
+-   As groups are added and removed, note that the state of the individual columns is preserved. To observe this, try moving, resizing, sorting, filtering etc and then add and remove groups, all the changed state will be preserved.
 
 {% gridExampleRunner title="Group Changes" name="group-changes" /%}
 
 The example above shows adding and removing groups. It is also possible to add and remove columns from groups. This is demonstrated in the example below. Note the following:
 
-* The example has two groups: **Athlete Details** and **Sports Results**
-* The example has two sets of columns, **Normal Cols** and **Extra Cols**.
-* When you move from **Normal Cols** to **Extra Cols**, three new columns are added to the list. Two belong to the **Athlete Details** group, the other belongs to no group.
+-   The example has two groups: **Athlete Details** and **Sports Results**
+-   The example has two sets of columns, **Normal Cols** and **Extra Cols**.
+-   When you move from **Normal Cols** to **Extra Cols**, three new columns are added to the list. Two belong to the **Athlete Details** group, the other belongs to no group.
 
 {% gridExampleRunner title="Group Changes 2" name="group-changes-2" /%}
 
@@ -163,7 +161,7 @@ By default the grid will resize the header cell to span the whole height of the 
 
 Note the following:
 
-* The **Age** column header cell is not under a column group cell, but spans the entire height of the header container.
+-   The **Age** column header cell is not under a column group cell, but spans the entire height of the header container.
 
 {% gridExampleRunner title="Span Header Height" name="span-header-height"  exampleHeight=300 /%}
 
@@ -190,7 +188,7 @@ const gridOptions = {
 
 Note the following:
 
-* The **Age** column has an empty column group header cell above it (shown with red borders).
+-   The **Age** column has an empty column group header cell above it (shown with red borders).
 
 {% gridExampleRunner title="Padded Header" name="padded-header"  exampleHeight=300 /%}
 
@@ -220,6 +218,7 @@ on the `headerGroupComponentParams` property. This is useful when you only need 
 the other header group functionality such as the expand / collapse.
 
 {% if isFramework("javascript", "angular", "react") %}
+
 ```js
 colDef = {
     ...
@@ -231,9 +230,11 @@ colDef = {
     }
 }
 ```
+
 {% /if %}
 
 {% if isFramework("vue") %}
+
 ```js
 colDef = {
     ...
@@ -245,6 +246,7 @@ colDef = {
     }
 }
 ```
+
 {% /if %}
 
 {% gridExampleRunner title="Custom Inner Header Group Component" name="inner-header-group-component" /%}
@@ -253,31 +255,42 @@ colDef = {
 Implement this interface to provide a custom inner header component.
 {% /if %}
 {% if isFramework("javascript") %}
+
 ### IInnerHeaderGroupComponent
+
 {% interfaceDocumentation interfaceName="IInnerHeaderGroupComponent" config={"asCode":true } /%}
 {% /if %}
 {% if isFramework("angular") %}
+
 ### IInnerHeaderGroupAngularComp
+
 {% interfaceDocumentation interfaceName="IInnerHeaderGroupAngularComp" config={"asCode":true } /%}
 {% /if %}
 {% if isFramework("javascript", "angular") %}
+
 ### IHeaderGroupParams
+
 {% interfaceDocumentation interfaceName="IHeaderGroupParams" exclude=["template"] config={ "description": "" } /%}
 {% /if %}
 {% if isFramework("react") %}
+
 ```ts
 const CustomInnerHeaderGroupComponent = (props: CustomInnerHeaderGroupProps) => {
     return <div>{props.displayName}</div>;
 };
 ```
+
 The following props are passed to the Custom Component (`CustomInnerHeaderGroupProps` interface).
+
 ### CustomInnerHeaderGroupProps
+
 {% interfaceDocumentation interfaceName="CustomInnerHeaderGroupProps" config={ "description": "" } /%}
 {% /if %}
 {% if isFramework("vue") %}
 Any valid Vue component can be a custom inner header group component, however it must implement the `IHeaderGroup` interface:
 
 ### IHeaderGroup
+
 {% interfaceDocumentation interfaceName="IHeaderGroup" config={"asCode":true } /%}
 {% /if %}
 
@@ -298,7 +311,7 @@ The example below shows a Custom Column Group Component.
 
 As with Column Headers, the grid will always handle resize and column moving. The Custom Component is responsible for the following:
 
-* **Group Open / Close:** If the group can expand (one or more columns visibility depends on the open / closed state of the group) then the Custom Component should handle the interaction with the user for opening and closing groups.
+-   **Group Open / Close:** If the group can expand (one or more columns visibility depends on the open / closed state of the group) then the Custom Component should handle the interaction with the user for opening and closing groups.
 
 {% partial file="./_group-component-interface-javascript.mdoc" /%}
 {% partial file="./_group-component-interface-angular.mdoc" /%}
@@ -330,8 +343,11 @@ When using Custom Header Components it might be necessary to have a better contr
 {% /if %}
 
 The example below demonstrates using the Dynamic Tooltips with a Custom Group Component.
-* Note that only Group Headers where the text is not fully displayed will show tooltips.
+
+-   Note that only Group Headers where the text is not fully displayed will show tooltips.
 
 {% gridExampleRunner title="Dynamic Group Header Tooltip" name="dynamic-tooltips" /%}
+
 ## Next Up
+
 Continue to the next section: [Column Sizing](./column-sizing/).

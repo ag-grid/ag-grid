@@ -4,9 +4,9 @@ title: "Row Styles"
 
 Row customisation can be achieved in the following ways:
 
-* **Row Style:** Providing a CSS style for the rows. Applied individually to each element.
-* **Row Class:** Providing a CSS class for the rows. Not removed on data refresh.
-* **Row Class Rules:** Providing rules for applying CSS classes. These styles are dynamic and applied in batches.
+-   **Row Style:** Providing a CSS style for the rows. Applied individually to each element.
+-   **Row Class:** Providing a CSS class for the rows. Not removed on data refresh.
+-   **Row Class Rules:** Providing rules for applying CSS classes. These styles are dynamic and applied in batches.
 
 {% note %}
 We recommend Row Class Rules for most use cases. See [Refresh of Styles](./row-styles/#refresh-of-styles) for more details.
@@ -89,11 +89,11 @@ As an alternative, you can also provide shorthands of the functions using an exp
 An expression is evaluated by the grid by executing the string as if it were a Javascript expression. The expression has the following attributes available to it (mapping the attributes of the equivalent
 params object):
 
-* `ctx`: maps context
-* `node`: maps node
-* `data`: maps data
-* `rowIndex`: maps rowIndex
-* `api`: maps the grid api
+-   `ctx`: maps context
+-   `node`: maps node
+-   `data`: maps data
+-   `rowIndex`: maps rowIndex
+-   `api`: maps the grid api
 
 The following snippet shows `rowClassRules` applying classes to rows using expressions on an age column value:
 
@@ -111,17 +111,17 @@ const gridOptions = {
 
 If you refresh a row, or a cell is updated due to editing, the `rowStyle`, `rowClass` and `rowClassRules` are all applied again. This has the following effect:
 
-* **rowStyle**: All new styles are applied. If a new style is the same as an old style, the new style overwrites the old style.
-* **rowClass**: All new classes are applied. Old classes are not removed so be aware that classes will accumulate. If you want to remove old classes, then use rowClassRules.
-* **rowClassRules**: Rules that return true will have the class applied the second time. Rules that return false will have the class removed second time.
+-   **rowStyle**: All new styles are applied. If a new style is the same as an old style, the new style overwrites the old style.
+-   **rowClass**: All new classes are applied. Old classes are not removed so be aware that classes will accumulate. If you want to remove old classes, then use rowClassRules.
+-   **rowClassRules**: Rules that return true will have the class applied the second time. Rules that return false will have the class removed second time.
 
 ## Example Row Class Rules
 
 The example below demonstrates `rowClassRules`:
 
-* `rowClassRules` are used to apply the class `sick-days-warning` when the number of sick days > 5 and <= 7, and the class `sick-days-breach` is applied when the number of sick days >= 8.
+-   `rowClassRules` are used to apply the class `sick-days-warning` when the number of sick days > 5 and <= 7, and the class `sick-days-breach` is applied when the number of sick days >= 8.
 
-* The grid re-evaluates the rowClassRules and applies styles when the data is changed independent of mechanism. See [Updating Data](./data-update/) for details on methods to update data.
+-   The grid re-evaluates the rowClassRules and applies styles when the data is changed independent of mechanism. See [Updating Data](./data-update/) for details on methods to update data.
 
 {% gridExampleRunner title="Row Class Rules" name="row-class-rules" /%}
 

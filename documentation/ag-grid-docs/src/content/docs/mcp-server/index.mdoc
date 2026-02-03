@@ -46,16 +46,15 @@ AG Grid's Model Context Protocol (MCP) server provides LLMs with framework and v
 
 {% video videoSrc="resources/ag-mcp-demo.mp4" centered=true /%}
 
-
 ## Overview
 
 The core feature of the AG MCP Server is an LLM optimized search tool which will provide additional context, (e.g. version specific documentation, examples, and references), in a condensed markdown format, minimising the amount of context used.
 
 More specifically, the AG MCP Server is made up of [Tools](#tools), [Prompts](#prompts) and [Resources](#resources-docs-api--example-search):
 
-- **Tools** - Schema defined interfaces that enable AI models to perform actions, including [searching the docs](#search-docs) and [detecting & setting the current AG Grid version](#detect-version).
-- **Prompts** - Pre-configured actions that allow you to perform common actions, such as [creating new grids](#create-a-new-grid), or [migrating to later versions](#migrate-to-a-new-version).
-- **Resources** - Documentation, examples, and API definitions/interfaces in condensed markdown.
+-   **Tools** - Schema defined interfaces that enable AI models to perform actions, including [searching the docs](#search-docs) and [detecting & setting the current AG Grid version](#detect-version).
+-   **Prompts** - Pre-configured actions that allow you to perform common actions, such as [creating new grids](#create-a-new-grid), or [migrating to later versions](#migrate-to-a-new-version).
+-   **Resources** - Documentation, examples, and API definitions/interfaces in condensed markdown.
 
 Each of these components are available to your LLM whenever it needs more information on how to implement AG Grid features, and can also be accessed directly.
 
@@ -136,7 +135,7 @@ To learn more, see the [Claude MCP documentation](https://docs.claude.com/en/doc
 
 ## Getting Started
 
-Once the MCP is installed, your LLM will automatically leverage the AG MCP Server to access additional context, based on your prompt. [Tools](#tools), [Prompts](#prompts) and [Resources](#resources) can also be accessed directly, as demonstrated below. 
+Once the MCP is installed, your LLM will automatically leverage the AG MCP Server to access additional context, based on your prompt. [Tools](#tools), [Prompts](#prompts) and [Resources](#resources) can also be accessed directly, as demonstrated below.
 
 Refer to your LLM documentation for specific instructions on accessing MCP features.
 
@@ -146,8 +145,8 @@ Prompts are pre-configured actions that allow you to perform common actions, suc
 
 AG MCP currently provides two prompts:
 
-- [`quick-start`](#create-a-new-grid) - Get started with AG Grid in any framework
-- [`upgrade-grid`](#migrate-to-a-new-version) - Migrate to a newer version of AG Grid
+-   [`quick-start`](#create-a-new-grid) - Get started with AG Grid in any framework
+-   [`upgrade-grid`](#migrate-to-a-new-version) - Migrate to a newer version of AG Grid
 
 ### Create a New Grid
 
@@ -162,6 +161,7 @@ To trigger the `quick-start` prompt, enter the following command in your LLM pro
 ```bash
 /ag-mcp:quick-start {additional-context}
 ```
+
 {% /tabItem %}
 {% tabItem id="quick-start-vs-code" label="VS Code (CoPilot)" %}
 To trigger the `quick-start` prompt, enter the following command in your LLM prompt:
@@ -169,6 +169,7 @@ To trigger the `quick-start` prompt, enter the following command in your LLM pro
 ```bash
 mcp.ag-mcp.quick-start {additional-context}
 ```
+
 {% /tabItem %}
 {% tabItem id="quick-start-claude" label="Claude" %}
 To trigger the `quick-start` prompt, enter the following command in your LLM prompt:
@@ -176,6 +177,7 @@ To trigger the `quick-start` prompt, enter the following command in your LLM pro
 ```bash
 /ag-mcp:quick-start {additional-context}
 ```
+
 {% /tabItem %}
 {% /tabs %}
 
@@ -187,19 +189,25 @@ To trigger the `upgrade-grid` prompt, enter the following command in your LLM pr
 
 {% tabs %}
 {% tabItem id="migrate-cursor" label="Cursor" %}
+
 ```bash
 /ag-mcp:upgrade-grid {additional-context}
 ```
+
 {% /tabItem %}
 {% tabItem id="migrate-vs-code" label="VS Code (CoPilot)" %}
+
 ```bash
 mcp.ag-mcp.upgrade-grid {additional-context}
 ```
+
 {% /tabItem %}
 {% tabItem id="migrate-claude" label="Claude" %}
+
 ```bash
 /ag-mcp:upgrade-grid {additional-context}
 ```
+
 {% /tabItem %}
 {% /tabs %}
 
@@ -209,11 +217,11 @@ Resources allow servers to share data that provides context to language models, 
 
 There are currently three sets of resources available:
 
-- `articles` - Access to the full AG Grid documentation at the correct version.
-- `definitions` - API definitions and interfaces
-- `examples` - A library of AG Grid implementation examples in your framework.
+-   `articles` - Access to the full AG Grid documentation at the correct version.
+-   `definitions` - API definitions and interfaces
+-   `examples` - A library of AG Grid implementation examples in your framework.
 
-Your LLM can access these resources whenever it needs more information on how to implement AG Grid features. 
+Your LLM can access these resources whenever it needs more information on how to implement AG Grid features.
 
 To directly reference articles, definitions or examples, use the following steps depending on your LLM provider of choice:
 
@@ -238,7 +246,7 @@ To access resources from the `ag-mcp` server in Claude, use the following format
 
 ```bash
 $ Referencing ag-mcp:ag-mcp://articles, create a new cell renderer that displays a button.
-``` 
+```
 
 &nbsp;
 
@@ -254,10 +262,10 @@ Tools can be called manually by entering the tool name as a prompt into your LLM
 
 AG-MCP currently provides four tools:
 
-- [`search_docs`](#search-docs) - Search the documents for the currently installed version of AG Grid.
-- [`detect_version`](#detect-version) - Infers the version and framework of AG Grid installed in your repo.
-- [`set_version`](#set-version) - Manually set the version of your repo (useful in monorepos).
-- `list_versions` - List all available AG Grid versions from the API to see what versions are available for migration or reference.
+-   [`search_docs`](#search-docs) - Search the documents for the currently installed version of AG Grid.
+-   [`detect_version`](#detect-version) - Infers the version and framework of AG Grid installed in your repo.
+-   [`set_version`](#set-version) - Manually set the version of your repo (useful in monorepos).
+-   `list_versions` - List all available AG Grid versions from the API to see what versions are available for migration or reference.
 
 ### Search Docs
 
@@ -265,11 +273,11 @@ Search AG Grid documentation for the detected or latest version. Use this to fin
 
 #### Parameters
 
-| Name      | Type   | Required | Description                                                                           |
-| --------- | ------ | -------- | ------------------------------------------------------------------------------------- |
+| Name        | Type   | Required | Description                                                                             |
+| ----------- | ------ | -------- | --------------------------------------------------------------------------------------- |
 | `query`     | string | Yes      | Search term (_"column sorting"_, _"cell renderers"_, _"data grid performance"_, etc...) |
-| `version`   | string | No       | Override the detected AG Grid version                                                 |
-| `framework` | string | No       | Override the detected framework                                                       |
+| `version`   | string | No       | Override the detected AG Grid version                                                   |
+| `framework` | string | No       | Override the detected framework                                                         |
 
 ### Detect Version
 
@@ -277,8 +285,8 @@ Detect the AG Grid version and framework in the current project by analyzing pac
 
 #### Parameters
 
-| Name | Type   | Required | Description                                                   |
-| ---- | ------ | -------- | ------------------------------------------------------------- |
+| Name   | Type   | Required | Description                                                   |
+| ------ | ------ | -------- | ------------------------------------------------------------- |
 | `path` | string | No       | Path to the project directory (defaults to current workspace) |
 
 ### Set Version
@@ -287,8 +295,8 @@ Set the AG Grid version and framework to use for documentation searches and reso
 
 #### Parameters
 
-| Name      | Type   | Required | Description                                                               |
-| --------- | ------ | -------- | ------------------------------------------------------------------------- |
+| Name        | Type   | Required | Description                                                               |
+| ----------- | ------ | -------- | ------------------------------------------------------------------------- |
 | `version`   | string | Yes      | AG Grid version to use (e.g., `"34.1.0"`)                                 |
 | `framework` | string | Yes      | Framework to use for documentation (`react`, `angular`, `vue`, `vanilla`) |
 

@@ -11,10 +11,11 @@ MCP Server, AI Toolkit, Scaled Column Auto-Sizing, Date and Time Pivoting, React
 AG Grid {% migrationVersion() %} adds important new features - [MCP Server](./mcp-server), [AI Toolkit](./ai-toolkit), [Scaled Column Auto-Sizing](./column-sizing/#auto-size-columns-to-fit-cell-contents), [Date and Time Pivoting](./pivoting-column-groups/#pivoting-by-dates-and-times), [React 19.2 Support](https://www.ag-grid.com/react-data-grid/compatibility/#ag-grid--react-compatibility-chart) as described in the [release post](https://blog.ag-grid.com/whats-new-in-ag-grid-34-3/).
 These improvements involve no breaking changes as listed below.
 
-<!-- 
+<!--
 Documentation to the highest patch release of the major/minor
 NOTE: This will not show if the current library version is the same as the migration version
 -->
+
 {% documentationArchiveSection version=migrationVersionPatch() /%}
 
 ## Codemods
@@ -60,7 +61,9 @@ There are no deprecated API removals in AG Grid version {% migrationVersion() %}
 ## Deprecations
 
 ### ColDef
+
 {% metaTag tags=["rowGroupingHierarchy"] /%}
-- `rowGroupingHierarchy` is deprecated, use `groupHierarchy` instead.
+
+-   `rowGroupingHierarchy` is deprecated, use `groupHierarchy` instead.
 
 {% changelogSection version=$migrationVersion /%}

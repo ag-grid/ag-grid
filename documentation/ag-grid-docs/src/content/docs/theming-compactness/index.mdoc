@@ -32,12 +32,12 @@ All compactness parameters except `rowVerticalPaddingScale` and `headerVerticalP
 
 Length parameters can accept the following values:
 
-| Syntax | Description |
-|-|-|
-| `string` | A [CSS length value](https://developer.mozilla.org/en-US/docs/Web/CSS/length), such as `'10px'` or variable expression `'var(--myAppHeaderSize)'`. |
-| `4` | A number without units is assumed to be pixels |
-| `{ ref: 'spacing' }` | Use the same value as the `spacing` parameter |
-| `{ calc: '4 * spacing - 2px' }` | A CSS [calc expression](https://developer.mozilla.org/en-US/docs/Web/CSS/calc), except that parameter names are allowed and will be converted to the appropriate CSS custom property. This expression would map to the CSS string  `"calc(4 * var(--ag-spacing) - 2px)"`. Note that `-` is a valid character in CSS identifiers, so if you use it for subtraction then spaces are required around it. |
+| Syntax                          | Description                                                                                                                                                                                                                                                                                                                                                                                          |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `string`                        | A [CSS length value](https://developer.mozilla.org/en-US/docs/Web/CSS/length), such as `'10px'` or variable expression `'var(--myAppHeaderSize)'`.                                                                                                                                                                                                                                                   |
+| `4`                             | A number without units is assumed to be pixels                                                                                                                                                                                                                                                                                                                                                       |
+| `{ ref: 'spacing' }`            | Use the same value as the `spacing` parameter                                                                                                                                                                                                                                                                                                                                                        |
+| `{ calc: '4 * spacing - 2px' }` | A CSS [calc expression](https://developer.mozilla.org/en-US/docs/Web/CSS/calc), except that parameter names are allowed and will be converted to the appropriate CSS custom property. This expression would map to the CSS string `"calc(4 * var(--ag-spacing) - 2px)"`. Note that `-` is a valid character in CSS identifiers, so if you use it for subtraction then spaces are required around it. |
 
 ## Using CSS rules to customise compactness
 
@@ -51,6 +51,6 @@ The grid contains thousands of elements. Most of them respond to the `spacing` p
 
 ### Setting the height of rows, headers and list items
 
-To change the height of rows, headers and list item heights, you *must* use the provided parameters `rowHeight`, `headerHeight` and `listItemHeight`, or the equivalent CSS custom properties `--ag-row-height`, `--ag-header-height` and `--ag-list-item-height`. The grid uses [DOM virtualisation](./dom-virtualisation/) for rendering large amounts of data, and needs to know the height of virtualised elements in order to calculate their layout. It does this by measuring the values of CSS variables such as `--ag-row-height`.
+To change the height of rows, headers and list item heights, you _must_ use the provided parameters `rowHeight`, `headerHeight` and `listItemHeight`, or the equivalent CSS custom properties `--ag-row-height`, `--ag-header-height` and `--ag-list-item-height`. The grid uses [DOM virtualisation](./dom-virtualisation/) for rendering large amounts of data, and needs to know the height of virtualised elements in order to calculate their layout. It does this by measuring the values of CSS variables such as `--ag-row-height`.
 
 Using CSS to set a height on a row element itself e.g. `.ag-row { height: 50px; }` is not supported.

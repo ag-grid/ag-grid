@@ -2,6 +2,7 @@
 title: "Custom Functions"
 enterprise: true
 ---
+
 Custom formula functions let you extend the engine with domain-specific logic and reusable calculations.
 
 ## Formula Functions API
@@ -54,8 +55,8 @@ This example shows `COUNTEQ`, which receives a range and a value and counts matc
 
 ## Best Practices
 
-- Validate argument counts and types early.
-- Prefer iterators (`params.values`) for large ranges to avoid unnecessary allocations.
-- Keep functions pure and fast to avoid performance issues on large grids.
+-   Validate argument counts and types early.
+-   Prefer iterators (`params.values`) for large ranges to avoid unnecessary allocations.
+-   Keep functions pure and fast to avoid performance issues on large grids.
 
 See [Formula Reference](./formula-reference/) for built-in functions that can inspire custom implementations.

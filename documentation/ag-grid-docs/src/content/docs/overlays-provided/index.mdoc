@@ -6,11 +6,11 @@ The grid shows built-in overlays when data is loading or being exported and when
 
 The following example demonstrates all the provided overlays.
 
-- Toggle the loading state to show/hide the loading overlay. 
-- Note that the loading overlay takes precedence over the other provided overlays if they are shown at the same time.
-- Clear Row Data shows the no rows overlay.
-- Set Non Matching Filter sets row data and a non-matching filter to show the no matching rows overlay.    
-- Export CSV exports the data to CSV and shows the exporting overlay.
+-   Toggle the loading state to show/hide the loading overlay.
+-   Note that the loading overlay takes precedence over the other provided overlays if they are shown at the same time.
+-   Clear Row Data shows the no rows overlay.
+-   Set Non Matching Filter sets row data and a non-matching filter to show the no matching rows overlay.
+-   Export CSV exports the data to CSV and shows the exporting overlay.
 
 {% gridExampleRunner title="Provided Overlays" name="provided-overlays"  exampleHeight=300 /%}
 
@@ -22,16 +22,13 @@ The loading overlay is displayed when the grid property `loading` is set to `tru
 
 {% apiDocumentation source="grid-options/properties.json" section="overlays" names=["loading"] /%}
 
-
 ## No Rows
 
-When there are no rows the grid automatically displays the no-rows overlay. 
-
+When there are no rows the grid automatically displays the no-rows overlay.
 
 ## No Matching Rows
 
-The no-matching-rows overlay is displayed when the grid has rows but none of the rows match the current filter criteria. 
-
+The no-matching-rows overlay is displayed when the grid has rows but none of the rows match the current filter criteria.
 
 ## Exporting
 
@@ -79,7 +76,6 @@ Any valid Vue component can be an overlay component, however it is also possible
 Implement this interface to provide a custom overlay when data is being loaded.
 {% /if %}
 
-
 {% if isFramework("angular") %}
 {% interfaceDocumentation interfaceName="ILoadingOverlayAngularComp" config={"asCode":true } /%}
 The `INoRowsOverlayAngularComp`, `INoMatchingRowsOverlayAngularComp` or `IExportingOverlayAngularComp` interfaces follow a similar pattern to the `ILoadingOverlayAngularComp` above.
@@ -91,7 +87,6 @@ The `INoRowsOverlayAngularComp`, `INoMatchingRowsOverlayAngularComp` or `IExport
 
 The `INoRowsOverlayComp`, `INoMatchingRowsOverlayComp` or `IExportingOverlayComp` interfaces follow a similar pattern to the `ILoadingOverlayComp` above.
 {% /if %}
-
 
 Then set the custom overlay to its matching key in the `components` map as described in [Overriding Grid Components](./components/#overriding-grid-components). Custom parameters can be supplied via the `overlayComponentParams` grid option.
 
@@ -106,7 +101,6 @@ const gridOptions = {
 };
 ```
 
-
 ### Overlay Component Selector
 
 To dynamically override a provided overlay with a custom component implement the `overlayComponentSelector(params)` callback. The callback params include an `overlayType` property which identifies which of the provided overlays that grid wants to display. The return type should match the `OverlaySelectorResult` interface.
@@ -114,7 +108,6 @@ To dynamically override a provided overlay with a custom component implement the
 {% apiDocumentation source="grid-options/properties.json" section="overlays" names=["overlayComponentSelector"] /%}
 
 Returning `undefined` from the selector will fall back to the overlay specified in `params.overlayType`.
-
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -137,7 +130,6 @@ In the example below the loading overlay is overridden via the `overlayComponent
 
 {% gridExampleRunner title="Overlay Component Selector" name="custom-overlay-selector"  exampleHeight=300 /%}
 
-
 ### Combined Overlay Component
 
 Provide a custom component to `overlayComponent` to be used in place of all the provided overlays. The custom component receives a `overlayType` parameter which identifies which of the provided overlays should be displayed. This can be used to conditionally render different content based on the overlay type.
@@ -156,7 +148,7 @@ const gridOptions = {
 };
 ```
 
-In the example below a single custom component is provided to the grid which contains the conditional logic about what to render for each `overlayType`. 
+In the example below a single custom component is provided to the grid which contains the conditional logic about what to render for each `overlayType`.
 
 {% gridExampleRunner title="Overlay Component" name="custom-overlay-component"  exampleHeight=300 /%}
 
@@ -169,6 +161,3 @@ Each provided overlay can be suppressed via the `suppressOverlays` grid option w
 ## Legacy Customisation
 
 Previously, the loading and no-rows overlays were customised via: `loadingOverlayComponent` and `noRowsOverlayComponent`. This approach is now superseded by the `overlayComponent` but the properties remain for backwards compatibility. The documentation for these properties is available [here](./overlays).
-
-
-

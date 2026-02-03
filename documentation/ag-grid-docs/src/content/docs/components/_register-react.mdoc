@@ -7,8 +7,8 @@ In versions <= v31, custom components were declared in an imperative way. See [M
 {% if isFramework("react") %}
 There are two ways to register custom components:
 
-- Direct reference.
-- By name.
+-   Direct reference.
+-   By name.
 
 ### 1. By Direct Reference
 
@@ -19,23 +19,25 @@ In this example we're specifying that we want our React `CubeComponent` as a Cel
 {% /if %}
 
 {% if isFramework("react") %}
+
 ```jsx
 //...other imports
 import CubeComponent from './CubeComponent';
 
 const GridExample = () => {
   // other properties & methods
-  
+
     const columnDefs = useMemo( () => [{field: 'value', cellRenderer: CubeComponent}], []);
 
     return (
         <AgGridReact
             columnDefs={columnDefs}
-            ...other properties            
+            ...other properties
         />
     );
 };
 ```
+
 {% /if %}
 
 {% if isFramework("react") %}
@@ -52,15 +54,16 @@ We then specify that we want the previously registered `cubeComponent` to be use
 {% /if %}
 
 {% if isFramework("react") %}
+
 ```jsx
 //...other imports
 import CubeComponent from './CubeComponent';
 
 const GridExample = () => {
   // other properties & methods
-  
+
   const components = useMemo(() => ({
-      cubeComponent: CubeComponent    
+      cubeComponent: CubeComponent
   }), []);
 
   const columnDefs = useMemo(() => [{field: 'value', cellRenderer: 'cubeComponent'}], []);
@@ -69,11 +72,12 @@ const GridExample = () => {
         <AgGridReact
            components={components}
            columnDefs={columnDefs}
-           ...other properties            
+           ...other properties
         />
   );
 };
 ```
+
 {% /if %}
 
 {% if isFramework("react") %}

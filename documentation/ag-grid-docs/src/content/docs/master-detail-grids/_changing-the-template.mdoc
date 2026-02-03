@@ -1,4 +1,5 @@
 {% if isFramework("javascript", "angular", "vue") %}
+
 ## Changing the Template
 
 By default the Detail Cell Renderer does not include any other information around the Detail Grid. It is possible to change this to allow additional details, such as header information, around the Detail Grid. This is done by providing an alternative Detail Template.
@@ -10,6 +11,7 @@ For comparison, the default template is as follows. It is simplistic, only inten
 {% /if %}
 
 {% if isFramework("javascript", "angular", "vue") %}
+
 ```html
 <!-- for when fixed height (normal) -->
 <div class="ag-details-row ag-details-row-fixed-height">
@@ -21,16 +23,18 @@ For comparison, the default template is as follows. It is simplistic, only inten
     <div data-ref="eDetailGrid" class="ag-details-grid ag-details-grid-auto-height"/>
 </div>
 ```
+
 {% /if %}
 
 {% if isFramework("javascript", "angular", "vue") %}
 To change the Detail Template, set the `template` inside the Detail Cell Renderer Params. The Detail Template can be a String or Function depending on whether you want to provide the template statically or dynamically:
 
-- **String Template** - Statically overrides the template used by the grid. The same fixed template is used for each row. This is useful for styling or generic information.
+-   **String Template** - Statically overrides the template used by the grid. The same fixed template is used for each row. This is useful for styling or generic information.
 
 {% /if %}
 
 {% if isFramework("javascript", "angular", "vue") %}
+
 ```js
     // example override using string template
     detailCellRendererParams: {
@@ -41,13 +45,17 @@ To change the Detail Template, set the `template` inside the Detail Cell Rendere
             '</div>'
     }
 ```
+
 {% /if %}
 
 {% if isFramework("javascript", "angular", "vue") %}
-- **Function Template** - Called each time a detail row is shown to dynamically provide a template based on the data. Useful for displaying information specific to the Detail Grid dataset
+
+-   **Function Template** - Called each time a detail row is shown to dynamically provide a template based on the data. Useful for displaying information specific to the Detail Grid dataset
+
 {% /if %}
 
 {% if isFramework("javascript", "angular", "vue") %}
+
 ```js
     // override using template callback
     detailCellRendererParams: {
@@ -60,6 +68,7 @@ To change the Detail Template, set the `template` inside the Detail Cell Rendere
         }
     }
 ```
+
 {% /if %}
 
 {% if isFramework("javascript", "angular", "vue") %}
@@ -69,8 +78,8 @@ The following two examples demonstrate both approaches.
 
 In this first example, the template is set statically. Note the following:
 
-- All Detail Grids have a spacing with blue background.
-- All Detail Grids have the same static title 'Call Details'.
+-   All Detail Grids have a spacing with blue background.
+-   All Detail Grids have the same static title 'Call Details'.
 
 {% /if %}
 
@@ -79,12 +88,13 @@ In this first example, the template is set statically. Note the following:
 {% /if %}
 
 {% if isFramework("javascript", "angular", "vue") %}
+
 ### Example Dynamic Template
 
 In this second example, the template is set dynamically. Note the following:
 
-- All Detail Grids have a spacing with blue background.
-- All Detail Grids have a different dynamic title including the persons name e.g. 'Mila Smith'.
+-   All Detail Grids have a spacing with blue background.
+-   All Detail Grids have a different dynamic title including the persons name e.g. 'Mila Smith'.
 
 {% /if %}
 

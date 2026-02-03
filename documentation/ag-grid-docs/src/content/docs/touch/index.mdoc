@@ -8,10 +8,10 @@ AG Grid is designed to work on touch devices. By default, browsers convert tap e
 
 The following touch gestures are supported by AG Grid Community:
 
-* Move columns by touch-dragging the column header with a touch.
-* Move column groups by touch-dragging the column group header with a touch.
-* Tap the column header to sort by that column.
-* Tap and drag the column header resize handle to resize it
+-   Move columns by touch-dragging the column header with a touch.
+-   Move column groups by touch-dragging the column group header with a touch.
+-   Tap the column header to sort by that column.
+-   Tap and drag the column header resize handle to resize it
 
 {% gridExampleRunner title="Touch Community" name="touch-community" /%}
 
@@ -19,8 +19,8 @@ The following touch gestures are supported by AG Grid Community:
 
 The following touch gestures are support by AG Grid Enterprise (in addition to the AG Grid Community gestures mentioned above):
 
-* Drag columns out of the tool panel using drag.
-* Drag columns out of the row group and pivot drop zones by dragging.
+-   Drag columns out of the tool panel using drag.
+-   Drag columns out of the row group and pivot drop zones by dragging.
 
 {% gridExampleRunner title="Touch Enterprise" name="touch-enterprise" /%}
 
@@ -39,10 +39,11 @@ You can disable viewport zooming by setting the following tag at the top level p
 By default, the Column Menu is launched from the menu button in the header. However, there are some situations where the menu button is not displayed. In these cases, the menu can be launched via tap and hold (for 500 ms) on the header.
 
 The following example demonstrates these different scenarios:
-- The `Athlete` column has the default behaviour where the menu is launched via a button.
-- The `Country` column has `colDef.suppressHeaderMenuButton = true` set. The menu button is suppressed, and the menu is launched via tap and hold.
-- The `Sport` column has `colDef.suppressHeaderMenuButton = true` and `colDef.suppressHeaderContextMenu = true` set. Both the menu button, and tap and hold are suppressed.
-- The `Medals` column group has no menu button as it is a column group not a column. The menu is launched via tap and hold.
+
+-   The `Athlete` column has the default behaviour where the menu is launched via a button.
+-   The `Country` column has `colDef.suppressHeaderMenuButton = true` set. The menu button is suppressed, and the menu is launched via tap and hold.
+-   The `Sport` column has `colDef.suppressHeaderMenuButton = true` and `colDef.suppressHeaderContextMenu = true` set. Both the menu button, and tap and hold are suppressed.
+-   The `Medals` column group has no menu button as it is a column group not a column. The menu is launched via tap and hold.
 
 {% gridExampleRunner title="Column Menu New" name="column-menu-new" /%}
 

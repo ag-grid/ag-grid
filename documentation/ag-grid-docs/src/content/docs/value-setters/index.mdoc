@@ -42,15 +42,15 @@ The example below demonstrates value setters working alongside value getters
 (value setters are typically only used alongside value getters). Note
 the following:
 
-* All columns are editable. After an edit, the example prints the updated row data to the console to show the impact of the edit.
+-   All columns are editable. After an edit, the example prints the updated row data to the console to show the impact of the edit.
 
-* Column Name uses `valueGetter` to combine the values from the two attributes `firstName` and `lastName` (separated by a space) and `valueSetter` is used to break the value up into the two same attributes.
+-   Column Name uses `valueGetter` to combine the values from the two attributes `firstName` and `lastName` (separated by a space) and `valueSetter` is used to break the value up into the two same attributes.
 
-* Column A uses `field` for both getting and setting the value. This is the simple case for comparison.
+-   Column A uses `field` for both getting and setting the value. This is the simple case for comparison.
 
-* Column B uses `valueGetter` and `valueSetter` instead of field for getting and setting the value.
+-   Column B uses `valueGetter` and `valueSetter` instead of field for getting and setting the value.
 
-* Column C.X and C.Y use `valueGetter` to get the value from an embedded object. They then use `valueSetter` to set the value into the embedded object while also making sure the correct structure exists (this structure creation would not happen if using field).
+-   Column C.X and C.Y use `valueGetter` to get the value from an embedded object. They then use `valueSetter` to set the value into the embedded object while also making sure the correct structure exists (this structure creation would not happen if using field).
 
 {% gridExampleRunner title="Value Setters" name="example-setters" /%}
 
@@ -61,6 +61,7 @@ Read Only Edit is a mode in the grid whereby Cell Editing will not update the da
 {% apiDocumentation source="grid-events/events.json" section="editing" names=["cellEditRequest"] /%}
 
 {% if isFramework("javascript") %}
+
 ```ts
 const gridOptions = {
     readOnlyEdit: true,
@@ -70,9 +71,11 @@ const gridOptions = {
     }
 }
 ```
+
 {% /if %}
 
 {% if isFramework("angular") %}
+
 ```ts
 <ag-grid-angular
     [readOnlyEdit]="true"
@@ -84,9 +87,11 @@ this.onCellEditRequest = event => {
     // the application should update the data somehow
 };
 ```
+
 {% /if %}
 
 {% if isFramework("react") %}
+
 ```jsx
 const readOnlyEdit = true;
 const onCellEditRequest = event => {
@@ -96,9 +101,11 @@ const onCellEditRequest = event => {
 
 <AgGridReact readOnlyEdit={readOnlyEdit} onCellEditRequest={onCellEditRequest}></AgGridReact>
 ```
+
 {% /if %}
 
 {% if isFramework("vue") %}
+
 ```ts
 <ag-grid-vue
     :readOnlyEdit="true"
@@ -111,6 +118,7 @@ this.onCellEditRequest = event => {
     // the application should update the data somehow
 };
 ```
+
 {% /if %}
 
 The example below has Cell Editing enabled, however the editing does nothing because `readOnlyEdit=true` is set. The application listens for `cellEditRequest` event and prints to the console. As the application does not try to update the data, the cell keeps its old value, giving the impression that editing is not working.

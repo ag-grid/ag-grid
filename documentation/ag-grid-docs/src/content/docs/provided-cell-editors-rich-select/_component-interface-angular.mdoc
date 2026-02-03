@@ -3,12 +3,14 @@ The interface for the Rich CellEditor Component is as follows:
 {% /if %}
 
 {% if isFramework("angular") %}
+
 ```ts
 interface ICellEditorRendererAngularComp {
     // Mandatory - Params for rendering
     agInit(params: IRichCellEditorRendererParams): void;
     }
 ```
+
 {% /if %}
 
 {% if isFramework("angular") %}
@@ -16,6 +18,7 @@ The Component is provided `props` containing, amongst other things, the value to
 {% /if %}
 
 {% if isFramework("angular") %}
+
 ```ts
 class MyCustomEditorRenderer implements ICellEditorRendererAngularComp {
   // ...
@@ -24,6 +27,7 @@ class MyCustomEditorRenderer implements ICellEditorRendererAngularComp {
   }
   // ...
 ```
+
 {% /if %}
 
 {% if isFramework("angular") %}

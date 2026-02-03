@@ -30,15 +30,20 @@ Any valid Vue component can be used, however the optional `IOverlay` interface e
 {% interfaceDocumentation interfaceName="IOverlay" config={"asCode":true } /%}
 {% /if %}
 
-
 The example below demonstrates using the grid provided overlays as an active overlay. Note the following:
- - activeOverlays take precedence over the provided loading overlay.
- - activeOverlay can be displayed no matter what the grid state, i.e showing the no-rows overlay even when there are rows.
+
 {% if isFramework("javascript", "angular","react") %}
- - StatusOverlay is registered in the [components](./components/#2-by-name) map and shown by setting `activateOverlay = "statusOverlay"` to the key used. 
- {% /if %}
- {% if isFramework("vue") %}
- - StatusOverlay is registered in the [components](./components/#registering-custom-components) map and shown by setting `activateOverlay = "statusOverlay"` to the key used. 
+
+-   activeOverlays take precedence over the provided loading overlay.
+-   activeOverlay can be displayed no matter what the grid state, i.e showing the no-rows overlay even when there are rows.
+-   StatusOverlay is registered in the [components](./components/#2-by-name) map and shown by setting `activateOverlay = "statusOverlay"` to the key used.
+
+{% /if %}
+{% if isFramework("vue") %}
+
+-   activeOverlays take precedence over the provided loading overlay.
+-   activeOverlay can be displayed no matter what the grid state, i.e showing the no-rows overlay even when there are rows.
+-   StatusOverlay is registered in the [components](./components/#registering-custom-components) map and shown by setting `activateOverlay = "statusOverlay"` to the key used.
+
 {% /if %}
 {% gridExampleRunner title="Active Overlay Switcher" name="active-overlay-switcher" exampleHeight=350 /%}
-

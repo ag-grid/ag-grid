@@ -3,6 +3,7 @@ title: "Row Grouping - Grouping Data"
 description: "Enable row grouping in the $framework Data Grid to allow rows to be grouped by columns. Define row groups, use the Grid API, or use the UI to group rows."
 enterprise: true
 ---
+
 Enable grouping on a column to group rows by equivalent values.
 
 ## Enabling Row Grouping
@@ -13,6 +14,7 @@ Parent rows are then introduced for each unique value in that column, containing
 {% gridExampleRunner title="Basic Grouping" name="basic-grouping" /%}
 
 The example above uses the following configuration to group rows by their `country` values:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
@@ -30,6 +32,7 @@ This can be overridden with a custom order by providing the `rowGroupIndex` prop
 {% gridExampleRunner title="Grouping by Multiple Columns" name="row-group-index" /%}
 
 The example above demonstrates the following configuration for grouping rows by `year` first, and `country` second:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
@@ -53,6 +56,7 @@ and `name` properties.
 {% gridExampleRunner title="Grouping by Object Data" name="grouping-object-data" /%}
 
 This demonstrates the following configuration for grouping rows by the `athlete` objects by their `id` property:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
@@ -120,6 +124,7 @@ By setting the `groupAllowUnbalanced` property to `true`, the grid will instead 
 {% gridExampleRunner title="Grouping by Null and Undefined Data" name="grouping-null-undefined" /%}
 
 To enable unbalanced grouping, the following configuration is used:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     groupAllowUnbalanced: true,
@@ -136,6 +141,7 @@ Filtering does not impact which groups get removed. Only groups containing a sin
 {% gridExampleRunner title="Removing Single Children" name="remove-single-children"  exampleHeight=540 /%}
 
 The following is an example of the configuration used to hide all parents of a single row:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     groupHideParentOfSingleChild: true,

@@ -6,6 +6,7 @@ The interface for a custom floating filter component is as follows:
 {% /if %}
 
 {% if isFramework("vue") %}
+
 ```ts
 interface IFloatingFilter {
     // Mandatory methods
@@ -25,7 +26,7 @@ interface IFloatingFilter {
     // Gets called every time the popup is shown, after the GUI returned in
     // getGui is attached to the DOM. If the filter popup is closed and re-opened, this method is
     // called each time the filter is shown. This is useful for any logic that requires attachment
-    // before executing, such as putting focus on a particular DOM element. 
+    // before executing, such as putting focus on a particular DOM element.
     afterGuiAttached(params?: IAfterGuiAttachedParams): void;
 
     // Gets called when the column is destroyed. If your custom filter needs to do
@@ -36,9 +37,11 @@ interface IFloatingFilter {
     destroy(): void;
 }
 ```
+
 {% /if %}
 
 {% if isFramework("vue") %}
+
 ### Custom Floating Filter Parameters
 
 When a Vue component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell and

@@ -20,7 +20,6 @@ The example below shows some Provided Editor Components and some Custom Editor C
 {% partial file="./_component-interface-react.mdoc" /%}
 {% partial file="./_component-interface-vue.mdoc" /%}
 
-
 ## Selecting Components
 
 Cell Editor Components are configured using the `cellEditor` property of the [Column Definition](./column-definitions/).
@@ -30,15 +29,15 @@ Cell Editor Components are configured using the `cellEditor` property of the [Co
 ```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
-        { 
-            field: 'name', 
-            editable: true, 
+        {
+            field: 'name',
+            editable: true,
             // uses a provided editor, referenced by name
-            cellEditor: 'agTextCellEditor' 
+            cellEditor: 'agTextCellEditor'
         },
-        { 
-            field: 'name', 
-            editable: true, 
+        {
+            field: 'name',
+            editable: true,
             // uses a custom editor, referenced directly
             cellEditor: 'CustomEditorComp'
         },
@@ -103,9 +102,9 @@ cellEditorSelector: params => {
 
 Here is a full example:
 
-* The column 'Value' holds data of different types as shown in the column 'Type' (numbers/genders/moods).
-* `colDef.cellEditorSelector` is a function that returns the name of the component to use to edit based on the type of data for that row
-* Edit a cell by double clicking to observe the different editors used.
+-   The column 'Value' holds data of different types as shown in the column 'Type' (numbers/genders/moods).
+-   `colDef.cellEditorSelector` is a function that returns the name of the component to use to edit based on the type of data for that row
+-   Edit a cell by double clicking to observe the different editors used.
 
 {% gridExampleRunner title="Dynamic Editor Component" name="dynamic-editor-component"  exampleHeight=450 /%}
 
@@ -142,10 +141,10 @@ cellEditorParams: params => {
 
 Below shows an example with dynamic props. The following can be noted:
 
-* Column **Gender** uses a Cell Component for both the grid and the editor.
-* Column **Country** allows country selection, with `cellHeight` being used to make each entry 50px tall. If the currently selected city for the row doesn't match a newly selected country, the city cell is cleared.
-* Column **City** uses dynamic parameters to display values for the selected country, and uses `formatValue` to add the selected city's country as a suffix.
-* Column **Address** uses the large text area editor.
+-   Column **Gender** uses a Cell Component for both the grid and the editor.
+-   Column **Country** allows country selection, with `cellHeight` being used to make each entry 50px tall. If the currently selected city for the row doesn't match a newly selected country, the city cell is cleared.
+-   Column **City** uses dynamic parameters to display values for the selected country, and uses `formatValue` to add the selected city's country as a suffix.
+-   Column **Address** uses the large text area editor.
 
 {% gridExampleRunner title="Dynamic Parameters" name="dynamic-parameters"  exampleHeight=520 /%}
 
@@ -163,8 +162,10 @@ Configure that an Editor is in a popup by setting `cellEditorPopup=true` on the 
 
 {% if isFramework("javascript", "angular", "vue") %}
 Configure that a Custom Cell Editor is in a popup in one of the following ways:
+
 1. Specify `cellEditorPopup=true` on the [Column Definition](./column-definitions/).
 1. Implement the `isPopup()` method on the Custom Cell Editor and return `true`.
+
 {% /if %}
 
 ```{% frameworkTransform=true %}
@@ -183,8 +184,10 @@ Popup Editors appear over the editing Cell. Configure the Popup Editor to appear
 
 {% if isFramework("javascript", "angular", "vue") %}
 Popup Editors appear over the editing Cell. Configure the Popup Editor to appear below the Cell in one of the following ways:
+
 1. Implement the `getPopupPosition()` method on the Custom Cell Editor and return `under`.
 1. Specify `cellEditorPopupPosition='under'` on the [Column Definition](./column-definitions/).
+
 {% /if %}
 
 ```{% frameworkTransform=true %}
@@ -247,15 +250,18 @@ If you are doing normal editing, then only one cell is editable at any given tim
 An example of calling `getCellEditorInstances()` is as follows:
 
 {% if isFramework("javascript", "angular", "vue") %}
+
 ```js
 const instances = api.getCellEditorInstances(params);
 if (instances.length > 0) {
     const instance = instances[0];
 }
 ```
+
 {% /if %}
 
 {% if isFramework("react") %}
+
 ```js
 const instances = api.getCellEditorInstances(params);
 if (instances.length > 0) {
@@ -264,44 +270,44 @@ if (instances.length > 0) {
     });
 }
 ```
+
 {% /if %}
 
 The example below shows using `getCellEditorInstances`. The following can be noted:
 
-* All cells are editable.
-* **First Name** and **Last Name** use the default editor.
-* All other columns use the provided `MySimpleCellEditor` editor.
-* The example sets an interval to print information from the active cell editor. There are three results: 1) No editing 2) Editing with default cell renderer and 3) editing with the custom cell editor. All results are printed to the developer console.
+-   All cells are editable.
+-   **First Name** and **Last Name** use the default editor.
+-   All other columns use the provided `MySimpleCellEditor` editor.
+-   The example sets an interval to print information from the active cell editor. There are three results: 1) No editing 2) Editing with default cell renderer and 3) editing with the custom cell editor. All results are printed to the developer console.
 
 {% gridExampleRunner title="Get Editor Instance" name="get-editor-instance" /%}
 
 ## API Reference
 
 {% if isFramework("angular") %}
+
 ### ICellEditorAngularComp
 
 {% interfaceDocumentation interfaceName="ICellEditorAngularComp" config={"description": "The ICellEditorAngularComp interface has the following methods:"} /%}
 {% /if %}
 
 {% if isFramework("vue") %}
+
 ### ICellEditor
 
 {% interfaceDocumentation interfaceName="ICellEditor" config={"description": "The ICellEditor interface has the following methods:"} /%}
 {% /if %}
 
-
 {% if isFramework("javascript", "angular", "vue") %}
+
 ### ICellEditorParams
 
 {% interfaceDocumentation interfaceName="ICellEditorParams" /%}
 {% /if %}
 
-
 {% if isFramework("react") %}
+
 ### CustomCellEditorProps
 
 {% interfaceDocumentation interfaceName="CustomCellEditorProps"  /%}
 {% /if %}
-
-
-

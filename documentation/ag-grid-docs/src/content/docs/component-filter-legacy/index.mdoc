@@ -42,6 +42,7 @@ will be additionally added to the params object, overriding items of the same na
 {% /if %}
 
 {% if isFramework("javascript", "angular", "vue") %}
+
 ### IDoesFilterPassParams
 
 The method `doesFilterPass(params)` takes the following as a parameter:
@@ -52,6 +53,7 @@ The method `doesFilterPass(params)` takes the following as a parameter:
 {% /if %}
 
 {% if isFramework("react") %}
+
 ### Filter Props
 
 The following props are passed to the custom filter components (`CustomFilterProps` interface). If custom props are provided via the `colDef.filterParams` property, these will be additionally added to the props object, overriding items of the same name if a name clash exists.
@@ -62,6 +64,7 @@ The following props are passed to the custom filter components (`CustomFilterPro
 {% /if %}
 
 {% if isFramework("react") %}
+
 ### Filter Callbacks
 
 The following callbacks can be passed to the `useGridFilter` hook (`CustomFilterCallbacks` interface). The hook must be used for filters to work. The `doesFilterPass` callback is mandatory, but all others are optional.

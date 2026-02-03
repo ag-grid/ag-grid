@@ -1,4 +1,5 @@
 {% if isFramework("vue") %}
+
 ```ts
 loadingCellRendererSelector: (params) => {
     const useCustomRenderer = ...some condition/check...
@@ -12,10 +13,11 @@ loadingCellRendererSelector: (params) => {
             },
         };
         } else {
-            // no loading cell renderer 
+            // no loading cell renderer
             return undefined;
         }
     }
 }
 ```
+
 {% /if %}

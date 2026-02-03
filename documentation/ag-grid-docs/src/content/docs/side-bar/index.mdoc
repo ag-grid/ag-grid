@@ -7,13 +7,12 @@ This section covers how to configure the Side Bar which contains Tool Panels.
 
 {% imageCaption imagePath="resources/sidebar.webp" alt="Side Bar" centered=true /%}
 
-
 ## Configuring the Side Bar
 
 The Side Bar is configured using the grid property `sideBar`. The property takes multiple forms to allow easy configuration or more advanced configuration. The different forms for the `sideBar` property are as follows:
 
 | Type                             | Description                                                                                                                                                                                                                                                       |
-|----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `undefined` / `null`             | No Side Bar provided.                                                                                                                                                                                                                                             |
 | `boolean`                        | Set to `true` to display the Side Bar with default configuration.                                                                                                                                                                                                 |
 | `string` / `string[]`            | Set to `'columns'`, `'filters'` or `'filters-new'` to display the Side Bar with just one of [Columns](./tool-panel-columns/), [Filters](./tool-panel-filters/) or [New Filters](./tool-panel-filters-new) Tool Panels or an array of some or all of these values. |
@@ -33,8 +32,8 @@ To display just one of the provided Tool Panels, set either `sideBar='columns'`,
 
 The example below demonstrates using the string configuration. Note the following:
 
-* The grid property `sideBar` is set to `'filters'`.
-* The Side Bar is displayed showing only the Filters panel.
+-   The grid property `sideBar` is set to `'filters'`.
+-   The Side Bar is displayed showing only the Filters panel.
 
 {% gridExampleRunner title="Side Bar - Only Filters" name="only-filters" /%}
 
@@ -211,7 +210,6 @@ You can also provide a parent for the tool panel in the call to openToolPanel me
 
 {% gridExampleRunner title="Tool Panel Parent" name="tool-panel-parent" exampleHeight=600 /%}
 
-
 ## Providing Parameters to Tool Panels
 
 Parameters are passed to Tool Panels via the `toolPanelParams` object. For example, the following code snippet sets `suppressRowGroups: true` and `suppressValues: true` for the [Columns Tool Panel](./tool-panel-columns/).
@@ -250,12 +248,12 @@ The list below details all the API methods relevant to the Tool Panel.
 
 The example below demonstrates different usages of the Tool Panel API methods. The following can be noted:
 
-* Initially the Side Bar is not visible as `sideBar.hiddenByDefault=true`.
-* **Visibility Buttons:** These toggle visibility of the Tool Panel. Note that when you make `visible=false`, the entire Tool Panel is hidden including the tabs. Make sure the Tool Panel is left visible before testing the other API features so you can see the impact.
-* **Open / Close Buttons:** These open and close different Tool Panel items.
-* **Reset Buttons:** These reset the Tool Panel to a new configuration. Notice that [shortcuts](#configuration-shortcuts) are provided as configuration however `getSideBar()` returns back the long form.
-* **Position Buttons:** These change the position of the Side Bar relative to the grid.
-* The `get*` buttons log data to the developer console.
+-   Initially the Side Bar is not visible as `sideBar.hiddenByDefault=true`.
+-   **Visibility Buttons:** These toggle visibility of the Tool Panel. Note that when you make `visible=false`, the entire Tool Panel is hidden including the tabs. Make sure the Tool Panel is left visible before testing the other API features so you can see the impact.
+-   **Open / Close Buttons:** These open and close different Tool Panel items.
+-   **Reset Buttons:** These reset the Tool Panel to a new configuration. Notice that [shortcuts](#configuration-shortcuts) are provided as configuration however `getSideBar()` returns back the long form.
+-   **Position Buttons:** These change the position of the Side Bar relative to the grid.
+-   The `get*` buttons log data to the developer console.
 
 {% gridExampleRunner title="Side Bar API" name="api"  exampleHeight=630 /%}
 

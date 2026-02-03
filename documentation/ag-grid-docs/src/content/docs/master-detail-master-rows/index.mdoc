@@ -53,25 +53,26 @@ gridApi.applyTransaction(transaction);
 
 In the example below, only Master Rows that have data to show are expandable. Note the following:
 
-* Row 'Nora Thomas' has no detail records, thus is not expandable.
-* Row 'Mila Smith' has detail records, thus is expandable.
-* Clicking 'Clear Mila Calls' removes detail records from Mila Smith which results in the Mila Smith row no longer being a Master Row.
-* Clicking 'Set Mila Calls' sets detail records from Mila Smith which results in the Mila Smith becoming a Master Row.
+-   Row 'Nora Thomas' has no detail records, thus is not expandable.
+-   Row 'Mila Smith' has detail records, thus is expandable.
+-   Clicking 'Clear Mila Calls' removes detail records from Mila Smith which results in the Mila Smith row no longer being a Master Row.
+-   Clicking 'Set Mila Calls' sets detail records from Mila Smith which results in the Mila Smith becoming a Master Row.
 
 {% gridExampleRunner title="Dynamically Changing Master Rows" name="changing-dynamic-1"  exampleHeight=510 /%}
 
 The example below extends the previous example. It demonstrates a common scenario of the Master Row controlling the Detail Rows. Note the following:
 
-* Each Master Row has buttons to add or remove one detail row.
+-   Each Master Row has buttons to add or remove one detail row.
 
-* Clicking 'Add' will:
-  * Add one detail row.
-  * Ensure the Master Row is expandable.
-  * Ensure the Master Row is expanded (i.e. the Detail Grid is visible).
+-   Clicking 'Add' will:
 
-* Clicking 'Remove' will:
-  * Remove one detail row.
-  * If no detail rows exist, ensure Master Row is not expandable
+    -   Add one detail row.
+    -   Ensure the Master Row is expandable.
+    -   Ensure the Master Row is expanded (i.e. the Detail Grid is visible).
+
+-   Clicking 'Remove' will:
+    -   Remove one detail row.
+    -   If no detail rows exist, ensure Master Row is not expandable
 
 {% gridExampleRunner title="Dynamically Changing Master Rows" name="changing-dynamic-2"  exampleHeight=510 /%}
 

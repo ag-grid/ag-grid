@@ -1,4 +1,5 @@
 {% if isFramework("javascript") %}
+
 ```js
 const KEY_LEFT = 'ArrowLeft';
 const KEY_UP = 'ArrowUp';
@@ -12,13 +13,13 @@ const KEY_PAGE_END = 'End';
 eInputDomElement.addEventListener('keydown', event => {
     const key = event.key;
 
-    const isNavigationKey = key === KEY_LEFT || 
-        key === KEY_RIGHT || 
-        key === KEY_UP || 
-        key === KEY_DOWN || 
-        key === KEY_PAGE_DOWN || 
-        key === KEY_PAGE_UP || 
-        key === KEY_PAGE_HOME || 
+    const isNavigationKey = key === KEY_LEFT ||
+        key === KEY_RIGHT ||
+        key === KEY_UP ||
+        key === KEY_DOWN ||
+        key === KEY_PAGE_DOWN ||
+        key === KEY_PAGE_UP ||
+        key === KEY_PAGE_HOME ||
         key === KEY_PAGE_END;
 
     if (isNavigationKey) {
@@ -27,4 +28,5 @@ eInputDomElement.addEventListener('keydown', event => {
     }
 })
 ```
+
 {% /if %}

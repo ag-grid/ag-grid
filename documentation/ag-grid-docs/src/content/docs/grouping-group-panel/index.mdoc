@@ -2,6 +2,7 @@
 title: "Row Grouping - Row Group Panel"
 enterprise: true
 ---
+
 Use the Row Group Panel to enable users to modify the configured row group columns.
 
 {% gridExampleRunner title="Enabling Row Group Panel" name="row-group-panel" /%}
@@ -14,8 +15,9 @@ by setting the `rowGroupPanelShow` grid option to `"always"` or `"onlyWhenGroupi
 Columns also need to have `enableRowGroup` set to `true` in their column definition to be dragged into the panel.
 
 The example above enables the panel and configures the `country` and `year` columns to be controllable by the panel:
+
 ```{% frameworkTransform=true spaceBetweenProperties=true %}
-const gridOptions = { 
+const gridOptions = {
     columnDefs: [
         { field: 'country', rowGroup: true, enableRowGroup: true },
         { field: 'year', rowGroup: true, enableRowGroup: true },
@@ -33,8 +35,9 @@ The Row Group Panel is also displayed as part of the [Columns Tool Panel](./tool
 {% gridExampleRunner title="Side Bar Row Group Panel" name="side-bar-row-group-panel" /%}
 
 The example above enabled the [Columns Tool Panel](./tool-panel-columns/) using the following configuration:
+
 ```{% frameworkTransform=true %}
-const gridOptions = { 
+const gridOptions = {
     sideBar: 'columns',
 }
 ```
@@ -56,8 +59,9 @@ When dragging a column over the row group panel, the column is considered outsid
 {% /note %}
 
 The following configuration can be used to prevent the column visibility from being impacted when a user changes the row group columns:
+
 ```{% frameworkTransform=true %}
-const gridOptions = { 
+const gridOptions = {
     suppressGroupChangesColumnVisibility: true,
 
     // prevent columns from being hidden when dragged over the row group panel
@@ -73,8 +77,9 @@ The panel displays sort indicators, and the column pills can be clicked to chang
 {% gridExampleRunner title="Prevent Panel Sorting" name="prevent-panel-sorting" /%}
 
 The previous example demonstrates the following configuration for preventing the Row Group Panel from sorting columns:
+
 ```{% frameworkTransform=true %}
-const gridOptions = { 
+const gridOptions = {
     rowGroupPanelSuppressSort: true,
 }
 ```
@@ -87,8 +92,9 @@ removing or reordering columns. Providing `-1` will lock all columns, or provide
 {% gridExampleRunner title="Prevent Group Order Changes" name="prevent-group-order-changes" /%}
 
 The example above demonstrates locking the columns from their grouping being moved or removed:
+
 ```{% frameworkTransform=true %}
-const gridOptions = { 
+const gridOptions = {
     groupLockGroupColumns: -1,
 }
 ```

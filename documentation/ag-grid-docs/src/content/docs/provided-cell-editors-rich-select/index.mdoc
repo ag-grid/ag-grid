@@ -29,9 +29,9 @@ columnDefs: [
 
 Benefits over browser's `select` are as follows:
 
-* Uses DOM row virtualisation so very large lists can be displayed.
-* Integrates with the grid perfectly, avoiding glitches seen with the standard select.
-* Uses HTML to render the values: you can provide cell renderers to customise what each value looks like.
+-   Uses DOM row virtualisation so very large lists can be displayed.
+-   Integrates with the grid perfectly, avoiding glitches seen with the standard select.
+-   Uses HTML to render the values: you can provide cell renderers to customise what each value looks like.
 
 ## Customisation
 
@@ -135,10 +135,9 @@ If the `Grid Column` being edited is not using complex values, or if the Rich Se
 used by the `Grid Column`, a `parseValue` callback function is required to convert the editor format into the grid column's format.
 
 {% note %}
-When working with `Cell Renderers`, a `formatValue` callback should still be provided so it will be possible to use functionality that 
+When working with `Cell Renderers`, a `formatValue` callback should still be provided so it will be possible to use functionality that
 relies on string values such as `allowTyping`.
 {% /note %}
-
 
 {% gridExampleRunner title="Rich Select Editor" name="rich-select-complex-objects" exampleHeight=300 /%}
 
@@ -167,7 +166,7 @@ columnDefs: [
 
 ## Multi Selection
 
-The editor can be configured to allow the selection of multiple values as shown below: 
+The editor can be configured to allow the selection of multiple values as shown below:
 
 {% gridExampleRunner title="Rich Select Editor" name="rich-select-multi-select" /%}
 
@@ -187,7 +186,6 @@ columnDefs: [
     }
 ]
 ```
-
 
 ## Async Values
 
@@ -226,10 +224,10 @@ For advanced filtering scenarios, combine async `values` callback, `allowTyping`
 
 When `filterListAsync` is set to `true`, the cell editor behaves as follows:
 
-- It calls the `values` callback with the current search term.
-- It delays the search request by 300ms (this can be adjusted using `searchDebounceDelay`) to avoid excessive calls.
-- A loading indicator appears while the network request is in progress.
-- Once the promise resolves, the dropdown is updated with the filtered results.
+-   It calls the `values` callback with the current search term.
+-   It delays the search request by 300ms (this can be adjusted using `searchDebounceDelay`) to avoid excessive calls.
+-   A loading indicator appears while the network request is in progress.
+-   Once the promise resolves, the dropdown is updated with the filtered results.
 
 For example:
 
@@ -256,9 +254,8 @@ columnDefs: [
     }
 ]
 ```
- 
-## API Reference
 
+## API Reference
 
 {% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" /%}
 

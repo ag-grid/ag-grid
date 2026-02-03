@@ -32,12 +32,11 @@ const gridOptions = {
 }
 ```
 
-
 ## Value Getter
 
-A Value Getter is a function that gets called for each row to return the Cell Value for a Column. 
-Typically column cell values are loaded using a `field`, and then a `valueGetter` is used when retrieving 
-the value requires custom logic. Columns with Value Getters usually have manually provided 
+A Value Getter is a function that gets called for each row to return the Cell Value for a Column.
+Typically column cell values are loaded using a `field`, and then a `valueGetter` is used when retrieving
+the value requires custom logic. Columns with Value Getters usually have manually provided
 Header Names as the grid cannot derive Header Names from Value Getters like it does with Fields.
 
 ```{% frameworkTransform=true suppressFrameworkContext=true spaceBetweenProperties=true %}
@@ -63,16 +62,16 @@ to an aggregation function when grouping.
 
 The example below demonstrates `valueGetter`. The following can be noted from the demo:
 
-* Columns A and B are simple columns using `field`
+-   Columns A and B are simple columns using `field`
 
-* Value Getters are used in all subsequent columns as follows:
-  * Column 'ID #' prints the row number, taken from the [Row Node](./row-object/).
-  * Column 'A+B' adds A and B.
-  * Column 'A \* 1000' multiplies A by 1000.
-  * Column 'B \* 137' multiplies B by 137.
-  * Column 'Random' doesn't take any value from the data, rather it returns a random value.
-  * Column 'Chain' takes the value 'A+B' and works on it further, thus chaining value getters.
-  * Column 'Const' returns back the same value for each column.
+-   Value Getters are used in all subsequent columns as follows:
+    -   Column 'ID #' prints the row number, taken from the [Row Node](./row-object/).
+    -   Column 'A+B' adds A and B.
+    -   Column 'A \* 1000' multiplies A by 1000.
+    -   Column 'B \* 137' multiplies B by 137.
+    -   Column 'Random' doesn't take any value from the data, rather it returns a random value.
+    -   Column 'Chain' takes the value 'A+B' and works on it further, thus chaining value getters.
+    -   Column 'Const' returns back the same value for each column.
 
 {% gridExampleRunner title="Value Getters" name="value-getters" /%}
 

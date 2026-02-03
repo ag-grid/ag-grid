@@ -9,12 +9,12 @@ This page describes the grid's legacy theming system that was the default in v32
 
 The grid comes with several provided themes which act as a great starting point for any application-specific customisations. See below for demos of each theme.
 
-| Theme Name | Description |
-|------------|-------------|
-|**ag-theme-quartz**{% br /%}**ag-theme-quartz-dark**{% br /%}**ag-theme-quartz-auto-dark** \*{% br /%}{% br /%}File name `ag-theme-quartz[.min].css` | Modern looking themes with high contrast and generous padding.{% br /%}{% br /%}This is the recommended grid theme and an excellent choice for most applications. |
-|**ag-theme-balham**{% br /%}**ag-theme-balham-dark**{% br /%}**ag-theme-balham-auto-dark** \*{% br /%}{% br /%}File name `ag-theme-balham[.min].css` | Balham has a more traditional look modelled after a spreadsheet application. It is appropriate for applications that need to fit more data onto each page. |
-|**ag-theme-material**{% br /%}**ag-theme-material-dark**{% br /%}**ag-theme-material-auto-dark** \*{% br /%}{% br /%}File name `ag-theme-material[.min].css` | A theme designed according to the Google Material Language Specs.{% br /%}{% br /%}This theme looks great for simple applications with lots of white space, and is the obvious choice if the rest of your application follows the Google Material Design spec. However, the Material spec doesn't cater for advanced grid features such as grouped columns and tool panels. If your application uses these features, consider using `ag-theme-quartz` instead. |
-|**ag-theme-alpine**{% br /%}**ag-theme-alpine-dark**{% br /%}**ag-theme-alpine-auto-dark** \*{% br /%}{% br /%}File name `ag-theme-alpine[.min].css` | Alpine was the default theme before Quartz was released. It is still supported, but we recommend Quartz for new applications. |
+| Theme Name                                                                                                                                                   | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **ag-theme-quartz**{% br /%}**ag-theme-quartz-dark**{% br /%}**ag-theme-quartz-auto-dark** \*{% br /%}{% br /%}File name `ag-theme-quartz[.min].css`         | Modern looking themes with high contrast and generous padding.{% br /%}{% br /%}This is the recommended grid theme and an excellent choice for most applications.                                                                                                                                                                                                                                                                                              |
+| **ag-theme-balham**{% br /%}**ag-theme-balham-dark**{% br /%}**ag-theme-balham-auto-dark** \*{% br /%}{% br /%}File name `ag-theme-balham[.min].css`         | Balham has a more traditional look modelled after a spreadsheet application. It is appropriate for applications that need to fit more data onto each page.                                                                                                                                                                                                                                                                                                     |
+| **ag-theme-material**{% br /%}**ag-theme-material-dark**{% br /%}**ag-theme-material-auto-dark** \*{% br /%}{% br /%}File name `ag-theme-material[.min].css` | A theme designed according to the Google Material Language Specs.{% br /%}{% br /%}This theme looks great for simple applications with lots of white space, and is the obvious choice if the rest of your application follows the Google Material Design spec. However, the Material spec doesn't cater for advanced grid features such as grouped columns and tool panels. If your application uses these features, consider using `ag-theme-quartz` instead. |
+| **ag-theme-alpine**{% br /%}**ag-theme-alpine-dark**{% br /%}**ag-theme-alpine-auto-dark** \*{% br /%}{% br /%}File name `ag-theme-alpine[.min].css`         | Alpine was the default theme before Quartz was released. It is still supported, but we recommend Quartz for new applications.                                                                                                                                                                                                                                                                                                                                  |
 
 \* The 'auto' versions of each theme use the [prefers-color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme) CSS media feature to switch between dark and light variants depending on whether the user has enabled dark mode on their operating system.
 
@@ -38,8 +38,8 @@ The grid must always have a theme class set on its container, whether this is a 
 
 In order for the above code to work, the correct stylesheets must be loaded in the correct order. There are two kinds of stylesheet that need to be loaded when using provided themes:
 
-* **`ag-grid.css`** - structural styles containing CSS rules that are essential to the functioning of the grid and must be loaded first.
-* **`ag-theme-{theme-name}.css`** - theme styles that add design look and feel on top of the structural styles.
+-   **`ag-grid.css`** - structural styles containing CSS rules that are essential to the functioning of the grid and must be loaded first.
+-   **`ag-theme-{theme-name}.css`** - theme styles that add design look and feel on top of the structural styles.
 
 {% note %}
 The correct files to load are located in `ag-grid-community/styles`.
@@ -52,7 +52,9 @@ Double-check that you are importing files from the new paths. If you have `/src/
 There are various ways to load these stylesheets, as described in the sections below:
 
 {% if isFramework("javascript") %}
+
 ### Pre-built Bundles
+
 Some pre-built bundles, whether downloaded from our website or included in the `ag-grid-community` [NPM package](./installation/#npm-installation), already embed the structural styles and all provided themes. If you are using one of these files, you do not need to load separately CSS.
 {% /if %}
 
@@ -106,7 +108,7 @@ import "ag-grid-community/styles/ag-grid.css";
 
 ### App Hosted
 
-You can copy, either manually or as part of your app's build, the required CSS files (`ag-grid.css` and `ag-theme-{theme-name}.css`) from node\_modules and serve it with your app.
+You can copy, either manually or as part of your app's build, the required CSS files (`ag-grid.css` and `ag-theme-{theme-name}.css`) from node_modules and serve it with your app.
 
 ### Sass Styling API
 
@@ -161,7 +163,8 @@ That's it! You've created a theme. You haven't added any styles to it so what yo
 ```
 
 ## Creating themes with the Theme Builder
-As an alternative to creating themes with CSS you can use our [Theme Builder](/theme-builder) to create themes with no code. Visit the [Theme Builder page](/theme-builder) to get started. Then try some of our preset themes, configure your theme options, and download your AG Grid Theme CSS file. 
+
+As an alternative to creating themes with CSS you can use our [Theme Builder](/theme-builder) to create themes with no code. Visit the [Theme Builder page](/theme-builder) to get started. Then try some of our preset themes, configure your theme options, and download your AG Grid Theme CSS file.
 
 ## Creating Themes with the AG Grid Design System
 

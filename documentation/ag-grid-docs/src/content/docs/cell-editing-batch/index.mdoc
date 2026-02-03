@@ -61,9 +61,9 @@ Pending values are used by display features such as cell rendering and copy/past
 
 The `api.getCellValue()` method retrieves the display value for a cell. It can retrieve values at different stages using the `from` parameter:
 
-- `'edit'` (default): Current editing value, including live typing and pending batch values
-- `'batch'`: Pending batch value, excluding live typing
-- `'data'`: Stored data value, ignoring all edit state
+-   `'edit'` (default): Current editing value, including live editor typing and pending batch values
+-   `'batch'`: Pending batch value, excluding live editor typing
+-   `'data'`: Actual stored data value, ignoring all edit state
 
 {% apiDocumentation source="grid-api/api.json" section="miscellaneous" names=["getCellValue"] /%}
 

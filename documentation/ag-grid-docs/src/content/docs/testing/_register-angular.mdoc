@@ -1,4 +1,5 @@
 {% if isFramework("angular") %}
+
 ## Configuring the Test Module
 
 We will walk through how you can use testing AG Grid as part of your Angular application, using default build tools provided when using the [Angular CLI](https://angular.dev/cli).
@@ -163,6 +164,7 @@ class TestHostComponent {
 ```
 
 We can test that the `EditorComponent` works as follows:
+
 ```js
 it('cell should be editable and editor component usable', async () => {
     // Setup template bindings and run ngOInit. This causes the <ag-grid-angular> component to be created.
@@ -195,6 +197,7 @@ it('cell should be editable and editor component usable', async () => {
 ```
 
 ## Testing with Angular Testing Library
+
 It is also possible to use [Angular Testing Library](https://testing-library.com/docs/angular-testing-library/intro/) to test AG Grid. Here is one example showing how to test a row click handler that displays the last clicked row above the grid.
 
 ```js

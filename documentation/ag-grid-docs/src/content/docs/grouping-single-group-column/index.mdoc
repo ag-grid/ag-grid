@@ -2,6 +2,7 @@
 title: "Row Grouping - Single Column"
 enterprise: true
 ---
+
 Display the group structure with a single generated column in the grid.
 
 {% gridExampleRunner title="Enabling Single Group Column" name="enabling-single-group-column" /%}
@@ -46,6 +47,7 @@ const gridOptions = {
 ```
 
 ## Cell Component
+
 The group column uses the `agGroupCellRenderer` component to display the group information, as well as the chevron control
 for expanding and collapsing rows. The renderer also embeds the grouped columns renderer and displays this inside of the group cell.
 
@@ -55,6 +57,7 @@ the `autoGroupColumnDef` property `cellRendererParams`. The example below remove
 {% gridExampleRunner title="Group Cell Renderer Configuration" name="renderer-config-group-cell" /%}
 
 The example above demonstrates the following configuration:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
@@ -86,6 +89,7 @@ instead using the group cell renderer to display checkboxes.
 {% gridExampleRunner title="Group Cell Renderer Checkbox Selection" name="renderer-config-checkbox" /%}
 
 The example above demonstrates the following configuration:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     rowSelection: {
@@ -107,6 +111,7 @@ on the `cellRendererParams` configuration.
 {% gridExampleRunner title="Group Cell Renderer Configuration" name="renderer-config-inner" /%}
 
 The example above uses the following configuration to provide a custom inner renderer to the group column:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     autoGroupColumnDef: {
@@ -140,6 +145,7 @@ be used to display the filters for the columns with row grouping enabled.
 {% gridExampleRunner title="Group Column Filtering" name="filtering-grouped-columns" /%}
 
 The example above demonstrates the following configuration to enable the group column filter:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     autoGroupColumnDef: {
@@ -166,6 +172,7 @@ to the group column definition.
 {% /note %}
 
 The example above demonstrates the following configuration to enable the tree set filter:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     autoGroupColumnDef: {
@@ -189,6 +196,7 @@ Providing a filter value getter to the group column allows for a simple string s
 
 The example above demonstrates using a filter value getter which returns an array of ancestor row keys. This enables searching for any group value
 containing the filter text:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     autoGroupColumnDef: {

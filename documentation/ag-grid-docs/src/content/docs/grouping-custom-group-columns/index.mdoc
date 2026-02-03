@@ -2,21 +2,26 @@
 title: "Row Grouping - Custom Group Columns"
 enterprise: true
 ---
+
 Custom Group Columns can be provided to gain additional control over the group columns.
 
 {% warning %}
 We advise against using your own group columns. Only do this if you require:
-- The ability to position a column left of the group column, and `colDef.lockPosition` or `colDef.pinned` are insufficient.
-- Fine grain control of [Multiple Group Columns](./grouping-multiple-group-columns/) configuration per column, where callbacks are unsupported.
+
+-   The ability to position a column left of the group column, and `colDef.lockPosition` or `colDef.pinned` are insufficient.
+-   Fine grain control of [Multiple Group Columns](./grouping-multiple-group-columns/) configuration per column, where callbacks are unsupported.
+
 {% /warning %}
 
 ## Enabling a Single Custom Group Column
+
 A [Single Group Column](./grouping-single-group-column/) can be configured by setting the `groupDisplayType` grid option to `"custom"`. The column displaying
 groups then needs to also be included in the `columnDefs` with `colDef.showRowGroup` set to `true`, and the `cellRenderer` set to `'agGroupCellRenderer'`.
 
 {% gridExampleRunner title="Custom Grouping Single Group Column" name="custom-grouping-single-group-column" /%}
 
 The example above demonstrates the following configuration:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
@@ -39,6 +44,7 @@ The `colDef` also requires `cellRenderer` to be set to `'agGroupCellRenderer'`.
 {% gridExampleRunner title="Custom Grouping Multiple Group Columns" name="custom-grouping-many-group-columns" /%}
 
 The example above demonstrates the following configuration for configuring multiple groups columns:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [

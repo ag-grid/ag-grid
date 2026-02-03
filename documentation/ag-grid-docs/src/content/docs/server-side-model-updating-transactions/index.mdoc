@@ -22,8 +22,8 @@ When the server-side store has a known last row index, remove transactions only 
 These operations are shown in the snippet below:
 
 ```{% frameworkTransform=true %}
-api.applyServerSideTransaction({ 
-    add: [ 
+api.applyServerSideTransaction({
+    add: [
         { tradeId: 101, portfolio: 'Aggressive', product: 'Aluminium', book: 'GL-62472', current: 57969 }
     ],
     update: [
@@ -37,10 +37,10 @@ api.applyServerSideTransaction({
 
 The following example demonstrates add / update and remove operations via the Server-Side Transaction API. Note the following:
 
-* When clicking any of the buttons, the console logs each transaction as it is applied to the grid.
-* **Add Above Selected** - adds a row above the selected row using the `addIndex` property as rows are added at the end by default.
-* **Updated Selected** - updates the 'current' value on the selected row.
-* **Removed Selected** - removes the selected row.
+-   When clicking any of the buttons, the console logs each transaction as it is applied to the grid.
+-   **Add Above Selected** - adds a row above the selected row using the `addIndex` property as rows are added at the end by default.
+-   **Updated Selected** - updates the 'current' value on the selected row.
+-   **Removed Selected** - removes the selected row.
 
 {% gridExampleRunner title="Server-Side Transaction API" name="transactions-simple"  exampleHeight=615 /%}
 
@@ -66,10 +66,10 @@ api.applyServerSideTransaction({
 
 In the example below, note the following:
 
-* When clicking any of the buttons, the console logs each transaction as it is applied to the grid.
-* To add a new row, if the group didn't previously exist, then the route is omitted and the group row is added. If it did previously exist, then the group route is provided and the leaf node is added.
-* To delete a row, if the group row would be deleted then a transaction needs to be applied to remove this group row instead of the leaf row.
-* To move a row between groups, the row needs to be deleted from the old group with one transaction, and added to the new group with another.
+-   When clicking any of the buttons, the console logs each transaction as it is applied to the grid.
+-   To add a new row, if the group didn't previously exist, then the route is omitted and the group row is added. If it did previously exist, then the group route is provided and the leaf node is added.
+-   To delete a row, if the group row would be deleted then a transaction needs to be applied to remove this group row instead of the leaf row.
+-   To move a row between groups, the row needs to be deleted from the old group with one transaction, and added to the new group with another.
 
 {% gridExampleRunner title="Transactions With Groups" name="transactions-grouping"  exampleHeight=615 /%}
 
@@ -85,23 +85,23 @@ The snippet below demonstrates three asynchronous transactions applied sequentia
 
 ```{% frameworkTransform=true %}
 // due to asynchronous batching, the following transactions are applied together preventing unnecessary DOM updates
-api.applyServerSideTransactionAsync({ 
+api.applyServerSideTransactionAsync({
     add: [{ tradeId: 101, portfolio: 'Aggressive', product: 'Aluminium', book: 'GL-62472', current: 57969 }],
 });
 
-api.applyServerSideTransactionAsync({ 
+api.applyServerSideTransactionAsync({
     update: [{ tradeId: 102,  portfolio: 'Aggressive', product: 'Aluminium', book: 'GL-624723', current: 58927 }],
 });
 
-api.applyServerSideTransactionAsync({ 
+api.applyServerSideTransactionAsync({
     remove: [{ tradeId: 103 }],
 });
 ```
 
 In the example below, note the following:
 
-* After starting the updates, 1 row is created, 10 rows are updated, and 1 rows is deleted every 10 milliseconds.
-* The transactions are batched, and only executed once every second.
+-   After starting the updates, 1 row is created, 10 rows are updated, and 1 rows is deleted every 10 milliseconds.
+-   The transactions are batched, and only executed once every second.
 
 {% gridExampleRunner title="Asynchronous Example" name="transactions-async"  exampleHeight=615 /%}
 
@@ -111,10 +111,10 @@ The following demonstrates a more complex example of transactions, it shows subs
 
 In the example below, note the following:
 
-* After starting the updates, 2 rows are created, 5 rows are updated, and 2 rows are deleted once every second.
-* Groups are created or destroyed when necessary by using transactions.
-* The group panel has been enabled, allowing a dynamic configuration of groups.
-* The group child counts and aggregations update in sync with changes to the leaf rows.
+-   After starting the updates, 2 rows are created, 5 rows are updated, and 2 rows are deleted once every second.
+-   Groups are created or destroyed when necessary by using transactions.
+-   The group panel has been enabled, allowing a dynamic configuration of groups.
+-   The group child counts and aggregations update in sync with changes to the leaf rows.
 
 {% gridExampleRunner title="Showcase Example" name="transactions-showcase"  exampleHeight=670 /%}
 

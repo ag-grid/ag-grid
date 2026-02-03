@@ -13,9 +13,9 @@ You can insert `hyperlinks` in the cells of the exported Excel file by outputtin
 const gridOptions = {
     columnDefs: [
         { field: 'company' },
-        { 
-            field: 'url', 
-            cellClass: 'hyperlinks' // references excel style 
+        {
+            field: 'url',
+            cellClass: 'hyperlinks' // references excel style
         }
     ],
     defaultExcelExportParams: {
@@ -39,8 +39,8 @@ const gridOptions = {
 
 Note the following:
 
-* The URL column of the grid below has URL values.
-* In the exported Excel file, the URL column has active links for these URL values.
+-   The URL column of the grid below has URL values.
+-   In the exported Excel file, the URL column has active links for these URL values.
 
 {% gridExampleRunner title="Excel Export - Hyperlinks" name="excel-export-hyperlinks" exampleHeight=530 /%}
 

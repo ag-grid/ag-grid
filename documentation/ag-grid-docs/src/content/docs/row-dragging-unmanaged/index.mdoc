@@ -15,10 +15,11 @@ This is because the logic in the example doesn't cover these scenarios and wants
 ## Differences from Managed Row Dragging
 
 Unmanaged dragging differs from managed dragging in the following ways:
-* The grid does not manage moving of the rows. The only thing the grid responds with is firing drag events. It is up to the application to do the moving of the rows (if that is what the application wants to do).
-* Dragging is allowed while sort is applied.
-* Dragging is allowed while filter is applied.
-* Dragging is allowed while row group or pivot is applied.
+
+-   The grid does not manage moving of the rows. The only thing the grid responds with is firing drag events. It is up to the application to do the moving of the rows (if that is what the application wants to do).
+-   Dragging is allowed while sort is applied.
+-   Dragging is allowed while filter is applied.
+-   Dragging is allowed while row group or pivot is applied.
 
 {% note %}
 It is not possible for the grid to provide a generic solution for row dragging that fits all usage scenarios. Unmanaged row dragging is provided as a way for the application developer to meet their requirements by responding to events emitted by the grid.
@@ -30,11 +31,11 @@ Row drag events are raised by both [Managed Row Dragging](./row-dragging-managed
 
 There are five grid events associated with row dragging which are:
 
-* `rowDragEnter`: A drag has started, or dragging already started and the mouse has re-entered the grid having previously left the grid.
-* `rowDragMove`: The mouse has moved while dragging.
-* `rowDragLeave`: The mouse has left the grid while dragging.
-* `rowDragEnd`: The drag has finished over the grid.
-* `rowDragCancel`: The drag has cancelled over the grid.
+-   `rowDragEnter`: A drag has started, or dragging already started and the mouse has re-entered the grid having previously left the grid.
+-   `rowDragMove`: The mouse has moved while dragging.
+-   `rowDragLeave`: The mouse has left the grid while dragging.
+-   `rowDragEnd`: The drag has finished over the grid.
+-   `rowDragCancel`: The drag has cancelled over the grid.
 
 Typically a drag will fire the following events:
 
@@ -60,17 +61,17 @@ The example also demonstrates all the events that are fired.
 
 From the example the following can be noted:
 
-* The first column has `rowDrag=true` which results in a draggable
-  area included in the cell.
+-   The first column has `rowDrag=true` which results in a draggable
+    area included in the cell.
 
-* The grid has not set `rowDragManaged` which results in the grid
-  not reordering rows as they are dragged.
+-   The grid has not set `rowDragManaged` which results in the grid
+    not reordering rows as they are dragged.
 
-* All of the drag events are listened for and when one is received, it is printed to the console. To best see this, open the example in a new tab and open the developer console.
+-   All of the drag events are listened for and when one is received, it is printed to the console. To best see this, open the example in a new tab and open the developer console.
 
-* Because `rowDragManaged` is not set, the row dragging is left enabled even if sorting or filtering is applied. This is because your application should decide if dragging should be allowed or suppressed using the `suppressRowDrag` property.
+-   Because `rowDragManaged` is not set, the row dragging is left enabled even if sorting or filtering is applied. This is because your application should decide if dragging should be allowed or suppressed using the `suppressRowDrag` property.
 
-* While dragging the row, the `setRowDropPositionIndicator` API method is called to display the projected row drop location using a horizontal line indicator.
+-   While dragging the row, the `setRowDropPositionIndicator` API method is called to display the projected row drop location using a horizontal line indicator.
 
 {% gridExampleRunner title="Row Drag Events" name="dragging-events" /%}
 
@@ -90,4 +91,5 @@ For grouping-specific guidance, including managed row dragging support, see [Row
 Unmanaged row dragging will work with any of the row models - [Infinite](./infinite-scrolling/), [Server-Side](./server-side-model/) and [Viewport](./viewport/). With unmanaged dragging, the implementation of what happens when a particular drag happens is up to your application.
 
 ## Next Up
+
 Continue to the next section to learn about [Row Dragging Customisation](./row-dragging-customisation).

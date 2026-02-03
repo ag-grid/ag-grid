@@ -821,6 +821,11 @@
                                 },
                                 {
                                     "type": "item",
+                                    "title": "BigInt Filter",
+                                    "path": "filter-bigint"
+                                },
+                                {
+                                    "type": "item",
                                     "title": "Date Filter",
                                     "path": "filter-date"
                                 },

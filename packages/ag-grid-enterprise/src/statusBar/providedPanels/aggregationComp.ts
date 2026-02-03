@@ -17,6 +17,7 @@ import {
     _getRowNode,
     _isRowBefore,
     _missing,
+    _parseBigIntOrNull,
 } from 'ag-grid-community';
 
 import type { AgNameValue } from './agNameValue';
@@ -110,13 +111,13 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
     private setAggregationComponentValue(
         aggFuncName: AggregationStatusPanelAggFunc,
-        value: number | null,
+        value: number | bigint | null,
         visible: boolean
     ) {
         const statusBarValueComponent = this.getAllowedAggregationValueComponent(aggFuncName);
         const totalRow = _getTotalRowCount(this.beans.rowModel);
         if (_exists(statusBarValueComponent) && statusBarValueComponent) {
-            statusBarValueComponent.setValue(value!, totalRow);
+            statusBarValueComponent.setValue(value, totalRow);
             statusBarValueComponent.setDisplayed(visible);
         } else {
             // might have previously been visible, so hide now
@@ -143,19 +144,76 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         return (this as any)[refComponentName];
     }
 
+    /**
+     * Aggregation notes:
+     * - Uses bigint aggregation when bigint values are present and all numeric values are safe integers.
+     * - Non-integer or unsafe integer numbers fall back to number aggregation to avoid precision loss.
+     * - Avg uses integer division when bigint aggregation is active, discarding the fractional part.
+     * - String values are trimmed; finite numeric strings are aggregated as numbers, while integer strings beyond the
+     *   safe integer range are parsed as bigint.
+     */
     private onCellSelectionChanged(): void {
         const beans = this.beans;
         const { rangeSvc, valueSvc } = beans;
         const cellRanges = rangeSvc?.getCellRanges();
 
         let sum = 0;
+        let sumBigint = 0n;
+        let hasBigInt = false;
+        let seenNonInteger = false;
         let count = 0;
-        let numberCount = 0;
+        let numericCount = 0;
         let min: number | null = null;
         let max: number | null = null;
+        let minBigint: bigint | null = null;
+        let maxBigint: bigint | null = null;
 
-        const cellsSoFar: any = {};
+        const addValue = (value: number | bigint): void => {
+            if (typeof value === 'number') {
+                sum += value;
+                if (min === null || value < min) {
+                    min = value;
+                }
+                if (max === null || value > max) {
+                    max = value;
+                }
 
+                if (!Number.isInteger(value) || !Number.isSafeInteger(value)) {
+                    seenNonInteger = true;
+                } else {
+                    const bigintValue = BigInt(value);
+                    sumBigint += bigintValue;
+                    if (minBigint === null || bigintValue < minBigint) {
+                        minBigint = bigintValue;
+                    }
+                    if (maxBigint === null || bigintValue > maxBigint) {
+                        maxBigint = bigintValue;
+                    }
+                }
+            } else {
+                hasBigInt = true;
+                sumBigint += value;
+                if (minBigint === null || value < minBigint) {
+                    minBigint = value;
+                }
+                if (maxBigint === null || value > maxBigint) {
+                    maxBigint = value;
+                }
+
+                const numberValue = Number(value);
+                sum += numberValue;
+                if (min === null || numberValue < min) {
+                    min = numberValue;
+                }
+                if (max === null || numberValue > max) {
+                    max = numberValue;
+                }
+            }
+
+            numericCount++;
+        };
+
+        const cellsSoFar: Record<string, true> = {};
         if (cellRanges?.length && rangeSvc) {
             for (let i = 0; i < cellRanges.length; i++) {
                 const cellRange = cellRanges[i];
@@ -210,21 +268,32 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                         }
 
                         if (typeof value === 'string') {
-                            value = Number(value);
+                            const trimmedValue = value.trim();
+                            if (trimmedValue === '') {
+                                return;
+                            }
+
+                            const asNumber = Number(trimmedValue);
+                            if (!Number.isFinite(asNumber)) {
+                                return;
+                            }
+                            if (
+                                sum + asNumber >= Number.MAX_SAFE_INTEGER ||
+                                sum + asNumber <= Number.MIN_SAFE_INTEGER ||
+                                asNumber >= Number.MAX_SAFE_INTEGER ||
+                                asNumber <= Number.MIN_SAFE_INTEGER
+                            ) {
+                                value = _parseBigIntOrNull(trimmedValue);
+                                if (value === null) {
+                                    value = asNumber;
+                                }
+                            } else {
+                                value = asNumber;
+                            }
                         }
 
-                        if (typeof value === 'number' && !isNaN(value)) {
-                            sum += value;
-
-                            if (max === null || value > max) {
-                                max = value;
-                            }
-
-                            if (min === null || value < min) {
-                                min = value;
-                            }
-
-                            numberCount++;
+                        if ((typeof value === 'number' && !isNaN(value)) || typeof value === 'bigint') {
+                            addValue(value);
                         }
                     });
 
@@ -233,16 +302,28 @@ export class AggregationComp extends Component implements IStatusPanelComp {
             }
         }
 
-        const gotResult = count > 1;
-        const gotNumberResult = numberCount > 1;
+        const moreThanOneValue = count > 1;
+        const moreThanOneNum = numericCount > 1;
+        const useBigintAggregation = hasBigInt && !seenNonInteger;
+
+        let avg: bigint | number;
+        if (useBigintAggregation) {
+            avg = sumBigint / BigInt(numericCount);
+        } else {
+            avg = sum / numericCount;
+        }
+
+        const sumValue = moreThanOneNum ? (useBigintAggregation ? sumBigint : sum) : null;
+        const minValue = moreThanOneNum ? (useBigintAggregation ? minBigint : min) : null;
+        const maxValue = moreThanOneNum ? (useBigintAggregation ? maxBigint : max) : null;
+        const avgValue = moreThanOneNum ? avg : null;
+        const showAvg = moreThanOneNum;
 
         // we show count even if no numbers
-        this.setAggregationComponentValue('count', count, gotResult);
-
-        // show if numbers found
-        this.setAggregationComponentValue('sum', sum, gotNumberResult);
-        this.setAggregationComponentValue('min', min, gotNumberResult);
-        this.setAggregationComponentValue('max', max, gotNumberResult);
-        this.setAggregationComponentValue('avg', sum / numberCount, gotNumberResult);
+        this.setAggregationComponentValue('count', count, moreThanOneValue);
+        this.setAggregationComponentValue('sum', sumValue, moreThanOneNum);
+        this.setAggregationComponentValue('min', minValue, moreThanOneNum);
+        this.setAggregationComponentValue('max', maxValue, moreThanOneNum);
+        this.setAggregationComponentValue('avg', avgValue, showAvg);
     }
 }

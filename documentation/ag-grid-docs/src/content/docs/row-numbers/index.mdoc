@@ -29,6 +29,7 @@ const gridOptions = {
     cellSelection: true
 }
 ```
+
 {% gridExampleRunner title="Row Numbers with Cell Selection" name="row-numbers-cell-selection" /%}
 
 ### Suppressing Integration
@@ -66,10 +67,9 @@ const gridOptions = {
 The Row Resizer feature does not work when columns are configured with [Auto Row Height](./row-height/#auto-row-height).
 {% /note %}
 
-
 ## Value Export
 
-By default, when working with exporters such as [CSV Export](./csv-export/) or [Excel Export](./excel-export/), the value of the Row Numbers column is not exported. 
+By default, when working with exporters such as [CSV Export](./csv-export/) or [Excel Export](./excel-export/), the value of the Row Numbers column is not exported.
 This behaviour can be changed by toggling the `exportRowNumbers` of the export params.
 
 ```{% frameworkTransform=true %}
@@ -86,6 +86,7 @@ const gridOptions = {
 ```
 
 ### ExportParams
+
 {% interfaceDocumentation interfaceName="ExportParams" config={ "description": "" } names=["exportRowNumbers"] /%}
 
 {% gridExampleRunner title="Row Numbers with Export" name="row-numbers-export" /%}
@@ -94,5 +95,5 @@ const gridOptions = {
 
 Row Numbers can be customised by providing a `RowNumbersOptions` object to the `rowNumbers` grid option:
 
-{% interfaceDocumentation interfaceName="RowNumbersOptions" config={ "description": "" } 
+{% interfaceDocumentation interfaceName="RowNumbersOptions" config={ "description": "" }
 /%}

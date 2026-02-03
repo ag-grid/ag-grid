@@ -24,7 +24,6 @@ By default, the grid uses [Cell Data Types](./cell-data-types/) to provide diffe
 
 The example below shows editing enabled on all columns by setting `editable=true` on the `defaultColDef`.
 
-
 {% gridExampleRunner title="Simple Cell Editing" name="simple-editing" /%}
 
 ## Conditional Editing
@@ -47,10 +46,10 @@ In the snippet above, **Athlete** cells will be editable on rows where the **Yea
 
 This is demonstrated in the following example, note that:
 
-* An `editable` callback is added to the **Athlete** and **Age** columns to control which cells are editable based on the selected **Year**.
-* A custom `editableColumn` [Column Type](./column-definitions/#default-column-definitions) is used to avoid duplication of the callback for **Athlete** and **Age**.
-* Buttons are provided to change the **Year** used by the `editable` callback function to control which cells are editable.
-* A blue [Cell Style](./cell-styles/) has been added to highlight editable cells using the same logic as the `editable` callback.
+-   An `editable` callback is added to the **Athlete** and **Age** columns to control which cells are editable based on the selected **Year**.
+-   A custom `editableColumn` [Column Type](./column-definitions/#default-column-definitions) is used to avoid duplication of the callback for **Athlete** and **Age**.
+-   Buttons are provided to change the **Year** used by the `editable` callback function to control which cells are editable.
+-   A blue [Cell Style](./cell-styles/) has been added to highlight editable cells using the same logic as the `editable` callback.
 
 {% gridExampleRunner title="Conditional Cell Editing" name="conditional-editing" /%}
 

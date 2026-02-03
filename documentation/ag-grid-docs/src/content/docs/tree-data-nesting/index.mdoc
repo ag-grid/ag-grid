@@ -2,6 +2,7 @@
 title: "Tree Data - Nested Records"
 enterprise: true
 ---
+
 Configure the grid to display structured data by providing nested records.
 
 ## Providing Hierarchy
@@ -9,6 +10,7 @@ Configure the grid to display structured data by providing nested records.
 Each row in the data can contain a field containing an array of child rows. The `treeDataChildrenField` property is used to specify the field containing the child rows.
 
 The below structure demonstrates a simple hierarchy, wherein the `treeDataChildrenField` grid option would specify `"children"` as the field containing child rows:
+
 ```
 const data = [
     {
@@ -31,6 +33,7 @@ const data = [
     }
 ]
 ```
+
 In the above hierarchy, the 'A' row is the parent of 'B' and 'C'. The 'D' row is the parent of 'E' which is the parent of 'F'.
 
 {% note %}
@@ -47,6 +50,7 @@ The example below demonstrates a case where the `autoGroupColumnDef` field is se
 {% gridExampleRunner title="Group Values" name="basic-example" exampleHeight=350 /%}
 
 The following snippet demonstrates how to provide nested siblings with a custom group value:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     treeData: true,
@@ -66,6 +70,7 @@ This means any supplied group data will be ignored in favour of the aggregated v
 
 The example above uses the configuration below to demonstrate the `Desktop` row is being aggregated to show
 the sum of its children (4), rather than the provided value (1), despite both columns showing the same field:
+
 ```
 const gridOptions = {
     treeData: true,
@@ -87,4 +92,5 @@ Refer to the [Aggregation](./aggregation/) page for more details, and [Editing G
 for editing aggregated values with cascading updates to children.
 
 ## Next Up
+
 Continue to the next section to learn how to provide [Self-Referential Records](./tree-data-self-referential/).

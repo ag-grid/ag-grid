@@ -66,16 +66,18 @@ Rows for which `isRowSelectable` returns `false` cannot be selected at all, whet
 Note this example uses `hideDisabledCheckboxes` to hide disabled checkboxes, which can be toggled on or off.
 
 ## Customising the Checkbox Column
+
 The checkbox column may be customised in a similar way to any other column, by specifying its column definition in the `selectionColumnDef` grid option.
 
 {% apiDocumentation source="grid-options/properties.json" section="selection" names=["selectionColumnDef"] /%}
 
 The `SelectionColumnDef` allows for a great deal of customisation, including custom renderers, sorting, tooltips and more.
 The example below demonstrates the following configuration:
-- allowing sorting using the default sort order (selected first) via the header menu
-- changing the default width of the column
-- allowing resizing
-- adding some header tooltip text
+
+-   allowing sorting using the default sort order (selected first) via the header menu
+-   changing the default width of the column
+-   allowing resizing
+-   adding some header tooltip text
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -102,16 +104,16 @@ The checkbox column is sized statically, and is therefore not affected by [Auto-
 
 ## Enable Click Selection & Deselection
 
-The `rowSelection.enableClickSelection` property configures whether a row's selection state will be impacted when the row is clicked. 
+The `rowSelection.enableClickSelection` property configures whether a row's selection state will be impacted when the row is clicked.
 
 {% interfaceDocumentation interfaceName="SingleRowSelectionOptions" names=["enableClickSelection"] config={"description": ""}/%}
 
-This is typically used when [Checkbox Selection](#removing-selection-checkboxes) is disabled, though both can be enabled simultaneously if desired. 
+This is typically used when [Checkbox Selection](#removing-selection-checkboxes) is disabled, though both can be enabled simultaneously if desired.
 Click-selection and deselection can be enabled by setting `enableClickSelection` to `true`, otherwise they may be enabled separately using the values `'enableSelection'` and `'enableDeselection'`.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    rowSelection: { 
+    rowSelection: {
         mode: 'singleRow',
         enableClickSelection: true,
     }
@@ -136,8 +138,8 @@ See the full list of configuration options available in `'singleRow'` mode.
 
 Row selection works with row grouping, tree data, and the server-side row model. See the relevant documentation sections:
 
-- [Row Group Selection](./grouping-row-selection)
-- [Tree Data Selection](./tree-data-selection)
-- [Server-Side Row Model Selection](./server-side-model-selection)
+-   [Row Group Selection](./grouping-row-selection)
+-   [Tree Data Selection](./tree-data-selection)
+-   [Server-Side Row Model Selection](./server-side-model-selection)
 
 Continue to the next section to learn about [Multi-Row Selection](./row-selection-multi-row).

@@ -5,10 +5,9 @@ description: "Create Custom Header Components for the $framework Table. Customis
 
 The grid provides a default Header Component with sorting, filtering and menu functionality. There are three approaches to customising Column Headers:
 
-- [Custom Template](#custom-template) - Provide an HTML template to the default Header Component for simple layout changes while retaining built-in functionality.
-- [Inner Header Component](#inner-header-component) - Replace just the header name display with a custom component while keeping sorting, filtering and menu functionality.
-- [Custom Component](#custom-component) - Create a fully custom Header Component with complete control over rendering and behaviour.
-
+-   [Custom Template](#custom-template) - Provide an HTML template to the default Header Component for simple layout changes while retaining built-in functionality.
+-   [Inner Header Component](#inner-header-component) - Replace just the header name display with a custom component while keeping sorting, filtering and menu functionality.
+-   [Custom Component](#custom-component) - Create a fully custom Header Component with complete control over rendering and behaviour.
 
 ## Custom Template
 
@@ -41,9 +40,9 @@ const gridOptions = {
 
 The example below demonstrates a custom template. Note that specifying your own templates is compatible with other configurations:
 
-* `suppressHeaderFilterButton` is specified in: **Athlete**, **Country**, **Date** and **Bronze** columns
-* `sortable=false` is specified in: **Age**, **Year**, **Sport**, **Silver** and **Total** columns
-* **Gold** is the only column that doesn't have `sortable=false` or `suppressHeaderFilterButton`
+-   `suppressHeaderFilterButton` is specified in: **Athlete**, **Country**, **Date** and **Bronze** columns
+-   `sortable=false` is specified in: **Age**, **Year**, **Sport**, **Silver** and **Total** columns
+-   **Gold** is the only column that doesn't have `sortable=false` or `suppressHeaderFilterButton`
 
 {% gridExampleRunner title="Header template" name="header-template" /%}
 
@@ -71,7 +70,7 @@ This is the default template used in AG Grid:
 When you provide your own template, everything should work as expected as long as you re-use the same `data-ref` attribute names.
 
 | Ref                 | Description                                                                                                                                                    |
-|---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `eMenu`             | The container where the column menu icon will appear to enable opening the column menu (in AG Grid Community, this is only used when `columnMenu = 'legacy'`). |
 | `eFilterButton`     | The container where the column filter icon will appear to enable opening the filter (not used when `columnMenu = 'legacy'`).                                   |
 | `eLabel`            | The container where there is going to be an onClick mouse listener to trigger the sort.                                                                        |
@@ -100,6 +99,7 @@ on the `headerComponentParams` property. This is useful when you only need to im
 the whole header functionality (sorting, filter, menu, etc...).
 
 {% if isFramework("javascript", "angular", "react") %}
+
 ```js
 colDef = {
     ...
@@ -111,9 +111,11 @@ colDef = {
     }
 }
 ```
+
 {% /if %}
 
 {% if isFramework("vue") %}
+
 ```js
 colDef = {
     ...
@@ -125,6 +127,7 @@ colDef = {
     }
 }
 ```
+
 {% /if %}
 
 {% gridExampleRunner title="Custom Inner Header Component" name="inner-header-component" /%}
@@ -133,34 +136,44 @@ colDef = {
 Implement this interface to provide a custom inner header component.
 {% /if %}
 {% if isFramework("javascript") %}
+
 ### IInnerHeaderComponent
+
 {% interfaceDocumentation interfaceName="IInnerHeaderComponent" config={"asCode":true } /%}
 {% /if %}
 {% if isFramework("angular") %}
+
 ### IInnerHeaderAngularComp
+
 {% interfaceDocumentation interfaceName="IInnerHeaderAngularComp" config={"asCode":true } /%}
 {% /if %}
 {% if isFramework("javascript", "angular") %}
+
 ### IHeaderParams
+
 {% interfaceDocumentation interfaceName="IHeaderParams" exclude=["template"] config={ "description": "" } /%}
 {% /if %}
 {% if isFramework("react") %}
+
 ```ts
 const CustomInnerHeaderComponent = (props: CustomInnerHeaderProps) => {
     return <div>{props.displayName}</div>;
 };
 ```
+
 The following props are passed to the Custom Component (`CustomInnerHeaderProps` interface).
+
 ### CustomInnerHeaderProps
+
 {% interfaceDocumentation interfaceName="CustomInnerHeaderProps" config={ "description": "" } /%}
 {% /if %}
 {% if isFramework("vue") %}
 Any valid Vue component can be a custom inner header component, however it must implement the `IHeader` interface:
 
 ### IHeader
+
 {% interfaceDocumentation interfaceName="IHeader" config={"asCode":true } /%}
 {% /if %}
-
 
 ## Custom Component
 
@@ -169,11 +182,10 @@ To use a fully customised Header Component, set `headerComponent` on the Column 
 {% partial file="./_column-def-javascript.mdoc" /%}
 {% partial file="./_column-def-vue.mdoc" /%}
 
-
-* Column moving and resizing works without custom logic.
-* `suppressHeaderFilterButton=true` is used to suppress the filter menu.
-* `sortable=false` is used to suppress sorting.
-* The menu icon is configurable.
+-   Column moving and resizing works without custom logic.
+-   `suppressHeaderFilterButton=true` is used to suppress the filter menu.
+-   `sortable=false` is used to suppress sorting.
+-   The menu icon is configurable.
 
 {% gridExampleRunner title="Header component" name="header-component" /%}
 
@@ -214,16 +226,16 @@ The following props are passed to the Custom Component (`CustomHeaderProps` inte
 
 The grid provides the following features that should not be implemented by Custom Header Components:
 
-* [**Resizing:**](./column-sizing/) When enabled, the grid will put an invisible widget to be grabbed by the mouse for resizing.
-* [**Header Checkbox Selection:**](./row-selection-multi-row/#selecting-all-rows) When enabled, the grid displays a checkbox for 'select all' in the header.
-* **Column Moving** The grid will react to Column Dragging to reorder columns.
+-   [**Resizing:**](./column-sizing/) When enabled, the grid will put an invisible widget to be grabbed by the mouse for resizing.
+-   [**Header Checkbox Selection:**](./row-selection-multi-row/#selecting-all-rows) When enabled, the grid displays a checkbox for 'select all' in the header.
+-   **Column Moving** The grid will react to Column Dragging to reorder columns.
 
 The Custom Header Component is responsible for the following:
 
-* **Sorting:** You will need to process user interaction for sorting. The default grid component sorts when the user clicks the header with the mouse. You may also need to display icons as the sort state of the column changes.
-* **Filtering:** You do not filter via the column (you filter from inside the menu), however you may need to display icons as the filter state of the column changes.
-* **Menu:** If you want the user to be able to open the column menu, you will need to manage this user interaction. The default grid component provides a button for the user to click to show the menu.
-* **Anything Else:** Whatever you want, you are probably creating a custom header to add your own functionality in.
+-   **Sorting:** You will need to process user interaction for sorting. The default grid component sorts when the user clicks the header with the mouse. You may also need to display icons as the sort state of the column changes.
+-   **Filtering:** You do not filter via the column (you filter from inside the menu), however you may need to display icons as the filter state of the column changes.
+-   **Menu:** If you want the user to be able to open the column menu, you will need to manage this user interaction. The default grid component provides a button for the user to click to show the menu.
+-   **Anything Else:** Whatever you want, you are probably creating a custom header to add your own functionality in.
 
 ### Sorting
 
@@ -232,16 +244,21 @@ How you interact with the user for sorting (e.g. listening for mouse clicks) is 
 After the user requests a sort, you should call ONE of the following:
 
 {% if isFramework("javascript", "angular", "vue") %}
+
 1. `params.progressSort(multiSort)`: Call this method to progress the sort on the column to the next stage. This uses the grid logic to determine the next sort stage (eg 'descending' normally follows 'ascending').
 1. `params.setSort(direction, multiSort)`: If you don't want to use the grid's logic for working out the next sort state, use this to set the sort to a specific state.
+
 {% /if %}
 
 {% if isFramework("react") %}
+
 1. `props.progressSort(multiSort)`: Call this method to progress the sort on the column to the next stage. This uses the grid logic to determine the next sort stage (eg 'descending' normally follows 'ascending').
 1. `props.setSort(direction, multiSort)`: If you don't want to use the grid's logic for working out the next sort state, use this to set the sort to a specific state.
+
 {% /if %}
 
 {% if isFramework("javascript") %}
+
 ```js
 // option 1) tell the grid when you want to progress the sorting
 myHeaderElement.addEventListener('click', function(event) {
@@ -260,9 +277,11 @@ mySortDescButton.addEventListener('click', function(event) {
     params.setSort('desc', event.shiftKey);
 });
 ```
+
 {% /if %}
 
 {% if isFramework("angular", "vue") %}
+
 ```js
 // option 1) tell the grid when you want to progress the sorting
 onSortClicked(event) {
@@ -281,9 +300,11 @@ onSortDescClicked(event) {
     this.params.setSort('desc', event.shiftKey);
 };
 ```
+
 {% /if %}
 
 {% if isFramework("react") %}
+
 ```js
 // option 1) tell the grid when you want to progress the sorting
 onSortClicked(event) {
@@ -302,6 +323,7 @@ onSortDescClicked(event) {
     props.setSort('desc', event.shiftKey);
 };
 ```
+
 {% /if %}
 
 To know when a column's sort state has changed (e.g. when to update your icons), you should listen for the `sortChanged` event on the column.
@@ -343,35 +365,43 @@ column.addEventListener('filterChanged', function() {
 How you get the user to ask for the column menu is up to you. When you want to display the menu, call the `params.showColumnMenu()` callback. The callback takes the HTML element for the button so that it can place the menu over the button (so the menu appears to drop down from the button).
 
 {% if isFramework("javascript") %}
+
 ```js
 myMenuButton.addEventListener('click', function() {
     params.showColumnMenu(myMenuButton);
 });
 ```
+
 {% /if %}
 
 {% if isFramework("vue") %}
+
 ```js
 onMenuClicked() {
     this.params.showColumnMenu(this.$refs.menuButton);
 });
 ```
+
 {% /if %}
 
 {% if isFramework("angular") %}
+
 ```js
 onMenuClicked() {
     this.params.showColumnMenu(this.menuButton.nativeElement);
 });
 ```
+
 {% /if %}
 
 {% if isFramework("react") %}
+
 ```js
 onMenuClicked() {
     props.showColumnMenu(refButton.current);
 });
 ```
+
 {% /if %}
 
 ### Refreshing Headers
@@ -382,8 +412,6 @@ how Header Components are refreshed.
 All Header Components that still exist after the new Column Definitions are applied (in other words, the Column still
 exists after the update, it was not removed) {% if isFramework("react") %}will be re-rendered.{% else/ %}will have its `refresh` method called.{% /if %}
 
-
-
 {% if isFramework("react") %}
 It is up to the Header Component to update based on any changes it may find in the Column Definition.
 {% else/ %}
@@ -392,16 +420,13 @@ It is the responsibility of the Header Component to inspect the Column Definitio
 
 The example below demonstrates refreshing of the headers. Note the following:
 
-* Each column is configured to use a custom Header Component.
-* The Header Component logs to the console when its lifecycle methods/functions are called.
-* Toggling between 'Upper Header Names' and 'Lower Header Names' causes the Header Component to refresh.
-* Toggling between 'Filter On' and 'Filter Off' causes the Header Component to refresh. {% if not(isFramework("react")) %}The Header Component returns `false` which results in the component getting destroyed and recreated.{% /if %}
-* Toggling between 'Resize On' and 'Resize Off' causes the Header Component to refresh. However there is no change to the Header Component as it doesn't depend on resize - the resize UI is provided by the grid.
+-   Each column is configured to use a custom Header Component.
+-   The Header Component logs to the console when its lifecycle methods/functions are called.
+-   Toggling between 'Upper Header Names' and 'Lower Header Names' causes the Header Component to refresh.
+-   Toggling between 'Filter On' and 'Filter Off' causes the Header Component to refresh. {% if not(isFramework("react")) %}The Header Component returns `false` which results in the component getting destroyed and recreated.{% /if %}
+-   Toggling between 'Resize On' and 'Resize Off' causes the Header Component to refresh. However there is no change to the Header Component as it doesn't depend on resize - the resize UI is provided by the grid.
 
 {% gridExampleRunner title="Refresh Headers" name="refresh-headers" /%}
-
-
-
 
 ### Custom Props
 
@@ -409,6 +434,7 @@ On top of the props provided by the grid, you can also provide your own paramete
 This is useful if you want to allow configuring the header component. For example, you might have a header component for formatting currency which also requires the currency symbol to be provided.
 
 {% if isFramework("javascript", "angular", "react") %}
+
 ```js
 colDef = {
     ...
@@ -418,9 +444,11 @@ colDef = {
     }
 }
 ```
+
 {% /if %}
 
 {% if isFramework("vue") %}
+
 ```js
 colDef = {
     ...
@@ -430,6 +458,7 @@ colDef = {
     }
 }
 ```
+
 {% /if %}
 
 ### Keyboard Navigation
@@ -440,8 +469,8 @@ Adding support for keyboard navigation and focus requires a custom `suppressHead
 
 An example of this is shown below, enabling keyboard navigation through the custom header elements when pressing {% kbd "⇥ Tab" /%} and {% kbd "⇧ Shift" /%}+{% kbd "⇥ Tab" /%}:
 
-* Click on the top left `Athlete` header, press the {% kbd "⇥ Tab" /%} key and notice that the button, textbox and link in the `Country` header can be tabbed into. At the end of the cell elements, the tab focus moves to the next `Age` header cell
-* Use {% kbd "⇧ Shift" /%}+{% kbd "⇥ Tab" /%} to navigate in the reverse direction
+-   Click on the top left `Athlete` header, press the {% kbd "⇥ Tab" /%} key and notice that the button, textbox and link in the `Country` header can be tabbed into. At the end of the cell elements, the tab focus moves to the next `Age` header cell
+-   Use {% kbd "⇧ Shift" /%}+{% kbd "⇥ Tab" /%} to navigate in the reverse direction
 
 The `suppressHeaderKeyboardEvent` callback is used to capture tab events and determine if the user is tabbing forward or backwards. It also suppresses the default behaviour of moving to the next cell if tabbing within the child elements.
 
@@ -461,7 +490,8 @@ When using Custom Header Components it might be necessary to have a better contr
 {% /if %}
 
 The example below demonstrates using the Dynamic Tooltips with a Custom Header Component.
-* Note that only Column Headers where the text is not fully displayed will show tooltips.
+
+-   Note that only Column Headers where the text is not fully displayed will show tooltips.
 
 {% gridExampleRunner title="Header Tooltip" name="dynamic-tooltips" /%}
 

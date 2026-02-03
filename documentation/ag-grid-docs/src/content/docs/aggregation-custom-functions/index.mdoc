@@ -2,11 +2,13 @@
 title: "Aggregation - Custom Functions"
 enterprise: true
 ---
+
 This section covers how custom aggregation functions can be supplied and used in the grid.
 
 {% gridExampleRunner title="Registering Functions" name="registering-functions" /%}
 
 ## Registering Custom Functions
+
 Custom functions can be registered to the grid by name via the `aggFuncs` grid option. The functions can
 then be applied to columns by referencing the function name in the column definition. The default values of
 `"sum"`, `"min"`, `"max"`, `"first"`, `"last"`, `"count"` and `"avg"` can also be overwritten with custom
@@ -14,6 +16,7 @@ implementations.
 
 The above example demonstrates the following configuration to register a custom `"range"` function and applies
 it to the `total` column:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
@@ -29,6 +32,7 @@ const gridOptions = {
 ```
 
 ## Directly Applied Functions
+
 For columns not [Configured via the UI](./aggregation-columns/#configuring-via-the-ui), it can be simpler to directly
 apply custom functions to columns. This can be done by passing a custom function directly to the column `aggFunc`
 property.
@@ -40,6 +44,7 @@ Direct functions will not appear in the [Columns Tool Panel](./tool-panel-column
 {% gridExampleRunner title="Directly Applied Functions" name="applied-functions" /%}
 
 The above example demonstrates the following configuration to apply a custom `"range"` function to the `total` column:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
@@ -55,6 +60,7 @@ const gridOptions = {
 ```
 
 ## Multiple Group Levels
+
 When aggregations are applied across multiple levels of grouping, the aggregation function is called recursively.
 This has the effect where some groups aggregate the results of other aggregations, causing incorrect results.
 
@@ -65,6 +71,7 @@ and a `"value"` field representing the result for this level.
 
 The above example demonstrates the following configuration to apply a custom `"range"` function which works with multiple
 levels of row grouping:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [

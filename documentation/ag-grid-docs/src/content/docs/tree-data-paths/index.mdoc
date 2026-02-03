@@ -2,6 +2,7 @@
 title: "Tree Data - Data Paths"
 enterprise: true
 ---
+
 Configure the grid to display structured data by providing data paths.
 
 ## Providing Hierarchy
@@ -10,6 +11,7 @@ Each row's position in the hierarchy must be provided to the grid as an array of
 The `getDataPath` callback is used to provide the grid with this path for each row.
 
 The below structure demonstrates a simple hierarchy, wherein the grid would expect the `getDataPath` callback to return the `path` field:
+
 ```
 const data = [
     { path: ['A'], id: 'A' },
@@ -17,6 +19,7 @@ const data = [
     { path: ['A', 'B', 'C'], id: 'C' },
 ]
 ```
+
 In the above hierarchy, the 'A' row is the parent of 'B', and 'B' is the parent of 'C'.
 
 {% note %}
@@ -33,6 +36,7 @@ This can be overridden by providing a `field` or `valueGetter` in the `autoGroup
 {% gridExampleRunner title="Displayed Values" name="duplicate-paths" exampleHeight=250 /%}
 
 The above example uses the following configuration to show two 'Bob Stevens' working within the same team, where the path is comprised of unique employee IDs:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     treeData: true,
@@ -60,6 +64,7 @@ highlights these omitted group rows by displaying 'Filler Group' in the 'Group T
 {% gridExampleRunner title="Filler Groups" name="filler-nodes" exampleHeight=305 /%}
 
 This uses the following dataset to provide data for the `D` and `E` group rows, but not the `A` and `B` group rows:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     rowData: [
@@ -89,6 +94,7 @@ This means any supplied group data will be ignored in favour of the aggregated v
 
 The example above uses the configuration below to demonstrate the `Desktop` row is being aggregated to show
 the sum of its children (4), rather than the provided value (1), despite both columns showing the same field:
+
 ```
 const gridOptions = {
     treeData: true,
@@ -110,4 +116,5 @@ Refer to the [Aggregation](./aggregation/) page for more details, and [Editing G
 for editing aggregated values with cascading updates to children.
 
 ## Next Up
+
 Continue to the next section to learn how to provide [Nested Records](./tree-data-nesting/).

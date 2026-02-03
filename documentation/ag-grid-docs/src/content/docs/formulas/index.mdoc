@@ -2,6 +2,7 @@
 title: "Formulas"
 enterprise: true
 ---
+
 Formulas let users enter spreadsheet-style expressions into grid cells so values update automatically when referenced data changes.
 
 ## Enabling Formulas
@@ -43,18 +44,19 @@ Formulas are text strings that start with an equals sign (`=`) and can contain r
 
 ### Basics
 
-- `=` prefix indicates a formula.
-- Constants can be numbers (e.g. `3.14`, `-7`), strings (e.g. `"Hello"`), or booleans (`TRUE`, `FALSE`).
-- Standard operator precedence applies (BODMAS/PEMDAS).
+-   `=` prefix indicates a formula.
+-   Constants can be numbers (e.g. `3.14`, `-7`), strings (e.g. `"Hello"`), or booleans (`TRUE`, `FALSE`).
+-   Standard operator precedence applies (BODMAS/PEMDAS).
 
 ### Cell References
 
 Cell references use column letters plus row numbers (e.g. `A1`, `B2`). Rows are 1-based and columns continue past `Z` with `AA`, `AB`, `AC`, and so on.
 
 Relative references move as the grid changes. Absolute references stay fixed using `$`:
-- `=$A$1` locks column and row.
-- `=A$1` locks the row only.
-- `=$A1` locks the column only.
+
+-   `=$A$1` locks column and row.
+-   `=A$1` locks the row only.
+-   `=$A1` locks the column only.
 
 #### Long-Form References
 
@@ -72,16 +74,16 @@ Formulas support built-in functions such as `SUM`, `AVERAGE`, and `CONCAT`. See 
 
 ## Feature Interactions / Compatibility
 
-| Feature | Status | Notes |
-| --- | --- | --- |
-| [Fill Handle](./cell-selection-fill-handle/) | Supported | Dragging from a formula offsets relative refs (e.g. `=B1+C2` becomes `=B2+C3`). Absolute refs remain fixed. |
-| [Cell Selection](./cell-selection/) | Supported | Required for range highlights and range handle editing in the formula editor. |
-| [Row Numbers](./row-numbers/) | Supported | Enabled by default; clicking a row number adds a row range to the formula. |
-| [Cell Expressions](./cell-expressions/#cell-expressions) | Not supported | |
-| [Tree Data](./tree-data/) and [Row Grouping](./grouping/) | Not supported | |
-| [Pivoting](./pivoting/) and [Aggregation](./aggregation/) | Not supported | |
-| [Master Detail](./master-detail/) | Not supported | |
-| [Server-Side](./server-side-model/), [Infinite](./infinite-scrolling/), and [Viewport](./viewport/) Row Models | Not supported | |
+| Feature                                                                                                        | Status        | Notes                                                                                                       |
+| -------------------------------------------------------------------------------------------------------------- | ------------- | ----------------------------------------------------------------------------------------------------------- |
+| [Fill Handle](./cell-selection-fill-handle/)                                                                   | Supported     | Dragging from a formula offsets relative refs (e.g. `=B1+C2` becomes `=B2+C3`). Absolute refs remain fixed. |
+| [Cell Selection](./cell-selection/)                                                                            | Supported     | Required for range highlights and range handle editing in the formula editor.                               |
+| [Row Numbers](./row-numbers/)                                                                                  | Supported     | Enabled by default; clicking a row number adds a row range to the formula.                                  |
+| [Cell Expressions](./cell-expressions/#cell-expressions)                                                       | Not supported |                                                                                                             |
+| [Tree Data](./tree-data/) and [Row Grouping](./grouping/)                                                      | Not supported |                                                                                                             |
+| [Pivoting](./pivoting/) and [Aggregation](./aggregation/)                                                      | Not supported |                                                                                                             |
+| [Master Detail](./master-detail/)                                                                              | Not supported |                                                                                                             |
+| [Server-Side](./server-side-model/), [Infinite](./infinite-scrolling/), and [Viewport](./viewport/) Row Models | Not supported |                                                                                                             |
 
 ## Formula Data Source
 
@@ -122,6 +124,6 @@ When performing a [CSV Export](./csv-export), the grid exports the evaluated val
 
 ## See also
 
-- [Formula Editor Component](./formula-editor-component/) – The rich editing experience for formula cells, including autocomplete and range selection tools.
-- [Formula Reference](./formula-reference/) – Full reference for operators (+, -, *, /, ^, &, comparisons), provided functions and errors.
-- [Custom Functions](./formula-custom-functions/) – How to register and implement custom functions for formulas.
+-   [Formula Editor Component](./formula-editor-component/) – The rich editing experience for formula cells, including autocomplete and range selection tools.
+-   [Formula Reference](./formula-reference/) – Full reference for operators (+, -, \*, /, ^, &, comparisons), provided functions and errors.
+-   [Custom Functions](./formula-custom-functions/) – How to register and implement custom functions for formulas.

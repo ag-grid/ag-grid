@@ -1,0 +1,77 @@
+---
+title: "BigInt Filter"
+---
+
+BigInt Filters allow you to filter `bigint` data without precision loss.
+
+{% gridExampleRunner title="BigInt Filter" name="bigint-filter" /%}
+
+## Enabling BigInt Filters
+
+The BigInt Filter is the default filter used for columns with `cellDataType: 'bigint'` when the [Set Filter is Disabled by Default](./filter-set/#suppress-set-filter-by-default). It can also be configured explicitly as shown below:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'totalBigInt',
+            cellDataType: 'bigint',
+            filter: true,
+        },
+        {
+            field: 'ledgerId',
+            filter: 'agBigIntColumnFilter',
+        },
+    ],
+};
+```
+
+## BigInt Filter Parameters
+
+BigInt Filters are configured through the `filterParams` attribute of the column definition (`IBigIntFilterParams` interface):
+
+{% interfaceDocumentation interfaceName="IBigIntFilterParams" config={"description":"", "sortAlphabetically":true} /%}
+
+## Input Parsing and Validation
+
+The BigInt Filter accepts decimal integer syntax only:
+
+- `500` and `500n` are both accepted and parse to `500n`.
+- Hex, binary, decimals and scientific notation are rejected.
+- Invalid input is handled via standard validation and does not crash the grid.
+
+## BigInt Filter Model
+
+The Filter Model describes the current state of the applied BigInt Filter:
+
+{% interfaceDocumentation interfaceName="BigIntFilterModel" config={"description":""} /%}
+
+## BigInt Filter Options
+
+The BigInt Filter presents the same list of [Filter Options](./filter-conditions/#filter-options) as the Number Filter:
+
+| Option Name              | Option Key            | Included by Default |
+| ------------------------ | --------------------- | ------------------- |
+| Equals                   | `equals`              | Yes                 |
+| Does not equal           | `notEqual`            | Yes                 |
+| Greater than             | `greaterThan`         | Yes                 |
+| Greater than or equal to | `greaterThanOrEqual`  | Yes                 |
+| Less than                | `lessThan`            | Yes                 |
+| Less than or equal to    | `lessThanOrEqual`     | Yes                 |
+| Between                  | `inRange`             | Yes                 |
+| Blank                    | `blank`               | Yes                 |
+| Not blank                | `notBlank`            | Yes                 |
+| Choose one               | `empty`               | No                  |
+
+The default option for the BigInt Filter is `equals`.
+
+## Applying the BigInt Filter
+
+Applying the BigInt Filter is described in more detail in the following sections:
+
+* [Apply, Clear, Reset and Cancel Buttons](./filter-applying/#apply-clear-reset-and-cancel-buttons)
+* [Applying the UI Model](./filter-applying/#applying-the-ui-model)
+
+## Next Up
+
+Continue to the next section to learn about [Date Filters](./filter-date/).

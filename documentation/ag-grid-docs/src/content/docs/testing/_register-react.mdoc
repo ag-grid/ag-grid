@@ -1,4 +1,5 @@
 {% if isFramework("react") %}
+
 ## Testing with React Testing Library
 
 To illustrate an alternative approach, the following snippet demonstrates testing a simple configuration of AG Grid with the [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/).
@@ -7,9 +8,9 @@ To illustrate an alternative approach, the following snippet demonstrates testin
 import { getByText, getByTestId } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import { 
+import {
     createGrid,
-    GridOptions, 
+    GridOptions,
     agTestIdFor,
     setupAgTestIds,
 } from 'ag-grid-community';
@@ -23,9 +24,9 @@ function createAgGrid() {
         columnDefs: [
             { headerName: 'Make', field: 'make' },
             { headerName: 'Model', field: 'model' },
-            { 
-                field: 'price', 
-                valueFormatter: (params) => '$' + params.value.toLocaleString() 
+            {
+                field: 'price',
+                valueFormatter: (params) => '$' + params.value.toLocaleString()
             },
         ],
         rowData: [
@@ -54,4 +55,5 @@ test('examples of some things', async () => {
     expect(api.getDisplayedRowCount()).toBe(3);
 });
 ```
+
 {% /if %}

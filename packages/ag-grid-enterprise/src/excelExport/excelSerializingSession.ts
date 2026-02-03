@@ -383,16 +383,19 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                 type: 'excel',
                 useRawFormula: true,
             });
+            const rawValueForCell = valueForCell;
+            const valueForCellString =
+                typeof rawValueForCell === 'bigint' ? rawValueForCell.toString() : rawValueForCell;
             const styleIds: string[] = this.config.styleLinker({
                 rowType: 'BODY',
                 rowIndex,
-                value: valueForCell,
+                value: rawValueForCell,
                 column,
                 node,
             });
             const excelStyleId: string | null = this.getStyleId(styleIds);
             const colSpan = column.getColSpan(node);
-            const addedImage = this.addImage(rowIndex, column, valueForCell);
+            const addedImage = this.addImage(rowIndex, column, valueForCellString);
 
             if (addedImage) {
                 currentCells.push(
@@ -407,23 +410,23 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                 currentCells.push(
                     this.createMergedCell(
                         excelStyleId,
-                        this.getDataTypeForValue(valueForCell),
-                        valueForCell,
+                        this.getDataTypeForValue(rawValueForCell),
+                        valueForCellString,
                         colSpan - 1
                     )
                 );
             } else {
-                const isFormula = column.isAllowFormula() && this.formulaSvc?.isFormula(valueForCell);
+                const isFormula = column.isAllowFormula() && this.formulaSvc?.isFormula(valueForCellString);
                 const cell = this.createCell(
                     excelStyleId,
-                    isFormula ? 'f' : this.getDataTypeForValue(valueForCell),
+                    isFormula ? 'f' : this.getDataTypeForValue(rawValueForCell),
                     isFormula
                         ? this.formulaSvc?.updateFormulaByOffset({
-                              value: valueForCell,
+                              value: valueForCellString,
                               rowDelta: rowIndex - (node.formulaRowIndex! + 1),
                               useRefFormat: false,
                           })
-                        : valueForCell,
+                        : valueForCellString,
                     valueFormatted
                 );
 
@@ -463,7 +466,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         return this.workbook.addWorksheet(excelStyles, data, config);
     }
 
-    private getDataTypeForValue(valueForCell?: string): ExcelOOXMLDataType {
+    private getDataTypeForValue(valueForCell?: any): ExcelOOXMLDataType {
         if (valueForCell === undefined) {
             return 'empty';
         }
@@ -675,7 +678,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
 
     private isNumerical(value: any): boolean {
         if (typeof value === 'bigint') {
-            return true;
+            return false;
         }
         return isFinite(value) && value !== '' && !isNaN(parseFloat(value));
     }

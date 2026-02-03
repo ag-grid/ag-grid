@@ -28,21 +28,21 @@ You can create your own Custom Components to customise the behaviour of the grid
 
 The full list of component types you can provide in the grid are as follows:
 
-* [Cell Component](./component-cell-renderer/): To customise the contents of a cell.
-* [Header Component](./column-headers-components/#custom-component): To customise the header of a column.
-* [Inner Header Component](./column-headers-components/#inner-header-component): To customise the inner header of a column.
-* [Header Group Component](./column-groups/#custom-group-component): To customise the header of a column group.
-* [Inner HeaderGroup Component](./column-groups/#inner-header-group-component): To customise the inner header component of a column group.
-* [Edit Component](./cell-editors/): To customise the editing of a cell.
-* [Filter Component](./component-filter/): For custom column filter that appears inside the column menu.
-* [Floating Filter](./component-floating-filter/): For custom column floating filter that appears inside the column menu.
-* [Date Component](./filter-date/#custom-selection-component): To customise the date selection component in the date filter.
-* [Menu Item Component](./component-menu-item/): To customise the items within grid menus.
-* [Loading Component](./component-loading-cell-renderer/): To customise the loading cell row when using Server Side row model.
-* [Overlay Component](./overlays-overview/): To customise loading, no rows, no matching rows and exporting overlay components or provide a custom overlay.
-* [Status Bar Component](./status-bar/): For custom status bar components.
-* [Tool Panel Component](./component-tool-panel/): For custom tool panel components.
-* [Tooltip Component](./tooltips/): For custom cell tooltip components.
+-   [Cell Component](./component-cell-renderer/): To customise the contents of a cell.
+-   [Header Component](./column-headers-components/#custom-component): To customise the header of a column.
+-   [Inner Header Component](./column-headers-components/#inner-header-component): To customise the inner header of a column.
+-   [Header Group Component](./column-groups/#custom-group-component): To customise the header of a column group.
+-   [Inner HeaderGroup Component](./column-groups/#inner-header-group-component): To customise the inner header component of a column group.
+-   [Edit Component](./cell-editors/): To customise the editing of a cell.
+-   [Filter Component](./component-filter/): For custom column filter that appears inside the column menu.
+-   [Floating Filter](./component-floating-filter/): For custom column floating filter that appears inside the column menu.
+-   [Date Component](./filter-date/#custom-selection-component): To customise the date selection component in the date filter.
+-   [Menu Item Component](./component-menu-item/): To customise the items within grid menus.
+-   [Loading Component](./component-loading-cell-renderer/): To customise the loading cell row when using Server Side row model.
+-   [Overlay Component](./overlays-overview/): To customise loading, no rows, no matching rows and exporting overlay components or provide a custom overlay.
+-   [Status Bar Component](./status-bar/): For custom status bar components.
+-   [Tool Panel Component](./component-tool-panel/): For custom tool panel components.
+-   [Tooltip Component](./tooltips/): For custom cell tooltip components.
 
 The remainder of this page gives information that is common across all the component types.
 
@@ -66,7 +66,7 @@ To provide additional parameters, use the property `[prop-name]Params`, e.g. `ce
 ```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
-        { 
+        {
             field: 'price',
             cellRenderer: PriceCellRenderer,
             cellRendererParams: {
@@ -83,7 +83,9 @@ const gridOptions = {
 {% partial file="./_js-fw-common-end.mdoc" /%}
 
 {% if isFramework("react") %}
+
 ## Higher Order Components
+
 {% /if %}
 
 {% if isFramework("react") %}
@@ -91,6 +93,7 @@ If you use `connect` to use Redux, or if you're using a Higher Order Component (
 {% /if %}
 
 {% if isFramework("react") %}
+
 ```jsx
 export default connect((state) => {
     return {
@@ -100,10 +103,13 @@ export default connect((state) => {
 }, null, null, { forwardRef: true } // must be supplied for react/redux when using AgGridReact
 )(PriceRenderer);
 ```
+
 {% /if %}
 
 {% if isFramework("angular", "vue") %}
+
 ## Child to Parent Communication
+
 {% /if %}
 
 {% if isFramework("angular") %}
@@ -115,6 +121,7 @@ then access.
 {% /if %}
 
 {% if isFramework("angular") %}
+
 ```ts
 //...other imports
 import {Component} from '@angular/core';
@@ -159,6 +166,7 @@ export class CellRendererComponent implements ICellRendererAngularComp {
   //...other properties & methods
 }
 ```
+
 {% /if %}
 
 {% if isFramework("angular") %}
@@ -176,6 +184,7 @@ then access.
 {% /if %}
 
 {% if isFramework("vue") %}
+
 ```js
 // Parent Grid Component
 <template>
@@ -231,6 +240,7 @@ export default {
 }
 </script>
 ```
+
 {% /if %}
 
 {% if isFramework("vue") %}
@@ -243,122 +253,123 @@ information between the components.
 
 The below table gives a summary of the components, where they are configured and using what attribute.
 
-| Component                     | Where                     | Attribute |
-| ----------------------------- | ------------------------- | ------------------------ |
-| Cell Component                 | Column Definition         | cellRenderer{% br /%}cellRendererParams{% br /%}cellRendererSelector         |
-| Editor Component               | Column Definition         | cellEditor{% br /%}cellEditorParams{% br /%}cellEditorSelector|
-| Filter                         | Column Definition         | filter{% br /%}filterParams              |
-| Floating Filter                | Column Definition         | floatingFilter{% br /%}floatingFilterParams       |
-| Date Component                 | Column Definition         | dateComponent{% br /%}dateComponentParams                  |
-| Header Component               | Column Definition         | headerComponent{% br /%}headerComponentParams               |
-| Inner Header Component         | Column Definition         | innerHeaderComponent{% br /%}innerHeaderComponentParams               |
-| Header Group Component         | Column Definition         | headerGroupComponent{% br /%}headerGroupComponentParams         |
-| Inner Header Group Component   | Column Definition         | innerHeaderGroupComponent{% br /%}innerHeaderGroupComponentParams               |
-| Tooltip Component              | Column Definition         | tooltipComponent{% br /%}tooltipComponentParams              |
-| Group Row Cell Component       | Grid Option               | groupRowRenderer{% br /%}groupRowRendererParams         |
-| Group Row Inner Cell Component | cellRendererParams{%br /%}groupRowRendererParams{%br /%}           | innerRenderer{% br /%}innerRendererParams            |
-| Detail Cell Component          | Grid Option               | detailCellRenderer{% br /%}detailCellRendererParams        |
-| Full Width Cell Component      | Grid Option               | fullWidthCellRenderer{% br /%}fullWidthCellRendererParams        |
-| Loading Cell Component         | Grid Option{%br /%}Column Definition               | loadingCellRenderer{% br /%}loadingCellRendererParams       |
-| Overlay Component              | Grid Option               | overlayComponent{% br /%}overlayComponentParams{% br /%}overlayComponentSelector        |
-| Active Overlay                 | Grid Option               | activeOverlay{% br /%}activeOverlayParams        |
-| Drag and Drop Image            | Grid Option               | dragAndDropImageComponent{% br /%}dragAndDropImageComponentParams        |
-| Status Bar Component           | Grid Option -> Status Bar | statusPanel{% br /%}statusPanelParams          |
-| Tool Panel                     | Grid Option -> Side Bar   | toolPanel{% br /%}toolPanelParams            |
-| Menu Item                      | Grid Option -> Menu       | menuItem{% br /%}menuItemParams            |
+| Component                      | Where                                                    | Attribute                                                                        |
+| ------------------------------ | -------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Cell Component                 | Column Definition                                        | cellRenderer{% br /%}cellRendererParams{% br /%}cellRendererSelector             |
+| Editor Component               | Column Definition                                        | cellEditor{% br /%}cellEditorParams{% br /%}cellEditorSelector                   |
+| Filter                         | Column Definition                                        | filter{% br /%}filterParams                                                      |
+| Floating Filter                | Column Definition                                        | floatingFilter{% br /%}floatingFilterParams                                      |
+| Date Component                 | Column Definition                                        | dateComponent{% br /%}dateComponentParams                                        |
+| Header Component               | Column Definition                                        | headerComponent{% br /%}headerComponentParams                                    |
+| Inner Header Component         | Column Definition                                        | innerHeaderComponent{% br /%}innerHeaderComponentParams                          |
+| Header Group Component         | Column Definition                                        | headerGroupComponent{% br /%}headerGroupComponentParams                          |
+| Inner Header Group Component   | Column Definition                                        | innerHeaderGroupComponent{% br /%}innerHeaderGroupComponentParams                |
+| Tooltip Component              | Column Definition                                        | tooltipComponent{% br /%}tooltipComponentParams                                  |
+| Group Row Cell Component       | Grid Option                                              | groupRowRenderer{% br /%}groupRowRendererParams                                  |
+| Group Row Inner Cell Component | cellRendererParams{%br /%}groupRowRendererParams{%br /%} | innerRenderer{% br /%}innerRendererParams                                        |
+| Detail Cell Component          | Grid Option                                              | detailCellRenderer{% br /%}detailCellRendererParams                              |
+| Full Width Cell Component      | Grid Option                                              | fullWidthCellRenderer{% br /%}fullWidthCellRendererParams                        |
+| Loading Cell Component         | Grid Option{%br /%}Column Definition                     | loadingCellRenderer{% br /%}loadingCellRendererParams                            |
+| Overlay Component              | Grid Option                                              | overlayComponent{% br /%}overlayComponentParams{% br /%}overlayComponentSelector |
+| Active Overlay                 | Grid Option                                              | activeOverlay{% br /%}activeOverlayParams                                        |
+| Drag and Drop Image            | Grid Option                                              | dragAndDropImageComponent{% br /%}dragAndDropImageComponentParams                |
+| Status Bar Component           | Grid Option -> Status Bar                                | statusPanel{% br /%}statusPanelParams                                            |
+| Tool Panel                     | Grid Option -> Side Bar                                  | toolPanel{% br /%}toolPanelParams                                                |
+| Menu Item                      | Grid Option -> Menu                                      | menuItem{% br /%}menuItemParams                                                  |
 
 ## Grid Provided Components
 
 The grid comes with pre-registered components that can be used. Each component provided by the grid starts with the namespaces 'ag' to minimise naming conflicts with user provided components. The full list of grid provided components are in the table below.
 
-| Drag And Drop | |
-| - | - |
+| Drag And Drop      |                                                         |
+| ------------------ | ------------------------------------------------------- |
 | agDragAndDropImage | Default cover element when grid parts are being dragged |
 
-| Date Inputs | |
-| - | - |
+| Date Inputs |                                    |
+| ----------- | ---------------------------------- |
 | agDateInput | Default date input used by filters |
 
-| Column Headers | |
-| - | - |
-| agColumnHeader | Default column header |
+| Column Headers      |                             |
+| ------------------- | --------------------------- |
+| agColumnHeader      | Default column header       |
 | agColumnHeaderGroup | Default column group header |
 
-| Column Filters | |
-| - | - |
-| agSetColumnFilter {% enterpriseIcon /%} | Set filter (default when using AG Grid Enterprise) |
-| agTextColumnFilter | Simple text filter (default when using AG Grid Community) |
-| agNumberColumnFilter | Number filter |
-| agDateColumnFilter | Date filter |
-| agMultiColumnFilter {% enterpriseIcon /%} | Multi filter |
-| agGroupColumnFilter {% enterpriseIcon /%} | Group column filter |
+| Column Filters                            |                                                           |
+| ----------------------------------------- | --------------------------------------------------------- |
+| agSetColumnFilter {% enterpriseIcon /%}   | Set filter (default when using AG Grid Enterprise)        |
+| agTextColumnFilter                        | Simple text filter (default when using AG Grid Community) |
+| agNumberColumnFilter                      | Number filter                                             |
+| agDateColumnFilter                        | Date filter                                               |
+| agMultiColumnFilter {% enterpriseIcon /%} | Multi filter                                              |
+| agGroupColumnFilter {% enterpriseIcon /%} | Group column filter                                       |
 
-| Floating Filters | |
-| - | - |
-| agSetColumnFloatingFilter {% enterpriseIcon /%} | Floating set filter |
-| agTextColumnFloatingFilter | Floating text filter |
-| agNumberColumnFloatingFilter | Floating number filter |
-| agDateColumnFloatingFilter | Floating date filter |
-| agMultiColumnFloatingFilter {% enterpriseIcon /%} | Floating multi filter |
+| Floating Filters                                  |                              |
+| ------------------------------------------------- | ---------------------------- |
+| agSetColumnFloatingFilter {% enterpriseIcon /%}   | Floating set filter          |
+| agTextColumnFloatingFilter                        | Floating text filter         |
+| agNumberColumnFloatingFilter                      | Floating number filter       |
+| agDateColumnFloatingFilter                        | Floating date filter         |
+| agMultiColumnFloatingFilter {% enterpriseIcon /%} | Floating multi filter        |
 | agGroupColumnFloatingFilter {% enterpriseIcon /%} | Floating group column filter |
 
-| Cell Components | |
-| - | - |
-| agAnimateShowChangeCellRenderer | Cell Component that animates value changes | 
-| agAnimateSlideCellRenderer | Cell Component that animates value changes | 
-| agGroupCellRenderer | Cell Component for displaying group information | 
-| agLoadingCellRenderer {% enterpriseIcon /%} | Cell Component for loading row when using Enterprise row model | 
-| agSkeletonCellRenderer | Cell Component for displaying skeleton cells |
-| agCheckboxCellRenderer | Cell Component that displays a checkbox for boolean values | 
+| Cell Components                             |                                                                |
+| ------------------------------------------- | -------------------------------------------------------------- |
+| agAnimateShowChangeCellRenderer             | Cell Component that animates value changes                     |
+| agAnimateSlideCellRenderer                  | Cell Component that animates value changes                     |
+| agGroupCellRenderer                         | Cell Component for displaying group information                |
+| agLoadingCellRenderer {% enterpriseIcon /%} | Cell Component for loading row when using Enterprise row model |
+| agSkeletonCellRenderer                      | Cell Component for displaying skeleton cells                   |
+| agCheckboxCellRenderer                      | Cell Component that displays a checkbox for boolean values     |
 
-| Overlays | |
-| - | - |
-| agLoadingOverlay | Loading overlay |
-| agNoRowsOverlay | No rows overlay |
+| Overlays                |                          |
+| ----------------------- | ------------------------ |
+| agLoadingOverlay        | Loading overlay          |
+| agNoRowsOverlay         | No rows overlay          |
 | agNoMatchingRowsOverlay | No matching rows overlay |
-| agExportingOverlay| Exporting overlay |
+| agExportingOverlay      | Exporting overlay        |
 
-| Cell Editors | |
-| - | - |
-| agTextCellEditor | Text cell editor |
-| agSelectCellEditor | Select cell editor |
-| agRichSelectCellEditor {% enterpriseIcon /%} | Rich select editor |
-| agLargeTextCellEditor | Large text cell editor |
-| agNumberCellEditor | Number cell editor |
-| agDateCellEditor | Date cell editor |
-| agDateStringCellEditor | Date represented as string cell editor |
-| agCheckboxCellEditor | Checkbox cell editor |
+| Cell Editors                                 |                                        |
+| -------------------------------------------- | -------------------------------------- |
+| agTextCellEditor                             | Text cell editor                       |
+| agSelectCellEditor                           | Select cell editor                     |
+| agRichSelectCellEditor {% enterpriseIcon /%} | Rich select editor                     |
+| agLargeTextCellEditor                        | Large text cell editor                 |
+| agNumberCellEditor                           | Number cell editor                     |
+| agDateCellEditor                             | Date cell editor                       |
+| agDateStringCellEditor                       | Date represented as string cell editor |
+| agCheckboxCellEditor                         | Checkbox cell editor                   |
 
-| Master Detail | |
-| - | - |
+| Master Detail                              |                                       |
+| ------------------------------------------ | ------------------------------------- |
 | agDetailCellRenderer {% enterpriseIcon /%} | Detail panel for master / detail grid |
 
-| Column Menu / Context Menu | |
-| - | - |
+| Column Menu / Context Menu       |                                         |
+| -------------------------------- | --------------------------------------- |
 | agMenuItem {% enterpriseIcon /%} | Menu item within column or context menu |
 
 ## Overriding Grid Components
 
 It is also possible to override components. Where the grid uses a default value, this means the override component will be used instead. The default components, where overriding makes sense, are as follows:
 
-* **agDragAndDropImage**: To change the default drag and drop image when dragging grid parts.
-* **agDateInput**: To change the default date selection across all filters.
-* **agColumnHeader**: To change the default column header across all columns.
-* **agColumnGroupHeader**: To change the default column group header across all columns.
-* **agLoadingCellRenderer**: To change the default loading cell renderer for Enterprise Row Model.
-* **agSkeletonCellRenderer**: To change the default skeleton loading cell renderer for Enterprise Row Model.
-* **agLoadingOverlay**: To change the default 'loading' overlay.
-* **agNoRowsOverlay**: To change the default 'no rows' overlay.
-* **agNoMatchingRowsOverlay**: To change the default 'no matching rows' overlay.
-* **agExportingOverlay**: To change the default 'exporting' overlay.
-* **agCellEditor**: To change the default cell editor.
-* **agDetailCellRenderer**: To change the default detail panel for master / detail grids.
-* **agMenuItem**: To change the default menu item for column and context menus.
-* **agTooltipComponent**: To change the default tooltip component for all tooltips.
+-   **agDragAndDropImage**: To change the default drag and drop image when dragging grid parts.
+-   **agDateInput**: To change the default date selection across all filters.
+-   **agColumnHeader**: To change the default column header across all columns.
+-   **agColumnGroupHeader**: To change the default column group header across all columns.
+-   **agLoadingCellRenderer**: To change the default loading cell renderer for Enterprise Row Model.
+-   **agSkeletonCellRenderer**: To change the default skeleton loading cell renderer for Enterprise Row Model.
+-   **agLoadingOverlay**: To change the default 'loading' overlay.
+-   **agNoRowsOverlay**: To change the default 'no rows' overlay.
+-   **agNoMatchingRowsOverlay**: To change the default 'no matching rows' overlay.
+-   **agExportingOverlay**: To change the default 'exporting' overlay.
+-   **agCellEditor**: To change the default cell editor.
+-   **agDetailCellRenderer**: To change the default detail panel for master / detail grids.
+-   **agMenuItem**: To change the default menu item for column and context menus.
+-   **agTooltipComponent**: To change the default tooltip component for all tooltips.
 
 To override the default component, register the custom component in the GridOptions `components` property under the above name.
 
 {% if isFramework("javascript") %}
+
 ```js
 const gridOptions = {
     // Here is where we specify the components to be used instead of the default
@@ -368,16 +379,18 @@ const gridOptions = {
     }
 };
 ```
+
 {% /if %}
 
 {% if isFramework("angular") %}
+
 ```ts
 @Component({
     selector: 'my-app',
     template: `
         <ag-grid-angular
             [components]="components"
-            ...other properties...  
+            ...other properties...
         />
     `
 })
@@ -388,13 +401,15 @@ export class AppComponent {
         agColumnHeader: CustomHeaderComponent
     };
 ```
+
 {% /if %}
 
 {% if isFramework("react") %}
+
 ```jsx
 const components = useMemo(() => (
     { agDateInput: CustomDateComponent,
-        agColumnHeader: CustomHeaderComponent 
+        agColumnHeader: CustomHeaderComponent
     }), []);
 
 <AgGridReact
@@ -402,9 +417,11 @@ const components = useMemo(() => (
     ...other properties...
 />
 ```
+
 {% /if %}
 
 {% if isFramework("vue") %}
+
 ```ts
 const MyApp = {
     // Here is where we specify the components to be used instead of the default
@@ -414,6 +431,7 @@ const MyApp = {
         agColumnHeader: CustomHeaderComponent
     },
 ```
+
 {% /if %}
 
 {% if isFramework("vue") %}

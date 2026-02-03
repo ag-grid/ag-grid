@@ -5,9 +5,10 @@ title: "Text Formatting"
 Use a Value Formatter to provide text formatting of values.
 
 In the example below:
-* Column `Raw Value` displays the value of the `a` field of the row data.
-* Column `Currency Value (£)` uses a `currencyFormatter` to display the value as a currency.
-* Column `Bracketed Value` uses a `bracketsFormatter` to display the value inside brackets.
+
+-   Column `Raw Value` displays the value of the `a` field of the row data.
+-   Column `Currency Value (£)` uses a `currencyFormatter` to display the value as a currency.
+-   Column `Bracketed Value` uses a `bracketsFormatter` to display the value inside brackets.
 
 {% gridExampleRunner title="Value Formatters" name="value-formatters" /%}
 
@@ -28,8 +29,8 @@ Below shows the column definition properties for value formatters.
 
 {% apiDocumentation source="column-properties/properties.json" section="columns" names=["valueFormatter"] /%}
 
-Please note the Value Formatter params won't always have `data` and `node` supplied, 
-e.g. the params supplied to the Value Formatter in the [Set Filter](./filter-set/). 
+Please note the Value Formatter params won't always have `data` and `node` supplied,
+e.g. the params supplied to the Value Formatter in the [Set Filter](./filter-set/).
 
 As a result favour formatter implementations that rely upon the 'value' argument instead, as this
 will lead to better reuse of your Value Formatters.
@@ -50,11 +51,11 @@ This behaviour can be prevented by setting the column definition property `useVa
 
 Using the value formatter for export applies to the following features:
 
-* [Copy/Cut](./clipboard/#processing-pasted-data)
-* [Fill Handle](./cell-selection-fill-handle/)
-* [Copy Range Down](./cell-selection/#copy-cell-range-down)
-* [CSV Export](./csv-export/)
-* [Excel Export](./excel-export-customising-content/)
+-   [Copy/Cut](./clipboard/#processing-pasted-data)
+-   [Fill Handle](./cell-selection-fill-handle/)
+-   [Copy Range Down](./cell-selection/#copy-cell-range-down)
+-   [CSV Export](./csv-export/)
+-   [Excel Export](./excel-export-customising-content/)
 
 Using a value formatter for export is normally used in conjunction with [Using a Value Parser for Import](./value-parsers/#use-value-parser-for-import), where a [Value Parser](./value-parsers/) is defined that does the reverse of the value formatter.
 
@@ -64,9 +65,9 @@ The following example demonstrates the default behaviour using the value formatt
 
 Note that if any of the following conditions are true, then `useValueFormatterForExport` is ignored for that feature and the value will be either the original value or that set in the custom handler:
 
-* If `processCellForClipboard` is provided when using copy/cut.
-* If `fillOperation` is provided when using fill handle.
-* If `processCellForClipboard` is provided when using copy range down.
-* If `processCellCallback` is provided when using CSV export.
-* If `processCellCallback` or [Excel Data Types](./excel-export-data-types/) are provided when using Excel export.
-* If the underlying value is a number when using Excel export. To export formatted number values to Excel, please use the [Excel Data Type](./excel-export-data-types/#strings-number-and-booleans) feature.
+-   If `processCellForClipboard` is provided when using copy/cut.
+-   If `fillOperation` is provided when using fill handle.
+-   If `processCellForClipboard` is provided when using copy range down.
+-   If `processCellCallback` is provided when using CSV export.
+-   If `processCellCallback` or [Excel Data Types](./excel-export-data-types/) are provided when using Excel export.
+-   If the underlying value is a number when using Excel export. To export formatted number values to Excel, please use the [Excel Data Type](./excel-export-data-types/#strings-number-and-booleans) feature.

@@ -5,7 +5,7 @@ description: "See whats new in AG Grid, view a full list of changes and migrate 
 
 ## What's New
 
-See the [release post](https://blog.ag-grid.com/whats-new-in-ag-grid-31-3/) for details of what's new in 
+See the [release post](https://blog.ag-grid.com/whats-new-in-ag-grid-31-3/) for details of what's new in
 version 31.3.
 
 ## Codemods
@@ -37,6 +37,7 @@ The codemod only transforms source files that make use of deprecated features, s
 See the [Codemods](./codemods/) documentation for more details.
 
 ## Deprecations
+
 {% metaTag tags=["ToolPanelColumnCompParams", "groupIncludeFooter", "groupIncludeTotalFooter", "footerValueGetter", "tabToNextCell", "tabToNextHeaderCell", "getValue"] /%}
 
 This release includes the following deprecations:
@@ -45,14 +46,14 @@ This release includes the following deprecations:
 
 ### GridOptions
 
-- `groupIncludeFooter` - deprecated, use `groupTotalRow` instead.
-- `groupIncludeTotalFooter` - deprecated, use `grandTotalRow` instead.
-- `footerValueGetter` - deprecated, use `totalValueGetter` instead.
+-   `groupIncludeFooter` - deprecated, use `groupTotalRow` instead.
+-   `groupIncludeTotalFooter` - deprecated, use `grandTotalRow` instead.
+-   `footerValueGetter` - deprecated, use `totalValueGetter` instead.
 
 ### Grid API
 
-- `tabToNextCell` - `null` input param type deprecated, provide boolean input param type instead.
-- `tabToNextHeaderCell` - `null` input param type deprecated, provide boolean input param type instead.
-- `getValue` - deprecated, use `getCellValue` instead.
-- Returning `null` from `tabToNextCell` is deprecated. Instead, return `true` to stay on the current cell, or `false` to let the browser handle the tab behaviour.
-- Returning `null` from `tabToNextHeader` is deprecated. Instead, return `true` to stay on the current header, or `false` to let the browser handle the tab behaviour.
+-   `tabToNextCell` - `null` input param type deprecated, provide boolean input param type instead.
+-   `tabToNextHeaderCell` - `null` input param type deprecated, provide boolean input param type instead.
+-   `getValue` - deprecated, use `getCellValue` instead.
+-   Returning `null` from `tabToNextCell` is deprecated. Instead, return `true` to stay on the current cell, or `false` to let the browser handle the tab behaviour.
+-   Returning `null` from `tabToNextHeader` is deprecated. Instead, return `true` to stay on the current header, or `false` to let the browser handle the tab behaviour.

@@ -1,4 +1,5 @@
 {% if isFramework("vue") %}
+
 ## Testing your Vue Application in NodeJS
 
 We will walk through how you can test AG Grid as part of your Vue application, using default build tools provided when using the [Vue CLI](https://cli.vuejs.org/) utility.
@@ -39,6 +40,7 @@ const ensureGridApiHasBeenSet = vm => new Promise(function (resolve, reject) {
 
 We can now use this utility method before each test or in the `beforeEach` to ensure the Grid is fully ready
 before continuing with out test:
+
 ```js
 beforeEach((done) => {
     wrapper = mount(GridExample, {});

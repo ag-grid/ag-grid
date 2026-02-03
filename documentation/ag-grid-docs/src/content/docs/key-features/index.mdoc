@@ -25,7 +25,6 @@ The page provides an overview of and introduction to popular features available 
 {% /videoSection %}
 {% /if %}
 
-
 {% note %}
 The following sections assume a level of familiarity with common Data Grid concepts. If you're new to {% getFrameworkCapitalised() %} Data Grids in general, we recommend starting with our [Introductory Tutorial](./deep-dive/) instead.
 {% /note %}
@@ -64,6 +63,7 @@ const gridOptions = {
 Add buttons, checkboxes or images to cells with a [Cell Component](./component-cell-renderer/).
 
 {% if isFramework("react") %}
+
 ```jsx
 const CustomButtonComponent = (props) => {
     return <button onClick={() => window.alert('clicked') }>Push Me!</button>;
@@ -74,9 +74,11 @@ const [colDefs, setColDefs] = useState([
     // ...
 ]);
 ```
+
 {% /if %}
 
 {% if isFramework("javascript") %}
+
 ```js
 class CustomButtonComponent {
     eGui;
@@ -114,9 +116,11 @@ const columnDefs = [
     // ...
 ];
 ```
+
 {% /if %}
 
 {% if isFramework("angular") %}
+
 ```js
 @Component({
     standalone: true,
@@ -137,9 +141,11 @@ columnDefs: ColDef[] = [
     // ...
 ];
 ```
+
 {% /if %}
 
 {% if isFramework("vue") %}
+
 ```js
 // ...
     components: {
@@ -165,6 +171,7 @@ columnDefs: ColDef[] = [
 },
 // ...
 ```
+
 {% /if %}
 
 ### Resizing Columns
@@ -421,16 +428,16 @@ This example demonstrates cell style and row style.
 
 ## Enterprise Features {% enterpriseIcon /%}
 
-AG Grid comes in two forms: 
+AG Grid comes in two forms:
 
-- **AG Grid Community**: Free for everyone, including production use - no licence required.
-- **AG Grid Enterprise**: Requires a licence to use in production. Free to test locally, or request a [trial](./community-vs-enterprise/#request-a-30-day-enterprise-bundle-trial-licence) to test in production.
+-   **AG Grid Community**: Free for everyone, including production use - no licence required.
+-   **AG Grid Enterprise**: Requires a licence to use in production. Free to test locally, or request a [trial](./community-vs-enterprise/#request-a-30-day-enterprise-bundle-trial-licence) to test in production.
 
 To learn more about the differences between AG Grid Community and Enterprise, when to use each version, and how to access our [free trial](./community-vs-enterprise/#request-a-30-day-enterprise-bundle-trial-licence) or purchase a licence, see the [Community vs Enterprise](./community-vs-enterprise/) docs.
 
 ### Integrated Charts {% enterpriseIcon /%}
 
-[Integrated Charts](./integrated-charts/) allow users to build and customise charts directly within the grid. 
+[Integrated Charts](./integrated-charts/) allow users to build and customise charts directly within the grid.
 
 Enable Integrated Charts by setting `enableCharts` to `true`. Set `cellSelection` to `true` to allow users to create charts by selecting a range of cells:
 
@@ -441,7 +448,7 @@ const gridOptions = {
 }
 ```
 
-### Grouping Rows  {% enterpriseIcon /%}
+### Grouping Rows {% enterpriseIcon /%}
 
 Enable [Row Grouping](./grouping/) by setting `rowGroup` to `true`:
 
@@ -482,7 +489,7 @@ const gridOptions = {
 
 ### Displaying Tree Data {% enterpriseIcon /%}
 
-Tree Data provides a way to supply the grid with structured hierarchical data. 
+Tree Data provides a way to supply the grid with structured hierarchical data.
 
 Enable Tree Data by setting `treeData` to `true`. Provide a `getDataPath` callback to configure the [Row Hierarchy](./tree-data-paths/#providing-hierarchy):
 

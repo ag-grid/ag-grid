@@ -22,6 +22,7 @@ interface ICar {
 ```
 
 {% if isFramework("react") %}
+
 ### Configure via Component
 
 The `<AgGridReact>` component accepts a generic parameter as `<AgGridReact<ICar>>`.
@@ -29,6 +30,7 @@ The `<AgGridReact>` component accepts a generic parameter as `<AgGridReact<ICar>
 {% /if %}
 
 {% if isFramework("react") %}
+
 ```jsx
 <AgGridReact<ICar>
     ref={gridRef}
@@ -36,6 +38,7 @@ The `<AgGridReact>` component accepts a generic parameter as `<AgGridReact<ICar>
     onRowSelected={onRowSelected}
 />
 ```
+
 {% /if %}
 
 {% if isFramework("react") %}
@@ -43,6 +46,7 @@ This ensures all the props defined on `<AgGridReact>` conform to the `ICar` inte
 {% /if %}
 
 {% if isFramework("react") %}
+
 ```ts
 const gridRef = useRef<AgGridReact<ICar>>(null);
 
@@ -50,6 +54,7 @@ const [rowData, setRowData] = useState<ICar[]>([ ... ]);
 
 const onRowSelected = useCallback((event: RowSelectedEvent<ICar>) => { ... }, [])
 ```
+
 {% /if %}
 
 ### Configure via GridOptions
@@ -80,7 +85,7 @@ const gridOptions: GridOptions<ICar> = {
 // Grid Api methods use ICar interface
 function onSelection() {
     // api.getSelectedRows() : ICar[]
-    const cars: ICar[] = api!.getSelectedRows();  
+    const cars: ICar[] = api!.getSelectedRows();
 }
 ```
 
@@ -102,19 +107,22 @@ function onRowSelected(event: RowSelectedEvent<ICar>) {
 ```
 
 {% if isFramework("angular") %}
+
 ### Configure via Component
 
 The `<ag-grid-angular>` component is generic with respect to `TData`. As there is no way to explicitly set generic parameters on Angular components, Angular infers the `TData` generic type from Inputs / Outputs. However, it will not always be successful, leaving `TData` inferred as `any`.
 
-We recommend providing the generic `TData` type to  your `columnDefs` property as in practice we see this leading to the most accurate inference.
+We recommend providing the generic `TData` type to your `columnDefs` property as in practice we see this leading to the most accurate inference.
 
 To provide the generic type of `ICar` to the `columnDefs` property you use the type `ColDef<ICar>` as follows:
 {% /if %}
 
 {% if isFramework("angular") %}
+
 ```ts
 const columnDefs: ColDef<ICar>[] = [...];
 ```
+
 {% /if %}
 
 {% if isFramework("angular") %}
@@ -122,12 +130,14 @@ Then set this on your component template as `[columnDefs]="columnDefs"`. This pr
 {% /if %}
 
 {% if isFramework("angular") %}
+
 ```html
-<ag-grid-angular 
-    [columnDefs]="columnDefs"    
+<ag-grid-angular
+    [columnDefs]="columnDefs"
     (rowSelected)="onRowSelected($event)"
     />
 ```
+
 {% /if %}
 
 {% if isFramework("angular") %}
@@ -135,6 +145,7 @@ This generic parameter is used for all other Inputs and Outputs ensuring consist
 {% /if %}
 
 {% if isFramework("angular") %}
+
 ```ts
 // ERROR: INotACar is not assignable to ICar
 onRowSelected(event: RowSelectedEvent<INotACar>) {}
@@ -142,8 +153,8 @@ onRowSelected(event: RowSelectedEvent<INotACar>) {}
 // SUCCESS: ICar is correct interface
 onRowSelected(event: RowSelectedEvent<ICar>) {}
 ```
-{% /if %}
 
+{% /if %}
 
 ### Type: TData | undefined
 
@@ -199,7 +210,7 @@ The grid options property `context` can be used to provided additional informati
 
 ### Configure via Interfaces
 
-The generic parameter `TContext` needs to be explicitly provided to each interface where it is used.  For example, an event handler function can accept the generic parameter on the event `RowSelectedEvent<TData, TContext>`.
+The generic parameter `TContext` needs to be explicitly provided to each interface where it is used. For example, an event handler function can accept the generic parameter on the event `RowSelectedEvent<TData, TContext>`.
 
 ```js
 // Define the interface for your context
@@ -227,9 +238,9 @@ function onRowSelected(event: RowSelectedEvent<ICar, IDiscountRate>) {
 
 Inspect the code in the following example or open in Plunker to experiment with generic typing yourself.
 
-* `rowData` is typed using the `ICar` interface via `TData`.
-* `valueFormatter` types the `value` property as `number` via `TValue`.
-* `onRowSelected` event handler uses the `IDiscountRate` interface via `TContext`.
+-   `rowData` is typed using the `ICar` interface via `TData`.
+-   `valueFormatter` types the `value` property as `number` via `TValue`.
+-   `onRowSelected` event handler uses the `IDiscountRate` interface via `TContext`.
 
 Also note that the `Log Selected Cars` button will log the selected cars to the developer console.
 
