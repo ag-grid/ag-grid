@@ -167,6 +167,7 @@ export {
     DateFilterParams,
     IDateComparatorFunc,
     IDateFilterParams,
+    PresetDateRangeFilterModel,
 } from './filter/provided/date/iDateFilter';
 export {
     IProvidedFilter,
