@@ -92,7 +92,7 @@
         },
         "getDataValue": {
             "more": {
-                "name": "Client-Side Single Cell Read",
+                "name": "Client-Side Single Cell Update",
                 "url": "./data-update-single-row-cell/"
             }
         }
