@@ -1,0 +1,58 @@
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import { CellSelectionModule, StatusBarModule } from 'ag-grid-enterprise';
+
+import { TestGridsManager, waitForEvent } from '../test-utils';
+
+const getStatusBarValue = (gridDiv: HTMLElement, label: string): string | null => {
+    const items = Array.from(gridDiv.querySelectorAll<HTMLElement>('.ag-status-name-value'));
+    for (const item of items) {
+        const labelSpan = item.querySelector('span');
+        if (labelSpan?.textContent === label) {
+            return item.querySelector<HTMLElement>('.ag-status-name-value-value')?.textContent ?? null;
+        }
+    }
+    return null;
+};
+
+describe('Status bar aggregation value formatter', () => {
+    const gridMgr = new TestGridsManager({
+        modules: [ClientSideRowModelModule, CellSelectionModule, StatusBarModule],
+    });
+
+    afterEach(() => {
+        gridMgr.reset();
+    });
+
+    test('uses valueFormatter for bigint aggregations', async () => {
+        const api = gridMgr.createGrid('status-bar-aggregation-bigint', {
+            columnDefs: [{ field: 'totalBigInt', cellDataType: 'bigint' }],
+            rowData: [
+                { id: 'r1', totalBigInt: 1000000000000000000000n },
+                { id: 'r2', totalBigInt: 2000000000000000000000n },
+                { id: 'r3', totalBigInt: 3000000000000000000000n },
+            ],
+            getRowId: (params) => params.data?.id,
+            cellSelection: true,
+            statusBar: {
+                statusPanels: [
+                    {
+                        statusPanel: 'agAggregationComponent',
+                        statusPanelParams: {
+                            valueFormatter: (params) =>
+                                params.bigintValue != null ? `bigint:${params.bigintValue}` : `number:${params.value}`,
+                        },
+                    },
+                ],
+            },
+        });
+
+        await waitForEvent('firstDataRendered', api);
+        const selectionChanged = waitForEvent('cellSelectionChanged', api);
+
+        api.addCellRange({ rowStartIndex: 0, rowEndIndex: 2, columns: ['totalBigInt'] });
+        await selectionChanged;
+
+        const gridDiv = TestGridsManager.getHTMLElement(api)!;
+        expect(getStatusBarValue(gridDiv, 'Sum')).toBe('bigint:6000000000000000000000');
+    });
+});
