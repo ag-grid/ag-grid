@@ -516,7 +516,7 @@ export class ValueService extends BeanStub implements NamedBean {
         // skipped value changes on group rows because we were not looking for them when calling setDataValue.
         // Now we do, so we need to block auto-creation to avoid unexpected data mutations to not change behavior.
         if (colDef.pivotValueColumn) {
-            return false; // Legacy behaviour - pivot groups do not auto-create data
+            return false; // Legacy behaviour - pivot groups do not auto-create data with pivot columns
         }
 
         return true;
