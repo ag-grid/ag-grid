@@ -55,4 +55,40 @@ describe('Status bar aggregation value formatter', () => {
         const gridDiv = TestGridsManager.getHTMLElement(api)!;
         expect(getStatusBarValue(gridDiv, 'Sum')).toBe('bigint:6000000000000000000000');
     });
+
+    test('avoids lossy number conversion for large bigint aggregations', async () => {
+        const api = gridMgr.createGrid('status-bar-aggregation-bigint-large', {
+            columnDefs: [{ field: 'totalBigInt', cellDataType: 'bigint' }],
+            rowData: [
+                { id: 'r1', totalBigInt: 9007199254740993n },
+                { id: 'r2', totalBigInt: 10n },
+            ],
+            getRowId: (params) => params.data?.id,
+            cellSelection: true,
+            statusBar: {
+                statusPanels: [
+                    {
+                        statusPanel: 'agAggregationComponent',
+                        statusPanelParams: {
+                            valueFormatter: (params) => {
+                                if (params.bigintValue != null) {
+                                    return `bigint:${params.bigintValue}`;
+                                }
+                                return params.value == null ? 'number:null' : `number:${params.value}`;
+                            },
+                        },
+                    },
+                ],
+            },
+        });
+
+        await waitForEvent('firstDataRendered', api);
+        const selectionChanged = waitForEvent('cellSelectionChanged', api);
+
+        api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['totalBigInt'] });
+        await selectionChanged;
+
+        const gridDiv = TestGridsManager.getHTMLElement(api)!;
+        expect(getStatusBarValue(gridDiv, 'Sum')).toBe('bigint:9007199254741003');
+    });
 });

@@ -29,10 +29,24 @@ export class AgNameValue extends Component {
     }
 
     public setValue(value: number | bigint | null, totalRows: number): void {
+        let numericValue: number | null = null;
+        let bigintValue: bigint | undefined;
+
+        if (typeof value === 'bigint') {
+            bigintValue = value;
+            const minSafe = BigInt(Number.MIN_SAFE_INTEGER);
+            const maxSafe = BigInt(Number.MAX_SAFE_INTEGER);
+            if (value >= minSafe && value <= maxSafe) {
+                numericValue = Number(value);
+            }
+        } else {
+            numericValue = value;
+        }
+
         const formattedValue = this.valueFormatter(
             _addGridCommonParams(this.gos, {
-                value: typeof value === 'bigint' ? Number(value) : value,
-                bigintValue: typeof value === 'bigint' ? value : undefined,
+                value: numericValue,
+                bigintValue,
                 totalRows,
                 key: this.key,
             })
