@@ -29,14 +29,16 @@ export class AgNameValue extends Component {
     }
 
     public setValue(value: number | bigint | null, totalRows: number): void {
-        if (typeof value === 'bigint') {
-            this.eValue.textContent = value.toString();
-            return;
-        }
-
-        this.eValue.textContent = this.valueFormatter(
-            _addGridCommonParams(this.gos, { value, totalRows, key: this.key })
+        const formattedValue = this.valueFormatter(
+            _addGridCommonParams(this.gos, {
+                value: typeof value === 'bigint' ? Number(value) : value,
+                bigintValue: typeof value === 'bigint' ? value : undefined,
+                totalRows,
+                key: this.key,
+            })
         );
+
+        this.eValue.textContent = formattedValue;
     }
 }
 export const AgNameValueSelector: ComponentSelector = {

@@ -93,7 +93,13 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
         const valueFormatter =
             params.valueFormatter ??
-            (({ value }) => _formatNumberTwoDecimalPlacesAndCommas(value, this.getLocaleTextFunc.bind(this)));
+            ((params) => {
+                const { value, bigintValue } = params;
+                if (bigintValue != null) {
+                    return bigintValue.toString();
+                }
+                return _formatNumberTwoDecimalPlacesAndCommas(value, this.getLocaleTextFunc.bind(this));
+            });
 
         const aggFuncNames: AggregationStatusPanelAggFunc[] = ['avg', 'count', 'min', 'max', 'sum'];
         for (const key of aggFuncNames) {
