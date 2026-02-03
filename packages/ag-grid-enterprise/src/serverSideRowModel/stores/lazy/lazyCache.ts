@@ -1049,12 +1049,12 @@ export class LazyCache extends BeanStub {
     /**
      * Client side sorting
      */
-    public clientSideSortRows() {
+    public clientSideSortRows(): boolean {
         const sortOptions = this.sortSvc?.getSortOptions() ?? [];
         const isAnySort = sortOptions.some((opt) => opt.sort != null);
         const rowNodeSorter = this.rowNodeSorter;
         if (!isAnySort || !rowNodeSorter) {
-            return;
+            return false;
         }
 
         // the node map does not need entirely recreated, only the indexes need updated.
@@ -1068,6 +1068,7 @@ export class LazyCache extends BeanStub {
             const node = sortedNodes[i];
             nodesMap.set({ id: node.id!, node, index: i });
         }
+        return true;
     }
 
     /**
