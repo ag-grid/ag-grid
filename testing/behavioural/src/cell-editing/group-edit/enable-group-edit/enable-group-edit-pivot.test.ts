@@ -33,12 +33,15 @@ describe('enableGroupEdit with pivot mode', () => {
     });
 
     async function createPivotGrid(events: EditEvent[]) {
+        // Use data that matches the e2e test (small-olympic-winners.json) for United States year 2000:
+        // gold: 2+2+3=7, silver: 0+1+0=1, bronze: 3+1+1=5
         const api = await gridsManager.createGridAndWait('pivot-enableGroupEdit', {
             columnDefs: [
                 { field: 'country', rowGroup: true },
                 { field: 'year', pivot: true },
                 { field: 'gold', aggFunc: 'sum' },
                 { field: 'silver', aggFunc: 'sum' },
+                { field: 'bronze', aggFunc: 'sum' },
             ],
             defaultColDef: {
                 flex: 1,
@@ -52,9 +55,11 @@ describe('enableGroupEdit with pivot mode', () => {
             enableGroupEdit: true,
             pivotMode: true,
             groupDefaultExpanded: 0,
+            // Matches small-olympic-winners.json United States data
             rowData: [
-                { country: 'USA', year: 2000, gold: 7, silver: 5 },
-                { country: 'USA', year: 2004, gold: 1, silver: 2 },
+                { country: 'United States', year: 2000, gold: 2, silver: 0, bronze: 3 }, // Dara Torres
+                { country: 'United States', year: 2000, gold: 2, silver: 1, bronze: 1 }, // Gary Hall Jr.
+                { country: 'United States', year: 2000, gold: 3, silver: 0, bronze: 1 }, // Jenny Thompson
             ],
             onCellEditingStarted: (event) => {
                 events.push({
@@ -93,31 +98,14 @@ describe('enableGroupEdit with pivot mode', () => {
         const pivotCol2000Gold = pivotColumns?.find(
             (col) => col.getColId().includes('2000') && col.getColId().includes('gold')
         );
-        const pivotCol2004Gold = pivotColumns?.find(
-            (col) => col.getColId().includes('2004') && col.getColId().includes('gold')
-        );
         expect(pivotCol2000Gold).toBeDefined();
-        expect(pivotCol2004Gold).toBeDefined();
 
-        // Debug: check pivot column colDef
-        const colDef = pivotCol2000Gold!.getColDef();
-        // eslint-disable-next-line no-console
-        console.log('Pivot col colDef:', {
-            colId: pivotCol2000Gold!.getColId(),
-            field: colDef.field,
-            valueSetter: colDef.valueSetter,
-            valueGetter: typeof colDef.valueGetter,
-            aggFunc: colDef.aggFunc,
-            pivotValueColumn: (colDef.pivotValueColumn as any)?.getColId?.(),
-        });
-
-        const usaNode = api.getRowNode('row-group-country-USA');
+        const usaNode = api.getRowNode('row-group-country-United States');
         expect(usaNode).toBeDefined();
 
         return {
             api,
             pivotCol2000GoldId: pivotCol2000Gold!.getColId(),
-            pivotCol2004GoldId: pivotCol2004Gold!.getColId(),
             usaNode: usaNode!,
         };
     }
@@ -142,39 +130,54 @@ describe('enableGroupEdit with pivot mode', () => {
         expect(usaNode.data).toBeUndefined(); // Group row has no data initially
 
         // First edit - without groupRowValueSetter, cellValueChanged should NOT fire
+        // and the group row data should NOT be created (preserving legacy behavior)
         await editCell(api, usaNode, pivotCol2000GoldId, '1234');
         await asyncSetTimeout(0);
 
-        // eslint-disable-next-line no-console
-        console.log('Events after first edit:', JSON.stringify(events, null, 2));
-
         expect(events).toHaveLength(2);
-        expect(events[0]).toMatchObject({ type: 'cellEditingStarted', value: 7 });
+        expect(events[0]).toMatchObject({
+            type: 'cellEditingStarted',
+            value: 7,
+            data: undefined,
+            rowNodeData: undefined,
+        });
         expect(events.find((e) => e.type === 'cellValueChanged')).toBeUndefined();
         expect(events[1]).toMatchObject({
             type: 'cellEditingStopped',
             newValue: 1234,
             oldValue: 7,
             valueChanged: true,
+            data: undefined,
+            rowNodeData: undefined,
         });
 
-        // After first edit, group row now has auto-created data object
-        expect(usaNode.data).toBeDefined();
+        // Group row data should still be undefined - we don't create it without groupRowValueSetter
+        expect(usaNode.data).toBeUndefined();
 
-        // Second edit - re-editing after data was created should still NOT fire cellValueChanged
+        // Second edit - re-editing should still NOT fire cellValueChanged (data is still not created)
         events.length = 0;
         await editCell(api, usaNode, pivotCol2000GoldId, '5678');
         await asyncSetTimeout(0);
 
         expect(events).toHaveLength(2);
-        expect(events[0]).toMatchObject({ type: 'cellEditingStarted', value: 7 }); // Still shows aggregated value
+        expect(events[0]).toMatchObject({
+            type: 'cellEditingStarted',
+            value: 7,
+            data: undefined,
+            rowNodeData: undefined,
+        }); // Still shows aggregated value
         expect(events.find((e) => e.type === 'cellValueChanged')).toBeUndefined();
         expect(events[1]).toMatchObject({
             type: 'cellEditingStopped',
             newValue: 5678,
             oldValue: 7,
             valueChanged: true,
+            data: undefined,
+            rowNodeData: undefined,
         });
+
+        // Data should remain undefined
+        expect(usaNode.data).toBeUndefined();
     });
 
     // Tests ported from e2e: documentation/ag-grid-docs/src/content/docs/pivoting-result-columns/_examples/pivot-result-summary/example.spec.ts
@@ -252,15 +255,17 @@ describe('enableGroupEdit with pivot mode', () => {
             await asyncSetTimeout(0);
 
             expect(events).toMatchObject([
-                { type: 'cellEditingStarted', value: 7 },
+                { type: 'cellEditingStarted', value: 7, data: undefined, rowNodeData: undefined },
                 {
                     type: 'cellEditingStopped',
                     newValue: 1234,
                     oldValue: 7,
                     value: 7,
                     valueChanged: true,
+                    data: undefined,
+                    rowNodeData: undefined,
                 },
-                { type: 'cellEditingStarted', value: 1 }, // Next cell (2004 gold) starts editing
+                { type: 'cellEditingStarted', value: 1, data: undefined, rowNodeData: undefined }, // Next cell (2000 silver) starts editing
             ]);
         });
     });
@@ -279,13 +284,15 @@ describe('enableGroupEdit with pivot mode', () => {
             await asyncSetTimeout(0);
 
             expect(events).toMatchObject([
-                { type: 'cellEditingStarted', value: 7 },
+                { type: 'cellEditingStarted', value: 7, data: undefined, rowNodeData: undefined },
                 {
                     type: 'cellEditingStopped',
                     newValue: 1234,
                     oldValue: 7,
                     value: 7,
                     valueChanged: true,
+                    data: undefined,
+                    rowNodeData: undefined,
                 },
             ]);
         });
@@ -303,13 +310,15 @@ describe('enableGroupEdit with pivot mode', () => {
             await asyncSetTimeout(0);
 
             expect(events).toMatchObject([
-                { type: 'cellEditingStarted', value: 7 },
+                { type: 'cellEditingStarted', value: 7, data: undefined, rowNodeData: undefined },
                 {
                     type: 'cellEditingStopped',
                     newValue: undefined,
                     oldValue: 7,
                     value: 7,
                     valueChanged: false,
+                    data: undefined,
+                    rowNodeData: undefined,
                 },
             ]);
         });
@@ -327,15 +336,17 @@ describe('enableGroupEdit with pivot mode', () => {
             await asyncSetTimeout(0);
 
             expect(events).toMatchObject([
-                { type: 'cellEditingStarted', value: 7 },
+                { type: 'cellEditingStarted', value: 7, data: undefined, rowNodeData: undefined },
                 {
                     type: 'cellEditingStopped',
                     newValue: 1234,
                     oldValue: 7,
                     value: 7,
                     valueChanged: true,
+                    data: undefined,
+                    rowNodeData: undefined,
                 },
-                { type: 'cellEditingStarted', value: 1 }, // Next cell (2004 gold) starts editing
+                { type: 'cellEditingStarted', value: 1, data: undefined, rowNodeData: undefined }, // Next cell (2000 silver) starts editing
             ]);
         });
     });

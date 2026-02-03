@@ -505,11 +505,20 @@ export class ValueService extends BeanStub implements NamedBean {
             return true; // not a group row
         }
 
-        if (colDef.groupRowEditable != null || colDef.groupRowValueSetter != null) {
-            return false; // Do not create the row data for a group row automatically
+        // If groupRowValueSetter or groupRowEditable is defined, do not create row data automatically.
+        // The user has explicitly configured group editing behavior.
+        if (colDef.groupRowValueSetter != null || colDef.groupRowEditable != null) {
+            return false;
         }
 
-        return true; // create the rowData for groupRowEditable (default legacy behaviour)
+        // For pivot columns (identified by pivotValueColumn), preserve legacy behavior:
+        // do not auto-create row data. In previous versions, pivot columns silently
+        // skipped value changes on group rows because getColDefCol() couldn't find them.
+        if (colDef.pivotValueColumn && this.gos.get('enableGroupEdit')) {
+            return false; // Legacy behaviour
+        }
+
+        return true;
     }
 
     private finishValueChange(
