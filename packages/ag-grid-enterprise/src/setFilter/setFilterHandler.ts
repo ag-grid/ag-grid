@@ -1,6 +1,5 @@
 import type {
     AgColumn,
-    ColDef,
     DoesFilterPassParams,
     FilterHandler,
     FilterHandlerParams,
@@ -152,9 +151,12 @@ export class SetFilterHandler<TValue = string>
 
     private getFormattedValue(key: string | null): string | null {
         let value: TValue | string | null = this.valueModel.getValueForFormatter(key);
-        if (this.noValueFormatterSupplied && this.isTreeDataOrGrouping() && Array.isArray(value)) {
-            // essentially get back the cell value
-            value = _last(value) as string;
+        if (this.isTreeDataOrGrouping() && Array.isArray(value)) {
+            const shouldUseLast = this.noValueFormatterSupplied || this.useValueFormatterFromColumn;
+            if (shouldUseLast) {
+                // essentially get back the cell value
+                value = _last(value) as string;
+            }
         }
 
         const formattedValue = this.beans.valueSvc.formatValue(
