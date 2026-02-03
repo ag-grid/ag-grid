@@ -626,6 +626,28 @@
         }
     }
 
+    .ag-delay-render {
+        .ag-cell {
+            visibility: hidden;
+        }
+
+        .ag-row {
+            visibility: hidden;
+        }
+
+        .ag-spanned-cell-wrapper {
+            visibility: hidden;
+        }
+
+        .ag-header-cell {
+            visibility: hidden;
+        }
+
+        .ag-header-group-cell {
+            visibility: hidden;
+        }
+    }
+
     // /**
     //  ****************************
     //  * Column Panel
