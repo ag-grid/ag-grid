@@ -110,14 +110,6 @@ BigInt behaviour and limitations:
 
 If you need a custom input format, provide a custom Value Parser/Formatter by [Overriding the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions).
 
-#### Server-Side Row Model (SSRM) and State
-
-When using the Server-Side Row Model, BigInt values in filter models, sort models, row group keys, pivot models, and grid state are stored using a serialisable representation (string form of the integer). Values are rehydrated back into `bigint` when restoring state or constructing SSRM requests. No implicit conversion to `number` occurs during serialisation, and grid state containing BigInt values is JSON-serialisable and safe to persist and restore.
-
-The example below shows BigInt filtering, aggregation and pivoting, plus saving and restoring grid state.
-
-{% gridExampleRunner title="BigInt Filtering, Aggregation and State" name="bigint-filtering-aggregation-state" /%}
-
 ### Boolean
 
 The `'boolean'` cell data type is used for `boolean` values.
