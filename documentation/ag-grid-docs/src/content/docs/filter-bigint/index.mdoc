@@ -16,10 +16,12 @@ const gridOptions = {
         {
             field: 'totalBigInt',
             cellDataType: 'bigint',
+            // BigInt Filter is used by default in Community version for bigInt columns
             filter: true,
         },
         {
             field: 'ledgerId',
+            // Explicitly configure column to use the BigInt Filter
             filter: 'agBigIntColumnFilter',
         },
     ],
