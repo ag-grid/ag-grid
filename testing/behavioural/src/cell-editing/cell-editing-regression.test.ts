@@ -14,6 +14,7 @@ import {
 } from 'ag-grid-enterprise';
 
 import {
+    GridRows,
     TestGridsManager,
     asyncSetTimeout,
     fakeElementAttribute,
@@ -839,7 +840,7 @@ describe('Cell Editing Regression', () => {
     });
 
     test.each(['ui', 'data'] as const)(
-        'onCellValueChanged receives transformed value from valueSetter via %s (AG-16586)',
+        'onCellValueChanged receives transformed value from valueSetter via %s',
         async (source) => {
             // This test verifies that when a valueSetter transforms the value (e.g., to uppercase),
             // the onCellValueChanged event receives the transformed value, not the original input.
@@ -888,6 +889,13 @@ describe('Cell Editing Regression', () => {
                 await asyncSetTimeout(1);
             }
 
+            // Verify the grid state with GridRows snapshot
+            const afterRows = new GridRows(api, `after ${source} edit`);
+            await afterRows.check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 athlete:"USAIN BOLT" age:30 country:"USA"
+            `);
+
             // Verify the cell displays the uppercase value
             const athleteCell = getByTestId(gridDiv, agTestIdFor.cell('0', 'athlete'));
             expect(athleteCell).toHaveTextContent('USAIN BOLT');
@@ -900,6 +908,78 @@ describe('Cell Editing Regression', () => {
             expect(cellValueChangedEvents[0].oldValue).toBe('Michael Phelps');
             // The newValue should be the transformed uppercase value, not the original lowercase input
             expect(cellValueChangedEvents[0].newValue).toBe('USAIN BOLT');
+        }
+    );
+
+    test.each(['ui', 'data'] as const)(
+        'onCellValueChanged receives correct newValue with nested valueGetter via %s',
+        async (source) => {
+            // This test verifies that when using a valueGetter that reads from nested data,
+            // onCellValueChanged receives the correct primitive value, not an object.
+            const cellValueChangedEvents: Array<{ oldValue: any; newValue: any }> = [];
+
+            const api = await gridMgr.createGridAndWait(`myGrid-nested-${source}`, {
+                columnDefs: [
+                    { field: 'name' },
+                    {
+                        colId: 'country',
+                        headerName: 'Country',
+                        editable: true,
+                        valueGetter: (params) => params.data?.person?.country,
+                        valueSetter: (params) => {
+                            params.data.person.country = params.newValue;
+                            return true;
+                        },
+                    },
+                ],
+                rowData: [{ name: 'John', person: { country: 'United States' } }],
+                onCellValueChanged: (event) => {
+                    cellValueChangedEvents.push({
+                        oldValue: event.oldValue,
+                        newValue: event.newValue,
+                    });
+                },
+            });
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            await asyncSetTimeout(1);
+
+            if (source === 'ui') {
+                // Edit via UI: double-click and type
+                const countryCell = getByTestId(gridDiv, agTestIdFor.cell('0', 'country'));
+                await userEvent.dblClick(countryCell);
+                await asyncSetTimeout(1);
+
+                const input = await waitForInput(gridDiv, countryCell, { popup: false });
+                await userEvent.clear(input);
+                await userEvent.type(input, 'Canada{Enter}');
+                await asyncSetTimeout(1);
+            } else {
+                // Edit via data: use rowNode.setDataValue
+                const rowNode = api.getDisplayedRowAtIndex(0)!;
+                rowNode.setDataValue('country', 'Canada');
+                await asyncSetTimeout(1);
+            }
+
+            // Verify the grid state with GridRows snapshot
+            const afterRows = new GridRows(api, `after ${source} edit`);
+            await afterRows.check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"John" country:"Canada"
+            `);
+
+            // Verify the cell displays the new value
+            const countryCell = getByTestId(gridDiv, agTestIdFor.cell('0', 'country'));
+            expect(countryCell).toHaveTextContent('Canada');
+
+            // Verify the nested data was updated
+            expect(api.getDisplayedRowAtIndex(0)?.data?.person?.country).toBe('Canada');
+
+            // Verify onCellValueChanged received the correct primitive value, not an object
+            expect(cellValueChangedEvents).toHaveLength(1);
+            expect(cellValueChangedEvents[0].oldValue).toBe('United States');
+            // The newValue should be the primitive string, not an object like {country: 'Canada'}
+            expect(cellValueChangedEvents[0].newValue).toBe('Canada');
         }
     );
 });
