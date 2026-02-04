@@ -419,7 +419,7 @@ export class GridBodyCtrl extends BeanStub {
         this.eCenterColsViewport.scrollBy({ left: deltaX || deltaY });
     }
 
-    private onBodyViewportContextMenu(mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent): void {
+    private onBodyViewportContextMenu(mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent, touchTarget?: EventTarget | null): void {
         if (!mouseEvent && !touchEvent) {
             return;
         }
@@ -429,7 +429,7 @@ export class GridBodyCtrl extends BeanStub {
             event.preventDefault();
         }
 
-        const target = _getEventTarget(mouseEvent || touch)!;
+        const target = mouseEvent ? _getEventTarget(mouseEvent) : touchTarget;
 
         if (target === this.eBodyViewport || target === this.ctrlsSvc.get('center').eViewport) {
             // show it

@@ -190,13 +190,13 @@ export class GridHeaderCtrl extends BeanStub {
         }
     }
 
-    private onHeaderContextMenu(mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent): void {
+    private onHeaderContextMenu(mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent, touchTarget?: EventTarget | null): void {
         const { menuSvc, ctrlsSvc } = this.beans;
         if ((!mouseEvent && !touchEvent) || !menuSvc?.isHeaderContextMenuEnabled()) {
             return;
         }
 
-        const target = _getEventTarget(mouseEvent ?? touchEvent!) as HTMLElement;
+        const target = mouseEvent ? _getEventTarget(mouseEvent) : touchTarget ?? _getEventTarget(touchEvent!);
 
         if (target === this.eGui || target === ctrlsSvc.getHeaderRowContainerCtrl()?.eViewport) {
             menuSvc.showHeaderContextMenu(undefined, mouseEvent, touchEvent);

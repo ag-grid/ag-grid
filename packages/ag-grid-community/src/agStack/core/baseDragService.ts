@@ -15,7 +15,6 @@ import {
     _getEventTarget,
     _getFirstActiveTouch,
     _isEventFromThisInstance,
-    _setTouchStartTarget,
     addTempEventHandlers,
     clearTempEventHandlers,
     preventEventDefault,
@@ -232,7 +231,7 @@ export class BaseDragService<
         const rootEl = _getRootNode(beans);
         const eElement = params.eElement;
         const pointerId = pointerEvent.pointerId;
-        const pointerDrag = new Dragging(rootEl, params, pointerEvent, pointerId);
+        const pointerDrag = new Dragging(rootEl, params, pointerEvent, _getEventTarget(pointerEvent), pointerId);
 
         activePointerDrags ??= new WeakMap();
         activePointerDrags.set(rootEl, pointerDrag);
@@ -305,8 +304,8 @@ export class BaseDragService<
         const beans = this.beans;
         const rootEl = _getRootNode(beans);
         const touch = touchEvent.touches[0];
-        _setTouchStartTarget(touch, touchEvent);
-        const touchDrag = new Dragging(rootEl, params, touch);
+        const target = _getEventTarget(touchEvent) ?? params.eElement;
+        const touchDrag = new Dragging(rootEl, params, touch, target);
 
         const touchMoveEvent = (e: TouchEvent) => this.onTouchMove(e);
         const touchEndEvent = (e: TouchEvent) => this.onTouchUp(e);
@@ -314,7 +313,6 @@ export class BaseDragService<
         const dragPreventEventDefault = (e: Event) => this.draggingPreventDefault(e);
 
         const rootNode = _getRootNode(beans);
-        const target = _getEventTarget(touchEvent) ?? params.eElement;
         this.initDrag(
             touchDrag,
             [target, 'touchmove', touchMoveEvent, PASSIVE_TRUE],
@@ -357,7 +355,7 @@ export class BaseDragService<
         const beans = this.beans;
         this.destroyDrag();
 
-        const mouseDrag = new Dragging(_getRootNode(beans), params, mouseEvent);
+        const mouseDrag = new Dragging(_getRootNode(beans), params, mouseEvent, _getEventTarget(mouseEvent));
 
         const mouseMoveEvent = (event: MouseEvent) => this.onMouseOrPointerMove(event);
         const mouseUpEvent = (event: MouseEvent) => this.onMouseOrPointerUp(event);
@@ -540,18 +538,15 @@ class Dragging {
     public readonly handlers: TempEventHandler[] = [];
     public lastDrag: PointerEvent | MouseEvent | Touch | null = null;
     public pointerCapture: PointerCapture | null = null;
-    /** The actual target element from composedPath, captured at drag start time */
-    public readonly startTarget: EventTarget | null;
 
     constructor(
         public readonly rootEl: Document | ShadowRoot,
         public readonly params: DragListenerParams,
         public readonly start: PointerEvent | MouseEvent | Touch,
+        public readonly startTarget: EventTarget | null,
         public readonly pointerId: number | null = null
     ) {
         this.eElement = params.eElement;
-        // Capture the target immediately using composedPath, as it may return empty after event dispatch
-        this.startTarget = _getEventTarget(start);
     }
 }
 

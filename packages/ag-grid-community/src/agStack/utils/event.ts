@@ -45,28 +45,13 @@ type EventWithEventTarget =
     | { readonly target: EventTarget | null; composedPath?(): EventTarget[] | null };
 
 /**
- * WeakMap to cache the composed target for Touch objects.
- * Touch objects don't have composedPath(), so we store the target from the parent TouchEvent.
- */
-let touchTargetMap: WeakMap<Touch, EventTarget> | undefined;
-
-/**
- * Stores the composed target for a Touch object extracted from a TouchEvent.
- * Call this when extracting the first touch from a touchstart event.
- */
-export function _setTouchStartTarget(touch: Touch, touchEvent: TouchEvent): void {
-    const target = _getEventTarget(touchEvent);
-    if (target) {
-        touchTargetMap ??= new WeakMap();
-        touchTargetMap.set(touch, target);
-    }
-}
-
-/**
  * Gets the actual target element from an event, handling Shadow DOM correctly.
  * When events cross shadow DOM boundaries, `event.target` may be retargeted to the shadow host.
  * This function uses `composedPath()[0]` to get the actual element that received the event.
- * For Touch objects, uses the target stored via _setTouchStartTarget.
+ *
+ * WARNING: The browser empties `composedPath()` after the event dispatch cycle completes.
+ * If you need the target after dispatch (e.g., in setTimeout, Promise callbacks, or stored events),
+ * capture it synchronously and store it explicitly.
  */
 export function _getEventTarget(event: EventWithEventTarget | null | undefined): EventTarget | null {
     if (!event) {
@@ -78,11 +63,6 @@ export function _getEventTarget(event: EventWithEventTarget | null | undefined):
         if (path && path.length > 0) {
             return path[0];
         }
-    }
-    // Check WeakMap cache for Touch objects (they don't have composedPath)
-    const cachedTarget = touchTargetMap?.get(event as Touch);
-    if (cachedTarget) {
-        return cachedTarget;
     }
     return event.target ?? null;
 }
