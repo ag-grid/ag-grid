@@ -853,7 +853,7 @@ function doesColDefPropPreventInference(
     colDef: ColDef,
     checkProps: { [key in keyof ColDef]: boolean },
     prop: keyof ColDef,
-    comparisonValue?: any
+    allowedValue?: any
 ): boolean {
     if (!checkProps[prop]) {
         return false;
@@ -862,9 +862,8 @@ function doesColDefPropPreventInference(
     if (value === null) {
         checkProps[prop] = false;
         return false;
-    } else {
-        return comparisonValue === undefined ? !!value : value === comparisonValue;
     }
+    return value !== undefined && value !== allowedValue;
 }
 
 function bigintComparator(valueA: any, valueB: any): number {
@@ -920,8 +919,8 @@ function doColDefPropsPreventInference(
         ['valueGetter', undefined],
         ['valueParser', undefined],
         ['refData', undefined],
-    ].some(([prop, comparisonValue]: [keyof ColDef, any]) =>
-        doesColDefPropPreventInference(colDef, propsToCheckForInference, prop, comparisonValue)
+    ].some(([prop, allowedValue]: [keyof ColDef, any]) =>
+        doesColDefPropPreventInference(colDef, propsToCheckForInference, prop, allowedValue)
     );
 }
 

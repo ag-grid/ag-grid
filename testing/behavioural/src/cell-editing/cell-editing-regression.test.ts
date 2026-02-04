@@ -370,6 +370,122 @@ describe('Cell Editing Regression', () => {
         expect(cell1).toHaveTextContent('3 - three');
     });
 
+    test('richSelectEditor with object values uses cellRenderer for display', async () => {
+        // virtualList doesn't add option elements if the offsetHeight is 0, so we need to fake it
+        fakeElementAttribute('offsetHeight', 100, '.ag-virtual-list-viewport');
+
+        // Custom cell renderer that displays the name property of object values
+        class CustomCellRenderer {
+            eGui: HTMLElement;
+
+            init(params: { value: any }) {
+                this.eGui = document.createElement('div');
+                this.eGui.innerHTML =
+                    params.value != null && params.value.name != null
+                        ? params.value.name
+                        : params.value == undefined
+                          ? ''
+                          : params.value;
+            }
+
+            getGui() {
+                return this.eGui;
+            }
+
+            refresh() {
+                return false;
+            }
+        }
+
+        // Custom renderer for the editor dropdown
+        class CustomEditorRenderer {
+            eGui: HTMLElement;
+
+            init(params: { value: any }) {
+                this.eGui = document.createElement('div');
+                this.eGui.innerHTML =
+                    params.value != null && params.value.name != null
+                        ? params.value.name
+                        : params.value == undefined
+                          ? ''
+                          : params.value;
+            }
+
+            getGui() {
+                return this.eGui;
+            }
+
+            refresh() {
+                return false;
+            }
+        }
+
+        const genderValues = [
+            { name: 'Male', code: 'M' },
+            { name: 'Female', code: 'F' },
+        ];
+
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                {
+                    field: 'gender',
+                    cellEditor: 'agRichSelectCellEditor',
+                    cellRenderer: CustomCellRenderer,
+                    cellEditorParams: {
+                        cellRenderer: CustomEditorRenderer,
+                        values: genderValues,
+                    },
+                    editable: true,
+                },
+            ],
+            rowData: [
+                { id: 1, gender: 'M' },
+                { id: 2, gender: 'F' },
+            ],
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(1);
+
+        // Verify cellDataType is not inferred (since we have a cellRenderer)
+        const colDef = api.getColumn('gender')!.getColDef();
+        expect(colDef.cellDataType).toBeFalsy();
+
+        // Verify initial cell content - should show 'M' since it's a string initially
+        const cell0 = getByTestId(gridDiv, agTestIdFor.cell('0', 'gender'));
+        expect(cell0).toHaveTextContent('M');
+
+        // Open the rich select editor
+        await userEvent.dblClick(cell0);
+        await asyncSetTimeout(1);
+
+        const popup = await waitForPopup(gridDiv);
+        const maleOption = await waitFor(() => within(popup).getByRole('option', { name: 'Male' }));
+
+        const rect = maleOption.getBoundingClientRect();
+
+        // agRichSelectCellEditor derives the item clicked from the click event, so we need to simulate a click with clientY
+        fireEvent(
+            maleOption,
+            new MouseEvent('click', {
+                bubbles: true,
+                clientY: rect.height - 1,
+            })
+        );
+
+        await userEvent.click(maleOption);
+        await asyncSetTimeout(1);
+
+        // After selecting the Male option, the cell should display 'Male' (using the cell renderer)
+        // NOT '[object Object]'
+        expect(cell0.textContent).not.toContain('[object Object]');
+        expect(cell0).toHaveTextContent('Male');
+
+        // Verify the underlying data is the object
+        const rowData = getAllRows(api)[0].data;
+        expect(rowData.gender).toEqual({ name: 'Male', code: 'M' });
+    });
+
     // AG-15794 - onCellEditRequest source
     test('onCellEditRequest should have source=edit', async () => {
         // virtualList doesn't add option elements if the offsetHeight is 0, so we need to fake it
