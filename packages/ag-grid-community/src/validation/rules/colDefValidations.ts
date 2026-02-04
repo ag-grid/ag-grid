@@ -1,7 +1,6 @@
 import type { UserComponentName } from '../../context/context';
 import { _isSortDefValid, _isSortDirectionValid } from '../../entities/agColumn';
 import type { AbstractColDef, ColDef, ColGroupDef, ColumnMenuTab } from '../../entities/colDef';
-import type { ColDefInternal } from '../../entities/colDefInternal';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
 import type { Deprecations, ModuleValidation, OptionsValidator, Validations } from '../validationTypes';
 import { USER_COMP_MODULES } from './userCompValidations';
@@ -40,8 +39,7 @@ export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGro
     autoHeight: 'RowAutoHeight',
     cellClass: 'CellStyle',
     cellClassRules: 'CellStyle',
-    cellEditor: ({ cellEditor, editable, ...rest }: ColDef) => {
-        const groupRowEditable = (rest as ColDefInternal).groupRowEditable;
+    cellEditor: ({ cellEditor, editable, groupRowEditable }: ColDef) => {
         const editingEnabled = !!editable || !!groupRowEditable;
         if (!editingEnabled) {
             return null;
@@ -64,6 +62,12 @@ export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGro
     dndSourceOnRowDrag: 'DragAndDrop',
     editable: ({ editable, cellEditor }: ColDef) => {
         if (editable && !cellEditor) {
+            return 'TextEditor';
+        }
+        return null;
+    },
+    groupRowEditable: ({ groupRowEditable, cellEditor }: ColDef) => {
+        if (groupRowEditable && !cellEditor) {
             return 'TextEditor';
         }
         return null;
@@ -256,6 +260,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
         spanRows: {
             dependencies: {
                 editable: { required: [false, undefined] },
+                groupRowEditable: { required: [false, undefined] },
                 rowDrag: { required: [false, undefined] },
                 colSpan: { required: [undefined] },
                 rowSpan: { required: [undefined] },
@@ -334,7 +339,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
     return validations;
 };
 
-type ColOrGroupKey = keyof ColDef | keyof ColGroupDef | keyof Partial<ColDefInternal>;
+type ColOrGroupKey = keyof ColDef | keyof ColGroupDef;
 const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     headerName: undefined,
     columnGroupShow: undefined,
@@ -360,7 +365,6 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     initialAggFunc: undefined,
     defaultAggFunc: undefined,
     aggFunc: undefined,
-    // Internal properties (not public API but still accepted)
     groupRowEditable: undefined,
     groupRowValueSetter: undefined,
     pinned: undefined,
