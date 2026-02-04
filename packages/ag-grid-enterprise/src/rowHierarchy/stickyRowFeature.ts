@@ -87,12 +87,18 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
             return this.refreshNodesAndContainerHeight(container, new Set(), newStickyContainerHeight);
         }
 
-        const { rowModel, rowRenderer, pinnedRowModel } = this.beans;
+        const newStickyRows = new Set<RowNode>();
+
+        const { rowModel, rowRenderer, pinnedRowModel, pageBounds, rowContainerHeight } = this.beans;
+        const { pageFirstPixel, pageLastPixel } = pageBounds.getCurrentPagePixelRange();
 
         const pixelAtContainerBoundary = isTop
             ? rowRenderer.firstVisibleVPixel - this.extraTopHeight
             : rowRenderer.lastVisibleVPixel - this.extraTopHeight;
-        const newStickyRows = new Set<RowNode>();
+
+        const divStretchOffset = rowContainerHeight.divStretchOffset ?? 0;
+        const pageFirstPixelWithOffset = pageFirstPixel + divStretchOffset;
+        const pageLastPixelWithOffset = pageLastPixel + divStretchOffset;
 
         const addStickyRow = (stickyRow: RowNode) => {
             newStickyRows.add(stickyRow);
@@ -181,6 +187,15 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
             if (!isTop) {
                 firstPixelAfterStickyRows = pixelAtContainerBoundary - newStickyContainerHeight;
             }
+
+            // clamp to the current page range so we don't treat rows outside the page
+            // as visible just because sticky rows add an offset.
+            if (isTop && firstPixelAfterStickyRows < pageFirstPixelWithOffset) {
+                firstPixelAfterStickyRows = pageFirstPixelWithOffset;
+            } else if (!isTop && firstPixelAfterStickyRows > pageLastPixelWithOffset) {
+                firstPixelAfterStickyRows = pageLastPixelWithOffset;
+            }
+
             const firstIndex = rowModel.getRowIndexAtPixel(firstPixelAfterStickyRows);
             const firstRow = rowModel.getRow(firstIndex);
 
