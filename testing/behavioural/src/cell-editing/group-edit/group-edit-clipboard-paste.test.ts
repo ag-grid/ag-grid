@@ -114,6 +114,8 @@ describe('Group Edit: clipboard paste', () => {
             cellValueChanged: 1,
             rowValueChanged: 0,
             cellEditRequest: 0,
+            bulkEditingStarted: 0,
+            bulkEditingStopped: 0,
         });
         expect(new Set(valueSetterTargets)).toEqual(new Set(['a-1']));
     });

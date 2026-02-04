@@ -552,7 +552,7 @@ describe('Cell Editing Start', () => {
         expect(cellComputed).toHaveTextContent('Echo: editing');
     });
 
-    test('valueCache is actually caching values (AG-16448)', async () => {
+    test('valueCache is actually caching values', async () => {
         // This test verifies that the value cache is actually active and caching
         let valueGetterCallCount = 0;
         const api = await gridMgr.createGridAndWait('myGrid', {

@@ -77,6 +77,8 @@ describe('Cell Editing: undo/redo', () => {
             cellValueChanged: valueSetterCalls,
             rowValueChanged: 0,
             cellEditRequest: 0,
+            bulkEditingStarted: 0,
+            bulkEditingStopped: 0,
         });
 
         expect(api.getDisplayedRowAtIndex(0)?.data?.field).toBe('Updated Value');
@@ -143,6 +145,8 @@ describe('Cell Editing: undo/redo', () => {
                 cellValueChanged: 1,
                 rowValueChanged: 1,
                 cellEditRequest: 0,
+                bulkEditingStarted: 0,
+                bulkEditingStopped: 0,
             });
         }
     );

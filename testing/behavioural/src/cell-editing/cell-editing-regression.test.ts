@@ -982,4 +982,118 @@ describe('Cell Editing Regression', () => {
             expect(cellValueChangedEvents[0].newValue).toBe('Canada');
         }
     );
+
+    test('tabbing into empty cell then clicking another cell closes editor', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [{ field: 'make' }, { field: 'model' }, { field: 'price' }, { field: 'electric' }],
+            defaultColDef: {
+                editable: true,
+            },
+            rowData: [
+                // First row has missing price - this is key to reproducing the bug
+                { make: 'Tesla', model: 'Model Y', electric: true },
+                { make: 'Ford', model: 'F-Series', price: 33850, electric: false },
+                { make: 'Toyota', model: 'Corolla', price: 29600, electric: false },
+            ],
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(1);
+
+        // Step 1: Start editing the 'Tesla' cell (top-left)
+        const makeCell = getByTestId(gridDiv, agTestIdFor.cell('0', 'make'));
+        await userEvent.dblClick(makeCell);
+        await waitForInput(gridDiv, makeCell, { popup: false });
+        expect(api.getCellEditorInstances()).toHaveLength(1);
+
+        // Step 2: Press Tab twice to navigate to the empty price cell
+        await userEvent.keyboard('{Tab}');
+        await asyncSetTimeout(1);
+        const modelCell = getByTestId(gridDiv, agTestIdFor.cell('0', 'model'));
+        await waitForInput(gridDiv, modelCell, { popup: false });
+        expect(api.getCellEditorInstances()).toHaveLength(1);
+
+        await userEvent.keyboard('{Tab}');
+        await asyncSetTimeout(1);
+        const priceCell = getByTestId(gridDiv, agTestIdFor.cell('0', 'price'));
+        await waitForInput(gridDiv, priceCell, { popup: false });
+        expect(api.getCellEditorInstances()).toHaveLength(1);
+
+        // Step 3: Click on another cell (e.g., Ford's make cell in row 1)
+        // setFocusedCell triggers focus change which should stop editing through
+        // the focus change handler. Then startEditingCell begins editing the new cell.
+        api.setFocusedCell(1, 'make');
+        await asyncSetTimeout(10);
+
+        // Start editing on the new cell (simulates what happens when clicking an editable cell)
+        api.startEditingCell({ rowIndex: 1, colKey: 'make' });
+        await asyncSetTimeout(10);
+
+        // Step 4: Verify the editor is closed
+        // The input field from price cell should be removed after clicking another cell
+        // Row 1 make should be the only editing cell now
+        expect(api.getCellEditorInstances()).toHaveLength(1);
+        expect(priceCell.querySelector('input[type="text"]')).toBeNull();
+        expect(api.getEditingCells()).toHaveLength(1);
+        expect(api.getEditingCells()[0].rowIndex).toBe(1);
+    });
+
+    test('full row editing: tabbing into empty cell then clicking another cell closes editors', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [{ field: 'make' }, { field: 'model' }, { field: 'price' }, { field: 'electric' }],
+            defaultColDef: {
+                editable: true,
+            },
+            editType: 'fullRow',
+            rowData: [
+                // First row has missing price - this is key to reproducing the bug
+                { make: 'Tesla', model: 'Model Y', electric: true },
+                { make: 'Ford', model: 'F-Series', price: 33850, electric: false },
+                { make: 'Toyota', model: 'Corolla', price: 29600, electric: false },
+            ],
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(1);
+
+        // Step 1: Start editing the 'Tesla' row by double-clicking the make cell
+        const makeCell = getByTestId(gridDiv, agTestIdFor.cell('0', 'make'));
+        await userEvent.dblClick(makeCell);
+        await waitForInput(gridDiv, makeCell, { popup: false });
+        // Full row edit should have editors for all 4 columns
+        expect(api.getCellEditorInstances().length).toBeGreaterThanOrEqual(3);
+        expect(getRowHtmlElement(api, '0')?.classList.contains('ag-row-editing')).toBe(true);
+
+        // Step 2: Press Tab twice to navigate to the empty price cell
+        await userEvent.keyboard('{Tab}');
+        await asyncSetTimeout(1);
+        const modelCell = getByTestId(gridDiv, agTestIdFor.cell('0', 'model'));
+        await waitForInput(gridDiv, modelCell, { popup: false });
+
+        await userEvent.keyboard('{Tab}');
+        await asyncSetTimeout(1);
+        const priceCell = getByTestId(gridDiv, agTestIdFor.cell('0', 'price'));
+        await waitForInput(gridDiv, priceCell, { popup: false });
+
+        // Step 3: Click on another row (Ford's make cell in row 1)
+        api.setFocusedCell(1, 'make');
+        await asyncSetTimeout(10);
+
+        // Start editing on the new row
+        api.startEditingCell({ rowIndex: 1, colKey: 'make' });
+        await asyncSetTimeout(10);
+
+        // Step 4: Verify row 0 editors are closed
+        // Row 0 should no longer be in edit mode
+        expect(getRowHtmlElement(api, '0')?.classList.contains('ag-row-editing')).toBe(false);
+        expect(getRowHtmlElement(api, '1')?.classList.contains('ag-row-editing')).toBe(true);
+
+        // Row 0 price cell should not have an input anymore
+        expect(priceCell.querySelector('input')).toBeNull();
+
+        // All editing cells should be in row 1
+        const editingCells = api.getEditingCells();
+        expect(editingCells.length).toBeGreaterThan(0);
+        expect(editingCells.every((cell) => cell.rowIndex === 1)).toBe(true);
+    });
 });

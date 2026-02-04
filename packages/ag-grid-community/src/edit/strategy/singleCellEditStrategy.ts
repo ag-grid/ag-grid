@@ -28,13 +28,26 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             return res;
         }
 
-        const { rowNode, column } = position || {};
+        const rowNode = position?.rowNode;
+        const column = position?.column;
+        const trackedRowNode = this.rowNode;
+        const trackedColumn = this.column;
 
-        if ((!this.rowNode || !this.column) && rowNode && column) {
-            return null;
+        if ((!trackedRowNode || !trackedColumn) && rowNode && column) {
+            return null; // no existing edit, so don't stop
         }
 
-        return this.rowNode !== rowNode || this.column !== column;
+        if (trackedRowNode !== rowNode || trackedColumn !== column) {
+            return true; // stop editing if moving to a different cell
+        }
+
+        // Both tracked and position cells are null/undefined (cells match after check above).
+        // Stop orphan editors from tabbing into empty cells.
+        if (!trackedRowNode && !trackedColumn) {
+            return this.model.hasEdits(undefined, { withOpenEditor: true });
+        }
+
+        return false; // continue editing the same cell
     }
 
     public override midBatchInputsAllowed(position?: EditPosition): boolean {

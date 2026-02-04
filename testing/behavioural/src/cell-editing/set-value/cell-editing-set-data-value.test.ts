@@ -66,6 +66,8 @@ describe('Cell Editing: setDataValue sources', () => {
                 cellValueChanged: 1,
                 rowValueChanged: 0,
                 cellEditRequest: 0,
+                bulkEditingStarted: 0,
+                bulkEditingStopped: 0,
             });
 
             expect(valueSetterTargets).toEqual(['ROW_0']);
@@ -118,6 +120,8 @@ describe('Cell Editing: setDataValue sources', () => {
             cellValueChanged: 1,
             rowValueChanged: 0,
             cellEditRequest: 0,
+            bulkEditingStarted: 0,
+            bulkEditingStopped: 0,
         });
 
         expect(api.getDisplayedRowAtIndex(0)?.data?.field).toBe('default-value');
@@ -170,6 +174,8 @@ describe('Cell Editing: setDataValue sources', () => {
             cellValueChanged: 1,
             rowValueChanged: 0,
             cellEditRequest: 0,
+            bulkEditingStarted: 0,
+            bulkEditingStopped: 0,
         });
 
         expect(api.getDisplayedRowAtIndex(0)?.data?.field).toBe('paste-value');
@@ -225,6 +231,8 @@ describe('Cell Editing: setDataValue sources', () => {
             cellValueChanged: 0,
             rowValueChanged: 0,
             cellEditRequest: 1,
+            bulkEditingStarted: 0,
+            bulkEditingStopped: 0,
         });
 
         expect(api.getDisplayedRowAtIndex(0)?.data?.field).toBe('Initial Value');

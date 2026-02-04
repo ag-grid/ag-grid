@@ -95,6 +95,8 @@ describe('Clipboard Paste Behaviour: paste flows', () => {
             cellValueChanged: 1,
             rowValueChanged: 0,
             cellEditRequest: 0,
+            bulkEditingStarted: 0,
+            bulkEditingStopped: 0,
         });
         expect(lastSetValue).toBe('Top Value');
         expect(valueSetterTargets).toEqual(['ROW_1']);
@@ -155,6 +157,8 @@ describe('Clipboard Paste Behaviour: paste flows', () => {
             cellValueChanged: 1,
             rowValueChanged: 0,
             cellEditRequest: 0,
+            bulkEditingStarted: 0,
+            bulkEditingStopped: 0,
         });
         expect(lastSetValue).toBe('Top Value');
         expect(valueSetterTargets).toEqual(['ROW_1']);

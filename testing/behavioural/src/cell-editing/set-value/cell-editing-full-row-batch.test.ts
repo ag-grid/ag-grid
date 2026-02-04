@@ -81,6 +81,8 @@ describe('Cell Editing: full-row batch', () => {
             cellValueChanged: action === 'commit' ? 1 : 0,
             rowValueChanged: action === 'commit' ? 1 : 0,
             cellEditRequest: 0,
+            bulkEditingStarted: 0,
+            bulkEditingStopped: 0,
         });
 
         const row = api.getDisplayedRowAtIndex(0)?.data as { a: string; b: string } | undefined;

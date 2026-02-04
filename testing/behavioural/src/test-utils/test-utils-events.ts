@@ -84,6 +84,8 @@ export type EditEventCounts = {
     cellValueChanged: number;
     rowValueChanged: number;
     cellEditRequest: number;
+    bulkEditingStarted: number;
+    bulkEditingStopped: number;
 };
 
 const DEFAULT_EDIT_EVENT_COUNTS = {
@@ -92,6 +94,8 @@ const DEFAULT_EDIT_EVENT_COUNTS = {
     cellValueChanged: 0,
     rowValueChanged: 0,
     cellEditRequest: 0,
+    bulkEditingStarted: 0,
+    bulkEditingStopped: 0,
 };
 
 export class EditEventTracker {
@@ -105,6 +109,8 @@ export class EditEventTracker {
         this.track('cellValueChanged');
         this.track('rowValueChanged');
         this.track('cellEditRequest');
+        this.track('bulkEditingStarted');
+        this.track('bulkEditingStopped');
     }
 
     private track(event: AgPublicEventType): void {
