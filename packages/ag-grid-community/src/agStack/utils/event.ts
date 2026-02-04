@@ -57,7 +57,8 @@ let touchTargetMap: WeakMap<Touch, EventTarget> | undefined;
 export function _setTouchStartTarget(touch: Touch, touchEvent: TouchEvent): void {
     const target = _getEventTarget(touchEvent);
     if (target) {
-        (touchTargetMap ??= new WeakMap()).set(touch, target);
+        touchTargetMap ??= new WeakMap();
+        touchTargetMap.set(touch, target);
     }
 }
 
@@ -71,17 +72,17 @@ export function _getEventTarget(event: EventWithEventTarget | null | undefined):
     if (!event) {
         return null;
     }
-    // Check WeakMap cache for Touch objects (they don't have composedPath)
-    const cachedTarget = touchTargetMap?.get(event as Touch);
-    if (cachedTarget) {
-        return cachedTarget;
-    }
     // composedPath()[0] gives us the actual target even across shadow DOM boundaries
     if (typeof (event as Event).composedPath === 'function') {
         const path = (event as Event).composedPath();
         if (path && path.length > 0) {
             return path[0];
         }
+    }
+    // Check WeakMap cache for Touch objects (they don't have composedPath)
+    const cachedTarget = touchTargetMap?.get(event as Touch);
+    if (cachedTarget) {
+        return cachedTarget;
     }
     return event.target ?? null;
 }
