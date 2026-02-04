@@ -46,8 +46,27 @@ const getEditErrorsForPosition = (
 
 const getCellTruncationCheck = (beans: BeanCollection, ctrl: CellCtrl): (() => boolean) | undefined => {
     const isTooltipWhenTruncated = _isShowTooltipWhenTruncated(beans.gos);
-    if (!isTooltipWhenTruncated || ctrl.isCellRenderer()) {
+
+    if (!isTooltipWhenTruncated) {
         return undefined;
+    }
+
+    if (ctrl.isCellRenderer()) {
+        const colDef = ctrl.column.getColDef();
+        // create rule for our internal group cell renderer
+        const isGroupCellRenderer = !!colDef.showRowGroup || colDef.cellRenderer === 'agGroupCellRenderer';
+        if (!isGroupCellRenderer) {
+            return undefined;
+        }
+
+        return _isElementOverflowingCallback(() => {
+            const eCell = ctrl.eGui;
+            return (
+                (eCell.querySelector('.ag-group-value') as HTMLElement | undefined) ||
+                (eCell.querySelector('.ag-cell-value') as HTMLElement | undefined) ||
+                eCell
+            );
+        });
     }
 
     return _isElementOverflowingCallback(() => {
