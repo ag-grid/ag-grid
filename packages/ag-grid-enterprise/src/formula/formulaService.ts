@@ -373,6 +373,32 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         return dataSource.getFormula({ column: col, rowNode: row });
     }
 
+    private coerceFormulaValue(column: AgColumn, value: unknown): unknown {
+        const baseDataType = this.beans.dataTypeSvc?.getBaseDataType(column);
+        if (baseDataType === 'bigint') {
+            const bigintValue = this.toBigIntValue(value);
+            return bigintValue ?? value;
+        }
+        if (baseDataType === 'number' && typeof value === 'bigint') {
+            const asNumber = Number(value);
+            return Number.isFinite(asNumber) ? asNumber : value;
+        }
+        return value;
+    }
+
+    private toBigIntValue(value: unknown): bigint | null {
+        if (typeof value === 'bigint') {
+            return value;
+        }
+        if (typeof value === 'number') {
+            if (!Number.isFinite(value) || !Number.isInteger(value)) {
+                return null;
+            }
+            return BigInt(value);
+        }
+        return null;
+    }
+
     /** Fetch a non-formula value from the grid without triggering nested formula calc. */
     private fetchRawValue(col: AgColumn, row: RowNode): unknown {
         return this.beans.valueSvc.getValue(col, row, 'data');
@@ -534,6 +560,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
                     },
                     { row, column: col }
                 );
+                const coerced = this.coerceFormulaValue(col, computed);
 
                 // an inner valueGetter might have errored this path, if so rethrow to avoid
                 // overwriting the error with the error value string
@@ -544,7 +571,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
                 }
 
                 // cache result and mark as completed
-                cachedCellFormula.setComputedValue(computed);
+                cachedCellFormula.setComputedValue(coerced);
                 setVisited(row, col);
                 evalStack.pop();
             }

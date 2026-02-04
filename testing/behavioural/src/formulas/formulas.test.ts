@@ -253,6 +253,63 @@ describe('ag-grid formulas general behaviour', () => {
         `);
     });
 
+    test('bigint formulas resolve and coerce values per column data type', async () => {
+        const rowData = [
+            { id: 'row-1', total: 11n, age: 12, name: 'A' },
+            { id: 'row-2', total: 3n, age: 13, name: 'B' },
+            { id: 'row-3', total: 36721673247624376423n, age: 25, name: 'C' },
+            {
+                id: 'sum-small',
+                total: '=REF(COLUMN("total"),ROW("row-1")) + REF(COLUMN("total"),ROW("row-2"))',
+            },
+            {
+                id: 'sum-big',
+                total: '=REF(COLUMN("total"),ROW("row-3")) + REF(COLUMN("total"),ROW("row-2"))',
+            },
+            {
+                id: 'sum-mixed',
+                total: '=REF(COLUMN("total"),ROW("row-3")) + REF(COLUMN("age"),ROW("row-2"))',
+            },
+            {
+                id: 'age-mixed',
+                age: '=REF(COLUMN("age"),ROW("row-1")) + REF(COLUMN("total"),ROW("row-2"))',
+            },
+            {
+                id: 'age-big',
+                age: '=REF(COLUMN("age"),ROW("row-1")) + REF(COLUMN("total"),ROW("row-3"))',
+            },
+        ];
+
+        const gridOptions: GridOptions = {
+            defaultColDef: {
+                allowFormula: true,
+            },
+            rowNumbers: true,
+            rowData,
+            getRowId: (params) => params.data?.id,
+            columnDefs: [
+                { field: 'total', cellDataType: 'bigint' },
+                { field: 'age', cellDataType: 'number' },
+                { field: 'name' },
+            ],
+        };
+
+        const api = gridsManager.createGrid('formulas-bigint', gridOptions);
+
+        const gridRows = new GridRows(api, 'bigint formulas');
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:row-1 row-number:"1" total:"11n" age:12 name:"A"
+            ├── LEAF id:row-2 row-number:"2" total:"3n" age:13 name:"B"
+            ├── LEAF id:row-3 row-number:"3" total:"36721673247624376423n" age:25 name:"C"
+            ├── LEAF id:sum-small row-number:"4" total:"14n"
+            ├── LEAF id:sum-big row-number:"5" total:"36721673247624376426n"
+            ├── LEAF id:sum-mixed row-number:"6" total:"36721673247624376436n"
+            ├── LEAF id:age-mixed row-number:"7" age:15
+            └── LEAF id:age-big row-number:"8" age:36721673247624376000
+        `);
+    });
+
     test('nested expressions respect evaluation order', async () => {
         const rowData = [
             {

@@ -2,13 +2,25 @@ import type { FormulaFunctionParams } from 'ag-grid-community';
 
 import { FormulaError } from '../../ast/utils';
 import { criteriaToPredicate, isRangeParam, isValueParam, iterableWithoutBlanks, take, takeBetween } from '../utils';
-import { coerceFiniteNumber, dateFromDays, isDateValue } from './utils';
+import { coerceBigInt, coerceFiniteNumber, coerceFiniteNumberOrBigInt, dateFromDays, isDateValue } from './utils';
 
-export const PRODUCT = ({ values }: FormulaFunctionParams): number => {
+export const PRODUCT = ({ values }: FormulaFunctionParams): number | bigint => {
     let acc = 1;
+    let accBigInt: bigint | null = null;
     for (const v of iterableWithoutBlanks(values)) {
-        const n = coerceFiniteNumber('PRODUCT', v);
-        if (n == null) {
+        const n = coerceFiniteNumberOrBigInt('PRODUCT', v);
+
+        if (typeof n === 'bigint') {
+            accBigInt ??= coerceBigInt('PRODUCT', acc);
+            if (n === 0n) {
+                return 0n;
+            }
+            accBigInt *= n;
+            continue;
+        }
+
+        if (accBigInt != null) {
+            accBigInt *= coerceBigInt('PRODUCT', n);
             continue;
         }
 
@@ -18,7 +30,7 @@ export const PRODUCT = ({ values }: FormulaFunctionParams): number => {
 
         acc *= n;
     }
-    return acc;
+    return accBigInt ?? acc;
 };
 
 export const DIVIDE = ({ values }: FormulaFunctionParams): number => {
@@ -34,17 +46,31 @@ export const DIVIDE = ({ values }: FormulaFunctionParams): number => {
     return na / nb;
 };
 
-export const SUM = ({ values }: FormulaFunctionParams): number | Date => {
+export const SUM = ({ values }: FormulaFunctionParams): number | Date | bigint => {
     let hasDates = false;
     let acc = 0;
+    let accBigInt: bigint | null = null;
     let hasValue = false;
     for (const v of iterableWithoutBlanks(values)) {
         hasDates ||= isDateValue(v);
 
-        const n = coerceFiniteNumber('SUM', v);
-        if (n == null) {
+        const n = coerceFiniteNumberOrBigInt('SUM', v);
+        if (typeof n === 'bigint') {
+            if (hasDates) {
+                throw new FormulaError('SUM: cannot combine dates with BigInt', '#VALUE!');
+            }
+            accBigInt ??= coerceBigInt('SUM', acc);
+            accBigInt += n;
+            hasValue = true;
             continue;
         }
+
+        if (accBigInt != null) {
+            accBigInt += coerceBigInt('SUM', n);
+            hasValue = true;
+            continue;
+        }
+
         acc += n;
         hasValue = true;
     }
@@ -52,24 +78,32 @@ export const SUM = ({ values }: FormulaFunctionParams): number | Date => {
         throw new FormulaError('SUM: requires at least one numeric value', '#PARSE!');
     }
 
+    if (accBigInt != null) {
+        return accBigInt;
+    }
     return hasDates ? dateFromDays(acc) : acc;
 };
 
-export const MINUS = ({ values }: FormulaFunctionParams): number | Date => {
+export const MINUS = ({ values }: FormulaFunctionParams): number | Date | bigint => {
     const [a, b] = take(iterableWithoutBlanks(values), 'MINUS', 2);
-    const na = coerceFiniteNumber('MINUS', a);
-    const nb = coerceFiniteNumber('MINUS', b);
-    if (na == null || nb == null) {
-        throw new FormulaError('MINUS: non-numeric argument', '#VALUE!');
-    }
-
     const aDate = isDateValue(a);
     const bDate = isDateValue(b);
-    if (aDate && !bDate) {
-        return dateFromDays(na - nb); // date - number = date
+    if (aDate || bDate) {
+        const na = coerceFiniteNumber('MINUS', a);
+        const nb = coerceFiniteNumber('MINUS', b);
+        if (aDate && !bDate) {
+            return dateFromDays(na - nb); // date - number = date
+        }
+        if (aDate && bDate) {
+            return na - nb; // subtracting two dates gives number of days between
+        }
+        return na - nb;
     }
-    if (aDate && bDate) {
-        return na - nb; // subtracting two dates gives number of days between
+
+    const na = coerceFiniteNumberOrBigInt('MINUS', a);
+    const nb = coerceFiniteNumberOrBigInt('MINUS', b);
+    if (typeof na === 'bigint' || typeof nb === 'bigint') {
+        return coerceBigInt('MINUS', na as number | bigint) - coerceBigInt('MINUS', nb as number | bigint);
     }
     return na - nb;
 };
@@ -135,7 +169,7 @@ export const MEDIAN = ({ values }: FormulaFunctionParams): number | Date => {
 
 export const RAND = (): number => Math.random();
 
-export const SUMIF = ({ args }: FormulaFunctionParams): number => {
+export const SUMIF = ({ args }: FormulaFunctionParams): number | bigint => {
     const [critRange, criteria, sumRange] = takeBetween(args, 'SUMIF', 2, 3);
 
     if (!isRangeParam(critRange)) {
@@ -153,15 +187,21 @@ export const SUMIF = ({ args }: FormulaFunctionParams): number => {
     // No sum_range → sum over critRange itself (Excel behavior).
     if (!sumRange) {
         let acc = 0;
+        let accBigInt: bigint | null = null;
         for (const v of critRange) {
             if (pred(v)) {
-                const n = coerceFiniteNumber('SUMIF', v);
-                if (n != null) {
-                    acc += n; // non-numerics ignored
+                const n = coerceFiniteNumberOrBigInt('SUMIF', v);
+                if (typeof n === 'bigint') {
+                    accBigInt ??= coerceBigInt('SUMIF', acc);
+                    accBigInt += n;
+                } else if (accBigInt != null) {
+                    accBigInt += coerceBigInt('SUMIF', n);
+                } else {
+                    acc += n;
                 }
             }
         }
-        return acc;
+        return accBigInt ?? acc;
     }
 
     const critRangeHeight = critRange.rowEnd - critRange.rowStart;
@@ -174,6 +214,7 @@ export const SUMIF = ({ args }: FormulaFunctionParams): number => {
     const sumRangeIterator = sumRange[Symbol.iterator]();
 
     let total = 0;
+    let totalBigInt: bigint | null = null;
     while (true) {
         const a = critRangeIterator.next();
         const b = sumRangeIterator.next();
@@ -184,11 +225,16 @@ export const SUMIF = ({ args }: FormulaFunctionParams): number => {
             break;
         }
         if (pred(a.value)) {
-            const n = coerceFiniteNumber('SUMIF', b.value);
-            if (n != null) {
+            const n = coerceFiniteNumberOrBigInt('SUMIF', b.value);
+            if (typeof n === 'bigint') {
+                totalBigInt ??= coerceBigInt('SUMIF', total);
+                totalBigInt += n;
+            } else if (totalBigInt != null) {
+                totalBigInt += coerceBigInt('SUMIF', n);
+            } else {
                 total += n;
             }
         }
     }
-    return total;
+    return totalBigInt ?? total;
 };

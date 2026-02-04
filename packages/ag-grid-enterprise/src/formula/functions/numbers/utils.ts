@@ -19,6 +19,13 @@ export function isDateValue(v: unknown): v is Date {
 
 /** Convert a value to a finite number, allowing numeric strings; else throw. */
 export function coerceFiniteNumber(fname: string, v: unknown): number {
+    if (typeof v === 'bigint') {
+        const asNumber = Number(v);
+        if (Number.isFinite(asNumber)) {
+            return asNumber;
+        }
+        throw new FormulaError(`${fname}: values must be numeric`, '#VALUE!');
+    }
     if (isFiniteNumber(v)) {
         return v;
     }
@@ -39,4 +46,22 @@ export function coerceFiniteNumber(fname: string, v: unknown): number {
     }
 
     throw new FormulaError(`${fname}: values must be numeric`, '#VALUE!');
+}
+
+/** Convert a value to a finite number or bigint, allowing numeric strings. */
+export function coerceFiniteNumberOrBigInt(fname: string, v: unknown): number | bigint {
+    if (typeof v === 'bigint') {
+        return v;
+    }
+    return coerceFiniteNumber(fname, v);
+}
+
+export function coerceBigInt(fname: string, v: number | bigint): bigint {
+    if (typeof v === 'bigint') {
+        return v;
+    }
+    if (!Number.isFinite(v) || !Number.isInteger(v)) {
+        throw new FormulaError(`${fname}: values must be integers`, '#VALUE!');
+    }
+    return BigInt(v);
 }
