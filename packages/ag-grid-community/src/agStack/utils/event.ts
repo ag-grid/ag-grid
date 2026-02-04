@@ -43,6 +43,7 @@ export function _isElementInEventPath(element: HTMLElement, event: Event): boole
  * WeakMap to store the composed target for Touch objects.
  * When extracting a Touch from a TouchEvent, call _setTouchStartTarget to store the real target.
  * This allows _getEventTarget to return the correct target for Shadow DOM scenarios.
+ * Note: This is a bit of a hack until we don't refactor the code to not cast Touch to Events.
  */
 let touchTargetMap: WeakMap<Touch, EventTarget> | undefined;
 
@@ -64,15 +65,15 @@ export function _setTouchStartTarget(touch: Touch, touchEvent: TouchEvent): void
  * For Touch objects, uses the target stored via _setTouchStartTarget if available.
  */
 export function _getEventTarget(
-    event: Event | Touch | { readonly target: EventTarget | null; composedPath?(): EventTarget[] | null } | null | undefined
+    event:
+        | Event
+        | Touch
+        | { readonly target: EventTarget | null; composedPath?(): EventTarget[] | null }
+        | null
+        | undefined
 ): EventTarget | null {
     if (!event) {
         return null;
-    }
-    // Check WeakMap for Touch objects
-    const touchTarget = touchTargetMap?.get(event as Touch);
-    if (touchTarget) {
-        return touchTarget;
     }
     // composedPath()[0] gives us the actual target even across shadow DOM boundaries
     const composedPath = (event as Event).composedPath;
@@ -80,6 +81,12 @@ export function _getEventTarget(
         const path = composedPath.call(event);
         if (path && path.length > 0) {
             return path[0];
+        }
+    } else {
+        // Check WeakMap for Touch objects
+        const touchTarget = touchTargetMap?.get(event as Touch);
+        if (touchTarget) {
+            return touchTarget;
         }
     }
     return event.target ?? null;
