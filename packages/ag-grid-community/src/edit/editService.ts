@@ -568,7 +568,7 @@ export class EditService extends BeanStub implements NamedBean {
 
                 if (!cancel && valueChanged && !hasValidationErrors) {
                     const cellCtrl = _getCellCtrl(this.beans, position);
-                    const success = this.setNodeDataValue(rowNode, column, editValue.pendingValue, source, cellCtrl);
+                    const success = this.setNodeDataValue(rowNode, column, editValue.pendingValue, cellCtrl, source);
                     if (!success) {
                         editsToDelete.push(position);
                     }
@@ -583,8 +583,8 @@ export class EditService extends BeanStub implements NamedBean {
         rowNode: IRowNode,
         column: Column,
         newValue: any,
-        originalSource: string,
-        cellCtrl: CellCtrl | null | undefined
+        cellCtrl: CellCtrl | null | undefined,
+        originalSource: string = 'edit'
     ): boolean {
         const translatedSource = INTERNAL_EDITOR_SOURCES.has(originalSource) ? 'edit' : originalSource;
 
@@ -970,8 +970,8 @@ export class EditService extends BeanStub implements NamedBean {
                     position.rowNode,
                     position.column,
                     newValue,
-                    eventSource,
-                    cellCtrl
+                    cellCtrl,
+                    eventSource
                 );
                 if (!success) {
                     // If the data value was not set (e.g. valueSetter returned false), clear the edit value
