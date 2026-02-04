@@ -567,7 +567,8 @@ export class EditService extends BeanStub implements NamedBean {
                 const valueChanged = _sourceAndPendingDiffer(editValue);
 
                 if (!cancel && valueChanged && !hasValidationErrors) {
-                    const success = this.setNodeDataValue(rowNode, column, editValue.pendingValue, undefined, source);
+                    const cellCtrl = _getCellCtrl(this.beans, position);
+                    const success = this.setNodeDataValue(rowNode, column, editValue.pendingValue, source, cellCtrl);
                     if (!success) {
                         editsToDelete.push(position);
                     }
@@ -582,11 +583,9 @@ export class EditService extends BeanStub implements NamedBean {
         rowNode: IRowNode,
         column: Column,
         newValue: any,
-        refreshCell?: boolean,
-        originalSource: string = 'edit'
+        originalSource: string,
+        cellCtrl: CellCtrl | null | undefined
     ): boolean {
-        const { beans } = this;
-        const cellCtrl = _getCellCtrl(beans, { rowNode, column });
         const translatedSource = INTERNAL_EDITOR_SOURCES.has(originalSource) ? 'edit' : originalSource;
 
         // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection
@@ -601,10 +600,6 @@ export class EditService extends BeanStub implements NamedBean {
         this.committing = false;
         if (cellCtrl) {
             cellCtrl.suppressRefreshCell = false;
-        }
-
-        if (refreshCell) {
-            cellCtrl?.refreshCell(FORCE_REFRESH);
         }
 
         return success;
@@ -970,8 +965,22 @@ export class EditService extends BeanStub implements NamedBean {
                     return true;
                 }
 
-                // a truthy return here indicates the operation succeeded, and if invoked from rowNode.setDataValue, will not result in a cell value change event
-                return this.setNodeDataValue(position.rowNode, position.column, newValue, true, eventSource);
+                const cellCtrl = _getCellCtrl(beans, position);
+                const success = this.setNodeDataValue(
+                    position.rowNode,
+                    position.column,
+                    newValue,
+                    eventSource,
+                    cellCtrl
+                );
+                if (!success) {
+                    // If the data value was not set (e.g. valueSetter returned false), clear the edit value
+                    // to prevent the pending value from being displayed instead of the original value
+                    this.model.clearEditValue(position);
+                }
+                // Refresh the cell once with the correct value (either the new value or original if rejected)
+                cellCtrl?.refreshCell(FORCE_REFRESH);
+                return success;
             }
 
             const existing = this.model.getEdit(position);
