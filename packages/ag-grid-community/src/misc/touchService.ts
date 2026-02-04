@@ -97,7 +97,7 @@ export class TouchService extends BeanStub implements NamedBean {
 
         if (params.enableSorting) {
             const tapListener = (event: TapEvent) => {
-                const target = event.touchStart.target as HTMLElement;
+                const target = _getEventTarget(event.touchStart) as HTMLElement;
                 // When suppressMenuHide is true, a tap on the menu icon or filter button will bubble up
                 // to the header container, in that case we should not sort
                 if (suppressMenuHide && (eMenu?.contains(target) || eFilterButton?.contains(target))) {

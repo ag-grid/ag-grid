@@ -4,6 +4,7 @@ import type { IEventEmitter, IEventListener } from '../agStack/interfaces/iEvent
 import {
     _areEventsNear,
     _getFirstActiveTouch,
+    _setTouchStartTarget,
     addTempEventHandlers,
     clearTempEventHandlers,
     preventEventDefault,
@@ -82,6 +83,7 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
         }
 
         const touchStart = touchEvent.touches[0];
+        _setTouchStartTarget(touchStart, touchEvent);
         this.touchStart = touchStart;
 
         const handlers = this.handlers;

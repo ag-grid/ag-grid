@@ -40,19 +40,44 @@ export function _isElementInEventPath(element: HTMLElement, event: Event): boole
 }
 
 /**
+ * WeakMap to store the composed target for Touch objects.
+ * When extracting a Touch from a TouchEvent, call _setTouchStartTarget to store the real target.
+ * This allows _getEventTarget to return the correct target for Shadow DOM scenarios.
+ */
+let touchTargetMap: WeakMap<Touch, EventTarget> | undefined;
+
+/**
+ * Stores the composed target for a Touch object extracted from a TouchEvent.
+ * Call this when extracting the first touch from a touchstart event.
+ */
+export function _setTouchStartTarget(touch: Touch, touchEvent: TouchEvent): void {
+    const target = _getEventTarget(touchEvent);
+    if (target) {
+        (touchTargetMap ??= new WeakMap()).set(touch, target);
+    }
+}
+
+/**
  * Gets the actual target element from an event, handling Shadow DOM correctly.
  * When events cross shadow DOM boundaries, `event.target` may be retargeted to the shadow host.
  * This function uses `composedPath()[0]` to get the actual element that received the event.
+ * For Touch objects, uses the target stored via _setTouchStartTarget if available.
  */
 export function _getEventTarget(
-    event: Event | { readonly target: EventTarget | null; composedPath?(): EventTarget[] | null } | null | undefined
+    event: Event | Touch | { readonly target: EventTarget | null; composedPath?(): EventTarget[] | null } | null | undefined
 ): EventTarget | null {
     if (!event) {
         return null;
     }
+    // Check WeakMap for Touch objects
+    const touchTarget = touchTargetMap?.get(event as Touch);
+    if (touchTarget) {
+        return touchTarget;
+    }
     // composedPath()[0] gives us the actual target even across shadow DOM boundaries
-    if (typeof event.composedPath === 'function') {
-        const path = event.composedPath();
+    const composedPath = (event as Event).composedPath;
+    if (typeof composedPath === 'function') {
+        const path = composedPath.call(event);
         if (path && path.length > 0) {
             return path[0];
         }

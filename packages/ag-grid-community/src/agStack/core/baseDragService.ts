@@ -15,6 +15,7 @@ import {
     _getEventTarget,
     _getFirstActiveTouch,
     _isEventFromThisInstance,
+    _setTouchStartTarget,
     addTempEventHandlers,
     clearTempEventHandlers,
     preventEventDefault,
@@ -303,7 +304,9 @@ export class BaseDragService<
 
         const beans = this.beans;
         const rootEl = _getRootNode(beans);
-        const touchDrag = new Dragging(rootEl, params, touchEvent.touches[0]);
+        const touch = touchEvent.touches[0];
+        _setTouchStartTarget(touch, touchEvent);
+        const touchDrag = new Dragging(rootEl, params, touch);
 
         const touchMoveEvent = (e: TouchEvent) => this.onTouchMove(e);
         const touchEndEvent = (e: TouchEvent) => this.onTouchUp(e);
