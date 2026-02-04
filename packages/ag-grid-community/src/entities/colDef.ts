@@ -393,21 +393,9 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
 
     /**
      * Set to `true` if this column is editable, otherwise `false`. Can also be a function to have different rows editable.
-     * When grouping, see `groupRowEditable` instead for group rows.
      * @default false
      */
     editable?: boolean | EditableCallback<TData, TValue>;
-    /**
-     * Works like `editable`, but is evaluated only for group rows. When provided, group rows use this property instead of `editable`.
-     * Set to `true` if this column is editable, otherwise `false`. Can also be a function to have different rows editable.
-     */
-    groupRowEditable?: boolean | GroupRowEditableCallback<TData, TValue>;
-    /**
-     * Runs after a group row value changes so custom code can push edits down to descendant rows.
-     * Fires for every `setDataValue` call when defined, regardless of `groupRowEditable`.
-     * Use this to mutate descendants directly; the grid always commits the group row value afterwards.
-     */
-    groupRowValueSetter?: GroupRowValueSetterFunc<TData, TValue>;
     /**
      * Function or expression. Sets the value into your data for saving. Return `true` if the data changed.
      */
@@ -977,39 +965,6 @@ export interface EditableCallbackParams<TData = any, TValue = any, TContext = an
 export type EditableCallback<TData = any, TValue = any, TContext = any> = (
     params: EditableCallbackParams<TData, TValue, TContext>
 ) => boolean;
-export interface GroupRowEditableCallbackParams<TData = any, TValue = any, TContext = any>
-    extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}
-export type GroupRowEditableCallback<TData = any, TValue = any, TContext = any> = (
-    params: GroupRowEditableCallbackParams<TData, TValue, TContext>
-) => boolean;
-export interface GroupRowValueSetterParams<TData = any, TValue = any, TContext = any>
-    extends Omit<
-        ChangedValueParams<TData, TValue | null | undefined, TValue | null | undefined, TContext>,
-        'node' | 'data'
-    > {
-    /** Group row that triggered the callback. */
-    node: IRowNode<TData>;
-    /** Data associated with the group row. Undefined when the row does not own data. */
-    data?: TData | null;
-    /** Source string provided to `rowNode.setDataValue`. */
-    eventSource: string | undefined;
-    /** Whether the value actually changed. */
-    valueChanged: boolean;
-    /**
-     * The immediate children that contribute to the aggregation.
-     *
-     * - For leaf groups (groups containing data rows): returns the data rows.
-     *   With pivot columns, only rows matching the pivot keys are included.
-     * - For non-leaf groups (groups containing other groups): returns the child groups.
-     *   Use `setDataValue` on child groups to cascade recursively.
-     *
-     * **Note:** Only supported with the Client-Side Row Model.
-     */
-    aggregatedChildren: IRowNode<TData>[];
-}
-export type GroupRowValueSetterFunc<TData = any, TValue = any, TContext = any> = (
-    params: GroupRowValueSetterParams<TData, TValue, TContext>
-) => void | boolean | undefined;
 export interface SuppressPasteCallbackParams<TData = any, TValue = any, TContext = any>
     extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}
 export type SuppressPasteCallback<TData = any, TValue = any, TContext = any> = (
