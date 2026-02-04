@@ -65,7 +65,10 @@ export const SUM = ({ values }: FormulaFunctionParams): number | Date | bigint =
             continue;
         }
 
-        if (accBigInt != null) {
+        if (typeof accBigInt === 'bigint') {
+            if (hasDates) {
+                throw new FormulaError('SUM: cannot combine dates with BigInt', '#VALUE!').type;
+            }
             accBigInt += coerceBigInt('SUM', n);
             hasValue = true;
             continue;
@@ -78,7 +81,7 @@ export const SUM = ({ values }: FormulaFunctionParams): number | Date | bigint =
         throw new FormulaError('SUM: requires at least one numeric value', '#PARSE!');
     }
 
-    if (accBigInt != null) {
+    if (typeof accBigInt === 'bigint') {
         return accBigInt;
     }
     return hasDates ? dateFromDays(acc) : acc;
