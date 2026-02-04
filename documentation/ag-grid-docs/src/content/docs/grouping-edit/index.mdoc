@@ -4,7 +4,7 @@ enterprise: true
 ---
 
 The grid supports editing grouped data when using the [Client-Side Row Model](./row-models/#client-side).
-This page explains how to keep the grouping hierarchy synchronised with edits and how to allow group rows themselves to be editable.
+This page explains how to keep the grouping hierarchy synchronised with edits.
 
 ## Refreshing Groups After Editing
 
@@ -24,86 +24,6 @@ stable IDs while rebuilding the grouping hierarchy.
 
 See also [Read Only Edit](./value-setters/#read-only-edit) for configuring immutable grouped data or
 connecting the grid with a store.
-
-## Editing Group Row Cells
-
-Set `groupRowEditable` on any column that should accept edits on group nodes.
-Provide either a boolean or a callback; callbacks only run for nodes where `rowNode.group === true`,
-while leaf rows continue to honour `editable`.
-
-`groupRowValueSetter` mirrors the regular `valueSetter`, but it only fires for group rows. It runs
-whenever a group row cell changes through the UI, `rowNode.setDataValue`, or another API call,
-making it the right place to cascade edits to child nodes.
-
-Return `true` from the callback to inform the grid that the value changed and refresh is needed.
-
-Most grouped rows (and filler nodes in tree data) do not own `rowNode.data`, so their column
-`valueSetter` never runs even if `groupRowEditable` is enabled. Provide a `groupRowValueSetter`
-whenever the edit needs to persist or update aggregates; only group rows that own real data objects
-run the normal value pipeline.
-
-When a column defines both `groupRowEditable` and `editable`, AG Grid only evaluates the property
-that matches the current node type, enabling separate rules for group rows and leaves.
-
-## Custom Distribution of Edits
-
-In this example, `groupRowValueSetter` is used to distribute edits on group rows to their descendant rows.
-The example uses a simple strategy of dividing the value equally among all visible children and sub groups.
-
-{% gridExampleRunner title="Custom Editable Group Totals" name="group-editable-totals-custom" exampleHeight=620 /%}
-
-### The aggregatedChildren Parameter
-
-The `groupRowValueSetter` callback receives an `aggregatedChildren` array containing the immediate children
-that contribute to the [Aggregation](./aggregation/) for the edited column. This array makes it easy to
-cascade edited values down to descendant rows without manually traversing the row hierarchy.
-
-The children returned by `aggregatedChildren` depend on the column and grid configuration:
-
--   **Regular value columns**: Returns direct children used for aggregation. This respects the
-    `suppressAggFilteredOnly` grid option and `groupAggFiltering` — when these cause aggregation to include
-    all children (not just filtered ones), `aggregatedChildren` returns all children accordingly.
--   **Pivot columns on leaf groups**: Returns only the children matching the column's pivot keys, since
-    pivot aggregation groups rows by pivot key values.
--   **Non-group rows**: Always returns an empty array — only group rows have aggregated children.
-
-Alternatively, use `rowNode.getAggregatedChildren(colKey)` anywhere in your code to retrieve the same
-children programmatically. See [Retrieving Aggregated Children](./aggregation/#retrieving-aggregated-children)
-for more details.
-
-### Cascading Edits
-
-Key points for implementing cascading edits:
-
--   Call `rowNode.setDataValue` on each child to push updated figures down. This triggers normal
-    aggregation to refresh parent totals.
--   When a child is also a group that defines its own `groupRowValueSetter`, the cascade recurses further.
--   Parent aggregates refresh automatically because child `data` changes re-run the column `aggFunc`,
-    so typing a new total into "Europe" instantly rebalances the children to reach that value.
-
-{% note %}
-The `aggregatedChildren` parameter and `rowNode.getAggregatedChildren()` method are only supported
-with the Client-Side Row Model. For other row models, `aggregatedChildren` is an empty array.
-{% /note %}
-
-## Editing Pivot Columns
-
-When using [Pivoting](./pivoting/), the `groupRowValueSetter` also works with pivot result columns.
-The key difference is that `aggregatedChildren` returns only the children matching the column's pivot keys,
-not all children of the group.
-
-{% gridExampleRunner title="Custom Editable Pivot Totals" name="pivot-editable-totals-custom" exampleHeight=500 /%}
-
-In this example:
-
--   The grid is pivoted by `product` (Electronics, Clothing, Food), grouped by `region` and `country`.
--   Double-click on any pivot column cell to edit the aggregated value.
--   When editing a pivot cell (e.g., "Electronics" column on "Europe" row), the `aggregatedChildren` array
-    contains only the European rows selling Electronics — not all European rows.
--   The edit is distributed equally among just those matching children, leaving other product categories unchanged.
-
-This behaviour ensures that edits on pivot columns affect only the data that contributes to that specific
-pivot value, making cascading edits work correctly with pivoted data.
 
 ## Next Up
 

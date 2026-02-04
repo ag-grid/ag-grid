@@ -2,6 +2,7 @@ import { KeyCode } from '../agStack/constants/keyCode';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
+import type { ColDefInternal } from '../entities/colDefInternal';
 import { _getRowNode } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
 import type { AgEventType } from '../eventTypes';
@@ -567,7 +568,8 @@ export class EditService extends BeanStub implements NamedBean {
                 const valueChanged = _sourceAndPendingDiffer(editValue);
 
                 if (!cancel && valueChanged && !hasValidationErrors) {
-                    const success = this.setNodeDataValue(rowNode, column, editValue.pendingValue, undefined, source);
+                    const cellCtrl = _getCellCtrl(this.beans, position);
+                    const success = this.setNodeDataValue(rowNode, column, editValue.pendingValue, cellCtrl, source);
                     if (!success) {
                         editsToDelete.push(position);
                     }
@@ -582,11 +584,9 @@ export class EditService extends BeanStub implements NamedBean {
         rowNode: IRowNode,
         column: Column,
         newValue: any,
-        refreshCell?: boolean,
+        cellCtrl: CellCtrl | null | undefined,
         originalSource: string = 'edit'
     ): boolean {
-        const { beans } = this;
-        const cellCtrl = _getCellCtrl(beans, { rowNode, column });
         const translatedSource = INTERNAL_EDITOR_SOURCES.has(originalSource) ? 'edit' : originalSource;
 
         // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection
@@ -601,10 +601,6 @@ export class EditService extends BeanStub implements NamedBean {
         this.committing = false;
         if (cellCtrl) {
             cellCtrl.suppressRefreshCell = false;
-        }
-
-        if (refreshCell) {
-            cellCtrl?.refreshCell(FORCE_REFRESH);
         }
 
         return success;
@@ -723,7 +719,8 @@ export class EditService extends BeanStub implements NamedBean {
         const { gos, beans } = this;
 
         const rowNode = position.rowNode;
-        if (rowNode.group && position.column.getColDef().groupRowEditable == null) {
+        const colDef: ColDefInternal = position.column.getColDef();
+        if (rowNode.group && colDef.groupRowEditable == null) {
             // This is a group - it could be a tree group or a grouping group...
             if (gos.get('treeData')) {
                 // tree - allow editing of groups with data by default.
@@ -970,8 +967,22 @@ export class EditService extends BeanStub implements NamedBean {
                     return true;
                 }
 
-                // a truthy return here indicates the operation succeeded, and if invoked from rowNode.setDataValue, will not result in a cell value change event
-                return this.setNodeDataValue(position.rowNode, position.column, newValue, true, eventSource);
+                const cellCtrl = _getCellCtrl(beans, position);
+                const success = this.setNodeDataValue(
+                    position.rowNode,
+                    position.column,
+                    newValue,
+                    cellCtrl,
+                    eventSource
+                );
+                if (!success) {
+                    // If the data value was not set (e.g. valueSetter returned false), clear the edit value
+                    // to prevent the pending value from being displayed instead of the original value
+                    this.model.clearEditValue(position);
+                }
+                // Refresh the cell once with the correct value (either the new value or original if rejected)
+                cellCtrl?.refreshCell(FORCE_REFRESH);
+                return success;
             }
 
             const existing = this.model.getEdit(position);

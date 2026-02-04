@@ -2,6 +2,7 @@ import { KeyCode } from '../../agStack/constants/keyCode';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ColDef } from '../../entities/colDef';
+import type { ColDefInternal } from '../../entities/colDefInternal';
 import type { GridOptionsService } from '../../gridOptionsService';
 import type { EditPosition, EditSource } from '../../interfaces/iEditService';
 
@@ -73,7 +74,7 @@ function existingEditing(beans: BeanCollection, editPosition: Required<EditPosit
 export function isCellEditable(beans: BeanCollection, editPosition: Required<EditPosition>): boolean {
     const column = editPosition.column as AgColumn;
     const rowNode = editPosition.rowNode;
-    const colDef = column.getColDef();
+    const colDef = column.getColDef() as ColDefInternal;
 
     if (!rowNode) {
         return existingEditing(beans, editPosition);

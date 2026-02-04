@@ -1304,4 +1304,144 @@ describe('Cell Editing Regression', () => {
             bulkEditingStopped: 0,
         });
     });
+
+    // Test for valueSetter returning false preventing Delete key changes with cellSelection
+    test('Delete key on cell with valueSetter returning false and cellSelection should not change value', async () => {
+        // 1. Focus on a cell that has a value and select it (create cell range)
+        // 2. Press DELETE - the value should NOT be removed because valueSetter returns false
+        // 3. Double-click another cell to enter edit mode
+        // 4. Press ESC to exit edit mode
+        // Expected: The original value should persist because valueSetter returned false
+
+        const valueSetterCalls: Array<{ oldValue: any; newValue: any }> = [];
+
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                {
+                    field: 'country',
+                    flex: 1,
+                    editable: true,
+                    cellDataType: false,
+                    valueSetter: (params) => {
+                        valueSetterCalls.push({
+                            oldValue: params.oldValue,
+                            newValue: params.newValue,
+                        });
+                        // Return false to reject the change
+                        return false;
+                    },
+                },
+                {
+                    field: 'sport',
+                    flex: 1,
+                    editable: true,
+                },
+            ],
+            cellSelection: {
+                handle: { mode: 'fill' },
+            },
+            rowData: [
+                { country: 'United States', sport: 'Swimming' },
+                { country: 'China', sport: 'Gymnastics' },
+            ],
+        });
+        const eventTracker = new EditEventTracker(api);
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(1);
+
+        const gridRows = new GridRows(api, 'initial');
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 country:"United States" sport:"Swimming"
+            └── LEAF id:1 country:"China" sport:"Gymnastics"
+        `);
+
+        // Step 1: Focus on a cell that has a value and create a cell range
+        const countryCell = getByTestId(gridDiv, agTestIdFor.cell('0', 'country'));
+        expect(countryCell).toHaveTextContent('United States');
+
+        await userEvent.click(countryCell);
+        // Create a cell range for the clicked cell (simulating proper cell selection)
+        api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['country'] });
+        await asyncSetTimeout(1);
+
+        // Verify we are not in edit mode
+        expect(api.getEditingCells()).toHaveLength(0);
+
+        // Step 2: Press DELETE - the valueSetter should be called but return false
+        await userEvent.keyboard('{Delete}');
+        await asyncSetTimeout(1);
+
+        // Verify valueSetter was called with correct values
+        expect(valueSetterCalls).toHaveLength(1);
+        expect(valueSetterCalls[0].newValue).toBeNull();
+        expect(valueSetterCalls[0].oldValue).toBe('United States');
+
+        // Since valueSetter returned false, the value should remain unchanged
+        expect(countryCell).toHaveTextContent('United States');
+        expect(api.getDisplayedRowAtIndex(0)?.data.country).toBe('United States');
+
+        // Verify grid data is unchanged after Delete
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 country:"United States" sport:"Swimming"
+            └── LEAF id:1 country:"China" sport:"Gymnastics"
+        `);
+
+        // Verify no cellValueChanged event was fired because valueSetter returned false
+        expect(eventTracker.counts.cellValueChanged).toBe(0);
+
+        // Step 3: Double-click another cell to enter edit mode
+        const sportCell = getByTestId(gridDiv, agTestIdFor.cell('1', 'sport'));
+        await userEvent.dblClick(sportCell);
+        await asyncSetTimeout(1);
+
+        // Verify we are now in edit mode on the sport cell
+        const editingCells = api.getEditingCells();
+        expect(editingCells).toHaveLength(1);
+        expect(editingCells[0].colId).toBe('sport');
+        expect(editingCells[0].rowIndex).toBe(1);
+
+        // Verify cellEditingStarted was fired for the sport cell
+        expect(eventTracker.counts.cellEditingStarted).toBe(1);
+
+        // The country cell value should still be unchanged
+        expect(countryCell).toHaveTextContent('United States');
+        expect(api.getDisplayedRowAtIndex(0)?.data.country).toBe('United States');
+
+        // Step 4: Press ESC to exit edit mode (cancel edit)
+        await userEvent.keyboard('{Escape}');
+        await asyncSetTimeout(1);
+
+        // Verify we exited edit mode
+        expect(api.getEditingCells()).toHaveLength(0);
+
+        // Step 5: The value in the initial cell should NOT have changed
+        // Since valueSetter returned false, the original value should persist
+        expect(countryCell).toHaveTextContent('United States');
+        expect(api.getDisplayedRowAtIndex(0)?.data.country).toBe('United States');
+
+        // Final grid state verification - all data should be unchanged
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 country:"United States" sport:"Swimming"
+            └── LEAF id:1 country:"China" sport:"Gymnastics"
+        `);
+
+        // Verify final event counts:
+        // - cellValueChanged should be 0 (valueSetter returned false for Delete, and edit was cancelled)
+        // - cellEditingStarted should be 1 (double-click on sport cell)
+        // - cellEditingStopped: The DELETE key clears the edit value triggering one stop,
+        //   and ESC on the sport cell triggers another stop = 2 total
+        expect(eventTracker.counts).toEqual({
+            cellEditingStarted: 1,
+            cellEditingStopped: 2,
+            cellValueChanged: 0,
+            rowValueChanged: 0,
+            cellEditRequest: 0,
+            bulkEditingStarted: 0,
+            bulkEditingStopped: 0,
+        });
+    });
 });
