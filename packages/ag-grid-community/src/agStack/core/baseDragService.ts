@@ -64,7 +64,7 @@ export class BaseDragService<
     private readonly dragSources: DragSourceEntry[] = [];
 
     public get startTarget(): EventTarget | null {
-        return _getEventTarget(this.drag?.start) ?? null;
+        return this.drag?.startTarget ?? null;
     }
 
     /** True if there is at least one active pointer drag in any BaseDragService instance in the page */
@@ -540,6 +540,8 @@ class Dragging {
     public readonly handlers: TempEventHandler[] = [];
     public lastDrag: PointerEvent | MouseEvent | Touch | null = null;
     public pointerCapture: PointerCapture | null = null;
+    /** The actual target element from composedPath, captured at drag start time */
+    public readonly startTarget: EventTarget | null;
 
     constructor(
         public readonly rootEl: Document | ShadowRoot,
@@ -548,6 +550,8 @@ class Dragging {
         public readonly pointerId: number | null = null
     ) {
         this.eElement = params.eElement;
+        // Capture the target immediately using composedPath, as it may return empty after event dispatch
+        this.startTarget = _getEventTarget(start);
     }
 }
 

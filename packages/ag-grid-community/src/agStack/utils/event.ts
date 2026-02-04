@@ -39,11 +39,14 @@ export function _isElementInEventPath(element: HTMLElement, event: Event): boole
     return _getEventPath(event).indexOf(element) >= 0;
 }
 
+type EventWithEventTarget =
+    | Event
+    | Touch
+    | { readonly target: EventTarget | null; composedPath?(): EventTarget[] | null };
+
 /**
- * WeakMap to store the composed target for Touch objects.
- * When extracting a Touch from a TouchEvent, call _setTouchStartTarget to store the real target.
- * This allows _getEventTarget to return the correct target for Shadow DOM scenarios.
- * Note: This is a bit of a hack until we don't refactor the code to not cast Touch to Events.
+ * WeakMap to cache the composed target for Touch objects.
+ * Touch objects don't have composedPath(), so we store the target from the parent TouchEvent.
  */
 let touchTargetMap: WeakMap<Touch, EventTarget> | undefined;
 
@@ -62,31 +65,22 @@ export function _setTouchStartTarget(touch: Touch, touchEvent: TouchEvent): void
  * Gets the actual target element from an event, handling Shadow DOM correctly.
  * When events cross shadow DOM boundaries, `event.target` may be retargeted to the shadow host.
  * This function uses `composedPath()[0]` to get the actual element that received the event.
- * For Touch objects, uses the target stored via _setTouchStartTarget if available.
+ * For Touch objects, uses the target stored via _setTouchStartTarget.
  */
-export function _getEventTarget(
-    event:
-        | Event
-        | Touch
-        | { readonly target: EventTarget | null; composedPath?(): EventTarget[] | null }
-        | null
-        | undefined
-): EventTarget | null {
+export function _getEventTarget(event: EventWithEventTarget | null | undefined): EventTarget | null {
     if (!event) {
         return null;
     }
+    // Check WeakMap cache for Touch objects (they don't have composedPath)
+    const cachedTarget = touchTargetMap?.get(event as Touch);
+    if (cachedTarget) {
+        return cachedTarget;
+    }
     // composedPath()[0] gives us the actual target even across shadow DOM boundaries
-    const composedPath = (event as Event).composedPath;
-    if (typeof composedPath === 'function') {
-        const path = composedPath.call(event);
+    if (typeof (event as Event).composedPath === 'function') {
+        const path = (event as Event).composedPath();
         if (path && path.length > 0) {
             return path[0];
-        }
-    } else {
-        // Check WeakMap for Touch objects
-        const touchTarget = touchTargetMap?.get(event as Touch);
-        if (touchTarget) {
-            return touchTarget;
         }
     }
     return event.target ?? null;

@@ -1,5 +1,5 @@
 import { _isIOSUserAgent } from '../agStack/utils/browser';
-import { _getEventTarget, _isEventFromThisInstance, _isEventSupported } from '../agStack/utils/event';
+import { _getEventTarget, _isEventSupported } from '../agStack/utils/event';
 import { _exists } from '../agStack/utils/generic';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -156,7 +156,7 @@ export class TouchService extends BeanStub implements NamedBean {
 
         const touchListener = new TouchListener(element);
         const longTapListener = (event: LongTapEvent) => {
-            if (!_isEventFromThisInstance(this.beans, event.touchEvent)) {
+            if (!this.beans.gos.isElementInThisInstance(event.target as HTMLElement)) {
                 return;
             }
             listener(undefined, event.touchStart, event.touchEvent);

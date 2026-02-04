@@ -3,6 +3,7 @@ import type { AgEvent } from '../agStack/interfaces/agEvent';
 import type { IEventEmitter, IEventListener } from '../agStack/interfaces/iEventEmitter';
 import {
     _areEventsNear,
+    _getEventTarget,
     _getFirstActiveTouch,
     _setTouchStartTarget,
     addTempEventHandlers,
@@ -21,6 +22,8 @@ export interface DoubleTapEvent extends AgEvent<'doubleTap'> {
 export interface LongTapEvent extends AgEvent<'longTap'> {
     touchStart: Touch;
     touchEvent: TouchEvent;
+    /** The actual target element, captured at touchstart (composedPath may be empty after dispatch) */
+    target: EventTarget | null;
 }
 
 const DOUBLE_TAP_MILLISECONDS = 500;
@@ -86,6 +89,9 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
         _setTouchStartTarget(touchStart, touchEvent);
         this.touchStart = touchStart;
 
+        // Capture target now since composedPath() returns empty after dispatch
+        const target = _getEventTarget(touchEvent);
+
         const handlers = this.handlers;
         if (!handlers.length) {
             const eElement = this.eElement;
@@ -110,7 +116,7 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
             this.longPressTimer = 0;
             if (this.touchStart === touchStart && !this.moved) {
                 this.moved = true;
-                this.eventSvc?.dispatchEvent<LongTapEvent>({ type: 'longTap', touchStart, touchEvent });
+                this.eventSvc?.dispatchEvent<LongTapEvent>({ type: 'longTap', touchStart, touchEvent, target });
             }
         }, LONG_PRESS_MILLISECONDS);
     }
