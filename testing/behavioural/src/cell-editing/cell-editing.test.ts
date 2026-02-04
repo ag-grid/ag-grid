@@ -5,7 +5,7 @@ import { userEvent } from '@testing-library/user-event';
 import type { ColDef } from 'ag-grid-community';
 import { agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 
-import { TestGridsManager, asyncSetTimeout, waitForInput, EditEventTracker } from '../test-utils';
+import { EditEventTracker, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
 import { expect } from '../test-utils/matchers';
 
 describe('Cell Editing Start', () => {
