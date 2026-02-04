@@ -262,7 +262,9 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
             return;
         }
 
-        // Reuse stored target if same event (composedPath() may be empty after dispatch)
+        // When onBodyScroll() calls onDragging() with the same cached event, composedPath() may
+        // return an empty array (browsers clear it after dispatch). We detect this by checking
+        // event identity and reuse the previously captured target for the scroll recalculation.
         const target = mouseEvent === this.lastMouseEvent ? this.lastMouseEventTarget : _getEventTarget(mouseEvent);
         this.updateValuesOnMove(target);
 
