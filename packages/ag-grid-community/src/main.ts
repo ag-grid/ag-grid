@@ -707,6 +707,10 @@ export {
     ValueParserParams,
     ValueSetterFunc,
     ValueSetterParams,
+    GroupRowEditableCallback,
+    GroupRowEditableCallbackParams,
+    GroupRowValueSetterParams,
+    GroupRowValueSetterFunc,
 } from './entities/colDef';
 export {
     BaseCellDataType,

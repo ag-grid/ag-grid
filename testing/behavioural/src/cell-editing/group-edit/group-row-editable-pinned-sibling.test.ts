@@ -1,9 +1,8 @@
-import type { GridOptions, RowNode, ValueSetterParams } from 'ag-grid-community';
+import type { GridOptions, GroupRowValueSetterParams, RowNode, ValueSetterParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, PinnedRowModule, UndoRedoEditModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, SetFilterModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
-import type { ColDefInternal, GroupRowValueSetterParams } from './group-edit-test-utils';
 import { EDIT_MODES, cascadeGroupRowValueSetter, editCell } from './group-edit-test-utils';
 
 /**
@@ -218,7 +217,7 @@ describe('editing with pinned sibling rows', () => {
                             editable: true,
                             groupRowEditable: true,
                             groupRowValueSetter: cascadeGroupRowValueSetter,
-                        } as ColDefInternal,
+                        },
                     ],
                     rowData: createGroupRowData(),
                     groupDefaultExpanded: -1,
@@ -307,7 +306,7 @@ describe('editing with pinned sibling rows', () => {
                             editable: true,
                             groupRowEditable: true,
                             groupRowValueSetter: cascadeGroupRowValueSetter,
-                        } as ColDefInternal,
+                        },
                     ],
                     rowData: createGroupRowData(),
                     groupDefaultExpanded: -1,
@@ -389,7 +388,7 @@ describe('editing with pinned sibling rows', () => {
                             editable: true,
                             groupRowEditable: true,
                             groupRowValueSetter: customValueSetter,
-                        } as ColDefInternal,
+                        },
                     ],
                     rowData: createGroupRowDataForCallback(),
                     groupDefaultExpanded: -1,
@@ -446,7 +445,7 @@ describe('editing with pinned sibling rows', () => {
                             groupRowEditable: true,
                             groupRowValueSetter: customValueSetter,
                             filter: 'agNumberColumnFilter',
-                        } as ColDefInternal,
+                        },
                     ],
                     rowData: createGroupRowDataForCallback(),
                     groupDefaultExpanded: -1,
@@ -509,7 +508,7 @@ describe('editing with pinned sibling rows', () => {
                             editable: true,
                             groupRowEditable: true,
                             groupRowValueSetter: customValueSetter,
-                        } as ColDefInternal,
+                        },
                     ],
                     rowData: createGroupRowDataForCallback(),
                     groupDefaultExpanded: -1,

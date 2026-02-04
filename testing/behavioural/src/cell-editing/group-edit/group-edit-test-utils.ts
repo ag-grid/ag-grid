@@ -4,12 +4,6 @@ import type { ColDef, GridApi, IRowNode } from 'ag-grid-community';
 import { AllCommunityModule, ClientSideRowModelModule, UndoRedoEditModule } from 'ag-grid-community';
 import { RowGroupingModule, SetFilterModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import type {
-    ColDefInternal,
-    GroupRowEditableCallback as GroupRowEditableCallbackInternal,
-    GroupRowValueSetterFunc,
-    GroupRowValueSetterParams,
-} from '../../../../../packages/ag-grid-community/src/entities/colDefInternal';
 import { TestGridsManager, asyncSetTimeout, waitForInput } from '../../test-utils';
 import { expect } from '../../test-utils/matchers';
 
@@ -27,13 +21,10 @@ export const gridsManager = new TestGridsManager({
 export const EDIT_MODES = ['ui', 'setDataValue'] as const;
 
 export type EditableCallback = Exclude<NonNullable<ColDef['editable']>, boolean>;
-export type GroupRowEditableCallback = GroupRowEditableCallbackInternal;
-export type GroupRowValueSetterCallback = GroupRowValueSetterFunc;
+export type GroupRowEditableCallback = Exclude<NonNullable<ColDef['groupRowEditable']>, boolean>;
+export type GroupRowValueSetterCallback = Extract<NonNullable<ColDef['groupRowValueSetter']>, (...args: any[]) => any>;
 export type ValueSetterCallback = Extract<NonNullable<ColDef['valueSetter']>, (...args: any[]) => any>;
 export type ValueParserCallback = Extract<NonNullable<ColDef['valueParser']>, (...args: any[]) => any>;
-
-// Re-export internal types for tests
-export type { ColDefInternal, GroupRowValueSetterParams };
 
 function locateCellElements(api: GridApi, rowNode: IRowNode, colId: string) {
     const gridDiv = TestGridsManager.getHTMLElement(api);
