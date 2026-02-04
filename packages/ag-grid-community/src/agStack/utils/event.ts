@@ -39,6 +39,27 @@ export function _isElementInEventPath(element: HTMLElement, event: Event): boole
     return _getEventPath(event).indexOf(element) >= 0;
 }
 
+/**
+ * Gets the actual target element from an event, handling Shadow DOM correctly.
+ * When events cross shadow DOM boundaries, `event.target` may be retargeted to the shadow host.
+ * This function uses `composedPath()[0]` to get the actual element that received the event.
+ */
+export function _getEventTarget(
+    event: Event | { readonly target: EventTarget | null; composedPath?(): EventTarget[] | null } | null | undefined
+): EventTarget | null {
+    if (!event) {
+        return null;
+    }
+    // composedPath()[0] gives us the actual target even across shadow DOM boundaries
+    if (typeof event.composedPath === 'function') {
+        const path = event.composedPath();
+        if (path && path.length > 0) {
+            return path[0];
+        }
+    }
+    return event.target ?? null;
+}
+
 function _createEventPath(event: { target: EventTarget }): EventTarget[] {
     const res: EventTarget[] = [];
     let pointer: any = event.target;
@@ -140,7 +161,7 @@ export const _getFirstActiveTouch = (touch: Touch, touchList: TouchList): Touch 
 // master / detail grids, and a child grid is found, then it returns false. this stops things like copy/paste
 // getting executed on many grids at the same time.
 export function _isEventFromThisInstance(beans: UtilBeanCollection, event: UIEvent): boolean {
-    return beans.gos.isElementInThisInstance(event.target as HTMLElement);
+    return beans.gos.isElementInThisInstance(_getEventTarget(event) as HTMLElement);
 }
 
 export function _anchorElementToMouseMoveEvent(

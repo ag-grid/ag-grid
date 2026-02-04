@@ -12,6 +12,7 @@ import { _isFocusableFormField } from '../utils/dom';
 import type { TempEventHandler } from '../utils/event';
 import {
     _areEventsNear,
+    _getEventTarget,
     _getFirstActiveTouch,
     _isEventFromThisInstance,
     addTempEventHandlers,
@@ -62,7 +63,7 @@ export class BaseDragService<
     private readonly dragSources: DragSourceEntry[] = [];
 
     public get startTarget(): EventTarget | null {
-        return this.drag?.start.target ?? null;
+        return _getEventTarget(this.drag?.start) ?? null;
     }
 
     /** True if there is at least one active pointer drag in any BaseDragService instance in the page */
@@ -310,7 +311,7 @@ export class BaseDragService<
         const dragPreventEventDefault = (e: Event) => this.draggingPreventDefault(e);
 
         const rootNode = _getRootNode(beans);
-        const target = touchEvent.target ?? params.eElement;
+        const target = _getEventTarget(touchEvent) ?? params.eElement;
         this.initDrag(
             touchDrag,
             [target, 'touchmove', touchMoveEvent, PASSIVE_TRUE],
@@ -548,6 +549,6 @@ class Dragging {
 }
 
 const getEventTargetElement = (event: Event): Element | null => {
-    const target = event.target;
+    const target = _getEventTarget(event);
     return target instanceof Element ? target : null;
 };

@@ -34,6 +34,7 @@ import {
     _getAbsoluteRowIndex,
     _getCellCtrlForEventTarget,
     _getEnableColumnSelection,
+    _getEventTarget,
     _getFirstRow,
     _getLastRow,
     _getRowAbove,
@@ -182,7 +183,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
     // Drag And Drop Target Methods
     public onDragStart(mouseEvent: MouseEvent): void {
         const gos = this.gos;
-        const target = mouseEvent.target as HTMLElement | null;
+        const target = _getEventTarget(mouseEvent);
         if (!_isCellSelectionEnabled(gos) || _getRowCtrlForEventTarget(gos, target)?.isSuppressMouseEvent(mouseEvent)) {
             return;
         }
@@ -260,7 +261,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
             return;
         }
 
-        this.updateValuesOnMove(mouseEvent.target);
+        this.updateValuesOnMove(_getEventTarget(mouseEvent));
 
         this.lastMouseEvent = mouseEvent;
 
@@ -417,7 +418,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
 
     public handleCellMouseDown(event: MouseEvent, cell: CellPosition): void {
         const { beans } = this;
-        const target = event.target as HTMLElement | null;
+        const target = _getEventTarget(event);
 
         if (this.shouldSuppressRangeSelection(target)) {
             return;

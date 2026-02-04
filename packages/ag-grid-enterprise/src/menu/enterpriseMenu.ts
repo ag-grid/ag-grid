@@ -24,6 +24,7 @@ import {
     _createIconNoSpan,
     _error,
     _focusInto,
+    _getEventTarget,
     _isColumnMenuAnchoringEnabled,
     _isLegacyMenuEnabled,
     _setColMenuVisible,
@@ -97,7 +98,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
             containerType,
             defaultTab,
             undefined,
-            mouseEvent.target as HTMLElement,
+            _getEventTarget(mouseEvent) as HTMLElement,
             onClosedCallback
         );
     }

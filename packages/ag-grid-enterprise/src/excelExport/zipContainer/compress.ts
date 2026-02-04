@@ -1,3 +1,5 @@
+import { _getEventTarget } from 'ag-grid-community';
+
 const compressBlob = async (
     data: Blob
 ): Promise<{
@@ -19,8 +21,9 @@ const compressBlob = async (
         start: (controller) => {
             const reader = new FileReader();
             reader.onload = (e) => {
-                if (e.target?.result) {
-                    controller.enqueue(e.target.result);
+                const target = _getEventTarget(e) as FileReader;
+                if (target.result) {
+                    controller.enqueue(target.result);
                 }
 
                 controller.close();

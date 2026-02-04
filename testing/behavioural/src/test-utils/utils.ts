@@ -112,6 +112,51 @@ export function unindentText(text: TemplateStringsArray | string | string[] | nu
 
 let consoleLicenseKeyErrorInitialized = false;
 
+/**
+ * Queries an element by test ID, including within shadow roots.
+ * This is necessary because @testing-library/dom's getByTestId doesn't search inside shadow roots.
+ */
+export function queryByTestIdDeep(container: Element | Document | ShadowRoot, testId: string): HTMLElement | null {
+    // First try the container itself
+    const directResult = container.querySelector<HTMLElement>(`[data-testid="${testId}"]`);
+    if (directResult) {
+        return directResult;
+    }
+
+    // Search in shadow roots
+    const searchInShadowRoots = (root: Element | Document | ShadowRoot): HTMLElement | null => {
+        const elements = root.querySelectorAll('*');
+        for (const element of elements) {
+            const shadowRoot = (element as Element).shadowRoot;
+            if (shadowRoot) {
+                const found = shadowRoot.querySelector<HTMLElement>(`[data-testid="${testId}"]`);
+                if (found) {
+                    return found;
+                }
+                const nested = searchInShadowRoots(shadowRoot);
+                if (nested) {
+                    return nested;
+                }
+            }
+        }
+        return null;
+    };
+
+    return searchInShadowRoots(container);
+}
+
+/**
+ * Gets an element by test ID, including within shadow roots.
+ * Throws an error if the element is not found.
+ */
+export function getByTestIdDeep(container: Element | Document | ShadowRoot, testId: string): HTMLElement {
+    const result = queryByTestIdDeep(container, testId);
+    if (!result) {
+        throw new Error(`Unable to find an element with data-testid="${testId}" (including shadow roots)`);
+    }
+    return result;
+}
+
 export function ignoreConsoleLicenseKeyError() {
     if (consoleLicenseKeyErrorInitialized) {
         return;

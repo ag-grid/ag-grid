@@ -2,6 +2,7 @@ import { KeyCode } from '../../../agStack/constants/keyCode';
 import { _setAriaLabel } from '../../../agStack/utils/aria';
 import { _getActiveDomElement } from '../../../agStack/utils/document';
 import { _isElementChildOfClass } from '../../../agStack/utils/dom';
+import { _getEventTarget } from '../../../agStack/utils/event';
 import { _findNextFocusableElement, _focusInto } from '../../../agStack/utils/focus';
 import { setupCompBean } from '../../../components/emptyBean';
 import type { BeanStub } from '../../../context/beanStub';
@@ -234,7 +235,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         const fromWithinHeader =
             !!e.relatedTarget && _isElementChildOfClass(e.relatedTarget as HTMLElement, 'ag-floating-filter');
 
-        if (notFromHeaderWrapper && fromWithinHeader && e.target === this.eGui) {
+        if (notFromHeaderWrapper && fromWithinHeader && _getEventTarget(e) === this.eGui) {
             const lastFocusEvent = this.lastFocusEvent;
             const fromTab = !!(lastFocusEvent && lastFocusEvent.key === KeyCode.TAB);
 

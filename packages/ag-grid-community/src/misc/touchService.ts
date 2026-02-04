@@ -1,5 +1,5 @@
 import { _isIOSUserAgent } from '../agStack/utils/browser';
-import { _isEventFromThisInstance, _isEventSupported } from '../agStack/utils/event';
+import { _getEventTarget, _isEventFromThisInstance, _isEventSupported } from '../agStack/utils/event';
 import { _exists } from '../agStack/utils/generic';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -38,7 +38,7 @@ export class TouchService extends BeanStub implements NamedBean {
         }
 
         const listener = (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => {
-            const { rowCtrl, cellCtrl } = ctrl.getControlsForEventTarget(touchEvent?.target ?? null);
+            const { rowCtrl, cellCtrl } = ctrl.getControlsForEventTarget(_getEventTarget(touchEvent));
             if (cellCtrl?.column) {
                 cellCtrl.dispatchCellContextMenuEvent(touchEvent ?? null);
             }

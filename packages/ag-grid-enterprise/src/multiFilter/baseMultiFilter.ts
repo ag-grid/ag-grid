@@ -6,6 +6,7 @@ import {
     _createElement,
     _focusInto,
     _getActiveDomElement,
+    _getEventTarget,
     _isNothingFocused,
     _setAriaRole,
 } from 'ag-grid-community';
@@ -333,7 +334,10 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
 
     protected onFocusIn(e: FocusEvent): void {
         const lastActivatedMenuItem = this.lastActivatedMenuItem;
-        if (lastActivatedMenuItem != null && !lastActivatedMenuItem.getGui().contains(e.target as HTMLElement)) {
+        if (
+            lastActivatedMenuItem != null &&
+            !lastActivatedMenuItem.getGui().contains(_getEventTarget(e) as HTMLElement)
+        ) {
             lastActivatedMenuItem.deactivate();
             this.lastActivatedMenuItem = null;
         }

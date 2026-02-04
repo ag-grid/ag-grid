@@ -3,6 +3,7 @@ import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPropertiesService } from '../interfaces/iProperties';
+import { _getEventTarget } from '../utils/event';
 import { AgAbstractInputField } from './agAbstractInputField';
 import type { AgCheckboxParams, LabelAlignment } from './agFieldParams';
 import type { AgWidgetSelectorType } from './agWidgetSelectorType';
@@ -153,7 +154,7 @@ export class AgCheckbox<
             return;
         }
         const previousValue = this.isSelected();
-        const selected = (this.selected = (e.target as HTMLInputElement).checked);
+        const selected = (this.selected = (_getEventTarget(e) as HTMLInputElement).checked);
         this.refreshSelectedClass(selected);
         this.dispatchChange(selected, previousValue, e);
     }

@@ -24,7 +24,7 @@ import {
     _getElementRectWithOffset,
     _observeResize,
 } from '../utils/dom';
-import { _isElementInEventPath } from '../utils/event';
+import { _getEventTarget, _isElementInEventPath } from '../utils/event';
 import { _exists } from '../utils/generic';
 import { AgPromise, _wrapInterval } from '../utils/promise';
 
@@ -734,7 +734,7 @@ export abstract class BasePopupService<
         // if the user did not write their own Custom Element to be rendered as popup
         // and this component has an additional popup element, they should have the
         // `ag-custom-component-popup` class to be detected as part of the Custom Component
-        return this.isElementWithinCustomPopup(event.target as HTMLElement);
+        return this.isElementWithinCustomPopup(_getEventTarget(event) as HTMLElement);
     }
 
     public isElementWithinCustomPopup(el: HTMLElement): boolean {

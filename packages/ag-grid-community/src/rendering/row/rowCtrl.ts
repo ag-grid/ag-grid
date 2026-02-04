@@ -7,6 +7,7 @@ import {
     _isFocusableFormField,
     _isVisible,
 } from '../../agStack/utils/dom';
+import { _getEventTarget } from '../../agStack/utils/event';
 import { _findNextFocusableElement } from '../../agStack/utils/focus';
 import { _batchCall } from '../../agStack/utils/function';
 import { _exists, _makeNull } from '../../agStack/utils/generic';
@@ -1002,7 +1003,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         const { rowGui, column } = groupInfo;
         const currentFullWidthContainer = rowGui.element;
-        const isFullWidthContainerFocused = currentFullWidthContainer === keyboardEvent.target;
+        const eventTarget = _getEventTarget(keyboardEvent);
+        const isFullWidthContainerFocused = currentFullWidthContainer === eventTarget;
 
         if (!isFullWidthContainerFocused) {
             return;
@@ -1025,11 +1027,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         if (keyboardEvent.defaultPrevented || _isStopPropagationForAgGrid(keyboardEvent)) {
             return;
         }
-        const currentFullWidthComp = this.allRowGuis.find((c) =>
-            c.element.contains(keyboardEvent.target as HTMLElement)
-        );
+        const eventTarget = _getEventTarget(keyboardEvent);
+        const currentFullWidthComp = this.allRowGuis.find((c) => c.element.contains(eventTarget as HTMLElement));
         const currentFullWidthContainer = currentFullWidthComp ? currentFullWidthComp.element : null;
-        const isFullWidthContainerFocused = currentFullWidthContainer === keyboardEvent.target;
+        const isFullWidthContainerFocused = currentFullWidthContainer === eventTarget;
         const activeEl = _getActiveDomElement(this.beans);
         let isDetailGridCellFocused = false;
 
@@ -1185,7 +1186,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             return;
         }
 
-        const rowGui = this.findFullWidthRowGui(event.target as HTMLElement);
+        const rowGui = this.findFullWidthRowGui(_getEventTarget(event) as HTMLElement);
         const column = this.getColumnForFullWidth(rowGui);
 
         if (!rowGui || !column) {
@@ -1214,7 +1215,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private onRowMouseDown(mouseEvent: MouseEvent) {
-        this.lastMouseDownOnDragger = _isElementChildOfClass(mouseEvent.target as HTMLElement, 'ag-row-drag', 3);
+        const eventTarget = _getEventTarget(mouseEvent) as HTMLElement;
+        this.lastMouseDownOnDragger = _isElementChildOfClass(eventTarget, 'ag-row-drag', 3);
 
         if (!this.isFullWidth() || this.isSuppressMouseEvent(mouseEvent)) {
             return;
@@ -1231,7 +1233,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         const { rowGui, column } = groupInfo;
         const element = rowGui.element;
-        const target = mouseEvent.target as HTMLElement;
+        const target = _getEventTarget(mouseEvent) as HTMLElement;
         const node = this.rowNode;
 
         let forceBrowserFocus = mouseEvent.defaultPrevented || _isBrowserSafari();
@@ -1251,7 +1253,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     public isSuppressMouseEvent(mouseEvent: MouseEvent): boolean {
         const { gos, rowNode } = this;
         if (this.isFullWidth()) {
-            const fullWidthRowGui = this.findFullWidthRowGui(mouseEvent.target as HTMLElement);
+            const fullWidthRowGui = this.findFullWidthRowGui(_getEventTarget(mouseEvent) as HTMLElement);
             return _suppressFullWidthMouseEvent(
                 gos,
                 fullWidthRowGui?.rowComp.getFullWidthCellRendererParams(),
@@ -1259,7 +1261,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
                 mouseEvent
             );
         }
-        const cellCtrl = _getCellCtrlForEventTarget(gos, mouseEvent.target);
+        const cellCtrl = _getCellCtrlForEventTarget(gos, _getEventTarget(mouseEvent));
         return cellCtrl != null && _suppressCellMouseEvent(gos, cellCtrl.column, rowNode, mouseEvent);
     }
 
