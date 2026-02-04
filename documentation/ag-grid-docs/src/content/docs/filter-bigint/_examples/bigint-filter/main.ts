@@ -3,6 +3,7 @@ import {
     BigIntFilterModule,
     ClientSideRowModelModule,
     ModuleRegistry,
+    TextEditorModule,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
@@ -11,6 +12,7 @@ import { getData } from './data';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
+    TextEditorModule,
     BigIntFilterModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
