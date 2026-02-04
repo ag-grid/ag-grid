@@ -1084,7 +1084,7 @@
         "suppressAggFilteredOnly": {
             "more": {
                 "name": "Aggregate Before Filtering",
-                "url": "./aggregation-custom-functions/"
+                "url": "./aggregation-filtering/"
             }
         },
         "groupAggFiltering": {
