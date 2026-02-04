@@ -3,12 +3,13 @@ import { type ChangeEvent, type FunctionComponent, useCallback, useMemo, useRef,
 import type {
     ColDef,
     GetDetailRowDataParams,
+    GridSizeChangedEvent,
     SizeColumnsToFitGridStrategy,
     ValueFormatterFunc,
     ValueFormatterParams,
     ValueGetterParams,
 } from 'ag-grid-community';
-import { AllCommunityModule, ClientSideRowModelModule } from 'ag-grid-community';
+import { AllCommunityModule } from 'ag-grid-community';
 import { ExcelExportModule, MasterDetailModule, MultiFilterModule, SetFilterModule } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
@@ -20,14 +21,49 @@ import { StatusCellRenderer } from './cell-renderers/StatusCellRenderer';
 import { StockCellRenderer } from './cell-renderers/StockCellRenderer';
 import { getData } from './data';
 
-const modules = [
-    AllCommunityModule,
-    ClientSideRowModelModule,
-    ExcelExportModule,
-    SetFilterModule,
-    MultiFilterModule,
-    MasterDetailModule,
-];
+type Breakpoint = 'small' | 'medium' | 'medLarge' | 'large' | 'xlarge';
+
+const BREAKPOINT_CONFIG: Record<
+    Breakpoint,
+    {
+        breakpoint?: number;
+        columns: string[];
+        detailColumns: string[];
+        productColumnMinWidth: number;
+    }
+> = {
+    small: {
+        breakpoint: 550,
+        columns: ['product', 'price'],
+        detailColumns: ['title', 'year'],
+        productColumnMinWidth: 150,
+    },
+    medium: {
+        breakpoint: 750,
+        columns: ['product', 'status', 'price', 'actions'],
+        detailColumns: ['title', 'format', 'year'],
+        productColumnMinWidth: 150,
+    },
+    medLarge: {
+        breakpoint: 1000,
+        columns: ['product', 'artist', 'status', 'price', 'actions'],
+        detailColumns: ['title', 'available', 'format', 'year'],
+        productColumnMinWidth: 200,
+    },
+    large: {
+        breakpoint: 1200,
+        columns: ['product', 'artist', 'year', 'status', 'inventory', 'price', 'actions'],
+        detailColumns: ['title', 'available', 'format', 'label', 'year'],
+        productColumnMinWidth: 250,
+    },
+    xlarge: {
+        columns: ['product', 'artist', 'year', 'status', 'inventory', 'incoming', 'price', 'sold', 'profit', 'actions'],
+        detailColumns: ['title', 'available', 'format', 'label', 'country', 'cat', 'year'],
+        productColumnMinWidth: 250,
+    },
+};
+
+const modules = [AllCommunityModule, ExcelExportModule, SetFilterModule, MultiFilterModule, MasterDetailModule];
 
 interface Props {
     gridTheme?: string;
@@ -42,65 +78,73 @@ const statusFormatter: ValueFormatterFunc = ({ value }) => statuses[value as key
 
 export const InventoryExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quartz', isDarkMode }) => {
     const gridRef = useRef<AgGridReact>(null);
+    const [breakpoint, setBreakpoint] = useState<Breakpoint>('xlarge');
 
-    const [colDefs] = useState<ColDef[]>([
-        {
-            field: 'product',
-            headerName: 'Album Name',
-            cellRenderer: 'agGroupCellRenderer',
-            headerClass: 'header-product',
-            cellRendererParams: {
-                innerRenderer: ProductCellRenderer,
+    const colDefs = useMemo<ColDef[]>(() => {
+        const breakpointConfig = BREAKPOINT_CONFIG[breakpoint];
+        const allColDefs: ColDef[] = [
+            {
+                field: 'product',
+                headerName: 'Album Name',
+                cellRenderer: 'agGroupCellRenderer',
+                headerClass: 'header-product',
+                cellRendererParams: {
+                    innerRenderer: ProductCellRenderer,
+                },
+                minWidth: breakpointConfig.productColumnMinWidth,
             },
-            minWidth: 300,
-        },
-        { field: 'artist' },
-        { field: 'year', width: 150, headerClass: 'header-sku' },
-        {
-            field: 'status',
-            valueFormatter: statusFormatter,
-            cellRenderer: StatusCellRenderer,
-            minWidth: 140,
-            filter: true,
-            filterParams: {
+            { field: 'artist' },
+            { field: 'year', width: 150, headerClass: 'header-sku' },
+            {
+                field: 'status',
                 valueFormatter: statusFormatter,
+                cellRenderer: StatusCellRenderer,
+                minWidth: 140,
+                filter: true,
+                filterParams: {
+                    valueFormatter: statusFormatter,
+                },
+                headerClass: 'header-status',
             },
-            headerClass: 'header-status',
-        },
+            {
+                field: 'inventory',
+                cellRenderer: StockCellRenderer,
+                headerClass: 'header-inventory',
+                sortable: false,
+            },
+            {
+                field: 'incoming',
+                cellEditorParams: {
+                    precision: 0,
+                    step: 1,
+                    showStepperButtons: true,
+                },
+                editable: true,
+            },
+            {
+                field: 'price',
+                width: 120,
+                headerClass: 'header-price',
+                cellRenderer: PriceCellRenderer,
+            },
+            { field: 'sold', headerClass: 'header-calendar' },
+            {
+                headerName: 'Est. Profit',
+                colId: 'profit',
+                headerClass: 'header-percentage',
+                cellDataType: 'number',
+                valueGetter: ({ data: { price, sold } }: ValueGetterParams) => (price * sold) / 10,
+                valueFormatter: ({ value }: ValueFormatterParams) => `£${value}`,
+                width: 150,
+            },
+            { field: 'actions', cellRenderer: ActionsCellRenderer, minWidth: 194 },
+        ];
 
-        {
-            field: 'inventory',
-            cellRenderer: StockCellRenderer,
-            headerClass: 'header-inventory',
-            sortable: false,
-        },
-        {
-            field: 'incoming',
-            cellEditorParams: {
-                precision: 0,
-                step: 1,
-                showStepperButtons: true,
-            },
-            editable: true,
-        },
-        {
-            field: 'price',
-            width: 120,
-            headerClass: 'header-price',
-            cellRenderer: PriceCellRenderer,
-        },
-        { field: 'sold', headerClass: 'header-calendar' },
-        {
-            headerName: 'Est. Profit',
-            colId: 'profit',
-            headerClass: 'header-percentage',
-            cellDataType: 'number',
-            valueGetter: ({ data: { price, sold } }: ValueGetterParams) => (price * sold) / 10,
-            valueFormatter: ({ value }: ValueFormatterParams) => `£${value}`,
-            width: 150,
-        },
-        { field: 'actions', cellRenderer: ActionsCellRenderer, minWidth: 194 },
-    ]);
+        return allColDefs.filter(
+            (colDef) =>
+                breakpointConfig.columns.includes(colDef.field!) || breakpointConfig.columns.includes(colDef.colId!)
+        );
+    }, [breakpoint]);
     const [rowData] = useState(getData());
     const defaultColDef = useMemo<ColDef>(
         () => ({
@@ -121,25 +165,44 @@ export const InventoryExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
         []
     );
 
-    const detailCellRendererParams = useMemo(
-        () => ({
+    const detailCellRendererParams = useMemo(() => {
+        const breakpointConfig = BREAKPOINT_CONFIG[breakpoint];
+        const allDetailColDefs: ColDef[] = [
+            { field: 'title', flex: 1.5 },
+            { field: 'available', maxWidth: 120 },
+            { field: 'format', flex: 2 },
+            { field: 'label', flex: 1 },
+            { field: 'country', flex: 0.66 },
+            { field: 'cat', headerName: 'Cat#', type: 'rightAligned', flex: 0.66 },
+            { field: 'year', type: 'rightAligned', maxWidth: 80 },
+        ];
+        const detailColDefs = allDetailColDefs.filter((colDef) =>
+            breakpointConfig.detailColumns.includes(colDef.field!)
+        );
+
+        return {
             detailGridOptions: {
-                columnDefs: [
-                    { field: 'title', flex: 1.5 },
-                    { field: 'available', maxWidth: 120 },
-                    { field: 'format', flex: 2 },
-                    { field: 'label', flex: 1 },
-                    { field: 'country', flex: 0.66 },
-                    { field: 'cat', headerName: 'Cat#', type: 'rightAligned', flex: 0.66 },
-                    { field: 'year', type: 'rightAligned', maxWidth: 80 },
-                ],
+                columnDefs: detailColDefs,
                 headerHeight: 38,
             },
             getDetailRowData: ({ successCallback, data: { variantDetails } }: GetDetailRowDataParams) =>
                 successCallback(variantDetails),
-        }),
-        []
-    );
+        };
+    }, [breakpoint]);
+    const onGridSizeChanged = useCallback((params: GridSizeChangedEvent) => {
+        if (params.clientWidth < BREAKPOINT_CONFIG.small.breakpoint!) {
+            setBreakpoint('small');
+        } else if (params.clientWidth < BREAKPOINT_CONFIG.medium.breakpoint!) {
+            setBreakpoint('medium');
+        } else if (params.clientWidth < BREAKPOINT_CONFIG.medLarge.breakpoint!) {
+            setBreakpoint('medLarge');
+        } else if (params.clientWidth < BREAKPOINT_CONFIG.large.breakpoint!) {
+            setBreakpoint('large');
+        } else {
+            setBreakpoint('xlarge');
+        }
+    }, []);
+
     const [activeTab, setActiveTab] = useState('all');
     const handleTabClick = useCallback((status: string) => {
         setActiveTab(status);
@@ -201,9 +264,11 @@ export const InventoryExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                             paginationPageSize={10}
                             paginationPageSizeSelector={paginationPageSizeSelector}
                             masterDetail
+                            keepDetailRows
                             detailCellRendererParams={detailCellRendererParams}
                             quickFilterText={quickFilterText}
                             detailRowAutoHeight
+                            onGridSizeChanged={onGridSizeChanged}
                         />
                     </div>
                 </div>
