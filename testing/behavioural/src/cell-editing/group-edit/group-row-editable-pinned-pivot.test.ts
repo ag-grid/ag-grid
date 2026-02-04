@@ -5,7 +5,6 @@ import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 import type { GridRowsOptions } from '../../test-utils';
 import { GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 import { expect } from '../../test-utils/matchers';
-import type { ColDefInternal } from './group-edit-test-utils';
 import { EDIT_MODES, cascadeGroupRowValueSetter, editCell } from './group-edit-test-utils';
 
 interface PivotRowData {
@@ -64,7 +63,7 @@ describe('editing with pinned pivot rows', () => {
                 editable: true,
                 groupRowEditable: true,
                 groupRowValueSetter: cascadeGroupRowValueSetter,
-            } as ColDefInternal<PivotRowData>,
+            },
         ],
         pivotMode: true,
         groupDefaultExpanded: -1,
@@ -265,7 +264,7 @@ describe('editing with pinned pivot rows', () => {
                     editable: true,
                     groupRowEditable: true,
                     groupRowValueSetter: cascadeGroupRowValueSetter,
-                } as ColDefInternal<PivotRowData>,
+                },
             ],
             pivotMode: true,
             groupDefaultExpanded: -1,
@@ -452,7 +451,7 @@ describe('editing with pinned pivot rows', () => {
                             editable: true,
                             groupRowEditable: true,
                             groupRowValueSetter: cascadeGroupRowValueSetter,
-                        } as ColDefInternal,
+                        },
                     ],
                     isRowPinned: (node) => {
                         if (!node.group) {
