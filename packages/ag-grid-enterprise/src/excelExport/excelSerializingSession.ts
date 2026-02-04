@@ -474,6 +474,8 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
     }
 
     private mapSharedStrings(worksheet: ExcelWorksheet): void {
+        let emptyStringPosition: string | undefined;
+
         for (const row of worksheet.table.rows) {
             for (const cell of row.cells) {
                 const data = cell.data;
@@ -482,7 +484,14 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                 }
 
                 const value = data.value;
-                if (value == null || value === '') {
+
+                if (value == null) {
+                    continue;
+                }
+
+                if (value === '') {
+                    emptyStringPosition ??= this.workbook.getStringPosition('').toString();
+                    data.value = emptyStringPosition;
                     continue;
                 }
 
