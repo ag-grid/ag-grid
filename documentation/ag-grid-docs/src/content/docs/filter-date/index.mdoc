@@ -246,7 +246,7 @@ const columnDefs: ColDef[] = [
 ### Available Built-in Date Filter Options
 
 | Option Name        | Option Key     | Time Range Start >=                    | Time Range End <              |
-| ------------------ | -------------- | -------------------------------------- | :---------------------------- |
+|--------------------|----------------|----------------------------------------|:------------------------------|
 | Today              | `today`        | `Start Of Today`                       | `Start Of Tomorrow`           |
 | Yesterday          | `yesterday`    | `Start Of Yesterday`                   | `Start Of Today`              |
 | Tomorrow           | `tomorrow`     | `Start Of Tomorrow`                    | `Start Of Day After Tomorrow` |
@@ -274,11 +274,7 @@ const columnDefs: ColDef[] = [
 `Start Of Today`, `Start Of Tomorrow`, `Start Of XXX` point to the beginning of the corresponding day, e.g. `00:00:00.000` in the browser’s local time zone.
 {% /note %}
 
-### Server-Side Row Model (SSRM)
-
-When a user selects one of built-in date ranges, the filter model sent to the server includes the preset `type` (for example, `today` or `last7Days`) and leaves `dateFrom`/`dateTo` undefined. The server / user defined code is responsible for interpreting the preset and applying the equivalent date range logic using its own time zone and locale rules.
-
-See [SSRM Filtering](./server-side-model-filtering/) for the server-side filtering contract.
+For date range filters, the Grid State model and the SSRM request model share the same shape, so you can persist the state and replay it on the server. See [SSRM Date Range Filters](./server-side-model-filtering/#date-range-filters) for the server-side filtering contract.
 
 ## Range Input Validation and Error States
 
