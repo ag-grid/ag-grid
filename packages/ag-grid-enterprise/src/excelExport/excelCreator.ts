@@ -382,6 +382,8 @@ export class ExcelCreator
 
     public createSerializingSession(params: ExcelExportParams): ExcelSerializingSession {
         const { colModel, colNames, rowGroupColsSvc, valueSvc, formula, gos } = this.beans;
+        const baseExcelStyles = gos.get('excelStyles') || [];
+        const styleLinker = this.createStyleLinker(baseExcelStyles);
 
         const config: ExcelGridSerializingParams = {
             ...params,
@@ -393,9 +395,9 @@ export class ExcelCreator
             gos,
             suppressRowOutline: params.suppressRowOutline || params.skipRowGroups,
             headerRowHeight: params.headerRowHeight || params.rowHeight,
-            baseExcelStyles: gos.get('excelStyles') || [],
+            baseExcelStyles,
             rightToLeft: params.rightToLeft ?? gos.get('enableRtl'),
-            styleLinker: this.styleLinker.bind(this),
+            styleLinker,
             headerRowCount: _getHeaderRowCount(colModel),
             pivotModeActive: colModel.isPivotActive(),
             workbook: this.workbook,
@@ -404,67 +406,76 @@ export class ExcelCreator
         return new ExcelSerializingSession(config);
     }
 
-    private styleLinker(params: StyleLinkerInterface): string[] {
-        const { rowType, rowIndex, value, column, columnGroup, node } = params;
-        const isHeader = rowType === 'HEADER';
-        const isGroupHeader = rowType === 'HEADER_GROUPING';
-        const col = (isHeader ? column : columnGroup) as AgColumn | AgColumnGroup | null;
-        let headerClasses: string[] = [];
+    private createStyleLinker(baseExcelStyles: ExcelStyle[]): (params: StyleLinkerInterface) => string[] {
+        const styleIds: string[] = [];
+        const styleIdsSet = new Set<string>();
+        const styleIdOrder = new Map<string, number>();
+
+        baseExcelStyles.forEach((it, idx) => {
+            styleIds.push(it.id);
+            styleIdsSet.add(it.id);
+            styleIdOrder.set(it.id, idx);
+        });
+
         const { gos, cellStyles } = this.beans;
 
-        if (isHeader || isGroupHeader) {
-            headerClasses.push('header');
-            if (isGroupHeader) {
-                headerClasses.push('headerGroup');
-            }
+        return (params) => {
+            const { rowType, rowIndex, value, column, columnGroup, node } = params;
+            const isHeader = rowType === 'HEADER';
+            const isGroupHeader = rowType === 'HEADER_GROUPING';
+            const col = (isHeader ? column : columnGroup) as AgColumn | AgColumnGroup | null;
+            let headerClasses: string[] = [];
 
-            if (col) {
-                headerClasses = headerClasses.concat(
-                    _getHeaderClassesFromColDef(
-                        col.getDefinition(),
-                        gos,
-                        (column as AgColumn) || null,
-                        (columnGroup as AgColumnGroup) || null
-                    )
-                );
-            }
-
-            return headerClasses;
-        }
-
-        const styles = gos.get('excelStyles');
-
-        const applicableStyles: string[] = ['cell'];
-
-        if (!styles?.length) {
-            return applicableStyles;
-        }
-
-        const styleIds: string[] = styles.map((it: ExcelStyle) => {
-            return it.id;
-        });
-
-        const colDef = (column as AgColumn).getDefinition();
-        cellStyles?.processAllCellClasses(
-            colDef,
-            _addGridCommonParams(gos, {
-                value,
-                data: node!.data,
-                node: node!,
-                colDef,
-                column: column!,
-                rowIndex: rowIndex,
-            }),
-            (className: string) => {
-                if (styleIds.indexOf(className) > -1) {
-                    applicableStyles.push(className);
+            if (isHeader || isGroupHeader) {
+                headerClasses.push('header');
+                if (isGroupHeader) {
+                    headerClasses.push('headerGroup');
                 }
-            }
-        );
 
-        return applicableStyles.sort((left: string, right: string): number => {
-            return styleIds.indexOf(left) < styleIds.indexOf(right) ? -1 : 1;
-        });
+                if (col) {
+                    headerClasses = headerClasses.concat(
+                        _getHeaderClassesFromColDef(
+                            col.getDefinition(),
+                            gos,
+                            (column as AgColumn) || null,
+                            (columnGroup as AgColumnGroup) || null
+                        )
+                    );
+                }
+
+                return headerClasses;
+            }
+
+            const applicableStyles: string[] = ['cell'];
+
+            if (!styleIds.length) {
+                return applicableStyles;
+            }
+
+            const colDef = (column as AgColumn).getDefinition();
+            cellStyles?.processAllCellClasses(
+                colDef,
+                _addGridCommonParams(gos, {
+                    value,
+                    data: node!.data,
+                    node: node!,
+                    colDef,
+                    column: column!,
+                    rowIndex: rowIndex,
+                }),
+                (className: string) => {
+                    if (styleIdsSet.has(className)) {
+                        applicableStyles.push(className);
+                    }
+                }
+            );
+
+            return applicableStyles.sort((left: string, right: string): number => {
+                const leftIdx = styleIdOrder.get(left) ?? -1;
+                const rightIdx = styleIdOrder.get(right) ?? -1;
+                return leftIdx === rightIdx ? 0 : leftIdx < rightIdx ? -1 : 1;
+            });
+        };
     }
 
     public isExportSuppressed(): boolean {
