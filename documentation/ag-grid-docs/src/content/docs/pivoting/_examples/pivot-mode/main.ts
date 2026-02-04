@@ -1,5 +1,11 @@
 import type { GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    ColumnApiModule,
+    ModuleRegistry,
+    ValidationModule,
+    createGrid,
+} from 'ag-grid-community';
 import {
     ColumnMenuModule,
     ColumnsToolPanelModule,
@@ -11,6 +17,7 @@ import {
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
+    ColumnApiModule,
     ColumnsToolPanelModule,
     ColumnMenuModule,
     ContextMenuModule,
