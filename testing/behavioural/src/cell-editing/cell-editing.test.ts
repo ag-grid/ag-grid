@@ -5,7 +5,7 @@ import { userEvent } from '@testing-library/user-event';
 import type { ColDef } from 'ag-grid-community';
 import { agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 
-import { TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
+import { TestGridsManager, asyncSetTimeout, waitForInput, EditEventTracker } from '../test-utils';
 import { expect } from '../test-utils/matchers';
 
 describe('Cell Editing Start', () => {
@@ -249,6 +249,7 @@ describe('Cell Editing Start', () => {
                 },
                 onCellValueChanged: () => onCellValueChangedGrid(),
             });
+            const eventTracker = new EditEventTracker(api);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
             await asyncSetTimeout(1);
@@ -263,6 +264,17 @@ describe('Cell Editing Start', () => {
             expect(cell).toHaveTextContent('12');
             expect(onCellValueChangedColumn).toHaveBeenCalledTimes(1);
             expect(onCellValueChangedGrid).toHaveBeenCalledTimes(1);
+
+            // 1 editor started/stopped with 1 value change
+            expect(eventTracker.counts).toEqual({
+                cellEditingStarted: 1,
+                cellEditingStopped: 1,
+                cellValueChanged: 1,
+                rowValueChanged: 0,
+                cellEditRequest: 0,
+                bulkEditingStarted: 0,
+                bulkEditingStopped: 0,
+            });
         });
 
         test('onValueChanged - valueSetter', async () => {
@@ -287,6 +299,7 @@ describe('Cell Editing Start', () => {
                 rowData,
                 onCellValueChanged: () => onCellValueChangedGrid(),
             });
+            const eventTracker = new EditEventTracker(api);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
             await asyncSetTimeout(1);
@@ -305,6 +318,17 @@ describe('Cell Editing Start', () => {
             expect(valueSetter).toHaveBeenCalledTimes(1);
             expect(onCellValueChangedColumn).toHaveBeenCalledTimes(1);
             expect(onCellValueChangedGrid).toHaveBeenCalledTimes(1);
+
+            // 1 editor started/stopped with 1 value change
+            expect(eventTracker.counts).toEqual({
+                cellEditingStarted: 1,
+                cellEditingStopped: 1,
+                cellValueChanged: 1,
+                rowValueChanged: 0,
+                cellEditRequest: 0,
+                bulkEditingStarted: 0,
+                bulkEditingStopped: 0,
+            });
         });
     });
 
@@ -320,6 +344,7 @@ describe('Cell Editing Start', () => {
             rowData: [{ id: '0', a: 'initial' }],
             getRowId: (params) => params.data.id,
         });
+        const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         await asyncSetTimeout(1);
@@ -367,6 +392,17 @@ describe('Cell Editing Start', () => {
         await asyncSetTimeout(1);
 
         expect(cellB).toHaveTextContent('xx');
+
+        // 2 edit sessions: first committed with value change, second cancelled
+        expect(eventTracker.counts).toEqual({
+            cellEditingStarted: 2,
+            cellEditingStopped: 2,
+            cellValueChanged: 1,
+            rowValueChanged: 0,
+            cellEditRequest: 0,
+            bulkEditingStarted: 0,
+            bulkEditingStopped: 0,
+        });
     });
 
     test('valueCache does not store editing values (AG-16448)', async () => {
@@ -384,6 +420,7 @@ describe('Cell Editing Start', () => {
             getRowId: (params) => params.data.id,
             valueCache: true, // Enable value caching
         });
+        const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         await asyncSetTimeout(1);
@@ -434,6 +471,17 @@ describe('Cell Editing Start', () => {
         await asyncSetTimeout(1);
 
         expect(cellB).toHaveTextContent('committed');
+
+        // 2 edit sessions: first cancelled, second committed with value change
+        expect(eventTracker.counts).toEqual({
+            cellEditingStarted: 2,
+            cellEditingStopped: 2,
+            cellValueChanged: 1,
+            rowValueChanged: 0,
+            cellEditRequest: 0,
+            bulkEditingStarted: 0,
+            bulkEditingStopped: 0,
+        });
     });
 
     test('valueCache does not cache editing values even during edit (AG-16448)', async () => {
@@ -457,6 +505,7 @@ describe('Cell Editing Start', () => {
             getRowId: (params) => params.data.id,
             valueCache: true,
         });
+        const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         await asyncSetTimeout(1);
@@ -495,6 +544,17 @@ describe('Cell Editing Start', () => {
 
         // Now the value should update
         expect(cellB).toHaveTextContent('Computed: typing');
+
+        // 1 editor started/stopped with 1 value change
+        expect(eventTracker.counts).toEqual({
+            cellEditingStarted: 1,
+            cellEditingStopped: 1,
+            cellValueChanged: 1,
+            rowValueChanged: 0,
+            cellEditRequest: 0,
+            bulkEditingStarted: 0,
+            bulkEditingStopped: 0,
+        });
     });
 
     test('edited cell shows editing value while dependent valueGetter shows committed value (AG-16448)', async () => {
@@ -514,6 +574,7 @@ describe('Cell Editing Start', () => {
             getRowId: (params) => params.data.id,
             valueCache: true,
         });
+        const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         await asyncSetTimeout(1);
@@ -550,6 +611,17 @@ describe('Cell Editing Start', () => {
         // Now both should be updated
         expect(cellA).toHaveTextContent('editing');
         expect(cellComputed).toHaveTextContent('Echo: editing');
+
+        // 1 editor started/stopped with 1 value change
+        expect(eventTracker.counts).toEqual({
+            cellEditingStarted: 1,
+            cellEditingStopped: 1,
+            cellValueChanged: 1,
+            rowValueChanged: 0,
+            cellEditRequest: 0,
+            bulkEditingStarted: 0,
+            bulkEditingStopped: 0,
+        });
     });
 
     test('valueCache is actually caching values', async () => {

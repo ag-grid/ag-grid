@@ -81,6 +81,14 @@ describe('Cell Editing: undo/redo', () => {
             bulkEditingStopped: 0,
         });
 
+        // 1 undo, 1 redo
+        expect(eventTracker.undoCounts).toEqual({
+            undoStarted: 1,
+            undoEnded: 1,
+            redoStarted: 1,
+            redoEnded: 1,
+        });
+
         expect(api.getDisplayedRowAtIndex(0)?.data?.field).toBe('Updated Value');
         expect(valueSetterCalls).toBe(3);
         expect(valueSetterTargets).toEqual(['ROW_0', 'ROW_0', 'ROW_0']);
@@ -134,19 +142,30 @@ describe('Cell Editing: undo/redo', () => {
             await waitFor(() => expect(new Set(rowValueChangedNodes)).toEqual(new Set(['ROW_0'])));
 
             api.undoCellEditing();
+            await asyncSetTimeout(0);
             await waitFor(() => expect(new Set(rowValueChangedNodes)).toEqual(new Set(['ROW_0'])));
 
             api.redoCellEditing();
+            await asyncSetTimeout(0);
             await waitFor(() => expect(new Set(rowValueChangedNodes)).toEqual(new Set(['ROW_0'])));
 
+            // 1 initial edit + 1 undo + 1 redo = 3 cellValueChanged
             expect(eventTracker.counts).toEqual({
                 cellEditingStarted: 2,
                 cellEditingStopped: batchEnabled ? 3 : 2,
-                cellValueChanged: 1,
+                cellValueChanged: 3,
                 rowValueChanged: 1,
                 cellEditRequest: 0,
                 bulkEditingStarted: 0,
                 bulkEditingStopped: 0,
+            });
+
+            // 1 undo, 1 redo
+            expect(eventTracker.undoCounts).toEqual({
+                undoStarted: 1,
+                undoEnded: 1,
+                redoStarted: 1,
+                redoEnded: 1,
             });
         }
     );
@@ -163,6 +182,7 @@ describe('Cell Editing: undo/redo', () => {
             ],
             getRowId: (params) => params.data.id,
         });
+        const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         const user = userEvent.setup({ skipHover: true });
@@ -194,5 +214,23 @@ describe('Cell Editing: undo/redo', () => {
         await asyncSetTimeout(0);
         expect(getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'))).toHaveTextContent('A0-EDIT');
         expect(api.getCurrentUndoSize()).toBe(1);
+
+        // Editing started/stopped counts include row 0 and row 1 full-row editing lifecycle
+        // 1 initial edit + 1 undo + 1 redo = 3 cellValueChanged
+        expect(eventTracker.counts).toEqual({
+            cellEditingStarted: 5,
+            cellEditingStopped: 5,
+            cellValueChanged: 3,
+            rowValueChanged: 1,
+            cellEditRequest: 0,
+            bulkEditingStarted: 0,
+            bulkEditingStopped: 0,
+        });
+        expect(eventTracker.undoCounts).toEqual({
+            undoStarted: 1,
+            undoEnded: 1,
+            redoStarted: 1,
+            redoEnded: 1,
+        });
     });
 });

@@ -88,6 +88,12 @@ export type EditEventCounts = {
     bulkEditingStopped: number;
 };
 
+export type UndoCounts = {
+    undoStarted: number;
+    undoEnded: number;
+    redoStarted: number;
+    redoEnded: number;
+};
 const DEFAULT_EDIT_EVENT_COUNTS = {
     cellEditingStarted: 0,
     cellEditingStopped: 0,
@@ -98,8 +104,16 @@ const DEFAULT_EDIT_EVENT_COUNTS = {
     bulkEditingStopped: 0,
 };
 
+const DEFAULT_UNDO_COUNTS = {
+    undoStarted: 0,
+    undoEnded: 0,
+    redoStarted: 0,
+    redoEnded: 0,
+};
+
 export class EditEventTracker {
     public readonly counts: EditEventCounts = { ...DEFAULT_EDIT_EVENT_COUNTS };
+    public readonly undoCounts: UndoCounts = { ...DEFAULT_UNDO_COUNTS };
 
     private readonly listeners: Array<{ event: AgPublicEventType; listener: () => void }> = [];
 
@@ -111,11 +125,24 @@ export class EditEventTracker {
         this.track('cellEditRequest');
         this.track('bulkEditingStarted');
         this.track('bulkEditingStopped');
+        this.trackUndo('undoStarted');
+        this.trackUndo('undoEnded');
+        this.trackUndo('redoStarted');
+        this.trackUndo('redoEnded');
     }
 
     private track(event: AgPublicEventType): void {
         const listener = () => {
             this.counts[event] += 1;
+        };
+
+        this.listeners.push({ event, listener });
+        this.api.addEventListener(event, listener);
+    }
+
+    private trackUndo(event: AgPublicEventType): void {
+        const listener = () => {
+            this.undoCounts[event] += 1;
         };
 
         this.listeners.push({ event, listener });
@@ -131,5 +158,6 @@ export class EditEventTracker {
 
     public reset(): void {
         Object.assign(this.counts, DEFAULT_EDIT_EVENT_COUNTS);
+        Object.assign(this.undoCounts, DEFAULT_UNDO_COUNTS);
     }
 }

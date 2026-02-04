@@ -14,6 +14,7 @@ import {
 } from 'ag-grid-enterprise';
 
 import {
+    EditEventTracker,
     GridRows,
     TestGridsManager,
     asyncSetTimeout,
@@ -88,6 +89,7 @@ describe('Cell Editing Regression', () => {
                 { readOnly: 'RO-1', make: 'Ford', model: 'Mondeo' },
             ],
         });
+        const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         await asyncSetTimeout(1);
@@ -106,6 +108,20 @@ describe('Cell Editing Regression', () => {
         await userEvent.keyboard('{Enter}');
 
         expect(modelCellRow1).toHaveTextContent('Updated');
+
+        // Row 0: 2 editors started (make, model - readOnly is not editable)
+        // Row 0: 2 editors stopped when tabbing to row 1
+        // Row 1: 2 editors started
+        // Row 1: 2 editors stopped on Enter, with 1 value changed
+        expect(eventTracker.counts).toEqual({
+            cellEditingStarted: 4,
+            cellEditingStopped: 4,
+            cellValueChanged: 1,
+            rowValueChanged: 1,
+            cellEditRequest: 0,
+            bulkEditingStarted: 0,
+            bulkEditingStopped: 0,
+        });
     });
 
     test('full-row editing fires rowEditingStopped on stopEditing', async () => {
@@ -123,6 +139,7 @@ describe('Cell Editing Regression', () => {
             ],
             onRowEditingStopped,
         });
+        const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         await asyncSetTimeout(1);
@@ -136,6 +153,17 @@ describe('Cell Editing Regression', () => {
 
         expect(onRowEditingStopped).toHaveBeenCalledTimes(1);
         expect(onRowEditingStopped.mock.calls[0][0].rowIndex).toBe(0);
+
+        // 2 editors started (make, model), 2 editors stopped
+        expect(eventTracker.counts).toEqual({
+            cellEditingStarted: 2,
+            cellEditingStopped: 2,
+            cellValueChanged: 0,
+            rowValueChanged: 0,
+            cellEditRequest: 0,
+            bulkEditingStarted: 0,
+            bulkEditingStopped: 0,
+        });
     });
 
     test('full-row editing closes empty editors when tabbing to next row', async () => {
@@ -150,6 +178,7 @@ describe('Cell Editing Regression', () => {
                 { make: 'Ford', model: 'Mondeo', model3: undefined },
             ],
         });
+        const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         await asyncSetTimeout(1);
@@ -177,6 +206,18 @@ describe('Cell Editing Regression', () => {
 
         const emptyCellRow0 = getByTestId(gridDiv, agTestIdFor.cell('0', 'model3'));
         expect(emptyCellRow0.querySelector('input')).toBeNull();
+
+        // Row 0: 3 editors started, then 1 extra start/stop during tab navigation, then 3 editors stopped
+        // Row 1: 3 editors started (still open at end of test)
+        expect(eventTracker.counts).toEqual({
+            cellEditingStarted: 7,
+            cellEditingStopped: 4,
+            cellValueChanged: 0,
+            rowValueChanged: 0,
+            cellEditRequest: 0,
+            bulkEditingStarted: 0,
+            bulkEditingStopped: 0,
+        });
     });
 
     test('full-row editing closes empty editors when shift-tabbing to previous row', async () => {
@@ -191,6 +232,7 @@ describe('Cell Editing Regression', () => {
                 { make: 'Ford', model: 'Mondeo', model3: undefined },
             ],
         });
+        const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         await asyncSetTimeout(1);
@@ -219,6 +261,18 @@ describe('Cell Editing Regression', () => {
 
         const emptyCellRow1 = getByTestId(gridDiv, agTestIdFor.cell('1', 'model3'));
         expect(emptyCellRow1.querySelector('input')).toBeNull();
+
+        // Row 1: 3 editors started, then 1 extra start/stop during tab navigation, then 3 editors stopped
+        // Row 0: 3 editors started (still open at end of test)
+        expect(eventTracker.counts).toEqual({
+            cellEditingStarted: 7,
+            cellEditingStopped: 4,
+            cellValueChanged: 0,
+            rowValueChanged: 0,
+            cellEditRequest: 0,
+            bulkEditingStarted: 0,
+            bulkEditingStopped: 0,
+        });
     });
 
     // AG-15698 - row doesn't rerender after value is selected in rich select editor
@@ -354,6 +408,7 @@ describe('Cell Editing Regression', () => {
             rowData: [{ code: 0 }, { code: 2 }],
             onCellEditRequest: ({ source }) => onCellEditRequest(source),
         });
+        const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         await asyncSetTimeout(1);
@@ -409,6 +464,16 @@ describe('Cell Editing Regression', () => {
         expect(onCellEditRequest).toHaveBeenCalledTimes(2);
         expect(onCellEditRequest).toHaveBeenNthCalledWith(1, 'edit');
         expect(onCellEditRequest).toHaveBeenNthCalledWith(2, 'edit');
+        // 2 editors started/stopped, no value changes (readOnlyEdit mode)
+        expect(eventTracker.counts).toEqual({
+            cellEditingStarted: 2,
+            cellEditingStopped: 2,
+            cellValueChanged: 0,
+            rowValueChanged: 0,
+            cellEditRequest: 2,
+            bulkEditingStarted: 0,
+            bulkEditingStopped: 0,
+        });
     });
 
     // Regression test for first cell edit event newValue is Symbol(unedited)
@@ -466,6 +531,7 @@ describe('Cell Editing Regression', () => {
                     onCellEditingStopped: ({ newValue, valueChanged }) =>
                         onCellEditingStopped({ newValue, valueChanged }),
                 });
+                const eventTracker = new EditEventTracker(api);
 
                 const gridDiv = getGridElement(api)! as HTMLElement;
                 await asyncSetTimeout(1);
@@ -486,6 +552,16 @@ describe('Cell Editing Regression', () => {
 
                 expect(onCellEditingStopped).toHaveBeenCalledTimes(1);
                 expect(onCellEditingStopped).toHaveBeenCalledWith(expected);
+                // 1 editor started/stopped, no value changes (readOnlyEdit mode)
+                expect(eventTracker.counts).toEqual({
+                    cellEditingStarted: 1,
+                    cellEditingStopped: 1,
+                    cellValueChanged: 0,
+                    rowValueChanged: 0,
+                    cellEditRequest: expected.valueChanged ? 1 : 0,
+                    bulkEditingStarted: 0,
+                    bulkEditingStopped: 0,
+                });
             }
         );
 
@@ -509,6 +585,7 @@ describe('Cell Editing Regression', () => {
                     onCellEditingStopped: ({ newValue, valueChanged }) =>
                         onCellEditingStopped({ newValue, valueChanged }),
                 });
+                const eventTracker = new EditEventTracker(api);
 
                 const gridDiv = getGridElement(api)! as HTMLElement;
                 await asyncSetTimeout(1);
@@ -531,6 +608,16 @@ describe('Cell Editing Regression', () => {
 
                 expect(onCellEditingStopped).toHaveBeenCalledTimes(1);
                 expect(onCellEditingStopped).toHaveBeenCalledWith(expected);
+                // 1 editor started/stopped, no value changes (Escape cancels)
+                expect(eventTracker.counts).toEqual({
+                    cellEditingStarted: 1,
+                    cellEditingStopped: 1,
+                    cellValueChanged: 0,
+                    rowValueChanged: 0,
+                    cellEditRequest: 0,
+                    bulkEditingStarted: 0,
+                    bulkEditingStopped: 0,
+                });
             }
         );
     });
@@ -544,6 +631,8 @@ describe('Cell Editing Regression', () => {
             onCellValueChangedColDef?: jest.Mock<any, any, any>,
             extraOptions?: GridOptions
         ): Promise<{
+            api: GridApi;
+            eventTracker: EditEventTracker;
             onCellValueChanged: jest.Mock<any, any, any>;
             onCellValueChangedColDef?: jest.Mock<any, any, any>;
         }> => {
@@ -562,12 +651,13 @@ describe('Cell Editing Regression', () => {
                     onCellValueChanged({ newValue, oldValue, source }),
                 ...extraOptions,
             });
+            const eventTracker = new EditEventTracker(api);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
             await asyncSetTimeout(1);
             const cell = getByTestId(gridDiv, agTestIdFor.cell('0', 'field'));
             await editAction(api, gridDiv, cell);
-            return { onCellValueChanged, onCellValueChangedColDef };
+            return { api, eventTracker, onCellValueChanged, onCellValueChangedColDef };
         };
 
         beforeEach(() => {
@@ -575,7 +665,7 @@ describe('Cell Editing Regression', () => {
         });
 
         test('dblClick edit should have source=edit', async () => {
-            const { onCellValueChanged, onCellValueChangedColDef } = await testACell(
+            const { eventTracker, onCellValueChanged, onCellValueChangedColDef } = await testACell(
                 async (api, gridDiv, cell) => {
                     await user.dblClick(cell);
                     const inputElement = await waitForInput(gridDiv, cell);
@@ -598,10 +688,20 @@ describe('Cell Editing Regression', () => {
                 newValue: 'A Value15',
                 oldValue: 'A Value',
             });
+            // 1 editor started/stopped with 1 value change
+            expect(eventTracker.counts).toEqual({
+                cellEditingStarted: 1,
+                cellEditingStopped: 1,
+                cellValueChanged: 1,
+                rowValueChanged: 0,
+                cellEditRequest: 0,
+                bulkEditingStarted: 0,
+                bulkEditingStopped: 0,
+            });
         });
 
         test('dblClick edit and click away should have source=edit', async () => {
-            const { onCellValueChanged, onCellValueChangedColDef } = await testACell(
+            const { eventTracker, onCellValueChanged, onCellValueChangedColDef } = await testACell(
                 async (api, gridDiv, cell) => {
                     await user.dblClick(cell);
                     const inputElement = await waitForInput(gridDiv, cell);
@@ -624,6 +724,16 @@ describe('Cell Editing Regression', () => {
             });
             expect(onCellValueChangedColDef).toHaveBeenCalledTimes(1);
             expect(onCellValueChangedColDef).toHaveBeenCalledWith({ newValue: 'A Value15', oldValue: 'A Value' });
+            // 1 editor started/stopped with 1 value change
+            expect(eventTracker.counts).toEqual({
+                cellEditingStarted: 1,
+                cellEditingStopped: 1,
+                cellValueChanged: 1,
+                rowValueChanged: 0,
+                cellEditRequest: 0,
+                bulkEditingStarted: 0,
+                bulkEditingStopped: 0,
+            });
         });
 
         test('copy/paste edit should have source=paste', async () => {
@@ -802,6 +912,7 @@ describe('Cell Editing Regression', () => {
                 },
             ],
         });
+        const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         await asyncSetTimeout(1);
@@ -837,6 +948,17 @@ describe('Cell Editing Regression', () => {
         expect(valueSetterCalls[1].newValue).toBeNull();
         expect(valueSetterCalls[1].oldValue).toBe(42);
         expect(scoreCell).toHaveTextContent('0');
+
+        // Delete key triggers value change without opening editor, but fires stop events
+        expect(eventTracker.counts).toEqual({
+            cellEditingStarted: 0,
+            cellEditingStopped: 2,
+            cellValueChanged: 2,
+            rowValueChanged: 0,
+            cellEditRequest: 0,
+            bulkEditingStarted: 0,
+            bulkEditingStopped: 0,
+        });
     });
 
     test.each(['ui', 'data'] as const)(
@@ -868,6 +990,7 @@ describe('Cell Editing Regression', () => {
                     });
                 },
             });
+            const eventTracker = new EditEventTracker(api);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
             await asyncSetTimeout(1);
@@ -908,6 +1031,17 @@ describe('Cell Editing Regression', () => {
             expect(cellValueChangedEvents[0].oldValue).toBe('Michael Phelps');
             // The newValue should be the transformed uppercase value, not the original lowercase input
             expect(cellValueChangedEvents[0].newValue).toBe('USAIN BOLT');
+
+            // UI edit: 1 editor started/stopped; data edit: no editors
+            expect(eventTracker.counts).toEqual({
+                cellEditingStarted: source === 'ui' ? 1 : 0,
+                cellEditingStopped: source === 'ui' ? 1 : 0,
+                cellValueChanged: 1,
+                rowValueChanged: 0,
+                cellEditRequest: 0,
+                bulkEditingStarted: 0,
+                bulkEditingStopped: 0,
+            });
         }
     );
 
@@ -940,6 +1074,7 @@ describe('Cell Editing Regression', () => {
                     });
                 },
             });
+            const eventTracker = new EditEventTracker(api);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
             await asyncSetTimeout(1);
@@ -980,6 +1115,17 @@ describe('Cell Editing Regression', () => {
             expect(cellValueChangedEvents[0].oldValue).toBe('United States');
             // The newValue should be the primitive string, not an object like {country: 'Canada'}
             expect(cellValueChangedEvents[0].newValue).toBe('Canada');
+
+            // UI edit: 1 editor started/stopped; data edit: no editors
+            expect(eventTracker.counts).toEqual({
+                cellEditingStarted: source === 'ui' ? 1 : 0,
+                cellEditingStopped: source === 'ui' ? 1 : 0,
+                cellValueChanged: 1,
+                rowValueChanged: 0,
+                cellEditRequest: 0,
+                bulkEditingStarted: 0,
+                bulkEditingStopped: 0,
+            });
         }
     );
 
@@ -996,6 +1142,7 @@ describe('Cell Editing Regression', () => {
                 { make: 'Toyota', model: 'Corolla', price: 29600, electric: false },
             ],
         });
+        const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         await asyncSetTimeout(1);
@@ -1025,6 +1172,20 @@ describe('Cell Editing Regression', () => {
         api.setFocusedCell(1, 'make');
         await asyncSetTimeout(10);
 
+        // Verify that the orphan editor from row 0 price cell is closed after focus change
+        expect(api.getCellEditorInstances()).toHaveLength(0);
+        expect(priceCell.querySelector('input[type="text"]')).toBeNull();
+        expect(api.getEditingCells()).toHaveLength(0);
+        expect(eventTracker.counts).toEqual({
+            cellEditingStarted: 3,
+            cellEditingStopped: 3,
+            cellValueChanged: 0,
+            rowValueChanged: 0,
+            cellEditRequest: 0,
+            bulkEditingStarted: 0,
+            bulkEditingStopped: 0,
+        });
+
         // Start editing on the new cell (simulates what happens when clicking an editable cell)
         api.startEditingCell({ rowIndex: 1, colKey: 'make' });
         await asyncSetTimeout(10);
@@ -1036,6 +1197,22 @@ describe('Cell Editing Regression', () => {
         expect(priceCell.querySelector('input[type="text"]')).toBeNull();
         expect(api.getEditingCells()).toHaveLength(1);
         expect(api.getEditingCells()[0].rowIndex).toBe(1);
+
+        // Stop editing to clean up
+        api.stopEditing();
+        await asyncSetTimeout(1);
+
+        // Verify events: 4 starts (make, model, price in row 0, then make in row 1)
+        // and 4 stops (make, model, price in row 0, then make in row 1)
+        expect(eventTracker.counts).toEqual({
+            cellEditingStarted: 4,
+            cellEditingStopped: 4,
+            cellValueChanged: 0,
+            rowValueChanged: 0,
+            cellEditRequest: 0,
+            bulkEditingStarted: 0,
+            bulkEditingStopped: 0,
+        });
     });
 
     test('full row editing: tabbing into empty cell then clicking another cell closes editors', async () => {
@@ -1052,6 +1229,7 @@ describe('Cell Editing Regression', () => {
                 { make: 'Toyota', model: 'Corolla', price: 29600, electric: false },
             ],
         });
+        const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         await asyncSetTimeout(1);
@@ -1079,6 +1257,21 @@ describe('Cell Editing Regression', () => {
         api.setFocusedCell(1, 'make');
         await asyncSetTimeout(10);
 
+        // Verify that row 0 editors are closed after focus change
+        expect(api.getCellEditorInstances()).toHaveLength(0);
+        expect(getRowHtmlElement(api, '0')?.classList.contains('ag-row-editing')).toBe(false);
+        expect(priceCell.querySelector('input')).toBeNull();
+        expect(api.getEditingCells()).toHaveLength(0);
+        expect(eventTracker.counts).toEqual({
+            cellEditingStarted: 4,
+            cellEditingStopped: 4,
+            cellValueChanged: 0,
+            rowValueChanged: 0,
+            cellEditRequest: 0,
+            bulkEditingStarted: 0,
+            bulkEditingStopped: 0,
+        });
+
         // Start editing on the new row
         api.startEditingCell({ rowIndex: 1, colKey: 'make' });
         await asyncSetTimeout(10);
@@ -1095,5 +1288,20 @@ describe('Cell Editing Regression', () => {
         const editingCells = api.getEditingCells();
         expect(editingCells.length).toBeGreaterThan(0);
         expect(editingCells.every((cell) => cell.rowIndex === 1)).toBe(true);
+
+        // Stop editing to clean up
+        api.stopEditing();
+        await asyncSetTimeout(1);
+
+        // Verify events: row 0 starts 4 editors, row 0 stops 4 editors, row 1 starts 4 editors, row 1 stops 4 editors
+        expect(eventTracker.counts).toEqual({
+            cellEditingStarted: 8,
+            cellEditingStopped: 8,
+            cellValueChanged: 0,
+            rowValueChanged: 0,
+            cellEditRequest: 0,
+            bulkEditingStarted: 0,
+            bulkEditingStopped: 0,
+        });
     });
 });
