@@ -135,8 +135,6 @@ describe('Find Navigation', () => {
         api.findGoTo(1);
         expect(api.findGetActiveMatch()!.numOverall).toBe(1);
 
-        const callCountAfterFirst = scrollListener.mock.calls.length;
-
         // Without force, going to the same match does nothing
         api.findGoTo(1);
         expect(api.findGetActiveMatch()!.numOverall).toBe(1);
