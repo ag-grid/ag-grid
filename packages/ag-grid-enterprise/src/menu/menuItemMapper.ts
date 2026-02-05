@@ -1,3 +1,5 @@
+import { get } from 'http';
+
 import type {
     AgColumn,
     ColumnEventType,
@@ -20,7 +22,7 @@ import {
     _warn,
 } from 'ag-grid-community';
 
-import { isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
+import { getGroupingLocaleText, isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import type { ChartMenuItemMapper } from './chartMenuItemMapper';
 import type { ColumnChooserFactory } from './columnChooserFactory';
 import { validateMenuItem } from './menuItemValidations';
@@ -230,7 +232,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     const displayName = colNames.getDisplayNameForColumn(column, 'header');
                     return rowGroupColsSvc
                         ? {
-                              name: localeTextFunc('groupBy', `Group by ${displayName}`, [displayName!]),
+                              name: getGroupingLocaleText(localeTextFunc, 'groupBy', displayName!),
                               disabled:
                                   gos.get('functionsReadOnly') ||
                                   column?.isRowGroupActive() ||
@@ -263,7 +265,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                                 underlyingColumn != null
                                     ? colNames.getDisplayNameForColumn(underlyingColumn, 'header')
                                     : showRowGroup;
-                            name = localeTextFunc('ungroupBy', `Un-Group by ${ungroupByName}`, [ungroupByName!]);
+                            name = getGroupingLocaleText(localeTextFunc, 'ungroupBy', ungroupByName!);
                             disabled = gos.get('functionsReadOnly') || isRowGroupColLocked(underlyingColumn, beans);
                             action = () => {
                                 rowGroupColsSvc.removeColumns([showRowGroup], source);
@@ -271,7 +273,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         } else {
                             // Handle primary column
                             const displayName = colNames.getDisplayNameForColumn(column, 'header');
-                            name = localeTextFunc('ungroupBy', `Un-Group by ${displayName}`, [displayName!]);
+                            name = getGroupingLocaleText(localeTextFunc, 'ungroupBy', displayName!);
                             disabled =
                                 gos.get('functionsReadOnly') ||
                                 !column?.isRowGroupActive() ||
