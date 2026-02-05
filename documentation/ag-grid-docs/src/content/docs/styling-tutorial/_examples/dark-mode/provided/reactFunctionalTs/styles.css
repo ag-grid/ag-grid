@@ -1,0 +1,19 @@
+/* Button styling */
+.ag-toggleButton {
+    appearance: none;
+    background-color: #0d4491;
+    border: 1px solid #0d4491;
+    border-radius: 6px;
+    height: 36px;
+    color: white;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    padding: 0.375em 1em 0.4em;
+    white-space: nowrap;
+    margin-right: 6px;
+    margin-bottom: 8px;
+    transition: background-color 0.25s ease-in-out;
+}
