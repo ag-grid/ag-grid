@@ -226,13 +226,11 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                                   }),
                           }
                         : null;
-                case 'rowGroup':
+                case 'rowGroup': {
+                    const displayName = colNames.getDisplayNameForColumn(column, 'header');
                     return rowGroupColsSvc
                         ? {
-                              name:
-                                  localeTextFunc('groupBy', 'Group by') +
-                                  ' ' +
-                                  colNames.getDisplayNameForColumn(column, 'header'),
+                              name: localeTextFunc('groupBy', `Group by ${displayName}`, [displayName!]),
                               disabled:
                                   gos.get('functionsReadOnly') ||
                                   column?.isRowGroupActive() ||
@@ -241,6 +239,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                               icon: _createIconNoSpan('menuAddRowGroup', beans, null),
                           }
                         : null;
+                }
                 case 'rowUnGroup': {
                     if (rowGroupColsSvc && gos.isModuleRegistered('SharedRowGrouping')) {
                         const showRowGroup = column?.getColDef().showRowGroup;
@@ -264,17 +263,15 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                                 underlyingColumn != null
                                     ? colNames.getDisplayNameForColumn(underlyingColumn, 'header')
                                     : showRowGroup;
-                            name = localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + ungroupByName;
+                            name = localeTextFunc('ungroupBy', `Un-Group by ${ungroupByName}`, [ungroupByName!]);
                             disabled = gos.get('functionsReadOnly') || isRowGroupColLocked(underlyingColumn, beans);
                             action = () => {
                                 rowGroupColsSvc.removeColumns([showRowGroup], source);
                             };
                         } else {
                             // Handle primary column
-                            name =
-                                localeTextFunc('ungroupBy', 'Un-Group by') +
-                                ' ' +
-                                colNames.getDisplayNameForColumn(column, 'header');
+                            const displayName = colNames.getDisplayNameForColumn(column, 'header');
+                            name = localeTextFunc('ungroupBy', `Un-Group by ${displayName}`, [displayName!]);
                             disabled =
                                 gos.get('functionsReadOnly') ||
                                 !column?.isRowGroupActive() ||

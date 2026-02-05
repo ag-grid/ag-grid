@@ -113,8 +113,8 @@ export class ToolPanelContextMenu extends Component {
         menuItemMap.set('rowGroup', {
             allowedFunction: rowGroupAllowed,
             activeFunction: (col) => col.isRowGroupActive(),
-            activateLabel: () => `${localeTextFunc('groupBy', 'Group by')} ${displayName}`,
-            deactivateLabel: () => `${localeTextFunc('ungroupBy', 'Un-Group by')} ${displayName}`,
+            activateLabel: () => `${localeTextFunc('groupBy', `Group by ${displayName}`, [displayName!])}`,
+            deactivateLabel: () => `${localeTextFunc('ungroupBy', `Un-Group by ${displayName}`, [displayName!])}`,
             activateFunction: () =>
                 rowGroupColsSvc?.setColumns(
                     this.addColumnsToList(rowGroupColsSvc.columns, rowGroupAllowed),
