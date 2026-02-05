@@ -881,7 +881,10 @@ export class CellCtrl extends BeanStub {
         this.comp.toggleCss(CSS_CELL_FOCUS, cellFocused);
 
         // see if we need to force browser focus - this can happen if focus is programmatically set
-        if (cellFocused && event?.forceBrowserFocus) {
+        if (
+            cellFocused &&
+            (event?.forceBrowserFocus || (!this.hasBrowserFocus() && this.beans.focusSvc.shouldTakeFocus()))
+        ) {
             let focusEl = this.comp.getFocusableElement();
 
             if (editing) {
@@ -891,7 +894,8 @@ export class CellCtrl extends BeanStub {
                 }
             }
 
-            focusEl.focus({ preventScroll: !!event.preventScrollOnBrowserFocus });
+            const preventScroll = event ? event.preventScrollOnBrowserFocus : true;
+            focusEl.focus({ preventScroll });
             _placeCaretAtEnd(beans, focusEl);
         }
 

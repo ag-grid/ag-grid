@@ -171,20 +171,28 @@ export class FocusService extends BeanStub implements NamedBean {
     public doesRowOrCellHaveBrowserFocus() {
         const activeElement = _getActiveDomElement(this.beans);
         // check for cell first
-        if (this.isDomDataPresentInHierarchy(activeElement, DOM_DATA_KEY_CELL_CTRL)) {
+        if (this.isDomDataPresentInHierarchy(activeElement, DOM_DATA_KEY_CELL_CTRL, true)) {
             return true;
         }
         // otherwise rows
-        return this.isDomDataPresentInHierarchy(activeElement, DOM_DATA_KEY_ROW_CTRL);
+        return this.isDomDataPresentInHierarchy(activeElement, DOM_DATA_KEY_ROW_CTRL, true);
     }
 
-    private isDomDataPresentInHierarchy(eBrowserCell: Node | null, key: string): boolean {
+    private isDomDataPresentInHierarchy(
+        eBrowserCell: Node | null,
+        key: string,
+        attemptToRefocusIfDestroyed?: boolean
+    ): boolean {
         let ePointer = eBrowserCell;
 
         while (ePointer) {
             const data = _getDomData(this.gos, ePointer, key);
 
             if (data) {
+                if (data.destroyed && attemptToRefocusIfDestroyed) {
+                    this.attemptToRecoverFocus();
+                    return false;
+                }
                 return true;
             }
 
