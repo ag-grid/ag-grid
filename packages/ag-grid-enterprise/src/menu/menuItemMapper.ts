@@ -226,11 +226,14 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                                   }),
                           }
                         : null;
-                case 'rowGroup': {
-                    const displayName = colNames.getDisplayNameForColumn(column, 'header');
+                case 'rowGroup':
                     return rowGroupColsSvc
                         ? {
-                              name: getGroupingLocaleText(localeTextFunc, 'groupBy', displayName!),
+                              name: getGroupingLocaleText(
+                                  localeTextFunc,
+                                  'groupBy',
+                                  colNames.getDisplayNameForColumn(column, 'header')!
+                              ),
                               disabled:
                                   gos.get('functionsReadOnly') ||
                                   column?.isRowGroupActive() ||
@@ -239,7 +242,6 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                               icon: _createIconNoSpan('menuAddRowGroup', beans, null),
                           }
                         : null;
-                }
                 case 'rowUnGroup': {
                     if (rowGroupColsSvc && gos.isModuleRegistered('SharedRowGrouping')) {
                         const showRowGroup = column?.getColDef().showRowGroup;
@@ -270,8 +272,11 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                             };
                         } else {
                             // Handle primary column
-                            const displayName = colNames.getDisplayNameForColumn(column, 'header');
-                            name = getGroupingLocaleText(localeTextFunc, 'ungroupBy', displayName!);
+                            name = getGroupingLocaleText(
+                                localeTextFunc,
+                                'ungroupBy',
+                                colNames.getDisplayNameForColumn(column, 'header')!
+                            );
                             disabled =
                                 gos.get('functionsReadOnly') ||
                                 !column?.isRowGroupActive() ||
