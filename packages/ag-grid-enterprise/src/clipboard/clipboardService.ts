@@ -545,7 +545,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                         const value = this.processCell(
                             rowNode,
                             column,
-                            valueSvc.getValue(column, rowNode, 'edit'),
+                            valueSvc.getValue(column, rowNode, 'batch'),
                             EXPORT_TYPE_DRAG_COPY,
                             processCellForClipboardFunc,
                             false,
@@ -1094,7 +1094,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 column: column as AgColumn,
                 node,
                 includeValueFormatted: true,
-                from: 'data',
+                from: 'batch',
             });
 
             const val = valueFormatted ?? value ?? '';
@@ -1121,6 +1121,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             suppressQuotes: true,
             columnSeparator: this.getClipboardDelimiter(),
             onlySelected: !rowPositions,
+            valueFrom: 'batch',
             processCellCallback: gos.getCallback('processCellForClipboard'),
             processRowGroupCallback: processRowGroupCallback,
             processHeaderCallback: gos.getCallback('processHeaderForClipboard'),
