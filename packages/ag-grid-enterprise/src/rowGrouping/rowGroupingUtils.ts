@@ -72,7 +72,7 @@ export function getGroupingLocaleText(
 ): string {
     const prefix = key === 'groupBy' ? 'Group by' : 'Un-Group by';
 
-    const localStr = `${localeTextFunc(key, `${prefix} ${displayName}`, [displayName])}`;
+    const localStr = localeTextFunc(key, `${prefix} ${displayName}`, [displayName]);
 
     // Check if the displayName variable is present in the localized string, if not fallback to the old way of concatenating the column name
     if (localStr.indexOf(displayName) >= 0) {
