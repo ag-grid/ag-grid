@@ -414,6 +414,104 @@ describe('Cell Editing: setDataValue in Batch Mode', () => {
         });
     });
 
+    describe('escape key reverts editor changes', () => {
+        test('pressing ESC during batch editing reverts cell to source value', async () => {
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [{ field: 'a', editable: true }],
+                rowData: [{ id: '0', a: 'initial' }],
+                getRowId: (params) => params.data.id,
+            });
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            api.startBatchEdit();
+            await asyncSetTimeout(1);
+
+            const rowNode = api.getDisplayedRowAtIndex(0)!;
+
+            // First set a batch pending value via API
+            rowNode.setDataValue('a', 'batch-pending', 'batch');
+            await asyncSetTimeout(1);
+
+            await new GridRows(api, 'after batch setDataValue').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"batch-pending"
+            `);
+
+            // Double-click to start editing the cell
+            const cell = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+            await userEvent.dblClick(cell);
+            await asyncSetTimeout(1);
+
+            // Type in the editor (this creates an editor value different from batch pending value)
+            const input = await waitForInput(gridDiv, cell, { popup: false });
+            await userEvent.clear(input);
+            await userEvent.type(input, 'typed-value');
+            await asyncSetTimeout(1);
+
+            expect(input.value).toBe('typed-value');
+            expect(api.getCellValue({ rowNode, colKey: 'a', from: 'edit' })).toBe('typed-value');
+            expect(api.getCellValue({ rowNode, colKey: 'a', from: 'batch' })).toBe('batch-pending');
+
+            // Press ESC to cancel editing - this reverts the entire cell edit (including batch pending value)
+            await userEvent.type(input, '{Escape}');
+            await asyncSetTimeout(1);
+
+            // After ESC, the cell reverts to the source value (not the typed value or batch pending)
+            await new GridRows(api, 'after escape').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"initial"
+            `);
+
+            expect(rowNode.data.a).toBe('initial'); // Data unchanged
+
+            api.cancelBatchEdit();
+        });
+
+        test('pressing ESC during batch editing with no prior batch value reverts to source value', async () => {
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [{ field: 'a', editable: true }],
+                rowData: [{ id: '0', a: 'initial' }],
+                getRowId: (params) => params.data.id,
+            });
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            api.startBatchEdit();
+            await asyncSetTimeout(1);
+
+            // Double-click to start editing without setting a batch value first
+            const cell = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+            await userEvent.dblClick(cell);
+            await asyncSetTimeout(1);
+
+            const rowNode = api.getDisplayedRowAtIndex(0)!;
+
+            // Type in the editor
+            const input = await waitForInput(gridDiv, cell, { popup: false });
+            await userEvent.clear(input);
+            await userEvent.type(input, 'typed-value');
+            await asyncSetTimeout(1);
+
+            expect(input.value).toBe('typed-value');
+            expect(api.getCellValue({ rowNode, colKey: 'a', from: 'edit' })).toBe('typed-value');
+
+            // Press ESC to cancel editing
+            await userEvent.type(input, '{Escape}');
+            await asyncSetTimeout(1);
+
+            // After ESC, the cell should show the original source value
+            await new GridRows(api, 'after escape').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"initial"
+            `);
+
+            expect(rowNode.data.a).toBe('initial'); // Data unchanged
+
+            api.cancelBatchEdit();
+        });
+    });
+
     describe('behavior outside batch mode', () => {
         test.each(allBatchSources)("'%s' updates data directly when not in batch mode", async (eventSource) => {
             const api = await gridMgr.createGridAndWait('myGrid', {

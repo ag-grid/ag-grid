@@ -1007,13 +1007,13 @@ export class EditService extends BeanStub implements NamedBean {
                             pendingValue: newValue,
                             state: 'changed',
                         });
+                        _purgeUnchangedEdits(beans);
+                        // bulkRefresh will dispatch cellEditValuesChanged via refCell
+                        this.bulkRefresh(position);
                     } else {
                         _syncFromEditor(beans, position, newValue, eventSource, undefined, { persist: true });
                         this.stopEditing(position, { source: source as any, suppressNavigateAfterEdit: true });
                     }
-                    _purgeUnchangedEdits(beans);
-                    this.dispatchEditValuesChanged(position, { ...existing, pendingValue: newValue });
-                    this.bulkRefresh(position);
                     return true;
                 }
 
@@ -1034,7 +1034,6 @@ export class EditService extends BeanStub implements NamedBean {
                 // 'batch' writes directly to pendingValue, bypassing open editor
                 beans.editModelSvc?.setEdit(position, { sourceValue, pendingValue: newValue, state: 'changed' });
                 _purgeUnchangedEdits(beans);
-                this.dispatchEditValuesChanged(position, { sourceValue, pendingValue: newValue });
                 this.bulkRefresh(position);
             } else {
                 _syncFromEditor(beans, position, newValue, eventSource, undefined, { persist: true });
