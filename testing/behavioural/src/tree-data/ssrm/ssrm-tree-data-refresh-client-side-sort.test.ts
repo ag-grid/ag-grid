@@ -1,13 +1,19 @@
 import type {
     GridOptions,
-    IsServerSideGroupOpenByDefaultParams,
     IServerSideDatasource,
     IServerSideGetRowsParams,
     IServerSideGetRowsRequest,
+    IsServerSideGroupOpenByDefaultParams,
 } from 'ag-grid-community';
 import { ServerSideRowModelModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout, ssrmExpandAndLoadAll, waitForNoLoadingRows } from '../../test-utils';
+import {
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    ssrmExpandAndLoadAll,
+    waitForNoLoadingRows,
+} from '../../test-utils';
 import { createFakeServer, createServerSideDatasource, getSmallTreeDataSet } from './ssrmSmallTreeDataSet';
 
 describe('ag-grid SSRM treeData client-side sort refresh', () => {
@@ -90,11 +96,7 @@ describe('ag-grid SSRM treeData client-side sort refresh', () => {
 
     test('purge refresh keeps client-side sort order for leaf rows', async () => {
         const gridOptions: GridOptions = {
-            columnDefs: [
-                { field: 'employeeId', hide: true },
-                { field: 'name', hide: true },
-                { field: 'experience' },
-            ],
+            columnDefs: [{ field: 'employeeId', hide: true }, { field: 'name', hide: true }, { field: 'experience' }],
             autoGroupColumnDef: {
                 field: 'name',
             },
