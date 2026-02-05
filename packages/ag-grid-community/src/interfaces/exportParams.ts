@@ -1,5 +1,6 @@
 import type { Column, ColumnGroup } from './iColumn';
 import type { AgGridCommon } from './iCommon';
+import type { CellValueResolveFrom } from './iEditService';
 import type { IRowNode } from './iRowNode';
 import type { RowPosition } from './iRowPosition';
 
@@ -65,6 +66,15 @@ export interface BaseExportParams {
      * @default false
      */
     skipPinnedBottom?: boolean;
+
+    /**
+     * The source to use for getting cell values: 'data', 'batch', or 'edit'.
+     * - `'data'`: Returns values from the underlying row data
+     * - `'batch'`: Returns pending batch edit values (falls back to data if not in batch mode)
+     * - `'edit'`: Returns current editor values including live typing
+     * @default 'data'
+     */
+    valueFrom?: CellValueResolveFrom;
 
     /**
      * A callback function that will be invoked once per row in the grid. Return true to omit the row from the export.

@@ -14,4 +14,10 @@ ignore:
                   Only used for testing packages, so ReDos attack would only affect developer machines and CI
               expires: 2026-06-08T00:00:00.000Z
               created: 2025-07-22T10:35:00.007Z
+    SNYK-JS-ISAACSBRACEEXPANSION-15208653:
+        - 'glob@11.1.0 > minimatch@10.1.1 > @isaacs/brace-expansion@5.0.0':
+              reason: >-
+                  braces is only used in development/testing - it's not used in the final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2025-01-05T10:10:00.000Z
 patch: {}

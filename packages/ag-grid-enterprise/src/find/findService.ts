@@ -143,6 +143,9 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             pinnedRowDataChanged: refreshAndKeepActive,
             cellValueChanged: refreshAndKeepActiveDebounced,
             rowNodeDataChanged: refreshAndKeepActiveDebounced,
+            cellEditingStopped: refreshAndKeepActiveDebounced,
+            cellEditValuesChanged: refreshAndKeepActiveDebounced,
+            batchEditingStopped: refreshAndKeepActiveDebounced,
         });
         const rowSpanSvc = this.beans.rowSpanSvc;
         if (rowSpanSvc) {
@@ -437,7 +440,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 let valueToFind: string | null;
                 const getFindText = (groupRowRendererParams as FindGroupRowRendererParams)?.getFindText;
                 if (getFindText) {
-                    const value = valueSvc.getValueForDisplay({ node, from: 'edit' }).value;
+                    const value = valueSvc.getValueForDisplay({ node, from: 'batch' }).value;
                     valueToFind = getFindText(
                         _addGridCommonParams(gos, {
                             value,
@@ -449,7 +452,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                                 const { valueFormatted } = valueSvc.getValueForDisplay({
                                     node,
                                     includeValueFormatted: true,
-                                    from: 'edit',
+                                    from: 'batch',
                                 });
                                 return valueFormatted;
                             },
@@ -459,7 +462,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                     const { value, valueFormatted } = valueSvc.getValueForDisplay({
                         node,
                         includeValueFormatted: true,
-                        from: 'edit',
+                        from: 'batch',
                     });
                     valueToFind = valueFormatted ?? value;
                 }
@@ -495,7 +498,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 const colDef = column.colDef;
                 const getFindText = colDef.getFindText;
                 if (getFindText) {
-                    const value = valueSvc.getValueForDisplay({ column, node, from: 'edit' }).value;
+                    const value = valueSvc.getValueForDisplay({ column, node, from: 'batch' }).value;
                     valueToFind = getFindText(
                         _addGridCommonParams(gos, {
                             value,
@@ -508,7 +511,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                                     column,
                                     node,
                                     includeValueFormatted: true,
-                                    from: 'edit',
+                                    from: 'batch',
                                 });
                                 return valueFormatted;
                             },
@@ -519,7 +522,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                         column,
                         node,
                         includeValueFormatted: true,
-                        from: 'edit',
+                        from: 'batch',
                     });
                     valueToFind = valueFormatted ?? value;
                 }

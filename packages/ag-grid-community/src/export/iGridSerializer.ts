@@ -11,6 +11,7 @@ import type {
 } from '../interfaces/exportParams';
 import type { IColsService } from '../interfaces/iColsService';
 import type { ColumnGroup } from '../interfaces/iColumn';
+import type { CellValueResolveFrom } from '../interfaces/iEditService';
 import type { ValueService } from '../valueService/valueService';
 
 export interface RowAccumulator {
@@ -33,6 +34,7 @@ export interface GridSerializingParams {
     colNames: ColumnNameService;
     valueSvc: ValueService;
     gos: GridOptionsService;
+    valueFrom?: CellValueResolveFrom;
     processCellCallback?: (params: ProcessCellForExportParams) => string;
     processHeaderCallback?: (params: ProcessHeaderForExportParams) => string;
     processGroupHeaderCallback?: (params: ProcessGroupHeaderForExportParams) => string;

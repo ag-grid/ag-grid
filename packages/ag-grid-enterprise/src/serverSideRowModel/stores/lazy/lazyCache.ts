@@ -895,6 +895,17 @@ export class LazyCache extends BeanStub {
             lazyNodesAfterStoreEnd.forEach((lazyNode) => this.destroyRowAtIndex(lazyNode.index));
         }
 
+        if (this.gos.get('serverSideEnableClientSideSort') && !wasRefreshing) {
+            const hasActiveSort = (this.sortSvc?.getSortOptions() ?? []).some((opt) => opt.sort != null);
+            const hasStubNodes = this.nodeMap.find((lazyNode) => !!lazyNode.node.stub) != null;
+            const allRowsLoaded = this.isLastRowKnown && this.nodeMap.getSize() === this.numberOfRows && !hasStubNodes;
+            const shouldClientSideSortOnLoad = (this.isStoreFullyLoaded() || allRowsLoaded) && hasActiveSort;
+
+            if (shouldClientSideSortOnLoad) {
+                this.clientSideSortRows();
+            }
+        }
+
         this.fireStoreUpdatedEvent();
 
         // Happens after store updated, as store updating can clear our excess rows.

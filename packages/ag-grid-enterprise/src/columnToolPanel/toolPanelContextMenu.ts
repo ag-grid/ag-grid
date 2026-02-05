@@ -1,7 +1,7 @@
 import type { AgColumn, AgProvidedColumnGroup, IconName, MenuItemDef } from 'ag-grid-community';
 import { Component, _createIconNoSpan, _focusInto, isColumn, isProvidedColumnGroup } from 'ag-grid-community';
 
-import { isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
+import { getGroupingLocaleText, isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import { MenuList } from '../widgets/menuList';
 
 type MenuItemName = 'scrollIntoView' | 'rowGroup' | 'value' | 'pivot';
@@ -113,8 +113,8 @@ export class ToolPanelContextMenu extends Component {
         menuItemMap.set('rowGroup', {
             allowedFunction: rowGroupAllowed,
             activeFunction: (col) => col.isRowGroupActive(),
-            activateLabel: () => `${localeTextFunc('groupBy', 'Group by')} ${displayName}`,
-            deactivateLabel: () => `${localeTextFunc('ungroupBy', 'Un-Group by')} ${displayName}`,
+            activateLabel: () => getGroupingLocaleText(localeTextFunc, 'groupBy', displayName!),
+            deactivateLabel: () => getGroupingLocaleText(localeTextFunc, 'ungroupBy', displayName!),
             activateFunction: () =>
                 rowGroupColsSvc?.setColumns(
                     this.addColumnsToList(rowGroupColsSvc.columns, rowGroupAllowed),
