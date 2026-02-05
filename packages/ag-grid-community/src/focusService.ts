@@ -175,7 +175,12 @@ export class FocusService extends BeanStub implements NamedBean {
             return true;
         }
         // otherwise rows
-        return this.isDomDataPresentInHierarchy(activeElement, DOM_DATA_KEY_ROW_CTRL);
+        if (this.isDomDataPresentInHierarchy(activeElement, DOM_DATA_KEY_ROW_CTRL)) {
+            return true;
+        }
+
+        // when tabbing into the grid, the tab guard can have focus while rows are loading
+        return this.isTabGuard(activeElement);
     }
 
     private isDomDataPresentInHierarchy(eBrowserCell: Node | null, key: string): boolean {
@@ -192,6 +197,10 @@ export class FocusService extends BeanStub implements NamedBean {
         }
 
         return false;
+    }
+
+    private isTabGuard(element: Node | null): boolean {
+        return element instanceof HTMLElement && element.classList.contains('ag-tab-guard');
     }
 
     public getFocusedCell(): CellPosition | null {
