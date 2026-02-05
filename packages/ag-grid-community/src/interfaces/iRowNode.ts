@@ -324,9 +324,20 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
      *
      * **Pivot Mode**: On leaf data rows (non-group rows), pivot columns resolve to their underlying value column.
      *
+     * ## Batch Editing Behaviour
+     *
+     * When batch editing is active (`api.startBatchEdit()`), values are staged as pending batch edits.
+     * The actual data is not modified until the batch is committed via `api.commitBatchEdit()`.
+     * If cancelled via `api.cancelBatchEdit()`, the pending values are discarded.
+     *
+     * The `eventSource` parameter can be used to control where the value is written:
+     * - `'edit'`: Write to the current edit state (editor if editing, batch if in batch mode, data otherwise)
+     * - `'batch'`: Write to batch if batch mode is active, otherwise write directly to data (ignores editor state)
+     * - `'data'`: Write directly to the underlying data, bypassing batch mode and edit state entirely
+     *
      * @param colKey The column where the value should be updated
      * @param newValue The new value
-     * @param eventSource The source of the event
+     * @param eventSource The source of the event (also accepts `'edit'`, `'batch'`, or `'data'` for write target control)
      * @returns `true` if the value was changed, otherwise `false`.
      */
     setDataValue(colKey: string | Column, newValue: any, eventSource?: string): boolean;

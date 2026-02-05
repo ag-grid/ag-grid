@@ -931,19 +931,27 @@ export class EditService extends BeanStub implements NamedBean {
     public setDataValue(position: Required<EditPosition>, newValue: any, eventSource?: string): boolean | undefined {
         try {
             const batch = this.batch;
-            const editing = this.isEditing(batch ? undefined : position);
+
+            // 'data' source bypasses batch mode - let caller write directly to data
+            // 'batch' source also writes directly to data when not in batch mode
+            if (eventSource === 'data' || (eventSource === 'batch' && !batch)) {
+                return;
+            }
+
+            const editing = batch || this.isEditing(position);
 
             if ((!editing || this.committing) && !SET_DATA_SOURCE_AS_API.has(eventSource)) {
                 return; // Ignore non-edit edits that are not treated as API sources.
             }
 
-            if (!editing && !batch && eventSource === 'paste') {
-                return; // Paste on non editable cells and not batching
+            if (!editing && eventSource === 'paste') {
+                return; // Paste on non editable cells
             }
 
             const beans = this.beans;
 
             this.strategy ??= this.createStrategy();
+
             let source: string;
             if (batch) {
                 source = 'ui';
@@ -992,8 +1000,20 @@ export class EditService extends BeanStub implements NamedBean {
                 }
 
                 if (existing.sourceValue !== newValue) {
-                    _syncFromEditor(beans, position, newValue, eventSource, undefined, { persist: true });
-                    this.stopEditing(position, { source: source as any, suppressNavigateAfterEdit: true });
+                    if (batch && eventSource === 'batch') {
+                        // 'batch' writes directly to pendingValue, bypassing open editor
+                        beans.editModelSvc?.setEdit(position, {
+                            sourceValue: existing.sourceValue,
+                            pendingValue: newValue,
+                            state: 'changed',
+                        });
+                    } else {
+                        _syncFromEditor(beans, position, newValue, eventSource, undefined, { persist: true });
+                        this.stopEditing(position, { source: source as any, suppressNavigateAfterEdit: true });
+                    }
+                    _purgeUnchangedEdits(beans);
+                    this.dispatchEditValuesChanged(position, { ...existing, pendingValue: newValue });
+                    this.bulkRefresh(position);
                     return true;
                 }
 
@@ -1009,8 +1029,17 @@ export class EditService extends BeanStub implements NamedBean {
                 }
             }
 
-            _syncFromEditor(beans, position, newValue, eventSource, undefined, { persist: true });
-            this.stopEditing(position, { source: source as any, suppressNavigateAfterEdit: true });
+            const sourceValue = this.valueSvc.getValue(position.column as AgColumn, position.rowNode, 'data');
+            if (batch && eventSource === 'batch') {
+                // 'batch' writes directly to pendingValue, bypassing open editor
+                beans.editModelSvc?.setEdit(position, { sourceValue, pendingValue: newValue, state: 'changed' });
+                _purgeUnchangedEdits(beans);
+                this.dispatchEditValuesChanged(position, { sourceValue, pendingValue: newValue });
+                this.bulkRefresh(position);
+            } else {
+                _syncFromEditor(beans, position, newValue, eventSource, undefined, { persist: true });
+                this.stopEditing(position, { source: source as any, suppressNavigateAfterEdit: true });
+            }
 
             return true;
         } finally {

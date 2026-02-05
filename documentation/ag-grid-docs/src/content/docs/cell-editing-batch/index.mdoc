@@ -74,6 +74,38 @@ Use `rowNode.getDataValue(colKey)` to retrieve the committed data value, ignorin
 const dataValue = rowNode.getDataValue('price');
 ```
 
+### Programmatic Value Updates with setDataValue
+
+When batch editing is active, calling `rowNode.setDataValue()` stages the value as a pending batch edit rather than immediately modifying the underlying data. This allows programmatic updates to participate in the batch workflow.
+
+The `eventSource` parameter controls where the value is written:
+
+-   `'edit'` (default): Write to the current edit state — updates the editor if the cell is being edited, otherwise stages as a pending batch value during batch mode, or writes directly to data when not in batch mode
+-   `'batch'`: Write to the batch pending value if batch mode is active (ignoring any open editor), otherwise write directly to the data
+-   `'data'`: Write directly to the underlying data, bypassing batch mode and edit state entirely
+
+```js
+// Start batch editing
+api.startBatchEdit();
+
+// Default behaviour: staged as a pending batch edit
+rowNode.setDataValue('price', 99.99);
+
+// 'batch': writes to batch pending value (ignores open editors)
+// If batch mode is not active, writes directly to data
+rowNode.setDataValue('price', 99.99, 'batch');
+
+// 'data': writes directly to data, bypassing batch mode entirely
+rowNode.setDataValue('price', 99.99, 'data');
+
+// Commit the batch to apply all pending edits to the data
+api.commitBatchEdit();
+```
+
+{% note %}
+When a cell has an open editor, using `'batch'` as the source writes to the pending batch value without affecting the editor's current value. This is useful for updating related cells during editing without disrupting the user's input.
+{% /note %}
+
 ## Customisation
 
 ### Custom Renderers & Editors
