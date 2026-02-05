@@ -895,6 +895,10 @@ export class CellCtrl extends BeanStub {
             _placeCaretAtEnd(beans, focusEl);
         }
 
+        if (cellFocused && this.focusEventWhileNotReady) {
+            this.focusEventWhileNotReady = null;
+        }
+
         // require event to announce so we only announce
         // a direct user interaction with the cell
         if (cellFocused && event) {

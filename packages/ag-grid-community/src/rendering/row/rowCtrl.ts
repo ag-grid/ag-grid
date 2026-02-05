@@ -1154,6 +1154,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
 
         this.setFullWidthRowFocusedClass(targetGui, true);
+        this.focusEventWhileNotReady = null;
 
         if (event?.forceBrowserFocus) {
             // we don't scroll normal rows into view when we focus them, so we don't want
