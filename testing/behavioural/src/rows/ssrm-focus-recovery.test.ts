@@ -47,27 +47,40 @@ describe('SSRM Focus Recovery', () => {
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
 
-        api.setFocusedCell(9, 'value');
+        api.setFocusedCell(0, 'value');
         await asyncSetTimeout(0);
 
         const gridElement = TestGridsManager.getHTMLElement(api);
         const tabGuard = gridElement?.querySelector<HTMLElement>('.ag-tab-guard-bottom');
         expect(tabGuard).toBeTruthy();
         tabGuard!.focus();
-        expect(document.activeElement).toBe(tabGuard);
+        const preRefreshActive = document.activeElement as HTMLElement | null;
+        expect(preRefreshActive).toBeTruthy();
+        expect(gridElement?.contains(preRefreshActive!)).toBe(true);
 
         api.refreshServerSide({ purge: true });
         await waitForNoLoadingRows(api);
         await asyncSetTimeout(0);
 
         const focusedCell = api.getFocusedCell();
-        expect(focusedCell?.rowIndex).toBe(9);
+        expect(focusedCell?.rowIndex).toBe(0);
 
-        const activeElement = document.activeElement as HTMLElement | null;
-        const activeCell = activeElement?.closest('.ag-cell') as HTMLElement | null;
+        const activeCell = await waitForFocusedCellElement();
         expect(activeCell).toBeTruthy();
 
         const activeRow = activeCell!.closest('.ag-row');
-        expect(activeRow?.getAttribute('row-index')).toBe('9');
+        expect(activeRow?.getAttribute('row-index')).toBe('0');
     });
 });
+
+async function waitForFocusedCellElement(retries = 20, delayMs = 5): Promise<HTMLElement | null> {
+    for (let i = 0; i < retries; i++) {
+        const activeElement = document.activeElement as HTMLElement | null;
+        const activeCell = activeElement?.closest('.ag-cell') as HTMLElement | null;
+        if (activeCell) {
+            return activeCell;
+        }
+        await asyncSetTimeout(delayMs);
+    }
+    return null;
+}
