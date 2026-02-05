@@ -133,9 +133,13 @@ Themes can be customised directly using the Theming API, which provides three ma
 
 ### Theme Parameters
 
-Theme Parameters can be defined by passing an object with the relevant configuration parameters to the `withParams()` method.
+[Theme Parameters](./theming-parameters/) are configuration values that affect the appearance of the grid.
 
-For example, to customise your theme with specific colours, spacing, and font sizes, add the following params to your `myTheme` definition:
+Some parameters, such as `headerTextColor`, affect a single aspect of grid appearance. Others such as `spacing` effect the whole grid.
+
+To set parameters on a theme, call the `theme.withParams(...)` method which returns a new theme with different default values for its parameters.
+
+For example, to customise your themes colours, spacing, and font sizes, add the following params to the `themeQuartz.withParams()` method:
 
 {% if isFramework("javascript") %}
 ```js
@@ -232,14 +236,16 @@ When you run your application, you should see the new theme applied to the grid,
 {% gridExampleRunner title="Theme Parameters" name="theme-params" suppressDarkMode=true  /%}
 
 {% note %}
-Our [Theme Parameters](./theming-parameters/) docs provides a full list of available parameters and how to use them.
+Our [Theme Parameters](./theming-parameters/) docs provide a full list of available parameters and how to use them.
 {% /note %}
 
 ### Theme Parts
 
-Theme Parts can be mixed into themes by passing them as arguments to the `theme.withPart()` API. 
+[Theme Parts](./theming-parts/) contain the CSS styles for a single feature like icons or text inputs. Using parts you can, for example, use the Material icons with the Quartz theme, or use the `colourSchemeDarkBlue` part to use a dark mode colour scheme. 
 
-For example, to use the Material icon set with the Quartz theme, add the `iconSetMaterial` part to your `myTheme` definition:
+To add a part to a theme, call the `theme.withPart(...)` method which returns a new theme using that part. 
+
+For example, to use the Material icon set with the Quartz theme, pass the `iconSetMaterial` part to the `themeQuartz.withPart()` method:
 
 {% if isFramework("javascript") %}
 ```js
@@ -332,7 +338,7 @@ export default {
 ```
 {% /if %}
 
-When you run your application, you should see the Material icons in the grid:
+When you run your application, you should see the Material icons used for the Filter icon:
 
 {% gridExampleRunner title="Theme Parts" name="theme-parts" suppressDarkMode=true  /%}
 
@@ -342,11 +348,9 @@ Our [Theming Parts](./theming-parts/) docs provides a full overview of the avail
 
 ### Theme Modes
 
-Whilst a theme can be updated dynamically at runtime by changing the theme grid option, this approach is not always practical for implementing light/dark mode support.
+[Theme Modes](./theming-colors/#theme-modes) allow you to define multiple colour schemes within a single theme, that can be toggled dynamically using a `theme-mode` HTML attribute.
 
-To make this simpler, we provide Theme Modes, which allow you to define multiple colour schemes within a single theme, that can be toggled dynamically.
-
-To use Theme Modes, you first need to create light and dark colour schemes within your `myTheme` definition, passing an additional string parameter to name the scheme:
+To use Theme Modes, you first need to create light and dark colour schemes by chaining another `withParams` method onto the `themeQuartz object, passing an additional string parameter to name the scheme:
 
 {% if isFramework("javascript") %}
 ```js
@@ -354,18 +358,13 @@ const myTheme = themeQuartz
     .withPart(iconSetMaterial)
     .withParams(
         {
-            backgroundColor: '#ffffff',
-            foregroundColor: '#1a1a1a',
-            headerBackgroundColor: '#faf8f5',
-            selectedRowBackgroundColor: 'rgba(14, 68, 145, 0.15)',
-            spacing: 10,
-            fontSize: 12,
-            headerFontSize: 14,
+            // Existing theme params...
         },
         'light' // Light scheme name, used as value of data-ag-theme-mode attribute
     )
     .withParams(
         {
+            // Add dark theme params
             backgroundColor: '#1e1e2f',
             foregroundColor: '#e2e8f0',
             headerBackgroundColor: '#2d2d44',
@@ -389,13 +388,7 @@ const myTheme = themeQuartz
     .withPart(iconSetMaterial)
     .withParams(
         {
-            backgroundColor: '#ffffff',
-            foregroundColor: '#1a1a1a',
-            headerBackgroundColor: '#faf8f5',
-            selectedRowBackgroundColor: 'rgba(14, 68, 145, 0.15)',
-            spacing: 10,
-            fontSize: 12,
-            headerFontSize: 14,
+            // Existing theme params...
         },
         'light' // Light scheme name
     )
@@ -428,13 +421,7 @@ const myTheme = themeQuartz
     .withPart(iconSetMaterial)
     .withParams(
         {
-            backgroundColor: '#ffffff',
-            foregroundColor: '#1a1a1a',
-            headerBackgroundColor: '#faf8f5',
-            selectedRowBackgroundColor: 'rgba(14, 68, 145, 0.15)',
-            spacing: 10,
-            fontSize: 12,
-            headerFontSize: 14,
+            // Existing theme params...
         },
         'light' // Light scheme name
     )
@@ -466,13 +453,7 @@ const myTheme = themeQuartz
     .withPart(iconSetMaterial)
     .withParams(
         {
-            backgroundColor: '#ffffff',
-            foregroundColor: '#1a1a1a',
-            headerBackgroundColor: '#faf8f5',
-            selectedRowBackgroundColor: 'rgba(14, 68, 145, 0.15)',
-            spacing: 10,
-            fontSize: 12,
-            headerFontSize: 14,
+            // Existing theme params...
         },
         'light' // Light scheme name
     )
@@ -498,7 +479,7 @@ export default {
 ```
 {% /if %}
 
-The active colour scheme can be controlled by setting the `data-ag-theme-mode="mode"` attribute on any parent element of the grid, commonly the html or body elements:
+The active colour scheme can then be controlled by setting the `data-ag-theme-mode="mode"` attribute on any parent element of the grid, commonly the `html` or `body` elements:
 
 {% if isFramework("javascript") %}
 ```js
@@ -606,7 +587,7 @@ export default {
 ```
 {% /if %}
 
-When you run your application, you should be able to toggle between light and dark modes:
+When you run your application, you should be able to toggle between light and dark modes by clicking the button:
 
 {% gridExampleRunner title="Dark Mode" name="dark-mode" suppressDarkMode=true  /%}
 
@@ -616,7 +597,7 @@ Our [Theme Modes](./theming-colors/#theme-modes) docs provide a full overview of
 
 ## Custom CSS for Fine-Tuning
 
-When the Theming API doesn't provide enough control, you can use custom CSS to target specific grid elements.
+When the Theming API doesn't provide enough control, you can use [custom CSS](./theming-css/) to target specific grid elements.
 
 Every DOM element rendered by the grid exposes a class name prefixed with `.ag-`. You can target these class names with your own CSS rules, allowing limitless customisation.
 
@@ -668,11 +649,11 @@ There are two main approaches for applying styles based on data:
 - [Cell Class Rules](./cell-styles/#cell-class-rules)
 - [Row Class Rules](./row-styles/#row-class-rules)
 
-Both of these features work in the same way, allowing you to specify when CSS classes are applied to cells/rows based on their data.
+Both of these features work in the same way, allowing you to create functions that dynamically apply CSS classes to elements based on arbitrary data.
 
 ### Cell Class Rules
 
-Class Rules are defined by passing a JavaScript map to the `cellClassRules` column property where the keys are the class names and the values are expressions that if evaluated to true, the class gets used. 
+Class Rules are defined by passing a JavaScript map to the `cellClassRules` column property where the keys are the class names and the values are expressions that, when returning `true`, the class gets used. 
 
 These expressions access the cell's data via the `params` object, which includes information such as the cell value and row node.
 
@@ -921,4 +902,3 @@ Explore these topics to learn more:
 
 - [Try the Theme Builder](https://www.ag-grid.com/theme-builder/) - Visual tool for creating themes
 - [Theming API Docs](./theming/) - Complete theming reference
-- [Building an Enterprise Grid](./enterprise-tutorial/) - Learn how to use Enterprise features
