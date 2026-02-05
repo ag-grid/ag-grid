@@ -139,6 +139,6 @@
     "**/jpeg-js": "0.4.0",
     "**/tough-cookie": "^4.1.3",
     "dependency-cruiser/**/cross-spawn": "7.0.6",
-    "@modelcontextprotocol/sdk": "1.25.2"
+    "@modelcontextprotocol/sdk": "1.26.0"
   }
 }
