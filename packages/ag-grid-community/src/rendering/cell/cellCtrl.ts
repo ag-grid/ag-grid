@@ -854,7 +854,7 @@ export class CellCtrl extends BeanStub {
         return isFocused;
     }
 
-    public setupFocus() {
+    private setupFocus() {
         // when cell is created, if it should be focus the grid should take focus from the focused cell
         this.restoreFocus(true);
         this.onCellFocused(this.focusEventWhileNotReady ?? undefined);
