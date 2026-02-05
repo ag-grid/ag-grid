@@ -89,15 +89,15 @@ const gridOptions = {
 
 ## Pivot Mode vs Pivot Active
 
-It is possible to have pivot mode turned on even though there is no pivot active on the grid. In this scenario, the grid will display the data as normal but will strip out columns that have no grouping or value active.
+It is possible to have pivot mode turned on even though there is no pivot active, on the grid. A pivot is active when one or more of the pivot columns is used as a column label. In this scenario, the grid will display the data as normal but will strip out columns that have no grouping or value active.
 
 The example below demonstrates the difference between pivot mode and having a column with pivot active. The example has three modes of operation that can be switched between using the top buttons. The modes are as follows:
 
 -   **1 - Grouping Active:** This is normal grouping. The grid groups with aggregations over Gold, Silver and Bronze. The user can drill down to the lowest level row data and columns without aggregation or group (eg Country, Year, Date and Sport) are shown.
 
--   **2 - Grouping Active with Pivot Mode:** This is grouping with pivotMode=true, but without any pivot active. The data shown is identical to the first option except the grid removes access to the lowest level row data and columns without aggregation or group are not shown.
+-   **2 - Grouping Active with Pivot Mode:** This is grouping with `pivotMode=true`, but without any pivot active. The data shown is identical to the first option except the grid removes access to the lowest level row data and columns without aggregation or group are not shown.
 
--   **3 - Grouping Active with Pivot Mode and Pivot Active:** This is grouping with pivotMode=true and pivot active. Although it appears similar to the second option, there is no pivot active in the second option.
+-   **3 - Grouping Active with Pivot Mode and Pivot Active:** This is grouping with pivotMode=true and pivot active. Note that the Year column has been added to the Column Labels and there are now pivot result columns for each year.
 
 {% gridExampleRunner title="Pivot Mode Vs Pivot Active" name="pivot-mode"  exampleHeight=630 /%}
 
