@@ -96,7 +96,7 @@ You can test AG Grid Enterprise locally without a licence. To test in production
 {% /if %}
 
 {% if isFramework("react") %}
-Use `AgGridProvider` to provide modules to all grid instances. Provide `AllCommunityModule` to access all Community features or `AllEnterpriseModule` to access all Community **_and_** Enterprise features:
+Use `AgGridProvider` to provide modules and a license key (enterprise only) to all grid instances. Provide `AllCommunityModule` to access all Community features or `AllEnterpriseModule` to access all Community **_and_** Enterprise features:
 
 ```jsx
 import { AllCommunityModule } from 'ag-grid-community';
@@ -107,7 +107,7 @@ const modules = [AllCommunityModule];
 
 function App() {
     return (
-        <AgGridProvider modules={modules}>
+        <AgGridProvider modules={modules} licenseKey="YOUR_LICENSE_KEY">
             <AgGridReact /* ... props */ />
         </AgGridProvider>
     );

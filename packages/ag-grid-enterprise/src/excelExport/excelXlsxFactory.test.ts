@@ -149,6 +149,39 @@ describe('excelXlsxFactory Workbook', () => {
 
         expect(worksheetXml).toContain('<drawing');
     });
+
+    it('maps empty strings to shared string indices', () => {
+        const workbook = new Workbook();
+        const session = new ExcelSerializingSession(
+            stubParams(
+                {
+                    baseExcelStyles: [{ id: 'cell' }] as any,
+                    styleLinker: () => ['cell'],
+                },
+                workbook
+            )
+        );
+
+        const colStub = {
+            getActualWidth: () => 100,
+            isFilterAllowed: () => false,
+            getDefinition: () => ({}),
+            getColSpan: () => 1,
+            isAllowFormula: () => false,
+        } as any;
+        session.prepare([colStub]);
+
+        session.addCustomContent([
+            {
+                cells: [{ data: { type: 's', value: '' }, styleId: 'cell' }],
+            },
+        ]);
+
+        const worksheetXml = session.parse();
+
+        // Shared string cells must have a numeric `<v>` index (including empty strings).
+        expect(worksheetXml).toMatch(/t="s"[^>]*>\s*<v>0<\/v>/);
+    });
 });
 
 describe('excelXlsxFactory custom metadata', () => {

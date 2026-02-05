@@ -86,7 +86,10 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         for (const style of this.config.baseExcelStyles) {
             this.stylesByIds[style.id] = style;
         }
-        this.excelStyles = [...this.config.baseExcelStyles, { id: '_quotePrefix', quotePrefix: 1 }];
+
+        const quotePrefixStyle = { id: '_quotePrefix', quotePrefix: 1 } as const;
+        this.stylesByIds[quotePrefixStyle.id] = quotePrefixStyle;
+        this.excelStyles = [...this.config.baseExcelStyles, quotePrefixStyle];
     }
 
     public addCustomContent(customContent: ExcelRow[]): void {
@@ -231,11 +234,15 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
             this.cols.push(this.convertColumnToExcel(null, this.cols.length + 1));
         }
 
-        const { config } = this;
+        const worksheet = this.createWorksheet();
+        return this.addWorksheetToWorkbook(worksheet);
+    }
+
+    private createWorksheet(): ExcelWorksheet {
+        const { sheetName } = this.config;
 
         let name: string;
-        if (config.sheetName != null) {
-            const { sheetName } = config;
+        if (sheetName != null) {
             const sheetNameValue =
                 typeof sheetName === 'function' ? sheetName(_addGridCommonParams(this.gos, {})) : sheetName;
 
@@ -244,15 +251,13 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
             name = 'ag-grid';
         }
 
-        const data: ExcelWorksheet = {
+        return {
             name,
             table: {
                 columns: this.cols,
                 rows: this.rows,
             },
         };
-
-        return this.createExcel(data);
     }
 
     private addRowOutlineIfNecessary(node: RowNode): void {
@@ -452,8 +457,10 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         };
     }
 
-    private createExcel(data: ExcelWorksheet): string {
+    private addWorksheetToWorkbook(worksheet: ExcelWorksheet): string {
         const { excelStyles, config } = this;
+
+        this.mapSharedStrings(worksheet);
 
         if (this.frozenColumnCount) {
             config.frozenColumnCount = this.frozenColumnCount;
@@ -463,7 +470,34 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
             config.frozenRowCount = this.frozenRowCount;
         }
 
-        return this.workbook.addWorksheet(excelStyles, data, config);
+        return this.workbook.addWorksheet(excelStyles, worksheet, config);
+    }
+
+    private mapSharedStrings(worksheet: ExcelWorksheet): void {
+        let emptyStringPosition: string | undefined;
+
+        for (const row of worksheet.table.rows) {
+            for (const cell of row.cells) {
+                const data = cell.data;
+                if (!data || data.type !== 's') {
+                    continue;
+                }
+
+                const value = data.value;
+
+                if (value == null) {
+                    continue;
+                }
+
+                if (value === '') {
+                    emptyStringPosition ??= this.workbook.getStringPosition('').toString();
+                    data.value = emptyStringPosition;
+                    continue;
+                }
+
+                data.value = this.workbook.getStringPosition(String(value)).toString();
+            }
+        }
     }
 
     private getDataTypeForValue(valueForCell?: any): ExcelOOXMLDataType {
@@ -580,7 +614,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
             styleId: this.getStyleById(styleId) ? styleId! : undefined,
             data: {
                 type: type,
-                value: type === 's' ? this.workbook.getStringPosition(valueToUse).toString() : value,
+                value: type === 's' ? String(valueToUse) : value,
             },
             mergeAcross: numOfCells,
         };
@@ -594,12 +628,12 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         }
 
         if (type === 's') {
-            if (value && value[0] === "'") {
+            value = String(value);
+
+            if (value[0] === "'") {
                 escaped = true;
                 value = value.slice(1);
             }
-
-            value = this.workbook.getStringPosition(value).toString();
         } else if (type === 'f') {
             value = this.addXlfnPrefix(value).slice(1);
         } else if (type === 'n') {
@@ -629,19 +663,21 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         if (!styleIds?.length) {
             return null;
         }
-        if (styleIds.length === 1) {
-            return styleIds[0];
+
+        const filteredStyleIds = styleIds.filter((styleId) => this.stylesByIds[styleId] != null);
+        if (!filteredStyleIds.length) {
+            return null;
         }
 
-        const key: string = styleIds.join('-');
+        if (filteredStyleIds.length === 1) {
+            return filteredStyleIds[0];
+        }
+
+        const key: string = filteredStyleIds.join('-');
         if (!this.mixedStyles[key]) {
-            this.addNewMixedStyle(styleIds);
+            this.addNewMixedStyle(filteredStyleIds);
         }
         return this.mixedStyles[key].excelID;
-    }
-
-    private deepCloneObject<T>(object: T): T {
-        return JSON.parse(JSON.stringify(object));
     }
 
     private addNewMixedStyle(styleIds: string[]): void {
@@ -650,10 +686,9 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         const resultantStyle: ExcelStyle = {} as ExcelStyle;
 
         for (const styleId of styleIds) {
-            for (const excelStyle of this.excelStyles) {
-                if (excelStyle.id === styleId) {
-                    _mergeDeep(resultantStyle, this.deepCloneObject(excelStyle));
-                }
+            const excelStyle = this.stylesByIds[styleId];
+            if (excelStyle) {
+                _mergeDeep(resultantStyle, excelStyle, true, true);
             }
         }
 

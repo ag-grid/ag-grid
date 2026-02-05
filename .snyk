@@ -79,4 +79,15 @@ ignore:
                   developer machines
               expires: 2026-06-08T00:00:00.000Z
               created: 2025-01-05T10:10:00.000Z
+    SNYK-JS-ISAACSBRACEEXPANSION-15208653:
+        - 'glob@11.1.0 > minimatch@10.1.1 > @isaacs/brace-expansion@5.0.0':
+              reason: >-
+                  braces is only used in development/testing - it's not used in the final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2025-01-05T10:10:00.000Z
+        - '@nx/rollup@20.3.1 > rollup-plugin-copy@3.5.0 > globby@10.0.1 > @types/glob@7.2.0 > @types/minimatch@6.0.0 > minimatch@10.1.1 > @isaacs/brace-expansion@5.0.0':
+              reason: >-
+                  braces is only used in development/testing - it's not used in the final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2025-01-05T10:10:00.000Z
 patch: {}
