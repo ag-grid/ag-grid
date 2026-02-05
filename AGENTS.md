@@ -1,3 +1,26 @@
+Please also reference the following rules as needed. The list below is provided in TOON format, and `@` stands for the project root directory.
+
+rules[5]:
+  - path: @.codex/memories/benchmarks.md
+    description: Running and creating performance benchmarks for AG Grid
+    applyTo[2]: testing/performance/**/*,**/benchmark*
+  - path: @.codex/memories/code-quality.md
+    description: "Code quality practices including avoiding bloat, comment guidelines, and review practices"
+    applyTo[1]: packages/*/src/**/*.ts
+  - path: @.codex/memories/docs-pages.md
+    description: Creating and maintaining documentation pages for AG Grid
+    applyTo[2]: documentation/**/*.mdoc,documentation/**/*.md
+  - path: @.codex/memories/examples.md
+    description: Working with examples in AG Grid documentation
+    applyTo[2]: _examples/**/*,documentation/**/_examples/**/*
+  - path: @.codex/memories/testing.md
+    description: "Testing strategies, Jest patterns, and verification for AG Grid"
+    applyTo[3]: **/*.test.ts,**/*.spec.ts,testing/**/*
+
+# Additional Conventions Beyond the Built-in Functions
+
+As this project's AI coding tool, you must follow the additional conventions below, in addition to the built-in functions.
+
 ## AI Agent Instructions
 
 This file provides guidance to AI Agents when working with code in this repository.
@@ -73,7 +96,10 @@ For detailed information about preferred technologies and architectural constrai
 -   `yarn nx build:package <package>` – create ESM/CJS bundles to validate publishable output.
 -   `yarn nx build:umd <package>` – produce UMD bundles for browser distribution smoke-tests.
 -   `yarn nx run-many -t build` – rebuild all packages when changes span the dependency graph.
--   `yarn nx test <package>` – execute Jest suites for the affected package.
+-   `yarn nx test ag-behavioural-testing --run` – run behavioural tests in `testing/behavioural/` (primary test suite, uses Vitest).
+-   `yarn nx test ag-behavioural-testing --run "<file-pattern>"` – run specific behavioural test file.
+-   `yarn nx test ag-behavioural-testing --run "<file-pattern>" -t "<test-name>"` – run specific behavioural test by name.
+-   `yarn nx test <package>` – execute Jest unit tests for the affected package.
 -   `yarn nx test <package> --testPathPattern="<file-name>"` - test specific test file
 -   `yarn nx test <package> --testPathPattern="<file-name>" --testNamePattern="<test-name>"` - test specific test name in a specific test file
 -   `yarn nx e2e <package>` – run Playwright flows when altering website behaviour.
@@ -121,11 +147,11 @@ Core dependency chain: `ag-grid-community` → `ag-grid-enterprise` → framewor
 
 For comprehensive testing information, see [Testing Guide](.rulesync/rules/testing.md).
 
-Key testing tools:
+**Behavioural tests are the primary test suite.** When verifying grid changes, run behavioural tests first. Key testing tools:
 
--   **Unit tests**: Jest with jsdom environment
+-   **Behavioural tests** (primary): `testing/behavioural/` for grid behaviour verification — use Vitest
+-   **Unit tests**: Jest with jsdom environment for package-level tests
 -   **E2E tests**: Playwright for website interaction testing
--   **Behavioural tests**: `testing/behavioural/` for grid behaviour verification
 -   **Accessibility tests**: `testing/accessibility/` for a11y compliance
 -   **Performance tests**: `testing/performance/` for performance regression testing
 

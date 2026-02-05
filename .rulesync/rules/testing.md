@@ -8,6 +8,16 @@ globs: ['**/*.test.ts', '**/*.spec.ts', 'testing/**/*']
 
 This guide covers testing strategies and best practices for the AG Grid codebase.
 
+## Behavioural Tests — Primary Test Suite
+
+Behavioural tests in `testing/behavioural/` are the primary test suite for AG Grid. They test the grid as a **black box**, instantiating the full grid to verify complex behaviours and features.
+
+**Key principles:**
+
+-   The unit under test is a **behaviour**, not a function, class, method, or file
+-   **Avoid mocking** — prefer fakes instead (e.g., fake DOM)
+-   Test at the edges of the system to ensure real integration using public APIs
+
 ## Test Structure
 
 ### Directory Layout
@@ -35,6 +45,31 @@ packages/ag-grid-community/src/
 
 ## Running Tests
 
+### Behavioural Tests (Vitest) – Primary Test Suite
+
+Behavioural tests in `testing/behavioural/` are the primary test suite for verifying grid behaviour. They use Vitest via Nx. Use `--run` to execute once (without watch mode):
+
+```bash
+# Run all behavioural tests
+yarn nx test ag-behavioural-testing --run
+
+# Run specific test file
+yarn nx test ag-behavioural-testing --run "cell-editing-regression"
+
+# Run specific test by name
+yarn nx test ag-behavioural-testing --run "cell-editing-regression" -t "should handle"
+```
+
+### Benchmarks
+
+```bash
+# Run all benchmarks
+yarn nx run ag-behavioural-testing:benchmark
+
+# Run specific benchmark file
+yarn nx run ag-behavioural-testing:benchmark -- src/tree-data/datapath/benchmarks/tree-data-path.bench.ts
+```
+
 ### Unit Tests (Jest)
 
 Unit tests in `packages/` use Jest. Use `--testPathPattern` and `--testNamePattern`:
@@ -55,21 +90,6 @@ yarn nx test ag-grid-community --testPathPattern="featureName" --testNamePattern
 ```bash
 # Run documentation E2E tests
 yarn nx e2e ag-grid-docs
-```
-
-### Behavioural Tests (Vitest)
-
-Behavioural tests in `testing/behavioural/` use Vitest via Nx. Use `--run` to execute once (without watch mode):
-
-```bash
-# Run all behavioural tests
-yarn nx test ag-behavioural-testing --run
-
-# Run specific test file
-yarn nx test ag-behavioural-testing --run "cell-editing-regression"
-
-# Run specific test by name
-yarn nx test ag-behavioural-testing --run "cell-editing-regression" -t "should handle"
 ```
 
 **Note:** Vitest does not support `--testPathPattern` or `--testNamePattern`. Use positional arguments for file matching and `-t` for test name filtering.
