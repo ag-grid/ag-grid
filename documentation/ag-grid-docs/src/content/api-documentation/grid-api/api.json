@@ -778,24 +778,9 @@
         "meta": {
             "displayName": "Scrolling"
         },
-        "ensureIndexVisible": {
-            "more": {
-                "name": "firstDataRendered event",
-                "url": "./grid-events/#reference-miscellaneous-firstDataRendered"
-            }
-        },
-        "ensureNodeVisible": {
-            "more": {
-                "name": "firstDataRendered event",
-                "url": "./grid-events/#reference-miscellaneous-firstDataRendered"
-            }
-        },
-        "ensureColumnVisible": {
-            "more": {
-                "name": "firstDataRendered event",
-                "url": "./grid-events/#reference-miscellaneous-firstDataRendered"
-            }
-        },
+        "ensureIndexVisible": {},
+        "ensureNodeVisible": {},
+        "ensureColumnVisible": {},
         "getHorizontalPixelRange": {},
         "getVerticalPixelRange": {}
     },
