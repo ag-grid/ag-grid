@@ -17,8 +17,8 @@
                 "path": "./cell-data-types/#bigint"
             },
             {
-                "text": "React Context",
-                "path": "./installation/#registering-modules"
+                "text": "Excel Export Security",
+                "path": "./excel-export-data-protection/"
             },
             {
                 "text": "Theme Builder - Import Theme",
