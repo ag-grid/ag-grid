@@ -895,17 +895,6 @@ export class LazyCache extends BeanStub {
             lazyNodesAfterStoreEnd.forEach((lazyNode) => this.destroyRowAtIndex(lazyNode.index));
         }
 
-        if (this.gos.get('serverSideEnableClientSideSort') && !wasRefreshing) {
-            const hasActiveSort = (this.sortSvc?.getSortOptions() ?? []).some((opt) => opt.sort != null);
-            const hasStubNodes = this.nodeMap.find((lazyNode) => !!lazyNode.node.stub) != null;
-            const allRowsLoaded = this.isLastRowKnown && this.nodeMap.getSize() === this.numberOfRows && !hasStubNodes;
-            const shouldClientSideSortOnLoad = (this.isStoreFullyLoaded() || allRowsLoaded) && hasActiveSort;
-
-            if (shouldClientSideSortOnLoad) {
-                this.clientSideSortRows();
-            }
-        }
-
         this.fireStoreUpdatedEvent();
 
         // Happens after store updated, as store updating can clear our excess rows.
@@ -1060,12 +1049,12 @@ export class LazyCache extends BeanStub {
     /**
      * Client side sorting
      */
-    public clientSideSortRows(): boolean {
+    public clientSideSortRows() {
         const sortOptions = this.sortSvc?.getSortOptions() ?? [];
         const isAnySort = sortOptions.some((opt) => opt.sort != null);
         const rowNodeSorter = this.rowNodeSorter;
         if (!isAnySort || !rowNodeSorter) {
-            return false;
+            return;
         }
 
         // the node map does not need entirely recreated, only the indexes need updated.
@@ -1079,7 +1068,6 @@ export class LazyCache extends BeanStub {
             const node = sortedNodes[i];
             nodesMap.set({ id: node.id!, node, index: i });
         }
-        return true;
     }
 
     /**
