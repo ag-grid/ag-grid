@@ -1,9 +1,9 @@
 import type { BeanCollection } from 'ag-grid-community';
 import { AgCheckboxSelector, Component } from 'ag-grid-community';
 
-import type { AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
-import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
-import { AgColorPickerSelector } from '../../../../widgets/agColorPicker';
+import { AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
+import type { GroupComponentParams } from '../../../../../widgets/gridEnterpriseWidgetTypes';
+import { ColorPickerSelector } from '../../../../widgets/colorPicker';
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
@@ -19,7 +19,7 @@ export class CrosshairPanel extends Component {
     }
 
     public postConstruct() {
-        const crosshairGroupParams = this.chartMenuParamsFactory.addEnableParams<AgGroupComponentParams>(
+        const crosshairGroupParams = this.chartMenuParamsFactory.addEnableParams<GroupComponentParams>(
             'crosshair.enabled',
             {
                 cssIdentifier: 'charts-advanced-settings-top-level',
@@ -50,7 +50,7 @@ export class CrosshairPanel extends Component {
                 <ag-color-picker data-ref="crosshairStrokeColorPicker"></ag-color-picker>
             </ag-group-component>
         </div>`,
-            [AgGroupComponentSelector, AgCheckboxSelector, AgColorPickerSelector],
+            [AgGroupComponentSelector, AgCheckboxSelector, ColorPickerSelector],
             {
                 crosshairGroup: crosshairGroupParams,
                 crosshairLabelCheckbox: crosshairLabelCheckboxParams,

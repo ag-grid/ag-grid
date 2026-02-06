@@ -19,20 +19,24 @@
         "!{projectRoot}/vitest.config.ts",
         "{workspaceRoot}/external/ag-website-shared/**",
         "charts",
+        "{projectRoot}/.astro/cache/sitemap/**",
         { "env": "PUBLIC_PACKAGE_VERSION" }
       ],
       "cache": true,
-      "command": "astro build",
+      "command": "tsx ../../external/ag-website-shared/scripts/buildWithSitemapCache.ts --silent",
       "options": {
-        "cwd": "{projectRoot}",
-        "silent": true
+        "cwd": "{projectRoot}"
       },
       "configurations": {
         "staging": {},
-        "archive": {},
-        "production": {},
+        "archive": {
+          "args": "--clean-cache=true --run-second-build=true"
+        },
+        "production": {
+          "args": "--clean-cache=true --run-second-build=true"
+        },
         "verbose": {
-          "silent": null
+          "args": "--silent=false"
         }
       }
     },
@@ -102,7 +106,7 @@
     },
     "test": {
       "executor": "nx:noop",
-      "dependsOn": ["test:vitest"],
+      "dependsOn": ["test:vitest", "test:validate-example-specs"],
       "inputs": [],
       "outputs": [],
       "options": {
@@ -117,7 +121,7 @@
     "test:vitest": {
       "command": "npx vitest",
       "outputs": ["{workspaceRoot}/reports/ag-grid-website.xml"],
-      "dependsOn": ["ag-grid-community:build:css", "ag-grid-enterprise:build:css", "generate-doc-references"],
+      "dependsOn": ["ag-grid-community:build", "ag-grid-enterprise:build", "generate-doc-references"],
       "options": {
         "cwd": "{projectRoot}",
         "config": "vitest.config.ts",
@@ -136,7 +140,38 @@
         }
       }
     },
-    "test:interactive:setup": {
+    "test:e2e": {
+      "command": "npx vitest",
+      "outputs": ["{workspaceRoot}/reports/ag-grid-website.xml"],
+      "dependsOn": ["^pack"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "config": "vitest.e2e.config.ts",
+        "watch": false
+      },
+      "configurations": {
+        "ci": {
+          "outputFile": "../../reports/ag-grid-website.xml",
+          "reporters": ["junit"]
+        },
+        "watch": {
+          "watch": true
+        },
+        "update": {
+          "update": true
+        }
+      }
+    },
+    "test:interactive:setup:chromium": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["npx playwright install --with-deps chromium"],
+        "parallel": false,
+        "cwd": "documentation/ag-grid-docs"
+      },
+      "cache": true
+    },
+    "test:interactive:setup:all": {
       "executor": "nx:run-commands",
       "options": {
         "commands": ["npx playwright install --with-deps chromium firefox webkit"],
@@ -145,24 +180,26 @@
       },
       "cache": true
     },
-    "test:interactive": {
+    "test:interactive:chromium": {
       "executor": "nx:run-commands",
-      "dependsOn": ["test:interactive:setup", "ag-grid-community:build"],
+      "dependsOn": [
+        "test:interactive:setup:chromium",
+        "ag-grid-community:build:types",
+        "ag-grid-community:build:package"
+      ],
+      "options": {
+        "commands": ["npx playwright test --project=chromium"],
+        "parallel": false,
+        "cwd": "documentation/ag-grid-docs"
+      }
+    },
+    "test:interactive:all": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["test:interactive:setup:all", "ag-grid-community:build:types", "ag-grid-community:build:package"],
       "options": {
         "commands": ["npx playwright test"],
         "parallel": false,
         "cwd": "documentation/ag-grid-docs"
-      },
-      "configurations": {
-        "production": {
-          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.build.production"
-        },
-        "staging": {
-          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.build.staging"
-        },
-        "dev": {
-          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.dev"
-        }
       }
     },
     "generate-examples": {
@@ -213,6 +250,14 @@
         "commands": ["npx tsc -p {projectRoot}/tsconfig.examples.json"]
       }
     },
+    "test:validate-example-specs": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": ["npx tsx scripts/validate-example-specs.ts"]
+      }
+    },
     "update-algolia": {
       "command": "npm run updateLocal",
       "options": {
@@ -243,6 +288,6 @@
       }
     }
   },
-  "implicitDependencies": ["ag-grid-community", "ag-grid-enterprise"],
+  "implicitDependencies": ["ag-grid-community", "ag-grid-enterprise", "ag-grid-react", "ag-grid-angular"],
   "tags": ["website"]
 }

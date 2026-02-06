@@ -31,6 +31,7 @@ export class CellMouseListenerFeature extends BeanStub {
             case 'click':
                 this.onCellClicked(mouseEvent);
                 break;
+            case 'pointerdown':
             case 'mousedown':
             case 'touchstart':
                 this.onMouseDown(mouseEvent);
@@ -88,9 +89,10 @@ export class CellMouseListenerFeature extends BeanStub {
 
         if (editModelSvc?.getState(cellCtrl) !== 'editing') {
             const editing = editSvc?.isEditing();
+            const isRangeSelectionEnabledWhileEditing = editSvc?.isRangeSelectionEnabledWhileEditing();
             const cellValidations = editModelSvc?.getCellValidationModel().getCellValidationMap().size ?? 0;
             const rowValidations = editModelSvc?.getRowValidationModel().getRowValidationMap().size ?? 0;
-            if (editing && (cellValidations > 0 || rowValidations > 0)) {
+            if (editing && (isRangeSelectionEnabledWhileEditing || cellValidations > 0 || rowValidations > 0)) {
                 return;
             }
 
@@ -143,9 +145,10 @@ export class CellMouseListenerFeature extends BeanStub {
 
         if (editSvc?.shouldStartEditing(cellCtrl, event) && editModelSvc?.getState(cellCtrl) !== 'editing') {
             const editing = editSvc?.isEditing();
+            const isRangeSelectionEnabledWhileEditing = editSvc?.isRangeSelectionEnabledWhileEditing();
             const cellValidations = editModelSvc?.getCellValidationModel().getCellValidationMap().size ?? 0;
             const rowValidations = editModelSvc?.getRowValidationModel().getRowValidationMap().size ?? 0;
-            if (editing && (cellValidations > 0 || rowValidations > 0)) {
+            if (editing && (isRangeSelectionEnabledWhileEditing || cellValidations > 0 || rowValidations > 0)) {
                 return;
             }
 
@@ -154,7 +157,7 @@ export class CellMouseListenerFeature extends BeanStub {
     }
 
     private onMouseDown(mouseEvent: MouseEvent): void {
-        const { ctrlKey, metaKey, shiftKey } = mouseEvent;
+        const { shiftKey } = mouseEvent;
         const target = mouseEvent.target as HTMLElement;
         const { cellCtrl, beans } = this;
         const { eventSvc, rangeSvc, rowNumbersSvc, focusSvc, gos, editSvc } = beans;
@@ -185,10 +188,6 @@ export class CellMouseListenerFeature extends BeanStub {
         const isRowNumberColumn = isRowNumberCol(column);
 
         if (rowNumbersSvc && isRowNumberColumn && !rowNumbersSvc.handleMouseDownOnCell(cellPosition, mouseEvent)) {
-            if (rangeSvc) {
-                mouseEvent.preventDefault();
-            }
-            mouseEvent.stopImmediatePropagation();
             return;
         }
 
@@ -217,21 +216,24 @@ export class CellMouseListenerFeature extends BeanStub {
             const focusedCell = focusSvc.getFocusedCell();
             if (focusedCell) {
                 const { column, rowIndex, rowPinned } = focusedCell;
+                const allowRangesWhileEditing = !!editSvc?.isRangeSelectionEnabledWhileEditing?.();
 
                 // if the focused cell is editing, need to stop editing first
-                if (editSvc?.isEditing(focusedCell)) {
+                if (editSvc?.isEditing(focusedCell) && !allowRangesWhileEditing) {
                     editSvc?.stopEditing(focusedCell);
                 }
 
                 // focus could have been lost, so restore it to the starting cell in the range if needed
-                focusSvc.setFocusedCell({
-                    column,
-                    rowIndex,
-                    rowPinned,
-                    forceBrowserFocus: true,
-                    preventScrollOnBrowserFocus: true,
-                    sourceEvent: mouseEvent,
-                });
+                if (!allowRangesWhileEditing) {
+                    focusSvc.setFocusedCell({
+                        column,
+                        rowIndex,
+                        rowPinned,
+                        forceBrowserFocus: true,
+                        preventScrollOnBrowserFocus: true,
+                        sourceEvent: mouseEvent,
+                    });
+                }
             }
         }
 
@@ -241,18 +243,7 @@ export class CellMouseListenerFeature extends BeanStub {
             return;
         }
 
-        if (rangeSvc) {
-            if (isRowNumberColumn) {
-                mouseEvent.preventDefault();
-            }
-            const hasRightClickedOnRowNumber = _interpretAsRightClick(beans, mouseEvent) && isRowNumberColumn;
-            if (shiftKey) {
-                rangeSvc.extendLatestRangeToCell(cellPosition);
-            } else if (!hasRightClickedOnRowNumber) {
-                const isMultiKey = ctrlKey || metaKey;
-                rangeSvc.setRangeToCell(cellPosition, isMultiKey);
-            }
-        }
+        rangeSvc?.handleCellMouseDown(mouseEvent, cellPosition);
 
         fireMouseDownEvent();
     }

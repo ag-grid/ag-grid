@@ -138,7 +138,7 @@ export class ChartDatasource extends BeanStub {
         }
 
         if (numRows > 0) {
-            valueCols.forEach((col) => {
+            for (const col of valueCols) {
                 let colNamesArr: string[] = [];
 
                 // pivot keys should be added first
@@ -157,7 +157,7 @@ export class ChartDatasource extends BeanStub {
                 if (colNamesArr.length > 0) {
                     colNames[col.getId()] = colNamesArr;
                 }
-            });
+            }
         }
 
         let numRemovedNodes = 0;
@@ -176,12 +176,12 @@ export class ChartDatasource extends BeanStub {
 
             const data: any = { node: rowNode };
             // first get data for dimensions columns
-            dimensionCols.forEach((col) => {
+            for (const col of dimensionCols) {
                 const colId = col.colId;
                 const column = this.colModel.getCol(colId);
 
                 if (column) {
-                    const valueObject = this.valueSvc.getValue(column, rowNode);
+                    const valueObject = this.valueSvc.getValue(column, rowNode, 'data');
 
                     // when grouping we also need to build up multi category labels for charts
                     if (grouping) {
@@ -231,16 +231,16 @@ export class ChartDatasource extends BeanStub {
                     // introduce a default category when no dimensions exist with a value based off row index (+1)
                     data[DEFAULT_CHART_CATEGORY] = i + 1;
                 }
-            });
+            }
 
             // then get data for value columns
-            valueCols.forEach((col) => {
+            for (const col of valueCols) {
                 const colId = col.getColId();
                 if (crossFiltering) {
                     const filteredOutColId = colId + '-filtered-out';
 
                     // add data value to value column
-                    const value = this.valueSvc.getValue(col, rowNode);
+                    const value = this.valueSvc.getValue(col, rowNode, 'data');
                     let actualValue = value;
 
                     // unwrap value objects if present
@@ -261,7 +261,7 @@ export class ChartDatasource extends BeanStub {
                     }
                 } else {
                     // add data value to value column
-                    let value = this.valueSvc.getValue(col, rowNode);
+                    let value = this.valueSvc.getValue(col, rowNode, 'data');
 
                     // unwrap value object if present
                     if (value && typeof value.value === 'number') {
@@ -275,7 +275,7 @@ export class ChartDatasource extends BeanStub {
 
                     data[colId] = value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
                 }
-            });
+            }
 
             // add data to results
             extractedRowData.push(data);
@@ -307,10 +307,10 @@ export class ChartDatasource extends BeanStub {
         const map: any = {};
         const dataAggregated: any[] = [];
 
-        dataFromGrid.forEach((data) => {
+        for (const data of dataFromGrid) {
             let currentMap = map;
 
-            dimensionCols.forEach((col) => {
+            for (const col of dimensionCols) {
                 const colId = col.colId;
                 const key = data[colId];
 
@@ -320,10 +320,10 @@ export class ChartDatasource extends BeanStub {
                     if (!groupItem) {
                         groupItem = { __children: [] };
 
-                        dimensionCols.forEach((dimCol) => {
+                        for (const dimCol of dimensionCols) {
                             const dimColId = dimCol.colId;
                             groupItem[dimColId] = data[dimColId];
-                        });
+                        }
 
                         currentMap[key] = groupItem;
                         dataAggregated.push(groupItem);
@@ -338,12 +338,12 @@ export class ChartDatasource extends BeanStub {
 
                     currentMap = currentMap[key];
                 }
-            });
-        });
+            }
+        }
 
         if (this.gos.assertModuleRegistered('SharedAggregation', 1)) {
-            dataAggregated.forEach((groupItem) =>
-                params.valueCols.forEach((col) => {
+            for (const groupItem of dataAggregated) {
+                for (const col of params.valueCols) {
                     const colId = col.getColId();
                     if (params.crossFiltering) {
                         // filtered data
@@ -351,7 +351,15 @@ export class ChartDatasource extends BeanStub {
                             .filter((child: any) => typeof child[colId] !== 'undefined')
                             .map((child: any) => child[colId]);
 
-                        const aggResult: any = _aggregateValues(this.beans, dataToAgg, params.aggFunc!, col);
+                        const aggResult: any = _aggregateValues({
+                            beans: this.beans,
+                            values: dataToAgg,
+                            aggFuncOrString: params.aggFunc,
+                            column: col,
+                            rowNode: undefined,
+                            pivotResultColumn: undefined,
+                            aggregatedChildren: [],
+                        });
                         groupItem[colId] =
                             aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
 
@@ -361,25 +369,36 @@ export class ChartDatasource extends BeanStub {
                             .filter((child: any) => typeof child[filteredOutColId] !== 'undefined')
                             .map((child: any) => child[filteredOutColId]);
 
-                        const aggResultFiltered: any = _aggregateValues(
-                            this.beans,
-                            dataToAggFiltered,
-                            params.aggFunc!,
-                            col
-                        );
+                        const aggResultFiltered: any = _aggregateValues({
+                            beans: this.beans,
+                            values: dataToAggFiltered,
+                            aggFuncOrString: params.aggFunc,
+                            column: col,
+                            rowNode: undefined,
+                            pivotResultColumn: undefined,
+                            aggregatedChildren: [],
+                        });
                         groupItem[filteredOutColId] =
                             aggResultFiltered && typeof aggResultFiltered.value !== 'undefined'
                                 ? aggResultFiltered.value
                                 : aggResultFiltered;
                     } else {
                         const dataToAgg = groupItem.__children.map((child: any) => child[colId]);
-                        const aggResult = _aggregateValues(this.beans, dataToAgg, params.aggFunc!, col);
+                        const aggResult = _aggregateValues({
+                            beans: this.beans,
+                            values: dataToAgg,
+                            aggFuncOrString: params.aggFunc,
+                            column: col,
+                            rowNode: undefined,
+                            pivotResultColumn: undefined,
+                            aggregatedChildren: [],
+                        });
 
                         groupItem[colId] =
                             aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
                     }
-                })
-            );
+                }
+            }
         }
 
         return dataAggregated;
@@ -398,14 +417,14 @@ export class ChartDatasource extends BeanStub {
 
         // `pivotKeys` is not used by the SSRM for pivoting, so it is safe to reuse this colDef property. This way
         // the same logic can be used for CSRM and SSRM to extract legend names in extractRowsFromGridRowModel()
-        secondaryColumns.forEach((col) => {
+        for (const col of secondaryColumns) {
             if (pivotKeySeparator === '') {
                 col.getColDef().pivotKeys = [];
             } else {
                 const keys = col.getColId().split(pivotKeySeparator);
                 col.getColDef().pivotKeys = keys.slice(0, keys.length - 1);
             }
-        });
+        }
     }
 
     private extractPivotKeySeparator(secondaryColumns: AgColumn[]) {
@@ -439,7 +458,7 @@ export class ChartDatasource extends BeanStub {
                     // just like we do for the initialLabel
                     const groupColumn = this.colModel.getCol(GROUP_AUTO_COLUMN_ID);
                     if (groupColumn) {
-                        const valueObject = this.valueSvc.getValue(groupColumn, rowNode);
+                        const valueObject = this.valueSvc.getValue(groupColumn, rowNode, 'data');
                         const valueString = valueObject?.toString ? String(valueObject.toString()) : ' ';
                         labels.push(valueString);
                     }
@@ -466,15 +485,14 @@ export class ChartDatasource extends BeanStub {
         this.gridRowModel.forEachNode((rowNode: RowNode) => {
             allRowNodes.push(rowNode);
         });
-        return this.sortRowNodes(allRowNodes, sortModel);
-    }
-
-    /** cross filtering only */
-    private sortRowNodes(rowNodes: RowNode[], sortModel: SortOption[] | boolean): RowNode[] {
-        const sortOptions = sortModel === true ? this.sortSvc?.getSortOptions() : sortModel;
-        if (!sortOptions || sortOptions.length == 0 || !this.rowNodeSorter) {
-            return rowNodes;
+        const rowNodeSorter = this.rowNodeSorter;
+        if (!rowNodeSorter) {
+            return allRowNodes;
         }
-        return this.rowNodeSorter.doFullSort(rowNodes, sortOptions);
+        const sortOptions = sortModel === true ? this.sortSvc?.getSortOptions() : sortModel;
+        if (!sortOptions || sortOptions.length == 0) {
+            return allRowNodes;
+        }
+        return rowNodeSorter.doFullSortInPlace(allRowNodes, sortOptions);
     }
 }

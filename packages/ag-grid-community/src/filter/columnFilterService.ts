@@ -1,4 +1,6 @@
 import type { AgEvent } from '../agStack/interfaces/agEvent';
+import type { AgPropertyValueChangedEvent } from '../agStack/interfaces/iProperties';
+import { _removeAllFromArray } from '../agStack/utils/array';
 import { _exists, _jsonEquals } from '../agStack/utils/generic';
 import { AgPromise } from '../agStack/utils/promise';
 import { _unwrapUserComp } from '../components/framework/unwrapUserComp';
@@ -16,6 +18,7 @@ import type { ColDef, ValueGetterFunc } from '../entities/colDef';
 import type { BaseCellDataType, CoreDataTypeDefinition, DataTypeFormatValueFunc } from '../entities/dataType';
 import type { RowNode } from '../entities/rowNode';
 import type { ColumnEventType, FilterChangedEventSourceType } from '../events';
+import type { GridOptionsWithDefaults } from '../gridOptionsDefault';
 import {
     _addGridCommonParams,
     _getGroupAggFiltering,
@@ -106,6 +109,10 @@ export interface FilterGlobalButtonsEvent extends AgEvent<'filterGlobalButtons'>
     isGlobal: boolean;
 }
 
+interface FilterModelAsStringChangedEvent extends AgEvent<'filterModelAsStringChanged'> {
+    column: AgColumn;
+}
+
 /** Used for non-CSRM handlers */
 const DUMMY_HANDLER = {
     filterHandler: () => ({
@@ -113,8 +120,44 @@ const DUMMY_HANDLER = {
     }),
 };
 
+function isAggFilter(
+    column: AgColumn,
+    isPivotMode: boolean,
+    isPivotActive: boolean,
+    groupFilterEnabled: boolean
+): boolean {
+    const isSecondary = !column.isPrimary();
+    // the only filters that can appear on secondary columns are groupAgg filters
+    if (isSecondary) {
+        return true;
+    }
+
+    const isShowingPrimaryColumns = !isPivotActive;
+    const isValueActive = column.isValueActive();
+
+    // primary columns are only ever groupAgg filters if a) value is active and b) showing primary columns
+    if (!isValueActive || !isShowingPrimaryColumns) {
+        return false;
+    }
+
+    // from here on we know: isPrimary=true, isValueActive=true, isShowingPrimaryColumns=true
+    if (isPivotMode) {
+        // primary column is pretending to be a pivot column, ie pivotMode=true, but we are
+        // still showing primary columns
+        return true;
+    }
+    // we are not pivoting, so we groupFilter when it's an agg column
+    return groupFilterEnabled;
+}
+
 export class ColumnFilterService
-    extends BeanStub<'filterParamsChanged' | 'filterStateChanged' | 'filterAction' | 'filterGlobalButtons'>
+    extends BeanStub<
+        | 'filterParamsChanged'
+        | 'filterStateChanged'
+        | 'filterAction'
+        | 'filterGlobalButtons'
+        | 'filterModelAsStringChanged'
+    >
     implements NamedBean
 {
     beanName: BeanName = 'colFilter';
@@ -152,6 +195,8 @@ export class ColumnFilterService
             gridColumnsChanged: this.onColumnsChanged.bind(this),
             dataTypesInferred: this.processFilterModelUpdateQueue.bind(this),
         });
+
+        this.addManagedPropertyListener('pivotMode', this.onPivotModeChanged.bind(this));
 
         const gos = this.gos;
         const initialFilterModel = {
@@ -363,37 +408,12 @@ export class ColumnFilterService
         const { colModel, gos } = this.beans;
         const groupFilterEnabled = !!_getGroupAggFiltering(gos);
 
-        const isAggFilter = (column: AgColumn) => {
-            const isSecondary = !column.isPrimary();
-            // the only filters that can appear on secondary columns are groupAgg filters
-            if (isSecondary) {
-                return true;
-            }
-
-            const isShowingPrimaryColumns = !colModel.isPivotActive();
-            const isValueActive = column.isValueActive();
-
-            // primary columns are only ever groupAgg filters if a) value is active and b) showing primary columns
-            if (!isValueActive || !isShowingPrimaryColumns) {
-                return false;
-            }
-
-            // from here on we know: isPrimary=true, isValueActive=true, isShowingPrimaryColumns=true
-            if (colModel.isPivotMode()) {
-                // primary column is pretending to be a pivot column, ie pivotMode=true, but we are
-                // still showing primary columns
-                return true;
-            }
-            // we are not pivoting, so we groupFilter when it's an agg column
-            return groupFilterEnabled;
-        };
-
         const activeAggregateFilters: DoesFilterPassWrapper[] = [];
         const activeColumnFilters: DoesFilterPassWrapper[] = [];
 
         const addFilter = (column: AgColumn, filterActive: boolean, doesFilterPassWrapper: DoesFilterPassWrapper) => {
             if (filterActive) {
-                if (isAggFilter(column)) {
+                if (isAggFilter(column, colModel.isPivotMode(), colModel.isPivotActive(), groupFilterEnabled)) {
                     activeAggregateFilters.push(doesFilterPassWrapper);
                 } else {
                     activeColumnFilters.push(doesFilterPassWrapper);
@@ -695,7 +715,7 @@ export class ColumnFilterService
         return this.allColumnFilters.get(column.getColId());
     }
 
-    private getDefaultFilter(column: AgColumn, isFloating: boolean = false): string {
+    public getDefaultFilter(column: AgColumn, isFloating: boolean = false): string {
         return this.getDefaultFilterFromDataType(() => this.beans.dataTypeSvc?.getBaseDataType(column), isFloating);
     }
 
@@ -976,7 +996,7 @@ export class ColumnFilterService
         const providedFilterHandler = enableFilterHandlers ? getFilterHandlerFromDef(filterDef) : undefined;
 
         const resolveProvidedFilterHandler = (handlerName: FilterHandlerName) => () =>
-            this.createBean(registry.createDynamicBean<FilterHandler & BeanStub>(handlerName!, true)!);
+            this.createBean(registry.createDynamicBean<FilterHandler & BeanStub>(handlerName, true)!);
 
         let filterHandler: CreateFilterHandlerFunc | undefined;
         let handlerName: FilterHandlerName | undefined;
@@ -985,11 +1005,9 @@ export class ColumnFilterService
             const userFilterHandler = gos.get('filterHandlers')?.[providedFilterHandler];
             if (userFilterHandler != null) {
                 filterHandler = userFilterHandler;
-            } else {
-                if (FILTER_HANDLERS.has(providedFilterHandler as FilterHandlerName)) {
-                    filterHandler = resolveProvidedFilterHandler(providedFilterHandler as FilterHandlerName);
-                    handlerName = providedFilterHandler as FilterHandlerName;
-                }
+            } else if (FILTER_HANDLERS.has(providedFilterHandler as FilterHandlerName)) {
+                filterHandler = resolveProvidedFilterHandler(providedFilterHandler as FilterHandlerName);
+                handlerName = providedFilterHandler as FilterHandlerName;
             }
         } else {
             filterHandler = providedFilterHandler;
@@ -1084,6 +1102,13 @@ export class ColumnFilterService
                     filterChangedCallback({ ...additionalEventAttributes, source: 'columnFilter' });
                 });
             },
+            onModelAsStringChange: () => {
+                column.dispatchColEvent('filterChanged', 'filterChanged');
+                this.dispatchLocalEvent<FilterModelAsStringChangedEvent>({
+                    type: 'filterModelAsStringChanged',
+                    column,
+                });
+            },
             filterParams,
         });
     }
@@ -1132,16 +1157,11 @@ export class ColumnFilterService
     }
 
     public getFloatingFilterCompDetails(column: AgColumn, showParentFilter: () => void): UserCompDetails | undefined {
-        const { userCompFactory, frameworkOverrides, selectableFilter } = this.beans;
+        const { userCompFactory, frameworkOverrides, selectableFilter, gos } = this.beans;
 
         const parentFilterInstance = (callback: IFloatingFilterParentCallback<IFilter>) => {
             const filterComponent = this.getOrCreateFilterUi(column);
-
-            if (filterComponent == null) {
-                return;
-            }
-
-            filterComponent.then((instance) => {
+            filterComponent?.then((instance) => {
                 callback(_unwrapUserComp(instance!));
             });
         };
@@ -1154,14 +1174,14 @@ export class ColumnFilterService
         const defaultFloatingFilterType =
             _getDefaultFloatingFilterType(frameworkOverrides, filterDef, () => this.getDefaultFloatingFilter(column)) ??
             'agReadOnlyFloatingFilter';
-        const isReactive = this.gos.get('enableFilterHandlers');
+        const isReactive = gos.get('enableFilterHandlers');
         const filterParams = _mergeFilterParamsWithApplicationProvidedParams(
             userCompFactory,
             filterDef,
             this.createFilterCompParams(column, isReactive, 'init', true) as IFilterParams
         );
 
-        const params: IFloatingFilterParams<IFilter> = _addGridCommonParams(this.gos, {
+        const params: IFloatingFilterParams<IFilter> = _addGridCommonParams(gos, {
             column,
             filterParams,
             currentParentModel: () => this.getCurrentFloatingFilterParentModel(column),
@@ -1199,6 +1219,7 @@ export class ColumnFilterService
         compDetails: UserCompDetails | null,
         createFilterUi: ((update?: boolean) => AgPromise<IFilterComp>) | null
     ): void {
+        const source = 'paramsUpdated';
         if (filterWrapper.isHandler) {
             const colId = column.getColId();
             delete this.initialModel[colId];
@@ -1206,21 +1227,29 @@ export class ColumnFilterService
             const filterUi = filterWrapper.filterUi;
             const newFilterUi = this.createFilterUiForHandler(compDetails, createFilterUi as any);
             filterWrapper.filterUi = newFilterUi;
+            const eventSvc = this.eventSvc;
             // destroy the old one after creating the new one
             // so that anything listening to the destroyed event will receive the new comp
+
             if (filterUi?.created) {
                 filterUi.promise.then((filter) => {
                     this.destroyBean(filter);
 
-                    this.eventSvc.dispatchEvent({
+                    eventSvc.dispatchEvent({
                         type: 'filterDestroyed',
-                        source: 'paramsUpdated',
-                        column: filterWrapper.column,
+                        source,
+                        column,
                     });
+                });
+            } else {
+                eventSvc.dispatchEvent({
+                    type: 'filterHandlerDestroyed',
+                    source,
+                    column,
                 });
             }
         } else {
-            this.destroyFilter(column, 'paramsUpdated');
+            this.destroyFilter(column, source);
         }
     }
 
@@ -1400,7 +1429,7 @@ export class ColumnFilterService
         // If refresh() method is implemented - call it and destroy filter if it returns false
         // Otherwise - do nothing ( filter will not be destroyed - we assume new params are compatible with old ones )
         getFilterUiFromWrapper(filterWrapper, wasHandler)?.then((filter) => {
-            const shouldRefreshFilter = filter?.refresh ? filter.refresh(newFilterParams as any) : true;
+            const shouldRefreshFilter = filter?.refresh ? filter.refresh(newFilterParams) : true;
             // framework wrapper always implements optional methods, but returns null if no underlying method
             if (shouldRefreshFilter === false) {
                 this.destroyFilterUi(filterWrapper, column, compDetails, createFilterUi);
@@ -1710,17 +1739,19 @@ export class ColumnFilterService
         const filterWrapper = this.cachedFilter(column);
         const getFilterUi = () =>
             filterWrapper?.filterUi as FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined;
-        _updateFilterModel(
+        _updateFilterModel({
             action,
+            filterParams: filterWrapper?.filterUi?.filterParams as FilterWrapperParams | undefined,
             getFilterUi,
-            () => _getFilterModel(this.model, colId),
-            () => this.state.get(colId),
-            (state) => this.updateState(column, state),
-            (model) => getFilterUi()?.filterParams?.onModelChange(model, additionalEventAttributes),
-            filterWrapper?.isHandler
+            getModel: () => _getFilterModel(this.model, colId),
+            getState: () => this.state.get(colId),
+            updateState: (state) => this.updateState(column, state),
+            updateModel: (model) =>
+                getFilterUi()?.filterParams?.onModelChange(model, { ...additionalEventAttributes, fromAction: action }),
+            processModelToApply: filterWrapper?.isHandler
                 ? filterWrapper.handler.processModelToApply?.bind(filterWrapper.handler)
-                : undefined
-        );
+                : undefined,
+        });
     }
 
     public updateAllModels(action: FilterAction, additionalEventAttributes?: any): void {
@@ -1728,13 +1759,14 @@ export class ColumnFilterService
         this.allColumnFilters.forEach((filter, colId) => {
             const column = this.beans.colModel.getColDefCol(colId);
             if (column) {
-                _updateFilterModel(
+                _updateFilterModel({
                     action,
-                    () => filter.filterUi as FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined,
-                    () => _getFilterModel(this.model, colId),
-                    () => this.state.get(colId),
-                    (state) => this.updateState(column, state),
-                    (model) => {
+                    filterParams: filter.filterUi?.filterParams as FilterWrapperParams | undefined,
+                    getFilterUi: () => filter.filterUi as FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined,
+                    getModel: () => _getFilterModel(this.model, colId),
+                    getState: () => this.state.get(colId),
+                    updateState: (state) => this.updateState(column, state),
+                    updateModel: (model) => {
                         this.updateStoredModel(colId, model);
                         this.dispatchLocalEvent<FilterActionEvent>({
                             type: 'filterAction',
@@ -1743,8 +1775,10 @@ export class ColumnFilterService
                         });
                         promises.push(this.refreshHandlerAndUi(column, model, 'ui'));
                     },
-                    filter?.isHandler ? filter.handler.processModelToApply?.bind(filter.handler) : undefined
-                );
+                    processModelToApply: filter?.isHandler
+                        ? filter.handler.processModelToApply?.bind(filter.handler)
+                        : undefined,
+                });
             }
         });
         if (promises.length) {
@@ -1830,6 +1864,40 @@ export class ColumnFilterService
         }
 
         return false;
+    }
+
+    /**
+     * When filters are applied in pivotMode, they are stored in `activeAggregateFilters`.
+     * When users disable pivotMode (e.g. via sidebar), they expect any applied filters to
+     * still be active but just re-applied to the non-pivoted data.
+     * This should also apply vice-versa (i.e. applying a filter and then pivoting)
+     */
+    private onPivotModeChanged(event: AgPropertyValueChangedEvent<GridOptionsWithDefaults, 'pivotMode'>): void {
+        const { colModel, pivotColsSvc } = this.beans;
+        const groupFilterEnabled = !!_getGroupAggFiltering(this.gos);
+        // Can't rely on `colModel.isPivotMode()` because this event hasn't reached to colModel yet
+        const isPivotMode = event.currentValue;
+
+        const from = isPivotMode ? this.activeColumnFilters : this.activeAggregateFilters;
+        const to = isPivotMode ? this.activeAggregateFilters : this.activeColumnFilters;
+
+        const moved: DoesFilterPassWrapper[] = [];
+
+        for (const filter of from) {
+            const column = colModel.getColById(filter.colId);
+            // Can't rely on `colModel.isPivotActive()` because this event hasn't reached to colModel yet
+            const isPivotActive = isPivotMode && !!pivotColsSvc?.columns.length;
+            // Our condition is isPivotMode === isAggFilter because:
+            // - if we've enabled pivot mode, we want to only move aggregate filters to `activeAggregateFilters`,
+            // - if we've disabled pivot mode, we want to only move non-aggregate filters to `activeColumnFilters`,
+            // and do nothing otherwise
+            if (column && isPivotMode === isAggFilter(column, isPivotMode, isPivotActive, groupFilterEnabled)) {
+                to.push(filter);
+                moved.push(filter);
+            }
+        }
+
+        _removeAllFromArray(from, moved);
     }
 
     public override destroy() {

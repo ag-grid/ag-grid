@@ -29,6 +29,13 @@ export const Alerts: FunctionComponent = () => {
                     laboriosam. Consequatur sit velit quas officiis delectus.
                 </p>
             </Alert>
+
+            <Alert type="success">
+                <p>
+                    <b>I am a success</b>: Quisquam voluptatem dolorem quia rerum. Voluptas consequatur est harum libero
+                    ipsa sit consequatur pariatur. Eaque nobis porro quo sunt natus ut quia et ea autem.
+                </p>
+            </Alert>
         </>
     );
 };

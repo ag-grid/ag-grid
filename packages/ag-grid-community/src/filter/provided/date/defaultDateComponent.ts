@@ -1,6 +1,6 @@
 import { RefPlaceholder } from '../../../agStack/interfaces/agComponent';
 import { _isBrowserSafari } from '../../../agStack/utils/browser';
-import { _dateToFormattedString, _parseDateTimeFromString, _serialiseDate } from '../../../agStack/utils/date';
+import { _parseDateTimeFromString, _serialiseDate } from '../../../agStack/utils/date';
 import { AgInputTextFieldSelector } from '../../../agStack/widgets/agInputTextField';
 import type { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
@@ -20,6 +20,7 @@ const DefaultDateElement: ElementParams = {
         },
     ],
 };
+
 export class DefaultDateComponent extends Component implements IDateComp {
     private readonly eDateInput: GridInputTextField = RefPlaceholder;
 
@@ -50,6 +51,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
             input: this.handleInput.bind(this, false),
             change: this.handleInput.bind(this, true),
             focusout: this.handleFocusOut.bind(this),
+            focusin: this.handleFocusIn.bind(this),
         });
     }
 
@@ -81,6 +83,10 @@ export class DefaultDateComponent extends Component implements IDateComp {
         }
     }
 
+    private handleFocusIn(): void {
+        this.params.onFocusIn?.();
+    }
+
     private setParams(params: IDateParams): void {
         const inputElement = this.eDateInput.getInputElement();
 
@@ -104,53 +110,19 @@ export class DefaultDateComponent extends Component implements IDateComp {
         } else {
             inputElement.type = 'text';
         }
+        const parsedMinValidDate = parseOrConstructDate(minValidDate, minValidYear, true);
+        const parsedMaxValidDate = parseOrConstructDate(maxValidDate, maxValidYear, false);
 
-        if (minValidDate && minValidYear) {
-            _warn(85);
+        if (parsedMinValidDate && parsedMaxValidDate && parsedMinValidDate.getTime() > parsedMaxValidDate.getTime()) {
+            _warn(87);
         }
 
-        if (maxValidDate && maxValidYear) {
-            _warn(86);
+        if (parsedMinValidDate) {
+            inputElement.min = _serialiseDate(parsedMinValidDate, shouldUseDateTimeLocal)!;
         }
-
-        if (minValidDate && maxValidDate) {
-            const [parsedMinValidDate, parsedMaxValidDate] = [minValidDate, maxValidDate].map((v) =>
-                v instanceof Date ? v : _parseDateTimeFromString(v)
-            );
-
-            if (
-                parsedMinValidDate &&
-                parsedMaxValidDate &&
-                parsedMinValidDate.getTime() > parsedMaxValidDate.getTime()
-            ) {
-                _warn(87);
-            }
+        if (parsedMaxValidDate) {
+            inputElement.max = _serialiseDate(parsedMaxValidDate, shouldUseDateTimeLocal)!;
         }
-
-        if (minValidDate) {
-            if (minValidDate instanceof Date) {
-                inputElement.min = _dateToFormattedString(minValidDate);
-            } else {
-                inputElement.min = minValidDate;
-            }
-        } else {
-            if (minValidYear) {
-                inputElement.min = `${minValidYear}-01-01`;
-            }
-        }
-
-        if (maxValidDate) {
-            if (maxValidDate instanceof Date) {
-                inputElement.max = _dateToFormattedString(maxValidDate);
-            } else {
-                inputElement.max = maxValidDate;
-            }
-        } else {
-            if (maxValidYear) {
-                inputElement.max = `${maxValidYear}-12-31`;
-            }
-        }
-
         this.isApply = params.location === 'floatingFilter' && !!buttons?.includes('apply');
     }
 
@@ -190,4 +162,19 @@ export class DefaultDateComponent extends Component implements IDateComp {
     private shouldUseBrowserDatePicker(params: IDateParams): boolean {
         return params?.filterParams?.browserDatePicker ?? true;
     }
+}
+
+function parseOrConstructDate(date: string | Date | undefined, year: number | undefined, isMin: boolean): null | Date {
+    if (date && year) {
+        _warn(isMin ? 85 : 86);
+    }
+    if (date instanceof Date) {
+        return date;
+    }
+    if (date) {
+        return _parseDateTimeFromString(date);
+    } else if (year) {
+        return _parseDateTimeFromString(`${year}-${isMin ? '01-01' : '12-31'}`);
+    }
+    return null;
 }

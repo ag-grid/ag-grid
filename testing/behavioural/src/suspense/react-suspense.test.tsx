@@ -1,8 +1,7 @@
 import { cleanup, render } from '@testing-library/react';
 import React, { Suspense, act, useState } from 'react';
 
-import { ModuleRegistry } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
 describe('React Suspense', () => {

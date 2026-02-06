@@ -93,7 +93,7 @@ const App = () => {
     const rowBuffer = 0;
 
     return (
-        <AgGridReact 
+        <AgGridReact
             // GOOD
             rowBuffer={rowBuffer}
 
@@ -148,8 +148,8 @@ const App = () => {
         console.log(`number of clicks is ${clickedCount}`);
     }, [clickedCount]);
 
-    return <AgGridReact 
-                onCellClicked={onCellClicked} 
+    return <AgGridReact
+                onCellClicked={onCellClicked}
                 onCellValueChanged={onCellValueChanged}
                 onFilterOpened={onFilterOpened}
             />;
@@ -168,7 +168,7 @@ const App = () => {
 
         // reference the Cell Renderer above
         { field: 'make', cellRenderer: MyCellRenderer },
-        
+
         // or put inline
         { field: 'model', cellRenderer: p => <span>{p.value}</span> },
 

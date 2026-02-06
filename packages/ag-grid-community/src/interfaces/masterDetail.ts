@@ -1,4 +1,4 @@
-import type { DetailGridInfo, GridApi } from '../api/gridApi';
+import type { GridApi } from '../api/gridApi';
 import type { Bean } from '../context/bean';
 import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
@@ -37,9 +37,7 @@ export interface IDetailCellRendererParams<TData = any, TDetail = any>
     pinned: 'left' | 'right' | null | undefined;
 }
 
-export interface GetDetailRowData<TData = any, TDetail = any> {
-    (params: GetDetailRowDataParams<TData, TDetail>): void;
-}
+export type GetDetailRowData<TData = any, TDetail = any> = (params: GetDetailRowDataParams<TData, TDetail>) => void;
 
 export interface GetDetailRowDataParams<TData = any, TDetail = any> {
     /** Row node for the details request. */
@@ -50,9 +48,7 @@ export interface GetDetailRowDataParams<TData = any, TDetail = any> {
     successCallback(rowData: TDetail[]): void;
 }
 
-interface TemplateFunc<TData = any> {
-    (params: ICellRendererParams<TData>): string;
-}
+type TemplateFunc<TData = any> = (params: ICellRendererParams<TData>) => string;
 
 export interface IDetailCellRendererCtrl extends Bean {
     init(comp: IDetailCellRenderer, params: IDetailCellRendererParams): void;
@@ -64,8 +60,18 @@ export interface IMasterDetailService {
     store: { [id: string]: DetailGridInfo | undefined };
 
     setupDetailRowAutoHeight(rowCtrl: RowCtrl, eDetailGui: HTMLElement): void;
-
+    setMaster(row: RowNode, created: boolean, updated: boolean): void;
     /** Used by flatten stage to get or create a detail node from a master node */
     getDetail(masterNode: RowNode): RowNode | null;
     refreshModel(params: RefreshModelParams): void;
+}
+
+export interface DetailGridInfo {
+    /**
+     * Id of the detail grid, the format is `detail_{ROW-ID}`,
+     * where `ROW-ID` is the `id` of the parent row.
+     */
+    id: string;
+    /** Grid api of the detail grid. */
+    api?: GridApi;
 }

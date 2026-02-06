@@ -1,6 +1,31 @@
 [
     {
         "group": {
+            "name": "AI Features"
+        },
+        "items": [
+            {
+                "label": {
+                    "name": "MCP Server",
+                    "link": "https://www.ag-grid.com/react-data-grid/mcp-server/"
+                },
+                "community": true,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "AI Toolkit",
+                    "link": "https://www.ag-grid.com/react-data-grid/ai-toolkit/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            }
+        ]
+    },
+    {
+        "group": {
             "name": "Charting"
         },
         "items": [
@@ -169,6 +194,31 @@
     },
     {
         "group": {
+            "name": "Cells"
+        },
+        "items": [
+            {
+                "label": {
+                    "name": "Formulas",
+                    "link": "https://www.ag-grid.com/react-data-grid/formulas"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Find",
+                    "link": "https://www.ag-grid.com/react-data-grid/find"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            }
+        ]
+    },
+    {
+        "group": {
             "name": "Cell Editing"
         },
         "items": [
@@ -231,6 +281,15 @@
                         "chartsGrid": true
                     }
                 ]
+            },
+            {
+                "label": {
+                    "name": "Batch Editing",
+                    "link": "https://www.ag-grid.com/react-data-grid/cell-editing-batch/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
             },
             {
                 "label": {

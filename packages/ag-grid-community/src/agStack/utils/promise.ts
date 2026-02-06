@@ -1,9 +1,5 @@
 export function _isPromise<T>(fn: any): fn is Promise<T> {
-    if (typeof fn.then === 'function') {
-        return true;
-    }
-
-    return false;
+    return typeof fn.then === 'function';
 }
 
 export function _wrapInterval(action: any, timeout?: any): AgPromise<number> {
@@ -69,7 +65,9 @@ export class AgPromise<T> {
         this.status = AgPromiseStatus.RESOLVED;
         this.resolution = value;
 
-        this.waiters.forEach((waiter) => waiter(value));
+        for (const waiter of this.waiters) {
+            waiter(value);
+        }
     }
 
     private onReject(_: any): void {}

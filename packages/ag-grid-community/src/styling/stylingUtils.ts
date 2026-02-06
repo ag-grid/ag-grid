@@ -19,17 +19,19 @@ export function processClassRules(
 
     const forEachSingleClass = (className: string, callback: (singleClass: string) => void) => {
         // in case className = 'my-class1 my-class2', we need to split into individual class names
-        className.split(' ').forEach((singleClass) => {
-            if (singleClass.trim() == '') return;
+        for (const singleClass of className.split(' ')) {
+            if (singleClass.trim() == '') {
+                continue;
+            }
             callback(singleClass);
-        });
+        }
     };
 
     if (classRules) {
         const classNames = Object.keys(classRules);
         for (let i = 0; i < classNames.length; i++) {
             const className = classNames[i];
-            const rule = classRules![className];
+            const rule = classRules[className];
 
             let resultOfRule: any;
 
@@ -40,19 +42,23 @@ export function processClassRules(
             }
 
             forEachSingleClass(className, (singleClass) => {
-                resultOfRule ? (classesToApply[singleClass] = true) : (classesToRemove[singleClass] = true);
+                if (resultOfRule) {
+                    classesToApply[singleClass] = true;
+                } else {
+                    classesToRemove[singleClass] = true;
+                }
             });
         }
     }
     if (previousClassRules && onNotApplicableClass) {
-        Object.keys(previousClassRules).forEach((className) =>
+        for (const className of Object.keys(previousClassRules)) {
             forEachSingleClass(className, (singleClass) => {
                 if (!classesToApply[singleClass]) {
                     // if we're not applying a previous class now, make sure we remove it
                     classesToRemove[singleClass] = true;
                 }
-            })
-        );
+            });
+        }
     }
 
     // we remove all classes first, then add all classes second,

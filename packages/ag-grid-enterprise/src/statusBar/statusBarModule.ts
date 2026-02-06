@@ -1,4 +1,4 @@
-import type { _ModuleWithApi, _StatusBarGridApi } from 'ag-grid-community';
+import type { StatusPanelComponentName, _ModuleWithApi, _StatusBarGridApi } from 'ag-grid-community';
 import { _KeyboardNavigationModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
@@ -26,7 +26,7 @@ export const StatusBarModule: _ModuleWithApi<_StatusBarGridApi> = {
         agFilteredRowCountComponent: FilteredRowsComp,
         agTotalAndFilteredRowCountComponent: TotalAndFilteredRowsComp,
         agSelectedRowCountComponent: SelectedRowsComp,
-    },
+    } satisfies Record<StatusPanelComponentName, any>,
     selectors: [AgStatusBarSelector],
     apiFunctions: {
         getStatusPanel,

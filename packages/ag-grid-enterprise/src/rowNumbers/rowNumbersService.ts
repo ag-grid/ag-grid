@@ -10,19 +10,21 @@ import {
     _createElement,
     _debounce,
     _destroyColumnTree,
+    _getColumnStateFromColDef,
     _getFirstRow,
     _getRowNode,
     _interpretAsRightClick,
+    _isRowNumbers,
     _selectAllCells,
     _setAriaLabel,
     _updateColsMap,
     isRowNumberCol,
 } from 'ag-grid-community';
 import type {
-    BeanCollection,
     CellClassParams,
     CellCtrl,
     CellPosition,
+    CellRange,
     ColDef,
     IRowNumbersRowResizeFeature,
     IRowNumbersService,
@@ -37,9 +39,13 @@ import type {
     _HeaderComp,
 } from 'ag-grid-community';
 
+import type {
+    RangeSelectionExtension,
+    RangeSelectionExtensionRegistry,
+} from '../rangeSelection/rangeSelectionExtensions';
 import { RowNumbersRowResizeFeature, _isRowNumbersResizerEnabled } from './rowNumbersRowResizeFeature';
 
-export class RowNumbersService extends BeanStub implements NamedBean, IRowNumbersService {
+export class RowNumbersService extends BeanStub implements NamedBean, IRowNumbersService, RangeSelectionExtension {
     beanName = 'rowNumbersSvc' as const;
 
     public columns: _ColumnCollections | null;
@@ -64,11 +70,37 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         });
 
         this.addManagedPropertyListeners(['rowNumbers', 'cellSelection'], (e: PropertyValueChangedEvent<any>) => {
-            this.refreshSelectionIntegration();
             this.updateColumns(e);
         });
 
         this.refreshSelectionIntegration();
+        this.registerRangeSelectionExtension();
+    }
+
+    public shouldSkipColumn(column: AgColumn): boolean {
+        return _isRowNumbers(this.beans) && isRowNumberCol(column);
+    }
+
+    public isAllColumnsSelectionCell(cellPosition: CellPosition): boolean {
+        return _isRowNumbers(this.beans) && isRowNumberCol(cellPosition.column);
+    }
+
+    public isAllColumnsRange(range: CellRange, allColumns: AgColumn[]): boolean {
+        if (!_isRowNumbers(this.beans) || allColumns.length === 0) {
+            return false;
+        }
+        return (
+            range.columns.length === allColumns.length && allColumns.every((column) => range.columns.includes(column))
+        );
+    }
+
+    private registerRangeSelectionExtension(): void {
+        const rangeSvc = this.beans.rangeSvc as RangeSelectionExtensionRegistry | undefined;
+        if (!rangeSvc) {
+            return;
+        }
+        rangeSvc.registerRangeSelectionExtension(this);
+        this.addDestroyFunc(() => rangeSvc.unregisterRangeSelectionExtension?.(this));
     }
 
     public addColumns(cols: _ColumnCollections): void {
@@ -88,8 +120,9 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
             _destroyColumnTree(this.beans, this.columns?.tree);
             this.columns = null;
         };
+        const { beans } = this;
 
-        if (!this.gos.get('rowNumbers')) {
+        if (!_isRowNumbers(beans)) {
             destroyCollection();
             return;
         }
@@ -129,13 +162,19 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     }
 
     public handleMouseDownOnCell(cellPosition: CellPosition, mouseEvent: MouseEvent): boolean {
+        // if click interaction can't produce an outcome (i.e. no cell selection, no row-resizing), do nothing
         if (
             !this.isIntegratedWithSelection ||
             (mouseEvent.target as HTMLElement).classList.contains('ag-row-numbers-resizer')
         ) {
+            if (this.beans.rangeSvc) {
+                mouseEvent.preventDefault();
+            }
+            mouseEvent.stopImmediatePropagation();
             return false;
         }
 
+        // if we're not extending the range, focus the first cell
         if (!mouseEvent.shiftKey && !_interpretAsRightClick(this.beans, mouseEvent)) {
             this.focusFirstRenderedCellAtRowPosition(cellPosition);
         }
@@ -145,14 +184,13 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
 
     public updateColumns(event: PropertyValueChangedEvent<any>): void {
         const source = _convertColumnEventSourceType(event.source);
-
         this.refreshSelectionIntegration();
+        for (const col of this.columns?.list ?? []) {
+            const colDef = this.createRowNumbersColDef();
+            col.setColDef(colDef, null, source);
 
-        this.columns?.list.forEach((col) => {
-            const newColDef = this.createRowNumbersColDef();
-            col.setColDef(newColDef, null, source);
-            _applyColumnState(this.beans, { state: [{ colId: col.getColId(), ...newColDef }] }, source);
-        });
+            _applyColumnState(this.beans, { state: [_getColumnStateFromColDef(colDef, col.getColId())] }, source);
+        }
     }
 
     public getColumn(): AgColumn | null {
@@ -179,15 +217,12 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         });
     }
 
-    public createRowNumbersRowResizerFeature(
-        beans: BeanCollection,
-        ctrl: CellCtrl
-    ): IRowNumbersRowResizeFeature | undefined {
-        if (!_isRowNumbersResizerEnabled(this.gos)) {
+    public createRowNumbersRowResizerFeature(ctrl: CellCtrl): IRowNumbersRowResizeFeature | undefined {
+        if (!_isRowNumbersResizerEnabled(this.beans)) {
             return undefined;
         }
 
-        return new RowNumbersRowResizeFeature(beans, ctrl);
+        return new RowNumbersRowResizeFeature(this.beans, ctrl);
     }
 
     private refreshSelectionIntegration(): void {
@@ -200,7 +235,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     }
 
     private refreshRowNumberOverrides(): void {
-        const rowNumbers = this.gos.get('rowNumbers');
+        const rowNumbers = _isRowNumbers(this.beans);
         this.rowNumberOverrides = {};
 
         if (!rowNumbers || typeof rowNumbers !== 'object') {
@@ -226,6 +261,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
             'tooltipValueGetter',
             'tooltipComponent',
             'tooltipComponentParams',
+            'tooltipComponentSelector',
             'valueGetter',
             'valueFormatter',
             'width',
@@ -323,7 +359,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
             minWidth: 60,
             width: 60,
             resizable: false,
-            valueGetter: this.valueGetter,
+            valueGetter: this.valueGetter.bind(this),
             contextMenuItems: this.isIntegratedWithSelection || !contextMenuSvc ? undefined : () => [],
             // overrides
             ...this.rowNumberOverrides,
@@ -350,14 +386,16 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
 
     private valueGetter(params: ValueGetterParams): string {
         const node = params.node as RowNode | null;
+        const isFormulasActive = this.beans.formula?.active;
 
-        // Rows that are in the pinned container take the row numbers of their pinned sibling rows
-        if (node?.rowPinned && node.pinnedSibling) {
-            const { rowIndex } = node.pinnedSibling;
+        // rows that are in the pinned container take the row numbers of their pinned sibling rows
+        const pinnedSibling = node?.pinnedSibling;
+        if (node?.rowPinned && pinnedSibling) {
+            const rowIndex = isFormulasActive ? pinnedSibling.formulaRowIndex : pinnedSibling.rowIndex;
             return `${rowIndex == null ? '-' : rowIndex + 1}`;
         }
 
-        return String((node?.rowIndex || 0) + 1);
+        return String(((isFormulasActive ? node?.formulaRowIndex : node?.rowIndex) || 0) + 1);
     }
 
     private getHeaderClass(): string[] {
@@ -396,7 +434,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         const shouldHighlight = typeof cellSelection === 'object' && cellSelection.enableHeaderHighlight;
 
         for (const range of ranges) {
-            if (rangeSvc.isRowInRange(node.rowIndex!, node.rowPinned, range)) {
+            if (rangeSvc.isRowInRange({ rowIndex: node.rowIndex!, rowPinned: node.rowPinned }, range)) {
                 if (shouldHighlight) {
                     cssClasses.push('ag-row-number-range-highlight');
                 }
@@ -411,8 +449,8 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     }
 
     private generateRowNumberCols(): AgColumn[] {
-        const { gos } = this;
-        if (!gos.get('rowNumbers')) {
+        const { gos, beans } = this;
+        if (!_isRowNumbers(beans)) {
             return [];
         }
 
@@ -424,9 +462,16 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         return [col];
     }
 
-    // focus is disabled on the Row Numbers cells, when a click happens on it,
+    // focus is disabled on the row numbers cells, when a click happens on it,
     // it should focus the first cell of that row or first cell of the grid (from header).
     private focusFirstRenderedCellAtRowPosition(rowPosition?: RowPosition | null) {
+        const editSvc = this.beans.editSvc;
+
+        if (editSvc?.isEditing() && editSvc.isRangeSelectionEnabledWhileEditing?.()) {
+            // let the formula editor keep focus when range selection is enabled during editing.
+            return;
+        }
+
         if (!rowPosition) {
             rowPosition = _getFirstRow(this.beans);
             if (!rowPosition) {

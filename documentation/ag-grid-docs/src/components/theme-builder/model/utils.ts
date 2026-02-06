@@ -36,7 +36,9 @@ export const logErrorMessage = (message: string, error?: unknown) => {
 
 const loggedMessages = new Set<string>();
 export const logErrorMessageOnce = (message: string) => {
-    if (loggedMessages.has(message)) return;
+    if (loggedMessages.has(message)) {
+        return;
+    }
     loggedMessages.add(message);
     logErrorMessage(message);
 };
@@ -58,13 +60,15 @@ export const memoize = <R, A = void>(fn: (arg: A) => R): ((arg: A) => R) => {
 export const stripFloatingPointErrors = (value: number) => value.toFixed(10).replace(/\.?0+$/, '');
 
 export const paramToVariableName = (param: string) => `--ag-${kebabCase(param)}`;
-const kebabCase = (str: string) => str.replace(/[A-Z]/g, (m) => `-${m}`).toLowerCase();
+const kebabCase = (str: string) => str.replace(/[A-Z]|\d+/g, (m) => `-${m}`).toLowerCase();
 
 export const cssValueIsValid = (value: string, type: ParamType): boolean => reinterpretCSSValue(value, type) != null;
 
 export const reinterpretCSSValue = (value: string, type: ParamType): string | null => {
     value = value.trim();
-    if (value === '') return '';
+    if (value === '') {
+        return '';
+    }
     const reinterpretationElement = getReinterpretationElement();
     const cssProperty = cssPropertyForParamType[type];
     try {
@@ -81,10 +85,9 @@ export const reinterpretCSSValue = (value: string, type: ParamType): string | nu
 
 let _reinterpretationElement: HTMLElement | null = null;
 
-const getReinterpretationElement = () => {
+export const getReinterpretationElement = () => {
     if (!_reinterpretationElement) {
         _reinterpretationElement = document.createElement('span');
-        _reinterpretationElement.className = 'apply-current-theme-params';
         document.body.appendChild(_reinterpretationElement);
     }
     return _reinterpretationElement;

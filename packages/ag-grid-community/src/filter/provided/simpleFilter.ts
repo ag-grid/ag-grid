@@ -1,6 +1,6 @@
 import { _isComponent } from '../../agStack/interfaces/agComponent';
 import { _areEqual } from '../../agStack/utils/array';
-import { _removeFromParent, _setDisabled, _setDisplayed } from '../../agStack/utils/dom';
+import { _addOrRemoveAttribute, _removeFromParent, _setDisabled, _setDisplayed } from '../../agStack/utils/dom';
 import { AgPromise } from '../../agStack/utils/promise';
 import { AgAbstractInputField } from '../../agStack/widgets/agAbstractInputField';
 import type { ListOption } from '../../agStack/widgets/agList';
@@ -11,8 +11,7 @@ import type { FilterDisplayParams } from '../../interfaces/iFilter';
 import type { ElementParams } from '../../utils/element';
 import { _createElement } from '../../utils/element';
 import { _warn } from '../../validation/logging';
-import type { ComponentSelector } from '../../widgets/component';
-import type { Component } from '../../widgets/component';
+import type { Component, ComponentSelector } from '../../widgets/component';
 import type { GridInputTextField, GridRadioButton, GridSelect } from '../../widgets/gridWidgetTypes';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
 import type {
@@ -29,6 +28,7 @@ import type {
 } from './iSimpleFilter';
 import { OptionsFactory } from './optionsFactory';
 import { ProvidedFilter } from './providedFilter';
+import { getPlaceholderText } from './providedFilterUtils';
 import {
     getDefaultJoinOperator,
     getNumberOfInputs,
@@ -39,6 +39,8 @@ import {
 /** temporary type until `SimpleFilterParams` is updated as breaking change */
 type SimpleFilterDisplayParams<M extends ISimpleFilterModel> = ISimpleFilterParams &
     FilterDisplayParams<any, any, M | ICombinedSimpleModel<M>>;
+
+type FilterModelOrCombined<M extends ISimpleFilterModel> = M | ICombinedSimpleModel<M> | null;
 
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values.
@@ -56,7 +58,7 @@ export abstract class SimpleFilter<
     extends ProvidedFilter<M | ICombinedSimpleModel<M>, V, P>
     implements ISimpleFilter
 {
-    public abstract override readonly filterType: 'number' | 'text' | 'date';
+    public abstract override readonly filterType: 'number' | 'bigint' | 'text' | 'date';
 
     protected readonly eTypes: GridSelect[] = [];
     protected readonly eJoinPanels: HTMLElement[] = [];
@@ -130,14 +132,9 @@ export abstract class SimpleFilter<
 
         this.createFilterListOptions();
 
-        const eGui = this.getGui();
-        if (this.isReadOnly()) {
-            // only do this when read only (so no other focusable elements), otherwise the tab order breaks
-            // as the tabbed layout managed focus feature will focus the body when it shouldn't
-            eGui.setAttribute('tabindex', '-1');
-        } else {
-            eGui.removeAttribute('tabindex');
-        }
+        // only set tabindex when read only (so no other focusable elements), otherwise the tab order breaks
+        // as the tabbed layout managed focus feature will focus the body when it shouldn't
+        _addOrRemoveAttribute(this.getGui(), 'tabindex', this.isReadOnly() ? '-1' : null);
     }
 
     // floating filter calls this when user applies filter from floating filter
@@ -154,7 +151,7 @@ export abstract class SimpleFilter<
         });
     }
 
-    public getModelFromUi(): M | ICombinedSimpleModel<M> | null {
+    public getModelFromUi(): FilterModelOrCombined<M> {
         const conditions = this.getUiCompleteConditions();
         if (conditions.length === 0) {
             return null;
@@ -365,9 +362,9 @@ export abstract class SimpleFilter<
     private putOptionsIntoDropdown(eType: GridSelect): void {
         const { filterListOptions } = this;
         // Add specified options to condition drop-down.
-        filterListOptions.forEach((listOption) => {
+        for (const listOption of filterListOptions) {
             eType.addOption(listOption);
-        });
+        }
 
         // Make drop-downs read-only if there is only one option.
         eType.setDisabled(filterListOptions.length <= 1);
@@ -452,12 +449,12 @@ export abstract class SimpleFilter<
         });
 
         const orChecked = (joinOperator ?? this.getJoinOperator()) === 'OR';
-        this.eJoinAnds.forEach((eJoinOperatorAnd) => {
+        for (const eJoinOperatorAnd of this.eJoinAnds) {
             eJoinOperatorAnd.setValue(!orChecked, true);
-        });
-        this.eJoinOrs.forEach((eJoinOperatorOr) => {
+        }
+        for (const eJoinOperatorOr of this.eJoinOrs) {
             eJoinOperatorOr.setValue(orChecked, true);
-        });
+        }
 
         this.forEachInput((element, index, position, numberOfInputs) => {
             this.setElementDisplayed(element, index < numberOfInputs);
@@ -471,7 +468,7 @@ export abstract class SimpleFilter<
         return areAllConditionsUiComplete && this.getNumConditions() < this.maxNumConditions && !this.isReadOnly();
     }
 
-    private removeConditionsAndOperators(startPosition: number, deleteCount?: number): void {
+    protected removeConditionsAndOperators(startPosition: number, deleteCount?: number): void {
         if (startPosition >= this.getNumConditions()) {
             return;
         }
@@ -494,7 +491,9 @@ export abstract class SimpleFilter<
 
     private removeElements(elements: HTMLElement[], startPosition: number, deleteCount?: number): void {
         const removedElements = removeItems(elements, startPosition, deleteCount);
-        removedElements.forEach((element) => _removeFromParent(element));
+        for (const element of removedElements) {
+            _removeFromParent(element);
+        }
     }
 
     protected removeComponents<TEventType extends string>(
@@ -503,10 +502,10 @@ export abstract class SimpleFilter<
         deleteCount?: number
     ): void {
         const removedComponents = removeItems(components, startPosition, deleteCount);
-        removedComponents.forEach((comp) => {
+        for (const comp of removedComponents) {
             _removeFromParent(comp.getGui());
             this.destroyBean(comp);
-        });
+        }
     }
 
     public override afterGuiAttached(params?: IAfterGuiAttachedParams) {
@@ -530,12 +529,16 @@ export abstract class SimpleFilter<
         }
     }
 
+    protected shouldKeepInvalidInputState(): boolean {
+        return false;
+    }
+
     public override afterGuiDetached(): void {
         super.afterGuiDetached();
 
         const params = this.params;
 
-        if (this.beans.colFilter?.shouldKeepStateOnDetach(params.column)) {
+        if (this.beans.colFilter?.shouldKeepStateOnDetach(params.column) || this.shouldKeepInvalidInputState()) {
             return;
         }
 
@@ -593,33 +596,17 @@ export abstract class SimpleFilter<
         return this.params.getHandler()?.getModelAsString?.(model) ?? '';
     }
 
-    private getPlaceholderText(defaultPlaceholder: FilterLocaleTextKey, position: number): string {
-        let placeholder = this.translate(defaultPlaceholder);
-        if (typeof this.filterPlaceholder === 'function') {
-            const filterOptionKey = this.eTypes[position].getValue() as ISimpleFilterModelType;
-            const filterOption = this.translate(filterOptionKey);
-            placeholder = this.filterPlaceholder({
-                filterOptionKey,
-                filterOption,
-                placeholder,
-            });
-        } else if (typeof this.filterPlaceholder === 'string') {
-            placeholder = this.filterPlaceholder;
-        }
-
-        return placeholder;
-    }
-
     // allow sub-classes to reset HTML placeholders after UI update.
     protected resetPlaceholder(): void {
         const globalTranslate = this.getLocaleTextFunc();
+        const { filterPlaceholder, eTypes } = this;
 
         this.forEachInput((element, index, position, numberOfInputs) => {
             if (!(element instanceof AgAbstractInputField)) {
                 return;
             }
 
-            const placeholder =
+            const placeholderKey =
                 index === 0 && numberOfInputs > 1 ? 'inRangeStart' : index === 0 ? 'filterOoo' : 'inRangeEnd';
             const ariaLabel =
                 index === 0 && numberOfInputs > 1
@@ -628,7 +615,10 @@ export abstract class SimpleFilter<
                       ? globalTranslate('ariaFilterValue', 'Filter Value')
                       : globalTranslate('ariaFilterToValue', 'Filter to Value');
 
-            element.setInputPlaceholder(this.getPlaceholderText(placeholder, position));
+            const filterOptionKey = eTypes[position].getValue() as ISimpleFilterModelType;
+            const placeholderText = getPlaceholderText(this, filterPlaceholder, placeholderKey, filterOptionKey);
+
+            element.setInputPlaceholder(placeholderText);
             element.setInputAriaLabel(ariaLabel);
         });
     }
@@ -720,6 +710,10 @@ export abstract class SimpleFilter<
         }
 
         if (this.getValues(position).some((v) => v == null)) {
+            return false;
+        }
+
+        if (this.positionHasInvalidInputs(position)) {
             return false;
         }
 
@@ -871,6 +865,10 @@ export abstract class SimpleFilter<
     }
 
     protected hasInvalidInputs(): boolean {
+        return false;
+    }
+
+    protected positionHasInvalidInputs(_position: number): boolean {
         return false;
     }
 

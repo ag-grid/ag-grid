@@ -1,15 +1,19 @@
 import { _jsonEquals } from '../agStack/utils/generic';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { RowNode } from '../entities/rowNode';
+import { RowNode } from '../entities/rowNode';
 import { _getRowHeightAsNumber, _getRowIdCallback } from '../gridOptionsUtils';
 import type { IDatasource } from '../interfaces/iDatasource';
 import type { IRowModel, RowBounds, RowModelType } from '../interfaces/iRowModel';
+import type { OverlayType } from '../rendering/overlays/overlayComponent';
 import type { InfiniteCacheParams } from './infiniteCache';
 import { InfiniteCache } from './infiniteCache';
 
 export class InfiniteRowModel extends BeanStub implements NamedBean, IRowModel {
     beanName = 'rowModel' as const;
+
+    /** Dummy root node */
+    public rootNode: RowNode | null = null;
 
     private infiniteCache: InfiniteCache | null | undefined;
     private datasource: IDatasource | null | undefined;
@@ -33,7 +37,13 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IRowModel {
             return;
         }
 
-        this.rowHeight = _getRowHeightAsNumber(this.beans);
+        const beans = this.beans;
+
+        const rootNode = new RowNode(beans);
+        this.rootNode = rootNode;
+        rootNode.level = -1;
+
+        this.rowHeight = _getRowHeightAsNumber(beans);
 
         this.addEventListeners();
 
@@ -47,6 +57,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IRowModel {
     public override destroy(): void {
         this.destroyDatasource();
         super.destroy();
+        this.rootNode = null;
     }
 
     private destroyDatasource(): void {
@@ -110,6 +121,16 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IRowModel {
 
     public isRowsToRender(): boolean {
         return !!this.infiniteCache;
+    }
+
+    public getOverlayType(): OverlayType | null {
+        // loading is handled on a row basis and not via overlay for infinite row model
+        const cache = this.infiniteCache;
+        if (cache?.getRowCount() === 0) {
+            return this.beans.filterManager?.isAnyFilterPresent() ? 'noMatchingRows' : 'noRows';
+        }
+
+        return null;
     }
 
     public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {

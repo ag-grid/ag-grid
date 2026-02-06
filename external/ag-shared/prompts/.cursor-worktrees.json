@@ -1,0 +1,3 @@
+{
+    "setup-worktree": ["./external/ag-shared/scripts/setup-worktree/setup-worktree.sh"]
+}

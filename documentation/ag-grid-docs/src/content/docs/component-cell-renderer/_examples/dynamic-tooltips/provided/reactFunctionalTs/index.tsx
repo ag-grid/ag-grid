@@ -4,25 +4,24 @@ import { createRoot } from 'react-dom/client';
 import type { ColDef } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
-    ModuleRegistry,
     TextEditorModule,
     TextFilterModule,
     TooltipModule,
     ValidationModule,
 } from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import AthleteCellRenderer from './athleteCellRenderer';
 import type { IOlympicData } from './interfaces';
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     TextEditorModule,
     TextFilterModule,
     ClientSideRowModelModule,
     TooltipModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const GridExample = () => {
     const gridRef = useRef<AgGridReact<IOlympicData>>(null);
@@ -43,17 +42,19 @@ const GridExample = () => {
     const { data, loading } = useFetchJson<IOlympicData>('https://www.ag-grid.com/example-assets/olympic-winners.json');
 
     return (
-        <div style={containerStyle}>
-            <div style={gridStyle}>
-                <AgGridReact<IOlympicData>
-                    ref={gridRef}
-                    rowData={data}
-                    loading={loading}
-                    columnDefs={columnDefs}
-                    defaultColDef={defaultColDef}
-                />
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div style={gridStyle}>
+                    <AgGridReact<IOlympicData>
+                        ref={gridRef}
+                        rowData={data}
+                        loading={loading}
+                        columnDefs={columnDefs}
+                        defaultColDef={defaultColDef}
+                    />
+                </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

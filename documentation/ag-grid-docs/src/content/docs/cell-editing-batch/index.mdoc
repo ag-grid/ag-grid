@@ -51,6 +51,29 @@ As in default editing, cell and row editing events get fired as normal when edit
 
 When in Batch Editing, the `cellValueChanged`, `rowValueChanged` events are fired **after** the batch edit is committed.
 
+### Pending Values
+
+When Batch Editing is active, edits made to cells are stored as **pending values**. These pending values are not immediately applied to the underlying data model. Instead, they are held in a temporary state until the batch is either committed or canceled.
+
+Pending values are used by display features such as cell rendering and copy/paste but they are not used for data based features such as sorting, filtering, grouping or aggregation until the batch is committed.
+
+### Retrieving Values During Batch Editing
+
+The `api.getCellValue()` method retrieves the display value for a cell. It can retrieve values at different stages using the `from` parameter:
+
+-   `'edit'` (default): Current editing value, including live typing and pending batch values
+-   `'batch'`: Pending batch value, excluding live typing
+-   `'data'`: Stored data value, ignoring all edit state
+
+{% apiDocumentation source="grid-api/api.json" section="miscellaneous" names=["getCellValue"] /%}
+
+Use `rowNode.getDataValue(colKey)` to retrieve the committed data value, ignoring pending edits. Unlike `getCellValue()` with `from='edit'`, which returns the current editing value, `getDataValue()` returns the resolved value (including valueGetters, aggregation for group rows, and computed formulas) but excludes pending edits and display formatting.
+
+```js
+// Returns the committed data value, ignoring pending edits
+const dataValue = rowNode.getDataValue('price');
+```
+
 ## Customisation
 
 ### Custom Renderers & Editors

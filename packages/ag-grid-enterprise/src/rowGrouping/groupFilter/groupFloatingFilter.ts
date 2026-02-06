@@ -101,7 +101,9 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
             selectedColumnChanged: listener,
             sourceColumnsChanged: listener,
             destroyed: () => {
-                destroyFunctions.forEach((func) => func());
+                for (const func of destroyFunctions) {
+                    func();
+                }
                 // resubscribe
                 this.addHandlerListeners(this.params as any, listener);
             },

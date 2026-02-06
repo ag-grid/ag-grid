@@ -589,7 +589,7 @@ export const AG_GRID_ERRORS = {
     226: () => 'viewport is missing init method.' as const,
     227: () => 'menu item icon must be DOM node or string' as const,
     228: ({ menuItemOrString }: { menuItemOrString: string }) => `unrecognised menu item ${menuItemOrString}` as const,
-    229: ({ index }: { index: number }) => ['invalid row index for ensureIndexVisible: ', index] as const,
+    // 229: ({ index }: { index: number }) => ['invalid row index for ensureIndexVisible: ', index] as const,
     230: () =>
         'detailCellRendererParams.template is not supported by AG Grid React. To change the template, provide a Custom Detail Cell Renderer. See https://www.ag-grid.com/react-data-grid/master-detail-custom-detail/' as const,
     // @deprecated v32 mark for removal as part of v32 deprecated features
@@ -719,6 +719,16 @@ export const AG_GRID_ERRORS = {
         'License Key being set multiple times with different values. This can result in an incorrect license key being used,' as const,
     292: ({ colId }: { colId: string }) =>
         `The Multi Filter for column '${colId}' has buttons configured against the child filters. When 'enableFilterHandlers=true', buttons must instead be provided against the parent Multi Filter params. The child filter buttons will be ignored.` as const,
+    293: () =>
+        `The grid was initialised detached from the DOM and was then inserted into a Shadow Root. Theme styles are probably broken. Pass the themeStyleContainer grid option to let the grid know where in the document to insert theme CSS.` as const,
+    294: () =>
+        `When using the \`agRichSelectCellEditor\` setting \`filterListAsync = true\` requires \`allowTyping = true\` and the \`values()\` callback must return a Promise of filtered values.` as const,
+    295: ({ blockedService }: { blockedService: string }) =>
+        `colDef.allowFormula is not supported with ${blockedService}. Formulas has been turned off.`,
+    296: () =>
+        'Since v35, `api.hideOverlay()` does not hide the overlay when `activeOverlay` is set. Set `activeOverlay=null` instead.' as const,
+    297: () =>
+        '`api.hideOverlay()` does not hide the no matching rows overlay as it is only controlled by grid state. Set `suppressOverlays=["noMatchingRows"] to not show it.' as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;
@@ -738,7 +748,7 @@ export function getError<TId extends ErrorId, TParams extends GetErrorParams<TId
     const errorBody = msgOrFunc(args as any);
     const errorLink = getErrorLink(errorId, args);
     const errorSuffix = `\nSee ${errorLink}`;
-    return Array.isArray(errorBody) ? (errorBody.concat(errorSuffix) as string[]) : [errorBody, errorSuffix];
+    return Array.isArray(errorBody) ? errorBody.concat(errorSuffix) : [errorBody, errorSuffix];
 }
 
 const MISSING_MODULE_REASONS = {

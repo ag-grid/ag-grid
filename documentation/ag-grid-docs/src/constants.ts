@@ -1,6 +1,6 @@
 import corePackageJson from '../../../packages/ag-grid-community/package.json';
 import gridEnterprisePackageJson from '../../../packages/ag-grid-enterprise/package.json';
-import type { Framework, FrameworkType, InternalFramework } from './types/ag-grid';
+import type { Framework, InternalFramework } from './types/ag-grid';
 
 const isTruthy = (val: string | boolean) => ['1', 'true', true].includes(val);
 
@@ -11,22 +11,6 @@ export const QUICK_BUILD_PAGES: string[] = quickBuildPages ? quickBuildPages.spl
 export const FRAMEWORKS: readonly Framework[] = ['react', 'angular', 'vue', 'javascript'] as const;
 export const DEFAULT_FRAMEWORK: Framework = FRAMEWORKS[0];
 export const DEFAULT_INTERNAL_FRAMEWORK: InternalFramework = 'reactFunctional';
-export const FRAMEWORK_TYPES: Record<Framework, Partial<Record<FrameworkType, InternalFramework>>> = {
-    javascript: {
-        javascript: 'vanilla',
-        typescript: 'typescript',
-    },
-    react: {
-        javascript: 'reactFunctional',
-        typescript: 'reactFunctionalTs',
-    },
-    angular: {
-        typescript: 'angular',
-    },
-    vue: {
-        typescript: 'vue3',
-    },
-} as const;
 
 export const USE_PACKAGES = true; // process.env?.USE_PACKAGES ?? false;
 
@@ -107,6 +91,7 @@ export const SITE_URL = import.meta.env?.SITE_URL || import.meta.env?.PUBLIC_SIT
 
 export const STAGING_SITE_URL = 'https://grid-staging.ag-grid.com';
 export const PRODUCTION_SITE_URLS = ['https://ag-grid.com', 'https://www.ag-grid.com'];
+export const PRODUCTION_SITE_URL = PRODUCTION_SITE_URLS[0];
 export const USE_PUBLISHED_PACKAGES = isTruthy(import.meta.env?.PUBLIC_USE_PUBLISHED_PACKAGES);
 
 export const URL_CONFIG: Record<'local' | 'staging' | 'production', { hosts: string[]; baseUrl?: string }> = {
@@ -156,7 +141,9 @@ export const LIBRARY = 'grid';
  * Charts URL
  */
 function getChartsUrl() {
-    if (SITE_URL == null) return;
+    if (SITE_URL == null) {
+        return;
+    }
 
     if (SITE_URL?.includes('localhost')) {
         return 'https://localhost:4600';
@@ -170,7 +157,9 @@ export const CHARTS_SITE_URL = getChartsUrl();
 export const PRODUCTION_GRID_SITE_URL = 'https://www.ag-grid.com';
 export const GRID_ARCHIVE_BASE_URL = `${PRODUCTION_GRID_SITE_URL}/archive`;
 function calculateGridUrl() {
-    if (SITE_URL == null) return;
+    if (SITE_URL == null) {
+        return;
+    }
 
     if (SITE_URL?.includes('localhost')) {
         return SITE_URL; // NOTE: Will be different if this is on the charts website
@@ -181,6 +170,8 @@ function calculateGridUrl() {
 }
 
 export const GRID_URL = calculateGridUrl();
+
+export const LIVE_SITEMAP_URL = import.meta.env?.LIVE_SITEMAP_URL;
 
 export const EXAMPLE_RANDOM_SEED = 'AG Grid Random Seed';
 

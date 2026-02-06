@@ -16,10 +16,16 @@ import {
     _areColIdsEqual,
     _columnsMatch,
     _destroyColumnTree,
+    _removeAllFromArray,
     _updateColsMap,
 } from 'ag-grid-community';
 
-import { getDatePartValueGetter, getHeaderValueGetter, numericalMonthToNamedMonth } from './groupHierarchyUtils';
+import {
+    _getGroupHierarchy,
+    getDatePartValueGetter,
+    getHeaderValueGetter,
+    numericalMonthToNamedMonth,
+} from './groupHierarchyUtils';
 
 export class GroupHierarchyColService extends BeanStub implements NamedBean, IGroupHierarchyColService {
     beanName = 'groupHierarchyColSvc' as const;
@@ -48,10 +54,10 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
     }
 
     public createColumns(cols: _ColumnCollections): void {
-        this.sourceColumnMap = new WeakMap();
-        this.inverseColumnMap = new WeakMap();
+        const newSourceColumnMap = new WeakMap();
+        const newInverseColumnMap = new WeakMap();
 
-        const list = this.createGroupHierarchyColumns(cols);
+        const list = this.createGroupHierarchyColumns(cols, newSourceColumnMap, newInverseColumnMap);
         const areSame = _areColIdsEqual(list, this.columns?.list ?? []);
 
         if (areSame) {
@@ -69,6 +75,8 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
             treeDepth,
             map: {},
         };
+        this.sourceColumnMap = newSourceColumnMap;
+        this.inverseColumnMap = newInverseColumnMap;
     }
 
     public updateColumns(_event: PropertyChangedEvent | PropertyValueChangedEvent<keyof GridOptions>): void {
@@ -111,13 +119,26 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
         return null;
     }
 
-    public insertVirtualColumnsForCol(columns: AgColumn<any>[], col: AgColumn<any>): void {
-        const hierarchyCols = this.getVirtualColumnsForColumn(col) ?? [];
-        for (const col of hierarchyCols) {
-            if (!columns.includes(col)) {
-                columns.push(col);
-            }
+    public insertVirtualColumnsForCol(columns: AgColumn<any>[], col: AgColumn<any>): AgColumn[] {
+        const hierarchyCols = this.getVirtualColumnsForColumn(col);
+        if (!hierarchyCols) {
+            return [];
         }
+
+        // Index at which to insert the virtual columns
+        let idxCol = columns.indexOf(col);
+        if (idxCol < 0) {
+            idxCol = columns.length - 1;
+        }
+
+        // For simplicity, reset the `columns` array by removing all associated
+        // virtual columns first
+        _removeAllFromArray(columns, hierarchyCols);
+
+        // Insert the virtual columns in the given order
+        columns.splice(idxCol, 0, ...hierarchyCols);
+
+        return hierarchyCols;
     }
 
     private getVirtualColumnsForColumn(col: AgColumn): AgColumn[] {
@@ -133,14 +154,24 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
 
     private isGroupHierarchyColsEnabledForCol(col: AgColumn): boolean {
         const def = col.getColDef();
-        return !!(def.rowGroupingHierarchy && (def.rowGroup || def.enableRowGroup));
+        const groupHierarchy = _getGroupHierarchy(def);
+        return !!(
+            groupHierarchy &&
+            (def.rowGroup ||
+                def.enableRowGroup ||
+                def.rowGroupIndex != null ||
+                def.pivot ||
+                def.enablePivot ||
+                def.pivotIndex != null)
+        );
     }
 
     private createGroupHierarchyColDefs(sourceCol: AgColumn): ColDef[] {
         const colDefs: ColDef[] = [];
         const sourceColDef = sourceCol.getColDef();
+        const groupHierarchy = _getGroupHierarchy(sourceColDef);
 
-        if (!sourceColDef.rowGroupingHierarchy) {
+        if (!groupHierarchy) {
             return colDefs;
         }
 
@@ -148,7 +179,7 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
             return colDefs;
         }
 
-        for (const part of sourceColDef.rowGroupingHierarchy) {
+        for (const part of groupHierarchy) {
             let colDef: ColDef | null = null;
             if (typeof part === 'string') {
                 colDef = this.createColDefForPart(part, sourceCol, sourceColDef);
@@ -163,7 +194,11 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
         return colDefs;
     }
 
-    private createGroupHierarchyColumns(cols: _ColumnCollections): AgColumn[] {
+    private createGroupHierarchyColumns(
+        cols: _ColumnCollections,
+        sourceColMap: WeakMap<AgColumn, AgColumn[]>,
+        inverseColMap: WeakMap<AgColumn, AgColumn>
+    ): AgColumn[] {
         if (!this.isGroupHierarchyColsEnabled(cols)) {
             return [];
         }
@@ -171,15 +206,15 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
         const newCols: AgColumn[] = [];
 
         for (const col of cols.list) {
-            this.createGroupHierarchyColDefs(col).forEach((colDef) => {
+            for (const colDef of this.createGroupHierarchyColDefs(col)) {
                 const colId = colDef.colId!;
                 this.gos.validateColDef(colDef, colId, true);
                 const newCol = new AgColumn(colDef, null, colId, true);
                 this.createBean(newCol);
                 newCols.push(newCol);
-                updateMap(this.sourceColumnMap, col, newCol);
-                this.inverseColumnMap.set(newCol, col);
-            });
+                updateMap(sourceColMap, col, newCol);
+                inverseColMap.set(newCol, col);
+            }
         }
 
         return newCols;
@@ -190,7 +225,7 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
 
         const colId = `${GROUP_HIERARCHY_COLUMN_ID_PREFIX}-${sourceCol.getColId()}-${part}`;
         const defaults: Partial<ColDef> = {
-            enableRowGroup: true,
+            enableRowGroup: sourceColDef.enableRowGroup,
             rowGroup: sourceColDef.rowGroup,
             enablePivot: sourceColDef.enablePivot,
             hide: true,
@@ -206,7 +241,7 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
 
         const base: ColDef = _addColumnDefaultAndTypes(beans, { colId, ...defaults }, colId, true);
 
-        const translate = beans.localeSvc?.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         const translatePart = (part: string, fallback: string) => translate?.(part, fallback) ?? fallback;
 
         switch (part) {

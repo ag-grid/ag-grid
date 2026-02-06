@@ -12,14 +12,13 @@ import { GetThemeButton } from './GetTheme';
 import { GridPreview } from './GridPreview';
 
 export const RootContainer = () => {
-    // makes variables available for use by editors
-    useRenderedTheme();
+    const renderedTheme = useRenderedTheme();
 
     useWarnOfUnknownCssVariables();
 
     return (
         <Container>
-            <Menu className="apply-current-theme-params">
+            <Menu className={renderedTheme._getParamsClassName()}>
                 <EditorScroller>
                     <EditorPanel />
                 </EditorScroller>

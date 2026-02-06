@@ -68,7 +68,7 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
      */
     private getFirstPixelOfGroup(row: RowNode): number {
         if (row.footer) {
-            return row.sibling!.rowTop! + row.sibling!.rowHeight! - 1;
+            return row.sibling.rowTop! + row.sibling.rowHeight! - 1;
         }
 
         if (row.hasChildren()) {
@@ -87,12 +87,18 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
             return this.refreshNodesAndContainerHeight(container, new Set(), newStickyContainerHeight);
         }
 
-        const { rowModel, rowRenderer, pinnedRowModel } = this.beans;
+        const newStickyRows = new Set<RowNode>();
+
+        const { rowModel, rowRenderer, pinnedRowModel, pageBounds, rowContainerHeight } = this.beans;
+        const { pageFirstPixel, pageLastPixel } = pageBounds.getCurrentPagePixelRange();
 
         const pixelAtContainerBoundary = isTop
             ? rowRenderer.firstVisibleVPixel - this.extraTopHeight
             : rowRenderer.lastVisibleVPixel - this.extraTopHeight;
-        const newStickyRows = new Set<RowNode>();
+
+        const divStretchOffset = rowContainerHeight.divStretchOffset ?? 0;
+        const pageFirstPixelWithOffset = pageFirstPixel + divStretchOffset;
+        const pageLastPixelWithOffset = pageLastPixel + divStretchOffset;
 
         const addStickyRow = (stickyRow: RowNode) => {
             newStickyRows.add(stickyRow);
@@ -181,6 +187,15 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
             if (!isTop) {
                 firstPixelAfterStickyRows = pixelAtContainerBoundary - newStickyContainerHeight;
             }
+
+            // clamp to the current page range so we don't treat rows outside the page
+            // as visible just because sticky rows add an offset.
+            if (isTop && firstPixelAfterStickyRows < pageFirstPixelWithOffset) {
+                firstPixelAfterStickyRows = pageFirstPixelWithOffset;
+            } else if (!isTop && firstPixelAfterStickyRows > pageLastPixelWithOffset) {
+                firstPixelAfterStickyRows = pageLastPixelWithOffset;
+            }
+
             const firstIndex = rowModel.getRowIndexAtPixel(firstPixelAfterStickyRows);
             const firstRow = rowModel.getRow(firstIndex);
 
@@ -360,12 +375,10 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
                 this.gridBodyCtrl.setStickyTopHeight(height);
                 hasSomethingChanged = true;
             }
-        } else {
-            if (this.bottomContainerHeight !== height) {
-                this.bottomContainerHeight = height;
-                this.gridBodyCtrl.setStickyBottomHeight(height);
-                hasSomethingChanged = true;
-            }
+        } else if (this.bottomContainerHeight !== height) {
+            this.bottomContainerHeight = height;
+            this.gridBodyCtrl.setStickyBottomHeight(height);
+            hasSomethingChanged = true;
         }
 
         // clean up removed ctrls
@@ -377,26 +390,28 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
         if (!isTop) {
             newCtrlsList.reverse();
         }
-        newCtrlsList.forEach((ctrl) => ctrl.setRowTop(ctrl.rowNode.stickyRowTop));
+        for (const ctrl of newCtrlsList) {
+            ctrl.setRowTop(ctrl.rowNode.stickyRowTop);
+        }
 
         const pageBounds = this.beans.pageBounds;
         let extraHeight = 0;
         if (isTop) {
-            newStickyNodes.forEach((node) => {
+            for (const node of newStickyNodes) {
                 if (node.rowIndex! < pageBounds.getFirstRow()) {
                     extraHeight += node.rowHeight!;
                 }
-            });
+            }
             if (extraHeight > this.topContainerHeight) {
                 extraHeight = this.topContainerHeight;
             }
             this.setOffsetTop(extraHeight);
         } else {
-            newStickyNodes.forEach((node) => {
+            for (const node of newStickyNodes) {
                 if (node.rowIndex! > pageBounds.getLastRow()) {
                     extraHeight += node.rowHeight!;
                 }
-            });
+            }
             if (extraHeight > this.bottomContainerHeight) {
                 extraHeight = this.bottomContainerHeight;
             }
@@ -451,7 +466,7 @@ function getServerSideLastPixelOfGroup(row: RowNode): number {
             return row.rowTop! + row.rowHeight!;
         }
 
-        return row.sibling!.rowTop! + row.sibling!.rowHeight!;
+        return row.sibling.rowTop! + row.sibling.rowHeight!;
     }
     // if not a group, then this row shouldn't be sticky currently.
     return Number.MAX_SAFE_INTEGER;
@@ -490,7 +505,7 @@ function getClientSideLastPixelOfGroup(row: RowNode): number {
         if (row.footer) {
             return row.rowTop! + row.rowHeight!;
         }
-        return row.sibling!.rowTop! + row.sibling!.rowHeight!;
+        return row.sibling.rowTop! + row.sibling.rowHeight!;
     }
     // if not expandable, then this row shouldn't be sticky currently.
     return Number.MAX_SAFE_INTEGER;

@@ -151,7 +151,7 @@ export class StateService extends BeanStub implements NamedBean {
 
         this.setGridReadyState(state, source, ignoreSet);
 
-        this.setColumnsInitialisedState(state, source, false, ignoreSet);
+        this.setColumnsInitialisedState(state, source, !!ignoreSet, ignoreSet);
 
         this.setRowCountState(state, source, ignoreSet);
 
@@ -241,6 +241,7 @@ export class StateService extends BeanStub implements NamedBean {
             ssrmRowGroupExpansion,
             rowSelection: rowSelectionState,
             pagination: paginationState,
+            rowPinning,
         } = state;
         const shouldSetState = <TKey extends GridStateKey>(prop: TKey, propState: GridState[TKey]) =>
             !ignoreSet?.has(prop) && (propState || source === 'api');
@@ -256,6 +257,9 @@ export class StateService extends BeanStub implements NamedBean {
         }
         if (shouldSetState('pagination', paginationState)) {
             this.setPaginationState(paginationState, source);
+        }
+        if (shouldSetState('rowPinning', rowPinning)) {
+            this.setRowPinningState(rowPinning);
         }
 
         const updateCachedState = this.updateCachedState.bind(this);
@@ -288,7 +292,7 @@ export class StateService extends BeanStub implements NamedBean {
         };
         const updateFilterState = () => updateCachedState('filter', this.getFilterState());
 
-        const { gos, colFilter } = this.beans;
+        const { gos, colFilter, selectableFilter } = this.beans;
         this.addManagedEventListeners({
             filterChanged: updateFilterState,
             rowExpansionStateChanged: this.onRowGroupOpenedDebounced,
@@ -310,10 +314,16 @@ export class StateService extends BeanStub implements NamedBean {
                     updateCachedState('pagination', this.getPaginationState());
                 }
             },
+            pinnedRowsChanged: () => updateCachedState('rowPinning', this.getRowPinningState()),
         });
         if (colFilter) {
             this.addManagedListeners(colFilter, {
                 filterStateChanged: updateFilterState,
+            });
+        }
+        if (selectableFilter) {
+            this.addManagedListeners(selectableFilter, {
+                selectedFilterChanged: updateFilterState,
             });
         }
     }
@@ -328,7 +338,6 @@ export class StateService extends BeanStub implements NamedBean {
             cellSelection: cellSelectionState,
             focusedCell: focusedCellState,
             columnOrder: columnOrderState,
-            rowPinning,
         } = state;
         const shouldSetState = <TKey extends GridStateKey>(prop: TKey, propState: GridState[TKey]) =>
             !ignoreSet?.has(prop) && (propState || source === 'api');
@@ -341,9 +350,6 @@ export class StateService extends BeanStub implements NamedBean {
         }
         if (shouldSetState('scroll', scrollState)) {
             this.setScrollState(scrollState);
-        }
-        if (shouldSetState('rowPinning', rowPinning)) {
-            this.setRowPinningState(rowPinning);
         }
         this.setColumnPivotState(!!columnOrderState?.orderedColIds, source);
 
@@ -373,7 +379,6 @@ export class StateService extends BeanStub implements NamedBean {
                 }
             },
             bodyScrollEnd: () => updateCachedState('scroll', this.getScrollState()),
-            pinnedRowsChanged: () => updateCachedState('rowPinning', this.getRowPinningState()),
         });
     }
 
@@ -481,12 +486,12 @@ export class StateService extends BeanStub implements NamedBean {
 
         const shouldSetColumnPinningState = shouldSetState('columnPinning', columnPinningState);
         if (shouldSetColumnPinningState) {
-            columnPinningState?.leftColIds.forEach((colId) => {
+            for (const colId of columnPinningState?.leftColIds ?? []) {
                 getColumnState(colId).pinned = 'left';
-            });
-            columnPinningState?.rightColIds.forEach((colId) => {
+            }
+            for (const colId of columnPinningState?.rightColIds ?? []) {
                 getColumnState(colId).pinned = 'right';
-            });
+            }
         }
         if (shouldSetColumnPinningState || !partialColumnState) {
             defaultState.pinned = null;
@@ -494,9 +499,9 @@ export class StateService extends BeanStub implements NamedBean {
 
         const shouldSetColumnVisibilityState = shouldSetState('columnVisibility', columnVisibilityState);
         if (shouldSetColumnVisibilityState) {
-            columnVisibilityState?.hiddenColIds.forEach((colId) => {
+            for (const colId of columnVisibilityState?.hiddenColIds ?? []) {
                 getColumnState(colId).hide = true;
-            });
+            }
         }
         if (shouldSetColumnVisibilityState || !partialColumnState) {
             defaultState.hide = null;
@@ -504,11 +509,11 @@ export class StateService extends BeanStub implements NamedBean {
 
         const shouldSetColumnSizingState = shouldSetState('columnSizing', columnSizingState);
         if (shouldSetColumnSizingState) {
-            columnSizingState?.columnSizingModel.forEach(({ colId, flex, width }) => {
+            for (const { colId, flex, width } of columnSizingState?.columnSizingModel ?? []) {
                 const columnState = getColumnState(colId);
                 columnState.flex = flex ?? null;
                 columnState.width = width;
-            });
+            }
         }
         if (shouldSetColumnSizingState || !partialColumnState) {
             defaultState.flex = null;
@@ -604,12 +609,12 @@ export class StateService extends BeanStub implements NamedBean {
             };
         });
         // probably pivot cols
-        openColumnGroups.forEach((groupId) => {
+        for (const groupId of openColumnGroups) {
             stateItems.push({
                 groupId,
                 open: true,
             });
-        });
+        }
         if (stateItems.length) {
             this.columnGroupStates = stateItems;
         }
@@ -617,25 +622,29 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private getFilterState(): FilterState | undefined {
-        const filterManager = this.beans.filterManager;
+        const { filterManager, selectableFilter } = this.beans;
         let filterModel: FilterModel | undefined = filterManager?.getFilterModel();
         if (filterModel && Object.keys(filterModel).length === 0) {
             filterModel = undefined;
         }
         const columnFilterState = filterManager?.getFilterState();
         const advancedFilterModel = filterManager?.getAdvFilterModel() ?? undefined;
-        return filterModel || advancedFilterModel || columnFilterState
-            ? { filterModel, columnFilterState, advancedFilterModel }
+        const selectableFilters = selectableFilter?.getState();
+        return filterModel || advancedFilterModel || columnFilterState || selectableFilters
+            ? { filterModel, columnFilterState, advancedFilterModel, selectableFilters }
             : undefined;
     }
 
     private setFilterState(filterState?: FilterState): void {
-        const filterManager = this.beans.filterManager;
-        const { filterModel, columnFilterState, advancedFilterModel } = filterState ?? {
+        const { filterManager, selectableFilter } = this.beans;
+        const { filterModel, columnFilterState, advancedFilterModel, selectableFilters } = filterState ?? {
             filterModel: null,
             columnFilterState: null,
             advancedFilterModel: null,
         };
+        if (selectableFilters !== undefined) {
+            selectableFilter?.setState(selectableFilters ?? {});
+        }
         if (filterModel !== undefined || columnFilterState !== undefined) {
             filterManager?.setFilterState(filterModel ?? null, columnFilterState ?? null, 'columnFilter');
         }
@@ -667,16 +676,16 @@ export class StateService extends BeanStub implements NamedBean {
         }
 
         const cellRanges: CellRange[] = [];
-        cellSelectionState?.cellRanges.forEach((cellRange) => {
+        for (const cellRange of cellSelectionState?.cellRanges ?? []) {
             const columns: AgColumn[] = [];
-            cellRange.colIds.forEach((colId) => {
+            for (const colId of cellRange.colIds) {
                 const column = colModel.getCol(colId);
                 if (column) {
                     columns.push(column);
                 }
-            });
+            }
             if (!columns.length) {
-                return;
+                continue;
             }
             let startColumn = colModel.getCol(cellRange.startColId);
             if (!startColumn) {
@@ -690,7 +699,7 @@ export class StateService extends BeanStub implements NamedBean {
                 columns,
                 startColumn,
             });
-        });
+        }
 
         rangeSvc.setCellRanges(cellRanges);
     }
@@ -898,14 +907,12 @@ export class StateService extends BeanStub implements NamedBean {
 
     private refreshStaleState(): void {
         const staleStateKeys = this.staleStateKeys;
-        staleStateKeys.forEach((key) => {
-            switch (key) {
-                // only row selection supported for now
-                case 'rowSelection':
-                    this.setCachedStateValue(key, this.getRowSelectionState());
-                    break;
+        for (const key of staleStateKeys) {
+            // only row selection supported for now
+            if (key === 'rowSelection') {
+                this.setCachedStateValue(key, this.getRowSelectionState());
             }
-        });
+        }
         staleStateKeys.clear();
     }
 
@@ -913,7 +920,9 @@ export class StateService extends BeanStub implements NamedBean {
         if (this.suppressEvents) {
             return;
         }
-        sources.forEach((source) => this.queuedUpdateSources.add(source));
+        for (const source of sources) {
+            this.queuedUpdateSources.add(source);
+        }
         this.dispatchStateUpdateEventDebounced();
     }
 

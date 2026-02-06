@@ -1,11 +1,9 @@
 import React, { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { ModuleRegistry, themeQuartz } from 'ag-grid-community';
+import { themeQuartz } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
-import { AgGridReact } from 'ag-grid-react';
-
-ModuleRegistry.registerModules([AllEnterpriseModule]);
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 const theme = themeQuartz
     .withParams(
@@ -27,22 +25,24 @@ const theme = themeQuartz
 
 const GridExample = () => {
     return (
-        <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <p style={{ flex: 0 }}>
-                <label>
-                    Dark mode: <input type="checkbox" onChange={(e) => setDarkMode(e.target.checked)} />
-                </label>
-            </p>
-            <div style={{ flex: 1 }}>
-                <AgGridReact
-                    theme={theme}
-                    columnDefs={columnDefs}
-                    rowData={rowData}
-                    defaultColDef={defaultColDef}
-                    sideBar
-                />
+        <AgGridProvider modules={[AllEnterpriseModule]}>
+            <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <p style={{ flex: 0 }}>
+                    <label>
+                        Dark mode: <input type="checkbox" onChange={(e) => setDarkMode(e.target.checked)} />
+                    </label>
+                </p>
+                <div style={{ flex: 1 }}>
+                    <AgGridReact
+                        theme={theme}
+                        columnDefs={columnDefs}
+                        rowData={rowData}
+                        defaultColDef={defaultColDef}
+                        sideBar
+                    />
+                </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

@@ -18,9 +18,9 @@ The Sass API provides a few benefits on top of the CSS API:
 
 First, set up your project to compile Sass (.scss) files. We provide examples for the major frameworks:
 
-* Vanilla JS and React: use the [Sass CLI](https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vanilla) or [Webpack and sass-loader](https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vanilla-webpack)
-* Angular: see our [Angular CLI](https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/angular) example
-* Vue: see our [Vue CLI](https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vue) example
+-   Vanilla JS and React: use the [Sass CLI](https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vanilla) or [Webpack and sass-loader](https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vanilla-webpack)
+-   Angular: see our [Angular CLI](https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/angular) example
+-   Vue: see our [Vue CLI](https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vue) example
 
 Next, import the Sass API in your .scss file:
 
@@ -30,8 +30,8 @@ Next, import the Sass API in your .scss file:
 
 The above import path assumes that `node_modules` is added to the Sass load path. Depending on how your project is configured, you may need to add one or more prefixes to the import path:
 
-* `node_modules/ag-grid-community/styles` if `node_modules` is not in the Sass load path
-* `~ag-grid-community/styles` is you're using webpack and sass-loader (the tilde instructs sass-loader to look in `node_modules`)
+-   `node_modules/ag-grid-community/styles` if `node_modules` is not in the Sass load path
+-   `~ag-grid-community/styles` is you're using webpack and sass-loader (the tilde instructs sass-loader to look in `node_modules`)
 
 ## Simple Example
 
@@ -84,10 +84,10 @@ For information about what CSS variables and rules to use to control grid featur
 
 The Sass API provides a little bit of sugar to make it easier to read and remember some parameter values and assists migration from the [Legacy Sass API](./theming-v32-customisation-sass-legacy/).
 
-* The `--ag-` prefix is optional.
-* You can pass `true` or `false` to any `borders-*` parameter to enable or disable the border (`true` is converted to `solid 1px` and `false` to `none`)
-* You can pass `true` or `false` to the `header-column-separator-display` or `header-column-resize-handle-display` parameters (`true` is converted to `block` and `false` to `none`)
-* You can pass `null` to any `*-color` parameter, which will be converted to a CSS value of `transparent`
+-   The `--ag-` prefix is optional.
+-   You can pass `true` or `false` to any `borders-*` parameter to enable or disable the border (`true` is converted to `solid 1px` and `false` to `none`)
+-   You can pass `true` or `false` to the `header-column-separator-display` or `header-column-resize-handle-display` parameters (`true` is converted to `block` and `false` to `none`)
+-   You can pass `null` to any `*-color` parameter, which will be converted to a CSS value of `transparent`
 
 ## Adding Your Own CSS Rules
 

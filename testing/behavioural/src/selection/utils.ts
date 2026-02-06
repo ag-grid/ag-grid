@@ -13,7 +13,9 @@ export class GridActions {
         parentSelector = '#myGrid'
     ) {
         this.parent = document.querySelector(parentSelector)!;
-        if (!this.parent) throw new Error(`${parentSelector} not found.`);
+        if (!this.parent) {
+            throw new Error(`${parentSelector} not found.`);
+        }
     }
 
     getRowByIndex(index: number): HTMLElement | null {
@@ -47,14 +49,22 @@ export class GridActions {
 
     selectRowsByIndex(indices: number[], click: boolean): void {
         for (const i of indices) {
-            click ? this.clickRowByIndex(i, { ctrlKey: true }) : this.toggleCheckboxByIndex(i);
+            if (click) {
+                this.clickRowByIndex(i, { ctrlKey: true });
+            } else {
+                this.toggleCheckboxByIndex(i);
+            }
         }
         assertSelectedRowsByIndex(indices, this.api);
     }
 
     selectRowsById(ids: string[], click: boolean): void {
         for (const i of ids) {
-            click ? this.clickRowById(i, { ctrlKey: true }) : this.toggleCheckboxById(i);
+            if (click) {
+                this.clickRowById(i, { ctrlKey: true });
+            } else {
+                this.toggleCheckboxById(i);
+            }
         }
         assertSelectedRowElementsById(ids, this.api);
     }
@@ -91,6 +101,12 @@ export class GridActions {
             ?.dispatchEvent(new MouseEvent('click', { ...opts, bubbles: true }));
     }
 
+    clickCollapseGroupRowByIndex(index: number, opts?: MouseEventInit): void {
+        this.getRowByIndex(index)
+            ?.querySelector<HTMLElement>('.ag-group-expanded')
+            ?.dispatchEvent(new MouseEvent('click', { ...opts, bubbles: true }));
+    }
+
     async expandGroupRowByIndex(index: number, opts?: MouseEventInit & { count?: number }): Promise<void> {
         const updated = waitForEvent('modelUpdated', this.api, opts?.count ?? 2); // attach listener first
         this.clickExpandGroupRowByIndex(index, opts);
@@ -100,6 +116,12 @@ export class GridActions {
     async expandGroupRowById(id: string, opts?: MouseEventInit & { count?: number }): Promise<void> {
         const updated = waitForEvent('modelUpdated', this.api, opts?.count ?? 2);
         this.clickExpandGroupRowById(id, opts);
+        await updated;
+    }
+
+    async collapseGroupRowByIndex(index: number, opts?: MouseEventInit & { count?: number }): Promise<void> {
+        const updated = waitForEvent('modelUpdated', this.api, opts?.count ?? 2);
+        this.clickCollapseGroupRowByIndex(index, opts);
         await updated;
     }
 }

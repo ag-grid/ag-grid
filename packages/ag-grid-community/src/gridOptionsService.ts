@@ -15,7 +15,7 @@ import type { BeanCollection } from './context/context';
 import type { ColDef, ColGroupDef } from './entities/colDef';
 import type { GridOptions } from './entities/gridOptions';
 import type { AgEventType, AgPublicEventType } from './eventTypes';
-import { ALWAYS_SYNC_GLOBAL_EVENTS } from './events';
+import { ALWAYS_SYNC_GLOBAL_EVENTS } from './eventTypes';
 import { GlobalGridOptions } from './globalGridOptions';
 import type { GridOptionOrDefault, GridOptionsWithDefaults } from './gridOptionsDefault';
 import { GRID_OPTION_DEFAULTS } from './gridOptionsDefault';
@@ -199,11 +199,11 @@ export class GridOptionsService
 
             const shouldForce = force || (typeof value === 'object' && source === 'api'); // force objects as they could have been mutated.
 
-            const previousValue = gridOptions[key as keyof GridOptions];
+            const previousValue = gridOptions[key];
             if (shouldForce || previousValue !== value) {
-                gridOptions[key as keyof GridOptions] = value;
+                gridOptions[key] = value;
                 const event: PropertyValueChangedEvent<keyof GridOptions> = {
-                    type: key as keyof GridOptions,
+                    type: key,
                     currentValue: value,
                     previousValue,
                     changeSet,
@@ -218,10 +218,10 @@ export class GridOptionsService
         // changeSet should just include the properties that have changed.
         changeSet.properties = events.map((event) => event.type);
 
-        events.forEach((event) => {
+        for (const event of events) {
             _logIfDebug(this, `Updated property ${event.type} from`, event.previousValue, ` to `, event.currentValue);
             this.propEventSvc.dispatchEvent(event);
-        });
+        }
     }
 
     public addPropertyEventListener<K extends keyof GridOptions>(
@@ -268,17 +268,15 @@ export class GridOptionsService
 
             if (this.gridReadyFired) {
                 fireEvent(eventName, event);
-            } else {
-                if (eventName === 'gridReady') {
-                    fireEvent(eventName, event);
-                    this.gridReadyFired = true;
-                    for (const q of this.queueEvents) {
-                        fireEvent(q.eventName, q.event);
-                    }
-                    this.queueEvents = [];
-                } else {
-                    this.queueEvents.push({ eventName, event });
+            } else if (eventName === 'gridReady') {
+                fireEvent(eventName, event);
+                this.gridReadyFired = true;
+                for (const q of this.queueEvents) {
+                    fireEvent(q.eventName, q.event);
                 }
+                this.queueEvents = [];
+            } else {
+                this.queueEvents.push({ eventName, event });
             }
         };
     };

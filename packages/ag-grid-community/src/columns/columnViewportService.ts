@@ -50,6 +50,10 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
         this.suppressColumnVirtualisation = this.gos.get('suppressColumnVirtualisation');
     }
 
+    public getScrollPosition(): number {
+        return this.scrollPosition;
+    }
+
     public setScrollPosition(scrollWidth: number, scrollPosition: number, afterScroll: boolean = false): void {
         const { visibleCols } = this;
         const bodyWidthDirty = visibleCols.isBodyWidthDirty;

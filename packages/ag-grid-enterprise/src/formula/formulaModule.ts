@@ -1,0 +1,21 @@
+import type { _ModuleWithoutApi } from 'ag-grid-community';
+
+import { RowNumbersModule } from '../rowNumbers/rowNumbersModule';
+import { VERSION } from '../version';
+import { FormulaCellEditor } from './editor/formulaCellEditor';
+import { formulaCSS } from './formula.css-GENERATED';
+import { FormulaDataService } from './formulaDataService';
+import { FormulaInputManagerService } from './formulaInputManagerService';
+import { FormulaService } from './formulaService';
+
+/**
+ * @feature Formulas
+ */
+export const FormulaModule: _ModuleWithoutApi = {
+    moduleName: 'Formula',
+    version: VERSION,
+    userComponents: { agFormulaCellEditor: FormulaCellEditor },
+    beans: [FormulaService, FormulaDataService, FormulaInputManagerService],
+    dependsOn: [RowNumbersModule],
+    css: [formulaCSS],
+};

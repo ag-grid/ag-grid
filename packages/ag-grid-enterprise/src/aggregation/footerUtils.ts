@@ -28,12 +28,12 @@ export function _createRowNodeFooter(rowNode: RowNode, beans: BeanCollection): v
 }
 
 export function _destroyRowNodeFooter(rowNode: RowNode): void {
-    if (!rowNode.sibling) {
+    const sibling = rowNode.sibling;
+    if (!sibling) {
         return;
     }
 
-    rowNode.sibling.setRowTop(null);
-    rowNode.sibling.setRowIndex(null);
-
+    sibling._destroy(false);
     rowNode.sibling = undefined as any;
+    sibling.sibling = undefined as any;
 }

@@ -76,7 +76,8 @@
 }
 
 .ag-row {
-    background-color: var(--ag-background-color);
+    /* Rows need a solid background to avoid being transparent when dragging */
+    background-color: var(--ag-data-background-color);
     width: 100%;
     height: var(--ag-row-height);
     border-bottom: var(--ag-row-border);
@@ -91,17 +92,12 @@
    is to ensure that the ag-body-vertical-content-no-gap class only hides the
    border of rows in the same grid, not in nested detail grids  */
 :where(
+
     /* there are either 3 or 4 elements between the body and the row as the
        center cols container has an extra layer of nesting than other containers */
     .ag-body-vertical-content-no-gap > div > div > div,
-    .ag-body-vertical-content-no-gap > div > div > div > div
-) > .ag-row-last {
+    .ag-body-vertical-content-no-gap > div > div > div > div)>.ag-row-last {
     border-bottom-color: transparent;
-}
-
-.ag-sticky-bottom {
-    border-top: var(--ag-row-border);
-    box-sizing: content-box !important;
 }
 
 .ag-group-expanded,
@@ -123,7 +119,7 @@
 }
 
 .ag-spanned-cell-wrapper {
-    background-color: var(--ag-background-color);
+    background-color: var(--ag-data-background-color);
     position: absolute;
 }
 
@@ -142,6 +138,9 @@
     align-items: center;
     padding-left: calc(var(--ag-indentation-level) * var(--ag-row-group-indent-size));
 
+    /* stylelint-disable-next-line ag/no-low-performance-key-selector --
+        Requires a slow selector because we allow custom cell editor components
+        as direct children of the wrapper, so we can't control the class name */
     > *:where(:not(.ag-cell-value, .ag-group-value)) {
         /* cell widgets like checkboxes don't respond to line-height, so set their
                height to vertically centre them */
@@ -200,6 +199,11 @@
     margin-right: var(--ag-cell-widget-spacing);
 }
 
+.ag-drag-handle-disabled {
+    opacity: 0.35;
+    pointer-events: none;
+}
+
 .ag-group-child-count {
     margin-left: 3px;
 }
@@ -210,8 +214,9 @@
     content: '';
     position: absolute;
     width: calc(100% - 1px);
-    height: 1px;
-    background-color: var(--ag-range-selection-border-color);
+    height: var(--ag-row-drag-indicator-width);
+    background-color: var(--ag-row-drag-indicator-color);
+    border-radius: calc(var(--ag-row-drag-indicator-width) / 2);
     left: 1px;
     pointer-events: none;
 }
@@ -241,6 +246,12 @@
     inset: 0;
     background-color: var(--ag-selected-row-background-color);
     border: 1px solid var(--ag-range-selection-border-color);
+}
+
+.ag-body,
+.ag-floating-top,
+.ag-floating-bottom {
+    background-color: var(--ag-data-background-color);
 }
 
 .ag-row-odd {
@@ -277,8 +288,11 @@
     background-image: linear-gradient(var(--ag-selected-row-background-color), var(--ag-selected-row-background-color));
 }
 
-/* Default the content position to relative so that it doesn't appear under the background */
+/* stylelint-disable-next-line ag/no-low-performance-key-selector -- Requires a
+    slow selector because the child might be a custom component so we can't
+    control the class name. */
 .ag-row.ag-full-width-row.ag-row-group > * {
+    /* Default the content position to relative so that it doesn't appear under the background */
     position: relative;
 }
 
@@ -303,8 +317,8 @@
 }
 
 .ag-cell:not(.ag-cell-inline-editing),
-    /* stylelint-disable-next-line no-descending-specificity */
-    .ag-full-width-row .ag-cell-wrapper.ag-row-group {
+/* stylelint-disable-next-line no-descending-specificity */
+.ag-full-width-row .ag-cell-wrapper.ag-row-group {
     padding-left: calc(
         var(--ag-cell-horizontal-padding) - 1px + var(--ag-row-group-indent-size) * var(--ag-indentation-level)
     );
@@ -325,7 +339,7 @@
 }
 
 .ag-details-row {
-    background-color: var(--ag-background-color);
+    background-color: var(--ag-data-background-color);
     padding: calc(var(--ag-spacing) * 3.75);
 }
 
@@ -337,7 +351,9 @@
     }
 }
 
-.ag-overlay-loading-wrapper {
+.ag-overlay-loading-wrapper,
+.ag-overlay-exporting-wrapper,
+.ag-overlay-modal-wrapper {
     background-color: var(--ag-modal-overlay-background-color);
 }
 

@@ -14,12 +14,11 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
             fileName = this.getDefaultFileName();
         }
 
-        return fileName.indexOf('.') === -1 ? `${fileName}.${extension}` : fileName;
+        return fileName.includes('.') ? fileName : `${fileName}.${extension}`;
     }
 
     protected getData(params: P): string {
-        const serializingSession = this.createSerializingSession(params);
-        return this.beans.gridSerializer!.serialize(serializingSession, params);
+        return this.beans.gridSerializer!.serialize(this.createSerializingSession(params), params);
     }
 
     public getDefaultFileName(): string {

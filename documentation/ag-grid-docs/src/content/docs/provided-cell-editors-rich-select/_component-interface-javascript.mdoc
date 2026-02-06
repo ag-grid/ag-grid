@@ -3,6 +3,7 @@ The interface for the Cell Component is as follows:
 {% /if %}
 
 {% if isFramework("javascript") %}
+
 ```ts
 interface ICellEditorRendererComp {
     // Optional - props for rendering.
@@ -16,6 +17,7 @@ interface ICellEditorRendererComp {
     destroy?(): void;
 }
 ```
+
 {% /if %}
 
 {% if isFramework("javascript") %}
@@ -23,6 +25,7 @@ The Component is provided `props` containing, amongst other things, the value to
 {% /if %}
 
 {% if isFramework("javascript") %}
+
 ```ts
 class MyCustomEditorRenderer {
     // ...
@@ -34,6 +37,7 @@ class MyCustomEditorRenderer {
     // ...
 }
 ```
+
 {% /if %}
 
 {% if isFramework("javascript") %}

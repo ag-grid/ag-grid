@@ -1,0 +1,49 @@
+---
+title: "Active Overlay"
+---
+
+Applications can display an overlay on demand regardless of grid state. This is achieved by providing an active overlay which can be one of the provided overlays or be a custom overlay component.
+
+{% gridExampleRunner title="Active Overlay (Component Class)" name="active-overlay-component" exampleHeight=350 /%}
+
+## Display an Active Overlay
+
+To display an overlay on demand set the `activeOverlay` / `activeOverlayParams` grid option. To clear the overlay set `activeOverlay = undefined`.
+
+{% apiDocumentation source="grid-options/properties.json" section="overlays" names=["activeOverlay", "activeOverlayParams"] /%}
+
+{% if isFramework("javascript", "angular") %}
+Implement the `IOverlayComp` interface to provide a custom overlay the grid will supply `IOverlayParams` whenever the component is created or refreshed.
+{% /if %}
+{% if isFramework("angular") %}
+{% interfaceDocumentation interfaceName="IOverlayAngularComp" config={"asCode":true } /%}
+{% /if %}
+{% if isFramework("javascript") %}
+{% interfaceDocumentation interfaceName="IOverlayComp" config={"asCode":true } /%}
+{% /if %}
+
+{% if isFramework("vue") %}
+Any valid Vue component can be used, however the optional `IOverlay` interface exposes lifecycle hooks that receive `IOverlayParams`.
+{% /if %}
+
+{% if isFramework("vue") %}
+{% interfaceDocumentation interfaceName="IOverlay" config={"asCode":true } /%}
+{% /if %}
+
+The example below demonstrates using the grid provided overlays as an active overlay. Note the following:
+
+{% if isFramework("javascript", "angular","react") %}
+
+-   activeOverlays take precedence over the provided loading overlay.
+-   activeOverlay can be displayed no matter what the grid state, i.e showing the no-rows overlay even when there are rows.
+-   StatusOverlay is registered in the [components](./components/#2-by-name) map and shown by setting `activateOverlay = "statusOverlay"` to the key used.
+
+{% /if %}
+{% if isFramework("vue") %}
+
+-   activeOverlays take precedence over the provided loading overlay.
+-   activeOverlay can be displayed no matter what the grid state, i.e showing the no-rows overlay even when there are rows.
+-   StatusOverlay is registered in the [components](./components/#registering-custom-components) map and shown by setting `activateOverlay = "statusOverlay"` to the key used.
+
+{% /if %}
+{% gridExampleRunner title="Active Overlay Switcher" name="active-overlay-switcher" exampleHeight=350 /%}

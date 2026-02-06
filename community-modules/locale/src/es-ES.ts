@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_ES = {
     searchOoo: 'Buscar...',
     blanks: '(Vacíos)',
     noMatches: 'Sin coincidencias',
+    typeToSearchOoo: 'Escribe para buscar...',
 
     // Number Filter & Text Filter
     filterOoo: 'Filtro...',
@@ -44,6 +45,28 @@ export const AG_GRID_LOCALE_ES = {
     dateFormatOoo: 'yyyy-mm-dd',
     before: 'Antes',
     after: 'Después',
+    yesterday: 'Ayer',
+    today: 'Hoy',
+    tomorrow: 'Mañana',
+    last7Days: 'Últimos 7 días',
+    lastWeek: 'Semana pasada',
+    thisWeek: 'Esta semana',
+    nextWeek: 'Próxima semana',
+    last30Days: 'Últimos 30 días',
+    lastMonth: 'Mes pasado',
+    thisMonth: 'Este mes',
+    nextMonth: 'Próximo mes',
+    last90Days: 'Últimos 90 días',
+    lastQuarter: 'Último trimestre',
+    thisQuarter: 'Este trimestre',
+    nextQuarter: 'Próximo trimestre',
+    lastYear: 'Año pasado',
+    thisYear: 'Este año',
+    yearToDate: 'Año hasta la fecha',
+    nextYear: 'Próximo año',
+    last6Months: 'Últimos 6 meses',
+    last12Months: 'Últimos 12 meses',
+    last24Months: 'Últimos 24 meses',
 
     // Filter Conditions
     andCondition: 'Y',
@@ -161,6 +184,8 @@ export const AG_GRID_LOCALE_ES = {
     maxLengthValidation: 'Debe tener ${variable} caracteres o menos.',
     minValueValidation: 'Debe ser mayor o igual a ${variable}',
     maxValueValidation: 'Debe ser menor o igual a ${variable}',
+    strictMinValueValidation: 'Debe ser mayor que ${variable}',
+    strictMaxValueValidation: 'Debe ser menor que ${variable}',
     invalidSelectionValidation: 'Selección no válida.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -188,6 +213,8 @@ export const AG_GRID_LOCALE_ES = {
     loadingOoo: 'Cargando...',
     loadingError: 'ERR',
     noRowsToShow: 'No hay filas para mostrar',
+    noMatchingRows: 'Sin filas coincidentes',
+    exportingOoo: 'Exportando...',
     enabled: 'Habilitado',
 
     // Menu
@@ -195,12 +222,16 @@ export const AG_GRID_LOCALE_ES = {
     pinLeft: 'Fijar a la Izquierda',
     pinRight: 'Fijar a la Derecha',
     noPin: 'No Fijar',
+    pinRow: 'Fijar fila',
+    pinTop: 'Fijar en la parte superior',
+    pinBottom: 'Fijar en la parte inferior',
+    unpinRow: 'Desfijar fila',
     valueAggregation: 'Agregación de Valores',
     noAggregation: 'Ninguna',
     autosizeThisColumn: 'Autoajustar Esta Columna',
     autosizeAllColumns: 'Autoajustar Todas las Columnas',
-    groupBy: 'Agrupar por',
-    ungroupBy: 'Desagrupar por',
+    groupBy: 'Agrupar por ${variable}',
+    ungroupBy: 'Desagrupar por ${variable}',
     ungroupAll: 'Desagrupar Todo',
     addToValues: 'Añadir ${variable} a valores',
     removeFromValues: 'Quitar ${variable} de valores',
@@ -225,6 +256,8 @@ export const AG_GRID_LOCALE_ES = {
     chooseColumns: 'Elegir columnas',
     sortAscending: 'Ordenar Ascendente',
     sortDescending: 'Ordenar Descendente',
+    sortAbsoluteAscending: 'Ordenar absolutamente ascendente',
+    sortAbsoluteDescending: 'Ordenar absolutamente descendente',
     sortUnSort: 'Limpiar Orden',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -553,6 +586,7 @@ export const AG_GRID_LOCALE_ES = {
     ariaChecked: 'seleccionado',
     ariaColumn: 'Columna',
     ariaColumnGroup: 'Grupo de Columnas',
+    ariaFilterActive: 'Filtro activo',
     ariaColumnFiltered: 'Columna Filtrada',
     ariaColumnSelectAll: 'Alternar visibilidad de todas las columnas',
     ariaDateFilterInput: 'Entrada de Filtro de Fecha',
@@ -606,6 +640,8 @@ export const AG_GRID_LOCALE_ES = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' de ',
     ariaDropZoneColumnComponentSortAscending: 'ascendente',
     ariaDropZoneColumnComponentSortDescending: 'descendente',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'ascendente absoluto',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'descendente absoluto',
     ariaLabelDialog: 'Diálogo',
     ariaLabelColumnMenu: 'Menú de Columna',
     ariaLabelColumnFilter: 'Filtro de Columna',
@@ -662,6 +698,15 @@ export const AG_GRID_LOCALE_ES = {
     november: 'Noviembre',
     december: 'Diciembre',
 
+    // Date-time parts
+    year: 'Año',
+    quarter: 'Trimestre',
+    month: 'Mes',
+    day: 'Día',
+    hour: 'Hora',
+    minute: 'Minuto',
+    second: 'Segundo',
+
     // Time formats
     timeFormatSlashesDDMMYYYY: 'DD/MM/AAAA',
     timeFormatSlashesMMDDYYYY: 'MM/DD/AAAA',
@@ -672,5 +717,5 @@ export const AG_GRID_LOCALE_ES = {
     timeFormatDashesYYYYMMDD: 'AAAA-MM-DD',
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM AAAA',
     timeFormatHHMMSS: 'HH:MM:SS',
-    timeFormatHHMMSSAmPm: 'HH:MM:SS AM/PM',
+    timeFormatHHMMSSAmPm: 'HH:MM:SS a. m./p. m.',
 };

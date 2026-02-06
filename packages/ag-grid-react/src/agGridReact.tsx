@@ -8,15 +8,17 @@ import type { AgGridReactProps } from './shared/interfaces';
 export class AgGridReact<TData = any> extends Component<AgGridReactProps<TData>, object> {
     /** Grid Api available after onGridReady event has fired. */
     public api!: GridApi<TData>;
-    private apiListeners: Array<(params: any) => void> = [];
+    private readonly apiListeners: Array<(params: any) => void> = [];
 
     public registerApiListener(listener: (api: GridApi) => void) {
         this.apiListeners.push(listener);
     }
 
-    private setGridApi = (api: GridApi) => {
+    private readonly setGridApi = (api: GridApi) => {
         this.api = api;
-        this.apiListeners.forEach((listener) => listener(api));
+        for (const listener of this.apiListeners) {
+            listener(api);
+        }
     };
 
     override componentWillUnmount() {

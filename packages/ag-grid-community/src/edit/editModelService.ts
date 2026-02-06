@@ -13,20 +13,17 @@ import type {
     EditValidationMap,
     EditValue,
     GetEditsParams,
-    IEditCellValidationModel,
-    IEditModelService,
-    IEditRowValidationModel,
 } from '../interfaces/iEditModelService';
 import type { EditPosition, EditRowPosition } from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { UNEDITED } from './utils/editors';
 
-export class EditModelService extends BeanStub implements NamedBean, IEditModelService {
-    beanName = 'editModelSvc' as const;
+export class EditModelService extends BeanStub implements NamedBean {
+    public beanName = 'editModelSvc' as const;
 
     private readonly edits: EditMap = new Map();
-    private cellValidations: IEditCellValidationModel = new EditCellValidationModel();
-    private rowValidations: IEditRowValidationModel = new EditRowValidationModel();
+    private cellValidations: EditCellValidationModel = new EditCellValidationModel();
+    private rowValidations: EditRowValidationModel = new EditRowValidationModel();
 
     // during some operations, we want to always return false from `hasEdits`
     private suspendEdits = false;
@@ -112,21 +109,28 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         return data;
     }
 
-    public getEdit(position: EditPosition, copy?: false): Readonly<EditValue> | undefined {
-        const edit = this._getEdit(position);
-        return copy && edit ? { ...edit } : edit;
-    }
-
-    private _getEdit(position: EditPosition): EditValue | undefined {
-        if (this.suspendEdits) {
-            return undefined;
+    public getEdit(position: EditPosition = {}, params?: GetEditsParams): EditValue | undefined {
+        const { rowNode, column } = position;
+        const edits = this.edits;
+        if (this.suspendEdits || edits.size === 0 || !rowNode || !column) {
+            return undefined; // no edits or incomplete position
         }
 
-        if (this.edits.size === 0) {
-            return undefined;
+        // Check the row's edits first
+        const edit = edits.get(rowNode)?.get(column);
+        if (edit) {
+            return edit; // found edit for the cell
         }
 
-        return position.rowNode && position.column && this.getEditRow(position.rowNode)?.get(position.column);
+        // If checkSiblings, also check the pinned sibling for the column
+        if (params?.checkSiblings) {
+            const pinnedSibling = (rowNode as RowNode).pinnedSibling;
+            if (pinnedSibling) {
+                return edits.get(pinnedSibling)?.get(column); // return edit from pinned sibling if found
+            }
+        }
+
+        return undefined;
     }
 
     public getEditMap(copy = true): EditMap {
@@ -163,9 +167,12 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
     }
 
     public setEdit(position: Required<EditPosition>, edit: Partial<EditValue>): Readonly<EditValue> {
-        (this.edits.size === 0 || !this.edits.has(position.rowNode)) && this.edits.set(position.rowNode, new Map());
+        const edits = this.edits;
+        if (edits.size === 0 || !edits.has(position.rowNode)) {
+            edits.set(position.rowNode, new Map());
+        }
 
-        const currentEdit = this._getEdit(position);
+        const currentEdit = this.getEdit(position);
 
         const updatedEdit = Object.assign({
             editorState: {
@@ -185,7 +192,7 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         const { rowNode, column } = position;
         if (rowNode) {
             if (column) {
-                const edit = this._getEdit(position);
+                const edit = this.getEdit(position);
                 if (edit) {
                     edit.editorValue = undefined;
                     edit.pendingValue = edit.sourceValue;
@@ -290,7 +297,7 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
             map.set(column, {
                 editorValue: undefined,
                 pendingValue: UNEDITED,
-                sourceValue: this.beans.valueSvc.getValue(column as AgColumn, rowNode, false, 'api'),
+                sourceValue: this.beans.valueSvc.getValue(column as AgColumn, rowNode, 'data'),
                 state: 'editing',
                 editorState: {
                     isCancelAfterEnd: undefined,
@@ -311,7 +318,6 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         } else {
             this.clear();
         }
-        return;
     }
 
     public clear(): void {
@@ -321,19 +327,19 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         this.edits.clear();
     }
 
-    public getCellValidationModel(): IEditCellValidationModel {
+    public getCellValidationModel(): EditCellValidationModel {
         return this.cellValidations;
     }
 
-    public getRowValidationModel(): IEditRowValidationModel {
+    public getRowValidationModel(): EditRowValidationModel {
         return this.rowValidations;
     }
 
-    public setCellValidationModel(model: IEditCellValidationModel): void {
+    public setCellValidationModel(model: EditCellValidationModel): void {
         this.cellValidations = model;
     }
 
-    public setRowValidationModel(model: IEditRowValidationModel): void {
+    public setRowValidationModel(model: EditRowValidationModel): void {
         this.rowValidations = model;
     }
 
@@ -343,7 +349,7 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
     }
 }
 
-export class EditCellValidationModel implements IEditCellValidationModel {
+export class EditCellValidationModel {
     private cellValidations: EditValidationMap = new Map();
 
     public getCellValidation(position?: EditPosition): EditValidation | undefined {
@@ -371,7 +377,7 @@ export class EditCellValidationModel implements IEditCellValidationModel {
         this.cellValidations.get(rowNode)?.delete(column);
     }
 
-    setCellValidationMap(validationMap: EditValidationMap): void {
+    public setCellValidationMap(validationMap: EditValidationMap): void {
         this.cellValidations = validationMap;
     }
 
@@ -379,11 +385,11 @@ export class EditCellValidationModel implements IEditCellValidationModel {
         return this.cellValidations;
     }
 
-    clearCellValidationMap(): void {
+    public clearCellValidationMap(): void {
         this.cellValidations.clear();
     }
 }
-export class EditRowValidationModel implements IEditRowValidationModel {
+export class EditRowValidationModel {
     private rowValidations: EditRowValidationMap = new Map();
 
     public getRowValidation(position?: EditRowPosition): EditValidation | undefined {

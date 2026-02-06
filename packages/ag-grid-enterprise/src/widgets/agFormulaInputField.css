@@ -1,0 +1,97 @@
+.ag-formula-token {
+    line-height: var(--ag-line-height, 1.6);
+}
+
+.ag-formula-token-color-1 {
+    color: var(--ag-formula-token-1-color);
+}
+
+.ag-formula-token-color-2 {
+    color: var(--ag-formula-token-2-color);
+}
+
+.ag-formula-token-color-3 {
+    color: var(--ag-formula-token-3-color);
+}
+
+.ag-formula-token-color-4 {
+    color: var(--ag-formula-token-4-color);
+}
+
+.ag-formula-token-color-5 {
+    color: var(--ag-formula-token-5-color);
+}
+
+.ag-formula-token-color-6 {
+    color: var(--ag-formula-token-6-color);
+}
+
+.ag-formula-token-color-7 {
+    color: var(--ag-formula-token-7-color);
+}
+
+.ag-formula-range-color-1 {
+    --ag-range-selection-border-color: var(--ag-formula-token-1-color);
+    --ag-range-selection-background-color: var(--ag-formula-token-1-background-color);
+}
+
+.ag-formula-range-color-2 {
+    --ag-range-selection-border-color: var(--ag-formula-token-2-color);
+    --ag-range-selection-background-color: var(--ag-formula-token-2-background-color);
+}
+
+.ag-formula-range-color-3 {
+    --ag-range-selection-border-color: var(--ag-formula-token-3-color);
+    --ag-range-selection-background-color: var(--ag-formula-token-3-background-color);
+}
+
+.ag-formula-range-color-4 {
+    --ag-range-selection-border-color: var(--ag-formula-token-4-color);
+    --ag-range-selection-background-color: var(--ag-formula-token-4-background-color);
+}
+
+.ag-formula-range-color-5 {
+    --ag-range-selection-border-color: var(--ag-formula-token-5-color);
+    --ag-range-selection-background-color: var(--ag-formula-token-5-background-color);
+}
+
+.ag-formula-range-color-6 {
+    --ag-range-selection-border-color: var(--ag-formula-token-6-color);
+    --ag-range-selection-background-color: var(--ag-formula-token-6-background-color);
+}
+
+.ag-formula-range-color-7 {
+    --ag-range-selection-border-color: var(--ag-formula-token-7-color);
+    --ag-range-selection-background-color: var(--ag-formula-token-7-background-color);
+}
+
+/* stylelint-disable selector-max-specificity */
+.ag-range-handle.ag-formula-range-color-1,
+.ag-fill-handle.ag-formula-range-color-1 {
+    background-color: var(--ag-formula-token-1-color);
+}
+
+.ag-range-handle.ag-formula-range-color-2,
+.ag-fill-handle.ag-formula-range-color-2 {
+    background-color: var(--ag-formula-token-2-color);
+}
+
+.ag-range-handle.ag-formula-range-color-3,
+.ag-fill-handle.ag-formula-range-color-3 {
+    background-color: var(--ag-formula-token-3-color);
+}
+
+.ag-range-handle.ag-formula-range-color-4,
+.ag-fill-handle.ag-formula-range-color-4 {
+    background-color: var(--ag-formula-token-4-color);
+}
+
+.ag-range-handle.ag-formula-range-color-5,
+.ag-fill-handle.ag-formula-range-color-5 {
+    background-color: var(--ag-formula-token-5-color);
+}
+
+.ag-range-handle.ag-formula-range-color-6,
+.ag-fill-handle.ag-formula-range-color-6 {
+    background-color: var(--ag-formula-token-6-color);
+}

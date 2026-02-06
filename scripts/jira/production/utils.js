@@ -66,8 +66,8 @@ const executeJiraRequest = (url, componentSelector) => {
                 resolution: resolution ? resolution.name : null,
                 features,
                 moreInformation: moreInformation ? renderedFields.customfield_10522 : moreInformation,
-                deprecationNotes,
-                breakingChangesNotes,
+                deprecationNotes: deprecationNotes ? renderedFields.customfield_10520 : deprecationNotes,
+                breakingChangesNotes: breakingChangesNotes ? renderedFields.customfield_10521 : breakingChangesNotes,
                 documentationUrl,
             };
         })

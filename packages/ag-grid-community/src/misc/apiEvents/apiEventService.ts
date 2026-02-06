@@ -1,8 +1,8 @@
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { AgEventType } from '../../eventTypes';
+import { ALWAYS_SYNC_GLOBAL_EVENTS } from '../../eventTypes';
 import type { AgEventListener, AgGlobalEventListener } from '../../events';
-import { ALWAYS_SYNC_GLOBAL_EVENTS } from '../../events';
 import type { IFrameworkEventListenerService } from '../../interfaces/iFrameworkEventListenerService';
 
 export class ApiEventService extends BeanStub<AgEventType> implements NamedBean {
@@ -89,7 +89,9 @@ export class ApiEventService extends BeanStub<AgEventType> implements NamedBean 
     }
 
     private destroyGlobalListeners(set: Set<AgGlobalEventListener>, async: boolean): void {
-        set.forEach((listener) => this.eventSvc.removeGlobalListener(listener, async));
+        for (const listener of set) {
+            this.eventSvc.removeGlobalListener(listener, async);
+        }
         set.clear();
     }
 

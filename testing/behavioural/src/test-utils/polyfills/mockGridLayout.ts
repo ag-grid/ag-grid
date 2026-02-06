@@ -19,13 +19,27 @@ const getElementType = (el: HTMLElement) => {
         return 'body';
     }
     const classList = el.classList;
-    if (classList.contains('ag-row')) return 'row';
-    if (classList.contains('ag-header')) return 'header';
-    if (classList.contains('ag-body-viewport')) return 'viewport';
-    if (classList.contains('ag-root')) return 'grid';
-    if (classList.contains('ag-header-cell')) return 'column';
-    if (classList.contains('ag-cell')) return 'cell';
-    if (classList.contains('ag-drag-handle')) return 'drag-handle';
+    if (classList.contains('ag-row')) {
+        return 'row';
+    }
+    if (classList.contains('ag-header')) {
+        return 'header';
+    }
+    if (classList.contains('ag-body-viewport')) {
+        return 'viewport';
+    }
+    if (classList.contains('ag-root')) {
+        return 'grid';
+    }
+    if (classList.contains('ag-header-cell')) {
+        return 'column';
+    }
+    if (classList.contains('ag-cell')) {
+        return 'cell';
+    }
+    if (classList.contains('ag-drag-handle')) {
+        return 'drag-handle';
+    }
     return 'default';
 };
 
@@ -116,6 +130,7 @@ function init(): boolean {
         return false;
     }
     initialized = true;
+    innerTextPolyfill();
 
     const DOMRectInspect = class DOMRect {
         constructor(
@@ -184,4 +199,16 @@ function getPaginationOffset(el: HTMLElement): number {
     }
 
     return isFinite(minIndex) ? minIndex : 0;
+}
+
+export function innerTextPolyfill() {
+    // for snapshots, the grid uses innerText which is not supported by JSDOM; so we need to polyfill it
+    // with innerText instead
+    if (!('innerText' in Element.prototype)) {
+        Object.defineProperty(Element.prototype, 'innerText', {
+            set(value) {
+                this.textContent = value;
+            },
+        });
+    }
 }

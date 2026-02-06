@@ -143,6 +143,9 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             pinnedRowDataChanged: refreshAndKeepActive,
             cellValueChanged: refreshAndKeepActiveDebounced,
             rowNodeDataChanged: refreshAndKeepActiveDebounced,
+            cellEditingStopped: refreshAndKeepActiveDebounced,
+            cellEditValuesChanged: refreshAndKeepActiveDebounced,
+            batchEditingStopped: refreshAndKeepActiveDebounced,
         });
         const rowSpanSvc = this.beans.rowSpanSvc;
         if (rowSpanSvc) {
@@ -437,7 +440,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 let valueToFind: string | null;
                 const getFindText = (groupRowRendererParams as FindGroupRowRendererParams)?.getFindText;
                 if (getFindText) {
-                    const value = valueSvc.getValueForDisplay(undefined, node).value;
+                    const value = valueSvc.getValueForDisplay({ node, from: 'batch' }).value;
                     valueToFind = getFindText(
                         _addGridCommonParams(gos, {
                             value,
@@ -446,13 +449,21 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                             column: null,
                             colDef: null,
                             getValueFormatted: () => {
-                                const { valueFormatted } = valueSvc.getValueForDisplay(undefined, node, true);
+                                const { valueFormatted } = valueSvc.getValueForDisplay({
+                                    node,
+                                    includeValueFormatted: true,
+                                    from: 'batch',
+                                });
                                 return valueFormatted;
                             },
                         })
                     );
                 } else {
-                    const { value, valueFormatted } = valueSvc.getValueForDisplay(undefined, node, true);
+                    const { value, valueFormatted } = valueSvc.getValueForDisplay({
+                        node,
+                        includeValueFormatted: true,
+                        from: 'batch',
+                    });
                     valueToFind = valueFormatted ?? value;
                 }
 
@@ -487,7 +498,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 const colDef = column.colDef;
                 const getFindText = colDef.getFindText;
                 if (getFindText) {
-                    const value = valueSvc.getValueForDisplay(column, node).value;
+                    const value = valueSvc.getValueForDisplay({ column, node, from: 'batch' }).value;
                     valueToFind = getFindText(
                         _addGridCommonParams(gos, {
                             value,
@@ -496,13 +507,23 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                             column,
                             colDef,
                             getValueFormatted: () => {
-                                const { valueFormatted } = valueSvc.getValueForDisplay(column, node, true);
+                                const { valueFormatted } = valueSvc.getValueForDisplay({
+                                    column,
+                                    node,
+                                    includeValueFormatted: true,
+                                    from: 'batch',
+                                });
                                 return valueFormatted;
                             },
                         })
                     );
                 } else {
-                    const { value, valueFormatted } = valueSvc.getValueForDisplay(column, node, true);
+                    const { value, valueFormatted } = valueSvc.getValueForDisplay({
+                        column,
+                        node,
+                        includeValueFormatted: true,
+                        from: 'batch',
+                    });
                     valueToFind = valueFormatted ?? value;
                 }
 

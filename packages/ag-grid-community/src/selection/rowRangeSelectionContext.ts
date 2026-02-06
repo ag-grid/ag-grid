@@ -50,7 +50,7 @@ export class RowRangeSelectionContext {
         this.cachedRange.length = 0;
     }
 
-    public getRange(): readonly RowNode[] {
+    private getRange(): readonly RowNode[] {
         if (this.cachedRange.length === 0) {
             const root = this.getRoot();
             const end = this.getEnd();

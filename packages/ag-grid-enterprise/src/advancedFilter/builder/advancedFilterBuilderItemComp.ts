@@ -137,7 +137,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
         if (level === 0) {
             const eTreeLine = _createElement({
                 tag: 'div',
-                cls: 'ag-advanced-filter-builder-item-tree-line-vertical-bottom ag-advanced-filter-builder-item-tree-line-root',
+                cls: 'ag-advanced-filter-builder-item-tree-line ag-advanced-filter-builder-item-tree-line-vertical-bottom ag-advanced-filter-builder-item-tree-line-root',
             });
             this.eTreeLines.appendChild(eTreeLine);
 
@@ -212,7 +212,9 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
 
     private setupTreeLines(level: number): void {
         for (let i = 0; i < level; i++) {
-            this.eTreeLines.appendChild(_createElement({ tag: 'div' }));
+            this.eTreeLines.appendChild(
+                _createElement({ tag: 'div', cls: 'ag-advanced-filter-builder-item-tree-line' })
+            );
         }
     }
 
@@ -281,12 +283,10 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
         this.addManagedListeners(this.eRemoveButton, {
             click: () => this.removeItem(),
             keydown: (event: KeyboardEvent) => {
-                switch (event.key) {
-                    case KeyCode.ENTER:
-                        event.preventDefault();
-                        _stopPropagationForAgGrid(event);
-                        this.removeItem();
-                        break;
+                if (event.key === KeyCode.ENTER) {
+                    event.preventDefault();
+                    _stopPropagationForAgGrid(event);
+                    this.removeItem();
                 }
             },
         });
@@ -310,12 +310,10 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
             this.addManagedListeners(this.eMoveUpButton, {
                 click: () => this.moveItem(true),
                 keydown: (event: KeyboardEvent) => {
-                    switch (event.key) {
-                        case KeyCode.ENTER:
-                            event.preventDefault();
-                            _stopPropagationForAgGrid(event);
-                            this.moveItem(true);
-                            break;
+                    if (event.key === KeyCode.ENTER) {
+                        event.preventDefault();
+                        _stopPropagationForAgGrid(event);
+                        this.moveItem(true);
                     }
                 },
             });
@@ -339,12 +337,10 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
             this.addManagedListeners(this.eMoveDownButton, {
                 click: () => this.moveItem(false),
                 keydown: (event: KeyboardEvent) => {
-                    switch (event.key) {
-                        case KeyCode.ENTER:
-                            event.preventDefault();
-                            _stopPropagationForAgGrid(event);
-                            this.moveItem(false);
-                            break;
+                    if (event.key === KeyCode.ENTER) {
+                        event.preventDefault();
+                        _stopPropagationForAgGrid(event);
+                        this.moveItem(false);
                     }
                 },
             });

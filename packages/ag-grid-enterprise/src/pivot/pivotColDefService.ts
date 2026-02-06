@@ -213,7 +213,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
                 const hasCollapsedLeafGroup =
                     leafGroup && valueCols.length === 1 && this.gos.get('removePivotHeaderRowWhenSingleValueColumn');
 
-                valueCols.forEach((valueColumn) => {
+                for (const valueColumn of valueCols) {
                     const columnName: string | null = this.colNames.getDisplayNameForColumn(valueColumn, 'header');
                     const totalColDef = this.createColDef(valueColumn, columnName, def.pivotKeys);
                     totalColDef.pivotTotalColumnIds = childAcc.get(valueColumn.getColId());
@@ -228,7 +228,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
                         children.push(totalColDef);
                         currentPivotColumnDefs.push(totalColDef);
                     }
-                });
+                }
 
                 this.merge(acc, childAcc);
 
@@ -317,7 +317,11 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
 
             // add total colDef to group and pivot colDefs array
             const children = (groupDef as ColGroupDef).children;
-            insertAfter ? children.push(totalColDef) : children.unshift(totalColDef);
+            if (insertAfter) {
+                children.push(totalColDef);
+            } else {
+                children.unshift(totalColDef);
+            }
             pivotColumnDefs.push(totalColDef);
         }
 
@@ -366,7 +370,11 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
                 : colDef;
 
             pivotColumnDefs.push(colDef);
-            insertAtEnd ? pivotColumnGroupDefs.push(valueGroup) : pivotColumnGroupDefs.unshift(valueGroup);
+            if (insertAtEnd) {
+                pivotColumnGroupDefs.push(valueGroup);
+            } else {
+                pivotColumnGroupDefs.unshift(valueGroup);
+            }
         }
     }
 

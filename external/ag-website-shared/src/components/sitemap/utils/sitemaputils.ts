@@ -11,16 +11,21 @@ export default function parseSitemap(xml: string) {
 }
 
 const CHARTS_PREFIX = '/charts';
+const STUDIO_PREFIX = '/studio';
 
 const categorizeUrls = (urls: string[]): CategorizedSitemap => {
     const categorisedSitemap: CategorizedSitemap = {};
 
     urls.forEach((url: string) => {
         const urlObj = new URL(url);
-        // Ignore charts prefix (only on some environments)
-        const pathname = urlObj.pathname.startsWith(CHARTS_PREFIX)
-            ? urlObj.pathname.slice(CHARTS_PREFIX.length)
-            : urlObj.pathname;
+        // Ignore library prefix (only on some environments)
+        let pathname = urlObj.pathname;
+        if (urlObj.pathname.startsWith(CHARTS_PREFIX)) {
+            pathname = urlObj.pathname.slice(CHARTS_PREFIX.length);
+        } else if (urlObj.pathname.startsWith(STUDIO_PREFIX)) {
+            // If it's a studio URL, remove the studio prefix
+            pathname = urlObj.pathname.slice(STUDIO_PREFIX.length);
+        }
         const path = pathname.split('/').filter(Boolean);
 
         // Determine category

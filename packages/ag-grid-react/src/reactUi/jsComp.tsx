@@ -44,7 +44,7 @@ export const showJsComp = (
             return;
         } // in case we were destroyed before async comp was returned
 
-        compGui?.parentElement?.removeChild(compGui);
+        compGui?.remove();
 
         context.destroyBean(comp);
 

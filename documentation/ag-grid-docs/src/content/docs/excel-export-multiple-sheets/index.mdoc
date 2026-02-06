@@ -21,13 +21,14 @@ Calling `getSheetDataForExcel` starts a **Multiple Sheet** export process, that 
 
 In this example, we use the `onlySelected=true` property to segment the grid data into multiple sheets, each containing 100 data rows. Specifically:
 
-1. We manually select 100 rows at a time using `setNodesSelected`. 
+1. We manually select 100 rows at a time using `setNodesSelected`.
 2. We then use `getSheetDataForExcel` with the `onlySelected` option to generate sheet data for these selected nodes only.
 3. We then deselect rows again to avoid affecting the UI.
 
 Note the following:
-* The header is exported on each page, so each page will contain 101 records (including the header).
-* Because each export did not have a specified `sheetName`, they will be named `ag-grid`, `ag-grid_1`, `ag-grid_2` and so on.
+
+-   The header is exported on each page, so each page will contain 101 records (including the header).
+-   Because each export did not have a specified `sheetName`, they will be named `ag-grid`, `ag-grid_1`, `ag-grid_2` and so on.
 
 {% gridExampleRunner title="Excel Export - Multiple Sheets with Data Selection" name="excel-export-multiple-sheets-selected" /%}
 
@@ -37,8 +38,8 @@ In this example, we filter on the sport column to segment the grid data into mul
 
 Note the following:
 
-* The exported Excel file will contain one sheet for each sport result.
-* Each sheet was exported using the sport name as the name of the sheet.
+-   The exported Excel file will contain one sheet for each sport result.
+-   Each sheet was exported using the sport name as the name of the sheet.
 
 {% gridExampleRunner title="Excel Export - Multiple Sheets with Filtered Data" name="excel-export-multiple-sheets-by-filter" /%}
 
@@ -48,9 +49,9 @@ In this example, we export two grids, each into a separate sheet of the same Exc
 
 Note the following:
 
-* The contents of the `Athletes` grid will be exported to the `Athletes` sheet.
-* The contents of the `Selected Athletes` grid will be exported to the `Selected Athletes` sheet.
-* Only the `onExcelExport` method is relevant to **Excel Export**
+-   The contents of the `Athletes` grid will be exported to the `Athletes` sheet.
+-   The contents of the `Selected Athletes` grid will be exported to the `Selected Athletes` sheet.
+-   Only the `onExcelExport` method is relevant to **Excel Export**
 
 {% gridExampleRunner title="Excel Export - Multiple Sheets with Multiple Grids" name="excel-export-multiple-sheets-multiple-grids" /%}
 

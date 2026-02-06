@@ -1,7 +1,7 @@
 import { type FunctionComponent, useCallback, useMemo, useRef, useState } from 'react';
 
 import type { ColDef, GetDataPath, ValueFormatterFunc, ValueFormatterParams } from 'ag-grid-community';
-import { AllCommunityModule, ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community';
+import { AllCommunityModule, ClientSideRowModelModule } from 'ag-grid-community';
 import {
     ExcelExportModule,
     MasterDetailModule,
@@ -11,7 +11,7 @@ import {
     StatusBarModule,
     TreeDataModule,
 } from 'ag-grid-enterprise';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import styles from './HRExample.module.css';
 import { ContactCellRenderer } from './cell-renderers/ContactCellRenderer';
@@ -21,7 +21,7 @@ import { StatusCellRenderer } from './cell-renderers/StatusCellRenderer';
 import { TagCellRenderer } from './cell-renderers/TagCellRenderer';
 import { getData } from './data';
 
-ModuleRegistry.registerModules([
+const modules = [
     AllCommunityModule,
     ClientSideRowModelModule,
     ExcelExportModule,
@@ -31,7 +31,7 @@ ModuleRegistry.registerModules([
     SetFilterModule,
     StatusBarModule,
     TreeDataModule,
-]);
+];
 
 interface Props {
     gridTheme?: string;
@@ -143,20 +143,22 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
     }, []);
 
     return (
-        <div className={styles.wrapper}>
-            <div className={styles.container}>
-                <div className={`${themeClass} ${styles.grid}`}>
-                    <AgGridReact
-                        ref={gridRef}
-                        columnDefs={colDefs}
-                        rowData={rowData}
-                        groupDefaultExpanded={-1}
-                        getDataPath={getDataPath}
-                        treeData
-                        autoGroupColumnDef={autoGroupColumnDef}
-                    />
+        <AgGridProvider modules={modules}>
+            <div className={styles.wrapper}>
+                <div className={styles.container}>
+                    <div className={`${themeClass} ${styles.grid}`}>
+                        <AgGridReact
+                            ref={gridRef}
+                            columnDefs={colDefs}
+                            rowData={rowData}
+                            groupDefaultExpanded={-1}
+                            getDataPath={getDataPath}
+                            treeData
+                            autoGroupColumnDef={autoGroupColumnDef}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };

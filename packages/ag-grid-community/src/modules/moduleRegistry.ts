@@ -1,4 +1,4 @@
-import type { Module, ModuleName, ModuleValidationInvalidResult } from '../interfaces/iModule';
+import type { Module, ModuleName, _ModuleWithLicenseManager } from '../interfaces/iModule';
 import type { RowModelType } from '../interfaces/iRowModel';
 import { _errorOnce } from '../utils/log';
 
@@ -41,12 +41,9 @@ function runVersionChecks(module: Module) {
         );
     }
 
-    if (module.validate) {
-        const result = module.validate();
-        if (!result.isValid) {
-            const errorResult = result as ModuleValidationInvalidResult;
-            _errorOnce(`${errorResult.message}`);
-        }
+    const result = module.validate?.();
+    if (result && !result.isValid) {
+        _errorOnce(`${result.message}`);
     }
 }
 
@@ -70,15 +67,17 @@ export function _registerModule(module: Module, gridId: string | undefined, isIn
     } else {
         moduleStore = globalModulesMap;
     }
-    rowModels.forEach((rowModel) => {
+    for (const rowModel of rowModels) {
         if (moduleStore[rowModel] === undefined) {
             moduleStore[rowModel] = {};
         }
         moduleStore[rowModel]![module.moduleName] = module;
-    });
+    }
 
     if (module.dependsOn) {
-        module.dependsOn.forEach((dependency) => _registerModule(dependency, gridId, isInternalRegistration));
+        for (const dependency of module.dependsOn) {
+            _registerModule(dependency, gridId, isInternalRegistration);
+        }
     }
 }
 
@@ -141,6 +140,24 @@ export class ModuleRegistry {
      * @param modules - modules to register
      */
     public static registerModules(modules: Module[]): void {
-        modules.forEach((module) => _registerModule(module, undefined));
+        for (const module of modules) {
+            _registerModule(module, undefined);
+        }
     }
+}
+
+export function _findEnterpriseCoreModule(modules: Module[]): _ModuleWithLicenseManager | undefined {
+    for (const module of modules) {
+        if ('setLicenseKey' in module) {
+            return module as _ModuleWithLicenseManager;
+        }
+
+        if (module.dependsOn) {
+            const found = _findEnterpriseCoreModule(module.dependsOn);
+            if (found) {
+                return found;
+            }
+        }
+    }
+    return undefined;
 }

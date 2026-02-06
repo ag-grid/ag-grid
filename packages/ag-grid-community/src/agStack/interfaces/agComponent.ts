@@ -13,7 +13,7 @@ export interface AgComponent<
     TBeanCollection,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
-    TLocalEventType extends string,
+    TLocalEventType extends string = AgComponentEvent,
 > extends AgBaseComponent<TBeanCollection>,
         AgBean<TBeanCollection, TProperties, TGlobalEvents, TLocalEventType> {
     getCompId(): number;
@@ -65,7 +65,7 @@ export type AgComponentSelector<
     TBeanCollection = any,
     TComponent extends AgBaseComponent<TBeanCollection> = AgBaseComponent<TBeanCollection>,
 > = {
-    component: { new (params?: any): TComponent };
+    component: new (params?: any) => TComponent;
     selector: TComponentSelectorType;
 };
 

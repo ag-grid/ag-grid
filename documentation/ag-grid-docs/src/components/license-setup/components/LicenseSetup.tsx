@@ -81,7 +81,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
         () =>
             getBootstrapSnippet({
                 framework,
-                license: (licenseState.chartsNoGridEnterpriseError ? '' : userLicense) || 'your License Key',
+                license: (licenseState.chartsNoGridEnterpriseError ? '' : userLicense) || 'YOUR_LICENSE_KEY',
                 isIntegratedCharts,
             }),
         [framework, licenseState, userLicense, isIntegratedCharts]
@@ -100,7 +100,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
             <Note>
                 You can test AG Grid Enterprise locally without a licence. To test in production, access support and
                 remove the watermark & console warnings,{' '}
-                <a href="../community-vs-enterprise/#request-an-enterprise-bundle-trial-licence">
+                <a href="../community-vs-enterprise/#request-a-30-day-enterprise-bundle-trial-licence">
                     request a trial licence
                 </a>
                 .

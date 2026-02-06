@@ -93,7 +93,8 @@ export abstract class BaseSelectionService extends BeanStub {
         }
 
         const selected = rowNode.isSelected()!;
-        if (!rowNode.selectable) {
+        const isEditing = this.beans.editSvc?.isEditing({ rowNode });
+        if (!rowNode.selectable || isEditing) {
             return;
         }
 
@@ -180,6 +181,8 @@ export abstract class BaseSelectionService extends BeanStub {
                     atLeastOneDeSelected = true;
                     break;
                 default:
+                    // If any child node has an indeterminate selection state, then its parent must also have an indeterminate state
+                    // regardless of the state of the other children, so we can return early here
                     return undefined;
             }
         }
@@ -209,6 +212,10 @@ export abstract class BaseSelectionService extends BeanStub {
         e?: Event,
         source: SelectionEventSourceType = 'api'
     ): boolean {
+        if (newValue && rowNode.destroyed) {
+            return false; // cannot select destroyed nodes
+        }
+
         // we only check selectable when newValue=true (ie selecting) to allow unselecting values,
         // as selectable is dynamic, need a way to unselect rows when selectable becomes false.
         const selectionNotAllowed = !rowNode.selectable && newValue;
@@ -267,7 +274,9 @@ export abstract class BaseSelectionService extends BeanStub {
         const isMultiSelect = this.isMultiSelect();
         const isRowClicked = source === 'rowClicked';
 
-        if (isRowClicked && !(enableClickSelection || enableDeselection)) return null;
+        if (isRowClicked && !(enableClickSelection || enableDeselection)) {
+            return null;
+        }
 
         if (shiftKey && metaKey && isMultiSelect) {
             // SHIFT+CTRL or SHIFT+CMD is used for bulk deselection, except where the selection root
@@ -319,7 +328,9 @@ export abstract class BaseSelectionService extends BeanStub {
                 const selectingWhenDisabled = newValue && !enableClickSelection;
                 const deselectingWhenDisabled = !newValue && !enableDeselection;
 
-                if (selectingWhenDisabled || deselectingWhenDisabled) return null;
+                if (selectingWhenDisabled || deselectingWhenDisabled) {
+                    return null;
+                }
 
                 selectionCtx.setRoot(node);
 
@@ -369,7 +380,9 @@ export abstract class BaseSelectionService extends BeanStub {
                 // only transistion to same state if we also want to clear other selected nodes
                 const wouldStateBeUnchanged = newValue === currentSelection && !shouldClear;
 
-                if (wouldStateBeUnchanged || selectingWhenDisabled || deselectingWhenDisabled) return null;
+                if (wouldStateBeUnchanged || selectingWhenDisabled || deselectingWhenDisabled) {
+                    return null;
+                }
 
                 return {
                     node,

@@ -3,7 +3,15 @@ import { _exists, _missing } from '../agStack/utils/generic';
 import { doesMovePassMarryChildren, placeLockedColumns } from '../columnMove/columnMoveUtils';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import type { IAggFunc } from '../entities/colDef';
+import {
+    _areSortDefsEqual,
+    _getSortDefFromInput,
+    _isSortDirectionValid,
+    _isSortTypeValid,
+    _normalizeSortDirection,
+    _normalizeSortType,
+} from '../entities/agColumn';
+import type { IAggFunc, SortDirection, SortType } from '../entities/colDef';
 import type { ColumnEvent, ColumnEventType, ColumnsResetEvent } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
 import { _addGridCommonParams } from '../gridOptionsUtils';
@@ -25,11 +33,13 @@ export interface ColumnStateParams {
     /** True if the column is hidden */
     hide?: boolean | null;
     /** Width of the column in pixels */
-    width?: number;
+    width?: number | null;
     /** Column's flex if flex is set */
     flex?: number | null;
-    /** Sort applied to the column */
-    sort?: 'asc' | 'desc' | null;
+    /** The sort direction of the column */
+    sort?: SortDirection;
+    /** The type of sort applied to the column */
+    sortType?: SortType;
     /** The order of the sort, if sorting by many columns */
     sortIndex?: number | null;
     /** The aggregation function applied */
@@ -107,11 +117,22 @@ export function _applyColumnState(
 
         const flex = getValue('flex').value1;
 
+        const maybeSortDirection = getValue('sort').value1;
+        const maybeSortType = getValue('sortType').value1;
+        const isSortUpdate = _isSortDirectionValid(maybeSortDirection) || _isSortTypeValid(maybeSortType);
+        /**
+         * If only a direction is provided, we treat it as a default sort type.
+         * User must provide both sortType and direction if they wish to preserve sort type
+         */
+        const type = _normalizeSortType(maybeSortType);
+        const direction = _normalizeSortDirection(maybeSortDirection);
+        const newSortDef = isSortUpdate ? { type, direction } : undefined;
+
         updateSomeColumnState(
             beans,
             column,
             getValue('hide').value1,
-            getValue('sort').value1,
+            newSortDef,
             getValue('sortIndex').value1,
             getValue('pinned').value1,
             flex,
@@ -163,7 +184,7 @@ export function _applyColumnState(
         const previousRowGroupCols = rowGroupColsSvc?.columns.slice() ?? [];
         const previousPivotCols = pivotColsSvc?.columns.slice() ?? [];
 
-        states.forEach((state) => {
+        for (const state of states) {
             const colId = state.colId;
 
             // auto group columns are re-created so deferring syncing with ColumnState
@@ -171,13 +192,13 @@ export function _applyColumnState(
             if (isAutoGroupColumn) {
                 autoColStates.push(state);
                 unmatchedAndAutoStates.push(state);
-                return;
+                continue;
             }
 
             if (isColumnSelectionCol(colId)) {
                 selectionColStates.push(state);
                 unmatchedAndAutoStates.push(state);
-                return;
+                continue;
             }
 
             const column = getById(colId);
@@ -189,7 +210,7 @@ export function _applyColumnState(
                 syncColumnWithStateItem(column, state, rowGroupIndexes, pivotIndexes, false);
                 _removeFromArray(columnsWithNoState, column);
             }
-        });
+        }
 
         // anything left over, we got no data for, so add in the column as non-value, non-rowGroup and hidden
         const applyDefaultsFunc = (col: AgColumn) =>
@@ -207,11 +228,11 @@ export function _applyColumnState(
             colStates: ColumnState[],
             columns: AgColumn[] = []
         ) => {
-            colStates.forEach((stateItem) => {
+            for (const stateItem of colStates) {
                 const col = getCol(stateItem.colId);
                 _removeFromArray(columns, col);
                 syncColumnWithStateItem(col, stateItem, null, null, true);
-            });
+            }
             columns.forEach(applyDefaultsFunc);
         };
 
@@ -332,9 +353,9 @@ export function _compareColumnStatesAndDispatchEvents(beans: BeanCollection, sou
     const columnStateBefore = _getColumnState(beans);
     const columnStateBeforeMap: { [colId: string]: ColumnState } = {};
 
-    columnStateBefore.forEach((col) => {
-        columnStateBeforeMap[col.colId!] = col;
-    });
+    for (const col of columnStateBefore) {
+        columnStateBeforeMap[col.colId] = col;
+    }
 
     return () => {
         // dispatches generic ColumnEvents where all columns are returned rather than what has changed
@@ -353,13 +374,13 @@ export function _compareColumnStatesAndDispatchEvents(beans: BeanCollection, sou
             }
 
             const changes = new Set(colsBefore);
-            colsAfter.forEach((id) => {
+            for (const id of colsAfter) {
                 // if the first list had it, delete it, as it's unchanged.
                 if (!changes.delete(id)) {
                     // if the second list has it, and first doesn't, add it.
                     changes.add(id);
                 }
-            });
+            }
 
             const changesArr = [...changes];
 
@@ -425,7 +446,10 @@ export function _compareColumnStatesAndDispatchEvents(beans: BeanCollection, sou
         dispatchColumnVisibleEvent(eventSvc, getChangedColumns(visibilityChangePredicate), source);
 
         const sortChangePredicate = (cs: ColumnState, c: AgColumn) =>
-            cs.sort != c.getSort() || cs.sortIndex != c.getSortIndex();
+            !_areSortDefsEqual(c.getSortDef(), {
+                type: _normalizeSortType(cs.sortType),
+                direction: _normalizeSortDirection(cs.sort),
+            }) || cs.sortIndex != c.getSortIndex();
         const changedColumns = getChangedColumns(sortChangePredicate);
         if (changedColumns.length > 0) {
             sortSvc?.dispatchSortChangedEvents(source, changedColumns);
@@ -454,7 +478,6 @@ export function _getColumnState(beans: BeanCollection): ColumnState[] {
         const pivotIndex = column.isPivotActive() && pivotColumns ? pivotColumns.indexOf(column) : null;
 
         const aggFunc = column.isValueActive() ? column.getAggFunc() : null;
-        const sort = column.getSort() != null ? column.getSort() : null;
         const sortIndex = column.getSortIndex() != null ? column.getSortIndex() : null;
 
         res.push({
@@ -462,7 +485,8 @@ export function _getColumnState(beans: BeanCollection): ColumnState[] {
             width: column.getActualWidth(),
             hide: !column.isVisible(),
             pinned: column.getPinned(),
-            sort,
+            sort: column.getSort(),
+            sortType: column.getSortDef()?.type,
             sortIndex,
             aggFunc,
             rowGroup: column.isRowGroupActive(),
@@ -489,10 +513,12 @@ export function _getColumnState(beans: BeanCollection): ColumnState[] {
 }
 
 export function getColumnStateFromColDef(column: AgColumn): ColumnState {
-    const getValueOrNull = (a: any, b: any) => (a != null ? a : b != null ? b : null);
+    const getValueOrNull = <T>(a: T, b: T) => (a != null ? a : b != null ? b : null);
 
     const colDef = column.getColDef();
-    const sort = getValueOrNull(colDef.sort, colDef.initialSort);
+    const sortDefFromColDef = _getSortDefFromInput(getValueOrNull(colDef.sort, colDef.initialSort));
+    const sort = sortDefFromColDef.direction;
+    const sortType = sortDefFromColDef.type;
     const sortIndex = getValueOrNull(colDef.sortIndex, colDef.initialSortIndex);
     const hide = getValueOrNull(colDef.hide, colDef.initialHide);
     const pinned = getValueOrNull(colDef.pinned, colDef.initialPinned);
@@ -503,7 +529,7 @@ export function getColumnStateFromColDef(column: AgColumn): ColumnState {
     let rowGroupIndex: number | null | undefined = getValueOrNull(colDef.rowGroupIndex, colDef.initialRowGroupIndex);
     let rowGroup: boolean | null | undefined = getValueOrNull(colDef.rowGroup, colDef.initialRowGroup);
 
-    if (rowGroupIndex == null && (rowGroup == null || rowGroup == false)) {
+    if (rowGroupIndex == null && !rowGroup) {
         rowGroupIndex = null;
         rowGroup = null;
     }
@@ -511,7 +537,7 @@ export function getColumnStateFromColDef(column: AgColumn): ColumnState {
     let pivotIndex: number | null | undefined = getValueOrNull(colDef.pivotIndex, colDef.initialPivotIndex);
     let pivot: boolean | null | undefined = getValueOrNull(colDef.pivot, colDef.initialPivot);
 
-    if (pivotIndex == null && (pivot == null || pivot == false)) {
+    if (pivotIndex == null && !pivot) {
         pivotIndex = null;
         pivot = null;
     }
@@ -521,6 +547,7 @@ export function getColumnStateFromColDef(column: AgColumn): ColumnState {
     return {
         colId: column.getColId(),
         sort,
+        sortType,
         sortIndex,
         hide,
         pinned,
@@ -539,11 +566,11 @@ function orderLiveColsLikeState(params: ApplyColumnStateParams, colModel: Column
         return;
     }
     const colIds: string[] = [];
-    params.state.forEach((item) => {
+    for (const item of params.state) {
         if (item.colId != null) {
             colIds.push(item.colId);
         }
-    });
+    }
     sortColsLikeKeys(colModel.cols, colIds, colModel, gos);
 }
 
@@ -560,24 +587,24 @@ function sortColsLikeKeys(
     let newOrder: AgColumn[] = [];
     const processedColIds: { [id: string]: boolean } = {};
 
-    colIds.forEach((colId) => {
+    for (const colId of colIds) {
         if (processedColIds[colId]) {
-            return;
+            continue;
         }
         const col = cols.map[colId];
         if (col) {
             newOrder.push(col);
             processedColIds[colId] = true;
         }
-    });
+    }
 
     // add in all other columns
     let autoGroupInsertIndex = 0;
-    cols.list.forEach((col) => {
+    for (const col of cols.list) {
         const colId = col.getColId();
         const alreadyProcessed = processedColIds[colId] != null;
         if (alreadyProcessed) {
-            return;
+            continue;
         }
 
         const isAutoGroupCol = colId.startsWith(GROUP_AUTO_COLUMN_ID);
@@ -591,7 +618,7 @@ function sortColsLikeKeys(
             // normal columns, if missing from state list, are added at the end
             newOrder.push(col);
         }
-    });
+    }
 
     // this is already done in updateCols, however we changed the order above (to match the order of the state
     // columns) so we need to do it again. we could of put logic into the order above to take into account fixed
@@ -617,27 +644,29 @@ function normaliseColumnMovedEventForColumnState(
     // we are only interested in columns that were both present and visible before and after
 
     const colStateAfterMapped: { [id: string]: ColumnState } = {};
-    colStateAfter.forEach((s) => (colStateAfterMapped[s.colId!] = s));
+    for (const s of colStateAfter) {
+        colStateAfterMapped[s.colId] = s;
+    }
 
     // get id's of cols in both before and after lists
     const colsIntersectIds: { [id: string]: boolean } = {};
-    colStateBefore.forEach((s) => {
-        if (colStateAfterMapped[s.colId!]) {
-            colsIntersectIds[s.colId!] = true;
+    for (const s of colStateBefore) {
+        if (colStateAfterMapped[s.colId]) {
+            colsIntersectIds[s.colId] = true;
         }
-    });
+    }
 
     // filter state lists, so we only have cols that were present before and after
-    const beforeFiltered = colStateBefore.filter((c) => colsIntersectIds[c.colId!]);
-    const afterFiltered = colStateAfter.filter((c) => colsIntersectIds[c.colId!]);
+    const beforeFiltered = colStateBefore.filter((c) => colsIntersectIds[c.colId]);
+    const afterFiltered = colStateAfter.filter((c) => colsIntersectIds[c.colId]);
 
     // see if any cols are in a different location
     const movedColumns: AgColumn[] = [];
 
-    afterFiltered!.forEach((csAfter: ColumnState, index: number) => {
+    afterFiltered.forEach((csAfter: ColumnState, index: number) => {
         const csBefore = beforeFiltered?.[index];
         if (csBefore && csBefore.colId !== csAfter.colId) {
-            const gridCol = colModel.getCol(csBefore.colId!);
+            const gridCol = colModel.getCol(csBefore.colId);
             if (gridCol) {
                 movedColumns.push(gridCol);
             }

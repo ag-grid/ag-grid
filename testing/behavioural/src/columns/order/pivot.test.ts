@@ -2,7 +2,7 @@ import type { ColDef, ColGroupDef } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { PivotModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager } from '../../test-utils';
+import { TestGridsManager, applyTransactionChecked } from '../../test-utils';
 import { getAutoGroupColumnIds, getColumnOrder } from '../column-test-utils';
 
 describe('pivotMode=true', () => {
@@ -391,7 +391,7 @@ describe('pivotMode=true', () => {
                 const initialExpected = [...groupColIds, 'pivot_b_1_c', 'pivot_b_2_c', 'pivot_b_3_c'];
                 expect(getColumnOrder(gridApi, 'center')).toEqual(initialExpected);
 
-                gridApi.applyTransaction({ add: [{ a: '3', b: '0', c: 3 }], addIndex: 0 });
+                applyTransactionChecked(gridApi, { add: [{ a: '3', b: '0', c: 3 }], addIndex: 0 });
 
                 const reorderedExpected = [...groupColIds, 'pivot_b_1_c', 'pivot_b_2_c', 'pivot_b_3_c', 'pivot_b_0_c'];
                 expect(getColumnOrder(gridApi, 'center')).toEqual(reorderedExpected);
@@ -447,7 +447,7 @@ describe('pivotMode=true', () => {
                 const initialExpected = [...groupColIds, 'pivot_b_1_c', 'pivot_b_2_c', 'pivot_b_3_c'];
                 expect(getColumnOrder(gridApi, 'center')).toEqual(initialExpected);
 
-                gridApi.applyTransaction({ add: [{ a: '3', b: '0', c: 3 }], addIndex: 0 });
+                applyTransactionChecked(gridApi, { add: [{ a: '3', b: '0', c: 3 }], addIndex: 0 });
 
                 const reorderedExpected = [...groupColIds, 'pivot_b_0_c', 'pivot_b_1_c', 'pivot_b_2_c', 'pivot_b_3_c'];
                 expect(getColumnOrder(gridApi, 'center')).toEqual(reorderedExpected);

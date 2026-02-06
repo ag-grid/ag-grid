@@ -7,43 +7,46 @@
     background-color: var(--ag-checkbox-unchecked-background-color);
     border: solid var(--ag-checkbox-border-width) var(--ag-checkbox-unchecked-border-color);
 
-    :where(input) {
-        cursor: pointer;
-        appearance: none;
-        opacity: 0;
-        margin: 0;
-        display: block;
-        width: var(--ag-icon-size);
-        height: var(--ag-icon-size);
-    }
-
-    &::after {
-        content: '';
-        position: absolute;
-        display: block;
-        inset: 0;
-        mask-position: center;
-        mask-repeat: no-repeat;
-        pointer-events: none;
-    }
-
     &:where(.ag-checked) {
         background-color: var(--ag-checkbox-checked-background-color);
         border-color: var(--ag-checkbox-checked-border-color);
-
-        &::after {
-            background-color: var(--ag-checkbox-checked-shape-color);
-        }
     }
 
-    &:where(:focus-within, :active) {
-        box-shadow: var(--ag-focus-shadow);
+    &:where(.ag-checked)::after {
+        background-color: var(--ag-checkbox-checked-shape-color);
     }
 
     &:where(.ag-disabled) {
         opacity: 0.5;
         filter: grayscale();
     }
+}
+
+.ag-checkbox-input,
+.ag-radio-button-input {
+    cursor: pointer;
+    appearance: none;
+    opacity: 0;
+    margin: 0;
+    display: block;
+    width: var(--ag-icon-size);
+    height: var(--ag-icon-size);
+}
+
+.ag-checkbox-input-wrapper::after,
+.ag-radio-button-input-wrapper::after {
+    content: '';
+    position: absolute;
+    display: block;
+    inset: 0;
+    mask-position: center;
+    mask-repeat: no-repeat;
+    pointer-events: none;
+}
+
+.ag-checkbox-input-wrapper:where(:focus-within, :active),
+.ag-radio-button-input-wrapper:where(:focus-within, :active) {
+    box-shadow: var(--ag-focus-shadow);
 }
 
 .ag-checkbox-input-wrapper {
@@ -56,11 +59,11 @@
     &:where(.ag-indeterminate) {
         background-color: var(--ag-checkbox-indeterminate-background-color);
         border-color: var(--ag-checkbox-indeterminate-border-color);
+    }
 
-        &::after {
-            background-color: var(--ag-checkbox-indeterminate-shape-color);
-            mask-image: var(--ag-checkbox-indeterminate-shape-image);
-        }
+    &:where(.ag-indeterminate)::after {
+        background-color: var(--ag-checkbox-indeterminate-shape-color);
+        mask-image: var(--ag-checkbox-indeterminate-shape-image);
     }
 }
 

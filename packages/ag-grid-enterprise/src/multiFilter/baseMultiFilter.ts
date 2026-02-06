@@ -10,10 +10,11 @@ import {
     _setAriaRole,
 } from 'ag-grid-community';
 
-import { AgGroupComponent } from '../widgets/agGroupComponent';
-import type { MenuItemActivatedEvent } from '../widgets/agMenuItemComponent';
-import { AgMenuItemComponent } from '../widgets/agMenuItemComponent';
-import { AgMenuItemRenderer } from '../widgets/agMenuItemRenderer';
+import { AgGroupComponent } from '../agStack/agGroupComponent';
+import type { GroupComponent } from '../widgets/gridEnterpriseWidgetTypes';
+import type { MenuItemActivatedEvent } from '../widgets/menuItemComponent';
+import { MenuItemComponent } from '../widgets/menuItemComponent';
+import { MenuItemRenderer } from '../widgets/menuItemRenderer';
 import { forEachReverse, getFilterTitle } from './multiFilterUtil';
 
 export interface BaseFilterComponent {
@@ -26,7 +27,7 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
     // this could be the accordion/sub menu element depending on the display type
     private filterGuis: (HTMLElement | null)[] = [];
     private lastOpenedInContainer?: ContainerType;
-    private lastActivatedMenuItem: AgMenuItemComponent | null = null;
+    private lastActivatedMenuItem: MenuItemComponent | null = null;
     private hidePopup?: () => void;
 
     constructor() {
@@ -96,7 +97,9 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
     }
 
     private destroyChildren() {
-        this.guiDestroyFuncs.forEach((func) => func());
+        for (const func of this.guiDestroyFuncs) {
+            func();
+        }
         this.guiDestroyFuncs.length = 0;
         this.filterGuis.length = 0;
     }
@@ -105,10 +108,10 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
         comp: BaseFilterComponent,
         filter: SharedFilterUi,
         name: string
-    ): AgPromise<AgMenuItemComponent> {
+    ): AgPromise<MenuItemComponent> {
         const eGui = comp.getGui();
         _setAriaRole(eGui, 'dialog');
-        const menuItem = this.createBean(new AgMenuItemComponent());
+        const menuItem = this.createBean(new MenuItemComponent());
         const childComponent = {
             getGui: () => comp.getGui(),
             afterGuiAttached: (params?: IAfterGuiAttachedParams) => {
@@ -126,7 +129,7 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
                     subMenu: [],
                     subMenuRole: 'dialog',
                     cssClasses: ['ag-multi-filter-menu-item'],
-                    menuItem: AgMenuItemRenderer,
+                    menuItem: MenuItemRenderer,
                     menuItemParams: {
                         cssClassPrefix: 'ag-compact-menu-option',
                         isCompact: true,
@@ -185,8 +188,8 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
             });
     }
 
-    private insertFilterGroup(filter: SharedFilterUi, comp: BaseFilterComponent, title: string): AgGroupComponent {
-        const group = this.createBean(
+    private insertFilterGroup(filter: SharedFilterUi, comp: BaseFilterComponent, title: string): GroupComponent {
+        const group: GroupComponent = this.createBean(
             new AgGroupComponent({
                 title,
                 cssIdentifier: 'multi-filter',

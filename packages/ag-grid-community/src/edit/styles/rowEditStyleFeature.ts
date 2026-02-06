@@ -1,14 +1,14 @@
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
-import type { IEditModelService } from '../../interfaces/iEditModelService';
-import type { IEditService } from '../../interfaces/iEditService';
 import type { IRowStyleFeature } from '../../interfaces/iRowStyleFeature';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
+import type { EditModelService } from '../editModelService';
+import type { EditService } from '../editService';
 import { _hasEdits, _hasLeafEdits, _hasPinnedEdits } from './style-utils';
 
 export class RowEditStyleFeature extends BeanStub implements IRowStyleFeature {
-    private readonly editSvc?: IEditService;
-    private readonly editModelSvc?: IEditModelService;
+    private readonly editSvc?: EditService;
+    private readonly editModelSvc?: EditModelService;
 
     constructor(
         private readonly rowCtrl: RowCtrl,

@@ -151,9 +151,9 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
         return false;
     }
 
-    private processData(data: any[] = []) {
-        if (data.length === 0) {
-            return data;
+    private processData(data: any[] | null | undefined) {
+        if (!data?.length) {
+            return data ?? []; // same reference if defined
         }
 
         if (this.dataRef !== data) {
@@ -182,7 +182,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
     }
 
     private wrapItemStyler(container: { itemStyler?: any }) {
-        container!.itemStyler = wrapFn(container.itemStyler, (fn, stylerParams: any): any => {
+        container.itemStyler = wrapFn(container.itemStyler, (fn, stylerParams: any): any => {
             return fn({
                 ...stylerParams,
                 context: this.createContext(),

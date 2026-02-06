@@ -11,6 +11,7 @@ import type {
     ProcessRowGroupForExportParams,
 } from '../interfaces/exportParams';
 import type { IColsService } from '../interfaces/iColsService';
+import type { CellValueResolveFrom } from '../interfaces/iEditService';
 import type { ValueService } from '../valueService/valueService';
 import type {
     GridSerializingParams,
@@ -29,6 +30,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     public processHeaderCallback?: (params: ProcessHeaderForExportParams) => string;
     public processGroupHeaderCallback?: (params: ProcessGroupHeaderForExportParams) => string;
     public processRowGroupCallback?: (params: ProcessRowGroupForExportParams) => string;
+    public valueFrom: CellValueResolveFrom = 'data';
 
     constructor(config: GridSerializingParams) {
         const {
@@ -41,6 +43,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             processHeaderCallback,
             processGroupHeaderCallback,
             processRowGroupCallback,
+            valueFrom,
         } = config;
 
         this.colModel = colModel;
@@ -52,6 +55,9 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         this.processHeaderCallback = processHeaderCallback;
         this.processGroupHeaderCallback = processGroupHeaderCallback;
         this.processRowGroupCallback = processRowGroupCallback;
+        if (valueFrom) {
+            this.valueFrom = valueFrom;
+        }
     }
 
     abstract addCustomContent(customContent: T): void;
@@ -67,13 +73,15 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         return value ?? '';
     }
 
-    public extractRowCellValue(
-        column: AgColumn,
-        currentColumnIndex: number,
-        accumulatedRowIndex: number,
-        type: string,
-        node: RowNode
-    ): { value: any; valueFormatted?: string | null } {
+    public extractRowCellValue(params: {
+        column: AgColumn;
+        node: RowNode;
+        currentColumnIndex: number;
+        accumulatedRowIndex: number;
+        type: string;
+        useRawFormula: boolean;
+    }): { value: any; valueFormatted?: string | null } {
+        const { column, node, currentColumnIndex, accumulatedRowIndex, type, useRawFormula } = params;
         const isFullWidthGroup =
             currentColumnIndex === 0 && _isFullWidthGroupRow(this.gos, node, this.colModel.isPivotMode());
         if (
@@ -92,14 +100,14 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                             accumulatedRowIndex,
                             column,
                             node,
-                            value: this.valueSvc.getValueForDisplay(column, node, undefined, undefined).value,
+                            value: this.valueSvc.getValueForDisplay({ column, node, from: this.valueFrom }).value,
                             type,
                             parseValue: (valueToParse: string) =>
                                 this.valueSvc.parseValue(
                                     column,
                                     node,
                                     valueToParse,
-                                    this.valueSvc.getValue(column, node, undefined)
+                                    this.valueSvc.getValue(column, node, this.valueFrom)
                                 ),
                             formatValue: (valueToFormat: any) =>
                                 this.valueSvc.formatValue(column, node, valueToFormat) ?? valueToFormat,
@@ -118,12 +126,13 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             let concatenatedGroupValue: string = '';
             let pointer: RowNode | null = node;
             while (pointer && pointer.level !== -1) {
-                const { value, valueFormatted } = valueService.getValueForDisplay(
-                    isFullWidthGroup ? undefined : column, // full width group doesn't have a column
-                    pointer,
-                    true,
-                    true
-                );
+                const { value, valueFormatted } = valueService.getValueForDisplay({
+                    column: isFullWidthGroup ? undefined : column, // full width group doesn't have a column
+                    node: pointer,
+                    includeValueFormatted: true,
+                    exporting: true,
+                    from: this.valueFrom,
+                });
                 concatenatedGroupValue = ` -> ${valueFormatted ?? value ?? ''}${concatenatedGroupValue}`;
                 pointer = pointer.parent;
             }
@@ -134,7 +143,14 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             };
         }
 
-        const { value, valueFormatted } = valueService.getValueForDisplay(column, node, true, true);
+        const { value, valueFormatted } = valueService.getValueForDisplay({
+            column,
+            node,
+            includeValueFormatted: true,
+            exporting: true,
+            useRawFormula,
+            from: this.valueFrom,
+        });
         return {
             value: value ?? '',
             valueFormatted,

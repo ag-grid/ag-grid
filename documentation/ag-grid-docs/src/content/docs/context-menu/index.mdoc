@@ -34,32 +34,32 @@ If you want to turn off the context menu completely, set the grid property `supp
 
 The following is a list of all the default built in menu items with the rules about when they are shown.
 
-* `autoSizeAll`: Auto-size all columns. Not shown by default.
-* `expandAll`: When set, it's only shown if grouping by at least one column. Not shown by default.
-* `contractAll`: Collapse all groups. When set, it's only shown if grouping by at least one column. Not shown by default.
-* `copy`: Copy selected value to clipboard. Shown by default.
-* `copyWithHeaders`: Copy selected value to clipboard with headers. Shown by default.
-* `copyWithGroupHeaders`: Copy selected value to clipboard with headers and header groups. Shown by default.
-* `cut`: Cut the selected value to clipboard. Not shown by default.
-* `paste`: Paste the clipboard value into the selected cell (see note below). Shown by default.
-* `resetColumns`: Reset all columns. Not shown by default.
-* `export`: Export sub menu (containing csvExport and excelExport). Shown by default.
-* `csvExport`: Export to CSV using all default export values. Shown by default.
-* `excelExport`: Export to Excel (.xlsx) using all default export values. Shown by default.
-* `chartRange`: Chart a range of selected cells. Only shown if charting is enabled. Configured via [chartToolPanelsDef](./integrated-charts-chart-tool-panels).
-* `pivotChart`: Chart all grouped and pivoted data from the grid. Only shown if charting is enabled and in [Pivot Mode](./integrated-charts-pivot-chart/). Configured via [chartToolPanelsDef](./integrated-charts-chart-tool-panels).
-* `pinRowSubMenu`: Row pinning sub menu (containing `pinTop`, `pinBottom` and `unpinRow`). Shown when [Row Pinning](./row-pinning) is enabled.
-* `pinTop`: Pin a row to the top of the grid. Shown when [Row Pinning](./row-pinning) is enabled.
-* `pinBottom`: Pin a row to the botom of the grid. Shown when [Row Pinning](./row-pinning) is enabled.
-* `unpinRow`: Unpin a row from the top or bottom of the grid. Shown for pinned rows when [Row Pinning](./row-pinning) is enabled.
+-   `autoSizeAll`: Auto-size all columns. Not shown by default.
+-   `expandAll`: When set, it's only shown if grouping by at least one column. Not shown by default.
+-   `contractAll`: Collapse all groups. When set, it's only shown if grouping by at least one column. Not shown by default.
+-   `copy`: Copy selected value to clipboard. Shown by default.
+-   `copyWithHeaders`: Copy selected value to clipboard with headers. Shown by default.
+-   `copyWithGroupHeaders`: Copy selected value to clipboard with headers and header groups. Shown by default.
+-   `cut`: Cut the selected value to clipboard. Not shown by default.
+-   `paste`: Paste the clipboard value into the selected cell (see note below). Shown by default.
+-   `resetColumns`: Reset all columns. Not shown by default.
+-   `export`: Export sub menu (containing csvExport and excelExport). Shown by default.
+-   `csvExport`: Export to CSV using all default export values. Shown by default.
+-   `excelExport`: Export to Excel (.xlsx) using all default export values. Shown by default.
+-   `chartRange`: Chart a range of selected cells. Only shown if charting is enabled. Configured via [chartToolPanelsDef](./integrated-charts-chart-tool-panels).
+-   `pivotChart`: Chart all grouped and pivoted data from the grid. Only shown if charting is enabled and in [Pivot Mode](./integrated-charts-pivot-chart/). Configured via [chartToolPanelsDef](./integrated-charts-chart-tool-panels).
+-   `pinRowSubMenu`: Row pinning sub menu (containing `pinTop`, `pinBottom` and `unpinRow`). Shown when [Row Pinning](./row-pinning) is enabled.
+-   `pinTop`: Pin a row to the top of the grid. Shown when [Row Pinning](./row-pinning) is enabled.
+-   `pinBottom`: Pin a row to the botom of the grid. Shown when [Row Pinning](./row-pinning) is enabled.
+-   `unpinRow`: Unpin a row from the top or bottom of the grid. Shown for pinned rows when [Row Pinning](./row-pinning) is enabled.
 
 Menu items also require the relevant [Module](./modules/) to be loaded in order to be displayed.
 
 {% note %}
-The 'paste' operation in the context menu uses the [Clipboard API](https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API). This means 
+The 'paste' operation in the context menu uses the [Clipboard API](https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API). This means
 that if your app is running inside an iframe, or if the Clipboard API is blocked, only **blank data** will be pasted into the cell.
 
-When the Clipboard API is not available, browser security restrictions prevent JavaScript from reading clipboard data without the user explicitly performing 
+When the Clipboard API is not available, browser security restrictions prevent JavaScript from reading clipboard data without the user explicitly performing
 a paste action (e.g. {% kbd "^ Ctrl" /%}+{% kbd "V" /%} or selecting Paste from the browser menu).
 These restrictions exist to prevent malicious websites from stealing clipboard data.
 
@@ -78,12 +78,12 @@ Hide the context menu with the grid API `hidePopupMenu()`, which will hide eithe
 
 Below shows a configured context menu in action demonstrating a customised menu with a mix of custom items. You should notice the following:
 
-* A mix of built in items and custom items are used.
-* The first item uses the contents of the cell to display its value. Clicking on it logs the cell data to the developer console.
-* The **Country** column uses a Promise to return the menu items asynchronously.
-* Country and Person are sub menus. The country sub menu contains icons.
-* The top menu item has CSS classes applied to it.
-* The 'Always Disabled' menu item has a tooltip.
+-   A mix of built in items and custom items are used.
+-   The first item uses the contents of the cell to display its value. Clicking on it logs the cell data to the developer console.
+-   The **Country** column uses a Promise to return the menu items asynchronously.
+-   Country and Person are sub menus. The country sub menu contains icons.
+-   The top menu item has CSS classes applied to it.
+-   The 'Always Disabled' menu item has a tooltip.
 
 {% gridExampleRunner title="Context Menu Example" name="context-menu" /%}
 
@@ -93,8 +93,8 @@ Under most scenarios, the menu will fit inside the grid. However if the grid is 
 
 This will lead to a bad user experience which is demonstrated in the following example:
 
-* Open the context menu or the column menu in the grid
-* Notice the menu will not be fully visible (i.e. clipped)
+-   Open the context menu or the column menu in the grid
+-   Notice the menu will not be fully visible (i.e. clipped)
 
 {% gridExampleRunner title="Small Grid Problem" name="popup-parent-problem"  exampleHeight=400 /%}
 

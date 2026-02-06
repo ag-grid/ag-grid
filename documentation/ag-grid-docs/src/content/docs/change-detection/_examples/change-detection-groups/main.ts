@@ -37,7 +37,7 @@ const gridOptions: GridOptions = {
         {
             headerName: 'Total',
             type: 'totalColumn',
-            // we use getValue() instead of data.a so that it gets the aggregated values at the group level
+            aggFunc: 'sum',
             valueGetter: 'getValue("a") + getValue("b") + getValue("c") + getValue("d")',
         },
     ],
@@ -64,6 +64,7 @@ const gridOptions: GridOptions = {
     rowData: getRowData(),
     groupDefaultExpanded: 1,
     suppressAggFuncInHeader: true,
+    allowShowChangeAfterFilter: true,
 };
 
 function getRowData() {

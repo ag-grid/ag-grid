@@ -1,118 +1,5 @@
 <script setup lang="ts" generic="TData = any">
 
-// @START_IMPORTS@
-import type {
-    AdvancedFilterBuilderVisibleChangedEvent,
-    AsyncTransactionsFlushedEvent,
-    BatchEditingStartedEvent,
-    BatchEditingStoppedEvent,
-    BodyScrollEndEvent,
-    BodyScrollEvent,
-    BulkEditingStartedEvent,
-    BulkEditingStoppedEvent,
-    CellClickedEvent,
-    CellContextMenuEvent,
-    CellDoubleClickedEvent,
-    CellEditRequestEvent,
-    CellEditingStartedEvent,
-    CellEditingStoppedEvent,
-    CellFocusedEvent,
-    CellKeyDownEvent,
-    CellMouseDownEvent,
-    CellMouseOutEvent,
-    CellMouseOverEvent,
-    CellSelectionChangedEvent,
-    CellSelectionDeleteEndEvent,
-    CellSelectionDeleteStartEvent,
-    CellValueChangedEvent,
-    ChartCreatedEvent,
-    ChartDestroyedEvent,
-    ChartOptionsChangedEvent,
-    ChartRangeSelectionChangedEvent,
-    ColumnEverythingChangedEvent,
-    ColumnGroupOpenedEvent,
-    ColumnHeaderClickedEvent,
-    ColumnHeaderContextMenuEvent,
-    ColumnHeaderMouseLeaveEvent,
-    ColumnHeaderMouseOverEvent,
-    ColumnMenuVisibleChangedEvent,
-    ColumnMovedEvent,
-    ColumnPinnedEvent,
-    ColumnPivotChangedEvent,
-    ColumnPivotModeChangedEvent,
-    ColumnResizedEvent,
-    ColumnRowGroupChangedEvent,
-    ColumnValueChangedEvent,
-    ColumnVisibleEvent,
-    ColumnsResetEvent,
-    ComponentStateChangedEvent,
-    ContextMenuVisibleChangedEvent,
-    CutEndEvent,
-    CutStartEvent,
-    DisplayedColumnsChangedEvent,
-    DragCancelledEvent,
-    DragStartedEvent,
-    DragStoppedEvent,
-    ExpandOrCollapseAllEvent,
-    FillEndEvent,
-    FillStartEvent,
-    FilterChangedEvent,
-    FilterModifiedEvent,
-    FilterOpenedEvent,
-    FilterUiChangedEvent,
-    FindChangedEvent,
-    FirstDataRenderedEvent,
-    FloatingFilterUiChangedEvent,
-    FullWidthCellKeyDownEvent,
-    GridColumnsChangedEvent,
-    GridPreDestroyedEvent,
-    GridReadyEvent,
-    GridSizeChangedEvent,
-    HeaderFocusedEvent,
-    ModelUpdatedEvent,
-    NewColumnsLoadedEvent,
-    PaginationChangedEvent,
-    PasteEndEvent,
-    PasteStartEvent,
-    PinnedRowDataChangedEvent,
-    PinnedRowsChangedEvent,
-    PivotMaxColumnsExceededEvent,
-    RangeDeleteEndEvent,
-    RangeDeleteStartEvent,
-    RangeSelectionChangedEvent,
-    RedoEndedEvent,
-    RedoStartedEvent,
-    RowClickedEvent,
-    RowDataUpdatedEvent,
-    RowDoubleClickedEvent,
-    RowDragCancelEvent,
-    RowDragEndEvent,
-    RowDragEnterEvent,
-    RowDragLeaveEvent,
-    RowDragMoveEvent,
-    RowEditingStartedEvent,
-    RowEditingStoppedEvent,
-    RowGroupOpenedEvent,
-    RowResizeEndedEvent,
-    RowResizeStartedEvent,
-    RowSelectedEvent,
-    RowValueChangedEvent,
-    SelectionChangedEvent,
-    SortChangedEvent,
-    StateUpdatedEvent,
-    StoreRefreshedEvent,
-    ToolPanelSizeChangedEvent,
-    ToolPanelVisibleChangedEvent,
-    TooltipHideEvent,
-    TooltipShowEvent,
-    UndoEndedEvent,
-    UndoStartedEvent,
-    ViewportChangedEvent,
-    VirtualColumnsChangedEvent,
-    VirtualRowRemovedEvent
-} from 'ag-grid-community';
-// @END_IMPORTS@
-
 import { VueFrameworkComponentWrapper } from '@/components/VueFrameworkComponentWrapper';
 import { VueFrameworkOverrides } from '@/components/VueFrameworkOverrides';
 import type { Props } from '@/components/utils';
@@ -120,7 +7,7 @@ import { debounce, deepToRaw, getProps } from '@/components/utils';
 import type { Ref } from 'vue';
 import { getCurrentInstance, markRaw, onMounted, onUnmounted, ref, toRaw, toRefs, useTemplateRef, watch } from 'vue';
 
-import type { AgEventType, ColDef, GridApi, GridOptions, IRowNode } from 'ag-grid-community';
+import type { AgEventType, GridApi, GridOptions, IRowNode } from 'ag-grid-community';
 import {
     ALWAYS_SYNC_GLOBAL_EVENTS,
     _registerModule,
@@ -234,7 +121,7 @@ const globalEventListenerFactory = (restrictToSyncOnly?: boolean) => {
         }
 
         if (ROW_DATA_EVENTS.has(eventType)) {
-            if (!rowDataUpdating.value) {
+            if (!rowDataUpdating.value && gridCreated.value) {
                 updateModelIfUsed(eventType);
             }
             rowDataUpdating.value = false;
@@ -292,6 +179,7 @@ onMounted(() => {
 
     const rowData = getRowDataBasedOnBindings();
     if (rowData !== undefined) {
+        rowDataUpdating.value = true;
         gridOptions.rowData = deepToRaw(rowData as TData[]);
     }
 

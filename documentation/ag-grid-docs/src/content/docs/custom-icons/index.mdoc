@@ -10,11 +10,11 @@ The grid provides several icon sets as [theme parts](./theming-parts/). You can 
 
 Available icon sets are:
 
-* `iconSetQuartz` - our default icon set
-    * `iconSetQuartz({strokeWidth: number})` you can call iconSetQuartz as a function to provide a custom stroke width in pixels (the default is 1.5)
-    * `iconSetQuartzLight` and `iconSetQuartzBold` preset lighter and bolder versions of the Quartz icons with 1px and 2px stroke widths respectively.
-* `iconSetAlpine` - the icon set used by the Alpine theme
-* `iconSetMaterial` - the Material Design icon set (these are designed to be displayed at look best at 18, 24, 36 or 48px)
+-   `iconSetQuartz` - our default icon set
+    -   `iconSetQuartz({strokeWidth: number})` you can call iconSetQuartz as a function to provide a custom stroke width in pixels (the default is 1.5)
+    -   `iconSetQuartzLight` and `iconSetQuartzBold` preset lighter and bolder versions of the Quartz icons with 1px and 2px stroke widths respectively.
+-   `iconSetAlpine` - the icon set used by the Alpine theme
+-   `iconSetMaterial` - the Material Design icon set (these are designed to be displayed at look best at 18, 24, 36 or 48px)
 
 This example shows the Quartz theme with the Material icon set
 
@@ -61,11 +61,11 @@ The `iconOverrides` part can be used to change individual icons to an image, sol
 
 `iconOverrides` can replace icons with images using the following arguments:
 
-| Parameter | Description |
-|-|-|
-| `type` | `image` |
-| `mask` | If `true`, the icon shape is taken from the image and the colour from the grid `foregroundColor` parameter. This allows one icon to serve in both light and dark modes |
-| `icons` | A map of [icon name](#provided-icons) to images. Values use [image parameter syntax](./theming-parameters/#image-values) to accept image urls or svg source code. |
+| Parameter | Description                                                                                                                                                            |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`    | `image`                                                                                                                                                                |
+| `mask`    | If `true`, the icon shape is taken from the image and the colour from the grid `foregroundColor` parameter. This allows one icon to serve in both light and dark modes |
+| `icons`   | A map of [icon name](#provided-icons) to images. Values use [image parameter syntax](./theming-parameters/#image-values) to accept image urls or svg source code.      |
 
 ```js
 import { themeQuartz, iconOverrides } from 'ag-grid-community';
@@ -89,14 +89,14 @@ const myTheme = themeQuartz.withPart(mySvgIcons);
 
 `iconOverrides` can replace icons with icon font glyphs or emoji using the following arguments:
 
-| Parameter | Description |
-|-|-|
-| `type` | `font` |
-| `family` | Optional, the name of the icon font family to use |
-| `cssImports` | Optional, an array CSS file URLs to import, can be used to load the CSS file that defines the icon font |
-| `weight` | Optional, e.g. `bold`. Some icon fonts such as fontawesome require a bold font weight. |
-| `color` | Optional CSS colour e.g. `red`. Can use [colour parameter syntax](./theming-parameters/#color-values) to reference and mix other colour parameters. |
-| `icons` | A map of [icon name](#icon-names) to text data. If you're using an icon font, the correct character for each icon will be documented by your font. But you can use any text or emoji. |
+| Parameter    | Description                                                                                                                                                                           |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`       | `font`                                                                                                                                                                                |
+| `family`     | Optional, the name of the icon font family to use                                                                                                                                     |
+| `cssImports` | Optional, an array CSS file URLs to import, can be used to load the CSS file that defines the icon font                                                                               |
+| `weight`     | Optional, e.g. `bold`. Some icon fonts such as fontawesome require a bold font weight.                                                                                                |
+| `color`      | Optional CSS colour e.g. `red`. Can use [colour parameter syntax](./theming-parameters/#color-values) to reference and mix other colour parameters.                                   |
+| `icons`      | A map of [icon name](#icon-names) to text data. If you're using an icon font, the correct character for each icon will be documented by your font. But you can use any text or emoji. |
 
 ```js
 import { themeQuartz, iconOverrides } from 'ag-grid-community';
@@ -122,11 +122,11 @@ const myTheme = themeQuartz.withPart(fontAwesomeIcons);
 
 The following example combines the various ways of overriding icons:
 
-* Sorting and grouping icons (coloured green) are replaced with characters from FontAwesome
-* Group and Aggregation icons (coloured red) are replaced with characters from the Material Design Icons font
-* The Columns icon (🏛️) is replaced with an emoji
-* The filter icon is replaced with a blue-coloured SVG image
-* The column menu icon is replaced with an SVG image in mask mode. Although the image is blue, the icon uses the grid foreground colour and will change colour as appropriate for light or dark mode.
+-   Sorting and grouping icons (coloured green) are replaced with characters from FontAwesome
+-   Group and Aggregation icons (coloured red) are replaced with characters from the Material Design Icons font
+-   The Columns icon (🏛️) is replaced with an emoji
+-   The filter icon is replaced with a blue-coloured SVG image
+-   The column menu icon is replaced with an SVG image in mask mode. Although the image is blue, the icon uses the grid foreground colour and will change colour as appropriate for light or dark mode.
 
 {% gridExampleRunner title="Alternative Icon Font" name="icons-override" /%}
 
@@ -157,8 +157,8 @@ You can pass an `icons` property either on the [Grid Options](./grid-options/) t
 
 The `icons` property takes an object of name/value pairs where the name is one of the icon names below (note that these are different from the CSS names above) and the value is one of:
 
-* An HTML string to be inserted in place of the usual DOM element for an icon
-* A function that returns either an HTML string or a DOM node
+-   An HTML string to be inserted in place of the usual DOM element for an icon
+-   A function that returns either an HTML string or a DOM node
 
 {% gridExampleRunner title="Icon Grid Options" name="icons-grid-options"  exampleHeight=660 /%}
 
@@ -176,24 +176,24 @@ columnGroupOpened: 'expanded'
 columnGroupClosed: 'contracted'
 
 // column tool panel column group contracted (click to expand)
-columnSelectClosed: 'tree-closed',
+columnSelectClosed: 'tree-closed'
 
 // column tool panel column group expanded (click to contract)
-columnSelectOpen: 'tree-open',
+columnSelectOpen: 'tree-open'
 
 // column tool panel header expand/collapse all button, shown
 // when some children are expanded and others are collapsed
-columnSelectIndeterminate: 'tree-indeterminate',
+columnSelectIndeterminate: 'tree-indeterminate'
 
 // accordion open (filter tool panel group, charts group)
-accordionOpen: 'tree-open',
+accordionOpen: 'tree-open'
 
 // accordion closed (filter tool panel group, charts group)
-accordionClosed: 'tree-closed',
+accordionClosed: 'tree-closed'
 
 // accordion indeterminate - shown when some children are expanded and
 // others are collapsed (filter tool panel group, charts group)
-accordionIndeterminate: 'tree-indeterminate',
+accordionIndeterminate: 'tree-indeterminate'
 
 // shown on drag and drop image component icon while dragging
 // column to the side of the grid to pin
@@ -239,15 +239,15 @@ groupContracted: 'tree-closed'
 groupExpanded: 'tree-open'
 
 // set filter tree list group contracted (click to expand)
-setFilterGroupClosed: 'tree-closed',
+setFilterGroupClosed: 'tree-closed'
 
 // set filter tree list group expanded (click to contract)
-setFilterGroupOpen: 'tree-open',
+setFilterGroupOpen: 'tree-open'
 
 // set filter tree list expand/collapse all button, shown when
 // some children are expanded and
 // others are collapsed
-setFilterGroupIndeterminate: 'tree-indeterminate',
+setFilterGroupIndeterminate: 'tree-indeterminate'
 
 // set filter async values loading
 setFilterLoading: 'loading'
@@ -288,17 +288,20 @@ unlinked: 'unlinked'
 // rotating spinner shown by the loading cell renderer
 groupLoading: 'loading'
 
+// rotating spinner shown by the loading overlay
+overlayLoading: 'loading'
+
 // button to launch legacy column menu
-menu: 'menu',
+menu: 'menu'
 
 // button to launch new enterprise column menu
-menuAlt: 'menu-alt',
+menuAlt: 'menu-alt'
 
 // menu tab icon in legacy tabbed enterprise column menu
 legacyMenu: 'menu'
 
 // open filter button - header, floating filter, menu
-filter: 'filter',
+filter: 'filter'
 
 // filter is applied - header (legacy column menu), filter tool panel
 filterActive: 'filter'
@@ -306,17 +309,17 @@ filterActive: 'filter'
 // filter add button in new filter tool panel
 filterAdd: 'filterAdd'
 
-// button to collapse filter card in new filter tool panel 
-filterCardCollapse: 'chevron-up',
+// button to collapse filter card in new filter tool panel
+filterCardCollapse: 'chevron-up'
 
-// button to expand filter card in new filter tool panel 
-filterCardExpand: 'chevron-down',
+// button to expand filter card in new filter tool panel
+filterCardExpand: 'chevron-down'
 
 // indicates filter card in new filter tool panel has edits
-filterCardEditing: 'edit',
+filterCardEditing: 'edit'
 
 // filter tab icon in legacy tabbed enterprise column menu
-filterTab: 'filter',
+filterTab: 'filter'
 
 // filter tool panel tab
 filtersToolPanel: 'filter'
@@ -379,27 +382,33 @@ csvExport: 'csv'
 // excel export
 excelExport: 'excel'
 
+// rotating spinner shown by the export overlay
+overlayExporting: 'loading',
+
 // icon on select dropdowns (select cell editor, charts tool panels)
-selectOpen: 'small-down',
+selectOpen: 'small-down'
 
 // open icon for rich select editor
-richSelectOpen: 'small-down',
+richSelectOpen: 'small-down'
 
 // remove for rich select editor pills
-richSelectRemove: 'cancel',
+richSelectRemove: 'cancel'
+
+// list items async values loading
+richSelectLoading: 'loading'
 
 // icon for sub menu item
-subMenuOpen: 'small-right',
+subMenuOpen: 'small-right'
 
 // version of subMenuOpen used in RTL mode
-subMenuOpenRtl: 'small-left',
+subMenuOpenRtl: 'small-left'
 
 // separator between column 'pills' when you add multiple
 // columns to the header drop zone
-panelDelimiter: 'small-right',
+panelDelimiter: 'small-right'
 
 // version of panelDelimiter used in RTL mode
-panelDelimiterRtl: 'small-left',
+panelDelimiterRtl: 'small-left'
 
 // show on column header when column is sorted ascending
 sortAscending: 'asc'
@@ -407,55 +416,61 @@ sortAscending: 'asc'
 // show on column header when column is sorted descending
 sortDescending: 'desc'
 
+// show on column header when column is sorted absolute ascending
+sortAbsoluteAscending: 'aasc'
+
+// show on column header when column is sorted absolute descending
+sortAbsoluteDescending: 'adesc'
+
 // show on column header when column has no sort, only when
 // enabled with colDef.unSortIcon=true
-sortUnSort: 'none',
+sortUnSort: 'none'
 
 // Builder button in Advanced Filter
-advancedFilterBuilder: 'group',
+advancedFilterBuilder: 'group'
 
 // drag handle used to pick up Advanced Filter Builder rows
-advancedFilterBuilderDrag: 'grip',
+advancedFilterBuilderDrag: 'grip'
 
 // Advanced Filter Builder row validation error
-advancedFilterBuilderInvalid: 'not-allowed',
+advancedFilterBuilderInvalid: 'not-allowed'
 
 // shown on Advanced Filter Builder rows to move them up
-advancedFilterBuilderMoveUp: 'up',
+advancedFilterBuilderMoveUp: 'up'
 
 // shown on Advanced Filter Builder rows to move them down
-advancedFilterBuilderMoveDown: 'down',
+advancedFilterBuilderMoveDown: 'down'
 
 // shown on Advanced Filter Builder rows to add new rows
-advancedFilterBuilderAdd: 'plus',
+advancedFilterBuilderAdd: 'plus'
 
 // shown on Advanced Filter Builder rows to remove row
-advancedFilterBuilderRemove: 'minus',
+advancedFilterBuilderRemove: 'minus'
 
 // shown on Advanced Filter Builder selection pills
-advancedFilterBuilderSelect: 'small-down',
+advancedFilterBuilderSelect: 'small-down'
 
 // icon to open charts menu
-chartsMenu: 'menu-alt',
+chartsMenu: 'menu-alt'
 
 // Edit Chart menu item shown in Integrated Charts menu
-chartsMenuEdit: 'chart',
+chartsMenuEdit: 'chart'
 
 // Advanced Settings menu item shown in Integrated Charts menu
-chartsMenuAdvancedSettings: 'settings',
+chartsMenuAdvancedSettings: 'settings'
 
 // shown in Integrated Charts menu add fields
-chartsMenuAdd: 'plus',
+chartsMenuAdd: 'plus'
 
 // shown in Integrated Charts tool panel color picker
 chartsColorPicker: 'small-down'
 
 // previous in Integrated Charts settings tool panel theme switcher
-chartsThemePrevious: 'previous',
+chartsThemePrevious: 'previous'
 
 // next in Integrated Charts settings tool panel theme switcher
-chartsThemeNext: 'next',
+chartsThemeNext: 'next'
 
 // download chart
-chartsDownload: 'save',
+chartsDownload: 'save'
 ```

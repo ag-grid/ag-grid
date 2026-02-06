@@ -3,12 +3,14 @@ The Component is provided `props` containing, amongst other things, the value to
 {% /if %}
 
 {% if isFramework("react") %}
+
 ```ts
 // this comp gets inserted into the Cell
 const MyCustomEditorRenderer = props => {
     return <>{props.value}</>;
 };
 ```
+
 {% /if %}
 
 {% if isFramework("react") %}

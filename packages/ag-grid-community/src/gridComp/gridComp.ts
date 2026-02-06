@@ -65,7 +65,7 @@ export class GridComp extends TabGuardComp {
         const eGui = this.getGui();
         this.eGridDiv.appendChild(eGui);
         this.addDestroyFunc(() => {
-            this.eGridDiv.removeChild(eGui);
+            eGui.remove();
             _logIfDebug(this.gos, 'Grid removed from DOM');
         });
     }
@@ -134,11 +134,11 @@ export class GridComp extends TabGuardComp {
     protected getFocusableContainers(): FocusableContainer[] {
         const focusableContainers: FocusableContainer[] = [this.gridBody];
 
-        [this.sideBar, this.pagination].forEach((comp) => {
+        for (const comp of [this.sideBar, this.pagination]) {
             if (comp) {
                 focusableContainers.push(comp);
             }
-        });
+        }
 
         return focusableContainers.filter((el) => _isVisible(el.getGui()));
     }

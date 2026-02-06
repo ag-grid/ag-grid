@@ -21,7 +21,9 @@ export function createCategoryHierarchy<T extends object>(data: T[], categoryKey
     }
 
     function getCategoryLabel(value: unknown): string | null {
-        if (value == null) return null;
+        if (value == null) {
+            return null;
+        }
         return String(value);
     }
 }
@@ -91,10 +93,10 @@ function buildNestedHierarchy<V extends object>(
     getItemGroupKey: (item: V, depthIndex: number) => string | null
 ): Tree<V> {
     const hierarchy: Tree<V> = { depth: 0, children: new Map() };
-    data.forEach((item) => {
+    for (const item of data) {
         const itemDepth = getItemDepth(item);
         createNestedItemHierarchy(item, itemDepth, getItemGroupKey, 0, hierarchy);
-    });
+    }
     return hierarchy;
 
     function createNestedItemHierarchy(

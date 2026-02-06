@@ -16,7 +16,9 @@ function addKeyboardModeEvents(doc: Document): void {
 }
 
 function removeKeyboardModeEvents(doc: Document): void {
-    if (instanceCount > 0) return;
+    if (instanceCount > 0) {
+        return;
+    }
     doc.removeEventListener('keydown', toggleKeyboardMode);
     doc.removeEventListener('mousedown', toggleKeyboardMode);
 }

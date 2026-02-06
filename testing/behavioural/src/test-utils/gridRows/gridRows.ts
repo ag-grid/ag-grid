@@ -1,10 +1,8 @@
 import util from 'util';
 import { expect } from 'vitest';
 
-import type { Column, GridApi, IRowNode } from 'ag-grid-community';
-import type { RowNode } from 'ag-grid-community';
+import type { Column, GridApi, IRowNode, RowNode } from 'ag-grid-community';
 
-import { TestGridsManager } from '../testGridsManager';
 import { log, unindentText } from '../utils';
 import { GridRowsDiagramTree } from './gridRowsDiagramTree';
 import { GridRowsErrors } from './gridRowsErrors';
@@ -21,8 +19,9 @@ export interface GridRowsOptions<TData = any> {
     /**
      * Columns to include when making the diagram. If true, all columns will be included.
      * If an array, it must contain the id of the columns to include. Default is false, no columns.
+     * Default is true. There is usually no need to defined this.
      */
-    columns?: (string | Column)[] | boolean;
+    forcedColumns?: (string | Column)[] | boolean;
 
     /** If false, the id will not be shown in the diagram. Default is true */
     printIds?: boolean;
@@ -33,37 +32,52 @@ export interface GridRowsOptions<TData = any> {
     /** If true, the diagram will show hidden rows, like the children of collapsed groups, also if they do not appear in the displayed rows. Default is true */
     printHiddenRows?: boolean;
 
+    /** If true, columns whose value resolves to undefined will be omitted from the diagram output. Default is true. */
+    ignoreUndefinedCells?: boolean;
+
     errors?: GridRowsErrors<TData>;
 
-    /** Forces treeData to be checked as true or false */
-    treeData?: boolean;
+    /** Forces treeData to be checked as true or false. There is usually no need to set this. */
+    forcedTreeData?: boolean;
+
+    /** Adds data field values to the snapshot, e.g. ['group'] -> data.group:"value" */
+    nodeDataProps?: string[];
+
+    /** If set to false, the formatter gets disabled when printing the rows. Default is true. */
+    useFormatter?: boolean;
 }
 
 export class GridRows<TData = any> {
+    public readonly api: GridApi<TData>;
     public readonly treeData: boolean;
     public readonly rowNodes: RowNode<TData>[];
     public readonly displayedRows: RowNode<TData>[];
+    public readonly pinnedTopRows: RowNode<TData>[];
+    public readonly pinnedBottomRows: RowNode<TData>[];
     public readonly rootRowNodes: RowNode<TData>[];
     public readonly rootRowNode: RowNode<TData> | null;
     public readonly rootAllLeafChildren: RowNode<TData>[];
     public readonly errors: GridRowsErrors<TData>;
 
-    #gridHtmlElement: HTMLElement | null | undefined = undefined;
     #byIdMap: Map<string, RowNode<TData>> | null = null;
     #indexMap: Map<IRowNode<TData>, number> | null = null;
     #displayedRowsSet: Set<RowNode<TData>> | null = null;
-    #rowsHtmlElements: HTMLElement[] | null = null;
-    #rowsHtmlElementsMap: Map<string, HTMLElement> | null = null;
     readonly #detailGridRows: Map<IRowNode<TData> | GridApi, GridRows<any>>;
 
+    /**
+     * @param api The grid API instance
+     * @param label A label to identify the grid in error messages and diagrams
+     * @param options Options to configure the GridRows instance - please try to not use this, the default options should be enough
+     */
     public constructor(
-        public readonly api: GridApi<TData>,
+        api: GridApi<TData>,
         public readonly label: string = '',
         public readonly options: GridRowsOptions<TData> = {}
     ) {
+        this.api = api;
         const errors = options.errors || new GridRowsErrors<TData>();
         this.errors = errors;
-        this.treeData = options.treeData ?? !!api.getGridOption('treeData');
+        this.treeData = options.forcedTreeData ?? !!api.getGridOption('treeData');
         const rowNodes: RowNode<TData>[] = [];
         const displayedRows: RowNode<TData>[] = [];
         const rootNodesSet = new Set<RowNode<TData>>();
@@ -88,7 +102,7 @@ export class GridRows<TData = any> {
                         const detailGridRow = new GridRows(api, label, {
                             ...options,
                             errors,
-                            columns: !!options.columns,
+                            forcedColumns: options.forcedColumns ?? true,
                         });
                         detailGridRows.set(row, detailGridRow);
                         detailGridRows.set(api, detailGridRow);
@@ -104,30 +118,40 @@ export class GridRows<TData = any> {
         this.rootRowNodes = Array.from(rootNodesSet);
         this.rootRowNode = this.rootRowNodes[0] ?? null;
         this.rootAllLeafChildren = this.rootRowNode?.allLeafChildren ?? [];
+
+        const { pinnedTopRows, pinnedBottomRows } = this.#collectPinnedRows();
+        this.pinnedTopRows = pinnedTopRows;
+        this.pinnedBottomRows = pinnedBottomRows;
+    }
+
+    #collectPinnedRows(): { pinnedTopRows: RowNode<TData>[]; pinnedBottomRows: RowNode<TData>[] } {
+        const pinnedTopRows: RowNode<TData>[] = [];
+        const pinnedBottomRows: RowNode<TData>[] = [];
+
+        if (!this.api.isModuleRegistered('PinnedRowModule')) {
+            return { pinnedTopRows, pinnedBottomRows };
+        }
+
+        const pinnedTopCount = this.api.getPinnedTopRowCount();
+        const pinnedBottomCount = this.api.getPinnedBottomRowCount();
+        for (let i = 0; i < pinnedTopCount; ++i) {
+            const row = this.api.getPinnedTopRow(i) as RowNode<TData> | undefined;
+            if (row) {
+                pinnedTopRows.push(row);
+            }
+        }
+        for (let i = 0; i < pinnedBottomCount; ++i) {
+            const row = this.api.getPinnedBottomRow(i) as RowNode<TData> | undefined;
+            if (row) {
+                pinnedBottomRows.push(row);
+            }
+        }
+
+        return { pinnedTopRows, pinnedBottomRows };
     }
 
     public getDetailGridRows(row: IRowNode<TData> | GridApi | null | undefined): GridRows<any> | undefined {
         return row ? this.#detailGridRows.get(row) : undefined;
-    }
-
-    public get gridHtmlElement(): HTMLElement | null {
-        let element = this.#gridHtmlElement;
-        if (element === undefined) {
-            element = TestGridsManager.getHTMLElement(this.api);
-            if (!element) {
-                // hack: we are accessing the beans here to obtain the html element
-                element = ((this.rootRowNode ?? this.rowNodes[0]) as any)?.beans?.eGridDiv ?? null;
-                if (element) {
-                    TestGridsManager.registerHTMLElement(this.api, element);
-                }
-            }
-            this.#gridHtmlElement = element;
-        }
-        return element ?? null;
-    }
-
-    public get rowsHtmlElements(): HTMLElement[] {
-        return (this.#rowsHtmlElements ??= Array.from(this.gridHtmlElement?.querySelectorAll('[row-id]') ?? []));
     }
 
     public getAllRowNodesData(): (TData | undefined)[] {
@@ -147,7 +171,9 @@ export class GridRows<TData = any> {
     }
 
     public isDuplicateIdRow(row: IRowNode<TData> | null | undefined): boolean {
-        if (!row || !('id' in row)) return false;
+        if (!row || !('id' in row)) {
+            return false;
+        }
         const found = this.getById(String(row.id));
         return !found || found !== row;
     }
@@ -158,28 +184,6 @@ export class GridRows<TData = any> {
 
     public isRowDisplayed(row: IRowNode<TData> | null | undefined): boolean {
         return (this.#displayedRowsSet ??= new Set(this.displayedRows)).has(row as RowNode<TData>);
-    }
-
-    public getRowHtmlElement(id: string | { readonly id: string | null } | null | undefined): HTMLElement | null {
-        if (typeof id === 'object') {
-            id = id?.id ?? null;
-            if (id === null) {
-                return null;
-            }
-        }
-        id = String(id);
-        let map = this.#rowsHtmlElementsMap;
-        if (!map) {
-            map = new Map<string, HTMLElement>();
-            for (const rowElement of this.rowsHtmlElements) {
-                const rowId = rowElement.getAttribute('row-id');
-                if (rowId !== null) {
-                    map.set(rowId, rowElement);
-                }
-            }
-            this.#rowsHtmlElementsMap = map;
-        }
-        return map.get(id) ?? null;
     }
 
     public loadErrors(): this {
@@ -196,10 +200,11 @@ export class GridRows<TData = any> {
 
     public makeDiagram(printErrors = false): string {
         let columns: Column[] | null = null;
-        if (this.options.columns) {
+        const optionsColumns = this.options.forcedColumns ?? true;
+        if (optionsColumns) {
             columns = this.api.getAllGridColumns();
-            if (Array.isArray(this.options.columns)) {
-                const set = new Set(this.options.columns);
+            if (Array.isArray(optionsColumns)) {
+                const set = new Set(optionsColumns);
                 columns = columns.filter((column) => set.has(column) || set.has(column.getColId()));
             }
         }

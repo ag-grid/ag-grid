@@ -1,21 +1,18 @@
 import type { UtilBeanCollection } from '../interfaces/agCoreBeanCollection';
 import { _requestAnimationFrame } from './dom';
 
-const doOnceFlags: { [key: string]: boolean } = {};
+const doOnceSet = new Set<string>();
 
-/**
- * If the key was passed before, then doesn't execute the func
- * @param {Function} func
- * @param {string} key
- */
-export function _doOnce(func: () => void, key: string) {
-    if (doOnceFlags[key]) {
-        return;
+/** If the key was passed before, then doesn't execute the func */
+export const _doOnce = (func: () => void, key: string) => {
+    if (!doOnceSet.has(key)) {
+        doOnceSet.add(key);
+        func();
     }
+};
 
-    func();
-    doOnceFlags[key] = true;
-}
+/** Expose the internal set for testing purposes */
+_doOnce._set = doOnceSet;
 
 type BatchedCalls = {
     pending: boolean;
@@ -55,7 +52,9 @@ export function _batchCall(
         const funcsCopy = batch.funcs.slice();
         batch.funcs.length = 0;
         batch.pending = false;
-        funcsCopy.forEach((func) => func());
+        for (const func of funcsCopy) {
+            func();
+        }
     };
 
     if (mode === 'raf') {
@@ -66,7 +65,7 @@ export function _batchCall(
 }
 
 /**
- * Creates a debounced function a function, and attach it to a bean for lifecycle
+ * Creates a debounced function, and attach it to a bean for lifecycle
  * @param {Function} func The function to be debounced
  * @param {number} delay The time in ms to debounce
  * @returns {Function} The debounced function
@@ -75,11 +74,11 @@ export function _debounce<TArgs extends any[], TContext>(
     bean: { isAlive(): boolean },
     func: (this: TContext, ...args: TArgs) => void,
     delay: number
-): (this: TContext, ...args: TArgs) => void {
-    let timeout: any;
+): (this: TContext, ...args: TArgs) => number {
+    let timeout: number;
 
     // Calling debounce returns a new anonymous function
-    return function (this: TContext, ...args: TArgs) {
+    return function (this: TContext, ...args: TArgs): number {
         const context = this as any;
         window.clearTimeout(timeout);
 
@@ -91,6 +90,8 @@ export function _debounce<TArgs extends any[], TContext>(
                 func.apply(context, args);
             }
         }, delay);
+
+        return timeout;
     };
 }
 

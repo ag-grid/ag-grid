@@ -1,0 +1,61 @@
+.ag-panel {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    background-color: var(--ag-panel-background-color);
+}
+
+/* A dialog is panel that is also a popup */
+.ag-dialog {
+    position: absolute;
+    border-radius: var(--ag-border-radius);
+    box-shadow: var(--ag-dialog-shadow);
+    border: var(--ag-dialog-border);
+}
+
+.ag-panel-title-bar {
+    display: flex;
+    flex: none;
+    align-items: center;
+    cursor: default;
+    color: var(--ag-panel-title-bar-text-color);
+    font-family: var(--ag-panel-title-bar-font-family);
+    font-size: var(--ag-panel-title-bar-font-size);
+    font-weight: var(--ag-panel-title-bar-font-weight);
+    background-color: var(--ag-panel-title-bar-background-color);
+    height: var(--ag-panel-title-bar-height);
+    padding: var(--ag-spacing) var(--ag-cell-horizontal-padding);
+    border-bottom: var(--ag-panel-title-bar-border);
+}
+
+.ag-panel-title-bar-button {
+    margin-left: calc(var(--ag-spacing) * 2);
+    margin-right: var(--ag-spacing);
+    cursor: pointer;
+
+    :where(.ag-icon) {
+        color: var(--ag-panel-title-bar-icon-color);
+    }
+}
+
+.ag-panel-title-bar-title {
+    flex: 1 1 auto;
+}
+
+.ag-panel-title-bar-buttons {
+    display: flex;
+}
+
+.ag-panel-content-wrapper {
+    display: flex;
+    flex: 1 1 auto;
+    position: relative;
+    overflow: hidden;
+}
+
+:where(.ag-dragging-range-handle) .ag-dialog,
+:where(.ag-dragging-fill-handle) .ag-dialog {
+    opacity: 0.7;
+    pointer-events: none;
+}

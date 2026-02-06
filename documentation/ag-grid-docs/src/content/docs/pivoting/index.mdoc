@@ -28,7 +28,7 @@ const gridOptions = {
 In the snippet above, the rows are [Grouped](./grouping) on the `Country` column and [Aggregated](./aggregation)
 to total the number of `Gold` medals won by each country. You must provide at least one aggregation column as only aggregated rows are shown when pivoting.
 
-Pivoting is then applied to the `Sport` column values which generates a [Pivot Result Column](./pivoting-result-columns/) 
+Pivoting is then applied to the `Sport` column values which generates a [Pivot Result Column](./pivoting-result-columns/)
 showing the total number of `Gold` medals won by each country in each sport, as seen in this example:
 
 {% gridExampleRunner title="Simple Example" name="simple" /%}
@@ -36,7 +36,6 @@ showing the total number of `Gold` medals won by each country in each sport, as 
 {% note %}
 Pivoting with [Tree Data](./tree-data) enabled is currently not supported. Pivoting can only be used with [Row Grouping](./grouping).
 {% /note %}
-
 
 ## Configuring via the UI
 
@@ -76,7 +75,7 @@ The example below demonstrates the pivot panel alongside a [Column Tool Panel](.
 
 This uses the following configuration to only show the pivot panel while pivoting is active:
 
-```{% frameworkTransform=true %} 
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         // ...other column definitions
@@ -87,6 +86,22 @@ const gridOptions = {
     pivotPanelShow: 'onlyWhenPivoting',
 };
 ```
+
+## Pivot Mode vs Pivot Active
+
+It is possible to have pivot mode turned on even though there is no pivot active, on the grid. A pivot is active when one or more of the pivot columns is used as a column label. In this scenario, the grid will display the data as normal but will strip out columns that have no grouping or value active.
+
+The example below demonstrates the difference between pivot mode and having a column with pivot active. The example has three modes of operation that can be switched between using the top buttons. The modes are as follows:
+
+-   **1 - Grouping Active:** This is normal grouping. The grid groups with aggregations over Gold, Silver and Bronze. The user can drill down to the lowest level row data and columns without aggregation or group (eg Country, Year, Date and Sport) are shown.
+
+-   **2 - Grouping Active with Pivot Mode:** This is grouping with `pivotMode=true`, but without any pivot active. The data shown is identical to the first option except the grid removes access to the lowest level row data and columns without aggregation or group are not shown.
+
+-   **3 - Grouping Active with Pivot Mode and Pivot Active:** This is grouping with pivotMode=true and pivot active. Note that the Year column has been added to the Column Labels and there are now pivot result columns for each year.
+
+{% gridExampleRunner title="Pivot Mode Vs Pivot Active" name="pivot-mode"  exampleHeight=630 /%}
+
+Note that a pivot can only be active if pivot mode is on. If pivot mode is off, all pivot columns are ignored.
 
 ## API Reference
 

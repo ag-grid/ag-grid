@@ -1,5 +1,7 @@
-import { type AgGridFixtures, expect, test } from '@utils/grid/test-utils';
-import type { Locator } from 'playwright/test';
+import { type AgGridFixtures, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import type { Locator, Page } from 'playwright/test';
+
+import type { ColDef } from 'ag-grid-community';
 
 async function getWidth(locator: Locator): Promise<number | undefined> {
     return (await locator.boundingBox())?.width;
@@ -26,8 +28,17 @@ async function totalHeaderWidth(headers: Record<ColIds, Locator>): Promise<numbe
     return widths.reduce<number>((acc, w) => acc + (w ?? 0), 0);
 }
 
+// wait twice as long as animation so we know widths have settled
+async function waitForAnimation(page: Page): Promise<void> {
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    await expect(page.locator('.ag-animate-autosize')).not.toBeVisible();
+}
+
 test.agExample(import.meta, () => {
     test.eachFramework('fitCellToContents', async ({ page, agIdFor }) => {
+        await waitForGridContent(page);
+
+        await waitForAnimation(page);
         const headers = getHeaders(agIdFor);
         const headerRow = page.locator('.ag-header-row').filter({ has: headers.athlete });
         const baseHeaderWidths = await getHeaderWidths(headers);
@@ -35,9 +46,11 @@ test.agExample(import.meta, () => {
         expect(await getWidth(headerRow)).toEqual(await totalHeaderWidth(headers));
 
         await page.locator('button.resize-button').click();
+        await waitForAnimation(page);
+
         const apiResizedHeaderWidths = await getHeaderWidths(headers);
-        // API call doesn't use defaultMaxWidth so we expect a larger column
-        expect(apiResizedHeaderWidths.athlete).toBeGreaterThan(baseHeaderWidths.athlete);
+        // Athlete column has suppressAutoSize: true so we expect the width to be unchanged
+        expect(apiResizedHeaderWidths.athlete).toBe(baseHeaderWidths.athlete);
         expect(apiResizedHeaderWidths.age).toBe(baseHeaderWidths.age);
         expect(apiResizedHeaderWidths.country).toBe(baseHeaderWidths.country);
         expect(apiResizedHeaderWidths.year).toBe(baseHeaderWidths.year);
@@ -47,6 +60,7 @@ test.agExample(import.meta, () => {
         // `skipHeaders only`
         await page.locator('#toggle-ignore-headers').click(); // on
         await page.locator('button.resize-button').click();
+        await waitForAnimation(page);
 
         // when we skip headers, we expect all widths to be the same except for the age column, which is narrower now
         const headerSkippedWidths = await getHeaderWidths(headers);
@@ -62,6 +76,8 @@ test.agExample(import.meta, () => {
         await page.locator('#toggle-ignore-headers').click(); // off
         await page.locator('#toggle-scale-up').click(); // on
         await page.locator('button.resize-button').click();
+        await waitForAnimation(page);
+
         const scaledUpHeaderWidths = await getHeaderWidths(headers);
 
         expect(scaledUpHeaderWidths.athlete).toBe(apiResizedHeaderWidths.athlete);
@@ -75,6 +91,8 @@ test.agExample(import.meta, () => {
         // `skipHeaders` and `scaleUpToFitGridWidth`
         await page.locator('#toggle-ignore-headers').click(); // on
         await page.locator('button.resize-button').click();
+        await waitForAnimation(page);
+
         const headerSkippedAndScaledUpHeaderWidths = await getHeaderWidths(headers);
 
         expect(headerSkippedAndScaledUpHeaderWidths.athlete).toBe(apiResizedHeaderWidths.athlete);
@@ -89,8 +107,11 @@ test.agExample(import.meta, () => {
         // need to set the viewport size to less than the column width to test the scale-down
         await page.setViewportSize({ width: 400, height: 600 });
 
+        await waitForGridContent(page);
+
         await page.locator('#toggle-scale-up').click(); // on
         await page.locator('button.resize-button').click();
+        await waitForAnimation(page);
 
         expect(
             await getWidth(page.locator('.ag-header-row').filter({ has: agIdFor.headerCell('athlete') }))
@@ -118,8 +139,12 @@ test.agExample(import.meta, () => {
             ]);
             const baseHeaderWidths = await getHeaderWidths(headers);
 
+            await waitForGridContent(page);
+
             await page.locator('#toggle-scale-up').click(); // on
             await page.locator('button.resize-button').click();
+            await waitForAnimation(page);
+
             const apiResizedHeaderWidths = await getHeaderWidths(headers);
 
             expect(apiResizedHeaderWidths.athlete).toBeGreaterThan(baseHeaderWidths.athlete);
@@ -136,5 +161,71 @@ test.agExample(import.meta, () => {
             // +50 for the selection column
             expect(pinnedWidth + mainWidth).toEqual((await totalHeaderWidth(headers)) + 50);
         });
+
+        test.eachFramework(
+            'fitCellToContents + scaleUpToFitGridWidth wide screen, no down-scaling',
+            async ({ agIdFor, page, remoteGrid }) => {
+                await page.setViewportSize({ width: 1600, height: 800 });
+
+                await waitForGridContent(page);
+
+                const remoteApi = remoteGrid(page, '1');
+                const colDefs: ColDef[] = [
+                    { field: 'athlete', width: 150, suppressAutoSize: true },
+                    {
+                        field: 'age',
+                        headerName: 'Age of Athlete',
+                        width: 90,
+                        minWidth: 50,
+                        maxWidth: 150,
+                    },
+                    { field: 'country', width: 120 },
+                    { field: 'year', width: 90 },
+                    { field: 'date', width: 110 },
+                    { field: 'bronze', width: 90 },
+                    { field: 'silver', width: 90 },
+                    { field: 'gold', width: 90 },
+                    { field: 'total', width: 90 },
+                    { field: 'test', width: 200 },
+                ];
+                await remoteApi.setGridOption('columnDefs', colDefs);
+
+                const rowData = await remoteApi.getGridOption('rowData');
+                await remoteApi.setGridOption(
+                    'rowData',
+                    rowData.map((d: any) => {
+                        d['test'] = 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.';
+                        return d;
+                    })
+                );
+                await remoteApi.autoSizeAllColumns({});
+
+                const columnWidths = Object.fromEntries(
+                    await Promise.all(
+                        colDefs.map(async (c) => {
+                            return [c.field, await getWidth(agIdFor.headerCell(c.field!))];
+                        })
+                    )
+                );
+
+                await page.locator('#toggle-scale-up').click(); // on
+                await page.locator('button.resize-button').click();
+                await waitForAnimation(page);
+
+                const newColumnWidths = Object.fromEntries(
+                    await Promise.all(
+                        colDefs.map(async (c) => {
+                            return [c.field, await getWidth(agIdFor.headerCell(c.field!))];
+                        })
+                    )
+                );
+
+                for (const header in columnWidths) {
+                    expect(newColumnWidths[header], `${header} should not get smaller`).toBeGreaterThanOrEqual(
+                        columnWidths[header]
+                    );
+                }
+            }
+        );
     });
 });

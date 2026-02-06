@@ -37,7 +37,7 @@ type IServerSideGetRowsRequest = {
 
     // what groups the user is viewing
     groupKeys: string[];
-    
+
     // ... // other params
 }
 ```
@@ -48,9 +48,9 @@ e.g. `['Argentina', '2012']`.
 
 The example below demonstrates server-side Row Grouping. Note the following:
 
-* **Country** and **Sport** columns have `rowGroup=true` defined on their column definitions. This tells the grid there are two levels of grouping, one for Country and one for Sport.
-* The `rowGroupCols` and `groupKeys` properties in the request are used by the server to perform grouping.
-* Open the browser's dev console to view the request supplied to the datasource.
+-   **Country** and **Sport** columns have `rowGroup=true` defined on their column definitions. This tells the grid there are two levels of grouping, one for Country and one for Sport.
+-   The `rowGroupCols` and `groupKeys` properties in the request are used by the server to perform grouping.
+-   Open the browser's dev console to view the request supplied to the datasource.
 
 {% gridExampleRunner title="Row Grouping" name="row-grouping"  exampleHeight=590 /%}
 
@@ -79,13 +79,13 @@ It may also be helpful to use the [Row Node](./row-object/) API `getRoute()` to 
 
 Below shows `isServerSideGroupOpenByDefault()` and `getRoute` in action. Note the following:
 
-* The callback opens the following routes as soon as those routes are loaded:
-  * **\[Zimbabwe]**
-  * **\[Zimbabwe, Swimming]**
-  * **\[United States, Swimming]**
-* Note **\[Zimbabwe]** and **\[Zimbabwe, Swimming]** are visibly open by default.
-* Note **\[United States, Swimming]** is not visibly open by default, as the parent group 'United States' is not open. However when 'United States' is opened, it's 'Swimming' group is opened by default.
-* Selecting a group row and clicking 'Route of Selected' prints the route to the selected node to the developer console.
+-   The callback opens the following routes as soon as those routes are loaded:
+    -   **\[Zimbabwe]**
+    -   **\[Zimbabwe, Swimming]**
+    -   **\[United States, Swimming]**
+-   Note **\[Zimbabwe]** and **\[Zimbabwe, Swimming]** are visibly open by default.
+-   Note **\[United States, Swimming]** is not visibly open by default, as the parent group 'United States' is not open. However when 'United States' is opened, it's 'Swimming' group is opened by default.
+-   Selecting a group row and clicking 'Route of Selected' prints the route to the selected node to the developer console.
 
 {% gridExampleRunner title="Open by Default" name="open-by-default" /%}
 
@@ -129,13 +129,12 @@ Group rows can be expanded or collapsed using the `expandAll()` and `collapseAll
 
 The example below demonstrates this feature, note the following:
 
-- First button expands all loaded group rows
-- Checking the checkbox enables `ssrmExpandAllAffectsAllRows` in the grid options
-- Now clicking the first button expands all group rows, including those not yet loaded
-- Second button collapses all group rows
+-   First button expands all loaded group rows
+-   Checking the checkbox enables `ssrmExpandAllAffectsAllRows` in the grid options
+-   Now clicking the first button expands all group rows, including those not yet loaded
+-   Second button collapses all group rows
 
 {% gridExampleRunner title="expand-all-affects-all-rows" name="expand-all-affects-all-rows"  exampleHeight=540 /%}
-
 
 To open only specific groups, e.g. only groups at the top level, then use the `forEachNode()` callback and open / close the row using `setExpanded()` as follows:
 
@@ -150,11 +149,11 @@ api.forEachNode(node => {
 
 The example below demonstrates these techniques. Note the following:
 
-* Clicking 'Expand All' expands all loaded group rows. Doing this when the grid initially loads expands all Year groups. Clicking it a second time (after Year groups have loaded) causes all Year groups as well as their children Country groups to be expanded - this is a heavier operation with 100's of rows to expand.
+-   Clicking 'Expand All' expands all loaded group rows. Doing this when the grid initially loads expands all Year groups. Clicking it a second time (after Year groups have loaded) causes all Year groups as well as their children Country groups to be expanded - this is a heavier operation with 100's of rows to expand.
 
-* Clicking 'Collapse All' collapses all rows.
+-   Clicking 'Collapse All' collapses all rows.
 
-* Clicking 'Expand Top Level Only' expands Years only, even if more group rows are loaded.
+-   Clicking 'Expand Top Level Only' expands Years only, even if more group rows are loaded.
 
 {% gridExampleRunner title="Expand All" name="expand-all" /%}
 
@@ -211,9 +210,9 @@ By default, changing filters fully purges the grid. Though, it can be configured
 
 In the example below, note the following:
 
-* Filtering by `Gold`, `Silver` or `Bronze` fully purges the grid, this is because they have aggregations applied.
-* Applying a filter to the `Year` column does not purge the entire grid, and instead only refreshes the `Year` group rows.
-* The example enables `serverSideOnlyRefreshFilteredGroups`, note that if you apply a filter to `Year` with the value `1900`, no leaf rows exist in any group.
+-   Filtering by `Gold`, `Silver` or `Bronze` fully purges the grid, this is because they have aggregations applied.
+-   Applying a filter to the `Year` column does not purge the entire grid, and instead only refreshes the `Year` group rows.
+-   The example enables `serverSideOnlyRefreshFilteredGroups`, note that if you apply a filter to `Year` with the value `1900`, no leaf rows exist in any group.
 
 {% gridExampleRunner title="Filtering" name="filtering"  exampleHeight=590 /%}
 

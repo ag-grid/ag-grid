@@ -55,7 +55,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
             const floatingFilterPromise = compDetails?.newAgStackInstance();
 
             if (floatingFilterPromise != null) {
-                this.compDetailsList.push(compDetails!);
+                this.compDetailsList.push(compDetails);
                 floatingFilterPromises.push(floatingFilterPromise);
             }
         });

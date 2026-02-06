@@ -34,6 +34,7 @@ const inputComponentDescriptors: {
     [S in BaseCellDataType]: [SupportedComponent] | [SupportedComponent, (instance: SupportedInstances) => void];
 } = {
     number: [AgInputNumberField],
+    bigint: [AgInputTextField],
     boolean: [AgInputTextField],
     object: [AgInputTextField],
     text: [AgInputTextField],
@@ -110,12 +111,10 @@ export class InputPillComp extends Component<InputPillCompEvent> {
                 this.showEditor();
             },
             keydown: (event: KeyboardEvent) => {
-                switch (event.key) {
-                    case KeyCode.ENTER:
-                        event.preventDefault();
-                        _stopPropagationForAgGrid(event);
-                        this.showEditor();
-                        break;
+                if (event.key === KeyCode.ENTER) {
+                    event.preventDefault();
+                    _stopPropagationForAgGrid(event);
+                    this.showEditor();
                 }
             },
         });
@@ -160,8 +159,9 @@ export class InputPillComp extends Component<InputPillCompEvent> {
      */
     private createEditorComp(type: BaseCellDataType): GridInputTextField {
         const [Comp, postConstruct] = inputComponentDescriptors[type];
+        // eslint-disable-next-line sonarjs/new-operator-misuse
         const instance = this.createBean(new Comp());
-        if (postConstruct) postConstruct(instance);
+        postConstruct?.(instance);
         return instance;
     }
 
@@ -171,7 +171,7 @@ export class InputPillComp extends Component<InputPillCompEvent> {
             return;
         }
         this.eEditor = undefined;
-        this.getGui().removeChild(eEditor.getGui());
+        eEditor.getGui().remove();
         this.destroyBean(eEditor);
         _setDisplayed(this.ePill, true);
         if (keepFocus) {
@@ -181,7 +181,8 @@ export class InputPillComp extends Component<InputPillCompEvent> {
 
     private renderValue(): void {
         let value: string;
-        const { displayValue, eLabel } = this;
+        const { displayValue, eLabel, params } = this;
+        const { type } = params;
         const { classList } = eLabel;
         classList.remove(
             'ag-advanced-filter-builder-value-empty',
@@ -191,7 +192,7 @@ export class InputPillComp extends Component<InputPillCompEvent> {
         if (!_exists(displayValue)) {
             value = this.advFilterExpSvc.translate('advancedFilterBuilderEnterValue');
             classList.add('ag-advanced-filter-builder-value-empty');
-        } else if (this.params.type === 'number') {
+        } else if (type === 'number' || type === 'bigint') {
             value = displayValue;
             classList.add('ag-advanced-filter-builder-value-number');
         } else {
@@ -205,7 +206,7 @@ export class InputPillComp extends Component<InputPillCompEvent> {
         if (!this.eEditor) {
             return;
         }
-        const value = this.eEditor!.getValue() ?? '';
+        const value = this.eEditor.getValue() ?? '';
         this.dispatchLocalEvent<WithoutGridCommon<FieldValueEvent>>({
             type: 'fieldValueChanged',
             value,

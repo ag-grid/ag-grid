@@ -24,8 +24,6 @@ import type { IHeaderComp, IHeaderParams, IInnerHeaderComponent } from '../../in
 import type { ILoadingCellRendererComp } from '../../interfaces/iLoadingCellRenderer';
 import type { ComponentType, UserCompDetails } from '../../interfaces/iUserCompDetails';
 import type { ICellRendererComp, ICellRendererParams } from '../../rendering/cellRenderers/iCellRenderer';
-import type { ILoadingOverlayComp, ILoadingOverlayParams } from '../../rendering/overlays/loadingOverlayComponent';
-import type { INoRowsOverlayComp, INoRowsOverlayParams } from '../../rendering/overlays/noRowsOverlayComponent';
 import type { ITooltipComp, ITooltipParams } from '../../tooltip/tooltipComponent';
 import type { UserComponentFactory } from './userComponentFactory';
 import { _getUserCompKeys } from './userComponentFactory';
@@ -81,10 +79,6 @@ const CellEditorComponent: ComponentType<ICellEditorComp> = {
         'refresh',
     ],
 };
-
-const LoadingOverlayComponent: ComponentType = { name: 'loadingOverlayComponent', optionalMethods: ['refresh'] };
-
-const NoRowsOverlayComponent: ComponentType = { name: 'noRowsOverlayComponent', optionalMethods: ['refresh'] };
 
 const TooltipComponent: ComponentType = { name: 'tooltipComponent' };
 
@@ -269,20 +263,6 @@ export function _getDateCompDetails(
     params: IDateParams
 ): UserCompDetails<IDateComp> | undefined {
     return userCompFactory.getCompDetails(def, DateComponent, 'agDateInput', params, true);
-}
-
-export function _getLoadingOverlayCompDetails(
-    userCompFactory: UserComponentFactory,
-    params: ILoadingOverlayParams
-): UserCompDetails<ILoadingOverlayComp> | undefined {
-    return userCompFactory.getCompDetailsFromGridOptions(LoadingOverlayComponent, 'agLoadingOverlay', params, true);
-}
-
-export function _getNoRowsOverlayCompDetails(
-    userCompFactory: UserComponentFactory,
-    params: INoRowsOverlayParams
-): UserCompDetails<INoRowsOverlayComp> | undefined {
-    return userCompFactory.getCompDetailsFromGridOptions(NoRowsOverlayComponent, 'agNoRowsOverlay', params, true);
 }
 
 export function _getTooltipCompDetails(

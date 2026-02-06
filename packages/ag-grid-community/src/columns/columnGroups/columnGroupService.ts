@@ -83,21 +83,21 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
 
         const impactedGroups: AgProvidedColumnGroup[] = [];
 
-        stateItems.forEach((stateItem) => {
+        for (const stateItem of stateItems) {
             const groupKey = stateItem.groupId;
             const newValue = stateItem.open;
             const providedColumnGroup = this.getProvidedColGroup(groupKey);
 
             if (!providedColumnGroup) {
-                return;
+                continue;
             }
             if (providedColumnGroup.isExpanded() === newValue) {
-                return;
+                continue;
             }
 
             providedColumnGroup.setExpanded(newValue);
             impactedGroups.push(providedColumnGroup);
-        });
+        }
 
         visibleCols.refresh(source, true);
 
@@ -244,7 +244,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
         const topLevelResultCols: (AgColumn | AgColumnGroup)[] = [];
 
         // this is an array of cols or col groups at one level of depth, starting from leaf and ending at root
-        let groupsOrColsAtCurrentLevel: (AgColumn | AgColumnGroup)[] = columns as AgColumn[];
+        let groupsOrColsAtCurrentLevel: (AgColumn | AgColumnGroup)[] = columns;
         while (groupsOrColsAtCurrentLevel.length) {
             // store what's currently iterating so the function can build the next level of col groups
             const currentlyIterating = groupsOrColsAtCurrentLevel;
@@ -263,7 +263,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
                 const previousNodeProvided = isColumnGroup(previousNode)
                     ? previousNode.getProvidedColumnGroup()
                     : previousNode;
-                const previousNodeParent = previousNodeProvided.getOriginalParent() as AgProvidedColumnGroup | null;
+                const previousNodeParent = previousNodeProvided.getOriginalParent();
 
                 if (previousNodeParent == null) {
                     // if the last node was different, and had a null parent, then we add all the nodes to the final
@@ -432,7 +432,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
 
         while (pointer?.[0] && isProvidedColumnGroup(pointer[0])) {
             depth++;
-            pointer = (pointer[0] as AgProvidedColumnGroup).getChildren();
+            pointer = pointer[0].getChildren();
         }
         return depth;
     }
@@ -462,12 +462,12 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
     public balanceTreeForAutoCols(autoCols: AgColumn[], depth: number): (AgColumn | AgProvidedColumnGroup)[] {
         const tree: (AgColumn | AgProvidedColumnGroup)[] = [];
 
-        autoCols.forEach((col) => {
+        for (const col of autoCols) {
             // at the end, this will be the top of the tree item.
             let nextChild: AgColumn | AgProvidedColumnGroup = col;
 
             for (let i = depth - 1; i >= 0; i--) {
-                const autoGroup = new AgProvidedColumnGroup(null, `FAKE_PATH_${col.getId()}}_${i}`, true, i);
+                const autoGroup = new AgProvidedColumnGroup(null, `FAKE_PATH_${col.getId()}_${i}`, true, i);
                 this.createBean(autoGroup);
                 autoGroup.setChildren([nextChild]);
                 nextChild.originalParent = autoGroup;
@@ -480,7 +480,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
 
             // at this point, the nextChild is the top most item in the tree
             tree.push(nextChild);
-        });
+        }
 
         return tree;
     }
@@ -548,13 +548,13 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
         const result: { [uniqueId: HeaderColumnId]: AgColumnGroup } = {};
 
         const recursive = (columnsOrGroups: (AgColumn | AgColumnGroup)[] | null) => {
-            columnsOrGroups!.forEach((columnOrGroup) => {
+            for (const columnOrGroup of columnsOrGroups!) {
                 if (isColumnGroup(columnOrGroup)) {
                     const columnGroup = columnOrGroup;
                     result[columnOrGroup.getUniqueId()] = columnGroup;
                     recursive(columnGroup.getChildren());
                 }
-            });
+            }
         };
 
         if (displayedGroups) {
@@ -568,7 +568,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
         columnsOrGroups: (AgColumn | AgColumnGroup)[] | null,
         parent: AgColumnGroup | null
     ): void {
-        columnsOrGroups!.forEach((columnsOrGroup) => {
+        for (const columnsOrGroup of columnsOrGroups ?? []) {
             if (columnsOrGroup.parent !== parent) {
                 // parent has explicitly changed - force viewport headers now needed.
                 this.beans.colViewport.colsWithinViewportHash = '';
@@ -578,6 +578,6 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
                 const columnGroup = columnsOrGroup;
                 this.setupParentsIntoCols(columnGroup.getChildren(), columnGroup);
             }
-        });
+        }
     }
 }

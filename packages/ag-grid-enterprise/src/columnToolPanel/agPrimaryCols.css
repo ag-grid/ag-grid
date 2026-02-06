@@ -28,10 +28,11 @@
     height: 100%;
     gap: var(--ag-widget-horizontal-spacing);
     padding-left: calc(var(--ag-indentation-level) * var(--ag-column-select-indent-size));
+}
 
-    &:where(:not(:last-child)) {
-        margin-bottom: var(--ag-widget-vertical-spacing);
-    }
+.ag-column-select-column:where(:not(:last-child)),
+.ag-column-select-column-group:where(:not(:last-child)) {
+    margin-bottom: var(--ag-widget-vertical-spacing);
 }
 
 .ag-column-select-header-icon {

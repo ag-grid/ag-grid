@@ -1,3 +1,4 @@
+import { ContactForm } from '@ag-website-shared/components/contact-form/ContactForm';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import ChartsActive from '@ag-website-shared/images/inline-svgs/pricing/charts-active.svg?react';
 import ChartsInactive from '@ag-website-shared/images/inline-svgs/pricing/charts-inactive.svg?react';
@@ -5,15 +6,15 @@ import GridActive from '@ag-website-shared/images/inline-svgs/pricing/grid-activ
 import GridInactive from '@ag-website-shared/images/inline-svgs/pricing/grid-inactive.svg?react';
 import { chartsUrlWithPrefix } from '@ag-website-shared/utils/chartsUrlWithPrefix';
 import { gridUrlWithPrefix } from '@ag-website-shared/utils/gridUrlWithPrefix';
+import { CustomerLogos } from '@components/customer-logos/CustomerLogos';
 import { useFrameworkFromStore } from '@utils/hooks/useFrameworkFromStore';
+import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
 import { useEffect, useRef, useState } from 'react';
 import type { FunctionComponent } from 'react';
 
 import chartsFeaturesData from '../../content/license-features/chartsFeaturesMatrix.json';
 import gridFeaturesData from '../../content/license-features/gridFeaturesMatrix.json';
-import { TrialLicenceForm } from '../trial-licence-form/TrialLicenceForm';
-import { InfoEmailLink } from './InfoEmailLink';
 import { Licenses } from './Licenses';
 import { DEV_LICENSE_DATA } from './Licenses';
 import SocialProof from './SocialProof';
@@ -78,6 +79,12 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                 <div className={classnames('layout-max-width-small', styles.fullWidthBarContainer)}>
                     {licenseData.map((license, i) => {
                         const isCommunity = license.id === 'community';
+                        const ctaId =
+                            license.id === 'community'
+                                ? 'get-started'
+                                : license.id.includes('enterprise')
+                                  ? 'buy-now'
+                                  : 'bundle-buy-now';
 
                         return (
                             <div className={styles.fullWidthBarItem} key={i}>
@@ -96,6 +103,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                                     </span>
 
                                     <a
+                                        id={ctaId}
                                         className={classnames(
                                             styles.fwAction,
                                             isCommunity ? 'button-tertiary' : 'button'
@@ -170,76 +178,96 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                                 );
                             })}
                         </div>
+                        <div ref={contactSalesRef} className={styles.salesForm}>
+                            <div className={styles.salesFormCopy}>
+                                <h3 className="text-2xl">
+                                    <span>Contact Our Sales Team</span>
+                                </h3>
 
-                        <div ref={contactSalesRef} className={styles.contactSales}>
-                            <h3 className="text-2xl">Need help?</h3>
+                                <p className={styles.salesContactsubHeading}>
+                                    Get help with pricing, explore use-cases for your team, and more
+                                </p>
 
-                            <p className="text-secondary">
-                                Email{' '}
-                                <InfoEmailLink emailSubject="AG Grid Developer licence query" trackingType="headerLink">
-                                    info@ag-grid.com
-                                </InfoEmailLink>{' '}
-                                and start a conversation. We can provide quotes, give bulk pricing, and answer any sales
-                                or contract-related questions you may have.
-                            </p>
+                                <div className={styles.testimonialContainer}>
+                                    <p className={styles.testimonalHeading}>Millions use AG Grid every day:</p>
+                                    <div className={styles.customerLogosWrapper}>
+                                        <CustomerLogos />
+                                    </div>
+                                </div>
+                            </div>
 
-                            <InfoEmailLink
-                                emailSubject="AG Grid Developer licence query"
-                                className="button"
-                                trackingType="footer"
-                            >
-                                info@ag-grid.com
-                            </InfoEmailLink>
+                            <div className={classnames(styles.salesFormForm, 'trial-licence-form')}>
+                                <ContactForm
+                                    formLocation={
+                                        defaultSelection === 'grid' ? 'Grid pricing page' : 'Charts pricing page'
+                                    }
+                                />
+                            </div>
                         </div>
 
                         <div className={styles.trialLicence}>
                             <div className={styles.trialLicenceCopy}>
-                                <h3 className="text-2xl" id="request-trial-licence">
+                                <h3
+                                    className={classnames(styles.trialLicenceHeader, 'text-2xl')}
+                                    id="request-trial-licence"
+                                >
                                     <Icon name="enterprise" svgClasses={styles.enterpriseIcon} />
-                                    <span>Enterprise Bundle Trial</span>
+                                    <p style={{ maxWidth: '16ch' }}>Start Your 30-Day Enterprise Bundle Trial</p>
                                 </h3>
 
-                                <p>Fill out the form to receive a trial licence for AG Grid and AG Charts</p>
+                                <p style={{ maxWidth: '48ch' }}>
+                                    Explore the full enterprise capabilities of AG Grid and AG Charts with a free 30-day
+                                    trial licence — no restrictions, no watermarks.
+                                </p>
 
-                                <div className={styles.trialLicenceCopyItem}>
-                                    <Icon name="alarm" svgClasses={styles.alarmIcon} />
-                                    <p>
-                                        <b>Two Week Trial</b>
-                                        <br />
-                                        Trial licences are valid for two weeks from the date of issue, or{' '}
-                                        <a href="mailto:info@ag-grid.com">contact&nbsp;us</a> to extend.
-                                    </p>
-                                </div>
-
-                                <div className={styles.trialLicenceSeparator}></div>
-
-                                <div className={styles.trialLicenceCopyItem}>
-                                    <Icon name="terminal" svgClasses={styles.terminalIcon} />
-                                    <p>
-                                        <b>Suppresses Console Warnings</b>
-                                        <br />
-                                        Removes console errors and watermarks from AG Grid and
-                                        AG&nbsp;Chart&nbsp;components.
-                                    </p>
-                                </div>
-
-                                <div className={styles.trialLicenceSeparator}></div>
-
-                                <div className={styles.trialLicenceCopyItem}>
-                                    <Icon name="support" svgClasses={styles.supportIcon} />
-                                    <p>
-                                        <b>Access Support</b>
-                                        <br />
-                                        Access dedicated support from our engineering team via{' '}
-                                        <a href="https://ag-grid.zendesk.com/hc/en-us">Zendesk</a>.
-                                    </p>
-                                </div>
+                                <a
+                                    id="request-trial-licence"
+                                    className={classnames('button', styles.trialButton)}
+                                    href={urlWithPrefix({
+                                        framework,
+                                        url: './community-vs-enterprise/#request-a-30-day-enterprise-bundle-trial-licence',
+                                    })}
+                                >
+                                    Get a trial license
+                                </a>
                             </div>
 
                             <div className={styles.trialLicenceSeparator}></div>
 
-                            <div className={classnames(styles.trialLicenceForm, 'trial-licence-form')}>
-                                <TrialLicenceForm />
+                            <div className={classnames(styles.trialLicenceCopy, 'trial-licence-form')}>
+                                <div className={styles.trialLicenceCopyItem}>
+                                    <Icon name="pricingFeatures" />
+                                    <p>
+                                        <b>Full enterprise features</b>
+                                        <br />
+                                        Access all advanced grid and charts features without console warnings or
+                                        watermarks.
+                                    </p>
+                                </div>
+
+                                <div className={styles.trialLicenceSeparator}></div>
+
+                                <div className={styles.trialLicenceCopyItem}>
+                                    <Icon name="alarm" />
+                                    <p>
+                                        <b>30 days of access</b>
+                                        <br />
+                                        Enough time to evaluate integration, performance, and fit.
+                                    </p>
+                                </div>
+
+                                <div className={styles.trialLicenceSeparator}></div>
+
+                                <div className={styles.trialLicenceCopyItem}>
+                                    <Icon name="support" />
+                                    <p>
+                                        <b>Engineering support</b>
+                                        <br />
+                                        Get direct assistance from our developers via{' '}
+                                        <a href="https://ag-grid.zendesk.com/hc/en-us">Zendesk</a> throughout your
+                                        trial.
+                                    </p>
+                                </div>
                             </div>
                         </div>
 
@@ -248,11 +276,17 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                             <p>
                                 Read our documentation on{' '}
                                 {defaultSelection === 'grid' ? (
-                                    <a href={gridUrlWithPrefix({ framework, url: './license-install' })}>
+                                    <a
+                                        id="licence-install-cta"
+                                        href={gridUrlWithPrefix({ framework, url: './license-install' })}
+                                    >
                                         Installing Your Licence Key
                                     </a>
                                 ) : (
-                                    <a href={chartsUrlWithPrefix({ framework, url: './license-install' })}>
+                                    <a
+                                        id="licence-install-cta"
+                                        href={chartsUrlWithPrefix({ framework, url: './license-install' })}
+                                    >
                                         Installing Your Licence Key
                                     </a>
                                 )}
@@ -262,6 +296,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
 
                         <div className={styles.videoPrompt}>
                             <a
+                                id="licence-explainer-video-thumbnail"
                                 href="https://www.youtube.com/watch?v=VPr__OKxH50"
                                 target="_blank"
                                 className={styles.thumbnail}
@@ -275,7 +310,11 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                             <div>
                                 <h3>Which licences do I need?</h3>
                                 <p>
-                                    <a href="https://www.youtube.com/watch?v=VPr__OKxH50" target="_blank">
+                                    <a
+                                        id="licence-explainer-video-text"
+                                        href="https://www.youtube.com/watch?v=VPr__OKxH50"
+                                        target="_blank"
+                                    >
                                         <span className="icon"></span>
                                         Watch our short explainer video
                                     </a>

@@ -5,17 +5,18 @@ import type { AgColumn } from '../../entities/agColumn';
 import { _getRowNode } from '../../entities/positionUtils';
 import type { AgEventType } from '../../eventTypes';
 import type { CellFocusClearedEvent, CellFocusedEvent, CommonCellFocusParams } from '../../events';
-import type { EditMap, EditValue, IEditModelService } from '../../interfaces/iEditModelService';
+import type { EditMap, EditValue } from '../../interfaces/iEditModelService';
 import type {
     EditInputEvents,
     EditPosition,
     EditRowPosition,
     EditSource,
-    IEditService,
     StartEditWithPositionParams,
     _SetEditingCellsParams,
 } from '../../interfaces/iEditService';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
+import type { EditModelService } from '../editModelService';
+import type { EditService } from '../editService';
 import { _getCellCtrl, _getRowCtrl } from '../utils/controllers';
 import {
     UNEDITED,
@@ -39,8 +40,8 @@ export type EditValidationAction<T extends Required<EditPosition> = Required<Edi
 
 export abstract class BaseEditStrategy extends BeanStub {
     beanName: BeanName | undefined;
-    protected model: IEditModelService;
-    protected editSvc: IEditService;
+    protected model: EditModelService;
+    protected editSvc: EditService;
 
     public postConstruct(): void {
         this.model = this.beans.editModelSvc!;
@@ -131,7 +132,7 @@ export abstract class BaseEditStrategy extends BeanStub {
 
         const results: EditValidationResult = { all: [], pass: [], fail: [] };
 
-        editingCells.forEach((cell) => {
+        for (const cell of editingCells) {
             results.all.push(cell);
 
             const validation = this.model.getCellValidationModel().getCellValidation(cell);
@@ -139,37 +140,36 @@ export abstract class BaseEditStrategy extends BeanStub {
 
             if ((validation?.errorMessages?.length ?? 0) > 0) {
                 results.fail.push(cell);
-                return;
+                continue;
             }
 
             results.pass.push(cell);
-        });
+        }
 
         if (cancel) {
-            editingCells.forEach((cell) => {
+            for (const cell of editingCells) {
                 _destroyEditor(this.beans, cell, { cancel });
                 this.model.stop(cell);
-            });
-            return true;
-        }
+            }
+        } else {
+            const actions = this.processValidationResults(results);
 
-        const actions = this.processValidationResults(results);
-
-        if (actions.destroy.length > 0) {
-            actions.destroy.forEach((cell) => {
-                _destroyEditor(this.beans, cell, { event, cancel });
-                this.model.stop(cell);
-            });
-        }
-
-        if (actions.keep.length > 0) {
-            actions.keep.forEach((cell) => {
-                const cellCtrl = _getCellCtrl(this.beans, cell);
-
-                if (!this.editSvc?.cellEditingInvalidCommitBlocks()) {
-                    cellCtrl && this.editSvc.revertSingleCellEdit(cellCtrl);
+            if (actions.destroy.length > 0) {
+                for (const cell of actions.destroy) {
+                    _destroyEditor(this.beans, cell, { event, cancel });
+                    this.model.stop(cell);
                 }
-            });
+            }
+
+            if (actions.keep.length > 0) {
+                for (const cell of actions.keep) {
+                    const cellCtrl = _getCellCtrl(this.beans, cell);
+                    const editSvc = this.editSvc;
+                    if (!editSvc?.cellEditingInvalidCommitBlocks() && cellCtrl) {
+                        editSvc.revertSingleCellEdit(cellCtrl);
+                    }
+                }
+            }
         }
 
         return true;
@@ -185,17 +185,17 @@ export abstract class BaseEditStrategy extends BeanStub {
         const discard: Required<EditPosition>[] = [];
 
         if (rowNode) {
-            positions.forEach((pos) => {
+            for (const pos of positions) {
                 // if the rowNode is provided, we only keep positions that match it
-                if (!(!rowNode || pos.rowNode === rowNode)) {
+                if (pos.rowNode !== rowNode) {
                     discard.push(pos);
                 }
-            });
+            }
         } else {
-            positions.forEach((pos) => {
+            for (const pos of positions) {
                 // if no rowNode is provided, we keep all positions
                 discard.push(pos);
-            });
+            }
         }
 
         // clean up any dangling editors

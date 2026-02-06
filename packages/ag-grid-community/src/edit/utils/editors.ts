@@ -5,6 +5,7 @@ import { _getCellEditorDetails } from '../../components/framework/userCompUtils'
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ColDef } from '../../entities/colDef';
+import type { ColDefInternal } from '../../entities/colDefInternal';
 import type { CellEditingStoppedEvent } from '../../events';
 import { _addGridCommonParams } from '../../gridOptionsUtils';
 import type {
@@ -15,6 +16,7 @@ import type {
     ICellEditorParams,
     ICellEditorValidationError,
 } from '../../interfaces/iCellEditor';
+import type { Column } from '../../interfaces/iColumn';
 import type { EditValue } from '../../interfaces/iEditModelService';
 import type { EditPosition } from '../../interfaces/iEditService';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
@@ -24,32 +26,24 @@ import { _getCellCtrl } from './controllers';
 
 export const UNEDITED = Symbol('unedited');
 
-function getCellEditorInstanceMap<TData = any>(
-    beans: BeanCollection,
-    params: GetCellEditorInstancesParams<TData> = {}
-): { ctrl: CellCtrl; editor: ICellEditor }[] {
-    const res: { ctrl: CellCtrl; editor: ICellEditor }[] = [];
-
-    const ctrls = beans.rowRenderer.getCellCtrls(params.rowNodes, params.columns as AgColumn[]);
-
-    for (const ctrl of ctrls) {
-        const cellEditor = ctrl.comp?.getCellEditor();
-
-        if (cellEditor) {
-            res.push({
-                ctrl,
-                editor: _unwrapUserComp(cellEditor),
-            });
-        }
-    }
-
-    return res;
-}
-
+/** public api getCellEditorInstances */
 export const getCellEditorInstances = <TData = any>(
     beans: BeanCollection,
     params: GetCellEditorInstancesParams<TData> = {}
-): ICellEditor[] => getCellEditorInstanceMap(beans, params).map((res) => res.editor);
+): ICellEditor[] => {
+    const ctrls = beans.rowRenderer.getCellCtrls(params.rowNodes, params.columns as AgColumn[]);
+    const editors: ICellEditor[] = new Array(ctrls.length);
+    let count = 0;
+    for (let i = 0, len = ctrls.length; i < len; ++i) {
+        const ctrl = ctrls[i];
+        const cellEditor = ctrl.comp?.getCellEditor();
+        if (cellEditor) {
+            editors[count++] = _unwrapUserComp(cellEditor);
+        }
+    }
+    editors.length = count;
+    return editors;
+};
 
 export function _setupEditors(
     beans: BeanCollection,
@@ -72,19 +66,23 @@ export function _setupEditors(
 
         if (!curCellCtrl) {
             if (cellRowNode && cellColumn) {
-                const oldValue = valueSvc.getValue(cellColumn as AgColumn, cellRowNode, undefined, 'api');
+                const oldValue = valueSvc.getValue(cellColumn as AgColumn, cellRowNode, 'data');
                 const isNewValueCell = position?.rowNode === cellRowNode && position?.column === cellColumn;
                 const cellStartValue = (isNewValueCell && key) || undefined;
 
                 const newValue =
                     cellStartValue ??
-                    editSvc?.getCellDataValue(cellPosition, false) ??
-                    valueSvc.getValueForDisplay(cellColumn as AgColumn, cellRowNode)?.value ??
+                    editSvc?.getCellDataValue(cellPosition) ??
+                    valueSvc.getValueForDisplay({
+                        column: cellColumn as AgColumn,
+                        node: cellRowNode,
+                        from: 'edit',
+                    })?.value ??
                     oldValue ??
                     UNEDITED;
 
                 editModelSvc?.setEdit(cellPosition, {
-                    pendingValue: newValue,
+                    pendingValue: getNormalisedFormula(beans, newValue, false, cellColumn),
                     sourceValue: oldValue,
                     state: 'editing',
                 });
@@ -104,8 +102,6 @@ export function _setupEditors(
             }
         );
     }
-
-    return;
 }
 
 export function _sourceAndPendingDiffer({
@@ -128,64 +124,64 @@ export function _setupEditor(
         silent?: boolean;
     }
 ): void {
-    const enableGroupEditing = beans.gos.get('enableGroupEdit');
     const { key, event, cellStartedEdit, silent } = params ?? {};
-    const cellCtrl = _getCellCtrl(beans, position)!;
+    const { editModelSvc, editSvc, gos, userCompFactory } = beans;
+
+    const cellCtrl = _getCellCtrl(beans, position);
     const editorComp = cellCtrl?.comp?.getCellEditor();
 
     const editorParams = _createEditorParams(beans, position, key, cellStartedEdit && !silent);
+    const previousEdit = editModelSvc?.getEdit(position);
 
-    const previousEdit = beans.editModelSvc?.getEdit(position);
-
-    let newValue = editorParams.value;
-
-    if (newValue === undefined) {
-        newValue = previousEdit?.sourceValue;
-    }
-
-    beans.editModelSvc?.setEdit(position, {
-        editorValue: newValue,
-        state: 'editing',
-    });
+    const newValue = editorParams.value ?? previousEdit?.sourceValue;
 
     if (editorComp) {
+        editModelSvc?.setEdit(position, {
+            editorValue: getNormalisedFormula(beans, newValue, true, position.column),
+            state: 'editing',
+        });
         // don't reinitialise, just refresh if possible
         editorComp.refresh?.(editorParams);
         return;
     }
 
     const colDef = position.column.getColDef();
-    const compDetails = _getCellEditorDetails(beans.userCompFactory, colDef, editorParams);
+    const compDetails = _getCellEditorDetails(userCompFactory, colDef, editorParams);
 
-    // if cellEditorSelector was used, we give preference to popup and popupPosition from the selector
-    const popup = compDetails?.popupFromSelector != null ? compDetails.popupFromSelector : !!colDef.cellEditorPopup;
-    const popupLocation: 'over' | 'under' | undefined =
-        compDetails?.popupPositionFromSelector != null
-            ? compDetails.popupPositionFromSelector
-            : colDef.cellEditorPopupPosition;
-
-    checkAndPreventDefault(compDetails!.params, event);
-
-    if (cellCtrl) {
-        cellCtrl.editCompDetails = compDetails;
-        cellCtrl.onEditorAttachedFuncs.push(() => cellCtrl.rangeFeature?.unsetComp());
-        cellCtrl.comp?.setEditDetails(compDetails, popup, popupLocation, beans.gos.get('reactiveCustomComponents'));
-        cellCtrl?.rowCtrl?.refreshRow({ suppressFlash: true });
-
-        const edit = beans.editModelSvc?.getEdit(position, true);
-
-        if (!silent && !edit?.editorState?.cellStartedEditing) {
-            beans.editSvc?.dispatchCellEvent(
-                position,
-                event,
-                'cellEditingStarted',
-                enableGroupEditing ? { value: newValue } : {}
-            );
-            beans.editModelSvc?.setEdit(position, { editorState: { cellStartedEditing: true } });
-        }
+    if (!compDetails) {
+        return;
     }
 
-    return;
+    const { popupFromSelector, popupPositionFromSelector } = compDetails;
+
+    // if cellEditorSelector was used, we give preference to popup and popupPosition from the selector
+    const popup = popupFromSelector ?? !!colDef.cellEditorPopup;
+    const popupLocation: 'over' | 'under' | undefined = popupPositionFromSelector ?? colDef.cellEditorPopupPosition;
+
+    checkAndPreventDefault(compDetails.params, event);
+
+    if (!cellCtrl) {
+        return;
+    }
+
+    const { rangeFeature, rowCtrl, comp, onEditorAttachedFuncs } = cellCtrl;
+
+    editModelSvc?.setEdit(position, {
+        editorValue: getNormalisedFormula(beans, newValue, true, position.column),
+        state: 'editing',
+    });
+
+    cellCtrl.editCompDetails = compDetails;
+    onEditorAttachedFuncs.push(() => rangeFeature?.unsetComp());
+    comp?.setEditDetails(compDetails, popup, popupLocation, gos.get('reactiveCustomComponents'));
+    rowCtrl?.refreshRow({ suppressFlash: true });
+
+    const edit = editModelSvc?.getEdit(position);
+
+    if (!silent && !edit?.editorState?.cellStartedEditing) {
+        editSvc?.dispatchCellEvent(position, event, 'cellEditingStarted', { value: newValue });
+        editModelSvc?.setEdit(position, { editorState: { cellStartedEditing: true } });
+    }
 }
 
 function _valueFromEditor(
@@ -238,14 +234,29 @@ function _createEditorParams(
     const { rowNode, column } = position;
 
     const editor = cellCtrl.comp?.getCellEditor();
+
+    const cellDataValue = editSvc?.getCellDataValue(position);
     const initialNewValue =
-        editSvc?.getCellDataValue(position, false) ??
-        (editor ? _valueFromEditor(beans, editor)?.editorValue : undefined);
+        cellDataValue === undefined
+            ? editor
+                ? _valueFromEditor(beans, editor)?.editorValue
+                : undefined
+            : cellDataValue;
+
     const value =
-        initialNewValue === UNEDITED ? valueSvc.getValueForDisplay(agColumn, rowNode)?.value : initialNewValue;
+        initialNewValue === UNEDITED
+            ? valueSvc.getValueForDisplay({ column: agColumn, node: rowNode, from: 'edit' })?.value
+            : initialNewValue;
+
+    // if formula, normalise the value to shorthand for users.
+    let paramsValue = enableGroupEditing ? initialNewValue : value;
+    if (column.isAllowFormula() && beans.formula?.isFormula(paramsValue)) {
+        // normalise to shorthand for editing
+        paramsValue = beans.formula?.normaliseFormula(paramsValue, true) ?? paramsValue;
+    }
 
     return _addGridCommonParams(gos, {
-        value: enableGroupEditing ? initialNewValue : value,
+        value: paramsValue,
         eventKey: key ?? null,
         column,
         colDef: column.getColDef(),
@@ -317,17 +328,17 @@ export function _syncFromEditors(
     beans: BeanCollection,
     params: { persist: boolean; isCancelling?: boolean; isStopping?: boolean }
 ): void {
-    beans.editModelSvc?.getEditPositions().forEach((cellId) => {
+    for (const cellId of beans.editModelSvc?.getEditPositions() ?? []) {
         const cellCtrl = _getCellCtrl(beans, cellId);
 
         if (!cellCtrl) {
-            return;
+            continue;
         }
 
         const editor = cellCtrl.comp?.getCellEditor();
 
         if (!editor) {
-            return;
+            continue;
         }
 
         const { editorValue, editorValueExists, isCancelAfterEnd } = _valueFromEditor(beans, editor, params);
@@ -337,7 +348,7 @@ export function _syncFromEditors(
         }
 
         _syncFromEditor(beans, cellId, editorValue, undefined, !editorValueExists, params);
-    });
+    }
 }
 
 export function _syncFromEditor(
@@ -358,20 +369,25 @@ export function _syncFromEditor(
         return;
     }
 
-    let edit = editModelSvc.getEdit(position, true);
+    let edit = editModelSvc.getEdit(position);
 
     if (!edit?.sourceValue) {
         // sourceValue not set means sync called without corresponding startEdit - from API call
-        edit = editModelSvc.setEdit(position, {
-            sourceValue: valueSvc.getValue(column as AgColumn, rowNode, undefined, 'api'),
-            pendingValue: edit ? edit.editorValue : UNEDITED,
-        });
+        const editValue: Partial<EditValue> = {
+            sourceValue: valueSvc.getValue(column as AgColumn, rowNode, 'data'),
+            pendingValue: edit ? getNormalisedFormula(beans, edit.editorValue, false, column) : UNEDITED,
+        };
+
+        if (params?.persist) {
+            editValue.state = 'changed';
+        }
+        edit = editModelSvc.setEdit(position, editValue);
     }
 
     // Note: we don't clear the edit state here (even if new===old) as this is also called from the stop editing flow.
     // Note: editorValue should be in the correct target format already, so no need to parse it again - this is done in the editor, via the colDef parseValue function.
     editModelSvc.setEdit(position, {
-        editorValue: valueSameAsSource ? edit.sourceValue : editorValue,
+        editorValue: valueSameAsSource ? getNormalisedFormula(beans, edit.sourceValue, true, column) : editorValue,
     });
 
     if (params?.persist) {
@@ -379,14 +395,26 @@ export function _syncFromEditor(
     }
 }
 
+/**
+ * Converts formula to shorthand or longhand depending on context
+ * @param forEditing if true, converts to shorthand (A1), if false converts to longhand (REF(COL(id),ROW(id))) for storage
+ */
+function getNormalisedFormula(beans: BeanCollection, value: any, forEditing: boolean, column: Column): any {
+    const { formula } = beans;
+    if (column.isAllowFormula() && formula?.isFormula(value)) {
+        return formula?.normaliseFormula(value, forEditing) ?? value;
+    }
+    return value;
+}
+
 function _persistEditorValue(beans: BeanCollection, position: Required<EditPosition>): void {
     const { editModelSvc } = beans;
 
-    const edit = editModelSvc?.getEdit(position, true);
+    const edit = editModelSvc?.getEdit(position);
 
     // propagate the editor value to pending.
     editModelSvc?.setEdit(position, {
-        pendingValue: edit?.editorValue,
+        pendingValue: getNormalisedFormula(beans, edit?.editorValue, false, position.column),
     });
 }
 
@@ -399,7 +427,9 @@ export function _destroyEditors(
         edits = beans.editModelSvc?.getEditPositions();
     }
 
-    edits!.forEach((cellPosition) => _destroyEditor(beans, cellPosition, params));
+    for (const cellPosition of edits ?? []) {
+        _destroyEditor(beans, cellPosition, params);
+    }
 }
 
 type DestroyEditorParams = { event?: Event | null; silent?: boolean; cancel?: boolean };
@@ -407,13 +437,12 @@ type DestroyEditorParams = { event?: Event | null; silent?: boolean; cancel?: bo
 export function _destroyEditor(
     beans: BeanCollection,
     position: Required<EditPosition>,
-    params?: DestroyEditorParams
+    params?: DestroyEditorParams,
+    cellCtrl = _getCellCtrl(beans, position)
 ): void {
-    const enableGroupEditing = beans.gos.get('enableGroupEdit');
-    const { editModelSvc } = beans;
-    const cellCtrl = _getCellCtrl(beans, position);
+    const editModelSvc = beans.editModelSvc;
 
-    const edit = editModelSvc?.getEdit(position, true);
+    const edit = editModelSvc?.getEdit(position);
 
     if (!cellCtrl) {
         if (edit) {
@@ -423,16 +452,17 @@ export function _destroyEditor(
         return;
     }
 
-    const { comp } = cellCtrl;
+    const comp = cellCtrl.comp;
+    const cellEditor = comp?.getCellEditor();
 
-    if (comp && !comp.getCellEditor()) {
-        // editor already cleaned up, refresh cell
+    // editor already cleaned up, refresh cell (React usually)
+    if (comp && !cellEditor) {
         cellCtrl?.refreshCell();
 
         if (edit) {
             editModelSvc?.setEdit(position, { state: 'changed' });
-            const args = enableGroupEditing
-                ? groupEditOverrides(params, edit)
+            const args = beans.gos.get('enableGroupEdit')
+                ? _enabledGroupEditStoppedArgs(edit, params?.cancel)
                 : {
                       valueChanged: false,
                       newValue: undefined,
@@ -445,7 +475,7 @@ export function _destroyEditor(
     }
 
     if (_hasValidationRules(beans)) {
-        const errorMessages = comp?.getCellEditor()?.getValidationErrors?.();
+        const errorMessages = edit && cellEditor?.getValidationErrors?.();
         const cellValidationModel = editModelSvc?.getCellValidationModel();
 
         if (errorMessages?.length) {
@@ -455,7 +485,9 @@ export function _destroyEditor(
         }
     }
 
-    editModelSvc?.setEdit(position, { state: 'changed' });
+    if (edit) {
+        editModelSvc?.setEdit(position, { state: 'changed' });
+    }
 
     comp?.setEditDetails(); // passing nothing stops editing
     comp?.refreshEditStyles(false, false);
@@ -465,37 +497,60 @@ export function _destroyEditor(
     const latest = editModelSvc?.getEdit(position);
 
     if (latest && latest.state === 'changed') {
-        const args = enableGroupEditing
-            ? groupEditOverrides(params, latest)
-            : {
-                  valueChanged: _sourceAndPendingDiffer(latest) && !params?.cancel,
-                  newValue:
-                      params?.cancel || latest.editorState.isCancelAfterEnd
-                          ? undefined
-                          : latest?.editorValue ?? edit?.pendingValue,
-                  oldValue: latest?.sourceValue,
-              };
-
+        const cancel = params?.cancel;
+        const args = beans.gos.get('enableGroupEdit')
+            ? _enabledGroupEditStoppedArgs(latest, cancel)
+            : _cellEditStoppedArgs(latest, edit, cancel);
         dispatchEditingStopped(beans, position, args, params);
     }
 }
 
 type EditingStoppedArgs = Partial<Pick<CellEditingStoppedEvent, 'valueChanged' | 'newValue' | 'oldValue' | 'value'>>;
 
-function groupEditOverrides(params: DestroyEditorParams | undefined, latest: Readonly<EditValue>): EditingStoppedArgs {
-    return params?.cancel
-        ? {
-              valueChanged: false,
-              oldValue: latest.sourceValue,
-              newValue: undefined,
-              value: latest.sourceValue,
-          }
-        : {
-              valueChanged: false,
-              oldValue: latest.sourceValue,
-              newValue: latest.pendingValue,
-              value: latest.sourceValue,
-          };
+/** Group editing event args (AG-15792): uses sourceValue for oldValue/value, does not check isCancelAfterEnd. */
+function _enabledGroupEditStoppedArgs(latest: Readonly<EditValue>, cancel: boolean | undefined): EditingStoppedArgs {
+    const { sourceValue, pendingValue } = latest;
+
+    let newValue: any;
+    if (!cancel && pendingValue !== UNEDITED) {
+        newValue = pendingValue;
+    }
+
+    return {
+        valueChanged: !cancel && _sourceAndPendingDiffer(latest),
+        newValue,
+        oldValue: sourceValue,
+        value: sourceValue,
+    };
+}
+
+/** Standard cell editing event args: newValue from editorValue (fallback to pendingValue), value is newValue. */
+function _cellEditStoppedArgs(
+    latest: Readonly<EditValue>,
+    edit: Readonly<EditValue> | undefined,
+    cancel: boolean | undefined
+): EditingStoppedArgs {
+    if (cancel || latest.editorState.isCancelAfterEnd) {
+        return {
+            valueChanged: false,
+            newValue: undefined,
+            oldValue: latest.sourceValue,
+        };
+    }
+
+    let newValue: any = latest.editorValue;
+    if (newValue == null || newValue === UNEDITED) {
+        newValue = edit?.pendingValue;
+    }
+    if (newValue === UNEDITED) {
+        newValue = undefined;
+    }
+
+    return {
+        valueChanged: _sourceAndPendingDiffer(latest),
+        newValue,
+        oldValue: latest.sourceValue,
+    };
 }
 
 function dispatchEditingStopped(
@@ -516,30 +571,50 @@ function dispatchEditingStopped(
     }
 }
 
+function _columnDefsRequireValidation(columnDefs?: ColDef[]): boolean {
+    if (!columnDefs) {
+        return false;
+    }
+    for (let i = 0, len = columnDefs.length; i < len; ++i) {
+        const colDef: ColDefInternal = columnDefs[i];
+        const params = colDef.cellEditorParams;
+        if (!params || (!colDef.editable && !colDef.groupRowEditable)) {
+            continue;
+        }
+        if (
+            params.minLength !== undefined ||
+            params.maxLength !== undefined ||
+            params.getValidationErrors !== undefined ||
+            params.min !== undefined ||
+            params.max !== undefined
+        ) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function _editorsRequireValidation(beans: BeanCollection): boolean {
+    const ctrls = beans.rowRenderer.getCellCtrls();
+    for (let i = 0, len = ctrls.length; i < len; ++i) {
+        const ctrl = ctrls[i];
+        const cellEditor = ctrl.comp?.getCellEditor();
+        if (cellEditor) {
+            const editor = _unwrapUserComp(cellEditor);
+            if (editor.getValidationElement || editor.getValidationErrors) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 function _hasValidationRules(beans: BeanCollection): boolean {
-    const { gos, colModel } = beans;
-    const getFullRowEditValidationErrors = !!gos.get('getFullRowEditValidationErrors');
-    const columnsHaveRules = colModel
-        .getColumnDefs()
-        ?.filter((c: ColDef) => c.editable)
-        .some(({ cellEditorParams }: ColDef) => {
-            const { minLength, maxLength, getValidationErrors, min, max } = cellEditorParams || {};
-
-            return (
-                minLength !== undefined ||
-                maxLength !== undefined ||
-                getValidationErrors !== undefined ||
-                min !== undefined ||
-                max !== undefined
-            );
-        });
-
-    const editorsHaveRules = beans.gridApi
-        .getCellEditorInstances()
-        // Check if either method was provided in the editor
-        .some((editor) => editor.getValidationElement || editor.getValidationErrors);
-
-    return columnsHaveRules || getFullRowEditValidationErrors || editorsHaveRules;
+    return (
+        !!beans.gos.get('getFullRowEditValidationErrors') ||
+        _columnDefsRequireValidation(beans.colModel.getColumnDefs()) ||
+        _editorsRequireValidation(beans)
+    );
 }
 
 export function _populateModelValidationErrors(beans: BeanCollection, force?: boolean): void {
@@ -547,16 +622,20 @@ export function _populateModelValidationErrors(beans: BeanCollection, force?: bo
         return;
     }
 
-    const mappedEditors = getCellEditorInstanceMap(beans);
     const cellValidationModel = new EditCellValidationModel();
 
     const { ariaAnnounce, localeSvc, editModelSvc, gos } = beans;
     const includeRows = gos.get('editType') === 'fullRow';
     const translate = _getLocaleTextFunc(localeSvc);
     const ariaValidationErrorPrefix = translate('ariaValidationErrorPrefix', 'Cell Editor Validation');
+    const rowCtrlSet = new Set<RowCtrl>();
+    for (const ctrl of beans.rowRenderer.getCellCtrls()) {
+        const cellEditorComp = ctrl.comp?.getCellEditor();
+        if (!cellEditorComp) {
+            continue;
+        }
 
-    for (const mappedEditor of mappedEditors) {
-        const { ctrl, editor } = mappedEditor;
+        const editor = _unwrapUserComp(cellEditorComp);
         const { rowNode, column } = ctrl;
         const errorMessages = editor.getValidationErrors?.() ?? [];
         const el = editor.getValidationElement?.(false) || (!editor.isPopup?.() && ctrl.eGui);
@@ -588,6 +667,7 @@ export function _populateModelValidationErrors(beans: BeanCollection, force?: bo
                 }
             );
         }
+        rowCtrlSet.add(ctrl.rowCtrl);
     }
 
     _syncFromEditors(beans, { persist: false });
@@ -595,12 +675,6 @@ export function _populateModelValidationErrors(beans: BeanCollection, force?: bo
     // the cellValidationModel should probably be reused to avoid
     // the second loop over mappedEditor below
     editModelSvc?.setCellValidationModel(cellValidationModel);
-
-    const rowCtrlSet = new Set<RowCtrl>();
-
-    for (const { ctrl } of mappedEditors) {
-        rowCtrlSet.add(ctrl.rowCtrl);
-    }
 
     if (includeRows) {
         const rowValidations = _generateRowValidationErrors(beans);

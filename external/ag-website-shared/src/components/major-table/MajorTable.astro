@@ -7,23 +7,24 @@ import { getDocumentationArchiveUrl } from '@ag-website-shared/utils/getArchiveU
 
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import styles from './MajorTable.module.scss';
+import type { Library, Framework } from '@ag-grid-types';
 
 interface Props {
-    library: 'grid' | 'charts';
+    library: Library;
     major: Number;
     type: 'migration' | 'archive';
 }
 
+interface Params {
+    framework?: Framework;
+}
+
 const { library, major, type } = Astro.props as Props;
 
-const isGrid = library === 'grid';
 const isMigration = type === 'migration';
 
 const { framework } = Astro.params as Params;
-const { data: allVersions } = (await getEntry(
-    'versions',
-    isGrid ? 'ag-grid-versions' : 'ag-charts-versions'
-)) as CollectionEntry<'versions'>;
+const { data: allVersions } = (await getEntry('versions', `ag-${library}-versions`)) as CollectionEntry<'versions'>;
 
 const filterMigrations = (version) => {
     return parseVersion(version.version).major === major && version.notesPath;

@@ -1,7 +1,8 @@
-import rootESLint from '../../eslint.config.mjs';
+import rootESLint, { sonarjsConfig } from '../../eslint.config.mjs';
 
 export default [
     ...rootESLint,
+    ...sonarjsConfig,
     {
         languageOptions: {
             parserOptions: {
@@ -30,6 +31,9 @@ export default [
             '@typescript-eslint/prefer-readonly': 'error',
             '@typescript-eslint/no-non-null-asserted-optional-chain': 'error',
             '@typescript-eslint/no-unnecessary-type-constraint': 'error',
+            '@typescript-eslint/prefer-function-type': 'error',
+
+            // '@typescript-eslint/no-unnecessary-type-assertion': 'error', rule fails on CI
             '@typescript-eslint/no-this-alias': 'off',
             '@typescript-eslint/no-for-in-array': 'error',
             'no-restricted-syntax': [
@@ -39,6 +43,10 @@ export default [
                     selector: 'Literal[value=/^&(w*);$/i]',
                     message:
                         "Prefer unicode characters as they don't have to be parsed into HTML to display correctly.",
+                },
+                {
+                    selector: 'PropertyDefinition[static=true]',
+                    message: 'Static class properties prevent tree-shaking. Use an alternative if possible.',
                 },
             ],
             'no-restricted-properties': [
@@ -59,6 +67,8 @@ export default [
                 },
             ],
             'no-console': 'error',
+
+            'unicorn/prefer-modern-dom-apis': 'error',
         },
     },
     {

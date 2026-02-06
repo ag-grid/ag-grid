@@ -1,0 +1,30 @@
+---
+title: "Row Grouping - Editing Groups"
+enterprise: true
+---
+
+The grid supports editing grouped data when using the [Client-Side Row Model](./row-models/#client-side).
+This page explains how to keep the grouping hierarchy synchronised with edits.
+
+## Refreshing Groups After Editing
+
+When grouped columns are editable, set `refreshAfterGroupEdit=true` so the grid updates row data
+and recalculates the grouping after every committed edit.
+
+{% gridExampleRunner title="Refresh After Group Edit" name="refresh-after-group-edit" exampleHeight=600 /%}
+
+In the example above, changing the `region` causes the grid to re-evaluate the grouping and move
+the row to the correct group instantly. Double click on a `region` cell to edit it.
+
+By default, without `refreshAfterGroupEdit` enabled, the row data updates but the grouping does not
+get updated until the next full refresh.
+
+When enabling `refreshAfterGroupEdit`, also provide `getRowId` so that the grid can track rows by
+stable IDs while rebuilding the grouping hierarchy.
+
+See also [Read Only Edit](./value-setters/#read-only-edit) for configuring immutable grouped data or
+connecting the grid with a store.
+
+## Next Up
+
+Continue to the next section to learn [Row Dragging with Row Groups](./grouping-row-dragging/).

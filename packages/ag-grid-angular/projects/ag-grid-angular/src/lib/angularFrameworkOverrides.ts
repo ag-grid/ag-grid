@@ -14,11 +14,11 @@ export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
     public override readonly batchFrameworkComps: boolean = true;
 
     // Flag used to control Zone behaviour when running tests as many test features rely on Zone.
-    private isRunningWithinTestZone: boolean = false;
+    private readonly isRunningWithinTestZone: boolean = false;
 
-    private runOutside: <T>(callback: () => T, source?: FrameworkOverridesIncomingSource) => T;
+    private readonly runOutside: <T>(callback: () => T, source?: FrameworkOverridesIncomingSource) => T;
 
-    constructor(private _ngZone: NgZone) {
+    constructor(private readonly _ngZone: NgZone) {
         super('angular');
 
         this.isRunningWithinTestZone =

@@ -1,13 +1,16 @@
-import type { MouseCapture } from '../events/mouseCapture';
-import { captureMouse, releaseMouseCapture } from '../events/mouseCapture';
 import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IComponent } from '../interfaces/iComponent';
 import type { DragListenerParams } from '../interfaces/iDrag';
-import type { AgDragSource, AgDraggingEvent, AgDropTarget, IDragAndDropImage } from '../interfaces/iDragAndDrop';
+import type {
+    AgDragSource,
+    AgDraggingEvent,
+    AgDropTarget,
+    IDragAndDropImage,
+    IDragAndDropService,
+} from '../interfaces/iDragAndDrop';
 import type { IPropertiesService } from '../interfaces/iProperties';
-import { _removeFromArray } from '../utils/array';
 import { _getPageBody, _getRootNode } from '../utils/document';
 import { _anchorElementToMouseMoveEvent } from '../utils/event';
 import type { AgPromise } from '../utils/promise';
@@ -24,17 +27,20 @@ interface DragSourceAndParams<
 }
 
 export abstract class BaseDragAndDropService<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
-    TProperties extends BaseProperties,
-    TGlobalEvents extends BaseEvents,
-    TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
-    TDragSourceType extends number,
-    TDragItem,
-    TDragAndDropIcon extends string,
-    TDraggingEvent extends AgDraggingEvent<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>,
-    TDragSource extends AgDragSource<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>,
-> extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService> {
+        TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+        TProperties extends BaseProperties,
+        TGlobalEvents extends BaseEvents,
+        TCommon,
+        TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+        TDragSourceType extends number,
+        TDragItem,
+        TDragAndDropIcon extends string,
+        TDraggingEvent extends AgDraggingEvent<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>,
+        TDragSource extends AgDragSource<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>,
+    >
+    extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
+    implements IDragAndDropService<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent, TDragSource>
+{
     beanName = 'dragAndDrop' as const;
 
     private readonly dragSourceAndParamsList: DragSourceAndParams<
@@ -52,14 +58,13 @@ export abstract class BaseDragAndDropService<
     private lastDraggingEvent: TDraggingEvent | null = null;
     private dragSource: TDragSource | null = null;
 
-    private dragImageParent: HTMLElement | ShadowRoot | null = null;
     private dragImageCompPromise: AgPromise<IComponent<any> & IDragAndDropImage> | null = null;
     private dragImageComp: (IComponent<any> & IDragAndDropImage) | null = null;
     private dragImageLastIcon: TDragAndDropIcon | null | undefined = undefined;
     private dragImageLastLabel: string | null | undefined = undefined;
-    private mouseCapture: MouseCapture | null = null;
 
-    private dropTargets: AgDropTarget<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>[] = [];
+    private readonly dropTargets: AgDropTarget<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>[] = [];
+    private externalDropZoneCount = 0;
     private lastDropTarget: AgDropTarget<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent> | null = null;
 
     protected abstract createEvent(
@@ -78,6 +83,7 @@ export abstract class BaseDragAndDropService<
 
     public addDragSource(dragSource: TDragSource, allowTouch = false): void {
         const entry: DragSourceAndParams<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent, TDragSource> = {
+            capturePointer: true,
             dragSource,
             eElement: dragSource.eElement,
             dragStartPixels: dragSource.dragStartPixels,
@@ -102,10 +108,13 @@ export abstract class BaseDragAndDropService<
 
     public removeDragSource(dragSource: TDragSource): void {
         const { dragSourceAndParamsList, beans } = this;
-        const sourceAndParams = dragSourceAndParamsList.find((item) => item.dragSource === dragSource);
-        if (sourceAndParams) {
-            beans.dragSvc?.removeDragSource(sourceAndParams);
-            _removeFromArray(dragSourceAndParamsList, sourceAndParams);
+        for (let i = 0, len = dragSourceAndParamsList.length; i < len; i++) {
+            if (dragSourceAndParamsList[i].dragSource === dragSource) {
+                const sourceAndParams = dragSourceAndParamsList[i];
+                beans.dragSvc?.removeDragSource(sourceAndParams);
+                dragSourceAndParamsList.splice(i, 1);
+                break;
+            }
         }
     }
 
@@ -117,6 +126,7 @@ export abstract class BaseDragAndDropService<
         }
         dragSourceAndParamsList.length = 0;
         dropTargets.length = 0;
+        this.externalDropZoneCount = 0;
         this.clearDragAndDropProperties();
         super.destroy();
     }
@@ -138,10 +148,6 @@ export abstract class BaseDragAndDropService<
         this.dragInitialSourcePointerOffsetY = mouseEvent.clientY - rect.top;
 
         dragSource.onDragStarted?.();
-
-        if (typeof PointerEvent !== 'undefined' && mouseEvent instanceof PointerEvent) {
-            this.mouseCapture = captureMouse(this.beans.eRootDiv, mouseEvent);
-        }
 
         this.createAndUpdateDragImageComp(dragSource);
     }
@@ -213,10 +219,8 @@ export abstract class BaseDragAndDropService<
     }
 
     private clearDragAndDropProperties(): void {
-        this.mouseCapture = releaseMouseCapture(this.mouseCapture);
         this.removeDragImageComp(this.dragImageComp);
         this.dragImageCompPromise = null;
-        this.dragImageParent = null;
         this.dragImageLastIcon = undefined;
         this.dragImageLastLabel = undefined;
         this.lastMouseEvent = null;
@@ -226,16 +230,24 @@ export abstract class BaseDragAndDropService<
         this.dragInitialSourcePointerOffsetX = 0;
         this.dragInitialSourcePointerOffsetY = 0;
         this.dragSource = null;
-        this.mouseCapture = null;
     }
 
     private getAllContainersFromDropTarget(
         dropTarget: AgDropTarget<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>
     ): HTMLElement[][] {
-        const secondaryContainers = dropTarget.getSecondaryContainers ? dropTarget.getSecondaryContainers() : null;
-        const containers: HTMLElement[][] = [[dropTarget.getContainer()]];
+        const primaryContainer = dropTarget.getContainer();
 
-        return secondaryContainers ? containers.concat(secondaryContainers) : containers;
+        const secondaryContainers = dropTarget.getSecondaryContainers?.();
+        const secondaryContainersLen = secondaryContainers?.length;
+        if (!secondaryContainersLen) {
+            return [[primaryContainer]];
+        }
+        const containers = new Array<HTMLElement[]>(secondaryContainersLen + 1);
+        containers[0] = [primaryContainer];
+        for (let i = 0; i < secondaryContainersLen; ++i) {
+            containers[i + 1] = secondaryContainers[i];
+        }
+        return containers;
     }
 
     // checks if the mouse is on the drop target. it checks eContainer and eSecondaryContainers
@@ -282,7 +294,15 @@ export abstract class BaseDragAndDropService<
     private findCurrentDropTarget(
         mouseEvent: MouseEvent
     ): AgDropTarget<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent> | null {
-        const validDropTargets = this.dropTargets.filter((target) => this.isMouseOnDropTarget(mouseEvent, target));
+        const validDropTargets: AgDropTarget<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>[] = [];
+        const dropTargets = this.dropTargets;
+        for (let i = 0, len = dropTargets.length; i < len; ++i) {
+            const target = dropTargets[i];
+            if (this.isMouseOnDropTarget(mouseEvent, target)) {
+                validDropTargets.push(target);
+            }
+        }
+
         const len = validDropTargets.length;
 
         if (len === 0) {
@@ -299,10 +319,25 @@ export abstract class BaseDragAndDropService<
         const elementStack = rootNode.elementsFromPoint(mouseEvent.clientX, mouseEvent.clientY) as HTMLElement[];
 
         // loop over the sorted elementStack to find which dropTarget comes first
-        for (const el of elementStack) {
-            for (const dropTarget of validDropTargets) {
-                const containers = this.getAllContainersFromDropTarget(dropTarget).flatMap((a) => a);
-                if (containers.indexOf(el) !== -1) {
+        for (let i = 0, stackLen = elementStack.length; i < stackLen; ++i) {
+            const el = elementStack[i];
+
+            for (let targetIndex = 0, targetsLen = validDropTargets.length; targetIndex < targetsLen; targetIndex++) {
+                const dropTarget = validDropTargets[targetIndex];
+                const containerGroups = this.getAllContainersFromDropTarget(dropTarget);
+
+                let matched = false;
+                for (let groupIdx = 0, groupLen = containerGroups.length; groupIdx < groupLen && !matched; groupIdx++) {
+                    const group = containerGroups[groupIdx];
+                    for (let elIdx = 0, elLen = group.length; elIdx < elLen; elIdx++) {
+                        if (group[elIdx] === el) {
+                            matched = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (matched) {
                     return dropTarget;
                 }
             }
@@ -315,23 +350,50 @@ export abstract class BaseDragAndDropService<
 
     public addDropTarget(dropTarget: AgDropTarget<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>) {
         this.dropTargets.push(dropTarget);
+        if (dropTarget.external) {
+            this.externalDropZoneCount++;
+        }
     }
 
     public removeDropTarget(dropTarget: AgDropTarget<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>) {
-        this.dropTargets = this.dropTargets.filter((target) => target.getContainer() !== dropTarget.getContainer());
+        const container = dropTarget.getContainer();
+        const dropTargets = this.dropTargets;
+        let writeIndex = 0;
+        for (let readIndex = 0, len = dropTargets.length; readIndex < len; ++readIndex) {
+            const target = dropTargets[readIndex];
+            if (target.getContainer() === container) {
+                if (target.external) {
+                    --this.externalDropZoneCount;
+                }
+                continue; // removed
+            }
+
+            if (writeIndex !== readIndex) {
+                dropTargets[writeIndex] = target;
+            }
+            ++writeIndex;
+        }
+        dropTargets.length = writeIndex;
     }
 
     public hasExternalDropZones(): boolean {
-        return this.dropTargets.some((zones) => zones.external);
+        return this.externalDropZoneCount > 0;
     }
 
     public findExternalZone(
         container: HTMLElement
     ): AgDropTarget<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent> | null {
-        return this.dropTargets.find((zone) => zone.external && zone.getContainer() === container) || null;
+        const dropTargets = this.dropTargets;
+        for (let i = 0, len = dropTargets.length; i < len; ++i) {
+            const zone = dropTargets[i];
+            if (zone.external && zone.getContainer() === container) {
+                return zone;
+            }
+        }
+        return null;
     }
 
-    public dropTargetEvent(
+    private dropTargetEvent(
         dropTarget: AgDropTarget<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>,
         mouseEvent: MouseEvent,
         fromNudge: boolean
@@ -381,8 +443,7 @@ export abstract class BaseDragAndDropService<
             this.dragImageComp = null;
         }
         if (comp) {
-            const eGui = comp.getGui();
-            this.dragImageParent?.removeChild(eGui);
+            comp.getGui()?.remove();
             this.destroyBean(comp);
         }
     }
@@ -392,7 +453,8 @@ export abstract class BaseDragAndDropService<
 
         this.dragImageCompPromise = promise;
         promise?.then((dragImageComp) => {
-            if (promise !== this.dragImageCompPromise || !this.lastMouseEvent || !this.isAlive()) {
+            const lastMouseEvent = this.lastMouseEvent;
+            if (promise !== this.dragImageCompPromise || !lastMouseEvent || !this.isAlive()) {
                 this.destroyBean(dragImageComp);
                 return; // New promise was started, ignore this old one.
             }
@@ -409,6 +471,7 @@ export abstract class BaseDragAndDropService<
             if (dragImageComp) {
                 this.appendDragImageComp(dragImageComp);
                 this.updateDragImageComp();
+                this.positionDragImageComp(lastMouseEvent);
             }
         });
     }
@@ -419,8 +482,8 @@ export abstract class BaseDragAndDropService<
 
         style.position = 'absolute';
         style.zIndex = '9999';
-        if (this.mouseCapture != null) {
-            style.pointerEvents = 'none';
+        if (this.beans.dragSvc?.hasPointerCapture()) {
+            style.pointerEvents = 'none'; // stops the ghost image from interfering with scrolling
         }
 
         this.gos.setInstanceDomData(eGui);
@@ -430,7 +493,6 @@ export abstract class BaseDragAndDropService<
         style.left = '20px';
 
         const targetEl = _getPageBody(this.beans);
-        this.dragImageParent = targetEl;
         if (!targetEl) {
             this.warnNoBody();
         } else {

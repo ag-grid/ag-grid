@@ -1,7 +1,9 @@
 {% if isFramework("react") %}
+
 ## Mixing JavaScript and React
 
 When providing Custom Components you have a choice of the following:
+
 1. Provide an AG Grid component as a React Component.
 1. Provide an AG Grid component in JavaScript (JavaScript Class Components only, not JavaScript Functional Components).
 
@@ -10,6 +12,7 @@ The following code snippet shows how both JavaScript and React Components can be
 {% /if %}
 
 {% if isFramework("react") %}
+
 ```jsx
 //...other imports
 import JavascriptComponent from './JavascriptComponent.js';
@@ -19,7 +22,7 @@ const GridExample = () => {
   // JS and React components, only need register if looking up by name
   const components = useMemo(() => ({
       'javascriptComponent': JavascriptComponent,
-      'reactComponent': ReactComponent    
+      'reactComponent': ReactComponent
   }), []);
 
   const columnDefs = useMemo( () => [
@@ -54,4 +57,5 @@ const GridExample = () => {
     );
 };
 ```
+
 {% /if %}

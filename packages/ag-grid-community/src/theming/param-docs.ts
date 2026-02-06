@@ -52,7 +52,7 @@ const docs: Record<AllThemeParams, string> = {
     cellFontFamily: 'Font family of text in grid cells',
     cellHorizontalPadding: 'Padding at the start and end of grid cells and header cells.',
     cellHorizontalPaddingScale: 'Multiply the cell horizontal padding by a number, e.g. 1.5 to increase by 50%',
-    cellTextColor: 'Color of text in grid cells.',
+    cellTextColor: 'Color of text in cells in the grid data area.',
     cellWidgetSpacing:
         'Horizontal spacing between widgets inside cells (e.g. row group expand buttons and row selection checkboxes).',
     chartMenuLabelColor: 'Color of form field labels within the chart editing panel for integrated charts',
@@ -111,7 +111,7 @@ const docs: Record<AllThemeParams, string> = {
     footerRowBorder: 'Horizontal borders above footer components like the pagination and status bars',
     foregroundColor:
         'Default color for neutral UI elements. Most text, borders and backgrounds are defined as semi-transparent versions of this color, resulting in a blend between the background and foreground colours.',
-    headerBackgroundColor: 'Background color for header and header-like.',
+    headerBackgroundColor: 'Background color for header and header-like components',
     headerCellBackgroundTransitionDuration:
         'Duration of the background color transition if headerCellHoverBackgroundColor or headerCellMovingBackgroundColor is set.',
     headerCellHoverBackgroundColor:
@@ -126,13 +126,13 @@ const docs: Record<AllThemeParams, string> = {
     headerColumnResizeHandleHeight:
         'Height of the drag handle on resizable header columns. Percentage values are relative to the header height.',
     headerColumnResizeHandleWidth: 'Width of the drag handle on resizable header columns.',
-    headerFontFamily: 'Font family of text in the header',
-    headerFontSize: 'Size of text in the header',
-    headerFontWeight: 'Font weight of text in the header',
+    headerFontFamily: 'Font family of text in the header and header-like components',
+    headerFontSize: 'Size of text in the header and header-like components',
+    headerFontWeight: 'Font weight of text in the header and header-like components',
     headerHeight:
-        'Height of header rows. NOTE: by default this value is calculated to leave enough room for text, icons and padding. Most applications should leave it as is and use rowVerticalPaddingScale to change padding.',
+        'Height of header and header-like components. NOTE: by default this value is calculated to leave enough room for text, icons and padding. Most applications should leave it as is and use headerVerticalPaddingScale to change padding.',
     headerRowBorder: 'Borders between and below header rows.',
-    headerTextColor: 'Color of text in the header',
+    headerTextColor: 'Color of text in the header and header-like components',
     headerVerticalPaddingScale: 'Multiply the header vertical padding by a number, e.g. 1.5 to increase by 50%',
     iconSize: 'The size of square icons and icon-buttons',
     iconColor: 'Color for icons, or `inherit` to take on the text color of the containing component',
@@ -180,17 +180,25 @@ const docs: Record<AllThemeParams, string> = {
     menuShadow: 'Shadow for menus e.g. column menu and right-click context menu',
     menuTextColor: 'Text color for menus e.g. column menu and right-click context menu',
     modalOverlayBackgroundColor: 'Background color of the overlay shown over the grid e.g. a data loading indicator.',
-    oddRowBackgroundColor: 'Background color applied to every other row',
+    dataBackgroundColor:
+        'Background color applied to grid rows. Should be a solid color, semi-transparent colors will cause issues.',
+    oddRowBackgroundColor: 'Alternative background colour applied to every other row to create a striped effect',
     paginationPanelHeight:
         'Height of the pagination panel at the bottom of the grid. Defaults to the higher of rowHeight or 22px.',
     panelBackgroundColor:
         'Background color for panels and dialogs such as the the advanced filter builder. Note that for the integrated charts panel, the chart fully fills the panel so no background is visible behind it - set the chart theme to change its background.',
+    panelTitleBarHeight:
+        'The height of the title bar of panels and dialogs such as the integrated charts panel and the advanced filter builder.',
     panelTitleBarBackgroundColor:
         'Background color for the title bar of panels and dialogs such as the integrated charts panel and the advanced filter builder.',
     panelTitleBarTextColor:
         'Text color for the title bar of panels and dialogs such as the integrated charts panel and the advanced filter builder.',
     panelTitleBarIconColor:
         'Icon color for the title bar of panels and dialogs such as the integrated charts panel and the advanced filter builder.',
+    panelTitleBarFontFamily:
+        'Font family for the title bar of panels and dialogs such as the integrated charts panel and the advanced filter builder.',
+    panelTitleBarFontSize:
+        'Size of text for the title bar of panels and dialogs such as the integrated charts panel and the advanced filter builder.',
     panelTitleBarFontWeight:
         'Font weight for the title bar of panels and dialogs such as the integrated charts panel and the advanced filter builder.',
     panelTitleBarBorder:
@@ -338,6 +346,14 @@ const docs: Record<AllThemeParams, string> = {
     colorPickerThumbBorderWidth: 'Border width of thumb (the draggable item) in color picker popup',
     colorPickerTrackBorderRadius: 'Border radius of track in color picker popup',
     colorPickerColorBorderRadius: 'Border radius of selected/recent colors in color picker',
+    rowDragIndicatorColor:
+        'Color of the indicator line used to show where a row will be inserted when dragging to reorder rows',
+    rowDragIndicatorWidth:
+        'Width of the indicator line used to show where a row will be inserted when dragging to reorder rows',
+    columnDragIndicatorColor:
+        'Color of the indicator line used to show where a row will be inserted when dragging to reorder columns',
+    columnDragIndicatorWidth:
+        'Width of the indicator line used to show where a row will be inserted when dragging to reorder columns',
 };
 
 export const getParamDocs = (param: string): string | undefined => {

@@ -11,8 +11,8 @@ To enable multi-row selection set `rowSelection.mode` to `'multiRow'`:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    rowSelection: { 
-        mode: 'multiRow' 
+    rowSelection: {
+        mode: 'multiRow'
     }
 }
 ```
@@ -24,12 +24,12 @@ The following example illustrates a basic multi-row selection configuration.
 Click checkboxes to select or deselect a row. Alternatively, you can do this via the keyboard by focusing the row and pressing the {% kbd "␣ Space" /%} key.
 Users can hold {% kbd "⇧ Shift" /%} and then click a checkbox to add a range of adjacent rows to the selection.
 
-Ranges of rows can be selected by holding down {% kbd "⇧ Shift" /%} while clicking on checkboxes. 
+Ranges of rows can be selected by holding down {% kbd "⇧ Shift" /%} while clicking on checkboxes.
 This behaviour also applies when [Click Selection](#enable-click-selection--deselection) is enabled, and in [Group Selection](./grouping-row-selection).
 
 ## Removing Selection Checkboxes
 
-To prevent any row selection checkboxes from being rendered in rows, set `rowSelection.checkboxes` to `false`. 
+To prevent any row selection checkboxes from being rendered in rows, set `rowSelection.checkboxes` to `false`.
 To prevent the header checkbox from being rendered, set `rowSelection.headerCheckbox` to `false`.
 Setting both to `false` will disable the checkbox column. You will also need to enable click selection by setting `enableClickSelection: true`.
 
@@ -70,20 +70,21 @@ Rows for which `isRowSelectable` returns `false` cannot be selected at all, whet
 
 {% gridExampleRunner title="Checkbox Selection: Hiding Disabled Checkboxes" name="checkbox-selection-disable-checkboxes" /%}
 
-Note that this example uses `hideDisabledCheckboxes` to hide disabled checkboxes, which can be toggled on or off. 
+Note that this example uses `hideDisabledCheckboxes` to hide disabled checkboxes, which can be toggled on or off.
 
 ## Selecting All Rows
 
 All rows may be selected at once by using the header checkbox, which is enabled by default in `'multiRow'` mode.
 
 The three possible values of `rowSelection.selectAll` are:
-- `'all'`: _(Default)_ Selecting the header checkbox selects all [selectable](#configure-selectable-rows) rows in the grid.
-- `'filtered'`: Selecting the header checkbox will select all rows that satisfy the currently active filter.
-- `'currentPage'`: Selecting the header checkbox will select all rows that satisfy the currently active filter on the current page.
+
+-   `'all'`: _(Default)_ Selecting the header checkbox selects all [selectable](#configure-selectable-rows) rows in the grid.
+-   `'filtered'`: Selecting the header checkbox will select all rows that satisfy the currently active filter.
+-   `'currentPage'`: Selecting the header checkbox will select all rows that satisfy the currently active filter on the current page.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    rowSelection: { 
+    rowSelection: {
         mode: 'multiRow',
         selectAll: 'filtered'
     }
@@ -97,21 +98,23 @@ The example below demonstrates the three different modes available for `rowSelec
 Note that when `rowSelection.isRowSelectable` is defined, the header checkbox will only select selectable rows.
 
 {% note %}
-The value of `rowSelection.selectAll` does not affect group selection behaviour, which is controlled by `rowSelection.groupSelects`. 
+The value of `rowSelection.selectAll` does not affect group selection behaviour, which is controlled by `rowSelection.groupSelects`.
 See [Row Grouping - Selecting Groups](./grouping-row-selection) for more on this.
 {% /note %}
 
 ## Customising the Checkbox Column
+
 The checkbox column may be customised in a similar way to any other column, by specifying its column definition in the `selectionColumnDef` grid option.
 
 {% apiDocumentation source="grid-options/properties.json" section="selection" names=["selectionColumnDef"] /%}
 
 The `SelectionColumnDef` allows for a great deal of customisation, including custom renderers, sorting, tooltips and more.
 The example below demonstrates the following configuration:
-- allowing sorting using the default sort order (selected first) via the header
-- changing the default width of the column
-- allowing resizing
-- pinning it to the left
+
+-   allowing sorting using the default sort order (selected first) via the header
+-   changing the default width of the column
+-   allowing resizing
+-   pinning it to the left
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -142,12 +145,12 @@ The `rowSelection.enableClickSelection` property configures whether a row's sele
 
 {% interfaceDocumentation interfaceName="MultiRowSelectionOptions" names=["enableClickSelection"] config={"description": ""}/%}
 
-This is typically used when [Checkbox Selection](#removing-selection-checkboxes) is disabled, though both can be enabled simultaneously if desired. 
+This is typically used when [Checkbox Selection](#removing-selection-checkboxes) is disabled, though both can be enabled simultaneously if desired.
 Click-selection and deselection can be enabled by setting `enableClickSelection` to `true`, otherwise they may be enabled separately using the values `'enableSelection'` and `'enableDeselection'`.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    rowSelection: { 
+    rowSelection: {
         mode: 'multiRow',
         enableClickSelection: true,
     }
@@ -164,7 +167,7 @@ Note that deselection is still possible when checkboxes are enabled by clicking 
 
 ## Force Checkboxes to be Selected
 
-It is possible to select a row via the Grid API and disable its checkbox to prevent users from deselecting it. 
+It is possible to select a row via the Grid API and disable its checkbox to prevent users from deselecting it.
 This can be achieved by providing a function to `rowSelection.checkboxes`.
 
 ```{% frameworkTransform=true %}
@@ -222,8 +225,8 @@ See the full list of configuration options available in `'multiRow'` mode.
 
 Row selection can be used when using row grouping, tree data and the server-side row model. See the respective sections of the documentation:
 
-- [Row Group Selection](./grouping-row-selection)
-- [Tree Data Selection](./tree-data-selection)
-- [Server-Side Row Model Selection](./server-side-model-selection)
+-   [Row Group Selection](./grouping-row-selection)
+-   [Tree Data Selection](./tree-data-selection)
+-   [Server-Side Row Model Selection](./server-side-model-selection)
 
 Continue to the next section to see the [Row Selection API reference](./row-selection-api-reference).

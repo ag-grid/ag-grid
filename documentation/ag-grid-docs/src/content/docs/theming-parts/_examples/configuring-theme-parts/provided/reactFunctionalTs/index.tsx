@@ -2,7 +2,6 @@ import React, { StrictMode, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import {
-    ModuleRegistry,
     colorSchemeDark,
     colorSchemeDarkBlue,
     colorSchemeDarkWarm,
@@ -20,9 +19,7 @@ import {
     themeQuartz,
 } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
-import { AgGridReact } from 'ag-grid-react';
-
-ModuleRegistry.registerModules([AllEnterpriseModule]);
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 const baseThemes = [
     { id: 'themeQuartz', value: themeQuartz },
@@ -67,22 +64,24 @@ const GridExample = () => {
     }, [baseTheme, colorScheme, iconSet]);
 
     return (
-        <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <p style={{ flex: 0 }}>
-                Theme: <PartSelector options={baseThemes} value={baseTheme} setValue={setBaseTheme} />
-                Icons: <PartSelector options={iconSets} value={iconSet} setValue={setIconSet} />
-                Color scheme: <PartSelector options={colorSchemes} value={colorScheme} setValue={setColorScheme} />
-            </p>
-            <div style={{ flex: 1 }}>
-                <AgGridReact
-                    theme={theme}
-                    columnDefs={columnDefs}
-                    rowData={rowData}
-                    defaultColDef={defaultColDef}
-                    sideBar
-                />
+        <AgGridProvider modules={[AllEnterpriseModule]}>
+            <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <p style={{ flex: 0 }}>
+                    Theme: <PartSelector options={baseThemes} value={baseTheme} setValue={setBaseTheme} />
+                    Icons: <PartSelector options={iconSets} value={iconSet} setValue={setIconSet} />
+                    Color scheme: <PartSelector options={colorSchemes} value={colorScheme} setValue={setColorScheme} />
+                </p>
+                <div style={{ flex: 1 }}>
+                    <AgGridReact
+                        theme={theme}
+                        columnDefs={columnDefs}
+                        rowData={rowData}
+                        defaultColDef={defaultColDef}
+                        sideBar
+                    />
+                </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

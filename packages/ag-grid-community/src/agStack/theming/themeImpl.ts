@@ -9,6 +9,8 @@ import { paramValueToCss } from './themeTypeUtils';
 import type { WithParamTypes } from './themeTypes';
 import { paramToVariableName } from './themeUtils';
 
+let paramsId = 0;
+
 export const _asThemeImpl = <TParams>(theme: Theme<TParams>): ThemeImpl => {
     if (!(theme instanceof ThemeImpl)) {
         throw new Error('theme is not an object created by createTheme');
@@ -16,8 +18,11 @@ export const _asThemeImpl = <TParams>(theme: Theme<TParams>): ThemeImpl => {
     return theme;
 };
 
-export const createSharedTheme = <TParams extends SharedThemeParams>(themeLogger: ThemeLogger): Theme<TParams> =>
-    new ThemeImpl(themeLogger);
+export const createSharedTheme = <TParams extends SharedThemeParams>(
+    themeLogger: ThemeLogger,
+    overridePrefix?: string
+): Theme<TParams> => new ThemeImpl({ themeLogger, overridePrefix });
+
 type themeUseArgs = {
     loadThemeGoogleFonts: boolean | undefined;
     styleContainer: HTMLElement;
@@ -28,18 +33,27 @@ type themeUseArgs = {
 
 export class ThemeImpl {
     constructor(
-        private readonly themeLogger: ThemeLogger,
+        private readonly params: {
+            themeLogger: ThemeLogger;
+            /**
+             * If a theme element is nested inside another theme element,
+             * this allows the child to inherit different variables than the parent
+             */
+            overridePrefix?: string;
+        },
         readonly parts: PartImpl[] = []
     ) {}
 
     withPart(part: Part | (() => Part)): ThemeImpl {
-        if (typeof part === 'function') part = part();
+        if (typeof part === 'function') {
+            part = part();
+        }
         if (!(part instanceof PartImpl)) {
             // Can't use validation service as this is API is designed to be used before modules are registered
-            this.themeLogger.preInitErr(259, 'Invalid part', { part });
+            this.params.themeLogger.preInitErr(259, 'Invalid part', { part });
             return this;
         }
-        return new ThemeImpl(this.themeLogger, [...this.parts, part]);
+        return new ThemeImpl(this.params, [...this.parts, part]);
     }
 
     withoutPart(feature: string): ThemeImpl {
@@ -54,15 +68,14 @@ export class ThemeImpl {
         );
     }
 
-    /**
-     * Called by a grid instance when it starts using the theme. This installs
-     * the theme's parts into document head, or the shadow DOM if the provided
-     * container is within a shadow root.
-     */
     _startUse({ styleContainer, cssLayer, nonce, loadThemeGoogleFonts, moduleCss }: themeUseArgs): void {
-        if (IS_SSR) return;
+        if (IS_SSR) {
+            return;
+        }
 
-        if (FORCE_LEGACY_THEMES) return;
+        if (FORCE_LEGACY_THEMES) {
+            return;
+        }
 
         uninstallLegacyCSS();
 
@@ -83,17 +96,23 @@ export class ThemeImpl {
     }
 
     private _cssClassCache?: string;
-    /**
-     * Return CSS that that applies the params of this theme to elements with
-     * the provided class name
-     */
+
     _getCssClass(this: ThemeImpl): string {
-        if (FORCE_LEGACY_THEMES) return 'ag-theme-quartz';
+        if (FORCE_LEGACY_THEMES) {
+            return 'ag-theme-quartz';
+        }
 
         return (this._cssClassCache ??= deduplicatePartsByFeature(this.parts)
             .map((part) => part.use(undefined, undefined, undefined))
             .filter(Boolean)
+            .concat(this._getParamsClassName())
             .join(' '));
+    }
+
+    private _paramsClassName?: string;
+
+    _getParamsClassName(): string {
+        return (this._paramsClassName ??= `ag-theme-params-${++paramsId}`);
     }
 
     private _paramsCache?: ModalParamValues;
@@ -147,17 +166,9 @@ export class ThemeImpl {
     }
 
     private _paramsCssCache?: string;
-    /**
-     * Return the CSS chunk that is inserted into the grid DOM, and will
-     * therefore be removed automatically when the grid is destroyed or it
-     * starts to use a new theme.
-     *
-     * @param className a unique class name on the grid wrapper used to scope the returned CSS to the grid instance
-     */
-    _getPerInstanceCss(className: string): string {
-        const selectorPlaceholder = '##SELECTOR##';
-        let innerParamsCss = this._paramsCssCache;
-        if (!innerParamsCss) {
+
+    _getParamsCss(): string {
+        if (!this._paramsCssCache) {
             // Ensure that every variable has a value set on root elements ("root"
             // elements are those containing grid UI, e.g. ag-root-wrapper and
             // ag-popup)
@@ -174,6 +185,8 @@ export class ThemeImpl {
             let variablesCss = '';
             let inheritanceCss = '';
             const modeParams = this._getModeParams();
+            const { overridePrefix, themeLogger } = this.params;
+            const cssOverridePrefix = overridePrefix ? `--ag-${overridePrefix}-` : undefined;
             for (const mode of Object.keys(modeParams)) {
                 const params = modeParams[mode];
                 if (mode !== defaultModeName) {
@@ -185,14 +198,15 @@ export class ThemeImpl {
                 // NOSONAR - these are not localised
                 for (const key of Object.keys(params).sort()) {
                     const value = params[key];
-                    const cssValue = paramValueToCss(key, value, this.themeLogger);
+                    const cssValue = paramValueToCss(key, value, themeLogger);
                     if (cssValue === false) {
-                        this.themeLogger.error(107, { key, value });
+                        themeLogger.error(107, { key, value });
                     } else {
                         const cssName = paramToVariableName(key);
+                        const overrideName = cssOverridePrefix ? cssName.replace('--ag-', cssOverridePrefix) : cssName;
                         const inheritedName = cssName.replace('--ag-', '--ag-inherited-');
                         variablesCss += `\t${cssName}: var(${inheritedName}, ${cssValue});\n`;
-                        inheritanceCss += `\t${inheritedName}: var(${cssName});\n`;
+                        inheritanceCss += `\t${inheritedName}: var(${overrideName});\n`;
                     }
                 }
                 if (mode !== defaultModeName) {
@@ -200,14 +214,15 @@ export class ThemeImpl {
                     inheritanceCss += '}\n';
                 }
             }
+            const selectorPlaceholder = `:where(.${this._getParamsClassName()})`;
             let css = `${selectorPlaceholder} {\n${variablesCss}}\n`;
             // Create --ag-inherited-foo variable values on the parent element, unless
             // the parent is itself a root (which can happen if popupParent is
             // ag-root-wrapper)
             css += `:has(> ${selectorPlaceholder}):not(${selectorPlaceholder}) {\n${inheritanceCss}}\n`;
-            this._paramsCssCache = innerParamsCss = css;
+            this._paramsCssCache = css;
         }
-        return innerParamsCss.replaceAll(selectorPlaceholder, `:where(.${className})`);
+        return this._paramsCssCache;
     }
 }
 type ParamValues = Record<string, unknown>;
@@ -251,15 +266,15 @@ let uninstalledLegacyCSS = false;
 // Remove the CSS from @ag-grid-community/styles that is automatically injected
 // by the UMD bundle
 const uninstallLegacyCSS = () => {
-    if (uninstalledLegacyCSS) return;
+    if (uninstalledLegacyCSS) {
+        return;
+    }
     uninstalledLegacyCSS = true;
     for (const style of Array.from(document.head.querySelectorAll('style[data-ag-scope="legacy"]'))) {
         style.remove();
     }
 };
-const googleFontsLoaded = new Set<string>();
 const loadGoogleFont = async (font: string, nonce: string | undefined) => {
-    googleFontsLoaded.add(font);
     const css = `@import url('https://${googleFontsDomain}/css2?family=${encodeURIComponent(font)}:wght@100;200;300;400;500;600;700;800;900&display=swap');\n`;
     // fonts are always installed in the document head, they are inherited in
     // shadow DOM without the need for separate installation

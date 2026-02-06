@@ -7,6 +7,7 @@ import type {
     ImageValue,
     LengthValue,
     ShadowValue,
+    ShadowValueParams,
 } from './themeTypes';
 import { clamp, memoize, paramToVariableExpression } from './themeUtils';
 
@@ -35,15 +36,23 @@ export const getParamType = memoize((param: string): ParamType => {
 });
 
 const literalToCSS = (value: string | number | { ref: string }): string | false => {
-    if (typeof value === 'object' && value?.ref) return paramToVariableExpression(value.ref);
-    if (typeof value === 'string') return value;
-    if (typeof value === 'number') return String(value);
+    if (typeof value === 'object' && value?.ref) {
+        return paramToVariableExpression(value.ref);
+    }
+    if (typeof value === 'string') {
+        return value;
+    }
+    if (typeof value === 'number') {
+        return String(value);
+    }
     return false;
 };
 
 export const colorValueToCss = (value: ColorValue): string | false => {
-    if (typeof value === 'string') return value;
-    if (value && 'ref' in value) {
+    if (typeof value === 'string') {
+        return value;
+    }
+    if (typeof value === 'object' && value && 'ref' in value) {
         const colorExpr: string = paramToVariableExpression(value.ref);
         if (value.mix == null) {
             return colorExpr;
@@ -57,26 +66,40 @@ export const colorValueToCss = (value: ColorValue): string | false => {
 export const colorSchemeValueToCss = literalToCSS;
 
 export const lengthValueToCss = (value: LengthValue): string | false => {
-    if (typeof value === 'string') return value;
-    if (typeof value === 'number') return `${value}px`;
-    if (value && 'calc' in value) {
+    if (typeof value === 'string') {
+        return value;
+    }
+    if (typeof value === 'number') {
+        return `${value}px`;
+    }
+    if (typeof value === 'object' && value && 'calc' in value) {
         // ensure a space around operators other than `-` (which can be part of an identifier)
         const valueWithSpaces = value.calc.replace(/ ?[*/+] ?/g, ' $& ');
         // convert param names to variable expressions, e.g. "fooBar" -> "var(--ag-foo-bar)",
         // ignoring words that are part of function names "fooBar()" or variables "--fooBar"
-        return `calc(${valueWithSpaces.replace(/-?\b[a-z][a-z0-9]*\b(?![-(])/gi, (p) => (p[0] === '-' ? p : ` ${paramToVariableExpression(p)} `))})`;
+        return `calc(${valueWithSpaces.replace(/-?\b[a-z][a-z0-9]*\b(?![-(])/gi, (p) => (p[0] === '-' ? p : ' ' + paramToVariableExpression(p) + ' '))})`;
     }
-    if (value && 'ref' in value) return paramToVariableExpression(value.ref);
+    if (typeof value === 'object' && value && 'ref' in value) {
+        return paramToVariableExpression(value.ref);
+    }
     return false;
 };
 
 export const scaleValueToCss = literalToCSS;
 
 export const borderValueToCss = (value: BorderValue, param: string): string => {
-    if (typeof value === 'string') return value;
-    if (value === true) return borderValueToCss({}, param);
-    if (value === false) return param === 'columnBorder' ? borderValueToCss({ color: 'transparent' }, param) : 'none';
-    if (value && 'ref' in value) return paramToVariableExpression(value.ref);
+    if (typeof value === 'string') {
+        return value;
+    }
+    if (value === true) {
+        return borderValueToCss({}, param);
+    }
+    if (value === false) {
+        return param === 'columnBorder' ? borderValueToCss({ color: 'transparent' }, param) : 'none';
+    }
+    if (typeof value === 'object' && value && 'ref' in value) {
+        return paramToVariableExpression(value.ref);
+    }
     return (
         borderStyleValueToCss(value.style ?? 'solid') +
         ' ' +
@@ -86,17 +109,31 @@ export const borderValueToCss = (value: BorderValue, param: string): string => {
     );
 };
 
-export const shadowValueToCss = (value: ShadowValue): string | false => {
-    if (typeof value === 'string') return value;
-    if (value === false) return 'none';
-    if (value && 'ref' in value) return paramToVariableExpression(value.ref);
+const shadowValueParamsToCss = (value: ShadowValueParams): string => {
     return [
         lengthValueToCss(value.offsetX ?? 0),
         lengthValueToCss(value.offsetY ?? 0),
         lengthValueToCss(value.radius ?? 0),
         lengthValueToCss(value.spread ?? 0),
         colorValueToCss(value.color ?? { ref: 'foregroundColor' }),
+        ...(value.inset ? ['inset'] : []),
     ].join(' ');
+};
+
+export const shadowValueToCss = (value: ShadowValue): string | false => {
+    if (typeof value === 'string') {
+        return value;
+    }
+    if (value === false) {
+        return 'none';
+    }
+    if (typeof value === 'object' && value && 'ref' in value) {
+        return paramToVariableExpression(value.ref);
+    }
+    if (Array.isArray(value)) {
+        return value.map(shadowValueParamsToCss).join(', ');
+    }
+    return shadowValueParamsToCss(value);
 };
 
 export const borderStyleValueToCss = literalToCSS;
@@ -107,10 +144,16 @@ export const fontFamilyValueToCss = (value: FontFamilyValue): string | false => 
     // names like `fontFamily: '"Times New Roman"'` which is a bit awkward. So
     // we add the quotes, unless a comma is present in which case we assume that
     // it's a list of correctly quoted font names
-    if (typeof value === 'string') return value.includes(',') ? value : quoteUnsafeChars(value);
+    if (typeof value === 'string') {
+        return value.includes(',') ? value : quoteUnsafeChars(value);
+    }
 
-    if (value && 'googleFont' in value) return fontFamilyValueToCss(value.googleFont);
-    if (value && 'ref' in value) return paramToVariableExpression(value.ref);
+    if (typeof value === 'object' && value && 'googleFont' in value) {
+        return fontFamilyValueToCss(value.googleFont);
+    }
+    if (typeof value === 'object' && value && 'ref' in value) {
+        return paramToVariableExpression(value.ref);
+    }
     if (Array.isArray(value)) {
         return value
             .map((font) => {
@@ -133,22 +176,34 @@ const quoteUnsafeChars = (font: string) =>
 export const fontWeightValueToCss = literalToCSS;
 
 export const imageValueToCss = (value: ImageValue): string | false => {
-    if (typeof value === 'string') return value;
-    if (value && 'url' in value) return `url(${JSON.stringify(value.url)})`;
-    if (value && 'svg' in value) return imageValueToCss({ url: `data:image/svg+xml,${encodeURIComponent(value.svg)}` });
-    if (value && 'ref' in value) return paramToVariableExpression(value.ref);
+    if (typeof value === 'string') {
+        return value;
+    }
+    if (typeof value === 'object' && value && 'url' in value) {
+        return `url(${JSON.stringify(value.url)})`;
+    }
+    if (typeof value === 'object' && value && 'svg' in value) {
+        return imageValueToCss({ url: `data:image/svg+xml,${encodeURIComponent(value.svg)}` });
+    }
+    if (typeof value === 'object' && value && 'ref' in value) {
+        return paramToVariableExpression(value.ref);
+    }
     return false;
 };
 
 export const durationValueToCss = (value: DurationValue, param: string, themeLogger: ThemeLogger): string | false => {
-    if (typeof value === 'string') return value;
+    if (typeof value === 'string') {
+        return value;
+    }
     if (typeof value === 'number') {
         if (value >= 10) {
             themeLogger.warn(104, { value, param });
         }
         return `${value}s`;
     }
-    if (value && 'ref' in value) return paramToVariableExpression(value.ref);
+    if (typeof value === 'object' && value && 'ref' in value) {
+        return paramToVariableExpression(value.ref);
+    }
     return false;
 };
 

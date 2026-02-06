@@ -11,7 +11,7 @@
       }
     },
     "test": {
-      "command": "npx vitest",
+      "command": "npx vitest run",
       "outputs": ["{workspaceRoot}/reports/ag-behavioural-testing.xml"],
       "dependsOn": ["ag-grid-community:build:css", "ag-grid-enterprise:build:css"],
       "options": {

@@ -45,6 +45,8 @@ export type IconName =
     | 'unlinked'
     | 'colorPicker' // deprecated v33
     | 'groupLoading'
+    | 'overlayLoading'
+    | 'overlayExporting'
     | 'menu'
     | 'legacyMenu'
     | 'loadingMenuItems'
@@ -84,6 +86,7 @@ export type IconName =
     | 'selectOpen'
     | 'richSelectOpen'
     | 'richSelectRemove'
+    | 'richSelectLoading'
     | 'smallLeft' // deprecated v33
     | 'smallRight' // deprecated v33
     | 'panelDelimiter'
@@ -93,6 +96,8 @@ export type IconName =
     | 'smallUp' // deprecated v33
     | 'sortAscending'
     | 'sortDescending'
+    | 'sortAbsoluteAscending'
+    | 'sortAbsoluteDescending'
     | 'sortUnSort'
     | 'advancedFilterBuilder'
     | 'advancedFilterBuilderDrag'
@@ -117,74 +122,7 @@ export type IconName =
     | 'radioButtonOn' // deprecated v33
     | 'radioButtonOff'; // deprecated v33
 
-export type IconValue =
-    | 'expanded'
-    | 'contracted'
-    | 'tree-closed'
-    | 'tree-open'
-    | 'tree-indeterminate'
-    | 'pin'
-    | 'eye-slash'
-    | 'arrows'
-    | 'left'
-    | 'right'
-    | 'group'
-    | 'aggregation'
-    | 'pivot'
-    | 'not-allowed'
-    | 'chart'
-    | 'cross'
-    | 'cancel'
-    | 'tick'
-    | 'first'
-    | 'previous'
-    | 'next'
-    | 'last'
-    | 'linked'
-    | 'unlinked'
-    | 'color-picker'
-    | 'loading'
-    | 'menu'
-    | 'menu-alt'
-    | 'filter'
-    | 'filter-add'
-    | 'columns'
-    | 'maximize'
-    | 'minimize'
-    | 'copy'
-    | 'cut'
-    | 'paste'
-    | 'grip'
-    | 'save'
-    | 'csv'
-    | 'excel'
-    | 'small-down'
-    | 'small-left'
-    | 'small-right'
-    | 'small-up'
-    | 'asc'
-    | 'desc'
-    | 'none'
-    | 'up'
-    | 'down'
-    | 'plus'
-    | 'minus'
-    | 'settings'
-    | 'checkbox-checked'
-    | 'checkbox-indeterminate'
-    | 'checkbox-unchecked'
-    | 'radio-button-on'
-    | 'radio-button-off'
-    | 'eye'
-    | 'column-arrow'
-    | 'un-pin'
-    | 'pinned-bottom'
-    | 'pinned-top'
-    | 'chevron-up'
-    | 'chevron-down'
-    | 'chevron-left'
-    | 'chevron-right'
-    | 'edit';
+export type Icons = { [key: string]: ((...args: any[]) => any) | string };
 
 /**
  * If icon provided, use this (either a string, or a function callback).
@@ -198,7 +136,7 @@ export function _createIcon(iconName: IconName, beans: BeanCollection, column: A
     if (iconContents) {
         const { className } = iconContents;
         if (
-            (typeof className === 'string' && className.indexOf('ag-icon') > -1) ||
+            (typeof className === 'string' && className.includes('ag-icon')) ||
             (typeof className === 'object' && className['ag-icon'])
         ) {
             return iconContents;

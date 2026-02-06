@@ -217,37 +217,37 @@
         "headerHeight": {
             "more": {
                 "name": "Header Height",
-                "url": "./column-headers/#header-height"
+                "url": "./column-headers-styling/#header-height"
             }
         },
         "groupHeaderHeight": {
             "more": {
                 "name": "Header Height",
-                "url": "./column-headers/#header-height"
+                "url": "./column-headers-styling/#header-height"
             }
         },
         "floatingFiltersHeight": {
             "more": {
                 "name": "Header Height",
-                "url": "./column-headers/#header-height"
+                "url": "./column-headers-styling/#header-height"
             }
         },
         "pivotHeaderHeight": {
             "more": {
                 "name": "Header Height",
-                "url": "./column-headers/#header-height"
+                "url": "./column-headers-styling/#header-height"
             }
         },
         "pivotGroupHeaderHeight": {
             "more": {
                 "name": "Header Height",
-                "url": "./column-headers/#header-height"
+                "url": "./column-headers-styling/#header-height"
             }
         },
         "hidePaddedHeaderRows": {
             "more": {
                 "name": "Hiding Additional Header Rows",
-                "url": "./column-headers/#hide-padded-column-headers"
+                "url": "./column-groups/#hide-padded-header-rows"
             }
         }
     },
@@ -324,6 +324,10 @@
                 "name": "Auto-Size Columns to Fit Cell Contents",
                 "url": "./column-sizing/#auto-size-columns-to-fit-cell-contents"
             }
+        },
+        "animateColumnResizing": {
+            "more": "Auto-Size Columns to Fit Cell Contents",
+            "url": "./column-sizing/#auto-size-columns-to-fit-cell-contents"
         }
     },
     "columnPinning": {
@@ -861,13 +865,49 @@
             "displayName": "Overlays",
             "page": {
                 "name": "Overlays",
-                "url": "./overlays/"
+                "url": "./overlays-overview/"
             }
         },
         "loading": {
             "more": {
                 "name": "Loading Overlay",
-                "url": "./overlays/#loading-overlay"
+                "url": "./overlays-provided/#loading"
+            }
+        },
+        "overlayComponent": {
+            "more": {
+                "name": "Overlay Component",
+                "url": "./overlays-provided/#customisation"
+            }
+        },
+        "overlayComponentParams": {
+            "more": {
+                "name": "Overlay Component",
+                "url": "./overlays-provided/#customisation"
+            }
+        },
+        "overlayComponentSelector": {
+            "more": {
+                "name": "Overlay Component",
+                "url": "./overlays-provided/#customisation"
+            }
+        },
+        "suppressOverlays": {
+            "more": {
+                "name": "Suppress Overlays",
+                "url": "./overlays-provided/#suppress-overlays"
+            }
+        },
+        "activeOverlay": {
+            "more": {
+                "name": "Active Overlay",
+                "url": "./overlays-active/"
+            }
+        },
+        "activeOverlayParams": {
+            "more": {
+                "name": "Active Overlay",
+                "url": "./overlays-active/"
             }
         },
         "overlayLoadingTemplate": {
@@ -877,7 +917,6 @@
             }
         },
         "loadingOverlayComponent": {
-            "description": "Provide a custom loading overlay component.",
             "more": {
                 "name": "Loading Overlay Component",
                 "url": "./overlays/"
@@ -902,7 +941,6 @@
             }
         },
         "noRowsOverlayComponent": {
-            "description": "Provide a custom no rows overlay component.",
             "more": {
                 "name": "No Rows Overlay Component",
                 "url": "./overlays/"
@@ -1046,7 +1084,7 @@
         "suppressAggFilteredOnly": {
             "more": {
                 "name": "Aggregate Before Filtering",
-                "url": "./aggregation-custom-functions/"
+                "url": "./aggregation-filtering/"
             }
         },
         "groupAggFiltering": {
@@ -1064,6 +1102,17 @@
         "suppressStickyTotalRow": {},
         "alwaysAggregateAtRootLevel": {},
         "getGroupRowAgg": {}
+    },
+    "formulas": {
+        "meta": {
+            "displayName": "Formulas",
+            "page": {
+                "name": "Formulas",
+                "url": "./formulas/"
+            }
+        },
+        "formulaDataSource": {},
+        "formulaFuncs": {}
     },
     "rowPivoting": {
         "meta": {
@@ -1433,6 +1482,12 @@
             "more": {
                 "name": "Row Grouping - Expand All / Collapse All",
                 "url": "./server-side-model-grouping/#expand-all--collapse-all"
+            }
+        },
+        "refreshAfterGroupEdit": {
+            "more": {
+                "name": "Row Grouping - Editing Groups",
+                "url": "./grouping-edit"
             }
         }
     },
@@ -1846,8 +1901,8 @@
         },
         "accentedSort": {
             "more": {
-                "name": "Accented Sort",
-                "url": "./row-sorting/#accented-sort"
+                "name": "Locale-specific Sort",
+                "url": "./row-sorting/#locale-specific-sort"
             }
         },
         "suppressMultiSort": {
@@ -1980,7 +2035,7 @@
         "themeCssLayer": {
             "more": {
                 "name": "CSS Layers",
-                "url": "./theming-css/#css-layers"
+                "url": "./theming/#css-layers"
             }
         },
         "styleNonce": {
@@ -2005,6 +2060,12 @@
             }
         },
         "tooltipShowDelay": {
+            "more": {
+                "name": "Tooltip Show and Hide Delay",
+                "url": "./tooltips/#show-and-hide-delay"
+            }
+        },
+        "tooltipSwitchShowDelay": {
             "more": {
                 "name": "Tooltip Show and Hide Delay",
                 "url": "./tooltips/#show-and-hide-delay"

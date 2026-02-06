@@ -1,4 +1,11 @@
-import type { AgColumn, BeanCollection, HeaderValueGetterParams, IRowNode, ValueGetterParams } from 'ag-grid-community';
+import type {
+    AgColumn,
+    BeanCollection,
+    ColDef,
+    HeaderValueGetterParams,
+    IRowNode,
+    ValueGetterParams,
+} from 'ag-grid-community';
 import { _MONTHS, _getDateParts, _parseDateTimeFromString } from 'ag-grid-community';
 
 const getDate = (
@@ -6,7 +13,7 @@ const getDate = (
     sourceCol: AgColumn,
     node: IRowNode | null
 ): Date | null => {
-    const innerValue = valueSvc.getValue(sourceCol, node);
+    const innerValue = valueSvc.getValue(sourceCol, node, 'data');
     let date: Date | null = null;
     if (innerValue instanceof Date) {
         date = innerValue;
@@ -47,3 +54,7 @@ export const numericalMonthToNamedMonth = (monthStr: string): { month: string; l
     const localeKey = MONTH_TO_LOCALE_KEY[month] ?? monthStr;
     return { month, localeKey };
 };
+
+export function _getGroupHierarchy(colDef: ColDef): ColDef['groupHierarchy'] {
+    return colDef.groupHierarchy ?? colDef.rowGroupingHierarchy;
+}

@@ -22,7 +22,6 @@ const columnDefs: ColDef[] = [
         headerName: 'Color (Column as String Type)',
         field: 'color',
         width: 250,
-        cellEditor: 'agRichSelectCellEditor',
         cellEditorParams: {
             formatValue: (v) => v.name,
             parseValue: (v) => v.name,
@@ -39,7 +38,7 @@ const columnDefs: ColDef[] = [
         width: 290,
         valueFormatter: (p) => `${p.value.name} (${p.value.code})`,
         valueParser: (p) => p.newValue,
-        cellEditor: 'agRichSelectCellEditor',
+        cellDataType: 'object',
         cellEditorParams: {
             formatValue: (v) => v.name,
             values: colors,
@@ -57,6 +56,7 @@ const gridOptions: GridOptions = {
     defaultColDef: {
         width: 200,
         editable: true,
+        cellEditor: 'agRichSelectCellEditor',
     },
     columnDefs: columnDefs,
     rowData: colors.map((v) => ({ color: v.name, detailedColor: v })),

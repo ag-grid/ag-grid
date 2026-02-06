@@ -127,12 +127,6 @@ describe('GridWrapperComponent', () => {
     });
 
     beforeEach(async () => {
-        // await TestBed.configureTestingModule({
-        //     imports: [GridWrapperComponent, AgGridAngular],
-        // }).compileComponents();
-    });
-
-    beforeEach(async () => {
         fixture = TestBed.createComponent(GridWrapperComponent);
         component = fixture.componentInstance;
         component.zoneStatus = {};
@@ -279,9 +273,9 @@ function assertZoneStatuses(zoneStatus: Record<string, boolean>, expected: Recor
         })
     );
 
-    Object.keys(expected).forEach((key) => {
+    for (const key of Object.keys(expected)) {
         expect(`${key}: ${results[key]}`).toBe(`${key}: ${expected[key]}`);
-    });
+    }
     expect(Object.keys(results).sort().join()).toBe(Object.keys(expected).sort().join());
 }
 

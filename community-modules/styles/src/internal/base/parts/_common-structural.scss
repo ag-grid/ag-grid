@@ -299,7 +299,9 @@
     .ag-floating-bottom-full-width-container,
     .ag-virtual-list-container,
     .ag-sticky-top-container,
-    .ag-sticky-bottom-container {
+    .ag-sticky-bottom-container,
+    .ag-pinned-left-sticky-bottom,
+    .ag-pinned-right-sticky-bottom {
         position: relative;
     }
 
@@ -453,7 +455,8 @@
         position: relative;
     }
 
-    .ag-header-cell-sortable .ag-header-cell-label {
+    .ag-header-cell-sortable .ag-header-cell-label,
+    .ag-header-group-cell-selectable .ag-header-cell-comp-wrapper {
         cursor: pointer;
     }
 
@@ -620,6 +623,28 @@
             transition:
                 left 0.2s,
                 width 0.2s;
+        }
+    }
+
+    .ag-delay-render {
+        .ag-cell {
+            visibility: hidden;
+        }
+
+        .ag-row {
+            visibility: hidden;
+        }
+
+        .ag-spanned-cell-wrapper {
+            visibility: hidden;
+        }
+
+        .ag-header-cell {
+            visibility: hidden;
+        }
+
+        .ag-header-group-cell {
+            visibility: hidden;
         }
     }
 
@@ -1053,7 +1078,9 @@
         text-align: center;
     }
 
-    .ag-overlay-loading-wrapper {
+    .ag-overlay-loading-wrapper,
+    .ag-overlay-exporting-wrapper,
+    .ag-overlay-modal-wrapper {
         // prevent interaction with grid while it's loading
         pointer-events: all;
     }
@@ -1416,7 +1443,8 @@
 
     .ag-rich-select-list {
         position: relative;
-        .ag-loading-text {
+        .ag-rich-select-loading {
+            display: flex;
             min-height: 2rem;
         }
     }
@@ -1991,6 +2019,29 @@
         .ag-column-drop {
             flex: unset;
         }
+    }
+
+    .ag-content-editable-field {
+        display: flex;
+        align-items: center;
+    }
+
+    .ag-content-editable-field-input {
+        cursor: text;
+        display: block;
+        flex: 1 1 auto;
+        outline: none;
+        white-space: nowrap;
+        line-height: normal;
+        overflow: auto;
+        overflow-y: hidden;
+
+        &::-webkit-scrollbar {
+            display: none !important;
+        }
+
+        -ms-overflow-style: none !important;
+        scrollbar-width: none !important;
     }
 
     .ag-ltr {

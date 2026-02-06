@@ -39,6 +39,7 @@
 
     .ag-cell-range-selected-1:not(.ag-cell-focus),
     .ag-cell-range-selected-1.ag-cell-range-chart,
+    .ag-cell-range-selected-1.ag-formula-range,
     .ag-root:not(.ag-context-menu-open)
         .ag-body-viewport:not(.ag-has-focus)
         .ag-cell-range-selected-1:not(.ag-cell-inline-editing) {
@@ -47,18 +48,21 @@
 
     .ag-cell-range-selected-2:not(.ag-cell-focus),
     .ag-cell-range-selected-2.ag-cell-range-chart,
+    .ag-cell-range-selected-2.ag-formula-range,
     .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-selected-2 {
         background-color: var(--ag-range-selection-background-color-2);
     }
 
     .ag-cell-range-selected-3:not(.ag-cell-focus),
     .ag-cell-range-selected-3.ag-cell-range-chart,
+    .ag-cell-range-selected-3.ag-formula-range,
     .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-selected-3 {
         background-color: var(--ag-range-selection-background-color-3);
     }
 
     .ag-cell-range-selected-4:not(.ag-cell-focus),
     .ag-cell-range-selected-4.ag-cell-range-chart,
+    .ag-cell-range-selected-4.ag-formula-range,
     .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-selected-4 {
         background-color: var(--ag-range-selection-background-color-4);
     }

@@ -1,8 +1,8 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { PRIVACY_POLICY_URL } from '@ag-website-shared/constants';
 import { TRIAL_LICENCE_FORM_URL } from '@constants';
 import { ZI_FORM_ID } from '@constants';
 import { trackTrialLicenseFormError, trackTrialLicenseFormSuccess } from '@utils/analytics';
-import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classnames from 'classnames';
 import { useCallback, useState } from 'react';
 import type { ChangeEventHandler, FormEventHandler, FunctionComponent, ReactElement } from 'react';
@@ -33,7 +33,7 @@ const getFormErrorMessage = (message: string) => {
 };
 
 const isEmailValid = (email: string) => {
-    const emailPattern = /^([a-zA-Z0-9._-]|\+)+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    const emailPattern = /^([a-zA-Z0-9._-]|\+)+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/;
     return emailPattern.test(email);
 };
 
@@ -193,6 +193,7 @@ export const TrialLicenceFormEmailOnly: FunctionComponent = ({ submitUrl }: Prop
             </div>
             <div className={classnames(styles.actions, 'trial-licence-actions')}>
                 <button
+                    id="submit-trial-licence"
                     className={styles.submit}
                     type="submit"
                     disabled={hasFormError || formState === 'loading' || formState === 'success'}
@@ -201,8 +202,8 @@ export const TrialLicenceFormEmailOnly: FunctionComponent = ({ submitUrl }: Prop
                 </button>
 
                 <p className={styles.privacyMessage}>
-                    By clicking "Request trial licence" you agree to our{' '}
-                    <a href={urlWithBaseUrl('/privacy/')}>Privacy Policy</a>.
+                    By clicking "Request trial licence" you agree to our <a href={PRIVACY_POLICY_URL}>Privacy Policy</a>
+                    .
                 </p>
 
                 {formState === 'success' && (

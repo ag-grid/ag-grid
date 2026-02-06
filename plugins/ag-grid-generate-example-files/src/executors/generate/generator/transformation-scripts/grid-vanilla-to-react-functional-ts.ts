@@ -1,3 +1,4 @@
+/* eslint-disable no-lonely-if */
 import { basename } from 'path';
 
 import type { ExampleConfig, ParsedBindings } from '../types';
@@ -36,7 +37,7 @@ function getModuleImports(
     const imports = [
         "import React, { useCallback, useMemo, useRef, useState, StrictMode } from 'react';",
         "import { createRoot } from 'react-dom/client';",
-        "import { AgGridReact } from 'ag-grid-react';",
+        "import { AgGridReact, AgGridProvider } from 'ag-grid-react';",
     ];
 
     if (allStylesheets && allStylesheets.length > 0) {
@@ -65,10 +66,6 @@ function getModuleImports(
 
     imports.push(getEnableAGTestIdLogic());
 
-    if (bindings.moduleRegistration) {
-        imports.push(bindings.moduleRegistration);
-    }
-
     return removeCreateGridImport(imports);
 }
 
@@ -90,6 +87,16 @@ function getImports(
 
     if (useFetchHook) {
         imports.push(`import { useFetchJson } from './useFetchJson';`);
+    }
+
+    if (bindings.moduleRegistration) {
+        // Modules registration is different in React - we just export the modules array and pass it to AgGridProvider
+        const reactModuleRegistration = bindings.moduleRegistration.replace(
+            /ModuleRegistry\.registerModules\(\s*\[([\s\S]*?)\]\s*\);/,
+            'const modules = [$1];'
+        );
+        imports.push('\n');
+        imports.push(reactModuleRegistration);
     }
     return imports;
 }
@@ -374,9 +381,11 @@ ${gridReady}${useFetchHook ?? ''}${darkModeWithGridRef ? '\n' + darkModeWithGrid
 ${[].concat(eventHandlers, externalEventHandlers, instanceMethods).join('\n\n   ')}
 
     return  (
-            <div ${containerStyle}>
-                ${template}
-            </div>
+            <AgGridProvider modules={modules}>
+                <div ${containerStyle}>
+                    ${template}
+                </div>
+            </AgGridProvider>
         );
 
 }

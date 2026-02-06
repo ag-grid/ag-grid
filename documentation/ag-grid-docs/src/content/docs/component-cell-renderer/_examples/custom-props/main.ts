@@ -29,11 +29,12 @@ interface IRow {
     successful: boolean;
 }
 
+// Override the icons via cellRendererParams
 function successIconSrc(params: boolean) {
     if (params === true) {
-        return 'https://www.ag-grid.com/example-assets/icons/tick-in-circle.png';
+        return 'https://www.ag-grid.com/example-assets/svg-icons/tick.svg';
     } else {
-        return 'https://www.ag-grid.com/example-assets/icons/cross-in-circle.png';
+        return 'https://www.ag-grid.com/example-assets/svg-icons/cross.svg';
     }
 }
 

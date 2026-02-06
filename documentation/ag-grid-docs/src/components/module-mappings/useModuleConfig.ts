@@ -1,3 +1,4 @@
+import type { Framework } from '@ag-grid-types';
 import { throwDevWarning } from '@ag-website-shared/utils/throwDevWarning';
 import { type RefObject, useCallback, useMemo, useState } from 'react';
 
@@ -32,7 +33,7 @@ const getChartsImportType = (chartOptions: ChartOptions): ChartsImportType => {
     return chartsImport;
 };
 
-export function useModuleConfig(gridRef: RefObject<AgGridReact>) {
+export function useModuleConfig(gridRef: RefObject<AgGridReact>, framework: Framework) {
     const [rowModelOption, setRowModelOption] = useState<string>('ClientSideRowModelModule');
     const [bundleOption, setBundleOption] = useState<BundleOptionValue>('');
     const [chartOptions, setChartOptions] = useState(DEFAULT_CHART_OPTIONS);
@@ -88,8 +89,8 @@ export function useModuleConfig(gridRef: RefObject<AgGridReact>) {
     }, [selectedModules, bundleOption, rowModelOption, chartOptions]);
     const selectedDependenciesSnippet = useMemo(() => {
         const chartsImportType = getChartsImportType(chartOptions);
-        return getModuleMappingsSnippet({ chartsImportType, selectedModules: allImportModules });
-    }, [allImportModules, chartOptions]);
+        return getModuleMappingsSnippet({ chartsImportType, selectedModules: allImportModules, framework });
+    }, [allImportModules, chartOptions, framework]);
 
     const updateRowModelOption = useCallback((moduleName: string) => {
         setRowModelOption(moduleName);

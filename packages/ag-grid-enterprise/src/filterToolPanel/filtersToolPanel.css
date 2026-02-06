@@ -11,7 +11,10 @@
     font-weight: var(--ag-header-font-weight);
     color: var(--ag-header-text-color);
 
-    > * {
+    > :where(.ag-filter-toolpanel-expand),
+    > :where(.ag-filter-toolpanel-search-input),
+    > :where(.ag-header-cell-text),
+    > :where(.ag-filter-icon) {
         display: flex;
         align-items: center;
     }

@@ -167,7 +167,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
                 idFunc({ level: this.level, parentKeys: this.parentRowNode.getRoute() ?? [], data })
             );
             const allUniqueIdsToRemove = [...new Set(allIdsToRemove)];
-            removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove);
+            removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove, transaction.rowCount);
         }
 
         const isClientSideSortingEnabled = this.gos.get('serverSideEnableClientSideSort');
@@ -193,17 +193,17 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             return;
         }
         const nodesToDeselect: RowNode[] = [];
-        updatedNodes?.forEach((node) => {
+        for (const node of updatedNodes ?? []) {
             if (node.isSelected() && !node.selectable) {
                 nodesToDeselect.push(node);
             }
-        });
+        }
 
-        removedNodes?.forEach((node) => {
+        for (const node of removedNodes ?? []) {
             if (node.isSelected()) {
                 nodesToDeselect.push(node);
             }
-        });
+        }
 
         if (nodesToDeselect.length) {
             this.selectionSvc.setNodesSelected({
@@ -267,7 +267,9 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @returns whether or not the row exists within this store
      */
     isDisplayIndexInStore(displayIndex: number): boolean {
-        if (this.cache.getRowCount() === 0) return false;
+        if (this.cache.getRowCount() === 0) {
+            return false;
+        }
 
         return this.displayIndexStart! <= displayIndex && displayIndex < this.getDisplayIndexEnd()!;
     }

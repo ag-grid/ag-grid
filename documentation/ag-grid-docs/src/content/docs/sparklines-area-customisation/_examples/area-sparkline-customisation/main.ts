@@ -33,7 +33,7 @@ const gridOptions: GridOptions = {
                         enabled: true,
                         size: 0,
                         itemStyler: (params: any) => {
-                            if (params.highlighted) {
+                            if (params.highlightState === 'highlighted-item') {
                                 return {
                                     size: 7,
                                 };

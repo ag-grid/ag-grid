@@ -32,10 +32,6 @@
                             "path": "modules"
                         },
                         {
-                            "title": "MCP Server",
-                            "path": "mcp-server"
-                        },
-                        {
                             "title": "Installing Enterprise Licence",
                             "path": "license-install"
                         },
@@ -58,6 +54,10 @@
                         {
                             "title": "Creating a Basic Grid",
                             "path": "deep-dive"
+                        },
+                        {
+                            "title": "Styling a Grid",
+                            "path": "styling-tutorial"
                         },
                         {
                             "title": "Best Practices",
@@ -153,6 +153,22 @@
             ]
         },
         {
+            "title": "AI Features",
+            "children": [
+                {
+                    "type": "item",
+                    "title": "AI Toolkit",
+                    "path": "ai-toolkit",
+                    "isEnterprise": true
+                },
+                {
+                    "type": "item",
+                    "title": "MCP Server",
+                    "path": "mcp-server"
+                }
+            ]
+        },
+        {
             "title": "Layout & Styling",
             "children": [
                 {
@@ -238,6 +254,11 @@
                             "type": "item",
                             "title": "Extending with CSS",
                             "path": "theming-css"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Theme Builder",
+                            "path": "theming-theme-builder"
                         },
                         {
                             "type": "item",
@@ -548,7 +569,19 @@
                         {
                             "type": "item",
                             "title": "Column Headers",
-                            "path": "column-headers"
+                            "path": "column-headers",
+                            "children": [
+                                {
+                                    "type": "item",
+                                    "title": "Styling & Height",
+                                    "path": "column-headers-styling"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Custom Components",
+                                    "path": "column-headers-components"
+                                }
+                            ]
                         },
                         {
                             "type": "item",
@@ -699,6 +732,38 @@
                         },
                         {
                             "type": "item",
+                            "title": "Formulas",
+                            "path": "formulas",
+                            "isEnterprise": true,
+                            "children": [
+                                {
+                                    "type": "item",
+                                    "title": "Formula Editor",
+                                    "path": "formula-editor-component",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Formula Reference",
+                                    "path": "formula-reference",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Custom Functions",
+                                    "path": "formula-custom-functions",
+                                    "isEnterprise": true
+                                }
+                            ]
+                        },
+                        {
+                            "type": "item",
+                            "title": "Find",
+                            "path": "find",
+                            "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
                             "title": "Styling Cells",
                             "path": "cell-styles"
                         },
@@ -731,12 +796,6 @@
                             "type": "item",
                             "title": "Cell Text Selection",
                             "path": "cell-text-selection"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Find",
-                            "path": "find",
-                            "isEnterprise": true
                         }
                     ]
                 },
@@ -763,6 +822,11 @@
                                     "type": "item",
                                     "title": "Number Filter",
                                     "path": "filter-number"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "BigInt Filter",
+                                    "path": "filter-bigint"
                                 },
                                 {
                                     "type": "item",
@@ -1151,6 +1215,18 @@
                             "title": "Sorting",
                             "path": "grouping-sorting",
                             "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
+                            "title": "Editing Groups",
+                            "path": "grouping-edit",
+                            "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
+                            "title": "Row Dragging",
+                            "path": "grouping-row-dragging",
+                            "isEnterprise": true
                         }
                     ]
                 },
@@ -1411,7 +1487,19 @@
                         {
                             "type": "item",
                             "title": "Overlays",
-                            "path": "overlays"
+                            "path": "overlays-overview",
+                            "children": [
+                                {
+                                    "type": "item",
+                                    "title": "Provided Overlays",
+                                    "path": "overlays-provided"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Active Overlay",
+                                    "path": "overlays-active"
+                                }
+                            ]
                         }
                     ]
                 },
@@ -1688,6 +1776,12 @@
                                     "type": "item",
                                     "title": "Page Setup",
                                     "path": "excel-export-page-setup",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Data Protection",
+                                    "path": "excel-export-data-protection",
                                     "isEnterprise": true
                                 }
                             ]

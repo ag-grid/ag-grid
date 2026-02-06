@@ -114,6 +114,12 @@
                     "path": "tooltips"
                 },
                 {
+                    "moduleName": "FormulaModule",
+                    "name": "Formulas",
+                    "path": "formulas",
+                    "isEnterprise": true
+                },
+                {
                     "moduleName": "FindModule",
                     "name": "Find",
                     "path": "find",
@@ -141,6 +147,11 @@
                             "moduleName": "DateFilterModule",
                             "name": "Date Filter",
                             "path": "filter-date"
+                        },
+                        {
+                            "moduleName": "BigIntFilterModule",
+                            "name": "BigInt Filter",
+                            "path": "filter-bigint"
                         },
                         {
                             "moduleName": "SetFilterModule",
@@ -334,6 +345,7 @@
         },
         {
             "name": "Accessories",
+            "isEnterprise": true,
             "children": [
                 {
                     "name": "Tool Panels",
@@ -381,6 +393,18 @@
                     "moduleName": "StatusBarModule",
                     "name": "Status Bar",
                     "path": "status-bar",
+                    "isEnterprise": true
+                }
+            ]
+        },
+        {
+            "name": "AI Features",
+            "isEnterprise": true,
+            "children": [
+                {
+                    "moduleName": "AiToolkitModule",
+                    "name": "AI Toolkit",
+                    "path": "ai-toolkit",
                     "isEnterprise": true
                 }
             ]

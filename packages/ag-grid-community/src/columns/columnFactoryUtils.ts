@@ -1,7 +1,7 @@
 import type { BeanCollection } from '../context/context';
 import { AgColumn } from '../entities/agColumn';
 import { AgProvidedColumnGroup, isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
-import type { ColDef, ColGroupDef, SortDirection } from '../entities/colDef';
+import type { ColDef, ColGroupDef, SortDef, SortDirection } from '../entities/colDef';
 import { DefaultColumnTypes } from '../entities/defaultColumnTypes';
 import type { ColumnEventType } from '../events';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
@@ -11,6 +11,15 @@ import { createMergedColGroupDef } from './columnGroups/columnGroupUtils';
 import type { IColumnKeyCreator } from './columnKeyCreator';
 import { ColumnKeyCreator } from './columnKeyCreator';
 import { convertColumnTypes } from './columnUtils';
+
+const depthFirstCallback = (child: AgColumn | AgProvidedColumnGroup, parent: AgProvidedColumnGroup) => {
+    if (isProvidedColumnGroup(child)) {
+        child.setupExpandable();
+    }
+    // we set the original parents at the end, rather than when we go along, as balancing the tree
+    // adds extra levels into the tree. so we can only set parents when balancing is done.
+    child.originalParent = parent;
+};
 
 /**
  * A performant approach to _createColumnTree where the function assumes all defs have an ID.
@@ -75,15 +84,6 @@ export function _createColumnTreeWithIds(
     };
     const columnTree = beans.colGroupSvc ? beans.colGroupSvc.balanceColumnTree(root, 0, maxDepth, keyCreator) : root;
 
-    const depthFirstCallback = (child: AgColumn | AgProvidedColumnGroup, parent: AgProvidedColumnGroup) => {
-        if (isProvidedColumnGroup(child)) {
-            child.setupExpandable();
-        }
-        // we set the original parents at the end, rather than when we go along, as balancing the tree
-        // adds extra levels into the tree. so we can only set parents when balancing is done.
-        child.originalParent = parent;
-    };
-
     depthFirstOriginalTreeSearch(null, columnTree, depthFirstCallback);
 
     return {
@@ -123,15 +123,6 @@ export function _createColumnTree(
     const columnTree = colGroupSvc
         ? colGroupSvc.balanceColumnTree(unbalancedTree, 0, treeDepth, columnKeyCreator)
         : unbalancedTree;
-
-    const depthFirstCallback = (child: AgColumn | AgProvidedColumnGroup, parent: AgProvidedColumnGroup) => {
-        if (isProvidedColumnGroup(child)) {
-            child.setupExpandable();
-        }
-        // we set the original parents at the end, rather than when we go along, as balancing the tree
-        // adds extra levels into the tree. so we can only set parents when balancing is done.
-        child.originalParent = parent;
-    };
 
     depthFirstOriginalTreeSearch(null, columnTree, depthFirstCallback);
 
@@ -176,7 +167,9 @@ export function _recursivelyCreateColumns(
     existingGroups: AgProvidedColumnGroup[],
     source: ColumnEventType
 ): (AgColumn | AgProvidedColumnGroup)[] {
-    if (!defs) return [];
+    if (!defs) {
+        return [];
+    }
 
     const { colGroupSvc } = beans;
     const result = new Array(defs.length);
@@ -185,7 +178,7 @@ export function _recursivelyCreateColumns(
         if (colGroupSvc && isColumnGroupDef(def)) {
             result[i] = colGroupSvc.createProvidedColumnGroup(
                 primaryColumns,
-                def as ColGroupDef,
+                def,
                 level,
                 existingColsCopy,
                 columnKeyCreator,
@@ -240,7 +233,7 @@ export function updateSomeColumnState(
     beans: BeanCollection,
     column: AgColumn,
     hide: boolean | null | undefined,
-    sort: SortDirection | undefined,
+    sort: SortDirection | SortDef | undefined,
     sortIndex: number | null | undefined,
     pinned: boolean | 'left' | 'right' | null | undefined,
     flex: number | null | undefined,
@@ -313,11 +306,15 @@ function findExistingColumn(
     newColDef: ColDef,
     existingColsCopy: AgColumn[] | null
 ): { idx: number; column: AgColumn } | undefined {
-    if (!existingColsCopy) return undefined;
+    if (!existingColsCopy) {
+        return undefined;
+    }
 
     for (let i = 0; i < existingColsCopy.length; i++) {
         const def = existingColsCopy[i].getUserProvidedColDef();
-        if (!def) continue;
+        if (!def) {
+            continue;
+        }
 
         const newHasId = newColDef.colId != null;
         if (newHasId) {
@@ -378,16 +375,17 @@ export function _addColumnDefaultAndTypes(
         // override the sort for row group columns where the autoGroupColDef defines these values.
         _mergeDeep(
             res,
-            { sort: autoGroupColDef.sort, initialSort: autoGroupColDef.initialSort } as ColDef,
+            {
+                sort: autoGroupColDef.sort,
+                initialSort: autoGroupColDef.initialSort,
+            } as ColDef,
             false,
             true
         );
     }
 
-    if (dataTypeSvc) {
-        dataTypeSvc.postProcess(res);
-        dataTypeSvc.validateColDef(res);
-    }
+    dataTypeSvc?.postProcess(res);
+    dataTypeSvc?.validateColDef(res);
 
     gos.validateColDef(res, colId, isAutoCol);
 
@@ -431,14 +429,14 @@ function assignColumnTypes(beans: BeanCollection, typeKeys: string[], colDefMerg
         }
     }
 
-    typeKeys.forEach((t) => {
+    for (const t of typeKeys) {
         const typeColDef = allColumnTypes[t.trim()];
         if (typeColDef) {
             _mergeDeep(colDefMerged, typeColDef, false, true);
         } else {
             _warn(36, { t });
         }
-    });
+    }
 }
 
 // if object has children, we assume it's a group

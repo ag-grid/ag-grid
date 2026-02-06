@@ -71,14 +71,10 @@ async function generateFile(options: ExecutorOptions) {
         await writeJSONFile(distFolder + '/doc-interfaces.AUTO.json', buildInterfaceProps(INTERFACE_GLOBS));
     };
 
-    console.log(`--------------------------------------------------------------------------------`);
-    console.log(`Generate docs reference files...`);
-    console.log('Using Typescript version: ', ts.version);
-
     await generateMetaFiles();
 
     console.log(`Generated OK.`);
-    console.log(`--------------------------------------------------------------------------------`);
+    console.log('-'.repeat(80));
 }
 
 // Run the executor for degugging

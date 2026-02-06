@@ -11,7 +11,7 @@ const useReactCommentEffect = (comment: string, eForCommentRef: RefObject<HTMLEl
                 eParent.insertBefore(eComment, eForComment);
 
                 return () => {
-                    eParent.removeChild(eComment);
+                    eComment.remove();
                 };
             }
         }

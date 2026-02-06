@@ -3,13 +3,13 @@ import type {
     AgEventTypeParams,
     AgGridCommon,
     AgPromise,
-    AriaAnnouncementService,
     BeanCollection,
     ElementParams,
     FieldPickerValueSelectedEvent,
     GridInputTextField,
     GridOptionsService,
     GridOptionsWithDefaults,
+    IAriaAnnouncementService,
     ICellRendererComp,
     IRichCellEditorRendererParams,
     ITooltipCtrl,
@@ -46,6 +46,7 @@ import { agRichSelectCSS } from './agRichSelect.css-GENERATED';
 import type { AgRichSelectListEvent } from './agRichSelectList';
 import { AgRichSelectList } from './agRichSelectList';
 
+const ON_SEARCH_CALLBACK_DEBOUNCE_DELAY = 300;
 type AgRichSelectEvent = AgRichSelectListEvent;
 
 const AgRichSelectElement: ElementParams = {
@@ -85,8 +86,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     AgRichSelectList<TValue, AgRichSelectEvent>
 > {
     private userCompFactory: UserComponentFactory;
-    private ariaAnnounce?: AriaAnnouncementService;
+    private ariaAnnounce?: IAriaAnnouncementService;
     private registry: Registry;
+    private readonly onSearchCallbackDebounced;
 
     public wireBeans(beans: BeanCollection) {
         this.userCompFactory = beans.userCompFactory;
@@ -98,7 +100,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     private searchString = '';
     private listComponent: AgRichSelectList<TValue> | undefined;
     private pillContainer: AgPillContainer<TValue> | null;
-    protected values: TValue[];
+    protected values: TValue[] | undefined;
 
     private searchStringCreator: ((values: TValue[]) => string[]) | null = null;
     private readonly eInput: GridInputTextField = RefPlaceholder;
@@ -127,7 +129,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             maxPickerHeight: config?.maxPickerHeight ?? 'calc(var(--ag-row-height) * 6.5)',
         });
 
-        const { value, valueList, searchStringCreator } = config || {};
+        const { value, valueList, searchStringCreator, onSearch } = config || {};
 
         if (value !== undefined) {
             this.value = value;
@@ -138,9 +140,13 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
 
         if (valueList != null) {
-            this.setValues(valueList);
+            this.setValueList({ valueList, isInitial: true });
         }
 
+        const { searchDebounceDelay = ON_SEARCH_CALLBACK_DEBOUNCE_DELAY } = this.config;
+        if (onSearch) {
+            this.onSearchCallbackDebounced = _debounce(this, onSearch, searchDebounceDelay);
+        }
         this.registerCSS(agRichSelectCSS);
     }
 
@@ -215,7 +221,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         });
     }
 
-    private renderSelectedValue(): void {
+    private renderSelectedValue(fromPicker?: boolean): void {
         const { value, eDisplayField, config, gos } = this;
         const {
             allowTyping,
@@ -226,12 +232,16 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             suppressDeselectAll,
             suppressMultiSelectPillRenderer,
             valueFormatter,
+            onSearch,
         } = config;
 
         const valueFormatted = formatValueFn(value, valueFormatter);
 
         if (allowTyping) {
-            this.eInput.setValue(initialInputValue ?? valueFormatted);
+            /**
+             * Suppress event in full async mode when item is selected to prevent redundant async filtering call for valid options.
+             */
+            this.eInput.setValue(initialInputValue ?? valueFormatted, !!fromPicker && !!onSearch);
             return;
         }
 
@@ -315,54 +325,88 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         this.searchStringCreator = searchStringFn;
     }
 
-    public setValueList(params: { valueList: TValue[]; refresh?: boolean }): void {
-        const { valueList, refresh } = params;
-
-        if (!this.listComponent || this.listComponent.getCurrentList() === valueList) {
+    private setValueListInternal(params: {
+        valueList: TValue[] | undefined;
+        refresh?: boolean;
+        isInitial?: boolean;
+    }): void {
+        const { listComponent, isPickerDisplayed, value } = this;
+        const { valueList, refresh, isInitial } = params;
+        if (isInitial) {
+            this.setValues(valueList);
+        }
+        if (!listComponent) {
             return;
         }
 
-        this.listComponent.setCurrentList(valueList);
+        // we need to update the list component even if the 'values' is undefined
+        this.listComponent?.setCurrentList(valueList);
 
-        if (refresh) {
-            // if `values` is not present, it means the valuesList was set asynchronously
-            if (!this.values) {
-                this.setValues(valueList);
-                if (this.isPickerDisplayed) {
-                    const hasRefreshed = this.listComponent.selectValue(this.value);
-                    if (!hasRefreshed) {
-                        this.listComponent.refresh();
-                    }
-                }
-            } else {
-                this.listComponent.refresh(true);
-            }
-
-            this.alignPickerToComponent();
+        if (!refresh) {
+            return;
         }
+        if (this.values) {
+            listComponent.refresh(true);
+        } else if (isPickerDisplayed) {
+            const hasRefreshed = listComponent.selectValue(value);
+            if (!hasRefreshed) {
+                listComponent.refresh();
+            }
+        }
+        this.alignPickerToComponent();
+    }
+
+    public setValueList(params: {
+        valueList: TValue[] | Promise<TValue[] | undefined> | undefined;
+        refresh?: boolean;
+        isInitial?: boolean;
+    }): void {
+        const { valueList } = params;
+
+        if (!valueList || Array.isArray(valueList)) {
+            // If valueList is an array, null or undefined, apply it synchronously.
+            // This lets us immediately clear the existing list and hide any status label.
+            // Useful for async searches where previous results must be removed so a
+            // placeholder/CTA (e.g. `Start typing...`) is shown until new results arrive.
+            this.setValueListInternal(params as any);
+            return;
+        }
+
+        this.listComponent?.setIsLoading();
+        valueList.then((values) => {
+            if (values) {
+                this.setValueListInternal({ ...params, valueList: values });
+            }
+        });
     }
 
     /**
-     * This method updates the list of values
+     * This method updates the list of select options
      */
-    private setValues(values: TValue[]): void {
+    private setValues(values: TValue[] | undefined): void {
         this.values = values;
-        this.searchStrings = this.getSearchStringsFromValues(values);
+        this.searchStrings = this.getSearchStringsFromValues(values || []);
     }
 
     public override showPicker() {
-        super.showPicker();
         const { listComponent, value } = this;
 
         if (!listComponent) {
             return;
         }
 
-        let idx = null;
-        listComponent.selectValue(this.value);
-        if (this.value != null) {
-            idx = listComponent.getIndicesForValues(Array.isArray(value) ? value : [value])[0];
+        super.showPicker();
+
+        let valueToUse: TValue[] | TValue = value;
+
+        // if value is null or undefined, we default to null and
+        // check the list of values for the presence of null
+        if (value === undefined) {
+            valueToUse = null as TValue;
         }
+
+        listComponent.selectValue(valueToUse);
+        const idx = listComponent.getIndicesForValues(Array.isArray(valueToUse) ? valueToUse : [valueToUse])[0];
 
         if (idx != null) {
             this.tooltipFeature?.attemptToHideTooltip();
@@ -370,8 +414,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         } else {
             listComponent.refresh();
         }
-
-        this.displayOrHidePicker();
     }
 
     private createOrUpdatePillContainer(container: HTMLElement): void {
@@ -493,8 +535,11 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         if (!this.listComponent) {
             return;
         }
-
-        const { values } = this;
+        if (this.onSearchCallbackDebounced) {
+            // this can potentially update the searchStrings synchronously and asynchronously
+            this.onSearchCallbackDebounced(this.searchString);
+            return;
+        }
         const searchStrings = this.searchStrings;
 
         if (!searchStrings) {
@@ -506,7 +551,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         const { filterList, highlightMatch, searchType = 'fuzzy' } = this.config;
         const shouldFilter = !!(filterList && this.searchString !== '');
 
-        this.filterListModel(shouldFilter ? filteredValues : values);
+        this.filterListModel(shouldFilter ? filteredValues : this.values || []);
 
         if (!this.highlightEmptyValue()) {
             this.highlightListValue(suggestions, filteredValues, shouldFilter);
@@ -516,7 +561,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             this.listComponent?.highlightFilterMatch(this.searchString);
         }
 
-        this.displayOrHidePicker();
+        this.listComponent?.toggleVisibility();
     }
 
     private highlightEmptyValue(): boolean {
@@ -563,7 +608,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
 
         const { searchType = 'fuzzy', filterList } = this.config;
-
+        const values = this.values || [];
         if (searchType === 'fuzzy') {
             const fuzzySearchResult = _fuzzySuggestions({
                 inputValue: searchValue,
@@ -575,7 +620,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             const indices = fuzzySearchResult.indices;
             if (filterList && indices.length) {
                 for (let i = 0; i < indices.length; i++) {
-                    filteredValues.push(this.values[indices[i]]);
+                    filteredValues.push(values[indices[i]]);
                 }
             }
         } else {
@@ -586,27 +631,15 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 const isMatch =
                     searchType === 'match'
                         ? currentValue.startsWith(valueToMatch)
-                        : currentValue.indexOf(valueToMatch) !== -1;
+                        : currentValue.includes(valueToMatch);
                 if (filterList && isMatch) {
-                    filteredValues.push(this.values[idx]);
+                    filteredValues.push(values[idx]);
                 }
                 return isMatch;
             });
         }
 
         return { suggestions, filteredValues };
-    }
-
-    private displayOrHidePicker(): void {
-        if (!this.listComponent) {
-            return;
-        }
-
-        const eListGui = this.listComponent.getGui();
-        const list = this.listComponent.getCurrentList();
-        const toggleValue = list ? list.length === 0 : false;
-
-        eListGui.classList.toggle('ag-hidden', toggleValue);
     }
 
     private clearSearchString(): void {
@@ -643,7 +676,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         super.setValue(value, silent);
 
         if (!skipRendering) {
-            this.renderSelectedValue();
+            this.renderSelectedValue(fromPicker);
         }
 
         return this;
@@ -672,7 +705,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         if (this.listComponent?.getCurrentList()) {
             const lastRowHovered = this.listComponent.getLastItemHovered();
-            if (this.config.multiSelect || lastRowHovered == null) {
+            if (this.config.multiSelect || lastRowHovered === undefined) {
                 this.dispatchPickerEventAndHidePicker(this.value, true);
             } else {
                 this.onListValueSelected(new Set<TValue>([lastRowHovered]), true);
@@ -706,7 +739,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             }
         } else {
             const lastItemHovered = listComponent.getLastItemHovered();
-            if (lastItemHovered) {
+            if (lastItemHovered !== undefined) {
                 this.setValue(lastItemHovered, false, true);
             }
         }
@@ -725,7 +758,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             if (!newValue) {
                 newValue = [];
             }
-            (newValue as TValue[]).push(value);
+            newValue.push(value);
         }
 
         if (Array.isArray(newValue)) {
@@ -842,7 +875,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 if (!isComposing && isPickerDisplayed && multiSelect && listComponent) {
                     const lastItemHovered = listComponent.getLastItemHovered();
 
-                    if (lastItemHovered) {
+                    if (lastItemHovered !== undefined) {
                         listComponent.toggleListItemSelection(lastItemHovered);
                     }
                 }
@@ -857,6 +890,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 break;
             default:
                 if (!allowTyping) {
+                    // this allows searching even without the input field, this is for historical reasons
                     this.buildSearchStringFromKeyboardEvent(e);
                 }
         }

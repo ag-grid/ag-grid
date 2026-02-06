@@ -4,6 +4,7 @@ const { execSync } = require('child_process');
 
 const LIBRARIES = ['grid', 'charts'];
 const library = process.env.AG_LIBRARY;
+const nxCommandType = process.env.NX_COMMAND_TYPE || 'affected';
 
 if (!LIBRARIES.includes(library)) {
     console.error(`AG_LIBRARY environment variable is not set. Valid values are: ${LIBRARIES.join(', ')}`);
@@ -24,19 +25,28 @@ if (library === 'grid') {
         'ag-charts-angular': 'angular',
         'ag-charts-react': 'react',
         'ag-charts-vue3': 'vue',
+        'ag-charts-server-side': 'server-side',
         'angular-package-tests': 'angular',
         'react-package-tests': 'react',
         'vue-package-tests': 'vue',
+        'server-side-package-tests': 'server-side',
     };
     affectedProjectsCmd = 'yarn nx show projects --affected -t pack -t test:package';
 }
 
 const result = { framework: new Set() };
-const affectedProjects = execSync(affectedProjectsCmd, { encoding: 'utf-8' }).split('\n');
 
-for (const packageName in matches) {
-    if (affectedProjects.includes(packageName)) {
+if (nxCommandType === 'run-many') {
+    for (const packageName in matches) {
         result.framework.add(matches[packageName]);
+    }
+} else {
+    const affectedProjects = execSync(affectedProjectsCmd, { encoding: 'utf-8' }).split('\n');
+
+    for (const packageName in matches) {
+        if (affectedProjects.includes(packageName)) {
+            result.framework.add(matches[packageName]);
+        }
     }
 }
 

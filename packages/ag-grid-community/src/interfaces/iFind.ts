@@ -72,9 +72,7 @@ export interface FindPart {
     activeMatch?: boolean;
 }
 
-export interface GetFindMatches<TData = any> {
-    (params: GetFindMatchesParams<TData>): number;
-}
+export type GetFindMatches<TData = any> = (params: GetFindMatchesParams<TData>) => number;
 
 export interface GetFindMatchesParams<TData = any> {
     node: IRowNode<TData>;

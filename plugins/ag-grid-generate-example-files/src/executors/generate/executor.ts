@@ -222,22 +222,26 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
         let scriptFiles = [];
         const mergedStyleFiles = { ...styleFiles };
         if (provideFrameworkFiles === undefined) {
-            const result = await getFrameworkFiles({
-                entryFile,
-                indexHtml,
-                isEnterprise,
-                bindings,
-                typedBindings,
-                componentScriptFiles,
-                otherScriptFiles,
-                styleFiles,
-                ignoreDarkMode: false,
-                transformEntryFile,
-                isDev,
-                exampleConfig: frameworkExampleConfig,
-            });
-            files = result.files;
-            scriptFiles = result.scriptFiles;
+            try {
+                const result = await getFrameworkFiles({
+                    entryFile,
+                    indexHtml,
+                    isEnterprise,
+                    bindings,
+                    typedBindings,
+                    componentScriptFiles,
+                    otherScriptFiles,
+                    styleFiles,
+                    ignoreDarkMode: false,
+                    transformEntryFile,
+                    isDev,
+                    exampleConfig: frameworkExampleConfig,
+                });
+                files = result.files;
+                scriptFiles = result.scriptFiles;
+            } catch (e) {
+                throw new Error(`Error generating files for ${internalFramework} in '${folderPath}': ${e}`);
+            }
         } else {
             scriptFiles = await processProvidedFiles(
                 internalFramework,
@@ -460,7 +464,9 @@ async function writeContents(
 
 // We want to replace Math.random() calls with agRandom() calls in the example runner so that tests are predictable.
 function useAgRandom<T extends string[] | Record<string, string>>(scripts: T): T {
-    if (!scripts) return scripts;
+    if (!scripts) {
+        return scripts;
+    }
 
     const replacer = (value: string) => value.replace(/Math\.random\(\)/g, 'window.agRandom()');
 

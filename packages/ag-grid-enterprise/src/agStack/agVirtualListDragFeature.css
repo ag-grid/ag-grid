@@ -1,0 +1,16 @@
+.ag-list-item-hovered::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: var(--ag-accent-color);
+}
+
+.ag-item-highlight-top::after {
+    top: 0;
+}
+
+.ag-item-highlight-bottom::after {
+    bottom: 0;
+}

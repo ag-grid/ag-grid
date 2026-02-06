@@ -1,7 +1,8 @@
 import type {
-    BeanCollection,
+    GridApi,
     IClientSideRowModel,
     IExpansionService,
+    IRowNode,
     NamedBean,
     RowGroupExpansionState,
     RowGroupOpenedEvent,
@@ -9,7 +10,6 @@ import type {
 } from 'ag-grid-community';
 import { _exists } from 'ag-grid-community';
 
-import { getDetailGridInfo } from '../masterDetail/masterDetailApi';
 import { BaseExpansionService } from './baseExpansionService';
 
 export class ClientSideExpansionService
@@ -18,18 +18,18 @@ export class ClientSideExpansionService
 {
     beanName = 'expansionSvc' as const;
 
-    private rowModel: IClientSideRowModel;
+    private events: RowGroupOpenedEvent[] | null = null;
+    private dispatchExpandedDebounced: (() => void) | null = null;
 
-    private events: RowGroupOpenedEvent[] = [];
-    private dispatchExpandedDebounced: () => void;
-
-    public wireBeans(beans: BeanCollection): void {
-        this.rowModel = beans.rowModel as IClientSideRowModel;
+    public override destroy(): void {
+        super.destroy();
+        this.events = null;
+        this.dispatchExpandedDebounced = null;
     }
 
     public setExpansionState(state: RowGroupExpansionState): void {
         const rowIdsToExpandSet = new Set(state.expandedRowGroupIds);
-        this.rowModel.forEachNode((node) => {
+        this.beans.rowModel.forEachNode((node) => {
             const id = node.id;
             if (!id) {
                 return;
@@ -40,9 +40,10 @@ export class ClientSideExpansionService
         this.onGroupExpandedOrCollapsed();
     }
 
-    public getExpansionState(): RowGroupExpansionState {
+    private getInternalExpansionState(allowCollapsed = false) {
         const expandedRowGroupIds: string[] = [];
-        this.rowModel.forEachNode((node) => {
+        const collapsedRowGroupIds: string[] = [];
+        this.beans.rowModel.forEachNode((node) => {
             const id = node.id;
             if (!id) {
                 return;
@@ -50,34 +51,43 @@ export class ClientSideExpansionService
 
             if (node.expanded) {
                 expandedRowGroupIds.push(id);
+            } else if (allowCollapsed && node.isExpandable()) {
+                collapsedRowGroupIds.push(id);
             }
         });
-        return { expandedRowGroupIds };
+        return { expandedRowGroupIds, collapsedRowGroupIds };
+    }
+
+    public getExpansionState(): RowGroupExpansionState {
+        return this.getInternalExpansionState();
     }
 
     public expandAll(expand: boolean): void {
-        const { gos, colModel, eventSvc } = this.beans;
-        const rowModel = this.rowModel;
+        const { gos, rowModel, colModel, eventSvc } = this.beans;
         const usingTreeData = gos.get('treeData');
         const usingPivotMode = colModel.isPivotActive();
-        const masterDetailsToExpandOrCollapse = [] as RowNode[];
 
         const recursiveExpandOrCollapse = (rowNodes: RowNode[] | null): void => {
             if (!rowNodes) {
                 return;
             }
-            rowNodes.forEach((rowNode) => {
+            for (const rowNode of rowNodes) {
                 const actionRow = () => {
                     rowNode.expanded = expand;
                     recursiveExpandOrCollapse(rowNode.childrenAfterGroup);
                 };
+
+                if (rowNode.master) {
+                    actionRow();
+                    continue;
+                }
 
                 if (usingTreeData) {
                     const hasChildren = _exists(rowNode.childrenAfterGroup);
                     if (hasChildren) {
                         actionRow();
                     }
-                    return;
+                    continue;
                 }
 
                 if (usingPivotMode) {
@@ -85,20 +95,14 @@ export class ClientSideExpansionService
                     if (notLeafGroup) {
                         actionRow();
                     }
-                    return;
+                    continue;
                 }
 
                 const isRowGroup = rowNode.group;
                 if (isRowGroup) {
                     actionRow();
                 }
-
-                const isMasterRow = rowNode.master;
-                if (isMasterRow) {
-                    actionRow();
-                    masterDetailsToExpandOrCollapse.push(rowNode);
-                }
-            });
+            }
         };
 
         const rootNode = rowModel.rootNode;
@@ -107,15 +111,6 @@ export class ClientSideExpansionService
         }
 
         this.onGroupExpandedOrCollapsed();
-
-        for (const masterRowNode of masterDetailsToExpandOrCollapse) {
-            if (masterRowNode.detailNode?.id) {
-                const detailGridApi = getDetailGridInfo(this.beans, masterRowNode.detailNode.id)?.api;
-                if (expand) {
-                    detailGridApi?.expandAll();
-                }
-            }
-        }
 
         eventSvc.dispatchEvent({
             type: 'expandOrCollapseAll',
@@ -130,44 +125,73 @@ export class ClientSideExpansionService
         // calling rowNode.setExpanded(boolean) - this way we do a 'keepRenderedRows=false' so that the whole
         // grid gets refreshed again - otherwise the row with the rowNodes that were changed won't get updated,
         // and thus the expand icon in the group cell won't get 'opened' or 'closed'.
-        this.rowModel.refreshModel({ step: 'map' });
+        (this.beans.rowModel as IClientSideRowModel).reMapRows();
     }
 
-    // because the user can call rowNode.setExpanded() many times in one VM turn,
-    // we throttle the calls to ClientSideRowModel using animationFrameSvc. this means for 100
-    // row nodes getting expanded, we only update the CSRM once, and then we fire all events after
-    // CSRM has updated.
-    //
-    // if we did not do this, then the user could call setExpanded on 100+ rows, causing the grid
-    // to re-render 100+ times, which would be a performance lag.
-    //
-    // we use animationFrameService
-    // rather than debounce() so this will get done if anyone flushes the animationFrameService
-    // (eg user calls api.ensureRowVisible(), which in turn flushes ).
+    public setDetailsExpansionState(detailGridApi: GridApi): void {
+        const expansionState = this.getInternalExpansionState(true);
+        const allExpanded = expansionState.collapsedRowGroupIds.length === 0;
+        const allCollapsed = expansionState.expandedRowGroupIds.length === 0;
+        if (allCollapsed === allExpanded) {
+            return;
+        }
+        return allExpanded ? detailGridApi.expandAll() : detailGridApi.collapseAll();
+    }
+
+    /**
+     * because the user can call rowNode.setExpanded() many times in one VM turn,
+     * we throttle the calls to ClientSideRowModel using animationFrameSvc. this means for 100
+     * row nodes getting expanded, we only update the CSRM once, and then we fire all events after
+     * CSRM has updated.
+     *
+     * if we did not do this, then the user could call setExpanded on 100+ rows, causing the grid
+     * to re-render 100+ times, which would be a performance lag.
+     *
+     * we use animationFrameService
+     * rather than debounce() so this will get done if anyone flushes the animationFrameService
+     * (eg user calls api.ensureRowVisible(), which in turn flushes ).
+     */
     protected override dispatchExpandedEvent(event: RowGroupOpenedEvent, forceSync?: boolean): void {
-        this.events.push(event);
-
-        const func = () => {
-            this.events.forEach((e) => this.eventSvc.dispatchEvent(e));
-
-            // when using footers we need to refresh the group row, as the aggregation
-            // values jump between group and footer, because the footer can be callback
-            // we refresh regardless as the output of the callback could be a moving target
-            const nodes = this.events.map((e) => e.node);
-            this.beans.rowRenderer.refreshCells({ rowNodes: nodes });
-
-            this.events = [];
-            this.dispatchStateUpdatedEvent();
-        };
+        (this.events ??= []).push(event);
 
         if (forceSync) {
-            func();
-        } else {
-            if (this.dispatchExpandedDebounced == null) {
-                this.dispatchExpandedDebounced = this.debounce(func);
-            }
-            this.dispatchExpandedDebounced();
+            this.dispatchExpandedEvents();
+            return;
         }
+
+        let dispatch = this.dispatchExpandedDebounced;
+        if (!dispatch) {
+            if (!this.isAlive()) {
+                return;
+            }
+            dispatch = this.debounce(() => this.dispatchExpandedEvents());
+            this.dispatchExpandedDebounced = dispatch;
+        }
+        dispatch();
+    }
+
+    private dispatchExpandedEvents() {
+        const { eventSvc, rowRenderer } = this.beans;
+        const eventsToDispatch = this.events;
+        const eventsLen = eventsToDispatch?.length;
+        if (!eventsLen) {
+            return;
+        }
+        this.events = null;
+
+        const rowNodes = new Array<IRowNode>(eventsLen);
+        for (let i = 0; i < eventsLen; ++i) {
+            rowNodes[i] = eventsToDispatch[i].node;
+            eventSvc.dispatchEvent(eventsToDispatch[i]);
+        }
+
+        // ensure row model updates (e.g. footer creation) complete before refreshing cells
+        this.dispatchStateUpdatedEvent();
+
+        // when using footers we need to refresh the group row, as the aggregation
+        // values jump between group and footer, because the footer can be callback
+        // we refresh regardless as the output of the callback could be a moving target
+        rowRenderer.refreshCells({ rowNodes });
     }
 
     // the advantage over normal debounce is the client can call flushAllFrames()
@@ -180,7 +204,7 @@ export class ClientSideExpansionService
         }
         let pending = false;
         return () => {
-            if (!animationFrameSvc!.active) {
+            if (!animationFrameSvc.active) {
                 window.setTimeout(func, 0);
                 return;
             }
@@ -188,7 +212,7 @@ export class ClientSideExpansionService
                 return;
             }
             pending = true;
-            animationFrameSvc!.addDestroyTask(() => {
+            animationFrameSvc.addDestroyTask(() => {
                 pending = false;
                 func();
             });

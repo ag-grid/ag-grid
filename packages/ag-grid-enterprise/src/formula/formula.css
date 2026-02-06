@@ -1,0 +1,10 @@
+.formula-error::after {
+    content: '';
+    position: absolute;
+    right: -6px;
+    top: -6px;
+    transform: rotate(45deg);
+    width: 12px;
+    height: 12px;
+    background-color: var(--ag-invalid-color);
+}

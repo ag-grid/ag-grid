@@ -1,12 +1,14 @@
+import { _getClientSideRowModel } from '../api/rowModelApiUtils';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import { ROW_ID_PREFIX_BOTTOM_PINNED, ROW_ID_PREFIX_TOP_PINNED } from '../entities/rowNode';
 import type { RowNode } from '../entities/rowNode';
 import { _createRowNodeSibling } from '../entities/rowNodeUtils';
-import type { CssVariablesChanged } from '../events';
-import { _getRowHeightForNode, _isClientSideRowModel } from '../gridOptionsUtils';
+import type { StylesChangedEvent } from '../events';
+import { _getRowHeightForNode } from '../gridOptionsUtils';
 import type { RowPinningState } from '../interfaces/gridState';
+import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { RowPinnedType } from '../interfaces/iRowNode';
 import { PinnedRows, _shouldHidePinnedRows } from './manualPinnedRowUtils';
@@ -14,6 +16,8 @@ import { PinnedRows, _shouldHidePinnedRows } from './manualPinnedRowUtils';
 export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     private top: PinnedRows;
     private bottom: PinnedRows;
+    /** Cached CSRM reference, null if not using client-side row model */
+    private csrm: IClientSideRowModel | null = null;
     /**
      * Determines where the grand total row should be pinned. Need a separate flag to break
      * an infinite recursion with CSRM.
@@ -24,6 +28,9 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         const { gos, beans } = this;
         this.top = new PinnedRows(beans, 'top');
         this.bottom = new PinnedRows(beans, 'bottom');
+
+        // Cache CSRM reference if using client-side row model
+        this.csrm = _getClientSideRowModel(beans) ?? null;
 
         const shouldHide = (node: RowNode) => _shouldHidePinnedRows(beans, node.pinnedSibling!);
 
@@ -37,13 +44,19 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         };
 
         this.addManagedEventListeners({
-            gridStylesChanged: this.onGridStylesChanges.bind(this),
+            stylesChanged: this.onGridStylesChanges.bind(this),
             modelUpdated: ({ keepRenderedRows }) => {
                 this.tryToEmptyQueues();
                 this.pinGrandTotalRow();
-                this.forContainers((container) => container.hide(shouldHide));
+
+                let visibilityChanged = false;
+                this.forContainers((container) => {
+                    visibilityChanged ||= container.hide(shouldHide);
+                });
+
                 const positionsChanged = this.refreshRowPositions();
-                if (!keepRenderedRows || positionsChanged) {
+
+                if (!keepRenderedRows || positionsChanged || visibilityChanged) {
                     this.dispatchRowPinnedEvents();
                 }
             },
@@ -94,20 +107,30 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     }
 
     public pinRow(rowNode: RowNode, float: RowPinnedType, column?: AgColumn | null): void {
-        // Forbid pinning group footers
-        if (rowNode.footer && rowNode.level > -1) return;
+        if (float != null && rowNode.destroyed) {
+            return; // Don't pin destroyed nodes (but allow unpinning)
+        }
 
-        // Pinning grand total row is the only case in which pinned rows are not duplicates of rows
-        // in the main viewport. So we have to handle them differently:
-        // 1. We first set `_grandTotalPinned` to mark the location the grand total row should be pinned to.
-        // 2. Then we refresh the row model to hide the sticky footer.
-        // 3. We then react to the `modelUpdated` event (above) to actually add the footer to the pinned row model.
-        // Otherwise we would run into either an infinite recursion of `modelUpdated` events, or be missing the `sibling`
-        // on the root node.
-        if (rowNode.footer && rowNode.level === -1) {
-            this._grandTotalPinned = float;
-            refreshCSRM(this.beans);
-            return;
+        if (rowNode.footer) {
+            const level = rowNode.level;
+
+            if (level > -1) {
+                return; // Forbid pinning group footers
+            }
+
+            // Pinning grand total row is the only case in which pinned rows are not duplicates of rows
+            // in the main viewport. So we have to handle them differently:
+            // 1. We first set `_grandTotalPinned` to mark the location the grand total row should be pinned to.
+            // 2. Then we refresh the row model to hide the sticky footer.
+            // 3. We then react to the `modelUpdated` event (above) to actually add the footer to the pinned row model.
+            // Otherwise we would run into either an infinite recursion of `modelUpdated` events, or be missing the `sibling`
+            // on the root node.
+            if (level === -1) {
+                this._grandTotalPinned = float;
+                // We need to refresh the model, but only if we are not already refreshing.
+                this.csrm?.reMapRows();
+                return;
+            }
         }
 
         // May have been called on either the pinned row or the source row, check both
@@ -137,7 +160,9 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             // Want to act on the pinned row, not the source row
             const node = rowNode.rowPinned ? rowNode : rowNode.pinnedSibling!;
             const found = this.findPinnedRowNode(node);
-            if (!found) return;
+            if (!found) {
+                return;
+            }
 
             found.delete(node);
             const source = node.pinnedSibling!;
@@ -234,7 +259,12 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     public getPinnedState(): RowPinningState {
         const buildState = (floating: NonNullable<RowPinnedType>) => {
             const list: string[] = [];
-            this.forEachPinnedRow(floating, (node) => list.push(node.pinnedSibling!.id!));
+            this.forEachPinnedRow(floating, (node) => {
+                const id = node.pinnedSibling?.id;
+                if (id != null) {
+                    list.push(id);
+                }
+            });
             return list;
         };
 
@@ -284,26 +314,31 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     }
 
     private pinGrandTotalRow() {
-        const { gos, beans, _grandTotalPinned: float } = this;
-        const rowModel = beans.rowModel;
-        if (!_isClientSideRowModel(gos, rowModel)) return;
+        const { csrm, beans, _grandTotalPinned: float } = this;
+        if (!csrm) {
+            return;
+        }
 
-        const sibling = rowModel.rootNode?.sibling;
-        if (!sibling) return;
+        const sibling = csrm.rootNode?.sibling;
+        if (!sibling) {
+            return;
+        }
 
         const pinnedSibling = sibling.pinnedSibling;
         const container = pinnedSibling && this.findPinnedRowNode(pinnedSibling);
         if (!float) {
             // unpin
-            if (!container) return;
-            container.delete(pinnedSibling);
+            if (!container) {
+                return;
+            }
             _destroyRowNodeSibling(pinnedSibling);
+            container.delete(pinnedSibling);
         } else {
             // pin
             if (container && container.floating !== float) {
                 // already have pinned grand total row, need to unpin first
-                container.delete(pinnedSibling);
                 _destroyRowNodeSibling(pinnedSibling);
+                container.delete(pinnedSibling);
             }
             if (!container || container.floating !== float) {
                 const newPinnedSibling = _createPinnedSibling(beans, sibling, float);
@@ -312,7 +347,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         }
     }
 
-    private onGridStylesChanges(e: CssVariablesChanged) {
+    private onGridStylesChanges(e: StylesChangedEvent) {
         if (e.rowHeightChanged) {
             this.forContainers((container) =>
                 container.forEach((rowNode) => rowNode.setRowHeight(rowNode.rowHeight, true))
@@ -325,8 +360,12 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     }
 
     private findPinnedRowNode(node: RowNode): PinnedRows | undefined {
-        if (this.top.has(node)) return this.top;
-        if (this.bottom.has(node)) return this.bottom;
+        if (this.top.has(node)) {
+            return this.top;
+        }
+        if (this.bottom.has(node)) {
+            return this.bottom;
+        }
     }
 
     private refreshRowPositions(floating?: RowPinnedType): boolean {
@@ -407,8 +446,7 @@ function _destroyRowNodeSibling(rowNode: RowNode): void {
     }
 
     rowNode.rowPinned = null;
-    rowNode.setRowTop(null);
-    rowNode.setRowIndex(null);
+    rowNode._destroy(false);
 
     const mainNode = rowNode.pinnedSibling;
     rowNode.pinnedSibling = undefined as any;
@@ -440,16 +478,14 @@ function getSpannedRows(beans: BeanCollection, rowNode: RowNode, column: AgColum
 
 function getTotalHeight(container: PinnedRows): number {
     const size = container.size();
-    if (size === 0) return 0;
+    if (size === 0) {
+        return 0;
+    }
 
     const node = container.getByIndex(size - 1);
-    if (node === undefined) return 0;
+    if (node === undefined) {
+        return 0;
+    }
 
     return node.rowTop! + node.rowHeight!;
-}
-
-function refreshCSRM({ gos, rowModel }: BeanCollection) {
-    if (_isClientSideRowModel(gos, rowModel)) {
-        rowModel.refreshModel({ step: 'map' });
-    }
 }

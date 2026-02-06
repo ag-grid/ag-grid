@@ -1,13 +1,20 @@
 @mixin output {
     .ag-root-wrapper,
-    .ag-sticky-top,
-    .ag-sticky-bottom,
     .ag-dnd-ghost {
         background-color: var(--ag-background-color);
     }
 
+    .ag-sticky-top,
     .ag-sticky-bottom {
-        border-top: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
+        background-color: var(--ag-data-background-color);
+    }
+
+    .ag-sticky-bottom {
+        .ag-pinned-left-sticky-bottom,
+        .ag-sticky-bottom-container,
+        .ag-pinned-right-sticky-bottom {
+            border-top: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
+        }
     }
 
     .ag-root-wrapper,

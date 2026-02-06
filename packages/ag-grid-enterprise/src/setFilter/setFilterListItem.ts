@@ -57,6 +57,7 @@ export interface SetFilterListItemParams<V> {
     params: ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>;
     translate: (key: SetFilterLocaleTextKey) => string;
     valueFormatter?: (params: ValueFormatterParams) => string;
+    shouldUseFormatterFromColumn?: boolean;
     item: SetFilterModelTreeItem | string | null;
     isSelected: boolean | undefined;
     isTree?: boolean;
@@ -106,6 +107,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
     private readonly params: ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>;
     private readonly translate: (key: SetFilterLocaleTextKey) => string;
     private readonly valueFormatter?: (params: ValueFormatterParams) => string;
+    private readonly useFormatterFromColumn?: boolean;
     private readonly isTree?: boolean;
     private readonly depth: number;
     private readonly isGroup?: boolean;
@@ -132,6 +134,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         this.params = params.params;
         this.translate = params.translate;
         this.valueFormatter = params.valueFormatter;
+        this.useFormatterFromColumn = params.shouldUseFormatterFromColumn;
         this.item = params.item;
         this.isSelected = params.isSelected;
         this.isTree = params.isTree;
@@ -183,10 +186,8 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
             }
             if (this.isGroup) {
                 this.setupExpansion();
-            } else {
-                if (this.groupsExist) {
-                    this.addCss('ag-set-filter-add-group-indent');
-                }
+            } else if (this.groupsExist) {
+                this.addCss('ag-set-filter-add-group-indent');
             }
 
             _setAriaLevel(this.getAriaElement(), this.depth + 1);
@@ -412,7 +413,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
     }
 
     private getFormattedValue(column: AgColumn, value: any) {
-        return this.beans.valueSvc.formatValue(column, null, value, this.valueFormatter, false);
+        return this.beans.valueSvc.formatValue(column, null, value, this.valueFormatter, !!this.useFormatterFromColumn);
     }
 
     private renderCell(): void {

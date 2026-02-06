@@ -3,7 +3,8 @@ import type { AgColorType } from 'ag-charts-types';
 import type { BeanCollection, ChartGroupsDef, ChartType } from 'ag-grid-community';
 import { Component, KeyCode, _setAriaLabel, _warn } from 'ag-grid-community';
 
-import { AgGroupComponent } from '../../../../widgets/agGroupComponent';
+import { AgGroupComponent } from '../../../../agStack/agGroupComponent';
+import type { GroupComponent } from '../../../../widgets/gridEnterpriseWidgetTypes';
 import type { ChartController } from '../../chartController';
 import type { ChartTranslationService } from '../../services/chartTranslationService';
 import { getFullChartNameTranslationKey } from '../../utils/seriesTypeMapper';
@@ -193,8 +194,7 @@ export class MiniChartsContainer extends Component {
         // that are invalid for the current chart configuration (pivot/range) and license type
         const displayedMenuGroups = Object.keys(this.chartGroups)
             .map((group: keyof ChartGroupsDef) => {
-                const menuGroup =
-                    group in miniChartMapping ? miniChartMapping[group as keyof typeof miniChartMapping] : undefined;
+                const menuGroup = group in miniChartMapping ? miniChartMapping[group] : undefined;
                 if (!menuGroup) {
                     // User has specified an invalid chart group in the chartGroupsDef config
                     _warn(148, { group });
@@ -202,7 +202,7 @@ export class MiniChartsContainer extends Component {
                 }
 
                 // Determine the valid chart types within this group, based on the chartGroupsDef config
-                const chartGroupValues = this.chartGroups[group as keyof ChartGroupsDef] ?? [];
+                const chartGroupValues = this.chartGroups[group] ?? [];
                 const menuItems = chartGroupValues
                     .map((chartType) => {
                         const menuItem =
@@ -220,13 +220,19 @@ export class MiniChartsContainer extends Component {
                             return null; // skip enterprise charts if community
                         }
                         // Only show the chart if it is valid for the current chart configuration (pivot/range)
-                        if (isRangeChart && menuItem.range) return menuItem;
-                        if (isPivotChart && menuItem.pivot) return menuItem;
+                        if (isRangeChart && menuItem.range) {
+                            return menuItem;
+                        }
+                        if (isPivotChart && menuItem.pivot) {
+                            return menuItem;
+                        }
                         return null;
                     })
                     .filter((menuItem): menuItem is NonNullable<typeof menuItem> => menuItem != null);
 
-                if (menuItems.length === 0) return null; // don't render empty chart groups
+                if (menuItems.length === 0) {
+                    return null;
+                } // don't render empty chart groups
 
                 return {
                     label: this.chartTranslation.translate(group),
@@ -237,7 +243,7 @@ export class MiniChartsContainer extends Component {
 
         // Render the filtered menu items
         for (const { label, items } of displayedMenuGroups) {
-            const groupComponent = this.createBean(
+            const groupComponent: GroupComponent = this.createBean(
                 new AgGroupComponent({
                     title: label,
                     suppressEnabledCheckbox: true,

@@ -112,7 +112,9 @@ export class MultiFilterUi
     }
 
     public override destroy(): void {
-        this.filters.forEach((filter) => this.destroyBean(filter));
+        for (const filter of this.filters) {
+            this.destroyBean(filter);
+        }
 
         this.filters.length = 0;
 

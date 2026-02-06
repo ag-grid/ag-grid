@@ -30,7 +30,6 @@ export function evaluateCustomFilter<V>(
     }
 
     // No custom filter invocation, indicate that to the caller.
-    return;
 }
 
 export function validateAndUpdateConditions<M>(conditions: M[], maxNumConditions: number): number {
@@ -44,6 +43,34 @@ export function validateAndUpdateConditions<M>(conditions: M[], maxNumConditions
     return numConditions;
 }
 
+const zeroInputTypes: Set<ISimpleFilterModelType> = new Set([
+    'empty',
+    'notBlank',
+    'blank',
+    'today',
+    'yesterday',
+    'tomorrow',
+    'thisWeek',
+    'lastWeek',
+    'nextWeek',
+    'thisMonth',
+    'lastMonth',
+    'nextMonth',
+    'thisQuarter',
+    'lastQuarter',
+    'nextQuarter',
+    'thisYear',
+    'lastYear',
+    'nextYear',
+    'yearToDate',
+    'last7Days',
+    'last30Days',
+    'last90Days',
+    'last6Months',
+    'last12Months',
+    'last24Months',
+]);
+
 export function getNumberOfInputs(
     type: ISimpleFilterModelType | null | undefined,
     optionsFactory: OptionsFactory
@@ -54,9 +81,7 @@ export function getNumberOfInputs(
         return numberOfInputs != null ? numberOfInputs : 1;
     }
 
-    const zeroInputTypes: ISimpleFilterModelType[] = ['empty', 'notBlank', 'blank'];
-
-    if (type && zeroInputTypes.indexOf(type) >= 0) {
+    if (type && zeroInputTypes.has(type)) {
         return 0;
     } else if (type === 'inRange') {
         return 2;

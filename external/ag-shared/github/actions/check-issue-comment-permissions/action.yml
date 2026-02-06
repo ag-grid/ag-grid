@@ -29,6 +29,9 @@ runs:
         - name: Check user permissions
           id: check
           shell: bash
+          env:
+              COMMENT_BODY: ${{ github.event.comment.body }}
+              COMMAND: ${{ inputs.command }}
           run: |
               # Set error handling
               set -euo pipefail
@@ -41,11 +44,12 @@ runs:
                 exit 0
               fi
 
-              # For issue_comment events, check if it's the specified command
-              if [[ "${{ github.event.comment.body }}" != "${{ inputs.command }}" ]]; then
+              # For issue_comment events, check if comment starts with the specified command
+              # Using startsWith logic to allow commands with parameters (e.g., "/benchmarks --filter pattern")
+              if [[ ! "$COMMENT_BODY" == "$COMMAND"* ]]; then
                 echo "allowed=false" >> $GITHUB_OUTPUT
                 echo "association=${{ github.event.comment.author_association }}" >> $GITHUB_OUTPUT
-                echo "Not the specified command (${{ inputs.command }})"
+                echo "Not the specified command ($COMMAND)"
                 exit 0
               fi
 
@@ -91,9 +95,9 @@ runs:
 
         - name: Post denial message
           if: |
-              github.event_name == 'issue_comment' && 
-              github.event.comment.body == inputs.command && 
-              steps.check.outputs.allowed == 'false' && 
+              github.event_name == 'issue_comment' &&
+              startsWith(github.event.comment.body, inputs.command) &&
+              steps.check.outputs.allowed == 'false' &&
               inputs.post_denial_message == 'true'
           uses: actions/github-script@v7
           with:

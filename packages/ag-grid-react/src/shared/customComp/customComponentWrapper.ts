@@ -11,18 +11,18 @@ export type WrapperParams<P extends { key?: string }, M> = {
 };
 
 export function addOptionalMethods<M, C>(optionalMethodNames: string[], providedMethods: M, component: C): void {
-    optionalMethodNames.forEach((methodName) => {
+    for (const methodName of optionalMethodNames) {
         const providedMethod = (providedMethods as any)[methodName];
         if (providedMethod) {
             (component as any)[methodName] = providedMethod;
         }
-    });
+    }
 }
 
 export class CustomComponentWrapper<TInputParams, TOutputParams, TMethods> extends ReactComponent {
     private updateCallback?: () => AgPromise<void>;
     private resolveUpdateCallback!: () => void;
-    private awaitUpdateCallback = new AgPromise<void>((resolve) => {
+    private readonly awaitUpdateCallback = new AgPromise<void>((resolve) => {
         this.resolveUpdateCallback = resolve;
     });
 

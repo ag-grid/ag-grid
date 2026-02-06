@@ -7,7 +7,7 @@ import type {
 } from 'ag-grid-community';
 import { AgSelect, Component } from 'ag-grid-community';
 
-import type { AgGroupComponent } from '../../../../widgets/agGroupComponent';
+import type { GroupComponent } from '../../../../widgets/gridEnterpriseWidgetTypes';
 import type { AgPillSelectChangeParams } from '../../../widgets/agPillSelect';
 import { AgPillSelect } from '../../../widgets/agPillSelect';
 import type { ChartController } from '../../chartController';
@@ -22,7 +22,7 @@ export abstract class DragDataPanel extends Component {
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
     }
 
-    protected groupComp: AgGroupComponent;
+    protected groupComp: GroupComponent;
     protected valuePillSelect?: AgPillSelect<ColState>;
     private valueSelect?: GridSelect<ColState>;
 
@@ -63,9 +63,9 @@ export abstract class DragDataPanel extends Component {
         } else {
             const params: AgSelectParams<AgComponentSelectorType, ColState> = this.createValueSelectParams(columns);
             params.onValueChange = (updatedColState: ColState) => {
-                columns.forEach((col) => {
+                for (const col of columns) {
                     col.selected = false;
-                });
+                }
                 updatedColState.selected = true;
                 // Clear the category aggregation function if the default ordinal category is selected
                 if (updatedColState.colId === DEFAULT_CHART_CATEGORY) {

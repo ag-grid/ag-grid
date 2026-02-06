@@ -28,13 +28,26 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             return res;
         }
 
-        const { rowNode, column } = position || {};
+        const rowNode = position?.rowNode;
+        const column = position?.column;
+        const trackedRowNode = this.rowNode;
+        const trackedColumn = this.column;
 
-        if ((!this.rowNode || !this.column) && rowNode && column) {
-            return null;
+        if ((!trackedRowNode || !trackedColumn) && rowNode && column) {
+            return null; // no existing edit, so don't stop
         }
 
-        return this.rowNode !== rowNode || this.column !== column;
+        if (trackedRowNode !== rowNode || trackedColumn !== column) {
+            return true; // stop editing if moving to a different cell
+        }
+
+        // Both tracked and position cells are null/undefined (cells match after check above).
+        // Stop orphan editors from tabbing into empty cells.
+        if (!trackedRowNode && !trackedColumn) {
+            return this.model.hasEdits(undefined, { withOpenEditor: true });
+        }
+
+        return false; // continue editing the same cell
     }
 
     public override midBatchInputsAllowed(position?: EditPosition): boolean {
@@ -109,10 +122,12 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         }
 
         if (
-            editSvc?.isEditing({ rowNode, column: curCol as AgColumn }, { withOpenEditor: true }) &&
-            event.type === 'cellFocused'
+            event.type == 'cellFocused' &&
+            (editSvc?.isRangeSelectionEnabledWhileEditing() ||
+                editSvc?.isEditing({ rowNode, column: curCol as AgColumn }, { withOpenEditor: true }))
         ) {
-            // editor is already active, so we don't need to do anything
+            // if editor is a formula selecting a range or if the
+            // editor is already active, we don't need to do anything
             return;
         }
 
@@ -206,7 +221,13 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             if (suppressStartEditOnTab) {
                 nextCell.focusCell(true, event);
             } else {
-                this.editSvc.startEditing(nextCell, { startedEdit: true, event, source, ignoreEventKey: true });
+                this.editSvc.startEditing(nextCell, {
+                    startedEdit: true,
+                    event,
+                    source,
+                    ignoreEventKey: true,
+                    editable: nextEditable,
+                });
             }
         }
 

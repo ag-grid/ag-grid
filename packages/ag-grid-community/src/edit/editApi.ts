@@ -1,9 +1,12 @@
-import type { StartEditingCellParams } from '../api/gridApi';
 import { ensureColumnVisible, ensureIndexVisible } from '../api/scrollApi';
 import type { BeanCollection } from '../context/context';
 import { _getRowNode } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
-import type { EditingCellPosition, ICellEditorValidationError } from '../interfaces/iCellEditor';
+import type {
+    EditingCellPosition,
+    ICellEditorValidationError,
+    StartEditingCellParams,
+} from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _warn } from '../validation/logging';
@@ -63,11 +66,11 @@ export function stopEditing(beans: BeanCollection, cancel: boolean = false): voi
     const { editSvc } = beans;
     if (editSvc?.isBatchEditing()) {
         if (cancel) {
-            beans.editModelSvc?.getEditPositions().forEach((cellPosition) => {
+            for (const cellPosition of beans.editModelSvc?.getEditPositions() ?? []) {
                 if (cellPosition.state === 'editing') {
                     editSvc.revertSingleCellEdit(cellPosition);
                 }
-            });
+            }
         } else {
             _syncFromEditors(beans, { persist: true });
         }
@@ -104,7 +107,7 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
         return;
     }
 
-    if (!column.isCellEditable(rowNode)) {
+    if (!editSvc?.isCellEditable({ rowNode, column }, 'api')) {
         return;
     }
 
@@ -123,6 +126,7 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
         {
             event: key ? new KeyboardEvent('keydown', { key }) : undefined,
             source: 'api',
+            editable: true,
         }
     );
 }

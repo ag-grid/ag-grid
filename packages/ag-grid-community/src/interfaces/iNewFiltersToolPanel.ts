@@ -15,7 +15,7 @@ export interface SelectableFilterDef {
     /**
      * Filter to use for this column.
      * - Set to `true` to use the default filter.
-     * - Set to the name of a provided filter: `agNumberColumnFilter`, `agTextColumnFilter`, `agDateColumnFilter`, `agMultiColumnFilter`, `agSetColumnFilter`.
+     * - Set to the name of a provided filter: `agNumberColumnFilter`, `agBigIntColumnFilter`, `agTextColumnFilter`, `agDateColumnFilter`, `agMultiColumnFilter`, `agSetColumnFilter`.
      * - Set to a `ColumnFilter`
      */
     filter: any;
@@ -85,9 +85,10 @@ export interface IFilterPanelService extends IEventEmitter<'filterPanelStateChan
     doAction(action: FilterAction): void;
     updateParams(params: IToolPanelNewFiltersCompParams, initialState?: NewFiltersToolPanelState): void;
     getGridState(): NewFiltersToolPanelState;
+    clear(): void;
 }
 
-export interface ISelectableFilterService {
+export interface ISelectableFilterService extends IEventEmitter<'selectedFilterChanged'> {
     getFilterValueGetter(colId: string): string | ValueGetterFunc | undefined;
     isSelectable(filterDef: IFilterDef): boolean;
     getFilterDef(column: AgColumn, filterDef: IFilterDef): IFilterDef;
@@ -97,4 +98,6 @@ export interface ISelectableFilterService {
     ): { filterDefs: SelectableFilterDef[]; activeFilterDef: SelectableFilterDef } | undefined;
     setActive(colId: string, filterDefs: SelectableFilterDef[], activeFilterDef: SelectableFilterDef): void;
     clearActive(colId: string): void;
+    getState(): { [colId: string]: number };
+    setState(state: { [colId: string]: number }): void;
 }

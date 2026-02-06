@@ -27,7 +27,7 @@ export abstract class SimpleFilterHandler<
     implements FilterHandler<any, any, TModel | ICombinedSimpleModel<TModel>, TParams>
 {
     /** Used to get the filter type for filter models. */
-    public abstract readonly filterType: 'text' | 'number' | 'date';
+    public abstract readonly filterType: 'text' | 'number' | 'bigint' | 'date';
 
     protected abstract readonly FilterModelFormatterClass: new (
         optionsFactory: OptionsFactory,
@@ -163,7 +163,7 @@ export abstract class SimpleFilterHandler<
             model.filterType !== filterType
         ) {
             // need to add filterType to model
-            conditions = conditions!.map((condition) => ({ ...condition, filterType }));
+            conditions = conditions.map((condition) => ({ ...condition, filterType }));
             needsUpdate = true;
         }
 
@@ -190,7 +190,6 @@ export abstract class SimpleFilterHandler<
                 model: updatedModel,
             };
             params.onModelChange(updatedModel);
-            return;
         }
     }
 

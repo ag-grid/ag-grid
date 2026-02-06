@@ -3,7 +3,7 @@ title: "Cell Selection API Reference"
 enterprise: true
 ---
 
-## Configuration API 
+## Configuration API
 
 {% interfaceDocumentation interfaceName="CellSelectionOptions" config={"description":""} /%}
 
@@ -11,24 +11,24 @@ enterprise: true
 
 {% apiDocumentation source="grid-events/events.json" section="selection" names=["fillStart", "fillEnd", "cellSelectionChanged"] /%}
 
-As an example to illustrate the `cellSelectionChanged` event, if selecting a range of 5 cells in a row, the user will click the first cell and drag to the last cell. 
-This will result in up to 7 events. The first and last cell in the range will cause two events each. 
-This is due to the first cell firing an event with `started=true, finished=true` upon mousedown with an additional event `started=true, finished=false` while in the range, and the last cell firing an event `started=false, finished=false` as soon as it is in the range and then again `started=false, finished=true` upon the end of cell selection. 
+As an example to illustrate the `cellSelectionChanged` event, if selecting a range of 5 cells in a row, the user will click the first cell and drag to the last cell.
+This will result in up to 7 events. The first and last cell in the range will cause two events each.
+This is due to the first cell firing an event with `started=true, finished=true` upon mousedown with an additional event `started=true, finished=false` while in the range, and the last cell firing an event `started=false, finished=false` as soon as it is in the range and then again `started=false, finished=true` upon the end of cell selection.
 All the intermediary events will have one event with both `started` and `finished` as `false`. This is illustrated in the table:
 
-| User action                       | `started` | `finished`  |
-|-----------------------------------|-----------|------------|
-| `mousedown` in first cell          | `true`    | `true`     |
-| `mousemove` in first cell          | `true`    | `false`    |
+| User action                       | `started` | `finished` |
+| --------------------------------- | --------- | ---------- |
+| `mousedown` in first cell         | `true`    | `true`     |
+| `mousemove` in first cell         | `true`    | `false`    |
 | `mousemove` in intermediate cells | `false`   | `false`    |
-| `mousemove` in final cell          | `false`   | `false`    |
-| `mouseup` in final cell            | `false`   | `true`     |
+| `mousemove` in final cell         | `false`   | `false`    |
+| `mouseup` in final cell           | `false`   | `true`     |
 
 The example below also illustrates this by logging the event fields in the console:
 
 {% gridExampleRunner title="cellSelectionChanged" name="range-selection-changed-event" /%}
 
-## Editing Events 
+## Editing Events
 
 {% apiDocumentation source="grid-events/events.json" section="editing" names=["cellSelectionDeleteStart","cellSelectionDeleteEnd", "cellEditRequest"] /%}
 

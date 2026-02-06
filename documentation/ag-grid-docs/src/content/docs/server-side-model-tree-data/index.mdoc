@@ -84,9 +84,9 @@ Be careful not to get mixed up with the [Client-Side Tree Data](./tree-data/) co
 
 The example below shows this in action where the following can be noted:
 
-* Tree Data is enabled with the Server-Side Row Model using `gridOptions.treeData = true`.
-* Group nodes are determined using the callback `gridOptions.isServerSideGroup(dataItem)`.
-* Group keys are returned from the callback `gridOptions.getServerSideGroupKey(dataItem)`.
+-   Tree Data is enabled with the Server-Side Row Model using `gridOptions.treeData = true`.
+-   Group nodes are determined using the callback `gridOptions.isServerSideGroup(dataItem)`.
+-   Group keys are returned from the callback `gridOptions.getServerSideGroupKey(dataItem)`.
 
 {% gridExampleRunner title="Tree Data" name="tree-data"  exampleHeight=590 /%}
 
@@ -97,8 +97,8 @@ explained in the [SSRM Refresh](./server-side-model-updating-refresh/).
 
 The example below shows this in action where the following can be noted:
 
-* Click **Refresh Everything** to clear all caches by calling `api.refreshServerSide({ route: [], purge: true })`.
-* Click **Refresh \['Kathryn Powers','Mabel Ward']** to clear a single cache by calling `api.refreshServerSide({ route: ['Kathryn Powers','Mabel Ward'], purge: true })`.
+-   Click **Refresh Everything** to clear all caches by calling `api.refreshServerSide({ route: [], purge: true })`.
+-   Click **Refresh \['Kathryn Powers','Mabel Ward']** to clear a single cache by calling `api.refreshServerSide({ route: ['Kathryn Powers','Mabel Ward'], purge: true })`.
 
 {% gridExampleRunner title="Purging Tree Data" name="purging-tree-data"  exampleHeight=615 /%}
 
@@ -108,10 +108,10 @@ Tree Data can have transactions applied in the same way as row groups. This is e
 
 The example below demonstrates transactions with Tree Data. Note the following:
 
-* **Add Child to Selected** adds a child under the selected row, even if it wasn't originally a group.
-* **Update Selected** changes the selected row's `Employment Type`.
-* **Delete Selected** removes the selected row, and all of its child rows.
-* **Move Selected to Robert Peterson** moves the selected row and its children directly under `Robert Peterson`.
+-   **Add Child to Selected** adds a child under the selected row, even if it wasn't originally a group.
+-   **Update Selected** changes the selected row's `Employment Type`.
+-   **Delete Selected** removes the selected row, and all of its child rows.
+-   **Move Selected to Robert Peterson** moves the selected row and its children directly under `Robert Peterson`.
 
 {% gridExampleRunner title="Transactions with Tree Data" name="transactions-tree-data"  exampleHeight=615 /%}
 
@@ -119,7 +119,7 @@ The example below demonstrates transactions with Tree Data. Note the following:
 
 Tree Data can have row selection applied in the same way as row groups. This is explained in the [SSRM Row Selection](./server-side-model-selection/) section.
 
-The example below demonstrates row selection with Tree Data where the grid has been configured with `rowSelection.groupSelects = 'descendants'`. 
+The example below demonstrates row selection with Tree Data where the grid has been configured with `rowSelection.groupSelects = 'descendants'`.
 This means that selecting a row with descendants selects all of its descendants. Selecting some, but not all, of the descendants of a row places that row in the indeterminate state.
 
 {% gridExampleRunner title="Selection with Tree Data" name="selecting-tree-data"  exampleHeight=615 /%}
@@ -136,12 +136,12 @@ Server-Side Tree Data Filtering should behave the same as Client-Side [Tree Data
 
 The following example demonstrates Server-Side Tree Data Filtering using the [Set Filter Tree List](./filter-set-tree-list/), which replicates the Tree Data structure in the filter.
 
-* The **Group** column has the Set Filter Tree List enabled via `filterParams.treeList = true`. A Key Creator is specified to convert the path into a string.
-* The **Group** column has the filter values supplied asynchronously as a nested array of strings that matches the data paths. The supplied values are at the child level only.
-* The **Date** column has the Set Filter Tree List enabled via `filterParams.treeList = true`, and is grouped by year -> month -> day.
-* The **Date** column has the filter values supplied asynchronously as an array of `Date` objects.
-* The **Date** column has a `filterParams.keyCreator` provided to convert the `Date` values into the (string) format the server is expecting in the Filter Model.
-* The **Group** and **Date** columns both have `filterParams.excelMode = 'windows'`, which allows changes to the tree filter to be applied in batches.
+-   The **Group** column has the Set Filter Tree List enabled via `filterParams.treeList = true`. A Key Creator is specified to convert the path into a string.
+-   The **Group** column has the filter values supplied asynchronously as a nested array of strings that matches the data paths. The supplied values are at the child level only.
+-   The **Date** column has the Set Filter Tree List enabled via `filterParams.treeList = true`, and is grouped by year -> month -> day.
+-   The **Date** column has the filter values supplied asynchronously as an array of `Date` objects.
+-   The **Date** column has a `filterParams.keyCreator` provided to convert the `Date` values into the (string) format the server is expecting in the Filter Model.
+-   The **Group** and **Date** columns both have `filterParams.excelMode = 'windows'`, which allows changes to the tree filter to be applied in batches.
 
 {% gridExampleRunner title="Filtering Tree Data" name="filtering-tree-data"  exampleHeight=590 /%}
 

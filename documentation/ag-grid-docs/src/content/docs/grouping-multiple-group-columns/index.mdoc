@@ -2,6 +2,7 @@
 title: "Row Grouping - Multiple Group Columns"
 enterprise: true
 ---
+
 Display the group structure with one group column representing each level of row grouping.
 
 {% gridExampleRunner title="Enabling Single Group Column" name="enabling-multiple-group-column" /%}
@@ -53,6 +54,7 @@ inside the group column.
 {% gridExampleRunner title="Show Opened Groups Many Columns" name="show-opened-groups-many-columns" /%}
 
 The example above demonstrates the following configuration to show the parent group value inside the group column:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     showOpenedGroup: true,
@@ -60,6 +62,7 @@ const gridOptions = {
 ```
 
 ## Cell Component
+
 The group columns use the `agGroupCellRenderer` component to display the group information, as well as the chevron control
 for expanding and collapsing rows. The renderer also embeds the grouped columns renderer and displays this inside of the group cell.
 
@@ -69,6 +72,7 @@ the `autoGroupColumnDef` property `cellRendererParams`. The example below remove
 {% gridExampleRunner title="Group Cell Renderer Configuration" name="renderer-config-group-cell" /%}
 
 The example above demonstrates the following configuration:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
@@ -100,6 +104,7 @@ instead using the group cell renderer to display checkboxes.
 {% gridExampleRunner title="Group Cell Renderer Checkbox Selection" name="renderer-config-checkbox" /%}
 
 The example above demonstrates the following configuration:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     rowSelection: {
@@ -121,6 +126,7 @@ on the `cellRendererParams` configuration.
 {% gridExampleRunner title="Group Cell Renderer Configuration" name="renderer-config-inner" /%}
 
 The example above uses the following configuration to provide a custom inner renderer to the group column:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     autoGroupColumnDef: {
@@ -139,13 +145,13 @@ property on the `autoGroupColumnDef` configuration.
 {% gridExampleRunner title="Custom Group Cell Renderer" name="renderer-config-custom" /%}
 
 {% note %}
-It is also possible to [Determine Cell Renderers Dynamically](./component-cell-renderer/#dynamic-component-selection).
+It is also possible to [Determine Cell Renderers Dynamically](./component-cell-renderer/#providing-custom-components-dynamically).
 {% /note %}
 
 ## Filtering
 
 To enable filters on the group column, set the `filter` property of the `autoGroupColumnDef` to `'agGroupColumnFilter'`. This configuration
-will cause the group column to inherit the the filter from the column it is representing.
+will cause the group column to inherit the filter from the column it is representing.
 
 {% gridExampleRunner title="Group Column Filtering" name="filtering-grouped-columns" /%}
 
@@ -154,6 +160,7 @@ When the column with row grouping enabled is also visible, the corresponding gro
 {% /note %}
 
 The example above demonstrates the following configuration to inherit the filter from the grouped column:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     autoGroupColumnDef: {
@@ -175,6 +182,7 @@ When `groupHideOpenParents` is enabled the grid no longer sticks expanded group 
 {% /note %}
 
 The example above demonstrates the following configuration to hide open parents:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     groupHideOpenParents: true,

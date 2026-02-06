@@ -7,18 +7,18 @@ export type ValueParserLiteParams<TData, TValue, TContext = any> = Omit<
     'data' | 'node' | 'oldValue'
 >;
 
-export interface ValueParserLiteFunc<TData, TValue, TContext = any> {
-    (params: ValueParserLiteParams<TData, TValue, TContext>): TValue | null | undefined;
-}
+export type ValueParserLiteFunc<TData, TValue, TContext = any> = (
+    params: ValueParserLiteParams<TData, TValue, TContext>
+) => TValue | null | undefined;
 
 export type ValueFormatterLiteParams<TData, TValue, TContext = any> = Omit<
     ValueFormatterParams<TData, TValue, TContext>,
     'data' | 'node'
 >;
 
-export interface ValueFormatterLiteFunc<TData, TValue, TContext = any> {
-    (params: ValueFormatterLiteParams<TData, TValue, TContext>): string;
-}
+export type ValueFormatterLiteFunc<TData, TValue, TContext = any> = (
+    params: ValueFormatterLiteParams<TData, TValue, TContext>
+) => string;
 
 /**
  * The pre-defined base data types.
@@ -26,6 +26,8 @@ export interface ValueFormatterLiteFunc<TData, TValue, TContext = any> {
  * `'text'` is type `string`.
  *
  * `'number'` is type `number`.
+ *
+ * `'bigint'` is type `bigint`.
  *
  * `'boolean'` is type `boolean`.
  *
@@ -42,6 +44,7 @@ export interface ValueFormatterLiteFunc<TData, TValue, TContext = any> {
 export type BaseCellDataType =
     | 'text'
     | 'number'
+    | 'bigint'
     | 'boolean'
     | 'date'
     | 'dateString'
@@ -54,7 +57,8 @@ interface BaseDataTypeDefinition<TValueType extends BaseCellDataType, TData = an
     baseDataType: TValueType;
     /**
      * The data type that this extends. Either one of the pre-defined data types
-     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'`, `'dateTime'`, `'dateTimeString'` or  `'object'`)
+     * (`'text'`, `'number'`, `'bigint'`, `'boolean'`, `'date'`, `'dateString'`, `'dateTime'`, `'dateTimeString'`
+     * or `'object'`)
      * or another custom data type.
      */
     extendsDataType: string;
@@ -110,6 +114,10 @@ export interface TextDataTypeDefinition<TData = any, TContext = any>
 export interface NumberDataTypeDefinition<TData = any, TContext = any>
     extends BaseDataTypeDefinition<'number', TData, number, TContext> {}
 
+/** Represents a `'bigint'` data type (type `bigint`). */
+interface BigIntDataTypeDefinition<TData = any, TContext = any>
+    extends BaseDataTypeDefinition<'bigint', TData, bigint, TContext> {}
+
 /** Represents a `'boolean'` data type (type `boolean`). */
 export interface BooleanDataTypeDefinition<TData = any, TContext = any>
     extends BaseDataTypeDefinition<'boolean', TData, boolean, TContext> {}
@@ -153,12 +161,17 @@ export type CheckDataTypes<Obj extends Record<K, any>, K extends keyof any = Bas
 export type DataTypeDefinition<TData = any, TValue = any, TContext = any> =
     | TextDataTypeDefinition<TData, TContext>
     | NumberDataTypeDefinition<TData, TContext>
+    | BigIntDataTypeDefinition<TData, TContext>
     | BooleanDataTypeDefinition<TData, TContext>
     | DateDataTypeDefinition<TData, TContext>
     | DateStringDataTypeDefinition<TData, TContext>
     | DateTimeDataTypeDefinition<TData, TContext>
     | DateTimeStringDataTypeDefinition<TData, TContext>
     | ObjectDataTypeDefinition<TData, TValue, TContext>;
+
+export type DataTypeDefinitions<TData = any, TValue = any, TContext = any> = {
+    [cellDataType: string]: DataTypeDefinition<TData, TValue, TContext>;
+};
 
 /** Configuration options for pre-defined data types. */
 export type CoreDataTypeDefinition<TData = any, TValue = any, TContext = any> = Omit<

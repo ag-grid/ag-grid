@@ -2,6 +2,7 @@
 title: "Row Grouping - Group Rows"
 enterprise: true
 ---
+
 Full width group rows can be used to represent the group structure in the grid.
 
 {% gridExampleRunner title="Enabling Group Rows" name="enabling-group-rows" /%}
@@ -20,6 +21,7 @@ const gridOptions = {
 ```
 
 ## Cell Component
+
 The group rows use the `agGroupCellRenderer` component to display the group information, as well as the chevron control
 for expanding and collapsing rows.
 
@@ -29,6 +31,7 @@ the `groupRowRendererParams` grid option. The example below removes the row coun
 {% gridExampleRunner title="Group Cell Renderer Configuration" name="renderer-config-group-cell" /%}
 
 The example above demonstrates the following configuration:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
@@ -38,8 +41,8 @@ const gridOptions = {
     groupRowRendererParams: {
         suppressCount: true,
     },
-    rowSelection: { 
-        mode: 'singleRow', 
+    rowSelection: {
+        mode: 'singleRow',
         checkboxLocation: 'autoGroupColumn',
     }
 }
@@ -58,6 +61,7 @@ but does prevent any columns configured with `agGroupCellRenderer` from showing 
 {% gridExampleRunner title="Group Cell Renderer Checkbox Selection" name="renderer-config-checkbox" /%}
 
 The example above demonstrates the following configuration:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     rowSelection: {
@@ -79,6 +83,7 @@ on the `groupRowRendererParams` grid option.
 {% gridExampleRunner title="Group Cell Renderer Configuration" name="renderer-config-inner" /%}
 
 The example above uses the following configuration to provide a custom inner renderer to the group column:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     autoGroupColumnDef: {
@@ -97,6 +102,7 @@ The Group Cell Renderer can be entirely replaced with a [Custom Cell Component](
 {% gridExampleRunner title="Custom Group Cell Renderer" name="renderer-config-custom" /%}
 
 The example above sets a custom cell renderer using the following configuration:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     groupRowRenderer: CustomGroupCellRenderer,

@@ -1,6 +1,6 @@
 import type { IComponent } from '../agStack/interfaces/iComponent';
 import type { AgPromise } from '../agStack/utils/promise';
-import type { ColDef } from '../entities/colDef';
+import type { ColDef, ColKey } from '../entities/colDef';
 import type { IFloatingFilterComp } from '../filter/floating/floatingFilter';
 import type { Column } from '../interfaces/iColumn';
 import type { IAfterGuiAttachedParams } from './iAfterGuiAttachedParams';
@@ -8,8 +8,8 @@ import type { AgGridCommon } from './iCommon';
 import type { IRowModel } from './iRowModel';
 import type { IRowNode } from './iRowNode';
 
-export type IFilterType = string | { new (): IFilterComp } | boolean;
-export type IFloatingFilterType = string | { new (): IFloatingFilterComp };
+export type IFilterType = string | (new () => IFilterComp) | boolean;
+export type IFloatingFilterType = string | (new () => IFloatingFilterComp);
 
 export interface DoesFilterPassParams<TData = any, TContext = any, TModel = any, TCustomParams = any>
     extends IDoesFilterPassParams<TData> {
@@ -24,7 +24,19 @@ export interface FilterHandlerBaseParams<TData = any, TContext = any, TModel = a
     extends SharedFilterParams<TData, TContext> {
     filterParams: TCustomParams;
     onModelChange: (model: TModel | null, additionalEventAttributes?: any) => void;
+    /**
+     * When using the read-only floating filter or the new filters tool panel,
+     * the display value is retrieved from the handler via `getModelAsString()`.
+     * This will automatically be called again when the filter model changes.
+     * If the display value needs to be updated without the filter model changing,
+     * this function can be called to trigger a refresh.
+     */
+    onModelAsStringChange: () => void;
 }
+
+export type QuickFilterParser = (quickFilter: string) => string[];
+export type QuickFilterMatcher = (quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean;
+export type AlwaysPassFilter<TData = any> = (rowNode: IRowNode<TData>) => boolean;
 
 export type FilterHandlerSource = 'init' | 'ui' | 'api' | 'colDef' | 'floating' | 'handler';
 
@@ -53,8 +65,8 @@ export interface FilterHandler<TData = any, TContext = any, TModel = any, TCusto
     doesFilterPass(params: DoesFilterPassParams<TData, TContext, TModel, TCustomParams>): boolean;
     /**
      * Optional: Used by AG Grid when rendering floating filters and there isn't a floating filter
-     * associated for this filter, this will happen if you create a custom filter and NOT a custom floating
-     * filter.
+     * associated for this filter. This will happen if you create a custom filter and NOT a custom floating
+     * filter. This is also used by the new filters tool panel to display the summary.
      */
     getModelAsString?(model: TModel | null, source?: 'floating' | 'filterToolPanel'): string;
     /**
@@ -72,16 +84,18 @@ export interface CreateFilterHandlerFuncParams<TData = any, TValue = any, TConte
     column: Column<TValue>;
 }
 
-export interface CreateFilterHandlerFunc<TData = any, TValue = any, TContext = any, TModel = any, TCustomParams = any> {
-    (
-        params: CreateFilterHandlerFuncParams<TData, TValue, TContext>
-    ): FilterHandler<TData, TContext, TModel, TCustomParams>;
-}
+export type CreateFilterHandlerFunc<TData = any, TValue = any, TContext = any, TModel = any, TCustomParams = any> = (
+    params: CreateFilterHandlerFuncParams<TData, TValue, TContext>
+) => FilterHandler<TData, TContext, TModel, TCustomParams>;
+
+export type FilterHandlers<TData = any, TValue = any, TContext = any, TModel = any, TCustomParams = any> = {
+    [key: string]: CreateFilterHandlerFunc<TData, TValue, TContext, TModel, TCustomParams>;
+};
 
 export interface ColumnFilter<TData = any, TValue = any, TContext = any, TModel = any, TCustomParams = any> {
     /**
      * Filter component to use for this column.
-     * - Set to the name of a provided filter: `agNumberColumnFilter`, `agTextColumnFilter`, `agDateColumnFilter`, `agMultiColumnFilter`, `agSetColumnFilter`.
+     * - Set to the name of a provided filter: `agNumberColumnFilter`, `agBigIntColumnFilter`, `agTextColumnFilter`, `agDateColumnFilter`, `agMultiColumnFilter`, `agSetColumnFilter`.
      * - Set to a custom filter `FilterDisplay`
      */
     component: any;
@@ -110,7 +124,7 @@ export interface IFilterDef {
     /**
      * Filter to use for this column.
      * - Set to `true` to use the default filter.
-     * - Set to the name of a provided filter: `agNumberColumnFilter`, `agTextColumnFilter`, `agDateColumnFilter`, `agMultiColumnFilter`, `agSetColumnFilter`.
+     * - Set to the name of a provided filter: `agNumberColumnFilter`, `agBigIntColumnFilter`, `agTextColumnFilter`, `agDateColumnFilter`, `agMultiColumnFilter`, `agSetColumnFilter`.
      * - Set to a custom filter `IFilterComp` when `enableFilterHandlers = false`.
      * - Set to a `ColumnFilter` when `enableFilterHandlers = true`
      */
@@ -277,10 +291,7 @@ export interface SharedFilterParams<TData = any, TContext = any> extends AgGridC
      * Get the cell value for the given row node and column, which can be the column ID, definition, or `Column` object.
      * If no column is provided, the column this filter is on will be used.
      */
-    getValue: <TValue = any>(
-        node: IRowNode<TData>,
-        column?: string | ColDef<TData, TValue> | Column<TValue>
-    ) => TValue | null | undefined;
+    getValue: <TValue = any>(node: IRowNode<TData>, column?: ColKey<TData, TValue>) => TValue | null | undefined;
 
     /**
      * A function callback, call with a node to be told whether the node passes all filters except the current filter.

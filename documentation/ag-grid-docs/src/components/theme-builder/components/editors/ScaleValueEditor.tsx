@@ -30,7 +30,9 @@ export const ScaleValueEditor = ({
             icon={icon}
             getIconSwipeAdjustment={(value, pixels) => {
                 const proportion = parseFloat(value);
-                if (isNaN(proportion)) return value;
+                if (isNaN(proportion)) {
+                    return value;
+                }
                 return stripFloatingPointErrors(proportion + pixels / swipeAdjustmentDivisor);
             }}
         />

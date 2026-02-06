@@ -5,7 +5,6 @@ import { _exists } from '../../../agStack/utils/generic';
 import { _toString } from '../../../agStack/utils/string';
 import { _getInnerHeaderGroupCompDetails } from '../../../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
-import type { BeanCollection } from '../../../context/context';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { ColumnGroup } from '../../../interfaces/iColumn';
 import type { AgGridCommon } from '../../../interfaces/iCommon';
@@ -15,6 +14,7 @@ import type { IconName } from '../../../utils/icon';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { _warn } from '../../../validation/logging';
 import { Component } from '../../../widgets/component';
+import { GroupStickyLabelFeature } from './groupStickyLabelFeature';
 
 export interface IHeaderGroupParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The column group the header is for. */
@@ -146,7 +146,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
             agOpened,
             agClosed,
             params: { columnGroup },
-            beans,
+            beans: { colGroupSvc },
         } = this;
         this.addInIcon('columnGroupOpened', agOpened);
         this.addInIcon('columnGroupClosed', agClosed);
@@ -157,15 +157,15 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
             }
 
             const newExpandedValue = !columnGroup.isExpanded();
-            beans.colGroupSvc!.setColumnGroupOpened(
+            colGroupSvc!.setColumnGroupOpened(
                 (columnGroup as AgColumnGroup).getProvidedColumnGroup(),
                 newExpandedValue,
                 'uiColumnExpanded'
             );
         };
 
-        this.addTouchAndClickListeners(beans, agClosed, expandAction);
-        this.addTouchAndClickListeners(beans, agOpened, expandAction);
+        this.addTouchAndClickListeners(agClosed, expandAction);
+        this.addTouchAndClickListeners(agOpened, expandAction);
 
         const stopPropagationAction = (event: MouseEvent) => {
             _stopPropagationForAgGrid(event);
@@ -191,12 +191,8 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         });
     }
 
-    private addTouchAndClickListeners(
-        beans: BeanCollection,
-        eElement: HTMLElement,
-        action: (event: MouseEvent) => void
-    ): void {
-        beans.touchSvc?.setupForHeaderGroupElement(this, eElement, action);
+    private addTouchAndClickListeners(eElement: HTMLElement, action: (event: MouseEvent) => void): void {
+        this.beans.touchSvc?.setupForHeaderGroupElement(this, eElement, action);
         this.addManagedElementListeners(eElement, { click: action });
     }
 
@@ -228,21 +224,23 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
             const { agOpened, agClosed } = this;
             _setDisplayed(agOpened, false);
             _setDisplayed(agClosed, false);
-            return;
         }
     }
 
     private setupLabel(params: IHeaderGroupParams): void {
         // no renderer, default text render
         const { displayName, columnGroup } = params;
+        const { innerHeaderGroupComponent, isLoadingInnerComponent } = this;
 
-        const hasInnerComponent = this.innerHeaderGroupComponent || this.isLoadingInnerComponent;
+        const hasInnerComponent = innerHeaderGroupComponent || isLoadingInnerComponent;
 
         if (_exists(displayName) && !hasInnerComponent) {
             this.agLabel.textContent = _toString(displayName);
         }
 
-        this.toggleCss('ag-sticky-label', !columnGroup.getColGroupDef()?.suppressStickyLabel);
+        if (!columnGroup.getColGroupDef()?.suppressStickyLabel) {
+            this.createManagedBean(new GroupStickyLabelFeature(this.getGui(), columnGroup as AgColumnGroup));
+        }
     }
 
     public override destroy(): void {

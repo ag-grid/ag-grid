@@ -61,23 +61,23 @@ These overrides can be used with any series type. For full list of overrides see
 
 The following documentation links describe different types of overrides specific to individual AG Charts series types.
 
-* [Line Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-line)
-* [Bar Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-bar)
-* [Area Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-area)
-* [Scatter Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-scatter)
-* [Pie Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-pie)
-* [Radar Line Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-radar-line)
-* [Radar Area Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-radar-area)
-* [Nightingale Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-nightingale)
-* [Radial Column Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-radial-column)
-* [Radial Bar Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-radial-bar)
-* [Range Bar Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-range-bar)
-* [Range Area Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-range-area)
-* [Box Plot Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-box-plot)
-* [Waterfall Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-waterfall)
-* [Heatmap Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-heatmap)
-* [Treemap Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-treemap)
-* [Sunburst Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-sunburst)
+-   [Line Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-line)
+-   [Bar Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-bar)
+-   [Area Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-area)
+-   [Scatter Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-scatter)
+-   [Pie Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-pie)
+-   [Radar Line Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-radar-line)
+-   [Radar Area Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-radar-area)
+-   [Nightingale Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-nightingale)
+-   [Radial Column Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-radial-column)
+-   [Radial Bar Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-radial-bar)
+-   [Range Bar Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-range-bar)
+-   [Range Area Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-range-area)
+-   [Box Plot Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-box-plot)
+-   [Waterfall Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-waterfall)
+-   [Heatmap Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-heatmap)
+-   [Treemap Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-treemap)
+-   [Sunburst Overrides](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides-sunburst)
 
 ## Custom Chart Themes
 
@@ -104,7 +104,7 @@ const gridOptions = {
                         },
                     },
                 },
-            },    
+            },
         },
         chartThemes: ['myCustomTheme', 'ag-vivid'],
     }
@@ -148,9 +148,10 @@ const gridOptions = {
 ```
 
 The example below shows:
-* A custom label formatter being used with the vertical axis to display SI units for the data. Additionally,
-this example demonstrates the use of the `domain` property passed through to the formatter to provide a consistent scale across the value range.
-* A custom title formatter using `boundSeries` property passed through to the formatter for the vertical axis to display which series the axes are representing.
+
+-   A custom label formatter being used with the vertical axis to display SI units for the data. Additionally,
+    this example demonstrates the use of the `domain` property passed through to the formatter to provide a consistent scale across the value range.
+-   A custom title formatter using `boundSeries` property passed through to the formatter for the vertical axis to display which series the axes are representing.
 
 {% gridExampleRunner title="Label Formatting" name="label-formatting"  exampleHeight=660 /%}
 
@@ -200,9 +201,10 @@ For formatters that are directly linked to row data, the row node will be passed
 For formatters related to columns, the `key` property will usually contain the column ID. In some instances this will be in the `key` property of the corresponding series in the `boundSeries` property.
 
 In the example below, the global formatter is used to access the `valueFormatter` in each of the columns:
-- The x axis uses the **Financial Period** column value formatter.
-- The y axis does not use a formatter as it belongs to multiple columns.
-- The tooltip (when mousing over the series) uses the value formatters from each of the three columns.
+
+-   The x axis uses the **Financial Period** column value formatter.
+-   The y axis does not use a formatter as it belongs to multiple columns.
+-   The tooltip (when mousing over the series) uses the value formatters from each of the three columns.
 
 {% gridExampleRunner title="Formatter Context" name="formatter-context"  exampleHeight=850 /%}
 

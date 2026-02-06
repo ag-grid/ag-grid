@@ -12,10 +12,11 @@ AG Grid {% migrationVersion() %} adds important new features – [New Filters To
 
 These improvements involve no breaking changes as listed below.
 
-<!-- 
+<!--
 Documentation to the highest patch release of the major/minor
 NOTE: This will not show if the current library version is the same as the migration version
 -->
+
 {% documentationArchiveSection version=migrationVersionPatch() /%}
 
 ## Breaking Changes
@@ -34,13 +35,13 @@ There are no deprecated API removals in AG Grid version {% migrationVersion() %}
 
 ### Grid Options
 
-- `suppressAdvancedFilterEval` is deprecated without replacement. No longer using eval at all in advanced filters so this is now default behaviour. This improves security by not requiring `script-src 'unsafe-eval'` for advanced filters.
+-   `suppressAdvancedFilterEval` is deprecated without replacement. No longer using eval at all in advanced filters so this is now default behaviour. This improves security by not requiring `script-src 'unsafe-eval'` for advanced filters.
 
 ### Filters
 
-- `ISetFilter` interface is deprecated. When retrieving a Set Filter via `api.getColumnFilterInstance(column)`, use `SetFilterUi`. To access the methods that were previously available on `ISetFilter` (but not on `SetFilterUi`), instead retrieve the Set Filter Handler via `api.getColumnFilterHandler(column)` and use the `SetFilterHandler` interface. See [Set Filter API](./filter-set-api/#set-filter-api) for more information.
+-   `ISetFilter` interface is deprecated. When retrieving a Set Filter via `api.getColumnFilterInstance(column)`, use `SetFilterUi`. To access the methods that were previously available on `ISetFilter` (but not on `SetFilterUi`), instead retrieve the Set Filter Handler via `api.getColumnFilterHandler(column)` and use the `SetFilterHandler` interface. See [Set Filter API](./filter-set-api/#set-filter-api) for more information.
 
-- `getModel()` and `setModel()` on all grid-provided filter instances are deprecated. Use `api.getColumnFilterModel(column)` and `api.setColumnFilterModel(column)` instead.
+-   `getModel()` and `setModel()` on all grid-provided filter instances are deprecated. Use `api.getColumnFilterModel(column)` and `api.setColumnFilterModel(column)` instead.
 
 {% expandingSection headerText="Migrating to Filter Handlers" %}
 Filter Handlers simplify custom filter components by splitting the filter logic out from the UI component. They also enable new features such as the [New Filters Tool Panel](./tool-panel-filters-new/).
@@ -56,6 +57,7 @@ To migrate a custom filter component, firstly move the logic from the `doesFilte
 {% /if %}
 
 Old:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
@@ -68,6 +70,7 @@ const gridOptions = {
 ```
 
 New:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [

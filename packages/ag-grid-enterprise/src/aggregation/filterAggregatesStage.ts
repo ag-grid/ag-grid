@@ -1,20 +1,20 @@
 import type {
     BeanCollection,
+    ChangedPath,
     ClientSideRowModelStage,
     FilterManager,
     GridOptions,
-    IRowNodeStage,
     NamedBean,
     RowNode,
-    StageExecuteParams,
+    _IRowNodeFilterAggregateStage,
 } from 'ag-grid-community';
 import { BeanStub, _getGroupAggFiltering } from 'ag-grid-community';
 
-export class FilterAggregatesStage extends BeanStub implements NamedBean, IRowNodeStage {
+export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowNodeFilterAggregateStage {
     beanName = 'filterAggStage' as const;
 
-    public refreshProps: Set<keyof GridOptions<any>> = new Set([]);
-    public step: ClientSideRowModelStage = 'filter_aggregates';
+    public readonly step: ClientSideRowModelStage = 'filter_aggregates';
+    public readonly refreshProps: (keyof GridOptions<any>)[] = [];
 
     private filterManager?: FilterManager;
 
@@ -22,7 +22,7 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, IRowNo
         this.filterManager = beans.filterManager;
     }
 
-    public execute(params: StageExecuteParams): void {
+    public execute(changedPath: ChangedPath): void {
         const isPivotMode = this.beans.colModel.isPivotMode();
         const isAggFilterActive =
             this.filterManager?.isAggregateFilterPresent() || this.filterManager?.isAggregateQuickFilterPresent();
@@ -40,13 +40,13 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, IRowNo
             _getGroupAggFiltering(this.gos) ||
             (isPivotMode ? defaultSecondaryColumnPredicate : defaultPrimaryColumnPredicate);
 
-        const { changedPath } = params;
-
         const preserveChildren = (node: RowNode, recursive = false) => {
             if (node.childrenAfterFilter) {
                 node.childrenAfterAggFilter = node.childrenAfterFilter;
                 if (recursive) {
-                    node.childrenAfterAggFilter.forEach((child) => preserveChildren(child, recursive));
+                    for (const child of node.childrenAfterAggFilter) {
+                        preserveChildren(child, recursive);
+                    }
                 }
                 this.setAllChildrenCount(node);
             }
@@ -78,7 +78,7 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, IRowNo
             }
         };
 
-        changedPath!.forEachChangedNodeDepthFirst(isAggFilterActive ? filterChildren : preserveChildren, true);
+        changedPath.forEachChangedNodeDepthFirst(isAggFilterActive ? filterChildren : preserveChildren, true);
     }
 
     /** for tree data, we include all children, groups and leafs */

@@ -1,7 +1,7 @@
+import { _getSortDefFromInput } from '../../entities/agColumn';
 import type { DomLayoutType, GridOptions } from '../../entities/gridOptions';
 import { _BOOLEAN_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS, _NUMBER_GRID_OPTIONS } from '../../propertyKeys';
 import { _PUBLIC_EVENT_HANDLERS_MAP } from '../../publicEventHandlersMap';
-import { DEFAULT_SORTING_ORDER } from '../../sort/sortService';
 import { _mergeDeep } from '../../utils/mergeDeep';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
 import type { Deprecations, OptionsValidator, RequiredModule, Validations } from '../validationTypes';
@@ -144,6 +144,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     rowClassRules: 'RowStyle',
     rowData: 'ClientSideRowModel',
     rowDragManaged: 'RowDrag',
+    refreshAfterGroupEdit: ['RowGrouping', 'TreeData'],
     rowGroupPanelShow: 'RowGroupingPanel',
     rowNumbers: 'RowNumbers',
     rowSelection: 'SharedRowSelection',
@@ -425,11 +426,16 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 const sortingOrder = _options.sortingOrder;
 
                 if (Array.isArray(sortingOrder) && sortingOrder.length > 0) {
-                    const invalidItems = sortingOrder.filter((a) => !DEFAULT_SORTING_ORDER.includes(a));
+                    const invalidItems = sortingOrder.filter((a) => !_getSortDefFromInput(a));
                     if (invalidItems.length > 0) {
-                        return `sortingOrder must be an array with elements from [${DEFAULT_SORTING_ORDER.map(toStringWithNullUndefined).join()}], currently it includes [${invalidItems.map(toStringWithNullUndefined).join()}]`;
+                        return `sortingOrder must be an array of type (SortDirection | SortDef)[], incorrect items are: ${invalidItems.map(
+                            (item) =>
+                                typeof item === 'string' || item == null
+                                    ? toStringWithNullUndefined(item)
+                                    : JSON.stringify(item)
+                        )}]`;
                     }
-                } else if (!Array.isArray(sortingOrder) || sortingOrder.length <= 0) {
+                } else if (!Array.isArray(sortingOrder) || !sortingOrder.length) {
                     return `sortingOrder must be an array with at least one element, currently it's ${sortingOrder}`;
                 }
                 return null;
@@ -447,6 +453,14 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
             validate: (options) => {
                 if (options.tooltipShowDelay && options.tooltipShowDelay < 0) {
                     return 'tooltipShowDelay should not be lower than 0';
+                }
+                return null;
+            },
+        },
+        tooltipSwitchShowDelay: {
+            validate: (options) => {
+                if (options.tooltipSwitchShowDelay && options.tooltipSwitchShowDelay < 0) {
+                    return 'tooltipSwitchShowDelay should not be lower than 0';
                 }
                 return null;
             },
@@ -528,7 +542,9 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         },
         autoSizeStrategy: {
             validate: ({ autoSizeStrategy }) => {
-                if (!autoSizeStrategy) return null;
+                if (!autoSizeStrategy) {
+                    return null;
+                }
 
                 const validModes: NonNullable<GridOptions['autoSizeStrategy']>['type'][] = [
                     'fitCellContents',
@@ -547,12 +563,12 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         },
     };
     const validations: Validations<GridOptions> = {};
-    _BOOLEAN_GRID_OPTIONS.forEach((key) => {
+    for (const key of _BOOLEAN_GRID_OPTIONS) {
         validations[key] = { expectedType: 'boolean' };
-    });
-    _NUMBER_GRID_OPTIONS.forEach((key) => {
+    }
+    for (const key of _NUMBER_GRID_OPTIONS) {
         validations[key] = { expectedType: 'number' };
-    });
+    }
 
     _mergeDeep(validations, definedValidations);
     return validations;

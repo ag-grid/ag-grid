@@ -12,17 +12,19 @@ import {
     _clearElement,
     _createIconNoSpan,
     _getShouldDisplayTooltip,
+    _setAriaLabel,
+    _setAriaRole,
     isProvidedColumnGroup,
 } from 'ag-grid-community';
 
-import type { AgGroupComponent, AgGroupComponentParams } from '../widgets/agGroupComponent';
-import { AgGroupComponentSelector } from '../widgets/agGroupComponent';
+import { AgGroupComponentSelector } from '../agStack/agGroupComponent';
+import type { GroupComponent, GroupComponentParams } from '../widgets/gridEnterpriseWidgetTypes';
 import { ToolPanelFilterComp } from './toolPanelFilterComp';
 
 export type ToolPanelFilterItem = ToolPanelFilterGroupComp | ToolPanelFilterComp;
 
 export class ToolPanelFilterGroupComp extends Component {
-    private readonly filterGroupComp: AgGroupComponent = RefPlaceholder;
+    private readonly filterGroupComp: GroupComponent = RefPlaceholder;
 
     private filterGroupName: string | null;
     private tooltipFeature?: TooltipFeature;
@@ -38,7 +40,7 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     public postConstruct(): void {
-        const groupParams: AgGroupComponentParams = {
+        const groupParams: GroupComponentParams = {
             cssIdentifier: 'filter-toolpanel',
             direction: 'vertical',
         };
@@ -60,11 +62,11 @@ export class ToolPanelFilterGroupComp extends Component {
         filterGroupComp.getGui().style.setProperty('--ag-indentation-level', String(depth));
         filterGroupComp.addCssClassToTitleBar(`ag-filter-toolpanel-group-level-${depth}-header`);
 
-        childFilterComps.forEach((filterComp) => {
+        for (const filterComp of childFilterComps) {
             filterGroupComp.addItem(filterComp as Component);
             filterComp.addCssClassToTitleBar(`ag-filter-toolpanel-group-level-${depth + 1}-header`);
             filterComp.getGui().style.setProperty('--ag-indentation-level', String(depth + 1));
-        });
+        }
 
         const column = this.showingColumn ? (this.columnGroup as AgColumn) : undefined;
         this.tooltipFeature = this.createOptionalManagedBean(
@@ -112,7 +114,9 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     public onPanelHidden() {
-        this.childFilterComps.forEach((filterComp) => filterComp.onPanelHidden());
+        for (const filterComp of this.childFilterComps) {
+            filterComp.onPanelHidden();
+        }
     }
 
     public isColumnGroup(): boolean {
@@ -147,16 +151,21 @@ export class ToolPanelFilterGroupComp extends Component {
         const eIcon = _createIconNoSpan(iconName, this.beans)!;
         if (eIcon) {
             eIcon.classList.add('ag-filter-toolpanel-group-instance-header-icon');
+            // as we only display the icons when the filter is active
+            // the aria-label should always be `ariaFilterActive`.
+            const translate = this.getLocaleTextFunc();
+            _setAriaLabel(eIcon, translate('ariaFilterActive', 'Filter Active'));
+            _setAriaRole(eIcon, 'img');
         }
         this.filterGroupComp.addTitleBarWidget(eIcon);
     }
 
     private forEachToolPanelFilterChild(action: (filterComp: ToolPanelFilterItem) => void) {
-        this.childFilterComps.forEach((filterComp) => {
+        for (const filterComp of this.childFilterComps) {
             if (filterComp instanceof ToolPanelFilterComp) {
                 action(filterComp);
             }
-        });
+        }
     }
 
     private addExpandCollapseListeners() {
@@ -183,9 +192,9 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     private addFilterChangedListeners() {
-        this.getColumns().forEach((column) => {
+        for (const column of this.getColumns()) {
             this.addManagedListeners(column, { filterChanged: () => this.refreshFilterClass() });
-        });
+        }
 
         if (!isProvidedColumnGroup(this.columnGroup)) {
             this.addManagedEventListeners({ filterOpened: this.onFilterOpened.bind(this) });

@@ -67,10 +67,12 @@ export class CellSpan {
         }
 
         let allButLastHeights = 0;
-        this.spannedNodes.forEach((node) => {
-            if (node === this.lastNode) return;
+        for (const node of this.spannedNodes) {
+            if (node === this.lastNode) {
+                continue;
+            }
             allButLastHeights += node.rowHeight!;
-        });
+        }
         return autoHeight - allButLastHeights;
     }
 }
@@ -138,12 +140,12 @@ export class RowSpanCache extends BeanStub {
                 node.footer ||
                 (spanData && node.rowIndex - 1 !== spanData?.getLastNode().rowIndex) // no span if rows not contiguous (SSRM)
             ) {
-                setNewHead(node, valueSvc.getValue(column, node));
+                setNewHead(node, valueSvc.getValue(column, node, 'data'));
                 return;
             }
 
             // check value is equal, if not, no span
-            const value = valueSvc.getValue(column, node);
+            const value = valueSvc.getValue(column, node, 'data');
             if (isCustomCompare) {
                 const params: SpanRowsParams = _addGridCommonParams(gos, {
                     valueA: lastValue,
@@ -157,11 +159,9 @@ export class RowSpanCache extends BeanStub {
                     setNewHead(node, value);
                     return;
                 }
-            } else {
-                if (equalsFnc ? !equalsFnc(lastValue, value) : lastValue !== value) {
-                    setNewHead(node, value);
-                    return;
-                }
+            } else if (equalsFnc ? !equalsFnc(lastValue, value) : lastValue !== value) {
+                setNewHead(node, value);
+                return;
             }
 
             if (!spanData) {

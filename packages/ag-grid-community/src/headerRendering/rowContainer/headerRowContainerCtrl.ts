@@ -254,7 +254,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
             return;
         }
 
-        focusSvc.focusHeaderPosition({ headerPosition: position });
+        focusSvc.focusHeaderPosition({ headerPosition: position, scroll: false });
     }
 
     private setupCenterWidth(): void {

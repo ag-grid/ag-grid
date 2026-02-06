@@ -18,6 +18,8 @@ export const RichSelectModule: _ModuleWithoutApi = {
         richSelectOpen: 'small-down',
         // remove for rich select editor pills
         richSelectRemove: 'cancel',
+        // loading async values
+        richSelectLoading: 'loading',
     },
     dependsOn: [EnterpriseCoreModule, _EditCoreModule],
 };

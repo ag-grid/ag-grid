@@ -1,69 +1,69 @@
 import React, { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { AllCommunityModule, ModuleRegistry, themeAlpine, themeBalham, themeQuartz } from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
+import { AllCommunityModule, themeAlpine, themeBalham, themeQuartz } from 'ag-grid-community';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import './style.css';
 
-ModuleRegistry.registerModules([AllCommunityModule]);
-
 const GridExample = () => {
     return (
-        <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <div style={{ display: 'flex', gap: 16 }}>
-                <p style={{ flex: 1 }}>Quartz theme:</p>
-                <p style={{ flex: 1 }}>Alpine theme:</p>
-            </div>
-            <div style={{ flex: 1, display: 'flex', gap: 16 }}>
-                <div style={{ flex: 1 }}>
-                    {
-                        <AgGridReact
-                            theme={themeQuartz}
-                            columnDefs={columnDefs}
-                            rowData={rowData}
-                            defaultColDef={defaultColDef}
-                        />
-                    }
+        <AgGridProvider modules={[AllCommunityModule]}>
+            <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', gap: 16 }}>
+                    <p style={{ flex: 1 }}>Quartz theme:</p>
+                    <p style={{ flex: 1 }}>Alpine theme:</p>
                 </div>
-                <div style={{ flex: 1 }}>
-                    {
-                        <AgGridReact
-                            theme={themeAlpine}
-                            columnDefs={columnDefs}
-                            rowData={rowData}
-                            defaultColDef={defaultColDef}
-                        />
-                    }
+                <div style={{ flex: 1, display: 'flex', gap: 16 }}>
+                    <div style={{ flex: 1 }}>
+                        {
+                            <AgGridReact
+                                theme={themeQuartz}
+                                columnDefs={columnDefs}
+                                rowData={rowData}
+                                defaultColDef={defaultColDef}
+                            />
+                        }
+                    </div>
+                    <div style={{ flex: 1 }}>
+                        {
+                            <AgGridReact
+                                theme={themeAlpine}
+                                columnDefs={columnDefs}
+                                rowData={rowData}
+                                defaultColDef={defaultColDef}
+                            />
+                        }
+                    </div>
+                </div>
+                <div style={{ display: 'flex', gap: 16 }}>
+                    <p style={{ flex: 1 }}>Balham theme (green header):</p>
+                    <p style={{ flex: 1 }}>Balham theme (red header):</p>
+                </div>
+                <div style={{ flex: 1, display: 'flex', gap: 16 }}>
+                    <div style={{ flex: 1 }} className="green-header">
+                        {
+                            <AgGridReact
+                                theme={themeBalham}
+                                columnDefs={columnDefs}
+                                rowData={rowData}
+                                defaultColDef={defaultColDef}
+                            />
+                        }
+                    </div>
+                    <div style={{ flex: 1 }} className="red-header">
+                        {
+                            <AgGridReact
+                                theme={themeBalham}
+                                columnDefs={columnDefs}
+                                rowData={rowData}
+                                defaultColDef={defaultColDef}
+                            />
+                        }
+                    </div>
                 </div>
             </div>
-            <div style={{ display: 'flex', gap: 16 }}>
-                <p style={{ flex: 1 }}>Balham theme (green header):</p>
-                <p style={{ flex: 1 }}>Balham theme (red header):</p>
-            </div>
-            <div style={{ flex: 1, display: 'flex', gap: 16 }}>
-                <div style={{ flex: 1 }} className="green-header">
-                    {
-                        <AgGridReact
-                            theme={themeBalham}
-                            columnDefs={columnDefs}
-                            rowData={rowData}
-                            defaultColDef={defaultColDef}
-                        />
-                    }
-                </div>
-                <div style={{ flex: 1 }} className="red-header">
-                    {
-                        <AgGridReact
-                            theme={themeBalham}
-                            columnDefs={columnDefs}
-                            rowData={rowData}
-                            defaultColDef={defaultColDef}
-                        />
-                    }
-                </div>
-            </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

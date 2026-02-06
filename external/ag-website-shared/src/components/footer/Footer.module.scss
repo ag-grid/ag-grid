@@ -134,7 +134,7 @@
 }
 
 .logoContainer a {
-    display: inline-block;
+    display: flex;
 
     @media screen and (min-width: $breakpoint-site-footer-five-column) {
         margin-top: -18px;

@@ -3,6 +3,8 @@ import type { AgEventType } from '../eventTypes';
 import type { RowEvent } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
 import { _addGridCommonParams } from '../gridOptionsUtils';
+import type { IRowModel } from '../interfaces/iRowModel';
+import type { IRowNode } from '../interfaces/iRowNode';
 import { RowNode } from './rowNode';
 
 export function _createGlobalRowEvent<T extends AgEventType>(
@@ -29,21 +31,59 @@ export function _createGlobalRowEvent<T extends AgEventType>(
  */
 const IGNORED_SIBLING_PROPERTIES = new Set<
     keyof RowNode | '__localEventService' | '__autoHeights' | '__checkAutoHeightsDebounced'
->(['__localEventService', '__objectId', 'sticky', '__autoHeights', '__checkAutoHeightsDebounced', 'childStore']);
+>([
+    '__autoHeights',
+    '__checkAutoHeightsDebounced',
+    '__localEventService',
+    '__objectId',
+    '_groupData',
+    '_leafs',
+    'childStore',
+    'groupValue',
+    'oldRowTop',
+    'sticky',
+    'treeNodeFlags',
+    'treeParent',
+]);
 
-export function _createRowNodeSibling(rowNode: RowNode, beans: BeanCollection): RowNode {
+export const _createRowNodeSibling = (rowNode: RowNode, beans: BeanCollection): RowNode => {
     const sibling = new RowNode(beans);
 
-    Object.keys(rowNode).forEach((key: keyof RowNode) => {
+    for (const key of Object.keys(rowNode) as (keyof RowNode)[]) {
         if (IGNORED_SIBLING_PROPERTIES.has(key)) {
-            return;
+            continue;
         }
-        (sibling as any)[key] = (rowNode as any)[key];
-    });
+        (sibling as Record<string, any>)[key] = rowNode[key];
+    }
 
     // manually set oldRowTop to null so we discard any
     // previous information about its position.
     sibling.oldRowTop = null;
 
     return sibling;
-}
+};
+
+/** When dragging multiple rows, we want the user to be able to drag to the prev or next in the group if dragging on one of the selected rows. */
+export const _prevOrNextDisplayedRow = (
+    rowModel: IRowModel,
+    direction: -1 | 1,
+    initial: IRowNode | null | undefined
+): RowNode | undefined => {
+    if (!initial) {
+        return undefined;
+    }
+    let rowIndex = initial.rowIndex;
+    if (rowIndex == null) {
+        return undefined; // Row index unknown
+    }
+    rowIndex += direction;
+    const rowCount = rowModel.getRowCount();
+    while (rowIndex >= 0 && rowIndex < rowCount) {
+        const row = rowModel.getRow(rowIndex);
+        if (!row || (!row.footer && !row.detail)) {
+            return row;
+        }
+        rowIndex += direction;
+    }
+    return undefined; // Out of bounds
+};

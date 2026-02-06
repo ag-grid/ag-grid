@@ -40,6 +40,7 @@ export abstract class FilterExpressionOperators
     dateTimeString: DataTypeFilterExpressionOperators<Date, string>;
     text: DataTypeFilterExpressionOperators<string>;
     number: DataTypeFilterExpressionOperators<number>;
+    bigint: DataTypeFilterExpressionOperators<bigint>;
     boolean: DataTypeFilterExpressionOperators<boolean>;
     date: DataTypeFilterExpressionOperators<Date>;
     dateString: DataTypeFilterExpressionOperators<Date, string>;
@@ -177,7 +178,7 @@ interface ScalarFilterExpressionOperatorsParams<ConvertedTValue> extends FilterE
     equals: (value: ConvertedTValue, operand: ConvertedTValue) => boolean;
 }
 
-export class ScalarFilterExpressionOperators<ConvertedTValue extends number | Date, TValue = ConvertedTValue>
+export class ScalarFilterExpressionOperators<ConvertedTValue extends number | Date | bigint, TValue = ConvertedTValue>
     implements DataTypeFilterExpressionOperators<ConvertedTValue, TValue>
 {
     public operators: { [operator: string]: FilterExpressionOperator<ConvertedTValue, TValue> };
@@ -206,7 +207,7 @@ export class ScalarFilterExpressionOperators<ConvertedTValue extends number | Da
                         params,
                         operand1!,
                         !!params.includeBlanksInEquals,
-                        equals!
+                        equals
                     ),
                 numOperands: 1,
             },
@@ -219,7 +220,7 @@ export class ScalarFilterExpressionOperators<ConvertedTValue extends number | Da
                         params,
                         operand1!,
                         !!params.includeBlanksInEquals,
-                        (v, o) => !equals!(v, o)
+                        (v, o) => !equals(v, o)
                     ),
                 numOperands: 1,
             },

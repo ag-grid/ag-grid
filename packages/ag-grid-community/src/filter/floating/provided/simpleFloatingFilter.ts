@@ -11,6 +11,7 @@ import type {
 } from '../../provided/iSimpleFilter';
 import { OptionsFactory } from '../../provided/optionsFactory';
 import type { SimpleFilterModelFormatter } from '../../provided/simpleFilterModelFormatter';
+import { getNumberOfInputs } from '../../provided/simpleFilterUtils';
 import type { FloatingFilterDisplayParams, IFloatingFilterComp, IFloatingFilterParams } from '../floatingFilter';
 
 export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams<ISimpleFilter>>
@@ -33,7 +34,7 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
 
     protected reactive: boolean;
 
-    protected abstract readonly filterType: 'text' | 'number' | 'date';
+    protected abstract readonly filterType: 'text' | 'number' | 'bigint' | 'date';
 
     protected abstract readonly FilterModelFormatterClass: new (
         optionsFactory: OptionsFactory,
@@ -53,7 +54,7 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
 
         if (isCombined) {
             const combinedModel = model as ICombinedSimpleModel<ISimpleFilterModel>;
-            condition = combinedModel.conditions![0];
+            condition = combinedModel.conditions[0];
         } else {
             condition = model as ISimpleFilterModel;
         }
@@ -164,23 +165,12 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
         this.onModelUpdated(model);
     }
 
-    private hasSingleInput(filterType: string) {
-        const numberOfInputs = this.optionsFactory.getCustomOption(filterType)?.numberOfInputs;
-        return numberOfInputs == null || numberOfInputs == 1;
-    }
-
     private isTypeEditable(type?: string | null): boolean {
-        const uneditableTypes: ISimpleFilterModelType[] = ['inRange', 'empty', 'blank', 'notBlank'];
-        return (
-            !!type &&
-            !this.readOnly &&
-            this.hasSingleInput(type) &&
-            uneditableTypes.indexOf(type as ISimpleFilterModelType) < 0
-        );
+        return !!type && !this.readOnly && getNumberOfInputs(type as ISimpleFilterModelType, this.optionsFactory) === 1;
     }
 
-    protected getAriaLabel(params: IFloatingFilterParams): string {
-        const displayName = this.beans.colNames.getDisplayNameForColumn(params.column as AgColumn, 'header', true);
+    protected getAriaLabel(column: AgColumn): string {
+        const displayName = this.beans.colNames.getDisplayNameForColumn(column, 'header', true);
         return `${displayName} ${this.getLocaleTextFunc()('ariaFilterInput', 'Filter Input')}`;
     }
 }

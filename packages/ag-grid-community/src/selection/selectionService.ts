@@ -75,7 +75,9 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         rowNode: RowNode,
         source: SelectionEventSourceType
     ): number {
-        if (this.isRowSelectionBlocked(rowNode)) return 0;
+        if (this.isRowSelectionBlocked(rowNode)) {
+            return 0;
+        }
 
         const selection = this.inferNodeSelections(rowNode, event.shiftKey, event.metaKey || event.ctrlKey, source);
 
@@ -117,7 +119,9 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         source,
         keepDescendants = false,
     }: ISetNodesSelectedParams & { keepDescendants?: boolean }): number {
-        if (nodes.length === 0) return 0;
+        if (nodes.length === 0) {
+            return 0;
+        }
 
         const { gos } = this;
         if (!_isRowSelection(gos) && newValue) {
@@ -145,6 +149,10 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             if (node.id === undefined) {
                 _warn(60);
                 continue;
+            }
+
+            if (newValue && rowNode.destroyed) {
+                continue; // skip destroyed nodes
             }
 
             const skipThisNode = this.groupSelectsFiltered && node.group && !gos.get('treeData');
@@ -359,7 +367,6 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         // in the selection service
         oldNode.id = rowNode.id;
         oldNode.data = rowNode.data;
-        oldNode.__daemon = true;
         oldNode.__selected = rowNode.__selected;
         oldNode.level = rowNode.level;
 
@@ -435,12 +442,11 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                 const node = nodes[i];
                 if (node.isSelected()) {
                     result.push(node);
-                } else {
-                    // if not selected, then if it's a group, and the group
-                    // has children, continue to search for selections
-                    if (node.group && node.childrenAfterGroup) {
-                        traverse(node.childrenAfterGroup);
-                    }
+                }
+                // if not selected, then if it's a group, and the group
+                // has children, continue to search for selections
+                else if (node.group && node.childrenAfterGroup) {
+                    traverse(node.childrenAfterGroup);
                 }
             }
         }
@@ -650,11 +656,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     }
 
     private canSelectAll(): boolean {
-        const { gos } = this.beans;
-        if (!_isClientSideRowModel(gos)) {
-            return false;
-        }
-        return true;
+        return _isClientSideRowModel(this.beans.gos);
     }
 
     /**
@@ -736,10 +738,14 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     }
 
     public refreshMasterNodeState(node: RowNode, e?: Event): void {
-        if (!this.masterSelectsDetail) return;
+        if (!this.masterSelectsDetail) {
+            return;
+        }
 
         const detailApi = node.detailNode?.detailGridInfo?.api;
-        if (!detailApi) return;
+        if (!detailApi) {
+            return;
+        }
 
         const isSelectAll = _isAllSelected(detailApi);
         const current = node.isSelected();
@@ -752,16 +758,14 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         }
 
         if (!isSelectAll) {
-            const detailSelected = this.detailSelection.get(node.id!) ?? new Set();
-            for (const n of detailApi.getSelectedNodes()) {
-                detailSelected.add(n.id!);
-            }
-            this.detailSelection.set(node.id!, detailSelected);
+            this.detailSelection.set(node.id!, new Set(detailApi.getSelectedNodes().map((n) => n.id!)));
         }
     }
 
     public setDetailSelectionState(masterNode: RowNode, detailGridOptions: GridOptions, detailApi: GridApi): void {
-        if (!this.masterSelectsDetail) return;
+        if (!this.masterSelectsDetail) {
+            return;
+        }
 
         if (!_isMultiRowSelection(detailGridOptions)) {
             _warn(269);
@@ -847,7 +851,9 @@ function _calculateSelectAllState(selected: number, notSelected: number): boolea
 function isDescendantOf(root: RowNode, child: RowNode): boolean {
     let parent = child.parent;
     while (parent) {
-        if (parent === root) return true;
+        if (parent === root) {
+            return true;
+        }
         parent = parent.parent;
     }
     return false;

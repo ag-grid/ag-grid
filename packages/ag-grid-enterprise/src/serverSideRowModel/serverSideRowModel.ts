@@ -14,6 +14,7 @@ import type {
     IServerSideRowModel,
     LoadSuccessParams,
     NamedBean,
+    OverlayType,
     RefreshServerSideParams,
     RowBounds,
     RowModelType,
@@ -214,7 +215,9 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         // if the columns are found, also ensures the field and aggFunc properties have not been changed.
         const areColsSame = (params: { oldCols: ColumnVO[]; newCols: ColumnVO[]; allowRemovedColumns?: boolean }) => {
             const oldColsMap: { [key: string]: ColumnVO } = {};
-            params.oldCols.forEach((col) => (oldColsMap[col.id] = col));
+            for (const col of params.oldCols) {
+                oldColsMap[col.id] = col;
+            }
 
             const allColsUnchanged = params.newCols.every((col) => {
                 const equivalentCol = oldColsMap[col.id];
@@ -533,6 +536,15 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
     public isEmpty(): boolean {
         return false;
+    }
+
+    public getOverlayType(): OverlayType | null {
+        // server side does not use the loading overlay as it has its own mechanism
+        const rootStore = this.getRootStore();
+        if (rootStore?.getDisplayIndexEnd() === 0) {
+            return this.filterManager?.isAnyFilterPresent() ? 'noMatchingRows' : 'noRows';
+        }
+        return null;
     }
 
     public isRowsToRender(): boolean {

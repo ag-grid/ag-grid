@@ -91,18 +91,20 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
 
         let anyNodesToggled = false;
 
-        removedNodeIds.forEach((id) => {
+        for (const id of removedNodeIds) {
             if (this.selectedState.toggledNodes.delete(id)) {
                 anyNodesToggled = true;
             }
-        });
+        }
 
         return anyNodesToggled;
     }
 
     public setNodesSelected(params: ISetNodesSelectedParams): number {
         const { nodes, clearSelection, newValue, source } = params;
-        if (nodes.length === 0) return 0;
+        if (nodes.length === 0) {
+            return 0;
+        }
 
         const onlyThisNode = clearSelection && newValue;
         if (!_isMultiRowSelection(this.gos) || onlyThisNode) {
@@ -144,7 +146,9 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
             }
         };
 
-        nodes.forEach((node) => updateNodeState(node));
+        for (const node of nodes) {
+            updateNodeState(node);
+        }
 
         if (nodes.length === 1 && source === 'api') {
             this.selectionCtx.setRoot(nodes[0].footer ? nodes[0].sibling : nodes[0]);

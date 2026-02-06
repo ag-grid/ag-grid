@@ -2,8 +2,7 @@ import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import type { GridRowsOptions } from '../../test-utils';
-import { GridRows, TestGridsManager, cachedJSONObjects } from '../../test-utils';
+import { GridRows, TestGridsManager, cachedJSONObjects, setRowDataChecked } from '../../test-utils';
 
 describe('ag-grid grouping treeDataChildrenField with set immutable data', () => {
     const gridsManager = new TestGridsManager({
@@ -56,13 +55,7 @@ describe('ag-grid grouping treeDataChildrenField with set immutable data', () =>
             ])
         );
 
-        const gridRowsOptions: GridRowsOptions = {
-            columns: ['country', 'year', 'name'],
-            printHiddenRows: true,
-            checkDom: true,
-        };
-
-        let gridRows = new GridRows(api, 'first', gridRowsOptions);
+        let gridRows = new GridRows(api, 'first');
 
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
@@ -102,7 +95,7 @@ describe('ag-grid grouping treeDataChildrenField with set immutable data', () =>
             ])
         );
 
-        gridRows = new GridRows(api, 'update 1', gridRowsOptions);
+        gridRows = new GridRows(api, 'update 1');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland
@@ -140,7 +133,7 @@ describe('ag-grid grouping treeDataChildrenField with set immutable data', () =>
             ])
         );
 
-        gridRows = new GridRows(api, 'update 2', gridRowsOptions);
+        gridRows = new GridRows(api, 'update 2');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland
@@ -181,7 +174,7 @@ describe('ag-grid grouping treeDataChildrenField with set immutable data', () =>
             ])
         );
 
-        gridRows = new GridRows(api, 'add', gridRowsOptions);
+        gridRows = new GridRows(api, 'add');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland
@@ -223,7 +216,7 @@ describe('ag-grid grouping treeDataChildrenField with set immutable data', () =>
             ])
         );
 
-        gridRows = new GridRows(api, 'remove', gridRowsOptions);
+        gridRows = new GridRows(api, 'remove');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland
@@ -266,7 +259,7 @@ describe('ag-grid grouping treeDataChildrenField with set immutable data', () =>
             ])
         );
 
-        gridRows = new GridRows(api, 'remove, update, add', gridRowsOptions);
+        gridRows = new GridRows(api, 'remove, update, add');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland
@@ -303,7 +296,7 @@ describe('ag-grid grouping treeDataChildrenField with set immutable data', () =>
             ])
         );
 
-        gridRows = new GridRows(api, 'update, reorder', gridRowsOptions);
+        gridRows = new GridRows(api, 'update, reorder');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland
@@ -322,9 +315,9 @@ describe('ag-grid grouping treeDataChildrenField with set immutable data', () =>
             · · └── LEAF id:8 name:"unknown Y" country:"Germany" year:1900
         `);
 
-        api.setGridOption('rowData', []);
+        setRowDataChecked(api, []);
 
-        gridRows = new GridRows(api, 'clear', gridRowsOptions);
+        gridRows = new GridRows(api, 'clear');
         await gridRows.check('empty');
     });
 
@@ -366,13 +359,7 @@ describe('ag-grid grouping treeDataChildrenField with set immutable data', () =>
             }
         });
 
-        const gridRowsOptions: GridRowsOptions = {
-            columns: ['country', 'year', 'name'],
-            printHiddenRows: true,
-            checkDom: true,
-        };
-
-        let gridRows = new GridRows(api, 'first', gridRowsOptions);
+        let gridRows = new GridRows(api, 'first');
 
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
@@ -410,7 +397,7 @@ describe('ag-grid grouping treeDataChildrenField with set immutable data', () =>
             ])
         );
 
-        gridRows = new GridRows(api, 'first', gridRowsOptions);
+        gridRows = new GridRows(api, 'first');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler collapsed id:row-group-country-Ireland
@@ -447,7 +434,7 @@ describe('ag-grid grouping treeDataChildrenField with set immutable data', () =>
             ])
         );
 
-        gridRows = new GridRows(api, 'first', gridRowsOptions);
+        gridRows = new GridRows(api, 'first');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler collapsed id:row-group-country-Ireland

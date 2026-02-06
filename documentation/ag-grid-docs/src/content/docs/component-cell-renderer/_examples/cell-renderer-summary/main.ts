@@ -54,15 +54,18 @@ const gridOptions: GridOptions<IRow> = {
         {
             field: 'revenue',
             cellRenderer: PriceRenderer,
+            flex: 8,
         },
         {
             field: 'hardware',
             cellRenderer: MissionResultRenderer,
+            flex: 8,
         },
         {
             colId: 'actions',
             headerName: 'Actions',
             cellRenderer: CustomButtonComponent,
+            minWidth: 160,
         },
     ],
 };

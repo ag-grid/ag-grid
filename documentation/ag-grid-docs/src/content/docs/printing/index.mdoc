@@ -10,8 +10,8 @@ opposed to printing a grid with scrollbars and only cells within the visible are
 
 The example below shows print layout. The following can be noted:
 
-* Pressing the button 'Printer Friendly Layout' turns the grid into print layout and removes all scrolls.
-* Pressing the button 'Normal Layout' returns the grid back to normal.
+-   Pressing the button 'Printer Friendly Layout' turns the grid into print layout and removes all scrolls.
+-   Pressing the button 'Normal Layout' returns the grid back to normal.
 
 {% gridExampleRunner title="For Print Simple" name="for-print-simple" /%}
 
@@ -40,15 +40,16 @@ When in print layout all rows will have the CSS property `page-break-inside: avo
 
 Below shows a more detailed example and also automatically shows the print dialog. From the example, the following can be noted:
 
-* When 'Print' is pressed, the grid will do the following:
-  * Set the grid into print layout.
-  * Remove the height and width settings from the grid to allow the grid to auto-fit it's size.
-  * Wait for two seconds (to allow the browser to redraw with the new settings) and then bring up the print dialog.
-  * Set the grid back to normal when the print dialog is closed.
+-   When 'Print' is pressed, the grid will do the following:
 
-* The first column 'ID' is pinned. When in print layout, the column is not pinned as pinning makes no sense when there are no horizontal scrolls.
+    -   Set the grid into print layout.
+    -   Remove the height and width settings from the grid to allow the grid to auto-fit it's size.
+    -   Wait for two seconds (to allow the browser to redraw with the new settings) and then bring up the print dialog.
+    -   Set the grid back to normal when the print dialog is closed.
 
-* The data is grouped and the group row spans the width of the grid. This group row is included in print layout as normal.
+-   The first column 'ID' is pinned. When in print layout, the column is not pinned as pinning makes no sense when there are no horizontal scrolls.
+
+-   The data is grouped and the group row spans the width of the grid. This group row is included in print layout as normal.
 
 {% gridExampleRunner title="For Print Complex" name="for-print-complex" /%}
 

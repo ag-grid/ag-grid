@@ -18,7 +18,11 @@ export class LoadingCellRenderer extends Component implements ILoadingCellRender
     }
 
     public init(params: ILoadingCellRendererParams): void {
-        params.node.failedLoad ? this.setupFailed() : this.setupLoading();
+        if (params.node.failedLoad) {
+            this.setupFailed();
+        } else {
+            this.setupLoading();
+        }
     }
 
     private setupFailed(): void {
@@ -31,7 +35,7 @@ export class LoadingCellRenderer extends Component implements ILoadingCellRender
             this.eLoadingIcon.appendChild(eLoadingIcon);
         }
 
-        this.eLoadingText.textContent = this.getLocaleTextFunc()('loadingOoo', 'Loading');
+        this.eLoadingText.textContent = this.getLocaleTextFunc()('loadingOoo', 'Loading...');
     }
 
     public refresh(_params: ILoadingCellRendererParams): boolean {

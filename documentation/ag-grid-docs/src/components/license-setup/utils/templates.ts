@@ -4,24 +4,27 @@ type TemplateFunction = (data: { license?: string; isIntegratedCharts?: boolean 
 type LicenseTemplate = Record<Framework, TemplateFunction>;
 
 export const GRID_LICENSE_TEMPLATES: LicenseTemplate = {
-    react: ({ license, isIntegratedCharts }) => `import React from "react";
-import { render } from "react-dom";
+    react: ({
+        license,
+        isIntegratedCharts,
+    }) => `import { AllEnterpriseModule${isIntegratedCharts ? ', IntegratedChartsModule' : ''} } from "ag-grid-enterprise";
+${isIntegratedCharts ? 'import { AgChartsEnterpriseModule } from "ag-charts-enterprise";\n' : ''}import { AgGridProvider, AgGridReact } from "ag-grid-react";
 
-import { ModuleRegistry } from "ag-grid-community";
-import { AllEnterpriseModule, LicenseManager${isIntegratedCharts ? ', IntegratedChartsModule' : ''} } from "ag-grid-enterprise";
-${isIntegratedCharts ? 'import { AgChartsEnterpriseModule } from "ag-charts-enterprise";\n' : ''}
-import App from "./App";
+const modules = [${isIntegratedCharts ? '\n    AllEnterpriseModule,\n    IntegratedChartsModule.with(AgChartsEnterpriseModule),\n' : 'AllEnterpriseModule'}];
 
-ModuleRegistry.registerModules([${isIntegratedCharts ? '\n    AllEnterpriseModule,\n    IntegratedChartsModule.with(AgChartsEnterpriseModule)\n' : 'AllEnterpriseModule'}]);
-
-LicenseManager.setLicenseKey("${license}");
-
-document.addEventListener('DOMContentLoaded', () => {
-    render(
-        <App/>,
-        document.querySelector('#app')
+function App() {
+    return (
+        <AgGridProvider modules={modules} licenseKey="${license}">
+            <AgGridReact /* ... props */ />
+        </AgGridProvider>
     );
-});
+}
+
+// For versions <35.1 use the LicenseManager and ModuleRegistry directly
+
+// import { LicenseManager, ModuleRegistry } from "ag-grid-enterprise";
+// ModuleRegistry.registerModules([${isIntegratedCharts ? '\n//   AllEnterpriseModule,\n//   IntegratedChartsModule.with(AgChartsEnterpriseModule)\n// ' : 'AllEnterpriseModule'}]);
+// LicenseManager.setLicenseKey("${license}");
 `,
     angular: ({ license, isIntegratedCharts }) => {
         return `import { ModuleRegistry } from "ag-grid-community";
@@ -31,11 +34,20 @@ ModuleRegistry.registerModules([${isIntegratedCharts ? '\n    AllEnterpriseModul
 
 LicenseManager.setLicenseKey("${license}");
 
-// Template
-<ag-grid-angular
-   [rowData]="rowData"
-   [columnDefs]="columnDefs"
-   [modules]="modules" />
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [AgGridAngular],
+  template: 
+  \`<ag-grid-angular
+      [rowData]="rowData"
+      [columnDefs]="columnDefs"
+    />\`,
+})
+export class AppComponent {
+ /* Class implementation */
+}
+
 `;
     },
     javascript: ({ license, isIntegratedCharts }) => {

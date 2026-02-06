@@ -1,0 +1,960 @@
+---
+title: "Customising AG Grid Styles"
+description: "Learn how to customise the look and feel of AG Grid using the Theming API, custom CSS, and conditional formatting."
+---
+
+Learn how to customise the look and feel of AG Grid using the Theming API, custom CSS, and conditional formatting.
+
+## Overview
+
+In this tutorial you will:
+
+1. [Start with a built-in theme](#introduction-to-styling)
+1. [Customise theme parameters](#customising-themes)
+1. [Add dark mode support](#theme-modes)
+1. [Apply custom CSS for fine-tuning](#custom-css-for-fine-tuning)
+1. [Conditionally style cells & rows](#conditional-formatting)
+
+By the end, you'll have built a fully styled grid that looks like the example below, complete with both light and dark themes:
+
+{% gridExampleRunner title="Complete Example" name="complete-example" suppressDarkMode=true /%}
+
+{% note %}
+This tutorial assumes basic knowledge of AG Grid. If you haven't already, we recommend reading our [Introductory Tutorial](./deep-dive/) first.
+{% /note %}
+
+## Introduction to Styling
+
+AG Grid provides three main approaches to styling:
+
+-   **Theming API:** Fully-typed API for customising default themes.
+-   **Custom CSS:** Fine-grained control over specific grid elements.
+-   **Cell/Row Styles:** Data-driven formatting for individual cells and rows.
+
+Each of these approaches can be used to customise our built-in themes: [Quartz](https://www.ag-grid.com/example), [Alpine](https://www.ag-grid.com/example?theme=alpine), [Balham](https://www.ag-grid.com/example?theme=balham), and [Material](https://www.ag-grid.com/example?theme=material).
+
+Our themes are simply JavaScript objects that define colours, spacing, fonts, and other design tokens. By default, the Quartz theme is applied; to use a custom theme, create a reference to the desired theme and pass it to the grid options:
+
+{% if isFramework("javascript") %}
+
+```js
+import { themeQuartz } from 'ag-grid-community';
+
+const myTheme = themeQuartz;
+
+const gridOptions = {
+    theme: myTheme,
+    // ... other options
+};
+```
+
+{% /if %}
+
+{% if isFramework("react") %}
+
+```jsx
+import { themeQuartz } from 'ag-grid-community';
+import { AgGridReact } from 'ag-grid-react';
+
+const myTheme = themeQuartz;
+
+const GridExample = () => {
+    // ... rowData, columnDefs, etc.
+
+    return (
+        <AgGridReact
+            theme={myTheme}
+            // ... other props
+        />
+    );
+};
+```
+
+{% /if %}
+
+{% if isFramework("angular") %}
+
+```ts
+import { Component } from '@angular/core';
+import { AgGridAngular } from 'ag-grid-angular';
+import { themeQuartz } from 'ag-grid-community';
+
+@Component({
+    selector: 'app-root',
+    template: `
+        <ag-grid-angular
+            [theme]="theme"
+            <!-- other options -->
+        />
+    `,
+})
+export class AppComponent {
+    theme = themeQuartz;
+}
+```
+
+{% /if %}
+
+{% if isFramework("vue") %}
+
+```js
+import { ref } from 'vue';
+import { AgGridVue } from 'ag-grid-vue3';
+import { themeQuartz } from 'ag-grid-community';
+
+const myTheme = themeQuartz;
+
+export default {
+    components: { AgGridVue },
+    setup() {
+        return {
+            theme: myTheme,
+            // ... rowData, columnDefs, etc.
+        };
+    },
+    template: `
+        <ag-grid-vue
+            :theme="theme"
+            <!-- other options -->
+        />
+    `,
+};
+```
+
+{% /if %}
+
+The example below demonstrates an AG Grid data grid with an unmodified Quartz theme. Open the example in CodeSandbox or Plunkr to follow this tutorial:
+
+{% gridExampleRunner title="Basic Theme" name="basic-theme" suppressDarkMode=true  /%}
+
+{% note %}
+Our [Built-in Themes](./themes/) docs provide a full overview of the available themes and their features.
+{% /note %}
+
+## Customising Themes
+
+Themes can be customised directly using the Theming API, which provides three main features:
+
+-   **Theme Parameters:** Adjust colours, spacing, fonts, and other variables to create a unique theme.
+-   **Theme Parts:** Mix-and-match parts from different themes, such as light/dark schemes, inputs or icon sets.
+-   **Theme Modes:** Define multiple colour schemes (e.g. light and dark) within a single theme.
+
+### Theme Parameters
+
+[Theme Parameters](./theming-parameters/) are configuration values that affect the appearance of the grid.
+
+Some parameters, such as `headerTextColor`, affect a single aspect of grid appearance. Others such as `spacing` affect the whole grid.
+
+To set parameters on a theme, call the `theme.withParams(...)` method which returns a new theme with different default values for its parameters.
+
+For example, to customise your themes colours, spacing, and font sizes, add the following params to the `themeQuartz.withParams()` method:
+
+{% if isFramework("javascript") %}
+
+```js
+// Custom theme with parameters
+const myTheme = themeQuartz
+    .withParams({
+        backgroundColor: '#ffffff',
+        foregroundColor: '#1a1a1a',
+        headerBackgroundColor: '#faf8f5',
+        spacing: 10,
+        fontSize: 12,
+        headerFontSize: 14,
+    });
+
+const gridOptions = {
+    theme: myTheme,
+    // ... other options
+};
+```
+
+{% /if %}
+
+{% if isFramework("react") %}
+
+```jsx
+// Custom theme with parameters
+const myTheme = themeQuartz
+    .withParams({
+        backgroundColor: '#ffffff',
+        foregroundColor: '#1a1a1a',
+        headerBackgroundColor: '#faf8f5',
+        spacing: 10,
+        fontSize: 12,
+        headerFontSize: 14,
+    });
+
+const GridExample = () => {
+    return (
+        <AgGridReact
+            theme={myTheme}
+            // ... other props
+        />
+    );
+};
+```
+
+{% /if %}
+
+{% if isFramework("angular") %}
+
+```ts
+// Custom theme with parameters
+const myTheme = themeQuartz
+    .withParams({
+        backgroundColor: '#ffffff',
+        foregroundColor: '#1a1a1a',
+        headerBackgroundColor: '#faf8f5',
+        spacing: 10,
+        fontSize: 12,
+        headerFontSize: 14,
+    });
+
+@Component({
+    selector: 'app-root',
+    template: `<ag-grid-angular [theme]="theme" />`,
+})
+export class AppComponent {
+    theme = myTheme;
+}
+```
+
+{% /if %}
+
+{% if isFramework("vue") %}
+
+```js
+// Custom theme with parameters
+const myTheme = themeQuartz
+    .withParams({
+        backgroundColor: '#ffffff',
+        foregroundColor: '#1a1a1a',
+        headerBackgroundColor: '#faf8f5',
+        spacing: 10,
+        fontSize: 12,
+        headerFontSize: 14,
+    });
+
+export default {
+    components: { AgGridVue },
+    setup() {
+        return { theme: myTheme };
+    },
+    template: `<ag-grid-vue :theme="theme" />`,
+};
+```
+
+{% /if %}
+
+When you run your application, you should see the new theme applied to the grid, with slightly smaller text, and an off-white header background colour:
+
+{% gridExampleRunner title="Theme Parameters" name="theme-params" suppressDarkMode=true  /%}
+
+{% note %}
+Our [Theme Parameters](./theming-parameters/) docs provide a full list of available parameters and how to use them.
+{% /note %}
+
+### Theme Parts
+
+[Theme Parts](./theming-parts/) contain the CSS styles for a single feature like icons or text inputs. Using parts you can, for example, use the Material icons with the Quartz theme, or use the `colourSchemeDarkBlue` part to use a dark mode colour scheme.
+
+To add a part to a theme, call the `theme.withPart(...)` method which returns a new theme using that part.
+
+For example, to use the Material icon set with the Quartz theme, pass the `iconSetMaterial` part to the `themeQuartz.withPart()` method:
+
+{% if isFramework("javascript") %}
+
+```js
+import { themeQuartz, iconSetMaterial } from 'ag-grid-community';
+
+// Custom Quartz theme that uses Material icons
+const myTheme = themeQuartz
+    .withParams({ /*...*/ })
+    .withPart(iconSetMaterial);
+
+const gridOptions = {
+    theme: myTheme,
+    // ... other options
+};
+```
+
+{% /if %}
+
+{% if isFramework("react") %}
+
+```jsx
+import { themeQuartz, iconSetMaterial } from 'ag-grid-community';
+import { AgGridReact } from 'ag-grid-react';
+
+// Custom Quartz theme that uses Material icons
+const myTheme = themeQuartz
+    .withParams({ /*...*/ })
+    .withPart(iconSetMaterial);
+
+const GridExample = () => {
+    // ... rowData, columnDefs, etc.
+
+    return (
+        <AgGridReact
+            theme={myTheme}
+            // ... other props
+        />
+    );
+};
+```
+
+{% /if %}
+
+{% if isFramework("angular") %}
+
+```ts
+import { Component } from '@angular/core';
+import { AgGridAngular } from 'ag-grid-angular';
+import { themeQuartz, iconSetMaterial } from 'ag-grid-community';
+
+@Component({
+    selector: 'app-root',
+    template: `
+        <ag-grid-angular
+            [theme]="theme"
+            <!-- other options -->
+        />
+    `,
+})
+export class AppComponent {
+    // Custom Quartz theme that uses Material icons
+    myTheme = themeQuartz
+        .withParams({ /*...*/ })
+        .withPart(iconSetMaterial);
+}
+```
+
+{% /if %}
+
+{% if isFramework("vue") %}
+
+```js
+import { AgGridVue } from 'ag-grid-vue3';
+import { themeQuartz, iconSetMaterial } from 'ag-grid-community';
+
+// Custom Quartz theme that uses Material icons
+const myTheme = themeQuartz
+    .withParams({ /*...*/ })
+    .withPart(iconSetMaterial);
+
+export default {
+    components: { AgGridVue },
+    setup() {
+        return {
+            theme: myTheme,
+            // ... rowData, columnDefs, etc.
+        };
+    },
+    template: `
+        <ag-grid-vue
+            :theme="theme"
+            <!-- other options -->
+        />
+    `,
+};
+```
+
+{% /if %}
+
+When you run your application, you should see the Material icons used for the Filter icon:
+
+{% gridExampleRunner title="Theme Parts" name="theme-parts" suppressDarkMode=true  /%}
+
+{% note %}
+Our [Theming Parts](./theming-parts/) docs provide a full overview of the available theme parts and how to use them.
+{% /note %}
+
+### Theme Modes
+
+[Theme Modes](./theming-colors/#theme-modes) allow you to define multiple colour schemes within a single theme, that can be toggled dynamically using a `theme-mode` HTML attribute.
+
+To use Theme Modes, you first need to create light and dark colour schemes by chaining another `withParams` method onto the `themeQuartz` object, passing an additional string parameter to name the scheme:
+
+{% if isFramework("javascript") %}
+
+```js
+const myTheme = themeQuartz
+    .withPart(iconSetMaterial)
+    .withParams(
+        {
+            // Existing theme params...
+        },
+        'light' // Light scheme name, used as value of data-ag-theme-mode attribute
+    )
+    .withParams(
+        {
+            // Add dark theme params
+            backgroundColor: '#1e1e2f',
+            foregroundColor: '#e2e8f0',
+            headerBackgroundColor: '#2d2d44',
+            selectedRowBackgroundColor: 'rgba(110, 168, 254, 0.2)',
+            spacing: 10,
+            fontSize: 12,
+        },
+        'dark' // Dark scheme name, used as value of data-ag-theme-mode attribute
+    );
+
+const gridOptions = {
+    theme: myTheme,
+    // ... other options
+};
+```
+
+{% /if %}
+
+{% if isFramework("react") %}
+
+```jsx
+const myTheme = themeQuartz
+    .withPart(iconSetMaterial)
+    .withParams(
+        {
+            // Existing theme params...
+        },
+        'light' // Light scheme name
+    )
+    .withParams(
+        {
+            backgroundColor: '#1e1e2f',
+            foregroundColor: '#e2e8f0',
+            headerBackgroundColor: '#2d2d44',
+            selectedRowBackgroundColor: 'rgba(110, 168, 254, 0.2)',
+            spacing: 10,
+            fontSize: 12,
+        },
+        'dark' // Dark scheme name
+    );
+
+const GridExample = () => {
+    return (
+        <AgGridReact
+            theme={myTheme}
+            // ... other props
+        />
+    );
+};
+```
+
+{% /if %}
+
+{% if isFramework("angular") %}
+
+```ts
+const myTheme = themeQuartz
+    .withPart(iconSetMaterial)
+    .withParams(
+        {
+            // Existing theme params...
+        },
+        'light' // Light scheme name
+    )
+    .withParams(
+        {
+            backgroundColor: '#1e1e2f',
+            foregroundColor: '#e2e8f0',
+            headerBackgroundColor: '#2d2d44',
+            selectedRowBackgroundColor: 'rgba(110, 168, 254, 0.2)',
+            spacing: 10,
+            fontSize: 12,
+        },
+        'dark' // Dark scheme name
+    );
+
+@Component({
+    selector: 'app-root',
+    template: `<ag-grid-angular [theme]="theme" />`,
+})
+export class AppComponent {
+    theme = myTheme;
+}
+```
+
+{% /if %}
+
+{% if isFramework("vue") %}
+
+```js
+const myTheme = themeQuartz
+    .withPart(iconSetMaterial)
+    .withParams(
+        {
+            // Existing theme params...
+        },
+        'light' // Light scheme name
+    )
+    .withParams(
+        {
+            backgroundColor: '#1e1e2f',
+            foregroundColor: '#e2e8f0',
+            headerBackgroundColor: '#2d2d44',
+            selectedRowBackgroundColor: 'rgba(110, 168, 254, 0.2)',
+            spacing: 10,
+            fontSize: 12,
+        },
+        'dark' // Dark scheme name
+    );
+
+export default {
+    components: { AgGridVue },
+    setup() {
+        return { theme: myTheme };
+    },
+    template: `<ag-grid-vue :theme="theme" />`,
+};
+```
+
+{% /if %}
+
+The active colour scheme can then be controlled by setting the `data-ag-theme-mode="mode"` attribute on any parent element of the grid, commonly the `html` or `body` elements:
+
+{% if isFramework("javascript") %}
+
+```js
+// Index.html - Button to control colour scheme
+<button id="toggle" onclick="setThemeMode()">Enable Dark Mode</button>
+
+// Theme mode toggle logic
+const toggleButton = document.querySelector<HTMLElement>('#toggle')!;
+
+function setThemeMode() {
+    const isDark = document.body.dataset.agThemeMode === 'dark';
+    const nextMode = isDark ? 'light' : 'dark';
+
+    document.body.dataset.agThemeMode = nextMode;
+    toggleButton.innerText = nextMode === 'dark' ? 'Enable Light Mode' : 'Enable Dark Mode';
+}
+
+// Set initial mode
+document.body.dataset.agThemeMode = 'light';
+```
+
+{% /if %}
+
+{% if isFramework("react") %}
+
+```jsx
+const GridExample = () => {
+    // Current theme mode
+    const [themeMode, setThemeMode] = useState<ThemeMode>('light');
+
+    // Set initial theme mode
+    useEffect(() => {
+        document.body.dataset.agThemeMode = themeMode;
+    }, [themeMode]);
+
+    // Toggle theme mode
+    const toggleThemeMode = () => {
+        setThemeMode((prev) => (prev === 'light' ? 'dark' : 'light'));
+    };
+
+    return (
+        <>
+            <button onClick={toggleThemeMode}>
+                {themeMode === 'dark' ? 'Enable Light Mode' : 'Enable Dark Mode'}
+            </button>
+            <AgGridReact theme={myTheme} /* ... other props */ />
+        </>
+    );
+};
+```
+
+{% /if %}
+
+{% if isFramework("angular") %}
+
+```ts
+@Component({
+    selector: 'app-root',
+    template: `
+        <button (click)="toggleThemeMode()">{{ buttonText }}</button>
+        <ag-grid-angular [theme]="theme" />
+    `,
+})
+export class AppComponent implements OnInit {
+    theme = myTheme;
+    isDarkMode = false;
+    buttonText = 'Enable Dark Mode';
+
+    ngOnInit() {
+        document.body.dataset['agThemeMode'] = 'light';
+    }
+
+    toggleThemeMode() {
+        this.isDarkMode = !this.isDarkMode;
+        const nextMode = this.isDarkMode ? 'dark' : 'light';
+        document.body.dataset['agThemeMode'] = nextMode;
+        this.buttonText = this.isDarkMode ? 'Enable Light Mode' : 'Enable Dark Mode';
+    }
+}
+```
+
+{% /if %}
+
+{% if isFramework("vue") %}
+
+```js
+export default {
+    components: { AgGridVue },
+    setup() {
+        const isDarkMode = ref(false);
+        const buttonText = ref('Enable Dark Mode');
+
+        onMounted(() => {
+            document.body.dataset.agThemeMode = 'light';
+        });
+
+        const toggleThemeMode = () => {
+            isDarkMode.value = !isDarkMode.value;
+            const nextMode = isDarkMode.value ? 'dark' : 'light';
+            document.body.dataset.agThemeMode = nextMode;
+            buttonText.value = isDarkMode.value ? 'Enable Light Mode' : 'Enable Dark Mode';
+        };
+
+        return { theme: myTheme, toggleThemeMode, buttonText };
+    },
+    template: `
+        <button @click="toggleThemeMode">{{ buttonText }}</button>
+        <ag-grid-vue :theme="theme" />
+    `,
+};
+```
+
+{% /if %}
+
+When you run your application, you should be able to toggle between light and dark modes by clicking the button:
+
+{% gridExampleRunner title="Dark Mode" name="dark-mode" suppressDarkMode=true  /%}
+
+{% note %}
+Our [Theme Modes](./theming-colors/#theme-modes) docs provide a full overview of how to use theme modes and best practices for implementing dark mode support.
+{% /note %}
+
+## Custom CSS for Fine-Tuning
+
+When the Theming API doesn't provide enough control, you can use [custom CSS](./theming-css/) to target specific grid elements.
+
+Every DOM element rendered by the grid exposes a class name prefixed with `.ag-`. You can target these class names with your own CSS rules, allowing limitless customisation.
+
+### Finding Class Names
+
+Use your browser's developer tools to inspect grid elements and find the appropriate class names. Right-click on any grid element and select "Inspect" to see its classes.
+
+{% video videoSrc="resources/find-css-classes.mp4" centered=true /%}
+
+### Overriding CSS Styles
+
+Once you've identified the class names, you can write custom CSS rules to override the default styles.
+
+Override the following CSS to style the header text with the `.ag-header-cell-text` class:
+
+```css
+.ag-header-cell-text {
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    font-size: 0.85em;
+}
+```
+
+You can also target specific columns by using the column’s `field` value via the `col-id` [attribute selector](https://www.w3schools.com/css/css_attribute_selectors.asp).
+
+Override the CSS for cells in the product column with the `.ag-cell` class and `[col-id='productName']` selector:
+
+```css
+.ag-cell[col-id='productName'] {
+    font-weight: 500;
+}
+```
+
+When you run the example, you should see the styles applied to the header text and product columns:
+
+{% gridExampleRunner title="Custom CSS" name="custom-css" suppressDarkMode=true  /%}
+
+{% note %}
+Our [Extending with CSS](./theming-css/) docs provide more information on applying custom CSS.
+{% /note %}
+
+## Conditional Formatting
+
+Conditional formatting allows you to dynamically apply styles to cells or rows based on their data.
+
+There are two main approaches for applying styles based on data:
+
+-   [Cell Class Rules](./cell-styles/#cell-class-rules)
+-   [Row Class Rules](./row-styles/#row-class-rules)
+
+Both of these features work in the same way, allowing you to create functions that dynamically apply CSS classes to elements based on arbitrary data.
+
+### Cell Class Rules
+
+Class Rules are defined by passing a JavaScript map to the `cellClassRules` column property where the keys are the class names and the values are expressions that, when returning `true`, the class gets used.
+
+These expressions access the cell's data via the `params` object, which includes information such as the cell value and row node.
+
+For example, to apply different classes to cells in the `status` column based on their value, first define the following `cellClassRules`:
+
+{% if isFramework("javascript") %}
+
+```js
+// Column Definition with Cell Class Rules
+const columnDefs = [
+    {
+        field: 'status',
+        cellClassRules: {
+            'status-delivered': (params) => params.value === 'Delivered',
+            'status-pending': (params) => params.value === 'Pending',
+            'status-cancelled': (params) => params.value === 'Cancelled',
+        },
+    },
+    // Other columns...
+];
+```
+
+{% /if %}
+
+{% if isFramework("react") %}
+
+```jsx
+// Column Definition with Cell Class Rules
+const [columnDefs] = useState([
+    {
+        field: 'status',
+        cellClassRules: {
+            'status-delivered': (params) => params.value === 'Delivered',
+            'status-pending': (params) => params.value === 'Pending',
+            'status-cancelled': (params) => params.value === 'Cancelled',
+        },
+    },
+    // Other columns...
+]);
+```
+
+{% /if %}
+
+{% if isFramework("angular") %}
+
+```ts
+// Column Definition with Cell Class Rules
+colDefs: ColDef[] = [
+    {
+        field: 'status',
+        cellClassRules: {
+            'status-delivered': (params) => params.value === 'Delivered',
+            'status-pending': (params) => params.value === 'Pending',
+            'status-cancelled': (params) => params.value === 'Cancelled',
+        },
+    },
+    // Other columns...
+];
+```
+
+{% /if %}
+
+{% if isFramework("vue") %}
+
+```js
+// Column Definition with Cell Class Rules
+const columnDefs = ref([
+    {
+        field: 'status',
+        cellClassRules: {
+            'status-delivered': (params) => params.value === 'Delivered',
+            'status-pending': (params) => params.value === 'Pending',
+            'status-cancelled': (params) => params.value === 'Cancelled',
+        },
+    },
+    // Other columns...
+]);
+```
+
+{% /if %}
+
+Each time a cell is rendered within the status column, the `cellClassRules` function will be evaluated, and a CSS class applied to the cell based on its value.
+
+To style these cells, add the corresponding classes to your CSS:
+
+```css
+.status-delivered {
+    color: #2e7d32;
+}
+
+.status-pending {
+    color: #ed6c02;
+}
+
+.status-cancelled {
+    color: #d32f2f;
+}
+```
+
+When you run your application, you should see the conditional styles applied to cells based on their data:
+
+{% gridExampleRunner title="Conditional Styles Cells" name="conditional-styles-cells" suppressDarkMode=true  /%}
+
+{% note %}
+Our [Cell Styles](./cell-styles/) docs provide a full overview of how to use class rules and best practices for conditional formatting.
+{% /note %}
+
+### Row Class Rules
+
+Row Class Rules work similarly to Cell Class Rules, but use the `rowClassRules` grid option to apply styles to entire rows, rather than cells.
+
+For example, to apply a `high-sales` class to rows where the `salesRevenue` is greater than $10,000, first, define the following rule:
+
+{% if isFramework("javascript") %}
+
+```js
+const gridOptions = {
+    rowClassRules: {
+        'high-sales': params => params.data.salesRevenue > 10000,
+    }
+};
+```
+
+{% /if %}
+
+{% if isFramework("react") %}
+
+```jsx
+const rowClassRules = useMemo(() => ({
+    'high-sales': params => params.data.salesRevenue > 10000,
+}), []);
+
+const GridExample = () => {
+    return (
+        <AgGridReact
+            rowClassRules={rowClassRules}
+            // ... other props
+        />
+    );
+};
+```
+
+{% /if %}
+
+{% if isFramework("angular") %}
+
+```ts
+@Component({
+    selector: 'app-root',
+    template: `<ag-grid-angular [rowClassRules]="rowClassRules" />`,
+})
+export class AppComponent {
+    rowClassRules: RowClassRules = {
+        'high-sales': params => params.data.salesRevenue > 10000,
+    };
+}
+```
+
+{% /if %}
+
+{% if isFramework("vue") %}
+
+```js
+export default {
+    components: { AgGridVue },
+    setup() {
+        const rowClassRules = {
+            'high-sales': params => params.data.salesRevenue > 10000,
+        };
+
+        return { rowClassRules };
+    },
+    template: `<ag-grid-vue :rowClassRules="rowClassRules" />`,
+};
+```
+
+{% /if %}
+
+And then add the corresponding class to your CSS:
+
+```css
+.high-sales {
+    background-color: rgba(76, 175, 80, 0.15);
+}
+```
+
+When you run your application, you should see the conditional styles applied to rows based on their data:
+
+{% gridExampleRunner title="Conditional Styles Rows" name="conditional-styles-rows" suppressDarkMode=true  /%}
+
+{% note %}
+Our [Row Styles](./row-styles/) docs provide a full overview of how to use class rules and best practices for conditional formatting.
+{% /note %}
+
+## Design Tools
+
+Whilst this tutorial has been focused on customising themes from within your application, we also provide tools to help both developers and designers create custom themes.
+
+### Theme Builder
+
+The [Theme Builder](https://www.ag-grid.com/theme-builder/) is a visual tool for creating and customising themes. It allows you to:
+
+-   Customise theme parameters via a user-friendly interface.
+-   Preview theme changes in real-time.
+-   Enable/disable grid features to accurately represent your configuration.
+
+You can then generate the resulting custom theme as code and copy it directly into your project.
+
+{% video videoSrc="resources/theme-builder-demo.mp4" centered=true /%}
+
+### Figma Design System
+
+{% videoSection id="Ymmm7wxLy7Y" title="Introducing the AG Grid Figma Design System" %}
+The AG Grid design system replicates the Quartz and Alpine themes within Figma, allowing you to customise them with [Figma variables](https://help.figma.com/hc/en-us/articles/15339657135383-Guide-to-variables-in-Figma) to match your brand and style.
+
+Figma variables can also be used with the [Style Dictionary](https://styledictionary.com/) package to automatically generate an AG Grid compatible theme object. Visit our [Design System](./ag-grid-design-system/) docs to learn more, or download the figma file using the button below to get started.
+{% /videoSection %}
+
+{% figmaCommunityButton /%}
+
+## Test Your Knowledge
+
+Try these challenges to reinforce what you've learned:
+
+1. **Change the accent colour to `#0e4491` in light mode, and `#6ea8fe` in dark mode**
+
+    _Hint: Use `withParams({ accentColor: '...' })`_
+
+2. **Add a bottom border to header cells using CSS**
+
+    _Hint: Target `.ag-header-cell` with `border-bottom: 2px solid blue`_
+
+3. **Make cell text bold where profit margin is greater than 20%**
+
+    _Hint: Use `cellClassRules` on the profitMargin column_
+
+4. **Highlight rows with `rgba(244, 67, 54, 0.1)` for products with revenue less than $1,000**
+
+    _Hint: Use `rowClassRules` and check `params.data.salesRevenue`_
+
+Once complete, your grid should look like the example below. If you're stuck, check out the source code to see how it's done:
+
+{% gridExampleRunner title="Complete Example" name="complete-example" suppressDarkMode=true  /%}
+
+## Summary
+
+Congratulations! You've completed the tutorial and learned how to style AG Grid using a combination of the Theming API, custom CSS, and conditional formatting.
+
+As recap, here's a simple table summarising the different styling requirements and the recommended approaches:
+
+| Requirement                       | Recommended Approach                  |
+| --------------------------------- | ------------------------------------- |
+| Global colours, spacing, fonts    | Theme with `withParams()`             |
+| Light/dark mode                   | Theme modes with `data-ag-theme-mode` |
+| Style specific elements           | Custom CSS targeting `.ag-*` classes  |
+| Cells styled based on their value | `cellClassRules`                      |
+| Rows styled based on row data     | `rowClassRules`                       |
+
+## Next Steps
+
+Explore these topics to learn more:
+
+-   [Try the Theme Builder](https://www.ag-grid.com/theme-builder/) - Visual tool for creating themes
+-   [Theming API Docs](./theming/) - Complete theming reference

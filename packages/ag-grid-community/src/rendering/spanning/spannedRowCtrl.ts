@@ -7,7 +7,9 @@ import { SpannedCellCtrl } from './spannedCellCtrl';
 export class SpannedRowCtrl extends RowCtrl {
     protected override onRowIndexChanged(): void {
         super.onRowIndexChanged();
-        this.getAllCellCtrls().forEach((c) => c.refreshAriaRowIndex());
+        for (const c of this.getAllCellCtrls()) {
+            c.refreshAriaRowIndex();
+        }
     }
 
     protected override getInitialRowClasses(_rowContainerType: RowContainerType): string[] {
@@ -49,13 +51,16 @@ export class SpannedRowCtrl extends RowCtrl {
     /**
      * Below overrides are explicitly disabling styling and other unwanted behaviours for spannedRowCtrl
      */
-    // row height should be 0 in spanned row - they're only included for purpose of aria
-    protected override onRowHeightChanged(): void {}
-
-    // no styling spanned rows
-    protected override refreshFirstAndLastRowStyles(): void {}
-
-    // no hover functionality for spanned rows
-    protected override addHoverFunctionality() {}
-    public override resetHoveredStatus() {}
+    protected override onRowHeightChanged(): void {
+        // row height should be 0 in spanned row - they're only included for purpose of aria
+    }
+    protected override refreshFirstAndLastRowStyles(): void {
+        // no styling spanned rows
+    }
+    protected override addHoverFunctionality() {
+        // no hover functionality for spanned rows
+    }
+    public override resetHoveredStatus() {
+        // no hover functionality for spanned rows
+    }
 }

@@ -4,6 +4,7 @@ import type {
     FilterAction,
     FilterDestroyedEvent,
     FilterHandler,
+    FilterHandlerDestroyedEvent,
     FilterPanelFilterState,
     FilterPanelSummaryState,
     IFilterPanelService,
@@ -43,6 +44,7 @@ export class FilterPanelService
 
         const updateFilterStates = this.updateFilterStates.bind(this);
         const updateApplyButton = () => this.dispatchStatesUpdates(undefined, true);
+        const onFilterDestroyed = this.onFilterDestroyed.bind(this);
         this.addManagedEventListeners({
             newColumnsLoaded: () => {
                 this.columnsLoaded = true;
@@ -51,16 +53,20 @@ export class FilterPanelService
                 }
                 updateFilterStates();
             },
+            dataTypesInferred: updateFilterStates,
             filterChanged: updateFilterStates,
-            filterDestroyed: this.onFilterDestroyed.bind(this),
+            filterDestroyed: onFilterDestroyed,
+            filterHandlerDestroyed: onFilterDestroyed,
             filterOpened: updateApplyButton,
             filterClosed: updateApplyButton,
         });
+        const refreshForColumn = ({ column }: { column: AgColumn }) => {
+            this.states.get(column.getColId())?.refresh?.();
+            updateApplyButton();
+        };
         this.addManagedListeners(this.beans.colFilter!, {
-            filterStateChanged: ({ column }: { column: AgColumn }) => {
-                this.states.get(column.getColId())?.refresh?.();
-                updateApplyButton();
-            },
+            filterStateChanged: refreshForColumn,
+            filterModelAsStringChanged: refreshForColumn,
         });
     }
 
@@ -72,14 +78,14 @@ export class FilterPanelService
             if (this.columnsLoaded) {
                 // Remove any filters no longer in the state
                 const newIds = new Set(state.filters?.map((f) => f.colId));
-                this.getIds().forEach((id) => {
+                for (const id of this.getIds()) {
                     if (!newIds.has(id)) {
                         this.remove(id);
                     }
-                });
+                }
 
                 // Clear out existing state so that new state order is maintained
-                this.clearStates();
+                this.clear();
                 this.applyState();
                 this.updateFilterStates();
                 dispatchedStateUpdates = true;
@@ -99,7 +105,7 @@ export class FilterPanelService
     public getAvailable(): { id: string; name: string }[] {
         const beans = this.beans;
         const availableFilters: { id: string; name: string }[] = [];
-        for (const column of beans.colModel.getCols()) {
+        for (const column of beans.colModel.getColDefCols() ?? []) {
             const id = column.getColId();
             if (column.isFilterAllowed() && !column.colDef.suppressFiltersToolPanel && !this.states.get(id)) {
                 availableFilters.push({
@@ -254,7 +260,7 @@ export class FilterPanelService
 
     private createFilterStateWrapper(id: string, expanded?: boolean): StateWrapper | undefined {
         const { colModel, colFilter } = this.beans;
-        const column = colModel.getColById(id);
+        const column = colModel.getColDefCol(id);
 
         if (column && !column.colDef.suppressFiltersToolPanel) {
             const handler = colFilter!.getHandler(column, true);
@@ -343,9 +349,11 @@ export class FilterPanelService
         }
     }
 
-    private onFilterDestroyed({ column, source }: FilterDestroyedEvent) {
-        if (!this.beans.colFilter?.isAlive()) {
-            // if grid is being destroyed, don't recreate filters
+    private onFilterDestroyed({ column, source }: FilterDestroyedEvent | FilterHandlerDestroyedEvent) {
+        const { colFilter, filterManager } = this.beans;
+        if (!colFilter?.isAlive() || !filterManager?.isFilterAllowed(column as AgColumn)) {
+            // if grid is being destroyed or filter not allowed (e.g. advanced filter toggled),
+            // don't recreate filters
             return;
         }
         const states = this.states;
@@ -378,20 +386,20 @@ export class FilterPanelService
     private applyState() {
         if (this.params && this.columnsLoaded) {
             this.initialStateApplied = true;
-            this.currState?.filters?.forEach(({ colId, expanded }) => {
+            for (const { colId, expanded } of this.currState?.filters ?? []) {
                 this.createFilter(colId, expanded);
-            });
+            }
         }
     }
 
     public override destroy(): void {
-        this.clearStates();
+        this.clear();
         this.params = undefined;
         this.currState = undefined;
         super.destroy();
     }
 
-    private clearStates() {
+    public clear() {
         const { states, orderedStates } = this;
         states.forEach((state) => state.destroy?.());
         states.clear();

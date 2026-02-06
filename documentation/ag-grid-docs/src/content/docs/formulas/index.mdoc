@@ -1,0 +1,131 @@
+---
+title: "Formulas"
+enterprise: true
+---
+
+Formulas let users enter spreadsheet-style expressions into grid cells so values update automatically when referenced data changes.
+
+{% video videoSrc="resources/formula-editor-demo.mp4" centered=true /%}
+
+## Enabling Formulas
+
+To enable formulas, set the column property `allowFormula: true` on one or more columns and ensure your rows have [Row IDs](./row-ids/#row-ids).
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'product' },
+        { field: 'price' },
+        { field: 'quantity' },
+        { field: 'subtotal', allowFormula: true },
+        { field: 'tax', allowFormula: true },
+        { field: 'total', allowFormula: true },
+    ],
+    cellSelection: {
+        handle: {
+            mode: 'fill',
+        },
+    },
+    getRowId: (params) => String(params.data.rid),
+};
+```
+
+{% gridExampleRunner title="Formulas" name="formulas" exampleHeight=390 /%}
+
+## Formula Editor Component
+
+The Formula Cell Editor is the default editor for `allowFormula: true` columns unless you provide a custom `cellEditor`. It tokenises references, highlights ranges, and provides function autocomplete while typing.
+
+To opt out, set a `cellEditor` on the column. Formulas still evaluate, but the formula editor features are disabled.
+
+See [Formula Editor Component](./formula-editor-component/) for details and examples.
+
+## Formula Syntax
+
+Formulas are text strings that start with an equals sign (`=`) and can contain references, functions, operators, and constants.
+
+### Basics
+
+-   `=` prefix indicates a formula.
+-   Constants can be numbers (e.g. `3.14`, `-7`), strings (e.g. `"Hello"`), or booleans (`TRUE`, `FALSE`).
+-   Standard operator precedence applies (BODMAS/PEMDAS).
+
+### Cell References
+
+Cell references use column letters plus row numbers (e.g. `A1`, `B2`). Rows are 1-based and columns continue past `Z` with `AA`, `AB`, `AC`, and so on.
+
+Relative references move as the grid changes. Absolute references stay fixed using `$`:
+
+-   `=$A$1` locks column and row.
+-   `=A$1` locks the row only.
+-   `=$A1` locks the column only.
+
+#### Long-Form References
+
+The grid stores formulas in a long-hand format using column and row IDs to preserve references across row/column changes while the grid is not open. The editor converts that back to shorthand when users edit a cell.
+
+If you supply formulas directly in data, use the long-hand format to avoid row position drift. See the notes in [Formula Reference](./formula-reference/) for the conversion rules.
+
+### Cell Ranges
+
+Ranges refer to a block of cells using a top-left and bottom-right reference separated by `:` (e.g. `A1:B2`).
+
+### Functions
+
+Formulas support built-in functions such as `SUM`, `AVERAGE`, and `CONCAT`. See [Formula Reference](./formula-reference/) for the full list of supported functions, errors and operators.
+
+## Feature Interactions / Compatibility
+
+| Feature                                                                                                        | Status        | Notes                                                                                                       |
+| -------------------------------------------------------------------------------------------------------------- | ------------- | ----------------------------------------------------------------------------------------------------------- |
+| [Fill Handle](./cell-selection-fill-handle/)                                                                   | Supported     | Dragging from a formula offsets relative refs (e.g. `=B1+C2` becomes `=B2+C3`). Absolute refs remain fixed. |
+| [Cell Selection](./cell-selection/)                                                                            | Supported     | Required for range highlights and range handle editing in the formula editor.                               |
+| [Row Numbers](./row-numbers/)                                                                                  | Supported     | Enabled by default; clicking a row number adds a row range to the formula.                                  |
+| [Cell Expressions](./cell-expressions/#cell-expressions)                                                       | Not supported |                                                                                                             |
+| [Tree Data](./tree-data/) and [Row Grouping](./grouping/)                                                      | Not supported |                                                                                                             |
+| [Pivoting](./pivoting/) and [Aggregation](./aggregation/)                                                      | Not supported |                                                                                                             |
+| [Master Detail](./master-detail/)                                                                              | Not supported |                                                                                                             |
+| [Server-Side](./server-side-model/), [Infinite](./infinite-scrolling/), and [Viewport](./viewport/) Row Models | Not supported |                                                                                                             |
+
+## Formula Data Source
+
+You can back formulas with a custom data source. This example uses a Map-based store for formula values:
+
+```{% frameworkTransform=true %}
+const formulaStore = new Map();
+const formulaKey = (rowId, colId) => `${rowId}-${colId}`;
+
+const gridOptions = {
+    columnDefs: [
+        { field: 'sales' },
+        { field: 'tax', allowFormula: true },
+    ],
+    formulaDataSource: {
+        getFormula: ({ column, rowNode }) => formulaStore.get(formulaKey(rowNode.id, column.getColId())),
+        setFormula: ({ column, rowNode, formula }) => {
+            const key = formulaKey(rowNode.id, column.getColId());
+            if (formula === undefined) {
+                formulaStore.delete(key);
+            } else {
+                formulaStore.set(key, formula);
+            }
+        },
+    },
+};
+```
+
+{% gridExampleRunner title="Formula Data Source" name="formulas-formula-data-source" exampleHeight=440 /%}
+
+A user-provided data source should provide the following interface:
+
+{% interfaceDocumentation interfaceName="FormulaDataSource" config={ "description": "" } /%}
+
+## Exporting
+
+When performing a [CSV Export](./csv-export), the grid exports the evaluated values of any formulas. When performing an [Excel Export](./excel-export), the grid exports the formulas themselves so Excel can evaluate them.
+
+## See also
+
+-   [Formula Editor Component](./formula-editor-component/) – The rich editing experience for formula cells, including autocomplete and range selection tools.
+-   [Formula Reference](./formula-reference/) – Full reference for operators (+, -, \*, /, ^, &, comparisons), provided functions and errors.
+-   [Custom Functions](./formula-custom-functions/) – How to register and implement custom functions for formulas.

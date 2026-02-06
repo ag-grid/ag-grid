@@ -28,7 +28,9 @@ export class PinnedRows {
 
     public add(node: RowNode): void {
         const { all, visible, order } = this;
-        if (all.has(node)) return;
+        if (all.has(node)) {
+            return;
+        }
         all.add(node);
         visible.add(node);
         order.push(node);
@@ -56,7 +58,9 @@ export class PinnedRows {
 
     public getById(id: string): RowNode | undefined {
         for (const node of this.visible) {
-            if (node.id == id) return node;
+            if (node.id == id) {
+                return node;
+            }
         }
     }
 
@@ -72,12 +76,18 @@ export class PinnedRows {
         const { sortSvc, rowNodeSorter, gos } = this.beans;
         const sortOptions = sortSvc?.getSortOptions() ?? [];
         // first remove the grand total row so it doesn't get sorted
-        const grandTotalNode = _removeGrandTotalRow(this.order);
+        const order = this.order;
+        const grandTotalNode = _removeGrandTotalRow(order);
         // pre-sort by existing row-index otherwise we'll fall back to order in which rows are pinned
-        this.order.sort((a, b) => (a.pinnedSibling?.rowIndex ?? 0) - (b.pinnedSibling?.rowIndex ?? 0));
-        this.order = rowNodeSorter?.doFullSort(this.order, sortOptions) ?? this.order;
+        order.sort(
+            (a, b) =>
+                rowNodeSorter?.compareRowNodes(sortOptions, a, b) ||
+                (a.pinnedSibling?.rowIndex ?? 0) - (b.pinnedSibling?.rowIndex ?? 0)
+        );
         // post-sort re-insert the grand total row in the correct place
-        if (!grandTotalNode) return;
+        if (!grandTotalNode) {
+            return;
+        }
         const grandTotalRow = _getGrandTotalRow(gos);
         if (grandTotalRow === 'bottom' || grandTotalRow === 'pinnedBottom') {
             this.order.push(grandTotalNode);
@@ -86,11 +96,15 @@ export class PinnedRows {
         }
     }
 
-    public hide(shouldHide: (node: RowNode) => boolean): void {
+    public hide(shouldHide: (node: RowNode) => boolean): boolean {
         const { all, visible } = this;
+        const sizeBefore = visible.size;
+
         all.forEach((node) => (shouldHide(node) ? visible.delete(node) : visible.add(node)));
         this.order = Array.from(visible);
         this.sort();
+
+        return sizeBefore != visible.size;
     }
 
     public queue(id: string): void {
@@ -112,7 +126,9 @@ export class PinnedRows {
  * displayed after filtering, accounting for both normal filters and aggregate filters.
  */
 function _isDisplayedAfterFilterCSRM(node: RowNode): boolean {
-    if (node.level === -1) return true;
+    if (node.level === -1) {
+        return true;
+    }
 
     const parent = node.parent;
 

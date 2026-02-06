@@ -1,19 +1,19 @@
-import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
+import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import type { CellDoubleClickedEvent, CellKeyDownEvent, ColDef } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, ValidationModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import CustomGroupCellRenderer from './customGroupCellRenderer';
 import { getData } from './data';
 
-ModuleRegistry.registerModules([
+const modules = [
     ClientSideRowModelModule,
     TreeDataModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
@@ -71,21 +71,23 @@ const GridExample = () => {
     }, []);
 
     return (
-        <div style={containerStyle}>
-            <div style={gridStyle}>
-                <AgGridReact
-                    treeData
-                    getDataPath={getDataPath}
-                    rowData={getData()}
-                    columnDefs={columnDefs}
-                    autoGroupColumnDef={autoGroupColumnDef}
-                    defaultColDef={defaultColDef}
-                    groupDefaultExpanded={1}
-                    onCellDoubleClicked={onCellDoubleClicked}
-                    onCellKeyDown={onCellKeyDown}
-                />
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div style={gridStyle}>
+                    <AgGridReact
+                        treeData
+                        getDataPath={getDataPath}
+                        rowData={getData()}
+                        columnDefs={columnDefs}
+                        autoGroupColumnDef={autoGroupColumnDef}
+                        defaultColDef={defaultColDef}
+                        groupDefaultExpanded={1}
+                        onCellDoubleClicked={onCellDoubleClicked}
+                        onCellKeyDown={onCellKeyDown}
+                    />
+                </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

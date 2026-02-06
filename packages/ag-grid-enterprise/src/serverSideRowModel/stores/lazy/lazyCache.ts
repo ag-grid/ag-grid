@@ -28,7 +28,7 @@ interface LazyStoreNode {
     node: RowNode;
 }
 
-const DEFAULT_BLOCK_SIZE = 100 as const;
+const DEFAULT_BLOCK_SIZE = 100;
 
 export class LazyCache extends BeanStub {
     private rowRenderer: RowRenderer;
@@ -126,9 +126,11 @@ export class LazyCache extends BeanStub {
         this.nodeDisplayIndexMap = new Map();
         this.nodesToRefresh = new Set();
 
-        this.defaultNodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.store.getParentNode());
-        this.getRowIdFunc = _getRowIdCallback(this.gos);
-        this.isMasterDetail = this.gos.get('masterDetail');
+        const { blockUtils, gos, store } = this;
+
+        this.defaultNodeIdPrefix = blockUtils.createNodeIdPrefix(store.getParentNode());
+        this.getRowIdFunc = _getRowIdCallback(gos);
+        this.isMasterDetail = gos.get('masterDetail');
     }
 
     public override destroy() {
@@ -242,7 +244,7 @@ export class LazyCache extends BeanStub {
      */
     private createStubNode(storeIndex: number, displayIndex: number): RowNode {
         // bounds are acquired before creating the node, as otherwise it'll use it's own empty self to calculate
-        const rowBounds = this.store.getRowBounds(displayIndex!);
+        const rowBounds = this.store.getRowBounds(displayIndex);
         const newNode = this.createRowAtIndex(storeIndex, null, (node) => {
             node.setRowIndex(displayIndex);
             node.setRowTop(rowBounds!.rowTop);
@@ -397,10 +399,11 @@ export class LazyCache extends BeanStub {
             // get the smallest next node
             if (nextNode == null || nextNode.node.rowIndex! > lazyNode.node.rowIndex!) {
                 nextNode = lazyNode;
-                return;
             }
         });
-        if (!previousNode && !nextNode) return null;
+        if (!previousNode && !nextNode) {
+            return null;
+        }
         return { previousNode, nextNode };
     }
 
@@ -430,7 +433,6 @@ export class LazyCache extends BeanStub {
             // get the smallest next node
             if (nextNode == null || nextNode.index > lazyNode.index) {
                 nextNode = lazyNode;
-                return;
             }
         });
 
@@ -490,7 +492,7 @@ export class LazyCache extends BeanStub {
             // it's been cached and we can retrieve it for reuse.
             const deletedNode = id && this.removedNodeCache?.get(id);
             if (deletedNode) {
-                this.removedNodeCache?.delete(id!);
+                this.removedNodeCache?.delete(id);
                 this.blockUtils.updateDataIntoRowNode(deletedNode, data);
                 this.nodeMap.set({
                     id: deletedNode.id!,
@@ -694,7 +696,9 @@ export class LazyCache extends BeanStub {
             let distEnd;
             // may not have an end node if the block came back small
             const lastLazyNode = this.nodeMap.getBy('index', [blockEnd - 1]);
-            if (lastLazyNode) distEnd = Math.abs(lastLazyNode.node.rowIndex! - otherDisplayIndex);
+            if (lastLazyNode) {
+                distEnd = Math.abs(lastLazyNode.node.rowIndex! - otherDisplayIndex);
+            }
             const farthest = distEnd == null || distStart < distEnd ? distStart : distEnd;
 
             blockDistanceToMiddle[blockStart] = farthest;
@@ -826,7 +830,9 @@ export class LazyCache extends BeanStub {
     }
 
     public onLoadSuccess(firstRowIndex: number, numberOfRowsExpected: number, response: LoadSuccessParams) {
-        if (!this.live) return;
+        if (!this.live) {
+            return;
+        }
 
         const info = response.groupLevelInfo;
         this.store.setStoreInfo(info);
@@ -956,7 +962,9 @@ export class LazyCache extends BeanStub {
     }
 
     public onLoadFailed(firstRowIndex: number, numberOfRowsExpected: number) {
-        if (!this.live) return;
+        if (!this.live) {
+            return;
+        }
         const wasRefreshing = this.nodesToRefresh.size > 0;
 
         for (let i = firstRowIndex; i < firstRowIndex + numberOfRowsExpected && i < this.getRowCount(); i++) {
@@ -1044,23 +1052,22 @@ export class LazyCache extends BeanStub {
     public clientSideSortRows() {
         const sortOptions = this.sortSvc?.getSortOptions() ?? [];
         const isAnySort = sortOptions.some((opt) => opt.sort != null);
-        if (!isAnySort || !this.rowNodeSorter) {
+        const rowNodeSorter = this.rowNodeSorter;
+        if (!isAnySort || !rowNodeSorter) {
             return;
         }
 
         // the node map does not need entirely recreated, only the indexes need updated.
         const allNodes = new Array(this.nodeMap.getSize());
-        this.nodeMap.forEach((lazyNode) => (allNodes[lazyNode.index] = lazyNode.node));
-        this.nodeMap.clear();
+        const nodesMap = this.nodeMap;
+        nodesMap.forEach((lazyNode) => (allNodes[lazyNode.index] = lazyNode.node));
+        nodesMap.clear();
 
-        const sortedNodes = this.rowNodeSorter.doFullSort(allNodes, sortOptions);
-        sortedNodes.forEach((node, index) => {
-            this.nodeMap.set({
-                id: node.id!,
-                node,
-                index,
-            });
-        });
+        const sortedNodes = rowNodeSorter.doFullSortInPlace(allNodes, sortOptions);
+        for (let i = 0, len = sortedNodes.length; i < len; ++i) {
+            const node = sortedNodes[i];
+            nodesMap.set({ id: node.id!, node, index: i });
+        }
     }
 
     /**
@@ -1130,7 +1137,7 @@ export class LazyCache extends BeanStub {
         );
     }
 
-    public removeRowNodes(idsToRemove: string[]): RowNode[] {
+    public removeRowNodes(idsToRemove: string[], newRowCount?: number): RowNode[] {
         const removedNodes: RowNode[] = [];
         const nodesToVerify: RowNode[] = [];
 
@@ -1170,13 +1177,29 @@ export class LazyCache extends BeanStub {
             // shift normal node up by number of deleted prior to this point
             this.nodeMap.delete(node);
             this.nodeMap.set({
-                id: node.id!,
+                id: node.id,
                 node: node.node,
                 index: numericStoreIndex - deletedNodeCount,
             });
         }
 
-        this.numberOfRows -= this.isLastRowIndexKnown() ? idsToRemove.length : deletedNodeCount;
+        const isNewRowCountValid = newRowCount != null && newRowCount >= 0;
+
+        /**
+         * 'known' nodes are ones in lazy cache
+         * 'unknown' or 'out-of-bounds' nodes are nodes that are not in cache currently.
+         *    These can be either nodes out of cached blocks or nodes that just were in cache and were deleted via a transaction
+         *
+         * If available, set new row count using user supplied number;
+         * else subtract 'known' + 'out-of-bounds' nodes when last index is known and all deleted nodes were in cache, this is an optimistic approach;
+         * else subtract 'known' nodes when last index is unknown, this is a pessimistic approach.
+         */
+        if (isNewRowCountValid) {
+            this.numberOfRows = newRowCount;
+            this.isLastRowKnown = true;
+        } else {
+            this.numberOfRows -= deletedNodeCount;
+        }
 
         if (remainingIdsToRemove.length > 0 && nodesToVerify.length > 0) {
             nodesToVerify.forEach((node) => (node.__needsRefreshWhenVisible = true));

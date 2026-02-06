@@ -67,19 +67,19 @@ const gridOptions = {
 
 Note the following:
 
-* An Excel Style with id `cell` gets automatically applied to all cells (**not headers**) when exported to Excel.
+-   An Excel Style with id `cell` gets automatically applied to all cells (**not headers**) when exported to Excel.
 
-* All cells will be vertically aligned to the middle due to Excel Style id `cell`.
+-   All cells will be vertically aligned to the middle due to Excel Style id `cell`.
 
-* Styles can be combined in a similar fashion to CSS, this can be seen in the column **age** where athletes less than 20 years old get two styles applied (greenBackground and redFont).
+-   Styles can be combined in a similar fashion to CSS, this can be seen in the column **age** where athletes less than 20 years old get two styles applied (greenBackground and redFont).
 
-* A default columnDef containing cellClassRules can be specified and it will be exported to Excel. You can see this is in the styling of the `darkGreyBackground` being applied to `even` rows.
+-   A default columnDef containing cellClassRules can be specified and it will be exported to Excel. You can see this is in the styling of the `darkGreyBackground` being applied to `even` rows.
 
-* If a cell has a style but there isn't an associated Excel Style defined, the style for that cell won't get exported. This is the case in this example of the year column which has the style notInExcel, but since it hasn't been specified in the gridOptions, the column then gets exported without formatting.
+-   If a cell has a style but there isn't an associated Excel Style defined, the style for that cell won't get exported. This is the case in this example of the year column which has the style notInExcel, but since it hasn't been specified in the gridOptions, the column then gets exported without formatting.
 
-* As you can see in the column **Group**, the Excel styles can be combined into cellClassRules and cellClass
+-   As you can see in the column **Group**, the Excel styles can be combined into cellClassRules and cellClass
 
-* Note that there are specific to Excel styles applied - the age column has a conditional number formatting styling applied: age values less than `23` have a green background applied, and age values less than `20` are using red italic underlined font.
+-   Note that there are specific to Excel styles applied - the age column has a conditional number formatting styling applied: age values less than `23` have a green background applied, and age values less than `20` are using red italic underlined font.
 
 {% gridExampleRunner title="Excel Export - Styles" name="excel-export-with-styles" /%}
 
@@ -89,22 +89,22 @@ Similarly to styling cells, the grid will use the result of [headerClass](./colu
 
 Default Column Header Export Styles:
 
-* An Excel Style with id `header` gets automatically applied to all (grouped and not grouped) AG Grid headers when exported to Excel.
-* An Excel Style with id `headerGroup` gets automatically applied to the AG Grid grouped headers when exported to Excel.
+-   An Excel Style with id `header` gets automatically applied to all (grouped and not grouped) AG Grid headers when exported to Excel.
+-   An Excel Style with id `headerGroup` gets automatically applied to the AG Grid grouped headers when exported to Excel.
 
 You can define custom styles to apply to specific column headers when exported to Excel. In the example below, export to Excel and note:
 
-* All column headers will be vertically aligned to the middle, have a grey background colour of `#f8f8f8` and an orange bottom border bottom of colour `#ffab00` due to the Excel Style id `header`.
+-   All column headers will be vertically aligned to the middle, have a grey background colour of `#f8f8f8` and an orange bottom border bottom of colour `#ffab00` due to the Excel Style id `header`.
 
-* All grouped headers will have a bold font due to Excel Style id `headerGroup`.
+-   All grouped headers will have a bold font due to Excel Style id `headerGroup`.
 
-* The Gold column header will have a gold-like background color.
+-   The Gold column header will have a gold-like background color.
 
-* The Silver column header will have a silver-like background color.
+-   The Silver column header will have a silver-like background color.
 
-* The Bronze column header will have a bronze-like background color.
+-   The Bronze column header will have a bronze-like background color.
 
-* All column header rows have a height of **30px**.
+-   All column header rows have a height of **30px**.
 
 {% gridExampleRunner title="Excel Export - Header Styles" name="excel-export-with-header-styles" /%}
 
@@ -160,13 +160,13 @@ If you get an error when opening the Excel file, the most likely reason is that 
 
 Some of the most likely errors you can encounter when exporting to Excel are:
 
-* Not specifying all the attributes of an Excel Style property. If you specify the interior for a Excel style and don't provide a pattern, just color, Excel will fail to open the spreadsheet
+-   Not specifying all the attributes of an Excel Style property. If you specify the interior for a Excel style and don't provide a pattern, just color, Excel will fail to open the spreadsheet
 
-* Using invalid characters in attributes, we recommend you not to use special characters.
+-   Using invalid characters in attributes, we recommend you not to use special characters.
 
-* Not specifying the style associated to a cell, if a cell has an style that is not passed as part of the grid options, Excel won't fail opening the spreadsheet but the column won't be formatted.
+-   Not specifying the style associated to a cell, if a cell has an style that is not passed as part of the grid options, Excel won't fail opening the spreadsheet but the column won't be formatted.
 
-* Specifying an invalid enumerated property. It is also important to realise that Excel is case sensitive, so Solid is a valid pattern, but SOLID or solid are not.
+-   Specifying an invalid enumerated property. It is also important to realise that Excel is case sensitive, so Solid is a valid pattern, but SOLID or solid are not.
 
 ## API
 

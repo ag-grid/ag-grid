@@ -2,7 +2,6 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridActions } from '../../../selection/utils';
-import type { GridRowsOptions } from '../../../test-utils';
 import { GridRows, TestGridsManager, assertSelectedRowElementsById, cachedJSONObjects } from '../../../test-utils';
 
 describe('ag-grid tree selection', () => {
@@ -44,12 +43,6 @@ describe('ag-grid tree selection', () => {
             getDataPath: (data: any) => data.orgHierarchy,
         });
 
-        const gridRowsOptions: GridRowsOptions = {
-            columns: ['name'],
-            checkDom: true,
-            checkSelectedNodes: true,
-        };
-
         api.setNodesSelected({
             nodes: [
                 api.getRowNode('1')!,
@@ -61,18 +54,18 @@ describe('ag-grid tree selection', () => {
             newValue: true,
         });
 
-        await new GridRows(api, 'initial', gridRowsOptions).check(`
+        await new GridRows(api, 'initial').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ A GROUP selected id:1 name:"John Von Neumann"
-            │ ├─┬ B GROUP id:2 name:"Alan Turing"
-            │ │ ├── D LEAF selected id:4 name:"Donald Knuth"
-            │ │ └── E LEAF id:5 name:"Grace Hopper"
-            │ └─┬ C GROUP selected id:3 name:"A. Church"
-            │ · ├── F LEAF id:6 name:"Linus Torvalds"
-            │ · ├── G LEAF id:7 name:"Brian Kernighan"
-            │ · └─┬ H filler selected id:row-group-0-A-1-C-2-H
-            │ · · └── I LEAF id:8 name:"Claude Elwood Shannon"
-            └── J LEAF selected id:9 name:"E. Dijkstra"
+            ├─┬ A GROUP selected id:1 ag-Grid-AutoColumn:"A" name:"John Von Neumann"
+            │ ├─┬ B GROUP id:2 ag-Grid-AutoColumn:"B" name:"Alan Turing"
+            │ │ ├── D LEAF selected id:4 ag-Grid-AutoColumn:"D" name:"Donald Knuth"
+            │ │ └── E LEAF id:5 ag-Grid-AutoColumn:"E" name:"Grace Hopper"
+            │ └─┬ C GROUP selected id:3 ag-Grid-AutoColumn:"C" name:"A. Church"
+            │ · ├── F LEAF id:6 ag-Grid-AutoColumn:"F" name:"Linus Torvalds"
+            │ · ├── G LEAF id:7 ag-Grid-AutoColumn:"G" name:"Brian Kernighan"
+            │ · └─┬ H filler selected id:row-group-0-A-1-C-2-H ag-Grid-AutoColumn:"H"
+            │ · · └── I LEAF id:8 ag-Grid-AutoColumn:"I" name:"Claude Elwood Shannon"
+            └── J LEAF selected id:9 ag-Grid-AutoColumn:"J" name:"E. Dijkstra"
         `);
 
         api.setNodesSelected({
@@ -80,18 +73,18 @@ describe('ag-grid tree selection', () => {
             newValue: true,
         });
 
-        await new GridRows(api, 'select 8', gridRowsOptions).check(`
+        await new GridRows(api, 'select 8').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ A GROUP selected id:1 name:"John Von Neumann"
-            │ ├─┬ B GROUP id:2 name:"Alan Turing"
-            │ │ ├── D LEAF selected id:4 name:"Donald Knuth"
-            │ │ └── E LEAF id:5 name:"Grace Hopper"
-            │ └─┬ C GROUP selected id:3 name:"A. Church"
-            │ · ├── F LEAF id:6 name:"Linus Torvalds"
-            │ · ├── G LEAF id:7 name:"Brian Kernighan"
-            │ · └─┬ H filler selected id:row-group-0-A-1-C-2-H
-            │ · · └── I LEAF selected id:8 name:"Claude Elwood Shannon"
-            └── J LEAF selected id:9 name:"E. Dijkstra"
+            ├─┬ A GROUP selected id:1 ag-Grid-AutoColumn:"A" name:"John Von Neumann"
+            │ ├─┬ B GROUP id:2 ag-Grid-AutoColumn:"B" name:"Alan Turing"
+            │ │ ├── D LEAF selected id:4 ag-Grid-AutoColumn:"D" name:"Donald Knuth"
+            │ │ └── E LEAF id:5 ag-Grid-AutoColumn:"E" name:"Grace Hopper"
+            │ └─┬ C GROUP selected id:3 ag-Grid-AutoColumn:"C" name:"A. Church"
+            │ · ├── F LEAF id:6 ag-Grid-AutoColumn:"F" name:"Linus Torvalds"
+            │ · ├── G LEAF id:7 ag-Grid-AutoColumn:"G" name:"Brian Kernighan"
+            │ · └─┬ H filler selected id:row-group-0-A-1-C-2-H ag-Grid-AutoColumn:"H"
+            │ · · └── I LEAF selected id:8 ag-Grid-AutoColumn:"I" name:"Claude Elwood Shannon"
+            └── J LEAF selected id:9 ag-Grid-AutoColumn:"J" name:"E. Dijkstra"
         `);
 
         api.setGridOption(
@@ -107,25 +100,25 @@ describe('ag-grid tree selection', () => {
             ])
         );
 
-        await new GridRows(api, 'rowData 2', gridRowsOptions).check(`
+        await new GridRows(api, 'rowData 2').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ A GROUP selected id:1 name:"John Von Neumann"
-            │ ├─┬ Y filler id:row-group-0-A-1-Y
-            │ │ ├── F LEAF id:6 name:"Linus Torvalds"
-            │ │ └── E LEAF id:5 name:"Grace Hopper"
-            │ ├── B LEAF id:2 name:"Alan Turing"
-            │ └─┬ X GROUP selected id:3 name:"A. Church"
-            │ · └── G LEAF id:7 name:"Brian Kernighan"
-            └── J LEAF selected id:9 name:"E. Dijkstra"
+            ├─┬ A GROUP selected id:1 ag-Grid-AutoColumn:"A" name:"John Von Neumann"
+            │ ├─┬ Y filler id:row-group-0-A-1-Y ag-Grid-AutoColumn:"Y"
+            │ │ ├── F LEAF id:6 ag-Grid-AutoColumn:"F" name:"Linus Torvalds"
+            │ │ └── E LEAF id:5 ag-Grid-AutoColumn:"E" name:"Grace Hopper"
+            │ ├── B LEAF id:2 ag-Grid-AutoColumn:"B" name:"Alan Turing"
+            │ └─┬ X GROUP selected id:3 ag-Grid-AutoColumn:"X" name:"A. Church"
+            │ · └── G LEAF id:7 ag-Grid-AutoColumn:"G" name:"Brian Kernighan"
+            └── J LEAF selected id:9 ag-Grid-AutoColumn:"J" name:"E. Dijkstra"
         `);
 
         api.setFilterModel({ name: { type: 'equals', filter: 'A. Church' } });
 
-        await new GridRows(api, 'filtered', gridRowsOptions).check(`
+        await new GridRows(api, 'filtered').check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ A GROUP selected id:1 name:"John Von Neumann"
-            · └─┬ X GROUP selected id:3 name:"A. Church"
-            · · └── G LEAF id:7 name:"Brian Kernighan"
+            └─┬ A GROUP selected id:1 ag-Grid-AutoColumn:"A" name:"John Von Neumann"
+            · └─┬ X GROUP selected id:3 ag-Grid-AutoColumn:"X" name:"A. Church"
+            · · └── G LEAF id:7 ag-Grid-AutoColumn:"G" name:"Brian Kernighan"
         `);
     });
 

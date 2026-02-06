@@ -2,11 +2,10 @@ import type { IconName } from '@ag-website-shared/icon/Icon';
 import type { CollectionEntry } from 'astro:content';
 
 export type Framework = 'javascript' | 'react' | 'angular' | 'vue';
-export type FrameworkType = 'javascript' | 'typescript';
 
 export type InternalFramework = 'vanilla' | 'typescript' | 'reactFunctional' | 'reactFunctionalTs' | 'angular' | 'vue3';
 
-export type Library = 'charts' | 'grid';
+export type Library = 'charts' | 'grid' | 'dash';
 
 export interface MenuSection {
     title?: string;

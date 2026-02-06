@@ -94,7 +94,7 @@ export abstract class AgBeanStub<
         if (!this.localEventService) {
             this.localEventService = new LocalEventService();
         }
-        this.localEventService!.addEventListener(eventType, listener, async);
+        this.localEventService.addEventListener(eventType, listener, async);
     }
 
     /** Remove a local event listener from this BeanStub */
@@ -162,7 +162,7 @@ export abstract class AgBeanStub<
         if (isAgEventEmitter(object)) {
             object.__addEventListener(event, listener);
             destroyFunc = () => {
-                (object as IAgEventEmitter<T>).__removeEventListener(event, listener);
+                object.__removeEventListener(event, listener);
                 return null;
             };
         } else {
@@ -280,7 +280,9 @@ export abstract class AgBeanStub<
             listener(propertiesChangeEvent);
         };
 
-        events.forEach((event) => this.setupPropertyListener(event, wrappedListener));
+        for (const event of events) {
+            this.setupPropertyListener(event, wrappedListener);
+        }
     }
 
     public isAlive = (): boolean => !this.destroyed;

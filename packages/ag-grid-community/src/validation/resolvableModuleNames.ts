@@ -9,6 +9,7 @@ import type { RowModelType } from '../interfaces/iRowModel';
 const ALL_COLUMN_FILTERS = [
     'TextFilter',
     'NumberFilter',
+    'BigIntFilter',
     'DateFilter',
     'SetFilter',
     'MultiFilter',
@@ -77,19 +78,19 @@ export function resolveModuleNames(
     rowModelType: RowModelType
 ): (CommunityModuleName | EnterpriseModuleName)[] {
     const resolvedModuleNames: (CommunityModuleName | EnterpriseModuleName)[] = [];
-    (Array.isArray(moduleName) ? moduleName : [moduleName]).forEach((modName) => {
+    for (const modName of Array.isArray(moduleName) ? moduleName : [moduleName]) {
         const resolved = RESOLVABLE_MODULE_NAMES[modName as ResolvableModuleName];
         if (resolved) {
-            resolved.forEach((resolvedModName) => {
+            for (const resolvedModName of resolved) {
                 const rowModelForModule = MODULES_FOR_ROW_MODELS[resolvedModName];
                 // don't show module for different row models
                 if (!rowModelForModule || rowModelForModule === rowModelType) {
                     resolvedModuleNames.push(resolvedModName);
                 }
-            });
+            }
         } else {
             resolvedModuleNames.push(modName as CommunityModuleName | EnterpriseModuleName);
         }
-    });
+    }
     return resolvedModuleNames;
 }

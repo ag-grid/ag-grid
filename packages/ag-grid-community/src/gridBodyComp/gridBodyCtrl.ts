@@ -1,5 +1,5 @@
 import { _isInvisibleScrollbar } from '../agStack/utils/browser';
-import { _isElementChildOfClass, _isVerticalScrollShowing, _requestAnimationFrame } from '../agStack/utils/dom';
+import { _isElementChildOfClass, _requestAnimationFrame } from '../agStack/utils/dom';
 import { _isEventFromThisInstance } from '../agStack/utils/event';
 import type { ColumnModel } from '../columns/columnModel';
 import { BeanStub } from '../context/beanStub';
@@ -16,6 +16,7 @@ import type { PopupService } from '../widgets/popupService';
 import { GridBodyScrollFeature } from './gridBodyScrollFeature';
 import { _getRowContainerClass, _getRowViewportClass } from './rowContainer/rowContainerCtrl';
 import type { ScrollVisibleService } from './scrollVisibleService';
+import { _shouldShowVerticalScroll } from './scrollbarVisibilityHelper';
 
 export type RowAnimationCssClasses = 'ag-row-animation' | 'ag-row-no-animation';
 
@@ -73,8 +74,6 @@ export class GridBodyCtrl extends BeanStub {
 
     private eCenterColsViewport: HTMLElement;
     private eFullWidthContainer: HTMLElement;
-    private eStickyTopFullWidthContainer: HTMLElement;
-    private eStickyBottomFullWidthContainer: HTMLElement;
 
     public stickyTopHeight: number = 0;
     private eStickyBottom: HTMLElement;
@@ -101,12 +100,6 @@ export class GridBodyCtrl extends BeanStub {
 
         this.eCenterColsViewport = eBodyViewport.querySelector(`.${_getRowViewportClass('center')}`) as HTMLElement;
         this.eFullWidthContainer = eBodyViewport.querySelector(`.${_getRowContainerClass('fullWidth')}`) as HTMLElement;
-        this.eStickyTopFullWidthContainer = eStickyTop.querySelector(
-            `.${_getRowContainerClass('stickyTopFullWidth')}`
-        ) as HTMLElement;
-        this.eStickyBottomFullWidthContainer = eStickyBottom.querySelector(
-            `.${_getRowContainerClass('stickyBottomFullWidth')}`
-        ) as HTMLElement;
 
         this.setCellTextSelection(this.gos.get('enableCellTextSelection'));
         this.addManagedPropertyListener('enableCellTextSelection', (props) =>
@@ -183,9 +176,9 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private setGridRootRole(): void {
-        const { rowGroupColsSvc, colModel } = this;
+        const { rowGroupColsSvc, colModel, gos } = this;
 
-        let isTreeGrid = this.gos.get('treeData');
+        let isTreeGrid = gos.get('treeData');
 
         if (!isTreeGrid) {
             const isPivotActive = colModel.isPivotMode();
@@ -198,7 +191,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private addFocusListeners(elements: HTMLElement[]): void {
-        elements.forEach((element) => {
+        for (const element of elements) {
             this.addManagedElementListeners(element, {
                 focusin: (e: FocusEvent) => {
                     const { target } = e;
@@ -230,7 +223,7 @@ export class GridBodyCtrl extends BeanStub {
                     }
                 },
             });
-        });
+        }
     }
 
     // used by ColumnAnimationService
@@ -296,11 +289,22 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     public isVerticalScrollShowing(): boolean {
-        const show = this.gos.get('alwaysShowVerticalScroll');
+        const { gos, comp, ctrlsSvc } = this;
+        const show = gos.get('alwaysShowVerticalScroll');
+
         const cssClass = show ? CSS_CLASS_FORCE_VERTICAL_SCROLL : null;
-        const allowVerticalScroll = _isDomLayout(this.gos, 'normal');
-        this.comp.setAlwaysVerticalScrollClass(cssClass, show);
-        return show || (allowVerticalScroll && _isVerticalScrollShowing(this.eBodyViewport));
+        const allowVerticalScroll = _isDomLayout(gos, 'normal');
+
+        comp.setAlwaysVerticalScrollClass(cssClass, show);
+        const horizontalScrollElement = ctrlsSvc.get('center')?.eViewport;
+        const hScrollEl = ctrlsSvc.get('fakeHScrollComp')?.getGui();
+        const vScrollEl = ctrlsSvc.get('fakeVScrollComp')?.getGui();
+
+        return (
+            show ||
+            (allowVerticalScroll &&
+                _shouldShowVerticalScroll(this.eBodyViewport, horizontalScrollElement, undefined, vScrollEl, hScrollEl))
+        );
     }
 
     private setupRowAnimationCssClass(): void {
@@ -324,7 +328,7 @@ export class GridBodyCtrl extends BeanStub {
         this.addManagedPropertyListener('animateRows', updateAnimationClass);
 
         this.addManagedEventListeners({
-            gridStylesChanged: () => {
+            stylesChanged: () => {
                 if (!initialSizeMeasurementComplete && environment.sizesMeasured) {
                     initialSizeMeasurementComplete = true;
                     updateAnimationClass();
@@ -488,7 +492,6 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     public setStickyTopHeight(height: number = 0): void {
-        // console.log('setting sticky top height ' + height);
         this.comp.setStickyTopHeight(`${height}px`);
         this.stickyTopHeight = height;
     }

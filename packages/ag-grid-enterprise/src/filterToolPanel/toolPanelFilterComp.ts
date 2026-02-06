@@ -8,6 +8,8 @@ import {
     _createElement,
     _createIconNoSpan,
     _setAriaExpanded,
+    _setAriaLabel,
+    _setAriaRole,
     _setDisplayed,
 } from 'ag-grid-community';
 
@@ -30,7 +32,6 @@ const ToolPanelFilterElement: ElementParams = {
                     tag: 'span',
                     ref: 'eFilterIcon',
                     cls: 'ag-header-icon ag-filter-icon ag-filter-toolpanel-instance-header-icon',
-                    attrs: { 'aria-hidden': 'true' },
                 },
             ],
         },
@@ -59,13 +60,18 @@ export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
     }
 
     public postConstruct() {
-        const { beans, eExpand } = this;
+        const { beans, eExpand, eFilterIcon } = this;
         const eExpandChecked = _createIconNoSpan('accordionOpen', beans)!;
         this.eExpandChecked = eExpandChecked;
         const eExpandUnchecked = _createIconNoSpan('accordionClosed', beans)!;
         this.eExpandUnchecked = eExpandUnchecked;
         eExpand.appendChild(eExpandChecked);
         eExpand.appendChild(eExpandUnchecked);
+        // as we only display the icons when the filter is active
+        // the aria-label should always be `ariaFilterActive`.
+        const translate = this.getLocaleTextFunc();
+        _setAriaLabel(eFilterIcon, translate('ariaFilterActive', 'Filter Active'));
+        _setAriaRole(eFilterIcon, 'img');
     }
 
     public setColumn(column: AgColumn): void {
@@ -80,7 +86,7 @@ export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
         this.addManagedEventListeners({ filterOpened: this.onFilterOpened.bind(this) });
         this.addInIcon('filterActive', eFilterIcon, column);
 
-        _setDisplayed(eFilterIcon, this.isFilterActive(), { skipAriaHidden: true });
+        _setDisplayed(eFilterIcon, this.isFilterActive());
         _setDisplayed(eExpandChecked, false);
 
         if (hideHeader) {
@@ -138,12 +144,16 @@ export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
     }
 
     private onFilterChanged(): void {
-        _setDisplayed(this.eFilterIcon, this.isFilterActive(), { skipAriaHidden: true });
+        _setDisplayed(this.eFilterIcon, this.isFilterActive());
         this.dispatchLocalEvent({ type: 'filterChanged' });
     }
 
     public toggleExpanded(): void {
-        this.expanded ? this.collapse() : this.expand();
+        if (this.expanded) {
+            this.collapse();
+        } else {
+            this.expand();
+        }
     }
 
     public expand(): void {

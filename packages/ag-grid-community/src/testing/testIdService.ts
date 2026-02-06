@@ -6,7 +6,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanName } from '../context/context';
 import type { ITestIdService } from '../interfaces/iTestIdService';
 import { agTestIdFor } from './testIdUtils';
-import type { FilterSpec } from './testIdUtils';
+import type { ColumnFilterSpec, FilterSpec } from './testIdUtils';
 
 let TEST_ID_ATTR = 'data-testid';
 
@@ -407,14 +407,31 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
             setTestId(fieldDisplay, agTestIdFor.filterInstancePickerDisplay(spec));
         });
 
-        const numberInput = filterRoot.querySelector('.ag-filter-body input[type="number"]');
-        setTestId(numberInput, agTestIdFor.numberFilterInstanceInput(spec));
+        const filterClass = spec.source === 'floating-filter' ? '.ag-floating-filter-body' : '.ag-filter-body';
 
-        const textInput = filterRoot.querySelector('.ag-filter-body input[type="text"]');
-        setTestId(textInput, agTestIdFor.textFilterInstanceInput(spec));
+        filterRoot
+            .querySelectorAll(`${filterClass} .ag-input-field:not(.ag-hidden) input[type="number"]`)
+            .forEach((numberInput, i, array) => {
+                const setIndex = array.length > 1;
+                const filterSpec = setIndex ? { ...(spec as ColumnFilterSpec), index: i } : spec;
+                setTestId(numberInput, agTestIdFor.numberFilterInstanceInput(filterSpec));
+            });
 
-        const dateInput = filterRoot.querySelector('.ag-filter-body input[type="date"]');
-        setTestId(dateInput, agTestIdFor.dateFilterInstanceInput(spec));
+        filterRoot
+            .querySelectorAll(`${filterClass} .ag-input-field:not(.ag-hidden) input[type="text"]`)
+            .forEach((textInput, i, array) => {
+                const setIndex = array.length > 1;
+                const filterSpec = setIndex ? { ...(spec as ColumnFilterSpec), index: i } : spec;
+                setTestId(textInput, agTestIdFor.textFilterInstanceInput(filterSpec));
+            });
+
+        filterRoot
+            .querySelectorAll(`${filterClass} .ag-input-field:not(.ag-hidden) input[type="date"]`)
+            .forEach((dateInput, i, array) => {
+                const setIndex = array.length > 1;
+                const filterSpec = setIndex ? { ...(spec as ColumnFilterSpec), index: i } : spec;
+                setTestId(dateInput, agTestIdFor.dateFilterInstanceInput(filterSpec));
+            });
 
         const setMiniFilterInput = filterRoot.querySelector('.ag-mini-filter input[type="text"]');
         setTestId(setMiniFilterInput, agTestIdFor.setFilterInstanceMiniFilterInput(spec));

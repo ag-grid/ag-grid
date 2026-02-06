@@ -2,6 +2,7 @@ import type { _RowSelectionGridApi } from '../api/gridApi';
 import { SelectionColService } from '../columns/selectionColService';
 import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
 import { VERSION } from '../version';
+import { rowSelectionCSS } from './rowSelection.css-GENERATED';
 import {
     deselectAll,
     deselectAllFiltered,
@@ -22,6 +23,7 @@ export const SharedRowSelectionModule: _ModuleWithApi<_RowSelectionGridApi> = {
     moduleName: 'SharedRowSelection',
     version: VERSION,
     beans: [SelectionColService],
+    css: [rowSelectionCSS],
     apiFunctions: {
         setNodesSelected,
         selectAll,

@@ -17,6 +17,7 @@ import {
     _columnsMatch,
     _convertColumnEventSourceType,
     _destroyColumnTree,
+    _getColumnStateFromColDef,
     _isColumnsSortingCoupledToGroup,
     _isGroupMultiAutoColumn,
     _isGroupUseEntireRow,
@@ -93,12 +94,12 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
         if (autoColsSame && treeDepthSame) {
             // Some things like header could have changed, ensure this is captured by updating the existing cols.
             const colsMap = new Map(list.map((col) => [col.getId(), col]));
-            this.columns?.list.forEach((col) => {
+            for (const col of this.columns?.list ?? []) {
                 const newDef = colsMap.get(col.getId());
                 if (newDef) {
                     col.setColDef(newDef.getColDef(), null, source);
                 }
-            });
+            }
             return;
         }
 
@@ -139,9 +140,10 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
 
     private generateAutoCols(rowGroupCols: AgColumn[] = []): AgColumn[] {
         const autoCols: AgColumn[] = [];
+        const { gos } = this;
 
-        const doingTreeData = this.gos.get('treeData');
-        let doingMultiAutoColumn = _isGroupMultiAutoColumn(this.gos);
+        const doingTreeData = gos.get('treeData');
+        let doingMultiAutoColumn = _isGroupMultiAutoColumn(gos);
 
         if (doingTreeData && doingMultiAutoColumn) {
             _warn(182);
@@ -203,7 +205,8 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
         const colDef = this.createAutoColDef(colId, underlyingColumn ?? undefined, index);
 
         colToUpdate.setColDef(colDef, null, source);
-        _applyColumnState(beans, { state: [{ colId, ...colDef }] }, source);
+
+        _applyColumnState(beans, { state: [_getColumnStateFromColDef(colDef, colId)] }, source);
     }
 
     private createAutoColDef(colId: string, underlyingColumn?: AgColumn, index?: number): ColDef {

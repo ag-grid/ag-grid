@@ -2,10 +2,8 @@ import React, { StrictMode, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef, RowSelectionOptions } from 'ag-grid-community';
-import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
-
-ModuleRegistry.registerModules([AllCommunityModule]);
+import { AllCommunityModule } from 'ag-grid-community';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 const rowSelection: RowSelectionOptions = {
     mode: 'multiRow',
@@ -96,17 +94,19 @@ const GridExample = () => {
     }, []);
 
     return (
-        <div style={{ height: 500 }}>
-            <AgGridReact
-                rowData={rowData}
-                columnDefs={columnDefs}
-                defaultColDef={defaultColDef}
-                rowSelection={rowSelection}
-                pagination={true}
-                paginationPageSize={10}
-                paginationPageSizeSelector={[10, 25, 50]}
-            />
-        </div>
+        <AgGridProvider modules={[AllCommunityModule]}>
+            <div style={{ height: 500 }}>
+                <AgGridReact
+                    rowData={rowData}
+                    columnDefs={columnDefs}
+                    defaultColDef={defaultColDef}
+                    rowSelection={rowSelection}
+                    pagination={true}
+                    paginationPageSize={10}
+                    paginationPageSizeSelector={[10, 25, 50]}
+                />
+            </div>
+        </AgGridProvider>
     );
 };
 

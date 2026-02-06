@@ -1,11 +1,4 @@
-import {
-    _getInnerWidth,
-    _getScrollLeft,
-    _isHorizontalScrollShowing,
-    _isInDOM,
-    _observeResize,
-    _setScrollLeft,
-} from '../../agStack/utils/dom';
+import { _getInnerWidth, _getScrollLeft, _isInDOM, _observeResize, _setScrollLeft } from '../../agStack/utils/dom';
 import { BeanStub } from '../../context/beanStub';
 import type { StickyTopOffsetChangedEvent } from '../../events';
 import { _isDomLayout } from '../../gridOptionsUtils';
@@ -15,6 +8,7 @@ import type { RowRenderer } from '../../rendering/rowRenderer';
 import type { SpannedRowRenderer } from '../../rendering/spanning/spannedRowRenderer';
 import { CenterWidthFeature } from '../centerWidthFeature';
 import type { ScrollPartner } from '../gridBodyScrollFeature';
+import { _shouldShowHorizontalScroll } from '../scrollbarVisibilityHelper';
 import { ViewportSizeFeature } from '../viewportSizeFeature';
 import { RowContainerEventsFeature } from './rowContainerEventsFeature';
 import { SetHeightFeature } from './setHeightFeature';
@@ -293,7 +287,9 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
 
     private registerWithCtrlsService(): void {
         // we don't register full width containers
-        if (this.options.fullWidth) return;
+        if (this.options.fullWidth) {
+            return;
+        }
         this.beans.ctrlsSvc.register(this.name as any, this);
     }
 
@@ -373,7 +369,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
         if (spannedRowRenderer && this.options.getSpannedRowCtrls && gos.get('enableCellSpan')) {
             this.addManagedListeners(spannedRowRenderer, {
                 spannedRowsUpdated: () => {
-                    const spannedCtrls = this.options.getSpannedRowCtrls!(spannedRowRenderer!);
+                    const spannedCtrls = this.options.getSpannedRowCtrls!(spannedRowRenderer);
                     if (!spannedCtrls) {
                         return;
                     }
@@ -413,7 +409,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
             return;
         }
         const preventScroll = (e: TouchEvent) => {
-            if (dragSvc!.dragging) {
+            if (dragSvc.dragging) {
                 if (e.cancelable) {
                     e.preventDefault();
                 }
@@ -465,8 +461,17 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     }
 
     public isHorizontalScrollShowing(): boolean {
-        const isAlwaysShowHorizontalScroll = this.gos.get('alwaysShowHorizontalScroll');
-        return isAlwaysShowHorizontalScroll || _isHorizontalScrollShowing(this.eViewport);
+        const { beans, gos, eViewport } = this;
+        const isAlwaysShowHorizontalScroll = gos.get('alwaysShowHorizontalScroll');
+        const { ctrlsSvc } = beans;
+        const verticalScrollElement = ctrlsSvc.getGridBodyCtrl()?.eBodyViewport;
+        const hScrollEl = ctrlsSvc.get('fakeHScrollComp')?.getGui();
+        const vScrollEl = ctrlsSvc.get('fakeVScrollComp')?.getGui();
+
+        return (
+            isAlwaysShowHorizontalScroll ||
+            _shouldShowHorizontalScroll(eViewport, verticalScrollElement, undefined, hScrollEl, vScrollEl)
+        );
     }
 
     public setHorizontalScroll(offset: number): void {

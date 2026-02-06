@@ -270,7 +270,9 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
             }
         };
 
-        this.activeDisplayedItemsFlat.forEach((item) => recursiveForEachItem(item, true));
+        for (const item of this.activeDisplayedItemsFlat) {
+            recursiveForEachItem(item, true);
+        }
     }
 
     public someDisplayedKey(func: (key: string | null) => boolean): boolean {

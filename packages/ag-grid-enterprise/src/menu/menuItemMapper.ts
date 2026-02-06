@@ -8,10 +8,19 @@ import type {
     MenuItemDef,
     NamedBean,
     RowNode,
+    SortDef,
 } from 'ag-grid-community';
-import { BeanStub, _createIconNoSpan, _exists, _getRowNode, _resetColumnState, _warn } from 'ag-grid-community';
+import {
+    BeanStub,
+    _createIconNoSpan,
+    _exists,
+    _getRowNode,
+    _normalizeSortType,
+    _resetColumnState,
+    _warn,
+} from 'ag-grid-community';
 
-import { isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
+import { getGroupingLocaleText, isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import type { ChartMenuItemMapper } from './chartMenuItemMapper';
 import type { ColumnChooserFactory } from './columnChooserFactory';
 import { validateMenuItem } from './menuItemValidations';
@@ -32,6 +41,29 @@ export function _removeRepeatsFromArray<T>(array: T[], object: T) {
         }
     }
 }
+
+const SORT_MENU_ITEM_TO_MENU_ACTION_PARAMS: Record<
+    string,
+    { fallback: string; getSortDef: (col?: AgColumn) => SortDef }
+> = {
+    sortAscending: { fallback: 'Sort Ascending', getSortDef: () => ({ type: 'default', direction: 'asc' }) },
+    sortDescending: {
+        fallback: 'Sort Descending',
+        getSortDef: () => ({ type: 'default', direction: 'desc' }),
+    },
+    sortAbsoluteAscending: {
+        fallback: 'Sort Absolute Ascending',
+        getSortDef: () => ({ type: 'absolute', direction: 'asc' }),
+    },
+    sortAbsoluteDescending: {
+        fallback: 'Sort Absolute Descending',
+        getSortDef: () => ({ type: 'absolute', direction: 'desc' }),
+    },
+    sortUnSort: {
+        fallback: 'Clear Sort',
+        getSortDef: (column: AgColumn) => ({ type: _normalizeSortType(column.getSortDef()?.type), direction: null }),
+    },
+};
 
 export class MenuItemMapper extends BeanStub implements NamedBean {
     beanName = 'menuItemMapper' as const;
@@ -169,7 +201,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         return {
                             name: localeTextFunc('valueAggregation', 'Value Aggregation'),
                             icon: _createIconNoSpan('menuValue', beans, null),
-                            subMenu: createAggregationSubMenu(column!, aggFuncSvc, valueColsSvc, localeTextFunc),
+                            subMenu: createAggregationSubMenu(column, aggFuncSvc, valueColsSvc, localeTextFunc),
                             disabled: gos.get('functionsReadOnly'),
                         };
                     } else {
@@ -197,10 +229,11 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                 case 'rowGroup':
                     return rowGroupColsSvc
                         ? {
-                              name:
-                                  localeTextFunc('groupBy', 'Group by') +
-                                  ' ' +
-                                  colNames.getDisplayNameForColumn(column, 'header'),
+                              name: getGroupingLocaleText(
+                                  localeTextFunc,
+                                  'groupBy',
+                                  colNames.getDisplayNameForColumn(column, 'header')!
+                              ),
                               disabled:
                                   gos.get('functionsReadOnly') ||
                                   column?.isRowGroupActive() ||
@@ -232,17 +265,18 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                                 underlyingColumn != null
                                     ? colNames.getDisplayNameForColumn(underlyingColumn, 'header')
                                     : showRowGroup;
-                            name = localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + ungroupByName;
+                            name = getGroupingLocaleText(localeTextFunc, 'ungroupBy', ungroupByName!);
                             disabled = gos.get('functionsReadOnly') || isRowGroupColLocked(underlyingColumn, beans);
                             action = () => {
                                 rowGroupColsSvc.removeColumns([showRowGroup], source);
                             };
                         } else {
                             // Handle primary column
-                            name =
-                                localeTextFunc('ungroupBy', 'Un-Group by') +
-                                ' ' +
-                                colNames.getDisplayNameForColumn(column, 'header');
+                            name = getGroupingLocaleText(
+                                localeTextFunc,
+                                'ungroupBy',
+                                colNames.getDisplayNameForColumn(column, 'header')!
+                            );
                             disabled =
                                 gos.get('functionsReadOnly') ||
                                 !column?.isRowGroupActive() ||
@@ -409,30 +443,24 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                           }
                         : null;
                 }
-                case 'sortAscending':
-                    return sortSvc
-                        ? {
-                              name: localeTextFunc('sortAscending', 'Sort Ascending'),
-                              icon: _createIconNoSpan('sortAscending', beans, null),
-                              action: () => sortSvc.setSortForColumn(column!, 'asc', false, source),
-                          }
-                        : null;
-                case 'sortDescending':
-                    return sortSvc
-                        ? {
-                              name: localeTextFunc('sortDescending', 'Sort Descending'),
-                              icon: _createIconNoSpan('sortDescending', beans, null),
-                              action: () => sortSvc.setSortForColumn(column!, 'desc', false, source),
-                          }
-                        : null;
                 case 'sortUnSort':
-                    return sortSvc
-                        ? {
-                              name: localeTextFunc('sortUnSort', 'Clear Sort'),
-                              icon: _createIconNoSpan('sortUnSort', beans, null),
-                              action: () => sortSvc.setSortForColumn(column!, null, false, source),
-                          }
-                        : null;
+                case 'sortAscending':
+                case 'sortDescending':
+                case 'sortAbsoluteAscending':
+                case 'sortAbsoluteDescending': {
+                    if (!sortSvc || !column) {
+                        return null;
+                    }
+
+                    const { fallback, getSortDef } = SORT_MENU_ITEM_TO_MENU_ACTION_PARAMS[key];
+
+                    return {
+                        name: localeTextFunc(key, fallback),
+                        icon: _createIconNoSpan(key, beans, null),
+                        action: () => sortSvc.setSortForColumn(column, getSortDef(column), false, source),
+                    };
+                }
+
                 default: {
                     _warn(176, { key });
                     return null;
@@ -440,18 +468,18 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             }
         };
 
-        originalList.forEach((menuItemOrString) => {
+        for (const menuItemOrString of originalList) {
             let result: MenuItemDef | 'separator' | null;
 
             if (typeof menuItemOrString === 'string') {
-                result = getStockMenuItem(menuItemOrString as DefaultMenuItem, column, sourceElement, source);
+                result = getStockMenuItem(menuItemOrString, column, sourceElement, source);
             } else {
                 // Spread to prevent leaking mapped subMenus back into the original menuItem
                 result = { ...menuItemOrString };
             }
             // if no mapping, can happen when module is not loaded but user tries to use module anyway
             if (!result) {
-                return;
+                continue;
             }
 
             const resultDef = result as MenuItemDef;
@@ -470,7 +498,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             if (result != null) {
                 resultList.push(result);
             }
-        });
+        }
 
         // items could have been removed due to missing modules
         _removeRepeatsFromArray(resultList, MENU_ITEM_SEPARATOR);
@@ -506,16 +534,16 @@ function createAggregationSubMenu(
             checked: !columnIsAlreadyAggValue,
         });
 
-        funcNames.forEach((funcName) => {
+        for (const funcName of funcNames) {
             result.push({
                 name: localeTextFunc(funcName, aggFuncSvc.getDefaultFuncLabel(funcName)),
                 action: () => {
                     valueColsSvc.setColumnAggFunc!(columnToUse, funcName, 'contextMenu');
                     valueColsSvc.addColumns([columnToUse!], 'contextMenu');
                 },
-                checked: columnIsAlreadyAggValue && columnToUse!.getAggFunc() === funcName,
+                checked: columnIsAlreadyAggValue && columnToUse.getAggFunc() === funcName,
             });
-        });
+        }
     }
 
     return result;

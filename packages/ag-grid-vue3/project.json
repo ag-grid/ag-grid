@@ -42,7 +42,12 @@
       },
       "configurations": {
         "production": {},
-        "archive": {}
+        "archive": {},
+        "watch": {
+          "options": {
+            "script": "build:watch"
+          }
+        }
       }
     },
     "pack": {

@@ -4,8 +4,7 @@ import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import { _isBrowserSafari } from '../utils/browser';
-import { _parseDateTimeFromString } from '../utils/date';
-import { _serialiseDate } from '../utils/date';
+import { _parseDateTimeFromString, _serialiseDate } from '../utils/date';
 import { _getActiveDomElement } from '../utils/document';
 import { _addOrRemoveAttribute } from '../utils/dom';
 import type { AgInputTextFieldParams } from './agInputTextField';
@@ -109,7 +108,9 @@ export class AgInputDateField<
         this.includeTime = includeTime;
 
         super.setInputType(includeTime ? 'datetime-local' : 'date');
-        if (includeTime) this.setStep(1);
+        if (includeTime) {
+            this.setStep(1);
+        }
 
         return this;
     }

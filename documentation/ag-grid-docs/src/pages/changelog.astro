@@ -2,7 +2,8 @@
 import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import { getDocsPages } from '../components/docs/utils/pageData';
-import { Changelog } from '@components/changelog/Changelog';
+import { Changelog } from '@ag-website-shared/components/changelog/Changelog';
+import styles from '@ag-website-shared/components/changelog/changelog.module.scss';
 import { DocsNavFromLocalStorage } from '@ag-website-shared/components/docs-navigation/DocsNavFromLocalStorage';
 
 export async function getStaticPaths() {
@@ -24,6 +25,10 @@ const { data: docsNavData } = (await getEntry('docsNav', 'nav')) as CollectionEn
     <div class:list={['contentViewport layout-grid']}>
         <DocsNavFromLocalStorage client:load menuData={docsNavData} pageName={pageName} />
 
-        <Changelog client:load />
+        <div class:list={['page-margin', styles.container]}>
+            <h1>AG Grid Changelog</h1>
+
+            <Changelog client:load library="grid" />
+        </div>
     </div>
 </Layout>

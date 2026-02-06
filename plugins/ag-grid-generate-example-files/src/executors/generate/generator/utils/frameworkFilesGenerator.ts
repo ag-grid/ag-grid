@@ -11,8 +11,7 @@ import {
     readAsJsFile,
     removeModuleRegistration,
 } from '../transformation-scripts/parser-utils';
-import type { InternalFramework, ParsedBindings } from '../types';
-import type { ExampleConfig, FileContents } from '../types';
+import type { ExampleConfig, FileContents, InternalFramework, ParsedBindings } from '../types';
 import { deepCloneObject } from './deepCloneObject';
 import { formatFile } from './fileFormatUtils';
 import { convertTsxToJsx, getBoilerPlateFiles, getEntryFileName, getMainFileName } from './fileUtils';
@@ -53,6 +52,10 @@ type ConfigGenerator = ({
     exampleConfig: ExampleConfig;
 }) => Promise<FrameworkFiles>;
 
+// The example generator does not currently extract grid imports in the component files
+// This is a shortcut to be able to support adding support for agGrid.isCombinedFilterModel in a custom component file
+const AG_GRID_EXPORTED_FUNCS_USED_IN_EXAMPLES_COMPS = ['isCombinedFilterModel'];
+
 export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGenerator>> = {
     vanilla: async ({
         bindings,
@@ -71,8 +74,19 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             .filter((i) => i.module.includes('ag-grid-') && !i.module.includes('@ag-grid-community/locale'))
             .flatMap((i) => i.imports);
 
-        const importNamePattern = '\\b(' + symbolsImportedGridPackage.map(regExpEscape).join('|') + ')\\b';
+        const importNamePattern = '\\b(' + [...symbolsImportedGridPackage].map(regExpEscape).join('|') + ')\\b';
         mainJs = mainJs.replace(new RegExp(importNamePattern, 'g'), 'agGrid.$&');
+
+        if (componentScriptFiles) {
+            const compImportNamePattern =
+                '\\b(' + AG_GRID_EXPORTED_FUNCS_USED_IN_EXAMPLES_COMPS.map(regExpEscape).join('|') + ')\\b';
+            for (const key in componentScriptFiles) {
+                const compFile = componentScriptFiles[key];
+                if (compFile) {
+                    componentScriptFiles[key] = compFile.replace(new RegExp(compImportNamePattern, 'g'), 'agGrid.$&');
+                }
+            }
+        }
 
         // Javascript is packages only
         mainJs = removeModuleRegistration(mainJs);

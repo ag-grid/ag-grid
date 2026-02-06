@@ -41,9 +41,9 @@ By default the Multi Filter will show a [Text Filter](./filter-text/) and [Set F
 
 The example above shows the Multi Filter in action. Note the following:
 
-* The **Athlete** column has a Multi Filter with default behaviour.
-* The **Country** column has a Multi Filter with the child filters configured explicitly to match the default behaviour.
-* The **Year** and **Age** columns have Multi Filters with the child filters configured explicitly to use the [Number Filter](./filter-number/) with the Set Filter.
+-   The **Athlete** column has a Multi Filter with default behaviour.
+-   The **Country** column has a Multi Filter with the child filters configured explicitly to match the default behaviour.
+-   The **Year** and **Age** columns have Multi Filters with the child filters configured explicitly to use the [Number Filter](./filter-number/) with the Set Filter.
 
 ## Passing Parameters to Child Filters
 
@@ -75,9 +75,10 @@ const gridOptions = {
 ```
 
 The example below demonstrates passing parameters to child filters:
-* The Text Filter in the **Athlete** column has a different default option (`'startsWith'`).
-* The [Date Filter](./filter-date/) in the **Date** column has a custom comparator to compare dates correctly.
-* The Set Filter in the **Date** column has a custom comparator, so the values are displayed in ascending order.
+
+-   The Text Filter in the **Athlete** column has a different default option (`'startsWith'`).
+-   The [Date Filter](./filter-date/) in the **Date** column has a custom comparator to compare dates correctly.
+-   The Set Filter in the **Date** column has a custom comparator, so the values are displayed in ascending order.
 
 {% gridExampleRunner title="Multi Filter Child Params" name="multi-filter-child-params"  exampleHeight=602 /%}
 
@@ -123,11 +124,11 @@ You can also provide a title that will be used in the menu item or accordion tit
 
 The following example demonstrates the different display styles.
 
-* The **Athlete** column demonstrates having the first filter inside a sub-menu.
-* The sub-menu for the **Athlete** filter is shown as an accordion inside the Tool Panel.
-* The **Country** column demonstrates having both filters as accordions.
-* A custom title is used for the first filter in the **Country** column.
-* The **Sport** column shows the default behaviour, where all filters are inline.
+-   The **Athlete** column demonstrates having the first filter inside a sub-menu.
+-   The sub-menu for the **Athlete** filter is shown as an accordion inside the Tool Panel.
+-   The **Country** column demonstrates having both filters as accordions.
+-   A custom title is used for the first filter in the **Country** column.
+-   The **Sport** column shows the default behaviour, where all filters are inline.
 
 {% gridExampleRunner title="Display Style" name="display-style"  exampleHeight=629 /%}
 
@@ -179,11 +180,11 @@ The example below allows you to see the Multi Filter Model in use. You can print
 
 ## Accessing Child Filters
 
-The Multi Filter acts as a wrapper around a list of child filters inside it. The order of the filters is the same order as they are specified in the `filters` array in the `filterParams`. If you want to interact with the individual child filters, you can retrieve a particular child filter instance from the Multi Filter by calling `getChildFilterInstance(index)`,  where `index` is the same as the index in the `filters` array. You can then call any API methods that are available on that particular child filter instance.
+The Multi Filter acts as a wrapper around a list of child filters inside it. The order of the filters is the same order as they are specified in the `filters` array in the `filterParams`. If you want to interact with the individual child filters, you can retrieve a particular child filter instance from the Multi Filter by calling `getChildFilterInstance(index)`, where `index` is the same as the index in the `filters` array. You can then call any API methods that are available on that particular child filter instance.
 
 The example below shows how you can access child filter instances and call methods on them:
 
-* Clicking the **Print Set Filter search text** button will access the Set Filter inside the Multi Filter and print the current search text to the console.
+-   Clicking the **Print Set Filter search text** button will access the Set Filter inside the Multi Filter and print the current search text to the console.
 
 {% gridExampleRunner title="Accessing Child Filters" name="accessing-child-filters"  exampleHeight=624 /%}
 

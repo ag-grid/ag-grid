@@ -34,10 +34,10 @@ export const isTestPage = (page: string) => {
 const isRedirectPage = (page: string) => {
     return (
         page.endsWith('/documentation/') ||
-        page.endsWith('/react-data-grid/') ||
-        page.endsWith('/angular-data-grid/') ||
-        page.endsWith('/javascript-data-grid/') ||
-        page.endsWith('/vue-data-grid/') ||
+        (!page.endsWith('/landing-pages/react-data-grid/') && page.endsWith('/react-data-grid/')) ||
+        (!page.endsWith('/landing-pages/angular-data-grid/') && page.endsWith('/angular-data-grid/')) ||
+        (!page.endsWith('/landing-pages/javascript-data-grid/') && page.endsWith('/javascript-data-grid/')) ||
+        (!page.endsWith('/landing-pages/vue-data-grid/') && page.endsWith('/vue-data-grid/')) ||
         page.includes(`/${FRAMEWORK_REDIRECT_PATH}/`)
     );
 };
@@ -46,7 +46,12 @@ const isRedirectPage = (page: string) => {
  * Exclude specific pages
  */
 const isNonPublicContent = (page: string) => {
-    return page.endsWith('/style-guide/');
+    return (
+        page.endsWith('/style-guide/') ||
+        // Contact form result pages
+        page.endsWith('/contact/failure/') ||
+        page.endsWith('/contact/success/')
+    );
 };
 
 const filterIgnoredPages = (page: string) => {
@@ -60,8 +65,9 @@ const filterIgnoredPages = (page: string) => {
     );
 };
 
-export function getSitemapConfig() {
+export function getSitemapConfig({ chartsSitemap }: { chartsSitemap?: string }) {
     return {
+        customSitemaps: chartsSitemap ? [chartsSitemap] : [],
         filter: filterIgnoredPages,
         changefreq: 'daily',
         priority: 0.7,

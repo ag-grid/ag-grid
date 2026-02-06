@@ -4,19 +4,18 @@ import { createRoot } from 'react-dom/client';
 import type { ColDef, IStatusPanel, RowSelectionOptions, StatusPanelDef } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
-    ModuleRegistry,
     RowSelectionModule,
     TextEditorModule,
     TextFilterModule,
     ValidationModule,
 } from 'ag-grid-community';
 import { CellSelectionModule, StatusBarModule } from 'ag-grid-enterprise';
-import { AgGridReact, getInstance } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact, getInstance } from 'ag-grid-react';
 
 import ClickableStatusBarComponent from './clickableStatusBarComponent';
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     TextEditorModule,
     TextFilterModule,
     RowSelectionModule,
@@ -24,7 +23,7 @@ ModuleRegistry.registerModules([
     StatusBarModule,
     CellSelectionModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 export interface IClickableStatusBar extends IStatusPanel {
     setVisible(visible: boolean): void;
@@ -100,22 +99,24 @@ const GridExample = () => {
     }, []);
 
     return (
-        <div style={containerStyle}>
-            <button onClick={toggleStatusBarComp} style={{ marginBottom: '10px' }}>
-                Toggle Status Bar Component
-            </button>
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <button onClick={toggleStatusBarComp} style={{ marginBottom: '10px' }}>
+                    Toggle Status Bar Component
+                </button>
 
-            <div style={gridStyle}>
-                <AgGridReact
-                    ref={gridRef}
-                    rowData={rowData}
-                    columnDefs={columnDefs}
-                    defaultColDef={defaultColDef}
-                    rowSelection={rowSelection}
-                    statusBar={statusBar}
-                />
+                <div style={gridStyle}>
+                    <AgGridReact
+                        ref={gridRef}
+                        rowData={rowData}
+                        columnDefs={columnDefs}
+                        defaultColDef={defaultColDef}
+                        rowSelection={rowSelection}
+                        statusBar={statusBar}
+                    />
+                </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

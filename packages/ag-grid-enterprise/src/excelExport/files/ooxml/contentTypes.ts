@@ -12,7 +12,7 @@ type ImageExtension = 'jpeg' | 'png' | 'gif';
 export const _normaliseImageExtension = (ext: 'jpg' | 'png' | 'gif'): ImageExtension => (ext === 'jpg' ? 'jpeg' : ext);
 
 const contentTypesFactory: ExcelOOXMLTemplate = {
-    getTemplate(sheetLen: number) {
+    getTemplate({ sheetLen, hasCustomProperties }: { sheetLen: number; hasCustomProperties?: boolean }) {
         const worksheets = new Array(sheetLen).fill(undefined).map((v, i) => ({
             name: 'Override',
             ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml',
@@ -42,6 +42,16 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
                 PartName: `/xl/tables/${name}.xml`,
             });
         });
+
+        const customPropertiesDocs = hasCustomProperties
+            ? [
+                  {
+                      name: 'Override',
+                      ContentType: 'application/vnd.openxmlformats-officedocument.custom-properties+xml',
+                      PartName: '/docProps/custom.xml',
+                  },
+              ]
+            : [];
 
         const imageTypes = Object.keys(imageTypesObject).map((ext) => ({
             name: 'Default',
@@ -97,6 +107,7 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
                 ContentType: 'application/vnd.openxmlformats-package.core-properties+xml',
                 PartName: '/docProps/core.xml',
             },
+            ...customPropertiesDocs,
         ].map((contentType) => contentTypeFactory.getTemplate(contentType));
 
         return {

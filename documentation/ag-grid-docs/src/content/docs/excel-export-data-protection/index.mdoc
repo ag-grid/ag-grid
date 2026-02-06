@@ -1,0 +1,107 @@
+---
+title: "Excel Export - Data Protection"
+enterprise: true
+---
+
+Excel Export allows you to protect the exported worksheet so that users can only edit specific cells.
+
+## Data Protection
+
+Excel has two layers of protection:
+
+1. **Cell Protection** controls whether a cell is _locked_ and whether a formula is _hidden_ (`ExcelStyle.protection`).
+1. **Worksheet Protection** enables enforcement of the locked/unlocked cell states (`ExcelExportParams.protectSheet`).
+
+{% note %}
+Cell locking only takes effect when the worksheet is protected. If you lock cells but do not enable worksheet protection, all cells will remain editable in Excel.
+{% /note %}
+
+Enable worksheet protection by setting `protectSheet` in the [Excel Export Params](./excel-export-api/#excelexportparams) (or in `defaultExcelExportParams`):
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    defaultExcelExportParams: {
+        protectSheet: true
+    }
+}
+```
+
+{% gridExampleRunner title="Excel Export - Data Protection (Default)" name="excel-export-data-protection-default" /%}
+
+## Worksheet Custom Protection
+
+To allow specific actions, or to require a password to unprotect the sheet, provide an `ExcelSheetProtection` config object:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    defaultExcelExportParams: {
+        protectSheet: {
+            password: 'secret',
+            autoFilter: true,
+            formatCells: true
+        }
+    }
+}
+```
+
+{% gridExampleRunner title="Excel Export - Data Protection (Custom Sheet Protection)" name="excel-export-data-protection-custom" /%}
+
+{% note %}
+Excel uses an obfuscation algorithm for worksheet protection passwords. It should not be treated as strong security.
+{% /note %}
+
+## Unlocking Cells
+
+When worksheet protection is enabled, all exported cells are locked by default. To unlock specific cells or columns, configure an Excel style with `protection.protected = false` and apply that style via `cellClass` / `cellClassRules`:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'athlete', cellClass: 'unlocked' },
+        { field: 'country', cellClass: 'unlocked' }
+    ],
+    excelStyles: [
+        {
+            id: 'unlocked',
+            protection: { protected: false, hideFormula: false }
+        }
+    ],
+    defaultExcelExportParams: {
+        protectSheet: true
+    }
+}
+```
+
+{% gridExampleRunner title="Excel Export - Data Protection (Unlocking Cells)" name="excel-export-unlocking-cells" /%}
+
+## Interfaces
+
+### ExcelExportParams
+
+```ts
+interface ExcelExportParams {
+    // ...
+    protectSheet?: boolean | ExcelSheetProtection;
+}
+```
+
+### ExcelSheetProtection
+
+{% interfaceDocumentation interfaceName="ExcelSheetProtection" /%}
+
+### ExcelStyle
+
+```ts
+interface ExcelStyle {
+    // ...
+    protection?: ExcelProtection;
+}
+```
+
+### ExcelProtection
+
+{% interfaceDocumentation interfaceName="ExcelProtection" /%}
+
+## Next Up
+
+Continue to the next section: [API Reference](./excel-export-api/).

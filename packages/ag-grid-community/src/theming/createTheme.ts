@@ -9,6 +9,7 @@ import { batchEditStyleBase } from './parts/batch-edit/batch-edit-styles';
 import { buttonStyleQuartz } from './parts/button-style/button-styles';
 import type { ButtonStyleParams } from './parts/button-style/button-styles';
 import { columnDropStyleBordered } from './parts/column-drop-style/column-drop-styles';
+import { formulaStyleBase } from './parts/formula-style/formula-styles';
 
 export const gridThemeLogger: ThemeLogger = {
     warn: (...args) => {
@@ -35,4 +36,5 @@ export const createTheme = (): Theme<CoreParams & ButtonStyleParams & BatchEditS
         .withParams(coreDefaults)
         .withPart(buttonStyleQuartz)
         .withPart(columnDropStyleBordered)
-        .withPart(batchEditStyleBase);
+        .withPart(batchEditStyleBase)
+        .withPart(formulaStyleBase);

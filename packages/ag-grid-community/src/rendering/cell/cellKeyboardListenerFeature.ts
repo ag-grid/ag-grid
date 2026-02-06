@@ -178,21 +178,19 @@ export class CellKeyboardListenerFeature extends BeanStub {
             } else {
                 startEditingAction(cellCtrl);
             }
+        } else if (beans.gos.get('enterNavigatesVertically')) {
+            const key = event.shiftKey ? KeyCode.UP : KeyCode.DOWN;
+            navigation?.navigateToNextCell(null, key, cellCtrl.cellPosition, false);
         } else {
-            if (beans.gos.get('enterNavigatesVertically')) {
-                const key = event.shiftKey ? KeyCode.UP : KeyCode.DOWN;
-                navigation?.navigateToNextCell(null, key, cellCtrl.cellPosition, false);
-            } else {
-                if (editSvc?.hasValidationErrors()) {
-                    return;
-                }
-
-                if (editSvc?.hasValidationErrors(cellCtrl)) {
-                    editSvc.revertSingleCellEdit(cellCtrl, true);
-                }
-
-                startEditingAction(cellCtrl);
+            if (editSvc?.hasValidationErrors()) {
+                return;
             }
+
+            if (editSvc?.hasValidationErrors(cellCtrl)) {
+                editSvc.revertSingleCellEdit(cellCtrl, true);
+            }
+
+            startEditingAction(cellCtrl);
         }
     }
     isCtrlEnter(e: KeyboardEvent) {
@@ -231,9 +229,15 @@ export class CellKeyboardListenerFeature extends BeanStub {
             editSvc.revertSingleCellEdit(cellCtrl);
         }
 
-        editSvc?.stopEditing(cellCtrl, {
-            event,
-            cancel: true,
+        // checkNavWithValidation stops and restarts the edit
+        // because React calls `setEditDetails` asynchronously
+        // by the time `stopEditing` is called, the new details
+        // have not been processed yet, so we call it async.
+        setTimeout(() => {
+            editSvc?.stopEditing(cellCtrl, {
+                event,
+                cancel: true,
+            });
         });
     }
 
@@ -264,7 +268,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
                 return;
             }
 
-            editSvc?.startEditing(cellCtrl, { startedEdit: true, event, source: 'api' });
+            editSvc?.startEditing(cellCtrl, { startedEdit: true, event, source: 'api', editable: true });
             // if we don't prevent default, then the event also gets applied to the text field
             // (at least when doing the default editor), but we need to allow the editor to decide
             // what it wants to do. we only do this IF editing was started - otherwise it messes

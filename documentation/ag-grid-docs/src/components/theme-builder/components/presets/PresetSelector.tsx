@@ -26,7 +26,7 @@ export const PresetSelector = memo(() => {
         <Scroller ref={scrollerRef}>
             <Horizontal>
                 {allPresets.map((preset, i) => (
-                    <SelectButton key={i} presetClass={`preset-${i}`} preset={preset} scrollerRef={scrollerRef} />
+                    <SelectButton key={i} preset={preset} scrollerRef={scrollerRef} />
                 ))}
             </Horizontal>
         </Scroller>
@@ -34,12 +34,11 @@ export const PresetSelector = memo(() => {
 });
 
 type SelectButtonProps = {
-    presetClass: string;
     preset: Preset;
     scrollerRef: RefObject<HTMLDivElement>;
 };
 
-const SelectButton = ({ preset, scrollerRef, presetClass }: SelectButtonProps) => {
+const SelectButton = ({ preset, scrollerRef }: SelectButtonProps) => {
     const [showDialog, setShowDialog] = useState(false);
     const wrapperRef = useRef<HTMLDivElement>(null);
     const styleRef = useRef<HTMLStyleElement>(null);
@@ -58,7 +57,7 @@ const SelectButton = ({ preset, scrollerRef, presetClass }: SelectButtonProps) =
             }
             wrapper.style.setProperty('--page-background-color', preset.pageBackgroundColor);
             theme._startUse({
-                styleContainer: wrapper,
+                styleContainer: document.head,
                 loadThemeGoogleFonts: true,
                 cssLayer: undefined,
                 nonce: undefined,
@@ -66,9 +65,9 @@ const SelectButton = ({ preset, scrollerRef, presetClass }: SelectButtonProps) =
             });
             setThemeClass(theme._getCssClass());
 
-            style.textContent = theme._getPerInstanceCss(presetClass) || '';
+            style.textContent = theme._getParamsCss();
         }
-    }, [preset, presetClass]);
+    }, [preset]);
 
     const store = useStore();
     const selectNewPreset = useCallback(() => {
@@ -96,7 +95,7 @@ const SelectButton = ({ preset, scrollerRef, presetClass }: SelectButtonProps) =
                     }
                     selectNewPreset();
                 }}
-                className={`${themeClass} ${presetClass}`}
+                className={themeClass}
             >
                 <PresetRender />
             </SelectButtonWrapper>

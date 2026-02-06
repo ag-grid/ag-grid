@@ -60,17 +60,19 @@ export class AutoWidthCalculator extends BeanStub implements NamedBean {
         // css styles that the real cells are inheriting
         const eBodyContainer = this.centerRowContainerCtrl.eContainer;
 
-        elements.forEach((el) => this.cloneItemIntoDummy(el, eDummyContainer));
+        for (const el of elements) {
+            this.cloneItemIntoDummy(el, eDummyContainer);
+        }
 
         // only append the dummyContainer to the DOM after it contains all the necessary items
         eBodyContainer.appendChild(eDummyContainer);
 
         // at this point, all the clones are lined up vertically with natural widths. the dummy
         // container will have a width wide enough just to fit the largest.
-        const dummyContainerWidth = eDummyContainer.offsetWidth;
+        const dummyContainerWidth = Math.ceil(eDummyContainer.getBoundingClientRect().width);
 
         // we are finished with the dummy container, so get rid of it
-        eBodyContainer.removeChild(eDummyContainer);
+        eDummyContainer.remove();
 
         // we add padding as I found sometimes the gui still put '...' after some of the texts. so the
         // user can configure the grid to add a few more pixels after the calculated width
@@ -82,12 +84,12 @@ export class AutoWidthCalculator extends BeanStub implements NamedBean {
     private getHeaderCellForColumn(column: AgColumnGroup | AgColumn): HTMLElement | null {
         let element: HTMLElement | null = null;
 
-        this.beans.ctrlsSvc.getHeaderRowContainerCtrls().forEach((container) => {
+        for (const container of this.beans.ctrlsSvc.getHeaderRowContainerCtrls()) {
             const res = container.getHtmlElementForColumnHeader(column);
             if (res != null) {
                 element = res;
             }
-        });
+        }
 
         return element;
     }

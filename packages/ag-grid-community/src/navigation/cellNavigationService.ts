@@ -256,7 +256,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
                 return null;
             }
 
-            if (!rowBelow.rowPinned && !(pagination?.isRowInPage(rowBelow.rowIndex!) ?? true)) {
+            if (!rowBelow.rowPinned && !(pagination?.isRowInPage(rowBelow.rowIndex) ?? true)) {
                 return null;
             }
 
@@ -290,7 +290,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
 
             // If we are tabbing and there is a paging panel present, tabbing should go
             // to the paging panel instead of loading the next page.
-            if (!rowAbove.rowPinned && !(pagination?.isRowInPage(rowAbove.rowIndex!) ?? true)) {
+            if (!rowAbove.rowPinned && !(pagination?.isRowInPage(rowAbove.rowIndex) ?? true)) {
                 return null;
             }
 

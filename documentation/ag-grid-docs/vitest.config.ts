@@ -11,7 +11,9 @@ export default defineConfig({
         globals: true,
         environment: 'node',
         include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
-        exclude: ['**/_examples/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+        exclude: [
+            'src/content/**/*', // examples tested via playwright
+        ],
         reporters: ['default'],
         coverage: { reportsDirectory: '../../coverage/ag-grid-docs', provider: 'v8' },
     },

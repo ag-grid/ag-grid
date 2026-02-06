@@ -3,8 +3,8 @@ import type { AgTooltipMode } from 'ag-charts-types';
 import type { GridSelect } from 'ag-grid-community';
 import { AgSelectSelector, Component, RefPlaceholder } from 'ag-grid-community';
 
-import type { AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
-import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
+import { AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
+import type { GroupComponentParams } from '../../../../../widgets/gridEnterpriseWidgetTypes';
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
@@ -23,7 +23,7 @@ export class TooltipPanel extends Component {
         const { chartMenuUtils, beans } = this;
         const propertyKey = 'tooltip';
         const chartTranslation = beans.chartTranslation as ChartTranslationService;
-        const tooltipGroupParams = chartMenuUtils.addEnableParams<AgGroupComponentParams>(`${propertyKey}.enabled`, {
+        const tooltipGroupParams = chartMenuUtils.addEnableParams<GroupComponentParams>(`${propertyKey}.enabled`, {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',
             suppressOpenCloseIcons: true,

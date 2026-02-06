@@ -1,9 +1,11 @@
 import { _exists } from '../agStack/utils/generic';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { IEditService } from '../interfaces/iEditService';
+import type { EditService } from '../edit/editService';
 import type { Component, ComponentSelector } from '../widgets/component';
 import { PaginationSelector } from './paginationComp';
+
+const DEFAULT_PAGE_SIZE = 100;
 
 export class PaginationService extends BeanStub implements NamedBean {
     beanName = 'pagination' as const;
@@ -20,7 +22,6 @@ export class PaginationService extends BeanStub implements NamedBean {
     private pageSizeFromPageSizeSelector?: number; // When user selects page size from page size selector.
     private pageSizeFromInitialState?: number; // When the initial grid state is loaded, and a page size rehydrated
     private pageSizeFromGridOptions?: number; // When user sets gridOptions.paginationPageSize.
-    private readonly defaultPageSize: 100; // When nothing else set, default page size is 100.
 
     private totalPages: number;
     private currentPage = 0;
@@ -30,7 +31,7 @@ export class PaginationService extends BeanStub implements NamedBean {
 
     private masterRowCount: number = 0;
 
-    private readonly editSvc?: IEditService;
+    private readonly editSvc?: EditService;
 
     public postConstruct() {
         const gos = this.gos;
@@ -164,7 +165,7 @@ export class PaginationService extends BeanStub implements NamedBean {
         if (_exists(this.pageSizeFromGridOptions)) {
             return this.pageSizeFromGridOptions;
         }
-        return this.defaultPageSize;
+        return DEFAULT_PAGE_SIZE;
     }
 
     public calculatePages(): void {
@@ -283,14 +284,12 @@ export class PaginationService extends BeanStub implements NamedBean {
         }
 
         this.topDisplayedRowIndex = rowModel.getTopLevelRowDisplayedIndex(masterPageStartIndex);
-        // masterRows[masterPageStartIndex].rowIndex;
 
         if (masterPageEndIndex === masterLastRowIndex) {
             // if showing the last master row, then we want to show the very last row of the model
             this.bottomDisplayedRowIndex = rowModel.getRowCount() - 1;
         } else {
             const firstIndexNotToShow = rowModel.getTopLevelRowDisplayedIndex(masterPageEndIndex + 1);
-            //masterRows[masterPageEndIndex + 1].rowIndex;
             // this gets the index of the last child - eg current row is open, we want to display all children,
             // the index of the last child is one less than the index of the next parent row.
             this.bottomDisplayedRowIndex = firstIndexNotToShow - 1;

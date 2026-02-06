@@ -6,7 +6,7 @@ import { VERSION } from '../version';
 import { cancelBatchEdit, commitBatchEdit, isBatchEditing, startBatchEdit } from './batchEditApi';
 
 /**
- * @internal
+ * @feature Batch Editing
  */
 export const BatchEditModule: _ModuleWithApi<_BatchEditApi> = {
     moduleName: 'BatchEdit',

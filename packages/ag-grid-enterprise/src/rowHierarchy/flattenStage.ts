@@ -1,10 +1,9 @@
 import type {
     ClientSideRowModelStage,
     GridOptions,
-    IRowNodeStage,
     NamedBean,
     RowNode,
-    StageExecuteParams,
+    _IRowNodeFlattenStage,
 } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
@@ -17,31 +16,38 @@ import {
     _shouldRowBeRendered,
 } from './flattenUtils';
 
-export class FlattenStage extends BeanStub implements IRowNodeStage<RowNode[]>, NamedBean {
+export class FlattenStage extends BeanStub implements _IRowNodeFlattenStage, NamedBean {
     beanName = 'flattenStage' as const;
 
-    public refreshProps: Set<keyof GridOptions<any>> = new Set([
+    public readonly step: ClientSideRowModelStage = 'map';
+    public readonly refreshProps: (keyof GridOptions<any>)[] = [
         'groupHideParentOfSingleChild',
         'groupRemoveSingleChildren',
         'groupRemoveLowestSingleChildren',
         'groupTotalRow',
         'masterDetail',
-    ]);
-    public step: ClientSideRowModelStage = 'map';
+    ];
 
-    public execute(params: StageExecuteParams): RowNode[] {
-        const rootNode = params.rowNode;
+    public execute(): RowNode[] {
+        const { beans, gos } = this;
 
         // even if not doing grouping, we do the mapping, as the client might
         // of passed in data that already has a grouping in it somewhere
         const result: RowNode[] = [];
-        const skipLeafNodes = this.beans.colModel.isPivotMode();
+
+        const rootNode = beans.rowModel.rootNode;
+        if (!rootNode) {
+            return result; // destroyed
+        }
+
+        const skipLeafNodes = beans.colModel.isPivotMode();
         // if we are reducing, and not grouping, then we want to show the root node, as that
         // is where the pivot values are
+
         const showRootNode = skipLeafNodes && rootNode.leafGroup && rootNode.aggData;
         const topList = showRootNode ? [rootNode] : rootNode.childrenAfterSort;
 
-        const details = _getFlattenDetails(this.gos);
+        const details = _getFlattenDetails(gos);
 
         this.recursivelyAddToRowsToDisplay(details, topList, result, skipLeafNodes, 0);
 
@@ -56,7 +62,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage<RowNode[]>, 
             grandTotalRow;
 
         if (includeGrandTotalRow) {
-            _createRowNodeFooter(rootNode, this.beans);
+            _createRowNodeFooter(rootNode, beans);
             // want to not render the footer row here if pinned via grid options
             if (grandTotalRow === 'pinnedBottom' || grandTotalRow === 'pinnedTop') {
                 this.beans.pinnedRowModel?.setGrandTotalPinned(grandTotalRow === 'pinnedBottom' ? 'bottom' : 'top');
@@ -82,8 +88,8 @@ export class FlattenStage extends BeanStub implements IRowNodeStage<RowNode[]>, 
 
         const masterDetailSvc = this.beans.masterDetailSvc;
 
-        for (let i = 0; i < rowsToFlatten!.length; i++) {
-            const rowNode = rowsToFlatten![i];
+        for (let i = 0; i < rowsToFlatten.length; i++) {
+            const rowNode = rowsToFlatten[i];
 
             // check all these cases, for working out if this row should be included in the final mapped list
             const isParent = rowNode.hasChildren();

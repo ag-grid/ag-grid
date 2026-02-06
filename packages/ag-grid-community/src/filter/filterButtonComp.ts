@@ -108,7 +108,9 @@ export class FilterButtonComp extends Component<FilterAction> {
             fragment.append(button);
         };
 
-        buttons.forEach((button) => addButton(button));
+        for (const button of buttons) {
+            addButton(button);
+        }
 
         this.eApply = eApplyButton;
 
@@ -138,13 +140,15 @@ export class FilterButtonComp extends Component<FilterAction> {
         if (!eApplyButton) {
             return;
         }
-        _setDisabled(eApplyButton, valid === false);
-        this.validationMessage = message ?? null;
+        _setDisabled(eApplyButton, !valid);
+        this.validationMessage = message;
         this.validationTooltipFeature?.setTooltipAndRefresh(this.validationMessage);
     }
 
     private destroyListeners(): void {
-        this.listeners.forEach((destroyFunc) => destroyFunc());
+        for (const destroyFunc of this.listeners) {
+            destroyFunc();
+        }
         this.listeners = [];
     }
 

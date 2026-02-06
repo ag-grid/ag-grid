@@ -1,3 +1,4 @@
+import type { AgGridCommon } from './iCommon';
 import type { IRowNode } from './iRowNode';
 
 export interface IViewportDatasource {
@@ -11,7 +12,7 @@ export interface IViewportDatasource {
     destroy?(): void;
 }
 
-export interface IViewportDatasourceParams {
+export interface IViewportDatasourceParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** Datasource calls this method when the total row count changes. This in turn sets the height of the grids vertical scroll. */
     setRowCount: (count: number, keepRenderedRows?: boolean) => void;
     /** Datasource calls this when new data arrives. The grid then updates the provided rows. The rows are mapped [rowIndex]=>rowData].*/

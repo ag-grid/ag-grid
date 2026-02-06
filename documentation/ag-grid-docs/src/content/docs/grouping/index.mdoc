@@ -3,6 +3,7 @@ title: "Row Grouping"
 description: "Enable row grouping in the $framework Data Grid to allow rows to be grouped by columns. Define row groups, use the Grid API, or use the UI to group rows."
 enterprise: true
 ---
+
 The Grid can group rows with equivalent cell values under shared parent rows.
 
 {% gridExampleRunner title="Kitchen Sink" name="kitchen-sink" /%}
@@ -13,6 +14,7 @@ Row Grouping is enabled by setting `rowGroup` to `true` on one or more [Column D
 Group rows are then introduced for each unique value in that column, containing the rows with that value.
 
 The example above uses the following configuration to group rows by their `country` and `year` values:
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [

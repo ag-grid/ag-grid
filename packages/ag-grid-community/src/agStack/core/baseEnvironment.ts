@@ -4,18 +4,23 @@ import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IEnvironment } from '../interfaces/iEnvironment';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import {
-    IS_SSR,
     _injectCoreAndModuleCSS,
     _injectGlobalCSS,
-    _registerInstanceUsingThemingAPI,
     _unregisterInstanceUsingThemingAPI,
+    _useParamsCss,
 } from '../theming/inject';
 import type { Theme } from '../theming/theme';
 import { ThemeImpl } from '../theming/themeImpl';
-import { _createAgElement } from '../utils/dom';
+import type { ParamType } from '../theming/themeTypeUtils';
+import { paramToVariableName } from '../theming/themeUtils';
+import { _createAgElement, _isInDOM, _observeResize } from '../utils/dom';
 import { AgBeanStub } from './agBeanStub';
 
-let paramsId = 0;
+const LIST_ITEM_HEIGHT: CssVariable<BaseCssChangeKeys> = {
+    changeKey: 'listItemHeight',
+    type: 'length',
+    defaultValue: 24,
+};
 
 export abstract class BaseEnvironment<
         TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
@@ -23,7 +28,7 @@ export abstract class BaseEnvironment<
         TGlobalEvents extends BaseEvents,
         TCommon,
         TPropertiesService extends IPropertiesService<TProperties, TCommon>,
-        TChangeKey extends string = 'themeChanged',
+        TChangeKeys extends BaseCssChangeKeys = BaseCssChangeKeys,
     >
     extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
     implements IEnvironment
@@ -35,20 +40,19 @@ export abstract class BaseEnvironment<
     public cssLayer: string | undefined;
     public styleNonce: string | undefined;
     private mutationObserver: MutationObserver;
+    private readonly sizeEls = new Map<CssVariable<TChangeKeys>, HTMLElement>();
+    private readonly lastKnownValues = new Map<CssVariable<TChangeKeys>, number>();
+    private eMeasurementContainer: HTMLElement | undefined;
+    public sizesMeasured = false;
 
     public wireBeans(beans: TBeanCollection): void {
         this.eRootDiv = beans.eRootDiv;
     }
 
-    private readonly paramsClass = `ag-theme-params-${++paramsId}`;
     private theme: ThemeImpl | undefined;
-    private eParamsStyle: HTMLStyleElement | undefined;
     private readonly globalCSS: [string, string][] = [];
 
     protected abstract initVariables(): void;
-
-    protected abstract fireStylesChangedEvent(change: TChangeKey): void;
-
     protected abstract getAdditionalCss(): Map<string, string[]>;
 
     protected abstract postProcessThemeChange(newTheme: ThemeImpl | undefined, themeProperty?: Theme | 'legacy'): void;
@@ -57,35 +61,41 @@ export abstract class BaseEnvironment<
 
     protected abstract themeError(theme: Theme | 'legacy'): void;
 
+    protected abstract shadowRootError(): void;
+
+    protected abstract varError(cssName: string, defaultValue: number): void;
+
     public postConstruct(): void {
         const { gos, eRootDiv } = this;
         gos.setInstanceDomData(eRootDiv);
+        const themeStyleContainer = gos.get('themeStyleContainer');
+        const hasShadowRootGlobal = typeof ShadowRoot !== 'undefined';
+        const isShadowRoot = hasShadowRootGlobal && eRootDiv.getRootNode() instanceof ShadowRoot;
         this.eStyleContainer =
-            gos.get('themeStyleContainer') ?? (eRootDiv.getRootNode() === document ? document.head : eRootDiv);
+            (typeof themeStyleContainer === 'function' ? themeStyleContainer() : themeStyleContainer) ??
+            (isShadowRoot ? eRootDiv : document.head);
+        if (!themeStyleContainer && !isShadowRoot && hasShadowRootGlobal) {
+            warnOnAttachToShadowRoot(eRootDiv, this.shadowRootError.bind(this), this.addDestroyFunc.bind(this));
+        }
         this.cssLayer = gos.get('themeCssLayer');
         this.styleNonce = gos.get('styleNonce');
         this.addManagedPropertyListener('theme', () => this.handleThemeChange());
         this.handleThemeChange();
 
+        this.getSizeEl(LIST_ITEM_HEIGHT);
         this.initVariables();
 
         this.addDestroyFunc(() => _unregisterInstanceUsingThemingAPI(this));
 
         this.mutationObserver = new MutationObserver(() => {
-            this.fireStylesChangedEvent('themeChanged' as TChangeKey);
+            this.fireStylesChangedEvent('theme');
         });
         this.addDestroyFunc(() => this.mutationObserver.disconnect());
     }
 
     public applyThemeClasses(el: HTMLElement, extraClasses: string[] = []): void {
         const { theme } = this;
-        let themeClass: string;
-        if (theme) {
-            // Theming API mode
-            themeClass = `${this.paramsClass} ${theme._getCssClass()}`;
-        } else {
-            themeClass = this.applyLegacyThemeClasses();
-        }
+        const themeClass = theme ? theme._getCssClass() : this.applyLegacyThemeClasses();
 
         for (const className of Array.from(el.classList)) {
             if (className.startsWith('ag-theme-')) {
@@ -94,7 +104,7 @@ export abstract class BaseEnvironment<
         }
         if (themeClass) {
             const oldClass = el.className;
-            el.className = `${oldClass}${oldClass ? ' ' : ''}${themeClass}${extraClasses?.length ? ` ${extraClasses.join(' ')}` : ''}`;
+            el.className = `${oldClass}${oldClass ? ' ' : ''}${themeClass}${extraClasses?.length ? ' ' + extraClasses.join(' ') : ''}`;
         }
     }
 
@@ -129,6 +139,108 @@ export abstract class BaseEnvironment<
         }
     }
 
+    public getDefaultListItemHeight(): number {
+        return this.getCSSVariablePixelValue(LIST_ITEM_HEIGHT);
+    }
+
+    protected getCSSVariablePixelValue(variable: CssVariable<TChangeKeys>): number {
+        const cached = this.lastKnownValues.get(variable);
+        if (cached != null) {
+            return cached;
+        }
+        const measurement = this.measureSizeEl(variable);
+        if (measurement === 'detached' || measurement === 'no-styles') {
+            if (variable.cacheDefault) {
+                this.lastKnownValues.set(variable, variable.defaultValue);
+            }
+            return variable.defaultValue;
+        }
+        this.lastKnownValues.set(variable, measurement);
+        return measurement;
+    }
+
+    private measureSizeEl(variable: CssVariable<TChangeKeys>): number | 'detached' | 'no-styles' {
+        const sizeEl = this.getSizeEl(variable);
+        if (sizeEl.offsetParent == null) {
+            return 'detached';
+        }
+        const newSize = sizeEl.offsetWidth;
+        if (newSize === NO_VALUE_SENTINEL) {
+            return 'no-styles';
+        }
+        this.sizesMeasured = true;
+        return newSize;
+    }
+
+    protected getMeasurementContainer(): HTMLElement {
+        let container = this.eMeasurementContainer;
+        if (!container) {
+            container = this.eMeasurementContainer = _createAgElement({ tag: 'div', cls: 'ag-measurement-container' });
+            this.eRootDiv.appendChild(container);
+        }
+        return container;
+    }
+
+    protected getSizeEl(variable: CssVariable<TChangeKeys>): HTMLElement {
+        let sizeEl = this.sizeEls.get(variable);
+        if (sizeEl) {
+            return sizeEl;
+        }
+        const container = this.getMeasurementContainer();
+
+        sizeEl = _createAgElement({ tag: 'div' });
+
+        const cssName = this.setSizeElStyles(sizeEl, variable);
+        container.appendChild(sizeEl);
+        this.sizeEls.set(variable, sizeEl);
+
+        const { type, noWarn } = variable;
+
+        if (type !== 'length' && type !== 'border') {
+            return sizeEl;
+        }
+
+        let lastMeasurement = this.measureSizeEl(variable);
+
+        if (lastMeasurement === 'no-styles' && !noWarn) {
+            // No value for the variable
+            this.varError(cssName, variable.defaultValue);
+        }
+
+        const unsubscribe = _observeResize(this.beans, sizeEl, () => {
+            const newMeasurement = this.measureSizeEl(variable);
+            if (newMeasurement === 'detached' || newMeasurement === 'no-styles') {
+                return;
+            }
+            this.lastKnownValues.set(variable, newMeasurement);
+            if (newMeasurement !== lastMeasurement) {
+                lastMeasurement = newMeasurement;
+                this.fireStylesChangedEvent(variable.changeKey);
+            }
+        });
+        this.addDestroyFunc(() => unsubscribe());
+
+        return sizeEl;
+    }
+
+    protected setSizeElStyles(sizeEl: HTMLElement, variable: CssVariable<TChangeKeys>): string {
+        const { changeKey, type } = variable;
+        let cssName = paramToVariableName(changeKey);
+        if (type === 'border') {
+            if (cssName.endsWith('-width')) {
+                cssName = cssName.slice(0, -6);
+            }
+            sizeEl.className = 'ag-measurement-element-border';
+            sizeEl.style.setProperty(
+                '--ag-internal-measurement-border',
+                `var(${cssName}, solid ${NO_VALUE_SENTINEL}px)`
+            );
+        } else {
+            sizeEl.style.width = `var(${cssName}, ${NO_VALUE_SENTINEL}px)`;
+        }
+        return cssName;
+    }
+
     private handleThemeChange(): void {
         const { gos, theme: oldTheme } = this;
         const themeProperty = gos.get('theme');
@@ -153,7 +265,6 @@ export abstract class BaseEnvironment<
         const { gos, eRootDiv, globalCSS } = this;
         const additionalCss = this.getAdditionalCss();
         if (newTheme) {
-            _registerInstanceUsingThemingAPI(this);
             _injectCoreAndModuleCSS(this.eStyleContainer, this.cssLayer, this.styleNonce, additionalCss);
             for (const [css, debugId] of globalCSS) {
                 _injectGlobalCSS(css, this.eStyleContainer, debugId, this.cssLayer, 0, this.styleNonce);
@@ -168,20 +279,60 @@ export abstract class BaseEnvironment<
             nonce: this.styleNonce,
             moduleCss: additionalCss,
         });
-        let eParamsStyle = this.eParamsStyle;
-        if (!eParamsStyle) {
-            eParamsStyle = this.eParamsStyle = _createAgElement<HTMLStyleElement>({ tag: 'style' });
-            const styleNonce = gos.get('styleNonce');
-            if (styleNonce) {
-                eParamsStyle.setAttribute('nonce', styleNonce);
-            }
-            eRootDiv.appendChild(eParamsStyle);
-        }
-        if (!IS_SSR) {
-            eParamsStyle.textContent = newTheme?._getPerInstanceCss(this.paramsClass) || '';
-        }
+
+        _useParamsCss(
+            this,
+            newTheme?._getParamsCss() ?? null,
+            newTheme?._getParamsClassName() ?? null,
+            this.eStyleContainer,
+            this.cssLayer,
+            this.styleNonce
+        );
 
         this.applyThemeClasses(eRootDiv);
-        this.fireStylesChangedEvent('themeChanged' as TChangeKey);
+        this.fireStylesChangedEvent('theme');
+    }
+
+    protected fireStylesChangedEvent(change: keyof TChangeKeys & string): void {
+        this.eventSvc.dispatchEvent({
+            type: 'stylesChanged',
+            [`${change}Changed`]: true,
+        });
     }
 }
+
+export type CssVariable<TChangeKeys extends BaseCssChangeKeys> = {
+    changeKey: keyof TChangeKeys & string;
+    type: ParamType;
+    defaultValue: number;
+    noWarn?: boolean;
+    cacheDefault?: boolean;
+};
+
+export interface BaseCssChangeKeys {
+    theme: true;
+    listItemHeight: true;
+}
+
+const NO_VALUE_SENTINEL = 15538;
+
+const warnOnAttachToShadowRoot = (
+    el: HTMLElement,
+    errorCallback: () => void,
+    onDestroy: (handler: () => void) => void
+) => {
+    // only retry for a minute, to prevent our tests (and potentially customer's
+    // tests) from hanging if they try to use vi.runAllTimers() to run the interval
+    // until it terminates
+    let retries = 60;
+    const interval = setInterval(() => {
+        if (typeof ShadowRoot !== 'undefined' && el.getRootNode() instanceof ShadowRoot) {
+            errorCallback();
+            clearInterval(interval);
+        }
+        if (_isInDOM(el) || --retries < 0) {
+            clearInterval(interval);
+        }
+    }, 1000);
+    onDestroy(() => clearInterval(interval));
+};

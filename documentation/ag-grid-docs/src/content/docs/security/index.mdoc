@@ -12,9 +12,9 @@ The basic information on Content Security Policy can be found on the [MDN web do
 
 Some optional grid features compile string expressions into code, and if you're using these then the `script-src 'unsafe-eval'` directive is required. However, it is possible to avoid this requirement as listed below:
 
- * Many grid properties such as [Cell Class Rules](./cell-styles/#cell-class-rules) and [Value Getters](./value-getters/) allow using expressions. However, this requires `script-src 'unsafe-eval'`. In order to avoid this requirement, replace expressions with functions as shown in the example below for the cellClassRules property of a column definition:
-    * `{ 'is-negative': 'value < 0' }` requires `script-src 'unsafe-eval'` so that `'value < 0'` can be compiled into a function.
-    * `{ 'is-negative': params => params.value < 0 }` does not because you have provided a function.
+-   Many grid properties such as [Cell Class Rules](./cell-styles/#cell-class-rules) and [Value Getters](./value-getters/) allow using expressions. However, this requires `script-src 'unsafe-eval'`. In order to avoid this requirement, replace expressions with functions as shown in the example below for the cellClassRules property of a column definition:
+    -   `{ 'is-negative': 'value < 0' }` requires `script-src 'unsafe-eval'` so that `'value < 0'` can be compiled into a function.
+    -   `{ 'is-negative': params => params.value < 0 }` does not because you have provided a function.
 
 ### style-src
 
@@ -68,11 +68,10 @@ AG Grid is tested for a wide variety of security vulnerabilities using the [Sona
 
 The SonarQube security test results for our main NPM packages are shown below:
 
-
-| AG-Grid Package           | Result |
-| ------------------------- | ------ |
-| ag-grid-community         | [![Quality Badge](https://sonarcloud.io/api/project_badges/quality_gate?project=ag-grid-community)](https://sonarcloud.io/dashboard?id=ag-grid-community) |
-| ag-grid-enterprise        | [![Quality Badge](https://sonarcloud.io/api/project_badges/quality_gate?project=ag-grid-enterprise)](https://sonarcloud.io/dashboard?id=ag-grid-enterprise) |
+| AG-Grid Package    | Result                                                                                                                                                      |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ag-grid-community  | [![Quality Badge](https://sonarcloud.io/api/project_badges/quality_gate?project=ag-grid-community)](https://sonarcloud.io/dashboard?id=ag-grid-community)   |
+| ag-grid-enterprise | [![Quality Badge](https://sonarcloud.io/api/project_badges/quality_gate?project=ag-grid-enterprise)](https://sonarcloud.io/dashboard?id=ag-grid-enterprise) |
 
 Results for AG-Charts are available distinctly: [AG Charts - SonarQube Results](https://www.ag-grid.com/charts/javascript/security/#sonarqube-results)
 
@@ -80,16 +79,15 @@ Results for AG-Charts are available distinctly: [AG Charts - SonarQube Results](
 
 Currently reported CVEs and their resolutions:
 
-| AG Grid Package     | CVE                                                              |  Issue Ticket | Version Fixed                                                 |
-| -------------------- | --------------------------------------------------------------- | ------------- | ------------------------------------------------------------- |
-| ag-grid-community  | [CVE-2017-16009](https://www.cve.org/CVERecord?id=CVE-2017-16009) | AG-5107       | [25.2.0](https://www.ag-grid.com/changelog?fixVersion=25.2.0) |
-| ag-grid-enterprise | [CVE-2024-39001](https://www.cve.org/CVERecord?id=CVE-2024-39001) | AG-12254      | [31.3.4](https://www.ag-grid.com/changelog?fixVersion=31.3.4) |
-| ag-grid-community  | [CVE-2024-38996](https://www.cve.org/CVERecord?id=CVE-2024-38996) | AG-12254      | [31.3.4](https://www.ag-grid.com/changelog?fixVersion=31.3.4) |
-| ag-grid-enterprise | [CVE-2024-38996](https://www.cve.org/CVERecord?id=CVE-2024-38996) | AG-12254      | [31.3.4](https://www.ag-grid.com/changelog?fixVersion=31.3.4) |
-| ag-grid-enterprise | [CVE-2024-39001](https://www.cve.org/CVERecord?id=CVE-2024-39001) | AG-12065      | [32.0.1](https://www.ag-grid.com/changelog?fixVersion=32.0.1) |
-| ag-grid-community  | [CVE-2024-38996](https://www.cve.org/CVERecord?id=CVE-2024-38996) | AG-12065      | [32.0.1](https://www.ag-grid.com/changelog?fixVersion=32.0.1) |
-| ag-grid-enterprise | [CVE-2024-38996](https://www.cve.org/CVERecord?id=CVE-2024-38996) | AG-12065      | [32.0.1](https://www.ag-grid.com/changelog?fixVersion=32.0.1) |
-
+| AG Grid Package    | CVE                                                               | Issue Ticket | Version Fixed                                                 |
+| ------------------ | ----------------------------------------------------------------- | ------------ | ------------------------------------------------------------- |
+| ag-grid-community  | [CVE-2017-16009](https://www.cve.org/CVERecord?id=CVE-2017-16009) | AG-5107      | [25.2.0](https://www.ag-grid.com/changelog?fixVersion=25.2.0) |
+| ag-grid-enterprise | [CVE-2024-39001](https://www.cve.org/CVERecord?id=CVE-2024-39001) | AG-12254     | [31.3.4](https://www.ag-grid.com/changelog?fixVersion=31.3.4) |
+| ag-grid-community  | [CVE-2024-38996](https://www.cve.org/CVERecord?id=CVE-2024-38996) | AG-12254     | [31.3.4](https://www.ag-grid.com/changelog?fixVersion=31.3.4) |
+| ag-grid-enterprise | [CVE-2024-38996](https://www.cve.org/CVERecord?id=CVE-2024-38996) | AG-12254     | [31.3.4](https://www.ag-grid.com/changelog?fixVersion=31.3.4) |
+| ag-grid-enterprise | [CVE-2024-39001](https://www.cve.org/CVERecord?id=CVE-2024-39001) | AG-12065     | [32.0.1](https://www.ag-grid.com/changelog?fixVersion=32.0.1) |
+| ag-grid-community  | [CVE-2024-38996](https://www.cve.org/CVERecord?id=CVE-2024-38996) | AG-12065     | [32.0.1](https://www.ag-grid.com/changelog?fixVersion=32.0.1) |
+| ag-grid-enterprise | [CVE-2024-38996](https://www.cve.org/CVERecord?id=CVE-2024-38996) | AG-12065     | [32.0.1](https://www.ag-grid.com/changelog?fixVersion=32.0.1) |
 
 ## Security Contact
 

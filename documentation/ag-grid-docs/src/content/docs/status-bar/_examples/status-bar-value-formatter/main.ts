@@ -35,8 +35,11 @@ const gridOptions: GridOptions<IOlympicData> = {
                 align: 'left',
                 statusPanelParams: {
                     valueFormatter: (params: IStatusPanelValueFormatterParams) => {
-                        const { value } = params;
-                        if (value > 1000) {
+                        const { value, bigintValue } = params;
+                        if (bigintValue != null) {
+                            return bigintValue.toString();
+                        }
+                        if (typeof value === 'number' && value > 1000) {
                             return (value / 1000).toFixed(1) + ' K';
                         }
                         return String(value);

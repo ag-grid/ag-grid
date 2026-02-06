@@ -158,7 +158,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     }
 
     public onDragStop(): void {
-        this.onDragging(this.lastDraggingEvent!, false, true, true);
+        this.onDragging(this.lastDraggingEvent, false, true, true);
         this.ensureIntervalCleared();
         this.lastMovedInfo = null;
     }
@@ -382,20 +382,29 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             targetColumn = null;
         }
 
-        if (this.lastHighlightedColumn?.column !== targetColumn) {
-            this.clearHighlighted();
-        }
-
         if (targetColumn == null || start == null || width == null) {
+            if (this.lastHighlightedColumn?.column !== targetColumn) {
+                this.clearHighlighted();
+            }
             return;
         }
 
         let position: ColumnHighlightPosition;
 
-        if (mouseX - start < width / 2 !== isRtl) {
-            position = ColumnHighlightPosition.Before;
+        if (mouseX - start < width / 2) {
+            const targetIndex = consideredColumns.indexOf(targetColumn);
+            if (targetIndex === 0) {
+                position = ColumnHighlightPosition.Before;
+            } else {
+                position = ColumnHighlightPosition.After;
+                targetColumn = consideredColumns[targetIndex - 1];
+            }
         } else {
             position = ColumnHighlightPosition.After;
+        }
+
+        if (this.lastHighlightedColumn?.column !== targetColumn || this.lastHighlightedColumn?.position !== position) {
+            this.clearHighlighted();
         }
 
         setColumnHighlighted(targetColumn, position);
@@ -421,8 +430,8 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
 
         const visibleColumns = visibleCols.allCols;
         const movingColIndex = visibleColumns.indexOf(firstMovingCol);
-        const targetIndex = visibleColumns.indexOf(column!);
-        const isBefore = (position === ColumnHighlightPosition.Before) !== isRtl;
+        const targetIndex = visibleColumns.indexOf(column);
+        const isBefore = position === ColumnHighlightPosition.Before;
         const fromLeft = movingColIndex < targetIndex || (movingColIndex === targetIndex && !isBefore);
         let diff: number = 0;
 
@@ -430,10 +439,8 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             if (fromLeft) {
                 diff -= 1;
             }
-        } else {
-            if (!fromLeft) {
-                diff += 1;
-            }
+        } else if (!fromLeft) {
+            diff += 1;
         }
 
         if (targetIndex + diff === movingColIndex) {

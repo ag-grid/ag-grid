@@ -12,6 +12,7 @@ export const GRID_OPTION_DEFAULTS = {
     enableBrowserTooltips: false,
     tooltipTrigger: 'hover',
     tooltipShowDelay: 2000,
+    tooltipSwitchShowDelay: 200,
     tooltipHideDelay: 10000,
     tooltipMouseTrack: false,
     tooltipShowMode: 'standard',
@@ -99,6 +100,7 @@ export const GRID_OPTION_DEFAULTS = {
     suppressMaxRenderedRowRestriction: false,
     suppressRowVirtualisation: false,
     rowDragManaged: false,
+    refreshAfterGroupEdit: false,
     rowDragInsertDelay: 500,
     suppressRowDrag: false,
     suppressMoveWhenRowDragging: false,
@@ -175,7 +177,6 @@ export const GRID_OPTION_DEFAULTS = {
     columnMenu: 'new',
     reactiveCustomComponents: true,
     suppressSetFilterByDefault: false,
-    rowNumbers: false,
     enableFilterHandlers: false,
 } as const;
 /**

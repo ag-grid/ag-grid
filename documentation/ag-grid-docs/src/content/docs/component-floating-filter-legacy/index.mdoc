@@ -32,6 +32,7 @@ Floating filters do not contain filter logic themselves, they are just an additi
 To see examples of the different ways to implement floating filters please refer to the examples below.
 
 {% if isFramework("javascript", "angular", "vue") %}
+
 ## Floating Filter Methods on Provided Filters
 
 When the user interacts with a floating filter, the floating filter must set the state of the main parent filter in order for filter changes to take effect This is done by the floating filter getting a reference to the parent filter instance and calling a method on it.
@@ -40,9 +41,9 @@ If you create your own filter and floating filter, it is up to you which method 
 
 The Simple Filters (Text, Number, Date) provide methods that the corresponding provided floating filters can call. This information is useful if a) you want to create your own floating filter that is paired with a provided parent filter or b) you are just interested to know how the interaction works to help build your own filters and floating filters.
 
-- **Date, Text and Number Filters:** all these filters provide a method `onFloatingFilterChanged(type: string, value: string)` where `type` is the type (`'lessThan'`, `'equals'`, etc.) and the value is the text value to use (the number and date filters will convert the text to the corresponding type).
+-   **Date, Text and Number Filters:** all these filters provide a method `onFloatingFilterChanged(type: string, value: string)` where `type` is the type (`'lessThan'`, `'equals'`, etc.) and the value is the text value to use (the number and date filters will convert the text to the corresponding type).
 
-- **Set Filter:** The floating set filter is not editable, so no method is exposed on the parent filter for the floating filter to call.
+-   **Set Filter:** The floating set filter is not editable, so no method is exposed on the parent filter for the floating filter to call.
 
 You could also call `setModel()` on the filters as an alternative. For example, you could build your own floating filter for the Set Filter that allows picking all European or Asian countries, or you could provide your own Number floating filter that allows selecting ranges (the provided Number floating filter does not allow editing ranges).
 {% /if %}
@@ -59,6 +60,7 @@ In this example it is important to note that:
 1. `NumberFloatingFilter.onParentModelChanged(parentModel)` receives the result of `NumberFilter.getModel()` every time the `NumberFilter` model changes.
 1. `NumberFloatingFilter` calls `parentFilter.myMethodForTakingValueFromFloatingFilter(change)` every time the user changes the floating filter value.
 1. `NumberFilter.myMethodForTakingValueFromFloatingFilter(change)` performs the filtering.
+
 {% /if %}
 
 {% gridExampleRunner title="Custom Filter and Floating Filter" name="custom-filter-and-floating-filter" /%}
@@ -72,6 +74,7 @@ This example uses the previous custom filter but implements `getModelAsString()`
 {% gridExampleRunner title="Custom Filter Only" name="custom-filter" /%}
 
 {% if isFramework("react", "angular", "vue") %}
+
 ## Sliding Floating Filters
 
 The below example shows how to create a custom floating filter re-using the out-of-the-box Number Filter .
@@ -80,15 +83,16 @@ The below example shows how to create a custom floating filter re-using the out-
 {% /if %}
 
 {% if isFramework("javascript") %}
+
 ## Complex Example with jQuery
 
 The following example illustrates a complex scenario. All the columns have floating filters. The first 6 columns (Athlete to Sport) have the standard provided floating filters. The last 4 (Gold to Total) have custom filters and custom floating filters that use jQuery sliders.
 
 Note that:
 
-- Athlete has a debounce of 2 seconds (`debounceMs: 2000`)
-- Age has no debounce (`debounceMs: 0`)
-- All the other columns have the standard 500ms debounce
+-   Athlete has a debounce of 2 seconds (`debounceMs: 2000`)
+-   Age has no debounce (`debounceMs: 0`)
+-   All the other columns have the standard 500ms debounce
 
 {% gridExampleRunner title="Custom Complex Filter and Floating Filter" name="custom-complex-filter-and-floating-filter" typescriptOnly=true /%}
 {% /if %}

@@ -18,7 +18,6 @@ export type Preset = {
 export const lightModePreset: Preset = {
     pageBackgroundColor: '#FAFAFA',
     params: {
-        headerFontSize: 14,
         browserColorScheme: 'light',
     },
 };
@@ -34,7 +33,6 @@ export const darkModePreset: Preset = {
             mix: 0.07,
             onto: 'backgroundColor',
         },
-        headerFontSize: 14,
     },
 };
 
@@ -56,7 +54,6 @@ export const allPresets: Preset[] = [
             borderRadius: 0,
             headerBackgroundColor: '#21222C',
             headerTextColor: '#68FF8E',
-            headerFontSize: 14,
             headerFontWeight: 700,
             headerVerticalPaddingScale: 1.5,
             cellTextColor: '#50F178',
@@ -119,7 +116,6 @@ export const allPresets: Preset[] = [
             borderRadius: 20,
             headerBackgroundColor: '#182226',
             headerTextColor: '#FFFFFF',
-            headerFontSize: 14,
             headerFontWeight: 500,
             headerVerticalPaddingScale: 0.9,
             rowVerticalPaddingScale: 1.2,
@@ -144,7 +140,6 @@ export const allPresets: Preset[] = [
             wrapperBorderRadius: 0,
             headerFontWeight: 600,
             oddRowBackgroundColor: '#F9FAFB',
-            headerFontSize: 14,
             wrapperBorder: false,
             rowBorder: false,
             columnBorder: false,

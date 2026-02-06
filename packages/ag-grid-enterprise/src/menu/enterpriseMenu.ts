@@ -31,10 +31,10 @@ import {
     isColumn,
 } from 'ag-grid-community';
 
-import type { CloseMenuEvent } from '../widgets/agMenuItemComponent';
-import type { AgMenuList } from '../widgets/agMenuList';
-import type { TabbedItem } from '../widgets/iTabbedLayout';
-import { TabbedLayout } from '../widgets/tabbedLayout';
+import type { AgCloseMenuEvent } from '../agStack/agMenuItemComponent';
+import { AgTabbedLayout } from '../agStack/agTabbedLayout';
+import type { TabbedItem, TabbedLayout } from '../widgets/gridEnterpriseWidgetTypes';
+import type { MenuList } from '../widgets/menuList';
 import type { ColumnChooserFactory } from './columnChooserFactory';
 import type { ColumnMenuFactory } from './columnMenuFactory';
 import type { MenuRestoreFocusParams, MenuUtils } from './menuUtils';
@@ -50,9 +50,9 @@ interface EnterpriseColumnMenu extends Bean {
     showTabBasedOnPreviousSelection?(): void;
 }
 
-const TAB_FILTER = 'filterMenuTab' as const;
-const TAB_GENERAL = 'generalMenuTab' as const;
-const TAB_COLUMNS = 'columnsMenuTab' as const;
+const TAB_FILTER = 'filterMenuTab';
+const TAB_GENERAL = 'generalMenuTab';
+const TAB_COLUMNS = 'columnsMenuTab';
 const TABS_DEFAULT: ColumnMenuTab[] = [TAB_GENERAL, TAB_FILTER, TAB_COLUMNS];
 
 export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuFactory {
@@ -82,7 +82,9 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
 
                 this.beans.popupSvc!.positionPopupUnderMouseEvent({
                     type: containerType,
-                    column,
+                    additionalParams: {
+                        column,
+                    },
                     mouseEvent,
                     ePopup,
                 });
@@ -142,7 +144,9 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
 
                 this.beans.popupSvc!.positionPopupByComponent({
                     type: containerType,
-                    column,
+                    additionalParams: {
+                        column,
+                    },
                     eventSource,
                     ePopup,
                     alignSide,
@@ -205,7 +209,9 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
             closeOnEsc: true,
             closedCallback: (e?: Event) => {
                 // menu closed callback
-                closedFuncs.forEach((f) => f(e));
+                for (const f of closedFuncs) {
+                    f(e);
+                }
                 this.dispatchVisibleChangedEvent(false, false, column, columnGroup, defaultTab);
             },
             afterGuiAttached: (params) =>
@@ -363,7 +369,7 @@ type TabbedColumnMenuEvent = 'tabSelected' | 'and';
 class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements EnterpriseColumnMenu {
     private tabbedLayout: TabbedLayout;
     private hidePopupFunc: (popupParams?: PopupEventParams) => void;
-    private mainMenuList: AgMenuList;
+    private mainMenuList: MenuList;
 
     private tabItemFilter: TabbedItem;
     private tabItemGeneral: TabbedItem;
@@ -395,7 +401,7 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
     public postConstruct(): void {
         const tabs = this.getTabsToCreate().map((name) => this.createTab(name));
 
-        const tabbedLayout = new TabbedLayout({
+        const tabbedLayout: TabbedLayout = new AgTabbedLayout({
             items: tabs,
             cssClass: 'ag-menu',
             onActiveItemClicked: this.onHidePopup.bind(this),
@@ -513,7 +519,7 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
         return tabItemGeneral;
     }
 
-    private onHidePopup(event?: CloseMenuEvent): void {
+    private onHidePopup(event?: AgCloseMenuEvent): void {
         (this.beans.menuUtils as MenuUtils).closePopupAndRestoreFocusOnSelect(
             this.hidePopupFunc,
             this.restoreFocusParams,
@@ -535,7 +541,7 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
         this.tabItemFilter = {
             title: _createIconNoSpan('filterTab', this.beans, this.column)!,
             titleLabel: TAB_FILTER.replace('MenuTab', ''),
-            bodyPromise: AgPromise.resolve(comp?.getGui()) as AgPromise<HTMLElement>,
+            bodyPromise: AgPromise.resolve(comp?.getGui()),
             afterAttachedCallback,
             afterDetachedCallback,
             name: TAB_FILTER,
@@ -594,7 +600,7 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
     private readonly eColumnMenu: HTMLElement = RefPlaceholder;
 
     private hidePopupFunc: (popupParams?: PopupEventParams) => void;
-    private mainMenuList: AgMenuList;
+    private mainMenuList: MenuList;
 
     constructor(
         private readonly menuItems: (DefaultMenuItem | MenuItemDef)[],
@@ -617,7 +623,8 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
         this.eColumnMenu.appendChild(mainMenuList.getGui());
     }
 
-    private onHidePopup(event?: CloseMenuEvent): void {
+    // eslint-disable-next-line sonarjs/no-identical-functions
+    private onHidePopup(event?: AgCloseMenuEvent): void {
         (this.beans.menuUtils as MenuUtils).closePopupAndRestoreFocusOnSelect(
             this.hidePopupFunc,
             this.restoreFocusParams,

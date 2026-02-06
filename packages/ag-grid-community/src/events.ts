@@ -6,7 +6,7 @@ import type { RowsDropParams } from './dragAndDrop/rowDragTypes';
 import type { ColDef } from './entities/colDef';
 import type { GridOptions } from './entities/gridOptions';
 import type { RowNode } from './entities/rowNode';
-import type { AgEventType, AgInternalEventType, AgPublicEventType } from './eventTypes';
+import type { AgEventType, AgInternalEventType, AgPublicEventType, BuildEventTypeMap } from './eventTypes';
 import type { FilterRequestSource } from './filter/iColumnFilter';
 import type { CellRange, CellRangeParams } from './interfaces/IRangeService';
 import type { GridState } from './interfaces/gridState';
@@ -20,10 +20,6 @@ import type { IServerSideGroupSelectionState, IServerSideSelectionState } from '
 import type { CellValueChange } from './interfaces/iUndoRedo';
 import type { RowNodeTransaction } from './interfaces/rowNodeTransaction';
 import type { ServerSideTransactionResult } from './interfaces/serverSideTransaction';
-
-export const ALWAYS_SYNC_GLOBAL_EVENTS: Set<AgEventType> = new Set(['gridPreDestroyed', 'fillStart', 'pasteStart']);
-
-export type BuildEventTypeMap<TEventTypes extends string, T extends { [K in TEventTypes]: AgEvent<K> }> = T;
 
 export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
     AgPublicEventType | AgInternalEventType,
@@ -159,9 +155,10 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         headerHeightChanged: HeaderHeightChangedEvent<TData, TContext>;
         columnGroupHeaderHeightChanged: ColumnGroupHeaderHeightChangedEvent<TData, TContext>;
         columnHeaderHeightChanged: ColumnHeaderHeightChangedEvent<TData, TContext>;
-        gridStylesChanged: GridStylesChangedEvent<TData, TContext>;
+        stylesChanged: StylesChangedEvent<TData, TContext>;
         storeUpdated: StoreUpdatedEvent<TData, TContext>;
         filterDestroyed: FilterDestroyedEvent<TData, TContext>;
+        filterHandlerDestroyed: FilterHandlerDestroyedEvent<TData, TContext>;
         filterClosed: FilterClosedEvent<TData, TContext>;
         rowDataUpdateStarted: RowDataUpdateStartedEvent<TData, TContext>;
         rowCountReady: RowCountReadyEvent<TData, TContext>;
@@ -188,6 +185,8 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         bulkEditingStopped: BulkEditingStoppedEvent<TData, TContext>;
         headerRowsChanged: AgEvent<'headerRowsChanged'>;
         rowExpansionStateChanged: AgEvent<'rowExpansionStateChanged'>;
+        showRowGroupColsSetChanged: AgEvent<'showRowGroupColsSetChanged'>;
+        rowDragVisibilityChanged: AgEvent<'rowDragVisibilityChanged'>;
     }
 >;
 
@@ -403,13 +402,6 @@ export interface FloatingFilterUiChangedEvent<TData = any, TContext = any>
     column: Column;
 }
 
-// internal event
-export interface FilterDestroyedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'filterDestroyed', TData, TContext> {
-    source: 'api' | 'columnChanged' | 'gridDestroyed' | 'advancedFilterEnabled' | 'paramsUpdated';
-    column: Column;
-}
-
 export interface FindChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<'findChanged', TData, TContext> {
     /** The current search value. */
     findSearchValue: string | undefined;
@@ -548,6 +540,8 @@ export interface RowDragCancelEvent<TData = any, TContext = any>
 export interface RowDragMoveEvent<TData = any, TContext = any> extends RowDragEvent<TData, TContext, 'rowDragMove'> {}
 
 export interface RowDragLeaveEvent<TData = any, TContext = any> extends RowDragEvent<TData, TContext, 'rowDragLeave'> {}
+
+// rowDragVisibilityChanged uses the base AgGlobalEvent
 
 export interface CutStartEvent<TData = any, TContext = any> extends AgGlobalEvent<'cutStart', TData, TContext> {
     source: 'api' | 'ui' | 'contextMenu';
@@ -1185,15 +1179,6 @@ export interface DisplayedRowsChangedEvent<TData = any, TContext = any>
     afterScroll: boolean;
 } // not documented
 
-export interface CssVariablesChanged<TData = any, TContext = any>
-    extends AgGlobalEvent<'gridStylesChanged', TData, TContext> {
-    themeChanged?: boolean;
-    headerHeightChanged?: boolean;
-    rowHeightChanged?: boolean;
-    listItemHeightChanged?: boolean;
-    rowBorderWidthChanged?: boolean;
-} // not documented
-
 export interface AdvancedFilterEnabledChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'advancedFilterEnabledChanged', TData, TContext> {
     enabled: boolean;
@@ -1257,8 +1242,14 @@ export interface ColumnGroupHeaderHeightChangedEvent<TData = any, TContext = any
     columnGroup: ColumnGroup | null;
     source: 'autosizeColumnGroupHeaderHeight';
 }
-export interface GridStylesChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'gridStylesChanged', TData, TContext> {}
+export interface StylesChangedEvent<TData = any, TContext = any>
+    extends AgGlobalEvent<'stylesChanged', TData, TContext> {
+    themeChanged?: boolean;
+    headerHeightChanged?: boolean;
+    rowHeightChanged?: boolean;
+    listItemHeightChanged?: boolean;
+    rowBorderWidthChanged?: boolean;
+}
 export interface RowCountReadyEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'rowCountReady', TData, TContext> {}
 export interface FieldValueChangedEvent<TData = any, TContext = any>
@@ -1290,3 +1281,19 @@ export interface FilterSwitchedEvent<TData = any, TContext = any>
 export interface FilterClosedEvent<TData = any, TContext = any> extends AgGlobalEvent<'filterClosed', TData, TContext> {
     column: Column;
 }
+
+interface BaseFilterDestroyedEvent<
+    TEventType extends 'filterDestroyed' | 'filterHandlerDestroyed',
+    TData = any,
+    TContext = any,
+> extends AgGlobalEvent<TEventType, TData, TContext> {
+    source: 'api' | 'columnChanged' | 'gridDestroyed' | 'advancedFilterEnabled' | 'paramsUpdated';
+    column: Column;
+}
+
+export interface FilterDestroyedEvent<TData = any, TContext = any>
+    extends BaseFilterDestroyedEvent<'filterDestroyed', TData, TContext> {}
+
+/** This is a special version of FilterDestroyedEvent, that only fires if the UI was never created (but the handler existed) */
+export interface FilterHandlerDestroyedEvent<TData = any, TContext = any>
+    extends BaseFilterDestroyedEvent<'filterHandlerDestroyed', TData, TContext> {}

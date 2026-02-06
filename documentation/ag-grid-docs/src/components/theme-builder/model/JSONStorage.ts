@@ -7,8 +7,13 @@ export const STORAGE_KEY_PREFIX = 'theme-builder.atom.';
 
 const storageKey = (key: string) => STORAGE_KEY_PREFIX + key;
 
+const IS_BROWSER = typeof localStorage === 'object';
+
 class JSONStorage<T> {
     getItem(key: string, initialValue: T): T {
+        if (!IS_BROWSER) {
+            return initialValue;
+        }
         const storedString = localStorage.getItem(storageKey(key));
         if (storedString == null) {
             return initialValue;
@@ -23,12 +28,18 @@ class JSONStorage<T> {
         return storedValue as T;
     }
     setItem(key: string, newValue: T): void {
+        if (!IS_BROWSER) {
+            return;
+        }
         if (newValue === undefined) {
             return this.removeItem(key);
         }
         localStorage.setItem(storageKey(key), JSON.stringify(newValue));
     }
     removeItem(key: string): void {
+        if (!IS_BROWSER) {
+            return;
+        }
         localStorage.removeItem(storageKey(key));
     }
 }

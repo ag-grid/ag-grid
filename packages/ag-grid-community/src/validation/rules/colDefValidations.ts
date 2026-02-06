@@ -1,9 +1,14 @@
 import type { UserComponentName } from '../../context/context';
+import { _isSortDefValid, _isSortDirectionValid } from '../../entities/agColumn';
 import type { AbstractColDef, ColDef, ColGroupDef, ColumnMenuTab } from '../../entities/colDef';
-import { DEFAULT_SORTING_ORDER } from '../../sort/sortService';
+import type { ColDefInternal } from '../../entities/colDefInternal';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
 import type { Deprecations, ModuleValidation, OptionsValidator, Validations } from '../validationTypes';
 import { USER_COMP_MODULES } from './userCompValidations';
+
+function quote(s: string): string {
+    return `"${s}"`;
+}
 
 const COLUMN_DEFINITION_DEPRECATIONS: () => Deprecations<ColDef | ColGroupDef> = () => ({
     checkboxSelection: { version: '32.2', message: 'Use `rowSelection.checkboxes` in `GridOptions` instead.' },
@@ -23,15 +28,22 @@ const COLUMN_DEFINITION_DEPRECATIONS: () => Deprecations<ColDef | ColGroupDef> =
         version: '32.2',
         message: 'Use `rowSelection.hideDisabledCheckboxes = true` in `GridOptions` instead.',
     },
+    rowGroupingHierarchy: {
+        version: '34.3',
+        message: 'Use `colDef.groupHierarchy` instead.',
+    },
 });
 
 export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGroupDef> = {
+    allowFormula: 'Formula',
     aggFunc: 'SharedAggregation',
     autoHeight: 'RowAutoHeight',
     cellClass: 'CellStyle',
     cellClassRules: 'CellStyle',
-    cellEditor: ({ cellEditor, editable }: ColDef) => {
-        if (!editable) {
+    cellEditor: ({ cellEditor, editable, ...rest }: ColDef) => {
+        const groupRowEditable = (rest as ColDefInternal).groupRowEditable;
+        const editingEnabled = !!editable || !!groupRowEditable;
+        if (!editingEnabled) {
             return null;
         }
         if (typeof cellEditor === 'string') {
@@ -72,6 +84,7 @@ export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGro
     floatingFilter: 'ColumnFilter',
     getQuickFilterText: 'QuickFilter',
     headerTooltip: 'Tooltip',
+    headerTooltipValueGetter: 'Tooltip',
     mainMenuItems: 'ColumnMenu',
     menuTabs: (options: ColDef) => {
         const enterpriseMenuTabs: ColumnMenuTab[] = ['columnsMenuTab', 'generalMenuTab'];
@@ -87,8 +100,9 @@ export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGro
     rowGroupIndex: 'SharedRowGrouping',
     tooltipField: 'Tooltip',
     tooltipValueGetter: 'Tooltip',
+    tooltipComponentSelector: 'Tooltip',
     spanRows: 'CellSpan',
-    rowGroupingHierarchy: 'SharedRowGrouping',
+    groupHierarchy: 'SharedRowGrouping',
 };
 
 const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = () => {
@@ -101,6 +115,9 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                 }
                 return null;
             },
+        },
+        allowFormula: {
+            supportedRowModels: ['clientSide'],
         },
         cellRendererParams: {
             validate: (colDef) => {
@@ -169,17 +186,43 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                 return null;
             },
         },
+        sort: {
+            validate: (_options) => {
+                if (_isSortDefValid(_options.sort) || _isSortDirectionValid(_options.sort)) {
+                    return null;
+                }
+
+                return `sort must be of type (SortDirection | SortDef), currently it is ${typeof _options.sort === 'object' ? JSON.stringify(_options.sort) : toStringWithNullUndefined(_options.sort)}`;
+            },
+        },
+        initialSort: {
+            validate: (_options) => {
+                if (_isSortDefValid(_options.initialSort) || _isSortDirectionValid(_options.initialSort)) {
+                    return null;
+                }
+
+                return `initialSort must be of non-null type (SortDirection | SortDef), currently it is ${typeof _options.initialSort === 'object' ? JSON.stringify(_options.initialSort) : toStringWithNullUndefined(_options.initialSort)}`;
+            },
+        },
         sortingOrder: {
             validate: (_options) => {
                 const sortingOrder = _options.sortingOrder;
 
                 if (Array.isArray(sortingOrder) && sortingOrder.length > 0) {
-                    const invalidItems = sortingOrder.filter((a) => !DEFAULT_SORTING_ORDER.includes(a));
+                    const invalidItems = sortingOrder.filter((a) => {
+                        return !(_isSortDefValid(a) || _isSortDirectionValid(a));
+                    });
                     if (invalidItems.length > 0) {
-                        return `sortingOrder must be an array with elements from [${DEFAULT_SORTING_ORDER.map(toStringWithNullUndefined).join()}], currently it includes [${invalidItems.map(toStringWithNullUndefined).join()}]`;
+                        return `sortingOrder must be an array of type non-null (SortDirection | SortDef)[], incorrect items are: [${invalidItems
+                            .map((item) =>
+                                typeof item === 'string' || item == null
+                                    ? toStringWithNullUndefined(item)
+                                    : JSON.stringify(item)
+                            )
+                            .join(', ')}]`;
                     }
-                } else if (!Array.isArray(sortingOrder) || sortingOrder.length <= 0) {
-                    return `sortingOrder must be an array with at least one element, currently it's ${sortingOrder}`;
+                } else if (!Array.isArray(sortingOrder) || !sortingOrder.length) {
+                    return `sortingOrder must be an array with at least one element, currently it is [${sortingOrder}]`;
                 }
                 return null;
             },
@@ -252,7 +295,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                 return null;
             },
         },
-        rowGroupingHierarchy: {
+        groupHierarchy: {
             validate(options, { groupHierarchyConfig = {} }, beans) {
                 const GROUP_HIERARCHY_PARTS = new Set([
                     'year',
@@ -267,20 +310,20 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
 
                 const unrecognisedParts: string[] = [];
 
-                options.rowGroupingHierarchy?.forEach((part) => {
+                for (const part of options.groupHierarchy ?? []) {
                     if (typeof part === 'object') {
                         beans.validation?.validateColDef(part);
-                        return null;
+                        continue;
                     }
 
                     if (!GROUP_HIERARCHY_PARTS.has(part) && !(part in groupHierarchyConfig)) {
-                        unrecognisedParts.push(part);
+                        unrecognisedParts.push(quote(part));
                     }
-                });
+                }
 
                 if (unrecognisedParts.length > 0) {
-                    const warning = `The following parts of colDef.rowGroupingHierarchy are not recognised: ${unrecognisedParts.map((s) => `"${s}"`).join(', ')}.`;
-                    const suggestions = `Choose one of ${[...GROUP_HIERARCHY_PARTS].map((s) => `"${s}"`).join(', ')}, or define your own parts in gridOptions.groupHierarchyConfig.`;
+                    const warning = `The following parts of colDef.groupHierarchy are not recognised: ${unrecognisedParts.join(', ')}.`;
+                    const suggestions = `Choose one of ${[...GROUP_HIERARCHY_PARTS].map(quote).join(', ')}, or define your own parts in gridOptions.groupHierarchyConfig.`;
                     return `${warning}\n${suggestions}`;
                 }
 
@@ -291,7 +334,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
     return validations;
 };
 
-type ColOrGroupKey = keyof ColDef | keyof ColGroupDef;
+type ColOrGroupKey = keyof ColDef | keyof ColGroupDef | keyof Partial<ColDefInternal>;
 const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     headerName: undefined,
     columnGroupShow: undefined,
@@ -310,12 +353,16 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     tooltipComponent: undefined,
     tooltipField: undefined,
     headerTooltip: undefined,
+    headerTooltipValueGetter: undefined,
     cellClass: undefined,
     showRowGroup: undefined,
     filter: undefined,
     initialAggFunc: undefined,
     defaultAggFunc: undefined,
     aggFunc: undefined,
+    // Internal properties (not public API but still accepted)
+    groupRowEditable: undefined,
+    groupRowValueSetter: undefined,
     pinned: undefined,
     initialPinned: undefined,
     chartDataType: undefined,
@@ -421,6 +468,7 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     onCellContextMenu: undefined,
     rowDragText: undefined,
     tooltipValueGetter: undefined,
+    tooltipComponentSelector: undefined,
     cellRendererSelector: undefined,
     cellEditorSelector: undefined,
     suppressSpanHeaderHeight: undefined,
@@ -439,6 +487,8 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     dateComponentParams: undefined,
     getFindText: undefined,
     rowGroupingHierarchy: undefined,
+    groupHierarchy: undefined,
+    allowFormula: undefined,
 };
 const ALL_PROPERTIES: () => ColOrGroupKey[] = () => Object.keys(colDefPropertyMap) as ColOrGroupKey[];
 

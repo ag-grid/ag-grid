@@ -47,10 +47,10 @@ export function doesMovePassMarryChildren(
         }
 
         const newIndexes: number[] = [];
-        columnGroup.getLeafColumns().forEach((col) => {
+        for (const col of columnGroup.getLeafColumns()) {
             const newColIndex = allColumnsCopy.indexOf(col);
             newIndexes.push(newColIndex);
-        });
+        }
 
         // eslint-disable-next-line prefer-spread
         const maxIndex = Math.max.apply(Math, newIndexes);
@@ -65,9 +65,6 @@ export function doesMovePassMarryChildren(
         if (spread > maxSpread) {
             rulePassed = false;
         }
-
-        // console.log(`maxIndex = ${maxIndex}, minIndex = ${minIndex}, spread = ${spread}, maxSpread = ${maxSpread}, fail = ${spread > (count-1)}`)
-        // console.log(allColumnsCopy.map( col => col.getColDef().field).join(','));
     });
 
     return rulePassed;

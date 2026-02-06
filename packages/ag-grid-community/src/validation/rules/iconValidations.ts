@@ -1,5 +1,6 @@
+import type { IconValue } from '../../agStack/interfaces/iIcon';
 import type { ValidationModuleName } from '../../interfaces/iModule';
-import type { IconName, IconValue } from '../../utils/icon';
+import type { IconName } from '../../utils/icon';
 
 export const ICON_VALUES: Record<IconValue, 1> = {
     expanded: 1,
@@ -48,6 +49,8 @@ export const ICON_VALUES: Record<IconValue, 1> = {
     'small-up': 1,
     asc: 1,
     desc: 1,
+    aasc: 1,
+    adesc: 1,
     none: 1,
     up: 1,
     down: 1,
@@ -124,6 +127,8 @@ export const ICON_MODULES: Record<IconName, ValidationModuleName | ValidationMod
     check: 'MenuItem',
     colorPicker: 'CommunityCore',
     groupLoading: 'LoadingCellRenderer',
+    overlayLoading: 'Overlay',
+    overlayExporting: 'Overlay',
     menuAlt: 'ColumnHeaderComp',
     menuPin: 'MenuCore',
     menuValue: 'MenuCore',
@@ -143,6 +148,7 @@ export const ICON_MODULES: Record<IconName, ValidationModuleName | ValidationMod
     selectOpen: 'CommunityCore',
     richSelectOpen: 'RichSelect',
     richSelectRemove: 'RichSelect',
+    richSelectLoading: 'RichSelect',
     smallLeft: 'CommunityCore',
     smallRight: 'CommunityCore',
     subMenuOpen: 'MenuItem',
@@ -152,6 +158,8 @@ export const ICON_MODULES: Record<IconName, ValidationModuleName | ValidationMod
     smallUp: 'CommunityCore',
     sortAscending: ['MenuCore', 'Sort'],
     sortDescending: ['MenuCore', 'Sort'],
+    sortAbsoluteAscending: ['MenuCore', 'Sort'],
+    sortAbsoluteDescending: ['MenuCore', 'Sort'],
     sortUnSort: ['MenuCore', 'Sort'],
     advancedFilterBuilder: 'AdvancedFilter',
     advancedFilterBuilderDrag: 'AdvancedFilter',

@@ -1,5 +1,6 @@
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
+    BigIntFilterModule,
     CheckboxEditorModule,
     ClientSideRowModelModule,
     DateEditorModule,
@@ -14,6 +15,7 @@ import {
 } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([
+    BigIntFilterModule,
     NumberEditorModule,
     NumberFilterModule,
     CheckboxEditorModule,
@@ -31,6 +33,7 @@ interface IOlympicDataTypes extends IOlympicData {
     dateTimeString: string;
     hasGold: boolean;
     hasSilver: boolean;
+    medalsBigInt: bigint;
     countryObject: {
         name: string;
     };
@@ -42,6 +45,7 @@ const gridOptions: GridOptions<IOlympicDataTypes> = {
     columnDefs: [
         { field: 'athlete' },
         { field: 'age', minWidth: 100 },
+        { field: 'medalsBigInt', headerName: 'Total (BigInt)', minWidth: 160, cellDataType: 'bigint' },
         { field: 'hasGold', minWidth: 100, headerName: 'Gold' },
         { field: 'hasSilver', minWidth: 100, headerName: 'Silver', cellRendererParams: { disabled: true } },
         { field: 'dateObject', headerName: 'Date' },
@@ -99,6 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         },
                         hasGold: rowData.gold > 0,
                         hasSilver: rowData.silver > 0,
+                        medalsBigInt: BigInt(rowData.gold + rowData.silver + rowData.bronze),
                     };
                 })
             )

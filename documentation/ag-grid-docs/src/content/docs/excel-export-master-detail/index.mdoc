@@ -28,17 +28,17 @@ The example below demonstrates how both the master and detail data can be export
 
 Note the following:
 
-* The `Master Detail` data is only available for `expanded` nodes, for more info see [Detail Grids](./master-detail-grids/).
-* The `RowBuffer` was set to **100** so all Detail Grids would be available.
-* The `Detail Grids` get exported into different sheets.
+-   The `Master Detail` data is only available for `expanded` nodes, for more info see [Detail Grids](./master-detail-grids/).
+-   The `RowBuffer` was set to **100** so all Detail Grids would be available.
+-   The `Detail Grids` get exported into different sheets.
 
 Note the following:
 
-* In this case we're not using the above approach with `getCustomContentBelowRow`, so the grid will be exported as-is. This means that detail data for a master-level row can be exported only if the master row is expanded. The `groupDefaultExpanded` property is set to 1 to expand the loaded master rows. For more information see [Detail Grids](./master-detail-grids/).
+-   In this case we're not using the above approach with `getCustomContentBelowRow`, so the grid will be exported as-is. This means that detail data for a master-level row can be exported only if the master row is expanded. The `groupDefaultExpanded` property is set to 1 to expand the loaded master rows. For more information see [Detail Grids](./master-detail-grids/).
 
-* The `RowBuffer` property is set to 100 to ensure that at least 100 master rows are loaded, so they can be expanded. If you have more than 100 master-level rows, you'll need to set this value accordingly to cover all master rows, so they can be expanded and their detail data can be included in the export.
+-   The `RowBuffer` property is set to 100 to ensure that at least 100 master rows are loaded, so they can be expanded. If you have more than 100 master-level rows, you'll need to set this value accordingly to cover all master rows, so they can be expanded and their detail data can be included in the export.
 
-* Each Detail grid gets exported into a separate sheet in the Excel file
+-   Each Detail grid gets exported into a separate sheet in the Excel file
 
 {% gridExampleRunner title="Excel Export - Multiple Sheets with Master Detail" name="multiple-sheets" /%}
 

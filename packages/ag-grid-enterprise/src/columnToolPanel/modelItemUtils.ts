@@ -30,16 +30,16 @@ function extractAllLeafColumns(allItems: ColumnModelItem[]): AgColumn[] {
     const res: AgColumn[] = [];
 
     const recursiveFunc = (items: ColumnModelItem[]) => {
-        items.forEach((item) => {
+        for (const item of items) {
             if (!item.passesFilter) {
-                return;
+                continue;
             }
             if (item.group) {
                 recursiveFunc(item.children);
             } else {
                 res.push(item.column);
             }
-        });
+        }
     };
 
     recursiveFunc(allItems);
@@ -50,9 +50,9 @@ function extractAllLeafColumns(allItems: ColumnModelItem[]): AgColumn[] {
 function setAllVisible(beans: BeanCollection, columns: AgColumn[], visible: boolean, eventType: ColumnEventType): void {
     const colStateItems: ColumnState[] = [];
 
-    columns.forEach((col) => {
+    for (const col of columns) {
         if (col.getColDef().lockVisible) {
-            return;
+            continue;
         }
         if (col.isVisible() != visible) {
             colStateItems.push({
@@ -60,7 +60,7 @@ function setAllVisible(beans: BeanCollection, columns: AgColumn[], visible: bool
                 hide: !visible,
             });
         }
-    });
+    }
 
     if (colStateItems.length > 0) {
         _applyColumnState(beans, { state: colStateItems }, eventType);

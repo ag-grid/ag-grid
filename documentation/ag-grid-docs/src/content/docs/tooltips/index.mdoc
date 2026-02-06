@@ -18,7 +18,17 @@ It's possible to configure tooltips to show only when the items hovered are trun
 
 ## Show and Hide Delay
 
-Tooltips show after 2 seconds and hide after 10 seconds. Set `tooltipShowDelay` and `tooltipHideDelay` to override these values. The example below has `tooltipShowDelay=0` (shows immediately) and `tooltipHideDelay=2000` (hides in 2,000 milliseconds, or 2 seconds).
+By default, tooltips show after 2 seconds and hide after 10 seconds. These delays can be configured in milliseconds:
+
+{% apiDocumentation source="grid-options/properties.json" section="tooltips" names=["tooltipShowDelay", "tooltipSwitchShowDelay", "tooltipHideDelay"] /%}
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    tooltipShowDelay: 0,
+    tooltipSwitchShowDelay: 1000,
+    tooltipHideDelay: 2000,
+};
+```
 
 {% gridExampleRunner title="Show Hide Delay" name="show-hide-delay" /%}
 
@@ -31,9 +41,10 @@ Setting delays will have no effect if using Browser Tooltips as Browser Tooltips
 Tooltips are not shown for the missing values `undefined`, `null` and `""` (empty String). To display tooltips for missing values, provide a `tooltipValueGetter` to return something that is not empty.
 
 In the example below:
-* The data has missing values `undefined`, `null` and `''` (empty String) as the first three rows.
-* Column A uses `tooltipField`, no tooltip is shown.
-* Column B uses `tooltipValueGetter` to return an object, tooltip is shown.
+
+-   The data has missing values `undefined`, `null` and `''` (empty String) as the first three rows.
+-   Column A uses `tooltipField`, no tooltip is shown.
+-   Column B uses `tooltipValueGetter` to return an object, tooltip is shown.
 
 {% gridExampleRunner title="Blank Values" name="blank-values" /%}
 
@@ -67,19 +78,18 @@ const gridOptions = {
 
 The example below enables Tooltip Interaction to demonstrate a scenario where tooltips will not disappear while hovered. Note following:
 
-* Tooltips will not disappear while being hovered.
-* Tooltips content can be selected and copied.
+-   Tooltips will not disappear while being hovered.
+-   Tooltips content can be selected and copied.
 
 {% gridExampleRunner title="Tooltip Interaction" name="tooltip-interaction" /%}
 
 The example below shows Tooltip Interaction with Custom Tooltips. Note the following:
 
-* Tooltip is enabled for the Athlete and Age columns.
-* Tooltips will not disappear while being hovered.
-* The custom tooltip displays a text input and a Submit button which when clicked, updates the value of the `Athlete` Column cell in the hovered row and then closes itself by calling `hideTooltipCallback()`.
+-   Tooltip is enabled for the Athlete and Age columns.
+-   Tooltips will not disappear while being hovered.
+-   The custom tooltip displays a text input and a Submit button which when clicked, updates the value of the `Athlete` Column cell in the hovered row and then closes itself by calling `hideTooltipCallback()`.
 
 {% gridExampleRunner title="Custom Tooltip Interaction" name="custom-tooltip-interaction" /%}
-
 
 ## Custom Component
 
@@ -87,8 +97,8 @@ The grid does not use the browser's default tooltip, instead it has a rich HTML 
 
 In the example below:
 
-* `tooltipComponent` is set on the Default Column Definition so it applies to all Columns.
-* `tooltipComponentParams` is set on the Athlete Column Definition to provide a Custom Property, in this instance setting the background color.
+-   `tooltipComponent` is set on the Default Column Definition so it applies to all Columns.
+-   `tooltipComponentParams` is set on the Athlete Column Definition to provide a Custom Property, in this instance setting the background color.
 
 {% gridExampleRunner title="Custom Tooltip Component" name="custom-tooltip-component" /%}
 

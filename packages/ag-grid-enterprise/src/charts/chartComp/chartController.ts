@@ -82,9 +82,13 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
     }
 
     public update(params: UpdateChartParams): boolean {
-        if (!this.validUpdateType(params)) return false;
+        if (!this.validUpdateType(params)) {
+            return false;
+        }
         const validationResult = validateUpdateParams(params, this.agChartsExports.isEnterprise);
-        if (!validationResult) return false;
+        if (!validationResult) {
+            return false;
+        }
         const validParams = validationResult === true ? params : validationResult;
         this.applyValidatedChartParams(validParams);
         return true;
@@ -119,6 +123,8 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
                 chartModelParams.seriesChartTypes = params.seriesChartTypes;
                 chartModelParams.suppressChartRanges = params.suppressChartRanges ?? this.model.suppressChartRanges;
                 chartModelParams.seriesGroupType = params.seriesGroupType ?? this.model.seriesGroupType;
+                chartModelParams.useGroupColumnAsCategory =
+                    (params as UpdateRangeChartParams).useGroupColumnAsCategory ?? this.model.useGroupColumnAsCategory;
                 break;
             case 'crossFilterChartUpdate':
                 chartModelParams.cellRange = this.createCellRange(params) ?? this.model.suppliedCellRange;
@@ -137,7 +143,11 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
 
         // if the chart should be unlinked or chart ranges suppressed, remove all cell ranges; otherwise, set the chart range
         const removeChartCellRanges = chartModelParams.unlinkChart || chartModelParams.suppressChartRanges;
-        removeChartCellRanges ? this.rangeSvc?.setCellRanges([]) : this.setChartRange();
+        if (removeChartCellRanges) {
+            this.rangeSvc?.setCellRanges([]);
+        } else {
+            this.setChartRange();
+        }
     }
 
     public updateForGridChange(params?: { maintainColState?: boolean; setColsFromRange?: boolean }): void {
@@ -267,6 +277,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
             unlinkChart: this.model.unlinked,
             seriesChartTypes,
             seriesGroupType: this.model.seriesGroupType,
+            useGroupColumnAsCategory: this.model.useGroupColumnAsCategory,
         };
     }
 
@@ -304,7 +315,9 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
     }
 
     public switchCategorySeries(inverted: boolean): void {
-        if (!supportsInvertedCategorySeries(this.getChartType())) return;
+        if (!supportsInvertedCategorySeries(this.getChartType())) {
+            return;
+        }
         this.model.switchCategorySeries = inverted;
         this.raiseChartModelUpdateEvent();
     }
@@ -314,9 +327,13 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
     }
 
     public setAggFunc(value: string | IAggFunc | undefined, silent?: boolean): void {
-        if (this.model.aggFunc === value) return;
+        if (this.model.aggFunc === value) {
+            return;
+        }
         this.model.aggFunc = value;
-        if (silent) return;
+        if (silent) {
+            return;
+        }
         this.model.updateData();
         this.raiseChartModelUpdateEvent();
     }
@@ -327,7 +344,9 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
         const updateForMax = (columns: ColState[], maxNum: number) => {
             let numSelected = 0;
             for (const colState of columns) {
-                if (!colState.selected) continue;
+                if (!colState.selected) {
+                    continue;
+                }
                 if (numSelected >= maxNum) {
                     colState.selected = false;
                 } else {

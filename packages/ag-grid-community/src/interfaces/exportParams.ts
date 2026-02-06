@@ -1,5 +1,6 @@
 import type { Column, ColumnGroup } from './iColumn';
 import type { AgGridCommon } from './iCommon';
+import type { CellValueResolveFrom } from './iEditService';
 import type { IRowNode } from './iRowNode';
 import type { RowPosition } from './iRowPosition';
 
@@ -65,6 +66,15 @@ export interface BaseExportParams {
      * @default false
      */
     skipPinnedBottom?: boolean;
+
+    /**
+     * The source to use for getting cell values: 'data', 'batch', or 'edit'.
+     * - `'data'`: Returns values from the underlying row data
+     * - `'batch'`: Returns pending batch edit values (falls back to data if not in batch mode)
+     * - `'edit'`: Returns current editor values including live typing
+     * @default 'data'
+     */
+    valueFrom?: CellValueResolveFrom;
 
     /**
      * A callback function that will be invoked once per row in the grid. Return true to omit the row from the export.
@@ -148,6 +158,13 @@ export interface ShouldRowBeSkippedParams<TData = any, TContext = any> extends A
     node: IRowNode<TData>;
 }
 
+export type ProcessCellForClipboard<TData = any, TContext = any> = (
+    params: ProcessCellForExportParams<TData, TContext>
+) => any;
+export type ProcessCellFromClipboard<TData = any, TContext = any> = (
+    params: ProcessCellForExportParams<TData, TContext>
+) => any;
+
 export interface ProcessCellForExportParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     value: any;
     accumulatedRowIndex?: number;
@@ -160,10 +177,16 @@ export interface ProcessCellForExportParams<TData = any, TContext = any> extends
     formatValue: (value: any) => string;
 }
 
+export type ProcessHeaderForClipboard<TData = any, TContext = any> = (
+    params: ProcessHeaderForExportParams<TData, TContext>
+) => any;
 export interface ProcessHeaderForExportParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     column: Column;
 }
 
+export type ProcessGroupHeaderForClipboard<TData = any, TContext = any> = (
+    params: ProcessGroupHeaderForExportParams<TData, TContext>
+) => any;
 export interface ProcessGroupHeaderForExportParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     columnGroup: ColumnGroup;
 }

@@ -1,6 +1,8 @@
 import { _dateToFormattedString, _parseDateTimeFromString } from '../../../agStack/utils/date';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { SharedFilterParams } from '../../../interfaces/iFilter';
+import type { FilterLocaleTextKey } from '../../filterLocaleText';
+import { translateForFilter } from '../../filterLocaleText';
 import type { OptionsFactory } from '../optionsFactory';
 import { SCALAR_FILTER_TYPE_KEYS, SimpleFilterModelFormatter } from '../simpleFilterModelFormatter';
 import type { DateFilterModel, IDateFilterParams } from './iDateFilter';
@@ -15,9 +17,11 @@ export class DateFilterModelFormatter extends SimpleFilterModelFormatter<
         super(optionsFactory, filterParams, (value) => {
             const { dataTypeSvc, valueSvc } = this.beans;
             const column = (filterParams as SharedFilterParams).column as AgColumn;
-            const dateFormatFn = dataTypeSvc?.getDateFormatterFunction(column);
-            const dateStringStringValue = dateFormatFn?.(value ?? undefined);
-            return valueSvc.formatValue(column, null, dateStringStringValue);
+            const dateFormatFn = dataTypeSvc?.getDateFormatterFunction(column); // only exists for dateString.
+            // dateString value formatter requires a string, so format it first.
+            // date value formatter wants the original Date.
+            const valueToFormat = dateFormatFn ? dateFormatFn(value ?? undefined) : value;
+            return valueSvc.formatValue(column, null, valueToFormat);
         });
     }
 
@@ -41,6 +45,10 @@ export class DateFilterModelFormatter extends SimpleFilterModelFormatter<
 
         const formattedFrom = () => (dateFrom !== null ? formatDate(dateFrom) : 'null');
         const formattedTo = () => (dateTo !== null ? formatDate(dateTo) : 'null');
+
+        if (dateFrom == null && dateTo == null) {
+            return translateForFilter(this, type as FilterLocaleTextKey);
+        }
 
         if (forToolPanel) {
             const valueForToolPanel = this.conditionForToolPanel(

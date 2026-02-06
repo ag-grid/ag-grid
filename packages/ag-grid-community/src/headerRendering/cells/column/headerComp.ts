@@ -12,8 +12,9 @@ import type { IconName } from '../../../utils/icon';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { _mergeDeep } from '../../../utils/mergeDeep';
 import { Component } from '../../../widgets/component';
+import { HeaderCellMouseListenerFeature } from './headerCellMouseListenerFeature';
 
-function getHeaderCompElementParams(includeSortIndicator: boolean): ElementParams {
+function getHeaderCompElementParams(includeColumnRefIndicator: boolean, includeSortIndicator: boolean): ElementParams {
     const hiddenAttrs = { 'aria-hidden': 'true' };
     return {
         tag: 'div',
@@ -38,6 +39,7 @@ function getHeaderCompElementParams(includeSortIndicator: boolean): ElementParam
                 cls: 'ag-header-cell-label',
                 role: 'presentation',
                 children: [
+                    includeColumnRefIndicator ? { tag: 'span', ref: 'eColRef', cls: 'ag-header-col-ref' } : null,
                     { tag: 'span', ref: 'eText', cls: 'ag-header-cell-text' },
                     {
                         tag: 'span',
@@ -51,8 +53,6 @@ function getHeaderCompElementParams(includeSortIndicator: boolean): ElementParam
         ],
     };
 }
-const HeaderCompElement = getHeaderCompElementParams(true);
-const HeaderCompElementNoSort = getHeaderCompElementParams(false);
 
 export class HeaderComp extends Component implements IHeaderComp {
     // All the elements are optional, as they are not guaranteed to be present if the user provides a custom template
@@ -62,6 +62,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     public eMenu?: HTMLElement = RefPlaceholder;
     private readonly eLabel?: HTMLElement = RefPlaceholder;
     private readonly eText?: HTMLElement = RefPlaceholder;
+    private readonly eColRef?: HTMLElement = RefPlaceholder;
 
     /**
      * Selectors for custom headers templates, i.e when the ag-sort-indicator is not present.
@@ -71,6 +72,8 @@ export class HeaderComp extends Component implements IHeaderComp {
     private readonly eSortDesc?: HTMLElement = RefPlaceholder;
     private readonly eSortMixed?: HTMLElement = RefPlaceholder;
     private readonly eSortNone?: HTMLElement = RefPlaceholder;
+    private readonly eSortAbsoluteAsc?: HTMLElement = RefPlaceholder;
+    private readonly eSortAbsoluteDesc?: HTMLElement = RefPlaceholder;
 
     public params: IHeaderParams;
 
@@ -79,9 +82,12 @@ export class HeaderComp extends Component implements IHeaderComp {
     private currentShowMenu: boolean;
     private currentSuppressMenuHide: boolean;
     private currentSort: boolean | undefined;
+    private currentRef: string | null;
 
     private innerHeaderComponent: IInnerHeaderComponent | undefined;
     private isLoadingInnerComponent: boolean = false;
+
+    private mouseListener?: HeaderCellMouseListenerFeature;
 
     public refresh(params: IHeaderParams): boolean {
         const oldParams = this.params;
@@ -93,6 +99,7 @@ export class HeaderComp extends Component implements IHeaderComp {
             this.workOutTemplate(params, !!this.beans?.sortSvc) != this.currentTemplate ||
             this.workOutShowMenu() != this.currentShowMenu ||
             params.enableSorting != this.currentSort ||
+            (params.column as AgColumn).formulaRef != this.currentRef ||
             (this.currentSuppressMenuHide != null && this.shouldSuppressMenuHide() != this.currentSuppressMenuHide) ||
             oldParams.enableFilterButton != params.enableFilterButton ||
             oldParams.enableFilterIcon != params.enableFilterIcon
@@ -113,13 +120,13 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private workOutTemplate(params: IHeaderParams, isSorting: boolean): string | ElementParams {
+        const { formula } = this.beans;
         const paramsTemplate = params.template;
         if (paramsTemplate) {
             // take account of any newlines & whitespace before/after the actual template
             return paramsTemplate?.trim ? paramsTemplate.trim() : paramsTemplate;
-        } else {
-            return isSorting ? HeaderCompElement : HeaderCompElementNoSort;
         }
+        return getHeaderCompElementParams(!!formula?.active, isSorting);
     }
 
     public init(params: IHeaderParams): void {
@@ -130,10 +137,17 @@ export class HeaderComp extends Component implements IHeaderComp {
         this.currentTemplate = this.workOutTemplate(params, !!sortComp);
         this.setTemplate(this.currentTemplate, sortComp ? [sortComp] : undefined);
 
+        if (this.eLabel) {
+            this.mouseListener ??= this.createManagedBean(
+                new HeaderCellMouseListenerFeature(params.column as AgColumn, this.eLabel)
+            );
+        }
+
         touchSvc?.setupForHeader(this);
 
         this.setMenu();
         this.setupSort();
+        this.setupColumnRefIndicator();
         rowNumbersSvc?.setupForHeader(this);
         this.setupFilterIcon();
         this.setupFilterButton();
@@ -269,8 +283,25 @@ export class HeaderComp extends Component implements IHeaderComp {
         // manually create eSortIndicator.
         if (!this.eSortIndicator) {
             this.eSortIndicator = this.createBean(sortSvc.createSortIndicator(true));
-            const { eSortIndicator, eSortOrder, eSortAsc, eSortDesc, eSortMixed, eSortNone } = this;
-            eSortIndicator.attachCustomElements(eSortOrder, eSortAsc, eSortDesc, eSortMixed, eSortNone);
+            const {
+                eSortIndicator,
+                eSortOrder,
+                eSortAsc,
+                eSortDesc,
+                eSortMixed,
+                eSortNone,
+                eSortAbsoluteAsc,
+                eSortAbsoluteDesc,
+            } = this;
+            eSortIndicator.attachCustomElements(
+                eSortOrder,
+                eSortAsc,
+                eSortDesc,
+                eSortMixed,
+                eSortNone,
+                eSortAbsoluteAsc,
+                eSortAbsoluteDesc
+            );
         }
         this.eSortIndicator.setupSort(column as AgColumn);
 
@@ -281,7 +312,32 @@ export class HeaderComp extends Component implements IHeaderComp {
             return;
         }
 
-        sortSvc.setupHeader(this, column as AgColumn, this.eLabel);
+        sortSvc.setupHeader(this, column as AgColumn);
+    }
+
+    private setupColumnRefIndicator(): void {
+        const {
+            eColRef,
+            beans: { editModelSvc },
+            params,
+        } = this;
+        if (!eColRef) {
+            return;
+        }
+        this.currentRef = (params.column as AgColumn).formulaRef;
+        eColRef.textContent = this.currentRef;
+        _setDisplayed(eColRef, false);
+        this.addManagedEventListeners({
+            cellEditingStarted: () => {
+                const editPositions = editModelSvc?.getEditPositions();
+                const shouldDisplay =
+                    !!this.currentRef && !!editPositions?.some((position) => position.column.isAllowFormula());
+                _setDisplayed(eColRef, shouldDisplay);
+            },
+            cellEditingStopped: () => {
+                _setDisplayed(eColRef, false);
+            },
+        });
     }
 
     private setupFilterIcon(): void {
@@ -309,7 +365,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         );
         if (configured) {
             this.addManagedElementListeners(eFilterButton, {
-                click: () => params.showFilter(eFilterButton!),
+                click: () => params.showFilter(eFilterButton),
             });
         } else {
             this.eFilterButton = undefined;
@@ -351,9 +407,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     public override destroy(): void {
         super.destroy();
 
-        if (this.innerHeaderComponent) {
-            this.destroyBean(this.innerHeaderComponent);
-            this.innerHeaderComponent = undefined;
-        }
+        this.innerHeaderComponent = this.destroyBean(this.innerHeaderComponent);
+        this.mouseListener = this.destroyBean(this.mouseListener);
     }
 }

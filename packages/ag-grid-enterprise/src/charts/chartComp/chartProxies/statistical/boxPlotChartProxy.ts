@@ -4,7 +4,7 @@ import type { UpdateParams } from '../chartProxy';
 import { StatisticalChartProxy } from './statisticalChartProxy';
 
 export class BoxPlotChartProxy extends StatisticalChartProxy<'box-plot'> {
-    public getSeries(params: UpdateParams): AgBoxPlotSeriesOptions<any>[] {
+    protected override getSeries(params: UpdateParams): AgBoxPlotSeriesOptions<any>[] {
         const [category] = params.categories;
         return params.fields.map((field, seriesIndex) => ({
             type: this.standaloneChartType as AgBoxPlotSeriesOptions['type'],

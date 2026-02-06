@@ -1,19 +1,20 @@
 {
   "name": "ag-grid",
-  "version": "34.2.0-beta.20250928.2005",
+  "version": "35.0.0-beta.20260202.1339",
   "license": "MIT",
   "scripts": {
     "compressVideo": "tsx external/ag-website-shared/scripts/compress-video",
     "build-generators": "nx run-many -p ag-grid-task-autogen -t build",
     "subrepo": "tsx external/ag-shared/scripts/subrepo",
-    "postinstall": "patch-package && yarn run build-generators",
-    "bootstrap": "SHARP_IGNORE_GLOBAL_LIBVIPS=true YARN_REGISTRY=\"http://52.50.158.57:4873\" yarn",
+    "postinstall": "./external/ag-shared/scripts/apply-patches.sh && yarn run build-generators && yarn setup-prompts",
+    "setup-prompts": "./external/ag-shared/scripts/setup-prompts/setup-prompts.sh --postinstall",
+    "bootstrap": "SHARP_IGNORE_GLOBAL_LIBVIPS=true YARN_REGISTRY=\"https://registry.ag-grid.com\" yarn",
     "git-clean": "git clean -fdx && git reset --hard HEAD",
     "git-purge-local-only": "git fetch -p && for branch in $(git for-each-ref --format '%(refname) %(upstream:track)' refs/heads | awk '$2 == \"[gone]\" {sub(\"refs/heads/\", \"\", $1); print $1}'); do git branch -D $branch; done"
   },
   "private": true,
   "engines": {
-    "node": "^20.19.4",
+    "node": "^22.21.1",
     "yarn": "^1.22.21"
   },
   "dependencies": {
@@ -22,10 +23,10 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@actions/core": "^1.11.1",
     "@axe-core/cli": "^4.10.2",
     "@axe-core/playwright": "^4.10.2",
     "@eslint/js": "^9.2.0",
+    "@modelcontextprotocol/server-sequential-thinking": "^2025.12.18",
     "@nx/devkit": "20.3.1",
     "@nx/esbuild": "20.3.1",
     "@nx/eslint": "20.3.1",
@@ -36,7 +37,7 @@
     "@nx/rollup": "20.3.1",
     "@nx/web": "20.3.1",
     "@nx/workspace": "20.3.1",
-    "@playwright/test": "^1.52.0",
+    "@playwright/test": "^1.56.0",
     "@swc-node/register": "1.9.2",
     "@swc/cli": "0.3.14",
     "@swc/core": "1.5.7",
@@ -62,8 +63,10 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import-x": "0.5.1",
     "eslint-plugin-react-hooks": "5.1.0",
+    "eslint-plugin-sonarjs": "3.0.5",
+    "eslint-plugin-unicorn": "61.0.2",
     "event-stream": "4.0.1",
-    "glob": "^11.0.0",
+    "glob": "^11.1.0",
     "globals": "^15.2.0",
     "jest": "29.7.0",
     "jest-environment-node": "^29.4.1",
@@ -76,16 +79,17 @@
     "patch-package": "^8.0.0",
     "postcss-import": "^16.1.0",
     "postcss-rtlcss": "^5.3.1",
+    "postcss-selector-parser": "^7.1.0",
     "postcss-url": "^10.1.3",
     "prettier": "3.2.5",
     "prompts": "^2.4.2",
-    "react-instantsearch": "^7.7.0",
+    "rulesync": "^5.2.0",
     "stylelint": "^16.10.0",
     "stylelint-config-standard": "^36.0.1",
     "ts-jest": "^29.1.0",
     "ts-node": "10.9.1",
     "tsx": "4.8.2",
-    "typescript": "~5.2.2",
+    "typescript": "~5.4.5",
     "typescript-eslint": "^7.9.0",
     "vite": "~5.4.19",
     "vitest": "2.1.9"
@@ -112,6 +116,7 @@
       "testing/vue-package-tests",
       "testing/accessibility",
       "testing/csp",
+      "testing/public-recipes/e2e",
       "external/ag-shared"
     ],
     "nohoist": [
@@ -123,6 +128,8 @@
   },
   "packageManager": "yarn@1.22.21",
   "resolutions": {
+    "**/astro/devalue": "5.6.2",
+    "**/astro/unstorage/h3": "1.15.5",
     "**/axios/form-data": "4.0.4",
     "**/jsdom/form-data": "4.0.4",
     "**/node-fetch/form-data": "3.0.4",
@@ -131,6 +138,7 @@
     "**/prismjs": "1.30.0",
     "**/jpeg-js": "0.4.0",
     "**/tough-cookie": "^4.1.3",
-    "dependency-cruiser/**/cross-spawn": "7.0.6"
+    "dependency-cruiser/**/cross-spawn": "7.0.6",
+    "@modelcontextprotocol/sdk": "1.26.0"
   }
 }

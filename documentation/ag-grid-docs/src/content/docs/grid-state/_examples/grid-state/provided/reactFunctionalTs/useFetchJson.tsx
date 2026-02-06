@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
  */
 export const useFetchJson = <T,>(url: string, limit?: number) => {
     const [data, setData] = useState<T[]>();
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);

@@ -1,4 +1,5 @@
 {% if isFramework("vue") %}
+
 ```js
 const KEY_LEFT = 'ArrowLeft';
 const KEY_UP = 'ArrowUp';
@@ -21,7 +22,7 @@ const MyCellEditor = {
         getValue() {
             return this.value;
         },
-        
+
         onKeyDown(event) {
             const key = event.key;
 
@@ -45,4 +46,5 @@ const MyCellEditor = {
     }
 }
 ```
+
 {% /if %}

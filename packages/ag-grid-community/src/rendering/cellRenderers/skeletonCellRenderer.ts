@@ -19,8 +19,10 @@ export class SkeletonCellRenderer extends Component implements ILoadingCellRende
 
         if (params.deferRender) {
             this.setupLoading(params);
+        } else if (params.node.failedLoad) {
+            this.setupFailed();
         } else {
-            params.node.failedLoad ? this.setupFailed() : this.setupLoading(params);
+            this.setupLoading(params);
         }
     }
 

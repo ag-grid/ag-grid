@@ -25,7 +25,9 @@ export class RowStyleService extends BeanStub implements NamedBean {
             if (typeof rowCls === 'string') {
                 classes.push(rowCls);
             } else if (Array.isArray(rowCls)) {
-                rowCls.forEach((e) => classes.push(e));
+                for (const e of rowCls) {
+                    classes.push(e);
+                }
             }
         };
 

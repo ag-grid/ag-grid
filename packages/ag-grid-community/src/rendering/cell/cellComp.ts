@@ -1,4 +1,5 @@
-import { CssClassManager } from '../../agStack/core/cssClassManager';
+import type { AgComponentPopupPositionParams } from '../../agStack/interfaces/iPopup';
+import { CssClassManager } from '../../agStack/rendering/cssClassManager';
 import { _getActiveDomElement } from '../../agStack/utils/document';
 import { _addStylesToElement, _clearElement, _removeFromParent } from '../../agStack/utils/dom';
 import { _missing } from '../../agStack/utils/generic';
@@ -203,7 +204,7 @@ export class CellComp extends Component {
         }
         const takeWrapperOut = !usingWrapper && this.eCellWrapper != null;
         if (takeWrapperOut) {
-            _removeFromParent(this.eCellWrapper!);
+            _removeFromParent(this.eCellWrapper);
             this.eCellWrapper = undefined;
         }
 
@@ -218,7 +219,7 @@ export class CellComp extends Component {
         }
         const takeCellValueOut = !usingCellValue && this.eCellValue != null;
         if (takeCellValueOut) {
-            _removeFromParent(this.eCellValue!);
+            _removeFromParent(this.eCellValue);
             this.eCellValue = undefined;
         }
 
@@ -265,7 +266,7 @@ export class CellComp extends Component {
         const cellEditorPromise = compDetails.newAgStackInstance();
 
         const { params } = compDetails;
-        cellEditorPromise.then((c) => this.afterCellEditorCreated(versionCopy, c!, params, popup, position));
+        cellEditorPromise.then((c) => this.afterCellEditorCreated(versionCopy, c, params, popup, position));
 
         // if we don't do this, and editor component is async, then there will be a period
         // when the component isn't present and keyboard navigation won't work - so example
@@ -517,10 +518,12 @@ export class CellComp extends Component {
             position != null ? position : cellEditor!.getPopupPosition?.() ?? 'over';
         const isRtl = gos.get('enableRtl');
 
-        const positionParams: PopupPositionParams & { type: string; eventSource: HTMLElement } = {
+        const positionParams: AgComponentPopupPositionParams<PopupPositionParams> = {
             ePopup: ePopupGui,
-            column,
-            rowNode,
+            additionalParams: {
+                column,
+                rowNode,
+            },
             type: 'popupCellEditor',
             eventSource: eCell,
             position: positionToUse,
@@ -547,7 +550,7 @@ export class CellComp extends Component {
     }
 
     public detach(): void {
-        this.eRow.removeChild(this.getGui());
+        this.getGui().remove();
     }
 
     // if the row is also getting destroyed, then we don't need to remove from dom,
