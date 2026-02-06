@@ -1,5 +1,34 @@
 [
     {
+        "version": "35.1.0",
+        "date": "11th February 2026",
+        "landingPageHighlight": "Filtering Named Date Ranges, Formula Editor, BigInt Support, React Context, Theme Builder - Import Theme",
+        "highlights": [
+            {
+                "text": "Filtering Named Date Ranges",
+                "path": "./filter-date/#built-in-named--relative-date-ranges"
+            },
+            {
+                "text": "Formula Editor",
+                "path": "./formula-editor-component/"
+            },
+            {
+                "text": "BigInt Support",
+                "path": "./cell-data-types/#bigint"
+            },
+            {
+                "text": "React Context",
+                "path": "./installation/#registering-modules"
+            },
+            {
+                "text": "Theme Builder - Import Theme",
+                "path": "./theming-theme-builder/#importing-themes"
+            }
+        ],
+        "notesPath": "./upgrading-to-ag-grid-35-1",
+        "hideBlogPostLink": false
+    },
+    {
         "version": "35.0.1",
         "date": "22nd January 2026"
     },
