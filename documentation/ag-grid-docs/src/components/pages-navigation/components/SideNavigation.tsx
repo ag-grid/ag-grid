@@ -12,9 +12,11 @@ interface Props {
 }
 
 export function SideNavigation({ headings, delayedScrollSpy }: Props) {
-    const menuRef = useScrollSpy({ headings, delayedScrollSpy });
+    const filteredHeadings = headings.filter(({ text }) => text !== 'Next Up');
 
-    if (headings.length < 2) {
+    const menuRef = useScrollSpy({ headings: filteredHeadings, delayedScrollSpy });
+
+    if (filteredHeadings.length < 2) {
         return null;
     }
 
@@ -22,7 +24,7 @@ export function SideNavigation({ headings, delayedScrollSpy }: Props) {
         <nav ref={menuRef} className={styles.sideNav}>
             <div>
                 <ul>
-                    {headings.map(({ slug, depth, text }, index) => {
+                    {filteredHeadings.map(({ slug, depth, text }, index) => {
                         const displayText = index === 0 ? 'On this page' : text;
 
                         return (

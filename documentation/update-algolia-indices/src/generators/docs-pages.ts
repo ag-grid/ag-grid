@@ -80,6 +80,11 @@ export const parseDocPage = async (item: FlattenedMenuItem) => {
         const snakeCaseHeading = (subHeading ?? heading)?.replace(/\s+/g, '-').toLowerCase();
         const hashPath = heading ? `${path}#${snakeCaseHeading}` : path;
 
+        if (heading === 'Next Up') {
+            // Don't include Next Up sections as they are not actual pages and cause confusion in search results
+            return;
+        }
+
         records.push({
             source: 'docs',
 
