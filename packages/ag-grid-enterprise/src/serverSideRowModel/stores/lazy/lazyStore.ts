@@ -723,15 +723,6 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
     // gets called when row data updated, and no more refreshing needed
     public fireRefreshFinishedEvent(): void {
-        const isClientSideSortingEnabled = this.gos.get('serverSideEnableClientSideSort');
-        const isClientSideSort = isClientSideSortingEnabled && this.cache.isStoreFullyLoaded();
-        if (isClientSideSort) {
-            // ensure refreshed rows remain in client-side sorted order
-            const didSort = this.cache.clientSideSortRows();
-            if (didSort) {
-                this.fireStoreUpdatedEvent();
-            }
-        }
         this.eventSvc.dispatchEvent({
             type: 'storeRefreshed',
             route: this.parentRowNode.getRoute(),
