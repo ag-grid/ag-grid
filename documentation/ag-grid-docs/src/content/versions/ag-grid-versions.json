@@ -2,7 +2,7 @@
     {
         "version": "35.1.0",
         "date": "11th February 2026",
-        "landingPageHighlight": "Filtering Named Date Ranges, Formula Editor, BigInt Support, React Context, Theme Builder - Import Theme",
+        "landingPageHighlight": "Filtering Named Date Ranges, Formula Editor, BigInt Support, Excel Export Security, Theme Builder - Import Theme",
         "highlights": [
             {
                 "text": "Filtering Named Date Ranges",
