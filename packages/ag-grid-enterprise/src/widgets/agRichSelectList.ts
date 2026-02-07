@@ -191,7 +191,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         });
     }
 
-    public selectValue(value?: TValue[] | TValue): boolean {
+    public selectValue(value?: TValue[] | TValue | null): boolean {
         if (!this.currentList || value == null) {
             return false;
         }
@@ -262,6 +262,8 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
 
         if (index < 0 || index >= this.currentList.length) {
             this.lastRowHovered = -1;
+            _setAriaActiveDescendant(this.richSelectWrapper, null);
+            this.richSelectWrapper.removeAttribute('data-active-option');
         } else {
             this.lastRowHovered = index;
 
@@ -285,7 +287,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         });
     }
 
-    public getIndicesForValues(values?: TValue[] | TValue): number[] {
+    public getIndicesForValues(values?: TValue[] | TValue | null): number[] {
         const { currentList } = this;
 
         if (!currentList || currentList.length === 0 || values == null) {
@@ -300,19 +302,15 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
             return [];
         }
 
-        const { valueFormatter } = this.params;
         const positions: number[] = [];
-
-        const isObject = typeof values[0] === 'object';
-        const formattedList = currentList.map(valueFormatter!);
+        const valueFormatter = this.getValueFormatter();
+        let formattedList: string[] | undefined;
 
         for (const value of values) {
-            let idx = -1;
-
-            if (isObject) {
-                idx = formattedList.indexOf(valueFormatter!(value));
-            } else {
-                idx = currentList.indexOf(value);
+            let idx = currentList.indexOf(value);
+            if (idx === -1 && typeof value === 'object') {
+                formattedList ??= currentList.map(valueFormatter);
+                idx = formattedList.indexOf(valueFormatter(value));
             }
 
             if (idx >= 0) {
@@ -345,7 +343,10 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
 
     private findItemInSelected(value: TValue): TValue | undefined {
         if (typeof value === 'object') {
-            const valueFormatter = this.params.valueFormatter!;
+            if (this.selectedItems.has(value)) {
+                return value;
+            }
+            const valueFormatter = this.getValueFormatter();
             const valueFormatted = valueFormatter(value);
             for (const item of this.selectedItems) {
                 if (valueFormatter(item) === valueFormatted) {
@@ -355,6 +356,10 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         } else {
             return this.selectedItems.has(value) ? value : undefined;
         }
+    }
+
+    private getValueFormatter(): (value: TValue) => string {
+        return this.params.valueFormatter ?? ((value) => String(value ?? ''));
     }
 
     private createRowComponent(
@@ -386,7 +391,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         const scrollTop = this.getScrollTop();
         const mouseY = e.clientY - rect.top + scrollTop;
 
-        return Math.min(Math.floor(mouseY / this.getRowHeight()), this.model.getRowCount() - 1);
+        return Math.min(Math.max(Math.floor(mouseY / this.getRowHeight()), 0), this.model.getRowCount() - 1);
     }
 
     private onMouseMove(e: MouseEvent): void {

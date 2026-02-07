@@ -6,7 +6,7 @@ import type {
     RichCellEditorValuesCallbackParams,
     RichSelectParams,
 } from 'ag-grid-community';
-import { AgAbstractCellEditor, KeyCode, _addGridCommonParams, _missing, _warn } from 'ag-grid-community';
+import { AgAbstractCellEditor, KeyCode, _addGridCommonParams, _consoleError, _missing, _warn } from 'ag-grid-community';
 
 import { AgRichSelect } from '../widgets/agRichSelect';
 
@@ -41,14 +41,19 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
 
         const isOneTimeAsync = valueList && !Array.isArray(valueList);
         if (isOneTimeAsync) {
-            valueList.then((values) => {
-                const searchStringCallback = this.getSearchStringCallback(values);
-                if (searchStringCallback) {
-                    richSelect.setSearchStringCreator(searchStringCallback);
-                }
+            valueList
+                .then((values) => {
+                    const searchStringCallback = this.getSearchStringCallback(values);
+                    if (searchStringCallback) {
+                        richSelect.setSearchStringCreator(searchStringCallback);
+                    }
 
-                this.processEventKey(eventKey);
-            });
+                    this.processEventKey(eventKey);
+                })
+                .catch((error) => {
+                    _consoleError('Rich Select', error);
+                    this.processEventKey(eventKey);
+                });
         }
 
         this.addManagedListeners(richSelect, {
@@ -132,14 +137,22 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
             suppressDeselectAll,
             suppressMultiSelectPillRenderer,
         } = params;
+        const formatValueFn = formatValue ?? ((value: TValue | null | undefined) => String(value ?? ''));
+        const valueFormatter = (value: TValue | TValue[]): string => {
+            if (Array.isArray(value)) {
+                return value.map((currentValue) => formatValueFn(currentValue)).join(', ');
+            }
 
-        const ret: RichSelectParams = {
+            return formatValueFn(value as TValue | null | undefined);
+        };
+
+        const ret: RichSelectParams<TValue> = {
             value,
             cellRenderer,
             cellRendererParams,
             cellRowHeight: cellHeight,
             searchDebounceDelay,
-            valueFormatter: formatValue,
+            valueFormatter,
             pickerAriaLabelKey: 'ariaLabelRichSelectField',
             pickerAriaLabelValue: 'Rich Select Field',
             pickerType: 'virtual-list',
@@ -170,12 +183,6 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
             ret.onSearch = this.onSearchCallback;
             ret.allowNoResultsCopy = true;
             ret.filterList = true; // force filterList when doing full async
-        }
-
-        if (multiSelect && allowTyping) {
-            params.allowTyping = false;
-            ret.allowTyping = false;
-            _warn(181);
         }
 
         return { params: ret, valueList };
@@ -211,13 +218,20 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
             return;
         }
         richSelect.setValueList({
-            valueList: valuesPromise.then((results) => {
-                // only set the results if this is the latest search request
-                // this avoids out of order responses messing up the results
-                if (currentRequest === this.currentSearchRequest) {
-                    return results;
-                }
-            }),
+            valueList: valuesPromise
+                .then((results) => {
+                    // only set the results if this is the latest search request
+                    // this avoids out of order responses messing up the results
+                    if (currentRequest === this.currentSearchRequest) {
+                        return results;
+                    }
+                })
+                .catch((error) => {
+                    _consoleError('Rich Select', error);
+                    if (currentRequest === this.currentSearchRequest) {
+                        return [];
+                    }
+                }),
             refresh: true,
         });
     };
@@ -229,9 +243,10 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
 
         const params = this.params;
         const { colDef, formatValue } = params;
+        const formatValueFn = formatValue ?? ((value: TValue | null | undefined) => String(value ?? ''));
 
         if (colDef.cellEditorParams?.formatValue) {
-            return (values: TValue[]) => values.map(formatValue!);
+            return (values: TValue[]) => values.map(formatValueFn);
         }
 
         const { keyCreator } = colDef;
@@ -251,7 +266,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
                 });
         }
 
-        return (values: TValue[]) => values.map(formatValue!);
+        return (values: TValue[]) => values.map(formatValueFn);
     }
 
     // we need to have the gui attached before we can draw the virtual rows, as the

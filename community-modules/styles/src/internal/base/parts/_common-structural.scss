@@ -1479,6 +1479,47 @@
         }
     }
 
+    .ag-rich-select-typing-multi {
+        .ag-picker-field-display {
+            flex: 0 1 auto;
+            min-width: 0;
+            max-width: 100%;
+        }
+
+        .ag-rich-select-pill-display {
+            display: flex;
+            flex: 0 1 auto;
+            min-width: 0;
+            max-width: 100%;
+            align-items: center;
+            overflow: hidden;
+
+            .ag-pill-container {
+                flex: 0 1 auto;
+                min-width: 0;
+                max-width: 100%;
+                overflow: hidden;
+            }
+        }
+
+        .ag-rich-select-field-input {
+            flex: 0 0 auto;
+            min-width: 0;
+            max-width: 100%;
+
+            .ag-input-wrapper {
+                flex: 0 0 auto;
+                max-width: 100%;
+            }
+
+            .ag-input-field-input {
+                width: auto;
+                min-width: 1ch;
+                max-width: 100%;
+            }
+        }
+    }
+
     // /**
     //  ****************************
     //  * Autocomplete

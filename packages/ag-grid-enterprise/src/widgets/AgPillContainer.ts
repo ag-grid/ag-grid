@@ -16,6 +16,9 @@ import { AgPill } from './agPill';
 
 interface PillRendererParams<TValue> {
     eWrapper?: HTMLElement;
+    focusAfterDelete?: () => void;
+    focusAfterForwardBoundary?: () => void;
+    onHorizontalArrowKeyDown?: (e: KeyboardEvent) => void;
     announceItemFocus?: () => void;
     onPillMouseDown?: (e: MouseEvent) => void;
     valueFormatter?: (value: TValue | TValue[]) => string | null;
@@ -92,30 +95,39 @@ export class AgPillContainer<TValue> extends Component {
 
     public onNavigationKeyDown(e: KeyboardEvent): void {
         const { key } = e;
+        const isRtl = this.gos.get('enableRtl');
+        const isPrevious = (!isRtl && key === KeyCode.LEFT) || (isRtl && key === KeyCode.RIGHT);
+        const isNext = (!isRtl && key === KeyCode.RIGHT) || (isRtl && key === KeyCode.LEFT);
 
-        if (!this.pills.length || (key !== KeyCode.LEFT && key !== KeyCode.RIGHT)) {
+        if (!this.pills.length || (!isPrevious && !isNext)) {
             return;
         }
 
         e.preventDefault();
 
-        const { params, beans } = this;
+        const { beans, params } = this;
         const activeEl = _getActiveDomElement(beans);
         const eGui = this.getGui();
+        const focusableElements = _findFocusableElements(eGui);
 
         if (eGui.contains(activeEl)) {
-            const nextFocusableEl = _findNextFocusableElement(beans, eGui, false, key === KeyCode.LEFT);
+            // If focus is on a descendant inside a pill, normalize it to the pill element first.
+            const activePill = focusableElements.find((el) => el.contains(activeEl));
+            if (activePill && activePill !== activeEl) {
+                activePill.focus();
+            }
+
+            const nextFocusableEl = _findNextFocusableElement(beans, eGui, false, isPrevious);
 
             if (nextFocusableEl) {
                 nextFocusableEl.focus();
-            } else if (params.eWrapper) {
-                params.eWrapper.focus();
+            } else if (isNext) {
+                params.focusAfterForwardBoundary?.();
             }
-        } else {
-            const focusableElements = _findFocusableElements(eGui);
-            if (focusableElements.length > 0) {
-                focusableElements[key === KeyCode.RIGHT ? 0 : focusableElements.length - 1].focus();
-            }
+            // Keep focus on the edge pill when there is no next target.
+            // Wrapping or focus handoff is controlled by the parent rich-select.
+        } else if (focusableElements.length > 0) {
+            focusableElements[isNext ? 0 : focusableElements.length - 1].focus();
         }
     }
 
@@ -137,6 +149,16 @@ export class AgPillContainer<TValue> extends Component {
 
     private onPillKeyDown(e: KeyboardEvent): void {
         const key = e.key;
+
+        if (key === KeyCode.LEFT || key === KeyCode.RIGHT) {
+            e.stopPropagation();
+            if (this.params.onHorizontalArrowKeyDown) {
+                this.params.onHorizontalArrowKeyDown(e);
+            } else {
+                this.onNavigationKeyDown(e);
+            }
+            return;
+        }
 
         if (key !== KeyCode.DELETE && key !== KeyCode.BACKSPACE) {
             return;
@@ -164,8 +186,12 @@ export class AgPillContainer<TValue> extends Component {
         const values = (params.getValue() || []).filter((val) => getKey(val) !== pillKey);
         params.setValue(values);
 
-        if (!values.length && params.eWrapper) {
-            params.eWrapper.focus();
+        if (!values.length) {
+            if (params.focusAfterDelete) {
+                params.focusAfterDelete();
+            } else {
+                params.eWrapper?.focus();
+            }
         } else if (restoreFocusToIndex != null) {
             const { pill } = pills[Math.min(restoreFocusToIndex, pills.length - 1)];
             if (pill) {

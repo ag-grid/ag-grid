@@ -1,6 +1,6 @@
 import type { AgPickerFieldParams } from '../agStack/widgets/agPickerFieldParams';
 import type { AgComponentSelectorType } from '../widgets/component';
-import type { ICellEditorParams } from './iCellEditor';
+import type { ICellEditorParamsShared } from './iCellEditor';
 import type { ICellEditorRendererParams } from './iCellEditorRenderer';
 
 export interface IRichCellEditorRendererParams<TValue> extends ICellEditorRendererParams<TValue> {
@@ -8,7 +8,7 @@ export interface IRichCellEditorRendererParams<TValue> extends ICellEditorRender
 }
 
 export interface RichSelectParams<TValue = any> extends AgPickerFieldParams<AgComponentSelectorType> {
-    value?: TValue[] | TValue;
+    value?: TValue[] | TValue | null;
     valueList?: TValue[];
     onSearch?: (search?: string) => void;
     cellRenderer?: any;
@@ -28,7 +28,7 @@ export interface RichSelectParams<TValue = any> extends AgPickerFieldParams<AgCo
     placeholder?: string;
     initialInputValue?: string;
 
-    valueFormatter?: (value: TValue[] | TValue) => string;
+    valueFormatter?: (value: TValue[] | TValue | null | undefined) => string;
     searchStringCreator?: (values: TValue[]) => string[];
     allowNoResultsCopy?: boolean;
 }
@@ -88,7 +88,6 @@ export interface IRichCellEditorParams<TData = any, TValue = any, GValue = any> 
     highlightMatch?: boolean;
     /**
      * If `true` this component will allow multiple items from the list of values to be selected.
-     * Note: This feature does not work with `allowTyping=true`.
      */
     multiSelect?: boolean;
     /**
@@ -135,4 +134,4 @@ export interface IRichCellEditorParams<TData = any, TValue = any, GValue = any> 
 
 export interface RichCellEditorParams<TData = any, TValue = any, TContext = any>
     extends IRichCellEditorParams<TData, TValue>,
-        Omit<ICellEditorParams<TData, TValue, TContext>, 'formatValue' | 'parseValue'> {}
+        ICellEditorParamsShared<TData, TValue, TContext> {}

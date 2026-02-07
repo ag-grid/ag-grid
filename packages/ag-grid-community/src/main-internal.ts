@@ -158,6 +158,7 @@ export {
     _setDisabled,
     _setDisplayed,
     _setFixedWidth,
+    _setScrollLeft,
     _setVisible,
     _isFocusableFormField,
     _placeCaretAtEnd,
@@ -487,7 +488,7 @@ export {
     _focusNextGridCoreContainer,
 } from './utils/gridFocus';
 export { _createIcon, _createIconNoSpan } from './utils/icon';
-export { _warnOnce } from './utils/log';
+export { _warnOnce, _consoleError } from './utils/log';
 export { _mergeDeep } from './utils/mergeDeep';
 export { _formatNumberCommas } from './utils/number';
 export { _selectAllCells } from './utils/selection';

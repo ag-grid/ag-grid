@@ -38,6 +38,7 @@ import {
     _isEventFromPrintableCharacter,
     _isVisible,
     _setAriaActiveDescendant,
+    _setScrollLeft,
     _stopPropagationForAgGrid,
 } from 'ag-grid-community';
 
@@ -80,7 +81,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     AgGridCommon<any, any>,
     GridOptionsService,
     AgComponentSelectorType,
-    TValue[] | TValue,
+    TValue[] | TValue | null,
     RichSelectParams<TValue>,
     AgRichSelectEvent,
     AgRichSelectList<TValue, AgRichSelectEvent>
@@ -114,22 +115,29 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     private shouldDisplayTooltip?: () => boolean;
 
     constructor(config?: RichSelectParams<TValue>) {
+        const resolvedAgComponents = config?.agComponents?.includes(AgInputTextFieldSelector)
+            ? config.agComponents
+            : [AgInputTextFieldSelector, ...(config?.agComponents ?? [])];
+
         super({
-            pickerAriaLabelKey: 'ariaLabelRichSelectField',
-            pickerAriaLabelValue: 'Rich Select Field',
-            pickerType: 'ag-list',
-            className: 'ag-rich-select',
-            pickerIcon: 'richSelectOpen',
-            ariaRole: 'combobox',
-            template: config?.template ?? AgRichSelectElement,
-            agComponents: [AgInputTextFieldSelector],
-            modalPicker: false,
             ...config,
-            // maxPickerHeight needs to be set after expanding `config`
+            // prevents undefined values from being passed to the picker which can cause
+            // issues with the list component's value selection and highlighting logic
+            pickerAriaLabelKey: config?.pickerAriaLabelKey ?? 'ariaLabelRichSelectField',
+            pickerAriaLabelValue: config?.pickerAriaLabelValue ?? 'Rich Select Field',
+            pickerType: config?.pickerType ?? 'ag-list',
+            className: config?.className ?? 'ag-rich-select',
+            pickerIcon: config?.pickerIcon ?? 'richSelectOpen',
+            ariaRole: config?.ariaRole ?? 'combobox',
+            template: config?.template ?? AgRichSelectElement,
+            agComponents: resolvedAgComponents,
+            modalPicker: config?.modalPicker ?? false,
+            valueFormatter:
+                config?.valueFormatter ?? ((value: TValue | TValue[] | null | undefined) => String(value ?? '')),
             maxPickerHeight: config?.maxPickerHeight ?? 'calc(var(--ag-row-height) * 6.5)',
         });
 
-        const { value, valueList, searchStringCreator, onSearch } = config || {};
+        const { value, valueList, searchStringCreator, onSearch } = config ?? {};
 
         if (value !== undefined) {
             this.value = value;
@@ -161,13 +169,21 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         this.createListComponent();
         this.eDeselect.appendChild(_createIconNoSpan('richSelectRemove', this.beans)!);
 
-        const { allowTyping, placeholder, suppressDeselectAll } = this.config;
+        const { allowTyping, placeholder, multiSelect, suppressDeselectAll, suppressMultiSelectPillRenderer } =
+            this.config;
 
         this.eDeselect.classList.add('ag-hidden');
 
         if (allowTyping) {
             this.eInput.setAutoComplete(false).setInputPlaceholder(placeholder);
-            this.eDisplayField.classList.add('ag-hidden');
+            if (!multiSelect) {
+                this.eDisplayField.classList.add('ag-hidden');
+            } else {
+                this.eWrapper.classList.add('ag-rich-select-typing-multi');
+                if (!suppressMultiSelectPillRenderer) {
+                    this.eDisplayField.classList.add('ag-rich-select-pill-display');
+                }
+            }
         } else {
             this.eInput.setDisplayed(false);
         }
@@ -180,7 +196,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         this.renderSelectedValue();
 
         if (allowTyping) {
-            this.eInput.onValueChange((value) => this.searchTextFromString(value));
+            this.eInput.onValueChange((value) => {
+                this.updateTypingMultiSelectPlaceholder(value);
+                this.searchTextFromString(value);
+            });
         }
 
         this.addManagedElementListeners(this.eWrapper, { focus: this.onWrapperFocus.bind(this) });
@@ -236,13 +255,22 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         } = config;
 
         const valueFormatted = formatValueFn(value, valueFormatter);
+        const isTypingMultiSelect = !!(allowTyping && multiSelect);
 
         if (allowTyping) {
             /**
              * Suppress event in full async mode when item is selected to prevent redundant async filtering call for valid options.
              */
-            this.eInput.setValue(initialInputValue ?? valueFormatted, !!fromPicker && !!onSearch);
-            return;
+            const inputValue = isTypingMultiSelect
+                ? initialInputValue ?? this.eInput.getValue() ?? ''
+                : initialInputValue ?? (value === '' ? '' : valueFormatted);
+            this.eInput.setValue(inputValue, !!fromPicker && !!onSearch);
+
+            if (!isTypingMultiSelect) {
+                return;
+            }
+
+            this.updateTypingMultiSelectPlaceholder(inputValue);
         }
 
         if (multiSelect && !suppressDeselectAll) {
@@ -257,7 +285,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             return;
         }
 
-        if (cellRenderer) {
+        if (cellRenderer && !allowTyping) {
             userCompDetails = _getEditorRendererDetails<RichSelectParams, IRichCellEditorRendererParams<TValue>>(
                 this.userCompFactory,
                 config,
@@ -291,7 +319,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 this.addDestroyFunc(() => this.destroyBean(renderer));
             });
         } else {
-            if (_exists(this.value)) {
+            if (value != null) {
                 // eslint-disable-next-line no-restricted-properties -- Could swap to textContent, but could be a breaking change
                 eDisplayField.innerText = valueFormatted;
                 eDisplayField.classList.remove('ag-display-as-placeholder');
@@ -373,11 +401,15 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
 
         this.listComponent?.setIsLoading();
-        valueList.then((values) => {
-            if (values) {
-                this.setValueListInternal({ ...params, valueList: values });
-            }
-        });
+        valueList
+            .then((values) => {
+                if (values !== undefined) {
+                    this.setValueListInternal({ ...params, valueList: values });
+                }
+            })
+            .catch(() => {
+                this.setValueListInternal({ ...params, valueList: [], refresh: true });
+            });
     }
 
     /**
@@ -397,16 +429,11 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         super.showPicker();
 
-        let valueToUse: TValue[] | TValue = value;
-
-        // if value is null or undefined, we default to null and
-        // check the list of values for the presence of null
-        if (value === undefined) {
-            valueToUse = null as TValue;
-        }
+        // if value is undefined, we default to null and check the list of values for null
+        const valueToUse: TValue[] | TValue | null = value ?? null;
 
         listComponent.selectValue(valueToUse);
-        const idx = listComponent.getIndicesForValues(Array.isArray(valueToUse) ? valueToUse : [valueToUse])[0];
+        const idx = listComponent.getIndicesForValues(valueToUse)[0];
 
         if (idx != null) {
             this.tooltipFeature?.attemptToHideTooltip();
@@ -439,18 +466,78 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 announceItemFocus: () => {
                     this.announceAriaValue(ariaDeleteSelection);
                 },
+                focusAfterDelete: config.allowTyping ? () => this.focusTypingInputAtBoundary() : undefined,
+                focusAfterForwardBoundary: config.allowTyping ? () => this.focusTypingInputAtBoundary() : undefined,
+                onHorizontalArrowKeyDown: this.onPillHorizontalArrowKeyDown,
                 getValue: () => this.getValue() as TValue[] | null,
                 setValue: (value: TValue[] | null) => this.setValue(value, true),
             });
         }
 
+        const previousPillCount = this.pillContainer.getGui().childElementCount;
         this.doWhileBlockingAnnouncement(() => this.pillContainer?.refresh());
+        this.scrollTypingMultiSelectPillsToEndOnAdd(previousPillCount);
+    }
+
+    private scrollTypingMultiSelectPillsToEndOnAdd(previousPillCount: number): void {
+        const { allowTyping, multiSelect, suppressMultiSelectPillRenderer } = this.config;
+
+        if (!allowTyping || !multiSelect || suppressMultiSelectPillRenderer) {
+            return;
+        }
+
+        const ePillContainer = this.pillContainer?.getGui();
+        if (!ePillContainer || ePillContainer.childElementCount <= previousPillCount) {
+            return;
+        }
+
+        _setScrollLeft(ePillContainer, ePillContainer.scrollWidth, this.isRtl());
     }
 
     private doWhileBlockingAnnouncement(func: () => void): void {
         this.skipWrapperAnnouncement = true;
         func();
         this.skipWrapperAnnouncement = false;
+    }
+
+    private readonly onPillHorizontalArrowKeyDown = (e: KeyboardEvent): void => {
+        this.handleHorizontalNavigationKey(e);
+    };
+
+    private isPreviousHorizontalNavigation(key: string): boolean {
+        return (key === KeyCode.LEFT) !== this.isRtl();
+    }
+
+    private isRtl(): boolean {
+        return !!this.gos?.get('enableRtl');
+    }
+
+    private isTypingInputAtPillBoundaryForPreviousNavigation(): boolean {
+        const inputEl = this.eInput.getInputElement();
+        const { selectionStart, selectionEnd, value } = inputEl;
+
+        if (selectionStart == null || selectionEnd == null || selectionStart !== selectionEnd) {
+            return false;
+        }
+
+        const isRtl = this.isRtl();
+        return isRtl ? selectionStart === value.length : selectionStart === 0;
+    }
+
+    private focusTypingInputAtBoundary(): void {
+        const inputEl = this.eInput.getInputElement();
+        inputEl.focus();
+        const caret = this.isRtl() ? inputEl.value.length : 0;
+        inputEl.setSelectionRange(caret, caret);
+    }
+
+    private getActiveElementForKeyboardNavigation(): Element | null {
+        if (this.beans?.eRootDiv) {
+            return _getActiveDomElement(this.beans);
+        }
+
+        const inputEl = this.eInput.getInputElement();
+        return inputEl.ownerDocument?.activeElement ?? document.activeElement;
     }
 
     private onWrapperFocus(): void {
@@ -518,7 +605,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             return this.searchStringCreator(values);
         }
 
-        return values.map((value) => formatValueFn(value, valueFormatter));
+        return values.map((value) => (value === '' ? '' : formatValueFn(value, valueFormatter)));
     }
 
     private filterListModel(filteredValues: TValue[]): void {
@@ -587,11 +674,11 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             if (!shouldFilter || filteredValues.length) {
                 this.listComponent?.ensureIndexVisible(0);
             } else if (shouldFilter) {
-                this.getAriaElement().removeAttribute('data-active-option');
-                const eListAriaEl = this.listComponent?.getAriaElement();
-                if (eListAriaEl) {
-                    _setAriaActiveDescendant(eListAriaEl, null);
-                }
+                // active-descendant is managed on the focusable element (wrapper/input),
+                // so clear it there to avoid stale references after filtering to no results.
+                const eAriaEl = this.getFocusableElement();
+                eAriaEl.removeAttribute('data-active-option');
+                _setAriaActiveDescendant(eAriaEl, null);
             }
         }
     }
@@ -653,6 +740,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         skipRendering?: boolean
     ): this {
         if (this.value === value) {
+            this.updateTypingMultiSelectPlaceholder();
             return this;
         }
 
@@ -660,10 +748,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         if (value != null) {
             if (!isArray) {
-                const list = this.listComponent?.getCurrentList();
-                const index = list ? list.indexOf(value) : -1;
-
-                if (index === -1) {
+                const indices = this.listComponent?.getIndicesForValues(value);
+                if (!indices?.length) {
                     return this;
                 }
             }
@@ -677,6 +763,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         if (!skipRendering) {
             this.renderSelectedValue(fromPicker);
+        } else {
+            this.updateTypingMultiSelectPlaceholder();
         }
 
         return this;
@@ -697,7 +785,13 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     }
 
     protected onEnterKeyDown(e: KeyboardEvent): void {
+        const isTypingMultiSelect = !!(this.config.allowTyping && this.config.multiSelect);
+
         if (!this.isPickerDisplayed) {
+            if (isTypingMultiSelect) {
+                e.preventDefault();
+                this.dispatchPickerEventAndHidePicker(this.value, true);
+            }
             return;
         }
 
@@ -705,10 +799,108 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         if (this.listComponent?.getCurrentList()) {
             const lastRowHovered = this.listComponent.getLastItemHovered();
+
+            if (isTypingMultiSelect) {
+                if (lastRowHovered !== undefined) {
+                    const values = this.getCurrentSelectionWithAppendedItem(lastRowHovered);
+                    this.listComponent.selectValue(values);
+                    this.setValue(values, false, true);
+                    this.resetTypingMultiSelectSearchState();
+                    this.hidePicker();
+                }
+                return;
+            }
+
             if (this.config.multiSelect || lastRowHovered === undefined) {
                 this.dispatchPickerEventAndHidePicker(this.value, true);
             } else {
                 this.onListValueSelected(new Set<TValue>([lastRowHovered]), true);
+            }
+        }
+    }
+
+    private getCurrentSelectionWithAppendedItem(item: TValue): TValue[] {
+        const value = this.getValue();
+        const values = Array.isArray(value) ? [...value] : value != null ? [value] : [];
+
+        if (!values.some((selectedValue) => this.areValuesEquivalent(selectedValue, item))) {
+            values.push(item);
+        }
+
+        return values;
+    }
+
+    private areValuesEquivalent(left: TValue, right: TValue): boolean {
+        if (left === right) {
+            return true;
+        }
+
+        if (typeof left === 'object' && typeof right === 'object' && left != null && right != null) {
+            const valueFormatter =
+                this.config.valueFormatter ?? ((value: TValue | TValue[] | null | undefined) => String(value ?? ''));
+            return valueFormatter(left) === valueFormatter(right);
+        }
+
+        return false;
+    }
+
+    private resetTypingMultiSelectSearchState(): void {
+        this.searchString = '';
+        this.eInput.setValue('', true);
+
+        if (this.onSearchCallbackDebounced) {
+            this.setValueList({ valueList: undefined, refresh: true });
+            return;
+        }
+
+        if (this.config.filterList && this.values) {
+            this.setValueList({ valueList: this.values, refresh: true });
+        }
+    }
+
+    private updateTypingMultiSelectPlaceholder(inputValue?: string | null): void {
+        const { allowTyping, multiSelect, placeholder } = this.config;
+
+        if (!allowTyping || !multiSelect) {
+            return;
+        }
+
+        const currentInputValue = inputValue ?? this.eInput.getValue() ?? '';
+        const hasInputValue = currentInputValue.length > 0;
+        const value = this.value;
+        const hasSelectedValues =
+            (Array.isArray(value) ? value.length > 0 : value != null) ||
+            (this.listComponent?.getSelectedItems().size ?? 0) > 0;
+        const nextPlaceholder = !hasInputValue && !hasSelectedValues ? placeholder : '';
+
+        this.eInput.setInputPlaceholder(nextPlaceholder);
+
+        this.updateTypingMultiSelectInputSize(currentInputValue, nextPlaceholder);
+    }
+
+    private updateTypingMultiSelectInputSize(inputValue: string, placeholder?: string): void {
+        const getInputElement = (this.eInput as Partial<GridInputTextField>).getInputElement;
+        if (typeof getInputElement !== 'function') {
+            return;
+        }
+
+        const inputEl = getInputElement.call(this.eInput);
+        if (!inputEl) {
+            return;
+        }
+
+        const widthSource = inputValue || placeholder || '';
+        // keep the input compact beside pills but still large enough for the current text.
+        const nextSize = Math.max(1, Math.min(widthSource.length + 1, 32));
+
+        if (inputEl.size !== nextSize) {
+            inputEl.size = nextSize;
+        }
+
+        if (inputValue) {
+            const ePillContainer = this.pillContainer?.getGui();
+            if (ePillContainer) {
+                _setScrollLeft(ePillContainer, ePillContainer.scrollWidth, this.isRtl());
             }
         }
     }
@@ -721,6 +913,29 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             e.preventDefault();
             this.setValue([], true);
         }
+    }
+
+    private onBackspaceKeyDown(e: KeyboardEvent): void {
+        const inputEl = this.eInput.getInputElement();
+        const isCursorAtStart = inputEl.selectionStart === 0 && inputEl.selectionEnd === 0;
+
+        if (!isCursorAtStart) {
+            return;
+        }
+
+        const value = this.getValue();
+        const selectedValues = Array.isArray(value)
+            ? value
+            : value != null
+              ? [value]
+              : Array.from(this.listComponent?.getSelectedItems() ?? []);
+
+        if (!selectedValues.length) {
+            return;
+        }
+
+        e.preventDefault();
+        this.setValue(selectedValues.slice(0, -1), true);
     }
 
     private onTabKeyDown(): void {
@@ -748,24 +963,18 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
     private getValueFromSet(valueSet: Set<TValue>): TValue[] | TValue | null {
         const { multiSelect } = this.config;
-        let newValue: TValue[] | TValue | null = null;
-
-        for (const value of valueSet) {
-            if (valueSet.size === 1 && !multiSelect) {
-                newValue = value;
-                break;
-            }
-            if (!newValue) {
-                newValue = [];
-            }
-            newValue.push(value);
+        // keep the historical return shape for non-multi-select editors:
+        // always return a scalar (or null), never an array.
+        // this is also prevents a misconfiguration from leaving more than one item selected.
+        if (!multiSelect) {
+            return valueSet.size ? valueSet.values().next().value : null;
         }
 
-        if (Array.isArray(newValue)) {
-            newValue.sort();
-        }
-
-        return newValue;
+        // preserve the exact order in which the user selected values.
+        // Set iteration order is insertion order, so this keeps pill order stable:
+        // selecting "Orange" then "Aqua" remains ["Orange", "Aqua"].
+        const selectedValues = Array.from(valueSet);
+        return selectedValues.length ? selectedValues : null;
     }
 
     private onListValueSelected(valueSet: Set<TValue>, fromEnterKey: boolean): void {
@@ -799,100 +1008,179 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         return super.getFocusableElement();
     }
 
+    private handleHorizontalNavigationKey(e: KeyboardEvent): void {
+        const { allowTyping, multiSelect } = this.config;
+
+        if (!allowTyping) {
+            e.preventDefault();
+            this.listComponent?.highlightIndex(-1);
+            this.pillContainer?.onNavigationKeyDown(e);
+            return;
+        }
+
+        const pillContainer = this.pillContainer;
+        if (!pillContainer) {
+            return;
+        }
+
+        if (!multiSelect) {
+            return;
+        }
+
+        const activeEl = this.getActiveElementForKeyboardNavigation();
+        const isPrevious = this.isPreviousHorizontalNavigation(e.key);
+        const inputEl = this.eInput.getInputElement();
+
+        if (activeEl === inputEl) {
+            if (isPrevious && this.isTypingInputAtPillBoundaryForPreviousNavigation()) {
+                this.listComponent?.highlightIndex(-1);
+                pillContainer.onNavigationKeyDown(e);
+            }
+            return;
+        }
+
+        if (pillContainer.getGui().contains(activeEl)) {
+            this.listComponent?.highlightIndex(-1);
+            const activeBefore = activeEl;
+            pillContainer.onNavigationKeyDown(e);
+
+            // Navigating forward from the last pill should move focus back into the input.
+            if (!isPrevious && this.getActiveElementForKeyboardNavigation() === activeBefore) {
+                this.focusTypingInputAtBoundary();
+            }
+        }
+    }
+
+    private handlePageNavigationKey(e: KeyboardEvent, key: string): void {
+        const { allowTyping } = this.config;
+
+        if (allowTyping && (key === KeyCode.PAGE_HOME || key === KeyCode.PAGE_END)) {
+            e.preventDefault();
+            const inputEl = this.eInput.getInputElement();
+            const target = key === KeyCode.PAGE_HOME ? 0 : inputEl.value.length;
+            inputEl.setSelectionRange(target, target);
+            return;
+        }
+
+        e.preventDefault();
+        if (this.pickerComponent) {
+            this.listComponent?.navigateToPage(key as 'PageUp' | 'PageDown' | 'Home' | 'End');
+        }
+    }
+
+    private handleVerticalNavigationKey(e: KeyboardEvent, key: string, isComposing: boolean): void {
+        if (isComposing) {
+            return;
+        }
+
+        this.onNavigationKeyDown(e, key, () => {
+            if (this.config.multiSelect) {
+                this.doWhileBlockingAnnouncement(() => this.eWrapper.focus());
+                this.announceAriaValue(this.ariaToggleSelection);
+            }
+        });
+    }
+
+    private handleEscapeKey(e: KeyboardEvent): void {
+        if (!this.isPickerDisplayed) {
+            return;
+        }
+
+        if (_isVisible(this.listComponent!.getGui())) {
+            e.preventDefault();
+            _stopPropagationForAgGrid(e);
+        }
+        this.hidePicker();
+    }
+
+    private handleEnterKey(e: KeyboardEvent, isComposing: boolean): void {
+        if (isComposing) {
+            e.preventDefault();
+            return;
+        }
+
+        this.onEnterKeyDown(e);
+    }
+
+    private handleSpaceKey(e: KeyboardEvent, isComposing: boolean): void {
+        const { allowTyping, multiSelect } = this.config;
+        const { isPickerDisplayed, listComponent } = this;
+        const shouldToggleSelectionWithSpace =
+            !isComposing &&
+            isPickerDisplayed &&
+            multiSelect &&
+            !!listComponent &&
+            (!allowTyping || (this.eInput.getValue() ?? '') === '');
+
+        if (!allowTyping || isComposing || shouldToggleSelectionWithSpace) {
+            e.preventDefault();
+        }
+
+        if (shouldToggleSelectionWithSpace && listComponent) {
+            const lastItemHovered = listComponent.getLastItemHovered();
+            if (lastItemHovered !== undefined) {
+                listComponent.toggleListItemSelection(lastItemHovered);
+            }
+        }
+    }
+
+    private handleBackspaceKey(e: KeyboardEvent, isComposing: boolean): void {
+        if (!isComposing && this.config.allowTyping && this.config.multiSelect) {
+            this.onBackspaceKeyDown(e);
+        }
+    }
+
+    private handleDeleteKey(e: KeyboardEvent): void {
+        if (this.config.multiSelect && !this.config.suppressDeselectAll) {
+            this.onDeleteKeyDown(e);
+        }
+    }
+
+    private handleSearchWithoutTyping(e: KeyboardEvent): void {
+        if (!this.config.allowTyping) {
+            // this allows searching even without the input field, this is for historical reasons
+            this.buildSearchStringFromKeyboardEvent(e);
+        }
+    }
+
     protected override onKeyDown(e: KeyboardEvent): void {
         const { key, isComposing } = e;
-
-        const {
-            isPickerDisplayed,
-            config: { allowTyping, multiSelect, suppressDeselectAll },
-            listComponent,
-            pickerComponent,
-        } = this;
 
         switch (key) {
             case KeyCode.LEFT:
             case KeyCode.RIGHT:
-                if (!allowTyping || this.pillContainer) {
-                    e.preventDefault();
-                    if (this.pillContainer) {
-                        this.listComponent?.highlightIndex(-1);
-                        this.pillContainer.onNavigationKeyDown(e);
-                    }
-                }
+                this.handleHorizontalNavigationKey(e);
                 break;
             case KeyCode.PAGE_HOME:
             case KeyCode.PAGE_END:
-                if (allowTyping) {
-                    e.preventDefault();
-                    const inputEl = this.eInput.getInputElement();
-                    const target = key === KeyCode.PAGE_HOME ? 0 : inputEl.value.length;
-                    inputEl.setSelectionRange(target, target);
-                    break;
-                }
-            // Only break here for allowTyping, otherwise use the same logic as PageUp/PageDown
-            // eslint-disable-next-line
             case KeyCode.PAGE_UP:
             case KeyCode.PAGE_DOWN:
-                e.preventDefault();
-                if (pickerComponent) {
-                    listComponent?.navigateToPage(key);
-                }
+                this.handlePageNavigationKey(e, key);
                 break;
             case KeyCode.DOWN:
             case KeyCode.UP:
-                if (!isComposing) {
-                    this.onNavigationKeyDown(e, key, () => {
-                        if (multiSelect) {
-                            this.doWhileBlockingAnnouncement(() => this.eWrapper.focus());
-                            this.announceAriaValue(this.ariaToggleSelection);
-                        }
-                    });
-                }
-
+                this.handleVerticalNavigationKey(e, key, isComposing);
                 break;
             case KeyCode.ESCAPE:
-                if (isPickerDisplayed) {
-                    if (_isVisible(this.listComponent!.getGui())) {
-                        e.preventDefault();
-                        _stopPropagationForAgGrid(e);
-                    }
-                    this.hidePicker();
-                }
+                this.handleEscapeKey(e);
                 break;
             case KeyCode.ENTER:
-                if (isComposing) {
-                    e.preventDefault();
-                } else {
-                    this.onEnterKeyDown(e);
-                }
-
+                this.handleEnterKey(e, isComposing);
                 break;
             case KeyCode.SPACE:
-                if (!allowTyping || isComposing) {
-                    e.preventDefault();
-                }
-
-                if (!isComposing && isPickerDisplayed && multiSelect && listComponent) {
-                    const lastItemHovered = listComponent.getLastItemHovered();
-
-                    if (lastItemHovered !== undefined) {
-                        listComponent.toggleListItemSelection(lastItemHovered);
-                    }
-                }
+                this.handleSpaceKey(e, isComposing);
+                break;
+            case KeyCode.BACKSPACE:
+                this.handleBackspaceKey(e, isComposing);
                 break;
             case KeyCode.TAB:
                 this.onTabKeyDown();
                 break;
             case KeyCode.DELETE:
-                if (multiSelect && !suppressDeselectAll) {
-                    this.onDeleteKeyDown(e);
-                }
+                this.handleDeleteKey(e);
                 break;
             default:
-                if (!allowTyping) {
-                    // this allows searching even without the input field, this is for historical reasons
-                    this.buildSearchStringFromKeyboardEvent(e);
-                }
+                this.handleSearchWithoutTyping(e);
         }
     }
 
@@ -914,8 +1202,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 // helper function that users a provided value formatter or
 // converts the value to a string, or to '' if the original
 // value is `null` or `undefined`
-const formatValueFn = <TValue>(value: TValue, valueFormatter?: ((value: TValue | TValue[]) => string) | undefined) =>
-    valueFormatter?.(value) ?? String(value ?? '');
+const formatValueFn = <TValue>(
+    value: TValue | null | undefined,
+    valueFormatter?: ((value: TValue | TValue[] | null | undefined) => string) | undefined
+) => valueFormatter?.(value) ?? String(value ?? '');
 
 /**
  * cell renderers are used in a few places. they bind to dom slightly differently to other cell renders as they

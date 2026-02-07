@@ -154,7 +154,6 @@ export class RichSelectRow<TValue> extends Component<HighlightTooltipEventType> 
     }
 
     private populateWithRenderer(value: TValue, valueFormatted: string): boolean {
-        // bad coder here - we are not populating all values of the cellRendererParams
         let cellRendererPromise: AgPromise<any> | undefined;
         let userCompDetails: UserCompDetails | undefined;
         const { cellRenderer, cellRendererParams } = this.params;
