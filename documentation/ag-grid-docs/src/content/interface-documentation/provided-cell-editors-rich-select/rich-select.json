@@ -2,7 +2,7 @@
     "_config_": {},
     "IRichCellEditorParams": {
         "values": {
-            "isRequired": true
+            "isRequired": false
         }
     }
 }

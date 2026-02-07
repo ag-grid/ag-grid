@@ -20,6 +20,7 @@ import type {
     UserCompDetails,
     UserComponentFactory,
     WithoutGridCommon,
+    _VerticalDirection,
 } from 'ag-grid-community';
 import {
     AgInputTextFieldSelector,
@@ -102,6 +103,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     private listComponent: AgRichSelectList<TValue> | undefined;
     private pillContainer: AgPillContainer<TValue> | null;
     protected values: TValue[] | undefined;
+    private loadMoreRowsCallback?: (direction?: _VerticalDirection) => void;
+    private loadMoreRowsThreshold = 10;
 
     private searchStringCreator: ((values: TValue[]) => string[]) | null = null;
     private readonly eInput: GridInputTextField = RefPlaceholder;
@@ -231,6 +234,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         this.listComponent = this.createBean(
             new AgRichSelectList<TValue>(this.config, this.getFocusableElement(), () => this.searchString)
         );
+        this.listComponent.setLoadMoreRowsCallback(this.loadMoreRowsCallback, this.loadMoreRowsThreshold);
+        this.listComponent.setStateAnnouncementCallback((value: string) => this.announceAriaValue(value));
         this.listComponent.setParentComponent(this);
 
         this.addManagedListeners(this.listComponent, {
@@ -353,13 +358,24 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         this.searchStringCreator = searchStringFn;
     }
 
+    public setLoadMoreRowsCallback(callback?: (direction?: _VerticalDirection) => void, thresholdRows = 10): void {
+        this.loadMoreRowsCallback = callback;
+        this.loadMoreRowsThreshold = Math.max(thresholdRows, 1);
+        this.listComponent?.setLoadMoreRowsCallback(this.loadMoreRowsCallback, this.loadMoreRowsThreshold);
+    }
+
+    public setIsLoading(): void {
+        this.listComponent?.setIsLoading();
+    }
+
     private setValueListInternal(params: {
         valueList: TValue[] | undefined;
         refresh?: boolean;
         isInitial?: boolean;
+        scrollToCurrentValue?: boolean;
     }): void {
         const { listComponent, isPickerDisplayed, value } = this;
-        const { valueList, refresh, isInitial } = params;
+        const { valueList, refresh, isInitial, scrollToCurrentValue = true } = params;
         if (isInitial) {
             this.setValues(valueList);
         }
@@ -368,13 +384,19 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
 
         // we need to update the list component even if the 'values' is undefined
-        this.listComponent?.setCurrentList(valueList);
+        listComponent.setCurrentList(valueList);
 
         if (!refresh) {
             return;
         }
         if (this.values) {
             listComponent.refresh(true);
+            const hasCurrentValueInLoadedList = value != null && listComponent.getIndicesForValues(value).length > 0;
+            if (isPickerDisplayed && hasCurrentValueInLoadedList && scrollToCurrentValue) {
+                // keep async/paged behaviour aligned with sync lists: when the loaded page contains
+                // the current value, select and scroll it into view.
+                listComponent.selectValue(value);
+            }
         } else if (isPickerDisplayed) {
             const hasRefreshed = listComponent.selectValue(value);
             if (!hasRefreshed) {
@@ -388,6 +410,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         valueList: TValue[] | Promise<TValue[] | undefined> | undefined;
         refresh?: boolean;
         isInitial?: boolean;
+        scrollToCurrentValue?: boolean;
     }): void {
         const { valueList } = params;
 
@@ -594,6 +617,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             str = '';
         }
         this.searchString = str;
+        if (this.onSearchCallbackDebounced) {
+            this.setValueList({ valueList: undefined, refresh: true });
+        }
         this.runSearch();
     }
 

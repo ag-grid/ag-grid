@@ -1,4 +1,4 @@
-import type { Component, HighlightTooltipEventType, RichSelectParams } from 'ag-grid-community';
+import type { Component, HighlightTooltipEventType, RichSelectParams, _VerticalDirection } from 'ag-grid-community';
 import {
     KeyCode,
     _createElement,
@@ -38,6 +38,9 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     private loadingState = STATE_READY_FOR_INPUT;
     private eStateCompLabel: HTMLElement;
     private eLoadingIcon: Element | undefined;
+    private loadMoreRowsCallback?: (direction?: _VerticalDirection) => void;
+    private loadMoreRowsThreshold = 10;
+    private stateAnnouncementCallback?: (value: string) => void;
 
     constructor(
         private readonly params: RichSelectParams,
@@ -86,6 +89,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
             mouseout: this.onMouseOut.bind(this),
             mousedown: this.onMouseDown.bind(this),
             click: this.onClick.bind(this),
+            scroll: this.onGuiScroll.bind(this),
         });
 
         eGui.classList.add(LIST_COMPONENT_NAME);
@@ -104,9 +108,19 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     }
 
     private setLoadingState(state: AgRichSelectListState): void {
+        const hasChanged = this.loadingState !== state;
         this.loadingState = state;
         this.toggleStateComp();
         this.toggleVisibility();
+        if (hasChanged) {
+            const stateAnnouncement = this.getStateAnnouncementText(state);
+            if (stateAnnouncement) {
+                this.stateAnnouncementCallback?.(stateAnnouncement);
+            }
+        }
+        if (state !== STATE_LOADING) {
+            this.scheduleMaybeRequestMoreRows();
+        }
     }
 
     private toggleStateComp(): void {
@@ -147,6 +161,17 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         } else {
             _setDisplayed(eListGui, forceVisible);
         }
+        this.scheduleMaybeRequestMoreRows();
+    }
+
+    public setLoadMoreRowsCallback(callback?: (direction?: _VerticalDirection) => void, thresholdRows = 10): void {
+        this.loadMoreRowsCallback = callback;
+        this.loadMoreRowsThreshold = Math.max(thresholdRows, 1);
+        this.maybeRequestMoreRows();
+    }
+
+    public setStateAnnouncementCallback(callback?: (value: string) => void): void {
+        this.stateAnnouncementCallback = callback;
     }
 
     public override navigateToPage(key: 'PageUp' | 'PageDown' | 'Home' | 'End'): number | null {
@@ -290,15 +315,13 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     public getIndicesForValues(values?: TValue[] | TValue | null): number[] {
         const { currentList } = this;
 
-        if (!currentList || currentList.length === 0 || values == null) {
+        if (!currentList || currentList.length === 0 || values === undefined) {
             return [];
         }
 
-        if (!Array.isArray(values)) {
-            values = [values] as TValue[];
-        }
+        const valuesToFind = Array.isArray(values) ? values : [values];
 
-        if (values.length === 0) {
+        if (valuesToFind.length === 0) {
             return [];
         }
 
@@ -306,9 +329,9 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         const valueFormatter = this.getValueFormatter();
         let formattedList: string[] | undefined;
 
-        for (const value of values) {
-            let idx = currentList.indexOf(value);
-            if (idx === -1 && typeof value === 'object') {
+        for (const value of valuesToFind) {
+            let idx = currentList.indexOf(value as TValue);
+            if (idx === -1 && value != null && typeof value === 'object') {
                 formattedList ??= currentList.map(valueFormatter);
                 idx = formattedList.indexOf(valueFormatter(value));
             }
@@ -401,6 +424,57 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
             this.lastRowHovered = row;
             this.highlightIndex(row, true);
         }
+    }
+
+    private onGuiScroll(): void {
+        this.maybeRequestMoreRows(true);
+    }
+
+    private scheduleMaybeRequestMoreRows(): void {
+        if (this.beans) {
+            _requestAnimationFrame(this.beans, () => this.maybeRequestMoreRows(false));
+            return;
+        }
+
+        this.maybeRequestMoreRows(false);
+    }
+
+    private maybeRequestMoreRows(fromScrollEvent = false): void {
+        const callback = this.loadMoreRowsCallback;
+        const currentList = this.currentList;
+
+        if (!callback || !currentList || this.loadingState === STATE_LOADING) {
+            return;
+        }
+
+        const eGui = this.getGui();
+        if (eGui.clientHeight <= 0) {
+            return;
+        }
+
+        const remainingPixels = eGui.scrollHeight - (eGui.scrollTop + eGui.clientHeight);
+        const remainingRows = remainingPixels / this.getRowHeight();
+        const rowsFromTop = eGui.scrollTop / this.getRowHeight();
+
+        // previous-page requests should only happen from user scroll, not from refresh/layout passes.
+        if (fromScrollEvent && rowsFromTop <= this.loadMoreRowsThreshold) {
+            callback('up');
+        }
+        if (remainingRows <= this.loadMoreRowsThreshold) {
+            callback('down');
+        }
+    }
+
+    private getStateAnnouncementText(state: AgRichSelectListState): string | undefined {
+        if (state === STATE_LOADING) {
+            return this.loadingLabel;
+        }
+
+        if (state === STATE_NO_RESULTS && this.params.allowNoResultsCopy) {
+            return this.noMatchesLabel;
+        }
+
+        return undefined;
     }
 
     private onMouseDown(e: MouseEvent): void {

@@ -35,6 +35,12 @@
     :where(.ag-rich-select-loading) {
         display: flex;
         padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
+
+        /* stylelint-disable-next-line selector-max-specificity */
+        :where(.ag-loading-text) {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     }
 }
 

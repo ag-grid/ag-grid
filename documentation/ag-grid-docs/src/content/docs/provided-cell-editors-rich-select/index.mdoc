@@ -216,6 +216,40 @@ columnDefs: [
 ]
 ```
 
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["values"] /%}
+
+### Paged Async Values
+
+For large datasets, use a paged datasource so the editor only requests the rows it needs:
+
+{% gridExampleRunner title="Rich Select Paged Async Values" name="rich-select-paged-async-values" /%}
+
+```ts
+function getLanguagesPage(params: RichCellEditorValuesPageParams): Promise<RichCellEditorValuesPageResult<string>> {
+    return fetch(
+        `/api/languages?startRow=${params.startRow}&endRow=${params.endRow}&cursor=${encodeURIComponent(params.cursor ?? '')}`
+    ).then((res) => res.json());
+}
+```
+
+```js
+columnDefs: [
+    {
+        headerName: 'Language',
+        field: 'language',
+        cellEditor: 'agRichSelectCellEditor',
+        cellEditorParams: {
+            valuesPage: getLanguagesPage,
+            valuesPageInitialStartRow: (value) => getRowForSelectedValue(value),
+            valuesPageSize: 100,
+            valuesPageLoadThreshold: 10
+        }
+    }
+]
+```
+
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["valuesPage", "valuesPageInitialStartRow", "valuesPageSize", "valuesPageLoadThreshold"] /%}
+
 ### Async Filtering
 
 For advanced filtering scenarios, combine async `values` callback, `allowTyping`, and `filterListAsync` to enable async filtering. This is shown in the example below:
@@ -254,6 +288,25 @@ columnDefs: [
     }
 ]
 ```
+
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["allowTyping", "filterList", "filterListAsync", "values", "searchDebounceDelay"] /%}
+
+### Paged Async Filtering
+
+When filtering against large server-backed datasets, use `valuesPage` with `allowTyping`, `filterList` and `filterListAsync`:
+
+{% gridExampleRunner title="Rich Select Paged Async Filtering" name="rich-select-paged-async-filtering" /%}
+
+Each request includes:
+
+-   `search` for the current filter text.
+-   `startRow` and `endRow` for range-based pagination.
+-   `cursor` for cursor-based APIs.
+
+This allows the grid to fetch filtered results in chunks instead of loading the complete filtered result set in one request.
+You can also provide `valuesPageInitialStartRow` so the initial unfiltered page opens around the current selection.
+
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["allowTyping", "filterList", "filterListAsync", "valuesPage", "valuesPageInitialStartRow", "valuesPageSize", "valuesPageLoadThreshold", "searchDebounceDelay"] /%}
 
 ## API Reference
 

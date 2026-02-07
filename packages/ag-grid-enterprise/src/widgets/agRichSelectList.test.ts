@@ -84,4 +84,81 @@ describe('AgRichSelectList', () => {
         expect(() => list.getIndicesForValues(objectValue)).not.toThrow();
         expect(list.getIndicesForValues(objectValue)).toEqual([0]);
     });
+
+    it('finds null entries when using null as the current-value sentinel', () => {
+        const { list } = createList<string | null>();
+        list.setCurrentList(['Open', null, 'Closed']);
+
+        expect(list.getIndicesForValues(null)).toEqual([1]);
+    });
+
+    it('requests more rows when viewport is close to the end', () => {
+        const { list } = createList<string>();
+        const callback = jest.fn();
+        const gui = list.getGui() as HTMLElement;
+
+        Object.defineProperty(gui, 'clientHeight', { value: 100, configurable: true });
+        Object.defineProperty(gui, 'scrollHeight', { value: 700, configurable: true });
+        Object.defineProperty(gui, 'scrollTop', { value: 560, configurable: true });
+
+        (list as any).getRowHeight = () => 20;
+        list.setCurrentList(new Array(40).fill('value'));
+        list.setLoadMoreRowsCallback(callback, 2);
+
+        (list as any).onGuiScroll();
+
+        expect(callback).toHaveBeenCalled();
+        expect(callback).toHaveBeenCalledWith('down');
+    });
+
+    it('requests previous rows when viewport is close to the start', () => {
+        const { list } = createList<string>();
+        const callback = jest.fn();
+        const gui = list.getGui() as HTMLElement;
+
+        Object.defineProperty(gui, 'clientHeight', { value: 100, configurable: true });
+        Object.defineProperty(gui, 'scrollHeight', { value: 700, configurable: true });
+        Object.defineProperty(gui, 'scrollTop', { value: 20, configurable: true });
+
+        (list as any).getRowHeight = () => 20;
+        list.setCurrentList(new Array(40).fill('value'));
+        list.setLoadMoreRowsCallback(callback, 2);
+
+        (list as any).onGuiScroll();
+
+        expect(callback).toHaveBeenCalledWith('up');
+    });
+
+    it('allows requesting more rows even when the current list is empty', () => {
+        const { list } = createList<string>();
+        const callback = jest.fn();
+        const gui = list.getGui() as HTMLElement;
+
+        Object.defineProperty(gui, 'clientHeight', { value: 100, configurable: true });
+        Object.defineProperty(gui, 'scrollHeight', { value: 100, configurable: true });
+        Object.defineProperty(gui, 'scrollTop', { value: 0, configurable: true });
+
+        (list as any).getRowHeight = () => 20;
+        list.setCurrentList([]);
+        list.setLoadMoreRowsCallback(callback, 2);
+
+        (list as any).onGuiScroll();
+
+        expect(callback).toHaveBeenCalled();
+    });
+
+    it('announces loading and no-matches state transitions', () => {
+        const { list } = createList<string>({ allowNoResultsCopy: true });
+        const announce = jest.fn();
+
+        (list as any).loadingLabel = 'Loading...';
+        (list as any).noMatchesLabel = 'No matches to show';
+        list.setStateAnnouncementCallback(announce);
+
+        list.setIsLoading();
+        list.setCurrentList([]);
+
+        expect(announce).toHaveBeenNthCalledWith(1, 'Loading...');
+        expect(announce).toHaveBeenNthCalledWith(2, 'No matches to show');
+    });
 });

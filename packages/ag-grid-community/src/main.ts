@@ -374,6 +374,10 @@ export {
     RichCellEditorParams,
     RichCellEditorValuesCallback,
     RichCellEditorValuesCallbackParams,
+    RichCellEditorValuesPageStartRowCallback,
+    RichCellEditorValuesPageCallback,
+    RichCellEditorValuesPageParams,
+    RichCellEditorValuesPageResult,
     RichSelectParams,
 } from './interfaces/iRichCellEditorParams';
 export type { CheckboxSelectionComponent } from './selection/checkboxSelectionComponent';

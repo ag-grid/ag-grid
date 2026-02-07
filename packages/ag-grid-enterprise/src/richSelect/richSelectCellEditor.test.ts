@@ -142,6 +142,26 @@ describe('RichSelectCellEditor', () => {
         await expect(request.valueList).resolves.toEqual([]);
     });
 
+    it('handles sync throws from values callback by clearing results for the latest request', () => {
+        const setValueList = jest.fn();
+        const values = jest.fn(() => {
+            throw new Error('sync boom');
+        });
+        const editor = createEditor({
+            values: values as any,
+            allowTyping: true,
+            filterList: true,
+            filterListAsync: true,
+        });
+        (editor as any).eEditor = { setValueList } as any;
+
+        (editor as any).onSearchCallback('term');
+
+        expect(setValueList).toHaveBeenCalledTimes(2);
+        expect(setValueList).toHaveBeenNthCalledWith(1, { refresh: true, valueList: undefined });
+        expect(setValueList).toHaveBeenNthCalledWith(2, { refresh: true, valueList: [] });
+    });
+
     it('ignores stale async search responses when a newer request exists', async () => {
         let firstResolve: ((values: TestValue[]) => void) | undefined;
         let secondResolve: ((values: TestValue[]) => void) | undefined;
@@ -172,6 +192,48 @@ describe('RichSelectCellEditor', () => {
         await expect(secondRequest.valueList).resolves.toEqual([{ id: 2, label: 'second' }]);
     });
 
+    it('passes an immutable search value per request to async values callback', () => {
+        let firstParams: any;
+        let secondParams: any;
+        const values = jest
+            .fn()
+            .mockImplementationOnce((params) => {
+                firstParams = params;
+                return new Promise<TestValue[]>(() => {});
+            })
+            .mockImplementationOnce((params) => {
+                secondParams = params;
+                return new Promise<TestValue[]>(() => {});
+            });
+
+        const setValueList = jest.fn();
+        const editor = createEditor({
+            values: values as any,
+            allowTyping: true,
+            filterList: true,
+            filterListAsync: true,
+        });
+        (editor as any).eEditor = { setValueList } as any;
+
+        (editor as any).onSearchCallback('first');
+        (editor as any).onSearchCallback('second');
+
+        expect(firstParams.search).toBe('first');
+        expect(secondParams.search).toBe('second');
+        expect(firstParams).not.toBe(secondParams);
+    });
+
+    it('warns and disables full async mode when filterListAsync is set without allowTyping', () => {
+        const editor = createEditor({
+            values: (() => Promise.resolve([] as TestValue[])) as any,
+            allowTyping: false,
+            filterListAsync: true,
+        });
+
+        expect((editor as any).isFullAsync()).toBe(false);
+        expect(warnSpy).toHaveBeenCalled();
+    });
+
     it('processes event key when one-time async values reject during initialise', async () => {
         const values = jest.fn(() => Promise.reject(new Error('load failed')));
         const editor = createEditor({
@@ -197,5 +259,476 @@ describe('RichSelectCellEditor', () => {
         await flushMicrotasks();
 
         expect(processEventKeySpy).toHaveBeenCalledWith('A');
+    });
+
+    it('loads initial paged values and wires load-more callback', async () => {
+        const valuesPage = jest.fn().mockReturnValue({
+            values: [{ id: 1, label: 'one' }],
+            cursor: 'next',
+        });
+        const editor = createEditor({
+            values: undefined,
+            valuesPage: valuesPage as any,
+            valuesPageSize: 25,
+        });
+
+        let loadMoreCallback: (() => void) | undefined;
+        const richSelect = {
+            addCss: jest.fn(),
+            setIsLoading: jest.fn(),
+            showPicker: jest.fn(),
+            setValueList: jest.fn(),
+            setLoadMoreRowsCallback: jest.fn((callback: () => void) => {
+                loadMoreCallback = callback;
+            }),
+            setSearchStringCreator: jest.fn(),
+            searchTextFromString: jest.fn(),
+        };
+
+        (editor as any).createManagedBean = jest.fn(() => richSelect);
+        (editor as any).appendChild = jest.fn();
+        (editor as any).addManagedListeners = jest.fn();
+
+        (editor as any).initialiseEditor((editor as any).params);
+        await flushMicrotasks();
+
+        expect(richSelect.setLoadMoreRowsCallback).toHaveBeenCalled();
+        expect(valuesPage).toHaveBeenCalledWith(
+            expect.objectContaining({
+                search: '',
+                startRow: 0,
+                endRow: 25,
+                cursor: undefined,
+            })
+        );
+        expect(richSelect.setIsLoading).toHaveBeenCalled();
+        expect(loadMoreCallback).toBeDefined();
+    });
+
+    it('replays initial event key once after the first paged load in non-full-async mode', async () => {
+        let resolveFirstPage: ((result: { values: TestValue[]; cursor: string }) => void) | undefined;
+        const valuesPage = jest
+            .fn()
+            .mockImplementationOnce(
+                () =>
+                    new Promise<{ values: TestValue[]; cursor: string }>((resolve) => {
+                        resolveFirstPage = resolve;
+                    })
+            )
+            .mockReturnValueOnce({
+                values: [{ id: 2, label: 'two' }],
+                lastRow: 2,
+            });
+        const editor = createEditor({
+            values: undefined,
+            valuesPage: valuesPage as any,
+            eventKey: 'A',
+            allowTyping: false,
+            filterList: false,
+            filterListAsync: false,
+        });
+
+        let loadMoreCallback: (() => void) | undefined;
+        const richSelect = {
+            addCss: jest.fn(),
+            setIsLoading: jest.fn(),
+            showPicker: jest.fn(),
+            setValueList: jest.fn(),
+            setLoadMoreRowsCallback: jest.fn((callback: () => void) => {
+                loadMoreCallback = callback;
+            }),
+            setSearchStringCreator: jest.fn(),
+            searchTextFromString: jest.fn(),
+        };
+
+        (editor as any).createManagedBean = jest.fn(() => richSelect);
+        (editor as any).appendChild = jest.fn();
+        (editor as any).addManagedListeners = jest.fn();
+
+        jest.useFakeTimers();
+        try {
+            (editor as any).initialiseEditor((editor as any).params);
+            (editor as any).afterGuiAttached();
+            jest.runOnlyPendingTimers();
+
+            expect(richSelect.searchTextFromString).toHaveBeenCalledTimes(0);
+
+            resolveFirstPage?.({
+                values: [{ id: 1, label: 'one' }],
+                cursor: 'next',
+            });
+            await flushMicrotasks();
+
+            expect(richSelect.searchTextFromString).toHaveBeenCalledTimes(1);
+            expect(richSelect.searchTextFromString).toHaveBeenCalledWith('A');
+
+            loadMoreCallback?.();
+            await flushMicrotasks();
+
+            expect(richSelect.searchTextFromString).toHaveBeenCalledTimes(1);
+        } finally {
+            jest.useRealTimers();
+        }
+    });
+
+    it('processes initial event key once in full-async paged mode', async () => {
+        const valuesPage = jest.fn().mockReturnValue({
+            values: [{ id: 1, label: 'one' }],
+            lastRow: 1,
+        });
+        const editor = createEditor({
+            values: undefined,
+            valuesPage: valuesPage as any,
+            eventKey: 'A',
+            allowTyping: true,
+            filterList: true,
+            filterListAsync: true,
+        });
+
+        const richSelect = {
+            addCss: jest.fn(),
+            setIsLoading: jest.fn(),
+            showPicker: jest.fn(),
+            setValueList: jest.fn(),
+            setLoadMoreRowsCallback: jest.fn(),
+            setSearchStringCreator: jest.fn(),
+            searchTextFromString: jest.fn(),
+        };
+
+        (editor as any).createManagedBean = jest.fn(() => richSelect);
+        (editor as any).appendChild = jest.fn();
+        (editor as any).addManagedListeners = jest.fn();
+
+        jest.useFakeTimers();
+        try {
+            (editor as any).initialiseEditor((editor as any).params);
+            (editor as any).afterGuiAttached();
+            jest.runOnlyPendingTimers();
+            await flushMicrotasks();
+
+            expect(richSelect.searchTextFromString).toHaveBeenCalledTimes(1);
+            expect(richSelect.searchTextFromString).toHaveBeenCalledWith('A');
+        } finally {
+            jest.useRealTimers();
+        }
+    });
+
+    it('supports custom initial start row for paged values and continues from that offset', async () => {
+        const valuesPageInitialStartRow = jest.fn(() => 10);
+        const valuesPage = jest
+            .fn()
+            .mockReturnValueOnce({
+                values: [
+                    { id: 10, label: 'ten' },
+                    { id: 11, label: 'eleven' },
+                ],
+                cursor: 'next',
+            })
+            .mockReturnValueOnce({
+                values: [{ id: 12, label: 'twelve' }],
+                lastRow: 13,
+            });
+        const editor = createEditor({
+            values: undefined,
+            valuesPage: valuesPage as any,
+            valuesPageSize: 2,
+            value: { id: 999, label: 'selected' } as any,
+            valuesPageInitialStartRow: valuesPageInitialStartRow as any,
+        });
+
+        let loadMoreCallback: (() => void) | undefined;
+        const richSelect = {
+            addCss: jest.fn(),
+            setIsLoading: jest.fn(),
+            showPicker: jest.fn(),
+            setValueList: jest.fn(),
+            setLoadMoreRowsCallback: jest.fn((callback: () => void) => {
+                loadMoreCallback = callback;
+            }),
+            setSearchStringCreator: jest.fn(),
+            searchTextFromString: jest.fn(),
+        };
+
+        (editor as any).createManagedBean = jest.fn(() => richSelect);
+        (editor as any).appendChild = jest.fn();
+        (editor as any).addManagedListeners = jest.fn();
+
+        (editor as any).initialiseEditor((editor as any).params);
+        await flushMicrotasks();
+        loadMoreCallback?.();
+        await flushMicrotasks();
+
+        expect(valuesPageInitialStartRow).toHaveBeenCalledWith({ id: 999, label: 'selected' });
+        expect(valuesPage).toHaveBeenNthCalledWith(
+            1,
+            expect.objectContaining({
+                search: '',
+                startRow: 10,
+                endRow: 12,
+            })
+        );
+        expect(valuesPage).toHaveBeenNthCalledWith(
+            2,
+            expect.objectContaining({
+                search: '',
+                startRow: 12,
+                endRow: 14,
+            })
+        );
+    });
+
+    it('loads previous pages when initial paged load starts after row zero', async () => {
+        const dataset = Array.from({ length: 40 }, (_, id) => ({ id, label: `value-${id}` }));
+        const valuesPage = jest.fn().mockImplementation((request: any) => ({
+            values: dataset.slice(request.startRow, request.endRow),
+            lastRow: dataset.length,
+        }));
+        const editor = createEditor({
+            values: undefined,
+            valuesPage: valuesPage as any,
+            valuesPageSize: 10,
+            valuesPageInitialStartRow: 20,
+        });
+
+        let loadMoreCallback: ((direction?: 'up' | 'down') => void) | undefined;
+        const richSelect = {
+            addCss: jest.fn(),
+            setIsLoading: jest.fn(),
+            showPicker: jest.fn(),
+            setValueList: jest.fn(),
+            setLoadMoreRowsCallback: jest.fn((callback: (direction?: 'up' | 'down') => void) => {
+                loadMoreCallback = callback;
+            }),
+            setSearchStringCreator: jest.fn(),
+            searchTextFromString: jest.fn(),
+        };
+
+        (editor as any).createManagedBean = jest.fn(() => richSelect);
+        (editor as any).appendChild = jest.fn();
+        (editor as any).addManagedListeners = jest.fn();
+
+        (editor as any).initialiseEditor((editor as any).params);
+        await flushMicrotasks();
+
+        loadMoreCallback?.('up');
+        await flushMicrotasks();
+        loadMoreCallback?.('up');
+        await flushMicrotasks();
+        loadMoreCallback?.('down');
+        await flushMicrotasks();
+
+        expect(valuesPage).toHaveBeenNthCalledWith(
+            1,
+            expect.objectContaining({
+                search: '',
+                startRow: 20,
+                endRow: 30,
+            })
+        );
+        expect(valuesPage).toHaveBeenNthCalledWith(
+            2,
+            expect.objectContaining({
+                search: '',
+                startRow: 10,
+                endRow: 20,
+            })
+        );
+        expect(valuesPage).toHaveBeenNthCalledWith(
+            3,
+            expect.objectContaining({
+                search: '',
+                startRow: 0,
+                endRow: 10,
+            })
+        );
+        expect(valuesPage).toHaveBeenNthCalledWith(
+            4,
+            expect.objectContaining({
+                search: '',
+                startRow: 30,
+                endRow: 40,
+            })
+        );
+    });
+
+    it('appends additional pages when load-more callback is invoked', async () => {
+        const valuesPage = jest
+            .fn()
+            .mockReturnValueOnce({
+                values: [
+                    { id: 1, label: 'one' },
+                    { id: 2, label: 'two' },
+                ],
+                cursor: 'next',
+            })
+            .mockReturnValueOnce({
+                values: [{ id: 3, label: 'three' }],
+                lastRow: 3,
+            });
+        const editor = createEditor({
+            values: undefined,
+            valuesPage: valuesPage as any,
+            valuesPageSize: 2,
+        });
+
+        let loadMoreCallback: (() => void) | undefined;
+        const richSelect = {
+            addCss: jest.fn(),
+            setIsLoading: jest.fn(),
+            showPicker: jest.fn(),
+            setValueList: jest.fn(),
+            setLoadMoreRowsCallback: jest.fn((callback: () => void) => {
+                loadMoreCallback = callback;
+            }),
+            setSearchStringCreator: jest.fn(),
+            searchTextFromString: jest.fn(),
+        };
+
+        (editor as any).createManagedBean = jest.fn(() => richSelect);
+        (editor as any).appendChild = jest.fn();
+        (editor as any).addManagedListeners = jest.fn();
+
+        (editor as any).initialiseEditor((editor as any).params);
+        await flushMicrotasks();
+        loadMoreCallback?.();
+        await flushMicrotasks();
+
+        expect(valuesPage).toHaveBeenNthCalledWith(
+            1,
+            expect.objectContaining({
+                search: '',
+                startRow: 0,
+                endRow: 2,
+                cursor: undefined,
+            })
+        );
+        expect(valuesPage).toHaveBeenNthCalledWith(
+            2,
+            expect.objectContaining({
+                search: '',
+                startRow: 2,
+                endRow: 4,
+                cursor: 'next',
+            })
+        );
+        expect(richSelect.setValueList).toHaveBeenCalledWith(
+            expect.objectContaining({
+                valueList: [
+                    { id: 1, label: 'one' },
+                    { id: 2, label: 'two' },
+                    { id: 3, label: 'three' },
+                ],
+                refresh: true,
+            })
+        );
+    });
+
+    it('continues loading pages when cursor is undefined but page is full', async () => {
+        const valuesPage = jest
+            .fn()
+            .mockReturnValueOnce({
+                values: [
+                    { id: 1, label: 'one' },
+                    { id: 2, label: 'two' },
+                ],
+                cursor: undefined,
+            })
+            .mockReturnValueOnce({
+                values: [{ id: 3, label: 'three' }],
+                lastRow: 3,
+            });
+        const editor = createEditor({
+            values: undefined,
+            valuesPage: valuesPage as any,
+            valuesPageSize: 2,
+        });
+
+        let loadMoreCallback: (() => void) | undefined;
+        const richSelect = {
+            addCss: jest.fn(),
+            setIsLoading: jest.fn(),
+            showPicker: jest.fn(),
+            setValueList: jest.fn(),
+            setLoadMoreRowsCallback: jest.fn((callback: () => void) => {
+                loadMoreCallback = callback;
+            }),
+            setSearchStringCreator: jest.fn(),
+            searchTextFromString: jest.fn(),
+        };
+
+        (editor as any).createManagedBean = jest.fn(() => richSelect);
+        (editor as any).appendChild = jest.fn();
+        (editor as any).addManagedListeners = jest.fn();
+
+        (editor as any).initialiseEditor((editor as any).params);
+        await flushMicrotasks();
+        loadMoreCallback?.();
+        await flushMicrotasks();
+
+        expect(valuesPage).toHaveBeenNthCalledWith(
+            1,
+            expect.objectContaining({
+                startRow: 0,
+                endRow: 2,
+            })
+        );
+        expect(valuesPage).toHaveBeenNthCalledWith(
+            2,
+            expect.objectContaining({
+                startRow: 2,
+                endRow: 4,
+            })
+        );
+    });
+
+    it('ignores stale paged responses after a newer search reset', async () => {
+        let resolveFirst: ((result: { values: TestValue[] }) => void) | undefined;
+        let resolveSecond: ((result: { values: TestValue[]; lastRow: number }) => void) | undefined;
+        const valuesPage = jest
+            .fn()
+            .mockImplementationOnce(
+                () =>
+                    new Promise<{ values: TestValue[] }>((resolve) => {
+                        resolveFirst = resolve;
+                    })
+            )
+            .mockImplementationOnce(
+                () =>
+                    new Promise<{ values: TestValue[]; lastRow: number }>((resolve) => {
+                        resolveSecond = resolve;
+                    })
+            );
+
+        const editor = createEditor({
+            values: undefined,
+            valuesPage: valuesPage as any,
+            allowTyping: true,
+            filterList: true,
+            filterListAsync: true,
+        });
+
+        (editor as any).eEditor = {
+            setValueList: jest.fn(),
+            setIsLoading: jest.fn(),
+        };
+
+        (editor as any).onSearchCallback('first');
+        (editor as any).onSearchCallback('second');
+
+        resolveSecond?.({
+            values: [{ id: 2, label: 'second' }],
+            lastRow: 1,
+        });
+        resolveFirst?.({
+            values: [{ id: 1, label: 'stale' }],
+        });
+        await flushMicrotasks();
+
+        expect((editor as any).eEditor.setValueList).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+                valueList: [{ id: 2, label: 'second' }],
+                refresh: true,
+            })
+        );
     });
 });

@@ -29,6 +29,31 @@ describe('AgRichSelect', () => {
         expect(config.valueFormatter('')).toBe('');
     });
 
+    it('announces list state changes through ariaAnnouncementService', () => {
+        const richSelect = createRichSelect<string>();
+        const announceValue = jest.fn();
+        let stateAnnouncementCallback: ((value: string) => void) | undefined;
+        const listComponent = {
+            setLoadMoreRowsCallback: jest.fn(),
+            setStateAnnouncementCallback: jest.fn((callback: (value: string) => void) => {
+                stateAnnouncementCallback = callback;
+            }),
+            setParentComponent: jest.fn(),
+        };
+
+        (richSelect as any).ariaAnnounce = { announceValue };
+        (richSelect as any).createBean = jest.fn(() => listComponent);
+        (richSelect as any).addManagedListeners = jest.fn();
+        (richSelect as any).getFocusableElement = jest.fn(() => document.createElement('div'));
+
+        (richSelect as any).createListComponent();
+        stateAnnouncementCallback?.('Loading...');
+        stateAnnouncementCallback?.('No matches to show');
+
+        expect(announceValue).toHaveBeenNthCalledWith(1, 'Loading...', 'richSelect');
+        expect(announceValue).toHaveBeenNthCalledWith(2, 'No matches to show', 'richSelect');
+    });
+
     it('preserves explicit null initial values', () => {
         const richSelect = createRichSelect<string | null>({ value: null });
 
@@ -184,6 +209,95 @@ describe('AgRichSelect', () => {
         await flushMicrotasks();
 
         expect(setValueListInternal).not.toHaveBeenCalled();
+    });
+
+    it('selects current value on refresh when list values are present and picker is displayed', () => {
+        const richSelect = createRichSelect<string>();
+        const listComponent = {
+            setCurrentList: jest.fn(),
+            refresh: jest.fn(),
+            getIndicesForValues: jest.fn(() => [0]),
+            selectValue: jest.fn(),
+        };
+
+        (richSelect as any).listComponent = listComponent;
+        (richSelect as any).isPickerDisplayed = true;
+        (richSelect as any).value = 'A';
+
+        richSelect.setValueList({
+            valueList: ['A', 'B'],
+            refresh: true,
+            isInitial: true,
+        });
+
+        expect(listComponent.refresh).toHaveBeenCalledWith(true);
+        expect(listComponent.selectValue).toHaveBeenCalledWith('A');
+    });
+
+    it('does not select current value on refresh when current page does not contain it', () => {
+        const richSelect = createRichSelect<string>();
+        const listComponent = {
+            setCurrentList: jest.fn(),
+            refresh: jest.fn(),
+            getIndicesForValues: jest.fn(() => []),
+            selectValue: jest.fn(),
+        };
+
+        (richSelect as any).listComponent = listComponent;
+        (richSelect as any).isPickerDisplayed = true;
+        (richSelect as any).value = 'Z';
+
+        richSelect.setValueList({
+            valueList: ['A', 'B'],
+            refresh: true,
+            isInitial: true,
+        });
+
+        expect(listComponent.refresh).toHaveBeenCalledWith(true);
+        expect(listComponent.selectValue).not.toHaveBeenCalled();
+    });
+
+    it('does not auto-select current value when refresh opts out of scroll-to-current behaviour', () => {
+        const richSelect = createRichSelect<string>();
+        const listComponent = {
+            setCurrentList: jest.fn(),
+            refresh: jest.fn(),
+            getIndicesForValues: jest.fn(() => [0]),
+            selectValue: jest.fn(),
+        };
+
+        (richSelect as any).listComponent = listComponent;
+        (richSelect as any).isPickerDisplayed = true;
+        (richSelect as any).value = 'A';
+
+        richSelect.setValueList({
+            valueList: ['A', 'B'],
+            refresh: true,
+            isInitial: true,
+            scrollToCurrentValue: false,
+        });
+
+        expect(listComponent.refresh).toHaveBeenCalledWith(true);
+        expect(listComponent.selectValue).not.toHaveBeenCalled();
+    });
+
+    it('clears current list immediately while waiting for debounced async search', () => {
+        jest.useFakeTimers();
+        try {
+            const onSearch = jest.fn();
+            const richSelect = createRichSelect<string>({
+                onSearch,
+                searchDebounceDelay: 300,
+            });
+            const setValueList = jest.spyOn(richSelect, 'setValueList');
+
+            richSelect.searchTextFromString('ab');
+
+            expect(setValueList).toHaveBeenCalledWith({ valueList: undefined, refresh: true });
+            expect(onSearch).not.toHaveBeenCalled();
+        } finally {
+            jest.useRealTimers();
+        }
     });
 
     it('preserves raw empty-string search entry even when formatter customises empty labels', () => {
@@ -724,6 +838,7 @@ describe('AgRichSelect', () => {
             getSelectedItems: () => selectedItems,
             setCurrentList: jest.fn(),
             refresh: jest.fn(),
+            getIndicesForValues: jest.fn(() => []),
             selectValue: jest.fn((values: string[]) => {
                 selectedItems.clear();
                 values.forEach((value) => selectedItems.add(value));
@@ -769,6 +884,7 @@ describe('AgRichSelect', () => {
             getSelectedItems: () => selectedItems,
             setCurrentList: jest.fn(),
             refresh: jest.fn(),
+            getIndicesForValues: jest.fn(() => []),
             selectValue: jest.fn((values: string[]) => {
                 selectedItems.clear();
                 values.forEach((value) => selectedItems.add(value));

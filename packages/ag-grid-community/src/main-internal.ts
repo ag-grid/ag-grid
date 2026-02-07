@@ -509,6 +509,7 @@ export { TabGuardComp } from './widgets/tabGuardComp';
 
 // AG Stack Widgets
 export { Direction } from './agStack/constants/direction';
+export type { VerticalDirection as _VerticalDirection } from './agStack/constants/direction';
 export { AgAbstractInputField } from './agStack/widgets/agAbstractInputField';
 export { AgAbstractLabel } from './agStack/widgets/agAbstractLabel';
 export { AgCheckbox, AgCheckboxSelector } from './agStack/widgets/agCheckbox';
