@@ -1,0 +1,36 @@
+{
+    "_config_": {},
+    "PdfExportParams": {
+        "documentTitle": {
+            "description": "Document title stored in the PDF metadata. When set, a visible title is rendered above the exported table. Provide a PdfCell to style the title."
+        },
+        "pdfStyles": {
+            "description": "Overrides PDF colours using theme-style keys such as `backgroundColor`, `headerBackgroundColor`, and `oddRowBackgroundColor`. Values accept CSS colours."
+        },
+        "skipStyleCallbacks": {
+            "description": "Set to `true` to skip `rowStyle`, `getRowStyle`, `colDef.cellStyle`, and `colDef.headerStyle` during PDF export."
+        },
+        "currentElementStyleCallback": {
+            "description": "Callback used to override PDF styles for exported `row`, `cell`, `rowgroup`, `header`, and `groupheader` elements."
+        },
+        "prependContent": {
+            "description": "Content to put at the top of the PDF export. A 2D array of PdfCell objects or a multi-line string that is split into rows."
+        },
+        "appendContent": {
+            "description": "Content to put at the bottom of the PDF export. A 2D array of PdfCell objects or a multi-line string that is split into rows."
+        },
+        "fileName": {
+            "default": "export.pdf"
+        }
+    },
+    "PdfCell": {
+        "data": {
+            "isRequired": true
+        }
+    },
+    "PdfCellData": {
+        "value": {
+            "isRequired": true
+        }
+    }
+}

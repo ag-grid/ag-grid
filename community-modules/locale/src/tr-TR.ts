@@ -250,6 +250,7 @@ export const AG_GRID_LOCALE_TR = {
     export: 'Dışa Aktar',
     csvExport: 'CSV Olarak Dışa Aktar',
     excelExport: 'Excel Olarak Dışa Aktar',
+    pdfExport: 'PDF Olarak Dışa Aktar',
     columnFilter: 'Sütun Filtresi',
     columnChooser: 'Sütunları Seç',
     chooseColumns: 'Sütunları Seç',

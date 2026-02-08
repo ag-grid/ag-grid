@@ -57,6 +57,7 @@ import type { FilterActionParams, FilterModel, IFilter } from '../interfaces/iFi
 import type { IFiltersToolPanel } from '../interfaces/iFiltersToolPanel';
 import type { FindCellParams, FindCellValueParams, FindMatch, FindPart } from '../interfaces/iFind';
 import type { AgModuleName } from '../interfaces/iModule';
+import type { PdfExportParams } from '../interfaces/iPdfCreator';
 import type { RedrawRowsParams } from '../interfaces/iRedrawRowsParams';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { LoadSuccessParams, RefreshServerSideParams } from '../interfaces/iServerSideRowModel';
@@ -1708,6 +1709,20 @@ export interface _ExcelExportGridApi {
     exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): void;
 }
 
+export interface _PdfExportGridApi {
+    /**
+     * Similar to `exportDataAsPdf`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user.
+     * @agModule `PdfExportModule`
+     */
+    getDataAsPdf(params?: PdfExportParams): Blob | undefined;
+
+    /**
+     * Downloads a PDF export of the grid's data.
+     * @agModule `PdfExportModule`
+     */
+    exportDataAsPdf(params?: PdfExportParams): void;
+}
+
 export interface _ClipboardGridApi {
     /**
      * Copies data to clipboard by following the same rules as pressing Ctrl+C.
@@ -1899,6 +1914,7 @@ export interface GridApi<TData = any>
         _ColumnChooserGridApi,
         _MasterDetailGridApi,
         _ExcelExportGridApi,
+        _PdfExportGridApi,
         _ClipboardGridApi,
         _GridChartsGridApi,
         _AdvancedFilterGridApi,

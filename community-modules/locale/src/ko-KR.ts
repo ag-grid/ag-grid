@@ -250,6 +250,7 @@ export const AG_GRID_LOCALE_KR = {
     export: '내보내기',
     csvExport: 'CSV 내보내기',
     excelExport: 'Excel 내보내기',
+    pdfExport: 'PDF 내보내기',
     columnFilter: '열 필터',
     columnChooser: '열 선택',
     chooseColumns: '열 선택',

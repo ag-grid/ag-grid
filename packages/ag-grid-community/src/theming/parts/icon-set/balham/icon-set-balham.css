@@ -69,6 +69,10 @@
     mask-image: url('./balham-svg-icons/excel.svg');
 }
 
+.ag-icon-pdf::before {
+    mask-image: url('./balham-svg-icons/pdf.svg');
+}
+
 .ag-icon-expanded::before {
     mask-image: url('./balham-svg-icons/expanded.svg');
 }

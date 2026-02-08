@@ -1,0 +1,94 @@
+---
+title: "PDF Export API Reference"
+enterprise: true
+---
+
+This page documents the PDF Export API and interfaces.
+
+### Grid Properties
+
+{% apiDocumentation source="grid-options/properties.json" section="export" names=["defaultPdfExportParams", "suppressPdfExport"] /%}
+
+### API Methods
+
+{% apiDocumentation source="grid-api/api.json" section="export" names=["exportDataAsPdf", "getDataAsPdf"] config={"isApi": true} /%}
+
+## Interfaces
+
+### PdfExportParams
+
+{% interfaceDocumentation interfaceName="PdfExportParams" overrideSrc="pdf-export/pdf.json" /%}
+
+### PdfExportStyles
+
+{% interfaceDocumentation interfaceName="PdfExportStyles" /%}
+
+### PdfCellStyle
+
+{% interfaceDocumentation interfaceName="PdfCellStyle" /%}
+
+### PdfCell
+
+{% interfaceDocumentation interfaceName="PdfCell" overrideSrc="pdf-export/pdf.json" /%}
+
+### PdfCellData
+
+{% interfaceDocumentation interfaceName="PdfCellData" overrideSrc="pdf-export/pdf.json" /%}
+
+### PdfStyleCallbackParams
+
+{% interfaceDocumentation interfaceName="PdfStyleCallbackParams" /%}
+
+### PdfMargin
+
+{% interfaceDocumentation interfaceName="PdfMargin" /%}
+
+## Types
+
+### PdfCustomContent
+
+```ts
+type PdfCustomContent = PdfCell[][] | string;
+```
+
+### PdfPageOrientation
+
+```ts
+type PdfPageOrientation = 'portrait' | 'landscape';
+```
+
+### PdfPageSize
+
+```ts
+type PdfPageSize =
+    | 'A4'
+    | 'Letter'
+    | {
+          width: number;
+          height: number;
+      };
+```
+
+### PdfFontFamily
+
+```ts
+type PdfFontFamily =
+    | 'Helvetica'
+    | 'Helvetica-Bold'
+    | 'Times-Roman'
+    | 'Times-Bold'
+    | 'Courier'
+    | 'Courier-Bold';
+```
+
+### PdfTextAlignment
+
+```ts
+type PdfTextAlignment = 'left' | 'center' | 'right';
+```
+
+### PdfStyleCallbackType
+
+```ts
+type PdfStyleCallbackType = 'cell' | 'row' | 'rowgroup' | 'header' | 'groupheader';
+```

@@ -250,6 +250,7 @@ export const AG_GRID_LOCALE_GR = {
     export: 'Εξαγωγή',
     csvExport: 'Εξαγωγή σε CSV',
     excelExport: 'Εξαγωγή σε Excel',
+    pdfExport: 'Εξαγωγή σε PDF',
     columnFilter: 'Φίλτρο Στηλών',
     columnChooser: 'Επιλογή Στηλών',
     chooseColumns: 'Επιλογή Στηλών',

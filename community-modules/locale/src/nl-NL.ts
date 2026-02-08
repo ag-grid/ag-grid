@@ -250,6 +250,7 @@ export const AG_GRID_LOCALE_NL = {
     export: 'Exporteren',
     csvExport: 'CSV Export',
     excelExport: 'Excel Export',
+    pdfExport: 'PDF Export',
     columnFilter: 'Kolomfilter',
     columnChooser: 'Kolommen kiezen',
     chooseColumns: 'Kolommen Kiezen',

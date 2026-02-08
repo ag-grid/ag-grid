@@ -250,6 +250,7 @@ export const AG_GRID_LOCALE_CN = {
     export: '导出',
     csvExport: '导出为CSV',
     excelExport: '导出为Excel',
+    pdfExport: '导出为PDF',
     columnFilter: '列过滤',
     columnChooser: '选择列',
     chooseColumns: '选择列',

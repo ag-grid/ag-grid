@@ -250,6 +250,7 @@ export const AG_GRID_LOCALE_UA = {
     export: 'Експорт',
     csvExport: 'Експорт CSV',
     excelExport: 'Експорт Excel',
+    pdfExport: 'Експорт PDF',
     columnFilter: 'Фільтр Стовпців',
     columnChooser: 'Вибрати Стовпці',
     chooseColumns: 'Виберіть стовпці',

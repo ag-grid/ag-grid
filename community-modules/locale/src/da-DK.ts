@@ -250,6 +250,7 @@ export const AG_GRID_LOCALE_DK = {
     export: 'Eksporter',
     csvExport: 'CSV Eksport',
     excelExport: 'Excel Eksport',
+    pdfExport: 'PDF Eksport',
     columnFilter: 'Kolonne Filter',
     columnChooser: 'Vælg Kolonner',
     chooseColumns: 'Vælg kolonner',

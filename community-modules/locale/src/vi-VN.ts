@@ -250,6 +250,7 @@ export const AG_GRID_LOCALE_VN = {
     export: 'Xuất',
     csvExport: 'Xuất CSV',
     excelExport: 'Xuất Excel',
+    pdfExport: 'Xuất PDF',
     columnFilter: 'Bộ Lọc Cột',
     columnChooser: 'Chọn Cột',
     chooseColumns: 'Chọn Cột',

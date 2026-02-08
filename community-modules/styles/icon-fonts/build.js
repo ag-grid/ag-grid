@@ -30,6 +30,7 @@ const nameToCodepoint = {
     cut: 0xf10f,
     desc: 0xf110,
     excel: 0xf111,
+    pdf: 0xf146,
     expanded: 0xf112,
     'eye-slash': 0xf113,
     eye: 0xf114,

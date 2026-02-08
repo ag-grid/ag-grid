@@ -250,6 +250,7 @@ export const AG_GRID_LOCALE_FI = {
     export: 'Vie',
     csvExport: 'Vie CSV-muodossa',
     excelExport: 'Vie Excel-muodossa',
+    pdfExport: 'Vie PDF-muodossa',
     columnFilter: 'Sarakkeen suodatus',
     columnChooser: 'Valitse sarakkeet',
     chooseColumns: 'Valitse sarakkeet',

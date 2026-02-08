@@ -481,6 +481,18 @@
                 "url": "./excel-export"
             }
         },
+        "defaultPdfExportParams": {
+            "more": {
+                "name": "Customising PDF Export",
+                "url": "./pdf-export/#pdf-styling"
+            }
+        },
+        "suppressPdfExport": {
+            "more": {
+                "name": "Enabling PDF Export",
+                "url": "./pdf-export/#enabling-pdf-export"
+            }
+        },
         "excelStyles": {
             "more": {
                 "name": "Excel Export Styles",

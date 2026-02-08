@@ -250,6 +250,7 @@ export const AG_GRID_LOCALE_PK = {
     export: 'ایکسپورٹ',
     csvExport: 'CSV ایکسپورٹ',
     excelExport: 'Excel ایکسپورٹ',
+    pdfExport: 'PDF ایکسپورٹ',
     columnFilter: 'کالم فلٹر',
     columnChooser: 'کالمز کا انتخاب کریں',
     chooseColumns: 'کالمز منتخب کریں',

@@ -250,6 +250,7 @@ export const AG_GRID_LOCALE_EG = {
     export: 'تصدير',
     csvExport: 'تصدير CSV',
     excelExport: 'تصدير Excel',
+    pdfExport: 'تصدير PDF',
     columnFilter: 'تصفية العمود',
     columnChooser: 'اختيار الأعمدة',
     chooseColumns: 'اختيار الأعمدة',

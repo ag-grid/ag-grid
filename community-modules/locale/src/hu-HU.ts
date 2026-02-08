@@ -250,6 +250,7 @@ export const AG_GRID_LOCALE_HU = {
     export: 'Exportálás',
     csvExport: 'CSV exportálás',
     excelExport: 'Excel exportálás',
+    pdfExport: 'PDF exportálás',
     columnFilter: 'Oszlopszűrés',
     columnChooser: 'Oszlopok kiválasztása',
     chooseColumns: 'Oszlopok kiválasztása',

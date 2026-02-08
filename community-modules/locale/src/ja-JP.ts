@@ -250,6 +250,7 @@ export const AG_GRID_LOCALE_JP = {
     export: 'エクスポート',
     csvExport: 'CSVエクスポート',
     excelExport: 'Excelエクスポート',
+    pdfExport: 'PDFエクスポート',
     columnFilter: '列フィルター',
     columnChooser: '列の選択',
     chooseColumns: '列を選択',

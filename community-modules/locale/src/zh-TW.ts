@@ -250,6 +250,7 @@ export const AG_GRID_LOCALE_TW = {
     export: '匯出',
     csvExport: '匯出 CSV',
     excelExport: '匯出 Excel',
+    pdfExport: '匯出 PDF',
     columnFilter: '列過濾器',
     columnChooser: '選擇列',
     chooseColumns: '選擇欄位',

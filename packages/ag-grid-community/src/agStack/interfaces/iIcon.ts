@@ -39,6 +39,7 @@ export type IconValue =
     | 'save'
     | 'csv'
     | 'excel'
+    | 'pdf'
     | 'small-down'
     | 'small-left'
     | 'small-right'

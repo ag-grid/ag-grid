@@ -250,6 +250,7 @@ export const AG_GRID_LOCALE_IR = {
     export: 'خروجی',
     csvExport: 'خروجی CSV',
     excelExport: 'خروجی اکسل',
+    pdfExport: 'خروجی PDF',
     columnFilter: 'فیلتر ستون',
     columnChooser: 'انتخاب ستون‌ها',
     chooseColumns: 'انتخاب ستون‌ها',

@@ -250,6 +250,7 @@ export const AG_GRID_LOCALE_BG = {
     export: 'Експортиране',
     csvExport: 'Експортиране в CSV',
     excelExport: 'Експортиране в Excel',
+    pdfExport: 'Експортиране в PDF',
     columnFilter: 'Филтър на колона',
     columnChooser: 'Избор на колони',
     chooseColumns: 'Изберете колони',

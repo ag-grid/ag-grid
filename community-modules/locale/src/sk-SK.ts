@@ -250,6 +250,7 @@ export const AG_GRID_LOCALE_SK = {
     export: 'Export',
     csvExport: 'Export do CSV',
     excelExport: 'Export do Excelu',
+    pdfExport: 'Export do PDF',
     columnFilter: 'Filter stĺpca',
     columnChooser: 'Výber stĺpcov',
     chooseColumns: 'Vyberte stĺpce',

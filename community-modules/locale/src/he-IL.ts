@@ -250,6 +250,7 @@ export const AG_GRID_LOCALE_IL = {
     export: 'ייצוא',
     csvExport: 'ייצוא CSV',
     excelExport: 'ייצוא Excel',
+    pdfExport: 'ייצוא PDF',
     columnFilter: 'סינון עמודה',
     columnChooser: 'בחר עמודות',
     chooseColumns: 'בחר עמודות',

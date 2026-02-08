@@ -70,6 +70,10 @@
     mask-image: url('./alpine-svg-icons/excel.svg');
 }
 
+.ag-icon-pdf::before {
+    mask-image: url('./alpine-svg-icons/pdf.svg');
+}
+
 .ag-icon-expanded::before {
     mask-image: url('./alpine-svg-icons/expanded.svg');
 }

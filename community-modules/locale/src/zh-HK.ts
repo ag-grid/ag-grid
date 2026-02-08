@@ -250,6 +250,7 @@ export const AG_GRID_LOCALE_HK = {
     export: '匯出',
     csvExport: '匯出為 CSV',
     excelExport: '匯出為 Excel',
+    pdfExport: '匯出為 PDF',
     columnFilter: '列篩選器',
     columnChooser: '選擇列',
     chooseColumns: '選擇列',
