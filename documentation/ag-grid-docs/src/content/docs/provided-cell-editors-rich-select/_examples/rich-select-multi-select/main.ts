@@ -48,51 +48,41 @@ const valueParser = (params: ValueParserParams) => {
     return params.newValue.split(',');
 };
 
-const columnDefs: ColDef[] = [
-    {
-        headerName: 'Multi Select',
-        field: 'colors',
-        cellEditor: 'agRichSelectCellEditor',
-        cellEditorParams: {
-            values: colors,
-            multiSelect: true,
-            searchType: 'matchAny',
-            filterList: true,
-            highlightMatch: true,
-            valueListMaxHeight: 220,
-        } as IRichCellEditorParams,
-    },
-    {
-        headerName: 'Multi Select (No Pills)',
-        field: 'colors',
-        cellEditor: 'agRichSelectCellEditor',
-        cellEditorParams: {
-            values: colors,
-            suppressMultiSelectPillRenderer: true,
-            multiSelect: true,
-            searchType: 'matchAny',
-            filterList: true,
-            highlightMatch: true,
-            valueListMaxHeight: 220,
-        } as IRichCellEditorParams,
-    },
-    {
-        headerName: 'Multi Select (With Renderer)',
-        field: 'colors',
-        cellRenderer: ColourCellRenderer,
-        cellEditor: 'agRichSelectCellEditor',
-        cellEditorParams: {
-            values: colors,
-            cellRenderer: ColourCellRenderer,
-            suppressMultiSelectPillRenderer: true,
-            multiSelect: true,
-            searchType: 'matchAny',
-            filterList: true,
-            highlightMatch: true,
-            valueListMaxHeight: 220,
-        } as IRichCellEditorParams,
-    },
-];
+type MultiSelectExampleConfig = {
+    allowTyping: boolean;
+    suppressMultiSelectPillRenderer: boolean;
+    useCustomCellRenderer: boolean;
+};
+
+const config: MultiSelectExampleConfig = {
+    allowTyping: false,
+    suppressMultiSelectPillRenderer: false,
+    useCustomCellRenderer: false,
+};
+
+function getColumnDefs(exampleConfig: MultiSelectExampleConfig): ColDef[] {
+    const { allowTyping, suppressMultiSelectPillRenderer, useCustomCellRenderer } = exampleConfig;
+
+    return [
+        {
+            headerName: 'Colours',
+            field: 'colors',
+            cellRenderer: useCustomCellRenderer ? ColourCellRenderer : undefined,
+            cellEditor: 'agRichSelectCellEditor',
+            cellEditorParams: {
+                values: colors,
+                cellRenderer: useCustomCellRenderer ? ColourCellRenderer : undefined,
+                allowTyping,
+                suppressMultiSelectPillRenderer,
+                multiSelect: true,
+                searchType: 'matchAny',
+                filterList: true,
+                highlightMatch: true,
+                valueListMaxHeight: 220,
+            } as IRichCellEditorParams,
+        },
+    ];
+}
 
 function getRandomNumber(min: number, max: number) {
     // min and max included
@@ -125,9 +115,38 @@ const gridOptions: GridOptions = {
         valueFormatter: valueFormatter,
         valueParser: valueParser,
     },
-    columnDefs: columnDefs,
+    columnDefs: getColumnDefs(config),
     rowData: data,
 };
+
+function getCheckboxValue(id: string): boolean {
+    return document.querySelector<HTMLInputElement>(id)?.checked ?? false;
+}
+
+function applyExampleConfig(): void {
+    config.allowTyping = getCheckboxValue('#allow-typing');
+    config.suppressMultiSelectPillRenderer = getCheckboxValue('#suppress-multi-select-pill-renderer');
+    config.useCustomCellRenderer = getCheckboxValue('#custom-cell-renderer');
+
+    if (gridApi) {
+        const activeEdit = gridApi.getEditingCells()[0];
+        if (activeEdit) {
+            gridApi.stopEditing();
+        }
+
+        gridApi.setGridOption('columnDefs', getColumnDefs(config));
+
+        if (activeEdit) {
+            requestAnimationFrame(() => {
+                gridApi.startEditingCell({
+                    rowIndex: activeEdit.rowIndex,
+                    rowPinned: activeEdit.rowPinned,
+                    colKey: 'colors',
+                });
+            });
+        }
+    }
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
