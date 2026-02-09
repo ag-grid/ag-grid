@@ -449,7 +449,7 @@ always be 0 and then making a row sticky causes the grid to scroll. */
         border-top: var(--ag-row-border);
 
         /* reset box-sizing as some customers override global box-sizing to
-           "inherit" and we only want .ag-sticky-bottom to be content-box (RTI-3229) */
+           "inherit" and we only want .ag-sticky-bottom to be content-box */
         box-sizing: border-box;
     }
 }
