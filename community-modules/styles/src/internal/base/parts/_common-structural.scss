@@ -1158,8 +1158,8 @@
         .ag-pinned-left-sticky-bottom,
         .ag-sticky-bottom-container,
         .ag-pinned-right-sticky-bottom {
-            /* reset box-sizing as some customers override global box-sizing to
-               "inherit" and we only want .ag-sticky-bottom to be content-box (RTI-3229) */
+            // reset box-sizing as some customers override global box-sizing to
+            // "inherit" and we only want .ag-sticky-bottom to be content-box
             box-sizing: border-box;
         }
     }
