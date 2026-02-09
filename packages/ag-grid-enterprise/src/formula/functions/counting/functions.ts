@@ -36,10 +36,10 @@ export const COUNTBLANK = ({ values }: FormulaFunctionParams): number => {
 export const COUNTIF = ({ args }: FormulaFunctionParams): number => {
     const [range, criteria] = take(args, 'COUNTIF', 2);
     if (!isRangeParam(range)) {
-        throw new FormulaError('COUNTIF: first argument must be a range', '#VALUE!');
+        throw new FormulaError(65);
     }
     if (!isValueParam(criteria)) {
-        throw new FormulaError('COUNTIF: second argument must be a value (criteria)', '#VALUE!');
+        throw new FormulaError(66);
     }
 
     const pred = criteriaToPredicate(criteria.value);

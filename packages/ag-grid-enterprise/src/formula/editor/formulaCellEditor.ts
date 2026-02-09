@@ -2,6 +2,7 @@ import { AgAbstractCellEditor, KeyCode, RefPlaceholder, _isBrowserSafari, _place
 import type { IFormulaCellEditorParams } from 'ag-grid-community';
 
 import { AgFormulaInputField } from '../../widgets/agFormulaInputField';
+import { translateFormulaError } from '../i18n';
 
 export class FormulaCellEditor extends AgAbstractCellEditor<IFormulaCellEditorParams> {
     protected eEditor: AgFormulaInputField = RefPlaceholder;
@@ -134,7 +135,7 @@ export class FormulaCellEditor extends AgAbstractCellEditor<IFormulaCellEditorPa
             const normalised = this.beans.formula?.normaliseFormula(value, true);
 
             if (!normalised) {
-                internalErrors = [translate('invalidFormulaValidation', 'Invalid formula.')];
+                internalErrors = [translateFormulaError(translate, 1)];
             }
         }
 

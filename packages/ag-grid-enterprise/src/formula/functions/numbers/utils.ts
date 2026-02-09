@@ -24,7 +24,7 @@ export function coerceFiniteNumber(fname: string, v: unknown): number {
         if (Number.isFinite(asNumber)) {
             return asNumber;
         }
-        throw new FormulaError(`${fname}: values must be numeric`, '#VALUE!');
+        throw new FormulaError(48, [fname]);
     }
     if (isFiniteNumber(v)) {
         return v;
@@ -45,7 +45,7 @@ export function coerceFiniteNumber(fname: string, v: unknown): number {
         }
     }
 
-    throw new FormulaError(`${fname}: values must be numeric`, '#VALUE!');
+    throw new FormulaError(48, [fname]);
 }
 
 /** Convert a value to a finite number or bigint, allowing numeric strings. */
@@ -61,7 +61,7 @@ export function coerceBigInt(fname: string, v: number | bigint): bigint {
         return v;
     }
     if (!Number.isFinite(v) || !Number.isInteger(v)) {
-        throw new FormulaError(`${fname}: values must be integers`, '#VALUE!');
+        throw new FormulaError(49, [fname]);
     }
     return BigInt(v);
 }
