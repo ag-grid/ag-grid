@@ -820,19 +820,18 @@ function createGroupSafeValueFormatter(
                         return dataTypeDefinition.valueFormatter!(params);
                     }
 
-                    if (typeof value !== 'object' || !value) {
+                    if (value == null) {
                         return undefined;
                     }
-                    let val = value.value;
-                    if (typeof value.toNumber === 'function') {
-                        val = value.toNumber();
-                    } else if ('value' in value && (isNumberOrBigintType(val) || val == null)) {
-                        val = value.value;
-                    } else {
-                        val = null;
-                    }
-                    if (val != null) {
-                        return dataTypeDefinition.valueFormatter!({ ...params, value: val });
+
+                    if (typeof value === 'object') {
+                        if (typeof value.toNumber === 'function') {
+                            return dataTypeDefinition.valueFormatter!({ ...params, value: value.toNumber() });
+                        }
+
+                        if ('value' in value) {
+                            return dataTypeDefinition.valueFormatter!({ ...params, value: value.value });
+                        }
                     }
                 }
 
