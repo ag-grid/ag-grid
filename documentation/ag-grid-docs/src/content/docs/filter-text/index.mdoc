@@ -172,8 +172,6 @@ interface ICombinedSimpleModel<TextFilterModel> {
 type JoinOperator = 'AND' | 'OR';
 ```
 
-Note that in AG Grid versions prior to 29.2, only two Filter Conditions were supported. These appeared in the Combined Model as properties `condition1` and `condition2`. The grid will still accept and supply models using these properties, but this behaviour is deprecated. The `conditions` property should be used instead.
-
 An example of a Filter Model with two conditions is as follows:
 
 ```js
