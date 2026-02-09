@@ -45,7 +45,7 @@ const myTheme = themeQuartz
 const columnDefs: ColDef[] = [
     { field: 'athlete', minWidth: 170 },
     { field: 'age' },
-    { field: 'country' },
+    { field: 'country', rowGroup: true },
     { field: 'year' },
     { field: 'date' },
     { field: 'sport' },
@@ -68,6 +68,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         enablePivot: true,
         enableValue: true,
     },
+    sideBar: ['columns', 'filters'],
 };
 
 // setup the grid after the page has finished loading
