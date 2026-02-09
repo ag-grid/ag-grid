@@ -792,7 +792,8 @@ function validateDataTypeDefinition(
     return true;
 }
 
-const numberOrBigint = (v: unknown) => typeof v === 'bigint' || typeof v === 'number';
+const isNumberOrBigintType = (v: unknown) => typeof v === 'bigint' || typeof v === 'number';
+const isNumberOrBigintBaseDataType = (v: string) => v === 'number' || v === 'bigint';
 
 function createGroupSafeValueFormatter(
     dataTypeDefinition: DataTypeDefinition | CoreDataTypeDefinition,
@@ -814,8 +815,8 @@ function createGroupSafeValueFormatter(
                 }
 
                 const { baseDataType } = dataTypeDefinition;
-                if (numberOrBigint(baseDataType) && aggFunc !== 'count') {
-                    if (numberOrBigint(value)) {
+                if (isNumberOrBigintBaseDataType(baseDataType) && aggFunc !== 'count') {
+                    if (isNumberOrBigintType(value)) {
                         return dataTypeDefinition.valueFormatter!(params);
                     }
 
@@ -825,12 +826,12 @@ function createGroupSafeValueFormatter(
                     let val = value.value;
                     if (typeof value.toNumber === 'function') {
                         val = value.toNumber();
-                    } else if ('value' in value && (numberOrBigint(val) || val == null)) {
+                    } else if ('value' in value && (isNumberOrBigintType(val) || val == null)) {
                         val = value.value;
                     } else {
                         val = null;
                     }
-                    if (val) {
+                    if (val != null) {
                         return dataTypeDefinition.valueFormatter!({ ...params, value: val });
                     }
                 }
