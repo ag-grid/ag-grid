@@ -29,4 +29,6 @@ export { AG_GRID_LOCALE_SE } from './sv-SE';
 export { AG_GRID_LOCALE_TR } from './tr-TR';
 export { AG_GRID_LOCALE_UA } from './uk-UA';
 export { AG_GRID_LOCALE_PK } from './ur-PK';
+export { AG_GRID_LOCALE_UZ_LATN } from './uz-latn';
+export { AG_GRID_LOCALE_UZ_CRYL } from './uz-cryl';
 export { AG_GRID_LOCALE_VN } from './vi-VN';
