@@ -28,13 +28,15 @@ interface Props {
     suppressDarkMode?: boolean;
     hasExampleConsoleLog?: boolean;
     consoleBufferSize?: number;
+    supportedFrameworks?: InternalFramework[];
 }
 
 const getInternalFramework = (
     docsInternalFramework: InternalFramework,
     supportedFrameworks: InternalFramework[] | undefined
-): InternalFramework => {
+): { internalFramework: InternalFramework; isUsingAlternativeInternalFramework: boolean } => {
     let internalFramework = docsInternalFramework;
+    let isUsingAlternativeInternalFramework = false;
     if (supportedFrameworks && supportedFrameworks.length > 0) {
         if (!supportedFrameworks.includes(docsInternalFramework)) {
             const bestAlternative: Record<InternalFramework, InternalFramework[]> = {
@@ -49,11 +51,12 @@ const getInternalFramework = (
             const alternative = alternatives.find((alternative) => supportedFrameworks.includes(alternative));
             if (alternative) {
                 internalFramework = alternative;
+                isUsingAlternativeInternalFramework = true;
             }
         }
     }
 
-    return internalFramework;
+    return { internalFramework, isUsingAlternativeInternalFramework };
 };
 
 const DocsExampleRunnerInner = ({
@@ -66,18 +69,23 @@ const DocsExampleRunnerInner = ({
     isDev,
     hasExampleConsoleLog,
     consoleBufferSize,
+    supportedFrameworks: supportedFrameworksProp,
 }: Props) => {
     const exampleName = name;
     const id = `example-${name}`;
     const loadingIFrameId = getLoadingIFrameId({ pageName, exampleName: name });
 
-    const [supportedFrameworks, setSupportedFrameworks] = useState<InternalFramework[] | undefined>(undefined);
+    const [supportedFrameworks, setSupportedFrameworks] = useState<InternalFramework[] | undefined>(
+        supportedFrameworksProp
+    );
 
     const storeInternalFramework = useStore($internalFramework);
     const internalFrameworkState = useStore($internalFrameworkState);
-    const internalFramework = typescriptOnly
-        ? 'typescript'
-        : getInternalFramework(storeInternalFramework, supportedFrameworks);
+    const { internalFramework: computedInternalFramework, isUsingAlternativeInternalFramework } = useMemo(
+        () => getInternalFramework(storeInternalFramework, supportedFrameworks),
+        [storeInternalFramework, supportedFrameworks]
+    );
+    const internalFramework = typescriptOnly ? 'typescript' : computedInternalFramework;
     const urlConfig: UrlParams = useMemo(
         () => ({ internalFramework, pageName, exampleName }),
         [internalFramework, pageName, exampleName]
@@ -181,6 +189,7 @@ const DocsExampleRunnerInner = ({
             externalLinks={externalLinks}
             loadingIFrameId={loadingIFrameId}
             supportedFrameworks={supportedFrameworks}
+            hideInternalFrameworkSelection={isUsingAlternativeInternalFramework}
             suppressDarkMode={suppressDarkMode}
             hasExampleConsoleLog={hasExampleConsoleLog}
             consoleBufferSize={consoleBufferSize}
