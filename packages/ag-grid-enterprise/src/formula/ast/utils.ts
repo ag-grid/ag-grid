@@ -1,9 +1,5 @@
-import {
-    type FormulaErrorId,
-    type FormulaErrorType,
-    getFormulaErrorDefaultMessage,
-    getFormulaErrorDefinition,
-} from '../i18n';
+import { getFormulaErrorDefaultMessage, getFormulaErrorDefinition } from '../i18n';
+import type { FormulaErrorId, FormulaErrorType } from '../i18n';
 
 interface FormulaOperand {
     type: 'operand';

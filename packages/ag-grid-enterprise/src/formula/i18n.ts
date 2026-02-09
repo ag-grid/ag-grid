@@ -2,7 +2,7 @@ export type FormulaErrorType = '#REF!' | '#NAME?' | '#CIRCREF!' | '#PARSE!' | '#
 
 type FormulaErrorDefinition = readonly [localeKey: string, defaultMessage: string, type?: FormulaErrorType];
 
-export const FORMULA_ERRORS: Record<number, FormulaErrorDefinition> = {
+const FORMULA_ERRORS: Record<number, FormulaErrorDefinition> = {
     1: ['invalidFormulaValidation', 'Invalid formula.'],
     2: ['formulaParseInvalidCellReference', 'Invalid cell reference: ${variable}.'],
     3: ['formulaParseInvalidRangeEndReference', 'Invalid range end reference.'],
@@ -144,10 +144,6 @@ export const getFormulaErrorDefinition = (errorId: FormulaErrorId): FormulaError
 export const getFormulaErrorDefaultMessage = (errorId: FormulaErrorId, variableValues?: readonly unknown[]): string => {
     const [, defaultMessage] = getFormulaErrorDefinition(errorId);
     return interpolateVariables(defaultMessage, normaliseVariableValues(variableValues));
-};
-
-export const getFormulaErrorType = (errorId: FormulaErrorId): FormulaErrorType => {
-    return getFormulaErrorDefinition(errorId)[2] ?? '#ERROR!';
 };
 
 export const translateFormulaError = (
