@@ -1,4 +1,4 @@
-import type { Framework, InternalFramework } from '@ag-grid-types';
+import type { InternalFramework } from '@ag-grid-types';
 import { getLoadingIFrameId } from '@ag-website-shared/components/loading-logo/getElementId';
 import type { GeneratedContents } from '@components/example-generator/types';
 import { ExampleRunner } from '@components/example-runner/components/ExampleRunner';
@@ -22,7 +22,6 @@ interface Props {
     name: string;
     title: string;
     exampleHeight?: number;
-    framework: Framework;
     pageName: string;
     isDev: boolean;
     typescriptOnly?: boolean;
