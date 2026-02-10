@@ -88,6 +88,8 @@ export type EditEventCounts = {
     cellEditRequest: number;
     bulkEditingStarted: number;
     bulkEditingStopped: number;
+    batchEditingStarted: number;
+    batchEditingStopped: number;
 };
 
 export type UndoCounts = {
@@ -104,6 +106,8 @@ const DEFAULT_EDIT_EVENT_COUNTS = {
     cellEditRequest: 0,
     bulkEditingStarted: 0,
     bulkEditingStopped: 0,
+    batchEditingStarted: 0,
+    batchEditingStopped: 0,
 };
 
 const DEFAULT_UNDO_COUNTS = {
@@ -127,6 +131,8 @@ export class EditEventTracker {
         this.track('cellEditRequest');
         this.track('bulkEditingStarted');
         this.track('bulkEditingStopped');
+        this.track('batchEditingStarted');
+        this.track('batchEditingStopped');
         this.trackUndo('undoStarted');
         this.trackUndo('undoEnded');
         this.trackUndo('redoStarted');

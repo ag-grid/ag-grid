@@ -75,6 +75,8 @@ describe('Cell Editing: setDataValue', () => {
                     cellEditRequest: 0,
                     bulkEditingStarted: 0,
                     bulkEditingStopped: 0,
+                    batchEditingStarted: 0,
+                    batchEditingStopped: 0,
                 });
 
                 expect(valueSetterTargets).toEqual(['ROW_0']);
@@ -137,6 +139,8 @@ describe('Cell Editing: setDataValue', () => {
                 cellEditRequest: 0,
                 bulkEditingStarted: 0,
                 bulkEditingStopped: 0,
+                batchEditingStarted: 0,
+                batchEditingStopped: 0,
             });
             expect(valueSetterTargets).toEqual(['ROW_0']);
             expect(valueSetterCalls).toBe(1);
@@ -194,6 +198,8 @@ describe('Cell Editing: setDataValue', () => {
                 cellEditRequest: 1,
                 bulkEditingStarted: 0,
                 bulkEditingStopped: 0,
+                batchEditingStarted: 0,
+                batchEditingStopped: 0,
             });
 
             // Verify data access methods - all should return original value

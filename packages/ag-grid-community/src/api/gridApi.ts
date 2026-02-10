@@ -883,25 +883,55 @@ export interface _EditGridApi<TData> {
 
 export interface _BatchEditApi {
     /**
-     * Start batch editing.
+     * Starts a batch editing session. While batch editing is active, cell edits are accumulated
+     * as pending values without being committed to the row data. The pending values are only
+     * written when `commitBatchEdit()` is called, or discarded when `cancelBatchEdit()` is called.
+     *
+     * Calling `startBatchEdit()` while a batch is already active is a no-op.
+     * Use `isBatchEditing()` to check whether a batch session is currently active.
+     *
+     * Any active cell editor is cancelled when the batch session starts.
+     *
+     * The `batchEditingStarted` event is fired lazily on the first actual cell edit within the
+     * batch session, not when `startBatchEdit()` is called.
+     *
+     * Only supported with the Client-Side Row Model.
      * @agModule `BatchEditModule`
      */
     startBatchEdit(): void;
 
     /**
-     * Commit Batch Editing.
+     * Commits all pending batch edits to the row data and ends the batch editing session.
+     * Each accumulated pending value is written via `rowNode.setDataValue()`, and the
+     * `batchEditingStopped` event is fired with the committed edits.
+     *
+     * Calling `commitBatchEdit()` when no batch is active is a no-op.
+     *
+     * If no cells were edited during the batch session (i.e. `batchEditingStarted` was never
+     * fired), `batchEditingStopped` is not fired either.
+     *
+     * Only supported with the Client-Side Row Model.
      * @agModule `BatchEditModule`
      */
     commitBatchEdit(): void;
 
     /**
-     * Cancel Batch Editing.
+     * Cancels all pending batch edits, reverting cells to their original values, and ends
+     * the batch editing session. The `batchEditingStopped` event is fired with an empty edit map.
+     *
+     * Calling `cancelBatchEdit()` when no batch is active is a no-op.
+     *
+     * If no cells were edited during the batch session (i.e. `batchEditingStarted` was never
+     * fired), `batchEditingStopped` is not fired either.
+     *
+     * Only supported with the Client-Side Row Model.
      * @agModule `BatchEditModule`
      */
     cancelBatchEdit(): void;
 
     /**
-     * Returns whether batch editing is currently active.
+     * Returns `true` if a batch editing session is currently active (i.e. `startBatchEdit()`
+     * has been called and neither `commitBatchEdit()` nor `cancelBatchEdit()` has been called yet).
      * @agModule `BatchEditModule`
      */
     isBatchEditing(): boolean;

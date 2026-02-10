@@ -43,6 +43,7 @@ import { _addStopEditingWhenGridLosesFocus, _getCellCtrl } from './utils/control
 import {
     UNEDITED,
     _destroyEditors,
+    _filterChangedEdits,
     _populateModelValidationErrors,
     _purgeUnchangedEdits,
     _refreshEditorOnColDefChanged,
@@ -107,6 +108,7 @@ export class EditService extends BeanStub implements NamedBean {
     public committing = false;
 
     private batch: boolean = false;
+    private batchStartDispatched: boolean = false;
     private model: EditModelService;
     private valueSvc: ValueService;
     private rangeSvc: IRangeService;
@@ -162,14 +164,24 @@ export class EditService extends BeanStub implements NamedBean {
         return this.batch;
     }
 
-    public setBatchEditing(enabled: boolean): void {
-        if (enabled) {
-            this.batch = true;
-            this.stopEditing(undefined, CANCEL_PARAMS);
-        } else {
-            this.stopEditing(undefined, CANCEL_PARAMS);
-            this.batch = false;
+    public startBatchEditing(): void {
+        if (this.batch) {
+            return;
         }
+        this.batch = true;
+        this.batchStartDispatched = false;
+        this.stopEditing(undefined, CANCEL_PARAMS);
+    }
+
+    public stopBatchEditing(params?: StopEditParams): void {
+        if (!this.batch) {
+            return;
+        }
+        if (params) {
+            this.stopEditing(undefined, params);
+        }
+        this.batch = false;
+        this.batchStartDispatched = false;
     }
 
     private createStrategy(editType?: EditStrategyType): BaseEditStrategy {
@@ -287,7 +299,8 @@ export class EditService extends BeanStub implements NamedBean {
             this.stopEditing(undefined, { source });
         }
 
-        if (res && this.batch) {
+        if (res && this.batch && !this.batchStartDispatched) {
+            this.batchStartDispatched = true;
             this.dispatchBatchEvent('batchEditingStarted', new Map());
         }
 
@@ -505,6 +518,7 @@ export class EditService extends BeanStub implements NamedBean {
         position,
         res,
         commit,
+        forceCancel,
         willCancel,
         willStop,
     }: StopContext & { params?: StopEditParams; res: boolean }): void {
@@ -540,8 +554,27 @@ export class EditService extends BeanStub implements NamedBean {
                 rowRenderer.refreshRows({ suppressFlash: true, force: true });
             }
 
-            if (res && willStop) {
-                this.dispatchBatchEvent('batchEditingStopped', edits);
+            const batchCommit = res && willStop && commit;
+            const batchCancel = willCancel && forceCancel;
+
+            // Only fire batchEditingStopped when the batch is genuinely ending:
+            // - commit: commitBatchEdit() was called (forceStop + commit)
+            // - forceCancel: cancelBatchEdit() was called (cancel + forceCancel)
+            // Do NOT fire during mid-batch row transitions (Tab/Enter across rows in fullRow mode).
+            // Also skip if batchEditingStarted was never dispatched (no edits were made).
+            if ((batchCommit || batchCancel) && this.batchStartDispatched) {
+                this.batchStartDispatched = false;
+
+                let eventEdits: EditMap;
+                if (commit) {
+                    // Filter the snapshot to only include cells with actual value changes
+                    eventEdits = _filterChangedEdits(edits);
+                } else {
+                    // Cancel: send empty edits since values are reverted
+                    eventEdits = new Map() as EditMap;
+                }
+
+                this.dispatchBatchEvent('batchEditingStopped', eventEdits);
             }
         }
     }

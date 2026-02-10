@@ -274,6 +274,8 @@ describe('Cell Editing Start', () => {
                 cellEditRequest: 0,
                 bulkEditingStarted: 0,
                 bulkEditingStopped: 0,
+                batchEditingStarted: 0,
+                batchEditingStopped: 0,
             });
         });
 
@@ -328,6 +330,8 @@ describe('Cell Editing Start', () => {
                 cellEditRequest: 0,
                 bulkEditingStarted: 0,
                 bulkEditingStopped: 0,
+                batchEditingStarted: 0,
+                batchEditingStopped: 0,
             });
         });
     });
@@ -402,6 +406,8 @@ describe('Cell Editing Start', () => {
             cellEditRequest: 0,
             bulkEditingStarted: 0,
             bulkEditingStopped: 0,
+            batchEditingStarted: 0,
+            batchEditingStopped: 0,
         });
     });
 
@@ -481,6 +487,8 @@ describe('Cell Editing Start', () => {
             cellEditRequest: 0,
             bulkEditingStarted: 0,
             bulkEditingStopped: 0,
+            batchEditingStarted: 0,
+            batchEditingStopped: 0,
         });
     });
 
@@ -554,6 +562,8 @@ describe('Cell Editing Start', () => {
             cellEditRequest: 0,
             bulkEditingStarted: 0,
             bulkEditingStopped: 0,
+            batchEditingStarted: 0,
+            batchEditingStopped: 0,
         });
     });
 
@@ -621,6 +631,8 @@ describe('Cell Editing Start', () => {
             cellEditRequest: 0,
             bulkEditingStarted: 0,
             bulkEditingStopped: 0,
+            batchEditingStarted: 0,
+            batchEditingStopped: 0,
         });
     });
 

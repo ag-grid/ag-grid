@@ -2,6 +2,7 @@ import { getByTestId } from '@testing-library/dom';
 import '@testing-library/jest-dom';
 import { userEvent } from '@testing-library/user-event';
 
+import type { BatchEditingStoppedEvent } from 'ag-grid-community';
 import { TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule } from 'ag-grid-enterprise';
 
@@ -83,6 +84,8 @@ describe('Cell Editing: full-row batch', () => {
             cellEditRequest: 0,
             bulkEditingStarted: 0,
             bulkEditingStopped: 0,
+            batchEditingStarted: 1,
+            batchEditingStopped: 1,
         });
 
         if (action === 'commit') {
@@ -174,4 +177,187 @@ describe('Cell Editing: full-row batch', () => {
             └── LEAF id:ROW_1 a:"A1" b:"B1"
         `);
     });
+
+    test.each(['commit', 'cancel'] as const)(
+        'batchEditingStopped does not fire during full-row Tab navigation across rows (%s)',
+        async (action) => {
+            const api = await gridMgr.createGridAndWait(`cellEditingFullRowBatch-batchStop-${action}`, {
+                editType: 'fullRow',
+                defaultColDef: { editable: true },
+                columnDefs: [
+                    { field: 'a', editable: true },
+                    { field: 'b', editable: true },
+                ],
+                rowData: [
+                    { id: 'ROW_0', a: 'A0', b: 'B0' },
+                    { id: 'ROW_1', a: 'A1', b: 'B1' },
+                ],
+                getRowId: (params) => params.data.id,
+            });
+            const eventTracker = new EditEventTracker(api);
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            const user = userEvent.setup({ skipHover: true });
+            await asyncSetTimeout(0);
+
+            // Start batch editing
+            api.startBatchEdit();
+
+            // Click and edit row 0 col a
+            const cellA0 = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'));
+            await user.click(cellA0);
+            api.startEditingCell({ rowIndex: 0, colKey: 'a' });
+            const input = await waitForInput(gridDiv, cellA0);
+            await user.clear(input);
+            await user.type(input, 'x');
+
+            // Tab from col a -> col b (same row)
+            await user.keyboard('{Tab}');
+            await asyncSetTimeout(0);
+
+            // batchEditingStopped must NOT have fired (still navigating within the batch)
+            expect(eventTracker.counts.batchEditingStopped).toBe(0);
+
+            // Tab from col b -> next row col a (crosses row boundary)
+            await user.keyboard('{Tab}');
+            await asyncSetTimeout(0);
+
+            // batchEditingStopped must NOT fire when navigating between rows via Tab
+            expect(eventTracker.counts.batchEditingStopped).toBe(0);
+
+            // Verify full event counts before commit/cancel — no batch stop events should have occurred
+            const preActionCounts = { ...eventTracker.counts };
+            expect(preActionCounts.batchEditingStopped).toBe(0);
+
+            // Now commit or cancel the batch
+            eventTracker.reset();
+            if (action === 'commit') {
+                api.commitBatchEdit();
+            } else {
+                api.cancelBatchEdit();
+            }
+            await asyncSetTimeout(0);
+
+            // Full event counts after commit/cancel
+            expect(eventTracker.counts).toEqual({
+                cellEditingStarted: 0,
+                cellEditingStopped: 3,
+                cellValueChanged: action === 'commit' ? 1 : 0,
+                rowValueChanged: action === 'commit' ? 1 : 0,
+                cellEditRequest: 0,
+                bulkEditingStarted: 0,
+                bulkEditingStopped: 0,
+                batchEditingStarted: 0,
+                batchEditingStopped: 1,
+            });
+
+            // Verify data
+            if (action === 'commit') {
+                await new GridRows(api, 'after commit').check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:ROW_0 a:"x" b:"B0"
+                    └── LEAF id:ROW_1 a:"A1" b:"B1"
+                `);
+            } else {
+                await new GridRows(api, 'after cancel').check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:ROW_0 a:"A0" b:"B0"
+                    └── LEAF id:ROW_1 a:"A1" b:"B1"
+                `);
+            }
+        }
+    );
+
+    test.each(['commit', 'cancel'] as const)(
+        'batchEditingStopped event contains correct changes payload (%s)',
+        async (action) => {
+            const batchStoppedEvents: BatchEditingStoppedEvent[] = [];
+
+            const api = await gridMgr.createGridAndWait(`cellEditingFullRowBatch-payload-${action}`, {
+                editType: 'fullRow',
+                defaultColDef: { editable: true },
+                columnDefs: [
+                    { field: 'a', editable: true },
+                    { field: 'b', editable: true },
+                ],
+                rowData: [
+                    { id: 'ROW_0', a: 'A0', b: 'B0' },
+                    { id: 'ROW_1', a: 'A1', b: 'B1' },
+                ],
+                getRowId: (params) => params.data.id,
+                onBatchEditingStopped: (event) => {
+                    batchStoppedEvents.push(event);
+                },
+            });
+            const eventTracker = new EditEventTracker(api);
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            const user = userEvent.setup({ skipHover: true });
+            await asyncSetTimeout(0);
+
+            api.startBatchEdit();
+
+            // Edit row 0, col a
+            const cellA0 = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'));
+            await user.click(cellA0);
+            api.startEditingCell({ rowIndex: 0, colKey: 'a' });
+            const inputA = await waitForInput(gridDiv, cellA0);
+            await user.clear(inputA);
+            await user.type(inputA, 'NEW_A');
+
+            // Tab to col b, edit it too
+            await user.keyboard('{Tab}');
+            await asyncSetTimeout(0);
+            const cellB0 = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'b'));
+            const inputB = await waitForInput(gridDiv, cellB0);
+            await user.clear(inputB);
+            await user.type(inputB, 'NEW_B');
+
+            // Press Enter to stop editing row 0 (stays in batch mode)
+            await user.keyboard('{Enter}');
+            await asyncSetTimeout(0);
+
+            // No batchEditingStopped should have fired yet
+            expect(batchStoppedEvents).toHaveLength(0);
+
+            // Commit or cancel
+            if (action === 'commit') {
+                api.commitBatchEdit();
+            } else {
+                api.cancelBatchEdit();
+            }
+            await asyncSetTimeout(0);
+
+            // batchEditingStopped should fire exactly once
+            expect(batchStoppedEvents).toHaveLength(1);
+
+            const stoppedEvent = batchStoppedEvents[0];
+
+            if (action === 'commit') {
+                // Commit: changes should contain the edited cells
+                expect(stoppedEvent.changes).toEqual(
+                    expect.arrayContaining([
+                        expect.objectContaining({ rowIndex: 0, columnId: 'a', oldValue: 'A0', newValue: 'NEW_A' }),
+                        expect.objectContaining({ rowIndex: 0, columnId: 'b', oldValue: 'B0', newValue: 'NEW_B' }),
+                    ])
+                );
+                expect(stoppedEvent.changes).toHaveLength(2);
+            } else {
+                // Cancel: changes should be empty (edits were discarded)
+                expect(stoppedEvent.changes).toEqual([]);
+            }
+
+            expect(eventTracker.counts).toEqual({
+                cellEditingStarted: 2,
+                cellEditingStopped: 4,
+                cellValueChanged: action === 'commit' ? 2 : 0,
+                rowValueChanged: action === 'commit' ? 1 : 0,
+                cellEditRequest: 0,
+                bulkEditingStarted: 0,
+                bulkEditingStopped: 0,
+                batchEditingStarted: 1,
+                batchEditingStopped: 1,
+            });
+        }
+    );
 });

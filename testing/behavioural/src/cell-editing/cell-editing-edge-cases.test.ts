@@ -530,7 +530,6 @@ describe('Cell Editing: edge cases', () => {
     });
 
     // Cancelling from batch mode via cancelBatchEdit should revert all pending changes.
-    // (setBatchEditing is internal; the public API is startBatchEdit / cancelBatchEdit / commitBatchEdit.)
     describe('cancelBatchEdit after multiple edit types', () => {
         test('cancelBatchEdit after paste + delete reverts everything', async () => {
             const api = await gridMgr.createGridAndWait('cancelMulti', {

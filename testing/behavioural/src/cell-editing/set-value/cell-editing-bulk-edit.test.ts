@@ -107,6 +107,8 @@ describe('Cell Editing: bulk edit', () => {
             cellEditRequest: 0,
             bulkEditingStarted: batchEnabled ? 0 : 1,
             bulkEditingStopped: batchEnabled ? 0 : 1,
+            batchEditingStarted: batchEnabled ? 1 : 0,
+            batchEditingStopped: batchEnabled ? 1 : 0,
         });
 
         expect(api.getDisplayedRowAtIndex(0)?.data?.a).toBe('Bulk Value');
@@ -189,6 +191,8 @@ describe('Cell Editing: bulk edit', () => {
             cellEditRequest: 0,
             bulkEditingStarted: 1,
             bulkEditingStopped: 1,
+            batchEditingStarted: 0,
+            batchEditingStopped: 0,
         });
 
         expect(valueSetterTargets).toEqual(['ROW_0:a', 'ROW_0:b', 'ROW_1:a']);
@@ -270,6 +274,8 @@ describe('Cell Editing: bulk edit', () => {
             cellEditRequest: 0,
             bulkEditingStarted: 1,
             bulkEditingStopped: 1,
+            batchEditingStarted: 0,
+            batchEditingStopped: 0,
         });
 
         expect(valueSetterTargets).toEqual(['ROW_0:a']);

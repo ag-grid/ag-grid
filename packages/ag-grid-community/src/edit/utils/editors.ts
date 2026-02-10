@@ -17,7 +17,7 @@ import type {
     ICellEditorValidationError,
 } from '../../interfaces/iCellEditor';
 import type { Column } from '../../interfaces/iColumn';
-import type { EditState, EditValue } from '../../interfaces/iEditModelService';
+import type { EditMap, EditState, EditValue } from '../../interfaces/iEditModelService';
 import type { EditPosition } from '../../interfaces/iEditService';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
@@ -112,6 +112,23 @@ export function _sourceAndPendingDiffer({
         pendingValue = sourceValue;
     }
     return pendingValue !== sourceValue;
+}
+
+/** Returns a copy of the edit map containing only entries where the pending value differs from the source value. */
+export function _filterChangedEdits(edits: EditMap): EditMap {
+    const result: EditMap = new Map();
+    for (const [rowNode, editRow] of edits) {
+        const filtered = new Map<Column, EditValue>();
+        for (const [column, editValue] of editRow) {
+            if (_sourceAndPendingDiffer(editValue)) {
+                filtered.set(column, editValue);
+            }
+        }
+        if (filtered.size > 0) {
+            result.set(rowNode, filtered);
+        }
+    }
+    return result;
 }
 
 export function _setupEditor(
