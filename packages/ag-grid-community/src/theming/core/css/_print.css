@@ -12,6 +12,7 @@
         the viewport (AG-5616) and other values like `inline-flex` will add a
         small gap at the top (AG-9296) */
         display: inline-block;
+        container-type: normal;
     }
 
     .ag-body-vertical-scroll {
