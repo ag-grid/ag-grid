@@ -3,6 +3,11 @@ import type { Column } from './iColumn';
 import type { EditPosition } from './iEditService';
 import type { IRowNode } from './iRowNode';
 
+/**
+ * The state of a cell edit in batch editing mode.
+ * - `'editing'`: An inline editor is currently open for this cell.
+ * - `'changed'`: The editor has been closed and the pending value differs from the source.
+ */
 export type EditState = 'editing' | 'changed';
 
 export type EditValidation = {

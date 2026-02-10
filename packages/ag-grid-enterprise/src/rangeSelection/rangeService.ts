@@ -17,11 +17,11 @@ import type {
     IHeaderCellComp,
     IRangeService,
     IRowModel,
+    IRowNode,
     NamedBean,
     PartialCellRange,
     RowPinnedType,
     RowPosition,
-    ValueService,
     VisibleColsService,
 } from 'ag-grid-community';
 import {
@@ -80,7 +80,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
     private visibleCols: VisibleColsService;
     private cellNavigation: CellNavigationService;
     private ctrlsSvc: CtrlsService;
-    private valueSvc: ValueService;
     private selectionMode: SelectionMode;
     private readonly rangeSelectionExtensions: RangeSelectionExtension[] = [];
 
@@ -91,7 +90,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         this.visibleCols = beans.visibleCols;
         this.cellNavigation = beans.cellNavigation!;
         this.ctrlsSvc = beans.ctrlsSvc;
-        this.valueSvc = beans.valueSvc;
     }
 
     private cellRanges: CellRange[] = [];
@@ -827,8 +825,13 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
     }
 
     public clearCellRangeCellValues(params: ClearCellRangeParams): void {
-        const { beans, valueSvc, eventSvc } = this;
-        const { cellEventSource = 'rangeSvc', dispatchWrapperEvents, wrapperEventSource = 'deleteKey' } = params;
+        const { beans, eventSvc } = this;
+        const {
+            cellEventSource = 'rangeSvc',
+            dispatchWrapperEvents,
+            wrapperEventSource = 'deleteKey',
+            restoreSourceInBatch,
+        } = params;
 
         let { cellRanges } = params;
 
@@ -847,22 +850,17 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
             cellRanges = this.cellRanges;
         }
 
-        for (const cellRange of cellRanges) {
-            this.forEachRowInRange(cellRange, (rowPosition) => {
-                const rowNode = _getRowNode(beans, rowPosition);
-                if (!rowNode) {
-                    return;
-                }
-                for (let i = 0; i < cellRange.columns.length; i++) {
-                    const column = this.getColumnFromModel(cellRange.columns[i] as AgColumn);
-                    if (!column?.isCellEditable(rowNode)) {
-                        continue;
-                    }
-                    const emptyValue = valueSvc.getDeleteValue(column, rowNode);
-                    rowNode.setDataValue(column, emptyValue, cellEventSource);
-                }
-            });
-        }
+        const { valueSvc, editSvc } = beans;
+        const batch = !!editSvc?.isBatchEditing();
+
+        this.forEachEditableCellInRanges(cellRanges, (rowNode, column) => {
+            if (restoreSourceInBatch && batch) {
+                editSvc?.batchResetToSourceValue({ rowNode, column });
+                return;
+            }
+            const deleteValue = valueSvc.getDeleteValue(column, rowNode);
+            rowNode.setDataValue(column, deleteValue, cellEventSource);
+        });
 
         if (dispatchWrapperEvents) {
             eventSvc.dispatchEvent({
@@ -1279,6 +1277,28 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
                 break;
             }
             currentRow = _getRowBelow(this.beans, currentRow);
+        }
+    }
+
+    private forEachEditableCellInRanges(
+        cellRanges: CellRange[],
+        callback: (rowNode: IRowNode, column: AgColumn) => void
+    ): void {
+        const { beans } = this;
+        for (const cellRange of cellRanges) {
+            this.forEachRowInRange(cellRange, (rowPosition) => {
+                const rowNode = _getRowNode(beans, rowPosition);
+                if (!rowNode) {
+                    return;
+                }
+                for (let i = 0; i < cellRange.columns.length; i++) {
+                    const column = this.getColumnFromModel(cellRange.columns[i] as AgColumn);
+                    if (!column?.isCellEditable(rowNode)) {
+                        continue;
+                    }
+                    callback(rowNode, column);
+                }
+            });
         }
     }
 

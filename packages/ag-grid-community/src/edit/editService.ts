@@ -57,13 +57,14 @@ import { _refreshEditCells } from './utils/refresh';
 type BatchPrepDetails = { compDetails?: UserCompDetails; valueToDisplay?: any };
 
 type StopContext = {
-    cancel?: boolean;
-    cellCtrl?: CellCtrl;
+    cancel: boolean;
+    cellCtrl: CellCtrl | undefined;
+    commit: boolean;
     edits: EditMap;
-    event?: KeyboardEvent | MouseEvent | null;
-    forceCancel?: boolean;
-    forceStop?: boolean;
-    position?: EditPosition;
+    event: KeyboardEvent | MouseEvent | null;
+    forceCancel: boolean;
+    forceStop: boolean;
+    position: EditPosition | undefined;
     source: EditSource;
     treatAsSource: EditSource;
     willCancel: boolean;
@@ -236,7 +237,7 @@ export class EditService extends BeanStub implements NamedBean {
     }
 
     public isRowEditing(rowNode?: IRowNode, params?: IsEditingParams): boolean {
-        return (rowNode && this.model.hasRowEdits(rowNode, params)) ?? false;
+        return !!rowNode && this.model.hasRowEdits(rowNode, params);
     }
 
     public enableRangeSelectionWhileEditing(): void {
@@ -332,7 +333,14 @@ export class EditService extends BeanStub implements NamedBean {
     }
 
     private prepareStopContext(position?: EditPosition, params?: StopEditParams): StopContext | null {
-        const { event, cancel, source = 'ui', forceCancel, forceStop } = params || {};
+        const {
+            event = null,
+            cancel = false,
+            source = 'ui',
+            forceCancel = false,
+            forceStop = false,
+            commit = false,
+        } = params || {};
 
         if (STOP_EDIT_SOURCE_TRANSFORM_KEYS.has(source) && this.batch) {
             // if we are in batch editing, we do not stop editing on paste
@@ -357,17 +365,17 @@ export class EditService extends BeanStub implements NamedBean {
             (!cancel &&
                 (!!this.shouldStopEditing(position, event, treatAsSource) ||
                     ((this.committing || source === 'paste') && !this.batch))) ||
-            (forceStop ?? false);
-        const willCancel =
-            (cancel && !!this.shouldCancelEditing(position, event, treatAsSource)) || (forceCancel ?? false);
+            forceStop;
+        const willCancel = (cancel && !!this.shouldCancelEditing(position, event, treatAsSource)) || forceCancel;
 
         return {
             cancel,
-            cellCtrl: cellCtrl ?? undefined,
+            cellCtrl,
             edits: this.model.getEditMap(true),
-            event,
+            event: event ?? null,
             forceCancel,
             forceStop,
+            commit,
             position,
             source,
             treatAsSource,
@@ -401,14 +409,22 @@ export class EditService extends BeanStub implements NamedBean {
 
     private handleStopOrCancel(context: StopContext): StopOutcome {
         const { beans, model } = this;
-        const { cancel, edits, event, source, willCancel, willStop } = context;
+        const { cancel, commit, edits, event, source, forceCancel, willCancel, willStop } = context;
 
-        _syncFromEditors(beans, { persist: true, isCancelling: willCancel || cancel, isStopping: willStop });
+        // In batch per-cell cancel (Escape), don't persist so previous pending value is preserved.
+        // A batch-wide cancel (forceCancel, e.g. cancelBatchEdit) persists before discarding.
+        const persist = !this.batch || !willCancel || forceCancel;
+        _syncFromEditors(beans, { persist, isCancelling: willCancel || cancel, isStopping: willStop });
 
         const freshEdits = model.getEditMap();
-        const editsToDelete = this.processEdits(freshEdits, cancel, source);
+        const shouldCommit = !willCancel && (!this.batch || commit);
+        const editsToDelete = shouldCommit ? this.processEdits(freshEdits, source) : [];
 
-        this.strategy?.stop(cancel, event);
+        if (cancel) {
+            this.strategy?.stopCancelled(context.forceCancel);
+        } else {
+            this.strategy?.stopCommitted(event, commit);
+        }
 
         this.clearValidationIfNoOpenEditors();
 
@@ -453,9 +469,17 @@ export class EditService extends BeanStub implements NamedBean {
         if (isEnter || isTab || isEscape) {
             if (isEnter || isTab) {
                 _syncFromEditors(beans, { persist: true });
-            } else if (isEscape) {
-                // only if ESC is pressed while in the editor for this cell
-                this.revertSingleCellEdit(cellCtrl!);
+            } else if (isEscape && cellCtrl) {
+                const { rowNode, column } = cellCtrl;
+                if (this.batch && rowNode && column) {
+                    // In batch mode, Escape reverts to previous pending value, not source value.
+                    const pos: Required<EditPosition> = { rowNode, column };
+                    _destroyEditors(beans, [pos], { silent: true });
+                    this.model.stop(pos, true, true);
+                    _getCellCtrl(beans, pos)?.refreshCell(FORCE_REFRESH);
+                } else {
+                    this.revertSingleCellEdit(cellCtrl);
+                }
             }
 
             if (this.batch) {
@@ -480,12 +504,15 @@ export class EditService extends BeanStub implements NamedBean {
         params,
         position,
         res,
+        commit,
         willCancel,
         willStop,
-    }: StopContext & { params?: StopEditParams; position?: EditPosition; res: boolean }): void {
+    }: StopContext & { params?: StopEditParams; res: boolean }): void {
         const beans = this.beans;
         if (res && position) {
-            this.model.removeEdits(position);
+            if (!this.batch || commit) {
+                this.model.removeEdits(position);
+            }
         }
 
         // Suppress navigation is required for bulk activities like pasting or fill handle via setDataValue,
@@ -551,7 +578,7 @@ export class EditService extends BeanStub implements NamedBean {
         this.beans.navigation?.navigateToNextCell(null, direction, cellPosition, false);
     }
 
-    private processEdits(edits: EditMap, cancel: boolean = false, source: EditSource): EditPosition[] {
+    private processEdits(edits: EditMap, source: EditSource): EditPosition[] {
         const rowNodes = Array.from(edits.keys());
 
         const hasValidationErrors =
@@ -565,9 +592,8 @@ export class EditService extends BeanStub implements NamedBean {
             for (const column of editRow.keys()) {
                 const editValue = editRow.get(column)!;
                 const position: Required<EditPosition> = { rowNode, column };
-                const valueChanged = _sourceAndPendingDiffer(editValue);
 
-                if (!cancel && valueChanged && !hasValidationErrors) {
+                if (_sourceAndPendingDiffer(editValue) && !hasValidationErrors) {
                     const cellCtrl = _getCellCtrl(this.beans, position);
                     const success = this.setNodeDataValue(rowNode, column, editValue.pendingValue, cellCtrl, source);
                     if (!success) {
@@ -580,6 +606,14 @@ export class EditService extends BeanStub implements NamedBean {
         return editsToDelete;
     }
 
+    /**
+     * Commits a value to the row node's data via `rowNode.setDataValue`.
+     *
+     * This is a low-level helper that only writes to data; it does NOT update the
+     * edit model. Callers are responsible for any model reconciliation — see
+     * `syncEditAfterCommit` for the non-batch case and `processEdits` for the
+     * batch-finalisation case (where edits are removed immediately after commit).
+     */
     private setNodeDataValue(
         rowNode: IRowNode,
         column: Column,
@@ -604,6 +638,35 @@ export class EditService extends BeanStub implements NamedBean {
         }
 
         return success;
+    }
+
+    /**
+     * Syncs the edit model after a non-batch commit so sourceValue never becomes stale.
+     * On success, re-reads the actual committed value from data (via getValue) because
+     * a custom valueSetter may transform or store it differently than the passed value.
+     * On failure, reverts the pending edit back to sourceValue.
+     *
+     * Skipped when an editor is open (state === 'editing'), because the upcoming
+     * stopEditing flow will call _syncFromEditors which reads from the editor widget;
+     * updating sourceValue here would cause that flow to re-commit stale editor content.
+     *
+     * NOTE: The re-read via `getValue` happens after `setNodeDataValue` has dispatched
+     * `cellValueChanged`. If a `cellValueChanged` listener synchronously mutates the
+     * same data field, the re-read will pick up that mutation. This is acceptable because
+     * the listener intentionally transformed the value and the model should track the
+     * actual committed state.
+     */
+    private syncEditAfterCommit(position: Required<EditPosition>, success: boolean): void {
+        const edit = this.model.getEdit(position);
+        if (edit && edit.state !== 'editing') {
+            if (success) {
+                this.beans.editModelSvc?.setEdit(position, {
+                    sourceValue: this.valueSvc.getValue(position.column as AgColumn, position.rowNode, 'data'),
+                });
+            } else {
+                this.model.clearEditValue(position);
+            }
+        }
     }
 
     public setEditMap(edits: EditMap, params?: _SetEditingCellsParams): void {
@@ -928,6 +991,31 @@ export class EditService extends BeanStub implements NamedBean {
         return new PopupEditorWrapper(params);
     }
 
+    public batchResetToSourceValue(position: Required<EditPosition>): boolean {
+        if (!this.batch) {
+            return false;
+        }
+        const existing = this.model.getEdit(position);
+        if (!existing) {
+            return false; // no edit, nothing to reset
+        }
+        const { pendingValue, sourceValue, state } = existing;
+        if (pendingValue === sourceValue) {
+            return false; // nothing to do, already at source value
+        }
+        if (state === 'editing') {
+            return false; // don't toggle-back if currently being edited
+        }
+
+        this.dispatchEditValuesChanged(position, { ...existing, pendingValue: sourceValue });
+        this.beans.editModelSvc?.removeEdits(position);
+        this.bulkRefresh(position);
+        return true; // toggled back to source value
+    }
+
+    /**
+     * Applies a data value change to a cell, handling batch editing, undo/redo, paste, and range operations.
+     */
     public setDataValue(position: Required<EditPosition>, newValue: any, eventSource?: string): boolean | undefined {
         try {
             const batch = this.batch;
@@ -954,68 +1042,88 @@ export class EditService extends BeanStub implements NamedBean {
             }
 
             if (!eventSource || KEEP_EDITOR_SOURCES.has(eventSource)) {
-                // editApi or undoRedoApi apply change without involving the editor
-                _syncFromEditor(beans, position, newValue, eventSource, undefined, { persist: true });
-
-                if (batch) {
-                    this.cleanupEditors();
-
-                    _purgeUnchangedEdits(beans);
-
-                    // force refresh of all row cells as custom renderers may depend on multiple cell values
-                    this.bulkRefresh();
-                    return true;
-                }
-
-                const cellCtrl = _getCellCtrl(beans, position);
-                const success = this.setNodeDataValue(
-                    position.rowNode,
-                    position.column,
-                    newValue,
-                    cellCtrl,
-                    eventSource
-                );
-                if (!success) {
-                    // If the data value was not set (e.g. valueSetter returned false), clear the edit value
-                    // to prevent the pending value from being displayed instead of the original value
-                    this.model.clearEditValue(position);
-                }
-                // Refresh the cell once with the correct value (either the new value or original if rejected)
-                cellCtrl?.refreshCell(FORCE_REFRESH);
-                return success;
+                return this.applyDirectValue(position, newValue, eventSource);
             }
 
-            const existing = this.model.getEdit(position);
-            if (existing) {
-                if (existing.pendingValue === newValue) {
-                    return false;
-                }
-
-                if (existing.sourceValue !== newValue) {
-                    _syncFromEditor(beans, position, newValue, eventSource, undefined, { persist: true });
-                    this.stopEditing(position, { source: source as any, suppressNavigateAfterEdit: true });
-                    return true;
-                }
-
-                if (existing.sourceValue === newValue) {
-                    beans.editModelSvc?.removeEdits(position);
-
-                    this.dispatchEditValuesChanged(position, {
-                        ...existing,
-                        pendingValue: newValue,
-                    });
-
-                    return true;
-                }
+            const result = this.applyExistingEdit(position, newValue, eventSource, source);
+            if (result !== undefined) {
+                return result; // existing edit handled, return its result
             }
 
             _syncFromEditor(beans, position, newValue, eventSource, undefined, { persist: true });
-            this.stopEditing(position, { source: source as any, suppressNavigateAfterEdit: true });
+            this.stopEditing(position, {
+                source: source as any,
+                suppressNavigateAfterEdit: true,
+            });
 
-            return true;
+            return true; // edit applied and cell refreshed, so return true to indicate the event was handled
         } finally {
             this.committing = false;
         }
+    }
+
+    /** Handles setDataValue when an edit already exists for the cell. */
+    private applyExistingEdit(
+        position: Required<EditPosition>,
+        newValue: any,
+        eventSource: string | undefined,
+        source: string
+    ): boolean | undefined {
+        const existing = this.model.getEdit(position);
+        if (!existing) {
+            return undefined; // signal to caller that there is no existing edit, so the normal setDataValue flow should proceed
+        }
+
+        if (existing.pendingValue === newValue) {
+            return false; // no change, so no need to update model or refresh cell
+        }
+
+        if (existing.sourceValue !== newValue) {
+            _syncFromEditor(this.beans, position, newValue, eventSource, undefined, { persist: true });
+            this.stopEditing(position, {
+                source: source as any,
+                suppressNavigateAfterEdit: true,
+            });
+            return true; // value was synced (in batch, stopEditing stays active but the edit is applied)
+        }
+
+        // sourceValue === newValue: setting back to original value removes the edit entirely.
+        this.beans.editModelSvc?.removeEdits(position);
+
+        this.dispatchEditValuesChanged(position, {
+            ...existing,
+            pendingValue: newValue,
+        });
+
+        return true; // edit removed and cell refreshed, so return true to indicate the event was handled
+    }
+
+    /** editApi or undoRedoApi apply change without involving the editor. */
+    private applyDirectValue(position: Required<EditPosition>, newValue: any, eventSource?: string): boolean {
+        const beans = this.beans;
+
+        if (this.batch) {
+            _syncFromEditor(beans, position, newValue, eventSource, undefined, { persist: true });
+
+            this.cleanupEditors();
+
+            _purgeUnchangedEdits(beans);
+
+            // force refresh of all row cells as custom renderers may depend on multiple cell values
+            this.bulkRefresh();
+            return true;
+        }
+
+        _syncFromEditor(beans, position, newValue, eventSource, undefined, { persist: true });
+
+        const cellCtrl = _getCellCtrl(beans, position);
+        const success = this.setNodeDataValue(position.rowNode, position.column, newValue, cellCtrl, eventSource);
+
+        this.syncEditAfterCommit(position, success);
+
+        // Re-fetch: change detection during setDataValue may have recreated the CellCtrl.
+        _getCellCtrl(beans, position)?.refreshCell(FORCE_REFRESH);
+        return success;
     }
 
     public handleColDefChanged(cellCtrl: CellCtrl): void {

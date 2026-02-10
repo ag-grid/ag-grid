@@ -116,4 +116,10 @@ export interface ClearCellRangeParams {
     dispatchWrapperEvents?: boolean;
     /** Source passed to `cellSelectionDeleteStart` and `cellSelectionDeleteEnd` events */
     wrapperEventSource?: 'deleteKey';
+    /**
+     * When `true` and in batch editing mode, cells with pending edits are restored to their
+     * original `sourceValue` instead of being cleared to `deleteValue`. This is used by
+     * fill-handle reduction to undo a fill rather than clearing cells.
+     */
+    restoreSourceInBatch?: boolean;
 }

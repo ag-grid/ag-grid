@@ -15,7 +15,9 @@ export function waitForEvent(event: AgPublicEventType, api: GridApi, n = 1): Pro
     });
 }
 
-const POINTER_EVENT_SUPPORTED = typeof PointerEvent === 'function';
+function isPointerEventSupported(): boolean {
+    return typeof PointerEvent === 'function';
+}
 
 export async function firePointerLikeClick(element: string | HTMLElement | null | undefined): Promise<boolean> {
     if (typeof element === 'string') {
@@ -42,7 +44,7 @@ export async function firePointerLikeClick(element: string | HTMLElement | null 
         buttons,
     };
 
-    if (POINTER_EVENT_SUPPORTED) {
+    if (isPointerEventSupported()) {
         element.dispatchEvent(new PointerEvent('pointerdown', pointerDownInit));
     }
 
@@ -62,7 +64,7 @@ export async function firePointerLikeClick(element: string | HTMLElement | null 
         ...pointerDownInit,
         buttons: 0,
     };
-    if (POINTER_EVENT_SUPPORTED) {
+    if (isPointerEventSupported()) {
         element.dispatchEvent(new PointerEvent('pointerup', pointerUpInit));
     }
 

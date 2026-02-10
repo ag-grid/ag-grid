@@ -853,8 +853,8 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         if (!column.isCellEditable(rowNode)) {
             return;
         }
-        const emptyValue = this.beans.valueSvc.getDeleteValue(column, rowNode);
-        rowNode.setDataValue(column, emptyValue, 'clipboardSvc');
+        const deleteValue = this.beans.valueSvc.getDeleteValue(column, rowNode);
+        rowNode.setDataValue(column, deleteValue, 'clipboardSvc');
     }
 
     private iterateActiveRanges(rowCallback: RowCallback, onlyFirst?: boolean, preProcessRange?: RangeCallback): void {
