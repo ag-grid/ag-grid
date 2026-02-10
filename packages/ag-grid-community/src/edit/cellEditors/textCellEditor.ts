@@ -59,14 +59,6 @@ class TextCellEditorInput<TValue = any>
             );
         }
 
-        const colDef = params.column.getColDef();
-        const isBigIntCell =
-            colDef.cellDataType === 'bigint' || (colDef.cellDataType == null && typeof params.value === 'bigint');
-
-        if (isBigIntCell && hasRawValue && String(rawValue).trim() !== '' && parsedValue == null) {
-            internalErrors.push(translate('invalidBigInt', 'Invalid BigInt'));
-        }
-
         if (!internalErrors.length) {
             internalErrors = null;
         }
