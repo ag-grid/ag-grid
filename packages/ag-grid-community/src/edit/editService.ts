@@ -180,6 +180,12 @@ export class EditService extends BeanStub implements NamedBean {
         if (params) {
             this.stopEditing(undefined, params);
         }
+        // If batchEditingStarted was dispatched but stopEditing didn't reach dispatchBatchStopped
+        // (e.g. all edits were purged so prepareStopContext returned null), fire it now to
+        // balance the event pair. Use cancel semantics since the batch didn't complete normally.
+        if (this.batchStartDispatched) {
+            this.dispatchBatchStopped(new Map(), false);
+        }
         this.batch = false;
         this.batchStartDispatched = false;
     }
@@ -565,7 +571,7 @@ export class EditService extends BeanStub implements NamedBean {
                 rowRenderer.refreshRows({ suppressFlash: true, force: true });
             }
 
-            const batchCommit = res && willStop && commit;
+            const batchCommit = willStop && commit;
             const batchCancel = willCancel && forceCancel;
 
             // Only fire batchEditingStopped when the batch is genuinely ending:
@@ -682,13 +688,14 @@ export class EditService extends BeanStub implements NamedBean {
             cellCtrl.suppressRefreshCell = true;
         }
         this.committing = true;
-        const success = rowNode.setDataValue(column, newValue, translatedSource);
-        this.committing = false;
-        if (cellCtrl) {
-            cellCtrl.suppressRefreshCell = false;
+        try {
+            return rowNode.setDataValue(column, newValue, translatedSource);
+        } finally {
+            this.committing = false;
+            if (cellCtrl) {
+                cellCtrl.suppressRefreshCell = false;
+            }
         }
-
-        return success;
     }
 
     /**
@@ -1349,10 +1356,12 @@ export class EditService extends BeanStub implements NamedBean {
             }
 
             this.committing = true;
-            this.stopEditing(undefined, { source: 'bulk' });
-            this.committing = false;
-
-            this.eventSvc.dispatchEvent({ type: 'bulkEditingStopped', changes: this.toEventChangeList(edits) });
+            try {
+                this.stopEditing(undefined, { source: 'bulk' });
+            } finally {
+                this.committing = false;
+                this.eventSvc.dispatchEvent({ type: 'bulkEditingStopped', changes: this.toEventChangeList(edits) });
+            }
         });
 
         this.bulkRefresh();
