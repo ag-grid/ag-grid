@@ -30,6 +30,7 @@
 @media print {
     .ag-root-wrapper.ag-layout-print {
         display: table;
+        container-type: normal;
 
         .ag-root-wrapper-body,
         .ag-root,
