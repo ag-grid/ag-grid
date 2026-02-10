@@ -79,7 +79,6 @@ const FILTER_LOCALE_TEXT = {
     maxDateValidation: (variableValues: string[]) => `Date must be before ${variableValues[0]}`,
     strictMinValueValidation: (variableValues: string[]) => `Must be greater than ${variableValues[0]}`,
     strictMaxValueValidation: (variableValues: string[]) => `Must be less than ${variableValues[0]}`,
-    invalidBigInt: 'Invalid BigInt',
 };
 
 export type FilterLocaleTextKey = keyof typeof FILTER_LOCALE_TEXT;

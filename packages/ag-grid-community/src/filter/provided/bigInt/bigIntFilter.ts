@@ -65,14 +65,17 @@ export class BigIntFilter extends SimpleFilter<
         const targetInvalid = isFrom ? fromInvalid : toInvalid;
         const otherInvalid = isFrom ? toInvalid : fromInvalid;
 
-        const localeKey = targetInvalid
-            ? 'invalidBigInt'
-            : !fromInvalid && !toInvalid
-              ? getValidityMessageKey(fromValue, toValue, isFrom)
-              : null;
-        const validityMessage = localeKey
-            ? this.translate(localeKey, [String(isFrom ? to.getValue() : from.getValue())])
-            : '';
+        let validityMessage = '';
+
+        if (targetInvalid) {
+            const translate = this.getLocaleTextFunc();
+            validityMessage = translate('invalidBigInt', 'Invalid BigInt');
+        } else if (!fromInvalid && !toInvalid) {
+            const localeKey = getValidityMessageKey(fromValue, toValue, isFrom);
+            if (localeKey) {
+                validityMessage = this.translate(localeKey, [String(isFrom ? to.getValue() : from.getValue())]);
+            }
+        }
 
         target.setCustomValidity(validityMessage);
         if (!otherInvalid) {

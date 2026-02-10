@@ -42,9 +42,12 @@ class TextCellEditorInput<TValue = any>
         const { params } = this;
         const { maxLength, getValidationErrors } = params;
         const rawValue = this.eEditor.getValue();
-        const hasRawValue = _exists(rawValue);
-        const parsedValue = hasRawValue ? params.parseValue(rawValue as string) : undefined;
-        const value = !hasRawValue && !_exists(params.value) ? params.value : hasRawValue ? parsedValue : params.value;
+        const hasRawValue = rawValue != null;
+        const parsedValue = hasRawValue ? params.parseValue(rawValue) : undefined;
+        let value = params.value;
+        if (hasRawValue) {
+            value = parsedValue;
+        }
 
         const translate = this.getLocaleTextFunc();
 
