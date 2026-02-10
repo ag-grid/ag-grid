@@ -758,4 +758,106 @@ describe('Cell Editing: edge cases', () => {
             expect(api.getDisplayedRowAtIndex(0)!.data.a).toBe(0);
         });
     });
+
+    // Non-editor batch writes (paste, cellClear, setDataValue with batch sources) must
+    // dispatch batchEditingStarted so that batchEditingStopped fires on commit/cancel. Without this,
+    // consumers that defer work until batchEditingStopped (e.g. groupEditService) would orphan pending updates.
+    describe('batchEditingStarted/Stopped events for non-editor batch paths', () => {
+        test.each(['commit', 'cancel'] as const)(
+            'paste-only batch session dispatches both batch events on %s',
+            async (action) => {
+                const api = await gridMgr.createGridAndWait(`pasteOnlyBatch-${action}`, {
+                    cellSelection: true,
+                    defaultColDef: { editable: true },
+                    columnDefs: [{ field: 'a' }],
+                    rowData: [{ id: 'ROW_0', a: 'Original' }],
+                    getRowId: (params) => params.data.id,
+                });
+                const eventTracker = new EditEventTracker(api);
+                await asyncSetTimeout(0);
+
+                api.startBatchEdit();
+
+                // Paste-source write without ever opening an editor
+                const rowNode = api.getDisplayedRowAtIndex(0)!;
+                rowNode.setDataValue('a', 'Pasted', 'paste');
+                await asyncSetTimeout(0);
+
+                // batchEditingStarted should have fired lazily
+                expect(eventTracker.counts.batchEditingStarted).toBe(1);
+                expect(eventTracker.counts.batchEditingStopped).toBe(0);
+
+                if (action === 'commit') {
+                    api.commitBatchEdit();
+                } else {
+                    api.cancelBatchEdit();
+                }
+                await asyncSetTimeout(0);
+
+                expect(eventTracker.counts).toMatchObject({
+                    batchEditingStarted: 1,
+                    batchEditingStopped: 1,
+                });
+
+                if (action === 'commit') {
+                    expect(rowNode.data.a).toBe('Pasted');
+                } else {
+                    expect(rowNode.data.a).toBe('Original');
+                }
+            }
+        );
+
+        test('cellClear-only batch session dispatches both batch events on commit', async () => {
+            const api = await gridMgr.createGridAndWait('cellClearOnlyBatch', {
+                cellSelection: true,
+                defaultColDef: { editable: true },
+                columnDefs: [{ field: 'a' }],
+                rowData: [{ id: 'ROW_0', a: 'Original' }],
+                getRowId: (params) => params.data.id,
+            });
+            const eventTracker = new EditEventTracker(api);
+            await asyncSetTimeout(0);
+
+            api.startBatchEdit();
+
+            // cellClear-source write without ever opening an editor
+            const rowNode = api.getDisplayedRowAtIndex(0)!;
+            rowNode.setDataValue('a', null, 'cellClear');
+            await asyncSetTimeout(0);
+
+            // batchEditingStarted should have fired
+            expect(eventTracker.counts.batchEditingStarted).toBe(1);
+
+            api.commitBatchEdit();
+            await asyncSetTimeout(0);
+
+            expect(eventTracker.counts).toMatchObject({
+                batchEditingStarted: 1,
+                batchEditingStopped: 1,
+            });
+            expect(rowNode.data.a).toBe(null);
+        });
+
+        test('no-change batch session does not dispatch batch events', async () => {
+            const api = await gridMgr.createGridAndWait('noChangeBatch', {
+                cellSelection: true,
+                defaultColDef: { editable: true },
+                columnDefs: [{ field: 'a' }],
+                rowData: [{ id: 'ROW_0', a: 'Original' }],
+                getRowId: (params) => params.data.id,
+            });
+            const eventTracker = new EditEventTracker(api);
+            await asyncSetTimeout(0);
+
+            api.startBatchEdit();
+            // No writes at all — just commit
+            api.commitBatchEdit();
+            await asyncSetTimeout(0);
+
+            expect(eventTracker.counts).toMatchObject({
+                batchEditingStarted: 0,
+                batchEditingStopped: 0,
+            });
+        });
+    });
 });

@@ -184,6 +184,15 @@ export class EditService extends BeanStub implements NamedBean {
         this.batchStartDispatched = false;
     }
 
+    /** Lazily dispatch batchEditingStarted when the first write or editor open occurs during a batch session. */
+    private ensureBatchStarted(): void {
+        if (!this.batch || this.batchStartDispatched) {
+            return;
+        }
+        this.batchStartDispatched = true;
+        this.dispatchBatchEvent('batchEditingStarted', new Map());
+    }
+
     private createStrategy(editType?: EditStrategyType): BaseEditStrategy {
         const { beans, gos, strategy } = this;
 
@@ -299,9 +308,8 @@ export class EditService extends BeanStub implements NamedBean {
             this.stopEditing(undefined, { source });
         }
 
-        if (res && this.batch && !this.batchStartDispatched) {
-            this.batchStartDispatched = true;
-            this.dispatchBatchEvent('batchEditingStarted', new Map());
+        if (res) {
+            this.ensureBatchStarted();
         }
 
         this.strategy.start({
@@ -422,11 +430,11 @@ export class EditService extends BeanStub implements NamedBean {
 
     private handleStopOrCancel(context: StopContext): StopOutcome {
         const { beans, model } = this;
-        const { cancel, commit, edits, event, source, forceCancel, willCancel, willStop } = context;
+        const { cancel, commit, edits, event, source, willCancel, willStop } = context;
 
-        // In batch per-cell cancel (Escape), don't persist so previous pending value is preserved.
-        // A batch-wide cancel (forceCancel, e.g. cancelBatchEdit) persists before discarding.
-        const persist = !this.batch || !willCancel || forceCancel;
+        // In batch cancel, don't persist editorValue→pendingValue: per-cell Escape preserves the
+        // previous pending value, and batch-wide cancel (forceCancel) discards all edits anyway.
+        const persist = !this.batch || !willCancel;
         _syncFromEditors(beans, { persist, isCancelling: willCancel || cancel, isStopping: willStop });
 
         const freshEdits = model.getEditMap();
@@ -485,6 +493,9 @@ export class EditService extends BeanStub implements NamedBean {
             } else if (isEscape && cellCtrl) {
                 const { rowNode, column } = cellCtrl;
                 if (this.batch && rowNode && column) {
+                    // Defensive: this Escape branch handles the case where the strategy blocked
+                    // direct cancellation (shouldCancelEditing returned false), so processStopRequest
+                    // fell through to handleMidBatchKey instead of handleStopOrCancel.
                     // In batch mode, Escape reverts to previous pending value, not source value.
                     const pos: Required<EditPosition> = { rowNode, column };
                     _destroyEditors(beans, [pos], { silent: true });
@@ -561,21 +572,28 @@ export class EditService extends BeanStub implements NamedBean {
             // - commit: commitBatchEdit() was called (forceStop + commit)
             // - forceCancel: cancelBatchEdit() was called (cancel + forceCancel)
             // Do NOT fire during mid-batch row transitions (Tab/Enter across rows in fullRow mode).
-            // Also skip if batchEditingStarted was never dispatched (no edits were made).
-            if ((batchCommit || batchCancel) && this.batchStartDispatched) {
-                this.batchStartDispatched = false;
-
-                let eventEdits: EditMap;
-                if (commit) {
-                    // Filter the snapshot to only include cells with actual value changes
-                    eventEdits = _filterChangedEdits(edits);
-                } else {
-                    // Cancel: send empty edits since values are reverted
-                    eventEdits = new Map() as EditMap;
-                }
-
-                this.dispatchBatchEvent('batchEditingStopped', eventEdits);
+            if (batchCommit || batchCancel) {
+                this.dispatchBatchStopped(edits, batchCommit);
             }
+        }
+    }
+
+    /** Dispatch batchEditingStopped if batchEditingStarted was (or should have been) dispatched. */
+    private dispatchBatchStopped(edits: EditMap, commit: boolean): void {
+        let eventEdits: EditMap | undefined;
+        if (commit) {
+            // Filter the snapshot to only include cells with actual value changes
+            eventEdits = _filterChangedEdits(edits);
+            if (eventEdits.size > 0) {
+                // Safety: if real edits exist but batchEditingStarted was somehow missed, fire it now
+                // so that batchEditingStopped is guaranteed to follow.
+                this.ensureBatchStarted();
+            }
+        }
+
+        if (this.batchStartDispatched) {
+            this.batchStartDispatched = false;
+            this.dispatchBatchEvent('batchEditingStopped', eventEdits ?? new Map());
         }
     }
 
@@ -1084,6 +1102,7 @@ export class EditService extends BeanStub implements NamedBean {
             }
 
             _syncFromEditor(beans, position, newValue, eventSource, undefined, { persist: true });
+            this.ensureBatchStarted();
             this.stopEditing(position, {
                 source: source as any,
                 suppressNavigateAfterEdit: true,
@@ -1113,6 +1132,7 @@ export class EditService extends BeanStub implements NamedBean {
 
         if (existing.sourceValue !== newValue) {
             _syncFromEditor(this.beans, position, newValue, eventSource, undefined, { persist: true });
+            this.ensureBatchStarted();
             this.stopEditing(position, {
                 source: source as any,
                 suppressNavigateAfterEdit: true,
@@ -1122,6 +1142,7 @@ export class EditService extends BeanStub implements NamedBean {
 
         // sourceValue === newValue: setting back to original value removes the edit entirely.
         this.beans.editModelSvc?.removeEdits(position);
+        this.ensureBatchStarted();
 
         this.dispatchEditValuesChanged(position, {
             ...existing,
@@ -1141,6 +1162,9 @@ export class EditService extends BeanStub implements NamedBean {
             this.cleanupEditors();
 
             _purgeUnchangedEdits(beans);
+
+            // Lazily dispatch batchEditingStarted for direct API writes during batch.
+            this.ensureBatchStarted();
 
             // force refresh of all row cells as custom renderers may depend on multiple cell values
             this.bulkRefresh();
@@ -1316,6 +1340,8 @@ export class EditService extends BeanStub implements NamedBean {
                 this.cleanupEditors();
 
                 _purgeUnchangedEdits(beans);
+
+                this.ensureBatchStarted();
 
                 // force refresh of all row cells as custom renderers may depend on multiple cell values
                 this.bulkRefresh();

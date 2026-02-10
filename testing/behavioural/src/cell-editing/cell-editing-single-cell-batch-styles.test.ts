@@ -459,7 +459,7 @@ describe('Cell Editing: single-cell batch styles', () => {
             cellEditRequest: 0,
             bulkEditingStarted: 0,
             bulkEditingStopped: 0,
-            batchEditingStarted: 0,
+            batchEditingStarted: 1,
             batchEditingStopped: 0,
         });
     });
@@ -595,8 +595,8 @@ describe('Cell Editing: single-cell batch styles', () => {
             cellEditRequest: 0,
             bulkEditingStarted: 0,
             bulkEditingStopped: 0,
-            batchEditingStarted: 0,
-            batchEditingStopped: 0,
+            batchEditingStarted: 1,
+            batchEditingStopped: 1,
         });
     });
 
@@ -774,8 +774,8 @@ describe('Cell Editing: single-cell batch styles', () => {
             cellEditRequest: 0,
             bulkEditingStarted: 0,
             bulkEditingStopped: 0,
-            batchEditingStarted: 0,
-            batchEditingStopped: 0,
+            batchEditingStarted: 1,
+            batchEditingStopped: 1,
         });
     });
 });
