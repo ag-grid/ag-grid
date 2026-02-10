@@ -41,7 +41,10 @@ class TextCellEditorInput<TValue = any>
     public getValidationErrors(): string[] | null {
         const { params } = this;
         const { maxLength, getValidationErrors } = params;
-        const value = this.getValue();
+        const rawValue = this.eEditor.getValue();
+        const hasRawValue = _exists(rawValue);
+        const parsedValue = hasRawValue ? params.parseValue(rawValue as string) : undefined;
+        const value = !hasRawValue && !_exists(params.value) ? params.value : hasRawValue ? parsedValue : params.value;
 
         const translate = this.getLocaleTextFunc();
 
@@ -51,6 +54,14 @@ class TextCellEditorInput<TValue = any>
             internalErrors.push(
                 translate('maxLengthValidation', `Must be ${maxLength} characters or fewer.`, [String(maxLength)])
             );
+        }
+
+        const colDef = params.column.getColDef();
+        const isBigIntCell =
+            colDef.cellDataType === 'bigint' || (colDef.cellDataType == null && typeof params.value === 'bigint');
+
+        if (isBigIntCell && hasRawValue && String(rawValue).trim() !== '' && parsedValue == null) {
+            internalErrors.push(translate('invalidBigInt', 'Invalid BigInt'));
         }
 
         if (!internalErrors.length) {

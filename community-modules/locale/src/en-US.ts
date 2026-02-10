@@ -691,6 +691,7 @@ export const AG_GRID_LOCALE_EN = {
     false: 'False',
     invalidDate: 'Invalid Date',
     invalidNumber: 'Invalid Number',
+    invalidBigInt: 'Invalid BigInt',
     january: 'January',
     february: 'February',
     march: 'March',

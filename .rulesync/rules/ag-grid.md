@@ -179,6 +179,14 @@ While this transition is in progress, changes made to Theming API should be appl
     2. Mirror updates in the corresponding docs page.
     3. Run the relevant generation/typecheck commands.
 
+-   **Editing & Validation**
+    1. **Filters vs editing**: Filter inputs validate themselves; cell editing validation goes through the editor and edit model.
+    2. **Invalid edits**: Default behaviour is to revert invalid edits unless `invalidEditValueMode='block'` is set.
+    3. **Editor validation style**: Editors validate from raw input once (avoid double parsing).
+    4. **Data type hints**: `cellDataType` drives defaults; if missing, code often falls back to the existing cell value.
+    5. **Locale text**: Filter validation strings live in filter locale text; editor validation strings should be in the core locale map.
+    6. **User callback**: Avoid calling user provided callbacks more than necessary. Callbacks may have undesired side effects.
+
 ### Technical Requirements
 
 -   **Node.js**: Check `.nvmrc` for version
