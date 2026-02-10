@@ -1280,9 +1280,11 @@ export class EditService extends BeanStub implements NamedBean {
         const edits: EditMap = this.model.getEditMap(true);
         let editValue = edits.get(rowNode)?.get(column)?.pendingValue;
 
+        let bulkStartDispatched = false;
         if (!this.batch) {
             // bulk edits occurring during batch are handled as a batch set of changes
             this.eventSvc.dispatchEvent({ type: 'bulkEditingStarted' });
+            bulkStartDispatched = true;
         }
 
         const isFormula = formula?.isFormula(editValue) ?? false;
@@ -1360,7 +1362,9 @@ export class EditService extends BeanStub implements NamedBean {
                 this.stopEditing(undefined, { source: 'bulk' });
             } finally {
                 this.committing = false;
-                this.eventSvc.dispatchEvent({ type: 'bulkEditingStopped', changes: this.toEventChangeList(edits) });
+                if (bulkStartDispatched) {
+                    this.eventSvc.dispatchEvent({ type: 'bulkEditingStopped', changes: this.toEventChangeList(edits) });
+                }
             }
         });
 
