@@ -54,22 +54,31 @@ export class BigIntFilter extends SimpleFilter<
 
     private refreshInputPairValidation(from: GridInputTextField, to: GridInputTextField, isFrom = false): void {
         const { bigintParser } = this.params;
+        const fromValue = this.getParsedValue(from, bigintParser);
+        const toValue = this.getParsedValue(to, bigintParser);
+        const fromInvalid = this.isInvalidValue(from, fromValue);
+        const toInvalid = this.isInvalidValue(to, toValue);
+
         const target = isFrom ? from : to;
-        const targetValue = this.getParsedValue(target, bigintParser);
-        const targetInvalid = this.isInvalidValue(target, targetValue);
+        const other = isFrom ? to : from;
+        const targetInvalid = isFrom ? fromInvalid : toInvalid;
+        const otherInvalid = isFrom ? toInvalid : fromInvalid;
 
         let validityMessage = '';
         if (targetInvalid) {
             const translate = this.getLocaleTextFunc();
             validityMessage = translate('invalidBigInt', 'Invalid BigInt');
-        } else {
-            const localeKey = getValidityMessageKey(_parseBigIntOrNull(from), _parseBigIntOrNull(to), isFrom);
+        } else if (!fromInvalid && !toInvalid) {
+            const localeKey = getValidityMessageKey(fromValue, toValue, isFrom);
             if (localeKey) {
                 validityMessage = this.translate(localeKey, [String(isFrom ? to.getValue() : from.getValue())]);
             }
         }
+
         target.setCustomValidity(validityMessage);
-        (isFrom ? to : from).setCustomValidity('');
+        if (!otherInvalid) {
+            other.setCustomValidity('');
+        }
         if (validityMessage.length > 0) {
             this.beans.ariaAnnounce.announceValue(validityMessage, 'dateFilter');
         }
