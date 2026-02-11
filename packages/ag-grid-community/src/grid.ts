@@ -49,7 +49,7 @@ export interface GridParams {
     // INTERNAL - set by frameworks if the provided grid div is safe to set a theme class on
     setThemeOnGridDiv?: boolean;
     // INTERNAL - set by studio
-    skipLicenseCheck?: string;
+    skipLicenseCheck?: boolean;
 
     /**
      * Modules to be registered directly with this grid instance.
