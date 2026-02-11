@@ -3,6 +3,7 @@ import { _EditCoreModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
+import { RichSelectAsyncRequestsModule } from './richSelectAsyncRequestsModule';
 import { RichSelectCellEditor } from './richSelectCellEditor';
 
 /**
@@ -21,5 +22,5 @@ export const RichSelectModule: _ModuleWithoutApi = {
         // loading async values
         richSelectLoading: 'loading',
     },
-    dependsOn: [EnterpriseCoreModule, _EditCoreModule],
+    dependsOn: [EnterpriseCoreModule, _EditCoreModule, RichSelectAsyncRequestsModule],
 };

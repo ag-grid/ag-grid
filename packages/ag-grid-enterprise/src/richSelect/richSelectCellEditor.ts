@@ -4,31 +4,20 @@ import type {
     KeyCreatorParams,
     RichCellEditorParams,
     RichCellEditorValuesCallbackParams,
-    RichCellEditorValuesPageParams,
-    RichCellEditorValuesPageResult,
     RichSelectParams,
-    _VerticalDirection,
 } from 'ag-grid-community';
 import { AgAbstractCellEditor, KeyCode, _addGridCommonParams, _consoleError, _missing, _warn } from 'ag-grid-community';
 
 import { AgRichSelect } from '../widgets/agRichSelect';
+import { RichSelectAsyncRequestsController } from './richSelectAsyncRequests';
 
-const DEFAULT_VALUES_PAGE_SIZE = 100;
 const DEFAULT_VALUES_PAGE_LOAD_THRESHOLD = 10;
 
 export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> extends AgAbstractCellEditor {
     protected override params: RichCellEditorParams<TData, TValue>;
     private focusAfterAttached: boolean;
     protected eEditor: AgRichSelect<TValue>;
-    private currentSearchRequest: number = 0;
-    private currentValuesPageRequest: number = 0;
-    private valuesPageLoading = false;
-    private valuesPageHasMoreNext = false;
-    private valuesPageHasMorePrev = false;
-    private valuesPageLoadedValues: TValue[] = [];
-    private valuesPageSearch = '';
-    private valuesPageWindowStartRow = 0;
-    private valuesPageNextCursor: string | null | undefined;
+    private asyncRequests?: RichSelectAsyncRequestsController<TData, TValue>;
     private pendingInitialEventKey: string | null = null;
     private initialEventKeyProcessed = false;
 
@@ -38,6 +27,8 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
 
     public initialiseEditor(_params: RichCellEditorParams<TData, TValue>): void {
         const { cellStartedEdit, values, valuesPage, eventKey } = this.params;
+        this.asyncRequests?.destroy();
+        this.asyncRequests = undefined;
         this.pendingInitialEventKey = null;
         this.initialEventKeyProcessed = false;
 
@@ -58,11 +49,12 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         this.eEditor.setValueList({ valueList, refresh: true, isInitial: true });
 
         if (this.isValuesPaged()) {
+            const asyncRequests = this.getAsyncRequests();
             this.eEditor.setLoadMoreRowsCallback(
-                (direction) => this.loadValuesPage(direction ?? 'down'),
+                (direction) => asyncRequests.loadValuesPage(direction ?? 'down'),
                 this.params.valuesPageLoadThreshold ?? DEFAULT_VALUES_PAGE_LOAD_THRESHOLD
             );
-            this.resetValuesPage('');
+            asyncRequests.resetValuesPage('');
             if (this.isFullAsync()) {
                 this.consumeInitialEventKey(eventKey);
             } else {
@@ -242,225 +234,27 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
     }
 
     private readonly onSearchCallback = (searchString: string): void => {
-        if (this.isValuesPaged()) {
-            this.resetValuesPage(searchString);
-            return;
-        }
-
-        const currentRequest = ++this.currentSearchRequest;
-        const richSelect = this.eEditor;
-        richSelect.setValueList({ refresh: true, valueList: undefined }); // undefined removes any previous value list and also removes any label like 'No matches'
-        const params = this.params as RichCellEditorValuesCallbackParams<TData, TValue>;
-
-        if (!searchString) {
-            // if search input is empty or has initial cell value, hide the picker
-            // it is consistent with the requirement of not calling values() with empty search
-            return;
-        }
-
-        if (typeof params.values !== 'function') {
-            if (this.isFullAsync()) {
-                _warn(294);
-            }
-            // should be impossible, but potentially allow sync values here
-            return;
-        }
-        const callbackParams: RichCellEditorValuesCallbackParams<TData, TValue> = { ...params, search: searchString };
-        let valuesPromise: TValue[] | Promise<TValue[]>;
-
-        try {
-            valuesPromise = params.values(callbackParams);
-        } catch (error) {
-            _consoleError('Rich Select', error);
-            if (currentRequest === this.currentSearchRequest) {
-                richSelect.setValueList({ refresh: true, valueList: [] });
-            }
-            return;
-        }
-
-        if (Array.isArray(valuesPromise)) {
-            // this is only possible due to grid misconfiguration, in which case handle it gracefully
-            if (this.isFullAsync()) {
-                _warn(294);
-            }
-            richSelect.setValueList({ refresh: true, valueList: valuesPromise });
-            return;
-        }
-        richSelect.setValueList({
-            valueList: valuesPromise
-                .then((results) => {
-                    // only set the results if this is the latest search request
-                    // this avoids out of order responses messing up the results
-                    if (currentRequest === this.currentSearchRequest) {
-                        return results;
-                    }
-                })
-                .catch((error) => {
-                    _consoleError('Rich Select', error);
-                    if (currentRequest === this.currentSearchRequest) {
-                        return [];
-                    }
-                }),
-            refresh: true,
-        });
+        this.getAsyncRequests().onSearch(searchString);
     };
 
-    private resetValuesPage(searchString: string): void {
-        this.valuesPageSearch = searchString;
-        this.valuesPageLoadedValues = [];
-        this.valuesPageWindowStartRow = this.resolveValuesPageStartRow(searchString);
-        this.valuesPageNextCursor = undefined;
-        this.valuesPageHasMoreNext = true;
-        this.valuesPageHasMorePrev = this.valuesPageWindowStartRow > 0;
-        this.valuesPageLoading = false;
-        this.currentValuesPageRequest++;
-
-        this.eEditor.setValueList({ valueList: undefined, refresh: true, isInitial: true });
-        this.loadValuesPage('down');
-    }
-
-    private loadValuesPage(direction: _VerticalDirection): void {
-        const valuesPage = this.params.valuesPage;
-
-        if (typeof valuesPage !== 'function' || this.valuesPageLoading) {
-            return;
+    private getAsyncRequests(): RichSelectAsyncRequestsController<TData, TValue> {
+        if (this.asyncRequests) {
+            return this.asyncRequests;
         }
 
-        if (
-            (direction === 'up' && !this.valuesPageHasMorePrev) ||
-            (direction === 'down' && !this.valuesPageHasMoreNext)
-        ) {
-            return;
-        }
-
-        const pageSize = Math.max(this.params.valuesPageSize ?? DEFAULT_VALUES_PAGE_SIZE, 1);
-        const startRow =
-            direction === 'up'
-                ? Math.max(this.valuesPageWindowStartRow - pageSize, 0)
-                : this.valuesPageWindowStartRow + this.valuesPageLoadedValues.length;
-        const endRow = direction === 'up' ? this.valuesPageWindowStartRow : startRow + pageSize;
-
-        if (startRow >= endRow) {
-            if (direction === 'up') {
-                this.valuesPageHasMorePrev = false;
-            } else {
-                this.valuesPageHasMoreNext = false;
-            }
-            return;
-        }
-
-        const requestVersion = this.currentValuesPageRequest;
-        const requestParams: RichCellEditorValuesPageParams<TData, TValue> = {
-            ...this.params,
-            search: this.valuesPageSearch,
-            startRow,
-            endRow,
-            cursor: direction === 'down' ? this.valuesPageNextCursor : undefined,
-        };
-
-        this.valuesPageLoading = true;
-
-        if (this.valuesPageLoadedValues.length === 0) {
-            this.eEditor.setIsLoading();
-        }
-
-        let pageResultOrPromise:
-            | RichCellEditorValuesPageResult<TValue>
-            | Promise<RichCellEditorValuesPageResult<TValue>>;
-        try {
-            pageResultOrPromise = valuesPage(requestParams);
-        } catch (error) {
-            this.handleValuesPageError(error, requestVersion);
-            return;
-        }
-
-        Promise.resolve(pageResultOrPromise)
-            .then((pageResult) =>
-                this.applyValuesPageResult(pageResult, pageSize, requestVersion, direction, startRow, endRow)
-            )
-            .catch((error) => this.handleValuesPageError(error, requestVersion));
-    }
-
-    private applyValuesPageResult(
-        pageResult: RichCellEditorValuesPageResult<TValue> | undefined,
-        pageSize: number,
-        requestVersion: number,
-        direction: _VerticalDirection,
-        requestStartRow: number,
-        requestEndRow: number
-    ): void {
-        if (requestVersion !== this.currentValuesPageRequest) {
-            return;
-        }
-
-        this.valuesPageLoading = false;
-
-        const isFirstLoadedPage = this.valuesPageLoadedValues.length === 0;
-        const values = pageResult?.values ?? [];
-
-        if (direction === 'up') {
-            if (values.length) {
-                this.valuesPageLoadedValues = [...values, ...this.valuesPageLoadedValues];
-                this.valuesPageWindowStartRow = requestStartRow;
-            }
-
-            const expectedCount = requestEndRow - requestStartRow;
-            this.valuesPageHasMorePrev = requestStartRow > 0 && values.length >= expectedCount;
-        } else {
-            if (values.length) {
-                this.valuesPageLoadedValues = [...this.valuesPageLoadedValues, ...values];
-            }
-
-            this.valuesPageNextCursor = pageResult?.cursor;
-            const loadedRowCount = this.valuesPageLoadedValues.length;
-
-            if (typeof pageResult?.lastRow === 'number') {
-                this.valuesPageHasMoreNext = this.valuesPageWindowStartRow + loadedRowCount < pageResult.lastRow;
-            } else if (pageResult?.cursor !== undefined) {
-                this.valuesPageHasMoreNext = !!pageResult.cursor;
-            } else {
-                this.valuesPageHasMoreNext = values.length >= pageSize;
-            }
-        }
-
-        this.eEditor.setValueList({
-            valueList: this.valuesPageLoadedValues,
-            refresh: true,
-            isInitial: true,
-            scrollToCurrentValue: isFirstLoadedPage,
+        this.asyncRequests = new RichSelectAsyncRequestsController<TData, TValue>({
+            getEditor: () => this.eEditor,
+            getParams: () => this.params,
+            isFullAsync: () => this.isFullAsync(),
+            onFirstValuesPageLoaded: () => {
+                if (this.pendingInitialEventKey != null) {
+                    this.consumeInitialEventKey(this.pendingInitialEventKey);
+                    this.pendingInitialEventKey = null;
+                }
+            },
         });
 
-        if (isFirstLoadedPage && this.pendingInitialEventKey != null) {
-            this.consumeInitialEventKey(this.pendingInitialEventKey);
-            this.pendingInitialEventKey = null;
-        }
-    }
-
-    private handleValuesPageError(error: unknown, requestVersion: number): void {
-        _consoleError('Rich Select', error);
-
-        if (requestVersion !== this.currentValuesPageRequest) {
-            return;
-        }
-
-        this.valuesPageLoading = false;
-        this.valuesPageHasMoreNext = false;
-        this.valuesPageHasMorePrev = false;
-        this.eEditor.setValueList({ valueList: this.valuesPageLoadedValues, refresh: true, isInitial: true });
-    }
-
-    private resolveValuesPageStartRow(searchString: string): number {
-        if (searchString) {
-            return 0;
-        }
-
-        const { valuesPageInitialStartRow, value } = this.params;
-        const startRow =
-            typeof valuesPageInitialStartRow === 'function'
-                ? valuesPageInitialStartRow(value)
-                : valuesPageInitialStartRow;
-
-        return Math.max(Math.floor(startRow ?? 0), 0);
+        return this.asyncRequests;
     }
 
     private getSearchStringCallback(values: TValue[]): ((values: TValue[]) => string[]) | undefined {
@@ -551,6 +345,12 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
 
     public focusIn(): void {
         this.eEditor.getFocusableElement().focus();
+    }
+
+    public override destroy(): void {
+        this.asyncRequests?.destroy();
+        this.asyncRequests = undefined;
+        super.destroy();
     }
 
     public getValue(): any {
