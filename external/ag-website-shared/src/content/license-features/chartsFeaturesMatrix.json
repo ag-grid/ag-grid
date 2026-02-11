@@ -437,6 +437,15 @@
             },
             {
                 "label": {
+                    "name": "Series Bars",
+                    "link": "https://www.ag-grid.com/charts/r/bars/"
+                },
+                "community": true,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
                     "name": "Series Markers",
                     "link": "https://www.ag-grid.com/charts/r/markers/"
                 },
@@ -545,6 +554,15 @@
                 "label": {
                     "name": "Navigator",
                     "link": "https://www.ag-grid.com/charts/r/navigator/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Scrollbar",
+                    "link": "https://www.ag-grid.com/charts/r/scrollbar/"
                 },
                 "community": false,
                 "enterprise": true,

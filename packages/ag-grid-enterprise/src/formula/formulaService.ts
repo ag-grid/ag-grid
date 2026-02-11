@@ -204,11 +204,13 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     }
 
     private setupFunctions() {
-        // eslint-disable-next-line no-restricted-properties
-        this.supportedOperations = new Map(Object.entries(SUPPORTED_FUNCTIONS));
+        this.supportedOperations = new Map();
+        Object.keys(SUPPORTED_FUNCTIONS).forEach((name) => {
+            this.supportedOperations.set(name, SUPPORTED_FUNCTIONS[name as keyof typeof SUPPORTED_FUNCTIONS]);
+        });
         this.functionNames = null;
 
-        // Register custom functions, not reactive.
+        // register custom functions, not reactive.
         const customFuncs = this.gos.get('formulaFuncs');
         if (customFuncs) {
             Object.keys(customFuncs).forEach((name) => {
@@ -425,7 +427,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             const isVisiting = colSet?.has(c);
             if (isVisiting) {
                 // already visiting, so we have a cycle.
-                throw new FormulaError('Circular reference', '#CIRCREF!');
+                throw new FormulaError(51);
             }
 
             if (!colSet) {
@@ -463,7 +465,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
 
         const ast = cachedItem.getAst();
         if (!ast) {
-            throw new FormulaError('Expected parsable formula', '#PARSE!');
+            throw new FormulaError(52);
         }
 
         const unresolvedDepIterator = unresolvedDeps(this.beans, ast, this.ensureCellFormula.bind(this));
@@ -547,7 +549,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
                         const cachedRefFormula = this.ensureCellFormula(addr.row, addr.column);
                         if (cachedRefFormula) {
                             if (!cachedRefFormula.isValueReady()) {
-                                throw new FormulaError('Internal scheduling error');
+                                throw new FormulaError(53);
                             }
 
                             const error = cachedRefFormula.getError();
@@ -577,7 +579,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             }
 
             if (!rootCachedCellFormula.isValueReady()) {
-                throw new FormulaError('Internal scheduling error');
+                throw new FormulaError(53);
             }
 
             return rootCachedCellFormula.getValue();

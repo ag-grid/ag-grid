@@ -33,6 +33,7 @@ export type StartEditParams = {
 export type StopEditParams = {
     event?: EditInputEvents;
     cancel?: boolean;
+    commit?: boolean;
     source?: EditSource;
     forceStop?: boolean;
     forceCancel?: boolean;

@@ -2,32 +2,20 @@ import type { BeanCollection } from 'ag-grid-community';
 import { _isClientSideRowModel, _warn } from 'ag-grid-community';
 
 export function startBatchEdit({ editSvc, gos, rowModel }: BeanCollection): void {
-    if (!editSvc?.isBatchEditing()) {
-        if (!_isClientSideRowModel(gos, rowModel)) {
-            _warn(289, { rowModelType: gos.get('rowModelType') });
-            return;
-        }
-
-        editSvc?.setBatchEditing(true);
+    if (!_isClientSideRowModel(gos, rowModel)) {
+        _warn(289, { rowModelType: gos.get('rowModelType') });
+        return;
     }
+
+    editSvc?.startBatchEditing();
 }
 
 export function cancelBatchEdit({ editSvc }: BeanCollection): void {
-    if (!editSvc?.isBatchEditing()) {
-        return;
-    }
-
-    editSvc?.stopEditing(undefined, { cancel: true, source: 'api', forceCancel: true });
-    editSvc?.setBatchEditing(false);
+    editSvc?.stopBatchEditing({ cancel: true, source: 'api', forceCancel: true });
 }
 
 export function commitBatchEdit({ editSvc }: BeanCollection): void {
-    if (!editSvc?.isBatchEditing()) {
-        return;
-    }
-
-    editSvc?.stopEditing(undefined, { source: 'api', forceStop: true });
-    editSvc?.setBatchEditing(false);
+    editSvc?.stopBatchEditing({ source: 'api', forceStop: true, commit: true });
 }
 
 export function isBatchEditing(beans: BeanCollection): boolean {

@@ -120,43 +120,56 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         };
     }
 
-    public override stop(cancel?: boolean, event?: Event | null): boolean {
+    public override stopCancelled(forceCancel: boolean): boolean {
+        const { rowNode } = this;
+        if (rowNode && !this.model.hasRowEdits(rowNode)) {
+            return false;
+        }
+
+        super.stopCancelled(forceCancel);
+
+        this.cleanupEditors({ rowNode }, true);
+        this.rowNode = undefined;
+
+        return true;
+    }
+
+    public override stopCommitted(event: Event | null, commit: boolean): boolean {
         const { rowNode } = this;
         if (rowNode && !this.model.hasRowEdits(rowNode)) {
             return false;
         }
 
         const changedRows: IRowNode[] = [];
-        if (!cancel) {
-            this.model.getEditMap().forEach((rowEdits, rowNode) => {
-                if (!rowEdits || rowEdits.size === 0) {
-                    return;
-                }
+        this.model.getEditMap().forEach((rowEdits, rowNode) => {
+            if (!rowEdits || rowEdits.size === 0) {
+                return;
+            }
 
-                for (const edit of rowEdits.values()) {
-                    if (_sourceAndPendingDiffer(edit)) {
-                        changedRows.push(rowNode);
-                        // early return, we only need to know if there are any edits
-                        break;
-                    }
+            for (const edit of rowEdits.values()) {
+                if (_sourceAndPendingDiffer(edit)) {
+                    changedRows.push(rowNode);
+                    break;
                 }
-            });
-        }
+            }
+        });
 
-        // rerun validation, new values might have triggered row validations
         _populateModelValidationErrors(this.beans);
-        if (!cancel && this.editSvc?.checkNavWithValidation({ rowNode }) === 'block-stop') {
+        if (this.editSvc.checkNavWithValidation({ rowNode }) === 'block-stop') {
             return false;
         }
 
-        super.stop(cancel, event);
+        super.stopCommitted(event, commit);
 
-        for (const rowNode of changedRows) {
-            this.dispatchRowEvent({ rowNode }, 'rowValueChanged');
+        // Only dispatch rowValueChanged when data is actually being committed.
+        // During batch row-to-row navigation, commit is false — values are pending, not persisted.
+        if (commit || !this.editSvc.isBatchEditing()) {
+            for (const rowNode of changedRows) {
+                this.dispatchRowEvent({ rowNode }, 'rowValueChanged');
+            }
         }
 
         this.cleanupEditors({ rowNode }, true);
-
         this.rowNode = undefined;
 
         return true;
@@ -212,9 +225,10 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         }
 
         // Destroy every editor created for this row, including those without edit model entries.
+        const destroyParams = {};
         for (const cellCtrl of rowCtrl.getAllCellCtrls()) {
             if (cellCtrl.comp?.getCellEditor()) {
-                _destroyEditor(this.beans, cellCtrl, undefined, cellCtrl);
+                _destroyEditor(this.beans, cellCtrl, destroyParams, cellCtrl);
             }
         }
     }

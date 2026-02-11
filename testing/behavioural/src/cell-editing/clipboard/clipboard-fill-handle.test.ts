@@ -100,6 +100,8 @@ describe('Clipboard Paste Behaviour: fill handle', () => {
             cellEditRequest: 0,
             bulkEditingStarted: 0,
             bulkEditingStopped: 0,
+            batchEditingStarted: 0,
+            batchEditingStopped: 0,
         });
 
         await asyncSetTimeout(1);

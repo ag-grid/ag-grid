@@ -17,7 +17,7 @@ import type {
     ICellEditorValidationError,
 } from '../../interfaces/iCellEditor';
 import type { Column } from '../../interfaces/iColumn';
-import type { EditValue } from '../../interfaces/iEditModelService';
+import type { EditMap, EditState, EditValue } from '../../interfaces/iEditModelService';
 import type { EditPosition } from '../../interfaces/iEditService';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
@@ -112,6 +112,23 @@ export function _sourceAndPendingDiffer({
         pendingValue = sourceValue;
     }
     return pendingValue !== sourceValue;
+}
+
+/** Returns a copy of the edit map containing only entries where the pending value differs from the source value. */
+export function _filterChangedEdits(edits: EditMap): EditMap {
+    const result: EditMap = new Map();
+    for (const [rowNode, editRow] of edits) {
+        const filtered = new Map<Column, EditValue>();
+        for (const [column, editValue] of editRow) {
+            if (_sourceAndPendingDiffer(editValue)) {
+                filtered.set(column, editValue);
+            }
+        }
+        if (filtered.size > 0) {
+            result.set(rowNode, filtered);
+        }
+    }
+    return result;
 }
 
 export function _setupEditor(
@@ -263,11 +280,11 @@ function _createEditorParams(
         rowIndex,
         node: rowNode,
         data: rowNode.data,
-        cellStartedEdit: cellStartedEdit ?? false,
+        cellStartedEdit: !!cellStartedEdit,
         onKeyDown: cellCtrl?.onKeyDown.bind(cellCtrl),
         stopEditing: (suppressNavigateAfterEdit: boolean) => {
             editSvc!.stopEditing(position, { source: batchEdit ? 'ui' : 'api', suppressNavigateAfterEdit });
-            _destroyEditor(beans, position);
+            _destroyEditor(beans, position, {});
         },
         eGridCell: cellCtrl?.eGui,
         parseValue: (newValue: any) => valueSvc.parseValue(agColumn, rowNode, newValue, cellCtrl?.value),
@@ -371,11 +388,12 @@ export function _syncFromEditor(
 
     let edit = editModelSvc.getEdit(position);
 
-    if (!edit?.sourceValue) {
+    if (edit?.sourceValue === undefined) {
         // sourceValue not set means sync called without corresponding startEdit - from API call
+        const pendingValue = edit ? getNormalisedFormula(beans, edit.editorValue, false, column) : UNEDITED;
         const editValue: Partial<EditValue> = {
             sourceValue: valueSvc.getValue(column as AgColumn, rowNode, 'data'),
-            pendingValue: edit ? getNormalisedFormula(beans, edit.editorValue, false, column) : UNEDITED,
+            pendingValue,
         };
 
         if (params?.persist) {
@@ -413,22 +431,33 @@ function _persistEditorValue(beans: BeanCollection, position: Required<EditPosit
     const edit = editModelSvc?.getEdit(position);
 
     // propagate the editor value to pending.
-    editModelSvc?.setEdit(position, {
-        pendingValue: getNormalisedFormula(beans, edit?.editorValue, false, position.column),
-    });
+    const pendingValue = getNormalisedFormula(beans, edit?.editorValue, false, position.column);
+
+    const editValue: Partial<EditValue> = { pendingValue };
+
+    // For API-driven edits (e.g. Delete/Backspace, paste, undo/redo) that did NOT go through
+    // an editor session and are not currently in 'editing' state, set the state to 'changed'.
+    // Actively-editing cells have their state managed by _destroyEditor.
+    if (!edit?.editorState?.cellStoppedEditing && edit?.state !== 'editing') {
+        editValue.state = 'changed';
+    }
+
+    editModelSvc?.setEdit(position, editValue);
 }
 
 export function _destroyEditors(
     beans: BeanCollection,
     edits?: Required<EditPosition>[],
-    params?: { event?: Event; silent?: boolean; cancel?: boolean }
+    params: { event?: Event; silent?: boolean; cancel?: boolean } = {}
 ): void {
     if (!edits) {
         edits = beans.editModelSvc?.getEditPositions();
     }
 
-    for (const cellPosition of edits ?? []) {
-        _destroyEditor(beans, cellPosition, params);
+    if (edits) {
+        for (const cellPosition of edits) {
+            _destroyEditor(beans, cellPosition, params);
+        }
     }
 }
 
@@ -437,16 +466,27 @@ type DestroyEditorParams = { event?: Event | null; silent?: boolean; cancel?: bo
 export function _destroyEditor(
     beans: BeanCollection,
     position: Required<EditPosition>,
-    params?: DestroyEditorParams,
-    cellCtrl = _getCellCtrl(beans, position)
+    params: DestroyEditorParams,
+    cellCtrl: CellCtrl | undefined = _getCellCtrl(beans, position)
 ): void {
     const editModelSvc = beans.editModelSvc;
 
     const edit = editModelSvc?.getEdit(position);
 
+    // Determine the edit state:
+    // - If the edit went through a prior editor session (cellStoppedEditing) and already
+    //   has a resolved state, preserve it
+    // - Otherwise, mark as 'changed'
+    let state: EditState;
+    if (edit && edit.state !== 'editing' && edit.editorState?.cellStoppedEditing) {
+        state = edit.state;
+    } else {
+        state = 'changed';
+    }
+
     if (!cellCtrl) {
         if (edit) {
-            editModelSvc?.setEdit(position, { state: 'changed' });
+            editModelSvc?.setEdit(position, { state });
         }
 
         return;
@@ -460,7 +500,7 @@ export function _destroyEditor(
         cellCtrl?.refreshCell();
 
         if (edit) {
-            editModelSvc?.setEdit(position, { state: 'changed' });
+            editModelSvc?.setEdit(position, { state });
             const args = beans.gos.get('enableGroupEdit')
                 ? _enabledGroupEditStoppedArgs(edit, params?.cancel)
                 : {
@@ -486,7 +526,7 @@ export function _destroyEditor(
     }
 
     if (edit) {
-        editModelSvc?.setEdit(position, { state: 'changed' });
+        editModelSvc?.setEdit(position, { state });
     }
 
     comp?.setEditDetails(); // passing nothing stops editing
@@ -496,7 +536,7 @@ export function _destroyEditor(
 
     const latest = editModelSvc?.getEdit(position);
 
-    if (latest && latest.state === 'changed') {
+    if (latest && latest.state !== 'editing') {
         const cancel = params?.cancel;
         const args = beans.gos.get('enableGroupEdit')
             ? _enabledGroupEditStoppedArgs(latest, cancel)

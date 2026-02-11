@@ -29,6 +29,18 @@ type CellTooltipDisplayFunctions = {
     shouldDisplayCustomTooltip: () => boolean;
 };
 
+type LocalisableError = Error & {
+    getTranslatedMessage?: (translate: LocaleTextFunc) => string;
+};
+
+const getErrorTooltipMessage = (error: Error, translate: LocaleTextFunc): string => {
+    const localisable = error as LocalisableError;
+    if (typeof localisable.getTranslatedMessage === 'function') {
+        return localisable.getTranslatedMessage(translate);
+    }
+    return error.message;
+};
+
 const getEditErrorsForPosition = (
     beans: BeanCollection,
     cellCtrl: CellCtrl,
@@ -125,7 +137,7 @@ const resolveCellTooltip = ({
         const error = formula.getFormulaError(column, rowNode);
         if (error) {
             return {
-                value: error.message,
+                value: getErrorTooltipMessage(error, translate),
                 location: 'cellFormula',
                 shouldDisplay: () => !!formula?.getFormulaError(column, rowNode),
             };

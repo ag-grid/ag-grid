@@ -52,7 +52,7 @@ export const MIN = ({ values }: FormulaFunctionParams): any => {
         }
     }
     if (best === null) {
-        throw new FormulaError('MIN: requires at least one value');
+        throw new FormulaError(68);
     }
     return best;
 };
@@ -71,7 +71,7 @@ export const MAX = ({ values }: FormulaFunctionParams): any => {
         }
     }
     if (best === null) {
-        throw new FormulaError('MAX: requires at least one value');
+        throw new FormulaError(69);
     }
     return best;
 };

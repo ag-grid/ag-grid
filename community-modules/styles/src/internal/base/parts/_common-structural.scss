@@ -1154,6 +1154,14 @@
 
     .ag-sticky-bottom {
         box-sizing: content-box !important;
+
+        .ag-pinned-left-sticky-bottom,
+        .ag-sticky-bottom-container,
+        .ag-pinned-right-sticky-bottom {
+            // reset box-sizing as some customers override global box-sizing to
+            // "inherit" and we only want .ag-sticky-bottom to be content-box
+            box-sizing: border-box;
+        }
     }
 
     .ag-pinned-left-sticky-top,

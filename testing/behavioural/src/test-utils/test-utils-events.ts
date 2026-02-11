@@ -15,7 +15,9 @@ export function waitForEvent(event: AgPublicEventType, api: GridApi, n = 1): Pro
     });
 }
 
-const POINTER_EVENT_SUPPORTED = typeof PointerEvent === 'function';
+function isPointerEventSupported(): boolean {
+    return typeof PointerEvent === 'function';
+}
 
 export async function firePointerLikeClick(element: string | HTMLElement | null | undefined): Promise<boolean> {
     if (typeof element === 'string') {
@@ -42,7 +44,7 @@ export async function firePointerLikeClick(element: string | HTMLElement | null 
         buttons,
     };
 
-    if (POINTER_EVENT_SUPPORTED) {
+    if (isPointerEventSupported()) {
         element.dispatchEvent(new PointerEvent('pointerdown', pointerDownInit));
     }
 
@@ -62,7 +64,7 @@ export async function firePointerLikeClick(element: string | HTMLElement | null 
         ...pointerDownInit,
         buttons: 0,
     };
-    if (POINTER_EVENT_SUPPORTED) {
+    if (isPointerEventSupported()) {
         element.dispatchEvent(new PointerEvent('pointerup', pointerUpInit));
     }
 
@@ -86,6 +88,8 @@ export type EditEventCounts = {
     cellEditRequest: number;
     bulkEditingStarted: number;
     bulkEditingStopped: number;
+    batchEditingStarted: number;
+    batchEditingStopped: number;
 };
 
 export type UndoCounts = {
@@ -102,6 +106,8 @@ const DEFAULT_EDIT_EVENT_COUNTS = {
     cellEditRequest: 0,
     bulkEditingStarted: 0,
     bulkEditingStopped: 0,
+    batchEditingStarted: 0,
+    batchEditingStopped: 0,
 };
 
 const DEFAULT_UNDO_COUNTS = {
@@ -125,6 +131,8 @@ export class EditEventTracker {
         this.track('cellEditRequest');
         this.track('bulkEditingStarted');
         this.track('bulkEditingStopped');
+        this.track('batchEditingStarted');
+        this.track('batchEditingStopped');
         this.trackUndo('undoStarted');
         this.trackUndo('undoEnded');
         this.trackUndo('redoStarted');

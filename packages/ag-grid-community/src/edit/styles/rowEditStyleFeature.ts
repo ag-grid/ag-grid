@@ -52,7 +52,7 @@ export class RowEditStyleFeature extends BeanStub implements IRowStyleFeature {
     }
 
     private applyStyle(hasErrors: boolean = false, editing: boolean = false) {
-        const batchEdit = this.editSvc?.isBatchEditing() ?? false;
+        const batchEdit = !!this.editSvc?.isBatchEditing();
         const fullRow = this.gos.get('editType') === 'fullRow';
 
         this.rowCtrl?.forEachGui(undefined, ({ rowComp }) => {

@@ -121,6 +121,8 @@ describe('Cell Editing Regression', () => {
             cellEditRequest: 0,
             bulkEditingStarted: 0,
             bulkEditingStopped: 0,
+            batchEditingStarted: 0,
+            batchEditingStopped: 0,
         });
     });
 
@@ -163,6 +165,8 @@ describe('Cell Editing Regression', () => {
             cellEditRequest: 0,
             bulkEditingStarted: 0,
             bulkEditingStopped: 0,
+            batchEditingStarted: 0,
+            batchEditingStopped: 0,
         });
     });
 
@@ -217,6 +221,8 @@ describe('Cell Editing Regression', () => {
             cellEditRequest: 0,
             bulkEditingStarted: 0,
             bulkEditingStopped: 0,
+            batchEditingStarted: 0,
+            batchEditingStopped: 0,
         });
     });
 
@@ -272,6 +278,8 @@ describe('Cell Editing Regression', () => {
             cellEditRequest: 0,
             bulkEditingStarted: 0,
             bulkEditingStopped: 0,
+            batchEditingStarted: 0,
+            batchEditingStopped: 0,
         });
     });
 
@@ -473,6 +481,8 @@ describe('Cell Editing Regression', () => {
             cellEditRequest: 2,
             bulkEditingStarted: 0,
             bulkEditingStopped: 0,
+            batchEditingStarted: 0,
+            batchEditingStopped: 0,
         });
     });
 
@@ -561,6 +571,8 @@ describe('Cell Editing Regression', () => {
                     cellEditRequest: expected.valueChanged ? 1 : 0,
                     bulkEditingStarted: 0,
                     bulkEditingStopped: 0,
+                    batchEditingStarted: 0,
+                    batchEditingStopped: 0,
                 });
             }
         );
@@ -617,6 +629,8 @@ describe('Cell Editing Regression', () => {
                     cellEditRequest: 0,
                     bulkEditingStarted: 0,
                     bulkEditingStopped: 0,
+                    batchEditingStarted: 0,
+                    batchEditingStopped: 0,
                 });
             }
         );
@@ -697,6 +711,8 @@ describe('Cell Editing Regression', () => {
                 cellEditRequest: 0,
                 bulkEditingStarted: 0,
                 bulkEditingStopped: 0,
+                batchEditingStarted: 0,
+                batchEditingStopped: 0,
             });
         });
 
@@ -733,6 +749,8 @@ describe('Cell Editing Regression', () => {
                 cellEditRequest: 0,
                 bulkEditingStarted: 0,
                 bulkEditingStopped: 0,
+                batchEditingStarted: 0,
+                batchEditingStopped: 0,
             });
         });
 
@@ -958,6 +976,8 @@ describe('Cell Editing Regression', () => {
             cellEditRequest: 0,
             bulkEditingStarted: 0,
             bulkEditingStopped: 0,
+            batchEditingStarted: 0,
+            batchEditingStopped: 0,
         });
     });
 
@@ -1041,6 +1061,8 @@ describe('Cell Editing Regression', () => {
                 cellEditRequest: 0,
                 bulkEditingStarted: 0,
                 bulkEditingStopped: 0,
+                batchEditingStarted: 0,
+                batchEditingStopped: 0,
             });
         }
     );
@@ -1125,6 +1147,8 @@ describe('Cell Editing Regression', () => {
                 cellEditRequest: 0,
                 bulkEditingStarted: 0,
                 bulkEditingStopped: 0,
+                batchEditingStarted: 0,
+                batchEditingStopped: 0,
             });
         }
     );
@@ -1184,6 +1208,8 @@ describe('Cell Editing Regression', () => {
             cellEditRequest: 0,
             bulkEditingStarted: 0,
             bulkEditingStopped: 0,
+            batchEditingStarted: 0,
+            batchEditingStopped: 0,
         });
 
         // Start editing on the new cell (simulates what happens when clicking an editable cell)
@@ -1212,6 +1238,8 @@ describe('Cell Editing Regression', () => {
             cellEditRequest: 0,
             bulkEditingStarted: 0,
             bulkEditingStopped: 0,
+            batchEditingStarted: 0,
+            batchEditingStopped: 0,
         });
     });
 
@@ -1270,6 +1298,8 @@ describe('Cell Editing Regression', () => {
             cellEditRequest: 0,
             bulkEditingStarted: 0,
             bulkEditingStopped: 0,
+            batchEditingStarted: 0,
+            batchEditingStopped: 0,
         });
 
         // Start editing on the new row
@@ -1302,6 +1332,8 @@ describe('Cell Editing Regression', () => {
             cellEditRequest: 0,
             bulkEditingStarted: 0,
             bulkEditingStopped: 0,
+            batchEditingStarted: 0,
+            batchEditingStopped: 0,
         });
     });
 
@@ -1442,6 +1474,8 @@ describe('Cell Editing Regression', () => {
             cellEditRequest: 0,
             bulkEditingStarted: 0,
             bulkEditingStopped: 0,
+            batchEditingStarted: 0,
+            batchEditingStopped: 0,
         });
     });
 });

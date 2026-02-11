@@ -27,14 +27,26 @@ const INTERACTION_EVENT_NAMES: Record<DragInteractionType, { down: string; move:
 } as const;
 
 export class DragEventDispatcher {
-    public readonly dataTransfer: DataTransfer;
+    private _dataTransfer: DataTransfer | null = null;
     private readonly eventType: DragInteractionType;
     private readonly dropContainer: Element | null;
+    private readonly html5DragDrop: boolean;
     private upTarget: Element | Document | null = null;
     private dragHandle: Element | null = null;
     private _currentDropTarget: Element | null = null;
     private _currentX = 0;
     private _currentY = 0;
+
+    /** Lazily created so environments without DataTransfer (e.g. basic jsdom) can still use pointer-only drags. */
+    public get dataTransfer(): DataTransfer {
+        let dt = this._dataTransfer;
+        if (!dt) {
+            dt = new DataTransfer();
+            dt.effectAllowed = 'all';
+            this._dataTransfer = dt;
+        }
+        return dt;
+    }
 
     public get currentDropTarget(): Element | null {
         return this._currentDropTarget;
@@ -48,12 +60,19 @@ export class DragEventDispatcher {
         return this._currentY;
     }
 
-    public constructor(eventType: DragInteractionType, dropContainer?: Element | null) {
+    /**
+     * @param eventType  The pointer/mouse/touch interaction type.
+     * @param dropContainer  Optional container element for HTML5 drag-and-drop target resolution.
+     * @param html5DragDrop  When `true` (default), fires full HTML5 drag events (`dragstart`,
+     *   `dragenter`, `dragleave`, `dragover`, `drag`, `drop`, `dragend`). When `false`, only
+     *   fires pointer/mouse/touch events — use this for AG Grid's internal DragService drags
+     *   (fill handle, column header drag, etc.) where the listener resolves targets from
+     *   `event.target` rather than HTML5 drop events.
+     */
+    public constructor(eventType: DragInteractionType, dropContainer?: Element | null, html5DragDrop = true) {
         this.eventType = eventType;
         this.dropContainer = dropContainer ?? null;
-        const dataTransfer = new DataTransfer();
-        dataTransfer.effectAllowed = 'all';
-        this.dataTransfer = dataTransfer;
+        this.html5DragDrop = html5DragDrop;
     }
 
     public async startDrag(dragHandle: Element, clientX: number, clientY: number): Promise<void> {
@@ -69,47 +88,57 @@ export class DragEventDispatcher {
         this._currentX = clientX;
         this._currentY = clientY;
 
-        await this.fire(dragHandle, 'dragstart', { clientX, clientY });
+        if (this.html5DragDrop) {
+            await this.fire(dragHandle, 'dragstart', { clientX, clientY });
+        }
     }
 
     public async movePointer(targetElement: Element, clientX: number, clientY: number): Promise<void> {
-        const dropContainer = this.getDropContainer();
         const dragHandle = this.dragHandle;
         if (!dragHandle) {
             throw new Error('DragEventDispatcher.movePointer called before startDrag');
         }
 
-        const moveTarget = this.getMoveTarget();
-
         const { move } = INTERACTION_EVENT_NAMES[this.eventType];
-        await this.fire(moveTarget, move, { clientX, clientY, buttons: 1 });
 
-        const previousDropTarget = this._currentDropTarget;
-        const targetChanged = previousDropTarget !== targetElement;
+        if (this.html5DragDrop) {
+            // HTML5 drag-and-drop: fire move on the document/dragHandle, then drag enter/leave/over
+            const dropContainer = this.getDropContainer();
+            const moveTarget = this.getMoveTarget();
 
-        if (targetChanged && previousDropTarget) {
-            const leaveOpts = { clientX, clientY, relatedTarget: targetElement };
-            await this.fire(previousDropTarget, 'dragleave', leaveOpts);
-            if (previousDropTarget !== dropContainer) {
-                await this.fire(dropContainer, 'dragleave', leaveOpts);
+            await this.fire(moveTarget, move, { clientX, clientY, buttons: 1 });
+
+            const previousDropTarget = this._currentDropTarget;
+            const targetChanged = previousDropTarget !== targetElement;
+
+            if (targetChanged && previousDropTarget) {
+                const leaveOpts = { clientX, clientY, relatedTarget: targetElement };
+                await this.fire(previousDropTarget, 'dragleave', leaveOpts);
+                if (previousDropTarget !== dropContainer) {
+                    await this.fire(dropContainer, 'dragleave', leaveOpts);
+                }
             }
-        }
 
-        if (targetChanged) {
-            const enterOpts = { clientX, clientY, relatedTarget: previousDropTarget ?? null };
+            if (targetChanged) {
+                const enterOpts = { clientX, clientY, relatedTarget: previousDropTarget ?? null };
+                if (targetElement !== dropContainer) {
+                    await this.fire(dropContainer, 'dragenter', enterOpts);
+                }
+                await this.fire(targetElement, 'dragenter', enterOpts);
+            }
+
+            this.dataTransfer.dropEffect = 'move';
             if (targetElement !== dropContainer) {
-                await this.fire(dropContainer, 'dragenter', enterOpts);
+                await this.fire(dropContainer, 'dragover', { clientX, clientY });
             }
-            await this.fire(targetElement, 'dragenter', enterOpts);
-        }
+            await this.fire(targetElement, 'dragover', { clientX, clientY });
 
-        this.dataTransfer.dropEffect = 'move';
-        if (targetElement !== dropContainer) {
-            await this.fire(dropContainer, 'dragover', { clientX, clientY });
+            await this.fire(dragHandle, 'drag', { clientX, clientY });
+        } else {
+            // Internal DragService drag: fire move directly on the target element so
+            // `event.target` is the element itself (listeners walk up the DOM from target).
+            await this.fire(targetElement, move, { clientX, clientY, buttons: 1 });
         }
-        await this.fire(targetElement, 'dragover', { clientX, clientY });
-
-        await this.fire(dragHandle, 'drag', { clientX, clientY });
 
         await asyncSetTimeout(0);
 
@@ -120,7 +149,6 @@ export class DragEventDispatcher {
 
     public async finishDrag(finalDropTarget?: Element | null | undefined): Promise<void> {
         const dragHandle = this.dragHandle;
-        const currentDropTarget = finalDropTarget ?? this._currentDropTarget;
         const currentX = this._currentX;
         const currentY = this._currentY;
 
@@ -128,15 +156,18 @@ export class DragEventDispatcher {
             throw new Error('DragEventDispatcher.finishDrag called before startDrag');
         }
 
-        if (!currentDropTarget) {
-            throw new Error('DragEventDispatcher.finishDrag called without a drop target');
-        }
-
         const resolvedUpTarget = this.resolveUpTarget();
         const { up } = INTERACTION_EVENT_NAMES[this.eventType];
 
-        await this.fire(currentDropTarget, 'drop', { clientX: currentX, clientY: currentY });
-        await this.fire(dragHandle, 'dragend', { clientX: currentX, clientY: currentY });
+        if (this.html5DragDrop) {
+            const currentDropTarget = finalDropTarget ?? this._currentDropTarget;
+            if (!currentDropTarget) {
+                throw new Error('DragEventDispatcher.finishDrag called without a drop target');
+            }
+            await this.fire(currentDropTarget, 'drop', { clientX: currentX, clientY: currentY });
+            await this.fire(dragHandle, 'dragend', { clientX: currentX, clientY: currentY });
+        }
+
         await this.fire(resolvedUpTarget, up, { clientX: currentX, clientY: currentY, buttons: 0 });
     }
 
@@ -153,7 +184,9 @@ export class DragEventDispatcher {
         const resolvedUpTarget = this.resolveUpTarget();
         const { up } = INTERACTION_EVENT_NAMES[this.eventType];
 
-        this.dataTransfer.dropEffect = 'none';
+        if (this.html5DragDrop) {
+            this.dataTransfer.dropEffect = 'none';
+        }
         if (this.eventType === 'pointer') {
             await this.fire(moveTarget, 'pointercancel', { clientX: x, clientY: y, buttons: 0 });
         } else if (this.eventType === 'touch') {
@@ -171,11 +204,13 @@ export class DragEventDispatcher {
             await this.fireESC(rootEventTarget);
         }
 
-        await this.fire(dragHandle, 'dragend', { clientX: x, clientY: y });
+        if (this.html5DragDrop) {
+            await this.fire(dragHandle, 'dragend', { clientX: x, clientY: y });
+        }
         await this.fire(resolvedUpTarget, up, { clientX: x, clientY: y, buttons: 0 });
     }
 
-    private reset() {
+    public reset() {
         this.upTarget = null;
         this.dragHandle = null;
         this._currentDropTarget = null;

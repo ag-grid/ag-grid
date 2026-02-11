@@ -127,51 +127,40 @@ export abstract class BaseEditStrategy extends BeanStub {
         preventNavigation?: boolean
     ): boolean | null;
 
-    public stop(cancel?: boolean, event?: Event | null): boolean {
+    public stopCancelled(forceCancel: boolean): boolean {
+        const preserveBatch = this.editSvc.isBatchEditing() && !forceCancel;
+        for (const cell of this.model.getEditPositions()) {
+            _destroyEditor(this.beans, cell, { cancel: true }, _getCellCtrl(this.beans, cell));
+            this.model.stop(cell, preserveBatch, true);
+        }
+        return true;
+    }
+
+    public stopCommitted(event: Event | null, commit: boolean): boolean {
         const editingCells = this.model.getEditPositions();
-
         const results: EditValidationResult = { all: [], pass: [], fail: [] };
-
         for (const cell of editingCells) {
             results.all.push(cell);
-
-            const validation = this.model.getCellValidationModel().getCellValidation(cell);
-            // check if the cell is valid
-
-            if ((validation?.errorMessages?.length ?? 0) > 0) {
+            if ((this.model.getCellValidationModel().getCellValidation(cell)?.errorMessages?.length ?? 0) > 0) {
                 results.fail.push(cell);
-                continue;
-            }
-
-            results.pass.push(cell);
-        }
-
-        if (cancel) {
-            for (const cell of editingCells) {
-                _destroyEditor(this.beans, cell, { cancel });
-                this.model.stop(cell);
-            }
-        } else {
-            const actions = this.processValidationResults(results);
-
-            if (actions.destroy.length > 0) {
-                for (const cell of actions.destroy) {
-                    _destroyEditor(this.beans, cell, { event, cancel });
-                    this.model.stop(cell);
-                }
-            }
-
-            if (actions.keep.length > 0) {
-                for (const cell of actions.keep) {
-                    const cellCtrl = _getCellCtrl(this.beans, cell);
-                    const editSvc = this.editSvc;
-                    if (!editSvc?.cellEditingInvalidCommitBlocks() && cellCtrl) {
-                        editSvc.revertSingleCellEdit(cellCtrl);
-                    }
-                }
+            } else {
+                results.pass.push(cell);
             }
         }
+        const actions = this.processValidationResults(results);
+        const preserveBatch = this.editSvc.isBatchEditing() && !commit;
 
+        for (const cell of actions.destroy) {
+            _destroyEditor(this.beans, cell, { event }, _getCellCtrl(this.beans, cell));
+            this.model.stop(cell, preserveBatch, false);
+        }
+
+        for (const cell of actions.keep) {
+            const cellCtrl = _getCellCtrl(this.beans, cell);
+            if (!this.editSvc.cellEditingInvalidCommitBlocks() && cellCtrl) {
+                this.editSvc.revertSingleCellEdit(cellCtrl);
+            }
+        }
         return true;
     }
 
