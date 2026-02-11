@@ -1,0 +1,31 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.example-header {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+.controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status {
+    margin-left: 8px;
+    color: #666;
+}
+
+#myGrid {
+    flex: 1 1 0;
+    width: 100%;
+}
+
+.ag-paging-panel {
+    display: none;
+}

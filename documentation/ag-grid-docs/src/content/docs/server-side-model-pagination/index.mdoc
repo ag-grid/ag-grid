@@ -61,6 +61,19 @@ The example below demonstrates server-side Pagination. Note the following:
 
 {% gridExampleRunner title="Server-Side Pagination" name="pagination"  exampleHeight=551 /%}
 
+## Example: Cursor Pagination (Custom Controls)
+
+Cursor-based pagination is common for APIs that return `nextCursor`/`prevCursor` instead of a page number.
+The example below demonstrates using Server-Side Row Model with cursor state stored outside the grid.
+Note the following:
+
+-   Pagination is still enabled using `pagination=true`, but the built-in pagination panel is hidden.
+-   The datasource ignores page numbers and uses a cursor plus a page-size limit.
+-   Navigation buttons drive cursor changes and refresh the Server-Side store.
+-   Total row count is unknown, so the datasource returns `rowCount=-1`.
+
+{% gridExampleRunner title="Cursor Pagination (Custom Controls)" name="cursor-pagination"  exampleHeight=551 /%}
+
 ## Pagination with Groups
 
 When grouping, pagination splits rows according to top-level groups only. This has the following implications:
