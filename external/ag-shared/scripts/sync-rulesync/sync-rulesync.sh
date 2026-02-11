@@ -366,10 +366,6 @@ check_missing_rulesync_skills() {
     local missing_count=0
     local missing_links=()
 
-    if [[ ! -d "$skills_dir" ]]; then
-        return 0
-    fi
-
     # Check external/ag-shared/prompts/skills/ (required)
     local shared_skills="$REPO_ROOT/external/ag-shared/prompts/skills"
     if [[ -d "$shared_skills" ]]; then
@@ -441,7 +437,7 @@ apply_create_missing_skills() {
             local expected_target="../../external/ag-shared/prompts/skills/$skill_name"
 
             if [[ ! -e "$target_path" ]]; then
-                ln -s "$expected_target" "$target_path"
+                ln -sfn "$expected_target" "$target_path"
                 log_fixed "Created skill symlink: .rulesync/skills/$skill_name"
                 ((created++)) || true
             fi
@@ -460,7 +456,7 @@ apply_create_missing_skills() {
             local expected_target="../../external/prompts/skills/$skill_name"
 
             if [[ ! -e "$target_path" ]]; then
-                ln -s "$expected_target" "$target_path"
+                ln -sfn "$expected_target" "$target_path"
                 log_fixed "Created skill symlink: .rulesync/skills/$skill_name"
                 ((created++)) || true
             fi
