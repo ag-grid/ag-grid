@@ -3,29 +3,20 @@ import { _consoleError } from 'ag-grid-community';
 
 const DEFAULT_VALUES_PAGE_SIZE = 100;
 
-export interface RichSelectAsyncValuesPageParams {
+interface RichSelectAsyncValuesPageParams {
     search: string;
     startRow: number;
     endRow: number;
     cursor?: string | null;
 }
 
-export interface RichSelectAsyncValuesPageResult<TValue> {
+interface RichSelectAsyncValuesPageResult<TValue> {
     values: TValue[];
     lastRow?: number;
     cursor?: string | null;
 }
 
-export interface RichSelectAsyncValuesSource<TValue> {
-    searchValues?: (searchString: string) => TValue[] | Promise<TValue[]>;
-    loadValuesPage?: (
-        params: RichSelectAsyncValuesPageParams
-    ) => RichSelectAsyncValuesPageResult<TValue> | Promise<RichSelectAsyncValuesPageResult<TValue>>;
-    valuesPageInitialStartRow?: (searchString: string) => number;
-    valuesPageSize?: number;
-}
-
-export interface RichSelectAsyncHost<TValue> {
+interface RichSelectAsyncHost<TValue> {
     setValueList: (params: {
         valueList: TValue[] | Promise<TValue[] | undefined> | undefined;
         refresh?: boolean;
@@ -40,6 +31,15 @@ interface RichSelectAsyncRequestsControllerParams<TValue> {
     source: RichSelectAsyncValuesSource<TValue>;
     onMisconfiguredSearchSource?: () => void;
     onFirstValuesPageLoaded: () => void;
+}
+
+export interface RichSelectAsyncValuesSource<TValue> {
+    searchValues?: (searchString: string) => TValue[] | Promise<TValue[]>;
+    loadValuesPage?: (
+        params: RichSelectAsyncValuesPageParams
+    ) => RichSelectAsyncValuesPageResult<TValue> | Promise<RichSelectAsyncValuesPageResult<TValue>>;
+    valuesPageInitialStartRow?: (searchString: string) => number;
+    valuesPageSize?: number;
 }
 
 export function createRichSelectAsyncRequestBindings<TValue>(params: {
