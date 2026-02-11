@@ -3,8 +3,15 @@ import { _EditCoreModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
-import { RichSelectAsyncRequestsModule } from './richSelectAsyncRequestsModule';
 import { RichSelectCellEditor } from './richSelectCellEditor';
+
+/**
+ * @internal
+ */
+const RichSelectAsyncRequestsModule: _ModuleWithoutApi = {
+    moduleName: 'RichSelectAsyncRequests',
+    version: VERSION,
+};
 
 /**
  * @feature Editing -> Rich Select Editor
