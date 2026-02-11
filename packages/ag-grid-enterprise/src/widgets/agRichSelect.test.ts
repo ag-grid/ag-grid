@@ -794,6 +794,38 @@ describe('AgRichSelect', () => {
         expect((richSelect as any).value).toEqual(['Open']);
     });
 
+    it('deletes the last selected item on backspace at RTL previous-navigation boundary', () => {
+        const richSelect = createRichSelect<string>({
+            allowTyping: true,
+            multiSelect: true,
+            suppressMultiSelectPillRenderer: true,
+        });
+        const selectValue = jest.fn();
+        const preventDefault = jest.fn();
+
+        (richSelect as any).gos = { get: () => true };
+        (richSelect as any).value = ['Open', 'Closed'];
+        (richSelect as any).listComponent = { selectValue };
+        (richSelect as any).eDeselect = document.createElement('span');
+        (richSelect as any).eDisplayField = document.createElement('span');
+        (richSelect as any).eInput = {
+            getInputElement: () => ({ value: 'abc', selectionStart: 3, selectionEnd: 3 }),
+            getValue: () => 'abc',
+            setValue: jest.fn(),
+            setInputPlaceholder: jest.fn(),
+        };
+
+        (richSelect as any).onKeyDown({
+            key: 'Backspace',
+            preventDefault,
+            isComposing: false,
+        });
+
+        expect(preventDefault).toHaveBeenCalled();
+        expect(selectValue).toHaveBeenCalledWith(['Open']);
+        expect((richSelect as any).value).toEqual(['Open']);
+    });
+
     it('does not delete selected items on backspace when typing caret is not at start', () => {
         const richSelect = createRichSelect<string>({
             allowTyping: true,

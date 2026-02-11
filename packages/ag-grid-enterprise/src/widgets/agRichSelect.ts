@@ -535,7 +535,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         return !!this.gos?.get('enableRtl');
     }
 
-    private isTypingInputAtPillBoundaryForPreviousNavigation(): boolean {
+    private isTypingInputAtPillBoundary(): boolean {
         const inputEl = this.eInput.getInputElement();
         const { selectionStart, selectionEnd, value } = inputEl;
 
@@ -544,7 +544,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
 
         const isRtl = this.isRtl();
-        return isRtl ? selectionStart === value.length : selectionStart === 0;
+        return isRtl ? selectionStart === (value ?? '').length : selectionStart === 0;
     }
 
     private focusTypingInputAtBoundary(): void {
@@ -942,10 +942,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     }
 
     private onBackspaceKeyDown(e: KeyboardEvent): void {
-        const inputEl = this.eInput.getInputElement();
-        const isCursorAtStart = inputEl.selectionStart === 0 && inputEl.selectionEnd === 0;
-
-        if (!isCursorAtStart) {
+        if (!this.isTypingInputAtPillBoundary()) {
             return;
         }
 
@@ -1058,7 +1055,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         const inputEl = this.eInput.getInputElement();
 
         if (activeEl === inputEl) {
-            if (isPrevious && this.isTypingInputAtPillBoundaryForPreviousNavigation()) {
+            if (isPrevious && this.isTypingInputAtPillBoundary()) {
                 this.listComponent?.highlightIndex(-1);
                 pillContainer.onNavigationKeyDown(e);
             }

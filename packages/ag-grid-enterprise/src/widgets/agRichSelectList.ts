@@ -455,9 +455,11 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         const remainingPixels = eGui.scrollHeight - (eGui.scrollTop + eGui.clientHeight);
         const remainingRows = remainingPixels / this.getRowHeight();
         const rowsFromTop = eGui.scrollTop / this.getRowHeight();
+        const hasVerticalOverflow = eGui.scrollHeight > eGui.clientHeight;
 
-        // previous-page requests should only happen from user scroll, not from refresh/layout passes.
-        if (fromScrollEvent && rowsFromTop <= this.loadMoreRowsThreshold) {
+        // if there is no vertical overflow, a scroll event cannot happen, so allow layout checks
+        // to request previous rows while still preserving scroll-driven behaviour when overflow exists.
+        if (rowsFromTop <= this.loadMoreRowsThreshold && (fromScrollEvent || !hasVerticalOverflow)) {
             callback('up');
         }
         if (remainingRows <= this.loadMoreRowsThreshold) {

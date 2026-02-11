@@ -129,6 +129,22 @@ describe('AgRichSelectList', () => {
         expect(callback).toHaveBeenCalledWith('up');
     });
 
+    it('requests previous rows from layout checks when there is no vertical overflow', () => {
+        const { list } = createList<string>();
+        const callback = jest.fn();
+        const gui = list.getGui() as HTMLElement;
+
+        Object.defineProperty(gui, 'clientHeight', { value: 200, configurable: true });
+        Object.defineProperty(gui, 'scrollHeight', { value: 200, configurable: true });
+        Object.defineProperty(gui, 'scrollTop', { value: 0, configurable: true });
+
+        (list as any).getRowHeight = () => 20;
+        list.setCurrentList(new Array(5).fill('value'));
+        list.setLoadMoreRowsCallback(callback, 2);
+
+        expect(callback).toHaveBeenCalledWith('up');
+    });
+
     it('allows requesting more rows even when the current list is empty', () => {
         const { list } = createList<string>();
         const callback = jest.fn();
