@@ -44,7 +44,24 @@ Optional flags:
     | `--quick`              | Quick    | 2-3    | Fast feedback, simple plans         |
     | `--thorough` (default) | Thorough | 5-6    | Comprehensive review, complex plans |
 
-3. **Extract and validate intent:**
+3. **Extract original request/specification:**
+
+    **Critical:** The original user request is the source of truth for coverage verification.
+
+    - Search conversation context or plan metadata for the original user request or linked specification
+    - If the plan embeds or references the original request, extract it
+    - Otherwise, check the conversation history that preceded the plan
+    - Decompose the original request into a **numbered requirements checklist** — discrete, verifiable asks
+    - Each requirement should be atomic (one testable assertion per item)
+
+    Store as `${ORIGINAL_REQUIREMENTS}` for use by review agents.
+
+    If no original request can be located:
+    - Flag as IMPORTANT: "Plan does not embed or reference the original request/specification"
+    - Recommend the plan include a **Source Request** section quoting or summarising the original ask
+    - **Fallback:** Derive `${ORIGINAL_REQUIREMENTS}` from the plan's stated goals/objectives instead — decompose them into the same numbered checklist format. Note in the output that coverage assessment is based on plan goals (lower confidence) rather than the original request
+
+4. **Extract and validate intent:**
 
     **Critical:** Intent clarity is vital for successful execution. Extract:
 
@@ -55,7 +72,9 @@ Optional flags:
 
     If intent is unclear or missing from the plan, flag as CRITICAL issue.
 
-4. **Parse plan structure:**
+    **Compare against original request:** Does the plan's stated intent align with what the user actually asked for? Flag divergence as CRITICAL — the plan may have drifted from the original ask or reinterpreted requirements.
+
+5. **Parse plan structure:**
 
     Extract from the plan file:
 
@@ -65,7 +84,7 @@ Optional flags:
     - **Verification criteria**: How success is measured
     - **Dependencies**: Relationships between tasks
 
-5. **Build task dependency graph:**
+6. **Build task dependency graph:**
 
     Analyse task dependencies:
 
@@ -85,7 +104,9 @@ Launch specialised review agents based on mode.
 ├─────────────────────────────────────────────────────────────┤
 │ 1. Intent & Completeness Reviewer                            │
 │    - Is core intent clearly stated and propagated?          │
-│    - Are all requirements addressed?                        │
+│    - Does plan intent match the original request intent?    │
+│    - Are all original requirements covered by plan tasks?   │
+│    - Are there original requirements with no plan task?     │
 │    - Would sub-agents understand the WHY?                   │
 │    - Edge cases: What could go wrong?                       │
 ├─────────────────────────────────────────────────────────────┤
@@ -114,9 +135,11 @@ Launch specialised review agents based on mode.
 │    - Are sub-agent prompts conveying intent?                │
 │    - Would a sub-agent understand WHY, not just WHAT?       │
 ├─────────────────────────────────────────────────────────────┤
-│ 2. Completeness Reviewer                                     │
-│    - Missing requirements                                   │
-│    - Unaddressed edge cases                                 │
+│ 2. Completeness & Specification Coverage Reviewer              │
+│    - Trace each original requirement → plan task(s)        │
+│    - Identify uncovered or partially covered requirements   │
+│    - Identify plan tasks with no traceability (scope creep) │
+│    - Missing requirements and unaddressed edge cases        │
 │    - Gaps in coverage                                       │
 ├─────────────────────────────────────────────────────────────┤
 │ 3. Technical Reviewer                                        │
@@ -209,11 +232,12 @@ TaskCreate({
 // Launch agents in parallel using Task tool
 Task({
     subagent_type: 'general-purpose',
-    description: 'Completeness review',
-    prompt: `Review this plan for completeness.
+    description: 'Completeness & specification coverage review',
+    prompt: `Review this plan for completeness and specification coverage.
 
     ## Your Focus
-    Check for missing requirements, edge cases, and gaps in coverage.
+    Verify the plan fully covers the original request. Check for missing
+    requirements, uncovered specifications, edge cases, and gaps.
 
     ## Discovered Work Protocol
     If you discover significant issues OUTSIDE your focus area:
@@ -222,19 +246,28 @@ Task({
     - Continue with your focused review - don't investigate further
     - Only create tasks for significant discoveries, not minor observations
 
+    ## Original Requirements (source of truth)
+    ${ORIGINAL_REQUIREMENTS}
+
     ## Plan Content
     ${planContent}
 
     ## Check for:
-    1. Are all stated requirements addressed by plan tasks?
-    2. Are there missing tasks that would be needed?
-    3. Are edge cases considered?
-    4. Are error handling scenarios covered?
+    1. For EACH original requirement, which plan task(s) address it? (build traceability)
+    2. Are there original requirements with NO corresponding plan task? (CRITICAL gap)
+    3. Are there original requirements only PARTIALLY addressed? (IMPORTANT gap)
+    4. Are there plan tasks that don't trace to any original requirement? (potential scope creep)
+    5. Are there intermediate tasks that would be needed but aren't listed?
+    6. Are edge cases and error scenarios considered?
 
     ## Return findings as:
-    - CRITICAL: [missing essential elements]
-    - IMPORTANT: [significant gaps]
-    - MINOR: [nice-to-have additions]
+    - CRITICAL: [original requirements with no plan coverage]
+    - IMPORTANT: [partially covered requirements, significant gaps]
+    - MINOR: [nice-to-have additions, minor scope creep]
+
+    ## Also return:
+    A traceability table mapping each original requirement to plan task(s):
+    | # | Original Requirement | Plan Task(s) | Coverage (Full/Partial/Missing) |
 
     **Discovered Work:**
     If you found significant issues outside your focus area, note that you
@@ -318,7 +351,16 @@ Aggregate findings from all review agents.
     - Priority order for addressing issues
     - Suggested plan revisions
 
-4. **Aggregate discovered tasks:**
+4. **Build specification coverage analysis:**
+
+    - Aggregate traceability findings from the Completeness & Specification Coverage Reviewer
+    - Build the traceability matrix mapping each original requirement → plan task(s)
+    - Calculate coverage metrics (full/partial/missing counts)
+    - Flag any uncovered original requirements as CRITICAL blocking issues
+    - Identify untraced plan tasks as potential scope creep
+    - Include coverage summary in the output report
+
+5. **Aggregate discovered tasks:**
 
     - Call `TaskList` to retrieve tasks created by sub-agents
     - For each task:
@@ -348,6 +390,7 @@ If issues found, present to user for iterative refinement:
 -   **Plan File:** [path/to/plan.md]
 -   **Review Mode:** [Quick/Thorough]
 -   **Overall Assessment:** [Ready/Needs Work/Major Gaps]
+-   **Specification Coverage:** X/N original requirements fully covered
 -   **Intent Clarity:** [Clear/Partial/Missing] ← CRITICAL for execution quality
 -   **Agentic Readiness:** [High/Medium/Low]
 -   **Parallelisation Potential:** XX%
@@ -385,6 +428,36 @@ If issues found, present to user for iterative refinement:
 
 2. **[For sub-agent prompts]** Include context prefix:
     > "Context: We are [INTENT]. Your task contributes by [HOW THIS TASK SERVES INTENT]."
+
+---
+
+## Specification Coverage
+
+### Original Requirements
+
+> [Numbered list extracted from original user request/specification]
+
+### Traceability Matrix
+
+| # | Original Requirement | Plan Task(s) | Coverage |
+|---|---------------------|--------------|----------|
+| 1 | [requirement]       | Task 2, 5    | Full     |
+| 2 | [requirement]       | Task 3       | Partial  |
+| 3 | [requirement]       | —            | Missing  |
+
+### Coverage Summary
+
+- **Full coverage:** X/N requirements
+- **Partial coverage:** Y/N requirements
+- **Missing coverage:** Z/N requirements (CRITICAL if > 0)
+- **Untraced plan tasks:** [list of tasks not linked to any original requirement]
+
+### Coverage Gaps (if any)
+
+For each missing or partial requirement:
+- **Requirement #N:** [requirement text]
+- **Gap:** [what is not covered]
+- **Recommendation:** [specific plan task to add or expand]
 
 ---
 
@@ -560,7 +633,49 @@ fi
 
 ## Review Agent Prompts
 
-### Intent Reviewer Prompt
+### Intent & Completeness Reviewer Prompt (Quick Mode)
+
+```markdown
+Review this plan for intent clarity, completeness, and specification coverage. This is a combined
+review for quick mode — cover both intent propagation AND original request coverage.
+
+**Original Requirements (source of truth):**
+${ORIGINAL_REQUIREMENTS}
+
+**Plan:**
+${PLAN_CONTENT}
+
+**Check for:**
+
+1. **Intent:** Is there a clear statement of WHY this plan exists? Does each task connect to the core intent?
+2. **Sub-agent prompts:** Would sub-agents understand the broader context and WHY?
+3. **Specification coverage:** For EACH original requirement, which plan task(s) address it?
+   - Flag requirements with NO plan coverage as CRITICAL
+   - Flag requirements with only PARTIAL coverage as IMPORTANT
+   - Flag plan tasks that don't trace to any original requirement as MINOR (scope creep)
+4. **Edge cases:** Are error scenarios and boundary conditions considered?
+5. **Non-goals:** Are boundaries clear so agents don't over-solve?
+
+**Return findings as:**
+
+-   CRITICAL: [uncovered requirements; intent missing or would cause misunderstanding]
+-   IMPORTANT: [partially covered requirements; intent unclear]
+-   MINOR: [scope creep; intent improvements]
+
+**Also return a traceability table:**
+
+| # | Original Requirement | Plan Task(s) | Coverage |
+|---|---------------------|--------------|----------|
+| 1 | [requirement text]  | [task refs]  | Full/Partial/Missing |
+
+**Discovered Work:**
+
+If you find significant issues outside your focus area, use TaskCreate to propose
+a follow-up task rather than investigating. Note in your findings that you
+created a task, then continue with your focused review.
+```
+
+### Intent Reviewer Prompt (Thorough Mode)
 
 ```markdown
 Review this plan for intent clarity and propagation. Your goal is to ensure the "why" is understood and conveyed throughout.
@@ -598,17 +713,25 @@ a follow-up task rather than investigating. Note in your findings that you
 created a task, then continue with your focused review.
 ```
 
-### Completeness Reviewer Prompt
+### Completeness & Specification Coverage Reviewer Prompt
 
 ```markdown
-Review this plan for completeness. Your goal is to identify missing elements.
+Review this plan for completeness and specification coverage. Your primary goal is to verify
+the plan fully addresses the original request, and your secondary goal is to identify missing elements.
+
+**Original Requirements (source of truth):**
+${ORIGINAL_REQUIREMENTS}
 
 **Plan:**
 ${PLAN_CONTENT}
 
 **Check for:**
 
-1. Are all stated requirements addressed by specific plan tasks?
+1. **Specification coverage (PRIMARY):**
+   - For EACH original requirement, identify which plan task(s) address it
+   - Flag requirements with NO plan coverage as CRITICAL
+   - Flag requirements with only PARTIAL coverage as IMPORTANT
+   - Flag plan tasks that don't trace to any original requirement as MINOR (scope creep)
 2. Are there intermediate tasks that would be needed but aren't listed?
 3. Are edge cases and error scenarios considered?
 4. Are there implicit assumptions that should be made explicit?
@@ -616,15 +739,22 @@ ${PLAN_CONTENT}
 
 **Return findings as:**
 
--   CRITICAL: [missing essential elements that would cause failure]
--   IMPORTANT: [significant gaps that should be addressed]
--   MINOR: [nice-to-have additions]
+-   CRITICAL: [original requirements with no plan coverage; missing essential elements]
+-   IMPORTANT: [partially covered requirements; significant gaps]
+-   MINOR: [nice-to-have additions; untraced plan tasks]
 
 For each finding, provide:
 
--   What is missing
+-   What is missing or uncovered
+-   Which original requirement is affected (by number)
 -   Why it matters
 -   Suggested addition
+
+**Also return a traceability table:**
+
+| # | Original Requirement | Plan Task(s) | Coverage |
+|---|---------------------|--------------|----------|
+| 1 | [requirement text]  | [task refs]  | Full/Partial/Missing |
 
 **Discovered Work:**
 

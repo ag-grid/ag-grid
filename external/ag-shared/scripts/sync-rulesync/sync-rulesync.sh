@@ -24,7 +24,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../../../.." && pwd)"
 
 # Shared patch location (relative to repo root)
 SHARED_PATCHES_REL="external/ag-shared/prompts/patches"
-PATCH_FILE="rulesync+5.2.0.patch"
+PATCH_FILE="rulesync+7.0.0.patch"
 
 # Colors for output
 RED='\033[0;31m'

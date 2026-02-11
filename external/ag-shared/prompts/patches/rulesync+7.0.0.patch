@@ -1,0 +1,32 @@
+diff --git a/node_modules/rulesync/dist/index.cjs b/node_modules/rulesync/dist/index.cjs
+index b80488f..1031beb 100644
+--- a/node_modules/rulesync/dist/index.cjs
++++ b/node_modules/rulesync/dist/index.cjs
+@@ -1732,9 +1732,10 @@ var GeminiCliCommand = class _GeminiCliCommand extends ToolCommand {
+       prompt: rulesyncCommand.getBody(),
+       ...geminicliFields
+     };
++    const escapedPrompt = geminiFrontmatter.prompt.replace(/\\/g, "\\\\");
+     const tomlContent = `description = "${geminiFrontmatter.description}"
+ prompt = """
+-${geminiFrontmatter.prompt}
++${escapedPrompt}
+ """`;
+     const paths = this.getSettablePaths({ global });
+     return new _GeminiCliCommand({
+diff --git a/node_modules/rulesync/dist/index.js b/node_modules/rulesync/dist/index.js
+index 7b7cdc2..fc4b33c 100755
+--- a/node_modules/rulesync/dist/index.js
++++ b/node_modules/rulesync/dist/index.js
+@@ -1709,9 +1709,10 @@ var GeminiCliCommand = class _GeminiCliCommand extends ToolCommand {
+       prompt: rulesyncCommand.getBody(),
+       ...geminicliFields
+     };
++    const escapedPrompt = geminiFrontmatter.prompt.replace(/\\/g, "\\\\");
+     const tomlContent = `description = "${geminiFrontmatter.description}"
+ prompt = """
+-${geminiFrontmatter.prompt}
++${escapedPrompt}
+ """`;
+     const paths = this.getSettablePaths({ global });
+     return new _GeminiCliCommand({
