@@ -1,26 +1,3 @@
-Please also reference the following rules as needed. The list below is provided in TOON format, and `@` stands for the project root directory.
-
-rules[5]:
-  - path: @.agents/memories/benchmarks.md
-    description: Running and creating performance benchmarks for AG Grid
-    applyTo[2]: testing/performance/**/*,**/benchmark*
-  - path: @.agents/memories/code-quality.md
-    description: "Code quality practices including avoiding bloat, comment guidelines, and review practices"
-    applyTo[1]: packages/*/src/**/*.ts
-  - path: @.agents/memories/docs-pages.md
-    description: Creating and maintaining documentation pages for AG Grid
-    applyTo[2]: documentation/**/*.mdoc,documentation/**/*.md
-  - path: @.agents/memories/examples.md
-    description: Working with examples in AG Grid documentation
-    applyTo[2]: _examples/**/*,documentation/**/_examples/**/*
-  - path: @.agents/memories/testing.md
-    description: "Testing strategies, Jest patterns, and verification for AG Grid"
-    applyTo[3]: **/*.test.ts,**/*.spec.ts,testing/**/*
-
-# Additional Conventions Beyond the Built-in Functions
-
-As this project's AI coding tool, you must follow the additional conventions below, in addition to the built-in functions.
-
 ## AI Agent Instructions
 
 This file provides guidance to AI Agents when working with code in this repository.
