@@ -1,6 +1,7 @@
 import type { RichCellEditorParams } from 'ag-grid-community';
 
 import { AgRichSelect } from '../widgets/agRichSelect';
+import { RichSelectAsyncRequestsController } from './richSelectAsyncRequests';
 import { RichSelectCellEditor } from './richSelectCellEditor';
 
 type TestValue = { id: number; label: string };
@@ -41,6 +42,63 @@ const flushMicrotasks = async (): Promise<void> => {
     await Promise.resolve();
     await Promise.resolve();
 };
+
+function createRichSelectMock() {
+    let asyncRequests: RichSelectAsyncRequestsController<TestValue> | undefined;
+    let loadMoreCallback: ((direction?: 'up' | 'down') => void) | undefined;
+    let useAsyncSearch = false;
+
+    const setValueList = jest.fn();
+    const setIsLoading = jest.fn();
+    const setLoadMoreRowsCallback = jest.fn(
+        (callback?: (direction?: 'up' | 'down') => void, _thresholdRows?: number) => {
+            loadMoreCallback = callback;
+        }
+    );
+
+    const richSelect = {
+        addCss: jest.fn(),
+        showPicker: jest.fn(),
+        setValueList,
+        setIsLoading,
+        setSearchStringCreator: jest.fn(),
+        setLoadMoreRowsCallback,
+        searchTextFromString: jest.fn((value?: string | null) => {
+            if (useAsyncSearch) {
+                asyncRequests?.onSearch(value ?? '');
+            }
+        }),
+        setAsyncValuesSource: jest.fn((params: any) => {
+            asyncRequests?.destroy();
+            useAsyncSearch = !!params.useAsyncSearch;
+            asyncRequests = new RichSelectAsyncRequestsController<TestValue>({
+                host: { setValueList, setIsLoading },
+                source: params.source,
+                onMisconfiguredSearchSource: params.onMisconfiguredSearchSource,
+                onFirstValuesPageLoaded: params.onFirstValuesPageLoaded ?? (() => {}),
+            });
+
+            if (params.source?.loadValuesPage) {
+                setLoadMoreRowsCallback(
+                    (direction?: 'up' | 'down') => asyncRequests?.loadValuesPage(direction ?? 'down'),
+                    params.thresholdRows
+                );
+            } else {
+                setLoadMoreRowsCallback(undefined);
+            }
+        }),
+        resetAsyncValues: jest.fn((searchString = '') => asyncRequests?.resetValuesPage(searchString)),
+    };
+
+    return {
+        richSelect,
+        setValueList,
+        setIsLoading,
+        setLoadMoreRowsCallback,
+        runAsyncSearch: (searchString: string) => asyncRequests?.onSearch(searchString),
+        getLoadMoreCallback: () => loadMoreCallback,
+    };
+}
 
 describe('RichSelectCellEditor', () => {
     let warnSpy: jest.SpyInstance;
@@ -119,11 +177,10 @@ describe('RichSelectCellEditor', () => {
         expect(params.allowTyping).toBe(true);
         expect(params.filterList).toBe(true);
         expect(params.allowNoResultsCopy).toBe(true);
-        expect(typeof params.onSearch).toBe('function');
+        expect(params.onSearch).toBeUndefined();
     });
 
     it('handles async search promise rejection by returning empty results for the latest request', async () => {
-        const setValueList = jest.fn();
         const values = jest.fn(() => Promise.reject(new Error('boom')));
         const editor = createEditor({
             values: values as any,
@@ -131,9 +188,14 @@ describe('RichSelectCellEditor', () => {
             filterList: true,
             filterListAsync: true,
         });
-        (editor as any).eEditor = { setValueList } as any;
+        const { richSelect, setValueList, runAsyncSearch } = createRichSelectMock();
+        (editor as any).createManagedBean = jest.fn(() => richSelect);
+        (editor as any).appendChild = jest.fn();
+        (editor as any).addManagedListeners = jest.fn();
+        (editor as any).initialiseEditor((editor as any).params);
+        setValueList.mockClear();
 
-        (editor as any).onSearchCallback('term');
+        runAsyncSearch('term');
 
         expect(setValueList).toHaveBeenCalledTimes(2);
         expect(setValueList).toHaveBeenNthCalledWith(1, { refresh: true, valueList: undefined });
@@ -143,7 +205,6 @@ describe('RichSelectCellEditor', () => {
     });
 
     it('handles sync throws from values callback by clearing results for the latest request', () => {
-        const setValueList = jest.fn();
         const values = jest.fn(() => {
             throw new Error('sync boom');
         });
@@ -153,9 +214,14 @@ describe('RichSelectCellEditor', () => {
             filterList: true,
             filterListAsync: true,
         });
-        (editor as any).eEditor = { setValueList } as any;
+        const { richSelect, setValueList, runAsyncSearch } = createRichSelectMock();
+        (editor as any).createManagedBean = jest.fn(() => richSelect);
+        (editor as any).appendChild = jest.fn();
+        (editor as any).addManagedListeners = jest.fn();
+        (editor as any).initialiseEditor((editor as any).params);
+        setValueList.mockClear();
 
-        (editor as any).onSearchCallback('term');
+        runAsyncSearch('term');
 
         expect(setValueList).toHaveBeenCalledTimes(2);
         expect(setValueList).toHaveBeenNthCalledWith(1, { refresh: true, valueList: undefined });
@@ -170,17 +236,21 @@ describe('RichSelectCellEditor', () => {
             .mockImplementationOnce(() => new Promise<TestValue[]>((resolve) => (firstResolve = resolve)))
             .mockImplementationOnce(() => new Promise<TestValue[]>((resolve) => (secondResolve = resolve)));
 
-        const setValueList = jest.fn();
         const editor = createEditor({
             values: values as any,
             allowTyping: true,
             filterList: true,
             filterListAsync: true,
         });
-        (editor as any).eEditor = { setValueList } as any;
+        const { richSelect, setValueList, runAsyncSearch } = createRichSelectMock();
+        (editor as any).createManagedBean = jest.fn(() => richSelect);
+        (editor as any).appendChild = jest.fn();
+        (editor as any).addManagedListeners = jest.fn();
+        (editor as any).initialiseEditor((editor as any).params);
+        setValueList.mockClear();
 
-        (editor as any).onSearchCallback('first');
-        (editor as any).onSearchCallback('second');
+        runAsyncSearch('first');
+        runAsyncSearch('second');
 
         const firstRequest = setValueList.mock.calls[1][0];
         const secondRequest = setValueList.mock.calls[3][0];
@@ -206,17 +276,21 @@ describe('RichSelectCellEditor', () => {
                 return new Promise<TestValue[]>(() => {});
             });
 
-        const setValueList = jest.fn();
         const editor = createEditor({
             values: values as any,
             allowTyping: true,
             filterList: true,
             filterListAsync: true,
         });
-        (editor as any).eEditor = { setValueList } as any;
+        const { richSelect, setValueList, runAsyncSearch } = createRichSelectMock();
+        (editor as any).createManagedBean = jest.fn(() => richSelect);
+        (editor as any).appendChild = jest.fn();
+        (editor as any).addManagedListeners = jest.fn();
+        (editor as any).initialiseEditor((editor as any).params);
+        setValueList.mockClear();
 
-        (editor as any).onSearchCallback('first');
-        (editor as any).onSearchCallback('second');
+        runAsyncSearch('first');
+        runAsyncSearch('second');
 
         expect(firstParams.search).toBe('first');
         expect(secondParams.search).toBe('second');
@@ -245,6 +319,8 @@ describe('RichSelectCellEditor', () => {
             addCss: jest.fn(),
             showPicker: jest.fn(),
             setValueList: jest.fn(),
+            setAsyncValuesSource: jest.fn(),
+            resetAsyncValues: jest.fn(),
             setSearchStringCreator: jest.fn(),
             searchTextFromString: jest.fn(),
         };
@@ -272,18 +348,7 @@ describe('RichSelectCellEditor', () => {
             valuesPageSize: 25,
         });
 
-        let loadMoreCallback: (() => void) | undefined;
-        const richSelect = {
-            addCss: jest.fn(),
-            setIsLoading: jest.fn(),
-            showPicker: jest.fn(),
-            setValueList: jest.fn(),
-            setLoadMoreRowsCallback: jest.fn((callback: () => void) => {
-                loadMoreCallback = callback;
-            }),
-            setSearchStringCreator: jest.fn(),
-            searchTextFromString: jest.fn(),
-        };
+        const { richSelect, setLoadMoreRowsCallback, setIsLoading, getLoadMoreCallback } = createRichSelectMock();
 
         (editor as any).createManagedBean = jest.fn(() => richSelect);
         (editor as any).appendChild = jest.fn();
@@ -292,7 +357,7 @@ describe('RichSelectCellEditor', () => {
         (editor as any).initialiseEditor((editor as any).params);
         await flushMicrotasks();
 
-        expect(richSelect.setLoadMoreRowsCallback).toHaveBeenCalled();
+        expect(setLoadMoreRowsCallback).toHaveBeenCalled();
         expect(valuesPage).toHaveBeenCalledWith(
             expect.objectContaining({
                 search: '',
@@ -301,8 +366,8 @@ describe('RichSelectCellEditor', () => {
                 cursor: undefined,
             })
         );
-        expect(richSelect.setIsLoading).toHaveBeenCalled();
-        expect(loadMoreCallback).toBeDefined();
+        expect(setIsLoading).toHaveBeenCalled();
+        expect(getLoadMoreCallback()).toBeDefined();
     });
 
     it('replays initial event key once after the first paged load in non-full-async mode', async () => {
@@ -328,18 +393,7 @@ describe('RichSelectCellEditor', () => {
             filterListAsync: false,
         });
 
-        let loadMoreCallback: (() => void) | undefined;
-        const richSelect = {
-            addCss: jest.fn(),
-            setIsLoading: jest.fn(),
-            showPicker: jest.fn(),
-            setValueList: jest.fn(),
-            setLoadMoreRowsCallback: jest.fn((callback: () => void) => {
-                loadMoreCallback = callback;
-            }),
-            setSearchStringCreator: jest.fn(),
-            searchTextFromString: jest.fn(),
-        };
+        const { richSelect, getLoadMoreCallback } = createRichSelectMock();
 
         (editor as any).createManagedBean = jest.fn(() => richSelect);
         (editor as any).appendChild = jest.fn();
@@ -362,7 +416,7 @@ describe('RichSelectCellEditor', () => {
             expect(richSelect.searchTextFromString).toHaveBeenCalledTimes(1);
             expect(richSelect.searchTextFromString).toHaveBeenCalledWith('A');
 
-            loadMoreCallback?.();
+            getLoadMoreCallback()?.();
             await flushMicrotasks();
 
             expect(richSelect.searchTextFromString).toHaveBeenCalledTimes(1);
@@ -385,15 +439,7 @@ describe('RichSelectCellEditor', () => {
             filterListAsync: true,
         });
 
-        const richSelect = {
-            addCss: jest.fn(),
-            setIsLoading: jest.fn(),
-            showPicker: jest.fn(),
-            setValueList: jest.fn(),
-            setLoadMoreRowsCallback: jest.fn(),
-            setSearchStringCreator: jest.fn(),
-            searchTextFromString: jest.fn(),
-        };
+        const { richSelect } = createRichSelectMock();
 
         (editor as any).createManagedBean = jest.fn(() => richSelect);
         (editor as any).appendChild = jest.fn();
@@ -436,18 +482,7 @@ describe('RichSelectCellEditor', () => {
             valuesPageInitialStartRow: valuesPageInitialStartRow as any,
         });
 
-        let loadMoreCallback: (() => void) | undefined;
-        const richSelect = {
-            addCss: jest.fn(),
-            setIsLoading: jest.fn(),
-            showPicker: jest.fn(),
-            setValueList: jest.fn(),
-            setLoadMoreRowsCallback: jest.fn((callback: () => void) => {
-                loadMoreCallback = callback;
-            }),
-            setSearchStringCreator: jest.fn(),
-            searchTextFromString: jest.fn(),
-        };
+        const { richSelect, getLoadMoreCallback } = createRichSelectMock();
 
         (editor as any).createManagedBean = jest.fn(() => richSelect);
         (editor as any).appendChild = jest.fn();
@@ -455,7 +490,7 @@ describe('RichSelectCellEditor', () => {
 
         (editor as any).initialiseEditor((editor as any).params);
         await flushMicrotasks();
-        loadMoreCallback?.();
+        getLoadMoreCallback()?.();
         await flushMicrotasks();
 
         expect(valuesPageInitialStartRow).toHaveBeenCalledWith({ id: 999, label: 'selected' });
@@ -490,18 +525,7 @@ describe('RichSelectCellEditor', () => {
             valuesPageInitialStartRow: 20,
         });
 
-        let loadMoreCallback: ((direction?: 'up' | 'down') => void) | undefined;
-        const richSelect = {
-            addCss: jest.fn(),
-            setIsLoading: jest.fn(),
-            showPicker: jest.fn(),
-            setValueList: jest.fn(),
-            setLoadMoreRowsCallback: jest.fn((callback: (direction?: 'up' | 'down') => void) => {
-                loadMoreCallback = callback;
-            }),
-            setSearchStringCreator: jest.fn(),
-            searchTextFromString: jest.fn(),
-        };
+        const { richSelect, getLoadMoreCallback } = createRichSelectMock();
 
         (editor as any).createManagedBean = jest.fn(() => richSelect);
         (editor as any).appendChild = jest.fn();
@@ -510,11 +534,11 @@ describe('RichSelectCellEditor', () => {
         (editor as any).initialiseEditor((editor as any).params);
         await flushMicrotasks();
 
-        loadMoreCallback?.('up');
+        getLoadMoreCallback()?.('up');
         await flushMicrotasks();
-        loadMoreCallback?.('up');
+        getLoadMoreCallback()?.('up');
         await flushMicrotasks();
-        loadMoreCallback?.('down');
+        getLoadMoreCallback()?.('down');
         await flushMicrotasks();
 
         expect(valuesPage).toHaveBeenNthCalledWith(
@@ -571,18 +595,7 @@ describe('RichSelectCellEditor', () => {
             valuesPageSize: 2,
         });
 
-        let loadMoreCallback: (() => void) | undefined;
-        const richSelect = {
-            addCss: jest.fn(),
-            setIsLoading: jest.fn(),
-            showPicker: jest.fn(),
-            setValueList: jest.fn(),
-            setLoadMoreRowsCallback: jest.fn((callback: () => void) => {
-                loadMoreCallback = callback;
-            }),
-            setSearchStringCreator: jest.fn(),
-            searchTextFromString: jest.fn(),
-        };
+        const { richSelect, getLoadMoreCallback } = createRichSelectMock();
 
         (editor as any).createManagedBean = jest.fn(() => richSelect);
         (editor as any).appendChild = jest.fn();
@@ -590,7 +603,7 @@ describe('RichSelectCellEditor', () => {
 
         (editor as any).initialiseEditor((editor as any).params);
         await flushMicrotasks();
-        loadMoreCallback?.();
+        getLoadMoreCallback()?.();
         await flushMicrotasks();
 
         expect(valuesPage).toHaveBeenNthCalledWith(
@@ -643,18 +656,7 @@ describe('RichSelectCellEditor', () => {
             valuesPageSize: 2,
         });
 
-        let loadMoreCallback: (() => void) | undefined;
-        const richSelect = {
-            addCss: jest.fn(),
-            setIsLoading: jest.fn(),
-            showPicker: jest.fn(),
-            setValueList: jest.fn(),
-            setLoadMoreRowsCallback: jest.fn((callback: () => void) => {
-                loadMoreCallback = callback;
-            }),
-            setSearchStringCreator: jest.fn(),
-            searchTextFromString: jest.fn(),
-        };
+        const { richSelect, getLoadMoreCallback } = createRichSelectMock();
 
         (editor as any).createManagedBean = jest.fn(() => richSelect);
         (editor as any).appendChild = jest.fn();
@@ -662,7 +664,7 @@ describe('RichSelectCellEditor', () => {
 
         (editor as any).initialiseEditor((editor as any).params);
         await flushMicrotasks();
-        loadMoreCallback?.();
+        getLoadMoreCallback()?.();
         await flushMicrotasks();
 
         expect(valuesPage).toHaveBeenNthCalledWith(
@@ -682,22 +684,12 @@ describe('RichSelectCellEditor', () => {
     });
 
     it('ignores stale paged responses after a newer search reset', async () => {
-        let resolveFirst: ((result: { values: TestValue[] }) => void) | undefined;
-        let resolveSecond: ((result: { values: TestValue[]; lastRow: number }) => void) | undefined;
-        const valuesPage = jest
-            .fn()
-            .mockImplementationOnce(
-                () =>
-                    new Promise<{ values: TestValue[] }>((resolve) => {
-                        resolveFirst = resolve;
-                    })
-            )
-            .mockImplementationOnce(
-                () =>
-                    new Promise<{ values: TestValue[]; lastRow: number }>((resolve) => {
-                        resolveSecond = resolve;
-                    })
-            );
+        const pendingResolvers: Record<string, Array<(result: { values: TestValue[]; lastRow?: number }) => void>> = {};
+        const valuesPage = jest.fn().mockImplementation((params: { search: string }) => {
+            return new Promise<{ values: TestValue[]; lastRow?: number }>((resolve) => {
+                (pendingResolvers[params.search] ??= []).push(resolve);
+            });
+        });
 
         const editor = createEditor({
             values: undefined,
@@ -707,24 +699,26 @@ describe('RichSelectCellEditor', () => {
             filterListAsync: true,
         });
 
-        (editor as any).eEditor = {
-            setValueList: jest.fn(),
-            setIsLoading: jest.fn(),
-        };
+        const { richSelect, setValueList, runAsyncSearch } = createRichSelectMock();
+        (editor as any).createManagedBean = jest.fn(() => richSelect);
+        (editor as any).appendChild = jest.fn();
+        (editor as any).addManagedListeners = jest.fn();
+        (editor as any).initialiseEditor((editor as any).params);
+        setValueList.mockClear();
 
-        (editor as any).onSearchCallback('first');
-        (editor as any).onSearchCallback('second');
+        runAsyncSearch('first');
+        runAsyncSearch('second');
 
-        resolveSecond?.({
+        pendingResolvers['second']?.[0]?.({
             values: [{ id: 2, label: 'second' }],
             lastRow: 1,
         });
-        resolveFirst?.({
+        pendingResolvers['first']?.[0]?.({
             values: [{ id: 1, label: 'stale' }],
         });
         await flushMicrotasks();
 
-        expect((editor as any).eEditor.setValueList).toHaveBeenLastCalledWith(
+        expect(setValueList).toHaveBeenLastCalledWith(
             expect.objectContaining({
                 valueList: [{ id: 2, label: 'second' }],
                 refresh: true,

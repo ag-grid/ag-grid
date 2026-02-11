@@ -48,6 +48,7 @@ const columnDefs: ColDef[] = [
         width: 300,
         cellEditorParams: {
             allowTyping: true,
+            filterList: true,
             values: getValueFromServer,
             filterListAsync: true,
         } as IRichCellEditorParams,

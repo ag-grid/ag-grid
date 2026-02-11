@@ -292,11 +292,12 @@ columnDefs: [
 ]
 ```
 
-{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["filterListAsync", "values"] /%}
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["filterListAsync", "searchDebounceDelay", "values"] /%}
 
 ### Paged Async Filtering
 
 For very large, server-backed datasets, combine async filtering with `valuesPage` so filtered results are also loaded incrementally.
+`valuesPageInitialStartRow` is only used for the initial unfiltered load; once the user types, filtered paging starts from row `0`.
 
 In this mode each request includes:
 

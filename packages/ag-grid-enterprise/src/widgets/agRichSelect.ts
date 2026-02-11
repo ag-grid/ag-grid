@@ -43,6 +43,11 @@ import {
     _stopPropagationForAgGrid,
 } from 'ag-grid-community';
 
+import type {
+    RichSelectAsyncRequestsController,
+    RichSelectAsyncValuesSource,
+} from '../richSelect/richSelectAsyncRequests';
+import { createRichSelectAsyncRequestBindings } from '../richSelect/richSelectAsyncRequests';
 import { AgPillContainer } from './AgPillContainer';
 import { agRichSelectCSS } from './agRichSelect.css-GENERATED';
 import type { AgRichSelectListEvent } from './agRichSelectList';
@@ -90,7 +95,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     private userCompFactory: UserComponentFactory;
     private ariaAnnounce?: IAriaAnnouncementService;
     private registry: Registry;
-    private readonly onSearchCallbackDebounced;
+    private onSearchCallbackDebounced?: (searchString: string) => void;
 
     public wireBeans(beans: BeanCollection) {
         this.userCompFactory = beans.userCompFactory;
@@ -105,6 +110,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     protected values: TValue[] | undefined;
     private loadMoreRowsCallback?: (direction?: _VerticalDirection) => void;
     private loadMoreRowsThreshold = 10;
+    private asyncRequests?: RichSelectAsyncRequestsController<TValue>;
+    private hasPagedAsyncSource = false;
 
     private searchStringCreator: ((values: TValue[]) => string[]) | null = null;
     private readonly eInput: GridInputTextField = RefPlaceholder;
@@ -356,6 +363,47 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
     public setSearchStringCreator(searchStringFn: (values: TValue[]) => string[]): void {
         this.searchStringCreator = searchStringFn;
+    }
+
+    public setAsyncValuesSource(params: {
+        source: RichSelectAsyncValuesSource<TValue>;
+        thresholdRows?: number;
+        useAsyncSearch?: boolean;
+        onMisconfiguredSearchSource?: () => void;
+        onFirstValuesPageLoaded?: () => void;
+    }): void {
+        const { source, thresholdRows, useAsyncSearch, onMisconfiguredSearchSource, onFirstValuesPageLoaded } = params;
+        this.asyncRequests?.destroy();
+
+        const asyncRequestBindings = createRichSelectAsyncRequestBindings<TValue>({
+            host: {
+                setValueList: (valueListParams) => this.setValueList(valueListParams),
+                setIsLoading: () => this.setIsLoading(),
+            },
+            source,
+            useAsyncSearch,
+            onMisconfiguredSearchSource,
+            onFirstValuesPageLoaded,
+        });
+
+        this.asyncRequests = asyncRequestBindings.controller;
+        this.hasPagedAsyncSource = asyncRequestBindings.hasPagedSource;
+
+        if (asyncRequestBindings.onSearch) {
+            const { searchDebounceDelay = ON_SEARCH_CALLBACK_DEBOUNCE_DELAY } = this.config;
+            this.onSearchCallbackDebounced = _debounce(this, asyncRequestBindings.onSearch, searchDebounceDelay);
+        } else if (!this.config.onSearch) {
+            this.onSearchCallbackDebounced = undefined;
+        }
+
+        this.setLoadMoreRowsCallback(asyncRequestBindings.onLoadMoreRows, thresholdRows ?? this.loadMoreRowsThreshold);
+    }
+
+    public resetAsyncValues(searchString = ''): void {
+        if (!this.hasPagedAsyncSource) {
+            return;
+        }
+        this.asyncRequests?.resetValuesPage(searchString);
     }
 
     public setLoadMoreRowsCallback(callback?: (direction?: _VerticalDirection) => void, thresholdRows = 10): void {
@@ -1212,6 +1260,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     }
 
     public override destroy(): void {
+        this.asyncRequests?.destroy();
+        this.asyncRequests = undefined;
+        this.hasPagedAsyncSource = false;
+
         if (this.listComponent) {
             this.listComponent = this.destroyBean(this.listComponent);
         }
