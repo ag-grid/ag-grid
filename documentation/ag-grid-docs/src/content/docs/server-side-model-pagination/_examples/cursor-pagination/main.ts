@@ -1,10 +1,25 @@
-import type { GridApi, GridOptions, IServerSideDatasource } from 'ag-grid-community';
-import { ModuleRegistry, PaginationModule, ValidationModule, createGrid } from 'ag-grid-community';
+import type {
+    GridApi,
+    GridOptions,
+    IDetailCellRendererParams,
+    IServerSideDatasource,
+    IServerSideGetRowsParams,
+} from 'ag-grid-community';
+import {
+    ModuleRegistry,
+    NumberFilterModule,
+    PaginationModule,
+    TextFilterModule,
+    ValidationModule,
+    createGrid,
+} from 'ag-grid-community';
 import {
     ColumnMenuModule,
     ColumnsToolPanelModule,
     ContextMenuModule,
+    MasterDetailModule,
     RowGroupingModule,
+    SideBarModule,
     ServerSideRowModelApiModule,
     ServerSideRowModelModule,
 } from 'ag-grid-enterprise';
@@ -14,12 +29,16 @@ import { FakeServer } from './fakeServer';
 
 ModuleRegistry.registerModules([
     PaginationModule,
+    TextFilterModule,
+    NumberFilterModule,
     ColumnsToolPanelModule,
     ColumnMenuModule,
     ContextMenuModule,
+    SideBarModule,
     RowGroupingModule,
     ServerSideRowModelModule,
     ServerSideRowModelApiModule,
+    MasterDetailModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
@@ -64,21 +83,63 @@ function updateNavButtons() {
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
-        { field: 'country', rowGroup: true, hide: true },
-        { field: 'athlete', minWidth: 190 },
-        { field: 'gold', aggFunc: 'sum' },
-        { field: 'silver', aggFunc: 'sum' },
-        { field: 'bronze', aggFunc: 'sum' },
+        { field: 'country' },
+        {
+            field: 'athlete',
+            minWidth: 190,
+            filter: 'agTextColumnFilter',
+        },
+        { field: 'gold', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
+        { field: 'silver', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
+        { field: 'bronze', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
     ],
-    defaultColDef: { flex: 1, minWidth: 90 },
-    autoGroupColumnDef: { flex: 1, minWidth: 180 },
+    defaultColDef: { flex: 1, minWidth: 90, sortable: true },
+    autoGroupColumnDef: { field: 'athlete', flex: 1, minWidth: 180 },
 
     rowModelType: 'serverSide',
+    masterDetail: true,
+    detailRowHeight: 180,
+    isRowMaster: (data) => !!data,
+    detailCellRendererParams: (params: IDetailCellRendererParams<IOlympicData, IOlympicData>) => {
+        const rowData = params.data ? [params.data] : [];
+
+        return {
+            detailGridOptions: {
+                rowModelType: 'serverSide',
+                columnDefs: [
+                    { field: 'athlete' },
+                    { field: 'country' },
+                    { field: 'year' },
+                    { field: 'sport', minWidth: 140 },
+                    { field: 'gold' },
+                    { field: 'silver' },
+                    { field: 'bronze' },
+                ],
+                defaultColDef: { flex: 1, minWidth: 90, sortable: true },
+                onGridReady: (detailParams) => {
+                    const datasource: IServerSideDatasource = {
+                        getRows: (ssParams: IServerSideGetRowsParams) => {
+                            ssParams.success({
+                                rowData,
+                                rowCount: rowData.length,
+                            });
+                        },
+                    };
+                    detailParams.api.setGridOption('serverSideDatasource', datasource);
+                },
+            },
+        };
+    },
 
     // Keep SSRM, but do NOT rely on AG Grid's pagination UI.
     // Hide it via CSS in the HTML snippet below.
     pagination: true,
     paginationAutoPageSize: true,
+
+    sideBar: {
+        toolPanels: ['columns'],
+        defaultToolPanel: 'columns',
+    },
 
     suppressAggFuncInHeader: true,
 };
@@ -88,8 +149,9 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
         getRows: (params) => {
             // NOTE: We ignore startRow/endRow as "page number".
             // We only use them to infer a limit/pageSize.
-            const { startRow, endRow } = params.request;
+            const { startRow, endRow, groupKeys } = params.request;
             const limit = Math.max(1, (endRow ?? 0) - (startRow ?? 0));
+            const isCursorRequest = (groupKeys?.length ?? 0) === 0;
 
             console.log('[Datasource] request:', params.request);
             console.log('[Cursor] currentCursor:', cursorState.currentCursor, 'limit:', limit);
@@ -98,8 +160,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
 
             const response = server.getData({
                 ...params.request,
-                limit,
-                cursor: cursorState.currentCursor,
+                ...(isCursorRequest ? { limit, cursor: cursorState.currentCursor } : {}),
             });
 
             setTimeout(() => {
@@ -111,8 +172,10 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
 
                 // FakeServer should return:
                 // { rows, lastRow, nextCursor, prevCursor, success: true }
-                cursorState.nextCursor = response.nextCursor ?? null;
-                cursorState.prevCursor = response.prevCursor ?? null;
+                if (isCursorRequest) {
+                    cursorState.nextCursor = response.nextCursor ?? null;
+                    cursorState.prevCursor = response.prevCursor ?? null;
+                }
 
                 params.success({
                     rowData: response.rows,
