@@ -1,3 +1,4 @@
+import { KeyCode } from '../../agStack/constants/keyCode';
 import { _setAriaColIndex } from '../../agStack/utils/aria';
 import { _getActiveDomElement } from '../../agStack/utils/document';
 import { _addOrRemoveAttribute, _placeCaretAtEnd, _requestAnimationFrame } from '../../agStack/utils/dom';
@@ -465,16 +466,30 @@ export class CellCtrl extends BeanStub {
         return selectionChanged || rowDragChanged || dndSourceChanged || autoHeightChanged;
     }
 
-    public onPopupEditorClosed(): void {
+    public onPopupEditorClosed(e?: MouseEvent | TouchEvent | KeyboardEvent): void {
         const { editSvc } = this.beans;
         if (!editSvc?.isEditing(this, { withOpenEditor: true })) {
             return;
         }
 
+        const isKeyboardEvent = e instanceof KeyboardEvent;
+        const isMouseEvent = e instanceof MouseEvent;
+
+        const isEscape = isKeyboardEvent && e.key === KeyCode.ESCAPE;
+
         // note: this happens because of a click outside of the grid or if the popupEditor
         // is closed with `Escape` key. if another cell was clicked, then the editing will
         // have already stopped and returned on the conditional above.
+        editSvc.stopEditing(this, {
+            source: editSvc.isBatchEditing() ? 'ui' : 'api',
+            cancel: isEscape,
+            event: isKeyboardEvent || isMouseEvent ? e : undefined,
+        });
         editSvc?.stopEditing(this, { source: editSvc?.isBatchEditing() ? 'ui' : 'api' });
+
+        if (isEscape) {
+            this.focusCell(true, e);
+        }
     }
 
     /**

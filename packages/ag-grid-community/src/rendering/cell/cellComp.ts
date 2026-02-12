@@ -537,8 +537,8 @@ export class CellComp extends Component {
             modal: useModelPopup,
             eChild: ePopupGui,
             closeOnEsc: true,
-            closedCallback: () => {
-                cellCtrl.onPopupEditorClosed();
+            closedCallback: (e) => {
+                cellCtrl.onPopupEditorClosed(e);
             },
             anchorToElement: eCell,
             positionCallback,
