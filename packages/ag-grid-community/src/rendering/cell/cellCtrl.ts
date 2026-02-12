@@ -485,7 +485,6 @@ export class CellCtrl extends BeanStub {
             cancel: isEscape,
             event: isKeyboardEvent || isMouseEvent ? e : undefined,
         });
-        editSvc?.stopEditing(this, { source: editSvc?.isBatchEditing() ? 'ui' : 'api' });
 
         if (isEscape) {
             this.focusCell(true, e);
