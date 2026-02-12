@@ -1,11 +1,21 @@
-import { clickAllButtons, ensureGridReady, test, waitForGridContent } from '@utils/grid/test-utils';
+import { expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    test.eachFramework('Example', async ({ page }) => {
-        // PLACEHOLDER - MINIMAL TEST TO ENSURE GRID LOADS WITHOUT ERRORS
-        await ensureGridReady(page);
-        await waitForGridContent(page);
-        await clickAllButtons(page);
-        // END PLACEHOLDER
+    test.eachFramework('Example', async ({ agIdFor }) => {
+        // Verify group rows with aggregated values
+        await expect(agIdFor.autoGroupCell('0')).toContainText('Desktop', { useInnerText: true });
+        await expect(agIdFor.cell('0', 'items')).toContainText('4'); // Aggregated sum: 1+1+1+1
+        await expect(agIdFor.cell('0', 'items_1')).toContainText('1'); // Provided value
+
+        await expect(agIdFor.autoGroupCell('1')).toContainText('ProjectAlpha', { useInnerText: true });
+        await expect(agIdFor.cell('1', 'items')).toContainText('2'); // Aggregated sum: 1+1
+
+        // Verify leaf rows
+        await expect(agIdFor.cell('2', 'items')).toContainText('1');
+        await expect(agIdFor.cell('2', 'items_1')).toContainText('1');
+
+        await expect(agIdFor.cell('3', 'items')).toContainText('1');
+        await expect(agIdFor.cell('4', 'items')).toContainText('1');
+        await expect(agIdFor.cell('5', 'items')).toContainText('1');
     });
 });
