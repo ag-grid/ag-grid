@@ -7,9 +7,9 @@ test.agExample(import.meta, () => {
 
         // Country groups are expanded by default (groupDefaultExpanded: 1)
         // With groupSuppressBlankHeader disabled (default), expanded group rows show blank agg values
-        await expect(agIdFor.cell(usGroupId, 'gold')).toContainText('');
-        await expect(agIdFor.cell(usGroupId, 'silver')).toContainText('');
-        await expect(agIdFor.cell(usGroupId, 'bronze')).toContainText('');
+        await expect(agIdFor.cell(usGroupId, 'gold')).toHaveText('');
+        await expect(agIdFor.cell(usGroupId, 'silver')).toHaveText('');
+        await expect(agIdFor.cell(usGroupId, 'bronze')).toHaveText('');
 
         // Year sub-groups (collapsed) still show their aggregation values
         const usYear2000Id = 'row-group-country-United States-year-2000';
@@ -35,8 +35,8 @@ test.agExample(import.meta, () => {
         // Disable groupSuppressBlankHeader — expanded group rows go blank again
         await page.locator('#groupSuppressBlankHeader').click();
 
-        await expect(agIdFor.cell(usGroupId, 'gold')).toContainText('');
-        await expect(agIdFor.cell(usGroupId, 'silver')).toContainText('');
-        await expect(agIdFor.cell(usGroupId, 'bronze')).toContainText('');
+        await expect(agIdFor.cell(usGroupId, 'gold')).toHaveText('');
+        await expect(agIdFor.cell(usGroupId, 'silver')).toHaveText('');
+        await expect(agIdFor.cell(usGroupId, 'bronze')).toHaveText('');
     });
 });
