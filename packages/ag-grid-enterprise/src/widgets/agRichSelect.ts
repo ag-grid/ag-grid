@@ -44,10 +44,10 @@ import {
 } from 'ag-grid-community';
 
 import type {
-    RichSelectAsyncRequestsController,
+    RichSelectAsyncRequestsFeature,
     RichSelectAsyncValuesSource,
-} from '../richSelect/richSelectAsyncRequests';
-import { createRichSelectAsyncRequestBindings } from '../richSelect/richSelectAsyncRequests';
+} from '../richSelect/richSelectAsyncRequestsFeature';
+import { createRichSelectAsyncRequestBindings } from '../richSelect/richSelectAsyncRequestsFeature';
 import { AgPillContainer } from './AgPillContainer';
 import { agRichSelectCSS } from './agRichSelect.css-GENERATED';
 import type { AgRichSelectListEvent } from './agRichSelectList';
@@ -110,7 +110,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     protected values: TValue[] | undefined;
     private loadMoreRowsCallback?: (direction?: _VerticalDirection) => void;
     private loadMoreRowsThreshold = 10;
-    private asyncRequests?: RichSelectAsyncRequestsController<TValue>;
+    private asyncRequests?: RichSelectAsyncRequestsFeature<TValue>;
     private hasPagedAsyncSource = false;
 
     private searchStringCreator: ((values: TValue[]) => string[]) | null = null;

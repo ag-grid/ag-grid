@@ -9,7 +9,7 @@ import type {
 import { AgAbstractCellEditor, KeyCode, _addGridCommonParams, _consoleError, _missing, _warn } from 'ag-grid-community';
 
 import { AgRichSelect } from '../widgets/agRichSelect';
-import type { RichSelectAsyncValuesSource } from './richSelectAsyncRequests';
+import type { RichSelectAsyncValuesSource } from './richSelectAsyncRequestsFeature';
 
 const DEFAULT_VALUES_PAGE_LOAD_THRESHOLD = 10;
 type RichSelectValuesPageResult<TValue> = { values: TValue[]; lastRow?: number; cursor?: string | null };

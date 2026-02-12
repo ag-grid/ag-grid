@@ -105,7 +105,6 @@ type InternalModuleName =
     | 'PinnedColumn'
     | 'Popup'
     | 'QuickFilterCore'
-    | 'RichSelectAsyncRequests'
     | 'SharedAggregation'
     | 'SharedDragAndDrop'
     | 'SharedExport'

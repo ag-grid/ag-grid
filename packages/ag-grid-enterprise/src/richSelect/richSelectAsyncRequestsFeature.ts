@@ -26,7 +26,7 @@ interface RichSelectAsyncHost<TValue> {
     setIsLoading: () => void;
 }
 
-interface RichSelectAsyncRequestsControllerParams<TValue> {
+interface RichSelectAsyncRequestsFeatureParams<TValue> {
     host: RichSelectAsyncHost<TValue>;
     source: RichSelectAsyncValuesSource<TValue>;
     onMisconfiguredSearchSource?: () => void;
@@ -49,13 +49,13 @@ export function createRichSelectAsyncRequestBindings<TValue>(params: {
     onMisconfiguredSearchSource?: () => void;
     onFirstValuesPageLoaded?: () => void;
 }): {
-    controller: RichSelectAsyncRequestsController<TValue>;
+    controller: RichSelectAsyncRequestsFeature<TValue>;
     hasPagedSource: boolean;
     onSearch?: (searchString: string) => void;
     onLoadMoreRows?: (direction?: _VerticalDirection) => void;
 } {
     const { host, source, useAsyncSearch, onMisconfiguredSearchSource, onFirstValuesPageLoaded } = params;
-    const controller = new RichSelectAsyncRequestsController<TValue>({
+    const controller = new RichSelectAsyncRequestsFeature<TValue>({
         host,
         source,
         onMisconfiguredSearchSource,
@@ -73,7 +73,7 @@ export function createRichSelectAsyncRequestBindings<TValue>(params: {
     };
 }
 
-export class RichSelectAsyncRequestsController<TValue = any> {
+export class RichSelectAsyncRequestsFeature<TValue = any> {
     private currentSearchRequest: number = 0;
     private currentValuesPageRequest: number = 0;
     private valuesPageLoading = false;
@@ -85,7 +85,7 @@ export class RichSelectAsyncRequestsController<TValue = any> {
     private valuesPageNextCursor: string | null | undefined;
     private destroyed = false;
 
-    constructor(private readonly ctrlParams: RichSelectAsyncRequestsControllerParams<TValue>) {}
+    constructor(private readonly ctrlParams: RichSelectAsyncRequestsFeatureParams<TValue>) {}
 
     public destroy(): void {
         this.destroyed = true;

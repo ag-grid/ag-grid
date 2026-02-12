@@ -6,14 +6,6 @@ import { VERSION } from '../version';
 import { RichSelectCellEditor } from './richSelectCellEditor';
 
 /**
- * @internal
- */
-const RichSelectAsyncRequestsModule: _ModuleWithoutApi = {
-    moduleName: 'RichSelectAsyncRequests',
-    version: VERSION,
-};
-
-/**
  * @feature Editing -> Rich Select Editor
  */
 export const RichSelectModule: _ModuleWithoutApi = {
@@ -29,5 +21,5 @@ export const RichSelectModule: _ModuleWithoutApi = {
         // loading async values
         richSelectLoading: 'loading',
     },
-    dependsOn: [EnterpriseCoreModule, _EditCoreModule, RichSelectAsyncRequestsModule],
+    dependsOn: [EnterpriseCoreModule, _EditCoreModule],
 };

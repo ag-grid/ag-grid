@@ -1,7 +1,7 @@
 import type { RichCellEditorParams } from 'ag-grid-community';
 
 import { AgRichSelect } from '../widgets/agRichSelect';
-import { RichSelectAsyncRequestsController } from './richSelectAsyncRequests';
+import { RichSelectAsyncRequestsFeature } from './richSelectAsyncRequestsFeature';
 import { RichSelectCellEditor } from './richSelectCellEditor';
 
 type TestValue = { id: number; label: string };
@@ -44,7 +44,7 @@ const flushMicrotasks = async (): Promise<void> => {
 };
 
 function createRichSelectMock() {
-    let asyncRequests: RichSelectAsyncRequestsController<TestValue> | undefined;
+    let asyncRequests: RichSelectAsyncRequestsFeature<TestValue> | undefined;
     let loadMoreCallback: ((direction?: 'up' | 'down') => void) | undefined;
     let useAsyncSearch = false;
 
@@ -71,7 +71,7 @@ function createRichSelectMock() {
         setAsyncValuesSource: jest.fn((params: any) => {
             asyncRequests?.destroy();
             useAsyncSearch = !!params.useAsyncSearch;
-            asyncRequests = new RichSelectAsyncRequestsController<TestValue>({
+            asyncRequests = new RichSelectAsyncRequestsFeature<TestValue>({
                 host: { setValueList, setIsLoading },
                 source: params.source,
                 onMisconfiguredSearchSource: params.onMisconfiguredSearchSource,

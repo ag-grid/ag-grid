@@ -223,6 +223,9 @@ columnDefs: [
 For large datasets, `valuesPage` avoids loading everything at once.
 
 In paged mode the editor requests row ranges (and optional cursor tokens), rather than a single full list.
+
+Requests always include `startRow` and `endRow`. `cursor` is optional: it is `undefined` on the first request, then for forward paging it is automatically populated from the previous page result.
+
 You can use `valuesPageInitialStartRow` to open around the current value while still allowing navigation to earlier and later pages.
 
 {% gridExampleRunner title="Rich Select Paged Async Values" name="rich-select-paged-async-values" /%}
@@ -303,7 +306,12 @@ In this mode each request includes:
 
 -   `search` for the current filter text.
 -   `startRow` and `endRow` for range-based pagination.
--   `cursor` for cursor-based pagination APIs.
+-   `cursor` for cursor-based forward pagination APIs (`undefined` on the first request, then replayed from the previous response).
+
+You can implement either strategy in your datasource:
+
+-   Range-based: use `startRow` / `endRow` and return `lastRow`.
+-   Cursor-based: use `cursor` for forward pages and still tolerate `startRow` / `endRow` for initial positioning and upward loading.
 
 {% gridExampleRunner title="Rich Select Paged Async Filtering" name="rich-select-paged-async-filtering" /%}
 
