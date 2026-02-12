@@ -122,6 +122,7 @@ Follow git-conventions for the PR:
 -   **Body:** JIRA-linked: include link(s) to the JIRA ticket(s). No JIRA: concise description of the change.
 -   Keep descriptions concise - this is a public repo.
 -   Never attribute agentic tooling.
+-   If JIRA-linked include "Fix #AG-XXXX"
 
 ### STEP 7: Report Result
 
