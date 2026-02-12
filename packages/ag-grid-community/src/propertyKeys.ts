@@ -166,6 +166,7 @@ export const _NUMBER_GRID_OPTIONS: KeysWithType<number>[] = [
     'tabIndex',
     'pivotMaxGeneratedColumns',
     'rowDragInsertDelay',
+    'skeletonLoadingRowCount',
 ];
 
 // If property does not fit above, i.e union that should not be coerced.
@@ -333,6 +334,7 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'hidePaddedHeaderRows',
     'ssrmExpandAllAffectsAllRows',
     'animateColumnResizing',
+    'enableSkeletonLoadingCells',
 ];
 
 /** @knipIgnore Used in example generation */

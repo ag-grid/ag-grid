@@ -1011,6 +1011,15 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default undefined
      */
     @Input({ transform: booleanAttribute }) public loading: boolean | undefined = undefined;
+    /** When `true`, shows skeleton loading indicators in individual cells instead of the loading overlay.
+     * Works with Client-Side Row Model.
+     * @default false
+     */
+    @Input({ transform: booleanAttribute }) public enableSkeletonLoadingCells: boolean | undefined = undefined;
+    /** Number of skeleton rows to display when `enableSkeletonLoadingCells` is `true`.
+     * If not provided, the grid calculates rows to fill the viewport.
+     */
+    @Input() public skeletonLoadingRowCount: number | undefined = undefined;
     /** Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
      *
      * -     **Prefer `overlayComponent` / `overlayComponentSelector`**

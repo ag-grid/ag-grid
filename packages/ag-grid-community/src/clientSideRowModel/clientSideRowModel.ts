@@ -4,7 +4,13 @@ import { BeanStub } from '../context/beanStub';
 import type { GridOptions } from '../entities/gridOptions';
 import { RowNode } from '../entities/rowNode';
 import type { FilterChangedEvent, StylesChangedEvent } from '../events';
-import { _getGroupSelectsDescendants, _getRowHeightForNode, _isAnimateRows, _isDomLayout } from '../gridOptionsUtils';
+import {
+    _getGroupSelectsDescendants,
+    _getRowHeightAsNumber,
+    _getRowHeightForNode,
+    _isAnimateRows,
+    _isDomLayout,
+} from '../gridOptionsUtils';
 import type {
     ClientSideRowModelStage,
     IClientSideRowModel,
@@ -85,6 +91,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     /** True after the first time row nodes have been created or data has been set. Used to determine when to fire rowCountReady. */
     private rowNodesCountReady: boolean = false;
+
+    /** Placeholder stub nodes shown when skeleton loading is active. */
+    private skeletonRows: RowNode[] = [];
+
+    /** Whether skeleton rows are currently being displayed. */
+    public showingSkeletons: boolean = false;
 
     /** Maps a property name to the index in this.stages array */
     private readonly stagesRefreshProps = new Map<keyof GridOptions, number>();
@@ -179,6 +191,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         });
 
         this.addManagedPropertyListener('rowHeight', () => this.resetRowHeights());
+
+        this.addManagedPropertyListeners(['loading', 'enableSkeletonLoadingCells'], () => this.updateSkeletonRows());
     }
 
     public start(): void {
@@ -187,6 +201,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             this.refreshModel({ step: 'group', rowDataUpdated: true, newData: true });
         } else {
             this.setInitialData();
+            this.showSkeletonRowsIfNeeded();
         }
     }
 
@@ -242,6 +257,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const groupStage = beans.groupStage;
         if (!nodeManager) {
             return; // Destroyed
+        }
+        if (this.showingSkeletons) {
+            this.clearSkeletonRows();
         }
         const changedProps = new Set(properties);
         const extractData = groupStage?.onPropChange(changedProps);
@@ -702,7 +720,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public isEmpty(): boolean {
-        return !this.rootNode?._leafs?.length || !this.beans.colModel?.ready;
+        // TODO: Hack to display stubs
+        return (!this.rootNode?._leafs?.length || !this.beans.colModel?.ready) && this.rowsToDisplay.length === 0;
     }
 
     public isRowsToRender(): boolean {
@@ -710,6 +729,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public getOverlayType(): OverlayType | null {
+        if (this.showingSkeletons) {
+            return null;
+        }
+
         const { beans, gos } = this;
 
         if (this.rootNode?._leafs?.length) {
@@ -1196,8 +1219,100 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
     }
 
+    private shouldShowSkeletons(): boolean {
+        const { gos } = this;
+        if (!gos.get('enableSkeletonLoadingCells')) {
+            return false;
+        }
+        // Need columns to render per-cell skeletons
+        if (!gos.get('columnDefs')) {
+            return false;
+        }
+        const loading = gos.get('loading');
+        if (loading === true) {
+            return true;
+        }
+        if (loading === false) {
+            return false;
+        }
+        // loading is undefined — show skeletons if no data yet
+        return !this.rowNodesCountReady && !gos.get('rowData');
+    }
+
+    private calculateSkeletonRowCount(): number {
+        const { gos, beans } = this;
+        const explicit = gos.get('skeletonLoadingRowCount');
+        if (explicit != null) {
+            return explicit;
+        }
+        if (gos.get('pagination')) {
+            return gos.get('paginationPageSize');
+        }
+        const rowHeight = Math.max(_getRowHeightAsNumber(beans), 1);
+        // Default fallback if viewport not sized yet
+        return Math.max(Math.ceil(600 / rowHeight), 1);
+    }
+
+    private createSkeletonRows(count: number): RowNode[] {
+        const { beans } = this;
+        const rowHeight = _getRowHeightAsNumber(beans);
+        const rows: RowNode[] = [];
+        for (let i = 0; i < count; i++) {
+            const node = new RowNode(beans);
+            node.stub = true;
+            node.id = `skeleton-${i}`;
+            node.setRowHeight(rowHeight);
+            node.setRowTop(i * rowHeight);
+            node.setRowIndex(i);
+            node.setUiLevel(0);
+            rows.push(node);
+        }
+        return rows;
+    }
+
+    private showSkeletonRowsIfNeeded(): void {
+        if (!this.shouldShowSkeletons()) {
+            return;
+        }
+        const count = this.calculateSkeletonRowCount();
+        this.skeletonRows = this.createSkeletonRows(count);
+        this.rowsToDisplay = this.skeletonRows;
+        this.showingSkeletons = true;
+        this.eventSvc.dispatchEvent({
+            type: 'modelUpdated',
+            animate: false,
+            keepRenderedRows: false,
+            newData: false,
+            newPage: false,
+            keepUndoRedoStack: true,
+        });
+    }
+
+    private clearSkeletonRows(): void {
+        if (!this.showingSkeletons) {
+            return;
+        }
+        this.showingSkeletons = false;
+        this.skeletonRows = [];
+        this.rowsToDisplay = [];
+    }
+
+    private updateSkeletonRows(): void {
+        if (this.shouldShowSkeletons()) {
+            if (!this.showingSkeletons) {
+                this.showSkeletonRowsIfNeeded();
+            }
+        } else if (this.showingSkeletons) {
+            this.clearSkeletonRows();
+            if (this.started && this.rowNodesCountReady) {
+                this.refreshModel({ step: 'group' });
+            }
+        }
+    }
+
     public override destroy(): void {
         super.destroy();
+        this.clearSkeletonRows();
         this.nodeManager = this.destroyBean(this.nodeManager);
         this.started = false;
         this.rootNode = null;

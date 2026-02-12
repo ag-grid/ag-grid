@@ -446,7 +446,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             beans: { colModel },
         } = this;
         const isStub =
-            rowNode.stub && !gos.get('suppressServerSideFullWidthLoadingRow') && !gos.get('groupHideOpenParents');
+            rowNode.stub &&
+            !gos.get('suppressServerSideFullWidthLoadingRow') &&
+            !gos.get('groupHideOpenParents') &&
+            !gos.get('enableSkeletonLoadingCells');
         const isFullWidthCell = this.isNodeFullWidthCell();
         const isDetailCell = gos.get('masterDetail') && rowNode.detail;
         const pivotMode = colModel.isPivotMode();

@@ -43,6 +43,9 @@ const LoadingOverlayDef: OverlayDef = {
     compKey: 'loadingOverlayComponent',
     paramsKey: 'loadingOverlayComponentParams',
     isSuppressed: (gos: GridOptionsService) => {
+        if (gos.get('enableSkeletonLoadingCells')) {
+            return true;
+        }
         const isLoading = gos.get('loading');
         return isLoading === false || (gos.get('suppressLoadingOverlay') === true && isLoading !== true);
     },

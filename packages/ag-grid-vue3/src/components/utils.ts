@@ -835,6 +835,15 @@ export interface Props<TData> {
          * @default undefined
          */
     loading?: boolean,
+    /** When `true`, shows skeleton loading indicators in individual cells instead of the loading overlay.
+         * Works with Client-Side Row Model.
+         * @default false
+         */
+    enableSkeletonLoadingCells?: boolean,
+    /** Number of skeleton rows to display when `enableSkeletonLoadingCells` is `true`.
+         * If not provided, the grid calculates rows to fill the viewport.
+         */
+    skeletonLoadingRowCount?: number,
     /** Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
          *
          * -     **Prefer `overlayComponent` / `overlayComponentSelector`**
@@ -2123,6 +2132,8 @@ export function getProps() {
         suppressChangeDetection: undefined,
         debug: undefined,
         loading: undefined,
+        enableSkeletonLoadingCells: undefined,
+        skeletonLoadingRowCount: undefined,
         overlayLoadingTemplate: undefined,
         loadingOverlayComponent: undefined,
         loadingOverlayComponentParams: undefined,

@@ -349,18 +349,18 @@ export class CellCtrl extends BeanStub {
         let compDetails: UserCompDetails | undefined;
 
         // if node is stub, and no group data for this node (groupSelectsChildren can populate group data)
-        const isSsrmLoading = rowNode.stub && rowNode.groupData?.[column.getId()] == null;
+        const isStubLoading = rowNode.stub && rowNode.groupData?.[column.getId()] == null;
         const colDef = column.getColDef();
 
-        if (isSsrmLoading || this.isCellRenderer()) {
+        if (isStubLoading || this.isCellRenderer()) {
             const params = this.createCellRendererParams();
-            if (!isSsrmLoading || isRowNumberCol(column)) {
+            if (!isStubLoading || isRowNumberCol(column)) {
                 compDetails = _getCellRendererDetails(userCompFactory, colDef, params);
             } else {
                 compDetails = _getLoadingCellRendererDetails(userCompFactory, colDef, params);
             }
         }
-        if (!compDetails && !isSsrmLoading && beans.findSvc?.isMatch(rowNode, column)) {
+        if (!compDetails && !isStubLoading && beans.findSvc?.isMatch(rowNode, column)) {
             const params = this.createCellRendererParams();
             compDetails = _getCellRendererDetails(
                 userCompFactory,
