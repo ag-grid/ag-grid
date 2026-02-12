@@ -46,4 +46,10 @@ ignore:
               reason: We don't use preact
               expires: 2026-06-08T00:00:00.000Z
               created: 2025-01-12T10:00:00.000Z
+    SNYK-JS-AXIOS-15252993:
+        - 'vite-plugin-mkcert@1.17.9 > axios@1.13.1':
+              reason: >-
+                  mkcert is only used during development - it's not used in the final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-02-12T10:10:00.000Z
 patch: {}
