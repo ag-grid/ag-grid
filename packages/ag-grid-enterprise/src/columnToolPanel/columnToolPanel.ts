@@ -83,9 +83,16 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
         const hasPivotModule = gos.isModuleRegistered('SharedPivot');
         const hasRowGroupingModule = hasPivotModule || gos.isModuleRegistered('SharedRowGrouping');
+        const onTogglePivotMode = mergedParams.deferApply ? this.onDeferredPivotModeToggle.bind(this) : undefined;
 
         if (!mergedParams.suppressPivotMode && colToolPanelFactory && hasPivotModule) {
-            this.pivotModePanel = colToolPanelFactory.createPivotModePanel(this, childDestroyFuncs);
+            this.pivotModePanel = onTogglePivotMode
+                ? colToolPanelFactory.createPivotModePanelWithToggleHandler(
+                      this,
+                      childDestroyFuncs,
+                      onTogglePivotMode
+                  )
+                : colToolPanelFactory.createPivotModePanel(this, childDestroyFuncs);
         }
 
         // DO NOT CHANGE TO createManagedBean
@@ -132,7 +139,15 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         this.pivotModePanel = colToolPanelFactory.setPanelVisible(
             this.pivotModePanel,
             visible,
-            colToolPanelFactory.createPivotModePanel.bind(colToolPanelFactory, this, this.childDestroyFuncs, true)
+            this.params.deferApply
+                ? colToolPanelFactory.createPivotModePanelWithToggleHandler.bind(
+                      colToolPanelFactory,
+                      this,
+                      this.childDestroyFuncs,
+                      this.onDeferredPivotModeToggle.bind(this),
+                      true
+                  )
+                : colToolPanelFactory.createPivotModePanel.bind(colToolPanelFactory, this, this.childDestroyFuncs, true)
         );
         this.setLastVisible();
     }
@@ -272,6 +287,13 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
                 aggFunc: col.getAggFunc() ?? null,
             })),
         };
+    }
+
+    private onDeferredPivotModeToggle(newValue: boolean): boolean {
+        const pendingState = this.deferredService.getPendingState();
+        pendingState.pivotMode = newValue;
+        this.deferredService.setPendingState(pendingState);
+        return true;
     }
 
     public getState(): ColumnToolPanelState {

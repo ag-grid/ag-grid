@@ -14,6 +14,9 @@ const PivotModePanelElement: ElementParams = {
 };
 export class PivotModePanel extends Component {
     private readonly cbPivotMode: GridCheckbox = RefPlaceholder;
+    constructor(private readonly onTogglePivotMode?: (newValue: boolean) => boolean) {
+        super();
+    }
 
     public postConstruct(): void {
         this.setTemplate(PivotModePanelElement, [AgToggleButtonSelector]);
@@ -28,6 +31,9 @@ export class PivotModePanel extends Component {
         const onBtPivotMode = () => {
             const newValue = !!cbPivotMode.getValue();
             if (newValue !== colModel.isPivotMode()) {
+                if (this.onTogglePivotMode?.(newValue)) {
+                    return;
+                }
                 gos.updateGridOptions({ options: { pivotMode: newValue }, source: 'toolPanelUi' as any });
                 for (const c of ctrlsSvc.getHeaderRowContainerCtrls()) {
                     c.refresh();
