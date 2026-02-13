@@ -1,4 +1,4 @@
-import type { ColDef, GridApi, SideBarDef } from 'ag-grid-community';
+import type { AgColumn, ColDef, GridApi, SideBarDef } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
@@ -48,7 +48,9 @@ describe('Columns Tool Panel Deferred Apply Mode', () => {
         const gridDiv = getGridElement(gridApi)! as HTMLElement;
         const buttons = Array.from(gridDiv.querySelectorAll('button.ag-column-panel-buttons-button'));
         const applyButton = buttons.find((button) => button.classList.contains('ag-column-panel-buttons-apply-button'));
-        const cancelButton = buttons.find((button) => !button.classList.contains('ag-column-panel-buttons-apply-button'));
+        const cancelButton = buttons.find(
+            (button) => !button.classList.contains('ag-column-panel-buttons-apply-button')
+        );
 
         if (!applyButton || !cancelButton) {
             throw new Error('Expected Apply and Cancel buttons to be rendered in the column tool panel');
@@ -377,7 +379,11 @@ describe('Columns Tool Panel Deferred Apply Mode', () => {
             pivotMode: false,
         });
 
-        const getColumnOrder = () => gridApi.getAllDisplayedColumns().slice(0, 3).map((col) => col.getColId());
+        const getColumnOrder = () =>
+            gridApi
+                .getAllDisplayedColumns()
+                .slice(0, 3)
+                .map((col) => col.getColId());
         expect(getColumnOrder()).toEqual(['athlete', 'age', 'country']);
         expect(getButtons(gridApi).applyButton.disabled).toBe(true);
 
@@ -391,7 +397,7 @@ describe('Columns Tool Panel Deferred Apply Mode', () => {
         }
 
         // Move athlete below age through the same move utility used by the CTP.
-        moveItem(primaryColsListPanel.beans, [athleteCol], {
+        moveItem(primaryColsListPanel.beans, [athleteCol as AgColumn], {
             component: { column: ageCol } as any,
             position: 'bottom',
             rowIndex: 1,
