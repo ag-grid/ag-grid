@@ -27,7 +27,7 @@
         "breakingChangesNotes": null,
         "documentationUrl": null
     },
-        {
+    {
         "key": "AG-5829",
         "issueType": "Bug",
         "manualEntry": true,
@@ -38,7 +38,7 @@
         "features": null,
         "moreInformation": null,
         "deprecationNotes": null,
-        "breakingChangesNotes": null, 
+        "breakingChangesNotes": null,
         "documentationUrl": null
     },
     {
