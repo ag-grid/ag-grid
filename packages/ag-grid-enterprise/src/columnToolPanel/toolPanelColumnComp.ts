@@ -163,7 +163,13 @@ export class ToolPanelColumnComp extends Component {
             return;
         }
 
-        const contextMenu = this.createBean(new ToolPanelContextMenu(column, e, this.focusWrapper));
+        const contextMenu = this.createBean(
+            new ToolPanelContextMenu(column, e, this.focusWrapper, {
+                getToolPanelPivotMode: this.params.getToolPanelPivotMode,
+                onDeferredPivotColumnStateUpdate: this.params.onDeferredPivotColumnStateUpdate,
+                getToolPanelColumnFunctionState: this.params.getToolPanelColumnFunctionState,
+            })
+        );
         this.addDestroyFunc(() => {
             if (contextMenu.isAlive()) {
                 this.destroyBean(contextMenu);
@@ -297,13 +303,17 @@ export class ToolPanelColumnComp extends Component {
     private onColumnStateChanged(): void {
         this.processingColumnStateChange = true;
         const isPivotMode = this.params.getToolPanelPivotMode?.() ?? this.beans.colModel.isPivotMode();
+        const isColumnChecked = this.params.isColumnCheckedInToolPanel
+            ? this.params.isColumnCheckedInToolPanel(this.column, isPivotMode)
+            : isPivotMode
+              ? this.column.isAnyFunctionActive()
+              : this.column.isVisible();
         if (isPivotMode) {
             // if reducing, checkbox means column is one of pivot, value or group
-            const anyFunctionActive = this.column.isAnyFunctionActive();
-            this.cbSelect.setValue(anyFunctionActive);
+            this.cbSelect.setValue(isColumnChecked);
         } else {
             // if not reducing, the checkbox tells us if column is visible or not
-            this.cbSelect.setValue(this.column.isVisible());
+            this.cbSelect.setValue(isColumnChecked);
         }
 
         let canBeToggled = true;

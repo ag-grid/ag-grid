@@ -591,13 +591,17 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 if (noPivotModeOptionsAllowed) {
                     return;
                 }
-                checked = column.isValueActive() || column.isPivotActive() || column.isRowGroupActive();
+                checked = this.params.isColumnCheckedInToolPanel
+                    ? this.params.isColumnCheckedInToolPanel(column, pivotMode)
+                    : column.isValueActive() || column.isPivotActive() || column.isRowGroupActive();
             } else {
                 if (colDef.lockVisible) {
                     return;
                 }
 
-                checked = column.isVisible();
+                checked = this.params.isColumnCheckedInToolPanel
+                    ? this.params.isColumnCheckedInToolPanel(column, pivotMode)
+                    : column.isVisible();
             }
 
             if (checked) {

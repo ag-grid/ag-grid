@@ -14,7 +14,10 @@ const PivotModePanelElement: ElementParams = {
 };
 export class PivotModePanel extends Component {
     private readonly cbPivotMode: GridCheckbox = RefPlaceholder;
-    constructor(private readonly onTogglePivotMode?: (newValue: boolean) => boolean) {
+    constructor(
+        private readonly onTogglePivotMode?: (newValue: boolean) => boolean,
+        private readonly getPivotMode?: () => boolean
+    ) {
         super();
     }
 
@@ -23,14 +26,15 @@ export class PivotModePanel extends Component {
 
         const cbPivotMode = this.cbPivotMode;
         const { colModel, ctrlsSvc, gos } = this.beans;
+        const getPivotMode = () => this.getPivotMode?.() ?? colModel.isPivotMode();
 
-        cbPivotMode.setValue(colModel.isPivotMode());
+        cbPivotMode.setValue(getPivotMode());
         const localeTextFunc = this.getLocaleTextFunc();
         cbPivotMode.setLabel(localeTextFunc('pivotMode', 'Pivot Mode'));
 
         const onBtPivotMode = () => {
             const newValue = !!cbPivotMode.getValue();
-            if (newValue !== colModel.isPivotMode()) {
+            if (newValue !== getPivotMode()) {
                 if (this.onTogglePivotMode?.(newValue)) {
                     return;
                 }
@@ -42,7 +46,7 @@ export class PivotModePanel extends Component {
         };
 
         const onPivotModeChanged = () => {
-            const pivotModeActive = colModel.isPivotMode();
+            const pivotModeActive = getPivotMode();
             cbPivotMode.setValue(pivotModeActive);
         };
 

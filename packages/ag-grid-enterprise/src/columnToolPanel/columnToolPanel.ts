@@ -28,6 +28,12 @@ export interface ToolPanelColumnCompParams<TData = any, TContext = any>
     onDeferredPivotColumnStateUpdate?: (stateItems: ColumnState[]) => void;
     onDeferredVisibilityColumnStateUpdate?: (stateItems: ColumnState[]) => void;
     getToolPanelPivotMode?: () => boolean;
+    isColumnCheckedInToolPanel?: (column: AgColumn, pivotMode: boolean) => boolean;
+    getToolPanelColumnFunctionState?: (column: AgColumn) => {
+        rowGroup: boolean;
+        pivot: boolean;
+        value: boolean;
+    };
 }
 
 export class ColumnToolPanel extends Component implements IColumnToolPanel, IToolPanelComp {
@@ -87,6 +93,8 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             this.params.onDeferredPivotColumnStateUpdate = this.onDeferredPivotColumnStateUpdate.bind(this);
             this.params.onDeferredVisibilityColumnStateUpdate = this.onDeferredVisibilityColumnStateUpdate.bind(this);
             this.params.getToolPanelPivotMode = this.getToolPanelPivotMode.bind(this);
+            this.params.isColumnCheckedInToolPanel = this.isColumnCheckedInToolPanel.bind(this);
+            this.params.getToolPanelColumnFunctionState = this.getToolPanelColumnFunctionState.bind(this);
         }
 
         const { childDestroyFuncs, colToolPanelFactory, gos } = this;
@@ -100,7 +108,8 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
                 ? colToolPanelFactory.createPivotModePanelWithToggleHandler(
                       this,
                       childDestroyFuncs,
-                      onTogglePivotMode
+                      onTogglePivotMode,
+                      this.getToolPanelPivotMode.bind(this)
                   )
                 : colToolPanelFactory.createPivotModePanel(this, childDestroyFuncs);
         }
@@ -192,6 +201,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
                       this,
                       this.childDestroyFuncs,
                       this.onDeferredPivotModeToggle.bind(this),
+                      this.getToolPanelPivotMode.bind(this),
                       true
                   )
                 : colToolPanelFactory.createPivotModePanel.bind(colToolPanelFactory, this, this.childDestroyFuncs, true)
@@ -375,22 +385,26 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
     private onDeferredPivotColumnStateUpdate(stateItems: ColumnState[]): void {
         this.deferredService.applyPivotColumnStateToPending(stateItems);
+        this.primaryColsPanel?.syncLayoutWithGrid();
         this.refreshDeferredButtonsState();
     }
 
     private onDeferredVisibilityColumnStateUpdate(stateItems: ColumnState[]): void {
         this.deferredService.applyVisibilityColumnStateToPending(stateItems);
+        this.primaryColsPanel?.syncLayoutWithGrid();
         this.refreshDeferredButtonsState();
     }
 
     private onDeferredRowGroupColumnsUpdate(columns: AgColumn[]): boolean {
         this.deferredService.setPendingRowGroupColumns(columns.map((column) => column.getColId()));
+        this.primaryColsPanel?.syncLayoutWithGrid();
         this.refreshDeferredButtonsState();
         return true;
     }
 
     private onDeferredPivotColumnsUpdate(columns: AgColumn[]): boolean {
         this.deferredService.setPendingPivotColumns(columns.map((column) => column.getColId()));
+        this.primaryColsPanel?.syncLayoutWithGrid();
         this.refreshDeferredButtonsState();
         return true;
     }
@@ -405,6 +419,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
                 aggFunc: pendingAggFuncMap.get(column.getColId()) ?? column.getAggFunc() ?? null,
             }))
         );
+        this.primaryColsPanel?.syncLayoutWithGrid();
         this.refreshDeferredButtonsState();
         return true;
     }
@@ -460,6 +475,44 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
     private getToolPanelPivotMode(): boolean {
         return this.params.deferApply ? this.deferredService.getPendingState().pivotMode : this.beans.colModel.isPivotMode();
+    }
+
+    private isColumnCheckedInToolPanel(column: AgColumn, pivotMode: boolean): boolean {
+        if (!this.params.deferApply) {
+            if (pivotMode) {
+                return column.isPivotActive() || column.isRowGroupActive() || column.isValueActive();
+            }
+            return column.isVisible();
+        }
+
+        const pendingState = this.deferredService.getPendingState();
+        const colId = column.getColId();
+        if (pivotMode) {
+            return (
+                pendingState.pivotColIds.includes(colId) ||
+                pendingState.rowGroupColIds.includes(colId) ||
+                pendingState.valueCols.some((valueCol) => valueCol.colId === colId)
+            );
+        }
+        return pendingState.visibleColIds.includes(colId);
+    }
+
+    private getToolPanelColumnFunctionState(column: AgColumn): { rowGroup: boolean; pivot: boolean; value: boolean } {
+        if (!this.params.deferApply) {
+            return {
+                rowGroup: column.isRowGroupActive(),
+                pivot: column.isPivotActive(),
+                value: column.isValueActive(),
+            };
+        }
+
+        const pendingState = this.deferredService.getPendingState();
+        const colId = column.getColId();
+        return {
+            rowGroup: pendingState.rowGroupColIds.includes(colId),
+            pivot: pendingState.pivotColIds.includes(colId),
+            value: pendingState.valueCols.some((valueCol) => valueCol.colId === colId),
+        };
     }
 
     private initDeferredButtonsIfNeeded(): void {

@@ -184,6 +184,36 @@ describe('Columns Tool Panel Deferred Apply Mode', () => {
         expect(getButtons(gridApi).applyButton.disabled).toBe(true);
     });
 
+    test('select all checkbox controls checkbox state and stages changes in deferred mode', async () => {
+        const gridApi = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            sideBar,
+            pivotMode: false,
+        });
+
+        const toolPanel = getToolPanel(gridApi);
+        const primaryColsPanel = toolPanel.primaryColsPanel as any;
+        const primaryColsListPanel = primaryColsPanel.primaryColsListPanel as any;
+        const primaryColsHeaderPanel = primaryColsPanel.primaryColsHeaderPanel as any;
+
+        expect(gridApi.getColumn('athlete')!.isVisible()).toBe(true);
+        expect(gridApi.getColumn('age')!.isVisible()).toBe(true);
+        expect(gridApi.getColumn('country')!.isVisible()).toBe(true);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
+
+        primaryColsListPanel.doSetSelectedAll(false);
+        await asyncSetTimeout(1);
+
+        // Header and child checkbox state are updated...
+        expect(primaryColsHeaderPanel.eSelect.getValue()).toBe(false);
+        // ...but applied grid visibility is unchanged until an explicit deferred action is staged and applied.
+        expect(gridApi.getColumn('athlete')!.isVisible()).toBe(true);
+        expect(gridApi.getColumn('age')!.isVisible()).toBe(true);
+        expect(gridApi.getColumn('country')!.isVisible()).toBe(true);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(false);
+    });
+
     test('does not apply value aggregation function change until Apply is clicked', async () => {
         const gridApi = await gridMgr.createGridAndWait('myGrid', {
             columnDefs,

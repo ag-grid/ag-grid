@@ -189,7 +189,13 @@ export class ToolPanelColumnGroupComp extends Component {
             return;
         }
 
-        const contextMenu = this.createBean(new ToolPanelContextMenu(columnGroup, e, this.focusWrapper));
+        const contextMenu = this.createBean(
+            new ToolPanelContextMenu(columnGroup, e, this.focusWrapper, {
+                getToolPanelPivotMode: this.params.getToolPanelPivotMode,
+                onDeferredPivotColumnStateUpdate: this.params.onDeferredPivotColumnStateUpdate,
+                getToolPanelColumnFunctionState: this.params.getToolPanelColumnFunctionState,
+            })
+        );
         this.addDestroyFunc(() => {
             if (contextMenu.isAlive()) {
                 this.destroyBean(contextMenu);
@@ -418,6 +424,11 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private isColumnChecked(column: AgColumn, pivotMode: boolean): boolean {
+        const checkedInToolPanel = this.params.isColumnCheckedInToolPanel?.(column, pivotMode);
+        if (checkedInToolPanel != null) {
+            return checkedInToolPanel;
+        }
+
         if (pivotMode) {
             const pivoted = column.isPivotActive();
             const grouped = column.isRowGroupActive();
