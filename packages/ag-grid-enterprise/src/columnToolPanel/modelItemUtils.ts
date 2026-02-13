@@ -9,7 +9,8 @@ export function selectAllChildren(
     selectAllChecked: boolean,
     eventType: ColumnEventType,
     onDeferredPivotColumnStateUpdate?: (stateItems: ColumnState[]) => void,
-    onDeferredVisibilityColumnStateUpdate?: (stateItems: ColumnState[]) => void
+    onDeferredVisibilityColumnStateUpdate?: (stateItems: ColumnState[]) => void,
+    pivotModeOverride?: boolean
 ): void {
     const cols = extractAllLeafColumns(colTree);
     setAllColumns(
@@ -18,7 +19,8 @@ export function selectAllChildren(
         selectAllChecked,
         eventType,
         onDeferredPivotColumnStateUpdate,
-        onDeferredVisibilityColumnStateUpdate
+        onDeferredVisibilityColumnStateUpdate,
+        pivotModeOverride
     );
 }
 
@@ -28,9 +30,10 @@ export function setAllColumns(
     selectAllChecked: boolean,
     eventType: ColumnEventType,
     onDeferredPivotColumnStateUpdate?: (stateItems: ColumnState[]) => void,
-    onDeferredVisibilityColumnStateUpdate?: (stateItems: ColumnState[]) => void
+    onDeferredVisibilityColumnStateUpdate?: (stateItems: ColumnState[]) => void,
+    pivotModeOverride?: boolean
 ): void {
-    if (beans.colModel.isPivotMode()) {
+    if (pivotModeOverride ?? beans.colModel.isPivotMode()) {
         setAllPivot(beans, cols, selectAllChecked, eventType, onDeferredPivotColumnStateUpdate);
     } else {
         setAllVisible(beans, cols, selectAllChecked, eventType, onDeferredVisibilityColumnStateUpdate);

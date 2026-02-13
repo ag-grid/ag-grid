@@ -27,6 +27,7 @@ export interface ToolPanelColumnCompParams<TData = any, TContext = any>
         IToolPanelColumnCompParams {
     onDeferredPivotColumnStateUpdate?: (stateItems: ColumnState[]) => void;
     onDeferredVisibilityColumnStateUpdate?: (stateItems: ColumnState[]) => void;
+    getToolPanelPivotMode?: () => boolean;
 }
 
 export class ColumnToolPanel extends Component implements IColumnToolPanel, IToolPanelComp {
@@ -85,6 +86,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             this.deferredService.initialiseFromApplied(this.getCurrentStateForDeferredMode());
             this.params.onDeferredPivotColumnStateUpdate = this.onDeferredPivotColumnStateUpdate.bind(this);
             this.params.onDeferredVisibilityColumnStateUpdate = this.onDeferredVisibilityColumnStateUpdate.bind(this);
+            this.params.getToolPanelPivotMode = this.getToolPanelPivotMode.bind(this);
         }
 
         const { childDestroyFuncs, colToolPanelFactory, gos } = this;
@@ -160,12 +162,12 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
         if (mergedParams.deferApply) {
             const [deferredSyncListener] = this.addManagedEventListeners({
-                newColumnsLoaded: () => {
-                    if (!this.deferredService.hasPendingChanges()) {
-                        this.deferredService.reconcileFromApplied(this.getCurrentStateForDeferredMode());
-                        this.refreshDeferredButtonsState();
-                    }
-                },
+                newColumnsLoaded: this.syncDeferredFromAppliedIfNoPending.bind(this),
+                columnPivotModeChanged: this.syncDeferredFromAppliedIfNoPending.bind(this),
+                columnRowGroupChanged: this.syncDeferredFromAppliedIfNoPending.bind(this),
+                columnPivotChanged: this.syncDeferredFromAppliedIfNoPending.bind(this),
+                columnValueChanged: this.syncDeferredFromAppliedIfNoPending.bind(this),
+                columnVisible: this.syncDeferredFromAppliedIfNoPending.bind(this),
             });
             childDestroyFuncs.push(() => deferredSyncListener());
         }
@@ -366,6 +368,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         const pendingState = this.deferredService.getPendingState();
         pendingState.pivotMode = newValue;
         this.deferredService.setPendingState(pendingState);
+        this.primaryColsPanel?.syncLayoutWithGrid();
         this.refreshDeferredButtonsState();
         return true;
     }
@@ -445,6 +448,18 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         return colIds
             .map((colId) => colModel.getColDefCol(colId))
             .filter((column): column is AgColumn => !!column);
+    }
+
+    private syncDeferredFromAppliedIfNoPending(): void {
+        if (this.deferredService.hasPendingChanges()) {
+            return;
+        }
+        this.deferredService.reconcileFromApplied(this.getCurrentStateForDeferredMode());
+        this.refreshDeferredButtonsState();
+    }
+
+    private getToolPanelPivotMode(): boolean {
+        return this.params.deferApply ? this.deferredService.getPendingState().pivotMode : this.beans.colModel.isPivotMode();
     }
 
     private initDeferredButtonsIfNeeded(): void {
