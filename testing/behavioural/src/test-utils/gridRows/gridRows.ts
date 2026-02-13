@@ -4,37 +4,23 @@ import { expect } from 'vitest';
 import type { Column, GridApi, IRowNode, RowNode } from 'ag-grid-community';
 
 import { log, unindentText } from '../utils';
-import { GridRowsDiagramTree } from './gridRowsDiagramTree';
-import { GridRowsErrors } from './gridRowsErrors';
-import { GridRowsDomValidator } from './validation/gridRowsDomValidator';
-import { GridRowsValidator } from './validation/gridRowsValidator';
+import { addDiagramToError, collectGridRows } from './grid-rows-helpers';
+import type { GridRowsOptions } from './gridRowsOptions';
+import { GridRowsDiagramTree } from './rows-diagram/gridRowsDiagramTree';
+import { GridRowsDomValidator } from './rows-validation-dom/gridRowsDomValidator';
+import type { GridRowsBugs } from './rows-validation/bugs';
+import { gridRowsBugs } from './rows-validation/bugs';
+import { GridRowsErrors } from './rows-validation/gridRowsErrors';
+import { GridRowsValidator } from './rows-validation/gridRowsValidator';
 
-export interface GridRowsOptions {
-    /** If true, the DOM will be checked as well. Default is true. */
-    checkDom?: boolean;
-
-    /**
-     * Columns to include when making the diagram. If true, or undefined, all columns will be included.
-     * If an array, it must contain the id of the columns to include. Default is false, no columns.
-     * Default is true. There is usually no need to defined this and can be useful only if you have way too many columns.
-     */
-    forcedColumns?: (string | Column)[] | boolean;
-
-    /** If true, the diagram will show hidden rows, like the children of collapsed groups, also if they do not appear in the displayed rows. Default is true */
-    printHiddenRows?: boolean;
-
-    /** Forces treeData to be checked as true or false. There is usually no need to set this. */
-    forcedTreeData?: boolean;
-
-    /** Adds data field values to the snapshot, e.g. ['group'] -> data.group:"value" */
-    nodeDataProps?: string[];
-
-    /** If set to false, the formatter gets disabled when printing the rows. Default is true. */
-    useFormatter?: boolean;
-}
+export type { GridRowsDomCellValidatorParams, GridRowsDomRowValidatorParams, GridRowsOptions } from './gridRowsOptions';
+export type { GridRowsBugs } from './rows-validation/bugs';
+export type { GridRowsErrorFilter } from './rows-validation/gridRowErrors';
+export type { GridRowErrors } from './rows-validation/gridRowErrors';
 
 export class GridRows<TData = any> {
     public readonly api: GridApi<TData>;
+    public readonly bugs: Readonly<GridRowsBugs>;
     public readonly treeData: boolean;
     public readonly rowNodes: RowNode<TData>[];
     public readonly displayedRows: RowNode<TData>[];
@@ -62,77 +48,23 @@ export class GridRows<TData = any> {
         errors?: GridRowsErrors<TData>
     ) {
         this.api = api;
+        this.bugs = options.bugs ? { ...gridRowsBugs, ...options.bugs } : gridRowsBugs;
         errors ??= new GridRowsErrors<TData>();
+        if (options.onError) {
+            errors.errorFilter = options.onError;
+        }
         this.errors = errors;
         this.treeData = options.forcedTreeData ?? !!api.getGridOption('treeData');
-        const rowNodes: RowNode<TData>[] = [];
-        const displayedRows: RowNode<TData>[] = [];
-        const rootNodesSet = new Set<RowNode<TData>>();
-        const detailGridRows = new Map<IRowNode<TData> | GridApi, GridRows<any>>();
-        this.#detailGridRows = detailGridRows;
-        const trackRoot = (row: RowNode<TData>) => {
-            const parent = row.parent;
-            if (parent && !parent.parent) {
-                rootNodesSet.add(parent);
-            }
-        };
 
-        api.forEachNode((row: RowNode) => {
-            rowNodes.push(row);
-            trackRoot(row);
-        });
-        this.rowNodes = rowNodes;
-        this.displayedRows = displayedRows;
-        for (let i = 0, len = api.getDisplayedRowCount(); i < len; ++i) {
-            const row = api.getDisplayedRowAtIndex(i) as RowNode<TData> | undefined;
-            if (row) {
-                displayedRows.push(row);
-                if (row.detail) {
-                    const api = row.detailGridInfo?.api;
-                    if (api && !detailGridRows.has(api)) {
-                        const detailGridRow = new GridRows(
-                            api,
-                            label,
-                            {
-                                ...options,
-                                forcedColumns: options.forcedColumns ?? true,
-                            },
-                            errors
-                        );
-                        detailGridRows.set(row, detailGridRow);
-                        detailGridRows.set(api, detailGridRow);
-                    }
-                }
-                trackRoot(row);
-            }
-        }
-        this.rootRowNodes = Array.from(rootNodesSet);
-        this.rootRowNode = this.rootRowNodes[0] ?? null;
+        const collected = collectGridRows(api, label, options, errors, GridRows);
+        this.rowNodes = collected.rowNodes;
+        this.displayedRows = collected.displayedRows;
+        this.rootRowNodes = collected.rootRowNodes;
+        this.rootRowNode = collected.rootRowNodes[0] ?? null;
         this.rootAllLeafChildren = this.rootRowNode?.allLeafChildren ?? [];
-
-        const { pinnedTopRows, pinnedBottomRows } = this.#collectPinnedRows();
-        this.pinnedTopRows = pinnedTopRows;
-        this.pinnedBottomRows = pinnedBottomRows;
-    }
-
-    #collectPinnedRows(): { pinnedTopRows: RowNode<TData>[]; pinnedBottomRows: RowNode<TData>[] } {
-        if (!this.api.isModuleRegistered('PinnedRowModule')) {
-            return { pinnedTopRows: [], pinnedBottomRows: [] };
-        }
-        const collect = (count: number, getter: (i: number) => any): RowNode<TData>[] => {
-            const rows: RowNode<TData>[] = [];
-            for (let i = 0; i < count; ++i) {
-                const row = getter(i);
-                if (row) {
-                    rows.push(row);
-                }
-            }
-            return rows;
-        };
-        return {
-            pinnedTopRows: collect(this.api.getPinnedTopRowCount(), (i) => this.api.getPinnedTopRow(i)),
-            pinnedBottomRows: collect(this.api.getPinnedBottomRowCount(), (i) => this.api.getPinnedBottomRow(i)),
-        };
+        this.pinnedTopRows = collected.pinnedTopRows;
+        this.pinnedBottomRows = collected.pinnedBottomRows;
+        this.#detailGridRows = collected.detailGridRows;
     }
 
     public getDetailGridRows(row: IRowNode<TData> | GridApi | null | undefined): GridRows<any> | undefined {
@@ -184,14 +116,11 @@ export class GridRows<TData = any> {
     }
 
     public makeDiagram(printErrors = false): string {
-        let columns: Column[] | null = null;
         const optionsColumns = this.options.forcedColumns ?? true;
-        if (optionsColumns) {
-            columns = this.api.getAllGridColumns();
-            if (Array.isArray(optionsColumns)) {
-                const set = new Set(optionsColumns);
-                columns = columns.filter((column) => set.has(column) || set.has(column.getColId()));
-            }
+        let columns: Column[] | null = optionsColumns ? this.api.getAllGridColumns() : null;
+        if (columns && Array.isArray(optionsColumns)) {
+            const set = new Set(optionsColumns);
+            columns = columns.filter((column) => set.has(column) || set.has(column.getColId()));
         }
         if (printErrors) {
             this.loadErrors();
@@ -215,19 +144,22 @@ export class GridRows<TData = any> {
         }
         if (diagramSnapshot === true) {
             this.printDiagram();
-        } else if (diagramSnapshot !== undefined) {
-            const diagram = this.makeDiagram(false);
-            try {
-                if (diagramSnapshot === 'empty') {
-                    expect(this.displayedRows.length).toBe(0);
-                } else {
-                    expect(unindentText(diagram)).toEqual(unindentText(diagramSnapshot));
-                }
-            } catch (e: any) {
-                addDiagramToError(e, diagram, this.label);
-                Error.captureStackTrace(e, this.check);
-                throw e;
+            return this;
+        }
+        if (diagramSnapshot === undefined) {
+            return this;
+        }
+        const diagram = this.makeDiagram(false);
+        try {
+            if (diagramSnapshot === 'empty') {
+                expect(this.displayedRows.length).toBe(0);
+            } else {
+                expect(unindentText(diagram)).toEqual(unindentText(diagramSnapshot));
             }
+        } catch (e: any) {
+            addDiagramToError(e, diagram, this.label);
+            Error.captureStackTrace(e, this.check);
+            throw e;
         }
         return this;
     }
@@ -268,31 +200,5 @@ export class GridRows<TData = any> {
         addDiagramToError(error, diagram, this.label);
         Error.captureStackTrace(error, callerFn);
         return error;
-    }
-}
-
-/** This is used to add the diagram to print to a vitest assertion error. */
-function addDiagramToError(error: any, diagram: string | null | undefined, label: string | null | undefined): void {
-    if (typeof error !== 'object' || error === null) {
-        return;
-    }
-
-    const diagramText = (label ? '\n⬢ ' + label : '') + (diagram ? '\n\n' + diagram : '');
-    error.message = (error.message ?? '') + diagramText;
-
-    if (typeof error.toJSON === 'function') {
-        const oldToJSON = error.toJSON;
-        Reflect.defineProperty(error, 'toJSON', {
-            value: function (this: any, ...args: any[]) {
-                const json = oldToJSON.call(this, ...args);
-                if (typeof json === 'object' && json !== null && typeof json.diff === 'string') {
-                    json.diff += diagramText;
-                }
-                return json;
-            },
-            configurable: true,
-            writable: true,
-            enumerable: false,
-        });
     }
 }

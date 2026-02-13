@@ -1,7 +1,7 @@
 import type { GridApi, IRowNode, RowDataTransaction, RowNode, RowNodeTransaction } from 'ag-grid-community';
 
 import { GridRows } from './gridRows/gridRows';
-import { GridRowsDiagramTree } from './gridRows/gridRowsDiagramTree';
+import { GridRowsDiagramTree } from './gridRows/rows-diagram/gridRowsDiagramTree';
 
 export function optionalEscapeString(s: string): string {
     return /^(?!\d)\w[._-\w]*$|^\d+$/.test(s) ? s : JSON.stringify(s);

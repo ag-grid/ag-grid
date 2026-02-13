@@ -1,0 +1,270 @@
+import type { Column, GridApi, RowNode } from 'ag-grid-community';
+
+import type { GridRows } from '../gridRows';
+import type { GridRowErrors } from '../rows-validation/gridRowErrors';
+import {
+    AUTO_GROUP_COL_ID,
+    cellValueMismatchMsg,
+    combineGroupValue,
+    findCellElement,
+    findGroupRowsWrapper,
+    getGroupRowsActualText,
+    hasSuppressCount,
+    isAutoGroupColumn,
+} from './cell-helpers';
+
+/** Validates cell-level DOM content for a single row against the grid model. */
+export class GridRowDomCellValidator {
+    private readonly api: GridApi;
+    private readonly columns: Column[];
+    private readonly isGroupRowsDisplay: boolean;
+    private readonly autoGroupColumn?: Column;
+
+    public constructor(private readonly gridRows: GridRows) {
+        const api = gridRows.api;
+        this.api = api;
+        this.columns = api.getAllGridColumns() ?? [];
+        this.isGroupRowsDisplay = api.getGridOption('groupDisplayType') === 'groupRows';
+        this.autoGroupColumn = this.lookupAutoGroupColumn();
+    }
+
+    public validateRow(row: RowNode<any>, rowElements: HTMLElement[]): void {
+        const rowErrors = this.gridRows.errors.get(row);
+
+        if (row.detail) {
+            return;
+        }
+
+        if (this.isGroupRowsDisplay && row.group) {
+            this.validateGroupRow(row, rowElements, rowErrors);
+            return;
+        }
+
+        for (const column of this.columns) {
+            this.validateCell(row, column, rowElements, rowErrors);
+        }
+    }
+
+    private validateGroupRow(row: RowNode<any>, rowElements: HTMLElement[], rowErrors: GridRowErrors<any>): void {
+        const wrapper = findGroupRowsWrapper(rowElements);
+        rowErrors.add(!wrapper && 'Missing groupRows cell wrapper for full-width group row');
+        if (!wrapper) {
+            return;
+        }
+
+        const expected = this.autoGroupColumn
+            ? this.getExpectedGroupTextFromColumn(row, this.autoGroupColumn)
+            : this.getGroupRowFallbackText(row);
+        const actual = getGroupRowsActualText(wrapper);
+
+        rowErrors.add(
+            expected !== actual &&
+                `HTML groupRows value mismatch, expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`
+        );
+    }
+
+    private validateCell(
+        row: RowNode<any>,
+        column: Column<any>,
+        rowElements: HTMLElement[],
+        rowErrors: GridRowErrors<any>
+    ): void {
+        const columnId = column.getColId();
+        const cellElement = findCellElement(rowElements, columnId);
+
+        rowErrors.add(
+            !cellElement &&
+                this.shouldReportMissingCell(row, column) &&
+                `Missing cell element for column id:"${columnId}"`
+        );
+        if (!cellElement) {
+            return;
+        }
+
+        // If a custom domCellValidator callback is provided and returns false, skip default validation for this cell
+        if (this.gridRows.options.domCellValidator?.({ row, column, cellElement, rowErrors }) === false) {
+            return;
+        }
+
+        if (this.validateCheckboxCell(cellElement, row, column, rowErrors)) {
+            return;
+        }
+
+        const textContent = cellElement.textContent?.trim() ?? '';
+        if (!textContent && isAutoGroupColumn(columnId)) {
+            return;
+        }
+
+        const cellValue = this.api.getCellValue({ rowNode: row, colKey: column, useFormatter: true });
+        const stringCellValue = cellValue != null ? String(cellValue).trim() : '';
+        const colDef = column.getColDef();
+        const cellRenderer = colDef?.cellRenderer;
+        const isGroupCol = (!cellRenderer && isAutoGroupColumn(columnId)) || cellRenderer === 'agGroupCellRenderer';
+
+        if (isGroupCol) {
+            const childCountText = this.getChildCountText(row, this.isGroupCountSuppressed(column, true));
+            if (textContent === childCountText || (cellValue === null && textContent === '')) {
+                return;
+            }
+            const expected = combineGroupValue(stringCellValue, childCountText);
+            this.reportGroupCellMismatch(rowErrors, columnId, expected, textContent);
+            return;
+        }
+
+        const hasGroupRendererDom = !!cellElement.querySelector('.ag-group-value');
+        if (hasGroupRendererDom || !!colDef.showRowGroup) {
+            const expected = this.getExpectedGroupCellText(row, column, stringCellValue);
+            if (expected !== undefined) {
+                this.reportGroupCellMismatch(rowErrors, columnId, expected, textContent);
+            }
+            return;
+        }
+
+        rowErrors.add(textContent !== stringCellValue && cellValueMismatchMsg(columnId, cellValue, textContent));
+    }
+
+    private reportGroupCellMismatch(
+        rowErrors: GridRowErrors<any>,
+        columnId: string,
+        expected: string,
+        actual: string
+    ): void {
+        rowErrors.add(
+            actual !== expected &&
+                !this.shouldIgnoreGroupMismatch(expected, actual) &&
+                cellValueMismatchMsg(columnId, expected, actual)
+        );
+    }
+
+    private shouldIgnoreGroupMismatch(expected: string, actual: string): boolean {
+        return !!this.api.getGridOption('groupHideOpenParents') && expected.endsWith(actual);
+    }
+
+    private shouldReportMissingCell(row: RowNode<any>, column: Column<any>): boolean {
+        if (!column.isVisible() || row.master) {
+            return false;
+        }
+
+        const columnId = column.getColId();
+        if (columnId === 'ag-Grid-SelectionColumn') {
+            return false;
+        }
+
+        return !column.getId().startsWith('pivot_');
+    }
+
+    private getExpectedGroupCellText(row: RowNode<any>, column: Column<any>, valueText: string): string | undefined {
+        const colDef = column.getColDef();
+
+        if (!valueText && colDef.showRowGroup) {
+            const groupKey = typeof colDef.showRowGroup === 'string' ? colDef.showRowGroup : column.getColId();
+            const groupDataValue = row.groupData?.[groupKey];
+            const fallback = row.key ?? '';
+            valueText = String(groupDataValue ?? fallback ?? '').trim();
+        }
+
+        if (!valueText) {
+            valueText = this.getBlankGroupLabel(row) ?? '';
+        }
+
+        const childCountText = this.getChildCountText(row, this.isGroupCountSuppressed(column, false));
+        if (valueText) {
+            return combineGroupValue(valueText, childCountText);
+        }
+        return childCountText;
+    }
+
+    private getExpectedGroupTextFromColumn(row: RowNode<any>, column: Column<any>): string {
+        const cellValue = this.api.getCellValue({ rowNode: row, colKey: column, useFormatter: true });
+        const stringCellValue = cellValue != null ? String(cellValue).trim() : '';
+        return this.getExpectedGroupCellText(row, column, stringCellValue) ?? '';
+    }
+
+    private getGroupRowFallbackText(row: RowNode<any>): string {
+        let valueText = String(row.key ?? '').trim();
+        if (!valueText) {
+            valueText = this.getBlankGroupLabel(row) ?? '';
+        }
+        const childCount = row.allChildrenCount ?? 0;
+        return combineGroupValue(valueText, childCount ? `(${childCount})` : '');
+    }
+
+    private isGroupCountSuppressed(column: Column<any>, isAutoGroupCol: boolean): boolean {
+        const result = hasSuppressCount(column.getColDef().cellRendererParams);
+        if (result !== undefined) {
+            return result;
+        }
+        if (!isAutoGroupCol) {
+            return false;
+        }
+        return hasSuppressCount(this.api.getGridOption('autoGroupColumnDef')?.cellRendererParams) ?? false;
+    }
+
+    private getChildCountText(row: RowNode<any>, suppressCount: boolean): string {
+        if (suppressCount || row.footer || String(row.id ?? '').startsWith('rowGroupFooter_')) {
+            return '';
+        }
+        const childCount = row.allChildrenCount ?? 0;
+        return childCount ? `(${childCount})` : '';
+    }
+
+    private getBlankGroupLabel(row: RowNode<any>): string | undefined {
+        const key = row.group ? row.key : undefined;
+        if (key === undefined || key === null) {
+            return row.group ? '(Blanks)' : undefined;
+        }
+        return String(key).trim() === '' ? '(Blanks)' : undefined;
+    }
+
+    private validateCheckboxCell(
+        cellElement: Element,
+        row: RowNode<any>,
+        column: Column<any>,
+        rowErrors: GridRowErrors<any>
+    ): boolean {
+        const columnId = column.getColId();
+        if (columnId === 'ag-Grid-SelectionColumn') {
+            return false;
+        }
+
+        const colDef = column.getColDef();
+        const usesCheckboxRenderer = colDef?.cellRenderer === 'agCheckboxCellRenderer';
+        const checkboxElement = cellElement.querySelector(
+            '.ag-checkbox-input-wrapper,[aria-checked],[role="checkbox"],.ag-checkbox'
+        );
+        if (!usesCheckboxRenderer && !checkboxElement) {
+            return false;
+        }
+
+        const cellValue = this.api.getCellValue({ rowNode: row, colKey: column });
+
+        if (!checkboxElement) {
+            return true;
+        }
+
+        const expectedAria =
+            cellValue === true ? 'true' : cellValue === false ? 'false' : cellValue == null ? 'mixed' : null;
+
+        if (expectedAria === null) {
+            return true;
+        }
+
+        const ariaSource = checkboxElement.hasAttribute('aria-checked')
+            ? checkboxElement
+            : checkboxElement.querySelector('[aria-checked]');
+        const ariaChecked = ariaSource?.getAttribute('aria-checked') ?? '';
+        rowErrors.add(
+            ariaChecked !== expectedAria &&
+                `HTML checkbox state mismatch for column id:"${columnId}", expected aria-checked=${expectedAria}, got ${ariaChecked}`
+        );
+
+        return true;
+    }
+
+    private lookupAutoGroupColumn(): Column | undefined {
+        return (
+            this.api.getColumn(AUTO_GROUP_COL_ID) ||
+            this.api.getAllGridColumns()?.find((col) => isAutoGroupColumn(col.getColId()))
+        );
+    }
+}
