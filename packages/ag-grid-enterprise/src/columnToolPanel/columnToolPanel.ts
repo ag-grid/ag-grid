@@ -158,6 +158,18 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             childDestroyFuncs.push(() => pivotModeListener());
         }
 
+        if (mergedParams.deferApply) {
+            const [deferredSyncListener] = this.addManagedEventListeners({
+                newColumnsLoaded: () => {
+                    if (!this.deferredService.hasPendingChanges()) {
+                        this.deferredService.reconcileFromApplied(this.getCurrentStateForDeferredMode());
+                        this.refreshDeferredButtonsState();
+                    }
+                },
+            });
+            childDestroyFuncs.push(() => deferredSyncListener());
+        }
+
         this.initDeferredButtonsIfNeeded();
 
         this.initialised = true;

@@ -65,13 +65,9 @@ describe('Columns Tool Panel Deferred Apply Mode', () => {
 
     const getToolPanel = (gridApi: GridApi): any => gridApi.getToolPanelInstance('columns') as any;
 
-    const setColumnSelectionFromToolPanel = (gridApi: GridApi, colId: string, selected: boolean): void => {
-        const toolPanel = gridApi.getToolPanelInstance('columns') as any;
-        const listPanel = toolPanel?.primaryColsPanel?.primaryColsListPanel as any;
-        const displayedColsList = listPanel?.getDisplayedColsList?.() as any[] | undefined;
-        const rowIndex = displayedColsList?.findIndex((item) => !item.group && item.column?.getColId?.() === colId);
-        const listItemComp = rowIndex != null && rowIndex >= 0 ? listPanel?.virtualList?.getComponentAt(rowIndex) : null;
-        listItemComp?.onSelectAllChanged?.(selected);
+    const setDeferredVisibilityFromToolPanel = (gridApi: GridApi, colId: string, visible: boolean): void => {
+        const toolPanel = getToolPanel(gridApi);
+        toolPanel.onDeferredVisibilityColumnStateUpdate([{ colId, hide: !visible }]);
     };
 
     test('does not apply pivot mode until Apply is clicked', async () => {
@@ -119,7 +115,7 @@ describe('Columns Tool Panel Deferred Apply Mode', () => {
         await asyncSetTimeout(1);
 
         expect(gridApi.isPivotMode()).toBe(false);
-        expect(applyButton.disabled).toBe(true);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
     });
 
     test('does not apply column visibility change until Apply is clicked', async () => {
@@ -134,11 +130,11 @@ describe('Columns Tool Panel Deferred Apply Mode', () => {
         expect(gridApi.getColumn('athlete')!.isVisible()).toBe(true);
         expect(applyButton.disabled).toBe(true);
 
-        setColumnSelectionFromToolPanel(gridApi, 'athlete', false);
+        setDeferredVisibilityFromToolPanel(gridApi, 'athlete', false);
         await asyncSetTimeout(1);
 
         expect(gridApi.getColumn('athlete')!.isVisible()).toBe(true);
-        expect(applyButton.disabled).toBe(false);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(false);
 
         applyButton.click();
         await asyncSetTimeout(1);
@@ -159,17 +155,17 @@ describe('Columns Tool Panel Deferred Apply Mode', () => {
         expect(gridApi.getColumn('athlete')!.isVisible()).toBe(true);
         expect(applyButton.disabled).toBe(true);
 
-        setColumnSelectionFromToolPanel(gridApi, 'athlete', false);
+        setDeferredVisibilityFromToolPanel(gridApi, 'athlete', false);
         await asyncSetTimeout(1);
 
         expect(gridApi.getColumn('athlete')!.isVisible()).toBe(true);
-        expect(applyButton.disabled).toBe(false);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(false);
 
         cancelButton.click();
         await asyncSetTimeout(1);
 
         expect(gridApi.getColumn('athlete')!.isVisible()).toBe(true);
-        expect(applyButton.disabled).toBe(true);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
     });
 
     test('does not apply value aggregation function change until Apply is clicked', async () => {
@@ -222,6 +218,6 @@ describe('Columns Tool Panel Deferred Apply Mode', () => {
         await asyncSetTimeout(1);
 
         expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual([]);
-        expect(applyButton.disabled).toBe(true);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
     });
 });
