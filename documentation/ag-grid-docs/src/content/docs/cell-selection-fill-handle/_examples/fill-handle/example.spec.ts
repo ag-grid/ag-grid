@@ -2,32 +2,19 @@ import { dragOverTo, expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.describe('Fill Handle', () => {
-        test.vanilla('Drag Fill', async ({ page, remoteGrid, agIdFor }) => {
-            test.skip(true, 'Skipping due to flakiness, to be re-enabled in future');
-            const remoteApi = remoteGrid(page, '1');
-
-            await remoteApi.updateGridOptions({
-                columnDefs: [
-                    {
-                        field: 'athlete',
-                        editable: true,
-                    },
-                ],
-                cellSelection: {
-                    handle: {
-                        mode: 'fill',
-                    },
-                },
-            });
-
+        test.eachFramework('should fill cells when dragging fill handle down', async ({ agIdFor }) => {
             const source = agIdFor.cell('0', 'athlete');
             const target = agIdFor.cell('1', 'athlete');
+
+            await expect(source).toHaveText('Natalie Coughlin');
+            await expect(target).toHaveText('Aleksey Nemov');
 
             await source.click();
 
             const fillHandle = agIdFor.fillHandle();
+            await expect(fillHandle).toBeVisible();
 
-            await source.locator(fillHandle).dragTo(target);
+            await dragOverTo(fillHandle, target);
 
             await expect(source).toHaveText('Natalie Coughlin');
             await expect(target).toHaveText('Natalie Coughlin');

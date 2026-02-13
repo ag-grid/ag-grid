@@ -433,13 +433,32 @@ const describe = test.describe;
 
 export { expect, describe, test };
 
-export async function dragOverTo(source: Locator, target: Locator) {
+export async function dragOverTo(
+    source: Locator,
+    target: Locator,
+    offsetPosition: 'bottomRight' | undefined = 'bottomRight'
+) {
     const { mouse } = source.page();
     await source.hover();
     await source.hover();
     await mouse.down();
-    await target.hover();
-    await target.hover();
+
+    let position = { x: 1, y: 1 };
+    if (offsetPosition === 'bottomRight') {
+        // Hover near the bottom right of the target cell to ensure we're in the cell's drop zone and not just near it which can cause issues with mouse events not firing
+        const box = await target.boundingBox();
+        position = {
+            x: box ? box.width - 10 : 0,
+            y: box ? box.height - 10 : 0,
+        };
+    }
+    await target.hover({
+        position,
+    });
+    await target.hover({
+        position,
+    });
+
     await mouse.up();
 }
 
