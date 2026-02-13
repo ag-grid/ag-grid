@@ -251,7 +251,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
         const expandedStates = this.getExpandedStates();
 
-        const pivotModeActive = this.colModel.isPivotMode();
+        const pivotModeActive = this.params.getToolPanelPivotMode?.() ?? this.colModel.isPivotMode();
         const shouldSyncColumnLayoutWithGrid = !params.suppressSyncLayoutWithGrid && !pivotModeActive;
 
         if (shouldSyncColumnLayoutWithGrid) {
@@ -555,14 +555,22 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     }
 
     public doSetSelectedAll(selectAllChecked: boolean): void {
-        selectAllChildren(this.beans, this.allColsTree, selectAllChecked, this.eventType);
+        selectAllChildren(
+            this.beans,
+            this.allColsTree,
+            selectAllChecked,
+            this.eventType,
+            this.params.onDeferredPivotColumnStateUpdate,
+            this.params.onDeferredVisibilityColumnStateUpdate,
+            this.params.getToolPanelPivotMode?.()
+        );
     }
 
     private getSelectionState(): boolean | undefined {
         let checkedCount = 0;
         let uncheckedCount = 0;
 
-        const pivotMode = this.colModel.isPivotMode();
+        const pivotMode = this.params.getToolPanelPivotMode?.() ?? this.colModel.isPivotMode();
 
         this.forEachItem((item) => {
             if (item.group) {

@@ -237,6 +237,41 @@ describe('Columns Tool Panel Deferred Apply Mode', () => {
         expect(getButtons(gridApi).applyButton.disabled).toBe(true);
     });
 
+    test('does not apply row group column reorder until Apply is clicked', async () => {
+        const gridApi = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            sideBar,
+            pivotMode: false,
+        });
+
+        gridApi.setRowGroupColumns(['athlete', 'age']);
+        await asyncSetTimeout(1);
+
+        expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['athlete', 'age']);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
+
+        const toolPanel = getToolPanel(gridApi);
+        const athleteCol = gridApi.getColumn('athlete');
+        const ageCol = gridApi.getColumn('age');
+        if (!athleteCol || !ageCol) {
+            throw new Error('Expected athlete and age columns to exist');
+        }
+
+        toolPanel.onDeferredRowGroupColumnsUpdate([ageCol, athleteCol]);
+        await asyncSetTimeout(1);
+
+        // Reorder is staged only while deferred mode is dirty.
+        expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['athlete', 'age']);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(false);
+
+        getButtons(gridApi).applyButton.click();
+        await asyncSetTimeout(1);
+
+        expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['age', 'athlete']);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
+    });
+
     test('applies combined deferred pivot, visibility and aggregation changes together', async () => {
         const gridApi = await gridMgr.createGridAndWait('myGrid', {
             columnDefs,

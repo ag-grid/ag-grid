@@ -340,7 +340,8 @@ export class ToolPanelColumnGroupComp extends Component {
             nextState,
             this.eventType,
             this.params.onDeferredPivotColumnStateUpdate,
-            this.params.onDeferredVisibilityColumnStateUpdate
+            this.params.onDeferredVisibilityColumnStateUpdate,
+            this.params.getToolPanelPivotMode?.()
         );
     }
 
@@ -374,7 +375,7 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private workOutSelectedValue(): boolean | undefined {
-        const pivotMode = this.beans.colModel.isPivotMode();
+        const pivotMode = this.params.getToolPanelPivotMode?.() ?? this.beans.colModel.isPivotMode();
 
         const visibleLeafColumns = this.getVisibleLeafColumns();
 
@@ -399,7 +400,7 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private workOutReadOnlyValue(): boolean {
-        const pivotMode = this.beans.colModel.isPivotMode();
+        const pivotMode = this.params.getToolPanelPivotMode?.() ?? this.beans.colModel.isPivotMode();
 
         let colsThatCanAction = 0;
 

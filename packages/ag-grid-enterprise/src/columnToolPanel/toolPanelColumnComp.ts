@@ -213,7 +213,8 @@ export class ToolPanelColumnComp extends Component {
             nextState,
             'toolPanelUi',
             this.params.onDeferredPivotColumnStateUpdate,
-            this.params.onDeferredVisibilityColumnStateUpdate
+            this.params.onDeferredVisibilityColumnStateUpdate,
+            this.params.getToolPanelPivotMode?.()
         );
     }
 
@@ -295,7 +296,7 @@ export class ToolPanelColumnComp extends Component {
 
     private onColumnStateChanged(): void {
         this.processingColumnStateChange = true;
-        const isPivotMode = this.beans.colModel.isPivotMode();
+        const isPivotMode = this.params.getToolPanelPivotMode?.() ?? this.beans.colModel.isPivotMode();
         if (isPivotMode) {
             // if reducing, checkbox means column is one of pivot, value or group
             const anyFunctionActive = this.column.isAnyFunctionActive();

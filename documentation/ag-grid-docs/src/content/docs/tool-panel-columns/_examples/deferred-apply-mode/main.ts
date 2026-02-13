@@ -1,13 +1,19 @@
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
-import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule, PivotModule } from 'ag-grid-enterprise';
+import type { ColDef, GridApi, GridOptions, IServerSideDatasource, IServerSideGetRowsRequest } from 'ag-grid-community';
+import { ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
+import {
+    ColumnMenuModule,
+    ColumnsToolPanelModule,
+    ContextMenuModule,
+    PivotModule,
+    ServerSideRowModelModule,
+} from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
     ColumnsToolPanelModule,
     ColumnMenuModule,
     ContextMenuModule,
     PivotModule,
+    ServerSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
@@ -31,6 +37,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
     },
+    rowModelType: 'serverSide',
     sideBar: {
         toolPanels: [
             {
@@ -55,5 +62,37 @@ document.addEventListener('DOMContentLoaded', function () {
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then((response) => response.json())
-        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
+        .then((data: IOlympicData[]) => {
+            const fakeServer = createFakeServer(data);
+            const datasource = createServerSideDatasource(fakeServer);
+            gridApi!.setGridOption('serverSideDatasource', datasource);
+        });
 });
+
+function createServerSideDatasource(server: { getData: (request: IServerSideGetRowsRequest) => any }): IServerSideDatasource {
+    return {
+        getRows: (params) => {
+            const response = server.getData(params.request);
+
+            setTimeout(() => {
+                if (response.success) {
+                    params.success({ rowData: response.rows });
+                } else {
+                    params.fail();
+                }
+            }, 200);
+        },
+    };
+}
+
+function createFakeServer(allData: IOlympicData[]) {
+    return {
+        getData: (request: IServerSideGetRowsRequest) => {
+            const requestedRows = allData.slice(request.startRow, request.endRow);
+            return {
+                success: true,
+                rows: requestedRows,
+            };
+        },
+    };
+}
