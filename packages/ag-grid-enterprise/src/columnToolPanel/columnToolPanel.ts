@@ -15,6 +15,8 @@ import type { RowGroupDropZonePanel } from '../rowGrouping/columnDropZones/rowGr
 import type { ValuesDropZonePanel } from '../rowGrouping/columnDropZones/valueDropZonePanel';
 import { AgPrimaryCols } from './agPrimaryCols';
 import { columnToolPanelCSS } from './columnToolPanel.css-GENERATED';
+import type { ColumnToolPanelDeferredState } from './columnToolPanelDeferredService';
+import { ColumnToolPanelDeferredService } from './columnToolPanelDeferredService';
 import type { ColumnToolPanelFactory } from './columnToolPanelFactory';
 import type { PivotModePanel } from './pivotModePanel';
 
@@ -34,6 +36,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     private valuesDropZonePanel?: ValuesDropZonePanel;
     private pivotDropZonePanel?: PivotDropZonePanel;
     private colToolPanelFactory?: ColumnToolPanelFactory;
+    private readonly deferredService = new ColumnToolPanelDeferredService();
 
     constructor() {
         super({ tag: 'div', cls: 'ag-column-panel' });
@@ -72,6 +75,9 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             ...params,
         };
         this.params = mergedParams;
+        if (mergedParams.deferApply) {
+            this.deferredService.initialiseFromApplied(this.getCurrentStateForDeferredMode());
+        }
 
         const { childDestroyFuncs, colToolPanelFactory, gos } = this;
 
@@ -249,7 +255,23 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     public refresh(params: ToolPanelColumnCompParams): boolean {
         this.destroyChildren();
         this.init(params);
+        if (this.params.deferApply) {
+            this.deferredService.reconcileFromApplied(this.getCurrentStateForDeferredMode());
+        }
         return true;
+    }
+
+    private getCurrentStateForDeferredMode(): ColumnToolPanelDeferredState {
+        const { colModel, rowGroupColsSvc, pivotColsSvc, valueColsSvc } = this.beans;
+        return {
+            pivotMode: colModel.isPivotMode(),
+            rowGroupColIds: rowGroupColsSvc?.columns.map((col) => col.getColId()) ?? [],
+            pivotColIds: pivotColsSvc?.columns.map((col) => col.getColId()) ?? [],
+            valueCols: (valueColsSvc?.columns ?? []).map((col) => ({
+                colId: col.getColId(),
+                aggFunc: col.getAggFunc(),
+            })),
+        };
     }
 
     public getState(): ColumnToolPanelState {
