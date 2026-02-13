@@ -8,7 +8,6 @@ describe('group order maintenance', () => {
         modules: [ClientSideRowModelModule, RowGroupingModule],
     });
 
-    beforeEach(() => gridsManager.reset());
     afterEach(() => gridsManager.reset());
 
     test('new group is appended at end when groupMaintainOrder is true', async () => {

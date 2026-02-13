@@ -63,7 +63,7 @@ export class TestGridsManager {
 
     /** Destroys all created grids, and eventually created html elements */
     public destroyAllGrids(): void {
-        for (const grid of this.getAllGrids()) {
+        for (const grid of this.gridsMap.values()) {
             grid.destroy();
         }
     }
@@ -106,10 +106,10 @@ export class TestGridsManager {
 
         ignoreConsoleLicenseKeyError();
 
-        let modules = unique(this.modulesToRegister ?? []).concat(params?.modules ?? []);
+        const modules = deduplicate([...(this.modulesToRegister ?? []), ...(params?.modules ?? [])]);
 
         if (this.includeDefaultModules) {
-            modules = modules.concat([AllCommunityModule, ServerSideRowModelApiModule]);
+            modules.push(AllCommunityModule, ServerSideRowModelApiModule);
         }
         const api = createGrid(
             element,
@@ -165,7 +165,15 @@ export class TestGridsManager {
     }
 }
 
-function unique<T>(xs: T[]): T[] {
-    const set = new Set(xs);
-    return Array.from(set);
+function deduplicate<T>(xs: T[]): T[] {
+    const seen = new Set<T>();
+    let writeIdx = 0;
+    for (let i = 0; i < xs.length; i++) {
+        if (!seen.has(xs[i])) {
+            seen.add(xs[i]);
+            xs[writeIdx++] = xs[i];
+        }
+    }
+    xs.length = writeIdx;
+    return xs;
 }

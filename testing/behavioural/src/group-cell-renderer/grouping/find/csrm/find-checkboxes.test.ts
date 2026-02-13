@@ -1,4 +1,4 @@
-import { AllEnterpriseModule } from 'ag-grid-enterprise';
+import { FindModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager } from '../../../../test-utils';
 import { getTestGenerator } from '../../../util';
@@ -6,7 +6,7 @@ import { rowModelGridOptions } from '../../grid-config';
 import { findSnapshotter, getGridOptions_checkboxes, getTestConcerns_checkboxes } from '../../grouping-test-utils';
 
 describe('ag-grid find API', () => {
-    const gridsManager = new TestGridsManager({ modules: [AllEnterpriseModule] });
+    const gridsManager = new TestGridsManager({ modules: [FindModule, RowGroupingModule] });
     const createTests = getTestGenerator(gridsManager, findSnapshotter);
 
     beforeEach(() => {

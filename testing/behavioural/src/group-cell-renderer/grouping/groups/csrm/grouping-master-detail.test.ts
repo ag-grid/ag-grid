@@ -1,4 +1,4 @@
-import { AllEnterpriseModule } from 'ag-grid-enterprise';
+import { MasterDetailModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager } from '../../../../test-utils';
 import { getTestGenerator } from '../../../util';
@@ -10,7 +10,7 @@ import {
 } from '../../grouping-test-utils';
 
 describe('ag-grid groupCellRenderer', () => {
-    const gridsManager = new TestGridsManager({ modules: [AllEnterpriseModule] });
+    const gridsManager = new TestGridsManager({ modules: [MasterDetailModule, RowGroupingModule] });
     const createTests = getTestGenerator(gridsManager, groupCellSnapshotter);
 
     beforeEach(() => {

@@ -1,10 +1,8 @@
-import { existsSync } from 'fs';
+import { accessSync, constants as fsConstants } from 'fs';
 import { readFile, readdir } from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { defineConfig } from 'vitest/config';
-
-const workspaceRootPath = path.resolve(fileURLToPath(import.meta.url), '../../../');
 
 const testingBehaviouralPath = path.resolve(fileURLToPath(import.meta.url), '../');
 
@@ -22,10 +20,12 @@ const resolveAlias: Record<string, string> = {
  *
  * Note that at the moment vitest is not correctly loading the sourcemaps of the bundled code, so it is recommended to use the source code.
  */
-const TESTS_USE_ORIGINAL_SOURCE_CODE = process.env.TESTS_USE_ORIGINAL_SOURCE_CODE !== 'false';
 
-if (TESTS_USE_ORIGINAL_SOURCE_CODE) {
-    await loadSourceCodeAliases(['packages']); // Load the projects source code
+const ENTRY_FILES = ['src/index.ts', 'src/index.tsx', 'src/main.ts', 'src/main.tsx'] as const;
+
+if (process.env.TESTS_USE_ORIGINAL_SOURCE_CODE !== 'false') {
+    const workspaceRootPath = path.resolve(fileURLToPath(import.meta.url), '../../../');
+    await loadSourceCodeAliases(resolveAlias, path.resolve(workspaceRootPath, 'packages'));
 }
 
 export default defineConfig({
@@ -48,39 +48,48 @@ export default defineConfig({
     clearScreen: false,
 });
 
-async function loadSourceCodeAliases(modulesDirectories: string[]) {
-    const processedPaths = new Set();
-    const processSourceDirectory = async (name: string, level: number) => {
-        const promises: Promise<void>[] = [];
-        const modulePath = path.resolve(name);
-        if (!processedPaths.has(modulePath)) {
-            processedPaths.add(modulePath);
-            const content = await readdir(modulePath, { withFileTypes: true });
-            for (const dir of content) {
-                if (dir.isDirectory()) {
-                    const packageJsonPath = path.resolve(modulePath, dir.name, 'package.json');
-                    if (existsSync(packageJsonPath)) {
-                        const packageJson = JSON.parse(await readFile(packageJsonPath, 'utf-8'));
-                        if (!(packageJson.name in resolveAlias)) {
-                            const mainFiles = ['src/index.ts', 'src/index.tsx', 'src/main.ts', 'src/main.tsx'];
-                            for (const mainFile of mainFiles) {
-                                const mainTsPath = path.resolve(modulePath, dir.name, mainFile);
-                                if (existsSync(mainTsPath)) {
-                                    resolveAlias[packageJson.name] = mainTsPath;
-                                    break;
-                                }
-                            }
-                        }
-                    } else if (level < 2) {
-                        promises.push(processSourceDirectory(path.resolve(modulePath, dir.name), level + 1));
-                    }
-                }
-            }
-        }
-        await Promise.all(promises);
-    };
+/** Scans package directories and maps package names to their TypeScript source entry points. */
+async function loadSourceCodeAliases(aliases: Record<string, string>, rootDir: string, depth = 0): Promise<void> {
+    const entries = await readdir(rootDir, { withFileTypes: true });
+    const tasks: Promise<void>[] = [];
 
-    await Promise.all(
-        modulesDirectories.map((name) => processSourceDirectory(path.resolve(workspaceRootPath, name), 0))
-    );
+    for (const entry of entries) {
+        if (!entry.isDirectory()) {
+            continue;
+        }
+        const dirPath = path.resolve(rootDir, entry.name);
+        const pkgJsonPath = path.join(dirPath, 'package.json');
+
+        if (fileExists(pkgJsonPath)) {
+            tasks.push(registerPackageAlias(aliases, dirPath, pkgJsonPath));
+        } else if (depth < 2) {
+            tasks.push(loadSourceCodeAliases(aliases, dirPath, depth + 1));
+        }
+    }
+
+    await Promise.all(tasks);
+}
+
+async function registerPackageAlias(aliases: Record<string, string>, dirPath: string, pkgJsonPath: string) {
+    const { name } = JSON.parse(await readFile(pkgJsonPath, 'utf-8'));
+    if (!name || name in aliases) {
+        return;
+    }
+
+    for (const entryFile of ENTRY_FILES) {
+        const entryPath = path.resolve(dirPath, entryFile);
+        if (fileExists(entryPath)) {
+            aliases[name] = entryPath;
+            return;
+        }
+    }
+}
+
+function fileExists(filePath: string): boolean {
+    try {
+        accessSync(filePath, fsConstants.F_OK);
+        return true;
+    } catch {
+        return false;
+    }
 }

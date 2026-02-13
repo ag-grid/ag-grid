@@ -18,7 +18,6 @@ describe('Number Range Filter', () => {
     });
 
     beforeAll(() => setupAgTestIds());
-    beforeEach(() => gridsManager.reset());
     afterEach(() => gridsManager.reset());
 
     test('Filter displays validation error state in last touched input when invalid range entered', async () => {
