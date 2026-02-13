@@ -23,21 +23,7 @@ export class GridRowsDomValidator {
         const displayedRows = gridRows.displayedRows;
 
         // Validate pinned top rows
-        for (const row of gridRows.pinnedTopRows) {
-            if (this.validatedRows.has(row)) {
-                continue;
-            }
-            this.validatedRows.add(row);
-            const stringId = String(row.id);
-            const rowElements = getRowHtmlElements(gridRows.api, stringId);
-            if (!rowElements.length) {
-                if (row.id !== undefined) {
-                    this.errors.get(row).add('Row HTMLElement row-id=' + JSON.stringify(stringId) + ' not found');
-                }
-                continue;
-            }
-            gridContext.validateRow(row, rowElements);
-        }
+        this.validatePinnedRows(gridRows, gridContext, gridRows.pinnedTopRows);
 
         for (let index = 0; index < displayedRows.length; index++) {
             const row = displayedRows[index];
@@ -51,7 +37,7 @@ export class GridRowsDomValidator {
 
             if (!rowElements.length) {
                 if (row.id !== undefined) {
-                    this.errors.get(row).add('Row HTMLElement row-id=' + JSON.stringify(stringId) + ' not found');
+                    this.errors.addRowError(row, 'Row HTMLElement row-id=' + JSON.stringify(stringId) + ' not found');
                 }
                 continue;
             }
@@ -65,7 +51,13 @@ export class GridRowsDomValidator {
         }
 
         // Validate pinned bottom rows
-        for (const row of gridRows.pinnedBottomRows) {
+        this.validatePinnedRows(gridRows, gridContext, gridRows.pinnedBottomRows);
+
+        ensureDomRowsBelongToGrid(gridRows);
+    }
+
+    private validatePinnedRows(gridRows: GridRows, gridContext: GridRowDomValidator, pinnedRows: RowNode[]): void {
+        for (const row of pinnedRows) {
             if (this.validatedRows.has(row)) {
                 continue;
             }
@@ -74,14 +66,12 @@ export class GridRowsDomValidator {
             const rowElements = getRowHtmlElements(gridRows.api, stringId);
             if (!rowElements.length) {
                 if (row.id !== undefined) {
-                    this.errors.get(row).add('Row HTMLElement row-id=' + JSON.stringify(stringId) + ' not found');
+                    this.errors.addRowError(row, 'Row HTMLElement row-id=' + JSON.stringify(stringId) + ' not found');
                 }
                 continue;
             }
             gridContext.validateRow(row, rowElements);
         }
-
-        ensureDomRowsBelongToGrid(gridRows);
     }
 
     private validateDetailGridRows(row: RowNode<any>, gridRows: GridRows): void {
@@ -176,59 +166,46 @@ class GridRowDomValidator {
 
         if (isGroupCol) {
             const childCountText = this.getChildCountText(row, this.isGroupCountSuppressed(column, true));
-
             if (textContent === childCountText || (cellValue === null && textContent === '')) {
                 return;
             }
-
             const expected = this.combineGroupValue(stringCellValue, childCountText);
-            if (textContent === expected) {
-                return;
-            }
-            if (!this.shouldIgnoreGroupMismatch(expected, textContent)) {
-                rowErrors.add(
-                    `HTML cell value mismatch for column id:"${columnId}", expected ${JSON.stringify(expected)}, got ${JSON.stringify(textContent)}`
-                );
-            }
+            this.reportGroupCellMismatch(rowErrors, columnId, expected, textContent);
             return;
         }
 
         const hasGroupRendererDom = !!cellElement.querySelector('.ag-group-value');
         if (hasGroupRendererDom || !!colDef.showRowGroup) {
             const expected = this.getExpectedGroupCellText(row, column, stringCellValue);
-            if (expected === undefined) {
-                return;
-            }
-            if (textContent === expected) {
-                return;
-            }
-            if (!this.shouldIgnoreGroupMismatch(expected, textContent)) {
-                rowErrors.add(
-                    `HTML cell value mismatch for column id:"${columnId}", expected ${JSON.stringify(expected)}, got ${JSON.stringify(textContent)}`
-                );
+            if (expected !== undefined) {
+                this.reportGroupCellMismatch(rowErrors, columnId, expected, textContent);
             }
             return;
         }
 
         if (textContent !== stringCellValue) {
-            rowErrors.add(
-                `HTML cell value mismatch for column id:"${columnId}", expected ${JSON.stringify(cellValue)}, got ${JSON.stringify(textContent)}`
-            );
+            rowErrors.add(cellValueMismatchMsg(columnId, cellValue, textContent));
+        }
+    }
+
+    private reportGroupCellMismatch(
+        rowErrors: GridRowErrors<any>,
+        columnId: string,
+        expected: string,
+        actual: string
+    ): void {
+        if (actual !== expected && !this.shouldIgnoreGroupMismatch(expected, actual)) {
+            rowErrors.add(cellValueMismatchMsg(columnId, expected, actual));
         }
     }
 
     private checkRowSelectionState(row: RowNode<any>, rowElements: HTMLElement[], rowErrors: GridRowErrors<any>): void {
-        if (!(this.gridRows.options.checkSelectedNodes ?? true)) {
-            return;
-        }
-
         const isSelected = !!row.isSelected();
         for (const rowElement of rowElements) {
-            const hasSelectedClass = rowElement.classList.contains('ag-row-selected');
-            if (isSelected && !hasSelectedClass) {
-                rowErrors.add('HTML element should have ag-row-selected class, but has ' + rowElement.className);
-            } else if (!isSelected && hasSelectedClass) {
-                rowErrors.add('HTML element should NOT have ag-row-selected class, but has ' + rowElement.className);
+            if (isSelected !== rowElement.classList.contains('ag-row-selected')) {
+                rowErrors.add(
+                    `HTML element should ${isSelected ? 'have' : 'NOT have'} ag-row-selected class, but has ${rowElement.className}`
+                );
             }
         }
     }
@@ -304,8 +281,7 @@ class GridRowDomValidator {
             valueText = this.getBlankGroupLabel(row) ?? '';
         }
         const childCount = row.allChildrenCount ?? 0;
-        const childCountText = childCount ? `(${childCount})` : '';
-        return valueText && childCountText ? `${valueText} ${childCountText}` : valueText || childCountText;
+        return this.combineGroupValue(valueText, childCount ? `(${childCount})` : '');
     }
 
     private getGroupRowsActualText(wrapper: HTMLElement): string {
@@ -315,19 +291,18 @@ class GridRowDomValidator {
     }
 
     private isGroupCountSuppressed(column: Column<any>, isAutoGroupCol: boolean): boolean {
-        const colDef = column.getColDef();
-        const params = colDef.cellRendererParams as any;
-        if (params && typeof params === 'object' && 'suppressCount' in params) {
-            return !!params.suppressCount;
+        const result = hasSuppressCount(column.getColDef().cellRendererParams);
+        if (result !== undefined) {
+            return result;
         }
-
         if (isAutoGroupCol) {
-            const autoGroupParams = this.gridRows.api.getGridOption('autoGroupColumnDef')?.cellRendererParams as any;
-            if (autoGroupParams && typeof autoGroupParams === 'object' && 'suppressCount' in autoGroupParams) {
-                return !!autoGroupParams.suppressCount;
+            const autoResult = hasSuppressCount(
+                this.gridRows.api.getGridOption('autoGroupColumnDef')?.cellRendererParams
+            );
+            if (autoResult !== undefined) {
+                return autoResult;
             }
         }
-
         return false;
     }
 
@@ -402,9 +377,9 @@ class GridRowDomValidator {
             return true;
         }
 
-        const ariaSource = checkboxElement?.hasAttribute('aria-checked')
+        const ariaSource = checkboxElement.hasAttribute('aria-checked')
             ? checkboxElement
-            : checkboxElement?.querySelector('[aria-checked]');
+            : checkboxElement.querySelector('[aria-checked]');
         const ariaChecked = ariaSource?.getAttribute('aria-checked') ?? '';
         if (ariaChecked !== expectedAria) {
             rowErrors.add(
@@ -427,6 +402,17 @@ class GridRowDomValidator {
     private isAutoGroupColumn(columnId: string): boolean {
         return columnId === AUTO_GROUP_COL_ID || columnId.startsWith(`${AUTO_GROUP_COL_ID}-`);
     }
+}
+
+function cellValueMismatchMsg(columnId: string, expected: unknown, actual: string): string {
+    return `HTML cell value mismatch for column id:"${columnId}", expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`;
+}
+
+function hasSuppressCount(params: unknown): boolean | undefined {
+    if (params && typeof params === 'object' && 'suppressCount' in params) {
+        return !!(params as any).suppressCount;
+    }
+    return undefined;
 }
 
 function getDomRowIds(gridRows: GridRows): string[] | null {

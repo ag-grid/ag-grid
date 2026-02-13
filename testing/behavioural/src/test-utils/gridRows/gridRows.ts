@@ -9,33 +9,19 @@ import { GridRowsErrors } from './gridRowsErrors';
 import { GridRowsDomValidator } from './validation/gridRowsDomValidator';
 import { GridRowsValidator } from './validation/gridRowsValidator';
 
-export interface GridRowsOptions<TData = any> {
-    /** If true, selected nodes will be tested. Default is true */
-    checkSelectedNodes?: boolean;
-
+export interface GridRowsOptions {
     /** If true, the DOM will be checked as well. Default is true. */
     checkDom?: boolean;
 
     /**
-     * Columns to include when making the diagram. If true, all columns will be included.
+     * Columns to include when making the diagram. If true, or undefined, all columns will be included.
      * If an array, it must contain the id of the columns to include. Default is false, no columns.
-     * Default is true. There is usually no need to defined this.
+     * Default is true. There is usually no need to defined this and can be useful only if you have way too many columns.
      */
     forcedColumns?: (string | Column)[] | boolean;
 
-    /** If false, the id will not be shown in the diagram. Default is true */
-    printIds?: boolean;
-
-    /** If true, will print row indices. Default is false. */
-    printRowIndices?: boolean;
-
     /** If true, the diagram will show hidden rows, like the children of collapsed groups, also if they do not appear in the displayed rows. Default is true */
     printHiddenRows?: boolean;
-
-    /** If true, columns whose value resolves to undefined will be omitted from the diagram output. Default is true. */
-    ignoreUndefinedCells?: boolean;
-
-    errors?: GridRowsErrors<TData>;
 
     /** Forces treeData to be checked as true or false. There is usually no need to set this. */
     forcedTreeData?: boolean;
@@ -72,10 +58,11 @@ export class GridRows<TData = any> {
     public constructor(
         api: GridApi<TData>,
         public readonly label: string = '',
-        public readonly options: GridRowsOptions<TData> = {}
+        public readonly options: GridRowsOptions = {},
+        errors?: GridRowsErrors<TData>
     ) {
         this.api = api;
-        const errors = options.errors || new GridRowsErrors<TData>();
+        errors ??= new GridRowsErrors<TData>();
         this.errors = errors;
         this.treeData = options.forcedTreeData ?? !!api.getGridOption('treeData');
         const rowNodes: RowNode<TData>[] = [];
@@ -83,12 +70,16 @@ export class GridRows<TData = any> {
         const rootNodesSet = new Set<RowNode<TData>>();
         const detailGridRows = new Map<IRowNode<TData> | GridApi, GridRows<any>>();
         this.#detailGridRows = detailGridRows;
-        api.forEachNode((row: RowNode) => {
-            rowNodes.push(row);
+        const trackRoot = (row: RowNode<TData>) => {
             const parent = row.parent;
             if (parent && !parent.parent) {
                 rootNodesSet.add(parent);
             }
+        };
+
+        api.forEachNode((row: RowNode) => {
+            rowNodes.push(row);
+            trackRoot(row);
         });
         this.rowNodes = rowNodes;
         this.displayedRows = displayedRows;
@@ -99,20 +90,20 @@ export class GridRows<TData = any> {
                 if (row.detail) {
                     const api = row.detailGridInfo?.api;
                     if (api && !detailGridRows.has(api)) {
-                        const detailGridRow = new GridRows(api, label, {
-                            ...options,
-                            errors,
-                            forcedColumns: options.forcedColumns ?? true,
-                        });
+                        const detailGridRow = new GridRows(
+                            api,
+                            label,
+                            {
+                                ...options,
+                                forcedColumns: options.forcedColumns ?? true,
+                            },
+                            errors
+                        );
                         detailGridRows.set(row, detailGridRow);
                         detailGridRows.set(api, detailGridRow);
                     }
                 }
-
-                const parent = row.parent;
-                if (parent && !parent.parent) {
-                    rootNodesSet.add(parent);
-                }
+                trackRoot(row);
             }
         }
         this.rootRowNodes = Array.from(rootNodesSet);
@@ -125,29 +116,23 @@ export class GridRows<TData = any> {
     }
 
     #collectPinnedRows(): { pinnedTopRows: RowNode<TData>[]; pinnedBottomRows: RowNode<TData>[] } {
-        const pinnedTopRows: RowNode<TData>[] = [];
-        const pinnedBottomRows: RowNode<TData>[] = [];
-
         if (!this.api.isModuleRegistered('PinnedRowModule')) {
-            return { pinnedTopRows, pinnedBottomRows };
+            return { pinnedTopRows: [], pinnedBottomRows: [] };
         }
-
-        const pinnedTopCount = this.api.getPinnedTopRowCount();
-        const pinnedBottomCount = this.api.getPinnedBottomRowCount();
-        for (let i = 0; i < pinnedTopCount; ++i) {
-            const row = this.api.getPinnedTopRow(i) as RowNode<TData> | undefined;
-            if (row) {
-                pinnedTopRows.push(row);
+        const collect = (count: number, getter: (i: number) => any): RowNode<TData>[] => {
+            const rows: RowNode<TData>[] = [];
+            for (let i = 0; i < count; ++i) {
+                const row = getter(i);
+                if (row) {
+                    rows.push(row);
+                }
             }
-        }
-        for (let i = 0; i < pinnedBottomCount; ++i) {
-            const row = this.api.getPinnedBottomRow(i) as RowNode<TData> | undefined;
-            if (row) {
-                pinnedBottomRows.push(row);
-            }
-        }
-
-        return { pinnedTopRows, pinnedBottomRows };
+            return rows;
+        };
+        return {
+            pinnedTopRows: collect(this.api.getPinnedTopRowCount(), (i) => this.api.getPinnedTopRow(i)),
+            pinnedBottomRows: collect(this.api.getPinnedBottomRowCount(), (i) => this.api.getPinnedBottomRow(i)),
+        };
     }
 
     public getDetailGridRows(row: IRowNode<TData> | GridApi | null | undefined): GridRows<any> | undefined {
@@ -250,14 +235,15 @@ export class GridRows<TData = any> {
     #makeByIdMap(): Map<string, RowNode<TData>> {
         const map = new Map<string, RowNode<TData>>();
         const addRow = (row: RowNode<TData> | null | undefined) => {
-            if (row && 'id' in row) {
-                const id = String(row.id);
-                if (!map.has(id)) {
-                    map.set(id, row);
-                }
-                if (row.detailNode) {
-                    addRow(row.detailNode);
-                }
+            if (!row || !('id' in row)) {
+                return;
+            }
+            const id = String(row.id);
+            if (!map.has(id)) {
+                map.set(id, row);
+            }
+            if (row.detailNode) {
+                addRow(row.detailNode);
             }
         };
         this.rowNodes.forEach(addRow);
@@ -266,12 +252,7 @@ export class GridRows<TData = any> {
     }
 
     #makeIndexMap(): Map<IRowNode<TData>, number> {
-        const map = new Map<IRowNode<TData>, number>();
-        const rowNodes = this.rowNodes;
-        for (let index = 0; index < rowNodes.length; ++index) {
-            map.set(rowNodes[index], index);
-        }
-        return map;
+        return new Map(this.rowNodes.map((row, index) => [row, index]));
     }
 
     #makeError(callerFn: Function, message = 'Grid errors:'): Error {
@@ -295,28 +276,17 @@ function addDiagramToError(error: any, diagram: string | null | undefined, label
     if (typeof error !== 'object' || error === null) {
         return;
     }
-    if (diagram) {
-        diagram = '\n\n' + diagram;
-    }
-    let diagramText = '';
-    if (label) {
-        diagramText += '\n⬢ ' + label;
-    }
-    diagramText += diagram;
 
+    const diagramText = (label ? '\n⬢ ' + label : '') + (diagram ? '\n\n' + diagram : '');
     error.message = (error.message ?? '') + diagramText;
 
     if (typeof error.toJSON === 'function') {
         const oldToJSON = error.toJSON;
-
         Reflect.defineProperty(error, 'toJSON', {
             value: function (this: any, ...args: any[]) {
                 const json = oldToJSON.call(this, ...args);
-                if (typeof json !== 'object' || json === null) {
-                    return json;
-                }
-                if (typeof json.diff === 'string') {
-                    json.diff = json.diff + diagramText;
+                if (typeof json === 'object' && json !== null && typeof json.diff === 'string') {
+                    json.diff += diagramText;
                 }
                 return json;
             },

@@ -4,6 +4,11 @@ import { isRowNumberCol } from 'ag-grid-community';
 import { optionalEscapeString, rowIdAndIndexToString, rowIdToString } from '../grid-test-utils';
 import type { GridRows } from './gridRows';
 
+/** Serialises a value for diagram output, handling bigint specially. */
+function serialiseValue(value: unknown): string {
+    return typeof value === 'bigint' ? JSON.stringify(`${value}n`) : JSON.stringify(value);
+}
+
 export class GridRowsDiagramNode {
     public parent: GridRowsDiagramNode | null = null;
     public children = new Map<RowNode | null, GridRowsDiagramNode>();
@@ -282,8 +287,6 @@ export class GridRowsDiagramTree {
             }
         };
 
-        this.getDiagramRoot(this.gridRows);
-
         for (const displayedRow of this.gridRows.displayedRows) {
             processRow(this.gridRows, displayedRow, inputColumns);
         }
@@ -340,13 +343,7 @@ export class GridRowsDiagramTree {
             }
         }
 
-        if (gridRows.options.printIds !== false) {
-            result += ' id:' + rowIdToString(row);
-        }
-
-        if (gridRows.options.printRowIndices) {
-            result += ' rowIndex:' + row.rowIndex;
-        }
+        result += ' id:' + rowIdToString(row);
 
         const printedFields = new Set<string>();
         result += this.formatRowColumns(gridRows, row, columns, row === gridRows.rootRowNode, printedFields);
@@ -357,8 +354,7 @@ export class GridRowsDiagramTree {
         if (rowPinned && row.data && typeof row.data === 'object') {
             for (const [key, value] of Object.entries(row.data)) {
                 if (key !== 'id' && value !== undefined && value !== null && !printedFields.has(key)) {
-                    const serialised = typeof value === 'bigint' ? JSON.stringify(`${value}n`) : JSON.stringify(value);
-                    result += ` ${key}:${serialised}`;
+                    result += ` ${key}:${serialiseValue(value)}`;
                 }
             }
         }
@@ -376,7 +372,6 @@ export class GridRowsDiagramTree {
         if (!columns) {
             return '';
         }
-        const omitUndefined = gridRows.options.ignoreUndefinedCells ?? true;
         let result = '';
 
         for (const column of columns) {
@@ -400,18 +395,12 @@ export class GridRowsDiagramTree {
 
             const diagramColumnId = isRowNumberCol(columnId) ? 'row-number' : columnId;
             if (value !== undefined || formattedValue) {
-                const serialisedValue =
-                    typeof (formattedValue || value) === 'bigint'
-                        ? JSON.stringify(`${formattedValue || value}n`)
-                        : JSON.stringify(formattedValue || value);
-                result += ' ' + diagramColumnId + ':' + serialisedValue;
+                result += ' ' + diagramColumnId + ':' + serialiseValue(formattedValue || value);
                 // Track this field as printed (use the column's field if it has one)
                 const colDef = column.getColDef();
                 if (colDef.field) {
                     printedFields?.add(colDef.field);
                 }
-            } else if (!omitUndefined && row.data != null) {
-                result += ' ' + diagramColumnId + ':undefined';
             }
         }
 
@@ -427,9 +416,7 @@ export class GridRowsDiagramTree {
         let result = '';
         for (const prop of dataProps) {
             const dataValue = (row.data as any)?.[prop];
-            const serialised =
-                typeof dataValue === 'bigint' ? JSON.stringify(`${dataValue}n`) : JSON.stringify(dataValue ?? '');
-            result += ` data.${prop}:${serialised}`;
+            result += ` data.${prop}:${serialiseValue(dataValue ?? '')}`;
         }
         return result;
     }

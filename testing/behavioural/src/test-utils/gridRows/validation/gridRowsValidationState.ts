@@ -28,8 +28,6 @@ export class GridRowsValidationState {
         this.groupHideOpenParents = !!api.getGridOption('groupHideOpenParents');
         this.groupHideParentOfSingleChild = api.getGridOption('groupHideParentOfSingleChild') ?? false;
         this.groupAllowUnbalanced = !!api.getGridOption('groupAllowUnbalanced');
-        this._showRowGroupColumns = undefined;
-        this._groupSelectsDescendants = undefined;
     }
 
     public get showRowGroupColumns(): AgColumn[] {

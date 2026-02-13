@@ -4,7 +4,7 @@ import type { IRowNode, RowNode } from 'ag-grid-community';
 
 import { rowIdAndIndexToString } from '../grid-test-utils';
 
-export class GridRowErrors<TData = any> implements GridRowErrors<TData> {
+export class GridRowErrors<TData = any> {
     #errors = new Set<string>();
 
     public get errors(): ReadonlySet<string> {
@@ -14,12 +14,10 @@ export class GridRowErrors<TData = any> implements GridRowErrors<TData> {
     public constructor(
         public readonly owner: GridRowsErrors<TData>,
         public readonly rowNode: RowNode<TData> | null
-    ) {
-        this.rowNode = rowNode;
-    }
+    ) {}
 
-    public add(error: string): void {
-        if (!this.#errors.has(error)) {
+    public add(error: string, condition?: boolean | null | undefined): void {
+        if ((arguments.length < 2 || condition) && !this.#errors.has(error)) {
             this.#errors.add(error);
             ++this.owner.totalErrorsCount;
         }
@@ -62,7 +60,13 @@ export class GridRowsErrors<TData = any> {
     #rowsErrors = new Map<RowNode<TData> | null, GridRowErrors<TData>>([[null, this.default]]);
 
     public getAll(): GridRowErrors<TData>[] {
-        return Array.from(this.#rowsErrors.values()).filter((x) => x.errors.size > 0);
+        const result: GridRowErrors<TData>[] = [];
+        for (const entry of this.#rowsErrors.values()) {
+            if (entry.errors.size > 0) {
+                result.push(entry);
+            }
+        }
+        return result;
     }
 
     public get(row: IRowNode<TData> | null | undefined): GridRowErrors<TData> {
@@ -73,6 +77,17 @@ export class GridRowsErrors<TData = any> {
             this.#rowsErrors.set(rowNode, result);
         }
         return result;
+    }
+
+    /** Adds an error for a row. When condition is provided, adds the error only when condition is truthy. */
+    public addRowError(
+        row: IRowNode<TData> | null | undefined,
+        error: string,
+        condition?: boolean | null | undefined
+    ): void {
+        if (arguments.length < 3 || condition) {
+            this.get(row).add(error);
+        }
     }
 
     public throwIfAny(callerFn: Function = this.throwIfAny): void {
