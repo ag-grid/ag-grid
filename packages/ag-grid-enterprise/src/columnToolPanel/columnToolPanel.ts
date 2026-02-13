@@ -64,6 +64,8 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             suppressValues: false,
             suppressPivots: false,
             suppressSyncLayoutWithGrid: false,
+            deferApply: false,
+            buttons: ['apply', 'cancel'],
         });
         const mergedParams = {
             ...defaultParams,
