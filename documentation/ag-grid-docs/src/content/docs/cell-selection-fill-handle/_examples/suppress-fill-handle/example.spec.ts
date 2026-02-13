@@ -40,17 +40,14 @@ test.agExample(import.meta, () => {
         await expect(fillHandle).toBeVisible();
     });
 
-    test.eachFramework(
-        'should fill cells when dragging fill handle on non-suppressed column',
-        async ({ agIdFor }) => {
-            const source = agIdFor.cell('0', 'athlete');
-            const target = agIdFor.cell('1', 'athlete');
+    test.eachFramework('should fill cells when dragging fill handle on non-suppressed column', async ({ agIdFor }) => {
+        const source = agIdFor.cell('0', 'athlete');
+        const target = agIdFor.cell('1', 'athlete');
 
-            await source.click();
-            await dragOverTo(agIdFor.fillHandle(), target);
+        await source.click();
+        await dragOverTo(agIdFor.fillHandle(), target);
 
-            await expect(source).toContainText('Natalie Coughlin');
-            await expect(target).toContainText('Natalie Coughlin');
-        }
-    );
+        await expect(source).toContainText('Natalie Coughlin');
+        await expect(target).toContainText('Natalie Coughlin');
+    });
 });

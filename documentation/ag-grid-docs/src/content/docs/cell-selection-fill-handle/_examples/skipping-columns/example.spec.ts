@@ -11,24 +11,21 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.cell('1', 'year')).toContainText('2000');
     });
 
-    test.eachFramework(
-        'should fill athlete column when dragging fill handle down',
-        async ({ agIdFor }) => {
-            const sourceCell = agIdFor.cell('0', 'athlete');
+    test.eachFramework('should fill athlete column when dragging fill handle down', async ({ agIdFor }) => {
+        const sourceCell = agIdFor.cell('0', 'athlete');
 
-            await sourceCell.click();
+        await sourceCell.click();
 
-            const fillHandle = agIdFor.fillHandle();
-            await expect(fillHandle).toBeVisible();
+        const fillHandle = agIdFor.fillHandle();
+        await expect(fillHandle).toBeVisible();
 
-            const targetCell = agIdFor.cell('2', 'athlete');
-            await dragOverTo(fillHandle, targetCell);
+        const targetCell = agIdFor.cell('2', 'athlete');
+        await dragOverTo(fillHandle, targetCell);
 
-            await expect(agIdFor.cell('0', 'athlete')).toContainText('Natalie Coughlin');
-            await expect(agIdFor.cell('1', 'athlete')).toContainText('Natalie Coughlin');
-            await expect(agIdFor.cell('2', 'athlete')).toContainText('Natalie Coughlin');
-        }
-    );
+        await expect(agIdFor.cell('0', 'athlete')).toContainText('Natalie Coughlin');
+        await expect(agIdFor.cell('1', 'athlete')).toContainText('Natalie Coughlin');
+        await expect(agIdFor.cell('2', 'athlete')).toContainText('Natalie Coughlin');
+    });
 
     test.eachFramework('should display all expected header cells', async ({ agIdFor }) => {
         await expect(agIdFor.headerCell('athlete')).toBeVisible();

@@ -6,25 +6,22 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.cell('0', 'gold')).toContainText('1');
     });
 
-    test.eachFramework(
-        'should fill cells when dragging fill handle via readOnlyEdit handler',
-        async ({ agIdFor }) => {
-            const sourceCell = agIdFor.cell('0', 'gold');
-            await expect(sourceCell).toContainText('1');
-            await expect(agIdFor.cell('1', 'gold')).toContainText('2');
+    test.eachFramework('should fill cells when dragging fill handle via readOnlyEdit handler', async ({ agIdFor }) => {
+        const sourceCell = agIdFor.cell('0', 'gold');
+        await expect(sourceCell).toContainText('1');
+        await expect(agIdFor.cell('1', 'gold')).toContainText('2');
 
-            await sourceCell.click();
+        await sourceCell.click();
 
-            const fillHandle = agIdFor.fillHandle();
-            await expect(fillHandle).toBeVisible();
+        const fillHandle = agIdFor.fillHandle();
+        await expect(fillHandle).toBeVisible();
 
-            const targetCell = agIdFor.cell('1', 'gold');
-            await dragOverTo(fillHandle, targetCell);
+        const targetCell = agIdFor.cell('1', 'gold');
+        await dragOverTo(fillHandle, targetCell);
 
-            await expect(agIdFor.cell('0', 'gold')).toContainText('1');
-            await expect(agIdFor.cell('1', 'gold')).toContainText('1');
-        }
-    );
+        await expect(agIdFor.cell('0', 'gold')).toContainText('1');
+        await expect(agIdFor.cell('1', 'gold')).toContainText('1');
+    });
 
     test.eachFramework('should update cell value via readOnlyEdit handler', async ({ page, agIdFor }) => {
         const cell = agIdFor.cell('0', 'athlete');
