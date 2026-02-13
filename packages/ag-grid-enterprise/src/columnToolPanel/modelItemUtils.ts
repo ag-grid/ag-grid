@@ -110,6 +110,7 @@ function setAllPivotActive(
     onDeferredPivotColumnStateUpdate?: (stateItems: ColumnState[]) => void
 ): void {
     const colStateItems: ColumnState[] = [];
+    const shouldAlwaysStageDeferredPivot = !!onDeferredPivotColumnStateUpdate;
 
     const turnOnAction = (col: AgColumn) => {
         // don't change any column that's already got a function active
@@ -139,7 +140,7 @@ function setAllPivotActive(
 
     const turnOffAction = (col: AgColumn) => {
         const isActive = col.isPivotActive() || col.isRowGroupActive() || col.isValueActive();
-        if (isActive) {
+        if (shouldAlwaysStageDeferredPivot || isActive) {
             colStateItems.push({
                 colId: col.getId(),
                 pivot: false,

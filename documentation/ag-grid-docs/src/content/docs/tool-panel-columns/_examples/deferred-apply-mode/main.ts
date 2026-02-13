@@ -31,6 +31,45 @@ const columnDefs: ColDef[] = [
 
 let gridApi: GridApi<IOlympicData>;
 
+const logColumnStateSnapshot = (source: string) => {
+    try {
+        if (!gridApi) {
+            return;
+        }
+
+        const getColIdSafe = (col: any): string => {
+            if (!col) {
+                return 'unknown';
+            }
+            if (typeof col.getColId === 'function') {
+                return col.getColId();
+            }
+            if (typeof col.getId === 'function') {
+                return col.getId();
+            }
+            return String(col.colId ?? col.field ?? 'unknown');
+        };
+
+        const visibleCols = gridApi.getAllDisplayedColumns().map(getColIdSafe).join(', ');
+        const rowGroups = gridApi.getRowGroupColumns().map(getColIdSafe).join(', ');
+        const pivots = gridApi.getPivotColumns().map(getColIdSafe).join(', ');
+        const values = gridApi.getValueColumns().map(getColIdSafe).join(', ');
+
+        console.log(
+            `[CTP Deferred Example] ${source} | pivotMode=${gridApi.isPivotMode()} | visible=[${visibleCols}] | rowGroups=[${rowGroups}] | pivots=[${pivots}] | values=[${values}]`
+        );
+    } catch (error) {
+        console.warn('[CTP Deferred Example] logging failed', error);
+    }
+};
+
+const onColumnMoved = () => logColumnStateSnapshot('columnMoved');
+const onColumnVisible = () => logColumnStateSnapshot('columnVisible');
+const onColumnRowGroupChanged = () => logColumnStateSnapshot('columnRowGroupChanged');
+const onColumnPivotChanged = () => logColumnStateSnapshot('columnPivotChanged');
+const onColumnValueChanged = () => logColumnStateSnapshot('columnValueChanged');
+const onColumnPivotModeChanged = () => logColumnStateSnapshot('columnPivotModeChanged');
+
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs,
     defaultColDef: {
@@ -54,6 +93,12 @@ const gridOptions: GridOptions<IOlympicData> = {
         ],
         defaultToolPanel: 'columns',
     },
+    onColumnMoved,
+    onColumnVisible,
+    onColumnRowGroupChanged,
+    onColumnPivotChanged,
+    onColumnValueChanged,
+    onColumnPivotModeChanged,
 };
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -72,12 +117,19 @@ document.addEventListener('DOMContentLoaded', function () {
 function createServerSideDatasource(server: { getData: (request: IServerSideGetRowsRequest) => any }): IServerSideDatasource {
     return {
         getRows: (params) => {
+            console.log('[CTP Deferred Example] SSRM getRows request', params.request);
             const response = server.getData(params.request);
 
             setTimeout(() => {
                 if (response.success) {
+                    console.log('[CTP Deferred Example] SSRM getRows success', {
+                        startRow: params.request.startRow,
+                        endRow: params.request.endRow,
+                        returnedRows: response.rows.length,
+                    });
                     params.success({ rowData: response.rows });
                 } else {
+                    console.log('[CTP Deferred Example] SSRM getRows fail');
                     params.fail();
                 }
             }, 200);

@@ -605,6 +605,9 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         }
 
         const allColumns = colModel.getColDefCols() ?? [];
+        const appliedOrderColIds = this.deferredService.getAppliedState().colOrderIds;
+        const shouldApplyColumnOrder =
+            state.colOrderIds.length > 0 && JSON.stringify(state.colOrderIds) !== JSON.stringify(appliedOrderColIds);
         const orderedColIds = (() => {
             const allColIds = allColumns.map((column) => column.getColId());
             if (!state.colOrderIds.length) {
@@ -640,11 +643,13 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             });
 
         _applyColumnState(this.beans, { state: columnState }, 'toolPanelUi');
-        _applyColumnState(
-            this.beans,
-            { state: orderedColIds.map((colId) => ({ colId })), applyOrder: true },
-            'toolPanelUi'
-        );
+        if (shouldApplyColumnOrder) {
+            _applyColumnState(
+                this.beans,
+                { state: orderedColIds.map((colId) => ({ colId })), applyOrder: true },
+                'toolPanelUi'
+            );
+        }
     }
 
     public getState(): ColumnToolPanelState {

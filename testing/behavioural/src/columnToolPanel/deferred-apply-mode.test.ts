@@ -414,6 +414,45 @@ describe('Columns Tool Panel Deferred Apply Mode', () => {
         expect(getButtons(gridApi).applyButton.disabled).toBe(true);
     });
 
+    test('applies deferred dragged column move order only when Apply is clicked', async () => {
+        const gridApi = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            sideBar,
+            pivotMode: false,
+        });
+
+        const getColumnOrder = () => gridApi.getAllDisplayedColumns().slice(0, 3).map((col) => col.getColId());
+        expect(getColumnOrder()).toEqual(['athlete', 'age', 'country']);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
+
+        const toolPanel = getToolPanel(gridApi);
+        const primaryColsPanel = toolPanel.primaryColsPanel as any;
+        const primaryColsListPanel = primaryColsPanel.primaryColsListPanel as any;
+        const athleteCol = gridApi.getColumn('athlete');
+        const ageCol = gridApi.getColumn('age');
+        if (!athleteCol || !ageCol) {
+            throw new Error('Expected athlete and age columns to exist');
+        }
+
+        // Simulate drag-move hover state used by the virtual-list drag path: move athlete below age.
+        primaryColsListPanel.stageDeferredColumnMove([athleteCol], {
+            component: { column: ageCol },
+            position: 'bottom',
+            rowIndex: 1,
+        });
+        await asyncSetTimeout(1);
+
+        expect(getColumnOrder()).toEqual(['athlete', 'age', 'country']);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(false);
+
+        getButtons(gridApi).applyButton.click();
+        await asyncSetTimeout(1);
+
+        expect(getColumnOrder()).toEqual(['age', 'athlete', 'country']);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
+    });
+
     test('applies combined deferred pivot, visibility and aggregation changes together', async () => {
         const gridApi = await gridMgr.createGridAndWait('myGrid', {
             columnDefs,
