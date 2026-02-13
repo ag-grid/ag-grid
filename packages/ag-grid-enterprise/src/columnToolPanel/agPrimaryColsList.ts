@@ -28,7 +28,7 @@ import { syncLayoutWithGrid, toolPanelCreateColumnTree } from '../sideBar/common
 import { VirtualList } from '../widgets/virtualList';
 import { ExpandState } from './agPrimaryColsHeader';
 import { ColumnModelItem } from './columnModelItem';
-import { getCurrentColumnsBeingMoved, getCurrentDragValue, getMoveTargetIndex, isMoveBlocked, moveItem } from './columnMoveUtils';
+import { getCurrentColumnsBeingMoved, getCurrentDragValue, isMoveBlocked, moveItem } from './columnMoveUtils';
 import type { ToolPanelColumnCompParams } from './columnToolPanel';
 import { selectAllChildren } from './modelItemUtils';
 import { ToolPanelColumnComp } from './toolPanelColumnComp';
@@ -176,13 +176,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 moveItem: (
                     currentDragValue: AgColumn | AgProvidedColumnGroup | null,
                     lastHoveredListItem: VirtualListDragItem<ToolPanelColumnGroupComp | ToolPanelColumnComp> | null
-                ) => {
-                    const currentColumns = getCurrentColumnsBeingMoved(currentDragValue);
-                    if (this.stageDeferredColumnMove(currentColumns, lastHoveredListItem)) {
-                        return;
-                    }
-                    moveItem(beans, currentColumns, lastHoveredListItem);
-                },
+                ) => moveItem(beans, getCurrentColumnsBeingMoved(currentDragValue), lastHoveredListItem),
             })
         );
     }
@@ -212,20 +206,6 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
         const nextItem = Math.min(Math.max(currentIndex + movePadding + diff, 0), this.displayedColsList.length - 1);
 
-        const hoveredComponent = this.virtualList.getComponentAt(nextItem) as
-            | ToolPanelColumnComp
-            | ToolPanelColumnGroupComp
-            | undefined;
-        if (
-            this.stageDeferredColumnMove(currentColumns, {
-                rowIndex: nextItem,
-                position: isUp ? 'top' : 'bottom',
-                component: hoveredComponent ?? null,
-            } as VirtualListDragItem<ToolPanelColumnGroupComp | ToolPanelColumnComp>)
-        ) {
-            return;
-        }
-
         this.skipRefocus = true;
         moveItem(beans, currentColumns, {
             rowIndex: nextItem,
@@ -236,61 +216,6 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         this.focusRowIfAlive(nextItem - movePadding).then(() => {
             this.skipRefocus = false;
         });
-    }
-
-    private stageDeferredColumnMove(
-        currentColumns: AgColumn[],
-        lastHoveredListItem: VirtualListDragItem<ToolPanelColumnGroupComp | ToolPanelColumnComp> | null
-    ): boolean {
-        const onDeferredColumnOrderUpdate = this.params.onDeferredColumnOrderUpdate;
-        if (!onDeferredColumnOrderUpdate) {
-            return false;
-        }
-
-        if (!lastHoveredListItem) {
-            return true;
-        }
-
-        const { component } = lastHoveredListItem;
-        let lastHoveredColumn: AgColumn | null = null;
-        let isBefore = lastHoveredListItem.position === 'top';
-
-        if (component instanceof ToolPanelColumnGroupComp) {
-            const columns = component.getColumns();
-            lastHoveredColumn = columns[0] ?? null;
-            isBefore = true;
-        } else if (component) {
-            lastHoveredColumn = component.column;
-        }
-
-        if (!lastHoveredColumn) {
-            const hoveredItem = this.displayedColsList[lastHoveredListItem.rowIndex];
-            if (hoveredItem) {
-                if (hoveredItem.group) {
-                    const columns = hoveredItem.columnGroup.getLeafColumns();
-                    lastHoveredColumn = columns[0] ?? null;
-                    isBefore = true;
-                } else {
-                    lastHoveredColumn = hoveredItem.column;
-                }
-            }
-        }
-
-        if (!lastHoveredColumn) {
-            return true;
-        }
-
-        const allColumns = this.params.getToolPanelColumnsInOrder?.() ?? this.beans.colModel.getCols();
-        const targetIndex = getMoveTargetIndex(allColumns, currentColumns, lastHoveredColumn, isBefore);
-        if (targetIndex == null) {
-            return true;
-        }
-
-        const movedIds = new Set(currentColumns.map((currentColumn) => currentColumn.getColId()));
-        const nextOrder = allColumns.filter((existingColumn) => !movedIds.has(existingColumn.getColId()));
-        nextOrder.splice(targetIndex, 0, ...currentColumns);
-        onDeferredColumnOrderUpdate(nextOrder.map((nextColumn) => nextColumn.getColId()));
-        return true;
     }
 
     private createComponentFromItem(

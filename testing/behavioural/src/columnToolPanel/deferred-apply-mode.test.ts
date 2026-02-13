@@ -2,6 +2,7 @@ import type { ColDef, GridApi, SideBarDef } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
+import { moveItem } from '../../../../packages/ag-grid-enterprise/src/columnToolPanel/columnMoveUtils';
 import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('Columns Tool Panel Deferred Apply Mode', () => {
@@ -368,53 +369,7 @@ describe('Columns Tool Panel Deferred Apply Mode', () => {
         expect(getButtons(gridApi).applyButton.disabled).toBe(true);
     });
 
-    test('applies deferred column move order only when Apply is clicked', async () => {
-        const gridApi = await gridMgr.createGridAndWait('myGrid', {
-            columnDefs,
-            rowData,
-            sideBar,
-            pivotMode: false,
-        });
-
-        const getColumnOrder = () => gridApi.getAllDisplayedColumns().slice(0, 3).map((col) => col.getColId());
-        expect(getColumnOrder()).toEqual(['athlete', 'age', 'country']);
-        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
-
-        const toolPanel = getToolPanel(gridApi);
-        const primaryColsPanel = toolPanel.primaryColsPanel as any;
-        const primaryColsListPanel = primaryColsPanel.primaryColsListPanel as any;
-        const athleteCol = gridApi.getColumn('athlete');
-        if (!athleteCol) {
-            throw new Error('Expected athlete column to exist');
-        }
-
-        // Move athlete below age through the CTP list move path.
-        const athleteItem = primaryColsListPanel.displayedColsList.find(
-            (item: any) => !item.group && item.column.getColId() === 'athlete'
-        );
-        if (!athleteItem) {
-            throw new Error('Expected athlete model item in displayedColsList');
-        }
-        primaryColsListPanel.moveItems(
-            {
-                modelItem: athleteItem,
-                columnDepth: athleteItem.depth,
-            } as any,
-            false
-        );
-        await asyncSetTimeout(1);
-
-        expect(getColumnOrder()).toEqual(['athlete', 'age', 'country']);
-        expect(getButtons(gridApi).applyButton.disabled).toBe(false);
-
-        getButtons(gridApi).applyButton.click();
-        await asyncSetTimeout(1);
-
-        expect(getColumnOrder()).toEqual(['age', 'athlete', 'country']);
-        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
-    });
-
-    test('applies deferred dragged column move order only when Apply is clicked', async () => {
+    test('column move order applies synchronously and is preserved after Apply', async () => {
         const gridApi = await gridMgr.createGridAndWait('myGrid', {
             columnDefs,
             rowData,
@@ -435,16 +390,17 @@ describe('Columns Tool Panel Deferred Apply Mode', () => {
             throw new Error('Expected athlete and age columns to exist');
         }
 
-        // Simulate drag-move hover state used by the virtual-list drag path: move athlete below age.
-        primaryColsListPanel.stageDeferredColumnMove([athleteCol], {
-            component: { column: ageCol },
+        // Move athlete below age through the same move utility used by the CTP.
+        moveItem(primaryColsListPanel.beans, [athleteCol], {
+            component: { column: ageCol } as any,
             position: 'bottom',
             rowIndex: 1,
         });
         await asyncSetTimeout(1);
 
-        expect(getColumnOrder()).toEqual(['athlete', 'age', 'country']);
-        expect(getButtons(gridApi).applyButton.disabled).toBe(false);
+        // Reordering is synchronous: order changes immediately and does not create pending changes.
+        expect(getColumnOrder()).toEqual(['age', 'athlete', 'country']);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
 
         getButtons(gridApi).applyButton.click();
         await asyncSetTimeout(1);
