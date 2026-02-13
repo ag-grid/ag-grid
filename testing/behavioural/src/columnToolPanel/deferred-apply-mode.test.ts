@@ -63,6 +63,8 @@ describe('Columns Tool Panel Deferred Apply Mode', () => {
         toggle?.toggle();
     };
 
+    const getToolPanel = (gridApi: GridApi): any => gridApi.getToolPanelInstance('columns') as any;
+
     const setColumnSelectionFromToolPanel = (gridApi: GridApi, colId: string, selected: boolean): void => {
         const toolPanel = gridApi.getToolPanelInstance('columns') as any;
         const listPanel = toolPanel?.primaryColsPanel?.primaryColsListPanel as any;
@@ -167,6 +169,59 @@ describe('Columns Tool Panel Deferred Apply Mode', () => {
         await asyncSetTimeout(1);
 
         expect(gridApi.getColumn('athlete')!.isVisible()).toBe(true);
+        expect(applyButton.disabled).toBe(true);
+    });
+
+    test('does not apply value aggregation function change until Apply is clicked', async () => {
+        const gridApi = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            sideBar,
+            pivotMode: false,
+        });
+
+        const { applyButton } = getButtons(gridApi);
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual([]);
+        expect(applyButton.disabled).toBe(true);
+
+        const toolPanel = getToolPanel(gridApi);
+        toolPanel.onDeferredValueColumnAggFuncUpdate(gridApi.getColumn('age'), 'sum');
+        await asyncSetTimeout(1);
+
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual([]);
+        expect(applyButton.disabled).toBe(false);
+
+        applyButton.click();
+        await asyncSetTimeout(1);
+
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['age']);
+        expect(gridApi.getColumn('age')!.getAggFunc()).toBe('sum');
+        expect(applyButton.disabled).toBe(true);
+    });
+
+    test('discards deferred value aggregation function change when Cancel is clicked', async () => {
+        const gridApi = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            sideBar,
+            pivotMode: false,
+        });
+
+        const { applyButton, cancelButton } = getButtons(gridApi);
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual([]);
+        expect(applyButton.disabled).toBe(true);
+
+        const toolPanel = getToolPanel(gridApi);
+        toolPanel.onDeferredValueColumnAggFuncUpdate(gridApi.getColumn('age'), 'sum');
+        await asyncSetTimeout(1);
+
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual([]);
+        expect(applyButton.disabled).toBe(false);
+
+        cancelButton.click();
+        await asyncSetTimeout(1);
+
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual([]);
         expect(applyButton.disabled).toBe(true);
     });
 });
