@@ -8,37 +8,37 @@ Mocking is to be avoided as much as possible here, and the use of fakes is prefe
 
 ## Running tests
 
-To execute all test, run in the root folder:
+To execute all tests, run from the repo root:
 
 ```sh
-nx test ag-behavioural-testing
+./behave.sh
 ```
 
-To execute a single test file
+To execute tests matching a file pattern:
 
 ```sh
-nx test ag-behavioural-testing -- src/folder/filename.test.ts
+./behave.sh "filename"
 ```
 
-By default, the tests run in watch mode, but to run without watching
+To run in watch mode:
 
 ```sh
-nx test ag-behavioural-testing -c run
+./behave.sh --watch
 ```
 
-To overwrite the snapshots for snapshot tests
+To overwrite the snapshots for snapshot tests:
 
 ```sh
-nx test ag-behavioural-testing -c update
+./behave.sh --update
 ```
 
-To execute benchmarks
+To execute benchmarks:
 
 ```sh
 nx run ag-behavioural-testing:benchmark
 ```
 
-To execute benchmarks on a single file
+To execute benchmarks on a single file:
 
 ```sh
 nx run ag-behavioural-testing:benchmark -- src/tree-data/datapath/benchmarks/tree-data-path.bench.ts

@@ -1,4 +1,3 @@
-import pluginReact from '@vitejs/plugin-react';
 import { existsSync } from 'fs';
 import { readFile, readdir } from 'fs/promises';
 import path from 'path';
@@ -7,8 +6,13 @@ import { defineConfig } from 'vitest/config';
 
 const workspaceRootPath = path.resolve(fileURLToPath(import.meta.url), '../../../');
 
-/** Resolve aliases */
-const resolveAlias = {};
+const testingBehaviouralPath = path.resolve(fileURLToPath(import.meta.url), '../');
+
+/** Resolve aliases — deduplicate react so ag-grid-react source code uses the same copy */
+const resolveAlias: Record<string, string> = {
+    react: path.resolve(testingBehaviouralPath, 'node_modules/react'),
+    'react-dom': path.resolve(testingBehaviouralPath, 'node_modules/react-dom'),
+};
 
 /**
  * This behavioural test project can both use the source code and the bundles of the modules.
@@ -25,12 +29,14 @@ if (TESTS_USE_ORIGINAL_SOURCE_CODE) {
 }
 
 export default defineConfig({
-    plugins: [pluginReact() as any],
     test: {
         globals: true,
         environment: 'jsdom',
         setupFiles: './vitest.setup.js',
-        reporters: ['default'],
+        reporters: ['basic'],
+        watch: false,
+        pool: 'threads',
+        dir: 'src',
         include: ['**/*.test.ts', '**/*.test.tsx'],
         benchmark: {
             include: ['**/*.bench.ts'],
