@@ -9,7 +9,7 @@ import type {
     IToolPanelComp,
     IToolPanelParams,
 } from 'ag-grid-community';
-import { Component, _addGridCommonParams, _clearElement, _last } from 'ag-grid-community';
+import { Component, FilterButtonComp, _addGridCommonParams, _applyColumnState, _clearElement, _last } from 'ag-grid-community';
 
 import type { PivotDropZonePanel } from '../rowGrouping/columnDropZones/pivotDropZonePanel';
 import type { RowGroupDropZonePanel } from '../rowGrouping/columnDropZones/rowGroupDropZonePanel';
@@ -40,6 +40,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     private pivotDropZonePanel?: PivotDropZonePanel;
     private colToolPanelFactory?: ColumnToolPanelFactory;
     private readonly deferredService = new ColumnToolPanelDeferredService();
+    private deferredButtonsComp?: FilterButtonComp;
 
     constructor() {
         super({ tag: 'div', cls: 'ag-column-panel' });
@@ -130,6 +131,8 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             });
             childDestroyFuncs.push(() => pivotModeListener());
         }
+
+        this.initDeferredButtonsIfNeeded();
 
         this.initialised = true;
     }
@@ -297,11 +300,91 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         const pendingState = this.deferredService.getPendingState();
         pendingState.pivotMode = newValue;
         this.deferredService.setPendingState(pendingState);
+        this.refreshDeferredButtonsState();
         return true;
     }
 
     private onDeferredPivotColumnStateUpdate(stateItems: ColumnState[]): void {
         this.deferredService.applyPivotColumnStateToPending(stateItems);
+        this.refreshDeferredButtonsState();
+    }
+
+    private initDeferredButtonsIfNeeded(): void {
+        if (!this.params.deferApply || !this.params.buttons?.length) {
+            return;
+        }
+
+        const buttonComp = this.createBean(new FilterButtonComp({ className: 'ag-column-panel-buttons' }));
+        this.deferredButtonsComp = buttonComp;
+
+        const localeTextFunc = this.getLocaleTextFunc();
+        const buttons = this.params.buttons.map((type) => ({
+            type,
+            label: localeTextFunc(type === 'apply' ? 'applyFilter' : 'cancelFilter', type === 'apply' ? 'Apply' : 'Cancel'),
+        }));
+        buttonComp.updateButtons(buttons);
+        this.appendChild(buttonComp);
+
+        this.addManagedListeners(buttonComp, {
+            apply: this.onDeferredApply.bind(this),
+            cancel: this.onDeferredCancel.bind(this),
+        });
+
+        this.childDestroyFuncs.push(() => {
+            if (this.deferredButtonsComp) {
+                this.deferredButtonsComp = this.destroyBean(this.deferredButtonsComp);
+            }
+        });
+
+        this.refreshDeferredButtonsState();
+    }
+
+    private refreshDeferredButtonsState(): void {
+        this.deferredButtonsComp?.updateValidity(this.deferredService.hasPendingChanges());
+    }
+
+    private onDeferredApply(): void {
+        const pendingState = this.deferredService.getPendingState();
+        this.applyDeferredState(pendingState);
+        this.deferredService.reconcileFromApplied(this.getCurrentStateForDeferredMode());
+        this.refreshDeferredButtonsState();
+    }
+
+    private onDeferredCancel(): void {
+        this.deferredService.cancelPending();
+        this.refresh(this.params);
+    }
+
+    private applyDeferredState(state: ColumnToolPanelDeferredState): void {
+        const { colModel, gos, ctrlsSvc } = this.beans;
+        if (colModel.isPivotMode() !== state.pivotMode) {
+            gos.updateGridOptions({ options: { pivotMode: state.pivotMode }, source: 'toolPanelUi' as any });
+            for (const ctrl of ctrlsSvc.getHeaderRowContainerCtrls()) {
+                ctrl.refresh();
+            }
+        }
+
+        const allColumns = colModel.getColDefCols() ?? [];
+        const rowGroupIndexMap = new Map(state.rowGroupColIds.map((colId, index) => [colId, index] as const));
+        const pivotIndexMap = new Map(state.pivotColIds.map((colId, index) => [colId, index] as const));
+        const valueAggMap = new Map(state.valueCols.map((valueCol) => [valueCol.colId, valueCol.aggFunc] as const));
+
+        const columnState: ColumnState[] = allColumns.map((column) => {
+            const colId = column.getColId();
+            const rowGroupIndex = rowGroupIndexMap.get(colId);
+            const pivotIndex = pivotIndexMap.get(colId);
+            const aggFunc = valueAggMap.has(colId) ? valueAggMap.get(colId)! : null;
+            return {
+                colId,
+                rowGroup: rowGroupIndex != null,
+                rowGroupIndex: rowGroupIndex ?? null,
+                pivot: pivotIndex != null,
+                pivotIndex: pivotIndex ?? null,
+                aggFunc,
+            };
+        });
+
+        _applyColumnState(this.beans, { state: columnState, applyOrder: true }, 'toolPanelUi');
     }
 
     public getState(): ColumnToolPanelState {
