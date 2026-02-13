@@ -94,6 +94,27 @@ export class ColumnToolPanelDeferredService {
         this.setPendingState(pendingState);
     }
 
+    public setPendingRowGroupColumns(colIds: string[]): void {
+        const pendingState = this.getPendingState();
+        pendingState.rowGroupColIds = [...colIds];
+        this.setPendingState(pendingState);
+    }
+
+    public setPendingPivotColumns(colIds: string[]): void {
+        const pendingState = this.getPendingState();
+        pendingState.pivotColIds = [...colIds];
+        this.setPendingState(pendingState);
+    }
+
+    public setPendingValueColumns(valueCols: DeferredValueColumnState[]): void {
+        const pendingState = this.getPendingState();
+        pendingState.valueCols = valueCols.map((valueCol) => ({
+            colId: valueCol.colId,
+            aggFunc: valueCol.aggFunc,
+        }));
+        this.setPendingState(pendingState);
+    }
+
     public reconcileFromApplied(state: ColumnToolPanelDeferredState): void {
         this.appliedState = cloneState(state);
         this.pendingState = cloneState(state);

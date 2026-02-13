@@ -1,4 +1,4 @@
-import type { BeanName, Component, NamedBean } from 'ag-grid-community';
+import type { AgColumn, BeanName, Component, IAggFunc, NamedBean } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
 import { PivotDropZonePanel } from '../rowGrouping/columnDropZones/pivotDropZonePanel';
@@ -26,12 +26,51 @@ export class ColumnToolPanelFactory extends BeanStub implements NamedBean {
         return this.createPanel(parent, destroyFuncs, new RowGroupDropZonePanel(false));
     }
 
+    public createRowGroupPanelWithUpdateHandler(
+        parent: Component,
+        destroyFuncs: (() => void)[],
+        onUpdateItems: (columns: AgColumn[]) => boolean,
+        getExistingItems: () => AgColumn[]
+    ): RowGroupDropZonePanel {
+        return this.createPanel(parent, destroyFuncs, new RowGroupDropZonePanel(false, onUpdateItems, getExistingItems));
+    }
+
     public createValuesPanel(parent: Component, destroyFuncs: (() => void)[]): ValuesDropZonePanel {
         return this.createPanel(parent, destroyFuncs, new ValuesDropZonePanel(false));
     }
 
+    public createValuesPanelWithUpdateHandler(
+        parent: Component,
+        destroyFuncs: (() => void)[],
+        onUpdateItems: (columns: AgColumn[]) => boolean,
+        getExistingItems: () => AgColumn[],
+        onAggregationFunctionChange: (column: AgColumn, aggFunc: string) => boolean,
+        getPendingAggregationFunction: (column: AgColumn) => string | IAggFunc | null | undefined
+    ): ValuesDropZonePanel {
+        return this.createPanel(
+            parent,
+            destroyFuncs,
+            new ValuesDropZonePanel(
+                false,
+                onUpdateItems,
+                getExistingItems,
+                onAggregationFunctionChange,
+                getPendingAggregationFunction
+            )
+        );
+    }
+
     public createPivotPanel(parent: Component, destroyFuncs: (() => void)[]): PivotDropZonePanel {
         return this.createPanel(parent, destroyFuncs, new PivotDropZonePanel(false));
+    }
+
+    public createPivotPanelWithUpdateHandler(
+        parent: Component,
+        destroyFuncs: (() => void)[],
+        onUpdateItems: (columns: AgColumn[]) => boolean,
+        getExistingItems: () => AgColumn[]
+    ): PivotDropZonePanel {
+        return this.createPanel(parent, destroyFuncs, new PivotDropZonePanel(false, onUpdateItems, getExistingItems));
     }
 
     public createPivotModePanel(parent: Component, destroyFuncs: (() => void)[], prepend?: boolean): PivotModePanel {

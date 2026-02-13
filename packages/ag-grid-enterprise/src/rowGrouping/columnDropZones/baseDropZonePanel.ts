@@ -1,4 +1,4 @@
-import type { AgColumn, ColumnEventType, DragItem, DropTarget, GridDraggingEvent } from 'ag-grid-community';
+import type { AgColumn, ColumnEventType, DragItem, DropTarget, GridDraggingEvent, IAggFunc } from 'ag-grid-community';
 import { DragSourceType, _shouldUpdateColVisibilityAfterGroup } from 'ag-grid-community';
 
 import type { PillDropZonePanelParams } from '../../widgets/pillDropZonePanel';
@@ -10,7 +10,10 @@ export type TDropZone = 'rowGroup' | 'pivot' | 'aggregation';
 export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumnComp, AgColumn> {
     constructor(
         horizontal: boolean,
-        private readonly dropZonePurpose: TDropZone
+        private readonly dropZonePurpose: TDropZone,
+        private readonly onUpdateItems?: (dropZone: TDropZone, columns: AgColumn[]) => boolean,
+        private readonly onAggregationFunctionChange?: (column: AgColumn, aggFunc: string) => boolean,
+        private readonly getPendingAggregationFunction?: (column: AgColumn) => string | IAggFunc | null | undefined
     ) {
         super(horizontal);
         this.addElementClasses(this.getGui(), this.dropZonePurpose.toLowerCase());
@@ -83,12 +86,24 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         return this.dropZonePurpose === 'rowGroup';
     }
 
+    protected handleUpdateItems(columns: AgColumn[]): boolean {
+        return this.onUpdateItems?.(this.dropZonePurpose, columns) ?? false;
+    }
+
     protected createPillComponent(
         column: AgColumn,
         dropTarget: DropTarget,
         ghost: boolean,
         horizontal: boolean
     ): DropZoneColumnComp {
-        return new DropZoneColumnComp(column, dropTarget, ghost, this.dropZonePurpose, horizontal);
+        return new DropZoneColumnComp(
+            column,
+            dropTarget,
+            ghost,
+            this.dropZonePurpose,
+            horizontal,
+            this.onAggregationFunctionChange,
+            this.getPendingAggregationFunction
+        );
     }
 }

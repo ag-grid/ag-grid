@@ -1,4 +1,4 @@
-import type { AgColumn, DragAndDropIcon, DragItem, DropTarget, SortIndicatorComp } from 'ag-grid-community';
+import type { AgColumn, DragAndDropIcon, DragItem, DropTarget, IAggFunc, SortIndicatorComp } from 'ag-grid-community';
 import { Component, DragSourceType, KeyCode, RefPlaceholder, _createElement } from 'ag-grid-community';
 
 import { PillDragComp } from '../../widgets/pillDragComp';
@@ -17,7 +17,9 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         dragSourceDropTarget: DropTarget,
         ghost: boolean,
         private readonly dropZonePurpose: TDropZone,
-        horizontal: boolean
+        horizontal: boolean,
+        private readonly onAggregationFunctionChange?: (column: AgColumn, aggFunc: string) => boolean,
+        private readonly getPendingAggregationFunction?: (column: AgColumn) => string | IAggFunc | null | undefined
     ) {
         super(dragSourceDropTarget, ghost, horizontal);
     }
@@ -141,7 +143,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         let aggFuncName: string = '';
 
         if (this.isAggregationZone()) {
-            const aggFunc = this.column.getAggFunc();
+            const aggFunc = this.getPendingAggregationFunction?.(this.column) ?? this.column.getAggFunc();
             // if aggFunc is a string, we can use it, but if it's a function, then we swap with 'func'
             const aggFuncString = typeof aggFunc === 'string' ? aggFunc : 'agg';
             const localeTextFunc = this.getLocaleTextFunc();
@@ -319,6 +321,9 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         const itemSelected = () => {
             hidePopup();
             this.getGui().focus();
+            if (this.onAggregationFunctionChange?.(this.column, value)) {
+                return;
+            }
             this.beans.valueColsSvc?.setColumnAggFunc?.(this.column, value, 'toolPanelDragAndDrop');
         };
 

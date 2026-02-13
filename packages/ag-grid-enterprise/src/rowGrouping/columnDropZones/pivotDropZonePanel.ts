@@ -4,8 +4,12 @@ import { _createIconNoSpan } from 'ag-grid-community';
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
 export class PivotDropZonePanel extends BaseDropZonePanel {
-    constructor(horizontal: boolean) {
-        super(horizontal, 'pivot');
+    constructor(
+        horizontal: boolean,
+        onUpdateItems?: (columns: AgColumn[]) => boolean,
+        private readonly getExistingItemsOverride?: () => AgColumn[]
+    ) {
+        super(horizontal, 'pivot', onUpdateItems ? (_dropZone, columns) => onUpdateItems(columns) : undefined);
     }
 
     public postConstruct(): void {
@@ -77,6 +81,9 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
     }
 
     protected updateItems(columns: AgColumn[]): void {
+        if (this.handleUpdateItems(columns)) {
+            return;
+        }
         this.beans.pivotColsSvc?.setColumns(columns, 'toolPanelUi');
     }
 
@@ -85,6 +92,10 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
     }
 
     protected getExistingItems(): AgColumn[] {
+        const override = this.getExistingItemsOverride?.();
+        if (override) {
+            return override;
+        }
         return this.beans.pivotColsSvc?.columns ?? [];
     }
 }

@@ -63,6 +63,15 @@ describe('Columns Tool Panel Deferred Apply Mode', () => {
         toggle?.toggle();
     };
 
+    const setColumnSelectionFromToolPanel = (gridApi: GridApi, colId: string, selected: boolean): void => {
+        const toolPanel = gridApi.getToolPanelInstance('columns') as any;
+        const listPanel = toolPanel?.primaryColsPanel?.primaryColsListPanel as any;
+        const displayedColsList = listPanel?.getDisplayedColsList?.() as any[] | undefined;
+        const rowIndex = displayedColsList?.findIndex((item) => !item.group && item.column?.getColId?.() === colId);
+        const listItemComp = rowIndex != null && rowIndex >= 0 ? listPanel?.virtualList?.getComponentAt(rowIndex) : null;
+        listItemComp?.onSelectAllChanged?.(selected);
+    };
+
     test('does not apply pivot mode until Apply is clicked', async () => {
         const gridApi = await gridMgr.createGridAndWait('myGrid', {
             columnDefs,
@@ -108,6 +117,56 @@ describe('Columns Tool Panel Deferred Apply Mode', () => {
         await asyncSetTimeout(1);
 
         expect(gridApi.isPivotMode()).toBe(false);
+        expect(applyButton.disabled).toBe(true);
+    });
+
+    test('does not apply column visibility change until Apply is clicked', async () => {
+        const gridApi = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            sideBar,
+            pivotMode: false,
+        });
+
+        const { applyButton } = getButtons(gridApi);
+        expect(gridApi.getColumn('athlete')!.isVisible()).toBe(true);
+        expect(applyButton.disabled).toBe(true);
+
+        setColumnSelectionFromToolPanel(gridApi, 'athlete', false);
+        await asyncSetTimeout(1);
+
+        expect(gridApi.getColumn('athlete')!.isVisible()).toBe(true);
+        expect(applyButton.disabled).toBe(false);
+
+        applyButton.click();
+        await asyncSetTimeout(1);
+
+        expect(gridApi.getColumn('athlete')!.isVisible()).toBe(false);
+        expect(applyButton.disabled).toBe(true);
+    });
+
+    test('discards deferred column visibility change when Cancel is clicked', async () => {
+        const gridApi = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            sideBar,
+            pivotMode: false,
+        });
+
+        const { applyButton, cancelButton } = getButtons(gridApi);
+        expect(gridApi.getColumn('athlete')!.isVisible()).toBe(true);
+        expect(applyButton.disabled).toBe(true);
+
+        setColumnSelectionFromToolPanel(gridApi, 'athlete', false);
+        await asyncSetTimeout(1);
+
+        expect(gridApi.getColumn('athlete')!.isVisible()).toBe(true);
+        expect(applyButton.disabled).toBe(false);
+
+        cancelButton.click();
+        await asyncSetTimeout(1);
+
+        expect(gridApi.getColumn('athlete')!.isVisible()).toBe(true);
         expect(applyButton.disabled).toBe(true);
     });
 });
