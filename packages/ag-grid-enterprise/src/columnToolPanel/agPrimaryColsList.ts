@@ -264,6 +264,19 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         }
 
         if (!lastHoveredColumn) {
+            const hoveredItem = this.displayedColsList[lastHoveredListItem.rowIndex];
+            if (hoveredItem) {
+                if (hoveredItem.group) {
+                    const columns = hoveredItem.columnGroup.getLeafColumns();
+                    lastHoveredColumn = columns[0] ?? null;
+                    isBefore = true;
+                } else {
+                    lastHoveredColumn = hoveredItem.column;
+                }
+            }
+        }
+
+        if (!lastHoveredColumn) {
             return true;
         }
 
