@@ -212,7 +212,8 @@ export class ToolPanelColumnComp extends Component {
             [this.column],
             nextState,
             'toolPanelUi',
-            this.params.onDeferredPivotColumnStateUpdate
+            this.params.onDeferredPivotColumnStateUpdate,
+            this.params.onDeferredVisibilityColumnStateUpdate
         );
     }
 

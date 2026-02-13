@@ -25,6 +25,7 @@ export interface ToolPanelColumnCompParams<TData = any, TContext = any>
     extends IToolPanelParams<TData, TContext, ColumnToolPanelState>,
         IToolPanelColumnCompParams {
     onDeferredPivotColumnStateUpdate?: (stateItems: ColumnState[]) => void;
+    onDeferredVisibilityColumnStateUpdate?: (stateItems: ColumnState[]) => void;
 }
 
 export class ColumnToolPanel extends Component implements IColumnToolPanel, IToolPanelComp {
@@ -82,6 +83,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         if (mergedParams.deferApply) {
             this.deferredService.initialiseFromApplied(this.getCurrentStateForDeferredMode());
             this.params.onDeferredPivotColumnStateUpdate = this.onDeferredPivotColumnStateUpdate.bind(this);
+            this.params.onDeferredVisibilityColumnStateUpdate = this.onDeferredVisibilityColumnStateUpdate.bind(this);
         }
 
         const { childDestroyFuncs, colToolPanelFactory, gos } = this;
@@ -285,6 +287,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
     private getCurrentStateForDeferredMode(): ColumnToolPanelDeferredState {
         const { colModel, rowGroupColsSvc, pivotColsSvc, valueColsSvc } = this.beans;
+        const colDefCols = colModel.getColDefCols() ?? [];
         return {
             pivotMode: colModel.isPivotMode(),
             rowGroupColIds: rowGroupColsSvc?.columns.map((col) => col.getColId()) ?? [],
@@ -293,6 +296,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
                 colId: col.getColId(),
                 aggFunc: col.getAggFunc() ?? null,
             })),
+            visibleColIds: colDefCols.filter((col) => col.isVisible()).map((col) => col.getColId()),
         };
     }
 
@@ -306,6 +310,11 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
     private onDeferredPivotColumnStateUpdate(stateItems: ColumnState[]): void {
         this.deferredService.applyPivotColumnStateToPending(stateItems);
+        this.refreshDeferredButtonsState();
+    }
+
+    private onDeferredVisibilityColumnStateUpdate(stateItems: ColumnState[]): void {
+        this.deferredService.applyVisibilityColumnStateToPending(stateItems);
         this.refreshDeferredButtonsState();
     }
 
@@ -368,6 +377,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         const rowGroupIndexMap = new Map(state.rowGroupColIds.map((colId, index) => [colId, index] as const));
         const pivotIndexMap = new Map(state.pivotColIds.map((colId, index) => [colId, index] as const));
         const valueAggMap = new Map(state.valueCols.map((valueCol) => [valueCol.colId, valueCol.aggFunc] as const));
+        const visibleColIdSet = new Set(state.visibleColIds);
 
         const columnState: ColumnState[] = allColumns.map((column) => {
             const colId = column.getColId();
@@ -381,6 +391,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
                 pivot: pivotIndex != null,
                 pivotIndex: pivotIndex ?? null,
                 aggFunc,
+                hide: !visibleColIdSet.has(colId),
             };
         });
 

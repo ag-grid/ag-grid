@@ -8,10 +8,18 @@ export function selectAllChildren(
     colTree: ColumnModelItem[],
     selectAllChecked: boolean,
     eventType: ColumnEventType,
-    onDeferredPivotColumnStateUpdate?: (stateItems: ColumnState[]) => void
+    onDeferredPivotColumnStateUpdate?: (stateItems: ColumnState[]) => void,
+    onDeferredVisibilityColumnStateUpdate?: (stateItems: ColumnState[]) => void
 ): void {
     const cols = extractAllLeafColumns(colTree);
-    setAllColumns(beans, cols, selectAllChecked, eventType, onDeferredPivotColumnStateUpdate);
+    setAllColumns(
+        beans,
+        cols,
+        selectAllChecked,
+        eventType,
+        onDeferredPivotColumnStateUpdate,
+        onDeferredVisibilityColumnStateUpdate
+    );
 }
 
 export function setAllColumns(
@@ -19,12 +27,13 @@ export function setAllColumns(
     cols: AgColumn[],
     selectAllChecked: boolean,
     eventType: ColumnEventType,
-    onDeferredPivotColumnStateUpdate?: (stateItems: ColumnState[]) => void
+    onDeferredPivotColumnStateUpdate?: (stateItems: ColumnState[]) => void,
+    onDeferredVisibilityColumnStateUpdate?: (stateItems: ColumnState[]) => void
 ): void {
     if (beans.colModel.isPivotMode()) {
         setAllPivot(beans, cols, selectAllChecked, eventType, onDeferredPivotColumnStateUpdate);
     } else {
-        setAllVisible(beans, cols, selectAllChecked, eventType);
+        setAllVisible(beans, cols, selectAllChecked, eventType, onDeferredVisibilityColumnStateUpdate);
     }
 }
 
@@ -49,7 +58,13 @@ function extractAllLeafColumns(allItems: ColumnModelItem[]): AgColumn[] {
     return res;
 }
 
-function setAllVisible(beans: BeanCollection, columns: AgColumn[], visible: boolean, eventType: ColumnEventType): void {
+function setAllVisible(
+    beans: BeanCollection,
+    columns: AgColumn[],
+    visible: boolean,
+    eventType: ColumnEventType,
+    onDeferredVisibilityColumnStateUpdate?: (stateItems: ColumnState[]) => void
+): void {
     const colStateItems: ColumnState[] = [];
 
     for (const col of columns) {
@@ -65,6 +80,10 @@ function setAllVisible(beans: BeanCollection, columns: AgColumn[], visible: bool
     }
 
     if (colStateItems.length > 0) {
+        if (onDeferredVisibilityColumnStateUpdate) {
+            onDeferredVisibilityColumnStateUpdate(colStateItems);
+            return;
+        }
         _applyColumnState(beans, { state: colStateItems }, eventType);
     }
 }

@@ -339,7 +339,8 @@ export class ToolPanelColumnGroupComp extends Component {
             this.modelItem.children,
             nextState,
             this.eventType,
-            this.params.onDeferredPivotColumnStateUpdate
+            this.params.onDeferredPivotColumnStateUpdate,
+            this.params.onDeferredVisibilityColumnStateUpdate
         );
     }
 

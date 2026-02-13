@@ -10,6 +10,7 @@ export interface ColumnToolPanelDeferredState {
     rowGroupColIds: string[];
     pivotColIds: string[];
     valueCols: DeferredValueColumnState[];
+    visibleColIds: string[];
 }
 
 const EMPTY_STATE: ColumnToolPanelDeferredState = {
@@ -17,6 +18,7 @@ const EMPTY_STATE: ColumnToolPanelDeferredState = {
     rowGroupColIds: [],
     pivotColIds: [],
     valueCols: [],
+    visibleColIds: [],
 };
 
 function cloneState(state: ColumnToolPanelDeferredState): ColumnToolPanelDeferredState {
@@ -28,6 +30,7 @@ function cloneState(state: ColumnToolPanelDeferredState): ColumnToolPanelDeferre
             colId: valueCol.colId,
             aggFunc: valueCol.aggFunc,
         })),
+        visibleColIds: [...state.visibleColIds],
     };
 }
 
@@ -73,6 +76,20 @@ export class ColumnToolPanelDeferredService {
                     pendingState.valueCols.push({ colId, aggFunc });
                 }
             }
+        }
+        this.setPendingState(pendingState);
+    }
+
+    public applyVisibilityColumnStateToPending(stateItems: ColumnState[]): void {
+        const pendingState = this.getPendingState();
+        for (const state of stateItems) {
+            const { colId, hide } = state;
+            if (!colId || hide === undefined) {
+                continue;
+            }
+            pendingState.visibleColIds = hide
+                ? pendingState.visibleColIds.filter((id) => id !== colId)
+                : addUnique(pendingState.visibleColIds, colId);
         }
         this.setPendingState(pendingState);
     }

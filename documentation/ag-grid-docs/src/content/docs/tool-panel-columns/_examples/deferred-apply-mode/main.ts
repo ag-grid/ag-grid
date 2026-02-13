@@ -49,20 +49,9 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
 };
 
-function updateStatus(): void {
-    const status = document.getElementById('pivot-mode-status');
-    if (!status || !gridApi) {
-        return;
-    }
-    status.textContent = `Grid Pivot Mode: ${gridApi.isPivotMode() ? 'On' : 'Off'}`;
-}
-
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
-
-    updateStatus();
-    gridApi.addEventListener('columnPivotModeChanged', updateStatus);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then((response) => response.json())
