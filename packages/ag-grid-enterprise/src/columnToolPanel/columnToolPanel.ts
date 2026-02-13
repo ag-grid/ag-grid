@@ -269,7 +269,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             pivotColIds: pivotColsSvc?.columns.map((col) => col.getColId()) ?? [],
             valueCols: (valueColsSvc?.columns ?? []).map((col) => ({
                 colId: col.getColId(),
-                aggFunc: col.getAggFunc(),
+                aggFunc: col.getAggFunc() ?? null,
             })),
         };
     }
