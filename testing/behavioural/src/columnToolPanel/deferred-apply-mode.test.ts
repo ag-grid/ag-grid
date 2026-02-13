@@ -70,6 +70,22 @@ describe('Columns Tool Panel Deferred Apply Mode', () => {
         toolPanel.onDeferredVisibilityColumnStateUpdate([{ colId, hide: !visible }]);
     };
 
+    const stageComboChangesFromToolPanel = (gridApi: GridApi): void => {
+        const toolPanel = getToolPanel(gridApi);
+        const countryCol = gridApi.getColumn('country');
+        const athleteCol = gridApi.getColumn('athlete');
+        const ageCol = gridApi.getColumn('age');
+        if (!countryCol || !athleteCol || !ageCol) {
+            throw new Error('Expected country, athlete and age columns to exist');
+        }
+        togglePivotModeFromToolPanel(gridApi);
+        toolPanel.onDeferredRowGroupColumnsUpdate([countryCol]);
+        toolPanel.onDeferredPivotColumnsUpdate([athleteCol]);
+        toolPanel.onDeferredValueColumnsUpdate([ageCol]);
+        toolPanel.onDeferredValueColumnAggFuncUpdate(ageCol, 'sum');
+        setDeferredVisibilityFromToolPanel(gridApi, 'athlete', false);
+    };
+
     test('does not apply pivot mode until Apply is clicked', async () => {
         const gridApi = await gridMgr.createGridAndWait('myGrid', {
             columnDefs,
@@ -217,6 +233,67 @@ describe('Columns Tool Panel Deferred Apply Mode', () => {
         cancelButton.click();
         await asyncSetTimeout(1);
 
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual([]);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
+    });
+
+    test('applies combined deferred pivot, visibility and aggregation changes together', async () => {
+        const gridApi = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            sideBar,
+            pivotMode: false,
+        });
+
+        expect(gridApi.isPivotMode()).toBe(false);
+        expect(gridApi.getColumn('athlete')!.isVisible()).toBe(true);
+        expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual([]);
+        expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual([]);
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual([]);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
+
+        stageComboChangesFromToolPanel(gridApi);
+        await asyncSetTimeout(1);
+
+        // Staged only, nothing applied yet
+        expect(gridApi.isPivotMode()).toBe(false);
+        expect(gridApi.getColumn('athlete')!.isVisible()).toBe(true);
+        expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual([]);
+        expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual([]);
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual([]);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(false);
+
+        getButtons(gridApi).applyButton.click();
+        await asyncSetTimeout(1);
+
+        expect(gridApi.isPivotMode()).toBe(true);
+        expect(gridApi.getColumn('athlete')!.isVisible()).toBe(false);
+        expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['country']);
+        expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['athlete']);
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['age']);
+        expect(gridApi.getColumn('age')!.getAggFunc()).toBe('sum');
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
+    });
+
+    test('cancels combined deferred pivot, visibility and aggregation changes together', async () => {
+        const gridApi = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            sideBar,
+            pivotMode: false,
+        });
+
+        stageComboChangesFromToolPanel(gridApi);
+        await asyncSetTimeout(1);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(false);
+
+        getButtons(gridApi).cancelButton.click();
+        await asyncSetTimeout(1);
+
+        expect(gridApi.isPivotMode()).toBe(false);
+        expect(gridApi.getColumn('athlete')!.isVisible()).toBe(true);
+        expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual([]);
+        expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual([]);
         expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual([]);
         expect(getButtons(gridApi).applyButton.disabled).toBe(true);
     });
