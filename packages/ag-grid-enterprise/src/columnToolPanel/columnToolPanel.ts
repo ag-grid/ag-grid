@@ -2,6 +2,7 @@ import type {
     BeanCollection,
     ColDef,
     ColGroupDef,
+    ColumnState,
     ColumnToolPanelState,
     IColumnToolPanel,
     IToolPanelColumnCompParams,
@@ -22,7 +23,9 @@ import type { PivotModePanel } from './pivotModePanel';
 
 export interface ToolPanelColumnCompParams<TData = any, TContext = any>
     extends IToolPanelParams<TData, TContext, ColumnToolPanelState>,
-        IToolPanelColumnCompParams {}
+        IToolPanelColumnCompParams {
+    onDeferredPivotColumnStateUpdate?: (stateItems: ColumnState[]) => void;
+}
 
 export class ColumnToolPanel extends Component implements IColumnToolPanel, IToolPanelComp {
     private initialised = false;
@@ -77,6 +80,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         this.params = mergedParams;
         if (mergedParams.deferApply) {
             this.deferredService.initialiseFromApplied(this.getCurrentStateForDeferredMode());
+            this.params.onDeferredPivotColumnStateUpdate = this.onDeferredPivotColumnStateUpdate.bind(this);
         }
 
         const { childDestroyFuncs, colToolPanelFactory, gos } = this;
@@ -294,6 +298,10 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         pendingState.pivotMode = newValue;
         this.deferredService.setPendingState(pendingState);
         return true;
+    }
+
+    private onDeferredPivotColumnStateUpdate(stateItems: ColumnState[]): void {
+        this.deferredService.applyPivotColumnStateToPending(stateItems);
     }
 
     public getState(): ColumnToolPanelState {

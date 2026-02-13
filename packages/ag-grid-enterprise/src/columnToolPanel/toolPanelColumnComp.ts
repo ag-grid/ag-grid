@@ -27,6 +27,7 @@ import {
 import type { ColumnModelItem } from './columnModelItem';
 import { createPivotState, setAllColumns, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
+import type { ToolPanelColumnCompParams } from './columnToolPanel';
 
 const ToolPanelColumnElement: ElementParams = {
     tag: 'div',
@@ -46,18 +47,21 @@ export class ToolPanelColumnComp extends Component {
     private readonly displayName: string | null;
     private processingColumnStateChange = false;
     private tooltipFeature?: TooltipFeature;
+    private readonly params: ToolPanelColumnCompParams;
 
     constructor(
         public modelItem: ColumnModelItem,
         private readonly allowDragging: boolean,
         private readonly groupsExist: boolean,
-        private readonly focusWrapper: HTMLElement
+        private readonly focusWrapper: HTMLElement,
+        params: ToolPanelColumnCompParams
     ) {
         super();
         const { column, depth, displayName } = modelItem;
         this.column = column;
         this.columnDepth = depth;
         this.displayName = displayName;
+        this.params = params;
     }
 
     public postConstruct(): void {
@@ -203,7 +207,13 @@ export class ToolPanelColumnComp extends Component {
             return;
         }
 
-        setAllColumns(this.beans, [this.column], nextState, 'toolPanelUi');
+        setAllColumns(
+            this.beans,
+            [this.column],
+            nextState,
+            'toolPanelUi',
+            this.params.onDeferredPivotColumnStateUpdate
+        );
     }
 
     private refreshAriaLabel(): void {

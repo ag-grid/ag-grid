@@ -224,13 +224,19 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     ): ToolPanelColumnGroupComp | ToolPanelColumnComp {
         const allowDragging = this.allowDragging;
         if (item.group) {
-            const renderedGroup = new ToolPanelColumnGroupComp(item, allowDragging, this.eventType, listItemElement);
+            const renderedGroup = new ToolPanelColumnGroupComp(
+                item,
+                allowDragging,
+                this.eventType,
+                listItemElement,
+                this.params
+            );
             this.createBean(renderedGroup);
 
             return renderedGroup;
         }
 
-        const columnComp = new ToolPanelColumnComp(item, allowDragging, this.groupsExist, listItemElement);
+        const columnComp = new ToolPanelColumnComp(item, allowDragging, this.groupsExist, listItemElement, this.params);
         this.createBean(columnComp);
 
         return columnComp;

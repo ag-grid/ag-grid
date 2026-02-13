@@ -7,20 +7,22 @@ export function selectAllChildren(
     beans: BeanCollection,
     colTree: ColumnModelItem[],
     selectAllChecked: boolean,
-    eventType: ColumnEventType
+    eventType: ColumnEventType,
+    onDeferredPivotColumnStateUpdate?: (stateItems: ColumnState[]) => void
 ): void {
     const cols = extractAllLeafColumns(colTree);
-    setAllColumns(beans, cols, selectAllChecked, eventType);
+    setAllColumns(beans, cols, selectAllChecked, eventType, onDeferredPivotColumnStateUpdate);
 }
 
 export function setAllColumns(
     beans: BeanCollection,
     cols: AgColumn[],
     selectAllChecked: boolean,
-    eventType: ColumnEventType
+    eventType: ColumnEventType,
+    onDeferredPivotColumnStateUpdate?: (stateItems: ColumnState[]) => void
 ): void {
     if (beans.colModel.isPivotMode()) {
-        setAllPivot(beans, cols, selectAllChecked, eventType);
+        setAllPivot(beans, cols, selectAllChecked, eventType, onDeferredPivotColumnStateUpdate);
     } else {
         setAllVisible(beans, cols, selectAllChecked, eventType);
     }
@@ -67,15 +69,22 @@ function setAllVisible(beans: BeanCollection, columns: AgColumn[], visible: bool
     }
 }
 
-function setAllPivot(beans: BeanCollection, columns: AgColumn[], value: boolean, eventType: ColumnEventType): void {
-    setAllPivotActive(beans, columns, value, eventType);
+function setAllPivot(
+    beans: BeanCollection,
+    columns: AgColumn[],
+    value: boolean,
+    eventType: ColumnEventType,
+    onDeferredPivotColumnStateUpdate?: (stateItems: ColumnState[]) => void
+): void {
+    setAllPivotActive(beans, columns, value, eventType, onDeferredPivotColumnStateUpdate);
 }
 
 function setAllPivotActive(
     beans: BeanCollection,
     columns: AgColumn[],
     value: boolean,
-    eventType: ColumnEventType
+    eventType: ColumnEventType,
+    onDeferredPivotColumnStateUpdate?: (stateItems: ColumnState[]) => void
 ): void {
     const colStateItems: ColumnState[] = [];
 
@@ -122,6 +131,10 @@ function setAllPivotActive(
     columns.forEach(action);
 
     if (colStateItems.length > 0) {
+        if (onDeferredPivotColumnStateUpdate) {
+            onDeferredPivotColumnStateUpdate(colStateItems);
+            return;
+        }
         _applyColumnState(beans, { state: colStateItems }, eventType);
     }
 }

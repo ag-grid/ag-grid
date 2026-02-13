@@ -1,4 +1,4 @@
-import type { IAggFunc } from 'ag-grid-community';
+import type { ColumnState, IAggFunc } from 'ag-grid-community';
 
 export interface DeferredValueColumnState {
     colId: string;
@@ -44,6 +44,39 @@ export class ColumnToolPanelDeferredService {
         this.pendingState = cloneState(state);
     }
 
+    public applyPivotColumnStateToPending(stateItems: ColumnState[]): void {
+        const pendingState = this.getPendingState();
+        for (const state of stateItems) {
+            const { colId, pivot, rowGroup, aggFunc } = state;
+            if (!colId) {
+                continue;
+            }
+            if (pivot !== undefined) {
+                pendingState.pivotColIds = pivot
+                    ? addUnique(pendingState.pivotColIds, colId)
+                    : pendingState.pivotColIds.filter((id) => id !== colId);
+            }
+            if (rowGroup !== undefined) {
+                pendingState.rowGroupColIds = rowGroup
+                    ? addUnique(pendingState.rowGroupColIds, colId)
+                    : pendingState.rowGroupColIds.filter((id) => id !== colId);
+            }
+            if (aggFunc !== undefined) {
+                const index = pendingState.valueCols.findIndex((valueCol) => valueCol.colId === colId);
+                if (aggFunc === null) {
+                    if (index >= 0) {
+                        pendingState.valueCols.splice(index, 1);
+                    }
+                } else if (index >= 0) {
+                    pendingState.valueCols[index].aggFunc = aggFunc;
+                } else {
+                    pendingState.valueCols.push({ colId, aggFunc });
+                }
+            }
+        }
+        this.setPendingState(pendingState);
+    }
+
     public reconcileFromApplied(state: ColumnToolPanelDeferredState): void {
         this.appliedState = cloneState(state);
         this.pendingState = cloneState(state);
@@ -70,4 +103,8 @@ export class ColumnToolPanelDeferredService {
     public getPendingState(): ColumnToolPanelDeferredState {
         return cloneState(this.pendingState);
     }
+}
+
+function addUnique(ids: string[], colId: string): string[] {
+    return ids.includes(colId) ? ids : [...ids, colId];
 }
