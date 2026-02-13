@@ -433,11 +433,11 @@ const describe = test.describe;
 
 export { expect, describe, test };
 
-export async function dragOverTo(
-    source: Locator,
-    target: Locator,
-    offsetPosition: 'bottomRight' | undefined = 'bottomRight'
-) {
+export async function dragFillHandleOverTo(fillHandle: Locator, target: Locator) {
+    return dragOverTo(fillHandle, target, 'bottomRight');
+}
+
+export async function dragOverTo(source: Locator, target: Locator, offsetPosition?: 'bottomRight') {
     const { mouse } = source.page();
     await source.hover();
     await source.hover();

@@ -1,4 +1,4 @@
-import { dragOverTo, expect, test } from '@utils/grid/test-utils';
+import { dragFillHandleOverTo, expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.describe('Fill Handle', () => {
@@ -14,7 +14,7 @@ test.agExample(import.meta, () => {
             const fillHandle = agIdFor.fillHandle();
             await expect(fillHandle).toBeVisible();
 
-            await dragOverTo(fillHandle, target);
+            await dragFillHandleOverTo(fillHandle, target);
 
             await expect(source).toHaveText('Natalie Coughlin');
             await expect(target).toHaveText('Natalie Coughlin');
@@ -50,7 +50,7 @@ test.agExample(import.meta, () => {
 
             await source.click();
 
-            await dragOverTo(source, target);
+            await dragFillHandleOverTo(source, target);
 
             const fillHandle = agIdFor.fillHandle();
 
