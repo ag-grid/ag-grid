@@ -28,7 +28,7 @@ import { syncLayoutWithGrid, toolPanelCreateColumnTree } from '../sideBar/common
 import { VirtualList } from '../widgets/virtualList';
 import { ExpandState } from './agPrimaryColsHeader';
 import { ColumnModelItem } from './columnModelItem';
-import { getCurrentColumnsBeingMoved, getCurrentDragValue, isMoveBlocked, moveItem } from './columnMoveUtils';
+import { getCurrentColumnsBeingMoved, getCurrentDragValue, getMoveTargetIndex, isMoveBlocked, moveItem } from './columnMoveUtils';
 import type { ToolPanelColumnCompParams } from './columnToolPanel';
 import { selectAllChildren } from './modelItemUtils';
 import { ToolPanelColumnComp } from './toolPanelColumnComp';
@@ -205,6 +205,30 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         }
 
         const nextItem = Math.min(Math.max(currentIndex + movePadding + diff, 0), this.displayedColsList.length - 1);
+
+        const onDeferredColumnOrderUpdate = this.params.onDeferredColumnOrderUpdate;
+        if (onDeferredColumnOrderUpdate) {
+            const hoveredItem = this.displayedColsList[nextItem];
+            if (!hoveredItem) {
+                return;
+            }
+            const hoveredColumn = hoveredItem.group ? hoveredItem.columnGroup.getLeafColumns()[0] : hoveredItem.column;
+            if (!hoveredColumn) {
+                return;
+            }
+
+            const allColumns = this.params.getToolPanelColumnsInOrder?.() ?? beans.colModel.getCols();
+            const targetIndex = getMoveTargetIndex(allColumns, currentColumns, hoveredColumn, isUp);
+            if (targetIndex == null) {
+                return;
+            }
+
+            const movedIds = new Set(currentColumns.map((currentColumn) => currentColumn.getColId()));
+            const nextOrder = allColumns.filter((existingColumn) => !movedIds.has(existingColumn.getColId()));
+            nextOrder.splice(targetIndex, 0, ...currentColumns);
+            onDeferredColumnOrderUpdate(nextOrder.map((nextColumn) => nextColumn.getColId()));
+            return;
+        }
 
         this.skipRefocus = true;
         moveItem(beans, currentColumns, {

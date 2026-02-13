@@ -69,12 +69,13 @@ function setAllVisible(
     onDeferredVisibilityColumnStateUpdate?: (stateItems: ColumnState[]) => void
 ): void {
     const colStateItems: ColumnState[] = [];
+    const shouldAlwaysStageDeferredVisibility = !!onDeferredVisibilityColumnStateUpdate;
 
     for (const col of columns) {
         if (col.getColDef().lockVisible) {
             continue;
         }
-        if (col.isVisible() != visible) {
+        if (shouldAlwaysStageDeferredVisibility || col.isVisible() != visible) {
             colStateItems.push({
                 colId: col.getId(),
                 hide: !visible,

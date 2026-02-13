@@ -7,6 +7,7 @@ export interface DeferredValueColumnState {
 
 export interface ColumnToolPanelDeferredState {
     pivotMode: boolean;
+    colOrderIds: string[];
     rowGroupColIds: string[];
     pivotColIds: string[];
     valueCols: DeferredValueColumnState[];
@@ -15,6 +16,7 @@ export interface ColumnToolPanelDeferredState {
 
 const EMPTY_STATE: ColumnToolPanelDeferredState = {
     pivotMode: false,
+    colOrderIds: [],
     rowGroupColIds: [],
     pivotColIds: [],
     valueCols: [],
@@ -24,6 +26,7 @@ const EMPTY_STATE: ColumnToolPanelDeferredState = {
 function cloneState(state: ColumnToolPanelDeferredState): ColumnToolPanelDeferredState {
     return {
         pivotMode: state.pivotMode,
+        colOrderIds: [...state.colOrderIds],
         rowGroupColIds: [...state.rowGroupColIds],
         pivotColIds: [...state.pivotColIds],
         valueCols: state.valueCols.map((valueCol) => ({
@@ -112,6 +115,12 @@ export class ColumnToolPanelDeferredService {
             colId: valueCol.colId,
             aggFunc: valueCol.aggFunc,
         }));
+        this.setPendingState(pendingState);
+    }
+
+    public setPendingColumnOrder(colIds: string[]): void {
+        const pendingState = this.getPendingState();
+        pendingState.colOrderIds = [...colIds];
         this.setPendingState(pendingState);
     }
 

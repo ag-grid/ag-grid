@@ -34,6 +34,8 @@ export interface ToolPanelColumnCompParams<TData = any, TContext = any>
         pivot: boolean;
         value: boolean;
     };
+    onDeferredColumnOrderUpdate?: (colIds: string[]) => void;
+    getToolPanelColumnsInOrder?: () => AgColumn[];
 }
 
 export class ColumnToolPanel extends Component implements IColumnToolPanel, IToolPanelComp {
@@ -95,6 +97,8 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             this.params.getToolPanelPivotMode = this.getToolPanelPivotMode.bind(this);
             this.params.isColumnCheckedInToolPanel = this.isColumnCheckedInToolPanel.bind(this);
             this.params.getToolPanelColumnFunctionState = this.getToolPanelColumnFunctionState.bind(this);
+            this.params.onDeferredColumnOrderUpdate = this.onDeferredColumnOrderUpdate.bind(this);
+            this.params.getToolPanelColumnsInOrder = this.getToolPanelColumnsInOrder.bind(this);
         }
 
         const { childDestroyFuncs, colToolPanelFactory, gos } = this;
@@ -364,6 +368,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         const colDefCols = colModel.getColDefCols() ?? [];
         return {
             pivotMode: colModel.isPivotMode(),
+            colOrderIds: (colModel.getCols() ?? []).map((col) => col.getColId()),
             rowGroupColIds: rowGroupColsSvc?.columns.map((col) => col.getColId()) ?? [],
             pivotColIds: pivotColsSvc?.columns.map((col) => col.getColId()) ?? [],
             valueCols: (valueColsSvc?.columns ?? []).map((col) => ({
@@ -422,6 +427,11 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         this.primaryColsPanel?.syncLayoutWithGrid();
         this.refreshDeferredButtonsState();
         return true;
+    }
+
+    private onDeferredColumnOrderUpdate(colIds: string[]): void {
+        this.deferredService.setPendingColumnOrder(colIds);
+        this.refreshDeferredButtonsState();
     }
 
     private onDeferredValueColumnAggFuncUpdate(column: AgColumn, aggFunc: string): boolean {
@@ -485,6 +495,13 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             return column.isVisible();
         }
 
+        if (!this.deferredService.hasPendingChanges()) {
+            if (pivotMode) {
+                return column.isPivotActive() || column.isRowGroupActive() || column.isValueActive();
+            }
+            return column.isVisible();
+        }
+
         const pendingState = this.deferredService.getPendingState();
         const colId = column.getColId();
         if (pivotMode) {
@@ -498,7 +515,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     private getToolPanelColumnFunctionState(column: AgColumn): { rowGroup: boolean; pivot: boolean; value: boolean } {
-        if (!this.params.deferApply) {
+        if (!this.params.deferApply || !this.deferredService.hasPendingChanges()) {
             return {
                 rowGroup: column.isRowGroupActive(),
                 pivot: column.isPivotActive(),
@@ -513,6 +530,23 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             pivot: pendingState.pivotColIds.includes(colId),
             value: pendingState.valueCols.some((valueCol) => valueCol.colId === colId),
         };
+    }
+
+    private getToolPanelColumnsInOrder(): AgColumn[] {
+        const { colModel } = this.beans;
+        if (!this.params.deferApply) {
+            return colModel.getCols() ?? [];
+        }
+
+        const pendingColIds = this.deferredService.getPendingState().colOrderIds;
+        if (pendingColIds.length === 0) {
+            return colModel.getCols() ?? [];
+        }
+
+        const mapped = pendingColIds
+            .map((colId) => colModel.getColDefCol(colId))
+            .filter((column): column is AgColumn => !!column);
+        return mapped.length > 0 ? mapped : colModel.getCols() ?? [];
     }
 
     private initDeferredButtonsIfNeeded(): void {
@@ -571,28 +605,46 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         }
 
         const allColumns = colModel.getColDefCols() ?? [];
+        const orderedColIds = (() => {
+            const allColIds = allColumns.map((column) => column.getColId());
+            if (!state.colOrderIds.length) {
+                return allColIds;
+            }
+            const existing = state.colOrderIds.filter((colId) => allColIds.includes(colId));
+            const missing = allColIds.filter((colId) => !existing.includes(colId));
+            return [...existing, ...missing];
+        })();
+        const allColumnsById = new Map(allColumns.map((column) => [column.getColId(), column] as const));
         const rowGroupIndexMap = new Map(state.rowGroupColIds.map((colId, index) => [colId, index] as const));
         const pivotIndexMap = new Map(state.pivotColIds.map((colId, index) => [colId, index] as const));
         const valueAggMap = new Map(state.valueCols.map((valueCol) => [valueCol.colId, valueCol.aggFunc] as const));
         const visibleColIdSet = new Set(state.visibleColIds);
 
-        const columnState: ColumnState[] = allColumns.map((column) => {
-            const colId = column.getColId();
-            const rowGroupIndex = rowGroupIndexMap.get(colId);
-            const pivotIndex = pivotIndexMap.get(colId);
-            const aggFunc = valueAggMap.has(colId) ? valueAggMap.get(colId)! : null;
-            return {
-                colId,
-                rowGroup: rowGroupIndex != null,
-                rowGroupIndex: rowGroupIndex ?? null,
-                pivot: pivotIndex != null,
-                pivotIndex: pivotIndex ?? null,
-                aggFunc,
-                hide: !visibleColIdSet.has(colId),
-            };
-        });
+        const columnState: ColumnState[] = orderedColIds
+            .map((colId) => allColumnsById.get(colId))
+            .filter((column): column is AgColumn => !!column)
+            .map((column) => {
+                const colId = column.getColId();
+                const rowGroupIndex = rowGroupIndexMap.get(colId);
+                const pivotIndex = pivotIndexMap.get(colId);
+                const aggFunc = valueAggMap.has(colId) ? valueAggMap.get(colId)! : null;
+                return {
+                    colId,
+                    rowGroup: rowGroupIndex != null,
+                    rowGroupIndex: rowGroupIndex ?? null,
+                    pivot: pivotIndex != null,
+                    pivotIndex: pivotIndex ?? null,
+                    aggFunc,
+                    hide: !visibleColIdSet.has(colId),
+                };
+            });
 
-        _applyColumnState(this.beans, { state: columnState, applyOrder: true }, 'toolPanelUi');
+        _applyColumnState(this.beans, { state: columnState }, 'toolPanelUi');
+        _applyColumnState(
+            this.beans,
+            { state: orderedColIds.map((colId) => ({ colId })), applyOrder: true },
+            'toolPanelUi'
+        );
     }
 
     public getState(): ColumnToolPanelState {

@@ -214,6 +214,72 @@ describe('Columns Tool Panel Deferred Apply Mode', () => {
         expect(getButtons(gridApi).applyButton.disabled).toBe(false);
     });
 
+    test('default checkbox state follows current grid visibility state', async () => {
+        const gridApi = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'athlete', enablePivot: true, enableRowGroup: true, enableValue: true },
+                { field: 'age', hide: true, enablePivot: true, enableRowGroup: true, enableValue: true },
+                { field: 'country', enablePivot: true, enableRowGroup: true, enableValue: true },
+            ],
+            rowData,
+            sideBar,
+            pivotMode: false,
+        });
+
+        const toolPanel = getToolPanel(gridApi);
+        const isCheckedInToolPanel = toolPanel.isColumnCheckedInToolPanel.bind(toolPanel) as (
+            column: any,
+            pivotMode: boolean
+        ) => boolean;
+
+        expect(gridApi.getColumn('athlete')!.isVisible()).toBe(true);
+        expect(gridApi.getColumn('age')!.isVisible()).toBe(false);
+        expect(gridApi.getColumn('country')!.isVisible()).toBe(true);
+
+        expect(isCheckedInToolPanel(gridApi.getColumn('athlete'), false)).toBe(true);
+        expect(isCheckedInToolPanel(gridApi.getColumn('age'), false)).toBe(false);
+        expect(isCheckedInToolPanel(gridApi.getColumn('country'), false)).toBe(true);
+    });
+
+    test('clicking select all checks all column checkboxes in deferred mode', async () => {
+        const gridApi = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            sideBar,
+            pivotMode: false,
+        });
+
+        const toolPanel = getToolPanel(gridApi);
+        const primaryColsPanel = toolPanel.primaryColsPanel as any;
+        const primaryColsListPanel = primaryColsPanel.primaryColsListPanel as any;
+        const primaryColsHeaderPanel = primaryColsPanel.primaryColsHeaderPanel as any;
+
+        const getRenderedSelectionStates = (): boolean[] => {
+            const states: boolean[] = [];
+            primaryColsListPanel.virtualList.forEachRenderedRow((comp: any) => {
+                if (!comp.modelItem?.group) {
+                    states.push(!!comp.isSelected());
+                }
+            });
+            return states;
+        };
+
+        primaryColsListPanel.doSetSelectedAll(false);
+        await asyncSetTimeout(1);
+
+        expect(getRenderedSelectionStates().every((selected) => !selected)).toBe(true);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(false);
+
+        primaryColsHeaderPanel.eSelect.getInputElement().click();
+        await asyncSetTimeout(1);
+
+        expect(getRenderedSelectionStates().every((selected) => selected)).toBe(true);
+        expect(gridApi.getColumn('athlete')!.isVisible()).toBe(true);
+        expect(gridApi.getColumn('age')!.isVisible()).toBe(true);
+        expect(gridApi.getColumn('country')!.isVisible()).toBe(true);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
+    });
+
     test('does not apply value aggregation function change until Apply is clicked', async () => {
         const gridApi = await gridMgr.createGridAndWait('myGrid', {
             columnDefs,
@@ -299,6 +365,52 @@ describe('Columns Tool Panel Deferred Apply Mode', () => {
         await asyncSetTimeout(1);
 
         expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['age', 'athlete']);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
+    });
+
+    test('applies deferred column move order only when Apply is clicked', async () => {
+        const gridApi = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            sideBar,
+            pivotMode: false,
+        });
+
+        const getColumnOrder = () => gridApi.getAllDisplayedColumns().slice(0, 3).map((col) => col.getColId());
+        expect(getColumnOrder()).toEqual(['athlete', 'age', 'country']);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
+
+        const toolPanel = getToolPanel(gridApi);
+        const primaryColsPanel = toolPanel.primaryColsPanel as any;
+        const primaryColsListPanel = primaryColsPanel.primaryColsListPanel as any;
+        const athleteCol = gridApi.getColumn('athlete');
+        if (!athleteCol) {
+            throw new Error('Expected athlete column to exist');
+        }
+
+        // Move athlete below age through the CTP list move path.
+        const athleteItem = primaryColsListPanel.displayedColsList.find(
+            (item: any) => !item.group && item.column.getColId() === 'athlete'
+        );
+        if (!athleteItem) {
+            throw new Error('Expected athlete model item in displayedColsList');
+        }
+        primaryColsListPanel.moveItems(
+            {
+                modelItem: athleteItem,
+                columnDepth: athleteItem.depth,
+            } as any,
+            false
+        );
+        await asyncSetTimeout(1);
+
+        expect(getColumnOrder()).toEqual(['athlete', 'age', 'country']);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(false);
+
+        getButtons(gridApi).applyButton.click();
+        await asyncSetTimeout(1);
+
+        expect(getColumnOrder()).toEqual(['age', 'athlete', 'country']);
         expect(getButtons(gridApi).applyButton.disabled).toBe(true);
     });
 
