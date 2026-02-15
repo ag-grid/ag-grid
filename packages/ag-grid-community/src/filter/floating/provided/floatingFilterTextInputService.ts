@@ -14,17 +14,44 @@ export class FloatingFilterTextInputService extends BeanStub implements Floating
         super();
     }
 
+    /**
+     * Sets up the text input and IME-aware value change listeners.
+     * During composition we suppress sync so the parent filter is not updated
+     * with intermediate text. We trigger sync once on compositionend and ignore
+     * the immediately following input event to avoid double application.
+     */
     public setupGui(parentElement: HTMLElement): void {
         this.eInput = this.createManagedBean(new AgInputTextField(this.params?.config));
-
         const eInput = this.eInput.getGui();
-
         parentElement.appendChild(eInput);
 
-        const listener = (e: KeyboardEvent) => this.onValueChanged(e);
-        this.addManagedListeners(eInput, {
-            input: listener,
-            keydown: listener,
+        let isComposing = false;
+        let skipNextInputEvent = false;
+
+        const handleValueChange = (e: KeyboardEvent | InputEvent) => {
+            if (isComposing) {
+                return;
+            }
+            if (skipNextInputEvent && e.type === 'input') {
+                skipNextInputEvent = false;
+                return;
+            }
+            skipNextInputEvent = false;
+            this.onValueChanged(e as KeyboardEvent);
+        };
+
+        this.addManagedElementListeners(eInput, {
+            compositionstart: () => {
+                isComposing = true;
+                skipNextInputEvent = false;
+            },
+            compositionend: (e: CompositionEvent) => {
+                isComposing = false;
+                skipNextInputEvent = true;
+                this.onValueChanged(e as unknown as KeyboardEvent);
+            },
+            input: handleValueChange,
+            keydown: handleValueChange,
         });
     }
 
