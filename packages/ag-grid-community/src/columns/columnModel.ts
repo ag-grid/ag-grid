@@ -291,20 +291,24 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const showRowNumbers = _isRowNumbers(beans);
         const valueColumns = valueColsSvc?.columns;
 
-        const res = cols.list.filter((col) => {
-            const isAutoGroupCol = isColumnGroupAutoCol(col);
-            if (showAutoGroupAndValuesOnly) {
-                const isValueCol = valueColumns?.includes(col);
+        if (showAutoGroupAndValuesOnly) {
+            const nonValueColumns = cols.list.filter((col) => {
+                const isAutoGroupCol = isColumnGroupAutoCol(col);
                 return (
                     isAutoGroupCol ||
-                    isValueCol ||
                     (showSelectionColumn && isColumnSelectionCol(col)) ||
                     (showRowNumbers && isRowNumberCol(col))
                 );
-            } else {
-                // keep col if a) it's auto-group or b) it's visible
-                return isAutoGroupCol || col.isVisible();
-            }
+            });
+
+            const valueColumnsInDisplayOrder = (valueColumns ?? []).filter((col) => cols.map[col.getColId()] !== undefined);
+            return [...nonValueColumns, ...valueColumnsInDisplayOrder];
+        }
+
+        const res = cols.list.filter((col) => {
+            const isAutoGroupCol = isColumnGroupAutoCol(col);
+            // keep col if a) it's auto-group or b) it's visible
+            return isAutoGroupCol || col.isVisible();
         });
 
         return res;

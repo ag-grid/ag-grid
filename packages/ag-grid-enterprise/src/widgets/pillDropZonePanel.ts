@@ -598,7 +598,10 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
 
     private createItemComponent(item: TItem, ghost: boolean): TPill {
         const itemComponent = this.createPillComponent(item, this.dropTarget, ghost, this.horizontal);
-        itemComponent.addEventListener('columnRemove', this.removeItems.bind(this, [item]));
+        itemComponent.addEventListener('columnRemove', () => {
+            this.removeItems([item]);
+            this.refreshGui();
+        });
 
         this.createBean(itemComponent);
         this.guiDestroyFunctions.push(() => this.destroyBean(itemComponent));

@@ -30,6 +30,7 @@ const columnDefs: ColDef[] = [
 ];
 
 let gridApi: GridApi<IOlympicData>;
+let requestSequence = 0;
 
 const logColumnStateSnapshot = (source: string) => {
     try {
@@ -76,6 +77,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
     },
+    enableStrictPivotColumnOrder: true,
     rowModelType: 'serverSide',
     sideBar: {
         toolPanels: [
@@ -117,19 +119,20 @@ document.addEventListener('DOMContentLoaded', function () {
 function createServerSideDatasource(server: { getData: (request: IServerSideGetRowsRequest) => any }): IServerSideDatasource {
     return {
         getRows: (params) => {
-            console.log('[CTP Deferred Example] SSRM getRows request', params.request);
+            const requestId = ++requestSequence;
+            console.log(`[CTP Deferred Example] Server request sent (#${requestId})`, params.request);
             const response = server.getData(params.request);
 
             setTimeout(() => {
                 if (response.success) {
-                    console.log('[CTP Deferred Example] SSRM getRows success', {
+                    console.log(`[CTP Deferred Example] Server response received (#${requestId})`, {
                         startRow: params.request.startRow,
                         endRow: params.request.endRow,
                         returnedRows: response.rows.length,
                     });
                     params.success({ rowData: response.rows });
                 } else {
-                    console.log('[CTP Deferred Example] SSRM getRows fail');
+                    console.log(`[CTP Deferred Example] Server request failed (#${requestId})`);
                     params.fail();
                 }
             }, 200);

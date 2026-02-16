@@ -336,6 +336,87 @@ describe('Columns Tool Panel Deferred Apply Mode', () => {
         expect(getButtons(gridApi).applyButton.disabled).toBe(true);
     });
 
+    test('applies deferred value column reorder in the same order as staged', async () => {
+        const gridApi = gridMgr.createGrid('myGrid', {
+            columnDefs,
+            rowData,
+            sideBar,
+            pivotMode: true,
+        });
+        await asyncSetTimeout(1);
+
+        gridApi.setValueColumns(['athlete', 'age']);
+        await asyncSetTimeout(1);
+
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['athlete', 'age']);
+        expect(gridApi.getAllDisplayedColumns().map((col) => col.getColId())).toEqual(['athlete', 'age']);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
+
+        const toolPanel = getToolPanel(gridApi);
+        const athleteCol = gridApi.getColumn('athlete');
+        const ageCol = gridApi.getColumn('age');
+        if (!athleteCol || !ageCol) {
+            throw new Error('Expected athlete and age columns to exist');
+        }
+
+        toolPanel.onDeferredValueColumnsUpdate([ageCol, athleteCol]);
+        await asyncSetTimeout(1);
+
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['athlete', 'age']);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(false);
+
+        getButtons(gridApi).applyButton.click();
+        await asyncSetTimeout(1);
+
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['age', 'athlete']);
+        expect(gridApi.getAllDisplayedColumns().map((col) => col.getColId())).toEqual(['age', 'athlete']);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
+    });
+
+    test('clicking remove on a value pill updates deferred UI only until Apply', async () => {
+        const gridApi = gridMgr.createGrid('myGrid', {
+            columnDefs,
+            rowData,
+            sideBar,
+            pivotMode: true,
+        });
+        await asyncSetTimeout(1);
+
+        gridApi.setValueColumns(['athlete']);
+        await asyncSetTimeout(1);
+
+        const toolPanel = getToolPanel(gridApi);
+        const valuesDropZonePanel = toolPanel.valuesDropZonePanel as any;
+        const valuesGui = valuesDropZonePanel?.getGui?.() as HTMLElement | undefined;
+        if (!valuesGui) {
+            throw new Error('Expected values drop zone panel to exist');
+        }
+
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['athlete']);
+        if (valuesGui.querySelectorAll('.ag-column-drop-cell').length === 0) {
+            const athleteCol = gridApi.getColumn('athlete');
+            if (!athleteCol) {
+                throw new Error('Expected athlete column to exist');
+            }
+            valuesDropZonePanel.addItem(athleteCol);
+            await asyncSetTimeout(1);
+        }
+        expect(valuesGui.querySelectorAll('.ag-column-drop-cell').length).toBe(1);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
+
+        const removeButton = valuesGui.querySelector('.ag-column-drop-cell-button') as HTMLElement | null;
+        if (!removeButton) {
+            throw new Error('Expected value pill remove button to exist');
+        }
+        removeButton.click();
+        await asyncSetTimeout(1);
+
+        // Deferred mode: pill is removed visually, but grid state is unchanged until Apply.
+        expect(valuesGui.querySelectorAll('.ag-column-drop-cell').length).toBe(0);
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['athlete']);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(false);
+    });
+
     test('does not apply row group column reorder until Apply is clicked', async () => {
         const gridApi = await gridMgr.createGridAndWait('myGrid', {
             columnDefs,

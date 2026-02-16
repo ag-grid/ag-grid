@@ -600,6 +600,10 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             });
 
         _applyColumnState(this.beans, { state: columnState }, 'toolPanelUi');
+
+        // Preserve deferred value column ordering (aggregation order) from the tool panel state.
+        const valueColumnsInOrder = this.getColumnsByColIds(state.valueCols.map((valueCol) => valueCol.colId));
+        this.beans.valueColsSvc?.setColumns(valueColumnsInOrder, 'toolPanelUi');
     }
 
     public getState(): ColumnToolPanelState {
