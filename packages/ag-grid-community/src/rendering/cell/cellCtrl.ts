@@ -68,6 +68,7 @@ export interface ICellComp {
     setIncludeSelection(include: boolean): void;
     setIncludeRowDrag(include: boolean): void;
     setIncludeDndSource(include: boolean): void;
+    setRowResizerElement(element: HTMLElement | null): void;
 
     getCellEditor(): ICellEditor | null;
     getCellRenderer(): ICellRenderer | null;

@@ -26,6 +26,9 @@ export interface RowNumbersOptions
             | 'valueGetter'
             | 'valueFormatter'
             | 'maxWidth'
+            | 'cellRenderer'
+            | 'cellRendererSelector'
+            | 'cellRendererParams'
         >
     > {
     /**

@@ -41,6 +41,7 @@ export class CellComp extends Component {
     private checkboxSelectionComp: CheckboxSelectionComponent | undefined;
     private dndSourceComp: DndSourceComp | undefined;
     private rowDraggingComp: RowDragComp | undefined;
+    private rowResizerElement: HTMLElement | null = null;
 
     private hideEditorPopup: ((...args: any[]) => any) | null | undefined;
     private cellEditorPopupWrapper: PopupEditorWrapper | undefined;
@@ -118,6 +119,7 @@ export class CellComp extends Component {
             setIncludeSelection: (include) => (this.includeSelection = include),
             setIncludeRowDrag: (include) => (this.includeRowDrag = include),
             setIncludeDndSource: (include) => (this.includeDndSource = include),
+            setRowResizerElement: (element) => this.setRowResizerElement(element),
 
             setRenderDetails: (compDetails, valueToDisplay, force) =>
                 this.setRenderDetails(compDetails, valueToDisplay, force),
@@ -137,6 +139,16 @@ export class CellComp extends Component {
         // if editing, and using wrapper, value (cell editor) goes in eCellWrapper
         // if editing or rendering, and not using wrapper, value (or comp) is directly inside cell
         return this.eCellValue ?? this.eCellWrapper ?? this.eCell;
+    }
+
+    private setRowResizerElement(element: HTMLElement | null): void {
+        if (this.rowResizerElement) {
+            _removeFromParent(this.rowResizerElement);
+        }
+        this.rowResizerElement = element;
+        if (element) {
+            this.eCell.appendChild(element);
+        }
     }
 
     private setRenderDetails(
@@ -171,6 +183,11 @@ export class CellComp extends Component {
         }
 
         this.rowDraggingComp?.refreshVisibility();
+
+        // re-append row resizer if it was cleared from eCell (e.g. when no eCellWrapper exists)
+        if (this.rowResizerElement && !this.rowResizerElement.parentElement) {
+            this.eCell.appendChild(this.rowResizerElement);
+        }
     }
 
     private setEditDetails(

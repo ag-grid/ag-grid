@@ -237,6 +237,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     private refreshRowNumberOverrides(): void {
         const rowNumbers = _isRowNumbers(this.beans);
         this.rowNumberOverrides = {};
+        this.isSuppressCellSelectionIntegration = false;
 
         if (!rowNumbers || typeof rowNumbers !== 'object') {
             return;
@@ -268,6 +269,9 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
             'maxWidth',
             'minWidth',
             'resizable',
+            'cellRenderer',
+            'cellRendererSelector',
+            'cellRendererParams',
         ];
 
         for (const prop of colDefValidProps) {
