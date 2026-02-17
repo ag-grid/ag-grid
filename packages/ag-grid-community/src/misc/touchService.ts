@@ -11,7 +11,7 @@ import type { HeaderComp } from '../headerRendering/cells/column/headerComp';
 import type { HeaderGroupComp } from '../headerRendering/cells/columnGroup/headerGroupComp';
 import type { GridHeaderCtrl } from '../headerRendering/gridHeaderCtrl';
 import type { CellMouseListenerFeature } from '../rendering/cell/cellMouseListenerFeature';
-import type { LongTapEvent, TapEvent, TouchListenerEvent } from '../widgets/touchListener';
+import type { LongTapEvent, TapEvent } from '../widgets/touchListener';
 import { TouchListener } from '../widgets/touchListener';
 
 export class TouchService extends BeanStub implements NamedBean {
@@ -81,17 +81,20 @@ export class TouchService extends BeanStub implements NamedBean {
 
         const suppressMenuHide = comp.shouldSuppressMenuHide();
         const tapMenuButton = suppressMenuHide && _exists(eMenu) && params.enableMenu;
+        const isHeaderContextMenuEnabled = !!menuSvc?.isHeaderContextMenuEnabled(params.column as AgColumn);
         let menuTouchListener = touchListener;
         if (tapMenuButton) {
             menuTouchListener = new TouchListener(eMenu, true);
             comp.addDestroyFunc(() => menuTouchListener.destroy());
         }
 
-        if (params.enableMenu || menuSvc?.isHeaderContextMenuEnabled(params.column as AgColumn)) {
-            const eventType: TouchListenerEvent = tapMenuButton ? 'tap' : 'longTap';
-            const showMenuFn = (event: TapEvent | LongTapEvent) =>
-                params.showColumnMenuAfterMouseClick(event.touchStart);
-            comp.addManagedListeners(menuTouchListener, { [eventType]: showMenuFn });
+        const showMenuFn = (event: TapEvent | LongTapEvent) => params.showColumnMenuAfterMouseClick(event.touchStart);
+
+        if (tapMenuButton && params.enableMenu) {
+            comp.addManagedListeners(menuTouchListener, { tap: showMenuFn });
+        }
+
+        if (isHeaderContextMenuEnabled) {
             comp.addManagedListeners(touchListener, { longTap: showMenuFn });
         }
 
