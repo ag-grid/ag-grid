@@ -13,6 +13,7 @@ import {
     _AgComponentStub,
     _AgPositionableFeature,
     _getActiveDomElement,
+    _getEventTarget,
     _getInnerHeight,
     _getInnerWidth,
     _isVisible,
@@ -175,7 +176,7 @@ export class AgPanel<
                 if (
                     eGui.contains(e.relatedTarget as HTMLElement) ||
                     eGui.contains(_getActiveDomElement(beans)) ||
-                    this.eTitleBarButtons.contains(e.target as HTMLElement)
+                    this.eTitleBarButtons.contains(_getEventTarget(e) as HTMLElement)
                 ) {
                     e.preventDefault();
                     return;

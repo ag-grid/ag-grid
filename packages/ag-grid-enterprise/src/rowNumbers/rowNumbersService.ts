@@ -11,6 +11,7 @@ import {
     _debounce,
     _destroyColumnTree,
     _getColumnStateFromColDef,
+    _getEventTarget,
     _getFirstRow,
     _getRowNode,
     _interpretAsRightClick,
@@ -165,7 +166,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         // if click interaction can't produce an outcome (i.e. no cell selection, no row-resizing), do nothing
         if (
             !this.isIntegratedWithSelection ||
-            (mouseEvent.target as HTMLElement).classList.contains('ag-row-numbers-resizer')
+            (_getEventTarget(mouseEvent) as HTMLElement).classList.contains('ag-row-numbers-resizer')
         ) {
             if (this.beans.rangeSvc) {
                 mouseEvent.preventDefault();

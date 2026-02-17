@@ -7,7 +7,7 @@ import type {
     _BaseProperties,
     _IPropertiesService,
 } from 'ag-grid-community';
-import { KeyCode, RefPlaceholder, _AgComponentStub, _exists, _setDisplayed } from 'ag-grid-community';
+import { KeyCode, RefPlaceholder, _AgComponentStub, _exists, _getEventTarget, _setDisplayed } from 'ag-grid-community';
 
 import type { AgColorInput } from './agColorInput';
 import { AgColorInputSelector } from './agColorInput';
@@ -438,7 +438,7 @@ export class AgColorPanel<
     }
 
     private onRecentColorClick(e: MouseEvent | KeyboardEvent) {
-        const target = e.target as HTMLElement;
+        const target = _getEventTarget(e) as HTMLElement;
 
         if (!_exists(target.id)) {
             return;

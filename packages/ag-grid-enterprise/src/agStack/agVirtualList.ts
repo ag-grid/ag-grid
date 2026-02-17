@@ -15,6 +15,7 @@ import {
     _AgTabGuardComp,
     _createAgElement,
     _getAriaPosInSet,
+    _getEventTarget,
     _observeResize,
     _requestAnimationFrame,
     _setAriaLabel,
@@ -156,7 +157,7 @@ export class AgVirtualList<
     }
 
     protected onFocusIn(e: FocusEvent): void {
-        const target = e.target as HTMLElement;
+        const target = _getEventTarget(e) as HTMLElement;
 
         if (target.classList.contains('ag-virtual-list-item')) {
             this.lastFocusedRowIndex = _getAriaPosInSet(target) - 1;

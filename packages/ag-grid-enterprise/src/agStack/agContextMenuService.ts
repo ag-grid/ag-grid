@@ -12,6 +12,7 @@ import {
     _anchorElementToMouseMoveEvent,
     _createAgElement,
     _focusInto,
+    _getEventTarget,
     _getPageBody,
     _getRootNode,
     _isPromise,
@@ -110,7 +111,7 @@ export class AgContextMenuService<
                     return;
                 }
 
-                const { target } = mouseEvent;
+                const target = _getEventTarget(mouseEvent);
 
                 // if there is no event target, it means the event was created by `api.showContextMenu`.
                 const isFromFakeEvent = !target;

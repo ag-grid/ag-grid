@@ -16,6 +16,7 @@ import {
     _focusInto,
     _getActiveDomElement,
     _getDocument,
+    _getEventTarget,
     _isKeyboardMode,
     _setAriaLabel,
     _setAriaRole,
@@ -177,7 +178,7 @@ export class AgTabbedLayout<
         const { suppressTrapFocus, enableCloseButton } = params;
 
         const activeElement = _getActiveDomElement(beans);
-        const target = e.target as HTMLElement;
+        const target = _getEventTarget(e) as HTMLElement;
         const backwards = e.shiftKey;
 
         if (eHeader.contains(activeElement)) {

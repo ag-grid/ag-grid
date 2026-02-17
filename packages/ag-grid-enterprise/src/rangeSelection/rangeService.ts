@@ -34,6 +34,7 @@ import {
     _getAbsoluteRowIndex,
     _getCellCtrlForEventTarget,
     _getEnableColumnSelection,
+    _getEventTarget,
     _getFirstRow,
     _getLastRow,
     _getRowAbove,
@@ -94,6 +95,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
 
     private cellRanges: CellRange[] = [];
     private lastMouseEvent: MouseEvent | null;
+    private lastMouseEventTarget: EventTarget | null;
     private readonly bodyScrollListener = this.onBodyScroll.bind(this);
 
     private lastCellHovered: CellPosition | undefined;
@@ -180,7 +182,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
     // Drag And Drop Target Methods
     public onDragStart(mouseEvent: MouseEvent): void {
         const gos = this.gos;
-        const target = mouseEvent.target as HTMLElement | null;
+        const target = _getEventTarget(mouseEvent);
         if (!_isCellSelectionEnabled(gos) || _getRowCtrlForEventTarget(gos, target)?.isSuppressMouseEvent(mouseEvent)) {
             return;
         }
@@ -258,9 +260,14 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
             return;
         }
 
-        this.updateValuesOnMove(mouseEvent.target);
+        // When onBodyScroll() calls onDragging() with the same cached event, composedPath() may
+        // return an empty array (browsers clear it after dispatch). We detect this by checking
+        // event identity and reuse the previously captured target for the scroll recalculation.
+        const target = mouseEvent === this.lastMouseEvent ? this.lastMouseEventTarget : _getEventTarget(mouseEvent);
+        this.updateValuesOnMove(target);
 
         this.lastMouseEvent = mouseEvent;
+        this.lastMouseEventTarget = target;
 
         const isMouseAndStartInPinned = (position: string) =>
             lastCellHovered && lastCellHovered.rowPinned === position && newestRangeStartCell!.rowPinned === position;
@@ -304,6 +311,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
 
         this.ctrlsSvc.getGridBodyCtrl().eBodyViewport.removeEventListener('scroll', this.bodyScrollListener);
         this.lastMouseEvent = null;
+        this.lastMouseEventTarget = null;
         this.dragging = false;
         this.draggingRange = undefined;
         this.lastCellHovered = undefined;
@@ -415,7 +423,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
 
     public handleCellMouseDown(event: MouseEvent, cell: CellPosition): void {
         const { beans } = this;
-        const target = event.target as HTMLElement | null;
+        const target = _getEventTarget(event);
 
         if (this.shouldSuppressRangeSelection(target)) {
             return;
@@ -1306,8 +1314,9 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
     // means we are selecting more (or less) cells, but the mouse isn't moving, so we recalculate
     // the selection by mimicking a new mouse event
     private onBodyScroll(): void {
-        if (this.dragging && this.lastMouseEvent) {
-            this.onDragging(this.lastMouseEvent);
+        const { dragging, lastMouseEvent } = this;
+        if (dragging && lastMouseEvent) {
+            this.onDragging(lastMouseEvent);
         }
     }
 

@@ -4,6 +4,7 @@ import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import { _getDocument } from '../utils/document';
+import { _getEventTarget } from '../utils/event';
 import { _findFocusableElements, _findNextFocusableElement } from '../utils/focus';
 import type { StopPropagationCallbacks } from './agManagedFocusFeature';
 import { AgManagedFocusFeature } from './agManagedFocusFeature';
@@ -161,7 +162,7 @@ export class AgTabGuardCtrl<
     private onFocus(e: FocusEvent): void {
         if (this.isFocusableContainer && !this.eFocusableElement.contains(e.relatedTarget as HTMLElement)) {
             if (!this.allowFocus) {
-                this.findNextElementOutsideAndFocus(e.target === this.eBottomGuard);
+                this.findNextElementOutsideAndFocus(_getEventTarget(e) === this.eBottomGuard);
                 return;
             }
         }
@@ -179,7 +180,7 @@ export class AgTabGuardCtrl<
                 ? this.providedIsEmpty()
                 : _findFocusableElements(this.eFocusableElement, '.ag-tab-guard').length === 0;
             if (isEmpty) {
-                this.findNextElementOutsideAndFocus(e.target === this.eBottomGuard);
+                this.findNextElementOutsideAndFocus(_getEventTarget(e) === this.eBottomGuard);
                 return;
             }
         }
@@ -188,14 +189,14 @@ export class AgTabGuardCtrl<
             return;
         }
 
-        const fromBottom = e.target === this.eBottomGuard;
+        const fromBottom = _getEventTarget(e) === this.eBottomGuard;
 
         const hasFocusedInnerElement = this.providedFocusInnerElement
             ? this.providedFocusInnerElement(fromBottom)
             : this.focusInnerElement(fromBottom);
         if (!hasFocusedInnerElement && this.forceFocusOutWhenTabGuardsAreEmpty) {
             // nothing actually got focused, so force out
-            this.findNextElementOutsideAndFocus(e.target === this.eBottomGuard);
+            this.findNextElementOutsideAndFocus(_getEventTarget(e) === this.eBottomGuard);
         }
     }
 

@@ -12,6 +12,7 @@ import { _isFocusableFormField } from '../utils/dom';
 import type { TempEventHandler } from '../utils/event';
 import {
     _areEventsNear,
+    _getEventTarget,
     _getFirstActiveTouch,
     _isEventFromThisInstance,
     addTempEventHandlers,
@@ -62,7 +63,7 @@ export class BaseDragService<
     private readonly dragSources: DragSourceEntry[] = [];
 
     public get startTarget(): EventTarget | null {
-        return this.drag?.start.target ?? null;
+        return this.drag?.startTarget ?? null;
     }
 
     /** True if there is at least one active pointer drag in any BaseDragService instance in the page */
@@ -230,7 +231,7 @@ export class BaseDragService<
         const rootEl = _getRootNode(beans);
         const eElement = params.eElement;
         const pointerId = pointerEvent.pointerId;
-        const pointerDrag = new Dragging(rootEl, params, pointerEvent, pointerId);
+        const pointerDrag = new Dragging(rootEl, params, pointerEvent, _getEventTarget(pointerEvent), pointerId);
 
         activePointerDrags ??= new WeakMap();
         activePointerDrags.set(rootEl, pointerDrag);
@@ -302,7 +303,9 @@ export class BaseDragService<
 
         const beans = this.beans;
         const rootEl = _getRootNode(beans);
-        const touchDrag = new Dragging(rootEl, params, touchEvent.touches[0]);
+        const touch = touchEvent.touches[0];
+        const target = _getEventTarget(touchEvent) ?? params.eElement;
+        const touchDrag = new Dragging(rootEl, params, touch, target);
 
         const touchMoveEvent = (e: TouchEvent) => this.onTouchMove(e);
         const touchEndEvent = (e: TouchEvent) => this.onTouchUp(e);
@@ -310,7 +313,6 @@ export class BaseDragService<
         const dragPreventEventDefault = (e: Event) => this.draggingPreventDefault(e);
 
         const rootNode = _getRootNode(beans);
-        const target = touchEvent.target ?? params.eElement;
         this.initDrag(
             touchDrag,
             [target, 'touchmove', touchMoveEvent, PASSIVE_TRUE],
@@ -353,7 +355,7 @@ export class BaseDragService<
         const beans = this.beans;
         this.destroyDrag();
 
-        const mouseDrag = new Dragging(_getRootNode(beans), params, mouseEvent);
+        const mouseDrag = new Dragging(_getRootNode(beans), params, mouseEvent, _getEventTarget(mouseEvent));
 
         const mouseMoveEvent = (event: MouseEvent) => this.onMouseOrPointerMove(event);
         const mouseUpEvent = (event: MouseEvent) => this.onMouseOrPointerUp(event);
@@ -541,6 +543,7 @@ class Dragging {
         public readonly rootEl: Document | ShadowRoot,
         public readonly params: DragListenerParams,
         public readonly start: PointerEvent | MouseEvent | Touch,
+        public readonly startTarget: EventTarget | null,
         public readonly pointerId: number | null = null
     ) {
         this.eElement = params.eElement;
@@ -548,6 +551,6 @@ class Dragging {
 }
 
 const getEventTargetElement = (event: Event): Element | null => {
-    const target = event.target;
+    const target = _getEventTarget(event);
     return target instanceof Element ? target : null;
 };

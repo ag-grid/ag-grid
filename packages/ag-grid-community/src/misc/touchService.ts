@@ -1,5 +1,5 @@
 import { _isIOSUserAgent } from '../agStack/utils/browser';
-import { _isEventFromThisInstance, _isEventSupported } from '../agStack/utils/event';
+import { _getEventTarget, _isEventSupported } from '../agStack/utils/event';
 import { _exists } from '../agStack/utils/generic';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -19,14 +19,24 @@ export class TouchService extends BeanStub implements NamedBean {
 
     public mockBodyContextMenu(
         ctrl: GridBodyCtrl,
-        listener: (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => void
+        listener: (
+            mouseListener?: MouseEvent,
+            touch?: Touch,
+            touchEvent?: TouchEvent,
+            target?: EventTarget | null
+        ) => void
     ): void {
         this.mockContextMenu(ctrl, ctrl.eBodyViewport, listener);
     }
 
     public mockHeaderContextMenu(
         ctrl: GridHeaderCtrl,
-        listener: (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => void
+        listener: (
+            mouseListener?: MouseEvent,
+            touch?: Touch,
+            touchEvent?: TouchEvent,
+            target?: EventTarget | null
+        ) => void
     ): void {
         this.mockContextMenu(ctrl, ctrl.eGui, listener);
     }
@@ -38,7 +48,7 @@ export class TouchService extends BeanStub implements NamedBean {
         }
 
         const listener = (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => {
-            const { rowCtrl, cellCtrl } = ctrl.getControlsForEventTarget(touchEvent?.target ?? null);
+            const { rowCtrl, cellCtrl } = ctrl.getControlsForEventTarget(_getEventTarget(touchEvent));
             if (cellCtrl?.column) {
                 cellCtrl.dispatchCellContextMenuEvent(touchEvent ?? null);
             }
@@ -97,7 +107,7 @@ export class TouchService extends BeanStub implements NamedBean {
 
         if (params.enableSorting) {
             const tapListener = (event: TapEvent) => {
-                const target = event.touchStart.target as HTMLElement;
+                const target = event.startTarget as HTMLElement;
                 // When suppressMenuHide is true, a tap on the menu icon or filter button will bubble up
                 // to the header container, in that case we should not sort
                 if (suppressMenuHide && (eMenu?.contains(target) || eFilterButton?.contains(target))) {
@@ -147,7 +157,12 @@ export class TouchService extends BeanStub implements NamedBean {
     private mockContextMenu(
         ctrl: BeanStub,
         element: HTMLElement,
-        listener: (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => void
+        listener: (
+            mouseListener?: MouseEvent,
+            touch?: Touch,
+            touchEvent?: TouchEvent,
+            target?: EventTarget | null
+        ) => void
     ): void {
         // we do NOT want this when not in iPad
         if (!_isIOSUserAgent()) {
@@ -156,10 +171,10 @@ export class TouchService extends BeanStub implements NamedBean {
 
         const touchListener = new TouchListener(element);
         const longTapListener = (event: LongTapEvent) => {
-            if (!_isEventFromThisInstance(this.beans, event.touchEvent)) {
+            if (!this.beans.gos.isElementInThisInstance(event.startTarget as HTMLElement)) {
                 return;
             }
-            listener(undefined, event.touchStart, event.touchEvent);
+            listener(undefined, event.touchStart, event.touchEvent, event.startTarget);
         };
 
         ctrl.addManagedListeners(touchListener, { longTap: longTapListener });

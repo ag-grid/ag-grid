@@ -1,5 +1,5 @@
 import { KeyCode, _normaliseQwertyAzerty } from '../../agStack/constants/keyCode';
-import { _isEventFromThisInstance, _isEventSupported } from '../../agStack/utils/event';
+import { _getEventTarget, _isEventFromThisInstance, _isEventSupported } from '../../agStack/utils/event';
 import { _isEventFromPrintableCharacter } from '../../agStack/utils/keyboard';
 import { BeanStub } from '../../context/beanStub';
 import type { EditService } from '../../edit/editService';
@@ -54,7 +54,7 @@ export class RowContainerEventsFeature extends BeanStub {
             return;
         }
 
-        const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(mouseEvent.target);
+        const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(_getEventTarget(mouseEvent));
 
         if (eventName === 'contextmenu') {
             if (cellCtrl?.column) {
@@ -83,7 +83,7 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private processKeyboardEvent(eventName: string, keyboardEvent: KeyboardEvent): void {
-        const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(keyboardEvent.target);
+        const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(_getEventTarget(keyboardEvent));
 
         if (keyboardEvent.defaultPrevented) {
             return;
@@ -237,7 +237,7 @@ export class RowContainerEventsFeature extends BeanStub {
             return;
         }
 
-        const { cellCtrl } = this.getControlsForEventTarget(event.target);
+        const { cellCtrl } = this.getControlsForEventTarget(_getEventTarget(event));
 
         if (this.editSvc?.isEditing(cellCtrl, { withOpenEditor: true })) {
             return;
@@ -252,7 +252,7 @@ export class RowContainerEventsFeature extends BeanStub {
             return;
         }
 
-        const { cellCtrl } = this.getControlsForEventTarget(event.target);
+        const { cellCtrl } = this.getControlsForEventTarget(_getEventTarget(event));
 
         if (this.editSvc?.isEditing(cellCtrl, { withOpenEditor: true })) {
             return;
@@ -263,7 +263,7 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private onCtrlAndV(clipboardSvc: IClipboardService | undefined, event: KeyboardEvent): void {
-        const { cellCtrl } = this.getControlsForEventTarget(event.target);
+        const { cellCtrl } = this.getControlsForEventTarget(_getEventTarget(event));
 
         if (this.editSvc?.isEditing(cellCtrl, { withOpenEditor: true })) {
             return;

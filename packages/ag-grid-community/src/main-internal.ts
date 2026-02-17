@@ -163,7 +163,7 @@ export {
     _isFocusableFormField,
     _placeCaretAtEnd,
 } from './agStack/utils/dom';
-export { _anchorElementToMouseMoveEvent, _isElementInEventPath } from './agStack/utils/event';
+export { _anchorElementToMouseMoveEvent, _getEventTarget, _isElementInEventPath } from './agStack/utils/event';
 export {
     _findFocusableElements,
     _findNextFocusableElement,

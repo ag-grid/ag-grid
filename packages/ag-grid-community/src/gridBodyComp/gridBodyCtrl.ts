@@ -1,6 +1,6 @@
 import { _isInvisibleScrollbar } from '../agStack/utils/browser';
 import { _isElementChildOfClass, _requestAnimationFrame } from '../agStack/utils/dom';
-import { _isEventFromThisInstance } from '../agStack/utils/event';
+import { _getEventTarget, _isEventFromThisInstance } from '../agStack/utils/event';
 import type { ColumnModel } from '../columns/columnModel';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -194,14 +194,15 @@ export class GridBodyCtrl extends BeanStub {
         for (const element of elements) {
             this.addManagedElementListeners(element, {
                 focusin: (e: FocusEvent) => {
-                    const { target } = e;
+                    const target = _getEventTarget(e);
                     // element being focused is nested?
                     const isFocusedElementNested = _isElementChildOfClass(target as HTMLElement, 'ag-root', element);
 
                     element.classList.toggle('ag-has-focus', !isFocusedElementNested);
                 },
                 focusout: (e: FocusEvent) => {
-                    const { target, relatedTarget } = e;
+                    const target = _getEventTarget(e);
+                    const relatedTarget = e.relatedTarget;
                     const gridContainRelatedTarget = element.contains(relatedTarget as HTMLElement);
                     const isNestedRelatedTarget = _isElementChildOfClass(
                         relatedTarget as HTMLElement,
@@ -249,7 +250,8 @@ export class GridBodyCtrl extends BeanStub {
     private disableBrowserDragging(): void {
         this.addManagedElementListeners(this.eGridBody, {
             dragstart: (event: DragEvent) => {
-                if (event.target instanceof HTMLImageElement) {
+                const target = _getEventTarget(event);
+                if (target instanceof HTMLImageElement) {
                     event.preventDefault();
                     return false;
                 }
@@ -417,7 +419,7 @@ export class GridBodyCtrl extends BeanStub {
         this.eCenterColsViewport.scrollBy({ left: deltaX || deltaY });
     }
 
-    private onBodyViewportContextMenu(mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent): void {
+    private onBodyViewportContextMenu(mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent, touchTarget?: EventTarget | null): void {
         if (!mouseEvent && !touchEvent) {
             return;
         }
@@ -427,7 +429,7 @@ export class GridBodyCtrl extends BeanStub {
             event.preventDefault();
         }
 
-        const { target } = (mouseEvent || touch)!;
+        const target = mouseEvent ? _getEventTarget(mouseEvent) : touchTarget;
 
         if (target === this.eBodyViewport || target === this.ctrlsSvc.get('center').eViewport) {
             // show it

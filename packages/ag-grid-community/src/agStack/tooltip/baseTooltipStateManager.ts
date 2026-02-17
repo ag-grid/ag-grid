@@ -8,6 +8,7 @@ import type { IPropertiesService } from '../interfaces/iProperties';
 import type { TooltipCtrl } from '../interfaces/iTooltip';
 import { _isIOSUserAgent } from '../utils/browser';
 import { _getActiveDomElement, _getDocument } from '../utils/document';
+import { _getEventTarget } from '../utils/event';
 import { _exists } from '../utils/generic';
 
 enum TooltipStates {
@@ -398,7 +399,7 @@ export abstract class BaseTooltipStateManager<
 
             [this.onDocumentKeyDownCallback] = this.addManagedElementListeners(_getDocument(this.beans), {
                 keydown: (e) => {
-                    if (!eGui.contains(e?.target as HTMLElement)) {
+                    if (!eGui.contains(_getEventTarget(e) as HTMLElement)) {
                         this.onKeyDown();
                     }
                 },

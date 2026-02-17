@@ -1,6 +1,7 @@
 import { KeyCode } from '../agStack/constants/keyCode';
 import { _getActiveDomElement } from '../agStack/utils/document';
 import { _requestAnimationFrame } from '../agStack/utils/dom';
+import { _getEventTarget } from '../agStack/utils/event';
 import { _exists } from '../agStack/utils/generic';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -189,13 +190,13 @@ export class GridHeaderCtrl extends BeanStub {
         }
     }
 
-    private onHeaderContextMenu(mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent): void {
+    private onHeaderContextMenu(mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent, touchTarget?: EventTarget | null): void {
         const { menuSvc, ctrlsSvc } = this.beans;
         if ((!mouseEvent && !touchEvent) || !menuSvc?.isHeaderContextMenuEnabled()) {
             return;
         }
 
-        const { target } = (mouseEvent ?? touch)!;
+        const target = mouseEvent ? _getEventTarget(mouseEvent) : touchTarget ?? _getEventTarget(touchEvent!);
 
         if (target === this.eGui || target === ctrlsSvc.getHeaderRowContainerCtrl()?.eViewport) {
             menuSvc.showHeaderContextMenu(undefined, mouseEvent, touchEvent);

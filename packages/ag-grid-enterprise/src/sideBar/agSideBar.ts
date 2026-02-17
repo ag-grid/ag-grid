@@ -19,6 +19,7 @@ import {
     _focusInto,
     _focusNextGridCoreContainer,
     _getActiveDomElement,
+    _getEventTarget,
     _isVisible,
     _removeFromParent,
     _setAriaControlsAndLabel,
@@ -89,7 +90,7 @@ class AgSideBar extends Component implements ISideBar {
         const sideBarGui = sideBarButtons.getGui();
         const activeElement = _getActiveDomElement(beans) as HTMLElement;
         const openPanel = eGui.querySelector('.ag-tool-panel-wrapper:not(.ag-hidden)') as HTMLElement;
-        const target = e.target as HTMLElement;
+        const target = _getEventTarget(e) as HTMLElement;
         const backwards = e.shiftKey;
 
         if (!openPanel) {
@@ -125,7 +126,7 @@ class AgSideBar extends Component implements ISideBar {
             nextEl = _isVisible(nextEl) ? nextEl : null;
         }
 
-        if (nextEl && nextEl !== e.target) {
+        if (nextEl && nextEl !== _getEventTarget(e)) {
             e.preventDefault();
             nextEl.focus();
         }

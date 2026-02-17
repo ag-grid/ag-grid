@@ -1,5 +1,6 @@
 import { KeyCode } from '../../agStack/constants/keyCode';
 import { _isMacOsUserAgent } from '../../agStack/utils/browser';
+import { _getEventTarget } from '../../agStack/utils/event';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import { _populateModelValidationErrors } from '../../edit/utils/editors';
@@ -246,7 +247,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
     public processCharacter(event: KeyboardEvent): void {
         // check this, in case focus is on a (for example) a text field inside the cell,
         // in which cse we should not be listening for these key pressed
-        const eventTarget = event.target;
+        const eventTarget = _getEventTarget(event);
         const eventOnChildComponent = eventTarget !== this.eGui;
         const {
             beans: { editSvc },

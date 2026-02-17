@@ -1,5 +1,6 @@
 import { KeyCode } from '../agStack/constants/keyCode';
 import { _isVisible } from '../agStack/utils/dom';
+import { _getEventTarget } from '../agStack/utils/event';
 import { _findNextFocusableElement, _findTabbableParent, _focusInto } from '../agStack/utils/focus';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -53,7 +54,7 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
                 });
             },
             containerType,
-            mouseEvent.target as HTMLElement,
+            _getEventTarget(mouseEvent) as HTMLElement,
             _isLegacyMenuEnabled(this.gos),
             onClosedCallback
         );

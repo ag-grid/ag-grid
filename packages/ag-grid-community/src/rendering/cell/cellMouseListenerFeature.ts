@@ -1,5 +1,6 @@
 import { _isBrowserSafari } from '../../agStack/utils/browser';
 import { _isElementChildOfClass, _isFocusableFormField } from '../../agStack/utils/dom';
+import { _getEventTarget } from '../../agStack/utils/event';
 import { isRowNumberCol } from '../../columns/columnUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
@@ -158,7 +159,7 @@ export class CellMouseListenerFeature extends BeanStub {
 
     private onMouseDown(mouseEvent: MouseEvent): void {
         const { shiftKey } = mouseEvent;
-        const target = mouseEvent.target as HTMLElement;
+        const target = _getEventTarget(mouseEvent) as HTMLElement;
         const { cellCtrl, beans } = this;
         const { eventSvc, rangeSvc, rowNumbersSvc, focusSvc, gos, editSvc } = beans;
         const { column, rowNode, cellPosition } = cellCtrl;
@@ -289,12 +290,14 @@ export class CellMouseListenerFeature extends BeanStub {
     }
 
     private mouseStayingInsideCell(e: MouseEvent): boolean {
-        if (!e.target || !e.relatedTarget) {
+        const target = _getEventTarget(e);
+        const relatedTarget = e.relatedTarget;
+        if (!target || !relatedTarget) {
             return false;
         }
         const eCell = this.cellCtrl.eGui;
-        const cellContainsTarget = eCell.contains(e.target as Node);
-        const cellContainsRelatedTarget = eCell.contains(e.relatedTarget as Node);
+        const cellContainsTarget = eCell.contains(target as Node);
+        const cellContainsRelatedTarget = eCell.contains(relatedTarget as Node);
         return cellContainsTarget && cellContainsRelatedTarget;
     }
 }

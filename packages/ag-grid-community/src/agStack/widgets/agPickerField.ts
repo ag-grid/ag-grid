@@ -10,6 +10,7 @@ import { _setAriaExpanded, _setAriaRole } from '../utils/aria';
 import { _isNothingFocused } from '../utils/document';
 import type { AgElementParams } from '../utils/dom';
 import { _formatSize, _getAbsoluteWidth, _getInnerHeight, _setElementWidth } from '../utils/dom';
+import { _getEventTarget } from '../utils/event';
 import type { AgAbstractFieldEvent } from './agAbstractField';
 import { AgAbstractField } from './agAbstractField';
 import { agPickerFieldCSS } from './agPickerField.css-GENERATED';
@@ -175,7 +176,7 @@ export abstract class AgPickerField<
             // if the focusableEl is not the wrapper and the mousedown
             // targets the focusableEl, we should not expand/collapse the picker.
             // Note: this will happen when AgRichSelect is set with `allowTyping=true`
-            if (focusableEl !== this.eWrapper && e?.target === focusableEl) {
+            if (focusableEl !== this.eWrapper && _getEventTarget(e) === focusableEl) {
                 return;
             }
 

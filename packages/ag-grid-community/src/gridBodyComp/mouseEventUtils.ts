@@ -1,14 +1,16 @@
+import { _getEventTarget } from '../agStack/utils/event';
 import type { BeanCollection } from '../context/context';
 import type { GridOptionsService } from '../gridOptionsService';
 import { _isDomLayout } from '../gridOptionsUtils';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import { _getCellCtrlForEventTarget } from '../rendering/renderUtils';
 
+/** Gets the cell position for a mouse/keyboard/touch event. */
 export function _getCellPositionForEvent(
     gos: GridOptionsService,
     event: MouseEvent | KeyboardEvent | Touch
 ): CellPosition | null {
-    return _getCellCtrlForEventTarget(gos, event.target)?.getFocusedCellPosition() ?? null;
+    return _getCellCtrlForEventTarget(gos, _getEventTarget(event))?.getFocusedCellPosition() ?? null;
 }
 
 export function _getNormalisedMousePosition(

@@ -3,6 +3,7 @@ import type { AgEvent } from '../agStack/interfaces/agEvent';
 import type { IEventEmitter, IEventListener } from '../agStack/interfaces/iEventEmitter';
 import {
     _areEventsNear,
+    _getEventTarget,
     _getFirstActiveTouch,
     addTempEventHandlers,
     clearTempEventHandlers,
@@ -12,14 +13,17 @@ import type { TempEventHandler } from '../agStack/utils/event';
 
 export interface TapEvent extends AgEvent<'tap'> {
     touchStart: Touch;
+    startTarget: EventTarget | null;
 }
 export interface DoubleTapEvent extends AgEvent<'doubleTap'> {
     touchStart: Touch;
+    startTarget: EventTarget | null;
 }
 
 export interface LongTapEvent extends AgEvent<'longTap'> {
     touchStart: Touch;
     touchEvent: TouchEvent;
+    startTarget: EventTarget | null;
 }
 
 const DOUBLE_TAP_MILLISECONDS = 500;
@@ -49,6 +53,7 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
     private eventSvc: LocalEventService<TouchListenerEvent> | null | undefined = undefined;
 
     private touchStart: Touch | null = null;
+    private touchStartTarget: EventTarget | null = null;
     private lastTapTime: number | null = null;
     private longPressTimer: number = 0;
     private moved: boolean = false;
@@ -82,6 +87,9 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
         }
 
         const touchStart = touchEvent.touches[0];
+
+        // Capture target now since composedPath() returns empty after dispatch
+        const target = (this.touchStartTarget = _getEventTarget(touchEvent));
         this.touchStart = touchStart;
 
         const handlers = this.handlers;
@@ -108,7 +116,12 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
             this.longPressTimer = 0;
             if (this.touchStart === touchStart && !this.moved) {
                 this.moved = true;
-                this.eventSvc?.dispatchEvent<LongTapEvent>({ type: 'longTap', touchStart, touchEvent });
+                this.eventSvc?.dispatchEvent<LongTapEvent>({
+                    type: 'longTap',
+                    touchStart,
+                    touchEvent,
+                    startTarget: target,
+                });
             }
         }, LONG_PRESS_MILLISECONDS);
     }
@@ -132,7 +145,7 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
         }
 
         if (!this.moved) {
-            this.eventSvc?.dispatchEvent<TapEvent>({ type: 'tap', touchStart });
+            this.eventSvc?.dispatchEvent<TapEvent>({ type: 'tap', touchStart, startTarget: this.touchStartTarget });
             this.checkDoubleTap(touchStart);
         }
 
@@ -160,7 +173,11 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
             // if previous tap, see if duration is short enough to be considered double tap
             const interval = now - lastTapTime;
             if (interval > DOUBLE_TAP_MILLISECONDS) {
-                this.eventSvc?.dispatchEvent<DoubleTapEvent>({ type: 'doubleTap', touchStart });
+                this.eventSvc?.dispatchEvent<DoubleTapEvent>({
+                    type: 'doubleTap',
+                    touchStart,
+                    startTarget: this.touchStartTarget,
+                });
                 now = null; // this stops a triple tap ending up as two double taps
             }
         }
@@ -171,6 +188,7 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
         this.clearLongPress();
         clearTempEventHandlers(this.handlers);
         this.touchStart = null;
+        this.touchStartTarget = null;
     }
 
     private clearLongPress(): void {

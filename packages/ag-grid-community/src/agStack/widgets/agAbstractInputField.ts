@@ -6,6 +6,7 @@ import type { IPropertiesService } from '../interfaces/iProperties';
 import { _setAriaLabel } from '../utils/aria';
 import type { AgElementParams } from '../utils/dom';
 import { _addOrRemoveAttribute, _setDisabled, _setElementWidth } from '../utils/dom';
+import { _getEventTarget } from '../utils/event';
 import type { AgAbstractFieldEvent, FieldElement } from './agAbstractField';
 import { AgAbstractField } from './agAbstractField';
 import type { AgInputFieldParams } from './agFieldParams';
@@ -97,7 +98,7 @@ export abstract class AgAbstractInputField<
 
     protected addInputListeners() {
         this.addManagedElementListeners(this.eInput, {
-            input: (e: InputEvent) => this.setValue((e.target as HTMLInputElement).value as TValue),
+            input: (e: InputEvent) => this.setValue((_getEventTarget(e) as HTMLInputElement).value as TValue),
         });
     }
 
