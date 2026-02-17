@@ -314,8 +314,8 @@ export class ToolPanelColumnComp extends Component {
 
         this.cbSelect.setValue(isColumnChecked);
 
-        let canBeToggled = true;
-        let canBeDragged = true;
+        let canBeToggled: boolean;
+        let canBeDragged: boolean;
         if (isPivotMode) {
             // when in pivot mode, the item should be read only if:
             //  a) gui is not allowed make any changes
