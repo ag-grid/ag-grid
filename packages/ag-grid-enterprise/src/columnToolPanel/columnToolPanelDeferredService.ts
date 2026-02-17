@@ -1,6 +1,6 @@
 import type { ColumnState, IAggFunc } from 'ag-grid-community';
 
-export interface DeferredValueColumnState {
+interface DeferredValueColumnState {
     colId: string;
     aggFunc: string | IAggFunc | null;
 }
@@ -131,7 +131,7 @@ export class ColumnToolPanelDeferredService {
     }
 
     public hasPendingChanges(): boolean {
-        return JSON.stringify(this.appliedState) !== JSON.stringify(this.pendingState);
+        return !areStatesEqual(this.appliedState, this.pendingState);
     }
 
     public getAppliedState(): ColumnToolPanelDeferredState {
@@ -145,4 +145,44 @@ export class ColumnToolPanelDeferredService {
 
 function addUnique(ids: string[], colId: string): string[] {
     return ids.includes(colId) ? ids : [...ids, colId];
+}
+
+function areStatesEqual(a: ColumnToolPanelDeferredState, b: ColumnToolPanelDeferredState): boolean {
+    if (a.pivotMode !== b.pivotMode) {
+        return false;
+    }
+    if (!areStringArraysEqual(a.rowGroupColIds, b.rowGroupColIds)) {
+        return false;
+    }
+    if (!areStringArraysEqual(a.pivotColIds, b.pivotColIds)) {
+        return false;
+    }
+    if (!areStringArraysEqual(a.visibleColIds, b.visibleColIds)) {
+        return false;
+    }
+    if (a.valueCols.length !== b.valueCols.length) {
+        return false;
+    }
+
+    for (let i = 0; i < a.valueCols.length; i++) {
+        const left = a.valueCols[i];
+        const right = b.valueCols[i];
+        if (left.colId !== right.colId || left.aggFunc !== right.aggFunc) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+function areStringArraysEqual(a: string[], b: string[]): boolean {
+    if (a.length !== b.length) {
+        return false;
+    }
+    for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i]) {
+            return false;
+        }
+    }
+    return true;
 }

@@ -18,7 +18,7 @@ export const getCurrentColumnsBeingMoved = (column: AgColumn | AgProvidedColumnG
     return column ? [column] : [];
 };
 
-export const getMoveTargetIndex = (
+const getMoveTargetIndex = (
     allColumns: AgColumn[],
     currentColumns: AgColumn[] | null,
     lastHoveredColumn: AgColumn,

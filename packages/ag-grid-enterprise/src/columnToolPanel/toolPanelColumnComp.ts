@@ -220,7 +220,8 @@ export class ToolPanelColumnComp extends Component {
             'toolPanelUi',
             this.params.onDeferredPivotColumnStateUpdate,
             this.params.onDeferredVisibilityColumnStateUpdate,
-            this.params.getToolPanelPivotMode?.()
+            this.params.getToolPanelPivotMode?.(),
+            this.params.getToolPanelColumnFunctionState
         );
     }
 

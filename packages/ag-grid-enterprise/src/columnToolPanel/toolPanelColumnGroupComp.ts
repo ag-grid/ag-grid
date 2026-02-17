@@ -347,7 +347,8 @@ export class ToolPanelColumnGroupComp extends Component {
             this.eventType,
             this.params.onDeferredPivotColumnStateUpdate,
             this.params.onDeferredVisibilityColumnStateUpdate,
-            this.params.getToolPanelPivotMode?.()
+            this.params.getToolPanelPivotMode?.(),
+            this.params.getToolPanelColumnFunctionState
         );
     }
 
