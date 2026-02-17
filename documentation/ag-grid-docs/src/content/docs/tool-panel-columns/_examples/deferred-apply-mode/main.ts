@@ -1,20 +1,23 @@
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
+import { ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
 import {
     ColumnMenuModule,
     ColumnsToolPanelModule,
     ContextMenuModule,
     PivotModule,
     RowGroupingPanelModule,
+    ServerSideRowModelModule,
 } from 'ag-grid-enterprise';
 
+import { createFakeServer, createServerSideDatasource } from './fakeServer';
+
 ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
     ColumnsToolPanelModule,
     ColumnMenuModule,
     ContextMenuModule,
     PivotModule,
     RowGroupingPanelModule,
+    ServerSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
@@ -55,27 +58,10 @@ const columnDefs: ColDef[] = [
         enablePivot: true,
         rowGroupIndex: 2,
     },
-    {
-        field: 'gold',
-        hide: true,
-        enableValue: true,
-    },
-    {
-        field: 'silver',
-        hide: true,
-        enableValue: true,
-        aggFunc: 'sum',
-    },
-    {
-        field: 'bronze',
-        hide: true,
-        enableValue: true,
-        aggFunc: 'sum',
-    },
-    {
-        headerName: 'Total',
-        field: 'total',
-    },
+    { field: 'gold', hide: true, enableValue: true },
+    { field: 'silver', hide: true, enableValue: true, aggFunc: 'sum' },
+    { field: 'bronze', hide: true, enableValue: true, aggFunc: 'sum' },
+    { headerName: 'Total', field: 'total', enableValue: true },
 ];
 
 let gridApi: GridApi<IOlympicData>;
@@ -90,6 +76,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 250,
     },
     pivotMode: true,
+    rowModelType: 'serverSide',
     rowGroupPanelShow: 'always',
     pivotPanelShow: 'always',
     sideBar: {
@@ -108,6 +95,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         ],
         defaultToolPanel: 'columns',
     },
+    getChildCount: (data: any) => (typeof data?.childCount === 'number' ? data.childCount : undefined),
 };
 
 // setup the grid after the page has finished loading
@@ -117,5 +105,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then((response) => response.json())
-        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
+        .then((data: IOlympicData[]) => {
+            const fakeServer = createFakeServer(data);
+            const datasource = createServerSideDatasource(fakeServer);
+            gridApi!.setGridOption('serverSideDatasource', datasource);
+        });
 });
