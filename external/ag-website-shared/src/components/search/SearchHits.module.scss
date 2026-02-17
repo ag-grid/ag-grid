@@ -127,6 +127,12 @@
     grid-area: text;
     font-weight: var(--text-regular);
     color: var(--text-color-secondary);
+
+    // Disable Safari's automatic tooltip for truncated text
+    &::after {
+        content: '';
+        display: block;
+    }
 }
 
 .crumbContainer {
