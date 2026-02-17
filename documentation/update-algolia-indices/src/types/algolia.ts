@@ -10,6 +10,5 @@ export interface AlgoliaRecord {
     breadcrumb: string;
     path: string;
     rank: number;
-    metaTag?: string;
     positionInPage?: number;
 }
