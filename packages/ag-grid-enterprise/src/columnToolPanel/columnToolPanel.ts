@@ -449,22 +449,22 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     private getDeferredPendingRowGroupColumns(): AgColumn[] {
-        return this.getColumnsByColIds(this.deferredService.getPendingState().rowGroupColIds);
+        return this.getColumnsByColIds(this.deferredService.getPendingStateSnapshot().rowGroupColIds);
     }
 
     private getDeferredPendingPivotColumns(): AgColumn[] {
-        return this.getColumnsByColIds(this.deferredService.getPendingState().pivotColIds);
+        return this.getColumnsByColIds(this.deferredService.getPendingStateSnapshot().pivotColIds);
     }
 
     private getDeferredPendingValueColumns(): AgColumn[] {
         return this.getColumnsByColIds(
-            this.deferredService.getPendingState().valueCols.map((valueCol) => valueCol.colId)
+            this.deferredService.getPendingStateSnapshot().valueCols.map((valueCol) => valueCol.colId)
         );
     }
 
     private getDeferredPendingAggregationFunction(column: AgColumn): string | null | undefined {
         const valueCol = this.deferredService
-            .getPendingState()
+            .getPendingStateSnapshot()
             .valueCols.find((pendingValueCol) => pendingValueCol.colId === column.getColId());
         return typeof valueCol?.aggFunc === 'string' ? valueCol.aggFunc : null;
     }
@@ -481,7 +481,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
     private getToolPanelPivotMode(): boolean {
         return this.params.deferApply
-            ? this.deferredService.getPendingState().pivotMode
+            ? this.deferredService.getPendingStateSnapshot().pivotMode
             : this.beans.colModel.isPivotMode();
     }
 
@@ -500,7 +500,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             return column.isVisible();
         }
 
-        const pendingState = this.deferredService.getPendingState();
+        const pendingState = this.deferredService.getPendingStateSnapshot();
         const colId = column.getColId();
         if (pivotMode) {
             return (
@@ -521,7 +521,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             };
         }
 
-        const pendingState = this.deferredService.getPendingState();
+        const pendingState = this.deferredService.getPendingStateSnapshot();
         const colId = column.getColId();
         return {
             rowGroup: pendingState.rowGroupColIds.includes(colId),

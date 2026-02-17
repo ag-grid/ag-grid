@@ -50,17 +50,43 @@ function cloneState(state: ColumnToolPanelDeferredState): ColumnToolPanelDeferre
     };
 }
 
+function freezeState(state: ColumnToolPanelDeferredState): ColumnToolPanelDeferredState {
+    const rowGroupColIds = Object.freeze([...state.rowGroupColIds]) as string[];
+    const pivotColIds = Object.freeze([...state.pivotColIds]) as string[];
+    const valueCols = Object.freeze(
+        state.valueCols.map((valueCol) =>
+            Object.freeze({
+                colId: valueCol.colId,
+                aggFunc: valueCol.aggFunc,
+            })
+        )
+    ) as DeferredValueColumnState[];
+    const visibleColIds = Object.freeze([...state.visibleColIds]) as string[];
+
+    return Object.freeze({
+        pivotMode: state.pivotMode,
+        rowGroupColIds,
+        pivotColIds,
+        valueCols,
+        visibleColIds,
+    }) as ColumnToolPanelDeferredState;
+}
+
 export class ColumnToolPanelDeferredService {
     private appliedState: ColumnToolPanelDeferredState = cloneState(EMPTY_STATE);
     private patch: PendingPatch = {};
+    private pendingStateCache: ColumnToolPanelDeferredState = cloneState(EMPTY_STATE);
+    private pendingStateCacheDirty = true;
 
     public initialiseFromApplied(state: ColumnToolPanelDeferredState): void {
         this.appliedState = cloneState(state);
         this.patch = {};
+        this.pendingStateCacheDirty = true;
     }
 
     public setPendingState(state: ColumnToolPanelDeferredState): void {
         this.patch = buildPatch(this.appliedState, state);
+        this.pendingStateCacheDirty = true;
     }
 
     public applyPivotColumnStateToPending(stateItems: ColumnState[]): void {
@@ -134,12 +160,14 @@ export class ColumnToolPanelDeferredService {
     public reconcileFromApplied(state: ColumnToolPanelDeferredState): void {
         this.appliedState = cloneState(state);
         this.patch = {};
+        this.pendingStateCacheDirty = true;
     }
 
     public reconcileFromAppliedPreservingPending(state: ColumnToolPanelDeferredState): void {
         if (!this.hasPendingChanges()) {
             this.appliedState = cloneState(state);
             this.patch = {};
+            this.pendingStateCacheDirty = true;
             return;
         }
 
@@ -161,17 +189,20 @@ export class ColumnToolPanelDeferredService {
         }
 
         this.patch = nextPatch;
+        this.pendingStateCacheDirty = true;
     }
 
     public commitPending(): ColumnToolPanelDeferredState {
         const pendingState = this.getPendingState();
         this.appliedState = cloneState(pendingState);
         this.patch = {};
+        this.pendingStateCacheDirty = true;
         return this.getAppliedState();
     }
 
     public cancelPending(): ColumnToolPanelDeferredState {
         this.patch = {};
+        this.pendingStateCacheDirty = true;
         return this.getPendingState();
     }
 
@@ -184,7 +215,15 @@ export class ColumnToolPanelDeferredService {
     }
 
     public getPendingState(): ColumnToolPanelDeferredState {
-        return applyPatchToState(this.appliedState, this.patch, false);
+        return cloneState(this.getPendingStateSnapshot());
+    }
+
+    public getPendingStateSnapshot(): Readonly<ColumnToolPanelDeferredState> {
+        if (this.pendingStateCacheDirty) {
+            this.pendingStateCache = freezeState(applyPatchToState(this.appliedState, this.patch, false));
+            this.pendingStateCacheDirty = false;
+        }
+        return this.pendingStateCache;
     }
 }
 
@@ -425,33 +464,41 @@ function getLisIndices(values: number[]): number[] {
         return [];
     }
 
-    const lengths = new Array<number>(n).fill(1);
-    const previous = new Array<number>(n).fill(-1);
+    const tailsValueIndices: number[] = [];
+    const previousIndex = new Array<number>(n).fill(-1);
 
-    let bestLen = 1;
-    let bestEnd = 0;
+    for (let i = 0; i < n; i++) {
+        const value = values[i];
+        let left = 0;
+        let right = tailsValueIndices.length;
 
-    for (let i = 1; i < n; i++) {
-        for (let j = 0; j < i; j++) {
-            if (values[j] < values[i] && lengths[j] + 1 > lengths[i]) {
-                lengths[i] = lengths[j] + 1;
-                previous[i] = j;
+        while (left < right) {
+            const mid = (left + right) >> 1;
+            if (values[tailsValueIndices[mid]] < value) {
+                left = mid + 1;
+            } else {
+                right = mid;
             }
         }
-        if (lengths[i] > bestLen) {
-            bestLen = lengths[i];
-            bestEnd = i;
+
+        if (left > 0) {
+            previousIndex[i] = tailsValueIndices[left - 1];
+        }
+
+        if (left === tailsValueIndices.length) {
+            tailsValueIndices.push(i);
+        } else {
+            tailsValueIndices[left] = i;
         }
     }
 
     const lisIndices: number[] = [];
-    let cursor = bestEnd;
-    while (cursor !== -1) {
+    let cursor = tailsValueIndices[tailsValueIndices.length - 1];
+    while (cursor != null && cursor >= 0) {
         lisIndices.push(cursor);
-        cursor = previous[cursor];
+        cursor = previousIndex[cursor];
     }
     lisIndices.reverse();
-
     return lisIndices;
 }
 
@@ -462,6 +509,7 @@ function mergeOrderedIdsWithTouched(base: string[], pending: string[], touched: 
 
     const result = base.filter((id) => !touched.has(id));
     const pendingTouchedIds = pending.filter((id) => touched.has(id));
+    const pendingIndexById = new Map(pending.map((id, index) => [id, index] as const));
 
     for (const touchedId of pendingTouchedIds) {
         const existingIdx = result.indexOf(touchedId);
@@ -469,11 +517,16 @@ function mergeOrderedIdsWithTouched(base: string[], pending: string[], touched: 
             result.splice(existingIdx, 1);
         }
 
-        const pendingIndex = pending.indexOf(touchedId);
+        const pendingIndex = pendingIndexById.get(touchedId);
+        if (pendingIndex == null) {
+            continue;
+        }
+
+        const resultIndexById = new Map(result.map((id, index) => [id, index] as const));
         let lowerBound = 0;
         for (let i = pendingIndex - 1; i >= 0; i--) {
             const candidate = pending[i];
-            const candidateIndex = result.indexOf(candidate);
+            const candidateIndex = resultIndexById.get(candidate);
             if (candidateIndex >= 0) {
                 lowerBound = Math.max(lowerBound, candidateIndex + 1);
             }
@@ -482,7 +535,7 @@ function mergeOrderedIdsWithTouched(base: string[], pending: string[], touched: 
         let upperBound = result.length;
         for (let i = pendingIndex + 1; i < pending.length; i++) {
             const candidate = pending[i];
-            const candidateIndex = result.indexOf(candidate);
+            const candidateIndex = resultIndexById.get(candidate);
             if (candidateIndex >= 0) {
                 upperBound = Math.min(upperBound, candidateIndex);
             }

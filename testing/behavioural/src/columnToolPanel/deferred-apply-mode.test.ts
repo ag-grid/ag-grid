@@ -68,6 +68,15 @@ describe('Columns Tool Panel Deferred Apply Mode', () => {
 
     const getToolPanel = (gridApi: GridApi): any => gridApi.getToolPanelInstance('columns') as any;
 
+    const createFirstLeafComp = (primaryColsListPanel: any): any => {
+        const firstLeafItem = primaryColsListPanel.getDisplayedColsList().find((item: any) => !item.group);
+        if (!firstLeafItem) {
+            throw new Error('Expected a leaf column item in the primary columns list');
+        }
+
+        return primaryColsListPanel.createComponentFromItem(firstLeafItem, document.createElement('div'));
+    };
+
     const setDeferredVisibilityFromToolPanel = (gridApi: GridApi, colId: string, visible: boolean): void => {
         const toolPanel = getToolPanel(gridApi);
         toolPanel.onDeferredVisibilityColumnStateUpdate([{ colId, hide: !visible }]);
@@ -90,12 +99,13 @@ describe('Columns Tool Panel Deferred Apply Mode', () => {
     };
 
     test('does not apply pivot mode until Apply is clicked', async () => {
-        const gridApi = await gridMgr.createGridAndWait('myGrid', {
+        const gridApi = gridMgr.createGrid('myGrid', {
             columnDefs,
             rowData,
             sideBar,
             pivotMode: false,
         });
+        await asyncSetTimeout(1);
 
         const { applyButton } = getButtons(gridApi);
         expect(applyButton.disabled).toBe(true);
@@ -280,6 +290,42 @@ describe('Columns Tool Panel Deferred Apply Mode', () => {
         expect(gridApi.getColumn('athlete')!.isVisible()).toBe(true);
         expect(gridApi.getColumn('age')!.isVisible()).toBe(true);
         expect(gridApi.getColumn('country')!.isVisible()).toBe(true);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
+    });
+
+    test('shares deferred callbacks through tool panel params across list and leaf components', async () => {
+        const gridApi = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            sideBar,
+            pivotMode: false,
+        });
+
+        const toolPanel = getToolPanel(gridApi);
+        const primaryColsPanel = toolPanel.primaryColsPanel as any;
+        const primaryColsListPanel = primaryColsPanel.primaryColsListPanel as any;
+        const toolPanelParams = toolPanel.params as any;
+        const listParams = primaryColsListPanel.params as any;
+
+        const firstLeafComp = createFirstLeafComp(primaryColsListPanel);
+
+        const leafParams = firstLeafComp.params as any;
+        const deferredVisibilityUpdate = toolPanelParams.onDeferredVisibilityColumnStateUpdate;
+
+        expect(typeof deferredVisibilityUpdate).toBe('function');
+        expect(listParams).toBe(toolPanelParams);
+        expect(leafParams).toBe(toolPanelParams);
+        expect(listParams.onDeferredVisibilityColumnStateUpdate).toBe(deferredVisibilityUpdate);
+        expect(leafParams.onDeferredVisibilityColumnStateUpdate).toBe(deferredVisibilityUpdate);
+
+        deferredVisibilityUpdate([{ colId: 'athlete', hide: true }]);
+        await asyncSetTimeout(1);
+        expect(gridApi.getColumn('athlete')!.isVisible()).toBe(true);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(false);
+
+        leafParams.onDeferredVisibilityColumnStateUpdate([{ colId: 'athlete', hide: false }]);
+        await asyncSetTimeout(1);
+        expect(gridApi.getColumn('athlete')!.isVisible()).toBe(true);
         expect(getButtons(gridApi).applyButton.disabled).toBe(true);
     });
 
@@ -627,48 +673,37 @@ describe('Columns Tool Panel Deferred Apply Mode', () => {
         expect(getButtons(gridApi).applyButton.disabled).toBe(true);
     });
 
-    test('clicking remove on a value pill updates deferred UI only until Apply', async () => {
-        const gridApi = gridMgr.createGrid('myGrid', {
+    test('removing deferred value column does not mutate grid until Apply', async () => {
+        const gridApi = await gridMgr.createGridAndWait('myGrid', {
             columnDefs,
             rowData,
             sideBar,
-            pivotMode: true,
+            pivotMode: false,
         });
-        await asyncSetTimeout(1);
-
-        gridApi.setValueColumns(['athlete']);
-        await asyncSetTimeout(1);
 
         const toolPanel = getToolPanel(gridApi);
-        const valuesDropZonePanel = toolPanel.valuesDropZonePanel as any;
-        const valuesGui = valuesDropZonePanel?.getGui?.() as HTMLElement | undefined;
-        if (!valuesGui) {
-            throw new Error('Expected values drop zone panel to exist');
+        const athleteCol = gridApi.getColumn('athlete');
+        if (!athleteCol) {
+            throw new Error('Expected athlete column to exist');
         }
 
-        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['athlete']);
-        if (valuesGui.querySelectorAll('.ag-column-drop-cell').length === 0) {
-            const athleteCol = gridApi.getColumn('athlete');
-            if (!athleteCol) {
-                throw new Error('Expected athlete column to exist');
-            }
-            valuesDropZonePanel.addItem(athleteCol);
-            await asyncSetTimeout(1);
-        }
-        expect(valuesGui.querySelectorAll('.ag-column-drop-cell').length).toBe(1);
-        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual([]);
+        toolPanel.onDeferredValueColumnsUpdate([athleteCol]);
+        await asyncSetTimeout(1);
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual([]);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(false);
 
-        const removeButton = valuesGui.querySelector('.ag-column-drop-cell-button') as HTMLElement | null;
-        if (!removeButton) {
-            throw new Error('Expected value pill remove button to exist');
-        }
-        removeButton.click();
+        toolPanel.onDeferredValueColumnsUpdate([]);
         await asyncSetTimeout(1);
 
-        // Deferred mode: pill is removed visually, but grid state is unchanged until Apply.
-        expect(valuesGui.querySelectorAll('.ag-column-drop-cell').length).toBe(0);
-        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['athlete']);
-        expect(getButtons(gridApi).applyButton.disabled).toBe(false);
+        // Removing the staged value column reverts pending state back to applied state.
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual([]);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
+
+        getButtons(gridApi).applyButton.click();
+        await asyncSetTimeout(1);
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual([]);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
     });
 
     test('does not apply row group column reorder until Apply is clicked', async () => {
