@@ -178,12 +178,12 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
         if (mergedParams.deferApply) {
             const [deferredSyncListener] = this.addManagedEventListeners({
-                newColumnsLoaded: this.syncDeferredFromAppliedIfNoPending.bind(this),
-                columnPivotModeChanged: this.syncDeferredFromAppliedIfNoPending.bind(this),
-                columnRowGroupChanged: this.syncDeferredFromAppliedIfNoPending.bind(this),
-                columnPivotChanged: this.syncDeferredFromAppliedIfNoPending.bind(this),
-                columnValueChanged: this.syncDeferredFromAppliedIfNoPending.bind(this),
-                columnVisible: this.syncDeferredFromAppliedIfNoPending.bind(this),
+                newColumnsLoaded: this.syncDeferredFromApplied.bind(this),
+                columnPivotModeChanged: this.syncDeferredFromApplied.bind(this),
+                columnRowGroupChanged: this.syncDeferredFromApplied.bind(this),
+                columnPivotChanged: this.syncDeferredFromApplied.bind(this),
+                columnValueChanged: this.syncDeferredFromApplied.bind(this),
+                columnVisible: this.syncDeferredFromApplied.bind(this),
             });
             childDestroyFuncs.push(() => deferredSyncListener());
         }
@@ -474,11 +474,8 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         return colIds.map((colId) => colModel.getColDefCol(colId)).filter((column): column is AgColumn => !!column);
     }
 
-    private syncDeferredFromAppliedIfNoPending(): void {
-        if (this.deferredService.hasPendingChanges()) {
-            return;
-        }
-        this.deferredService.reconcileFromApplied(this.getCurrentStateForDeferredMode());
+    private syncDeferredFromApplied(): void {
+        this.deferredService.reconcileFromAppliedPreservingPending(this.getCurrentStateForDeferredMode());
         this.refreshDeferredButtonsState();
     }
 
@@ -584,6 +581,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
     private applyDeferredState(state: ColumnToolPanelDeferredState): void {
         const { colModel, gos, ctrlsSvc } = this.beans;
+        const currentState = this.getCurrentStateForDeferredMode();
         if (colModel.isPivotMode() !== state.pivotMode) {
             gos.updateGridOptions({ options: { pivotMode: state.pivotMode }, source: 'toolPanelUi' as any });
             for (const ctrl of ctrlsSvc.getHeaderRowContainerCtrls()) {
@@ -592,32 +590,65 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         }
 
         const allColumns = colModel.getColDefCols() ?? [];
+        const currentRowGroupIndexMap = new Map(
+            currentState.rowGroupColIds.map((colId, index) => [colId, index] as const)
+        );
+        const currentPivotIndexMap = new Map(currentState.pivotColIds.map((colId, index) => [colId, index] as const));
+        const currentValueAggMap = new Map(
+            currentState.valueCols.map((valueCol) => [valueCol.colId, valueCol.aggFunc] as const)
+        );
+        const currentVisibleColIdSet = new Set(currentState.visibleColIds);
+
         const rowGroupIndexMap = new Map(state.rowGroupColIds.map((colId, index) => [colId, index] as const));
         const pivotIndexMap = new Map(state.pivotColIds.map((colId, index) => [colId, index] as const));
         const valueAggMap = new Map(state.valueCols.map((valueCol) => [valueCol.colId, valueCol.aggFunc] as const));
         const visibleColIdSet = new Set(state.visibleColIds);
 
-        const columnState: ColumnState[] = allColumns.map((column) => {
+        const columnState: ColumnState[] = [];
+        for (const column of allColumns) {
             const colId = column.getColId();
+
+            const currentRowGroupIndex = currentRowGroupIndexMap.get(colId);
+            const currentPivotIndex = currentPivotIndexMap.get(colId);
+            const currentAggFunc = currentValueAggMap.has(colId) ? currentValueAggMap.get(colId)! : null;
+            const currentHidden = !currentVisibleColIdSet.has(colId);
+
             const rowGroupIndex = rowGroupIndexMap.get(colId);
             const pivotIndex = pivotIndexMap.get(colId);
             const aggFunc = valueAggMap.has(colId) ? valueAggMap.get(colId)! : null;
-            return {
+            const hidden = !visibleColIdSet.has(colId);
+
+            if (
+                currentRowGroupIndex === rowGroupIndex &&
+                currentPivotIndex === pivotIndex &&
+                currentAggFunc === aggFunc &&
+                currentHidden === hidden
+            ) {
+                continue;
+            }
+
+            columnState.push({
                 colId,
                 rowGroup: rowGroupIndex != null,
                 rowGroupIndex: rowGroupIndex ?? null,
                 pivot: pivotIndex != null,
                 pivotIndex: pivotIndex ?? null,
                 aggFunc,
-                hide: !visibleColIdSet.has(colId),
-            };
-        });
+                hide: hidden,
+            });
+        }
 
-        _applyColumnState(this.beans, { state: columnState }, 'toolPanelUi');
+        if (columnState.length > 0) {
+            _applyColumnState(this.beans, { state: columnState }, 'toolPanelUi');
+        }
 
         // Preserve deferred value column ordering (aggregation order) from the tool panel state.
-        const valueColumnsInOrder = this.getColumnsByColIds(state.valueCols.map((valueCol) => valueCol.colId));
-        this.beans.valueColsSvc?.setColumns(valueColumnsInOrder, 'toolPanelUi');
+        const currentValueOrder = currentState.valueCols.map((valueCol) => valueCol.colId);
+        const nextValueOrder = state.valueCols.map((valueCol) => valueCol.colId);
+        if (!areStringArraysEqual(currentValueOrder, nextValueOrder)) {
+            const valueColumnsInOrder = this.getColumnsByColIds(nextValueOrder);
+            this.beans.valueColsSvc?.setColumns(valueColumnsInOrder, 'toolPanelUi');
+        }
     }
 
     public getState(): ColumnToolPanelState {
@@ -630,4 +661,16 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         this.destroyChildren();
         super.destroy();
     }
+}
+
+function areStringArraysEqual(a: string[], b: string[]): boolean {
+    if (a.length !== b.length) {
+        return false;
+    }
+    for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i]) {
+            return false;
+        }
+    }
+    return true;
 }

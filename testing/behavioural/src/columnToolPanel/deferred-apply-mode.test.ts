@@ -373,6 +373,213 @@ describe('Columns Tool Panel Deferred Apply Mode', () => {
         expect(getButtons(gridApi).applyButton.disabled).toBe(true);
     });
 
+    test('preserves external value agg func updates while deferred value reorder is pending', async () => {
+        const gridApi = gridMgr.createGrid('myGrid', {
+            columnDefs,
+            rowData,
+            sideBar,
+            pivotMode: true,
+        });
+        await asyncSetTimeout(1);
+
+        gridApi.setValueColumns(['athlete', 'age']);
+        await asyncSetTimeout(1);
+
+        const toolPanel = getToolPanel(gridApi);
+        const athleteCol = gridApi.getColumn('athlete');
+        const ageCol = gridApi.getColumn('age');
+        if (!athleteCol || !ageCol) {
+            throw new Error('Expected athlete and age columns to exist');
+        }
+
+        // Stage reorder only (no staged agg-func change).
+        toolPanel.onDeferredValueColumnsUpdate([ageCol, athleteCol]);
+        await asyncSetTimeout(1);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(false);
+
+        // External change outside CTP while pending is dirty.
+        gridApi.applyColumnState({
+            state: [{ colId: 'athlete', aggFunc: 'max' }],
+        });
+        await asyncSetTimeout(1);
+        expect(gridApi.getColumn('athlete')!.getAggFunc()).toBe('max');
+
+        getButtons(gridApi).applyButton.click();
+        await asyncSetTimeout(1);
+
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['age', 'athlete']);
+        expect(gridApi.getColumn('athlete')!.getAggFunc()).toBe('max');
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
+    });
+
+    test('preserves external row group updates when only pivot mode is staged', async () => {
+        const gridApi = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            sideBar,
+            pivotMode: false,
+        });
+
+        togglePivotModeFromToolPanel(gridApi);
+        await asyncSetTimeout(1);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(false);
+
+        // External update in untouched dimension while deferred state is dirty.
+        gridApi.setRowGroupColumns(['country']);
+        await asyncSetTimeout(1);
+        expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['country']);
+
+        getButtons(gridApi).applyButton.click();
+        await asyncSetTimeout(1);
+
+        expect(gridApi.isPivotMode()).toBe(true);
+        expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['country']);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
+    });
+
+    test('preserves external visibility updates on untouched columns', async () => {
+        const gridApi = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            sideBar,
+            pivotMode: false,
+        });
+
+        // Stage a visibility change for athlete only.
+        setDeferredVisibilityFromToolPanel(gridApi, 'athlete', false);
+        await asyncSetTimeout(1);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(false);
+
+        // External visibility update for a different column.
+        gridApi.applyColumnState({
+            state: [{ colId: 'country', hide: true }],
+        });
+        await asyncSetTimeout(1);
+        expect(gridApi.getColumn('country')!.isVisible()).toBe(false);
+
+        getButtons(gridApi).applyButton.click();
+        await asyncSetTimeout(1);
+
+        expect(gridApi.getColumn('athlete')!.isVisible()).toBe(false);
+        expect(gridApi.getColumn('country')!.isVisible()).toBe(false);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
+    });
+
+    test('preserves external reorder for untouched row-group columns during deferred rebase', async () => {
+        const gridApi = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            sideBar,
+            pivotMode: false,
+        });
+
+        // Start with two grouped columns.
+        gridApi.setRowGroupColumns(['athlete', 'age']);
+        await asyncSetTimeout(1);
+        expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['athlete', 'age']);
+
+        const toolPanel = getToolPanel(gridApi);
+        const countryCol = gridApi.getColumn('country');
+        const athleteCol = gridApi.getColumn('athlete');
+        const ageCol = gridApi.getColumn('age');
+        if (!countryCol || !athleteCol || !ageCol) {
+            throw new Error('Expected country, athlete and age columns to exist');
+        }
+
+        // Stage inserting a new row-group column at the front.
+        toolPanel.onDeferredRowGroupColumnsUpdate([countryCol, athleteCol, ageCol]);
+        await asyncSetTimeout(1);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(false);
+
+        // External update reorders the existing grouped columns while deferred state is dirty.
+        gridApi.setRowGroupColumns(['age', 'athlete']);
+        await asyncSetTimeout(1);
+        expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['age', 'athlete']);
+
+        getButtons(gridApi).applyButton.click();
+        await asyncSetTimeout(1);
+
+        // Expected: staged insertion is preserved, untouched existing order follows external update.
+        expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['country', 'age', 'athlete']);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
+    });
+
+    test('preserves external value membership/order updates when only value agg is staged', async () => {
+        const gridApi = gridMgr.createGrid('myGrid', {
+            columnDefs,
+            rowData,
+            sideBar,
+            pivotMode: true,
+        });
+        await asyncSetTimeout(1);
+
+        gridApi.setValueColumns(['athlete', 'age']);
+        await asyncSetTimeout(1);
+
+        const toolPanel = getToolPanel(gridApi);
+        const ageCol = gridApi.getColumn('age');
+        if (!ageCol) {
+            throw new Error('Expected age column to exist');
+        }
+
+        // Stage agg update only, no staged value order/membership changes.
+        toolPanel.onDeferredValueColumnAggFuncUpdate(ageCol, 'avg');
+        await asyncSetTimeout(1);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(false);
+
+        // External update changes membership/order in untouched dimension.
+        gridApi.setValueColumns(['country', 'age']);
+        await asyncSetTimeout(1);
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['country', 'age']);
+
+        getButtons(gridApi).applyButton.click();
+        await asyncSetTimeout(1);
+
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['country', 'age']);
+        expect(gridApi.getColumn('age')!.getAggFunc()).toBe('avg');
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
+    });
+
+    test('preserves external reorder for untouched value columns during deferred rebase', async () => {
+        const gridApi = gridMgr.createGrid('myGrid', {
+            columnDefs,
+            rowData,
+            sideBar,
+            pivotMode: true,
+        });
+        await asyncSetTimeout(1);
+
+        // Start with three value columns so staged change is order-only (no membership add/remove).
+        gridApi.setValueColumns(['athlete', 'age', 'country']);
+        await asyncSetTimeout(1);
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['athlete', 'age', 'country']);
+
+        const toolPanel = getToolPanel(gridApi);
+        const countryCol = gridApi.getColumn('country');
+        const athleteCol = gridApi.getColumn('athlete');
+        const ageCol = gridApi.getColumn('age');
+        if (!countryCol || !athleteCol || !ageCol) {
+            throw new Error('Expected country, athlete and age columns to exist');
+        }
+
+        // Stage moving country to the front.
+        toolPanel.onDeferredValueColumnsUpdate([countryCol, athleteCol, ageCol]);
+        await asyncSetTimeout(1);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(false);
+
+        // External update reorders existing value columns while deferred state is dirty.
+        gridApi.setValueColumns(['age', 'athlete', 'country']);
+        await asyncSetTimeout(1);
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['age', 'athlete', 'country']);
+
+        getButtons(gridApi).applyButton.click();
+        await asyncSetTimeout(1);
+
+        // Expected: staged move is preserved, untouched existing order follows external update.
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['country', 'age', 'athlete']);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
+    });
+
     test('clicking remove on a value pill updates deferred UI only until Apply', async () => {
         const gridApi = gridMgr.createGrid('myGrid', {
             columnDefs,
