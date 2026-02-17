@@ -116,7 +116,9 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 });
 
-function createServerSideDatasource(server: { getData: (request: IServerSideGetRowsRequest) => any }): IServerSideDatasource {
+function createServerSideDatasource(server: {
+    getData: (request: IServerSideGetRowsRequest) => any;
+}): IServerSideDatasource {
     return {
         getRows: (params) => {
             const requestId = ++requestSequence;

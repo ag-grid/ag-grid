@@ -89,7 +89,12 @@ export const moveItem = (
         return;
     }
 
-    const targetIndex: number | null = getMoveTargetIndex(beans.colModel.getCols(), currentColumns, lastHoveredColumn, isBefore);
+    const targetIndex: number | null = getMoveTargetIndex(
+        beans.colModel.getCols(),
+        currentColumns,
+        lastHoveredColumn,
+        isBefore
+    );
 
     if (targetIndex != null) {
         beans.colMoves?.moveColumns(currentColumns, targetIndex, 'toolPanelUi');

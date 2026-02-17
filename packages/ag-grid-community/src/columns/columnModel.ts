@@ -301,7 +301,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
                 );
             });
 
-            const valueColumnsInDisplayOrder = (valueColumns ?? []).filter((col) => cols.map[col.getColId()] !== undefined);
+            const valueColumnsInDisplayOrder = (valueColumns ?? []).filter(
+                (col) => cols.map[col.getColId()] !== undefined
+            );
             return [...nonValueColumns, ...valueColumnsInDisplayOrder];
         }
 

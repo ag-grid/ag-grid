@@ -32,7 +32,11 @@ export class ColumnToolPanelFactory extends BeanStub implements NamedBean {
         onUpdateItems: (columns: AgColumn[]) => boolean,
         getExistingItems: () => AgColumn[]
     ): RowGroupDropZonePanel {
-        return this.createPanel(parent, destroyFuncs, new RowGroupDropZonePanel(false, onUpdateItems, getExistingItems));
+        return this.createPanel(
+            parent,
+            destroyFuncs,
+            new RowGroupDropZonePanel(false, onUpdateItems, getExistingItems)
+        );
     }
 
     public createValuesPanel(parent: Component, destroyFuncs: (() => void)[]): ValuesDropZonePanel {

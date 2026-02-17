@@ -134,7 +134,10 @@ export class ToolPanelContextMenu extends Component {
                 this.applyDeferredPivotColumnState((col) =>
                     rowGroupAllowed(col) ? { colId: col.getColId(), rowGroup: true } : undefined
                 ) ||
-                rowGroupColsSvc?.setColumns(this.addColumnsToList(rowGroupColsSvc.columns, rowGroupAllowed), 'toolPanelUi'),
+                rowGroupColsSvc?.setColumns(
+                    this.addColumnsToList(rowGroupColsSvc.columns, rowGroupAllowed),
+                    'toolPanelUi'
+                ),
             deActivateFunction: () =>
                 this.applyDeferredPivotColumnState((col) =>
                     rowGroupAllowed(col) ? { colId: col.getColId(), rowGroup: false } : undefined
@@ -160,9 +163,12 @@ export class ToolPanelContextMenu extends Component {
                         return undefined;
                     }
                     const aggFunc =
-                        typeof col.getAggFunc() === 'string' ? col.getAggFunc() : beans.aggFuncSvc?.getDefaultAggFunc(col);
+                        typeof col.getAggFunc() === 'string'
+                            ? col.getAggFunc()
+                            : beans.aggFuncSvc?.getDefaultAggFunc(col);
                     return { colId: col.getColId(), aggFunc };
-                }) || valueColsSvc?.setColumns(this.addColumnsToList(valueColsSvc.columns, valueAllowed), 'toolPanelUi'),
+                }) ||
+                valueColsSvc?.setColumns(this.addColumnsToList(valueColsSvc.columns, valueAllowed), 'toolPanelUi'),
             deActivateFunction: () =>
                 this.applyDeferredPivotColumnState((col) =>
                     valueAllowed(col) ? { colId: col.getColId(), aggFunc: null } : undefined

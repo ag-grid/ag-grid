@@ -10,7 +10,14 @@ import type {
     IToolPanelComp,
     IToolPanelParams,
 } from 'ag-grid-community';
-import { Component, FilterButtonComp, _addGridCommonParams, _applyColumnState, _clearElement, _last } from 'ag-grid-community';
+import {
+    Component,
+    FilterButtonComp,
+    _addGridCommonParams,
+    _applyColumnState,
+    _clearElement,
+    _last,
+} from 'ag-grid-community';
 
 import type { PivotDropZonePanel } from '../rowGrouping/columnDropZones/pivotDropZonePanel';
 import type { RowGroupDropZonePanel } from '../rowGrouping/columnDropZones/rowGroupDropZonePanel';
@@ -411,7 +418,9 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
     private onDeferredValueColumnsUpdate(columns: AgColumn[]): boolean {
         const pendingAggFuncMap = new Map(
-            this.deferredService.getPendingState().valueCols.map((valueCol) => [valueCol.colId, valueCol.aggFunc] as const)
+            this.deferredService
+                .getPendingState()
+                .valueCols.map((valueCol) => [valueCol.colId, valueCol.aggFunc] as const)
         );
         this.deferredService.setPendingValueColumns(
             columns.map((column) => ({
@@ -448,7 +457,9 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     private getDeferredPendingValueColumns(): AgColumn[] {
-        return this.getColumnsByColIds(this.deferredService.getPendingState().valueCols.map((valueCol) => valueCol.colId));
+        return this.getColumnsByColIds(
+            this.deferredService.getPendingState().valueCols.map((valueCol) => valueCol.colId)
+        );
     }
 
     private getDeferredPendingAggregationFunction(column: AgColumn): string | null | undefined {
@@ -460,9 +471,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
     private getColumnsByColIds(colIds: string[]): AgColumn[] {
         const { colModel } = this.beans;
-        return colIds
-            .map((colId) => colModel.getColDefCol(colId))
-            .filter((column): column is AgColumn => !!column);
+        return colIds.map((colId) => colModel.getColDefCol(colId)).filter((column): column is AgColumn => !!column);
     }
 
     private syncDeferredFromAppliedIfNoPending(): void {
@@ -474,7 +483,9 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     private getToolPanelPivotMode(): boolean {
-        return this.params.deferApply ? this.deferredService.getPendingState().pivotMode : this.beans.colModel.isPivotMode();
+        return this.params.deferApply
+            ? this.deferredService.getPendingState().pivotMode
+            : this.beans.colModel.isPivotMode();
     }
 
     private isColumnCheckedInToolPanel(column: AgColumn, pivotMode: boolean): boolean {
@@ -533,7 +544,10 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         const localeTextFunc = this.getLocaleTextFunc();
         const buttons = this.params.buttons.map((type) => ({
             type,
-            label: localeTextFunc(type === 'apply' ? 'applyFilter' : 'cancelFilter', type === 'apply' ? 'Apply' : 'Cancel'),
+            label: localeTextFunc(
+                type === 'apply' ? 'applyFilter' : 'cancelFilter',
+                type === 'apply' ? 'Apply' : 'Cancel'
+            ),
         }));
         buttonComp.updateButtons(buttons);
         this.appendChild(buttonComp);
@@ -584,20 +598,20 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         const visibleColIdSet = new Set(state.visibleColIds);
 
         const columnState: ColumnState[] = allColumns.map((column) => {
-                const colId = column.getColId();
-                const rowGroupIndex = rowGroupIndexMap.get(colId);
-                const pivotIndex = pivotIndexMap.get(colId);
-                const aggFunc = valueAggMap.has(colId) ? valueAggMap.get(colId)! : null;
-                return {
-                    colId,
-                    rowGroup: rowGroupIndex != null,
-                    rowGroupIndex: rowGroupIndex ?? null,
-                    pivot: pivotIndex != null,
-                    pivotIndex: pivotIndex ?? null,
-                    aggFunc,
-                    hide: !visibleColIdSet.has(colId),
-                };
-            });
+            const colId = column.getColId();
+            const rowGroupIndex = rowGroupIndexMap.get(colId);
+            const pivotIndex = pivotIndexMap.get(colId);
+            const aggFunc = valueAggMap.has(colId) ? valueAggMap.get(colId)! : null;
+            return {
+                colId,
+                rowGroup: rowGroupIndex != null,
+                rowGroupIndex: rowGroupIndex ?? null,
+                pivot: pivotIndex != null,
+                pivotIndex: pivotIndex ?? null,
+                aggFunc,
+                hide: !visibleColIdSet.has(colId),
+            };
+        });
 
         _applyColumnState(this.beans, { state: columnState }, 'toolPanelUi');
 

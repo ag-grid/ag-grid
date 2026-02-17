@@ -29,9 +29,9 @@ import {
 } from 'ag-grid-community';
 
 import type { ColumnModelItem } from './columnModelItem';
+import type { ToolPanelColumnCompParams } from './columnToolPanel';
 import { createPivotState, selectAllChildren, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
-import type { ToolPanelColumnCompParams } from './columnToolPanel';
 
 const ToolPanelColumnGroupElement: ElementParams = {
     tag: 'div',
