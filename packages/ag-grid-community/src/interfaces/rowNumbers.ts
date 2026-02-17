@@ -8,6 +8,7 @@ export interface RowNumbersOptions
     extends Partial<
         Pick<
             ColDef,
+            | 'cellRenderer'
             | 'contextMenuItems'
             | 'context'
             | 'onCellClicked'

@@ -10,6 +10,9 @@
     font-family: var(--ag-header-font-family);
     font-weight: var(--ag-header-font-weight);
     border: none;
+    & > * {
+        pointer-events: none;
+    }
 }
 
 .ag-row-numbers-resizer {
