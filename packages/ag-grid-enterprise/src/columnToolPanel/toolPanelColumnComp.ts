@@ -304,18 +304,15 @@ export class ToolPanelColumnComp extends Component {
     private onColumnStateChanged(): void {
         this.processingColumnStateChange = true;
         const isPivotMode = this.params.getToolPanelPivotMode?.() ?? this.beans.colModel.isPivotMode();
-        const isColumnChecked = this.params.isColumnCheckedInToolPanel
-            ? this.params.isColumnCheckedInToolPanel(this.column, isPivotMode)
-            : isPivotMode
-              ? this.column.isAnyFunctionActive()
-              : this.column.isVisible();
-        if (isPivotMode) {
-            // if reducing, checkbox means column is one of pivot, value or group
-            this.cbSelect.setValue(isColumnChecked);
+        let isColumnChecked: boolean;
+
+        if (this.params.isColumnCheckedInToolPanel) {
+            isColumnChecked = this.params.isColumnCheckedInToolPanel(this.column, isPivotMode);
         } else {
-            // if not reducing, the checkbox tells us if column is visible or not
-            this.cbSelect.setValue(isColumnChecked);
+            isColumnChecked = isPivotMode ? this.column.isAnyFunctionActive() : this.column.isVisible();
         }
+
+        this.cbSelect.setValue(isColumnChecked);
 
         let canBeToggled = true;
         let canBeDragged = true;
