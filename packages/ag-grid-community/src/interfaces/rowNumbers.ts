@@ -5,31 +5,29 @@ import type { CellPosition } from './iCellPosition';
 import type { IColumnCollectionService } from './iColumnCollectionService';
 
 export interface RowNumbersOptions
-    extends Partial<
-        Pick<
-            ColDef,
-            | 'contextMenuItems'
-            | 'context'
-            | 'onCellClicked'
-            | 'onCellContextMenu'
-            | 'onCellDoubleClicked'
-            | 'headerTooltip'
-            | 'headerStyle'
-            | 'headerComponent'
-            | 'headerComponentParams'
-            | 'suppressHeaderKeyboardEvent'
-            | 'tooltipField'
-            | 'tooltipValueGetter'
-            | 'tooltipComponent'
-            | 'tooltipComponentParams'
-            | 'tooltipComponentSelector'
-            | 'valueGetter'
-            | 'valueFormatter'
-            | 'maxWidth'
-            | 'cellRenderer'
-            | 'cellRendererSelector'
-            | 'cellRendererParams'
-        >
+    extends Pick<
+        ColDef,
+        | 'contextMenuItems'
+        | 'context'
+        | 'onCellClicked'
+        | 'onCellContextMenu'
+        | 'onCellDoubleClicked'
+        | 'headerTooltip'
+        | 'headerStyle'
+        | 'headerComponent'
+        | 'headerComponentParams'
+        | 'suppressHeaderKeyboardEvent'
+        | 'tooltipField'
+        | 'tooltipValueGetter'
+        | 'tooltipComponent'
+        | 'tooltipComponentParams'
+        | 'tooltipComponentSelector'
+        | 'valueGetter'
+        | 'valueFormatter'
+        | 'maxWidth'
+        | 'cellRenderer'
+        | 'cellRendererSelector'
+        | 'cellRendererParams'
     > {
     /**
      * Set to `true` to prevent selecting all the currently visible cells in the row when clicking a Row Number.
