@@ -5,6 +5,7 @@ import { _getActiveDomElement } from '../../../agStack/utils/document';
 import { _setDisplayed } from '../../../agStack/utils/dom';
 import { _isKeyboardMode } from '../../../agStack/utils/focus';
 import type { ResizeFeature } from '../../../columnResize/resizeFeature';
+import { isRowNumberCol } from '../../../columns/columnUtils';
 import { setupCompBean } from '../../../components/emptyBean';
 import { _getHeaderCompDetails } from '../../../components/framework/userCompUtils';
 import type { BeanStub } from '../../../context/beanStub';
@@ -627,15 +628,14 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
     private refreshAriaCellSelection(): void {
         let description: string | null = null;
-        const { gos, column, beans } = this;
+        const { gos, column } = this;
         const enableColumnSelection = _getEnableColumnSelection(gos);
 
-        if (enableColumnSelection) {
+        if (enableColumnSelection && !isRowNumberCol(column)) {
             const translate = this.getLocaleTextFunc();
-            const colSelected = beans.rangeSvc?.isColumnInAnyRange(column);
             description = translate(
                 'ariaColumnCellSelection',
-                `Press CTRL+SPACE to ${colSelected ? 'de' : ''}select all visible cells in this column`
+                'Press Enter to toggle selection for all visible cells in this column'
             );
         }
 

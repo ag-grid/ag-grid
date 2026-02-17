@@ -5,13 +5,6 @@ import { RowCtrl } from '../row/rowCtrl';
 import { SpannedCellCtrl } from './spannedCellCtrl';
 
 export class SpannedRowCtrl extends RowCtrl {
-    protected override onRowIndexChanged(): void {
-        super.onRowIndexChanged();
-        for (const c of this.getAllCellCtrls()) {
-            c.refreshAriaRowIndex();
-        }
-    }
-
     protected override getInitialRowClasses(_rowContainerType: RowContainerType): string[] {
         return ['ag-spanned-row'];
     }

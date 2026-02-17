@@ -4,6 +4,7 @@ import { _getActiveDomElement } from './agStack/utils/document';
 import { _focusInto, _registerKeyboardFocusEvents } from './agStack/utils/focus';
 import { _makeNull } from './agStack/utils/generic';
 import type { ColumnModel } from './columns/columnModel';
+import { isRowNumberCol } from './columns/columnUtils';
 import type { VisibleColsService } from './columns/visibleColsService';
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
@@ -561,9 +562,10 @@ export class FocusService extends BeanStub implements NamedBean {
         const nextRow = backwards ? _getLastRow(this.beans) : _getFirstRow(this.beans);
 
         if (nextRow) {
-            const column = params.column ?? (this.focusedHeader?.column as AgColumn);
+            const column: AgColumn | undefined = params.column ?? (this.focusedHeader?.column as AgColumn | undefined);
             const { rowIndex, rowPinned } = nextRow;
             const rowNode = _getRowNode(this.beans, nextRow);
+
             if (!column || !rowNode || rowIndex == null) {
                 return false;
             }
@@ -603,7 +605,9 @@ export class FocusService extends BeanStub implements NamedBean {
                 forceBrowserFocus: true,
             });
 
-            this.beans.rangeSvc?.setRangeToCell({ rowIndex, rowPinned, column });
+            if (!isRowNumberCol(column)) {
+                this.beans.rangeSvc?.setRangeToCell({ rowIndex, rowPinned, column });
+            }
 
             return true;
         }

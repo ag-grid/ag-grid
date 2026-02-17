@@ -1,6 +1,7 @@
 import { KeyCode } from '../agStack/constants/keyCode';
 import { _last } from '../agStack/utils/array';
 import { _missing } from '../agStack/utils/generic';
+import { isRowNumberCol } from '../columns/columnUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -63,12 +64,14 @@ export class CellNavigationService extends BeanStub implements NamedBean {
             rowIndex = focusedCell.rowIndex;
             const allColumns = leftKey !== isRtl ? visibleCols.allCols : [...visibleCols.allCols].reverse();
 
-            column = allColumns.find((col) =>
-                this.isCellGoodToFocusOn({
-                    rowIndex,
-                    rowPinned: null,
-                    column: col,
-                })
+            column = allColumns.find(
+                (col) =>
+                    !isRowNumberCol(col) &&
+                    this.isCellGoodToFocusOn({
+                        rowIndex,
+                        rowPinned: null,
+                        column: col,
+                    })
             );
         }
 
