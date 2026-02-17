@@ -7,6 +7,7 @@ import {
     _injectCoreAndModuleCSS,
     _injectGlobalCSS,
     _unregisterInstanceUsingThemingAPI,
+    _updateDynamicParamsCss,
     _useParamsCss,
 } from '../theming/inject';
 import type { Theme } from '../theming/theme';
@@ -14,6 +15,7 @@ import { ThemeImpl } from '../theming/themeImpl';
 import type { ParamType } from '../theming/themeTypeUtils';
 import { paramToVariableName } from '../theming/themeUtils';
 import { _createAgElement, _isInDOM, _observeResize } from '../utils/dom';
+import { _debounce } from '../utils/function';
 import { AgBeanStub } from './agBeanStub';
 
 const LIST_ITEM_HEIGHT: CssVariable<BaseCssChangeKeys> = {
@@ -44,6 +46,8 @@ export abstract class BaseEnvironment<
     private readonly lastKnownValues = new Map<CssVariable<TChangeKeys>, number>();
     private eMeasurementContainer: HTMLElement | undefined;
     public sizesMeasured = false;
+
+    private readonly handleDynamicParamChange = _debounce(this, this.doHandleDynamicParamChange.bind(this), 0);
 
     public wireBeans(beans: TBeanCollection): void {
         this.eRootDiv = beans.eRootDiv;
@@ -181,7 +185,7 @@ export abstract class BaseEnvironment<
         return container;
     }
 
-    protected getSizeEl(variable: CssVariable<TChangeKeys>): HTMLElement {
+    protected getSizeEl(variable: CssVariable<TChangeKeys>, handleChange?: () => void): HTMLElement {
         let sizeEl = this.sizeEls.get(variable);
         if (sizeEl) {
             return sizeEl;
@@ -215,7 +219,11 @@ export abstract class BaseEnvironment<
             this.lastKnownValues.set(variable, newMeasurement);
             if (newMeasurement !== lastMeasurement) {
                 lastMeasurement = newMeasurement;
-                this.fireStylesChangedEvent(variable.changeKey);
+                if (handleChange) {
+                    handleChange();
+                } else {
+                    this.fireStylesChangedEvent(variable.changeKey);
+                }
             }
         });
         this.addDestroyFunc(() => unsubscribe());
@@ -284,13 +292,55 @@ export abstract class BaseEnvironment<
             this,
             newTheme?._getParamsCss() ?? null,
             newTheme?._getParamsClassName() ?? null,
+            newTheme?._getDynamicParamsCss() ?? null,
+            newTheme?._getDynamicParamsDebugId() ?? null,
             this.eStyleContainer,
             this.cssLayer,
             this.styleNonce
         );
 
         this.applyThemeClasses(eRootDiv);
+        const dynamicParamKeys = newTheme?._getDynamicParamKeys() ?? [];
+        const handleDynamicParamChange = this.handleDynamicParamChange.bind(this);
+        for (const dynamicParamKey of dynamicParamKeys) {
+            this.getSizeEl(
+                {
+                    changeKey: `${dynamicParamKey}Length` as keyof TChangeKeys & string,
+                    type: 'length',
+                    defaultValue: 1,
+                },
+                handleDynamicParamChange
+            );
+        }
+
         this.fireStylesChangedEvent('theme');
+    }
+
+    private doHandleDynamicParamChange(): void {
+        const theme = this.theme;
+        if (!theme) {
+            return;
+        }
+        const dynamicParamKeys = theme._getDynamicParamKeys();
+        const newParams: Record<string, number> = {};
+        for (const key of dynamicParamKeys) {
+            const length = this.getCSSVariablePixelValue({
+                changeKey: `${key}Length` as keyof TChangeKeys & string,
+                type: 'length',
+                defaultValue: 1,
+            });
+            newParams[key] = length;
+        }
+        if (theme._onDynamicParamsChange(newParams)) {
+            _updateDynamicParamsCss(
+                this,
+                theme?._getDynamicParamsCss() ?? null,
+                theme?._getDynamicParamsDebugId() ?? null,
+                this.eStyleContainer,
+                this.cssLayer,
+                this.styleNonce
+            );
+        }
     }
 
     protected fireStylesChangedEvent(change: keyof TChangeKeys & string): void {

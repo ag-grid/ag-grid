@@ -988,6 +988,7 @@ export type {
     BorderValue,
     ColorSchemeValue,
     ColorValue,
+    ColorListValue,
     DurationValue,
     FontFamilyValue,
     FontWeightValue,

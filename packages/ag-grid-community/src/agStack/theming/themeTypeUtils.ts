@@ -1,6 +1,7 @@
 import type { ThemeLogger } from './themeLogger';
 import type {
     BorderValue,
+    ColorListValue,
     ColorValue,
     DurationValue,
     FontFamilyValue,
@@ -14,6 +15,7 @@ import { clamp, memoize, paramToVariableExpression } from './themeUtils';
 export const paramTypes = [
     'colorScheme',
     'color',
+    'colorList',
     'length',
     'scale',
     'borderStyle',
@@ -64,6 +66,23 @@ export const colorValueToCss = (value: ColorValue): string | false => {
 };
 
 export const colorSchemeValueToCss = literalToCSS;
+
+export const colorListValueToCss = (): false => {
+    // handled separately
+    return false;
+};
+export const colorListValueToCssArray = (value: ColorListValue, length?: number): string[] | false => {
+    if (!Array.isArray(value)) {
+        return false;
+    }
+    const colors: string[] = [];
+    const numValues = length ?? value.length;
+    for (let i = 0; i < numValues; ++i) {
+        const color = value[i];
+        colors.push(color == null ? '' : colorValueToCss(color) || '');
+    }
+    return colors;
+};
 
 export const lengthValueToCss = (value: LengthValue): string | false => {
     if (typeof value === 'string') {
@@ -211,6 +230,7 @@ const paramValidators: Record<ParamType, (value: unknown, param: string, themeLo
     {
         color: colorValueToCss,
         colorScheme: colorSchemeValueToCss,
+        colorList: colorListValueToCss,
         length: lengthValueToCss,
         scale: scaleValueToCss,
         border: borderValueToCss,
@@ -222,7 +242,12 @@ const paramValidators: Record<ParamType, (value: unknown, param: string, themeLo
         duration: durationValueToCss,
     };
 
-export const paramValueToCss = (param: string, value: unknown, themeLogger: ThemeLogger): string | false => {
-    const type = getParamType(param);
-    return paramValidators[type](value, param, themeLogger);
+export const paramValueToCss = (
+    param: string,
+    value: unknown,
+    themeLogger: ThemeLogger,
+    type?: ParamType
+): string | false => {
+    const paramType = type ?? getParamType(param);
+    return paramValidators[paramType](value, param, themeLogger);
 };

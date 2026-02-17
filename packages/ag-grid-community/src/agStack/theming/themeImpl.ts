@@ -5,8 +5,8 @@ import { sharedDefaults } from './shared/shared-css';
 import type { SharedThemeParams } from './shared/shared-css';
 import type { Theme } from './theme';
 import type { ThemeLogger } from './themeLogger';
-import { paramValueToCss } from './themeTypeUtils';
-import type { WithParamTypes } from './themeTypes';
+import { colorListValueToCssArray, getParamType, paramValueToCss } from './themeTypeUtils';
+import type { ColorListValue, WithParamTypes } from './themeTypes';
 import { paramToVariableName } from './themeUtils';
 
 let paramsId = 0;
@@ -110,9 +110,14 @@ export class ThemeImpl {
     }
 
     private _paramsClassName?: string;
+    private _variableParamsDebugId?: string;
 
     _getParamsClassName(): string {
         return (this._paramsClassName ??= `ag-theme-params-${++paramsId}`);
+    }
+
+    _getDynamicParamsDebugId(): string {
+        return (this._variableParamsDebugId ??= this._paramsClassName!.replace('ag-theme-', 'ag-theme-dynamic-'));
     }
 
     private _paramsCache?: ModalParamValues;
@@ -166,63 +171,203 @@ export class ThemeImpl {
     }
 
     private _paramsCssCache?: string;
+    private _dynamicParamsCssCache?: string;
 
     _getParamsCss(): string {
         if (!this._paramsCssCache) {
-            // Ensure that every variable has a value set on root elements ("root"
-            // elements are those containing grid UI, e.g. ag-root-wrapper and
-            // ag-popup)
-            //
-            // Simply setting .ag-root-wrapper { --ag-foo: default-value } is not
-            // appropriate because it will override any values set on parent
-            // elements. An application should be able to set `--ag-spacing: 4px`
-            // on the document body and have it picked up by all grids on the page.
-            //
-            // To allow this we capture the application-provided value of --ag-foo
-            // into --ag-inherited-foo on the *parent* element of the root, and then
-            // use --ag-inherited-foo as the value for --ag-foo on the root element,
-            // applying our own default if it is unset.
-            let variablesCss = '';
-            let inheritanceCss = '';
-            const modeParams = this._getModeParams();
-            const { overridePrefix, themeLogger } = this.params;
-            const cssOverridePrefix = overridePrefix ? `--ag-${overridePrefix}-` : undefined;
-            for (const mode of Object.keys(modeParams)) {
-                const params = modeParams[mode];
-                if (mode !== defaultModeName) {
-                    const escapedMode = typeof CSS === 'object' ? CSS.escape(mode) : mode; // check for CSS global in case we're running in tests
-                    const wrapPrefix = `:where([data-ag-theme-mode="${escapedMode}"]) & {\n`;
-                    variablesCss += wrapPrefix;
-                    inheritanceCss += wrapPrefix;
-                }
-                // NOSONAR - these are not localised
-                for (const key of Object.keys(params).sort()) {
-                    const value = params[key];
-                    const cssValue = paramValueToCss(key, value, themeLogger);
-                    if (cssValue === false) {
+            return this._generateParamsCss();
+        }
+        return this._paramsCssCache;
+    }
+
+    _getDynamicParamsCss(): string {
+        if (!this._dynamicParamsCssCache) {
+            return this._generateParamsCss();
+        }
+        return this._dynamicParamsCssCache;
+    }
+
+    private readonly _dynamicParams: ModalParamValues = {};
+
+    private _generateParamsCssGeneric<TParamValues>(
+        modeParams: { [mode: string]: Record<string, TParamValues> },
+        getParamValue: (params: Record<string, TParamValues>, key: string, mode: string) => unknown,
+        addToVariablesCss: (cssString: string, isDynamic?: boolean) => void,
+        addToInheritanceCss: (cssString: string, isDynamic?: boolean) => void
+    ): (variablesCssString: string, inheritanceCssString: string) => string {
+        // Ensure that every variable has a value set on root elements ("root"
+        // elements are those containing grid UI, e.g. ag-root-wrapper and
+        // ag-popup)
+        //
+        // Simply setting .ag-root-wrapper { --ag-foo: default-value } is not
+        // appropriate because it will override any values set on parent
+        // elements. An application should be able to set `--ag-spacing: 4px`
+        // on the document body and have it picked up by all grids on the page.
+        //
+        // To allow this we capture the application-provided value of --ag-foo
+        // into --ag-inherited-foo on the *parent* element of the root, and then
+        // use --ag-inherited-foo as the value for --ag-foo on the root element,
+        // applying our own default if it is unset.
+        const { overridePrefix, themeLogger } = this.params;
+        const cssOverridePrefix = overridePrefix ? `--ag-${overridePrefix}-` : undefined;
+        const _dynamicParams = this._dynamicParams;
+        for (const mode of Object.keys(modeParams)) {
+            const params = modeParams[mode];
+            if (mode !== defaultModeName) {
+                const escapedMode = typeof CSS === 'object' ? CSS.escape(mode) : mode; // check for CSS global in case we're running in tests
+                const wrapPrefix = `:where([data-ag-theme-mode="${escapedMode}"]) & {\n`;
+                addToVariablesCss(wrapPrefix);
+                addToInheritanceCss(wrapPrefix);
+            }
+            // NOSONAR - these are not localised
+            for (const key of Object.keys(params).sort()) {
+                const value = getParamValue(params, key, mode);
+                const paramType = getParamType(key);
+                const addParam = (currentKey: string, currentCssValue: string | false, isVariable: boolean) => {
+                    if (currentCssValue === false) {
                         themeLogger.error(107, { key, value });
                     } else {
-                        const cssName = paramToVariableName(key);
+                        const cssName = paramToVariableName(currentKey);
                         const overrideName = cssOverridePrefix ? cssName.replace('--ag-', cssOverridePrefix) : cssName;
                         const inheritedName = cssName.replace('--ag-', '--ag-inherited-');
-                        variablesCss += `\t${cssName}: var(${inheritedName}, ${cssValue});\n`;
-                        inheritanceCss += `\t${inheritedName}: var(${overrideName});\n`;
+                        addToVariablesCss(`\t${cssName}: var(${inheritedName}, ${currentCssValue});\n`, isVariable);
+                        addToInheritanceCss(`\t${inheritedName}: var(${overrideName});\n`, isVariable);
+                    }
+                };
+                if (paramType === 'colorList') {
+                    const providedLengthValue = getParamValue(params, `${key}Length`, mode);
+                    const cssValues = colorListValueToCssArray(
+                        value as ColorListValue,
+                        typeof providedLengthValue === 'number' ? providedLengthValue : undefined
+                    );
+                    if (Array.isArray(cssValues)) {
+                        const arrayLength = cssValues.length;
+                        for (let i = 0; i < arrayLength; ++i) {
+                            addParam(`${key}${i + 1}`, cssValues[i], true);
+                        }
+                        _dynamicParams[mode] ??= {};
+                        _dynamicParams[mode][key] = arrayLength;
+                    } else {
+                        // show warning
+                        addParam(key, cssValues, false);
+                    }
+                } else {
+                    const cssValue = paramValueToCss(key, value, themeLogger, paramType);
+                    addParam(key, cssValue, false);
+                }
+                const cssValue = paramValueToCss(key, value, themeLogger, paramType);
+                if (Array.isArray(cssValue)) {
+                    for (let i = 0; i < cssValue.length; ++i) {
+                        addParam(`${key}${i + 1}`, cssValue[i], true);
                     }
                 }
-                if (mode !== defaultModeName) {
-                    variablesCss += '}\n';
-                    inheritanceCss += '}\n';
-                }
             }
+            if (mode !== defaultModeName) {
+                addToVariablesCss('}\n');
+                addToInheritanceCss('}\n');
+            }
+        }
+        return (variablesCssString: string, inheritanceCssString: string) => {
             const selectorPlaceholder = `:where(.${this._getParamsClassName()})`;
-            let css = `${selectorPlaceholder} {\n${variablesCss}}\n`;
+            let cssString = `${selectorPlaceholder} {\n${variablesCssString}}\n`;
             // Create --ag-inherited-foo variable values on the parent element, unless
             // the parent is itself a root (which can happen if popupParent is
             // ag-root-wrapper)
-            css += `:has(> ${selectorPlaceholder}):not(${selectorPlaceholder}) {\n${inheritanceCss}}\n`;
-            this._paramsCssCache = css;
+            cssString += `:has(> ${selectorPlaceholder}):not(${selectorPlaceholder}) {\n${inheritanceCssString}}\n`;
+            return cssString;
+        };
+    }
+
+    private _generateParamsCss(): string {
+        let variablesCss = '';
+        let inheritanceCss = '';
+        let variableVariablesCss = '';
+        let variableInheritanceCss = '';
+        const addToVariablesCss = (cssString: string, isVariable?: boolean) => {
+            if (isVariable !== true) {
+                variablesCss += cssString;
+            }
+            if (isVariable !== false) {
+                variableVariablesCss += cssString;
+            }
+        };
+        const addToInheritanceCss = (cssString: string, isVariable?: boolean) => {
+            if (isVariable !== true) {
+                inheritanceCss += cssString;
+            }
+            if (isVariable !== false) {
+                variableInheritanceCss += cssString;
+            }
+        };
+        const modeParams = this._getModeParams();
+        const generateCss = this._generateParamsCssGeneric(
+            modeParams,
+            (params, key) => params[key],
+            addToVariablesCss,
+            addToInheritanceCss
+        );
+        const css = generateCss(variablesCss, inheritanceCss);
+        const variableCss = generateCss(variableVariablesCss, variableInheritanceCss);
+        this._paramsCssCache = css;
+        this._dynamicParamsCssCache = variableCss;
+        return css;
+    }
+
+    _onDynamicParamsChange(paramLengths: Record<string, number>): boolean {
+        const params = this._dynamicParams;
+        let changed = false;
+        for (const key of Object.keys(paramLengths)) {
+            const newValue = paramLengths[key];
+            for (const paramsForMode of Object.values(params)) {
+                // we don't know the current mode, so just update all of them
+                const oldValue = paramsForMode[key];
+                if (oldValue !== newValue) {
+                    changed = true;
+                    paramsForMode[key] = newValue;
+                }
+            }
         }
-        return this._paramsCssCache;
+        if (changed) {
+            this._generateDynamicParamsCss();
+        }
+        return changed;
+    }
+
+    _getDynamicParamKeys(): string[] {
+        const dynamicParams = new Set<string>();
+        for (const paramsForMode of Object.values(this._dynamicParams)) {
+            for (const param of Object.keys(paramsForMode)) {
+                dynamicParams.add(param);
+            }
+        }
+        return Array.from(dynamicParams);
+    }
+
+    private _generateDynamicParamsCss(): void {
+        const params = this._dynamicParams;
+        if (!params) {
+            this._generateParamsCss();
+        }
+        let variablesCss = '';
+        let inheritanceCss = '';
+        const addToVariablesCss = (cssString: string) => {
+            variablesCss += cssString;
+        };
+        const addToInheritanceCss = (cssString: string) => {
+            inheritanceCss += cssString;
+        };
+        const modeParams = this._getModeParams();
+        const generateCss = this._generateParamsCssGeneric(
+            params,
+            // Will either be the length value or the color list.
+            // For the length we want to return the calculated value.
+            // For the color list, return the array.
+            (_, key, mode) => (key.endsWith('Length') ? params[mode][key.slice(0, -6)] : modeParams[mode][key]),
+            addToVariablesCss,
+            addToInheritanceCss
+        );
+        const css = generateCss(variablesCss, inheritanceCss);
+        this._dynamicParamsCssCache = css;
     }
 }
 type ParamValues = Record<string, unknown>;

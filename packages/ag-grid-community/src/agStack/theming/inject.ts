@@ -11,6 +11,7 @@ type InjectedStyle = {
     el: HTMLStyleElement;
     priority: number;
     isParams: boolean;
+    dynamicParamsId?: string;
 };
 
 export const _injectGlobalCSS = (
@@ -20,7 +21,8 @@ export const _injectGlobalCSS = (
     layer: string | undefined,
     priority: number,
     nonce: string | undefined,
-    isParams: boolean = false
+    isParams: boolean = false,
+    dynamicParamsId?: string
 ) => {
     if (IS_SSR || FORCE_LEGACY_THEMES) {
         return;
@@ -47,7 +49,7 @@ export const _injectGlobalCSS = (
     }
     el.dataset.agGlobalCss = debugId;
     el.textContent = css;
-    const newInjection: InjectedStyle = { css, el, priority, isParams };
+    const newInjection: InjectedStyle = { css, el, priority, isParams, dynamicParamsId };
 
     let insertAfter: InjectedStyle | undefined;
     for (const injection of injections) {
@@ -86,6 +88,8 @@ export const _useParamsCss = (
     environment: IEnvironment,
     paramsCss: string | null,
     paramsDebugId: string | null,
+    dynamicParamsCss: string | null,
+    dynamicParamsDebugId: string | null,
     styleContainer: HTMLElement,
     layer: string | undefined,
     nonce: string | undefined
@@ -96,9 +100,14 @@ export const _useParamsCss = (
 
     const gridState = injectionState.grids.get(environment);
     if (!gridState) {
-        injectionState.grids.set(environment, { styleContainer, paramsCss });
+        injectionState.grids.set(environment, {
+            styleContainer,
+            paramsCss,
+            dynamicParamsCss,
+        });
     } else {
         gridState.paramsCss = paramsCss;
+        gridState.dynamicParamsCss = dynamicParamsCss;
     }
 
     removeStaleParamsCss(styleContainer);
@@ -106,6 +115,58 @@ export const _useParamsCss = (
     if (paramsCss && paramsDebugId) {
         _injectGlobalCSS(paramsCss, styleContainer, paramsDebugId, layer, 2, nonce, true);
     }
+    if (dynamicParamsCss && dynamicParamsDebugId) {
+        _injectGlobalCSS(
+            dynamicParamsCss,
+            styleContainer,
+            dynamicParamsDebugId,
+            layer,
+            2,
+            nonce,
+            true,
+            dynamicParamsDebugId
+        );
+    }
+};
+
+export const _updateDynamicParamsCss = (
+    environment: IEnvironment,
+    dynamicParamsCss: string | null,
+    dynamicParamsDebugId: string | null,
+    styleContainer: HTMLElement,
+    layer: string | undefined,
+    nonce: string | undefined
+) => {
+    if (IS_SSR || FORCE_LEGACY_THEMES || !dynamicParamsCss || !dynamicParamsDebugId) {
+        return;
+    }
+    const { grids: injectionStateInstances, map: injectionStateMap } = injectionState;
+    const gridState = injectionStateInstances.get(environment);
+    if (gridState) {
+        gridState.dynamicParamsCss = dynamicParamsCss;
+    }
+    const injections = injectionStateMap.get(styleContainer);
+    const injectionIndex = injections?.findIndex(({ dynamicParamsId }) => dynamicParamsId === dynamicParamsDebugId);
+    if (injectionIndex != null && injectionIndex !== -1) {
+        const { css: oldCss, el } = injections![injectionIndex];
+        el.remove();
+        injections!.splice(injectionIndex, 1);
+        for (const gs of injectionStateInstances.values()) {
+            if (gs.styleContainer === styleContainer && gs.dynamicParamsCss === oldCss) {
+                gs.dynamicParamsCss = dynamicParamsCss;
+            }
+        }
+    }
+    _injectGlobalCSS(
+        dynamicParamsCss,
+        styleContainer,
+        dynamicParamsDebugId,
+        layer,
+        2,
+        nonce,
+        true,
+        dynamicParamsDebugId
+    );
 };
 
 export const _unregisterInstanceUsingThemingAPI = (environment: IEnvironment) => {
@@ -131,6 +192,7 @@ const removeStaleParamsCss = (styleContainer: HTMLElement, deleteAll = false) =>
     for (const gs of injectionState.grids.values()) {
         if (gs.styleContainer === styleContainer) {
             neededCss.add(gs.paramsCss);
+            neededCss.add(gs.dynamicParamsCss);
         }
     }
 
@@ -146,6 +208,7 @@ const removeStaleParamsCss = (styleContainer: HTMLElement, deleteAll = false) =>
 type InjectedGridCssState = {
     styleContainer: HTMLElement;
     paramsCss: string | null;
+    dynamicParamsCss: string | null;
 };
 
 type InjectionState = {

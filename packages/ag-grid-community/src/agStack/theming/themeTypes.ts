@@ -8,6 +8,7 @@ export type WithParamTypes<T> = {
 type ParamTypeForLowercaseKey<K extends string> = K extends `${string}color`
     ? ColorValue
     : K extends `${string}colorscheme` ? ColorSchemeValue
+    : K extends `${string}colorlist` ? ColorListValue
     : K extends `${string}color` ? ColorValue
     : K extends `${string}scale` ? ScaleValue
     : K extends `${string}borderstyle` ? BorderStyleValue
@@ -55,6 +56,8 @@ export type ColorValue =
  * @see https://developer.mozilla.org/en-US/docs/Web/CSS/color-scheme
  */
 export type ColorSchemeValue = 'light' | 'dark' | 'inherit' | 'normal' | AnyString | { ref: string };
+
+export type ColorListValue = ColorValue[];
 
 /**
  * A CSS dimension value with length units, e.g. "1px" or "2em". Alternatively:
