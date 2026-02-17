@@ -15,7 +15,7 @@ import type { CellMouseListenerFeature } from '../rendering/cell/cellMouseListen
 import type { LongTapEvent, TapEvent } from '../widgets/touchListener';
 import { TouchListener } from '../widgets/touchListener';
 
-export const _shouldOpenHeaderMenuOnLongTap = (
+const _shouldOpenHeaderMenuOnLongTap = (
     enableMenu: boolean,
     isHeaderContextMenuEnabled: boolean,
     isLegacyMenuEnabled: boolean
