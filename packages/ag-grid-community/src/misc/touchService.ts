@@ -7,12 +7,19 @@ import type { AgColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import type { RowContainerEventsFeature } from '../gridBodyComp/rowContainer/rowContainerEventsFeature';
+import { _isLegacyMenuEnabled } from '../gridOptionsUtils';
 import type { HeaderComp } from '../headerRendering/cells/column/headerComp';
 import type { HeaderGroupComp } from '../headerRendering/cells/columnGroup/headerGroupComp';
 import type { GridHeaderCtrl } from '../headerRendering/gridHeaderCtrl';
 import type { CellMouseListenerFeature } from '../rendering/cell/cellMouseListenerFeature';
 import type { LongTapEvent, TapEvent } from '../widgets/touchListener';
 import { TouchListener } from '../widgets/touchListener';
+
+export const _shouldOpenHeaderMenuOnLongTap = (
+    enableMenu: boolean,
+    isHeaderContextMenuEnabled: boolean,
+    isLegacyMenuEnabled: boolean
+): boolean => isHeaderContextMenuEnabled || (enableMenu && isLegacyMenuEnabled);
 
 export class TouchService extends BeanStub implements NamedBean {
     beanName = 'touchSvc' as const;
@@ -82,6 +89,12 @@ export class TouchService extends BeanStub implements NamedBean {
         const suppressMenuHide = comp.shouldSuppressMenuHide();
         const tapMenuButton = suppressMenuHide && _exists(eMenu) && params.enableMenu;
         const isHeaderContextMenuEnabled = !!menuSvc?.isHeaderContextMenuEnabled(params.column as AgColumn);
+        const shouldOpenMenuOnLongTap = _shouldOpenHeaderMenuOnLongTap(
+            params.enableMenu,
+            isHeaderContextMenuEnabled,
+            _isLegacyMenuEnabled(gos)
+        );
+
         let menuTouchListener = touchListener;
         if (tapMenuButton) {
             menuTouchListener = new TouchListener(eMenu, true);
@@ -94,7 +107,7 @@ export class TouchService extends BeanStub implements NamedBean {
             comp.addManagedListeners(menuTouchListener, { tap: showMenuFn });
         }
 
-        if (isHeaderContextMenuEnabled) {
+        if (shouldOpenMenuOnLongTap) {
             comp.addManagedListeners(touchListener, { longTap: showMenuFn });
         }
 

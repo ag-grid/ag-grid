@@ -14,6 +14,17 @@ Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
     },
 });
 
+const dispatchTouchStart = (target: HTMLElement) => {
+    const touch = { identifier: 1, target, clientX: 5, clientY: 5 };
+    const touchStartEvent = new Event('touchstart', { bubbles: true, cancelable: true }) as TouchEvent;
+
+    Object.defineProperty(touchStartEvent, 'touches', { value: [touch] });
+    Object.defineProperty(touchStartEvent, 'targetTouches', { value: [touch] });
+    Object.defineProperty(touchStartEvent, 'changedTouches', { value: [touch] });
+
+    target.dispatchEvent(touchStartEvent);
+};
+
 describe('React Jsdom Context menu ', () => {
     beforeEach(() => {
         ignoreConsoleLicenseKeyError();
@@ -57,27 +68,13 @@ describe('React Jsdom Context menu ', () => {
                 />
             );
 
+            const popupCountBefore = document.querySelectorAll('.ag-popup').length;
             const header = screen.getByRole('columnheader', { name: /name/i });
-            const touch = new Touch({
-                identifier: 1,
-                target: header,
-                clientX: 5,
-                clientY: 5,
-            });
-
-            header.dispatchEvent(
-                new TouchEvent('touchstart', {
-                    bubbles: true,
-                    cancelable: true,
-                    touches: [touch],
-                    targetTouches: [touch],
-                    changedTouches: [touch],
-                })
-            );
+            dispatchTouchStart(header);
 
             vi.advanceTimersByTime(600);
 
-            expect(screen.queryByRole('dialog', { name: /column menu/i })).not.toBeInTheDocument();
+            expect(document.querySelectorAll('.ag-popup').length).toBe(popupCountBefore);
         } finally {
             vi.useRealTimers();
         }
