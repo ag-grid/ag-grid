@@ -685,8 +685,10 @@ export const AG_GRID_LOCALE_IT = {
     ariaHeaderSelection: 'Colonna con selezione intestazione',
     ariaSelectAllCells: 'Premi Spazio o Enter per selezionare tutte le celle',
     ariaSelectAllRowCells: 'Premi Enter per selezionare tutte le celle di questa riga',
-    ariaColumnCellSelection: 'Premi Enter per attivare o disattivare la selezione di tutte le celle visibili in questa colonna',
-    ariaColumnGroupCellSelection: 'Premi Enter per attivare o disattivare la selezione di tutte le celle visibili in questo gruppo di colonne',
+    ariaColumnCellSelection:
+        'Premi Enter per attivare o disattivare la selezione di tutte le celle visibili in questa colonna',
+    ariaColumnGroupCellSelection:
+        'Premi Enter per attivare o disattivare la selezione di tutte le celle visibili in questo gruppo di colonne',
     ariaRowSelectAll: 'Premi SPAZIO per attivare/disattivare la selezione di tutte le righe',
     ariaRowToggleSelection: 'Premi SPAZIO per attivare/disattivare la selezione della riga',
     ariaRowSelect: 'Premi SPAZIO per selezionare questa riga',

@@ -682,7 +682,8 @@ export const AG_GRID_LOCALE_SK = {
     ariaSelectAllCells: 'Stlačte medzerník alebo Enter pre výber všetkých buniek',
     ariaSelectAllRowCells: 'Stlačte Enter pre výber všetkých buniek v tomto riadku',
     ariaColumnCellSelection: 'Stlačte Enter na prepnutie výberu všetkých viditeľných buniek v tomto stĺpci',
-    ariaColumnGroupCellSelection: 'Stlačte Enter na prepnutie výberu všetkých viditeľných buniek v tejto skupine stĺpcov',
+    ariaColumnGroupCellSelection:
+        'Stlačte Enter na prepnutie výberu všetkých viditeľných buniek v tejto skupine stĺpcov',
     ariaRowSelectAll: 'Stlačte SPACE na prepínanie výberu všetkých riadkov',
     ariaRowToggleSelection: 'Stlačte SPACE na prepínanie výberu riadku',
     ariaRowSelect: 'Stlačte SPACE na výber tohto riadku',

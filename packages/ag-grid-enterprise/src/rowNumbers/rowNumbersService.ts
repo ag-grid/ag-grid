@@ -21,9 +21,9 @@ import {
     isRowNumberCol,
 } from 'ag-grid-community';
 import type {
-    CellFocusedEvent,
     CellClassParams,
     CellCtrl,
+    CellFocusedEvent,
     CellPosition,
     CellRange,
     ColDef,
@@ -244,7 +244,12 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     }
 
     private onGridCellFocused(event: CellFocusedEvent): void {
-        if (!this.isIntegratedWithSelection || event.rowIndex == null || !event.column || !isRowNumberCol(event.column)) {
+        if (
+            !this.isIntegratedWithSelection ||
+            event.rowIndex == null ||
+            !event.column ||
+            !isRowNumberCol(event.column)
+        ) {
             return;
         }
 

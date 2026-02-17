@@ -685,7 +685,8 @@ export const AG_GRID_LOCALE_PT = {
     ariaSelectAllCells: 'Pressione Espaço ou Enter para selecionar todas as células',
     ariaSelectAllRowCells: 'Pressione Enter para selecionar todas as células desta linha',
     ariaColumnCellSelection: 'Pressione Enter para alternar a seleção de todas as células visíveis nesta coluna',
-    ariaColumnGroupCellSelection: 'Pressione Enter para alternar a seleção de todas as células visíveis neste grupo de colunas',
+    ariaColumnGroupCellSelection:
+        'Pressione Enter para alternar a seleção de todas as células visíveis neste grupo de colunas',
     ariaRowSelectAll: 'Pressione Espaço para alternar a seleção de todas as linhas',
     ariaRowToggleSelection: 'Pressione Espaço para alternar a seleção da linha',
     ariaRowSelect: 'Pressione ESPAÇO para selecionar esta linha',

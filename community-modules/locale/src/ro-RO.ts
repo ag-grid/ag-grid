@@ -685,7 +685,8 @@ export const AG_GRID_LOCALE_RO = {
     ariaSelectAllCells: 'Apăsați Spațiu sau Enter pentru a selecta toate celulele',
     ariaSelectAllRowCells: 'Apăsați Enter pentru a selecta toate celulele din acest rând',
     ariaColumnCellSelection: 'Apăsați Enter pentru a comuta selecția tuturor celulelor vizibile din această coloană',
-    ariaColumnGroupCellSelection: 'Apăsați Enter pentru a comuta selecția tuturor celulelor vizibile din acest grup de coloane',
+    ariaColumnGroupCellSelection:
+        'Apăsați Enter pentru a comuta selecția tuturor celulelor vizibile din acest grup de coloane',
     ariaRowSelectAll: 'Apăsați Space pentru a comuta selecția tuturor rândurilor',
     ariaRowToggleSelection: 'Apăsați Space pentru a comuta selecția rândului',
     ariaRowSelect: 'Apăsați SPACE pentru a selecta acest rând',

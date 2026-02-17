@@ -686,7 +686,8 @@ export const AG_GRID_LOCALE_TR = {
     ariaSelectAllCells: 'Tüm hücreleri seçmek için Boşluk veya Enter tuşuna basın',
     ariaSelectAllRowCells: 'Bu satırdaki tüm hücreleri seçmek için Enter tuşuna basın',
     ariaColumnCellSelection: 'Bu sütundaki tüm görünür hücrelerin seçimini değiştirmek için Enter tuşuna basın',
-    ariaColumnGroupCellSelection: 'Bu sütun grubundaki tüm görünür hücrelerin seçimini değiştirmek için Enter tuşuna basın',
+    ariaColumnGroupCellSelection:
+        'Bu sütun grubundaki tüm görünür hücrelerin seçimini değiştirmek için Enter tuşuna basın',
     ariaRowSelectAll: 'Tüm satırların seçimini değiştirmek için Boşluk tuşuna basın',
     ariaRowToggleSelection: 'Satır seçimini değiştirmek için Boşluk tuşuna basın',
     ariaRowSelect: 'Bu satırı seçmek için SPACE tuşuna basın',

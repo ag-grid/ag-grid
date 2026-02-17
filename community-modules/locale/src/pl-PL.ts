@@ -686,7 +686,8 @@ export const AG_GRID_LOCALE_PL = {
     ariaSelectAllCells: 'Naciśnij Spację lub Enter, aby zaznaczyć wszystkie komórki',
     ariaSelectAllRowCells: 'Naciśnij Enter, aby zaznaczyć wszystkie komórki w tym wierszu',
     ariaColumnCellSelection: 'Naciśnij Enter, aby przełączyć zaznaczenie wszystkich widocznych komórek w tej kolumnie',
-    ariaColumnGroupCellSelection: 'Naciśnij Enter, aby przełączyć zaznaczenie wszystkich widocznych komórek w tej grupie kolumn',
+    ariaColumnGroupCellSelection:
+        'Naciśnij Enter, aby przełączyć zaznaczenie wszystkich widocznych komórek w tej grupie kolumn',
     ariaRowSelectAll: 'Naciśnij SPACJĘ, aby przełączyć zaznaczenie wszystkich wierszy',
     ariaRowToggleSelection: 'Naciśnij SPACJĘ, aby przełączyć zaznaczenie wiersza',
     ariaRowSelect: 'Naciśnij SPACJĘ, aby zaznaczyć ten wiersz',
