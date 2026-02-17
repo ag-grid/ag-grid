@@ -13,7 +13,7 @@ const createState = (overrides: Partial<ColumnToolPanelDeferredState> = {}): Col
 describe('ColumnToolPanelDeferredService', () => {
     it('invalidates pending snapshot cache when reconciling applied state with no pending changes', () => {
         const service = new ColumnToolPanelDeferredService();
-        service.initialiseFromApplied(createState({ visibleColIds: ['athlete', 'age', 'country'] }));
+        service.reconcileFromApplied(createState({ visibleColIds: ['athlete', 'age', 'country'] }));
 
         const snapshotBefore = service.getPendingStateSnapshot();
         expect(snapshotBefore.visibleColIds).toEqual(['athlete', 'age', 'country']);
@@ -27,7 +27,7 @@ describe('ColumnToolPanelDeferredService', () => {
 
     it('returns immutable pending snapshots so external callers cannot mutate service state', () => {
         const service = new ColumnToolPanelDeferredService();
-        service.initialiseFromApplied(
+        service.reconcileFromApplied(
             createState({
                 valueCols: [{ colId: 'age', aggFunc: 'sum' }],
                 visibleColIds: ['athlete', 'age'],

@@ -78,12 +78,6 @@ export class ColumnToolPanelDeferredService {
     private pendingStateCache: ColumnToolPanelDeferredState = cloneState(EMPTY_STATE);
     private pendingStateCacheDirty = true;
 
-    public initialiseFromApplied(state: ColumnToolPanelDeferredState): void {
-        this.appliedState = cloneState(state);
-        this.patch = {};
-        this.pendingStateCacheDirty = true;
-    }
-
     public setPendingState(state: ColumnToolPanelDeferredState): void {
         this.patch = buildPatch(this.appliedState, state);
         this.pendingStateCacheDirty = true;
@@ -389,6 +383,7 @@ function buildPatchedValueCols(
 
     const appliedOrder = appliedValueCols.map((valueCol) => valueCol.colId);
     let order = patch.valueColOrder ? [...patch.valueColOrder] : [...appliedOrder];
+    const orderSet = new Set(order);
 
     if (patch.valueColOrder && preserveUntouchedOrderOnRebase) {
         order = mergeOrderedIdsWithTouched(
@@ -401,8 +396,9 @@ function buildPatchedValueCols(
     // A staged agg func for a non-value column should stage adding it as a value column.
     for (const colId of Object.keys(aggOverrides)) {
         const aggFunc = aggOverrides[colId];
-        if (aggFunc !== null && !order.includes(colId)) {
+        if (aggFunc !== null && !orderSet.has(colId)) {
             order.push(colId);
+            orderSet.add(colId);
         }
     }
 
@@ -527,7 +523,7 @@ function mergeOrderedIdsWithTouched(base: string[], pending: string[], touched: 
         for (let i = pendingIndex - 1; i >= 0; i--) {
             const candidate = pending[i];
             const candidateIndex = resultIndexById.get(candidate);
-            if (candidateIndex >= 0) {
+            if (candidateIndex != null && candidateIndex >= 0) {
                 lowerBound = Math.max(lowerBound, candidateIndex + 1);
             }
         }
@@ -536,7 +532,7 @@ function mergeOrderedIdsWithTouched(base: string[], pending: string[], touched: 
         for (let i = pendingIndex + 1; i < pending.length; i++) {
             const candidate = pending[i];
             const candidateIndex = resultIndexById.get(candidate);
-            if (candidateIndex >= 0) {
+            if (candidateIndex != null && candidateIndex >= 0) {
                 upperBound = Math.min(upperBound, candidateIndex);
             }
         }

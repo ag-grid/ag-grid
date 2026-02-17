@@ -96,7 +96,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         };
         this.params = mergedParams;
         if (mergedParams.deferApply) {
-            this.deferredService.initialiseFromApplied(this.getCurrentStateForDeferredMode());
+            this.deferredService.reconcileFromApplied(this.getCurrentStateForDeferredMode());
             this.params.onDeferredPivotColumnStateUpdate = this.onDeferredPivotColumnStateUpdate.bind(this);
             this.params.onDeferredVisibilityColumnStateUpdate = this.onDeferredVisibilityColumnStateUpdate.bind(this);
             this.params.getToolPanelPivotMode = this.getToolPanelPivotMode.bind(this);
@@ -417,6 +417,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     private onDeferredValueColumnsUpdate(columns: AgColumn[]): boolean {
+        const { aggFuncSvc } = this.beans;
         const pendingAggFuncMap = new Map(
             this.deferredService
                 .getPendingState()
@@ -425,7 +426,11 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         this.deferredService.setPendingValueColumns(
             columns.map((column) => ({
                 colId: column.getColId(),
-                aggFunc: pendingAggFuncMap.get(column.getColId()) ?? column.getAggFunc() ?? null,
+                aggFunc:
+                    pendingAggFuncMap.get(column.getColId()) ??
+                    column.getAggFunc() ??
+                    aggFuncSvc?.getDefaultAggFunc(column) ??
+                    null,
             }))
         );
         this.primaryColsPanel?.syncLayoutWithGrid();

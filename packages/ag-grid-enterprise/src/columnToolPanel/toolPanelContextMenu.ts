@@ -166,6 +166,9 @@ export class ToolPanelContextMenu extends Component {
                         typeof col.getAggFunc() === 'string'
                             ? col.getAggFunc()
                             : beans.aggFuncSvc?.getDefaultAggFunc(col);
+                    if (aggFunc == null) {
+                        return undefined;
+                    }
                     return { colId: col.getColId(), aggFunc };
                 }) ||
                 valueColsSvc?.setColumns(this.addColumnsToList(valueColsSvc.columns, valueAllowed), 'toolPanelUi'),

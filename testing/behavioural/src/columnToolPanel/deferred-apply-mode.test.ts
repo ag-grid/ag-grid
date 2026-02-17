@@ -3,6 +3,7 @@ import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 import { moveItem } from '../../../../packages/ag-grid-enterprise/src/columnToolPanel/columnMoveUtils';
+import { ToolPanelContextMenu } from '../../../../packages/ag-grid-enterprise/src/columnToolPanel/toolPanelContextMenu';
 import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('Columns Tool Panel Deferred Apply Mode', () => {
@@ -80,6 +81,40 @@ describe('Columns Tool Panel Deferred Apply Mode', () => {
     const setDeferredVisibilityFromToolPanel = (gridApi: GridApi, colId: string, visible: boolean): void => {
         const toolPanel = getToolPanel(gridApi);
         toolPanel.onDeferredVisibilityColumnStateUpdate([{ colId, hide: !visible }]);
+    };
+
+    const triggerDeferredContextMenuAction = (
+        gridApi: GridApi,
+        colId: string,
+        menuItem: 'value' | 'rowGroup' | 'pivot',
+        action: 'activateFunction' | 'deActivateFunction'
+    ): void => {
+        const toolPanel = getToolPanel(gridApi);
+        const column = gridApi.getColumn(colId) as any;
+        if (!column) {
+            throw new Error(`Expected ${colId} column to exist`);
+        }
+
+        const gridDiv = getGridElement(gridApi)! as HTMLElement;
+        const contextMenu = column.createBean(
+            new ToolPanelContextMenu(column, new MouseEvent('contextmenu'), gridDiv, {
+                getToolPanelPivotMode: toolPanel.getToolPanelPivotMode?.bind(toolPanel),
+                onDeferredPivotColumnStateUpdate: toolPanel.onDeferredPivotColumnStateUpdate?.bind(toolPanel),
+                getToolPanelColumnFunctionState: toolPanel.getToolPanelColumnFunctionState?.bind(toolPanel),
+            })
+        ) as any;
+
+        const menuItemConfig = contextMenu.menuItemMap.get(menuItem);
+        if (!menuItemConfig) {
+            throw new Error(`Expected deferred context menu item "${menuItem}" to exist`);
+        }
+
+        const menuAction = menuItemConfig[action];
+        if (typeof menuAction !== 'function') {
+            throw new Error(`Expected deferred context menu item "${menuItem}" action "${action}"`);
+        }
+
+        menuAction();
     };
 
     const stageComboChangesFromToolPanel = (gridApi: GridApi): void => {
@@ -354,6 +389,92 @@ describe('Columns Tool Panel Deferred Apply Mode', () => {
         expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['age']);
         expect(gridApi.getColumn('age')!.getAggFunc()).toBe('sum');
         expect(applyButton.disabled).toBe(true);
+    });
+
+    test('stages adding a value column in non-pivot mode and applies with a default agg function', async () => {
+        const gridApi = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            sideBar,
+            pivotMode: false,
+        });
+
+        const toolPanel = getToolPanel(gridApi);
+        const athleteCol = gridApi.getColumn('athlete');
+        if (!athleteCol) {
+            throw new Error('Expected athlete column to exist');
+        }
+
+        const { applyButton } = getButtons(gridApi);
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual([]);
+        expect(applyButton.disabled).toBe(true);
+
+        toolPanel.onDeferredValueColumnsUpdate([athleteCol]);
+        await asyncSetTimeout(1);
+
+        // Deferred mode: adding a value column via drop zone should stage even when no agg func was set yet.
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual([]);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(false);
+
+        getButtons(gridApi).applyButton.click();
+        await asyncSetTimeout(1);
+
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['athlete']);
+        expect(gridApi.getColumn('athlete')!.getAggFunc()).not.toBeNull();
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
+    });
+
+    test('deferred context menu add to values stages and applies value column', async () => {
+        const gridApi = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            sideBar,
+            pivotMode: false,
+        });
+
+        const { applyButton } = getButtons(gridApi);
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual([]);
+        expect(applyButton.disabled).toBe(true);
+
+        triggerDeferredContextMenuAction(gridApi, 'athlete', 'value', 'activateFunction');
+        await asyncSetTimeout(1);
+
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual([]);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(false);
+
+        getButtons(gridApi).applyButton.click();
+        await asyncSetTimeout(1);
+
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['athlete']);
+        expect(gridApi.getColumn('athlete')!.getAggFunc()).not.toBeNull();
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
+    });
+
+    test('deferred context menu remove from values stages and applies removal', async () => {
+        const gridApi = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            sideBar,
+            pivotMode: false,
+        });
+
+        gridApi.setValueColumns(['athlete']);
+        await asyncSetTimeout(1);
+
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['athlete']);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
+
+        triggerDeferredContextMenuAction(gridApi, 'athlete', 'value', 'deActivateFunction');
+        await asyncSetTimeout(1);
+
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['athlete']);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(false);
+
+        getButtons(gridApi).applyButton.click();
+        await asyncSetTimeout(1);
+
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual([]);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
     });
 
     test('discards deferred value aggregation function change when Cancel is clicked', async () => {

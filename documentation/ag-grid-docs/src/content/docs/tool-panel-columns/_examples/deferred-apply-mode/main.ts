@@ -57,10 +57,10 @@ const logColumnStateSnapshot = (source: string) => {
         const values = gridApi.getValueColumns().map(getColIdSafe).join(', ');
 
         console.log(
-            `[CTP Deferred Example] ${source} | pivotMode=${gridApi.isPivotMode()} | visible=[${visibleCols}] | rowGroups=[${rowGroups}] | pivots=[${pivots}] | values=[${values}]`
+            `${source} | pivotMode=${gridApi.isPivotMode()} | visible=[${visibleCols}] | rowGroups=[${rowGroups}] | pivots=[${pivots}] | values=[${values}]`
         );
     } catch (error) {
-        console.warn('[CTP Deferred Example] logging failed', error);
+        console.warn('logging failed', error);
     }
 };
 
@@ -122,19 +122,19 @@ function createServerSideDatasource(server: {
     return {
         getRows: (params) => {
             const requestId = ++requestSequence;
-            console.log(`[CTP Deferred Example] Server request sent (#${requestId})`, params.request);
+            console.log(`Server request sent (#${requestId})`, params.request);
             const response = server.getData(params.request);
 
             setTimeout(() => {
                 if (response.success) {
-                    console.log(`[CTP Deferred Example] Server response received (#${requestId})`, {
+                    console.log(`Server response received (#${requestId})`, {
                         startRow: params.request.startRow,
                         endRow: params.request.endRow,
                         returnedRows: response.rows.length,
                     });
                     params.success({ rowData: response.rows });
                 } else {
-                    console.log(`[CTP Deferred Example] Server request failed (#${requestId})`);
+                    console.log(`Server request failed (#${requestId})`);
                     params.fail();
                 }
             }, 200);
