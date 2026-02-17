@@ -956,7 +956,6 @@ describe('Columns Tool Panel Deferred Apply Mode', () => {
         expect(gridApi.getColumn('athlete')!.isVisible()).toBe(true);
         expect(getButtons(gridApi).applyButton.disabled).toBe(true);
 
-        const toolPanel = getToolPanel(gridApi);
         togglePivotModeFromToolPanel(gridApi);
         setDeferredVisibilityFromToolPanel(gridApi, 'athlete', false);
         await asyncSetTimeout(1);

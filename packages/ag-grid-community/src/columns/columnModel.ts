@@ -277,6 +277,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
         return this.cols;
     }
 
+    /**
+     * Returns a canonical list of columns to show.
+     */
     public getColsToShow(): AgColumn[] {
         if (!this.cols) {
             return [];
@@ -307,13 +310,11 @@ export class ColumnModel extends BeanStub implements NamedBean {
             return [...nonValueColumns, ...valueColumnsInDisplayOrder];
         }
 
-        const res = cols.list.filter((col) => {
+        return cols.list.filter((col) => {
             const isAutoGroupCol = isColumnGroupAutoCol(col);
             // keep col if a) it's auto-group or b) it's visible
             return isAutoGroupCol || col.isVisible();
         });
-
-        return res;
     }
 
     // on events 'groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents'
