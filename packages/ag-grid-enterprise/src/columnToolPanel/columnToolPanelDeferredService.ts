@@ -186,14 +186,6 @@ export class ColumnToolPanelDeferredService {
         this.pendingStateCacheDirty = true;
     }
 
-    public commitPending(): ColumnToolPanelDeferredState {
-        const pendingState = this.getPendingState();
-        this.appliedState = cloneState(pendingState);
-        this.patch = {};
-        this.pendingStateCacheDirty = true;
-        return this.getAppliedState();
-    }
-
     public cancelPending(): ColumnToolPanelDeferredState {
         this.patch = {};
         this.pendingStateCacheDirty = true;
