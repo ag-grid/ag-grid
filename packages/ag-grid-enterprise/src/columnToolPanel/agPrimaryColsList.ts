@@ -222,21 +222,16 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         item: ColumnModelItem,
         listItemElement: HTMLElement
     ): ToolPanelColumnGroupComp | ToolPanelColumnComp {
-        const allowDragging = this.allowDragging;
+        const { allowDragging, eventType, params, groupsExist } = this;
         if (item.group) {
-            const renderedGroup = new ToolPanelColumnGroupComp(
-                item,
-                allowDragging,
-                this.eventType,
-                listItemElement,
-                this.params
-            );
+            // Pass tool-panel params through so each row/group can use deferred callbacks and staged-state helpers.
+            const renderedGroup = new ToolPanelColumnGroupComp(item, allowDragging, eventType, listItemElement, params);
             this.createBean(renderedGroup);
 
             return renderedGroup;
         }
 
-        const columnComp = new ToolPanelColumnComp(item, allowDragging, this.groupsExist, listItemElement, this.params);
+        const columnComp = new ToolPanelColumnComp(item, allowDragging, groupsExist, listItemElement, params);
         this.createBean(columnComp);
 
         return columnComp;
@@ -251,6 +246,8 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
         const expandedStates = this.getExpandedStates();
 
+        // Prefer tool-panel state when available. In deferred mode, pivot mode can be staged but not yet applied,
+        // and the UI should still reflect the staged state.
         const pivotModeActive = this.params.getToolPanelPivotMode?.() ?? this.colModel.isPivotMode();
         const shouldSyncColumnLayoutWithGrid = !params.suppressSyncLayoutWithGrid && !pivotModeActive;
 
@@ -555,15 +552,17 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     }
 
     public doSetSelectedAll(selectAllChecked: boolean): void {
+        const { beans, allColsTree, eventType, params } = this;
+        // In deferred mode, stage checkbox actions as pending changes instead of applying immediately.
         selectAllChildren(
-            this.beans,
-            this.allColsTree,
+            beans,
+            allColsTree,
             selectAllChecked,
-            this.eventType,
-            this.params.onDeferredPivotColumnStateUpdate,
-            this.params.onDeferredVisibilityColumnStateUpdate,
-            this.params.getToolPanelPivotMode?.(),
-            this.params.getToolPanelColumnFunctionState
+            eventType,
+            params.onDeferredPivotColumnStateUpdate,
+            params.onDeferredVisibilityColumnStateUpdate,
+            params.getToolPanelPivotMode?.(),
+            params.getToolPanelColumnFunctionState
         );
     }
 
@@ -571,6 +570,8 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         let checkedCount = 0;
         let uncheckedCount = 0;
 
+        // Prefer tool-panel state when available. In deferred mode, pivot mode can be staged but not yet applied,
+        // and the UI should still reflect the staged state.
         const pivotMode = this.params.getToolPanelPivotMode?.() ?? this.colModel.isPivotMode();
 
         this.forEachItem((item) => {
@@ -586,6 +587,8 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
             let checked: boolean;
 
+            // Header checkbox state (checked/indeterminate) should match staged row-group/pivot/value/visibility
+            // state in deferred mode.
             if (pivotMode) {
                 const noPivotModeOptionsAllowed =
                     !column.isAllowPivot() && !column.isAllowRowGroup() && !column.isAllowValue();
