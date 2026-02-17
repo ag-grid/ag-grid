@@ -580,6 +580,53 @@ describe('Columns Tool Panel Deferred Apply Mode', () => {
         expect(getButtons(gridApi).applyButton.disabled).toBe(true);
     });
 
+    test('preserves latest external reorder for untouched value columns across repeated external updates', async () => {
+        const gridApi = gridMgr.createGrid('myGrid', {
+            columnDefs,
+            rowData,
+            sideBar,
+            pivotMode: true,
+        });
+        await asyncSetTimeout(1);
+
+        gridApi.setValueColumns(['athlete', 'age', 'country']);
+        await asyncSetTimeout(1);
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['athlete', 'age', 'country']);
+
+        const toolPanel = getToolPanel(gridApi);
+        const countryCol = gridApi.getColumn('country');
+        const athleteCol = gridApi.getColumn('athlete');
+        const ageCol = gridApi.getColumn('age');
+        if (!countryCol || !athleteCol || !ageCol) {
+            throw new Error('Expected country, athlete and age columns to exist');
+        }
+
+        // Stage moving country to the front.
+        toolPanel.onDeferredValueColumnsUpdate([countryCol, athleteCol, ageCol]);
+        await asyncSetTimeout(1);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(false);
+
+        // Repeated external reorders of untouched value columns while deferred state is dirty.
+        gridApi.setValueColumns(['age', 'athlete', 'country']);
+        await asyncSetTimeout(1);
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['age', 'athlete', 'country']);
+
+        gridApi.setValueColumns(['athlete', 'age', 'country']);
+        await asyncSetTimeout(1);
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['athlete', 'age', 'country']);
+
+        gridApi.setValueColumns(['age', 'athlete', 'country']);
+        await asyncSetTimeout(1);
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['age', 'athlete', 'country']);
+
+        getButtons(gridApi).applyButton.click();
+        await asyncSetTimeout(1);
+
+        // Expected: staged move is preserved, untouched existing order follows latest external update.
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['country', 'age', 'athlete']);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
+    });
+
     test('clicking remove on a value pill updates deferred UI only until Apply', async () => {
         const gridApi = gridMgr.createGrid('myGrid', {
             columnDefs,
@@ -738,6 +785,36 @@ describe('Columns Tool Panel Deferred Apply Mode', () => {
         expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['athlete']);
         expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['age']);
         expect(gridApi.getColumn('age')!.getAggFunc()).toBe('sum');
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
+    });
+
+    test('applies deferred visibility changes when pivot mode is toggled on', async () => {
+        const gridApi = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            sideBar,
+            pivotMode: false,
+        });
+
+        expect(gridApi.isPivotMode()).toBe(false);
+        expect(gridApi.getColumn('athlete')!.isVisible()).toBe(true);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(true);
+
+        const toolPanel = getToolPanel(gridApi);
+        togglePivotModeFromToolPanel(gridApi);
+        setDeferredVisibilityFromToolPanel(gridApi, 'athlete', false);
+        await asyncSetTimeout(1);
+
+        // Staged only, applied grid state unchanged before Apply.
+        expect(gridApi.isPivotMode()).toBe(false);
+        expect(gridApi.getColumn('athlete')!.isVisible()).toBe(true);
+        expect(getButtons(gridApi).applyButton.disabled).toBe(false);
+
+        getButtons(gridApi).applyButton.click();
+        await asyncSetTimeout(1);
+
+        expect(gridApi.isPivotMode()).toBe(true);
+        expect(gridApi.getColumn('athlete')!.isVisible()).toBe(false);
         expect(getButtons(gridApi).applyButton.disabled).toBe(true);
     });
 

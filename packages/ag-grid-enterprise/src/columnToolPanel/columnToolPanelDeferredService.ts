@@ -325,7 +325,8 @@ function applyPatchToState(
 
     if (patch.visibilityOverrides) {
         const visibleSet = new Set(appliedState.visibleColIds);
-        for (const [colId, visible] of Object.entries(patch.visibilityOverrides)) {
+        for (const colId of Object.keys(patch.visibilityOverrides)) {
+            const visible = patch.visibilityOverrides[colId];
             if (visible) {
                 visibleSet.add(colId);
             } else {
@@ -359,7 +360,8 @@ function buildPatchedValueCols(
     }
 
     // A staged agg func for a non-value column should stage adding it as a value column.
-    for (const [colId, aggFunc] of Object.entries(aggOverrides)) {
+    for (const colId of Object.keys(aggOverrides)) {
+        const aggFunc = aggOverrides[colId];
         if (aggFunc !== null && !order.includes(colId)) {
             order.push(colId);
         }
