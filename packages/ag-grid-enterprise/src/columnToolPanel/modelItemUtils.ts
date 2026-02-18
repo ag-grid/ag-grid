@@ -3,6 +3,7 @@ import { _applyColumnState } from 'ag-grid-community';
 
 import type { ColumnModelItem } from './columnModelItem';
 
+/** Apply select-all from groups while supporting deferred-mode staging callbacks. */
 export function selectAllChildren(
     beans: BeanCollection,
     colTree: ColumnModelItem[],
@@ -26,6 +27,7 @@ export function selectAllChildren(
     );
 }
 
+/** Route select-all updates to pivot/value or visibility paths, with optional deferred overrides. */
 export function setAllColumns(
     beans: BeanCollection,
     cols: AgColumn[],
@@ -79,6 +81,7 @@ function setAllVisible(
     onDeferredVisibilityColumnStateUpdate?: (stateItems: ColumnState[]) => void
 ): void {
     const colStateItems: ColumnState[] = [];
+    /** Stage full desired visibility in deferred mode, not only visible diffs against applied state. */
     const shouldAlwaysStageDeferredVisibility = !!onDeferredVisibilityColumnStateUpdate;
 
     for (const col of columns) {
@@ -129,6 +132,7 @@ function setAllPivotActive(
     getToolPanelColumnFunctionState?: (column: AgColumn) => { rowGroup: boolean; pivot: boolean; value: boolean }
 ): void {
     const colStateItems: ColumnState[] = [];
+    /** Stage explicit pivot off actions in deferred mode, even if applied state is already inactive. */
     const shouldAlwaysStageDeferredPivot = !!onDeferredPivotColumnStateUpdate;
 
     const turnOnAction = (col: AgColumn) => {

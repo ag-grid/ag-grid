@@ -86,6 +86,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         return this.dropZonePurpose === 'rowGroup';
     }
 
+    /** Delegate item updates to deferred handlers when present; return true when handled. */
     protected handleUpdateItems(columns: AgColumn[]): boolean {
         return this.onUpdateItems?.(this.dropZonePurpose, columns) ?? false;
     }

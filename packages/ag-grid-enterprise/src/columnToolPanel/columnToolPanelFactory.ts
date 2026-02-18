@@ -26,6 +26,7 @@ export class ColumnToolPanelFactory extends BeanStub implements NamedBean {
         return this.createPanel(parent, destroyFuncs, new RowGroupDropZonePanel(false));
     }
 
+    /** Create a row-group panel wired to deferred mode handlers instead of immediate grid mutation. */
     public createRowGroupPanelWithUpdateHandler(
         parent: Component,
         destroyFuncs: (() => void)[],
@@ -43,6 +44,7 @@ export class ColumnToolPanelFactory extends BeanStub implements NamedBean {
         return this.createPanel(parent, destroyFuncs, new ValuesDropZonePanel(false));
     }
 
+    /** Create a values panel that reads/writes staged deferred value state and aggregation functions. */
     public createValuesPanelWithUpdateHandler(
         parent: Component,
         destroyFuncs: (() => void)[],
@@ -68,6 +70,7 @@ export class ColumnToolPanelFactory extends BeanStub implements NamedBean {
         return this.createPanel(parent, destroyFuncs, new PivotDropZonePanel(false));
     }
 
+    /** Create a pivot panel wired to deferred mode handlers so pending pivot order is preserved. */
     public createPivotPanelWithUpdateHandler(
         parent: Component,
         destroyFuncs: (() => void)[],
@@ -81,6 +84,7 @@ export class ColumnToolPanelFactory extends BeanStub implements NamedBean {
         return this.createPanel(parent, destroyFuncs, new PivotModePanel(), prepend);
     }
 
+    /** Create a pivot mode panel that stages pivot mode changes until deferred apply confirms them. */
     public createPivotModePanelWithToggleHandler(
         parent: Component,
         destroyFuncs: (() => void)[],

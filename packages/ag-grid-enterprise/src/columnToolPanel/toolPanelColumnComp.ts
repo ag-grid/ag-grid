@@ -163,6 +163,7 @@ export class ToolPanelColumnComp extends Component {
             return;
         }
 
+        /** Pass deferred callbacks so context-menu actions stage pending pivot/value/group changes. */
         const contextMenu = this.createBean(
             new ToolPanelContextMenu(column, e, this.focusWrapper, {
                 getToolPanelPivotMode: this.params.getToolPanelPivotMode,
@@ -213,6 +214,7 @@ export class ToolPanelColumnComp extends Component {
             return;
         }
 
+        /** Route checkbox actions through deferred-aware column updates when deferred mode is active. */
         setAllColumns(
             this.beans,
             [this.column],

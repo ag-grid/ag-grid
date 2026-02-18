@@ -14,6 +14,7 @@ const PivotModePanelElement: ElementParams = {
 };
 export class PivotModePanel extends Component {
     private readonly cbPivotMode: GridCheckbox = RefPlaceholder;
+    /** Allow deferred mode to intercept pivot-mode toggles and stage them instead of applying immediately. */
     constructor(
         private readonly onTogglePivotMode?: (newValue: boolean) => boolean,
         private readonly getPivotMode?: () => boolean

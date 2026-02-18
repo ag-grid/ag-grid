@@ -37,6 +37,7 @@ const EMPTY_STATE: ColumnToolPanelDeferredState = {
     visibleColIds: [],
 };
 
+/** Clone deferred state so callers cannot mutate internal service references. */
 function cloneState(state: ColumnToolPanelDeferredState): ColumnToolPanelDeferredState {
     return {
         pivotMode: state.pivotMode,
@@ -50,6 +51,7 @@ function cloneState(state: ColumnToolPanelDeferredState): ColumnToolPanelDeferre
     };
 }
 
+/** Freeze state snapshots so deferred mode consumers treat pending state as read-only. */
 function freezeState(state: ColumnToolPanelDeferredState): ColumnToolPanelDeferredState {
     const rowGroupColIds = Object.freeze([...state.rowGroupColIds]) as string[];
     const pivotColIds = Object.freeze([...state.pivotColIds]) as string[];
@@ -72,17 +74,20 @@ function freezeState(state: ColumnToolPanelDeferredState): ColumnToolPanelDeferr
     }) as ColumnToolPanelDeferredState;
 }
 
+/** Track applied state plus a patch so deferred mode can stage edits without immediate grid mutation. */
 export class ColumnToolPanelDeferredService {
     private appliedState: ColumnToolPanelDeferredState = cloneState(EMPTY_STATE);
     private patch: PendingPatch = {};
     private pendingStateCache: ColumnToolPanelDeferredState = cloneState(EMPTY_STATE);
     private pendingStateCacheDirty = true;
 
+    /** Replace staged state by rebuilding the patch against current applied state. */
     public setPendingState(state: ColumnToolPanelDeferredState): void {
         this.patch = buildPatch(this.appliedState, state);
         this.pendingStateCacheDirty = true;
     }
 
+    /** Stage pivot/row-group/value mutations from column state updates in deferred mode. */
     public applyPivotColumnStateToPending(stateItems: ColumnState[]): void {
         const pendingState = this.getPendingState();
         for (const state of stateItems) {
@@ -116,6 +121,7 @@ export class ColumnToolPanelDeferredService {
         this.setPendingState(pendingState);
     }
 
+    /** Stage visibility updates from column state changes in deferred mode. */
     public applyVisibilityColumnStateToPending(stateItems: ColumnState[]): void {
         const pendingState = this.getPendingState();
         for (const state of stateItems) {
@@ -130,18 +136,21 @@ export class ColumnToolPanelDeferredService {
         this.setPendingState(pendingState);
     }
 
+    /** Stage row-group order updates from tool panel interactions. */
     public setPendingRowGroupColumns(colIds: string[]): void {
         const pendingState = this.getPendingState();
         pendingState.rowGroupColIds = [...colIds];
         this.setPendingState(pendingState);
     }
 
+    /** Stage pivot order updates from tool panel interactions. */
     public setPendingPivotColumns(colIds: string[]): void {
         const pendingState = this.getPendingState();
         pendingState.pivotColIds = [...colIds];
         this.setPendingState(pendingState);
     }
 
+    /** Stage value column order and aggregation function updates. */
     public setPendingValueColumns(valueCols: DeferredValueColumnState[]): void {
         const pendingState = this.getPendingState();
         pendingState.valueCols = valueCols.map((valueCol) => ({
@@ -151,12 +160,14 @@ export class ColumnToolPanelDeferredService {
         this.setPendingState(pendingState);
     }
 
+    /** Reset deferred state to a new applied baseline after apply or panel refresh. */
     public reconcileFromApplied(state: ColumnToolPanelDeferredState): void {
         this.appliedState = cloneState(state);
         this.patch = {};
         this.pendingStateCacheDirty = true;
     }
 
+    /** Rebase staged edits onto new applied state so pending deferred edits survive external grid changes. */
     public reconcileFromAppliedPreservingPending(state: ColumnToolPanelDeferredState): void {
         if (!this.hasPendingChanges()) {
             this.appliedState = cloneState(state);
@@ -186,24 +197,29 @@ export class ColumnToolPanelDeferredService {
         this.pendingStateCacheDirty = true;
     }
 
+    /** Drop all staged edits and return the applied-equivalent pending state. */
     public cancelPending(): ColumnToolPanelDeferredState {
         this.patch = {};
         this.pendingStateCacheDirty = true;
         return this.getPendingState();
     }
 
+    /** Report whether deferred mode currently has staged edits to apply or cancel. */
     public hasPendingChanges(): boolean {
         return hasPatchChanges(this.patch);
     }
 
+    /** Return a defensive copy of applied state. */
     public getAppliedState(): ColumnToolPanelDeferredState {
         return cloneState(this.appliedState);
     }
 
+    /** Return a defensive copy of pending state. */
     public getPendingState(): ColumnToolPanelDeferredState {
         return cloneState(this.getPendingStateSnapshot());
     }
 
+    /** Return a frozen pending snapshot for read-only consumers in deferred mode UI. */
     public getPendingStateSnapshot(): Readonly<ColumnToolPanelDeferredState> {
         if (this.pendingStateCacheDirty) {
             this.pendingStateCache = freezeState(applyPatchToState(this.appliedState, this.patch, false));
@@ -213,10 +229,12 @@ export class ColumnToolPanelDeferredService {
     }
 }
 
+/** Add an id only when absent so staged ordered lists stay unique. */
 function addUnique(ids: string[], colId: string): string[] {
     return ids.includes(colId) ? ids : [...ids, colId];
 }
 
+/** Check whether the staged patch contains any deferred changes. */
 function hasPatchChanges(patch: PendingPatch): boolean {
     return (
         patch.pivotMode !== undefined ||
@@ -228,10 +246,12 @@ function hasPatchChanges(patch: PendingPatch): boolean {
     );
 }
 
+/** Check whether override records contain at least one staged key. */
 function hasRecordEntries(record: { [key: string]: unknown } | undefined): boolean {
     return !!record && Object.keys(record).length > 0;
 }
 
+/** Build a minimal patch that captures pending state differences from applied state. */
 function buildPatch(applied: ColumnToolPanelDeferredState, pending: ColumnToolPanelDeferredState): PendingPatch {
     const patch: PendingPatch = {};
 
@@ -271,6 +291,7 @@ function buildPatch(applied: ColumnToolPanelDeferredState, pending: ColumnToolPa
     return patch;
 }
 
+/** Build visibility overrides so deferred mode stage hidden/visible deltas only. */
 function buildVisibilityOverrides(
     appliedVisibleColIds: string[],
     pendingVisibleColIds: string[]
@@ -293,6 +314,7 @@ function buildVisibilityOverrides(
     return overrides;
 }
 
+/** Build aggregation overrides so deferred mode stage value agg deltas only. */
 function buildValueAggOverrides(
     appliedValueCols: DeferredValueColumnState[],
     pendingValueCols: DeferredValueColumnState[]
@@ -313,6 +335,7 @@ function buildValueAggOverrides(
     return overrides;
 }
 
+/** Apply a staged patch to applied state to materialise current deferred pending state. */
 function applyPatchToState(
     appliedState: ColumnToolPanelDeferredState,
     patch: PendingPatch,
@@ -364,6 +387,7 @@ function applyPatchToState(
     return pendingState;
 }
 
+/** Build staged value columns after applying order and aggregation overrides. */
 function buildPatchedValueCols(
     appliedValueCols: DeferredValueColumnState[],
     patch: PendingPatch,
@@ -406,10 +430,12 @@ function buildPatchedValueCols(
     return result;
 }
 
+/** Map value column ids to aggregation functions for patch comparisons and materialisation. */
 function getValueAggMap(valueCols: DeferredValueColumnState[]): Map<string, string | IAggFunc | null> {
     return new Map(valueCols.map((valueCol) => [valueCol.colId, valueCol.aggFunc] as const));
 }
 
+/** Track ids whose membership or ordering changed so rebasing preserves untouched order. */
 function getTouchedOrderedAndMembershipIds(applied: string[], pending: string[]): string[] {
     const touched = new Set<string>();
 
@@ -431,6 +457,7 @@ function getTouchedOrderedAndMembershipIds(applied: string[], pending: string[])
     return [...touched];
 }
 
+/** Detect common ids that changed order between applied and pending sequences. */
 function getMovedCommonIds(applied: string[], pending: string[]): string[] {
     const appliedIndex = new Map(applied.map((id, index) => [id, index] as const));
     const commonPendingIds = pending.filter((id) => appliedIndex.has(id));
@@ -446,6 +473,7 @@ function getMovedCommonIds(applied: string[], pending: string[]): string[] {
     return commonPendingIds.filter((id) => !untouchedCommonIds.has(id));
 }
 
+/** Compute LIS indices to identify common ids that keep relative order across reorder operations. */
 function getLisIndices(values: number[]): number[] {
     const n = values.length;
     if (n === 0) {
@@ -490,6 +518,7 @@ function getLisIndices(values: number[]): number[] {
     return lisIndices;
 }
 
+/** Merge touched ids into base order while keeping untouched ids stable during rebase. */
 function mergeOrderedIdsWithTouched(base: string[], pending: string[], touched: Set<string>): string[] {
     if (!touched.size) {
         return [...base];
@@ -540,6 +569,7 @@ function mergeOrderedIdsWithTouched(base: string[], pending: string[], touched: 
     return result;
 }
 
+/** Compare ordered id arrays to detect deferred order changes. */
 function areStringArraysEqual(a: string[], b: string[]): boolean {
     if (a.length !== b.length) {
         return false;

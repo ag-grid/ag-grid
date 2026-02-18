@@ -4,6 +4,7 @@ import { _createIconNoSpan } from 'ag-grid-community';
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
 export class PivotDropZonePanel extends BaseDropZonePanel {
+    /** Accept deferred-mode overrides for staged pivot list updates and pending item source. */
     constructor(
         horizontal: boolean,
         onUpdateItems?: (columns: AgColumn[]) => boolean,
@@ -81,6 +82,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
     }
 
     protected updateItems(columns: AgColumn[]): void {
+        /** Skip live service update when deferred mode handles staging. */
         if (this.handleUpdateItems(columns)) {
             return;
         }
@@ -92,6 +94,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
     }
 
     protected getExistingItems(): AgColumn[] {
+        /** Read pending pivot items in deferred mode so UI reflects staged order. */
         const override = this.getExistingItemsOverride?.();
         if (override) {
             return override;

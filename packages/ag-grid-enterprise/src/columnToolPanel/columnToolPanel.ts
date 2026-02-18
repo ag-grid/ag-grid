@@ -55,7 +55,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     private valuesDropZonePanel?: ValuesDropZonePanel;
     private pivotDropZonePanel?: PivotDropZonePanel;
     private colToolPanelFactory?: ColumnToolPanelFactory;
-    private readonly deferredService = new ColumnToolPanelDeferredService();
+    private deferredService!: ColumnToolPanelDeferredService;
     private deferredButtonsComp?: FilterButtonComp;
 
     constructor() {
@@ -95,6 +95,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             ...params,
         };
         this.params = mergedParams;
+        this.deferredService = new ColumnToolPanelDeferredService();
         if (mergedParams.deferApply) {
             this.deferredService.reconcileFromApplied(this.getCurrentStateForDeferredMode());
             this.params.onDeferredPivotColumnStateUpdate = this.onDeferredPivotColumnStateUpdate.bind(this);
@@ -177,6 +178,10 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         }
 
         if (mergedParams.deferApply) {
+            /**
+             * Deferred apply can rebuild this panel on refresh/cancel.
+             * Keep all destroy callbacks so old column listeners are removed.
+             */
             const deferredSyncListeners = this.addManagedEventListeners({
                 newColumnsLoaded: this.syncDeferredFromApplied.bind(this),
                 columnPivotModeChanged: this.syncDeferredFromApplied.bind(this),
@@ -185,6 +190,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
                 columnValueChanged: this.syncDeferredFromApplied.bind(this),
                 columnVisible: this.syncDeferredFromApplied.bind(this),
             });
+            /** Tear down every deferred-sync listener when this panel is rebuilt. */
             childDestroyFuncs.push(...deferredSyncListeners);
         }
 
@@ -381,6 +387,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         };
     }
 
+    /** Stage pivot mode changes so deferred apply can commit them as an explicit action. */
     private onDeferredPivotModeToggle(newValue: boolean): boolean {
         const pendingState = this.deferredService.getPendingState();
         pendingState.pivotMode = newValue;
@@ -390,18 +397,21 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         return true;
     }
 
+    /** Stage pivot column state edits instead of applying them immediately to grid state. */
     private onDeferredPivotColumnStateUpdate(stateItems: ColumnState[]): void {
         this.deferredService.applyPivotColumnStateToPending(stateItems);
         this.primaryColsPanel?.syncLayoutWithGrid();
         this.refreshDeferredButtonsState();
     }
 
+    /** Stage visibility edits so deferred apply/cancel controls column visibility changes. */
     private onDeferredVisibilityColumnStateUpdate(stateItems: ColumnState[]): void {
         this.deferredService.applyVisibilityColumnStateToPending(stateItems);
         this.primaryColsPanel?.syncLayoutWithGrid();
         this.refreshDeferredButtonsState();
     }
 
+    /** Stage row group ordering to keep deferred mode pending state in sync with tool panel interactions. */
     private onDeferredRowGroupColumnsUpdate(columns: AgColumn[]): boolean {
         this.deferredService.setPendingRowGroupColumns(columns.map((column) => column.getColId()));
         this.primaryColsPanel?.syncLayoutWithGrid();
@@ -409,6 +419,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         return true;
     }
 
+    /** Stage pivot ordering to keep deferred mode pending state in sync with tool panel interactions. */
     private onDeferredPivotColumnsUpdate(columns: AgColumn[]): boolean {
         this.deferredService.setPendingPivotColumns(columns.map((column) => column.getColId()));
         this.primaryColsPanel?.syncLayoutWithGrid();
@@ -416,6 +427,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         return true;
     }
 
+    /** Stage value columns and agg funcs so deferred apply preserves aggregation intent before commit. */
     private onDeferredValueColumnsUpdate(columns: AgColumn[]): boolean {
         const { aggFuncSvc } = this.beans;
         const pendingAggFuncMap = new Map(
@@ -438,6 +450,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         return true;
     }
 
+    /** Update staged aggregation functions without mutating live value column state. */
     private onDeferredValueColumnAggFuncUpdate(column: AgColumn, aggFunc: string): boolean {
         const pendingState = this.deferredService.getPendingState();
         const colId = column.getColId();
@@ -453,20 +466,24 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         return true;
     }
 
+    /** Resolve staged row group ids to column instances for deferred mode rendering. */
     private getDeferredPendingRowGroupColumns(): AgColumn[] {
         return this.getColumnsByColIds(this.deferredService.getPendingStateSnapshot().rowGroupColIds);
     }
 
+    /** Resolve staged pivot ids to column instances for deferred mode rendering. */
     private getDeferredPendingPivotColumns(): AgColumn[] {
         return this.getColumnsByColIds(this.deferredService.getPendingStateSnapshot().pivotColIds);
     }
 
+    /** Resolve staged value ids to column instances so pending value order is visible before apply. */
     private getDeferredPendingValueColumns(): AgColumn[] {
         return this.getColumnsByColIds(
             this.deferredService.getPendingStateSnapshot().valueCols.map((valueCol) => valueCol.colId)
         );
     }
 
+    /** Read staged aggregation function values so deferred mode editors show pending state. */
     private getDeferredPendingAggregationFunction(column: AgColumn): string | null | undefined {
         const valueCol = this.deferredService
             .getPendingStateSnapshot()
@@ -479,6 +496,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         return colIds.map((colId) => colModel.getColDefCol(colId)).filter((column): column is AgColumn => !!column);
     }
 
+    /** Re-sync deferred pending state when external column changes occur while edits are staged. */
     private syncDeferredFromApplied(): void {
         this.deferredService.reconcileFromAppliedPreservingPending(this.getCurrentStateForDeferredMode());
         this.refreshDeferredButtonsState();
@@ -535,6 +553,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         };
     }
 
+    /** Add apply/cancel controls */
     private initDeferredButtonsIfNeeded(): void {
         if (!this.params.deferApply || !this.params.buttons?.length) {
             return;
@@ -568,10 +587,12 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         this.refreshDeferredButtonsState();
     }
 
+    /** Enable/disable deferred action controls based on whether staged changes exist. */
     private refreshDeferredButtonsState(): void {
         this.deferredButtonsComp?.updateValidity(this.deferredService.hasPendingChanges());
     }
 
+    /** Apply staged deferred changes and reset the pending snapshot to the now-applied state. */
     private onDeferredApply(): void {
         const pendingState = this.deferredService.getPendingState();
         this.applyDeferredState(pendingState);
@@ -579,11 +600,13 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         this.refreshDeferredButtonsState();
     }
 
+    /** Drop staged deferred changes and rebuild the panel from current applied grid state. */
     private onDeferredCancel(): void {
         this.deferredService.cancelPending();
         this.refresh(this.params);
     }
 
+    /** Apply the staged deferred snapshot as one batch to avoid partial intermediate grid states. */
     private applyDeferredState(state: ColumnToolPanelDeferredState): void {
         const { colModel, gos, ctrlsSvc } = this.beans;
         const currentState = this.getCurrentStateForDeferredMode();

@@ -202,6 +202,7 @@ export class ToolPanelContextMenu extends Component {
         });
     }
 
+    /** Stage context-menu pivot/value/group changes through deferred callbacks when present. */
     private applyDeferredPivotColumnState(getState: (col: AgColumn) => ColumnState | undefined): boolean {
         const onDeferredPivotColumnStateUpdate = this.options?.onDeferredPivotColumnStateUpdate;
         if (!onDeferredPivotColumnStateUpdate) {
