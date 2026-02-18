@@ -95,6 +95,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             ...params,
         };
         this.params = mergedParams;
+        /** Recreate deferred state per panel init so refresh/cancel starts from a clean staged model. */
         this.deferredService = new ColumnToolPanelDeferredService();
         if (mergedParams.deferApply) {
             this.deferredService.reconcileFromApplied(this.getCurrentStateForDeferredMode());
@@ -367,6 +368,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         this.destroyChildren();
         this.init(params);
         if (this.params.deferApply) {
+            /** Reconcile again after child rebuild so pending/apply buttons reflect the latest applied grid snapshot. */
             this.deferredService.reconcileFromApplied(this.getCurrentStateForDeferredMode());
         }
         return true;
