@@ -958,8 +958,8 @@ describe('AgRichSelect', () => {
         (richSelect as any).isPickerDisplayed = false;
         (richSelect as any).showPicker = showPicker;
 
-        (richSelect as any).maybeOpenPickerOnTypingMultiSelectInput('D');
-        (richSelect as any).maybeOpenPickerOnTypingMultiSelectInput('');
+        (richSelect as any).openPickerOnTypingIfNeeded('D');
+        (richSelect as any).openPickerOnTypingIfNeeded('');
 
         expect(showPicker).toHaveBeenCalledTimes(1);
     });
