@@ -1,3 +1,4 @@
+import { VERSION } from '../../version';
 import type { IEnvironment } from '../interfaces/iEnvironment';
 import { sharedCSS } from './shared/shared.css-GENERATED';
 
@@ -155,19 +156,21 @@ type InjectionState = {
     grids: Map<IEnvironment, InjectedGridCssState>;
 };
 
-type WindowState = {
-    agStyleInjectionState?: InjectionState;
-};
+const injectionStatePropertyName = 'agStyleInjectionState' + VERSION;
 
-// AG-14716 - for customers using module federation, there may be many
-// instances of this module, but we want to ensure that there is only
-// one instance of the container to injection map per window otherwise
-// unmounting any grid instance will clear all styles from the page
-// resulting in unstyled grids
-const injectionState: InjectionState = ((typeof window === 'object'
-    ? (window as WindowState)
-    : {}
-).agStyleInjectionState ??= {
+// When many copies of the grid are loaded (either due to module federation or
+// just multiple scripts each embedding a copy of the library), there may be
+// many instances of this module, which may be different versions or not. Our
+// requirement is that all grid instances sharing the same style context (the
+// main document or any one shadow DOM) must have exactly the same version. If
+// two independent modules share the same version, they will share the same
+// InjectionState and cooperate on inserting the correct styles. Different
+// versions get their own state, meaning that they will insert their own CSS.
+// Provided that different versions never share style contexts this will not
+// cause issues. If they do, both versions' styles will be injected.
+const injectionState: InjectionState = ((typeof window === 'object' ? (window as any) : {})[
+    injectionStatePropertyName
+] ??= {
     map: new WeakMap(),
     grids: new Map(),
 });
