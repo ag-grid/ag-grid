@@ -37,48 +37,11 @@ const EMPTY_STATE: ColumnToolPanelDeferredState = {
     visibleColIds: [],
 };
 
-/** Clone deferred state so callers cannot mutate internal service references. */
-function cloneState(state: ColumnToolPanelDeferredState): ColumnToolPanelDeferredState {
-    return {
-        pivotMode: state.pivotMode,
-        rowGroupColIds: [...state.rowGroupColIds],
-        pivotColIds: [...state.pivotColIds],
-        valueCols: state.valueCols.map((valueCol) => ({
-            colId: valueCol.colId,
-            aggFunc: valueCol.aggFunc,
-        })),
-        visibleColIds: [...state.visibleColIds],
-    };
-}
-
-/** Freeze state snapshots so deferred mode consumers treat pending state as read-only. */
-function freezeState(state: ColumnToolPanelDeferredState): ColumnToolPanelDeferredState {
-    const rowGroupColIds = Object.freeze([...state.rowGroupColIds]) as string[];
-    const pivotColIds = Object.freeze([...state.pivotColIds]) as string[];
-    const valueCols = Object.freeze(
-        state.valueCols.map((valueCol) =>
-            Object.freeze({
-                colId: valueCol.colId,
-                aggFunc: valueCol.aggFunc,
-            })
-        )
-    ) as DeferredValueColumnState[];
-    const visibleColIds = Object.freeze([...state.visibleColIds]) as string[];
-
-    return Object.freeze({
-        pivotMode: state.pivotMode,
-        rowGroupColIds,
-        pivotColIds,
-        valueCols,
-        visibleColIds,
-    }) as ColumnToolPanelDeferredState;
-}
-
 /** Track applied state plus a patch so deferred mode can stage edits without immediate grid mutation. */
 export class ColumnToolPanelDeferredService {
-    private appliedState: ColumnToolPanelDeferredState = cloneState(EMPTY_STATE);
+    private appliedState: ColumnToolPanelDeferredState = EMPTY_STATE;
     private patch: PendingPatch = {};
-    private pendingStateCache: ColumnToolPanelDeferredState = cloneState(EMPTY_STATE);
+    private pendingStateCache: ColumnToolPanelDeferredState = EMPTY_STATE;
     private pendingStateCacheDirty = true;
 
     /** Replace staged state by rebuilding the patch against current applied state. */
@@ -162,7 +125,7 @@ export class ColumnToolPanelDeferredService {
 
     /** Reset deferred state to a new applied baseline after apply or panel refresh. */
     public reconcileFromApplied(state: ColumnToolPanelDeferredState): void {
-        this.appliedState = cloneState(state);
+        this.appliedState = state;
         this.patch = {};
         this.pendingStateCacheDirty = true;
     }
@@ -170,14 +133,14 @@ export class ColumnToolPanelDeferredService {
     /** Rebase staged edits onto new applied state so pending deferred edits survive external grid changes. */
     public reconcileFromAppliedPreservingPending(state: ColumnToolPanelDeferredState): void {
         if (!this.hasPendingChanges()) {
-            this.appliedState = cloneState(state);
+            this.appliedState = state;
             this.patch = {};
             this.pendingStateCacheDirty = true;
             return;
         }
 
         const existingPatch = this.patch;
-        this.appliedState = cloneState(state);
+        this.appliedState = state;
         const rebasedPendingState = applyPatchToState(this.appliedState, existingPatch, true);
         const nextPatch = buildPatch(this.appliedState, rebasedPendingState);
 
@@ -209,20 +172,20 @@ export class ColumnToolPanelDeferredService {
         return hasPatchChanges(this.patch);
     }
 
-    /** Return a defensive copy of applied state. */
+    /** Return the current applied state baseline. */
     public getAppliedState(): ColumnToolPanelDeferredState {
-        return cloneState(this.appliedState);
+        return this.appliedState;
     }
 
-    /** Return a defensive copy of pending state. */
+    /** Return current pending state. */
     public getPendingState(): ColumnToolPanelDeferredState {
-        return cloneState(this.getPendingStateSnapshot());
+        return this.getPendingStateSnapshot();
     }
 
-    /** Return a frozen pending snapshot for read-only consumers in deferred mode UI. */
+    /** Return cached pending state, recomputed when patch or applied state changes. */
     public getPendingStateSnapshot(): Readonly<ColumnToolPanelDeferredState> {
         if (this.pendingStateCacheDirty) {
-            this.pendingStateCache = freezeState(applyPatchToState(this.appliedState, this.patch, false));
+            this.pendingStateCache = applyPatchToState(this.appliedState, this.patch, false);
             this.pendingStateCacheDirty = false;
         }
         return this.pendingStateCache;
@@ -341,7 +304,13 @@ function applyPatchToState(
     patch: PendingPatch,
     preserveUntouchedOrderOnRebase: boolean
 ): ColumnToolPanelDeferredState {
-    const pendingState = cloneState(appliedState);
+    const pendingState: ColumnToolPanelDeferredState = {
+        pivotMode: appliedState.pivotMode,
+        rowGroupColIds: appliedState.rowGroupColIds,
+        pivotColIds: appliedState.pivotColIds,
+        valueCols: appliedState.valueCols,
+        visibleColIds: appliedState.visibleColIds,
+    };
 
     if (patch.pivotMode !== undefined) {
         pendingState.pivotMode = patch.pivotMode;
