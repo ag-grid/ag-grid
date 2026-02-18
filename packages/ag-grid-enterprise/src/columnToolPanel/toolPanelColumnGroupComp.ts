@@ -183,7 +183,7 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private onContextMenu(e: MouseEvent | Touch): void {
-        const { columnGroup, gos } = this;
+        const { columnGroup, gos, params } = this;
 
         if (gos.get('functionsReadOnly')) {
             return;
@@ -192,9 +192,9 @@ export class ToolPanelColumnGroupComp extends Component {
         /** Pass deferred callbacks so context-menu actions stage pending pivot/value/group changes. */
         const contextMenu = this.createBean(
             new ToolPanelContextMenu(columnGroup, e, this.focusWrapper, {
-                getToolPanelPivotMode: this.params.getToolPanelPivotMode,
-                onDeferredPivotColumnStateUpdate: this.params.onDeferredPivotColumnStateUpdate,
-                getToolPanelColumnFunctionState: this.params.getToolPanelColumnFunctionState,
+                getToolPanelPivotMode: params.getToolPanelPivotMode,
+                onDeferredPivotColumnStateUpdate: params.onDeferredPivotColumnStateUpdate,
+                getToolPanelColumnFunctionState: params.getToolPanelColumnFunctionState,
             })
         );
         this.addDestroyFunc(() => {
@@ -335,6 +335,7 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private onChangeCommon(nextState: boolean): void {
+        const { eventType, modelItem, params } = this;
         this.refreshAriaLabel();
 
         if (this.processingColumnStateChange) {
@@ -344,13 +345,13 @@ export class ToolPanelColumnGroupComp extends Component {
         /** Route group checkbox actions through deferred-aware bulk updates when deferred mode is active. */
         selectAllChildren(
             this.beans,
-            this.modelItem.children,
+            modelItem.children,
             nextState,
-            this.eventType,
-            this.params.onDeferredPivotColumnStateUpdate,
-            this.params.onDeferredVisibilityColumnStateUpdate,
-            this.params.getToolPanelPivotMode?.(),
-            this.params.getToolPanelColumnFunctionState
+            eventType,
+            params.onDeferredPivotColumnStateUpdate,
+            params.onDeferredVisibilityColumnStateUpdate,
+            params.getToolPanelPivotMode?.(),
+            params.getToolPanelColumnFunctionState
         );
     }
 

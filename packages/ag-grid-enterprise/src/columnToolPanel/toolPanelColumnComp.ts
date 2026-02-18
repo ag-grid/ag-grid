@@ -157,7 +157,7 @@ export class ToolPanelColumnComp extends Component {
     }
 
     private onContextMenu(e: MouseEvent | Touch): void {
-        const { column, gos } = this;
+        const { column, gos, params } = this;
 
         if (gos.get('functionsReadOnly')) {
             return;
@@ -166,9 +166,9 @@ export class ToolPanelColumnComp extends Component {
         /** Pass deferred callbacks so context-menu actions stage pending pivot/value/group changes. */
         const contextMenu = this.createBean(
             new ToolPanelContextMenu(column, e, this.focusWrapper, {
-                getToolPanelPivotMode: this.params.getToolPanelPivotMode,
-                onDeferredPivotColumnStateUpdate: this.params.onDeferredPivotColumnStateUpdate,
-                getToolPanelColumnFunctionState: this.params.getToolPanelColumnFunctionState,
+                getToolPanelPivotMode: params.getToolPanelPivotMode,
+                onDeferredPivotColumnStateUpdate: params.onDeferredPivotColumnStateUpdate,
+                getToolPanelColumnFunctionState: params.getToolPanelColumnFunctionState,
             })
         );
         this.addDestroyFunc(() => {
@@ -201,6 +201,7 @@ export class ToolPanelColumnComp extends Component {
     }
 
     private onChangeCommon(nextState: boolean): void {
+        const { params } = this;
         // ignore lock visible columns
         if (this.cbSelect.isReadOnly()) {
             return;
@@ -220,10 +221,10 @@ export class ToolPanelColumnComp extends Component {
             [this.column],
             nextState,
             'toolPanelUi',
-            this.params.onDeferredPivotColumnStateUpdate,
-            this.params.onDeferredVisibilityColumnStateUpdate,
-            this.params.getToolPanelPivotMode?.(),
-            this.params.getToolPanelColumnFunctionState
+            params.onDeferredPivotColumnStateUpdate,
+            params.onDeferredVisibilityColumnStateUpdate,
+            params.getToolPanelPivotMode?.(),
+            params.getToolPanelColumnFunctionState
         );
     }
 

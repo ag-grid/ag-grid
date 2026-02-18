@@ -75,6 +75,7 @@ export class ToolPanelContextMenu extends Component {
     }
 
     private initializeProperties(column: AgColumn | AgProvidedColumnGroup): void {
+        const { options } = this;
         let columns: AgColumn[];
         if (isProvidedColumnGroup(column)) {
             columns = column.getLeafColumns();
@@ -83,7 +84,7 @@ export class ToolPanelContextMenu extends Component {
         }
         this.columns = columns;
 
-        const isPivotMode = this.options?.getToolPanelPivotMode?.() ?? this.beans.colModel.isPivotMode();
+        const isPivotMode = options?.getToolPanelPivotMode?.() ?? this.beans.colModel.isPivotMode();
 
         this.allowScrollIntoView = !isPivotMode && columns.some(this.isColumnValidForScrollIntoView);
         this.allowGrouping = columns.some((col) => col.isPrimary() && col.isAllowRowGroup());
@@ -92,6 +93,7 @@ export class ToolPanelContextMenu extends Component {
     }
 
     private buildMenuItemMap(): void {
+        const { options } = this;
         const localeTextFunc = this.getLocaleTextFunc();
         const { beans, displayName } = this;
         const { rowGroupColsSvc, valueColsSvc, pivotColsSvc, colModel } = beans;
@@ -99,9 +101,9 @@ export class ToolPanelContextMenu extends Component {
         const menuItemMap = new Map<MenuItemName, MenuItemProperty>();
         this.menuItemMap = menuItemMap;
 
-        const isPivotMode = this.options?.getToolPanelPivotMode?.() ?? colModel.isPivotMode();
+        const isPivotMode = options?.getToolPanelPivotMode?.() ?? colModel.isPivotMode();
         const getColumnFunctionState = (col: AgColumn) =>
-            this.options?.getToolPanelColumnFunctionState?.(col) ?? {
+            options?.getToolPanelColumnFunctionState?.(col) ?? {
                 rowGroup: col.isRowGroupActive(),
                 pivot: col.isPivotActive(),
                 value: col.isValueActive(),
@@ -204,12 +206,13 @@ export class ToolPanelContextMenu extends Component {
 
     /** Stage context-menu pivot/value/group changes through deferred callbacks when present. */
     private applyDeferredPivotColumnState(getState: (col: AgColumn) => ColumnState | undefined): boolean {
-        const onDeferredPivotColumnStateUpdate = this.options?.onDeferredPivotColumnStateUpdate;
+        const { columns, options } = this;
+        const onDeferredPivotColumnStateUpdate = options?.onDeferredPivotColumnStateUpdate;
         if (!onDeferredPivotColumnStateUpdate) {
             return false;
         }
 
-        const stateItems = this.columns.map((col) => getState(col)).filter((state): state is ColumnState => !!state);
+        const stateItems = columns.map((col) => getState(col)).filter((state): state is ColumnState => !!state);
         if (stateItems.length > 0) {
             onDeferredPivotColumnStateUpdate(stateItems);
         }
