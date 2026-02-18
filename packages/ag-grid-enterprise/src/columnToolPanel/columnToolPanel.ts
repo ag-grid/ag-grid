@@ -177,7 +177,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         }
 
         if (mergedParams.deferApply) {
-            const [deferredSyncListener] = this.addManagedEventListeners({
+            const deferredSyncListeners = this.addManagedEventListeners({
                 newColumnsLoaded: this.syncDeferredFromApplied.bind(this),
                 columnPivotModeChanged: this.syncDeferredFromApplied.bind(this),
                 columnRowGroupChanged: this.syncDeferredFromApplied.bind(this),
@@ -185,7 +185,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
                 columnValueChanged: this.syncDeferredFromApplied.bind(this),
                 columnVisible: this.syncDeferredFromApplied.bind(this),
             });
-            childDestroyFuncs.push(() => deferredSyncListener());
+            childDestroyFuncs.push(...deferredSyncListeners);
         }
 
         this.initDeferredButtonsIfNeeded();
