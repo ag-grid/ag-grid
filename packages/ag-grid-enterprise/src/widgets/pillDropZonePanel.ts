@@ -600,7 +600,6 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         const itemComponent = this.createPillComponent(item, this.dropTarget, ghost, this.horizontal);
         itemComponent.addEventListener('columnRemove', () => {
             this.removeItems([item]);
-            /** Rebuild pills so deferred-mode pending updates are reflected immediately after remove. */
             this.refreshGui();
         });
 

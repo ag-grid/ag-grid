@@ -4,7 +4,6 @@ import { _createIconNoSpan } from 'ag-grid-community';
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
 export class RowGroupDropZonePanel extends BaseDropZonePanel {
-    /** Accept deferred-mode overrides for staged row-group updates and pending item source. */
     constructor(
         horizontal: boolean,
         onUpdateItems?: (columns: AgColumn[]) => boolean,
@@ -44,7 +43,6 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
     }
 
     protected updateItems(columns: AgColumn[]) {
-        /** Skip live service update when deferred mode handles staging. */
         if (this.handleUpdateItems(columns)) {
             return;
         }
@@ -56,7 +54,6 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
     }
 
     protected getExistingItems(): AgColumn[] {
-        /** Read pending row-group items in deferred mode so UI reflects staged order. */
         const override = this.getExistingItemsOverride?.();
         if (override) {
             return override;

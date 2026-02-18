@@ -321,7 +321,6 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         const itemSelected = () => {
             hidePopup();
             this.getGui().focus();
-            /** Let deferred mode consume the agg-func update so live column state stays unchanged until apply. */
             if (this.onAggregationFunctionChange?.(this.column, value)) {
                 return;
             }
