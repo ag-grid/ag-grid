@@ -7,7 +7,9 @@ type ServerResponse = {
     pivotResultFields?: string[];
 };
 
-export function createServerSideDatasource(server: { getData: (request: IServerSideGetRowsRequest) => ServerResponse }): IServerSideDatasource {
+export function createServerSideDatasource(server: {
+    getData: (request: IServerSideGetRowsRequest) => ServerResponse;
+}): IServerSideDatasource {
     return {
         getRows: (params) => {
             const response = server.getData(params.request);
@@ -96,10 +98,10 @@ export function createFakeServer(allData: IOlympicData[]) {
                 return values.length;
             }
             case 'first': {
-                return values.length ? ((values[0] as any) ?? null) : null;
+                return values.length ? (values[0] as any) ?? null : null;
             }
             case 'last': {
-                return values.length ? ((values[values.length - 1] as any) ?? null) : null;
+                return values.length ? (values[values.length - 1] as any) ?? null : null;
             }
             default:
                 return values.reduce((sum, value) => sum + (toNumber(value) ?? 0), 0);
@@ -177,7 +179,7 @@ export function createFakeServer(allData: IOlympicData[]) {
                     const matchingRows = targetRows.filter((row) => matchesPivotKey(row, pivotColIds, pivotKey));
                     for (const valueCol of valueCols) {
                         const field = createPivotField(pivotKey, valueCol.id);
-                        result[field] = aggregateValues(matchingRows, valueCol.id, valueCol.aggFunc);
+                        result[field] = aggregateValues(matchingRows, valueCol.id, valueCol.aggFunc!);
                     }
                 }
                 return result as IOlympicData;
@@ -215,7 +217,7 @@ export function createFakeServer(allData: IOlympicData[]) {
 
                         const groupRow: any = { [groupField]: key, childCount: groupRows.length };
                         for (const valueCol of valueCols) {
-                            groupRow[valueCol.id] = aggregateValues(groupRows, valueCol.id, valueCol.aggFunc);
+                            groupRow[valueCol.id] = aggregateValues(groupRows, valueCol.id, valueCol.aggFunc!);
                         }
                         return groupRow as IOlympicData;
                     });
