@@ -5,8 +5,8 @@ import { AgRichSelect } from './agRichSelect';
 
 type ComplexValue = { id: number; label: string };
 
-function createRichSelect<TValue>(config?: Partial<RichSelectParams<TValue>>) {
-    return new AgRichSelect<TValue>(config as RichSelectParams<TValue>) as AgRichSelect<TValue> & Record<string, any>;
+function createRichSelect<TValue>(config?: Partial<RichSelectParams<TValue>>): any {
+    return new AgRichSelect<TValue>(config as RichSelectParams<TValue>);
 }
 
 const flushMicrotasks = async (): Promise<void> => {
@@ -16,12 +16,13 @@ const flushMicrotasks = async (): Promise<void> => {
 
 describe('AgRichSelect', () => {
     afterEach(() => {
+        // eslint-disable-next-line no-restricted-properties
         document.body.innerHTML = '';
     });
 
     it('applies required picker defaults when config is partial', () => {
         const richSelect = createRichSelect<string>();
-        const { config } = richSelect as any;
+        const { config } = richSelect;
 
         expect(config.pickerAriaLabelKey).toBe('ariaLabelRichSelectField');
         expect(config.pickerAriaLabelValue).toBe('Rich Select Field');
@@ -41,12 +42,12 @@ describe('AgRichSelect', () => {
             setParentComponent: jest.fn(),
         };
 
-        (richSelect as any).ariaAnnounce = { announceValue };
-        (richSelect as any).createBean = jest.fn(() => listComponent);
-        (richSelect as any).addManagedListeners = jest.fn();
-        (richSelect as any).getFocusableElement = jest.fn(() => document.createElement('div'));
+        richSelect.ariaAnnounce = { announceValue };
+        richSelect.createBean = jest.fn(() => listComponent);
+        richSelect.addManagedListeners = jest.fn();
+        richSelect.getFocusableElement = jest.fn(() => document.createElement('div'));
 
-        (richSelect as any).createListComponent();
+        richSelect.createListComponent();
         stateAnnouncementCallback?.('Loading...');
         stateAnnouncementCallback?.('No matches to show');
 
@@ -57,7 +58,7 @@ describe('AgRichSelect', () => {
     it('preserves explicit null initial values', () => {
         const richSelect = createRichSelect<string | null>({ value: null });
 
-        expect((richSelect as any).value).toBeNull();
+        expect(richSelect.value).toBeNull();
     });
 
     it('renders empty string as a selected value, not as placeholder', () => {
@@ -68,11 +69,11 @@ describe('AgRichSelect', () => {
         const eDisplayField = document.createElement('span');
         const tooltipFeature = { setTooltipAndRefresh: jest.fn() };
 
-        (richSelect as any).eDisplayField = eDisplayField;
-        (richSelect as any).tooltipFeature = tooltipFeature;
-        (richSelect as any).value = '';
+        richSelect.eDisplayField = eDisplayField;
+        richSelect.tooltipFeature = tooltipFeature;
+        richSelect.value = '';
 
-        (richSelect as any).renderSelectedValue();
+        richSelect.renderSelectedValue();
 
         expect(eDisplayField.classList.contains('ag-display-as-placeholder')).toBe(false);
         expect(eDisplayField.textContent).toBe('');
@@ -86,10 +87,10 @@ describe('AgRichSelect', () => {
         });
         const setValue = jest.fn();
 
-        (richSelect as any).eInput = { setValue } as any;
-        (richSelect as any).value = '';
+        richSelect.eInput = { setValue } as any;
+        richSelect.value = '';
 
-        (richSelect as any).renderSelectedValue();
+        richSelect.renderSelectedValue();
 
         expect(setValue).toHaveBeenCalledWith('', false);
     });
@@ -101,13 +102,13 @@ describe('AgRichSelect', () => {
             getIndicesForValues: jest.fn(() => []),
             selectValue: jest.fn(),
         };
-        (richSelect as any).listComponent = listComponent;
-        (richSelect as any).renderSelectedValue = jest.fn();
+        richSelect.listComponent = listComponent;
+        richSelect.renderSelectedValue = jest.fn();
 
         richSelect.setValue(unknown, false, false, true);
 
         expect(listComponent.getIndicesForValues).toHaveBeenCalledWith(unknown);
-        expect((richSelect as any).value).not.toBe(unknown);
+        expect(richSelect.value).not.toBe(unknown);
     });
 
     it('accepts object values when list indices resolve logical equality', () => {
@@ -117,33 +118,33 @@ describe('AgRichSelect', () => {
             getIndicesForValues: jest.fn(() => [1]),
             selectValue: jest.fn(),
         };
-        (richSelect as any).listComponent = listComponent;
-        (richSelect as any).renderSelectedValue = jest.fn();
+        richSelect.listComponent = listComponent;
+        richSelect.renderSelectedValue = jest.fn();
 
         richSelect.setValue(value, false, false, true);
 
         expect(listComponent.getIndicesForValues).toHaveBeenCalledWith(value);
-        expect((richSelect as any).value).toBe(value);
+        expect(richSelect.value).toBe(value);
         expect(listComponent.selectValue).toHaveBeenCalledWith(value);
     });
 
     it('returns scalar values for non-multi-select getValueFromSet', () => {
         const richSelect = createRichSelect<number>({ multiSelect: false });
 
-        expect((richSelect as any).getValueFromSet(new Set<number>([2, 3]))).toBe(2);
-        expect((richSelect as any).getValueFromSet(new Set<number>())).toBeNull();
+        expect(richSelect.getValueFromSet(new Set<number>([2, 3]))).toBe(2);
+        expect(richSelect.getValueFromSet(new Set<number>())).toBeNull();
     });
 
     it('keeps multi-select values in selection order', () => {
         const richSelect = createRichSelect<number>({ multiSelect: true });
 
-        expect((richSelect as any).getValueFromSet(new Set<number>([3, 1, 4]))).toEqual([3, 1, 4]);
+        expect(richSelect.getValueFromSet(new Set<number>([3, 1, 4]))).toEqual([3, 1, 4]);
     });
 
     it('keeps selected order stable when list is filtered', () => {
         const richSelect = createRichSelect<string>({ multiSelect: true });
 
-        expect((richSelect as any).getValueFromSet(new Set<string>(['Orange', 'Aqua']))).toEqual(['Orange', 'Aqua']);
+        expect(richSelect.getValueFromSet(new Set<string>(['Orange', 'Aqua']))).toEqual(['Orange', 'Aqua']);
     });
 
     it('preserves object selections in insertion order', () => {
@@ -151,10 +152,7 @@ describe('AgRichSelect', () => {
         const second = { id: 1, label: 'one' };
         const richSelect = createRichSelect<ComplexValue>({ multiSelect: true });
 
-        expect((richSelect as any).getValueFromSet(new Set<ComplexValue>([selected, second]))).toEqual([
-            selected,
-            second,
-        ]);
+        expect(richSelect.getValueFromSet(new Set<ComplexValue>([selected, second]))).toEqual([selected, second]);
     });
 
     it('clears active option aria attributes when filtered search has no matches', () => {
@@ -163,14 +161,14 @@ describe('AgRichSelect', () => {
         wrapper.setAttribute('data-active-option', 'stale-option');
         wrapper.setAttribute('aria-activedescendant', 'stale-option');
 
-        (richSelect as any).eWrapper = wrapper;
-        (richSelect as any).listComponent = {
+        richSelect.eWrapper = wrapper;
+        richSelect.listComponent = {
             highlightIndex: jest.fn(),
             ensureIndexVisible: jest.fn(),
         };
-        (richSelect as any).searchStrings = ['a'];
+        richSelect.searchStrings = ['a'];
 
-        (richSelect as any).highlightListValue([], [], true);
+        richSelect.highlightListValue([], [], true);
 
         expect(wrapper.hasAttribute('data-active-option')).toBe(false);
         expect(wrapper.hasAttribute('aria-activedescendant')).toBe(false);
@@ -180,8 +178,8 @@ describe('AgRichSelect', () => {
         const richSelect = createRichSelect<string>();
         const listComponent = { setIsLoading: jest.fn() };
         const setValueListInternal = jest.fn();
-        (richSelect as any).listComponent = listComponent;
-        (richSelect as any).setValueListInternal = setValueListInternal;
+        richSelect.listComponent = listComponent;
+        richSelect.setValueListInternal = setValueListInternal;
 
         richSelect.setValueList({
             valueList: Promise.reject(new Error('failed')),
@@ -199,8 +197,8 @@ describe('AgRichSelect', () => {
     it('ignores async value list responses that resolve to undefined', async () => {
         const richSelect = createRichSelect<string>();
         const setValueListInternal = jest.fn();
-        (richSelect as any).listComponent = { setIsLoading: jest.fn() };
-        (richSelect as any).setValueListInternal = setValueListInternal;
+        richSelect.listComponent = { setIsLoading: jest.fn() };
+        richSelect.setValueListInternal = setValueListInternal;
 
         richSelect.setValueList({
             valueList: Promise.resolve(undefined),
@@ -220,9 +218,9 @@ describe('AgRichSelect', () => {
             selectValue: jest.fn(),
         };
 
-        (richSelect as any).listComponent = listComponent;
-        (richSelect as any).isPickerDisplayed = true;
-        (richSelect as any).value = 'A';
+        richSelect.listComponent = listComponent;
+        richSelect.isPickerDisplayed = true;
+        richSelect.value = 'A';
 
         richSelect.setValueList({
             valueList: ['A', 'B'],
@@ -243,9 +241,9 @@ describe('AgRichSelect', () => {
             selectValue: jest.fn(),
         };
 
-        (richSelect as any).listComponent = listComponent;
-        (richSelect as any).isPickerDisplayed = true;
-        (richSelect as any).value = 'Z';
+        richSelect.listComponent = listComponent;
+        richSelect.isPickerDisplayed = true;
+        richSelect.value = 'Z';
 
         richSelect.setValueList({
             valueList: ['A', 'B'],
@@ -266,9 +264,9 @@ describe('AgRichSelect', () => {
             selectValue: jest.fn(),
         };
 
-        (richSelect as any).listComponent = listComponent;
-        (richSelect as any).isPickerDisplayed = true;
-        (richSelect as any).value = 'A';
+        richSelect.listComponent = listComponent;
+        richSelect.isPickerDisplayed = true;
+        richSelect.value = 'A';
 
         richSelect.setValueList({
             valueList: ['A', 'B'],
@@ -305,7 +303,7 @@ describe('AgRichSelect', () => {
             valueFormatter: (value) => (value === '' ? '-- SELECT --' : String(value).toUpperCase()),
         });
 
-        expect((richSelect as any).getSearchStringsFromValues(['', 'open'])).toEqual(['', 'OPEN']);
+        expect(richSelect.getSearchStringsFromValues(['', 'open'])).toEqual(['', 'OPEN']);
     });
 
     it('keeps input value and renders pills when allowTyping and multiSelect are both enabled', () => {
@@ -317,21 +315,21 @@ describe('AgRichSelect', () => {
         const setInputPlaceholder = jest.fn();
         const createOrUpdatePillContainer = jest.fn();
 
-        (richSelect as any).eInput = {
+        richSelect.eInput = {
             getValue: () => 'typed',
             setInputPlaceholder,
             setValue,
         };
-        (richSelect as any).eDeselect = document.createElement('span');
-        (richSelect as any).eDisplayField = document.createElement('span');
-        (richSelect as any).value = ['Open'];
-        (richSelect as any).createOrUpdatePillContainer = createOrUpdatePillContainer;
+        richSelect.eDeselect = document.createElement('span');
+        richSelect.eDisplayField = document.createElement('span');
+        richSelect.value = ['Open'];
+        richSelect.createOrUpdatePillContainer = createOrUpdatePillContainer;
 
-        (richSelect as any).renderSelectedValue();
+        richSelect.renderSelectedValue();
 
         expect(setValue).toHaveBeenCalledWith('typed', false);
         expect(setInputPlaceholder).toHaveBeenCalledWith('');
-        expect(createOrUpdatePillContainer).toHaveBeenCalledWith((richSelect as any).eDisplayField);
+        expect(createOrUpdatePillContainer).toHaveBeenCalledWith(richSelect.eDisplayField);
     });
 
     it('shows typing placeholder only when input is empty and there are no selected values', () => {
@@ -343,26 +341,26 @@ describe('AgRichSelect', () => {
         const setInputPlaceholder = jest.fn();
         const createOrUpdatePillContainer = jest.fn();
 
-        (richSelect as any).eInput = {
+        richSelect.eInput = {
             getValue: () => '',
             setInputPlaceholder,
             setValue: jest.fn(),
         };
-        (richSelect as any).eDeselect = document.createElement('span');
-        (richSelect as any).eDisplayField = document.createElement('span');
-        (richSelect as any).createOrUpdatePillContainer = createOrUpdatePillContainer;
+        richSelect.eDeselect = document.createElement('span');
+        richSelect.eDisplayField = document.createElement('span');
+        richSelect.createOrUpdatePillContainer = createOrUpdatePillContainer;
 
-        (richSelect as any).value = [];
-        (richSelect as any).renderSelectedValue();
+        richSelect.value = [];
+        richSelect.renderSelectedValue();
         expect(setInputPlaceholder).toHaveBeenLastCalledWith('Pick status');
 
-        (richSelect as any).value = ['Open'];
-        (richSelect as any).renderSelectedValue();
+        richSelect.value = ['Open'];
+        richSelect.renderSelectedValue();
         expect(setInputPlaceholder).toHaveBeenLastCalledWith('');
 
-        (richSelect as any).value = [];
-        (richSelect as any).eInput.getValue = () => 'o';
-        (richSelect as any).renderSelectedValue();
+        richSelect.value = [];
+        richSelect.eInput.getValue = () => 'o';
+        richSelect.renderSelectedValue();
         expect(setInputPlaceholder).toHaveBeenLastCalledWith('');
     });
 
@@ -374,12 +372,12 @@ describe('AgRichSelect', () => {
         });
         const setInputPlaceholder = jest.fn();
 
-        (richSelect as any).value = [];
-        (richSelect as any).eInput = {
+        richSelect.value = [];
+        richSelect.eInput = {
             getValue: () => '',
             setInputPlaceholder,
         };
-        (richSelect as any).listComponent = {
+        richSelect.listComponent = {
             getSelectedItems: () => new Set<string>(),
         };
 
@@ -399,9 +397,9 @@ describe('AgRichSelect', () => {
         ePillContainer.scrollLeft = 0;
         ePillContainer.appendChild(document.createElement('span'));
 
-        (richSelect as any).pillContainer = { getGui: () => ePillContainer };
+        richSelect.pillContainer = { getGui: () => ePillContainer };
 
-        (richSelect as any).scrollTypingMultiSelectPillsToEndOnAdd(0);
+        richSelect.scrollTypingMultiSelectPillsToEndOnAdd(0);
 
         expect(ePillContainer.scrollLeft).toBe(123);
     });
@@ -417,10 +415,10 @@ describe('AgRichSelect', () => {
         ePillContainer.scrollLeft = 0;
         ePillContainer.appendChild(document.createElement('span'));
 
-        (richSelect as any).gos = { get: () => true };
-        (richSelect as any).pillContainer = { getGui: () => ePillContainer };
+        richSelect.gos = { get: () => true };
+        richSelect.pillContainer = { getGui: () => ePillContainer };
 
-        (richSelect as any).scrollTypingMultiSelectPillsToEndOnAdd(0);
+        richSelect.scrollTypingMultiSelectPillsToEndOnAdd(0);
 
         expect(ePillContainer.scrollLeft).toBe(-200);
     });
@@ -435,9 +433,9 @@ describe('AgRichSelect', () => {
         ePillContainer.scrollLeft = 10;
         ePillContainer.appendChild(document.createElement('span'));
 
-        (richSelect as any).pillContainer = { getGui: () => ePillContainer };
+        richSelect.pillContainer = { getGui: () => ePillContainer };
 
-        (richSelect as any).scrollTypingMultiSelectPillsToEndOnAdd(1);
+        richSelect.scrollTypingMultiSelectPillsToEndOnAdd(1);
 
         expect(ePillContainer.scrollLeft).toBe(10);
     });
@@ -450,16 +448,16 @@ describe('AgRichSelect', () => {
         });
         const setInputPlaceholder = jest.fn();
 
-        (richSelect as any).value = [];
-        (richSelect as any).eInput = {
+        richSelect.value = [];
+        richSelect.eInput = {
             getValue: () => '',
             setInputPlaceholder,
         };
-        (richSelect as any).listComponent = {
+        richSelect.listComponent = {
             getSelectedItems: () => new Set<string>(['Open']),
         };
 
-        (richSelect as any).updateTypingMultiSelectPlaceholder();
+        richSelect.updateTypingMultiSelectPlaceholder();
 
         expect(setInputPlaceholder).toHaveBeenLastCalledWith('');
     });
@@ -480,11 +478,11 @@ describe('AgRichSelect', () => {
             getGui: () => document.createElement('div'),
         };
 
-        (richSelect as any).pillContainer = pillContainer;
-        (richSelect as any).listComponent = { highlightIndex: jest.fn() };
-        (richSelect as any).eInput = { getInputElement: () => inputEl };
+        richSelect.pillContainer = pillContainer;
+        richSelect.listComponent = { highlightIndex: jest.fn() };
+        richSelect.eInput = { getInputElement: () => inputEl };
 
-        (richSelect as any).onKeyDown({
+        richSelect.onKeyDown({
             key: 'ArrowLeft',
             preventDefault,
             isComposing: false,
@@ -500,10 +498,10 @@ describe('AgRichSelect', () => {
         const preventDefault = jest.fn();
         const highlightIndex = jest.fn();
 
-        (richSelect as any).pillContainer = null;
-        (richSelect as any).listComponent = { highlightIndex };
+        richSelect.pillContainer = null;
+        richSelect.listComponent = { highlightIndex };
 
-        (richSelect as any).onKeyDown({
+        richSelect.onKeyDown({
             key: 'ArrowLeft',
             preventDefault,
             isComposing: false,
@@ -526,14 +524,14 @@ describe('AgRichSelect', () => {
         const onNavigationKeyDown = jest.fn();
         const highlightIndex = jest.fn();
 
-        (richSelect as any).pillContainer = {
+        richSelect.pillContainer = {
             onNavigationKeyDown,
             getGui: () => document.createElement('div'),
         };
-        (richSelect as any).listComponent = { highlightIndex };
-        (richSelect as any).eInput = { getInputElement: () => inputEl };
+        richSelect.listComponent = { highlightIndex };
+        richSelect.eInput = { getInputElement: () => inputEl };
 
-        (richSelect as any).onKeyDown({
+        richSelect.onKeyDown({
             key: 'ArrowLeft',
             preventDefault: jest.fn(),
             isComposing: false,
@@ -556,15 +554,15 @@ describe('AgRichSelect', () => {
         inputEl.setSelectionRange(inputEl.value.length, inputEl.value.length);
         const onNavigationKeyDown = jest.fn();
 
-        (richSelect as any).gos = { get: () => true };
-        (richSelect as any).pillContainer = {
+        richSelect.gos = { get: () => true };
+        richSelect.pillContainer = {
             onNavigationKeyDown,
             getGui: () => document.createElement('div'),
         };
-        (richSelect as any).listComponent = { highlightIndex: jest.fn() };
-        (richSelect as any).eInput = { getInputElement: () => inputEl };
+        richSelect.listComponent = { highlightIndex: jest.fn() };
+        richSelect.eInput = { getInputElement: () => inputEl };
 
-        (richSelect as any).onKeyDown({
+        richSelect.onKeyDown({
             key: 'ArrowRight',
             preventDefault: jest.fn(),
             isComposing: false,
@@ -590,15 +588,15 @@ describe('AgRichSelect', () => {
         focusedPill.focus();
         const focusTypingInputAtBoundary = jest.fn();
 
-        (richSelect as any).pillContainer = {
+        richSelect.pillContainer = {
             onNavigationKeyDown: jest.fn(),
             getGui: () => pillGui,
         };
-        (richSelect as any).listComponent = { highlightIndex: jest.fn() };
-        (richSelect as any).eInput = { getInputElement: () => inputEl };
-        (richSelect as any).focusTypingInputAtBoundary = focusTypingInputAtBoundary;
+        richSelect.listComponent = { highlightIndex: jest.fn() };
+        richSelect.eInput = { getInputElement: () => inputEl };
+        richSelect.focusTypingInputAtBoundary = focusTypingInputAtBoundary;
 
-        (richSelect as any).onKeyDown({
+        richSelect.onKeyDown({
             key: 'ArrowRight',
             preventDefault: jest.fn(),
             isComposing: false,
@@ -736,12 +734,12 @@ describe('AgRichSelect', () => {
             toggleListItemSelection,
         };
 
-        (richSelect as any).isPickerDisplayed = true;
-        (richSelect as any).listComponent = listComponent;
-        (richSelect as any).eInput = { getValue: () => 'in-progress search' };
+        richSelect.isPickerDisplayed = true;
+        richSelect.listComponent = listComponent;
+        richSelect.eInput = { getValue: () => 'in-progress search' };
 
         const preventDefaultWithText = jest.fn();
-        (richSelect as any).onKeyDown({
+        richSelect.onKeyDown({
             key: ' ',
             preventDefault: preventDefaultWithText,
             isComposing: false,
@@ -750,10 +748,10 @@ describe('AgRichSelect', () => {
         expect(preventDefaultWithText).not.toHaveBeenCalled();
         expect(toggleListItemSelection).not.toHaveBeenCalled();
 
-        (richSelect as any).eInput = { getValue: () => '' };
+        richSelect.eInput = { getValue: () => '' };
 
         const preventDefaultWithoutText = jest.fn();
-        (richSelect as any).onKeyDown({
+        richSelect.onKeyDown({
             key: ' ',
             preventDefault: preventDefaultWithoutText,
             isComposing: false,
@@ -772,18 +770,18 @@ describe('AgRichSelect', () => {
         const selectValue = jest.fn();
         const preventDefault = jest.fn();
 
-        (richSelect as any).value = ['Open', 'Closed'];
-        (richSelect as any).listComponent = { selectValue };
-        (richSelect as any).eDeselect = document.createElement('span');
-        (richSelect as any).eDisplayField = document.createElement('span');
-        (richSelect as any).eInput = {
+        richSelect.value = ['Open', 'Closed'];
+        richSelect.listComponent = { selectValue };
+        richSelect.eDeselect = document.createElement('span');
+        richSelect.eDisplayField = document.createElement('span');
+        richSelect.eInput = {
             getInputElement: () => ({ selectionStart: 0, selectionEnd: 0 }),
             getValue: () => '',
             setValue: jest.fn(),
             setInputPlaceholder: jest.fn(),
         };
 
-        (richSelect as any).onKeyDown({
+        richSelect.onKeyDown({
             key: 'Backspace',
             preventDefault,
             isComposing: false,
@@ -791,7 +789,7 @@ describe('AgRichSelect', () => {
 
         expect(preventDefault).toHaveBeenCalled();
         expect(selectValue).toHaveBeenCalledWith(['Open']);
-        expect((richSelect as any).value).toEqual(['Open']);
+        expect(richSelect.value).toEqual(['Open']);
     });
 
     it('deletes the last selected item on backspace at RTL previous-navigation boundary', () => {
@@ -803,19 +801,19 @@ describe('AgRichSelect', () => {
         const selectValue = jest.fn();
         const preventDefault = jest.fn();
 
-        (richSelect as any).gos = { get: () => true };
-        (richSelect as any).value = ['Open', 'Closed'];
-        (richSelect as any).listComponent = { selectValue };
-        (richSelect as any).eDeselect = document.createElement('span');
-        (richSelect as any).eDisplayField = document.createElement('span');
-        (richSelect as any).eInput = {
+        richSelect.gos = { get: () => true };
+        richSelect.value = ['Open', 'Closed'];
+        richSelect.listComponent = { selectValue };
+        richSelect.eDeselect = document.createElement('span');
+        richSelect.eDisplayField = document.createElement('span');
+        richSelect.eInput = {
             getInputElement: () => ({ value: 'abc', selectionStart: 3, selectionEnd: 3 }),
             getValue: () => 'abc',
             setValue: jest.fn(),
             setInputPlaceholder: jest.fn(),
         };
 
-        (richSelect as any).onKeyDown({
+        richSelect.onKeyDown({
             key: 'Backspace',
             preventDefault,
             isComposing: false,
@@ -823,7 +821,7 @@ describe('AgRichSelect', () => {
 
         expect(preventDefault).toHaveBeenCalled();
         expect(selectValue).toHaveBeenCalledWith(['Open']);
-        expect((richSelect as any).value).toEqual(['Open']);
+        expect(richSelect.value).toEqual(['Open']);
     });
 
     it('does not delete selected items on backspace when typing caret is not at start', () => {
@@ -835,18 +833,18 @@ describe('AgRichSelect', () => {
         const selectValue = jest.fn();
         const preventDefault = jest.fn();
 
-        (richSelect as any).value = ['Open', 'Closed'];
-        (richSelect as any).listComponent = { selectValue };
-        (richSelect as any).eDeselect = document.createElement('span');
-        (richSelect as any).eDisplayField = document.createElement('span');
-        (richSelect as any).eInput = {
+        richSelect.value = ['Open', 'Closed'];
+        richSelect.listComponent = { selectValue };
+        richSelect.eDeselect = document.createElement('span');
+        richSelect.eDisplayField = document.createElement('span');
+        richSelect.eInput = {
             getInputElement: () => ({ selectionStart: 1, selectionEnd: 1 }),
             getValue: () => 'x',
             setValue: jest.fn(),
             setInputPlaceholder: jest.fn(),
         };
 
-        (richSelect as any).onKeyDown({
+        richSelect.onKeyDown({
             key: 'Backspace',
             preventDefault,
             isComposing: false,
@@ -854,7 +852,7 @@ describe('AgRichSelect', () => {
 
         expect(preventDefault).not.toHaveBeenCalled();
         expect(selectValue).not.toHaveBeenCalled();
-        expect((richSelect as any).value).toEqual(['Open', 'Closed']);
+        expect(richSelect.value).toEqual(['Open', 'Closed']);
     });
 
     it('selects highlighted item on enter in typing multi-select mode without finishing edit', () => {
@@ -877,31 +875,31 @@ describe('AgRichSelect', () => {
             }),
         };
 
-        (richSelect as any).values = ['Aqua', 'Bisque', 'Black'];
-        (richSelect as any).value = ['Aqua', 'Bisque'];
-        (richSelect as any).isPickerDisplayed = true;
-        (richSelect as any).listComponent = listComponent;
-        (richSelect as any).eDeselect = document.createElement('span');
-        (richSelect as any).eDisplayField = document.createElement('span');
-        (richSelect as any).createOrUpdatePillContainer = jest.fn();
+        richSelect.values = ['Aqua', 'Bisque', 'Black'];
+        richSelect.value = ['Aqua', 'Bisque'];
+        richSelect.isPickerDisplayed = true;
+        richSelect.listComponent = listComponent;
+        richSelect.eDeselect = document.createElement('span');
+        richSelect.eDisplayField = document.createElement('span');
+        richSelect.createOrUpdatePillContainer = jest.fn();
         const setInputValue = jest.fn();
-        (richSelect as any).eInput = {
+        richSelect.eInput = {
             getValue: () => 'Blac',
             setValue: setInputValue,
             setInputPlaceholder: jest.fn(),
         };
-        (richSelect as any).hidePicker = jest.fn();
-        (richSelect as any).dispatchPickerEventAndHidePicker = jest.fn();
+        richSelect.hidePicker = jest.fn();
+        richSelect.dispatchPickerEventAndHidePicker = jest.fn();
 
         const preventDefault = jest.fn();
-        (richSelect as any).onEnterKeyDown({ preventDefault } as unknown as KeyboardEvent);
+        richSelect.onEnterKeyDown({ preventDefault } as unknown as KeyboardEvent);
 
         expect(preventDefault).toHaveBeenCalled();
         expect(listComponent.selectValue).toHaveBeenCalledWith(['Aqua', 'Bisque', 'Black']);
-        expect((richSelect as any).value).toEqual(['Aqua', 'Bisque', 'Black']);
+        expect(richSelect.value).toEqual(['Aqua', 'Bisque', 'Black']);
         expect(setInputValue).toHaveBeenCalledWith('', true);
-        expect((richSelect as any).hidePicker).toHaveBeenCalled();
-        expect((richSelect as any).dispatchPickerEventAndHidePicker).not.toHaveBeenCalled();
+        expect(richSelect.hidePicker).toHaveBeenCalled();
+        expect(richSelect.dispatchPickerEventAndHidePicker).not.toHaveBeenCalled();
     });
 
     it('selects highlighted item on enter in typing multi-select mode even when input is empty', () => {
@@ -923,29 +921,29 @@ describe('AgRichSelect', () => {
             }),
         };
 
-        (richSelect as any).values = ['Aqua', 'Black'];
-        (richSelect as any).value = ['Aqua'];
-        (richSelect as any).isPickerDisplayed = true;
-        (richSelect as any).listComponent = listComponent;
-        (richSelect as any).eDeselect = document.createElement('span');
-        (richSelect as any).eDisplayField = document.createElement('span');
-        (richSelect as any).createOrUpdatePillContainer = jest.fn();
+        richSelect.values = ['Aqua', 'Black'];
+        richSelect.value = ['Aqua'];
+        richSelect.isPickerDisplayed = true;
+        richSelect.listComponent = listComponent;
+        richSelect.eDeselect = document.createElement('span');
+        richSelect.eDisplayField = document.createElement('span');
+        richSelect.createOrUpdatePillContainer = jest.fn();
         const setInputValue = jest.fn();
-        (richSelect as any).eInput = {
+        richSelect.eInput = {
             getValue: () => '',
             setValue: setInputValue,
             setInputPlaceholder: jest.fn(),
         };
-        (richSelect as any).hidePicker = jest.fn();
-        (richSelect as any).dispatchPickerEventAndHidePicker = jest.fn();
+        richSelect.hidePicker = jest.fn();
+        richSelect.dispatchPickerEventAndHidePicker = jest.fn();
 
-        (richSelect as any).onEnterKeyDown({ preventDefault: jest.fn() } as unknown as KeyboardEvent);
+        richSelect.onEnterKeyDown({ preventDefault: jest.fn() } as unknown as KeyboardEvent);
 
         expect(listComponent.selectValue).toHaveBeenCalledWith(['Aqua', 'Black']);
-        expect((richSelect as any).value).toEqual(['Aqua', 'Black']);
+        expect(richSelect.value).toEqual(['Aqua', 'Black']);
         expect(setInputValue).toHaveBeenCalledWith('', true);
-        expect((richSelect as any).hidePicker).toHaveBeenCalled();
-        expect((richSelect as any).dispatchPickerEventAndHidePicker).not.toHaveBeenCalled();
+        expect(richSelect.hidePicker).toHaveBeenCalled();
+        expect(richSelect.dispatchPickerEventAndHidePicker).not.toHaveBeenCalled();
     });
 
     it('reopens the picker when typing resumes in collapsed typing multi-select mode', () => {
@@ -955,11 +953,11 @@ describe('AgRichSelect', () => {
         });
         const showPicker = jest.fn();
 
-        (richSelect as any).isPickerDisplayed = false;
-        (richSelect as any).showPicker = showPicker;
+        richSelect.isPickerDisplayed = false;
+        richSelect.showPicker = showPicker;
 
-        (richSelect as any).openPickerOnTypingIfNeeded('D');
-        (richSelect as any).openPickerOnTypingIfNeeded('');
+        richSelect.openPickerOnTypingIfNeeded('D');
+        richSelect.openPickerOnTypingIfNeeded('');
 
         expect(showPicker).toHaveBeenCalledTimes(1);
     });
@@ -974,12 +972,12 @@ describe('AgRichSelect', () => {
         const hidePicker = jest.fn();
         const dispatchPickerEventAndHidePicker = jest.fn();
 
-        (richSelect as any).setValue = setValue;
-        (richSelect as any).resetTypingMultiSelectSearchState = resetTypingMultiSelectSearchState;
-        (richSelect as any).hidePicker = hidePicker;
-        (richSelect as any).dispatchPickerEventAndHidePicker = dispatchPickerEventAndHidePicker;
+        richSelect.setValue = setValue;
+        richSelect.resetTypingMultiSelectSearchState = resetTypingMultiSelectSearchState;
+        richSelect.hidePicker = hidePicker;
+        richSelect.dispatchPickerEventAndHidePicker = dispatchPickerEventAndHidePicker;
 
-        (richSelect as any).onListValueSelected(new Set<string>(['DarkBlue']), false);
+        richSelect.onListValueSelected(new Set<string>(['DarkBlue']), false);
 
         expect(setValue).toHaveBeenCalledWith(['DarkBlue'], false, true);
         expect(resetTypingMultiSelectSearchState).toHaveBeenCalled();
@@ -993,26 +991,26 @@ describe('AgRichSelect', () => {
             multiSelect: true,
         });
 
-        (richSelect as any).isPickerDisplayed = true;
-        (richSelect as any).listComponent = {
+        richSelect.isPickerDisplayed = true;
+        richSelect.listComponent = {
             getCurrentList: () => ['Open'],
             getLastItemHovered: () => undefined,
             getSelectedItems: () => new Set<string>(),
             selectValue: jest.fn(),
         };
-        (richSelect as any).eInput = {
+        richSelect.eInput = {
             getValue: () => 'open',
             setInputPlaceholder: jest.fn(),
         };
-        (richSelect as any).hidePicker = jest.fn();
-        (richSelect as any).dispatchPickerEventAndHidePicker = jest.fn();
+        richSelect.hidePicker = jest.fn();
+        richSelect.dispatchPickerEventAndHidePicker = jest.fn();
 
         const preventDefault = jest.fn();
-        (richSelect as any).onEnterKeyDown({ preventDefault } as unknown as KeyboardEvent);
+        richSelect.onEnterKeyDown({ preventDefault } as unknown as KeyboardEvent);
 
         expect(preventDefault).toHaveBeenCalled();
-        expect((richSelect as any).hidePicker).not.toHaveBeenCalled();
-        expect((richSelect as any).dispatchPickerEventAndHidePicker).not.toHaveBeenCalled();
+        expect(richSelect.hidePicker).not.toHaveBeenCalled();
+        expect(richSelect.dispatchPickerEventAndHidePicker).not.toHaveBeenCalled();
     });
 
     it('finishes edit on enter when typing multi-select mode has a collapsed list', () => {
@@ -1021,14 +1019,14 @@ describe('AgRichSelect', () => {
             multiSelect: true,
         });
 
-        (richSelect as any).value = ['Open'];
-        (richSelect as any).isPickerDisplayed = false;
-        (richSelect as any).dispatchPickerEventAndHidePicker = jest.fn();
+        richSelect.value = ['Open'];
+        richSelect.isPickerDisplayed = false;
+        richSelect.dispatchPickerEventAndHidePicker = jest.fn();
 
         const preventDefault = jest.fn();
-        (richSelect as any).onEnterKeyDown({ preventDefault } as unknown as KeyboardEvent);
+        richSelect.onEnterKeyDown({ preventDefault } as unknown as KeyboardEvent);
 
         expect(preventDefault).toHaveBeenCalled();
-        expect((richSelect as any).dispatchPickerEventAndHidePicker).toHaveBeenCalledWith(['Open'], true);
+        expect(richSelect.dispatchPickerEventAndHidePicker).toHaveBeenCalledWith(['Open'], true);
     });
 });
