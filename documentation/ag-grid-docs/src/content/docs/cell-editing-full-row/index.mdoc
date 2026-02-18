@@ -2,25 +2,94 @@
 title: "Full Row Editing"
 ---
 
+Edit entire rows at once with start/stop behavior for the full row instead of individual cells.
+
 Full row editing is for when you want all cells in the row to become editable at the same time. This gives the impression to the user that the record the row represents is being edited.
 
+## When to Use Full Row Editing
+
+Full row editing is particularly useful when:
+
+- **Form-like Editing**: Your data represents complete records (like user profiles, orders, or inventory items) where editing multiple fields together makes sense.
+- **Related Fields**: Changes to one field often require updates to related fields in the same row.
+- **User Experience**: You want to provide a clear visual indication that a record is being edited.
+- **Data Validation**: You need to validate relationships between fields before saving (e.g., ensuring a start date is before an end date).
+
+## Enable Full Row Editing
+
 To enable full row editing, set the grid option `editType = 'fullRow'`.
+
+```{% frameworkTransform=true spaceBetweenProperties=true %}
+const gridOptions = {
+    editType: 'fullRow'
+}
+```
+
+## How It Works
+
+When full row editing is enabled, the editing behavior changes:
+
+1. **Starting Edit**: When you start editing any cell, all editable cells in that row become editable simultaneously.
+2. **Navigation**: Press {% kbd "⇥ Tab" /%} to move between cells within the editing row. Read-only cells remain focusable but not editable.
+3. **Stopping Edit**: Pressing {% kbd "↵ Enter" /%} or clicking outside the row commits all changes and stops editing for the entire row.
+4. **Cancelling Edit**: Press {% kbd "⎋ Esc" /%} to discard all changes and exit edit mode for the row.
+
+## Events
+
+When a row stops editing:
+- `cellValueChanged` event fires for each column that changed
+- `rowValueChanged` event fires once for the entire row
+- `rowEditingStarted` fires when edit mode begins
+- `rowEditingStopped` fires when edit mode ends
+
+## Custom Cell Editors
 
 If using custom cell editors, the cell editors will work in the exact same way with the following additions:
 
 -   `focusIn`: If your cell editor has a `focusIn()` method, it will get called when the user tabs into the cell. This should be used to put the focus on the particular item to be focused, e.g. the `textfield` within your cell editor.
 -   `focusOut`: If your cell editor has a `focusOut()` method, it will get called when the user tabs out of the cell. There is no intended use for this; it's just there to complement the `focusIn()` method.
--   Events: When a row stops editing, the `cellValueChanged` event gets called for each column and `rowValueChanged` gets called once for the row.
 
-### Full Row Edit and Popup Editors
+## Integration with Other Features
+
+### Validation
+
+Full row editing works seamlessly with [Cell Editing Validation](./cell-editing-validation/). You can validate individual cells as well as perform cross-field validation using `getFullRowEditValidationErrors`. The row will only save if all cells pass validation.
+
+### Undo / Redo
+
+When [Undo / Redo](./undo-redo-edits/) is enabled, undoing a full row edit will revert all cells in the row to their previous values as a single operation.
+
+### Read-Only Cells
+
+Cells with `editable: false` remain read-only during full row editing, but they can still receive focus when tabbing through the row.
+
+### Keyboard Navigation
+
+Use {% kbd "⇥ Tab" /%} and {% kbd "⇧ Shift" /%}+{% kbd "⇥ Tab" /%} to navigate between editable cells within the row. Cells with `suppressNavigable: true` will be skipped during tab navigation.
+
+## Popup Editors
 
 Full row editing is not compatible with popup editors. This is because a) the grid would look confusing to pop up an editor for each cell in the row at the same time and b) the complexity of navigation and popup is almost impossible to model, so the grid and your application code would be messy and very error prone. If you are using full row edit, then you are prevented from using popup editors.
 
 This does not mean that you cannot show a popup from your 'in cell' editor - you are free to do that - however the responsibility of showing and hiding the popup belongs with your editor. You may want to use the grid's focus events to hide the popups when the user tabs or clicks out of the cell.
 
-### Example: Full Row Edit
+## Starting Edit Programmatically
 
-The example below shows full row editing. In addition to standard full row editing, the following should also be noted:
+You can start full row editing programmatically using the grid API:
+
+```{% frameworkTransform=true %}
+// Start editing a specific cell - the entire row becomes editable
+api.startEditingCell({
+    rowIndex: 2,
+    colKey: 'athlete'
+});
+```
+
+Even though you specify a single cell, the entire row enters edit mode when using `editType: 'fullRow'`.
+
+## Example: Full Row Editing
+
+The example below demonstrates full row editing. In addition to standard full row editing, the following should also be noted:
 
 -   The 'Price' column has a custom editor demonstrating how you should implement the `focusIn()` method.
     Both `focusIn()` and `focusOut()` for this editor are logged to the console. Note that `focusIn()`
@@ -34,3 +103,10 @@ The example below shows full row editing. In addition to standard full row editi
 -   `cellValueChanged` and `rowValueChanged` events are logged to console.
 
 {% gridExampleRunner title="Full Row Editing" name="full-row-editing"  exampleHeight=527 /%}
+
+## See Also
+
+- [Cell Editing](./cell-editing/) - Enable and configure cell editing
+- [Start / Stop Editing](./cell-editing-start-stop/) - Control when editing begins and ends
+- [Custom Edit Components](./cell-editors/) - Build custom cell editors
+- [Validation](./cell-editing-validation/) - Validate edited values

@@ -997,88 +997,112 @@
                             "path": "cell-editing"
                         },
                         {
-                            "type": "item",
-                            "title": "Start / Stop Editing",
-                            "path": "cell-editing-start-stop"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Parsing Values",
-                            "path": "value-parsers"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Saving Values",
-                            "path": "value-setters"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Edit Components",
-                            "path": "cell-editors"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Provided Cell Editors",
-                            "path": "provided-cell-editors",
+                            "type": "group",
+                            "title": "Editing Basics",
                             "children": [
                                 {
                                     "type": "item",
-                                    "title": "Text Editor",
-                                    "path": "provided-cell-editors-text"
+                                    "title": "Start / Stop Editing",
+                                    "path": "cell-editing-start-stop"
                                 },
                                 {
                                     "type": "item",
-                                    "title": "Large Text Editor",
-                                    "path": "provided-cell-editors-large-text"
+                                    "title": "Parsing Values",
+                                    "path": "value-parsers"
                                 },
                                 {
                                     "type": "item",
-                                    "title": "Select Editor",
-                                    "path": "provided-cell-editors-select"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Rich Select Editor",
-                                    "path": "provided-cell-editors-rich-select",
-                                    "isEnterprise": true
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Number Editor",
-                                    "path": "provided-cell-editors-number"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Date Editors",
-                                    "path": "provided-cell-editors-date"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Checkbox Editor",
-                                    "path": "provided-cell-editors-checkbox"
+                                    "title": "Saving Values",
+                                    "path": "value-setters"
                                 }
                             ]
                         },
                         {
-                            "type": "item",
-                            "title": "Undo / Redo Edits",
-                            "path": "undo-redo-edits"
+                            "type": "group",
+                            "title": "Cell Editors",
+                            "children": [
+                                {
+                                    "type": "item",
+                                    "title": "Provided Cell Editors",
+                                    "path": "provided-cell-editors",
+                                    "children": [
+                                        {
+                                            "type": "item",
+                                            "title": "Text Editor",
+                                            "path": "provided-cell-editors-text"
+                                        },
+                                        {
+                                            "type": "item",
+                                            "title": "Large Text Editor",
+                                            "path": "provided-cell-editors-large-text"
+                                        },
+                                        {
+                                            "type": "item",
+                                            "title": "Select Editor",
+                                            "path": "provided-cell-editors-select"
+                                        },
+                                        {
+                                            "type": "item",
+                                            "title": "Rich Select Editor",
+                                            "path": "provided-cell-editors-rich-select",
+                                            "isEnterprise": true
+                                        },
+                                        {
+                                            "type": "item",
+                                            "title": "Number Editor",
+                                            "path": "provided-cell-editors-number"
+                                        },
+                                        {
+                                            "type": "item",
+                                            "title": "Date Editors",
+                                            "path": "provided-cell-editors-date"
+                                        },
+                                        {
+                                            "type": "item",
+                                            "title": "Checkbox Editor",
+                                            "path": "provided-cell-editors-checkbox"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Custom Edit Components",
+                                    "path": "cell-editors"
+                                }
+                            ]
                         },
                         {
-                            "type": "item",
-                            "title": "Full Row",
-                            "path": "cell-editing-full-row"
+                            "type": "group",
+                            "title": "Editing Modes",
+                            "children": [
+                                {
+                                    "type": "item",
+                                    "title": "Full Row Editing",
+                                    "path": "cell-editing-full-row"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Batch Editing",
+                                    "path": "cell-editing-batch",
+                                    "isEnterprise": true
+                                }
+                            ]
                         },
                         {
-                            "type": "item",
-                            "title": "Validation",
-                            "path": "cell-editing-validation"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Batch Editing",
-                            "path": "cell-editing-batch",
-                            "isEnterprise": true
+                            "type": "group",
+                            "title": "Data Quality",
+                            "children": [
+                                {
+                                    "type": "item",
+                                    "title": "Validation",
+                                    "path": "cell-editing-validation"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Undo / Redo Edits",
+                                    "path": "undo-redo-edits"
+                                }
+                            ]
                         }
                     ]
                 },
