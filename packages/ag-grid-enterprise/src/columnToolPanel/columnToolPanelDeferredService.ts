@@ -308,7 +308,7 @@ function applyPatchToState(
         pivotMode: appliedState.pivotMode,
         rowGroupColIds: appliedState.rowGroupColIds,
         pivotColIds: appliedState.pivotColIds,
-        valueCols: appliedState.valueCols,
+        valueCols: appliedState.valueCols.map((valueCol) => ({ colId: valueCol.colId, aggFunc: valueCol.aggFunc })),
         visibleColIds: appliedState.visibleColIds,
     };
 

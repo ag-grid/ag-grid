@@ -42,4 +42,19 @@ describe('ColumnToolPanelDeferredService', () => {
         expect(latestSnapshot.visibleColIds).toEqual(['athlete', 'age', 'country']);
         expect(latestSnapshot.valueCols).toEqual([{ colId: 'age', aggFunc: 'max' }]);
     });
+
+    it('stages agg changes without mutating applied value columns', () => {
+        const service = new ColumnToolPanelDeferredService();
+        service.reconcileFromApplied(
+            createState({
+                valueCols: [{ colId: 'age', aggFunc: 'sum' }],
+            })
+        );
+
+        service.applyPivotColumnStateToPending([{ colId: 'age', aggFunc: 'max' }]);
+
+        expect(service.getAppliedState().valueCols).toEqual([{ colId: 'age', aggFunc: 'sum' }]);
+        expect(service.getPendingState().valueCols).toEqual([{ colId: 'age', aggFunc: 'max' }]);
+        expect(service.hasPendingChanges()).toBe(true);
+    });
 });
