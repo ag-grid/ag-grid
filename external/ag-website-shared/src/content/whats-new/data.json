@@ -7,7 +7,7 @@
         "name": "AG Charts",
         "blogPrefix": "https://blog.ag-grid.com/whats-new-in-ag-charts-"
     },
-    "dash": {
+    "studio": {
         "name": "AG Studio",
         "blogPrefix": "https://blog.ag-grid.com/whats-new-in-ag-studio-"
     }

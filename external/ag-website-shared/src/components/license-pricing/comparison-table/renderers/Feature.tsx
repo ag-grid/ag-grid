@@ -12,7 +12,7 @@ export function Feature({ value }: { value: boolean | string }) {
                     <Icon name="tick" />
                 </span>
             )}
-            {!isEnabled && <span className={styles.dash}>—</span>}
+            {!isEnabled && <span className={styles.studio}>—</span>}
 
             {value.detail && <span className={styles.detail} dangerouslySetInnerHTML={{ __html: value.detail }}></span>}
         </div>
