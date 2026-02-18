@@ -948,6 +948,45 @@ describe('AgRichSelect', () => {
         expect((richSelect as any).dispatchPickerEventAndHidePicker).not.toHaveBeenCalled();
     });
 
+    it('reopens the picker when typing resumes in collapsed typing multi-select mode', () => {
+        const richSelect = createRichSelect<string>({
+            allowTyping: true,
+            multiSelect: true,
+        });
+        const showPicker = jest.fn();
+
+        (richSelect as any).isPickerDisplayed = false;
+        (richSelect as any).showPicker = showPicker;
+
+        (richSelect as any).maybeOpenPickerOnTypingMultiSelectInput('D');
+        (richSelect as any).maybeOpenPickerOnTypingMultiSelectInput('');
+
+        expect(showPicker).toHaveBeenCalledTimes(1);
+    });
+
+    it('resets typing state and closes picker when selecting from list in typing multi-select mode', () => {
+        const richSelect = createRichSelect<string>({
+            allowTyping: true,
+            multiSelect: true,
+        });
+        const setValue = jest.fn();
+        const resetTypingMultiSelectSearchState = jest.fn();
+        const hidePicker = jest.fn();
+        const dispatchPickerEventAndHidePicker = jest.fn();
+
+        (richSelect as any).setValue = setValue;
+        (richSelect as any).resetTypingMultiSelectSearchState = resetTypingMultiSelectSearchState;
+        (richSelect as any).hidePicker = hidePicker;
+        (richSelect as any).dispatchPickerEventAndHidePicker = dispatchPickerEventAndHidePicker;
+
+        (richSelect as any).onListValueSelected(new Set<string>(['DarkBlue']), false);
+
+        expect(setValue).toHaveBeenCalledWith(['DarkBlue'], false, true);
+        expect(resetTypingMultiSelectSearchState).toHaveBeenCalled();
+        expect(hidePicker).toHaveBeenCalled();
+        expect(dispatchPickerEventAndHidePicker).not.toHaveBeenCalled();
+    });
+
     it('does not finish edit on enter in typing multi-select mode when no item is highlighted', () => {
         const richSelect = createRichSelect<string>({
             allowTyping: true,

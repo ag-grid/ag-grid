@@ -207,6 +207,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         if (allowTyping) {
             this.eInput.onValueChange((value) => {
+                this.openPickerOnTypingIfNeeded(value);
                 this.updateTypingMultiSelectPlaceholder(value);
                 this.searchTextFromString(value);
             });
@@ -979,6 +980,17 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
     }
 
+    private openPickerOnTypingIfNeeded(value: string | null | undefined): void {
+        const {
+            isPickerDisplayed,
+            config: { allowTyping, multiSelect },
+        } = this;
+
+        if (allowTyping && multiSelect && !isPickerDisplayed && !!value) {
+            this.showPicker();
+        }
+    }
+
     private onDeleteKeyDown(e: KeyboardEvent): void {
         const { eWrapper, beans } = this;
         const activeEl = _getActiveDomElement(beans);
@@ -1053,7 +1065,12 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         this.setValue(newValue, false, true);
 
-        if (!this.config.multiSelect) {
+        const { multiSelect, allowTyping } = this.config;
+
+        if (multiSelect && allowTyping) {
+            this.resetTypingMultiSelectSearchState();
+            this.hidePicker();
+        } else if (!multiSelect) {
             this.dispatchPickerEventAndHidePicker(newValue, fromEnterKey);
         }
     }
