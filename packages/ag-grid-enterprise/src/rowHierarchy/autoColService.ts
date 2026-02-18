@@ -5,6 +5,7 @@ import type {
     IColumnCollectionService,
     NamedBean,
     PropertyValueChangedEvent,
+    RowNode,
     _ColumnCollections,
 } from 'ag-grid-community';
 import {
@@ -36,6 +37,13 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
 
     public postConstruct(): void {
         this.addManagedPropertyListener('autoGroupColumnDef', this.updateColumns.bind(this));
+
+        this.addManagedEventListeners({
+            rowExpansionStateChanged: () => this.updateGroupColumnVisibility(),
+            expandOrCollapseAll: () => this.updateGroupColumnVisibility(),
+            modelUpdated: () => this.updateGroupColumnVisibility(),
+        });
+        this.addManagedPropertyListener('showGroupColumnsWhenExpanded', () => this.updateGroupColumnVisibility());
     }
 
     public addColumns(cols: _ColumnCollections): void {
@@ -271,6 +279,74 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
         }
 
         return res;
+    }
+
+    private updateGroupColumnVisibility(): void {
+        const columns = this.columns?.list;
+        if (!columns || columns.length <= 1) {
+            return;
+        }
+
+        const { gos, visibleCols } = this.beans;
+        const isFeatureEnabled = gos.get('showGroupColumnsWhenExpanded') && _isGroupMultiAutoColumn(gos);
+
+        let changed = false;
+
+        if (!isFeatureEnabled) {
+            // Reset: ensure all auto group columns are visible
+            for (const col of columns) {
+                if (!col.isVisible()) {
+                    col.setVisible(true, 'api');
+                    changed = true;
+                }
+            }
+        } else {
+            const expandedLevels = this.calculateExpandedLevels(columns.length);
+
+            for (let i = 0; i < columns.length; i++) {
+                // Level 0 always visible; level K visible if expandedLevels[K-1] is true
+                const shouldBeVisible = i === 0 || expandedLevels[i - 1];
+                const isCurrentlyVisible = columns[i].isVisible();
+                if (shouldBeVisible !== isCurrentlyVisible) {
+                    columns[i].setVisible(shouldBeVisible, 'api');
+                    changed = true;
+                }
+            }
+        }
+
+        if (changed) {
+            visibleCols.refresh('api');
+        }
+    }
+
+    private calculateExpandedLevels(numLevels: number): boolean[] {
+        const expandedLevels = new Array<boolean>(numLevels).fill(false);
+        const rootNode = this.beans.rowModel.rootNode;
+        if (!rootNode) {
+            return expandedLevels;
+        }
+
+        const traverse = (children: RowNode[] | null): void => {
+            if (!children) {
+                return;
+            }
+            for (const node of children) {
+                if (!node.group) {
+                    continue;
+                }
+                if (node.expanded) {
+                    expandedLevels[node.level] = true;
+                }
+                // Early exit: no need to traverse further once every level has an expanded node
+                if (expandedLevels.every(Boolean)) {
+                    return;
+                }
+                traverse(node.childrenAfterGroup as RowNode[] | null);
+            }
+        };
+
+        traverse(rootNode.childrenAfterGroup as RowNode[] | null);
+        return expandedLevels;
     }
 
     public override destroy(): void {

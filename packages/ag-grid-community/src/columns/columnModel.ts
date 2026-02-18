@@ -74,6 +74,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
                 'treeData',
                 'treeDataDisplayType',
                 'groupHideOpenParents',
+                'showGroupColumnsWhenExpanded',
                 'rowNumbers',
                 'hidePaddedHeaderRows',
             ],
@@ -285,25 +286,26 @@ export class ColumnModel extends BeanStub implements NamedBean {
         // show columns we are aggregating on and possibly the selection/row numbers column
         const { beans, showingPivotResult, cols } = this;
 
-        const { valueColsSvc, selectionColSvc } = beans;
+        const { valueColsSvc, selectionColSvc, gos } = beans;
         const showAutoGroupAndValuesOnly = this.isPivotMode() && !showingPivotResult;
         const showSelectionColumn = selectionColSvc?.isSelectionColumnEnabled();
         const showRowNumbers = _isRowNumbers(beans);
         const valueColumns = valueColsSvc?.columns;
+        const showGroupColumnsWhenExpanded = gos.get('showGroupColumnsWhenExpanded');
 
         const res = cols.list.filter((col) => {
             const isAutoGroupCol = isColumnGroupAutoCol(col);
             if (showAutoGroupAndValuesOnly) {
                 const isValueCol = valueColumns?.includes(col);
                 return (
-                    isAutoGroupCol ||
+                    (isAutoGroupCol && (!showGroupColumnsWhenExpanded || col.isVisible())) ||
                     isValueCol ||
                     (showSelectionColumn && isColumnSelectionCol(col)) ||
                     (showRowNumbers && isRowNumberCol(col))
                 );
             } else {
-                // keep col if a) it's auto-group or b) it's visible
-                return isAutoGroupCol || col.isVisible();
+                // keep col if a) it's auto-group (and feature not managing visibility) or b) it's visible
+                return (isAutoGroupCol && !showGroupColumnsWhenExpanded) || col.isVisible();
             }
         });
 

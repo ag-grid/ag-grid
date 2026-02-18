@@ -1495,6 +1495,15 @@ export interface GridOptions<TData = any> {
      */
     groupHideOpenParents?: boolean;
     /**
+     * When using `groupDisplayType='multipleColumns'`, dynamically shows group columns
+     * based on expansion state. Only the top-level group column is initially visible;
+     * each subsequent level becomes visible when at least one group at the preceding
+     * level is expanded.
+     * @default false
+     * @agModule `RowGroupingModule`
+     */
+    showGroupColumnsWhenExpanded?: boolean;
+    /**
      * Set to `true` to prevent the grid from creating a '(Blanks)' group for nodes which do not belong to a group, and display the unbalanced nodes alongside group nodes.
      * @default false
      * @agModule `RowGroupingModule`
