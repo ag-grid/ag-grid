@@ -1,6 +1,7 @@
 import type { AgColumn, ColumnEventType, DragItem, DropTarget, GridDraggingEvent } from 'ag-grid-community';
 import { DragSourceType, _shouldUpdateColVisibilityAfterGroup } from 'ag-grid-community';
 
+import type { BaseColumnToolPanelEdits } from '../../columnToolPanel/columnToolPanelEdits';
 import type { PillDropZonePanelParams } from '../../widgets/pillDropZonePanel';
 import { PillDropZonePanel } from '../../widgets/pillDropZonePanel';
 import { DropZoneColumnComp } from './dropZoneColumnComp';
@@ -73,9 +74,17 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
     }
 
     public setColumnsVisible(columns: AgColumn[] | null | undefined, visible: boolean, source: ColumnEventType) {
-        if (columns) {
-            const allowedCols = columns.filter((c) => !c.getColDef().lockVisible);
-            this.beans.colModel.setColsVisible(allowedCols, visible, source);
+        if (!columns) {
+            return;
+        }
+        const { beans } = this;
+        const strategy = (beans.columnToolPanelSyncEditStrategy ||
+            beans.columnToolPanelDeferredEditStrategy) as BaseColumnToolPanelEdits; // todo this should be more decisive
+        const allowedCols = columns.filter((c) => !c.getColDef().lockVisible);
+        if (strategy) {
+            strategy.setColumnsVisible(allowedCols, visible, source);
+        } else {
+            beans.colModel.setColsVisible(allowedCols, visible, source);
         }
     }
 

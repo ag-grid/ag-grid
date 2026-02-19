@@ -46,7 +46,7 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
     protected updateItems(columns: AgColumn[]): void {
         const { beans } = this;
         const strategy = (beans.columnToolPanelSyncEditStrategy ||
-            beans.columnToolPanelDeferredEditStrategy) as BaseColumnToolPanelEdits;
+            beans.columnToolPanelDeferredEditStrategy) as BaseColumnToolPanelEdits; // todo this should be more decisive
         if (strategy) {
             strategy.setValueColumns(columns, 'toolPanelUi');
         } else {
