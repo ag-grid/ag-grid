@@ -273,34 +273,34 @@ export abstract class BaseEnvironment<
     }
 
     private handleNewTheme(newTheme: ThemeImpl | undefined): void {
-        const { gos, eRootDiv, globalCSS } = this;
+        const { gos, eRootDiv, globalCSS, eStyleContainer, cssLayer, styleNonce } = this;
         const additionalCss = this.getAdditionalCss();
         if (newTheme) {
-            _injectCoreAndModuleCSS(this.eStyleContainer, this.cssLayer, this.styleNonce, additionalCss);
+            _injectCoreAndModuleCSS(eStyleContainer, cssLayer, styleNonce, additionalCss);
             for (const [css, debugId] of globalCSS) {
-                _injectGlobalCSS(css, this.eStyleContainer, debugId, this.cssLayer, 0, this.styleNonce);
+                _injectGlobalCSS(css, eStyleContainer, debugId, cssLayer, 0, styleNonce);
             }
             globalCSS.length = 0;
         }
         this.theme = newTheme;
         newTheme?._startUse({
             loadThemeGoogleFonts: gos.get('loadThemeGoogleFonts'),
-            styleContainer: this.eStyleContainer,
-            cssLayer: this.cssLayer,
-            nonce: this.styleNonce,
+            styleContainer: eStyleContainer,
+            cssLayer,
+            nonce: styleNonce,
             moduleCss: additionalCss,
         });
 
-        _useParamsCss(
-            this,
-            newTheme?._getParamsCss() ?? null,
-            newTheme?._getParamsClassName() ?? null,
-            newTheme?._getDynamicParamsCss() ?? null,
-            newTheme?._getDynamicParamsDebugId() ?? null,
-            this.eStyleContainer,
-            this.cssLayer,
-            this.styleNonce
-        );
+        _useParamsCss({
+            environment: this,
+            paramsCss: newTheme?._getParamsCss() ?? null,
+            paramsDebugId: newTheme?._getParamsClassName() ?? null,
+            dynamicParamsCss: newTheme?._getDynamicParamsCss() ?? null,
+            dynamicParamsDebugId: newTheme?._getDynamicParamsDebugId() ?? null,
+            styleContainer: eStyleContainer,
+            layer: cssLayer,
+            nonce: styleNonce,
+        });
 
         this.applyThemeClasses(eRootDiv);
         const dynamicParamKeys = newTheme?._getDynamicParamKeys() ?? [];

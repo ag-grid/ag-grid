@@ -120,7 +120,12 @@ export class ThemeImpl {
     }
 
     _getDynamicParamsDebugId(): string {
-        return (this._variableParamsDebugId ??= this._getParamsClassName().replace('ag-theme-', 'ag-theme-dynamic-'));
+        let _variableParamsDebugId = this._variableParamsDebugId;
+        if (!_variableParamsDebugId) {
+            _variableParamsDebugId = this._getParamsClassName().replace('ag-theme-', 'ag-theme-dynamic-');
+            this._variableParamsDebugId = _variableParamsDebugId;
+        }
+        return _variableParamsDebugId;
     }
 
     _getModeParams(): ModalParamValues {

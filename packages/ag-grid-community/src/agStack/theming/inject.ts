@@ -11,7 +11,7 @@ type InjectedStyle = {
     el: HTMLStyleElement;
     priority: number;
     isParams: boolean;
-    dynamicParamsId?: string;
+    debugId?: string;
 };
 
 export const _injectGlobalCSS = (
@@ -21,8 +21,7 @@ export const _injectGlobalCSS = (
     layer: string | undefined,
     priority: number,
     nonce: string | undefined,
-    isParams: boolean = false,
-    dynamicParamsId?: string
+    isParams: boolean = false
 ) => {
     if (IS_SSR || FORCE_LEGACY_THEMES) {
         return;
@@ -49,7 +48,7 @@ export const _injectGlobalCSS = (
     }
     el.dataset.agGlobalCss = debugId;
     el.textContent = css;
-    const newInjection: InjectedStyle = { css, el, priority, isParams, dynamicParamsId };
+    const newInjection: InjectedStyle = { css, el, priority, isParams, debugId };
 
     let insertAfter: InjectedStyle | undefined;
     for (const injection of injections) {
@@ -84,19 +83,30 @@ export const _injectCoreAndModuleCSS = (
     );
 };
 
-export const _useParamsCss = (
-    environment: IEnvironment,
-    paramsCss: string | null,
-    paramsDebugId: string | null,
-    dynamicParamsCss: string | null,
-    dynamicParamsDebugId: string | null,
-    styleContainer: HTMLElement,
-    layer: string | undefined,
-    nonce: string | undefined
-) => {
+export const _useParamsCss = (params: {
+    environment: IEnvironment;
+    paramsCss: string | null;
+    paramsDebugId: string | null;
+    dynamicParamsCss: string | null;
+    dynamicParamsDebugId: string | null;
+    styleContainer: HTMLElement;
+    layer: string | undefined;
+    nonce: string | undefined;
+}) => {
     if (IS_SSR || FORCE_LEGACY_THEMES) {
         return;
     }
+
+    const {
+        environment,
+        paramsCss,
+        paramsDebugId,
+        dynamicParamsCss,
+        dynamicParamsDebugId,
+        styleContainer,
+        layer,
+        nonce,
+    } = params;
 
     const gridState = injectionState.grids.get(environment);
     if (!gridState) {
@@ -116,16 +126,7 @@ export const _useParamsCss = (
         _injectGlobalCSS(paramsCss, styleContainer, paramsDebugId, layer, 2, nonce, true);
     }
     if (dynamicParamsCss && dynamicParamsDebugId) {
-        _injectGlobalCSS(
-            dynamicParamsCss,
-            styleContainer,
-            dynamicParamsDebugId,
-            layer,
-            2,
-            nonce,
-            true,
-            dynamicParamsDebugId
-        );
+        _injectGlobalCSS(dynamicParamsCss, styleContainer, dynamicParamsDebugId, layer, 2, nonce, true);
     }
 };
 
@@ -146,7 +147,7 @@ export const _updateDynamicParamsCss = (
         gridState.dynamicParamsCss = dynamicParamsCss;
     }
     const injections = injectionStateMap.get(styleContainer);
-    const injectionIndex = injections?.findIndex(({ dynamicParamsId }) => dynamicParamsId === dynamicParamsDebugId);
+    const injectionIndex = injections?.findIndex(({ debugId }) => debugId === dynamicParamsDebugId);
     if (injectionIndex != null && injectionIndex !== -1) {
         const { css: oldCss, el } = injections![injectionIndex];
         el.remove();
@@ -157,16 +158,7 @@ export const _updateDynamicParamsCss = (
             }
         }
     }
-    _injectGlobalCSS(
-        dynamicParamsCss,
-        styleContainer,
-        dynamicParamsDebugId,
-        layer,
-        2,
-        nonce,
-        true,
-        dynamicParamsDebugId
-    );
+    _injectGlobalCSS(dynamicParamsCss, styleContainer, dynamicParamsDebugId, layer, 2, nonce, true);
 };
 
 export const _unregisterInstanceUsingThemingAPI = (environment: IEnvironment) => {
