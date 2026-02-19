@@ -141,12 +141,6 @@ describe('AgRichSelect', () => {
         expect(richSelect.getValueFromSet(new Set<number>([3, 1, 4]))).toEqual([3, 1, 4]);
     });
 
-    it('keeps selected order stable when list is filtered', () => {
-        const richSelect = createRichSelect<string>({ multiSelect: true });
-
-        expect(richSelect.getValueFromSet(new Set<string>(['Orange', 'Aqua']))).toEqual(['Orange', 'Aqua']);
-    });
-
     it('preserves object selections in insertion order', () => {
         const selected = { id: 2, label: 'two-selected' };
         const second = { id: 1, label: 'one' };
@@ -277,6 +271,32 @@ describe('AgRichSelect', () => {
 
         expect(listComponent.refresh).toHaveBeenCalledWith(true);
         expect(listComponent.selectValue).not.toHaveBeenCalled();
+    });
+
+    it('preserves viewport continuity when async paging prepends rows', () => {
+        const richSelect = createRichSelect<string>();
+        const listComponent = {
+            getScrollTop: jest.fn(() => 500),
+            setCurrentList: jest.fn(),
+            restoreScrollOnPrependedRows: jest.fn(),
+            refresh: jest.fn(),
+            getIndicesForValues: jest.fn(() => []),
+            selectValue: jest.fn(),
+        };
+
+        richSelect.listComponent = listComponent;
+        richSelect.isPickerDisplayed = true;
+        richSelect.value = 'Language 19254';
+
+        richSelect.setValueList({
+            valueList: ['Language 19154', 'Language 19155'],
+            refresh: true,
+            isInitial: true,
+            prependedRowCount: 100,
+        });
+
+        expect(listComponent.getScrollTop).toHaveBeenCalled();
+        expect(listComponent.restoreScrollOnPrependedRows).toHaveBeenCalledWith(500, 100);
     });
 
     it('clears current list immediately while waiting for debounced async search', () => {

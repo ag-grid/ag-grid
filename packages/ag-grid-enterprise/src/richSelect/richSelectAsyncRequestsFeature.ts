@@ -22,6 +22,7 @@ interface RichSelectAsyncHost<TValue> {
         refresh?: boolean;
         isInitial?: boolean;
         scrollToCurrentValue?: boolean;
+        prependedRowCount?: number;
     }) => void;
     setIsLoading: () => void;
 }
@@ -285,6 +286,7 @@ export class RichSelectAsyncRequestsFeature<TValue = any> {
             refresh: true,
             isInitial: true,
             scrollToCurrentValue: isFirstLoadedPage,
+            prependedRowCount: direction === 'up' ? values.length : undefined,
         });
 
         if (isFirstLoadedPage) {

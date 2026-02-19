@@ -422,9 +422,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         refresh?: boolean;
         isInitial?: boolean;
         scrollToCurrentValue?: boolean;
+        prependedRowCount?: number;
     }): void {
         const { listComponent, isPickerDisplayed, value } = this;
-        const { valueList, refresh, isInitial, scrollToCurrentValue = true } = params;
+        const { valueList, refresh, isInitial, scrollToCurrentValue = true, prependedRowCount = 0 } = params;
         if (isInitial) {
             this.setValues(valueList);
         }
@@ -432,12 +433,19 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             return;
         }
 
+        const previousScrollTop = prependedRowCount > 0 ? listComponent.getScrollTop() : undefined;
+
         // we need to update the list component even if the 'values' is undefined
         listComponent.setCurrentList(valueList);
 
         if (!refresh) {
             return;
         }
+
+        if (isPickerDisplayed && previousScrollTop != null && prependedRowCount > 0) {
+            listComponent.restoreScrollOnPrependedRows?.(previousScrollTop, prependedRowCount);
+        }
+
         if (this.values) {
             listComponent.refresh(true);
             const hasCurrentValueInLoadedList = value != null && listComponent.getIndicesForValues(value).length > 0;
@@ -460,6 +468,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         refresh?: boolean;
         isInitial?: boolean;
         scrollToCurrentValue?: boolean;
+        prependedRowCount?: number;
     }): void {
         const { valueList } = params;
 
@@ -608,7 +617,12 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             return _getActiveDomElement(this.beans);
         }
 
-        const inputEl = this.eInput.getInputElement();
+        const inputEl = this.getTypingInputElement();
+
+        if (!inputEl) {
+            return document.activeElement;
+        }
+
         return inputEl.ownerDocument?.activeElement ?? document.activeElement;
     }
 
@@ -954,12 +968,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     }
 
     private updateTypingMultiSelectInputSize(inputValue: string, placeholder?: string): void {
-        const getInputElement = (this.eInput as Partial<GridInputTextField>).getInputElement;
-        if (typeof getInputElement !== 'function') {
-            return;
-        }
+        const inputEl = this.getTypingInputElement();
 
-        const inputEl = getInputElement.call(this.eInput);
         if (!inputEl) {
             return;
         }
@@ -978,6 +988,15 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 _setScrollLeft(ePillContainer, ePillContainer.scrollWidth, this.isRtl());
             }
         }
+    }
+
+    private getTypingInputElement(): HTMLInputElement | undefined {
+        const getInputElement = (this.eInput as Partial<GridInputTextField>).getInputElement;
+        if (typeof getInputElement !== 'function') {
+            return;
+        }
+
+        return getInputElement.call(this.eInput);
     }
 
     private openPickerOnTypingIfNeeded(value: string | null | undefined): void {

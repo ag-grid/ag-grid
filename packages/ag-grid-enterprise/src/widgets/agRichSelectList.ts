@@ -118,9 +118,6 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
                 this.stateAnnouncementCallback?.(stateAnnouncement);
             }
         }
-        if (state !== STATE_LOADING) {
-            this.scheduleMaybeRequestMoreRows();
-        }
     }
 
     private toggleStateComp(): void {
@@ -269,6 +266,23 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
             getRowCount: () => list.length,
             getRow: (index: number) => list[index],
             areRowsEqual: (oldRow, newRow) => oldRow === newRow,
+        });
+    }
+
+    public restoreScrollOnPrependedRows(previousScrollTop: number, prependedRowCount: number): void {
+        if (prependedRowCount <= 0) {
+            return;
+        }
+
+        const eGui = this.getGui();
+        const rowHeight = this.getRowHeight();
+        const nextScrollTop = previousScrollTop + prependedRowCount * rowHeight;
+
+        this.awaitStable(() => {
+            if (!this.isAlive()) {
+                return;
+            }
+            eGui.scrollTop = nextScrollTop;
         });
     }
 
