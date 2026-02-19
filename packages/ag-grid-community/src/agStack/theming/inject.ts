@@ -1,3 +1,4 @@
+import { VERSION } from '../../version';
 import type { IEnvironment } from '../interfaces/iEnvironment';
 import { sharedCSS } from './shared/shared.css-GENERATED';
 
@@ -45,7 +46,8 @@ export const _injectGlobalCSS = (
     if (nonce) {
         el.setAttribute('nonce', nonce);
     }
-    el.dataset.agGlobalCss = debugId;
+    el.dataset.agCss = debugId;
+    el.dataset.agCssVersion = VERSION;
     el.textContent = css;
     const newInjection: InjectedStyle = { css, el, priority, isParams };
 
@@ -155,19 +157,35 @@ type InjectionState = {
     grids: Map<IEnvironment, InjectedGridCssState>;
 };
 
+// IMPORTANT: this global API on the window object must remain constant across
+// versions. Each version is free to change the structure of InjectionState, but
+// the contract of "agStyleInjectionVersions" is that it is map of version to
+// that version's state.
 type WindowState = {
-    agStyleInjectionState?: InjectionState;
+    agStyleInjectionVersions?: Map<string, InjectionState>;
 };
 
-// AG-14716 - for customers using module federation, there may be many
-// instances of this module, but we want to ensure that there is only
-// one instance of the container to injection map per window otherwise
-// unmounting any grid instance will clear all styles from the page
-// resulting in unstyled grids
-const injectionState: InjectionState = ((typeof window === 'object'
-    ? (window as WindowState)
-    : {}
-).agStyleInjectionState ??= {
-    map: new WeakMap(),
-    grids: new Map(),
-});
+// When many copies of the grid are loaded (either due to module federation or
+// just multiple scripts each embedding a copy of the library), there may be
+// many instances of this module, which may be different versions or not. Our
+// requirement is that all grid instances sharing the same style context (the
+// main document or any one shadow DOM) must have exactly the same version. If
+// two independent modules share the same version, they will share the same
+// InjectionState and cooperate on inserting the correct styles. Different
+// versions get their own state, meaning that they will insert their own CSS.
+// Provided that different versions never share style contexts this will not
+// cause issues. If they do, both versions' styles will be injected and the
+// result will be obvious in development tools because of the
+// data-ag-css-version attribute on each style element.
+const injectionState: InjectionState = (() => {
+    const versionMap = ((globalThis as WindowState).agStyleInjectionVersions ??= new Map());
+    let state = versionMap.get(VERSION);
+    if (!state) {
+        state = {
+            map: new WeakMap(),
+            grids: new Map(),
+        };
+        versionMap.set(VERSION, state);
+    }
+    return state;
+})();
