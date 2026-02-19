@@ -222,16 +222,15 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         item: ColumnModelItem,
         listItemElement: HTMLElement
     ): ToolPanelColumnGroupComp | ToolPanelColumnComp {
-        const { allowDragging, eventType, params, groupsExist } = this;
+        const allowDragging = this.allowDragging;
         if (item.group) {
-            // Pass tool-panel params through so each row/group can use deferred callbacks and staged-state helpers.
-            const renderedGroup = new ToolPanelColumnGroupComp(item, allowDragging, eventType, listItemElement, params);
+            const renderedGroup = new ToolPanelColumnGroupComp(item, allowDragging, this.eventType, listItemElement);
             this.createBean(renderedGroup);
 
             return renderedGroup;
         }
 
-        const columnComp = new ToolPanelColumnComp(item, allowDragging, groupsExist, listItemElement, params);
+        const columnComp = new ToolPanelColumnComp(item, allowDragging, this.groupsExist, listItemElement);
         this.createBean(columnComp);
 
         return columnComp;
@@ -246,9 +245,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
         const expandedStates = this.getExpandedStates();
 
-        // Prefer tool-panel state when available. In deferred mode, pivot mode can be staged but not yet applied,
-        // and the UI should still reflect the staged state.
-        const pivotModeActive = this.params.getToolPanelPivotMode?.() ?? this.colModel.isPivotMode();
+        const pivotModeActive = this.colModel.isPivotMode();
         const shouldSyncColumnLayoutWithGrid = !params.suppressSyncLayoutWithGrid && !pivotModeActive;
 
         if (shouldSyncColumnLayoutWithGrid) {
@@ -552,27 +549,14 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     }
 
     public doSetSelectedAll(selectAllChecked: boolean): void {
-        const { beans, allColsTree, eventType, params } = this;
-        // In deferred mode, stage checkbox actions as pending changes instead of applying immediately.
-        selectAllChildren(
-            beans,
-            allColsTree,
-            selectAllChecked,
-            eventType,
-            params.onDeferredPivotColumnStateUpdate,
-            params.onDeferredVisibilityColumnStateUpdate,
-            params.getToolPanelPivotMode?.(),
-            params.getToolPanelColumnFunctionState
-        );
+        selectAllChildren(this.beans, this.allColsTree, selectAllChecked, this.eventType);
     }
 
     private getSelectionState(): boolean | undefined {
         let checkedCount = 0;
         let uncheckedCount = 0;
 
-        // Prefer tool-panel state when available. In deferred mode, pivot mode can be staged but not yet applied,
-        // and the UI should still reflect the staged state.
-        const pivotMode = this.params.getToolPanelPivotMode?.() ?? this.colModel.isPivotMode();
+        const pivotMode = this.colModel.isPivotMode();
 
         this.forEachItem((item) => {
             if (item.group) {
@@ -587,25 +571,19 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
             let checked: boolean;
 
-            // Header checkbox state (checked/indeterminate) should match staged row-group/pivot/value/visibility
-            // state in deferred mode.
             if (pivotMode) {
                 const noPivotModeOptionsAllowed =
                     !column.isAllowPivot() && !column.isAllowRowGroup() && !column.isAllowValue();
                 if (noPivotModeOptionsAllowed) {
                     return;
                 }
-                checked = this.params.isColumnCheckedInToolPanel
-                    ? this.params.isColumnCheckedInToolPanel(column, pivotMode)
-                    : column.isValueActive() || column.isPivotActive() || column.isRowGroupActive();
+                checked = column.isValueActive() || column.isPivotActive() || column.isRowGroupActive();
             } else {
                 if (colDef.lockVisible) {
                     return;
                 }
 
-                checked = this.params.isColumnCheckedInToolPanel
-                    ? this.params.isColumnCheckedInToolPanel(column, pivotMode)
-                    : column.isVisible();
+                checked = column.isVisible();
             }
 
             if (checked) {

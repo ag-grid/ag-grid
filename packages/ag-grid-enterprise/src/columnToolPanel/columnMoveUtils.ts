@@ -19,7 +19,7 @@ export const getCurrentColumnsBeingMoved = (column: AgColumn | AgProvidedColumnG
 };
 
 const getMoveTargetIndex = (
-    allColumns: AgColumn[],
+    beans: BeanCollection,
     currentColumns: AgColumn[] | null,
     lastHoveredColumn: AgColumn,
     isBefore: boolean
@@ -28,6 +28,7 @@ const getMoveTargetIndex = (
         return null;
     }
 
+    const allColumns = beans.colModel.getCols();
     const targetColumnIndex = allColumns.indexOf(lastHoveredColumn);
     const adjustedTarget = isBefore ? targetColumnIndex : targetColumnIndex + 1;
     const diff = getMoveDiff(allColumns, currentColumns, adjustedTarget);
@@ -89,12 +90,7 @@ export const moveItem = (
         return;
     }
 
-    const targetIndex: number | null = getMoveTargetIndex(
-        beans.colModel.getCols(),
-        currentColumns,
-        lastHoveredColumn,
-        isBefore
-    );
+    const targetIndex: number | null = getMoveTargetIndex(beans, currentColumns, lastHoveredColumn, isBefore);
 
     if (targetIndex != null) {
         beans.colMoves?.moveColumns(currentColumns, targetIndex, 'toolPanelUi');

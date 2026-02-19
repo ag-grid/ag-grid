@@ -29,7 +29,6 @@ import {
 } from 'ag-grid-community';
 
 import type { ColumnModelItem } from './columnModelItem';
-import type { ToolPanelColumnCompParams } from './columnToolPanel';
 import { createPivotState, selectAllChildren, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
 
@@ -67,21 +66,18 @@ export class ToolPanelColumnGroupComp extends Component {
     private readonly displayName: string | null;
     private processingColumnStateChange = false;
     private tooltipFeature?: TooltipFeature;
-    private readonly params: ToolPanelColumnCompParams;
 
     constructor(
         public readonly modelItem: ColumnModelItem,
         private readonly allowDragging: boolean,
         private readonly eventType: ColumnEventType,
-        private readonly focusWrapper: HTMLElement,
-        params: ToolPanelColumnCompParams
+        private readonly focusWrapper: HTMLElement
     ) {
         super();
         const { columnGroup, depth, displayName } = modelItem;
         this.columnGroup = columnGroup;
         this.columnDepth = depth;
         this.displayName = displayName;
-        this.params = params;
     }
 
     public postConstruct(): void {
@@ -183,20 +179,13 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private onContextMenu(e: MouseEvent | Touch): void {
-        const { columnGroup, gos, params } = this;
+        const { columnGroup, gos } = this;
 
         if (gos.get('functionsReadOnly')) {
             return;
         }
 
-        /** Pass deferred callbacks so context-menu actions stage pending pivot/value/group changes. */
-        const contextMenu = this.createBean(
-            new ToolPanelContextMenu(columnGroup, e, this.focusWrapper, {
-                getToolPanelPivotMode: params.getToolPanelPivotMode,
-                onDeferredPivotColumnStateUpdate: params.onDeferredPivotColumnStateUpdate,
-                getToolPanelColumnFunctionState: params.getToolPanelColumnFunctionState,
-            })
-        );
+        const contextMenu = this.createBean(new ToolPanelContextMenu(columnGroup, e, this.focusWrapper));
         this.addDestroyFunc(() => {
             if (contextMenu.isAlive()) {
                 this.destroyBean(contextMenu);
@@ -335,24 +324,13 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private onChangeCommon(nextState: boolean): void {
-        const { eventType, modelItem, params } = this;
         this.refreshAriaLabel();
 
         if (this.processingColumnStateChange) {
             return;
         }
 
-        /** Route group checkbox actions through deferred-aware bulk updates when deferred mode is active. */
-        selectAllChildren(
-            this.beans,
-            modelItem.children,
-            nextState,
-            eventType,
-            params.onDeferredPivotColumnStateUpdate,
-            params.onDeferredVisibilityColumnStateUpdate,
-            params.getToolPanelPivotMode?.(),
-            params.getToolPanelColumnFunctionState
-        );
+        selectAllChildren(this.beans, this.modelItem.children, nextState, this.eventType);
     }
 
     private refreshAriaLabel(): void {
@@ -385,7 +363,7 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private workOutSelectedValue(): boolean | undefined {
-        const pivotMode = this.params.getToolPanelPivotMode?.() ?? this.beans.colModel.isPivotMode();
+        const pivotMode = this.beans.colModel.isPivotMode();
 
         const visibleLeafColumns = this.getVisibleLeafColumns();
 
@@ -410,7 +388,7 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private workOutReadOnlyValue(): boolean {
-        const pivotMode = this.params.getToolPanelPivotMode?.() ?? this.beans.colModel.isPivotMode();
+        const pivotMode = this.beans.colModel.isPivotMode();
 
         let colsThatCanAction = 0;
 
@@ -428,11 +406,6 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private isColumnChecked(column: AgColumn, pivotMode: boolean): boolean {
-        const checkedInToolPanel = this.params.isColumnCheckedInToolPanel?.(column, pivotMode);
-        if (checkedInToolPanel != null) {
-            return checkedInToolPanel;
-        }
-
         if (pivotMode) {
             const pivoted = column.isPivotActive();
             const grouped = column.isRowGroupActive();

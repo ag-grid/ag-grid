@@ -14,31 +14,20 @@ const PivotModePanelElement: ElementParams = {
 };
 export class PivotModePanel extends Component {
     private readonly cbPivotMode: GridCheckbox = RefPlaceholder;
-    /** Allow deferred mode to intercept pivot-mode toggles and stage them instead of applying immediately. */
-    constructor(
-        private readonly onTogglePivotMode?: (newValue: boolean) => boolean,
-        private readonly getPivotMode?: () => boolean
-    ) {
-        super();
-    }
 
     public postConstruct(): void {
         this.setTemplate(PivotModePanelElement, [AgToggleButtonSelector]);
 
         const cbPivotMode = this.cbPivotMode;
         const { colModel, ctrlsSvc, gos } = this.beans;
-        const getPivotMode = () => this.getPivotMode?.() ?? colModel.isPivotMode();
 
-        cbPivotMode.setValue(getPivotMode());
+        cbPivotMode.setValue(colModel.isPivotMode());
         const localeTextFunc = this.getLocaleTextFunc();
         cbPivotMode.setLabel(localeTextFunc('pivotMode', 'Pivot Mode'));
 
         const onBtPivotMode = () => {
             const newValue = !!cbPivotMode.getValue();
-            if (newValue !== getPivotMode()) {
-                if (this.onTogglePivotMode?.(newValue)) {
-                    return;
-                }
+            if (newValue !== colModel.isPivotMode()) {
                 gos.updateGridOptions({ options: { pivotMode: newValue }, source: 'toolPanelUi' as any });
                 for (const c of ctrlsSvc.getHeaderRowContainerCtrls()) {
                     c.refresh();
@@ -47,7 +36,7 @@ export class PivotModePanel extends Component {
         };
 
         const onPivotModeChanged = () => {
-            const pivotModeActive = getPivotMode();
+            const pivotModeActive = colModel.isPivotMode();
             cbPivotMode.setValue(pivotModeActive);
         };
 

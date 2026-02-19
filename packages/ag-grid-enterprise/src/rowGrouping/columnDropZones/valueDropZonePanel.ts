@@ -1,23 +1,11 @@
-import type { AgColumn, DragAndDropIcon, GridDraggingEvent, IAggFunc } from 'ag-grid-community';
+import type { AgColumn, DragAndDropIcon, GridDraggingEvent } from 'ag-grid-community';
 import { _createIconNoSpan } from 'ag-grid-community';
 
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
 export class ValuesDropZonePanel extends BaseDropZonePanel {
-    constructor(
-        horizontal: boolean,
-        onUpdateItems?: (columns: AgColumn[]) => boolean,
-        private readonly getExistingItemsOverride?: () => AgColumn[],
-        onAggregationFunctionChange?: (column: AgColumn, aggFunc: string) => boolean,
-        getPendingAggregationFunction?: (column: AgColumn) => string | IAggFunc | null | undefined
-    ) {
-        super(
-            horizontal,
-            'aggregation',
-            onUpdateItems ? (_dropZone, columns) => onUpdateItems(columns) : undefined,
-            onAggregationFunctionChange,
-            getPendingAggregationFunction
-        );
+    constructor(horizontal: boolean) {
+        super(horizontal, 'aggregation');
     }
 
     public postConstruct(): void {
@@ -55,17 +43,10 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
     }
 
     protected updateItems(columns: AgColumn[]): void {
-        if (this.handleUpdateItems(columns)) {
-            return;
-        }
         this.beans.valueColsSvc?.setColumns(columns, 'toolPanelUi');
     }
 
     protected getExistingItems(): AgColumn[] {
-        const override = this.getExistingItemsOverride?.();
-        if (override) {
-            return override;
-        }
         return this.beans.valueColsSvc?.columns ?? [];
     }
 }

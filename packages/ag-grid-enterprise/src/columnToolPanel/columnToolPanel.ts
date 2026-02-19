@@ -1,47 +1,26 @@
 import type {
-    AgColumn,
     BeanCollection,
     ColDef,
     ColGroupDef,
-    ColumnState,
     ColumnToolPanelState,
     IColumnToolPanel,
     IToolPanelColumnCompParams,
     IToolPanelComp,
     IToolPanelParams,
 } from 'ag-grid-community';
-import {
-    Component,
-    FilterButtonComp,
-    _addGridCommonParams,
-    _applyColumnState,
-    _clearElement,
-    _last,
-} from 'ag-grid-community';
+import { Component, _addGridCommonParams, _clearElement, _last } from 'ag-grid-community';
 
 import type { PivotDropZonePanel } from '../rowGrouping/columnDropZones/pivotDropZonePanel';
 import type { RowGroupDropZonePanel } from '../rowGrouping/columnDropZones/rowGroupDropZonePanel';
 import type { ValuesDropZonePanel } from '../rowGrouping/columnDropZones/valueDropZonePanel';
 import { AgPrimaryCols } from './agPrimaryCols';
 import { columnToolPanelCSS } from './columnToolPanel.css-GENERATED';
-import type { ColumnToolPanelDeferredState } from './columnToolPanelDeferredService';
-import { ColumnToolPanelDeferredService } from './columnToolPanelDeferredService';
 import type { ColumnToolPanelFactory } from './columnToolPanelFactory';
 import type { PivotModePanel } from './pivotModePanel';
 
 export interface ToolPanelColumnCompParams<TData = any, TContext = any>
     extends IToolPanelParams<TData, TContext, ColumnToolPanelState>,
-        IToolPanelColumnCompParams {
-    onDeferredPivotColumnStateUpdate?: (stateItems: ColumnState[]) => void;
-    onDeferredVisibilityColumnStateUpdate?: (stateItems: ColumnState[]) => void;
-    getToolPanelPivotMode?: () => boolean;
-    isColumnCheckedInToolPanel?: (column: AgColumn, pivotMode: boolean) => boolean;
-    getToolPanelColumnFunctionState?: (column: AgColumn) => {
-        rowGroup: boolean;
-        pivot: boolean;
-        value: boolean;
-    };
-}
+        IToolPanelColumnCompParams {}
 
 export class ColumnToolPanel extends Component implements IColumnToolPanel, IToolPanelComp {
     private initialised = false;
@@ -55,8 +34,6 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     private valuesDropZonePanel?: ValuesDropZonePanel;
     private pivotDropZonePanel?: PivotDropZonePanel;
     private colToolPanelFactory?: ColumnToolPanelFactory;
-    private deferredService!: ColumnToolPanelDeferredService;
-    private deferredButtonsComp?: FilterButtonComp;
 
     constructor() {
         super({ tag: 'div', cls: 'ag-column-panel' });
@@ -87,40 +64,20 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             suppressValues: false,
             suppressPivots: false,
             suppressSyncLayoutWithGrid: false,
-            deferApply: false,
-            buttons: ['apply', 'cancel'],
         });
         const mergedParams = {
             ...defaultParams,
             ...params,
         };
         this.params = mergedParams;
-        /** Recreate deferred state per panel init so refresh/cancel starts from a clean staged model. */
-        this.deferredService = new ColumnToolPanelDeferredService();
-        if (mergedParams.deferApply) {
-            this.deferredService.reconcileFromApplied(this.getCurrentStateForDeferredMode());
-            this.params.onDeferredPivotColumnStateUpdate = this.onDeferredPivotColumnStateUpdate.bind(this);
-            this.params.onDeferredVisibilityColumnStateUpdate = this.onDeferredVisibilityColumnStateUpdate.bind(this);
-            this.params.getToolPanelPivotMode = this.getToolPanelPivotMode.bind(this);
-            this.params.isColumnCheckedInToolPanel = this.isColumnCheckedInToolPanel.bind(this);
-            this.params.getToolPanelColumnFunctionState = this.getToolPanelColumnFunctionState.bind(this);
-        }
 
         const { childDestroyFuncs, colToolPanelFactory, gos } = this;
 
         const hasPivotModule = gos.isModuleRegistered('SharedPivot');
         const hasRowGroupingModule = hasPivotModule || gos.isModuleRegistered('SharedRowGrouping');
-        const onTogglePivotMode = mergedParams.deferApply ? this.onDeferredPivotModeToggle.bind(this) : undefined;
 
         if (!mergedParams.suppressPivotMode && colToolPanelFactory && hasPivotModule) {
-            this.pivotModePanel = onTogglePivotMode
-                ? colToolPanelFactory.createPivotModePanelWithToggleHandler(
-                      this,
-                      childDestroyFuncs,
-                      onTogglePivotMode,
-                      this.getToolPanelPivotMode.bind(this)
-                  )
-                : colToolPanelFactory.createPivotModePanel(this, childDestroyFuncs);
+            this.pivotModePanel = colToolPanelFactory.createPivotModePanel(this, childDestroyFuncs);
         }
 
         // DO NOT CHANGE TO createManagedBean
@@ -134,38 +91,15 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
         if (colToolPanelFactory) {
             if (!mergedParams.suppressRowGroups && hasRowGroupingModule) {
-                this.rowGroupDropZonePanel = mergedParams.deferApply
-                    ? colToolPanelFactory.createRowGroupPanelWithUpdateHandler(
-                          this,
-                          childDestroyFuncs,
-                          this.onDeferredRowGroupColumnsUpdate.bind(this),
-                          this.getDeferredPendingRowGroupColumns.bind(this)
-                      )
-                    : colToolPanelFactory.createRowGroupPanel(this, childDestroyFuncs);
+                this.rowGroupDropZonePanel = colToolPanelFactory.createRowGroupPanel(this, childDestroyFuncs);
             }
 
             if (!mergedParams.suppressValues && hasRowGroupingModule) {
-                this.valuesDropZonePanel = mergedParams.deferApply
-                    ? colToolPanelFactory.createValuesPanelWithUpdateHandler(
-                          this,
-                          childDestroyFuncs,
-                          this.onDeferredValueColumnsUpdate.bind(this),
-                          this.getDeferredPendingValueColumns.bind(this),
-                          this.onDeferredValueColumnAggFuncUpdate.bind(this),
-                          this.getDeferredPendingAggregationFunction.bind(this)
-                      )
-                    : colToolPanelFactory.createValuesPanel(this, childDestroyFuncs);
+                this.valuesDropZonePanel = colToolPanelFactory.createValuesPanel(this, childDestroyFuncs);
             }
 
             if (!mergedParams.suppressPivots && hasPivotModule) {
-                this.pivotDropZonePanel = mergedParams.deferApply
-                    ? colToolPanelFactory.createPivotPanelWithUpdateHandler(
-                          this,
-                          childDestroyFuncs,
-                          this.onDeferredPivotColumnsUpdate.bind(this),
-                          this.getDeferredPendingPivotColumns.bind(this)
-                      )
-                    : colToolPanelFactory.createPivotPanel(this, childDestroyFuncs);
+                this.pivotDropZonePanel = colToolPanelFactory.createPivotPanel(this, childDestroyFuncs);
             }
 
             this.setLastVisible();
@@ -177,25 +111,6 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             });
             childDestroyFuncs.push(() => pivotModeListener());
         }
-
-        if (mergedParams.deferApply) {
-            /**
-             * Deferred apply can rebuild this panel on refresh/cancel.
-             * Keep all destroy callbacks so old column listeners are removed.
-             */
-            const deferredSyncListeners = this.addManagedEventListeners({
-                newColumnsLoaded: this.syncDeferredFromApplied.bind(this),
-                columnPivotModeChanged: this.syncDeferredFromApplied.bind(this),
-                columnRowGroupChanged: this.syncDeferredFromApplied.bind(this),
-                columnPivotChanged: this.syncDeferredFromApplied.bind(this),
-                columnValueChanged: this.syncDeferredFromApplied.bind(this),
-                columnVisible: this.syncDeferredFromApplied.bind(this),
-            });
-            /** Tear down every deferred-sync listener when this panel is rebuilt. */
-            childDestroyFuncs.push(...deferredSyncListeners);
-        }
-
-        this.initDeferredButtonsIfNeeded();
 
         this.initialised = true;
     }
@@ -209,16 +124,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         this.pivotModePanel = colToolPanelFactory.setPanelVisible(
             this.pivotModePanel,
             visible,
-            this.params.deferApply
-                ? colToolPanelFactory.createPivotModePanelWithToggleHandler.bind(
-                      colToolPanelFactory,
-                      this,
-                      this.childDestroyFuncs,
-                      this.onDeferredPivotModeToggle.bind(this),
-                      this.getToolPanelPivotMode.bind(this),
-                      true
-                  )
-                : colToolPanelFactory.createPivotModePanel.bind(colToolPanelFactory, this, this.childDestroyFuncs, true)
+            colToolPanelFactory.createPivotModePanel.bind(colToolPanelFactory, this, this.childDestroyFuncs, true)
         );
         this.setLastVisible();
     }
@@ -232,15 +138,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         this.rowGroupDropZonePanel = colToolPanelFactory.setPanelVisible(
             this.rowGroupDropZonePanel,
             visible,
-            this.params.deferApply
-                ? colToolPanelFactory.createRowGroupPanelWithUpdateHandler.bind(
-                      colToolPanelFactory,
-                      this,
-                      this.childDestroyFuncs,
-                      this.onDeferredRowGroupColumnsUpdate.bind(this),
-                      this.getDeferredPendingRowGroupColumns.bind(this)
-                  )
-                : colToolPanelFactory.createRowGroupPanel.bind(colToolPanelFactory, this, this.childDestroyFuncs)
+            colToolPanelFactory.createRowGroupPanel.bind(colToolPanelFactory, this, this.childDestroyFuncs)
         );
         this.setLastVisible();
     }
@@ -254,17 +152,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         this.valuesDropZonePanel = colToolPanelFactory.setPanelVisible(
             this.valuesDropZonePanel,
             visible,
-            this.params.deferApply
-                ? colToolPanelFactory.createValuesPanelWithUpdateHandler.bind(
-                      colToolPanelFactory,
-                      this,
-                      this.childDestroyFuncs,
-                      this.onDeferredValueColumnsUpdate.bind(this),
-                      this.getDeferredPendingValueColumns.bind(this),
-                      this.onDeferredValueColumnAggFuncUpdate.bind(this),
-                      this.getDeferredPendingAggregationFunction.bind(this)
-                  )
-                : colToolPanelFactory.createValuesPanel.bind(colToolPanelFactory, this, this.childDestroyFuncs)
+            colToolPanelFactory.createValuesPanel.bind(colToolPanelFactory, this, this.childDestroyFuncs)
         );
         this.setLastVisible();
     }
@@ -278,15 +166,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         this.pivotDropZonePanel = colToolPanelFactory.setPanelVisible(
             this.pivotDropZonePanel,
             visible,
-            this.params.deferApply
-                ? colToolPanelFactory.createPivotPanelWithUpdateHandler.bind(
-                      colToolPanelFactory,
-                      this,
-                      this.childDestroyFuncs,
-                      this.onDeferredPivotColumnsUpdate.bind(this),
-                      this.getDeferredPendingPivotColumns.bind(this)
-                  )
-                : colToolPanelFactory.createPivotPanel.bind(colToolPanelFactory, this, this.childDestroyFuncs)
+            colToolPanelFactory.createPivotPanel.bind(colToolPanelFactory, this, this.childDestroyFuncs)
         );
         this.pivotDropZonePanel?.setDisplayed(visible);
         this.setLastVisible();
@@ -367,318 +247,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     public refresh(params: ToolPanelColumnCompParams): boolean {
         this.destroyChildren();
         this.init(params);
-        if (this.params.deferApply) {
-            /** Reconcile again after child rebuild so pending/apply buttons reflect the latest applied grid snapshot. */
-            this.deferredService.reconcileFromApplied(this.getCurrentStateForDeferredMode());
-        }
         return true;
-    }
-
-    private getCurrentStateForDeferredMode(): ColumnToolPanelDeferredState {
-        const { colModel, rowGroupColsSvc, pivotColsSvc, valueColsSvc } = this.beans;
-        const colDefCols = colModel.getColDefCols() ?? [];
-        return {
-            pivotMode: colModel.isPivotMode(),
-            rowGroupColIds: rowGroupColsSvc?.columns.map((col) => col.getColId()) ?? [],
-            pivotColIds: pivotColsSvc?.columns.map((col) => col.getColId()) ?? [],
-            valueCols: (valueColsSvc?.columns ?? []).map((col) => ({
-                colId: col.getColId(),
-                aggFunc: col.getAggFunc() ?? null,
-            })),
-            visibleColIds: colDefCols.filter((col) => col.isVisible()).map((col) => col.getColId()),
-        };
-    }
-
-    /** Stage pivot mode changes so deferred apply can commit them as an explicit action. */
-    private onDeferredPivotModeToggle(newValue: boolean): boolean {
-        const pendingState = this.deferredService.getPendingState();
-        pendingState.pivotMode = newValue;
-        this.deferredService.setPendingState(pendingState);
-        this.primaryColsPanel?.syncLayoutWithGrid();
-        this.refreshDeferredButtonsState();
-        return true;
-    }
-
-    /** Stage pivot column state edits instead of applying them immediately to grid state. */
-    private onDeferredPivotColumnStateUpdate(stateItems: ColumnState[]): void {
-        this.deferredService.applyPivotColumnStateToPending(stateItems);
-        this.primaryColsPanel?.syncLayoutWithGrid();
-        this.refreshDeferredButtonsState();
-    }
-
-    /** Stage visibility edits so deferred apply/cancel controls column visibility changes. */
-    private onDeferredVisibilityColumnStateUpdate(stateItems: ColumnState[]): void {
-        this.deferredService.applyVisibilityColumnStateToPending(stateItems);
-        this.primaryColsPanel?.syncLayoutWithGrid();
-        this.refreshDeferredButtonsState();
-    }
-
-    /** Stage row group ordering to keep deferred mode pending state in sync with tool panel interactions. */
-    private onDeferredRowGroupColumnsUpdate(columns: AgColumn[]): boolean {
-        this.deferredService.setPendingRowGroupColumns(columns.map((column) => column.getColId()));
-        this.primaryColsPanel?.syncLayoutWithGrid();
-        this.refreshDeferredButtonsState();
-        return true;
-    }
-
-    /** Stage pivot ordering to keep deferred mode pending state in sync with tool panel interactions. */
-    private onDeferredPivotColumnsUpdate(columns: AgColumn[]): boolean {
-        this.deferredService.setPendingPivotColumns(columns.map((column) => column.getColId()));
-        this.primaryColsPanel?.syncLayoutWithGrid();
-        this.refreshDeferredButtonsState();
-        return true;
-    }
-
-    /** Stage value columns and agg funcs so deferred apply preserves aggregation intent before commit. */
-    private onDeferredValueColumnsUpdate(columns: AgColumn[]): boolean {
-        const { aggFuncSvc } = this.beans;
-        const pendingAggFuncMap = new Map(
-            this.deferredService
-                .getPendingState()
-                .valueCols.map((valueCol) => [valueCol.colId, valueCol.aggFunc] as const)
-        );
-        this.deferredService.setPendingValueColumns(
-            columns.map((column) => ({
-                colId: column.getColId(),
-                aggFunc:
-                    pendingAggFuncMap.get(column.getColId()) ??
-                    column.getAggFunc() ??
-                    aggFuncSvc?.getDefaultAggFunc(column) ??
-                    null,
-            }))
-        );
-        this.primaryColsPanel?.syncLayoutWithGrid();
-        this.refreshDeferredButtonsState();
-        return true;
-    }
-
-    /** Update staged aggregation functions without mutating live value column state. */
-    private onDeferredValueColumnAggFuncUpdate(column: AgColumn, aggFunc: string): boolean {
-        const pendingState = this.deferredService.getPendingState();
-        const colId = column.getColId();
-        const existing = pendingState.valueCols.find((valueCol) => valueCol.colId === colId);
-        if (existing) {
-            existing.aggFunc = aggFunc;
-        } else {
-            pendingState.valueCols.push({ colId, aggFunc });
-        }
-        this.deferredService.setPendingState(pendingState);
-        this.valuesDropZonePanel?.refreshGui();
-        this.refreshDeferredButtonsState();
-        return true;
-    }
-
-    /** Resolve staged row group ids to column instances for deferred mode rendering. */
-    private getDeferredPendingRowGroupColumns(): AgColumn[] {
-        return this.getColumnsByColIds(this.deferredService.getPendingStateSnapshot().rowGroupColIds);
-    }
-
-    /** Resolve staged pivot ids to column instances for deferred mode rendering. */
-    private getDeferredPendingPivotColumns(): AgColumn[] {
-        return this.getColumnsByColIds(this.deferredService.getPendingStateSnapshot().pivotColIds);
-    }
-
-    /** Resolve staged value ids to column instances so pending value order is visible before apply. */
-    private getDeferredPendingValueColumns(): AgColumn[] {
-        return this.getColumnsByColIds(
-            this.deferredService.getPendingStateSnapshot().valueCols.map((valueCol) => valueCol.colId)
-        );
-    }
-
-    /** Read staged aggregation function values so deferred mode editors show pending state. */
-    private getDeferredPendingAggregationFunction(column: AgColumn): string | null | undefined {
-        const valueCol = this.deferredService
-            .getPendingStateSnapshot()
-            .valueCols.find((pendingValueCol) => pendingValueCol.colId === column.getColId());
-        return typeof valueCol?.aggFunc === 'string' ? valueCol.aggFunc : null;
-    }
-
-    private getColumnsByColIds(colIds: string[]): AgColumn[] {
-        const { colModel } = this.beans;
-        return colIds.map((colId) => colModel.getColDefCol(colId)).filter((column): column is AgColumn => !!column);
-    }
-
-    /** Re-sync deferred pending state when external column changes occur while edits are staged. */
-    private syncDeferredFromApplied(): void {
-        this.deferredService.reconcileFromAppliedPreservingPending(this.getCurrentStateForDeferredMode());
-        this.refreshDeferredButtonsState();
-    }
-
-    private getToolPanelPivotMode(): boolean {
-        return this.params.deferApply
-            ? this.deferredService.getPendingStateSnapshot().pivotMode
-            : this.beans.colModel.isPivotMode();
-    }
-
-    private isColumnCheckedInToolPanel(column: AgColumn, pivotMode: boolean): boolean {
-        if (!this.params.deferApply) {
-            if (pivotMode) {
-                return column.isPivotActive() || column.isRowGroupActive() || column.isValueActive();
-            }
-            return column.isVisible();
-        }
-
-        if (!this.deferredService.hasPendingChanges()) {
-            if (pivotMode) {
-                return column.isPivotActive() || column.isRowGroupActive() || column.isValueActive();
-            }
-            return column.isVisible();
-        }
-
-        const pendingState = this.deferredService.getPendingStateSnapshot();
-        const colId = column.getColId();
-        if (pivotMode) {
-            return (
-                pendingState.pivotColIds.includes(colId) ||
-                pendingState.rowGroupColIds.includes(colId) ||
-                pendingState.valueCols.some((valueCol) => valueCol.colId === colId)
-            );
-        }
-        return pendingState.visibleColIds.includes(colId);
-    }
-
-    private getToolPanelColumnFunctionState(column: AgColumn): { rowGroup: boolean; pivot: boolean; value: boolean } {
-        if (!this.params.deferApply || !this.deferredService.hasPendingChanges()) {
-            return {
-                rowGroup: column.isRowGroupActive(),
-                pivot: column.isPivotActive(),
-                value: column.isValueActive(),
-            };
-        }
-
-        const pendingState = this.deferredService.getPendingStateSnapshot();
-        const colId = column.getColId();
-        return {
-            rowGroup: pendingState.rowGroupColIds.includes(colId),
-            pivot: pendingState.pivotColIds.includes(colId),
-            value: pendingState.valueCols.some((valueCol) => valueCol.colId === colId),
-        };
-    }
-
-    /** Add apply/cancel controls */
-    private initDeferredButtonsIfNeeded(): void {
-        if (!this.params.deferApply || !this.params.buttons?.length) {
-            return;
-        }
-
-        const buttonComp = this.createBean(new FilterButtonComp({ className: 'ag-column-panel-buttons' }));
-        this.deferredButtonsComp = buttonComp;
-
-        const localeTextFunc = this.getLocaleTextFunc();
-        const buttons = this.params.buttons.map((type) => ({
-            type,
-            label: localeTextFunc(
-                type === 'apply' ? 'applyFilter' : 'cancelFilter',
-                type === 'apply' ? 'Apply' : 'Cancel'
-            ),
-        }));
-        buttonComp.updateButtons(buttons);
-        this.appendChild(buttonComp);
-
-        this.addManagedListeners(buttonComp, {
-            apply: this.onDeferredApply.bind(this),
-            cancel: this.onDeferredCancel.bind(this),
-        });
-
-        this.childDestroyFuncs.push(() => {
-            if (this.deferredButtonsComp) {
-                this.deferredButtonsComp = this.destroyBean(this.deferredButtonsComp);
-            }
-        });
-
-        this.refreshDeferredButtonsState();
-    }
-
-    /** Enable/disable deferred action controls based on whether staged changes exist. */
-    private refreshDeferredButtonsState(): void {
-        this.deferredButtonsComp?.updateValidity(this.deferredService.hasPendingChanges());
-    }
-
-    /** Apply staged deferred changes and reset the pending snapshot to the now-applied state. */
-    private onDeferredApply(): void {
-        const pendingState = this.deferredService.getPendingState();
-        this.applyDeferredState(pendingState);
-        this.deferredService.reconcileFromApplied(this.getCurrentStateForDeferredMode());
-        this.refreshDeferredButtonsState();
-    }
-
-    /** Drop staged deferred changes and rebuild the panel from current applied grid state. */
-    private onDeferredCancel(): void {
-        this.deferredService.cancelPending();
-        this.refresh(this.params);
-    }
-
-    /** Apply the staged deferred snapshot as one batch to avoid partial intermediate grid states. */
-    private applyDeferredState(state: ColumnToolPanelDeferredState): void {
-        const { colModel, gos, ctrlsSvc } = this.beans;
-        const currentState = this.getCurrentStateForDeferredMode();
-        if (colModel.isPivotMode() !== state.pivotMode) {
-            gos.updateGridOptions({ options: { pivotMode: state.pivotMode }, source: 'toolPanelUi' as any });
-            for (const ctrl of ctrlsSvc.getHeaderRowContainerCtrls()) {
-                ctrl.refresh();
-            }
-        }
-
-        const allColumns = colModel.getColDefCols() ?? [];
-        const currentRowGroupIndexMap = new Map(
-            currentState.rowGroupColIds.map((colId, index) => [colId, index] as const)
-        );
-        const currentPivotIndexMap = new Map(currentState.pivotColIds.map((colId, index) => [colId, index] as const));
-        const currentValueAggMap = new Map(
-            currentState.valueCols.map((valueCol) => [valueCol.colId, valueCol.aggFunc] as const)
-        );
-        const currentVisibleColIdSet = new Set(currentState.visibleColIds);
-
-        const rowGroupIndexMap = new Map(state.rowGroupColIds.map((colId, index) => [colId, index] as const));
-        const pivotIndexMap = new Map(state.pivotColIds.map((colId, index) => [colId, index] as const));
-        const valueAggMap = new Map(state.valueCols.map((valueCol) => [valueCol.colId, valueCol.aggFunc] as const));
-        const visibleColIdSet = new Set(state.visibleColIds);
-
-        const columnState: ColumnState[] = [];
-        for (const column of allColumns) {
-            const colId = column.getColId();
-
-            const currentRowGroupIndex = currentRowGroupIndexMap.get(colId);
-            const currentPivotIndex = currentPivotIndexMap.get(colId);
-            const currentAggFunc = currentValueAggMap.has(colId) ? currentValueAggMap.get(colId)! : null;
-            const currentHidden = !currentVisibleColIdSet.has(colId);
-
-            const rowGroupIndex = rowGroupIndexMap.get(colId);
-            const pivotIndex = pivotIndexMap.get(colId);
-            const aggFunc = valueAggMap.has(colId) ? valueAggMap.get(colId)! : null;
-            const hidden = !visibleColIdSet.has(colId);
-
-            if (
-                currentRowGroupIndex === rowGroupIndex &&
-                currentPivotIndex === pivotIndex &&
-                currentAggFunc === aggFunc &&
-                currentHidden === hidden
-            ) {
-                continue;
-            }
-
-            columnState.push({
-                colId,
-                rowGroup: rowGroupIndex != null,
-                rowGroupIndex: rowGroupIndex ?? null,
-                pivot: pivotIndex != null,
-                pivotIndex: pivotIndex ?? null,
-                aggFunc,
-                hide: hidden,
-            });
-        }
-
-        if (columnState.length > 0) {
-            _applyColumnState(this.beans, { state: columnState }, 'toolPanelUi');
-        }
-
-        // Preserve deferred value column ordering (aggregation order) from the tool panel state.
-        const currentValueOrder = currentState.valueCols.map((valueCol) => valueCol.colId);
-        const nextValueOrder = state.valueCols.map((valueCol) => valueCol.colId);
-        if (!areStringArraysEqual(currentValueOrder, nextValueOrder)) {
-            const valueColumnsInOrder = this.getColumnsByColIds(nextValueOrder);
-            this.beans.valueColsSvc?.setColumns(valueColumnsInOrder, 'toolPanelUi');
-        }
     }
 
     public getState(): ColumnToolPanelState {
@@ -691,16 +260,4 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         this.destroyChildren();
         super.destroy();
     }
-}
-
-function areStringArraysEqual(a: string[], b: string[]): boolean {
-    if (a.length !== b.length) {
-        return false;
-    }
-    for (let i = 0; i < a.length; i++) {
-        if (a[i] !== b[i]) {
-            return false;
-        }
-    }
-    return true;
 }

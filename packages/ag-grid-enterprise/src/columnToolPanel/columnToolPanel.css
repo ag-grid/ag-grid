@@ -36,23 +36,3 @@
 :where(.ag-column-panel) .ag-column-drop-vertical:where(:not(.ag-last-column-drop)) {
     border-bottom: var(--ag-tool-panel-separator-border);
 }
-
-.ag-column-panel-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--ag-widget-vertical-spacing) var(--ag-widget-horizontal-spacing);
-    justify-content: flex-end;
-    overflow: hidden;
-    padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
-    border-top: var(--ag-tool-panel-separator-border);
-}
-
-.ag-column-panel-buttons-button {
-    line-height: 1.5;
-
-    &:disabled:hover {
-        color: var(--ag-button-disabled-text-color);
-        background-color: var(--ag-button-disabled-background-color);
-        border: var(--ag-button-disabled-border);
-    }
-}

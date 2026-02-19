@@ -25,7 +25,6 @@ import {
 } from 'ag-grid-community';
 
 import type { ColumnModelItem } from './columnModelItem';
-import type { ToolPanelColumnCompParams } from './columnToolPanel';
 import { createPivotState, setAllColumns, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
 
@@ -47,21 +46,18 @@ export class ToolPanelColumnComp extends Component {
     private readonly displayName: string | null;
     private processingColumnStateChange = false;
     private tooltipFeature?: TooltipFeature;
-    private readonly params: ToolPanelColumnCompParams;
 
     constructor(
         public modelItem: ColumnModelItem,
         private readonly allowDragging: boolean,
         private readonly groupsExist: boolean,
-        private readonly focusWrapper: HTMLElement,
-        params: ToolPanelColumnCompParams
+        private readonly focusWrapper: HTMLElement
     ) {
         super();
         const { column, depth, displayName } = modelItem;
         this.column = column;
         this.columnDepth = depth;
         this.displayName = displayName;
-        this.params = params;
     }
 
     public postConstruct(): void {
@@ -157,20 +153,13 @@ export class ToolPanelColumnComp extends Component {
     }
 
     private onContextMenu(e: MouseEvent | Touch): void {
-        const { column, gos, params } = this;
+        const { column, gos } = this;
 
         if (gos.get('functionsReadOnly')) {
             return;
         }
 
-        /** Pass deferred callbacks so context-menu actions stage pending pivot/value/group changes. */
-        const contextMenu = this.createBean(
-            new ToolPanelContextMenu(column, e, this.focusWrapper, {
-                getToolPanelPivotMode: params.getToolPanelPivotMode,
-                onDeferredPivotColumnStateUpdate: params.onDeferredPivotColumnStateUpdate,
-                getToolPanelColumnFunctionState: params.getToolPanelColumnFunctionState,
-            })
-        );
+        const contextMenu = this.createBean(new ToolPanelContextMenu(column, e, this.focusWrapper));
         this.addDestroyFunc(() => {
             if (contextMenu.isAlive()) {
                 this.destroyBean(contextMenu);
@@ -201,7 +190,6 @@ export class ToolPanelColumnComp extends Component {
     }
 
     private onChangeCommon(nextState: boolean): void {
-        const { params } = this;
         // ignore lock visible columns
         if (this.cbSelect.isReadOnly()) {
             return;
@@ -215,17 +203,7 @@ export class ToolPanelColumnComp extends Component {
             return;
         }
 
-        /** Route checkbox actions through deferred-aware column updates when deferred mode is active. */
-        setAllColumns(
-            this.beans,
-            [this.column],
-            nextState,
-            'toolPanelUi',
-            params.onDeferredPivotColumnStateUpdate,
-            params.onDeferredVisibilityColumnStateUpdate,
-            params.getToolPanelPivotMode?.(),
-            params.getToolPanelColumnFunctionState
-        );
+        setAllColumns(this.beans, [this.column], nextState, 'toolPanelUi');
     }
 
     private refreshAriaLabel(): void {
@@ -306,19 +284,18 @@ export class ToolPanelColumnComp extends Component {
 
     private onColumnStateChanged(): void {
         this.processingColumnStateChange = true;
-        const isPivotMode = this.params.getToolPanelPivotMode?.() ?? this.beans.colModel.isPivotMode();
-        let isColumnChecked: boolean;
-
-        if (this.params.isColumnCheckedInToolPanel) {
-            isColumnChecked = this.params.isColumnCheckedInToolPanel(this.column, isPivotMode);
+        const isPivotMode = this.beans.colModel.isPivotMode();
+        if (isPivotMode) {
+            // if reducing, checkbox means column is one of pivot, value or group
+            const anyFunctionActive = this.column.isAnyFunctionActive();
+            this.cbSelect.setValue(anyFunctionActive);
         } else {
-            isColumnChecked = isPivotMode ? this.column.isAnyFunctionActive() : this.column.isVisible();
+            // if not reducing, the checkbox tells us if column is visible or not
+            this.cbSelect.setValue(this.column.isVisible());
         }
 
-        this.cbSelect.setValue(isColumnChecked);
-
-        let canBeToggled: boolean;
-        let canBeDragged: boolean;
+        let canBeToggled = true;
+        let canBeDragged = true;
         if (isPivotMode) {
             // when in pivot mode, the item should be read only if:
             //  a) gui is not allowed make any changes

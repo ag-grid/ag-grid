@@ -277,9 +277,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
         return this.cols;
     }
 
-    /**
-     * Returns a canonical list of columns to show.
-     */
     public getColsToShow(): AgColumn[] {
         if (!this.cols) {
             return [];
@@ -294,27 +291,23 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const showRowNumbers = _isRowNumbers(beans);
         const valueColumns = valueColsSvc?.columns;
 
-        if (showAutoGroupAndValuesOnly) {
-            const nonValueColumns = cols.list.filter((col) => {
-                const isAutoGroupCol = isColumnGroupAutoCol(col);
+        const res = cols.list.filter((col) => {
+            const isAutoGroupCol = isColumnGroupAutoCol(col);
+            if (showAutoGroupAndValuesOnly) {
+                const isValueCol = valueColumns?.includes(col);
                 return (
                     isAutoGroupCol ||
+                    isValueCol ||
                     (showSelectionColumn && isColumnSelectionCol(col)) ||
                     (showRowNumbers && isRowNumberCol(col))
                 );
-            });
-
-            const valueColumnsInDisplayOrder = (valueColumns ?? []).filter(
-                (col) => cols.map[col.getColId()] !== undefined
-            );
-            return [...nonValueColumns, ...valueColumnsInDisplayOrder];
-        }
-
-        return cols.list.filter((col) => {
-            const isAutoGroupCol = isColumnGroupAutoCol(col);
-            // keep col if a) it's auto-group or b) it's visible
-            return isAutoGroupCol || col.isVisible();
+            } else {
+                // keep col if a) it's auto-group or b) it's visible
+                return isAutoGroupCol || col.isVisible();
+            }
         });
+
+        return res;
     }
 
     // on events 'groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents'

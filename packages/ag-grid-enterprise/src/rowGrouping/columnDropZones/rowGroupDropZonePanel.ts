@@ -4,12 +4,8 @@ import { _createIconNoSpan } from 'ag-grid-community';
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
 export class RowGroupDropZonePanel extends BaseDropZonePanel {
-    constructor(
-        horizontal: boolean,
-        onUpdateItems?: (columns: AgColumn[]) => boolean,
-        private readonly getExistingItemsOverride?: () => AgColumn[]
-    ) {
-        super(horizontal, 'rowGroup', onUpdateItems ? (_dropZone, columns) => onUpdateItems(columns) : undefined);
+    constructor(horizontal: boolean) {
+        super(horizontal, 'rowGroup');
     }
 
     public postConstruct(): void {
@@ -43,9 +39,6 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
     }
 
     protected updateItems(columns: AgColumn[]) {
-        if (this.handleUpdateItems(columns)) {
-            return;
-        }
         this.beans.rowGroupColsSvc?.setColumns(columns, 'toolPanelUi');
     }
 
@@ -54,10 +47,6 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
     }
 
     protected getExistingItems(): AgColumn[] {
-        const override = this.getExistingItemsOverride?.();
-        if (override) {
-            return override;
-        }
         return this.beans.rowGroupColsSvc?.columns ?? [];
     }
 }

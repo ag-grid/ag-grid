@@ -3,52 +3,26 @@ import { _applyColumnState } from 'ag-grid-community';
 
 import type { ColumnModelItem } from './columnModelItem';
 
-/** Apply select-all from groups while supporting deferred-mode staging callbacks. */
 export function selectAllChildren(
     beans: BeanCollection,
     colTree: ColumnModelItem[],
     selectAllChecked: boolean,
-    eventType: ColumnEventType,
-    onDeferredPivotColumnStateUpdate?: (stateItems: ColumnState[]) => void,
-    onDeferredVisibilityColumnStateUpdate?: (stateItems: ColumnState[]) => void,
-    pivotModeOverride?: boolean,
-    getToolPanelColumnFunctionState?: (column: AgColumn) => { rowGroup: boolean; pivot: boolean; value: boolean }
+    eventType: ColumnEventType
 ): void {
     const cols = extractAllLeafColumns(colTree);
-    setAllColumns(
-        beans,
-        cols,
-        selectAllChecked,
-        eventType,
-        onDeferredPivotColumnStateUpdate,
-        onDeferredVisibilityColumnStateUpdate,
-        pivotModeOverride,
-        getToolPanelColumnFunctionState
-    );
+    setAllColumns(beans, cols, selectAllChecked, eventType);
 }
 
-/** Route select-all updates to pivot/value or visibility paths, with optional deferred overrides. */
 export function setAllColumns(
     beans: BeanCollection,
     cols: AgColumn[],
     selectAllChecked: boolean,
-    eventType: ColumnEventType,
-    onDeferredPivotColumnStateUpdate?: (stateItems: ColumnState[]) => void,
-    onDeferredVisibilityColumnStateUpdate?: (stateItems: ColumnState[]) => void,
-    pivotModeOverride?: boolean,
-    getToolPanelColumnFunctionState?: (column: AgColumn) => { rowGroup: boolean; pivot: boolean; value: boolean }
+    eventType: ColumnEventType
 ): void {
-    if (pivotModeOverride ?? beans.colModel.isPivotMode()) {
-        setAllPivot(
-            beans,
-            cols,
-            selectAllChecked,
-            eventType,
-            onDeferredPivotColumnStateUpdate,
-            getToolPanelColumnFunctionState
-        );
+    if (beans.colModel.isPivotMode()) {
+        setAllPivot(beans, cols, selectAllChecked, eventType);
     } else {
-        setAllVisible(beans, cols, selectAllChecked, eventType, onDeferredVisibilityColumnStateUpdate);
+        setAllVisible(beans, cols, selectAllChecked, eventType);
     }
 }
 
@@ -73,22 +47,14 @@ function extractAllLeafColumns(allItems: ColumnModelItem[]): AgColumn[] {
     return res;
 }
 
-function setAllVisible(
-    beans: BeanCollection,
-    columns: AgColumn[],
-    visible: boolean,
-    eventType: ColumnEventType,
-    onDeferredVisibilityColumnStateUpdate?: (stateItems: ColumnState[]) => void
-): void {
+function setAllVisible(beans: BeanCollection, columns: AgColumn[], visible: boolean, eventType: ColumnEventType): void {
     const colStateItems: ColumnState[] = [];
-    /** Stage full desired visibility in deferred mode, not only visible diffs against applied state. */
-    const shouldAlwaysStageDeferredVisibility = !!onDeferredVisibilityColumnStateUpdate;
 
     for (const col of columns) {
         if (col.getColDef().lockVisible) {
             continue;
         }
-        if (shouldAlwaysStageDeferredVisibility || col.isVisible() != visible) {
+        if (col.isVisible() != visible) {
             colStateItems.push({
                 colId: col.getId(),
                 hide: !visible,
@@ -97,51 +63,25 @@ function setAllVisible(
     }
 
     if (colStateItems.length > 0) {
-        if (onDeferredVisibilityColumnStateUpdate) {
-            onDeferredVisibilityColumnStateUpdate(colStateItems);
-            return;
-        }
         _applyColumnState(beans, { state: colStateItems }, eventType);
     }
 }
 
-function setAllPivot(
-    beans: BeanCollection,
-    columns: AgColumn[],
-    value: boolean,
-    eventType: ColumnEventType,
-    onDeferredPivotColumnStateUpdate?: (stateItems: ColumnState[]) => void,
-    getToolPanelColumnFunctionState?: (column: AgColumn) => { rowGroup: boolean; pivot: boolean; value: boolean }
-): void {
-    setAllPivotActive(
-        beans,
-        columns,
-        value,
-        eventType,
-        onDeferredPivotColumnStateUpdate,
-        getToolPanelColumnFunctionState
-    );
+function setAllPivot(beans: BeanCollection, columns: AgColumn[], value: boolean, eventType: ColumnEventType): void {
+    setAllPivotActive(beans, columns, value, eventType);
 }
 
 function setAllPivotActive(
     beans: BeanCollection,
     columns: AgColumn[],
     value: boolean,
-    eventType: ColumnEventType,
-    onDeferredPivotColumnStateUpdate?: (stateItems: ColumnState[]) => void,
-    getToolPanelColumnFunctionState?: (column: AgColumn) => { rowGroup: boolean; pivot: boolean; value: boolean }
+    eventType: ColumnEventType
 ): void {
     const colStateItems: ColumnState[] = [];
-    /** Stage explicit pivot off actions in deferred mode, even if applied state is already inactive. */
-    const shouldAlwaysStageDeferredPivot = !!onDeferredPivotColumnStateUpdate;
 
     const turnOnAction = (col: AgColumn) => {
-        const currentFunctionState = getToolPanelColumnFunctionState?.(col);
-        const isAnyFunctionActive = currentFunctionState
-            ? currentFunctionState.rowGroup || currentFunctionState.pivot || currentFunctionState.value
-            : col.isAnyFunctionActive();
         // don't change any column that's already got a function active
-        if (isAnyFunctionActive) {
+        if (col.isAnyFunctionActive()) {
             return;
         }
 
@@ -167,7 +107,7 @@ function setAllPivotActive(
 
     const turnOffAction = (col: AgColumn) => {
         const isActive = col.isPivotActive() || col.isRowGroupActive() || col.isValueActive();
-        if (shouldAlwaysStageDeferredPivot || isActive) {
+        if (isActive) {
             colStateItems.push({
                 colId: col.getId(),
                 pivot: false,
@@ -182,10 +122,6 @@ function setAllPivotActive(
     columns.forEach(action);
 
     if (colStateItems.length > 0) {
-        if (onDeferredPivotColumnStateUpdate) {
-            onDeferredPivotColumnStateUpdate(colStateItems);
-            return;
-        }
         _applyColumnState(beans, { state: colStateItems }, eventType);
     }
 }
