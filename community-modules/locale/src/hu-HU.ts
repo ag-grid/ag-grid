@@ -74,9 +74,11 @@ export const AG_GRID_LOCALE_HU = {
 
     // Filter Buttons
     applyFilter: 'Alkalmaz',
+    applyColumnToolPanel: 'Alkalmaz',
     resetFilter: 'Visszaállítás',
     clearFilter: 'Törlés',
     cancelFilter: 'Mégse',
+    cancelColumnToolPanel: 'Mégse',
 
     // Filter Titles
     textFilter: 'Szövegszűrő',

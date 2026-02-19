@@ -65,9 +65,11 @@ export const AG_GRID_LOCALE_EN = {
 
     // Filter Buttons
     applyFilter: 'Apply',
+    applyColumnToolPanel: 'Apply',
     resetFilter: 'Reset',
     clearFilter: 'Clear',
     cancelFilter: 'Cancel',
+    cancelColumnToolPanel: 'Cancel',
 
     // Filter Titles
     textFilter: 'Text Filter',

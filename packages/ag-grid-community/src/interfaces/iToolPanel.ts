@@ -54,8 +54,6 @@ export interface IToolPanelColumnCompParams {
     suppressSyncLayoutWithGrid: boolean;
     /** Defer applying Columns Tool Panel changes until an explicit apply action */
     deferApply?: boolean;
-    /** Action buttons shown in the Columns Tool Panel when `deferApply` is enabled */
-    buttons?: ('apply' | 'cancel')[];
 }
 
 export interface IToolPanelFiltersCompParams {

@@ -74,9 +74,11 @@ export const AG_GRID_LOCALE_FI = {
 
     // Filter Buttons
     applyFilter: 'Käytä',
+    applyColumnToolPanel: 'Käytä',
     resetFilter: 'Nollaa',
     clearFilter: 'Tyhjennä',
     cancelFilter: 'Peruuta',
+    cancelColumnToolPanel: 'Peruuta',
 
     // Filter Titles
     textFilter: 'Tekstisuodatin',

@@ -74,9 +74,11 @@ export const AG_GRID_LOCALE_JP = {
 
     // Filter Buttons
     applyFilter: '適用',
+    applyColumnToolPanel: '適用',
     resetFilter: 'リセット',
     clearFilter: 'クリア',
     cancelFilter: 'キャンセル',
+    cancelColumnToolPanel: 'キャンセル',
 
     // Filter Titles
     textFilter: 'テキストフィルター',

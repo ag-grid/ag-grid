@@ -74,9 +74,11 @@ export const AG_GRID_LOCALE_EG = {
 
     // Filter Buttons
     applyFilter: 'تطبيق',
+    applyColumnToolPanel: 'تطبيق',
     resetFilter: 'إعادة تعيين',
     clearFilter: 'مسح',
     cancelFilter: 'إلغاء',
+    cancelColumnToolPanel: 'إلغاء',
 
     // Filter Titles
     textFilter: 'فلتر النص',
