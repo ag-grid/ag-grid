@@ -200,7 +200,7 @@ export abstract class BaseEnvironment<
 
         const { type, noWarn } = variable;
 
-        if (type !== 'length' && type !== 'border') {
+        if (type !== 'length' && type !== 'border' && type !== 'scale') {
             return sizeEl;
         }
 
@@ -243,6 +243,8 @@ export abstract class BaseEnvironment<
                 '--ag-internal-measurement-border',
                 `var(${cssName}, solid ${NO_VALUE_SENTINEL}px)`
             );
+        } else if (type === 'scale') {
+            sizeEl.style.width = `calc(var(${cssName}, ${NO_VALUE_SENTINEL}) * 1px)`;
         } else {
             sizeEl.style.width = `var(${cssName}, ${NO_VALUE_SENTINEL}px)`;
         }
@@ -305,8 +307,8 @@ export abstract class BaseEnvironment<
         for (const dynamicParamKey of dynamicParamKeys) {
             this.getSizeEl(
                 {
-                    changeKey: `${dynamicParamKey}Length` as keyof TChangeKeys & string,
-                    type: 'length',
+                    changeKey: `${dynamicParamKey}Scale` as keyof TChangeKeys & string,
+                    type: 'scale',
                     defaultValue: 1,
                 },
                 handleDynamicParamChange
@@ -324,12 +326,12 @@ export abstract class BaseEnvironment<
         const dynamicParamKeys = theme._getDynamicParamKeys();
         const newParams: Record<string, number> = {};
         for (const key of dynamicParamKeys) {
-            const length = this.getCSSVariablePixelValue({
-                changeKey: `${key}Length` as keyof TChangeKeys & string,
-                type: 'length',
+            const size = this.getCSSVariablePixelValue({
+                changeKey: `${key}Scale` as keyof TChangeKeys & string,
+                type: 'scale',
                 defaultValue: 1,
             });
-            newParams[key] = length;
+            newParams[key] = size;
         }
         if (theme._onDynamicParamsChange(newParams)) {
             _updateDynamicParamsCss(

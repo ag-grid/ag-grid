@@ -57,6 +57,14 @@ export type ColorValue =
  */
 export type ColorSchemeValue = 'light' | 'dark' | 'inherit' | 'normal' | AnyString | { ref: string };
 
+/**
+ * A list of CSS color values to allow for color palettes of dynamic size.
+ * A corresponding scale variable (which must have the same name suffixed with `Scale`)
+ * defines the number of values.
+ *
+ * E.g. if defining `colorList: ColorListValue`, `colorListScale: ScaleValue` would also be required.
+ * This would then create `ag-color-list-1`, `ag-color-list-2`, etc. based on the size of the scale value.
+ */
 export type ColorListValue = ColorValue[];
 
 /**

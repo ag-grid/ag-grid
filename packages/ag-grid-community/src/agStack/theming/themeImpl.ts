@@ -171,7 +171,7 @@ export class ThemeImpl {
     }
 
     private _paramsCssCache?: string;
-    private _dynamicParamsCssCache?: string;
+    private _dynamicParamsCssCache?: string | null;
 
     _getParamsCss(): string {
         if (!this._paramsCssCache) {
@@ -180,8 +180,9 @@ export class ThemeImpl {
         return this._paramsCssCache;
     }
 
-    _getDynamicParamsCss(): string {
-        if (!this._dynamicParamsCssCache) {
+    _getDynamicParamsCss(): string | null {
+        // if it's null, there are no dynamic params
+        if (this._dynamicParamsCssCache === undefined) {
             return this._generateParamsCss();
         }
         return this._dynamicParamsCssCache;
@@ -235,7 +236,7 @@ export class ThemeImpl {
                     }
                 };
                 if (paramType === 'colorList') {
-                    const providedLengthValue = getParamValue(params, `${key}Length`, mode);
+                    const providedLengthValue = getParamValue(params, `${key}Scale`, mode);
                     const cssValues = colorListValueToCssArray(
                         value as ColorListValue,
                         typeof providedLengthValue === 'number' ? providedLengthValue : undefined
@@ -307,7 +308,8 @@ export class ThemeImpl {
             addToInheritanceCss
         );
         const css = generateCss(variablesCss, inheritanceCss);
-        const variableCss = generateCss(variableVariablesCss, variableInheritanceCss);
+        const hasDynamicParams = Object.keys(this._dynamicParams).length > 0;
+        const variableCss = hasDynamicParams ? generateCss(variableVariablesCss, variableInheritanceCss) : null;
         this._paramsCssCache = css;
         this._dynamicParamsCssCache = variableCss;
         return css;
@@ -345,8 +347,9 @@ export class ThemeImpl {
 
     private _generateDynamicParamsCss(): void {
         const params = this._dynamicParams;
-        if (!params) {
-            this._generateParamsCss();
+        if (Object.keys(params).length === 0) {
+            this._dynamicParamsCssCache = null;
+            return;
         }
         let variablesCss = '';
         let inheritanceCss = '';
@@ -362,7 +365,7 @@ export class ThemeImpl {
             // Will either be the length value or the color list.
             // For the length we want to return the calculated value.
             // For the color list, return the array.
-            (_, key, mode) => (key.endsWith('Length') ? params[mode][key.slice(0, -6)] : modeParams[mode][key]),
+            (_, key, mode) => (key.endsWith('Scale') ? params[mode][key.slice(0, -5)] : modeParams[mode][key]),
             addToVariablesCss,
             addToInheritanceCss
         );
