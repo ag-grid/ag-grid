@@ -32,6 +32,14 @@ type themeUseArgs = {
 };
 
 export class ThemeImpl {
+    private _cssClassCache?: string;
+    private _paramsClassName?: string;
+    private _variableParamsDebugId?: string;
+    private _paramsCache?: ModalParamValues;
+    private _paramsCssCache?: string;
+    private _dynamicParamsCssCache?: string | null;
+    private readonly _dynamicParams: ModalParamValues = {};
+
     constructor(
         private readonly params: {
             themeLogger: ThemeLogger;
@@ -95,8 +103,6 @@ export class ThemeImpl {
         }
     }
 
-    private _cssClassCache?: string;
-
     _getCssClass(this: ThemeImpl): string {
         if (FORCE_LEGACY_THEMES) {
             return 'ag-theme-quartz';
@@ -109,18 +115,14 @@ export class ThemeImpl {
             .join(' '));
     }
 
-    private _paramsClassName?: string;
-    private _variableParamsDebugId?: string;
-
     _getParamsClassName(): string {
         return (this._paramsClassName ??= `ag-theme-params-${++paramsId}`);
     }
 
     _getDynamicParamsDebugId(): string {
-        return (this._variableParamsDebugId ??= this._paramsClassName!.replace('ag-theme-', 'ag-theme-dynamic-'));
+        return (this._variableParamsDebugId ??= this._getParamsClassName().replace('ag-theme-', 'ag-theme-dynamic-'));
     }
 
-    private _paramsCache?: ModalParamValues;
     _getModeParams(): ModalParamValues {
         let paramsCache = this._paramsCache;
         if (!paramsCache) {
@@ -170,9 +172,6 @@ export class ThemeImpl {
         return paramsCache;
     }
 
-    private _paramsCssCache?: string;
-    private _dynamicParamsCssCache?: string | null;
-
     _getParamsCss(): string {
         if (!this._paramsCssCache) {
             return this._generateParamsCss();
@@ -180,22 +179,12 @@ export class ThemeImpl {
         return this._paramsCssCache;
     }
 
-    _getDynamicParamsCss(): string | null {
-        // if it's null, there are no dynamic params
-        if (this._dynamicParamsCssCache === undefined) {
-            return this._generateParamsCss();
-        }
-        return this._dynamicParamsCssCache;
-    }
-
-    private readonly _dynamicParams: ModalParamValues = {};
-
-    private _generateParamsCssGeneric<TParamValues>(
+    private _doGenerateParamsCss<TParamValues>(
         modeParams: { [mode: string]: Record<string, TParamValues> },
         getParamValue: (params: Record<string, TParamValues>, key: string, mode: string) => unknown,
         addToVariablesCss: (cssString: string, isDynamic?: boolean) => void,
         addToInheritanceCss: (cssString: string, isDynamic?: boolean) => void
-    ): (variablesCssString: string, inheritanceCssString: string) => string {
+    ): (variablesCss: string, inheritanceCss: string) => string {
         // Ensure that every variable has a value set on root elements ("root"
         // elements are those containing grid UI, e.g. ag-root-wrapper and
         // ag-popup)
@@ -256,52 +245,54 @@ export class ThemeImpl {
                     const cssValue = paramValueToCss(key, value, themeLogger, paramType);
                     addParam(key, cssValue, false);
                 }
-                const cssValue = paramValueToCss(key, value, themeLogger, paramType);
-                if (Array.isArray(cssValue)) {
-                    for (let i = 0; i < cssValue.length; ++i) {
-                        addParam(`${key}${i + 1}`, cssValue[i], true);
-                    }
-                }
             }
             if (mode !== defaultModeName) {
                 addToVariablesCss('}\n');
                 addToInheritanceCss('}\n');
             }
         }
-        return (variablesCssString: string, inheritanceCssString: string) => {
+        return (variablesCss: string, inheritanceCss: string) => {
             const selectorPlaceholder = `:where(.${this._getParamsClassName()})`;
-            let cssString = `${selectorPlaceholder} {\n${variablesCssString}}\n`;
+            let css = `${selectorPlaceholder} {\n${variablesCss}}\n`;
             // Create --ag-inherited-foo variable values on the parent element, unless
             // the parent is itself a root (which can happen if popupParent is
             // ag-root-wrapper)
-            cssString += `:has(> ${selectorPlaceholder}):not(${selectorPlaceholder}) {\n${inheritanceCssString}}\n`;
-            return cssString;
+            css += `:has(> ${selectorPlaceholder}):not(${selectorPlaceholder}) {\n${inheritanceCss}}\n`;
+            return css;
         };
+    }
+
+    _getDynamicParamsCss(): string | null {
+        // if it's null, there are no dynamic params
+        if (this._dynamicParamsCssCache === undefined) {
+            return this._generateParamsCss();
+        }
+        return this._dynamicParamsCssCache;
     }
 
     private _generateParamsCss(): string {
         let variablesCss = '';
         let inheritanceCss = '';
-        let variableVariablesCss = '';
-        let variableInheritanceCss = '';
-        const addToVariablesCss = (cssString: string, isVariable?: boolean) => {
-            if (isVariable !== true) {
+        let dynamicVariablesCss = '';
+        let dynamicInheritanceCss = '';
+        const addToVariablesCss = (cssString: string, isDynamic?: boolean) => {
+            if (isDynamic !== true) {
                 variablesCss += cssString;
             }
-            if (isVariable !== false) {
-                variableVariablesCss += cssString;
+            if (isDynamic !== false) {
+                dynamicVariablesCss += cssString;
             }
         };
-        const addToInheritanceCss = (cssString: string, isVariable?: boolean) => {
-            if (isVariable !== true) {
+        const addToInheritanceCss = (cssString: string, isDynamic?: boolean) => {
+            if (isDynamic !== true) {
                 inheritanceCss += cssString;
             }
-            if (isVariable !== false) {
-                variableInheritanceCss += cssString;
+            if (isDynamic !== false) {
+                dynamicInheritanceCss += cssString;
             }
         };
         const modeParams = this._getModeParams();
-        const generateCss = this._generateParamsCssGeneric(
+        const generateCss = this._doGenerateParamsCss(
             modeParams,
             (params, key) => params[key],
             addToVariablesCss,
@@ -309,9 +300,9 @@ export class ThemeImpl {
         );
         const css = generateCss(variablesCss, inheritanceCss);
         const hasDynamicParams = Object.keys(this._dynamicParams).length > 0;
-        const variableCss = hasDynamicParams ? generateCss(variableVariablesCss, variableInheritanceCss) : null;
+        const dynamicCss = hasDynamicParams ? generateCss(dynamicVariablesCss, dynamicInheritanceCss) : null;
         this._paramsCssCache = css;
-        this._dynamicParamsCssCache = variableCss;
+        this._dynamicParamsCssCache = dynamicCss;
         return css;
     }
 
@@ -360,10 +351,10 @@ export class ThemeImpl {
             inheritanceCss += cssString;
         };
         const modeParams = this._getModeParams();
-        const generateCss = this._generateParamsCssGeneric(
+        const generateCss = this._doGenerateParamsCss(
             params,
-            // Will either be the length value or the color list.
-            // For the length we want to return the calculated value.
+            // Will either be the scale value (size) or the color list.
+            // For the scale we want to return the calculated value.
             // For the color list, return the array.
             (_, key, mode) => (key.endsWith('Scale') ? params[mode][key.slice(0, -5)] : modeParams[mode][key]),
             addToVariablesCss,
