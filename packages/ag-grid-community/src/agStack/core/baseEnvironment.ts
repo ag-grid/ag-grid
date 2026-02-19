@@ -43,6 +43,7 @@ export abstract class BaseEnvironment<
     public styleNonce: string | undefined;
     private mutationObserver: MutationObserver;
     private readonly sizeEls = new Map<CssVariable<TChangeKeys>, HTMLElement>();
+    private readonly dynamicParamScaleVariables = new Map<string, CssVariable<TChangeKeys>>();
     private readonly lastKnownValues = new Map<CssVariable<TChangeKeys>, number>();
     private eMeasurementContainer: HTMLElement | undefined;
     public sizesMeasured = false;
@@ -272,7 +273,7 @@ export abstract class BaseEnvironment<
     }
 
     private handleNewTheme(newTheme: ThemeImpl | undefined): void {
-        const { gos, eRootDiv, globalCSS } = this;
+        const { gos, eRootDiv, globalCSS, dynamicParamScaleVariables } = this;
         const additionalCss = this.getAdditionalCss();
         if (newTheme) {
             _injectCoreAndModuleCSS(this.eStyleContainer, this.cssLayer, this.styleNonce, additionalCss);
@@ -305,14 +306,17 @@ export abstract class BaseEnvironment<
         const dynamicParamKeys = newTheme?._getDynamicParamKeys() ?? [];
         const handleDynamicParamChange = this.handleDynamicParamChange.bind(this);
         for (const dynamicParamKey of dynamicParamKeys) {
-            this.getSizeEl(
-                {
-                    changeKey: `${dynamicParamKey}Scale` as keyof TChangeKeys & string,
+            const changeKey = `${dynamicParamKey}Scale` as keyof TChangeKeys & string;
+            let dynamicVar = dynamicParamScaleVariables.get(changeKey);
+            if (!dynamicVar) {
+                dynamicVar = {
+                    changeKey,
                     type: 'scale',
                     defaultValue: 1,
-                },
-                handleDynamicParamChange
-            );
+                };
+                dynamicParamScaleVariables.set(changeKey, dynamicVar);
+            }
+            this.getSizeEl(dynamicVar, handleDynamicParamChange);
         }
 
         this.fireStylesChangedEvent('theme');
