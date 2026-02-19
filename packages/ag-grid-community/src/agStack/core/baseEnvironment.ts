@@ -273,7 +273,7 @@ export abstract class BaseEnvironment<
     }
 
     private handleNewTheme(newTheme: ThemeImpl | undefined): void {
-        const { gos, eRootDiv, globalCSS, dynamicParamScaleVariables } = this;
+        const { gos, eRootDiv, globalCSS } = this;
         const additionalCss = this.getAdditionalCss();
         if (newTheme) {
             _injectCoreAndModuleCSS(this.eStyleContainer, this.cssLayer, this.styleNonce, additionalCss);
@@ -306,17 +306,7 @@ export abstract class BaseEnvironment<
         const dynamicParamKeys = newTheme?._getDynamicParamKeys() ?? [];
         const handleDynamicParamChange = this.handleDynamicParamChange.bind(this);
         for (const dynamicParamKey of dynamicParamKeys) {
-            const changeKey = `${dynamicParamKey}Scale` as keyof TChangeKeys & string;
-            let dynamicVar = dynamicParamScaleVariables.get(changeKey);
-            if (!dynamicVar) {
-                dynamicVar = {
-                    changeKey,
-                    type: 'scale',
-                    defaultValue: 1,
-                };
-                dynamicParamScaleVariables.set(changeKey, dynamicVar);
-            }
-            this.getSizeEl(dynamicVar, handleDynamicParamChange);
+            this.getSizeEl(this.getDynamicParamScaleVar(dynamicParamKey), handleDynamicParamChange);
         }
 
         this.fireStylesChangedEvent('theme');
@@ -330,11 +320,7 @@ export abstract class BaseEnvironment<
         const dynamicParamKeys = theme._getDynamicParamKeys();
         const newParams: Record<string, number> = {};
         for (const key of dynamicParamKeys) {
-            const size = this.getCSSVariablePixelValue({
-                changeKey: `${key}Scale` as keyof TChangeKeys & string,
-                type: 'scale',
-                defaultValue: 1,
-            });
+            const size = this.getCSSVariablePixelValue(this.getDynamicParamScaleVar(key));
             newParams[key] = size;
         }
         if (theme._onDynamicParamsChange(newParams)) {
@@ -347,6 +333,21 @@ export abstract class BaseEnvironment<
                 this.styleNonce
             );
         }
+    }
+
+    private getDynamicParamScaleVar(dynamicParamKey: string): CssVariable<TChangeKeys> {
+        const dynamicParamScaleVariables = this.dynamicParamScaleVariables;
+        const changeKey = `${dynamicParamKey}Scale` as keyof TChangeKeys & string;
+        let dynamicVar = dynamicParamScaleVariables.get(changeKey);
+        if (!dynamicVar) {
+            dynamicVar = {
+                changeKey,
+                type: 'scale',
+                defaultValue: 1,
+            };
+            dynamicParamScaleVariables.set(changeKey, dynamicVar);
+        }
+        return dynamicVar;
     }
 
     protected fireStylesChangedEvent(change: keyof TChangeKeys & string): void {
