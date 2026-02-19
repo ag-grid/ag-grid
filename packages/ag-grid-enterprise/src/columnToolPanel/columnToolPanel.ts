@@ -15,6 +15,7 @@ import type { RowGroupDropZonePanel } from '../rowGrouping/columnDropZones/rowGr
 import type { ValuesDropZonePanel } from '../rowGrouping/columnDropZones/valueDropZonePanel';
 import { AgPrimaryCols } from './agPrimaryCols';
 import { columnToolPanelCSS } from './columnToolPanel.css-GENERATED';
+import type { BaseColumnToolPanelEdits } from './columnToolPanelEdits';
 import type { ColumnToolPanelFactory } from './columnToolPanelFactory';
 import type { PivotModePanel } from './pivotModePanel';
 
@@ -35,6 +36,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     private pivotDropZonePanel?: PivotDropZonePanel;
     private colToolPanelFactory?: ColumnToolPanelFactory;
     private deferredButtonsComp?: FilterButtonComp;
+    private editStrategy?: BaseColumnToolPanelEdits;
 
     constructor() {
         super({ tag: 'div', cls: 'ag-column-panel' });
@@ -114,6 +116,13 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             childDestroyFuncs.push(() => pivotModeListener());
         }
 
+        this.editStrategy = this.createOptionalManagedBean(
+            this.beans.registry.createDynamicBean<BaseColumnToolPanelEdits>(
+                mergedParams.deferApply ? 'columnToolPanelDeferredEditStrategy' : 'columnToolPanelSyncEditStrategy',
+                true
+            )
+        )!;
+
         if (this.params.deferApply) {
             this.initDeferredButtons();
         }
@@ -129,7 +138,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         });
 
         const translate = this.getLocaleTextFunc();
-        const buttons = (['apply', 'cancel'] as const).map((type) => ({
+        const buttons = (['cancel', 'apply'] as const).map((type) => ({
             type,
             label: translate(
                 type === 'apply' ? 'applyColumnToolPanel' : 'cancelColumnToolPanel',
@@ -138,20 +147,20 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         }));
         buttonComp.updateButtons(buttons);
         buttonComp.addManagedListeners(buttonComp, {
-            apply: this.onDeferredApply.bind(this),
-            cancel: this.onDeferredCancel.bind(this),
+            apply: this.onDeferredApply,
+            cancel: this.onDeferredCancel,
         });
 
         this.appendChild(buttonComp);
     }
 
-    private onDeferredApply(): void {
+    private readonly onDeferredApply = (): void => {
         // no-op for now
-    }
+    };
 
-    private onDeferredCancel(): void {
+    private readonly onDeferredCancel = (): void => {
         // no-op for now
-    }
+    };
 
     public setPivotModeSectionVisible(visible: boolean): void {
         const colToolPanelFactory = this.colToolPanelFactory;

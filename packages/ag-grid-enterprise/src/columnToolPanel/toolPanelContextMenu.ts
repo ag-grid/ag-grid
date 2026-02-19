@@ -3,6 +3,7 @@ import { Component, _createIconNoSpan, _focusInto, isColumn, isProvidedColumnGro
 
 import { getGroupingLocaleText, isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import { MenuList } from '../widgets/menuList';
+import { ColumnToolPanelSyncEditStrategy } from './columnToolPanelEdits';
 
 type MenuItemName = 'scrollIntoView' | 'rowGroup' | 'value' | 'pivot';
 
@@ -86,6 +87,7 @@ export class ToolPanelContextMenu extends Component {
         const localeTextFunc = this.getLocaleTextFunc();
         const { beans, displayName } = this;
         const { rowGroupColsSvc, valueColsSvc, pivotColsSvc, colModel } = beans;
+        const edits = beans.colToolPanelEdits as ColumnToolPanelSyncEditStrategy;
 
         const menuItemMap = new Map<MenuItemName, MenuItemProperty>();
         this.menuItemMap = menuItemMap;
@@ -116,13 +118,13 @@ export class ToolPanelContextMenu extends Component {
             activateLabel: () => getGroupingLocaleText(localeTextFunc, 'groupBy', displayName!),
             deactivateLabel: () => getGroupingLocaleText(localeTextFunc, 'ungroupBy', displayName!),
             activateFunction: () =>
-                rowGroupColsSvc?.setColumns(
-                    this.addColumnsToList(rowGroupColsSvc.columns, rowGroupAllowed),
+                edits.setRowGroupColumns(
+                    this.addColumnsToList(rowGroupColsSvc?.columns ?? [], rowGroupAllowed),
                     'toolPanelUi'
                 ),
             deActivateFunction: () =>
-                rowGroupColsSvc?.setColumns(
-                    this.removeColumnsFromList(rowGroupColsSvc.columns, rowGroupAllowed),
+                edits.setRowGroupColumns(
+                    this.removeColumnsFromList(rowGroupColsSvc?.columns ?? [], rowGroupAllowed),
                     'toolPanelUi'
                 ),
             addIcon: 'menuAddRowGroup',
@@ -137,9 +139,12 @@ export class ToolPanelContextMenu extends Component {
             deactivateLabel: () =>
                 localeTextFunc('removeFromValues', `Remove ${displayName} from values`, [displayName!]),
             activateFunction: () =>
-                valueColsSvc?.setColumns(this.addColumnsToList(valueColsSvc.columns, valueAllowed), 'toolPanelUi'),
+                edits.setValueColumns(this.addColumnsToList(valueColsSvc?.columns ?? [], valueAllowed), 'toolPanelUi'),
             deActivateFunction: () =>
-                valueColsSvc?.setColumns(this.removeColumnsFromList(valueColsSvc.columns, valueAllowed), 'toolPanelUi'),
+                edits.setValueColumns(
+                    this.removeColumnsFromList(valueColsSvc?.columns ?? [], valueAllowed),
+                    'toolPanelUi'
+                ),
             addIcon: 'valuePanel',
             removeIcon: 'valuePanel',
         });
@@ -152,9 +157,12 @@ export class ToolPanelContextMenu extends Component {
             deactivateLabel: () =>
                 localeTextFunc('removeFromLabels', `Remove ${displayName} from labels`, [displayName!]),
             activateFunction: () =>
-                pivotColsSvc?.setColumns(this.addColumnsToList(pivotColsSvc.columns, pivotAllowed), 'toolPanelUi'),
+                edits.setPivotColumns(this.addColumnsToList(pivotColsSvc?.columns ?? [], pivotAllowed), 'toolPanelUi'),
             deActivateFunction: () =>
-                pivotColsSvc?.setColumns(this.removeColumnsFromList(pivotColsSvc.columns, pivotAllowed), 'toolPanelUi'),
+                edits.setPivotColumns(
+                    this.removeColumnsFromList(pivotColsSvc?.columns ?? [], pivotAllowed),
+                    'toolPanelUi'
+                ),
             addIcon: 'pivotPanel',
             removeIcon: 'pivotPanel',
         });

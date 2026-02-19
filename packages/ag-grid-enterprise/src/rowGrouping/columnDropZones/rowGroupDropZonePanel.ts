@@ -1,6 +1,7 @@
 import type { AgColumn, DragAndDropIcon, GridDraggingEvent } from 'ag-grid-community';
 import { _createIconNoSpan } from 'ag-grid-community';
 
+import type { ColumnToolPanelSyncEditStrategy } from '../../columnToolPanel/columnToolPanelEdits';
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
 export class RowGroupDropZonePanel extends BaseDropZonePanel {
@@ -39,6 +40,11 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
     }
 
     protected updateItems(columns: AgColumn[]) {
+        const edits = this.beans.colToolPanelEdits as ColumnToolPanelSyncEditStrategy | undefined;
+        if (edits) {
+            edits.setRowGroupColumns(columns, 'toolPanelUi');
+            return;
+        }
         this.beans.rowGroupColsSvc?.setColumns(columns, 'toolPanelUi');
     }
 

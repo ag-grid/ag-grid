@@ -422,7 +422,7 @@ export {
 } from './interfaces/iStatusPanel';
 
 // Tool Panel
-export { IColumnToolPanel } from './interfaces/iColumnToolPanel';
+export { IColumnToolPanel, IColumnToolPanelEdits } from './interfaces/iColumnToolPanel';
 export { IFiltersToolPanel } from './interfaces/iFiltersToolPanel';
 export {
     FilterPanelDetailState,

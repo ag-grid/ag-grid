@@ -1,5 +1,6 @@
 import type { AgColumn, BeanCollection, ColumnEventType, ColumnState, IAggFunc } from 'ag-grid-community';
-import { _applyColumnState } from 'ag-grid-community';
+
+import { ColumnToolPanelSyncEditStrategy } from './columnToolPanelEdits';
 
 import type { ColumnModelItem } from './columnModelItem';
 
@@ -11,6 +12,10 @@ export function selectAllChildren(
 ): void {
     const cols = extractAllLeafColumns(colTree);
     setAllColumns(beans, cols, selectAllChecked, eventType);
+}
+
+function getEdits(beans: BeanCollection): ColumnToolPanelSyncEditStrategy {
+    return beans.colToolPanelEdits as ColumnToolPanelSyncEditStrategy;
 }
 
 export function setAllColumns(
@@ -62,9 +67,7 @@ function setAllVisible(beans: BeanCollection, columns: AgColumn[], visible: bool
         }
     }
 
-    if (colStateItems.length > 0) {
-        _applyColumnState(beans, { state: colStateItems }, eventType);
-    }
+    getEdits(beans).applyColumnState(colStateItems, eventType);
 }
 
 function setAllPivot(beans: BeanCollection, columns: AgColumn[], value: boolean, eventType: ColumnEventType): void {
@@ -121,9 +124,7 @@ function setAllPivotActive(
 
     columns.forEach(action);
 
-    if (colStateItems.length > 0) {
-        _applyColumnState(beans, { state: colStateItems }, eventType);
-    }
+    getEdits(beans).applyColumnState(colStateItems, eventType);
 }
 
 export function updateColumns(
@@ -159,7 +160,7 @@ export function updateColumns(
             };
         }
     });
-    _applyColumnState(beans, { state }, eventType);
+    getEdits(beans).applyColumnState(state, eventType);
 }
 
 export function createPivotState(column: AgColumn): {
