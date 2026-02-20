@@ -370,6 +370,7 @@ export {
     _isFullWidthGroupRow,
     _isGetRowHeightFunction,
     _isGroupMultiAutoColumn,
+    _isGroupMultiAutoColumnHiding,
     _isGroupRowsSticky,
     _isGroupUseEntireRow,
     _isLegacyMenuEnabled,

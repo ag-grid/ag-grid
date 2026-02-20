@@ -20,6 +20,7 @@ import {
     _getColumnStateFromColDef,
     _isColumnsSortingCoupledToGroup,
     _isGroupMultiAutoColumn,
+    _isGroupMultiAutoColumnHiding,
     _isGroupUseEntireRow,
     _mergeDeep,
     _missing,
@@ -37,20 +38,22 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
     public postConstruct(): void {
         this.addManagedPropertyListener('autoGroupColumnDef', this.updateColumns.bind(this));
 
+        const updateGroupColumnVisibility = () => this.updateGroupColumnVisibility();
         this.addManagedEventListeners({
-            rowExpansionStateChanged: () => this.updateGroupColumnVisibility(),
-            expandOrCollapseAll: () => this.updateGroupColumnVisibility(),
-            modelUpdated: () => this.updateGroupColumnVisibility(),
+            rowExpansionStateChanged: updateGroupColumnVisibility,
+            expandOrCollapseAll: updateGroupColumnVisibility,
+            modelUpdated: updateGroupColumnVisibility,
         });
-        this.addManagedPropertyListener('showGroupColumnsWhenExpanded', () => this.updateGroupColumnVisibility());
+        this.addManagedPropertyListener('showGroupColumnsWhenExpanded', updateGroupColumnVisibility);
     }
 
     public addColumns(cols: _ColumnCollections): void {
-        if (this.columns == null) {
+        const { columns } = this;
+        if (columns == null) {
             return;
         }
-        cols.list = this.columns.list.concat(cols.list);
-        cols.tree = this.columns.tree.concat(cols.tree);
+        cols.list = columns.list.concat(cols.list);
+        cols.tree = columns.tree.concat(cols.tree);
         _updateColsMap(cols);
     }
 
@@ -287,7 +290,7 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
         }
 
         const { gos, visibleCols, groupStage } = this.beans;
-        const isFeatureEnabled = gos.get('showGroupColumnsWhenExpanded') && _isGroupMultiAutoColumn(gos);
+        const isFeatureEnabled = _isGroupMultiAutoColumnHiding(gos);
 
         let changed = false;
 

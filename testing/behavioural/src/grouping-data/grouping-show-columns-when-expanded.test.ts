@@ -436,28 +436,55 @@ describe('ag-grid showGroupColumnsWhenExpanded with pivot mode', () => {
             .map((col) => col.getColId());
     }
 
-    test('pivot mode with active pivot result - auto group column visible', async () => {
+    test('pivot mode with active pivot result - auto group column visible (multipleColumns)', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
+                { field: 'sport', rowGroup: true, hide: true },
                 { field: 'year', pivot: true, hide: true },
                 { field: 'gold', aggFunc: 'sum', hide: true },
             ],
             pivotMode: true,
             showGroupColumnsWhenExpanded: true,
+            groupDisplayType: 'multipleColumns',
             groupDefaultExpanded: 0,
             rowData: pivotRowData,
             getRowId: (params) => params.data.id,
         });
 
         // In pivot mode with results, single auto group column should be visible
-        expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn']);
+        expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn-country']);
+    });
+
+    test('pivot mode with active pivot result - auto group column visible (groupHideOpenParents)', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'sport', rowGroup: true, hide: true },
+                { field: 'year', pivot: true, hide: true },
+                { field: 'gold', aggFunc: 'sum', hide: true },
+            ],
+            pivotMode: true,
+            showGroupColumnsWhenExpanded: true,
+            groupHideOpenParents: true,
+            groupDefaultExpanded: 0,
+            rowData: pivotRowData,
+            getRowId: (params) => params.data.id,
+        });
+
+        // In pivot mode with results, single auto group column should be visible
+        expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn-country']);
     });
 
     test('pivot mode without pivot result - does not leak regular columns', async () => {
         const api = gridsManager.createGrid('myGrid', {
-            columnDefs: [{ field: 'country', rowGroup: true }, { field: 'year' }, { field: 'gold', aggFunc: 'sum' }],
+            columnDefs: [
+                { field: 'country', rowGroup: true },
+                { field: 'year', rowGroup: true },
+                { field: 'gold', aggFunc: 'sum' },
+            ],
             pivotMode: true,
+            groupDisplayType: 'multipleColumns',
             showGroupColumnsWhenExpanded: true,
             groupDefaultExpanded: 0,
             rowData: pivotRowData,
@@ -472,8 +499,13 @@ describe('ag-grid showGroupColumnsWhenExpanded with pivot mode', () => {
 
     test('pivot mode without pivot result and feature off - auto group always visible', async () => {
         const api = gridsManager.createGrid('myGrid', {
-            columnDefs: [{ field: 'country', rowGroup: true }, { field: 'year' }, { field: 'gold', aggFunc: 'sum' }],
+            columnDefs: [
+                { field: 'country', rowGroup: true },
+                { field: 'year', rowGroup: true },
+                { field: 'gold', aggFunc: 'sum' },
+            ],
             pivotMode: true,
+            groupDisplayType: 'multipleColumns',
             showGroupColumnsWhenExpanded: false,
             groupDefaultExpanded: 0,
             rowData: pivotRowData,
@@ -481,7 +513,7 @@ describe('ag-grid showGroupColumnsWhenExpanded with pivot mode', () => {
         });
 
         // Auto group column always visible when feature is off
-        expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn']);
+        expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn-country', 'ag-Grid-AutoColumn-year']);
         // Only value columns alongside auto group
         const nonAutoCols = getVisibleNonAutoColIds(api);
         expect(nonAutoCols).toEqual(['gold']);

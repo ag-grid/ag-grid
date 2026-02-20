@@ -236,6 +236,10 @@ export function _isGroupMultiAutoColumn(gos: GridOptionsService) {
     return gos.get('groupDisplayType') === 'multipleColumns';
 }
 
+export function _isGroupMultiAutoColumnHiding(gos: GridOptionsService) {
+    return _isGroupMultiAutoColumn(gos) && gos.get('showGroupColumnsWhenExpanded');
+}
+
 export function _isGroupUseEntireRow(gos: GridOptionsService, pivotMode: boolean): boolean {
     // we never allow groupDisplayType = 'groupRows' if in pivot mode, otherwise we won't see the pivot values.
     if (pivotMode) {

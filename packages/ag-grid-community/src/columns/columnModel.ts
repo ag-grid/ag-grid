@@ -8,7 +8,7 @@ import type { ColDef, ColGroupDef, ColKey } from '../entities/colDef';
 import type { GridOptions } from '../entities/gridOptions';
 import type { ColumnEventType } from '../events';
 import type { PropertyChangedEvent, PropertyValueChangedEvent } from '../gridOptionsService';
-import { _isRowNumbers, _shouldMaintainColumnOrder } from '../gridOptionsUtils';
+import { _isGroupMultiAutoColumnHiding, _isRowNumbers, _shouldMaintainColumnOrder } from '../gridOptionsUtils';
 import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
 import { _createColumnTree } from './columnFactoryUtils';
@@ -291,21 +291,21 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const showSelectionColumn = selectionColSvc?.isSelectionColumnEnabled();
         const showRowNumbers = _isRowNumbers(beans);
         const valueColumns = valueColsSvc?.columns;
-        const showGroupColumnsWhenExpanded = gos.get('showGroupColumnsWhenExpanded');
+        const hideEmptyAutoColGroups = _isGroupMultiAutoColumnHiding(gos);
 
         const res = cols.list.filter((col) => {
             const isAutoGroupCol = isColumnGroupAutoCol(col);
             if (showAutoGroupAndValuesOnly) {
                 const isValueCol = valueColumns?.includes(col);
                 return (
-                    (isAutoGroupCol && (!showGroupColumnsWhenExpanded || col.isVisible())) ||
                     isValueCol ||
+                    (isAutoGroupCol && (!hideEmptyAutoColGroups || col.isVisible())) ||
                     (showSelectionColumn && isColumnSelectionCol(col)) ||
                     (showRowNumbers && isRowNumberCol(col))
                 );
             } else {
                 // keep col if a) it's auto-group (and feature not managing visibility) or b) it's visible
-                return (isAutoGroupCol && !showGroupColumnsWhenExpanded) || col.isVisible();
+                return (isAutoGroupCol && !hideEmptyAutoColGroups) || col.isVisible();
             }
         });
 
