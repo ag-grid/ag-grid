@@ -62,7 +62,6 @@ function getInitialStartRowForValue(value: string | null | undefined): number {
 
 const columnDefs: ColDef[] = [
     {
-        headerName: 'Paged Async Values',
         field: 'language',
         width: 300,
         editable: true,

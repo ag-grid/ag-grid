@@ -43,8 +43,9 @@ export class ChartMenuListFactory extends BeanStub implements NamedBean {
         eventSource: HTMLElement;
         showMenu: () => void;
         chartMenuContext: ChartMenuContext;
+        closeOnElementClick?: HTMLElement;
     }): void {
-        const { eventSource, showMenu, chartMenuContext } = params;
+        const { eventSource, showMenu, chartMenuContext, closeOnElementClick } = params;
         const areChartToolPanelsEnabled = this.chartMenuSvc.doChartToolPanelsExist(chartMenuContext.chartController);
         const menuItems = this.mapWithStockItems(
             this.getMenuItems(chartMenuContext.chartController, areChartToolPanelsEnabled),
@@ -73,6 +74,7 @@ export class ChartMenuListFactory extends BeanStub implements NamedBean {
             modal: true,
             eChild: eGui,
             closeOnEsc: true,
+            alwaysOnTop: true,
             closedCallback: () => {
                 this.destroyBean(chartMenuList);
                 this.activeChartMenuList = undefined;
@@ -80,7 +82,9 @@ export class ChartMenuListFactory extends BeanStub implements NamedBean {
                     eventSource.focus({ preventScroll: true });
                 }
             },
-            afterGuiAttached: (params) => chartMenuList.afterGuiAttached(params),
+            afterGuiAttached: (params) => {
+                chartMenuList.afterGuiAttached(params, closeOnElementClick);
+            },
             positionCallback: () => {
                 {
                     this.popupSvc.positionPopupByComponent({
@@ -245,10 +249,24 @@ class ChartMenuList extends Component {
         this.hidePopupFunc?.();
     }
 
-    public afterGuiAttached({ hidePopup }: IAfterGuiAttachedParams): void {
+    public afterGuiAttached({ hidePopup }: IAfterGuiAttachedParams, closeOnElementClick?: HTMLElement): void {
+        const time = Date.now();
         if (hidePopup) {
             this.hidePopupFunc = hidePopup;
             this.addDestroyFunc(hidePopup);
+
+            if (closeOnElementClick) {
+                const clickListener = () => {
+                    if (Date.now() - time < 500) {
+                        return;
+                    }
+                    this.hidePopupFunc();
+                };
+                closeOnElementClick.addEventListener('click', clickListener);
+                this.addDestroyFunc(() => {
+                    closeOnElementClick?.removeEventListener('click', clickListener);
+                });
+            }
         }
         _focusInto(this.mainMenuList.getGui());
     }

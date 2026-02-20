@@ -42,7 +42,6 @@ function getValueFromServer(params: RichCellEditorValuesCallbackParams): Promise
 
 const columnDefs: ColDef[] = [
     {
-        headerName: 'Async Filtering',
         field: 'language',
         cellEditor: 'agRichSelectCellEditor',
         width: 300,

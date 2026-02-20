@@ -36,7 +36,6 @@ function getValueFromServer(_params: RichCellEditorValuesCallbackParams): Promis
 
 const columnDefs: ColDef[] = [
     {
-        headerName: 'Rich Select Editor',
         field: 'language',
         cellEditor: 'agRichSelectCellEditor',
         cellEditorParams: {
