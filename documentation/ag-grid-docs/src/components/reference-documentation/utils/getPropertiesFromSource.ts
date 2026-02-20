@@ -51,6 +51,40 @@ export const getPropertiesFromSource = async ({
         });
     const codeConfigs = Object.fromEntries(codeConfigEntries);
 
+    // Validate that theme-params properties.json keys match the AUTO.json keys
+    for (const propsFile of propertiesFromFiles) {
+        const codeSrc = propsFile['_config_']?.codeSrc;
+        if (codeSrc !== 'theming-api.AUTO.json') continue;
+
+        const codeConfig = codeConfigs[codeSrc];
+        if (!codeConfig) {
+            throw new Error(`Theme params codeSrc file not found: ${codeSrc}`);
+        }
+
+        const codeKeys = new Set(Object.keys(codeConfig));
+        const propsKeys = Object.entries(propsFile)
+            .filter(([k]) => k !== '_config_')
+            .flatMap(([, section]) => Object.keys(section as object).filter((k) => k !== 'meta'));
+
+        const missing = propsKeys.filter((k) => !codeKeys.has(k));
+        const extra = [...codeKeys].filter((k) => !propsKeys.includes(k));
+
+        if (missing.length || extra.length) {
+            const msgs: string[] = [];
+            if (missing.length) {
+                msgs.push(
+                    `These theme params are documented in theming-api/properties.json but not in the API (checking ${codeSrc}): ${missing.join(', ')}`
+                );
+            }
+            if (extra.length) {
+                msgs.push(
+                    `These theme params are present in the API (checking ${codeSrc}) but not documented in theming-api/properties.json: ${extra.join(', ')}`
+                );
+            }
+            throw new Error(msgs.join('\n'));
+        }
+    }
+
     return {
         sources,
         propertiesFromFiles,

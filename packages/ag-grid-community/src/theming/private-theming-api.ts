@@ -9,7 +9,6 @@ import { coreCSS as oldCoreCss } from './core/core.css-GENERATED';
 export * from '../agStack/theming/themeTypes';
 export * from '../agStack/theming/themeTypeUtils';
 export const coreCSS = oldCoreCss + sharedCSS;
-export { getParamDocs } from './param-docs';
 export { gridThemeLogger } from './createTheme';
 
 export function getAdditionalCss(): Map<string, string[]> {

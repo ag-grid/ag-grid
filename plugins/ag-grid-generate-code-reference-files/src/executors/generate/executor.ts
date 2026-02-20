@@ -9,6 +9,7 @@ import {
     getGridOptions,
     getInterfaces,
     getRowNode,
+    getThemeParams,
 } from './generate-code-reference-files';
 
 type ExecutorOptions = { output: string };
@@ -39,6 +40,7 @@ async function generateFile(options: ExecutorOptions) {
     const gridApiFile = workspaceRoot + '/packages/ag-grid-community/src/api/gridApi.ts';
     const columnFile = workspaceRoot + '/packages/ag-grid-community/src/interfaces/iColumn.ts';
     const rowNodeFile = workspaceRoot + '/packages/ag-grid-community/src/interfaces/iRowNode.ts';
+    const themesFile = workspaceRoot + '/packages/ag-grid-community/src/theming/parts/theme/themes.ts';
 
     const distFolder = workspaceRoot + '/' + options.output;
 
@@ -69,6 +71,7 @@ async function generateFile(options: ExecutorOptions) {
         );
         await writeJSONFile(distFolder + '/interfaces.AUTO.json', getInterfaces(INTERFACE_GLOBS));
         await writeJSONFile(distFolder + '/doc-interfaces.AUTO.json', buildInterfaceProps(INTERFACE_GLOBS));
+        await writeJSONFile(distFolder + '/theming-api.AUTO.json', getThemeParams(themesFile));
     };
 
     await generateMetaFiles();

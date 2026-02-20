@@ -91,6 +91,11 @@ const getFirstLevelProperties = (typeName: string): string[] => {
     return Object.keys(interfaceData).filter((key) => !IGNORE_FIELDS.has(key));
 };
 
+const paramToVariableName = (paramName: string): string => {
+    const kebabCase = paramName.replace(/[A-Z]|\d+/g, (m) => `-${m}`).toLowerCase();
+    return `--ag-${kebabCase}`;
+};
+
 const getCodeWordsForApiProperty = (data: APIPropertyRefSource, normalizedText: string): string[] => {
     const docInterfaces = getDocInterfaces();
     const allWords: string[] = [];
@@ -151,7 +156,7 @@ export const parseApiPageData = (details: APIPageData): AlgoliaRecord[] => {
     const file = fs.readFileSync(propertiesFileUrl, 'utf8');
     const { _config_, ...sections } = JSON.parse(file);
     if (!_config_) return []; // if no config, wrong type of file.
-    const { codeSrc } = _config_;
+    const { codeSrc, codeWordsMode } = _config_;
     if (!codeSrc) return []; // if no src, wrong type of file.
 
     const referenceFile = fs.readFileSync(`${API_REFERENCE_DIR}/${codeSrc}`, 'utf8');
@@ -179,11 +184,14 @@ export const parseApiPageData = (details: APIPageData): AlgoliaRecord[] => {
             const text = description ?? data.meta.comment;
             const normalizedText = text?.replace(/\[([^\]]+)\][^)]+\)/g, '$1');
 
-            // Extract all code words (text + type names + nested properties)
-            // Skip if property/method name is excluded
-            const codeWords = TYPE_PROPERTY_INDEXING[propertyKey]
-                ? []
-                : getCodeWordsForApiProperty(data, normalizedText);
+            let codeWords: string[];
+            if (codeWordsMode === 'cssVariable') {
+                codeWords = [paramToVariableName(propertyKey)];
+            } else if (TYPE_PROPERTY_INDEXING[propertyKey] === 'never') {
+                codeWords = [];
+            } else {
+                codeWords = getCodeWordsForApiProperty(data, normalizedText);
+            }
 
             records.push({
                 source: 'api',
