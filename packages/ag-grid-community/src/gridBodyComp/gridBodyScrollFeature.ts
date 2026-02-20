@@ -264,16 +264,9 @@ export class GridBodyScrollFeature extends BeanStub {
             return;
         }
 
-        let requestedScrollTop: number;
-        let scrollTop: number;
-
-        if (source === VIEWPORT) {
-            requestedScrollTop = this.eBodyViewport.scrollTop;
-            scrollTop = requestedScrollTop;
-        } else {
-            requestedScrollTop = this.fakeVScrollComp.getScrollPosition();
-            scrollTop = requestedScrollTop;
-        }
+        const requestedScrollTop =
+            source === VIEWPORT ? this.eBodyViewport.scrollTop : this.fakeVScrollComp.getScrollPosition();
+        let scrollTop = requestedScrollTop;
 
         if (this.shouldBlockScrollUpdate(Direction.Vertical, scrollTop, true)) {
             return;
