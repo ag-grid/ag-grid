@@ -315,11 +315,20 @@ export class ThemeImpl {
         const params = this._dynamicParams;
         let changed = false;
         for (const key of Object.keys(paramLengths)) {
-            const newValue = paramLengths[key];
+            let newValue = paramLengths[key];
+            if (newValue > 50) {
+                // We never decrease the number, so prevent accidental setup of very large numbers
+                newValue = 50;
+            }
             for (const paramsForMode of Object.values(params)) {
-                // we don't know the current mode, so just update all of them
-                const oldValue = paramsForMode[key];
-                if (oldValue !== newValue) {
+                // We don't know the current mode, so just update all of them.
+                // If the scale changes with the mode, this method will get called again anyway
+                const oldValue = paramsForMode[key] as number;
+                // Multiple instances can share the same dynamic param css,
+                // but this only affects the number of dynamic color variables we listen to.
+                // Each instance will read based on its own scale variable.
+                // Therefore we just need to increase the number if required.
+                if (oldValue == null || newValue > oldValue) {
                     changed = true;
                     paramsForMode[key] = newValue;
                 }
