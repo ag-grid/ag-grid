@@ -5,7 +5,6 @@ import type {
     IColumnCollectionService,
     NamedBean,
     PropertyValueChangedEvent,
-    RowNode,
     _ColumnCollections,
 } from 'ag-grid-community';
 import {
@@ -287,7 +286,7 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
             return;
         }
 
-        const { gos, visibleCols } = this.beans;
+        const { gos, visibleCols, groupStage } = this.beans;
         const isFeatureEnabled = gos.get('showGroupColumnsWhenExpanded') && _isGroupMultiAutoColumn(gos);
 
         let changed = false;
@@ -301,11 +300,10 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
                 }
             }
         } else {
-            const expandedLevels = this.calculateExpandedLevels(columns.length);
+            const deepestExpandedLevel = groupStage?.getDeepestExpandedLevel(columns.length - 2) ?? -1;
 
             for (let i = 0; i < columns.length; i++) {
-                // Level 0 always visible; level K visible if expandedLevels[K-1] is true
-                const shouldBeVisible = i === 0 || expandedLevels[i - 1];
+                const shouldBeVisible = deepestExpandedLevel >= i - 1;
                 const isCurrentlyVisible = columns[i].isVisible();
                 if (shouldBeVisible !== isCurrentlyVisible) {
                     columns[i].setVisible(shouldBeVisible, 'api');
@@ -317,36 +315,6 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
         if (changed) {
             visibleCols.refresh('api');
         }
-    }
-
-    private calculateExpandedLevels(numLevels: number): boolean[] {
-        const expandedLevels = new Array<boolean>(numLevels).fill(false);
-        const rootNode = this.beans.rowModel.rootNode;
-        if (!rootNode) {
-            return expandedLevels;
-        }
-
-        const traverse = (children: RowNode[] | null): void => {
-            if (!children) {
-                return;
-            }
-            for (const node of children) {
-                if (!node.group) {
-                    continue;
-                }
-                if (node.expanded) {
-                    expandedLevels[node.level] = true;
-                }
-                // Early exit: no need to traverse further once every level has an expanded node
-                if (expandedLevels.every(Boolean)) {
-                    return;
-                }
-                traverse(node.childrenAfterGroup as RowNode[] | null);
-            }
-        };
-
-        traverse(rootNode.childrenAfterGroup as RowNode[] | null);
-        return expandedLevels;
     }
 
     public override destroy(): void {
