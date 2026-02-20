@@ -220,11 +220,8 @@ export abstract class BaseEnvironment<
             this.lastKnownValues.set(variable, newMeasurement);
             if (newMeasurement !== lastMeasurement) {
                 lastMeasurement = newMeasurement;
-                if (handleChange) {
-                    handleChange();
-                } else {
-                    this.fireStylesChangedEvent(variable.changeKey);
-                }
+                handleChange?.();
+                this.fireStylesChangedEvent(variable.changeKey);
             }
         });
         this.addDestroyFunc(() => unsubscribe());
