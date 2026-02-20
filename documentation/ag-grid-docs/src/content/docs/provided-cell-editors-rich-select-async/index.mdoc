@@ -1,0 +1,161 @@
+---
+title: "Rich Select Cell Editor - Async Values"
+enterprise: true
+---
+
+An alternative to using the browser's `select` popup for dropdowns inside the grid.
+
+The Rich Select Cell Editor allows users to enter a cell value from a list of provided values by searching or filtering the list.
+
+## Overview
+
+List values can be provided asynchronously to the editor as shown below:
+
+{% gridExampleRunner title="Rich Select Async Values" name="rich-select-async-values" /%}
+
+```ts
+function fetchLanguages(_params: RichCellEditorValuesCallbackParams): Promise<string[]> {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve(['English', 'Spanish', 'French', 'Portuguese', '(other)']), 1000);
+  });
+}
+```
+
+```js
+columnDefs: [
+    {
+        field: 'language',
+        cellEditor: 'agRichSelectCellEditor',
+        cellEditorParams: {
+            values: fetchLanguages,
+        }
+    }
+]
+```
+
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["values"] /%}
+
+### Paged Async Values
+
+For large datasets, `valuesPage` avoids loading everything at once.
+
+In paged mode the editor requests row ranges (and optional cursor tokens), rather than a single full list.
+
+Requests always include `startRow` and `endRow`. `cursor` is optional: it is `undefined` on the first request, then for forward paging it is automatically populated from the previous page result.
+
+You can use `valuesPageInitialStartRow` to open around the current value while still allowing navigation to earlier and later pages.
+
+{% gridExampleRunner title="Rich Select Paged Async Values" name="rich-select-paged-async-values" /%}
+
+```ts
+function getLanguagesPage(params: RichCellEditorValuesPageParams): Promise<RichCellEditorValuesPageResult<string>> {
+    return fetch(
+        `/api/languages?startRow=${params.startRow}&endRow=${params.endRow}&cursor=${encodeURIComponent(params.cursor ?? '')}`
+    ).then((res) => res.json());
+}
+```
+
+```js
+columnDefs: [
+    {
+        field: 'language',
+        cellEditor: 'agRichSelectCellEditor',
+        cellEditorParams: {
+            valuesPage: getLanguagesPage,
+            valuesPageInitialStartRow: (value) => getRowForSelectedValue(value),
+            valuesPageSize: 100,
+            valuesPageLoadThreshold: 10
+        }
+    }
+]
+```
+
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["valuesPage", "valuesPageInitialStartRow", "valuesPageSize", "valuesPageLoadThreshold"] /%}
+
+## Async Filtering
+
+For advanced filtering scenarios, combine async `values` callback, `allowTyping`, and `filterListAsync` to enable async filtering.
+
+When `filterListAsync` is set to `true`, the cell editor behaves as follows:
+
+-   It calls the `values` callback with the current search term.
+-   It delays the search request by 300ms (this can be adjusted using `searchDebounceDelay`) to avoid excessive calls.
+-   A loading indicator appears while the network request is in progress.
+-   Once the promise resolves, the dropdown is updated with the filtered results.
+
+This is shown in the example below:
+
+{% gridExampleRunner title="Rich Select Async Filtering" name="rich-select-full-async-values" /%}
+
+```ts
+function fetchLanguages(params: RichCellEditorValuesCallbackParams): Promise<string[]> {
+    return fetch(`/api/languages?search=${encodeURIComponent(params.search)}`)
+        .then(res => res.json())
+        .then(data => data.items as string[]);
+}
+```
+
+```js
+columnDefs: [
+    {
+        field: 'language',
+        cellEditor: 'agRichSelectCellEditor',
+        cellEditorParams: {
+            allowTyping: true,
+            filterList: true,
+            filterListAsync: true,
+            values: fetchLanguages
+        }
+    }
+]
+```
+
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["filterListAsync", "searchDebounceDelay", "values"] /%}
+
+## Paged Async Filtering
+
+For very large, server-backed datasets, combine async filtering with `valuesPage` so filtered results are also loaded incrementally.
+`valuesPageInitialStartRow` is only used for the initial unfiltered load; once the user types, filtered paging starts from row `0`.
+
+In this mode each request includes:
+
+-   `search` for the current filter text.
+-   `startRow` and `endRow` for range-based pagination.
+-   `cursor` for cursor-based forward pagination APIs (`undefined` on the first request, then replayed from the previous response).
+
+You can implement either strategy in your datasource:
+
+-   Range-based: use `startRow` / `endRow` and return `lastRow`.
+-   Cursor-based: use `cursor` for forward pages and still tolerate `startRow` / `endRow` for initial positioning and upward loading.
+
+{% gridExampleRunner title="Rich Select Paged Async Filtering" name="rich-select-paged-async-filtering" /%}
+
+```ts
+function getFilteredLanguagesPage(
+    params: RichCellEditorValuesPageParams
+): Promise<RichCellEditorValuesPageResult<string>> {
+    return fetch(
+        `/api/languages?search=${encodeURIComponent(params.search)}&startRow=${params.startRow}&endRow=${params.endRow}&cursor=${encodeURIComponent(params.cursor ?? '')}`
+    ).then((res) => res.json());
+}
+```
+
+```js
+columnDefs: [
+    {
+        field: 'language',
+        cellEditor: 'agRichSelectCellEditor',
+        cellEditorParams: {
+            allowTyping: true,
+            filterList: true,
+            filterListAsync: true,
+            valuesPage: getFilteredLanguagesPage,
+            valuesPageInitialStartRow: (value) => getRowForSelectedValue(value),
+            valuesPageSize: 100,
+            valuesPageLoadThreshold: 10
+        }
+    }
+]
+```
+
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["filterListAsync", "valuesPage", "valuesPageInitialStartRow", "valuesPageSize", "valuesPageLoadThreshold"] /%}
