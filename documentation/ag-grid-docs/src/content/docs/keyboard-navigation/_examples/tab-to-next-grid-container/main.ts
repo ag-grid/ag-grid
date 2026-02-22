@@ -72,7 +72,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         filter: true,
     },
     pagination: true,
-    paginationPageSize: 10,
     tabToNextGridContainer,
     onCellFocused: (params) => {
         const { rowIndex, rowPinned, column } = params;
