@@ -373,6 +373,7 @@ export const _FUNCTION_GRID_OPTIONS: (CallbackKeys | FunctionKeys)[] = [
     'tabToNextHeader',
     'navigateToNextCell',
     'tabToNextCell',
+    'tabToNextGridContainer',
     'processCellFromClipboard',
     'getDocument',
     'postProcessPopup',

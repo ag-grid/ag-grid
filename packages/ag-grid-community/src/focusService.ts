@@ -17,9 +17,14 @@ import { _getDomData } from './gridOptionsUtils';
 import { DOM_DATA_KEY_HEADER_CTRL } from './headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 import type { HeaderCellCtrl } from './headerRendering/cells/column/headerCellCtrl';
 import { getFocusHeaderRowCount, isHeaderPositionEqual } from './headerRendering/headerUtils';
-import type { NavigateToNextHeaderParams, TabToNextHeaderParams } from './interfaces/iCallbackParams';
+import type {
+    NavigateToNextHeaderParams,
+    TabToNextGridContainerTarget,
+    TabToNextHeaderParams,
+} from './interfaces/iCallbackParams';
 import type { CellPosition } from './interfaces/iCellPosition';
 import type { WithoutGridCommon } from './interfaces/iCommon';
+import type { FocusableContainer } from './interfaces/iFocusableContainer';
 import type { HeaderPosition } from './interfaces/iHeaderPosition';
 import type { RowPinnedType } from './interfaces/iRowNode';
 import { getHeaderIndexToFocus } from './navigation/headerNavigationService';
@@ -27,7 +32,12 @@ import type { NavigationService } from './navigation/navigationService';
 import type { OverlayService } from './rendering/overlays/overlayService';
 import { DOM_DATA_KEY_CELL_CTRL, DOM_DATA_KEY_ROW_CTRL } from './rendering/renderUtils';
 import type { RowRenderer } from './rendering/rowRenderer';
-import { _focusNextGridCoreContainer, _isCellFocusSuppressed, _isHeaderFocusSuppressed } from './utils/gridFocus';
+import {
+    _focusNextGridCoreContainer,
+    _getDefaultTabTargetForContainer,
+    _isCellFocusSuppressed,
+    _isHeaderFocusSuppressed,
+} from './utils/gridFocus';
 
 type FocusDirection = 'Before' | 'After' | null;
 
@@ -358,7 +368,8 @@ export class FocusService extends BeanStub implements NamedBean {
                         headerRowCount,
                         event,
                     };
-                    headerPosition = userFunc(params);
+                    const userResult = userFunc(params);
+                    headerPosition = userResult === null ? currentPosition : userResult;
                 }
             }
         }
@@ -527,6 +538,117 @@ export class FocusService extends BeanStub implements NamedBean {
         return !!overlayGui && _focusInto(overlayGui, backwards);
     }
 
+    public getDefaultTabToNextGridContainerTarget(params: {
+        backwards: boolean;
+        focusableContainers: FocusableContainer[];
+        nextIndex: number;
+    }): TabToNextGridContainerTarget | null {
+        const { backwards, focusableContainers } = params;
+        const step = backwards ? -1 : 1;
+        let gridBodyTarget: TabToNextGridContainerTarget | null | undefined;
+        const getGridBodyTabTarget = (): TabToNextGridContainerTarget | null => {
+            if (gridBodyTarget === undefined) {
+                gridBodyTarget = this.getGridBodyTabTarget(backwards);
+            }
+
+            return gridBodyTarget;
+        };
+
+        // walk container order in tab direction and return the first default target candidate.
+        for (let index = params.nextIndex; index >= 0 && index < focusableContainers.length; index += step) {
+            const target = _getDefaultTabTargetForContainer(focusableContainers[index], getGridBodyTabTarget);
+            if (target) {
+                return target;
+            }
+        }
+
+        return null;
+    }
+
+    private getGridBodyTabTarget(backwards: boolean): CellPosition | HeaderPosition | null {
+        if (backwards) {
+            return this.getGridViewTabTarget({ column: _last(this.visibleCols.allCols), backwards: true });
+        }
+
+        const firstColumn = this.visibleCols.allCols[0];
+
+        // forward tab into grid body mirrors focusGridBodyDefault:
+        // headers first when enabled, otherwise first focusable grid cell.
+        if (this.gos.get('headerHeight') === 0 || _isHeaderFocusSuppressed(this.beans)) {
+            return this.getGridViewTabTarget({ column: firstColumn });
+        }
+
+        if (!firstColumn) {
+            return null;
+        }
+
+        return getHeaderIndexToFocus(this.beans, firstColumn, 0);
+    }
+
+    private getGridViewTabTarget(params: {
+        column?: AgColumn;
+        backwards?: boolean;
+    }): CellPosition | HeaderPosition | null {
+        const { backwards = false } = params;
+        const column: AgColumn | undefined = params.column ?? (this.focusedHeader?.column as AgColumn | undefined);
+
+        // compute the grid-view focus target without moving browser focus or scrolling.
+        if (!column) {
+            return null;
+        }
+
+        if (this.overlays?.exclusive) {
+            return null;
+        }
+
+        if (_isCellFocusSuppressed(this.beans)) {
+            return backwards && !_isHeaderFocusSuppressed(this.beans)
+                ? {
+                      headerRowIndex: getFocusHeaderRowCount(this.beans) - 1,
+                      column,
+                  }
+                : null;
+        }
+
+        const nextRow = backwards ? _getLastRow(this.beans) : _getFirstRow(this.beans);
+        if (nextRow?.rowIndex == null) {
+            if (this.overlays?.isVisible()) {
+                return null;
+            }
+
+            if (backwards && !_isHeaderFocusSuppressed(this.beans)) {
+                const lastColumn = _last(this.visibleCols.allCols);
+                if (lastColumn) {
+                    return {
+                        headerRowIndex: getFocusHeaderRowCount(this.beans) - 1,
+                        column: lastColumn,
+                    };
+                }
+            }
+
+            return null;
+        }
+
+        const rowNode = _getRowNode(this.beans, nextRow);
+
+        if (!rowNode || column.isSuppressNavigable(rowNode)) {
+            return null;
+        }
+
+        if (backwards) {
+            const rowCtrl = this.rowRenderer.getRowByPosition(nextRow);
+            if (rowCtrl?.isFullWidth()) {
+                return null;
+            }
+        }
+
+        return {
+            rowIndex: nextRow.rowIndex,
+            rowPinned: nextRow.rowPinned,
+            column,
+        };
+    }
+
     public focusGridView(params: {
         column?: AgColumn;
         backwards?: boolean;
@@ -637,9 +759,8 @@ export class FocusService extends BeanStub implements NamedBean {
                     headerRowIndex: getFocusHeaderRowCount(this.beans) - 1,
                 },
             });
-        } else {
-            return this.focusGridView({ column });
         }
+        return this.focusGridView({ column });
     }
 
     public clearAdvancedFilterColumn(): void {

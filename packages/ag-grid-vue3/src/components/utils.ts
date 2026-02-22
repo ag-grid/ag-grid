@@ -101,6 +101,7 @@ import type {
     SortDirection,
     StatusBar,
     TabToNextCell,
+    TabToNextGridContainer,
     TabToNextHeader,
     Theme,
     TreeDataDisplayType,
@@ -1759,6 +1760,12 @@ export interface Props<TData> {
          * or `false` to let the browser handle the tab behaviour.
          */
     tabToNextCell?: TabToNextCell<TData>,
+    /** Allows overriding the default behaviour when tabbing between core grid containers.
+         * Return a container name, a cell position, or a header position to focus that target,
+         * `true` to stay on the current focus, `false` to let the browser handle tab behaviour,
+         * or `undefined` to use the grid's default behaviour.
+         */
+    tabToNextGridContainer?: TabToNextGridContainer<TData>,
     /** A callback for localising text within the grid.
          * @initial
          * @agModule `LocaleModule`
@@ -2308,6 +2315,7 @@ export function getProps() {
         tabToNextHeader: undefined,
         navigateToNextCell: undefined,
         tabToNextCell: undefined,
+        tabToNextGridContainer: undefined,
         getLocaleText: undefined,
         getDocument: undefined,
         paginationNumberFormatter: undefined,

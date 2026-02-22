@@ -216,6 +216,7 @@ import type {
     StatusBar,
     StoreRefreshedEvent,
     TabToNextCell,
+    TabToNextGridContainer,
     TabToNextHeader,
     Theme,
     ToolPanelSizeChangedEvent,
@@ -1938,6 +1939,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * or `false` to let the browser handle the tab behaviour.
      */
     @Input() public tabToNextCell: TabToNextCell<TData> | undefined = undefined;
+    /** Allows overriding the default behaviour when tabbing between core grid containers.
+     * Return a container name, a cell position, or a header position to focus that target,
+     * `true` to stay on the current focus, `false` to let the browser handle tab behaviour,
+     * or `undefined` to use the grid's default behaviour.
+     */
+    @Input() public tabToNextGridContainer: TabToNextGridContainer<TData> | undefined = undefined;
     /** A callback for localising text within the grid.
      * @initial
      * @agModule `LocaleModule`

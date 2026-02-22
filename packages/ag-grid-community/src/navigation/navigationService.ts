@@ -746,7 +746,10 @@ export class NavigationService extends BeanStub implements NamedBean {
             const headerLen = getFocusHeaderRowCount(beans);
 
             focusSvc.focusHeaderPosition({
-                headerPosition: { headerRowIndex: headerLen + nextCell.rowIndex, column: currentCell.column },
+                headerPosition: {
+                    headerRowIndex: headerLen + nextCell.rowIndex,
+                    column: nextCell.column ?? currentCell.column,
+                },
                 event: event || undefined,
                 fromCell: true,
             });
