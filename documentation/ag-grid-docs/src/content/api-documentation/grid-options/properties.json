@@ -990,6 +990,12 @@
                 "name": "Custom Navigation",
                 "url": "./keyboard-navigation/#custom-navigation"
             }
+        },
+        "tabToNextGridContainer": {
+            "more": {
+                "name": "Custom Navigation",
+                "url": "./keyboard-navigation/#custom-navigation"
+            }
         }
     },
     "pagination": {
