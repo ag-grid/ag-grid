@@ -751,6 +751,9 @@ export const AG_GRID_LOCALE_PK = {
     ariaLabelFilterCardDelete: 'فلٹر حذف کریں',
     ariaLabelFilterCardHasEdits: 'ترمیم شدہ',
 
+    // Keyboard Navigation
+    tabToNextGridContainerContainerNotFound: 'tabToNextGridContainer: ${variable} کنٹینر نہیں ملا',
+
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
     decimalSeparator: '.',

@@ -751,6 +751,9 @@ export const AG_GRID_LOCALE_VN = {
     ariaLabelFilterCardDelete: 'Xóa Bộ Lọc',
     ariaLabelFilterCardHasEdits: 'Có Chỉnh Sửa',
 
+    // Keyboard Navigation
+    tabToNextGridContainerContainerNotFound: 'tabToNextGridContainer: không tìm thấy vùng chứa ${variable}',
+
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
     decimalSeparator: '.',

@@ -757,6 +757,9 @@ export const AG_GRID_LOCALE_HU = {
     ariaLabelFilterCardDelete: 'Szűrő törlése',
     ariaLabelFilterCardHasEdits: 'Módosításokat tartalmaz',
 
+    // Keyboard Navigation
+    tabToNextGridContainerContainerNotFound: 'tabToNextGridContainer: a(z) ${variable} konténer nem található',
+
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',
     decimalSeparator: ',',

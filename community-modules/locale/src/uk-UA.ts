@@ -753,6 +753,9 @@ export const AG_GRID_LOCALE_UA = {
     ariaLabelFilterCardDelete: 'Видалити фільтр',
     ariaLabelFilterCardHasEdits: 'Є зміни',
 
+    // Keyboard Navigation
+    tabToNextGridContainerContainerNotFound: 'tabToNextGridContainer: контейнер ${variable} не знайдено',
+
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ' ',
     decimalSeparator: ',',

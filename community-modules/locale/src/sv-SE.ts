@@ -754,6 +754,9 @@ export const AG_GRID_LOCALE_SE = {
     ariaLabelFilterCardDelete: 'Radera filter',
     ariaLabelFilterCardHasEdits: 'Har ändringar',
 
+    // Keyboard Navigation
+    tabToNextGridContainerContainerNotFound: 'tabToNextGridContainer: behållaren ${variable} hittades inte',
+
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
     decimalSeparator: '.',

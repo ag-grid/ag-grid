@@ -756,6 +756,9 @@ export const AG_GRID_LOCALE_TR = {
     ariaLabelFilterCardDelete: 'Filtreyi Sil',
     ariaLabelFilterCardHasEdits: 'Düzenlemeler Var',
 
+    // Keyboard Navigation
+    tabToNextGridContainerContainerNotFound: 'tabToNextGridContainer: ${variable} kapsayıcısı bulunamadı',
+
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',
     decimalSeparator: ',',
