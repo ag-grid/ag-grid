@@ -7,11 +7,12 @@ import type { TabToNextGridContainerTarget } from '../interfaces/iCallbackParams
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import type { Component } from '../widgets/component';
+import { _isStopPropagationForAgGrid } from './gridEvent';
 
 export function _addFocusableContainerListener(beans: BeanCollection, comp: Component, eGui: HTMLElement): void {
     comp.addManagedElementListeners(eGui, {
         keydown: (e: KeyboardEvent) => {
-            if (!e.defaultPrevented && e.key === KeyCode.TAB) {
+            if (!e.defaultPrevented && !_isStopPropagationForAgGrid(e) && e.key === KeyCode.TAB) {
                 const backwards = e.shiftKey;
                 if (!_findNextFocusableElement(beans, eGui, false, backwards)) {
                     if (_focusNextGridCoreContainer(beans, backwards)) {

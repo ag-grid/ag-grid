@@ -1,3 +1,5 @@
+import { _addFocusableContainerListener } from 'ag-grid-community';
+
 import { AgSideBarSelector } from './agSideBar';
 
 function createFocusableButton(): HTMLButtonElement {
@@ -8,43 +10,65 @@ function createFocusableButton(): HTMLButtonElement {
 }
 
 describe('AgSideBar focus overrides', () => {
-    test('tab with no open panel evaluates next grid container once when callback returns false', () => {
-        const sideBarGui = document.createElement('div');
-        const sideBarButton = createFocusableButton();
-        sideBarGui.appendChild(sideBarButton);
+    test.each<boolean | undefined>([false, undefined])(
+        'tab with no open panel evaluates next grid container once when focus result is %s',
+        (focusResult) => {
+            const sideBarGui = document.createElement('div');
+            const sideBarButton = createFocusableButton();
+            sideBarGui.appendChild(sideBarButton);
 
-        const rootDiv = document.createElement('div');
-        try {
-            rootDiv.appendChild(sideBarGui);
-            document.body.appendChild(rootDiv);
-            sideBarButton.focus();
+            const rootDiv = document.createElement('div');
+            try {
+                rootDiv.appendChild(sideBarGui);
+                document.body.appendChild(rootDiv);
+                sideBarButton.focus();
 
-            const gridCtrl = {
-                focusNextInnerContainer: jest.fn(() => false),
-                forceFocusOutOfContainer: jest.fn(),
-                isDetailGrid: jest.fn(() => false),
-                isFocusInsideGridBody: jest.fn(() => true),
-            };
+                const gridCtrl = {
+                    focusNextInnerContainer: jest.fn((_backwards: boolean) => focusResult),
+                    forceFocusOutOfContainer: jest.fn(),
+                    isDetailGrid: jest.fn(() => false),
+                    isFocusInsideGridBody: jest.fn(() => true),
+                };
 
-            const sideBarContext = {
-                beans: {
+                const beans = {
                     eRootDiv: rootDiv,
                     ctrlsSvc: {
                         get: jest.fn(() => gridCtrl),
                     },
-                },
-                sideBarButtons: {
+                };
+
+                const sideBarContext = {
+                    beans,
+                    sideBarButtons: {
+                        getGui: () => sideBarGui,
+                    },
                     getGui: () => sideBarGui,
-                },
-                getGui: () => sideBarGui,
-            };
+                    addManagedElementListeners: (
+                        element: HTMLElement,
+                        listeners: { keydown?: (e: KeyboardEvent) => void }
+                    ) => {
+                        if (listeners.keydown) {
+                            element.addEventListener('keydown', listeners.keydown as EventListener);
+                        }
+                    },
+                };
 
-            const onTabKeyDown = (AgSideBarSelector.component as any).prototype.onTabKeyDown;
-            onTabKeyDown.call(sideBarContext, new KeyboardEvent('keydown', { key: 'Tab', cancelable: true }));
+                const onTabKeyDown = (AgSideBarSelector.component as any).prototype.onTabKeyDown;
 
-            expect(gridCtrl.focusNextInnerContainer).toHaveBeenCalledTimes(1);
-        } finally {
-            rootDiv.remove();
+                // replicate enterprise sidebar wiring: managed focus listener + focusable container listener
+                sideBarContext.addManagedElementListeners(sideBarGui, {
+                    keydown: (e: KeyboardEvent) => onTabKeyDown.call(sideBarContext, e),
+                });
+                _addFocusableContainerListener(beans as any, sideBarContext as any, sideBarGui);
+
+                sideBarButton.dispatchEvent(
+                    new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true })
+                );
+
+                expect(gridCtrl.focusNextInnerContainer).toHaveBeenCalledTimes(1);
+            } finally {
+                rootDiv.remove();
+            }
         }
-    });
+    );
 });

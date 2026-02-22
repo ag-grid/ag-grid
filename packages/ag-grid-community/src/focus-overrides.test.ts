@@ -1261,6 +1261,27 @@ describe('Focus override callbacks', () => {
             expect(result).toBe(true);
             expect(document.activeElement).toBe(paginationButton);
         });
+
+        test('tabToNextGridContainer: shift-tab from unmanaged element into gridBody-only uses grid body default target', () => {
+            const gridBodyViewport = appendFocusableButton(gridBodyContainer);
+            gridCtrlAny.view.getFocusableContainers = () => [gridBodyContainer];
+
+            const externalButton = createFocusableButton();
+            rootDiv.appendChild(externalButton);
+            externalButton.focus();
+            getCallback.mockImplementation(() => undefined);
+
+            const lastColumn = createColumn('sport');
+            gridCtrlAny.beans.visibleCols.allCols = [lastColumn];
+            const focusSvc = gridCtrlAny.beans.focusSvc;
+            focusSvc.focusGridView.mockReturnValue(true);
+
+            const result = gridCtrl.focusNextInnerContainer(true);
+
+            expect(result).toBe(true);
+            expect(focusSvc.focusGridView).toHaveBeenCalledWith({ column: lastColumn, backwards: true });
+            expect(document.activeElement).not.toBe(gridBodyViewport);
+        });
     });
 
     describe('GridHeaderCtrl', () => {

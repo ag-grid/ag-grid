@@ -126,10 +126,14 @@ export class GridCtrl extends BeanStub {
         const focusableContainers = this.getFocusableContainers();
         const { indexWithFocus, nextIndex } = this.getNextFocusableIndex(focusableContainers, backwards);
         const resolvedNextIndex = indexWithFocus === -1 ? (backwards ? focusableContainers.length - 1 : 0) : nextIndex;
-        const userCallbackFunction = this.gos.getCallback('tabToNextGridContainer');
+        const {
+            gos,
+            beans: { focusSvc, navigation },
+        } = this;
+        const userCallbackFunction = gos.getCallback('tabToNextGridContainer');
 
         if (userCallbackFunction) {
-            const defaultTarget = this.beans.focusSvc.getDefaultTabToNextGridContainerTarget({
+            const defaultTarget = focusSvc.getDefaultTabToNextGridContainerTarget({
                 backwards,
                 focusableContainers,
                 nextIndex: resolvedNextIndex,
@@ -177,12 +181,12 @@ export class GridCtrl extends BeanStub {
                 }
 
                 if (isHeaderPosition(userResult)) {
-                    return this.beans.focusSvc.focusHeaderPosition({ headerPosition: userResult }) || undefined;
+                    return focusSvc.focusHeaderPosition({ headerPosition: userResult }) || undefined;
                 }
 
-                this.beans.navigation?.ensureCellVisible(userResult);
-                this.beans.focusSvc.setFocusedCell({ ...userResult, forceBrowserFocus: true });
-                return this.beans.focusSvc.isCellFocused(userResult) || undefined;
+                navigation?.ensureCellVisible(userResult);
+                focusSvc.setFocusedCell({ ...userResult, forceBrowserFocus: true });
+                return focusSvc.isCellFocused(userResult) || undefined;
             }
         }
 
@@ -197,13 +201,17 @@ export class GridCtrl extends BeanStub {
     }
 
     public focusInnerElement(fromBottom?: boolean): boolean {
-        const userCallbackFunction = this.gos.getCallback('focusGridInnerElement');
+        const {
+            gos,
+            beans,
+            beans: { focusSvc, visibleCols },
+        } = this;
+        const userCallbackFunction = gos.getCallback('focusGridInnerElement');
         if (userCallbackFunction?.({ fromBottom: !!fromBottom })) {
             return true;
         }
 
         const focusableContainers = this.getFocusableContainers();
-        const { focusSvc, visibleCols } = this.beans;
 
         if (fromBottom) {
             if (
@@ -223,7 +231,7 @@ export class GridCtrl extends BeanStub {
 
         const allColumns = visibleCols.allCols;
 
-        if (this.gos.get('headerHeight') === 0 || _isHeaderFocusSuppressed(this.beans)) {
+        if (gos.get('headerHeight') === 0 || _isHeaderFocusSuppressed(beans)) {
             if (focusSvc.focusGridView({ column: allColumns[0], backwards: fromBottom })) {
                 return true;
             }
@@ -296,13 +304,20 @@ export class GridCtrl extends BeanStub {
     }
 
     private focusGridBodyDefault(backwards: boolean): boolean {
-        const { focusSvc, visibleCols } = this.beans;
+        const {
+            gos,
+            beans,
+            beans: {
+                focusSvc,
+                visibleCols: { allCols },
+            },
+        } = this;
         if (backwards) {
-            return focusSvc.focusGridView({ column: _last(visibleCols.allCols), backwards: true });
+            return focusSvc.focusGridView({ column: _last(allCols), backwards: true });
         }
 
-        if (this.gos.get('headerHeight') === 0 || _isHeaderFocusSuppressed(this.beans)) {
-            return focusSvc.focusGridView({ column: visibleCols.allCols[0] });
+        if (gos.get('headerHeight') === 0 || _isHeaderFocusSuppressed(beans)) {
+            return focusSvc.focusGridView({ column: allCols[0] });
         }
 
         return focusSvc.focusFirstHeader();
@@ -325,7 +340,7 @@ export class GridCtrl extends BeanStub {
             // grid body transitions should restore a real grid target, not focus structural wrappers.
             if (containerName === 'gridBody') {
                 const enteringGridBody =
-                    (backwards && indexWithFocus > index) || (!backwards && indexWithFocus < index);
+                    indexWithFocus === -1 || (backwards ? indexWithFocus > index : indexWithFocus < index);
                 if (enteringGridBody) {
                     if (this.focusGridBodyDefault(backwards)) {
                         return true;
