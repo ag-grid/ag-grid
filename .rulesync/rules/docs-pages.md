@@ -6,11 +6,7 @@ globs: ['documentation/**/*.mdoc', 'documentation/**/*.md']
 
 # Documentation Pages Guide
 
-This guide covers creating and maintaining documentation pages for AG Grid.
-
-## Overview
-
-Documentation is located in `documentation/ag-grid-docs/` and uses Astro with Markdoc for content.
+This guide covers creating and maintaining documentation pages for AG Grid — its structure, writing style, tone, and quality standards. Documentation is located in `documentation/ag-grid-docs/` and uses Astro with Markdoc for content.
 
 ## Page Structure
 
@@ -23,17 +19,11 @@ documentation/ag-grid-docs/src/content/docs/
 │   │   └── _examples/       # Feature examples
 ```
 
-## Language Conventions
-
--   **Documentation text**: UK/British English (e.g., "colour", "behaviour")
--   **API option names**: US English (e.g., "color", "behavior")
--   **Comments and JSDocs**: UK/British English
-
 ## Creating New Pages
 
 1. Create the `.mdoc` file in the appropriate directory
 2. Add frontmatter with title and description
-3. Write content following existing patterns
+3. Write content following existing patterns and the [writing guidelines](#writing-style) below
 4. Add examples in `_examples/` if needed
 5. Update navigation in `nav.json` if required
 
@@ -46,13 +36,107 @@ description: Brief description of the feature
 ---
 ```
 
-## Content Guidelines
+## Language Conventions
 
-1. Start with a brief introduction
-2. Use progressive disclosure - simple concepts first
-3. Include code examples for all features
-4. Link to related documentation
-5. Keep paragraphs concise
+-   **Documentation text**: UK/British English (e.g., "colour", "behaviour")
+-   **API option names**: US English (e.g., "color", "behavior")
+-   **Comments and JSDocs**: UK/British English
+
+## Writing Style
+
+### Core Principles
+
+1. **Example-driven** - Illustrate concepts with examples rather than prose alone
+2. **Progressive disclosure** - Present simple concepts before complex ones
+3. **Active voice** - Direct and clear; say who does what
+4. **Present tense** - Describe current behaviour, not future state
+5. **Positive framing** - Lead with solutions, not limitations
+6. **Appropriate length** - Calibrate to content complexity; don't pad or compress artificially
+7. **Consistent structure** - Predictable patterns that start with user benefit aid navigation
+8. **Cross-reference** - Link to related documentation where it adds context or discovery value
+
+### Quick Reference
+
+| Principle        | ✅ Do This                       | ❌ Avoid This                    |
+| ---------------- | -------------------------------- | -------------------------------- |
+| **Voice**        | "The grid requests rows"         | "Rows are requested" (passive)   |
+| **Voice**        | "Set `rowGroup` to true"         | "rowGroup should be set"         |
+| **Tense**        | "The grid calls" (present)       | "will call" (future)             |
+| **Mood**         | "Enable editing" (imperative)    | "Editing can be enabled"         |
+| **Contractions** | "doesn't", "can't", "won't"      | "does not", "cannot", "will not" |
+| **Clarity**      | Direct statements                | "In a nutshell", "Basically"     |
+| **Framing**      | "Use X instead" (positive)       | "cannot do Y" (negative)         |
+| **Structure**    | Value prop → examples → advanced | API reference first, no examples |
+
+### Positive Framing
+
+Transform limitations into requirements or alternatives:
+
+**Before (negative):**
+
+```markdown
+Aggregation and grouping are not available in infinite scrolling.
+The grid cannot do sorting for you.
+```
+
+**After (positive):**
+
+```markdown
+For aggregation and grouping, use [Server-Side Row Model](./server-side-model/) instead.
+Sorting must be performed server-side.
+```
+
+**Pattern:** Lead with solution, then explain why.
+
+### Value Propositions
+
+Every page should open with a value proposition immediately after the frontmatter:
+
+```markdown
+---
+title: 'Page Title'
+---
+
+One-sentence value proposition describing the user benefit.
+
+## First Section Heading
+```
+
+**Writing guidelines**:
+
+-   Start with an action verb (e.g., "Create", "Control", "Prevent", "Recover")
+-   Focus on user benefit, not implementation
+-   Keep it under 15 words
+-   Answer "Why would I use this?"
+
+### Code Snippets
+
+Use `frameworkTransform=true` and show only relevant code with clarifying comments:
+
+````markdown
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'country', rowGroup: true }, // enable row grouping on this column
+    ],
+    // ...other options
+};
+```
+````
+
+### Section Ordering
+
+Not every page will include all sections; follow this order for the sections that are relevant:
+
+1. Value proposition (what & why)
+2. Context statement (prerequisites, when to use)
+3. Basic configuration (enable/setup)
+4. Simple example (get users running)
+5. Core concepts (ordered by complexity)
+6. Advanced features (power user territory)
+7. API reference (programmatic control)
+8. Events (lifecycle hooks)
+9. See Also (discovery, only where it adds genuine value)
 
 ## Validation
 

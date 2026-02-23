@@ -8,6 +8,8 @@ description: 'Systematically improve a documentation section organisation, clari
 Systematically improve the documentation section specified in `${ARGUMENTS}` — its organisation, navigation, value propositions, cross-references, and content balance — to match best practices established in well-organised sections like Row Grouping.
 
 > **Primary goal: reorganise, not rewrite.** Move content, restructure navigation, merge or split pages. Add new prose only where genuinely missing and clearly justified — never pad for length or to hit a line-count target.
+>
+> Apply the writing style guidelines from the [Documentation Pages Guide](../rules/docs-pages.md) to any new or revised prose.
 
 ## When to Use
 
@@ -17,20 +19,7 @@ Use this command when a documentation section:
 -   Lacks clear value propositions on pages
 -   Has weak or missing cross-references between related topics
 -   Contains orphan pages that are too short to stand alone
--   Doesn't follow consistent writing patterns
 -   Is too long with multiple self-contained topics that could be split into focused sub-pages
-
-## Core Principles
-
-Apply these principles consistently:
-
-1. **Example-driven** - Illustrate concepts with examples rather than prose alone
-2. **Progressive disclosure** - Simple → Complex
-3. **Active voice** - Direct and clear
-4. **Present tense** - Describe behaviour, not future
-5. **Positive framing** - Solutions over limitations
-6. **Appropriate length** - Calibrate to content complexity; don't pad or artificially compress
-7. **Consistent structure** - Predictable patterns that start with user benefit aid navigation
 
 ## Process
 
@@ -43,7 +32,7 @@ Apply these principles consistently:
     - Missing value propositions (pages jump straight to content)?
     - Weak cross-referencing
     - Orphan pages (< 50 lines, too short)?
-    - Inconsistent writing style?
+    - Inconsistent page length or structure across the section?
 
 3. **Compare to reference sections**:
 
@@ -120,12 +109,7 @@ One-sentence value proposition describing the user benefit.
 ## First Section Heading
 ```
 
-**Writing guidelines**:
-
--   Start with an action verb (e.g., "Create", "Control", "Prevent", "Recover")
--   Focus on user benefit, not implementation
--   Keep it under 15 words
--   Answer "Why would I use this?"
+See the [Documentation Pages Guide](../rules/docs-pages.md#value-propositions) for writing guidelines on value propositions.
 
 ### Phase 4: Cross-References
 
@@ -300,68 +284,6 @@ When moving content from a long page to sub-pages, the prose must be transplante
 
 **Review step**: After writing sub-pages, diff each sub-page section-by-section against the corresponding section in the source file. For every difference, ask: is this cosmetic (heading level, new nav section) or a content change? Content changes must be reverted.
 
-## Documentation Standards
-
-### Quick Reference
-
-| Principle        | ✅ Do This                       | ❌ Avoid This                    |
-| ---------------- | -------------------------------- | -------------------------------- |
-| **Voice**        | "The grid requests rows"         | "Rows are requested" (passive)   |
-| **Voice**        | "Set `rowGroup` to true"         | "rowGroup should be set"         |
-| **Tense**        | "The grid calls" (present)       | "will call" (future)             |
-| **Mood**         | "Enable editing" (imperative)    | "Editing can be enabled"         |
-| **Contractions** | "doesn't", "can't", "won't"      | "does not", "cannot", "will not" |
-| **Clarity**      | Direct statements                | "In a nutshell", "Basically"     |
-| **Framing**      | "Use X instead" (positive)       | "cannot do Y" (negative)         |
-| **Structure**    | Value prop → examples → advanced | API reference first, no examples |
-
-### Positive Framing
-
-Transform limitations into requirements or alternatives:
-
-**Before (negative):**
-
-```markdown
-Aggregation and grouping are not available in infinite scrolling.
-The grid cannot do sorting for you.
-```
-
-**After (positive):**
-
-```markdown
-For aggregation and grouping, use [Server-Side Row Model](./server-side-model/) instead.
-Sorting must be performed server-side.
-```
-
-**Pattern:** Lead with solution, then explain why
-
-### Code Snippets
-
-Use `frameworkTransform=true` and show only relevant code with clarifying comments:
-
-````markdown
-```{% frameworkTransform=true %}
-const gridOptions = {
-    columnDefs: [
-        { field: 'country', rowGroup: true }, // Add clarifying comments
-    ],
-    // ...other options
-};
-```
-````
-
-### Section Ordering
-
-1. Value proposition (what & why)
-2. Context statement (prerequisites, when to use)
-3. Basic configuration (enable/setup)
-4. Simple example (get users running)
-5. Core concepts (ordered by complexity)
-6. Advanced features (power user territory)
-7. API reference (programmatic control)
-8. Events (lifecycle hooks)
-9. See Also (discovery, only where it adds value)
-
 ## Quality Checklist
 
 Before completing, verify:
@@ -375,9 +297,9 @@ Before completing, verify:
 
 ### Content
 
--   [ ] Every page has a value proposition
--   [ ] Consistent writing style (active voice, imperative mood)
--   [ ] Example-driven learning
+-   [ ] Every page has a value proposition (see [Documentation Pages Guide](../rules/docs-pages.md#value-propositions) for writing guidelines)
+-   [ ] Writing style follows [Documentation Pages Guide](../rules/docs-pages.md#writing-style) (active voice, imperative mood, positive framing)
+-   [ ] Each page includes at least one working example
 -   [ ] No orphan pages (all pages are 50+ lines or merged)
 -   [ ] No new prose added without clear justification
 
@@ -450,6 +372,6 @@ Editing
 ## Related Documentation
 
 -   Row Grouping section: `documentation/ag-grid-docs/src/content/docs/grouping-data/index.mdoc` - Model for excellent organisation
--   [Documentation Pages Guide](../rules/docs-pages.md) - General documentation standards
+-   [Documentation Pages Guide](../rules/docs-pages.md) - Writing style, tone, and content standards
 -   [Examples Guide](../rules/examples.md) - Working with examples
 -   [Code Quality Guide](../rules/code-quality.md) - Writing quality standards
