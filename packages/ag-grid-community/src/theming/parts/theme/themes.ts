@@ -37,6 +37,8 @@ export type ThemeDefaultParams = CoreParams &
 /**
  * Used as an entry point for collecting parameters for automated API
  * documentation generation on the website and in Theme Builder
+ *
+ * @knipIgnore
  */
 export type AllThemeParamsForAPIDocumentation = ThemeDefaultParams & FormulaStyleParams;
 
