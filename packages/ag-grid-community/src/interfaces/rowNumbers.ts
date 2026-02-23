@@ -17,6 +17,7 @@ export interface RowNumbersOptions
         | 'headerComponent'
         | 'headerComponentParams'
         | 'suppressHeaderKeyboardEvent'
+        | 'suppressNavigable'
         | 'tooltipField'
         | 'tooltipValueGetter'
         | 'tooltipComponent'
@@ -62,6 +63,7 @@ export interface RowNumbersOptions
 export interface IRowNumbersService extends IColumnCollectionService {
     setupForHeader(comp: HeaderComp): void;
     handleMouseDownOnCell(cell: CellPosition, mouseEvent: MouseEvent): boolean;
+    handleKeyDownOnCell(cell: CellPosition, event: KeyboardEvent): boolean;
     createRowNumbersRowResizerFeature(ctrl: CellCtrl): IRowNumbersRowResizeFeature | undefined;
 }
 

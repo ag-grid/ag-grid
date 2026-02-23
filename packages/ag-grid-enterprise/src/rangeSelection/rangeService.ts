@@ -414,8 +414,42 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
     }
 
     public handleCellMouseDown(event: MouseEvent, cell: CellPosition): void {
-        const { beans } = this;
-        const target = event.target as HTMLElement | null;
+        const isMultiKey = event.ctrlKey || event.metaKey;
+        this.handleCellSelectionInput(cell, {
+            target: event.target as HTMLElement | null,
+            shiftKey: event.shiftKey,
+            isRightClick: _interpretAsRightClick(this.beans, event),
+            isMultiRange: this.isMultiRange(event),
+            isMultiKey,
+            preventDefault: () => event.preventDefault(),
+        });
+    }
+
+    public handleCellKeyboardSelect(event: KeyboardEvent, cell: CellPosition): void {
+        const isMultiKey = event.ctrlKey || event.metaKey;
+        this.handleCellSelectionInput(cell, {
+            target: event.target as HTMLElement | null,
+            shiftKey: event.shiftKey,
+            // keyboard selection should never be interpreted as a right click.
+            isRightClick: false,
+            isMultiRange: this.isMultiRangeForKeyState(isMultiKey),
+            isMultiKey,
+            preventDefault: () => event.preventDefault(),
+        });
+    }
+
+    private handleCellSelectionInput(
+        cell: CellPosition,
+        params: {
+            target: HTMLElement | null;
+            shiftKey: boolean;
+            isRightClick: boolean;
+            isMultiRange: boolean;
+            isMultiKey: boolean;
+            preventDefault: () => void;
+        }
+    ): void {
+        const { target, shiftKey, isRightClick, isMultiRange, isMultiKey, preventDefault } = params;
 
         if (this.shouldSuppressRangeSelection(target)) {
             return;
@@ -423,18 +457,16 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
 
         const isAllColumnsCell = this.isAllColumnsSelectionCell(cell);
         if (isAllColumnsCell) {
-            event.preventDefault();
+            preventDefault();
         }
 
-        if (event.shiftKey) {
+        if (shiftKey) {
             return this.extendLatestRangeToCell(cell);
         }
 
-        if (isAllColumnsCell && _interpretAsRightClick(beans, event)) {
+        if (isAllColumnsCell && isRightClick) {
             return;
         }
-
-        const isMultiRange = this.isMultiRange(event);
 
         this.updateSelectionModeForCell(cell);
         const columns = this.calculateColumnsBetween(cell.column as AgColumn, cell.column as AgColumn);
@@ -449,8 +481,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
                   endRow: cell,
               })
             : undefined;
-        const isMultiRangeRemoval =
-            isAllColumnsCell && !!containingRange && isMultiRange && (event.ctrlKey || event.metaKey);
+        const isMultiRangeRemoval = isAllColumnsCell && !!containingRange && isMultiRange && isMultiKey;
 
         if (isMultiRangeRemoval && containingRange) {
             this.removeRowFromAllColumnsRange(cell, containingRange);
@@ -460,11 +491,12 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
     }
 
     private isMultiRange(event: MouseEvent): boolean {
-        const { ctrlKey, metaKey } = event;
-        const { editingWithRanges, allowMulti } = this.getMultiRangeContext();
+        // ctrlKey for Windows, metaKey for Apple
+        return this.isMultiRangeForKeyState(event.ctrlKey || event.metaKey);
+    }
 
-        // ctrlKey for windows, metaKey for Apple
-        const isMultiKey = ctrlKey || metaKey;
+    private isMultiRangeForKeyState(isMultiKey: boolean): boolean {
+        const { editingWithRanges, allowMulti } = this.getMultiRangeContext();
         return editingWithRanges || (allowMulti ? isMultiKey : false);
     }
 
@@ -557,9 +589,14 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
             startColumn: cell.column,
         };
 
+        const startColumn = this.ensureRangeStartColumn(cellRange);
+        if (!startColumn) {
+            return;
+        }
+
         this.cellRanges.push(cellRange);
 
-        this.setNewestRangeStartCell(cell);
+        this.setNewestRangeStartCell({ ...cell, column: startColumn });
         this.onDragStop();
         this.dispatchChangedEvent(true, true);
     }
@@ -614,7 +651,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
     }
 
     public extendRangeColumnCountBy(cellRange: CellRange, delta: number): void {
-        const { columns, startColumn } = cellRange;
+        const { columns } = cellRange;
 
         if (delta === 0) {
             return;
@@ -626,14 +663,19 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
             return;
         }
 
+        const rangeStartColumn = this.ensureRangeStartColumn(cellRange);
+        if (!rangeStartColumn) {
+            return;
+        }
+
         const lastColumn = _last(columns);
-        const endColumn = startColumn === columns[0] ? lastColumn : columns[0];
+        const endColumn = rangeStartColumn === columns[0] ? lastColumn : columns[0];
 
         if (!lastColumn || !endColumn) {
             return;
         }
 
-        let startIdx = allColumns.indexOf(startColumn as AgColumn);
+        let startIdx = allColumns.indexOf(rangeStartColumn);
         const endIdx = allColumns.indexOf(endColumn as AgColumn);
         const isRtlRange = endIdx < startIdx;
 
@@ -697,7 +739,12 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
     public updateRangeRowBoundary(params: CellRangeBoundaryParams): void {
         const { cellRange, boundary, cellPosition, silent = false } = params;
         const endColumn = cellPosition.column as AgColumn;
-        const colsToAdd = this.calculateColumnsBetween(cellRange.startColumn as AgColumn, endColumn);
+        const startColumn = this.ensureRangeStartColumn(cellRange);
+        if (!startColumn) {
+            return;
+        }
+
+        const colsToAdd = this.calculateColumnsBetween(startColumn, endColumn);
 
         if (!colsToAdd || isLastCellOfRange(cellRange, cellPosition)) {
             return;
@@ -753,6 +800,11 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
 
         // if user is at end of grid, so no cell to extend to, we return false
         if (!newEndCell) {
+            return;
+        }
+
+        // do not extend range into row number columns
+        if (this.shouldSkipColumn(newEndCell.column as AgColumn)) {
             return;
         }
 
@@ -1196,7 +1248,12 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
     }
 
     private refreshRangeStart(cellRange: CellRange) {
-        const { startColumn, columns } = cellRange;
+        const { columns } = cellRange;
+        const startColumn = this.ensureRangeStartColumn(cellRange);
+
+        if (!startColumn) {
+            return;
+        }
 
         const moveColInCellRange = (colToMove: AgColumn, moveToFront: boolean) => {
             const otherCols = cellRange.columns.filter((col) => col !== colToMove);
@@ -1375,6 +1432,43 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         }
 
         return columns.length ? columns : undefined;
+    }
+
+    private ensureRangeStartColumn(cellRange: CellRange): AgColumn | undefined {
+        const startColumn = this.getRangeStartColumn(
+            cellRange.columns as AgColumn[],
+            cellRange.startColumn as AgColumn
+        );
+        if (!startColumn) {
+            return;
+        }
+
+        cellRange.startColumn = startColumn;
+        return startColumn;
+    }
+
+    private getRangeStartColumn(columns: AgColumn[], preferredStartColumn?: AgColumn): AgColumn | undefined {
+        const firstColumn = columns[0];
+        const lastColumn = _last(columns);
+
+        if (!firstColumn || !lastColumn) {
+            return;
+        }
+
+        if (!preferredStartColumn || columns.includes(preferredStartColumn)) {
+            return preferredStartColumn ?? firstColumn;
+        }
+
+        const allColumns = this.visibleCols.allCols;
+        const preferredStartIndex = allColumns.indexOf(preferredStartColumn);
+        const firstIndex = allColumns.indexOf(firstColumn);
+        const lastIndex = allColumns.indexOf(lastColumn);
+
+        if (preferredStartIndex < 0 || firstIndex < 0 || lastIndex < 0) {
+            return firstColumn;
+        }
+
+        return preferredStartIndex - firstIndex <= lastIndex - preferredStartIndex ? firstColumn : lastColumn;
     }
 
     private calculateColumnsBetween(columnA: string | AgColumn, columnB: string | AgColumn): AgColumn[] | undefined {

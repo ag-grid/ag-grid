@@ -6,9 +6,9 @@ export interface AlgoliaRecord {
     heading?: string;
     subHeading?: string;
     text: string;
+    codeWords?: string[];
     breadcrumb: string;
     path: string;
     rank: number;
-    metaTag?: string;
     positionInPage?: number;
 }

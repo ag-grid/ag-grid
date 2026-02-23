@@ -114,9 +114,7 @@ export interface IRichCellEditorParams<TData = any, TValue = any, GValue = any> 
      * @default false
      */
     filterList?: boolean;
-
     /**
-     *
      * Set to `true` to enable asynchronous filtering of values via the `values` or `valuesPage` callback.
      * (only relevant when `allowTyping=true` and `filterList=true`).
      * @default false

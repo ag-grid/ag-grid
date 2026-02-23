@@ -1,6 +1,7 @@
 import type {
     ComponentSelector,
     ElementParams,
+    FocusableContainer,
     ISideBar,
     IToolPanel,
     IToolPanelParams,
@@ -22,6 +23,7 @@ import {
     _isVisible,
     _removeFromParent,
     _setAriaControlsAndLabel,
+    _stopPropagationForAgGrid,
     _warn,
 } from 'ag-grid-community';
 
@@ -43,7 +45,7 @@ const AgSideBarElement: ElementParams = {
         },
     ],
 };
-class AgSideBar extends Component implements ISideBar {
+class AgSideBar extends Component implements ISideBar, FocusableContainer {
     private readonly sideBarButtons: AgSideBarButtons = RefPlaceholder;
     private toolPanelWrappers: ToolPanelWrapper[] = [];
     private sideBar: SideBarDef | undefined;
@@ -79,6 +81,10 @@ class AgSideBar extends Component implements ISideBar {
         this.addManagedPropertyListener('enableAdvancedFilter', this.onAdvancedFilterChanged.bind(this));
     }
 
+    public getFocusableContainerName(): 'sideBar' {
+        return 'sideBar';
+    }
+
     protected onTabKeyDown(e: KeyboardEvent) {
         if (e.defaultPrevented) {
             return;
@@ -93,11 +99,13 @@ class AgSideBar extends Component implements ISideBar {
         const backwards = e.shiftKey;
 
         if (!openPanel) {
-            if (_focusNextGridCoreContainer(beans, backwards)) {
+            if (_focusNextGridCoreContainer(beans, backwards, true)) {
                 e.preventDefault();
                 return true;
             }
-            return _focusNextGridCoreContainer(beans, backwards, true);
+            // avoid a second core-container evaluation from the generic focusable-container listener.
+            _stopPropagationForAgGrid(e);
+            return false;
         }
 
         if (sideBarGui.contains(activeElement)) {

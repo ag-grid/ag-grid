@@ -812,6 +812,7 @@ export {
     GetRowIdParams,
     GetServerSideGroupLevelParams,
     GetServerSideGroupLevelParamsParams,
+    GridContainerName,
     IMenuActionParams,
     InitialGroupOrderComparator,
     InitialGroupOrderComparatorParams,
@@ -847,6 +848,9 @@ export {
     ServerSideStoreParams,
     TabToNextCell,
     TabToNextCellParams,
+    TabToNextGridContainer,
+    TabToNextGridContainerParams,
+    TabToNextGridContainerTarget,
     TabToNextHeader,
     TabToNextHeaderParams,
 } from './interfaces/iCallbackParams';

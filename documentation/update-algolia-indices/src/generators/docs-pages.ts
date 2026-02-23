@@ -1,6 +1,7 @@
 import fs from 'fs';
 import { JSDOM, VirtualConsole } from 'jsdom';
 
+import { MIGRATION_DOCS_RANK_OFFSET } from '../config';
 import type { AlgoliaRecord } from '../types/algolia';
 import {
     API_FILE_PATH,
@@ -17,6 +18,38 @@ const virtualConsole = new VirtualConsole();
 // css support, and crashes on some pages
 virtualConsole.on('error', () => {});
 
+const truncateAtWordBoundary = (text: string, targetLength: number, maxLength: number): string => {
+    if (text.length <= targetLength) {
+        return text;
+    }
+    text = text.slice(0, maxLength);
+    // Truncate at the first space after targetLength
+    return text.slice(0, text.indexOf(' ', targetLength)) + '...';
+};
+
+/**
+ * Extract searchable code words from documentation HTML source text
+ */
+export const extractCodeWords = (text: string): string[] => {
+    const allWords: string[] = [];
+
+    // Extract code words from <code>word</code> and `word`, here we match code
+    // samples so that e.g. "new agGrid.Grid()" appears as a code word, matching
+    // the behaviour of the old manually-maintained metaTags for migration pages
+    allWords.push(...(text.match(/(?<=<code>|`)([.\w()-]|, |new )*(?=<\/code>|`)/g) ?? []));
+
+    // Strip the inner content of <style> tags which are automatically inserted
+    // and shouldn't be searchable
+    text = text.replace(/<style.*?>.*?<\/style>/gs, '');
+
+    // strip all HTML tags so that names and content of attributes aren't searchable
+    text = text.replace(/<.*?>/gs, ' ');
+
+    allWords.push(...(text.match(/\b[a-zA-Z]*[a-z][A-Z][a-zA-Z]*\b/g) ?? []));
+
+    return [...new Set(allWords)];
+};
+
 let pageRank = 0;
 
 export const getAllDocPages = (): FlattenedMenuItem[] => {
@@ -24,11 +57,12 @@ export const getAllDocPages = (): FlattenedMenuItem[] => {
     const apiMenu = getApiMenuData();
     pageRank = 0;
 
-    const flattenedDocMenuItems = getFlattenedMenuItems(docsMenu.sections);
-    const flattenedDocMigrationItems = getFlattenedDocMigrationItems();
-    const flattenedApiMenuItems = getFlattenedMenuItems(apiMenu.sections);
+    const allSections = [...docsMenu.sections, ...apiMenu.sections];
 
-    return [...flattenedApiMenuItems, ...flattenedDocMigrationItems, ...flattenedDocMenuItems];
+    const flattenedMenuItems = getFlattenedMenuItems(allSections);
+    const flattenedDocMigrationItems = getFlattenedDocMigrationItems();
+
+    return [...flattenedMenuItems, ...flattenedDocMigrationItems];
 };
 
 function getHeadingContent(heading: Element) {
@@ -71,36 +105,44 @@ export const parseDocPage = async (item: FlattenedMenuItem) => {
     let subHeading: string | undefined = undefined;
     let text = '';
     let position = 0;
-    let metaTag: string | undefined = undefined;
 
     const createPreviousRecord = () => {
         // Because content for the header comes after the header
         // we need to create a record for the previous section
         // after we find the next one.
-        const snakeCaseHeading = (subHeading ?? heading)?.replace(/\s+/g, '-').toLowerCase();
-        const hashPath = heading ? `${path}#${snakeCaseHeading}` : path;
+        const kebabCaseHeading = (subHeading ?? heading)?.replace(/\s+/g, '-').toLowerCase();
+        const hashPath = heading ? `${path}#${kebabCaseHeading}` : path;
+
+        // Extract codeWords from raw text (before cleaning) to capture code examples
+        const codeWords = extractCodeWords(text);
+        const positionInPage = position++;
 
         records.push({
             source: 'docs',
-
-            objectID: hashPath,
+            objectID: `${hashPath}:${positionInPage}`,
             breadcrumb,
             title: pageTitle || title,
             heading,
             subHeading,
             path: hashPath,
-            text: cleanContents(text).slice(0, 250), // this is only used for display not search, limit chars to reduce load on algolia
+            text: truncateAtWordBoundary(cleanContents(text), 120, 250),
+            codeWords: codeWords.length > 0 ? codeWords : undefined,
             rank,
-            positionInPage: position++,
-            metaTag,
+            positionInPage,
         });
     };
 
     const recursivelyParseContent = (container: Element | null) => {
         for (let currentTag = container; currentTag != null; currentTag = currentTag.nextElementSibling) {
             try {
-                if (['style', 'pre'].includes(currentTag.nodeName.toLowerCase())) {
-                    // ignore this tag
+                if (currentTag.nodeName.toLowerCase() === 'style') {
+                    continue;
+                }
+
+                if (currentTag.nodeName.toLowerCase() === 'pre') {
+                    // Wrap in <pre> tags so cleanContents can strip it for display text
+                    // while preserving it for codeWords extraction
+                    text += `\n<pre>${currentTag.innerHTML}</pre>`;
                     continue;
                 }
 
@@ -124,9 +166,6 @@ export const parseDocPage = async (item: FlattenedMenuItem) => {
 
                     case 'DIV': {
                         createPreviousRecord();
-                        if (currentTag.getAttribute('data-meta')) {
-                            metaTag = JSON.parse(currentTag.getAttribute('data-meta')?.replaceAll('&quot;', '"') ?? '');
-                        }
                         // process content inside div containers
                         recursivelyParseContent(currentTag.firstChild as Element | null);
                         break;
@@ -187,7 +226,7 @@ const getFlattenedDocMigrationItems = (): FlattenedMenuItem[] => {
             return {
                 title,
                 path: entry.name,
-                rank: pageRank++,
+                rank: pageRank++ + MIGRATION_DOCS_RANK_OFFSET,
                 breadcrumb: `${MIGRATION_DOC_BREADCRUMB_PREFIX} > ${title}`,
             };
         });
@@ -230,7 +269,6 @@ const getFlattenedMenuItems = (
 
 const disallowedTags = ['style', 'pre'];
 const cleanContents = (contents: string): string => {
-    // remove all content from disallowed tags
     disallowedTags.forEach(
         (tag) => (contents = contents.replace(new RegExp(`<${tag}(\\s.*?)?>.*?</${tag}>`, 'gs'), ''))
     );

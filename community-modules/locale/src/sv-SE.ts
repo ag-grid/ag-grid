@@ -681,7 +681,11 @@ export const AG_GRID_LOCALE_SE = {
     ariaFilterColumn: 'Tryck CTRL ENTER för att öppna filter',
     ariaRowDeselect: 'Tryck SPACE för att avmarkera denna rad',
     ariaHeaderSelection: 'Kolumn med rubrikval',
-    ariaSelectAllCells: 'Tryck på mellanslag för att markera alla celler',
+    ariaSelectAllCells: 'Tryck på mellanslag eller Enter för att markera alla celler',
+    ariaSelectAllRowCells: 'Tryck på Enter för att markera alla celler i den här raden',
+    ariaColumnCellSelection: 'Tryck på Enter för att växla markeringen av alla synliga celler i den här kolumnen',
+    ariaColumnGroupCellSelection:
+        'Tryck på Enter för att växla markeringen av alla synliga celler i den här kolumngruppen',
     ariaRowSelectAll: 'Tryck SPACE för att växla markering av alla rader',
     ariaRowToggleSelection: 'Tryck SPACE för att växla radmarkering',
     ariaRowSelect: 'Tryck SPACE för att markera denna rad',

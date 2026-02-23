@@ -20,8 +20,6 @@ NOTE: This will not show if the current library version is the same as the migra
 
 ## Breaking Changes
 
-{% metaTag tags=["AnimationQueueEmptyEvent", "getChartImageDataURL"] /%}
-
 -   Now when setting / updating Column Definitions, the order of the Columns in the grid will always match the order of the Column Definitions. Prior to v26, `applyColumnDefOrder` was used to achieve this, however this is now the default behaviour. To turn off this behaviour, i.e. to maintain the order of Columns between updates to Column Definitions, set the grid property `maintainColumnOrder=true` (see [Maintain Column Order](https://www.ag-grid.com/archive/26.0.0/javascript-data-grid/column-updating-definitions/#maintain-column-order)).
 -   The `AnimationQueueEmptyEvent` has been removed, the grid API method `isAnimationFrameQueueEmpty()` can be used instead.
 -   `.cjs` are self-contained units preventing LicenseManager from recognizing the license key. These files previously included all AG Grid related dependencies. These files now only contain the relevant code for that module, which is the correct behaviour.
@@ -30,15 +28,11 @@ NOTE: This will not show if the current library version is the same as the migra
 
 ### Integrated Charts
 
-{% metaTag tags=["processChartOptions", "getChartImageDataURL"] /%}
-
 -   The previously deprecated `processChartOptions()` callback has now been removed. Please use [Theme Based Configuration](https://www.ag-grid.com/archive/26.0.0/javascript-data-grid/integrated-charts-customisation/) instead.
 -   `getChartImageDataURL()` has been removed from the `ChartModel` and it is now available directly through the grid API (see [Downloading Chart Image](https://www.ag-grid.com/archive/26.0.0/javascript-data-grid/integrated-charts-api/#downloading-chart-image)).
 -   The chart instance has been removed from the `ChartModel` to support serialization. Use `gridApi.getChartRef(chartId)` instead (see [Accessing Chart Instance](https://www.ag-grid.com/archive/26.0.0/javascript-data-grid/integrated-charts-events/#accessing-chart-instance)).
 
 ### Standalone Charts
-
-{% metaTag tags=["tooltipTracking", "tooltipClass", "tooltipEnabled", "tooltipRenderer", "layoutHorizontalSpacing", "layoutVerticalSpacing", "itemSpacing", "markerShape", "markerSize", "strokeWidth", "color", "fontStyle", "fontWeight", "fontSize", "fontFamily"] /%}
 
 The following Standalone Chart options were previously deprecated and have now been removed:
 
@@ -72,16 +66,12 @@ This release includes the following deprecations:
 
 ### Grid Options
 
-{% metaTag tags=["groupMultiAutoColumn", "groupUseEntireRow", "groupSuppressAutoColumn", "defaultGroupSortComparator"] /%}
-
 -   `groupMultiAutoColumn` - deprecated, use `groupDisplayType='multipleColumns'` instead.
 -   `groupUseEntireRow` - deprecated, use `groupDisplayType='groupRows'` instead.
 -   `groupSuppressAutoColumn` - deprecated, use `groupDisplayType='custom'` instead.
 -   `defaultGroupSortComparator` - deprecated, use `defaultGroupOrderComparator` instead.
 
 ### Column Properties
-
-{% metaTag tags=["pinnedRowCellRenderer", "pinnedRowCellRendererFramework", "pinnedRowCellRendererParams"] /%}
 
 -   `pinnedRowCellRenderer`, `pinnedRowCellRendererFramework`, and `pinnedRowCellRendererParams` are deprecated. Please use `cellRendererSelector` instead if you want a different Cell Renderer / Params for Pinned Rows.
 

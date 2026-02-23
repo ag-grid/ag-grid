@@ -39,8 +39,6 @@ See the [Codemods](./codemods/) documentation for more details.
 
 ## Migrating Custom Components to Use reactiveCustomComponents Option
 
-{% metaTag tags=["getValue", "useImperativeHandle", "getDate", "setDate", "isFilterActive", "getModel", "setModel", "filterModifiedCallback", "api.getFilterInstance","getfilterinstance", "onParentModelChanged", "api.getStatusPanel"] /%}
-
 Custom components can now be created more easily by setting `reactiveCustomComponents`. Custom components built in an imperative way (without setting `reactiveCustomComponents`) may need to be rebuilt in order to work with the setting enabled. Using custom components built in an imperative way is now deprecated, and in AG Grid v32 the `reactiveCustomComponents` option will be `true` by default, and custom components built in an imperative way will still be supported as an optional behaviour.
 
 Please note that enabling this setting affects all custom components and you cannot use a mix of reactive custom components and imperative custom components in the same grid instance.
@@ -50,7 +48,6 @@ Please note that enabling this setting affects all custom components and you can
 {% /if %}
 
 {% if isFramework("react") %}
-{% metaTag tags=["useGridCellEditor"] /%}
 
 -   `getValue` is no longer used. The component will be passed `value` as a prop with the latest value (and `initialValue` with the value when editing started). When the value is updated in the UI, the component should call the prop `onValueChange` with the updated value.
 -   Any other date methods defined via `useImperativeHandle` should now be defined as callbacks, and passed to the new hook `useGridCellEditor`. These are all optional; the hook is only needed if the callbacks are required.
@@ -92,8 +89,6 @@ See [Implementing a Floating Filter Component](./component-floating-filter/#impl
 {% /if %}
 
 ## Deprecations
-
-{% metaTag tags=["AgReactUiProps", "AgGridReactProps.disableStaticMarkup", "AgGridReactProps.legacyComponentRendering", "getReactContainerStyle", "getReactContainerClasses", "IHeaderGroupReactComp", "IHeaderReactComp", "IDateReactComp", "IFilterReactComp", "IFloatingFilterReactComp", "ICellRendererReactComp", "ICellEditorReactComp", "ILoadingCellRendererReactComp", "ILoadingOverlayReactComp", "INoRowsOverlayReactComp", "IStatusPanelReactComp", "IToolPanelReactComp", "ITooltipReactComp", "gridOptions.cellFlashDelay", "gridOptions.cellFadeDelay", "colDef.floatingFilterComponentParams.suppressFilterButton", "suppressServerSideInfiniteScroll", "serverSideSortOnServer", "serverSideFilterOnServer", "api.getFilterInstance", "suppressMenu", "columnsMenuParams", "column.getMenuTabs", "getModel", "getModel().getRow(index)", "getModel().getRowNode(id)", "getModel().getRowCount()", "getModel().isEmpty()", "getModel().forEachNode()", "getFirstDisplayedRow", "getLastDisplayedRow", "flashCells", "flashDelay", "fadeDelay", "showColumnMenuAfterButtonClick", "showColumnMenuAfterMouseClick", "removeRowGroupColumn", "addRowGroupColumn", "setColumnPinned", "removePivotColumn", "addPivotColumn", "addAggFunc", "removeValueColumn", "addValueColumn", "autoSizeColumn", "moveColumn", "setColumnWidth", "setColumnVisible", "IDate.onParamsUpdated", "IFloatingFilter.onParamsUpdated"] /%}
 
 This release includes the following deprecations:
 

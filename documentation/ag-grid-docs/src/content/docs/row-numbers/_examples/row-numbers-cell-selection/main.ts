@@ -26,7 +26,9 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
     },
-    cellSelection: true,
+    cellSelection: {
+        enableColumnSelection: true,
+    },
     rowNumbers: true,
     columnDefs: columnDefs,
     rowData: null,

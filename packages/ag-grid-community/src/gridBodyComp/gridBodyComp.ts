@@ -3,6 +3,7 @@ import { _setAriaColCount, _setAriaMultiSelectable, _setAriaRole, _setAriaRowCou
 import { _observeResize } from '../agStack/utils/dom';
 import { _isCellSelectionEnabled, _isMultiRowSelection } from '../gridOptionsUtils';
 import { GridHeaderSelector } from '../headerRendering/gridHeaderComp';
+import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import { LayoutCssClasses } from '../styling/layoutFeature';
 import type { ElementParams } from '../utils/element';
 import type { ComponentSelector } from '../widgets/component';
@@ -104,7 +105,7 @@ function getGridBodyTemplate(includeOverlay?: boolean): {
     return { paramsMap, elementParams };
 }
 
-export class GridBodyComp extends Component {
+export class GridBodyComp extends Component implements FocusableContainer {
     private readonly eGridRoot: HTMLElement = RefPlaceholder;
     private readonly eBodyViewport: HTMLElement = RefPlaceholder;
     private readonly eStickyTop: HTMLElement = RefPlaceholder;
@@ -208,6 +209,10 @@ export class GridBodyComp extends Component {
         const bodyViewportClassList = this.eBodyViewport.classList;
         bodyViewportClassList.toggle('ag-row-animation' as RowAnimationCssClasses, animateRows);
         bodyViewportClassList.toggle('ag-row-no-animation' as RowAnimationCssClasses, !animateRows);
+    }
+
+    public getFocusableContainerName(): 'gridBody' {
+        return 'gridBody';
     }
 }
 export const GridBodySelector: ComponentSelector = {

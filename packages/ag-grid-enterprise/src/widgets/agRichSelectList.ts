@@ -56,11 +56,13 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
 
     public override postConstruct(): void {
         super.postConstruct();
-        const i18n = this.getLocaleTextFunc();
-        this.loadingLabel = i18n('loadingOoo', 'Loading...');
-        this.noMatchesLabel = i18n('noMatches', 'No matches to show');
+        const translate = this.getLocaleTextFunc();
+        this.loadingLabel = translate('loadingOoo', 'Loading...');
+        this.noMatchesLabel = translate('noMatches', 'No matches to show');
+
         this.eLoadingIcon = _createIconNoSpan('richSelectLoading', this.beans, null);
         this.eStateCompLabel = _createElement({ tag: 'span', cls: 'ag-loading-text', children: this.loadingLabel });
+
         this.eStateComp = _createElement({
             tag: 'div',
             cls: 'ag-rich-select-loading',
@@ -73,6 +75,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
                 { tag: 'span', cls: 'ag-loading-text', children: [() => this.eStateCompLabel] },
             ],
         });
+
         this.appendChild(this.eStateComp);
 
         const { cellRowHeight, pickerAriaLabelKey, pickerAriaLabelValue } = this.params;
@@ -96,7 +99,6 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
 
         const listId = `${LIST_COMPONENT_NAME}-${this.getCompId()}`;
         eListAriaEl.setAttribute('id', listId);
-        const translate = this.getLocaleTextFunc();
         const ariaLabel = translate(pickerAriaLabelKey, pickerAriaLabelValue);
 
         _setAriaLabel(eListAriaEl, ariaLabel);
@@ -117,9 +119,6 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
             if (stateAnnouncement) {
                 this.stateAnnouncementCallback?.(stateAnnouncement);
             }
-        }
-        if (state !== STATE_LOADING) {
-            this.scheduleMaybeRequestMoreRows();
         }
     }
 
@@ -269,6 +268,23 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
             getRowCount: () => list.length,
             getRow: (index: number) => list[index],
             areRowsEqual: (oldRow, newRow) => oldRow === newRow,
+        });
+    }
+
+    public restoreScrollOnPrependedRows(previousScrollTop: number, prependedRowCount: number): void {
+        if (prependedRowCount <= 0) {
+            return;
+        }
+
+        const eGui = this.getGui();
+        const rowHeight = this.getRowHeight();
+        const nextScrollTop = previousScrollTop + prependedRowCount * rowHeight;
+
+        this.awaitStable(() => {
+            if (!this.isAlive()) {
+                return;
+            }
+            eGui.scrollTop = nextScrollTop;
         });
     }
 

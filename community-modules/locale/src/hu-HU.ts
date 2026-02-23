@@ -684,7 +684,11 @@ export const AG_GRID_LOCALE_HU = {
     ariaFilterColumn: 'Nyomja meg a CTRL + ENTER billentyűket a szűrő megnyitásához',
     ariaRowDeselect: 'Nyomja le a SPACE billentyűt ezen sor kiválasztásának megszüntetéséhez',
     ariaHeaderSelection: 'Oszlop fejléc kiválasztásával',
-    ariaSelectAllCells: 'Nyomja meg a szóközt az összes cella kiválasztásához',
+    ariaSelectAllCells: 'Nyomja meg a szóközt vagy az Entert az összes cella kiválasztásához',
+    ariaSelectAllRowCells: 'Nyomja meg az Entert az összes cella kijelöléséhez ebben a sorban',
+    ariaColumnCellSelection: 'Nyomja meg az Entert az oszlop összes látható cellájának kijelölésének váltásához',
+    ariaColumnGroupCellSelection:
+        'Nyomja meg az Entert az oszlopcsoport összes látható cellájának kijelölésének váltásához',
     ariaRowSelectAll: 'Nyomja le a SPACE billentyűt az összes sor kiválasztásának váltásához',
     ariaRowToggleSelection: 'Nyomja le a SPACE billentyűt a sor kiválasztásának váltásához',
     ariaRowSelect: 'Nyomja le a SPACE billentyűt ezen sor kiválasztásához',

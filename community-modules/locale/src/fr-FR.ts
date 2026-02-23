@@ -685,7 +685,12 @@ export const AG_GRID_LOCALE_FR = {
     ariaFilterColumn: 'Appuyez sur CTRL ENTER pour ouvrir le filtre',
     ariaRowDeselect: 'Appuyez sur ESPACE pour désélectionner cette ligne',
     ariaHeaderSelection: "Colonne avec sélection d'en-tête",
-    ariaSelectAllCells: 'Appuyez sur Espace pour sélectionner toutes les cellules',
+    ariaSelectAllCells: 'Appuyez sur Espace ou Entrée pour sélectionner toutes les cellules',
+    ariaSelectAllRowCells: 'Appuyez sur Entrée pour sélectionner toutes les cellules de cette ligne',
+    ariaColumnCellSelection:
+        'Appuyez sur Entrée pour basculer la sélection de toutes les cellules visibles de cette colonne',
+    ariaColumnGroupCellSelection:
+        'Appuyez sur Entrée pour basculer la sélection de toutes les cellules visibles de ce groupe de colonnes',
     ariaRowSelectAll: 'Appuyez sur ESPACE pour basculer la sélection de toutes les lignes',
     ariaRowToggleSelection: 'Appuyez sur ESPACE pour basculer la sélection de la ligne',
     ariaRowSelect: 'Appuyez sur ESPACE pour sélectionner cette ligne',

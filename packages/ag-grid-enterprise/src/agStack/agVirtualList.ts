@@ -488,20 +488,29 @@ export class AgVirtualList<
     }
 
     private insertRow(rowIndex: number): void {
-        const value = this.model.getRow(rowIndex);
-        const role = this.ariaRole === 'tree' ? 'treeitem' : 'option';
+        const { model } = this;
+
+        if (rowIndex < 0 || rowIndex >= model.getRowCount()) {
+            return;
+        }
+
+        const { cssIdentifier, ariaRole, renderedRows, eContainer } = this;
+        const value = model.getRow(rowIndex);
+        const role = ariaRole === 'tree' ? 'treeitem' : 'option';
         const eDiv = _createAgElement<HTMLDivElement>({
             tag: 'div',
-            cls: `ag-virtual-list-item ag-${this.cssIdentifier}-virtual-list-item`,
+            cls: `ag-virtual-list-item ag-${cssIdentifier}-virtual-list-item`,
             role,
             attrs: { tabindex: '-1' },
         });
 
-        _setAriaSetSize(eDiv, this.model.getRowCount());
+        _setAriaSetSize(eDiv, model.getRowCount());
         _setAriaPosInSet(eDiv, rowIndex + 1);
 
-        eDiv.style.height = `${this.rowHeight}px`;
-        eDiv.style.top = `${this.rowHeight * rowIndex}px`;
+        const rowHeight = this.rowHeight;
+
+        eDiv.style.height = `${rowHeight}px`;
+        eDiv.style.top = `${rowHeight * rowIndex}px`;
 
         const rowComponent = this.componentCreator(value, eDiv);
 
@@ -510,15 +519,15 @@ export class AgVirtualList<
         eDiv.appendChild(rowComponent.getGui());
 
         // keep the DOM order consistent with the order of the rows
-        if (this.renderedRows.has(rowIndex - 1)) {
-            this.renderedRows.get(rowIndex - 1)!.eDiv.insertAdjacentElement('afterend', eDiv);
-        } else if (this.renderedRows.has(rowIndex + 1)) {
-            this.renderedRows.get(rowIndex + 1)!.eDiv.insertAdjacentElement('beforebegin', eDiv);
+        if (renderedRows.has(rowIndex - 1)) {
+            renderedRows.get(rowIndex - 1)!.eDiv.insertAdjacentElement('afterend', eDiv);
+        } else if (renderedRows.has(rowIndex + 1)) {
+            renderedRows.get(rowIndex + 1)!.eDiv.insertAdjacentElement('beforebegin', eDiv);
         } else {
-            this.eContainer.appendChild(eDiv);
+            eContainer.appendChild(eDiv);
         }
 
-        this.renderedRows.set(rowIndex, { rowComponent, eDiv, value });
+        renderedRows.set(rowIndex, { rowComponent, eDiv, value });
     }
 
     private removeRow(rowIndex: number) {

@@ -680,7 +680,11 @@ export const AG_GRID_LOCALE_NL = {
     ariaFilterColumn: 'Druk op CTRL ENTER om te filteren',
     ariaRowDeselect: 'Druk op SPATIE om deze rij te deselecteren',
     ariaHeaderSelection: 'Kolom met Hoofdselectie',
-    ariaSelectAllCells: 'Druk op Spatiebalk om alle cellen te selecteren',
+    ariaSelectAllCells: 'Druk op Spatiebalk of Enter om alle cellen te selecteren',
+    ariaSelectAllRowCells: 'Druk op Enter om alle cellen in deze rij te selecteren',
+    ariaColumnCellSelection: 'Druk op Enter om de selectie van alle zichtbare cellen in deze kolom te wisselen',
+    ariaColumnGroupCellSelection:
+        'Druk op Enter om de selectie van alle zichtbare cellen in deze kolomgroep te wisselen',
     ariaRowSelectAll: 'Druk op SPATIE om alle rijen te selecteren/deselecteren',
     ariaRowToggleSelection: 'Druk op SPATIE om rijselectie te schakelen',
     ariaRowSelect: 'Druk op SPATIE om deze rij te selecteren',
