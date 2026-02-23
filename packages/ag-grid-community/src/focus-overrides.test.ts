@@ -1115,8 +1115,14 @@ describe('Focus override callbacks', () => {
             expect(firstResult).toBeUndefined();
             expect(secondResult).toBeUndefined();
             expect(warnSpy).toHaveBeenCalledTimes(2);
-            expect(warnSpy).toHaveBeenNthCalledWith(1, 'AG Grid: tabToNextGridContainer statusBar container not found');
-            expect(warnSpy).toHaveBeenNthCalledWith(2, 'AG Grid: tabToNextGridContainer statusBar container not found');
+            expect(warnSpy).toHaveBeenNthCalledWith(
+                1,
+                'AG Grid: tabToNextGridContainer - statusBar container not found'
+            );
+            expect(warnSpy).toHaveBeenNthCalledWith(
+                2,
+                'AG Grid: tabToNextGridContainer - statusBar container not found'
+            );
         });
 
         test('tabToNextGridContainer: callback gridBody target follows header-first forward default', () => {
