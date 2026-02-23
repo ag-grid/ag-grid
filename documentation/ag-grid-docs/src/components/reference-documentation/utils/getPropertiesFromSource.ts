@@ -52,7 +52,10 @@ export const getPropertiesFromSource = async ({
     const codeConfigs = Object.fromEntries(codeConfigEntries);
 
     // Validate that theming-api/properties.json keys match the theming-api.AUTO.json keys
-    validateThemingApiProperties(propertiesFromFiles, codeConfigs);
+    // Only run when actually processing the theming-api source
+    if (sources.some((s) => s.includes('theming-api'))) {
+        validateThemingApiProperties(propertiesFromFiles, codeConfigs);
+    }
 
     return {
         sources,
