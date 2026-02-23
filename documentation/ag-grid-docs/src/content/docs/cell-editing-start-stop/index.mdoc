@@ -8,60 +8,54 @@ Once you've [enabled editing](./cell-editing/) on your columns, the grid provide
 
 ## Customizing Start Triggers
 
+Assuming `editable=true` or `editable` has a callback that returns `true` for the Column Definition, editing will start upon any of the following:
+
+-   **Edit Key Pressed**: One of the following is pressed: {% kbd "↵ Enter" /%}, {% kbd "F2" /%}.
+-   **Backspace**: The default editor will start and clear the contents of the cell if {% kbd "Backspace" /%} is pressed on Windows. To mimic this behaviour on MacOS, use the `enableCellEditingOnBackspace=true` grid option.
+-   **Printable Key Pressed**: Any of the following characters are pressed: `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!"£$%^&amp;*()_+-=[];\'#,./\|<>?:@~{}`{% br /%} The default editor places this character into the edit field so that the user experience is they are typing into the cell.
+-   **Mouse Double Click**: If the mouse is double-clicked. There is a grid property `singleClickEdit` that will allow single-click to start editing instead of double-click. Another property `suppressClickEdit` will prevent both single-click and double-click from starting the edit; use this if you only want to have your own way of starting editing, such as clicking a button in your custom cell renderer.
+-   **api.startEditingCell(params)**: If you call `startEditingCell(params)` on the grid API
+
 ### Single-Click Editing
 
-By default, double-click starts editing. Set `singleClickEdit = true` on the grid or column to start editing with a single click.
+The default is for the grid to enter editing when you Double-Click on a cell. To change the default so that a single-click starts editing, set the property `gridOptions.singleClickEdit = true`. This is useful when you want a cell to enter edit mode as soon as you click on it, similar to the experience you get when inside Excel.
 
-```{% frameworkTransform=true %}
-const gridOptions = {
-    // Enable single-click editing for all columns
-    singleClickEdit: true,
-};
-```
+It is also possible to define single-click editing on a per-column basis using `colDef.singleClickEdit = true`.
 
-You can also configure single-click editing per column:
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    columnDefs: [
-        { field: 'country', singleClickEdit: true },
-        // Other columns use double-click
-    ],
-};
-```
+The grid below has `singleClickEdit = true` so that editing will start on a cell when you single-click on it.
 
 {% gridExampleRunner title="Single Click Editing" name="single-click-editing"  exampleHeight=520 /%}
 
 ### No-Click Editing
 
-Prevent clicks from starting editing by setting `suppressClickEdit = true`. This is useful when you want to trigger editing programmatically, such as with a button in a custom cell renderer.
+It is possible to configure the grid so neither Single-Click or Double-Click starts editing. To do this set the property `suppressClickEdit=true`. This is useful when you want to start the editing in another way, such as including a button in your cell renderer.
 
-```{% frameworkTransform=true %}
-const gridOptions = {
-    suppressClickEdit: true,
-};
-```
+The grid below has `suppressClickEdit = true` so that clicking doesn't started editing. The grid configures a Cell Renderer with a button to start editing.
 
 {% gridExampleRunner title="No Click Editing" name="single-click-editing-renderer"  exampleHeight=520 /%}
 
 ## Customizing Stop Behavior
 
-Editing stops when focus moves to another cell, or when specific keys are pressed ({% kbd "↵ Enter" /%} to accept, {% kbd "⎋ Esc" /%} to cancel, {% kbd "⇥ Tab" /%} to move to next cell). You can also stop editing programmatically using the Grid API.
+The grid will stop editing when any of the following happen:
+
+-   **Callback stopEditing**: The callback `stopEditing` (from the params above) gets called by the editor. This is how your cell editor informs the grid to stop editing.
+-   **Other Cell Focus**: If focus in the grid goes to another cell, the editing will stop.
+-   **Enter Key Down**: If the grid receives an {% kbd "↵ Enter" /%} key press event on the cell. If you do **not** want to stop editing when {% kbd "↵ Enter" /%} is pressed, then listen for the event and stop propagation so the grid does not act on the event.
+-   **Escape Key Down**: Similar to {% kbd "↵ Enter" /%}, if {% kbd "⎋ Esc" /%} key is pressed, editing will stop. Unlike {% kbd "↵ Enter" /%}, the {% kbd "⎋ Esc" /%} action will discard changes rather than taking the new value.
+-   **Tab Key Down**: Editing will stop, accepting changes, and editing will move to the next cell, or the previous cell if {% kbd "⇧ Shift" /%} is also pressed.
+-   **Popup Editor Closed**: If using popup editor, the popup is configured to close if you click outside the editor. Closing the popup triggers the grid to stop editing.
+-   **gridApi.stopEditing()**: If you call `stopEditing()` on the grid API.
 
 ### Stop When Grid Loses Focus
 
-By default, the grid continues editing when the cell loses focus unless another grid cell is clicked. To stop editing when focus leaves the grid entirely, set `stopEditingWhenCellsLoseFocus = true`:
+By default, the grid will not stop editing the currently editing cell when the cell loses focus, unless another cell is clicked on. This means clicking on the grid header, or another part of your application, will not stop editing. This can be bad if, for example, you have a save button, and you need the grid to stop editing before you execute your save function (e.g. you want to make sure the edit is saved into the grid's state).
 
-```{% frameworkTransform=true %}
-const gridOptions = {
-    stopEditingWhenCellsLoseFocus: true,
-};
-```
+If you want the grid to stop editing when focus leaves the cell or the grid, set the grid property `stopEditingWhenCellsLoseFocus = true`.
 
-The example below demonstrates this behaviour:
+The example below shows the editing with `stopEditingWhenCellsLoseFocus = true`. Notice the following:
 
--   Double-click to start editing 'Age', then click outside the grid (on the 'Dummy Save' button or text field) and editing stops
--   Double-click to start editing 'Year' (custom popup editor), click anywhere on the popup, but clicking outside closes it
+-   Double-click to start editing 'Age', then click outside the grid (on the 'Dummy Save' button, or the dummy text field) and the grid will stop editing.
+-   Double-click to start editing 'Year', a custom popup editor appears, you can click anywhere on the popup editor, but once you click outside the editor, the popup closes.
 
 {% gridExampleRunner title="Stop Editing When Grid Loses Focus" name="stop-edit-when-grid-loses-focus"  exampleHeight=510 /%}
 
@@ -79,17 +73,14 @@ Both methods return `true` if navigation was successful, otherwise `false`.
 
 ### Enter Key Navigation
 
-By default, pressing {% kbd "↵ Enter" /%} starts or stops editing without moving focus. Configure vertical navigation for Excel-like behaviour:
+By default pressing {% kbd "↵ Enter" /%} will start editing on a cell, or stop editing on an editing cell. It will not navigate to the cell below.
 
--   `enterNavigatesVertically`: Set to `true` to have {% kbd "↵ Enter" /%} move focus to the cell below when not editing. Default is {% kbd "↵ Enter" /%} starts editing the focused cell.
--   `enterNavigatesVerticallyAfterEdit`: Set to `true` to have {% kbd "↵ Enter" /%} move focus to the cell below after editing. Default is editing stops and focus remains on the current cell.
+To allow consistency with Excel the grid has the following properties:
 
-```{% frameworkTransform=true %}
-const gridOptions = {
-    enterNavigatesVertically: true,
-    enterNavigatesVerticallyAfterEdit: true,
-};
-```
+-   `enterNavigatesVertically`: Set to `true` to have {% kbd "↵ Enter" /%} key move focus to the cell below if not editing. The default is {% kbd "↵ Enter" /%} key starts editing the currently focused cell.
+-   `enterNavigatesVerticallyAfterEdit:` Set to `true` to have {% kbd "↵ Enter" /%} key move focus to the cell below after {% kbd "↵ Enter" /%} is pressed while editing. The default is editing will stop and focus will remain on the editing cell.
+
+The example below demonstrates the focus moving down when {% kbd "↵ Enter" /%} is pressed.
 
 {% gridExampleRunner title="Enter Key Navigation" name="enter-key-navigation"  exampleHeight=555 /%}
 
@@ -101,17 +92,19 @@ Control editing programmatically with the Grid API:
 
 `getEditingCells()` returns an array of objects containing details of currently editing cells. Typically this array contains one entry, but when using [Full Row Edit](./cell-editing-full-row/), multiple cells may be editing simultaneously.
 
-The example below demonstrates the editing API with buttons that:
+The example below illustrates different parts of the editing API. Each button starts editing the 'Last Name' column of the first row with the following differences:
 
--   `edit()`: Start editing normally
--   `edit(Backspace)`: Start editing as if {% kbd "Backspace" /%} was pressed (clears contents first)
--   `edit('T')`: Start editing with 'T' as the initial value
--   `edit(top)`: Edit the top pinned row
--   `edit(bottom)`: Edit the bottom pinned row
--   `stop()`: Stop editing
--   `next()`: Navigate to next cell
--   `previous()`: Navigate to previous cell
--   `which()`: Log which cell is currently editing
+-   `edit()`: Normal editing start.
+-   `edit(Backspace)`: Edit as if delete button was pressed (clears contents first).
+-   `edit('T')`: Edit as if 'T' was pressed (places 'T' into cell).
+-   `edit(top)`: Edits top pinned row.
+-   `edit(bottom)`: Edits bottom pinned row.
+-   `stop()`: Stops editing.
+-   `next()`: Edits the next cell.
+-   `previous()`: Edits the previous cell.
+-   `which()`: If the grid is editing, prints to the console which cell is in edit mode.
+
+Events are logged in the developer console.
 
 {% gridExampleRunner title="Cell Editing API" name="cell-editing"  exampleHeight=545 /%}
 
@@ -143,6 +136,10 @@ Listen for editing lifecycle events:
 {% apiDocumentation source="grid-events/events.json" section="editing" names=["cellEditingStarted", "cellEditingStopped"] /%}
 
 These events fire when editing starts and stops, allowing you to respond to user interactions or trigger custom logic.
+
+{% note %}
+Cell Editing can also be performed via Cell Editor Components; please see [Cell Editor Components](./cell-editors/) for more information.
+{% /note %}
 
 ## See Also
 
