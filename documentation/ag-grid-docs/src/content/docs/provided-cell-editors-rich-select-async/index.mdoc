@@ -3,11 +3,9 @@ title: "Rich Select Cell Editor - Async Values"
 enterprise: true
 ---
 
-An alternative to using the browser's `select` popup for dropdowns inside the grid.
+The Rich Select Cell Editor supports loading values asynchronously, including paged loading and server-side filtering.
 
-The Rich Select Cell Editor allows users to enter a cell value from a list of provided values by searching or filtering the list.
-
-## Overview
+## Async Values
 
 List values can be provided asynchronously to the editor as shown below:
 
@@ -35,7 +33,7 @@ columnDefs: [
 
 {% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["values"] /%}
 
-### Paged Async Values
+## Paged Async Values
 
 For large datasets, `valuesPage` avoids loading everything at once.
 
