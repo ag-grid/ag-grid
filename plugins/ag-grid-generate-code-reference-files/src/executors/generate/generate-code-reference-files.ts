@@ -756,8 +756,8 @@ export function getThemeParams(themesFile: string) {
 
     // Collect all properties from the type - we're running on the TS AST so we
     // don't have the fully resolved type object available, we have to traverse
-    // the source file to get properties, taking into account inheritance,
-    // aliases and intersections
+    // the source to get properties, taking into account inheritance, aliases
+    // and intersections
     const collectMembers = (node: ts.Node) => {
         const nodeFile = node.getSourceFile();
         if (ts.isTypeAliasDeclaration(node)) {
