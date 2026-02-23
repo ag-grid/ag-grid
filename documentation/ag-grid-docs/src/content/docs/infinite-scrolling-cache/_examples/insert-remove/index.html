@@ -1,0 +1,18 @@
+<div style="display: flex; flex-direction: column; height: 100%">
+    <div style="margin-bottom: 10px">
+        <button onclick="insertItemsAt2AndRefresh(5)">Insert Rows</button>
+        <button onclick="removeItem(3, 10)">Delete Rows</button>
+        <button onclick="setRowCountTo200()">Set Row Count</button>
+        <button onclick="rowsAndMaxFound()">Print Info</button>
+        <button onclick="jumpTo500()">Jump to 500</button>
+    </div>
+    <div style="margin-bottom: 10px">
+        <button onclick="setPricesHigh()">Set Prices High</button>
+        <button onclick="setPricesLow()">Set Prices Low</button>
+        <button onclick="refreshCache()">Refresh Cache</button>
+        <button onclick="purgeCache()">Purge Cache</button>
+    </div>
+    <div style="flex-grow: 1">
+        <div id="myGrid" style="height: 100%"></div>
+    </div>
+</div>

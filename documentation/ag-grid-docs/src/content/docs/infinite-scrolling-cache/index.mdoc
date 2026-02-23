@@ -1,0 +1,76 @@
+---
+title: "Block Cache & Performance"
+---
+
+The grid keeps the blocks in a cache. You have the choice to never expire the blocks, or to set a limit to the number of blocks kept. If you set a limit, then as you scroll down, previous blocks will be discarded and will be loaded again if the user scrolls back up. The maximum blocks to keep in the cache is set using the `maxBlocksInCache` property.
+
+## Block Size
+
+The block size is set using the grid property `cacheBlockSize`. This is how many rows each block in the cache should contain. Each call to your datasource will be for one block.
+
+## Debounce Block Loading
+
+It is also possible to debounce the loading to prevent blocks loading until scrolling has stopped. This can be configured using: `blockLoadDebounceMillis`.
+
+## More Control via Properties and API
+
+Infinite scrolling has a cache working behind the scenes. The following properties and API are provided to give you control of the cache.
+
+### Properties
+
+{% apiDocumentation source="grid-options/properties.json" section="infiniteRowModel" names=["cacheOverflowSize", "maxConcurrentDatasourceRequests", "maxBlocksInCache", "infiniteInitialRowCount", "cacheBlockSize"] config={"restrictModule":"InfiniteRowModelModule"} /%}
+
+### API
+
+{% apiDocumentation source="grid-api/api.json" section="infiniteScrolling" config={"restrictModule":"InfiniteRowModelModule"} /%}
+
+{% note %}
+Adding / removing rows directly in the grid for infinite scrolling is not recommended as it will complicate your application. It will make your life easier if you update the data on the server and refresh the block cache.
+{% /note %}
+
+## Example: Using Cache API Methods
+
+Below demonstrates the different API methods via the buttons. The example outputs a lot of debugging items to the console because the grid property `debug=true` is set. The buttons are as follows:
+
+-   **Insert Rows**: Inserts 5 rows at row index 2 from the server, then refreshes the grid.
+-   **Delete Rows**: Deletes 10 rows at row index 3 from the server, then refreshes the grid.
+-   **Set Row Count**: Sets the row count to 200. This adjusts the vertical scroll to show 200 rows. If the scroll is positioned at the end, this results in the grid automatically re-adjusting as it seeks ahead for the next block of data.
+-   **Print Info**: Prints `rowCount` and `maxFound` to the console.
+-   **Jump to 500**: Positions the grid so that row 500 is displayed.
+-   **Print Cache State**: Debugging method, to see the state of the cache.
+-   **Set Prices High & Set Prices Low**: Sets the prices on the server-side to either high or low prices. This will not impact the grid until after a block cache is loaded. Use these buttons to then further test the refresh and purge methods.
+-   **Refresh Cache**: Calls for the cache to be refreshed.
+-   **Purge Cache**: Calls for the cache to be purged.
+
+The example also makes each Honda row bold - demonstrating that the callbacks `getRowStyle` and `getRowClass`
+get called after the data is set as well as when the row is created (when the data may not yet be available).
+
+{% gridExampleRunner title="Insert And Remove Example" name="insert-remove" /%}
+
+## Loading Spinner
+
+The examples on this page use a loading spinner to show if the row is waiting for its data to be loaded. The grid does not provide this, rather it is a simple rendering technique used in the examples. If the data is loading, then the `rowNode` will have no ID, so if you use the ID as the value, the cell will get refreshed when the ID is set.
+
+```js
+loadingSpinnerColumn = {
+    // use a value getter to have the node ID as this column's value
+    valueGetter: 'node.id',
+
+    // then a custom cellRenderer
+    cellRenderer: function(params) {
+        if (params.value === undefined) {
+            // when no node id, display the spinner image
+            return '<img src="loading.gif" />';
+        } else {
+            // otherwise just display node ID (or whatever you wish for this column)
+            return params.value;
+        }
+    }
+}
+```
+
+Refer to section [Cell Rendering](./component-cell-renderer/) for how to build cell renderers.
+
+## See Also
+
+-   [Datasource](./infinite-scrolling-datasource/) - Implementing the datasource interface
