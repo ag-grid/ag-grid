@@ -754,9 +754,6 @@ export const AG_GRID_LOCALE_FI = {
     ariaLabelFilterCardDelete: 'Poista suodatin',
     ariaLabelFilterCardHasEdits: 'On muutoksia',
 
-    // Keyboard Navigation
-    tabToNextGridContainerContainerNotFound: 'tabToNextGridContainer: säiliötä ${variable} ei löytynyt',
-
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ' ',
     decimalSeparator: ',',

@@ -750,9 +750,6 @@ export const AG_GRID_LOCALE_CN = {
     ariaLabelFilterCardDelete: '删除过滤器',
     ariaLabelFilterCardHasEdits: '有编辑',
 
-    // Keyboard Navigation
-    tabToNextGridContainerContainerNotFound: 'tabToNextGridContainer：未找到 ${variable} 容器',
-
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
     decimalSeparator: '.',

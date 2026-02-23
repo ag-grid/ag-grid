@@ -752,9 +752,6 @@ export const AG_GRID_LOCALE_NO = {
     ariaLabelFilterCardDelete: 'Slett filter',
     ariaLabelFilterCardHasEdits: 'Har endringer',
 
-    // Keyboard Navigation
-    tabToNextGridContainerContainerNotFound: 'tabToNextGridContainer: beholderen ${variable} ble ikke funnet',
-
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',
     decimalSeparator: ',',

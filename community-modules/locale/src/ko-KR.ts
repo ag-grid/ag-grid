@@ -751,9 +751,6 @@ export const AG_GRID_LOCALE_KR = {
     ariaLabelFilterCardDelete: '필터 삭제',
     ariaLabelFilterCardHasEdits: '편집 사항 있음',
 
-    // Keyboard Navigation
-    tabToNextGridContainerContainerNotFound: 'tabToNextGridContainer: ${variable} 컨테이너를 찾을 수 없습니다',
-
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
     decimalSeparator: '.',

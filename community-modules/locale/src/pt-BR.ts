@@ -756,9 +756,6 @@ export const AG_GRID_LOCALE_BR = {
     ariaLabelFilterCardDelete: 'Excluir Filtro',
     ariaLabelFilterCardHasEdits: 'Tem Edições',
 
-    // Keyboard Navigation
-    tabToNextGridContainerContainerNotFound: 'tabToNextGridContainer: container ${variable} não encontrado',
-
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',
     decimalSeparator: ',',

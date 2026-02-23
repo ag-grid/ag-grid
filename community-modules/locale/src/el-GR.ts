@@ -757,9 +757,6 @@ export const AG_GRID_LOCALE_GR = {
     ariaLabelFilterCardDelete: 'Διαγραφή φίλτρου',
     ariaLabelFilterCardHasEdits: 'Έχει επεξεργασίες',
 
-    // Keyboard Navigation
-    tabToNextGridContainerContainerNotFound: 'tabToNextGridContainer: το κοντέινερ ${variable} δεν βρέθηκε',
-
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',
     decimalSeparator: ',',

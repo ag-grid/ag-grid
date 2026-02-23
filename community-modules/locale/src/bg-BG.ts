@@ -756,9 +756,6 @@ export const AG_GRID_LOCALE_BG = {
     ariaLabelFilterCardDelete: 'Изтриване на филтър',
     ariaLabelFilterCardHasEdits: 'Има редакции',
 
-    // Keyboard Navigation
-    tabToNextGridContainerContainerNotFound: 'tabToNextGridContainer: контейнерът ${variable} не е намерен',
-
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
     decimalSeparator: '.',

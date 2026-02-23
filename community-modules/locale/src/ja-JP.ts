@@ -751,9 +751,6 @@ export const AG_GRID_LOCALE_JP = {
     ariaLabelFilterCardDelete: 'フィルターを削除',
     ariaLabelFilterCardHasEdits: '編集されています',
 
-    // Keyboard Navigation
-    tabToNextGridContainerContainerNotFound: 'tabToNextGridContainer: コンテナ ${variable} が見つかりません',
-
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '、',
     decimalSeparator: '。',

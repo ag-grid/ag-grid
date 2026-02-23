@@ -751,9 +751,6 @@ export const AG_GRID_LOCALE_CZ = {
     ariaLabelFilterCardDelete: 'Smazat filtr',
     ariaLabelFilterCardHasEdits: 'Má úpravy',
 
-    // Keyboard Navigation
-    tabToNextGridContainerContainerNotFound: 'tabToNextGridContainer: kontejner ${variable} nebyl nalezen',
-
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '‚',
     decimalSeparator: ',',

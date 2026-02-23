@@ -755,9 +755,6 @@ export const AG_GRID_LOCALE_RO = {
     ariaLabelFilterCardDelete: 'Șterge Filtrul',
     ariaLabelFilterCardHasEdits: 'Are Modificări',
 
-    // Keyboard Navigation
-    tabToNextGridContainerContainerNotFound: 'tabToNextGridContainer: containerul ${variable} nu a fost găsit',
-
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
     decimalSeparator: '.',

@@ -752,9 +752,6 @@ export const AG_GRID_LOCALE_SK = {
     ariaLabelFilterCardDelete: 'Odstrániť filter',
     ariaLabelFilterCardHasEdits: 'Má úpravy',
 
-    // Keyboard Navigation
-    tabToNextGridContainerContainerNotFound: 'tabToNextGridContainer: kontajner ${variable} sa nenašiel',
-
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',
     decimalSeparator: ',',

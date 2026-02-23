@@ -166,14 +166,7 @@ export class GridCtrl extends BeanStub {
                         (container) => container.getFocusableContainerName() === userResult
                     );
                     if (!targetContainer) {
-                        const translate = this.getLocaleTextFunc();
-                        _consoleWarn(
-                            translate(
-                                'tabToNextGridContainerContainerNotFound',
-                                `tabToNextGridContainer ${userResult} container not found`,
-                                [userResult]
-                            )
-                        );
+                        _consoleWarn(`tabToNextGridContainer - ${userResult} container not found`);
                         return undefined;
                     }
 

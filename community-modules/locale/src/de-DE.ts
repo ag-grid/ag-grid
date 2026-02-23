@@ -758,9 +758,6 @@ export const AG_GRID_LOCALE_DE = {
     ariaLabelFilterCardDelete: 'Filter löschen',
     ariaLabelFilterCardHasEdits: 'Hat Änderungen',
 
-    // Keyboard Navigation
-    tabToNextGridContainerContainerNotFound: 'tabToNextGridContainer: Container ${variable} nicht gefunden',
-
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',
     decimalSeparator: ',',

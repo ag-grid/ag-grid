@@ -753,9 +753,6 @@ export const AG_GRID_LOCALE_HR = {
     ariaLabelFilterCardDelete: 'Izbriši filter',
     ariaLabelFilterCardHasEdits: 'Ima izmjene',
 
-    // Keyboard Navigation
-    tabToNextGridContainerContainerNotFound: 'tabToNextGridContainer: spremnik ${variable} nije pronađen',
-
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
     decimalSeparator: '.',

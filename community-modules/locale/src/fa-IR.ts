@@ -753,9 +753,6 @@ export const AG_GRID_LOCALE_IR = {
     ariaLabelFilterCardDelete: 'حذف فیلتر',
     ariaLabelFilterCardHasEdits: 'دارای ویرایش‌ها',
 
-    // Keyboard Navigation
-    tabToNextGridContainerContainerNotFound: 'tabToNextGridContainer: ظرف ${variable} پیدا نشد',
-
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '،',
     decimalSeparator: '.',

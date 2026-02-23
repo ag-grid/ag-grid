@@ -750,9 +750,6 @@ export const AG_GRID_LOCALE_HK = {
     ariaLabelFilterCardDelete: '刪除篩選',
     ariaLabelFilterCardHasEdits: '已有編輯',
 
-    // Keyboard Navigation
-    tabToNextGridContainerContainerNotFound: 'tabToNextGridContainer：找不到 ${variable} 容器',
-
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
     decimalSeparator: '.',

@@ -750,9 +750,6 @@ export const AG_GRID_LOCALE_EG = {
     ariaLabelFilterCardDelete: 'حذف الفلتر',
     ariaLabelFilterCardHasEdits: 'يوجد تعديلات',
 
-    // Keyboard Navigation
-    tabToNextGridContainerContainerNotFound: 'tabToNextGridContainer: تعذر العثور على الحاوية ${variable}',
-
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '،',
     decimalSeparator: '.',
