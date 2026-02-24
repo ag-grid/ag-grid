@@ -1,5 +1,5 @@
 import type { GridApi } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, QuickFilterModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, cachedJSONObjects } from '../test-utils';
@@ -13,7 +13,7 @@ function getVisibleAutoGroupColIds(api: GridApi): string[] {
 
 describe('ag-grid groupHideColumnsUntilExpanded', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule],
+        modules: [ClientSideRowModelModule, RowGroupingModule, QuickFilterModule],
     });
 
     beforeEach(() => {
@@ -242,6 +242,40 @@ describe('ag-grid groupHideColumnsUntilExpanded', () => {
             'ag-Grid-AutoColumn-year',
             'ag-Grid-AutoColumn-sport',
         ]);
+    });
+
+    test('expand level 0 - level 1 auto column appears, filter out row group column still visible', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', rowGroup: true, hide: true },
+                { field: 'athlete' },
+                { field: 'gold' },
+            ],
+            groupDisplayType: 'multipleColumns',
+            groupHideColumnsUntilExpanded: true,
+            groupDefaultExpanded: 0,
+            rowData: twoLevelRowData,
+            getRowId: (params) => params.data.id,
+        });
+
+        // Initially only level 0
+        expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn-country']);
+
+        // Expand Ireland
+        api.setRowNodeExpanded(api.getRowNode('row-group-country-Ireland')!, true, false, true);
+
+        // Now both levels should be visible
+        expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn-country', 'ag-Grid-AutoColumn-year']);
+
+        api.setGridOption('quickFilterText', 'France');
+
+        // Filter hides Ireland rows - only France group row is displayed
+        expect(api.getDisplayedRowCount()).toBe(1);
+        expect(api.getDisplayedRowAtIndex(0)!.key).toBe('France');
+
+        // Year column remains visible even though the expanded Ireland group is now filtered out
+        expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn-country', 'ag-Grid-AutoColumn-year']);
     });
 
     test('collapse all level 0 - hides level 1+', async () => {

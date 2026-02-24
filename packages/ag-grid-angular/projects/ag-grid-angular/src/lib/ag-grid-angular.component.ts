@@ -1421,7 +1421,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `RowGroupingModule`
      */
     @Input({ transform: booleanAttribute }) public groupHideOpenParents: boolean | undefined = undefined;
-    /** When using `groupDisplayType='multipleColumns'`, hides group columns for levels
+    /** When using `groupDisplayType='multipleColumns'` or `groupHideOpenParents=true`, hides group columns for levels
      * that have not yet been expanded. Only the top-level group column is initially
      * visible; each subsequent level becomes visible when at least one group at the
      * preceding level is expanded.

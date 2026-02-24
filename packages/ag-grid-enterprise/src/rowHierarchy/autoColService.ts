@@ -39,11 +39,16 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
     public postConstruct(): void {
         this.addManagedPropertyListener('autoGroupColumnDef', this.updateColumns.bind(this));
 
+        this.setupGroupHideColumnsUntilExpanded();
+    }
+
+    private setupGroupHideColumnsUntilExpanded() {
         const updateGroupColumnVisibility = () => this.updateGroupColumnVisibility();
         this.addManagedEventListeners({
             // modelUpdated is fired when rowGroup events are fired so we do not duplicate work by also listening to "rowGroupOpened" and "expandOrCollapseAll"
             modelUpdated: updateGroupColumnVisibility,
         });
+        // Ensure the properties are reactive.
         this.addManagedPropertyListeners(
             ['groupHideColumnsUntilExpanded', 'groupDisplayType', 'groupHideOpenParents'],
             updateGroupColumnVisibility
@@ -286,29 +291,43 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
         return res;
     }
 
-    // Recursively walks expanded group nodes to find the deepest level with an expanded node,
-    // up to maxLevel. Only descends into a node's children if that node itself is expanded,
-    // so collapsed parents never contribute to the result. Exits early once maxLevel is reached.
     private getDeepestExpandedLevel(nodes: RowNode[] | null | undefined, maxLevel: number): number {
         let deepest = -1;
-        if (!nodes) return deepest;
+
+        if (!nodes) {
+            return deepest;
+        }
+
         for (const node of nodes) {
-            if (node.group && node.expanded) {
-                if (node.level > deepest) deepest = node.level;
-                if (deepest >= maxLevel) return deepest;
-                const childDeepest = this.getDeepestExpandedLevel(node.childrenAfterGroup, maxLevel);
-                if (childDeepest > deepest) {
-                    deepest = childDeepest;
-                    if (deepest >= maxLevel) return deepest;
-                }
+            if (!node.group || !node.expanded) {
+                continue;
+            }
+
+            if (node.level > deepest) {
+                deepest = node.level;
+            }
+
+            if (deepest >= maxLevel) {
+                return deepest;
+            }
+
+            // only expanded nodes recurse into their child groups; collapsed branches are skipped.
+            const childDeepest = this.getDeepestExpandedLevel(node.childrenAfterGroup, maxLevel);
+            if (childDeepest > deepest) {
+                deepest = childDeepest;
+            }
+            if (deepest >= maxLevel) {
+                return deepest;
             }
         }
+
         return deepest;
     }
 
     private updateGroupColumnVisibility(): void {
         const columns = this.columns?.list;
-        if (!columns?.length) {
+
+        if (!columns || columns.length === 0) {
             return;
         }
 
@@ -316,39 +335,34 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
         const isFeatureEnabled = _isGroupHideColumnsUntilExpanded(gos);
 
         let changed = false;
-
-        const updateColVis = (col: AgColumn, newVis: boolean) => {
-            if (newVis !== col.isVisible()) {
-                col.setVisible(newVis, 'api');
+        const setColVisible = (col: AgColumn, visible: boolean): void => {
+            if (visible !== col.isVisible()) {
+                col.setVisible(visible, 'api');
                 changed = true;
             }
         };
 
-        let showAll = false;
+        const setAllColumnsVisible = (): void => {
+            for (const col of columns) {
+                setColVisible(col, true);
+            }
+        };
+
         if (!isFeatureEnabled) {
-            showAll = true;
+            setAllColumnsVisible();
         } else if (columns.length > 1) {
             // Feature only applies when there are multiple columns to show/hide;
             // the first column is always visible so a single column needs no adjustment.
-            const rootChildren = rowModel?.rootNode?.childrenAfterGroup;
-            // columns[0] is always visible; columns[level+1] shows when level has an expanded group.
-            // We only need to check down to the level that reveals the last column (columns.length - 2).
             const maxLevel = columns.length - 2;
+            const rootChildren = rowModel?.rootNode?.childrenAfterGroup;
             const deepestExpandedLevel = this.getDeepestExpandedLevel(rootChildren, maxLevel);
 
             if (deepestExpandedLevel >= maxLevel) {
-                showAll = true;
+                setAllColumnsVisible();
             } else {
                 for (let level = 0; level < columns.length - 1; level++) {
-                    updateColVis(columns[level + 1], deepestExpandedLevel >= level);
+                    setColVisible(columns[level + 1], deepestExpandedLevel >= level);
                 }
-            }
-        }
-
-        if (showAll) {
-            // Reset: ensure all auto group columns are visible
-            for (const col of columns) {
-                updateColVis(col, true);
             }
         }
 
