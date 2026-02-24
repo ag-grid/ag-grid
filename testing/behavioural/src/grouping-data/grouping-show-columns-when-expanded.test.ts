@@ -38,6 +38,13 @@ describe('ag-grid showGroupColumnsWhenExpanded', () => {
         { id: '4', country: 'Italy', year: '2020', sport: 'Soccer', athlete: 'Mario Rossi', gold: 4 },
     ]);
 
+    const fourLevelRowData = cachedJSONObjects.array([
+        { id: '1', country: 'Ireland', year: '2020', sport: 'Sailing', athlete: 'John Smith', gold: 1 },
+        { id: '2', country: 'Ireland', year: '2020', sport: 'Soccer', athlete: 'Jane Doe', gold: 2 },
+        { id: '3', country: 'Ireland', year: '2021', sport: 'Soccer', athlete: 'Bob Johnson', gold: 3 },
+        { id: '4', country: 'Italy', year: '2020', sport: 'Soccer', athlete: 'Mario Rossi', gold: 4 },
+    ]);
+
     test('default (false) - all auto columns visible when collapsed', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [
@@ -176,6 +183,60 @@ describe('ag-grid showGroupColumnsWhenExpanded', () => {
         // Expand Ireland > 2020 (level 1)
         api.setRowNodeExpanded(api.getRowNode('row-group-country-Ireland-year-2020')!, true, false, true);
 
+        expect(getVisibleAutoGroupColIds(api)).toEqual([
+            'ag-Grid-AutoColumn-country',
+            'ag-Grid-AutoColumn-year',
+            'ag-Grid-AutoColumn-sport',
+        ]);
+    });
+
+    test('4-level grouping - each expansion reveals the next auto column', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', rowGroup: true, hide: true },
+                { field: 'sport', rowGroup: true, hide: true },
+                { field: 'athlete', rowGroup: true, hide: true },
+                { field: 'gold' },
+            ],
+            groupDisplayType: 'multipleColumns',
+            showGroupColumnsWhenExpanded: true,
+            groupDefaultExpanded: 0,
+            rowData: fourLevelRowData,
+            getRowId: (params) => params.data.id,
+        });
+
+        // Initially only level 0
+        expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn-country']);
+
+        // Expand Ireland (level 0)
+        api.setRowNodeExpanded(api.getRowNode('row-group-country-Ireland')!, true, false, true);
+        expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn-country', 'ag-Grid-AutoColumn-year']);
+
+        // Expand Ireland > 2020 (level 1)
+        api.setRowNodeExpanded(api.getRowNode('row-group-country-Ireland-year-2020')!, true, false, true);
+        expect(getVisibleAutoGroupColIds(api)).toEqual([
+            'ag-Grid-AutoColumn-country',
+            'ag-Grid-AutoColumn-year',
+            'ag-Grid-AutoColumn-sport',
+        ]);
+
+        // Expand Ireland > 2020 > Sailing (level 2)
+        api.setRowNodeExpanded(api.getRowNode('row-group-country-Ireland-year-2020-sport-Sailing')!, true, false, true);
+        expect(getVisibleAutoGroupColIds(api)).toEqual([
+            'ag-Grid-AutoColumn-country',
+            'ag-Grid-AutoColumn-year',
+            'ag-Grid-AutoColumn-sport',
+            'ag-Grid-AutoColumn-athlete',
+        ]);
+
+        // Collapse Ireland > 2020 > Sailing (level 2) - athlete column should hide
+        api.setRowNodeExpanded(
+            api.getRowNode('row-group-country-Ireland-year-2020-sport-Sailing')!,
+            false,
+            false,
+            true
+        );
         expect(getVisibleAutoGroupColIds(api)).toEqual([
             'ag-Grid-AutoColumn-country',
             'ag-Grid-AutoColumn-year',
@@ -343,6 +404,116 @@ describe('ag-grid showGroupColumnsWhenExpanded', () => {
 
         // Both should be visible again
         expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn-country', 'ag-Grid-AutoColumn-year']);
+    });
+
+    test('runtime groupDisplayType change to multipleColumns - feature activates', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', rowGroup: true, hide: true },
+                { field: 'athlete' },
+                { field: 'gold' },
+            ],
+            groupDisplayType: 'singleColumn',
+            showGroupColumnsWhenExpanded: true,
+            groupDefaultExpanded: 0,
+            rowData: twoLevelRowData,
+            getRowId: (params) => params.data.id,
+        });
+
+        // In singleColumn mode, feature has no effect - one auto col always visible
+        expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn']);
+
+        // Switch to multipleColumns at runtime
+        api.updateGridOptions({ groupDisplayType: 'multipleColumns' });
+
+        // Feature now active: only level 0 visible (nothing expanded)
+        expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn-country']);
+
+        // Expand Ireland to reveal level 1
+        api.setRowNodeExpanded(api.getRowNode('row-group-country-Ireland')!, true, false, true);
+
+        expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn-country', 'ag-Grid-AutoColumn-year']);
+    });
+
+    test('runtime groupDisplayType change from multipleColumns - resets to singleColumn', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', rowGroup: true, hide: true },
+                { field: 'athlete' },
+                { field: 'gold' },
+            ],
+            groupDisplayType: 'multipleColumns',
+            showGroupColumnsWhenExpanded: true,
+            groupDefaultExpanded: 0,
+            rowData: twoLevelRowData,
+            getRowId: (params) => params.data.id,
+        });
+
+        // Feature active: only level 0 visible
+        expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn-country']);
+
+        // Switch back to singleColumn at runtime
+        api.updateGridOptions({ groupDisplayType: 'singleColumn' });
+
+        // Feature no longer active: single auto col visible
+        expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn']);
+    });
+
+    test('runtime groupHideOpenParents true - feature activates with multipleColumns behaviour', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', rowGroup: true, hide: true },
+                { field: 'athlete' },
+                { field: 'gold' },
+            ],
+            groupHideOpenParents: false,
+            showGroupColumnsWhenExpanded: true,
+            groupDefaultExpanded: 0,
+            rowData: twoLevelRowData,
+            getRowId: (params) => params.data.id,
+        });
+
+        // Without groupHideOpenParents, singleColumn mode (default) - feature has no effect
+        expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn']);
+
+        // Enable groupHideOpenParents at runtime (implies multipleColumns)
+        api.updateGridOptions({ groupHideOpenParents: true });
+
+        // Feature now active: only level 0 visible (nothing expanded)
+        expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn-country']);
+
+        // Expand Ireland to reveal level 1
+        api.setRowNodeExpanded(api.getRowNode('row-group-country-Ireland')!, true, false, true);
+
+        expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn-country', 'ag-Grid-AutoColumn-year']);
+    });
+
+    test('runtime groupHideOpenParents false - feature deactivates', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', rowGroup: true, hide: true },
+                { field: 'athlete' },
+                { field: 'gold' },
+            ],
+            groupHideOpenParents: true,
+            showGroupColumnsWhenExpanded: true,
+            groupDefaultExpanded: 0,
+            rowData: twoLevelRowData,
+            getRowId: (params) => params.data.id,
+        });
+
+        // Feature active via groupHideOpenParents: only level 0 visible
+        expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn-country']);
+
+        // Disable groupHideOpenParents at runtime
+        api.updateGridOptions({ groupHideOpenParents: false });
+
+        // Without multipleColumns mode, feature deactivates - single auto col visible
+        expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn']);
     });
 
     test('with groupHideOpenParents - feature works (forces multipleColumns mode)', async () => {

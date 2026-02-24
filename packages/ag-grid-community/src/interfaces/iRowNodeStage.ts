@@ -55,8 +55,6 @@ export interface IRowNodeGroupStage<TData = any> extends IRowNodeStage<TData> {
     extractData(): TData[];
     /** Gets a tree data filler or row grouping group row by id */
     getNonLeaf(id: string): RowNode<TData> | undefined;
-    /** Returns the deepest group level that has at least one expanded node, or -1 if none */
-    getDeepestExpandedLevel(maxDepth: number): number;
     /** Used to lazily compute and store allLeafChildren for a row node */
     loadLeafs(node: RowNode<TData>): RowNode<TData>[] | null;
     /** Used to lazily compute and store groupData for a row node - not for siblings */

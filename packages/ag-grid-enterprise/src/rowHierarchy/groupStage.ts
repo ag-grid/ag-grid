@@ -57,22 +57,6 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, _IRowNodeG
         return this.strategy?.nonLeafsById?.get(id);
     }
 
-    public getDeepestExpandedLevel(maxDepth: number): number {
-        let deepest = -1;
-        const nonLeafs = this.strategy?.nonLeafsById;
-        if (nonLeafs) {
-            for (const node of nonLeafs.values()) {
-                if (node.expanded && node.level > deepest) {
-                    deepest = node.level;
-                    if (deepest >= maxDepth) {
-                        break;
-                    }
-                }
-            }
-        }
-        return deepest;
-    }
-
     public getNestedDataGetter(): NestedDataGetter<TData> | null | undefined {
         return this.getStrategy()?.nestedDataGetter;
     }
