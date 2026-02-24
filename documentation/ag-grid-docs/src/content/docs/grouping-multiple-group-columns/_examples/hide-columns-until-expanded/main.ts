@@ -1,20 +1,10 @@
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
-import {
-    ColumnMenuModule,
-    ColumnsToolPanelModule,
-    ContextMenuModule,
-    RowGroupingModule,
-    SetFilterModule,
-} from 'ag-grid-enterprise';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
-    ColumnsToolPanelModule,
-    ColumnMenuModule,
-    ContextMenuModule,
     RowGroupingModule,
-    SetFilterModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
@@ -24,19 +14,19 @@ const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
         { field: 'country', rowGroup: true, hide: true },
         { field: 'year', rowGroup: true, hide: true },
-
-        { field: 'athlete', minWidth: 200 },
+        { field: 'sport', rowGroup: true, hide: true },
+        { field: 'athlete', minWidth: 200, aggFunc: 'count' },
         { field: 'total', aggFunc: 'sum' },
     ],
     defaultColDef: {
-        flex: 1,
         minWidth: 150,
     },
     autoGroupColumnDef: {
         minWidth: 200,
     },
-    groupHideOpenParents: true,
     groupDisplayType: 'multipleColumns',
+    groupHideColumnsUntilExpanded: true,
+    groupDefaultExpanded: 0,
 };
 
 // setup the grid after the page has finished loading
