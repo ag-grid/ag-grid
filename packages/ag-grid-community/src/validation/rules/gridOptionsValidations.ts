@@ -246,11 +246,11 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         groupDefaultExpanded: {
             supportedRowModels: ['clientSide'],
         },
-        showGroupColumnsWhenExpanded: {
+        groupHideColumnsUntilExpanded: {
             supportedRowModels: ['clientSide'],
-            validate({ showGroupColumnsWhenExpanded, groupHideOpenParents, groupDisplayType }) {
-                if (showGroupColumnsWhenExpanded && !groupHideOpenParents && groupDisplayType !== 'multipleColumns') {
-                    return "`showGroupColumnsWhenExpanded = true` requires either `groupDisplayType = 'multipleColumns'` or `groupHideOpenParents = true`";
+            validate({ groupHideColumnsUntilExpanded, groupHideOpenParents, groupDisplayType }) {
+                if (groupHideColumnsUntilExpanded && !groupHideOpenParents && groupDisplayType !== 'multipleColumns') {
+                    return "`groupHideColumnsUntilExpanded = true` requires either `groupDisplayType = 'multipleColumns'` or `groupHideOpenParents = true`";
                 }
                 return null;
             },

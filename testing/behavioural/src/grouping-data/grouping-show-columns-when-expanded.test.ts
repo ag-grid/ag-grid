@@ -11,7 +11,7 @@ function getVisibleAutoGroupColIds(api: GridApi): string[] {
         .map((col) => col.getColId());
 }
 
-describe('ag-grid showGroupColumnsWhenExpanded', () => {
+describe('ag-grid groupHideColumnsUntilExpanded', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, RowGroupingModule],
     });
@@ -98,7 +98,7 @@ describe('ag-grid showGroupColumnsWhenExpanded', () => {
                 { field: 'gold' },
             ],
             groupDisplayType: 'multipleColumns',
-            showGroupColumnsWhenExpanded: false,
+            groupHideColumnsUntilExpanded: false,
             groupDefaultExpanded: 0,
             rowData: threeLevelRowData,
             getRowId: (params) => params.data.id,
@@ -121,7 +121,7 @@ describe('ag-grid showGroupColumnsWhenExpanded', () => {
                 { field: 'gold' },
             ],
             groupDisplayType: 'multipleColumns',
-            showGroupColumnsWhenExpanded: true,
+            groupHideColumnsUntilExpanded: true,
             groupDefaultExpanded: 0,
             rowData: twoLevelRowData,
             getRowId: (params) => params.data.id,
@@ -140,7 +140,7 @@ describe('ag-grid showGroupColumnsWhenExpanded', () => {
                 { field: 'gold' },
             ],
             groupDisplayType: 'multipleColumns',
-            showGroupColumnsWhenExpanded: true,
+            groupHideColumnsUntilExpanded: true,
             groupDefaultExpanded: 0,
             rowData: twoLevelRowData,
             getRowId: (params) => params.data.id,
@@ -166,7 +166,7 @@ describe('ag-grid showGroupColumnsWhenExpanded', () => {
                 { field: 'gold' },
             ],
             groupDisplayType: 'multipleColumns',
-            showGroupColumnsWhenExpanded: true,
+            groupHideColumnsUntilExpanded: true,
             groupDefaultExpanded: 0,
             rowData: threeLevelRowData,
             getRowId: (params) => params.data.id,
@@ -200,7 +200,7 @@ describe('ag-grid showGroupColumnsWhenExpanded', () => {
                 { field: 'gold' },
             ],
             groupDisplayType: 'multipleColumns',
-            showGroupColumnsWhenExpanded: true,
+            groupHideColumnsUntilExpanded: true,
             groupDefaultExpanded: 0,
             rowData: fourLevelRowData,
             getRowId: (params) => params.data.id,
@@ -253,7 +253,7 @@ describe('ag-grid showGroupColumnsWhenExpanded', () => {
                 { field: 'gold' },
             ],
             groupDisplayType: 'multipleColumns',
-            showGroupColumnsWhenExpanded: true,
+            groupHideColumnsUntilExpanded: true,
             groupDefaultExpanded: 0,
             rowData: twoLevelRowData,
             getRowId: (params) => params.data.id,
@@ -279,7 +279,7 @@ describe('ag-grid showGroupColumnsWhenExpanded', () => {
                 { field: 'gold' },
             ],
             groupDisplayType: 'multipleColumns',
-            showGroupColumnsWhenExpanded: true,
+            groupHideColumnsUntilExpanded: true,
             groupDefaultExpanded: 0,
             rowData: twoLevelRowData,
             getRowId: (params) => params.data.id,
@@ -301,7 +301,7 @@ describe('ag-grid showGroupColumnsWhenExpanded', () => {
                 { field: 'gold' },
             ],
             groupDisplayType: 'multipleColumns',
-            showGroupColumnsWhenExpanded: true,
+            groupHideColumnsUntilExpanded: true,
             groupDefaultExpanded: -1,
             rowData: twoLevelRowData,
             getRowId: (params) => params.data.id,
@@ -324,7 +324,7 @@ describe('ag-grid showGroupColumnsWhenExpanded', () => {
                 { field: 'gold' },
             ],
             groupDisplayType: 'multipleColumns',
-            showGroupColumnsWhenExpanded: true,
+            groupHideColumnsUntilExpanded: true,
             groupDefaultExpanded: 1,
             rowData: twoLevelRowData,
             getRowId: (params) => params.data.id,
@@ -343,7 +343,7 @@ describe('ag-grid showGroupColumnsWhenExpanded', () => {
                 { field: 'gold' },
             ],
             groupDisplayType: 'multipleColumns',
-            showGroupColumnsWhenExpanded: true,
+            groupHideColumnsUntilExpanded: true,
             groupDefaultExpanded: -1,
             rowData: threeLevelRowData,
             getRowId: (params) => params.data.id,
@@ -365,7 +365,7 @@ describe('ag-grid showGroupColumnsWhenExpanded', () => {
                 { field: 'gold' },
             ],
             groupDisplayType: 'multipleColumns',
-            showGroupColumnsWhenExpanded: false,
+            groupHideColumnsUntilExpanded: false,
             groupDefaultExpanded: 0,
             rowData: twoLevelRowData,
             getRowId: (params) => params.data.id,
@@ -375,7 +375,7 @@ describe('ag-grid showGroupColumnsWhenExpanded', () => {
         expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn-country', 'ag-Grid-AutoColumn-year']);
 
         // Enable feature
-        api.updateGridOptions({ showGroupColumnsWhenExpanded: true });
+        api.updateGridOptions({ groupHideColumnsUntilExpanded: true });
 
         // Now only level 0 should be visible
         expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn-country']);
@@ -390,7 +390,7 @@ describe('ag-grid showGroupColumnsWhenExpanded', () => {
                 { field: 'gold' },
             ],
             groupDisplayType: 'multipleColumns',
-            showGroupColumnsWhenExpanded: true,
+            groupHideColumnsUntilExpanded: true,
             groupDefaultExpanded: 0,
             rowData: twoLevelRowData,
             getRowId: (params) => params.data.id,
@@ -400,7 +400,7 @@ describe('ag-grid showGroupColumnsWhenExpanded', () => {
         expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn-country']);
 
         // Disable feature
-        api.updateGridOptions({ showGroupColumnsWhenExpanded: false });
+        api.updateGridOptions({ groupHideColumnsUntilExpanded: false });
 
         // Both should be visible again
         expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn-country', 'ag-Grid-AutoColumn-year']);
@@ -415,7 +415,7 @@ describe('ag-grid showGroupColumnsWhenExpanded', () => {
                 { field: 'gold' },
             ],
             groupDisplayType: 'singleColumn',
-            showGroupColumnsWhenExpanded: true,
+            groupHideColumnsUntilExpanded: true,
             groupDefaultExpanded: 0,
             rowData: twoLevelRowData,
             getRowId: (params) => params.data.id,
@@ -445,7 +445,7 @@ describe('ag-grid showGroupColumnsWhenExpanded', () => {
                 { field: 'gold' },
             ],
             groupDisplayType: 'multipleColumns',
-            showGroupColumnsWhenExpanded: true,
+            groupHideColumnsUntilExpanded: true,
             groupDefaultExpanded: 0,
             rowData: twoLevelRowData,
             getRowId: (params) => params.data.id,
@@ -470,7 +470,7 @@ describe('ag-grid showGroupColumnsWhenExpanded', () => {
                 { field: 'gold' },
             ],
             groupHideOpenParents: false,
-            showGroupColumnsWhenExpanded: true,
+            groupHideColumnsUntilExpanded: true,
             groupDefaultExpanded: 0,
             rowData: twoLevelRowData,
             getRowId: (params) => params.data.id,
@@ -500,7 +500,7 @@ describe('ag-grid showGroupColumnsWhenExpanded', () => {
                 { field: 'gold' },
             ],
             groupHideOpenParents: true,
-            showGroupColumnsWhenExpanded: true,
+            groupHideColumnsUntilExpanded: true,
             groupDefaultExpanded: 0,
             rowData: twoLevelRowData,
             getRowId: (params) => params.data.id,
@@ -525,7 +525,7 @@ describe('ag-grid showGroupColumnsWhenExpanded', () => {
                 { field: 'gold' },
             ],
             groupHideOpenParents: true,
-            showGroupColumnsWhenExpanded: true,
+            groupHideColumnsUntilExpanded: true,
             groupDefaultExpanded: 0,
             rowData: twoLevelRowData,
             getRowId: (params) => params.data.id,
@@ -550,7 +550,7 @@ describe('ag-grid showGroupColumnsWhenExpanded', () => {
                 { field: 'gold' },
             ],
             groupDisplayType: 'singleColumn',
-            showGroupColumnsWhenExpanded: true,
+            groupHideColumnsUntilExpanded: true,
             groupDefaultExpanded: 0,
             rowData: twoLevelRowData,
             getRowId: (params) => params.data.id,
@@ -569,7 +569,7 @@ describe('ag-grid showGroupColumnsWhenExpanded', () => {
                 { field: 'gold' },
             ],
             groupDisplayType: 'groupRows',
-            showGroupColumnsWhenExpanded: true,
+            groupHideColumnsUntilExpanded: true,
             groupDefaultExpanded: 0,
             rowData: twoLevelRowData,
             getRowId: (params) => params.data.id,
@@ -580,7 +580,7 @@ describe('ag-grid showGroupColumnsWhenExpanded', () => {
     });
 });
 
-describe('ag-grid showGroupColumnsWhenExpanded with pivot mode', () => {
+describe('ag-grid groupHideColumnsUntilExpanded with pivot mode', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, RowGroupingModule, PivotModule],
     });
@@ -616,7 +616,7 @@ describe('ag-grid showGroupColumnsWhenExpanded with pivot mode', () => {
                 { field: 'gold', aggFunc: 'sum', hide: true },
             ],
             pivotMode: true,
-            showGroupColumnsWhenExpanded: true,
+            groupHideColumnsUntilExpanded: true,
             groupDisplayType: 'multipleColumns',
             groupDefaultExpanded: 0,
             rowData: pivotRowData,
@@ -636,7 +636,7 @@ describe('ag-grid showGroupColumnsWhenExpanded with pivot mode', () => {
                 { field: 'gold', aggFunc: 'sum', hide: true },
             ],
             pivotMode: true,
-            showGroupColumnsWhenExpanded: true,
+            groupHideColumnsUntilExpanded: true,
             groupHideOpenParents: true,
             groupDefaultExpanded: 0,
             rowData: pivotRowData,
@@ -656,7 +656,7 @@ describe('ag-grid showGroupColumnsWhenExpanded with pivot mode', () => {
             ],
             pivotMode: true,
             groupDisplayType: 'multipleColumns',
-            showGroupColumnsWhenExpanded: true,
+            groupHideColumnsUntilExpanded: true,
             groupDefaultExpanded: 0,
             rowData: pivotRowData,
             getRowId: (params) => params.data.id,
@@ -677,7 +677,7 @@ describe('ag-grid showGroupColumnsWhenExpanded with pivot mode', () => {
             ],
             pivotMode: true,
             groupDisplayType: 'multipleColumns',
-            showGroupColumnsWhenExpanded: false,
+            groupHideColumnsUntilExpanded: false,
             groupDefaultExpanded: 0,
             rowData: pivotRowData,
             getRowId: (params) => params.data.id,

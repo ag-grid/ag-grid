@@ -20,8 +20,8 @@ import {
     _destroyColumnTree,
     _getColumnStateFromColDef,
     _isColumnsSortingCoupledToGroup,
+    _isGroupHideColumnsUntilExpanded,
     _isGroupMultiAutoColumn,
-    _isGroupMultiAutoColumnHiding,
     _isGroupUseEntireRow,
     _mergeDeep,
     _missing,
@@ -45,7 +45,7 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
             modelUpdated: updateGroupColumnVisibility,
         });
         this.addManagedPropertyListeners(
-            ['showGroupColumnsWhenExpanded', 'groupDisplayType', 'groupHideOpenParents'],
+            ['groupHideColumnsUntilExpanded', 'groupDisplayType', 'groupHideOpenParents'],
             updateGroupColumnVisibility
         );
     }
@@ -313,7 +313,7 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
         }
 
         const { gos, visibleCols, rowModel } = this.beans;
-        const isFeatureEnabled = _isGroupMultiAutoColumnHiding(gos);
+        const isFeatureEnabled = _isGroupHideColumnsUntilExpanded(gos);
 
         let changed = false;
 

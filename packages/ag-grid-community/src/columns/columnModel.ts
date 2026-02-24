@@ -8,7 +8,7 @@ import type { ColDef, ColGroupDef, ColKey } from '../entities/colDef';
 import type { GridOptions } from '../entities/gridOptions';
 import type { ColumnEventType } from '../events';
 import type { PropertyChangedEvent, PropertyValueChangedEvent } from '../gridOptionsService';
-import { _isGroupMultiAutoColumnHiding, _isRowNumbers, _shouldMaintainColumnOrder } from '../gridOptionsUtils';
+import { _isGroupHideColumnsUntilExpanded, _isRowNumbers, _shouldMaintainColumnOrder } from '../gridOptionsUtils';
 import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
 import { _createColumnTree } from './columnFactoryUtils';
@@ -74,7 +74,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
                 'treeData',
                 'treeDataDisplayType',
                 'groupHideOpenParents',
-                'showGroupColumnsWhenExpanded',
+                'groupHideColumnsUntilExpanded',
                 'rowNumbers',
                 'hidePaddedHeaderRows',
             ],
@@ -291,7 +291,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const showSelectionColumn = selectionColSvc?.isSelectionColumnEnabled();
         const showRowNumbers = _isRowNumbers(beans);
         const valueColumns = valueColsSvc?.columns;
-        const hideEmptyAutoColGroups = _isGroupMultiAutoColumnHiding(gos);
+        const hideEmptyAutoColGroups = _isGroupHideColumnsUntilExpanded(gos);
 
         const res = cols.list.filter((col) => {
             const isAutoGroupCol = isColumnGroupAutoCol(col);

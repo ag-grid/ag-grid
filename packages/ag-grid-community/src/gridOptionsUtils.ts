@@ -236,8 +236,8 @@ export function _isGroupMultiAutoColumn(gos: GridOptionsService) {
     return gos.get('groupDisplayType') === 'multipleColumns';
 }
 
-export function _isGroupMultiAutoColumnHiding(gos: GridOptionsService) {
-    return _isGroupMultiAutoColumn(gos) && gos.get('showGroupColumnsWhenExpanded');
+export function _isGroupHideColumnsUntilExpanded(gos: GridOptionsService) {
+    return _isGroupMultiAutoColumn(gos) && gos.get('groupHideColumnsUntilExpanded');
 }
 
 export function _isGroupUseEntireRow(gos: GridOptionsService, pivotMode: boolean): boolean {
