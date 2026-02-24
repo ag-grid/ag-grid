@@ -54,6 +54,7 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
     'reference/grid-options.AUTO.json': 'dist/documentation/reference/grid-options.AUTO.json',
     'reference/interfaces.AUTO.json': 'dist/documentation/reference/interfaces.AUTO.json',
     'reference/row-node.AUTO.json': 'dist/documentation/reference/row-node.AUTO.json',
+    'reference/theming-api.AUTO.json': 'dist/documentation/reference/theming-api.AUTO.json',
 
     // Community modules
     '@ag-grid-community/locale/dist/**': 'community-modules/locale/dist/**/*.{cjs,js,map}',

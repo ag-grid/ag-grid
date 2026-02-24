@@ -6,7 +6,7 @@
     padding-bottom: $spacing-size-4;
     font-size: 18px;
     border-top: 1px solid var(--color-border-secondary);
-    max-height: calc(var(--container-height) - var(--input-height));
+    max-height: min(643px, calc(100vh - 246px));
     overflow: auto;
     overscroll-behavior: contain;
 
@@ -19,64 +19,40 @@
         position: relative;
         z-index: 1;
     }
-
-    @media screen and (min-width: $breakpoint-docs-search-small) {
-        max-height: calc(100vh - 450px);
-
-        &::after {
-            content: '';
-            position: fixed;
-            width: 100%;
-            height: $spacing-size-24;
-            left: 0;
-            bottom: var(--controls-height);
-            background-image: linear-gradient(transparent, var(--color-bg-primary));
-            pointer-events: none;
-
-            #{$selector-darkmode} & {
-                background-image: linear-gradient(
-                    transparent,
-                    color-mix(in srgb, var(--color-bg-primary), var(--color-fg-primary) 6%)
-                );
-            }
-        }
-    }
 }
 
 .hit {
     position: relative;
-    display: grid;
-    grid-template:
-        'icon title' min-content
-        'icon text' min-content / max-content 1fr;
-    margin: 0 $spacing-size-4;
-    padding: $spacing-size-4;
+    gap: $spacing-size-4;
+    display: flex;
+    margin: 0 $spacing-size-6;
+    padding: $spacing-size-3;
     border-radius: var(--radius-md);
     cursor: pointer;
+    align-items: center;
 
     &[data-selected='true'] {
-        background: rgba(4, 75, 147, 1);
+        background-color: var(--color-brand-50);
+        box-shadow: inset 0px 0px 0px 1px var(--color-brand-300);
         z-index: 1;
         #{$selector-darkmode} & {
-            background-color: var(--color-brand-300);
-            span,
-            p {
-                color: var(--color-bg-primary);
-            }
+            background-color: var(--color-bg-secondary);
+        }
+        :global(.icon) {
+            --icon-color: var(--color-text-brand-primary);
         }
     }
 }
 
 .hitIcon {
-    grid-area: icon;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 52px;
-    height: 52px;
-    margin-right: $spacing-size-4;
+    flex: none;
+    width: 40px;
+    height: 40px;
     border-radius: var(--radius-md);
-    background-color: var(--color-bg-secondary);
+    background-color: var(--color-bg-primary);
     border: 1px solid var(--color-border-primary);
     box-shadow: var(--shadow-xs);
 
@@ -85,14 +61,20 @@
     }
 
     :global(.icon) {
-        --icon-size: #{$spacing-size-8};
-        --icon-color: var(--color-bg-brand-solid);
+        --icon-size: #{$spacing-size-6};
+        --icon-color: var(--color-fg-secondary);
+        transition: none; //There is a transition set to the global icon that makes this color change appear slow
 
         #{$selector-darkmode} & {
             --icon-color: var(--color-fg-primary);
             opacity: 0.5;
         }
     }
+}
+
+.hitTextWrapper {
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .titleSection,
@@ -103,30 +85,24 @@
     text-decoration: none;
     overflow: hidden;
     font-size: var(--text-fs-base);
-
-    [data-selected='true'] & {
-        color: var(--color-bg-primary);
-
-        #{$selector-darkmode} & {
-            color: var(--color-white);
-        }
-    }
+    width: 100%;
 }
 
 .titleSection {
-    grid-area: title;
     margin-bottom: 0;
 }
 
 .title {
     color: var(--color-fg-primary);
     font-weight: var(--text-semibold);
+    [data-selected='true'] & {
+        color: var(--color-text-brand-primary);
+    }
 }
 
 .text {
-    grid-area: text;
     font-weight: var(--text-regular);
-    color: var(--text-color-secondary);
+    font-size: var(--text-fs-sm);
 
     // Disable Safari's automatic tooltip for truncated text
     &::after {
@@ -136,15 +112,14 @@
 }
 
 .crumbContainer {
-    padding: $spacing-size-3 0 $spacing-size-3 $spacing-size-8;
-    padding-bottom: $spacing-size-2;
+    padding: $spacing-size-3 0 $spacing-size-2 $spacing-size-6;
 }
 
 .crumb {
     font-weight: var(--text-semibold);
     text-decoration: none;
     color: var(--color-text-primary);
-    font-size: var(--text-fs-base);
+    font-size: var(--text-fs-sm);
 
     #{$selector-darkmode} & {
         color: var(--color-white);
@@ -170,7 +145,6 @@
         --icon-size: #{$spacing-size-10};
         --icon-color: var(--color-text-secondary);
         opacity: 0.7;
-
         margin-bottom: $spacing-size-2;
     }
 
@@ -181,4 +155,9 @@
 
 .hitLink {
     color: var(--color-text-tertiary);
+
+    // fixes hover inherited color styles on the text
+    &:hover {
+        color: inherit;
+    }
 }

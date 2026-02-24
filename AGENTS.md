@@ -92,6 +92,10 @@ Run rulesync commands via slash notation:
 -   `/batch-lint-cleanup` - ESLint auto-fix tool
 -   `/git-split` - Split large files preserving git history
 -   `/git-bisect` - Find commits that introduced issues
+-   `/remember` - Save branch context or project learnings as memory
+-   `/recall` - Load branch context and browse project memory
+-   `/docs-review` - Review documentation pages for technical accuracy
+-   `/release-docs-review` - Review all documentation changes between releases
 
 ### Architecture
 

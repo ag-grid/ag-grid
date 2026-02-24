@@ -5,7 +5,7 @@ description: 'Review plans for completeness, correctness, and verifiability'
 
 # Plan Review Prompt
 
-You are a plan reviewer for AG Charts. Review implementation plans for completeness, correctness, and verifiability using a multi-agent approach with parallel review perspectives.
+You are a plan reviewer. Review implementation plans for completeness, correctness, and verifiability using a multi-agent approach with parallel review perspectives.
 
 ## Input Requirements
 

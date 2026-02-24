@@ -1,0 +1,523 @@
+{
+    "_config_": {
+        "codeSrc": "theming-api.AUTO.json",
+        "codeWordsMode": "cssVariable"
+    },
+    "colorsAndDarkMode": {
+        "meta": {
+            "displayName": "Colours & Dark Mode",
+            "page": {
+                "name": "Theming: Colours & Dark Mode",
+                "url": "./theming-colors/"
+            }
+        },
+        "accentColor": {},
+        "backgroundColor": {},
+        "borderColor": {},
+        "browserColorScheme": {},
+        "cellTextColor": {},
+        "chromeBackgroundColor": {},
+        "dataBackgroundColor": {},
+        "foregroundColor": {},
+        "invalidColor": {},
+        "subtleTextColor": {},
+        "textColor": {}
+    },
+    "fonts": {
+        "meta": {
+            "displayName": "Fonts",
+            "page": {
+                "name": "Theming: Customising Fonts",
+                "url": "./theming-fonts/"
+            }
+        },
+        "cellFontFamily": {},
+        "cellTextColor": {},
+        "dataFontSize": {},
+        "fontFamily": {},
+        "fontSize": {},
+        "headerFontFamily": {},
+        "headerFontSize": {},
+        "headerFontWeight": {}
+    },
+    "borders": {
+        "meta": {
+            "displayName": "Borders",
+            "page": {
+                "name": "Theming API: Customising Borders",
+                "url": "./theming-borders/"
+            }
+        },
+        "borderRadius": {},
+        "borderWidth": {},
+        "borderColor": {},
+        "columnBorder": {},
+        "footerRowBorder": {},
+        "headerColumnBorder": {},
+        "headerRowBorder": {},
+        "pinnedColumnBorder": {},
+        "pinnedRowBorder": {},
+        "rowBorder": {},
+        "sidePanelBorder": {},
+        "wrapperBorder": {},
+        "wrapperBorderRadius": {}
+    },
+    "spacingAndSizing": {
+        "meta": {
+            "displayName": "Spacing & Sizing",
+            "page": {
+                "name": "Theming: Compactness & Row Height",
+                "url": "./theming-compactness/"
+            }
+        },
+        "cellHorizontalPadding": {},
+        "cellHorizontalPaddingScale": {},
+        "cellWidgetSpacing": {},
+        "headerHeight": {},
+        "headerVerticalPaddingScale": {},
+        "iconSize": {},
+        "listItemHeight": {},
+        "paginationPanelHeight": {},
+        "rowHeight": {},
+        "rowVerticalPaddingScale": {},
+        "spacing": {},
+        "widgetContainerHorizontalPadding": {},
+        "widgetContainerVerticalPadding": {},
+        "widgetHorizontalSpacing": {},
+        "widgetVerticalSpacing": {}
+    },
+    "data": {
+        "meta": {
+            "displayName": "Data Rows & Columns",
+            "page": {
+                "name": "Row Styles",
+                "url": "./row-styles/"
+            }
+        },
+        "cellFontFamily": {},
+        "cellTextColor": {},
+        "columnHoverColor": {},
+        "dataBackgroundColor": {},
+        "dataFontSize": {},
+        "oddRowBackgroundColor": {},
+        "pinnedRowBackgroundColor": {},
+        "pinnedRowFontWeight": {},
+        "pinnedRowTextColor": {},
+        "pinnedSourceRowBackgroundColor": {},
+        "pinnedSourceRowFontWeight": {},
+        "pinnedSourceRowTextColor": {},
+        "rowGroupIndentSize": {},
+        "rowHoverColor": {},
+        "rowLoadingSkeletonEffectColor": {},
+        "valueChangeDeltaDownColor": {},
+        "valueChangeDeltaUpColor": {},
+        "valueChangeValueHighlightBackgroundColor": {}
+    },
+    "selections": {
+        "meta": {
+            "displayName": "Selections",
+            "description": "Style [Cell Selection](./cell-selection/) and [Row Selection](./row-selection/), see also [Theming: Customising Selections](./theming-selections/)"
+        },
+        "rangeHeaderHighlightColor": {},
+        "rangeSelectionBackgroundColor": {},
+        "rangeSelectionBorderColor": {},
+        "rangeSelectionBorderStyle": {},
+        "rangeSelectionChartBackgroundColor": {},
+        "rangeSelectionChartCategoryBackgroundColor": {},
+        "rangeSelectionHighlightColor": {},
+        "rowNumbersSelectedColor": {},
+        "selectedRowBackgroundColor": {}
+    },
+    "headers": {
+        "meta": {
+            "displayName": "Headers",
+            "description": "Style [Column Headers](./column-headers/), see also [Theming: Customising Headers](./theming-headers/)"
+        },
+        "headerBackgroundColor": {},
+        "headerCellBackgroundTransitionDuration": {},
+        "headerCellHoverBackgroundColor": {},
+        "headerCellMovingBackgroundColor": {},
+        "headerColumnBorderHeight": {},
+        "headerColumnResizeHandleColor": {},
+        "headerColumnResizeHandleHeight": {},
+        "headerColumnResizeHandleWidth": {},
+        "headerTextColor": {}
+    },
+    "icons": {
+        "meta": {
+            "displayName": "Icons",
+            "page": {
+                "name": "Custom Icons",
+                "url": "./custom-icons/"
+            }
+        },
+        "dragHandleColor": {},
+        "iconButtonActiveBackgroundColor": {},
+        "iconButtonActiveColor": {},
+        "iconButtonActiveIndicatorColor": {},
+        "iconButtonBackgroundColor": {},
+        "iconButtonBackgroundSpread": {},
+        "iconButtonBorderRadius": {},
+        "iconButtonColor": {},
+        "iconButtonHoverBackgroundColor": {},
+        "iconButtonHoverColor": {},
+        "iconColor": {}
+    },
+    "sidebar": {
+        "meta": {
+            "displayName": "Sidebar",
+            "description": "Style [Tool Panels](./tool-panel/), see also [Theming: Customising Tool Panels](./theming-tool-panels/)"
+        },
+        "sideBarBackgroundColor": {},
+        "sideBarPanelWidth": {},
+        "sideButtonBackgroundColor": {},
+        "sideButtonBarBackgroundColor": {},
+        "sideButtonBarTopPadding": {},
+        "sideButtonBorder": {},
+        "sideButtonHoverBackgroundColor": {},
+        "sideButtonHoverTextColor": {},
+        "sideButtonLeftPadding": {},
+        "sideButtonRightPadding": {},
+        "sideButtonSelectedBackgroundColor": {},
+        "sideButtonSelectedBorder": {},
+        "sideButtonSelectedTextColor": {},
+        "sideButtonSelectedUnderlineColor": {},
+        "sideButtonSelectedUnderlineTransitionDuration": {},
+        "sideButtonSelectedUnderlineWidth": {},
+        "sideButtonTextColor": {},
+        "sideButtonVerticalPadding": {},
+        "toolPanelSeparatorBorder": {}
+    },
+    "inputs": {
+        "meta": {
+            "displayName": "Inputs",
+            "page": {
+                "name": "Customising Inputs & Widgets",
+                "url": "./theming-widgets/"
+            }
+        },
+        "focusErrorShadow": {},
+        "focusShadow": {},
+        "invalidColor": {},
+        "inputBackgroundColor": {},
+        "inputBorder": {},
+        "inputBorderRadius": {},
+        "inputDisabledBackgroundColor": {},
+        "inputDisabledBorder": {},
+        "inputDisabledTextColor": {},
+        "inputFocusBackgroundColor": {},
+        "inputFocusBorder": {},
+        "inputFocusShadow": {},
+        "inputFocusTextColor": {},
+        "inputHeight": {},
+        "inputIconColor": {},
+        "inputInvalidBackgroundColor": {},
+        "inputInvalidBorder": {},
+        "inputInvalidTextColor": {},
+        "inputPaddingStart": {},
+        "inputPlaceholderTextColor": {},
+        "inputTextColor": {}
+    },
+    "pickers": {
+        "meta": {
+            "displayName": "Pickers & Selects",
+            "page": {
+                "name": "Customising Inputs & Widgets",
+                "url": "./theming-widgets/"
+            }
+        },
+        "pickerButtonBackgroundColor": {},
+        "pickerButtonBorder": {},
+        "pickerButtonFocusBackgroundColor": {},
+        "pickerButtonFocusBorder": {},
+        "pickerListBackgroundColor": {},
+        "pickerListBorder": {},
+        "selectCellBackgroundColor": {},
+        "selectCellBorder": {}
+    },
+    "buttons": {
+        "meta": {
+            "displayName": "Buttons",
+            "page": {
+                "name": "Customising Inputs & Widgets",
+                "url": "./theming-widgets/"
+            }
+        },
+        "buttonActiveBackgroundColor": {},
+        "buttonActiveBorder": {},
+        "buttonActiveTextColor": {},
+        "buttonBackgroundColor": {},
+        "buttonBorder": {},
+        "buttonBorderRadius": {},
+        "buttonDisabledBackgroundColor": {},
+        "buttonDisabledBorder": {},
+        "buttonDisabledTextColor": {},
+        "buttonFontWeight": {},
+        "buttonHorizontalPadding": {},
+        "buttonHoverBackgroundColor": {},
+        "buttonHoverBorder": {},
+        "buttonHoverTextColor": {},
+        "buttonTextColor": {},
+        "buttonVerticalPadding": {}
+    },
+    "checkboxes": {
+        "meta": {
+            "displayName": "Checkboxes & Radio Buttons",
+            "page": {
+                "name": "Customising Inputs & Widgets",
+                "url": "./theming-widgets/"
+            }
+        },
+        "checkboxBorderRadius": {},
+        "checkboxBorderWidth": {},
+        "checkboxCheckedBackgroundColor": {},
+        "checkboxCheckedBorderColor": {},
+        "checkboxCheckedShapeColor": {},
+        "checkboxCheckedShapeImage": {},
+        "checkboxIndeterminateBackgroundColor": {},
+        "checkboxIndeterminateBorderColor": {},
+        "checkboxIndeterminateShapeColor": {},
+        "checkboxIndeterminateShapeImage": {},
+        "checkboxUncheckedBackgroundColor": {},
+        "checkboxUncheckedBorderColor": {},
+        "radioCheckedShapeImage": {}
+    },
+    "toggleButtons": {
+        "meta": {
+            "displayName": "Toggle Buttons",
+            "page": {
+                "name": "Customising Inputs & Widgets",
+                "url": "./theming-widgets/"
+            }
+        },
+        "toggleButtonHeight": {},
+        "toggleButtonOffBackgroundColor": {},
+        "toggleButtonOnBackgroundColor": {},
+        "toggleButtonSwitchBackgroundColor": {},
+        "toggleButtonSwitchInset": {},
+        "toggleButtonWidth": {}
+    },
+    "menusAndPopups": {
+        "meta": {
+            "displayName": "Menus & Popups",
+            "description": "Style menus like the [Context Menu](./context-menu/) and [Column Menu](./column-menu/), see also [Theming: Customising Menus & Popups](./theming-popups/)"
+        },
+        "cardShadow": {},
+        "dropdownShadow": {},
+        "menuBackgroundColor": {},
+        "menuBorder": {},
+        "menuSeparatorColor": {},
+        "menuShadow": {},
+        "menuTextColor": {},
+        "modalOverlayBackgroundColor": {},
+        "popupShadow": {}
+    },
+    "tooltips": {
+        "meta": {
+            "displayName": "Tooltips",
+            "page": {
+                "name": "Tooltips",
+                "url": "./tooltips/"
+            }
+        },
+        "tooltipBackgroundColor": {},
+        "tooltipBorder": {},
+        "tooltipErrorBackgroundColor": {},
+        "tooltipErrorBorder": {},
+        "tooltipErrorTextColor": {},
+        "tooltipTextColor": {}
+    },
+    "panels": {
+        "meta": {
+            "displayName": "Panels & Dialogs",
+            "page": {
+                "name": "Theming: Customising Menus & Popups",
+                "url": "./theming-popups/"
+            }
+        },
+        "dialogBorder": {},
+        "dialogShadow": {},
+        "panelBackgroundColor": {},
+        "panelTitleBarBackgroundColor": {},
+        "panelTitleBarBorder": {},
+        "panelTitleBarFontFamily": {},
+        "panelTitleBarFontSize": {},
+        "panelTitleBarFontWeight": {},
+        "panelTitleBarHeight": {},
+        "panelTitleBarIconColor": {},
+        "panelTitleBarTextColor": {}
+    },
+    "tabs": {
+        "meta": {
+            "displayName": "Tabs",
+            "page": {
+                "name": "Theming: Customising Tool Panels",
+                "url": "./theming-tool-panels/"
+            }
+        },
+        "tabBackgroundColor": {},
+        "tabBarBackgroundColor": {},
+        "tabBarBorder": {},
+        "tabBarHorizontalPadding": {},
+        "tabBarTopPadding": {},
+        "tabBottomPadding": {},
+        "tabHorizontalPadding": {},
+        "tabHoverBackgroundColor": {},
+        "tabHoverTextColor": {},
+        "tabSelectedBackgroundColor": {},
+        "tabSelectedBorderColor": {},
+        "tabSelectedBorderWidth": {},
+        "tabSelectedTextColor": {},
+        "tabSelectedUnderlineColor": {},
+        "tabSelectedUnderlineTransitionDuration": {},
+        "tabSelectedUnderlineWidth": {},
+        "tabSpacing": {},
+        "tabTextColor": {},
+        "tabTopPadding": {}
+    },
+    "editing": {
+        "meta": {
+            "displayName": "Editing",
+            "page": {
+                "name": "Cell Editing",
+                "url": "./cell-editing/"
+            }
+        },
+        "cellBatchEditBackgroundColor": {},
+        "cellBatchEditTextColor": {},
+        "cellEditingBorder": {},
+        "cellEditingShadow": {},
+        "fullRowEditInvalidBackgroundColor": {},
+        "rowBatchEditBackgroundColor": {},
+        "rowBatchEditTextColor": {}
+    },
+    "columnDrop": {
+        "meta": {
+            "displayName": "Column Drop",
+            "description": "The Column drop component is used in the [Columns Tool Panel](./tool-panel-columns/) and [Row Group Panel](./grouping-group-panel/)."
+        },
+        "columnDropCellBackgroundColor": {},
+        "columnDropCellBorder": {},
+        "columnDropCellDragHandleColor": {},
+        "columnDropCellTextColor": {}
+    },
+    "advancedFilter": {
+        "meta": {
+            "displayName": "Advanced Filter",
+            "page": {
+                "name": "Advanced Filter",
+                "url": "./filter-advanced/"
+            }
+        },
+        "advancedFilterBuilderButtonBarBorder": {},
+        "advancedFilterBuilderColumnPillColor": {},
+        "advancedFilterBuilderIndentSize": {},
+        "advancedFilterBuilderJoinPillColor": {},
+        "advancedFilterBuilderOptionPillColor": {},
+        "advancedFilterBuilderValuePillColor": {}
+    },
+    "find": {
+        "meta": {
+            "displayName": "Find",
+            "page": {
+                "name": "Find",
+                "url": "./find/"
+            }
+        },
+        "findActiveMatchBackgroundColor": {},
+        "findActiveMatchColor": {},
+        "findMatchBackgroundColor": {},
+        "findMatchColor": {}
+    },
+    "filterPanel": {
+        "meta": {
+            "displayName": "Filter Panel",
+            "page": {
+                "name": "Filters Tool Panel",
+                "url": "./tool-panel-filters/"
+            }
+        },
+        "columnSelectIndentSize": {},
+        "filterPanelApplyButtonBackgroundColor": {},
+        "filterPanelApplyButtonColor": {},
+        "filterPanelCardSubtleColor": {},
+        "filterPanelCardSubtleHoverColor": {},
+        "filterToolPanelGroupIndent": {},
+        "setFilterIndentSize": {}
+    },
+    "dragAndDrop": {
+        "meta": {
+            "displayName": "Drag & Drop",
+            "description": "Row dragging, column dragging, and data drag & drop"
+        },
+        "columnDragIndicatorColor": {},
+        "columnDragIndicatorWidth": {},
+        "dragAndDropImageBackgroundColor": {},
+        "dragAndDropImageBorder": {},
+        "dragAndDropImageNotAllowedBorder": {},
+        "dragAndDropImageShadow": {},
+        "rowDragIndicatorColor": {},
+        "rowDragIndicatorWidth": {}
+    },
+    "formulaBar": {
+        "meta": {
+            "displayName": "Formula Bar",
+            "page": {
+                "name": "Formulas",
+                "url": "./formulas/"
+            }
+        },
+        "formulaToken1BackgroundColor": {},
+        "formulaToken1Border": {},
+        "formulaToken1Color": {},
+        "formulaToken2BackgroundColor": {},
+        "formulaToken2Border": {},
+        "formulaToken2Color": {},
+        "formulaToken3BackgroundColor": {},
+        "formulaToken3Border": {},
+        "formulaToken3Color": {},
+        "formulaToken4BackgroundColor": {},
+        "formulaToken4Border": {},
+        "formulaToken4Color": {},
+        "formulaToken5BackgroundColor": {},
+        "formulaToken5Border": {},
+        "formulaToken5Color": {},
+        "formulaToken6BackgroundColor": {},
+        "formulaToken6Border": {},
+        "formulaToken6Color": {},
+        "formulaToken7BackgroundColor": {},
+        "formulaToken7Border": {},
+        "formulaToken7Color": {}
+    },
+    "statusBar": {
+        "meta": {
+            "displayName": "Status Bar",
+            "page": {
+                "name": "Status Bar",
+                "url": "./status-bar/"
+            }
+        },
+        "statusBarLabelColor": {},
+        "statusBarLabelFontWeight": {},
+        "statusBarValueColor": {},
+        "statusBarValueFontWeight": {}
+    },
+    "charts": {
+        "meta": {
+            "displayName": "Integrated Charts",
+            "page": {
+                "name": "Integrated Charts",
+                "url": "./integrated-charts/"
+            }
+        },
+        "chartMenuLabelColor": {},
+        "chartMenuPanelWidth": {},
+        "colorPickerColorBorderRadius": {},
+        "colorPickerThumbBorderWidth": {},
+        "colorPickerThumbSize": {},
+        "colorPickerTrackBorderRadius": {},
+        "colorPickerTrackSize": {},
+        "rangeSelectionChartBackgroundColor": {},
+        "rangeSelectionChartCategoryBackgroundColor": {}
+    }
+}

@@ -99,11 +99,15 @@ export default ({ closeModal, structuredHits, selectedHit, setSelectedHit, query
                                         <Icon name={icon} />
                                     </span>
 
-                                    <p className={styles.titleSection}>
-                                        <span className={styles.title}>{hit.title}</span>
-                                        <span className={styles.heading}>{hit.heading && <> - {hit.heading}</>}</span>
-                                    </p>
-                                    <p className={styles.text}>{hit.text}</p>
+                                    <div className={styles.hitTextWrapper}>
+                                        <p className={styles.titleSection}>
+                                            <span className={styles.title}>{hit.title}</span>
+                                            <span className={styles.heading}>
+                                                {hit.heading && <> - {hit.heading}</>}
+                                            </span>
+                                        </p>
+                                        <p className={styles.text}>{hit.text}</p>
+                                    </div>
                                 </article>
                             </a>
                         );

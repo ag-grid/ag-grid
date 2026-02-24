@@ -13,10 +13,16 @@ import { TabGuardComp } from '../widgets/tabGuardComp';
 import type { IGridComp, OptionalGridComponents } from './gridCtrl';
 import { GridCtrl } from './gridCtrl';
 
+interface HeaderDropZonesComp extends Component {
+    getFocusableContainers?(): FocusableContainer[];
+}
+
 export class GridComp extends TabGuardComp {
     private readonly gridBody: GridBodyComp = RefPlaceholder;
-    private readonly sideBar: ISideBar & Component = RefPlaceholder;
-    private readonly pagination: TabGuardComp = RefPlaceholder;
+    private readonly gridHeaderDropZones: HeaderDropZonesComp = RefPlaceholder;
+    private readonly sideBar: ISideBar & Component & FocusableContainer = RefPlaceholder;
+    private readonly statusBar: Component & FocusableContainer = RefPlaceholder;
+    private readonly pagination: TabGuardComp & FocusableContainer = RefPlaceholder;
     private readonly rootWrapperBody: HTMLElement = RefPlaceholder;
 
     private readonly eGridDiv: HTMLElement;
@@ -85,7 +91,7 @@ export class GridComp extends TabGuardComp {
 
     private createTemplate(params: OptionalGridComponents): ElementParams {
         const dropZones: ElementParams | null = params.gridHeaderDropZonesSelector
-            ? { tag: 'ag-grid-header-drop-zones' }
+            ? { tag: 'ag-grid-header-drop-zones', ref: 'gridHeaderDropZones' }
             : null;
         const sideBar: ElementParams | null = params.sideBarSelector
             ? {
@@ -93,7 +99,9 @@ export class GridComp extends TabGuardComp {
                   ref: 'sideBar',
               }
             : null;
-        const statusBar: ElementParams | null = params.statusBarSelector ? { tag: 'ag-status-bar' } : null;
+        const statusBar: ElementParams | null = params.statusBarSelector
+            ? { tag: 'ag-status-bar', ref: 'statusBar' }
+            : null;
         const watermark: ElementParams | null = params.watermarkSelector ? { tag: 'ag-watermark' } : null;
         const pagination: ElementParams | null = params.paginationSelector
             ? { tag: 'ag-pagination', ref: 'pagination' }
@@ -132,9 +140,12 @@ export class GridComp extends TabGuardComp {
     }
 
     protected getFocusableContainers(): FocusableContainer[] {
-        const focusableContainers: FocusableContainer[] = [this.gridBody];
+        const focusableContainers: FocusableContainer[] = [
+            ...(this.gridHeaderDropZones?.getFocusableContainers?.() ?? []),
+            this.gridBody,
+        ];
 
-        for (const comp of [this.sideBar, this.pagination]) {
+        for (const comp of [this.sideBar, this.statusBar, this.pagination]) {
             if (comp) {
                 focusableContainers.push(comp);
             }

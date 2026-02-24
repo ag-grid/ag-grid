@@ -1,8 +1,9 @@
-import { type ParamType, getParamDocs, getParamType } from '@components/theme-builder/api';
+import { type ParamType, getParamType } from '@components/theme-builder/api';
 import { useAtom, useAtomValue } from 'jotai';
 
 import { themeQuartz } from 'ag-grid-community';
 
+import themingApi from '../../../../../../dist/documentation/reference/theming-api.AUTO.json';
 import { getThemeDefaultParams } from '../components/component-utils';
 import type { PersistentAtom } from './JSONStorage';
 import { atomWithJSONStorage } from './JSONStorage';
@@ -79,3 +80,7 @@ export const allParamModels = memoize(() => {
     const allParams = Array.from(Object.keys(defaultModeParams)) as ThemeParam[];
     return allParams.map(ParamModel.for).sort((a, b) => a.label.toLowerCase().localeCompare(b.label.toLowerCase()));
 });
+
+export function getParamDocs(param: string): string | undefined {
+    return (themingApi as Record<string, { meta?: { comment?: string } }>)[param]?.meta?.comment;
+}

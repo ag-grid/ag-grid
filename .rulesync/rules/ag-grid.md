@@ -18,7 +18,7 @@ This file provides guidance to AI Agents when working with code in this reposito
 -   **Build:** `yarn nx build <package>`
 -   **Test:** `yarn nx test <package>`
 -   **E2E:** `yarn nx e2e ag-grid-docs`
--   **Dev server:** `yarn nx dev`
+-   **Dev server:** `yarn nx dev` (launches on https://localhost:4610/, check if it is already running before trying to run it)
 
 ### Content Locations
 
@@ -99,6 +99,10 @@ Run rulesync commands via slash notation:
 -   `/batch-lint-cleanup` - ESLint auto-fix tool
 -   `/git-split` - Split large files preserving git history
 -   `/git-bisect` - Find commits that introduced issues
+-   `/remember` - Save branch context or project learnings as memory
+-   `/recall` - Load branch context and browse project memory
+-   `/docs-review` - Review documentation pages for technical accuracy
+-   `/release-docs-review` - Review all documentation changes between releases
 
 ### Architecture
 

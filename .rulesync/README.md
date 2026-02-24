@@ -53,16 +53,27 @@ Quick-reference for all AI agent commands, skills, sub-agents, and rules availab
 | Command | 🔵 `/plan-implementation-review` | `/plan-implementation-review` | Review plan execution, identify delivery gaps    |
 | Agent   | 🔵 `nx-expert`                   | Auto                          | Nx monorepo configuration and build optimisation |
 
+## Context and Memory
+
+| Type    | Name           | Invoke      | What it does                                       |
+| ------- | -------------- | ----------- | -------------------------------------------------- |
+| Command | 🔵 `/remember` | `/remember` | Save branch context or project learnings as memory |
+| Command | 🔵 `/recall`   | `/recall`   | Load branch context and browse project memory      |
+
+## Documentation Review
+
+| Type    | Name                      | Invoke                 | What it does                                                     |
+| ------- | ------------------------- | ---------------------- | ---------------------------------------------------------------- |
+| Command | 🟢 `/docs-review`         | `/docs-review`         | Review docs pages for technical accuracy and example consistency |
+| Command | 🟢 `/release-docs-review` | `/release-docs-review` | Review all documentation changes between releases                |
+
 ## Git and Branch Management
 
-| Type    | Name                          | Invoke                     | What it does                                   |
-| ------- | ----------------------------- | -------------------------- | ---------------------------------------------- |
-| Command | 🔵 `/git-branch-save-context` | `/git-branch-save-context` | Save branch-specific context to `.context/`    |
-| Command | 🔵 `/git-branch-load-context` | `/git-branch-load-context` | Load branch-specific context from `.context/`  |
-| Command | 🔵 `/git-worktree-clean`      | `/git-worktree-clean`      | Hard-reset worktree to `origin/latest`         |
-| Command | 🔵 `/git-split`               | `/git-split`               | Split large files preserving git history       |
-| Command | 🔵 `/pr-split`                | `/pr-split`                | Split a branch into stacked PRs                |
-| Command | 🔵 `/context-remember`        | `/context-remember`        | Persist learnings from conversations as memory |
+| Type    | Name                     | Invoke                | What it does                             |
+| ------- | ------------------------ | --------------------- | ---------------------------------------- |
+| Command | 🔵 `/git-worktree-clean` | `/git-worktree-clean` | Hard-reset worktree to `origin/latest`   |
+| Command | 🔵 `/git-split`          | `/git-split`          | Split large files preserving git history |
+| Command | 🔵 `/pr-split`           | `/pr-split`           | Split a branch into stacked PRs          |
 
 ---
 

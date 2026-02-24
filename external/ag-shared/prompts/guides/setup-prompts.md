@@ -70,3 +70,15 @@ npx patch-package rulesync
 ```
 
 This updates `patches/rulesync+*.patch` (which symlinks to `external/ag-shared/prompts/patches/`).
+
+## Shared Prompt Conventions
+
+When using the inverted reference pattern (shared core + thin wrapper), follow these rules to avoid silent breakage.
+
+### Section names are normative contracts
+
+Heading names in the wrapper are referenced by exact name in the core. Adding suffixes like `(REQUIRED)` or other annotations to heading text in templates or guides will break the exact-name contract silently at runtime. Treat section headings as API identifiers — rename them only with the same care as renaming a function.
+
+### Preserve executable content during genericisation
+
+When migrating product-specific prompts to shared cores, bash scripts and procedural subsections are often generic despite appearing product-specific (they only contain path references that can be parameterised). Always diff the original vs genericised output section-by-section to catch accidentally dropped content.
