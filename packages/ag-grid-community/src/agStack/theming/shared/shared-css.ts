@@ -388,7 +388,7 @@ export const sharedDefaults: Readonly<SharedThemeParams> = {
     borderRadius: 4,
     spacing: 8,
     fontSize: 14,
-    fontWeight: 400,
+    fontWeight: 'inherit',
     focusShadow: {
         spread: 3,
         color: accentMix(0.5),
