@@ -30,6 +30,7 @@ function getRandomNumber(min: number, max: number) {
 
 function getValueFromServer(params: RichCellEditorValuesCallbackParams): Promise<string[]> {
     const search = params.search?.toLowerCase() ?? '';
+    // Simulates an async request to a server
     return new Promise((resolve) => {
         console.log(`Grid requested \`${search}\` from server.`);
         setTimeout(() => {

@@ -9,15 +9,9 @@ The Rich Select Cell Editor supports loading values asynchronously, including pa
 
 List values can be provided asynchronously to the editor as shown below:
 
-{% gridExampleRunner title="Rich Select Async Values" name="rich-select-async-values" /%}
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["values"] config={ "description": "" } /%}
 
-```ts
-function fetchLanguages(_params: RichCellEditorValuesCallbackParams): Promise<string[]> {
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(['English', 'Spanish', 'French', 'Portuguese', '(other)']), 1000);
-  });
-}
-```
+{% gridExampleRunner title="Rich Select Async Values" name="rich-select-async-values" /%}
 
 ```js
 columnDefs: [
@@ -25,41 +19,31 @@ columnDefs: [
         field: 'language',
         cellEditor: 'agRichSelectCellEditor',
         cellEditorParams: {
-            values: fetchLanguages,
+            values: (_params) => fetch('/api/languages').then((res) => res.json()),
         }
     }
 ]
 ```
 
-{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["values"] /%}
-
 ## Paged Async Values
 
-For large datasets, `valuesPage` avoids loading everything at once.
+For large datasets, `valuesPage` avoids loading all items at once and instead loads values on demand based on user scroll and interactions. `valuesPageInitialStartRow` can be used to set the initial position. The `valuesPage` callback should return a value that conforms to the `RichCellEditorValuesPageResult` interface.
 
-In paged mode the editor requests row ranges (and optional cursor tokens), rather than a single full list.
-
-Requests always include `startRow` and `endRow`. `cursor` is optional: it is `undefined` on the first request, then for forward paging it is automatically populated from the previous page result.
-
-You can use `valuesPageInitialStartRow` to open around the current value while still allowing navigation to earlier and later pages.
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["valuesPage", "valuesPageInitialStartRow", "valuesPageSize", "valuesPageLoadThreshold"] config={ "description": "" } /%}
 
 {% gridExampleRunner title="Rich Select Paged Async Values" name="rich-select-paged-async-values" /%}
-
-```ts
-function getLanguagesPage(params: RichCellEditorValuesPageParams): Promise<RichCellEditorValuesPageResult<string>> {
-    return fetch(
-        `/api/languages?startRow=${params.startRow}&endRow=${params.endRow}&cursor=${encodeURIComponent(params.cursor ?? '')}`
-    ).then((res) => res.json());
-}
-```
 
 ```js
 columnDefs: [
     {
-        field: 'language',
         cellEditor: 'agRichSelectCellEditor',
         cellEditorParams: {
-            valuesPage: getLanguagesPage,
+            valuesPage: (params) : Promise<RichCellEditorValuesPageResult<string>> {
+                return fetch(`/api/languages?
+                    startRow=${params.startRow}
+                    &endRow=${params.endRow}`)
+                .then((res) => res.json());
+            },
             valuesPageInitialStartRow: (value) => getRowForSelectedValue(value),
             valuesPageSize: 100,
             valuesPageLoadThreshold: 10
@@ -67,8 +51,6 @@ columnDefs: [
     }
 ]
 ```
-
-{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["valuesPage", "valuesPageInitialStartRow", "valuesPageSize", "valuesPageLoadThreshold"] /%}
 
 ## Async Filtering
 
@@ -81,17 +63,11 @@ When `filterListAsync` is set to `true`, the cell editor behaves as follows:
 -   A loading indicator appears while the network request is in progress.
 -   Once the promise resolves, the dropdown is updated with the filtered results.
 
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["filterListAsync", "searchDebounceDelay", "values"]  config={ "description": "" } /%}
+
 This is shown in the example below:
 
 {% gridExampleRunner title="Rich Select Async Filtering" name="rich-select-full-async-values" /%}
-
-```ts
-function fetchLanguages(params: RichCellEditorValuesCallbackParams): Promise<string[]> {
-    return fetch(`/api/languages?search=${encodeURIComponent(params.search)}`)
-        .then(res => res.json())
-        .then(data => data.items as string[]);
-}
-```
 
 ```js
 columnDefs: [
@@ -102,13 +78,14 @@ columnDefs: [
             allowTyping: true,
             filterList: true,
             filterListAsync: true,
-            values: fetchLanguages
-        }
+            values: (params): Promise<string[]> {
+                return fetch(`/api/languages?search=${encodeURIComponent(params.search)}`)
+                    .then(res => res.json())
+                    .then(data => data.items as string[])
+            }
     }
 ]
 ```
-
-{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["filterListAsync", "searchDebounceDelay", "values"] /%}
 
 ## Paged Async Filtering
 
@@ -119,41 +96,34 @@ In this mode each request includes:
 
 -   `search` for the current filter text.
 -   `startRow` and `endRow` for range-based pagination.
--   `cursor` for cursor-based forward pagination APIs (`undefined` on the first request, then replayed from the previous response).
+-   `cursor` (optional) for cursor-based forward pagination APIs (`undefined` on the first request, then replayed from the previous response).
 
-You can implement either strategy in your datasource:
-
--   Range-based: use `startRow` / `endRow` and return `lastRow`.
--   Cursor-based: use `cursor` for forward pages and still tolerate `startRow` / `endRow` for initial positioning and upward loading.
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["filterListAsync", "valuesPage", "valuesPageInitialStartRow", "valuesPageSize", "valuesPageLoadThreshold"] config={ "description": "" } /%}
 
 {% gridExampleRunner title="Rich Select Paged Async Filtering" name="rich-select-paged-async-filtering" /%}
-
-```ts
-function getFilteredLanguagesPage(
-    params: RichCellEditorValuesPageParams
-): Promise<RichCellEditorValuesPageResult<string>> {
-    return fetch(
-        `/api/languages?search=${encodeURIComponent(params.search)}&startRow=${params.startRow}&endRow=${params.endRow}&cursor=${encodeURIComponent(params.cursor ?? '')}`
-    ).then((res) => res.json());
-}
-```
 
 ```js
 columnDefs: [
     {
-        field: 'language',
         cellEditor: 'agRichSelectCellEditor',
         cellEditorParams: {
             allowTyping: true,
             filterList: true,
             filterListAsync: true,
-            valuesPage: getFilteredLanguagesPage,
             valuesPageInitialStartRow: (value) => getRowForSelectedValue(value),
-            valuesPageSize: 100,
-            valuesPageLoadThreshold: 10
+            valuesPage: (params): Promise<RichCellEditorValuesPageResult<string>> {
+                    return fetch(
+                        `/api/languages
+                            ?search=${encodeURIComponent(params.search)}
+                            &startRow=${params.startRow}
+                            &endRow=${params.endRow}`
+                    ).then((res) => res.json());
+            },
         }
     }
 ]
 ```
 
-{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["filterListAsync", "valuesPage", "valuesPageInitialStartRow", "valuesPageSize", "valuesPageLoadThreshold"] /%}
+## API
+
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" /%}

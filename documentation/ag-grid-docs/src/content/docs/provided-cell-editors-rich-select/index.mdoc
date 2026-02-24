@@ -3,15 +3,13 @@ title: "Rich Select Cell Editor"
 enterprise: true
 ---
 
-An alternative to using the browser's `select` popup for dropdowns inside the grid.
-
-The Rich Select Cell Editor allows users to enter a cell value from a list of provided values by searching or filtering the list.
+An alternative to using the browser's `select` popup for dropdowns inside the grid. The Rich Select Cell Editor allows users to enter a cell value from a list of provided values by searching or filtering the list.
 
 ## Enabling Rich Select Cell Editor
 
 Edit any cell in the grid below to see the Rich Select Cell Editor.
 
-{% gridExampleRunner title="Rich Select Editor" name="rich-select-editor" /%}
+{% gridExampleRunner title="Rich Select Editor" name="rich-select-editor" exampleHeight=400 /%}
 
 Enabled with `agRichSelectCellEditor` and configured with `IRichCellEditorParams`.
 
@@ -46,13 +44,13 @@ The Rich Select Editor can be customised to give the desired results. See the [C
 
 ## Async Values
 
-The Rich Select editor can be configured to load values asynchronously. For large datasets the Rich Select Editor supports paging async values as well as filtering values asynchronously on a server. See the [Async Values](./provided-cell-editors-rich-select-async/) page for details:
+The Rich Select editor can be configured to load values asynchronously. For large datasets the editor supports paging async values as well as filtering values asynchronously on a server. See the [Async Values](./provided-cell-editors-rich-select-async/) page for details:
 
 -   [Async Values](./provided-cell-editors-rich-select-async/) - load all values asynchronously
 -   [Paged Async Values](./provided-cell-editors-rich-select-async/#paged-async-values) - load pages as the user scrolls
 -   [Async Filtering](./provided-cell-editors-rich-select-async/#async-filtering) - return filtered values asynchronously
 -   [Paged Async Filtering](./provided-cell-editors-rich-select-async/#paged-async-filtering) - combine paged loading with filtering
 
-## API Reference
+## API
 
-See all properties available on the `IRichCellEditorParams` in the [API Reference](./provided-cell-editors-rich-select-api/).
+See all properties available on the [IRichCellEditorParams](./provided-cell-editors-rich-select-customisation/#api-reference) interface.

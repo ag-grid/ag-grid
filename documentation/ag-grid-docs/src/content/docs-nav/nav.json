@@ -1065,14 +1065,8 @@
                                         },
                                         {
                                             "type": "item",
-                                            "title": "Async Editor",
+                                            "title": "Async Values",
                                             "path": "provided-cell-editors-rich-select-async",
-                                            "isEnterprise": true
-                                        },
-                                        {
-                                            "type": "item",
-                                            "title": "API",
-                                            "path": "provided-cell-editors-rich-select-api",
                                             "isEnterprise": true
                                         }
                                     ]

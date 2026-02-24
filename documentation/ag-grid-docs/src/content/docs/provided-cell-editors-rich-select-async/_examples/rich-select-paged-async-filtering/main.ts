@@ -34,6 +34,7 @@ function getFilteredValuePageFromServer(
 ): Promise<RichCellEditorValuesPageResult<string>> {
     const search = params.search.toLowerCase();
 
+    // Simulates an async request to a server
     return new Promise((resolve) => {
         setTimeout(() => {
             const filtered = search

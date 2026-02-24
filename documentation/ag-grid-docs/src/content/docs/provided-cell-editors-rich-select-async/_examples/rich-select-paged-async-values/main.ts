@@ -32,6 +32,7 @@ function getRandomNumber(min: number, max: number) {
 function getValuePageFromServer(
     params: RichCellEditorValuesPageParams
 ): Promise<RichCellEditorValuesPageResult<string>> {
+    // Simulates an async request to a server
     return new Promise((resolve) => {
         setTimeout(() => {
             const pageValues = languages.slice(params.startRow, params.endRow);

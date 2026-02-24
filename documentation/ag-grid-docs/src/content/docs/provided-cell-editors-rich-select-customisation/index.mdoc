@@ -3,7 +3,7 @@ title: "Rich Select Cell Editor - Customisation"
 enterprise: true
 ---
 
-The Rich Select Cell Editor can be customised in a number of ways.
+The Rich Select Cell Editor supports cell renderers, value formatting, search and typing behaviour, multi-selection, and complex object values.
 
 ## Cell Renderer
 
@@ -37,19 +37,17 @@ columnDefs: [
 
 Different types of search are possible within the editor list as shown below:
 
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["searchType"] config={ "description": "" } /%}
+
 {% gridExampleRunner title="Rich Select Editor" name="rich-select-search-values" /%}
 
 ```js
 columnDefs: [
     {
         cellEditor: 'agRichSelectCellEditor',
-        cellRenderer: ColourCellRenderer,
         cellEditorParams: {
             values: ['AliceBlue', 'AntiqueWhite', 'Aqua', /* .... many colours */ ],
-            allowTyping: true,
-            filterList: true,
-            highlightMatch: true,
-            valueListMaxHeight: 220
+            searchType: 'match',
         }
         // ...other props
     }
@@ -59,6 +57,8 @@ columnDefs: [
 ## Allow Typing
 
 The editor input can be configured to allow text input, which is used to match different parts of the editor list items as shown below:
+
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["allowTyping"] config={ "description": "" } /%}
 
 {% gridExampleRunner title="Rich Select Editor" name="rich-select-allow-typing" /%}
 
@@ -72,7 +72,6 @@ columnDefs: [
             allowTyping: true,
             filterList: true,
             highlightMatch: true,
-            valueListMaxHeight: 220
         }
         // ...other props
     }
@@ -82,6 +81,8 @@ columnDefs: [
 ## Format Values
 
 Items in the editor list can be formatted as shown below:
+
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["formatValue"] config={ "description": "" } /%}
 
 {% gridExampleRunner title="Rich Select Format Values" name="rich-select-format-values" /%}
 
@@ -102,6 +103,8 @@ columnDefs: [
 
 The editor can be configured to allow the selection of multiple values as shown below:
 
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["multiSelect","suppressMultiSelectPillRenderer"] config={ "description": "" } /%}
+
 {% gridExampleRunner title="Rich Select Editor" name="rich-select-multi-select" /%}
 
 ```js
@@ -111,10 +114,6 @@ columnDefs: [
         cellEditorParams: {
             values: ['AliceBlue', 'AntiqueWhite', 'Aqua', /* .... many colours */ ],
             multiSelect: true,
-            searchType: 'matchAny',
-            filterList: true,
-            highlightMatch: true,
-            valueListMaxHeight: 220
         }
         // ...other props
     }
@@ -126,6 +125,8 @@ columnDefs: [
 When working with complex objects, a `formatValue` callback function is required to convert that complex object into a string that can be rendered by the Rich Select Editor.
 If the `Grid Column` being edited is not using complex values, or if the Rich Select Editor value object has a different format (different properties) than the object
 used by the `Grid Column`, a `parseValue` callback function is required to convert the editor format into the grid column's format.
+
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["formatValue","parseValue"] config={ "description": "" } /%}
 
 {% note %}
 When working with `Cell Renderers`, a `formatValue` callback should still be provided so it will be possible to use functionality that
@@ -149,10 +150,12 @@ columnDefs: [
         cellEditorParams: {
             values: colors,
             formatValue: (v) => v.name,
-            allowTyping: true,
-            filterList: true,
         }
         // ...other props
     }
 ]
 ```
+
+## API
+
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" /%}
