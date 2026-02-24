@@ -59,7 +59,9 @@ export interface SharedThemeParams {
     chromeBackgroundColor: ColorValue;
 
     /**
-     * Font size for data in grid rows
+     * Sets the default value for `cellFontSize` and is involved in the default calculation of `listItemHeight`
+     *
+     * @deprecated v35.2 - use `cellFontSize` and `listItemHeight` directly
      */
     dataFontSize: LengthValue;
 
@@ -117,6 +119,11 @@ export interface SharedThemeParams {
      * Default font size for text throughout the grid UI
      */
     fontSize: LengthValue;
+
+    /**
+     * Default font weight for text throughout the grid UI
+     */
+    fontWeight: FontWeightValue;
 
     /**
      * Default color for neutral UI elements. Most text, borders and backgrounds are defined as semi-transparent versions of this color, resulting in a blend between the background and foreground colours.
@@ -381,6 +388,7 @@ export const sharedDefaults: Readonly<SharedThemeParams> = {
     borderRadius: 4,
     spacing: 8,
     fontSize: 14,
+    fontWeight: 400,
     focusShadow: {
         spread: 3,
         color: accentMix(0.5),
@@ -497,7 +505,7 @@ export const sharedDefaults: Readonly<SharedThemeParams> = {
         ref: 'textColor',
     },
     headerHeight: {
-        calc: 'max(iconSize, dataFontSize) + spacing * 4 * headerVerticalPaddingScale',
+        calc: 'max(iconSize, headerFontSize) + spacing * 4 * headerVerticalPaddingScale',
     },
     headerVerticalPaddingScale: 1,
     menuBorder: {
