@@ -32,10 +32,13 @@
             }
         },
         "cellFontFamily": {},
+        "cellFontSize": {},
+        "cellFontWeight": {},
         "cellTextColor": {},
         "dataFontSize": {},
         "fontFamily": {},
         "fontSize": {},
+        "fontWeight": {},
         "headerFontFamily": {},
         "headerFontSize": {},
         "headerFontWeight": {}
