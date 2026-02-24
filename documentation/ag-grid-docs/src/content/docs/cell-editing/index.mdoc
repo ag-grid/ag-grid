@@ -57,7 +57,9 @@ This is demonstrated in the following example, note that:
 
 ## Two Way Binding
 
-If you want to have row data changes done within the grid - i.e. from the Grid back up to the parent component - then you'll need to make use of `v-model` instead of binding to `rowData`.
+By default, `:rowData` is a **one-way binding**: data flows into the grid, but changes made within the grid (e.g. via cell editing) will **not** propagate back to the parent component's `rowData` variable.
+
+To have row data changes flow back up from the grid to the parent component, use `v-model` instead of `:rowData`.
 
 For example:
 
