@@ -316,7 +316,6 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
         const isFeatureEnabled = _isGroupMultiAutoColumnHiding(gos);
 
         let changed = false;
-        let showAll = !isFeatureEnabled;
 
         const updateColVis = (col: AgColumn, newVis: boolean) => {
             if (newVis !== col.isVisible()) {
@@ -325,7 +324,10 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
             }
         };
 
-        if (columns.length > 1) {
+        let showAll = false;
+        if (!isFeatureEnabled) {
+            showAll = true;
+        } else if (columns.length > 1) {
             // Feature only applies when there are multiple columns to show/hide;
             // the first column is always visible so a single column needs no adjustment.
             const rootChildren = rowModel?.rootNode?.childrenAfterGroup;
