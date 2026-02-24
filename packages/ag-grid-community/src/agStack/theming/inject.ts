@@ -155,6 +155,8 @@ type InjectionState = {
     map: WeakMap<HTMLElement, InjectedStyle[]>;
     // Map of environments to their grid state
     grids: Map<IEnvironment, InjectedGridCssState>;
+    // Counter for generating unique params class names
+    paramsId: number;
 };
 
 // IMPORTANT: this global API on the window object must remain constant across
@@ -177,15 +179,18 @@ type WindowState = {
 // cause issues. If they do, both versions' styles will be injected and the
 // result will be obvious in development tools because of the
 // data-ag-css-version attribute on each style element.
-const injectionState: InjectionState = (() => {
+export const getInjectionState = (): InjectionState => {
     const versionMap = ((globalThis as WindowState).agStyleInjectionVersions ??= new Map());
     let state = versionMap.get(VERSION);
     if (!state) {
         state = {
             map: new WeakMap(),
             grids: new Map(),
+            paramsId: 0,
         };
         versionMap.set(VERSION, state);
     }
     return state;
-})();
+};
+
+const injectionState = getInjectionState();
