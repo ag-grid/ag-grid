@@ -18,6 +18,30 @@ import {
 
 import { EditEventTracker, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
 
+/** Asserts the value of a form control, handling number/date/checkbox inputs correctly. */
+function expectInputValue(input: HTMLInputElement, expected: unknown): void {
+    const type = input.type;
+    if (type === 'number' || type === 'range') {
+        if (expected == null || (typeof expected === 'number' && isNaN(expected))) {
+            expect(input.valueAsNumber).toBeNaN();
+        } else {
+            expect(input.valueAsNumber).toBe(Number(expected));
+        }
+    } else if (type === 'checkbox' || type === 'radio') {
+        expect(input.checked).toBe(Boolean(expected));
+    } else if (type === 'date' || type === 'datetime-local' || type === 'time') {
+        if (expected == null || expected === undefined) {
+            expect(input.value).toBe('');
+        } else if (expected instanceof Date) {
+            expect(input.valueAsDate?.getTime()).toBe(expected.getTime());
+        } else {
+            expect(input.value).toBe(String(expected));
+        }
+    } else {
+        expect(input.value).toBe(expected == null ? '' : String(expected));
+    }
+}
+
 describe('Cell Editing Start', () => {
     const gridMgr = new TestGridsManager({
         includeDefaultModules: true,
@@ -103,7 +127,7 @@ describe('Cell Editing Start', () => {
             // get input element inside the cell and check text contents, don't use agTestIdFor
             // as it might not be available for all cell editors, use testing-library
             const inputElement = await waitForInput(gridDiv, cell, { popup });
-            expect(inputElement).toHaveValue(expected as any);
+            expectInputValue(inputElement, expected);
         });
     });
 
@@ -135,7 +159,7 @@ describe('Cell Editing Start', () => {
             await asyncSetTimeout(1);
 
             const inputElement = await waitForInput(gridDiv, cell, { popup });
-            expect(inputElement).toHaveValue(expected);
+            expectInputValue(inputElement, expected);
 
             expect(inputElement.selectionStart).toEqual(selectionStart);
             expect(inputElement.selectionEnd).toEqual(selectionEnd);
@@ -171,7 +195,7 @@ describe('Cell Editing Start', () => {
             await asyncSetTimeout(1);
 
             const inputElement = await waitForInput(gridDiv, cell, { popup });
-            expect(inputElement).toHaveValue(expected);
+            expectInputValue(inputElement, expected);
 
             expect(inputElement.selectionStart).toEqual(selectionStart);
             expect(inputElement.selectionEnd).toEqual(selectionEnd);
@@ -218,7 +242,7 @@ describe('Cell Editing Start', () => {
             `);
 
             const inputElement = await waitForInput(gridDiv, cell, { popup });
-            expect(inputElement).toHaveValue(expectedValue as any);
+            expectInputValue(inputElement, expectedValue);
 
             expect(cell).toHaveTextContent(expectedText as any);
         });
