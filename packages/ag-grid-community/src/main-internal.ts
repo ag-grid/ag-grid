@@ -143,6 +143,7 @@ export {
     AgElementParams as _AgElementParams,
     _clearElement,
     _createAgElement,
+    _addOrRemoveAttribute,
     _getAbsoluteHeight,
     _getAbsoluteWidth,
     _getInnerHeight,
