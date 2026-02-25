@@ -12,7 +12,7 @@ import {
 } from 'ag-grid-community';
 import { BatchEditModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
+import { GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
 
 /** Tests for AG-16448: valueGetter using params.getValue() sees committed data only during batch editing */
 describe('Cell Editing Batch Value (AG-16448)', () => {
@@ -59,6 +59,11 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
         await userEvent.clear(editor);
         await userEvent.keyboard('xx{Enter}');
         await asyncSetTimeout(1);
+
+        await new GridRows(api, 'batch pending before commit').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF ⏳ id:0 a:⏳"xx" "initial" b:"initial"
+        `);
 
         api.refreshCells({ columns: ['b'], force: true });
         await asyncSetTimeout(1);
@@ -245,8 +250,21 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
         await userEvent.dblClick(cellA);
         const editor = await waitForInput(gridDiv, cellA, { popup: false });
         await userEvent.clear(editor);
-        await userEvent.type(editor, 'pending{Enter}');
+        await userEvent.type(editor, 'pending');
         await asyncSetTimeout(1);
+
+        await new GridRows(api, 'editor open with typed value').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF 🖍️ id:0 a:🖍️"pending" "initial" b:"initial"
+        `);
+
+        await userEvent.keyboard('{Enter}');
+        await asyncSetTimeout(1);
+
+        await new GridRows(api, 'batch pending before commit').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF ⏳ id:0 a:⏳"pending" "initial" b:"initial"
+        `);
 
         expect(cellA).toHaveTextContent('pending');
         expect(cellA).toHaveClass(/ag-cell-batch-edit/);
@@ -282,6 +300,11 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
         await userEvent.type(editor, 'typing'); // Don't press Enter yet - still editing
         await asyncSetTimeout(1);
 
+        await new GridRows(api, 'editor open while typing').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF 🖍️ id:0 a:🖍️"typing" "initial"
+        `);
+
         const rowNode = api.getDisplayedRowAtIndex(0)!;
 
         // While actively typing (editor still open):
@@ -297,6 +320,11 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
         await asyncSetTimeout(1);
 
         expect(rowNode.data.a).toBe('initial');
+
+        await new GridRows(api, 'batch pending before cancel').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF ⏳ id:0 a:⏳"typing" "initial"
+        `);
 
         // After closing editor, value becomes pending:
         expect(api.getCellValue({ rowNode, colKey: 'a' })).toBe('typing');

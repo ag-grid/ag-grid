@@ -59,4 +59,10 @@ export interface GridRowsOptions {
      * Called for each row before default validation. Return false to skip the default row validation.
      */
     domRowValidator?: (params: GridRowsDomRowValidatorParams) => boolean | void;
+
+    /** If true, edit state will be included in diagrams and validated in DOM. Auto-detected from edit module presence if not set. */
+    checkEditState?: boolean;
+
+    /** If true, batch edit state will be included in diagrams. Auto-detected from batch edit module presence if not set. */
+    checkBatchState?: boolean;
 }

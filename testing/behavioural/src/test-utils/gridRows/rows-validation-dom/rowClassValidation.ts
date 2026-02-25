@@ -1,5 +1,6 @@
 import type { RowNode } from 'ag-grid-community';
 
+import type { GridRows } from '../gridRows';
 import type { GridRowsBugs } from '../rows-validation/bugs';
 import type { GridRowErrors } from '../rows-validation/gridRowErrors';
 
@@ -9,7 +10,8 @@ export function validateRowClasses(
     rowElements: HTMLElement[],
     rowErrors: GridRowErrors<any>,
     lastDisplayedRowIndex: number,
-    bugs: Readonly<GridRowsBugs>
+    bugs: Readonly<GridRowsBugs>,
+    gridRows?: GridRows
 ): void {
     const el = rowElements[0];
     if (!el) {
@@ -92,6 +94,28 @@ export function validateRowClasses(
         !row.stub && classList.contains('ag-row-loading') && 'Non-stub row should NOT have ag-row-loading class'
     );
 
+    // Edit state classes — only validate when the edit style feature is active
+    // (RowEditStyleFeature sets ag-row-inline-editing / ag-row-not-inline-editing only when the edit module is loaded)
+    if (gridRows?.checkEditState) {
+        // Skip validation for pinned sibling rows when the bug flag is not resolved — the grid
+        // does not clean up edit CSS classes on the pinned sibling when editing stops.
+        const skipPinnedSiblingBug = !bugs.pinnedSiblingEditCssClass && !!row.pinnedSibling;
+
+        const hasEditStyleClasses =
+            classList.contains('ag-row-inline-editing') || classList.contains('ag-row-not-inline-editing');
+        if (hasEditStyleClasses && !skipPinnedSiblingBug) {
+            const isEditing = gridRows.isRowEditing(row);
+
+            validateClassPresence(classList, 'ag-row-inline-editing', isEditing, rowErrors);
+            validateClassPresence(classList, 'ag-row-not-inline-editing', !isEditing, rowErrors);
+
+            const isFullRowEdit = gridRows.api.getGridOption('editType') === 'fullRow';
+            if (isFullRowEdit) {
+                validateClassPresence(classList, 'ag-row-editing', isEditing, rowErrors);
+            }
+        }
+    }
+
     // ag-row-group-expanded / ag-row-group-contracted (enterprise only — validate consistency when present)
     if (!bugs.expandedContractedClasses) {
         return;
@@ -119,4 +143,16 @@ export function validateRowClasses(
     rowErrors.add(
         expandable && !isExpanded && hasExpandedClass && 'Contracted row should NOT have ag-row-group-expanded class'
     );
+}
+
+/** Validates that a CSS class is present or absent as expected. */
+function validateClassPresence(
+    classList: DOMTokenList,
+    className: string,
+    shouldBePresent: boolean,
+    rowErrors: GridRowErrors<any>
+): void {
+    const hasClass = classList.contains(className);
+    rowErrors.add(shouldBePresent && !hasClass && `HTML element should have ${className} class but does not`);
+    rowErrors.add(!shouldBePresent && hasClass && `HTML element should NOT have ${className} class`);
 }

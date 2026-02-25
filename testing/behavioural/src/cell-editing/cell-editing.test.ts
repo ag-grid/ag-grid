@@ -16,7 +16,7 @@ import {
     setupAgTestIds,
 } from 'ag-grid-community';
 
-import { EditEventTracker, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
+import { EditEventTracker, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
 
 describe('Cell Editing Start', () => {
     const gridMgr = new TestGridsManager({
@@ -276,9 +276,22 @@ describe('Cell Editing Start', () => {
             const cell = getByTestId(gridDiv, agTestIdFor.cell('0', 'number'));
             await userEvent.dblClick(cell);
             await asyncSetTimeout(1);
+
+            await new GridRows(api, 'during edit, dblClick opened editor').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF 🖍️ id:0 number:10
+                └── LEAF id:1
+            `);
+
             await userEvent.keyboard('12{Enter}');
 
             await asyncSetTimeout(1);
+
+            await new GridRows(api, 'after edit committed').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 number:12
+                └── LEAF id:1
+            `);
 
             expect(cell).toHaveTextContent('12');
             expect(onCellValueChangedColumn).toHaveBeenCalledTimes(1);
@@ -330,9 +343,21 @@ describe('Cell Editing Start', () => {
 
             await asyncSetTimeout(1);
 
+            await new GridRows(api, 'during edit with valueSetter, dblClick opened editor').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF 🖍️ id:0 number:10
+                └── LEAF id:1
+            `);
+
             await userEvent.keyboard('12{Enter}');
 
             await asyncSetTimeout(1);
+
+            await new GridRows(api, 'after edit with valueSetter committed').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 number:12
+                └── LEAF id:1
+            `);
 
             expect(cell).not.toHaveTextContent('10');
             expect(cell).toHaveTextContent('12');

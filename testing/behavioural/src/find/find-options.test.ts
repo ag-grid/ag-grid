@@ -104,8 +104,16 @@ describe('Find Options', () => {
                 findOptions: { currentPageOnly: true },
             });
 
-            expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('warning #94'), expect.any(String), expect.any(String));
-            expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('warning #95'), expect.any(String), expect.any(String));
+            expect(warnSpy).toHaveBeenCalledWith(
+                expect.stringContaining('warning #94'),
+                expect.any(String),
+                expect.any(String)
+            );
+            expect(warnSpy).toHaveBeenCalledWith(
+                expect.stringContaining('warning #95'),
+                expect.any(String),
+                expect.any(String)
+            );
 
             api.setGridOption('findSearchValue', 'apple');
             await asyncSetTimeout(1);
@@ -138,8 +146,16 @@ describe('Find Options', () => {
                 paginationPageSize: 3,
             });
 
-            expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('warning #94'), expect.any(String), expect.any(String));
-            expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('warning #95'), expect.any(String), expect.any(String));
+            expect(warnSpy).toHaveBeenCalledWith(
+                expect.stringContaining('warning #94'),
+                expect.any(String),
+                expect.any(String)
+            );
+            expect(warnSpy).toHaveBeenCalledWith(
+                expect.stringContaining('warning #95'),
+                expect.any(String),
+                expect.any(String)
+            );
 
             api.setGridOption('findSearchValue', 'apple');
             await asyncSetTimeout(1);

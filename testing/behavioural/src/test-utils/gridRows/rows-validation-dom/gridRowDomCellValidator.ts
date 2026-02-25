@@ -86,6 +86,70 @@ export class GridRowDomCellValidator {
             return;
         }
 
+        // Validate edit-related CSS classes on the cell when checkEditState is enabled
+        if (this.gridRows.checkEditState) {
+            const cellHasActiveEditor = this.gridRows.isCellActivelyEditing(row, columnId);
+
+            // ag-cell-inline-editing is toggled by cellComp for any cell with an active editor
+            const hasInlineEditingClass = cellElement.classList.contains('ag-cell-inline-editing');
+            rowErrors.add(
+                cellHasActiveEditor &&
+                    !hasInlineEditingClass &&
+                    `Cell id:"${columnId}" should have ag-cell-inline-editing class but does not`
+            );
+            rowErrors.add(
+                !cellHasActiveEditor &&
+                    hasInlineEditingClass &&
+                    `Cell id:"${columnId}" should NOT have ag-cell-inline-editing class`
+            );
+
+            // ag-cell-editing and ag-cell-batch-edit are set by CellEditStyleFeature (batch mode only).
+            // On group/footer rows these classes can be inherited from leaf children via _hasLeafEdits,
+            // which is too complex to validate here, so we only check leaf rows.
+            if (this.gridRows.checkBatchState && !row.group && !row.footer) {
+                const hasCellEditingClass = cellElement.classList.contains('ag-cell-editing');
+                const hasBatchEditClass = cellElement.classList.contains('ag-cell-batch-edit');
+
+                // ag-cell-editing is applied when pendingValue differs from sourceValue, not when
+                // a cell merely has an active editor. Compare batch vs data values to determine expected state.
+                const batchValue = this.api.getCellValue({
+                    rowNode: row,
+                    colKey: column,
+                    useFormatter: false,
+                    from: 'batch',
+                });
+                const dataValue = this.api.getCellValue({
+                    rowNode: row,
+                    colKey: column,
+                    useFormatter: false,
+                    from: 'data',
+                });
+                const cellHasBatchChange = batchValue !== dataValue;
+
+                rowErrors.add(
+                    cellHasBatchChange &&
+                        !hasCellEditingClass &&
+                        `Cell id:"${columnId}" should have ag-cell-editing class but does not`
+                );
+                rowErrors.add(
+                    !cellHasBatchChange &&
+                        hasCellEditingClass &&
+                        `Cell id:"${columnId}" should NOT have ag-cell-editing class`
+                );
+                rowErrors.add(
+                    hasBatchEditClass &&
+                        !hasCellEditingClass &&
+                        `Cell id:"${columnId}" has ag-cell-batch-edit but missing ag-cell-editing`
+                );
+            }
+
+            // Validate editor input value for cells with active editors
+            if (cellHasActiveEditor) {
+                this.validateEditorInput(cellElement, row, column, rowErrors);
+                return;
+            }
+        }
+
         if (this.validateCheckboxCell(cellElement, row, column, rowErrors)) {
             return;
         }
@@ -214,6 +278,29 @@ export class GridRowDomCellValidator {
             return row.group ? '(Blanks)' : undefined;
         }
         return String(key).trim() === '' ? '(Blanks)' : undefined;
+    }
+
+    private validateEditorInput(
+        cellElement: HTMLElement,
+        row: RowNode<any>,
+        column: Column<any>,
+        rowErrors: GridRowErrors<any>
+    ): void {
+        const input = cellElement.querySelector<HTMLInputElement | HTMLTextAreaElement>(
+            '.ag-cell-editor input.ag-input-field-input, .ag-cell-editor textarea'
+        );
+        if (!input) {
+            // Custom editor — cannot validate input value
+            return;
+        }
+        const editValue = this.api.getCellValue({ rowNode: row, colKey: column, useFormatter: false, from: 'edit' });
+        const expectedStr = editValue != null ? String(editValue) : '';
+        const actualStr = input.value ?? '';
+        const columnId = column.getColId();
+        rowErrors.add(
+            actualStr !== expectedStr &&
+                `Editor input value mismatch for column id:"${columnId}", expected ${JSON.stringify(expectedStr)}, got ${JSON.stringify(actualStr)}`
+        );
     }
 
     private validateCheckboxCell(

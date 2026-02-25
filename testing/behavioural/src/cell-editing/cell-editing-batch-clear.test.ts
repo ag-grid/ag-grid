@@ -76,7 +76,7 @@ describe('Cell Editing: batch clear bugs', () => {
         const afterEdit = new GridRows(api, 'after editing to Foo', { checkDom: false });
         await afterEdit.check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:ROW_0 a:"Foo" b:"B0"
+            ├── LEAF ⏳ id:ROW_0 a:⏳"Foo" "A0" b:"B0"
             └── LEAF id:ROW_1 a:"A1" b:"B1"
         `);
 
@@ -95,7 +95,7 @@ describe('Cell Editing: batch clear bugs', () => {
         const afterFirstDelete = new GridRows(api, 'after first Delete', { checkDom: false });
         await afterFirstDelete.check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:ROW_0 a:null b:"B0"
+            ├── LEAF ⏳ id:ROW_0 a:⏳null "A0" b:"B0"
             └── LEAF id:ROW_1 a:"A1" b:"B1"
         `);
 
@@ -110,7 +110,7 @@ describe('Cell Editing: batch clear bugs', () => {
         const afterSecondDelete = new GridRows(api, 'after second Delete — should stay cleared', { checkDom: false });
         await afterSecondDelete.check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:ROW_0 a:null b:"B0"
+            ├── LEAF ⏳ id:ROW_0 a:⏳null "A0" b:"B0"
             └── LEAF id:ROW_1 a:"A1" b:"B1"
         `);
     });
@@ -172,8 +172,8 @@ describe('Cell Editing: batch clear bugs', () => {
         await afterFill.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:ROW_0 a:"A0"
-            ├── LEAF id:ROW_1 a:"A0"
-            └── LEAF id:ROW_2 a:"A0"
+            ├── LEAF ⏳ id:ROW_1 a:⏳"A0" "A1"
+            └── LEAF ⏳ id:ROW_2 a:⏳"A0" "A2"
         `);
 
         // Step 2: Drag fill handle upward to reduce the range back to ROW_0 only.
@@ -434,7 +434,7 @@ describe('Cell Editing: batch clear bugs', () => {
         const gridState = new GridRows(api, 'after paste then cellClear', { checkDom: false });
         await gridState.check(`
             ROOT id:ROOT_NODE_ID total:0
-            ├── LEAF id:ROW_0 athlete:null gold:8 silver:2 bronze:1 total:11
+            ├── LEAF ⏳ id:ROW_0 athlete:⏳null "Michael Phelps" gold:8 silver:2 bronze:1 total:11
             └── LEAF id:ROW_1 athlete:"Usain Bolt" gold:3 silver:0 bronze:0 total:3
         `);
     });

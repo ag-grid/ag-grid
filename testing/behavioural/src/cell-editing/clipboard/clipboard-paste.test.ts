@@ -329,7 +329,7 @@ describe('Clipboard Paste Behaviour: paste flows', () => {
         await stagedRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:0 field:"Top Value"
-            └── LEAF id:1 field:"Top Value"
+            └── LEAF ⏳ id:1 field:⏳"Top Value" "Bottom Value"
         `);
 
         const stagedRowNode = api.getDisplayedRowAtIndex(1);

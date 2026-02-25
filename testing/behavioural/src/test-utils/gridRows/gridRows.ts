@@ -1,7 +1,7 @@
 import util from 'util';
 import { expect } from 'vitest';
 
-import type { Column, GridApi, IRowNode, RowNode } from 'ag-grid-community';
+import type { Column, EditingCellPosition, GridApi, IRowNode, RowNode } from 'ag-grid-community';
 
 import { log, unindentText } from '../utils';
 import { addDiagramToError, collectGridRows } from './grid-rows-helpers';
@@ -31,9 +31,21 @@ export class GridRows<TData = any> {
     public readonly rootAllLeafChildren: RowNode<TData>[];
     public readonly errors: GridRowsErrors<TData>;
 
+    /** Whether edit state checking is active. Auto-detected from edit module presence unless explicitly set. */
+    public readonly checkEditState: boolean;
+
+    /** Whether batch edit state checking is active. Auto-detected from batch edit module presence unless explicitly set. */
+    public readonly checkBatchState: boolean;
+
     #byIdMap: Map<string, RowNode<TData>> | null = null;
     #indexMap: Map<IRowNode<TData>, number> | null = null;
     #displayedRowsSet: Set<RowNode<TData>> | null = null;
+    #editingCells: EditingCellPosition[] | null = null;
+    #editingRowIndices: Set<number> | null = null;
+    #activelyEditingRowIndices: Set<number> | null = null;
+    #batchPendingRowIndices: Set<number> | null = null;
+    #editingCellKeys: Set<string> | null = null;
+    #activeEditorCellKeys: Set<string> | null = null;
     readonly #detailGridRows: Map<IRowNode<TData> | GridApi, GridRows<any>>;
 
     /**
@@ -55,6 +67,11 @@ export class GridRows<TData = any> {
         }
         this.errors = errors;
         this.treeData = options.forcedTreeData ?? !!api.getGridOption('treeData');
+        // Auto-detect edit module via module registry to avoid triggering error #200 when no editor module is loaded
+        this.checkEditState =
+            options.checkEditState ?? (api.isModuleRegistered as (name: string) => boolean)('EditCoreModule');
+        // Auto-detect batch edit module via module registry
+        this.checkBatchState = options.checkBatchState ?? api.isModuleRegistered('BatchEditModule');
 
         const collected = collectGridRows(api, label, options, errors, GridRows);
         this.rowNodes = collected.rowNodes;
@@ -101,6 +118,55 @@ export class GridRows<TData = any> {
 
     public isRowDisplayed(row: IRowNode<TData> | null | undefined): boolean {
         return (this.#displayedRowsSet ??= new Set(this.displayedRows)).has(row as RowNode<TData>);
+    }
+
+    /** Returns cached editing cells. Only meaningful when `checkEditState` is true. */
+    public getEditingCells(): EditingCellPosition[] {
+        return (this.#editingCells ??= this.api.getEditingCells?.() ?? []);
+    }
+
+    /** Checks if a row (by rowIndex) has any editing or changed cells. */
+    public isRowEditing(row: RowNode): boolean {
+        const indices = (this.#editingRowIndices ??= new Set(this.getEditingCells().map((c) => c.rowIndex)));
+        return indices.has(row.rowIndex!);
+    }
+
+    /** Checks if a row has any cell with an active editor (state === 'editing'). */
+    public isRowActivelyEditing(row: RowNode): boolean {
+        const indices = (this.#activelyEditingRowIndices ??= new Set(
+            this.getEditingCells()
+                .filter((c) => c.state === 'editing')
+                .map((c) => c.rowIndex)
+        ));
+        return indices.has(row.rowIndex!);
+    }
+
+    /** Checks if a row has any cell with a batch pending change (state !== 'editing'). */
+    public isRowBatchPending(row: RowNode): boolean {
+        const indices = (this.#batchPendingRowIndices ??= new Set(
+            this.getEditingCells()
+                .filter((c) => c.state !== 'editing')
+                .map((c) => c.rowIndex)
+        ));
+        return indices.has(row.rowIndex!);
+    }
+
+    /** Checks if a specific cell is being edited or has pending changes. */
+    public isCellEditing(row: RowNode, colId: string): boolean {
+        const keys = (this.#editingCellKeys ??= new Set(
+            this.getEditingCells().map((c) => `${c.rowIndex}:${c.rowPinned ?? ''}:${c.colId}`)
+        ));
+        return keys.has(`${row.rowIndex}:${row.rowPinned ?? ''}:${colId}`);
+    }
+
+    /** Checks if a specific cell has an active editor (state === 'editing', not just 'changed'). */
+    public isCellActivelyEditing(row: RowNode, colId: string): boolean {
+        const keys = (this.#activeEditorCellKeys ??= new Set(
+            this.getEditingCells()
+                .filter((c) => c.state === 'editing')
+                .map((c) => `${c.rowIndex}:${c.rowPinned ?? ''}:${c.colId}`)
+        ));
+        return keys.has(`${row.rowIndex}:${row.rowPinned ?? ''}:${colId}`);
     }
 
     public loadErrors(): this {

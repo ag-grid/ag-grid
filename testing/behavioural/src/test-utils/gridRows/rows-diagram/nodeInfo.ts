@@ -56,7 +56,7 @@ export function getRowTypePrefix(gridRows: GridRows, row: RowNode): string {
     return getNodeType(gridRows, row);
 }
 
-/** Builds the row state flags string (selected, collapsed, hidden). */
+/** Builds the row state flags string (selected, collapsed, hidden, editing, batch). */
 export function getRowStateFlags(gridRows: GridRows, row: RowNode): string {
     if (row.rowPinned) {
         return '';
@@ -73,6 +73,14 @@ export function getRowStateFlags(gridRows: GridRows, row: RowNode): string {
     }
     if (!gridRows.isRowDisplayed(row) && row !== gridRows.rootRowNode) {
         result += ' hidden';
+    }
+    if (gridRows.checkEditState && gridRows.isRowEditing(row)) {
+        if (gridRows.isRowActivelyEditing(row)) {
+            result += ' 🖍️';
+        }
+        if (gridRows.isRowBatchPending(row)) {
+            result += ' ⏳';
+        }
     }
     return result;
 }

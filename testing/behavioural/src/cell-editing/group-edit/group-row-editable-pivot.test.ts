@@ -183,6 +183,24 @@ describe('groupRowEditable with pivot mode', () => {
             expect(usaNode!.getDataValue(pivotColId)).toBe(2200);
 
             if (editMode === 'ui') {
+                // Start editing and capture mid-edit state before committing
+                api.startEditingCell({
+                    rowIndex: usaNode!.rowIndex!,
+                    colKey: pivotColId,
+                });
+                await asyncSetTimeout(0);
+
+                await new GridRows(api, 'during pivot edit', gridRowsOptions).check(`
+                    ROOT id:ROOT_NODE_ID pivot_year_2020_sales:5300 pivot_year_2021_sales:6100
+                    ├── LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France" pivot_year_2020_sales:1000 pivot_year_2021_sales:1200
+                    ├── LEAF_GROUP collapsed id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" pivot_year_2020_sales:1500 pivot_year_2021_sales:1800
+                    ├── LEAF_GROUP collapsed 🖍️ id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_year_2020_sales:2000 pivot_year_2021_sales:2200
+                    └── LEAF_GROUP collapsed id:row-group-country-Canada ag-Grid-AutoColumn:"Canada" pivot_year_2020_sales:800 pivot_year_2021_sales:900
+                `);
+
+                api.stopEditing(true);
+                await asyncSetTimeout(0);
+
                 await editCell(api, usaNode!, pivotColId, '4000');
             } else {
                 usaNode!.setDataValue(pivotColId, 4000, 'ui');

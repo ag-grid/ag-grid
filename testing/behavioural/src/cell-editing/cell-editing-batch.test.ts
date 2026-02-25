@@ -302,7 +302,7 @@ describe('Cell Editing Batch', () => {
 
         await new GridRows(api, 'after batch setDataValue ui').check(`
             ROOT id:ROOT_NODE_ID
-            └── LEAF id:0 number:100 string1:"pending"
+            └── LEAF ⏳ id:0 number:⏳100 10 string1:⏳"pending" "test"
         `);
 
         expect(stringCell).toHaveTextContent('pending');

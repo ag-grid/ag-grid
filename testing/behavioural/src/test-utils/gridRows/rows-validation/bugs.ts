@@ -23,6 +23,14 @@ export const gridRowsBugs = {
      * After transactions that re-parent nodes, expanded rows may retain `ag-row-group-contracted` class.
      */
     expandedContractedClasses: false,
+
+    /**
+     * BUG: ag-row-inline-editing / ag-row-not-inline-editing CSS classes are not cleaned up on
+     * pinned sibling rows when editing stops via the source row. The RowEditStyleFeature only
+     * removes the classes from the row that triggered stopEditing, leaving stale classes on
+     * the pinnedSibling.
+     */
+    pinnedSiblingEditCssClass: false,
 } as const;
 
 /** The type of the known bugs configuration object. */

@@ -189,7 +189,7 @@ describe('Cell Editing: edge cases', () => {
             const afterBothBatch = new GridRows(api, 'after two batch paste calls', { checkDom: false });
             await afterBothBatch.check(`
                 ROOT id:ROOT_NODE_ID
-                └── LEAF id:ROW_0 a:"Second"
+                └── LEAF ⏳ id:ROW_0 a:⏳"Second" "Original"
             `);
             expect(rowNode.data.a).toBe('Original');
 
@@ -327,8 +327,8 @@ describe('Cell Editing: edge cases', () => {
             const pendingState = new GridRows(api, 'pending edits', { checkDom: false });
             await pendingState.check(`
                 ROOT id:ROOT_NODE_ID
-                ├── LEAF id:ROW_0 a:"Modified" b:"B0"
-                └── LEAF id:ROW_1 a:"A1" b:null
+                ├── LEAF ⏳ id:ROW_0 a:⏳"Modified" "A0" b:"B0"
+                └── LEAF ⏳ id:ROW_1 a:"A1" b:⏳null "B1"
             `);
 
             // Data unchanged
@@ -443,7 +443,7 @@ describe('Cell Editing: edge cases', () => {
             const afterPaste = new GridRows(api, 'after batch paste — pending value shown', { checkDom: false });
             await afterPaste.check(`
                 ROOT id:ROOT_NODE_ID
-                └── LEAF id:ROW_0 a:"Attempted"
+                └── LEAF ⏳ id:ROW_0 a:⏳"Attempted" "Original"
             `);
 
             // Data unchanged (still original)
@@ -687,7 +687,7 @@ describe('Cell Editing: edge cases', () => {
             const afterEdit = new GridRows(api, 'after editing 0 to 99', { checkDom: false });
             await afterEdit.check(`
                 ROOT id:ROOT_NODE_ID
-                └── LEAF id:ROW_0 a:99
+                └── LEAF ⏳ id:ROW_0 a:⏳99 0
             `);
 
             // Delete → clear
@@ -699,7 +699,7 @@ describe('Cell Editing: edge cases', () => {
             const afterFirstDelete = new GridRows(api, 'after first Delete', { checkDom: false });
             await afterFirstDelete.check(`
                 ROOT id:ROOT_NODE_ID
-                └── LEAF id:ROW_0 a:null
+                └── LEAF ⏳ id:ROW_0 a:⏳null 0
             `);
 
             // Second Delete → should stay cleared (was edited before being cleared)
@@ -711,7 +711,7 @@ describe('Cell Editing: edge cases', () => {
             });
             await afterSecondDelete.check(`
                 ROOT id:ROOT_NODE_ID
-                └── LEAF id:ROW_0 a:null
+                └── LEAF ⏳ id:ROW_0 a:⏳null 0
             `);
 
             // Underlying data unchanged in batch mode
@@ -742,7 +742,7 @@ describe('Cell Editing: edge cases', () => {
             const afterClear = new GridRows(api, 'after Delete on 0', { checkDom: false });
             await afterClear.check(`
                 ROOT id:ROOT_NODE_ID
-                └── LEAF id:ROW_0 a:null
+                └── LEAF ⏳ id:ROW_0 a:⏳null 0
             `);
 
             // Cancel — should revert to 0
