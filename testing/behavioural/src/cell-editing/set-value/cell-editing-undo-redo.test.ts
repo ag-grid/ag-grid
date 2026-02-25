@@ -73,8 +73,18 @@ describe('Cell Editing: undo/redo', () => {
         expect(api.getDisplayedRowAtIndex(0)?.data?.field).toBe('Initial Value');
         expect(valueSetterCalls).toBe(2);
 
+        await new GridRows(api, 'after undo').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:ROW_0 field:"Initial Value"
+        `);
+
         api.redoCellEditing();
         await asyncSetTimeout(0);
+
+        await new GridRows(api, 'after redo').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:ROW_0 field:"Updated Value"
+        `);
 
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 1,
@@ -157,9 +167,19 @@ describe('Cell Editing: undo/redo', () => {
             await asyncSetTimeout(0);
             await waitFor(() => expect(new Set(rowValueChangedNodes)).toEqual(new Set(['ROW_0'])));
 
+            await new GridRows(api, 'full-row after undo').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:ROW_0 a:"A0" b:"B0"
+            `);
+
             api.redoCellEditing();
             await asyncSetTimeout(0);
             await waitFor(() => expect(new Set(rowValueChangedNodes)).toEqual(new Set(['ROW_0'])));
+
+            await new GridRows(api, 'full-row after redo').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:ROW_0 a:"A1" b:"B0"
+            `);
 
             // 1 initial edit + 1 undo + 1 redo = 3 cellValueChanged
             expect(eventTracker.counts).toEqual({
@@ -230,10 +250,22 @@ describe('Cell Editing: undo/redo', () => {
 
         expect(api.getCurrentUndoSize()).toBe(0);
 
+        await new GridRows(api, 'tab-to-next-row after undo').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 a:"A0" b:"B0"
+            └── LEAF id:ROW_1 a:"A1" b:"B1"
+        `);
+
         api.redoCellEditing();
         await asyncSetTimeout(0);
         expect(getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'))).toHaveTextContent('A0-EDIT');
         expect(api.getCurrentUndoSize()).toBe(1);
+
+        await new GridRows(api, 'tab-to-next-row after redo').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 a:"A0-EDIT" b:"B0"
+            └── LEAF id:ROW_1 a:"A1" b:"B1"
+        `);
 
         // Editing started/stopped counts include row 0 and row 1 full-row editing lifecycle
         // 1 initial edit + 1 undo + 1 redo = 3 cellValueChanged

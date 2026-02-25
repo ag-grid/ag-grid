@@ -7,7 +7,6 @@
  *
  * Uses TypeScript's parser for precise AST-based template literal replacement.
  */
-import ansis from 'ansis';
 import { readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -159,13 +158,13 @@ export async function processSnapshotUpdates(currentTestFile?: string): Promise<
             source = readFileSync(file, 'utf-8');
         } catch {
             for (const m of fileMismatches) {
-                logWarning(ansis.yellow(`  ⚠ Skipped`) + ` ${relPath}:${m.line} — cannot read file`);
+                logWarning(`  ⚠️️ Skipped ${relPath}:${m.line} — cannot read file`);
                 totalSkipped++;
             }
             continue;
         }
 
-        const replacements = findReplacements(ts, source, file, fileMismatches, ansis, relPath);
+        const replacements = findReplacements(ts, source, file, fileMismatches, relPath);
 
         if (!replacements.length) {
             continue;
@@ -181,9 +180,7 @@ export async function processSnapshotUpdates(currentTestFile?: string): Promise<
                 const prev = deduped[deduped.length - 1];
                 // prev.start >= r.end since sorted descending — but check overlap just in case
                 if (r.end > prev.start) {
-                    logWarning(
-                        ansis.yellow(`  ⚠ Skipped`) + ` ${relPath}:${r.line} — "${r.label}" (overlapping replacement)`
-                    );
+                    logWarning(`  ⚠️️ Skipped ${relPath}:${r.line} — "${r.label}" (overlapping replacement)`);
                     totalSkipped++;
                     continue;
                 }
@@ -194,12 +191,12 @@ export async function processSnapshotUpdates(currentTestFile?: string): Promise<
         let newSource = source;
         for (const r of deduped) {
             if (mode === 'dry') {
-                logInfo(ansis.cyan(`  📋 Would update`) + ` ${relPath}:${r.line} — "${r.label}"`);
+                logInfo(`  📋 Would update ${relPath}:${r.line} — "${r.label}"`);
                 totalUpdated++;
             } else {
                 newSource = newSource.slice(0, r.start) + r.newText + newSource.slice(r.end);
-                const suffix = r.indentFixed ? ansis.yellow(' (indentation fixed)') : '';
-                logInfo(ansis.green.bold(`  👉 Updated`) + ` ${relPath}:${r.line} — "${r.label}"` + suffix);
+                const suffix = r.indentFixed ? ' (indentation fixed)' : '';
+                logInfo(`  👉 Updated ${relPath}:${r.line} — "${r.label}"` + suffix);
                 totalUpdated++;
                 updatedFiles.add(file);
             }
@@ -229,10 +226,10 @@ export async function processSnapshotUpdates(currentTestFile?: string): Promise<
         let newSource = source;
         for (const fix of fixes) {
             if (mode === 'dry') {
-                logInfo(ansis.cyan(`  📋 Would fix indent`) + ` ${relPath}:${fix.line} — "${fix.label}"`);
+                logInfo(`  📋 Would fix indent ${relPath}:${fix.line} — "${fix.label}"`);
             } else {
                 newSource = newSource.slice(0, fix.start) + fix.newText + newSource.slice(fix.end);
-                logInfo(ansis.yellow(`  📐 Indent fixed`) + ` ${relPath}:${fix.line} — "${fix.label}"`);
+                logInfo(`  📐 Indent fixed ${relPath}:${fix.line} — "${fix.label}"`);
                 updatedFiles.add(file);
             }
             totalIndentFixed++;
@@ -247,13 +244,13 @@ export async function processSnapshotUpdates(currentTestFile?: string): Promise<
         const fileCount = mode === 'dry' ? byFile.size : updatedFiles.size;
         if (mode === 'dry') {
             logInfo(
-                ansis.cyan(`\n  📋 Dry run: ${totalUpdated} snapshot(s) would be updated in ${fileCount} file(s)`) +
-                    (totalSkipped > 0 ? ansis.yellow(`, ${totalSkipped} skipped`) : '')
+                `\n  📋 Dry run: ${totalUpdated} snapshot(s) would be updated in ${fileCount} file(s)` +
+                    (totalSkipped > 0 ? `, ${totalSkipped} skipped` : '')
             );
         } else {
             logInfo(
-                ansis.green(`\n  ✅ ${totalUpdated} snapshot(s) updated in ${fileCount} file(s)`) +
-                    (totalSkipped > 0 ? ansis.yellow(`, ${totalSkipped} skipped`) : '')
+                `\n  ✅ ${totalUpdated} snapshot(s) updated in ${fileCount} file(s)` +
+                    (totalSkipped > 0 ? `, ${totalSkipped} skipped` : '')
             );
         }
     }
@@ -273,7 +270,6 @@ function findReplacements(
     source: string,
     file: string,
     mismatches: SnapshotMismatch[],
-    ansis: any,
     relPath: string
 ): Replacement[] {
     const sourceFile = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, /* setParentNodes */ true);
@@ -337,15 +333,14 @@ function findReplacements(
         // Require the match to be within a reasonable tolerance
         if (!bestMatch || bestDistance > 5) {
             logWarning(
-                ansis.yellow(`  ⚠ Skipped`) +
-                    ` ${relPath}:${mismatch.line} — "${mismatch.label}" (could not find .check() call in AST)`
+                `  ⚠️ Skipped ${relPath}:${mismatch.line} — "${mismatch.label}" (could not find .check() call in AST)`
             );
             continue;
         }
 
         usedCheckCalls.add(bestMatch);
 
-        const result = resolveTemplateLiteral(ts, sourceFile, bestMatch.arg, varDeclarations, ansis, relPath, mismatch);
+        const result = resolveTemplateLiteral(ts, sourceFile, bestMatch.arg, varDeclarations, relPath, mismatch);
         if (result) {
             const built = buildReplacementText(source, result.start, result.end, mismatch.actualDiagram);
             replacements.push({
@@ -451,7 +446,6 @@ function resolveTemplateLiteral(
     sourceFile: any,
     arg: any,
     varDeclarations: Map<string, { node: any; scope: any } | null>,
-    ansis: any,
     relPath: string,
     mismatch: SnapshotMismatch
 ): { start: number; end: number } | null {
@@ -472,20 +466,22 @@ function resolveTemplateLiteral(
             return { start: template.getStart(sourceFile), end: template.getEnd() };
         }
         logWarning(
-            ansis.yellow(`  ⚠ Skipped`) +
-                ` ${relPath}:${mismatch.line} — "${mismatch.label}" (tagged template with substitutions)`
+            `  ⚠️ Skipped ${relPath}:${mismatch.line} — "${mismatch.label}" (tagged template with substitutions)`
         );
         return null;
     }
 
     // Case 4: Identifier reference — `.check(myVar)` where `const myVar = \`...\``
+    // Special case: `undefined` literal — replace it with a new template literal
     if (ts.isIdentifier(arg)) {
         const varName = arg.text;
+        if (varName === 'undefined') {
+            return { start: arg.getStart(sourceFile), end: arg.getEnd() };
+        }
         const decl = varDeclarations.get(varName);
         if (decl === null) {
             logWarning(
-                ansis.yellow(`  ⚠ Skipped`) +
-                    ` ${relPath}:${mismatch.line} — "${mismatch.label}" (variable "${varName}" is declared multiple times)`
+                `  ⚠️ Skipped ${relPath}:${mismatch.line} — "${mismatch.label}" (variable "${varName}" is declared multiple times)`
             );
             return null;
         }
@@ -497,16 +493,14 @@ function resolveTemplateLiteral(
             };
         }
         logWarning(
-            ansis.yellow(`  ⚠ Skipped`) +
-                ` ${relPath}:${mismatch.line} — "${mismatch.label}" (variable "${varName}" is not a static string or template literal)`
+            `  ⚠️ Skipped ${relPath}:${mismatch.line} — "${mismatch.label}" (variable "${varName}" is not a static string or template literal)`
         );
         return null;
     }
 
     // Case 5: Template with substitutions or other unsupported expression — skip
     logWarning(
-        ansis.yellow(`  ⚠ Skipped`) +
-            ` ${relPath}:${mismatch.line} — "${mismatch.label}" (argument is not a static string or template literal)`
+        `  ⚠️ Skipped ${relPath}:${mismatch.line} — "${mismatch.label}" (argument is not a static string or template literal)`
     );
     return null;
 }

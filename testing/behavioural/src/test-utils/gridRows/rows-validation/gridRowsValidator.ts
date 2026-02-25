@@ -6,6 +6,9 @@ import type { GridRows } from '../gridRows';
 import type { GridRowErrors } from './gridRowErrors';
 import type { GridRowsErrors } from './gridRowsErrors';
 import { GridRowsValidationState } from './gridRowsValidationState';
+import { computeUiLevel, validateAllChildrenCount } from './gridRowsValidatorComputed';
+import type { RowAllLeafs } from './gridRowsValidatorLeafs';
+import { verifyAllLeafChildrenWithChildrenAfterGroup, verifyLeafs } from './gridRowsValidatorLeafs';
 
 type RowChildrenField =
     | 'childrenAfterGroup'
@@ -14,16 +17,9 @@ type RowChildrenField =
     | 'childrenAfterSort'
     | 'allLeafChildren';
 
-interface RowAllLeafs {
-    row: RowNode;
-    leafs: RowNode[];
-    count: number | null;
-    allLeafChildren: Set<RowNode>;
-}
-
 export class GridRowsValidator {
     public validatedRows = new Set<IRowNode>();
-    #allLeafsMap = new Map<IRowNode, RowAllLeafs>();
+    #allLeafsMap = new Map<RowNode, RowAllLeafs>();
 
     public constructor(public readonly errors: GridRowsErrors) {}
 
@@ -134,7 +130,10 @@ export class GridRowsValidator {
 
             const uiLevel = row.uiLevel;
             if (csrm || !row.detail || uiLevel !== undefined) {
-                rowErrors.expectValueEqual('uiLevel', uiLevel, this.computeUiLevel(state, row));
+                // When groupDisplayType='multipleColumns' in CSRM, enterprise flattenStage always sets
+                // uiLevel=0 for all displayed rows. SSRM uses its own uiLevel calculation instead.
+                const expectedUiLevel = csrm && state.isGroupMultiAutoColumn ? 0 : computeUiLevel(state, row);
+                rowErrors.expectValueEqual('uiLevel', uiLevel, expectedUiLevel);
             }
 
             this.validateRow(state, row);
@@ -247,9 +246,9 @@ export class GridRowsValidator {
                     `api.getRowNode(${JSON.stringify(row.id)}) should return this group row, but got ${rowIdAndIndexToString(apiNode ?? undefined)}`
                 );
             }
-            this.verifyLeafs(gridRows, row);
+            verifyLeafs(this.errors, this.#allLeafsMap, gridRows, row);
             if (row.allChildrenCount !== undefined) {
-                this.validateAllChildrenCount(state, rowErrors, row);
+                validateAllChildrenCount(state, rowErrors, row);
             }
         }
 
@@ -274,7 +273,7 @@ export class GridRowsValidator {
         }
 
         if (level >= 0 && csrm) {
-            this.verifyAllLeafChildrenWithChildrenAfterGroup(gridRows, row);
+            verifyAllLeafChildrenWithChildrenAfterGroup(this.errors, row);
         }
 
         // Validate leaf groups (using ag-Grid's built-in leafGroup property)
@@ -296,6 +295,7 @@ export class GridRowsValidator {
             this.validate(detailGrid);
         }
     }
+
     private validateSibling(rowErrors: GridRowErrors, row: RowNode<any>) {
         const sibling = row.sibling;
         if (!sibling) {
@@ -487,261 +487,6 @@ export class GridRowsValidator {
         }
     }
 
-    private computeUiLevel(state: GridRowsValidationState, row: RowNode): number {
-        if (state.ssrm) {
-            return this.computeSsrmUiLevel(state, row);
-        }
-
-        let level = -1;
-        let parent = row.parent;
-        while (parent) {
-            if (parent.footer) {
-                ++level;
-            }
-
-            // Check if this parent should be counted based on grouping options
-            let shouldCountParent = true;
-
-            if (!parent.master) {
-                if (state.groupHideOpenParents && parent.expanded) {
-                    shouldCountParent = false;
-                } else if (
-                    state.groupHideParentOfSingleChild &&
-                    parent.group &&
-                    parent.childrenAfterGroup?.length === 1
-                ) {
-                    if (
-                        state.groupHideParentOfSingleChild === true ||
-                        (state.groupHideParentOfSingleChild === 'leafGroupsOnly' && parent.leafGroup)
-                    ) {
-                        shouldCountParent = false;
-                    }
-                }
-            }
-
-            parent = parent.parent;
-            if (shouldCountParent) {
-                ++level;
-            }
-        }
-        if (row.footer) {
-            ++level;
-        } else if (row.detail) {
-            --level;
-        }
-        if (level <= 0) {
-            return 0;
-        }
-        return level;
-    }
-
-    private computeSsrmUiLevel(state: GridRowsValidationState, row: RowNode): number {
-        if (row.level == null || row.level < 0) {
-            return 0;
-        }
-
-        if (row.detail && row.parent) {
-            return this.computeSsrmUiLevel(state, row.parent);
-        }
-
-        let expected = row.level + (row.footer ? 1 : 0);
-        expected -= this.countUnbalancedAncestors(state, row);
-
-        if (expected < 0) {
-            expected = 0;
-        }
-
-        return expected;
-    }
-
-    private countUnbalancedAncestors(state: GridRowsValidationState, row: RowNode): number {
-        if (!state.groupAllowUnbalanced) {
-            return 0;
-        }
-
-        let count = 0;
-        let current: RowNode | null | undefined = row;
-        const visited = new Set<RowNode>();
-
-        while (current && current.parent) {
-            current = current.parent;
-            if (!current || visited.has(current)) {
-                break;
-            }
-            visited.add(current);
-
-            if (current.level == null || current.level < 0) {
-                break;
-            }
-
-            if (current.footer) {
-                continue;
-            }
-
-            if (current.group && current.key === '') {
-                ++count;
-            }
-        }
-
-        return count;
-    }
-
-    private verifyLeafs(gridRows: GridRows, row: RowNode): RowAllLeafs {
-        let result = this.#allLeafsMap.get(row);
-        if (result !== undefined) {
-            return result;
-        }
-
-        let count = 0;
-        let duplicates = 0;
-        const allChildrenSet = new Set<RowNode>();
-        const allLeafChildrenSet = new Set<RowNode>();
-
-        const array = Array.isArray(row.childrenAfterAggFilter) ? row.childrenAfterAggFilter : [];
-        const length = array.length;
-        const treeData = gridRows.treeData;
-        for (let i = 0; i < length; ++i) {
-            const child = array[i];
-            if (!(child instanceof RowNode)) {
-                continue;
-            }
-            if (child === row) {
-                this.errors.add(row, 'Found self in allChildren');
-                continue;
-            }
-            const childAllChildren = this.verifyLeafs(gridRows, array[i]);
-            for (const leaf of childAllChildren.leafs) {
-                if (allChildrenSet.has(leaf)) {
-                    ++duplicates;
-                } else {
-                    allChildrenSet.add(leaf);
-                }
-            }
-
-            if (treeData || !child.group) {
-                ++count;
-            }
-
-            count += childAllChildren.count ?? 0;
-        }
-
-        this.errors.add(row, allChildrenSet.has(row) && 'Found self building allChildren');
-        this.errors.add(row, duplicates > 0 && 'Found ' + duplicates + ' duplicates building allChildren');
-
-        let allLeafChildrenDuplicates = 0;
-        for (const child of Array.isArray(row.allLeafChildren) ? row.allLeafChildren : []) {
-            if (!(child instanceof RowNode)) {
-                continue;
-            }
-            if (allLeafChildrenSet.has(child)) {
-                ++allLeafChildrenDuplicates;
-            } else {
-                allLeafChildrenSet.add(child);
-            }
-        }
-
-        this.errors.add(row, allLeafChildrenSet.has(row) && 'Found self building allLeafChildren');
-        this.errors.add(
-            row,
-            allLeafChildrenDuplicates > 0 &&
-                'Found ' + allLeafChildrenDuplicates + ' duplicates building allLeafChildren'
-        );
-
-        const allLeafChildren = new Set(Array.isArray(row.allLeafChildren) ? row.allLeafChildren : []);
-        for (const child of allLeafChildren) {
-            if (!allLeafChildrenSet.has(child)) {
-                this.errors.add(row, 'Missing ' + rowIdAndIndexToString(child) + ' in allLeafChildren');
-            }
-        }
-        for (const child of allLeafChildrenSet) {
-            if (!allLeafChildren.has(child)) {
-                this.errors.add(row, 'Extra ' + rowIdAndIndexToString(child) + ' in allLeafChildren');
-            }
-        }
-
-        result = {
-            row,
-            leafs: Array.from(allChildrenSet),
-            count: count === 0 && row.level >= 0 ? null : count,
-            allLeafChildren: allChildrenSet,
-        };
-        this.#allLeafsMap.set(row, result);
-        return result;
-    }
-
-    private verifyAllLeafChildrenWithChildrenAfterGroup(gridRows: GridRows<any>, row: RowNode<any>) {
-        const allLeafsSet = new Set<RowNode>();
-        const processed = new Set<RowNode>();
-
-        const traverse = (node: RowNode<any>) => {
-            if (!(node instanceof RowNode)) {
-                this.errors.add(row, 'Invalid child in childrenAfterGroup');
-                return;
-            }
-            if (processed.has(node)) {
-                this.errors.add(row, 'Circular reference in childrenAfterGroup ' + node.id);
-                return;
-            }
-            processed.add(node);
-            if (node.data) {
-                allLeafsSet.add(node); // Not a group, not a filler node
-            }
-            const nodeChildren = node.childrenAfterGroup;
-            if (nodeChildren) {
-                for (const child of nodeChildren) {
-                    traverse(child);
-                }
-            }
-        };
-
-        const childrenAfterGroup = row.childrenAfterGroup;
-        if (childrenAfterGroup) {
-            for (const child of childrenAfterGroup) {
-                traverse(child);
-            }
-        }
-
-        const allLeafChildren = row.allLeafChildren;
-        const allLeafChildrenSet = new Set(allLeafChildren);
-
-        this.errors.add(
-            row,
-            allLeafChildrenSet.size !== allLeafsSet.size &&
-                'allLeafChildren does not match. ' +
-                    allLeafChildrenSet.size +
-                    '!==' +
-                    allLeafsSet.size +
-                    ' : [' +
-                    Array.from(allLeafChildrenSet)
-                        .map((n) => n.id)
-                        .join(', ') +
-                    '] !== [' +
-                    Array.from(allLeafsSet)
-                        .map((n) => n.id)
-                        .join(', ') +
-                    ']'
-        );
-
-        for (const child of allLeafChildrenSet) {
-            if (!allLeafsSet.has(child)) {
-                this.errors.add(row, 'allLeafChildren does not match childrenAfterGroup');
-                break;
-            }
-        }
-
-        for (const child of allLeafsSet) {
-            if (!allLeafChildrenSet.has(child)) {
-                this.errors.add(row, 'allLeafChildren does not match childrenAfterGroup');
-                break;
-            }
-        }
-
-        this.errors.add(
-            row,
-            row.level >= 0 && allLeafChildren?.length === 0 && 'allLeafChildren should not be zero, should be null'
-        );
-    }
-
     private validateLeafGroup(state: GridRowsValidationState, row: RowNode): void {
         if (!state.csrm) {
             return;
@@ -765,61 +510,6 @@ export class GridRowsValidator {
                 rowErrors.add(child === row && 'allLeafChildren contains the group node itself');
             }
         }
-    }
-
-    /**
-     * Validates `allChildrenCount` by recomputing the expected value from `childrenAfterAggFilter`,
-     * mirroring the enterprise FilterAggregatesStage logic:
-     * - Grid grouping: counts only leaf descendants (groups are not counted, only their leaf children).
-     * - Tree data: counts all descendants (groups + leaves) recursively; null when no children at level >= 0.
-     */
-    private validateAllChildrenCount(state: GridRowsValidationState, rowErrors: GridRowErrors, row: RowNode): void {
-        const expected = this.computeExpectedAllChildrenCount(state, row);
-        rowErrors.add(
-            row.allChildrenCount !== expected &&
-                `allChildrenCount=${row.allChildrenCount} but expected ${expected} (computed from childrenAfterAggFilter)`
-        );
-    }
-
-    private computeExpectedAllChildrenCount(state: GridRowsValidationState, row: RowNode): number | null {
-        if (!row.hasChildren()) {
-            return null;
-        }
-        if (state.gridRows.treeData) {
-            return this.computeExpectedAllChildrenCountTreeData(row);
-        }
-        return this.computeExpectedAllChildrenCountGridGrouping(row);
-    }
-
-    /** Tree data: count all descendants (groups + leaves) from childrenAfterAggFilter recursively. */
-    private computeExpectedAllChildrenCountTreeData(row: RowNode): number | null {
-        const childrenAfterAggFilter = row.childrenAfterAggFilter;
-        if (!childrenAfterAggFilter) {
-            return row.level >= 0 ? null : 0;
-        }
-        let count = childrenAfterAggFilter.length;
-        for (const child of childrenAfterAggFilter) {
-            count += child.allChildrenCount ?? 0;
-        }
-        // Historical behaviour: null for non-root rows with no children, 0 for root
-        return count === 0 && row.level >= 0 ? null : count;
-    }
-
-    /** Grid grouping: count only leaf descendants from childrenAfterAggFilter recursively. */
-    private computeExpectedAllChildrenCountGridGrouping(row: RowNode): number | null {
-        const childrenAfterAggFilter = row.childrenAfterAggFilter;
-        if (!childrenAfterAggFilter) {
-            return null;
-        }
-        let count = 0;
-        for (const child of childrenAfterAggFilter) {
-            if (child.group) {
-                count += child.allChildrenCount as number;
-            } else {
-                count++;
-            }
-        }
-        return count;
     }
 
     private validatePivotLeafRow({ gridRows }: GridRowsValidationState, row: RowNode): void {

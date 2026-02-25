@@ -383,10 +383,10 @@ describe('Clipboard Paste Behaviour: paste flows', () => {
 
             const beforeRows = new GridRows(api, `before full-row paste (batch=${batchEnabled})`);
             await beforeRows.check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:ROW_0 field:"Top Value"
-            └── LEAF id:ROW_1 field:"Bottom Value"
-        `);
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:ROW_0 field:"Top Value"
+                └── LEAF id:ROW_1 field:"Bottom Value"
+            `);
 
             if (batchEnabled) {
                 api.startBatchEdit();
@@ -408,10 +408,10 @@ describe('Clipboard Paste Behaviour: paste flows', () => {
 
             const afterRows = new GridRows(api, `after full-row paste (batch=${batchEnabled})`);
             await afterRows.check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:ROW_0 field:"Top Value"
-            └── LEAF id:ROW_1 field:"Top Value"
-        `);
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:ROW_0 field:"Top Value"
+                └── LEAF id:ROW_1 field:"Top Value"
+            `);
 
             await waitFor(() => expect(new Set(rowValueChangedNodes)).toEqual(new Set(['ROW_1'])));
         }

@@ -15,6 +15,8 @@ export class GridRowsValidationState {
     public readonly groupHideOpenParents: boolean;
     public readonly groupHideParentOfSingleChild: string | boolean;
     public readonly groupAllowUnbalanced: boolean;
+    /** When groupDisplayType is 'multipleColumns', all displayed rows get uiLevel=0 (set by enterprise flattenStage). */
+    public readonly isGroupMultiAutoColumn: boolean;
 
     public constructor(gridRows: GridRows) {
         const api = gridRows.api;
@@ -28,6 +30,7 @@ export class GridRowsValidationState {
         this.groupHideOpenParents = !!api.getGridOption('groupHideOpenParents');
         this.groupHideParentOfSingleChild = api.getGridOption('groupHideParentOfSingleChild') ?? false;
         this.groupAllowUnbalanced = !!api.getGridOption('groupAllowUnbalanced');
+        this.isGroupMultiAutoColumn = api.getGridOption('groupDisplayType') === 'multipleColumns';
     }
 
     public get showRowGroupColumns(): AgColumn[] {

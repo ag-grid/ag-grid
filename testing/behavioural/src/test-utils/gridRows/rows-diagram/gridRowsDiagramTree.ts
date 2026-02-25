@@ -206,13 +206,16 @@ export class GridRowsDiagramTree {
             result += this.formatPinnedRow(pinnedRow, inputColumns, printErrors, processedRows);
         }
 
-        // Trailing errors
-        const additionalErrors = this.gridRows.errors.toString({ exclude: processedRows });
-        if (additionalErrors.length > 0) {
-            result += '\n' + additionalErrors;
-        }
-        if (this.gridRows.errors.totalErrorsCount > 0) {
-            result += '\n❌ GRID HAS ' + this.gridRows.errors.totalErrorsCount + ' ERRORS\n';
+        // Trailing errors — only included when explicitly printing errors (e.g. for error messages and true mode).
+        // In snapshot update mode makeDiagram(false) is used so errors are NOT baked into recorded snapshots.
+        if (printErrors) {
+            const additionalErrors = this.gridRows.errors.toString({ exclude: processedRows });
+            if (additionalErrors.length > 0) {
+                result += '\n' + additionalErrors;
+            }
+            if (this.gridRows.errors.totalErrorsCount > 0) {
+                result += '\n❌ GRID HAS ' + this.gridRows.errors.totalErrorsCount + ' ERRORS\n';
+            }
         }
         return result;
     }

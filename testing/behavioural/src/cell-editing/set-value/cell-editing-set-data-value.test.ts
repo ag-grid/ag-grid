@@ -47,9 +47,9 @@ describe('Cell Editing: setDataValue', () => {
 
                 const beforeRows = new GridRows(api, `before ${source} setDataValue`);
                 await beforeRows.check(`
-                ROOT id:ROOT_NODE_ID
-                └── LEAF id:ROW_0 field:"Initial Value"
-            `);
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:ROW_0 field:"Initial Value"
+                `);
 
                 const rowNode = api.getDisplayedRowAtIndex(0);
                 rowNode?.setDataValue('field', `${source}-value`, source);

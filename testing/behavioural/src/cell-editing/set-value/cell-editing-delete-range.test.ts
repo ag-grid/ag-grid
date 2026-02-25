@@ -136,9 +136,9 @@ describe('Cell Editing: delete and range clearing', () => {
 
         const beforeRows = new GridRows(api, `before suppress ${key} (batch=${batchEnabled})`);
         await beforeRows.check(`
-                ROOT id:ROOT_NODE_ID
-                └── LEAF id:ROW_0 field:"Initial Value"
-            `);
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:ROW_0 field:"Initial Value"
+        `);
 
         await asyncSetTimeout(0);
 
@@ -154,9 +154,9 @@ describe('Cell Editing: delete and range clearing', () => {
 
         const afterRows = new GridRows(api, `after suppress ${key} (batch=${batchEnabled})`);
         await afterRows.check(`
-                ROOT id:ROOT_NODE_ID
-                └── LEAF id:ROW_0 field:"Initial Value"
-            `);
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:ROW_0 field:"Initial Value"
+        `);
 
         if (batchEnabled) {
             api.commitBatchEdit();
