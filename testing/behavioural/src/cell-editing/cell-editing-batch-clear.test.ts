@@ -73,7 +73,7 @@ describe('Cell Editing: batch clear bugs', () => {
         expect(cellA0Edited).toHaveTextContent('Foo');
         expect(cellA0Edited).toHaveClass(/ag-cell-batch-edit/);
 
-        const afterEdit = new GridRows(api, 'after editing to Foo', { checkDom: false });
+        const afterEdit = new GridRows(api, 'after editing to Foo');
         await afterEdit.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF ⏳ id:ROW_0 a:⏳"Foo" "A0" b:"B0"
@@ -92,7 +92,7 @@ describe('Cell Editing: batch clear bugs', () => {
         expect(cellA0Cleared).toBeEmptyDOMElement();
         expect(cellA0Cleared).toHaveClass(/ag-cell-batch-edit/);
 
-        const afterFirstDelete = new GridRows(api, 'after first Delete', { checkDom: false });
+        const afterFirstDelete = new GridRows(api, 'after first Delete');
         await afterFirstDelete.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF ⏳ id:ROW_0 a:⏳null "A0" b:"B0"
@@ -107,7 +107,7 @@ describe('Cell Editing: batch clear bugs', () => {
         expect(cellA0AfterSecondDelete).toBeEmptyDOMElement();
         expect(cellA0AfterSecondDelete).toHaveClass(/ag-cell-batch-edit/);
 
-        const afterSecondDelete = new GridRows(api, 'after second Delete — should stay cleared', { checkDom: false });
+        const afterSecondDelete = new GridRows(api, 'after second Delete — should stay cleared');
         await afterSecondDelete.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF ⏳ id:ROW_0 a:⏳null "A0" b:"B0"
@@ -149,7 +149,7 @@ describe('Cell Editing: batch clear bugs', () => {
 
         api.startBatchEdit();
 
-        const beforeFill = new GridRows(api, 'before fill', { checkDom: false });
+        const beforeFill = new GridRows(api, 'before fill');
         await beforeFill.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:ROW_0 a:"A0"
@@ -168,7 +168,7 @@ describe('Cell Editing: batch clear bugs', () => {
         await fillEnd;
         await asyncSetTimeout(0);
 
-        const afterFill = new GridRows(api, 'after fill extend via dblClick', { checkDom: false });
+        const afterFill = new GridRows(api, 'after fill extend via dblClick');
         await afterFill.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:ROW_0 a:"A0"
@@ -204,9 +204,7 @@ describe('Cell Editing: batch clear bugs', () => {
         await fillEnd2;
 
         // After reduction: ROW_1 and ROW_2 should be restored to their original values ("A1" and "A2").
-        const afterReduction = new GridRows(api, 'after fill reduction — should restore originals', {
-            checkDom: false,
-        });
+        const afterReduction = new GridRows(api, 'after fill reduction — should restore originals');
         await afterReduction.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:ROW_0 a:"A0"
@@ -245,7 +243,7 @@ describe('Cell Editing: batch clear bugs', () => {
         await user.keyboard('{Enter}');
         await asyncSetTimeout(0);
 
-        const afterEdit = new GridRows(api, 'after editing to Foo', { checkDom: false });
+        const afterEdit = new GridRows(api, 'after editing to Foo');
         await afterEdit.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:ROW_0 a:"Foo" b:"B0"
@@ -260,7 +258,7 @@ describe('Cell Editing: batch clear bugs', () => {
         await user.keyboard('{Delete}');
         await asyncSetTimeout(0);
 
-        const afterFirstDelete = new GridRows(api, 'after first Delete', { checkDom: false });
+        const afterFirstDelete = new GridRows(api, 'after first Delete');
         await afterFirstDelete.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:ROW_0 a:null b:"B0"
@@ -271,7 +269,7 @@ describe('Cell Editing: batch clear bugs', () => {
         await user.keyboard('{Delete}');
         await asyncSetTimeout(0);
 
-        const afterSecondDelete = new GridRows(api, 'after second Delete — should stay cleared', { checkDom: false });
+        const afterSecondDelete = new GridRows(api, 'after second Delete — should stay cleared');
         await afterSecondDelete.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:ROW_0 a:null b:"B0"
@@ -305,7 +303,7 @@ describe('Cell Editing: batch clear bugs', () => {
 
         // No batch mode
 
-        const beforeFill = new GridRows(api, 'before fill', { checkDom: false });
+        const beforeFill = new GridRows(api, 'before fill');
         await beforeFill.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:ROW_0 a:"A0"
@@ -324,7 +322,7 @@ describe('Cell Editing: batch clear bugs', () => {
         await fillEnd;
         await asyncSetTimeout(0);
 
-        const afterFill = new GridRows(api, 'after fill extend via dblClick', { checkDom: false });
+        const afterFill = new GridRows(api, 'after fill extend via dblClick');
         await afterFill.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:ROW_0 a:"A0"
@@ -356,9 +354,7 @@ describe('Cell Editing: batch clear bugs', () => {
 
         // Without batch mode, reduction should clear the cells outside the range.
         // The fill overwrote the original values, so after clearing the cells revert to deleteValue (null).
-        const afterReduction = new GridRows(api, 'after fill reduction — should clear cells', {
-            checkDom: false,
-        });
+        const afterReduction = new GridRows(api, 'after fill reduction — should clear cells');
         await afterReduction.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:ROW_0 a:"A0"
@@ -431,7 +427,7 @@ describe('Cell Editing: batch clear bugs', () => {
         expect(total).toBe(8 + 2 + 1); // gold + silver + bronze unchanged
 
         // Verify grid state
-        const gridState = new GridRows(api, 'after paste then cellClear', { checkDom: false });
+        const gridState = new GridRows(api, 'after paste then cellClear');
         await gridState.check(`
             ROOT id:ROOT_NODE_ID total:0
             ├── LEAF ⏳ id:ROW_0 athlete:⏳null "Michael Phelps" gold:8 silver:2 bronze:1 total:11

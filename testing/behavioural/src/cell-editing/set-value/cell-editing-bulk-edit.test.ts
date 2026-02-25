@@ -105,6 +105,12 @@ describe('Cell Editing: bulk edit', () => {
             expect(api.getDisplayedRowAtIndex(1)?.data?.b).toBe('B1');
             api.commitBatchEdit();
             await asyncSetTimeout(0);
+
+            await new GridRows(api, `after batch commit (batch=${batchEnabled})`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:ROW_0 a:"Bulk Value" b:"Bulk Value"
+                └── LEAF id:ROW_1 a:"Bulk Value" b:"Bulk Value"
+            `);
         }
 
         expect(eventTracker.counts).toEqual({

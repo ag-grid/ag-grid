@@ -32,6 +32,31 @@ To overwrite the snapshots for snapshot tests:
 ./behave.sh --update
 ```
 
+### Updating GridRows inline snapshots
+
+When diagram formatting or grid behaviour changes, you can automatically update all GridRows inline
+snapshots (the template literals passed to `.check()`):
+
+```sh
+# Update all GridRows snapshots
+./behave.sh --update-grid-rows
+
+# Update snapshots in matching test files only
+./behave.sh --update-grid-rows "cell-editing"
+
+# Dry-run: show what would change without writing files
+./behave.sh --update-grid-rows=dry
+
+# Equivalent env var form
+UPDATE_GRID_ROWS_SNAPSHOTS=1 ./behave.sh
+UPDATE_GRID_ROWS_SNAPSHOTS=dry ./behave.sh
+```
+
+The updater uses TypeScript's parser to locate `.check()` calls and precisely rewrite the template
+literal argument, preserving surrounding code and indentation. It handles direct inline template
+literals, variable references (`const x = \`...\`; gridRows.check(x)`), and tagged templates.
+Dynamic strings with `${}` interpolation are skipped with a warning.
+
 To execute benchmarks:
 
 ```sh

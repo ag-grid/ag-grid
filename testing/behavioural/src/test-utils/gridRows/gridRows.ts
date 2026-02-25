@@ -12,6 +12,7 @@ import type { GridRowsBugs } from './rows-validation/bugs';
 import { gridRowsBugs } from './rows-validation/bugs';
 import { GridRowsErrors } from './rows-validation/gridRowsErrors';
 import { GridRowsValidator } from './rows-validation/gridRowsValidator';
+import { getSnapshotUpdateMode, recordSnapshotMismatch } from './snapshot-updater';
 
 export type { GridRowsDomCellValidatorParams, GridRowsDomRowValidatorParams, GridRowsOptions } from './gridRowsOptions';
 export type { GridRowsBugs } from './rows-validation/bugs';
@@ -204,7 +205,28 @@ export class GridRows<TData = any> {
     }
 
     public async check(diagramSnapshot?: string | string[] | 'empty' | true): Promise<this> {
+        const updateMode = getSnapshotUpdateMode();
+
         this.loadErrors();
+
+        if (updateMode) {
+            // In snapshot update mode: record mismatches instead of failing.
+            // Always generate the diagram even if there are validation errors.
+            if (diagramSnapshot === true) {
+                this.printDiagram();
+                return this;
+            }
+            if (diagramSnapshot === undefined || diagramSnapshot === 'empty' || Array.isArray(diagramSnapshot)) {
+                // Nothing to update for these argument types
+                return this;
+            }
+            const diagram = this.makeDiagram(false);
+            if (unindentText(diagram) !== unindentText(diagramSnapshot)) {
+                recordSnapshotMismatch(this.check, diagram, this.label);
+            }
+            return this;
+        }
+
         if (this.errors.totalErrorsCount > 0) {
             throw this.#makeError(this.check);
         }
