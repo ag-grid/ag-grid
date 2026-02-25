@@ -9,6 +9,8 @@ The Rich Select Cell Editor supports loading values asynchronously, including pa
 
 List values can be provided asynchronously to the editor as shown below:
 
+When `values` is provided as a callback function, the callback receives `params` with type `RichCellEditorValuesCallbackParams`.
+
 {% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["values"] config={ "description": "" } /%}
 
 {% gridExampleRunner title="Rich Select Async Values" name="rich-select-async-values" /%}
@@ -27,7 +29,7 @@ columnDefs: [
 
 ## Paged Async Values
 
-For large datasets, `valuesPage` avoids loading all items at once and instead loads values on demand based on user scroll and interactions. `valuesPageInitialStartRow` can be used to set the initial position. The `valuesPage` callback should return a value that conforms to the `RichCellEditorValuesPageResult` interface.
+For large datasets, `valuesPage` avoids loading all items at once and instead loads values on demand based on user scroll and interactions. `valuesPageInitialStartRow` can be used to set the initial position. The `valuesPage` callback receives `params` with type `RichCellEditorValuesPageParams` and should return a value that conforms to the `RichCellEditorValuesPageResult` interface.
 
 {% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["valuesPage", "valuesPageInitialStartRow", "valuesPageSize", "valuesPageLoadThreshold"] config={ "description": "" } /%}
 
@@ -38,7 +40,7 @@ columnDefs: [
     {
         cellEditor: 'agRichSelectCellEditor',
         cellEditorParams: {
-            valuesPage: (params) : Promise<RichCellEditorValuesPageResult<string>> {
+            valuesPage: (params) => {
                 return fetch(`/api/languages?
                     startRow=${params.startRow}
                     &endRow=${params.endRow}`)
@@ -55,6 +57,7 @@ columnDefs: [
 ## Async Filtering
 
 For advanced filtering scenarios, combine async `values` callback, `allowTyping`, and `filterListAsync` to enable async filtering.
+The `values` callback params remain typed as `RichCellEditorValuesCallbackParams`.
 
 When `filterListAsync` is set to `true`, the cell editor behaves as follows:
 
@@ -78,11 +81,12 @@ columnDefs: [
             allowTyping: true,
             filterList: true,
             filterListAsync: true,
-            values: (params): Promise<string[]> {
+            values: (params) => {
                 return fetch(`/api/languages?search=${encodeURIComponent(params.search)}`)
-                    .then(res => res.json())
-                    .then(data => data.items as string[])
+                    .then((res) => res.json())
+                    .then((data) => data.items);
             }
+        }
     }
 ]
 ```
@@ -111,7 +115,7 @@ columnDefs: [
             filterList: true,
             filterListAsync: true,
             valuesPageInitialStartRow: (value) => getRowForSelectedValue(value),
-            valuesPage: (params): Promise<RichCellEditorValuesPageResult<string>> {
+            valuesPage: (params) => {
                     return fetch(
                         `/api/languages
                             ?search=${encodeURIComponent(params.search)}

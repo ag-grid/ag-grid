@@ -1,4 +1,10 @@
-import type { ColDef, GridApi, GridOptions, IRichCellEditorParams } from 'ag-grid-community';
+import type {
+    ColDef,
+    GridApi,
+    GridOptions,
+    IRichCellEditorParams,
+    RichCellEditorValuesCallbackParams,
+} from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -22,13 +28,19 @@ function getRandomNumber(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
+function getValueFromServer(_params: RichCellEditorValuesCallbackParams): Promise<string[]> {
+    // simulates an async request to a server
+    return new Promise((resolve) => {
+        setTimeout(() => resolve(languages), 1000);
+    });
+}
+
 const columnDefs: ColDef[] = [
     {
         field: 'language',
         cellEditor: 'agRichSelectCellEditor',
         cellEditorParams: {
-            // Simulates an async request to a server
-            values: (_params) => fetch('/api/languages').then((res) => res.json()),
+            values: getValueFromServer,
         } as IRichCellEditorParams,
     },
 ];
