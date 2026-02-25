@@ -1,0 +1,21 @@
+{
+  "name": "vue3-tests",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "testing/vue3-tests/src",
+  "projectType": "application",
+  "targets": {
+    "dev": {
+      "command": "npx vite",
+      "options": {
+        "cwd": "testing/vue3-tests"
+      }
+    },
+    "build": {
+      "command": "npx vue-tsc && npx vite build",
+      "options": {
+        "cwd": "testing/vue3-tests"
+      }
+    }
+  },
+  "implicitDependencies": ["ag-grid-community", "ag-grid-enterprise", "ag-grid-vue3"]
+}
