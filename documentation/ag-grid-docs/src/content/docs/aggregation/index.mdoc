@@ -47,7 +47,8 @@ After the grid is initialised aggregations can be applied / retrieved / removed 
 ## Retrieving Aggregated Children
 
 The method `rowNode.getAggregatedChildren(colKey)` with Client Side Row Model returns the immediate children that contribute to the aggregation
-of a group row. This is useful when implementing custom logic based on aggregated data.
+of a group row. This is useful when implementing custom logic based on aggregated data or when
+[Editing Group Rows](./grouping-edit/) to update child rows accordingly.
 
 -   For regular group columns, returns the direct children used for aggregation (respecting `suppressAggFilteredOnly`
     and `groupAggFiltering` settings).
