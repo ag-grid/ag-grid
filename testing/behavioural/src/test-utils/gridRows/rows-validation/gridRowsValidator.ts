@@ -6,9 +6,9 @@ import type { GridRows } from '../gridRows';
 import type { GridRowErrors } from './gridRowErrors';
 import type { GridRowsErrors } from './gridRowsErrors';
 import { GridRowsValidationState } from './gridRowsValidationState';
-import { computeUiLevel, validateAllChildrenCount } from './gridRowsValidatorComputed';
-import type { RowAllLeafs } from './gridRowsValidatorLeafs';
-import { verifyAllLeafChildrenWithChildrenAfterGroup, verifyLeafs } from './gridRowsValidatorLeafs';
+import { computeUiLevel, validateAllChildrenCount } from './validator-computed';
+import type { RowAllLeafs } from './validator-leafs';
+import { verifyAllLeafChildrenWithChildrenAfterGroup, verifyLeafs } from './validator-leafs';
 
 type RowChildrenField =
     | 'childrenAfterGroup'

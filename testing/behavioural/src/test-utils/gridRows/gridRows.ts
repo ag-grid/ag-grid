@@ -226,16 +226,13 @@ export class GridRows<TData = any> {
                 this.printDiagram();
                 return this;
             }
+            // Throw validation errors even in update mode — don't bake broken snapshots.
+            if (this.errors.totalErrorsCount > 0) {
+                throw this.#makeError(this.check);
+            }
             if (diagramSnapshot === false || diagramSnapshot === 'empty') {
                 // Nothing to update for these argument types
                 return this;
-            }
-            // Throw validation errors even in update mode — don't bake broken snapshots.
-            if (this.errors.totalErrorsCount > 0) {
-                const error = this.#makeError(this.check);
-                addDiagramToError(error, this.makeDiagram(true), this.label);
-                Error.captureStackTrace(error, this.check);
-                throw error;
             }
             const diagram = this.makeDiagram(false);
             if (unindentText(diagram) !== unindentText(diagramSnapshot)) {
