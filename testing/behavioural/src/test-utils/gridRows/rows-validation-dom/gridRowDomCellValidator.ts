@@ -90,17 +90,25 @@ export class GridRowDomCellValidator {
         if (this.gridRows.checkEditState) {
             const cellHasActiveEditor = this.gridRows.isCellActivelyEditing(row, columnId);
 
-            // ag-cell-inline-editing is toggled by cellComp for any cell with an active editor
+            // ag-cell-inline-editing is set for in-cell editors; ag-cell-popup-editing for popup editors.
+            // Both mean the cell has an active editor — the distinction is where the editor DOM is rendered.
             const hasInlineEditingClass = cellElement.classList.contains('ag-cell-inline-editing');
+            const hasPopupEditingClass = cellElement.classList.contains('ag-cell-popup-editing');
+            const hasAnyEditingClass = hasInlineEditingClass || hasPopupEditingClass;
             rowErrors.add(
                 cellHasActiveEditor &&
-                    !hasInlineEditingClass &&
-                    `Cell id:"${columnId}" should have ag-cell-inline-editing class but does not`
+                    !hasAnyEditingClass &&
+                    `Cell id:"${columnId}" should have ag-cell-inline-editing or ag-cell-popup-editing class but does not`
             );
             rowErrors.add(
                 !cellHasActiveEditor &&
                     hasInlineEditingClass &&
                     `Cell id:"${columnId}" should NOT have ag-cell-inline-editing class`
+            );
+            rowErrors.add(
+                !cellHasActiveEditor &&
+                    hasPopupEditingClass &&
+                    `Cell id:"${columnId}" should NOT have ag-cell-popup-editing class`
             );
 
             // ag-cell-editing and ag-cell-batch-edit are set by CellEditStyleFeature (batch mode only).
@@ -290,12 +298,21 @@ export class GridRowDomCellValidator {
             '.ag-cell-editor input.ag-input-field-input, .ag-cell-editor textarea'
         );
         if (!input) {
-            // Custom editor — cannot validate input value
+            // Popup or custom editor — input is outside the cell element, cannot validate input value
             return;
         }
         const editValue = this.api.getCellValue({ rowNode: row, colKey: column, useFormatter: false, from: 'edit' });
         const expectedStr = editValue != null ? String(editValue) : '';
         const actualStr = input.value ?? '';
+
+        // getCellValue(from:'edit') returns the last synced edit value — not the live keystroke state.
+        // editorValue is only updated when stopEditing() is called or setDataValue() is invoked.
+        // When an editor is started via Backspace (input cleared, no sync yet), actualStr is ""
+        // but expectedStr is the original committed value. This mismatch is expected and not an error.
+        if (actualStr === '' && expectedStr !== '') {
+            return;
+        }
+
         const columnId = column.getColId();
         rowErrors.add(
             actualStr !== expectedStr &&
@@ -316,7 +333,7 @@ export class GridRowDomCellValidator {
 
         const colDef = column.getColDef();
         const usesCheckboxRenderer = colDef?.cellRenderer === 'agCheckboxCellRenderer';
-        const checkboxElement = cellElement.querySelector(
+        const checkboxElement = cellElement.querySelector<HTMLElement>(
             '.ag-checkbox-input-wrapper,[aria-checked],[role="checkbox"],.ag-checkbox'
         );
         if (!usesCheckboxRenderer && !checkboxElement) {
@@ -329,6 +346,40 @@ export class GridRowDomCellValidator {
             return true;
         }
 
+        // The grid's agCheckboxCellRenderer uses a native input[type=checkbox] element.
+        // Its state is stored in the input's .checked and .indeterminate properties, not aria-checked.
+        // Some custom checkbox implementations may use aria-checked instead.
+        const nativeInput = checkboxElement.matches('input[type="checkbox"]')
+            ? (checkboxElement as HTMLInputElement)
+            : checkboxElement.querySelector<HTMLInputElement>('input[type="checkbox"]');
+
+        if (nativeInput) {
+            // Validate via native checkbox properties: checked=true/false, indeterminate=true for null/undefined
+            const isIndeterminate = nativeInput.indeterminate;
+            const isChecked = nativeInput.checked;
+            const expectedChecked = cellValue === true;
+            const expectedIndeterminate = cellValue == null;
+
+            rowErrors.add(
+                !isIndeterminate &&
+                    expectedIndeterminate &&
+                    `HTML checkbox state mismatch for column id:"${columnId}", expected indeterminate (value=${cellValue}) but input is not indeterminate`
+            );
+            rowErrors.add(
+                isIndeterminate &&
+                    !expectedIndeterminate &&
+                    `HTML checkbox state mismatch for column id:"${columnId}", expected checked=${expectedChecked} (value=${cellValue}) but input is indeterminate`
+            );
+            if (!isIndeterminate && !expectedIndeterminate) {
+                rowErrors.add(
+                    isChecked !== expectedChecked &&
+                        `HTML checkbox state mismatch for column id:"${columnId}", expected checked=${expectedChecked} (value=${cellValue}) but input.checked=${isChecked}`
+                );
+            }
+            return true;
+        }
+
+        // Fallback: validate via aria-checked attribute (for custom checkbox implementations)
         const expectedAria =
             cellValue === true ? 'true' : cellValue === false ? 'false' : cellValue == null ? 'mixed' : null;
 

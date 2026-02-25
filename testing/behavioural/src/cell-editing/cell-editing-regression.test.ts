@@ -362,13 +362,16 @@ describe('Cell Editing Regression', () => {
                     cellEditorParams: {
                         values: [0, 1, 2, 3],
                     },
-                    valueGetter: ({ data: { code } }) => {
+                    valueGetter: ({ data }) => {
+                        if (!data) {
+                            return undefined;
+                        }
                         return {
                             0: '0 - zero',
                             1: '1 - one',
                             2: '2 - two',
                             3: '3 - three',
-                        }[code];
+                        }[data.code as number];
                     },
                     valueSetter: ({ newValue, data }) => {
                         const valueChanged = data.code !== newValue;
@@ -387,11 +390,25 @@ describe('Cell Editing Regression', () => {
         const gridDiv = getGridElement(api)! as HTMLElement;
         await asyncSetTimeout(1);
 
+        await new GridRows(api, 'initial state').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 code:"0 - zero"
+            └── LEAF id:1 code:"2 - two"
+        `);
+
         // FIRST EDIT
         const cell0 = getByTestId(gridDiv, agTestIdFor.cell('0', 'code'));
         await userEvent.dblClick(cell0);
 
         await asyncSetTimeout(1);
+
+        // Row 0 has a 🖍️ active popup editor (agRichSelectCellEditor is a popup editor).
+        // The cell shows the committed value, not a live editor value.
+        await new GridRows(api, 'row 0 rich select editor open').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF 🖍️ id:0 code:"0 - zero"
+            └── LEAF id:1 code:"2 - two"
+        `);
 
         const popup0 = await waitForPopup(gridDiv);
         const option0 = await waitFor(() => within(popup0).getByRole('option', { name: '1' }));
@@ -415,11 +432,25 @@ describe('Cell Editing Regression', () => {
         expect(getAllRows(api)[1].data.code).toBe(2);
         expect(cell0).toHaveTextContent('1 - one');
 
+        // After first edit committed: code changed from 0 to 1
+        await new GridRows(api, 'after row 0 rich select edit committed').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 code:"1 - one"
+            └── LEAF id:1 code:"2 - two"
+        `);
+
         // SECOND EDIT
         const cell1 = getByTestId(gridDiv, agTestIdFor.cell('1', 'code'));
         await userEvent.dblClick(cell1);
 
         await asyncSetTimeout(100);
+
+        // Row 1 now has a 🖍️ active popup editor
+        await new GridRows(api, 'row 1 rich select editor open').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 code:"1 - one"
+            └── LEAF 🖍️ id:1 code:"2 - two"
+        `);
 
         const popup1 = await waitForPopup(gridDiv);
         const option1 = await waitFor(() => within(popup1).getByRole('option', { name: '3' }));
@@ -442,6 +473,13 @@ describe('Cell Editing Regression', () => {
         expect(getAllRows(api)[0].data.code).toBe(1);
         expect(getAllRows(api)[1].data.code).toBe(3);
         expect(cell1).toHaveTextContent('3 - three');
+
+        // After second edit committed: code changed from 2 to 3 (AG-15698 regression: cell was not refreshed)
+        await new GridRows(api, 'after row 1 rich select edit committed').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 code:"1 - one"
+            └── LEAF id:1 code:"3 - three"
+        `);
     });
 
     // AG-15794 - onCellEditRequest source
@@ -459,13 +497,16 @@ describe('Cell Editing Regression', () => {
                     cellEditorParams: {
                         values: [0, 1, 2, 3],
                     },
-                    valueGetter: ({ data: { code } }) => {
+                    valueGetter: ({ data }) => {
+                        if (!data) {
+                            return undefined;
+                        }
                         return {
                             0: '0 - zero',
                             1: '1 - one',
                             2: '2 - two',
                             3: '3 - three',
-                        }[code];
+                        }[data.code as number];
                     },
                     valueSetter: ({ newValue, data }) => {
                         const valueChanged = data.code !== newValue;

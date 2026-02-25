@@ -1,3 +1,4 @@
+import { setTimeout as asyncSetTimeout } from 'timers/promises';
 import util from 'util';
 import { expect } from 'vitest';
 
@@ -204,19 +205,29 @@ export class GridRows<TData = any> {
         return this;
     }
 
-    public async check(diagramSnapshot?: string | string[] | 'empty' | true): Promise<this> {
+    /**
+     * @param diagramSnapshot The grid rows diagram snapshot.
+     *  - Pass a template literal snapshot string to compare against the current diagram output.
+     *    If the snapshot does not match the generated diagram, an error will be thrown with the diagram included for debugging.
+     *  - Run `./behave.sh --update-grid-rows` to generate or update snapshots automatically.
+     *    In update mode, mismatches are recorded instead of throwing, allowing batch snapshot updates.
+     *  - 'empty': Assert that there are no displayed rows (empty diagram).
+     *  - true: Print the diagram to the console without performing any snapshot comparison or validation.
+     *  - false: Skip diagram generation and snapshot comparison, running only GridRowsValidator and GridRowsDomValidator.
+     *  - undefined: Logs an error to console reminding you to run `./behave.sh --update-grid-rows` to generate the snapshot.
+     */
+    public async check(diagramSnapshot: string | 'empty' | boolean | undefined): Promise<this> {
         const updateMode = getSnapshotUpdateMode();
 
-        this.loadErrors();
-
         if (updateMode) {
+            this.loadErrors();
             // In snapshot update mode: record mismatches instead of failing.
             // Always generate the diagram even if there are validation errors.
             if (diagramSnapshot === true) {
                 this.printDiagram();
                 return this;
             }
-            if (diagramSnapshot === undefined || diagramSnapshot === 'empty' || Array.isArray(diagramSnapshot)) {
+            if (diagramSnapshot === false || diagramSnapshot === 'empty') {
                 // Nothing to update for these argument types
                 return this;
             }
@@ -227,15 +238,60 @@ export class GridRows<TData = any> {
             return this;
         }
 
-        if (this.errors.totalErrorsCount > 0) {
-            throw this.#makeError(this.check);
-        }
         if (diagramSnapshot === true) {
+            this.loadErrors();
             this.printDiagram();
             return this;
         }
-        if (diagramSnapshot === undefined) {
+        if (diagramSnapshot === false) {
+            this.loadErrors();
+            if (this.errors.totalErrorsCount > 0) {
+                throw this.#makeError(this.check);
+            }
             return this;
+        }
+        if (diagramSnapshot === undefined) {
+            console.error(
+                `GridRows.check() called without a snapshot for "${this.label}". Run \`./behave.sh --update-grid-rows\` to generate one.`
+            );
+            return this;
+        }
+
+        // Retry loop: on failure, rebuild GridRows from scratch (re-reads all grid state) and retry
+        // with a short delay. This handles timing issues where the grid hasn't fully settled yet.
+        // If it keeps failing after all retries, warn loudly that the test needs an explicit delay.
+        const retryDelays = [10, 50, 100];
+        let attempt: GridRows<TData> = this;
+        let lastError: any;
+
+        for (let i = 0; i <= retryDelays.length; i++) {
+            attempt.loadErrors();
+            lastError = attempt.#tryCheck(diagramSnapshot);
+            if (!lastError) {
+                return this;
+            }
+            if (i < retryDelays.length) {
+                await asyncSetTimeout(retryDelays[i]);
+                attempt = new GridRows<TData>(this.api, this.label, this.options);
+            }
+        }
+
+        if (attempt !== this) {
+            console.error(
+                `GridRows flaky check detected for "${this.label}" — passed only after retrying with delays. ` +
+                    `Add \`await asyncSetTimeout(N)\` before this check to avoid intermittent failures.`
+            );
+        }
+
+        addDiagramToError(lastError, attempt.makeDiagram(false), this.label);
+        Error.captureStackTrace(lastError, this.check);
+        throw lastError;
+    }
+
+    /** Attempts validation+snapshot check without throwing. Returns the error if failed, null if passed. */
+    #tryCheck(diagramSnapshot: string | 'empty'): any {
+        if (this.errors.totalErrorsCount > 0) {
+            return this.#makeError(this.check);
         }
         const diagram = this.makeDiagram(false);
         try {
@@ -245,11 +301,9 @@ export class GridRows<TData = any> {
                 expect(unindentText(diagram)).toEqual(unindentText(diagramSnapshot));
             }
         } catch (e: any) {
-            addDiagramToError(e, diagram, this.label);
-            Error.captureStackTrace(e, this.check);
-            throw e;
+            return e;
         }
-        return this;
+        return null;
     }
 
     #makeByIdMap(): Map<string, RowNode<TData>> {

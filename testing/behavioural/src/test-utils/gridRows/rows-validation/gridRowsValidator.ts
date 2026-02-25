@@ -49,6 +49,7 @@ export class GridRowsValidator {
         this.validateDisplayedRows(state);
         this.validatePinnedRows(state);
         this.validateSelectedRows(state);
+        this.validateDisplayedRowCounts(state);
         return this;
     }
 
@@ -247,6 +248,29 @@ export class GridRowsValidator {
                 );
             }
             this.verifyLeafs(gridRows, row);
+            if (row.allChildrenCount !== undefined) {
+                this.validateAllChildrenCount(state, rowErrors, row);
+            }
+        }
+
+        // For leaf rows, api.getRowNode(id) must return this exact row or another row with the same id.
+        // Skip this check for rows that are themselves duplicates (non-canonical instances),
+        // or for rows where getRowId is not configured (auto-generated ids).
+        if (
+            !row.footer &&
+            !row.group &&
+            !row.detail &&
+            !row.stub &&
+            level >= 0 &&
+            row.id !== undefined &&
+            !gridRows.isDuplicateIdRow(row)
+        ) {
+            const apiNode = gridRows.api.getRowNode(row.id!);
+            if (apiNode !== undefined && apiNode !== row && apiNode.id !== row.id) {
+                rowErrors.add(
+                    `api.getRowNode(${JSON.stringify(row.id)}) should return this leaf row, but got ${rowIdAndIndexToString(apiNode)}`
+                );
+            }
         }
 
         if (level >= 0 && csrm) {
@@ -448,6 +472,17 @@ export class GridRowsValidator {
                 selectedRowsSet.has(row)
                     ? 'Selected node is not in getSelectedNodes()'
                     : 'Unselected node is in getSelectedNodes()'
+            );
+        }
+    }
+
+    /** Validates getDisplayedRowCount() matches the number of collected displayed rows. */
+    private validateDisplayedRowCounts({ gridRows }: GridRowsValidationState): void {
+        const displayedRows = gridRows.displayedRows;
+        const apiCount = gridRows.api.getDisplayedRowCount?.();
+        if (apiCount !== undefined && apiCount !== displayedRows.length) {
+            this.errors.default.add(
+                `getDisplayedRowCount()=${apiCount} but ${displayedRows.length} displayed rows were collected`
             );
         }
     }
@@ -730,6 +765,61 @@ export class GridRowsValidator {
                 rowErrors.add(child === row && 'allLeafChildren contains the group node itself');
             }
         }
+    }
+
+    /**
+     * Validates `allChildrenCount` by recomputing the expected value from `childrenAfterAggFilter`,
+     * mirroring the enterprise FilterAggregatesStage logic:
+     * - Grid grouping: counts only leaf descendants (groups are not counted, only their leaf children).
+     * - Tree data: counts all descendants (groups + leaves) recursively; null when no children at level >= 0.
+     */
+    private validateAllChildrenCount(state: GridRowsValidationState, rowErrors: GridRowErrors, row: RowNode): void {
+        const expected = this.computeExpectedAllChildrenCount(state, row);
+        rowErrors.add(
+            row.allChildrenCount !== expected &&
+                `allChildrenCount=${row.allChildrenCount} but expected ${expected} (computed from childrenAfterAggFilter)`
+        );
+    }
+
+    private computeExpectedAllChildrenCount(state: GridRowsValidationState, row: RowNode): number | null {
+        if (!row.hasChildren()) {
+            return null;
+        }
+        if (state.gridRows.treeData) {
+            return this.computeExpectedAllChildrenCountTreeData(row);
+        }
+        return this.computeExpectedAllChildrenCountGridGrouping(row);
+    }
+
+    /** Tree data: count all descendants (groups + leaves) from childrenAfterAggFilter recursively. */
+    private computeExpectedAllChildrenCountTreeData(row: RowNode): number | null {
+        const childrenAfterAggFilter = row.childrenAfterAggFilter;
+        if (!childrenAfterAggFilter) {
+            return row.level >= 0 ? null : 0;
+        }
+        let count = childrenAfterAggFilter.length;
+        for (const child of childrenAfterAggFilter) {
+            count += child.allChildrenCount ?? 0;
+        }
+        // Historical behaviour: null for non-root rows with no children, 0 for root
+        return count === 0 && row.level >= 0 ? null : count;
+    }
+
+    /** Grid grouping: count only leaf descendants from childrenAfterAggFilter recursively. */
+    private computeExpectedAllChildrenCountGridGrouping(row: RowNode): number | null {
+        const childrenAfterAggFilter = row.childrenAfterAggFilter;
+        if (!childrenAfterAggFilter) {
+            return null;
+        }
+        let count = 0;
+        for (const child of childrenAfterAggFilter) {
+            if (child.group) {
+                count += child.allChildrenCount as number;
+            } else {
+                count++;
+            }
+        }
+        return count;
     }
 
     private validatePivotLeafRow({ gridRows }: GridRowsValidationState, row: RowNode): void {

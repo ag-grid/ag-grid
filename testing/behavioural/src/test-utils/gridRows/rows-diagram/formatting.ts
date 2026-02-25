@@ -17,16 +17,26 @@ function getCellDisplayValue(
     column: Column,
     from?: 'data' | 'batch' | 'edit'
 ): unknown {
-    const value = gridRows.api.getCellValue({ rowNode: row, colKey: column, useFormatter: false, from });
+    let value: unknown;
+    try {
+        value = gridRows.api.getCellValue({ rowNode: row, colKey: column, useFormatter: false, from });
+    } catch {
+        return '<ERROR>';
+    }
     if (!(gridRows.options.useFormatter ?? true)) {
         return value;
     }
-    const formattedValue = gridRows.api.getCellValue({
-        rowNode: row,
-        colKey: column,
-        useFormatter: true,
-        from,
-    });
+    let formattedValue: unknown;
+    try {
+        formattedValue = gridRows.api.getCellValue({
+            rowNode: row,
+            colKey: column,
+            useFormatter: true,
+            from,
+        });
+    } catch {
+        return value;
+    }
     if (value === undefined && !formattedValue) {
         return undefined;
     }

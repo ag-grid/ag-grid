@@ -209,6 +209,14 @@ describe('Cell Editing Start', () => {
 
             expect(api.getCellEditorInstances()).toHaveLength(1);
 
+            // Row 0 shows 🖍️ (row is editing) but column values still show committed data —
+            // Backspace clears the editor input without changing the data model until editing stops.
+            await new GridRows(api, `during Backspace edit of ${field}`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF 🖍️ id:0 number:10 string1:"test" string2:"test" date:"2025-01-01" dateStr:"2025-01-01" boolean:true
+                └── LEAF id:1
+            `);
+
             const inputElement = await waitForInput(gridDiv, cell, { popup });
             expect(inputElement).toHaveValue(expectedValue as any);
 
@@ -250,6 +258,59 @@ describe('Cell Editing Start', () => {
     });
 
     describe('Editing Events', () => {
+        test('agLargeTextCellEditor popup editing state', async () => {
+            // Tests that the 🖍️ editing indicator shows correctly for popup editors (agLargeTextCellEditor),
+            // and that the DOM validator correctly handles cells with popup editors (input is outside the cell).
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs,
+                rowData,
+                defaultColDef: {
+                    editable: true,
+                },
+            });
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            await asyncSetTimeout(1);
+
+            const cell = getByTestId(gridDiv, agTestIdFor.cell('0', 'string2'));
+            await userEvent.dblClick(cell);
+            await asyncSetTimeout(1);
+
+            // Editor is open — the row has a 🖍️ editing indicator.
+            // The cell value shows the committed value (popup editors render outside the cell,
+            // so the cell DOM is not replaced with an editor and there's no 🖍️ on the cell value).
+            await new GridRows(api, 'during large text popup edit').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF 🖍️ id:0 number:10 string1:"test" string2:"test" date:"2025-01-01" dateStr:"2025-01-01" boolean:true
+                └── LEAF id:1
+            `);
+
+            // Find the popup textarea and update its value
+            const textarea = await waitForInput(gridDiv, cell, { popup: true });
+            await userEvent.clear(textarea);
+            await userEvent.type(textarea, 'updated text');
+            await asyncSetTimeout(1);
+
+            // Editor still open — row shows 🖍️, and the cell value shows 🖍️editValue dataValue
+            // because the grid has synced the typed value with the edit model
+            await new GridRows(api, 'during large text popup edit - after typing').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF 🖍️ id:0 number:10 string1:"test" string2:🖍️"updated text" "test" date:"2025-01-01" dateStr:"2025-01-01" boolean:true
+                └── LEAF id:1
+            `);
+
+            // Commit by stopping editing programmatically (avoids starting a new edit on the next cell)
+            api.stopEditing();
+            await asyncSetTimeout(1);
+
+            // After commit: string2 is updated, no more editing indicator
+            await new GridRows(api, 'after large text popup edit committed').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 number:10 string1:"test" string2:"updated text" date:"2025-01-01" dateStr:"2025-01-01" boolean:true
+                └── LEAF id:1
+            `);
+        });
+
         test('onValueChanged', async () => {
             const onCellValueChangedGrid = vi.fn();
             const onCellValueChangedColumn = vi.fn();
