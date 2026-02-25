@@ -28,8 +28,7 @@ connecting the grid with a store.
 ## Editing Group Row Cells
 
 Set `groupRowEditable` on any column that should accept edits on group nodes.
-Provide either a boolean or a callback; callbacks only run for nodes where `rowNode.group === true`,
-while leaf rows continue to honour `editable`.
+Provide either a boolean or a callback; callbacks only run for nodes where `rowNode.group === true`, while leaf rows continue to honour `editable`.
 
 `groupRowValueSetter` mirrors the regular `valueSetter`, but it only fires for group rows. It runs
 whenever a group row cell changes through the UI, `rowNode.setDataValue`, or another API call,
