@@ -59,12 +59,16 @@ export function _setVisible(element: HTMLElement, visible: boolean, options: { s
 }
 
 export function _setDisabled(element: HTMLElement, disabled: boolean) {
-    const value = disabled ? 'disabled' : null;
-    _addOrRemoveAttribute(element, 'disabled', value);
+    const attributeName = 'disabled';
+    const addOrRemoveDisabledAttribute = disabled
+        ? (e: HTMLElement) => e.setAttribute(attributeName, '')
+        : (e: HTMLElement) => e.removeAttribute(attributeName);
 
-    const inputs = element.querySelectorAll<HTMLInputElement>('input');
+    addOrRemoveDisabledAttribute(element);
+
+    const inputs = element.querySelectorAll('input') ?? [];
     for (const input of inputs) {
-        _addOrRemoveAttribute(input, 'disabled', value);
+        addOrRemoveDisabledAttribute(input as HTMLElement);
     }
 }
 
