@@ -238,6 +238,12 @@ export class GridRows<TData = any> {
             return this;
         }
 
+        if (diagramSnapshot === undefined) {
+            console.error(
+                `GridRows.check() called without a snapshot for "${this.label}". Run \`./behave.sh --update-grid-rows\` to generate one.`
+            );
+            diagramSnapshot = false;
+        }
         if (diagramSnapshot === true) {
             this.loadErrors();
             this.printDiagram();
@@ -248,12 +254,6 @@ export class GridRows<TData = any> {
             if (this.errors.totalErrorsCount > 0) {
                 throw this.#makeError(this.check);
             }
-            return this;
-        }
-        if (diagramSnapshot === undefined) {
-            console.error(
-                `GridRows.check() called without a snapshot for "${this.label}". Run \`./behave.sh --update-grid-rows\` to generate one.`
-            );
             return this;
         }
 
