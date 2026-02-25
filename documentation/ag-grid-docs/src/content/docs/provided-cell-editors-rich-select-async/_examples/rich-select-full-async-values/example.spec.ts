@@ -19,31 +19,28 @@ test.agExample(import.meta, () => {
         await page.keyboard.press('Escape');
     });
 
-    test.eachFramework(
-        'should show filtered async results after typing a search term',
-        async ({ agIdFor, page }) => {
-            const cell = agIdFor.cell('0', 'language');
+    test.eachFramework('should show filtered async results after typing a search term', async ({ agIdFor, page }) => {
+        const cell = agIdFor.cell('0', 'language');
 
-            // Open editor
-            await cell.dblclick();
+        // Open editor
+        await cell.dblclick();
 
-            const editorInput = page.locator('.ag-rich-select-field-input .ag-input-field-input').first();
-            await expect(editorInput).toBeVisible();
+        const editorInput = page.locator('.ag-rich-select-field-input .ag-input-field-input').first();
+        await expect(editorInput).toBeVisible();
 
-            // Fill with 'Sp' — only 'Spanish' matches the server-side filter
-            await editorInput.fill('Sp');
+        // Fill with 'Sp' — only 'Spanish' matches the server-side filter
+        await editorInput.fill('Sp');
 
-            // Popup should appear once the async response resolves (debounce 300ms + server 1000ms)
-            const popup = page.locator('.ag-rich-select-list').first();
-            await expect(popup).toBeVisible({ timeout: 5000 });
+        // Popup should appear once the async response resolves (debounce 300ms + server 1000ms)
+        const popup = page.locator('.ag-rich-select-list').first();
+        await expect(popup).toBeVisible({ timeout: 5000 });
 
-            // Only Spanish matches 'Sp'
-            await expect(popup.locator('.ag-rich-select-row')).toHaveCount(1, { timeout: 5000 });
-            await expect(popup.locator('.ag-rich-select-row', { hasText: 'Spanish' }).first()).toBeVisible();
+        // Only Spanish matches 'Sp'
+        await expect(popup.locator('.ag-rich-select-row')).toHaveCount(1, { timeout: 5000 });
+        await expect(popup.locator('.ag-rich-select-row', { hasText: 'Spanish' }).first()).toBeVisible();
 
-            await page.keyboard.press('Escape');
-        }
-    );
+        await page.keyboard.press('Escape');
+    });
 
     test.eachFramework(
         'should update cell value when selecting from the async-filtered list',

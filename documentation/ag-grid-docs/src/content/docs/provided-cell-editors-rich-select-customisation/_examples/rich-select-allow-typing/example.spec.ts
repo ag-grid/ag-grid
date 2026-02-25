@@ -28,51 +28,42 @@ test.agExample(import.meta, () => {
         }
     );
 
-    test.eachFramework(
-        'should filter list differently based on search type when typing',
-        async ({ agIdFor, page }) => {
-            // --- Test Match column (prefix search) ---
+    test.eachFramework('should filter list differently based on search type when typing', async ({ agIdFor, page }) => {
+        // --- Test Match column (prefix search) ---
 
-            const matchCell = agIdFor.cell('0', 'color').first();
-            await matchCell.dblclick();
+        const matchCell = agIdFor.cell('0', 'color').first();
+        await matchCell.dblclick();
 
-            const matchPopup = page.locator('.ag-rich-select-list').first();
-            await expect(matchPopup).toBeVisible();
+        const matchPopup = page.locator('.ag-rich-select-list').first();
+        await expect(matchPopup).toBeVisible();
 
-            // Type 'Blue' to filter the list by prefix
-            await page.keyboard.type('Blue');
+        // Type 'Blue' to filter the list by prefix
+        await page.keyboard.type('Blue');
 
-            // 'Blue' should appear in the filtered list (starts with 'Blue')
-            await expect(
-                matchPopup.locator('.ag-rich-select-row', { hasText: 'Blue' }).first()
-            ).toBeVisible();
+        // 'Blue' should appear in the filtered list (starts with 'Blue')
+        await expect(matchPopup.locator('.ag-rich-select-row', { hasText: 'Blue' }).first()).toBeVisible();
 
-            // 'AliceBlue' should NOT appear because it does not start with 'Blue' (prefix search)
-            await expect(
-                matchPopup.locator('.ag-rich-select-row', { hasText: 'AliceBlue' })
-            ).toHaveCount(0);
+        // 'AliceBlue' should NOT appear because it does not start with 'Blue' (prefix search)
+        await expect(matchPopup.locator('.ag-rich-select-row', { hasText: 'AliceBlue' })).toHaveCount(0);
 
-            // Close the editor
-            await page.keyboard.press('Escape');
+        // Close the editor
+        await page.keyboard.press('Escape');
 
-            // --- Test MatchAny column (substring search) ---
+        // --- Test MatchAny column (substring search) ---
 
-            const matchAnyCell = agIdFor.cell('0', 'color_1').first();
-            await matchAnyCell.dblclick();
+        const matchAnyCell = agIdFor.cell('0', 'color_1').first();
+        await matchAnyCell.dblclick();
 
-            const matchAnyPopup = page.locator('.ag-rich-select-list').first();
-            await expect(matchAnyPopup).toBeVisible();
+        const matchAnyPopup = page.locator('.ag-rich-select-list').first();
+        await expect(matchAnyPopup).toBeVisible();
 
-            // Type 'Blue' to filter the list by substring
-            await page.keyboard.type('Blue');
+        // Type 'Blue' to filter the list by substring
+        await page.keyboard.type('Blue');
 
-            // 'AliceBlue' should appear because it contains 'Blue' (substring search)
-            await expect(
-                matchAnyPopup.locator('.ag-rich-select-row', { hasText: 'AliceBlue' }).first()
-            ).toBeVisible();
+        // 'AliceBlue' should appear because it contains 'Blue' (substring search)
+        await expect(matchAnyPopup.locator('.ag-rich-select-row', { hasText: 'AliceBlue' }).first()).toBeVisible();
 
-            // Close the editor
-            await page.keyboard.press('Escape');
-        }
-    );
+        // Close the editor
+        await page.keyboard.press('Escape');
+    });
 });
