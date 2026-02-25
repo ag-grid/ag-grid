@@ -139,6 +139,13 @@ describe('AgRichSelectList', () => {
         expect(list.getIndicesForValues(null)).toEqual([1]);
     });
 
+    it('does not match null sentinel to empty-string options', () => {
+        const { list } = createList<string | null>();
+        list.setCurrentList(['', 'Open', 'Closed']);
+
+        expect(list.getIndicesForValues(null)).toEqual([]);
+    });
+
     it('requests more rows when viewport is close to the end', () => {
         const { list } = createList<string>();
         const callback = jest.fn();

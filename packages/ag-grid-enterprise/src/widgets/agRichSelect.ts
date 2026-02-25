@@ -1327,7 +1327,7 @@ export function _bindCellRendererToHtmlElement(
     });
 }
 
-export type RichSelectValueFormatter<TValue> = (value: TValue | TValue[] | null | undefined) => string;
+type RichSelectValueFormatter<TValue> = (value: TValue | TValue[] | null | undefined) => string;
 
 export function resolveRichSelectValueFormatter<TValue>(
     valueFormatter?: RichSelectParams<TValue>['valueFormatter']

@@ -373,7 +373,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
 
         for (const value of valuesToFind) {
             let idx = currentList.indexOf(value as TValue);
-            if (idx === -1) {
+            if (idx === -1 && value != null) {
                 formattedList ??= currentList.map((item) => this.valueFormatter(item));
                 // objects must go through the formatter, while primitives are compared by their raw string value
                 // so a primitive selected value (e.g. 'Blue') can still match a formatted object option in the list.
