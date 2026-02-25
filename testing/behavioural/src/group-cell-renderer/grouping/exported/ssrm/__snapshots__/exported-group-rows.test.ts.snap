@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=false > showOpenedGroup=false > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=false 1`] = `
+exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=false > showOpenedGroup=false > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=false 1`] = `
 """
 " -> Ireland"
 " -> Ireland -> 2000"
@@ -32,7 +32,7 @@ exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisp
 """
 `;
 
-exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=false > showOpenedGroup=false > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=true 1`] = `
+exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=false > showOpenedGroup=false > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=true 1`] = `
 """
 " -> Ireland"
 " -> Ireland -> columnDef[1].valueFormatter(2000)"
@@ -64,7 +64,7 @@ exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisp
 """
 `;
 
-exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=false > showOpenedGroup=false > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=false > colDef[1].valueFormatter=undefined > snapshot 1`] = `
+exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=false > showOpenedGroup=false > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=false > colDef[1].valueFormatter=undefined > snapshot 1`] = `
 """
 " -> Ireland"
 " -> Ireland -> columnDef[1].valueFormatter(2000)"
@@ -96,7 +96,7 @@ exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisp
 """
 `;
 
-exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=false > showOpenedGroup=false > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=true > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=false 1`] = `
+exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=false > showOpenedGroup=false > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=true > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=false 1`] = `
 """
 " -> Ireland"
 " -> Ireland -> 2000"
@@ -128,7 +128,7 @@ exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisp
 """
 `;
 
-exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=false > showOpenedGroup=false > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=true > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=true 1`] = `
+exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=false > showOpenedGroup=false > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=true > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=true 1`] = `
 """
 " -> Ireland"
 " -> Ireland -> columnDef[1].valueFormatter(2000)"
@@ -160,7 +160,7 @@ exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisp
 """
 `;
 
-exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=false > showOpenedGroup=false > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=true > colDef[1].valueFormatter=undefined > snapshot 1`] = `
+exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=false > showOpenedGroup=false > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=true > colDef[1].valueFormatter=undefined > snapshot 1`] = `
 """
 " -> Ireland"
 " -> Ireland -> columnDef[1].valueFormatter(2000)"
@@ -192,7 +192,7 @@ exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisp
 """
 `;
 
-exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=false > showOpenedGroup=false > autoGroupColumnDef.valueFormatter=undefined > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=false 1`] = `
+exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=false > showOpenedGroup=false > autoGroupColumnDef.valueFormatter=undefined > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=false 1`] = `
 """
 " -> Ireland"
 " -> Ireland -> 2000"
@@ -224,7 +224,7 @@ exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisp
 """
 `;
 
-exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=false > showOpenedGroup=false > autoGroupColumnDef.valueFormatter=undefined > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=true 1`] = `
+exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=false > showOpenedGroup=false > autoGroupColumnDef.valueFormatter=undefined > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=true 1`] = `
 """
 " -> Ireland"
 " -> Ireland -> columnDef[1].valueFormatter(2000)"
@@ -288,7 +288,7 @@ exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisp
 """
 `;
 
-exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=false > showOpenedGroup=true > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=false 1`] = `
+exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=false > showOpenedGroup=true > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=false 1`] = `
 """
 " -> Ireland"
 " -> Ireland -> 2000"
@@ -320,7 +320,7 @@ exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisp
 """
 `;
 
-exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=false > showOpenedGroup=true > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=true 1`] = `
+exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=false > showOpenedGroup=true > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=true 1`] = `
 """
 " -> Ireland"
 " -> Ireland -> columnDef[1].valueFormatter(2000)"
@@ -352,7 +352,7 @@ exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisp
 """
 `;
 
-exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=false > showOpenedGroup=true > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=false > colDef[1].valueFormatter=undefined > snapshot 1`] = `
+exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=false > showOpenedGroup=true > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=false > colDef[1].valueFormatter=undefined > snapshot 1`] = `
 """
 " -> Ireland"
 " -> Ireland -> columnDef[1].valueFormatter(2000)"
@@ -384,7 +384,7 @@ exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisp
 """
 `;
 
-exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=false > showOpenedGroup=true > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=true > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=false 1`] = `
+exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=false > showOpenedGroup=true > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=true > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=false 1`] = `
 """
 " -> Ireland"
 " -> Ireland -> 2000"
@@ -416,7 +416,7 @@ exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisp
 """
 `;
 
-exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=false > showOpenedGroup=true > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=true > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=true 1`] = `
+exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=false > showOpenedGroup=true > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=true > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=true 1`] = `
 """
 " -> Ireland"
 " -> Ireland -> columnDef[1].valueFormatter(2000)"
@@ -448,7 +448,7 @@ exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisp
 """
 `;
 
-exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=false > showOpenedGroup=true > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=true > colDef[1].valueFormatter=undefined > snapshot 1`] = `
+exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=false > showOpenedGroup=true > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=true > colDef[1].valueFormatter=undefined > snapshot 1`] = `
 """
 " -> Ireland"
 " -> Ireland -> columnDef[1].valueFormatter(2000)"
@@ -480,7 +480,7 @@ exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisp
 """
 `;
 
-exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=false > showOpenedGroup=true > autoGroupColumnDef.valueFormatter=undefined > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=false 1`] = `
+exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=false > showOpenedGroup=true > autoGroupColumnDef.valueFormatter=undefined > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=false 1`] = `
 """
 " -> Ireland"
 " -> Ireland -> 2000"
@@ -512,7 +512,7 @@ exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisp
 """
 `;
 
-exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=false > showOpenedGroup=true > autoGroupColumnDef.valueFormatter=undefined > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=true 1`] = `
+exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=false > showOpenedGroup=true > autoGroupColumnDef.valueFormatter=undefined > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=true 1`] = `
 """
 " -> Ireland"
 " -> Ireland -> columnDef[1].valueFormatter(2000)"
@@ -576,7 +576,7 @@ exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisp
 """
 `;
 
-exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=true > showOpenedGroup=false > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=false 1`] = `
+exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=true > showOpenedGroup=false > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=false 1`] = `
 ""Group"
 " -> Ireland"
 " -> Ireland -> 2000"
@@ -593,7 +593,7 @@ exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisp
 " -> Total (Blanks)""
 `;
 
-exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=true > showOpenedGroup=false > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=true 1`] = `
+exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=true > showOpenedGroup=false > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=true 1`] = `
 ""Group"
 " -> Ireland"
 " -> Ireland -> columnDef[1].valueFormatter(2000)"
@@ -610,7 +610,7 @@ exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisp
 " -> Total (Blanks)""
 `;
 
-exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=true > showOpenedGroup=false > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=false > colDef[1].valueFormatter=undefined > snapshot 1`] = `
+exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=true > showOpenedGroup=false > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=false > colDef[1].valueFormatter=undefined > snapshot 1`] = `
 ""Group"
 " -> Ireland"
 " -> Ireland -> columnDef[1].valueFormatter(2000)"
@@ -627,7 +627,7 @@ exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisp
 " -> Total (Blanks)""
 `;
 
-exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=true > showOpenedGroup=false > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=true > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=false 1`] = `
+exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=true > showOpenedGroup=false > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=true > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=false 1`] = `
 ""Group"
 " -> Ireland"
 " -> Ireland -> 2000"
@@ -644,7 +644,7 @@ exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisp
 " -> Total (Blanks)""
 `;
 
-exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=true > showOpenedGroup=false > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=true > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=true 1`] = `
+exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=true > showOpenedGroup=false > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=true > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=true 1`] = `
 ""Group"
 " -> Ireland"
 " -> Ireland -> columnDef[1].valueFormatter(2000)"
@@ -661,7 +661,7 @@ exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisp
 " -> Total (Blanks)""
 `;
 
-exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=true > showOpenedGroup=false > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=true > colDef[1].valueFormatter=undefined > snapshot 1`] = `
+exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=true > showOpenedGroup=false > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=true > colDef[1].valueFormatter=undefined > snapshot 1`] = `
 ""Group"
 " -> Ireland"
 " -> Ireland -> columnDef[1].valueFormatter(2000)"
@@ -678,7 +678,7 @@ exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisp
 " -> Total (Blanks)""
 `;
 
-exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=true > showOpenedGroup=false > autoGroupColumnDef.valueFormatter=undefined > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=false 1`] = `
+exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=true > showOpenedGroup=false > autoGroupColumnDef.valueFormatter=undefined > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=false 1`] = `
 ""Group"
 " -> Ireland"
 " -> Ireland -> 2000"
@@ -695,7 +695,7 @@ exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisp
 " -> Total (Blanks)""
 `;
 
-exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=true > showOpenedGroup=false > autoGroupColumnDef.valueFormatter=undefined > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=true 1`] = `
+exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=true > showOpenedGroup=false > autoGroupColumnDef.valueFormatter=undefined > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=true 1`] = `
 ""Group"
 " -> Ireland"
 " -> Ireland -> columnDef[1].valueFormatter(2000)"
@@ -729,7 +729,7 @@ exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisp
 " -> Total (Blanks)""
 `;
 
-exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=true > showOpenedGroup=true > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=false 1`] = `
+exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=true > showOpenedGroup=true > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=false 1`] = `
 ""Group"
 " -> Ireland"
 " -> Ireland -> 2000"
@@ -746,7 +746,7 @@ exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisp
 " -> Total (Blanks)""
 `;
 
-exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=true > showOpenedGroup=true > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=true 1`] = `
+exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=true > showOpenedGroup=true > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=true 1`] = `
 ""Group"
 " -> Ireland"
 " -> Ireland -> columnDef[1].valueFormatter(2000)"
@@ -763,7 +763,7 @@ exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisp
 " -> Total (Blanks)""
 `;
 
-exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=true > showOpenedGroup=true > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=false > colDef[1].valueFormatter=undefined > snapshot 1`] = `
+exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=true > showOpenedGroup=true > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=false > colDef[1].valueFormatter=undefined > snapshot 1`] = `
 ""Group"
 " -> Ireland"
 " -> Ireland -> columnDef[1].valueFormatter(2000)"
@@ -780,7 +780,7 @@ exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisp
 " -> Total (Blanks)""
 `;
 
-exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=true > showOpenedGroup=true > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=true > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=false 1`] = `
+exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=true > showOpenedGroup=true > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=true > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=false 1`] = `
 ""Group"
 " -> Ireland"
 " -> Ireland -> 2000"
@@ -797,7 +797,7 @@ exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisp
 " -> Total (Blanks)""
 `;
 
-exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=true > showOpenedGroup=true > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=true > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=true 1`] = `
+exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=true > showOpenedGroup=true > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=true > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=true 1`] = `
 ""Group"
 " -> Ireland"
 " -> Ireland -> columnDef[1].valueFormatter(2000)"
@@ -814,7 +814,7 @@ exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisp
 " -> Total (Blanks)""
 `;
 
-exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=true > showOpenedGroup=true > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=true > colDef[1].valueFormatter=undefined > snapshot 1`] = `
+exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=true > showOpenedGroup=true > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.useValueFormatterForExport=true > colDef[1].valueFormatter=undefined > snapshot 1`] = `
 ""Group"
 " -> Ireland"
 " -> Ireland -> columnDef[1].valueFormatter(2000)"
@@ -831,7 +831,7 @@ exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisp
 " -> Total (Blanks)""
 `;
 
-exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=true > showOpenedGroup=true > autoGroupColumnDef.valueFormatter=undefined > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=false 1`] = `
+exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=true > showOpenedGroup=true > autoGroupColumnDef.valueFormatter=undefined > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=false 1`] = `
 ""Group"
 " -> Ireland"
 " -> Ireland -> 2000"
@@ -848,7 +848,7 @@ exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisp
 " -> Total (Blanks)""
 `;
 
-exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=true > showOpenedGroup=true > autoGroupColumnDef.valueFormatter=undefined > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=true 1`] = `
+exports[`ag-grid exported group values > with rowModelType=serverSide, groupDisplayType=groupRows > pivotMode=true > showOpenedGroup=true > autoGroupColumnDef.valueFormatter=undefined > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > colDef[1].useValueFormatterForExport=true 1`] = `
 ""Group"
 " -> Ireland"
 " -> Ireland -> columnDef[1].valueFormatter(2000)"
