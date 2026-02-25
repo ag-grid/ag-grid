@@ -217,45 +217,39 @@ export class GridRows<TData = any> {
      *  - undefined: Logs an error to console reminding you to run `./behave.sh --update-grid-rows` to generate the snapshot.
      */
     public async check(diagramSnapshot: string | 'empty' | boolean | undefined): Promise<this> {
-        const updateMode = getSnapshotUpdateMode();
+        if (diagramSnapshot === undefined) {
+            console.error(
+                `'n❌ GridRows.check() called without a snapshot for "${this.label}". Run \`./behave.sh --update-grid-rows\` to generate one.\n`
+            );
+            diagramSnapshot = false;
+        }
 
-        if (updateMode) {
-            this.loadErrors();
-            // In snapshot update mode: record mismatches instead of failing.
-            if (diagramSnapshot === true) {
-                this.printDiagram();
-                return this;
-            }
-            // Throw validation errors even in update mode — don't bake broken snapshots.
-            if (this.errors.totalErrorsCount > 0) {
-                throw this.#makeError(this.check);
-            }
-            if (diagramSnapshot === false || diagramSnapshot === 'empty') {
-                // Nothing to update for these argument types
+        this.loadErrors();
+
+        // Throw validation errors always — don't bake broken snapshots, and don't hide grid bugs.
+        if (this.errors.totalErrorsCount > 0) {
+            throw this.#makeError(this.check);
+        }
+
+        if (diagramSnapshot === true) {
+            this.printDiagram();
+            return this;
+        }
+
+        if (diagramSnapshot === false) {
+            return this;
+        }
+
+        if (getSnapshotUpdateMode()) {
+            // In snapshot update mode: enforce 'empty' assertions but record string mismatches
+            // instead of throwing, allowing batch snapshot updates across the whole suite.
+            if (diagramSnapshot === 'empty') {
+                expect(this.displayedRows.length).toBe(0);
                 return this;
             }
             const diagram = this.makeDiagram(false);
             if (unindentText(diagram) !== unindentText(diagramSnapshot)) {
                 recordSnapshotMismatch(this.check, diagram, this.label);
-            }
-            return this;
-        }
-
-        if (diagramSnapshot === undefined) {
-            console.error(
-                `GridRows.check() called without a snapshot for "${this.label}". Run \`./behave.sh --update-grid-rows\` to generate one.`
-            );
-            diagramSnapshot = false;
-        }
-        if (diagramSnapshot === true) {
-            this.loadErrors();
-            this.printDiagram();
-            return this;
-        }
-        if (diagramSnapshot === false) {
-            this.loadErrors();
-            if (this.errors.totalErrorsCount > 0) {
-                throw this.#makeError(this.check);
             }
             return this;
         }
@@ -291,7 +285,7 @@ export class GridRows<TData = any> {
         throw lastError;
     }
 
-    /** Attempts validation+snapshot check without throwing. Returns the error if failed, null if passed. */
+    /** Attempts snapshot check without throwing. Returns the error if failed, null if passed. */
     #tryCheck(diagramSnapshot: string | 'empty'): any {
         if (this.errors.totalErrorsCount > 0) {
             return this.#makeError(this.check);
