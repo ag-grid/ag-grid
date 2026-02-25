@@ -60,8 +60,6 @@ export interface SharedThemeParams {
 
     /**
      * Sets the default value for `cellFontSize` and is involved in the default calculation of `listItemHeight`
-     *
-     * @deprecated v35.2 - use `cellFontSize` and `listItemHeight` directly
      */
     dataFontSize: LengthValue;
 
