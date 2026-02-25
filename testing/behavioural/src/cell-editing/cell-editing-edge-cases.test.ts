@@ -1,0 +1,863 @@
+import { getByTestId } from '@testing-library/dom';
+import { userEvent } from '@testing-library/user-event';
+
+import { TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import { BatchEditModule, CellSelectionModule, ClipboardModule } from 'ag-grid-enterprise';
+
+import { EditEventTracker, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
+
+describe('Cell Editing: edge cases', () => {
+    const gridMgr = new TestGridsManager({
+        modules: [CellSelectionModule, BatchEditModule, TextEditorModule, ClipboardModule],
+    });
+
+    beforeAll(() => {
+        setupAgTestIds();
+    });
+
+    afterEach(() => {
+        gridMgr.reset();
+    });
+
+    /** Helper: ensure focus + range are set before each keyboard action */
+    function selectCell(api: any, rowIndex: number, col: string) {
+        api.setFocusedCell(rowIndex, col);
+        api.clearCellSelection();
+        api.addCellRange({ rowStartIndex: rowIndex, rowEndIndex: rowIndex, columns: [col] });
+    }
+
+    // After a non-batch KEEP_EDITOR_SOURCES setDataValue (e.g. paste),
+    // the committed data must reflect the valueSetter's transformation.
+    describe('syncEditAfterCommit reads back transformed value', () => {
+        test('paste via setDataValue with transforming valueSetter writes transformed data', async () => {
+            const valueSetter = ({ data, newValue }: { data: any; newValue: string }) => {
+                // Transform: always uppercase the stored value
+                data.a = String(newValue).toUpperCase();
+                return true;
+            };
+
+            const api = await gridMgr.createGridAndWait('syncTransform-paste', {
+                cellSelection: true,
+                columnDefs: [
+                    { field: 'a', editable: true, valueSetter },
+                    { field: 'b', editable: true },
+                ],
+                rowData: [
+                    { id: 'ROW_0', a: 'Original', b: 'B0' },
+                    { id: 'ROW_1', a: 'A1', b: 'B1' },
+                ],
+                getRowId: (params) => params.data.id,
+            });
+            await asyncSetTimeout(0);
+
+            // Paste 'hello' into ROW_0:a via paste source path
+            const rowNode = api.getDisplayedRowAtIndex(0)!;
+            rowNode.setDataValue('a', 'hello', 'paste');
+            await asyncSetTimeout(0);
+
+            // valueSetter uppercased → data should show HELLO
+            expect(rowNode.data.a).toBe('HELLO');
+            expect(api.getCellValue({ rowNode, colKey: 'a', from: 'data' })).toBe('HELLO');
+        });
+
+        test('rangeSvc setDataValue with transforming valueSetter writes transformed data', async () => {
+            const valueSetter = ({ data, newValue }: { data: any; newValue: string }) => {
+                data.a = newValue === null ? null : `[${newValue}]`;
+                return true;
+            };
+
+            const api = await gridMgr.createGridAndWait('syncTransform-rangeSvc', {
+                cellSelection: true,
+                columnDefs: [
+                    { field: 'a', editable: true, valueSetter },
+                    { field: 'b', editable: true },
+                ],
+                rowData: [
+                    { id: 'ROW_0', a: '[Original]', b: 'B0' },
+                    { id: 'ROW_1', a: '[A1]', b: 'B1' },
+                ],
+                getRowId: (params) => params.data.id,
+            });
+            await asyncSetTimeout(0);
+
+            const rowNode = api.getDisplayedRowAtIndex(0)!;
+            rowNode.setDataValue('a', 'wrapped', 'rangeSvc');
+            await asyncSetTimeout(0);
+
+            expect(rowNode.data.a).toBe('[wrapped]');
+            expect(api.getCellValue({ rowNode, colKey: 'a', from: 'data' })).toBe('[wrapped]');
+        });
+    });
+
+    // syncEditAfterCommit failure path should revert the edit.
+    describe('valueSetter rejection via paste/rangeSvc source', () => {
+        test('paste setDataValue with rejecting valueSetter keeps original value', async () => {
+            const valueSetter = () => false; // always reject
+
+            const api = await gridMgr.createGridAndWait('rejectPaste', {
+                cellSelection: true,
+                columnDefs: [{ field: 'a', editable: true, valueSetter }],
+                rowData: [{ id: 'ROW_0', a: 'Original' }],
+                getRowId: (params) => params.data.id,
+            });
+            const eventTracker = new EditEventTracker(api);
+            await asyncSetTimeout(0);
+
+            const rowNode = api.getDisplayedRowAtIndex(0)!;
+            const result = rowNode.setDataValue('a', 'Rejected', 'paste');
+            await asyncSetTimeout(0);
+
+            // valueSetter rejected → data unchanged
+            expect(rowNode.data.a).toBe('Original');
+            expect(result).toBe(false);
+            expect(eventTracker.counts.cellValueChanged).toBe(0);
+        });
+
+        test('rangeSvc setDataValue with rejecting valueSetter keeps original value', async () => {
+            const valueSetter = () => false;
+
+            const api = await gridMgr.createGridAndWait('rejectRangeSvc', {
+                cellSelection: true,
+                columnDefs: [{ field: 'a', editable: true, valueSetter }],
+                rowData: [{ id: 'ROW_0', a: 'Original' }],
+                getRowId: (params) => params.data.id,
+            });
+            await asyncSetTimeout(0);
+
+            const rowNode = api.getDisplayedRowAtIndex(0)!;
+            const result = rowNode.setDataValue('a', 'Denied', 'rangeSvc');
+            await asyncSetTimeout(0);
+
+            expect(rowNode.data.a).toBe('Original');
+            expect(result).toBe(false);
+        });
+    });
+
+    // The second call should win and sourceValue should reflect the final committed value.
+    describe('sequential setDataValue to same cell', () => {
+        test('two rapid paste setDataValue calls — second value wins', async () => {
+            let valueSetterCalls = 0;
+            const valueSetter = ({ data, newValue }: { data: any; newValue: any }) => {
+                valueSetterCalls += 1;
+                data.a = newValue;
+                return true;
+            };
+
+            const api = await gridMgr.createGridAndWait('seqPaste', {
+                cellSelection: true,
+                columnDefs: [{ field: 'a', editable: true, valueSetter }],
+                rowData: [{ id: 'ROW_0', a: 'Original' }],
+                getRowId: (params) => params.data.id,
+            });
+            const eventTracker = new EditEventTracker(api);
+            await asyncSetTimeout(0);
+
+            const rowNode = api.getDisplayedRowAtIndex(0)!;
+            rowNode.setDataValue('a', 'First', 'paste');
+            rowNode.setDataValue('a', 'Second', 'paste');
+            await asyncSetTimeout(0);
+
+            const afterBoth = new GridRows(api, 'after two rapid paste calls', { checkDom: false });
+            await afterBoth.check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:ROW_0 a:"Second"
+            `);
+
+            expect(rowNode.data.a).toBe('Second');
+            expect(valueSetterCalls).toBe(2);
+            expect(eventTracker.counts.cellValueChanged).toBe(2);
+        });
+
+        test('batch: two setDataValue calls — second value is the pending value', async () => {
+            const api = await gridMgr.createGridAndWait('seqBatch', {
+                cellSelection: true,
+                defaultColDef: { editable: true },
+                columnDefs: [{ field: 'a' }],
+                rowData: [{ id: 'ROW_0', a: 'Original' }],
+                getRowId: (params) => params.data.id,
+            });
+            await asyncSetTimeout(0);
+
+            api.startBatchEdit();
+
+            const rowNode = api.getDisplayedRowAtIndex(0)!;
+            rowNode.setDataValue('a', 'First', 'paste');
+            rowNode.setDataValue('a', 'Second', 'paste');
+            await asyncSetTimeout(0);
+
+            // In batch mode, pending value should be 'Second'; data is still 'Original'
+            const afterBothBatch = new GridRows(api, 'after two batch paste calls', { checkDom: false });
+            await afterBothBatch.check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:ROW_0 a:"Second"
+            `);
+            expect(rowNode.data.a).toBe('Original');
+
+            api.commitBatchEdit();
+            await asyncSetTimeout(0);
+
+            expect(rowNode.data.a).toBe('Second');
+        });
+    });
+
+    // The editor on cell A should remain undisturbed and cell B should
+    // get committed correctly (syncEditAfterCommit must not run for the editing cell).
+    describe('setDataValue on different cell while editor is open', () => {
+        test('paste on cell B while editing cell A leaves editor undisturbed', async () => {
+            const api = await gridMgr.createGridAndWait('pasteWhileEditing', {
+                cellSelection: true,
+                defaultColDef: { editable: true },
+                columnDefs: [
+                    { field: 'a', editable: true },
+                    { field: 'b', editable: true },
+                ],
+                rowData: [
+                    { id: 'ROW_0', a: 'A0', b: 'B0' },
+                    { id: 'ROW_1', a: 'A1', b: 'B1' },
+                ],
+                getRowId: (params) => params.data.id,
+            });
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            const user = userEvent.setup({ skipHover: true });
+            await asyncSetTimeout(0);
+
+            // Open editor on ROW_0:a
+            const cellA = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'));
+            await user.dblClick(cellA);
+            const input = await waitForInput(gridDiv, cellA);
+            await user.clear(input);
+            await user.type(input, 'InProgress');
+
+            // Paste on ROW_1:b (different cell)
+            const rowNode1 = api.getDisplayedRowAtIndex(1)!;
+            rowNode1.setDataValue('b', 'PastedValue', 'paste');
+            await asyncSetTimeout(0);
+
+            // Editor on ROW_0:a should still be open with typed value
+            const inputAfter = await waitForInput(gridDiv, cellA);
+            expect(inputAfter).toBeTruthy();
+            expect(inputAfter.value).toBe('InProgress');
+
+            // ROW_1:b should have the pasted value committed
+            expect(rowNode1.data.b).toBe('PastedValue');
+            expect(api.getCellValue({ rowNode: rowNode1, colKey: 'b' })).toBe('PastedValue');
+
+            // ROW_0:a data should still be original (editor not committed yet)
+            const rowNode0 = api.getDisplayedRowAtIndex(0)!;
+            expect(rowNode0.data.a).toBe('A0');
+        });
+
+        test('batch: setDataValue paste on different cell stores pending edit without committing', async () => {
+            const api = await gridMgr.createGridAndWait('batchPasteNoEditor', {
+                defaultColDef: { editable: true },
+                columnDefs: [
+                    { field: 'a', editable: true },
+                    { field: 'b', editable: true },
+                ],
+                rowData: [
+                    { id: 'ROW_0', a: 'A0', b: 'B0' },
+                    { id: 'ROW_1', a: 'A1', b: 'B1' },
+                ],
+                getRowId: (params) => params.data.id,
+            });
+            await asyncSetTimeout(0);
+
+            api.startBatchEdit();
+
+            // Paste on ROW_1:b via setDataValue
+            const rowNode1 = api.getDisplayedRowAtIndex(1)!;
+            rowNode1.setDataValue('b', 'BatchPaste', 'paste');
+            await asyncSetTimeout(0);
+
+            // In batch mode, data stays original (paste value is pending, not committed)
+            expect(rowNode1.data.b).toBe('B1');
+
+            // The grid cell should display the pending value
+            expect(api.getCellValue({ rowNode: rowNode1, colKey: 'b' })).toBe('BatchPaste');
+
+            // After commit, data should be updated
+            api.commitBatchEdit();
+            await asyncSetTimeout(0);
+            expect(rowNode1.data.b).toBe('BatchPaste');
+
+            // Verify ROW_0 was not affected
+            const rowNode0 = api.getDisplayedRowAtIndex(0)!;
+            expect(rowNode0.data.a).toBe('A0');
+            expect(rowNode0.data.b).toBe('B0');
+        });
+    });
+
+    describe('batch commit and cancel edge cases', () => {
+        test('cancelBatchEdit reverts all pending edits', async () => {
+            const api = await gridMgr.createGridAndWait('batchCancel', {
+                cellSelection: true,
+                defaultColDef: { editable: true },
+                columnDefs: [
+                    { field: 'a', editable: true },
+                    { field: 'b', editable: true },
+                ],
+                rowData: [
+                    { id: 'ROW_0', a: 'A0', b: 'B0' },
+                    { id: 'ROW_1', a: 'A1', b: 'B1' },
+                ],
+                getRowId: (params) => params.data.id,
+            });
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            const user = userEvent.setup({ skipHover: true });
+            await asyncSetTimeout(0);
+
+            api.startBatchEdit();
+
+            // Edit ROW_0:a
+            const cellA = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'));
+            await user.dblClick(cellA);
+            const input = await waitForInput(gridDiv, cellA);
+            await user.clear(input);
+            await user.type(input, 'Modified');
+            await user.keyboard('{Enter}');
+            await asyncSetTimeout(0);
+
+            // Delete ROW_1:b
+            selectCell(api, 1, 'b');
+            await asyncSetTimeout(0);
+            await user.keyboard('{Delete}');
+            await asyncSetTimeout(0);
+
+            // Verify pending state
+            const pendingState = new GridRows(api, 'pending edits', { checkDom: false });
+            await pendingState.check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:ROW_0 a:"Modified" b:"B0"
+                └── LEAF id:ROW_1 a:"A1" b:null
+            `);
+
+            // Data unchanged
+            expect(api.getDisplayedRowAtIndex(0)!.data.a).toBe('A0');
+            expect(api.getDisplayedRowAtIndex(1)!.data.b).toBe('B1');
+
+            // Cancel — everything reverts
+            api.cancelBatchEdit();
+            await asyncSetTimeout(0);
+
+            const afterCancel = new GridRows(api, 'after cancel', { checkDom: false });
+            await afterCancel.check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:ROW_0 a:"A0" b:"B0"
+                └── LEAF id:ROW_1 a:"A1" b:"B1"
+            `);
+
+            expect(api.getDisplayedRowAtIndex(0)!.data.a).toBe('A0');
+            expect(api.getDisplayedRowAtIndex(1)!.data.b).toBe('B1');
+        });
+
+        test('commitBatchEdit applies all pending edits to data', async () => {
+            let valueSetterCalls = 0;
+            const valueSetter = ({
+                data,
+                newValue,
+                colDef,
+            }: {
+                data: any;
+                newValue: any;
+                colDef: { field?: string };
+            }) => {
+                valueSetterCalls += 1;
+                if (colDef.field) {
+                    data[colDef.field] = newValue;
+                }
+                return true;
+            };
+
+            const api = await gridMgr.createGridAndWait('batchCommit', {
+                cellSelection: true,
+                defaultColDef: { editable: true, valueSetter },
+                columnDefs: [
+                    { field: 'a', editable: true },
+                    { field: 'b', editable: true },
+                ],
+                rowData: [
+                    { id: 'ROW_0', a: 'A0', b: 'B0' },
+                    { id: 'ROW_1', a: 'A1', b: 'B1' },
+                ],
+                getRowId: (params) => params.data.id,
+            });
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            const user = userEvent.setup({ skipHover: true });
+            await asyncSetTimeout(0);
+
+            api.startBatchEdit();
+
+            // Edit ROW_0:a
+            const cellA = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'));
+            await user.dblClick(cellA);
+            const input = await waitForInput(gridDiv, cellA);
+            await user.clear(input);
+            await user.type(input, 'CommittedA');
+            await user.keyboard('{Enter}');
+            await asyncSetTimeout(0);
+
+            // Paste into ROW_1:b
+            const rowNode1 = api.getDisplayedRowAtIndex(1)!;
+            rowNode1.setDataValue('b', 'CommittedB', 'paste');
+            await asyncSetTimeout(0);
+
+            // Commit
+            api.commitBatchEdit();
+            await asyncSetTimeout(0);
+
+            const afterCommit = new GridRows(api, 'after commit', { checkDom: false });
+            await afterCommit.check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:ROW_0 a:"CommittedA" b:"B0"
+                └── LEAF id:ROW_1 a:"A1" b:"CommittedB"
+            `);
+
+            expect(api.getDisplayedRowAtIndex(0)!.data.a).toBe('CommittedA');
+            expect(api.getDisplayedRowAtIndex(1)!.data.b).toBe('CommittedB');
+            expect(valueSetterCalls).toBeGreaterThanOrEqual(2);
+        });
+    });
+
+    // In batch mode, paste bypasses valueSetter (deferred to commit).
+    // The pending value is set regardless; rejection only happens at commit.
+    describe('batch paste with rejecting valueSetter', () => {
+        test('batch: paste sets pending value despite rejecting valueSetter (deferred to commit)', async () => {
+            const valueSetter = () => false; // always reject
+
+            const api = await gridMgr.createGridAndWait('batchReject', {
+                cellSelection: true,
+                columnDefs: [{ field: 'a', editable: true, valueSetter }],
+                rowData: [{ id: 'ROW_0', a: 'Original' }],
+                getRowId: (params) => params.data.id,
+            });
+            await asyncSetTimeout(0);
+
+            api.startBatchEdit();
+
+            // Paste sets pending value (valueSetter not called yet)
+            const rowNode = api.getDisplayedRowAtIndex(0)!;
+            rowNode.setDataValue('a', 'Attempted', 'paste');
+            await asyncSetTimeout(0);
+
+            // In batch mode, cell displays the pending value
+            const afterPaste = new GridRows(api, 'after batch paste — pending value shown', { checkDom: false });
+            await afterPaste.check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:ROW_0 a:"Attempted"
+            `);
+
+            // Data unchanged (still original)
+            expect(rowNode.data.a).toBe('Original');
+
+            // Commit — valueSetter rejects, so data stays original
+            api.commitBatchEdit();
+            await asyncSetTimeout(0);
+
+            expect(rowNode.data.a).toBe('Original');
+        });
+    });
+
+    // Pasting the same value that's already pending goes through cleanupEditors again
+    // but the net result is the same pending value.
+    describe('paste duplicate pending value', () => {
+        test('batch: paste same value twice — both succeed but pending value unchanged', async () => {
+            const api = await gridMgr.createGridAndWait('pasteDupe', {
+                cellSelection: true,
+                defaultColDef: { editable: true },
+                columnDefs: [{ field: 'a' }],
+                rowData: [{ id: 'ROW_0', a: 'Original' }],
+                getRowId: (params) => params.data.id,
+            });
+            await asyncSetTimeout(0);
+
+            api.startBatchEdit();
+
+            const rowNode = api.getDisplayedRowAtIndex(0)!;
+            const result1 = rowNode.setDataValue('a', 'Pasted', 'paste');
+            const result2 = rowNode.setDataValue('a', 'Pasted', 'paste');
+            await asyncSetTimeout(0);
+
+            expect(result1).toBe(true);
+            expect(result2).toBe(true);
+
+            expect(api.getCellValue({ rowNode, colKey: 'a' })).toBe('Pasted');
+            expect(rowNode.data.a).toBe('Original');
+
+            api.cancelBatchEdit();
+        });
+    });
+
+    // Escape in batch should revert to the prior pending value, not to sourceValue.
+    describe('mid-batch Escape preserves prior pending value', () => {
+        test('batch: paste X, open editor, type Y, Escape → cell shows X', async () => {
+            const api = await gridMgr.createGridAndWait('escapePreserves', {
+                defaultColDef: { editable: true },
+                columnDefs: [{ field: 'a' }],
+                rowData: [{ id: 'ROW_0', a: 'Source' }],
+                getRowId: (params) => params.data.id,
+            });
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            const user = userEvent.setup({ skipHover: true });
+            await asyncSetTimeout(0);
+
+            api.startBatchEdit();
+
+            // Paste sets pending value to 'PastedX'
+            const rowNode = api.getDisplayedRowAtIndex(0)!;
+            rowNode.setDataValue('a', 'PastedX', 'paste');
+            await asyncSetTimeout(0);
+
+            expect(api.getCellValue({ rowNode, colKey: 'a' })).toBe('PastedX');
+
+            // Open editor on same cell and type a different value
+            const cell = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'));
+            await user.dblClick(cell);
+            await asyncSetTimeout(0);
+
+            const input = await waitForInput(gridDiv, cell);
+            await user.clear(input);
+            await user.type(input, 'TypedY');
+
+            // Escape — should revert to prior pending value 'PastedX', not sourceValue 'Source'
+            await user.keyboard('{Escape}');
+            await asyncSetTimeout(0);
+
+            expect(api.getCellValue({ rowNode, colKey: 'a' })).toBe('PastedX');
+            expect(rowNode.data.a).toBe('Source');
+
+            api.cancelBatchEdit();
+        });
+    });
+
+    // Cancelling from batch mode via cancelBatchEdit should revert all pending changes.
+    describe('cancelBatchEdit after multiple edit types', () => {
+        test('cancelBatchEdit after paste + delete reverts everything', async () => {
+            const api = await gridMgr.createGridAndWait('cancelMulti', {
+                cellSelection: true,
+                defaultColDef: { editable: true },
+                columnDefs: [
+                    { field: 'a', editable: true },
+                    { field: 'b', editable: true },
+                ],
+                rowData: [
+                    { id: 'ROW_0', a: 'A0', b: 'B0' },
+                    { id: 'ROW_1', a: 'A1', b: 'B1' },
+                ],
+                getRowId: (params) => params.data.id,
+            });
+            const user = userEvent.setup({ skipHover: true });
+            await asyncSetTimeout(0);
+
+            api.startBatchEdit();
+
+            // Paste on ROW_0:a
+            const rowNode0 = api.getDisplayedRowAtIndex(0)!;
+            rowNode0.setDataValue('a', 'Pasted', 'paste');
+            await asyncSetTimeout(0);
+
+            // Delete on ROW_1:b
+            selectCell(api, 1, 'b');
+            await asyncSetTimeout(0);
+            await user.keyboard('{Delete}');
+            await asyncSetTimeout(0);
+
+            // Verify pending state
+            expect(api.getCellValue({ rowNode: rowNode0, colKey: 'a' })).toBe('Pasted');
+            expect(api.getCellValue({ rowNode: api.getDisplayedRowAtIndex(1)!, colKey: 'b' })).toBeNull();
+
+            // Cancel reverts all
+            api.cancelBatchEdit();
+            await asyncSetTimeout(0);
+
+            const afterCancel = new GridRows(api, 'after cancel', { checkDom: false });
+            await afterCancel.check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:ROW_0 a:"A0" b:"B0"
+                └── LEAF id:ROW_1 a:"A1" b:"B1"
+            `);
+
+            expect(rowNode0.data.a).toBe('A0');
+            expect(api.getDisplayedRowAtIndex(1)!.data.b).toBe('B1');
+        });
+    });
+
+    // Batch commit with an editor-typed value and a rejecting valueSetter
+    // should leave data unchanged — the pending value was shown in the UI but the
+    // valueSetter vetoes the actual data write at commit time.
+    describe('batch commit with rejecting valueSetter (editor-typed)', () => {
+        test('batch: type value via editor, commit — valueSetter rejects, data unchanged', async () => {
+            const valueSetter = () => false;
+
+            const api = await gridMgr.createGridAndWait('batchRejectEditor', {
+                cellSelection: true,
+                columnDefs: [{ field: 'a', editable: true, valueSetter }],
+                rowData: [{ id: 'ROW_0', a: 'Original' }],
+                getRowId: (params) => params.data.id,
+            });
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            const user = userEvent.setup({ skipHover: true });
+            await asyncSetTimeout(0);
+
+            api.startBatchEdit();
+
+            // Open editor and type a value
+            const cell = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'));
+            await user.dblClick(cell);
+            const input = await waitForInput(gridDiv, cell);
+            await user.clear(input);
+            await user.type(input, 'Rejected');
+            await user.keyboard('{Enter}');
+            await asyncSetTimeout(0);
+
+            // Pending value should be shown
+            const rowNode = api.getDisplayedRowAtIndex(0)!;
+            expect(api.getCellValue({ rowNode, colKey: 'a' })).toBe('Rejected');
+            expect(rowNode.data.a).toBe('Original');
+
+            // Commit — valueSetter rejects
+            api.commitBatchEdit();
+            await asyncSetTimeout(0);
+
+            expect(rowNode.data.a).toBe('Original');
+        });
+    });
+
+    // Batch commit with Delete (clear) and a rejecting valueSetter
+    // should leave data unchanged.
+    describe('batch commit with rejecting valueSetter (Delete clear)', () => {
+        test('batch: Delete to clear, commit — valueSetter rejects, data unchanged', async () => {
+            const valueSetter = () => false;
+
+            const api = await gridMgr.createGridAndWait('batchRejectDelete', {
+                cellSelection: true,
+                columnDefs: [{ field: 'a', editable: true, valueSetter }],
+                rowData: [{ id: 'ROW_0', a: 'Original' }],
+                getRowId: (params) => params.data.id,
+            });
+            const user = userEvent.setup({ skipHover: true });
+            await asyncSetTimeout(0);
+
+            api.startBatchEdit();
+
+            selectCell(api, 0, 'a');
+            await asyncSetTimeout(0);
+
+            await user.keyboard('{Delete}');
+            await asyncSetTimeout(0);
+
+            // Pending value should be cleared (null)
+            const rowNode = api.getDisplayedRowAtIndex(0)!;
+            expect(api.getCellValue({ rowNode, colKey: 'a' })).toBeNull();
+            expect(rowNode.data.a).toBe('Original');
+
+            // Commit — valueSetter rejects
+            api.commitBatchEdit();
+            await asyncSetTimeout(0);
+
+            expect(rowNode.data.a).toBe('Original');
+        });
+    });
+
+    // Numeric column (sourceValue=0): edit → clear → Delete again should stay cleared,
+    // because the cell was explicitly edited before being cleared.
+    describe('numeric column edge cases (sourceValue=0)', () => {
+        test('batch: edit numeric 0 to new value, Delete clears, second Delete stays cleared', async () => {
+            const api = await gridMgr.createGridAndWait('numericEditClear', {
+                cellSelection: true,
+                defaultColDef: { editable: true },
+                columnDefs: [{ field: 'a', editable: true }],
+                rowData: [{ id: 'ROW_0', a: 0 }],
+                getRowId: (params) => params.data.id,
+            });
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            const user = userEvent.setup({ skipHover: true });
+            await asyncSetTimeout(0);
+
+            api.startBatchEdit();
+
+            // Edit cell from 0 to 99
+            const cell = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'));
+            await user.dblClick(cell);
+            const input = await waitForInput(gridDiv, cell);
+            await user.clear(input);
+            await user.type(input, '99');
+            await user.keyboard('{Enter}');
+            await asyncSetTimeout(0);
+
+            const afterEdit = new GridRows(api, 'after editing 0 to 99', { checkDom: false });
+            await afterEdit.check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:ROW_0 a:99
+            `);
+
+            // Delete → clear
+            selectCell(api, 0, 'a');
+            await asyncSetTimeout(0);
+            await user.keyboard('{Delete}');
+            await asyncSetTimeout(0);
+
+            const afterFirstDelete = new GridRows(api, 'after first Delete', { checkDom: false });
+            await afterFirstDelete.check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:ROW_0 a:null
+            `);
+
+            // Second Delete → should stay cleared (was edited before being cleared)
+            await user.keyboard('{Delete}');
+            await asyncSetTimeout(0);
+
+            const afterSecondDelete = new GridRows(api, 'after second Delete — should stay cleared', {
+                checkDom: false,
+            });
+            await afterSecondDelete.check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:ROW_0 a:null
+            `);
+
+            // Underlying data unchanged in batch mode
+            expect(api.getDisplayedRowAtIndex(0)!.data.a).toBe(0);
+
+            api.cancelBatchEdit();
+        });
+
+        test('batch: Delete on numeric 0, cancel reverts to 0', async () => {
+            const api = await gridMgr.createGridAndWait('numericCancelZero', {
+                cellSelection: true,
+                defaultColDef: { editable: true },
+                columnDefs: [{ field: 'a', editable: true }],
+                rowData: [{ id: 'ROW_0', a: 0 }],
+                getRowId: (params) => params.data.id,
+            });
+            const user = userEvent.setup({ skipHover: true });
+            await asyncSetTimeout(0);
+
+            api.startBatchEdit();
+
+            selectCell(api, 0, 'a');
+            await asyncSetTimeout(0);
+
+            await user.keyboard('{Delete}');
+            await asyncSetTimeout(0);
+
+            const afterClear = new GridRows(api, 'after Delete on 0', { checkDom: false });
+            await afterClear.check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:ROW_0 a:null
+            `);
+
+            // Cancel — should revert to 0
+            api.cancelBatchEdit();
+            await asyncSetTimeout(0);
+
+            const afterCancel = new GridRows(api, 'after cancel — should revert to 0', { checkDom: false });
+            await afterCancel.check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:ROW_0 a:0
+            `);
+
+            expect(api.getDisplayedRowAtIndex(0)!.data.a).toBe(0);
+        });
+    });
+
+    // Non-editor batch writes (paste, cellClear, setDataValue with batch sources) must
+    // dispatch batchEditingStarted so that batchEditingStopped fires on commit/cancel. Without this,
+    // consumers that defer work until batchEditingStopped (e.g. groupEditService) would orphan pending updates.
+    describe('batchEditingStarted/Stopped events for non-editor batch paths', () => {
+        test.each(['commit', 'cancel'] as const)(
+            'paste-only batch session dispatches both batch events on %s',
+            async (action) => {
+                const api = await gridMgr.createGridAndWait(`pasteOnlyBatch-${action}`, {
+                    cellSelection: true,
+                    defaultColDef: { editable: true },
+                    columnDefs: [{ field: 'a' }],
+                    rowData: [{ id: 'ROW_0', a: 'Original' }],
+                    getRowId: (params) => params.data.id,
+                });
+                const eventTracker = new EditEventTracker(api);
+                await asyncSetTimeout(0);
+
+                api.startBatchEdit();
+
+                // Paste-source write without ever opening an editor
+                const rowNode = api.getDisplayedRowAtIndex(0)!;
+                rowNode.setDataValue('a', 'Pasted', 'paste');
+                await asyncSetTimeout(0);
+
+                // batchEditingStarted should have fired lazily
+                expect(eventTracker.counts.batchEditingStarted).toBe(1);
+                expect(eventTracker.counts.batchEditingStopped).toBe(0);
+
+                if (action === 'commit') {
+                    api.commitBatchEdit();
+                } else {
+                    api.cancelBatchEdit();
+                }
+                await asyncSetTimeout(0);
+
+                expect(eventTracker.counts).toMatchObject({
+                    batchEditingStarted: 1,
+                    batchEditingStopped: 1,
+                });
+
+                if (action === 'commit') {
+                    expect(rowNode.data.a).toBe('Pasted');
+                } else {
+                    expect(rowNode.data.a).toBe('Original');
+                }
+            }
+        );
+
+        test('cellClear-only batch session dispatches both batch events on commit', async () => {
+            const api = await gridMgr.createGridAndWait('cellClearOnlyBatch', {
+                cellSelection: true,
+                defaultColDef: { editable: true },
+                columnDefs: [{ field: 'a' }],
+                rowData: [{ id: 'ROW_0', a: 'Original' }],
+                getRowId: (params) => params.data.id,
+            });
+            const eventTracker = new EditEventTracker(api);
+            await asyncSetTimeout(0);
+
+            api.startBatchEdit();
+
+            // cellClear-source write without ever opening an editor
+            const rowNode = api.getDisplayedRowAtIndex(0)!;
+            rowNode.setDataValue('a', null, 'cellClear');
+            await asyncSetTimeout(0);
+
+            // batchEditingStarted should have fired
+            expect(eventTracker.counts.batchEditingStarted).toBe(1);
+
+            api.commitBatchEdit();
+            await asyncSetTimeout(0);
+
+            expect(eventTracker.counts).toMatchObject({
+                batchEditingStarted: 1,
+                batchEditingStopped: 1,
+            });
+            expect(rowNode.data.a).toBe(null);
+        });
+
+        test('no-change batch session does not dispatch batch events', async () => {
+            const api = await gridMgr.createGridAndWait('noChangeBatch', {
+                cellSelection: true,
+                defaultColDef: { editable: true },
+                columnDefs: [{ field: 'a' }],
+                rowData: [{ id: 'ROW_0', a: 'Original' }],
+                getRowId: (params) => params.data.id,
+            });
+            const eventTracker = new EditEventTracker(api);
+            await asyncSetTimeout(0);
+
+            api.startBatchEdit();
+            // No writes at all — just commit
+            api.commitBatchEdit();
+            await asyncSetTimeout(0);
+
+            expect(eventTracker.counts).toMatchObject({
+                batchEditingStarted: 0,
+                batchEditingStopped: 0,
+            });
+        });
+    });
+});

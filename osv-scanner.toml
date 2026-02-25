@@ -202,5 +202,15 @@ reason = "tar not used directly and not accessible to end users/external users"
 id = "GHSA-r6q2-hw4h-h46w"
 reason = "tar not used directly and not accessible to end users/external users"
 
+[[IgnoredVulns]]
+id = "GHSA-7h2j-956f-4vf2"
+reason = "braces-expansion not used directly and not accessible to end users/external users"
 
+[[IgnoredVulns]]
+id = "GHSA-wqch-xfxh-vrr4"
+reason = "used by expressjs which is only used for dev purposes"
+
+[[IgnoredVulns]]
+id = "GHSA-34x7-hfp2-rc4v"
+reason = "tar not used directly and not accessible to end users/external users"
 

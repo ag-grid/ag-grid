@@ -92,3 +92,7 @@ function getPivotGroupHeaderHeight(beans: BeanCollection): number {
 export function isHeaderPositionEqual(headerPosA: HeaderPosition, headerPosB: HeaderPosition): boolean {
     return headerPosA.headerRowIndex === headerPosB.headerRowIndex && headerPosA.column === headerPosB.column;
 }
+
+export function isHeaderPosition(position: unknown): position is HeaderPosition {
+    return (position as HeaderPosition)?.headerRowIndex != null;
+}

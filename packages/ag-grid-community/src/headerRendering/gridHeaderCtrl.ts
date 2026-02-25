@@ -5,7 +5,6 @@ import { _exists } from '../agStack/utils/generic';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { HeaderNavigationDirection } from '../navigation/headerNavigationService';
-import { _focusNextGridCoreContainer } from '../utils/gridFocus';
 import { ManagedFocusFeature } from '../widgets/managedFocusFeature';
 import { getColumnHeaderRowHeight, getFloatingFiltersHeight, getGroupRowsHeight } from './headerUtils';
 
@@ -130,11 +129,22 @@ export class GridHeaderCtrl extends BeanStub {
         const { beans } = this;
         const { headerNavigation, focusSvc } = beans;
 
-        if (
-            headerNavigation!.navigateHorizontally(direction, true, e) ||
-            (!backwards && focusSvc.focusOverlay(false)) ||
-            _focusNextGridCoreContainer(beans, backwards, true)
-        ) {
+        let focused =
+            headerNavigation!.navigateHorizontally(direction, true, e) || (!backwards && focusSvc.focusOverlay(false));
+
+        if (!focused) {
+            const gridCtrl = beans.ctrlsSvc.get('gridCtrl');
+            const focusResult = gridCtrl.focusNextInnerContainer(backwards);
+
+            if (focusResult === true) {
+                focused = true;
+            } else if (focusResult === undefined) {
+                gridCtrl.forceFocusOutOfContainer(backwards);
+                focused = true;
+            }
+        }
+
+        if (focused) {
             // preventDefault so that the tab key doesn't cause focus to get lost
             e.preventDefault();
         }

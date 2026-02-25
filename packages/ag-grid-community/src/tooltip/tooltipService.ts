@@ -29,6 +29,18 @@ type CellTooltipDisplayFunctions = {
     shouldDisplayCustomTooltip: () => boolean;
 };
 
+type LocalisableError = Error & {
+    getTranslatedMessage?: (translate: LocaleTextFunc) => string;
+};
+
+const getErrorTooltipMessage = (error: Error, translate: LocaleTextFunc): string => {
+    const localisable = error as LocalisableError;
+    if (typeof localisable.getTranslatedMessage === 'function') {
+        return localisable.getTranslatedMessage(translate);
+    }
+    return error.message;
+};
+
 const getEditErrorsForPosition = (
     beans: BeanCollection,
     cellCtrl: CellCtrl,
@@ -46,8 +58,27 @@ const getEditErrorsForPosition = (
 
 const getCellTruncationCheck = (beans: BeanCollection, ctrl: CellCtrl): (() => boolean) | undefined => {
     const isTooltipWhenTruncated = _isShowTooltipWhenTruncated(beans.gos);
-    if (!isTooltipWhenTruncated || ctrl.isCellRenderer()) {
+
+    if (!isTooltipWhenTruncated) {
         return undefined;
+    }
+
+    if (ctrl.isCellRenderer()) {
+        const colDef = ctrl.column.getColDef();
+        // create rule for our internal group cell renderer
+        const isGroupCellRenderer = !!colDef.showRowGroup || colDef.cellRenderer === 'agGroupCellRenderer';
+        if (!isGroupCellRenderer) {
+            return undefined;
+        }
+
+        return _isElementOverflowingCallback(() => {
+            const eCell = ctrl.eGui;
+            return (
+                (eCell.querySelector('.ag-group-value') as HTMLElement | undefined) ||
+                (eCell.querySelector('.ag-cell-value') as HTMLElement | undefined) ||
+                eCell
+            );
+        });
     }
 
     return _isElementOverflowingCallback(() => {
@@ -106,7 +137,7 @@ const resolveCellTooltip = ({
         const error = formula.getFormulaError(column, rowNode);
         if (error) {
             return {
-                value: error.message,
+                value: getErrorTooltipMessage(error, translate),
                 location: 'cellFormula',
                 shouldDisplay: () => !!formula?.getFormulaError(column, rowNode),
             };

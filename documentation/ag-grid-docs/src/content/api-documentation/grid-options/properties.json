@@ -990,6 +990,12 @@
                 "name": "Custom Navigation",
                 "url": "./keyboard-navigation/#custom-navigation"
             }
+        },
+        "tabToNextGridContainer": {
+            "more": {
+                "name": "Custom Navigation",
+                "url": "./keyboard-navigation/#custom-navigation"
+            }
         }
     },
     "pagination": {
@@ -1084,7 +1090,7 @@
         "suppressAggFilteredOnly": {
             "more": {
                 "name": "Aggregate Before Filtering",
-                "url": "./aggregation-custom-functions/"
+                "url": "./aggregation-filtering/"
             }
         },
         "groupAggFiltering": {
@@ -1398,6 +1404,12 @@
             "more": {
                 "name": "Hide Open Parents",
                 "url": "./grouping-multiple-group-columns/#hiding-expanded-parent-rows"
+            }
+        },
+        "groupHideColumnsUntilExpanded": {
+            "more": {
+                "name": "Hiding Group Columns Until Expanded",
+                "url": "./grouping-multiple-group-columns/#hiding-group-columns-until-expanded"
             }
         },
         "groupHideParentOfSingleChild": {

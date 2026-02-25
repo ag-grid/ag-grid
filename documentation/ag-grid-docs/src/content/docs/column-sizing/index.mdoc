@@ -3,7 +3,7 @@ title: "Column Sizing"
 description: "Column Sizing controls the way Columns are sized within the $framework Data Grid. Use auto-sizing or column-flex to control Column Size programmatically."
 ---
 
-All columns can be resized by dragging the top right portion of the column.
+Columns can be resized by dragging the right edge of the column header or by using the keyboard.
 
 ## Sizing
 
@@ -179,6 +179,12 @@ Just like Excel, each column can also be auto-resized by double clicking the rig
 
 {% /note %}
 
+## Resize via Keyboard
+
+Column headers can be resized using the keyboard. When a column header is focused, press {% kbd "⌥ Alt" /%} + {% kbd "←" /%} / {% kbd "→" /%} to resize the column in that direction.
+
+See [Column Header Navigation](./keyboard-navigation/#column-header-navigation) for a full list of header keyboard interactions.
+
 ## Shift Resizing
 
 If you hold the {% kbd "⇧ Shift" /%} key while dragging the resize handle, the column will take space away from the column adjacent to it. This means the total width for all columns will be constant.
@@ -201,7 +207,3 @@ When you resize a group, it will distribute the extra room to all columns in the
 -   The group 'Nothing Resizes' cannot be resized at all because all the columns in the groups have `resizable=false`.
 
 {% gridExampleRunner title="Resizing Groups" name="resizing-groups" /%}
-
-## Next Up
-
-Continue to the next section: [Column Moving](./column-moving/).

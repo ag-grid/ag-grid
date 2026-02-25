@@ -204,11 +204,13 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     }
 
     private setupFunctions() {
-        // eslint-disable-next-line no-restricted-properties
-        this.supportedOperations = new Map(Object.entries(SUPPORTED_FUNCTIONS));
+        this.supportedOperations = new Map();
+        Object.keys(SUPPORTED_FUNCTIONS).forEach((name) => {
+            this.supportedOperations.set(name, SUPPORTED_FUNCTIONS[name as keyof typeof SUPPORTED_FUNCTIONS]);
+        });
         this.functionNames = null;
 
-        // Register custom functions, not reactive.
+        // register custom functions, not reactive.
         const customFuncs = this.gos.get('formulaFuncs');
         if (customFuncs) {
             Object.keys(customFuncs).forEach((name) => {
@@ -373,6 +375,32 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         return dataSource.getFormula({ column: col, rowNode: row });
     }
 
+    private coerceFormulaValue(column: AgColumn, value: unknown): unknown {
+        const baseDataType = this.beans.dataTypeSvc?.getBaseDataType(column);
+        if (baseDataType === 'bigint') {
+            const bigintValue = this.toBigIntValue(value);
+            return bigintValue ?? value;
+        }
+        if (baseDataType === 'number' && typeof value === 'bigint') {
+            const asNumber = Number(value);
+            return Number.isFinite(asNumber) ? asNumber : value;
+        }
+        return value;
+    }
+
+    private toBigIntValue(value: unknown): bigint | null {
+        if (typeof value === 'bigint') {
+            return value;
+        }
+        if (typeof value === 'number') {
+            if (!Number.isFinite(value) || !Number.isInteger(value)) {
+                return null;
+            }
+            return BigInt(value);
+        }
+        return null;
+    }
+
     /** Fetch a non-formula value from the grid without triggering nested formula calc. */
     private fetchRawValue(col: AgColumn, row: RowNode): unknown {
         return this.beans.valueSvc.getValue(col, row, 'data');
@@ -399,7 +427,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             const isVisiting = colSet?.has(c);
             if (isVisiting) {
                 // already visiting, so we have a cycle.
-                throw new FormulaError('Circular reference', '#CIRCREF!');
+                throw new FormulaError(51);
             }
 
             if (!colSet) {
@@ -437,7 +465,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
 
         const ast = cachedItem.getAst();
         if (!ast) {
-            throw new FormulaError('Expected parsable formula', '#PARSE!');
+            throw new FormulaError(52);
         }
 
         const unresolvedDepIterator = unresolvedDeps(this.beans, ast, this.ensureCellFormula.bind(this));
@@ -521,7 +549,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
                         const cachedRefFormula = this.ensureCellFormula(addr.row, addr.column);
                         if (cachedRefFormula) {
                             if (!cachedRefFormula.isValueReady()) {
-                                throw new FormulaError('Internal scheduling error');
+                                throw new FormulaError(53);
                             }
 
                             const error = cachedRefFormula.getError();
@@ -534,6 +562,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
                     },
                     { row, column: col }
                 );
+                const coerced = this.coerceFormulaValue(col, computed);
 
                 // an inner valueGetter might have errored this path, if so rethrow to avoid
                 // overwriting the error with the error value string
@@ -544,13 +573,13 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
                 }
 
                 // cache result and mark as completed
-                cachedCellFormula.setComputedValue(computed);
+                cachedCellFormula.setComputedValue(coerced);
                 setVisited(row, col);
                 evalStack.pop();
             }
 
             if (!rootCachedCellFormula.isValueReady()) {
-                throw new FormulaError('Internal scheduling error');
+                throw new FormulaError(53);
             }
 
             return rootCachedCellFormula.getValue();

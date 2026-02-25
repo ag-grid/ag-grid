@@ -101,6 +101,7 @@ import type {
     SortDirection,
     StatusBar,
     TabToNextCell,
+    TabToNextGridContainer,
     TabToNextHeader,
     Theme,
     TreeDataDisplayType,
@@ -1243,6 +1244,14 @@ export interface Props<TData> {
          * @agModule `RowGroupingModule`
          */
     groupHideOpenParents?: boolean,
+    /** When using `groupDisplayType='multipleColumns'` or `groupHideOpenParents=true`, hides group columns for levels
+         * that have not yet been expanded. Only the top-level group column is initially
+         * visible; each subsequent level becomes visible when at least one group at the
+         * preceding level is expanded. (Client Side Row Model only)
+         * @default false
+         * @agModule `RowGroupingModule`
+         */
+    groupHideColumnsUntilExpanded?: boolean,
     /** Set to `true` to prevent the grid from creating a '(Blanks)' group for nodes which do not belong to a group, and display the unbalanced nodes alongside group nodes.
          * @default false
          * @agModule `RowGroupingModule`
@@ -1759,6 +1768,12 @@ export interface Props<TData> {
          * or `false` to let the browser handle the tab behaviour.
          */
     tabToNextCell?: TabToNextCell<TData>,
+    /** Allows overriding the default behaviour when tabbing between core grid containers.
+         * Return a container name, a cell position, or a header position to focus that target,
+         * `true` to stay on the current focus, `false` to let the browser handle tab behaviour,
+         * or `undefined` to use the grid's default behaviour.
+         */
+    tabToNextGridContainer?: TabToNextGridContainer<TData>,
     /** A callback for localising text within the grid.
          * @initial
          * @agModule `LocaleModule`
@@ -2201,6 +2216,7 @@ export function getProps() {
         groupRemoveSingleChildren: undefined,
         groupRemoveLowestSingleChildren: undefined,
         groupHideOpenParents: undefined,
+        groupHideColumnsUntilExpanded: undefined,
         groupAllowUnbalanced: undefined,
         rowGroupPanelShow: undefined,
         groupRowRenderer: undefined,
@@ -2308,6 +2324,7 @@ export function getProps() {
         tabToNextHeader: undefined,
         navigateToNextCell: undefined,
         tabToNextCell: undefined,
+        tabToNextGridContainer: undefined,
         getLocaleText: undefined,
         getDocument: undefined,
         paginationNumberFormatter: undefined,

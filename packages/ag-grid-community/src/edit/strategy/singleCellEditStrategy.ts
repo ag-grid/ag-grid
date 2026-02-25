@@ -96,12 +96,19 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         };
     }
 
-    public override stop(cancel?: boolean, event?: Event | null): boolean {
-        super.stop(cancel, event);
+    public override stopCancelled(forceCancel: boolean): boolean {
+        super.stopCancelled(forceCancel);
+        return this.clearPosition();
+    }
 
+    public override stopCommitted(event: Event | null, commit: boolean): boolean {
+        super.stopCommitted(event, commit);
+        return this.clearPosition();
+    }
+
+    private clearPosition(): true {
         this.rowNode = undefined;
         this.column = undefined;
-
         return true;
     }
 

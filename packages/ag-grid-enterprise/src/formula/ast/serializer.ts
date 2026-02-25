@@ -3,6 +3,7 @@ import type { AgColumn, BeanCollection, ColumnModel } from 'ag-grid-community';
 
 import { getDefBySymbol } from './operators';
 import type { InfixOpDef } from './operators';
+import { FormulaError } from './utils';
 import type { Cell, CellRef, FormulaNode, FormulaOperation } from './utils';
 
 // shared, symbol-only
@@ -48,7 +49,7 @@ export function rowIdFromIndex(beans: BeanCollection, idx: number): string | nul
 
 function quoteString(s: string): string {
     if (s.includes('"')) {
-        throw 'String contains a quote (") which the tokenizer does not support.';
+        throw new FormulaError(18);
     }
     return `"${s}"`;
 }
@@ -63,7 +64,7 @@ function columnValueForREF(beans: BeanCollection, ref: CellRef): string {
         if (label) {
             return label.toUpperCase();
         }
-        throw `Cannot produce absolute COLUMN label from id '${ref.id}'`;
+        throw new FormulaError(19, [ref.id]);
     } else {
         if (looksLetters) {
             const id = colIdFromLabel(beans, ref.id);
@@ -81,12 +82,12 @@ function rowValueForREF(beans: BeanCollection, ref: CellRef): string {
         // when absolute, the reference id is the index
         const rowId = rowIdFromIndex(beans, Number(id));
         if (rowId == null) {
-            throw `Cannot produce absolute ROW index from id '${id}'`;
+            throw new FormulaError(20, [id]);
         }
     } else {
         const idx = rowIndexFromId(beans, id);
         if (idx == null) {
-            throw `Cannot produce ROW index from id '${id}'`;
+            throw new FormulaError(21, [id]);
         }
     }
 
@@ -103,7 +104,7 @@ function columnLabelForA1(beans: BeanCollection, ref: CellRef): string {
     if (label) {
         return label.toUpperCase();
     }
-    throw `Cannot map column id '${ref.id}' to A1 label`;
+    throw new FormulaError(22, [ref.id]);
 }
 
 function rowIndexForA1(beans: BeanCollection, ref: CellRef): number {
@@ -113,13 +114,13 @@ function rowIndexForA1(beans: BeanCollection, ref: CellRef): number {
         if (Number.isFinite(idx) && idx >= 1) {
             return idx;
         }
-        throw `Cannot parse absolute row index '${ref.id}'`;
+        throw new FormulaError(23, [ref.id]);
     }
     const idx = rowIndexFromId(beans, ref.id);
     if (idx != null) {
         return idx;
     }
-    throw `Cannot map row id '${ref.id}' to A1 index`;
+    throw new FormulaError(24, [ref.id]);
 }
 
 function serializeCellA1(beans: BeanCollection, cell: Cell, unsafe: boolean): string {

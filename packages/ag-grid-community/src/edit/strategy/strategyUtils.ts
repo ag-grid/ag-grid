@@ -44,7 +44,7 @@ export function shouldStartEditing(
     }
 
     if (source === 'api') {
-        return cellStartedEdit ?? false;
+        return !!cellStartedEdit;
     }
 
     return false;

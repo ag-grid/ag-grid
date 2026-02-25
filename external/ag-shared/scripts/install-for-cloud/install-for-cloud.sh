@@ -159,10 +159,11 @@ symlink_nx_cache() {
     fi
 }
 
-# Try to symlink node_modules from root worktree if lockfiles match
-# Returns 0 if symlink was created, 1 if fallback to install needed
-try_symlink_node_modules() {
-    if ! is_claude_worktree; then
+# Try to copy node_modules from root worktree if lockfiles match.
+# Uses APFS COW clone (cp -cR) for speed and disk savings, with rsync fallback.
+# Returns 0 if copy succeeded (node_modules now exists), 1 if fallback to install needed.
+try_copy_node_modules() {
+    if ! is_claude_worktree && [[ -z "${ROOT_WORKTREE_PATH:-}" ]]; then
         return 1
     fi
 
@@ -184,14 +185,23 @@ try_symlink_node_modules() {
         return 1
     fi
 
-    log_info "yarn.lock matches root worktree, symlinking node_modules"
-    if ln -s "${root_path}/node_modules" ./node_modules; then
-        log_info "Successfully symlinked node_modules from ${root_path}"
+    log_info "yarn.lock matches root worktree, copying node_modules"
+
+    # Try APFS COW clone first (fast, minimal disk usage), fall back to rsync
+    if cp -cR "${root_path}/node_modules/" ./node_modules/ 2>/dev/null; then
+        log_info "Successfully cloned node_modules from ${root_path} (COW)"
         return 0
-    else
-        log_error "Failed to symlink node_modules"
-        return 1
     fi
+
+    log_info "COW clone not available, falling back to rsync"
+    if rsync -a "${root_path}/node_modules/" ./node_modules/; then
+        log_info "Successfully rsynced node_modules from ${root_path}"
+        return 0
+    fi
+
+    log_error "Failed to copy node_modules"
+    rm -rf ./node_modules
+    return 1
 }
 
 # Function to install/update dependencies when node_modules exists
@@ -224,12 +234,16 @@ main() {
     # Full mode: install dependencies, yarn, nx, etc.
     if [ -d node_modules ]; then
         log_info "node_modules directory exists, checking dependencies"
+        symlink_nx_cache
         if ! install_dependencies; then
             exit 2
         fi
-    elif try_symlink_node_modules; then
-        # Successfully symlinked node_modules from root worktree
-        log_info "Using symlinked node_modules, skipping install"
+    elif try_copy_node_modules; then
+        log_info "Validating copied node_modules"
+        symlink_nx_cache
+        if ! install_dependencies; then
+            exit 2
+        fi
     else
         log_info "node_modules directory not found, performing fresh install"
         if ! install_yarn; then
@@ -238,17 +252,13 @@ main() {
         if ! install_nx; then
             exit 2
         fi
-
+        symlink_nx_cache
         if ! install_dependencies; then
             exit 2
         fi
     fi
 
     if ! opt_enable_direnv; then
-        exit 2
-    fi
-
-    if ! symlink_nx_cache; then
         exit 2
     fi
 

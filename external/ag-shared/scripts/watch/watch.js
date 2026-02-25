@@ -8,7 +8,7 @@
  * batched up into one update event. Watching `BUILD_QUEUE_EMPTY_FILE` in another process
  * can be used to trigger further updates eg, website refresh.
  *
- * Usage: node ./watch [charts|grid]
+ * Usage: node ./watch [charts|grid|studio]
  */
 const { spawn, spawnSync } = require('child_process');
 const fsp = require('node:fs/promises');
@@ -25,7 +25,7 @@ const {
 } = require('./constants');
 const chartsConfig = require('./chartsWatch.config');
 const gridConfig = require('./gridWatch.config');
-const dashConfig = require('./dashWatch.config');
+const studioConfig = require('./studioWatch.config');
 
 const RED = '\x1b[;31m';
 const GREEN = '\x1b[;32m';
@@ -563,7 +563,7 @@ process.on('beforeExit', async () => {
 const LIBRARY_CONFIGS = {
     charts: chartsConfig,
     grid: gridConfig,
-    dash: dashConfig,
+    studio: studioConfig,
 };
 const LIBRARY_KEYS = Object.keys(LIBRARY_CONFIGS);
 

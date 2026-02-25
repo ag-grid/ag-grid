@@ -53,12 +53,32 @@ export class BigIntFilter extends SimpleFilter<
     }
 
     private refreshInputPairValidation(from: GridInputTextField, to: GridInputTextField, isFrom = false): void {
-        const localeKey = getValidityMessageKey(_parseBigIntOrNull(from), _parseBigIntOrNull(to), isFrom);
-        const validityMessage = localeKey
-            ? this.translate(localeKey, [String(isFrom ? to.getValue() : from.getValue())])
-            : '';
-        (isFrom ? from : to).setCustomValidity(validityMessage);
-        (isFrom ? to : from).setCustomValidity('');
+        const { bigintParser } = this.params;
+        const fromValue = this.getParsedValue(from, bigintParser);
+        const toValue = this.getParsedValue(to, bigintParser);
+        const fromInvalid = this.isInvalidValue(from, fromValue);
+        const toInvalid = this.isInvalidValue(to, toValue);
+
+        const target = isFrom ? from : to;
+        const other = isFrom ? to : from;
+        const targetInvalid = isFrom ? fromInvalid : toInvalid;
+        const otherInvalid = isFrom ? toInvalid : fromInvalid;
+
+        let validityMessage = '';
+        if (targetInvalid) {
+            const translate = this.getLocaleTextFunc();
+            validityMessage = translate('invalidBigInt', 'Invalid BigInt');
+        } else if (!fromInvalid && !toInvalid) {
+            const localeKey = getValidityMessageKey(fromValue, toValue, isFrom);
+            if (localeKey) {
+                validityMessage = this.translate(localeKey, [String(isFrom ? to.getValue() : from.getValue())]);
+            }
+        }
+
+        target.setCustomValidity(validityMessage);
+        if (!otherInvalid) {
+            other.setCustomValidity('');
+        }
         if (validityMessage.length > 0) {
             this.beans.ariaAnnounce.announceValue(validityMessage, 'dateFilter');
         }
@@ -214,6 +234,22 @@ export class BigIntFilter extends SimpleFilter<
 
     protected override canApply(_model: BigIntFilterModel | ICombinedSimpleModel<BigIntFilterModel> | null): boolean {
         return !this.hasInvalidInputs();
+    }
+
+    private getParsedValue(
+        element: GridInputTextField,
+        bigintParser: IBigIntFilterParams['bigintParser']
+    ): bigint | null {
+        const rawValue = element.getValue();
+        if (rawValue == null || (typeof rawValue === 'string' && rawValue.trim() === '')) {
+            return null;
+        }
+        return bigintParser ? bigintParser(rawValue) : _parseBigIntOrNull(rawValue);
+    }
+
+    private isInvalidValue(element: GridInputTextField, parsedValue: bigint | null): boolean {
+        const rawValue = element.getValue();
+        return rawValue != null && String(rawValue).trim() !== '' && parsedValue === null;
     }
 }
 

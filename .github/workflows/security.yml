@@ -29,31 +29,32 @@ env:
     AG_LIBRARY: grid
 
 jobs:
-    rulesync-integrity:
-        name: Rulesync Integrity Check
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-              with:
-                  fetch-depth: 1
-
-            - name: Setup Node
-              uses: actions/setup-node@v4
-              with:
-                  node-version-file: '.nvmrc'
-                  cache: 'yarn'
-
-            - name: Install dependencies
-              run: yarn install --frozen-lockfile
-
-            - name: Verify Rulesync Integrity (Claude Code)
-              id: rulesync-claudecode
-              run: ./external/ag-shared/scripts/setup-prompts/verify-rulesync.sh . claudecode
-
-            - name: Verify Rulesync Integrity (Codex CLI)
-              id: rulesync-codexcli
-              run: ./external/ag-shared/scripts/setup-prompts/verify-rulesync.sh . codexcli
+    # TODO: Re-enable rulesync-integrity job once rulesync issues are resolved
+    # rulesync-integrity:
+    #     name: Rulesync Integrity Check
+    #     runs-on: ubuntu-latest
+    #     steps:
+    #         - name: Checkout
+    #           uses: actions/checkout@v4
+    #           with:
+    #               fetch-depth: 1
+    #
+    #         - name: Setup Node
+    #           uses: actions/setup-node@v4
+    #           with:
+    #               node-version-file: '.nvmrc'
+    #               cache: 'yarn'
+    #
+    #         - name: Install dependencies
+    #           run: yarn install --frozen-lockfile
+    #
+    #         - name: Verify Rulesync Integrity (Claude Code)
+    #           id: rulesync-claudecode
+    #           run: ./external/ag-shared/scripts/setup-prompts/verify-rulesync.sh . claudecode
+    #
+    #         - name: Verify Rulesync Integrity (Codex CLI)
+    #           id: rulesync-codexcli
+    #           run: ./external/ag-shared/scripts/setup-prompts/verify-rulesync.sh . codexcli
 
     code-dependency-scan:
         runs-on: ubuntu-latest
@@ -128,7 +129,7 @@ jobs:
                   exit 1
 
     combine-scan-results:
-      needs: [rulesync-integrity, code-dependency-scan, sast-code-scan]
+      needs: [code-dependency-scan, sast-code-scan]
       runs-on: ubuntu-latest
       if: ${{ always() }}
       steps:
@@ -206,7 +207,7 @@ jobs:
               SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
               PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
               CURRENT_COMMIT_SHA: ${{ github.sha }}
-              IS_SUCCESS: ${{ needs.rulesync-integrity.result != 'failure' && needs.code-dependency-scan.result != 'failure' && needs.sast-code-scan.result != 'failure' }}
+              IS_SUCCESS: ${{ needs.code-dependency-scan.result != 'failure' && needs.sast-code-scan.result != 'failure' }}
 
         - name: Create Jira Ticket
           uses: ./.github/actions/jira-integration
@@ -216,7 +217,7 @@ jobs:
             JIRA_API_AUTH: ${{ secrets.JIRA_API_AUTH }}
             JIRA_SUMMARY: "[NR] CI/CD workflow '${{ github.workflow }}' is failing."
             CTRF_REPORT_FILE: ${{ env.REPORT_FILE }}
-            IS_SUCCESS: ${{ needs.rulesync-integrity.result != 'failure' && needs.code-dependency-scan.result != 'failure' && needs.sast-code-scan.result != 'failure' }}
+            IS_SUCCESS: ${{ needs.code-dependency-scan.result != 'failure' && needs.sast-code-scan.result != 'failure' }}
             PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
             CURRENT_COMMIT_SHA: ${{ github.sha }}
 

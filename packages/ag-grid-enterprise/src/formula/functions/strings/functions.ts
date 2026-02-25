@@ -26,7 +26,7 @@ export const CONCAT = ({ values }: FormulaFunctionParams): string => {
                 break;
             }
             default: {
-                throw new FormulaError('CONCAT: unsupported value type', '#VALUE!');
+                throw new FormulaError(67);
             }
         }
     }

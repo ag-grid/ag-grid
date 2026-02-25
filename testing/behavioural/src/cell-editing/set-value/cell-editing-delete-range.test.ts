@@ -84,6 +84,8 @@ describe('Cell Editing: delete and range clearing', () => {
             cellEditRequest: 0,
             bulkEditingStarted: 0,
             bulkEditingStopped: 0,
+            batchEditingStarted: batchEnabled ? 1 : 0,
+            batchEditingStopped: batchEnabled ? 1 : 0,
         });
 
         expect(api.getDisplayedRowAtIndex(0)?.data?.field ?? null).toBeNull();
@@ -162,6 +164,8 @@ describe('Cell Editing: delete and range clearing', () => {
             cellEditRequest: 0,
             bulkEditingStarted: 0,
             bulkEditingStopped: 0,
+            batchEditingStarted: 0,
+            batchEditingStopped: 0,
         });
 
         expect(api.getDisplayedRowAtIndex(0)?.data?.field).toBe('Initial Value');
@@ -240,6 +244,8 @@ describe('Cell Editing: delete and range clearing', () => {
             cellEditRequest: 0,
             bulkEditingStarted: 0,
             bulkEditingStopped: 0,
+            batchEditingStarted: batchEnabled ? 1 : 0,
+            batchEditingStopped: batchEnabled ? 1 : 0,
         });
 
         expect(api.getDisplayedRowAtIndex(0)?.data?.field ?? null).toBeNull();
@@ -328,6 +334,8 @@ describe('Cell Editing: delete and range clearing', () => {
             cellEditRequest: 0,
             bulkEditingStarted: 0,
             bulkEditingStopped: 0,
+            batchEditingStarted: batchEnabled ? 1 : 0,
+            batchEditingStopped: batchEnabled ? 1 : 0,
         });
 
         expect(api.getDisplayedRowAtIndex(0)?.data?.a ?? null).toBeNull();

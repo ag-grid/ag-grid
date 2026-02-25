@@ -106,8 +106,6 @@ interface ICombinedSimpleModel<NumberFilterModel> {
 type JoinOperator = 'AND' | 'OR';
 ```
 
-Note that in AG Grid versions prior to 29.2, only two Filter Conditions were supported. These appeared in the Combined Model as properties `condition1` and `condition2`. The grid will still accept and supply models using these properties, but this behaviour is deprecated. The `conditions` property should be used instead.
-
 An example of a Filter Model with two conditions is as follows:
 
 ```js
@@ -199,7 +197,3 @@ In the following example you can filter by age and see how blank values are incl
 ## Data Updates
 
 The Number Filter is not affected by data changes. When the grid data is updated, the filter value will remain unchanged and the filter will be re-applied based on the updated data (e.g. the displayed rows will update if necessary).
-
-## Next Up
-
-Continue to the next section to learn about [BigInt Filters](./filter-bigint/).

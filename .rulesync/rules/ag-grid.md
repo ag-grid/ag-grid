@@ -18,7 +18,7 @@ This file provides guidance to AI Agents when working with code in this reposito
 -   **Build:** `yarn nx build <package>`
 -   **Test:** `yarn nx test <package>`
 -   **E2E:** `yarn nx e2e ag-grid-docs`
--   **Dev server:** `yarn nx dev`
+-   **Dev server:** `yarn nx dev` (launches on https://localhost:4610/, check if it is already running before trying to run it)
 
 ### Content Locations
 
@@ -80,7 +80,10 @@ For detailed information about preferred technologies and architectural constrai
 -   `yarn nx build:package <package>` – create ESM/CJS bundles to validate publishable output.
 -   `yarn nx build:umd <package>` – produce UMD bundles for browser distribution smoke-tests.
 -   `yarn nx run-many -t build` – rebuild all packages when changes span the dependency graph.
--   `yarn nx test <package>` – execute Jest suites for the affected package.
+-   `yarn nx test ag-behavioural-testing --run` – run behavioural tests in `testing/behavioural/` (primary test suite, uses Vitest).
+-   `yarn nx test ag-behavioural-testing --run "<file-pattern>"` – run specific behavioural test file.
+-   `yarn nx test ag-behavioural-testing --run "<file-pattern>" -t "<test-name>"` – run specific behavioural test by name.
+-   `yarn nx test <package>` – execute Jest unit tests for the affected package.
 -   `yarn nx test <package> --testPathPattern="<file-name>"` - test specific test file
 -   `yarn nx test <package> --testPathPattern="<file-name>" --testNamePattern="<test-name>"` - test specific test name in a specific test file
 -   `yarn nx e2e <package>` – run Playwright flows when altering website behaviour.
@@ -96,6 +99,10 @@ Run rulesync commands via slash notation:
 -   `/batch-lint-cleanup` - ESLint auto-fix tool
 -   `/git-split` - Split large files preserving git history
 -   `/git-bisect` - Find commits that introduced issues
+-   `/remember` - Save branch context or project learnings as memory
+-   `/recall` - Load branch context and browse project memory
+-   `/docs-review` - Review documentation pages for technical accuracy
+-   `/release-docs-review` - Review all documentation changes between releases
 
 ### Architecture
 
@@ -128,11 +135,11 @@ Core dependency chain: `ag-grid-community` → `ag-grid-enterprise` → framewor
 
 For comprehensive testing information, see [Testing Guide](.rulesync/rules/testing.md).
 
-Key testing tools:
+**Behavioural tests are the primary test suite.** When verifying grid changes, run behavioural tests first. Key testing tools:
 
--   **Unit tests**: Jest with jsdom environment
+-   **Behavioural tests** (primary): `testing/behavioural/` for grid behaviour verification — use Vitest
+-   **Unit tests**: Jest with jsdom environment for package-level tests
 -   **E2E tests**: Playwright for website interaction testing
--   **Behavioural tests**: `testing/behavioural/` for grid behaviour verification
 -   **Accessibility tests**: `testing/accessibility/` for a11y compliance
 -   **Performance tests**: `testing/performance/` for performance regression testing
 

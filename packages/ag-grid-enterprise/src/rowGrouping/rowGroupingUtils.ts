@@ -1,4 +1,4 @@
-import type { AgColumn, BeanCollection, ColumnModel, RowNode } from 'ag-grid-community';
+import type { AgColumn, BeanCollection, ColumnModel, LocaleTextFunc, RowNode } from 'ag-grid-community';
 
 export function setRowNodeGroupValue(
     rowNode: RowNode,
@@ -59,4 +59,25 @@ export function isRowGroupColLocked(column: AgColumn | undefined | null, beans: 
 
     const colIndex = rowGroupColsSvc.columns.findIndex((groupCol) => groupCol.getColId() === column.getColId());
     return groupLockGroupColumns > colIndex;
+}
+
+/**
+ * In AG-16700 the locale introduced a ${variable} and stopped concatenating the column name in the code
+ * To avoid a breaking change we need to check if the variable is present and if not fallback to the old way of concatenating the column name.
+ */
+export function getGroupingLocaleText(
+    localeTextFunc: LocaleTextFunc,
+    key: 'groupBy' | 'ungroupBy',
+    displayName: string
+): string {
+    const prefix = key === 'groupBy' ? 'Group by' : 'Un-Group by';
+
+    const localStr = localeTextFunc(key, `${prefix} ${displayName}`, [displayName]);
+
+    // Check if the displayName variable is present in the localized string, if not fallback to the old way of concatenating the column name
+    if (localStr.indexOf(displayName) >= 0) {
+        return localStr;
+    } else {
+        return `${localStr} ${displayName}`;
+    }
 }

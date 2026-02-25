@@ -1,4 +1,4 @@
-import { FORCE_LEGACY_THEMES, IS_SSR, _injectCoreAndModuleCSS, _injectGlobalCSS } from './inject';
+import { FORCE_LEGACY_THEMES, IS_SSR, _injectCoreAndModuleCSS, _injectGlobalCSS, getInjectionState } from './inject';
 import type { Part } from './part';
 import { PartImpl, createPart, defaultModeName } from './partImpl';
 import { sharedDefaults } from './shared/shared-css';
@@ -8,8 +8,6 @@ import type { ThemeLogger } from './themeLogger';
 import { paramValueToCss } from './themeTypeUtils';
 import type { WithParamTypes } from './themeTypes';
 import { paramToVariableName } from './themeUtils';
-
-let paramsId = 0;
 
 export const _asThemeImpl = <TParams>(theme: Theme<TParams>): ThemeImpl => {
     if (!(theme instanceof ThemeImpl)) {
@@ -112,7 +110,7 @@ export class ThemeImpl {
     private _paramsClassName?: string;
 
     _getParamsClassName(): string {
-        return (this._paramsClassName ??= `ag-theme-params-${++paramsId}`);
+        return (this._paramsClassName ??= `ag-theme-params-${++getInjectionState().paramsId}`);
     }
 
     private _paramsCache?: ModalParamValues;

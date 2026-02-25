@@ -1,12 +1,12 @@
-import type { ComponentSelector } from 'ag-grid-community';
+import type { ComponentSelector, FocusableContainer } from 'ag-grid-community';
 import { Component, _createElement } from 'ag-grid-community';
 
 import { PivotDropZonePanel } from './pivotDropZonePanel';
 import { RowGroupDropZonePanel } from './rowGroupDropZonePanel';
 
 class AgGridHeaderDropZones extends Component {
-    private rowGroupComp: Component;
-    private pivotComp: Component;
+    private rowGroupComp: Component & FocusableContainer;
+    private pivotComp: Component & FocusableContainer;
 
     constructor() {
         super();
@@ -92,6 +92,10 @@ class AgGridHeaderDropZones extends Component {
         } else {
             pivotComp.setDisplayed(false);
         }
+    }
+
+    public getFocusableContainers(): FocusableContainer[] {
+        return [this.rowGroupComp, this.pivotComp].filter((comp) => !!comp);
     }
 }
 

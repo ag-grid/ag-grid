@@ -349,8 +349,6 @@ See the [Codemods](./codemods/) documentation for more details.
 
 ## Breaking Changes
 
-{% metaTag tags=["ag-grid-enterprise","ag-charts-community","ag-charts-enterprise","IntegratedChartsModule","GridChartsModule","AgChartsCommunityModule","AgChartsEnterpriseModule","RowDragModule","getMainMenuItems","getContextMenuItems","mainMenuItems","contextMenuItems","chartMenuItems","columnGroup","navigator","api.getRowDropZoneParams","Grid","createGrid","selectAll","deselectAll","getFirstDisplayedRow","getLastDisplayedRow","getModel","getValue","getCellValue","showColumnMenuAfterButtonClick","showColumnMenuAfterMouseClick","IHeaderParams","autoSizeColumn","autoSizeColumns","setColumnWidths","moveColumn","moveColumns","addAggFunc","addAggFuncs","removeValueColumn","removeValueColumns","addValueColumn","addValueColumns","removeRowGroupColumn","removeRowGroupColumns","addRowGroupColumn","addRowGroupColumns","removePivotColumn","removePivotColumns","addPivotColumn","addPivotColumns","setColumnVisible","setColumnsVisible","setColumnPinned","setColumnsPinned","getColumnFilterModel","setColumnFilterModel","getServerSideGroupLevelParams","cellFlashDuration","enableCellChangeFlash","suppressGroupMaintainValueType","groupTotalRow","grandTotalRow","columnChooserParams","suppressHeaderMenuButton", "RowDragEvent","vDirection","suppressFilterButton","colDef.suppressFloatingFilterButton","textCustomComparator","textMatcher","onParamsUpdated","refresh","valueGetter","getValue","footerValueGetter","totalValueGetter","flashDuration","fadeDuration","IToolPanelColumnCompParams","verticalText","charSet","name","sparklineOptions.label.placement"] /%}
-
 The full list of breaking changes across all features for version {% migrationVersion() %}.
 
 {% expandingSection headerText="Breaking Changes" %}
@@ -534,8 +532,6 @@ The following APIs have been deprecated since at least v31 and have now been rem
 
 ### Grid API
 
-{% metaTag tags=["Grid","api","selectAll","deselectAll","getFirstDisplayedRow","getLastDisplayedRow","getModel","getValue","showColumnMenuAfterButtonClick","showColumnMenuAfterMouseClick","autoSizeColumn","setColumnWidths","moveColumn","addAggFunc","removeValueColumn","addValueColumn","removeRowGroupColumn","addRowGroupColumn","removePivotColumn","addPivotColumn","setColumnVisible","setColumnPinned"] /%}
-
 -   `new Grid()` - removed, use `createGrid` instead.
 -   `api` - no longer mutated onto the provided `gridOptions` for Javascript users.
 -   First argument of `selectAll` and `deselectAll` grid API methods is now the selection mode, the event source is now the second argument. Both are optional.
@@ -561,8 +557,6 @@ The following APIs have been deprecated since at least v31 and have now been rem
 
 ### Grid Options
 
-{% metaTag tags=["suppressServerSideInfiniteScroll","getServerSideGroupLevelParams","advancedFilterModel","suppressAsyncEvents","cellFlashDelay","cellFadeDelay","enableCellChangeFlash","suppressGroupMaintainValueType","groupIncludeFooter","groupIncludeTotalFooter","serverSideSortOnServer","serverSideFilterOnServer","tabToNextCell","tabToNextHeader"] /%}
-
 -   `suppressServerSideInfiniteScroll` - removed without replacement.
 -   Interface `getServerSideGroupLevelParams` - `suppressInfiniteScroll` property removed without replacement.
 -   `advancedFilterModel` - removed, please use `initialState.filter.advancedFilterModel` instead.
@@ -580,8 +574,6 @@ The following APIs have been deprecated since at least v31 and have now been rem
 
 ### ColDef
 
-{% metaTag tags=["suppressCellFlash","columnsMenuParams","suppressMenu"] /%}
-
 -   `suppressCellFlash` - removed, please use `enableCellChangeFlash: false` in the `ColDef`.
 -   `columnsMenuParams` - removed, please use `columnChooserParams` instead.
 -   `suppressMenu` - removed, please use `suppressHeaderMenuButton` instead.
@@ -591,8 +583,6 @@ The following APIs have been deprecated since at least v31 and have now been rem
 Floating filters provided via the `colDef.filter` values `text`, `number`, `date`, `set`, `multi`, and `group` no longer work. Use the values `agTextColumnFilter`, `agNumberColumnFilter`, `agDateColumnFilter`, `agSetColumnFilter`, `agMultiColumnFilter`, and `agGroupColumnFilter` instead.
 
 ### Interfaces
-
-{% metaTag tags=["vDirection","suppressFilterButton","textCustomComparator","onParamsUpdated","valueGetter","footerValueGetter","flashDelay","fadeDelay","ToolPanelColumnCompParams","verticalText","charSet","name"] /%}
 
 -   `RowDragEvent` interface: `vDirection` property is now typed as `'up' | 'down' | null`.
 -   `IFloatingFilterParams`: `suppressFilterButton` - removed, please use `colDef.suppressFloatingFilterButton` instead.
@@ -613,13 +603,9 @@ Floating filters provided via the `colDef.filter` values `text`, `number`, `date
 
 ## Deprecations
 
-{% metaTag tags=["ModuleRegistry.register","MenuModule","RangeSelectionModule","Column.isHovered","deselectAllFiltered","deselectAllOnCurrentPage","selectAllFiltered","selectAllOnCurrentPage","cellRendererParams.checkbox","gridOptions.sortingOrder","gridOptions.unSortIcon","groupRemoveLowestSingleChildren","groupRemoveSingleChildren","suppressMakeColumnVisibleAfterUnGroup","suppressPropertyNamesCheck","suppressRowGroupHidesColumns","childIndex","firstChild","lastChild","childIndexChanged","firstChildChanged","lastChildChanged","smallDown","smallLeft","smallRight"] /%}
-
 {% expandingSection headerText="Deprecations" %}
 
 ### Modules
-
-{% metaTag tags=["ModuleRegistry.register","MenuModule","RangeSelectionModule"] /%}
 
 -   `ModuleRegistry.register(module)` - deprecated, use `ModuleRegistry.registerModules([module])` instead.
 -   `MenuModule` - deprecated, use `ColumnMenuModule` for the Column Menu and/or `ContextMenuModule` for the Context Menu instead.
@@ -627,13 +613,9 @@ Floating filters provided via the `colDef.filter` values `text`, `number`, `date
 
 ### Column Object
 
-{% metaTag tags=["Column.isHovered"] /%}
-
 -   `Column.isHovered()` - deprecated, use `api.isColumnHovered(column)` instead.
 
 ### Grid API
-
-{% metaTag tags=["deselectAllFiltered","deselectAllOnCurrentPage","selectAllFiltered","selectAllOnCurrentPage"] /%}
 
 -   `deselectAllFiltered` - deprecated, use `deselectAll('filtered')` instead.
 -   `deselectAllOnCurrentPage` - deprecated, use `deselectAll('currentPage')` instead.
@@ -654,23 +636,17 @@ Floating filters provided via the `colDef.filter` values `text`, `number`, `date
 
 ### Row Node
 
-{% metaTag tags=["childIndex","firstChild","lastChild","childIndexChanged","firstChildChanged","lastChildChanged","smallDown","smallLeft","smallRight"] /%}
-
 -   `childIndex` - deprecated, use `rowNode.parent?.childrenAfterSort?.findIndex(r =&gt; r === rowNode)` instead.
 -   `firstChild` - deprecated, use `rowNode.parent?.childrenAfterSort?.[0] === rowNode` instead.
 -   `lastChild` - deprecated, use `!!rowNode.parent?.childrenAfterSort && (rowNode.parent.childrenAfterSort[rowNode.parent.childrenAfterSort.length - 1] === rowNode)` instead.
 
 ### Row Node Events
 
-{% metaTag tags=["childIndexChanged","firstChildChanged","lastChildChanged"] /%}
-
 -   `childIndexChanged` - deprecated, use the global `modelUpdated` event to determine when row children have changed.
 -   `firstChildChanged` - deprecated, use the global `modelUpdated` event to determine when row children have changed.
 -   `lastChildChanged` - deprecated, use the global `modelUpdated` event to determine when row children have changed.
 
 ### Theming Custom Icons
-
-{% metaTag tags=["smallDown","smallLeft","smallRight"] /%}
 
 -   `smallDown` - deprecated, use:
     -   `advancedFilterBuilderSelect` for Advanced Filter Builder dropdown.

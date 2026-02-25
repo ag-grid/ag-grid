@@ -69,7 +69,7 @@ const parseOperand = (
                 rowAbs || unsafe ? rowStr : _getClientSideRowModel(beans)?.getFormulaRow(Number(rowStr) - 1)?.id; // TODO handle NaN
 
             if (col == null || row == null) {
-                throw new FormulaParseError(`Invalid cell reference: ${trimmed}`, 0, 0);
+                throw new FormulaParseError(2, 0, 0, [trimmed]);
             }
 
             return {
@@ -150,7 +150,7 @@ function tokenize(expr: string): string[] {
             j++; // consume ':'
             if (!parseCell()) {
                 // Be explicit about what's wrong, instead of falling back and later erroring on ':'
-                throw new FormulaParseError('Invalid range end reference', colonPos, j);
+                throw new FormulaParseError(3, colonPos, j);
             }
         }
 
@@ -178,7 +178,7 @@ function tokenize(expr: string): string[] {
                 j++;
             }
             if (j >= expr.length) {
-                throw new FormulaParseError('Unterminated string', i, expr.length);
+                throw new FormulaParseError(4, i, expr.length);
             }
             tokens.push(expr.slice(i, j + 1));
             i = j + 1;
@@ -224,7 +224,7 @@ function tokenize(expr: string): string[] {
         // operators (greedy longest-first match)
         const firstMatch = OP_SYMBOLS_DESC.find((sym) => expr.startsWith(sym, i));
         if (!firstMatch) {
-            throw new FormulaParseError('Unexpected character: ' + ch, i, i + 1);
+            throw new FormulaParseError(5, i, i + 1, [ch]);
         }
 
         tokens.push(firstMatch);
@@ -294,7 +294,7 @@ function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean): 
     const applyTop = () => {
         const frame = ops.pop();
         if (!frame) {
-            throw new FormulaParseError('Operator stack underflow', 0, 0);
+            throw new FormulaParseError(6, 0, 0);
         }
 
         if (frame.kind === 'op') {
@@ -303,7 +303,7 @@ function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean): 
             if (def.fixity !== 'infix') {
                 const right = output.pop();
                 if (!right) {
-                    throw new FormulaParseError(`Missing operand for '${def.symbol}'`, 0, 0);
+                    throw new FormulaParseError(7, 0, 0, [def.symbol]);
                 }
 
                 // unary plus is a no-op
@@ -336,14 +336,14 @@ function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean): 
             const right = output.pop();
             const left = output.pop();
             if (!left || !right) {
-                throw new FormulaParseError(`Missing operand for '${def.symbol}'`, 0, 0);
+                throw new FormulaParseError(7, 0, 0, [def.symbol]);
             }
             output.push({ type: 'operation', operation: def.symbol, operands: [left, right] });
             return;
         }
 
         // parenthesis/function should not be reduced directly here
-        throw new FormulaParseError('Internal error: unexpected frame during reduction', 0, 0);
+        throw new FormulaParseError(8, 0, 0);
     };
 
     let i = 0;
@@ -377,17 +377,17 @@ function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean): 
                 if (top.kind === 'op') {
                     applyTop();
                 } else {
-                    throw new FormulaParseError("Internal error: unexpected frame before '('", i, i + 1);
+                    throw new FormulaParseError(9, i, i + 1);
                 }
             }
             const paren = ops[ops.length - 1];
             if (!paren || paren.kind !== 'parenthesis') {
-                throw new FormulaParseError('Misplaced comma', i, i + 1);
+                throw new FormulaParseError(10, i, i + 1);
             }
             // function frame must be just below '('
             const maybeFunction = ops[ops.length - 2];
             if (!maybeFunction || maybeFunction.kind !== 'function') {
-                throw new FormulaParseError('Comma outside of a function call', i, i + 1);
+                throw new FormulaParseError(11, i, i + 1);
             }
             // Only consume an arg if something was produced since '('
             if (output.length > paren.outLen) {
@@ -408,12 +408,12 @@ function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean): 
                 if (top.kind === 'op') {
                     applyTop();
                 } else {
-                    throw new FormulaParseError("Internal error: unexpected frame before ')'", i, i + 1);
+                    throw new FormulaParseError(12, i, i + 1);
                 }
             }
             const paren = ops[ops.length - 1];
             if (!paren || paren.kind !== 'parenthesis') {
-                throw new FormulaParseError('Mismatched parentheses', i, i + 1);
+                throw new FormulaParseError(13, i, i + 1);
             }
             const parenOutLen = paren.outLen;
             ops.pop(); // pop '('
@@ -457,7 +457,7 @@ function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean): 
         // Operand
         const parsed = parseOperand(beans, token, unsafe);
         if (parsed == null) {
-            throw new FormulaParseError('Unsupported operand: ' + token, 0, token.length);
+            throw new FormulaParseError(14, 0, token.length, [token]);
         }
         output.push({ type: 'operand', value: parsed });
         i++;
@@ -469,12 +469,12 @@ function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean): 
         if (top.kind === 'op') {
             applyTop();
         } else {
-            throw new FormulaParseError('Mismatched parentheses or unfinished function call', 0, 0);
+            throw new FormulaParseError(15, 0, 0);
         }
     }
 
     if (output.length !== 1) {
-        throw new FormulaParseError('Invalid expression', 0, 0);
+        throw new FormulaParseError(16, 0, 0);
     }
     return output[0];
 }
@@ -492,7 +492,7 @@ function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean): 
  */
 export const parseFormula = (beans: BeanCollection, formula: string, unsafe: boolean = false): FormulaNode => {
     if (!_isExpressionString(formula)) {
-        throw new FormulaParseError('Formulas must begin with =', 0, 1);
+        throw new FormulaParseError(17, 0, 1);
     }
     const body = formula.slice(1).trim();
     return normalizeRefCells(parseExpression(beans, body, unsafe));

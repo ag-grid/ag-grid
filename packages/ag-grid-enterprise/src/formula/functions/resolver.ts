@@ -46,19 +46,19 @@ export function evalAst(
 
         if (isRangeCell(v)) {
             // A bare range in scalar context is not meaningful
-            throw new FormulaError('Range is not allowed in scalar context');
+            throw new FormulaError(25);
         }
 
         const addr = resolveRefToAddress(beans, v);
         if (!addr) {
-            throw new FormulaError('Unknown reference to cell', '#REF!');
+            throw new FormulaError(26);
         }
         return getCellValue(addr);
     }
 
     const fn = beans.formula?.getFunction(node.operation);
     if (!fn) {
-        throw new FormulaError(`Unsupported operation ${node.operation}`, '#NAME?');
+        throw new FormulaError(27, [node.operation]);
     }
 
     const { args, values } = makeArgIterables(beans, node.operands, getCellValue, caller);
@@ -84,7 +84,7 @@ function operandToArg(
 
         const addr = resolveRefToAddress(beans, v);
         if (!addr) {
-            throw new FormulaError('Unknown reference to cell', '#REF!');
+            throw new FormulaError(26);
         }
         return { kind: 'value', value: getCellValue(addr) };
     }
@@ -201,13 +201,13 @@ function resolveRowIndex(beans: BeanCollection, ref: CellRef): number {
     if (ref.absolute) {
         const n = Number(ref.id) - 1;
         if (!Number.isFinite(n) || n < 0) {
-            throw new FormulaError('Invalid absolute row', '#REF!');
+            throw new FormulaError(28);
         }
         return n;
     }
     const node = beans.rowModel?.getRowNode?.(ref.id);
     if (node?.formulaRowIndex == null) {
-        throw new FormulaError('Unrecognised row id', '#REF!');
+        throw new FormulaError(29);
     }
     return node.formulaRowIndex;
 }
@@ -216,13 +216,13 @@ function resolveCol(beans: BeanCollection, ref: CellRef): AgColumn {
     if (ref.absolute) {
         const col = beans.formula?.getColByRef(ref.id);
         if (!col) {
-            throw new FormulaError('Invalid absolute column', '#REF!');
+            throw new FormulaError(30);
         }
         return col;
     }
     const col = beans.colModel.getColById(ref.id);
     if (!col) {
-        throw new FormulaError('Unrecognised column id', '#REF!');
+        throw new FormulaError(31);
     }
     return col;
 }
@@ -278,7 +278,7 @@ class RangeValuesIterator implements Iterator<unknown> {
         if (this.currentRowIndex <= this.rowEndIndex) {
             const row = _getClientSideRowModel(this.beans)?.getFormulaRow(this.currentRowIndex);
             if (!row) {
-                throw new FormulaError('Unrecognised row in range', '#REF!');
+                throw new FormulaError(32);
             }
 
             const col = this.cols![this.currentColIdx];
@@ -409,7 +409,7 @@ export function* unresolvedDeps(
             if (!operandValue.endColumn && !operandValue.endRow) {
                 const cellAddress = resolveRefToAddress(beans, operandValue);
                 if (!cellAddress) {
-                    throw new FormulaError('Unrecognised reference to cell', '#REF!');
+                    throw new FormulaError(33);
                 }
 
                 const cachedCellFormula = ensureFormulaCache(cellAddress.row, cellAddress.column);
@@ -422,7 +422,7 @@ export function* unresolvedDeps(
             }
 
             if (!operandValue.endColumn || !operandValue.endRow) {
-                throw new FormulaError('Incomplete range reference', '#REF!');
+                throw new FormulaError(34);
             }
 
             // Range reference

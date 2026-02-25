@@ -79,6 +79,8 @@ describe('Cell Editing: undo/redo', () => {
             cellEditRequest: 0,
             bulkEditingStarted: 0,
             bulkEditingStopped: 0,
+            batchEditingStarted: 0,
+            batchEditingStopped: 0,
         });
 
         // 1 undo, 1 redo
@@ -158,6 +160,8 @@ describe('Cell Editing: undo/redo', () => {
                 cellEditRequest: 0,
                 bulkEditingStarted: 0,
                 bulkEditingStopped: 0,
+                batchEditingStarted: batchEnabled ? 1 : 0,
+                batchEditingStopped: batchEnabled ? 1 : 0,
             });
 
             // 1 undo, 1 redo
@@ -225,6 +229,8 @@ describe('Cell Editing: undo/redo', () => {
             cellEditRequest: 0,
             bulkEditingStarted: 0,
             bulkEditingStopped: 0,
+            batchEditingStarted: 0,
+            batchEditingStopped: 0,
         });
         expect(eventTracker.undoCounts).toEqual({
             undoStarted: 1,

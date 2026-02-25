@@ -42,6 +42,7 @@ const compareSemver = (a: any, b: any) => {
     // versions are in the format 'x.y.z', so we need to compare them as numbers
     const [aMajor, aMinor, aPatch] = a.split('.').map((num: string) => parseInt(num, 10));
     const [bMajor, bMinor, bPatch] = b.split('.').map((num: string) => parseInt(num, 10));
+
     if (aMajor !== bMajor) {
         return bMajor - aMajor; // Sort by major version descending
     } else if (aMinor !== bMinor) {
@@ -318,8 +319,7 @@ export const Changelog: FunctionComponent<Props> = ({ library }) => {
                 width: 145,
                 sort: 'desc',
                 filterParams: {
-                    suppressSorting: true,
-                    comparator: compareSemver,
+                    comparator: (a, b) => compareSemver(a, b),
                 },
                 comparator: (a, b) => compareSemver(b, a), // Reverse order for descending
             },

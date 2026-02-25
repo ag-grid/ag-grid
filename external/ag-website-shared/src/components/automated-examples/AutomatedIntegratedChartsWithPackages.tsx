@@ -19,7 +19,7 @@ const AG_GRID_CDN_URL = isArchive
       : `${GRID_STAGING_SITE_URL}/files/ag-grid-enterprise/dist/ag-grid-enterprise.min.js`;
 
 const AG_CHARTS_CDN_URL =
-    isArchive || isProduction
+    isProduction && !isArchive
         ? `https://cdn.jsdelivr.net/npm/ag-charts-enterprise@${agChartsVersion}/dist/umd/ag-charts-enterprise.min.js`
         : urlWithBaseUrl('/dev/ag-charts-enterprise/dist/umd/ag-charts-enterprise.js');
 

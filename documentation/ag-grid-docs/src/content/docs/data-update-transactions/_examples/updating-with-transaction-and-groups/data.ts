@@ -9,7 +9,7 @@ export function getData(): any[] {
 }
 
 // make the data three 10 times bigger
-const names = ['Elly', 'Shane', 'Niall', 'Rob', 'John', 'Sean', 'Dicky', 'Willy', 'Shaggy', 'Spud', 'Sugar', 'Spice'];
+const names = ['Elly', 'Shane', 'Niall', 'Rob', 'John', 'Sean', 'Richard', 'Will', 'Shaun', 'Spud', 'Susan', 'Simon'];
 const models = [
     'Mondeo',
     'Celica',

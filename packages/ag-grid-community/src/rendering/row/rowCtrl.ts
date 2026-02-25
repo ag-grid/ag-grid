@@ -110,6 +110,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     private centerGui: RowGui | undefined;
     private rightGui: RowGui | undefined;
     private fullWidthGui: RowGui | undefined;
+    private focusEventWhileNotReady: CellFocusedEvent | null = null;
 
     private allRowGuis: RowGui[] = [];
 
@@ -152,6 +153,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     private updateColumnListsPending = false;
 
     public rowId: string | null = null;
+    public ariaRowIndex: number | null = null;
     /** sanitised */
     public businessKey: string | null = null;
     private businessKeyForNodeFunc: ((node: IRowNode<any>) => string) | undefined;
@@ -218,7 +220,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         containerType: RowContainerType,
         compBean: BeanStub<any> | undefined
     ): void {
-        const { context, focusSvc } = this.beans;
+        const { context, rowRenderer } = this.beans;
         compBean = setupCompBean(this, context, compBean);
 
         const gui: RowGui = { rowComp, element, containerType, compBean };
@@ -235,17 +237,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             // this is fired within setComp as we know that the component renderer is now trying to render.
             // linked with the fact the function implementation queues behind requestAnimationFrame should allow
             // us to be certain that all rendering is done by the time the event fires.
-            this.beans.rowRenderer.dispatchFirstDataRenderedEvent();
+            rowRenderer.dispatchFirstDataRenderedEvent();
         }
 
-        const focusableElement = this.fullWidthGui?.element;
-        if (focusableElement) {
-            // when cell is created, if it should be focus the grid should take focus from the focused cell
-            const editing = this.beans.editSvc?.isEditing(this);
-            if (!editing && focusSvc.isRowFocused(rowNode.rowIndex!, rowNode.rowPinned) && focusSvc.shouldTakeFocus()) {
-                setTimeout(() => focusableElement.focus({ preventScroll: true }), 0);
-            }
-        }
+        this.setupFocus();
     }
 
     public unsetComp(containerType: RowContainerType): void {
@@ -1073,37 +1068,99 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
     }
 
-    public onFullWidthRowFocused(event?: CellFocusedEvent) {
-        const node = this.rowNode;
-        const isFocused = !event
-            ? false
-            : this.isFullWidth() && event.rowIndex === node.rowIndex && event.rowPinned == node.rowPinned;
-
-        let element: HTMLElement | undefined;
-
-        if (this.fullWidthGui) {
-            element = this.fullWidthGui.element;
-        } else {
-            const column = this.beans.colModel.getCol(event?.column);
-            const pinned = column?.pinned;
-
-            if (pinned) {
-                element = pinned === 'right' ? this.rightGui?.element : this.leftGui?.element;
-            } else {
-                element = this.centerGui?.element;
-            }
+    private setupFocus(): void {
+        if (!this.isFullWidth()) {
+            return;
         }
 
-        if (!element) {
+        this.restoreFullWidthFocus(true);
+        this.onFullWidthRowFocused(this.focusEventWhileNotReady ?? undefined);
+    }
+
+    private restoreFullWidthFocus(waitForRender = false): void {
+        const { focusSvc, editSvc } = this.beans;
+        if (editSvc?.isEditing(this)) {
             return;
-        } // can happen with react ui, comp not yet ready
+        }
 
-        element.classList.toggle('ag-full-width-focus', isFocused);
+        if (!focusSvc.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned) || !focusSvc.shouldTakeFocus()) {
+            return;
+        }
 
-        if (isFocused && event?.forceBrowserFocus) {
+        const targetGui = this.getFullWidthRowGuiForFocus();
+        if (!targetGui) {
+            return;
+        }
+
+        const focus = () => {
+            if (!this.isAlive()) {
+                return;
+            }
+            if (focusSvc.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned)) {
+                targetGui.element.focus({ preventScroll: true });
+            }
+        };
+
+        if (waitForRender) {
+            setTimeout(focus, 0);
+            return;
+        }
+
+        focus();
+    }
+
+    private getFullWidthRowGuiForFocus(event?: CellFocusedEvent): RowGui | undefined {
+        if (this.fullWidthGui) {
+            return this.fullWidthGui;
+        }
+
+        const focusedCell = this.beans.focusSvc.getFocusedCell();
+        const column = this.beans.colModel.getCol(event?.column ?? focusedCell?.column);
+        if (!column) {
+            return;
+        }
+        const pinned = column?.pinned;
+
+        if (pinned === 'right') {
+            return this.rightGui;
+        }
+        if (pinned === 'left') {
+            return this.leftGui;
+        }
+        return this.centerGui;
+    }
+
+    private setFullWidthRowFocusedClass(targetGui: RowGui | undefined, isFocused: boolean): void {
+        this.forEachGui(undefined, (gui) => {
+            gui.element.classList.toggle('ag-full-width-focus', isFocused && gui === targetGui);
+        });
+    }
+
+    public onFullWidthRowFocused(event?: CellFocusedEvent) {
+        const { focusSvc } = this.beans;
+        const isFocused = this.isFullWidth() && focusSvc.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned);
+
+        if (!isFocused) {
+            this.setFullWidthRowFocusedClass(undefined, false);
+            return;
+        }
+
+        const targetGui = this.getFullWidthRowGuiForFocus(event);
+        if (!targetGui) {
+            if (event) {
+                this.focusEventWhileNotReady = event;
+            }
+            this.setFullWidthRowFocusedClass(undefined, false);
+            return;
+        }
+
+        this.setFullWidthRowFocusedClass(targetGui, true);
+        this.focusEventWhileNotReady = null;
+
+        if (event?.forceBrowserFocus) {
             // we don't scroll normal rows into view when we focus them, so we don't want
             // to scroll Full Width rows either.
-            element.focus({ preventScroll: true });
+            targetGui.element.focus({ preventScroll: true });
         }
     }
 
@@ -1907,7 +1964,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             (this.beans.ctrlsSvc.getHeaderRowContainerCtrl()?.getRowCount() ?? 0) +
             (this.beans.filterManager?.getHeaderRowCount() ?? 0);
         const rowIsEven = this.rowNode.rowIndex! % 2 === 0;
-        const ariaRowIndex = headerRowCount + this.rowNode.rowIndex! + 1;
+        const ariaRowIndex = (this.ariaRowIndex = headerRowCount + this.rowNode.rowIndex! + 1);
 
         this.forEachGui(gui, (c) => {
             c.rowComp.setRowIndex(rowIndexStr);

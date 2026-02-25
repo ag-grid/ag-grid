@@ -36,7 +36,6 @@ export class SpannedCellCtrl extends CellCtrl {
         this.eWrapper = eWrapper!;
         super.setComp(comp, eCell, eWrapper, eCellWrapper, printLayout, startEditing, compBean);
         this.setAriaRowSpan();
-        this.refreshAriaRowIndex();
     }
 
     public override isCellSpanning(): boolean {

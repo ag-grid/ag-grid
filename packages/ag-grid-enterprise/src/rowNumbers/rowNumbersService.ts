@@ -23,6 +23,7 @@ import {
 import type {
     CellClassParams,
     CellCtrl,
+    CellFocusedEvent,
     CellPosition,
     CellRange,
     ColDef,
@@ -62,6 +63,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
             columnResized: () => {
                 this.lastColumnResized = Date.now();
             },
+            cellFocused: this.onGridCellFocused.bind(this),
             modelUpdated: (params) => {
                 refreshCells_debounced(false, !params.keepRenderedRows);
             },
@@ -182,6 +184,30 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         return true;
     }
 
+    public handleKeyDownOnCell(cellPosition: CellPosition, event: KeyboardEvent): boolean {
+        if (!this.isIntegratedWithSelection) {
+            return false;
+        }
+
+        if (event.key === KeyCode.ENTER) {
+            this.selectRowCells(cellPosition, event);
+            event.preventDefault();
+            return true;
+        }
+
+        return false;
+    }
+
+    private selectRowCells(cellPosition: CellPosition, keyboardEvent: KeyboardEvent): void {
+        const { rangeSvc } = this.beans;
+
+        if (!rangeSvc) {
+            return;
+        }
+
+        rangeSvc.handleCellKeyboardSelect(keyboardEvent, cellPosition);
+    }
+
     public updateColumns(event: PropertyValueChangedEvent<any>): void {
         const source = _convertColumnEventSourceType(event.source);
         this.refreshSelectionIntegration();
@@ -217,6 +243,21 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         });
     }
 
+    private onGridCellFocused(event: CellFocusedEvent): void {
+        if (
+            !this.isIntegratedWithSelection ||
+            event.rowIndex == null ||
+            !event.column ||
+            !isRowNumberCol(event.column)
+        ) {
+            return;
+        }
+
+        const translate = this.getLocaleTextFunc();
+        const message = translate('ariaSelectAllRowCells', 'Press Enter to select all cells on this row');
+        this.beans.ariaAnnounce?.announceValue(message, 'ariaSelectAllRowCells');
+    }
+
     public createRowNumbersRowResizerFeature(ctrl: CellCtrl): IRowNumbersRowResizeFeature | undefined {
         if (!_isRowNumbersResizerEnabled(this.beans)) {
             return undefined;
@@ -237,6 +278,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     private refreshRowNumberOverrides(): void {
         const rowNumbers = _isRowNumbers(this.beans);
         this.rowNumberOverrides = {};
+        this.isSuppressCellSelectionIntegration = false;
 
         if (!rowNumbers || typeof rowNumbers !== 'object') {
             return;
@@ -257,6 +299,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
             'headerComponent',
             'headerComponentParams',
             'suppressHeaderKeyboardEvent',
+            'suppressNavigable',
             'tooltipField',
             'tooltipValueGetter',
             'tooltipComponent',
@@ -268,6 +311,9 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
             'maxWidth',
             'minWidth',
             'resizable',
+            'cellRenderer',
+            'cellRendererSelector',
+            'cellRendererParams',
         ];
 
         for (const prop of colDefValidProps) {
@@ -278,13 +324,21 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     }
 
     private onHeaderFocus(): void {
-        this.beans.ariaAnnounce?.announceValue('Press Space to select all cells', 'ariaSelectAllCells');
+        if (!this.isIntegratedWithSelection) {
+            return;
+        }
+
+        const translate = this.getLocaleTextFunc();
+        const message = translate('ariaSelectAllCells', 'Press Space or Enter to select all cells');
+        this.beans.ariaAnnounce?.announceValue(message, 'ariaSelectAllCells');
     }
 
     private onHeaderKeyDown(e: KeyboardEvent): void {
-        if (!this.isIntegratedWithSelection || e.key !== KeyCode.SPACE) {
+        if (!this.isIntegratedWithSelection || (e.key !== KeyCode.SPACE && e.key !== KeyCode.ENTER)) {
             return;
         }
+
+        e.preventDefault();
         this.handleFocusAllCellsFromHeader();
     }
 
@@ -377,7 +431,6 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
             suppressAutoSize: true,
             suppressSizeToFit: true,
             suppressHeaderContextMenu: true,
-            suppressNavigable: true,
             headerClass: this.getHeaderClass(),
             cellClass: this.getCellClass.bind(this),
             cellAriaRole: 'rowheader',
@@ -462,8 +515,6 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         return [col];
     }
 
-    // focus is disabled on the row numbers cells, when a click happens on it,
-    // it should focus the first cell of that row or first cell of the grid (from header).
     private focusFirstRenderedCellAtRowPosition(rowPosition?: RowPosition | null) {
         const editSvc = this.beans.editSvc;
 
