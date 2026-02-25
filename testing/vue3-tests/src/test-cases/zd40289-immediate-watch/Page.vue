@@ -6,6 +6,8 @@
     <ag-grid-vue
         v-model="rowData"
         style="width: 100%; height: 500px"
+        class="ag-theme-quartz"
+        theme="legacy"
         :columnDefs="colDefs"
         :defaultColDef="defaultColDef"
     />

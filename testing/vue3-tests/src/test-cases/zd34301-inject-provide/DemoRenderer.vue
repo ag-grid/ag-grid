@@ -9,7 +9,7 @@ const props = defineProps({
 });
 
 const someValue = inject('someValue');
-const state = inject < any > 'state';
+const state = inject('state');
 </script>
 
 <template>
