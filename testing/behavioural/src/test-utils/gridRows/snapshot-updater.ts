@@ -31,6 +31,7 @@ interface Replacement {
     newText: string;
     line: number;
     label: string;
+    indentFixed: boolean;
 }
 
 /** Returns the update mode if active, or undefined if not. */
@@ -119,18 +120,20 @@ function logWarning(message: string): void {
  * Processes all recorded snapshot mismatches for the current test suite.
  * Called from afterAll in vitest.setup.ts.
  */
-export async function processSnapshotUpdates(): Promise<void> {
+export async function processSnapshotUpdates(currentTestFile?: string): Promise<void> {
     const updates = getUpdatesArray();
-    if (!updates?.length) {
+    const mode = getSnapshotUpdateMode()!;
+
+    // Nothing to do if no mismatches and no current file to indent-fix
+    if (!updates?.length && !currentTestFile) {
         return;
     }
 
-    const mode = getSnapshotUpdateMode()!;
-    const mismatches = updates.splice(0); // drain the array
+    const mismatches = updates?.splice(0) ?? []; // drain the array
 
     const ts = await import('typescript');
 
-    // Group by file
+    // Group mismatches by file
     const byFile = new Map<string, SnapshotMismatch[]>();
     for (const m of mismatches) {
         let arr = byFile.get(m.file);
@@ -139,6 +142,10 @@ export async function processSnapshotUpdates(): Promise<void> {
             byFile.set(m.file, arr);
         }
         arr.push(m);
+    }
+    // Always include the current test file in the indent-fix pass, even with no mismatches
+    if (currentTestFile && !byFile.has(currentTestFile)) {
+        byFile.set(currentTestFile, []);
     }
 
     let totalUpdated = 0;
@@ -191,7 +198,8 @@ export async function processSnapshotUpdates(): Promise<void> {
                 totalUpdated++;
             } else {
                 newSource = newSource.slice(0, r.start) + r.newText + newSource.slice(r.end);
-                logInfo(ansis.green.bold(`  👉 Updated`) + ` ${relPath}:${r.line} — "${r.label}"`);
+                const suffix = r.indentFixed ? ansis.yellow(' (indentation fixed)') : '';
+                logInfo(ansis.green.bold(`  👉 Updated`) + ` ${relPath}:${r.line} — "${r.label}"` + suffix);
                 totalUpdated++;
                 updatedFiles.add(file);
             }
@@ -202,8 +210,40 @@ export async function processSnapshotUpdates(): Promise<void> {
         }
     }
 
+    // Indentation-fix pass: scan all processed files for .check() templates with wrong indentation
+    // (catches snapshots that were correct in content but hand-written with bad indent)
+    let totalIndentFixed = 0;
+    for (const file of byFile.keys()) {
+        const relPath = relativePath(file);
+        let source: string;
+        try {
+            source = readFileSync(file, 'utf-8');
+        } catch {
+            continue;
+        }
+        const fixes = findIndentationFixes(ts, source, file);
+        if (!fixes.length) {
+            continue;
+        }
+        fixes.sort((a, b) => b.start - a.start);
+        let newSource = source;
+        for (const fix of fixes) {
+            if (mode === 'dry') {
+                logInfo(ansis.cyan(`  📋 Would fix indent`) + ` ${relPath}:${fix.line} — "${fix.label}"`);
+            } else {
+                newSource = newSource.slice(0, fix.start) + fix.newText + newSource.slice(fix.end);
+                logInfo(ansis.yellow(`  📐 Indent fixed`) + ` ${relPath}:${fix.line} — "${fix.label}"`);
+                updatedFiles.add(file);
+            }
+            totalIndentFixed++;
+        }
+        if (mode !== 'dry' && newSource !== source) {
+            writeFileSync(file, newSource, 'utf-8');
+        }
+    }
+
     // Summary
-    if (totalUpdated > 0 || totalSkipped > 0) {
+    if (totalUpdated > 0 || totalSkipped > 0 || totalIndentFixed > 0) {
         const fileCount = mode === 'dry' ? byFile.size : updatedFiles.size;
         if (mode === 'dry') {
             logInfo(
@@ -307,18 +347,99 @@ function findReplacements(
 
         const result = resolveTemplateLiteral(ts, sourceFile, bestMatch.arg, varDeclarations, ansis, relPath, mismatch);
         if (result) {
-            const newText = buildReplacementText(source, result.start, result.end, mismatch.actualDiagram);
+            const built = buildReplacementText(source, result.start, result.end, mismatch.actualDiagram);
             replacements.push({
                 start: result.start,
                 end: result.end,
-                newText,
+                newText: built.text,
                 line: mismatch.line,
                 label: mismatch.label,
+                indentFixed: built.indentFixed,
             });
         }
     }
 
     return replacements;
+}
+
+/**
+ * Scans all .check(`...`) template literals in a file and returns replacements for any
+ * whose indentation doesn't match line-indent + 4. Does not require a recorded mismatch.
+ */
+function findIndentationFixes(ts: Typescript, source: string, file: string): Replacement[] {
+    const sourceFile = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, /* setParentNodes */ true);
+    const fixes: Replacement[] = [];
+
+    function visit(node: any): void {
+        if (ts.isCallExpression(node)) {
+            const expr = node.expression;
+            if (ts.isPropertyAccessExpression(expr) && expr.name.text === 'check' && node.arguments.length >= 1) {
+                const arg = node.arguments[0];
+                if (ts.isNoSubstitutionTemplateLiteral(arg)) {
+                    const start = arg.getStart(sourceFile);
+                    const end = arg.getEnd();
+                    const original = source.slice(start, end);
+                    const originalLines = original.slice(1, -1).split('\n'); // strip backticks
+
+                    // Only multi-line templates can have indentation issues
+                    if (originalLines.length <= 1) {
+                        ts.forEachChild(node, visit);
+                        return;
+                    }
+
+                    // Find existing content indent
+                    let existingIndent = '';
+                    for (let i = 1; i < originalLines.length; i++) {
+                        if (originalLines[i].trim().length > 0) {
+                            const m = originalLines[i].match(/^(\s*)/);
+                            existingIndent = m ? m[1] : '';
+                            break;
+                        }
+                    }
+
+                    // Derive expected indent from the line containing the backtick
+                    let lineStart = start - 1;
+                    while (lineStart >= 0 && source[lineStart] !== '\n') {
+                        lineStart--;
+                    }
+                    lineStart++;
+                    const lineLeadMatch = source.slice(lineStart).match(/^(\s*)/);
+                    const lineIndent = lineLeadMatch ? lineLeadMatch[1] : '';
+                    const expectedIndent = lineIndent + '    ';
+
+                    if (existingIndent === expectedIndent) {
+                        ts.forEachChild(node, visit);
+                        return; // already correct
+                    }
+
+                    // Re-apply correct indent: strip existing indent, apply expected
+                    const contentLines = originalLines.slice(1, -1); // skip line after opening backtick and closing indent line
+                    const stripped = contentLines.map((l) => l.slice(existingIndent.length));
+                    const fixedLines = stripped.map((l) => (l.trim() ? expectedIndent + l : ''));
+                    const closingIndent = lineIndent;
+                    const newText = '`\n' + fixedLines.join('\n') + '\n' + closingIndent + '`';
+
+                    const callLine = sourceFile.getLineAndCharacterOfPosition(node.getStart()).line + 1;
+                    // Try to extract the label from the second argument of the GridRows constructor call
+                    let label = '';
+                    const receiver = expr.expression; // the object .check() is called on
+                    if (
+                        ts.isNewExpression(receiver) &&
+                        receiver.arguments &&
+                        receiver.arguments.length >= 2 &&
+                        ts.isStringLiteral(receiver.arguments[1])
+                    ) {
+                        label = receiver.arguments[1].text;
+                    }
+
+                    fixes.push({ start, end, newText, line: callLine, label, indentFixed: true });
+                }
+            }
+        }
+        ts.forEachChild(node, visit);
+    }
+    visit(sourceFile);
+    return fixes;
 }
 
 /**
@@ -393,59 +514,54 @@ function resolveTemplateLiteral(
 // ─── Text replacement with indentation ───────────────────────────────────────
 
 /**
- * Builds the replacement text for a template literal, preserving the original indentation.
+ * Builds the replacement text for a .check() argument.
+ * Indentation is always derived from the line containing `start` — content gets +4 spaces,
+ * the closing backtick sits at the line's base indent. This also corrects any pre-existing
+ * wrong indentation in the original template.
  *
  * @param source Full source file content
- * @param start Start position of the template literal (the opening backtick)
- * @param end End position of the template literal (after the closing backtick)
+ * @param start Start position of the argument (opening quote/backtick)
+ * @param end End position of the argument (after closing quote/backtick)
  * @param actualDiagram The new diagram content from makeDiagram(false)
+ * @returns `{ text, indentFixed }` — indentFixed is true when the original indentation was wrong
  */
-function buildReplacementText(source: string, start: number, end: number, actualDiagram: string): string {
+function buildReplacementText(
+    source: string,
+    start: number,
+    end: number,
+    actualDiagram: string
+): { text: string; indentFixed: boolean } {
+    // Derive indent from the leading whitespace of the line containing `start`
+    let lineStart = start - 1;
+    while (lineStart >= 0 && source[lineStart] !== '\n') {
+        lineStart--;
+    }
+    lineStart++; // move past '\n' (or stay at 0)
+    const lineLeadMatch = source.slice(lineStart).match(/^(\s*)/);
+    const lineIndent = lineLeadMatch ? lineLeadMatch[1] : '';
+    const contentIndent = lineIndent + '    ';
+    const closingIndent = lineIndent;
+
+    // Detect whether the existing template already has correct indentation
+    // (so we can report a fix when it didn't)
     const original = source.slice(start, end);
-
-    // Detect the indentation from the original template literal content
-    const originalContent = original.slice(1, -1); // strip backticks
+    const originalContent = original.slice(1, original.startsWith('`') ? -1 : -1);
     const originalLines = originalContent.split('\n');
-
-    // Find indent of first non-empty content line (skip the first which is after the backtick on the same line)
-    let contentIndent = '';
+    let existingContentIndent = '';
     for (let i = 1; i < originalLines.length; i++) {
-        const line = originalLines[i];
-        if (line.trim().length > 0) {
-            const match = line.match(/^(\s+)/);
-            contentIndent = match ? match[1] : '';
+        if (originalLines[i].trim().length > 0) {
+            const m = originalLines[i].match(/^(\s*)/);
+            existingContentIndent = m ? m[1] : '';
             break;
         }
     }
+    const indentFixed = originalLines.length > 1 && existingContentIndent !== contentIndent;
 
-    // Find indent of the closing backtick line
-    let closingIndent = '';
-    if (originalLines.length > 1) {
-        const lastLine = originalLines[originalLines.length - 1];
-        const match = lastLine.match(/^(\s*)/);
-        closingIndent = match ? match[1] : '';
-    }
-
-    // If we couldn't detect indentation (single-line or empty original), fall back to the
-    // leading whitespace of the line containing the literal, plus 4 extra spaces for content.
-    if (!contentIndent) {
-        // Find the start of the line containing `start`
-        let lineStart = start - 1;
-        while (lineStart >= 0 && source[lineStart] !== '\n') {
-            lineStart--;
-        }
-        lineStart++; // move past the '\n' (or stay at 0)
-        const lineLeadMatch = source.slice(lineStart).match(/^(\s*)/);
-        const lineIndent = lineLeadMatch ? lineLeadMatch[1] : '';
-        contentIndent = lineIndent + '    '; // 4 extra spaces for diagram content
-        closingIndent = lineIndent;
-    }
-
-    // Build the new diagram with proper indentation
+    // Build the new diagram with correct indentation
     const diagramLines = unindentText(actualDiagram).split('\n');
     const indentedLines = diagramLines.map((line) => (line.trim() ? contentIndent + line : ''));
 
-    return '`\n' + indentedLines.join('\n') + '\n' + closingIndent + '`';
+    return { text: '`\n' + indentedLines.join('\n') + '\n' + closingIndent + '`', indentFixed };
 }
 
 // ─── Utilities ───────────────────────────────────────────────────────────────

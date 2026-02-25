@@ -32,7 +32,7 @@ if (Error.stackTraceLimit < 40) {
 
         afterAll(async () => {
             const { processSnapshotUpdates } = await import('./src/test-utils/gridRows/snapshot-updater');
-            await processSnapshotUpdates();
+            await processSnapshotUpdates(expect.getState().testPath ?? undefined);
         });
     }
 }
