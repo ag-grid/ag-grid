@@ -88,7 +88,11 @@ export {
 } from './agStack/theming/shared/shared-css';
 export { _asThemeImpl, createSharedTheme as _createSharedTheme } from './agStack/theming/themeImpl';
 export { ThemeLogger as _ThemeLogger } from './agStack/theming/themeLogger';
-export { getParamType as _getParamType, paramValueToCss as _paramValueToCss } from './agStack/theming/themeTypeUtils';
+export {
+    getParamType as _getParamType,
+    paramValueToCss as _paramValueToCss,
+    ParamType as _ParamType,
+} from './agStack/theming/themeTypeUtils';
 export { paramToVariableName as _paramToVariableName } from './agStack/theming/themeUtils';
 export { HighlightTooltipEventType } from './agStack/tooltip/agHighlightTooltipFeature';
 export { AgTooltipComponent as _AgTooltipComponent } from './agStack/tooltip/agTooltipComponent';

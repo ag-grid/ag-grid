@@ -196,7 +196,7 @@ export abstract class BaseEnvironment<
 
         const { type, noWarn } = variable;
 
-        if (type !== 'length' && type !== 'border') {
+        if (type !== 'length' && type !== 'border' && type !== 'scale') {
             return sizeEl;
         }
 
@@ -235,6 +235,8 @@ export abstract class BaseEnvironment<
                 '--ag-internal-measurement-border',
                 `var(${cssName}, solid ${NO_VALUE_SENTINEL}px)`
             );
+        } else if (type === 'scale') {
+            sizeEl.style.width = `calc(var(${cssName}, ${NO_VALUE_SENTINEL}) * 1px)`;
         } else {
             sizeEl.style.width = `var(${cssName}, ${NO_VALUE_SENTINEL}px)`;
         }
