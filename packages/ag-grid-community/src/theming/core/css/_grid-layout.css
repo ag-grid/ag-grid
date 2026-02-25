@@ -55,7 +55,8 @@
     color: var(--ag-cell-text-color);
     font-family: var(--ag-cell-font-family);
     white-space: nowrap;
-    font-size: var(--ag-data-font-size);
+    font-size: var(--ag-cell-font-size);
+    font-weight: var(--ag-cell-font-weight);
 
     /* Work out the correct line height. --ag-row-height is the default row
            height, --ag-line-height is the actual row height, only set if variable row

@@ -1499,7 +1499,7 @@ export interface GridOptions<TData = any> {
      * When using `groupDisplayType='multipleColumns'` or `groupHideOpenParents=true`, hides group columns for levels
      * that have not yet been expanded. Only the top-level group column is initially
      * visible; each subsequent level becomes visible when at least one group at the
-     * preceding level is expanded.
+     * preceding level is expanded. (Client Side Row Model only)
      * @default false
      * @agModule `RowGroupingModule`
      */

@@ -234,6 +234,16 @@ export interface CoreParams extends SharedThemeParams {
     cellFontFamily: FontFamilyValue;
 
     /**
+     * Font size of text in grid cells
+     */
+    cellFontSize: LengthValue;
+
+    /**
+     * Font weight of text in grid cells
+     */
+    cellFontWeight: FontWeightValue;
+
+    /**
      * Borders between and below header rows.
      */
     headerRowBorder: BorderValue;
@@ -641,6 +651,12 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     cellFontFamily: {
         ref: 'fontFamily',
     },
+    cellFontSize: {
+        ref: 'dataFontSize',
+    },
+    cellFontWeight: {
+        ref: 'fontWeight',
+    },
     headerCellHoverBackgroundColor: 'transparent',
     headerCellMovingBackgroundColor: { ref: 'headerCellHoverBackgroundColor' },
     headerCellBackgroundTransitionDuration: '0.2s',
@@ -679,7 +695,7 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     valueChangeDeltaDownColor: '#e53935',
     valueChangeValueHighlightBackgroundColor: '#16a08580',
     rowHeight: {
-        calc: 'max(iconSize, dataFontSize) + spacing * 3.25 * rowVerticalPaddingScale',
+        calc: 'max(iconSize, cellFontSize) + spacing * 3.25 * rowVerticalPaddingScale',
     },
     rowVerticalPaddingScale: 1,
     paginationPanelHeight: {
