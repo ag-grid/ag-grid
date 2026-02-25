@@ -8423,7 +8423,7 @@
     "@rolldown/pluginutils" "^1.0.0-beta.9"
     "@vue/babel-plugin-jsx" "^1.4.0"
 
-"@vitejs/plugin-vue@^5.0.5":
+"@vitejs/plugin-vue@^5.0.5", "@vitejs/plugin-vue@^5.2.0":
   version "5.2.4"
   resolved "http://52.50.158.57:4873/@vitejs/plugin-vue/-/plugin-vue-5.2.4.tgz#9e8a512eb174bfc2a333ba959bbf9de428d89ad8"
   integrity sha512-7Yx/SXSOcQq5HiiV3orevHUFn+pmMB4cgbEkDYgnkUWb0WfeQ/wa2yFv6D5ICiCQOVpjA7vYDXrC7AGO8yjDHA==
@@ -8703,6 +8703,11 @@
   dependencies:
     de-indent "^1.0.2"
     he "^1.2.0"
+
+"@vue/devtools-api@^6.6.4":
+  version "6.6.4"
+  resolved "https://registry.yarnpkg.com/@vue/devtools-api/-/devtools-api-6.6.4.tgz#cbe97fe0162b365edc1dba80e173f90492535343"
+  integrity sha512-sGhTPMuXqZ1rVOk32RylztWkfXTRhuS7vgAKv0zjqk8gbsHkJ7xfFf+jbySxt7tWObEJwyKaHMikV/WGDiQm8g==
 
 "@vue/devtools-core@^7.7.7":
   version "7.7.7"
@@ -24306,7 +24311,7 @@ typescript@~5.4.5:
   resolved "http://52.50.158.57:4873/typescript/-/typescript-5.4.5.tgz#42ccef2c571fdbd0f6718b1d1f5e6e5ef006f611"
   integrity sha512-vcI4UpRgg81oIRUFwR0WSIHKt11nJ7SAVlYNIu+QpqeyXP+gpQJy/Z4+F0aGxSE4MqwjyXvW/TzgkLAx2AGHwQ==
 
-typescript@~5.6.2:
+typescript@~5.6.0, typescript@~5.6.2:
   version "5.6.3"
   resolved "http://52.50.158.57:4873/typescript/-/typescript-5.6.3.tgz#5f3449e31c9d94febb17de03cc081dd56d81db5b"
   integrity sha512-hjcS1mhfuyi4WW8IWtjP7brDrG2cuDZukyrYrSauoXGNgx0S7zceP07adYkJycEr56BOUTNPzbInooiN3fn1qw==
@@ -24937,7 +24942,7 @@ vite-plugin-vue-inspector@^5.3.1:
     kolorist "^1.8.0"
     magic-string "^0.30.4"
 
-vite@6.4.1, vite@^6.4.1:
+vite@6.4.1, vite@^6.0.0, vite@^6.4.1:
   version "6.4.1"
   resolved "http://52.50.158.57:4873/vite/-/vite-6.4.1.tgz#afbe14518cdd6887e240a4b0221ab6d0ce733f96"
   integrity sha512-+Oxm7q9hDoLMyJOYfUYBuHQo+dkAloi33apOPP56pzj+vsdJDzr+j1NISE5pyaAuKL4A3UD34qd0lx5+kfKp2g==
@@ -25136,7 +25141,14 @@ vue-component-type-helpers@^2.0.0:
   resolved "http://52.50.158.57:4873/vue-component-type-helpers/-/vue-component-type-helpers-2.2.12.tgz#5014787aad185a22f460ad469cc51f14524308bc"
   integrity sha512-YbGqHZ5/eW4SnkPNR44mKVc6ZKQoRs/Rux1sxC6rdwXb4qpbOSYfDr9DsTHolOTGmIKgM9j141mZbBeg05R1pw==
 
-vue-tsc@^2.0.21:
+vue-router@^4.5.0:
+  version "4.6.4"
+  resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-4.6.4.tgz#a0a9cb9ef811a106d249e4bb9313d286718020d8"
+  integrity sha512-Hz9q5sa33Yhduglwz6g9skT8OBPii+4bFn88w6J+J4MfEo4KRRpmiNG/hHHkdbRFlLBOqxN8y8gf2Fb0MTUgVg==
+  dependencies:
+    "@vue/devtools-api" "^6.6.4"
+
+vue-tsc@^2.0.0, vue-tsc@^2.0.21:
   version "2.2.12"
   resolved "http://52.50.158.57:4873/vue-tsc/-/vue-tsc-2.2.12.tgz#5f719b08ef7390a763c1a20169ca5c9d09d55688"
   integrity sha512-P7OP77b2h/Pmk+lZdJ0YWs+5tJ6J2+uOQPo7tlBnY44QqQSPYvS0qVT4wqDJgwrZaLe47etJLLQRFia71GYITw==

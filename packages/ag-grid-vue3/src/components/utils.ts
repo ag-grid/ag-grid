@@ -2473,34 +2473,90 @@ export function getProps() {
 
 export const debounce = (func: () => void, delay: number) => {
      let timeout: number;
-     return () => {
-          const later = function () {
-               func();
-          };
+     const debounced = () => {
           window.clearTimeout(timeout);
-          timeout = window.setTimeout(later, delay);
+          timeout = window.setTimeout(func, delay);
      };
+     debounced.cancel = () => {
+          window.clearTimeout(timeout);
+     };
+     return debounced;
 };
 
 function isInputClass(input: any) {
-     return input &&
-          input.constructor &&
-          input.constructor.toString().substring(0, 5) === 'class';
+     if (!input || typeof input !== 'object' || Array.isArray(input)) {
+          return false;
+     }
+     const proto = Object.getPrototypeOf(input);
+     return proto !== null && proto !== Object.prototype;
 }
 
 // necessary for grid change detection to work - everything in vue is proxied
 export function deepToRaw<T extends Record<string, any>>(sourceObj: T): T {
+     // Fast path: primitives, null/undefined, and functions need no unwrapping
+     if (sourceObj === null || sourceObj === undefined || typeof sourceObj !== 'object') {
+          return sourceObj;
+     }
+
+     const seen = new WeakSet();
      const objectIterator = (input: any): any => {
+          // Primitives and functions pass through immediately
+          if (input === null || input === undefined || typeof input !== 'object') {
+               return input;
+          }
+          if (isRef(input)) {
+               return objectIterator(input.value);
+          }
+          if (isReactive(input) || isProxy(input)) {
+               return objectIterator(toRaw(input));
+          }
           if (isInputClass(input)) {
                return toRaw(input);
           }
           if (Array.isArray(input)) {
-               return input.map((item) => objectIterator(item));
+               // Check if any element needs unwrapping before allocating a new array
+               let needsCopy = false;
+               for (let i = 0; i < input.length; i++) {
+                    const item = input[i];
+                    if (item !== null && typeof item === 'object') {
+                         if (isRef(item) || isReactive(item) || isProxy(item)) {
+                              needsCopy = true;
+                              break;
+                         }
+                         // Nested object/array — need to recurse
+                         needsCopy = true;
+                         break;
+                    }
+               }
+               return needsCopy ? input.map((item) => objectIterator(item)) : input;
           }
-          if (isRef(input) || isReactive(input) || isProxy(input)) {
-               return objectIterator(toRaw(input));
+          if (seen.has(input)) {
+               return input;
           }
-          return input;
+          seen.add(input);
+          // Check if any value needs unwrapping before allocating a new object
+          const keys = Object.keys(input);
+          let needsCopy = false;
+          for (let i = 0; i < keys.length; i++) {
+               const val = input[keys[i]];
+               if (val !== null && typeof val === 'object') {
+                    if (isRef(val) || isReactive(val) || isProxy(val)) {
+                         needsCopy = true;
+                         break;
+                    }
+                    // Nested object/array — need to recurse
+                    needsCopy = true;
+                    break;
+               }
+          }
+          if (!needsCopy) {
+               return input;
+          }
+          const result: Record<string, any> = {};
+          for (let i = 0; i < keys.length; i++) {
+               result[keys[i]] = objectIterator(input[keys[i]]);
+          }
+          return result;
      };
 
      return objectIterator(sourceObj);

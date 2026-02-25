@@ -116,6 +116,7 @@
       "testing/vue-package-tests",
       "testing/accessibility",
       "testing/csp",
+      "testing/vue3-tests",
       "testing/public-recipes/e2e",
       "external/ag-shared"
     ],

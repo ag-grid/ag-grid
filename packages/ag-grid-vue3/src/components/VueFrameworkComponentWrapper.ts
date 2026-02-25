@@ -60,7 +60,7 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
 
             public processMethod(methodName: string, args: IArguments): any {
                 if (methodName === 'refresh') {
-                    this.getFrameworkComponentInstance().params = args[0];
+                    this.getFrameworkComponentInstance().params = Object.freeze(args[0]);
                 }
 
                 if (this.hasMethod(methodName)) {
@@ -122,7 +122,7 @@ abstract class VueComponent<P> {
         ) {
             this.getFrameworkComponentInstance().destroy();
         }
-        this.unmount();
+        this.unmount?.();
     }
 
     public getFrameworkComponentInstance(): any {
