@@ -402,6 +402,9 @@ export class GridRowsValidator {
 
     private validateSelectedRows(state: GridRowsValidationState): void {
         const gridRows = state.gridRows;
+        if (!gridRows.api.isModuleRegistered('RowSelectionModule')) {
+            return;
+        }
         const selectedRows = gridRows.api.getSelectedNodes();
         const selectedRowsSet = new Set();
         let duplicates = 0;
@@ -730,6 +733,9 @@ export class GridRowsValidator {
     }
 
     private validatePivotLeafRow({ gridRows }: GridRowsValidationState, row: RowNode): void {
+        if (!gridRows.api.isModuleRegistered('RowGroupingModule') && !gridRows.api.isModuleRegistered('PivotModule')) {
+            return;
+        }
         this.errors.add(
             row,
             gridRows.isRowDisplayed(row) &&

@@ -1,11 +1,11 @@
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, QuickFilterModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
 
 describe('group order maintenance', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule],
+        modules: [QuickFilterModule, ClientSideRowModelModule, RowGroupingModule],
     });
 
     afterEach(() => gridsManager.reset());

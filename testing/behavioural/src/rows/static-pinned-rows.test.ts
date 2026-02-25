@@ -1,10 +1,10 @@
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, PinnedRowModule } from 'ag-grid-community';
 
 import { TestGridsManager } from '../test-utils';
 import { VERSION } from '../version';
 
 describe('Pinned rows', () => {
-    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule] });
+    const gridsManager = new TestGridsManager({ modules: [PinnedRowModule, ClientSideRowModelModule] });
 
     const columnDefs = [{ field: 'athlete' }, { field: 'sport' }, { field: 'age' }];
     const topData = [{ athlete: 'Top Athlete', sport: 'Top Sport', age: 11 }];

@@ -1,5 +1,5 @@
 import type { GridApi, GridOptions, IRowNode, RowNode, RowPinnedType } from 'ag-grid-community';
-import { ClientSideRowModelModule, PinnedRowModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, NumberFilterModule, PinnedRowModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, applyTransactionChecked, cachedJSONObjects } from '../test-utils';
@@ -17,7 +17,7 @@ interface RowData {
  */
 describe('ag-grid grouping pinned sibling aggregation', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, PinnedRowModule],
+        modules: [NumberFilterModule, ClientSideRowModelModule, RowGroupingModule, PinnedRowModule],
     });
 
     beforeEach(() => {

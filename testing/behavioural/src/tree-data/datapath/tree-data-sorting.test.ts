@@ -1,11 +1,11 @@
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, TextFilterModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager } from '../../test-utils';
 
 describe('tree dats sorting behaviour', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, TreeDataModule],
+        modules: [ClientSideRowModelModule, TextFilterModule, TreeDataModule],
     });
 
     afterEach(() => {

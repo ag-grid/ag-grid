@@ -1,3 +1,4 @@
+import { CellStyleModule } from 'ag-grid-community';
 import { MasterDetailModule, ServerSideRowModelModule, TreeDataModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager } from '../../../test-utils';
@@ -11,7 +12,7 @@ import {
 
 describe('ag-grid tree data groupCellRenderer', () => {
     const gridsManager = new TestGridsManager({
-        modules: [MasterDetailModule, ServerSideRowModelModule, TreeDataModule],
+        modules: [CellStyleModule, MasterDetailModule, ServerSideRowModelModule, TreeDataModule],
     });
     const createTests = getTestGenerator(gridsManager, treeDataSnapshotter);
 

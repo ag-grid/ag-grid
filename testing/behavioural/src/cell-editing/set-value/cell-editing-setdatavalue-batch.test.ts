@@ -1,8 +1,7 @@
-import { setupAgTestIds } from 'ag-grid-community';
+import { TextEditorModule, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
-import { expect } from '../../test-utils/matchers';
 
 /**
  * Tests for setDataValue behavior during batch editing.
@@ -14,7 +13,7 @@ import { expect } from '../../test-utils/matchers';
 describe('Cell Editing: setDataValue in Batch Mode', () => {
     const gridMgr = new TestGridsManager({
         includeDefaultModules: true,
-        modules: [BatchEditModule],
+        modules: [BatchEditModule, TextEditorModule],
     });
 
     beforeAll(() => {

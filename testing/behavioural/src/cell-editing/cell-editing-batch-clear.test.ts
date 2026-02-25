@@ -2,7 +2,7 @@ import { getByTestId } from '@testing-library/dom';
 import '@testing-library/jest-dom';
 import { userEvent } from '@testing-library/user-event';
 
-import { TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import { NumberEditorModule, TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule, CellSelectionModule } from 'ag-grid-enterprise';
 
 import {
@@ -17,7 +17,7 @@ import {
 
 describe('Cell Editing: batch clear bugs', () => {
     const gridMgr = new TestGridsManager({
-        modules: [BatchEditModule, TextEditorModule, CellSelectionModule],
+        modules: [BatchEditModule, TextEditorModule, NumberEditorModule, CellSelectionModule],
     });
 
     beforeAll(() => {

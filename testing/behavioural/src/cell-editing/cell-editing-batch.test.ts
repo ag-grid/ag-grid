@@ -2,16 +2,22 @@ import { getByTestId } from '@testing-library/dom';
 import '@testing-library/jest-dom';
 import { userEvent } from '@testing-library/user-event';
 
-import { agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import {
+    NumberEditorModule,
+    RenderApiModule,
+    TextEditorModule,
+    agTestIdFor,
+    getGridElement,
+    setupAgTestIds,
+} from 'ag-grid-community';
 import { BatchEditModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
-import { expect } from '../test-utils/matchers';
 
 describe('Cell Editing Batch', () => {
     const gridMgr = new TestGridsManager({
         includeDefaultModules: true,
-        modules: [BatchEditModule],
+        modules: [TextEditorModule, NumberEditorModule, RenderApiModule, BatchEditModule],
     });
 
     const rowDataFactory = () => [

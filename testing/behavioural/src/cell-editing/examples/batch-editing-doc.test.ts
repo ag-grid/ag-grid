@@ -5,8 +5,10 @@ import { userEvent } from '@testing-library/user-event';
 import type { GridOptions, ValueGetterParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    DateEditorModule,
     NumberEditorModule,
     PinnedRowModule,
+    ScrollApiModule,
     SelectEditorModule,
     TextEditorModule,
     agTestIdFor,
@@ -44,10 +46,12 @@ describe('Batch editing documentation examples', () => {
         includeDefaultModules: true,
         modules: [
             ClientSideRowModelModule,
+            DateEditorModule,
             NumberEditorModule,
             TextEditorModule,
             SelectEditorModule,
             PinnedRowModule,
+            ScrollApiModule,
             BatchEditModule,
             CellSelectionModule,
             ColumnsToolPanelModule,

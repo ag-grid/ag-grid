@@ -1,7 +1,7 @@
 import { vi } from 'vitest';
 
 import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../test-utils';
@@ -9,7 +9,7 @@ import { GridRows, TestGridsManager, applyTransactionChecked, setRowDataChecked 
 
 describe('ag-grid grouping with pivot', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, PivotModule],
+        modules: [ClientSideRowModelModule, NumberFilterModule, TextFilterModule, RowGroupingModule, PivotModule],
     });
 
     beforeEach(() => {

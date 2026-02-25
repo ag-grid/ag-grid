@@ -1,12 +1,12 @@
 import type { GridOptions, ModelUpdatedEvent } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, PinnedRowModule, TextFilterModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout, cachedJSONObjects } from '../test-utils';
 
 describe('ag-grid grouping expanded state', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule],
+        modules: [PinnedRowModule, TextFilterModule, ClientSideRowModelModule, RowGroupingModule],
     });
 
     beforeEach(() => {

@@ -1,7 +1,7 @@
 import type { MockInstance } from 'vitest';
 
 import type { DetailGridInfo, GetDetailRowDataParams, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
 import { MasterDetailModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, assertSelectedRowsByIndex, asyncSetTimeout, waitForEvent } from '../test-utils';
@@ -88,7 +88,7 @@ describe('Row Selection Grid Options', () => {
     }
 
     const gridMgr = new TestGridsManager({
-        modules: [ClientSideRowModelModule, MasterDetailModule],
+        modules: [RowSelectionModule, ClientSideRowModelModule, MasterDetailModule],
     });
 
     beforeEach(() => {

@@ -1,14 +1,14 @@
 import { getByTestId } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 
-import { TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import { NumberEditorModule, TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule, CellSelectionModule, ClipboardModule } from 'ag-grid-enterprise';
 
 import { EditEventTracker, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
 
 describe('Cell Editing: edge cases', () => {
     const gridMgr = new TestGridsManager({
-        modules: [CellSelectionModule, BatchEditModule, TextEditorModule, ClipboardModule],
+        modules: [CellSelectionModule, BatchEditModule, TextEditorModule, NumberEditorModule, ClipboardModule],
     });
 
     beforeAll(() => {

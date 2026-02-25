@@ -4,6 +4,7 @@ import { userEvent } from '@testing-library/user-event';
 import {
     ClientSideRowModelModule,
     DateFilterModule,
+    NumberFilterModule,
     TextFilterModule,
     agTestIdFor,
     getGridElement,
@@ -14,7 +15,7 @@ import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('Number Range Filter', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, TextFilterModule, DateFilterModule],
+        modules: [NumberFilterModule, ClientSideRowModelModule, TextFilterModule, DateFilterModule],
     });
 
     beforeAll(() => setupAgTestIds());

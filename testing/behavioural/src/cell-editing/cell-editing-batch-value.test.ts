@@ -2,17 +2,23 @@ import { getByTestId } from '@testing-library/dom';
 import '@testing-library/jest-dom';
 import { userEvent } from '@testing-library/user-event';
 
-import { agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import {
+    RenderApiModule,
+    TextEditorModule,
+    ValueCacheModule,
+    agTestIdFor,
+    getGridElement,
+    setupAgTestIds,
+} from 'ag-grid-community';
 import { BatchEditModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
-import { expect } from '../test-utils/matchers';
 
 /** Tests for AG-16448: valueGetter using params.getValue() sees committed data only during batch editing */
 describe('Cell Editing Batch Value (AG-16448)', () => {
     const gridMgr = new TestGridsManager({
         includeDefaultModules: true,
-        modules: [BatchEditModule],
+        modules: [TextEditorModule, RenderApiModule, ValueCacheModule, BatchEditModule],
     });
 
     beforeAll(() => setupAgTestIds());

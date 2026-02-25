@@ -1,11 +1,11 @@
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, RowSelectionModule, TextFilterModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, cachedJSONObjects } from '../../../test-utils';
 
 describe('ag-grid parentId tree selection', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, TreeDataModule],
+        modules: [TextFilterModule, RowSelectionModule, ClientSideRowModelModule, TreeDataModule],
     });
 
     beforeEach(() => {

@@ -12,7 +12,6 @@ import {
     clipboardUtils,
     waitForEvent,
 } from '../../test-utils';
-import { expect } from '../../test-utils/matchers';
 import type { ColDefInternal } from './group-edit-test-utils';
 
 describe('Group Edit: clipboard paste', () => {

@@ -1,11 +1,10 @@
 import { userEvent } from '@testing-library/user-event';
 
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, NumberEditorModule, TextEditorModule } from 'ag-grid-community';
 import type { GridApi, IRowNode } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, asyncSetTimeout, waitForInput } from '../../../test-utils';
-import { expect } from '../../../test-utils/matchers';
 import { editCell } from '../group-edit-test-utils';
 
 type EditEvent = {
@@ -21,7 +20,7 @@ type EditEvent = {
 
 describe('enableGroupEdit with pivot mode', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, PivotModule],
+        modules: [TextEditorModule, NumberEditorModule, ClientSideRowModelModule, RowGroupingModule, PivotModule],
     });
 
     beforeEach(() => {

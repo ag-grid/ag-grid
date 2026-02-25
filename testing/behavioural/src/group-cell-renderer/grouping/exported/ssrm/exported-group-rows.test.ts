@@ -1,4 +1,5 @@
 import type { GridApi } from 'ag-grid-community';
+import { CellStyleModule, CsvExportModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager } from '../../../../test-utils';
@@ -8,7 +9,7 @@ import { getExportedTestConcerns } from '../exported-test-utils';
 
 describe('ag-grid exported group values', () => {
     const gridsManager = new TestGridsManager({
-        modules: [PivotModule, RowGroupingModule, ServerSideRowModelModule],
+        modules: [CellStyleModule, CsvExportModule, PivotModule, RowGroupingModule, ServerSideRowModelModule],
     });
     const snapshotCsv = (container: HTMLDivElement, api: GridApi) => {
         return api.getDataAsCsv();

@@ -1,11 +1,11 @@
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { CellStyleModule, ClientSideRowModelModule, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, cachedJSONObjects, setRowDataChecked } from '../../../test-utils';
 
 describe('ag-grid hierarchical tree filter sort', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, TreeDataModule],
+        modules: [CellStyleModule, TextFilterModule, NumberFilterModule, ClientSideRowModelModule, TreeDataModule],
     });
 
     beforeEach(() => {

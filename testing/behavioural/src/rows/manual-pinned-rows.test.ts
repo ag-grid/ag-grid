@@ -1,4 +1,4 @@
-import { ClientSideRowModelModule, PaginationModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, PaginationModule, PinnedRowModule } from 'ag-grid-community';
 import type { GridApi, RowNode, RowPinnedType } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -24,7 +24,7 @@ function getPinnedRows(api: GridApi, floating: NonNullable<RowPinnedType>): RowN
 
 describe('Manual pinned rows', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, PaginationModule],
+        modules: [PinnedRowModule, ClientSideRowModelModule, RowGroupingModule, PaginationModule],
     });
 
     const columnDefs = [{ field: 'sport' }];

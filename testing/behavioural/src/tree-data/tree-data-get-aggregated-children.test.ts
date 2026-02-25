@@ -3,7 +3,6 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule, SetFilterModule, TreeDataModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, applyTransactionChecked } from '../test-utils';
-import { expect } from '../test-utils/matchers';
 
 describe('IRowNode.getAggregatedChildren() with tree data', () => {
     const gridsManager = new TestGridsManager({

@@ -1,95 +1,82 @@
-import { accessSync, constants as fsConstants } from 'fs';
+import { existsSync } from 'fs';
 import { readFile, readdir } from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { defineConfig } from 'vitest/config';
 
-const testingBehaviouralPath = path.resolve(fileURLToPath(import.meta.url), '../');
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const rootDir = path.resolve(__dirname, '../..');
 
-/** Resolve aliases — deduplicate react so ag-grid-react source code uses the same copy */
-const resolveAlias: Record<string, string> = {
-    react: path.resolve(testingBehaviouralPath, 'node_modules/react'),
-    'react-dom': path.resolve(testingBehaviouralPath, 'node_modules/react-dom'),
-};
+type Alias = { find: string | RegExp; replacement: string };
 
-/**
- * This behavioural test project can both use the source code and the bundles of the modules.
- * So we can have a faster development cycle running tests before the compilation steps is done,
- * and, we can still run the tests using the compiled code if needed by setting the environment variable
- * `TESTS_USE_SOURCE_CODE=false`, will make the project use the bundled dist code.
- *
- * Note that at the moment vitest is not correctly loading the sourcemaps of the bundled code, so it is recommended to use the source code.
- */
+/** Candidate entry-point filenames tried when resolving a package to source. */
+const SOURCE_ENTRY_FILES = ['src/index.ts', 'src/index.tsx', 'src/main.ts', 'src/main.tsx'] as const;
 
-const ENTRY_FILES = ['src/index.ts', 'src/index.tsx', 'src/main.ts', 'src/main.tsx'] as const;
+const aliases: Alias[] = [
+    { find: 'react', replacement: path.resolve(__dirname, 'node_modules/react') },
+    { find: 'react-dom', replacement: path.resolve(__dirname, 'node_modules/react-dom') },
+];
 
+// Point package names at TypeScript source so tests run against uncompiled code.
 if (process.env.TESTS_USE_ORIGINAL_SOURCE_CODE !== 'false') {
-    const workspaceRootPath = path.resolve(fileURLToPath(import.meta.url), '../../../');
-    await loadSourceCodeAliases(resolveAlias, path.resolve(workspaceRootPath, 'packages'));
+    await loadSourceCodeAliases(aliases, path.resolve(rootDir, 'packages'));
 }
 
 export default defineConfig({
+    esbuild: { target: 'esnext' },
+    resolve: { alias: aliases },
     test: {
         globals: true,
         environment: 'jsdom',
-        setupFiles: './vitest.setup.js',
+        setupFiles: './vitest.setup.ts',
         reporters: ['basic'],
         watch: false,
         pool: 'threads',
         dir: 'src',
         include: ['**/*.test.ts', '**/*.test.tsx'],
-        benchmark: {
-            include: ['**/*.bench.ts'],
-        },
-    },
-    resolve: {
-        alias: resolveAlias,
+        benchmark: { include: ['**/*.bench.ts'] },
+        css: false,
     },
     clearScreen: false,
 });
 
-/** Scans package directories and maps package names to their TypeScript source entry points. */
-async function loadSourceCodeAliases(aliases: Record<string, string>, rootDir: string, depth = 0): Promise<void> {
-    const entries = await readdir(rootDir, { withFileTypes: true });
+/** Recursively discover packages under `dir` and alias them to their source entry. */
+async function loadSourceCodeAliases(aliases: Alias[], dir: string, depth = 0): Promise<void> {
+    const entries = await readdir(dir, { withFileTypes: true });
     const tasks: Promise<void>[] = [];
 
     for (const entry of entries) {
-        if (!entry.isDirectory()) {
+        if (!entry.isDirectory() || entry.isSymbolicLink()) {
             continue;
         }
-        const dirPath = path.resolve(rootDir, entry.name);
+        const name = entry.name;
+        if (name === 'node_modules' || name === 'dist' || name === '.git' || name[0] === '.') {
+            continue;
+        }
+
+        const dirPath = path.resolve(dir, name);
         const pkgJsonPath = path.join(dirPath, 'package.json');
 
-        if (fileExists(pkgJsonPath)) {
+        if (existsSync(pkgJsonPath)) {
             tasks.push(registerPackageAlias(aliases, dirPath, pkgJsonPath));
         } else if (depth < 2) {
             tasks.push(loadSourceCodeAliases(aliases, dirPath, depth + 1));
         }
     }
-
     await Promise.all(tasks);
 }
 
-async function registerPackageAlias(aliases: Record<string, string>, dirPath: string, pkgJsonPath: string) {
+async function registerPackageAlias(aliases: Alias[], dirPath: string, pkgJsonPath: string): Promise<void> {
     const { name } = JSON.parse(await readFile(pkgJsonPath, 'utf-8'));
-    if (!name || name in aliases) {
+    if (!name || aliases.some((a) => a.find === name)) {
         return;
     }
 
-    for (const entryFile of ENTRY_FILES) {
-        const entryPath = path.resolve(dirPath, entryFile);
-        if (fileExists(entryPath)) {
-            aliases[name] = entryPath;
+    for (const entry of SOURCE_ENTRY_FILES) {
+        const entryPath = path.resolve(dirPath, entry);
+        if (existsSync(entryPath)) {
+            aliases.push({ find: name, replacement: entryPath });
             return;
         }
-    }
-}
-
-function fileExists(filePath: string): boolean {
-    try {
-        accessSync(filePath, fsConstants.F_OK);
-        return true;
-    } catch {
-        return false;
     }
 }

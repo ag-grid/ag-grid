@@ -11,7 +11,6 @@ import type {
     GroupRowValueSetterParams,
 } from '../../../../../packages/ag-grid-community/src/entities/colDefInternal';
 import { TestGridsManager, asyncSetTimeout, waitForInput } from '../../test-utils';
-import { expect } from '../../test-utils/matchers';
 
 export const gridsManager = new TestGridsManager({
     modules: [

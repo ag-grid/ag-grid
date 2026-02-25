@@ -3,14 +3,33 @@ import '@testing-library/jest-dom';
 import { userEvent } from '@testing-library/user-event';
 
 import type { ColDef } from 'ag-grid-community';
-import { agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import {
+    CheckboxEditorModule,
+    DateEditorModule,
+    LargeTextEditorModule,
+    NumberEditorModule,
+    RenderApiModule,
+    TextEditorModule,
+    ValueCacheModule,
+    agTestIdFor,
+    getGridElement,
+    setupAgTestIds,
+} from 'ag-grid-community';
 
 import { EditEventTracker, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
-import { expect } from '../test-utils/matchers';
 
 describe('Cell Editing Start', () => {
     const gridMgr = new TestGridsManager({
         includeDefaultModules: true,
+        modules: [
+            RenderApiModule,
+            ValueCacheModule,
+            TextEditorModule,
+            NumberEditorModule,
+            DateEditorModule,
+            LargeTextEditorModule,
+            CheckboxEditorModule,
+        ],
     });
 
     const rowDataFactory = () => [

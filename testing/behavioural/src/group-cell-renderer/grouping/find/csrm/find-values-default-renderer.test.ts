@@ -1,3 +1,4 @@
+import { CellStyleModule } from 'ag-grid-community';
 import { FindModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager } from '../../../../test-utils';
@@ -10,7 +11,7 @@ import {
 } from '../../grouping-test-utils';
 
 describe('ag-grid find API', () => {
-    const gridsManager = new TestGridsManager({ modules: [FindModule, RowGroupingModule] });
+    const gridsManager = new TestGridsManager({ modules: [FindModule, RowGroupingModule, CellStyleModule] });
     const createTests = getTestGenerator(gridsManager, findSnapshotter);
 
     beforeEach(() => {

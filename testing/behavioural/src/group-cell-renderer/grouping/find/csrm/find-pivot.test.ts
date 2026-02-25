@@ -1,3 +1,4 @@
+import { CellStyleModule } from 'ag-grid-community';
 import { FindModule, PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager } from '../../../../test-utils';
@@ -6,7 +7,9 @@ import { rowModelGridOptions } from '../../grid-config';
 import { findSnapshotter, getGridOptions_pivot, getTestConcerns_pivot } from '../../grouping-test-utils';
 
 describe('ag-grid find API', () => {
-    const gridsManager = new TestGridsManager({ modules: [FindModule, PivotModule, RowGroupingModule] });
+    const gridsManager = new TestGridsManager({
+        modules: [FindModule, PivotModule, RowGroupingModule, CellStyleModule],
+    });
     const createTests = getTestGenerator(gridsManager, findSnapshotter);
 
     beforeEach(() => {

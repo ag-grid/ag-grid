@@ -1,10 +1,9 @@
 import type { GridOptions, IRowNode, RowNode, RowPinnedType } from 'ag-grid-community';
-import { ClientSideRowModelModule, PinnedRowModule, UndoRedoEditModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, NumberEditorModule, PinnedRowModule, UndoRedoEditModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../../test-utils';
 import { GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
-import { expect } from '../../test-utils/matchers';
 import type { ColDefInternal } from './group-edit-test-utils';
 import { EDIT_MODES, cascadeGroupRowValueSetter, editCell } from './group-edit-test-utils';
 
@@ -23,7 +22,14 @@ interface PivotRowData {
  */
 describe('editing with pinned pivot rows', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, PivotModule, UndoRedoEditModule, PinnedRowModule],
+        modules: [
+            NumberEditorModule,
+            ClientSideRowModelModule,
+            RowGroupingModule,
+            PivotModule,
+            UndoRedoEditModule,
+            PinnedRowModule,
+        ],
     });
 
     beforeEach(() => {

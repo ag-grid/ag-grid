@@ -1,7 +1,7 @@
+import { TextEditorModule } from 'ag-grid-community';
 import { FindModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, asyncSetTimeout } from '../test-utils';
-import { expect } from '../test-utils/matchers';
 
 /**
  * Tests for find with data mutations and cell updates.
@@ -9,7 +9,7 @@ import { expect } from '../test-utils/matchers';
 describe('Find Data Mutations', () => {
     const gridMgr = new TestGridsManager({
         includeDefaultModules: true,
-        modules: [FindModule],
+        modules: [FindModule, TextEditorModule],
     });
 
     afterEach(() => {

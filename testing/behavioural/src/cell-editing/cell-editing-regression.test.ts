@@ -3,7 +3,15 @@ import '@testing-library/jest-dom';
 import { userEvent } from '@testing-library/user-event';
 import { vi } from 'vitest';
 
-import { agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import {
+    CheckboxEditorModule,
+    LargeTextEditorModule,
+    NumberEditorModule,
+    TextEditorModule,
+    agTestIdFor,
+    getGridElement,
+    setupAgTestIds,
+} from 'ag-grid-community';
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     CellSelectionModule,
@@ -24,12 +32,21 @@ import {
     waitForInput,
     waitForPopup,
 } from '../test-utils';
-import { expect } from '../test-utils/matchers';
 
 describe('Cell Editing Regression', () => {
     const gridMgr = new TestGridsManager({
         includeDefaultModules: true,
-        modules: [RichSelectModule, CellSelectionModule, ClipboardModule, DragAndDropModule, RowDragModule],
+        modules: [
+            TextEditorModule,
+            LargeTextEditorModule,
+            NumberEditorModule,
+            CheckboxEditorModule,
+            RichSelectModule,
+            CellSelectionModule,
+            ClipboardModule,
+            DragAndDropModule,
+            RowDragModule,
+        ],
     });
 
     beforeAll(() => setupAgTestIds());

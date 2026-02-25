@@ -1,14 +1,20 @@
 import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, PinnedRowModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, NumberFilterModule, PinnedRowModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, SetFilterModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../test-utils';
 import { GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
-import { expect } from '../test-utils/matchers';
 
 describe('IRowNode.getAggregatedChildren()', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, PivotModule, SetFilterModule, PinnedRowModule],
+        modules: [
+            NumberFilterModule,
+            ClientSideRowModelModule,
+            RowGroupingModule,
+            PivotModule,
+            SetFilterModule,
+            PinnedRowModule,
+        ],
     });
 
     beforeEach(() => {

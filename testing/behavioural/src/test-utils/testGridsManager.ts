@@ -1,6 +1,16 @@
 import type { GridApi, GridOptions, Module, Params } from 'ag-grid-community';
-import { AllCommunityModule, _doOnce, createGrid, getGridElement } from 'ag-grid-community';
-import { ServerSideRowModelApiModule } from 'ag-grid-enterprise';
+import {
+    CellApiModule,
+    ClientSideRowModelApiModule,
+    ClientSideRowModelModule,
+    ColumnApiModule,
+    EventApiModule,
+    RowApiModule,
+    ValidationModule,
+    _doOnce,
+    createGrid,
+    getGridElement,
+} from 'ag-grid-community';
 
 import { mockGridLayout } from './polyfills/mockGridLayout';
 import { waitForEvent } from './test-utils-events';
@@ -109,7 +119,15 @@ export class TestGridsManager {
         const modules = deduplicate([...(this.modulesToRegister ?? []), ...(params?.modules ?? [])]);
 
         if (this.includeDefaultModules) {
-            modules.push(AllCommunityModule, ServerSideRowModelApiModule);
+            modules.push(
+                ClientSideRowModelModule,
+                ClientSideRowModelApiModule,
+                RowApiModule,
+                ColumnApiModule,
+                CellApiModule,
+                EventApiModule,
+                ValidationModule
+            );
         }
         const api = createGrid(
             element,

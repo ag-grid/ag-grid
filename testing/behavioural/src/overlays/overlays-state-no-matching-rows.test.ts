@@ -1,14 +1,14 @@
 import { waitFor } from '@testing-library/dom';
 
 import type { AdvancedFilterModel } from 'ag-grid-community';
-import { ClientSideRowModelModule, TextFilterModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, GridStateModule, QuickFilterModule, TextFilterModule } from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, isAgHtmlElementVisible } from '../test-utils';
 
 describe('ag-grid overlays no matching rows', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, TextFilterModule, AdvancedFilterModule],
+        modules: [GridStateModule, QuickFilterModule, ClientSideRowModelModule, TextFilterModule, AdvancedFilterModule],
     });
     const columnDefs = [
         { field: 'athlete', filter: true },

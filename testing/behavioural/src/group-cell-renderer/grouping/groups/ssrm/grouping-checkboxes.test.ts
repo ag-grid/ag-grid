@@ -1,3 +1,4 @@
+import { CellStyleModule } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager } from '../../../../test-utils';
@@ -6,7 +7,9 @@ import { rowModelGridOptions } from '../../grid-config';
 import { getGridOptions_checkboxes, getTestConcerns_checkboxes, groupCellSnapshotter } from '../../grouping-test-utils';
 
 describe('ag-grid groupCellRenderer', () => {
-    const gridsManager = new TestGridsManager({ modules: [RowGroupingModule, ServerSideRowModelModule] });
+    const gridsManager = new TestGridsManager({
+        modules: [CellStyleModule, RowGroupingModule, ServerSideRowModelModule],
+    });
     const createTests = getTestGenerator(gridsManager, groupCellSnapshotter);
 
     beforeEach(() => {

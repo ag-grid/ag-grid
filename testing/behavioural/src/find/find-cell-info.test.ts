@@ -1,7 +1,6 @@
 import { FindModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, asyncSetTimeout } from '../test-utils';
-import { expect } from '../test-utils/matchers';
 
 /**
  * Tests for findGetNumMatches and findGetParts API functions.

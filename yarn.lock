@@ -8488,7 +8488,7 @@
     "@rolldown/pluginutils" "1.0.0-rc.2"
     "@swc/core" "^1.15.11"
 
-"@vitejs/plugin-react@^4.3.1", "@vitejs/plugin-react@^4.5.1", "@vitejs/plugin-react@^4.7.0":
+"@vitejs/plugin-react@^4.3.1", "@vitejs/plugin-react@^4.7.0":
   version "4.7.0"
   resolved "http://52.50.158.57:4873/@vitejs/plugin-react/-/plugin-react-4.7.0.tgz#647af4e7bb75ad3add578e762ad984b90f4a24b9"
   integrity sha512-gUu9hwfWvvEDBBmgtAowQCojwZmJ5mcLn3aufeCsitijs3+f2NsrPtlAWIR6OPiqljl96GVCUbLe0HyqIpVaoA==
@@ -12573,7 +12573,7 @@ es-errors@^1.3.0:
   resolved "http://52.50.158.57:4873/es-errors/-/es-errors-1.3.0.tgz#05f75a25dab98e4fb1dcd5e1472c0546d5057c8f"
   integrity sha512-Zf5H2Kxt2xjTvbJvP2ZWLEICxA6j+hAmMzIlypy4xcBg1vKVnx89Wy0GbS+kf5cwCVFFzdCFh2XSCFNULS6csw==
 
-es-module-lexer@^1.2.1, es-module-lexer@^1.5.4, es-module-lexer@^1.7.0:
+es-module-lexer@^1.2.1, es-module-lexer@^1.5.4, es-module-lexer@^1.6.0, es-module-lexer@^1.7.0:
   version "1.7.0"
   resolved "http://52.50.158.57:4873/es-module-lexer/-/es-module-lexer-1.7.0.tgz#9159601561880a85f2734560a9099b2c31e5372a"
   integrity sha512-jEQoCwk8hyb2AZziIOLhDqpm5+2ww5uIE6lkO/6jcOCusfk6LhMHpXXfBLXTZ7Ydyt0j4VoUQv6uGNYbdW+kBA==
