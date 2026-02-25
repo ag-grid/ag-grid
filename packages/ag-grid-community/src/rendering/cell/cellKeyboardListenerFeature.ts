@@ -1,5 +1,6 @@
 import { KeyCode } from '../../agStack/constants/keyCode';
 import { _isMacOsUserAgent } from '../../agStack/utils/browser';
+import { isRowNumberCol } from '../../columns/columnUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import { _populateModelValidationErrors } from '../../edit/utils/editors';
@@ -40,6 +41,15 @@ export class CellKeyboardListenerFeature extends BeanStub {
 
     public onKeyDown(event: KeyboardEvent): void {
         const key = event.key;
+
+        // delegate Enter on Row Number cells to the RowNumbersService
+        if (
+            key === KeyCode.ENTER &&
+            isRowNumberCol(this.cellCtrl.column) &&
+            this.beans.rowNumbersSvc?.handleKeyDownOnCell(this.cellCtrl.cellPosition, event)
+        ) {
+            return;
+        }
 
         switch (key) {
             case KeyCode.ENTER:

@@ -1,5 +1,4 @@
 #!/usr/bin/env tsx
-
 /* eslint-disable no-console */
 import { readdir, stat } from 'fs/promises';
 import { dirname, join, relative } from 'path';

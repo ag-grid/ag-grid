@@ -35,6 +35,11 @@
                 },
                 {
                     "type": "item",
+                    "title": "Theme Parameters",
+                    "path": "theming-api"
+                },
+                {
+                    "type": "item",
                     "title": "Custom Components",
                     "path": "components"
                 }

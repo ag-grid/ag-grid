@@ -2,7 +2,30 @@
     "_config_": {},
     "IRichCellEditorParams": {
         "values": {
-            "isRequired": false
+            "isRequired": false,
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "RichCellEditorValuesPageCallback",
+                    "RichCellEditorValuesPageParams",
+                    "RichCellEditorValuesPageStartRowCallback",
+                    "IErrorValidationParams",
+                    "ICellEditorParams",
+                    "IErrorValidationParams"
+                ],
+                "include": []
+            }
+        },
+        "valuesPage": {
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "RichCellEditorValuesCallbackParams",
+                    "ICellEditorParams",
+                    "RichCellEditorValuesCallback",
+                    "RichCellEditorValuesCallbackParams",
+                    "IErrorValidationParams"
+                ],
+                "include": []
+            }
         }
     }
 }

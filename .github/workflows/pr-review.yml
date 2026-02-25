@@ -59,8 +59,7 @@ jobs:
             - name: Run Codex PR Review
               uses: ./external/ag-shared/github/actions/codex-pr-review
               with:
-                  openai-api-key: ${{ secrets.OPENAI_API_KEY }}
-                  codex-auth-json-b64: ${{ secrets.CODEX_AUTH_JSON_B64 }}
+                  codex-api-key: ${{ secrets.CODEX_API_KEY }}
                   pr-number: ${{ github.event.pull_request.number || github.event.issue.number || inputs.pr_number }}
                   base-ref: ${{ github.event.pull_request.base.ref || 'latest' }}
                   head-ref: ${{ github.event.pull_request.head.ref || '' }}

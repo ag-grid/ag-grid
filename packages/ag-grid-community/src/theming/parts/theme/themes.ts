@@ -18,6 +18,7 @@ import { checkboxStyleDefault } from '../checkbox-style/checkbox-styles';
 import type { CheckboxStyleParams } from '../checkbox-style/checkbox-styles';
 import { colorSchemeVariable } from '../color-scheme/color-schemes';
 import { columnDropStyleBordered, columnDropStylePlain } from '../column-drop-style/column-drop-styles';
+import type { FormulaStyleParams } from '../formula-style/formula-styles';
 import { iconSetBalham } from '../icon-set/balham/icon-set-balham';
 import { iconSetAlpine, iconSetMaterial, iconSetQuartzRegular } from '../icon-set/icon-sets';
 import type { InputStyleParams } from '../input-style/input-styles';
@@ -32,6 +33,14 @@ export type ThemeDefaultParams = CoreParams &
     TabStyleParams &
     InputStyleParams &
     BatchEditStyleParams;
+
+/**
+ * Used as an entry point for collecting parameters for automated API
+ * documentation generation on the website and in Theme Builder
+ *
+ * @knipIgnore
+ */
+export type AllThemeParamsForAPIDocumentation = ThemeDefaultParams & FormulaStyleParams;
 
 export const themeQuartzParams = () => ({
     fontFamily: [

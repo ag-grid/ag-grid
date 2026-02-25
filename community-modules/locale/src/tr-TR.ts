@@ -683,7 +683,11 @@ export const AG_GRID_LOCALE_TR = {
     ariaFilterColumn: 'Filtreyi açmak için CTRL ENTER tuşlarına basın',
     ariaRowDeselect: 'Bu satırın seçimini kaldırmak için SPACE tuşuna basın',
     ariaHeaderSelection: 'Başlık Seçimi Olan Sütun',
-    ariaSelectAllCells: 'Tüm hücreleri seçmek için Boşluk tuşuna basın',
+    ariaSelectAllCells: 'Tüm hücreleri seçmek için Boşluk veya Enter tuşuna basın',
+    ariaSelectAllRowCells: 'Bu satırdaki tüm hücreleri seçmek için Enter tuşuna basın',
+    ariaColumnCellSelection: 'Bu sütundaki tüm görünür hücrelerin seçimini değiştirmek için Enter tuşuna basın',
+    ariaColumnGroupCellSelection:
+        'Bu sütun grubundaki tüm görünür hücrelerin seçimini değiştirmek için Enter tuşuna basın',
     ariaRowSelectAll: 'Tüm satırların seçimini değiştirmek için Boşluk tuşuna basın',
     ariaRowToggleSelection: 'Satır seçimini değiştirmek için Boşluk tuşuna basın',
     ariaRowSelect: 'Bu satırı seçmek için SPACE tuşuna basın',

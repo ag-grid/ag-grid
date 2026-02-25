@@ -2,13 +2,13 @@ import { getByTestId } from '@testing-library/dom';
 import '@testing-library/jest-dom';
 import { userEvent } from '@testing-library/user-event';
 
-import { TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import { RenderApiModule, TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 
 import { EditEventTracker, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../../test-utils';
 
 describe('Cell Editing: setDataValue', () => {
     const gridMgr = new TestGridsManager({
-        modules: [TextEditorModule],
+        modules: [RenderApiModule, TextEditorModule],
     });
 
     beforeAll(() => {

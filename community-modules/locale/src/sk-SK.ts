@@ -679,7 +679,11 @@ export const AG_GRID_LOCALE_SK = {
     ariaFilterColumn: 'Stlačte CTRL ENTER na otvorenie filtra',
     ariaRowDeselect: 'Stlačte SPACE na zrušenie výberu tohto riadku',
     ariaHeaderSelection: 'Stĺpec s výberom hlavičky',
-    ariaSelectAllCells: 'Stlačte medzerník pre výber všetkých buniek',
+    ariaSelectAllCells: 'Stlačte medzerník alebo Enter pre výber všetkých buniek',
+    ariaSelectAllRowCells: 'Stlačte Enter pre výber všetkých buniek v tomto riadku',
+    ariaColumnCellSelection: 'Stlačte Enter na prepnutie výberu všetkých viditeľných buniek v tomto stĺpci',
+    ariaColumnGroupCellSelection:
+        'Stlačte Enter na prepnutie výberu všetkých viditeľných buniek v tejto skupine stĺpcov',
     ariaRowSelectAll: 'Stlačte SPACE na prepínanie výberu všetkých riadkov',
     ariaRowToggleSelection: 'Stlačte SPACE na prepínanie výberu riadku',
     ariaRowSelect: 'Stlačte SPACE na výber tohto riadku',

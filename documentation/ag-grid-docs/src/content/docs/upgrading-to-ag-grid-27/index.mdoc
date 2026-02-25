@@ -55,8 +55,6 @@ NOTE: This will not show if the current library version is the same as the migra
 
 ### Rendering
 
-{% metaTag tags=["refreshView", "refreshRows", "rowDataChanged", "refreshGroupRows"] /%}
-
 -   The following methods were previously deprecated and have now been removed:
     -   `gridApi.refreshView()` - use `gridApi.refreshCells()` or `gridApi.redrawRows()` instead.
     -   `gridApi.refreshRows()` - use `gridApi.refreshCells()` or `gridApi.redrawRows()` instead.
@@ -65,13 +63,9 @@ NOTE: This will not show if the current library version is the same as the migra
 
 ### Sorting
 
-{% metaTag tags=["setSortModel", "getSortModel"] /%}
-
 -   `gridApi.setSortModel()` and `gridApi.getSortModel()` were previously deprecated and have now been removed. Sort information is now part of Column State. Use `columnApi.applyColumnState()` and `columnApi.getColumnState()` instead.
 
 ### Filters
-
-{% metaTag tags=["floatingFilter", "enableOldSetFilterModel", "isAdvancedFilterPresent", "getFilterApiForColDef", "getFilterApi", "onFloatingFilterChanged", "clearButton", "resetButton", "applyButton", "nullComparator", "onFilterChanged", "newRowsAction", "suppressRemoveEntries", "suppressSyncValuesAfterDataChange", "selectAllOnMiniFilter", "syncValuesLikeExcel", "getUniqueValue", "getUniqueValueCount", "isNothingSelected", "isEverythingSelected", "setLoading", "selectEverything", "selectNothing", "unselectValue", "selectValue", "isValueSelected"] /%}
 
 The following Filter Options / APIs were previously deprecated and have now been removed:
 
@@ -149,8 +143,6 @@ This release includes the following deprecations:
 
 ### Keyboard Navigation
 
-{% metaTag tags=["suppressCellSelection", "StartEditingCellParams", "ICellEditorParams", "IRichCellEditorParams", "ILargeTextEditorParams", "ISelectCellEditorParams", "ITextCellEditorParams", "NavigateToNextCellParams"] /%}
-
 -   `gridOptions.suppressCellSelection` is deprecated; use `gridOptions.suppressCellFocus` instead.
 -   The following interfaces have deprecated properties:
     -   `StartEditingCellParams { keyPress: number }` use `StartEditingCellParams { key: string }` instead.
@@ -163,13 +155,9 @@ This release includes the following deprecations:
 
 ### Columns
 
-{% metaTag tags=["getOriginalColumnGroup"] /%}
-
 -   `gridApi.getOriginalColumnGroup()` is deprecated; use `gridApi.getProvidedColumnGroup()` instead.
 
 ### Filters
-
-{% metaTag tags=["ITextFilterParams"] /%}
 
 -   `ITextFilterParams.textCustomComparator` is deprecated; use `ITextFilterParams.textMatcher` instead.
 

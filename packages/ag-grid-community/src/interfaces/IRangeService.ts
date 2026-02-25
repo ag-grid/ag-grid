@@ -30,6 +30,7 @@ export interface IRangeService {
     getCellRanges(): CellRange[];
     setRangeToCell(cell: CellPosition, appendRange?: boolean): void;
     handleCellMouseDown(event: MouseEvent, cell: CellPosition): void;
+    handleCellKeyboardSelect(event: KeyboardEvent, cell: CellPosition): void;
     intersectLastRange(fromMouseClick?: boolean): void;
     setCellRange(params: CellRangeParams): void;
     addCellRange(params: CellRangeParams): CellRange | undefined;

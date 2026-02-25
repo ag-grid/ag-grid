@@ -1,0 +1,1 @@
+../../external/ag-shared/prompts/guides/nx-conventions.md

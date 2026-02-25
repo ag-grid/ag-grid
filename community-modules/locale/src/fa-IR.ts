@@ -680,7 +680,11 @@ export const AG_GRID_LOCALE_IR = {
     ariaFilterColumn: 'CTRL+ENTER را فشار دهید تا فیلتر را باز کنید',
     ariaRowDeselect: 'SPACE را فشار دهید تا این سطر از انتخاب خارج شود',
     ariaHeaderSelection: 'ستون با انتخاب سرصفحه',
-    ariaSelectAllCells: 'برای انتخاب تمام سلول‌ها دکمه فاصله را فشار دهید',
+    ariaSelectAllCells: 'برای انتخاب تمام سلول‌ها کلید فاصله یا Enter را فشار دهید',
+    ariaSelectAllRowCells: 'برای انتخاب تمام سلول‌های این ردیف، کلید Enter را فشار دهید',
+    ariaColumnCellSelection: 'برای تغییر انتخاب همه سلول‌های قابل مشاهده در این ستون، کلید Enter را فشار دهید',
+    ariaColumnGroupCellSelection:
+        'برای تغییر انتخاب همه سلول‌های قابل مشاهده در این گروه ستون، کلید Enter را فشار دهید',
     ariaRowSelectAll: 'SPACE را فشار دهید تا همه سطرها انتخاب/غیرفعال شوند',
     ariaRowToggleSelection: 'SPACE را فشار دهید تا انتخاب سطر تغییر یابد',
     ariaRowSelect: 'SPACE را فشار دهید تا این سطر انتخاب شود',

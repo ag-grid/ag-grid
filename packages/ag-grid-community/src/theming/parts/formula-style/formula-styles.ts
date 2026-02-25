@@ -2,7 +2,7 @@ import type { Part } from '../../../agStack/theming/part';
 import { createPart } from '../../../agStack/theming/partImpl';
 import type { BorderValue, ColorValue } from '../../../agStack/theming/themeTypes';
 
-type FormulaStyleParams = {
+export type FormulaStyleParams = {
     /**
      * The color of the 1st formula field token
      */

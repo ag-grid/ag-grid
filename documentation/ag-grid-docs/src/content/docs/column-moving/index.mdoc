@@ -5,13 +5,8 @@ title: "Column Moving"
 Columns can be moved in the grid in the following ways:
 
 -   Dragging the column header with the mouse or through touch.
--   Using the grid API.
-
-## API
-
-The grid API methods for moving columns are as follows:
-
-{% apiDocumentation source="grid-api/api.json" section="columnMoving" names=["moveColumns", "moveColumnByIndex"] /%}
+-   Using the [keyboard](#move-via-keyboard) to move focused column headers.
+-   Using the [grid API](#move-via-api).
 
 ## Simple Example
 
@@ -21,9 +16,22 @@ The example below demonstrates simple moving via mouse dragging and the API. The
 -   The **Medals First** and **Medals Last** buttons call the API `moveColumns(keys, toIndex)` to place the medals columns at the start or at the end respectively.
 -   The **Country First** button calls the API `moveColumns([key], toIndex)` to place the Country column first.
 -   The **Swap First Two** button calls the API `moveColumnByIndex(fromIndex, toIndex)` to swap the first two columns.
+-   Focusing a column header and pressing {% kbd "⇧ Shift" /%} + {% kbd "←" /%} / {% kbd "→" /%} moves the column in that direction.
 -   The **Print Columns** button calls the API `getAllGridColumns()` to print to the dev console the current column order.
 
 {% gridExampleRunner title="Column Moving Simple" name="moving-simple" /%}
+
+## Move via Keyboard
+
+Column headers can be moved using the keyboard. When a column header is focused, press {% kbd "⇧ Shift" /%} + {% kbd "←" /%} / {% kbd "→" /%} to move the column in that direction. The grid will automatically scroll to keep the moved column visible.
+
+See [Column Header Navigation](./keyboard-navigation/#column-header-navigation) for a full list of header keyboard interactions.
+
+## Move via API
+
+The grid API methods for moving columns are as follows:
+
+{% apiDocumentation source="grid-api/api.json" section="columnMoving" names=["moveColumns", "moveColumnByIndex"] /%}
 
 ## Moving Animation
 

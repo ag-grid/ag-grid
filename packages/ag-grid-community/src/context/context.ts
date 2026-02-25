@@ -285,6 +285,7 @@ interface CoreBeanCollection
     gridOptions: GridOptions;
     eGridDiv: HTMLElement;
     eRootDiv: HTMLElement;
+    withinStudio?: boolean;
     pivotResultCols?: IPivotResultColsService;
     autoColSvc?: IColumnCollectionService;
     selectionColSvc?: SelectionColService;

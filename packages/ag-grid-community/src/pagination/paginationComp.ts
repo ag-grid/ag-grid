@@ -97,6 +97,10 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
         this.allowFocusInnerElement = allowFocus;
     }
 
+    public getFocusableContainerName(): 'pagination' {
+        return 'pagination';
+    }
+
     private onPaginationChanged(): void {
         const isPaging = this.gos.get('pagination');
         const paginationPanelEnabled = isPaging && !this.gos.get('suppressPaginationPanel');

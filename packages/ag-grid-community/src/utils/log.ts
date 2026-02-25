@@ -20,7 +20,7 @@ export function _consoleError(msg: string, ...args: any[]) {
     console.error('AG Grid: ' + msg, ...args);
 }
 
-function _consoleWarn(msg: string, ...args: any[]) {
+export function _consoleWarn(msg: string, ...args: any[]) {
     // eslint-disable-next-line no-console
     console.warn('AG Grid: ' + msg, ...args);
 }

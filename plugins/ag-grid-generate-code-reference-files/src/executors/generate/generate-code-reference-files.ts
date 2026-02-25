@@ -740,3 +740,47 @@ export function getColumnTypes(columnFile: string, interfaces: string[]) {
 
     return members;
 }
+
+export function getThemeParams(themesFile: string) {
+    const srcFile = parseFile(themesFile);
+    const auxSrcFiles = parseImportedDefinitions(path.dirname(themesFile), srcFile);
+
+    const members = {};
+
+    const resolveAndCollect = (name: string) => {
+        const node = silentFindNode(name, srcFile, auxSrcFiles);
+        if (node) {
+            collectMembers(node);
+        }
+    };
+
+    // Collect all properties from the type - we're running on the TS AST so we
+    // don't have the fully resolved type object available, we have to traverse
+    // the source to get properties, taking into account inheritance, aliases
+    // and intersections
+    const collectMembers = (node: ts.Node) => {
+        const nodeFile = node.getSourceFile();
+        if (ts.isTypeAliasDeclaration(node)) {
+            if (ts.isIntersectionTypeNode(node.type)) {
+                for (const t of node.type.types) {
+                    if (ts.isTypeReferenceNode(t)) {
+                        resolveAndCollect(t.typeName.getText(nodeFile));
+                    }
+                }
+            } else if (ts.isTypeLiteralNode(node.type)) {
+                node.type.members.forEach((m) => Object.assign(members, extractTypesFromNode(m, nodeFile, false)));
+            }
+        } else if (ts.isInterfaceDeclaration(node)) {
+            // Process parents first (e.g. CoreParams extends SharedThemeParams)
+            node.heritageClauses?.forEach((clause) => {
+                clause.types.forEach((t) => resolveAndCollect(formatNode(t.expression, nodeFile)));
+            });
+            ts.forEachChild(node, (n) => {
+                Object.assign(members, extractTypesFromNode(n, nodeFile, false));
+            });
+        }
+    };
+
+    resolveAndCollect('AllThemeParamsForAPIDocumentation');
+    return members;
+}

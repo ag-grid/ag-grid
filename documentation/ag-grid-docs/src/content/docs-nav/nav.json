@@ -1033,17 +1033,6 @@
                                 },
                                 {
                                     "type": "item",
-                                    "title": "Select Editor",
-                                    "path": "provided-cell-editors-select"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Rich Select Editor",
-                                    "path": "provided-cell-editors-rich-select",
-                                    "isEnterprise": true
-                                },
-                                {
-                                    "type": "item",
                                     "title": "Number Editor",
                                     "path": "provided-cell-editors-number"
                                 },
@@ -1056,6 +1045,31 @@
                                     "type": "item",
                                     "title": "Checkbox Editor",
                                     "path": "provided-cell-editors-checkbox"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Select Editor",
+                                    "path": "provided-cell-editors-select"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Rich Select Editor",
+                                    "path": "provided-cell-editors-rich-select",
+                                    "isEnterprise": true,
+                                    "children": [
+                                        {
+                                            "type": "item",
+                                            "title": "Customisation",
+                                            "path": "provided-cell-editors-rich-select-customisation",
+                                            "isEnterprise": true
+                                        },
+                                        {
+                                            "type": "item",
+                                            "title": "Async Values",
+                                            "path": "provided-cell-editors-rich-select-async",
+                                            "isEnterprise": true
+                                        }
+                                    ]
                                 }
                             ]
                         },

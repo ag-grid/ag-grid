@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/ag-grid/ag-website-shared#readme",
   "devDependencies": {
-    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "prettier": "^3.2.5",
     "prettier-plugin-astro": "^0.13.0",
     "vitest": "2.1.9"

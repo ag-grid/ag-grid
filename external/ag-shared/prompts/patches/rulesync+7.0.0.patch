@@ -1,5 +1,5 @@
 diff --git a/node_modules/rulesync/dist/index.cjs b/node_modules/rulesync/dist/index.cjs
-index b80488f..1031beb 100644
+index b80488f..decff9f 100644
 --- a/node_modules/rulesync/dist/index.cjs
 +++ b/node_modules/rulesync/dist/index.cjs
 @@ -1732,9 +1732,10 @@ var GeminiCliCommand = class _GeminiCliCommand extends ToolCommand {
@@ -14,8 +14,38 @@ index b80488f..1031beb 100644
  """`;
      const paths = this.getSettablePaths({ global });
      return new _GeminiCliCommand({
+@@ -13636,15 +13637,23 @@ var RulesProcessor = class extends FeatureProcessor {
+     const rulesyncBaseDir = (0, import_node_path107.join)(this.baseDir, RULESYNC_RULES_RELATIVE_DIR_PATH);
+     const files = await findFilesByGlobs((0, import_node_path107.join)(rulesyncBaseDir, "**", "*.md"));
+     logger.debug(`Found ${files.length} rulesync files`);
+-    const rulesyncRules = await Promise.all(
+-      files.map((file) => {
++    const rulesyncRules = (await Promise.all(
++      files.map(async (file) => {
+         const relativeFilePath = (0, import_node_path107.relative)(rulesyncBaseDir, file);
+         checkPathTraversal({ relativePath: relativeFilePath, intendedRootDir: rulesyncBaseDir });
+-        return RulesyncRule.fromFile({
+-          relativeFilePath
+-        });
++        try {
++          return await RulesyncRule.fromFile({
++            relativeFilePath
++          });
++        } catch (e) {
++          if (e.code === "ENOENT") {
++            logger.warn(`Skipping missing or broken symlink: ${relativeFilePath}`);
++            return null;
++          }
++          throw e;
++        }
+       })
+-    );
++    )).filter(Boolean);
+     const rootRules = rulesyncRules.filter((rule) => rule.getFrontmatter().root);
+     if (rootRules.length > 1) {
+       throw new Error("Multiple root rulesync rules found");
 diff --git a/node_modules/rulesync/dist/index.js b/node_modules/rulesync/dist/index.js
-index 7b7cdc2..fc4b33c 100755
+index 7b7cdc2..8dfcc14 100755
 --- a/node_modules/rulesync/dist/index.js
 +++ b/node_modules/rulesync/dist/index.js
 @@ -1709,9 +1709,10 @@ var GeminiCliCommand = class _GeminiCliCommand extends ToolCommand {
@@ -30,3 +60,33 @@ index 7b7cdc2..fc4b33c 100755
  """`;
      const paths = this.getSettablePaths({ global });
      return new _GeminiCliCommand({
+@@ -13613,15 +13614,23 @@ var RulesProcessor = class extends FeatureProcessor {
+     const rulesyncBaseDir = join106(this.baseDir, RULESYNC_RULES_RELATIVE_DIR_PATH);
+     const files = await findFilesByGlobs(join106(rulesyncBaseDir, "**", "*.md"));
+     logger.debug(`Found ${files.length} rulesync files`);
+-    const rulesyncRules = await Promise.all(
+-      files.map((file) => {
++    const rulesyncRules = (await Promise.all(
++      files.map(async (file) => {
+         const relativeFilePath = relative4(rulesyncBaseDir, file);
+         checkPathTraversal({ relativePath: relativeFilePath, intendedRootDir: rulesyncBaseDir });
+-        return RulesyncRule.fromFile({
+-          relativeFilePath
+-        });
++        try {
++          return await RulesyncRule.fromFile({
++            relativeFilePath
++          });
++        } catch (e) {
++          if (e.code === "ENOENT") {
++            logger.warn(`Skipping missing or broken symlink: ${relativeFilePath}`);
++            return null;
++          }
++          throw e;
++        }
+       })
+-    );
++    )).filter(Boolean);
+     const rootRules = rulesyncRules.filter((rule) => rule.getFrontmatter().root);
+     if (rootRules.length > 1) {
+       throw new Error("Multiple root rulesync rules found");

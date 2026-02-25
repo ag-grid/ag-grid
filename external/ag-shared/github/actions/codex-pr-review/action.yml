@@ -10,21 +10,28 @@ description: Run a Codex PR review with complete log suppression - no LLM output
 #    (only those with no user reactions or replies - preserving conversations)
 # 5. POST RESULTS: Create/update summary comment (<!-- codex-pr-review --> marker)
 #    and post new inline comments on specific file/line locations
-# 6. REACT COMPLETE: Remove 👀 from PR description, add 👍 on success
-# 7. CLEANUP FILES: Remove sensitive review output and auth files
+# 6. REACT COMPLETE: Remove 👀 from PR description, add 👍 (no findings) or 👎 (has findings)
+# 7. CLEANUP FILES: Remove sensitive review output files
 #
 # Re-review behaviour:
 # - Summary comment is updated in-place (found via marker)
 # - Old inline comments are deleted (unless users have reacted/replied)
 # - Reactions target the PR description, not the trigger comment
 #
+# PR-visible output states (old 👍/👎 reactions are cleaned up at the start of each run):
+#
+# | Scenario                             | 👀  | Reaction | Summary comment       | Inline comments    |
+# |--------------------------------------|-----|----------|-----------------------|--------------------|
+# | Auth not configured (skipped)        | No  | None     | No                    | No                 |
+# | Codex exits non-zero                 | Yes then removed | None | No             | No                 |
+# | Codex exits 0, empty output          | Yes then removed | None | No             | No                 |
+# | Codex exits 0 (markdown mode)        | Yes then removed | None | Yes (created/updated) | No                 |
+# | Codex exits 0, no findings (JSON)    | Yes then removed | 👍   | Yes (created/updated) | No                 |
+# | Codex exits 0, 1+ findings (JSON)    | Yes then removed | 👎   | Yes (created/updated) | Yes                |
+#
 inputs:
-    openai-api-key:
-        description: 'OpenAI API key for Codex CLI (alternative to codex-auth-json-b64)'
-        required: false
-        default: ''
-    codex-auth-json-b64:
-        description: 'Base64-encoded ~/.codex/auth.json for ChatGPT OAuth auth (alternative to openai-api-key)'
+    codex-api-key:
+        description: 'Codex API key for Codex CLI authentication'
         required: false
         default: ''
     pr-number:
@@ -79,11 +86,10 @@ runs:
           id: check-auth
           shell: bash
           env:
-              CODEX_AUTH_JSON_B64: ${{ inputs.codex-auth-json-b64 }}
-              OPENAI_API_KEY: ${{ inputs.openai-api-key }}
+              CODEX_API_KEY: ${{ inputs.codex-api-key }}
           run: |
-              if [ -z "${CODEX_AUTH_JSON_B64:-}" ] && [ -z "${OPENAI_API_KEY:-}" ]; then
-                echo "::warning::Skipping PR review - no authentication configured (set OPENAI_API_KEY or CODEX_AUTH_JSON_B64 secret)"
+              if [ -z "${CODEX_API_KEY:-}" ]; then
+                echo "::warning::Skipping PR review - no authentication configured (set CODEX_API_KEY secret)"
                 echo "skipped=true" >> $GITHUB_OUTPUT
               else
                 echo "skipped=false" >> $GITHUB_OUTPUT
@@ -106,6 +112,40 @@ runs:
                     content: 'eyes'
                   });
                   core.setOutput('reaction_id', reaction.id);
+
+        - name: Clean Up Old Completion Reactions
+          # Removes prior +1/-1 reactions from github-actions[bot] on this PR.
+          # Note: github-actions[bot] is a shared identity for all GITHUB_TOKEN-based actions,
+          # so this could theoretically remove reactions from other workflows. Accepted trade-off:
+          # GitHub limits each user to one reaction per type per issue, so blast radius is minimal.
+          if: steps.check-auth.outputs.skipped != 'true'
+          uses: actions/github-script@v7
+          continue-on-error: true
+          env:
+              PR_NUMBER: ${{ inputs.pr-number }}
+          with:
+              github-token: ${{ inputs.github-token }}
+              script: |
+                  const prNumber = parseInt(process.env.PR_NUMBER, 10);
+                  const reactions = await github.paginate(
+                    github.rest.reactions.listForIssue,
+                    {
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      issue_number: prNumber,
+                      per_page: 100
+                    }
+                  );
+                  for (const reaction of reactions) {
+                    if (reaction.user?.login === 'github-actions[bot]' && (reaction.content === '+1' || reaction.content === '-1')) {
+                      await github.rest.reactions.deleteForIssue({
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        issue_number: prNumber,
+                        reaction_id: reaction.id
+                      });
+                    }
+                  }
 
         - name: Fetch PR refs
           if: steps.check-auth.outputs.skipped != 'true'
@@ -233,24 +273,6 @@ runs:
                 ./external/ag-shared/scripts/setup-prompts/setup-prompts.sh --targets=codexcli --verbose || true
               fi
 
-        - name: Setup Authentication
-          if: steps.check-auth.outputs.skipped != 'true'
-          shell: bash
-          env:
-              CODEX_AUTH_JSON_B64: ${{ inputs.codex-auth-json-b64 }}
-              OPENAI_API_KEY: ${{ inputs.openai-api-key }}
-          run: |
-              # Prefer auth.json if provided, fall back to API key
-              if [ -n "${CODEX_AUTH_JSON_B64:-}" ]; then
-                echo "Using base64-encoded auth.json for authentication"
-                mkdir -p "$HOME/.codex"
-                echo "$CODEX_AUTH_JSON_B64" | base64 -d > "$HOME/.codex/auth.json"
-                chmod 600 "$HOME/.codex/auth.json"
-              elif [ -n "${OPENAI_API_KEY:-}" ]; then
-                echo "Using OpenAI API key for authentication"
-                # API key already set via env var - Codex will use it
-              fi
-
         - name: Determine Prompt File
           if: steps.check-auth.outputs.skipped != 'true'
           id: prompt
@@ -272,7 +294,8 @@ runs:
           id: codex
           shell: bash
           env:
-              OPENAI_API_KEY: ${{ inputs.openai-api-key }}
+              OPENAI_API_KEY: ${{ inputs.codex-api-key }}
+              CODEX_API_KEY: ${{ inputs.codex-api-key }}
               ARGUMENTS: ${{ inputs.pr-number }}
               BASE_REF: ${{ inputs.base-ref }}
               HEAD_REF: ${{ inputs.head-ref }}
@@ -304,6 +327,12 @@ runs:
 
               if [ $exit_code -ne 0 ]; then
                 echo "::error::Codex review failed with exit code ${exit_code}"
+
+                # Check if error is authentication-related
+                if [ -f "${error_file}" ] && grep -qE "(invalid_api_key|token_expired|refresh_token_reused|401 Unauthorized|Incorrect API key|Your access token could not be refreshed|exceeded retry limit.*401)" "${error_file}"; then
+                  echo "::error::Authentication failure detected — the CODEX_API_KEY secret is likely invalid, expired, or has insufficient permissions. Verify the secret in repo/org settings."
+                fi
+
                 # Show stderr for debugging - contains CLI errors, not review content
                 if [ -f "${error_file}" ] && [ -s "${error_file}" ]; then
                   echo "::group::Codex CLI Error Output"
@@ -318,6 +347,12 @@ runs:
           shell: bash
           run: |
               output_file="${{ steps.codex.outputs.output_file }}"
+              exit_code="${{ steps.codex.outputs.exit_code }}"
+              if [ "$exit_code" != "0" ]; then
+                echo "success=false" >> $GITHUB_OUTPUT
+                echo "::error::Codex exited with code ${exit_code}"
+                exit 1
+              fi
               if [ -f "${output_file}" ] && [ -s "${output_file}" ]; then
                 echo "success=true" >> $GITHUB_OUTPUT
                 echo "Review output generated successfully"
@@ -328,6 +363,7 @@ runs:
               fi
 
         - name: Post Review Comment
+          id: post-comment
           if: steps.check-auth.outputs.skipped != 'true' && steps.verify.outputs.success == 'true' && inputs.post-comment == 'true'
           uses: actions/github-script@v7
           env:
@@ -419,6 +455,7 @@ runs:
                       // Build summary comment body from JSON
                       const verdictEmoji = review.verdict?.assessment === 'correct' ? ':white_check_mark:' : ':x:';
                       const totalFindings = (review.stats?.p0_count || 0) + (review.stats?.p1_count || 0) + (review.stats?.p2_count || 0) + (review.stats?.p3_count || 0);
+                      core.setOutput('has_findings', String(totalFindings > 0));
                       const statsLine = `P0: ${review.stats?.p0_count || 0} | P1: ${review.stats?.p1_count || 0} | P2: ${review.stats?.p2_count || 0} | P3: ${review.stats?.p3_count || 0}`;
 
                       // Build summary line
@@ -601,7 +638,7 @@ runs:
                   });
 
         - name: React Success
-          if: steps.check-auth.outputs.skipped != 'true' && steps.verify.outputs.success == 'true'
+          if: steps.check-auth.outputs.skipped != 'true' && steps.verify.outputs.success == 'true' && steps.post-comment.outputs.has_findings == 'false'
           uses: actions/github-script@v7
           continue-on-error: true
           env:
@@ -616,10 +653,24 @@ runs:
                     content: '+1'
                   });
 
+        - name: React Has Findings
+          if: steps.check-auth.outputs.skipped != 'true' && steps.verify.outputs.success == 'true' && steps.post-comment.outputs.has_findings == 'true'
+          uses: actions/github-script@v7
+          continue-on-error: true
+          env:
+              PR_NUMBER: ${{ inputs.pr-number }}
+          with:
+              github-token: ${{ inputs.github-token }}
+              script: |
+                  await github.rest.reactions.createForIssue({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: parseInt(process.env.PR_NUMBER, 10),
+                    content: '-1'
+                  });
+
         - name: Cleanup Sensitive Files
           if: always()
           shell: bash
           run: |
               rm -f ".codex-review-${{ inputs.pr-number }}.md" ".codex-review-${{ inputs.pr-number }}.json" ".codex-error-${{ inputs.pr-number }}.log"
-              # Also clean up auth.json if we created it
-              rm -f "$HOME/.codex/auth.json"

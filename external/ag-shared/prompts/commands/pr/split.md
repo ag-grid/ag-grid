@@ -42,8 +42,17 @@ Verify the working tree is clean, not on main branch, and gh CLI is authenticate
 
 Determine the commit message prefix from the branch name:
 
-1. If branch matches `ag-NNNNN/description` pattern: extract JIRA ticket (e.g., `AG-12345`)
-2. Otherwise: derive prefix from branch name (e.g., `feature/null-keys` becomes `null-keys`)
+1. Detect the project from the repo name (enclosing directory):
+
+   | Repo          | Branch Pattern            | JIRA Prefix |
+   |---------------|---------------------------|-------------|
+   | `ag-studio`   | `st-NNNNN/description`    | `ST-`       |
+   | `ag-charts`   | `ag-NNNNN/description`    | `AG-`       |
+   | `ag-grid`     | `ag-NNNNN/description`    | `AG-`       |
+   | *(default)*   | `ag-NNNNN/description`    | `AG-`       |
+
+2. If branch matches the project's pattern: extract JIRA ticket (e.g., `ST-12345`, `AG-12345`)
+3. Otherwise: derive prefix from branch name (e.g., `feature/null-keys` becomes `null-keys`)
 
 Store this prefix for use in commit messages and PR titles.
 
@@ -208,9 +217,8 @@ This phase is essential. Each PR must be polished until reviewer-ready, not just
    - Would the PR title make sense in a changelog?
 
 5. **Run Build Validation**
-   - Type checking: `yarn nx build:types <affected-package>`
-   - Linting: `yarn nx lint <affected-package>`
-   - Tests: `yarn nx test <affected-package>`
+   - Run the project's pre-commit validation commands against each affected package
+   - Ensure type checking, linting, and tests all pass before proceeding
 
 6. **Fix Issues**
    - Code quality issues: fix and amend or add fixup commits
@@ -265,7 +273,7 @@ PR N of M in the series.
 
 ## JIRA
 
-Jira: [AG-12345](https://ag-grid.atlassian.net/browse/AG-12345)
+Jira: [TICKET-12345](https://jira.example.com/browse/TICKET-12345)
 
 ## Test Plan
 
