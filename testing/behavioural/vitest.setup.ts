@@ -42,24 +42,21 @@ function customToHaveValue(this: MatcherThis, received: HTMLElement, expected: u
                 pass,
                 actual,
                 expected,
-                message: () => `Expected ${tag}[type=${type}] .checked ${notHint}to be ${String(expected)}, got ${String(actual)}`,
+                message: () =>
+                    `Expected ${tag}[type=${type}] .checked ${notHint}to be ${String(expected)}, got ${String(actual)}`,
             };
         }
 
         if (type === 'number' || type === 'range') {
             const actual = input.valueAsNumber;
             const exp = typeof expected === 'string' ? parseFloat(expected) : (expected as number | null | undefined);
-            const pass =
-                exp == null
-                    ? isNaN(actual)
-                    : isNaN(exp as number)
-                      ? isNaN(actual)
-                      : actual === exp;
+            const pass = exp == null ? isNaN(actual) : isNaN(exp as number) ? isNaN(actual) : actual === exp;
             return {
                 pass,
                 actual,
                 expected: exp,
-                message: () => `Expected ${tag}[type=${type}] .valueAsNumber ${notHint}to be ${String(exp)}, got ${String(actual)}`,
+                message: () =>
+                    `Expected ${tag}[type=${type}] .valueAsNumber ${notHint}to be ${String(exp)}, got ${String(actual)}`,
             };
         }
 
@@ -71,7 +68,8 @@ function customToHaveValue(this: MatcherThis, received: HTMLElement, expected: u
                 pass,
                 actual: actual?.toISOString() ?? null,
                 expected: exp?.toISOString() ?? null,
-                message: () => `Expected ${tag}[type=${type}] .valueAsDate ${notHint}to be ${String(exp)}, got ${String(actual)}`,
+                message: () =>
+                    `Expected ${tag}[type=${type}] .valueAsDate ${notHint}to be ${String(exp)}, got ${String(actual)}`,
             };
         }
     }
