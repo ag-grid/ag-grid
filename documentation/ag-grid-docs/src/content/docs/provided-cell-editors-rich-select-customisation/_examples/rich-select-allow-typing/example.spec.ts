@@ -38,7 +38,8 @@ test.agExample(import.meta, () => {
         await expect(matchPopup).toBeVisible();
 
         // Type 'Blue' to filter the list by prefix
-        await page.keyboard.type('Blue');
+        const matchEditorInput = page.locator('.ag-rich-select-field-input .ag-input-field-input').first();
+        await matchEditorInput.fill('Blue');
 
         // 'Blue' should appear in the filtered list (starts with 'Blue')
         await expect(matchPopup.locator('.ag-rich-select-row', { hasText: 'Blue' }).first()).toBeVisible();
@@ -58,7 +59,8 @@ test.agExample(import.meta, () => {
         await expect(matchAnyPopup).toBeVisible();
 
         // Type 'Blue' to filter the list by substring
-        await page.keyboard.type('Blue');
+        const matchAnyEditorInput = page.locator('.ag-rich-select-field-input .ag-input-field-input').first();
+        await matchAnyEditorInput.fill('Blue');
 
         // 'AliceBlue' should appear because it contains 'Blue' (substring search)
         await expect(matchAnyPopup.locator('.ag-rich-select-row', { hasText: 'AliceBlue' }).first()).toBeVisible();
