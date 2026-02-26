@@ -163,9 +163,9 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     /** Returns 'skip' if no refresh needed, 'refresh' for a normal refresh, or 'groupColsChanged' when group columns changed */
     private initRefresh(params: RefreshModelParams): 'skip' | 'refresh' | 'groupColsChanged' {
         const { rowGroupColsSvc, colModel, gos } = this.beans;
-        const pivotMode = colModel.isPivotMode();
-        this.pivotMode = pivotMode;
-        this.groupEmpty = pivotMode || !gos.get('groupAllowUnbalanced');
+
+        this.pivotMode = colModel.isPivotMode();
+        this.groupEmpty = this.pivotMode || !gos.get('groupAllowUnbalanced');
         const cols = rowGroupColsSvc?.columns;
         const groupCols = this.groupCols;
         const afterColumnsChanged = params.afterColumnsChanged;
@@ -179,7 +179,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                 // Group columns changed
                 // if grouping columns change, we don't animate the regrouping
                 params.animate = false;
-                makeGroupColumns(cols, this.groupCols);
+                makeGroupColumns(cols, groupCols);
                 return 'groupColsChanged';
             }
         }
