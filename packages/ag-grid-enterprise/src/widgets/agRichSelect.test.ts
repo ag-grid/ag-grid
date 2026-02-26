@@ -277,6 +277,7 @@ describe('AgRichSelect', () => {
         const richSelect = createRichSelect<string>();
         const listComponent = {
             getScrollTop: jest.fn(() => 500),
+            offsetHoveredIndexOnPrependedRows: jest.fn(),
             setCurrentList: jest.fn(),
             restoreScrollOnPrependedRows: jest.fn(),
             refresh: jest.fn(),
@@ -296,6 +297,7 @@ describe('AgRichSelect', () => {
         });
 
         expect(listComponent.getScrollTop).toHaveBeenCalled();
+        expect(listComponent.offsetHoveredIndexOnPrependedRows).toHaveBeenCalledWith(100);
         expect(listComponent.restoreScrollOnPrependedRows).toHaveBeenCalledWith(500, 100);
     });
 
