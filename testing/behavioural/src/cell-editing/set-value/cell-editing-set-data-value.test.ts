@@ -241,6 +241,7 @@ describe('Cell Editing: setDataValue', () => {
             `);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
+            await asyncSetTimeout(5);
             const cell = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'field'));
             await userEvent.click(cell);
             await asyncSetTimeout(3);
