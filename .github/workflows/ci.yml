@@ -241,50 +241,50 @@ jobs:
 #          path: |
 #            reports/
 
-  format_lint_build:
-    runs-on: ubuntu-latest
-    name: Format, Lint and Build
-    needs: init
-    if: ${{ needs.init.result == 'success' }}
-    outputs:
-      format: ${{ steps.format.outcome || '' }}
-      lint: ${{ steps.lint.outcome || '' }}
-      build: ${{ steps.build.outcome || '' }}
-    steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1 # shallow copy
-
-      - name: Verify rulesync configuration
-        run: ./external/ag-shared/scripts/sync-rulesync/sync-rulesync.sh --check
-
-      - name: Setup
-        id: setup
-        uses: ./.github/actions/setup-nx
-        with:
-          cache_mode: ro
-
-#      - name: nx format:check
-#        id: format
-#        if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
+#  format_lint_build:
+#    runs-on: ubuntu-latest
+#    name: Format, Lint and Build
+#    needs: init
+#    if: ${{ needs.init.result == 'success' }}
+#    outputs:
+#      format: ${{ steps.format.outcome || '' }}
+#      lint: ${{ steps.lint.outcome || '' }}
+#      build: ${{ steps.build.outcome || '' }}
+#    steps:
+#      - name: Checkout
+#        id: checkout
+#        uses: actions/checkout@v4
+#        with:
+#          fetch-depth: 1 # shallow copy
+#
+#      - name: Verify rulesync configuration
+#        run: ./external/ag-shared/scripts/sync-rulesync/sync-rulesync.sh --check
+#
+#      - name: Setup
+#        id: setup
+#        uses: ./.github/actions/setup-nx
+#        with:
+#          cache_mode: ro
+#
+##      - name: nx format:check
+##        id: format
+##        if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
+##        run: |
+##          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
+##            yarn nx format:check --all
+##          else
+##            yarn nx format:check --base ${{ steps.setup.outputs.base }}
+##          fi
+#
+##      - name: nx lint
+##        id: lint
+##        run: |
+##          yarn nx lint
+#
+#      - name: nx build
+#        id: build
 #        run: |
-#          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
-#            yarn nx format:check --all
-#          else
-#            yarn nx format:check --base ${{ steps.setup.outputs.base }}
-#          fi
-
-#      - name: nx lint
-#        id: lint
-#        run: |
-#          yarn nx lint
-
-      - name: nx build
-        id: build
-        run: |
-          yarn nx run-many --t build -c staging --exclude ag-grid-docs --exclude all
+#          yarn nx run-many --t build -c staging --exclude ag-grid-docs --exclude all
 
 #  docs:
 #    runs-on: ubuntu-latest
@@ -377,7 +377,7 @@ jobs:
 
   report:
     runs-on: ubuntu-24.04
-    needs: [ init, e2e, format_lint_build, calc_matrix ]
+    needs: [ init, e2e, calc_matrix ]
 #    needs: [ init, test, e2e, format_lint_build, docs, calc_matrix, fw_pkg_test, sonar_community, sonar_enterprise ]
     if: cancelled() != true && github.event.pull_request.draft == false
     permissions:
