@@ -479,7 +479,9 @@ export interface CoreParams extends SharedThemeParams {
     sideBarPanelWidth: LengthValue;
 
     /**
-     * Duration of the animation when a sidebar panel opens or closes. Set to 0 to disable animations.
+     * Duration of the animation when a sidebar panel opens or closes. Set to 0
+     * to disable animations. Automatically disabled if the user has requested
+     * reduced motion in their OS accessibility settings.
      */
     sideBarPanelAnimationDuration: DurationValue;
 
