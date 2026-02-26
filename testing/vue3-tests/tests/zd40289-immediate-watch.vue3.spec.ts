@@ -10,7 +10,7 @@ test('rowData reactivity', async ({ page }) => {
     //   }
     // })
 
-    await page.goto('http://localhost:8085/zd40289');
+    await page.goto('/zd40289');
 
     const firstCell = page.locator('.ag-cell-value').first();
     await firstCell.waitFor({ state: 'visible', timeout: 30000 });

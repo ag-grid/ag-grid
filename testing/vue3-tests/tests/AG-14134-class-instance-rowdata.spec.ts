@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 test('reactive rowdata', async ({ page }) => {
     test.setTimeout(5_000);
 
-    await page.goto('http://localhost:8085/ag-14134');
+    await page.goto('/ag-14134');
 
     await expect(page.getByLabel('cell-value')).toHaveText('name 1-Mission: name 1-true');
     await expect(page.getByLabel('selection-check')).toHaveText('');

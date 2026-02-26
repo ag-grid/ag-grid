@@ -10,7 +10,7 @@ test('header components exposed render', async ({ page }) => {
     //   }
     // })
 
-    await page.goto('http://localhost:8085/ag-11760-expose');
+    await page.goto('/ag-11760-expose');
 
     await expect(page.getByRole('row')).toHaveCount(2);
     await expect(page.getByRole('gridcell')).toHaveCount(2);

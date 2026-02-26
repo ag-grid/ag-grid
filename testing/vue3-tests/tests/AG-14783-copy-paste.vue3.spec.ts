@@ -5,7 +5,7 @@ test('copy-paste selected rows overwrites last row and adds new rows', async ({ 
 
     await context.grantPermissions(['clipboard-read', 'clipboard-write']);
 
-    await page.goto('http://localhost:8085/ag-14783');
+    await page.goto('/ag-14783');
 
     // Wait for data to load (10 rows from remote endpoint)
     const firstCell = page.locator('.ag-row[row-index="0"] .ag-cell').first();

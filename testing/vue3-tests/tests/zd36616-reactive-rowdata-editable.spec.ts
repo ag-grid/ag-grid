@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 test('reactive rowdata', async ({ page }) => {
     test.setTimeout(5_000);
 
-    await page.goto('http://localhost:8085/zd36616');
+    await page.goto('/zd36616');
 
     expect(await page.getByRole('gridcell').textContent()).toBe('2');
     expect(await page.getByLabel('value').textContent()).toBe('2');

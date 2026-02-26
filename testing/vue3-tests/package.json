@@ -9,7 +9,7 @@
     "start-server": "vite preview > http.log 2>&1 & echo $! > pid",
     "stop-server": "kill $(cat pid) 2>/dev/null; rm -f pid",
     "test": "npx playwright test --reporter=list",
-    "test:e2e": "run-s -c preview test",
+    "test:e2e": "run-s -c start-server test stop-server",
     "preview": "vite preview --host"
   },
   "dependencies": {

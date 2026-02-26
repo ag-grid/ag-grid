@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 test('focus is maintained when tabbing between cells', async ({ page }) => {
     test.setTimeout(10_000);
 
-    await page.goto('http://localhost:8085/ag-14250');
+    await page.goto('/ag-14250');
 
     // Wait for data to load (fetched from remote endpoint)
     const firstCell = page.getByRole('gridcell').first();

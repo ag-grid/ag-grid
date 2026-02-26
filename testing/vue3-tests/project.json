@@ -25,7 +25,7 @@
       }
     },
     "test:e2e": {
-      "dependsOn": ["^build", "setup"],
+      "dependsOn": ["^build", "build", "setup"],
       "command": "npm run test:e2e",
       "options": {
         "cwd": "testing/vue3-tests"

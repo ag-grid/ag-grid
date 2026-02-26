@@ -8,7 +8,7 @@ test('AG-6753 rowData is reactive', async ({ page }) => {
     //   }
     // })
 
-    await page.goto('http://localhost:8085/ag-6753');
+    await page.goto('/ag-6753');
 
     // should start off with one row
     await expect(page.getByRole('gridcell')).toHaveCount(1);
