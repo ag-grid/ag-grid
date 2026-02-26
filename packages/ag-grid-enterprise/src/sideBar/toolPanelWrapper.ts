@@ -166,7 +166,8 @@ export class ToolPanelWrapper extends Component {
 
         // Don't rely on the transition end event alone for cleanup because
         // transitions might have been disabled by application or user CSS
-        const fallbackTimeout = setTimeout(cleanup, 300);
+        // Note: the timeout needs to be long enough to fire after the transitionstart event
+        const fallbackTimeout = setTimeout(cleanup, 100);
         eGui.addEventListener('transitionstart', () => clearTimeout(fallbackTimeout), { once: true });
         eGui.addEventListener('transitionend', cleanup, { once: true });
     }
