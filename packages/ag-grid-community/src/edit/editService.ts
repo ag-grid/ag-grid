@@ -2,7 +2,6 @@ import { KeyCode } from '../agStack/constants/keyCode';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
-import type { ColDefInternal } from '../entities/colDefInternal';
 import { _getRowNode } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
 import type { AgEventType } from '../eventTypes';
@@ -840,8 +839,7 @@ export class EditService extends BeanStub implements NamedBean {
         const { gos, beans } = this;
 
         const rowNode = position.rowNode;
-        const colDef: ColDefInternal = position.column.getColDef();
-        if (rowNode.group && colDef.groupRowEditable == null) {
+        if (rowNode.group && position.column.getColDef().groupRowEditable == null) {
             // This is a group - it could be a tree group or a grouping group...
             if (gos.get('treeData')) {
                 // tree - allow editing of groups with data by default.

@@ -3,7 +3,15 @@ import '@testing-library/jest-dom';
 import { userEvent } from '@testing-library/user-event';
 import { vi } from 'vitest';
 
-import { agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import {
+    CheckboxEditorModule,
+    LargeTextEditorModule,
+    NumberEditorModule,
+    TextEditorModule,
+    agTestIdFor,
+    getGridElement,
+    setupAgTestIds,
+} from 'ag-grid-community';
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     CellSelectionModule,
@@ -24,12 +32,21 @@ import {
     waitForInput,
     waitForPopup,
 } from '../test-utils';
-import { expect } from '../test-utils/matchers';
 
 describe('Cell Editing Regression', () => {
     const gridMgr = new TestGridsManager({
         includeDefaultModules: true,
-        modules: [RichSelectModule, CellSelectionModule, ClipboardModule, DragAndDropModule, RowDragModule],
+        modules: [
+            TextEditorModule,
+            LargeTextEditorModule,
+            NumberEditorModule,
+            CheckboxEditorModule,
+            RichSelectModule,
+            CellSelectionModule,
+            ClipboardModule,
+            DragAndDropModule,
+            RowDragModule,
+        ],
     });
 
     beforeAll(() => setupAgTestIds());
@@ -68,7 +85,7 @@ describe('Cell Editing Regression', () => {
             await asyncSetTimeout(1);
 
             const inputElement = await waitForInput(gridDiv, cell, { popup });
-            expect(inputElement).toHaveValue(expected as any);
+            expect(inputElement.value).toBe(expected);
             expect(valueFormatter).toHaveBeenCalled();
         });
     });
@@ -98,16 +115,37 @@ describe('Cell Editing Regression', () => {
         await userEvent.dblClick(makeCellRow0);
         await waitForInput(gridDiv, makeCellRow0, { popup: false });
 
+        // Mid-edit: row 0 is being edited
+        await new GridRows(api, 'during full-row edit of row 0').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF 🖍️ id:0 readOnly:"RO-0" make:"Toyota" model:"Celica"
+            └── LEAF id:1 readOnly:"RO-1" make:"Ford" model:"Mondeo"
+        `);
+
         await userEvent.keyboard('{Tab}{Tab}');
         await asyncSetTimeout(1);
 
         const modelCellRow1 = getByTestId(gridDiv, agTestIdFor.cell('1', 'model'));
         const editor = await waitForInput(gridDiv, modelCellRow1, { popup: false });
+
+        // Mid-edit: row 1 is now being edited after tabbing from row 0
+        await new GridRows(api, 'during full-row edit of row 1').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 readOnly:"RO-0" make:"Toyota" model:"Celica"
+            └── LEAF 🖍️ id:1 readOnly:"RO-1" make:"Ford" model:"Mondeo"
+        `);
+
         await userEvent.clear(editor);
         await userEvent.type(editor, 'Updated');
         await userEvent.keyboard('{Enter}');
 
         expect(modelCellRow1).toHaveTextContent('Updated');
+
+        await new GridRows(api, 'after committing edit on row 1').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 readOnly:"RO-0" make:"Toyota" model:"Celica"
+            └── LEAF id:1 readOnly:"RO-1" make:"Ford" model:"Updated"
+        `);
 
         // Row 0: 2 editors started (make, model - readOnly is not editable)
         // Row 0: 2 editors stopped when tabbing to row 1
@@ -194,6 +232,13 @@ describe('Cell Editing Regression', () => {
         expect(getRowHtmlElement(api, '1')?.classList.contains('ag-row-editing')).toBe(false);
         expect(api.isEditing({ rowIndex: 0, rowPinned: undefined, column: api.getColumn('model3')! })).toBe(true);
 
+        // Mid-edit: row 0 is being full-row edited
+        await new GridRows(api, 'during full-row edit of row 0').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF 🖍️ id:0 make:"Toyota" model:"Celica"
+            └── LEAF id:1 make:"Ford" model:"Mondeo"
+        `);
+
         await userEvent.keyboard('{Tab}{Tab}{Tab}');
         const makeCellRow1 = getByTestId(gridDiv, agTestIdFor.cell('1', 'make'));
         await waitForInput(gridDiv, makeCellRow1, { popup: false });
@@ -207,6 +252,13 @@ describe('Cell Editing Regression', () => {
         expect(getRowHtmlElement(api, '1')?.classList.contains('ag-row-editing')).toBe(true);
         expect(api.isEditing({ rowIndex: 0, rowPinned: undefined, column: api.getColumn('model3')! })).toBe(false);
         expect(api.isEditing({ rowIndex: 1, rowPinned: undefined, column: api.getColumn('model3')! })).toBe(true);
+
+        // After tabbing: row 1 is now being full-row edited, row 0 editors closed
+        await new GridRows(api, 'after tab to row 1').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 make:"Toyota" model:"Celica"
+            └── LEAF 🖍️ id:1 make:"Ford" model:"Mondeo"
+        `);
 
         const emptyCellRow0 = getByTestId(gridDiv, agTestIdFor.cell('0', 'model3'));
         expect(emptyCellRow0.querySelector('input')).toBeNull();
@@ -251,6 +303,13 @@ describe('Cell Editing Regression', () => {
         expect(api.isEditing({ rowIndex: 0, rowPinned: undefined, column: api.getColumn('model3')! })).toBe(false);
         expect(api.isEditing({ rowIndex: 1, rowPinned: undefined, column: api.getColumn('model3')! })).toBe(true);
 
+        // Mid-edit: row 1 is being full-row edited
+        await new GridRows(api, 'during full-row edit of row 1').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 make:"Toyota" model:"Celica"
+            └── LEAF 🖍️ id:1 make:"Ford" model:"Mondeo"
+        `);
+
         await userEvent.keyboard('{Shift>}{Tab}{/Shift}');
         const model3CellRow0 = getByTestId(gridDiv, agTestIdFor.cell('0', 'model3'));
         await waitForInput(gridDiv, model3CellRow0, { popup: false });
@@ -264,6 +323,13 @@ describe('Cell Editing Regression', () => {
         expect(getRowHtmlElement(api, '1')?.classList.contains('ag-row-editing')).toBe(false);
         expect(api.isEditing({ rowIndex: 0, rowPinned: undefined, column: api.getColumn('model3')! })).toBe(true);
         expect(api.isEditing({ rowIndex: 1, rowPinned: undefined, column: api.getColumn('model3')! })).toBe(false);
+
+        // After shift-tab: row 0 is now being full-row edited, row 1 editors closed
+        await new GridRows(api, 'after shift-tab to row 0').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF 🖍️ id:0 make:"Toyota" model:"Celica"
+            └── LEAF id:1 make:"Ford" model:"Mondeo"
+        `);
 
         const emptyCellRow1 = getByTestId(gridDiv, agTestIdFor.cell('1', 'model3'));
         expect(emptyCellRow1.querySelector('input')).toBeNull();
@@ -296,13 +362,16 @@ describe('Cell Editing Regression', () => {
                     cellEditorParams: {
                         values: [0, 1, 2, 3],
                     },
-                    valueGetter: ({ data: { code } }) => {
+                    valueGetter: ({ data }) => {
+                        if (!data) {
+                            return undefined;
+                        }
                         return {
                             0: '0 - zero',
                             1: '1 - one',
                             2: '2 - two',
                             3: '3 - three',
-                        }[code];
+                        }[data.code as number];
                     },
                     valueSetter: ({ newValue, data }) => {
                         const valueChanged = data.code !== newValue;
@@ -321,11 +390,25 @@ describe('Cell Editing Regression', () => {
         const gridDiv = getGridElement(api)! as HTMLElement;
         await asyncSetTimeout(1);
 
+        await new GridRows(api, 'initial state').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 code:"0 - zero"
+            └── LEAF id:1 code:"2 - two"
+        `);
+
         // FIRST EDIT
         const cell0 = getByTestId(gridDiv, agTestIdFor.cell('0', 'code'));
         await userEvent.dblClick(cell0);
 
         await asyncSetTimeout(1);
+
+        // Row 0 has a 🖍️ active popup editor (agRichSelectCellEditor is a popup editor).
+        // The cell shows the committed value, not a live editor value.
+        await new GridRows(api, 'row 0 rich select editor open').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF 🖍️ id:0 code:"0 - zero"
+            └── LEAF id:1 code:"2 - two"
+        `);
 
         const popup0 = await waitForPopup(gridDiv);
         const option0 = await waitFor(() => within(popup0).getByRole('option', { name: '1' }));
@@ -349,11 +432,25 @@ describe('Cell Editing Regression', () => {
         expect(getAllRows(api)[1].data.code).toBe(2);
         expect(cell0).toHaveTextContent('1 - one');
 
+        // After first edit committed: code changed from 0 to 1
+        await new GridRows(api, 'after row 0 rich select edit committed').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 code:"1 - one"
+            └── LEAF id:1 code:"2 - two"
+        `);
+
         // SECOND EDIT
         const cell1 = getByTestId(gridDiv, agTestIdFor.cell('1', 'code'));
         await userEvent.dblClick(cell1);
 
         await asyncSetTimeout(100);
+
+        // Row 1 now has a 🖍️ active popup editor
+        await new GridRows(api, 'row 1 rich select editor open').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 code:"1 - one"
+            └── LEAF 🖍️ id:1 code:"2 - two"
+        `);
 
         const popup1 = await waitForPopup(gridDiv);
         const option1 = await waitFor(() => within(popup1).getByRole('option', { name: '3' }));
@@ -376,6 +473,13 @@ describe('Cell Editing Regression', () => {
         expect(getAllRows(api)[0].data.code).toBe(1);
         expect(getAllRows(api)[1].data.code).toBe(3);
         expect(cell1).toHaveTextContent('3 - three');
+
+        // After second edit committed: code changed from 2 to 3 (AG-15698 regression: cell was not refreshed)
+        await new GridRows(api, 'after row 1 rich select edit committed').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 code:"1 - one"
+            └── LEAF id:1 code:"3 - three"
+        `);
     });
 
     // AG-15794 - onCellEditRequest source
@@ -393,13 +497,16 @@ describe('Cell Editing Regression', () => {
                     cellEditorParams: {
                         values: [0, 1, 2, 3],
                     },
-                    valueGetter: ({ data: { code } }) => {
+                    valueGetter: ({ data }) => {
+                        if (!data) {
+                            return undefined;
+                        }
                         return {
                             0: '0 - zero',
                             1: '1 - one',
                             2: '2 - two',
                             3: '3 - three',
-                        }[code];
+                        }[data.code as number];
                     },
                     valueSetter: ({ newValue, data }) => {
                         const valueChanged = data.code !== newValue;
@@ -511,9 +618,23 @@ describe('Cell Editing Regression', () => {
         await userEvent.keyboard('1');
         const inputElement = await waitForInput(gridDiv, cell, { popup: false });
         await userEvent.type(inputElement, '2');
+
+        // Mid-edit: editor has typed value 12
+        await new GridRows(api, 'during full-row edit with typed number').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF 🖍️ id:0 field:🖍️12 0
+            └── LEAF id:1 field:1
+        `);
+
         await userEvent.keyboard('{Enter}');
 
         expect(cell).toHaveTextContent('12');
+
+        await new GridRows(api, 'after committing number edit').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 field:12
+            └── LEAF id:1 field:1
+        `);
 
         expect(onCellEditingStopped).toHaveBeenCalledTimes(1);
         expect(onCellEditingStopped).toHaveBeenCalledWith(12);
@@ -554,7 +675,7 @@ describe('Cell Editing Regression', () => {
                     await userEvent.clear(inputElement);
                     await userEvent.type(inputElement, action);
                 }
-                expect(inputElement).toHaveValue(expected?.newValue);
+                expect(inputElement.value).toBe(expected?.newValue);
 
                 await userEvent.type(inputElement, '{Enter}');
 
@@ -610,7 +731,7 @@ describe('Cell Editing Regression', () => {
                     await userEvent.clear(inputElement);
                     await userEvent.type(inputElement, action);
                 }
-                expect(inputElement).toHaveValue(expected?.newValue);
+                expect(inputElement.value).toBe(action ?? 'A Value');
 
                 await userEvent.type(inputElement, '{Escape}');
 

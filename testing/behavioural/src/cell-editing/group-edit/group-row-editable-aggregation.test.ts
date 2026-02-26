@@ -3,7 +3,6 @@ import { userEvent } from '@testing-library/user-event';
 import type { NumberFilterModel, SetFilterModel } from 'ag-grid-community';
 
 import { GridRows, TestGridsManager } from '../../test-utils';
-import { expect } from '../../test-utils/matchers';
 import {
     EDIT_MODES,
     asyncSetTimeout,
@@ -80,6 +79,37 @@ describe.each(EDIT_MODES)('groupRowEditable cascading edits (%s)', (editMode) =>
         const targetValue = 600;
 
         if (editMode === 'ui') {
+            // Start editing and capture mid-edit state before committing
+            api.startEditingCell({
+                rowIndex: europeNode!.rowIndex!,
+                colKey: amountColId,
+            });
+            await asyncSetTimeout(0);
+
+            await new GridRows(api, 'during edit').check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ filler 🖍️ id:row-group-region-Europe amount:180
+                │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-France amount:60
+                │ │ ├── LEAF id:fr-paris region:"Europe" country:"France" amount:30
+                │ │ └── LEAF id:fr-lyon region:"Europe" country:"France" amount:30
+                │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-Germany amount:60
+                │ │ ├── LEAF id:de-berlin region:"Europe" country:"Germany" amount:30
+                │ │ └── LEAF id:de-hamburg region:"Europe" country:"Germany" amount:30
+                │ └─┬ LEAF_GROUP id:row-group-region-Europe-country-Italy amount:60
+                │ · ├── LEAF id:it-rome region:"Europe" country:"Italy" amount:30
+                │ · └── LEAF id:it-milan region:"Europe" country:"Italy" amount:30
+                └─┬ filler id:row-group-region-Americas amount:160
+                · ├─┬ LEAF_GROUP id:row-group-region-Americas-country-USA amount:100
+                · │ ├── LEAF id:us-nyc region:"Americas" country:"USA" amount:70
+                · │ └── LEAF id:us-la region:"Americas" country:"USA" amount:30
+                · └─┬ LEAF_GROUP id:row-group-region-Americas-country-Canada amount:60
+                · · ├── LEAF id:ca-toronto region:"Americas" country:"Canada" amount:35
+                · · └── LEAF id:ca-vancouver region:"Americas" country:"Canada" amount:25
+            `);
+
+            api.stopEditing(true);
+            await asyncSetTimeout(0);
+
             await editCell(api, europeNode!, amountColId, `${targetValue}`);
         } else {
             europeNode!.setDataValue(amountColId, targetValue, 'ui');
@@ -157,6 +187,37 @@ describe.each(EDIT_MODES)('groupRowEditable cascading edits (%s)', (editMode) =>
 
         const amountColId = 'amount';
         if (editMode === 'ui') {
+            // Start editing and capture mid-edit state before committing
+            api.startEditingCell({
+                rowIndex: parisNode!.rowIndex!,
+                colKey: amountColId,
+            });
+            await asyncSetTimeout(0);
+
+            await new GridRows(api, 'during leaf edit').check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ filler id:row-group-region-Europe amount:180
+                │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-France amount:60
+                │ │ ├── LEAF 🖍️ id:fr-paris region:"Europe" country:"France" amount:30
+                │ │ └── LEAF id:fr-lyon region:"Europe" country:"France" amount:30
+                │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-Germany amount:60
+                │ │ ├── LEAF id:de-berlin region:"Europe" country:"Germany" amount:30
+                │ │ └── LEAF id:de-hamburg region:"Europe" country:"Germany" amount:30
+                │ └─┬ LEAF_GROUP id:row-group-region-Europe-country-Italy amount:60
+                │ · ├── LEAF id:it-rome region:"Europe" country:"Italy" amount:30
+                │ · └── LEAF id:it-milan region:"Europe" country:"Italy" amount:30
+                └─┬ filler id:row-group-region-Americas amount:160
+                · ├─┬ LEAF_GROUP id:row-group-region-Americas-country-USA amount:100
+                · │ ├── LEAF id:us-nyc region:"Americas" country:"USA" amount:70
+                · │ └── LEAF id:us-la region:"Americas" country:"USA" amount:30
+                · └─┬ LEAF_GROUP id:row-group-region-Americas-country-Canada amount:60
+                · · ├── LEAF id:ca-toronto region:"Americas" country:"Canada" amount:35
+                · · └── LEAF id:ca-vancouver region:"Americas" country:"Canada" amount:25
+            `);
+
+            api.stopEditing(true);
+            await asyncSetTimeout(0);
+
             await editCell(api, parisNode!, amountColId, '45');
         } else {
             parisNode!.setDataValue(amountColId, 45, 'ui');

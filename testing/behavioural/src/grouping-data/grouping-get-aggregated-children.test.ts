@@ -1,14 +1,20 @@
 import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, PinnedRowModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, NumberFilterModule, PinnedRowModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, SetFilterModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../test-utils';
 import { GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
-import { expect } from '../test-utils/matchers';
 
 describe('IRowNode.getAggregatedChildren()', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, PivotModule, SetFilterModule, PinnedRowModule],
+        modules: [
+            NumberFilterModule,
+            ClientSideRowModelModule,
+            RowGroupingModule,
+            PivotModule,
+            SetFilterModule,
+            PinnedRowModule,
+        ],
     });
 
     beforeEach(() => {
@@ -43,6 +49,17 @@ describe('IRowNode.getAggregatedChildren()', () => {
                     { id: '5', country: 'Italy', sport: 'Football', gold: 2 },
                 ],
             });
+
+            await new GridRows(api, 'after data load').check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" gold:4
+                │ ├── LEAF id:1 country:"Ireland" sport:"Sailing" gold:1
+                │ ├── LEAF id:2 country:"Ireland" sport:"Soccer" gold:2
+                │ └── LEAF id:3 country:"Ireland" sport:"Football" gold:1
+                └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" gold:5
+                · ├── LEAF id:4 country:"Italy" sport:"Soccer" gold:3
+                · └── LEAF id:5 country:"Italy" sport:"Football" gold:2
+            `);
 
             const irelandGroup = api.getRowNode('row-group-country-Ireland');
             expect(irelandGroup).toBeDefined();
@@ -82,6 +99,19 @@ describe('IRowNode.getAggregatedChildren()', () => {
                     { id: '4', region: 'Americas', country: 'USA', gold: 30 },
                 ],
             });
+
+            await new GridRows(api, 'after data load').check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ filler id:row-group-region-Europe ag-Grid-AutoColumn:"Europe" gold:45
+                │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-Ireland ag-Grid-AutoColumn:"Ireland" gold:30
+                │ │ ├── LEAF id:1 region:"Europe" country:"Ireland" gold:10
+                │ │ └── LEAF id:2 region:"Europe" country:"Ireland" gold:20
+                │ └─┬ LEAF_GROUP id:row-group-region-Europe-country-France ag-Grid-AutoColumn:"France" gold:15
+                │ · └── LEAF id:3 region:"Europe" country:"France" gold:15
+                └─┬ filler id:row-group-region-Americas ag-Grid-AutoColumn:"Americas" gold:30
+                · └─┬ LEAF_GROUP id:row-group-region-Americas-country-USA ag-Grid-AutoColumn:"USA" gold:30
+                · · └── LEAF id:4 region:"Americas" country:"USA" gold:30
+            `);
 
             // Get the Europe region group
             const europeGroup = api.getRowNode('row-group-region-Europe');
@@ -123,6 +153,14 @@ describe('IRowNode.getAggregatedChildren()', () => {
                 ],
             });
 
+            await new GridRows(api, 'before filter').check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" gold:4
+                · ├── LEAF id:1 country:"Ireland" sport:"Sailing" gold:1
+                · ├── LEAF id:2 country:"Ireland" sport:"Soccer" gold:2
+                · └── LEAF id:3 country:"Ireland" sport:"Football" gold:1
+            `);
+
             const irelandGroup = api.getRowNode('row-group-country-Ireland');
             expect(irelandGroup).toBeDefined();
 
@@ -134,6 +172,12 @@ describe('IRowNode.getAggregatedChildren()', () => {
             await api.setColumnFilterModel('sport', { values: ['Soccer'] });
             api.onFilterChanged();
 
+            await new GridRows(api, 'after Soccer filter').check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" gold:2
+                · └── LEAF id:2 country:"Ireland" sport:"Soccer" gold:2
+            `);
+
             // After filter, should have only 1 child
             children = irelandGroup!.getAggregatedChildren(null);
             expect(children.length).toBe(1);
@@ -142,6 +186,14 @@ describe('IRowNode.getAggregatedChildren()', () => {
             // Clear filter
             await api.setColumnFilterModel('sport', null);
             api.onFilterChanged();
+
+            await new GridRows(api, 'after clearing filter').check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" gold:4
+                · ├── LEAF id:1 country:"Ireland" sport:"Sailing" gold:1
+                · ├── LEAF id:2 country:"Ireland" sport:"Soccer" gold:2
+                · └── LEAF id:3 country:"Ireland" sport:"Football" gold:1
+            `);
 
             // After clearing filter, should have all 3 again
             children = irelandGroup!.getAggregatedChildren(null);
@@ -163,6 +215,12 @@ describe('IRowNode.getAggregatedChildren()', () => {
             applyTransactionChecked(api, {
                 add: [{ id: '1', country: 'Ireland', gold: 10 }],
             });
+
+            await new GridRows(api, 'after data load').check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" gold:10
+                · └── LEAF id:1 country:"Ireland" gold:10
+            `);
 
             const leafNode = api.getRowNode('1');
             expect(leafNode).toBeDefined();
@@ -582,6 +640,14 @@ describe('IRowNode.getAggregatedChildren()', () => {
             const irelandGroup = api.getRowNode('row-group-country-Ireland');
             expect(irelandGroup).toBeDefined();
 
+            await new GridRows(api, 'before filter').check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" gold:6
+                · ├── LEAF id:1 country:"Ireland" sport:"Sailing" gold:1
+                · ├── LEAF id:2 country:"Ireland" sport:"Soccer" gold:2
+                · └── LEAF id:3 country:"Ireland" sport:"Football" gold:3
+            `);
+
             // Before filter: 3 children, aggData should sum to 6
             // Pass 'gold' column to verify column parameter works
             expect(irelandGroup!.aggData?.gold).toBe(6);
@@ -591,6 +657,12 @@ describe('IRowNode.getAggregatedChildren()', () => {
             // Apply filter to show only Soccer
             await api.setColumnFilterModel('sport', { values: ['Soccer'] });
             api.onFilterChanged();
+
+            await new GridRows(api, 'after Soccer filter').check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" gold:2
+                · └── LEAF id:2 country:"Ireland" sport:"Soccer" gold:2
+            `);
 
             // After filter: 1 visible child, aggData should sum to 2 (only filtered values)
             expect(irelandGroup!.aggData?.gold).toBe(2);
@@ -624,6 +696,14 @@ describe('IRowNode.getAggregatedChildren()', () => {
             const irelandGroup = api.getRowNode('row-group-country-Ireland');
             expect(irelandGroup).toBeDefined();
 
+            await new GridRows(api, 'before filter').check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" gold:6
+                · ├── LEAF id:1 country:"Ireland" sport:"Sailing" gold:1
+                · ├── LEAF id:2 country:"Ireland" sport:"Soccer" gold:2
+                · └── LEAF id:3 country:"Ireland" sport:"Football" gold:3
+            `);
+
             // Before filter: 3 children, aggData should sum to 6
             // Pass Column object to verify it works
             const goldCol = api.getColumn('gold')!;
@@ -634,6 +714,12 @@ describe('IRowNode.getAggregatedChildren()', () => {
             // Apply filter to show only Soccer
             await api.setColumnFilterModel('sport', { values: ['Soccer'] });
             api.onFilterChanged();
+
+            await new GridRows(api, 'after Soccer filter (suppressAggFilteredOnly=true)').check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" gold:6
+                · └── LEAF id:2 country:"Ireland" sport:"Soccer" gold:2
+            `);
 
             // After filter: with suppressAggFilteredOnly=true, aggData STILL sums ALL rows (6, not 2)
             expect(irelandGroup!.aggData?.gold).toBe(6);
@@ -868,6 +954,16 @@ describe('IRowNode.getAggregatedChildren()', () => {
 
             const api = await gridsManager.createGridAndWait('myGrid', gridOptions);
 
+            await new GridRows(api, 'after data load with pinned sibling').check(`
+                PINNED_TOP id:t-top-row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" gold:3
+                ROOT id:ROOT_NODE_ID
+                ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" gold:3
+                │ ├── LEAF id:1 country:"Ireland" gold:1
+                │ └── LEAF id:2 country:"Ireland" gold:2
+                └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" gold:3
+                · └── LEAF id:3 country:"Italy" gold:3
+            `);
+
             const sourceGroup = api.getRowNode('row-group-country-Ireland');
             const pinnedGroup = api.getPinnedTopRow(0);
 
@@ -907,6 +1003,15 @@ describe('IRowNode.getAggregatedChildren()', () => {
             const pinnedGroup = api.getPinnedTopRow(0);
             expect(pinnedGroup).toBeDefined();
 
+            await new GridRows(api, 'before filter').check(`
+                PINNED_TOP id:t-top-row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" gold:9
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" gold:9
+                · ├── LEAF id:1 country:"Ireland" gold:1
+                · ├── LEAF id:2 country:"Ireland" gold:5
+                · └── LEAF id:3 country:"Ireland" gold:3
+            `);
+
             // Before filter: all 3 children
             let pinnedChildren = pinnedGroup!.getAggregatedChildren('gold');
             expect(pinnedChildren.length).toBe(3);
@@ -918,6 +1023,14 @@ describe('IRowNode.getAggregatedChildren()', () => {
                 filter: 3,
             });
             api.onFilterChanged();
+
+            await new GridRows(api, 'after gold>=3 filter').check(`
+                PINNED_TOP id:t-top-row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" gold:8
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" gold:8
+                · ├── LEAF id:2 country:"Ireland" gold:5
+                · └── LEAF id:3 country:"Ireland" gold:3
+            `);
 
             // After filter: only 2 children (gold >= 3)
             pinnedChildren = pinnedGroup!.getAggregatedChildren('gold');
@@ -1048,6 +1161,14 @@ describe('IRowNode.getAggregatedChildren()', () => {
             const pinnedGroup = api.getPinnedTopRow(0);
             expect(pinnedGroup).toBeDefined();
 
+            await new GridRows(api, 'initial state').check(`
+                PINNED_TOP id:t-top-row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" gold:3
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" gold:3
+                · ├── LEAF id:1 country:"Ireland" gold:1
+                · └── LEAF id:2 country:"Ireland" gold:2
+            `);
+
             // Initial: 2 children
             let pinnedChildren = pinnedGroup!.getAggregatedChildren('gold');
             expect(pinnedChildren.length).toBe(2);
@@ -1056,6 +1177,15 @@ describe('IRowNode.getAggregatedChildren()', () => {
             applyTransactionChecked(api, {
                 add: [{ id: '3', country: 'Ireland', gold: 3 }],
             });
+
+            await new GridRows(api, 'after adding row 3').check(`
+                PINNED_TOP id:t-top-row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" gold:6
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" gold:6
+                · ├── LEAF id:1 country:"Ireland" gold:1
+                · ├── LEAF id:2 country:"Ireland" gold:2
+                · └── LEAF id:3 country:"Ireland" gold:3
+            `);
 
             // After add: 3 children
             pinnedChildren = pinnedGroup!.getAggregatedChildren('gold');
@@ -1066,6 +1196,14 @@ describe('IRowNode.getAggregatedChildren()', () => {
             applyTransactionChecked(api, {
                 remove: [{ id: '1' }],
             });
+
+            await new GridRows(api, 'after removing row 1').check(`
+                PINNED_TOP id:t-top-row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" gold:5
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" gold:5
+                · ├── LEAF id:2 country:"Ireland" gold:2
+                · └── LEAF id:3 country:"Ireland" gold:3
+            `);
 
             // After remove: 2 children
             pinnedChildren = pinnedGroup!.getAggregatedChildren('gold');

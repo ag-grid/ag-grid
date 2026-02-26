@@ -64,10 +64,17 @@ describe('Cell Editing: delete and range clearing', () => {
         await asyncSetTimeout(0);
 
         const afterRows = new GridRows(api, `after cellClear delete (batch=${batchEnabled})`);
-        await afterRows.check(`
+        await afterRows.check(
+            batchEnabled
+                ? `
+            ROOT id:ROOT_NODE_ID
+            └── LEAF ⏳ id:ROW_0 field:⏳null "Initial Value"
+        `
+                : `
             ROOT id:ROOT_NODE_ID
             └── LEAF id:ROW_0 field:null
-        `);
+        `
+        );
 
         const rowNode = api.getDisplayedRowAtIndex(0);
         if (batchEnabled) {
@@ -129,9 +136,9 @@ describe('Cell Editing: delete and range clearing', () => {
 
         const beforeRows = new GridRows(api, `before suppress ${key} (batch=${batchEnabled})`);
         await beforeRows.check(`
-                ROOT id:ROOT_NODE_ID
-                └── LEAF id:ROW_0 field:"Initial Value"
-            `);
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:ROW_0 field:"Initial Value"
+        `);
 
         await asyncSetTimeout(0);
 
@@ -147,9 +154,9 @@ describe('Cell Editing: delete and range clearing', () => {
 
         const afterRows = new GridRows(api, `after suppress ${key} (batch=${batchEnabled})`);
         await afterRows.check(`
-                ROOT id:ROOT_NODE_ID
-                └── LEAF id:ROW_0 field:"Initial Value"
-            `);
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:ROW_0 field:"Initial Value"
+        `);
 
         if (batchEnabled) {
             api.commitBatchEdit();
@@ -223,11 +230,19 @@ describe('Cell Editing: delete and range clearing', () => {
         await asyncSetTimeout(0);
 
         const afterRows = new GridRows(api, `after range delete (batch=${batchEnabled})`);
-        await afterRows.check(`
+        await afterRows.check(
+            batchEnabled
+                ? `
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF ⏳ id:ROW_0 field:⏳null "Top Value"
+            └── LEAF ⏳ id:ROW_1 field:⏳null "Bottom Value"
+        `
+                : `
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:ROW_0 field:null
             └── LEAF id:ROW_1 field:null
-        `);
+        `
+        );
 
         if (batchEnabled) {
             expect(api.getDisplayedRowAtIndex(0)?.data?.field).toBe('Top Value');
@@ -311,11 +326,19 @@ describe('Cell Editing: delete and range clearing', () => {
         await asyncSetTimeout(0);
 
         const afterRows = new GridRows(api, `after range multi delete (batch=${batchEnabled})`);
-        await afterRows.check(`
+        await afterRows.check(
+            batchEnabled
+                ? `
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF ⏳ id:ROW_0 a:⏳null "A0" b:⏳null "B0"
+            └── LEAF ⏳ id:ROW_1 a:⏳null "A1" b:⏳null "B1"
+        `
+                : `
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:ROW_0 a:null b:null
             └── LEAF id:ROW_1 a:null b:null
-        `);
+        `
+        );
 
         if (batchEnabled) {
             expect(api.getDisplayedRowAtIndex(0)?.data?.a).toBe('A0');

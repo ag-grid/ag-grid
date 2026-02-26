@@ -1,6 +1,16 @@
 import type { GridApi, GridOptions, Module, Params } from 'ag-grid-community';
-import { AllCommunityModule, _doOnce, createGrid, getGridElement } from 'ag-grid-community';
-import { ServerSideRowModelApiModule } from 'ag-grid-enterprise';
+import {
+    CellApiModule,
+    ClientSideRowModelApiModule,
+    ClientSideRowModelModule,
+    ColumnApiModule,
+    EventApiModule,
+    RowApiModule,
+    ValidationModule,
+    _doOnce,
+    createGrid,
+    getGridElement,
+} from 'ag-grid-community';
 
 import { mockGridLayout } from './polyfills/mockGridLayout';
 import { waitForEvent } from './test-utils-events';
@@ -63,7 +73,7 @@ export class TestGridsManager {
 
     /** Destroys all created grids, and eventually created html elements */
     public destroyAllGrids(): void {
-        for (const grid of this.getAllGrids()) {
+        for (const grid of this.gridsMap.values()) {
             grid.destroy();
         }
     }
@@ -106,10 +116,18 @@ export class TestGridsManager {
 
         ignoreConsoleLicenseKeyError();
 
-        let modules = unique(this.modulesToRegister ?? []).concat(params?.modules ?? []);
+        const modules = deduplicate([...(this.modulesToRegister ?? []), ...(params?.modules ?? [])]);
 
         if (this.includeDefaultModules) {
-            modules = modules.concat([AllCommunityModule, ServerSideRowModelApiModule]);
+            modules.push(
+                ClientSideRowModelModule,
+                ClientSideRowModelApiModule,
+                RowApiModule,
+                ColumnApiModule,
+                CellApiModule,
+                EventApiModule,
+                ValidationModule
+            );
         }
         const api = createGrid(
             element,
@@ -165,7 +183,15 @@ export class TestGridsManager {
     }
 }
 
-function unique<T>(xs: T[]): T[] {
-    const set = new Set(xs);
-    return Array.from(set);
+function deduplicate<T>(xs: T[]): T[] {
+    const seen = new Set<T>();
+    let writeIdx = 0;
+    for (let i = 0; i < xs.length; i++) {
+        if (!seen.has(xs[i])) {
+            seen.add(xs[i]);
+            xs[writeIdx++] = xs[i];
+        }
+    }
+    xs.length = writeIdx;
+    return xs;
 }

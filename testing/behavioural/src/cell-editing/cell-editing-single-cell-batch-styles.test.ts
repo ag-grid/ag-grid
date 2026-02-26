@@ -5,7 +5,7 @@ import { userEvent } from '@testing-library/user-event';
 import { TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule, CellSelectionModule } from 'ag-grid-enterprise';
 
-import { EditEventTracker, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
+import { EditEventTracker, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
 
 describe('Cell Editing: single-cell batch styles', () => {
     const gridMgr = new TestGridsManager({
@@ -64,6 +64,14 @@ describe('Cell Editing: single-cell batch styles', () => {
         await user.keyboard('{Enter}');
         await asyncSetTimeout(0);
 
+        // Snapshot: one cell pending
+        await new GridRows(api, 'pending after first edit').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF ⏳ id:ROW_0 a:⏳"CHANGED" "A0" b:"B0"
+            ├── LEAF id:ROW_1 a:"A1" b:"B1"
+            └── LEAF id:ROW_2 a:"A2" b:"B2"
+        `);
+
         // Cell A should have batch edit style
         const cellA0After = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'));
         expect(cellA0After).toHaveTextContent('CHANGED');
@@ -77,6 +85,14 @@ describe('Cell Editing: single-cell batch styles', () => {
         await user.type(inputB0, 'ALSO_CHANGED');
         await user.keyboard('{Enter}');
         await asyncSetTimeout(0);
+
+        // Snapshot: two cells pending
+        await new GridRows(api, 'pending after second edit').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF ⏳ id:ROW_0 a:⏳"CHANGED" "A0" b:⏳"ALSO_CHANGED" "B0"
+            ├── LEAF id:ROW_1 a:"A1" b:"B1"
+            └── LEAF id:ROW_2 a:"A2" b:"B2"
+        `);
 
         // Cell A should still have batch edit style after editing another cell
         const cellA0Still = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'));
@@ -140,6 +156,14 @@ describe('Cell Editing: single-cell batch styles', () => {
         await user.keyboard('{Enter}');
         await asyncSetTimeout(0);
 
+        // Snapshot: pending edits across two rows
+        await new GridRows(api, 'pending across rows').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF ⏳ id:ROW_0 a:⏳"R0_CHANGED" "A0" b:"B0"
+            ├── LEAF ⏳ id:ROW_1 a:⏳"R1_CHANGED" "A1" b:"B1"
+            └── LEAF id:ROW_2 a:"A2" b:"B2"
+        `);
+
         // Both cells should have batch edit styles
         const cellA0After = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'));
         expect(cellA0After).toHaveTextContent('R0_CHANGED');
@@ -181,6 +205,14 @@ describe('Cell Editing: single-cell batch styles', () => {
         await user.type(inputA0, 'CHANGED');
         await user.keyboard('{Enter}');
         await asyncSetTimeout(0);
+
+        // Snapshot: pending before cancel
+        await new GridRows(api, 'pending before cancel').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF ⏳ id:ROW_0 a:⏳"CHANGED" "A0" b:"B0"
+            ├── LEAF id:ROW_1 a:"A1" b:"B1"
+            └── LEAF id:ROW_2 a:"A2" b:"B2"
+        `);
 
         // Verify style exists before cancel
         const cellA0Before = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'));
@@ -231,6 +263,14 @@ describe('Cell Editing: single-cell batch styles', () => {
         expect(cellA0After).toHaveTextContent('CHANGED');
         expect(cellA0After).toHaveClass(/ag-cell-batch-edit/);
 
+        // Snapshot: one cell pending after first edit
+        await new GridRows(api, 'after first edit to CHANGED').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF ⏳ id:ROW_0 a:⏳"CHANGED" "A0" b:"B0"
+            ├── LEAF id:ROW_1 a:"A1" b:"B1"
+            └── LEAF id:ROW_2 a:"A2" b:"B2"
+        `);
+
         // Re-edit cell (0, a) back to original value
         await user.dblClick(cellA0After);
         input = await waitForInput(gridDiv, cellA0After);
@@ -244,6 +284,14 @@ describe('Cell Editing: single-cell batch styles', () => {
         expect(cellA0After).toHaveTextContent('A0');
         expect(cellA0After).not.toHaveClass(/ag-cell-batch-edit/);
 
+        // Snapshot: no pending edits after reverting to original
+        await new GridRows(api, 'after reverting to original A0').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 a:"A0" b:"B0"
+            ├── LEAF id:ROW_1 a:"A1" b:"B1"
+            └── LEAF id:ROW_2 a:"A2" b:"B2"
+        `);
+
         // Re-edit cell (0, a) to a different value again
         await user.dblClick(cellA0After);
         input = await waitForInput(gridDiv, cellA0After);
@@ -256,6 +304,14 @@ describe('Cell Editing: single-cell batch styles', () => {
         cellA0After = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'));
         expect(cellA0After).toHaveTextContent('CHANGED_AGAIN');
         expect(cellA0After).toHaveClass(/ag-cell-batch-edit/);
+
+        // Snapshot: pending again after re-edit
+        await new GridRows(api, 'after re-edit to CHANGED_AGAIN').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF ⏳ id:ROW_0 a:⏳"CHANGED_AGAIN" "A0" b:"B0"
+            ├── LEAF id:ROW_1 a:"A1" b:"B1"
+            └── LEAF id:ROW_2 a:"A2" b:"B2"
+        `);
 
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 3,
@@ -346,6 +402,14 @@ describe('Cell Editing: single-cell batch styles', () => {
         expect(getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'))).toHaveTextContent('FIRST_EDIT');
         expect(getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'))).toHaveClass(/ag-cell-batch-edit/);
 
+        // Snapshot: pending batch value after first edit
+        await new GridRows(api, 'after first edit to FIRST_EDIT').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF ⏳ id:ROW_0 a:⏳"FIRST_EDIT" "A0" b:"B0"
+            ├── LEAF id:ROW_1 a:"A1" b:"B1"
+            └── LEAF id:ROW_2 a:"A2" b:"B2"
+        `);
+
         // Re-open the same cell, type a different value, then Escape
         const cellA0Again = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'));
         await user.dblClick(cellA0Again);
@@ -359,6 +423,14 @@ describe('Cell Editing: single-cell batch styles', () => {
         const cellA0Final = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'));
         expect(cellA0Final).toHaveTextContent('FIRST_EDIT');
         expect(cellA0Final).toHaveClass(/ag-cell-batch-edit/);
+
+        // Snapshot: after Escape, still has FIRST_EDIT as pending (not reverted to A0)
+        await new GridRows(api, 'after Escape reverts to previous batch value').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF ⏳ id:ROW_0 a:⏳"FIRST_EDIT" "A0" b:"B0"
+            ├── LEAF id:ROW_1 a:"A1" b:"B1"
+            └── LEAF id:ROW_2 a:"A2" b:"B2"
+        `);
 
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 2,

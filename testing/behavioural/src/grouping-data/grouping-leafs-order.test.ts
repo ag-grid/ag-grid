@@ -86,6 +86,16 @@ describe('grouping leaf ordering', () => {
 
         const api = gridsManager.createGrid('grouping-leafs-order-refresh', gridOptions);
 
+        await new GridRows(api, 'initial').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-group-New
+            │ ├── LEAF id:A id:"A" make:"Toyota" model:"Celica" group:"New"
+            │ └── LEAF id:B id:"B" make:"Ford" model:"Mondeo" group:"New"
+            └─┬ LEAF_GROUP id:row-group-group-Old
+            · ├── LEAF id:C id:"C" make:"Porsche" model:"Boxster" group:"Old"
+            · └── LEAF id:D id:"D" make:"Ford2" model:"Boxster" group:"Old"
+        `);
+
         const reversedRowData = getSecondScenarioData().reverse();
 
         setRowDataChecked(api, reversedRowData);

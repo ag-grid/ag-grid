@@ -1,7 +1,7 @@
 import type { MockInstance } from 'vitest';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
 import { CellSelectionModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, assertSelectedRowsByIndex } from '../test-utils';
@@ -28,7 +28,7 @@ describe('Row Selection with Keyboard', () => {
     }
 
     const gridMgr = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, CellSelectionModule],
+        modules: [RowSelectionModule, ClientSideRowModelModule, RowGroupingModule, CellSelectionModule],
     });
 
     beforeEach(() => {

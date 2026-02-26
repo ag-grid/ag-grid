@@ -18,7 +18,6 @@ describe('Floating Filters', () => {
     });
 
     beforeAll(() => setupAgTestIds());
-    beforeEach(() => gridsManager.reset());
     afterEach(() => gridsManager.reset());
 
     describe.each(['agTextColumnFilter', 'agNumberColumnFilter'])('Placeholders for `%s` filters', (filter) => {

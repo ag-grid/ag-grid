@@ -1,6 +1,7 @@
 import type { Component, HighlightTooltipEventType, RichSelectParams, _VerticalDirection } from 'ag-grid-community';
 import {
     KeyCode,
+    _addOrRemoveAttribute,
     _createElement,
     _createIconNoSpan,
     _requestAnimationFrame,
@@ -10,6 +11,7 @@ import {
     _setDisplayed,
 } from 'ag-grid-community';
 
+import { resolveRichSelectValueFormatter } from './agRichSelect';
 import { RichSelectRow } from './agRichSelectRow';
 import { VirtualList } from './virtualList';
 
@@ -41,14 +43,15 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     private loadMoreRowsCallback?: (direction?: _VerticalDirection) => void;
     private loadMoreRowsThreshold = 10;
     private stateAnnouncementCallback?: (value: string) => void;
+    private readonly valueFormatter: (value: TValue | TValue[] | null | undefined) => string;
 
     constructor(
-        private readonly params: RichSelectParams,
+        private readonly params: RichSelectParams<TValue>,
         private readonly richSelectWrapper: HTMLElement,
         private readonly getSearchString: () => string
     ) {
         super({ cssIdentifier: 'rich-select' });
-        this.params = params;
+        this.valueFormatter = resolveRichSelectValueFormatter<TValue>(params.valueFormatter);
         this.setComponentCreator(this.createRowComponent.bind(this));
         /* nothing to update but method required to soft refresh */
         this.setComponentUpdater(() => {});
@@ -192,6 +195,9 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         super.drawVirtualRows(softRefresh);
 
         this.refreshSelectedItems();
+        if (this.lastRowHovered !== -1) {
+            this.updateRenderedHighlightState(this.lastRowHovered);
+        }
     }
 
     public highlightFilterMatch(searchString: string): void {
@@ -235,6 +241,10 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
 
         this.selectListItems(Array.isArray(value) ? value : [value]);
 
+        if (refresh) {
+            this.highlightIndex(selectedPositions[0], true);
+        }
+
         return refresh;
     }
 
@@ -271,6 +281,14 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         });
     }
 
+    public offsetHoveredIndexOnPrependedRows(prependedRowCount: number): void {
+        if (prependedRowCount <= 0 || this.lastRowHovered < 0) {
+            return;
+        }
+
+        this.lastRowHovered += prependedRowCount;
+    }
+
     public restoreScrollOnPrependedRows(previousScrollTop: number, prependedRowCount: number): void {
         if (prependedRowCount <= 0) {
             return;
@@ -303,8 +321,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
 
         if (index < 0 || index >= this.currentList.length) {
             this.lastRowHovered = -1;
-            _setAriaActiveDescendant(this.richSelectWrapper, null);
-            this.richSelectWrapper.removeAttribute('data-active-option');
+            this.setActiveOption();
         } else {
             this.lastRowHovered = index;
 
@@ -315,17 +332,27 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
             }
         }
 
+        this.updateRenderedHighlightState(index);
+    }
+
+    private updateRenderedHighlightState(index: number): void {
+        let activeOptionId: string | undefined;
+
         this.forEachRenderedRow((cmp: RichSelectRow<TValue>, idx: number) => {
             const highlighted = index === idx;
-
             cmp.toggleHighlighted(highlighted);
 
             if (highlighted) {
-                const idForParent = `${ROW_COMPONENT_NAME}-${cmp.getCompId()}`;
-                _setAriaActiveDescendant(this.richSelectWrapper, idForParent);
-                this.richSelectWrapper.setAttribute('data-active-option', idForParent);
+                activeOptionId = `${ROW_COMPONENT_NAME}-${cmp.getCompId()}`;
             }
         });
+
+        this.setActiveOption(activeOptionId);
+    }
+
+    private setActiveOption(activeOptionId?: string): void {
+        _setAriaActiveDescendant(this.richSelectWrapper, activeOptionId ?? null);
+        _addOrRemoveAttribute(this.richSelectWrapper, 'data-active-option', activeOptionId);
     }
 
     public getIndicesForValues(values?: TValue[] | TValue | null): number[] {
@@ -342,14 +369,16 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         }
 
         const positions: number[] = [];
-        const valueFormatter = this.getValueFormatter();
         let formattedList: string[] | undefined;
 
         for (const value of valuesToFind) {
             let idx = currentList.indexOf(value as TValue);
-            if (idx === -1 && value != null && typeof value === 'object') {
-                formattedList ??= currentList.map(valueFormatter);
-                idx = formattedList.indexOf(valueFormatter(value));
+            if (idx === -1 && value != null) {
+                formattedList ??= currentList.map((item) => this.valueFormatter(item));
+                // objects must go through the formatter, while primitives are compared by their raw string value
+                // so a primitive selected value (e.g. 'Blue') can still match a formatted object option in the list.
+                const formattedValue = this.getComparableFormattedValue(value as TValue | null | undefined);
+                idx = formattedList.indexOf(formattedValue);
             }
 
             if (idx >= 0) {
@@ -385,10 +414,9 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
             if (this.selectedItems.has(value)) {
                 return value;
             }
-            const valueFormatter = this.getValueFormatter();
-            const valueFormatted = valueFormatter(value);
+            const valueFormatted = this.valueFormatter(value);
             for (const item of this.selectedItems) {
-                if (valueFormatter(item) === valueFormatted) {
+                if (this.valueFormatter(item) === valueFormatted) {
                     return item;
                 }
             }
@@ -397,8 +425,8 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         }
     }
 
-    private getValueFormatter(): (value: TValue) => string {
-        return this.params.valueFormatter ?? ((value) => String(value ?? ''));
+    private getComparableFormattedValue(value: TValue | null | undefined): string {
+        return value != null && typeof value === 'object' ? this.valueFormatter(value) : String(value ?? '');
     }
 
     private createRowComponent(

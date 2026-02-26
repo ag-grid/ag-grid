@@ -1,14 +1,14 @@
 import { setTimeout as asyncSetTimeout } from 'timers/promises';
 import type { MockInstance } from 'vitest';
 
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, cachedJSONObjects, setRowDataChecked } from '../../test-utils';
 
 describe('ag-grid parentId tree data reset', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, TreeDataModule],
+        modules: [RowSelectionModule, ClientSideRowModelModule, TreeDataModule],
     });
 
     let consoleWarnSpy: MockInstance;

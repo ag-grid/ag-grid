@@ -392,6 +392,8 @@ describe('Delta Sorting', () => {
             add: [{ id: 'dup-17', value: 65 }],
         });
 
+        // checkDom: false — this test intentionally uses duplicate row IDs (same id string for two rowData items),
+        // which causes DOM order/cell validation to fail as the grid cannot distinguish the duplicate DOM rows.
         await new GridRows(api, 'delta sort with duplicate IDs', { checkDom: false }).check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:dup-2 value:5
@@ -452,6 +454,8 @@ describe('Delta Sorting', () => {
             add: [{ id: 'dup-inst-15', value: 65 }],
         });
 
+        // checkDom: false — this test intentionally uses duplicate rowData object instances (same JS object twice),
+        // which causes DOM order/cell validation to fail as the grid cannot distinguish the duplicate DOM rows.
         await new GridRows(api, 'delta sort with duplicate instances', { checkDom: false }).check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:dup-inst-3 value:5
