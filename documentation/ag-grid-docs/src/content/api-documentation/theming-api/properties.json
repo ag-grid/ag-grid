@@ -172,6 +172,7 @@
             "description": "Style [Tool Panels](./tool-panel/), see also [Theming: Customising Tool Panels](./theming-tool-panels/)"
         },
         "sideBarBackgroundColor": {},
+        "sideBarPanelAnimationDuration": {},
         "sideBarPanelWidth": {},
         "sideButtonBackgroundColor": {},
         "sideButtonBarBackgroundColor": {},
