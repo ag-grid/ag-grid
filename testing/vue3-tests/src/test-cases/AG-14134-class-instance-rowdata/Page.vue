@@ -1,9 +1,11 @@
 <template>
     <div style="width: 100%; height: 500px">
         <ag-grid-vue
+            class="ag-theme-quartz"
             style="width: 100%; height: 200px"
             :columnDefs="colDefs"
             :rowData="rowData"
+            theme="legacy"
             :rowSelection="rowSelection"
             @selection-changed="onSelectionChanged"
         />

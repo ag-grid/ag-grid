@@ -39,6 +39,8 @@ const onGridReady = (params: GridReadyEvent) => {
     <div style="height: 300px">
         <AgGridVue
             style="width: 100%; height: 100%"
+            theme="legacy"
+            class="ag-theme-quartz"
             :columnDefs="columnDefs"
             :defaultColDef="defaultColDef"
             :rowData="rowData"
