@@ -83,7 +83,7 @@ jobs:
       - name: nx test:e2e
         id: tests
         run: |
-          cd packages/vue3-tests
+          cd testing/vue3-tests
           npx playwright install --with-deps chromium
           vite preview --host &
           npx playwright test tests/AG-14783-copy-paste.vue3.spec.ts
