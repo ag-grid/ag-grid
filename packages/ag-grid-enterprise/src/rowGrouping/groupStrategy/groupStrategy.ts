@@ -83,12 +83,16 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
     public execute(rootNode: RowNode, params: RefreshModelParams): void {
         const changedPath = params.changedPath!;
-        if (this.initRefresh(params)) {
+        const refreshResult = this.initRefresh(params);
+        if (refreshResult !== 'skip') {
             const changedRowNodes = params.changedRowNodes;
             if (changedRowNodes) {
                 this.handleDeltaUpdate(rootNode, changedPath, changedRowNodes, !!params.animate);
             } else {
-                this.shotgunResetEverything(rootNode);
+                this.shotgunResetEverything(
+                    rootNode,
+                    refreshResult === 'groupColsChanged' ? this.getExpandedIds() : null
+                );
             }
         }
 
@@ -96,6 +100,17 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         this.orderGroups(rootNode);
 
         this.beans.selectionSvc?.updateSelectableAfterGrouping(changedPath);
+    }
+
+    /** When group columns change, snapshot expanded group node IDs so they can be restored after rebuild */
+    private getExpandedIds(): Set<string> {
+        const savedExpandedIds = new Set<string>();
+        for (const [id, node] of this.nonLeafsById) {
+            if (node.expanded) {
+                savedExpandedIds.add(id);
+            }
+        }
+        return savedExpandedIds;
     }
 
     private positionLeafsAndGroups(changedPath: ChangedPath) {
@@ -137,7 +152,8 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         }, false);
     }
 
-    private initRefresh(params: RefreshModelParams): boolean {
+    /** Returns 'skip' if no refresh needed, 'refresh' for a normal refresh, or 'groupColsChanged' when group columns changed */
+    private initRefresh(params: RefreshModelParams): 'skip' | 'refresh' | 'groupColsChanged' {
         const { rowGroupColsSvc, colModel, gos } = this.beans;
         const pivotMode = colModel.isPivotMode();
         this.pivotMode = pivotMode;
@@ -149,16 +165,18 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             this.checkGroupCols = false;
             if (groupCols && !groupColumnsChanged(groupCols, cols)) {
                 if (afterColumnsChanged) {
-                    return false; // no change to grouping
+                    return 'skip'; // no change to grouping
                 }
             } else {
-                // Group columns changed.
-                params.animate = false; // if grouping columns change, we don't animate the regrouping
+                // Group columns changed
+                // if grouping columns change, we don't animate the regrouping
+                params.animate = false;
                 makeGroupColumns(cols, this.groupCols);
+                return 'groupColsChanged';
             }
         }
 
-        return true;
+        return 'refresh';
     }
 
     private handleDeltaUpdate(
@@ -416,7 +434,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         }
     }
 
-    private shotgunResetEverything(rootNode: RowNode): void {
+    private shotgunResetEverything(rootNode: RowNode, savedExpandedIds: Set<string> | null): void {
         // groups are about to get disposed, so need to deselect any that are selected
         this.beans.selectionSvc?.filterFromSelection?.((node) => !node.group);
 
@@ -438,11 +456,11 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
         const allLeafs = rootNode._leafs!;
         for (let i = 0, len = allLeafs.length; i < len; ++i) {
-            this.insertOneNode(rootNode, allLeafs[i]);
+            this.insertOneNode(rootNode, allLeafs[i], savedExpandedIds);
         }
     }
 
-    private insertOneNode(rootNode: RowNode, childNode: RowNode): void {
+    private insertOneNode(rootNode: RowNode, childNode: RowNode, savedExpandedIds?: Set<string> | null): void {
         let parentGroup = rootNode;
         const { beans, pivotMode, groupCols, groupEmpty } = this;
         const valueSvc = beans.valueSvc;
@@ -469,7 +487,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             const isLeafLevel = nextLevel >= len - 1;
             const newGroup = this.createGroup(parentGroup, groupCol, key, nextLevel, isLeafLevel, childNode);
             this.addToParent(newGroup, parentGroup);
-            this.setExpandedInitialValue(pivotMode, newGroup);
+            this.setExpandedInitialValue(pivotMode, newGroup, savedExpandedIds);
             parentGroup = newGroup;
         }
         if (!parentGroup.group) {
@@ -532,10 +550,20 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         return rowGroupColumn ? rowGroupColumn.getId() + '-' + key : key;
     }
 
-    private setExpandedInitialValue(pivotMode: boolean, groupNode: RowNode): void {
+    private setExpandedInitialValue(
+        pivotMode: boolean,
+        groupNode: RowNode,
+        savedExpandedIds?: Set<string> | null
+    ): void {
         // if pivoting the leaf group is never expanded as we do not show leaf rows
         if (pivotMode && groupNode.leafGroup) {
             groupNode.expanded = false;
+            return;
+        }
+
+        // Restore previous expansion state for surviving group nodes when group columns change
+        if (savedExpandedIds?.has(groupNode.id!)) {
+            groupNode.expanded = true;
             return;
         }
 

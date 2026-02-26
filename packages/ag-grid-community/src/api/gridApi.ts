@@ -622,7 +622,7 @@ export interface _ColumnResizeApi {
 }
 
 export interface _ColumnMoveApi {
-    /** Moves the column at `fromIdex` to `toIndex`. The column is first removed, then added at the `toIndex` location, thus index locations will change to the right of the column after the removal. */
+    /** Moves the column at `fromIndex` to `toIndex`. The column is first removed, then added at the `toIndex` location, thus index locations will change to the right of the column after the removal. */
     moveColumnByIndex(fromIndex: number, toIndex: number): void;
 
     /** Moves columns to `toIndex`. The columns are first removed, then added at the `toIndex` location, thus index locations will change to the right of the column after the removal. */
