@@ -1,9 +1,15 @@
 import type { GridOptions, RowNode, ValueSetterParams } from 'ag-grid-community';
-import { ClientSideRowModelModule, PinnedRowModule, UndoRedoEditModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    NumberEditorModule,
+    NumberFilterModule,
+    PinnedRowModule,
+    TextEditorModule,
+    UndoRedoEditModule,
+} from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, SetFilterModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
-import type { ColDefInternal, GroupRowValueSetterParams } from './group-edit-test-utils';
 import { EDIT_MODES, cascadeGroupRowValueSetter, editCell } from './group-edit-test-utils';
 
 /**
@@ -14,6 +20,9 @@ import { EDIT_MODES, cascadeGroupRowValueSetter, editCell } from './group-edit-t
 describe('editing with pinned sibling rows', () => {
     const gridsManager = new TestGridsManager({
         modules: [
+            NumberEditorModule,
+            TextEditorModule,
+            NumberFilterModule,
             ClientSideRowModelModule,
             RowGroupingModule,
             PivotModule,
@@ -105,6 +114,28 @@ describe('editing with pinned sibling rows', () => {
 
                 // Edit the pinned row
                 if (editMode === 'ui') {
+                    // Start editing and capture mid-edit state before committing
+                    api.startEditingCell({
+                        rowIndex: pinnedRow.rowIndex!,
+                        rowPinned: pinnedRow.rowPinned,
+                        colKey: 'sales',
+                    });
+                    await asyncSetTimeout(0);
+
+                    await new GridRows(api, 'during edit').check(`
+                        PINNED_TOP id:t-top-1 country:"France" year:2020 sales:1000 region:"Europe"
+                        ROOT id:ROOT_NODE_ID
+                        ├── LEAF 🖍️ id:1 country:"France" year:2020 sales:1000 region:"Europe"
+                        ├── LEAF id:2 country:"France" year:2021 sales:1200 region:"Europe"
+                        ├── LEAF id:3 country:"Germany" year:2020 sales:1500 region:"Europe"
+                        ├── LEAF id:4 country:"Germany" year:2021 sales:1800 region:"Europe"
+                        ├── LEAF id:5 country:"USA" year:2020 sales:2000 region:"Americas"
+                        └── LEAF id:6 country:"USA" year:2021 sales:2200 region:"Americas"
+                    `);
+
+                    api.stopEditing(true);
+                    await asyncSetTimeout(0);
+
                     await editCell(api, pinnedRow, 'sales', '9999');
                 } else {
                     pinnedRow.setDataValue('sales', 9999, 'ui');
@@ -218,7 +249,7 @@ describe('editing with pinned sibling rows', () => {
                             editable: true,
                             groupRowEditable: true,
                             groupRowValueSetter: cascadeGroupRowValueSetter,
-                        } as ColDefInternal,
+                        },
                     ],
                     rowData: createGroupRowData(),
                     groupDefaultExpanded: -1,
@@ -307,7 +338,7 @@ describe('editing with pinned sibling rows', () => {
                             editable: true,
                             groupRowEditable: true,
                             groupRowValueSetter: cascadeGroupRowValueSetter,
-                        } as ColDefInternal,
+                        },
                     ],
                     rowData: createGroupRowData(),
                     groupDefaultExpanded: -1,
@@ -389,7 +420,7 @@ describe('editing with pinned sibling rows', () => {
                             editable: true,
                             groupRowEditable: true,
                             groupRowValueSetter: customValueSetter,
-                        } as ColDefInternal,
+                        },
                     ],
                     rowData: createGroupRowDataForCallback(),
                     groupDefaultExpanded: -1,
@@ -446,7 +477,7 @@ describe('editing with pinned sibling rows', () => {
                             groupRowEditable: true,
                             groupRowValueSetter: customValueSetter,
                             filter: 'agNumberColumnFilter',
-                        } as ColDefInternal,
+                        },
                     ],
                     rowData: createGroupRowDataForCallback(),
                     groupDefaultExpanded: -1,
@@ -509,7 +540,7 @@ describe('editing with pinned sibling rows', () => {
                             editable: true,
                             groupRowEditable: true,
                             groupRowValueSetter: customValueSetter,
-                        } as ColDefInternal,
+                        },
                     ],
                     rowData: createGroupRowDataForCallback(),
                     groupDefaultExpanded: -1,

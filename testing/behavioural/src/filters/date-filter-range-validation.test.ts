@@ -4,6 +4,7 @@ import { userEvent } from '@testing-library/user-event';
 import {
     ClientSideRowModelModule,
     DateFilterModule,
+    NumberFilterModule,
     TextFilterModule,
     agTestIdFor,
     getGridElement,
@@ -14,11 +15,10 @@ import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('Number Range Filter', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, TextFilterModule, DateFilterModule],
+        modules: [NumberFilterModule, ClientSideRowModelModule, TextFilterModule, DateFilterModule],
     });
 
     beforeAll(() => setupAgTestIds());
-    beforeEach(() => gridsManager.reset());
     afterEach(() => gridsManager.reset());
 
     test('Filter displays validation error state in last touched input when invalid range entered', async () => {
@@ -61,8 +61,8 @@ describe('Number Range Filter', () => {
         await userSession.type(fromNumberInput, '1');
         await userSession.type(toNumberInput, '5');
 
-        expect(fromNumberInput).toHaveValue(1);
-        expect(toNumberInput).toHaveValue(5);
+        expect(fromNumberInput.valueAsNumber).toBe(1);
+        expect(toNumberInput.valueAsNumber).toBe(5);
         expect(toNumberInput.validity.valid).toBe(true);
         await waitFor(() => {
             expect(api.getFilterModel()).toEqual({
@@ -76,7 +76,7 @@ describe('Number Range Filter', () => {
         });
 
         await userSession.type(fromNumberInput, '0');
-        expect(fromNumberInput).toHaveValue(10);
+        expect(fromNumberInput.valueAsNumber).toBe(10);
         expect(fromNumberInput.validity.valid).toBe(false);
         expect(fromNumberInput).toHaveAttribute('aria-invalid', 'true');
 
@@ -87,16 +87,16 @@ describe('Number Range Filter', () => {
         await userSession.click(filterBtn);
 
         // When re-opening, validity state defaults to the "to" input
-        expect(fromNumberInput).toHaveValue(10);
-        expect(toNumberInput).toHaveValue(5);
+        expect(fromNumberInput.valueAsNumber).toBe(10);
+        expect(toNumberInput.valueAsNumber).toBe(5);
         expect(toNumberInput.validity.valid).toBe(false);
         expect(toNumberInput).toHaveAttribute('aria-invalid', 'true');
 
         // Delete content of from input
         await userSession.type(fromNumberInput, `{Backspace}{Backspace}`);
 
-        expect(fromNumberInput).toHaveValue(null);
-        expect(toNumberInput).toHaveValue(5);
+        expect(fromNumberInput.valueAsNumber).toBeNaN();
+        expect(toNumberInput.valueAsNumber).toBe(5);
         expect(toNumberInput.validity.valid).toBe(true);
         expect(toNumberInput).toHaveAttribute('aria-invalid', 'false');
     });

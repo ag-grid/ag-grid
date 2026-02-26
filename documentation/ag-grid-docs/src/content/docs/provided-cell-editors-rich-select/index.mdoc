@@ -3,15 +3,13 @@ title: "Rich Select Cell Editor"
 enterprise: true
 ---
 
-An alternative to using the browser's `select` popup for dropdowns inside the grid.
-
-The Rich Select Cell Editor allows users to enter a cell value from a list of provided values by searching or filtering the list.
+An alternative to using the browser's `select` popup for dropdowns inside the grid. The Rich Select Cell Editor allows users to enter a cell value from a list of provided values by searching or filtering the list.
 
 ## Enabling Rich Select Cell Editor
 
 Edit any cell in the grid below to see the Rich Select Cell Editor.
 
-{% gridExampleRunner title="Rich Select Editor" name="rich-select-editor" /%}
+{% gridExampleRunner title="Rich Select Editor" name="rich-select-editor" exampleHeight=400 /%}
 
 Enabled with `agRichSelectCellEditor` and configured with `IRichCellEditorParams`.
 
@@ -35,315 +33,24 @@ Benefits over browser's `select` are as follows:
 
 ## Customisation
 
-### Cell Renderer
+The Rich Select Editor can be customised to give the desired results. See the [Customisation](./provided-cell-editors-rich-select-customisation/) page for details:
 
-The cell renderer used within the editor can be customised as shown below:
-
-{% gridExampleRunner title="Rich Select with Cell Renderer" name="rich-select-cell-renderer" /%}
-
-```js
-columnDefs: [
-    {
-        cellEditor: 'agRichSelectCellEditor',
-        cellRenderer: ColourCellRenderer,
-        cellEditorParams: {
-            values: ['AliceBlue', 'AntiqueWhite', 'Aqua', /* .... many colours */ ],
-            cellRenderer: ColourCellRenderer,
-            valueListMaxHeight: 220
-        }
-        // ...other props
-    }
-]
-```
-
-{% partial file="./_component-interface-angular.mdoc" /%}
-{% partial file="./_component-interface-javascript.mdoc" /%}
-{% partial file="./_component-interface-react.mdoc" /%}
-{% partial file="./_component-interface-vue.mdoc" /%}
-
-{% interfaceDocumentation interfaceName="IRichCellEditorRendererParams" config={ "description": "" } /%}
-
-### Search Values
-
-Different types of search are possible within the editor list as shown below:
-
-{% gridExampleRunner title="Rich Select Editor" name="rich-select-search-values" /%}
-
-```js
-columnDefs: [
-    {
-        cellEditor: 'agRichSelectCellEditor',
-        cellRenderer: ColourCellRenderer,
-        cellEditorParams: {
-            values: ['AliceBlue', 'AntiqueWhite', 'Aqua', /* .... many colours */ ],
-            allowTyping: true,
-            filterList: true,
-            highlightMatch: true,
-            valueListMaxHeight: 220
-        }
-        // ...other props
-    }
-]
-```
-
-### Allow Typing
-
-The editor input can be configured to allow text input, which is used to match different parts of the editor list items as shown below:
-
-{% gridExampleRunner title="Rich Select Editor" name="rich-select-allow-typing" /%}
-
-```js
-columnDefs: [
-    {
-        cellEditor: 'agRichSelectCellEditor',
-        cellRenderer: ColourCellRenderer,
-        cellEditorParams: {
-            values: ['AliceBlue', 'AntiqueWhite', 'Aqua', /* .... many colours */ ],
-            allowTyping: true,
-            filterList: true,
-            highlightMatch: true,
-            valueListMaxHeight: 220
-        }
-        // ...other props
-    }
-]
-```
-
-### Format Values
-
-Items in the editor list can be formatted as shown below:
-
-{% gridExampleRunner title="Rich Select Format Values" name="rich-select-format-values" /%}
-
-```js
-columnDefs: [
-    {
-        cellEditor: 'agRichSelectCellEditor',
-        cellEditorParams: {
-            values: ['English', 'Spanish', 'French', 'Portuguese', '(other)'],
-            formatValue: value => value.toUpperCase()
-        }
-        // ...other props
-    }
-]
-```
-
-### Multi Selection
-
-The editor can be configured to allow the selection of multiple values as shown below:
-
-{% gridExampleRunner title="Rich Select Editor" name="rich-select-multi-select" /%}
-
-```js
-columnDefs: [
-    {
-        cellEditor: 'agRichSelectCellEditor',
-        cellEditorParams: {
-            values: ['AliceBlue', 'AntiqueWhite', 'Aqua', /* .... many colours */ ],
-            multiSelect: true,
-            searchType: 'matchAny',
-            filterList: true,
-            highlightMatch: true,
-            valueListMaxHeight: 220
-        }
-        // ...other props
-    }
-]
-```
-
-## Complex Objects
-
-When working with complex objects, a `formatValue` callback function is required to convert that complex object into a string that can be rendered by the Rich Select Editor.
-If the `Grid Column` being edited is not using complex values, or if the Rich Select Editor value object has a different format (different properties) than the object
-used by the `Grid Column`, a `parseValue` callback function is required to convert the editor format into the grid column's format.
-
-{% note %}
-When working with `Cell Renderers`, a `formatValue` callback should still be provided so it will be possible to use functionality that
-relies on string values such as `allowTyping`.
-{% /note %}
-
-{% gridExampleRunner title="Rich Select Editor" name="rich-select-complex-objects" exampleHeight=300 /%}
-
-```js
-const colors = [
-  { name: "Pink", code: "#FFC0CB" },
-  // ...other values
-];
-
-columnDefs: [
-    {
-        cellEditor: 'agRichSelectCellEditor',
-        valueFormatter: (p) => `${p.value.name} (${p.value.code})`,
-        valueParser: (p) => p.newValue,
-        cellDataType: 'object',
-        cellEditorParams: {
-            values: colors,
-            formatValue: (v) => v.name,
-            allowTyping: true,
-            filterList: true,
-        }
-        // ...other props
-    }
-]
-```
+-   [Cell Renderer](./provided-cell-editors-rich-select-customisation/#cell-renderer) - use a cell renderer within the editor
+-   [Format Values](./provided-cell-editors-rich-select-customisation/#format-values) - format values within the list
+-   [Search Values](./provided-cell-editors-rich-select-customisation/#search-values) - different types of search matching
+-   [Allow Typing](./provided-cell-editors-rich-select-customisation/#allow-typing) - allow text input to match list items
+-   [Multi Selection](./provided-cell-editors-rich-select-customisation/#multi-selection) - allow the selection of multiple values
+-   [Complex Objects](./provided-cell-editors-rich-select-customisation/#complex-objects) - configure support for items that are complex objects
 
 ## Async Values
 
-### Overview
+The Rich Select editor can be configured to load values asynchronously. For large datasets the editor supports paging async values as well as filtering values asynchronously on a server. See the [Async Values](./provided-cell-editors-rich-select-async/) page for details:
 
-List values can be provided asynchronously to the editor as shown below:
+-   [Async Values](./provided-cell-editors-rich-select-async/) - load all values asynchronously
+-   [Paged Async Values](./provided-cell-editors-rich-select-async/#paged-async-values) - load pages as the user scrolls
+-   [Async Filtering](./provided-cell-editors-rich-select-async/#async-filtering) - return filtered values asynchronously
+-   [Paged Async Filtering](./provided-cell-editors-rich-select-async/#paged-async-filtering) - combine paged loading with filtering
 
-{% gridExampleRunner title="Rich Select Async Values" name="rich-select-async-values" /%}
+## API
 
-```ts
-function fetchLanguages(_params: RichCellEditorValuesCallbackParams): Promise<string[]> {
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(['English', 'Spanish', 'French', 'Portuguese', '(other)']), 1000);
-  });
-}
-```
-
-```js
-columnDefs: [
-    {
-        field: 'language',
-        cellEditor: 'agRichSelectCellEditor',
-        cellEditorParams: {
-            values: fetchLanguages,
-        }
-    }
-]
-```
-
-{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["values"] /%}
-
-### Paged Async Values
-
-For large datasets, `valuesPage` avoids loading everything at once.
-
-In paged mode the editor requests row ranges (and optional cursor tokens), rather than a single full list.
-
-Requests always include `startRow` and `endRow`. `cursor` is optional: it is `undefined` on the first request, then for forward paging it is automatically populated from the previous page result.
-
-You can use `valuesPageInitialStartRow` to open around the current value while still allowing navigation to earlier and later pages.
-
-{% gridExampleRunner title="Rich Select Paged Async Values" name="rich-select-paged-async-values" /%}
-
-```ts
-function getLanguagesPage(params: RichCellEditorValuesPageParams): Promise<RichCellEditorValuesPageResult<string>> {
-    return fetch(
-        `/api/languages?startRow=${params.startRow}&endRow=${params.endRow}&cursor=${encodeURIComponent(params.cursor ?? '')}`
-    ).then((res) => res.json());
-}
-```
-
-```js
-columnDefs: [
-    {
-        field: 'language',
-        cellEditor: 'agRichSelectCellEditor',
-        cellEditorParams: {
-            valuesPage: getLanguagesPage,
-            valuesPageInitialStartRow: (value) => getRowForSelectedValue(value),
-            valuesPageSize: 100,
-            valuesPageLoadThreshold: 10
-        }
-    }
-]
-```
-
-{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["valuesPage", "valuesPageInitialStartRow", "valuesPageSize", "valuesPageLoadThreshold"] /%}
-
-### Async Filtering
-
-For advanced filtering scenarios, combine async `values` callback, `allowTyping`, and `filterListAsync` to enable async filtering.
-
-When `filterListAsync` is set to `true`, the cell editor behaves as follows:
-
--   It calls the `values` callback with the current search term.
--   It delays the search request by 300ms (this can be adjusted using `searchDebounceDelay`) to avoid excessive calls.
--   A loading indicator appears while the network request is in progress.
--   Once the promise resolves, the dropdown is updated with the filtered results.
-
-This is shown in the example below:
-
-{% gridExampleRunner title="Rich Select Async Filtering" name="rich-select-full-async-values" /%}
-
-```ts
-function fetchLanguages(params: RichCellEditorValuesCallbackParams): Promise<string[]> {
-    return fetch(`/api/languages?search=${encodeURIComponent(params.search)}`)
-        .then(res => res.json())
-        .then(data => data.items as string[]);
-}
-```
-
-```js
-columnDefs: [
-    {
-        field: 'language',
-        cellEditor: 'agRichSelectCellEditor',
-        cellEditorParams: {
-            allowTyping: true,
-            filterList: true,
-            filterListAsync: true,
-            values: fetchLanguages
-        }
-    }
-]
-```
-
-{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["filterListAsync", "searchDebounceDelay", "values"] /%}
-
-### Paged Async Filtering
-
-For very large, server-backed datasets, combine async filtering with `valuesPage` so filtered results are also loaded incrementally.
-`valuesPageInitialStartRow` is only used for the initial unfiltered load; once the user types, filtered paging starts from row `0`.
-
-In this mode each request includes:
-
--   `search` for the current filter text.
--   `startRow` and `endRow` for range-based pagination.
--   `cursor` for cursor-based forward pagination APIs (`undefined` on the first request, then replayed from the previous response).
-
-You can implement either strategy in your datasource:
-
--   Range-based: use `startRow` / `endRow` and return `lastRow`.
--   Cursor-based: use `cursor` for forward pages and still tolerate `startRow` / `endRow` for initial positioning and upward loading.
-
-{% gridExampleRunner title="Rich Select Paged Async Filtering" name="rich-select-paged-async-filtering" /%}
-
-```ts
-function getFilteredLanguagesPage(
-    params: RichCellEditorValuesPageParams
-): Promise<RichCellEditorValuesPageResult<string>> {
-    return fetch(
-        `/api/languages?search=${encodeURIComponent(params.search)}&startRow=${params.startRow}&endRow=${params.endRow}&cursor=${encodeURIComponent(params.cursor ?? '')}`
-    ).then((res) => res.json());
-}
-```
-
-```js
-columnDefs: [
-    {
-        field: 'language',
-        cellEditor: 'agRichSelectCellEditor',
-        cellEditorParams: {
-            allowTyping: true,
-            filterList: true,
-            filterListAsync: true,
-            valuesPage: getFilteredLanguagesPage,
-            valuesPageInitialStartRow: (value) => getRowForSelectedValue(value),
-            valuesPageSize: 100,
-            valuesPageLoadThreshold: 10
-        }
-    }
-]
-```
-
-{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["filterListAsync", "valuesPage", "valuesPageInitialStartRow", "valuesPageSize", "valuesPageLoadThreshold"] /%}
-
-## API Reference
-
-{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" /%}
-
-Continue to the next section: [Number Cell Editor](./provided-cell-editors-number/).
+See all properties available on the [IRichCellEditorParams](./provided-cell-editors-rich-select-customisation/#api) interface.

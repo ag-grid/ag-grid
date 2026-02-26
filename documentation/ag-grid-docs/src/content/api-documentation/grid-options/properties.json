@@ -1406,6 +1406,12 @@
                 "url": "./grouping-multiple-group-columns/#hiding-expanded-parent-rows"
             }
         },
+        "groupHideColumnsUntilExpanded": {
+            "more": {
+                "name": "Hiding Group Columns Until Expanded",
+                "url": "./grouping-multiple-group-columns/#hiding-group-columns-until-expanded"
+            }
+        },
         "groupHideParentOfSingleChild": {
             "more": {
                 "name": "Remove Single Children",

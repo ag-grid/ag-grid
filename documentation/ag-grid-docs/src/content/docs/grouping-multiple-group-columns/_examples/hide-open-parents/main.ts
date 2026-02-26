@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions, ValueGetterParams } from 'ag-grid-community';
+import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
 import {
     ColumnMenuModule,

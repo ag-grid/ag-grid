@@ -1,10 +1,10 @@
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, PinnedRowModule } from 'ag-grid-community';
 
-import { TestGridsManager } from '../test-utils';
+import { GridRows, TestGridsManager } from '../test-utils';
 import { VERSION } from '../version';
 
 describe('Pinned rows', () => {
-    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule] });
+    const gridsManager = new TestGridsManager({ modules: [PinnedRowModule, ClientSideRowModelModule] });
 
     const columnDefs = [{ field: 'athlete' }, { field: 'sport' }, { field: 'age' }];
     const topData = [{ athlete: 'Top Athlete', sport: 'Top Sport', age: 11 }];
@@ -43,23 +43,35 @@ describe('Pinned rows', () => {
     });
 
     describe('top', () => {
-        test('are shown', () => {
-            gridsManager.createGrid('myGrid', { columnDefs, pinnedTopRowData: topData });
-
-            assertPinnedRowData(topData, 'top');
-        });
-
-        test('are shown then updated', () => {
+        test('are shown', async () => {
             const api = gridsManager.createGrid('myGrid', { columnDefs, pinnedTopRowData: topData });
 
             assertPinnedRowData(topData, 'top');
+            await new GridRows(api, 'pinned top rows').check(`
+                PINNED_TOP id:t-0 athlete:"Top Athlete" sport:"Top Sport" age:11
+                [no root row]
+            `);
+        });
+
+        test('are shown then updated', async () => {
+            const api = gridsManager.createGrid('myGrid', { columnDefs, pinnedTopRowData: topData });
+
+            assertPinnedRowData(topData, 'top');
+            await new GridRows(api, 'initial').check(`
+                PINNED_TOP id:t-0 athlete:"Top Athlete" sport:"Top Sport" age:11
+                [no root row]
+            `);
 
             const updatedTopData = [{ athlete: 'Updated Top Athlete', sport: 'Updated Top Sport', age: 33 }];
             api.setGridOption('pinnedTopRowData', updatedTopData);
             assertPinnedRowData(updatedTopData, 'top');
+            await new GridRows(api, 'after update').check(`
+                PINNED_TOP id:t-1 athlete:"Updated Top Athlete" sport:"Updated Top Sport" age:33
+                [no root row]
+            `);
         });
 
-        test('are shown then updated with getRowId', () => {
+        test('are shown then updated with getRowId', async () => {
             const getRowId = vitest.fn((p) => p.data.athlete);
 
             const api = gridsManager.createGrid('myGrid', {
@@ -70,6 +82,10 @@ describe('Pinned rows', () => {
 
             assertPinnedRowData(topData, 'top');
             expect(getRowId).toHaveBeenLastCalledWith(expect.objectContaining({ data: topData[0], rowPinned: 'top' }));
+            await new GridRows(api, 'initial').check(`
+                PINNED_TOP id:"Top Athlete" athlete:"Top Athlete" sport:"Top Sport" age:11
+                [no root row]
+            `);
 
             const updatedTopData = [{ athlete: 'Updated Top Athlete', sport: 'Updated Top Sport', age: 33 }];
             api.setGridOption('pinnedTopRowData', updatedTopData);
@@ -78,9 +94,13 @@ describe('Pinned rows', () => {
             expect(getRowId).toHaveBeenLastCalledWith(
                 expect.objectContaining({ data: updatedTopData[0], rowPinned: 'top' })
             );
+            await new GridRows(api, 'after update').check(`
+                PINNED_TOP id:"Updated Top Athlete" athlete:"Updated Top Athlete" sport:"Updated Top Sport" age:33
+                [no root row]
+            `);
         });
 
-        test('row data with matching ID is correctly updated', () => {
+        test('row data with matching ID is correctly updated', async () => {
             const getRowId = vitest.fn((p) => p.data.id);
             const pinnedTopRowData = [{ id: '3', athlete: 'Jake', sport: 'Top sport', age: 11 }];
 
@@ -94,6 +114,10 @@ describe('Pinned rows', () => {
             expect(getRowId).toHaveBeenLastCalledWith(
                 expect.objectContaining({ data: pinnedTopRowData[0], rowPinned: 'top' })
             );
+            await new GridRows(api, 'initial').check(`
+                PINNED_TOP id:3 athlete:"Jake" sport:"Top sport" age:11
+                [no root row]
+            `);
 
             const updatedTop = [
                 { id: '3', athlete: 'Peter', sport: 'Updated top sport', age: 12 },
@@ -106,9 +130,14 @@ describe('Pinned rows', () => {
             expect(getRowId).toHaveBeenLastCalledWith(
                 expect.objectContaining({ data: updatedTop[1], rowPinned: 'top' })
             );
+            await new GridRows(api, 'after update').check(`
+                PINNED_TOP id:3 athlete:"Peter" sport:"Updated top sport" age:12
+                PINNED_TOP id:4 athlete:"Victor" sport:"new sport" age:22
+                [no root row]
+            `);
         });
 
-        test('row data with matching ID is correctly updated with a new row order', () => {
+        test('row data with matching ID is correctly updated with a new row order', async () => {
             const getRowId = vitest.fn((p) => p.data.id);
             const pinnedTopRowData = [{ id: '3', athlete: 'Jake', sport: 'Top sport', age: 11 }];
 
@@ -122,6 +151,10 @@ describe('Pinned rows', () => {
             expect(getRowId).toHaveBeenLastCalledWith(
                 expect.objectContaining({ data: pinnedTopRowData[0], rowPinned: 'top' })
             );
+            await new GridRows(api, 'initial').check(`
+                PINNED_TOP id:3 athlete:"Jake" sport:"Top sport" age:11
+                [no root row]
+            `);
 
             const updatedTop = [
                 { id: '4', athlete: 'Victor', sport: 'new sport', age: 22 },
@@ -134,9 +167,14 @@ describe('Pinned rows', () => {
             expect(getRowId).toHaveBeenLastCalledWith(
                 expect.objectContaining({ data: updatedTop[1], rowPinned: 'top' })
             );
+            await new GridRows(api, 'after reorder').check(`
+                PINNED_TOP id:4 athlete:"Victor" sport:"new sport" age:22
+                PINNED_TOP id:3 athlete:"Peter" sport:"Updated top sport" age:12
+                [no root row]
+            `);
         });
 
-        test('remove and re-order rows', () => {
+        test('remove and re-order rows', async () => {
             const getRowId = vitest.fn((p) => p.data.id);
             const pinnedTopRowData = [
                 { id: '3', athlete: 'Jake', sport: 'Top sport 0', age: 11 },
@@ -154,6 +192,12 @@ describe('Pinned rows', () => {
             expect(getRowId).toHaveBeenLastCalledWith(
                 expect.objectContaining({ data: pinnedTopRowData[2], rowPinned: 'top' })
             );
+            await new GridRows(api, 'initial').check(`
+                PINNED_TOP id:3 athlete:"Jake" sport:"Top sport 0" age:11
+                PINNED_TOP id:4 athlete:"Peter" sport:"Top sport 1" age:12
+                PINNED_TOP id:5 athlete:"Victor" sport:"Top sport 2" age:22
+                [no root row]
+            `);
 
             const updatedTop = [
                 { id: '5', athlete: 'Charles', sport: 'new sport 0', age: 22 },
@@ -166,15 +210,27 @@ describe('Pinned rows', () => {
             expect(getRowId).toHaveBeenLastCalledWith(
                 expect.objectContaining({ data: updatedTop[1], rowPinned: 'top' })
             );
+            await new GridRows(api, 'after remove and reorder').check(`
+                PINNED_TOP id:5 athlete:"Charles" sport:"new sport 0" age:22
+                PINNED_TOP id:3 athlete:"Jake" sport:"new sport 1" age:14
+                [no root row]
+            `);
         });
 
-        test('rows are cleared on setting undefined rowData', () => {
+        test('rows are cleared on setting undefined rowData', async () => {
             const api = gridsManager.createGrid('myGrid', { columnDefs, pinnedTopRowData: topData });
 
             assertPinnedRowData(topData, 'top');
+            await new GridRows(api, 'initial').check(`
+                PINNED_TOP id:t-0 athlete:"Top Athlete" sport:"Top Sport" age:11
+                [no root row]
+            `);
 
             api.setGridOption('pinnedTopRowData', undefined);
             assertPinnedRowData([], 'top');
+            await new GridRows(api, 'after clear').check(`
+                [no root row]
+            `);
         });
 
         test('cannot render duplicate rows with getRowId', () => {
@@ -200,23 +256,35 @@ describe('Pinned rows', () => {
     });
 
     describe('bottom', () => {
-        test('are shown', () => {
-            gridsManager.createGrid('myGrid', { columnDefs, pinnedBottomRowData: bottomData });
-
-            assertPinnedRowData(bottomData, 'bottom');
-        });
-
-        test('are shown then updated', () => {
+        test('are shown', async () => {
             const api = gridsManager.createGrid('myGrid', { columnDefs, pinnedBottomRowData: bottomData });
 
             assertPinnedRowData(bottomData, 'bottom');
+            await new GridRows(api, 'pinned bottom rows').check(`
+                [no root row]
+                PINNED_BOTTOM id:b-0 athlete:"Bottom Athlete" sport:"Bottom Sport" age:22
+            `);
+        });
+
+        test('are shown then updated', async () => {
+            const api = gridsManager.createGrid('myGrid', { columnDefs, pinnedBottomRowData: bottomData });
+
+            assertPinnedRowData(bottomData, 'bottom');
+            await new GridRows(api, 'initial').check(`
+                [no root row]
+                PINNED_BOTTOM id:b-0 athlete:"Bottom Athlete" sport:"Bottom Sport" age:22
+            `);
 
             const updatedBottom = [{ athlete: 'Updated Bottom Athlete', sport: 'Updated Bottom Sport', age: 33 }];
             api.setGridOption('pinnedBottomRowData', updatedBottom);
             assertPinnedRowData(updatedBottom, 'bottom');
+            await new GridRows(api, 'after update').check(`
+                [no root row]
+                PINNED_BOTTOM id:b-1 athlete:"Updated Bottom Athlete" sport:"Updated Bottom Sport" age:33
+            `);
         });
 
-        test('are shown then updated with getRowId', () => {
+        test('are shown then updated with getRowId', async () => {
             const getRowId = vitest.fn((p) => p.data.athlete);
 
             const api = gridsManager.createGrid('myGrid', {
@@ -230,6 +298,10 @@ describe('Pinned rows', () => {
             );
 
             assertPinnedRowData(bottomData, 'bottom');
+            await new GridRows(api, 'initial').check(`
+                [no root row]
+                PINNED_BOTTOM id:"Bottom Athlete" athlete:"Bottom Athlete" sport:"Bottom Sport" age:22
+            `);
 
             const updatedBottom = [{ athlete: 'Updated Bottom Athlete', sport: 'Updated Bottom Sport', age: 33 }];
             api.setGridOption('pinnedBottomRowData', updatedBottom);
@@ -238,9 +310,13 @@ describe('Pinned rows', () => {
             expect(getRowId).toHaveBeenLastCalledWith(
                 expect.objectContaining({ data: updatedBottom[0], rowPinned: 'bottom' })
             );
+            await new GridRows(api, 'after update').check(`
+                [no root row]
+                PINNED_BOTTOM id:"Updated Bottom Athlete" athlete:"Updated Bottom Athlete" sport:"Updated Bottom Sport" age:33
+            `);
         });
 
-        test('row data with matching ID is correctly updated', () => {
+        test('row data with matching ID is correctly updated', async () => {
             const getRowId = vitest.fn((p) => p.data.id);
             const pinnedBottomRowData = [{ id: '3', athlete: 'Jake', sport: 'Top sport', age: 11 }];
 
@@ -254,6 +330,10 @@ describe('Pinned rows', () => {
             expect(getRowId).toHaveBeenLastCalledWith(
                 expect.objectContaining({ data: pinnedBottomRowData[0], rowPinned: 'bottom' })
             );
+            await new GridRows(api, 'initial').check(`
+                [no root row]
+                PINNED_BOTTOM id:3 athlete:"Jake" sport:"Top sport" age:11
+            `);
 
             const updatedBottom = [
                 { id: '3', athlete: 'Peter', sport: 'Updated bottom sport', age: 12 },
@@ -266,9 +346,14 @@ describe('Pinned rows', () => {
             expect(getRowId).toHaveBeenLastCalledWith(
                 expect.objectContaining({ data: updatedBottom[1], rowPinned: 'bottom' })
             );
+            await new GridRows(api, 'after update').check(`
+                [no root row]
+                PINNED_BOTTOM id:3 athlete:"Peter" sport:"Updated bottom sport" age:12
+                PINNED_BOTTOM id:4 athlete:"Victor" sport:"new sport" age:22
+            `);
         });
 
-        test('row data with matching ID is correctly updated with a new row order', () => {
+        test('row data with matching ID is correctly updated with a new row order', async () => {
             const getRowId = vitest.fn((p) => p.data.id);
             const pinnedBottomRowData = [{ id: '3', athlete: 'Jake', sport: 'Top sport', age: 11 }];
 
@@ -282,6 +367,10 @@ describe('Pinned rows', () => {
             expect(getRowId).toHaveBeenLastCalledWith(
                 expect.objectContaining({ data: pinnedBottomRowData[0], rowPinned: 'bottom' })
             );
+            await new GridRows(api, 'initial').check(`
+                [no root row]
+                PINNED_BOTTOM id:3 athlete:"Jake" sport:"Top sport" age:11
+            `);
 
             const updatedBottom = [
                 { id: '4', athlete: 'Victor', sport: 'new sport', age: 22 },
@@ -294,9 +383,14 @@ describe('Pinned rows', () => {
             expect(getRowId).toHaveBeenLastCalledWith(
                 expect.objectContaining({ data: updatedBottom[1], rowPinned: 'bottom' })
             );
+            await new GridRows(api, 'after reorder').check(`
+                [no root row]
+                PINNED_BOTTOM id:4 athlete:"Victor" sport:"new sport" age:22
+                PINNED_BOTTOM id:3 athlete:"Peter" sport:"Updated bottom sport" age:12
+            `);
         });
 
-        test('remove and re-order rows', () => {
+        test('remove and re-order rows', async () => {
             const getRowId = vitest.fn((p) => p.data.id);
             const pinnedBottomRowData = [
                 { id: '3', athlete: 'Jake', sport: 'Bottom sport 0', age: 11 },
@@ -314,6 +408,12 @@ describe('Pinned rows', () => {
             expect(getRowId).toHaveBeenLastCalledWith(
                 expect.objectContaining({ data: pinnedBottomRowData[2], rowPinned: 'bottom' })
             );
+            await new GridRows(api, 'initial').check(`
+                [no root row]
+                PINNED_BOTTOM id:3 athlete:"Jake" sport:"Bottom sport 0" age:11
+                PINNED_BOTTOM id:4 athlete:"Peter" sport:"Bottom sport 1" age:12
+                PINNED_BOTTOM id:5 athlete:"Victor" sport:"Bottom sport 2" age:22
+            `);
 
             const updatedBottom = [
                 { id: '5', athlete: 'Charles', sport: 'new sport 0', age: 22 },
@@ -326,15 +426,27 @@ describe('Pinned rows', () => {
             expect(getRowId).toHaveBeenLastCalledWith(
                 expect.objectContaining({ data: updatedBottom[1], rowPinned: 'bottom' })
             );
+            await new GridRows(api, 'after remove and reorder').check(`
+                [no root row]
+                PINNED_BOTTOM id:5 athlete:"Charles" sport:"new sport 0" age:22
+                PINNED_BOTTOM id:3 athlete:"Jake" sport:"new sport 1" age:14
+            `);
         });
 
-        test('rows are cleared on setting undefined rowData', () => {
+        test('rows are cleared on setting undefined rowData', async () => {
             const api = gridsManager.createGrid('myGrid', { columnDefs, pinnedBottomRowData: bottomData });
 
             assertPinnedRowData(bottomData, 'bottom');
+            await new GridRows(api, 'initial').check(`
+                [no root row]
+                PINNED_BOTTOM id:b-0 athlete:"Bottom Athlete" sport:"Bottom Sport" age:22
+            `);
 
             api.setGridOption('pinnedBottomRowData', undefined);
             assertPinnedRowData([], 'bottom');
+            await new GridRows(api, 'after clear').check(`
+                [no root row]
+            `);
         });
 
         test('cannot render duplicate rows with getRowId', () => {

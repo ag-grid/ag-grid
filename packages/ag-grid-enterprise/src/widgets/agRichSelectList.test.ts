@@ -46,6 +46,17 @@ describe('AgRichSelectList', () => {
         expect(indices).toEqual([0, 1]);
     });
 
+    it('matches primitive current values against complex list items via formatted text', () => {
+        const { list } = createList<ComplexValue>({
+            valueFormatter: ((value: ComplexValue) => value.label) as any,
+        });
+        const pink = { id: 1, label: 'Pink' };
+        const blue = { id: 2, label: 'Blue' };
+        list.setCurrentList([pink, blue]);
+
+        expect(list.getIndicesForValues('Pink' as any)).toEqual([0]);
+    });
+
     it('matches selected complex objects by reference first, then formatter', () => {
         const { list } = createList<ComplexValue>({
             valueFormatter: ((value: ComplexValue) => `id-${value.id}`) as any,
@@ -59,6 +70,42 @@ describe('AgRichSelectList', () => {
 
         expect((list as any).findItemInSelected(selectedByReference)).toBe(selectedByReference);
         expect((list as any).findItemInSelected({ id: 2, label: 'two-copy' })).toBe(selectedByFormatter);
+    });
+
+    it('keeps highlight state when selected rows render after selection', () => {
+        const { list, wrapper } = createList<string>();
+        list.setCurrentList(['Pink', 'Blue']);
+
+        let rendered = false;
+        const row = {
+            getCompId: () => '123',
+            getValue: () => 'Pink',
+            toggleHighlighted: jest.fn(),
+            updateSelected: jest.fn(),
+        };
+
+        (list as any).forEachRenderedRow = (callback: (cmp: any, idx: number) => void) => {
+            if (rendered) {
+                callback(row, 0);
+            }
+        };
+        (list as any).refresh = jest.fn();
+        (list as any).ensureIndexVisible = jest.fn();
+
+        list.selectValue('Pink');
+        expect(row.toggleHighlighted).not.toHaveBeenCalled();
+
+        const virtualListPrototype = Object.getPrototypeOf(Object.getPrototypeOf(list));
+        const drawVirtualRowsSpy = jest.spyOn(virtualListPrototype, 'drawVirtualRows').mockImplementation(() => {});
+        try {
+            rendered = true;
+            (list as any).drawVirtualRows(true);
+
+            expect(row.toggleHighlighted).toHaveBeenCalledWith(true);
+            expect(wrapper.getAttribute('data-active-option')).toBe('ag-rich-select-row-123');
+        } finally {
+            drawVirtualRowsSpy.mockRestore();
+        }
     });
 
     it('clamps mouse-derived row index to zero for positions above the list', () => {
@@ -90,6 +137,13 @@ describe('AgRichSelectList', () => {
         list.setCurrentList(['Open', null, 'Closed']);
 
         expect(list.getIndicesForValues(null)).toEqual([1]);
+    });
+
+    it('does not match null sentinel to empty-string options', () => {
+        const { list } = createList<string | null>();
+        list.setCurrentList(['', 'Open', 'Closed']);
+
+        expect(list.getIndicesForValues(null)).toEqual([]);
     });
 
     it('requests more rows when viewport is close to the end', () => {

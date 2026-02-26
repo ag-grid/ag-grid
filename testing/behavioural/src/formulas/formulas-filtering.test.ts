@@ -1,5 +1,12 @@
 import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, TextEditorModule, TextFilterModule, TooltipModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    NumberFilterModule,
+    TextEditorModule,
+    TextFilterModule,
+    TooltipModule,
+    UndoRedoEditModule,
+} from 'ag-grid-community';
 import { CellSelectionModule, FormulaModule, SetFilterModule } from 'ag-grid-enterprise';
 import type { SetFilter } from 'ag-grid-enterprise';
 
@@ -8,6 +15,8 @@ import { GridRows, TestGridsManager, applyTransactionChecked, waitForEvent } fro
 describe('ag-grid formulas filtering', () => {
     const gridsManager = new TestGridsManager({
         modules: [
+            NumberFilterModule,
+            UndoRedoEditModule,
             ClientSideRowModelModule,
             CellSelectionModule,
             FormulaModule,

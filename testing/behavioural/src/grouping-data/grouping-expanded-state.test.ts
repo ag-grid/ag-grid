@@ -1,12 +1,12 @@
 import type { GridOptions, ModelUpdatedEvent } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, PinnedRowModule, TextFilterModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout, cachedJSONObjects } from '../test-utils';
 
 describe('ag-grid grouping expanded state', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule],
+        modules: [PinnedRowModule, TextFilterModule, ClientSideRowModelModule, RowGroupingModule],
     });
 
     beforeEach(() => {
@@ -1224,7 +1224,7 @@ describe('ag-grid grouping expanded state', () => {
             },
         });
 
-        await new GridRows(api, 'initial - Ireland pinned', { checkDom: false }).check(`
+        await new GridRows(api, 'initial - Ireland pinned').check(`
             PINNED_TOP id:t-top-row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
@@ -1251,7 +1251,7 @@ describe('ag-grid grouping expanded state', () => {
         await asyncSetTimeout(1);
 
         // The Italy group should be destroyed, but the pinned Ireland should remain
-        await new GridRows(api, 'after Italy removal', { checkDom: false }).check(`
+        await new GridRows(api, 'after Italy removal').check(`
             PINNED_TOP id:t-top-row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
@@ -1282,7 +1282,7 @@ describe('ag-grid grouping expanded state', () => {
         await asyncSetTimeout(1);
 
         // Ireland group should be destroyed and pinned row removed
-        await new GridRows(api, 'after Ireland removal', { checkDom: false }).check(`
+        await new GridRows(api, 'after Ireland removal').check(`
             ROOT id:ROOT_NODE_ID
             └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
             · └── LEAF id:4 country:"France" athlete:"Jean Dupont"

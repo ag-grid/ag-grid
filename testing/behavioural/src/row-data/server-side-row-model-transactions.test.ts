@@ -1,11 +1,12 @@
 import type { GridOptions } from 'ag-grid-community';
-import { ServerSideRowModelModule } from 'ag-grid-enterprise';
+import { ScrollApiModule } from 'ag-grid-community';
+import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, waitForEvent } from '../test-utils';
 
 describe('Server Side Row Model Transactions', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ServerSideRowModelModule],
+        modules: [ServerSideRowModelApiModule, ScrollApiModule, ServerSideRowModelModule],
     });
 
     afterEach(() => {

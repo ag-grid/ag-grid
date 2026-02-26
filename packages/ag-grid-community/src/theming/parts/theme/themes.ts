@@ -302,10 +302,10 @@ export const styleMaterial = /*#__PURE__*/ makeStyleMaterialTreeShakeable();
 
 export const themeMaterialParams = () => ({
     rowHeight: {
-        calc: 'max(iconSize, dataFontSize) + spacing * 3.75 * rowVerticalPaddingScale',
+        calc: 'max(iconSize, cellFontSize) + spacing * 3.75 * rowVerticalPaddingScale',
     },
     headerHeight: {
-        calc: 'max(iconSize, dataFontSize) + spacing * 4.75 * headerVerticalPaddingScale',
+        calc: 'max(iconSize, cellFontSize) + spacing * 4.75 * headerVerticalPaddingScale',
     },
     widgetVerticalSpacing: {
         calc: 'spacing * 1.75',

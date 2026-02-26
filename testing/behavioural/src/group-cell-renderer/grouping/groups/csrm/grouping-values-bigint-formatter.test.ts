@@ -1,10 +1,11 @@
 import type { GridOptions } from 'ag-grid-community';
-import { AllEnterpriseModule } from 'ag-grid-enterprise';
+import { CellStyleModule, ScrollApiModule } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager } from '../../../../test-utils';
 
 describe('ag-grid groupCellRenderer', () => {
-    const gridsManager = new TestGridsManager({ modules: [AllEnterpriseModule] });
+    const gridsManager = new TestGridsManager({ modules: [CellStyleModule, ScrollApiModule, RowGroupingModule] });
 
     beforeEach(() => {
         gridsManager.reset();

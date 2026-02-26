@@ -2,13 +2,13 @@ import { getByTestId } from '@testing-library/dom';
 import '@testing-library/jest-dom';
 import { userEvent } from '@testing-library/user-event';
 
-import { agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import { RenderApiModule, TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 
 import { EditEventTracker, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../../test-utils';
 
 describe('Cell Editing: setDataValue', () => {
     const gridMgr = new TestGridsManager({
-        includeDefaultModules: true,
+        modules: [RenderApiModule, TextEditorModule],
     });
 
     beforeAll(() => {
@@ -47,9 +47,9 @@ describe('Cell Editing: setDataValue', () => {
 
                 const beforeRows = new GridRows(api, `before ${source} setDataValue`);
                 await beforeRows.check(`
-                ROOT id:ROOT_NODE_ID
-                └── LEAF id:ROW_0 field:"Initial Value"
-            `);
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:ROW_0 field:"Initial Value"
+                `);
 
                 const rowNode = api.getDisplayedRowAtIndex(0);
                 rowNode?.setDataValue('field', `${source}-value`, source);
@@ -241,8 +241,10 @@ describe('Cell Editing: setDataValue', () => {
             `);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
+            await asyncSetTimeout(5);
             const cell = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'field'));
             await userEvent.click(cell);
+            await asyncSetTimeout(3);
             api.startEditingCell({ rowIndex: 0, colKey: 'field' });
             const input = await waitForInput(gridDiv, cell);
             await userEvent.clear(input);

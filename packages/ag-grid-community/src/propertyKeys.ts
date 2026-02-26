@@ -253,6 +253,7 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'embedFullWidthRows',
     'suppressPaginationPanel',
     'groupHideOpenParents',
+    'groupHideColumnsUntilExpanded',
     'groupAllowUnbalanced',
     'pagination',
     'paginationAutoPageSize',

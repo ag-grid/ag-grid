@@ -1,13 +1,15 @@
+import { vi } from 'vitest';
+
 import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../test-utils';
-import { GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout, setRowDataChecked } from '../test-utils';
+import { GridRows, TestGridsManager, applyTransactionChecked, setRowDataChecked } from '../test-utils';
 
 describe('ag-grid grouping with pivot', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, PivotModule],
+        modules: [ClientSideRowModelModule, NumberFilterModule, TextFilterModule, RowGroupingModule, PivotModule],
     });
 
     beforeEach(() => {
@@ -1017,58 +1019,57 @@ describe('ag-grid grouping with pivot', () => {
             { id: '4', country: 'United Kingdom', athlete: 'Mo', year: 2012, gold: 2 },
         ]);
 
-        await asyncSetTimeout(25);
-
-        const beforePivotRows = new GridRows(api, 'custom group columns before pivot');
-        await beforePivotRows.check(`
-            ROOT id:ROOT_NODE_ID countryGroupCol:null athleteGroupCol:null
-            ├─┬ filler id:row-group-country-USA countryGroupCol:"USA" athleteGroupCol:null gold:10
-            │ ├─┬ LEAF_GROUP id:row-group-country-USA-athlete-Michael athleteGroupCol:"Michael" gold:8
-            │ │ └── LEAF id:1 country:"USA" athlete:"Michael" year:2008 gold:8
-            │ └─┬ LEAF_GROUP id:row-group-country-USA-athlete-Ryan athleteGroupCol:"Ryan" gold:2
-            │ · └── LEAF id:2 country:"USA" athlete:"Ryan" year:2012 gold:2
-            └─┬ filler id:"row-group-country-United Kingdom" countryGroupCol:"United Kingdom" athleteGroupCol:null gold:5
-            · ├─┬ LEAF_GROUP id:"row-group-country-United Kingdom-athlete-Chris" athleteGroupCol:"Chris" gold:3
-            · │ └── LEAF id:3 country:"United Kingdom" athlete:"Chris" year:2008 gold:3
-            · └─┬ LEAF_GROUP id:"row-group-country-United Kingdom-athlete-Mo" athleteGroupCol:"Mo" gold:2
-            · · └── LEAF id:4 country:"United Kingdom" athlete:"Mo" year:2012 gold:2
-        `);
+        await vi.waitFor(async () => {
+            await new GridRows(api, 'custom group columns before pivot').check(`
+                ROOT id:ROOT_NODE_ID countryGroupCol:null athleteGroupCol:null
+                ├─┬ filler id:row-group-country-USA countryGroupCol:"USA" athleteGroupCol:null gold:10
+                │ ├─┬ LEAF_GROUP id:row-group-country-USA-athlete-Michael athleteGroupCol:"Michael" gold:8
+                │ │ └── LEAF id:1 country:"USA" athlete:"Michael" year:2008 gold:8
+                │ └─┬ LEAF_GROUP id:row-group-country-USA-athlete-Ryan athleteGroupCol:"Ryan" gold:2
+                │ · └── LEAF id:2 country:"USA" athlete:"Ryan" year:2012 gold:2
+                └─┬ filler id:"row-group-country-United Kingdom" countryGroupCol:"United Kingdom" athleteGroupCol:null gold:5
+                · ├─┬ LEAF_GROUP id:"row-group-country-United Kingdom-athlete-Chris" athleteGroupCol:"Chris" gold:3
+                · │ └── LEAF id:3 country:"United Kingdom" athlete:"Chris" year:2008 gold:3
+                · └─┬ LEAF_GROUP id:"row-group-country-United Kingdom-athlete-Mo" athleteGroupCol:"Mo" gold:2
+                · · └── LEAF id:4 country:"United Kingdom" athlete:"Mo" year:2012 gold:2
+            `);
+        });
 
         api.setGridOption('pivotMode', true);
-        await asyncSetTimeout(25);
 
-        const pivotRows = new GridRows(api, 'custom group columns with pivot enabled');
-        await pivotRows.check(`
-            ROOT id:ROOT_NODE_ID pivot_year_2008_gold:11 pivot_year_2012_gold:4
-            ├─┬ filler id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_year_2008_gold:8 pivot_year_2012_gold:2
-            │ ├─┬ LEAF_GROUP collapsed id:row-group-country-USA-athlete-Michael ag-Grid-AutoColumn:"Michael" pivot_year_2008_gold:8 pivot_year_2012_gold:null
-            │ │ └── LEAF hidden id:1 pivot_year_2008_gold:8 pivot_year_2012_gold:8
-            │ └─┬ LEAF_GROUP collapsed id:row-group-country-USA-athlete-Ryan ag-Grid-AutoColumn:"Ryan" pivot_year_2008_gold:null pivot_year_2012_gold:2
-            │ · └── LEAF hidden id:2 pivot_year_2008_gold:2 pivot_year_2012_gold:2
-            └─┬ filler id:"row-group-country-United Kingdom" ag-Grid-AutoColumn:"United Kingdom" pivot_year_2008_gold:3 pivot_year_2012_gold:2
-            · ├─┬ LEAF_GROUP collapsed id:"row-group-country-United Kingdom-athlete-Chris" ag-Grid-AutoColumn:"Chris" pivot_year_2008_gold:3 pivot_year_2012_gold:null
-            · │ └── LEAF hidden id:3 pivot_year_2008_gold:3 pivot_year_2012_gold:3
-            · └─┬ LEAF_GROUP collapsed id:"row-group-country-United Kingdom-athlete-Mo" ag-Grid-AutoColumn:"Mo" pivot_year_2008_gold:null pivot_year_2012_gold:2
-            · · └── LEAF hidden id:4 pivot_year_2008_gold:2 pivot_year_2012_gold:2
-        `);
+        await vi.waitFor(async () => {
+            await new GridRows(api, 'custom group columns with pivot enabled').check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2008_gold:11 pivot_year_2012_gold:4
+                ├─┬ filler id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_year_2008_gold:8 pivot_year_2012_gold:2
+                │ ├─┬ LEAF_GROUP collapsed id:row-group-country-USA-athlete-Michael ag-Grid-AutoColumn:"Michael" pivot_year_2008_gold:8 pivot_year_2012_gold:null
+                │ │ └── LEAF hidden id:1 pivot_year_2008_gold:8 pivot_year_2012_gold:8
+                │ └─┬ LEAF_GROUP collapsed id:row-group-country-USA-athlete-Ryan ag-Grid-AutoColumn:"Ryan" pivot_year_2008_gold:null pivot_year_2012_gold:2
+                │ · └── LEAF hidden id:2 pivot_year_2008_gold:2 pivot_year_2012_gold:2
+                └─┬ filler id:"row-group-country-United Kingdom" ag-Grid-AutoColumn:"United Kingdom" pivot_year_2008_gold:3 pivot_year_2012_gold:2
+                · ├─┬ LEAF_GROUP collapsed id:"row-group-country-United Kingdom-athlete-Chris" ag-Grid-AutoColumn:"Chris" pivot_year_2008_gold:3 pivot_year_2012_gold:null
+                · │ └── LEAF hidden id:3 pivot_year_2008_gold:3 pivot_year_2012_gold:3
+                · └─┬ LEAF_GROUP collapsed id:"row-group-country-United Kingdom-athlete-Mo" ag-Grid-AutoColumn:"Mo" pivot_year_2008_gold:null pivot_year_2012_gold:2
+                · · └── LEAF hidden id:4 pivot_year_2008_gold:2 pivot_year_2012_gold:2
+            `);
+        });
 
         api.setGridOption('pivotMode', false);
-        await asyncSetTimeout(25);
 
-        const afterPivotRows = new GridRows(api, 'custom group columns after pivot disabled');
-        await afterPivotRows.check(`
-            ROOT id:ROOT_NODE_ID countryGroupCol:null athleteGroupCol:null
-            ├─┬ filler id:row-group-country-USA countryGroupCol:"USA" athleteGroupCol:null gold:10
-            │ ├─┬ LEAF_GROUP id:row-group-country-USA-athlete-Michael athleteGroupCol:"Michael" gold:8
-            │ │ └── LEAF id:1 country:"USA" athlete:"Michael" year:2008 gold:8
-            │ └─┬ LEAF_GROUP id:row-group-country-USA-athlete-Ryan athleteGroupCol:"Ryan" gold:2
-            │ · └── LEAF id:2 country:"USA" athlete:"Ryan" year:2012 gold:2
-            └─┬ filler id:"row-group-country-United Kingdom" countryGroupCol:"United Kingdom" athleteGroupCol:null gold:5
-            · ├─┬ LEAF_GROUP id:"row-group-country-United Kingdom-athlete-Chris" athleteGroupCol:"Chris" gold:3
-            · │ └── LEAF id:3 country:"United Kingdom" athlete:"Chris" year:2008 gold:3
-            · └─┬ LEAF_GROUP id:"row-group-country-United Kingdom-athlete-Mo" athleteGroupCol:"Mo" gold:2
-            · · └── LEAF id:4 country:"United Kingdom" athlete:"Mo" year:2012 gold:2
-        `);
+        await vi.waitFor(async () => {
+            await new GridRows(api, 'custom group columns after pivot disabled').check(`
+                ROOT id:ROOT_NODE_ID countryGroupCol:null athleteGroupCol:null
+                ├─┬ filler id:row-group-country-USA countryGroupCol:"USA" athleteGroupCol:null gold:10
+                │ ├─┬ LEAF_GROUP id:row-group-country-USA-athlete-Michael athleteGroupCol:"Michael" gold:8
+                │ │ └── LEAF id:1 country:"USA" athlete:"Michael" year:2008 gold:8
+                │ └─┬ LEAF_GROUP id:row-group-country-USA-athlete-Ryan athleteGroupCol:"Ryan" gold:2
+                │ · └── LEAF id:2 country:"USA" athlete:"Ryan" year:2012 gold:2
+                └─┬ filler id:"row-group-country-United Kingdom" countryGroupCol:"United Kingdom" athleteGroupCol:null gold:5
+                · ├─┬ LEAF_GROUP id:"row-group-country-United Kingdom-athlete-Chris" athleteGroupCol:"Chris" gold:3
+                · │ └── LEAF id:3 country:"United Kingdom" athlete:"Chris" year:2008 gold:3
+                · └─┬ LEAF_GROUP id:"row-group-country-United Kingdom-athlete-Mo" athleteGroupCol:"Mo" gold:2
+                · · └── LEAF id:4 country:"United Kingdom" athlete:"Mo" year:2012 gold:2
+            `);
+        });
     });
 
     test('pivot mode API usage', async () => {

@@ -12,10 +12,9 @@ import type {
     TabToNextGridContainerParams,
     TabToNextHeaderParams,
 } from 'ag-grid-community';
-import { getGridElement } from 'ag-grid-community';
+import { PaginationModule, getGridElement } from 'ag-grid-community';
 
 import { TestGridsManager, asyncSetTimeout } from '../test-utils';
-import { expect } from '../test-utils/matchers';
 
 interface RowData {
     athlete: string;
@@ -123,14 +122,18 @@ describe('Focus Overrides', () => {
     test('tabToNextGridContainer callback is invoked on backwards tab flow', async () => {
         const tabToNextGridContainer = vi.fn((_params: TabToNextGridContainerParams<RowData>) => undefined);
 
-        const api = await gridsManager.createGridAndWait<RowData>('myGrid', {
-            columnDefs,
-            rowData,
-            pagination: true,
-            paginationPageSize: 1,
-            paginationPageSizeSelector: false,
-            tabToNextGridContainer,
-        });
+        const api = await gridsManager.createGridAndWait<RowData>(
+            'myGrid',
+            {
+                columnDefs,
+                rowData,
+                pagination: true,
+                paginationPageSize: 1,
+                paginationPageSizeSelector: false,
+                tabToNextGridContainer,
+            },
+            { modules: [PaginationModule] }
+        );
 
         const gridElement = getGridElement(api) as HTMLElement;
         const pagingButtons = Array.from(gridElement.querySelectorAll<HTMLElement>('.ag-paging-button'));

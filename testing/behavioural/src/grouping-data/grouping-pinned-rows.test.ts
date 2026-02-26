@@ -1,4 +1,4 @@
-import { ClientSideRowModelModule, PaginationModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, PaginationModule, PinnedRowModule } from 'ag-grid-community';
 import type { GridApi, RowNode, RowPinnedType } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -16,7 +16,7 @@ function assertPinnedRows(api: GridApi, floating: NonNullable<RowPinnedType>, id
 
 describe('ag-grid grouping pinned rows', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, PaginationModule],
+        modules: [PinnedRowModule, ClientSideRowModelModule, RowGroupingModule, PaginationModule],
     });
 
     const columnDefs = [
@@ -52,7 +52,7 @@ describe('ag-grid grouping pinned rows', () => {
         });
 
         // Verify initial state - France group is pinned
-        await new GridRows(api, 'initial', { checkDom: false }).check(`
+        await new GridRows(api, 'initial').check(`
             PINNED_TOP id:t-top-row-group-country-France ag-Grid-AutoColumn:"France" amount:300
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" amount:300
@@ -80,7 +80,7 @@ describe('ag-grid grouping pinned rows', () => {
         await asyncSetTimeout(10);
 
         // France group should be destroyed, and pinned row should be removed
-        await new GridRows(api, 'after remove', { checkDom: false }).check(`
+        await new GridRows(api, 'after remove').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" amount:400
             │ ├── LEAF id:de-berlin country:"Germany" sport:"tennis" amount:150
@@ -105,7 +105,7 @@ describe('ag-grid grouping pinned rows', () => {
         });
 
         // Verify initial state
-        await new GridRows(api, 'initial', { checkDom: false }).check(`
+        await new GridRows(api, 'initial').check(`
             PINNED_TOP id:t-top-row-group-country-France ag-Grid-AutoColumn:"France" amount:300
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" amount:300
@@ -130,7 +130,7 @@ describe('ag-grid grouping pinned rows', () => {
         await asyncSetTimeout(10);
 
         // France group should still exist and be pinned
-        await new GridRows(api, 'after remove', { checkDom: false }).check(`
+        await new GridRows(api, 'after remove').check(`
             PINNED_TOP id:t-top-row-group-country-France ag-Grid-AutoColumn:"France" amount:200
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" amount:200
@@ -171,7 +171,7 @@ describe('ag-grid grouping pinned rows', () => {
         });
 
         // Verify initial state
-        await new GridRows(api, 'initial', { checkDom: false }).check(`
+        await new GridRows(api, 'initial').check(`
             PINNED_TOP id:t-top-row-group-country-France ag-Grid-AutoColumn:"France" amount:300
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" amount:300
@@ -195,7 +195,7 @@ describe('ag-grid grouping pinned rows', () => {
         await asyncSetTimeout(10);
 
         // Both pinned rows should be removed
-        await new GridRows(api, 'after remove', { checkDom: false }).check(`
+        await new GridRows(api, 'after remove').check(`
             ROOT id:ROOT_NODE_ID
             └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" amount:300
             · └── LEAF id:it-rome country:"Italy" sport:"golf" amount:300
@@ -216,7 +216,7 @@ describe('ag-grid grouping pinned rows', () => {
         });
 
         // Verify initial state
-        await new GridRows(api, 'initial', { checkDom: false }).check(`
+        await new GridRows(api, 'initial').check(`
             PINNED_TOP id:t-top-row-group-country-France ag-Grid-AutoColumn:"France" amount:300
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" amount:300
@@ -241,7 +241,7 @@ describe('ag-grid grouping pinned rows', () => {
         await asyncSetTimeout(10);
 
         // France group should be destroyed and pinned row removed
-        await new GridRows(api, 'after setRowData', { checkDom: false }).check(`
+        await new GridRows(api, 'after setRowData').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" amount:400
             │ ├── LEAF id:de-berlin country:"Germany" sport:"tennis" amount:150
@@ -265,7 +265,7 @@ describe('ag-grid grouping pinned rows', () => {
         });
 
         // Verify initial state - France group is pinned
-        await new GridRows(api, 'initial', { checkDom: false }).check(`
+        await new GridRows(api, 'initial').check(`
             PINNED_TOP id:t-top-row-group-country-France ag-Grid-AutoColumn:"France" amount:300
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" amount:300
@@ -299,7 +299,7 @@ describe('ag-grid grouping pinned rows', () => {
         });
 
         // Verify initial state - France group is pinned
-        await new GridRows(api, 'initial', { checkDom: false }).check(`
+        await new GridRows(api, 'initial').check(`
             PINNED_TOP id:t-top-row-group-country-France ag-Grid-AutoColumn:"France" amount:300
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" amount:300
@@ -325,7 +325,7 @@ describe('ag-grid grouping pinned rows', () => {
         await asyncSetTimeout(10);
 
         // The Germany group should be destroyed, but the pinned France should remain
-        await new GridRows(api, 'after Germany removal', { checkDom: false }).check(`
+        await new GridRows(api, 'after Germany removal').check(`
             PINNED_TOP id:t-top-row-group-country-France ag-Grid-AutoColumn:"France" amount:300
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" amount:300

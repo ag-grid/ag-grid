@@ -11,7 +11,7 @@ description: Run a Codex PR review with complete log suppression - no LLM output
 # 5. POST RESULTS: Create/update summary comment (<!-- codex-pr-review --> marker)
 #    and post new inline comments on specific file/line locations
 # 6. REACT COMPLETE: Remove 👀 from PR description, add 👍 (no findings) or 👎 (has findings)
-# 7. CLEANUP FILES: Remove sensitive review output and auth files
+# 7. CLEANUP FILES: Remove sensitive review output files
 #
 # Re-review behaviour:
 # - Summary comment is updated in-place (found via marker)
@@ -30,12 +30,8 @@ description: Run a Codex PR review with complete log suppression - no LLM output
 # | Codex exits 0, 1+ findings (JSON)    | Yes then removed | 👎   | Yes (created/updated) | Yes                |
 #
 inputs:
-    openai-api-key:
-        description: 'OpenAI API key for Codex CLI (alternative to codex-auth-json-b64)'
-        required: false
-        default: ''
-    codex-auth-json-b64:
-        description: 'Base64-encoded ~/.codex/auth.json for ChatGPT OAuth auth (alternative to openai-api-key)'
+    codex-api-key:
+        description: 'Codex API key for Codex CLI authentication'
         required: false
         default: ''
     pr-number:
@@ -90,11 +86,10 @@ runs:
           id: check-auth
           shell: bash
           env:
-              CODEX_AUTH_JSON_B64: ${{ inputs.codex-auth-json-b64 }}
-              OPENAI_API_KEY: ${{ inputs.openai-api-key }}
+              CODEX_API_KEY: ${{ inputs.codex-api-key }}
           run: |
-              if [ -z "${CODEX_AUTH_JSON_B64:-}" ] && [ -z "${OPENAI_API_KEY:-}" ]; then
-                echo "::warning::Skipping PR review - no authentication configured (set OPENAI_API_KEY or CODEX_AUTH_JSON_B64 secret)"
+              if [ -z "${CODEX_API_KEY:-}" ]; then
+                echo "::warning::Skipping PR review - no authentication configured (set CODEX_API_KEY secret)"
                 echo "skipped=true" >> $GITHUB_OUTPUT
               else
                 echo "skipped=false" >> $GITHUB_OUTPUT
@@ -278,24 +273,6 @@ runs:
                 ./external/ag-shared/scripts/setup-prompts/setup-prompts.sh --targets=codexcli --verbose || true
               fi
 
-        - name: Setup Authentication
-          if: steps.check-auth.outputs.skipped != 'true'
-          shell: bash
-          env:
-              CODEX_AUTH_JSON_B64: ${{ inputs.codex-auth-json-b64 }}
-              OPENAI_API_KEY: ${{ inputs.openai-api-key }}
-          run: |
-              # Prefer auth.json if provided, fall back to API key
-              if [ -n "${CODEX_AUTH_JSON_B64:-}" ]; then
-                echo "Using base64-encoded auth.json for authentication"
-                mkdir -p "$HOME/.codex"
-                echo "$CODEX_AUTH_JSON_B64" | base64 -d > "$HOME/.codex/auth.json"
-                chmod 600 "$HOME/.codex/auth.json"
-              elif [ -n "${OPENAI_API_KEY:-}" ]; then
-                echo "Using OpenAI API key for authentication"
-                # API key already set via env var - Codex will use it
-              fi
-
         - name: Determine Prompt File
           if: steps.check-auth.outputs.skipped != 'true'
           id: prompt
@@ -317,7 +294,8 @@ runs:
           id: codex
           shell: bash
           env:
-              OPENAI_API_KEY: ${{ inputs.openai-api-key }}
+              OPENAI_API_KEY: ${{ inputs.codex-api-key }}
+              CODEX_API_KEY: ${{ inputs.codex-api-key }}
               ARGUMENTS: ${{ inputs.pr-number }}
               BASE_REF: ${{ inputs.base-ref }}
               HEAD_REF: ${{ inputs.head-ref }}
@@ -349,6 +327,12 @@ runs:
 
               if [ $exit_code -ne 0 ]; then
                 echo "::error::Codex review failed with exit code ${exit_code}"
+
+                # Check if error is authentication-related
+                if [ -f "${error_file}" ] && grep -qE "(invalid_api_key|token_expired|refresh_token_reused|401 Unauthorized|Incorrect API key|Your access token could not be refreshed|exceeded retry limit.*401)" "${error_file}"; then
+                  echo "::error::Authentication failure detected — the CODEX_API_KEY secret is likely invalid, expired, or has insufficient permissions. Verify the secret in repo/org settings."
+                fi
+
                 # Show stderr for debugging - contains CLI errors, not review content
                 if [ -f "${error_file}" ] && [ -s "${error_file}" ]; then
                   echo "::group::Codex CLI Error Output"
@@ -690,5 +674,3 @@ runs:
           shell: bash
           run: |
               rm -f ".codex-review-${{ inputs.pr-number }}.md" ".codex-review-${{ inputs.pr-number }}.json" ".codex-error-${{ inputs.pr-number }}.log"
-              # Also clean up auth.json if we created it
-              rm -f "$HOME/.codex/auth.json"

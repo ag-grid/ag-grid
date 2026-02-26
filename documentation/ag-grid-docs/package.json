@@ -95,7 +95,7 @@
     "vue": "^3.5.13"
   },
   "devDependencies": {
-    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@types/he": "^1.2.3",
     "playwright": "^1.56.0",
     "playwright-ctrf-json-reporter": "0.0.24",

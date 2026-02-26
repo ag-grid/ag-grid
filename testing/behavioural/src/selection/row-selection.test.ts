@@ -1,7 +1,14 @@
 import type { MockInstance } from 'vitest';
 
 import type { GridApi, GridOptions, Params } from 'ag-grid-community';
-import { ClientSideRowModelModule, PinnedRowModule, isColumnSelectionCol } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    PaginationModule,
+    PinnedRowModule,
+    QuickFilterModule,
+    RowSelectionModule,
+    isColumnSelectionCol,
+} from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import {
@@ -63,7 +70,7 @@ describe('Row Selection Grid Options', () => {
     }
 
     const gridMgr = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule],
+        modules: [RowSelectionModule, ClientSideRowModelModule, RowGroupingModule, PaginationModule, QuickFilterModule],
     });
 
     beforeEach(() => {
@@ -2151,7 +2158,7 @@ describe('Row Selection Grid Options', () => {
                     },
                     enableRowPinning: true,
                 },
-                { modules: [PinnedRowModule] }
+                { modules: [RowSelectionModule, PinnedRowModule] }
             );
 
             assertSelectableByIndex([0, 1, 2, 3, 4, 5, 6], api);

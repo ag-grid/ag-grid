@@ -2,17 +2,16 @@ import { getByTestId, waitFor } from '@testing-library/dom';
 import '@testing-library/jest-dom';
 import { userEvent } from '@testing-library/user-event';
 
-import { agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import { TooltipModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import type { GridOptions, Module } from 'ag-grid-community';
 import { FormulaModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, asyncSetTimeout } from '../test-utils';
-import { expect } from '../test-utils/matchers';
 
 describe('Tooltips', () => {
     const gridMgr = new TestGridsManager({
         includeDefaultModules: true,
-        modules: [FormulaModule] as Module[],
+        modules: [TooltipModule, FormulaModule] as Module[],
     });
 
     beforeAll(() => setupAgTestIds());

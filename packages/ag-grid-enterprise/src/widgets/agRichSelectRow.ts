@@ -24,7 +24,7 @@ import {
 } from 'ag-grid-community';
 
 import type { AgRichSelect } from './agRichSelect';
-import { _bindCellRendererToHtmlElement } from './agRichSelect';
+import { _bindCellRendererToHtmlElement, resolveRichSelectValueFormatter } from './agRichSelect';
 
 const RichSelectRowElement: ElementParams = { tag: 'div', cls: 'ag-rich-select-row', role: 'presentation' };
 export class RichSelectRow<TValue> extends Component<HighlightTooltipEventType> {
@@ -40,9 +40,11 @@ export class RichSelectRow<TValue> extends Component<HighlightTooltipEventType> 
     private parsedValue: string | null;
     private tooltipFeature?: TooltipFeature;
     private shouldDisplayTooltip?: () => boolean;
+    private readonly valueFormatter: (value: TValue | TValue[] | null | undefined) => string;
 
     constructor(private readonly params: RichSelectParams<TValue>) {
         super(RichSelectRowElement);
+        this.valueFormatter = resolveRichSelectValueFormatter<TValue>(params.valueFormatter);
     }
 
     public postConstruct(): void {
@@ -60,8 +62,7 @@ export class RichSelectRow<TValue> extends Component<HighlightTooltipEventType> 
     }
 
     public setState(value: TValue): void {
-        const { params } = this;
-        const formattedValue = params.valueFormatter?.(value) ?? '';
+        const formattedValue = this.valueFormatter(value);
 
         const rendererSuccessful = this.populateWithRenderer(value, formattedValue);
         if (!rendererSuccessful) {

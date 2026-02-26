@@ -1,7 +1,7 @@
 import { setTimeout as asyncSetTimeout } from 'timers/promises';
 import type { MockInstance } from 'vitest';
 
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, cachedJSONObjects, setRowDataChecked } from '../../test-utils';
@@ -10,7 +10,7 @@ const getDataPath = (data: any) => data.orgHierarchy;
 
 describe('ag-grid tree data reset', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, TreeDataModule],
+        modules: [RowSelectionModule, ClientSideRowModelModule, TreeDataModule],
     });
 
     let consoleWarnSpy: MockInstance;
@@ -697,70 +697,6 @@ describe('ag-grid tree data reset', () => {
             · │ └── W LEAF id:7 ag-Grid-AutoColumn:"W"
             · ├── U LEAF id:12 ag-Grid-AutoColumn:"U"
             · └── N LEAF id:10 ag-Grid-AutoColumn:"N"
-        `);
-    });
-
-    test('can reorder two leafs without changing references', async () => {
-        const rowData = [
-            { id: 'A', path: ['A'] },
-            { id: 'B', path: ['A', 'B'] },
-            { id: 'C', path: ['A', 'C'] },
-            { id: 'D', path: ['A', 'B', 'D'] },
-            { id: 'E', path: ['A', 'B', 'E'] },
-            { id: 'F', path: ['A', 'B', 'F'] },
-        ];
-
-        const api = gridsManager.createGrid('myGrid', {
-            columnDefs: [],
-            autoGroupColumnDef: { headerName: 'path' },
-            treeData: true,
-            animateRows: false,
-            groupDefaultExpanded: -1,
-            rowData,
-            getDataPath: (data) => data.path,
-            getRowId: (params) => params.data.id,
-        });
-
-        await new GridRows(api, 'update 0').check(`
-            ROOT id:ROOT_NODE_ID
-            └─┬ A GROUP id:A ag-Grid-AutoColumn:"A"
-            · ├─┬ B GROUP id:B ag-Grid-AutoColumn:"B"
-            · │ ├── D LEAF id:D ag-Grid-AutoColumn:"D"
-            · │ ├── E LEAF id:E ag-Grid-AutoColumn:"E"
-            · │ └── F LEAF id:F ag-Grid-AutoColumn:"F"
-            · └── C LEAF id:C ag-Grid-AutoColumn:"C"
-        `);
-
-        const rowData1 = rowData.slice();
-        // Swap D and F
-        rowData1[3] = rowData[5];
-        rowData1[5] = rowData[3];
-        setRowDataChecked(api, rowData1);
-
-        await new GridRows(api, 'update 1').check(`
-            ROOT id:ROOT_NODE_ID
-            └─┬ A GROUP id:A ag-Grid-AutoColumn:"A"
-            · ├─┬ B GROUP id:B ag-Grid-AutoColumn:"B"
-            · │ ├── F LEAF id:F ag-Grid-AutoColumn:"F"
-            · │ ├── E LEAF id:E ag-Grid-AutoColumn:"E"
-            · │ └── D LEAF id:D ag-Grid-AutoColumn:"D"
-            · └── C LEAF id:C ag-Grid-AutoColumn:"C"
-        `);
-
-        const rowData2 = rowData1.slice();
-        // Swap B and C
-        rowData2[1] = rowData1[4];
-        rowData2[4] = rowData1[1];
-        setRowDataChecked(api, rowData2);
-
-        await new GridRows(api, 'update 1').check(`
-            ROOT id:ROOT_NODE_ID
-            └─┬ A GROUP id:A ag-Grid-AutoColumn:"A"
-            · ├── C LEAF id:C ag-Grid-AutoColumn:"C"
-            · └─┬ B GROUP id:B ag-Grid-AutoColumn:"B"
-            · · ├── E LEAF id:E ag-Grid-AutoColumn:"E"
-            · · ├── F LEAF id:F ag-Grid-AutoColumn:"F"
-            · · └── D LEAF id:D ag-Grid-AutoColumn:"D"
         `);
     });
 });

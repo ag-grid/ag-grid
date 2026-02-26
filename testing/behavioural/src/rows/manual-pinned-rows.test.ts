@@ -1,4 +1,4 @@
-import { ClientSideRowModelModule, PaginationModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, PaginationModule, PinnedRowModule } from 'ag-grid-community';
 import type { GridApi, RowNode, RowPinnedType } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -24,7 +24,7 @@ function getPinnedRows(api: GridApi, floating: NonNullable<RowPinnedType>): RowN
 
 describe('Manual pinned rows', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, PaginationModule],
+        modules: [PinnedRowModule, ClientSideRowModelModule, RowGroupingModule, PaginationModule],
     });
 
     const columnDefs = [{ field: 'sport' }];
@@ -59,7 +59,7 @@ describe('Manual pinned rows', () => {
         });
 
         // Verify initial state (grandTotalRow: 'bottom' adds a footer row)
-        await new GridRows(api, 'initial', { checkDom: false }).check(`
+        await new GridRows(api, 'initial').check(`
             PINNED_TOP id:t-top-0-rugby sport:"rugby"
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:"0-football" sport:"football"
@@ -79,7 +79,7 @@ describe('Manual pinned rows', () => {
         await asyncSetTimeout(5);
 
         // After changing grandTotalRow to 'top', footer moves to top but is not shown in DOM
-        await new GridRows(api, 'after grandTotalRow change', { checkDom: false }).check(`
+        await new GridRows(api, 'after grandTotalRow change').check(`
             PINNED_TOP id:t-top-0-rugby sport:"rugby"
             ROOT id:ROOT_NODE_ID
             ├─ footer id:rowGroupFooter_ROOT_NODE_ID
@@ -108,7 +108,7 @@ describe('Manual pinned rows', () => {
         });
 
         // Verify initial state (grandTotalRow: 'bottom' adds a footer row)
-        await new GridRows(api, 'initial', { checkDom: false }).check(`
+        await new GridRows(api, 'initial').check(`
             PINNED_TOP id:t-top-0-rugby sport:"rugby"
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:"0-football" sport:"football"
@@ -190,7 +190,7 @@ describe('Manual pinned rows', () => {
         });
 
         // Verify initial state
-        await new GridRows(api, 'initial', { checkDom: false }).check(`
+        await new GridRows(api, 'initial').check(`
             PINNED_TOP id:t-top-0-rugby sport:"rugby"
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:"0-football" sport:"football"
@@ -217,7 +217,7 @@ describe('Manual pinned rows', () => {
         await asyncSetTimeout(10);
 
         // Verify final state - rugby is removed
-        await new GridRows(api, 'after remove', { checkDom: false }).check(`
+        await new GridRows(api, 'after remove').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:"0-football" sport:"football"
             ├── LEAF id:"0-tennis" sport:"tennis"
@@ -246,7 +246,7 @@ describe('Manual pinned rows', () => {
         });
 
         // Verify initial state
-        await new GridRows(api, 'initial', { checkDom: false }).check(`
+        await new GridRows(api, 'initial').check(`
             PINNED_TOP id:t-top-0-rugby sport:"rugby"
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:"0-football" sport:"football"
@@ -270,7 +270,7 @@ describe('Manual pinned rows', () => {
         await asyncSetTimeout(10);
 
         // Verify final state - rugby is removed
-        await new GridRows(api, 'after setRowData', { checkDom: false }).check(`
+        await new GridRows(api, 'after setRowData').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:"0-football" sport:"football"
             ├── LEAF id:"0-tennis" sport:"tennis"
@@ -299,7 +299,7 @@ describe('Manual pinned rows', () => {
         });
 
         // Verify grid state
-        await new GridRows(api, 'state', { checkDom: false }).check(`
+        await new GridRows(api, 'state').check(`
             PINNED_TOP id:t-top-0-rugby sport:"rugby"
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:"0-football" sport:"football"
@@ -349,7 +349,7 @@ describe('Manual pinned rows', () => {
         });
 
         // Verify initial state
-        await new GridRows(api, 'initial', { checkDom: false }).check(`
+        await new GridRows(api, 'initial').check(`
             PINNED_TOP id:t-top-0-rugby sport:"rugby"
             PINNED_TOP id:t-top-0-tennis sport:"tennis"
             ROOT id:ROOT_NODE_ID
@@ -373,7 +373,7 @@ describe('Manual pinned rows', () => {
         await asyncSetTimeout(10);
 
         // Verify final state - all pinned rows removed
-        await new GridRows(api, 'after remove', { checkDom: false }).check(`
+        await new GridRows(api, 'after remove').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:"0-football" sport:"football"
             ├── LEAF id:"0-cricket" sport:"cricket"
@@ -400,7 +400,7 @@ describe('Manual pinned rows', () => {
         });
 
         // Verify initial state - pinned to top
-        await new GridRows(api, 'initial', { checkDom: false }).check(`
+        await new GridRows(api, 'initial').check(`
             PINNED_TOP id:t-top-0-rugby sport:"rugby"
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:"0-football" sport:"football"
@@ -438,7 +438,7 @@ describe('Manual pinned rows', () => {
         });
 
         // Verify initial state
-        await new GridRows(api, 'initial', { checkDom: false }).check(`
+        await new GridRows(api, 'initial').check(`
             PINNED_TOP id:t-top-0-rugby sport:"rugby"
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:"0-football" sport:"football"
@@ -457,7 +457,7 @@ describe('Manual pinned rows', () => {
         await asyncSetTimeout(10);
 
         // Rugby should still be pinned
-        await new GridRows(api, 'after update tennis', { checkDom: false }).check(`
+        await new GridRows(api, 'after update tennis').check(`
             PINNED_TOP id:t-top-0-rugby sport:"rugby"
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:"0-football" sport:"football"
@@ -476,7 +476,7 @@ describe('Manual pinned rows', () => {
         await asyncSetTimeout(10);
 
         // Rugby should still be pinned
-        await new GridRows(api, 'after add hockey', { checkDom: false }).check(`
+        await new GridRows(api, 'after add hockey').check(`
             PINNED_TOP id:t-top-0-rugby sport:"rugby"
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:"0-football" sport:"football"

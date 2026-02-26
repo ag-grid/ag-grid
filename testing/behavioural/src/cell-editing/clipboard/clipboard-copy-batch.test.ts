@@ -151,9 +151,9 @@ describe('Clipboard Copy: uses batch values not edit values', () => {
         // After copyRangeDown, all rows should have the batch value from row 0
         await new GridRows(api, 'after copy range down').check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 value:"batch-source"
-            ├── LEAF id:1 value:"batch-source"
-            └── LEAF id:2 value:"batch-source"
+            ├── LEAF ⏳ id:0 value:⏳"batch-source" "source"
+            ├── LEAF ⏳ id:1 value:⏳"batch-source" "target1"
+            └── LEAF ⏳ id:2 value:⏳"batch-source" "target2"
         `);
 
         api.cancelBatchEdit();

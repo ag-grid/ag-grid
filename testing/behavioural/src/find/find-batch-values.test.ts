@@ -2,11 +2,10 @@ import { getByTestId } from '@testing-library/dom';
 import '@testing-library/jest-dom';
 import { userEvent } from '@testing-library/user-event';
 
-import { agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import { TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule, FindModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
-import { expect } from '../test-utils/matchers';
 
 /**
  * Tests for find functionality using batch values (AG-16448).
@@ -16,7 +15,7 @@ import { expect } from '../test-utils/matchers';
 describe('Find with Batch Values', () => {
     const gridMgr = new TestGridsManager({
         includeDefaultModules: true,
-        modules: [BatchEditModule, FindModule],
+        modules: [TextEditorModule, BatchEditModule, FindModule],
     });
 
     beforeAll(() => setupAgTestIds());
