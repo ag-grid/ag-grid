@@ -15,6 +15,13 @@
       "options": {
         "cwd": "testing/vue3-tests"
       }
+    },
+    "test:e2e": {
+      "dependsOn": ["^build"],
+      "command": "npm run test:e2e",
+      "options": {
+        "cwd": "testing/vue3-tests"
+      }
     }
   },
   "implicitDependencies": ["ag-grid-community", "ag-grid-enterprise", "ag-grid-vue3"]

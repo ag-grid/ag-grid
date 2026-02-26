@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 test('quasar get value', async ({ page }) => {
     test.setTimeout(5_000);
 
-    await page.goto('http://localhost:5173/ag-10731');
+    await page.goto('http://localhost:8085/ag-10731');
 
     await page.getByRole('gridcell').dblclick();
 

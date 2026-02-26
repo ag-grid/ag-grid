@@ -10,7 +10,7 @@ test('ts examples compiles', async ({ page }) => {
     //   }
     // })
 
-    await page.goto('http://localhost:5173/ts-testcase');
+    await page.goto('http://localhost:8085/ts-testcase');
 
     const firstCell = page.locator('.ag-cell-value').first();
     await firstCell.waitFor();

@@ -80,6 +80,16 @@ const routes = [
         name: 'ZD40289 Immediate Watch',
         component: () => import('./test-cases/zd40289-immediate-watch/Page.vue'),
     },
+    {
+        path: '/ag-14250',
+        name: 'AG-14250 Lose Focus',
+        component: () => import('./test-cases/AG-14250-lose-focus/Page.vue'),
+    },
+    {
+        path: '/ag-14783',
+        name: 'AG-14783 Copy Paste',
+        component: () => import('./test-cases/AG-14783-copy-paste/Page.vue'),
+    },
 ];
 
 export const router = createRouter({

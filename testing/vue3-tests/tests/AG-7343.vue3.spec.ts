@@ -8,7 +8,7 @@ test('urlql master detail', async ({ page }) => {
     //   }
     // })
 
-    // await page.goto('http://localhost:5173/ag-7343');
+    // await page.goto('http://localhost:8085/ag-7343');
     //
     // const element = page.locator('[class="ag-icon ag-icon-tree-closed"]').first();
     // await element.click();

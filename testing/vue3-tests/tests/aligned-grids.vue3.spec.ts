@@ -10,7 +10,7 @@ test('aligned grids', async ({ page }) => {
     //   }
     // })
 
-    await page.goto('http://localhost:5173/aligned-grids/');
+    await page.goto('http://localhost:8085/aligned-grids/');
 
     // await page.waitForTimeout(2000); // waits for 2 seconds
     // // const firstCell = page.locator('.ag-cell-value').first();

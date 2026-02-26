@@ -10,7 +10,7 @@ test('rowData is reactive', async ({ page }) => {
     //   }
     // })
 
-    await page.goto('http://localhost:5173/ag-13735');
+    await page.goto('http://localhost:8085/ag-13735');
 
     const firstCell = page.locator('.ag-cell-value').first();
     await firstCell.waitFor({ state: 'visible', timeout: 30000 });

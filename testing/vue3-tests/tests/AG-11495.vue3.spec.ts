@@ -10,7 +10,7 @@ test('ensure no v-model/rowdata error message', async ({ page }) => {
     //   }
     // })
 
-    await page.goto('http://localhost:5173/ag-11495');
+    await page.goto('http://localhost:8085/ag-11495');
 
     await expect(page.getByRole('row')).toHaveCount(4);
     await expect(page.getByRole('gridcell')).toHaveCount(12);

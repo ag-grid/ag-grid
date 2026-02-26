@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 test('row data reactivity', async ({ page }) => {
     test.setTimeout(5_000);
 
-    await page.goto('http://localhost:5173/zd35354');
+    await page.goto('http://localhost:8085/zd35354');
 
     expect(await page.getByRole('gridcell')).toHaveCount(35);
     expect(await page.getByRole('gridcell').nth(1).textContent()).toBe('AO');

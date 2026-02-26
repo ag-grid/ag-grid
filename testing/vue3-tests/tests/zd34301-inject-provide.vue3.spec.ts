@@ -10,7 +10,7 @@ test('aligned grids', async ({ page }) => {
     //   }
     // })
 
-    await page.goto('http://localhost:5173/zd34301');
+    await page.goto('http://localhost:8085/zd34301');
 
     const firstCell = page.locator('.ag-cell-value').first();
     await firstCell.waitFor();

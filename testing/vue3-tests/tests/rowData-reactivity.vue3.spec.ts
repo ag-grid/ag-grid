@@ -10,7 +10,7 @@ test('rowData reactivity', async ({ page }) => {
     //   }
     // })
 
-    await page.goto('http://localhost:5173/simple-vue3-grid');
+    await page.goto('http://localhost:8085/simple-vue3-grid');
 
     const firstCell = page.locator('.ag-cell-value').first();
     await firstCell.waitFor();

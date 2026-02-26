@@ -10,7 +10,7 @@ test('v-model reactivity', async ({ page }) => {
     //   }
     // })
 
-    await page.goto('http://localhost:5173/simple-v-model');
+    await page.goto('http://localhost:8085/simple-v-model');
 
     // should start off with one row
     await expect(page.getByRole('gridcell')).toHaveCount(2);
