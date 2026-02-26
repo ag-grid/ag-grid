@@ -269,4 +269,18 @@ The example below shows two custom layouts for the Columns Tool Panel. Note the 
 
 {% gridExampleRunner title="Custom Column Layout" name="custom-layout"  exampleHeight=640 /%}
 
+## Animation
+
+By default, sidebar panels open and close instantly. You can enable a smooth slide animation using the [Theming API](./theming-api/) parameter `sideBarPanelAnimationDuration`. Set it to a value in seconds:
+
+```js
+const myTheme = themeQuartz.withParams({
+    sideBarPanelAnimationDuration: 0.3,
+});
+```
+
+The animation is automatically disabled when the user has enabled the "reduce motion" accessibility setting in their operating system.
+
+{% gridExampleRunner title="Tool Panel Animation" name="animation" exampleHeight=400 /%}
+
 {% partial file="../shared-partials/_drag-and-drop-image-component.mdoc" /%}
