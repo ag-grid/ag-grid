@@ -8,8 +8,8 @@
     "build": "vue-tsc && vite build",
     "start-server": "vite preview > http.log 2>&1 & echo $! > pid",
     "stop-server": "kill $(cat pid) 2>/dev/null; rm -f pid",
-    "test": "npx playwright test --reporter=list",
-    "test:e2e": "run-s -c start-server test stop-server",
+    "playwright": "npx playwright test --reporter=list",
+    "test:e2e": "run-s -c start-server playwright stop-server",
     "preview": "vite preview --host"
   },
   "dependencies": {
