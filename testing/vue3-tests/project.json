@@ -4,6 +4,16 @@
   "sourceRoot": "testing/vue3-tests/src",
   "projectType": "application",
   "targets": {
+    "setup": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "npx playwright install --with-deps chromium"
+        ],
+        "parallel": false,
+        "cwd": "testing/vue3-tests"
+      }
+    },
     "dev": {
       "command": "npx vite",
       "options": {
@@ -17,7 +27,7 @@
       }
     },
     "test:e2e": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "setup"],
       "command": "npm run test:e2e",
       "options": {
         "cwd": "testing/vue3-tests"
