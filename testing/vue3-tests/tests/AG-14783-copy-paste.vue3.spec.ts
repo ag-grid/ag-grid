@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 test('copy-paste selected rows overwrites last row and adds new rows', async ({ page, context }) => {
-    test.setTimeout(15_000);
+    test.setTimeout(5_000);
 
     await context.grantPermissions(['clipboard-read', 'clipboard-write']);
 

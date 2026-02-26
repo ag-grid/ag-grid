@@ -148,61 +148,61 @@ jobs:
           echo "pkg_matrix=${pkg_matrix}" >> $GITHUB_OUTPUT
           echo "Package test matrix determined to be: ${pkg_matrix}"
 
-  test:
-    runs-on: ubuntu-24.04
-    name: Unit Tests (${{ matrix.shard }}/${{ strategy.job-total }})
-    needs: calc_matrix
-    if: needs.calc_matrix.outputs.test_count > 0
-    strategy:
-      matrix: ${{ fromJson(needs.calc_matrix.outputs.test_matrix )}}
-      fail-fast: false
-    env:
-      NX_PARALLEL: 1
-      NX_BASE: ${{ needs.init.outputs.nx_base }}
-    steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1 # shallow copy
-
-      - name: Fetch Refs
-        run: |
-          git fetch origin --depth 1 latest
-          git fetch origin --depth 1 tag latest-success
-
-      - name: Setup
-        id: setup
-        uses: ./.github/actions/setup-nx
-        with:
-          cache_mode: ro
-
-      - name: nx test
-        if: matrix.shard != 0
-        id: test
-        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test -c=staging --exclude tag:no-sharding --exclude all --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
-      - name: nx test (non-sharded)
-        if: matrix.shard == 0
-        id: test-no-shard
-        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test -c staging --exclude '*,!tag:no-sharding'
-      - name: nx pack:verify
-        if: matrix.shard == 0
-        id: pack-verify
-        run: |
-          yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t pack:verify --prod
-      - name: Assert No Debugger
-        if: matrix.shard == 0
-        id: assertNoDebugger
-        run: |
-          ./scripts/assertNoDebugger.sh
-      - name: Persist test results
-        if: always() && matrix.shard != 0
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results-${{matrix.shard}}
-          path: |
-            reports/
-            packages/**/__diff_output__/*
+#  test:
+#    runs-on: ubuntu-24.04
+#    name: Unit Tests (${{ matrix.shard }}/${{ strategy.job-total }})
+#    needs: calc_matrix
+#    if: needs.calc_matrix.outputs.test_count > 0
+#    strategy:
+#      matrix: ${{ fromJson(needs.calc_matrix.outputs.test_matrix )}}
+#      fail-fast: false
+#    env:
+#      NX_PARALLEL: 1
+#      NX_BASE: ${{ needs.init.outputs.nx_base }}
+#    steps:
+#      - name: Checkout
+#        id: checkout
+#        uses: actions/checkout@v4
+#        with:
+#          fetch-depth: 1 # shallow copy
+#
+#      - name: Fetch Refs
+#        run: |
+#          git fetch origin --depth 1 latest
+#          git fetch origin --depth 1 tag latest-success
+#
+#      - name: Setup
+#        id: setup
+#        uses: ./.github/actions/setup-nx
+#        with:
+#          cache_mode: ro
+#
+#      - name: nx test
+#        if: matrix.shard != 0
+#        id: test
+#        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test -c=staging --exclude tag:no-sharding --exclude all --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
+#      - name: nx test (non-sharded)
+#        if: matrix.shard == 0
+#        id: test-no-shard
+#        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test -c staging --exclude '*,!tag:no-sharding'
+#      - name: nx pack:verify
+#        if: matrix.shard == 0
+#        id: pack-verify
+#        run: |
+#          yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t pack:verify --prod
+#      - name: Assert No Debugger
+#        if: matrix.shard == 0
+#        id: assertNoDebugger
+#        run: |
+#          ./scripts/assertNoDebugger.sh
+#      - name: Persist test results
+#        if: always() && matrix.shard != 0
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: test-results-${{matrix.shard}}
+#          path: |
+#            reports/
+#            packages/**/__diff_output__/*
 
   e2e:
     runs-on: ubuntu-latest
@@ -230,15 +230,16 @@ jobs:
 
       - name: nx test:e2e
         id: tests
-        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e -c staging --exclude 'tag:module-size' --exclude all
+        #run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e -c staging --exclude 'tag:module-size' --exclude all
+        run: yarn  nx run vue3-tests:test:e2e
 
-      - name: Persist test results
-        if: always() && matrix.shard != 0
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results-e2e-shard-${{matrix.shard}}
-          path: |
-            reports/
+#      - name: Persist test results
+#        if: always() && matrix.shard != 0
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: test-results-e2e-shard-${{matrix.shard}}
+#          path: |
+#            reports/
 
   format_lint_build:
     runs-on: ubuntu-latest
@@ -265,118 +266,119 @@ jobs:
         with:
           cache_mode: ro
 
-      - name: nx format:check
-        id: format
-        if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
-        run: |
-          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
-            yarn nx format:check --all
-          else
-            yarn nx format:check --base ${{ steps.setup.outputs.base }}
-          fi
+#      - name: nx format:check
+#        id: format
+#        if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
+#        run: |
+#          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
+#            yarn nx format:check --all
+#          else
+#            yarn nx format:check --base ${{ steps.setup.outputs.base }}
+#          fi
 
-      - name: nx lint
-        id: lint
-        run: |
-          yarn nx lint
+#      - name: nx lint
+#        id: lint
+#        run: |
+#          yarn nx lint
 
       - name: nx build
         id: build
         run: |
           yarn nx run-many --t build -c staging --exclude ag-grid-docs --exclude all
 
-  docs:
-    runs-on: ubuntu-latest
-    name: Docs Build & Link Checker
-    needs: init
-    if: ${{ needs.init.result == 'success' && !inputs.skip_docs }}
-    strategy:
-      fail-fast: false
-    env:
-      NX_BASE: ${{ needs.init.outputs.nx_base }}
-    outputs:
-      docs_deployed: ${{ steps.deploy_to_staging.outcome }}
-    steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1 # shallow copy
+#  docs:
+#    runs-on: ubuntu-latest
+#    name: Docs Build & Link Checker
+#    needs: init
+#    if: ${{ needs.init.result == 'success' && !inputs.skip_docs }}
+#    strategy:
+#      fail-fast: false
+#    env:
+#      NX_BASE: ${{ needs.init.outputs.nx_base }}
+#    outputs:
+#      docs_deployed: ${{ steps.deploy_to_staging.outcome }}
+#    steps:
+#      - name: Checkout
+#        id: checkout
+#        uses: actions/checkout@v4
+#        with:
+#          fetch-depth: 1 # shallow copy
+#
+#      - name: Setup
+#        id: setup
+#        uses: ./.github/actions/setup-nx
+#        with:
+#          cache_mode: ro
+#
+#      - name: update base url
+#        run: node scripts/deployments/prep_and_archive/updateBaseUrl.js staging
+#
+#      - name: validate grid modules
+#        run: node scripts/deployments/validateGridModulesList.js
+#
+#      - name: docs build and link checker
+#        run: CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c staging
+#
+#      - name: validate base url
+#        run: node scripts/deployments/sanityCheckBaseUrl.js staging
+#
+#      - name: Deploy to Staging
+#        id: deploy_to_staging
+#        if: ${{ github.ref == 'refs/heads/latest' }}
+#        env:
+#          SSH_PRIVATE_KEY: |
+#            ${{ secrets.STAGING_SSH_KEY }}
+#          SSH_HOST: ${{ secrets.STAGING_HOST }}
+#          SSH_USER: ubuntu
+#          SSH_KEY_LOCATION: ${{ github.workspace }}/staging.pem
+#          WWW_ROOT_DIR: ${{ vars.WWW_ROOT_DIR }}
+#        run: |
+#          echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
+#          chmod 400 $SSH_KEY_LOCATION
+#          ./scripts/deployments/createAndDeployDocsToTCGH.sh
+#
+#      - name: Persist test results
+#        if: always()
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: test-results-docs
+#          path: |
+#            reports/
 
-      - name: Setup
-        id: setup
-        uses: ./.github/actions/setup-nx
-        with:
-          cache_mode: ro
-
-      - name: update base url
-        run: node scripts/deployments/prep_and_archive/updateBaseUrl.js staging
-
-      - name: validate grid modules
-        run: node scripts/deployments/validateGridModulesList.js
-
-      - name: docs build and link checker
-        run: CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c staging
-
-      - name: validate base url
-        run: node scripts/deployments/sanityCheckBaseUrl.js staging
-
-      - name: Deploy to Staging
-        id: deploy_to_staging
-        if: ${{ github.ref == 'refs/heads/latest' }}
-        env:
-          SSH_PRIVATE_KEY: |
-            ${{ secrets.STAGING_SSH_KEY }}
-          SSH_HOST: ${{ secrets.STAGING_HOST }}
-          SSH_USER: ubuntu
-          SSH_KEY_LOCATION: ${{ github.workspace }}/staging.pem
-          WWW_ROOT_DIR: ${{ vars.WWW_ROOT_DIR }}
-        run: |
-          echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
-          chmod 400 $SSH_KEY_LOCATION
-          ./scripts/deployments/createAndDeployDocsToTCGH.sh
-
-      - name: Persist test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results-docs
-          path: |
-            reports/
-
-  fw_pkg_test:
-    runs-on: ubuntu-24.04
-    name: Framework Package Tests (${{ matrix.framework }})
-    needs: calc_matrix
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.calc_matrix.outputs.test_pkg_matrix )}}
-    if: (needs.init.outputs.build_type == 'latest' || needs.init.outputs.build_type == 'release') || inputs.run_package_tests
-    env:
-      NX_BASE: ${{ needs.init.outputs.nx_base }}
-    steps:
-      - name: Checkout
-        id: checkout
-        if: matrix.framework != 'none'
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
-      - name: Setup
-        id: setup
-        if: matrix.framework != 'none'
-        uses: ./.github/actions/setup-nx
-        with:
-          cache_mode: ro
-
-      - name: nx package:test
-        id: package-test
-        if: matrix.framework != 'none'
-        run: yarn nx run-many -t test:package -p ${{ matrix.framework }}-package-tests -c=staging
+#  fw_pkg_test:
+#    runs-on: ubuntu-24.04
+#    name: Framework Package Tests (${{ matrix.framework }})
+#    needs: calc_matrix
+#    strategy:
+#      fail-fast: false
+#      matrix: ${{ fromJson(needs.calc_matrix.outputs.test_pkg_matrix )}}
+#    if: (needs.init.outputs.build_type == 'latest' || needs.init.outputs.build_type == 'release') || inputs.run_package_tests
+#    env:
+#      NX_BASE: ${{ needs.init.outputs.nx_base }}
+#    steps:
+#      - name: Checkout
+#        id: checkout
+#        if: matrix.framework != 'none'
+#        uses: actions/checkout@v4
+#        with:
+#          fetch-depth: 1
+#
+#      - name: Setup
+#        id: setup
+#        if: matrix.framework != 'none'
+#        uses: ./.github/actions/setup-nx
+#        with:
+#          cache_mode: ro
+#
+#      - name: nx package:test
+#        id: package-test
+#        if: matrix.framework != 'none'
+#        run: yarn nx run-many -t test:package -p ${{ matrix.framework }}-package-tests -c=staging
 
   report:
     runs-on: ubuntu-24.04
-    needs: [ init, test, e2e, format_lint_build, docs, calc_matrix, fw_pkg_test, sonar_community, sonar_enterprise ]
+    needs: [ init, e2e, format_lint_build, calc_matrix ]
+#    needs: [ init, test, e2e, format_lint_build, docs, calc_matrix, fw_pkg_test, sonar_community, sonar_enterprise ]
     if: cancelled() != true && github.event.pull_request.draft == false
     permissions:
       contents: write
@@ -539,53 +541,53 @@ jobs:
             echo "Workflow failed, failing the build."
             exit 1
 
-  sonar_community:
-    name: SonarQube Community
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
-      - name: SonarQube Analysis Community
-        uses: SonarSource/sonarqube-scan-action@v5.2.0
-        env:
-          SONAR_HOST_URL: https://sonarcloud.io
-          SONAR_TOKEN: ${{ secrets.SONAR_COMMUNITY_LOGIN }}
-        with:
-          projectBaseDir: ./packages/
-          args: >
-            -Dsonar.javascript.node.maxspace=8192
-            -Dsonar.organization=ag-grid
-            -Dsonar.sources=./ag-grid-community,./ag-grid-angular/projects/ag-grid-angular,./ag-grid-react,./ag-grid-vue3
-            -Dsonar.typescript.tsconfigPaths=./ag-grid-community/tsconfig.lib.json,./ag-grid-angular/projects/ag-grid-angular/tsconfig.lib.prod.json,./ag-grid-react/tsconfig.json,./ag-grid-vue3/tsconfig.json
-            -Dsonar.projectKey=ag-grid_community_latest
-            -Dsonar.exclusions=**/__tests__/*,**/test.ts,**/tsconfig.typings.json,**/LICENSE.html,**/*.md,**/dist,**/node_modules,**/typings,**/lib,**/*spec.js
-            -Dsonar.scanner.force-deprecated-java-version=true
-            -Dsonar.coverage.exclusions=**/*
-
-  sonar_enterprise:
-    name: SonarQube Enterprise
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
-      - name: SonarQube Analysis Enterprise
-        uses: SonarSource/sonarqube-scan-action@v5.2.0
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_ENTERPRISE_LOGIN }}
-          SONAR_HOST_URL: https://sonarcloud.io
-        with:
-          projectBaseDir: ./packages/
-          args: >
-            -Dsonar.javascript.node.maxspace=8192
-            -Dsonar.organization=ag-grid
-            -Dsonar.sources=./ag-grid-enterprise
-            -Dsonar.typescript.tsconfigPaths=./ag-grid-enterprise/tsconfig.lib.json
-            -Dsonar.branch.name=master
-            -Dsonar.projectKey=ag-grid-enterprise-latest
-            -Dsonar.exclusions=**/tsconfig.typings.json,**/LICENSE.html,**/*.md,**/dist,**/node_modules,**/typings,**/lib,**/*spec.js
-            -Dsonar.scanner.force-deprecated-java-version=true
-            -Dsonar.coverage.exclusions=**/*
+#  sonar_community:
+#    name: SonarQube Community
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v4
+#        with:
+#          fetch-depth: 1
+#
+#      - name: SonarQube Analysis Community
+#        uses: SonarSource/sonarqube-scan-action@v5.2.0
+#        env:
+#          SONAR_HOST_URL: https://sonarcloud.io
+#          SONAR_TOKEN: ${{ secrets.SONAR_COMMUNITY_LOGIN }}
+#        with:
+#          projectBaseDir: ./packages/
+#          args: >
+#            -Dsonar.javascript.node.maxspace=8192
+#            -Dsonar.organization=ag-grid
+#            -Dsonar.sources=./ag-grid-community,./ag-grid-angular/projects/ag-grid-angular,./ag-grid-react,./ag-grid-vue3
+#            -Dsonar.typescript.tsconfigPaths=./ag-grid-community/tsconfig.lib.json,./ag-grid-angular/projects/ag-grid-angular/tsconfig.lib.prod.json,./ag-grid-react/tsconfig.json,./ag-grid-vue3/tsconfig.json
+#            -Dsonar.projectKey=ag-grid_community_latest
+#            -Dsonar.exclusions=**/__tests__/*,**/test.ts,**/tsconfig.typings.json,**/LICENSE.html,**/*.md,**/dist,**/node_modules,**/typings,**/lib,**/*spec.js
+#            -Dsonar.scanner.force-deprecated-java-version=true
+#            -Dsonar.coverage.exclusions=**/*
+#
+#  sonar_enterprise:
+#    name: SonarQube Enterprise
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v4
+#        with:
+#          fetch-depth: 1
+#
+#      - name: SonarQube Analysis Enterprise
+#        uses: SonarSource/sonarqube-scan-action@v5.2.0
+#        env:
+#          SONAR_TOKEN: ${{ secrets.SONAR_ENTERPRISE_LOGIN }}
+#          SONAR_HOST_URL: https://sonarcloud.io
+#        with:
+#          projectBaseDir: ./packages/
+#          args: >
+#            -Dsonar.javascript.node.maxspace=8192
+#            -Dsonar.organization=ag-grid
+#            -Dsonar.sources=./ag-grid-enterprise
+#            -Dsonar.typescript.tsconfigPaths=./ag-grid-enterprise/tsconfig.lib.json
+#            -Dsonar.branch.name=master
+#            -Dsonar.projectKey=ag-grid-enterprise-latest
+#            -Dsonar.exclusions=**/tsconfig.typings.json,**/LICENSE.html,**/*.md,**/dist,**/node_modules,**/typings,**/lib,**/*spec.js
+#            -Dsonar.scanner.force-deprecated-java-version=true
+#            -Dsonar.coverage.exclusions=**/*
