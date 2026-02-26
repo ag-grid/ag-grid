@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build",
-    "start-server": "vite preview 2>&1 & echo $! > pid",
+    "start-server": "vite preview --host > http.log 2>&1 & echo $! > pid",
     "stop-server": "kill $(cat pid) 2>/dev/null; rm -f pid",
     "test": "npx playwright test --reporter=list",
     "test:e2e": "run-s -c start-server test stop-server",

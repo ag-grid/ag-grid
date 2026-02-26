@@ -29,7 +29,7 @@ on:
         default: false
         required: true
       nx_command:
-        type: 'choice'
+        type: 'ch oice'
         required: true
         default: 'affected'
         options:
@@ -80,73 +80,77 @@ jobs:
         with:
           cache_mode: 'rw'
 
-  calc_matrix:
-    name: Calculate Github Matrix
-    needs: init
-    outputs:
-      test_count: ${{ steps.matrix.outputs.test_count }}
-      test_matrix: ${{ steps.matrix.outputs.test_matrix }}
-      test_pkg_matrix: ${{ steps.matrix.outputs.pkg_matrix }}
-      e2e_test_count: ${{ steps.matrix.outputs.e2e_test_count }}
-      e2e_test_matrix: ${{ steps.matrix.outputs.e2e_test_matrix }}
-      bundle_test_count: ${{ steps.matrix.outputs.bundle_test_count }}
-      bundle_test_matrix: ${{ steps.matrix.outputs.bundle_test_matrix }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1 # shallow copy
+      - name: nx test:e2e
+        id: tests
+        run: yarn  nx run vue3-tests:test:e2e
 
-      - name: Fetch Refs
-        run: |
-          git fetch origin --depth 1 latest
-          git fetch origin --depth 1 tag latest-success
-
-      - name: Setup
-        id: setup
-        uses: ./.github/actions/setup-nx
-        with:
-          cache_mode: ro
-
-      - name: Calculate Matrix
-        id: matrix
-        run: |
-          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
-            count=10
-          else
-            count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test | wc -l)
-          fi
-          
-          matrix=$(node ./external/ag-shared/scripts/shard/calculate-shards.js eval --ratio 1 --zero ${count} --max 1)
-          echo "test_matrix=${matrix}" >> $GITHUB_OUTPUT
-          echo "test_count=${count}" >> $GITHUB_OUTPUT
-          echo "Test matrix determined to be: ${matrix} (test_count=${count})"
-          
-          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
-            e2e_count=10
-          else
-            e2e_count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test:e2e --exclude 'tag:module-size' --exclude all | wc -l)
-          fi
-          
-          # not enough non-bundle size e2e tests to shard atm
-          e2e_matrix={"shard":[0]}
-          echo "e2e_test_matrix=${e2e_matrix}" >> $GITHUB_OUTPUT
-          echo "e2e_test_count=${e2e_count}" >> $GITHUB_OUTPUT
-          echo "e2e Test matrix determined to be: ${e2e_matrix} (e2e_test_count=${e2e_count})"
-          
-          # 3 is optimal atm for bundle tests
-          bundle_count=3
-          
-          bundle_matrix=$(node ./external/ag-shared/scripts/shard/calculate-shards.js eval --ratio 1 --zero ${bundle_count})
-          echo "bundle_test_matrix=${bundle_matrix}" >> $GITHUB_OUTPUT
-          echo "bundle_test_count=${bundle_count}" >> $GITHUB_OUTPUT
-          echo "bundle Test matrix determined to be: ${bundle_matrix} (bundle_test_count=${bundle_count})"
-
-          pkg_matrix=$(node ./external/ag-shared/scripts/shard/calculate-pkg-shards.js)
-          echo "pkg_matrix=${pkg_matrix}" >> $GITHUB_OUTPUT
-          echo "Package test matrix determined to be: ${pkg_matrix}"
+#  calc_matrix:
+#    name: Calculate Github Matrix
+#    needs: init
+#    outputs:
+#      test_count: ${{ steps.matrix.outputs.test_count }}
+#      test_matrix: ${{ steps.matrix.outputs.test_matrix }}
+#      test_pkg_matrix: ${{ steps.matrix.outputs.pkg_matrix }}
+#      e2e_test_count: ${{ steps.matrix.outputs.e2e_test_count }}
+#      e2e_test_matrix: ${{ steps.matrix.outputs.e2e_test_matrix }}
+#      bundle_test_count: ${{ steps.matrix.outputs.bundle_test_count }}
+#      bundle_test_matrix: ${{ steps.matrix.outputs.bundle_test_matrix }}
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout
+#        id: checkout
+#        uses: actions/checkout@v4
+#        with:
+#          fetch-depth: 1 # shallow copy
+#
+#      - name: Fetch Refs
+#        run: |
+#          git fetch origin --depth 1 latest
+#          git fetch origin --depth 1 tag latest-success
+#
+#      - name: Setup
+#        id: setup
+#        uses: ./.github/actions/setup-nx
+#        with:
+#          cache_mode: ro
+#
+#      - name: Calculate Matrix
+#        id: matrix
+#        run: |
+#          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
+#            count=10
+#          else
+#            count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test | wc -l)
+#          fi
+#
+#          matrix=$(node ./external/ag-shared/scripts/shard/calculate-shards.js eval --ratio 1 --zero ${count} --max 1)
+#          echo "test_matrix=${matrix}" >> $GITHUB_OUTPUT
+#          echo "test_count=${count}" >> $GITHUB_OUTPUT
+#          echo "Test matrix determined to be: ${matrix} (test_count=${count})"
+#
+#          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
+#            e2e_count=10
+#          else
+#            e2e_count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test:e2e --exclude 'tag:module-size' --exclude all | wc -l)
+#          fi
+#
+#          # not enough non-bundle size e2e tests to shard atm
+#          e2e_matrix={"shard":[0]}
+#          echo "e2e_test_matrix=${e2e_matrix}" >> $GITHUB_OUTPUT
+#          echo "e2e_test_count=${e2e_count}" >> $GITHUB_OUTPUT
+#          echo "e2e Test matrix determined to be: ${e2e_matrix} (e2e_test_count=${e2e_count})"
+#
+#          # 3 is optimal atm for bundle tests
+#          bundle_count=3
+#
+#          bundle_matrix=$(node ./external/ag-shared/scripts/shard/calculate-shards.js eval --ratio 1 --zero ${bundle_count})
+#          echo "bundle_test_matrix=${bundle_matrix}" >> $GITHUB_OUTPUT
+#          echo "bundle_test_count=${bundle_count}" >> $GITHUB_OUTPUT
+#          echo "bundle Test matrix determined to be: ${bundle_matrix} (bundle_test_count=${bundle_count})"
+#
+#          pkg_matrix=$(node ./external/ag-shared/scripts/shard/calculate-pkg-shards.js)
+#          echo "pkg_matrix=${pkg_matrix}" >> $GITHUB_OUTPUT
+#          echo "Package test matrix determined to be: ${pkg_matrix}"
 
 #  test:
 #    runs-on: ubuntu-24.04
@@ -204,34 +208,34 @@ jobs:
 #            reports/
 #            packages/**/__diff_output__/*
 
-  e2e:
-    runs-on: ubuntu-latest
-    name: e2e Tests
-    needs: calc_matrix
-    if: needs.calc_matrix.outputs.e2e_test_count > 0
-    strategy:
-      matrix: ${{ fromJson(needs.calc_matrix.outputs.e2e_test_matrix )}}
-      fail-fast: false
-    env:
-      NX_PARALLEL: 1
-      NX_BASE: ${{ needs.init.outputs.nx_base }}
-    steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1 # shallow copy
-
-      - name: Setup
-        id: setup
-        uses: ./.github/actions/setup-nx
-        with:
-          cache_mode: ro
-
-      - name: nx test:e2e
-        id: tests
-        #run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e -c staging --exclude 'tag:module-size' --exclude all
-        run: yarn  nx run vue3-tests:test:e2e
+#  e2e:
+#    runs-on: ubuntu-latest
+#    name: e2e Tests
+##    needs: calc_matrix
+##    if: needs.calc_matrix.outputs.e2e_test_count > 0
+##    strategy:
+##      matrix: ${{ fromJson(needs.calc_matrix.outputs.e2e_test_matrix )}}
+##      fail-fast: false
+#    env:
+#      NX_PARALLEL: 1
+##      NX_BASE: ${{ needs.init.outputs.nx_base }}
+#    steps:
+#      - name: Checkout
+#        id: checkout
+#        uses: actions/checkout@v4
+#        with:
+#          fetch-depth: 1 # shallow copy
+#
+#      - name: Setup
+#        id: setup
+#        uses: ./.github/actions/setup-nx
+#        with:
+#          cache_mode: ro
+#
+#      - name: nx test:e2e
+#        id: tests
+#        #run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e -c staging --exclude 'tag:module-size' --exclude all
+#        run: yarn  nx run vue3-tests:test:e2e
 
 #      - name: Persist test results
 #        if: always() && matrix.shard != 0
@@ -375,171 +379,171 @@ jobs:
 #        if: matrix.framework != 'none'
 #        run: yarn nx run-many -t test:package -p ${{ matrix.framework }}-package-tests -c=staging
 
-  report:
-    runs-on: ubuntu-24.04
-    needs: [ init, e2e, calc_matrix ]
-#    needs: [ init, test, e2e, format_lint_build, docs, calc_matrix, fw_pkg_test, sonar_community, sonar_enterprise ]
-    if: cancelled() != true && github.event.pull_request.draft == false
-    permissions:
-      contents: write
-      actions: read
-      checks: write
-    steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
-      - name: Setup
-        id: setup
-        uses: ./.github/actions/setup-nx
-        with:
-          cache_mode: ro
-
-      - name: Fetch Refs
-        run: |
-          git fetch origin --depth 1 latest
-          git fetch origin --depth 1 tag latest-success
-
-      - uses: actions/download-artifact@v4
-        with:
-          path: test-results/
-
-      - name: Merge JUnit Report XMLs
-        run: |
-          YARN_REGISTRY=
-          yarn global add junit-report-merger
-          reports=$(find test-results/ -name \*.xml -type f -exec basename \{\} \; | sort | uniq)
-          mkdir -p reports/
-          echo "$reports" | (while read name ; do
-            yarn exec -s jrm reports/${name} "test-results/**/${name}"
-          done)
-
-      - name: Test Report
-        uses: dorny/test-reporter@v1
-        if: needs.test.result == 'success' || needs.test.result == 'failure' ||
-          needs.e2e.result == 'success' || needs.e2e.result == 'failure'
-        id: testReport
-        continue-on-error: true
-        with:
-          name: 'Tests Results'
-          path: reports/*.xml
-          reporter: jest-junit
-
-      - name: Check last job status
-        id: lastJobStatus
-        if: always()
-        run: |
-          WORKFLOW_STATUS="success"
-          if [[ "${{ needs.init.result }}" == "failure" ]] ; then
-            WORKFLOW_STATUS="failure"
-          elif [[ "${{ needs.calc_matrix.result }}" == "failure" ]] ; then
-            WORKFLOW_STATUS="failure"
-          elif [ "${{ needs.test.result }}" == "failure" ] ; then
-            WORKFLOW_STATUS="failure"
-          elif [ "${{ needs.e2e.result }}" == "failure" ] ; then
-            WORKFLOW_STATUS="failure"
-          elif [ "${{ needs.format_lint_build.result }}" == "failure" ] ; then
-            WORKFLOW_STATUS="failure"
-          elif [ "${{ needs.docs.result }}" == "failure" ] ; then
-            WORKFLOW_STATUS="failure"
-          elif [ "${{ needs.fw_pkg_test.result }}" == "failure" ] ; then
-            WORKFLOW_STATUS="failure"
-          elif [ "${{ needs.sonar_community.result }}" == "failure" ] ; then
-            WORKFLOW_STATUS="failure"
-          elif [ "${{ needs.sonar_enterprise.result }}" == "failure" ] ; then
-            WORKFLOW_STATUS="failure"
-          fi
-          echo "workflowStatus=${WORKFLOW_STATUS}" >> $GITHUB_OUTPUT
-
-          LAST_WORKFLOW_STATUS=$(gh run list --workflow .github/workflows/ci.yml -b latest | grep -oh "completed.*" | grep -v "cancelled" | head -1 | awk '{print $2}')
-          if [ "$GITHUB_RUN_ATTEMPT" -ge 2 ]; then
-            # Handle re-run cases - there is no way to query the previous run status, so we assume the most
-            # common scenario will be re-run after failure.
-            LAST_WORKFLOW_STATUS="failure"
-          fi
-          if [ "$LAST_WORKFLOW_STATUS" != "$WORKFLOW_STATUS" ]; then
-            echo "status changed from $LAST_WORKFLOW_STATUS to $WORKFLOW_STATUS"
-            echo "changedState=true" >> $GITHUB_OUTPUT
-          else
-            echo "status is still $WORKFLOW_STATUS"
-            echo "changedState=false" >> $GITHUB_OUTPUT
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Commit History
-        id: commits
-        if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest' && steps.lastJobStatus.outputs.changedState == 'true'
-        run: |
-          GIT_LOG=$(git log HEAD ^${{ needs.init.outputs.nx_base }} --format="%an (%h) %s")
-          echo "GIT_LOG<<EOF" >> $GITHUB_ENV
-          echo "$GIT_LOG" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-
-      - name: Tag Latest Successful Commit
-        if: success() && github.ref == 'refs/heads/latest' && steps.lastJobStatus.outputs.workflowStatus != 'failure'
-        uses: EndBug/latest-tag@latest
-        with:
-          ref: latest-success
-          description: Latest commit to pass GitHub Actions workflow on latest branch.
-
-      - name: Find matching workflow
-        if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest'
-        id: find_latest_sha
-        uses: SamhammerAG/last-successful-build-action@v4
-        with:
-          branch: "latest"
-          workflow: "ci"
-          verify: false
-
-      - name: SlackBot
-        if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest'
-        env:
-          CI_GRID_GATE_CHANNEL: ${{ env.SLACK_CHANNEL }}
-          CHARTS_TEAM_CITY_CHANNEL: ${{ secrets.CHARTS_TEAM_CITY_CHANNEL }}
-          WEBSITE_STATUS_CHANNEL: ${{ secrets.WEBSITE_STATUS_CHANNEL }}
-          SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
-          SLACK_DEBUG_CHANNEL: ${{ secrets.SLACK_DEBUG_CHANNEL }}
-          SLACK_GITHUB_MAPPING: ${{ secrets.SLACK_GITHUB_MAPPING }}
-          RUN_CONTEXT: >
-            {
-              "workflow": "${{ github.workflow }}",
-              "ref": "${{ github.ref }}",
-              "currentSha": "${{ github.sha }}",
-              "lastSuccessfulSha": "${{ steps.find_latest_sha.outputs.sha }}",
-              "runId": "${{ github.run_id }}",
-              "project": "AgGrid",
-              "reportUrl": "${{ steps.testReport.outputs.url_html }}",
-              "deployToStaging": ${{ needs.docs.outputs.docs_deployed == 'success' }},
-              "changedState": ${{ steps.lastJobStatus.outputs.changedState == 'true' }},
-              "jobStatuses":
-                {
-                    "Format": "${{ needs.format_lint_build.outputs.format }}",
-                    "Lint": "${{ needs.format_lint_build.outputs.lint }}",
-                    "Build": "${{ needs.format_lint_build.outputs.build }}",
-                    "Test": "${{ needs.test.result }}",
-                    "FW_Pkg": "${{ needs.fw_pkg_test.result }}",
-                    "e2e": "${{ needs.e2e.result }}",
-                    "Docs": "${{ needs.docs.result }}",
-                    "SonarCommunity": "${{ needs.sonar_community.result }}",
-                    "SonarEnterprise": "${{ needs.sonar_enterprise.result }}"
-                }
-            }
-        run: |
-          npx ts-node ./scripts/agBotSlackMessage.ts --auth-token "$SLACK_BOT_OAUTH_TOKEN" \
-            --grid-channel "$CI_GRID_GATE_CHANNEL" \
-            --charts-channel "$CHARTS_TEAM_CITY_CHANNEL" \
-            --website-status-channel "$WEBSITE_STATUS_CHANNEL" \
-            --debug-channel "$SLACK_DEBUG_CHANNEL" \
-            --run-context "$RUN_CONTEXT"
-
-      - name: Fail job if workflow failed
-        if: success() && steps.lastJobStatus.outputs.workflowStatus == 'failure'
-        run: |
-            echo "Workflow failed, failing the build."
-            exit 1
+#  report:
+#    runs-on: ubuntu-24.04
+#    needs: [ init, e2e ]
+##    needs: [ init, test, e2e, format_lint_build, docs, calc_matrix, fw_pkg_test, sonar_community, sonar_enterprise ]
+#    if: cancelled() != true && github.event.pull_request.draft == false
+#    permissions:
+#      contents: write
+#      actions: read
+#      checks: write
+#    steps:
+#      - name: Checkout
+#        id: checkout
+#        uses: actions/checkout@v4
+#        with:
+#          fetch-depth: 1
+#
+#      - name: Setup
+#        id: setup
+#        uses: ./.github/actions/setup-nx
+#        with:
+#          cache_mode: ro
+#
+#      - name: Fetch Refs
+#        run: |
+#          git fetch origin --depth 1 latest
+#          git fetch origin --depth 1 tag latest-success
+#
+#      - uses: actions/download-artifact@v4
+#        with:
+#          path: test-results/
+#
+#      - name: Merge JUnit Report XMLs
+#        run: |
+#          YARN_REGISTRY=
+#          yarn global add junit-report-merger
+#          reports=$(find test-results/ -name \*.xml -type f -exec basename \{\} \; | sort | uniq)
+#          mkdir -p reports/
+#          echo "$reports" | (while read name ; do
+#            yarn exec -s jrm reports/${name} "test-results/**/${name}"
+#          done)
+#
+#      - name: Test Report
+#        uses: dorny/test-reporter@v1
+#        if: needs.test.result == 'success' || needs.test.result == 'failure' ||
+#          needs.e2e.result == 'success' || needs.e2e.result == 'failure'
+#        id: testReport
+#        continue-on-error: true
+#        with:
+#          name: 'Tests Results'
+#          path: reports/*.xml
+#          reporter: jest-junit
+#
+#      - name: Check last job status
+#        id: lastJobStatus
+#        if: always()
+#        run: |
+#          WORKFLOW_STATUS="success"
+#          if [[ "${{ needs.init.result }}" == "failure" ]] ; then
+#            WORKFLOW_STATUS="failure"
+#          elif [[ "${{ needs.calc_matrix.result }}" == "failure" ]] ; then
+#            WORKFLOW_STATUS="failure"
+#          elif [ "${{ needs.test.result }}" == "failure" ] ; then
+#            WORKFLOW_STATUS="failure"
+#          elif [ "${{ needs.e2e.result }}" == "failure" ] ; then
+#            WORKFLOW_STATUS="failure"
+#          elif [ "${{ needs.format_lint_build.result }}" == "failure" ] ; then
+#            WORKFLOW_STATUS="failure"
+#          elif [ "${{ needs.docs.result }}" == "failure" ] ; then
+#            WORKFLOW_STATUS="failure"
+#          elif [ "${{ needs.fw_pkg_test.result }}" == "failure" ] ; then
+#            WORKFLOW_STATUS="failure"
+#          elif [ "${{ needs.sonar_community.result }}" == "failure" ] ; then
+#            WORKFLOW_STATUS="failure"
+#          elif [ "${{ needs.sonar_enterprise.result }}" == "failure" ] ; then
+#            WORKFLOW_STATUS="failure"
+#          fi
+#          echo "workflowStatus=${WORKFLOW_STATUS}" >> $GITHUB_OUTPUT
+#
+#          LAST_WORKFLOW_STATUS=$(gh run list --workflow .github/workflows/ci.yml -b latest | grep -oh "completed.*" | grep -v "cancelled" | head -1 | awk '{print $2}')
+#          if [ "$GITHUB_RUN_ATTEMPT" -ge 2 ]; then
+#            # Handle re-run cases - there is no way to query the previous run status, so we assume the most
+#            # common scenario will be re-run after failure.
+#            LAST_WORKFLOW_STATUS="failure"
+#          fi
+#          if [ "$LAST_WORKFLOW_STATUS" != "$WORKFLOW_STATUS" ]; then
+#            echo "status changed from $LAST_WORKFLOW_STATUS to $WORKFLOW_STATUS"
+#            echo "changedState=true" >> $GITHUB_OUTPUT
+#          else
+#            echo "status is still $WORKFLOW_STATUS"
+#            echo "changedState=false" >> $GITHUB_OUTPUT
+#          fi
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#
+#      - name: Commit History
+#        id: commits
+#        if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest' && steps.lastJobStatus.outputs.changedState == 'true'
+#        run: |
+#          GIT_LOG=$(git log HEAD ^${{ needs.init.outputs.nx_base }} --format="%an (%h) %s")
+#          echo "GIT_LOG<<EOF" >> $GITHUB_ENV
+#          echo "$GIT_LOG" >> $GITHUB_ENV
+#          echo "EOF" >> $GITHUB_ENV
+#
+#      - name: Tag Latest Successful Commit
+#        if: success() && github.ref == 'refs/heads/latest' && steps.lastJobStatus.outputs.workflowStatus != 'failure'
+#        uses: EndBug/latest-tag@latest
+#        with:
+#          ref: latest-success
+#          description: Latest commit to pass GitHub Actions workflow on latest branch.
+#
+#      - name: Find matching workflow
+#        if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest'
+#        id: find_latest_sha
+#        uses: SamhammerAG/last-successful-build-action@v4
+#        with:
+#          branch: "latest"
+#          workflow: "ci"
+#          verify: false
+#
+#      - name: SlackBot
+#        if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest'
+#        env:
+#          CI_GRID_GATE_CHANNEL: ${{ env.SLACK_CHANNEL }}
+#          CHARTS_TEAM_CITY_CHANNEL: ${{ secrets.CHARTS_TEAM_CITY_CHANNEL }}
+#          WEBSITE_STATUS_CHANNEL: ${{ secrets.WEBSITE_STATUS_CHANNEL }}
+#          SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
+#          SLACK_DEBUG_CHANNEL: ${{ secrets.SLACK_DEBUG_CHANNEL }}
+#          SLACK_GITHUB_MAPPING: ${{ secrets.SLACK_GITHUB_MAPPING }}
+#          RUN_CONTEXT: >
+#            {
+#              "workflow": "${{ github.workflow }}",
+#              "ref": "${{ github.ref }}",
+#              "currentSha": "${{ github.sha }}",
+#              "lastSuccessfulSha": "${{ steps.find_latest_sha.outputs.sha }}",
+#              "runId": "${{ github.run_id }}",
+#              "project": "AgGrid",
+#              "reportUrl": "${{ steps.testReport.outputs.url_html }}",
+#              "deployToStaging": ${{ needs.docs.outputs.docs_deployed == 'success' }},
+#              "changedState": ${{ steps.lastJobStatus.outputs.changedState == 'true' }},
+#              "jobStatuses":
+#                {
+#                    "Format": "${{ needs.format_lint_build.outputs.format }}",
+#                    "Lint": "${{ needs.format_lint_build.outputs.lint }}",
+#                    "Build": "${{ needs.format_lint_build.outputs.build }}",
+#                    "Test": "${{ needs.test.result }}",
+#                    "FW_Pkg": "${{ needs.fw_pkg_test.result }}",
+#                    "e2e": "${{ needs.e2e.result }}",
+#                    "Docs": "${{ needs.docs.result }}",
+#                    "SonarCommunity": "${{ needs.sonar_community.result }}",
+#                    "SonarEnterprise": "${{ needs.sonar_enterprise.result }}"
+#                }
+#            }
+#        run: |
+#          npx ts-node ./scripts/agBotSlackMessage.ts --auth-token "$SLACK_BOT_OAUTH_TOKEN" \
+#            --grid-channel "$CI_GRID_GATE_CHANNEL" \
+#            --charts-channel "$CHARTS_TEAM_CITY_CHANNEL" \
+#            --website-status-channel "$WEBSITE_STATUS_CHANNEL" \
+#            --debug-channel "$SLACK_DEBUG_CHANNEL" \
+#            --run-context "$RUN_CONTEXT"
+#
+#      - name: Fail job if workflow failed
+#        if: success() && steps.lastJobStatus.outputs.workflowStatus == 'failure'
+#        run: |
+#            echo "Workflow failed, failing the build."
+#            exit 1
 
 #  sonar_community:
 #    name: SonarQube Community
