@@ -21,10 +21,15 @@
                 allVulnEntries.push({ vuln, project });
             }
         }
+        const reportVulnIds = new Set(allVulnEntries.map(e => e.vuln.id));
 
         // Local mutable copy of review state
         const localRS = JSON.parse(JSON.stringify(reviewState));
         localRS.decisions = localRS.decisions || {};
+
+        // Patterns added via the UI this session — checked alongside the original ignorePatternsByFile
+        // so buildSections() stays accurate after adds without a server round-trip
+        const localAddedPatterns = {};
 
         // ── Skip state (persists across re-renders) ──
         const skipState = {
@@ -33,7 +38,8 @@
         };
 
         function getNear(vuln, project) {
-            return getNearIgnoredPath(vuln, project, ignorePatternsByFile);
+            return getNearIgnoredPath(vuln, project, ignorePatternsByFile)
+                || getNearIgnoredPath(vuln, project, localAddedPatterns);
         }
 
         // ── Build sections ──
@@ -91,26 +97,48 @@
 
                 // Near-ignored check
                 const near = getNear(vuln, project);
+                const activePath = (vuln.from?.slice(1) || []).join(' > ');
                 if (near) {
-                    const sf = getSnykFilePath(project);
-                    if (!nearItems.has(sf)) nearItems.set(sf, []);
-                    const activePath = (vuln.from?.slice(1) || []).join(' > ');
-                    const resolved = activePath === near.path;
-                    const existing = nearItems.get(sf).find(item => item.id === id);
-                    if (!existing) {
-                        nearItems.get(sf).push({ id, vuln, entry: { vuln, project }, nearMatch: near, resolved });
+                    const exactMatch = activePath === near.path;
+                    if (!exactMatch) {
+                        // Stale path (package names match but versions changed) — show in Near-ignored only
+                        const sf = getSnykFilePath(project);
+                        if (!nearItems.has(sf)) nearItems.set(sf, []);
+                        const existing = nearItems.get(sf).find(item => item.id === id);
+                        if (!existing) {
+                            nearItems.get(sf).push({ id, vuln, entry: { vuln, project }, nearMatch: near, resolved: false });
+                        }
+                        continue;
                     }
+                    // Exact match — falls through to Snyk Ignores as alreadyIgnored
                 }
 
-                // Ignore candidates — shown in Cat C; alreadyIgnored=true if path is already in .snyk
+                // Ignore candidates — alreadyIgnored=true only for exact .snyk matches
                 const snykFile = getSnykFilePath(project);
-                const depPath = (vuln.from?.slice(1) || []).join(' > ');
+                const depPath = activePath;
                 const topLevelDep = stripVer(vuln.from?.[1] || '');
                 if (!ignoreVulns.has(id)) ignoreVulns.set(id, { id, vuln, paths: [] });
                 const v = ignoreVulns.get(id);
                 const key = snykFile + '\0' + depPath;
                 if (!v.paths.some(p => p.snykFile + '\0' + p.depPath === key)) {
                     v.paths.push({ snykFile, depPath, topLevelDep, alreadyIgnored: near != null });
+                }
+            }
+
+            // Include vulns suppressed by .snyk (filtered.ignore) — show as already-resolved in Snyk Ignores
+            for (const project of projects) {
+                for (const vuln of (project.filtered?.ignore || [])) {
+                    const id = vuln.id;
+                    if (decisions[id]?.status === 'resolved') continue;
+                    const snykFile = getSnykFilePath(project);
+                    const depPath = (vuln.from?.slice(1) || []).join(' > ');
+                    const topLevelDep = stripVer(vuln.from?.[1] || '');
+                    if (!ignoreVulns.has(id)) ignoreVulns.set(id, { id, vuln, paths: [] });
+                    const v = ignoreVulns.get(id);
+                    const key = snykFile + '\0' + depPath;
+                    if (!v.paths.some(p => p.snykFile + '\0' + p.depPath === key)) {
+                        v.paths.push({ snykFile, depPath, topLevelDep, alreadyIgnored: true });
+                    }
                 }
             }
 
@@ -125,7 +153,17 @@
                 if (entry) reviewed.push({ id, vuln: entry.vuln, decision: dec });
             }
 
-            return { depGroups, resGroups, ignoreData: { nearItems, ignoreVulns }, reviewed };
+            // Auto-resolve vulns whose every path is already covered by a .snyk entry
+            const autoResolvedIds = new Set();
+            for (const [id, { vuln, paths }] of ignoreVulns) {
+                if (paths.length && paths.every(p => p.alreadyIgnored) && !seenReviewed.has(id)) {
+                    autoResolvedIds.add(id);
+                    seenReviewed.add(id);
+                    reviewed.push({ id, vuln, decision: { status: 'resolved', resolution: 'snyk-ignore', note: 'All paths already in .snyk' } });
+                }
+            }
+
+            return { depGroups, resGroups, ignoreData: { nearItems, ignoreVulns, autoResolvedIds }, reviewed };
         }
 
         // ── HTML helpers ──
@@ -575,33 +613,39 @@
             return blocks.join('\n');
         }
 
+        // ── Progress bar ──
+        // applyProgress: update the DOM elements only (call with pre-computed counts)
+        function applyProgress(reviewed) {
+            const total = reportVulnIds.size;
+            const reviewedCount = reviewed.filter(r => reportVulnIds.has(r.id)).length;
+            const pct = total > 0 ? Math.round((reviewedCount / total) * 100) : 0;
+            const fill = document.getElementById('rq-progress-fill');
+            const progressText = document.getElementById('rq-progress-text');
+            const badge = document.getElementById('queue-badge');
+            if (fill) fill.style.width = pct + '%';
+            if (progressText) progressText.textContent = `${reviewedCount} / ${total} reviewed`;
+            if (badge) badge.textContent = total - reviewedCount;
+        }
+
+        // recomputeProgress: recompute from current data model and apply — call after any state change
+        function recomputeProgress() {
+            const { reviewed } = buildSections();
+            applyProgress(reviewed);
+        }
+
         // ── Render the full tab ──
         function renderReviewQueueTab() {
             const { depGroups, resGroups, ignoreData, reviewed } = buildSections();
 
-            // Count unique pending vulns (union across all sections)
-            const pendingIds = new Set();
-            for (const g of depGroups.values()) for (const id of g.vulns.keys()) pendingIds.add(id);
-            for (const g of resGroups.values()) for (const { id } of g.items) pendingIds.add(id);
-            for (const id of ignoreData.ignoreVulns.keys()) pendingIds.add(id);
-            const pendingCount = pendingIds.size;
-            const total = pendingCount + reviewed.length;
-
-            const badge = document.getElementById('queue-badge');
-            if (badge) badge.textContent = pendingCount;
-
-            const pct = total > 0 ? Math.round((reviewed.length / total) * 100) : 0;
-            const fill = document.getElementById('rq-progress-fill');
-            const progressText = document.getElementById('rq-progress-text');
-            if (fill) fill.style.width = pct + '%';
-            if (progressText) progressText.textContent = `${reviewed.length} / ${total} reviewed`;
+            applyProgress(reviewed);
 
             let html = '';
             html += renderDepUpgradeSection(depGroups);
             html += renderResolutionSection(resGroups);
             html += renderIgnoreSection(ignoreData);
 
-            if (!depGroups.size && !resGroups.size && !ignoreData.ignoreVulns.size) {
+            const pendingIgnoreCount = ignoreData.ignoreVulns.size - ignoreData.autoResolvedIds.size;
+            if (!depGroups.size && !resGroups.size && !pendingIgnoreCount) {
                 html = `<div class="rq-empty"><div class="empty-icon">&#x1F389;</div><p>No pending items &#x2014; all vulnerabilities reviewed!</p></div>`;
             }
 
@@ -711,6 +755,15 @@
                     }
                 }
                 btn.textContent = '\u2713 Updated';
+
+                // Update localAddedPatterns so buildSections() treats these paths as alreadyIgnored
+                for (const p of toAdd) {
+                    if (!localAddedPatterns[p.snykFile]) localAddedPatterns[p.snykFile] = {};
+                    if (!localAddedPatterns[p.snykFile][p.vulnId]) localAddedPatterns[p.snykFile][p.vulnId] = [];
+                    const arr = localAddedPatterns[p.snykFile][p.vulnId];
+                    if (!arr.find(e => e.path === p.depPath)) arr.push({ path: p.depPath, reason: p.reason });
+                }
+                recomputeProgress();
 
                 // Convert successfully-added rows to the resolved display (same as on load)
                 subgroup.querySelectorAll('.path-checkbox-row:not(.path-already-ignored)').forEach(row => {
