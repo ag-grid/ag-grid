@@ -382,11 +382,18 @@
                             ${esc(snykFile)}
                             <span class="s3-file-path-count">${fps.length} path${fps.length !== 1 ? 's' : ''}</span>
                         </div>
-                        <select class="ignore-form-input preset-select cat-a-preset"
-                            data-card="${cardId}" data-vuln-idx="${vi}" data-snyk-file="${esc(snykFile)}">
-                            <option value="">Fill reasons for this file&#x2026;</option>
-                            ${presetOptionsHtml}
-                        </select>
+                        <div class="prefill-row">
+                            <select class="ignore-form-input preset-select cat-a-preset"
+                                data-card="${cardId}" data-vuln-idx="${vi}" data-snyk-file="${esc(snykFile)}">
+                                <option value="">Preset&#x2026;</option>
+                                ${presetOptionsHtml}
+                            </select>
+                            <input type="text" class="ignore-form-input prefill-text"
+                                data-card="${cardId}" data-vuln-idx="${vi}" data-snyk-file="${esc(snykFile)}"
+                                placeholder="Prefill reason&#x2026;">
+                            <button class="btn btn-sm btn-outline" data-action="prefill-reasons"
+                                data-card="${cardId}" data-vuln-idx="${vi}" data-snyk-file="${esc(snykFile)}">Apply to all</button>
+                        </div>
                         ${rowsHtml}
                         <details class="batch-yaml-details">
                             <summary class="batch-yaml-summary">
@@ -695,21 +702,14 @@
                 setTimeout(() => { btn.disabled = false; btn.textContent = `Add to ${snykFile}`; }, 2000);
             }
 
-            // Preset dropdown
+            // Preset dropdown — fills the prefill text box, not the reason inputs directly
             container.addEventListener('change', function (e) {
                 if (!e.target.classList.contains('preset-select')) return;
-                const vulnIdx = e.target.dataset.vulnIdx;
-                const snykFile = e.target.dataset.snykFile;
                 const val = e.target.value;
                 if (!val) return;
-                const card = document.getElementById(`s3-card-${vulnIdx}`);
-                const subgroup = card?.querySelector(`.batch-file-subgroup[data-snyk-file="${CSS.escape(snykFile)}"]`);
-                if (!subgroup) return;
-                subgroup.querySelectorAll('.batch-ignore-reason').forEach(inp => {
-                    inp.value = val;
-                });
+                const prefillInput = e.target.closest('.prefill-row')?.querySelector('.prefill-text');
+                if (prefillInput) prefillInput.value = val;
                 e.target.value = '';
-                if (vulnIdx !== undefined && snykFile) rebuildFileYaml(parseInt(vulnIdx), snykFile);
             });
 
             container.addEventListener('click', function (e) {
@@ -718,7 +718,18 @@
                 e.stopPropagation();
                 const action = btn.dataset.action;
 
-                if (action === 'check-versions') {
+                if (action === 'prefill-reasons') {
+                    const vulnIdx = btn.dataset.vulnIdx;
+                    const snykFile = btn.dataset.snykFile;
+                    const prefillInput = btn.closest('.prefill-row')?.querySelector('.prefill-text');
+                    const val = prefillInput?.value?.trim() || '';
+                    if (!val) return;
+                    const card = document.getElementById(`s3-card-${vulnIdx}`);
+                    const subgroup = card?.querySelector(`.batch-file-subgroup[data-snyk-file="${CSS.escape(snykFile)}"]`);
+                    if (!subgroup) return;
+                    subgroup.querySelectorAll('.batch-ignore-reason').forEach(inp => { inp.value = val; });
+                    if (vulnIdx !== undefined && snykFile) rebuildFileYaml(parseInt(vulnIdx), snykFile);
+                } else if (action === 'check-versions') {
                     handleCheckVersions(btn);
                 } else if (action === 'check-dep-field') {
                     handleCheckDepField(btn);

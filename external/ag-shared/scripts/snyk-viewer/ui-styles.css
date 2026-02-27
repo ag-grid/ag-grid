@@ -1625,6 +1625,26 @@ details.s3-vuln-card:not([open]) .s3-card-chevron {
     word-break: break-word;
 }
 
+/* ── Prefill row: preset dropdown + text box + apply button ── */
+.prefill-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+.prefill-row .cat-a-preset {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 120px;
+    max-width: 220px;
+    margin-bottom: 0;
+    cursor: pointer;
+}
+.prefill-row .prefill-text {
+    flex: 1;
+    min-width: 0;
+}
+
 /* ── Cat A: preset select inside each file card ── */
 .cat-a-preset {
     width: 100%;
