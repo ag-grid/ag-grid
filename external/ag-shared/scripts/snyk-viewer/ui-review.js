@@ -246,7 +246,7 @@
                     <div class="dep-card-body">${fileRowsHtml}</div>
                 </div>`;
             }).join('');
-            return `<details class="tool-section" open>
+            return `<details class="tool-section">
                 <summary class="tool-section-header">
                     <span class="tool-section-chevron">&#x25BC;</span>
                     <span class="tool-section-num">1</span>
@@ -262,7 +262,7 @@
         function renderResolutionSection(resGroups) {
             if (!resGroups.size) return '';
             const cardsHtml = [...resGroups.entries()].map(([pkg, batch]) => renderCatBCard(pkg, batch)).join('');
-            return `<details class="tool-section" open>
+            return `<details class="tool-section">
                 <summary class="tool-section-header">
                     <span class="tool-section-chevron">&#x25BC;</span>
                     <span class="tool-section-num">2</span>
@@ -383,6 +383,15 @@
                 vulnCards.push({ id, vuln, skipped, byFile, startIdx });
             }
 
+            // Sort by severity (critical→low), resolved cards to bottom
+            const SEV_ORDER = { critical: 0, high: 1, medium: 2, low: 3 };
+            vulnCards.sort((a, b) => {
+                const aResolved = [...a.byFile.values()].every(fps => fps.every(p => p.alreadyIgnored));
+                const bResolved = [...b.byFile.values()].every(fps => fps.every(p => p.alreadyIgnored));
+                if (aResolved !== bResolved) return aResolved ? 1 : -1;
+                return (SEV_ORDER[sevClass(a.vuln)] ?? 4) - (SEV_ORDER[sevClass(b.vuln)] ?? 4);
+            });
+
             const vulnCardsHtml = vulnCards.map(({ id, vuln, skipped, byFile }, vi) => {
                 // Unique top-level deps for skip-by-dep tags
                 const topDeps = new Set();
@@ -394,9 +403,14 @@
 
                 // Total path count and file count for header badge
                 let totalPaths = 0;
-                for (const [, fps] of byFile) totalPaths += fps.length;
+                let resolvedPaths = 0;
+                for (const [, fps] of byFile) {
+                    totalPaths += fps.length;
+                    resolvedPaths += fps.filter(p => p.alreadyIgnored).length;
+                }
                 const fileCount = byFile.size;
-                const countBadge = `<span class="s3-path-count-badge">${totalPaths} path${totalPaths !== 1 ? 's' : ''} &middot; ${fileCount} file${fileCount !== 1 ? 's' : ''}</span>`;
+                const resolvedPart = resolvedPaths > 0 ? ` &middot; ${resolvedPaths} resolved` : '';
+                const countBadge = `<span class="s3-path-count-badge">${totalPaths} path${totalPaths !== 1 ? 's' : ''} &middot; ${fileCount} file${fileCount !== 1 ? 's' : ''}${resolvedPart}</span>`;
 
                 const allPathsIgnored = [...byFile.values()].every(fps => fps.every(p => p.alreadyIgnored));
 
@@ -425,7 +439,7 @@
                     const fileId = snykFile.replace(/[^a-z0-9]/gi, '-');
                     const pendingPaths = fps.filter(p => !p.alreadyIgnored).map(p => ({ vulnId: id, depPath: p.depPath, idx: p.idx }));
                     const fileYaml = buildGroupedYamlPreview(pendingPaths, [], expiry);
-                    return `<details class="batch-file-subgroup${allFileIgnored ? ' batch-file-subgroup--done' : ''}" data-snyk-file="${esc(snykFile)}"${allFileIgnored ? '' : ' open'}>
+                    return `<details class="batch-file-subgroup${allFileIgnored ? ' batch-file-subgroup--done' : ''}" data-snyk-file="${esc(snykFile)}">
                         <summary class="batch-file-subgroup-heading">
                             <span class="batch-file-subgroup-chevron">&#x25BC;</span>
                             ${esc(snykFile)}
@@ -459,7 +473,7 @@
                     </details>`;
                 }).join('');
 
-                return `<details class="rq-card s3-vuln-card${skipped ? ' s3-card-skipped' : ''}${allPathsIgnored ? ' s3-card-all-ignored' : ''}" id="s3-card-${vi}" data-vuln-id="${esc(id)}" ${allPathsIgnored ? '' : 'open'}>
+                return `<details class="rq-card s3-vuln-card${skipped ? ' s3-card-skipped' : ''}${allPathsIgnored ? ' s3-card-all-ignored' : ''}" id="s3-card-${vi}" data-vuln-id="${esc(id)}">
                     <summary class="rq-card-header s3-card-header">
                         <div class="s3-card-header-main">
                             <span class="s3-card-chevron">&#x25BC;</span>
@@ -490,7 +504,7 @@
                     data-note="Added ${allBatchItems.length} path(s) to .snyk">&#x2713; Mark All as Resolved</button>
             </div>`;
 
-            return `<details class="tool-section" open>
+            return `<details class="tool-section">
                 <summary class="tool-section-header">
                     <span class="tool-section-chevron">&#x25BC;</span>
                     <span class="tool-section-num">3</span>
