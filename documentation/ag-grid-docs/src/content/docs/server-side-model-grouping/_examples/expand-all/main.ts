@@ -49,6 +49,10 @@ function onBtCollapseAll() {
     gridApi!.collapseAll();
 }
 
+function onBtResetExpansion() {
+    gridApi!.resetRowGroupExpansion();
+}
+
 function onBtExpandTopLevel() {
     gridApi!.forEachNode(function (node) {
         if (node.group && node.level == 0) {
