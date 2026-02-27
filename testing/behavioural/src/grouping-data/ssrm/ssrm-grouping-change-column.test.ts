@@ -202,6 +202,100 @@ describe('ssrm grouping column changes preserve expansion state', () => {
         `);
     });
 
+    test('resetRowGroupExpansion resets all groups back to defaults', async () => {
+        const api = await gridManager.createGridAndWait(null, {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', rowGroup: true, hide: true },
+                { field: 'medals' },
+            ],
+            autoGroupColumnDef: { headerName: 'Group' },
+            rowModelType: 'serverSide',
+            serverSideDatasource: createDatasource(),
+            getRowId,
+        });
+
+        await waitForNoLoadingRows(api);
+
+        // Expand Ireland
+        const irelandNode = api.getRowNode('country:Ireland');
+        expect(irelandNode).toBeDefined();
+        api.setRowNodeExpanded(irelandNode!, true);
+        await waitForNoLoadingRows(api);
+
+        // Expand Ireland/2020
+        const ireland2020Node = api.getRowNode('Ireland|year:2020');
+        expect(ireland2020Node).toBeDefined();
+        api.setRowNodeExpanded(ireland2020Node!, true);
+        await waitForNoLoadingRows(api);
+
+        await new GridRows(api, 'Ireland and Ireland/2020 expanded').check(`
+            ROOT id:<no-id>
+            ├─┬ GROUP id:"country:Ireland" ag-Grid-AutoColumn:"Ireland" country:"Ireland" medals:5
+            │ ├─┬ GROUP-leafGroup id:"Ireland|year:2020" ag-Grid-AutoColumn:"2020" year:"2020" medals:2
+            │ │ └── LEAF id:ie-2020-1 country:"Ireland" year:"2020" medals:2
+            │ └── GROUP-leafGroup collapsed id:"Ireland|year:2021" ag-Grid-AutoColumn:"2021" year:"2021" medals:3
+            └── GROUP collapsed id:"country:France" ag-Grid-AutoColumn:"France" country:"France" medals:4
+        `);
+
+        api.resetRowGroupExpansion();
+        await waitForNoLoadingRows(api);
+
+        // All groups should be collapsed (default)
+        await new GridRows(api, 'after resetRowGroupExpansion — all collapsed').check(`
+            ROOT id:<no-id>
+            ├── GROUP collapsed id:"country:Ireland" ag-Grid-AutoColumn:"Ireland" country:"Ireland" medals:5
+            └── GROUP collapsed id:"country:France" ag-Grid-AutoColumn:"France" country:"France" medals:4
+        `);
+    });
+
+    test('resetRowGroupExpansion re-evaluates isServerSideGroupOpenByDefault callback', async () => {
+        const api = await gridManager.createGridAndWait(null, {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'year' }, { field: 'medals' }],
+            autoGroupColumnDef: { headerName: 'Group' },
+            rowModelType: 'serverSide',
+            serverSideDatasource: createDatasource(),
+            getRowId,
+            // Auto-expand Ireland only
+            isServerSideGroupOpenByDefault: (params) => params.rowNode.key === 'Ireland',
+        });
+
+        await waitForNoLoadingRows(api);
+
+        // Ireland auto-expanded via callback, France collapsed
+        await new GridRows(api, 'initial — Ireland expanded via callback').check(`
+            ROOT id:<no-id>
+            ├─┬ GROUP-leafGroup id:"country:Ireland" ag-Grid-AutoColumn:"Ireland" country:"Ireland" medals:5
+            │ ├── LEAF id:ie-2020-1 country:"Ireland" year:"2020" medals:2
+            │ └── LEAF id:ie-2021-1 country:"Ireland" year:"2021" medals:3
+            └── GROUP-leafGroup collapsed id:"country:France" ag-Grid-AutoColumn:"France" country:"France" medals:4
+        `);
+
+        // Manually collapse Ireland and expand France (overrides)
+        api.setRowNodeExpanded(api.getRowNode('country:Ireland')!, false);
+        api.setRowNodeExpanded(api.getRowNode('country:France')!, true);
+        await waitForNoLoadingRows(api);
+
+        await new GridRows(api, 'user overrides: Ireland collapsed, France expanded').check(`
+            ROOT id:<no-id>
+            ├── GROUP-leafGroup collapsed id:"country:Ireland" ag-Grid-AutoColumn:"Ireland" country:"Ireland" medals:5
+            └─┬ GROUP-leafGroup id:"country:France" ag-Grid-AutoColumn:"France" country:"France" medals:4
+            · └── LEAF id:fr-2020-1 country:"France" year:"2020" medals:4
+        `);
+
+        api.resetRowGroupExpansion();
+        await waitForNoLoadingRows(api);
+
+        // Callback re-evaluated: Ireland expanded, France collapsed (back to initial state)
+        await new GridRows(api, 'after resetRowGroupExpansion — callback re-evaluated').check(`
+            ROOT id:<no-id>
+            ├─┬ GROUP-leafGroup id:"country:Ireland" ag-Grid-AutoColumn:"Ireland" country:"Ireland" medals:5
+            │ ├── LEAF id:ie-2020-1 country:"Ireland" year:"2020" medals:2
+            │ └── LEAF id:ie-2021-1 country:"Ireland" year:"2021" medals:3
+            └── GROUP-leafGroup collapsed id:"country:France" ag-Grid-AutoColumn:"France" country:"France" medals:4
+        `);
+    });
+
     test('expand groups then remove deepest group column — groups remain expanded', async () => {
         const api = await gridManager.createGridAndWait(null, {
             columnDefs: [

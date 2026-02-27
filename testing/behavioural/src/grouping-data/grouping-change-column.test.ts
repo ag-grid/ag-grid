@@ -620,6 +620,267 @@ describe('ag-grid grouping simple data', () => {
         `);
     });
 
+    describe('resetRowGroupExpansion', () => {
+        test('resets all groups back to collapsed (default groupDefaultExpanded: 0)', async () => {
+            const rowData = [
+                { id: '1', country: 'Ireland', year: 2020 },
+                { id: '2', country: 'Ireland', year: 2021 },
+                { id: '3', country: 'France', year: 2020 },
+            ];
+
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'year', rowGroup: true, hide: true },
+                ],
+                rowData,
+                getRowId: (params) => params.data.id,
+            });
+
+            // Expand Ireland and Ireland/2020
+            api.setRowNodeExpanded(api.getRowNode('row-group-country-Ireland')!, true, false, true);
+            api.setRowNodeExpanded(api.getRowNode('row-group-country-Ireland-year-2020')!, true, false, true);
+
+            await new GridRows(api, 'Ireland and Ireland/2020 expanded').check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+                │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
+                │ │ └── LEAF id:1 country:"Ireland" year:2020
+                │ └─┬ LEAF_GROUP collapsed id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
+                │ · └── LEAF hidden id:2 country:"Ireland" year:2021
+                └─┬ filler collapsed id:row-group-country-France ag-Grid-AutoColumn:"France"
+                · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020
+                · · └── LEAF hidden id:3 country:"France" year:2020
+            `);
+
+            api.resetRowGroupExpansion();
+
+            // All groups should be collapsed (groupDefaultExpanded defaults to 0)
+            await new GridRows(api, 'after resetRowGroupExpansion').check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ filler collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+                │ ├─┬ LEAF_GROUP collapsed hidden id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
+                │ │ └── LEAF hidden id:1 country:"Ireland" year:2020
+                │ └─┬ LEAF_GROUP collapsed hidden id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
+                │ · └── LEAF hidden id:2 country:"Ireland" year:2021
+                └─┬ filler collapsed id:row-group-country-France ag-Grid-AutoColumn:"France"
+                · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020
+                · · └── LEAF hidden id:3 country:"France" year:2020
+            `);
+        });
+
+        test('resets to groupDefaultExpanded: -1 (all expanded)', async () => {
+            const rowData = [
+                { id: '1', country: 'Ireland', year: 2020 },
+                { id: '2', country: 'Ireland', year: 2021 },
+                { id: '3', country: 'France', year: 2020 },
+            ];
+
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'year', rowGroup: true, hide: true },
+                ],
+                groupDefaultExpanded: -1,
+                rowData,
+                getRowId: (params) => params.data.id,
+            });
+
+            // Collapse France and Ireland/2020
+            api.setRowNodeExpanded(api.getRowNode('row-group-country-France')!, false, false, true);
+            api.setRowNodeExpanded(api.getRowNode('row-group-country-Ireland-year-2020')!, false, false, true);
+
+            await new GridRows(api, 'France collapsed, Ireland/2020 collapsed').check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+                │ ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
+                │ │ └── LEAF hidden id:1 country:"Ireland" year:2020
+                │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
+                │ · └── LEAF id:2 country:"Ireland" year:2021
+                └─┬ filler collapsed id:row-group-country-France ag-Grid-AutoColumn:"France"
+                · └─┬ LEAF_GROUP hidden id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020
+                · · └── LEAF hidden id:3 country:"France" year:2020
+            `);
+
+            api.resetRowGroupExpansion();
+
+            // All groups should be expanded (groupDefaultExpanded: -1)
+            await new GridRows(api, 'after resetRowGroupExpansion — all expanded').check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+                │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
+                │ │ └── LEAF id:1 country:"Ireland" year:2020
+                │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
+                │ · └── LEAF id:2 country:"Ireland" year:2021
+                └─┬ filler id:row-group-country-France ag-Grid-AutoColumn:"France"
+                · └─┬ LEAF_GROUP id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020
+                · · └── LEAF id:3 country:"France" year:2020
+            `);
+        });
+
+        test('resets to groupDefaultExpanded: 1 (first level expanded only)', async () => {
+            const rowData = [
+                { id: '1', country: 'Ireland', year: 2020 },
+                { id: '2', country: 'Ireland', year: 2021 },
+                { id: '3', country: 'France', year: 2020 },
+            ];
+
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'year', rowGroup: true, hide: true },
+                ],
+                groupDefaultExpanded: 1,
+                rowData,
+                getRowId: (params) => params.data.id,
+            });
+
+            // Collapse Ireland and expand Ireland/2020 (overrides both levels)
+            api.setRowNodeExpanded(api.getRowNode('row-group-country-Ireland')!, false, false, true);
+            api.setRowNodeExpanded(api.getRowNode('row-group-country-Ireland-year-2020')!, true, false, true);
+
+            await new GridRows(api, 'Ireland collapsed, Ireland/2020 expanded (override)').check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ filler collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+                │ ├─┬ LEAF_GROUP hidden id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
+                │ │ └── LEAF hidden id:1 country:"Ireland" year:2020
+                │ └─┬ LEAF_GROUP collapsed hidden id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
+                │ · └── LEAF hidden id:2 country:"Ireland" year:2021
+                └─┬ filler id:row-group-country-France ag-Grid-AutoColumn:"France"
+                · └─┬ LEAF_GROUP collapsed id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020
+                · · └── LEAF hidden id:3 country:"France" year:2020
+            `);
+
+            api.resetRowGroupExpansion();
+
+            // Level 0 expanded, level 1 collapsed (groupDefaultExpanded: 1)
+            await new GridRows(api, 'after resetRowGroupExpansion — level 0 expanded, level 1 collapsed').check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+                │ ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
+                │ │ └── LEAF hidden id:1 country:"Ireland" year:2020
+                │ └─┬ LEAF_GROUP collapsed id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
+                │ · └── LEAF hidden id:2 country:"Ireland" year:2021
+                └─┬ filler id:row-group-country-France ag-Grid-AutoColumn:"France"
+                · └─┬ LEAF_GROUP collapsed id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020
+                · · └── LEAF hidden id:3 country:"France" year:2020
+            `);
+        });
+
+        test('re-evaluates isGroupOpenByDefault callback', async () => {
+            const rowData = [
+                { id: '1', country: 'Ireland', year: 2020 },
+                { id: '2', country: 'Ireland', year: 2021 },
+                { id: '3', country: 'France', year: 2020 },
+            ];
+
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'year', rowGroup: true, hide: true },
+                ],
+                rowData,
+                getRowId: (params) => params.data.id,
+                // Only Ireland should be expanded by default
+                isGroupOpenByDefault: (params) => params.key === 'Ireland',
+            });
+
+            await new GridRows(api, 'initial — Ireland expanded via callback').check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+                │ ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
+                │ │ └── LEAF hidden id:1 country:"Ireland" year:2020
+                │ └─┬ LEAF_GROUP collapsed id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
+                │ · └── LEAF hidden id:2 country:"Ireland" year:2021
+                └─┬ filler collapsed id:row-group-country-France ag-Grid-AutoColumn:"France"
+                · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020
+                · · └── LEAF hidden id:3 country:"France" year:2020
+            `);
+
+            // Override: collapse Ireland, expand France and Ireland/2020
+            api.setRowNodeExpanded(api.getRowNode('row-group-country-Ireland')!, false, false, true);
+            api.setRowNodeExpanded(api.getRowNode('row-group-country-France')!, true, false, true);
+            api.setRowNodeExpanded(api.getRowNode('row-group-country-Ireland-year-2020')!, true, false, true);
+
+            await new GridRows(api, 'user overrides applied').check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ filler collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+                │ ├─┬ LEAF_GROUP hidden id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
+                │ │ └── LEAF hidden id:1 country:"Ireland" year:2020
+                │ └─┬ LEAF_GROUP collapsed hidden id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
+                │ · └── LEAF hidden id:2 country:"Ireland" year:2021
+                └─┬ filler id:row-group-country-France ag-Grid-AutoColumn:"France"
+                · └─┬ LEAF_GROUP collapsed id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020
+                · · └── LEAF hidden id:3 country:"France" year:2020
+            `);
+
+            api.resetRowGroupExpansion();
+
+            // Callback re-evaluated: Ireland expanded, France collapsed (back to initial state)
+            await new GridRows(api, 'after resetRowGroupExpansion — callback re-evaluated').check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+                │ ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
+                │ │ └── LEAF hidden id:1 country:"Ireland" year:2020
+                │ └─┬ LEAF_GROUP collapsed id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
+                │ · └── LEAF hidden id:2 country:"Ireland" year:2021
+                └─┬ filler collapsed id:row-group-country-France ag-Grid-AutoColumn:"France"
+                · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020
+                · · └── LEAF hidden id:3 country:"France" year:2020
+            `);
+        });
+
+        test('resets preserved expansion state after column change', async () => {
+            const rowData = [
+                { id: '1', country: 'Ireland', year: 2020 },
+                { id: '2', country: 'Ireland', year: 2021 },
+                { id: '3', country: 'France', year: 2020 },
+            ];
+
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'year' }],
+                rowData,
+                getRowId: (params) => params.data.id,
+            });
+
+            // Expand Ireland
+            api.setRowNodeExpanded(api.getRowNode('row-group-country-Ireland')!, true, false, true);
+
+            // Add year as group column — Ireland stays expanded (preserved)
+            api.setGridOption('columnDefs', [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', rowGroup: true, hide: true },
+            ]);
+
+            await new GridRows(api, 'Ireland preserved expanded after column change').check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+                │ ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
+                │ │ └── LEAF hidden id:1 country:"Ireland" year:2020
+                │ └─┬ LEAF_GROUP collapsed id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
+                │ · └── LEAF hidden id:2 country:"Ireland" year:2021
+                └─┬ filler collapsed id:row-group-country-France ag-Grid-AutoColumn:"France"
+                · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020
+                · · └── LEAF hidden id:3 country:"France" year:2020
+            `);
+
+            api.resetRowGroupExpansion();
+
+            // Reset clears the preserved expansion — all groups return to default (collapsed)
+            await new GridRows(api, 'after resetRowGroupExpansion — all collapsed').check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ filler collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+                │ ├─┬ LEAF_GROUP collapsed hidden id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
+                │ │ └── LEAF hidden id:1 country:"Ireland" year:2020
+                │ └─┬ LEAF_GROUP collapsed hidden id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
+                │ · └── LEAF hidden id:2 country:"Ireland" year:2021
+                └─┬ filler collapsed id:row-group-country-France ag-Grid-AutoColumn:"France"
+                · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020
+                · · └── LEAF hidden id:3 country:"France" year:2020
+            `);
+        });
+    });
+
     describe('pivot mode', () => {
         const pivotGridsManager = new TestGridsManager({
             modules: [ClientSideRowModelModule, RowGroupingModule, PivotModule],
@@ -761,6 +1022,70 @@ describe('ag-grid grouping simple data', () => {
                 └─┬ filler collapsed id:row-group-country-France ag-Grid-AutoColumn:"France" pivot_sport_Football_medals:4 pivot_sport_Rugby_medals:null
                 · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020 pivot_sport_Football_medals:4 pivot_sport_Rugby_medals:null
                 · · └── LEAF hidden id:3 pivot_sport_Football_medals:4 pivot_sport_Rugby_medals:4
+            `);
+        });
+
+        test('resetRowGroupExpansion in pivot mode forces leaf groups collapsed, re-evaluates non-leaf defaults', async () => {
+            const rowData = [
+                { id: '1', country: 'Ireland', year: 2020, sport: 'Football' },
+                { id: '2', country: 'Ireland', year: 2021, sport: 'Rugby' },
+                { id: '3', country: 'France', year: 2020, sport: 'Football' },
+            ];
+
+            const api = pivotGridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'year', rowGroup: true, hide: true },
+                ],
+                pivotMode: true,
+                groupDefaultExpanded: -1,
+                rowData,
+                getRowId: (params) => params.data.id,
+            });
+
+            // groupDefaultExpanded: -1 expands non-leaf groups; leaf groups forced collapsed in pivot
+            await new GridRows(api, 'initial — non-leaf expanded, leaf forced collapsed').check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+                │ ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
+                │ │ └── LEAF hidden id:1 country:"Ireland" year:2020
+                │ └─┬ LEAF_GROUP collapsed id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
+                │ · └── LEAF hidden id:2 country:"Ireland" year:2021
+                └─┬ filler id:row-group-country-France ag-Grid-AutoColumn:"France"
+                · └─┬ LEAF_GROUP collapsed id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020
+                · · └── LEAF hidden id:3 country:"France" year:2020
+            `);
+
+            // Collapse Ireland, expand year leaf groups (user overrides)
+            api.setRowNodeExpanded(api.getRowNode('row-group-country-Ireland')!, false, false, true);
+            api.setRowNodeExpanded(api.getRowNode('row-group-country-Ireland-year-2020')!, true, false, true);
+
+            await new GridRows(api, 'user overrides: Ireland collapsed, year 2020 expanded').check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ filler collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+                │ ├─┬ LEAF_GROUP hidden id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
+                │ │ └── LEAF hidden id:1 country:"Ireland" year:2020
+                │ └─┬ LEAF_GROUP collapsed hidden id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
+                │ · └── LEAF hidden id:2 country:"Ireland" year:2021
+                └─┬ filler id:row-group-country-France ag-Grid-AutoColumn:"France"
+                · └─┬ LEAF_GROUP collapsed id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020
+                · · └── LEAF hidden id:3 country:"France" year:2020
+            `);
+
+            api.resetRowGroupExpansion();
+
+            // Non-leaf groups re-evaluated against groupDefaultExpanded: -1 → expanded.
+            // Leaf groups forced collapsed in pivot mode regardless.
+            await new GridRows(api, 'after reset — non-leaf expanded, leaf forced collapsed').check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+                │ ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
+                │ │ └── LEAF hidden id:1 country:"Ireland" year:2020
+                │ └─┬ LEAF_GROUP collapsed id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
+                │ · └── LEAF hidden id:2 country:"Ireland" year:2021
+                └─┬ filler id:row-group-country-France ag-Grid-AutoColumn:"France"
+                · └─┬ LEAF_GROUP collapsed id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020
+                · · └── LEAF hidden id:3 country:"France" year:2020
             `);
         });
     });

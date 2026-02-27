@@ -9,7 +9,7 @@ import type {
 import { BeanStub, RowNode, _csrmFirstLeaf, _warn } from 'ag-grid-community';
 
 import type { IRowGroupingStrategy } from '../../rowHierarchy/rowHierarchyUtils';
-import { _getRowDefaultExpanded } from '../../rowHierarchy/rowHierarchyUtils';
+import { _getGroupNodeDefaultExpanded } from '../../rowHierarchy/rowHierarchyUtils';
 import { setRowNodeGroup } from '../rowGroupingUtils';
 import type { GroupColumn } from './groupColumns';
 import { groupColumnsChanged, makeGroupColumns } from './groupColumns';
@@ -559,26 +559,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     }
 
     private setExpandedInitialValue(pivotMode: boolean, groupNode: RowNode, snapshot?: ExpansionSnapshot | null): void {
-        // if pivoting the leaf group is never expanded as we do not show leaf rows
-        if (pivotMode && groupNode.leafGroup) {
-            groupNode.expanded = false;
-            return;
-        }
-
-        // Restore previous expansion state for surviving group nodes when group columns change
-        if (snapshot) {
-            const id = groupNode.id!;
-            if (snapshot.expanded.has(id)) {
-                groupNode.expanded = true;
-                return;
-            }
-            if (snapshot.collapsed.has(id)) {
-                groupNode.expanded = false;
-                return;
-            }
-        }
-
-        groupNode.expanded = _getRowDefaultExpanded(this.beans, groupNode, groupNode.level);
+        groupNode.expanded = _getGroupNodeDefaultExpanded(this.beans, pivotMode, groupNode, snapshot);
     }
 
     public onShowRowGroupColsSetChanged(): void {

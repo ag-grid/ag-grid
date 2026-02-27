@@ -520,6 +520,15 @@ export interface _CsrmSsrmSharedGridApi {
      * @agModule `ClientSideRowModelApiModule / ServerSideRowModelApiModule`
      */
     collapseAll(): void;
+
+    /**
+     * Reset all group expansion to defaults, as determined by `groupDefaultExpanded`,
+     * `isGroupOpenByDefault`, or `isServerSideGroupOpenByDefault`.
+     * Any user-initiated expand/collapse overrides are discarded.
+     *
+     * @agModule `ClientSideRowModelApiModule / ServerSideRowModelApiModule`
+     */
+    resetRowGroupExpansion(): void;
 }
 
 export interface _RowModelSharedApi {

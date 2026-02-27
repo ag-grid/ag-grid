@@ -287,6 +287,7 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
     ...mod<_CsrmSsrmSharedGridApi>('CsrmSsrmSharedApi', {
         expandAll: 0,
         collapseAll: 0,
+        resetRowGroupExpansion: 0,
     }),
     ...mod<_SsrmInfiniteSharedGridApi>('SsrmInfiniteSharedApi', {
         setRowCount: 0,

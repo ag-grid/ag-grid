@@ -39,6 +39,7 @@ export interface IExpansionService<
     getExpansionState(): T;
 
     expandAll(value: boolean): void;
+    resetExpansion(): void;
 
     onGroupExpandedOrCollapsed(): void;
 

@@ -128,6 +128,12 @@ export class ServerSideExpansionService
         this.updateExpandedState(node);
     }
 
+    public resetExpansion(): void {
+        this.strategy = this.createManagedBean(new ExpandStrategy());
+        this.updateAllNodes();
+        this.dispatchStateUpdatedEvent();
+    }
+
     public expandAll(expanded: boolean): void {
         const ssrmExpandAllAffectsAllRows = this.beans.gos.get('ssrmExpandAllAffectsAllRows');
         // if allowed, swap to expand all strategy

@@ -11,6 +11,7 @@ import type {
 import { _exists } from 'ag-grid-community';
 
 import { BaseExpansionService } from './baseExpansionService';
+import { _getGroupNodeDefaultExpanded } from './rowHierarchyUtils';
 
 export class ClientSideExpansionService
     extends BaseExpansionService
@@ -60,6 +61,20 @@ export class ClientSideExpansionService
 
     public getExpansionState(): RowGroupExpansionState {
         return this.getInternalExpansionState();
+    }
+
+    public resetExpansion(): void {
+        const { colModel, rowModel } = this.beans;
+        const pivotMode = colModel.isPivotMode();
+
+        rowModel.forEachNode((node) => {
+            if (!node.isExpandable()) {
+                return;
+            }
+            node.expanded = _getGroupNodeDefaultExpanded(this.beans, pivotMode, node);
+        });
+
+        this.onGroupExpandedOrCollapsed();
     }
 
     public expandAll(expand: boolean): void {
