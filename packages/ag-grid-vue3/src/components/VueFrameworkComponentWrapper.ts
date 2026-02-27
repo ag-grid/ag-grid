@@ -60,6 +60,7 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
 
             public processMethod(methodName: string, args: IArguments): any {
                 if (methodName === 'refresh') {
+                    // Freeze params to prevent components from accidentally mutating shared objects
                     this.getFrameworkComponentInstance().params = Object.freeze(args[0]);
                 }
 

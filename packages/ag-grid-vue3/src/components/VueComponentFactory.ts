@@ -3,6 +3,7 @@ import { createVNode, defineComponent, render } from 'vue';
 import { _error } from 'ag-grid-community';
 
 export class VueComponentFactory {
+    // WeakMap avoids repeat component tree traversals and allows GC of parent components
     private static componentCache = new WeakMap<any, Map<string, any>>();
 
     private static getComponentDefinition(component: any, parent: any) {

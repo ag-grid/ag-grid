@@ -25,15 +25,18 @@ const props = withDefaults(defineProps<Props<TData>>(), getProps());
 
 const rootRef = useTemplateRef<HTMLDivElement>('root');
 
+// shallowRef avoids deep reactive proxying — grid API and simple flags only change at the top level
 const api: Ref<GridApi | undefined> = shallowRef(undefined);
 const gridCreated = shallowRef(false);
 const isDestroyed = shallowRef(false);
 const gridReadyFired = shallowRef(false);
+// transient batch state doesn't need Vue reactivity tracking
 let batchChanges: { [key: string]: any } = {};
 let batchScheduled = false;
 
 // setup up watches
 const propsAsRefs = toRefs<any>(props);
+// Per-option shallow vs deep watching — reduces overhead for options that don't need deep tracking
 const shallowOptions: Set<string> = new Set(_GET_SHALLOW_GRID_OPTIONS());
 
 _GET_ALL_GRID_OPTIONS()
@@ -147,8 +150,10 @@ const processChanges = (propertyName: string, currentValue: any, _previousValue?
         batchChanges[propertyName] = value;
         if (!batchScheduled) {
             batchScheduled = true;
+            // queueMicrotask fires sooner than setTimeout(0) (microtask vs macrotask), reducing latency
             queueMicrotask(() => {
                 batchScheduled = false;
+                // Guard against updates after grid destruction (microtask may fire after unmount)
                 if (!isDestroyed.value && api.value) {
                     _processOnChange(batchChanges, api.value!);
                 }
@@ -198,6 +203,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   if (gridCreated.value) {
+    // Cancel pending debounced timer to prevent callbacks after grid destruction
     emitRowModel.cancel();
     api?.value?.destroy();
     isDestroyed.value = true;
