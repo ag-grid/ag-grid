@@ -200,7 +200,7 @@ export class LicenseManager {
         const hostname = this.getHostname();
         return (
             hostname.match(/^((?:[\w-]+\.)?ag-grid\.com)$/) !== null ||
-            hostname.match(/^((?:[\w-]+\.)?bryntum.com\.com)$/) !== null
+            hostname.match(/^((?:[\w-]+\.)?bryntum\.com)$/) !== null
         );
     }
 
