@@ -102,7 +102,7 @@
                     }
                 }
 
-                // Ignore candidates — all unresolved vulns
+                // Ignore candidates — shown in Cat C; alreadyIgnored=true if path is already in .snyk
                 const snykFile = getSnykFilePath(project);
                 const depPath = (vuln.from?.slice(1) || []).join(' > ');
                 const topLevelDep = stripVer(vuln.from?.[1] || '');
@@ -110,7 +110,7 @@
                 const v = ignoreVulns.get(id);
                 const key = snykFile + '\0' + depPath;
                 if (!v.paths.some(p => p.snykFile + '\0' + p.depPath === key)) {
-                    v.paths.push({ snykFile, depPath, topLevelDep });
+                    v.paths.push({ snykFile, depPath, topLevelDep, alreadyIgnored: near != null });
                 }
             }
 
@@ -336,7 +336,7 @@
                 if (!skipped) {
                     for (const [, filePaths] of byFile) {
                         for (const p of filePaths) {
-                            if (!skipState.deps.has(p.topLevelDep)) {
+                            if (!skipState.deps.has(p.topLevelDep) && !p.alreadyIgnored) {
                                 allBatchItems.push({ vulnId: id, snykFile: p.snykFile, depPath: p.depPath, idx: p.idx });
                             }
                         }
@@ -360,8 +360,18 @@
                 const fileCount = byFile.size;
                 const countBadge = `<span class="s3-path-count-badge">${totalPaths} path${totalPaths !== 1 ? 's' : ''} &middot; ${fileCount} file${fileCount !== 1 ? 's' : ''}</span>`;
 
+                const allPathsIgnored = [...byFile.values()].every(fps => fps.every(p => p.alreadyIgnored));
+
                 const fileGroupsHtml = [...byFile.entries()].map(([snykFile, fps]) => {
+                    const allFileIgnored = fps.every(p => p.alreadyIgnored);
                     const rowsHtml = fps.map(path => {
+                        if (path.alreadyIgnored) {
+                            return `<div class="path-checkbox-row path-already-ignored" data-top-dep="${esc(path.topLevelDep)}">
+                                <span class="path-already-ignored-check">&#x2713;</span>
+                                <span class="path-deppath">${esc(path.depPath)}</span>
+                                <span class="already-ignored-badge">Already in .snyk</span>
+                            </div>`;
+                        }
                         const depSkipped = skipState.deps.has(path.topLevelDep);
                         return `<div class="path-checkbox-row${depSkipped ? ' dep-skipped' : ''}" data-top-dep="${esc(path.topLevelDep)}">
                             <input type="checkbox" class="path-cb"${depSkipped ? '' : ' checked'}
@@ -375,14 +385,16 @@
                         </div>`;
                     }).join('');
                     const fileId = snykFile.replace(/[^a-z0-9]/gi, '-');
-                    const filePaths = fps.map(p => ({ vulnId: id, depPath: p.depPath, idx: p.idx }));
-                    const fileYaml = buildGroupedYamlPreview(filePaths, [], expiry);
-                    return `<div class="batch-file-subgroup" data-snyk-file="${esc(snykFile)}">
-                        <div class="batch-file-subgroup-heading">
+                    const pendingPaths = fps.filter(p => !p.alreadyIgnored).map(p => ({ vulnId: id, depPath: p.depPath, idx: p.idx }));
+                    const fileYaml = buildGroupedYamlPreview(pendingPaths, [], expiry);
+                    return `<details class="batch-file-subgroup${allFileIgnored ? ' batch-file-subgroup--done' : ''}" data-snyk-file="${esc(snykFile)}"${allFileIgnored ? '' : ' open'}>
+                        <summary class="batch-file-subgroup-heading">
+                            <span class="batch-file-subgroup-chevron">&#x25BC;</span>
                             ${esc(snykFile)}
                             <span class="s3-file-path-count">${fps.length} path${fps.length !== 1 ? 's' : ''}</span>
-                        </div>
-                        <div class="prefill-row">
+                            ${allFileIgnored ? '<span class="batch-file-done-badge">&#x2713; In .snyk</span>' : ''}
+                        </summary>
+                        ${!allFileIgnored ? `<div class="prefill-row">
                             <select class="ignore-form-input preset-select cat-a-preset"
                                 data-card="${cardId}" data-vuln-idx="${vi}" data-snyk-file="${esc(snykFile)}">
                                 <option value="">Preset&#x2026;</option>
@@ -393,9 +405,9 @@
                                 placeholder="Prefill reason&#x2026;">
                             <button class="btn btn-sm btn-outline" data-action="prefill-reasons"
                                 data-card="${cardId}" data-vuln-idx="${vi}" data-snyk-file="${esc(snykFile)}">Apply to all</button>
-                        </div>
+                        </div>` : ''}
                         ${rowsHtml}
-                        <details class="batch-yaml-details">
+                        ${!allFileIgnored ? `<details class="batch-yaml-details">
                             <summary class="batch-yaml-summary">
                                 ${esc(snykFile)} YAML preview
                                 <button class="btn btn-sm btn-outline" data-action="copy-file-yaml"
@@ -405,11 +417,11 @@
                         </details>
                         <button class="btn btn-sm btn-accent" data-action="add-file-snyk-ignore"
                             data-card="${cardId}" data-vuln-idx="${vi}" data-snyk-file="${esc(snykFile)}"
-                            data-vuln-id="${esc(id)}">Add to ${esc(snykFile)}</button>
-                    </div>`;
+                            data-vuln-id="${esc(id)}">Add to ${esc(snykFile)}</button>` : ''}
+                    </details>`;
                 }).join('');
 
-                return `<details class="rq-card s3-vuln-card${skipped ? ' s3-card-skipped' : ''}" id="s3-card-${vi}" data-vuln-id="${esc(id)}" open>
+                return `<details class="rq-card s3-vuln-card${skipped ? ' s3-card-skipped' : ''}${allPathsIgnored ? ' s3-card-all-ignored' : ''}" id="s3-card-${vi}" data-vuln-id="${esc(id)}" ${allPathsIgnored ? '' : 'open'}>
                     <summary class="rq-card-header s3-card-header">
                         <div class="s3-card-header-main">
                             <span class="s3-card-chevron">&#x25BC;</span>
@@ -699,6 +711,38 @@
                     }
                 }
                 btn.textContent = '\u2713 Updated';
+
+                // Convert successfully-added rows to the resolved display (same as on load)
+                subgroup.querySelectorAll('.path-checkbox-row:not(.path-already-ignored)').forEach(row => {
+                    const cb = row.querySelector('.path-cb');
+                    if (!cb || !cb.checked) return;
+                    const topDep = row.dataset.topDep || '';
+                    const depPath = row.querySelector('.path-deppath')?.textContent || '';
+                    row.className = 'path-checkbox-row path-already-ignored';
+                    row.dataset.topDep = topDep;
+                    row.innerHTML = `<span class="path-already-ignored-check">&#x2713;</span>`
+                        + `<span class="path-deppath">${esc(depPath)}</span>`
+                        + `<span class="already-ignored-badge">Already in .snyk</span>`;
+                });
+
+                subgroup.removeAttribute('open');
+                subgroup.classList.add('batch-file-subgroup--done');
+                const heading = subgroup.querySelector('.batch-file-subgroup-heading');
+                if (heading && !heading.querySelector('.batch-file-done-badge')) {
+                    const badge = document.createElement('span');
+                    badge.className = 'batch-file-done-badge';
+                    badge.textContent = '\u2713 Added';
+                    heading.appendChild(badge);
+                }
+
+                // If all paths across all subgroups are now resolved, mark the whole card
+                const cardAllIgnored = !card.querySelector('.path-checkbox-row:not(.path-already-ignored)');
+                if (cardAllIgnored) {
+                    card.classList.add('s3-card-all-ignored');
+                    card.removeAttribute('open');
+                }
+
+                card.querySelector('.s3-card-header')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 setTimeout(() => { btn.disabled = false; btn.textContent = `Add to ${snykFile}`; }, 2000);
             }
 

@@ -1607,6 +1607,71 @@ details.s3-vuln-card:not([open]) .s3-card-chevron {
     color: var(--c-accent);
     padding: 4px 0 6px;
     margin-bottom: 6px;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    user-select: none;
+}
+.batch-file-subgroup-heading::-webkit-details-marker { display: none; }
+.batch-file-subgroup-chevron {
+    font-size: 9px;
+    color: var(--c-text-muted);
+    transition: transform 0.15s;
+    flex-shrink: 0;
+}
+.batch-file-subgroup[open] > .batch-file-subgroup-heading .batch-file-subgroup-chevron {
+    transform: rotate(0deg);
+}
+.batch-file-subgroup:not([open]) > .batch-file-subgroup-heading .batch-file-subgroup-chevron {
+    transform: rotate(-90deg);
+}
+/* ── Already-ignored path rows ── */
+.path-already-ignored {
+    opacity: 0.6;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.path-already-ignored-check {
+    color: var(--c-fix);
+    font-weight: 700;
+    flex-shrink: 0;
+}
+.already-ignored-badge {
+    font-size: 10px;
+    color: var(--c-fix);
+    background: rgba(76, 175, 130, 0.12);
+    border: 1px solid rgba(76, 175, 130, 0.3);
+    border-radius: 3px;
+    padding: 1px 5px;
+    white-space: nowrap;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+/* ── All-paths-ignored vuln card ── */
+.s3-card-all-ignored > .s3-card-header {
+    opacity: 0.65;
+}
+.s3-card-all-ignored > .s3-card-header .s3-card-chevron {
+    color: var(--c-fix);
+}
+
+.batch-file-subgroup--done > .batch-file-subgroup-heading {
+    color: var(--c-fix);
+}
+.batch-file-done-badge {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--c-fix);
+    background: rgba(76, 175, 130, 0.12);
+    border: 1px solid rgba(76, 175, 130, 0.3);
+    border-radius: 3px;
+    padding: 1px 5px;
+    margin-left: auto;
+    flex-shrink: 0;
 }
 .batch-path-row {
     background: rgba(255,255,255,0.02);
