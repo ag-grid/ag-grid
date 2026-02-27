@@ -423,7 +423,7 @@ export const _GET_ALL_GRID_OPTIONS: () => GridOptionKey[] = () => [
     ...OTHER_GRID_OPTIONS,
 ];
 
-// Options that only need shallow (reference) watching in Vue — primitives and functions
+// Options that only need shallow (reference) watching (only Vue atm) — primitives and functions
 export const _GET_SHALLOW_GRID_OPTIONS: () => GridOptionKey[] = () => [
     ...STRING_GRID_OPTIONS,
     ..._NUMBER_GRID_OPTIONS,
