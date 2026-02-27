@@ -1,5 +1,11 @@
 import type { GridOptions, Module } from 'ag-grid-community';
-import { ClientSideRowModelModule, TextEditorModule, TextFilterModule, TooltipModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    NumberFilterModule,
+    TextEditorModule,
+    TextFilterModule,
+    TooltipModule,
+} from 'ag-grid-community';
 import { CellSelectionModule, FormulaModule, SetFilterModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
@@ -10,6 +16,7 @@ const rowNumberRefreshBufferMs = 25;
 describe('ag-grid formulas sorting', () => {
     const gridsManager = new TestGridsManager({
         modules: [
+            NumberFilterModule,
             ClientSideRowModelModule,
             CellSelectionModule,
             FormulaModule,

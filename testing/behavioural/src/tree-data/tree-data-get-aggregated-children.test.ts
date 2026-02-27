@@ -2,8 +2,7 @@ import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule, SetFilterModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, applyTransactionChecked } from '../test-utils';
-import { expect } from '../test-utils/matchers';
+import { GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
 
 describe('IRowNode.getAggregatedChildren() with tree data', () => {
     const gridsManager = new TestGridsManager({
@@ -43,6 +42,16 @@ describe('IRowNode.getAggregatedChildren() with tree data', () => {
                 { id: '6', path: ['Documents', 'Personal', 'photo.jpg'], name: 'photo.jpg', size: 50 },
             ],
         });
+
+        await new GridRows(api, 'data').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ Documents GROUP id:1 ag-Grid-AutoColumn:"Documents" name:"Documents" size:350
+            · ├─┬ Work GROUP id:2 ag-Grid-AutoColumn:"Work" name:"Work" size:300
+            · │ ├── report.pdf LEAF id:3 ag-Grid-AutoColumn:"report.pdf" name:"report.pdf" size:100
+            · │ └── data.xlsx LEAF id:4 ag-Grid-AutoColumn:"data.xlsx" name:"data.xlsx" size:200
+            · └─┬ Personal GROUP id:5 ag-Grid-AutoColumn:"Personal" name:"Personal" size:50
+            · · └── photo.jpg LEAF id:6 ag-Grid-AutoColumn:"photo.jpg" name:"photo.jpg" size:50
+        `);
 
         // Get the Documents folder
         const documentsNode = api.getRowNode('1');
@@ -90,6 +99,14 @@ describe('IRowNode.getAggregatedChildren() with tree data', () => {
             ],
         });
 
+        await new GridRows(api, 'data').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ Folder GROUP id:1 ag-Grid-AutoColumn:"Folder" name:"Folder" size:60
+            · ├── file1.txt LEAF id:2 ag-Grid-AutoColumn:"file1.txt" name:"file1.txt" size:10
+            · ├── file2.txt LEAF id:3 ag-Grid-AutoColumn:"file2.txt" name:"file2.txt" size:20
+            · └── image.png LEAF id:4 ag-Grid-AutoColumn:"image.png" name:"image.png" size:30
+        `);
+
         const folderNode = api.getRowNode('1');
         expect(folderNode).toBeDefined();
 
@@ -101,6 +118,13 @@ describe('IRowNode.getAggregatedChildren() with tree data', () => {
         // Filter to only show .txt files
         await api.setColumnFilterModel('name', { values: ['file1.txt', 'file2.txt'] });
         api.onFilterChanged();
+
+        await new GridRows(api, 'after .txt filter').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ Folder GROUP id:1 ag-Grid-AutoColumn:"Folder" name:"Folder" size:30
+            · ├── file1.txt LEAF id:2 ag-Grid-AutoColumn:"file1.txt" name:"file1.txt" size:10
+            · └── file2.txt LEAF id:3 ag-Grid-AutoColumn:"file2.txt" name:"file2.txt" size:20
+        `);
 
         // After filter: 2 children
         children = folderNode!.getAggregatedChildren(null);

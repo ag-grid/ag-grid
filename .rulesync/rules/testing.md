@@ -47,17 +47,20 @@ packages/ag-grid-community/src/
 
 ### Behavioural Tests (Vitest) – Primary Test Suite
 
-Behavioural tests in `testing/behavioural/` are the primary test suite for verifying grid behaviour. They use Vitest via Nx. Use `--run` to execute once (without watch mode):
+Behavioural tests in `testing/behavioural/` are the primary test suite for verifying grid behaviour. They use Vitest. Watch mode is disabled by default:
 
 ```bash
 # Run all behavioural tests
-yarn nx test ag-behavioural-testing --run
+./behave.sh
 
 # Run specific test file
-yarn nx test ag-behavioural-testing --run "cell-editing-regression"
+./behave.sh "cell-editing-regression"
 
 # Run specific test by name
-yarn nx test ag-behavioural-testing --run "cell-editing-regression" -t "should handle"
+./behave.sh "cell-editing-regression" -t "should handle"
+
+# Run in watch mode
+./behave.sh --watch
 ```
 
 ### Benchmarks

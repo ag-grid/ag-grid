@@ -1,5 +1,7 @@
 import {
     ClientSideRowModelModule,
+    GridStateModule,
+    NumberEditorModule,
     RowDragModule,
     RowSelectionModule,
     TextEditorModule,
@@ -29,6 +31,8 @@ describe('row drag state persistence', () => {
     const gridsManager = new TestGridsManager({
         modules: [
             ClientSideRowModelModule,
+            GridStateModule,
+            NumberEditorModule,
             RowDragModule,
             RowSelectionModule,
             RowGroupingModule,

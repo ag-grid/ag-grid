@@ -12,7 +12,6 @@ import {
     clipboardUtils,
     waitForEvent,
 } from '../../test-utils';
-import { expect } from '../../test-utils/matchers';
 
 describe('Group Edit: clipboard paste', () => {
     const gridMgr = new TestGridsManager({

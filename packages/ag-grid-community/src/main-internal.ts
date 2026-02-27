@@ -447,7 +447,7 @@ export type { CellNavigationService } from './navigation/cellNavigationService';
 export type { HeaderNavigationService } from './navigation/headerNavigationService';
 export type { NavigationService } from './navigation/navigationService';
 export type { PageBoundsService } from './pagination/pageBoundsService';
-export { _BOOLEAN_MIXED_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS } from './propertyKeys';
+export { _BOOLEAN_MIXED_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS, _GET_SHALLOW_GRID_OPTIONS } from './propertyKeys';
 export { _PUBLIC_EVENT_HANDLERS_MAP } from './publicEventHandlersMap';
 export type { CellCtrl, ICellComp } from './rendering/cell/cellCtrl';
 export type { CheckboxCellRenderer } from './rendering/cellRenderers/checkboxCellRenderer';

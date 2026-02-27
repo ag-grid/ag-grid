@@ -1,10 +1,9 @@
 import type { GridOptions, IRowNode, RowNode, RowPinnedType } from 'ag-grid-community';
-import { ClientSideRowModelModule, PinnedRowModule, UndoRedoEditModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, NumberEditorModule, PinnedRowModule, UndoRedoEditModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../../test-utils';
 import { GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
-import { expect } from '../../test-utils/matchers';
 import { EDIT_MODES, cascadeGroupRowValueSetter, editCell } from './group-edit-test-utils';
 
 interface PivotRowData {
@@ -22,7 +21,14 @@ interface PivotRowData {
  */
 describe('editing with pinned pivot rows', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, PivotModule, UndoRedoEditModule, PinnedRowModule],
+        modules: [
+            NumberEditorModule,
+            ClientSideRowModelModule,
+            RowGroupingModule,
+            PivotModule,
+            UndoRedoEditModule,
+            PinnedRowModule,
+        ],
     });
 
     beforeEach(() => {
@@ -108,6 +114,25 @@ describe('editing with pinned pivot rows', () => {
                 expect(franceNode).toBeDefined();
 
                 if (editMode === 'ui') {
+                    // Start editing and capture mid-edit state before committing
+                    api.startEditingCell({
+                        rowIndex: franceNode!.rowIndex!,
+                        colKey: pivotColId,
+                    });
+                    await asyncSetTimeout(0);
+
+                    await new GridRows(api, 'during edit', gridRowsOptions).check(`
+                        PINNED_TOP id:t-top-row-group-country-France ag-Grid-AutoColumn:"France" pivot_year_2020_sales:1000 pivot_year_2021_sales:1200
+                        ROOT id:ROOT_NODE_ID pivot_year_2020_sales:5300 pivot_year_2021_sales:6100
+                        ├── LEAF_GROUP collapsed 🖍️ id:row-group-country-France ag-Grid-AutoColumn:"France" pivot_year_2020_sales:1000 pivot_year_2021_sales:1200
+                        ├── LEAF_GROUP collapsed id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" pivot_year_2020_sales:1500 pivot_year_2021_sales:1800
+                        ├── LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_year_2020_sales:2000 pivot_year_2021_sales:2200
+                        └── LEAF_GROUP collapsed id:row-group-country-Canada ag-Grid-AutoColumn:"Canada" pivot_year_2020_sales:800 pivot_year_2021_sales:900
+                    `);
+
+                    api.stopEditing(true);
+                    await asyncSetTimeout(0);
+
                     await editCell(api, franceNode!, pivotColId, '2000');
                 } else {
                     franceNode!.setDataValue(pivotColId, 2000, 'ui');

@@ -22,7 +22,20 @@ if (!fs.existsSync(snykPath)) {
 (async () => {
     console.log(`Snyk JSON file: ${snykPath}`);
     const snykJson = fs.readFileSync(snykPath, 'utf-8');
-    const snykData = JSON.parse(snykJson);
+    let snykData;
+    try {
+        snykData = JSON.parse(snykJson);
+    } catch (e) {
+        // Newer Snyk CLI versions append error objects after the main JSON array
+        // when workspace paths fail (e.g. root with "Forbidden"). Extract first document.
+        const position = e.message.match(/at position (\d+)/)?.[1];
+        if (!position) {
+            throw e;
+        }
+
+        console.log(`::warning:: Failed to parse Snyk JSON (${SNYK_JSON_FILE}). Attempting to extract valid JSON portion up to position ${position} (${e.message})`);
+        snykData = JSON.parse(snykJson.slice(0, parseInt(position, 10)));
+    }
     const ctrf = convertToCtrf(snykData);
 
     fs.mkdirSync(path.dirname(ctrfPath), { recursive: true });

@@ -1,7 +1,7 @@
 import type { GridApi, IRowNode, RowDataTransaction, RowNode, RowNodeTransaction } from 'ag-grid-community';
 
 import { GridRows } from './gridRows/gridRows';
-import { GridRowsDiagramTree } from './gridRows/gridRowsDiagramTree';
+import { GridRowsDiagramTree } from './gridRows/rows-diagram/gridRowsDiagramTree';
 
 export function optionalEscapeString(s: string): string {
     return /^(?!\d)\w[._-\w]*$|^\d+$/.test(s) ? s : JSON.stringify(s);
@@ -228,7 +228,7 @@ export function isAgHtmlElementVisible(element: Element | string | null | undefi
 }
 
 export function drawGrid(api: GridApi): void {
-    const gr = new GridRows(api, undefined, { printRowIndices: true });
+    const gr = new GridRows(api);
     const tr = new GridRowsDiagramTree(gr);
     console.log(tr.diagramToString(false, null));
 }

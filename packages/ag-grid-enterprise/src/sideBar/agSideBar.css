@@ -1,8 +1,25 @@
 .ag-tool-panel-wrapper {
-    display: flex;
-    overflow: hidden auto;
+    overflow: hidden;
     user-select: none;
     width: var(--ag-side-bar-panel-width);
+}
+
+.ag-tool-panel-content {
+    display: flex;
+    height: 100%;
+    overflow: hidden auto;
+}
+
+.ag-tool-panel-wrapper.ag-tool-panel-animating {
+    /* !important required to override .ag-hidden to tool panel remains visible while animating */
+    display: block !important;
+    transition: width var(--ag-side-bar-panel-animation-duration) ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ag-tool-panel-wrapper.ag-tool-panel-animating {
+        transition: none;
+    }
 }
 
 .ag-tool-panel-external {

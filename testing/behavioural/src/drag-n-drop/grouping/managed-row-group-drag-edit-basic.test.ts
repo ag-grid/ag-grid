@@ -109,8 +109,10 @@ describe('drag refreshAfterGroupEdit multi-step interactions', () => {
         await dispatcher.start('2');
         await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('A2'));
         await dispatcher.move('3', { yOffsetPercent: 0.4 });
+        await asyncSetTimeout(5);
         await assertIntermediateStep('row-group-group-B', intermediateHoverLeaf, 'after hover over group B leaf');
         await dispatcher.move('row-group-group-C', { center: true });
+        await asyncSetTimeout(5);
         await assertIntermediateStep('row-group-group-C', intermediateHoverLeaf, 'after hover over group C group node');
         await dispatcher.move('6', { yOffsetPercent: 0.9 });
         await dispatcher.finish();

@@ -80,9 +80,10 @@ For detailed information about preferred technologies and architectural constrai
 -   `yarn nx build:package <package>` – create ESM/CJS bundles to validate publishable output.
 -   `yarn nx build:umd <package>` – produce UMD bundles for browser distribution smoke-tests.
 -   `yarn nx run-many -t build` – rebuild all packages when changes span the dependency graph.
--   `yarn nx test ag-behavioural-testing --run` – run behavioural tests in `testing/behavioural/` (primary test suite, uses Vitest).
--   `yarn nx test ag-behavioural-testing --run "<file-pattern>"` – run specific behavioural test file.
--   `yarn nx test ag-behavioural-testing --run "<file-pattern>" -t "<test-name>"` – run specific behavioural test by name.
+-   `./behave.sh` – run behavioural tests in `testing/behavioural/` (primary test suite, uses Vitest).
+-   `./behave.sh "<file-pattern>"` – run specific behavioural test file.
+-   `./behave.sh "<file-pattern>" -t "<test-name>"` – run specific behavioural test by name.
+-   `./behave.sh --watch` – run behavioural tests in watch mode.
 -   `yarn nx test <package>` – execute Jest unit tests for the affected package.
 -   `yarn nx test <package> --testPathPattern="<file-name>"` - test specific test file
 -   `yarn nx test <package> --testPathPattern="<file-name>" --testNamePattern="<test-name>"` - test specific test name in a specific test file

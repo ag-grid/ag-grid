@@ -1,4 +1,4 @@
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
 import type { GridOptions } from 'ag-grid-community';
 
 import { TestGridsManager } from '../test-utils';
@@ -8,7 +8,7 @@ describe('sourceRowIndex in isRowSelectable', () => {
     const rowData = [{ sport: 'football' }, { sport: 'rugby' }, { sport: 'tennis' }];
 
     const gridMgr = new TestGridsManager({
-        modules: [ClientSideRowModelModule],
+        modules: [RowSelectionModule, ClientSideRowModelModule],
     });
 
     beforeEach(() => {

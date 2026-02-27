@@ -1,10 +1,15 @@
-import { ServerSideRowModelModule, TextFilterModule, ValidationModule } from 'ag-grid-enterprise';
+import {
+    ServerSideRowModelApiModule,
+    ServerSideRowModelModule,
+    TextFilterModule,
+    ValidationModule,
+} from 'ag-grid-enterprise';
 
 import { TestGridsManager, isAgHtmlElementVisible } from '../test-utils';
 
 describe('ag-grid overlays state', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ServerSideRowModelModule, TextFilterModule, ValidationModule],
+        modules: [ServerSideRowModelApiModule, ServerSideRowModelModule, TextFilterModule, ValidationModule],
     });
 
     function hasLoadingIcon() {

@@ -2,16 +2,22 @@ import { getByTestId } from '@testing-library/dom';
 import '@testing-library/jest-dom';
 import { userEvent } from '@testing-library/user-event';
 
-import { agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import {
+    NumberEditorModule,
+    RenderApiModule,
+    TextEditorModule,
+    agTestIdFor,
+    getGridElement,
+    setupAgTestIds,
+} from 'ag-grid-community';
 import { BatchEditModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
-import { expect } from '../test-utils/matchers';
 
 describe('Cell Editing Batch', () => {
     const gridMgr = new TestGridsManager({
         includeDefaultModules: true,
-        modules: [BatchEditModule],
+        modules: [TextEditorModule, NumberEditorModule, RenderApiModule, BatchEditModule],
     });
 
     const rowDataFactory = () => [
@@ -47,7 +53,7 @@ describe('Cell Editing Batch', () => {
         vi.clearAllMocks();
     });
 
-    test('should decorate cell as pending', async () => {
+    test('batch edit: pending decoration, commit and cancel lifecycle', async () => {
         const api = await gridMgr.createGridAndWait('myGrid', {
             columnDefs: [
                 {
@@ -59,103 +65,74 @@ describe('Cell Editing Batch', () => {
             rowData,
         });
 
-        api.startBatchEdit();
+        await new GridRows(api, 'initial state').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 number:10
+            └── LEAF id:1
+        `);
 
+        api.startBatchEdit();
         expect(api.isBatchEditing()).toBe(true);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         await asyncSetTimeout(1);
         const cell = getByTestId(gridDiv, agTestIdFor.cell('0', 'number'));
+        const cell2 = getByTestId(gridDiv, agTestIdFor.cell('1', 'number'));
 
+        // Phase A: edit adds pending decoration, only on edited cell
         await userEvent.dblClick(cell);
         await asyncSetTimeout(1);
         await userEvent.keyboard('100{Enter}');
-
         await asyncSetTimeout(1);
 
         expect(api.getCellEditorInstances()).toHaveLength(0);
-
         expect(cell).toHaveTextContent('100');
         expect(cell).toHaveClass(/ag-cell-batch-edit/);
-
-        const cell2 = getByTestId(gridDiv, agTestIdFor.cell('1', 'number'));
         expect(cell2).not.toHaveClass(/ag-cell-batch-edit/);
-    });
 
-    test('cell not pending after commit', async () => {
-        const api = await gridMgr.createGridAndWait('myGrid', {
-            columnDefs: [
-                {
-                    field: 'number',
-                    cellEditor: 'agNumberCellEditor',
-                    editable: true,
-                },
-            ],
-            rowData,
-        });
+        await new GridRows(api, 'after typing 100 — row 0 pending, row 1 unchanged').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF ⏳ id:0 number:⏳100 10
+            └── LEAF id:1
+        `);
 
-        api.startBatchEdit();
-
-        expect(api.isBatchEditing()).toBe(true);
-
-        const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
-        const cell = getByTestId(gridDiv, agTestIdFor.cell('0', 'number'));
-
-        await userEvent.dblClick(cell);
-        await asyncSetTimeout(1);
-        await userEvent.keyboard('100{Enter}');
-        await asyncSetTimeout(1);
-
-        expect(api.getCellEditorInstances()).toHaveLength(0);
-
+        // Phase B: commit removes decoration, value is retained
         api.commitBatchEdit();
-
         await asyncSetTimeout(1);
 
         expect(cell).toHaveTextContent('100');
         expect(cell).not.toHaveClass(/ag-cell-batch-edit/);
 
-        const cell2 = getByTestId(gridDiv, agTestIdFor.cell('1', 'number'));
-        expect(cell2).not.toHaveClass(/ag-cell-batch-edit/);
-    });
+        await new GridRows(api, 'after commit — row 0 committed to 100').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 number:100
+            └── LEAF id:1
+        `);
 
-    test('cell not pending or updated after cancel', async () => {
-        const api = await gridMgr.createGridAndWait('myGrid', {
-            columnDefs: [
-                {
-                    field: 'number',
-                    cellEditor: 'agNumberCellEditor',
-                    editable: true,
-                },
-            ],
-            rowData,
-        });
-
+        // Phase C: cancel reverts value to sourceValue and removes decoration
         api.startBatchEdit();
-
-        expect(api.isBatchEditing()).toBe(true);
-
-        const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
-        const cell = getByTestId(gridDiv, agTestIdFor.cell('0', 'number'));
-
         await userEvent.dblClick(cell);
         await asyncSetTimeout(1);
-        await userEvent.keyboard('100{Enter}');
+        await userEvent.keyboard('200{Enter}');
         await asyncSetTimeout(1);
 
-        expect(api.getCellEditorInstances()).toHaveLength(0);
+        await new GridRows(api, 'after typing 200 in second batch — pending 200, source 100').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF ⏳ id:0 number:⏳200 100
+            └── LEAF id:1
+        `);
 
         api.cancelBatchEdit();
-
         await asyncSetTimeout(1);
 
-        expect(cell).toHaveTextContent('10');
+        expect(cell).toHaveTextContent('100');
         expect(cell).not.toHaveClass(/ag-cell-batch-edit/);
 
-        const cell2 = getByTestId(gridDiv, agTestIdFor.cell('1', 'number'));
-        expect(cell2).not.toHaveClass(/ag-cell-batch-edit/);
+        await new GridRows(api, 'after cancel — reverted to 100').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 number:100
+            └── LEAF id:1
+        `);
     });
 
     test('commit keeps edited value when focus leaves grid', async () => {
@@ -186,11 +163,24 @@ describe('Cell Editing Batch', () => {
         await userEvent.keyboard('123');
         await asyncSetTimeout(1);
 
+        // While editing: editor is open (🖍️), data still shows 10
+        await new GridRows(api, 'while editor open — live typing 123').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF 🖍️ id:0 number:🖍️123 10
+            └── LEAF id:1
+        `);
+
         await userEvent.click(commitButton);
         await asyncSetTimeout(1);
 
         expect(cell).toHaveTextContent('123');
         expect(cell).not.toHaveClass(/ag-cell-batch-edit/);
+
+        await new GridRows(api, 'after commit — focus left grid, value 123 committed').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 number:123
+            └── LEAF id:1
+        `);
 
         commitButton.remove();
     });
@@ -217,6 +207,11 @@ describe('Cell Editing Batch', () => {
         const cellB = getByTestId(gridDiv, agTestIdFor.cell('0', 'b'));
         expect(cellB).toHaveTextContent('initial');
 
+        await new GridRows(api, 'initial state').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:"initial" b:"initial"
+        `);
+
         api.startEditingCell({ rowIndex: 0, colKey: 'a' });
         await asyncSetTimeout(1);
         const editor = gridDiv.querySelector<HTMLInputElement>('input');
@@ -226,6 +221,12 @@ describe('Cell Editing Batch', () => {
         await userEvent.clear(editor);
         await userEvent.keyboard('xx{Enter}');
         await asyncSetTimeout(1);
+
+        // After editing: a is pending 'xx', b still sees 'initial' (valueGetter uses committed data)
+        await new GridRows(api, 'after editing a to xx — b still shows initial').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF ⏳ id:0 a:⏳"xx" "initial" b:"initial"
+        `);
 
         api.refreshCells({ columns: ['b'], force: true });
         await asyncSetTimeout(1);
@@ -239,6 +240,11 @@ describe('Cell Editing Batch', () => {
         // After commit, valueGetter sees the newly committed value
         expect(cellB).toHaveTextContent('xx');
 
+        await new GridRows(api, 'after commit — a and b both show xx').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:"xx" b:"xx"
+        `);
+
         api.startBatchEdit();
 
         await userEvent.dblClick(cellA);
@@ -246,6 +252,12 @@ describe('Cell Editing Batch', () => {
         await userEvent.clear(editor2);
         await userEvent.type(editor2, 'yy{Enter}');
         await asyncSetTimeout(1);
+
+        // Second batch: a pending 'yy', b still sees 'xx' (committed)
+        await new GridRows(api, 'second batch — a pending yy, b still shows xx').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF ⏳ id:0 a:⏳"yy" "xx" b:"xx"
+        `);
 
         api.refreshCells({ columns: ['b'], force: true });
         await asyncSetTimeout(1);
@@ -258,6 +270,11 @@ describe('Cell Editing Batch', () => {
 
         // After cancel, still shows committed value (xx)
         expect(cellB).toHaveTextContent('xx');
+
+        await new GridRows(api, 'after cancel — reverted to xx').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:"xx" b:"xx"
+        `);
     });
 
     test('setDataValue during batch edit is staged for new cells', async () => {
@@ -296,7 +313,7 @@ describe('Cell Editing Batch', () => {
 
         await new GridRows(api, 'after batch setDataValue ui').check(`
             ROOT id:ROOT_NODE_ID
-            └── LEAF id:0 number:100 string1:"pending"
+            └── LEAF ⏳ id:0 number:⏳100 10 string1:⏳"pending" "test"
         `);
 
         expect(stringCell).toHaveTextContent('pending');

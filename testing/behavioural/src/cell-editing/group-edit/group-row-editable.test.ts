@@ -1,6 +1,5 @@
 import type { GridOptions, ValueParserParams } from 'ag-grid-community';
 
-import { expect } from '../../test-utils/matchers';
 import type {
     EditableCallback,
     GroupRowEditableCallback,

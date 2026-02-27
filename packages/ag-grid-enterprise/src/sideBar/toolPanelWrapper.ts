@@ -7,7 +7,7 @@ import type {
     UserCompDetails,
     UserComponentFactory,
 } from 'ag-grid-community';
-import { Component } from 'ag-grid-community';
+import { Component, RefPlaceholder } from 'ag-grid-community';
 
 import { AgHorizontalResize } from './agHorizontalResize';
 
@@ -28,13 +28,23 @@ const ToolPanelElement: ElementParams = {
     tag: 'div',
     cls: 'ag-tool-panel-wrapper',
     role: 'tabpanel',
+    children: [
+        {
+            tag: 'div',
+            cls: 'ag-tool-panel-content',
+            ref: 'eContent',
+        },
+    ],
 };
+
 export class ToolPanelWrapper extends Component {
+    private readonly eContent: HTMLElement = RefPlaceholder;
     private toolPanelCompInstance: IToolPanelComp | undefined;
     private toolPanelId: string;
     private resizeBar: AgHorizontalResize;
     private width: number | undefined;
     private params: IToolPanelParams;
+    private animationId: number = 0;
 
     constructor() {
         super(ToolPanelElement);
@@ -85,7 +95,8 @@ export class ToolPanelWrapper extends Component {
     private setToolPanelComponent(compInstance: IToolPanelComp): void {
         this.toolPanelCompInstance = compInstance;
 
-        this.appendChild(compInstance.getGui());
+        const { eContent } = this;
+        eContent.appendChild(compInstance.getGui());
         this.addDestroyFunc(() => {
             this.destroyBean(compInstance);
         });
@@ -110,5 +121,54 @@ export class ToolPanelWrapper extends Component {
 
     public refresh(): void {
         this.toolPanelCompInstance?.refresh(this.params);
+    }
+
+    public animateDisplayed(displayed: boolean): void {
+        if (this.isDisplayed() === displayed) {
+            return;
+        }
+
+        const eGui = this.getGui();
+
+        const savedInlineWidth = eGui.style.width;
+        const durationStr = getComputedStyle(eGui).getPropertyValue('--ag-side-bar-panel-animation-duration').trim();
+        this.setDisplayed(displayed);
+
+        if (!parseFloat(durationStr)) {
+            return;
+        }
+
+        const id = ++this.animationId;
+        const { eContent } = this;
+
+        eGui.classList.add('ag-tool-panel-animating');
+        const fullWidth = eGui.offsetWidth;
+        const fromWidth = displayed ? 0 : fullWidth;
+        const toWidth = displayed ? fullWidth : 0;
+
+        eContent.style.minWidth = `${fullWidth}px`;
+
+        // disable transition, force reflow, and re-enable to synchronously start an animation
+        eGui.style.transition = 'none';
+        eGui.style.width = `${fromWidth}px`;
+        const _ = eGui.offsetWidth;
+        eGui.style.transition = '';
+
+        eGui.style.width = `${toWidth}px`;
+
+        const cleanup = () => {
+            if (this.animationId === id) {
+                eGui.classList.remove('ag-tool-panel-animating');
+                eContent.style.minWidth = '';
+                eGui.style.width = savedInlineWidth;
+            }
+        };
+
+        // Don't rely on the transition end event alone for cleanup because
+        // transitions might have been disabled by application or user CSS
+        // Note: the timeout needs to be long enough to fire after the transitionstart event
+        const fallbackTimeout = setTimeout(cleanup, 100);
+        eGui.addEventListener('transitionstart', () => clearTimeout(fallbackTimeout), { once: true });
+        eGui.addEventListener('transitionend', cleanup, { once: true });
     }
 }

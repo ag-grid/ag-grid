@@ -5,7 +5,6 @@ import { AllCommunityModule, ClientSideRowModelModule, UndoRedoEditModule } from
 import { RowGroupingModule, SetFilterModule, TreeDataModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, asyncSetTimeout, waitForInput } from '../../test-utils';
-import { expect } from '../../test-utils/matchers';
 
 export const gridsManager = new TestGridsManager({
     modules: [

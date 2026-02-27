@@ -1,7 +1,13 @@
 import type { MockInstance } from 'vitest';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, InfiniteRowModelModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    InfiniteRowModelModule,
+    PaginationModule,
+    QuickFilterModule,
+    RowSelectionModule,
+} from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelModule, ViewportRowModelModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, assertSelectedRowsByIndex, waitForEvent } from '../test-utils';
@@ -39,11 +45,14 @@ describe('Row Selection Legacy Grid Options', () => {
 
     const gridMgr = new TestGridsManager({
         modules: [
+            RowSelectionModule,
             ClientSideRowModelModule,
             ServerSideRowModelModule,
             ViewportRowModelModule,
             InfiniteRowModelModule,
             RowGroupingModule,
+            PaginationModule,
+            QuickFilterModule,
         ],
     });
 
