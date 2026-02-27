@@ -700,6 +700,9 @@ export const AG_GRID_LOCALE_DK = {
     ariaPageSizeSelectorLabel: 'Sidestørrelse',
     ariaChartMenuClose: 'Luk Diagram Redigeringsmenu',
     ariaChartSelected: 'Valgt',
+    ariaSparklineChartDescription:
+        'Sparkline - ${variable} viser ${variable} værdier mellem ${variable} og ${variable}. Starter ved ${variable} og slutter ved ${variable}.',
+    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${variable} uden værdier.',
     ariaSkeletonCellLoadingFailed: 'Række kunne ikke indlæses',
     ariaSkeletonCellLoading: 'Række data indlæses',
     ariaDeferSkeletonCellLoading: 'Celle indlæses',

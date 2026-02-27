@@ -700,6 +700,9 @@ export const AG_GRID_LOCALE_FI = {
     ariaPageSizeSelectorLabel: 'Sivun koko',
     ariaChartMenuClose: 'Sulje kaavion muokkausvalikko',
     ariaChartSelected: 'Valittu',
+    ariaSparklineChartDescription:
+        'Sparkline - ${variable}, joka näyttää ${variable} arvoa välillä ${variable} ja ${variable}. Alkaa arvosta ${variable} ja päättyy arvoon ${variable}.',
+    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${variable}, ei arvoja.',
     ariaSkeletonCellLoadingFailed: 'Rivin lataus epäonnistui',
     ariaSkeletonCellLoading: 'Rivin tietoja ladataan',
     ariaDeferSkeletonCellLoading: 'Solu latautuu',

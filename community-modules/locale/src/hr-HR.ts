@@ -699,6 +699,9 @@ export const AG_GRID_LOCALE_HR = {
     ariaPageSizeSelectorLabel: 'Veličina stranice',
     ariaChartMenuClose: 'Zatvori izbornik uređivanja grafikona',
     ariaChartSelected: 'Odabrano',
+    ariaSparklineChartDescription:
+        'Sparkline - ${variable} prikazuje ${variable} vrijednosti između ${variable} i ${variable}. Počinje na ${variable} i završava na ${variable}.',
+    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${variable} bez vrijednosti.',
     ariaSkeletonCellLoadingFailed: 'Redak nije uspješno učitan',
     ariaSkeletonCellLoading: 'Podaci retka se učitavaju',
     ariaDeferSkeletonCellLoading: 'Ćelija se učitava',

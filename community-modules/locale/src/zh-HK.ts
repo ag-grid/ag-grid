@@ -696,6 +696,9 @@ export const AG_GRID_LOCALE_HK = {
     ariaPageSizeSelectorLabel: '頁面大小',
     ariaChartMenuClose: '關閉圖表編輯菜單',
     ariaChartSelected: '已選擇',
+    ariaSparklineChartDescription:
+        '迷你圖 - ${variable} 顯示 ${variable} 個值，介乎 ${variable} 至 ${variable}。由 ${variable} 開始，至 ${variable} 結束。',
+    ariaSparklineChartDescriptionEmpty: '迷你圖 - ${variable}，沒有數值。',
     ariaSkeletonCellLoadingFailed: '行加載失敗',
     ariaSkeletonCellLoading: '行數據加載中',
     ariaDeferSkeletonCellLoading: '儲存格正在載入',

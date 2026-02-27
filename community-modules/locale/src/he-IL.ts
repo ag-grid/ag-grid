@@ -696,6 +696,9 @@ export const AG_GRID_LOCALE_IL = {
     ariaPageSizeSelectorLabel: 'גודל עמוד',
     ariaChartMenuClose: 'סגור תפריט עריכת תרשים',
     ariaChartSelected: 'נבחר',
+    ariaSparklineChartDescription:
+        'ספארקליין - ${variable} מציג ${variable} ערכים בין ${variable} ל-${variable}. מתחיל ב-${variable} ומסתיים ב-${variable}.',
+    ariaSparklineChartDescriptionEmpty: 'ספארקליין - ${variable} ללא ערכים.',
     ariaSkeletonCellLoadingFailed: 'הטעינת השורה נכשלה',
     ariaSkeletonCellLoading: 'נתוני השורה נטענים',
     ariaDeferSkeletonCellLoading: 'התא נטען',

@@ -696,6 +696,9 @@ export const AG_GRID_LOCALE_EG = {
     ariaPageSizeSelectorLabel: 'حجم الصفحة',
     ariaChartMenuClose: 'إغلاق قائمة تحرير الرسم البياني',
     ariaChartSelected: 'محدد',
+    ariaSparklineChartDescription:
+        'مخطط شراري - ${variable} يعرض ${variable} قيمة بين ${variable} و ${variable}. يبدأ عند ${variable} وينتهي عند ${variable}.',
+    ariaSparklineChartDescriptionEmpty: 'مخطط شراري - ${variable} بدون قيم.',
     ariaSkeletonCellLoadingFailed: 'فشل تحميل الصف',
     ariaSkeletonCellLoading: 'جاري تحميل بيانات الصف',
     ariaDeferSkeletonCellLoading: 'الخلية قيد التحميل',

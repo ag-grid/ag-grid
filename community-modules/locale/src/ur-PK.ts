@@ -697,6 +697,9 @@ export const AG_GRID_LOCALE_PK = {
     ariaPageSizeSelectorLabel: 'صفہ کا سائز',
     ariaChartMenuClose: 'چارٹ ایڈیٹ مینو بند کریں',
     ariaChartSelected: 'منتخب شدہ',
+    ariaSparklineChartDescription:
+        'اسپارک لائن - ${variable}، ${variable} اور ${variable} کے درمیان ${variable} اقدار دکھاتا ہے۔ ${variable} سے شروع ہوتا ہے اور ${variable} پر ختم ہوتا ہے۔',
+    ariaSparklineChartDescriptionEmpty: 'اسپارک لائن - ${variable} بغیر اقدار کے۔',
     ariaSkeletonCellLoadingFailed: 'صف لوڈ کرنے میں ناکام',
     ariaSkeletonCellLoading: 'صف کا ڈیٹا لوڈ ہو رہا ہے',
     ariaDeferSkeletonCellLoading: 'سیل لوڈ ہو رہا ہے',

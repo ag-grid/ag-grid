@@ -699,6 +699,9 @@ export const AG_GRID_LOCALE_NL = {
     ariaPageSizeSelectorLabel: 'Pagina Grootte',
     ariaChartMenuClose: 'Sluit Grafiek Bewerkmenu',
     ariaChartSelected: 'Geselecteerd',
+    ariaSparklineChartDescription:
+        'Sparkline - ${variable} met ${variable} waarden tussen ${variable} en ${variable}. Begint bij ${variable} en eindigt bij ${variable}.',
+    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${variable} zonder waarden.',
     ariaSkeletonCellLoadingFailed: 'Rij laden is mislukt',
     ariaSkeletonCellLoading: 'Rijgegevens worden geladen',
     ariaDeferSkeletonCellLoading: 'Cel wordt geladen',

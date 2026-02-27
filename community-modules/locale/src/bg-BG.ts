@@ -701,6 +701,9 @@ export const AG_GRID_LOCALE_BG = {
     ariaPageSizeSelectorLabel: 'Размер на страницата',
     ariaChartMenuClose: 'Затворете менюто за редактиране на диаграмата',
     ariaChartSelected: 'Избрано',
+    ariaSparklineChartDescription:
+        'Спарклайн - ${variable}, показва ${variable} стойности между ${variable} и ${variable}. Започва от ${variable} и завършва на ${variable}.',
+    ariaSparklineChartDescriptionEmpty: 'Спарклайн - ${variable}, без стойности.',
     ariaSkeletonCellLoadingFailed: 'Редът не можа да се зареди',
     ariaSkeletonCellLoading: 'Данните на реда се зареждат',
     ariaDeferSkeletonCellLoading: 'Зарежда се клетка',

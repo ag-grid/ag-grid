@@ -698,6 +698,9 @@ export const AG_GRID_LOCALE_NO = {
     ariaPageSizeSelectorLabel: 'Sidestørrelse',
     ariaChartMenuClose: 'Lukk diagramredigeringsmeny',
     ariaChartSelected: 'Valgt',
+    ariaSparklineChartDescription:
+        'Sparkline - ${variable} som viser ${variable} verdier mellom ${variable} og ${variable}. Starter på ${variable} og slutter på ${variable}.',
+    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${variable} uten verdier.',
     ariaSkeletonCellLoadingFailed: 'Raden kunne ikke lastes',
     ariaSkeletonCellLoading: 'Raddata lastes',
     ariaDeferSkeletonCellLoading: 'Cell laster',

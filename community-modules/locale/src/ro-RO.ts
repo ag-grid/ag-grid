@@ -701,6 +701,9 @@ export const AG_GRID_LOCALE_RO = {
     ariaPageSizeSelectorLabel: 'Dimensiunea Paginii',
     ariaChartMenuClose: 'Închide meniul de editare a graficului',
     ariaChartSelected: 'Selectat',
+    ariaSparklineChartDescription:
+        'Sparkline - ${variable} afișează ${variable} valori între ${variable} și ${variable}. Începe la ${variable} și se termină la ${variable}.',
+    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${variable} fără valori.',
     ariaSkeletonCellLoadingFailed: 'Încărcarea rândului a eșuat',
     ariaSkeletonCellLoading: 'Datele rândului se încarcă',
     ariaDeferSkeletonCellLoading: 'Celula se încarcă',

@@ -701,6 +701,9 @@ export const AG_GRID_LOCALE_PT = {
     ariaPageSizeSelectorLabel: 'Tamanho da Página',
     ariaChartMenuClose: 'Fechar Menu de Edição de Gráfico',
     ariaChartSelected: 'Selecionado',
+    ariaSparklineChartDescription:
+        'Sparkline - ${variable} a apresentar ${variable} valores entre ${variable} e ${variable}. Começa em ${variable} e termina em ${variable}.',
+    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${variable} sem valores.',
     ariaSkeletonCellLoadingFailed: 'Falha ao carregar a linha',
     ariaSkeletonCellLoading: 'Os dados da linha estão carregando',
     ariaDeferSkeletonCellLoading: 'Célula está carregando',

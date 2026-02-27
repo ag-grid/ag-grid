@@ -698,6 +698,9 @@ export const AG_GRID_LOCALE_SK = {
     ariaPageSizeSelectorLabel: 'Veľkosť Strany',
     ariaChartMenuClose: 'Zatvoriť Menu Úpravy Grafu',
     ariaChartSelected: 'Vybrané',
+    ariaSparklineChartDescription:
+        'Mini graf - ${variable} zobrazuje ${variable} hodnôt medzi ${variable} a ${variable}. Začína na ${variable} a končí na ${variable}.',
+    ariaSparklineChartDescriptionEmpty: 'Mini graf - ${variable} bez hodnôt.',
     ariaSkeletonCellLoadingFailed: 'Nahrávanie riadku zlyhalo',
     ariaSkeletonCellLoading: 'Údaje riadku sa nahrávajú',
     ariaDeferSkeletonCellLoading: 'Načítava sa bunka',

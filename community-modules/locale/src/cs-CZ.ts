@@ -697,6 +697,9 @@ export const AG_GRID_LOCALE_CZ = {
     ariaPageSizeSelectorLabel: 'Velikost stránky',
     ariaChartMenuClose: 'Zavřít nabídku úpravy grafu',
     ariaChartSelected: 'Vybráno',
+    ariaSparklineChartDescription:
+        'Mini graf - ${variable} zobrazuje ${variable} hodnot mezi ${variable} a ${variable}. Začíná na ${variable} a končí na ${variable}.',
+    ariaSparklineChartDescriptionEmpty: 'Mini graf - ${variable} bez hodnot.',
     ariaSkeletonCellLoadingFailed: 'Řádek se nepodařilo načíst',
     ariaSkeletonCellLoading: 'Data řádku se načítají',
     ariaDeferSkeletonCellLoading: 'Načítá se buňka',

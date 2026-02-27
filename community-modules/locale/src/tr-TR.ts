@@ -702,6 +702,9 @@ export const AG_GRID_LOCALE_TR = {
     ariaPageSizeSelectorLabel: 'Sayfa Boyutu',
     ariaChartMenuClose: 'Grafik Düzenleme Menüsünü Kapat',
     ariaChartSelected: 'Seçildi',
+    ariaSparklineChartDescription:
+        'Sparkline - ${variable}, ${variable} ile ${variable} arasında ${variable} değer gösterir. ${variable} ile başlar ve ${variable} ile biter.',
+    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${variable}, değer içermez.',
     ariaSkeletonCellLoadingFailed: 'Satır yüklenemedi',
     ariaSkeletonCellLoading: 'Satır verisi yükleniyor',
     ariaDeferSkeletonCellLoading: 'Hücre yükleniyor',

@@ -696,6 +696,9 @@ export const AG_GRID_LOCALE_CN = {
     ariaPageSizeSelectorLabel: '页面大小',
     ariaChartMenuClose: '关闭图表编辑菜单',
     ariaChartSelected: '已选择',
+    ariaSparklineChartDescription:
+        '迷你图 - ${variable} 显示 ${variable} 个值，范围在 ${variable} 到 ${variable} 之间。起始于 ${variable}，结束于 ${variable}。',
+    ariaSparklineChartDescriptionEmpty: '迷你图 - ${variable}，无值。',
     ariaSkeletonCellLoadingFailed: '行加载失败',
     ariaSkeletonCellLoading: '行数据加载中',
     ariaDeferSkeletonCellLoading: '单元格正在加载',

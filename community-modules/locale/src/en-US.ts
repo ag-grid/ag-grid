@@ -700,6 +700,9 @@ export const AG_GRID_LOCALE_EN = {
     ariaPageSizeSelectorLabel: 'Page Size',
     ariaChartMenuClose: 'Close Chart Edit Menu',
     ariaChartSelected: 'Selected',
+    ariaSparklineChartDescription:
+        'Sparkline - ${variable} displaying ${variable} values between ${variable} and ${variable}. Starts at ${variable} and ends at ${variable}.',
+    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${variable} displaying no values.',
     ariaSkeletonCellLoadingFailed: 'Row failed to load',
     ariaSkeletonCellLoading: 'Row data is loading',
     ariaDeferSkeletonCellLoading: 'Cell is loading',

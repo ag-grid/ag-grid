@@ -699,6 +699,9 @@ export const AG_GRID_LOCALE_UA = {
     ariaPageSizeSelectorLabel: 'Розмір сторінки',
     ariaChartMenuClose: 'Закрити меню редагування діаграми',
     ariaChartSelected: 'Вибрано',
+    ariaSparklineChartDescription:
+        'Спарклайн - ${variable}, відображає ${variable} значень між ${variable} і ${variable}. Починається з ${variable} і закінчується на ${variable}.',
+    ariaSparklineChartDescriptionEmpty: 'Спарклайн - ${variable}, без значень.',
     ariaSkeletonCellLoadingFailed: 'Помилка завантаження рядка',
     ariaSkeletonCellLoading: 'Дані рядка завантажуються',
     ariaDeferSkeletonCellLoading: 'Завантажується комірка',
