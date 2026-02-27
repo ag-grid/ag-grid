@@ -2534,24 +2534,9 @@ export function deepToRaw<T extends Record<string, any>>(sourceObj: T): T {
                return input;
           }
           seen.add(input);
-          // Check if any value needs unwrapping before allocating a new object
+          // Always create a shallow copy so the grid's reference equality check
+          // detects in-place mutations (AG-14654)
           const keys = Object.keys(input);
-          let needsCopy = false;
-          for (let i = 0; i < keys.length; i++) {
-               const val = input[keys[i]];
-               if (val !== null && typeof val === 'object') {
-                    if (isRef(val) || isReactive(val) || isProxy(val)) {
-                         needsCopy = true;
-                         break;
-                    }
-                    // Nested object/array — need to recurse
-                    needsCopy = true;
-                    break;
-               }
-          }
-          if (!needsCopy) {
-               return input;
-          }
           const result: Record<string, any> = {};
           for (let i = 0; i < keys.length; i++) {
                result[keys[i]] = objectIterator(input[keys[i]]);

@@ -1,8 +1,14 @@
 <template>
-    <ag-grid-vue style="width: 100%; height: 500px" :columnDefs="colDefs" :rowData="rowData" />
+    <ag-grid-vue
+        :columnDefs="colDefs"
+        :rowData="rowData"
+        class="ag-theme-quartz"
+        style="width: 100%; height: 500px"
+        theme="legacy"
+    />
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { onMounted, ref } from 'vue';
 
 import type { ColDef } from 'ag-grid-community';

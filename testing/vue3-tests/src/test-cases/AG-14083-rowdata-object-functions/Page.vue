@@ -1,8 +1,14 @@
 <template>
-    <ag-grid-vue style="width: 100%; height: 500px" :columnDefs="colDefs" :rowData="rowData" />
+    <ag-grid-vue
+        :columnDefs="colDefs"
+        :rowData="rowData"
+        style="width: 100%; height: 500px"
+        class="ag-theme-quartz"
+        theme="legacy"
+    />
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import Decimal from 'decimal.js';
 import { onMounted, ref } from 'vue';
 

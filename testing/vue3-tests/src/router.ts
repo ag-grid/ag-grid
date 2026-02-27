@@ -90,6 +90,11 @@ const routes = [
         name: 'AG-14783 Copy Paste',
         component: () => import('./test-cases/AG-14783-copy-paste/Page.vue'),
     },
+    {
+        path: '/ag-14654',
+        name: 'AG-14654 Change Detection',
+        component: () => import('./test-cases/AG-14654-change-detection/Page.vue'),
+    },
 ];
 
 export const router = createRouter({
