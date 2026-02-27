@@ -14,6 +14,7 @@ export class ExpandStrategy extends BeanStub implements IExpansionStrategy<RowGr
     private expanded: Set<string> = new Set();
     private collapsed: Set<string> = new Set();
     private readonly initialState: Map<string, boolean> = new Map();
+    private readonly nodeLevels: Map<string, number> = new Map();
 
     /**
      * Set the expanded and collapsed rows.
@@ -53,6 +54,7 @@ export class ExpandStrategy extends BeanStub implements IExpansionStrategy<RowGr
      */
     public setRowExpanded(row: IRowNode, expanded: boolean) {
         const id = row.id!;
+        this.nodeLevels.set(id, row.level);
         const stateIsDefault = this.initialState.get(id) === expanded;
         if (expanded) {
             this.collapsed.delete(id);
@@ -114,6 +116,11 @@ export class ExpandStrategy extends BeanStub implements IExpansionStrategy<RowGr
         };
 
         return userFunc(params);
+    }
+
+    /** Returns the group level recorded for the given row ID, or undefined if unknown. */
+    public getNodeLevel(rowId: string): number | undefined {
+        return this.nodeLevels.get(rowId);
     }
 
     /**

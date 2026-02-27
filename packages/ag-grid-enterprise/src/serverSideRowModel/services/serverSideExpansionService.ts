@@ -38,15 +38,43 @@ export class ServerSideExpansionService
     }
 
     public postConstruct(): void {
-        const setDefaultExpand = () => {
+        const resetExpand = () => {
             this.strategy = this.createManagedBean(new ExpandStrategy());
         };
 
+        const preserveAndResetExpand = () => {
+            const newStrategy = this.createManagedBean(new ExpandStrategy());
+            // Preserve expansion state from the previous default strategy across group column changes
+            if (this.strategy && !this.isExpandAllStrategy(this.strategy)) {
+                const oldStrategy = this.strategy as ExpandStrategy;
+                let { expandedRowGroupIds, collapsedRowGroupIds } = oldStrategy.getExpandedState();
+
+                // Filter out IDs at levels that no longer exist or that will become leaf groups
+                // in pivot mode (leaf groups in pivot have no rows to display)
+                const newGroupColCount = this.beans.rowGroupColsSvc?.columns.length ?? 0;
+                const maxValidLevel = this.beans.colModel.isPivotMode() ? newGroupColCount - 1 : newGroupColCount;
+                if (maxValidLevel >= 0) {
+                    const isValidLevel = (id: string) => {
+                        const level = oldStrategy.getNodeLevel(id);
+                        return level != null && level < maxValidLevel;
+                    };
+                    expandedRowGroupIds = expandedRowGroupIds.filter(isValidLevel);
+                    collapsedRowGroupIds = collapsedRowGroupIds?.filter(isValidLevel);
+                }
+
+                if (expandedRowGroupIds.length || collapsedRowGroupIds?.length) {
+                    newStrategy.setExpandedState({ expandedRowGroupIds, collapsedRowGroupIds });
+                }
+            }
+            this.strategy = newStrategy;
+        };
+
         this.addManagedEventListeners({
-            // when row grouping / pivot changes, the old expand all state is no longer valid as rows changed
-            columnRowGroupChanged: setDefaultExpand,
-            columnPivotChanged: setDefaultExpand,
-            columnPivotModeChanged: setDefaultExpand,
+            // preserve expansion state across row group column changes (IDs may still match)
+            columnRowGroupChanged: preserveAndResetExpand,
+            // pivot changes restructure rows entirely — reset without preserving
+            columnPivotChanged: resetExpand,
+            columnPivotModeChanged: resetExpand,
         });
 
         this.addManagedPropertyListener('ssrmExpandAllAffectsAllRows', (p) => {
@@ -59,7 +87,7 @@ export class ServerSideExpansionService
             }
         });
 
-        setDefaultExpand();
+        resetExpand();
     }
 
     public setExpansionState(state: RowGroupExpansionState | RowGroupBulkExpansionState): void {
