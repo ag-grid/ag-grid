@@ -1595,9 +1595,7 @@
     //  ****************************
     // */
     .ag-tool-panel-wrapper {
-        display: flex;
-        overflow-y: auto;
-        overflow-x: hidden;
+        overflow: hidden;
         cursor: default;
         @include ag.selectable(none);
     }

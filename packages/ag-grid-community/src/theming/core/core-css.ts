@@ -479,6 +479,13 @@ export interface CoreParams extends SharedThemeParams {
     sideBarPanelWidth: LengthValue;
 
     /**
+     * Duration of the animation when a sidebar panel opens or closes. Set to 0
+     * to disable animations. Automatically disabled if the user has requested
+     * reduced motion in their OS accessibility settings.
+     */
+    sideBarPanelAnimationDuration: DurationValue;
+
+    /**
      * Borders between the grid and side panels including the column and filter tool bars, and chart settings
      */
     sidePanelBorder: BorderValue;
@@ -627,6 +634,7 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     pinnedRowBorder: true,
     sidePanelBorder: true,
     sideBarPanelWidth: 250,
+    sideBarPanelAnimationDuration: 0,
     sideBarBackgroundColor: {
         ref: 'chromeBackgroundColor',
     },

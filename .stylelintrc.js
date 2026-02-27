@@ -46,6 +46,7 @@ module.exports = {
                     '.ag-layout-print',
                     '.ag-layout-normal',
                     '.ag-layout-auto-height',
+                    '.ag-tool-panel-animating',
                 ],
             },
         ],

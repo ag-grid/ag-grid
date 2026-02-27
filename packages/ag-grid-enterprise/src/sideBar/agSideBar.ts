@@ -387,9 +387,16 @@ class AgSideBar extends Component implements ISideBar, FocusableContainer {
             return;
         }
 
+        const switchingToolPanel = !!key && !!currentlyOpenedKey;
+        const skipAnimation = switchingToolPanel || source === 'sideBarInitializing';
+
         for (const wrapper of this.toolPanelWrappers) {
             const show = key === wrapper.getToolPanelId();
-            wrapper.setDisplayed(show);
+            if (skipAnimation) {
+                wrapper.setDisplayed(show);
+            } else {
+                wrapper.animateDisplayed(show);
+            }
         }
 
         const newlyOpenedKey = this.openedItem();
