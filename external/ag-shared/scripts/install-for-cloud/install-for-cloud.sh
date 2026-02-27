@@ -95,21 +95,6 @@ install_nx() {
     return 0
 }
 
-opt_enable_direnv() {
-    if ! command -v direnv &> /dev/null; then
-        log_info "direnv is not installed, skipping enablement"
-        return 0
-    fi
-
-    if direnv allow; then
-        log_info "direnv enabled successfully"
-        return 0
-    else
-        log_error "Failed to enable direnv"
-        return 2
-    fi
-}
-
 # Function to install yarn and initial dependencies
 install_yarn() {
     # Create .yarnrc to ignore engine checks
@@ -256,10 +241,6 @@ main() {
         if ! install_dependencies; then
             exit 2
         fi
-    fi
-
-    if ! opt_enable_direnv; then
-        exit 2
     fi
 
     # Verify nx is available after installation
