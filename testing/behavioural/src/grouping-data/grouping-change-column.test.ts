@@ -1,6 +1,6 @@
 import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { RowGroupingModule } from 'ag-grid-enterprise';
+import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager } from '../test-utils';
 
@@ -618,5 +618,150 @@ describe('ag-grid grouping simple data', () => {
             · └─┬ LEAF_GROUP hidden id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020
             · · └── LEAF hidden id:3 country:"France" year:2020
         `);
+    });
+
+    describe('pivot mode', () => {
+        const pivotGridsManager = new TestGridsManager({
+            modules: [ClientSideRowModelModule, RowGroupingModule, PivotModule],
+        });
+
+        beforeEach(() => {
+            pivotGridsManager.reset();
+        });
+
+        afterEach(() => {
+            pivotGridsManager.reset();
+        });
+
+        test('pivot mode without active pivot — add deeper group column preserves non-leaf expansion, leaf groups forced collapsed', async () => {
+            const rowData = [
+                { id: '1', country: 'Ireland', year: 2020, sport: 'Football' },
+                { id: '2', country: 'Ireland', year: 2021, sport: 'Rugby' },
+                { id: '3', country: 'France', year: 2020, sport: 'Football' },
+            ];
+
+            const api = pivotGridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'year', rowGroup: true, hide: true },
+                ],
+                pivotMode: true,
+                rowData,
+                getRowId: (params) => params.data.id,
+            });
+
+            // Country is non-leaf (filler), year is LEAF_GROUP → forced collapsed in pivot mode
+            await new GridRows(api, 'initial — all collapsed in pivot mode').check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ filler collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+                │ ├─┬ LEAF_GROUP collapsed hidden id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
+                │ │ └── LEAF hidden id:1 country:"Ireland" year:2020
+                │ └─┬ LEAF_GROUP collapsed hidden id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
+                │ · └── LEAF hidden id:2 country:"Ireland" year:2021
+                └─┬ filler collapsed id:row-group-country-France ag-Grid-AutoColumn:"France"
+                · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020
+                · · └── LEAF hidden id:3 country:"France" year:2020
+            `);
+
+            // Expand Ireland (non-leaf group)
+            api.setRowNodeExpanded(api.getRowNode('row-group-country-Ireland')!, true, false, true);
+
+            await new GridRows(api, 'Ireland expanded, year leaf groups forced collapsed').check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+                │ ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
+                │ │ └── LEAF hidden id:1 country:"Ireland" year:2020
+                │ └─┬ LEAF_GROUP collapsed id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
+                │ · └── LEAF hidden id:2 country:"Ireland" year:2021
+                └─┬ filler collapsed id:row-group-country-France ag-Grid-AutoColumn:"France"
+                · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020
+                · · └── LEAF hidden id:3 country:"France" year:2020
+            `);
+
+            // Add sport as 3rd group column
+            api.setGridOption('columnDefs', [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', rowGroup: true, hide: true },
+                { field: 'sport', rowGroup: true, hide: true },
+            ]);
+
+            // Ireland preserved expanded (non-leaf, snapshot match).
+            // Year now non-leaf → stays collapsed (snapshot match).
+            // Sport is new leaf group → forced collapsed in pivot mode.
+            await new GridRows(api, 'after adding sport — leaf groups forced collapsed').check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+                │ ├─┬ filler collapsed id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
+                │ │ └─┬ LEAF_GROUP collapsed hidden id:row-group-country-Ireland-year-2020-sport-Football ag-Grid-AutoColumn:"Football"
+                │ │ · └── LEAF hidden id:1 country:"Ireland" year:2020 sport:"Football"
+                │ └─┬ filler collapsed id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
+                │ · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-Ireland-year-2021-sport-Rugby ag-Grid-AutoColumn:"Rugby"
+                │ · · └── LEAF hidden id:2 country:"Ireland" year:2021 sport:"Rugby"
+                └─┬ filler collapsed id:row-group-country-France ag-Grid-AutoColumn:"France"
+                · └─┬ filler collapsed hidden id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020
+                · · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-France-year-2020-sport-Football ag-Grid-AutoColumn:"Football"
+                · · · └── LEAF hidden id:3 country:"France" year:2020 sport:"Football"
+            `);
+        });
+
+        test('pivot mode with active pivot — add deeper group column preserves non-leaf expansion, leaf groups forced collapsed', async () => {
+            const rowData = [
+                { id: '1', country: 'Ireland', year: 2020, sport: 'Football', medals: 2 },
+                { id: '2', country: 'Ireland', year: 2021, sport: 'Rugby', medals: 3 },
+                { id: '3', country: 'France', year: 2020, sport: 'Football', medals: 4 },
+            ];
+
+            const gridRowsOptions = {
+                forcedColumns: ['ag-Grid-AutoColumn', 'pivot_sport_Football_medals', 'pivot_sport_Rugby_medals'],
+            };
+
+            const api = pivotGridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'sport', pivot: true, hide: true },
+                    { field: 'medals', aggFunc: 'sum', hide: true },
+                    { field: 'year' },
+                ],
+                pivotMode: true,
+                rowData,
+                getRowId: (params) => params.data.id,
+            });
+
+            // Country is LEAF_GROUP → forced collapsed in pivot mode
+            // Secondary pivot columns created from sport values
+            await new GridRows(api, 'initial — leaf groups forced collapsed with pivot', gridRowsOptions).check(`
+                ROOT id:ROOT_NODE_ID pivot_sport_Football_medals:6 pivot_sport_Rugby_medals:3
+                ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" pivot_sport_Football_medals:2 pivot_sport_Rugby_medals:3
+                │ ├── LEAF hidden id:1 pivot_sport_Football_medals:2 pivot_sport_Rugby_medals:2
+                │ └── LEAF hidden id:2 pivot_sport_Football_medals:3 pivot_sport_Rugby_medals:3
+                └─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France" pivot_sport_Football_medals:4 pivot_sport_Rugby_medals:null
+                · └── LEAF hidden id:3 pivot_sport_Football_medals:4 pivot_sport_Rugby_medals:4
+            `);
+
+            // Expand Ireland (leaf group in pivot — user override)
+            api.setRowNodeExpanded(api.getRowNode('row-group-country-Ireland')!, true, false, true);
+
+            // Add year as 2nd group column — country becomes non-leaf
+            api.setGridOption('columnDefs', [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', rowGroup: true, hide: true },
+                { field: 'sport', pivot: true, hide: true },
+                { field: 'medals', aggFunc: 'sum', hide: true },
+            ]);
+
+            // Ireland preserved expanded (non-leaf now, snapshot match).
+            // Year groups are new leaf groups → forced collapsed in pivot mode.
+            await new GridRows(api, 'after adding year — non-leaf preserved, leaf collapsed', gridRowsOptions).check(`
+                ROOT id:ROOT_NODE_ID pivot_sport_Football_medals:6 pivot_sport_Rugby_medals:3
+                ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" pivot_sport_Football_medals:2 pivot_sport_Rugby_medals:3
+                │ ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020 pivot_sport_Football_medals:2 pivot_sport_Rugby_medals:null
+                │ │ └── LEAF hidden id:1 pivot_sport_Football_medals:2 pivot_sport_Rugby_medals:2
+                │ └─┬ LEAF_GROUP collapsed id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021 pivot_sport_Football_medals:null pivot_sport_Rugby_medals:3
+                │ · └── LEAF hidden id:2 pivot_sport_Football_medals:3 pivot_sport_Rugby_medals:3
+                └─┬ filler collapsed id:row-group-country-France ag-Grid-AutoColumn:"France" pivot_sport_Football_medals:4 pivot_sport_Rugby_medals:null
+                · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020 pivot_sport_Football_medals:4 pivot_sport_Rugby_medals:null
+                · · └── LEAF hidden id:3 pivot_sport_Football_medals:4 pivot_sport_Rugby_medals:4
+            `);
+        });
     });
 });
