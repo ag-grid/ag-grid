@@ -105,7 +105,7 @@ export class SetLeftFeature extends BeanStub {
             return leftPosition;
         }
 
-        const leftWidth = visibleCols.getColsLeftWidth();
+        const leftWidth = visibleCols.getLeftStickyColumnContainerWidth();
 
         if (colOrGroup.getPinned() === 'right') {
             const bodyWidth = visibleCols.bodyWidth;

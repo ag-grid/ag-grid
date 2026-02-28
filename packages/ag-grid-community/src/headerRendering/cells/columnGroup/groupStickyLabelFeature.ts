@@ -19,6 +19,7 @@ export class GroupStickyLabelFeature extends BeanStub {
         const { ctrlsSvc } = beans;
         ctrlsSvc.whenReady(this, () => {
             const refreshPosition = this.refreshPosition.bind(this);
+            const refreshStickyOffset = this.refreshStickyOffset.bind(this);
 
             if (columnGroup.getPinned() == null) {
                 this.addManagedEventListeners({
@@ -27,6 +28,7 @@ export class GroupStickyLabelFeature extends BeanStub {
                             this.updateSticky(event.left);
                         }
                     },
+                    leftPinnedWidthChanged: refreshStickyOffset,
                 });
             }
 
@@ -38,6 +40,8 @@ export class GroupStickyLabelFeature extends BeanStub {
                 columnResized: refreshPosition,
             });
 
+            this.addManagedPropertyListener('enableRtl', refreshStickyOffset);
+            this.refreshStickyOffset();
             this.refreshPosition();
         });
     }
@@ -85,5 +89,29 @@ export class GroupStickyLabelFeature extends BeanStub {
 
         this.isSticky = value;
         eLabel.classList.toggle('ag-sticky-label', value);
+    }
+
+    private refreshStickyOffset(): void {
+        if (this.columnGroup.getPinned() != null) {
+            this.eLabel.style.removeProperty('left');
+            this.eLabel.style.removeProperty('right');
+            return;
+        }
+
+        const {
+            beans: { gos, visibleCols },
+            eLabel,
+        } = this;
+        const pinnedOffset = visibleCols.getLeftStickyColumnContainerWidth();
+        const offset = `calc(var(--ag-cell-horizontal-padding) + ${pinnedOffset}px)`;
+
+        if (gos.get('enableRtl')) {
+            eLabel.style.removeProperty('left');
+            eLabel.style.setProperty('right', offset);
+            return;
+        }
+
+        eLabel.style.removeProperty('right');
+        eLabel.style.setProperty('left', offset);
     }
 }

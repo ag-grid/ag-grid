@@ -8,16 +8,26 @@
     }
 
     .ag-header-row {
+        border-bottom: none;
         color: var(--ag-header-foreground-color);
         height: var(--ag-header-height);
-    }
+        z-index: 3;
 
-    .ag-pinned-right-header {
-        border-left: var(--ag-borders-critical) var(--ag-border-color);
-    }
+        .ag-grid-pinned-left-cells,
+        .ag-grid-scrolling-cells,
+        .ag-grid-pinned-right-cells {
+            background-color: var(--ag-header-background-color);
+        }
 
-    .ag-pinned-left-header {
-        border-right: var(--ag-borders-critical) var(--ag-border-color);
+        .ag-grid-pinned-right-cells {
+            border-left: var(--ag-borders-critical) var(--ag-border-color);
+            overflow: visible;
+        }
+
+        .ag-grid-pinned-left-cells {
+            border-right: var(--ag-borders-critical) var(--ag-border-color);
+            overflow: visible;
+        }
     }
 
     .ag-header-cell:not(.ag-right-aligned-header) {
@@ -106,7 +116,7 @@
     }
 
     .ag-header-cell::before,
-    .ag-header-group-cell:not(.ag-header-span-height.ag-header-group-cell-no-group)::before {
+    .ag-header-group-cell::before {
         content: '';
         position: absolute;
         z-index: 1;
@@ -141,7 +151,7 @@
         right: 0px;
     }
 
-    .ag-pinned-left-header .ag-header-highlight-after::after {
+    .ag-grid-pinned-left-cells .ag-header-highlight-after::after {
         right: 1px;
     }
 
@@ -159,6 +169,11 @@
         height: var(--ag-header-column-resize-handle-height);
         top: calc(50% - var(--ag-header-column-resize-handle-height) * 0.5);
         background-color: var(--ag-header-column-resize-handle-color);
+        @include ag.unthemed-rtl(
+            (
+                left: calc(50% - var(--ag-header-column-resize-handle-width)),
+            )
+        );
 
         .ag-header-cell.ag-header-span-height & {
             height: calc(100% - calc(var(--ag-grid-size) * 4));
@@ -166,19 +181,11 @@
         }
     }
 
-    .ag-header-viewport .ag-header-cell-resize::after {
-        @include ag.unthemed-rtl(
-            (
-                left: calc(50% - var(--ag-header-column-resize-handle-width)),
-            )
-        );
-    }
-
-    .ag-pinned-left-header .ag-header-cell-resize::after {
+    .ag-grid-pinned-left-cells .ag-header-cell-resize::after {
         left: calc(50% - var(--ag-header-column-resize-handle-width));
     }
 
-    .ag-pinned-right-header .ag-header-cell-resize::after {
+    .ag-grid-pinned-right-cells .ag-header-cell-resize::after {
         left: 50%;
     }
 

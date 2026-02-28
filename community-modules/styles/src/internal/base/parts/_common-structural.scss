@@ -192,15 +192,10 @@
     //  * Viewports
     //  ****************************
     // */
-    .ag-header-viewport,
-    .ag-floating-top-viewport,
-    .ag-body-viewport,
-    .ag-center-cols-viewport,
     .ag-floating-bottom-viewport,
     .ag-body-horizontal-scroll-viewport,
     .ag-body-vertical-scroll-viewport,
     .ag-virtual-list-viewport,
-    .ag-sticky-top-viewport,
     .ag-sticky-bottom-viewport {
         position: relative;
         height: 100%;
@@ -209,14 +204,9 @@
         flex: 1 1 auto;
     }
 
-    .ag-body-viewport,
-    .ag-center-cols-viewport,
-    .ag-header-viewport,
-    .ag-floating-top-viewport,
     .ag-floating-bottom-viewport,
-    .ag-sticky-top-viewport,
     .ag-sticky-bottom-viewport {
-        overflow-x: auto;
+        overflow-x: hidden;
         &::-webkit-scrollbar {
             display: none !important;
         }
@@ -224,18 +214,31 @@
         scrollbar-width: none !important;
     }
 
-    .ag-body-viewport {
-        display: flex;
-        overflow-x: hidden;
+    .ag-viewport {
+        position: relative;
+    }
 
-        &.ag-layout-normal {
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
+    .ag-grid-viewport {
+        position: relative;
+        overflow: auto;
+        min-width: 0;
+        min-height: 0;
+        flex: 1 1 auto;
+        -webkit-overflow-scrolling: touch;
+        -ms-overflow-style: none !important;
+        scrollbar-width: none !important;
+
+        &::-webkit-scrollbar {
+            display: none !important;
         }
     }
 
-    .ag-viewport {
+    .ag-grid-scrollable-area {
         position: relative;
+        min-width: 100%;
+        min-height: 100%;
+        display: flex;
+        flex-direction: column;
     }
 
     .ag-spanning-container {
@@ -246,24 +249,8 @@
         z-index: 1;
     }
 
-    // the sticky and pinned containers need at least one 1px height
-    // so we can set the scrollLeft position when there are
-    // no rows within, otherwise scrollLeft will always be 0
-    // and then making a row sticky causes the grid to scroll.
-    .ag-sticky-top-container,
-    .ag-sticky-bottom-container,
-    .ag-floating-top-container,
-    .ag-floating-bottom-container {
-        min-height: 1px;
-    }
-
-    // /* sticky containers need to appear over spanned and edited rows */
-    .ag-sticky-top,
-    .ag-sticky-bottom {
-        z-index: 1;
-    }
-
-    .ag-center-cols-viewport {
+    .ag-grid-scrolling-container {
+        display: block;
         min-height: 100%;
         width: 100%;
     }
@@ -286,45 +273,24 @@
     //  * Containers
     //  ****************************
     // */
-    .ag-header-container,
-    .ag-floating-top-container,
-    .ag-body-container,
-    .ag-pinned-right-cols-container,
-    .ag-center-cols-container,
-    .ag-pinned-left-cols-container,
+    .ag-grid-scrolling-container,
     .ag-floating-bottom-container,
     .ag-body-horizontal-scroll-container,
     .ag-body-vertical-scroll-container,
     .ag-full-width-container,
     .ag-floating-bottom-full-width-container,
     .ag-virtual-list-container,
-    .ag-sticky-top-container,
-    .ag-sticky-bottom-container,
-    .ag-pinned-left-sticky-bottom,
-    .ag-pinned-right-sticky-bottom {
+    .ag-sticky-bottom-container {
         position: relative;
     }
 
     // for when auto height is used but there is no row data
-    .ag-header-container,
-    .ag-floating-top-container,
-    .ag-pinned-left-floating-top,
-    .ag-pinned-right-floating-top,
     .ag-floating-bottom-container,
-    .ag-pinned-left-floating-bottom,
-    .ag-pinned-right-floating-bottom,
-    .ag-sticky-top-container,
     .ag-sticky-bottom-container {
+        // these containers need at least one 1px height so scrollLeft can be set even when empty
+        min-height: 1px;
         height: 100%;
         white-space: nowrap;
-    }
-
-    .ag-center-cols-container {
-        display: block;
-    }
-
-    .ag-pinned-right-cols-container {
-        display: block;
     }
 
     .ag-body-horizontal-scroll-container {
@@ -336,9 +302,7 @@
     }
 
     .ag-full-width-container,
-    .ag-floating-top-full-width-container,
     .ag-floating-bottom-full-width-container,
-    .ag-sticky-top-full-width-container,
     .ag-sticky-bottom-full-width-container {
         position: absolute;
         top: 0px;
@@ -360,8 +324,7 @@
         width: 100%;
     }
 
-    .ag-floating-bottom-full-width-container,
-    .ag-floating-top-full-width-container {
+    .ag-floating-bottom-full-width-container {
         display: inline-block;
         overflow: hidden;
         height: 100%;
@@ -377,7 +340,7 @@
     //  * Scrollers
     //  ****************************
     // */
-    .ag-body {
+    .ag-grid-scrolling-rows {
         position: relative;
         display: flex;
         flex: 1 1 auto;
@@ -415,11 +378,15 @@
         }
     }
 
+    .ag-body-horizontal-scroll-end-spacer {
+        flex: 0 0 auto;
+        min-width: 0;
+        overflow: scroll;
+    }
+
     .ag-body-vertical-scroll {
-        height: 100%;
         &.ag-scrollbar-invisible {
             top: 0;
-            z-index: 10;
             @include ag.unthemed-rtl(
                 (
                     right: 0,
@@ -432,24 +399,12 @@
         overflow-y: scroll !important;
     }
 
-    .ag-horizontal-left-spacer,
-    .ag-horizontal-right-spacer {
-        height: 100%;
-        min-width: 0;
-        overflow-x: scroll;
-        &.ag-scroller-corner {
-            overflow-x: hidden;
-        }
-    }
-
     // /**
     //  ****************************
     //  * Headers
     //  ****************************
     // */
-    .ag-header,
-    .ag-pinned-left-header,
-    .ag-pinned-right-header {
+    .ag-header {
         display: inline-block;
         overflow: hidden;
         position: relative;
@@ -466,24 +421,17 @@
         white-space: nowrap;
     }
 
-    .ag-pinned-left-header {
-        height: 100%;
-    }
-
-    .ag-pinned-right-header {
-        height: 100%;
-    }
-
     .ag-header-row {
         position: absolute;
     }
 
     .ag-header-row:not(.ag-header-row-column-group) {
         // so when floating filters are height 0px, the contents don't spill out
-        overflow: hidden;
+        overflow: visible;
     }
 
-    .ag-header.ag-header-allow-overflow .ag-header-row {
+    .ag-header.ag-header-allow-overflow .ag-header-row,
+    .ag-grid-pinned-top-rows-container.ag-header-allow-overflow .ag-header-row {
         overflow: visible;
     }
 
@@ -581,11 +529,11 @@
         );
     }
 
-    .ag-pinned-left-header .ag-header-cell-resize {
+    .ag-grid-pinned-left-cells .ag-header-cell-resize {
         right: -3px; // pinned left headers always have their resize on the right, even in RTL mode
     }
 
-    .ag-pinned-right-header .ag-header-cell-resize {
+    .ag-grid-pinned-right-cells .ag-header-cell-resize {
         left: -3px; // pinned right headers always have their resize on the left, even in RTL mode
     }
 
@@ -826,6 +774,41 @@
     .ag-row-loading {
         display: flex;
         align-items: center;
+    }
+
+    .ag-row:not(.ag-full-width-row),
+    .ag-header-row {
+        display: flex;
+        width: 100%;
+    }
+
+    .ag-grid-pinned-left-cells,
+    .ag-grid-scrolling-cells,
+    .ag-grid-pinned-right-cells {
+        position: relative;
+        height: 100%;
+        white-space: nowrap;
+    }
+
+    .ag-grid-scrolling-cells {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .ag-grid-pinned-left-cells,
+    .ag-grid-pinned-right-cells {
+        position: sticky;
+        z-index: 2;
+        overflow: hidden;
+        flex: 0 0 auto;
+    }
+
+    .ag-grid-pinned-left-cells {
+        left: 0;
+    }
+
+    .ag-grid-pinned-right-cells {
+        right: 0;
     }
 
     .ag-row-position-absolute {
@@ -1120,62 +1103,79 @@
     //  * Floating Top and Bottom
     //  ****************************
     // */
-    .ag-floating-top,
-    .ag-floating-bottom {
-        overflow: hidden;
+    .ag-grid-pinned-top-rows,
+    .ag-grid-pinned-bottom-rows {
+        width: 100%;
+        position: sticky;
+        z-index: 2;
+        background-color: var(--ag-data-background-color);
+        border-bottom: var(--ag-borders-critical) var(--ag-border-color);
+    }
+
+    .ag-grid-pinned-top-rows {
+        top: 0;
         white-space: nowrap;
-        width: 100%;
-        position: relative;
-        display: flex;
     }
 
-    .ag-pinned-left-floating-top,
-    .ag-pinned-right-floating-top,
-    .ag-pinned-left-floating-bottom,
-    .ag-pinned-right-floating-bottom {
-        overflow: hidden;
-        position: relative;
-        min-width: 0px;
-    }
-
-    // /**
-    //  ****************************
-    //  * Sticky Top
-    //  ****************************
-    // */
-    .ag-sticky-top,
-    .ag-sticky-bottom {
-        position: absolute;
-        display: flex;
-        width: 100%;
-        overflow: hidden;
-        height: 0px;
-    }
-
-    .ag-sticky-bottom {
+    .ag-grid-pinned-bottom-rows {
+        bottom: 0;
+        border-bottom: none;
+        white-space: nowrap;
         box-sizing: content-box !important;
 
-        .ag-pinned-left-sticky-bottom,
-        .ag-sticky-bottom-container,
-        .ag-pinned-right-sticky-bottom {
+        .ag-grid-pinned-left-cells,
+        .ag-grid-scrolling-cells,
+        .ag-grid-pinned-right-cells {
+            border-top: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
             // reset box-sizing as some customers override global box-sizing to
-            // "inherit" and we only want .ag-sticky-bottom to be content-box
+            // "inherit" and we only want .ag-grid-pinned-bottom-rows to be content-box
             box-sizing: border-box;
         }
     }
 
-    .ag-pinned-left-sticky-top,
-    .ag-pinned-right-sticky-top {
-        position: relative;
-        height: 100%;
+    .ag-grid-pinned-bottom-rows-container {
         overflow: hidden;
+        white-space: nowrap;
+        width: 100%;
+        position: relative;
+        min-height: 100%;
+        height: 100%;
     }
 
-    .ag-sticky-top-full-width-container,
-    .ag-sticky-bottom-full-width-container {
-        overflow: hidden;
+    .ag-grid-pinned-top-rows-container {
+        position: relative;
+        width: 100%;
+        min-height: 100%;
+        height: 100%;
+        white-space: nowrap;
+    }
+
+    .ag-grid-pinned-top-rows-full-width-container {
+        position: absolute;
+        top: 0;
+        @include ag.unthemed-rtl(
+            (
+                left: 0,
+            )
+        );
         width: 100%;
         height: 100%;
+        pointer-events: none;
+        overflow: visible;
+    }
+
+    .ag-grid-pinned-bottom-rows-full-width-container {
+        position: absolute;
+        top: 0;
+        @include ag.unthemed-rtl(
+            (
+                left: 0,
+            )
+        );
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        overflow: visible;
     }
 
     // /**
@@ -1790,7 +1790,7 @@
         cursor: ns-resize;
     }
 
-    .ag-floating-bottom .ag-row-numbers-resizer {
+    .ag-grid-pinned-bottom-rows .ag-row-numbers-resizer {
         bottom: unset;
         top: -2px;
     }
@@ -2098,28 +2098,32 @@
 
     .ag-ltr {
         direction: ltr;
-        .ag-body,
-        .ag-floating-top,
-        .ag-floating-bottom,
+        .ag-grid-scrolling-rows,
+        .ag-grid-pinned-top-rows,
+        .ag-grid-pinned-bottom-rows,
         .ag-header,
-        .ag-sticky-top,
-        .ag-sticky-bottom,
-        .ag-body-viewport,
         .ag-body-horizontal-scroll {
+            flex-direction: row;
+        }
+
+        .ag-row:not(.ag-full-width-row),
+        .ag-header-row {
             flex-direction: row;
         }
     }
 
     .ag-rtl {
         direction: rtl;
-        .ag-body,
-        .ag-floating-top,
-        .ag-floating-bottom,
+        .ag-grid-scrolling-rows,
+        .ag-grid-pinned-top-rows,
+        .ag-grid-pinned-bottom-rows,
         .ag-header,
-        .ag-sticky-top,
-        .ag-sticky-bottom,
-        .ag-body-viewport,
         .ag-body-horizontal-scroll {
+            flex-direction: row-reverse;
+        }
+
+        .ag-row:not(.ag-full-width-row),
+        .ag-header-row {
             flex-direction: row-reverse;
         }
 
@@ -2129,10 +2133,6 @@
             display: block;
             transform: rotate(180deg);
         }
-    }
-
-    .ag-body .ag-body-viewport {
-        -webkit-overflow-scrolling: touch;
     }
 
     .ag-measurement-container {

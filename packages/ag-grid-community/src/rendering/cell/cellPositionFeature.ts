@@ -187,7 +187,7 @@ export class CellPositionFeature extends BeanStub {
         }
 
         const { visibleCols } = this.beans;
-        const leftWidth = visibleCols.getColsLeftWidth();
+        const leftWidth = visibleCols.getLeftStickyColumnContainerWidth();
 
         if (this.column.getPinned() === 'right') {
             const bodyWidth = visibleCols.bodyWidth;

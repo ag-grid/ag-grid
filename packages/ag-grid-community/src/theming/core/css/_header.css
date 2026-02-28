@@ -1,19 +1,50 @@
-.ag-header {
+.ag-header,
+.ag-grid-pinned-top-rows-container {
     display: flex;
     width: 100%;
     white-space: nowrap;
-    overflow: hidden;
-    background-color: var(--ag-header-background-color);
+}
+
+.ag-header,
+.ag-header-row {
     color: var(--ag-header-text-color);
-    border-bottom: var(--ag-header-row-border);
     font-size: var(--ag-header-font-size);
     font-family: var(--ag-header-font-family);
     font-weight: var(--ag-header-font-weight);
 }
 
+.ag-header {
+    overflow: hidden;
+    background-color: var(--ag-header-background-color);
+    border-bottom: var(--ag-header-row-border);
+}
+
+.ag-grid-pinned-top-rows-container {
+    overflow: visible;
+}
+
+:where(.ag-row.ag-header-row .ag-grid-pinned-left-cells),
+:where(.ag-row.ag-header-row .ag-grid-scrolling-cells),
+:where(.ag-row.ag-header-row .ag-grid-pinned-right-cells) {
+    background-color: var(--ag-header-background-color);
+}
+
+/* stylelint-disable selector-max-specificity */
+.ag-row.ag-header-row {
+    border-bottom: none;
+
+    .ag-grid-pinned-left-cells,
+    .ag-grid-pinned-right-cells {
+        overflow: visible;
+    }
+
+    /* stylelint-enable selector-max-specificity */
+}
+
 .ag-header-row {
     position: absolute;
     height: var(--ag-header-height);
+    z-index: 3;
 }
 
 .ag-header-cell-menu-button,
@@ -38,10 +69,11 @@
 }
 
 .ag-header-row:where(:not(.ag-header-row-column-group)) {
-    overflow: hidden;
+    overflow: visible;
 }
 
-:where(.ag-header.ag-header-allow-overflow) .ag-header-row {
+:where(.ag-header.ag-header-allow-overflow, .ag-grid-pinned-top-rows-container.ag-header-allow-overflow)
+    .ag-header-row {
     overflow: visible;
 }
 
@@ -231,7 +263,7 @@
 /* COLUMN SEPARATOR */
 
 .ag-header-cell::after,
-.ag-header-group-cell:where(:not(.ag-header-span-height.ag-header-group-cell-no-group))::after {
+.ag-header-group-cell::after {
     content: '';
     position: absolute;
     z-index: 1;
@@ -261,7 +293,7 @@
 .ag-header-highlight-after::after {
     right: 0;
 
-    :where(.ag-pinned-left-header) & {
+    :where(.ag-grid-pinned-left-cells) & {
         right: 1px;
     }
 }

@@ -1,9 +1,8 @@
-import { _isVisible, _setFixedWidth } from '../agStack/utils/dom';
+import { _isVisible, _requestAnimationFrame, _setFixedWidth } from '../agStack/utils/dom';
 import type { CtrlsService } from '../ctrlsService';
 import type { ElementParams } from '../utils/element';
 import type { ComponentSelector } from '../widgets/component';
 import { AbstractFakeScrollComp } from './abstractFakeScrollComp';
-import { SetHeightFeature } from './rowContainer/setHeightFeature';
 
 const FakeVScrollElement: ElementParams = {
     tag: 'div',
@@ -19,6 +18,8 @@ const FakeVScrollElement: ElementParams = {
     ],
 };
 export class FakeVScrollComp extends AbstractFakeScrollComp {
+    private enableRtl: boolean;
+
     constructor() {
         super(FakeVScrollElement, 'vertical');
     }
@@ -26,33 +27,63 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
     public override postConstruct(): void {
         super.postConstruct();
 
-        this.createManagedBean(new SetHeightFeature(this.eContainer));
+        this.enableRtl = this.gos.get('enableRtl');
         const { ctrlsSvc } = this.beans;
         ctrlsSvc.register('fakeVScrollComp', this);
 
         this.addManagedEventListeners({
             rowContainerHeightChanged: this.onRowContainerHeightChanged.bind(this, ctrlsSvc),
+            headerHeightChanged: this.onScrollVisibilityChanged.bind(this),
+            pinnedRowsChanged: this.queueContainerHeightSync.bind(this),
+            pinnedHeightChanged: this.queueContainerHeightSync.bind(this),
+            pinnedRowDataChanged: this.queueContainerHeightSync.bind(this),
+            stickyBottomOffsetChanged: this.queueContainerHeightSync.bind(this),
         });
+        this.addManagedPropertyListeners(
+            ['suppressHorizontalScroll', 'enableRtl'],
+            this.onScrollVisibilityChanged.bind(this)
+        );
     }
 
     protected setScrollVisible(): void {
         const { scrollVisibleSvc } = this.beans;
+        this.enableRtl = this.gos.get('enableRtl');
         const vScrollShowing = scrollVisibleSvc.verticalScrollShowing;
         const invisibleScrollbar = this.invisibleScrollbar;
+        const gridBodyCtrl = this.beans.ctrlsSvc.getGridBodyCtrl();
 
-        const scrollbarWidth = vScrollShowing ? scrollVisibleSvc.getScrollbarWidth() || 0 : 0;
+        const fallbackScrollbarWidth = scrollVisibleSvc.getScrollbarWidth() || 0;
+        const scrollbarWidth = vScrollShowing ? gridBodyCtrl?.getVerticalScrollbarWidth() ?? fallbackScrollbarWidth : 0;
         const adjustedScrollbarWidth = scrollbarWidth === 0 && invisibleScrollbar ? 16 : scrollbarWidth;
+        const horizontalScrollHeight = gridBodyCtrl?.getHorizontalScrollbarHeight() ?? 0;
+        const headerRowsOffset = gridBodyCtrl?.getHeaderRowsOffset() ?? 0;
+
+        const eGui = this.getGui();
+        eGui.style.position = 'absolute';
+        eGui.style.top = `${headerRowsOffset}px`;
+        eGui.style.bottom = `${horizontalScrollHeight}px`;
+        eGui.style.zIndex = '3';
+        if (this.enableRtl) {
+            eGui.style.left = '0';
+            eGui.style.right = '';
+        } else {
+            eGui.style.right = '0';
+            eGui.style.left = '';
+        }
 
         this.toggleCss('ag-scrollbar-invisible', invisibleScrollbar);
-        _setFixedWidth(this.getGui(), adjustedScrollbarWidth);
+        _setFixedWidth(eGui, adjustedScrollbarWidth);
         _setFixedWidth(this.eViewport, adjustedScrollbarWidth);
         _setFixedWidth(this.eContainer, adjustedScrollbarWidth);
         this.setDisplayed(vScrollShowing, { skipAriaHidden: true });
+        this.queueContainerHeightSync();
     }
 
     private onRowContainerHeightChanged(ctrlsSvc: CtrlsService): void {
         const gridBodyCtrl = ctrlsSvc.getGridBodyCtrl();
-        const gridBodyViewportEl = gridBodyCtrl.eBodyViewport;
+        const gridBodyViewportEl = gridBodyCtrl.eGridViewport;
+
+        this.syncContainerHeight();
 
         const eViewportScrollTop = this.getScrollPosition();
         const gridBodyViewportScrollTop = gridBodyViewportEl.scrollTop;
@@ -60,6 +91,20 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         if (eViewportScrollTop != gridBodyViewportScrollTop) {
             this.setScrollPosition(gridBodyViewportScrollTop, true);
         }
+    }
+
+    private queueContainerHeightSync(): void {
+        _requestAnimationFrame(this.beans, () => this.syncContainerHeight());
+    }
+
+    private syncContainerHeight(): void {
+        const gridBodyCtrl = this.beans.ctrlsSvc.getGridBodyCtrl();
+        if (!gridBodyCtrl) {
+            return;
+        }
+
+        const scrollHeight = gridBodyCtrl.eGridViewport.scrollHeight + gridBodyCtrl.getHorizontalScrollbarHeight();
+        this.eContainer.style.height = `${Math.max(1, scrollHeight)}px`;
     }
 
     public getScrollPosition(): number {

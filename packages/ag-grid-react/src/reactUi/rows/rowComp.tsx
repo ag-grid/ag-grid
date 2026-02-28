@@ -18,7 +18,7 @@ import { showJsComp } from '../jsComp';
 import { agFlushSync, agUseSyncExternalStore, getNextValueIfDifferent, isComponentStateless } from '../utils';
 
 const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: RowContainerType }) => {
-    const { context, gos, editSvc } = useContext(BeansContext);
+    const { context, gos, editSvc, visibleCols } = useContext(BeansContext);
 
     const enableUses = useContext(RenderModeContext) === 'default';
 
@@ -35,6 +35,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
     );
     const [rowId, setRowId] = useState<string | null>(() => rowCtrl.rowId);
     const [rowBusinessKey, setRowBusinessKey] = useState<string | null>(() => rowCtrl.businessKey);
+    const [pinnedWidthsVersion, setPinnedWidthsVersion] = useState(0);
 
     const [userStyles, setUserStyles] = useState<RowStyle | undefined>(() => rowCtrl.rowStyles);
     const cellCtrlsRef = useRef<CellCtrl[] | null>(null);
@@ -51,6 +52,8 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
     );
 
     const eGui = useRef<HTMLDivElement | null>(null);
+    const ePinnedLeftCells = useRef<HTMLDivElement | null>(null);
+    const ePinnedRightCells = useRef<HTMLDivElement | null>(null);
     const fullWidthCompRef = useRef<ICellRenderer>();
     const fullWidthParamsRef = useRef<ICellRendererParams>();
 
@@ -146,6 +149,9 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
                     }
                 }
             },
+            getPinnedLeftRowElement: () => ePinnedLeftCells.current ?? undefined,
+            getPinnedRightRowElement: () => ePinnedRightCells.current ?? undefined,
+            refreshPinnedCellGroupWidths: () => setPinnedWidthsVersion((v) => v + 1),
             showFullWidth: (compDetails) => {
                 fullWidthParamsRef.current = compDetails.params;
                 setFullWidthCompDetails(compDetails);
@@ -187,6 +193,34 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
     const showFullWidthFramework = isFullWidth && fullWidthCompDetails?.componentFromFramework;
     const showCells = !isFullWidth && cellCtrlsMerged != null;
 
+    const { leftCellCtrls, centerCellCtrls, rightCellCtrls, leftWidth, rightWidth } = useMemo(() => {
+        const left: CellCtrl[] = [];
+        const center: CellCtrl[] = [];
+        const right: CellCtrl[] = [];
+
+        for (const cellCtrl of cellCtrlsMerged ?? []) {
+            const pinned = cellCtrl.column.getPinned();
+            if (pinned === 'left') {
+                left.push(cellCtrl);
+            } else if (pinned === 'right') {
+                right.push(cellCtrl);
+            } else {
+                center.push(cellCtrl);
+            }
+        }
+
+        const leftWidth = rowCtrl.printLayout ? 0 : visibleCols.getLeftStickyColumnContainerWidth();
+        const rightWidth = rowCtrl.printLayout ? 0 : visibleCols.getRightStickyColumnContainerWidth();
+
+        return {
+            leftCellCtrls: left,
+            centerCellCtrls: center,
+            rightCellCtrls: right,
+            leftWidth,
+            rightWidth,
+        };
+    }, [cellCtrlsMerged, pinnedWidthsVersion, rowCtrl.printLayout, visibleCols]);
+
     const reactFullWidthCellRendererStateless = useMemo(() => {
         const res =
             fullWidthCompDetails?.componentFromFramework && isComponentStateless(fullWidthCompDetails.componentClass);
@@ -200,8 +234,8 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
             reactFullWidthCellRendererStateless && !!fullWidthCompDetails && !!gos.get('reactiveCustomComponents');
     }, [reactFullWidthCellRendererStateless, fullWidthCompDetails]);
 
-    const showCellsJsx = () =>
-        cellCtrlsMerged?.map((cellCtrl) => (
+    const showCellsJsx = (cellCtrls: CellCtrl[]) =>
+        cellCtrls.map((cellCtrl) => (
             <CellComp
                 cellCtrl={cellCtrl}
                 editingCell={editSvc?.isEditing(cellCtrl, { withOpenEditor: true }) ?? false}
@@ -228,7 +262,31 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
             row-id={rowId}
             row-business-key={rowBusinessKey}
         >
-            {showCells ? showCellsJsx() : showFullWidthFramework ? showFullWidthFrameworkJsx() : null}
+            {showCells ? (
+                <>
+                    <div
+                        className="ag-grid-pinned-left-cells"
+                        role="presentation"
+                        ref={ePinnedLeftCells}
+                        style={{ width: leftWidth || undefined, display: leftWidth > 0 ? undefined : 'none' }}
+                    >
+                        {showCellsJsx(leftCellCtrls)}
+                    </div>
+                    <div className="ag-grid-scrolling-cells" role="presentation">
+                        {showCellsJsx(centerCellCtrls)}
+                    </div>
+                    <div
+                        className="ag-grid-pinned-right-cells"
+                        role="presentation"
+                        ref={ePinnedRightCells}
+                        style={{ width: rightWidth || undefined, display: rightWidth > 0 ? undefined : 'none' }}
+                    >
+                        {showCellsJsx(rightCellCtrls)}
+                    </div>
+                </>
+            ) : showFullWidthFramework ? (
+                showFullWidthFrameworkJsx()
+            ) : null}
         </div>
     );
 };

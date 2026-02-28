@@ -125,8 +125,8 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         return proposedColumnOrder;
     }
 
-    public createBodyDropTarget(pinned: ColumnPinnedType, dropContainer: HTMLElement): BodyDropTarget {
-        return new BodyDropTarget(pinned, dropContainer);
+    public createBodyDropTarget(dropContainer: HTMLElement): BodyDropTarget {
+        return new BodyDropTarget(dropContainer);
     }
 
     public moveHeader(
@@ -149,6 +149,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
             fromKeyboard: true,
             gos,
             ctrlsSvc,
+            visibleCols,
         });
         const headerPosition = focusSvc.focusedHeader;
 

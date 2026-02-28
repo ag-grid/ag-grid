@@ -8,7 +8,7 @@ export type RowElementReference = string | Element | { readonly id: string | nul
 export type CheckboxState = boolean | 'mixed';
 
 const ROW_SELECTOR = '[row-id]';
-const CENTER_CONTAINER_SELECTOR = '.ag-center-cols-container';
+const CENTER_CONTAINER_SELECTORS = ['.ag-grid-scrolling-container', '.ag-center-cols-container'];
 const ROW_SELECTION_CHECKBOX_QUERIES = [
     '.ag-selection-checkbox input[type="checkbox"]',
     '.ag-selection-checkbox [aria-checked]',
@@ -46,7 +46,7 @@ export function getRowHtmlElements<TData = any>(api: GridApi<TData>, reference: 
             continue;
         }
 
-        if (rowElement.closest(CENTER_CONTAINER_SELECTOR)) {
+        if (CENTER_CONTAINER_SELECTORS.some((selector) => rowElement.closest(selector))) {
             mainRowElements.push(rowElement);
         } else {
             secondaryRowElements.push(rowElement);

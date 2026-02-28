@@ -8,47 +8,32 @@ import type { RowContainerCtrl } from './gridBodyComp/rowContainer/rowContainerC
 import type { GridCtrl } from './gridComp/gridCtrl';
 import type { GridHeaderCtrl } from './headerRendering/gridHeaderCtrl';
 import type { HeaderRowContainerCtrl } from './headerRendering/rowContainer/headerRowContainerCtrl';
-import type { ColumnPinnedType } from './interfaces/iColumn';
 
 /** If adding or removing a control, update `NUM_CTRLS` below. */
 interface ReadyParams {
     gridCtrl: GridCtrl;
     gridBodyCtrl: GridBodyCtrl;
 
-    center: RowContainerCtrl;
-    left: RowContainerCtrl;
-    right: RowContainerCtrl;
-
-    bottomCenter: RowContainerCtrl;
-    bottomLeft: RowContainerCtrl;
-    bottomRight: RowContainerCtrl;
-
-    topCenter: RowContainerCtrl;
-    topLeft: RowContainerCtrl;
-    topRight: RowContainerCtrl;
+    scrollingCenter: RowContainerCtrl;
+    pinnedBottomCenter: RowContainerCtrl;
+    pinnedTopCenter: RowContainerCtrl;
 
     stickyTopCenter: RowContainerCtrl;
-    stickyTopLeft: RowContainerCtrl;
-    stickyTopRight: RowContainerCtrl;
 
     stickyBottomCenter: RowContainerCtrl;
-    stickyBottomLeft: RowContainerCtrl;
-    stickyBottomRight: RowContainerCtrl;
 
     fakeHScrollComp: FakeHScrollComp;
     fakeVScrollComp: FakeVScrollComp;
     gridHeaderCtrl: GridHeaderCtrl;
 
     centerHeader: HeaderRowContainerCtrl;
-    leftHeader: HeaderRowContainerCtrl;
-    rightHeader: HeaderRowContainerCtrl;
 }
 
 /**
  * This is the number of controls defined above in `ReadyParams`.
  * This allows us to quickly know when all controls have been registered.
  */
-const NUM_CTRLS = 23;
+const NUM_CTRLS = 11;
 
 type CtrlType = keyof ReadyParams;
 
@@ -132,20 +117,12 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
     }
 
     public getHeaderRowContainerCtrls(): HeaderRowContainerCtrl[] {
-        const { leftHeader, centerHeader, rightHeader } = this.params;
-        return [leftHeader, rightHeader, centerHeader];
+        const { centerHeader } = this.params;
+        return centerHeader ? [centerHeader] : [];
     }
 
-    public getHeaderRowContainerCtrl(pinned?: ColumnPinnedType): HeaderRowContainerCtrl | undefined {
-        const params = this.params;
-        switch (pinned) {
-            case 'left':
-                return params.leftHeader;
-            case 'right':
-                return params.rightHeader;
-            default:
-                return params.centerHeader;
-        }
+    public getHeaderRowContainerCtrl(): HeaderRowContainerCtrl | undefined {
+        return this.params.centerHeader;
     }
 
     public getScrollFeature(): GridBodyScrollFeature {

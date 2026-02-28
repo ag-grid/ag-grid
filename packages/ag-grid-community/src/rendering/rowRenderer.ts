@@ -227,7 +227,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
      * @returns true if cellCtrl is present, or if the row is present but has not rendered rows yet
      */
     private isCellBeingRendered(rowIndex: number, column?: AgColumn): boolean {
-        const rowCtrl = this.rowCtrlsByRowIndex[rowIndex];
+        const rowCtrl = this.getRowByPosition({ rowIndex, rowPinned: null });
 
         // if no column, simply check for row ctrl, if no rowCtrl then return false
         if (!column || !rowCtrl) {
@@ -494,17 +494,17 @@ export class RowRenderer extends BeanStub implements NamedBean {
         return res;
     }
 
-    private refreshFloatingRowComps(recycleRows = true): void {
-        this.refreshFloatingRows(this.topRowCtrls, 'top', recycleRows);
+    private refreshPinnedRowComps(recycleRows = true): void {
+        this.refreshPinnedRows(this.topRowCtrls, 'top', recycleRows);
 
-        this.refreshFloatingRows(this.bottomRowCtrls, 'bottom', recycleRows);
+        this.refreshPinnedRows(this.bottomRowCtrls, 'bottom', recycleRows);
     }
 
     /**
      * Determines which row controllers need to be destroyed and re-created vs which ones can
      * be re-used.
      *
-     * This is operation is to pinned/floating rows as `this.recycleRows` is to normal/body rows.
+     * This operation is to pinned rows as `this.recycleRows` is to normal/body rows.
      *
      * All `RowCtrl` instances in `rowCtrls` that don't correspond to `RowNode` instances in `rowNodes` are destroyed.
      * All `RowNode` instances in `rowNodes` that don't correspond to `RowCtrl` instances in `rowCtrls` are created.
@@ -513,14 +513,14 @@ export class RowRenderer extends BeanStub implements NamedBean {
      * @param rowCtrls The list of existing row controllers
      * @param rowNodes The canonical list of row nodes that should have associated controllers
      */
-    private refreshFloatingRows(rowCtrls: RowCtrl[], floating: NonNullable<RowPinnedType>, recycleRows: boolean): void {
+    private refreshPinnedRows(rowCtrls: RowCtrl[], pinned: NonNullable<RowPinnedType>, recycleRows: boolean): void {
         const { pinnedRowModel, beans, printLayout } = this;
         const rowCtrlMap = Object.fromEntries(rowCtrls.map((ctrl) => [ctrl.rowNode.id!, ctrl]));
 
-        pinnedRowModel?.forEachPinnedRow(floating, (node, i) => {
+        pinnedRowModel?.forEachPinnedRow(pinned, (node, i) => {
             const rowCtrl = rowCtrls[i];
             const rowCtrlDoesNotExist =
-                rowCtrl && pinnedRowModel.getPinnedRowById(rowCtrl.rowNode.id!, floating) === undefined;
+                rowCtrl && pinnedRowModel.getPinnedRowById(rowCtrl.rowNode.id!, pinned) === undefined;
 
             if (rowCtrlDoesNotExist) {
                 // ctrl not in new nodes list, destroy
@@ -539,7 +539,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         });
 
         const rowNodeCount =
-            (floating === 'top' ? pinnedRowModel?.getPinnedTopRowCount() : pinnedRowModel?.getPinnedBottomRowCount()) ??
+            (pinned === 'top' ? pinnedRowModel?.getPinnedTopRowCount() : pinnedRowModel?.getPinnedBottomRowCount()) ??
             0;
 
         // Truncate array if rowCtrls is longer than rowNodes
@@ -670,7 +670,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.gridBodyCtrl.updateRowCount();
 
         if (!params.onlyBody) {
-            this.refreshFloatingRowComps(gos.get('enableRowPinning') ? recycleRows : undefined);
+            this.refreshPinnedRowComps(gos.get('enableRowPinning') ? recycleRows : undefined);
         }
 
         this.dispatchDisplayedRowsChanged();
@@ -856,7 +856,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         rowIndex: number,
         callback: IEventListener<RenderedRowEvent>
     ): void {
-        const rowComp = this.rowCtrlsByRowIndex[rowIndex];
+        const rowComp = this.getRowByPosition({ rowIndex, rowPinned: null });
         if (rowComp) {
             rowComp.addEventListener(eventName, callback);
         }
@@ -1213,7 +1213,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             rowsToRemove.push(rowIndex!.toString());
         }
 
-        this.refreshFloatingRowComps();
+        this.refreshPinnedRowComps();
         this.removeRowCtrls(rowsToRemove);
         this.redraw({ afterScroll: true });
     }
@@ -1706,9 +1706,9 @@ export function isRowInMap(
 ): boolean {
     // skip this row if it is missing from the provided list
     const id = rowNode.id!;
-    const floating = rowNode.rowPinned;
+    const pinned = rowNode.rowPinned;
 
-    switch (floating) {
+    switch (pinned) {
         case 'top':
             return rowIdsMap.top[id] != null;
         case 'bottom':

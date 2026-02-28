@@ -15,7 +15,7 @@ export class ViewportSizeFeature extends BeanStub {
         this.scrollVisibleSvc = beans.scrollVisibleSvc;
     }
 
-    private gridBodyCtrl: GridBodyCtrl;
+    private gridBodyCtrl: GridBodyCtrl | undefined;
 
     private centerWidth: number;
     private bodyHeight: number;
@@ -29,7 +29,10 @@ export class ViewportSizeFeature extends BeanStub {
             this.gridBodyCtrl = p.gridBodyCtrl;
             this.listenForResize();
         });
-        this.addManagedEventListeners({ scrollbarWidthChanged: this.onScrollbarWidthChanged.bind(this) });
+        this.addManagedEventListeners({
+            scrollbarWidthChanged: this.onScrollbarWidthChanged.bind(this),
+            scrollVisibilityChanged: this.onCenterViewportResized.bind(this),
+        });
         this.addManagedPropertyListeners(['alwaysShowHorizontalScroll', 'alwaysShowVerticalScroll'], () => {
             this.checkViewportAndScrolls();
         });
@@ -37,6 +40,9 @@ export class ViewportSizeFeature extends BeanStub {
 
     private listenForResize(): void {
         const { beans, centerContainerCtrl, gridBodyCtrl } = this;
+        if (!gridBodyCtrl) {
+            return;
+        }
 
         const listener = () => {
             // onCenterViewportResize causes resize events to be fired (flex-columns).
@@ -53,7 +59,7 @@ export class ViewportSizeFeature extends BeanStub {
         // centerContainer gets horizontal resizes
         centerContainerCtrl.registerViewportResizeListener(listener);
 
-        // eBodyViewport gets vertical resizes
+        // eGridViewport gets vertical resizes
         gridBodyCtrl.registerBodyViewportResizeListener(listener);
     }
 
@@ -62,6 +68,10 @@ export class ViewportSizeFeature extends BeanStub {
     }
 
     private onCenterViewportResized(): void {
+        if (!this.gridBodyCtrl) {
+            return;
+        }
+
         this.scrollVisibleSvc.updateScrollGap();
         if (this.centerContainerCtrl.isViewportInTheDOMTree()) {
             const { pinnedCols, colFlex } = this.beans;
@@ -86,6 +96,11 @@ export class ViewportSizeFeature extends BeanStub {
     // gets called every time the viewport size changes. we use this to check visibility of scrollbars
     // in the grid panel, and also to check size and position of viewport for row and column virtualisation.
     private checkViewportAndScrolls(): void {
+        const gridBodyCtrl = this.gridBodyCtrl;
+        if (!gridBodyCtrl) {
+            return;
+        }
+
         // results in updating anything that depends on scroll showing
         this.updateScrollVisibleService();
 
@@ -95,7 +110,7 @@ export class ViewportSizeFeature extends BeanStub {
         // check for virtual columns for ColumnController
         this.onHorizontalViewportChanged();
 
-        this.gridBodyCtrl.scrollFeature.checkScrollLeft();
+        gridBodyCtrl.scrollFeature.checkScrollLeft();
     }
 
     public getBodyHeight(): number {
@@ -103,8 +118,13 @@ export class ViewportSizeFeature extends BeanStub {
     }
 
     private checkBodyHeight(): void {
-        const eBodyViewport = this.gridBodyCtrl.eBodyViewport;
-        const bodyHeight = _getInnerHeight(eBodyViewport);
+        const gridBodyCtrl = this.gridBodyCtrl;
+        if (!gridBodyCtrl) {
+            return;
+        }
+
+        const eGridViewport = gridBodyCtrl.eGridViewport;
+        const bodyHeight = gridBodyCtrl.getBodyViewportHeight(_getInnerHeight(eGridViewport));
 
         if (this.bodyHeight !== bodyHeight) {
             this.bodyHeight = bodyHeight;
@@ -126,13 +146,14 @@ export class ViewportSizeFeature extends BeanStub {
     }
 
     private updateScrollVisibleServiceImpl(): void {
-        if (!this.isAlive()) {
+        const gridBodyCtrl = this.gridBodyCtrl;
+        if (!this.isAlive() || !gridBodyCtrl) {
             return;
         }
 
         const params: SetScrollsVisibleParams = {
             horizontalScrollShowing: this.centerContainerCtrl.isHorizontalScrollShowing(),
-            verticalScrollShowing: this.gridBodyCtrl.isVerticalScrollShowing(),
+            verticalScrollShowing: gridBodyCtrl.isVerticalScrollShowing(),
         };
 
         this.scrollVisibleSvc.setScrollsVisible(params);

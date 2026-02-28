@@ -728,10 +728,12 @@ export class StateService extends BeanStub implements NamedBean {
         const { top, left } = scrollState ?? { top: 0, left: 0 };
         const { frameworkOverrides, rowRenderer, animationFrameSvc, ctrlsSvc } = this.beans;
         frameworkOverrides.wrapIncoming(() => {
-            ctrlsSvc.get('center').setCenterViewportScrollLeft(left);
-            ctrlsSvc.getScrollFeature()?.setVerticalScrollPosition(top);
-            rowRenderer.redraw({ afterScroll: true });
-            animationFrameSvc?.flushAllFrames();
+            ctrlsSvc.whenReady(this, () => {
+                ctrlsSvc.get('scrollingCenter')?.setCenterViewportScrollLeft(left);
+                ctrlsSvc.getScrollFeature()?.setVerticalScrollPosition(top);
+                rowRenderer.redraw({ afterScroll: true });
+                animationFrameSvc?.flushAllFrames();
+            });
         });
     }
 

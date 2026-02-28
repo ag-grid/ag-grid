@@ -1,5 +1,6 @@
 import { _setAriaRowIndex } from '../../agStack/utils/aria';
 import { _setDomChildOrder } from '../../agStack/utils/dom';
+import { _createElement } from '../../utils/element';
 import { Component } from '../../widgets/component';
 import type { AbstractHeaderCellComp } from '../cells/abstractCell/abstractHeaderCellComp';
 import type { AbstractHeaderCellCtrl, HeaderCellCtrlInstanceId } from '../cells/abstractCell/abstractHeaderCellCtrl';
@@ -15,9 +16,29 @@ export type HeaderRowType = 'group' | 'column' | 'filter';
 
 export class HeaderRowComp extends Component {
     private headerComps: { [key: HeaderCellCtrlInstanceId]: AbstractHeaderCellComp<AbstractHeaderCellCtrl> } = {};
+    private readonly ePinnedLeftCells: HTMLElement;
+    private readonly eScrollingCells: HTMLElement;
+    private readonly ePinnedRightCells: HTMLElement;
 
     constructor(private readonly ctrl: HeaderRowCtrl) {
         super({ tag: 'div', cls: ctrl.headerRowClass, role: 'row' });
+
+        this.ePinnedLeftCells = _createElement({
+            tag: 'div',
+            cls: 'ag-grid-pinned-left-cells',
+            role: 'presentation',
+        });
+        this.eScrollingCells = _createElement({
+            tag: 'div',
+            cls: 'ag-grid-scrolling-cells',
+            role: 'presentation',
+        });
+        this.ePinnedRightCells = _createElement({
+            tag: 'div',
+            cls: 'ag-grid-pinned-right-cells',
+            role: 'presentation',
+        });
+        this.getGui().append(this.ePinnedLeftCells, this.eScrollingCells, this.ePinnedRightCells);
     }
 
     public postConstruct(): void {
@@ -29,6 +50,7 @@ export class HeaderRowComp extends Component {
             setHeight: (height) => (this.getGui().style.height = height),
             setTop: (top) => (this.getGui().style.top = top),
             setHeaderCtrls: (ctrls, forceOrder) => this.setHeaderCtrls(ctrls, forceOrder),
+            refreshPinnedCellGroupWidths: () => this.refreshPinnedCellGroupWidths(),
             setWidth: (width) => (this.getGui().style.width = width),
             setRowIndex: (rowIndex) => _setAriaRowIndex(this.getGui(), rowIndex),
         };
@@ -56,9 +78,12 @@ export class HeaderRowComp extends Component {
 
             if (comp == null) {
                 comp = this.createHeaderComp(ctrl);
-                this.getGui().appendChild(comp.getGui());
             }
 
+            const parent = this.getHeaderCellGroup(ctrl);
+            if (comp.getGui().parentElement !== parent) {
+                parent.appendChild(comp.getGui());
+            }
             this.headerComps[id] = comp;
         }
 
@@ -67,22 +92,97 @@ export class HeaderRowComp extends Component {
             this.destroyBean(comp);
         });
 
+        this.updatePinnedCellGroupWidths();
+
         if (forceOrder) {
-            const comps = Object.values(this.headerComps);
-            // ordering the columns by left position orders them in the order they appear on the screen
-            comps.sort(
-                (
-                    a: AbstractHeaderCellComp<AbstractHeaderCellCtrl>,
-                    b: AbstractHeaderCellComp<AbstractHeaderCellCtrl>
-                ) => {
-                    const leftA = a.getCtrl().column.getLeft()!;
-                    const leftB = b.getCtrl().column.getLeft()!;
-                    return leftA - leftB;
+            const sortByLeft = (
+                a: AbstractHeaderCellComp<AbstractHeaderCellCtrl>,
+                b: AbstractHeaderCellComp<AbstractHeaderCellCtrl>
+            ) => a.getCtrl().column.getLeft()! - b.getCtrl().column.getLeft()!;
+
+            if (this.gos.get('domLayout') === 'print') {
+                const comps = Object.values(this.headerComps).sort(sortByLeft);
+                _setDomChildOrder(
+                    this.eScrollingCells,
+                    comps.map((c) => c.getGui())
+                );
+                return;
+            }
+
+            const leftComps: AbstractHeaderCellComp<AbstractHeaderCellCtrl>[] = [];
+            const centerComps: AbstractHeaderCellComp<AbstractHeaderCellCtrl>[] = [];
+            const rightComps: AbstractHeaderCellComp<AbstractHeaderCellCtrl>[] = [];
+            for (const comp of Object.values(this.headerComps)) {
+                const pinned = comp.getCtrl().column.getPinned();
+                if (pinned === 'left') {
+                    leftComps.push(comp);
+                } else if (pinned === 'right') {
+                    rightComps.push(comp);
+                } else {
+                    centerComps.push(comp);
                 }
+            }
+
+            leftComps.sort(sortByLeft);
+            centerComps.sort(sortByLeft);
+            rightComps.sort(sortByLeft);
+
+            _setDomChildOrder(
+                this.ePinnedLeftCells,
+                leftComps.map((c) => c.getGui())
             );
-            const elementsInOrder = comps.map((c) => c.getGui());
-            _setDomChildOrder(this.getGui(), elementsInOrder);
+            _setDomChildOrder(
+                this.eScrollingCells,
+                centerComps.map((c) => c.getGui())
+            );
+            _setDomChildOrder(
+                this.ePinnedRightCells,
+                rightComps.map((c) => c.getGui())
+            );
         }
+    }
+
+    private getHeaderCellGroup(ctrl: AbstractHeaderCellCtrl): HTMLElement {
+        if (this.gos.get('domLayout') === 'print') {
+            return this.eScrollingCells;
+        }
+
+        const pinned = ctrl.column.getPinned();
+        if (pinned === 'left') {
+            return this.ePinnedLeftCells;
+        }
+        if (pinned === 'right') {
+            return this.ePinnedRightCells;
+        }
+        return this.eScrollingCells;
+    }
+
+    private updatePinnedCellGroupWidths(): void {
+        const {
+            gos,
+            ePinnedLeftCells,
+            ePinnedRightCells,
+            beans: { visibleCols },
+        } = this;
+        if (gos.get('domLayout') === 'print') {
+            ePinnedLeftCells.style.width = '0px';
+            ePinnedRightCells.style.width = '0px';
+            ePinnedLeftCells.style.display = 'none';
+            ePinnedRightCells.style.display = 'none';
+            return;
+        }
+
+        const leftWidth = visibleCols.getLeftStickyColumnContainerWidth();
+        const rightWidth = visibleCols.getRightStickyColumnContainerWidth();
+
+        ePinnedLeftCells.style.width = `${leftWidth}px`;
+        ePinnedRightCells.style.width = `${rightWidth}px`;
+        ePinnedLeftCells.style.display = leftWidth > 0 ? '' : 'none';
+        ePinnedRightCells.style.display = rightWidth > 0 ? '' : 'none';
+    }
+
+    private refreshPinnedCellGroupWidths(): void {
+        this.updatePinnedCellGroupWidths();
     }
 
     private createHeaderComp(headerCtrl: AbstractHeaderCellCtrl): AbstractHeaderCellComp<AbstractHeaderCellCtrl> {

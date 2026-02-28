@@ -397,9 +397,10 @@ export function normaliseX(params: {
     skipScrollPadding?: boolean;
     gos: GridOptionsService;
     ctrlsSvc: CtrlsService;
+    visibleCols?: VisibleColsService;
 }): number {
-    const { pinned, fromKeyboard, gos, ctrlsSvc, useHeaderRow, skipScrollPadding } = params;
-    let eViewport = ctrlsSvc.getHeaderRowContainerCtrl(pinned)?.eViewport;
+    const { pinned, fromKeyboard, gos, ctrlsSvc, visibleCols, useHeaderRow, skipScrollPadding } = params;
+    let eViewport = ctrlsSvc.getHeaderRowContainerCtrl()?.eViewport;
 
     let { x } = params;
 
@@ -409,10 +410,14 @@ export function normaliseX(params: {
 
     if (fromKeyboard) {
         x -= eViewport.getBoundingClientRect().left;
+        if (visibleCols) {
+            x -= getPinnedSectionOffset(pinned, visibleCols, eViewport.clientWidth);
+        }
     }
 
+    const isRtl = gos.get('enableRtl');
     // flip the coordinate if doing RTL
-    if (gos.get('enableRtl')) {
+    if (isRtl) {
         if (useHeaderRow) {
             eViewport = eViewport.querySelector('.ag-header-row') as HTMLElement;
         }
@@ -421,10 +426,26 @@ export function normaliseX(params: {
 
     // adjust for scroll only if centre container (the pinned containers don't scroll)
     if (pinned == null && !skipScrollPadding) {
-        x += ctrlsSvc.get('center').getCenterViewportScrollLeft();
+        x += ctrlsSvc.get('scrollingCenter').getCenterViewportScrollLeft();
     }
 
     return x;
+}
+
+function getPinnedSectionOffset(
+    pinned: ColumnPinnedType | undefined,
+    visibleCols: VisibleColsService,
+    viewportWidth: number
+): number {
+    if (pinned === 'left') {
+        return 0;
+    }
+
+    if (pinned === 'right') {
+        return Math.max(0, viewportWidth - visibleCols.getRightStickyColumnContainerWidth());
+    }
+
+    return visibleCols.getLeftStickyColumnContainerWidth();
 }
 
 export function setColumnsMoving(columns: AgColumn[], isMoving: boolean): void {

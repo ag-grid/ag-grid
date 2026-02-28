@@ -2,7 +2,6 @@ import { _getInnerWidth, _getScrollLeft, _isInDOM, _observeResize, _setScrollLef
 import { BeanStub } from '../../context/beanStub';
 import type { StickyTopOffsetChangedEvent } from '../../events';
 import { _isDomLayout } from '../../gridOptionsUtils';
-import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import type { RowRenderer } from '../../rendering/rowRenderer';
 import type { SpannedRowRenderer } from '../../rendering/spanning/spannedRowRenderer';
@@ -12,39 +11,26 @@ import { _shouldShowHorizontalScroll } from '../scrollbarVisibilityHelper';
 import { ViewportSizeFeature } from '../viewportSizeFeature';
 import { RowContainerEventsFeature } from './rowContainerEventsFeature';
 import { SetHeightFeature } from './setHeightFeature';
-import type { SetPinnedWidthFeature } from './setPinnedWidthFeature';
 
 export type RowContainerName =
-    | 'left'
-    | 'right'
-    | 'center'
-    | 'fullWidth'
-    | 'topLeft'
-    | 'topRight'
-    | 'topCenter'
-    | 'topFullWidth'
-    | 'stickyTopLeft'
-    | 'stickyTopRight'
+    | 'scrollingCenter'
+    | 'scrollingFullWidth'
+    | 'pinnedTopCenter'
+    | 'pinnedTopFullWidth'
     | 'stickyTopCenter'
     | 'stickyTopFullWidth'
-    | 'stickyBottomLeft'
-    | 'stickyBottomRight'
     | 'stickyBottomCenter'
     | 'stickyBottomFullWidth'
-    | 'bottomLeft'
-    | 'bottomRight'
-    | 'bottomCenter'
-    | 'bottomFullWidth';
+    | 'pinnedBottomCenter'
+    | 'pinnedBottomFullWidth';
 
-export type RowContainerType = 'left' | 'right' | 'center' | 'fullWidth';
+export type RowContainerType = 'center' | 'fullWidth';
 
 type GetRowCtrls = (renderer: RowRenderer) => RowCtrl[];
 type GetSpannedRowCtrls = (renderer: SpannedRowRenderer) => RowCtrl[];
 export type RowContainerOptions = {
     type: RowContainerType;
     name: string;
-    container?: `ag-${string}`;
-    pinnedType?: ColumnPinnedType;
     fullWidth?: boolean;
     getRowCtrls: GetRowCtrls;
     getSpannedRowCtrls?: GetSpannedRowCtrls;
@@ -61,139 +47,65 @@ const getSpannedCenterRowCtrls: GetSpannedRowCtrls = (r) => r.getCtrls('center')
 const getSpannedBottomRowCtrls: GetSpannedRowCtrls = (r) => r.getCtrls('bottom');
 
 const ContainerCssClasses: Record<RowContainerName, RowContainerOptions> = {
-    center: {
+    scrollingCenter: {
         type: 'center',
-        name: 'center-cols',
+        name: 'grid-scrolling',
         getRowCtrls: getCentreRowCtrls,
         getSpannedRowCtrls: getSpannedCenterRowCtrls,
     },
-    left: {
-        type: 'left',
-        name: 'pinned-left-cols',
-        pinnedType: 'left',
-        getRowCtrls: getCentreRowCtrls,
-        getSpannedRowCtrls: getSpannedCenterRowCtrls,
-    },
-    right: {
-        type: 'right',
-        name: 'pinned-right-cols',
-        pinnedType: 'right',
-        getRowCtrls: getCentreRowCtrls,
-        getSpannedRowCtrls: getSpannedCenterRowCtrls,
-    },
-    fullWidth: {
+    scrollingFullWidth: {
         type: 'fullWidth',
         name: 'full-width',
         fullWidth: true,
         getRowCtrls: getCentreRowCtrls,
     },
 
-    topCenter: {
+    pinnedTopCenter: {
         type: 'center',
-        name: 'floating-top',
+        name: 'grid-pinned-top-rows',
         getRowCtrls: getTopRowCtrls,
         getSpannedRowCtrls: getSpannedTopRowCtrls,
     },
-    topLeft: {
-        type: 'left',
-        name: 'pinned-left-floating',
-        container: 'ag-pinned-left-floating-top',
-        pinnedType: 'left',
-        getRowCtrls: getTopRowCtrls,
-        getSpannedRowCtrls: getSpannedTopRowCtrls,
-    },
-    topRight: {
-        type: 'right',
-        name: 'pinned-right-floating',
-        container: 'ag-pinned-right-floating-top',
-        pinnedType: 'right',
-        getRowCtrls: getTopRowCtrls,
-        getSpannedRowCtrls: getSpannedTopRowCtrls,
-    },
-    topFullWidth: {
+    pinnedTopFullWidth: {
         type: 'fullWidth',
-        name: 'floating-top-full-width',
+        name: 'grid-pinned-top-rows-full-width',
         fullWidth: true,
         getRowCtrls: getTopRowCtrls,
     },
 
     stickyTopCenter: {
         type: 'center',
-        name: 'sticky-top',
-        getRowCtrls: getStickyTopRowCtrls,
-    },
-    stickyTopLeft: {
-        type: 'left',
-        name: 'pinned-left-sticky-top',
-        container: 'ag-pinned-left-sticky-top',
-        pinnedType: 'left',
-        getRowCtrls: getStickyTopRowCtrls,
-    },
-    stickyTopRight: {
-        type: 'right',
-        name: 'pinned-right-sticky-top',
-        container: 'ag-pinned-right-sticky-top',
-        pinnedType: 'right',
+        name: 'grid-sticky-top-rows',
         getRowCtrls: getStickyTopRowCtrls,
     },
     stickyTopFullWidth: {
         type: 'fullWidth',
-        name: 'sticky-top-full-width',
+        name: 'grid-sticky-top-rows-full-width',
         fullWidth: true,
         getRowCtrls: getStickyTopRowCtrls,
     },
 
     stickyBottomCenter: {
         type: 'center',
-        name: 'sticky-bottom',
-        getRowCtrls: getStickyBottomRowCtrls,
-    },
-    stickyBottomLeft: {
-        type: 'left',
-        name: 'pinned-left-sticky-bottom',
-        container: 'ag-pinned-left-sticky-bottom',
-        pinnedType: 'left',
-        getRowCtrls: getStickyBottomRowCtrls,
-    },
-    stickyBottomRight: {
-        type: 'right',
-        name: 'pinned-right-sticky-bottom',
-        container: 'ag-pinned-right-sticky-bottom',
-        pinnedType: 'right',
+        name: 'grid-sticky-bottom-rows',
         getRowCtrls: getStickyBottomRowCtrls,
     },
     stickyBottomFullWidth: {
         type: 'fullWidth',
-        name: 'sticky-bottom-full-width',
+        name: 'grid-sticky-bottom-rows-full-width',
         fullWidth: true,
         getRowCtrls: getStickyBottomRowCtrls,
     },
 
-    bottomCenter: {
+    pinnedBottomCenter: {
         type: 'center',
-        name: 'floating-bottom',
+        name: 'grid-pinned-bottom-rows',
         getRowCtrls: getBottomRowCtrls,
         getSpannedRowCtrls: getSpannedBottomRowCtrls,
     },
-    bottomLeft: {
-        type: 'left',
-        name: 'pinned-left-floating-bottom',
-        container: 'ag-pinned-left-floating-bottom',
-        pinnedType: 'left',
-        getRowCtrls: getBottomRowCtrls,
-        getSpannedRowCtrls: getSpannedBottomRowCtrls,
-    },
-    bottomRight: {
-        type: 'right',
-        name: 'pinned-right-floating-bottom',
-        container: 'ag-pinned-right-floating-bottom',
-        pinnedType: 'right',
-        getRowCtrls: getBottomRowCtrls,
-        getSpannedRowCtrls: getSpannedBottomRowCtrls,
-    },
-    bottomFullWidth: {
+    pinnedBottomFullWidth: {
         type: 'fullWidth',
-        name: 'floating-bottom-full-width',
+        name: 'grid-pinned-bottom-rows-full-width',
         fullWidth: true,
         getRowCtrls: getBottomRowCtrls,
     },
@@ -204,7 +116,7 @@ export function _getRowViewportClass(name: RowContainerName): `ag-${string}-view
 }
 export function _getRowContainerClass(name: RowContainerName): `ag-${string}` {
     const options = _getRowContainerOptions(name);
-    return options.container ?? `ag-${options.name}-container`;
+    return `ag-${options.name}-container`;
 }
 export function _getRowSpanContainerClass(name: RowContainerName): `ag-${string}-spanned-cells-container` {
     const options = _getRowContainerOptions(name);
@@ -214,30 +126,21 @@ export function _getRowContainerOptions(name: RowContainerName): RowContainerOpt
     return ContainerCssClasses[name];
 }
 
-const allTopNoFW: RowContainerName[] = ['topCenter', 'topLeft', 'topRight'];
-const allBottomNoFW: RowContainerName[] = ['bottomCenter', 'bottomLeft', 'bottomRight'];
-const allMiddleNoFW: RowContainerName[] = ['center', 'left', 'right'];
-
-const allMiddle: RowContainerName[] = ['center', 'left', 'right', 'fullWidth'];
-const allCenter: RowContainerName[] = ['stickyTopCenter', 'stickyBottomCenter', 'center', 'topCenter', 'bottomCenter'];
-const allLeft: RowContainerName[] = ['left', 'bottomLeft', 'topLeft', 'stickyTopLeft', 'stickyBottomLeft'];
-const allRight: RowContainerName[] = ['right', 'bottomRight', 'topRight', 'stickyTopRight', 'stickyBottomRight'];
+const allMiddle: RowContainerName[] = ['scrollingCenter', 'scrollingFullWidth'];
+const allCenter: RowContainerName[] = [
+    'stickyTopCenter',
+    'stickyBottomCenter',
+    'scrollingCenter',
+    'pinnedTopCenter',
+    'pinnedBottomCenter',
+];
 
 // sticky section must show rows in set order
-const allStickyTopNoFW: RowContainerName[] = ['stickyTopCenter', 'stickyTopLeft', 'stickyTopRight'];
-const allStickyBottomNoFW: RowContainerName[] = ['stickyBottomCenter', 'stickyBottomLeft', 'stickyBottomRight'];
 const allStickyContainers: RowContainerName[] = [
-    ...allStickyTopNoFW,
+    'stickyTopCenter',
     'stickyTopFullWidth',
-    ...allStickyBottomNoFW,
+    'stickyBottomCenter',
     'stickyBottomFullWidth',
-];
-const allNoFW: RowContainerName[] = [
-    ...allTopNoFW,
-    ...allBottomNoFW,
-    ...allMiddleNoFW,
-    ...allStickyTopNoFW,
-    ...allStickyBottomNoFW,
 ];
 
 export interface IRowContainerComp {
@@ -260,8 +163,6 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     private enableRtl: boolean;
 
     public viewportSizeFeature: ViewportSizeFeature | undefined; // only center has this
-    private pinnedWidthFeature: SetPinnedWidthFeature | undefined;
-    private visible: boolean = true;
     // Maintaining a constant reference enables optimization in React.
     private readonly EMPTY_CTRLS = [];
 
@@ -273,7 +174,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     public postConstruct(): void {
         this.enableRtl = this.gos.get('enableRtl');
 
-        this.forContainers(['center'], () => {
+        this.forContainers(['scrollingCenter'], () => {
             this.viewportSizeFeature = this.createManagedBean(new ViewportSizeFeature(this));
             this.addManagedEventListeners({
                 stickyTopOffsetChanged: this.onStickyTopOffsetChanged.bind(this),
@@ -310,42 +211,33 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
         this.eSpannedContainer = eSpannedContainer;
         this.eViewport = eViewport;
 
-        this.createManagedBean(new RowContainerEventsFeature(this.eViewport ?? this.eContainer));
-        this.addPreventScrollWhileDragging();
+        this.forContainers(['scrollingCenter'], () =>
+            this.createManagedBean(new RowContainerEventsFeature(this.eViewport ?? this.eContainer))
+        );
+        this.forContainers(['scrollingCenter'], () => this.addPreventScrollWhileDragging());
         this.listenOnDomOrder();
 
-        const { pinnedCols, rangeSvc } = this.beans;
-
-        const pinnedWidthChanged = () => this.onPinnedWidthChanged();
-        this.forContainers(allLeft, () => {
-            this.pinnedWidthFeature = this.createOptionalManagedBean(
-                pinnedCols?.createPinnedWidthFeature(true, this.eContainer, this.eSpannedContainer)
-            );
-            this.addManagedEventListeners({ leftPinnedWidthChanged: pinnedWidthChanged });
-        });
-        this.forContainers(allRight, () => {
-            this.pinnedWidthFeature = this.createOptionalManagedBean(
-                pinnedCols?.createPinnedWidthFeature(false, this.eContainer, this.eSpannedContainer)
-            );
-            this.addManagedEventListeners({ rightPinnedWidthChanged: pinnedWidthChanged });
-        });
-        this.forContainers(allMiddle, () =>
-            this.createManagedBean(
-                new SetHeightFeature(this.eContainer, this.name === 'center' ? eViewport : undefined)
-            )
-        );
+        const { rangeSvc } = this.beans;
+        this.forContainers(allMiddle, () => this.createManagedBean(new SetHeightFeature(this.eContainer)));
         if (rangeSvc) {
-            this.forContainers(allNoFW, () =>
-                this.createManagedBean(rangeSvc.createDragListenerFeature(this.eContainer))
+            this.forContainers(['scrollingCenter'], () =>
+                this.createManagedBean(rangeSvc.createDragListenerFeature(this.eViewport ?? this.eContainer))
             );
         }
 
         this.forContainers(allCenter, () =>
-            this.createManagedBean(new CenterWidthFeature((width) => this.comp.setContainerWidth(`${width}px`)))
+            this.createManagedBean(
+                new CenterWidthFeature(() => {
+                    const { visibleCols } = this.beans;
+                    const width =
+                        visibleCols.bodyWidth +
+                        visibleCols.getLeftStickyColumnContainerWidth() +
+                        visibleCols.getRightStickyColumnContainerWidth();
+                    this.comp.setContainerWidth(`${width}px`);
+                })
+            )
         );
 
-        // Set the initial visibility of the container to avoid extra rendering
-        this.visible = this.isContainerVisible();
         this.addListeners();
         this.registerWithCtrlsService();
     }
@@ -398,7 +290,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     }
 
     public onDisplayedColumnsChanged(): void {
-        this.forContainers(['center'], () => this.onHorizontalViewportChanged());
+        this.forContainers(['scrollingCenter'], () => this.onHorizontalViewportChanged());
     }
 
     // this methods prevents the grid views from being scrolled while the dragService is being used
@@ -416,8 +308,9 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
             }
         };
 
-        this.eContainer.addEventListener('touchmove', preventScroll, { passive: false });
-        this.addDestroyFunc(() => this.eContainer.removeEventListener('touchmove', preventScroll));
+        const ePreventScroll = this.eViewport ?? this.eContainer;
+        ePreventScroll.addEventListener('touchmove', preventScroll, { passive: false });
+        this.addDestroyFunc(() => ePreventScroll.removeEventListener('touchmove', preventScroll));
     }
 
     // this gets called whenever a change in the viewport, so we can inform column controller it has to work
@@ -439,7 +332,15 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     }
 
     public getCenterWidth(): number {
-        return _getInnerWidth(this.eViewport);
+        const viewportWidth = _getInnerWidth(this.eViewport);
+        if (this.name !== 'scrollingCenter') {
+            return viewportWidth;
+        }
+
+        const { visibleCols } = this.beans;
+        const pinnedWidth =
+            visibleCols.getLeftStickyColumnContainerWidth() + visibleCols.getRightStickyColumnContainerWidth();
+        return Math.max(0, viewportWidth - pinnedWidth - this.getVisibleVerticalScrollbarWidth());
     }
 
     public getCenterViewportScrollLeft(): number {
@@ -464,13 +365,14 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
         const { beans, gos, eViewport } = this;
         const isAlwaysShowHorizontalScroll = gos.get('alwaysShowHorizontalScroll');
         const { ctrlsSvc } = beans;
-        const verticalScrollElement = ctrlsSvc.getGridBodyCtrl()?.eBodyViewport;
+        const verticalScrollElement = ctrlsSvc.getGridBodyCtrl()?.eGridViewport;
+        const oppositeAxisElement = verticalScrollElement === eViewport ? undefined : verticalScrollElement;
         const hScrollEl = ctrlsSvc.get('fakeHScrollComp')?.getGui();
         const vScrollEl = ctrlsSvc.get('fakeVScrollComp')?.getGui();
 
         return (
             isAlwaysShowHorizontalScroll ||
-            _shouldShowHorizontalScroll(eViewport, verticalScrollElement, undefined, hScrollEl, vScrollEl)
+            _shouldShowHorizontalScroll(eViewport, oppositeAxisElement, undefined, hScrollEl, vScrollEl)
         );
     }
 
@@ -479,9 +381,10 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     }
 
     public getHScrollPosition(): { left: number; right: number } {
+        const left = this.eViewport.scrollLeft;
         const res = {
-            left: this.eViewport.scrollLeft,
-            right: this.eViewport.scrollLeft + this.eViewport.offsetWidth,
+            left,
+            right: left + this.getCenterWidth(),
         };
         return res;
     }
@@ -491,22 +394,25 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
         _setScrollLeft(this.eViewport, value, this.enableRtl);
     }
 
-    private isContainerVisible(): boolean {
-        const pinned = this.options.pinnedType != null;
-        return !pinned || (!!this.pinnedWidthFeature && this.pinnedWidthFeature.getWidth() > 0);
-    }
-
-    private onPinnedWidthChanged(): void {
-        const visible = this.isContainerVisible();
-        if (this.visible != visible) {
-            this.visible = visible;
-            this.onDisplayedRowsChanged();
+    private getVisibleVerticalScrollbarWidth(): number {
+        const { scrollVisibleSvc, ctrlsSvc } = this.beans;
+        if (!scrollVisibleSvc.verticalScrollShowing) {
+            return 0;
         }
+
+        const fakeVScrollComp = ctrlsSvc.get('fakeVScrollComp');
+        const fakeScrollbarWidth = fakeVScrollComp?.getGui().offsetWidth ?? 0;
+        if (fakeScrollbarWidth > 0) {
+            return fakeScrollbarWidth;
+        }
+
+        const scrollbarWidth = scrollVisibleSvc.getScrollbarWidth() || 0;
+        return scrollbarWidth > 0 ? scrollbarWidth : 16;
     }
 
     private onDisplayedRowsChanged(afterScroll: boolean = false): void {
         const rows = this.options.getRowCtrls(this.beans.rowRenderer);
-        if (!this.visible || rows.length === 0) {
+        if (rows.length === 0) {
             this.comp.setRowCtrls({ rowCtrls: this.EMPTY_CTRLS });
             return;
         }

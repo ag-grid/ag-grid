@@ -174,6 +174,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         chartTitleEdit: ChartTitleEditEvent<TData, TContext>;
         recalculateRowBounds: RecalculateRowBoundsEvent<TData, TContext>;
         stickyTopOffsetChanged: StickyTopOffsetChangedEvent<TData, TContext>;
+        stickyBottomOffsetChanged: StickyBottomOffsetChangedEvent<TData, TContext>;
         overlayExclusiveChanged: AgEvent<'overlayExclusiveChanged'>;
         rowNodeDataChanged: RowNodeDataChangedEvent<TData, TContext>;
         columnsReset: ColumnsResetEvent<TData, TContext>;
@@ -722,6 +723,10 @@ export interface StickyTopOffsetChangedEvent extends AgEvent<'stickyTopOffsetCha
     offset: number;
 }
 
+export interface StickyBottomOffsetChangedEvent extends AgEvent<'stickyBottomOffsetChanged'> {
+    offset: number;
+}
+
 export interface CommonCellFocusParams {
     /** Row index of the focused cell */
     rowIndex: number | null;
@@ -1266,6 +1271,8 @@ export interface RecalculateRowBoundsEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'recalculateRowBounds', TData, TContext> {}
 export interface StickyTopOffsetChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'stickyTopOffsetChanged', TData, TContext> {}
+export interface StickyBottomOffsetChangedEvent<TData = any, TContext = any>
+    extends AgGlobalEvent<'stickyBottomOffsetChanged', TData, TContext> {}
 export interface RowNodeDataChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'rowNodeDataChanged', TData, TContext> {
     node: RowNode<TData>;

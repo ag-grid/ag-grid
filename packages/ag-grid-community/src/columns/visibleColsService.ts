@@ -493,12 +493,12 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     // used by:
     // + angularGrid -> setting pinned body width
     // note: this should be cached
-    public getColsLeftWidth() {
+    public getLeftStickyColumnContainerWidth() {
         return getWidthOfColsInList(this.leftCols);
     }
 
     // note: this should be cached
-    public getDisplayedColumnsRightWidth() {
+    public getRightStickyColumnContainerWidth() {
         return getWidthOfColsInList(this.rightCols);
     }
 

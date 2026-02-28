@@ -74,6 +74,9 @@ export interface IRowComp {
     setDomOrder(domOrder: boolean): void;
     toggleCss(cssClassName: string, on: boolean): void;
     setCellCtrls(cellCtrls: CellCtrl[], useFlushSync: boolean): void;
+    getPinnedLeftRowElement(): HTMLElement | undefined;
+    getPinnedRightRowElement(): HTMLElement | undefined;
+    refreshPinnedCellGroupWidths(): void;
     showFullWidth(compDetails: UserCompDetails): void;
     getFullWidthCellRenderer(): ICellRenderer | null | undefined;
     getFullWidthCellRendererParams(): ICellRendererParams | undefined;
@@ -106,9 +109,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private rowType: RowType;
 
-    private leftGui: RowGui | undefined;
     private centerGui: RowGui | undefined;
-    private rightGui: RowGui | undefined;
     private fullWidthGui: RowGui | undefined;
     private focusEventWhileNotReady: CellFocusedEvent | null = null;
 
@@ -126,16 +127,12 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     private rightCellCtrls: CellCtrlListAndMap = { list: [], map: {} };
 
     private slideInAnimation: { [key in RowContainerType]: boolean } = {
-        left: false,
         center: false,
-        right: false,
         fullWidth: false,
     };
 
     private fadeInAnimation: { [key in RowContainerType]: boolean } = {
-        left: false,
         center: false,
-        right: false,
         fullWidth: false,
     };
 
@@ -203,11 +200,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private updateGui(containerType: RowContainerType, gui: RowGui | undefined) {
-        if (containerType === 'left') {
-            this.leftGui = gui;
-        } else if (containerType === 'right') {
-            this.rightGui = gui;
-        } else if (containerType === 'fullWidth') {
+        if (containerType === 'fullWidth') {
             this.fullWidthGui = gui;
         } else {
             this.centerGui = gui;
@@ -386,7 +379,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private setupFullWidth(gui: RowGui): void {
-        const pinned = this.getPinnedForContainer(gui.containerType);
+        const pinned = this.getPinnedForContainer();
         const compDetails = this.createFullWidthCompDetails(gui.element, pinned);
         gui.rowComp.showFullWidth(compDetails);
     }
@@ -407,8 +400,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const params: WithoutGridCommon<ProcessRowParams> = {
             // areAllContainersReady asserts that centerGui is not null
             eRow: this.centerGui!.element,
-            ePinnedLeftRow: this.leftGui ? this.leftGui.element : undefined,
-            ePinnedRightRow: this.rightGui ? this.rightGui.element : undefined,
+            ePinnedLeftRow: this.centerGui!.rowComp.getPinnedLeftRowElement(),
+            ePinnedRightRow: this.centerGui!.rowComp.getPinnedRightRowElement(),
             node: this.rowNode,
             rowIndex: this.rowNode.rowIndex!,
             addRenderedRowListener: this.addEventListener.bind(this),
@@ -417,17 +410,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private areAllContainersReady(): boolean {
-        const {
-            leftGui,
-            centerGui,
-            rightGui,
-            beans: { visibleCols },
-        } = this;
-        const isLeftReady = !!leftGui || !visibleCols.isPinningLeft();
-        const isCenterReady = !!centerGui;
-        const isRightReady = !!rightGui || !visibleCols.isPinningRight();
-
-        return isLeftReady && isCenterReady && isRightReady;
+        return !!this.centerGui;
     }
 
     private isNodeFullWidthCell(): boolean {
@@ -644,16 +627,18 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
     }
 
+    private refreshPinnedCellGroupWidths(): void {
+        for (const gui of this.allRowGuis) {
+            gui.rowComp.refreshPinnedCellGroupWidths();
+        }
+    }
+
     private getCellCtrlsForContainer(containerType: RowContainerType) {
         switch (containerType) {
-            case 'left':
-                return this.leftCellCtrls.list;
-            case 'right':
-                return this.rightCellCtrls.list;
             case 'fullWidth':
                 return [];
             case 'center':
-                return this.centerCellCtrls.list;
+                return [...this.leftCellCtrls.list, ...this.centerCellCtrls.list, ...this.rightCellCtrls.list];
         }
     }
 
@@ -726,9 +711,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
 
         const oldRowTopExists = _exists(this.rowNode.oldRowTop);
-        const { visibleCols } = this.beans;
-        const pinningLeft = visibleCols.isPinningLeft();
-        const pinningRight = visibleCols.isPinningRight();
 
         if (oldRowTopExists) {
             const { slideInAnimation } = this;
@@ -739,8 +721,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
             // if the row had a previous position, we slide it in
             slideInAnimation.center = true;
-            slideInAnimation.left = pinningLeft;
-            slideInAnimation.right = pinningRight;
         } else {
             const { fadeInAnimation } = this;
             if (this.isFullWidth() && !this.gos.get('embedFullWidthRows')) {
@@ -750,8 +730,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
             // if the row had no previous position, we fade it in
             fadeInAnimation.center = true;
-            fadeInAnimation.left = pinningLeft;
-            fadeInAnimation.right = pinningRight;
         }
     }
 
@@ -774,10 +752,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         const fullWidthSuccess = tryRefresh(this.fullWidthGui, null);
         const centerSuccess = tryRefresh(this.centerGui, null);
-        const leftSuccess = tryRefresh(this.leftGui, 'left');
-        const rightSuccess = tryRefresh(this.rightGui, 'right');
-
-        const allFullWidthRowsRefreshed = fullWidthSuccess && centerSuccess && leftSuccess && rightSuccess;
+        const allFullWidthRowsRefreshed = fullWidthSuccess && centerSuccess;
 
         return allFullWidthRowsRefreshed;
     }
@@ -811,7 +786,13 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.addManagedListeners(eventSvc, {
             paginationPixelOffsetChanged: this.onPaginationPixelOffsetChanged.bind(this),
             heightScaleChanged: this.onTopChanged.bind(this),
+            headerHeightChanged: this.onTopChanged.bind(this),
+            stickyBottomOffsetChanged: this.onStickyBottomOffsetChanged.bind(this),
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
+            displayedColumnsWidthChanged: this.refreshPinnedCellGroupWidths.bind(this),
+            leftPinnedWidthChanged: this.refreshPinnedCellGroupWidths.bind(this),
+            rightPinnedWidthChanged: this.refreshPinnedCellGroupWidths.bind(this),
+            columnResized: this.refreshPinnedCellGroupWidths.bind(this),
             virtualColumnsChanged: this.onVirtualColumnsChanged.bind(this),
             cellFocused: this.onCellFocusChanged.bind(this),
             cellFocusCleared: this.onCellFocusChanged.bind(this),
@@ -1109,23 +1090,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         focus();
     }
 
-    private getFullWidthRowGuiForFocus(event?: CellFocusedEvent): RowGui | undefined {
+    private getFullWidthRowGuiForFocus(): RowGui | undefined {
         if (this.fullWidthGui) {
             return this.fullWidthGui;
-        }
-
-        const focusedCell = this.beans.focusSvc.getFocusedCell();
-        const column = this.beans.colModel.getCol(event?.column ?? focusedCell?.column);
-        if (!column) {
-            return;
-        }
-        const pinned = column?.pinned;
-
-        if (pinned === 'right') {
-            return this.rightGui;
-        }
-        if (pinned === 'left') {
-            return this.leftGui;
         }
         return this.centerGui;
     }
@@ -1145,7 +1112,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             return;
         }
 
-        const targetGui = this.getFullWidthRowGuiForFocus(event);
+        const targetGui = this.getFullWidthRowGuiForFocus();
         if (!targetGui) {
             if (event) {
                 this.focusEventWhileNotReady = event;
@@ -1258,16 +1225,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private getColumnForFullWidth(fullWidthRowGui?: RowGui): AgColumn {
         const { visibleCols } = this.beans;
-        switch (fullWidthRowGui?.containerType) {
-            case 'center':
-                return visibleCols.centerCols[0];
-            case 'left':
-                return visibleCols.leftCols[0];
-            case 'right':
-                return visibleCols.rightCols[0];
-            default:
-                return visibleCols.allCols[0];
+        if (fullWidthRowGui?.containerType === 'center') {
+            return visibleCols.centerCols[0];
         }
+        return visibleCols.allCols[0];
     }
 
     private onRowMouseDown(mouseEvent: MouseEvent) {
@@ -1514,15 +1475,14 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.forEachGui(gui, (gui) => gui.rowComp.setUserStyles(this.rowStyles));
     }
 
-    private getPinnedForContainer(rowContainerType: RowContainerType): ColumnPinnedType {
-        if (rowContainerType === 'left' || rowContainerType === 'right') {
-            return rowContainerType;
-        }
+    private getPinnedForContainer(): ColumnPinnedType {
+        // Rows now render left/center/right cells within a single row instance.
+        // Container-level pinning is no longer used.
         return null;
     }
 
     protected getInitialRowClasses(rowContainerType: RowContainerType): string[] {
-        const pinned = this.getPinnedForContainer(rowContainerType);
+        const pinned = this.getPinnedForContainer();
         const fullWidthRow = this.isFullWidth();
         const { rowNode, beans } = this;
 
@@ -1826,11 +1786,22 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private onTopChanged(): void {
-        this.setRowTop(this.rowNode.rowTop!);
+        const rowTop = this.rowNode.sticky ? this.rowNode.stickyRowTop : this.rowNode.rowTop;
+        if (!_exists(rowTop)) {
+            return;
+        }
+        this.setRowTop(rowTop);
     }
 
     private onPaginationPixelOffsetChanged(): void {
         // the pixel offset is used when calculating rowTop to set on the row DIV
+        this.onTopChanged();
+    }
+
+    private onStickyBottomOffsetChanged(): void {
+        if (this.rowNode.rowPinned !== 'bottom') {
+            return;
+        }
         this.onTopChanged();
     }
 
@@ -1862,7 +1833,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             const afterScalingPixels = skipScaling
                 ? afterPaginationPixels
                 : this.beans.rowContainerHeight.getRealPixelPosition(afterPaginationPixels);
-            const topPx = `${afterScalingPixels}px`;
+            const topPx = `${afterScalingPixels + this.getPinnedTopOffset() + this.getPinnedBottomOffset()}px`;
             this.setRowTopStyle(topPx);
         }
     }
@@ -1902,7 +1873,31 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
                 : this.beans.rowContainerHeight.getRealPixelPosition(afterPaginationPixels);
         }
 
+        rowTop += this.getPinnedTopOffset() + this.getPinnedBottomOffset();
         return rowTop + 'px';
+    }
+
+    private getPinnedTopOffset(): number {
+        if (this.rowNode.rowPinned !== 'top') {
+            return 0;
+        }
+
+        const gridHeaderCtrl = this.beans.ctrlsSvc.get('gridHeaderCtrl');
+        if (!gridHeaderCtrl) {
+            return 0;
+        }
+
+        const headerHeight = gridHeaderCtrl.headerHeight;
+        const headerBorder = headerHeight > 0 ? this.beans.environment.getHeaderRowBorderWidth() : 0;
+        return headerHeight + headerBorder;
+    }
+
+    private getPinnedBottomOffset(): number {
+        if (this.rowNode.rowPinned !== 'bottom') {
+            return 0;
+        }
+
+        return this.beans.ctrlsSvc.getGridBodyCtrl()?.stickyBottomHeight ?? 0;
     }
 
     private setRowTopStyle(topPx: string): void {

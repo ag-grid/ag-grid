@@ -19,13 +19,16 @@ const getElementType = (el: HTMLElement) => {
         return 'body';
     }
     const classList = el.classList;
+    if (classList.contains('ag-header-row')) {
+        return 'header-row';
+    }
     if (classList.contains('ag-row')) {
         return 'row';
     }
     if (classList.contains('ag-header')) {
         return 'header';
     }
-    if (classList.contains('ag-body-viewport')) {
+    if (classList.contains('ag-grid-viewport') || classList.contains('ag-body-viewport')) {
         return 'viewport';
     }
     if (classList.contains('ag-root')) {
@@ -79,6 +82,10 @@ function getBoundingClientRect(this: HTMLElement): DOMRect {
             const adjustedRowIndex = rowIndex - paginationOffset;
             top = adjustedRowIndex * rowHeight;
             height = rowHeight;
+            break;
+        }
+        case 'header-row': {
+            height = headerHeight;
             break;
         }
 
@@ -182,12 +189,12 @@ function init(): boolean {
 }
 
 function getPaginationOffset(el: HTMLElement): number {
-    const body = el.closest('.ag-body');
+    const body = el.closest('.ag-grid-scrolling-rows, .ag-body');
     if (!body) {
         return 0;
     }
 
-    const rows = body.querySelectorAll('.ag-row');
+    const rows = body.querySelectorAll('.ag-row:not(.ag-header-row)');
     let minIndex = Infinity;
 
     for (let i = 0; i < rows.length; i++) {

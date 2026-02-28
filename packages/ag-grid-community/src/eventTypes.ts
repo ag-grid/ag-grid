@@ -163,6 +163,7 @@ const _INTERNAL_EVENTS = [
     'chartTitleEdit',
     'recalculateRowBounds',
     'stickyTopOffsetChanged',
+    'stickyBottomOffsetChanged',
     'overlayExclusiveChanged',
     'rowNodeDataChanged',
     'cellEditValuesChanged',

@@ -43,14 +43,9 @@
  * Viewports
  ****************************
  */
-.ag-header-viewport,
-.ag-floating-top-viewport,
-.ag-body-viewport,
-.ag-center-cols-viewport,
 .ag-floating-bottom-viewport,
 .ag-body-horizontal-scroll-viewport,
 .ag-body-vertical-scroll-viewport,
-.ag-sticky-top-viewport,
 .ag-sticky-bottom-viewport {
     position: relative;
     height: 100%;
@@ -63,6 +58,29 @@
     position: relative;
 }
 
+.ag-grid-viewport {
+    position: relative;
+    overflow: auto;
+    min-width: 0;
+    min-height: 0;
+    flex: 1 1 auto;
+    -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
+}
+
+.ag-grid-viewport::-webkit-scrollbar {
+    display: none !important;
+}
+
+.ag-grid-scrollable-area {
+    position: relative;
+    min-width: 100%;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
 .ag-spanning-container {
     position: absolute;
     top: 0;
@@ -71,49 +89,20 @@
     z-index: 1;
 }
 
-.ag-body-viewport,
-.ag-center-cols-viewport,
-.ag-header-viewport,
-.ag-floating-top-viewport,
 .ag-floating-bottom-viewport,
-.ag-sticky-top-viewport,
 .ag-sticky-bottom-viewport {
-    overflow-x: auto;
+    overflow-x: hidden;
     -ms-overflow-style: none !important;
     scrollbar-width: none !important;
 }
 
-.ag-body-viewport::-webkit-scrollbar,
-.ag-center-cols-viewport::-webkit-scrollbar,
-.ag-header-viewport::-webkit-scrollbar,
-.ag-floating-top-viewport::-webkit-scrollbar,
 .ag-floating-bottom-viewport::-webkit-scrollbar,
-.ag-sticky-top-viewport::-webkit-scrollbar,
 .ag-sticky-bottom-viewport::-webkit-scrollbar {
     display: none !important;
 }
 
-.ag-body-viewport {
-    display: flex;
-    overflow-x: hidden;
-
-    &:where(.ag-layout-normal) {
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-}
-
-/* the sticky and pinned containers need at least one 1px height so we can set the
-scrollLeft position when there are no rows within, otherwise scrollLeft will
-always be 0 and then making a row sticky causes the grid to scroll. */
-.ag-sticky-top-container,
-.ag-sticky-bottom-container,
-.ag-floating-top-container,
-.ag-floating-bottom-container {
-    min-height: 1px;
-}
-
-.ag-center-cols-viewport {
+.ag-grid-scrolling-container {
+    display: block;
     min-height: 100%;
     width: 100%;
 }
@@ -131,43 +120,22 @@ always be 0 and then making a row sticky causes the grid to scroll. */
   * Containers
   ****************************
   */
-.ag-header-container,
-.ag-floating-top-container,
-.ag-body-container,
-.ag-pinned-right-cols-container,
-.ag-center-cols-container,
-.ag-pinned-left-cols-container,
+.ag-grid-scrolling-container,
 .ag-floating-bottom-container,
 .ag-body-horizontal-scroll-container,
 .ag-body-vertical-scroll-container,
 .ag-full-width-container,
 .ag-floating-bottom-full-width-container,
-.ag-sticky-top-container,
-.ag-sticky-bottom-container,
-.ag-pinned-left-sticky-bottom,
-.ag-pinned-right-sticky-bottom {
+.ag-sticky-bottom-container {
     position: relative;
 }
 
-.ag-header-container,
-.ag-floating-top-container,
-.ag-pinned-left-floating-top,
-.ag-pinned-right-floating-top,
 .ag-floating-bottom-container,
-.ag-pinned-left-floating-bottom,
-.ag-pinned-right-floating-bottom,
-.ag-sticky-top-container,
 .ag-sticky-bottom-container {
+    /* these containers need at least 1px height so scrollLeft can be set even when empty */
+    min-height: 1px;
     height: 100%;
     white-space: nowrap;
-}
-
-.ag-center-cols-container {
-    display: block;
-}
-
-.ag-pinned-right-cols-container {
-    display: block;
 }
 
 .ag-body-horizontal-scroll-container {
@@ -179,9 +147,7 @@ always be 0 and then making a row sticky causes the grid to scroll. */
 }
 
 .ag-full-width-container,
-.ag-floating-top-full-width-container,
 .ag-floating-bottom-full-width-container,
-.ag-sticky-top-full-width-container,
 .ag-sticky-bottom-full-width-container {
     position: absolute;
     top: 0;
@@ -200,8 +166,7 @@ always be 0 and then making a row sticky causes the grid to scroll. */
     width: 100%;
 }
 
-.ag-floating-bottom-full-width-container,
-.ag-floating-top-full-width-container {
+.ag-floating-bottom-full-width-container {
     display: inline-block;
     overflow: hidden;
     height: 100%;
@@ -213,7 +178,7 @@ always be 0 and then making a row sticky causes the grid to scroll. */
   * Scrollers
   ****************************
   */
-.ag-body {
+.ag-grid-scrolling-rows {
     position: relative;
     display: flex;
     flex: 1 1 auto;
@@ -255,29 +220,21 @@ always be 0 and then making a row sticky causes the grid to scroll. */
     }
 }
 
-.ag-body-vertical-scroll {
-    height: 100%;
+.ag-body-horizontal-scroll-end-spacer {
+    flex: 0 0 auto;
+    min-width: 0;
+    overflow: scroll;
+}
 
+.ag-body-vertical-scroll {
     &:where(.ag-scrollbar-invisible) {
         top: 0;
-        z-index: 10;
         right: 0;
     }
 }
 
 .ag-force-vertical-scroll {
     overflow-y: scroll !important;
-}
-
-.ag-horizontal-left-spacer,
-.ag-horizontal-right-spacer {
-    height: 100%;
-    min-width: 0;
-    overflow-x: scroll;
-
-    &:where(.ag-scroller-corner) {
-        overflow-x: hidden;
-    }
 }
 
 /**
@@ -317,6 +274,41 @@ always be 0 and then making a row sticky causes the grid to scroll. */
 .ag-row-loading {
     display: flex;
     align-items: center;
+}
+
+.ag-row:where(:not(.ag-full-width-row)),
+.ag-header-row {
+    display: flex;
+    width: 100%;
+}
+
+.ag-grid-pinned-left-cells,
+.ag-grid-scrolling-cells,
+.ag-grid-pinned-right-cells {
+    position: relative;
+    height: 100%;
+    white-space: nowrap;
+}
+
+.ag-grid-scrolling-cells {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.ag-grid-pinned-left-cells,
+.ag-grid-pinned-right-cells {
+    position: sticky;
+    z-index: 2;
+    overflow: hidden;
+    flex: 0 0 auto;
+}
+
+.ag-grid-pinned-left-cells {
+    left: 0;
+}
+
+.ag-grid-pinned-right-cells {
+    right: 0;
 }
 
 .ag-row-position-absolute {
@@ -398,60 +390,69 @@ always be 0 and then making a row sticky causes the grid to scroll. */
   * Floating Top and Bottom
   ****************************
   */
-.ag-floating-top {
+.ag-grid-pinned-top-rows,
+.ag-grid-pinned-bottom-rows {
+    width: 100%;
+    position: sticky;
+    z-index: 2;
+    background-color: var(--ag-data-background-color);
+    border-bottom: var(--ag-header-row-border);
+}
+
+.ag-grid-pinned-top-rows {
+    top: 0;
+    white-space: nowrap;
+}
+
+.ag-grid-pinned-bottom-rows {
+    bottom: 0;
+    border-bottom: none;
+    white-space: nowrap;
+}
+
+.ag-grid-pinned-bottom-rows-container {
     overflow: hidden;
     white-space: nowrap;
     width: 100%;
     position: relative;
-    display: flex;
+    min-height: 100%;
+    height: 100%;
 }
 
-:where(.ag-floating-top:not(.ag-invisible)) {
+.ag-grid-pinned-bottom-rows-full-width-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
+}
+
+:where(.ag-grid-pinned-top-rows:not(.ag-no-top-rows)) {
     border-bottom: var(--ag-pinned-row-border);
 }
 
-.ag-floating-bottom {
-    overflow: hidden;
-    white-space: nowrap;
-    width: 100%;
-    position: relative;
-    display: flex;
-}
-
-:where(.ag-floating-bottom:not(.ag-invisible)) {
+:where(.ag-grid-pinned-bottom-rows:not(.ag-no-bottom-rows)) {
     border-top: var(--ag-pinned-row-border);
 }
 
-/**
-  ****************************
-  * Sticky Top
-  ****************************
-  */
-.ag-sticky-top,
-.ag-sticky-bottom {
-    position: absolute;
-    display: flex;
+.ag-grid-pinned-top-rows-container {
+    position: relative;
     width: 100%;
-    overflow: hidden;
-    height: 0;
-    background-color: var(--ag-data-background-color);
-
-    /* sticky containers need to appear over spanned and edited rows */
-    z-index: 1;
+    min-height: 100%;
+    height: 100%;
+    white-space: nowrap;
 }
 
-.ag-sticky-bottom {
-    box-sizing: content-box !important;
-
-    :where(.ag-pinned-left-sticky-bottom),
-    :where(.ag-sticky-bottom-container),
-    :where(.ag-pinned-right-sticky-bottom) {
-        border-top: var(--ag-row-border);
-
-        /* reset box-sizing as some customers override global box-sizing to
-           "inherit" and we only want .ag-sticky-bottom to be content-box */
-        box-sizing: border-box;
-    }
+.ag-grid-pinned-top-rows-full-width-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
 }
 
 .ag-opacity-zero {
@@ -495,14 +496,16 @@ always be 0 and then making a row sticky causes the grid to scroll. */
 :where(.ag-ltr) {
     direction: ltr;
 
-    .ag-body,
-    .ag-floating-top,
-    .ag-floating-bottom,
+    .ag-grid-scrolling-rows,
+    .ag-grid-pinned-top-rows,
+    .ag-grid-pinned-bottom-rows,
     .ag-header,
-    .ag-sticky-top,
-    .ag-sticky-bottom,
-    .ag-body-viewport,
     .ag-body-horizontal-scroll {
+        flex-direction: row;
+    }
+
+    .ag-row:where(:not(.ag-full-width-row)),
+    .ag-header-row {
         flex-direction: row;
     }
 }
@@ -511,14 +514,16 @@ always be 0 and then making a row sticky causes the grid to scroll. */
     direction: rtl;
     text-align: right;
 
-    .ag-body,
-    .ag-floating-top,
-    .ag-floating-bottom,
+    .ag-grid-scrolling-rows,
+    .ag-grid-pinned-top-rows,
+    .ag-grid-pinned-bottom-rows,
     .ag-header,
-    .ag-sticky-top,
-    .ag-sticky-bottom,
-    .ag-body-viewport,
     .ag-body-horizontal-scroll {
+        flex-direction: row-reverse;
+    }
+
+    .ag-row:where(:not(.ag-full-width-row)),
+    .ag-header-row {
         flex-direction: row-reverse;
     }
 

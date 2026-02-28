@@ -140,25 +140,14 @@
         border: 1px solid var(--ag-range-selection-border-color);
     }
 
-    .ag-body,
-    .ag-floating-top,
-    .ag-floating-bottom {
+    .ag-grid-scrolling-rows,
+    .ag-grid-pinned-top-rows-container,
+    .ag-grid-pinned-bottom-rows-container {
         background-color: var(--ag-data-background-color);
     }
 
     .ag-row-odd {
         background-color: var(--ag-odd-row-background-color);
-    }
-
-    // NOTE: these don't need an RTL version because the "left spacer" is always the one visually on the left
-    .ag-body-horizontal-scroll:not(.ag-scrollbar-invisible) {
-        .ag-horizontal-left-spacer:not(.ag-scroller-corner) {
-            border-right: var(--ag-borders-critical) var(--ag-border-color);
-        }
-
-        .ag-horizontal-right-spacer:not(.ag-scroller-corner) {
-            border-left: var(--ag-borders-critical) var(--ag-border-color);
-        }
     }
 
     .ag-row-selected::before {
@@ -303,8 +292,7 @@
 
     .ag-layout-auto-height,
     .ag-layout-print {
-        .ag-center-cols-viewport,
-        .ag-center-cols-container {
+        .ag-grid-scrolling-container {
             min-height: 50px;
         }
     }
@@ -382,10 +370,10 @@
         }
     }
 
-    .ag-floating-top:not(.ag-invisible) {
+    .ag-grid-pinned-top-rows:not(.ag-no-top-rows) {
         border-bottom: var(--ag-borders-critical) var(--ag-border-color);
     }
-    .ag-floating-bottom:not(.ag-invisible) {
+    .ag-grid-pinned-bottom-rows:not(.ag-no-bottom-rows) {
         border-top: var(--ag-borders-critical) var(--ag-border-color);
     }
 

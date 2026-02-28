@@ -93,11 +93,18 @@
    is to ensure that the ag-body-vertical-content-no-gap class only hides the
    border of rows in the same grid, not in nested detail grids  */
 :where(
-
-    /* there are either 3 or 4 elements between the body and the row as the
-       center cols container has an extra layer of nesting than other containers */
-    .ag-body-vertical-content-no-gap > div > div > div,
-    .ag-body-vertical-content-no-gap > div > div > div > div)>.ag-row-last {
+        .ag-body-vertical-content-no-gap
+            > .ag-grid-viewport
+            > .ag-grid-scrollable-area
+            > .ag-grid-scrolling-rows
+            > .ag-full-width-container,
+        .ag-body-vertical-content-no-gap
+            > .ag-grid-viewport
+            > .ag-grid-scrollable-area
+            > .ag-grid-scrolling-rows
+            > .ag-grid-scrolling-container
+    )
+    > .ag-row-last {
     border-bottom-color: transparent;
 }
 
@@ -249,9 +256,9 @@
     border: 1px solid var(--ag-range-selection-border-color);
 }
 
-.ag-body,
-.ag-floating-top,
-.ag-floating-bottom {
+.ag-grid-scrolling-rows,
+.ag-grid-pinned-top-rows-container,
+.ag-grid-pinned-bottom-rows-container {
     background-color: var(--ag-data-background-color);
 }
 
@@ -346,8 +353,7 @@
 
 .ag-layout-auto-height,
 .ag-layout-print {
-    .ag-center-cols-viewport,
-    .ag-center-cols-container {
+    .ag-grid-scrolling-container {
         min-height: 150px;
     }
 }

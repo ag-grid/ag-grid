@@ -71,7 +71,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     ): void {
         this.comp = comp;
 
-        const { rowCtrl, column, beans } = this;
+        const { column, beans } = this;
         const { colResize, context, colHover, rangeSvc } = beans;
         const compBean = setupCompBean(this, context, compBeanInput);
 
@@ -102,7 +102,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
         if (colResize) {
             this.resizeFeature = compBean.createManagedBean(
-                colResize.createResizeFeature(rowCtrl.pinned, column, eResize, comp, this)
+                colResize.createResizeFeature(column.getPinned(), column, eResize, comp, this)
             );
         } else {
             _setDisplayed(eResize, false);

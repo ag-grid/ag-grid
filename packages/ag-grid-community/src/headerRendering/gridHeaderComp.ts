@@ -1,36 +1,136 @@
+import { _ensureDomOrder } from '../agStack/utils/dom';
 import type { ElementParams } from '../utils/element';
 import type { ComponentSelector } from '../widgets/component';
 import { Component } from '../widgets/component';
 import type { IGridHeaderComp } from './gridHeaderCtrl';
 import { GridHeaderCtrl } from './gridHeaderCtrl';
-import { HeaderRowContainerComp } from './rowContainer/headerRowContainerComp';
+import { HeaderRowComp } from './row/headerRowComp';
+import type { HeaderRowCtrl, HeaderRowCtrlInstanceId } from './row/headerRowCtrl';
+import type { IHeaderRowContainerComp } from './rowContainer/headerRowContainerCtrl';
+import { HeaderRowContainerCtrl } from './rowContainer/headerRowContainerCtrl';
 
-const GridHeaderElement: ElementParams = { tag: 'div', cls: 'ag-header', role: 'presentation' };
+const GridHeaderElement: ElementParams = { tag: 'div', cls: 'ag-header', role: 'rowgroup' };
 class GridHeaderComp extends Component {
+    private headerRowComps: { [ctrlId: HeaderRowCtrlInstanceId]: HeaderRowComp } = {};
+    private eHeaderHost: HTMLElement | null = null;
+    private ePinnedTopRowsHost: HTMLElement | null = null;
+    private isFlattened = false;
+    private initialised = false;
+
     constructor() {
         super(GridHeaderElement);
     }
 
     public postConstruct(): void {
+        this.initialiseWhenAttached();
+    }
+
+    private initialiseWhenAttached(): void {
+        if (!this.isAlive() || this.initialised) {
+            return;
+        }
+
+        const eGui = this.getGui();
+        const parent = eGui.parentElement ?? this.getFlattenedHostFromParent();
+        if (!parent) {
+            window.requestAnimationFrame(() => this.initialiseWhenAttached());
+            return;
+        }
+
+        if (parent.classList.contains('ag-grid-pinned-top-rows-container')) {
+            this.eHeaderHost = parent;
+            this.ePinnedTopRowsHost =
+                (parent.parentElement?.classList.contains('ag-grid-pinned-top-rows') ? parent.parentElement : null) ??
+                parent;
+            this.isFlattened = true;
+            eGui.remove();
+        } else {
+            this.eHeaderHost = eGui;
+        }
+        this.initialised = true;
+
         const compProxy: IGridHeaderComp = {
-            toggleCss: (cssClassName, on) => this.toggleCss(cssClassName, on),
+            toggleCss: (cssClassName, on) => this.eHeaderHost?.classList.toggle(cssClassName, on),
             setHeightAndMinHeight: (height) => {
-                this.getGui().style.height = height;
-                this.getGui().style.minHeight = height;
+                if (!this.eHeaderHost) {
+                    return;
+                }
+
+                if (this.isFlattened) {
+                    this.ePinnedTopRowsHost?.style.setProperty('--ag-header-rows-height', height);
+                } else {
+                    this.eHeaderHost.style.height = height;
+                    this.eHeaderHost.style.minHeight = height;
+                }
             },
         };
 
         const ctrl = this.createManagedBean(new GridHeaderCtrl());
-        ctrl.setComp(compProxy, this.getGui(), this.getFocusableElement());
+        ctrl.setComp(compProxy, this.eHeaderHost!, this.eHeaderHost!);
 
-        const addContainer = (container: HeaderRowContainerComp) => {
-            this.createManagedBean(container);
-            this.appendChild(container);
+        const rowContainerCompProxy: IHeaderRowContainerComp = {
+            setCtrls: (ctrls) => this.setCtrls(ctrls),
+            setViewportScrollLeft: (left) => {
+                if (!this.isFlattened && this.eHeaderHost) {
+                    this.eHeaderHost.scrollLeft = left;
+                }
+            },
         };
 
-        addContainer(new HeaderRowContainerComp('left'));
-        addContainer(new HeaderRowContainerComp(null));
-        addContainer(new HeaderRowContainerComp('right'));
+        const rowContainerCtrl = this.createManagedBean(new HeaderRowContainerCtrl());
+        const eScrollViewport =
+            (this.isFlattened
+                ? (this.eHeaderHost?.closest('.ag-grid-viewport') as HTMLElement | null) ?? this.eHeaderHost
+                : this.eHeaderHost) ?? this.eHeaderHost!;
+        rowContainerCtrl.setComp(rowContainerCompProxy, this.eHeaderHost!, eScrollViewport);
+    }
+
+    private getFlattenedHostFromParent(): HTMLElement | null {
+        const parentComp = this.getParentComponent<Component>();
+        return parentComp?.getGui().querySelector('.ag-grid-pinned-top-rows-container') ?? null;
+    }
+
+    public override destroy(): void {
+        this.setCtrls([]);
+        if (this.isFlattened) {
+            this.ePinnedTopRowsHost?.style.removeProperty('--ag-header-rows-height');
+        }
+        super.destroy();
+    }
+
+    private destroyRowComp(rowComp: HeaderRowComp): void {
+        this.destroyBean(rowComp);
+        rowComp.getGui().remove();
+    }
+
+    private setCtrls(ctrls: HeaderRowCtrl[]): void {
+        const oldRowComps = this.headerRowComps;
+        this.headerRowComps = {};
+
+        let prevGui: HTMLElement | undefined;
+        const eHeader = this.eHeaderHost!;
+
+        for (const ctrl of ctrls) {
+            const ctrlId = ctrl.instanceId;
+            const existingComp = oldRowComps[ctrlId];
+            delete oldRowComps[ctrlId];
+
+            const rowComp = existingComp ?? this.createBean(new HeaderRowComp(ctrl));
+            this.headerRowComps[ctrlId] = rowComp;
+
+            const eGui = rowComp.getGui();
+            if (eGui.parentElement !== eHeader) {
+                eHeader.appendChild(eGui);
+            }
+            if (prevGui) {
+                _ensureDomOrder(eHeader, eGui, prevGui);
+            }
+            prevGui = eGui;
+        }
+
+        for (const oldComp of Object.values(oldRowComps)) {
+            this.destroyRowComp(oldComp);
+        }
     }
 }
 export const GridHeaderSelector: ComponentSelector = {

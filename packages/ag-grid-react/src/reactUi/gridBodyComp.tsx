@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
 
-import type { ComponentSelector, IGridBodyComp, RowContainerName } from 'ag-grid-community';
+import type { ComponentSelector, IGridBodyComp } from 'ag-grid-community';
 import {
     CssClassManager,
     FakeHScrollComp,
@@ -8,6 +8,7 @@ import {
     GridBodyCtrl,
     _observeResize,
     _setAriaColCount,
+    _setAriaRole,
     _setAriaRowCount,
 } from 'ag-grid-community';
 
@@ -15,13 +16,8 @@ import { BeansContext } from './beansContext';
 import GridHeaderComp from './header/gridHeaderComp';
 import useReactCommentEffect from './reactComment';
 import RowContainerComp from './rows/rowContainerComp';
+import type { ReactRowContainerName } from './rows/rowContainerComp';
 import { classesList } from './utils';
-
-interface SectionProperties {
-    section: React.RefObject<HTMLDivElement>;
-    className: string;
-    style?: React.CSSProperties;
-}
 
 const GridBodyComp = () => {
     const beans = useContext(BeansContext);
@@ -30,9 +26,6 @@ const GridBodyComp = () => {
     const [rowAnimationClass, setRowAnimationClass] = useState<string>('');
     const [topHeight, setTopHeight] = useState<number>(0);
     const [bottomHeight, setBottomHeight] = useState<number>(0);
-    const [stickyTopHeight, setStickyTopHeight] = useState<string>('0px');
-    const [stickyTopTop, setStickyTopTop] = useState<string>('0px');
-    const [stickyTopWidth, setStickyTopWidth] = useState<string>('100%');
     const [stickyBottomHeight, setStickyBottomHeight] = useState<string>('0px');
     const [stickyBottomBottom, setStickyBottomBottom] = useState<string>('0px');
     const [stickyBottomWidth, setStickyBottomWidth] = useState<string>('100%');
@@ -40,7 +33,6 @@ const GridBodyComp = () => {
     const [bottomInvisible, setBottomInvisible] = useState<boolean>(true);
 
     const [forceVerticalScrollClass, setForceVerticalScrollClass] = useState<string | null>(null);
-    const [topAndBottomOverflowY, setTopAndBottomOverflowY] = useState<string>('');
     const [cellSelectableCss, setCellSelectableCss] = useState<string | null>(null);
 
     // we initialise layoutClass to 'ag-layout-normal', because if we don't, the comp will initially
@@ -57,19 +49,21 @@ const GridBodyComp = () => {
 
     const eRoot = useRef<HTMLDivElement | null>(null);
     const eTop = useRef<HTMLDivElement>(null);
-    const eStickyTop = useRef<HTMLDivElement>(null);
-    const eStickyBottom = useRef<HTMLDivElement>(null);
+    const eGridViewport = useRef<HTMLDivElement>(null);
+    const eGridScrollableArea = useRef<HTMLDivElement>(null);
     const eBody = useRef<HTMLDivElement>(null);
-    const eBodyViewport = useRef<HTMLDivElement>(null);
     const eBottom = useRef<HTMLDivElement>(null);
+    const [topRowsHost, setTopRowsHost] = useState<HTMLDivElement | null>(null);
+    const [topRowsFullWidthHost, setTopRowsFullWidthHost] = useState<HTMLDivElement | null>(null);
+    const [bottomRowsHost, setBottomRowsHost] = useState<HTMLDivElement | null>(null);
+    const [bottomRowsFullWidthHost, setBottomRowsFullWidthHost] = useState<HTMLDivElement | null>(null);
 
     const beansToDestroy = useRef<any[]>([]);
     const destroyFuncs = useRef<(() => void)[]>([]);
 
     useReactCommentEffect(' AG Grid Body ', eRoot);
     useReactCommentEffect(' AG Pinned Top ', eTop);
-    useReactCommentEffect(' AG Sticky Top ', eStickyTop);
-    useReactCommentEffect(' AG Middle ', eBodyViewport);
+    useReactCommentEffect(' AG Middle ', eGridViewport);
     useReactCommentEffect(' AG Pinned Bottom ', eBottom);
 
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
@@ -99,14 +93,12 @@ const GridBodyComp = () => {
         };
 
         addComp(eRef, FakeHScrollComp, ' AG Fake Horizontal Scroll ');
+        addComp(eRef, FakeVScrollComp, ' AG Fake Vertical Scroll ');
         const overlayComp = overlays?.getOverlayWrapperCompClass();
         if (overlayComp) {
             addComp(eRef, overlayComp, ' AG Overlay Wrapper ');
         }
 
-        if (eBody.current) {
-            addComp(eBody.current, FakeVScrollComp, ' AG Fake Vertical Scroll ');
-        }
         const compProxy: IGridBodyComp = {
             setRowAnimationCssOnBodyViewport: setRowAnimationClass,
             setColumnCount: (count: number) => {
@@ -121,157 +113,156 @@ const GridBodyComp = () => {
             },
             setTopHeight,
             setBottomHeight,
-            setStickyTopHeight,
-            setStickyTopTop,
-            setStickyTopWidth,
             setTopInvisible,
             setBottomInvisible,
             setColumnMovingCss: (cssClass: string, flag: boolean) => cssManager.current!.toggleCss(cssClass, flag),
             updateLayoutClasses: setLayoutClass,
             setAlwaysVerticalScrollClass: setForceVerticalScrollClass,
-            setPinnedTopBottomOverflowY: setTopAndBottomOverflowY,
-            setCellSelectableCss: (cssClass: string, flag: boolean) => setCellSelectableCss(flag ? cssClass : null),
+            setCellSelectableCss: (cssClass: string | null, flag: boolean) =>
+                setCellSelectableCss(flag ? cssClass : null),
             setBodyViewportWidth: (width: string) => {
-                if (eBodyViewport.current) {
-                    eBodyViewport.current.style.width = width;
+                if (eGridScrollableArea.current) {
+                    eGridScrollableArea.current.style.minWidth = width;
+                }
+            },
+            setGridScrollableAreaWidth: (width: string) => {
+                if (eGridScrollableArea.current) {
+                    eGridScrollableArea.current.style.width = width;
                 }
             },
             registerBodyViewportResizeListener: (listener: () => void) => {
-                if (eBodyViewport.current) {
-                    const unsubscribeFromResize = _observeResize(beans, eBodyViewport.current, listener);
+                if (eGridViewport.current) {
+                    const unsubscribeFromResize = _observeResize(beans, eGridViewport.current, listener);
                     destroyFuncs.current.push(() => unsubscribeFromResize());
                 }
             },
             setStickyBottomHeight,
             setStickyBottomBottom,
             setStickyBottomWidth,
-            setGridRootRole: (role: 'grid' | 'treegrid') => eRef.setAttribute('role', role),
+            setGridRootRole: (role: 'grid' | 'treegrid') => _setAriaRole(eRef, role),
         };
 
         const ctrl = context.createBean(new GridBodyCtrl());
         beansToDestroy.current.push(ctrl);
-        ctrl.setComp(
-            compProxy,
-            eRef,
-            eBodyViewport.current!,
-            eTop.current!,
-            eBottom.current!,
-            eStickyTop.current!,
-            eStickyBottom.current!
-        );
+        ctrl.setComp(compProxy, eRef, eGridViewport.current!, eTop.current!, eBottom.current!);
     }, []);
 
     const rootClasses = useMemo(() => classesList('ag-root', 'ag-unselectable', layoutClass), [layoutClass]);
-    const bodyViewportClasses = useMemo(
-        () =>
-            classesList(
-                'ag-body-viewport',
-                rowAnimationClass,
-                layoutClass,
-                forceVerticalScrollClass,
-                cellSelectableCss
-            ),
-        [rowAnimationClass, layoutClass, forceVerticalScrollClass, cellSelectableCss]
+    const gridViewportClasses = useMemo(
+        () => classesList('ag-grid-viewport', layoutClass, forceVerticalScrollClass),
+        [layoutClass, forceVerticalScrollClass]
     );
-    const bodyClasses = useMemo(() => classesList('ag-body', layoutClass), [layoutClass]);
+    const bodyClasses = useMemo(
+        () => classesList('ag-grid-scrolling-rows', rowAnimationClass, layoutClass, cellSelectableCss),
+        [rowAnimationClass, layoutClass, cellSelectableCss]
+    );
     const topClasses = useMemo(
-        () => classesList('ag-floating-top', topInvisible ? 'ag-invisible' : null, cellSelectableCss),
+        () => classesList('ag-grid-pinned-top-rows', topInvisible ? 'ag-no-top-rows' : null, cellSelectableCss),
         [cellSelectableCss, topInvisible]
     );
-    const stickyTopClasses = useMemo(() => classesList('ag-sticky-top', cellSelectableCss), [cellSelectableCss]);
-    const stickyBottomClasses = useMemo(
-        () => classesList('ag-sticky-bottom', stickyBottomHeight === '0px' ? 'ag-invisible' : null, cellSelectableCss),
-        [cellSelectableCss, stickyBottomHeight]
-    );
+    const stickyBottomHeightNumber = Number.parseFloat(stickyBottomHeight) || 0;
+    const bottomSectionInvisible = bottomHeight <= 0 && stickyBottomHeightNumber <= 0;
+    const bottomNoRows = bottomInvisible && stickyBottomHeightNumber <= 0;
     const bottomClasses = useMemo(
-        () => classesList('ag-floating-bottom', bottomInvisible ? 'ag-invisible' : null, cellSelectableCss),
-        [cellSelectableCss, bottomInvisible]
+        () =>
+            classesList(
+                'ag-grid-pinned-bottom-rows',
+                bottomNoRows ? 'ag-no-bottom-rows' : null,
+                bottomSectionInvisible ? 'ag-invisible' : null,
+                cellSelectableCss
+            ),
+        [bottomNoRows, bottomSectionInvisible, cellSelectableCss]
     );
 
-    const topStyle: React.CSSProperties = useMemo(
-        () => ({
-            height: topHeight,
-            minHeight: topHeight,
-            overflowY: topAndBottomOverflowY as any,
-        }),
-        [topHeight, topAndBottomOverflowY]
-    );
-
-    const stickyTopStyle: React.CSSProperties = useMemo(
-        () => ({
-            height: stickyTopHeight,
-            top: stickyTopTop,
-            width: stickyTopWidth,
-        }),
-        [stickyTopHeight, stickyTopTop, stickyTopWidth]
-    );
-
-    const stickyBottomStyle: React.CSSProperties = useMemo(
-        () => ({
-            height: stickyBottomHeight,
-            bottom: stickyBottomBottom,
-            width: stickyBottomWidth,
-        }),
-        [stickyBottomHeight, stickyBottomBottom, stickyBottomWidth]
-    );
+    const topStyle: React.CSSProperties = useMemo(() => {
+        const topRowsHeight = `${topHeight}px`;
+        const topSectionHeight = `calc(var(--ag-header-rows-height, 0px) + ${topRowsHeight})`;
+        return {
+            '--ag-top-rows-height': topRowsHeight,
+            minHeight: topSectionHeight,
+            height: topSectionHeight,
+        } as React.CSSProperties;
+    }, [topHeight]);
 
     const bottomStyle: React.CSSProperties = useMemo(
         () => ({
-            height: bottomHeight,
-            minHeight: bottomHeight,
-            overflowY: topAndBottomOverflowY as any,
+            height: `calc(${bottomHeight}px + ${stickyBottomHeight})`,
+            minHeight: `calc(${bottomHeight}px + ${stickyBottomHeight})`,
+            bottom: stickyBottomBottom,
+            width: stickyBottomWidth,
         }),
-        [bottomHeight, topAndBottomOverflowY]
+        [bottomHeight, stickyBottomHeight, stickyBottomBottom, stickyBottomWidth]
     );
 
-    const createRowContainer = (container: RowContainerName) => (
-        <RowContainerComp name={container} key={`${container}-container`} />
+    const getContainerHost = (container: ReactRowContainerName): HTMLElement | null | undefined => {
+        switch (container) {
+            case 'pinnedTopCenter':
+            case 'stickyTopCenter':
+                return topRowsHost;
+            case 'pinnedTopFullWidth':
+            case 'stickyTopFullWidth':
+                return topRowsFullWidthHost;
+            case 'pinnedBottomCenter':
+            case 'stickyBottomCenter':
+                return bottomRowsHost;
+            case 'pinnedBottomFullWidth':
+            case 'stickyBottomFullWidth':
+                return bottomRowsFullWidthHost;
+            default:
+                return undefined;
+        }
+    };
+
+    const createRowContainer = (container: ReactRowContainerName) => (
+        <RowContainerComp name={container} hostElement={getContainerHost(container)} key={`${container}-container`} />
     );
-    const createSection = ({
-        section,
-        children,
-        className,
-        style,
-    }: SectionProperties & { children: RowContainerName[] }) => (
-        <div ref={section} className={className} role="presentation" style={style}>
-            {children.map(createRowContainer)}
-        </div>
-    );
+
+    const setBottomRowsContainerRef = useCallback((el: HTMLDivElement | null) => {
+        setBottomRowsHost(el);
+    }, []);
 
     return (
         <div ref={setRef} className={rootClasses}>
-            <GridHeaderComp />
-            {createSection({
-                section: eTop,
-                className: topClasses,
-                style: topStyle,
-                children: ['topLeft', 'topCenter', 'topRight', 'topFullWidth'],
-            })}
-            <div className={bodyClasses} ref={eBody} role="presentation">
-                {createSection({
-                    section: eBodyViewport,
-                    className: bodyViewportClasses,
-                    children: ['left', 'center', 'right', 'fullWidth'],
-                })}
+            <div ref={eGridViewport} className={gridViewportClasses} role="presentation">
+                <div ref={eGridScrollableArea} className="ag-grid-scrollable-area" role="presentation">
+                    <div ref={eTop} className={topClasses} role="presentation" style={topStyle}>
+                        <div className="ag-grid-pinned-top-rows-container" role="rowgroup" ref={setTopRowsHost}>
+                            <GridHeaderComp hostElement={topRowsHost} flattened />
+                            {createRowContainer('pinnedTopCenter')}
+                            {createRowContainer('stickyTopCenter')}
+                        </div>
+                        <div
+                            className="ag-grid-pinned-top-rows-full-width-container"
+                            role="rowgroup"
+                            ref={setTopRowsFullWidthHost}
+                        >
+                            {createRowContainer('pinnedTopFullWidth')}
+                            {createRowContainer('stickyTopFullWidth')}
+                        </div>
+                    </div>
+                    <div className={bodyClasses} ref={eBody} role="presentation">
+                        {(['scrollingCenter', 'scrollingFullWidth'] as const).map(createRowContainer)}
+                    </div>
+                    <div className={bottomClasses} ref={eBottom} role="presentation" style={bottomStyle}>
+                        <div
+                            className="ag-grid-pinned-bottom-rows-container"
+                            role="rowgroup"
+                            ref={setBottomRowsContainerRef}
+                        >
+                            {createRowContainer('stickyBottomCenter')}
+                            {createRowContainer('pinnedBottomCenter')}
+                        </div>
+                        <div
+                            className="ag-grid-pinned-bottom-rows-full-width-container"
+                            role="rowgroup"
+                            ref={setBottomRowsFullWidthHost}
+                        >
+                            {createRowContainer('stickyBottomFullWidth')}
+                            {createRowContainer('pinnedBottomFullWidth')}
+                        </div>
+                    </div>
+                </div>
             </div>
-            {createSection({
-                section: eStickyTop,
-                className: stickyTopClasses,
-                style: stickyTopStyle,
-                children: ['stickyTopLeft', 'stickyTopCenter', 'stickyTopRight', 'stickyTopFullWidth'],
-            })}
-            {createSection({
-                section: eStickyBottom,
-                className: stickyBottomClasses,
-                style: stickyBottomStyle,
-                children: ['stickyBottomLeft', 'stickyBottomCenter', 'stickyBottomRight', 'stickyBottomFullWidth'],
-            })}
-            {createSection({
-                section: eBottom,
-                className: bottomClasses,
-                style: bottomStyle,
-                children: ['bottomLeft', 'bottomCenter', 'bottomRight', 'bottomFullWidth'],
-            })}
         </div>
     );
 };

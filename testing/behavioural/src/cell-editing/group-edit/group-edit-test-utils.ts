@@ -50,7 +50,7 @@ export async function editCell(api: GridApi, rowNode: IRowNode, colId: string, n
 
     await userEvent.click(cell);
 
-    api.setFocusedCell(rowIndex, colId);
+    api.setFocusedCell(rowIndex, colId, rowNode.rowPinned ?? undefined);
     api.startEditingCell({ rowIndex, rowPinned: rowNode.rowPinned, colKey: colId });
 
     const input = await waitForInput(gridDiv, cell ?? gridDiv);

@@ -28,7 +28,7 @@ export class TouchService extends BeanStub implements NamedBean {
         ctrl: GridBodyCtrl,
         listener: (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => void
     ): void {
-        this.mockContextMenu(ctrl, ctrl.eBodyViewport, listener);
+        this.mockContextMenu(ctrl, ctrl.eGridViewport, listener);
     }
 
     public mockHeaderContextMenu(

@@ -5,7 +5,6 @@ import type { BeanCollection } from '../context/context';
 import type { ElementParams } from '../utils/element';
 import type { ComponentSelector } from '../widgets/component';
 import { AbstractFakeScrollComp } from './abstractFakeScrollComp';
-import { CenterWidthFeature } from './centerWidthFeature';
 import type { ScrollVisibleService } from './scrollVisibleService';
 
 const FakeHScrollElement: ElementParams = {
@@ -13,14 +12,13 @@ const FakeHScrollElement: ElementParams = {
     cls: 'ag-body-horizontal-scroll',
     attrs: { 'aria-hidden': 'true' },
     children: [
-        { tag: 'div', ref: 'eLeftSpacer', cls: 'ag-horizontal-left-spacer' },
         {
             tag: 'div',
             ref: 'eViewport',
             cls: 'ag-body-horizontal-scroll-viewport',
             children: [{ tag: 'div', ref: 'eContainer', cls: 'ag-body-horizontal-scroll-container' }],
         },
-        { tag: 'div', ref: 'eRightSpacer', cls: 'ag-horizontal-right-spacer' },
+        { tag: 'div', ref: 'eEndSpacer', cls: 'ag-body-horizontal-scroll-end-spacer' },
     ],
 };
 export class FakeHScrollComp extends AbstractFakeScrollComp {
@@ -32,10 +30,8 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         this.scrollVisibleSvc = beans.scrollVisibleSvc;
     }
 
-    private readonly eLeftSpacer: HTMLElement = RefPlaceholder;
-    private readonly eRightSpacer: HTMLElement = RefPlaceholder;
-
     private enableRtl: boolean;
+    private readonly eEndSpacer: HTMLElement = RefPlaceholder;
 
     constructor() {
         super(FakeHScrollElement, 'horizontal');
@@ -44,19 +40,20 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
     public override postConstruct(): void {
         super.postConstruct();
 
-        // When doing printing, this changes whether cols are pinned or not
-        const spacerWidthsListener = this.setFakeHScrollSpacerWidths.bind(this);
+        const widthListener = this.setContainerWidth.bind(this);
 
         this.addManagedEventListeners({
-            displayedColumnsChanged: spacerWidthsListener,
-            displayedColumnsWidthChanged: spacerWidthsListener,
+            displayedColumnsChanged: widthListener,
+            displayedColumnsWidthChanged: widthListener,
+            leftPinnedWidthChanged: widthListener,
+            rightPinnedWidthChanged: widthListener,
             pinnedRowDataChanged: this.refreshCompBottom.bind(this),
         });
 
-        this.addManagedPropertyListener('domLayout', spacerWidthsListener);
+        this.addManagedPropertyListener('domLayout', widthListener);
 
         this.beans.ctrlsSvc.register('fakeHScrollComp', this);
-        this.createManagedBean(new CenterWidthFeature((width) => (this.eContainer.style.width = `${width}px`)));
+        this.setContainerWidth();
 
         this.addManagedPropertyListeners(['suppressHorizontalScroll'], this.onScrollVisibilityChanged.bind(this));
     }
@@ -88,42 +85,18 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         this.getGui().style.bottom = `${bottomPinnedHeight}px`;
     }
 
-    protected override onScrollVisibilityChanged(): void {
-        super.onScrollVisibilityChanged();
-        this.setFakeHScrollSpacerWidths();
-    }
-
-    private setFakeHScrollSpacerWidths(): void {
-        const vScrollShowing = this.scrollVisibleSvc.verticalScrollShowing;
-
-        // we pad the right based on a) if cols are pinned to the right and
-        // b) if v scroll is showing on the right (normal position of scroll)
-        let rightSpacing = this.visibleCols.getDisplayedColumnsRightWidth();
-        const scrollOnRight = !this.enableRtl && vScrollShowing;
-        const scrollbarWidth = this.scrollVisibleSvc.getScrollbarWidth();
-
-        if (scrollOnRight) {
-            rightSpacing += scrollbarWidth;
-        }
-        _setFixedWidth(this.eRightSpacer, rightSpacing);
-        this.eRightSpacer.classList.toggle('ag-scroller-corner', rightSpacing <= scrollbarWidth);
-
-        // we pad the left based on a) if cols are pinned to the left and
-        // b) if v scroll is showing on the left (happens in LTR layout only)
-        let leftSpacing = this.visibleCols.getColsLeftWidth();
-        const scrollOnLeft = this.enableRtl && vScrollShowing;
-
-        if (scrollOnLeft) {
-            leftSpacing += scrollbarWidth;
-        }
-
-        _setFixedWidth(this.eLeftSpacer, leftSpacing);
-        this.eLeftSpacer.classList.toggle('ag-scroller-corner', leftSpacing <= scrollbarWidth);
+    private setContainerWidth(): void {
+        const width =
+            this.visibleCols.bodyWidth +
+            this.visibleCols.getLeftStickyColumnContainerWidth() +
+            this.visibleCols.getRightStickyColumnContainerWidth();
+        this.eContainer.style.width = `${Math.max(width, 1)}px`;
     }
 
     private setScrollVisibleDebounce = 0;
 
     protected setScrollVisible(): void {
+        this.enableRtl = this.gos.get('enableRtl');
         const hScrollShowing = this.scrollVisibleSvc.horizontalScrollShowing;
         const invisibleScrollbar = this.invisibleScrollbar;
         const isSuppressHorizontalScroll = this.gos.get('suppressHorizontalScroll');
@@ -140,6 +113,13 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
             _setFixedHeight(this.getGui(), scrollContainerSize);
             _setFixedHeight(this.eViewport, scrollContainerSize);
             _setFixedHeight(this.eContainer, scrollContainerSize);
+            _setFixedHeight(this.eEndSpacer, scrollContainerSize);
+            const verticalScrollbarWidth = this.getVerticalSpacerWidth();
+            _setFixedWidth(this.eEndSpacer, verticalScrollbarWidth);
+            this.eEndSpacer.style.display = verticalScrollbarWidth > 0 ? '' : 'none';
+            this.eViewport.style.width =
+                verticalScrollbarWidth > 0 ? `calc(100% - ${verticalScrollbarWidth}px)` : '100%';
+            this.getGui().style.flexDirection = this.enableRtl ? 'row-reverse' : 'row';
 
             if (!scrollContainerSize) {
                 // the container needs a min-height of 1px to be
@@ -154,6 +134,20 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         } else {
             this.setScrollVisibleDebounce = window.setTimeout(apply, 100);
         }
+    }
+
+    private getVerticalSpacerWidth(): number {
+        const gridBodyCtrl = this.beans.ctrlsSvc.getGridBodyCtrl();
+        if (gridBodyCtrl) {
+            return gridBodyCtrl.getVerticalScrollbarWidth();
+        }
+
+        if (!this.scrollVisibleSvc.verticalScrollShowing) {
+            return 0;
+        }
+
+        const scrollbarWidth = this.scrollVisibleSvc.getScrollbarWidth() || 0;
+        return scrollbarWidth > 0 ? scrollbarWidth : this.invisibleScrollbar ? 16 : 0;
     }
 
     public getScrollPosition(): number {

@@ -7,11 +7,11 @@ import type { RowContainerCtrl } from '../gridBodyComp/rowContainer/rowContainer
 export class AutoWidthCalculator extends BeanStub implements NamedBean {
     beanName = 'autoWidthCalc' as const;
 
-    private centerRowContainerCtrl: RowContainerCtrl;
+    private scrollingRowContainerCtrl: RowContainerCtrl;
 
     public postConstruct(): void {
         this.beans.ctrlsSvc.whenReady(this, (p) => {
-            this.centerRowContainerCtrl = p.center;
+            this.scrollingRowContainerCtrl = p.scrollingCenter;
         });
     }
 
@@ -58,7 +58,7 @@ export class AutoWidthCalculator extends BeanStub implements NamedBean {
 
         // we put the dummy into the body container, so it will inherit all the
         // css styles that the real cells are inheriting
-        const eBodyContainer = this.centerRowContainerCtrl.eContainer;
+        const eBodyContainer = this.scrollingRowContainerCtrl.eContainer;
 
         for (const el of elements) {
             this.cloneItemIntoDummy(el, eDummyContainer);

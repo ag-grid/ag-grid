@@ -64,7 +64,7 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
     }
 
     private updateScrollVisibleImpl(): void {
-        const centerRowCtrl = this.ctrlsSvc.get('center');
+        const centerRowCtrl = this.ctrlsSvc.get('scrollingCenter');
 
         if (!centerRowCtrl || this.colAnimation?.isActive()) {
             return;
@@ -80,7 +80,7 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
     }
 
     public updateScrollGap(): void {
-        const centerRowCtrl = this.ctrlsSvc.get('center');
+        const centerRowCtrl = this.ctrlsSvc.get('scrollingCenter');
         const horizontalGap = centerRowCtrl.hasHorizontalScrollGap();
         const verticalGap = centerRowCtrl.hasVerticalScrollGap();
         const atLeastOneDifferent =

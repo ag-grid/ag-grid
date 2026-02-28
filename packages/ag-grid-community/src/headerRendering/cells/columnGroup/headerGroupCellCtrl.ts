@@ -74,7 +74,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         this.addManagedPropertyListener('groupHeaderHeight', this.refreshMaxHeaderHeight.bind(this));
         this.refreshMaxHeaderHeight();
 
-        const pinned = this.rowCtrl.pinned;
+        const pinned = column.getPinned();
         const leafCols = column.getProvidedColumnGroup().getLeafColumns();
 
         colHover?.createHoverFeature(compBean, leafCols, eGui);

@@ -114,7 +114,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         fakeEvent = false,
         finished = false
     ): void {
-        const { gos, ctrlsSvc } = this.beans;
+        const { gos, ctrlsSvc, visibleCols } = this.beans;
         const isSuppressMoveWhenDragging = gos.get('suppressMoveWhenColumnDragging');
 
         if (finished && !isSuppressMoveWhenDragging) {
@@ -129,8 +129,16 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             return;
         }
 
+        let sectionX = draggingEvent.x;
+        if (this.pinned == null) {
+            sectionX -= visibleCols.getLeftStickyColumnContainerWidth();
+        } else if (this.pinned === 'right') {
+            const viewportWidth = ctrlsSvc.getHeaderRowContainerCtrl()?.eViewport.clientWidth ?? 0;
+            sectionX -= Math.max(0, viewportWidth - visibleCols.getRightStickyColumnContainerWidth());
+        }
+
         const mouseX = normaliseX({
-            x: draggingEvent.x,
+            x: sectionX,
             pinned: this.pinned,
             gos,
             ctrlsSvc,
@@ -576,15 +584,21 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             return;
         }
 
+        const { ctrlsSvc, gos, visibleCols } = this.beans;
+
         // scroll if the mouse has gone outside the grid (or just outside the scrollable part if pinning)
         // putting in 50 buffer, so even if user gets to edge of grid, a scroll will happen
-        const centerCtrl = this.beans.ctrlsSvc.get('center');
-        const firstVisiblePixel = centerCtrl.getCenterViewportScrollLeft();
+        const centerCtrl = ctrlsSvc.get('scrollingCenter');
+        const pinnedSectionWidth = gos.get('enableRtl')
+            ? visibleCols.getRightStickyColumnContainerWidth()
+            : visibleCols.getLeftStickyColumnContainerWidth();
+        const firstVisiblePixel = centerCtrl.getCenterViewportScrollLeft() + pinnedSectionWidth;
         const lastVisiblePixel = firstVisiblePixel + centerCtrl.getCenterWidth();
 
         let needToMoveRight: boolean;
         let needToMoveLeft: boolean;
-        if (this.gos.get('enableRtl')) {
+
+        if (gos.get('enableRtl')) {
             needToMoveRight = xAdjustedForScroll < firstVisiblePixel + SCROLL_GAP_NEEDED_BEFORE_MOVE;
             needToMoveLeft = xAdjustedForScroll > lastVisiblePixel - SCROLL_GAP_NEEDED_BEFORE_MOVE;
         } else {
@@ -650,9 +664,9 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             // this is how we achieve pining by dragging the column to the edge of the grid.
             this.failedMoveAttempts++;
 
-            const { pinnedCols, dragAndDrop, gos } = this.beans;
+            const { dragAndDrop, gos } = this.beans;
 
-            if (this.failedMoveAttempts <= MOVE_FAIL_THRESHOLD + 1 || !pinnedCols) {
+            if (this.failedMoveAttempts <= MOVE_FAIL_THRESHOLD + 1) {
                 return;
             }
 
