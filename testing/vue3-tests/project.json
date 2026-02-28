@@ -1,5 +1,5 @@
 {
-  "name": "vue3-tests",
+  "name": "ag-grid-vue3-tests",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "testing/vue3-tests/src",
   "projectType": "application",
