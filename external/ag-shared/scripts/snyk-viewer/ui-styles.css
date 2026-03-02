@@ -1454,6 +1454,12 @@ details.s3-vuln-card:not([open]) .s3-card-chevron {
     margin-top: 4px;
     padding-top: 12px;
     border-top: 1px solid var(--c-border);
+    justify-content: flex-end;
+}
+.batch-file-subgroup > .btn {
+    display: block;
+    margin-left: auto;
+    width: fit-content;
 }
 
 /* ── Skip controls ── */
