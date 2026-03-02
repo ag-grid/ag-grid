@@ -4,7 +4,8 @@
 
     const IGNORE_REASONS = [
         'Used in build & dev - not included in final production build',
-        'Test/lint dependency - not included in final production build',
+        'Test dependency - not included in final production build',
+        'Lint dependency - not included in final production build',
         'Downstream dependency of [package] - not included in final production build',
         'Dev server only - not exposed in production',
         'MCP/dev tooling - not a directly exposed production dependency',
