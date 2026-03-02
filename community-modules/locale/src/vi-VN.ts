@@ -698,8 +698,8 @@ export const AG_GRID_LOCALE_VN = {
     ariaChartMenuClose: 'Đóng Menu Chỉnh sửa Biểu đồ',
     ariaChartSelected: 'Đã chọn',
     ariaSparklineChartDescription:
-        'Sparkline - ${variable} hiển thị ${variable} giá trị trong khoảng từ ${variable} đến ${variable}. Bắt đầu tại ${variable} và kết thúc tại ${variable}.',
-    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${variable} không có giá trị.',
+        'Sparkline - ${chartType} hiển thị ${count} giá trị trong khoảng từ ${min} đến ${max}. Bắt đầu tại ${start} và kết thúc tại ${end}.',
+    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${chartType} không có giá trị.',
     ariaSkeletonCellLoadingFailed: 'Hàng không tải được',
     ariaSkeletonCellLoading: 'Dữ liệu hàng đang tải',
     ariaDeferSkeletonCellLoading: 'Ô đang tải',

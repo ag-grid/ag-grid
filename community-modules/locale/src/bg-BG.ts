@@ -702,8 +702,8 @@ export const AG_GRID_LOCALE_BG = {
     ariaChartMenuClose: 'Затворете менюто за редактиране на диаграмата',
     ariaChartSelected: 'Избрано',
     ariaSparklineChartDescription:
-        'Спарклайн - ${variable}, показва ${variable} стойности между ${variable} и ${variable}. Започва от ${variable} и завършва на ${variable}.',
-    ariaSparklineChartDescriptionEmpty: 'Спарклайн - ${variable}, без стойности.',
+        'Спарклайн - ${chartType}, показва ${count} стойности между ${min} и ${max}. Започва от ${start} и завършва на ${end}.',
+    ariaSparklineChartDescriptionEmpty: 'Спарклайн - ${chartType}, без стойности.',
     ariaSkeletonCellLoadingFailed: 'Редът не можа да се зареди',
     ariaSkeletonCellLoading: 'Данните на реда се зареждат',
     ariaDeferSkeletonCellLoading: 'Зарежда се клетка',

@@ -701,8 +701,8 @@ export const AG_GRID_LOCALE_EN = {
     ariaChartMenuClose: 'Close Chart Edit Menu',
     ariaChartSelected: 'Selected',
     ariaSparklineChartDescription:
-        'Sparkline - ${variable} displaying ${variable} values between ${variable} and ${variable}. Starts at ${variable} and ends at ${variable}.',
-    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${variable} displaying no values.',
+        'Sparkline - ${chartType} displaying ${count} values between ${min} and ${max}. Starts at ${start} and ends at ${end}.',
+    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${chartType} displaying no values.',
     ariaSkeletonCellLoadingFailed: 'Row failed to load',
     ariaSkeletonCellLoading: 'Row data is loading',
     ariaDeferSkeletonCellLoading: 'Cell is loading',

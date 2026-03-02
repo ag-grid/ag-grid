@@ -703,8 +703,8 @@ export const AG_GRID_LOCALE_TR = {
     ariaChartMenuClose: 'Grafik Düzenleme Menüsünü Kapat',
     ariaChartSelected: 'Seçildi',
     ariaSparklineChartDescription:
-        'Sparkline - ${variable}, ${variable} ile ${variable} arasında ${variable} değer gösterir. ${variable} ile başlar ve ${variable} ile biter.',
-    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${variable}, değer içermez.',
+        'Sparkline - ${chartType}, ${count} değer gösterir, ${min} ile ${max} arasında. ${start} ile başlar ve ${end} ile biter.',
+    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${chartType}, değer içermez.',
     ariaSkeletonCellLoadingFailed: 'Satır yüklenemedi',
     ariaSkeletonCellLoading: 'Satır verisi yükleniyor',
     ariaDeferSkeletonCellLoading: 'Hücre yükleniyor',

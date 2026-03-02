@@ -22,11 +22,10 @@ export const wrapFn = (fn: FunctionParams, wrapperFn: WrapperFunctionParams) => 
 };
 
 // ARIA
-const defaultSparklineAriaDescription = (variableValues: string[]) =>
-    `Sparkline - ${variableValues[0]} displaying ${variableValues[1]} values between ${variableValues[2]} and ${variableValues[3]}. Starts at ${variableValues[4]} and ends at ${variableValues[5]}.`;
+const defaultSparklineAriaDescription =
+    'Sparkline - ${chartType} displaying ${count} values between ${min} and ${max}. Starts at ${start} and ends at ${end}.';
 
-const defaultEmptySparklineAriaDescription = (variableValues: string[]) =>
-    `Sparkline - ${variableValues[0]} displaying no values.`;
+const defaultEmptySparklineAriaDescription = 'Sparkline - ${chartType} displaying no values.';
 
 export const getChartTypeLabel = (translate: LocaleTextFunc, sparklineOptions?: AgSparklineOptions): string => {
     const type = sparklineOptions?.type ?? 'line';
@@ -43,7 +42,7 @@ export const getChartTypeLabel = (translate: LocaleTextFunc, sparklineOptions?: 
     }
 };
 
-export interface SparklineSummary {
+interface SparklineSummary {
     count: number;
     min?: number;
     max?: number;
@@ -52,7 +51,7 @@ export interface SparklineSummary {
 }
 type CompleteSparklineSummary = SparklineSummary & Required<Pick<SparklineSummary, 'min' | 'max' | 'start' | 'end'>>;
 
-export type SparklineTemplateValues = Record<string, string>;
+type SparklineTemplateValues = Record<string, string>;
 
 export const getSparklineSummary = (data: any[], yKey: string): SparklineSummary => {
     let count = 0;
@@ -88,12 +87,12 @@ export function getSparklineAriaTemplate(params: {
 }): { template: string; values: SparklineTemplateValues } {
     const { translate, chartType, summary, formatNumber } = params;
 
-    if (!hasCompleteSparklineSummary(params.summary)) {
-        const variableValues = [params.chartType];
+    if (!hasCompleteSparklineSummary(summary)) {
+        const variableValues = [chartType];
         return {
             template: translate(
                 'ariaSparklineChartDescriptionEmpty',
-                defaultEmptySparklineAriaDescription(variableValues),
+                defaultEmptySparklineAriaDescription,
                 variableValues
             ),
             values: { chartType },
@@ -106,11 +105,7 @@ export function getSparklineAriaTemplate(params: {
     const variableValues = [chartType, count, min, max, start, end];
 
     return {
-        template: translate(
-            'ariaSparklineChartDescription',
-            defaultSparklineAriaDescription(variableValues),
-            variableValues
-        ),
+        template: translate('ariaSparklineChartDescription', defaultSparklineAriaDescription, variableValues),
         values: { chartType, count, min, max, start, end },
     };
 }

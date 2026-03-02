@@ -699,8 +699,8 @@ export const AG_GRID_LOCALE_NO = {
     ariaChartMenuClose: 'Lukk diagramredigeringsmeny',
     ariaChartSelected: 'Valgt',
     ariaSparklineChartDescription:
-        'Sparkline - ${variable} som viser ${variable} verdier mellom ${variable} og ${variable}. Starter på ${variable} og slutter på ${variable}.',
-    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${variable} uten verdier.',
+        'Sparkline - ${chartType} som viser ${count} verdier mellom ${min} og ${max}. Starter på ${start} og slutter på ${end}.',
+    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${chartType} uten verdier.',
     ariaSkeletonCellLoadingFailed: 'Raden kunne ikke lastes',
     ariaSkeletonCellLoading: 'Raddata lastes',
     ariaDeferSkeletonCellLoading: 'Cell laster',

@@ -700,8 +700,8 @@ export const AG_GRID_LOCALE_HR = {
     ariaChartMenuClose: 'Zatvori izbornik uređivanja grafikona',
     ariaChartSelected: 'Odabrano',
     ariaSparklineChartDescription:
-        'Sparkline - ${variable} prikazuje ${variable} vrijednosti između ${variable} i ${variable}. Počinje na ${variable} i završava na ${variable}.',
-    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${variable} bez vrijednosti.',
+        'Sparkline - ${chartType} prikazuje ${count} vrijednosti između ${min} i ${max}. Počinje na ${start} i završava na ${end}.',
+    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${chartType} bez vrijednosti.',
     ariaSkeletonCellLoadingFailed: 'Redak nije uspješno učitan',
     ariaSkeletonCellLoading: 'Podaci retka se učitavaju',
     ariaDeferSkeletonCellLoading: 'Ćelija se učitava',

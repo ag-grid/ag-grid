@@ -700,8 +700,8 @@ export const AG_GRID_LOCALE_NL = {
     ariaChartMenuClose: 'Sluit Grafiek Bewerkmenu',
     ariaChartSelected: 'Geselecteerd',
     ariaSparklineChartDescription:
-        'Sparkline - ${variable} met ${variable} waarden tussen ${variable} en ${variable}. Begint bij ${variable} en eindigt bij ${variable}.',
-    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${variable} zonder waarden.',
+        'Sparkline - ${chartType} met ${count} waarden tussen ${min} en ${max}. Begint bij ${start} en eindigt bij ${end}.',
+    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${chartType} zonder waarden.',
     ariaSkeletonCellLoadingFailed: 'Rij laden is mislukt',
     ariaSkeletonCellLoading: 'Rijgegevens worden geladen',
     ariaDeferSkeletonCellLoading: 'Cel wordt geladen',

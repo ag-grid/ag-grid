@@ -702,8 +702,8 @@ export const AG_GRID_LOCALE_RO = {
     ariaChartMenuClose: 'Închide meniul de editare a graficului',
     ariaChartSelected: 'Selectat',
     ariaSparklineChartDescription:
-        'Sparkline - ${variable} afișează ${variable} valori între ${variable} și ${variable}. Începe la ${variable} și se termină la ${variable}.',
-    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${variable} fără valori.',
+        'Sparkline - ${chartType} afișează ${count} valori între ${min} și ${max}. Începe la ${start} și se termină la ${end}.',
+    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${chartType} fără valori.',
     ariaSkeletonCellLoadingFailed: 'Încărcarea rândului a eșuat',
     ariaSkeletonCellLoading: 'Datele rândului se încarcă',
     ariaDeferSkeletonCellLoading: 'Celula se încarcă',

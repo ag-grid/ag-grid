@@ -705,8 +705,8 @@ export const AG_GRID_LOCALE_DE = {
     ariaChartMenuClose: 'Diagramm-Bearbeitungsmenü schließen',
     ariaChartSelected: 'Ausgewählt',
     ariaSparklineChartDescription:
-        'Sparkline - ${variable} mit ${variable} Werten zwischen ${variable} und ${variable}. Beginnt bei ${variable} und endet bei ${variable}.',
-    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${variable} ohne Werte.',
+        'Sparkline - ${chartType} mit ${count} Werten zwischen ${min} und ${max}. Beginnt bei ${start} und endet bei ${end}.',
+    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${chartType} ohne Werte.',
     ariaSkeletonCellLoadingFailed: 'Das Laden der Zeile ist fehlgeschlagen',
     ariaSkeletonCellLoading: 'Zeilendaten werden geladen',
     ariaDeferSkeletonCellLoading: 'Zelle wird geladen',

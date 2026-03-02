@@ -698,8 +698,8 @@ export const AG_GRID_LOCALE_JP = {
     ariaChartMenuClose: 'チャート編集メニューを閉じる',
     ariaChartSelected: '選択済み',
     ariaSparklineChartDescription:
-        'スパークライン - ${variable} は ${variable} から ${variable} までの ${variable} 個の値を表示します。${variable} で始まり ${variable} で終わります。',
-    ariaSparklineChartDescriptionEmpty: 'スパークライン - ${variable} は値がありません。',
+        'スパークライン - ${chartType} は ${count} 個の値を ${min} から ${max} の範囲で表示します。${start} で始まり ${end} で終わります。',
+    ariaSparklineChartDescriptionEmpty: 'スパークライン - ${chartType} は値がありません。',
     ariaSkeletonCellLoadingFailed: '行の読み込みに失敗しました',
     ariaSkeletonCellLoading: '行データを読み込み中',
     ariaDeferSkeletonCellLoading: 'セルを読み込み中',

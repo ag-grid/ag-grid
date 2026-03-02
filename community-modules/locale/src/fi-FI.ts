@@ -701,8 +701,8 @@ export const AG_GRID_LOCALE_FI = {
     ariaChartMenuClose: 'Sulje kaavion muokkausvalikko',
     ariaChartSelected: 'Valittu',
     ariaSparklineChartDescription:
-        'Sparkline - ${variable}, joka näyttää ${variable} arvoa välillä ${variable} ja ${variable}. Alkaa arvosta ${variable} ja päättyy arvoon ${variable}.',
-    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${variable}, ei arvoja.',
+        'Sparkline - ${chartType}, joka näyttää ${count} arvoa välillä ${min} ja ${max}. Alkaa arvosta ${start} ja päättyy arvoon ${end}.',
+    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${chartType}, ei arvoja.',
     ariaSkeletonCellLoadingFailed: 'Rivin lataus epäonnistui',
     ariaSkeletonCellLoading: 'Rivin tietoja ladataan',
     ariaDeferSkeletonCellLoading: 'Solu latautuu',

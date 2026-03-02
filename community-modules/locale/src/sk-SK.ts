@@ -699,8 +699,8 @@ export const AG_GRID_LOCALE_SK = {
     ariaChartMenuClose: 'Zatvoriť Menu Úpravy Grafu',
     ariaChartSelected: 'Vybrané',
     ariaSparklineChartDescription:
-        'Mini graf - ${variable} zobrazuje ${variable} hodnôt medzi ${variable} a ${variable}. Začína na ${variable} a končí na ${variable}.',
-    ariaSparklineChartDescriptionEmpty: 'Mini graf - ${variable} bez hodnôt.',
+        'Mini graf - ${chartType} zobrazuje ${count} hodnôt medzi ${min} a ${max}. Začína na ${start} a končí na ${end}.',
+    ariaSparklineChartDescriptionEmpty: 'Mini graf - ${chartType} bez hodnôt.',
     ariaSkeletonCellLoadingFailed: 'Nahrávanie riadku zlyhalo',
     ariaSkeletonCellLoading: 'Údaje riadku sa nahrávajú',
     ariaDeferSkeletonCellLoading: 'Načítava sa bunka',

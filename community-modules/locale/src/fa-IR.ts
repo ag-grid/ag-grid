@@ -700,8 +700,8 @@ export const AG_GRID_LOCALE_IR = {
     ariaChartMenuClose: 'بستن منوی ویرایش نمودار',
     ariaChartSelected: 'انتخاب شده',
     ariaSparklineChartDescription:
-        'اسپارک‌لاین - ${variable}، ${variable} مقدار را بین ${variable} و ${variable} نمایش می‌دهد. از ${variable} شروع می‌شود و در ${variable} پایان می‌یابد.',
-    ariaSparklineChartDescriptionEmpty: 'اسپارک‌لاین - ${variable} بدون مقدار.',
+        'اسپارک‌لاین - ${chartType}، ${count} مقدار را بین ${min} و ${max} نمایش می‌دهد. از ${start} شروع می‌شود و در ${end} پایان می‌یابد.',
+    ariaSparklineChartDescriptionEmpty: 'اسپارک‌لاین - ${chartType} بدون مقدار.',
     ariaSkeletonCellLoadingFailed: 'بارگیری ردیف ناموفق بود',
     ariaSkeletonCellLoading: 'داده‌های ردیف در حال بارگیری است',
     ariaDeferSkeletonCellLoading: 'در حال بارگذاری سلول',
