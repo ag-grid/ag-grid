@@ -965,8 +965,11 @@ describe('RowNode.getDataValue', () => {
 
             let euGroup: any, frGroup: any;
             api.forEachNode((node: any) => {
-                if (node.group && node.key === 'EU' && node.level === 0) euGroup = node;
-                else if (node.group && node.key === 'FR' && node.level === 1) frGroup = node;
+                if (node.group && node.key === 'EU' && node.level === 0) {
+                    euGroup = node;
+                } else if (node.group && node.key === 'FR' && node.level === 1) {
+                    frGroup = node;
+                }
             });
 
             // FR: avg(10,20) = 15, count=2
@@ -1243,7 +1246,7 @@ describe('RowNode.getDataValue', () => {
             };
 
             const api = await gridsManager.createGridAndWait('field-toNumber', {
-                columnDefs: [{ field: 'data' }],
+                columnDefs: [{ field: 'data', cellDataType: false }],
                 rowData: [{ id: '1', data: customObj }],
                 getRowId: (params) => params.data.id,
             });
@@ -1696,7 +1699,9 @@ describe('RowNode.getDataValue', () => {
 
             let group: any;
             api.forEachNode((node: any) => {
-                if (node.group && node.key === 'A') group = node;
+                if (node.group && node.key === 'A') {
+                    group = node;
+                }
             });
 
             // default returns avg wrapper object
@@ -1727,7 +1732,9 @@ describe('RowNode.getDataValue', () => {
 
             let group: any;
             api.forEachNode((node: any) => {
-                if (node.group && node.key === 'A') group = node;
+                if (node.group && node.key === 'A') {
+                    group = node;
+                }
             });
 
             // 'data' returns raw wrapper
@@ -1758,7 +1765,9 @@ describe('RowNode.getDataValue', () => {
 
             let group: any;
             api.forEachNode((node: any) => {
-                if (node.group && node.key === 'A') group = node;
+                if (node.group && node.key === 'A') {
+                    group = node;
+                }
             });
 
             // 'batch' resolves the wrapper via toNumber()
@@ -1785,7 +1794,9 @@ describe('RowNode.getDataValue', () => {
 
             let group: any;
             api.forEachNode((node: any) => {
-                if (node.group && node.key === 'A') group = node;
+                if (node.group && node.key === 'A') {
+                    group = node;
+                }
             });
 
             // 'data' returns count wrapper
@@ -1814,7 +1825,9 @@ describe('RowNode.getDataValue', () => {
 
             let group: any;
             api.forEachNode((node: any) => {
-                if (node.group && node.key === 'A') group = node;
+                if (node.group && node.key === 'A') {
+                    group = node;
+                }
             });
 
             // sum returns plain scalar for both modes
@@ -1852,7 +1865,9 @@ describe('RowNode.getDataValue', () => {
 
             let group: any;
             api.forEachNode((node: any) => {
-                if (node.group && node.key === 'A') group = node;
+                if (node.group && node.key === 'A') {
+                    group = node;
+                }
             });
 
             // 'data' returns raw wrapper
@@ -1883,7 +1898,9 @@ describe('RowNode.getDataValue', () => {
 
             let group: any;
             api.forEachNode((node: any) => {
-                if (node.group && node.key === 'A') group = node;
+                if (node.group && node.key === 'A') {
+                    group = node;
+                }
             });
 
             // 'data' returns count wrapper
@@ -1984,7 +2001,9 @@ describe('RowNode.getDataValue', () => {
 
             let group: any;
             api.forEachNode((node: any) => {
-                if (node.group && node.key === 'A') group = node;
+                if (node.group && node.key === 'A') {
+                    group = node;
+                }
             });
 
             // 'data' returns the raw custom object
@@ -2015,7 +2034,9 @@ describe('RowNode.getDataValue', () => {
 
             let group: any;
             api.forEachNode((node: any) => {
-                if (node.group && node.key === 'A') group = node;
+                if (node.group && node.key === 'A') {
+                    group = node;
+                }
             });
 
             // 'data' returns the agg wrapper

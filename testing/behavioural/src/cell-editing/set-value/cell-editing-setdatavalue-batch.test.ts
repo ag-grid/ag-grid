@@ -1,4 +1,4 @@
-import { TextEditorModule, setupAgTestIds } from 'ag-grid-community';
+import { NumberEditorModule, TextEditorModule, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
@@ -14,7 +14,7 @@ import { GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 describe('Cell Editing: setDataValue in Batch Mode', () => {
     const gridMgr = new TestGridsManager({
         includeDefaultModules: true,
-        modules: [BatchEditModule, TextEditorModule],
+        modules: [BatchEditModule, TextEditorModule, NumberEditorModule],
     });
 
     beforeAll(() => {

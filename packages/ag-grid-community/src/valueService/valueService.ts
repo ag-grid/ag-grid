@@ -212,7 +212,7 @@ export class ValueService extends BeanStub implements NamedBean {
             }
         }
 
-        let result = this.resolveValue(column, rowNode, ignoreAggData, ignoreShowRowGroup);
+        let result = this.resolveValue(column, rowNode, ignoreAggData);
 
         // the result could be an expression itself, if we are allowing cell values to be expressions
         if (this.cellExpressions && _isExpressionString(result)) {
@@ -254,12 +254,7 @@ export class ValueService extends BeanStub implements NamedBean {
         return !!node.sibling && !this.gos.get('groupSuppressBlankHeader');
     }
 
-    private resolveValue(
-        column: AgColumn,
-        rowNode: IRowNode,
-        ignoreAggData: boolean,
-        ignoreShowRowGroup: boolean = false
-    ): any {
+    private resolveValue(column: AgColumn, rowNode: IRowNode, ignoreAggData: boolean): any {
         const colDef = column.getColDef();
         const colId = column.getColId();
 
@@ -296,7 +291,7 @@ export class ValueService extends BeanStub implements NamedBean {
 
         // don't retrieve group values from field or valueGetter for multiple auto cols
         const rowGroupColId = colDef.showRowGroup;
-        const allowUserValuesForCell = ignoreShowRowGroup || typeof rowGroupColId !== 'string' || !rowNode.group;
+        const allowUserValuesForCell = typeof rowGroupColId !== 'string' || !rowNode.group;
 
         // SSRM agg data comes from the data attribute, so ignore that instead
         const ignoreSsrmAggData = this.isSsrm && ignoreAggData && !!colDef.aggFunc;
