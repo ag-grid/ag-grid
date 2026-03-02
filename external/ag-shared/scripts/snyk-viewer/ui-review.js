@@ -362,7 +362,6 @@
             // Build per-vuln cards with global path indices
             let globalIdx = 0;
             const vulnCards = [];
-            const allBatchItems = []; // for "Add All" button — populated after skipped filtering
 
             for (const [id, { vuln, paths }] of ignoreVulns) {
                 const skipped = skipState.vulns.has(id);
@@ -373,15 +372,6 @@
                     if (!byFile.has(path.snykFile)) byFile.set(path.snykFile, []);
                     const idx = globalIdx++;
                     byFile.get(path.snykFile).push({ ...path, idx });
-                }
-                if (!skipped) {
-                    for (const [, filePaths] of byFile) {
-                        for (const p of filePaths) {
-                            if (!skipState.deps.has(p.topLevelDep) && !p.alreadyIgnored) {
-                                allBatchItems.push({ vulnId: id, snykFile: p.snykFile, depPath: p.depPath, idx: p.idx });
-                            }
-                        }
-                    }
                 }
                 vulnCards.push({ id, vuln, skipped, byFile, startIdx });
             }
@@ -504,13 +494,10 @@
 
             const allVulnIds = [...ignoreVulns.keys()].filter(id => !skipState.vulns.has(id)).join(',');
             const globalActionsHtml = `<div class="rq-actions s3-global-actions">
-                <button class="btn btn-accent" data-action="add-all-snyk-ignore"
-                    data-card="${cardId}"
-                    data-items="${esc(JSON.stringify(allBatchItems))}">&#x2713; Add All to .snyk &#x2014; ${allBatchItems.length} path${allBatchItems.length !== 1 ? 's' : ''}</button>
                 <button class="btn btn-primary" data-action="resolve"
                     data-ids="${esc(allVulnIds)}"
                     data-resolution="snyk-ignore"
-                    data-note="Added ${allBatchItems.length} path(s) to .snyk">&#x2713; Mark All as Resolved</button>
+                    data-note="All paths added to .snyk">&#x2713; Mark All as Resolved</button>
             </div>`;
 
             return `<details class="tool-section">
@@ -887,8 +874,6 @@
                     handleApplyResolution(btn);
                 } else if (action === 'update-ignore-reason') {
                     handleUpdateIgnoreReason(btn);
-                } else if (action === 'add-all-snyk-ignore') {
-                    handleAddAllSnykIgnore(btn);
                 } else if (action === 'add-file-snyk-ignore') {
                     handleAddFileSnykIgnore(btn);
                 } else if (action === 'add-snyk-ignore') {
@@ -1090,41 +1075,6 @@
             } catch (err) {
                 btn.disabled = false; btn.textContent = 'Update'; alert('Request failed: ' + err.message);
             }
-        }
-
-        async function handleAddAllSnykIgnore(btn) {
-            const cardId = btn.dataset.card;
-            const expiryInput = document.getElementById('expiry-' + cardId);
-            const expires = expiryInput?.value?.trim() || '';
-            if (!expires) { alert('Please enter an expiry date.'); return; }
-            let batchItems;
-            try { batchItems = JSON.parse(btn.dataset.items); } catch { return; }
-            if (!batchItems.length) return;
-            const reasons = batchItems.map(function (item) {
-                return document.getElementById('reason-' + cardId + '-' + item.idx)?.value?.trim() || '';
-            });
-            const emptyIdx = reasons.findIndex(function (r) { return !r; });
-            if (emptyIdx >= 0) { alert('Please enter a reason for path ' + (emptyIdx + 1) + '.'); return; }
-            btn.disabled = true;
-            const allVulnIds = [...new Set(batchItems.map(function (i) { return i.vulnId; }))];
-            for (let i = 0; i < batchItems.length; i++) {
-                const item = batchItems[i];
-                btn.textContent = 'Adding ' + (i + 1) + '/' + batchItems.length + '\u2026';
-                try {
-                    const r = await fetch('/add-snyk-ignore', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ snykFile: item.snykFile, vulnId: item.vulnId, path: item.depPath, reason: reasons[i], expires }),
-                    });
-                    const data = await r.json();
-                    if (!data.ok) { btn.disabled = false; btn.textContent = '\u2713 Add All to .snyk'; alert('Failed: ' + data.error); return; }
-                } catch (err) {
-                    btn.disabled = false; btn.textContent = '\u2713 Add All to .snyk';
-                    alert('Request failed: ' + err.message); return;
-                }
-            }
-            btn.textContent = '\u2713 Added ' + batchItems.length + '/' + batchItems.length;
-            applyDecision(allVulnIds, 'resolved', { resolution: 'snyk-ignore', note: 'Added ' + batchItems.length + ' path(s) to .snyk' });
         }
 
         function handleUpdateDep(btn) {
