@@ -410,7 +410,7 @@
                     resolvedPaths += fps.filter(p => p.alreadyIgnored).length;
                 }
                 const fileCount = byFile.size;
-                const resolvedPart = resolvedPaths > 0 ? ` &middot; ${resolvedPaths} resolved` : '';
+                const resolvedPart = resolvedPaths > 0 ? ` &middot; <span class="s3-resolved-count">${resolvedPaths} resolved</span>` : '';
                 const countBadge = `<span class="s3-path-count-badge">${totalPaths} path${totalPaths !== 1 ? 's' : ''} &middot; ${fileCount} file${fileCount !== 1 ? 's' : ''}${resolvedPart}</span>`;
 
                 const allPathsIgnored = [...byFile.values()].every(fps => fps.every(p => p.alreadyIgnored));
@@ -482,6 +482,7 @@
                             <a class="vuln-id-link" href="https://security.snyk.io/vuln/${esc(id)}" target="_blank" rel="noopener">${esc(id)}</a>
                             <span class="rq-card-title">${esc(vuln.title || '')}</span>
                             ${countBadge}
+                            ${allPathsIgnored ? '<span class="s3-all-resolved-badge">&#x2713; Resolved</span>' : ''}
                         </div>
                         <div class="s3-card-header-right">
                             ${depTagsHtml ? `<span class="s3-via-label">Via:</span> ${depTagsHtml}` : ''}
@@ -724,6 +725,26 @@
                 yamlEl.textContent = buildGroupedYamlPreview(filePaths, reasons, expiry);
             }
 
+            function updateCardCountBadge(card) {
+                const badge = card.querySelector('.s3-path-count-badge');
+                if (!badge) return;
+                const totalPaths = card.querySelectorAll('.path-checkbox-row').length;
+                const resolvedPaths = card.querySelectorAll('.path-checkbox-row.path-already-ignored').length;
+                const fileCount = card.querySelectorAll('.batch-file-subgroup').length;
+                const resolvedPart = resolvedPaths > 0 ? ` &middot; <span class="s3-resolved-count">${resolvedPaths} resolved</span>` : '';
+                badge.innerHTML = `${totalPaths} path${totalPaths !== 1 ? 's' : ''} &middot; ${fileCount} file${fileCount !== 1 ? 's' : ''}${resolvedPart}`;
+                const allResolved = totalPaths > 0 && resolvedPaths === totalPaths;
+                let checkBadge = card.querySelector('.s3-all-resolved-badge');
+                if (allResolved && !checkBadge) {
+                    checkBadge = document.createElement('span');
+                    checkBadge.className = 's3-all-resolved-badge';
+                    checkBadge.textContent = '\u2713 Resolved';
+                    badge.insertAdjacentElement('afterend', checkBadge);
+                } else if (!allResolved && checkBadge) {
+                    checkBadge.remove();
+                }
+            }
+
             async function handleAddFileSnykIgnore(btn) {
                 const cardId = btn.dataset.card;
                 const vulnIdx = parseInt(btn.dataset.vulnIdx);
@@ -802,6 +823,8 @@
                     badge.textContent = '\u2713 Added';
                     heading.appendChild(badge);
                 }
+
+                updateCardCountBadge(card);
 
                 // If all paths across all subgroups are now resolved, mark the whole card
                 const cardAllIgnored = !card.querySelector('.path-checkbox-row:not(.path-already-ignored)');

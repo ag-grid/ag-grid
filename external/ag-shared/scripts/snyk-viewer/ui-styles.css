@@ -1435,6 +1435,20 @@ details.s3-vuln-card:not([open]) .s3-card-chevron {
     padding: 1px 7px;
     white-space: nowrap;
 }
+.s3-resolved-count {
+    color: var(--c-fix);
+    font-weight: 600;
+}
+.s3-all-resolved-badge {
+    font-size: 10px;
+    color: var(--c-fix);
+    background: rgba(76, 175, 130, 0.12);
+    border: 1px solid rgba(76, 175, 130, 0.3);
+    border-radius: 10px;
+    padding: 1px 7px;
+    white-space: nowrap;
+    font-weight: 600;
+}
 .s3-file-path-count {
     font-size: 10px;
     color: var(--c-text-muted);
