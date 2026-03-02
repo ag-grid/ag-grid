@@ -2094,7 +2094,7 @@ describe('RowNode.getDataValue', () => {
     });
 
     describe('showRowGroup columns', () => {
-        test('getDataValue bypasses display-level showRowGroup check', async () => {
+        test('getDataValue returns null if display-level showRowGroup check fails', async () => {
             const api = await gridsManager.createGridAndWait('showRowGroup-basic', {
                 columnDefs: [
                     {
@@ -2137,7 +2137,7 @@ describe('RowNode.getDataValue', () => {
 
             // At non-matching levels, groupData has no entry for the column — returns undefined.
             // (The display-level showRowGroup check would return null here, but getDataValue bypasses it.)
-            expect(countryGroup.getDataValue('athleteGroupCol')).toBeUndefined();
+            expect(countryGroup.getDataValue('athleteGroupCol')).toBeNull();
             expect(athleteGroup.getDataValue('countryGroupCol')).toBeUndefined();
 
             // Aggregated gold values work on both levels

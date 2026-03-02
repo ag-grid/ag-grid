@@ -166,8 +166,7 @@ export class ValueService extends BeanStub implements NamedBean {
         column: AgColumn,
         rowNode: IRowNode | null | undefined,
         from: CellValueResolveFrom,
-        ignoreAggData: boolean = false,
-        ignoreShowRowGroup: boolean = false
+        ignoreAggData: boolean = false
     ): any {
         // hack - the grid is getting refreshed before this bean gets initialised, race condition.
         // really should have a way so they get initialised in the right order???
@@ -197,22 +196,21 @@ export class ValueService extends BeanStub implements NamedBean {
             return pending;
         }
 
-        if (!ignoreShowRowGroup) {
-            // For showRowGroup columns (custom group display), return null when the row's group level
-            // is shallower than the column's associated row group. E.g. a country-level group (level 0)
-            // shows null for a showRowGroup:'athlete' column (group index 1) because athlete grouping
-            // hasn't been reached yet at that level.
-            // This however is a UI only concern - this shouldn't have been here at all!
-            const rowGroupColId = colDef.showRowGroup;
+        let result = this.resolveValue(column, rowNode, ignoreAggData);
+
+        if (result === undefined) {
+            // For showRowGroup columns, if no value was resolved and the row's group level is shallower
+            // than the column's associated row group, return null for retro-compatibility
+            // (previously getValue returned null early in this case).
+            const rowGroupColId = rowNode.group && column.getColDef().showRowGroup;
             if (typeof rowGroupColId === 'string') {
-                const colRowGroupIndex = this.beans.rowGroupColsSvc?.getColumnIndex(rowGroupColId) ?? -1;
-                if (colRowGroupIndex > rowNode.level) {
+                const colRowGroupIndex = this.beans.rowGroupColsSvc?.getColumnIndex(rowGroupColId);
+                if (colRowGroupIndex != null && colRowGroupIndex > rowNode.level) {
                     return null;
                 }
             }
+            return undefined;
         }
-
-        let result = this.resolveValue(column, rowNode, ignoreAggData);
 
         // the result could be an expression itself, if we are allowing cell values to be expressions
         if (this.cellExpressions && _isExpressionString(result)) {
