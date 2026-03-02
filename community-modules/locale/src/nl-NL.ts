@@ -701,6 +701,7 @@ export const AG_GRID_LOCALE_NL = {
     ariaChartSelected: 'Geselecteerd',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} met ${count} waarden tussen ${min} en ${max}. Begint bij ${start} en eindigt bij ${end}.',
+    ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} met 1 waarde, ${value}.',
     ariaSparklineChartDescriptionEmpty: 'Sparkline - ${chartType} zonder waarden.',
     ariaSkeletonCellLoadingFailed: 'Rij laden is mislukt',
     ariaSkeletonCellLoading: 'Rijgegevens worden geladen',

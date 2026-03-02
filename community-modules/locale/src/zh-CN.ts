@@ -698,6 +698,7 @@ export const AG_GRID_LOCALE_CN = {
     ariaChartSelected: '已选择',
     ariaSparklineChartDescription:
         '迷你图 - ${chartType} 显示 ${count} 个值，范围在 ${min} 到 ${max} 之间。起始于 ${start}，结束于 ${end}。',
+    ariaSparklineChartDescriptionSingleValue: '迷你图 - ${chartType} 显示 1 个值：${value}。',
     ariaSparklineChartDescriptionEmpty: '迷你图 - ${chartType}，无值。',
     ariaSkeletonCellLoadingFailed: '行加载失败',
     ariaSkeletonCellLoading: '行数据加载中',

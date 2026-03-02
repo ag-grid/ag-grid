@@ -704,6 +704,7 @@ export const AG_GRID_LOCALE_TR = {
     ariaChartSelected: 'Seçildi',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType}, ${count} değer gösterir, ${min} ile ${max} arasında. ${start} ile başlar ve ${end} ile biter.',
+    ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType}, 1 değer gösterir: ${value}.',
     ariaSparklineChartDescriptionEmpty: 'Sparkline - ${chartType}, değer içermez.',
     ariaSkeletonCellLoadingFailed: 'Satır yüklenemedi',
     ariaSkeletonCellLoading: 'Satır verisi yükleniyor',

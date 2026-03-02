@@ -705,6 +705,7 @@ export const AG_GRID_LOCALE_GR = {
     ariaChartSelected: 'Επιλεγμένο',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} που εμφανίζει ${count} τιμές μεταξύ ${min} και ${max}. Ξεκινά από ${start} και τελειώνει στο ${end}.',
+    ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} εμφανίζει 1 τιμή, ${value}.',
     ariaSparklineChartDescriptionEmpty: 'Sparkline - ${chartType} χωρίς τιμές.',
     ariaSkeletonCellLoadingFailed: 'Αποτυχία φόρτωσης γραμμής',
     ariaSkeletonCellLoading: 'Τα δεδομένα γραμμής φορτώνονται',

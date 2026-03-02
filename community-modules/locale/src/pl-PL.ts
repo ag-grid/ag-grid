@@ -704,6 +704,7 @@ export const AG_GRID_LOCALE_PL = {
     ariaChartSelected: 'Wybrane',
     ariaSparklineChartDescription:
         'Wykres iskrowy - ${chartType} wyświetla ${count} wartości między ${min} a ${max}. Zaczyna się od ${start} i kończy na ${end}.',
+    ariaSparklineChartDescriptionSingleValue: 'Wykres iskrowy - ${chartType} wyświetla 1 wartość: ${value}.',
     ariaSparklineChartDescriptionEmpty: 'Wykres iskrowy - ${chartType} bez wartości.',
     ariaSkeletonCellLoadingFailed: 'Wiersza nie udało się załadować',
     ariaSkeletonCellLoading: 'Dane wiersza ładują się',

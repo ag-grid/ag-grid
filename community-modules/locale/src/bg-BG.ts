@@ -703,6 +703,7 @@ export const AG_GRID_LOCALE_BG = {
     ariaChartSelected: 'Избрано',
     ariaSparklineChartDescription:
         'Спарклайн - ${chartType}, показва ${count} стойности между ${min} и ${max}. Започва от ${start} и завършва на ${end}.',
+    ariaSparklineChartDescriptionSingleValue: 'Спарклайн - ${chartType}, показва 1 стойност: ${value}.',
     ariaSparklineChartDescriptionEmpty: 'Спарклайн - ${chartType}, без стойности.',
     ariaSkeletonCellLoadingFailed: 'Редът не можа да се зареди',
     ariaSkeletonCellLoading: 'Данните на реда се зареждат',

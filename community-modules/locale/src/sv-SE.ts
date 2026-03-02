@@ -702,6 +702,7 @@ export const AG_GRID_LOCALE_SE = {
     ariaChartSelected: 'Vald',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} som visar ${count} värden mellan ${min} och ${max}. Börjar på ${start} och slutar på ${end}.',
+    ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} visar 1 värde, ${value}.',
     ariaSparklineChartDescriptionEmpty: 'Sparkline - ${chartType} utan värden.',
     ariaSkeletonCellLoadingFailed: 'Raden kunde inte laddas',
     ariaSkeletonCellLoading: 'Raddata laddas',

@@ -699,6 +699,7 @@ export const AG_GRID_LOCALE_CZ = {
     ariaChartSelected: 'Vybráno',
     ariaSparklineChartDescription:
         'Mini graf - ${chartType} zobrazuje ${count} hodnot mezi ${min} a ${max}. Začíná na ${start} a končí na ${end}.',
+    ariaSparklineChartDescriptionSingleValue: 'Mini graf - ${chartType} zobrazuje 1 hodnotu: ${value}.',
     ariaSparklineChartDescriptionEmpty: 'Mini graf - ${chartType} bez hodnot.',
     ariaSkeletonCellLoadingFailed: 'Řádek se nepodařilo načíst',
     ariaSkeletonCellLoading: 'Data řádku se načítají',

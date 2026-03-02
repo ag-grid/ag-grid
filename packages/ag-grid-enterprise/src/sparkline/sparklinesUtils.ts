@@ -25,6 +25,8 @@ export const wrapFn = (fn: FunctionParams, wrapperFn: WrapperFunctionParams) => 
 const defaultSparklineAriaDescription =
     'Sparkline - ${chartType} displaying ${count} values between ${min} and ${max}. Starts at ${start} and ends at ${end}.';
 
+const defaultSingleValueSparklineAriaDescription = 'Sparkline - ${chartType} displaying 1 value, ${value}.';
+
 const defaultEmptySparklineAriaDescription = 'Sparkline - ${chartType} displaying no values.';
 
 export const getChartTypeLabel = (translate: LocaleTextFunc, sparklineOptions?: AgSparklineOptions): string => {
@@ -96,6 +98,20 @@ export function getSparklineAriaTemplate(params: {
                 variableValues
             ),
             values: { chartType },
+        };
+    }
+
+    if (summary.count === 1) {
+        const value = formatNumber(summary.start);
+        const variableValues = [chartType, value];
+
+        return {
+            template: translate(
+                'ariaSparklineChartDescriptionSingleValue',
+                defaultSingleValueSparklineAriaDescription,
+                variableValues
+            ),
+            values: { chartType, value },
         };
     }
 

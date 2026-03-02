@@ -700,6 +700,7 @@ export const AG_GRID_LOCALE_NO = {
     ariaChartSelected: 'Valgt',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} som viser ${count} verdier mellom ${min} og ${max}. Starter på ${start} og slutter på ${end}.',
+    ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} viser 1 verdi, ${value}.',
     ariaSparklineChartDescriptionEmpty: 'Sparkline - ${chartType} uten verdier.',
     ariaSkeletonCellLoadingFailed: 'Raden kunne ikke lastes',
     ariaSkeletonCellLoading: 'Raddata lastes',
