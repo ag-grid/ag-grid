@@ -1,8 +1,7 @@
-import { setupAgTestIds } from 'ag-grid-community';
+import { TextEditorModule, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
-import { expect } from '../../test-utils/matchers';
 
 /**
  * Tests for setDataValue behavior during batch editing.
@@ -14,7 +13,7 @@ import { expect } from '../../test-utils/matchers';
 describe('Cell Editing: setDataValue in Batch Mode', () => {
     const gridMgr = new TestGridsManager({
         includeDefaultModules: true,
-        modules: [BatchEditModule],
+        modules: [BatchEditModule, TextEditorModule],
     });
 
     beforeAll(() => {
@@ -53,7 +52,7 @@ describe('Cell Editing: setDataValue in Batch Mode', () => {
             // GridRows shows rendered values (pending in batch mode)
             await new GridRows(api, `after ${eventSource} setDataValue`).check(`
                 ROOT id:ROOT_NODE_ID
-                └── LEAF id:0 a:"changed"
+                └── LEAF ⏳ id:0 a:⏳"changed" "initial"
             `);
 
             expect(result).toBe(true);
@@ -82,7 +81,7 @@ describe('Cell Editing: setDataValue in Batch Mode', () => {
 
             await new GridRows(api, 'before commit').check(`
                 ROOT id:ROOT_NODE_ID
-                └── LEAF id:0 a:"committed"
+                └── LEAF ⏳ id:0 a:⏳"committed" "initial"
             `);
 
             api.commitBatchEdit();
@@ -111,7 +110,7 @@ describe('Cell Editing: setDataValue in Batch Mode', () => {
 
             await new GridRows(api, 'before cancel').check(`
                 ROOT id:ROOT_NODE_ID
-                └── LEAF id:0 a:"pending"
+                └── LEAF ⏳ id:0 a:⏳"pending" "initial"
             `);
 
             api.cancelBatchEdit();
@@ -244,7 +243,7 @@ describe('Cell Editing: setDataValue in Batch Mode', () => {
 
             await new GridRows(api, 'after setDataValue calls').check(`
                 ROOT id:ROOT_NODE_ID
-                └── LEAF id:0 a:"a-changed" b:"b-changed"
+                └── LEAF ⏳ id:0 a:⏳"a-changed" "a-initial" b:⏳"b-changed" "b-initial"
             `);
 
             expect(rowNode.data.a).toBe('a-initial');

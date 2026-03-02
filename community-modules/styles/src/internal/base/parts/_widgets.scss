@@ -549,6 +549,32 @@
         );
     }
 
+    .ag-rich-select-typing-multi {
+        .ag-rich-select-field-input {
+            @include ag.unthemed-rtl(
+                (
+                    margin-left: 0.25rem,
+                )
+            );
+        }
+
+        .ag-rich-select-deselect-button {
+            @include ag.unthemed-rtl(
+                (
+                    margin-left: auto,
+                )
+            );
+        }
+
+        .ag-rich-select-deselect-button.ag-hidden + .ag-picker-field-icon {
+            @include ag.unthemed-rtl(
+                (
+                    margin-left: auto,
+                )
+            );
+        }
+    }
+
     .ag-popup-editor .ag-rich-select-value {
         height: var(--ag-row-height);
         min-width: 200px;

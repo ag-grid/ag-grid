@@ -211,12 +211,6 @@ export default defineMarkdocConfig({
         figmaCommunityButton: {
             render: component('./src/components/figma-community-button/FigmaCommunityButton.astro'),
         },
-        metaTag: {
-            render: component('./src/components/docs/components/MetaTagComponent.astro'),
-            attributes: {
-                tags: { type: Array, required: true },
-            },
-        },
         seedProjectsTable: {
             render: component('./src/components/SeedProjectsTable.astro'),
         },

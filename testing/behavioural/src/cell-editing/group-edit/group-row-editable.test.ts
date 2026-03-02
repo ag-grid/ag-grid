@@ -1,8 +1,6 @@
 import type { GridOptions, ValueParserParams } from 'ag-grid-community';
 
-import { expect } from '../../test-utils/matchers';
 import type {
-    ColDefInternal,
     EditableCallback,
     GroupRowEditableCallback,
     GroupRowValueSetterCallback,
@@ -67,7 +65,7 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
                     editable,
                     groupRowEditable,
                     valueSetter,
-                } as ColDefInternal,
+                },
                 { field: 'category', rowGroup: true, hide: true },
             ],
             rowData: [
@@ -90,7 +88,7 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
         editableCalls.length = 0;
         valueSetterCalls.length = 0;
         const groupColumn = api.getDisplayedCenterColumns()[0]!;
-        expect((groupColumn.getColDef() as ColDefInternal).groupRowEditable).toBe(groupRowEditable);
+        expect(groupColumn.getColDef().groupRowEditable).toBe(groupRowEditable);
         expect(groupColumn.isCellEditable(groupRowNode!)).toBe(true);
         const groupColId = groupColumn.getColId();
         if (editMode === 'ui') {
@@ -191,7 +189,7 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
                     groupRowEditable: true,
                     valueParser,
                     valueSetter,
-                } as ColDefInternal,
+                },
                 { field: 'category', rowGroup: true, hide: true },
             ],
             rowData: [
@@ -264,7 +262,7 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
                     editable,
                     groupRowEditable,
                     valueSetter,
-                } as ColDefInternal,
+                },
             ],
             treeData: true,
             rowData: [{ id: 'mars', path: ['Solar System', 'Mars'], label: 'Mars' }],
@@ -280,7 +278,7 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
         const originalFillerValue = getGroupColumnDisplayValue(fillerRowNode!);
 
         const groupColumn = api.getDisplayedCenterColumns()[0]!;
-        expect((groupColumn.getColDef() as ColDefInternal).groupRowEditable).toBe(groupRowEditable);
+        expect(groupColumn.getColDef().groupRowEditable).toBe(groupRowEditable);
 
         groupRowEditableCalls.length = 0;
         editableCalls.length = 0;
@@ -351,7 +349,7 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
                     editable,
                     groupRowEditable,
                     valueSetter,
-                } as ColDefInternal,
+                },
             ],
             treeData: true,
             rowData,
@@ -485,7 +483,7 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
                     groupRowEditable: false,
                     valueSetter,
                     groupRowValueSetter,
-                } as ColDefInternal,
+                },
                 { field: 'category', rowGroup: true, hide: true },
             ],
             rowData: [

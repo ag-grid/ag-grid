@@ -886,8 +886,8 @@ describe('Grouping delta sorting', () => {
             add: [{ id: 'esp-7', country: 'Spain', athlete: 'Zara', score: 70 }],
         });
 
-        // Both duplicates remain in correct sorted order
-        // Skip DOM validation since duplicate IDs cause mismatches between logical tree and DOM
+        // checkDom: false — this test intentionally uses duplicate row IDs (ire-1 appears twice),
+        // which causes DOM order/cell validation to fail as the grid cannot distinguish the duplicate DOM rows.
         await new GridRows(api, 'delta sort grouped with duplicate IDs', { checkDom: false }).check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
@@ -987,7 +987,8 @@ describe('Grouping delta sorting', () => {
             add: [{ id: 'esp-5', country: 'Spain', athlete: 'Zara', score: 70 }],
         });
 
-        // Skip DOM validation since duplicate IDs cause mismatches between logical tree and DOM
+        // checkDom: false — this test intentionally uses duplicate rowData object instances (same JS object twice),
+        // which causes DOM order/cell validation to fail as the grid cannot distinguish the duplicate DOM rows.
         await new GridRows(api, 'delta sort grouped with duplicate instances', { checkDom: false }).check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"

@@ -50,11 +50,12 @@ export const updateAlgolia = async (indexName: string, records: Record<string, a
         return;
     }
 
-    const algoliaClient = algoliasearch(process.env.PUBLIC_ALGOLIA_APP_ID, process.env.ALGOLIA_ADMIN_KEY);
+    const algoliaClient = algoliasearch(process.env.PUBLIC_ALGOLIA_APP_ID!, process.env.ALGOLIA_ADMIN_KEY!);
     const index = algoliaClient.initIndex(indexName);
 
     index.setSettings({
-        searchableAttributes: ['metaTag', 'title', 'heading', 'subHeading'], // attributes used for searching
+        // attributes used for searching, earlier properties rank higher
+        searchableAttributes: ['title', 'heading', 'subHeading', 'codeWords'],
         disableExactOnAttributes: ['text'], // don't allow "exact matches" in the text
         attributesToSnippet: ['text:40'], // configure snippet length shown in results
         distinct: 1, // only allow each page to appear in the results once

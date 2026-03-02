@@ -28,6 +28,20 @@
         "documentationUrl": null
     },
     {
+        "key": "AG-5829",
+        "issueType": "Bug",
+        "manualEntry": true,
+        "summary": "Test Sorting order for 34.3.1",
+        "versions": ["34.3.1"],
+        "status": "Done",
+        "resolution": "Done",
+        "features": null,
+        "moreInformation": null,
+        "deprecationNotes": null,
+        "breakingChangesNotes": null,
+        "documentationUrl": null
+    },
+    {
         "key": "AG-16379",
         "issueType": "Bug",
         "manualEntry": true,

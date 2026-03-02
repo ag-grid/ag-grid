@@ -382,6 +382,13 @@ describe('ag-grid tree data pinned sibling aggregation', () => {
             const pinnedFranceAfter = api.getPinnedTopRow(0);
             // The pinned row may still exist but its aggData won't be synced to the new group
             expect(pinnedFranceAfter?.aggData?.amount).toBeUndefined();
+
+            await new GridRows(api, 'after setRowData without getRowId').check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ Europe filler id:row-group-0-Europe ag-Grid-AutoColumn:"Europe" amount:1000
+                · └─┬ France filler id:row-group-0-Europe-1-France ag-Grid-AutoColumn:"France" amount:1000
+                · · └── Paris LEAF id:0 ag-Grid-AutoColumn:"Paris" name:"Paris" amount:1000
+            `);
         });
     });
 
@@ -454,6 +461,17 @@ describe('ag-grid tree data pinned sibling aggregation', () => {
             expect(franceGroup?.aggData?.amount).toBe(300);
             expect(pinnedFrance?.aggData?.amount).toBe(300);
 
+            await new GridRows(api, 'initial filler node state').check(`
+                PINNED_TOP id:t-top-row-group-0-Europe-1-France ag-Grid-AutoColumn:"France" amount:300
+                ROOT id:ROOT_NODE_ID
+                └─┬ Europe filler id:row-group-0-Europe ag-Grid-AutoColumn:"Europe" amount:450
+                · ├─┬ France filler id:row-group-0-Europe-1-France ag-Grid-AutoColumn:"France" amount:300
+                · │ ├── Paris LEAF id:fr-paris ag-Grid-AutoColumn:"Paris" name:"Paris" amount:100
+                · │ └── Lyon LEAF id:fr-lyon ag-Grid-AutoColumn:"Lyon" name:"Lyon" amount:200
+                · └─┬ Germany filler id:row-group-0-Europe-1-Germany ag-Grid-AutoColumn:"Germany" amount:150
+                · · └── Berlin LEAF id:de-berlin ag-Grid-AutoColumn:"Berlin" name:"Berlin" amount:150
+            `);
+
             // Add a new city
             applyTransactionChecked(api, {
                 add: [{ id: 'fr-nice', path: ['Europe', 'France', 'Nice'], name: 'Nice', amount: 150 }],
@@ -461,6 +479,18 @@ describe('ag-grid tree data pinned sibling aggregation', () => {
 
             expect(franceGroup?.aggData?.amount).toBe(450);
             expect(pinnedFrance?.aggData?.amount).toBe(450);
+
+            await new GridRows(api, 'after adding Nice').check(`
+                PINNED_TOP id:t-top-row-group-0-Europe-1-France ag-Grid-AutoColumn:"France" amount:450
+                ROOT id:ROOT_NODE_ID
+                └─┬ Europe filler id:row-group-0-Europe ag-Grid-AutoColumn:"Europe" amount:600
+                · ├─┬ France filler id:row-group-0-Europe-1-France ag-Grid-AutoColumn:"France" amount:450
+                · │ ├── Paris LEAF id:fr-paris ag-Grid-AutoColumn:"Paris" name:"Paris" amount:100
+                · │ ├── Lyon LEAF id:fr-lyon ag-Grid-AutoColumn:"Lyon" name:"Lyon" amount:200
+                · │ └── Nice LEAF id:fr-nice ag-Grid-AutoColumn:"Nice" name:"Nice" amount:150
+                · └─┬ Germany filler id:row-group-0-Europe-1-Germany ag-Grid-AutoColumn:"Germany" amount:150
+                · · └── Berlin LEAF id:de-berlin ag-Grid-AutoColumn:"Berlin" name:"Berlin" amount:150
+            `);
         });
     });
 

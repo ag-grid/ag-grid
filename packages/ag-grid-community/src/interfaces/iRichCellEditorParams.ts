@@ -1,6 +1,6 @@
 import type { AgPickerFieldParams } from '../agStack/widgets/agPickerFieldParams';
 import type { AgComponentSelectorType } from '../widgets/component';
-import type { ICellEditorParams } from './iCellEditor';
+import type { ICellEditorParamsShared } from './iCellEditor';
 import type { ICellEditorRendererParams } from './iCellEditorRenderer';
 
 export interface IRichCellEditorRendererParams<TValue> extends ICellEditorRendererParams<TValue> {
@@ -8,7 +8,7 @@ export interface IRichCellEditorRendererParams<TValue> extends ICellEditorRender
 }
 
 export interface RichSelectParams<TValue = any> extends AgPickerFieldParams<AgComponentSelectorType> {
-    value?: TValue[] | TValue;
+    value?: TValue[] | TValue | null;
     valueList?: TValue[];
     onSearch?: (search?: string) => void;
     cellRenderer?: any;
@@ -28,7 +28,7 @@ export interface RichSelectParams<TValue = any> extends AgPickerFieldParams<AgCo
     placeholder?: string;
     initialInputValue?: string;
 
-    valueFormatter?: (value: TValue[] | TValue) => string;
+    valueFormatter?: (value: TValue[] | TValue | null | undefined) => string;
     searchStringCreator?: (values: TValue[]) => string[];
     allowNoResultsCopy?: boolean;
 }
@@ -43,9 +43,60 @@ export type RichCellEditorValuesCallback<TData = any, TValue = any> = (
     params: RichCellEditorValuesCallbackParams<TData, TValue>
 ) => TValue[] | Promise<TValue[]>;
 
+export interface RichCellEditorValuesPageParams<TData = any, TValue = any> extends RichCellEditorParams<TData, TValue> {
+    /** The current search string. Empty string means unfiltered values. */
+    search: string;
+    /** The first row index requested (inclusive). */
+    startRow: number;
+    /** The last row index requested (exclusive). */
+    endRow: number;
+    /** Opaque continuation token returned by the previous page. */
+    cursor?: string | null;
+}
+
+export interface RichCellEditorValuesPageResult<TValue = any> {
+    /** The page of values returned by the server. */
+    values: TValue[];
+    /** Optional absolute row index where data ends. */
+    lastRow?: number;
+    /** Optional continuation token for the next page. */
+    cursor?: string | null;
+}
+
+export type RichCellEditorValuesPageCallback<TData = any, TValue = any> = (
+    params: RichCellEditorValuesPageParams<TData, TValue>
+) => RichCellEditorValuesPageResult<TValue> | Promise<RichCellEditorValuesPageResult<TValue>>;
+
+export type RichCellEditorValuesPageStartRowCallback<TValue = any> = (
+    value: TValue[] | TValue | null | undefined
+) => number;
+
 export interface IRichCellEditorParams<TData = any, TValue = any, GValue = any> {
-    /** The list of values to be selected from. */
-    values: TValue[] | RichCellEditorValuesCallback<TData, TValue>;
+    /** The list of values to be selected from. Required when `valuesPage` is not provided. */
+    values?: TValue[] | RichCellEditorValuesCallback<TData, TValue>;
+    /**
+     * Optional paged datasource for very large value lists.
+     * When provided, values are loaded incrementally and additional pages are requested as the user scrolls.
+     * If both `values` and `valuesPage` are set, `valuesPage` takes precedence.
+     */
+    valuesPage?: RichCellEditorValuesPageCallback<TData, TValue>;
+    /**
+     * Initial page start row when using `valuesPage`.
+     * Can be a fixed number or a callback that derives the start row from the current editor value.
+     * Only applied for the initial, unfiltered load. Filtered searches always start from row `0`.
+     * @default 0
+     */
+    valuesPageInitialStartRow?: number | RichCellEditorValuesPageStartRowCallback<TValue>;
+    /**
+     * Number of rows requested per page when using `valuesPage`.
+     * @default 100
+     */
+    valuesPageSize?: number;
+    /**
+     * Number of rows from the end of the loaded list at which the next page is requested.
+     * @default 10
+     */
+    valuesPageLoadThreshold?: number;
     /** The row height, in pixels, of each value. */
     cellHeight?: number;
     /** The cell renderer to use to render each value. Cell renderers are useful for rendering rich HTML values, or when processing complex data. */
@@ -63,11 +114,9 @@ export interface IRichCellEditorParams<TData = any, TValue = any, GValue = any> 
      * @default false
      */
     filterList?: boolean;
-
     /**
-     *
-     * Set to `true` to enable asynchronous filtering of values via the `values` callback.
-     * (only relevant when `allowTyping=true`, `filterList=true` and the `values` callback returns a promise of filtered values).
+     * Set to `true` to enable asynchronous filtering of values via the `values` or `valuesPage` callback.
+     * (only relevant when `allowTyping=true` and `filterList=true`).
      * @default false
      */
     filterListAsync?: boolean;
@@ -88,7 +137,6 @@ export interface IRichCellEditorParams<TData = any, TValue = any, GValue = any> 
     highlightMatch?: boolean;
     /**
      * If `true` this component will allow multiple items from the list of values to be selected.
-     * Note: This feature does not work with `allowTyping=true`.
      */
     multiSelect?: boolean;
     /**
@@ -135,4 +183,4 @@ export interface IRichCellEditorParams<TData = any, TValue = any, GValue = any> 
 
 export interface RichCellEditorParams<TData = any, TValue = any, TContext = any>
     extends IRichCellEditorParams<TData, TValue>,
-        Omit<ICellEditorParams<TData, TValue, TContext>, 'formatValue' | 'parseValue'> {}
+        ICellEditorParamsShared<TData, TValue, TContext> {}

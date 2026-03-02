@@ -35,6 +35,12 @@
     :where(.ag-rich-select-loading) {
         display: flex;
         padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
+
+        /* stylelint-disable-next-line selector-max-specificity */
+        :where(.ag-loading-text) {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     }
 }
 
@@ -78,6 +84,56 @@
     left: var(--ag-spacing);
 }
 
+.ag-rich-select-typing-multi {
+    :where(.ag-picker-field-display) {
+        flex: 0 1 auto;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    :where(.ag-rich-select-pill-display) {
+        display: flex;
+        flex: 0 1 auto;
+        min-width: 0;
+        max-width: 100%;
+        align-items: center;
+        overflow: hidden;
+
+        :where(.ag-pill-container) {
+            flex: 0 1 auto;
+            min-width: 0;
+            max-width: 100%;
+            overflow: hidden;
+        }
+    }
+
+    :where(.ag-rich-select-field-input) {
+        margin-left: 0.25rem;
+        flex: 0 0 auto;
+        min-width: 0;
+        max-width: 100%;
+
+        :where(.ag-input-wrapper) {
+            flex: 0 0 auto;
+            max-width: 100%;
+        }
+
+        :where(.ag-input-field-input) {
+            width: auto;
+            min-width: 1ch;
+            max-width: 100%;
+        }
+    }
+
+    :where(.ag-rich-select-deselect-button) {
+        margin-left: auto;
+    }
+
+    :where(.ag-rich-select-deselect-button.ag-hidden + .ag-picker-field-icon) {
+        margin-left: auto;
+    }
+}
+
 :where(.ag-popup-editor) .ag-rich-select-value {
     height: var(--ag-row-height);
     min-width: 200px;
@@ -92,6 +148,7 @@
     display: flex;
     gap: 0.25rem;
     flex-wrap: nowrap;
+    min-width: 0;
 }
 
 .ag-pill {

@@ -7,7 +7,6 @@ import { agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from '../test-utils';
-import { expect } from '../test-utils/matchers';
 
 describe('SSRM focus restoration', () => {
     const gridsManager = new TestGridsManager({

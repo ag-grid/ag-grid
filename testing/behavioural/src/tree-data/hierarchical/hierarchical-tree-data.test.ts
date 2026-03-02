@@ -214,14 +214,14 @@ describe('ag-grid hierarchical tree data', () => {
 
         gridRows = new GridRows(api, 'update 4');
         await gridRows.check(`
-                ROOT id:ROOT_NODE_ID
-                ├─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"0" x:"E"
-                │ ├── 1 LEAF id:1 ag-Grid-AutoColumn:"1" x:"F"
-                │ └── 2 LEAF id:2 ag-Grid-AutoColumn:"2" x:"G"
-                └─┬ 3 GROUP id:3 ag-Grid-AutoColumn:"3" x:"H"
-                · ├── 4 LEAF id:4 ag-Grid-AutoColumn:"4" x:"I"
-                · └── 5 LEAF id:5 ag-Grid-AutoColumn:"5" x:"J"
-            `);
+            ROOT id:ROOT_NODE_ID
+            ├─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"0" x:"E"
+            │ ├── 1 LEAF id:1 ag-Grid-AutoColumn:"1" x:"F"
+            │ └── 2 LEAF id:2 ag-Grid-AutoColumn:"2" x:"G"
+            └─┬ 3 GROUP id:3 ag-Grid-AutoColumn:"3" x:"H"
+            · ├── 4 LEAF id:4 ag-Grid-AutoColumn:"4" x:"I"
+            · └── 5 LEAF id:5 ag-Grid-AutoColumn:"5" x:"J"
+        `);
     });
 
     // TODO: disabled due to AG-13994 - Remove the treeData flattening behavior (from the API, not the codebase)
@@ -286,38 +286,38 @@ describe('ag-grid hierarchical tree data', () => {
 
         gridRows = new GridRows(api, 'update 2');
         await gridRows.check(`
-                ROOT id:ROOT_NODE_ID
-                ├── LEAF id:0 x:"A"
-                ├── LEAF id:1 x:"B"
-                ├── LEAF id:2 x:"C"
-                └── LEAF id:3 x:"D"
-            `);
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 x:"A"
+            ├── LEAF id:1 x:"B"
+            ├── LEAF id:2 x:"C"
+            └── LEAF id:3 x:"D"
+        `);
 
         api.updateGridOptions({ rowData: rowData1 });
 
         gridRows = new GridRows(api, 'update 3');
         await gridRows.check(`
-                ROOT id:ROOT_NODE_ID
-                ├── LEAF id:0 x:"E"
-                ├── LEAF id:1 x:"F"
-                ├── LEAF id:2 x:"G"
-                ├── LEAF id:3 x:"H"
-                ├── LEAF id:4 x:"I"
-                └── LEAF id:5 x:"J"
-            `);
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 x:"E"
+            ├── LEAF id:1 x:"F"
+            ├── LEAF id:2 x:"G"
+            ├── LEAF id:3 x:"H"
+            ├── LEAF id:4 x:"I"
+            └── LEAF id:5 x:"J"
+        `);
 
         api.updateGridOptions({ treeData: true });
 
         gridRows = new GridRows(api, 'update 4');
         await gridRows.check(`
-                ROOT id:ROOT_NODE_ID
-                ├─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"0" x:"E"
-                │ ├── 1 LEAF id:1 ag-Grid-AutoColumn:"1" x:"F"
-                │ └── 2 LEAF id:2 ag-Grid-AutoColumn:"2" x:"G"
-                └─┬ 3 GROUP id:3 ag-Grid-AutoColumn:"3" x:"H"
-                · ├── 4 LEAF id:4 ag-Grid-AutoColumn:"4" x:"I"
-                · └── 5 LEAF id:5 ag-Grid-AutoColumn:"5" x:"J"
-            `);
+            ROOT id:ROOT_NODE_ID
+            ├─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"0" x:"E"
+            │ ├── 1 LEAF id:1 ag-Grid-AutoColumn:"1" x:"F"
+            │ └── 2 LEAF id:2 ag-Grid-AutoColumn:"2" x:"G"
+            └─┬ 3 GROUP id:3 ag-Grid-AutoColumn:"3" x:"H"
+            · ├── 4 LEAF id:4 ag-Grid-AutoColumn:"4" x:"I"
+            · └── 5 LEAF id:5 ag-Grid-AutoColumn:"5" x:"J"
+        `);
     });
 
     test('ag-grid hierarchical override tree data is insensitive to updateGridOptions object order', async () => {

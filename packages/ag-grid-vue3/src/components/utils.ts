@@ -102,6 +102,7 @@ import type {
     SortDirection,
     StatusBar,
     TabToNextCell,
+    TabToNextGridContainer,
     TabToNextHeader,
     Theme,
     TreeDataDisplayType,
@@ -1252,6 +1253,14 @@ export interface Props<TData> {
          * @agModule `RowGroupingModule`
          */
     groupHideOpenParents?: boolean,
+    /** When using `groupDisplayType='multipleColumns'` or `groupHideOpenParents=true`, hides group columns for levels
+         * that have not yet been expanded. Only the top-level group column is initially
+         * visible; each subsequent level becomes visible when at least one group at the
+         * preceding level is expanded. (Client Side Row Model only)
+         * @default false
+         * @agModule `RowGroupingModule`
+         */
+    groupHideColumnsUntilExpanded?: boolean,
     /** Set to `true` to prevent the grid from creating a '(Blanks)' group for nodes which do not belong to a group, and display the unbalanced nodes alongside group nodes.
          * @default false
          * @agModule `RowGroupingModule`
@@ -1768,6 +1777,12 @@ export interface Props<TData> {
          * or `false` to let the browser handle the tab behaviour.
          */
     tabToNextCell?: TabToNextCell<TData>,
+    /** Allows overriding the default behaviour when tabbing between core grid containers.
+         * Return a container name, a cell position, or a header position to focus that target,
+         * `true` to stay on the current focus, `false` to let the browser handle tab behaviour,
+         * or `undefined` to use the grid's default behaviour.
+         */
+    tabToNextGridContainer?: TabToNextGridContainer<TData>,
     /** A callback for localising text within the grid.
          * @initial
          * @agModule `LocaleModule`
@@ -2212,6 +2227,7 @@ export function getProps() {
         groupRemoveSingleChildren: undefined,
         groupRemoveLowestSingleChildren: undefined,
         groupHideOpenParents: undefined,
+        groupHideColumnsUntilExpanded: undefined,
         groupAllowUnbalanced: undefined,
         rowGroupPanelShow: undefined,
         groupRowRenderer: undefined,
@@ -2319,6 +2335,7 @@ export function getProps() {
         tabToNextHeader: undefined,
         navigateToNextCell: undefined,
         tabToNextCell: undefined,
+        tabToNextGridContainer: undefined,
         getLocaleText: undefined,
         getDocument: undefined,
         paginationNumberFormatter: undefined,
@@ -2467,34 +2484,75 @@ export function getProps() {
 
 export const debounce = (func: () => void, delay: number) => {
      let timeout: number;
-     return () => {
-          const later = function () {
-               func();
-          };
+     const debounced = () => {
           window.clearTimeout(timeout);
-          timeout = window.setTimeout(later, delay);
+          timeout = window.setTimeout(func, delay);
      };
+     debounced.cancel = () => {
+          window.clearTimeout(timeout);
+     };
+     return debounced;
 };
 
 function isInputClass(input: any) {
-     return input &&
-          input.constructor &&
-          input.constructor.toString().substring(0, 5) === 'class';
+     if (!input || typeof input !== 'object' || Array.isArray(input)) {
+          return false;
+     }
+     const proto = Object.getPrototypeOf(input);
+     return proto !== null && proto !== Object.prototype;
 }
 
 // necessary for grid change detection to work - everything in vue is proxied
 export function deepToRaw<T extends Record<string, any>>(sourceObj: T): T {
+     // Fast path: primitives, null/undefined, and functions need no unwrapping
+     if (sourceObj === null || sourceObj === undefined || typeof sourceObj !== 'object') {
+          return sourceObj;
+     }
+
+     const seen = new WeakSet();
      const objectIterator = (input: any): any => {
+          // Primitives and functions pass through immediately
+          if (input === null || input === undefined || typeof input !== 'object') {
+               return input;
+          }
+          if (isRef(input)) {
+               return objectIterator(input.value);
+          }
+          if (isReactive(input) || isProxy(input)) {
+               return objectIterator(toRaw(input));
+          }
           if (isInputClass(input)) {
                return toRaw(input);
           }
           if (Array.isArray(input)) {
-               return input.map((item) => objectIterator(item));
+               // Check if any element needs unwrapping before allocating a new array
+               let needsCopy = false;
+               for (let i = 0; i < input.length; i++) {
+                    const item = input[i];
+                    if (item !== null && typeof item === 'object') {
+                         if (isRef(item) || isReactive(item) || isProxy(item)) {
+                              needsCopy = true;
+                              break;
+                         }
+                         // Nested object/array — need to recurse
+                         needsCopy = true;
+                         break;
+                    }
+               }
+               return needsCopy ? input.map((item) => objectIterator(item)) : input;
           }
-          if (isRef(input) || isReactive(input) || isProxy(input)) {
-               return objectIterator(toRaw(input));
+          if (seen.has(input)) {
+               return input;
           }
-          return input;
+          seen.add(input);
+          // Always create a shallow copy so the grid's reference equality check
+          // detects in-place mutations (AG-14654)
+          const keys = Object.keys(input);
+          const result: Record<string, any> = {};
+          for (let i = 0; i < keys.length; i++) {
+               result[keys[i]] = objectIterator(input[keys[i]]);
+          }
+          return result;
      };
 
      return objectIterator(sourceObj);

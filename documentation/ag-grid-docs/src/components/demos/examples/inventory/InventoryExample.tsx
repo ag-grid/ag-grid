@@ -111,6 +111,7 @@ export const InventoryExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                 cellRenderer: StockCellRenderer,
                 headerClass: 'header-inventory',
                 sortable: false,
+                tooltipValueGetter: ({ data: { available, variants } }) => `${available} Stock / ${variants} Variants`,
             },
             {
                 field: 'incoming',
@@ -123,7 +124,7 @@ export const InventoryExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
             },
             {
                 field: 'price',
-                width: 120,
+                width: 150,
                 headerClass: 'header-price',
                 cellRenderer: PriceCellRenderer,
             },
@@ -137,7 +138,7 @@ export const InventoryExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                 valueFormatter: ({ value }: ValueFormatterParams) => `£${value}`,
                 width: 150,
             },
-            { field: 'actions', cellRenderer: ActionsCellRenderer, minWidth: 194 },
+            { field: 'actions', cellRenderer: ActionsCellRenderer, minWidth: 194, sortable: false, filter: false },
         ];
 
         return allColDefs.filter(

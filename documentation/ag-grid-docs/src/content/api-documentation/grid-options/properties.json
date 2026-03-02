@@ -1002,6 +1002,12 @@
                 "name": "Custom Navigation",
                 "url": "./keyboard-navigation/#custom-navigation"
             }
+        },
+        "tabToNextGridContainer": {
+            "more": {
+                "name": "Custom Navigation",
+                "url": "./keyboard-navigation/#custom-navigation"
+            }
         }
     },
     "pagination": {
@@ -1410,6 +1416,12 @@
             "more": {
                 "name": "Hide Open Parents",
                 "url": "./grouping-multiple-group-columns/#hiding-expanded-parent-rows"
+            }
+        },
+        "groupHideColumnsUntilExpanded": {
+            "more": {
+                "name": "Hiding Group Columns Until Expanded",
+                "url": "./grouping-multiple-group-columns/#hiding-group-columns-until-expanded"
             }
         },
         "groupHideParentOfSingleChild": {

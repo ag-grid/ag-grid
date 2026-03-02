@@ -648,6 +648,55 @@ describe('StateService - Grid State Management', () => {
             expect(restoredState).toEqual(savedState);
         });
 
+        test('should preserve absolute sort type when restoring state via setState', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: defaultColumnDefs,
+                rowData: defaultRowData,
+            });
+
+            api.applyColumnState({
+                state: [{ colId: 'age', sort: 'asc', sortType: 'absolute' }],
+            });
+
+            const savedState = api.getState();
+            expect(savedState.sort?.sortModel).toEqual([{ colId: 'age', sort: 'asc', type: 'absolute' }]);
+
+            // Clear sort and restore from saved state
+            api.applyColumnState({ state: [{ colId: 'age', sort: null }] });
+            expect(api.getState().sort?.sortModel ?? []).toHaveLength(0);
+
+            api.setState(savedState);
+            await asyncSetTimeout(50);
+
+            expect(api.getState().sort?.sortModel).toEqual([{ colId: 'age', sort: 'asc', type: 'absolute' }]);
+        });
+
+        test('should clear absolute sort from a column not present in the restored sort state', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: defaultColumnDefs,
+                rowData: defaultRowData,
+            });
+
+            // Set absolute sort on 'age', default sort on 'name'
+            api.applyColumnState({
+                state: [
+                    { colId: 'age', sort: 'asc', sortType: 'absolute', sortIndex: 0 },
+                    { colId: 'name', sort: 'desc', sortIndex: 1 },
+                ],
+            });
+
+            expect(api.getState().sort?.sortModel).toEqual([
+                { colId: 'age', sort: 'asc', type: 'absolute' },
+                { colId: 'name', sort: 'desc', type: 'default' },
+            ]);
+
+            // Restore a state that only sorts 'name' — 'age' absolute sort should be cleared
+            api.setState({ sort: { sortModel: [{ colId: 'name', sort: 'asc', type: 'default' }] } });
+            await asyncSetTimeout(50);
+
+            expect(api.getState().sort?.sortModel).toEqual([{ colId: 'name', sort: 'asc', type: 'default' }]);
+        });
+
         test('should initialize grid with initial state', async () => {
             const initialState: GridState = {
                 sort: {

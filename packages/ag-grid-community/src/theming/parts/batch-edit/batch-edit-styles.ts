@@ -5,22 +5,22 @@ import { batchEditStyleDefaultCSS } from './batch-edit-style-default.css-GENERAT
 
 export type BatchEditStyleParams = {
     /**
-     * Background color of the cell when in batch edit mode.
+     * Background color for cells in batch edit mode
      */
     cellBatchEditBackgroundColor: ColorValue;
 
     /**
-     * Text color of the cell when in batch edit mode.
+     * Text color for cells in batch edit mode
      */
     cellBatchEditTextColor: ColorValue;
 
     /**
-     * Background color for rows in batch edit mode.
+     * Background color for rows in batch edit mode
      */
     rowBatchEditBackgroundColor: ColorValue;
 
     /**
-     * Text color for rows in batch edit mode.
+     * Text color for rows in batch edit mode
      */
     rowBatchEditTextColor: ColorValue;
 };

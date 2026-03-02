@@ -167,6 +167,7 @@ import type {
     ProcessUnpinnedColumns,
     SendToClipboard,
     TabToNextCell,
+    TabToNextGridContainer,
     TabToNextHeader,
 } from '../interfaces/iCallbackParams';
 import type {
@@ -1506,6 +1507,15 @@ export interface GridOptions<TData = any> {
      */
     groupHideOpenParents?: boolean;
     /**
+     * When using `groupDisplayType='multipleColumns'` or `groupHideOpenParents=true`, hides group columns for levels
+     * that have not yet been expanded. Only the top-level group column is initially
+     * visible; each subsequent level becomes visible when at least one group at the
+     * preceding level is expanded. (Client Side Row Model only)
+     * @default false
+     * @agModule `RowGroupingModule`
+     */
+    groupHideColumnsUntilExpanded?: boolean;
+    /**
      * Set to `true` to prevent the grid from creating a '(Blanks)' group for nodes which do not belong to a group, and display the unbalanced nodes alongside group nodes.
      * @default false
      * @agModule `RowGroupingModule`
@@ -2205,6 +2215,13 @@ export interface GridOptions<TData = any> {
      * or `false` to let the browser handle the tab behaviour.
      */
     tabToNextCell?: TabToNextCell<TData>;
+    /**
+     * Allows overriding the default behaviour when tabbing between core grid containers.
+     * Return a container name, a cell position, or a header position to focus that target,
+     * `true` to stay on the current focus, `false` to let the browser handle tab behaviour,
+     * or `undefined` to use the grid's default behaviour.
+     */
+    tabToNextGridContainer?: TabToNextGridContainer<TData>;
 
     // *** Localisation *** //
     /**

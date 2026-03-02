@@ -7,6 +7,7 @@ import {
     ClientSideRowModelModule,
     PaginationModule,
     PinnedRowModule,
+    TextEditorModule,
     agTestIdFor,
     getGridElement,
     setupAgTestIds,
@@ -28,7 +29,7 @@ describe('Cell Selection', () => {
     let consoleWarnSpy: MockInstance;
 
     const gridMgr = new TestGridsManager({
-        modules: [ClientSideRowModelModule, CellSelectionModule, PaginationModule, PinnedRowModule],
+        modules: [ClientSideRowModelModule, CellSelectionModule, PaginationModule, PinnedRowModule, TextEditorModule],
     });
 
     async function createGrid(go: GridOptions): Promise<[GridApi, GridActions]> {

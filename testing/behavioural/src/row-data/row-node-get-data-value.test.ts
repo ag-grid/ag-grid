@@ -2,16 +2,24 @@ import { getByTestId } from '@testing-library/dom';
 import '@testing-library/jest-dom';
 import { userEvent } from '@testing-library/user-event';
 
-import { ClientSideRowModelModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    NumberEditorModule,
+    TextEditorModule,
+    agTestIdFor,
+    getGridElement,
+    setupAgTestIds,
+} from 'ag-grid-community';
 import { BatchEditModule, FormulaModule, PivotModule, RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
-import { expect } from '../test-utils/matchers';
 
 /** Tests for RowNode.getDataValue() method (AG-16600) */
 describe('RowNode.getDataValue', () => {
     const gridsManager = new TestGridsManager({
         modules: [
+            TextEditorModule,
+            NumberEditorModule,
             ClientSideRowModelModule,
             RowGroupingModule,
             TreeDataModule,

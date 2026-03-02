@@ -1,7 +1,7 @@
 import type { MockInstance } from 'vitest';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, PaginationModule, QuickFilterModule, RowSelectionModule } from 'ag-grid-community';
 
 import { TestGridsManager, assertSelectedRowNodes, assertSelectedRowsByIndex } from '../test-utils';
 
@@ -10,7 +10,7 @@ describe('Row Selection Grid API', () => {
     let consoleWarnSpy: MockInstance;
 
     const gridMgr = new TestGridsManager({
-        modules: [ClientSideRowModelModule],
+        modules: [RowSelectionModule, ClientSideRowModelModule, PaginationModule, QuickFilterModule],
     });
 
     function createGrid(go: GridOptions): GridApi {

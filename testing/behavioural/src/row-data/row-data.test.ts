@@ -1,6 +1,6 @@
 import type { MockInstance } from 'vitest';
 
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
 import type { GridOptions, ModelUpdatedEvent } from 'ag-grid-community';
 
 import {
@@ -15,7 +15,7 @@ import {
 
 describe('ag-grid row data', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule],
+        modules: [TextFilterModule, NumberFilterModule, ClientSideRowModelModule],
     });
     let consoleWarnSpy: MockInstance | undefined;
     let consoleErrorSpy: MockInstance | undefined;

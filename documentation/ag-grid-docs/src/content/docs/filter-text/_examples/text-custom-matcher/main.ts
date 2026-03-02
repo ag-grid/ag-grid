@@ -27,11 +27,6 @@ const countryFilterParams: ITextFilterParams = {
                 const aliases: Record<string, string> = {
                     usa: 'united states',
                     holland: 'netherlands',
-                    niall: 'ireland',
-                    sean: 'south africa',
-                    alberto: 'mexico',
-                    john: 'australia',
-                    xi: 'china',
                 };
 
                 const literalMatch = contains(value, filterText || '');

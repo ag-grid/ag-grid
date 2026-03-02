@@ -13,13 +13,13 @@ export function take<T>(values: Iterable<T>, name: string, n: number): T[] {
     for (let i = 0; i < n; i++) {
         const step = it.next();
         if (step.done) {
-            throw new FormulaError(`${name}: expected exactly ${n} arguments`);
+            throw new FormulaError(35, [name, n]);
         }
         out[i] = step.value;
     }
     // ensure there aren't extras
     if (!it.next().done) {
-        throw new FormulaError(`${name}: expected exactly ${n} arguments`);
+        throw new FormulaError(35, [name, n]);
     }
     return out;
 }
@@ -42,11 +42,11 @@ export function takeBetween<T>(values: Iterable<T>, name: string, min: number, m
         out.push(v);
 
         if (out.length > max) {
-            throw new FormulaError(`${name}: expected at most ${max} arguments`);
+            throw new FormulaError(36, [name, max]);
         }
     }
     if (out.length < min) {
-        throw new FormulaError(`${name}: expected at least ${min} arguments`);
+        throw new FormulaError(37, [name, min]);
     }
     return out;
 }
@@ -193,7 +193,7 @@ export function criteriaToPredicate(criteria: unknown): (cell: unknown) => boole
     }
 
     if (symbol && symbol !== '=' && symbol !== '<>') {
-        throw new FormulaError('Invalid criteria: wildcards with comparator', '#VALUE!');
+        throw new FormulaError(38);
     }
     const regexp = wildcardToRegExp(query);
     return REGEX_COMPARE_VALUES.bind(null, symbol ?? '=', regexp);

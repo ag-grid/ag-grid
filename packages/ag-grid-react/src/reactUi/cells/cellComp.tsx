@@ -53,6 +53,8 @@ const CellComp = ({
     const [includeRowDrag, setIncludeRowDrag] = useState<boolean>(false);
     const [includeDndSource, setIncludeDndSource] = useState<boolean>(false);
 
+    const rowResizerElement = useRef<HTMLElement | null>(null);
+
     const [jsEditorComp, setJsEditorComp] = useState<ICellEditorComp>();
 
     // useMemo as more then just accessing a boolean on the cellCtrl
@@ -276,6 +278,15 @@ const CellComp = ({
             setIncludeSelection: (include) => setIncludeSelection(include),
             setIncludeRowDrag: (include) => setIncludeRowDrag(include),
             setIncludeDndSource: (include) => setIncludeDndSource(include),
+            setRowResizerElement: (element) => {
+                if (rowResizerElement.current) {
+                    _removeFromParent(rowResizerElement.current);
+                }
+                rowResizerElement.current = element;
+                if (element && eGui.current) {
+                    eGui.current.appendChild(element);
+                }
+            },
 
             getCellEditor: () => cellEditorRef.current ?? null,
             getCellRenderer: () => cellRendererRef.current ?? jsCellRendererRef.current,

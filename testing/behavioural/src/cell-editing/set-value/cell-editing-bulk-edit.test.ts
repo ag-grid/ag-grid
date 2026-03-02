@@ -84,11 +84,19 @@ describe('Cell Editing: bulk edit', () => {
         await asyncSetTimeout(0);
 
         const afterRows = new GridRows(api, `after bulk edit (batch=${batchEnabled})`);
-        await afterRows.check(`
+        await afterRows.check(
+            batchEnabled
+                ? `
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF ⏳ id:ROW_0 a:⏳"Bulk Value" "A0" b:⏳"Bulk Value" "B0"
+            └── LEAF ⏳ id:ROW_1 a:⏳"Bulk Value" "A1" b:⏳"Bulk Value" "B1"
+        `
+                : `
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:ROW_0 a:"Bulk Value" b:"Bulk Value"
             └── LEAF id:ROW_1 a:"Bulk Value" b:"Bulk Value"
-        `);
+        `
+        );
 
         if (batchEnabled) {
             expect(api.getDisplayedRowAtIndex(0)?.data?.a).toBe('A0');
@@ -97,6 +105,12 @@ describe('Cell Editing: bulk edit', () => {
             expect(api.getDisplayedRowAtIndex(1)?.data?.b).toBe('B1');
             api.commitBatchEdit();
             await asyncSetTimeout(0);
+
+            await new GridRows(api, `after batch commit (batch=${batchEnabled})`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:ROW_0 a:"Bulk Value" b:"Bulk Value"
+                └── LEAF id:ROW_1 a:"Bulk Value" b:"Bulk Value"
+            `);
         }
 
         expect(eventTracker.counts).toEqual({
@@ -107,6 +121,8 @@ describe('Cell Editing: bulk edit', () => {
             cellEditRequest: 0,
             bulkEditingStarted: batchEnabled ? 0 : 1,
             bulkEditingStopped: batchEnabled ? 0 : 1,
+            batchEditingStarted: batchEnabled ? 1 : 0,
+            batchEditingStopped: batchEnabled ? 1 : 0,
         });
 
         expect(api.getDisplayedRowAtIndex(0)?.data?.a).toBe('Bulk Value');
@@ -189,6 +205,8 @@ describe('Cell Editing: bulk edit', () => {
             cellEditRequest: 0,
             bulkEditingStarted: 1,
             bulkEditingStopped: 1,
+            batchEditingStarted: 0,
+            batchEditingStopped: 0,
         });
 
         expect(valueSetterTargets).toEqual(['ROW_0:a', 'ROW_0:b', 'ROW_1:a']);
@@ -270,6 +288,8 @@ describe('Cell Editing: bulk edit', () => {
             cellEditRequest: 0,
             bulkEditingStarted: 1,
             bulkEditingStopped: 1,
+            batchEditingStarted: 0,
+            batchEditingStopped: 0,
         });
 
         expect(valueSetterTargets).toEqual(['ROW_0:a']);

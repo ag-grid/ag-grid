@@ -4,7 +4,6 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import {
     AllCommunityModule,
-    ClientSideRowModelModule,
     type ColDef,
     type GetRowIdFunc,
     type GetRowIdParams,
@@ -95,7 +94,6 @@ const BREAKPOINT_CONFIG: Record<
 
 const modules = [
     AllCommunityModule,
-    ClientSideRowModelModule,
     AdvancedFilterModule,
     ColumnsToolPanelModule,
     ExcelExportModule,
@@ -195,6 +193,7 @@ export const FinanceExample: React.FC<Props> = ({
             {
                 field: 'ticker',
                 cellRenderer: getTickerCellRenderer(Boolean(breakpointConfig.hideTickerName)),
+                enableRowGroup: false,
                 ...tickerWidthDefs,
             },
             {
@@ -202,6 +201,7 @@ export const FinanceExample: React.FC<Props> = ({
                 field: 'timeline',
                 sortable: false,
                 filter: false,
+                enableRowGroup: false,
                 cellRenderer: 'agSparklineCellRenderer',
                 cellRendererParams: {
                     sparklineOptions: {
@@ -227,6 +227,7 @@ export const FinanceExample: React.FC<Props> = ({
                 cellDataType: 'number',
                 filter: 'agNumberColumnFilter',
                 type: 'rightAligned',
+                enableRowGroup: false,
                 cellRenderer: 'agAnimateShowChangeCellRenderer',
                 valueGetter: ({ data }: ValueGetterParams) => data && data.quantity * (data.price / data.purchasePrice),
                 valueFormatter: numberFormatter,
@@ -238,6 +239,7 @@ export const FinanceExample: React.FC<Props> = ({
                 colId: 'totalValue',
                 headerName: 'Total Value',
                 type: 'rightAligned',
+                enableRowGroup: false,
                 cellDataType: 'number',
                 filter: 'agNumberColumnFilter',
                 valueGetter: ({ data }: ValueGetterParams) => data && data.quantity * data.price,
@@ -253,18 +255,20 @@ export const FinanceExample: React.FC<Props> = ({
             allColDefs.push(
                 {
                     field: 'quantity',
+                    enableRowGroup: false,
                     cellDataType: 'number',
                     type: 'rightAligned',
                     valueFormatter: numberFormatter,
-                    maxWidth: 75,
+                    minWidth: 75,
                 },
                 {
                     headerName: 'Price',
                     field: 'purchasePrice',
+                    enableRowGroup: false,
                     cellDataType: 'number',
                     type: 'rightAligned',
                     valueFormatter: numberFormatter,
-                    maxWidth: 75,
+                    minWidth: 75,
                 }
             );
         }

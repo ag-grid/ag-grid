@@ -48,6 +48,8 @@ export interface GridParams {
     providedBeanInstances?: { [key: string]: any };
     // INTERNAL - set by frameworks if the provided grid div is safe to set a theme class on
     setThemeOnGridDiv?: boolean;
+    // INTERNAL - set by studio
+    withinStudio?: boolean;
 
     /**
      * Modules to be registered directly with this grid instance.
@@ -231,6 +233,7 @@ export class GridCoreCreator {
             globalListener: params ? params.globalListener : null,
             globalSyncListener: params ? params.globalSyncListener : null,
             frameworkOverrides: frameworkOverrides,
+            withinStudio: params?.withinStudio,
         };
         if (params?.providedBeanInstances) {
             Object.assign(seed, params.providedBeanInstances);

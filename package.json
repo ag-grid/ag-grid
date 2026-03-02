@@ -1,6 +1,6 @@
 {
   "name": "ag-grid",
-  "version": "35.0.0-beta.20260206.1454",
+  "version": "35.1.0-beta.20260218.1143",
   "license": "MIT",
   "scripts": {
     "compressVideo": "tsx external/ag-website-shared/scripts/compress-video",
@@ -10,7 +10,8 @@
     "setup-prompts": "./external/ag-shared/scripts/setup-prompts/setup-prompts.sh --postinstall",
     "bootstrap": "SHARP_IGNORE_GLOBAL_LIBVIPS=true YARN_REGISTRY=\"https://registry.ag-grid.com\" yarn",
     "git-clean": "git clean -fdx && git reset --hard HEAD",
-    "git-purge-local-only": "git fetch -p && for branch in $(git for-each-ref --format '%(refname) %(upstream:track)' refs/heads | awk '$2 == \"[gone]\" {sub(\"refs/heads/\", \"\", $1); print $1}'); do git branch -D $branch; done"
+    "git-purge-local-only": "git fetch -p && for branch in $(git for-each-ref --format '%(refname) %(upstream:track)' refs/heads | awk '$2 == \"[gone]\" {sub(\"refs/heads/\", \"\", $1); print $1}'); do git branch -D $branch; done",
+    "behave": "./behave.sh"
   },
   "private": true,
   "engines": {
@@ -51,6 +52,7 @@
     "@types/prompts": "^2.4.9",
     "@typescript-eslint/eslint-plugin": "7.18.0",
     "@typescript-eslint/parser": "7.18.0",
+    "@vitejs/plugin-react-swc": "^4.2.3",
     "@vue/compiler-sfc": "3.5.13",
     "JSONStream": "1.3.5",
     "autoprefixer": "^10.4.20",
@@ -83,7 +85,7 @@
     "postcss-url": "^10.1.3",
     "prettier": "3.2.5",
     "prompts": "^2.4.2",
-    "rulesync": "^5.2.0",
+    "rulesync": "^7.0.0",
     "stylelint": "^16.10.0",
     "stylelint-config-standard": "^36.0.1",
     "ts-jest": "^29.1.0",
@@ -116,7 +118,9 @@
       "testing/vue-package-tests",
       "testing/accessibility",
       "testing/csp",
+      "testing/vue3-tests",
       "testing/public-recipes/e2e",
+      "testing/angular-tests",
       "external/ag-shared"
     ],
     "nohoist": [

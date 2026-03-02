@@ -1,5 +1,6 @@
 import { KeyCode } from '../../agStack/constants/keyCode';
 import { _isMacOsUserAgent } from '../../agStack/utils/browser';
+import { isRowNumberCol } from '../../columns/columnUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import { _populateModelValidationErrors } from '../../edit/utils/editors';
@@ -40,6 +41,15 @@ export class CellKeyboardListenerFeature extends BeanStub {
 
     public onKeyDown(event: KeyboardEvent): void {
         const key = event.key;
+
+        // delegate Enter on Row Number cells to the RowNumbersService
+        if (
+            key === KeyCode.ENTER &&
+            isRowNumberCol(this.cellCtrl.column) &&
+            this.beans.rowNumbersSvc?.handleKeyDownOnCell(this.cellCtrl.cellPosition, event)
+        ) {
+            return;
+        }
 
         switch (key) {
             case KeyCode.ENTER:
@@ -118,11 +128,13 @@ export class CellKeyboardListenerFeature extends BeanStub {
             !editSvc?.isEditing(cellCtrl, { withOpenEditor: true })
         ) {
             if (rangeSvc && _isCellSelectionEnabled(gos)) {
-                rangeSvc.clearCellRangeCellValues({ dispatchWrapperEvents: true, wrapperEventSource: 'deleteKey' });
+                rangeSvc.clearCellRangeCellValues({
+                    dispatchWrapperEvents: true,
+                    wrapperEventSource: 'deleteKey',
+                });
             } else if (cellCtrl.isCellEditable()) {
-                const { column } = cellCtrl;
-                const emptyValue = this.beans.valueSvc.getDeleteValue(column, rowNode);
-                rowNode.setDataValue(column, emptyValue, 'cellClear');
+                const deleteValue = beans.valueSvc.getDeleteValue(cellCtrl.column, rowNode);
+                rowNode.setDataValue(cellCtrl.column, deleteValue, 'cellClear');
             }
         } else if (!editSvc?.isEditing(cellCtrl, { withOpenEditor: true })) {
             beans.editSvc?.startEditing(cellCtrl, { startedEdit: true, event });

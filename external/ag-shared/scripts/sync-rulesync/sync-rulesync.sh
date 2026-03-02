@@ -24,7 +24,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../../../.." && pwd)"
 
 # Shared patch location (relative to repo root)
 SHARED_PATCHES_REL="external/ag-shared/prompts/patches"
-PATCH_FILE="rulesync+5.2.0.patch"
+PATCH_FILE="rulesync+7.0.0.patch"
 
 # Colors for output
 RED='\033[0;31m'
@@ -359,6 +359,113 @@ apply_create_missing_symlinks() {
     return 0
 }
 
+# Check for missing skill directories in .rulesync/skills/ that should exist based on source
+# Skills are directories containing a SKILL.md file
+check_missing_rulesync_skills() {
+    local skills_dir="$REPO_ROOT/.rulesync/skills"
+    local missing_count=0
+    local missing_links=()
+
+    # Check external/ag-shared/prompts/skills/ (required)
+    local shared_skills="$REPO_ROOT/external/ag-shared/prompts/skills"
+    if [[ -d "$shared_skills" ]]; then
+        # Find all skill directories (contain SKILL.md)
+        while IFS= read -r -d '' skill_file; do
+            local skill_dir
+            skill_dir=$(dirname "$skill_file")
+            local skill_name
+            skill_name=$(basename "$skill_dir")
+            local target_path="$skills_dir/$skill_name"
+            local expected_target="../../external/ag-shared/prompts/skills/$skill_name"
+
+            if [[ ! -e "$target_path" ]]; then
+                ((missing_count++)) || true
+                missing_links+=("$skill_name -> $expected_target")
+            fi
+        done < <(find "$shared_skills" -name "SKILL.md" -type f -print0 2>/dev/null)
+    fi
+
+    # Check external/prompts/skills/ (optional - only if it exists)
+    local private_skills="$REPO_ROOT/external/prompts/skills"
+    if [[ -d "$private_skills" ]] && [[ -e "$private_skills" ]]; then
+        while IFS= read -r -d '' skill_file; do
+            local skill_dir
+            skill_dir=$(dirname "$skill_file")
+            local skill_name
+            skill_name=$(basename "$skill_dir")
+            local target_path="$skills_dir/$skill_name"
+            local expected_target="../../external/prompts/skills/$skill_name"
+
+            if [[ ! -e "$target_path" ]]; then
+                ((missing_count++)) || true
+                missing_links+=("$skill_name -> $expected_target")
+            fi
+        done < <(find "$private_skills" -name "SKILL.md" -type f -print0 2>/dev/null)
+    fi
+
+    if [[ $missing_count -gt 0 ]]; then
+        log_warn "Found $missing_count missing skill(s) in .rulesync/skills/"
+        for link in "${missing_links[@]}"; do
+            log_info "  $link"
+        done
+        return 1
+    fi
+
+    log_success "No missing skills in .rulesync/skills/"
+    return 0
+}
+
+# Create missing skill symlinks in .rulesync/skills/
+apply_create_missing_skills() {
+    local skills_dir="$REPO_ROOT/.rulesync/skills"
+
+    if [[ ! -d "$skills_dir" ]]; then
+        mkdir -p "$skills_dir"
+    fi
+
+    local created=0
+
+    # Check external/ag-shared/prompts/skills/ (required)
+    local shared_skills="$REPO_ROOT/external/ag-shared/prompts/skills"
+    if [[ -d "$shared_skills" ]]; then
+        while IFS= read -r -d '' skill_file; do
+            local skill_dir
+            skill_dir=$(dirname "$skill_file")
+            local skill_name
+            skill_name=$(basename "$skill_dir")
+            local target_path="$skills_dir/$skill_name"
+            local expected_target="../../external/ag-shared/prompts/skills/$skill_name"
+
+            if [[ ! -e "$target_path" ]]; then
+                ln -sfn "$expected_target" "$target_path"
+                log_fixed "Created skill symlink: .rulesync/skills/$skill_name"
+                ((created++)) || true
+            fi
+        done < <(find "$shared_skills" -name "SKILL.md" -type f -print0 2>/dev/null)
+    fi
+
+    # Check external/prompts/skills/ (optional)
+    local private_skills="$REPO_ROOT/external/prompts/skills"
+    if [[ -d "$private_skills" ]] && [[ -e "$private_skills" ]]; then
+        while IFS= read -r -d '' skill_file; do
+            local skill_dir
+            skill_dir=$(dirname "$skill_file")
+            local skill_name
+            skill_name=$(basename "$skill_dir")
+            local target_path="$skills_dir/$skill_name"
+            local expected_target="../../external/prompts/skills/$skill_name"
+
+            if [[ ! -e "$target_path" ]]; then
+                ln -sfn "$expected_target" "$target_path"
+                log_fixed "Created skill symlink: .rulesync/skills/$skill_name"
+                ((created++)) || true
+            fi
+        done < <(find "$private_skills" -name "SKILL.md" -type f -print0 2>/dev/null)
+    fi
+
+    return 0
+}
+
 # Regenerate AGENTS.md using rulesync
 regenerate_agents_md() {
     log_info "Regenerating AGENTS.md..."
@@ -455,6 +562,8 @@ show_help() {
     echo "  - .rulesync/ has no stale symlinks to external/ag-shared/ or external/prompts/"
     echo "  - .rulesync/commands/ has all expected symlinks from external/ag-shared/prompts/commands/"
     echo "    and external/prompts/commands/ (if present)"
+    echo "  - .rulesync/skills/ has all expected symlinks from external/ag-shared/prompts/skills/"
+    echo "    and external/prompts/skills/ (if present)"
     echo "  - AGENTS.md is regenerated (--apply only)"
     echo ""
     echo "Shared patch location: $SHARED_PATCHES_REL/$PATCH_FILE"
@@ -503,6 +612,7 @@ main() {
             check_postinstall || true
             check_stale_rulesync_symlinks || true
             check_missing_rulesync_symlinks || true
+            check_missing_rulesync_skills || true
             ;;
         apply)
             # Check and fix patches directory
@@ -526,6 +636,11 @@ main() {
             # Check and create missing symlinks
             if ! check_missing_rulesync_symlinks; then
                 apply_create_missing_symlinks
+            fi
+
+            # Check and create missing skills
+            if ! check_missing_rulesync_skills; then
+                apply_create_missing_skills
             fi
 
             # Regenerate AGENTS.md to ensure it's up to date

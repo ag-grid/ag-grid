@@ -143,6 +143,7 @@ export {
     AgElementParams as _AgElementParams,
     _clearElement,
     _createAgElement,
+    _addOrRemoveAttribute,
     _getAbsoluteHeight,
     _getAbsoluteWidth,
     _getInnerHeight,
@@ -158,6 +159,7 @@ export {
     _setDisabled,
     _setDisplayed,
     _setFixedWidth,
+    _setScrollLeft,
     _setVisible,
     _isFocusableFormField,
     _placeCaretAtEnd,
@@ -370,6 +372,7 @@ export {
     _isFullWidthGroupRow,
     _isGetRowHeightFunction,
     _isGroupMultiAutoColumn,
+    _isGroupHideColumnsUntilExpanded,
     _isGroupRowsSticky,
     _isGroupUseEntireRow,
     _isLegacyMenuEnabled,
@@ -445,7 +448,7 @@ export type { CellNavigationService } from './navigation/cellNavigationService';
 export type { HeaderNavigationService } from './navigation/headerNavigationService';
 export type { NavigationService } from './navigation/navigationService';
 export type { PageBoundsService } from './pagination/pageBoundsService';
-export { _BOOLEAN_MIXED_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS } from './propertyKeys';
+export { _BOOLEAN_MIXED_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS, _GET_SHALLOW_GRID_OPTIONS } from './propertyKeys';
 export { _PUBLIC_EVENT_HANDLERS_MAP } from './publicEventHandlersMap';
 export type { CellCtrl, ICellComp } from './rendering/cell/cellCtrl';
 export type { CheckboxCellRenderer } from './rendering/cellRenderers/checkboxCellRenderer';
@@ -488,7 +491,7 @@ export {
     _focusNextGridCoreContainer,
 } from './utils/gridFocus';
 export { _createIcon, _createIconNoSpan } from './utils/icon';
-export { _warnOnce } from './utils/log';
+export { _warnOnce, _consoleError } from './utils/log';
 export { _mergeDeep } from './utils/mergeDeep';
 export { _formatNumberCommas } from './utils/number';
 export { _selectAllCells } from './utils/selection';
@@ -509,6 +512,7 @@ export { TabGuardComp } from './widgets/tabGuardComp';
 
 // AG Stack Widgets
 export { Direction } from './agStack/constants/direction';
+export type { VerticalDirection as _VerticalDirection } from './agStack/constants/direction';
 export { AgAbstractInputField } from './agStack/widgets/agAbstractInputField';
 export { AgAbstractLabel } from './agStack/widgets/agAbstractLabel';
 export { AgCheckbox, AgCheckboxSelector } from './agStack/widgets/agCheckbox';

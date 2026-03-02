@@ -188,3 +188,23 @@ const gridOptions = {
     groupHideOpenParents: true,
 }
 ```
+
+## Hiding Group Columns Until Expanded
+
+By default all group columns are visible at all times. Setting `groupHideColumnsUntilExpanded` to `true` hides group columns
+for levels that have not yet been reached through expansion. Only the top-level group column is initially visible; each
+subsequent level's column becomes visible when at least one group at the preceding level is expanded.
+
+Try expanding a Country row to reveal the Year group column, then expand a Year row to reveal the Sport group column.
+Collapsing all rows at a given level will hide the corresponding group column again.
+
+{% gridExampleRunner title="Hide Group Columns Until Expanded" name="hide-columns-until-expanded" /%}
+
+The example above demonstrates the following configuration:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    groupDisplayType: 'multipleColumns',
+    groupHideColumnsUntilExpanded: true,
+}
+```

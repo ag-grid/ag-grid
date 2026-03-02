@@ -27,3 +27,4 @@ coverage
 .dependency-cruiser.js
 .swcrc
 osv-scanner.toml
+.snyk

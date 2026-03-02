@@ -1,4 +1,5 @@
-import { _setAriaColIndex } from '../../agStack/utils/aria';
+import { KeyCode } from '../../agStack/constants/keyCode';
+import { _setAriaColIndex, _setAriaRowIndex } from '../../agStack/utils/aria';
 import { _getActiveDomElement } from '../../agStack/utils/document';
 import { _addOrRemoveAttribute, _placeCaretAtEnd, _requestAnimationFrame } from '../../agStack/utils/dom';
 import { _findFocusableElements } from '../../agStack/utils/focus';
@@ -67,6 +68,7 @@ export interface ICellComp {
     setIncludeSelection(include: boolean): void;
     setIncludeRowDrag(include: boolean): void;
     setIncludeDndSource(include: boolean): void;
+    setRowResizerElement(element: HTMLElement | null): void;
 
     getCellEditor(): ICellEditor | null;
     getCellRenderer(): ICellRenderer | null;
@@ -253,6 +255,7 @@ export class CellCtrl extends BeanStub {
 
         this.refreshFirstAndLastStyles();
         this.checkFormulaError();
+        this.refreshAriaRowIndex();
         this.refreshAriaColIndex();
 
         this.positionFeature?.init();
@@ -465,16 +468,29 @@ export class CellCtrl extends BeanStub {
         return selectionChanged || rowDragChanged || dndSourceChanged || autoHeightChanged;
     }
 
-    public onPopupEditorClosed(): void {
+    public onPopupEditorClosed(e?: MouseEvent | TouchEvent | KeyboardEvent): void {
         const { editSvc } = this.beans;
         if (!editSvc?.isEditing(this, { withOpenEditor: true })) {
             return;
         }
 
+        const isKeyboardEvent = e instanceof KeyboardEvent;
+        const isMouseEvent = e instanceof MouseEvent;
+
+        const isEscape = isKeyboardEvent && e.key === KeyCode.ESCAPE;
+
         // note: this happens because of a click outside of the grid or if the popupEditor
         // is closed with `Escape` key. if another cell was clicked, then the editing will
         // have already stopped and returned on the conditional above.
-        editSvc?.stopEditing(this, { source: editSvc?.isBatchEditing() ? 'ui' : 'api' });
+        editSvc.stopEditing(this, {
+            source: editSvc.isBatchEditing() ? 'ui' : 'api',
+            cancel: isEscape,
+            event: isKeyboardEvent || isMouseEvent ? e : undefined,
+        });
+
+        if (isEscape) {
+            this.focusCell(true, e);
+        }
     }
 
     /**
@@ -802,6 +818,7 @@ export class CellCtrl extends BeanStub {
         // when index changes, this influences items that need the index, so we update the
         // grid cell so they are working off the new index.
         this.createCellPosition();
+        this.refreshAriaRowIndex();
         // when the index of the row changes, ie means the cell may have lost or gained focus
         this.onCellFocused();
 
@@ -818,9 +835,6 @@ export class CellCtrl extends BeanStub {
         const element = this.eGui;
         if (!element) {
             return;
-        }
-        if (isRowNumberCol(this.column)) {
-            suppressCellFocus = true;
         }
         _addOrRemoveAttribute(element, 'tabindex', suppressCellFocus ? undefined : -1);
     }
@@ -1085,7 +1099,15 @@ export class CellCtrl extends BeanStub {
     }
 
     public refreshAriaRowIndex(): void {
-        // noop, used by spannedCellCtrl
+        if (!isRowNumberCol(this.column) || !this.eGui) {
+            return;
+        }
+
+        const { ariaRowIndex } = this.rowCtrl;
+
+        if (ariaRowIndex != null) {
+            _setAriaRowIndex(this.eGui, ariaRowIndex);
+        }
     }
 
     /**

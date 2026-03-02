@@ -5,6 +5,7 @@ import type {
     IColumnCollectionService,
     NamedBean,
     PropertyValueChangedEvent,
+    RowNode,
     _ColumnCollections,
 } from 'ag-grid-community';
 import {
@@ -19,6 +20,7 @@ import {
     _destroyColumnTree,
     _getColumnStateFromColDef,
     _isColumnsSortingCoupledToGroup,
+    _isGroupHideColumnsUntilExpanded,
     _isGroupMultiAutoColumn,
     _isGroupUseEntireRow,
     _mergeDeep,
@@ -36,14 +38,30 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
 
     public postConstruct(): void {
         this.addManagedPropertyListener('autoGroupColumnDef', this.updateColumns.bind(this));
+
+        this.setupGroupHideColumnsUntilExpanded();
+    }
+
+    private setupGroupHideColumnsUntilExpanded() {
+        const updateGroupColumnVisibility = () => this.updateGroupColumnVisibility();
+        this.addManagedEventListeners({
+            // modelUpdated is fired when rowGroup events are fired so we do not duplicate work by also listening to "rowGroupOpened" and "expandOrCollapseAll"
+            modelUpdated: updateGroupColumnVisibility,
+        });
+        // Ensure the properties are reactive.
+        this.addManagedPropertyListeners(
+            ['groupHideColumnsUntilExpanded', 'groupDisplayType', 'groupHideOpenParents'],
+            updateGroupColumnVisibility
+        );
     }
 
     public addColumns(cols: _ColumnCollections): void {
-        if (this.columns == null) {
+        const { columns } = this;
+        if (columns == null) {
             return;
         }
-        cols.list = this.columns.list.concat(cols.list);
-        cols.tree = this.columns.tree.concat(cols.tree);
+        cols.list = columns.list.concat(cols.list);
+        cols.tree = columns.tree.concat(cols.tree);
         _updateColsMap(cols);
     }
 
@@ -271,6 +289,86 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
         }
 
         return res;
+    }
+
+    private getDeepestExpandedLevel(nodes: RowNode[] | null | undefined, maxLevel: number): number {
+        let deepest = -1;
+
+        if (!nodes) {
+            return deepest;
+        }
+
+        for (const node of nodes) {
+            if (!node.group || !node.expanded) {
+                continue;
+            }
+
+            if (node.level > deepest) {
+                deepest = node.level;
+            }
+
+            if (deepest >= maxLevel) {
+                return deepest;
+            }
+
+            // only expanded nodes recurse into their child groups; collapsed branches are skipped.
+            const childDeepest = this.getDeepestExpandedLevel(node.childrenAfterGroup, maxLevel);
+            if (childDeepest > deepest) {
+                deepest = childDeepest;
+            }
+            if (deepest >= maxLevel) {
+                return deepest;
+            }
+        }
+
+        return deepest;
+    }
+
+    private updateGroupColumnVisibility(): void {
+        const columns = this.columns?.list;
+
+        if (!columns || columns.length === 0) {
+            return;
+        }
+
+        const { gos, visibleCols, rowModel } = this.beans;
+        const isFeatureEnabled = _isGroupHideColumnsUntilExpanded(gos);
+
+        let changed = false;
+        const setColVisible = (col: AgColumn, visible: boolean): void => {
+            if (visible !== col.isVisible()) {
+                col.setVisible(visible, 'api');
+                changed = true;
+            }
+        };
+
+        const setAllColumnsVisible = (): void => {
+            for (const col of columns) {
+                setColVisible(col, true);
+            }
+        };
+
+        if (!isFeatureEnabled) {
+            setAllColumnsVisible();
+        } else if (columns.length > 1) {
+            // Feature only applies when there are multiple columns to show/hide;
+            // the first column is always visible so a single column needs no adjustment.
+            const maxLevel = columns.length - 2;
+            const rootChildren = rowModel?.rootNode?.childrenAfterGroup;
+            const deepestExpandedLevel = this.getDeepestExpandedLevel(rootChildren, maxLevel);
+
+            if (deepestExpandedLevel >= maxLevel) {
+                setAllColumnsVisible();
+            } else {
+                for (let level = 0; level < columns.length - 1; level++) {
+                    setColVisible(columns[level + 1], deepestExpandedLevel >= level);
+                }
+            }
+        }
+
+        if (changed) {
+            visibleCols.refresh('api');
+        }
     }
 
     public override destroy(): void {

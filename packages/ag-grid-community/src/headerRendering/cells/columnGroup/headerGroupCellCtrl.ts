@@ -405,15 +405,14 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 
     private refreshAnnouncement(): void {
         let description: string | undefined;
-        const { gos, column, beans } = this;
+        const { gos } = this;
         const enableColumnSelection = _getEnableColumnSelection(gos);
 
         if (enableColumnSelection) {
             const translate = this.getLocaleTextFunc();
-            const colSelected = beans.rangeSvc?.isColumnInAnyRange(column);
             description = translate(
-                'ariaColumnCellSelection',
-                `Press CTRL+SPACE to ${colSelected ? 'de' : ''}select all visible cells in this column group`
+                'ariaColumnGroupCellSelection',
+                'Press Enter to toggle selection for all visible cells in this column group'
             );
         }
 

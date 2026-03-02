@@ -52,21 +52,27 @@ const getPromptSubrepo = async ({ command }: { command: string }) => {
 yargs(hideBin(process.argv))
     .usage('Usage: <command> [options]')
     .command(
-        '$0 <command>',
+        '$0 <command> [repo]',
         'Wrapper for `git subrepo` commands',
         (yargs) => {
-            return yargs.positional('command', {
-                describe:
-                    'Git subrepo command\n\n' +
-                    'push: git subrepo push\n' +
-                    'pull: git subrepo pull\n' +
-                    'check: Check whether .gitrepo is in a valid state\n',
-                choices: ['push', 'pull', 'check'],
-            });
+            return yargs
+                .positional('command', {
+                    describe:
+                        'Git subrepo command\n\n' +
+                        'push: git subrepo push\n' +
+                        'pull: git subrepo pull\n' +
+                        'check: Check whether .gitrepo is in a valid state\n',
+                    choices: ['push', 'pull', 'check'],
+                })
+                .positional('repo', {
+                    describe: 'Subrepo name (e.g. ag-shared). If omitted, prompts interactively.',
+                    choices: subRepos,
+                    type: 'string',
+                });
         },
         async (argv) => {
-            const { subrepo: subrepoArg, command, verbose } = argv;
-            let subrepo = subrepoArg;
+            const { repo, subrepo: subrepoArg, command, verbose } = argv;
+            let subrepo = repo ?? subrepoArg;
 
             if (!subrepo) {
                 const promptSubrepo = await getPromptSubrepo({ command: command! });
@@ -92,7 +98,7 @@ yargs(hideBin(process.argv))
     .option('subrepo', {
         alias: 's',
         choices: subRepos,
-        description: 'Subrepo to run the command on',
+        description: '[deprecated: use positional arg] Subrepo to run the command on',
     })
     .help()
     .parse();

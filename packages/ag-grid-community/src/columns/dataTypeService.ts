@@ -792,7 +792,8 @@ function validateDataTypeDefinition(
     return true;
 }
 
-const numberOrBigint = (v: unknown) => typeof v === 'bigint' || typeof v === 'number';
+const isNumberOrBigintType = (v: unknown) => typeof v === 'bigint' || typeof v === 'number';
+const isNumberOrBigintBaseDataType = (v: string) => v === 'number' || v === 'bigint';
 
 function createGroupSafeValueFormatter(
     dataTypeDefinition: DataTypeDefinition | CoreDataTypeDefinition,
@@ -814,24 +815,23 @@ function createGroupSafeValueFormatter(
                 }
 
                 const { baseDataType } = dataTypeDefinition;
-                if (numberOrBigint(baseDataType) && aggFunc !== 'count') {
-                    if (numberOrBigint(value)) {
+                if (isNumberOrBigintBaseDataType(baseDataType) && aggFunc !== 'count') {
+                    if (isNumberOrBigintType(value)) {
                         return dataTypeDefinition.valueFormatter!(params);
                     }
 
-                    if (typeof value !== 'object' || !value) {
+                    if (value == null) {
                         return undefined;
                     }
-                    let val = value.value;
-                    if (typeof value.toNumber === 'function') {
-                        val = value.toNumber();
-                    } else if ('value' in value && (numberOrBigint(val) || val == null)) {
-                        val = value.value;
-                    } else {
-                        val = null;
-                    }
-                    if (val) {
-                        return dataTypeDefinition.valueFormatter!({ ...params, value: val });
+
+                    if (typeof value === 'object') {
+                        if (typeof value.toNumber === 'function') {
+                            return dataTypeDefinition.valueFormatter!({ ...params, value: value.toNumber() });
+                        }
+
+                        if ('value' in value) {
+                            return dataTypeDefinition.valueFormatter!({ ...params, value: value.value });
+                        }
                     }
                 }
 

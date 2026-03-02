@@ -91,6 +91,7 @@ export const Pipeline: FunctionComponent<Props> = ({ library }) => {
     const [rowData, setRowData] = useState(null);
     const [gridApi, setGridApi] = useState(null);
     const { searchQuery, handleSearchQueryChange } = useSearchQuery();
+    const libraryTitleCase = library.charAt(0).toUpperCase() + library.slice(1);
 
     useEffect(() => {
         fetch(PIPELINE_DATA_URL)
@@ -120,9 +121,9 @@ export const Pipeline: FunctionComponent<Props> = ({ library }) => {
             <section className={styles.header}>
                 <Alert type="idea">
                     <p>
-                        The AG Grid pipeline lists the feature requests and active bugs in our product backlog. Use it
-                        to see the items scheduled for our next release or to look up the status of a specific item. If
-                        you can't find the item you're looking for, check the{' '}
+                        The AG {libraryTitleCase} pipeline lists the feature requests and active bugs in our product
+                        backlog. Use it to see the items scheduled for our next release or to look up the status of a
+                        specific item. If you can't find the item you're looking for, check the{' '}
                         <a href={urlWithBaseUrl('/changelog')}>Changelog</a> containing the list of completed items.
                     </p>
                 </Alert>

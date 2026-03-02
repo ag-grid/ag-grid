@@ -433,10 +433,11 @@ export class StateService extends BeanStub implements NamedBean {
 
         const shouldSetSortState = shouldSetState('sort', sortState);
         if (shouldSetSortState) {
-            sortState?.sortModel.forEach(({ colId, sort }, sortIndex) => {
+            sortState?.sortModel.forEach(({ colId, sort, type }, sortIndex) => {
                 const columnState = getColumnState(colId);
                 columnState.sort = sort;
                 columnState.sortIndex = sortIndex;
+                columnState.sortType = type;
             });
         }
         if (shouldSetSortState || !partialColumnState) {

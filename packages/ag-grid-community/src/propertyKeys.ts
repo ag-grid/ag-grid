@@ -254,6 +254,7 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'embedFullWidthRows',
     'suppressPaginationPanel',
     'groupHideOpenParents',
+    'groupHideColumnsUntilExpanded',
     'groupAllowUnbalanced',
     'pagination',
     'paginationAutoPageSize',
@@ -375,6 +376,7 @@ export const _FUNCTION_GRID_OPTIONS: (CallbackKeys | FunctionKeys)[] = [
     'tabToNextHeader',
     'navigateToNextCell',
     'tabToNextCell',
+    'tabToNextGridContainer',
     'processCellFromClipboard',
     'getDocument',
     'postProcessPopup',
@@ -421,4 +423,13 @@ export const _GET_ALL_GRID_OPTIONS: () => GridOptionKey[] = () => [
     ..._BOOLEAN_GRID_OPTIONS,
     ..._BOOLEAN_MIXED_GRID_OPTIONS,
     ...OTHER_GRID_OPTIONS,
+];
+
+// Options that only need shallow (reference) watching (only Vue atm) — primitives and functions
+export const _GET_SHALLOW_GRID_OPTIONS: () => GridOptionKey[] = () => [
+    ...STRING_GRID_OPTIONS,
+    ..._NUMBER_GRID_OPTIONS,
+    ..._FUNCTION_GRID_OPTIONS,
+    ..._BOOLEAN_GRID_OPTIONS,
+    ..._BOOLEAN_MIXED_GRID_OPTIONS,
 ];

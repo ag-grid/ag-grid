@@ -435,7 +435,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
             columns,
             startColumn: columns[0],
         };
-        this.beans.rangeSvc!.clearCellRangeCellValues({ cellRanges: [cellRange] });
+        this.beans.rangeSvc!.clearCellRangeCellValues({ cellRanges: [cellRange], restoreSourceInBatch: true });
     }
 
     private processValues(params: {

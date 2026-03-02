@@ -1,4 +1,12 @@
-import { ClientSideRowModelModule, CsvExportModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    CsvExportModule,
+    ExternalFilterModule,
+    NumberFilterModule,
+    QuickFilterModule,
+    RowSelectionModule,
+    TextFilterModule,
+} from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import {
@@ -12,7 +20,16 @@ import {
 
 describe('ag-grid grouping filter aggregation', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, CsvExportModule, RowGroupingModule],
+        modules: [
+            ExternalFilterModule,
+            NumberFilterModule,
+            TextFilterModule,
+            RowSelectionModule,
+            QuickFilterModule,
+            ClientSideRowModelModule,
+            CsvExportModule,
+            RowGroupingModule,
+        ],
     });
 
     beforeEach(() => {

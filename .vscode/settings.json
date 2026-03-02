@@ -79,9 +79,10 @@
   "cSpell.files": ["**/*", "!**/{package,settings,project,tsconfig}.json"],
   "git.detectSubmodulesLimit": 20,
   "files.exclude": {
-    "**/vitest.config.*.timestamp*": true,
+    "**/.angular/": true,
+    "**/.DS_Store": true,
     "**/.git": true,
-    "**/.DS_Store": true
+    "**/vitest.config.*.timestamp*": true
   },
   "[scss]": {
     "editor.detectIndentation": false,

@@ -39,6 +39,15 @@ export interface ScrollPartner {
     onScrollCallback(fn: () => void): void;
 }
 
+interface VerticalScrollComp extends ScrollPartner {
+    getScrollPosition(): number;
+    setScrollPosition(value: number, force?: boolean): void;
+}
+
+interface HorizontalScrollComp extends ScrollPartner {
+    getScrollPosition(): number;
+}
+
 export class GridBodyScrollFeature extends BeanStub {
     private ctrlsSvc: CtrlsService;
     private animationFrameSvc?: AnimationFrameService;
@@ -79,6 +88,8 @@ export class GridBodyScrollFeature extends BeanStub {
     private readonly resetLastVScrollDebounced: () => void;
 
     private centerRowsCtrl: RowContainerCtrl;
+    private fakeVScrollComp: VerticalScrollComp;
+    private fakeHScrollComp: HorizontalScrollComp;
 
     constructor(eBodyViewport: HTMLElement) {
         super();
@@ -124,6 +135,8 @@ export class GridBodyScrollFeature extends BeanStub {
 
         this.ctrlsSvc.whenReady(this, (p) => {
             this.centerRowsCtrl = p.center;
+            this.fakeVScrollComp = p.fakeVScrollComp;
+            this.fakeHScrollComp = p.fakeHScrollComp;
             this.onDisplayedColumnsWidthChanged();
             this.addScrollListener();
         });
@@ -154,7 +167,6 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private addVerticalScrollListeners(): void {
-        const fakeVScrollComp = this.ctrlsSvc.get('fakeVScrollComp');
         const isDebounce = this.gos.get('debounceVerticalScrollbar');
 
         const onVScroll = isDebounce
@@ -165,7 +177,7 @@ export class GridBodyScrollFeature extends BeanStub {
             : this.onVScroll.bind(this, FAKE_V_SCROLLBAR);
 
         this.addManagedElementListeners(this.eBodyViewport, { scroll: onVScroll });
-        this.registerScrollPartner(fakeVScrollComp, onFakeVScroll);
+        this.registerScrollPartner(this.fakeVScrollComp, onFakeVScroll);
     }
 
     private registerScrollPartner(comp: ScrollPartner, callback: () => void) {
@@ -252,26 +264,32 @@ export class GridBodyScrollFeature extends BeanStub {
             return;
         }
 
-        let scrollTop: number;
-
-        if (source === VIEWPORT) {
-            scrollTop = this.eBodyViewport.scrollTop;
-        } else {
-            scrollTop = this.ctrlsSvc.get('fakeVScrollComp').getScrollPosition();
-        }
+        const requestedScrollTop =
+            source === VIEWPORT ? this.eBodyViewport.scrollTop : this.fakeVScrollComp.getScrollPosition();
+        let scrollTop = requestedScrollTop;
 
         if (this.shouldBlockScrollUpdate(Direction.Vertical, scrollTop, true)) {
             return;
         }
+
+        if (source === VIEWPORT) {
+            this.fakeVScrollComp.setScrollPosition(scrollTop);
+        } else {
+            this.eBodyViewport.scrollTop = requestedScrollTop;
+            // resolve to the browser-applied value in case assignment is clamped.
+            scrollTop = this.eBodyViewport.scrollTop;
+            // keep cached vertical metrics in sync even when the fake scrollbar drives scrolling,
+            // as setting scrollTop programmatically may not emit a viewport scroll event.
+            this.invalidateVerticalScroll();
+
+            if (scrollTop !== requestedScrollTop) {
+                this.fakeVScrollComp.setScrollPosition(scrollTop, true);
+            }
+        }
+
         const { animationFrameSvc } = this;
         animationFrameSvc?.setScrollTop(scrollTop);
         this.nextScrollTop = scrollTop;
-
-        if (source === VIEWPORT) {
-            this.ctrlsSvc.get('fakeVScrollComp').setScrollPosition(scrollTop);
-        } else {
-            this.eBodyViewport.scrollTop = scrollTop;
-        }
 
         // the `scrollGridIfNeeded` will recalculate the rows to be rendered by the grid
         // so it should only be called after `eBodyViewport` has been scrolled to the correct
@@ -286,7 +304,7 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private doHorizontalScroll(scrollLeft: number): void {
-        const fakeScrollLeft = this.ctrlsSvc.get('fakeHScrollComp').getScrollPosition();
+        const fakeScrollLeft = this.fakeHScrollComp.getScrollPosition();
 
         if (this.scrollLeft === scrollLeft && scrollLeft === fakeScrollLeft) {
             return;
@@ -496,7 +514,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
     // gets called by rowRenderer when new data loaded, as it will want to scroll to the top
     public scrollToTop(): void {
-        this.eBodyViewport.scrollTop = 0;
+        this.setVerticalScrollPosition(0);
     }
 
     // Valid values for position are bottom, middle and top

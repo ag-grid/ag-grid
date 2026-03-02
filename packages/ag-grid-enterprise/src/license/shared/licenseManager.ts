@@ -15,7 +15,7 @@ export interface ILicenseManager {
 
 export class LicenseManager {
     // eslint-disable-next-line no-restricted-syntax
-    private static readonly RELEASE_INFORMATION: string = 'MTc2OTEwMTg5NDA0NQ==';
+    private static readonly RELEASE_INFORMATION: string = 'MTc3MDgwOTgzNDk5MQ==';
     // eslint-disable-next-line no-restricted-syntax
     private static licenseKey: string;
     // eslint-disable-next-line no-restricted-syntax
@@ -198,7 +198,7 @@ export class LicenseManager {
 
     private isWebsiteUrl(): boolean {
         const hostname = this.getHostname();
-        return hostname.match(/^((?:[\w-]+\.)?ag-grid\.com)$/) !== null;
+        return hostname.match(/^(?:[\w-]+\.)?(ag-grid|bryntum)\.com$/) !== null;
     }
 
     private isLocalhost(): boolean {

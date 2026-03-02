@@ -1,0 +1,27 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.25.1
+
+ignore:
+    SNYK-JS-MINIMATCH-15353389:
+        - '@nx/devkit@17.2.6 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:14:13.158Z
+        - glob@8.0.3 > minimatch@5.1.6:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:14:13.155Z
+    SNYK-JS-MINIMATCH-15309438:
+        - '@nx/devkit@17.2.6 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T09:16:27.117Z
+        - glob@8.0.3 > minimatch@5.1.6:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T09:16:27.114Z
+patch: {}

@@ -60,6 +60,21 @@
     }
 }
 
+/* RTI-3243 auto rtl doesn't work for elements outside the grid, this is a
+   tactical fix and can be removed when we fix the underlying issue in AG-16725 */
+&:where(.ag-ltr, .ag-rtl)
+    .ag-input-field-input:where(
+        input:not([type]),
+        input[type='text'],
+        input[type='number'],
+        input[type='tel'],
+        input[type='date'],
+        input[type='datetime-local'],
+        textarea
+    ) {
+    padding: 0 var(--ag-input-padding-start);
+}
+
 /* icon for search inputs */
 :where(.ag-column-select-header-filter-wrapper),
 :where(.ag-filter-toolpanel-search),

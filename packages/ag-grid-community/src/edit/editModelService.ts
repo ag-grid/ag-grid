@@ -89,7 +89,7 @@ export class EditModelService extends BeanStub implements NamedBean {
             return undefined;
         }
 
-        const data: any = Object.assign({}, rowNode.data);
+        const data: any = { ...rowNode.data };
 
         const applyEdits = (edits: EditRow, data: any) =>
             edits.forEach(({ pendingValue }, column) => {
@@ -174,14 +174,14 @@ export class EditModelService extends BeanStub implements NamedBean {
 
         const currentEdit = this.getEdit(position);
 
-        const updatedEdit = Object.assign({
+        const updatedEdit: EditValue = {
             editorState: {
                 isCancelAfterEnd: undefined,
                 isCancelBeforeStart: undefined,
             },
             ...currentEdit,
             ...edit,
-        }) as EditValue;
+        } as EditValue;
 
         this.getEditRow(position.rowNode)!.set(position.column, updatedEdit);
 
@@ -190,21 +190,26 @@ export class EditModelService extends BeanStub implements NamedBean {
 
     public clearEditValue(position: EditPosition): void {
         const { rowNode, column } = position;
-        if (rowNode) {
-            if (column) {
-                const edit = this.getEdit(position);
-                if (edit) {
-                    edit.editorValue = undefined;
-                    edit.pendingValue = edit.sourceValue;
-                    edit.state = 'changed';
-                }
-            } else {
-                this.getEditRow(rowNode)?.forEach((cellData) => {
-                    cellData.editorValue = undefined;
-                    cellData.pendingValue = cellData.sourceValue;
-                    cellData.state = 'changed';
-                });
-            }
+        if (!rowNode) {
+            return; // no row specified, cannot clear
+        }
+
+        const update = (edit: EditValue) => {
+            edit.editorValue = undefined;
+            edit.pendingValue = edit.sourceValue;
+            // Reverting to sourceValue is always 'changed' (i.e. "no longer editing").
+            // The value matches source so _sourceAndPendingDiffer will return false and nothing commits.
+            edit.state = 'changed';
+        };
+
+        if (!column) {
+            this.getEditRow(rowNode)?.forEach(update); // clear all columns in the row
+            return;
+        }
+
+        const edit = this.getEdit(position);
+        if (edit) {
+            update(edit); // clear specific cell
         }
     }
 
@@ -270,7 +275,7 @@ export class EditModelService extends BeanStub implements NamedBean {
                 if (withOpenEditor) {
                     return this.getEdit(position)?.state === 'editing';
                 }
-                return rowEdits.has(column) ?? false;
+                return rowEdits.has(column);
             }
 
             if (rowEdits.size !== 0) {
@@ -308,15 +313,27 @@ export class EditModelService extends BeanStub implements NamedBean {
         this.edits.set(rowNode, map);
     }
 
-    public stop(position?: Required<EditPosition>): void {
+    public stop(position: Required<EditPosition>, preserveBatch: boolean, cancel: boolean): void {
         if (!this.hasEdits(position)) {
             return;
         }
 
-        if (position) {
-            this.removeEdits(position);
+        if (preserveBatch) {
+            // Keep edits that were actually changed; remove unchanged ones.
+            const edit = this.getEditRow(position.rowNode)?.get(position.column);
+            if (edit && (edit.pendingValue === UNEDITED || edit.pendingValue === edit.sourceValue)) {
+                this.removeEdits(position);
+            } else if (edit && cancel) {
+                // Clear the transient editorValue so the cell renderer shows pendingValue.
+                // No event dispatch is needed here — editorValue is an internal field only
+                // consumed while an editor is open, and the editor has already been destroyed
+                // by the caller (_destroyEditor dispatched cellEditingStopped). The visible
+                // pendingValue is preserved and any UI refresh is handled by the caller's
+                // bulkRefresh call afterward.
+                edit.editorValue = undefined;
+            }
         } else {
-            this.clear();
+            this.removeEdits(position);
         }
     }
 
