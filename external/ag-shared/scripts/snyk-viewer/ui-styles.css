@@ -759,6 +759,12 @@ a:hover { text-decoration: underline; }
     margin-bottom: 16px;
     gap: 16px;
     flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--c-bg);
+    padding: 10px 0;
+    margin-top: -10px;
 }
 .rq-progress {
     display: flex;
