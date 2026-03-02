@@ -133,6 +133,9 @@ active path with changed versions highlighted. Actions:
 - **Update All in This File** — batch-updates all stale paths in one file
 - **Update All .snyk Files** — batch-updates all stale paths across all files
 
+After any update action the panel dims (`opacity: 0.5`, `pointer-events: none`) while
+the `/data` refresh is in flight, then re-renders with the updated state.
+
 #### Shared expiry field
 
 A single expiry date input (pre-filled from the first expiry found in any `.snyk` file)
@@ -243,10 +246,12 @@ patch: {}
 - **IIFE modules** — `ui-browse.js` and `ui-review.js` are IIFEs; shared utilities are
   exposed via `window.SnykUtils`; entry points via `window.initBrowseAll` /
   `window.initReviewQueue`
-- **Delegated events** — a single `click` listener on `#rq-content` dispatches by
-  `data-action` attribute; avoids per-element listeners on re-rendered HTML
-- **Collapsible elements** — use native `<details>`/`<summary>`; no JS toggle needed for
-  open/close state
+- **Delegated events** — a single `click` listener on `#rq-content` is attached once
+  at init (`attachEvents()`) and dispatches by `data-action` attribute; avoids
+  per-element listeners and prevents duplicate handlers accumulating across re-renders
+- **Collapsible elements** — use native `<details>`/`<summary>`; `refreshIgnorePatterns`
+  snapshots which `.tool-section` elements are open before re-rendering and restores
+  them after, so the user's expanded/collapsed state survives a data refresh
 - **`skipState`** — module-level `{ vulns: Set, deps: Set }` persists across re-renders
   so skip selections survive review state updates
 - **Global path index** — each dep-path row in Section 3 gets a unique `globalIdx` so
