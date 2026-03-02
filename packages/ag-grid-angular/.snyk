@@ -125,6 +125,21 @@ ignore:
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-02-23T00:00:00.000Z
     SNYK-JS-MINIMATCH-15309438:
+        - karma@6.4.4 > rimraf@3.0.2 > glob@7.2.3 > minimatch@3.1.2:
+              reason: >-
+                  Used in dev - ReDOS attack would only affect developer machines
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-02-27T18:32:18.850Z
+        - rimraf@3.0.2 > glob@7.2.3 > minimatch@3.1.2:
+              reason: >-
+                  Used in dev - ReDOS attack would only affect developer machines
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-02-27T18:32:18.849Z
+        - replace-in-file@4.3.1 > glob@7.2.3 > minimatch@3.1.2:
+              reason: >-
+                  Used in dev - ReDOS attack would only affect developer machines
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-02-27T18:32:18.846Z
         - '@angular/cli@18.2.21 > pacote@18.0.6 > @npmcli/package-json@5.2.1 > glob@10.4.5 > minimatch@9.0.5':
               reason: angular/downstream dependency
               expires: 2026-06-08T00:00:00.000Z
