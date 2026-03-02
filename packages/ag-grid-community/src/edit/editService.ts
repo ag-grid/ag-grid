@@ -1077,17 +1077,28 @@ export class EditService extends BeanStub implements NamedBean {
             const batch = this.batch;
             const editing = this.isEditing(batch ? undefined : position);
 
-            if ((!editing || this.committing) && !SET_DATA_SOURCE_AS_API.has(eventSource)) {
-                return; // Ignore non-edit edits that are not treated as API sources.
+            if ((!editing || this.committing) && !batch && !SET_DATA_SOURCE_AS_API.has(eventSource)) {
+                return; // Ignore non-edit edits that are not treated as API sources and not in batch mode.
             }
 
             if (!editing && !batch && eventSource === 'paste') {
                 return; // Paste on non editable cells and not batching
             }
 
-            const beans = this.beans;
+            // 'batch' source: write to batch pending value if batch is active (ignoring any open editor),
+            // otherwise fall through to direct data write in rowNode.setDataValue.
+            if (eventSource === 'batch' && !batch) {
+                return; // Not in batch mode, fall through to direct data write
+            }
 
             this.strategy ??= this.createStrategy();
+
+            if (eventSource === 'batch') {
+                return this.applyDirectValue(position, newValue, eventSource);
+            }
+
+            const beans = this.beans;
+
             let source: string;
             if (batch) {
                 source = 'ui';

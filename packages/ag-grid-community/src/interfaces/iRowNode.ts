@@ -326,7 +326,12 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
      *
      * @param colKey The column where the value should be updated
      * @param newValue The new value
-     * @param eventSource The source of the event
+     * @param eventSource The source of the event. Controls where the value is written:
+     *   - `undefined` (default), `'edit'`, or `'ui'`: Writes to the current edit state — updates the editor if the cell is being edited,
+     *     otherwise stages as a pending batch value during batch mode, or writes directly to data when not in batch mode.
+     *   - `'batch'`: Writes to the batch pending value if batch mode is active (ignoring any open editor),
+     *     otherwise writes directly to the data.
+     *   - `'data'`: Writes directly to the underlying data, bypassing batch mode and edit state entirely.
      * @returns `true` if the value was changed, otherwise `false`.
      */
     setDataValue(colKey: string | Column, newValue: any, eventSource?: string): boolean;

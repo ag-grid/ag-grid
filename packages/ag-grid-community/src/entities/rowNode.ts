@@ -508,7 +508,20 @@ export class RowNode<TData = any>
      *
      * @param colKey The column where the value should be updated
      * @param newValue The new value
-     * @param eventSource The source of the event
+     * @param eventSource The source of the event. Controls where the value is written:
+     *
+     *   - `'data'` — Always writes directly to data, bypassing batch mode and edit state entirely.
+     *
+     *   - `'batch'` — Writes to batch pending value when batch mode is active (ignoring any open editor).
+     *     When batch mode is not active, writes directly to data (also ignoring any open editor).
+     *
+     *   - `undefined` (default), `'ui'`, `'edit'`, `'api'`, `'fillHandle'`, `'cellClear'` —
+     *     Batch mode: stages as pending batch value (commits any open editor first).
+     *     No batch mode + editor open: writes through the editor.
+     *     No batch mode + no editor: writes directly to data.
+     *
+     *   - `'bulk'`, `'paste'`, `'rangeSvc'`, `'undo'`, `'redo'` —
+     *     Same as above, except when an editor is open during batch mode it is kept open rather than committed.
      * @returns `true` if the value was changed, otherwise `false`.
      */
     public setDataValue(colKey: string | AgColumn, newValue: any, eventSource?: string): boolean {
@@ -560,7 +573,8 @@ export class RowNode<TData = any>
             return false;
         }
 
-        if (editSvc && !editSvc.committing) {
+        // 'data' source: bypass batch mode and edit state entirely, write directly to data
+        if (eventSource !== 'data' && editSvc && !editSvc.committing) {
             const result = editSvc.setDataValue({ rowNode: this, column }, newValue, eventSource);
 
             if (result != null) {
