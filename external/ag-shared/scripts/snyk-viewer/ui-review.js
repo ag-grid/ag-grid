@@ -40,6 +40,15 @@
             deps: new Set(),   // skipped top-level dep names
         };
 
+        function semverLt(a, b) {
+            const pa = a.split('.').map(Number), pb = b.split('.').map(Number);
+            for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+                const na = pa[i] || 0, nb = pb[i] || 0;
+                if (na !== nb) return na < nb;
+            }
+            return false;
+        }
+
         function getNear(vuln, project) {
             return getNearIgnoredPath(vuln, project, ignorePatternsByFile)
                 || getNearIgnoredPath(vuln, project, localAddedPatterns);
@@ -80,7 +89,7 @@
                 if (!pkg) continue;
                 if (!resGroups.has(pkg)) resGroups.set(pkg, { fixVersion: fix, itemsMap: new Map() });
                 const g = resGroups.get(pkg);
-                if (fix < g.fixVersion) g.fixVersion = fix;
+                if (semverLt(fix, g.fixVersion)) g.fixVersion = fix;
                 if (!g.itemsMap.has(vuln.id)) g.itemsMap.set(vuln.id, { id: vuln.id, vuln, entries: [] });
                 g.itemsMap.get(vuln.id).entries.push({ vuln, project });
             }
@@ -733,7 +742,8 @@
                 const filePaths = [];
                 rows.forEach(row => {
                     const cb = row.querySelector('input[type="checkbox"]');
-                    const idx = cb ? parseInt(cb.dataset.idx) : NaN;
+                    if (!cb || !cb.checked) return;
+                    const idx = parseInt(cb.dataset.idx);
                     if (isNaN(idx)) return;
                     const depPathSpan = row.querySelector('.path-deppath');
                     filePaths.push({ vulnId, depPath: depPathSpan?.textContent || '', idx });
@@ -889,6 +899,17 @@
                     if (!subgroup) return;
                     subgroup.querySelectorAll('.batch-ignore-reason').forEach(inp => { inp.value = val; });
                     if (vulnIdx !== undefined && snykFile) rebuildFileYaml(parseInt(vulnIdx), snykFile);
+                } else if (action === 'select-version') {
+                    const version = btn.dataset.version;
+                    const row = btn.closest('.dep-card-file-row');
+                    if (!row) return;
+                    const updateBtn = row.querySelector('[data-action="update-dep"]');
+                    if (updateBtn) {
+                        updateBtn.dataset.version = version;
+                        updateBtn.textContent = `Update to ${version}`;
+                    }
+                    btn.closest('.versions-list')?.querySelectorAll('.version-tag').forEach(t => t.classList.remove('selected'));
+                    btn.classList.add('selected');
                 } else if (action === 'check-versions') {
                     handleCheckVersions(btn);
                 } else if (action === 'check-dep-field') {
@@ -1030,9 +1051,9 @@
                     else {
                         const tags = data.versions.map(v => {
                             const isRec = v === recommend;
-                            return `<span class="version-tag${isRec ? ' recommended' : ''}">${esc(v)}</span>`;
+                            return `<button class="version-tag${isRec ? ' recommended' : ''}" data-action="select-version" data-version="${esc(v)}">${esc(v)}</button>`;
                         }).join('');
-                        panel.innerHTML = `<div class="versions-panel-title">Available versions (newest first)</div><div class="versions-list">${tags}</div>`;
+                        panel.innerHTML = `<div class="versions-panel-title">Available versions (newest first — click to select)</div><div class="versions-list">${tags}</div>`;
                     }
                     panel.style.display = 'block';
                 })

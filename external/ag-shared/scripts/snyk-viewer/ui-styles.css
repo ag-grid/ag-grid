@@ -952,7 +952,9 @@ a:hover { text-decoration: underline; }
     background: var(--c-surface2);
     border: 1px solid var(--c-border);
     color: var(--c-text-muted);
+    cursor: pointer;
 }
+.version-tag:hover { border-color: var(--c-accent); color: var(--c-text); }
 .version-tag.recommended {
     background: rgba(76,175,130,0.15);
     border-color: rgba(76,175,130,0.4);
@@ -960,6 +962,13 @@ a:hover { text-decoration: underline; }
     font-weight: 700;
 }
 .version-tag.recommended::after { content: ' ✓'; }
+.version-tag.selected {
+    background: rgba(100,160,255,0.15);
+    border-color: var(--c-accent);
+    color: var(--c-accent);
+    font-weight: 700;
+}
+.version-tag.selected::after { content: ' ←'; }
 
 /* ── Shared action buttons ── */
 .rq-actions {
