@@ -2071,4 +2071,153 @@ describe('RowNode.getDataValue', () => {
             expect(parent.getDataValue('v', 'data-raw')).toBe(5);
         });
     });
+
+    describe('showRowGroup columns', () => {
+        test('getDataValue bypasses display-level showRowGroup check', async () => {
+            const api = await gridsManager.createGridAndWait('showRowGroup-basic', {
+                columnDefs: [
+                    {
+                        colId: 'countryGroupCol',
+                        showRowGroup: 'country',
+                        cellRenderer: 'agGroupCellRenderer',
+                    },
+                    {
+                        colId: 'athleteGroupCol',
+                        showRowGroup: 'athlete',
+                        cellRenderer: 'agGroupCellRenderer',
+                    },
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'athlete', rowGroup: true, hide: true },
+                    { field: 'gold', aggFunc: 'sum' },
+                ],
+                groupDisplayType: 'custom',
+                groupDefaultExpanded: -1,
+                getRowId: ({ data }) => data.id,
+                rowData: [
+                    { id: '1', country: 'USA', athlete: 'Michael', gold: 8 },
+                    { id: '2', country: 'USA', athlete: 'Ryan', gold: 2 },
+                ],
+            });
+            await asyncSetTimeout(1);
+
+            // Country group node (level 0)
+            const countryGroup = api.getRowNode('row-group-country-USA')!;
+            expect(countryGroup.group).toBe(true);
+            expect(countryGroup.level).toBe(0);
+
+            // Athlete group node (level 1)
+            const athleteGroup = api.getRowNode('row-group-country-USA-athlete-Michael')!;
+            expect(athleteGroup.group).toBe(true);
+            expect(athleteGroup.level).toBe(1);
+
+            // Group key is returned from groupData at matching level
+            expect(countryGroup.getDataValue('countryGroupCol')).toBe('USA');
+            expect(athleteGroup.getDataValue('athleteGroupCol')).toBe('Michael');
+
+            // At non-matching levels, groupData has no entry for the column — returns undefined.
+            // (The display-level showRowGroup check would return null here, but getDataValue bypasses it.)
+            expect(countryGroup.getDataValue('athleteGroupCol')).toBeUndefined();
+            expect(athleteGroup.getDataValue('countryGroupCol')).toBeUndefined();
+
+            // Aggregated gold values work on both levels
+            expect(countryGroup.getDataValue('gold')).toBe(10);
+            expect(athleteGroup.getDataValue('gold')).toBe(8);
+        });
+
+        test('getDataValue returns edited value on group row after setDataValue with enableGroupEdit', async () => {
+            const api = await gridsManager.createGridAndWait('showRowGroup-enableGroupEdit', {
+                columnDefs: [
+                    {
+                        colId: 'countryGroupCol',
+                        showRowGroup: 'country',
+                        cellRenderer: 'agGroupCellRenderer',
+                    },
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'gold', aggFunc: 'sum' },
+                    { field: 'notes', editable: true },
+                ],
+                groupDisplayType: 'custom',
+                enableGroupEdit: true,
+                groupDefaultExpanded: -1,
+                getRowId: ({ data }) => data.id,
+                rowData: [
+                    { id: '1', country: 'USA', gold: 8, notes: 'leaf note' },
+                    { id: '2', country: 'USA', gold: 2, notes: '' },
+                ],
+            });
+            await asyncSetTimeout(1);
+
+            const countryGroup = api.getRowNode('row-group-country-USA')!;
+            expect(countryGroup.group).toBe(true);
+            expect(countryGroup.data).toBeUndefined();
+
+            // Before editing, 'notes' has no value on the group row
+            expect(countryGroup.getDataValue('notes')).toBeUndefined();
+
+            // setDataValue creates rowNode.data on the group row and sets the value
+            countryGroup.setDataValue('notes', 'group note');
+
+            expect(countryGroup.data).toBeDefined();
+            expect(countryGroup.getDataValue('notes')).toBe('group note');
+
+            // groupData still drives the showRowGroup column
+            expect(countryGroup.getDataValue('countryGroupCol')).toBe('USA');
+
+            // Aggregated gold values still work
+            expect(countryGroup.getDataValue('gold')).toBe(10);
+        });
+
+        test('tree data group rows resolve showRowGroup columns from their own data', async () => {
+            const api = await gridsManager.createGridAndWait('showRowGroup-treeData', {
+                columnDefs: [
+                    {
+                        colId: 'regionGroupCol',
+                        showRowGroup: true,
+                        cellRenderer: 'agGroupCellRenderer',
+                    },
+                    { field: 'name' },
+                    { field: 'region' },
+                    { field: 'value', aggFunc: 'sum' },
+                ],
+                treeData: true,
+                treeDataChildrenField: 'children',
+                groupDefaultExpanded: -1,
+                rowData: [
+                    {
+                        id: '1',
+                        name: 'Parent',
+                        region: 'North',
+                        value: 5,
+                        children: [
+                            { id: '2', name: 'Child1', region: 'East', value: 20 },
+                            { id: '3', name: 'Child2', region: 'West', value: 30 },
+                        ],
+                    },
+                ],
+                getRowId: ({ data }) => data.id,
+            });
+            await asyncSetTimeout(1);
+
+            const parent = api.getRowNode('1')!;
+            expect(parent.group).toBe(true);
+            // Tree data group rows have their own data
+            expect(parent.data).toBeDefined();
+
+            // Field values come from the row's own data
+            expect(parent.getDataValue('name')).toBe('Parent');
+            expect(parent.getDataValue('region')).toBe('North');
+
+            // Aggregated value
+            expect(parent.getDataValue('value')).toBe(50);
+
+            // data-raw bypasses aggregation and returns the row's own data
+            expect(parent.getDataValue('value', 'data-raw')).toBe(5);
+
+            // Child row
+            const child = api.getRowNode('2')!;
+            expect(child.getDataValue('name')).toBe('Child1');
+            expect(child.getDataValue('region')).toBe('East');
+            expect(child.getDataValue('value')).toBe(20);
+        });
+    });
 });

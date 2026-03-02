@@ -166,7 +166,8 @@ export class ValueService extends BeanStub implements NamedBean {
         column: AgColumn,
         rowNode: IRowNode | null | undefined,
         from: CellValueResolveFrom,
-        ignoreAggData: boolean = false
+        ignoreAggData: boolean = false,
+        ignoreShowRowGroup: boolean = false
     ): any {
         // hack - the grid is getting refreshed before this bean gets initialised, race condition.
         // really should have a way so they get initialised in the right order???
@@ -196,17 +197,22 @@ export class ValueService extends BeanStub implements NamedBean {
             return pending;
         }
 
-        // when using multiple columns, the group column should have no value higher than its level
-        const rowGroupColId = colDef.showRowGroup;
-        if (typeof rowGroupColId === 'string') {
-            // if multiple columns, don't show values in cells grouped at a higher level
-            const colRowGroupIndex = this.beans.rowGroupColsSvc?.getColumnIndex(rowGroupColId) ?? -1;
-            if (colRowGroupIndex > rowNode.level) {
-                return null;
+        if (!ignoreShowRowGroup) {
+            // For showRowGroup columns (custom group display), return null when the row's group level
+            // is shallower than the column's associated row group. E.g. a country-level group (level 0)
+            // shows null for a showRowGroup:'athlete' column (group index 1) because athlete grouping
+            // hasn't been reached yet at that level.
+            // This however is a UI only concern - this shouldn't have been here at all!
+            const rowGroupColId = colDef.showRowGroup;
+            if (typeof rowGroupColId === 'string') {
+                const colRowGroupIndex = this.beans.rowGroupColsSvc?.getColumnIndex(rowGroupColId) ?? -1;
+                if (colRowGroupIndex > rowNode.level) {
+                    return null;
+                }
             }
         }
 
-        let result = this.resolveValue(column, rowNode, ignoreAggData);
+        let result = this.resolveValue(column, rowNode, ignoreAggData, ignoreShowRowGroup);
 
         // the result could be an expression itself, if we are allowing cell values to be expressions
         if (this.cellExpressions && _isExpressionString(result)) {
@@ -248,7 +254,12 @@ export class ValueService extends BeanStub implements NamedBean {
         return !!node.sibling && !this.gos.get('groupSuppressBlankHeader');
     }
 
-    private resolveValue(column: AgColumn, rowNode: IRowNode, ignoreAggData: boolean): any {
+    private resolveValue(
+        column: AgColumn,
+        rowNode: IRowNode,
+        ignoreAggData: boolean,
+        ignoreShowRowGroup: boolean = false
+    ): any {
         const colDef = column.getColDef();
         const colId = column.getColId();
 
@@ -285,7 +296,7 @@ export class ValueService extends BeanStub implements NamedBean {
 
         // don't retrieve group values from field or valueGetter for multiple auto cols
         const rowGroupColId = colDef.showRowGroup;
-        const allowUserValuesForCell = typeof rowGroupColId !== 'string' || !rowNode.group;
+        const allowUserValuesForCell = ignoreShowRowGroup || typeof rowGroupColId !== 'string' || !rowNode.group;
 
         // SSRM agg data comes from the data attribute, so ignore that instead
         const ignoreSsrmAggData = this.isSsrm && ignoreAggData && !!colDef.aggFunc;

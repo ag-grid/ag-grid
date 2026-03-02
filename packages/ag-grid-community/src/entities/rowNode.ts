@@ -622,7 +622,7 @@ export class RowNode<TData = any>
         // 'value' reads committed data like 'data' but resolves agg wrappers (handled below)
         const dataRaw = from === 'data-raw';
         const resolvedFrom = dataRaw || from === 'value' ? 'data' : from;
-        let value = valueSvc.getValue(column, this, resolvedFrom, dataRaw);
+        let value = valueSvc.getValue(column, this, resolvedFrom, dataRaw, true);
 
         if (!dataRaw) {
             // Resolve formulas to their computed value (skip for 'data-raw')
