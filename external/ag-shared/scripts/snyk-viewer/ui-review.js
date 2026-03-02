@@ -674,7 +674,7 @@
                                 <a class="vuln-id-link" href="https://security.snyk.io/vuln/${esc(id)}" target="_blank" rel="noopener">${esc(id)}</a>
                                 ${sevBadge(vuln)}
                                 <span class="rq-resolved-note">${esc(vuln.title || '')}</span>
-                                ${decision.note ? `<span class="rq-resolved-note" style="color:var(--c-fix)">${esc(decision.note)}</span>` : ''}
+                                ${decision.note ? `<span class="rq-resolved-decision-note">${esc(decision.note)}</span>` : ''}
                                 <span class="rq-resolved-ts">${esc(ts)}</span>
                             </div>`;
                         }).join('')}

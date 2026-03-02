@@ -81,6 +81,7 @@ a:hover { text-decoration: underline; }
 .sev-pill.high     { background: rgba(255,140,66,0.15); color: var(--c-high);     border: 1px solid rgba(255,140,66,0.3); }
 .sev-pill.medium   { background: rgba(255,193,7,0.12);  color: var(--c-medium);   border: 1px solid rgba(255,193,7,0.3); }
 .sev-pill.low      { background: rgba(111,168,220,0.12);color: var(--c-low);      border: 1px solid rgba(111,168,220,0.3); }
+.sev-pill.sev-pill-zero { opacity: 0.35; }
 
 /* ── Tab bar ── */
 #tab-bar {
@@ -1190,7 +1191,8 @@ a:hover { text-decoration: underline; }
 .status-skipped { background: rgba(142,160,188,0.1); color: var(--c-text-muted); border: 1px solid var(--c-border); }
 .status-reopened { background: rgba(255,77,77,0.12); color: var(--c-critical); border: 1px solid rgba(255,77,77,0.3); }
 .rq-resolved-note { font-size: 11px; color: var(--c-text-muted); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.rq-resolved-ts { font-size: 11px; color: var(--c-text-muted); margin-left: auto; white-space: nowrap; flex-shrink: 0; }
+.rq-resolved-decision-note { font-size: 11px; color: var(--c-fix); margin-left: auto; white-space: nowrap; flex-shrink: 0; }
+.rq-resolved-ts { font-size: 11px; color: var(--c-text-muted); white-space: nowrap; flex-shrink: 0; }
 
 /* ── Empty queue ── */
 .rq-empty { text-align: center; padding: 48px 20px; color: var(--c-text-muted); }

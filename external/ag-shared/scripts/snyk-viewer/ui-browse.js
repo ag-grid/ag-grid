@@ -169,7 +169,7 @@
                 { key: 'low', label: 'Low', n: summary.bySev.low },
             ];
             sevPills.innerHTML = pills.map(p =>
-                `<span class="sev-pill ${p.key}">${p.label} <strong>${p.n}</strong></span>`
+                `<span class="sev-pill ${p.key}${p.n === 0 ? ' sev-pill-zero' : ''}">${p.label} <strong>${p.n}</strong></span>`
             ).join('');
 
             const projectNames = [...new Set(projects.map(p => projectName(p)))].sort();
