@@ -321,6 +321,15 @@ const warnOnAttachToShadowRoot = (
     errorCallback: () => void,
     onDestroy: (handler: () => void) => void
 ) => {
+    // In environments without a layout engine (e.g. jsdom used by Jest),
+    // offsetParent is always null so _isInDOM can never return true and the
+    // interval would run for the full retry duration, blocking Angular's
+    // fixture.whenStable(). Skip the polling entirely in that case — shadow
+    // root moves can't be detected without layout anyway.
+    if (!document.body?.offsetParent) {
+        return;
+    }
+
     // only retry for a minute, to prevent our tests (and potentially customer's
     // tests) from hanging if they try to use vi.runAllTimers() to run the interval
     // until it terminates
