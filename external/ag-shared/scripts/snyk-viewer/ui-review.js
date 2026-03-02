@@ -8,6 +8,7 @@
         'Lint dependency - not included in final production build',
         'Downstream dependency of [package] - not included in final production build',
         'Dev server only - not exposed in production',
+        'The website is a static site, so server-side vulns are not relevant',
         'MCP/dev tooling - not a directly exposed production dependency',
     ];
 
