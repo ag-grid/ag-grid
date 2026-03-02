@@ -344,7 +344,7 @@
                 const nearGroupsHtml = [...nearItems.entries()].map(([sf, items]) => renderCatDGroup(sf, items)).join('');
                 nearHtml = `<details class="s3-near-panel" open>
                     <summary class="s3-near-summary">
-                        <span>&#x26A1; Near-ignored &#x2014; stale .snyk paths</span>
+                        <span>&#x26A1; Outdated versions &#x2014; stale .snyk paths</span>
                         <span class="s3-near-count">${nearItems.size} file${nearItems.size !== 1 ? 's' : ''}</span>
                         ${updateAllBtn}
                     </summary>
