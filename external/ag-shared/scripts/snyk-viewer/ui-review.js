@@ -667,12 +667,10 @@
                     </button>
                     <div class="rq-resolved-list" id="rq-resolved-list">
                         ${reviewed.map(({ id, vuln, decision }) => {
-                            const status = decision.status || 'skipped';
                             const ts = decision.timestamp ? new Date(decision.timestamp).toLocaleString() : '';
                             return `<div class="rq-resolved-item">
-                                <span class="status-badge status-${esc(status)}">${esc(status)}</span>
-                                <a class="vuln-id-link" href="https://security.snyk.io/vuln/${esc(id)}" target="_blank" rel="noopener">${esc(id)}</a>
                                 ${sevBadge(vuln)}
+                                <a class="vuln-id-link" href="https://security.snyk.io/vuln/${esc(id)}" target="_blank" rel="noopener">${esc(id)}</a>
                                 <span class="rq-resolved-note">${esc(vuln.title || '')}</span>
                                 ${decision.note ? `<span class="rq-resolved-decision-note">${esc(decision.note)}</span>` : ''}
                                 <span class="rq-resolved-ts">${esc(ts)}</span>
