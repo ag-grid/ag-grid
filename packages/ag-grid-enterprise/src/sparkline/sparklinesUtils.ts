@@ -89,41 +89,33 @@ export function getSparklineAriaTemplate(params: {
 }): { template: string; values: SparklineTemplateValues } {
     const { translate, chartType, summary, formatNumber } = params;
 
+    let key: string;
+    let defaultTemplate: string;
+    let variableValues: string[];
+    let values: SparklineTemplateValues;
+
     if (!hasCompleteSparklineSummary(summary)) {
-        const variableValues = [chartType];
-        return {
-            template: translate(
-                'ariaSparklineChartDescriptionEmpty',
-                defaultEmptySparklineAriaDescription,
-                variableValues
-            ),
-            values: { chartType },
-        };
-    }
-
-    if (summary.count === 1) {
+        key = 'ariaSparklineChartDescriptionEmpty';
+        defaultTemplate = defaultEmptySparklineAriaDescription;
+        variableValues = [chartType];
+        values = { chartType };
+    } else if (summary.count === 1) {
         const value = formatNumber(summary.start);
-        const variableValues = [chartType, value];
-
-        return {
-            template: translate(
-                'ariaSparklineChartDescriptionSingleValue',
-                defaultSingleValueSparklineAriaDescription,
-                variableValues
-            ),
-            values: { chartType, value },
-        };
+        key = 'ariaSparklineChartDescriptionSingleValue';
+        defaultTemplate = defaultSingleValueSparklineAriaDescription;
+        variableValues = [chartType, value];
+        values = { chartType, value };
+    } else {
+        const [count, min, max, start, end] = [summary.count, summary.min, summary.max, summary.start, summary.end].map(
+            formatNumber
+        );
+        key = 'ariaSparklineChartDescription';
+        defaultTemplate = defaultSparklineAriaDescription;
+        variableValues = [chartType, count, min, max, start, end];
+        values = { chartType, count, min, max, start, end };
     }
 
-    const [count, min, max, start, end] = [summary.count, summary.min, summary.max, summary.start, summary.end].map(
-        formatNumber
-    );
-    const variableValues = [chartType, count, min, max, start, end];
-
-    return {
-        template: translate('ariaSparklineChartDescription', defaultSparklineAriaDescription, variableValues),
-        values: { chartType, count, min, max, start, end },
-    };
+    return { template: translate(key, defaultTemplate, variableValues), values };
 }
 
 const hasCompleteSparklineSummary = (summary: SparklineSummary): summary is CompleteSparklineSummary =>
