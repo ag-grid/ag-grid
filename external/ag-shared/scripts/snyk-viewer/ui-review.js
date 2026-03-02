@@ -339,7 +339,7 @@
                     }
                 }
                 const updateAllBtn = allNearUpdates.length
-                    ? `<button class="btn btn-sm btn-warn" data-action="update-all-near"
+                    ? `<button class="btn btn-sm btn-warn" style="margin-left:auto" data-action="update-all-near"
                             data-updates="${esc(JSON.stringify(allNearUpdates))}">Update All .snyk Files</button>`
                     : '';
                 const nearGroupsHtml = [...nearItems.entries()].map(([sf, items]) => renderCatDGroup(sf, items)).join('');
@@ -581,7 +581,7 @@
                     newPath: (entry.vuln.from?.slice(1) || []).join(' > '),
                 }));
                 const updateAllVulnBtn = vulnUpdates.length > 1
-                    ? `<button class="btn btn-sm btn-warn" data-action="update-all-near"
+                    ? `<button class="btn btn-sm btn-warn" style="margin-left:auto" data-action="update-all-near"
                             data-updates="${esc(JSON.stringify(vulnUpdates))}">Update all paths</button>`
                     : '';
                 const pathsHtml = unresolvedVulnItems.map(({ entry, nearMatch }) =>
@@ -608,7 +608,7 @@
             const resolvedPill = allResolved ? '<span class="near-group-resolved-pill">&#x2713; Resolved</span>' : '';
             const toggleArrow = `<span class="near-toggle-arrow">${allResolved ? '&#x25B6;' : '&#x25BC;'}</span>`;
             const updateAllBtn = !allResolved
-                ? `<button class="btn btn-sm btn-warn" data-action="update-all-near"
+                ? `<button class="btn btn-sm btn-warn" style="margin-left:auto" data-action="update-all-near"
                         data-updates="${esc(JSON.stringify(allUpdates))}">Update All in This File</button>`
                 : '';
 
@@ -711,7 +711,6 @@
             }
 
             document.getElementById('rq-content').innerHTML = html;
-            attachEvents();
         }
 
         // ── Event handling (delegated) ──
@@ -1179,9 +1178,14 @@
         }
 
         function refreshIgnorePatterns() {
+            document.querySelector('.s3-near-panel')?.classList.add('refreshing');
+            const openSectionIndices = new Set(
+                [...document.querySelectorAll('.tool-section')].map((el, i) => el.open ? i : -1).filter(i => i !== -1)
+            );
             return fetch('/data').then(r => r.json()).then(data => {
                 ignorePatternsByFile = data.ignorePatternsByFile || {};
                 renderReviewQueueTab();
+                document.querySelectorAll('.tool-section').forEach((el, i) => { if (openSectionIndices.has(i)) el.open = true; });
                 document.getElementById('rq-resolved-section')?.classList.add('open');
             });
         }
@@ -1199,7 +1203,7 @@
                     btn.textContent = '\u2713 Updated';
                     btn.classList.replace('btn-warn', 'btn-primary');
                     applyNearUpdatesToLocalPatterns([{ snykFile, vulnId, newPath }]);
-                    setTimeout(refreshIgnorePatterns, 700);
+                    refreshIgnorePatterns();
                 } else { btn.disabled = false; btn.textContent = 'Update .snyk'; alert('Failed: ' + data.error); }
             }).catch(err => { btn.disabled = false; btn.textContent = 'Update .snyk'; alert('Request failed: ' + err.message); });
         }
@@ -1219,7 +1223,7 @@
                     btn.textContent = '\u2713 All Updated';
                     btn.classList.replace('btn-warn', 'btn-primary');
                     applyNearUpdatesToLocalPatterns(updates);
-                    setTimeout(refreshIgnorePatterns, 700);
+                    refreshIgnorePatterns();
                 } else { btn.disabled = false; btn.textContent = 'Update All in This File'; alert('Failed: ' + data.error); }
             }).catch(err => { btn.disabled = false; btn.textContent = 'Update All in This File'; alert('Request failed: ' + err.message); });
         }
@@ -1259,5 +1263,6 @@
         }
 
         renderReviewQueueTab();
+        attachEvents();
     };
 })();

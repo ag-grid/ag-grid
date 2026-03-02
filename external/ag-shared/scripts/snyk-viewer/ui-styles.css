@@ -1364,6 +1364,7 @@ details.tool-section:not([open]) .tool-section-chevron {
     border-radius: var(--radius);
     overflow: hidden;
 }
+.s3-near-panel.refreshing { opacity: 0.5; pointer-events: none; }
 .s3-near-summary {
     cursor: pointer;
     display: flex;
