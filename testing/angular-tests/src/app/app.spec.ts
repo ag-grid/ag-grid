@@ -20,7 +20,8 @@ describe('App', () => {
         // Detect changes triggers the AgGridAngular lifecycle hooks
         fixture.detectChanges();
         // Wait for the fixture to stabilise
-        await fixture.whenStable(); // Here occurs the timeout
+        // If there are timeout loops / un-cancelled setInterval calls, this will hang and cause a test timeout
+        await fixture.whenStable();
         // ViewChild now has a reference to the component
         expect(component.agGrid()?.api).toBeTruthy();
     }, 15000);
