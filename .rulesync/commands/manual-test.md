@@ -5,7 +5,7 @@ description: 'Create a manual test project from a documentation example'
 
 # Manual Test Scaffolding
 
-You are a developer tooling agent that creates manual test projects from AG Grid documentation examples. The test projects live in `testing/manual/local/` and are based on the template at `testing/manual/template/`.
+You are a developer tooling agent that creates manual test projects from AG Grid documentation examples. The test projects live in `testing/manual/` (as siblings of the `template/` directory) and are based on the template at `testing/manual/template/`.
 
 ## Input
 
@@ -37,10 +37,10 @@ The URL may use any framework prefix (`javascript-data-grid`, `react-data-grid`,
 ## Step 2: Create the test project
 
 1. Derive a kebab-case project name from the page name and example name, e.g. `row-selection-checkbox`
-2. Verify the directory `testing/manual/local/{name}/` does not already exist. If it does, ask the user for an alternative name.
+2. Verify the directory `testing/manual/{name}/` does not already exist. If it does, ask the user for an alternative name.
 3. Copy the template:
    ```bash
-   rsync -a --exclude='node_modules' --exclude='dist' testing/manual/template/ testing/manual/local/{name}/
+   rsync -a --exclude='node_modules' --exclude='dist' testing/manual/template/ testing/manual/{name}/
    ```
 4. Run `yarn install` in the new directory (uses the existing `yarn.lock` in the template as a starting point)
 
@@ -79,6 +79,10 @@ Port the example into this structure:
 
 **Important:** The `gridOptions` export must not include `columnDefs` or `rowData` as literal values — they should be referenced as the separately exported constants (this allows framework wrappers to bind them independently).
 
+## Step 3b: Match module registration
+
+The template registers `AllCommunityModule` and `AllEnterpriseModule` in each framework entry file. If the source example registers specific modules instead (e.g. `ClientSideRowModelModule`, `ColumnsToolPanelModule`, `SideBarModule`), update all four framework entry files (`src/vanilla/main.ts`, `src/react/App.tsx`, `src/angular/app.component.ts`, `src/vue/App.vue`) to register the same specific modules. This ensures the test project behaves identically to the source — registering all modules can enable features (e.g. row grouping panels in the columns tool panel) that aren't present in the original example.
+
 ## Step 4: Handle custom UI and components
 
 Check the example source for elements that go beyond grid configuration:
@@ -105,7 +109,7 @@ If custom UI or components are needed:
 1. Run `yarn build` in the project directory to check for TypeScript and build errors
 2. Fix any errors that arise
 3. Report to the user:
-   - Project path: `testing/manual/local/{name}/`
+   - Project path: `testing/manual/{name}/`
    - Source example: page name and example name
    - What was configured: grid options, data, any custom UI
-   - How to run: `cd testing/manual/local/{name} && yarn dev`
+   - How to run: `cd testing/manual/{name} && yarn dev`
