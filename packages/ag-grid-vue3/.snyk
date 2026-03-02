@@ -2,6 +2,12 @@
 version: v1.25.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
+    SNYK-JS-ROLLUP-15340920:
+        - vite@5.4.21 > rollup@4.52.5:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T11:40:04.704Z
     SNYK-JS-MINIMATCH-15353387:
         - '@vue/test-utils@2.4.6 > js-beautify@1.15.4 > glob@10.4.5 > minimatch@9.0.5':
               reason: >-

@@ -2,6 +2,17 @@
 version: v1.25.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
+    SNYK-JS-ROLLUP-15340920:
+        - '@angular-devkit/build-angular@19.2.19 > @angular/build@19.2.19 > vite@6.4.1 > rollup@4.52.5':
+              reason: >-
+                  Test dependency - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T11:40:36.416Z
+        - '@angular-devkit/build-angular@19.2.19 > @angular/build@19.2.19 > rollup@4.34.8':
+              reason: >-
+                  Test dependency - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T11:40:36.413Z
     SNYK-JS-QS-15268416:
         - '@angular-devkit/build-angular@19.2.19 > webpack-dev-server@5.2.2 > express@4.21.2 > body-parser@1.20.3 > qs@6.13.0':
               reason: >-
