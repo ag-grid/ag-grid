@@ -18,5 +18,4 @@ jest.config.ts
 eslint.config.mjs
 tsconfig.types.test.json
 coverage
-
-
+.snyk
