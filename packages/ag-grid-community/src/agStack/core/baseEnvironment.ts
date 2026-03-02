@@ -13,7 +13,7 @@ import type { Theme } from '../theming/theme';
 import { ThemeImpl } from '../theming/themeImpl';
 import type { ParamType } from '../theming/themeTypeUtils';
 import { paramToVariableName } from '../theming/themeUtils';
-import { _createAgElement, _isInDOM, _observeResize } from '../utils/dom';
+import { _createAgElement, _observeResize } from '../utils/dom';
 import { AgBeanStub } from './agBeanStub';
 
 const LIST_ITEM_HEIGHT: CssVariable<BaseCssChangeKeys> = {
@@ -321,15 +321,6 @@ const warnOnAttachToShadowRoot = (
     errorCallback: () => void,
     onDestroy: (handler: () => void) => void
 ) => {
-    // In environments without a layout engine (e.g. jsdom used by Jest),
-    // offsetParent is always null so _isInDOM can never return true and the
-    // interval would run for the full retry duration, blocking Angular's
-    // fixture.whenStable(). Skip the polling entirely in that case — shadow
-    // root moves can't be detected without layout anyway.
-    if (!document.body?.offsetParent) {
-        return;
-    }
-
     // only retry for a minute, to prevent our tests (and potentially customer's
     // tests) from hanging if they try to use vi.runAllTimers() to run the interval
     // until it terminates
@@ -339,7 +330,7 @@ const warnOnAttachToShadowRoot = (
             errorCallback();
             clearInterval(interval);
         }
-        if (_isInDOM(el) || --retries < 0) {
+        if (el.isConnected || --retries < 0) {
             clearInterval(interval);
         }
     }, 1000);
