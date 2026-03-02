@@ -42,7 +42,6 @@ export class ToolPanelWrapper extends Component {
     private toolPanelCompInstance: IToolPanelComp | undefined;
     private toolPanelId: string;
     private resizeBar: AgHorizontalResize;
-    private width: number | undefined;
     private params: IToolPanelParams;
     private animationId: number = 0;
 
@@ -68,7 +67,10 @@ export class ToolPanelWrapper extends Component {
         const { id, minWidth, maxWidth, width } = toolPanelDef;
 
         this.toolPanelId = id;
-        this.width = width;
+
+        if (width) {
+            this.getGui().style.setProperty('--ag-side-bar-panel-width', `${width}px`);
+        }
 
         const compDetails = getToolPanelCompDetails(this.beans.userCompFactory, toolPanelDef, params);
         if (compDetails == null) {
@@ -100,11 +102,6 @@ export class ToolPanelWrapper extends Component {
         this.addDestroyFunc(() => {
             this.destroyBean(compInstance);
         });
-
-        const width = this.width;
-        if (width) {
-            this.getGui().style.width = `${width}px`;
-        }
     }
 
     public getToolPanelInstance(): IToolPanelComp | undefined {
@@ -127,42 +124,37 @@ export class ToolPanelWrapper extends Component {
         if (this.isDisplayed() === displayed) {
             return;
         }
-
-        const eGui = this.getGui();
-
-        const savedInlineWidth = eGui.style.width;
-        const durationStr = getComputedStyle(eGui).getPropertyValue('--ag-side-bar-panel-animation-duration').trim();
-        this.setDisplayed(displayed);
-
-        if (!parseFloat(durationStr)) {
-            return;
-        }
-
         const id = ++this.animationId;
         const { eContent } = this;
-
-        eGui.classList.add('ag-tool-panel-animating');
-        const fullWidth = eGui.offsetWidth;
-        const fromWidth = displayed ? 0 : fullWidth;
-        const toWidth = displayed ? fullWidth : 0;
-
-        eContent.style.minWidth = `${fullWidth}px`;
-
-        // disable transition, force reflow, and re-enable to synchronously start an animation
-        eGui.style.transition = 'none';
-        eGui.style.width = `${fromWidth}px`;
-        const _ = eGui.offsetWidth;
-        eGui.style.transition = '';
-
-        eGui.style.width = `${toWidth}px`;
 
         const cleanup = () => {
             if (this.animationId === id) {
                 eGui.classList.remove('ag-tool-panel-animating');
-                eContent.style.minWidth = '';
-                eGui.style.width = savedInlineWidth;
+                eContent.style.width = '';
+                eGui.style.width = '';
             }
         };
+
+        const eGui = this.getGui();
+        const currentWrapperWidth = eGui.offsetWidth;
+
+        this.setDisplayed(displayed);
+        eGui.classList.add('ag-tool-panel-animating');
+
+        const durationStr = getComputedStyle(eGui).transitionDuration;
+        if (!parseFloat(durationStr)) {
+            cleanup();
+            return;
+        }
+
+        // Cancel any existing transition and start a new one
+        eGui.style.transition = 'none';
+        eGui.style.width = '';
+        eContent.style.width = `${eContent.offsetWidth}px`;
+        eGui.style.width = `${currentWrapperWidth}px`;
+        const _ = eGui.offsetWidth; // force a layout to set transition start
+        eGui.style.transition = '';
+        eGui.style.width = displayed ? '' : '0'; // animate to intended width
 
         // Don't rely on the transition end event alone for cleanup because
         // transitions might have been disabled by application or user CSS

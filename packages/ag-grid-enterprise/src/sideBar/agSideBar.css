@@ -1,7 +1,7 @@
 .ag-tool-panel-wrapper {
     overflow: hidden;
     user-select: none;
-    width: var(--ag-side-bar-panel-width);
+    width: var(--ag-horizontal-size, var(--ag-side-bar-panel-width));
 }
 
 .ag-tool-panel-content {
