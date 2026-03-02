@@ -1,0 +1,18 @@
+html,
+body,
+#root,
+#app,
+#grid,
+app-root {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+app-root {
+    display: block;
+}

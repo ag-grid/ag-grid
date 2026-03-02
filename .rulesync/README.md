@@ -43,6 +43,7 @@ Quick-reference for all AI agent commands, skills, sub-agents, and rules availab
 | Skill   | 🔵 `git-bisect`         | `/git-bisect` (user)         | Find the commit that introduced a regression   |
 | Skill   | 🔵 `batch-lint-cleanup` | `/batch-lint-cleanup` (user) | Auto-fix ESLint violations by rule             |
 | Command | 🟢 `/docs-e2e-tests`    | `/docs-e2e-tests`            | Write/update Playwright tests for doc examples |
+| Command | 🟢 `/manual-test`       | `/manual-test <url>`         | Create manual test project from a docs example |
 | Agent   | 🔵 `playwright-expert`  | Auto                         | Playwright test architecture and debugging     |
 
 ## Planning and Analysis
@@ -57,8 +58,8 @@ Quick-reference for all AI agent commands, skills, sub-agents, and rules availab
 
 | Type  | Name          | Invoke             | What it does                                       |
 | ----- | ------------- | ------------------ | -------------------------------------------------- |
-| Skill | 🔵 `remember`  | `/remember` (user) | Save branch context or project learnings as memory |
-| Skill | 🔵 `recall`    | `/recall` (user)   | Load branch context, browse project memories       |
+| Skill | 🔵 `remember` | `/remember` (user) | Save branch context or project learnings as memory |
+| Skill | 🔵 `recall`   | `/recall` (user)   | Load branch context, browse project memories       |
 
 ## Documentation Review
 
