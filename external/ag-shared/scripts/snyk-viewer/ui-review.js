@@ -1200,6 +1200,9 @@
 
         function refreshIgnorePatterns() {
             document.querySelector('.s3-near-panel')?.classList.add('refreshing');
+            document.body.insertAdjacentHTML('beforeend',
+                '<div class="rq-refresh-overlay"><div class="rq-refresh-spinner"></div></div>');
+            document.body.style.overflow = 'hidden';
             const openSectionIndices = new Set(
                 [...document.querySelectorAll('.tool-section')].map((el, i) => el.open ? i : -1).filter(i => i !== -1)
             );
@@ -1208,6 +1211,9 @@
                 renderReviewQueueTab();
                 document.querySelectorAll('.tool-section').forEach((el, i) => { if (openSectionIndices.has(i)) el.open = true; });
                 document.getElementById('rq-resolved-section')?.classList.add('open');
+            }).finally(() => {
+                document.querySelector('.rq-refresh-overlay')?.remove();
+                document.body.style.overflow = '';
             });
         }
 

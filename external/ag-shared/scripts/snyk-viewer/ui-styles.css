@@ -790,6 +790,23 @@ a:hover { text-decoration: underline; }
     transition: width 0.3s;
 }
 .rq-progress-text { font-size: 12px; color: var(--c-text-muted); white-space: nowrap; }
+.rq-refresh-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15,17,23,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+.rq-refresh-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--c-border);
+    border-top-color: var(--c-accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
 .reset-review-btn {
     padding: 5px 12px;
     background: none;
