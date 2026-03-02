@@ -1,8 +1,25 @@
 import type { AgEvent } from '../agStack/interfaces/agEvent';
-import type { ColKey } from '../entities/colDef';
+import type { ColKey, IAggFuncResult } from '../entities/colDef';
 import type { BuildEventTypeMap } from '../eventTypes';
 import type { SelectionEventSourceType } from '../events';
 import type { Column } from '../interfaces/iColumn';
+import type { CellValueResolveFrom } from '../interfaces/iEditService';
+
+/**
+ * Specifies how to resolve the value returned by `rowNode.getDataValue()`.
+ * - `'data'` (default): Returns the committed data value, ignoring all edit state.
+ *   For group rows with aggregation functions that return wrapped objects (e.g. `avg`, `count`),
+ *   the raw aggregation object is returned as `IAggFuncResult`. Formulas are resolved to their computed value.
+ * - `'data-raw'`: Returns the raw underlying data, bypassing aggregation and formula resolution.
+ *   On group rows, returns the value from `rowNode.data` (typically `undefined`) instead of aggregated values.
+ *   On formula cells, returns the raw formula string instead of the computed result.
+ * - `'value'`: Returns the committed data value with aggregation wrappers resolved to their scalar value.
+ * - `'edit'`: Returns the live editor value if a cell is being edited, otherwise the resolved committed value.
+ *   Aggregation wrappers are resolved to scalars.
+ * - `'batch'`: Returns pending batch values (but not live editor typing), otherwise the resolved committed value.
+ *   Aggregation wrappers are resolved to scalars.
+ */
+export type GetDataValueFrom = 'data' | 'data-raw' | 'value' | CellValueResolveFrom;
 
 export type RowNodeEventType =
     | 'rowSelected'
@@ -338,18 +355,45 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
 
     /**
      * Retrieves the data value from the `rowNode` for the specified column.
-     * Always returns the committed data value, ignoring any pending edit state.
+     * By default returns the committed data value, ignoring any pending edit state.
      * For group rows, returns aggregated values or the group key as appropriate.
      * If the value is a formula, the computed result is returned.
      *
-     * To get the displayed value (including pending edits and formatting), use `api.getCellValue()` instead.
+     * **Note**: For group rows with aggregation functions that return wrapped objects (e.g. `avg`, `count`),
+     * the raw aggregation object is returned when `from` is `'data'` (default).
+     * When `from` is `'value'`, `'edit'`, or `'batch'`, aggregation wrappers are resolved to their scalar value.
+     *
+     * To get the displayed value (including formatting), use `api.getCellValue()` instead.
      *
      * **Pivot Mode**: On leaf data rows (non-group rows), pivot columns resolve to their underlying value column.
+     * On group rows (including pivot leaf groups), aggregation data is returned if available.
      *
      * @param colKey The column to get the value from
+     * @param from Controls value resolution:
+     *   - `'data'` (default): Returns committed data. For group rows with `avg`/`count`, returns raw aggregation wrapper objects.
+     *     Formulas are resolved to their computed value.
+     *   - `'data-raw'`: Returns raw underlying data, bypassing aggregation and formula resolution.
+     *     On group rows, returns the value from `rowNode.data` instead of aggregated values.
+     *     On formula cells, returns the raw formula string instead of the computed result.
+     *   - `'value'`: Returns committed data with aggregation resolved to scalars.
+     *   - `'edit'`: Returns the live editor value if a cell is being edited, otherwise the resolved committed value.
+     *     Aggregation wrappers are resolved to scalars.
+     *   - `'batch'`: Returns pending batch values (but not live editor typing), otherwise the resolved committed value.
+     *     Aggregation wrappers are resolved to scalars.
      * @returns The data value, `null` if the value is null, or `undefined` if the column is not found.
      */
-    getDataValue<TValue = any>(colKey: ColKey<TValue>): TValue | null | undefined;
+    getDataValue<TValue = any>(
+        colKey: ColKey<TValue>,
+        from: 'value' | 'data-raw' | 'edit' | 'batch'
+    ): TValue | null | undefined;
+    getDataValue<TValue = any>(
+        colKey: ColKey<TValue>,
+        from?: 'data'
+    ): TValue | IAggFuncResult<TValue> | null | undefined;
+    getDataValue<TValue = any>(
+        colKey: ColKey<TValue>,
+        from?: GetDataValueFrom
+    ): TValue | IAggFuncResult<TValue> | null | undefined;
 
     /**
      * Returns the route of the row node. If the Row Node does not have a key (i.e it's a leaf row inside a row group) returns undefined

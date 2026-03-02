@@ -765,4 +765,1310 @@ describe('RowNode.getDataValue', () => {
             expect(incomeGroup!.getDataValue('amount')).toBe(1500);
         });
     });
+
+    describe('built-in aggregation functions on group rows', () => {
+        function findGroup(api: any, key: string): any {
+            let found: any;
+            api.forEachNode((node: any) => {
+                if (node.group && node.key === key) {
+                    found = node;
+                }
+            });
+            return found;
+        }
+
+        test('sum returns a plain scalar on group rows', async () => {
+            const api = await gridsManager.createGridAndWait('agg-sum-type', {
+                columnDefs: [
+                    { field: 'cat', rowGroup: true, hide: true },
+                    { field: 'v', aggFunc: 'sum' },
+                ],
+                rowData: [
+                    { id: '1', cat: 'A', v: 10 },
+                    { id: '2', cat: 'A', v: 20 },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: 1,
+            });
+            await asyncSetTimeout(1);
+
+            const group = findGroup(api, 'A')!;
+            const val = group.getDataValue('v');
+
+            expect(typeof val).toBe('number');
+            expect(val).toBe(30);
+        });
+
+        test('min returns a plain scalar on group rows', async () => {
+            const api = await gridsManager.createGridAndWait('agg-min-type', {
+                columnDefs: [
+                    { field: 'cat', rowGroup: true, hide: true },
+                    { field: 'v', aggFunc: 'min' },
+                ],
+                rowData: [
+                    { id: '1', cat: 'A', v: 10 },
+                    { id: '2', cat: 'A', v: 20 },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: 1,
+            });
+            await asyncSetTimeout(1);
+
+            const group = findGroup(api, 'A')!;
+            const val = group.getDataValue('v');
+
+            expect(typeof val).toBe('number');
+            expect(val).toBe(10);
+        });
+
+        test('max returns a plain scalar on group rows', async () => {
+            const api = await gridsManager.createGridAndWait('agg-max-type', {
+                columnDefs: [
+                    { field: 'cat', rowGroup: true, hide: true },
+                    { field: 'v', aggFunc: 'max' },
+                ],
+                rowData: [
+                    { id: '1', cat: 'A', v: 10 },
+                    { id: '2', cat: 'A', v: 20 },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: 1,
+            });
+            await asyncSetTimeout(1);
+
+            const group = findGroup(api, 'A')!;
+            const val = group.getDataValue('v');
+
+            expect(typeof val).toBe('number');
+            expect(val).toBe(20);
+        });
+
+        test('first returns a plain scalar on group rows', async () => {
+            const api = await gridsManager.createGridAndWait('agg-first-type', {
+                columnDefs: [
+                    { field: 'cat', rowGroup: true, hide: true },
+                    { field: 'v', aggFunc: 'first' },
+                ],
+                rowData: [
+                    { id: '1', cat: 'A', v: 'alpha' },
+                    { id: '2', cat: 'A', v: 'beta' },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: 1,
+            });
+            await asyncSetTimeout(1);
+
+            const group = findGroup(api, 'A')!;
+            const val = group.getDataValue('v');
+
+            expect(typeof val).toBe('string');
+            expect(val).toBe('alpha');
+        });
+
+        test('last returns a plain scalar on group rows', async () => {
+            const api = await gridsManager.createGridAndWait('agg-last-type', {
+                columnDefs: [
+                    { field: 'cat', rowGroup: true, hide: true },
+                    { field: 'v', aggFunc: 'last' },
+                ],
+                rowData: [
+                    { id: '1', cat: 'A', v: 'alpha' },
+                    { id: '2', cat: 'A', v: 'beta' },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: 1,
+            });
+            await asyncSetTimeout(1);
+
+            const group = findGroup(api, 'A')!;
+            const val = group.getDataValue('v');
+
+            expect(typeof val).toBe('string');
+            expect(val).toBe('beta');
+        });
+
+        test('avg returns a wrapped object (not a scalar) on group rows', async () => {
+            const api = await gridsManager.createGridAndWait('agg-avg-type', {
+                columnDefs: [
+                    { field: 'cat', rowGroup: true, hide: true },
+                    { field: 'v', aggFunc: 'avg' },
+                ],
+                rowData: [
+                    { id: '1', cat: 'A', v: 10 },
+                    { id: '2', cat: 'A', v: 20 },
+                    { id: '3', cat: 'A', v: 30 },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: 1,
+            });
+            await asyncSetTimeout(1);
+
+            const group = findGroup(api, 'A')!;
+            const val = group.getDataValue('v');
+
+            // avg returns { value, count, toNumber(), toString() } — NOT a plain number
+            expect(typeof val).toBe('object');
+            expect(val).not.toBeNull();
+            expect(val.value).toBe(20); // (10 + 20 + 30) / 3
+            expect(val.count).toBe(3);
+            expect(val.toNumber()).toBe(20);
+            expect(val.toString()).toBe('20');
+
+            // Leaf rows return plain scalars
+            expect(api.getRowNode('1')!.getDataValue('v')).toBe(10);
+        });
+
+        test('count returns a wrapped object (not a scalar) on group rows', async () => {
+            const api = await gridsManager.createGridAndWait('agg-count-type', {
+                columnDefs: [
+                    { field: 'cat', rowGroup: true, hide: true },
+                    { field: 'v', aggFunc: 'count' },
+                ],
+                rowData: [
+                    { id: '1', cat: 'A', v: 'x' },
+                    { id: '2', cat: 'A', v: 'y' },
+                    { id: '3', cat: 'B', v: 'z' },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: 1,
+            });
+            await asyncSetTimeout(1);
+
+            const group = findGroup(api, 'A')!;
+            const val = group.getDataValue('v');
+
+            // count returns { value, toNumber(), toString() } — NOT a plain number
+            expect(typeof val).toBe('object');
+            expect(val).not.toBeNull();
+            expect(val.value).toBe(2);
+            expect(val.toNumber()).toBe(2);
+            expect(val.toString()).toBe('2');
+        });
+
+        test('avg with nested groups returns wrapped objects at all levels', async () => {
+            const api = await gridsManager.createGridAndWait('agg-avg-nested', {
+                columnDefs: [
+                    { field: 'region', rowGroup: true, hide: true },
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'v', aggFunc: 'avg' },
+                ],
+                rowData: [
+                    { id: '1', region: 'EU', country: 'FR', v: 10 },
+                    { id: '2', region: 'EU', country: 'FR', v: 20 },
+                    { id: '3', region: 'EU', country: 'DE', v: 30 },
+                    { id: '4', region: 'EU', country: 'DE', v: 40 },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: -1,
+            });
+            await asyncSetTimeout(1);
+
+            let euGroup: any, frGroup: any;
+            api.forEachNode((node: any) => {
+                if (node.group && node.key === 'EU' && node.level === 0) euGroup = node;
+                else if (node.group && node.key === 'FR' && node.level === 1) frGroup = node;
+            });
+
+            // FR: avg(10,20) = 15, count=2
+            const frAvg = frGroup!.getDataValue('v');
+            expect(typeof frAvg).toBe('object');
+            expect(frAvg.value).toBe(15);
+            expect(frAvg.count).toBe(2);
+
+            // EU: weighted avg (15*2 + 35*2)/4 = 25, count=4
+            const euAvg = euGroup!.getDataValue('v');
+            expect(typeof euAvg).toBe('object');
+            expect(euAvg.value).toBe(25);
+            expect(euAvg.count).toBe(4);
+        });
+    });
+
+    describe('custom aggregation functions returning objects', () => {
+        function findGroup(api: any, key: string): any {
+            let found: any;
+            api.forEachNode((node: any) => {
+                if (node.group && node.key === key) {
+                    found = node;
+                }
+            });
+            return found;
+        }
+
+        test('custom aggFunc returning plain object preserves it on group rows', async () => {
+            interface CustomAggResult {
+                total: number;
+                items: number;
+                label: string;
+            }
+
+            const api = await gridsManager.createGridAndWait('agg-custom-plain', {
+                columnDefs: [
+                    { field: 'cat', rowGroup: true, hide: true },
+                    {
+                        field: 'v',
+                        aggFunc: (params) => {
+                            let total = 0;
+                            let items = 0;
+                            for (const value of params.values) {
+                                if (typeof value === 'number') {
+                                    total += value;
+                                    items += 1;
+                                } else if (value && typeof value === 'object' && 'total' in value) {
+                                    total += (value as CustomAggResult).total;
+                                    items += (value as CustomAggResult).items;
+                                }
+                            }
+                            return { total, items, label: `${total}/${items}` } satisfies CustomAggResult;
+                        },
+                    },
+                ],
+                rowData: [
+                    { id: '1', cat: 'A', v: 100 },
+                    { id: '2', cat: 'A', v: 200 },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: 1,
+            });
+            await asyncSetTimeout(1);
+
+            const group = findGroup(api, 'A')!;
+            const val = group.getDataValue('v') as CustomAggResult;
+
+            expect(typeof val).toBe('object');
+            expect(val.total).toBe(300);
+            expect(val.items).toBe(2);
+            expect(val.label).toBe('300/2');
+
+            // Leaf rows return plain scalar
+            expect(api.getRowNode('1')!.getDataValue('v')).toBe(100);
+        });
+
+        test('custom aggFunc returning object with toNumber() preserves the full object', async () => {
+            // A user creates a custom aggregation that returns an object with toNumber/toString
+            // — similar to AG Grid's internal avg/count wrappers.
+            // getDataValue should return the full object, not resolve it.
+            const api = await gridsManager.createGridAndWait('agg-custom-toNumber', {
+                columnDefs: [
+                    { field: 'cat', rowGroup: true, hide: true },
+                    {
+                        field: 'v',
+                        aggFunc: (params) => {
+                            let sum = 0;
+                            let count = 0;
+                            for (const value of params.values) {
+                                if (typeof value === 'number') {
+                                    sum += value;
+                                    count += 1;
+                                } else if (value && typeof value === 'object' && typeof value.toNumber === 'function') {
+                                    sum += value.sum;
+                                    count += value.count;
+                                }
+                            }
+                            return {
+                                sum,
+                                count,
+                                toNumber() {
+                                    return sum;
+                                },
+                                toString() {
+                                    return `sum=${sum}`;
+                                },
+                            };
+                        },
+                    },
+                ],
+                rowData: [
+                    { id: '1', cat: 'A', v: 10 },
+                    { id: '2', cat: 'A', v: 20 },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: 1,
+            });
+            await asyncSetTimeout(1);
+
+            const group = findGroup(api, 'A')!;
+            const val = group.getDataValue('v');
+
+            // The full custom object is returned — including toNumber/toString
+            expect(typeof val).toBe('object');
+            expect(val.sum).toBe(30);
+            expect(val.count).toBe(2);
+            expect(val.toNumber()).toBe(30);
+            expect(val.toString()).toBe('sum=30');
+        });
+
+        test('custom aggFunc returning object with toString() but no toNumber() preserves object', async () => {
+            const api = await gridsManager.createGridAndWait('agg-custom-toString', {
+                columnDefs: [
+                    { field: 'cat', rowGroup: true, hide: true },
+                    {
+                        field: 'v',
+                        aggFunc: (params) => {
+                            const items = params.values.filter((v) => typeof v === 'string');
+                            return {
+                                items,
+                                toString() {
+                                    return items.join(', ');
+                                },
+                            };
+                        },
+                    },
+                ],
+                rowData: [
+                    { id: '1', cat: 'A', v: 'hello' },
+                    { id: '2', cat: 'A', v: 'world' },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: 1,
+            });
+            await asyncSetTimeout(1);
+
+            const group = findGroup(api, 'A')!;
+            const val = group.getDataValue('v');
+
+            expect(typeof val).toBe('object');
+            expect(val.items).toEqual(['hello', 'world']);
+            expect(val.toString()).toBe('hello, world');
+            expect(val.toNumber).toBeUndefined(); // no toNumber
+        });
+    });
+
+    describe('valueGetter returning custom objects', () => {
+        test('valueGetter returning object with amount/currency preserves it', async () => {
+            interface Money {
+                amount: number;
+                currency: string;
+            }
+
+            const api = await gridsManager.createGridAndWait('vg-money', {
+                columnDefs: [
+                    { field: 'name' },
+                    {
+                        colId: 'price',
+                        valueGetter: (params) =>
+                            ({ amount: params.data.price, currency: params.data.currency }) satisfies Money,
+                    },
+                ],
+                rowData: [
+                    { id: '1', name: 'Widget', price: 9.99, currency: 'USD' },
+                    { id: '2', name: 'Gadget', price: 19.99, currency: 'EUR' },
+                ],
+                getRowId: (params) => params.data.id,
+            });
+
+            const row1 = api.getRowNode('1')!;
+            const val1 = row1.getDataValue('price') as Money;
+
+            expect(typeof val1).toBe('object');
+            expect(val1.amount).toBe(9.99);
+            expect(val1.currency).toBe('USD');
+
+            const row2 = api.getRowNode('2')!;
+            const val2 = row2.getDataValue('price') as Money;
+
+            expect(val2.amount).toBe(19.99);
+            expect(val2.currency).toBe('EUR');
+        });
+
+        test('valueGetter returning object with toNumber() preserves the full object', async () => {
+            // User object that happens to have toNumber/toString — should NOT be resolved
+            const api = await gridsManager.createGridAndWait('vg-toNumber', {
+                columnDefs: [
+                    {
+                        colId: 'measurement',
+                        valueGetter: (params) => ({
+                            value: params.data.value,
+                            unit: params.data.unit,
+                            toNumber() {
+                                return params.data.value;
+                            },
+                            toString() {
+                                return `${params.data.value}${params.data.unit}`;
+                            },
+                        }),
+                    },
+                ],
+                rowData: [
+                    { id: '1', value: 42, unit: 'kg' },
+                    { id: '2', value: 100, unit: 'cm' },
+                ],
+                getRowId: (params) => params.data.id,
+            });
+
+            const row = api.getRowNode('1')!;
+            const val = row.getDataValue('measurement');
+
+            // Full object preserved — not resolved to 42
+            expect(typeof val).toBe('object');
+            expect(val.value).toBe(42);
+            expect(val.unit).toBe('kg');
+            expect(val.toNumber()).toBe(42);
+            expect(val.toString()).toBe('42kg');
+        });
+
+        test('valueGetter returning object with value property preserves the full object', async () => {
+            // User object with a .value property — should NOT be unwrapped
+            const api = await gridsManager.createGridAndWait('vg-value-prop', {
+                columnDefs: [
+                    {
+                        colId: 'wrapper',
+                        valueGetter: (params) => ({
+                            value: params.data.score,
+                            confidence: params.data.confidence,
+                        }),
+                    },
+                ],
+                rowData: [{ id: '1', score: 95, confidence: 0.8 }],
+                getRowId: (params) => params.data.id,
+            });
+
+            const row = api.getRowNode('1')!;
+            const val = row.getDataValue('wrapper');
+
+            expect(typeof val).toBe('object');
+            expect(val.value).toBe(95);
+            expect(val.confidence).toBe(0.8);
+        });
+
+        test('field data containing object with toNumber/toString preserves it', async () => {
+            // Data field directly contains an object with toNumber/toString
+            const customObj = {
+                raw: 123,
+                toNumber() {
+                    return 123;
+                },
+                toString() {
+                    return 'custom-123';
+                },
+            };
+
+            const api = await gridsManager.createGridAndWait('field-toNumber', {
+                columnDefs: [{ field: 'data' }],
+                rowData: [{ id: '1', data: customObj }],
+                getRowId: (params) => params.data.id,
+            });
+
+            const row = api.getRowNode('1')!;
+            const val = row.getDataValue('data');
+
+            expect(typeof val).toBe('object');
+            expect(val.raw).toBe(123);
+            expect(val.toNumber()).toBe(123);
+            expect(val.toString()).toBe('custom-123');
+        });
+    });
+
+    describe('tree data with aggregation objects', () => {
+        test('avg aggregation on tree data parent returns wrapped object', async () => {
+            const api = await gridsManager.createGridAndWait('tree-avg', {
+                columnDefs: [{ field: 'name' }, { field: 'v', aggFunc: 'avg' }],
+                treeData: true,
+                treeDataChildrenField: 'children',
+                rowData: [
+                    {
+                        id: '1',
+                        name: 'Parent',
+                        v: 10,
+                        children: [
+                            { id: '1-1', name: 'Child 1', v: 20 },
+                            { id: '1-2', name: 'Child 2', v: 40 },
+                        ],
+                    },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: -1,
+            });
+            await asyncSetTimeout(1);
+
+            const parent = api.getRowNode('1')!;
+            const child = api.getRowNode('1-1')!;
+
+            // Parent has aggregated avg from children — wrapped object
+            const parentVal = parent.getDataValue('v');
+            expect(typeof parentVal).toBe('object');
+            expect(parentVal.value).toBe(30); // (20 + 40) / 2
+            expect(parentVal.count).toBe(2);
+
+            // Child returns plain scalar
+            expect(child.getDataValue('v')).toBe(20);
+        });
+
+        test('sum aggregation on tree data parent returns plain scalar', async () => {
+            const api = await gridsManager.createGridAndWait('tree-sum', {
+                columnDefs: [{ field: 'name' }, { field: 'v', aggFunc: 'sum' }],
+                treeData: true,
+                treeDataChildrenField: 'children',
+                rowData: [
+                    {
+                        id: '1',
+                        name: 'Parent',
+                        v: 10,
+                        children: [
+                            { id: '1-1', name: 'A', v: 20 },
+                            { id: '1-2', name: 'B', v: 30 },
+                        ],
+                    },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: -1,
+            });
+            await asyncSetTimeout(1);
+
+            const parent = api.getRowNode('1')!;
+            const parentVal = parent.getDataValue('v');
+
+            expect(typeof parentVal).toBe('number');
+            expect(parentVal).toBe(50); // 20 + 30
+        });
+
+        test('custom aggFunc on tree data preserves full object', async () => {
+            const api = await gridsManager.createGridAndWait('tree-custom-agg', {
+                columnDefs: [
+                    { field: 'name' },
+                    {
+                        field: 'v',
+                        aggFunc: (params) => {
+                            let sum = 0;
+                            for (const v of params.values) {
+                                sum += typeof v === 'number' ? v : typeof v === 'object' && v ? v.sum : 0;
+                            }
+                            return { sum, source: 'custom' };
+                        },
+                    },
+                ],
+                treeData: true,
+                treeDataChildrenField: 'children',
+                rowData: [
+                    {
+                        id: '1',
+                        name: 'Root',
+                        v: 0,
+                        children: [
+                            { id: '1-1', name: 'A', v: 10 },
+                            { id: '1-2', name: 'B', v: 20 },
+                        ],
+                    },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: -1,
+            });
+            await asyncSetTimeout(1);
+
+            const root = api.getRowNode('1')!;
+            const val = root.getDataValue('v');
+
+            expect(typeof val).toBe('object');
+            expect(val.sum).toBe(30);
+            expect(val.source).toBe('custom');
+        });
+    });
+
+    describe('getDataValue vs getCellValue divergence', () => {
+        function findGroup(api: any, key: string): any {
+            let found: any;
+            api.forEachNode((node: any) => {
+                if (node.group && node.key === key) {
+                    found = node;
+                }
+            });
+            return found;
+        }
+
+        test('avg: getDataValue returns object, getCellValue also returns same object', async () => {
+            const api = await gridsManager.createGridAndWait('diverge-avg', {
+                columnDefs: [
+                    { field: 'cat', rowGroup: true, hide: true },
+                    { field: 'v', aggFunc: 'avg' },
+                ],
+                rowData: [
+                    { id: '1', cat: 'A', v: 10 },
+                    { id: '2', cat: 'A', v: 30 },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: 1,
+            });
+            await asyncSetTimeout(1);
+
+            const group = findGroup(api, 'A')!;
+            const dataVal = group.getDataValue('v');
+            const cellVal = api.getCellValue({ rowNode: group, colKey: 'v' });
+            const cellValData = api.getCellValue({ rowNode: group, colKey: 'v', from: 'data' });
+
+            // Document what each returns
+            expect(typeof dataVal).toBe('object');
+            expect(dataVal.value).toBe(20);
+            expect(typeof cellVal).toBe('object');
+            expect(cellVal.value).toBe(20);
+            expect(typeof cellValData).toBe('object');
+            expect(cellValData.value).toBe(20);
+
+            // Are they the same reference?
+            expect(dataVal).toBe(cellVal);
+            expect(dataVal).toBe(cellValData);
+        });
+
+        test('avg: expanded group with footer — getDataValue returns aggData, getCellValue skips it', async () => {
+            // When groupTotalRow is set, expanded groups have a sibling (footer).
+            // getCellValue respects displayIgnoresAggData (UI concern: footer shows the value),
+            // but getDataValue always returns the actual data regardless of display settings.
+            const api = await gridsManager.createGridAndWait('diverge-avg-footer', {
+                columnDefs: [
+                    { field: 'cat', rowGroup: true, hide: true },
+                    { field: 'v', aggFunc: 'avg' },
+                ],
+                rowData: [
+                    { id: '1', cat: 'A', v: 10 },
+                    { id: '2', cat: 'A', v: 30 },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: 1,
+                groupTotalRow: 'bottom',
+            });
+            await asyncSetTimeout(1);
+
+            const group = findGroup(api, 'A')!;
+            expect(group.expanded).toBe(true);
+            expect(group.sibling).toBeDefined(); // footer sibling exists
+
+            // getDataValue always returns the actual agg data (not a UI concern)
+            const dataVal = group.getDataValue('v');
+            expect(typeof dataVal).toBe('object');
+            expect(dataVal.value).toBe(20);
+
+            // getCellValue skips aggData when the group is expanded with a footer sibling
+            // (display logic: the agg value is shown on the footer row, not the group header)
+            const cellVal = api.getCellValue({ rowNode: group, colKey: 'v' });
+            expect(cellVal).toBeUndefined();
+
+            // The footer sibling also has the aggregated value
+            const footer = group.sibling!;
+            expect(footer.footer).toBe(true);
+            const footerVal = footer.getDataValue('v');
+            expect(typeof footerVal).toBe('object');
+            expect(footerVal.value).toBe(20);
+        });
+
+        test('avg: expanded group with footer + groupSuppressBlankHeader — aggData is preserved', async () => {
+            // When groupSuppressBlankHeader=true, the group header DOES show aggregated values
+            // even when expanded with footer.
+            const api = await gridsManager.createGridAndWait('diverge-avg-footer-suppress', {
+                columnDefs: [
+                    { field: 'cat', rowGroup: true, hide: true },
+                    { field: 'v', aggFunc: 'avg' },
+                ],
+                rowData: [
+                    { id: '1', cat: 'A', v: 10 },
+                    { id: '2', cat: 'A', v: 30 },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: 1,
+                groupTotalRow: 'bottom',
+                groupSuppressBlankHeader: true,
+            });
+            await asyncSetTimeout(1);
+
+            const group = findGroup(api, 'A')!;
+            expect(group.expanded).toBe(true);
+            expect(group.sibling).toBeDefined();
+
+            // With groupSuppressBlankHeader=true, aggData is NOT skipped
+            const dataVal = group.getDataValue('v');
+            const cellVal = api.getCellValue({ rowNode: group, colKey: 'v' });
+
+            expect(typeof dataVal).toBe('object');
+            expect(dataVal.value).toBe(20);
+            expect(typeof cellVal).toBe('object');
+            expect(cellVal.value).toBe(20);
+            expect(dataVal).toBe(cellVal);
+        });
+
+        test('pivot + avg: getDataValue on group row returns wrapped object', async () => {
+            const api = await gridsManager.createGridAndWait('diverge-pivot-avg', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'year', pivot: true, hide: true },
+                    { field: 'score', aggFunc: 'avg' },
+                ],
+                pivotMode: true,
+                groupDefaultExpanded: -1,
+                getRowId: ({ data }) => data.id,
+                rowData: [
+                    { id: '1', country: 'FR', year: 2020, score: 10 },
+                    { id: '2', country: 'FR', year: 2020, score: 30 },
+                    { id: '3', country: 'FR', year: 2021, score: 50 },
+                ],
+            });
+            await asyncSetTimeout(1);
+
+            const pivotColumns = api.getPivotResultColumns();
+            const pivotCol2020 = pivotColumns?.find((col: any) => col.getColId().includes('2020'));
+            expect(pivotCol2020).toBeDefined();
+
+            const frGroup = api.getRowNode('row-group-country-FR')!;
+            expect(frGroup.group).toBe(true);
+
+            const dataVal = frGroup.getDataValue(pivotCol2020!);
+            const cellVal = api.getCellValue({ rowNode: frGroup, colKey: pivotCol2020! });
+
+            // avg on pivot group row — should be wrapped object
+            expect(typeof dataVal).toBe('object');
+            expect(dataVal.value).toBe(20); // avg(10, 30)
+            expect(dataVal.count).toBe(2);
+
+            // getCellValue should return same thing
+            expect(typeof cellVal).toBe('object');
+            expect(cellVal.value).toBe(20);
+        });
+
+        test('pivot + avg: getDataValue on leaf row resolves pivotValueColumn', async () => {
+            const api = await gridsManager.createGridAndWait('diverge-pivot-avg-leaf', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'year', pivot: true, hide: true },
+                    { field: 'score', aggFunc: 'avg' },
+                ],
+                pivotMode: true,
+                groupDefaultExpanded: -1,
+                getRowId: ({ data }) => data.id,
+                rowData: [
+                    { id: '1', country: 'FR', year: 2020, score: 10 },
+                    { id: '2', country: 'FR', year: 2021, score: 50 },
+                ],
+            });
+            await asyncSetTimeout(1);
+
+            const pivotColumns = api.getPivotResultColumns();
+            const pivotCol2020 = pivotColumns?.find((col: any) => col.getColId().includes('2020'));
+            expect(pivotCol2020).toBeDefined();
+
+            // Leaf row under the group
+            const leafNode = api.getRowNode('1')!;
+            expect(leafNode.group).toBe(false);
+
+            const dataVal = leafNode.getDataValue(pivotCol2020!);
+            const cellVal = api.getCellValue({ rowNode: leafNode, colKey: pivotCol2020! });
+
+            // Leaf row: pivot column resolves to underlying value column → reads from data
+            // Should return plain scalar (the original score value), not a wrapped object
+            expect(dataVal).toBe(10);
+            expect(cellVal).toBe(10);
+        });
+
+        test('count: getDataValue returns object, getCellValue returns same', async () => {
+            const api = await gridsManager.createGridAndWait('diverge-count', {
+                columnDefs: [
+                    { field: 'cat', rowGroup: true, hide: true },
+                    { field: 'v', aggFunc: 'count' },
+                ],
+                rowData: [
+                    { id: '1', cat: 'A', v: 'x' },
+                    { id: '2', cat: 'A', v: 'y' },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: 1,
+            });
+            await asyncSetTimeout(1);
+
+            const group = findGroup(api, 'A')!;
+            const dataVal = group.getDataValue('v');
+            const cellVal = api.getCellValue({ rowNode: group, colKey: 'v' });
+
+            expect(typeof dataVal).toBe('object');
+            expect(dataVal.value).toBe(2);
+            expect(typeof cellVal).toBe('object');
+            expect(cellVal.value).toBe(2);
+            expect(dataVal).toBe(cellVal);
+        });
+    });
+
+    describe('from parameter', () => {
+        test('from defaults to data — returns committed value during batch edit', async () => {
+            const api = await gridsManager.createGridAndWait('from-data', {
+                columnDefs: [{ field: 'a', editable: true, cellEditor: 'agTextCellEditor' }],
+                rowData: [{ id: '0', a: 'original' }],
+                getRowId: (params) => params.data.id,
+            });
+
+            api.startBatchEdit();
+            const rowNode = api.getRowNode('0')!;
+            rowNode.setDataValue('a', 'pending', 'batch');
+
+            // default (no from) returns committed data
+            expect(rowNode.getDataValue('a')).toBe('original');
+            // explicit 'data' is the same
+            expect(rowNode.getDataValue('a', 'data')).toBe('original');
+
+            api.cancelBatchEdit();
+        });
+
+        test('from: batch returns pending batch value', async () => {
+            const api = await gridsManager.createGridAndWait('from-batch', {
+                columnDefs: [{ field: 'a', editable: true, cellEditor: 'agTextCellEditor' }],
+                rowData: [{ id: '0', a: 'original' }],
+                getRowId: (params) => params.data.id,
+            });
+
+            api.startBatchEdit();
+            const rowNode = api.getRowNode('0')!;
+            rowNode.setDataValue('a', 'pending', 'batch');
+
+            // from: 'batch' returns the pending batch value
+            expect(rowNode.getDataValue('a', 'batch')).toBe('pending');
+
+            // from: 'data' still returns committed
+            expect(rowNode.getDataValue('a', 'data')).toBe('original');
+
+            api.cancelBatchEdit();
+        });
+
+        test('from: edit returns editor value when cell is being edited', async () => {
+            const api = await gridsManager.createGridAndWait('from-edit', {
+                columnDefs: [{ field: 'a', editable: true, cellEditor: 'agTextCellEditor' }],
+                rowData: [{ id: '0', a: 'original' }],
+                getRowId: (params) => params.data.id,
+            });
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            await asyncSetTimeout(1);
+            const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+
+            // Start editing
+            await userEvent.dblClick(cellA);
+            const editor = await waitForInput(gridDiv, cellA, { popup: false });
+            await userEvent.clear(editor);
+            await userEvent.type(editor, 'typing');
+            await asyncSetTimeout(1);
+
+            const rowNode = api.getRowNode('0')!;
+
+            // from: 'edit' returns live editor value
+            expect(rowNode.getDataValue('a', 'edit')).toBe('typing');
+
+            // from: 'data' returns committed
+            expect(rowNode.getDataValue('a', 'data')).toBe('original');
+
+            // default (no from) returns committed
+            expect(rowNode.getDataValue('a')).toBe('original');
+        });
+
+        test('from: edit outside editor returns committed value', async () => {
+            const api = await gridsManager.createGridAndWait('from-edit-no-editor', {
+                columnDefs: [{ field: 'a', editable: true }],
+                rowData: [{ id: '0', a: 'value' }],
+                getRowId: (params) => params.data.id,
+            });
+
+            const rowNode = api.getRowNode('0')!;
+
+            // No editor open — from: 'edit' still returns committed data
+            expect(rowNode.getDataValue('a', 'edit')).toBe('value');
+            expect(rowNode.getDataValue('a', 'data')).toBe('value');
+            expect(rowNode.getDataValue('a')).toBe('value');
+        });
+
+        test('from: batch outside batch mode returns committed value', async () => {
+            const api = await gridsManager.createGridAndWait('from-batch-no-batch', {
+                columnDefs: [{ field: 'a', editable: true }],
+                rowData: [{ id: '0', a: 'value' }],
+                getRowId: (params) => params.data.id,
+            });
+
+            const rowNode = api.getRowNode('0')!;
+
+            // No batch active — from: 'batch' returns committed data
+            expect(rowNode.getDataValue('a', 'batch')).toBe('value');
+        });
+
+        test('from: data returns raw agg object on group rows', async () => {
+            const api = await gridsManager.createGridAndWait('from-agg-data', {
+                columnDefs: [
+                    { field: 'cat', rowGroup: true, hide: true },
+                    { field: 'v', aggFunc: 'avg', editable: true },
+                ],
+                rowData: [
+                    { id: '1', cat: 'A', v: 10 },
+                    { id: '2', cat: 'A', v: 30 },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: 1,
+            });
+            await asyncSetTimeout(1);
+
+            let group: any;
+            api.forEachNode((node: any) => {
+                if (node.group && node.key === 'A') group = node;
+            });
+
+            // default returns avg wrapper object
+            const aggVal = group!.getDataValue('v');
+            expect(typeof aggVal).toBe('object');
+            expect(aggVal.value).toBe(20);
+            expect(aggVal.count).toBe(2);
+
+            // explicit 'data' returns the same wrapper object
+            const aggValData = group!.getDataValue('v', 'data');
+            expect(aggValData).toBe(aggVal);
+        });
+
+        test('from: edit resolves agg object to scalar on group rows', async () => {
+            const api = await gridsManager.createGridAndWait('from-agg-edit', {
+                columnDefs: [
+                    { field: 'cat', rowGroup: true, hide: true },
+                    { field: 'v', aggFunc: 'avg', editable: true },
+                ],
+                rowData: [
+                    { id: '1', cat: 'A', v: 10 },
+                    { id: '2', cat: 'A', v: 30 },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: 1,
+            });
+            await asyncSetTimeout(1);
+
+            let group: any;
+            api.forEachNode((node: any) => {
+                if (node.group && node.key === 'A') group = node;
+            });
+
+            // 'data' returns raw wrapper
+            const rawVal = group!.getDataValue('v', 'data');
+            expect(typeof rawVal).toBe('object');
+            expect(rawVal.value).toBe(20);
+
+            // 'edit' resolves the wrapper via toNumber()
+            const editVal = group!.getDataValue('v', 'edit');
+            expect(editVal).toBe(20);
+            expect(typeof editVal).toBe('number');
+        });
+
+        test('from: batch resolves agg object to scalar on group rows', async () => {
+            const api = await gridsManager.createGridAndWait('from-agg-batch', {
+                columnDefs: [
+                    { field: 'cat', rowGroup: true, hide: true },
+                    { field: 'v', aggFunc: 'avg', editable: true },
+                ],
+                rowData: [
+                    { id: '1', cat: 'A', v: 10 },
+                    { id: '2', cat: 'A', v: 30 },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: 1,
+            });
+            await asyncSetTimeout(1);
+
+            let group: any;
+            api.forEachNode((node: any) => {
+                if (node.group && node.key === 'A') group = node;
+            });
+
+            // 'batch' resolves the wrapper via toNumber()
+            const batchVal = group!.getDataValue('v', 'batch');
+            expect(batchVal).toBe(20);
+            expect(typeof batchVal).toBe('number');
+        });
+
+        test('from: edit resolves count agg object to scalar', async () => {
+            const api = await gridsManager.createGridAndWait('from-count-edit', {
+                columnDefs: [
+                    { field: 'cat', rowGroup: true, hide: true },
+                    { field: 'v', aggFunc: 'count' },
+                ],
+                rowData: [
+                    { id: '1', cat: 'A', v: 'x' },
+                    { id: '2', cat: 'A', v: 'y' },
+                    { id: '3', cat: 'A', v: 'z' },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: 1,
+            });
+            await asyncSetTimeout(1);
+
+            let group: any;
+            api.forEachNode((node: any) => {
+                if (node.group && node.key === 'A') group = node;
+            });
+
+            // 'data' returns count wrapper
+            const rawVal = group!.getDataValue('v', 'data');
+            expect(typeof rawVal).toBe('object');
+            expect(rawVal.value).toBe(3);
+
+            // 'edit' resolves to scalar
+            expect(group!.getDataValue('v', 'edit')).toBe(3);
+        });
+
+        test('from: edit does not resolve sum (already scalar)', async () => {
+            const api = await gridsManager.createGridAndWait('from-sum-edit', {
+                columnDefs: [
+                    { field: 'cat', rowGroup: true, hide: true },
+                    { field: 'v', aggFunc: 'sum' },
+                ],
+                rowData: [
+                    { id: '1', cat: 'A', v: 10 },
+                    { id: '2', cat: 'A', v: 20 },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: 1,
+            });
+            await asyncSetTimeout(1);
+
+            let group: any;
+            api.forEachNode((node: any) => {
+                if (node.group && node.key === 'A') group = node;
+            });
+
+            // sum returns plain scalar for both modes
+            expect(group!.getDataValue('v', 'data')).toBe(30);
+            expect(group!.getDataValue('v', 'edit')).toBe(30);
+        });
+
+        test('from: edit on leaf row returns same value as data', async () => {
+            const api = await gridsManager.createGridAndWait('from-leaf-edit', {
+                columnDefs: [{ field: 'v', editable: true }],
+                rowData: [{ id: '1', v: 42 }],
+                getRowId: (params) => params.data.id,
+            });
+
+            const row = api.getRowNode('1')!;
+            expect(row.getDataValue('v', 'edit')).toBe(42);
+            expect(row.getDataValue('v', 'data')).toBe(42);
+            expect(row.getDataValue('v')).toBe(42);
+        });
+
+        test('from: value resolves avg agg object to scalar (committed data)', async () => {
+            const api = await gridsManager.createGridAndWait('from-value-avg', {
+                columnDefs: [
+                    { field: 'cat', rowGroup: true, hide: true },
+                    { field: 'v', aggFunc: 'avg' },
+                ],
+                rowData: [
+                    { id: '1', cat: 'A', v: 10 },
+                    { id: '2', cat: 'A', v: 30 },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: 1,
+            });
+            await asyncSetTimeout(1);
+
+            let group: any;
+            api.forEachNode((node: any) => {
+                if (node.group && node.key === 'A') group = node;
+            });
+
+            // 'data' returns raw wrapper
+            const rawVal = group!.getDataValue('v', 'data');
+            expect(typeof rawVal).toBe('object');
+            expect(rawVal.value).toBe(20);
+
+            // 'value' resolves to scalar
+            const resolved = group!.getDataValue('v', 'value');
+            expect(resolved).toBe(20);
+            expect(typeof resolved).toBe('number');
+        });
+
+        test('from: value resolves count agg object to scalar (committed data)', async () => {
+            const api = await gridsManager.createGridAndWait('from-value-count', {
+                columnDefs: [
+                    { field: 'cat', rowGroup: true, hide: true },
+                    { field: 'v', aggFunc: 'count' },
+                ],
+                rowData: [
+                    { id: '1', cat: 'A', v: 'x' },
+                    { id: '2', cat: 'A', v: 'y' },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: 1,
+            });
+            await asyncSetTimeout(1);
+
+            let group: any;
+            api.forEachNode((node: any) => {
+                if (node.group && node.key === 'A') group = node;
+            });
+
+            // 'data' returns count wrapper
+            const rawVal = group!.getDataValue('v', 'data');
+            expect(typeof rawVal).toBe('object');
+            expect(rawVal.value).toBe(2);
+
+            // 'value' resolves to scalar
+            expect(group!.getDataValue('v', 'value')).toBe(2);
+        });
+
+        test('from: value on leaf row returns same as data', async () => {
+            const api = await gridsManager.createGridAndWait('from-value-leaf', {
+                columnDefs: [{ field: 'v' }],
+                rowData: [{ id: '1', v: 42 }],
+                getRowId: (params) => params.data.id,
+            });
+
+            const row = api.getRowNode('1')!;
+            expect(row.getDataValue('v', 'value')).toBe(42);
+            expect(row.getDataValue('v', 'data')).toBe(42);
+        });
+
+        test('from: value ignores pending batch edits', async () => {
+            const api = await gridsManager.createGridAndWait('from-value-batch', {
+                columnDefs: [{ field: 'a', editable: true, cellEditor: 'agTextCellEditor' }],
+                rowData: [{ id: '0', a: 'original' }],
+                getRowId: (params) => params.data.id,
+            });
+
+            api.startBatchEdit();
+            const rowNode = api.getRowNode('0')!;
+            rowNode.setDataValue('a', 'pending', 'batch');
+
+            // 'value' reads committed data (not pending)
+            expect(rowNode.getDataValue('a', 'value')).toBe('original');
+
+            // 'batch' reads pending
+            expect(rowNode.getDataValue('a', 'batch')).toBe('pending');
+
+            api.cancelBatchEdit();
+        });
+
+        test('from: value does not resolve non-agg column objects with toNumber', async () => {
+            const api = await gridsManager.createGridAndWait('from-value-non-agg', {
+                columnDefs: [
+                    {
+                        colId: 'measurement',
+                        valueGetter: (params) => ({
+                            value: params.data.v,
+                            toNumber() {
+                                return params.data.v;
+                            },
+                        }),
+                    },
+                ],
+                rowData: [{ id: '1', v: 42 }],
+                getRowId: (params) => params.data.id,
+            });
+
+            const row = api.getRowNode('1')!;
+            const val = row.getDataValue('measurement', 'value');
+
+            // No aggFunc on this column, so the object is preserved (not resolved)
+            expect(typeof val).toBe('object');
+            expect(val.value).toBe(42);
+            expect(val.toNumber()).toBe(42);
+        });
+
+        test('from: value resolves custom aggFunc object via .value fallback (no toNumber)', async () => {
+            const api = await gridsManager.createGridAndWait('from-value-fallback', {
+                columnDefs: [
+                    { field: 'cat', rowGroup: true, hide: true },
+                    {
+                        field: 'v',
+                        aggFunc: (params) => {
+                            let sum = 0;
+                            for (const v of params.values) {
+                                sum +=
+                                    typeof v === 'number'
+                                        ? v
+                                        : typeof v === 'object' && v && 'value' in v
+                                          ? v.value
+                                          : 0;
+                            }
+                            return { value: sum, label: `total=${sum}` };
+                        },
+                    },
+                ],
+                rowData: [
+                    { id: '1', cat: 'A', v: 100 },
+                    { id: '2', cat: 'A', v: 200 },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: 1,
+            });
+            await asyncSetTimeout(1);
+
+            let group: any;
+            api.forEachNode((node: any) => {
+                if (node.group && node.key === 'A') group = node;
+            });
+
+            // 'data' returns the raw custom object
+            const rawVal = group!.getDataValue('v', 'data');
+            expect(typeof rawVal).toBe('object');
+            expect(rawVal.value).toBe(300);
+            expect(rawVal.label).toBe('total=300');
+
+            // 'value' resolves via .value fallback (no toNumber on this object)
+            expect(group!.getDataValue('v', 'value')).toBe(300);
+            expect(group!.getDataValue('v', 'edit')).toBe(300);
+        });
+
+        test('from: data-raw on group row bypasses aggregation, returns undefined', async () => {
+            const api = await gridsManager.createGridAndWait('from-data-raw-group', {
+                columnDefs: [
+                    { field: 'cat', rowGroup: true, hide: true },
+                    { field: 'v', aggFunc: 'avg' },
+                ],
+                rowData: [
+                    { id: '1', cat: 'A', v: 10 },
+                    { id: '2', cat: 'A', v: 30 },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: 1,
+            });
+            await asyncSetTimeout(1);
+
+            let group: any;
+            api.forEachNode((node: any) => {
+                if (node.group && node.key === 'A') group = node;
+            });
+
+            // 'data' returns the agg wrapper
+            const dataVal = group!.getDataValue('v', 'data');
+            expect(typeof dataVal).toBe('object');
+            expect(dataVal.value).toBe(20);
+
+            // 'data-raw' bypasses aggregation — group rows have no rowNode.data, so returns undefined
+            const rawVal = group!.getDataValue('v', 'data-raw');
+            expect(rawVal).toBeUndefined();
+        });
+
+        test('from: data-raw on leaf row returns same value as data', async () => {
+            const api = await gridsManager.createGridAndWait('from-data-raw-leaf', {
+                columnDefs: [{ field: 'v' }],
+                rowData: [{ id: '1', v: 42 }],
+                getRowId: (params) => params.data.id,
+            });
+
+            const row = api.getRowNode('1')!;
+            // On leaf rows there's no aggregation, so data-raw returns the same as data
+            expect(row.getDataValue('v', 'data-raw')).toBe(42);
+            expect(row.getDataValue('v', 'data')).toBe(42);
+        });
+
+        test('from: data-raw on tree data parent bypasses aggregation', async () => {
+            const api = await gridsManager.createGridAndWait('from-data-raw-tree', {
+                columnDefs: [{ field: 'name' }, { field: 'v', aggFunc: 'sum' }],
+                treeData: true,
+                treeDataChildrenField: 'children',
+                rowData: [
+                    {
+                        id: '1',
+                        name: 'Parent',
+                        v: 5,
+                        children: [
+                            { id: '1-1', name: 'Child 1', v: 20 },
+                            { id: '1-2', name: 'Child 2', v: 30 },
+                        ],
+                    },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: -1,
+            });
+            await asyncSetTimeout(1);
+
+            const parent = api.getRowNode('1')!;
+
+            // 'data' returns aggregated value (sum of children)
+            expect(parent.getDataValue('v', 'data')).toBe(50);
+
+            // 'data-raw' bypasses aggregation — returns the parent's own data value
+            expect(parent.getDataValue('v', 'data-raw')).toBe(5);
+        });
+    });
 });

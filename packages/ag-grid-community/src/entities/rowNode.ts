@@ -9,6 +9,7 @@ import type {
     AgRowNodeEventListener,
     CellChangedEvent,
     DataChangedEvent,
+    GetDataValueFrom,
     IRowNode,
     RowNodeEvent,
     RowNodeEventType,
@@ -17,7 +18,7 @@ import type {
 import type { DetailGridInfo } from '../interfaces/masterDetail';
 import { _error, _warn } from '../validation/logging';
 import type { AgColumn } from './agColumn';
-import type { ColKey } from './colDef';
+import type { ColKey, IAggFuncResult } from './colDef';
 
 export const ROW_ID_PREFIX_ROW_GROUP = 'row-group-';
 export const ROW_ID_PREFIX_TOP_PINNED = 't-';
@@ -594,7 +595,18 @@ export class RowNode<TData = any>
         return valueChanged;
     }
 
-    public getDataValue<TValue = any>(colKey: ColKey<TValue>): TValue | null | undefined {
+    public getDataValue<TValue = any>(
+        colKey: ColKey<TValue>,
+        from: 'value' | 'data-raw' | 'edit' | 'batch'
+    ): TValue | null | undefined;
+    public getDataValue<TValue = any>(
+        colKey: ColKey<TValue>,
+        from?: 'data'
+    ): TValue | IAggFuncResult<TValue> | null | undefined;
+    public getDataValue<TValue = any>(
+        colKey: ColKey<TValue>,
+        from: GetDataValueFrom = 'data'
+    ): TValue | IAggFuncResult<TValue> | null | undefined {
         const { colModel, valueSvc, formula } = this.beans;
 
         if (colKey == null) {
@@ -606,11 +618,29 @@ export class RowNode<TData = any>
             return undefined;
         }
 
-        let value = valueSvc.getValue(column, this, 'data');
+        // 'data-raw' bypasses aggregation and formula resolution — returns raw underlying data
+        // 'value' reads committed data like 'data' but resolves agg wrappers (handled below)
+        const dataRaw = from === 'data-raw';
+        const resolvedFrom = dataRaw || from === 'value' ? 'data' : from;
+        let value = valueSvc.getValue(column, this, resolvedFrom, dataRaw);
 
-        // Resolve formulas to their computed value
-        if (formula && column.isAllowFormula() && formula.isFormula(value)) {
-            value = formula.resolveValue(column, this);
+        if (!dataRaw) {
+            // Resolve formulas to their computed value (skip for 'data-raw')
+            if (formula && column.isAllowFormula() && formula.isFormula(value)) {
+                value = formula.resolveValue(column, this);
+            }
+
+            // For 'value', 'edit', and 'batch' modes, resolve aggregation wrapper objects to their scalar value
+            // on agg columns. Matches the resolution pattern in dataTypeService:
+            // first try toNumber(), then fall back to .value property.
+            if (from !== 'data' && column.getAggFunc() && typeof value === 'object' && value != null) {
+                if (typeof value.toNumber === 'function') {
+                    return value.toNumber();
+                }
+                if ('value' in value) {
+                    return value.value;
+                }
+            }
         }
 
         return value;
