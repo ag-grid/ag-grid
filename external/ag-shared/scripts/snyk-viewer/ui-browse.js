@@ -609,7 +609,7 @@
             const evtSource = new EventSource(`/run-snyk?backup=${backup ? '1' : '0'}`);
             evtSource.addEventListener('message', e => {
                 const { text } = JSON.parse(e.data);
-                logBody.textContent += text;
+                logBody.textContent += text.replace(/\u001b\[[0-9;]*[a-zA-Z]/g, '');
                 logBody.scrollTop = logBody.scrollHeight;
             });
             evtSource.addEventListener('done', e => {
