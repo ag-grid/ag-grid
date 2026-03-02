@@ -185,6 +185,23 @@
                     `<a href="https://security.snyk.io/vuln/${esc(v.id)}" target="_blank" rel="noopener" class="popover-vuln-id">${esc(v.id)}</a>` +
                     `<span class="popover-vuln-title">${esc(v.title)}</span></div>`
                 ).join('')}</div>`;
+
+            const copyBtn = document.getElementById('copy-summary-btn');
+            if (copyBtn) {
+                copyBtn.onclick = () => {
+                    const date = new Date().toISOString().slice(0, 10);
+                    const { projects, total, bySev, totalInstances } = summary;
+                    const sevParts = ['critical', 'high', 'medium', 'low']
+                        .filter(s => bySev[s] > 0)
+                        .map(s => `${bySev[s]} ${s}`)
+                        .join(', ');
+                    const text = `Snyk ${date}: ${projects} project${projects !== 1 ? 's' : ''}, ${total} vulnerabilit${total !== 1 ? 'ies' : 'y'} (${sevParts}), ${totalInstances} dep path${totalInstances !== 1 ? 's' : ''}`;
+                    navigator.clipboard.writeText(text).then(() => {
+                        copyBtn.textContent = '✓ Copied';
+                        setTimeout(() => { copyBtn.innerHTML = '&#x2398; Copy summary'; }, 2000);
+                    });
+                };
+            }
         }
 
         // ── POSTs path updates ──
