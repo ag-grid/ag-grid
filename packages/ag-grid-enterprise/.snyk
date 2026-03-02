@@ -2,6 +2,12 @@
 version: v1.25.1
 
 ignore:
+    SNYK-JS-SERIALIZEJAVASCRIPT-570062:
+        - terser-webpack-plugin@5.3.14 > serialize-javascript@6.0.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T11:42:06.089Z
     SNYK-JS-AJV-15274295:
         - terser-webpack-plugin@5.3.14 > schema-utils@4.3.3 > ajv-formats@2.1.1 > ajv@8.17.1:
               reason: >-

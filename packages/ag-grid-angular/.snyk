@@ -2,6 +2,17 @@
 version: v1.25.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
+    SNYK-JS-SERIALIZEJAVASCRIPT-570062:
+        - '@angular-devkit/build-angular@18.2.21 > webpack@5.94.0 > terser-webpack-plugin@5.3.14 > serialize-javascript@6.0.2':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T11:41:56.216Z
+        - '@angular-devkit/build-angular@18.2.21 > copy-webpack-plugin@12.0.2 > serialize-javascript@6.0.2':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T11:41:56.205Z
     SNYK-JS-ROLLUP-15340920:
         - '@angular-devkit/build-angular@18.2.21 > @angular/build@18.2.21 > vite@5.4.21 > rollup@4.52.5':
               reason: >-
