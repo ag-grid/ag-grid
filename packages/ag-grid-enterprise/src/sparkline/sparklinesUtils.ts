@@ -121,13 +121,8 @@ const getYValue = (datum: any, yKey: string): number | null => {
         return Number.isFinite(datum) ? datum : null;
     }
 
-    if (Array.isArray(datum)) {
-        const yValue = datum[1];
-        return typeof yValue === 'number' && Number.isFinite(yValue) ? yValue : null;
-    }
-
     if (datum && typeof datum === 'object') {
-        const yValue = datum[yKey];
+        const yValue = Array.isArray(datum) ? datum[1] : datum[yKey];
         return typeof yValue === 'number' && Number.isFinite(yValue) ? yValue : null;
     }
 
