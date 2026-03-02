@@ -2,6 +2,23 @@
 version: v1.25.1
 
 ignore:
+    SNYK-JS-MINIMATCH-15353387:
+        - vue-tsc@2.2.12 > @vue/language-core@2.2.12 > minimatch@9.0.5:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:38:39.549Z
+    SNYK-JS-MINIMATCH-15353389:
+        - npm-run-all@4.1.5 > minimatch@3.1.2:
+              reason: >-
+                  Test dependency - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:15:14.605Z
+        - vue-tsc@2.2.12 > @vue/language-core@2.2.12 > minimatch@9.0.5:
+              reason: >-
+                  Test dependency - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:15:14.603Z
     SNYK-JS-MINIMATCH-15309438:
         - npm-run-all@4.1.5 > minimatch@3.1.2:
               reason: >-

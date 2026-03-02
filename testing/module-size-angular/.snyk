@@ -2,6 +2,48 @@
 version: v1.25.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
+    SNYK-JS-MINIMATCH-15353387:
+        - '@angular/cli@19.2.19 > pacote@20.0.0 > sigstore@3.1.0 > @sigstore/tuf@3.1.1 > tuf-js@3.1.0 > @tufjs/models@3.0.1 > minimatch@9.0.5':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:38:32.328Z
+        - '@angular/cli@19.2.19 > pacote@20.0.0 > npm-packlist@9.0.0 > ignore-walk@7.0.0 > minimatch@9.0.5':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:38:32.324Z
+        - '@angular/cli@19.2.19 > pacote@20.0.0 > @npmcli/package-json@6.2.0 > glob@10.4.5 > minimatch@9.0.5':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:38:32.321Z
+    SNYK-JS-MINIMATCH-15353389:
+        - source-map-explorer@2.5.3 > glob@7.2.3 > minimatch@3.1.2:
+              reason: >-
+                  Test dependency - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:15:01.260Z
+        - source-map-explorer@2.5.3 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6:
+              reason: >-
+                  Test dependency - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:15:01.256Z
+        - '@angular/cli@19.2.19 > pacote@20.0.0 > sigstore@3.1.0 > @sigstore/tuf@3.1.1 > tuf-js@3.1.0 > @tufjs/models@3.0.1 > minimatch@9.0.5':
+              reason: >-
+                  Test dependency - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:15:01.253Z
+        - '@angular/cli@19.2.19 > pacote@20.0.0 > npm-packlist@9.0.0 > ignore-walk@7.0.0 > minimatch@9.0.5':
+              reason: >-
+                  Test dependency - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:15:01.248Z
+        - '@angular/cli@19.2.19 > pacote@20.0.0 > @npmcli/package-json@6.2.0 > glob@10.4.5 > minimatch@9.0.5':
+              reason: >-
+                  Test dependency - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:15:01.244Z
     SNYK-JS-WEBPACKDEVSERVER-10300775:
         - ag-grid-angular > @angular-devkit/build-angular@19.0.7 > webpack-dev-server@5.1.0:
               reason: Only used for calculating module size and is dev only

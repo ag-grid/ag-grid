@@ -2,6 +2,88 @@
 version: v1.25.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
+    SNYK-JS-MINIMATCH-15353387:
+        - '@angular/cli@18.2.21 > pacote@18.0.6 > @npmcli/run-script@8.1.0 > node-gyp@10.3.1 > make-fetch-happen@13.0.1 > cacache@18.0.4 > glob@10.4.5 > minimatch@9.0.5':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:37:42.534Z
+        - '@angular/cli@18.2.21 > pacote@18.0.6 > sigstore@2.3.1 > @sigstore/tuf@2.3.4 > tuf-js@2.2.1 > @tufjs/models@2.0.1 > minimatch@9.0.5':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:37:42.530Z
+        - '@angular/cli@18.2.21 > pacote@18.0.6 > npm-packlist@8.0.2 > ignore-walk@6.0.5 > minimatch@9.0.5':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:37:42.527Z
+        - '@angular/cli@18.2.21 > pacote@18.0.6 > @npmcli/package-json@5.2.1 > glob@10.4.5 > minimatch@9.0.5':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:37:42.524Z
+        - ng-packagr@18.2.1 > cacache@18.0.4 > glob@10.4.5 > minimatch@9.0.5:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:37:42.521Z
+    SNYK-JS-MINIMATCH-15353389:
+        - karma@6.4.4 > rimraf@3.0.2 > glob@7.2.3 > minimatch@3.1.2:
+              reason: >-
+                  Used in testing - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:22:49.708Z
+        - rimraf@3.0.2 > glob@7.2.3 > minimatch@3.1.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:22:49.706Z
+        - replace-in-file@4.3.1 > glob@7.2.3 > minimatch@3.1.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:22:49.703Z
+        - karma@6.4.4 > glob@7.2.3 > minimatch@3.1.2:
+              reason: >-
+                  Used in testing - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:22:49.700Z
+        - karma@6.4.4 > minimatch@3.1.2:
+              reason: >-
+                  Used in testing - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:22:49.697Z
+        - karma-coverage@2.2.1 > minimatch@3.1.2:
+              reason: >-
+                  Used in testing - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:22:49.690Z
+        - '@angular/cli@18.2.21 > pacote@18.0.6 > @npmcli/run-script@8.1.0 > node-gyp@10.3.1 > make-fetch-happen@13.0.1 > cacache@18.0.4 > glob@10.4.5 > minimatch@9.0.5':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:22:49.687Z
+        - '@angular/cli@18.2.21 > pacote@18.0.6 > sigstore@2.3.1 > @sigstore/tuf@2.3.4 > tuf-js@2.2.1 > @tufjs/models@2.0.1 > minimatch@9.0.5':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:22:49.681Z
+        - '@angular/cli@18.2.21 > pacote@18.0.6 > npm-packlist@8.0.2 > ignore-walk@6.0.5 > minimatch@9.0.5':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:22:49.674Z
+        - '@angular/cli@18.2.21 > pacote@18.0.6 > @npmcli/package-json@5.2.1 > glob@10.4.5 > minimatch@9.0.5':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:22:49.669Z
+        - ng-packagr@18.2.1 > cacache@18.0.4 > glob@10.4.5 > minimatch@9.0.5:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:22:49.667Z
     SNYK-JS-WEBPACKDEVSERVER-10300775:
         - '@angular-devkit/build-angular@17.3.17 > webpack-dev-server@4.15.1':
               reason: Only used for dev
