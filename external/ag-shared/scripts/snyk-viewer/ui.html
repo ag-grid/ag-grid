@@ -13,7 +13,14 @@
 </div>
 <div id="app">
     <div id="header">
-        <h1><span class="icon">🔒</span> Snyk Vulnerability Viewer</h1>
+        <h1><span class="icon">🔒</span> Snyk Vulnerability Viewer
+            <div class="tab-bar-run">
+                <label class="toggle-label">
+                    <input type="checkbox" id="backup-cb"> Backup old results
+                </label>
+                <button id="run-snyk-btn" class="run-snyk-btn">&#x21BB; Re-run Snyk scan</button>
+            </div>
+        </h1>
         <div class="summary-row">
             <div class="sev-pills" id="sev-pills"></div>
             <div class="summary-stat" id="stat-projects"></div>
@@ -28,12 +35,6 @@
             Review Queue <span class="tab-badge" id="queue-badge">0</span>
         </button>
         <button class="tab-btn" data-tab="browse-all">Browse All</button>
-        <div class="tab-bar-run">
-            <label class="toggle-label">
-                <input type="checkbox" id="backup-cb"> Backup old results
-            </label>
-            <button id="run-snyk-btn" class="run-snyk-btn">&#x21BB; Re-run Snyk scan</button>
-        </div>
     </div>
 
     <div id="run-log-panel" style="display:none"></div>

@@ -99,7 +99,6 @@ a:hover { text-decoration: underline; }
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 0 17px 0 0;
 }
 .tab-btn {
     padding: 10px 18px;
