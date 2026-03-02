@@ -252,11 +252,12 @@
       }
     },
     "snyk:view": {
-      "command": "node ./external/ag-shared/scripts/snyk-viewer/index.mjs {args.file}",
+      "command": "node ./external/ag-shared/scripts/snyk-viewer/index.mjs {args.file} --port {args.port}",
       "dependsOn": ["snyk:test:json"],
       "options": {
         "cwd": "{workspaceRoot}",
-        "file": "tmp/snyk.json"
+        "file": "tmp/snyk.json",
+        "port": 4615
       },
       "configurations": {
         "open": {
