@@ -1127,6 +1127,8 @@ a:hover { text-decoration: underline; }
 .near-item:last-child { border-bottom: none; }
 .near-item-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
 .near-item-resolved .near-item-header { margin-bottom: 0; }
+.near-path-entry { padding: 8px 0 4px; border-top: 1px dashed var(--c-border); margin-top: 4px; }
+.near-path-entry:first-child { border-top: none; margin-top: 0; padding-top: 0; }
 .near-paths { display: flex; flex-direction: column; gap: 5px; }
 .near-path-row { display: flex; align-items: flex-start; gap: 8px; }
 .near-path-lbl {

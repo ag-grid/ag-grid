@@ -12,7 +12,8 @@
         'MCP/dev tooling - not a directly exposed production dependency',
     ];
 
-    window.initReviewQueue = function (projects, ignorePatternsByFile, reviewState, sharedExpiry, _rootPackageName) {
+    window.initReviewQueue = function (projects, ignorePatternsByFileInit, reviewState, sharedExpiry, _rootPackageName) {
+        let ignorePatternsByFile = ignorePatternsByFileInit;
         const { esc, sevClass, stripVer, getSnykFilePath, getNearIgnoredPath,
                 sameMajorFixVersion } = window.SnykUtils;
 
@@ -106,7 +107,7 @@
                         // Stale path (package names match but versions changed) — show in Near-ignored only
                         const sf = getSnykFilePath(project);
                         if (!nearItems.has(sf)) nearItems.set(sf, []);
-                        const existing = nearItems.get(sf).find(item => item.id === id);
+                        const existing = nearItems.get(sf).find(item => item.id === id && item.nearMatch.path === near.path);
                         if (!existing) {
                             nearItems.get(sf).push({ id, vuln, entry: { vuln, project }, nearMatch: near, resolved: false });
                         }
@@ -523,7 +524,14 @@
             const allResolved = items.every(i => i.resolved);
             const unresolvedItems = items.filter(i => !i.resolved);
 
-            const itemsHtml = items.map(({ id, vuln, entry, nearMatch, resolved }) => {
+            // Group items by vuln ID, preserving insertion order
+            const byVuln = new Map();
+            for (const item of items) {
+                if (!byVuln.has(item.id)) byVuln.set(item.id, []);
+                byVuln.get(item.id).push(item);
+            }
+
+            function renderPathEntry(id, entry, nearMatch) {
                 const activeParts = entry.vuln.from?.slice(1) || [];
                 const snykParts = nearMatch.path.split(' > ');
                 const snykVerByName = new Map(snykParts.map(p => [stripVer(p), p.slice(stripVer(p).length)]));
@@ -542,14 +550,8 @@
                 }
 
                 const activePath = activeParts.join(' > ');
-                return `<div class="near-item${resolved ? ' near-item-resolved' : ''}">
-                    <div class="near-item-header">
-                        ${sevBadge(vuln)}
-                        <a class="vuln-id-link" href="https://security.snyk.io/vuln/${esc(id)}" target="_blank" rel="noopener">${esc(id)}</a>
-                        <span style="color:var(--c-text-muted);font-size:12px">${esc(vuln.title || '')}</span>
-                        ${resolved ? '<span class="near-resolved-pill">&#x2713; path matches</span>' : ''}
-                    </div>
-                    ${!resolved ? `<div class="near-paths">
+                return `<div class="near-path-entry">
+                    <div class="near-paths">
                         <div class="near-path-row">
                             <span class="near-path-lbl lbl-snyk">.snyk</span>
                             <span class="near-path-text snyk-side">${highlightPath(snykParts, true)}</span>
@@ -566,15 +568,43 @@
                             data-vuln-id="${esc(id)}"
                             data-old-path="${esc(nearMatch.path)}"
                             data-new-path="${esc(activePath)}">Update .snyk</button>
-                    </div>` : ''}
+                    </div>
+                </div>`;
+            }
+
+            const vulnGroupsHtml = [...byVuln.entries()].map(([id, vulnItems]) => {
+                const vuln = vulnItems[0].vuln;
+                const unresolvedVulnItems = vulnItems.filter(i => !i.resolved);
+                const vulnUpdates = unresolvedVulnItems.map(({ nearMatch, entry }) => ({
+                    snykFile, vulnId: id,
+                    oldPath: nearMatch.path,
+                    newPath: (entry.vuln.from?.slice(1) || []).join(' > '),
+                }));
+                const updateAllVulnBtn = vulnUpdates.length > 1
+                    ? `<button class="btn btn-sm btn-warn" data-action="update-all-near"
+                            data-updates="${esc(JSON.stringify(vulnUpdates))}">Update all paths</button>`
+                    : '';
+                const pathsHtml = unresolvedVulnItems.map(({ entry, nearMatch }) =>
+                    renderPathEntry(id, entry, nearMatch)
+                ).join('');
+                return `<div class="near-item">
+                    <div class="near-item-header">
+                        ${sevBadge(vuln)}
+                        <a class="vuln-id-link" href="https://security.snyk.io/vuln/${esc(id)}" target="_blank" rel="noopener">${esc(id)}</a>
+                        <span style="color:var(--c-text-muted);font-size:12px">${esc(vuln.title || '')}</span>
+                        ${updateAllVulnBtn}
+                    </div>
+                    ${pathsHtml}
                 </div>`;
             }).join('');
 
-            const allUpdates = unresolvedItems.map(({ id, nearMatch, entry }) => {
-                const activePath = (entry.vuln.from?.slice(1) || []).join(' > ');
-                return { snykFile, vulnId: id, oldPath: nearMatch.path, newPath: activePath };
-            });
-            const countBadge = `<span class="near-group-count">${items.length} vuln${items.length !== 1 ? 's' : ''}</span>`;
+            const allUpdates = unresolvedItems.map(({ id, nearMatch, entry }) => ({
+                snykFile, vulnId: id,
+                oldPath: nearMatch.path,
+                newPath: (entry.vuln.from?.slice(1) || []).join(' > '),
+            }));
+            const uniqueVulnCount = byVuln.size;
+            const countBadge = `<span class="near-group-count">${uniqueVulnCount} vuln${uniqueVulnCount !== 1 ? 's' : ''}</span>`;
             const resolvedPill = allResolved ? '<span class="near-group-resolved-pill">&#x2713; Resolved</span>' : '';
             const toggleArrow = `<span class="near-toggle-arrow">${allResolved ? '&#x25B6;' : '&#x25BC;'}</span>`;
             const updateAllBtn = !allResolved
@@ -591,7 +621,7 @@
                     ${updateAllBtn}
                 </div>
                 <div class="near-group-items" id="${esc(groupId)}-items" style="${allResolved ? 'display:none' : ''}">
-                    ${itemsHtml}
+                    ${vulnGroupsHtml}
                 </div>
             </div>`;
         }
@@ -1139,6 +1169,23 @@
             }).catch(err => { btn.disabled = false; btn.textContent = 'Add to .snyk File'; alert('Request failed: ' + err.message); });
         }
 
+        function applyNearUpdatesToLocalPatterns(updates) {
+            for (const { snykFile: sf, vulnId: vid, newPath } of updates) {
+                if (!localAddedPatterns[sf]) localAddedPatterns[sf] = {};
+                if (!localAddedPatterns[sf][vid]) localAddedPatterns[sf][vid] = [];
+                const arr = localAddedPatterns[sf][vid];
+                if (!arr.find(e => e.path === newPath)) arr.push({ path: newPath, reason: '' });
+            }
+        }
+
+        function refreshIgnorePatterns() {
+            return fetch('/data').then(r => r.json()).then(data => {
+                ignorePatternsByFile = data.ignorePatternsByFile || {};
+                renderReviewQueueTab();
+                document.getElementById('rq-resolved-section')?.classList.add('open');
+            });
+        }
+
         function handleUpdateSnyk(btn) {
             const { snykFile, vulnId, oldPath, newPath } = btn.dataset;
             btn.disabled = true;
@@ -1148,8 +1195,12 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ updates: [{ snykFile, vulnId, oldPath, newPath }] }),
             }).then(r => r.json()).then(data => {
-                if (data.ok) { location.reload(); }
-                else { btn.disabled = false; btn.textContent = 'Update .snyk'; alert('Failed: ' + data.error); }
+                if (data.ok) {
+                    btn.textContent = '\u2713 Updated';
+                    btn.classList.replace('btn-warn', 'btn-primary');
+                    applyNearUpdatesToLocalPatterns([{ snykFile, vulnId, newPath }]);
+                    setTimeout(refreshIgnorePatterns, 700);
+                } else { btn.disabled = false; btn.textContent = 'Update .snyk'; alert('Failed: ' + data.error); }
             }).catch(err => { btn.disabled = false; btn.textContent = 'Update .snyk'; alert('Request failed: ' + err.message); });
         }
 
@@ -1164,8 +1215,12 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ updates }),
             }).then(r => r.json()).then(data => {
-                if (data.ok) { location.reload(); }
-                else { btn.disabled = false; btn.textContent = 'Update All in This File'; alert('Failed: ' + data.error); }
+                if (data.ok) {
+                    btn.textContent = '\u2713 All Updated';
+                    btn.classList.replace('btn-warn', 'btn-primary');
+                    applyNearUpdatesToLocalPatterns(updates);
+                    setTimeout(refreshIgnorePatterns, 700);
+                } else { btn.disabled = false; btn.textContent = 'Update All in This File'; alert('Failed: ' + data.error); }
             }).catch(err => { btn.disabled = false; btn.textContent = 'Update All in This File'; alert('Request failed: ' + err.message); });
         }
 
