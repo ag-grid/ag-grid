@@ -1014,6 +1014,26 @@ ignore:
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-02-12T10:10:00.000Z
     SNYK-JS-AJV-15274295:
+        - '@nx/react@20.3.1 > @nx/module-federation@20.3.1 > webpack@5.88.0 > schema-utils@3.3.0 > ajv@6.12.6':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:53:07.380Z
+        - '@nx/react@20.3.1 > @nx/module-federation@20.3.1 > webpack@5.88.0 > terser-webpack-plugin@5.3.14 > schema-utils@4.3.3 > ajv-formats@2.1.1 > ajv@8.17.1':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:53:07.370Z
+        - '@nx/react@20.3.1 > @nx/module-federation@20.3.1 > webpack@5.88.0 > terser-webpack-plugin@5.3.14 > schema-utils@4.3.3 > ajv@8.17.1':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:53:07.364Z
+        - stylelint@16.25.0 > table@6.9.0 > ajv@8.17.1:
+              reason: >-
+                  Used in linting - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:53:07.358Z
         - '@kazuph/mcp-fetch@1.5.0 > @modelcontextprotocol/sdk@1.26.0 > ajv@8.17.1':
               reason: >-
                   used by mcp so not a directly exposed dependency and only used during development

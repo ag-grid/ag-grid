@@ -2,6 +2,17 @@
 version: v1.25.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
+    SNYK-JS-AJV-15274295:
+        - eslint@9.39.1 > @eslint/eslintrc@3.3.1 > ajv@6.12.6:
+              reason: >-
+                  Lint dependency - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T11:00:44.807Z
+        - eslint@9.39.1 > ajv@6.12.6:
+              reason: >-
+                  Lint dependency - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T11:00:44.803Z
     SNYK-JS-MINIMATCH-15353387:
         - typescript-eslint@8.46.3 > @typescript-eslint/eslint-plugin@8.46.3 > @typescript-eslint/type-utils@8.46.3 > @typescript-eslint/typescript-estree@8.46.3 > minimatch@9.0.5:
               reason: >-
