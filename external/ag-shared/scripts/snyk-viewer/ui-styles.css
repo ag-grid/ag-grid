@@ -1670,6 +1670,15 @@ details.s3-vuln-card:not([open]) .s3-card-chevron {
     margin-left: auto;
     flex-shrink: 0;
 }
+.already-ignored-reason-input {
+    flex: 1;
+    min-width: 0;
+    font-size: 12px;
+    opacity: 0.6;
+}
+.already-ignored-reason-input:focus {
+    opacity: 1;
+}
 
 /* ── All-paths-ignored vuln card ── */
 .s3-card-all-ignored > .s3-card-header {

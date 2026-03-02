@@ -122,7 +122,7 @@
                 const v = ignoreVulns.get(id);
                 const key = snykFile + '\0' + depPath;
                 if (!v.paths.some(p => p.snykFile + '\0' + p.depPath === key)) {
-                    v.paths.push({ snykFile, depPath, topLevelDep, alreadyIgnored: near != null });
+                    v.paths.push({ snykFile, depPath, topLevelDep, alreadyIgnored: near != null, existingReason: near?.reason || '' });
                 }
             }
 
@@ -138,7 +138,8 @@
                     const v = ignoreVulns.get(id);
                     const key = snykFile + '\0' + depPath;
                     if (!v.paths.some(p => p.snykFile + '\0' + p.depPath === key)) {
-                        v.paths.push({ snykFile, depPath, topLevelDep, alreadyIgnored: true });
+                        const filteredReason = vuln.filtered?.ignored?.[0]?.reason || '';
+                        v.paths.push({ snykFile, depPath, topLevelDep, alreadyIgnored: true, existingReason: filteredReason });
                     }
                 }
             }
@@ -422,6 +423,11 @@
                             return `<div class="path-checkbox-row path-already-ignored" data-top-dep="${esc(path.topLevelDep)}">
                                 <span class="path-already-ignored-check">&#x2713;</span>
                                 <span class="path-deppath">${esc(path.depPath)}</span>
+                                <input type="text" class="ignore-form-input already-ignored-reason-input"
+                                    value="${esc(path.existingReason || '')}" placeholder="Reason&hellip;"
+                                    data-snyk-file="${esc(snykFile)}" data-vuln-id="${esc(id)}" data-dep-path="${esc(path.depPath)}">
+                                <button class="btn btn-sm btn-outline" data-action="update-ignore-reason"
+                                    data-snyk-file="${esc(snykFile)}" data-vuln-id="${esc(id)}" data-dep-path="${esc(path.depPath)}">Update</button>
                                 <span class="already-ignored-badge">Already in .snyk</span>
                             </div>`;
                         }
@@ -801,16 +807,20 @@
                 }
                 recomputeProgress();
 
-                // Convert successfully-added rows to the resolved display (same as on load)
+                // Convert successfully-added rows to the resolved display (editable reason + Update button)
                 subgroup.querySelectorAll('.path-checkbox-row:not(.path-already-ignored)').forEach(row => {
                     const cb = row.querySelector('.path-cb');
                     if (!cb || !cb.checked) return;
                     const topDep = row.dataset.topDep || '';
                     const depPath = row.querySelector('.path-deppath')?.textContent || '';
+                    const idx = cb.dataset.idx;
+                    const reason = document.getElementById(`reason-${cardId}-${idx}`)?.value?.trim() || '';
                     row.className = 'path-checkbox-row path-already-ignored';
                     row.dataset.topDep = topDep;
                     row.innerHTML = `<span class="path-already-ignored-check">&#x2713;</span>`
                         + `<span class="path-deppath">${esc(depPath)}</span>`
+                        + `<input type="text" class="ignore-form-input already-ignored-reason-input" value="${esc(reason)}" placeholder="Reason&hellip;" data-snyk-file="${esc(snykFile)}" data-vuln-id="${esc(vulnId)}" data-dep-path="${esc(depPath)}">`
+                        + `<button class="btn btn-sm btn-outline" data-action="update-ignore-reason" data-snyk-file="${esc(snykFile)}" data-vuln-id="${esc(vulnId)}" data-dep-path="${esc(depPath)}">Update</button>`
                         + `<span class="already-ignored-badge">Already in .snyk</span>`;
                 });
 
@@ -874,6 +884,8 @@
                     handleRemoveDep(btn);
                 } else if (action === 'apply-resolution') {
                     handleApplyResolution(btn);
+                } else if (action === 'update-ignore-reason') {
+                    handleUpdateIgnoreReason(btn);
                 } else if (action === 'add-all-snyk-ignore') {
                     handleAddAllSnykIgnore(btn);
                 } else if (action === 'add-file-snyk-ignore') {
@@ -1043,6 +1055,40 @@
                     btn.textContent = 'Check dep type \u2192';
                     panel.textContent = 'error: ' + err.message;
                 });
+        }
+
+        async function handleUpdateIgnoreReason(btn) {
+            const { snykFile, vulnId, depPath } = btn.dataset;
+            const expiryInput = document.getElementById('expiry-s3');
+            const expires = expiryInput?.value?.trim() || '';
+            if (!expires) { alert('Please enter an expiry date.'); return; }
+            const row = btn.closest('.path-checkbox-row');
+            const reason = row?.querySelector('.already-ignored-reason-input')?.value?.trim() || '';
+            if (!reason) { alert('Please enter a reason.'); return; }
+            btn.disabled = true;
+            btn.textContent = 'Updating\u2026';
+            try {
+                const r = await fetch('/add-snyk-ignore', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ snykFile, vulnId, path: depPath, reason, expires }),
+                });
+                const data = await r.json();
+                if (data.ok) {
+                    if (!localAddedPatterns[snykFile]) localAddedPatterns[snykFile] = {};
+                    if (!localAddedPatterns[snykFile][vulnId]) localAddedPatterns[snykFile][vulnId] = [];
+                    const arr = localAddedPatterns[snykFile][vulnId];
+                    const existing = arr.find(e => e.path === depPath);
+                    if (existing) existing.reason = reason;
+                    else arr.push({ path: depPath, reason });
+                    btn.textContent = '\u2713 Updated';
+                    setTimeout(() => { btn.disabled = false; btn.textContent = 'Update'; }, 2000);
+                } else {
+                    btn.disabled = false; btn.textContent = 'Update'; alert('Failed: ' + data.error);
+                }
+            } catch (err) {
+                btn.disabled = false; btn.textContent = 'Update'; alert('Request failed: ' + err.message);
+            }
         }
 
         async function handleAddAllSnykIgnore(btn) {
