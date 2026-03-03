@@ -17,14 +17,7 @@ import type { RowContainerCtrl } from './rowContainer/rowContainerCtrl';
 
 const VIEWPORT = 'Viewport';
 const FAKE_V_SCROLLBAR = 'fakeVScrollComp';
-const HORIZONTAL_SOURCES = [
-    'fakeHScrollComp',
-    'centerHeader',
-    'pinnedTopCenter',
-    'pinnedBottomCenter',
-    'stickyTopCenter',
-    'stickyBottomCenter',
-] as const;
+const HORIZONTAL_SOURCES = ['fakeHScrollComp'] as const;
 
 type VerticalScrollSource = typeof VIEWPORT | typeof FAKE_V_SCROLLBAR;
 type HorizontalScrollSource = typeof VIEWPORT | (typeof HORIZONTAL_SOURCES)[number];
@@ -503,7 +496,8 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private getBodyViewportHeight(totalViewportHeight: number): number {
-        return this.ctrlsSvc.getGridBodyCtrl().getBodyViewportHeight(totalViewportHeight);
+        const gridBodyCtrl = this.ctrlsSvc.getGridBodyCtrl();
+        return gridBodyCtrl ? gridBodyCtrl.getBodyViewportHeight(totalViewportHeight) : totalViewportHeight;
     }
 
     public getHScrollPosition(): { left: number; right: number } {

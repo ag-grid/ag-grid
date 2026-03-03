@@ -399,15 +399,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
         if (!scrollVisibleSvc.verticalScrollShowing) {
             return 0;
         }
-
-        const fakeVScrollComp = ctrlsSvc.get('fakeVScrollComp');
-        const fakeScrollbarWidth = fakeVScrollComp?.getGui().offsetWidth ?? 0;
-        if (fakeScrollbarWidth > 0) {
-            return fakeScrollbarWidth;
-        }
-
-        const scrollbarWidth = scrollVisibleSvc.getScrollbarWidth() || 0;
-        return scrollbarWidth > 0 ? scrollbarWidth : 16;
+        return ctrlsSvc.getGridBodyCtrl()?.getVerticalScrollbarWidth() ?? scrollVisibleSvc.getScrollbarWidth() ?? 0;
     }
 
     private onDisplayedRowsChanged(afterScroll: boolean = false): void {

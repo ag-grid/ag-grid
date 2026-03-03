@@ -1,4 +1,4 @@
-import { _getInnerHeight, _requestAnimationFrame } from '../agStack/utils/dom';
+import { _getInnerHeight, _observeResize, _requestAnimationFrame } from '../agStack/utils/dom';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { ScrollVisibleService, SetScrollsVisibleParams } from '../gridBodyComp/scrollVisibleService';
@@ -29,10 +29,12 @@ export class ViewportSizeFeature extends BeanStub {
             this.gridBodyCtrl = p.gridBodyCtrl;
             this.listenForResize();
         });
+
         this.addManagedEventListeners({
             scrollbarWidthChanged: this.onScrollbarWidthChanged.bind(this),
             scrollVisibilityChanged: this.onCenterViewportResized.bind(this),
         });
+
         this.addManagedPropertyListeners(['alwaysShowHorizontalScroll', 'alwaysShowVerticalScroll'], () => {
             this.checkViewportAndScrolls();
         });
@@ -61,6 +63,16 @@ export class ViewportSizeFeature extends BeanStub {
 
         // eGridViewport gets vertical resizes
         gridBodyCtrl.registerBodyViewportResizeListener(listener);
+
+        const refreshScrollVisibility = () => {
+            _requestAnimationFrame(beans, () => this.updateScrollVisibleServiceImpl());
+        };
+        const unsubscribeFromContainerResize = _observeResize(
+            beans,
+            centerContainerCtrl.eContainer,
+            refreshScrollVisibility
+        );
+        this.addDestroyFunc(() => unsubscribeFromContainerResize());
     }
 
     private onScrollbarWidthChanged() {

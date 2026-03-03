@@ -14,7 +14,6 @@ import { LayoutFeature } from '../styling/layoutFeature';
 import type { PopupService } from '../widgets/popupService';
 import { GridBodyScrollFeature } from './gridBodyScrollFeature';
 import type { ScrollVisibleService } from './scrollVisibleService';
-import { _shouldShowVerticalScroll } from './scrollbarVisibilityHelper';
 
 export type RowAnimationCssClasses = 'ag-row-animation' | 'ag-row-no-animation';
 
@@ -277,22 +276,25 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     public isVerticalScrollShowing(): boolean {
-        const { gos, comp, ctrlsSvc } = this;
+        const { gos, comp } = this;
         const show = gos.get('alwaysShowVerticalScroll');
 
         const cssClass = show ? CSS_CLASS_FORCE_VERTICAL_SCROLL : null;
         const allowVerticalScroll = _isDomLayout(gos, 'normal');
 
         comp.setAlwaysVerticalScrollClass(cssClass, show);
-        const horizontalScrollElement = ctrlsSvc.get('scrollingCenter')?.eViewport;
-        const hScrollEl = ctrlsSvc.get('fakeHScrollComp')?.getGui();
-        const vScrollEl = ctrlsSvc.get('fakeVScrollComp')?.getGui();
 
-        return (
-            show ||
-            (allowVerticalScroll &&
-                _shouldShowVerticalScroll(this.eGridViewport, horizontalScrollElement, undefined, vScrollEl, hScrollEl))
-        );
+        if (show) {
+            return true;
+        }
+
+        if (!allowVerticalScroll) {
+            return false;
+        }
+
+        const bodyViewportHeight = this.getBodyViewportHeight(this.eGridViewport.clientHeight);
+        const rowContainerHeight = this.beans.rowContainerHeight.uiContainerHeight ?? 0;
+        return rowContainerHeight > bodyViewportHeight;
     }
 
     private setupRowAnimationCssClass(): void {
@@ -517,8 +519,9 @@ export class GridBodyCtrl extends BeanStub {
     public getHeaderRowsOffset(): number {
         const gridHeaderCtrl = this.ctrlsSvc.get('gridHeaderCtrl');
         const headerHeight = gridHeaderCtrl?.headerHeight ?? 0;
+        const advancedFilterHeaderHeight = this.filterManager?.getHeaderHeight() ?? 0;
         const headerBorder = headerHeight > 0 ? this.beans.environment.getHeaderRowBorderWidth() : 0;
-        return headerHeight + headerBorder;
+        return advancedFilterHeaderHeight + headerHeight + headerBorder;
     }
 
     public getTopPinnedRowsOffset(): number {
@@ -542,7 +545,7 @@ export class GridBodyCtrl extends BeanStub {
         }
 
         const scrollbarWidth = this.scrollVisibleSvc.getScrollbarWidth() || 0;
-        return scrollbarWidth > 0 ? scrollbarWidth : 16;
+        return scrollbarWidth;
     }
 
     public getHorizontalScrollbarHeight(): number {
@@ -559,7 +562,7 @@ export class GridBodyCtrl extends BeanStub {
         }
 
         const scrollbarWidth = this.scrollVisibleSvc.getScrollbarWidth() || 0;
-        return scrollbarWidth > 0 ? scrollbarWidth : 16;
+        return scrollbarWidth;
     }
 
     private setStickyBottomOffsetBottom(): void {

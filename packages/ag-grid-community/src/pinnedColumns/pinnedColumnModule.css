@@ -8,7 +8,6 @@
  * visually on the left
  */
 
-.ag-grid-pinned-bottom-rows-full-width-container,
 .ag-sticky-bottom-full-width-container {
     overflow: hidden;
     width: 100%;

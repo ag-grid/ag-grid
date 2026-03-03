@@ -110,12 +110,6 @@ const GridHeaderComp = ({
         };
     }, [destroyControllers, flattened, hostElement, initControllers, viewportElement]);
 
-    useEffect(() => {
-        return () => {
-            destroyControllers();
-        };
-    }, [destroyControllers]);
-
     const className = useMemo(() => {
         const res = cssClasses.toString();
         return 'ag-header ' + res;

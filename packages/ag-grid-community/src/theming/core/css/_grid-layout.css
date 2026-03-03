@@ -88,6 +88,7 @@
 
 :where(.ag-row:not(.ag-header-row)) {
     background-color: var(--ag-data-background-color);
+
     --ag-internal-row-overlay-color: transparent;
     --ag-internal-row-overlay-image: none;
 }

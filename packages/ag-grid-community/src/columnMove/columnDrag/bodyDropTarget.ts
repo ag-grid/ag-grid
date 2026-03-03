@@ -21,7 +21,9 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
     private moveColumnFeatureCenter: MoveColumnFeature;
     private moveColumnFeatureLeft: MoveColumnFeature;
     private moveColumnFeatureRight: MoveColumnFeature;
-    private bodyDropPivotTarget: BodyDropPivotTarget;
+    private bodyDropPivotTargetCenter: BodyDropPivotTarget;
+    private bodyDropPivotTargetLeft: BodyDropPivotTarget;
+    private bodyDropPivotTargetRight: BodyDropPivotTarget;
 
     constructor(private readonly eContainer: HTMLElement) {
         super();
@@ -43,7 +45,9 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
         this.moveColumnFeatureCenter = this.createManagedBean(new MoveColumnFeature(null));
         this.moveColumnFeatureLeft = this.createManagedBean(new MoveColumnFeature('left'));
         this.moveColumnFeatureRight = this.createManagedBean(new MoveColumnFeature('right'));
-        this.bodyDropPivotTarget = this.createManagedBean(new BodyDropPivotTarget(null));
+        this.bodyDropPivotTargetCenter = this.createManagedBean(new BodyDropPivotTarget(null));
+        this.bodyDropPivotTargetLeft = this.createManagedBean(new BodyDropPivotTarget('left'));
+        this.bodyDropPivotTargetRight = this.createManagedBean(new BodyDropPivotTarget('right'));
 
         dragAndDrop!.addDropTarget(this);
         this.addDestroyFunc(() => dragAndDrop!.removeDropTarget(this));
@@ -79,12 +83,7 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
     }
 
     public onDragEnter(draggingEvent: GridDraggingEvent): void {
-        // we pick the drop listener depending on whether we are in pivot mode are not. if we are
-        // in pivot mode, then dropping cols changes the row group, pivot, value stats. otherwise
-        // we change visibility state and position.
-        this.currentDropListener = this.isDropColumnInPivotMode(draggingEvent)
-            ? this.bodyDropPivotTarget
-            : this.getMoveColumnFeature(draggingEvent);
+        this.currentDropListener = this.getDropListener(draggingEvent);
         this.currentDropListener.onDragEnter(draggingEvent);
     }
 
@@ -98,13 +97,11 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
             return;
         }
 
-        if (this.currentDropListener !== this.bodyDropPivotTarget) {
-            const moveFeature = this.getMoveColumnFeature(params);
-            if (this.currentDropListener !== moveFeature) {
-                this.currentDropListener.onDragLeave(params);
-                this.currentDropListener = moveFeature;
-                this.currentDropListener.onDragEnter(params);
-            }
+        const dropListener = this.getDropListener(params);
+        if (this.currentDropListener !== dropListener) {
+            this.currentDropListener.onDragLeave(params);
+            this.currentDropListener = dropListener;
+            this.currentDropListener.onDragEnter(params);
         }
 
         this.currentDropListener.onDragging(params);
@@ -129,6 +126,23 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
             default:
                 return this.moveColumnFeatureCenter;
         }
+    }
+
+    private getBodyDropPivotTarget(draggingEvent: GridDraggingEvent): BodyDropPivotTarget {
+        switch (this.getPinnedSection(draggingEvent)) {
+            case 'left':
+                return this.bodyDropPivotTargetLeft;
+            case 'right':
+                return this.bodyDropPivotTargetRight;
+            default:
+                return this.bodyDropPivotTargetCenter;
+        }
+    }
+
+    private getDropListener(draggingEvent: GridDraggingEvent): DropListener {
+        return this.isDropColumnInPivotMode(draggingEvent)
+            ? this.getBodyDropPivotTarget(draggingEvent)
+            : this.getMoveColumnFeature(draggingEvent);
     }
 
     private getPinnedSection(draggingEvent: GridDraggingEvent): ColumnPinnedType {

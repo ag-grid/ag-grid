@@ -305,7 +305,7 @@ export class RowContainerComp extends Component {
 
     private insertFlattenedPinnedRow(eRow: HTMLElement, container: HTMLElement): void {
         const rowPriority = getFlattenedPinnedRowPriority(this.name);
-        const rowTop = Number.parseFloat(eRow.style.top) || 0;
+        const rowTop = this.getFlattenedPinnedRowPosition(eRow);
         let insertBefore: HTMLElement | null = null;
 
         for (const child of Array.from(container.children) as HTMLElement[]) {
@@ -320,7 +320,7 @@ export class RowContainerComp extends Component {
                 break;
             }
             if (childPriority === rowPriority) {
-                const childTop = Number.parseFloat(child.style.top) || 0;
+                const childTop = this.getFlattenedPinnedRowPosition(child);
                 if (childTop > rowTop) {
                     insertBefore = child;
                     break;
@@ -333,6 +333,27 @@ export class RowContainerComp extends Component {
         } else if (eRow.parentElement !== container || eRow !== container.lastElementChild) {
             container.appendChild(eRow);
         }
+    }
+
+    private getFlattenedPinnedRowPosition(eRow: HTMLElement): number {
+        const top = Number.parseFloat(eRow.style.top);
+        if (Number.isFinite(top)) {
+            return top;
+        }
+
+        const transform = eRow.style.transform;
+        if (transform) {
+            const transformMatch = /translateY\((-?\d+(?:\.\d+)?)px\)/.exec(transform);
+            if (transformMatch) {
+                const transformTop = Number.parseFloat(transformMatch[1]);
+                if (Number.isFinite(transformTop)) {
+                    return transformTop;
+                }
+            }
+        }
+
+        const rowIndex = Number.parseFloat(eRow.getAttribute('row-index') ?? '');
+        return Number.isFinite(rowIndex) ? rowIndex : 0;
     }
 
     private removeOldRows(rowComps: RowComp[]): void {

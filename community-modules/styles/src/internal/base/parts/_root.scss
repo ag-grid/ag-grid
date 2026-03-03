@@ -4,16 +4,6 @@
         background-color: var(--ag-background-color);
     }
 
-    .ag-grid-pinned-bottom-rows {
-        background-color: var(--ag-data-background-color);
-
-        .ag-grid-pinned-left-cells,
-        .ag-grid-scrolling-cells,
-        .ag-grid-pinned-right-cells {
-            border-top: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
-        }
-    }
-
     .ag-root-wrapper,
     .ag-popup {
         --ag-indentation-level: 0;

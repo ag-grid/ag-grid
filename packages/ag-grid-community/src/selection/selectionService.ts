@@ -807,9 +807,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                 break;
             }
             case false: {
-                if (!restoreTrackedState()) {
-                    detailApi.deselectAll();
-                }
+                detailApi.deselectAll();
                 break;
             }
             case undefined: {
