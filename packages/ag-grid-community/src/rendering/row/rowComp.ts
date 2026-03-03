@@ -25,7 +25,11 @@ export class RowComp extends Component {
         this.beans = beans;
         this.rowCtrl = ctrl;
 
-        const rowDiv = _createElement({ tag: 'div', role: 'row', attrs: { 'comp-id': `${this.getCompId()}` } });
+        const rowDiv = _createElement({
+            tag: 'div',
+            role: 'row',
+            attrs: { 'comp-id': `${this.getCompId()}` },
+        });
         this.setInitialStyle(rowDiv, containerType);
         this.setTemplateFromElement(rowDiv);
 
