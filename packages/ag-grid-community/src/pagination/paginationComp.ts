@@ -15,7 +15,7 @@ import type { Component, ComponentSelector } from '../widgets/component';
 import { TabGuardComp } from '../widgets/tabGuardComp';
 import type { PageSizeSelectorComp } from './pageSizeSelector/pageSizeSelectorComp';
 import { PageSizeSelectorSelector } from './pageSizeSelector/pageSizeSelectorComp';
-import { paginationCompCSS } from './paginationComp.css-GENERATED';
+import paginationCompCSS from './paginationComp.css';
 import type { PaginationService } from './paginationService';
 
 class PaginationComp extends TabGuardComp implements FocusableContainer {

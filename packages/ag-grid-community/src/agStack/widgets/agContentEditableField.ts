@@ -8,7 +8,7 @@ import { _setAriaRole } from '../utils/aria';
 import type { AgElementParams } from '../utils/dom';
 import type { AgAbstractFieldEvent } from './agAbstractField';
 import { AgAbstractField } from './agAbstractField';
-import { agContentEditableFieldCSS } from './agContentEditableField.css-GENERATED';
+import agContentEditableFieldCSS from './agContentEditableField.css';
 import type { AgFieldParams } from './agFieldParams';
 import type { AgWidgetSelectorType } from './agWidgetSelectorType';
 

@@ -7,7 +7,7 @@ import type { IPropertiesService } from '../interfaces/iProperties';
 import { _setAriaRole } from '../utils/aria';
 import { _last } from '../utils/array';
 import { _clearElement, _isVisible } from '../utils/dom';
-import { agListCSS } from './agList.css-GENERATED';
+import agListCSS from './agList.css';
 import { AgListItem } from './agListItem';
 
 export interface ListOption<TValue = string> {

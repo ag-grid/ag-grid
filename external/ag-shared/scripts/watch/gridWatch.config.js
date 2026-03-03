@@ -26,13 +26,6 @@ function getProjectBuildTargets(project) {
         if (PACKAGE_PROJECTS.includes(project)) {
             buildTargets.push(['ag-grid-docs', ['generate-doc-references']]);
 
-            if (project === 'ag-grid-community') {
-                buildTargets.push(['ag-grid-community', ['build:css']]);
-            }
-            if (project === 'ag-grid-enterprise') {
-                buildTargets.push(['ag-grid-enterprise', ['build:css']]);
-            }
-
             buildTargets.push(['ag-grid-community', ['build'], 'watch'], ['ag-grid-enterprise', ['build'], 'watch']);
 
             // Generate framework properties after the core library is built
@@ -65,7 +58,7 @@ const externalBuildTriggers = [
 
 module.exports = {
     ignoredProjects: getIgnoredProjects(),
-    devServerReloadTargets: ['generate', 'generate-doc-references', 'build', 'build:css', 'generate-examples'],
+    devServerReloadTargets: ['generate', 'generate-doc-references', 'build', 'generate-examples'],
     getProjectBuildTargets,
     externalBuildTriggers,
 };

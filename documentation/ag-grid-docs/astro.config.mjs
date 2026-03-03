@@ -12,6 +12,7 @@ import agCacheSitemap from '../../external/ag-website-shared/plugins/agCacheSite
 import agLinkChecker from '../../external/ag-website-shared/plugins/agLinkChecker';
 import { SITEMAP_CACHE_DIR } from '../../external/ag-website-shared/src/constants';
 import buildTime from './plugins/agBuildTime';
+import agCssPlugin from './plugins/agCssPlugin';
 import agHotModuleReload from './plugins/agHotModuleReload';
 import agHtaccessGen from './plugins/agHtaccessGen';
 import agRedirectsChecker from './plugins/agRedirectsChecker';
@@ -136,7 +137,7 @@ console.log(
     )
 );
 
-const plugins = [svgr(), agHotModuleReload()];
+const plugins = [agCssPlugin(), svgr(), agHotModuleReload()];
 if (NODE_ENV !== 'test') {
     plugins.push(mkcert()); // mkcert is not necessary for tests
 }

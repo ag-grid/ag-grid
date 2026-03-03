@@ -8,9 +8,9 @@ import type {
 } from 'ag-grid-community';
 import { AgContentEditableField, _createElement, _getDocument, _getWindow, _placeCaretAtEnd } from 'ag-grid-community';
 
-import { agAutocompleteCSS } from '../advancedFilter/autocomplete/agAutocomplete.css-GENERATED';
+import agAutocompleteCSS from '../advancedFilter/autocomplete/agAutocomplete.css';
 import { getRefTokenMatches } from '../formula/refUtils';
-import { agFormulaInputFieldCSS } from './agFormulaInputField.css-GENERATED';
+import agFormulaInputFieldCSS from './agFormulaInputField.css';
 import { FormulaInputAutocompleteFeature } from './formulaInputAutocompleteFeature';
 import { FormulaInputRangeSyncFeature } from './formulaInputRangeSyncFeature';
 import { TOKEN_INSERT_AFTER_CHARS, getPreviousNonSpaceChar } from './formulaInputTokenUtils';

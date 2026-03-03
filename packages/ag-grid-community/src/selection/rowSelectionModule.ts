@@ -2,7 +2,7 @@ import type { _RowSelectionGridApi } from '../api/gridApi';
 import { SelectionColService } from '../columns/selectionColService';
 import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
 import { VERSION } from '../version';
-import { rowSelectionCSS } from './rowSelection.css-GENERATED';
+import rowSelectionCSS from './rowSelection.css';
 import {
     deselectAll,
     deselectAllFiltered,

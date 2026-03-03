@@ -44,7 +44,7 @@
     },
     "build:types": {
       "executor": "@nx/js:tsc",
-      "dependsOn": ["^build:types", "chartsTypes", "build:css"],
+      "dependsOn": ["^build:types", "chartsTypes"],
       "inputs": [
         "{projectRoot}/package.json",
         "{projectRoot}/src/**/*",
@@ -71,23 +71,9 @@
         "production": {}
       }
     },
-    "build:css": {
-      "command": "tsx ./scripts/build-css.ts --package ag-grid-enterprise",
-      "cache": true,
-      "options": {
-        "cwd": "{workspaceRoot}"
-      },
-      "inputs": ["{projectRoot}/src/**/*.css"],
-      "outputs": ["{projectRoot}/**/*.css-GENERATED.ts"],
-      "configurations": {
-        "debug": {
-          "command": "CSS_DEBUG=1 tsx ./scripts/build-css.ts --package ag-grid-enterprise"
-        }
-      }
-    },
     "build:package": {
       "executor": "@nx/esbuild:esbuild",
-      "dependsOn": ["^build:types", "chartsPackages", "build:css"],
+      "dependsOn": ["^build:types", "chartsPackages"],
       "inputs": [
         "{projectRoot}/package.json",
         "{projectRoot}/src/**/*",

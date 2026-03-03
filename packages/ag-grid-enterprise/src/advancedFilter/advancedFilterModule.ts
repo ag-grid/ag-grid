@@ -9,7 +9,7 @@ import {
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
-import { advancedFilterCSS } from './advanced-filter.css-GENERATED';
+import advancedFilterCSS from './advanced-filter.css';
 import {
     getAdvancedFilterModel,
     hideAdvancedFilterBuilder,

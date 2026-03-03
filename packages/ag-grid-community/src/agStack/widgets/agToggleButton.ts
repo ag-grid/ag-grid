@@ -5,7 +5,7 @@ import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import { AgCheckbox } from './agCheckbox';
 import type { AgCheckboxParams } from './agFieldParams';
-import { agToggleButtonCSS } from './agToggleButton.css-GENERATED';
+import agToggleButtonCSS from './agToggleButton.css';
 import type { AgWidgetSelectorType } from './agWidgetSelectorType';
 
 export interface AgToggleButtonParams<TComponentSelectorType extends string>

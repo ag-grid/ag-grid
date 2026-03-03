@@ -72,6 +72,6 @@ export default [
         },
     },
     {
-        ignores: ['webpack.config.js', 'jest.*.js', 'eslint.config.mjs', 'scripts/build-css.ts'],
+        ignores: ['webpack.config.js', 'jest.*.js', 'eslint.config.mjs'],
     },
 ];

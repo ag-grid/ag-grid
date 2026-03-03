@@ -11,7 +11,7 @@ import { Component } from '../widgets/component';
 import type { FilterDisplayWrapper } from './columnFilterService';
 import { FilterWrapperComp } from './filterWrapperComp';
 import type { FilterRequestSource } from './iColumnFilter';
-import { legacyFilterCSS } from './legacyFilter.css-GENERATED';
+import legacyFilterCSS from './legacyFilter.css';
 
 const FilterElement: ElementParams = { tag: 'div', cls: 'ag-filter' };
 

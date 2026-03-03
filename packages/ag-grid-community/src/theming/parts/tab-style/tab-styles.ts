@@ -2,8 +2,8 @@ import type { Part } from '../../../agStack/theming/part';
 import { createPart } from '../../../agStack/theming/partImpl';
 import type { BorderValue, ColorValue, DurationValue, LengthValue } from '../../../agStack/theming/themeTypes';
 import { accentColor, backgroundColor, foregroundMix } from '../../../agStack/theming/themeUtils';
-import { tabStyleBaseCSS } from './tab-style-base.css-GENERATED';
-import { tabStyleRolodexCSS } from './tab-style-rolodex.css-GENERATED';
+import tabStyleBaseCSS from './tab-style-base.css';
+import tabStyleRolodexCSS from './tab-style-rolodex.css';
 
 export type TabStyleParams = {
     /**

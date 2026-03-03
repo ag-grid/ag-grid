@@ -8,7 +8,7 @@ import type { ElementParams } from '../../utils/element';
 import { _stopPropagationForAgGrid } from '../../utils/gridEvent';
 import { Component } from '../../widgets/component';
 import type { GridCheckbox } from '../../widgets/gridWidgetTypes';
-import { checkboxCellRendererCSS } from './checkboxCellRenderer.css-GENERATED';
+import checkboxCellRendererCSS from './checkboxCellRenderer.css';
 import type { ICellRenderer, ICellRendererParams } from './iCellRenderer';
 
 export interface ICheckboxCellRendererParams<TData = any, TContext = any>

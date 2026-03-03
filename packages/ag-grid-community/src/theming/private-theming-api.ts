@@ -1,7 +1,7 @@
-import { sharedCSS } from '../agStack/theming/shared/shared.css-GENERATED';
+import sharedCSS from '../agStack/theming/shared/shared.css';
 import { _addAdditionalCss } from '../environment';
 import { _getAllRegisteredModules } from '../modules/moduleRegistry';
-import { coreCSS as oldCoreCss } from './core/core.css-GENERATED';
+import oldCoreCss from './core/core.css';
 
 // This file contains types and utilities required by Theme Builder but not part
 // of the public Theming API

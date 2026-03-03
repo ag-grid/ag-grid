@@ -36,7 +36,7 @@
     },
     "build:types": {
       "executor": "@nx/js:tsc",
-      "dependsOn": ["^build:types", "build:css"],
+      "dependsOn": ["^build:types"],
       "inputs": [
         "{projectRoot}/package.json",
         "{projectRoot}/src/**/*",
@@ -62,23 +62,9 @@
         "production": {}
       }
     },
-    "build:css": {
-      "command": "tsx ./scripts/build-css.ts --package ag-grid-community",
-      "cache": true,
-      "options": {
-        "cwd": "{workspaceRoot}"
-      },
-      "inputs": ["{projectRoot}/src/**/*.css"],
-      "outputs": ["{projectRoot}/**/*.css-GENERATED.ts"],
-      "configurations": {
-        "debug": {
-          "command": "CSS_DEBUG=1 tsx ./scripts/build-css.ts --package ag-grid-community"
-        }
-      }
-    },
     "build:package": {
       "executor": "@nx/esbuild:esbuild",
-      "dependsOn": ["^build", "build:css"],
+      "dependsOn": ["^build"],
       "inputs": [
         "{projectRoot}/package.json",
         "{projectRoot}/src/**/*",
@@ -122,9 +108,7 @@
         "cwd": "{projectRoot}"
       }
     },
-    "lint:depcruise": {
-      "dependsOn": ["build:css"]
-    },
+    "lint:depcruise": {},
     "lint": {
       "dependsOn": ["lint:knip", "lint:depcruise"],
       "command": "eslint && stylelint './src/**/*css'",
@@ -134,7 +118,6 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "dependsOn": ["build:css"],
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}", "{workspaceRoot}/reports/ag-grid-community.xml"],
       "parallelism": false,
       "options": {

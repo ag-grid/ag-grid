@@ -2,6 +2,43 @@ const esbuild = require('esbuild');
 const { umdWrapper } = require('esbuild-plugin-umd-wrapper');
 const fs = require('fs/promises');
 const path = require('path');
+const postcss = require('postcss');
+const cssAutoPrefix = require('autoprefixer');
+const cssNano = require('cssnano');
+const cssImport = require('postcss-import');
+const cssRtl = require('postcss-rtlcss');
+const cssUrl = require('postcss-url');
+
+/** @type {import('esbuild').Plugin} */
+const cssPlugin = {
+    name: 'css-plugin',
+    setup(build) {
+        build.onLoad({ filter: /\.css$/ }, async (args) => {
+            const css = await require('fs').promises.readFile(args.path, 'utf8');
+            const result = await postcss([
+                cssImport(),
+                cssUrl({ url: 'inline' }),
+                cssAutoPrefix(),
+                cssRtl({
+                    ltrPrefix: `:where(.ag-ltr)`,
+                    rtlPrefix: `:where(.ag-rtl)`,
+                    bothPrefix: `:where(.ag-ltr, .ag-rtl)`,
+                }),
+                cssNano({
+                    preset: [
+                        'default',
+                        {
+                            discardComments: true,
+                            normalizeWhitespace: true,
+                            minifySelectors: true,
+                        },
+                    ],
+                }),
+            ]).process(css, { from: args.path, to: args.path });
+            return { contents: result.css, loader: 'text' };
+        });
+    },
+};
 
 const exportedNames = {
     react: 'React',
@@ -94,7 +131,7 @@ if (typeof require === 'undefined') {
     },
 };
 
-const plugins = [];
+const plugins = [cssPlugin];
 let outExtension = {};
 if (process.env.NX_TASK_TARGET_TARGET?.endsWith('umd')) {
     plugins.push(umdWrapperAdaptorPlugin);
