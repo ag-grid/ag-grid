@@ -43,6 +43,7 @@ export default defineConfig(async () => {
         plugins,
         resolve: { alias: aliases },
         build: {
+            target: 'esnext',
             rollupOptions: {
                 input: {
                     main: path.resolve(__dirname, 'index.html'),
