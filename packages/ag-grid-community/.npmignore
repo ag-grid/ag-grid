@@ -28,3 +28,4 @@ coverage
 .swcrc
 osv-scanner.toml
 .snyk
+e2e/umd.test.ts

@@ -1,8 +1,36 @@
 const { join } = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
+const postcss = require('postcss');
+const cssAutoPrefix = require('autoprefixer');
+const cssNano = require('cssnano');
+const cssImport = require('postcss-import');
+const cssRtl = require('postcss-rtlcss');
+const cssUrl = require('postcss-url');
 
-module.exports = ({ production = false, minify = false, styles = true, entry = './src/main-umd-styles.ts' }) => {
-    styles = styles === 'false' ? false : styles;
+const postcssPlugins = [
+    cssImport(),
+    cssUrl({ url: 'inline' }),
+    cssAutoPrefix(),
+    cssRtl({
+        ltrPrefix: ':where(.ag-ltr)',
+        rtlPrefix: ':where(.ag-rtl)',
+        bothPrefix: ':where(.ag-ltr, .ag-rtl)',
+    }),
+    cssNano({
+        preset: [
+            'default',
+            {
+                discardComments: true,
+                normalizeWhitespace: true,
+                minifySelectors: true,
+            },
+        ],
+    }),
+];
+
+module.exports = ({ production = false, minify = false, styles = 'true', entry = './src/main-umd-styles.ts' }) => {
+    styles = styles !== 'false';
+
     const filename = `ag-grid-enterprise${minify ? '.min' : ''}${styles ? '' : '.noStyle'}.js`;
 
     console.log(`filename: ${filename}, minify: ${minify}, styles: ${styles}, entry: ${entry}`);
@@ -40,10 +68,19 @@ module.exports = ({ production = false, minify = false, styles = true, entry = '
         });
     }
 
+    // Source CSS (packages/*/src/**/*.css) → processed text string (default export)
+    rules.push({
+        test: /\.css$/,
+        include: [join(__dirname, 'src')],
+        type: 'asset/source',
+        use: [{ loader: 'postcss-loader', options: { postcssOptions: { plugins: postcssPlugins } } }],
+    });
+
     if (styles) {
-        // styles if styles included..and post process css if minify is enabled
+        // Legacy theme CSS (@ag-grid-community/styles/*.css) → injected as <style> tags
         rules.push({
             test: /\.css$/,
+            exclude: [join(__dirname, 'src')],
             use: [
                 {
                     loader: 'style-loader',
@@ -54,25 +91,8 @@ module.exports = ({ production = false, minify = false, styles = true, entry = '
                     },
                 },
                 'css-loader',
-            ].concat(
-                minify
-                    ? {
-                          loader: 'postcss-loader',
-                          options: {
-                              postcssOptions: {
-                                  plugins: [
-                                      [
-                                          'postcss-preset-env',
-                                          {
-                                              // Options
-                                          },
-                                      ],
-                                  ],
-                              },
-                          },
-                      }
-                    : []
-            ),
+                { loader: 'postcss-loader', options: { postcssOptions: { plugins: postcssPlugins } } },
+            ],
         });
     }
 

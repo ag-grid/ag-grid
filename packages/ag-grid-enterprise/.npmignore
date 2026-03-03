@@ -25,3 +25,4 @@ jest.jsdom-env.cjs
 coverage
 .swcrc
 .snyk
+e2e/umd.test.ts

@@ -28,7 +28,8 @@
         "commands": ["./webpackBuild.sh"]
       },
       "configurations": {
-        "production": {}
+        "production": {},
+        "staging": {}
       },
       "cache": true
     },
@@ -111,6 +112,18 @@
           "sourcemap": false,
           "metafile": false
         }
+      }
+    },
+    "test:e2e": {
+      "executor": "@nx/jest:jest",
+      "dependsOn": ["pack"],
+      "options": {
+        "jestConfig": "{projectRoot}/jest.config.ts",
+        "testPathPattern": ["e2e"]
+      },
+      "configurations": {
+        "production": {},
+        "staging": {}
       }
     },
     "pack": {
