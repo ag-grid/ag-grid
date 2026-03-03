@@ -1289,6 +1289,7 @@ summary.tool-section-header {
     z-index: 20;
 }
 summary.tool-section-header::-webkit-details-marker { display: none; }
+.s3-view-seg { font-size: 11px; }
 .tool-section-chevron {
     display: inline-block;
     font-size: 10px;
