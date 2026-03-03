@@ -56,6 +56,7 @@ type BeanDestroyFunc = Pick<BeanStub<any>, 'addDestroyFunc'>;
 
 // for all controllers that are singletons, they can register here so other parts
 // of the application can access them.
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
     beanName = 'ctrlsSvc' as const;
 

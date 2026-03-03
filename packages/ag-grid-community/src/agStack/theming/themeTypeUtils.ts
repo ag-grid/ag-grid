@@ -29,6 +29,7 @@ export type ParamType = (typeof paramTypes)[number];
 
 /**
  * Return the ParamType for a given param name,
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export const getParamType = memoize((param: string): ParamType => {
     param = param.toLowerCase();
@@ -222,6 +223,7 @@ const paramValidators: Record<ParamType, (value: unknown, param: string, themeLo
         duration: durationValueToCss,
     };
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const paramValueToCss = (param: string, value: unknown, themeLogger: ThemeLogger): string | false => {
     const type = getParamType(param);
     return paramValidators[type](value, param, themeLogger);

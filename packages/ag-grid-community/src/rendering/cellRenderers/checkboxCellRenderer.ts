@@ -30,6 +30,7 @@ const CheckboxCellRendererElement: ElementParams = {
     ],
 };
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class CheckboxCellRenderer extends Component implements ICellRenderer {
     private readonly eCheckbox: GridCheckbox = RefPlaceholder;
     private params: ICheckboxCellRendererParams;

@@ -7,6 +7,7 @@ import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { RowNode } from './rowNode';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _createGlobalRowEvent<T extends AgEventType>(
     rowNode: RowNode,
     gos: GridOptionsService,
@@ -46,6 +47,7 @@ const IGNORED_SIBLING_PROPERTIES = new Set<
     'treeParent',
 ]);
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const _createRowNodeSibling = (rowNode: RowNode, beans: BeanCollection): RowNode => {
     const sibling = new RowNode(beans);
 
@@ -63,7 +65,10 @@ export const _createRowNodeSibling = (rowNode: RowNode, beans: BeanCollection): 
     return sibling;
 };
 
-/** When dragging multiple rows, we want the user to be able to drag to the prev or next in the group if dragging on one of the selected rows. */
+/**
+ * When dragging multiple rows, we want the user to be able to drag to the prev or next in the group if dragging on one of the selected rows.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
 export const _prevOrNextDisplayedRow = (
     rowModel: IRowModel,
     direction: -1 | 1,

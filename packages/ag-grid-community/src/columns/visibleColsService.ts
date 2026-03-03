@@ -26,6 +26,7 @@ function _removeAllFromUnorderedArray<T>(array: T[], toRemove: T[]) {
 }
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class VisibleColsService extends BeanStub implements NamedBean {
     beanName = 'visibleCols' as const;
 

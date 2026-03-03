@@ -11,6 +11,7 @@ import type { IClientSideRowModel } from '../../interfaces/iClientSideRowModel';
 import type { IServerSideRowModel } from '../../interfaces/iServerSideRowModel';
 import type { CellCtrl } from '../cell/cellCtrl';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class RowAutoHeightService extends BeanStub implements NamedBean {
     beanName = 'rowAutoHeight' as const;
 

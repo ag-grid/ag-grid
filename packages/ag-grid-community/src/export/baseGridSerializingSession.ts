@@ -20,6 +20,7 @@ import type {
     RowSpanningAccumulator,
 } from './iGridSerializer';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export abstract class BaseGridSerializingSession<T> implements GridSerializingSession<T> {
     public colModel: ColumnModel;
     private readonly colNames: ColumnNameService;

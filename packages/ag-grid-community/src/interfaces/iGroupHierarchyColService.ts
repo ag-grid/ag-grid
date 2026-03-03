@@ -1,6 +1,7 @@
 import type { AgColumn } from '../entities/agColumn';
 import type { IColumnCollectionService } from './iColumnCollectionService';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IGroupHierarchyColService extends IColumnCollectionService {
     /**
      * Mutates the `target` parameter, adding any virtual columns associated with the given source column, as well as the source column itself (last in the array)

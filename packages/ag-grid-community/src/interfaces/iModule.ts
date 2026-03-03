@@ -16,6 +16,7 @@ type ModuleValidationInvalidResult = {
     message: string;
 };
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type ModuleValidationResult = ModuleValidationValidResult | ModuleValidationInvalidResult;
 
 /** A Module contains all the code related to this feature to enable tree shaking when this module is not used. */
@@ -48,16 +49,25 @@ export interface Module {
     css?: string[];
 }
 
-/** Used to define a module that contains api functions. */
+/**
+ * Used to define a module that contains api functions.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
 export type _ModuleWithApi<TGridApi extends Readonly<Partial<GridApi>>> = Omit<Module, 'rowModels'> & {
     apiFunctions?: { [K in ApiFunctionName & keyof TGridApi]: ApiFunction<K> };
 };
-/** Used to define a module that does not contain api functions. */
+/**
+ * Used to define a module that does not contain api functions.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
 export type _ModuleWithoutApi = Module & {
     apiFunctions?: never;
 };
 
-/** Used by React to set the license key via React context if an enterprise module has been provided. */
+/**
+ * Used by React to set the license key via React context if an enterprise module has been provided.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
 export type _ModuleWithLicenseManager = {
     setLicenseKey: (licenseKey: string) => void;
 };
@@ -294,7 +304,10 @@ type ModuleTypesEquivalent = ValidateTheSame | ValidateTheSame2 extends never ? 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const validateTheSame: ModuleTypesEquivalent = true;
 
-/** INTERNAL: All public and internal module names */
+/**
+ * INTERNAL: All public and internal module names
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
 export type ModuleName = InternalModuleName | CommunityModuleName | EnterpriseModuleName;
 
 /** These are the internal modules that we have mappings for to convert into exported modules */
@@ -334,5 +347,8 @@ export type ResolvableModuleName = Extract<
     | 'SharedTreeData'
 >;
 
-/** These are the types that we can display validations for */
+/**
+ * These are the types that we can display validations for
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
 export type ValidationModuleName = CommunityModuleName | EnterpriseModuleName | ResolvableModuleName;

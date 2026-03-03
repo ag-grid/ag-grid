@@ -11,6 +11,7 @@ import { agAbstractLabelCSS } from './agAbstractLabel.css-GENERATED';
 import type { AgLabelParams, LabelAlignment } from './agFieldParams';
 
 type AgAbstractLabelEvent = AgComponentEvent;
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export abstract class AgAbstractLabel<
     TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,

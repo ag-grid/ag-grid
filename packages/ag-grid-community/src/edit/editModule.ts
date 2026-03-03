@@ -31,7 +31,7 @@ import { SingleCellEditStrategy } from './strategy/singleCellEditStrategy';
 import { getCellEditorInstances } from './utils/editors';
 
 /**
- * @internal
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export const EditCoreModule: _ModuleWithApi<_EditGridApi<any>> = {
     moduleName: 'EditCore',

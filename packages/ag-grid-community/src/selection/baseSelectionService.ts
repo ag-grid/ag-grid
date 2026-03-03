@@ -28,6 +28,7 @@ import { CheckboxSelectionComponent } from './checkboxSelectionComponent';
 import { RowRangeSelectionContext } from './rowRangeSelectionContext';
 import { SelectAllFeature, isCheckboxSelection } from './selectAllFeature';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export abstract class BaseSelectionService extends BeanStub {
     protected isRowSelectable?: IsRowSelectable;
     protected selectionCtx: RowRangeSelectionContext;

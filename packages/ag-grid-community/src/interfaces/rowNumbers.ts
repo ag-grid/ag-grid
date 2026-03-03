@@ -60,6 +60,7 @@ export interface RowNumbersOptions
     resizable?: boolean;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowNumbersService extends IColumnCollectionService {
     setupForHeader(comp: HeaderComp): void;
     handleMouseDownOnCell(cell: CellPosition, mouseEvent: MouseEvent): boolean;
