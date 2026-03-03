@@ -145,21 +145,20 @@ shared across all per-file ignore operations in this section.
 
 Click the header to collapse/expand. Header shows:
 - Severity badge, vuln ID (linked to Snyk), title
-- Path/file count badge (`N paths · M files`)
-- **Via:** dep tags — click a tag to uncheck all dep paths via that dep (skip-by-dep)
-- **Skip ✕** — greys out the card and excludes it from "Add All" operations
+- Path/dep count badge (`N paths · M deps`)
+- **Via:** dep tags — click a tag to hide all dep groups for that dep (skip-by-dep)
+- **Skip ✕** — greys out the card and excludes it from "Mark All" operations
 
-Card body is sub-grouped by `.snyk` file. Each file subgroup shows:
-- **Fill reasons dropdown** — preset reason strings; selecting one fills all reason
-  inputs in that file group and resets the select to the placeholder
-- One checkbox row per dep path (uncheck to exclude from add operations)
-- Live **YAML preview** (`<details>` block) — updates as reasons are typed or expiry
-  changes; shows only the paths for that specific file
-- Copy button for the YAML preview
-- **Add to `<file>.snyk`** — validates all checked paths have reasons, then calls
-  `/add-snyk-ignore` for each. If an entry for `(vulnId, depPath)` already exists in
-  the file it is **updated in-place** (reason + expires replaced, created preserved).
-  The button re-enables after 2 s to allow re-adding with different values.
+Card body is sub-grouped by **top-level dep** (e.g. `lodash`, `webpack`). Each dep group shows:
+- Dep name (monospace, accent colour) and path count
+- **✓ In .snyk** badge if all paths in that dep are already ignored
+- **Reason input** — a single text field shared across all paths for that dep
+- **Preset dropdown** — preset reason strings; selecting one fills the reason input
+- One checkbox row per dep path (each row shows the `.snyk` file badge and the dep chain)
+- **Add N path(s) to .snyk** — validates reason and expiry, then calls `/add-snyk-ignore`
+  for each checked path in sequence. Paths may span multiple `.snyk` files; the button
+  fans out across all of them automatically. On success, all added rows convert to
+  already-ignored display and the reason row / button are removed from the DOM.
 
 #### Global actions
 
@@ -254,7 +253,8 @@ patch: {}
   them after, so the user's expanded/collapsed state survives a data refresh
 - **`skipState`** — module-level `{ vulns: Set, deps: Set }` persists across re-renders
   so skip selections survive review state updates
-- **Global path index** — each dep-path row in Section 3 gets a unique `globalIdx` so
-  `reason-s3-N` input IDs are stable and `handleAddAllSnykIgnore` can read them by index
+- **Global path index** — each dep-path row in Section 3 still gets a unique `globalIdx`
+  (stored on the path object) for future use, though current DOM reading uses element
+  content directly rather than index-based IDs
 - **CSS variables** — `--c-bg`, `--c-surface`, `--c-border`, `--c-accent`, `--c-text`,
   `--c-text-muted`, `--c-fix`, `--c-critical`, `--c-warn` etc. defined in `:root`

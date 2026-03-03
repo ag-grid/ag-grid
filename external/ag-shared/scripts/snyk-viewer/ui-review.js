@@ -40,6 +40,9 @@
             deps: new Set(),   // skipped top-level dep names
         };
 
+        // ── Section 3 view mode: 'by-dep' (default) | 'by-file' ──
+        let s3ViewMode = 'by-dep';
+
         function semverLt(a, b) {
             const pa = a.split('.').map(Number), pb = b.split('.').map(Number);
             for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
@@ -376,49 +379,59 @@
             for (const [id, { vuln, paths }] of ignoreVulns) {
                 const skipped = skipState.vulns.has(id);
                 const startIdx = globalIdx;
-                // Group paths by snyk file
-                const byFile = new Map();
+                // Group paths by top-level dep
+                const byDep = new Map();
                 for (const path of paths) {
-                    if (!byFile.has(path.snykFile)) byFile.set(path.snykFile, []);
+                    if (!byDep.has(path.topLevelDep)) byDep.set(path.topLevelDep, []);
                     const idx = globalIdx++;
-                    byFile.get(path.snykFile).push({ ...path, idx });
+                    byDep.get(path.topLevelDep).push({ ...path, idx });
                 }
-                vulnCards.push({ id, vuln, skipped, byFile, startIdx });
+                vulnCards.push({ id, vuln, skipped, byDep, startIdx });
             }
 
             // Sort by severity (critical→low), resolved cards to bottom
             const SEV_ORDER = { critical: 0, high: 1, medium: 2, low: 3 };
             vulnCards.sort((a, b) => {
-                const aResolved = [...a.byFile.values()].every(fps => fps.every(p => p.alreadyIgnored));
-                const bResolved = [...b.byFile.values()].every(fps => fps.every(p => p.alreadyIgnored));
+                const aResolved = [...a.byDep.values()].every(dps => dps.every(p => p.alreadyIgnored));
+                const bResolved = [...b.byDep.values()].every(dps => dps.every(p => p.alreadyIgnored));
                 if (aResolved !== bResolved) return aResolved ? 1 : -1;
                 return (SEV_ORDER[sevClass(a.vuln)] ?? 4) - (SEV_ORDER[sevClass(b.vuln)] ?? 4);
             });
 
-            const vulnCardsHtml = vulnCards.map(({ id, vuln, skipped, byFile }, vi) => {
-                // Unique top-level deps for skip-by-dep tags
-                const topDeps = new Set();
-                for (const [, fps] of byFile) for (const p of fps) topDeps.add(p.topLevelDep);
-                const depTagsHtml = [...topDeps].filter(Boolean).map(dep => {
+            const vulnCardsHtml = vulnCards.map(({ id, vuln, skipped, byDep }, vi) => {
+                // Top-level dep tags for skip-by-dep
+                const depTagsHtml = [...byDep.keys()].filter(Boolean).map(dep => {
                     const active = skipState.deps.has(dep);
                     return `<button class="skip-dep-tag${active ? ' skipped' : ''}" data-action="skip-dep" data-dep="${esc(dep)}">${esc(dep)} &#x2715;</button>`;
                 }).join('');
 
-                // Total path count and file count for header badge
+                // Total path count and dep count for header badge
                 let totalPaths = 0;
                 let resolvedPaths = 0;
-                for (const [, fps] of byFile) {
-                    totalPaths += fps.length;
-                    resolvedPaths += fps.filter(p => p.alreadyIgnored).length;
+                for (const [, dps] of byDep) {
+                    totalPaths += dps.length;
+                    resolvedPaths += dps.filter(p => p.alreadyIgnored).length;
                 }
-                const fileCount = byFile.size;
+                const depCount = byDep.size;
                 const resolvedPart = resolvedPaths > 0 ? ` &middot; <span class="s3-resolved-count">${resolvedPaths} resolved</span>` : '';
-                const countBadge = `<span class="s3-path-count-badge">${totalPaths} path${totalPaths !== 1 ? 's' : ''} &middot; ${fileCount} file${fileCount !== 1 ? 's' : ''}${resolvedPart}</span>`;
+                const countBadge = `<span class="s3-path-count-badge">${totalPaths} path${totalPaths !== 1 ? 's' : ''} &middot; ${depCount} dep${depCount !== 1 ? 's' : ''}${resolvedPart}</span>`;
 
-                const allPathsIgnored = [...byFile.values()].every(fps => fps.every(p => p.alreadyIgnored));
+                const allPathsIgnored = [...byDep.values()].every(dps => dps.every(p => p.alreadyIgnored));
 
+                // ── By-file view: build byFile from byDep ──
+                const byFile = new Map();
+                for (const [, dps] of byDep) {
+                    for (const path of dps) {
+                        if (!byFile.has(path.snykFile)) byFile.set(path.snykFile, []);
+                        byFile.get(path.snykFile).push(path);
+                    }
+                }
                 const fileGroupsHtml = [...byFile.entries()].map(([snykFile, fps]) => {
                     const allFileIgnored = fps.every(p => p.alreadyIgnored);
+                    const pendingCount = fps.filter(p => !p.alreadyIgnored).length;
+                    const safeFileId = snykFile.replace(/[^a-z0-9]/gi, '-');
+                    const groupId = `s3-file-${vi}-${safeFileId}`;
+                    const reasonInputId = `file-reason-${vi}-${safeFileId}`;
                     const rowsHtml = fps.map(path => {
                         if (path.alreadyIgnored) {
                             return `<div class="path-checkbox-row path-already-ignored" data-top-dep="${esc(path.topLevelDep)}">
@@ -435,50 +448,81 @@
                         const depSkipped = skipState.deps.has(path.topLevelDep);
                         return `<div class="path-checkbox-row${depSkipped ? ' dep-skipped' : ''}" data-top-dep="${esc(path.topLevelDep)}">
                             <input type="checkbox" class="path-cb"${depSkipped ? '' : ' checked'}
-                                data-card="${cardId}" data-idx="${path.idx}" data-vuln-idx="${vi}" data-vuln-id="${esc(id)}">
+                                data-card="${cardId}" data-vuln-idx="${vi}" data-vuln-id="${esc(id)}">
                             <span class="path-deppath">${esc(path.depPath)}</span>
-                            <input type="text" class="ignore-form-input batch-ignore-reason"
-                                id="reason-${cardId}-${path.idx}"
-                                data-card="${cardId}" data-idx="${path.idx}" data-vuln-idx="${vi}"
-                                data-snyk-file="${esc(snykFile)}"
-                                placeholder="Reason&#x2026;">
                         </div>`;
                     }).join('');
-                    const fileId = snykFile.replace(/[^a-z0-9]/gi, '-');
-                    const pendingPaths = fps.filter(p => !p.alreadyIgnored).map(p => ({ vulnId: id, depPath: p.depPath, idx: p.idx }));
-                    const fileYaml = buildGroupedYamlPreview(pendingPaths, [], expiry);
-                    return `<details class="batch-file-subgroup${allFileIgnored ? ' batch-file-subgroup--done' : ''}" data-snyk-file="${esc(snykFile)}">
-                        <summary class="batch-file-subgroup-heading">
-                            <span class="batch-file-subgroup-chevron">&#x25BC;</span>
-                            ${esc(snykFile)}
-                            <span class="s3-file-path-count">${fps.length} path${fps.length !== 1 ? 's' : ''}</span>
-                            ${allFileIgnored ? '<span class="batch-file-done-badge">&#x2713; In .snyk</span>' : ''}
-                        </summary>
-                        ${!allFileIgnored ? `<div class="prefill-row">
-                            <select class="ignore-form-input preset-select cat-a-preset"
-                                data-card="${cardId}" data-vuln-idx="${vi}" data-snyk-file="${esc(snykFile)}">
-                                <option value="">Preset&#x2026;</option>
+                    return `<div class="s3-dep-group${allFileIgnored ? ' s3-dep-group--done' : ''}" data-snyk-file="${esc(snykFile)}" id="${esc(groupId)}">
+                        <div class="s3-dep-group-header">
+                            <span class="s3-dep-group-name">${esc(snykFile)}</span>
+                            <span class="s3-dep-group-count">${fps.length} path${fps.length !== 1 ? 's' : ''}</span>
+                            ${allFileIgnored ? '<span class="already-ignored-badge">&#x2713; In .snyk</span>' : ''}
+                        </div>
+                        ${!allFileIgnored ? `<div class="s3-dep-group-reason-row">
+                            <input class="s3-dep-reason ignore-form-input" id="${esc(reasonInputId)}"
+                                placeholder="Reason for all paths in this file\u2026">
+                            <select class="s3-dep-preset ignore-form-input" data-target-input="${esc(reasonInputId)}">
+                                <option value="">Preset\u2026</option>
                                 ${presetOptionsHtml}
                             </select>
-                            <input type="text" class="ignore-form-input prefill-text"
-                                data-card="${cardId}" data-vuln-idx="${vi}" data-snyk-file="${esc(snykFile)}"
-                                placeholder="Prefill reason&#x2026;">
-                            <button class="btn btn-sm btn-outline" data-action="prefill-reasons"
-                                data-card="${cardId}" data-vuln-idx="${vi}" data-snyk-file="${esc(snykFile)}">Apply to all</button>
                         </div>` : ''}
                         ${rowsHtml}
-                        ${!allFileIgnored ? `<details class="batch-yaml-details">
-                            <summary class="batch-yaml-summary">
-                                ${esc(snykFile)} YAML preview
-                                <button class="btn btn-sm btn-outline" data-action="copy-file-yaml"
-                                    data-vuln-idx="${vi}" data-snyk-file="${esc(snykFile)}">&#x2398; Copy</button>
-                            </summary>
-                            <pre class="yaml-snippet" id="batch-yaml-${cardId}-${vi}-${fileId}">${esc(fileYaml)}</pre>
-                        </details>
-                        <button class="btn btn-sm btn-accent" data-action="add-file-snyk-ignore"
-                            data-card="${cardId}" data-vuln-idx="${vi}" data-snyk-file="${esc(snykFile)}"
-                            data-vuln-id="${esc(id)}">Add to ${esc(snykFile)}</button>` : ''}
-                    </details>`;
+                        ${!allFileIgnored ? `<button class="btn btn-sm btn-accent s3-dep-add-btn"
+                            data-action="add-file-group"
+                            data-snyk-file="${esc(snykFile)}" data-vuln-id="${esc(id)}" data-group-id="${esc(groupId)}">
+                            Add ${pendingCount} path${pendingCount !== 1 ? 's' : ''} to .snyk
+                        </button>` : ''}
+                    </div>`;
+                }).join('');
+
+                const depGroupsHtml = [...byDep.entries()].map(([depName, dps]) => {
+                    const allDepIgnored = dps.every(p => p.alreadyIgnored);
+                    const pendingCount = dps.filter(p => !p.alreadyIgnored).length;
+                    const safeDepId = depName.replace(/[^a-z0-9]/gi, '-');
+                    const groupId = `s3-dep-${vi}-${safeDepId}`;
+                    const reasonInputId = `dep-reason-${vi}-${safeDepId}`;
+                    const rowsHtml = dps.map(path => {
+                        if (path.alreadyIgnored) {
+                            return `<div class="path-checkbox-row path-already-ignored" data-top-dep="${esc(depName)}">
+                                <span class="path-already-ignored-check">&#x2713;</span>
+                                <span class="s3-file-badge">${esc(path.snykFile)}</span>
+                                <span class="path-deppath">${esc(path.depPath)}</span>
+                                <input type="text" class="ignore-form-input already-ignored-reason-input"
+                                    value="${esc(path.existingReason || '')}" placeholder="Reason&hellip;"
+                                    data-snyk-file="${esc(path.snykFile)}" data-vuln-id="${esc(id)}" data-dep-path="${esc(path.depPath)}">
+                                <button class="btn btn-sm btn-outline" data-action="update-ignore-reason"
+                                    data-snyk-file="${esc(path.snykFile)}" data-vuln-id="${esc(id)}" data-dep-path="${esc(path.depPath)}">Update</button>
+                                <span class="already-ignored-badge">Already in .snyk</span>
+                            </div>`;
+                        }
+                        return `<div class="path-checkbox-row" data-top-dep="${esc(depName)}">
+                            <input type="checkbox" class="path-cb" checked
+                                data-card="${cardId}" data-vuln-idx="${vi}" data-vuln-id="${esc(id)}">
+                            <span class="s3-file-badge">${esc(path.snykFile)}</span>
+                            <span class="path-deppath">${esc(path.depPath)}</span>
+                        </div>`;
+                    }).join('');
+                    return `<div class="s3-dep-group${allDepIgnored ? ' s3-dep-group--done' : ''}" data-dep="${esc(depName)}" id="${esc(groupId)}">
+                        <div class="s3-dep-group-header">
+                            <span class="s3-dep-group-name">${esc(depName)}</span>
+                            <span class="s3-dep-group-count">${dps.length} path${dps.length !== 1 ? 's' : ''}</span>
+                            ${allDepIgnored ? '<span class="already-ignored-badge">&#x2713; In .snyk</span>' : ''}
+                        </div>
+                        ${!allDepIgnored ? `<div class="s3-dep-group-reason-row">
+                            <input class="s3-dep-reason ignore-form-input" id="${esc(reasonInputId)}"
+                                placeholder="Reason for ${esc(depName)}\u2026">
+                            <select class="s3-dep-preset ignore-form-input" data-target-input="${esc(reasonInputId)}">
+                                <option value="">Preset\u2026</option>
+                                ${presetOptionsHtml}
+                            </select>
+                        </div>` : ''}
+                        ${rowsHtml}
+                        ${!allDepIgnored ? `<button class="btn btn-sm btn-accent s3-dep-add-btn"
+                            data-action="add-dep-group"
+                            data-dep="${esc(depName)}" data-vuln-id="${esc(id)}" data-group-id="${esc(groupId)}">
+                            Add ${pendingCount} path${pendingCount !== 1 ? 's' : ''} to .snyk
+                        </button>` : ''}
+                    </div>`;
                 }).join('');
 
                 return `<details class="rq-card s3-vuln-card${skipped ? ' s3-card-skipped' : ''}${allPathsIgnored ? ' s3-card-all-ignored' : ''}" id="s3-card-${vi}" data-vuln-id="${esc(id)}">
@@ -498,7 +542,7 @@
                     </summary>
                     ${skipped
                         ? '<div class="s3-skipped-overlay">Skipped</div>'
-                        : `<div class="rq-card-body">${fileGroupsHtml}</div>`}
+                        : `<div class="rq-card-body">${s3ViewMode === 'by-dep' ? depGroupsHtml : fileGroupsHtml}</div>`}
                 </details>`;
             }).join('');
 
@@ -515,8 +559,12 @@
                     <span class="tool-section-chevron">&#x25BC;</span>
                     <span class="tool-section-num">3</span>
                     <span class="tool-section-title">Snyk Ignores</span>
-                    <span class="tool-section-desc">Per-vuln cards sub-grouped by .snyk file.</span>
+                    <span class="tool-section-desc">${s3ViewMode === 'by-dep' ? 'Per-vuln cards grouped by top-level dep.' : 'Per-vuln cards grouped by .snyk file.'}</span>
                     <span class="tool-section-badge">${ignoreVulns.size}</span>
+                    <button class="btn btn-sm btn-outline s3-view-toggle" data-action="toggle-s3-view"
+                        title="${s3ViewMode === 'by-dep' ? 'Switch to group by .snyk file' : 'Switch to group by top-level dep'}">
+                        ${s3ViewMode === 'by-dep' ? 'By File' : 'By Dep'}
+                    </button>
                 </summary>
                 <div class="tool-section-body">
                     ${expiryHtml}
@@ -635,33 +683,6 @@
             </div>`;
         }
 
-        // ── YAML builders ──
-        function buildGroupedYamlPreview(batchItems, reasons, expiry) {
-            const byVuln = new Map();
-            batchItems.forEach(function (item, localIdx) {
-                if (!byVuln.has(item.vulnId)) byVuln.set(item.vulnId, []);
-                const reasonIdx = (item.idx !== undefined) ? item.idx : localIdx;
-                byVuln.get(item.vulnId).push({ depPath: item.depPath, idx: reasonIdx });
-            });
-            const created = new Date().toISOString().slice(0, 10) + 'T00:00:00.000Z';
-            const e = expiry || '<expiry>';
-            const blocks = [];
-            for (const [vulnId, paths] of byVuln.entries()) {
-                let block = '  ' + vulnId + ':';
-                for (const { depPath, idx } of paths) {
-                    const r = (typeof reasons === 'object' && reasons !== null)
-                        ? (Array.isArray(reasons) ? (reasons[idx] || '') : (reasons[idx] || ''))
-                        : '';
-                    block += '\n    - \'' + (depPath || '<dep-path>') + '\':' +
-                             '\n        reason: >-\n          ' + (r || '<reason>') +
-                             '\n        expires: ' + e +
-                             '\n        created: ' + created;
-                }
-                blocks.push(block);
-            }
-            return blocks.join('\n');
-        }
-
         // ── Progress bar ──
         // applyProgress: update the DOM elements only (call with pre-computed counts)
         function applyProgress(reviewed) {
@@ -726,44 +747,14 @@
         function attachEvents() {
             const container = document.getElementById('rq-content');
 
-            // Rebuild YAML preview for a specific vuln+file combo
-            function rebuildFileYaml(vulnIdx, snykFile) {
-                const cardId = 's3';
-                const fileId = snykFile.replace(/[^a-z0-9]/gi, '-');
-                const yamlEl = document.getElementById(`batch-yaml-${cardId}-${vulnIdx}-${fileId}`);
-                if (!yamlEl) return;
-                const expiry = document.getElementById(`expiry-${cardId}`)?.value || '';
-                const card = document.getElementById(`s3-card-${vulnIdx}`);
-                if (!card) return;
-                const vulnId = card.dataset.vulnId || '';
-                const subgroup = card.querySelector(`.batch-file-subgroup[data-snyk-file="${CSS.escape(snykFile)}"]`);
-                if (!subgroup) return;
-                const rows = subgroup.querySelectorAll('.path-checkbox-row');
-                const filePaths = [];
-                rows.forEach(row => {
-                    const cb = row.querySelector('input[type="checkbox"]');
-                    if (!cb || !cb.checked) return;
-                    const idx = parseInt(cb.dataset.idx);
-                    if (isNaN(idx)) return;
-                    const depPathSpan = row.querySelector('.path-deppath');
-                    filePaths.push({ vulnId, depPath: depPathSpan?.textContent || '', idx });
-                });
-                const reasons = {};
-                filePaths.forEach(p => {
-                    const el = document.getElementById(`reason-s3-${p.idx}`);
-                    if (el) reasons[p.idx] = el.value;
-                });
-                yamlEl.textContent = buildGroupedYamlPreview(filePaths, reasons, expiry);
-            }
-
             function updateCardCountBadge(card) {
                 const badge = card.querySelector('.s3-path-count-badge');
                 if (!badge) return;
                 const totalPaths = card.querySelectorAll('.path-checkbox-row').length;
                 const resolvedPaths = card.querySelectorAll('.path-checkbox-row.path-already-ignored').length;
-                const fileCount = card.querySelectorAll('.batch-file-subgroup').length;
+                const depCount = card.querySelectorAll('.s3-dep-group').length;
                 const resolvedPart = resolvedPaths > 0 ? ` &middot; <span class="s3-resolved-count">${resolvedPaths} resolved</span>` : '';
-                badge.innerHTML = `${totalPaths} path${totalPaths !== 1 ? 's' : ''} &middot; ${fileCount} file${fileCount !== 1 ? 's' : ''}${resolvedPart}`;
+                badge.innerHTML = `${totalPaths} path${totalPaths !== 1 ? 's' : ''} &middot; ${depCount} dep${depCount !== 1 ? 's' : ''}${resolvedPart}`;
                 const allResolved = totalPaths > 0 && resolvedPaths === totalPaths;
                 let checkBadge = card.querySelector('.s3-all-resolved-badge');
                 if (allResolved && !checkBadge) {
@@ -776,70 +767,123 @@
                 }
             }
 
-            async function handleAddFileSnykIgnore(btn) {
-                const cardId = btn.dataset.card;
-                const vulnIdx = parseInt(btn.dataset.vulnIdx);
-                const snykFile = btn.dataset.snykFile;
-                const vulnId = btn.dataset.vulnId;
-                const expiryInput = document.getElementById('expiry-' + cardId);
-                const expires = expiryInput?.value?.trim() || '';
+            async function handleAddDepGroup(btn) {
+                const { groupId, vulnId } = btn.dataset;
+                const group = document.getElementById(groupId);
+                const expires = document.getElementById('expiry-s3')?.value?.trim() || '';
+                const reason = group?.querySelector('.s3-dep-reason')?.value?.trim() || '';
                 if (!expires) { alert('Please enter an expiry date.'); return; }
-
-                const card = document.getElementById(`s3-card-${vulnIdx}`);
-                const subgroup = card?.querySelector(`.batch-file-subgroup[data-snyk-file="${CSS.escape(snykFile)}"]`);
-                if (!subgroup) return;
+                if (!reason)  { alert('Please enter a reason.'); return; }
 
                 const toAdd = [];
-                subgroup.querySelectorAll('.path-checkbox-row').forEach(row => {
+                group.querySelectorAll('.path-checkbox-row:not(.path-already-ignored)').forEach(row => {
                     const cb = row.querySelector('input[type="checkbox"]');
-                    if (!cb || !cb.checked) return;
-                    const idx = parseInt(cb.dataset.idx);
-                    const depPathSpan = row.querySelector('.path-deppath');
-                    const depPath = depPathSpan?.textContent || '';
-                    const reason = document.getElementById(`reason-${cardId}-${idx}`)?.value?.trim() || '';
-                    toAdd.push({ vulnId, depPath, reason, snykFile });
+                    if (!cb?.checked) return;
+                    toAdd.push({
+                        snykFile: row.querySelector('.s3-file-badge')?.textContent || '',
+                        depPath:  row.querySelector('.path-deppath')?.textContent  || '',
+                    });
                 });
-
-                if (!toAdd.length) { alert('No checked paths to add.'); return; }
-                const emptyReason = toAdd.find(p => !p.reason);
-                if (emptyReason) { alert('Please enter a reason for all checked paths.'); return; }
+                if (!toAdd.length) { alert('No checked paths.'); return; }
 
                 btn.disabled = true;
                 for (let i = 0; i < toAdd.length; i++) {
-                    const p = toAdd[i];
                     btn.textContent = `Adding ${i + 1}/${toAdd.length}\u2026`;
-                    try {
-                        const r = await fetch('/add-snyk-ignore', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ snykFile: p.snykFile, vulnId: p.vulnId, path: p.depPath, reason: p.reason, expires }),
-                        });
-                        const data = await r.json();
-                        if (!data.ok) { btn.disabled = false; btn.textContent = `Add to ${snykFile}`; alert('Failed: ' + data.error); return; }
-                    } catch (err) {
-                        btn.disabled = false; btn.textContent = `Add to ${snykFile}`;
-                        alert('Request failed: ' + err.message); return;
+                    const { snykFile, depPath } = toAdd[i];
+                    const r = await fetch('/add-snyk-ignore', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ snykFile, vulnId, path: depPath, reason, expires }),
+                    });
+                    const data = await r.json();
+                    if (!data.ok) {
+                        btn.disabled = false;
+                        btn.textContent = `Add ${toAdd.length} path${toAdd.length !== 1 ? 's' : ''} to .snyk`;
+                        alert('Failed: ' + data.error); return;
                     }
                 }
-                btn.textContent = '\u2713 Updated';
+                btn.textContent = '\u2713 Added';
 
-                // Update localAddedPatterns so buildSections() treats these paths as alreadyIgnored
-                for (const p of toAdd) {
-                    if (!localAddedPatterns[p.snykFile]) localAddedPatterns[p.snykFile] = {};
-                    if (!localAddedPatterns[p.snykFile][p.vulnId]) localAddedPatterns[p.snykFile][p.vulnId] = [];
-                    const arr = localAddedPatterns[p.snykFile][p.vulnId];
-                    if (!arr.find(e => e.path === p.depPath)) arr.push({ path: p.depPath, reason: p.reason });
+                for (const { snykFile, depPath } of toAdd) {
+                    if (!localAddedPatterns[snykFile]) localAddedPatterns[snykFile] = {};
+                    if (!localAddedPatterns[snykFile][vulnId]) localAddedPatterns[snykFile][vulnId] = [];
+                    localAddedPatterns[snykFile][vulnId].push({ path: depPath, reason });
                 }
                 recomputeProgress();
 
-                // Convert successfully-added rows to the resolved display (editable reason + Update button)
-                subgroup.querySelectorAll('.path-checkbox-row:not(.path-already-ignored)').forEach(row => {
-                    const cb = row.querySelector('.path-cb');
-                    if (!cb || !cb.checked) return;
-                    const topDep = row.dataset.topDep || '';
-                    const depPath = row.querySelector('.path-deppath')?.textContent || '';
-                    const idx = cb.dataset.idx;
-                    const reason = document.getElementById(`reason-${cardId}-${idx}`)?.value?.trim() || '';
+                group.querySelectorAll('.path-checkbox-row:not(.path-already-ignored)').forEach(row => {
+                    const cb = row.querySelector('input[type="checkbox"]');
+                    if (!cb?.checked) return;
+                    const snykFile = row.querySelector('.s3-file-badge')?.textContent || '';
+                    const depPath  = row.querySelector('.path-deppath')?.textContent  || '';
+                    const topDep   = row.dataset.topDep || '';
+                    row.className = 'path-checkbox-row path-already-ignored';
+                    row.dataset.topDep = topDep;
+                    row.innerHTML = `<span class="path-already-ignored-check">&#x2713;</span>`
+                        + `<span class="s3-file-badge">${esc(snykFile)}</span>`
+                        + `<span class="path-deppath">${esc(depPath)}</span>`
+                        + `<input type="text" class="ignore-form-input already-ignored-reason-input" value="${esc(reason)}" placeholder="Reason&hellip;" data-snyk-file="${esc(snykFile)}" data-vuln-id="${esc(vulnId)}" data-dep-path="${esc(depPath)}">`
+                        + `<button class="btn btn-sm btn-outline" data-action="update-ignore-reason" data-snyk-file="${esc(snykFile)}" data-vuln-id="${esc(vulnId)}" data-dep-path="${esc(depPath)}">Update</button>`
+                        + `<span class="already-ignored-badge">Already in .snyk</span>`;
+                });
+
+                group.querySelector('.s3-dep-group-reason-row')?.remove();
+                group.classList.add('s3-dep-group--done');
+                btn.remove();
+
+                const card = group.closest('.s3-vuln-card');
+                if (card) {
+                    updateCardCountBadge(card);
+                    card.querySelector('.s3-card-header')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            }
+
+            async function handleAddFileGroup(btn) {
+                const { groupId, vulnId, snykFile } = btn.dataset;
+                const group = document.getElementById(groupId);
+                const expires = document.getElementById('expiry-s3')?.value?.trim() || '';
+                const reason = group?.querySelector('.s3-dep-reason')?.value?.trim() || '';
+                if (!expires) { alert('Please enter an expiry date.'); return; }
+                if (!reason)  { alert('Please enter a reason.'); return; }
+
+                const toAdd = [];
+                group.querySelectorAll('.path-checkbox-row:not(.path-already-ignored)').forEach(row => {
+                    const cb = row.querySelector('input[type="checkbox"]');
+                    if (!cb?.checked) return;
+                    toAdd.push({ depPath: row.querySelector('.path-deppath')?.textContent || '' });
+                });
+                if (!toAdd.length) { alert('No checked paths.'); return; }
+
+                btn.disabled = true;
+                for (let i = 0; i < toAdd.length; i++) {
+                    btn.textContent = `Adding ${i + 1}/${toAdd.length}\u2026`;
+                    const { depPath } = toAdd[i];
+                    const r = await fetch('/add-snyk-ignore', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ snykFile, vulnId, path: depPath, reason, expires }),
+                    });
+                    const data = await r.json();
+                    if (!data.ok) {
+                        btn.disabled = false;
+                        btn.textContent = `Add ${toAdd.length} path${toAdd.length !== 1 ? 's' : ''} to .snyk`;
+                        alert('Failed: ' + data.error); return;
+                    }
+                }
+                btn.textContent = '\u2713 Added';
+
+                for (const { depPath } of toAdd) {
+                    if (!localAddedPatterns[snykFile]) localAddedPatterns[snykFile] = {};
+                    if (!localAddedPatterns[snykFile][vulnId]) localAddedPatterns[snykFile][vulnId] = [];
+                    localAddedPatterns[snykFile][vulnId].push({ path: depPath, reason });
+                }
+                recomputeProgress();
+
+                group.querySelectorAll('.path-checkbox-row:not(.path-already-ignored)').forEach(row => {
+                    const cb = row.querySelector('input[type="checkbox"]');
+                    if (!cb?.checked) return;
+                    const depPath  = row.querySelector('.path-deppath')?.textContent || '';
+                    const topDep   = row.dataset.topDep || '';
                     row.className = 'path-checkbox-row path-already-ignored';
                     row.dataset.topDep = topDep;
                     row.innerHTML = `<span class="path-already-ignored-check">&#x2713;</span>`
@@ -849,36 +893,24 @@
                         + `<span class="already-ignored-badge">Already in .snyk</span>`;
                 });
 
-                subgroup.removeAttribute('open');
-                subgroup.classList.add('batch-file-subgroup--done');
-                const heading = subgroup.querySelector('.batch-file-subgroup-heading');
-                if (heading && !heading.querySelector('.batch-file-done-badge')) {
-                    const badge = document.createElement('span');
-                    badge.className = 'batch-file-done-badge';
-                    badge.textContent = '\u2713 Added';
-                    heading.appendChild(badge);
+                group.querySelector('.s3-dep-group-reason-row')?.remove();
+                group.classList.add('s3-dep-group--done');
+                btn.remove();
+
+                const card = group.closest('.s3-vuln-card');
+                if (card) {
+                    updateCardCountBadge(card);
+                    card.querySelector('.s3-card-header')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 }
-
-                updateCardCountBadge(card);
-
-                // If all paths across all subgroups are now resolved, mark the whole card
-                const cardAllIgnored = !card.querySelector('.path-checkbox-row:not(.path-already-ignored)');
-                if (cardAllIgnored) {
-                    card.classList.add('s3-card-all-ignored');
-                    card.removeAttribute('open');
-                }
-
-                card.querySelector('.s3-card-header')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                setTimeout(() => { btn.disabled = false; btn.textContent = `Add to ${snykFile}`; }, 2000);
             }
 
-            // Preset dropdown — fills the prefill text box, not the reason inputs directly
+            // Preset dropdown — fills the dep-group reason input
             container.addEventListener('change', function (e) {
-                if (!e.target.classList.contains('preset-select')) return;
+                if (!e.target.classList.contains('s3-dep-preset')) return;
                 const val = e.target.value;
                 if (!val) return;
-                const prefillInput = e.target.closest('.prefill-row')?.querySelector('.prefill-text');
-                if (prefillInput) prefillInput.value = val;
+                const input = document.getElementById(e.target.dataset.targetInput);
+                if (input) { input.value = val; input.dispatchEvent(new Event('input')); }
                 e.target.value = '';
             });
 
@@ -888,18 +920,7 @@
                 e.stopPropagation();
                 const action = btn.dataset.action;
 
-                if (action === 'prefill-reasons') {
-                    const vulnIdx = btn.dataset.vulnIdx;
-                    const snykFile = btn.dataset.snykFile;
-                    const prefillInput = btn.closest('.prefill-row')?.querySelector('.prefill-text');
-                    const val = prefillInput?.value?.trim() || '';
-                    if (!val) return;
-                    const card = document.getElementById(`s3-card-${vulnIdx}`);
-                    const subgroup = card?.querySelector(`.batch-file-subgroup[data-snyk-file="${CSS.escape(snykFile)}"]`);
-                    if (!subgroup) return;
-                    subgroup.querySelectorAll('.batch-ignore-reason').forEach(inp => { inp.value = val; });
-                    if (vulnIdx !== undefined && snykFile) rebuildFileYaml(parseInt(vulnIdx), snykFile);
-                } else if (action === 'select-version') {
+                if (action === 'select-version') {
                     const version = btn.dataset.version;
                     const row = btn.closest('.dep-card-file-row');
                     if (!row) return;
@@ -920,10 +941,23 @@
                     handleRemoveDep(btn);
                 } else if (action === 'apply-resolution') {
                     handleApplyResolution(btn);
+                } else if (action === 'toggle-s3-view') {
+                    s3ViewMode = s3ViewMode === 'by-dep' ? 'by-file' : 'by-dep';
+                    const openSections = new Set(
+                        [...document.querySelectorAll('.tool-section')].map((el, i) => el.open ? i : -1).filter(i => i !== -1)
+                    );
+                    const openCards = new Set(
+                        [...document.querySelectorAll('.s3-vuln-card')].map((el, i) => el.open ? i : -1).filter(i => i !== -1)
+                    );
+                    renderReviewQueueTab();
+                    document.querySelectorAll('.tool-section').forEach((el, i) => { if (openSections.has(i)) el.open = true; });
+                    document.querySelectorAll('.s3-vuln-card').forEach((el, i) => { if (openCards.has(i)) el.open = true; });
                 } else if (action === 'update-ignore-reason') {
                     handleUpdateIgnoreReason(btn);
-                } else if (action === 'add-file-snyk-ignore') {
-                    handleAddFileSnykIgnore(btn);
+                } else if (action === 'add-dep-group') {
+                    handleAddDepGroup(btn);
+                } else if (action === 'add-file-group') {
+                    handleAddFileGroup(btn);
                 } else if (action === 'add-snyk-ignore') {
                     handleAddSnykIgnore(btn);
                 } else if (action === 'update-snyk') {
@@ -949,35 +983,20 @@
                     const dep = btn.dataset.dep;
                     if (skipState.deps.has(dep)) skipState.deps.delete(dep);
                     else skipState.deps.add(dep);
-                    // Toggle checkboxes for this dep and collect affected (vulnIdx, snykFile) pairs
-                    const toRebuild = new Set();
-                    container.querySelectorAll(`.path-checkbox-row[data-top-dep="${CSS.escape(dep)}"]`).forEach(row => {
-                        const cb = row.querySelector('input[type="checkbox"]');
-                        if (cb) {
-                            cb.checked = !skipState.deps.has(dep);
-                            const vi = cb.dataset.vulnIdx;
-                            const sf = row.closest('.batch-file-subgroup')?.dataset.snykFile;
-                            if (vi !== undefined && sf) toRebuild.add(`${vi}\0${sf}`);
-                        }
-                    });
-                    // Toggle button style
-                    container.querySelectorAll(`[data-action="skip-dep"][data-dep="${CSS.escape(dep)}"]`).forEach(b => {
-                        b.classList.toggle('skipped', skipState.deps.has(dep));
-                    });
-                    // Rebuild YAML previews for affected vuln+file pairs
-                    toRebuild.forEach(key => {
-                        const sep = key.indexOf('\0');
-                        rebuildFileYaml(parseInt(key.slice(0, sep)), key.slice(sep + 1));
-                    });
-                } else if (action === 'copy-file-yaml') {
-                    const vi = btn.dataset.vulnIdx;
-                    const snykFile = btn.dataset.snykFile;
-                    const fileId = snykFile.replace(/[^a-z0-9]/gi, '-');
-                    const yamlEl = document.getElementById(`batch-yaml-s3-${vi}-${fileId}`);
-                    if (yamlEl) navigator.clipboard.writeText(yamlEl.textContent).then(() => {
-                        const orig = btn.textContent; btn.textContent = '\u2713 Copied';
-                        setTimeout(() => { btn.textContent = orig; }, 1500);
-                    });
+                    const isSkipped = skipState.deps.has(dep);
+                    if (s3ViewMode === 'by-dep') {
+                        container.querySelectorAll(`.s3-dep-group[data-dep="${CSS.escape(dep)}"]`)
+                            .forEach(g => g.classList.toggle('s3-dep-group--skipped', isSkipped));
+                    } else {
+                        container.querySelectorAll(`.path-checkbox-row[data-top-dep="${CSS.escape(dep)}"]`)
+                            .forEach(row => {
+                                row.classList.toggle('dep-skipped', isSkipped);
+                                const cb = row.querySelector('input[type="checkbox"]');
+                                if (cb && !row.classList.contains('path-already-ignored')) cb.checked = !isSkipped;
+                            });
+                    }
+                    container.querySelectorAll(`[data-action="skip-dep"][data-dep="${CSS.escape(dep)}"]`)
+                        .forEach(b => b.classList.toggle('skipped', isSkipped));
                 } else if (action === 'resolve') {
                     const ids = btn.dataset.ids.split(',').filter(Boolean);
                     applyDecision(ids, 'resolved', { resolution: btn.dataset.resolution, note: btn.dataset.note });
@@ -993,35 +1012,6 @@
                     if (yaml) navigator.clipboard.writeText(yaml.textContent).then(() => {
                         const orig = btn.textContent; btn.textContent = '\u2713 Copied';
                         setTimeout(() => { btn.textContent = orig; }, 1500);
-                    });
-                }
-            });
-
-            // Live YAML preview updates
-            container.addEventListener('input', function (e) {
-                if (e.target.classList.contains('batch-ignore-reason')) {
-                    const vulnIdx = parseInt(e.target.dataset.vulnIdx);
-                    const snykFile = e.target.dataset.snykFile;
-                    if (!isNaN(vulnIdx) && snykFile) rebuildFileYaml(vulnIdx, snykFile);
-                }
-                if (e.target.classList.contains('batch-ignore-expiry')) {
-                    const cardId = e.target.dataset.card;
-                    if (!cardId) return;
-                    // Rebuild all file YAML previews
-                    container.querySelectorAll('[id^="batch-yaml-s3-"]').forEach(yamlEl => {
-                        const m = yamlEl.id.match(/^batch-yaml-s3-(\d+)-(.+)$/);
-                        if (!m) return;
-                        const vi = parseInt(m[1]);
-                        const fileId = m[2];
-                        // Find snyk file from matching subgroup
-                        const card = document.getElementById(`s3-card-${vi}`);
-                        if (!card) return;
-                        card.querySelectorAll('.batch-file-subgroup').forEach(sg => {
-                            const sf = sg.dataset.snykFile;
-                            if (sf && sf.replace(/[^a-z0-9]/gi, '-') === fileId) {
-                                rebuildFileYaml(vi, sf);
-                            }
-                        });
                     });
                 }
             });

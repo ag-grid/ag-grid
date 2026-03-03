@@ -1415,6 +1415,22 @@ details.tool-section:not([open]) .tool-section-chevron {
 }
 .s3-near-body { padding: 8px; }
 
+/* ── Section 3: Dep groups ── */
+.s3-dep-group { margin-bottom: 10px; border: 1px solid var(--c-border); border-radius: var(--radius); background: rgba(255,255,255,0.02); padding: 10px 12px; }
+.s3-dep-group--done { border-color: rgba(76,175,130,0.3); background: rgba(76,175,130,0.03); }
+.s3-dep-group--skipped { display: none; }
+.s3-dep-group-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.s3-dep-group-name { font-family: monospace; font-size: 12px; font-weight: 700; color: var(--c-accent); }
+.s3-dep-group-count { font-size: 10px; color: var(--c-text-muted); }
+.s3-dep-group-reason-row { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+.s3-dep-reason { flex: 1; min-width: 0; }
+.s3-dep-preset { flex: 0 0 auto; max-width: 160px; cursor: pointer; }
+.s3-dep-add-btn { display: block; margin-top: 8px; margin-left: auto; }
+.s3-file-badge { font-family: monospace; font-size: 10px; color: var(--c-text-muted); background: rgba(255,255,255,0.05); border: 1px solid var(--c-border); border-radius: 3px; padding: 1px 5px; white-space: nowrap; flex-shrink: 0; }
+
+/* ── Section 3: View toggle button ── */
+.s3-view-toggle { margin-left: auto; flex-shrink: 0; }
+
 /* ── Section 3: Shared expiry row ── */
 .s3-expiry-row {
     display: flex;
@@ -1506,12 +1522,6 @@ details.s3-vuln-card:not([open]) .s3-card-chevron {
     border-top: 1px solid var(--c-border);
     justify-content: flex-end;
 }
-.batch-file-subgroup > .btn {
-    display: block;
-    margin-left: auto;
-    width: fit-content;
-}
-
 /* ── Skip controls ── */
 .skip-btn {
     padding: 2px 8px;
@@ -1574,11 +1584,6 @@ details.s3-vuln-card:not([open]) .s3-card-chevron {
     word-break: break-word;
     min-width: 0;
 }
-.path-checkbox-row .batch-ignore-reason {
-    width: 240px;
-    flex-shrink: 0;
-}
-
 /* ── Category A: Batch ignore section ── */
 .batch-ignore-section {
     border: 1px solid rgba(76,175,130,0.2);
@@ -1652,37 +1657,6 @@ details.s3-vuln-card:not([open]) .s3-card-chevron {
     margin-bottom: 12px;
 }
 
-/* ── Per-.snyk-file subgroup inside a vuln card ── */
-.batch-file-subgroup {
-    margin-bottom: 10px;
-}
-.batch-file-subgroup-heading {
-    font-family: monospace;
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--c-accent);
-    padding: 4px 0 6px;
-    margin-bottom: 6px;
-    cursor: pointer;
-    list-style: none;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    user-select: none;
-}
-.batch-file-subgroup-heading::-webkit-details-marker { display: none; }
-.batch-file-subgroup-chevron {
-    font-size: 9px;
-    color: var(--c-text-muted);
-    transition: transform 0.15s;
-    flex-shrink: 0;
-}
-.batch-file-subgroup[open] > .batch-file-subgroup-heading .batch-file-subgroup-chevron {
-    transform: rotate(0deg);
-}
-.batch-file-subgroup:not([open]) > .batch-file-subgroup-heading .batch-file-subgroup-chevron {
-    transform: rotate(-90deg);
-}
 /* ── Already-ignored path rows ── */
 .path-already-ignored {
     opacity: 0.6;
@@ -1723,87 +1697,6 @@ details.s3-vuln-card:not([open]) .s3-card-chevron {
 .s3-card-all-ignored > .s3-card-header .s3-card-chevron {
     color: var(--c-fix);
 }
-
-.batch-file-subgroup--done > .batch-file-subgroup-heading {
-    color: var(--c-fix);
-}
-.batch-file-done-badge {
-    font-size: 10px;
-    font-weight: 700;
-    color: var(--c-fix);
-    background: rgba(76, 175, 130, 0.12);
-    border: 1px solid rgba(76, 175, 130, 0.3);
-    border-radius: 3px;
-    padding: 1px 5px;
-    margin-left: auto;
-    flex-shrink: 0;
-}
-.batch-path-row {
-    background: rgba(255,255,255,0.02);
-    border: 1px solid var(--c-border);
-    border-radius: 6px;
-    padding: 8px 10px;
-    margin-bottom: 6px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-.batch-path-deppath {
-    font-family: monospace;
-    font-size: 11px;
-    color: var(--c-text);
-    word-break: break-word;
-}
-
-/* ── Prefill row: preset dropdown + text box + apply button ── */
-.prefill-row {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-bottom: 8px;
-}
-.prefill-row .cat-a-preset {
-    flex: 0 0 auto;
-    width: auto;
-    min-width: 120px;
-    max-width: 220px;
-    margin-bottom: 0;
-    cursor: pointer;
-}
-.prefill-row .prefill-text {
-    flex: 1;
-    min-width: 0;
-}
-
-/* ── Cat A: preset select inside each file card ── */
-.cat-a-preset {
-    width: 100%;
-    margin-bottom: 8px;
-    cursor: pointer;
-}
-
-/* ── Collapsible YAML preview inside group ── */
-.batch-yaml-details {
-    margin: 8px 0;
-}
-.batch-yaml-summary {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 11px;
-    color: var(--c-text-muted);
-    list-style: none;
-    user-select: none;
-    padding: 4px 0;
-}
-.batch-yaml-summary::-webkit-details-marker { display: none; }
-.batch-yaml-summary::before {
-    content: '\25B6';
-    font-size: 9px;
-    transition: transform 0.15s;
-}
-details[open] > .batch-yaml-summary::before { transform: rotate(90deg); }
 
 /* ── Cat A: shared expiry row (above file cards) ── */
 .cat-a-expiry-row {
