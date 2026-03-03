@@ -560,11 +560,11 @@
                     <span class="tool-section-num">3</span>
                     <span class="tool-section-title">Snyk Ignores</span>
                     <span class="tool-section-desc">${s3ViewMode === 'by-dep' ? 'Per-vuln cards grouped by top-level dep.' : 'Per-vuln cards grouped by .snyk file.'}</span>
-                    <span class="tool-section-badge">${ignoreVulns.size}</span>
                     <button class="btn btn-sm btn-outline s3-view-toggle" data-action="toggle-s3-view"
                         title="${s3ViewMode === 'by-dep' ? 'Switch to group by .snyk file' : 'Switch to group by top-level dep'}">
                         ${s3ViewMode === 'by-dep' ? 'By File' : 'By Dep'}
                     </button>
+                    <span class="tool-section-badge">${ignoreVulns.size}</span>
                 </summary>
                 <div class="tool-section-body">
                     ${expiryHtml}

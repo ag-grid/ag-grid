@@ -252,12 +252,13 @@
       }
     },
     "snyk:view": {
-      "command": "node ./external/ag-shared/scripts/snyk-viewer/index.mjs {args.file} --port {args.port}",
+      "command": "node ./external/ag-shared/scripts/snyk-viewer/index.mjs {args.file} --port {args.port} --name \"{args.name}\"",
       "dependsOn": ["snyk:test:json"],
       "options": {
         "cwd": "{workspaceRoot}",
         "file": "tmp/snyk.json",
-        "port": 4615
+        "port": 4615,
+        "name": "AG Grid"
       },
       "configurations": {
         "open": {

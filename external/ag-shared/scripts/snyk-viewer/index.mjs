@@ -9,10 +9,13 @@ import { exec, spawn } from 'child_process';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 function parseArgs(args) {
-    const result = { port: 3456, file: null, open: false };
+    const result = { port: 3456, file: null, open: false, name: null };
     for (let i = 0; i < args.length; i++) {
         if (args[i] === '--port' && args[i + 1]) {
             result.port = parseInt(args[i + 1], 10);
+            i++;
+        } else if (args[i] === '--name' && args[i + 1]) {
+            result.name = args[i + 1];
             i++;
         } else if (args[i] === '--open') {
             result.open = true;
@@ -300,6 +303,9 @@ try {
 } catch (err) {
     console.error('Could not read ui.html:', err.message);
     process.exit(1);
+}
+if (args.name) {
+    uiHtml = uiHtml.replaceAll('Snyk Vulnerability Viewer', `${args.name}: Snyk Vulnerability Viewer`);
 }
 
 function readBody(req) {
