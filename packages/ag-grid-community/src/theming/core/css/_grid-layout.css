@@ -77,8 +77,6 @@
 }
 
 .ag-row {
-    /* Rows need a solid background to avoid being transparent when dragging */
-    background-color: var(--ag-data-background-color);
     width: 100%;
     height: var(--ag-row-height);
     border-bottom: var(--ag-row-border);
@@ -86,6 +84,19 @@
     &.ag-row-editing-invalid {
         background-color: var(--ag-full-row-edit-invalid-background-color);
     }
+}
+
+:where(.ag-row:not(.ag-header-row)) {
+    background-color: var(--ag-data-background-color);
+    --ag-internal-row-overlay-color: transparent;
+    --ag-internal-row-overlay-image: none;
+}
+
+/* Rows need a solid background to avoid being transparent when dragging */
+.ag-row:not(.ag-header-row) > .ag-grid-pinned-left-cells,
+.ag-row:not(.ag-header-row) > .ag-grid-pinned-right-cells,
+.ag-row:not(.ag-header-row) > .ag-grid-scrolling-cells {
+    background-color: inherit;
 }
 
 /* Hide the border of the last last row when there is no gap between the row and
@@ -269,32 +280,45 @@
 /* row selection and hover colors are added on a ::before pseudo element so
       that they overlay on top of the alternating row backgrounds rather than
       replacing them */
-.ag-row-selected::before {
-    content: '';
-    background-color: var(--ag-selected-row-background-color);
-    display: block;
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
+.ag-row-selected,
+.ag-row-hover:not(.ag-full-width-row),
+.ag-row-hover.ag-full-width-row.ag-row-group {
+    .ag-grid-pinned-left-cells::before,
+    .ag-grid-pinned-right-cells::before,
+    .ag-grid-scrolling-cells::before {
+        content: '';
+        display: block;
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background-color: var(--ag-internal-row-overlay-color);
+        background-image: var(--ag-internal-row-overlay-image);
+    }
 }
 
-.ag-row-hover:not(.ag-full-width-row)::before,
-.ag-row-hover.ag-full-width-row.ag-row-group::before {
-    content: '';
-    background-color: var(--ag-row-hover-color);
-    display: block;
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
+.ag-row.ag-row-selected {
+    --ag-internal-row-overlay-color: var(--ag-selected-row-background-color);
 }
 
-.ag-row-hover.ag-row-selected::before {
-    background-color: var(--ag-row-hover-color);
+.ag-row-hover:not(.ag-full-width-row),
+.ag-row-hover.ag-full-width-row.ag-row-group {
+    --ag-internal-row-overlay-color: var(--ag-row-hover-color);
+}
+
+/* stylelint-disable no-descending-specificity */
+
+.ag-row-hover.ag-row-selected {
+    --ag-internal-row-overlay-color: var(--ag-row-hover-color);
 
     /* apply hover with a background-image so that it overlays on top of the
-        existing background-color */
-    background-image: linear-gradient(var(--ag-selected-row-background-color), var(--ag-selected-row-background-color));
+    existing background-color */
+    --ag-internal-row-overlay-image: linear-gradient(
+        var(--ag-selected-row-background-color),
+        var(--ag-selected-row-background-color)
+    );
 }
+
+/* stylelint-enable no-descending-specificity */
 
 /* stylelint-disable-next-line ag/no-low-performance-key-selector -- Requires a
     slow selector because the child might be a custom component so we can't

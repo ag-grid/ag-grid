@@ -301,17 +301,6 @@
     z-index: 2;
     overflow: hidden;
     flex: 0 0 auto;
-    background-color: var(--ag-data-background-color);
-
-    /* FIXME: we should set ag-row-odd-pinned-cells to avoid the descendant selector */
-    :where(.ag-row-odd) & {
-        background-color: var(--ag-odd-row-background-color);
-    }
-
-    /* FIXME: we should set eg ag-header-pinned-cells to avoid the descendant selector */
-    :where(.ag-header) & {
-        background-color: var(--ag-header-background-color);
-    }
 }
 
 .ag-grid-pinned-left-cells {
