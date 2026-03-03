@@ -57,8 +57,8 @@ Quick-reference for all AI agent commands, skills, sub-agents, and rules availab
 
 | Type  | Name          | Invoke             | What it does                                       |
 | ----- | ------------- | ------------------ | -------------------------------------------------- |
-| Skill | 🔵 `remember`  | `/remember` (user) | Save branch context or project learnings as memory |
-| Skill | 🔵 `recall`    | `/recall` (user)   | Load branch context, browse project memories       |
+| Skill | 🔵 `remember` | `/remember` (user) | Save branch context or project learnings as memory |
+| Skill | 🔵 `recall`   | `/recall` (user)   | Load branch context, browse project memories       |
 
 ## Documentation Review
 
