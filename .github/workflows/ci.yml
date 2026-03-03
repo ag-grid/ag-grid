@@ -344,6 +344,105 @@ jobs:
           path: |
             reports/
 
+  doc_example_tests:
+    runs-on: ubuntu-latest
+    name: Doc Example Tests
+    needs: init
+    if: needs.init.outputs.build_type == 'pr'
+    env:
+      NX_BASE: ${{ needs.init.outputs.nx_base }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup
+        id: setup
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: ro
+
+      - name: Detect changed examples
+        id: detect
+        run: |
+          CHANGED_FILES=$(git diff --name-only "$NX_BASE" -- 'documentation/ag-grid-docs/src/content/docs/' || true)
+
+          # Filter for _examples/ changes and extract unique page names
+          PAGES=$(echo "$CHANGED_FILES" | grep '/_examples/' | sed 's|documentation/ag-grid-docs/src/content/docs/||' | cut -d'/' -f1 | sort -u | grep -v '^$')
+
+          if [ -z "$PAGES" ]; then
+            echo "No example changes detected"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          PAGE_COUNT=$(echo "$PAGES" | wc -l | tr -d ' ')
+          echo "Detected $PAGE_COUNT changed page(s): $(echo $PAGES | tr '\n' ', ')"
+
+          if [ "$PAGE_COUNT" -gt 20 ]; then
+            echo "Too many pages changed ($PAGE_COUNT > 20), skipping (nightly covers this)"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Comma-separated page list for QUICK_BUILD_PAGES
+          QUICK_PAGES=$(echo "$PAGES" | tr '\n' ',' | sed 's/,$//')
+          echo "quick_pages=$QUICK_PAGES" >> $GITHUB_OUTPUT
+
+          # Extract unique example directories for Playwright test patterns
+          EXAMPLE_DIRS=$(echo "$CHANGED_FILES" | grep '/_examples/' | sed 's|documentation/ag-grid-docs/src/content/docs/||' | cut -d'/' -f1-3 | sort -u | tr '\n' ' ')
+          echo "test_patterns=$EXAMPLE_DIRS" >> $GITHUB_OUTPUT
+
+          echo "has_changes=true" >> $GITHUB_OUTPUT
+
+      - name: Build affected doc pages
+        if: steps.detect.outputs.has_changes == 'true'
+        env:
+          QUICK_BUILD_PAGES: ${{ steps.detect.outputs.quick_pages }}
+        run: yarn nx run ag-grid-docs:build -c staging
+
+      - name: Start preview server
+        if: steps.detect.outputs.has_changes == 'true'
+        run: |
+          cd documentation/ag-grid-docs
+          npx astro preview --port 4611 &
+          SERVER_READY=false
+          for i in $(seq 1 60); do
+            if curl -s -o /dev/null -w "%{http_code}" http://localhost:4611 2>/dev/null | grep -qE "200|301|302"; then
+              echo "Server is ready"
+              SERVER_READY=true
+              break
+            fi
+            echo "Waiting for server... ($i)"
+            sleep 2
+          done
+          if [ "$SERVER_READY" != "true" ]; then
+            echo "ERROR: Preview server failed to start within 120 seconds"
+            exit 1
+          fi
+
+      - name: Install Playwright browsers
+        if: steps.detect.outputs.has_changes == 'true'
+        working-directory: documentation/ag-grid-docs
+        run: npx playwright install --with-deps chromium
+
+      - name: Run example tests
+        if: steps.detect.outputs.has_changes == 'true'
+        env:
+          FRAMEWORK: typescript
+          BASE_URL: http://localhost:4611
+        working-directory: documentation/ag-grid-docs
+        run: npx playwright test --project=chromium ${{ steps.detect.outputs.test_patterns }}
+
+      - name: Persist test results
+        if: always() && steps.detect.outputs.has_changes == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-doc-examples
+          path: |
+            reports/
+
   fw_pkg_test:
     runs-on: ubuntu-24.04
     name: Framework Package Tests (${{ matrix.framework }})
@@ -376,7 +475,7 @@ jobs:
 
   report:
     runs-on: ubuntu-24.04
-    needs: [ init, test, e2e, format_lint_build, docs, calc_matrix, fw_pkg_test, sonar_community, sonar_enterprise ]
+    needs: [ init, test, e2e, format_lint_build, docs, doc_example_tests, calc_matrix, fw_pkg_test, sonar_community, sonar_enterprise ]
     if: cancelled() != true && github.event.pull_request.draft == false
     permissions:
       contents: write
@@ -441,6 +540,8 @@ jobs:
           elif [ "${{ needs.format_lint_build.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
           elif [ "${{ needs.docs.result }}" == "failure" ] ; then
+            WORKFLOW_STATUS="failure"
+          elif [ "${{ needs.doc_example_tests.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
           elif [ "${{ needs.fw_pkg_test.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
@@ -521,6 +622,7 @@ jobs:
                     "FW_Pkg": "${{ needs.fw_pkg_test.result }}",
                     "e2e": "${{ needs.e2e.result }}",
                     "Docs": "${{ needs.docs.result }}",
+                    "DocExamples": "${{ needs.doc_example_tests.result }}",
                     "SonarCommunity": "${{ needs.sonar_community.result }}",
                     "SonarEnterprise": "${{ needs.sonar_enterprise.result }}"
                 }
