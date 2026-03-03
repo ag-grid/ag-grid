@@ -64,17 +64,11 @@
         function buildSections() {
             const decisions = localRS.decisions;
 
-            // Mark resolved vulns that reappeared as reopened
-            const activeIds = new Set(allVulnEntries.map(e => e.vuln.id));
-            for (const [id, dec] of Object.entries(decisions)) {
-                if (dec.status === 'resolved' && activeIds.has(id)) {
-                    decisions[id] = { ...dec, status: 'reopened' };
-                }
-            }
-
             // Section 1: Dep groups — Map: depName → { depName, vulns: Map<id,{id,vuln}>, files: Map<pkgPath,version> }
             const depGroups = new Map();
             for (const { vuln, project } of allVulnEntries) {
+                const dec = decisions[vuln.id];
+                if (dec?.status === 'resolved' || dec?.status === 'skipped') continue;
                 const topDep = vuln.from?.[1] || '';
                 if (!topDep) continue;
                 const depName = stripVer(topDep);
@@ -89,6 +83,8 @@
             // Section 2: Resolution groups — Map: pkgName → { fixVersion, items: [{id,vuln,entries}] }
             const resGroups = new Map();
             for (const { vuln, project } of allVulnEntries) {
+                const dec = decisions[vuln.id];
+                if (dec?.status === 'resolved' || dec?.status === 'skipped') continue;
                 const fix = sameMajorFixVersion(vuln);
                 if (!fix) continue;
                 const pkg = vuln.name || vuln.packageName || '';
@@ -111,7 +107,7 @@
             for (const { vuln, project } of allVulnEntries) {
                 const id = vuln.id;
                 const decision = decisions[id];
-                if (decision?.status === 'resolved') continue;
+                if (decision?.status === 'resolved' || decision?.status === 'skipped') continue;
 
                 // Near-ignored check
                 const near = getNear(vuln, project);

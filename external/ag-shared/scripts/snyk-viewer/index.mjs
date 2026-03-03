@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { createServer } from 'http';
 import { readFileSync, writeFileSync, mkdirSync, unlinkSync, readdirSync, renameSync, existsSync, statSync } from 'fs';
-import { resolve, dirname } from 'path';
+import { resolve, dirname, sep } from 'path';
 import { fileURLToPath } from 'url';
 import jsYaml from 'js-yaml';
 import { exec, spawn } from 'child_process';
@@ -191,7 +191,7 @@ function findSharedExpiry(rootDir) {
 function addSnykIgnoreEntry(snykFile, vulnId, depPath, reason, expires) {
     const rootDir = process.cwd();
     const absPath = resolve(rootDir, snykFile);
-    const rootPrefix = rootDir + '/';
+    const rootPrefix = rootDir + sep;
     if ((!absPath.startsWith(rootPrefix) && absPath !== resolve(rootDir, '.snyk')) || !snykFile.endsWith('.snyk')) {
         throw new Error('Invalid .snyk file path');
     }
@@ -398,7 +398,7 @@ const server = createServer((req, res) => {
             try {
                 const { updates } = JSON.parse(body);
                 const rootDir = process.cwd();
-                const rootPrefix = rootDir + '/';
+                const rootPrefix = rootDir + sep;
                 let updatedCount = 0;
                 for (const { snykFile, vulnId, oldPath, newPath } of (updates || [])) {
                     if (typeof snykFile !== 'string' || !snykFile.endsWith('.snyk')) continue;
@@ -498,7 +498,7 @@ const server = createServer((req, res) => {
                 const { packageJsonPath, dep, version, field } = JSON.parse(body);
                 const rootDir = process.cwd();
                 const absPath = resolve(rootDir, packageJsonPath);
-                const rootPrefix = rootDir + '/';
+                const rootPrefix = rootDir + sep;
                 if (!absPath.startsWith(rootPrefix) || !packageJsonPath.endsWith('package.json')) {
                     throw new Error('Invalid packageJsonPath');
                 }
@@ -536,7 +536,7 @@ const server = createServer((req, res) => {
                 const { packageJsonPath, dep, field } = JSON.parse(body);
                 const rootDir = process.cwd();
                 const absPath = resolve(rootDir, packageJsonPath);
-                const rootPrefix = rootDir + '/';
+                const rootPrefix = rootDir + sep;
                 if (!absPath.startsWith(rootPrefix) || !packageJsonPath.endsWith('package.json')) {
                     throw new Error('Invalid packageJsonPath');
                 }
@@ -624,7 +624,7 @@ const server = createServer((req, res) => {
         try {
             const rootDir = process.cwd();
             const absPath = resolve(rootDir, file);
-            const rootPrefix = rootDir + '/';
+            const rootPrefix = rootDir + sep;
             if ((!absPath.startsWith(rootPrefix) && absPath !== resolve(rootDir, 'package.json')) || !file.endsWith('package.json')) {
                 throw new Error('Invalid file path');
             }
