@@ -243,7 +243,7 @@
       }
     },
     "snyk:test:json": {
-      "command": "npx snyk test --yarn-workspaces --dev --strict-out-of-sync=false --severity-threshold=high --exclude=.nx,project.json,dist,.claude --remote-repo-url=https://github.com/ag-grid/ag-grid --json > tmp/snyk.json; true",
+      "command": "mkdir -p tmp && { npx snyk test --yarn-workspaces --dev --strict-out-of-sync=false --severity-threshold=high --exclude=.nx,project.json,dist,.claude --remote-repo-url=https://github.com/ag-grid/ag-grid --json > tmp/snyk.json; code=$?; [ $code -le 1 ]; }",
       "cache": true,
       "inputs": ["{workspaceRoot}/yarn.lock"],
       "outputs": ["{workspaceRoot}/tmp/snyk.json"],
