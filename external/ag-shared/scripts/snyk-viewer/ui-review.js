@@ -43,6 +43,9 @@
         // ── Section 3 view mode: 'by-dep' (default) | 'by-file' ──
         let s3ViewMode = 'by-dep';
 
+        // ── Section 3 near-panel open state ──
+        let nearPanelOpen = true;
+
         function semverLt(a, b) {
             const pa = a.split('.').map(Number), pb = b.split('.').map(Number);
             for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
@@ -355,7 +358,7 @@
                             data-updates="${esc(JSON.stringify(allNearUpdates))}">Update All .snyk Files</button>`
                     : '';
                 const nearGroupsHtml = [...nearItems.entries()].map(([sf, items]) => renderCatDGroup(sf, items)).join('');
-                nearHtml = `<details class="s3-near-panel" open>
+                nearHtml = `<details class="s3-near-panel"${nearPanelOpen ? ' open' : ''}>
                     <summary class="s3-near-summary">
                         <span>&#x26A1; Outdated versions &#x2014; stale .snyk paths</span>
                         <span class="s3-near-count">${nearItems.size} file${nearItems.size !== 1 ? 's' : ''}</span>
@@ -1087,6 +1090,7 @@
                     const openCards = new Set(
                         [...document.querySelectorAll('.s3-vuln-card')].map((el, i) => el.open ? i : -1).filter(i => i !== -1)
                     );
+                    nearPanelOpen = document.querySelector('.s3-near-panel')?.open ?? nearPanelOpen;
                     renderReviewQueueTab();
                     document.querySelectorAll('.tool-section').forEach((el, i) => { if (openSections.has(i)) el.open = true; });
                     document.querySelectorAll('.s3-vuln-card').forEach((el, i) => { if (openCards.has(i)) el.open = true; });
@@ -1121,6 +1125,7 @@
                     if (!vulnId) return;
                     if (skipState.vulns.has(vulnId)) skipState.vulns.delete(vulnId);
                     else skipState.vulns.add(vulnId);
+                    nearPanelOpen = document.querySelector('.s3-near-panel')?.open ?? nearPanelOpen;
                     renderReviewQueueTab();
                 } else if (action === 'skip-dep') {
                     const dep = btn.dataset.dep;
@@ -1341,6 +1346,7 @@
             );
             return fetch('/data').then(r => r.json()).then(data => {
                 ignorePatternsByFile = data.ignorePatternsByFile || {};
+                nearPanelOpen = document.querySelector('.s3-near-panel')?.open ?? nearPanelOpen;
                 renderReviewQueueTab();
                 document.querySelectorAll('.tool-section').forEach((el, i) => { if (openSectionIndices.has(i)) el.open = true; });
                 document.getElementById('rq-resolved-section')?.classList.add('open');
@@ -1401,6 +1407,7 @@
                     for (const [id, decision] of Object.entries(updates)) {
                         localRS.decisions[id] = { ...decision, timestamp: ts };
                     }
+                    nearPanelOpen = document.querySelector('.s3-near-panel')?.open ?? nearPanelOpen;
                     renderReviewQueueTab();
                 } else {
                     alert('Failed to save: ' + data.error);
