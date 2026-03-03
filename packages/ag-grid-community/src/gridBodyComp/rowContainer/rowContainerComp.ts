@@ -105,6 +105,7 @@ export class RowContainerComp extends Component {
     private readonly name: RowContainerName;
     private readonly options: RowContainerOptions;
     private readonly hostElement?: HTMLElement;
+    private readonly viewportElement?: HTMLElement;
 
     private rowCompsNoSpan: { [id: RowCtrlInstanceId]: RowComp } = {};
     private rowCompsWithSpan: { [id: RowCtrlInstanceId]: RowComp } = {};
@@ -115,11 +116,12 @@ export class RowContainerComp extends Component {
     private lastPlacedElement: HTMLElement | null;
     private initialised = false;
 
-    constructor(params?: { name: string; hostElement?: HTMLElement }) {
+    constructor(params?: { name: string; hostElement?: HTMLElement; viewportElement?: HTMLElement }) {
         super();
         this.name = params?.name as RowContainerName;
         this.options = _getRowContainerOptions(this.name);
         this.hostElement = params?.hostElement;
+        this.viewportElement = params?.viewportElement;
     }
 
     public postConstruct(): void {
@@ -139,26 +141,46 @@ export class RowContainerComp extends Component {
         this.initialiseComp();
     }
 
-    private getGridViewportFromParent(): HTMLElement | null {
+    private getGridViewportFromController(): HTMLElement | null {
+        const gridBodyCtrl = this.beans.ctrlsSvc.get('gridBodyCtrl');
+        return gridBodyCtrl?.eGridViewport ?? null;
+    }
+
+    private getGridViewportFromParentComponent(): HTMLElement | null {
         const parentComp = this.getParentComponent<Component>();
-        if (!parentComp) {
-            return null;
+        return parentComp?.getGui().querySelector('.ag-grid-viewport') ?? null;
+    }
+
+    private getGridViewportFromParentChain(start: HTMLElement | null): HTMLElement | null {
+        let current: HTMLElement | null = start;
+        while (current) {
+            if (current.classList.contains('ag-grid-viewport')) {
+                return current;
+            }
+            current = current.parentElement;
         }
-        return parentComp.getGui().querySelector('.ag-grid-viewport');
+        return null;
     }
 
     private initialiseComp(pinnedRowsParent?: HTMLElement): void {
-        if (this.initialised) {
+        if (this.initialised || !this.isAlive()) {
+            return;
+        }
+
+        const eGridViewport =
+            this.viewportElement ??
+            this.getGridViewportFromController() ??
+            this.getGridViewportFromParentChain(this.eContainer) ??
+            this.getGridViewportFromParentComponent();
+        const needsExternalViewport = !!pinnedRowsParent || this.name === 'scrollingCenter';
+        if (needsExternalViewport && !eGridViewport) {
+            window.requestAnimationFrame(() => this.initialiseComp(pinnedRowsParent));
             return;
         }
 
         let eContainerForRows = this.eContainer;
         let eSpannedContainerForRows: HTMLElement | undefined = this.eSpannedContainer;
-        let eViewportForCtrl =
-            (this.name === 'scrollingCenter'
-                ? (this.eContainer.closest('.ag-grid-viewport') as HTMLElement | null) ??
-                  this.getGridViewportFromParent()
-                : this.eViewport) ?? this.eContainer;
+        let eViewportForCtrl = (this.name === 'scrollingCenter' ? eGridViewport : this.eViewport) ?? this.eContainer;
 
         if (pinnedRowsParent && isFlattenedPinnedRowContainer(this.name)) {
             this.flattenedPinnedContainer = true;
@@ -167,8 +189,7 @@ export class RowContainerComp extends Component {
             // rowgroup when flattened.
             const shouldRenderSpannedRows = !!this.options.getSpannedRowCtrls && !!this.beans.gos.get('enableCellSpan');
             eSpannedContainerForRows = shouldRenderSpannedRows ? eContainerForRows : undefined;
-            eViewportForCtrl =
-                (pinnedRowsParent.closest('.ag-grid-viewport') as HTMLElement | null) ?? pinnedRowsParent;
+            eViewportForCtrl = eGridViewport ?? pinnedRowsParent;
         }
 
         this.eRowsContainer = eContainerForRows;

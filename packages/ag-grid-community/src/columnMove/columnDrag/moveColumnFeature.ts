@@ -148,7 +148,9 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         // we don't want to scroll the grid this time, it would appear like the table is jumping
         // each time a column is dragged in.
         if (!fromEnter) {
-            this.checkCenterForScrolling(mouseX);
+            // auto-scroll boundaries are computed in full-row coordinates (including pinned sections),
+            // so use raw drag x rather than centre-section-adjusted x used for move index calculations.
+            this.checkCenterForScrolling(draggingEvent.x);
         }
 
         if (isSuppressMoveWhenDragging) {

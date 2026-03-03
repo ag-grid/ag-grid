@@ -10,6 +10,7 @@ import type { IHeaderRowContainerComp } from './rowContainer/headerRowContainerC
 import { HeaderRowContainerCtrl } from './rowContainer/headerRowContainerCtrl';
 
 const GridHeaderElement: ElementParams = { tag: 'div', cls: 'ag-header', role: 'rowgroup' };
+
 class GridHeaderComp extends Component {
     private headerRowComps: { [ctrlId: HeaderRowCtrlInstanceId]: HeaderRowComp } = {};
     private eHeaderHost: HTMLElement | null = null;
@@ -25,6 +26,22 @@ class GridHeaderComp extends Component {
         this.initialiseWhenAttached();
     }
 
+    private getGridViewportFromParentChain(start: HTMLElement | null): HTMLElement | null {
+        let current: HTMLElement | null = start;
+        while (current) {
+            if (current.classList.contains('ag-grid-viewport')) {
+                return current;
+            }
+            current = current.parentElement;
+        }
+        return null;
+    }
+
+    private getFlattenedHostFromParent(): HTMLElement | null {
+        const parentComp = this.getParentComponent<Component>();
+        return parentComp?.getGui().querySelector('.ag-grid-pinned-top-rows-container') ?? null;
+    }
+
     private initialiseWhenAttached(): void {
         if (!this.isAlive() || this.initialised) {
             return;
@@ -37,11 +54,16 @@ class GridHeaderComp extends Component {
             return;
         }
 
+        const eGridViewport =
+            this.beans.ctrlsSvc.get('gridBodyCtrl')?.eGridViewport ?? this.getGridViewportFromParentChain(parent);
+
         if (parent.classList.contains('ag-grid-pinned-top-rows-container')) {
+            if (!eGridViewport) {
+                window.requestAnimationFrame(() => this.initialiseWhenAttached());
+                return;
+            }
             this.eHeaderHost = parent;
-            this.ePinnedTopRowsHost =
-                (parent.parentElement?.classList.contains('ag-grid-pinned-top-rows') ? parent.parentElement : null) ??
-                parent;
+            this.ePinnedTopRowsHost = parent.parentElement ?? parent;
             this.isFlattened = true;
             eGui.remove();
         } else {
@@ -78,16 +100,8 @@ class GridHeaderComp extends Component {
         };
 
         const rowContainerCtrl = this.createManagedBean(new HeaderRowContainerCtrl());
-        const eScrollViewport =
-            (this.isFlattened
-                ? (this.eHeaderHost?.closest('.ag-grid-viewport') as HTMLElement | null) ?? this.eHeaderHost
-                : this.eHeaderHost) ?? this.eHeaderHost!;
+        const eScrollViewport = this.isFlattened ? eGridViewport! : this.eHeaderHost!;
         rowContainerCtrl.setComp(rowContainerCompProxy, this.eHeaderHost!, eScrollViewport);
-    }
-
-    private getFlattenedHostFromParent(): HTMLElement | null {
-        const parentComp = this.getParentComponent<Component>();
-        return parentComp?.getGui().querySelector('.ag-grid-pinned-top-rows-container') ?? null;
     }
 
     public override destroy(): void {

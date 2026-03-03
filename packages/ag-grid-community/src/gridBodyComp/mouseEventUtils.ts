@@ -26,14 +26,7 @@ export function _getNormalisedMousePosition(
     } else {
         x = e.x;
         y = e.y;
-
-        // Drag service computes x/y relative to the drop target (eGridViewport),
-        // which includes headers and pinned rows in the flattened layout.
-        // Subtract their height to get row-area-relative coordinates.
-        const gridBodyCtrl = beans.ctrlsSvc.getGridBodyCtrl();
-        if (gridBodyCtrl) {
-            y -= gridBodyCtrl.getTopPinnedRowsOffset();
-        }
+        y -= getRowAreaTopOffset(beans, event);
     }
 
     const { pageFirstPixel } = beans.pageBounds.getCurrentPagePixelRange();
@@ -48,4 +41,22 @@ export function _getNormalisedMousePosition(
     }
 
     return { x, y };
+}
+
+function getRowAreaTopOffset(beans: BeanCollection, event: MouseEvent | { x: number; y: number }): number {
+    const { eGridViewport, eScrollingRows } = beans.ctrlsSvc.getGridBodyCtrl();
+
+    const eventWithDropZone = event as { dropZoneTarget?: EventTarget | null };
+    const viewport = eventWithDropZone.dropZoneTarget;
+    const eViewport = (viewport ? viewport : eGridViewport) as HTMLElement;
+
+    if (!eScrollingRows) {
+        return 0;
+    }
+
+    const visibleOffset = eScrollingRows.getBoundingClientRect().top - eViewport.getBoundingClientRect().top;
+    // `event.y` is viewport-relative. Convert the measured visible offset into
+    // the scroll-content offset so it remains stable while scrolling.
+    const offset = visibleOffset + eViewport.scrollTop;
+    return offset > 0 ? offset : 0;
 }

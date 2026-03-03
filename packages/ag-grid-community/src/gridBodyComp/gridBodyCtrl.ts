@@ -13,7 +13,6 @@ import type { LayoutView } from '../styling/layoutFeature';
 import { LayoutFeature } from '../styling/layoutFeature';
 import type { PopupService } from '../widgets/popupService';
 import { GridBodyScrollFeature } from './gridBodyScrollFeature';
-import { _getRowContainerClass } from './rowContainer/rowContainerCtrl';
 import type { ScrollVisibleService } from './scrollVisibleService';
 import { _shouldShowVerticalScroll } from './scrollbarVisibilityHelper';
 
@@ -64,10 +63,10 @@ export class GridBodyCtrl extends BeanStub {
     private comp: IGridBodyComp;
     public eGridBody: HTMLElement;
     public eGridViewport: HTMLElement;
+    public eScrollingRows: HTMLElement;
+    private eFullWidthContainer: HTMLElement;
     private eTop: HTMLElement;
     private eBottom: HTMLElement;
-
-    private eFullWidthContainer: HTMLElement;
     private topPinnedRowsHeight = 0;
     private bottomPinnedRowsHeight = 0;
 
@@ -80,18 +79,18 @@ export class GridBodyCtrl extends BeanStub {
         comp: IGridBodyComp,
         eGridBody: HTMLElement,
         eGridViewport: HTMLElement,
+        eScrollingRows: HTMLElement,
+        eFullWidthContainer: HTMLElement,
         eTop: HTMLElement,
         eBottom: HTMLElement
     ): void {
         this.comp = comp;
         this.eGridBody = eGridBody;
         this.eGridViewport = eGridViewport;
+        this.eScrollingRows = eScrollingRows;
+        this.eFullWidthContainer = eFullWidthContainer;
         this.eTop = eTop;
         this.eBottom = eBottom;
-
-        this.eFullWidthContainer = eGridViewport.querySelector(
-            `.${_getRowContainerClass('scrollingFullWidth')}`
-        ) as HTMLElement;
 
         this.setCellTextSelection(this.gos.get('enableCellTextSelection'));
         this.addManagedPropertyListener('enableCellTextSelection', (props) =>

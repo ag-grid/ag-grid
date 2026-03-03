@@ -17,7 +17,10 @@ import type { RowContainerName } from './rowContainer/rowContainerCtrl';
 
 function makeRowContainers(paramsMap: Record<string, { name: string }>, names: RowContainerName[]): ElementParams[] {
     return names.map((name) => {
-        const refName = `e${name[0].toUpperCase() + name.substring(1)}RowContainer`;
+        const refName =
+            name === 'scrollingFullWidth'
+                ? 'scrollingFullWidthRowContainerComp'
+                : `e${name[0].toUpperCase() + name.substring(1)}RowContainer`;
         paramsMap[refName] = { name };
         return {
             tag: 'ag-row-container',
@@ -121,6 +124,7 @@ export class GridBodyComp extends Component implements FocusableContainer {
     private readonly eBottomRowsContainer: HTMLElement = RefPlaceholder;
     private readonly eBottomRowsFullWidthContainer: HTMLElement = RefPlaceholder;
     private readonly eBody: HTMLElement = RefPlaceholder;
+    private readonly scrollingFullWidthRowContainerComp: RowContainerComp = RefPlaceholder;
 
     private ctrl: GridBodyCtrl;
     private bottomRowsHeight = 0;
@@ -207,7 +211,15 @@ export class GridBodyComp extends Component implements FocusableContainer {
         };
 
         this.ctrl = this.createManagedBean(new GridBodyCtrl());
-        this.ctrl.setComp(compProxy, this.getGui(), this.eGridViewport, this.eTop, this.eBottom);
+        this.ctrl.setComp(
+            compProxy,
+            this.getGui(),
+            this.eGridViewport,
+            this.eBody,
+            this.scrollingFullWidthRowContainerComp.getGui(),
+            this.eTop,
+            this.eBottom
+        );
 
         if ((rangeSvc && _isCellSelectionEnabled(this.gos)) || _isMultiRowSelection(this.gos)) {
             _setAriaMultiSelectable(this.getGui(), true);
@@ -216,7 +228,7 @@ export class GridBodyComp extends Component implements FocusableContainer {
 
     private initialiseFlattenedPinnedRowContainers(): void {
         const createFlattened = (name: RowContainerName, hostElement: HTMLElement) =>
-            this.createManagedBean(new RowContainerComp({ name, hostElement }));
+            this.createManagedBean(new RowContainerComp({ name, hostElement, viewportElement: this.eGridViewport }));
 
         createFlattened('pinnedTopCenter', this.eTopRowsContainer);
         createFlattened('stickyTopCenter', this.eTopRowsContainer);

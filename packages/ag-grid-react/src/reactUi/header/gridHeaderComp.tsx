@@ -11,9 +11,11 @@ import HeaderRowComp from './headerRowComp';
 const GridHeaderComp = ({
     hostElement,
     flattened = false,
+    viewportElement,
 }: {
     hostElement?: HTMLElement | null;
     flattened?: boolean;
+    viewportElement?: HTMLElement | null;
 }) => {
     const [cssClasses, setCssClasses] = useState<CssClasses>(() => new CssClasses());
     const [height, setHeight] = useState<string>();
@@ -39,10 +41,7 @@ const GridHeaderComp = ({
                 return;
             }
 
-            const eTopRowsContainer = isFlattened ? eHeaderHost : null;
-            const ePinnedTopRowsHost = isFlattened
-                ? (eTopRowsContainer?.closest('.ag-grid-pinned-top-rows') as HTMLElement | null) ?? null
-                : null;
+            const ePinnedTopRowsHost = isFlattened ? (eHeaderHost.parentElement as HTMLElement | null) : null;
             if (ePinnedTopRowsHostRef.current && ePinnedTopRowsHostRef.current !== ePinnedTopRowsHost) {
                 ePinnedTopRowsHostRef.current.style.removeProperty('--ag-header-rows-height');
             }
@@ -74,9 +73,7 @@ const GridHeaderComp = ({
                     }
                 },
             };
-            const eScrollViewport = isFlattened
-                ? (eHeaderHost.closest('.ag-grid-viewport') as HTMLElement | null) ?? eHeaderHost
-                : eHeaderHost;
+            const eScrollViewport = isFlattened ? viewportElement ?? eHeaderHost : eHeaderHost;
 
             gridCtrlRef.current = context.destroyBean(gridCtrlRef.current);
             headerRowContainerCtrlRef.current = context.destroyBean(headerRowContainerCtrlRef.current);
@@ -86,7 +83,7 @@ const GridHeaderComp = ({
             gridCtrlRef.current.setComp(compProxy, eHeaderHost, eHeaderHost);
             headerRowContainerCtrlRef.current.setComp(rowContainerCompProxy, eHeaderHost, eScrollViewport);
         },
-        [context]
+        [context, viewportElement]
     );
 
     const setRef = useCallback(
@@ -104,14 +101,14 @@ const GridHeaderComp = ({
     );
 
     useEffect(() => {
-        if (!flattened || !hostElement) {
+        if (!flattened || !hostElement || !viewportElement) {
             return;
         }
         initControllers(hostElement, true);
         return () => {
             destroyControllers();
         };
-    }, [destroyControllers, flattened, hostElement, initControllers]);
+    }, [destroyControllers, flattened, hostElement, initControllers, viewportElement]);
 
     useEffect(() => {
         return () => {

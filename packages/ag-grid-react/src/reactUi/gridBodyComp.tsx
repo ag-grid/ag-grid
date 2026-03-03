@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { ComponentSelector, IGridBodyComp } from 'ag-grid-community';
 import {
@@ -20,8 +20,7 @@ import type { ReactRowContainerName } from './rows/rowContainerComp';
 import { classesList } from './utils';
 
 const GridBodyComp = () => {
-    const beans = useContext(BeansContext);
-    const { context, overlays } = beans;
+    const { context, overlays } = useContext(BeansContext);
 
     const [rowAnimationClass, setRowAnimationClass] = useState<string>('');
     const [topHeight, setTopHeight] = useState<number>(0);
@@ -48,43 +47,52 @@ const GridBodyComp = () => {
     }
 
     const eRoot = useRef<HTMLDivElement | null>(null);
-    const eTop = useRef<HTMLDivElement>(null);
-    const eGridViewport = useRef<HTMLDivElement>(null);
-    const eGridScrollableArea = useRef<HTMLDivElement>(null);
-    const eBody = useRef<HTMLDivElement>(null);
-    const eBottom = useRef<HTMLDivElement>(null);
+    const [rootElement, setRootElement] = useState<HTMLDivElement | null>(null);
+    const eTop = useRef<HTMLDivElement | null>(null);
+    const eGridViewport = useRef<HTMLDivElement | null>(null);
+    const [gridViewportElement, setGridViewportElement] = useState<HTMLDivElement | null>(null);
+    const eGridScrollableArea = useRef<HTMLDivElement | null>(null);
+    const eBody = useRef<HTMLDivElement | null>(null);
+    const eBottom = useRef<HTMLDivElement | null>(null);
     const [topRowsHost, setTopRowsHost] = useState<HTMLDivElement | null>(null);
     const [topRowsFullWidthHost, setTopRowsFullWidthHost] = useState<HTMLDivElement | null>(null);
     const [bottomRowsHost, setBottomRowsHost] = useState<HTMLDivElement | null>(null);
     const [bottomRowsFullWidthHost, setBottomRowsFullWidthHost] = useState<HTMLDivElement | null>(null);
-
-    const beansToDestroy = useRef<any[]>([]);
-    const destroyFuncs = useRef<(() => void)[]>([]);
+    const [scrollingFullWidthContainer, setScrollingFullWidthContainer] = useState<HTMLDivElement | null>(null);
 
     useReactCommentEffect(' AG Grid Body ', eRoot);
     useReactCommentEffect(' AG Pinned Top ', eTop);
     useReactCommentEffect(' AG Middle ', eGridViewport);
     useReactCommentEffect(' AG Pinned Bottom ', eBottom);
 
-    const setRef = useCallback((eRef: HTMLDivElement | null) => {
+    const setRootRef = useCallback((eRef: HTMLDivElement | null) => {
         eRoot.current = eRef;
-        if (!eRef || context.isDestroyed()) {
-            beansToDestroy.current = context.destroyBeans(beansToDestroy.current);
-            for (const f of destroyFuncs.current) {
-                f();
-            }
-            destroyFuncs.current = [];
+        setRootElement(eRef);
+    }, []);
 
+    useEffect(() => {
+        if (
+            !rootElement ||
+            !scrollingFullWidthContainer ||
+            context.isDestroyed() ||
+            !eGridViewport.current ||
+            !eBody.current ||
+            !eTop.current ||
+            !eBottom.current
+        ) {
             return;
         }
 
+        const beansToDestroy: any[] = [];
+        const destroyFuncs: (() => void)[] = [];
+
         const attachToDom = (eParent: HTMLElement, eChild: HTMLElement | Comment) => {
             eParent.appendChild(eChild);
-            destroyFuncs.current.push(() => eChild.remove());
+            destroyFuncs.push(() => eChild.remove());
         };
         const newComp = (compClass: ComponentSelector['component']) => {
             const comp = context.createBean(new compClass());
-            beansToDestroy.current.push(comp);
+            beansToDestroy.push(comp);
             return comp;
         };
         const addComp = (eParent: HTMLElement, compClass: ComponentSelector['component'], comment: string) => {
@@ -92,11 +100,11 @@ const GridBodyComp = () => {
             attachToDom(eParent, newComp(compClass).getGui());
         };
 
-        addComp(eRef, FakeHScrollComp, ' AG Fake Horizontal Scroll ');
-        addComp(eRef, FakeVScrollComp, ' AG Fake Vertical Scroll ');
+        addComp(rootElement, FakeHScrollComp, ' AG Fake Horizontal Scroll ');
+        addComp(rootElement, FakeVScrollComp, ' AG Fake Vertical Scroll ');
         const overlayComp = overlays?.getOverlayWrapperCompClass();
         if (overlayComp) {
-            addComp(eRef, overlayComp, ' AG Overlay Wrapper ');
+            addComp(rootElement, overlayComp, ' AG Overlay Wrapper ');
         }
 
         const compProxy: IGridBodyComp = {
@@ -132,20 +140,35 @@ const GridBodyComp = () => {
             },
             registerBodyViewportResizeListener: (listener: () => void) => {
                 if (eGridViewport.current) {
-                    const unsubscribeFromResize = _observeResize(beans, eGridViewport.current, listener);
-                    destroyFuncs.current.push(() => unsubscribeFromResize());
+                    const unsubscribeFromResize = _observeResize(context.getBeans(), eGridViewport.current, listener);
+                    destroyFuncs.push(() => unsubscribeFromResize());
                 }
             },
             setStickyBottomHeight,
             setStickyBottomBottom,
             setStickyBottomWidth,
-            setGridRootRole: (role: 'grid' | 'treegrid') => _setAriaRole(eRef, role),
+            setGridRootRole: (role: 'grid' | 'treegrid') => _setAriaRole(rootElement, role),
         };
 
         const ctrl = context.createBean(new GridBodyCtrl());
-        beansToDestroy.current.push(ctrl);
-        ctrl.setComp(compProxy, eRef, eGridViewport.current!, eTop.current!, eBottom.current!);
-    }, []);
+        beansToDestroy.push(ctrl);
+        ctrl.setComp(
+            compProxy,
+            rootElement,
+            eGridViewport.current,
+            eBody.current,
+            scrollingFullWidthContainer,
+            eTop.current,
+            eBottom.current
+        );
+
+        return () => {
+            context.destroyBeans(beansToDestroy);
+            for (const f of destroyFuncs) {
+                f();
+            }
+        };
+    }, [context, overlays, rootElement, scrollingFullWidthContainer]);
 
     const rootClasses = useMemo(() => classesList('ag-root', 'ag-unselectable', layoutClass), [layoutClass]);
     const gridViewportClasses = useMemo(
@@ -214,20 +237,31 @@ const GridBodyComp = () => {
     };
 
     const createRowContainer = (container: ReactRowContainerName) => (
-        <RowContainerComp name={container} hostElement={getContainerHost(container)} key={`${container}-container`} />
+        <RowContainerComp
+            name={container}
+            hostElement={getContainerHost(container)}
+            viewportElement={gridViewportElement}
+            onContainerElementChanged={container === 'scrollingFullWidth' ? setScrollingFullWidthContainer : undefined}
+            key={`${container}-container`}
+        />
     );
 
     const setBottomRowsContainerRef = useCallback((el: HTMLDivElement | null) => {
         setBottomRowsHost(el);
     }, []);
 
+    const setGridViewportRef = useCallback((el: HTMLDivElement | null) => {
+        eGridViewport.current = el;
+        setGridViewportElement(el);
+    }, []);
+
     return (
-        <div ref={setRef} className={rootClasses}>
-            <div ref={eGridViewport} className={gridViewportClasses} role="presentation">
+        <div ref={setRootRef} className={rootClasses}>
+            <div ref={setGridViewportRef} className={gridViewportClasses} role="presentation">
                 <div ref={eGridScrollableArea} className="ag-grid-scrollable-area" role="presentation">
                     <div ref={eTop} className={topClasses} role="presentation" style={topStyle}>
                         <div className="ag-grid-pinned-top-rows-container" role="rowgroup" ref={setTopRowsHost}>
-                            <GridHeaderComp hostElement={topRowsHost} flattened />
+                            <GridHeaderComp hostElement={topRowsHost} flattened viewportElement={gridViewportElement} />
                             {createRowContainer('pinnedTopCenter')}
                             {createRowContainer('stickyTopCenter')}
                         </div>

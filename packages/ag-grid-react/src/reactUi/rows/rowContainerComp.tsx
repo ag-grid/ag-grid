@@ -44,7 +44,17 @@ function isFlattenedPinnedRowContainer(name: ReactRowContainerName): boolean {
     );
 }
 
-const RowContainerComp = ({ name, hostElement }: { name: ReactRowContainerName; hostElement?: HTMLElement | null }) => {
+const RowContainerComp = ({
+    name,
+    hostElement,
+    viewportElement,
+    onContainerElementChanged,
+}: {
+    name: ReactRowContainerName;
+    hostElement?: HTMLElement | null;
+    viewportElement?: HTMLElement | null;
+    onContainerElementChanged?: (element: HTMLDivElement | null) => void;
+}) => {
     const { context, gos } = useContext(BeansContext);
 
     const containerOptions = useMemo(() => _getRowContainerOptions(asCommunityRowContainerName(name)), [name]);
@@ -81,6 +91,7 @@ const RowContainerComp = ({ name, hostElement }: { name: ReactRowContainerName; 
 
     const shouldRenderViewport =
         !isFlattenedPinnedContainer && name !== 'scrollingCenter' && (containerOptions.type === 'center' || isSpanning);
+    const requiresExternalViewport = isFlattenedPinnedContainer || name === 'scrollingCenter';
 
     const topLevelRef = shouldRenderViewport ? eViewport : eContainer;
 
@@ -88,13 +99,21 @@ const RowContainerComp = ({ name, hostElement }: { name: ReactRowContainerName; 
 
     const areElementsReady = useCallback(() => {
         if (isFlattenedPinnedContainer) {
-            return hostElement != null;
+            return hostElement != null && viewportElement != null;
         }
         const viewportReady = !shouldRenderViewport || eViewport.current != null;
         const containerReady = eContainer.current != null;
         const spanContainerReady = !isSpanning || eSpanContainer.current != null;
-        return viewportReady && containerReady && spanContainerReady;
-    }, [isFlattenedPinnedContainer, hostElement, shouldRenderViewport, isSpanning]);
+        const externalViewportReady = !requiresExternalViewport || viewportElement != null;
+        return viewportReady && containerReady && spanContainerReady && externalViewportReady;
+    }, [
+        isFlattenedPinnedContainer,
+        hostElement,
+        shouldRenderViewport,
+        isSpanning,
+        requiresExternalViewport,
+        viewportElement,
+    ]);
 
     const areElementsRemoved = useCallback(() => {
         if (isFlattenedPinnedContainer) {
@@ -113,25 +132,27 @@ const RowContainerComp = ({ name, hostElement }: { name: ReactRowContainerName; 
         }
 
         if (areElementsReady()) {
-            if (isFlattenedPinnedContainer && rowContainerCtrlRef.current && ctrlHostRef.current !== hostElement) {
-                rowContainerCtrlRef.current = context.destroyBean(rowContainerCtrlRef.current);
-                ctrlHostRef.current = null;
-            }
-            if (rowContainerCtrlRef.current) {
-                return;
-            }
             const eContainerForCtrl = isFlattenedPinnedContainer ? hostElement! : eContainer.current!;
             const eSpanContainerForCtrl = isFlattenedPinnedContainer
                 ? isSpanning
                     ? eContainerForCtrl
                     : undefined
                 : eSpanContainer.current ?? undefined;
-            const eViewportForCtrl =
-                (isFlattenedPinnedContainer
-                    ? (hostElement!.closest('.ag-grid-viewport') as HTMLDivElement | null) ?? hostElement!
-                    : name === 'scrollingCenter'
-                      ? (eContainer.current?.closest('.ag-grid-viewport') as HTMLDivElement | null)
-                      : eViewport.current) ?? eContainerForCtrl;
+            const eViewportForCtrl = requiresExternalViewport
+                ? (viewportElement as HTMLDivElement)
+                : (eViewport.current as HTMLDivElement);
+
+            if (
+                isFlattenedPinnedContainer &&
+                rowContainerCtrlRef.current &&
+                ctrlHostRef.current !== eContainerForCtrl
+            ) {
+                rowContainerCtrlRef.current = context.destroyBean(rowContainerCtrlRef.current);
+                ctrlHostRef.current = null;
+            }
+            if (rowContainerCtrlRef.current) {
+                return;
+            }
 
             const updateRowCtrlsOrdered = (useFlushSync: boolean) => {
                 const next = getNextValueIfDifferent(
@@ -208,7 +229,17 @@ const RowContainerComp = ({ name, hostElement }: { name: ReactRowContainerName; 
             ctrlHostRef.current = isFlattenedPinnedContainer ? eContainerForCtrl : null;
             rowContainerCtrlRef.current.setComp(compProxy, eContainerForCtrl, eSpanContainerForCtrl, eViewportForCtrl!);
         }
-    }, [areElementsReady, areElementsRemoved, context, hostElement, isFlattenedPinnedContainer, isSpanning, name]);
+    }, [
+        areElementsReady,
+        areElementsRemoved,
+        context,
+        hostElement,
+        isFlattenedPinnedContainer,
+        isSpanning,
+        name,
+        requiresExternalViewport,
+        viewportElement,
+    ]);
 
     useEffect(() => {
         if (isFlattenedPinnedContainer) {
@@ -227,9 +258,10 @@ const RowContainerComp = ({ name, hostElement }: { name: ReactRowContainerName; 
     const setContainerRef = useCallback(
         (e: HTMLDivElement | null) => {
             eContainer.current = e;
+            onContainerElementChanged?.(e);
             setRef();
         },
-        [setRef]
+        [onContainerElementChanged, setRef]
     );
     const setSpanContainerRef = useCallback(
         (e: HTMLDivElement | null) => {

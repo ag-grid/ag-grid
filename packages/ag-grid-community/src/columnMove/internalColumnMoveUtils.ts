@@ -424,8 +424,9 @@ export function normaliseX(params: {
         x = eViewport.clientWidth - x;
     }
 
-    // adjust for scroll only if centre container (the pinned containers don't scroll)
-    if (pinned == null && !skipScrollPadding) {
+    // keyboard-derived x is viewport-relative, so it still needs scroll padding.
+    // drag-derived x is already in scroll-content coordinates in the flattened layout.
+    if (fromKeyboard && pinned == null && !skipScrollPadding) {
         x += ctrlsSvc.get('scrollingCenter').getCenterViewportScrollLeft();
     }
 
