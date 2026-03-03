@@ -107,7 +107,7 @@ If custom UI or components are needed:
 
 1. Summarise what custom elements are required (e.g. "2 buttons that call `api.deselectAll()` and `api.selectAll()`", "a custom cell renderer that shows a flag icon")
 2. Ask the user which framework to build them for:
-    - **Vanilla** — implement in `src/vanilla/`
+    - **JavaScript** — implement in `src/javascript/`
     - **React** — implement in `src/react/`
     - **Angular** — implement in `src/angular/`
     - **Vue** — implement in `src/vue/`
