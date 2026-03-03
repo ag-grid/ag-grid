@@ -81,6 +81,9 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
 
     public updateScrollGap(): void {
         const centerRowCtrl = this.ctrlsSvc.get('scrollingCenter');
+        if (!centerRowCtrl) {
+            return;
+        }
         const horizontalGap = centerRowCtrl.hasHorizontalScrollGap();
         const verticalGap = centerRowCtrl.hasVerticalScrollGap();
         const atLeastOneDifferent =

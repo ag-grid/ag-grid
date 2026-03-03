@@ -26,6 +26,14 @@ export function _getNormalisedMousePosition(
     } else {
         x = e.x;
         y = e.y;
+
+        // Drag service computes x/y relative to the drop target (eGridViewport),
+        // which includes headers and pinned rows in the flattened layout.
+        // Subtract their height to get row-area-relative coordinates.
+        const gridBodyCtrl = beans.ctrlsSvc.getGridBodyCtrl();
+        if (gridBodyCtrl) {
+            y -= gridBodyCtrl.getTopPinnedRowsOffset();
+        }
     }
 
     const { pageFirstPixel } = beans.pageBounds.getCurrentPagePixelRange();

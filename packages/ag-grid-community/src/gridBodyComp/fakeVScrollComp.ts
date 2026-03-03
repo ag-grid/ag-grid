@@ -81,6 +81,9 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
 
     private onRowContainerHeightChanged(ctrlsSvc: CtrlsService): void {
         const gridBodyCtrl = ctrlsSvc.getGridBodyCtrl();
+        if (!gridBodyCtrl) {
+            return;
+        }
         const gridBodyViewportEl = gridBodyCtrl.eGridViewport;
 
         this.syncContainerHeight();
@@ -103,7 +106,7 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
             return;
         }
 
-        const scrollHeight = gridBodyCtrl.eGridViewport.scrollHeight + gridBodyCtrl.getHorizontalScrollbarHeight();
+        const scrollHeight = gridBodyCtrl.eGridViewport.scrollHeight - gridBodyCtrl.getHeaderRowsOffset();
         this.eContainer.style.height = `${Math.max(1, scrollHeight)}px`;
     }
 

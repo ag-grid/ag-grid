@@ -84,6 +84,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 getVerticalPosition: getScrollY,
                 setVerticalPosition: (position: number) =>
                     p.gridBodyCtrl.scrollFeature.setVerticalScrollPosition(position),
+                getTopOffset: () => p.gridBodyCtrl.getTopPinnedRowsOffset(),
                 onScrollCallback: () => {
                     const newVScroll = getScrollY();
                     if (this.autoScrollOldV !== newVScroll) {

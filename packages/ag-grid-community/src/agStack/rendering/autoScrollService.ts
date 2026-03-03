@@ -21,6 +21,8 @@ export class AutoScrollService {
     private readonly shouldSkipVerticalScroll: () => boolean;
     private readonly shouldSkipHorizontalScroll: () => boolean;
 
+    private readonly getTopOffset: () => number;
+
     private readonly onScrollCallback: (() => void) | null = null;
 
     private tickCount: number;
@@ -40,6 +42,8 @@ export class AutoScrollService {
         setHorizontalPosition?: (position: number) => void;
         shouldSkipVerticalScroll?: () => boolean;
         shouldSkipHorizontalScroll?: () => boolean;
+        /** Offset from the top of the scroll container to the start of the scrollable row area. */
+        getTopOffset?: () => number;
         onScrollCallback?: () => void;
     }) {
         this.scrollContainer = params.scrollContainer;
@@ -64,6 +68,7 @@ export class AutoScrollService {
 
         this.shouldSkipVerticalScroll = params.shouldSkipVerticalScroll || (() => false);
         this.shouldSkipHorizontalScroll = params.shouldSkipHorizontalScroll || (() => false);
+        this.getTopOffset = params.getTopOffset || (() => 0);
     }
 
     public check(mouseEvent: MouseEvent | Touch, forceSkipVerticalScroll: boolean = false): void {
@@ -76,9 +81,11 @@ export class AutoScrollService {
         const rect = this.scrollContainer.getBoundingClientRect();
         const scrollTick = this.scrollByTick;
 
+        const topOffset = this.getTopOffset();
+
         this.tickLeft = mouseEvent.clientX < rect.left + scrollTick;
         this.tickRight = mouseEvent.clientX > rect.right - scrollTick;
-        this.tickUp = mouseEvent.clientY < rect.top + scrollTick && !skipVerticalScroll;
+        this.tickUp = mouseEvent.clientY < rect.top + topOffset + scrollTick && !skipVerticalScroll;
         this.tickDown = mouseEvent.clientY > rect.bottom - scrollTick && !skipVerticalScroll;
 
         if (this.tickLeft || this.tickRight || this.tickUp || this.tickDown) {
