@@ -1419,7 +1419,11 @@ details.tool-section:not([open]) .tool-section-chevron {
 .s3-dep-group { margin-bottom: 10px; border: 1px solid var(--c-border); border-radius: var(--radius); background: rgba(255,255,255,0.02); padding: 10px 12px; }
 .s3-dep-group--done { border-color: rgba(76,175,130,0.3); background: rgba(76,175,130,0.03); }
 .s3-dep-group--skipped { display: none; }
-.s3-dep-group-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.s3-dep-group-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer; user-select: none; }
+.s3-dep-group-header:hover .s3-dep-group-name { text-decoration: underline; }
+.s3-dep-group-chevron { font-size: 10px; color: var(--c-text-muted); transition: transform 0.2s; flex-shrink: 0; }
+.s3-dep-group--collapsed .s3-dep-group-chevron { transform: rotate(-90deg); }
+.s3-dep-group--collapsed .s3-dep-group-body { display: none; }
 .s3-dep-group-name { font-family: monospace; font-size: 12px; font-weight: 700; color: var(--c-accent); }
 .s3-dep-group-count { font-size: 10px; color: var(--c-text-muted); }
 .s3-dep-group-reason-row { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
