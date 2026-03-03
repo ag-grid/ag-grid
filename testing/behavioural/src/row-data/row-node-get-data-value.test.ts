@@ -2136,8 +2136,9 @@ describe('RowNode.getDataValue', () => {
             expect(athleteGroup.getDataValue('athleteGroupCol')).toBe('Michael');
 
             // At non-matching levels, groupData has no entry for the column — returns undefined.
-            // (The display-level showRowGroup check would return null here, but getDataValue bypasses it.)
+            // countryGroup (level 0) on athleteGroupCol (showRowGroup:'athlete', index 1): null for retro-compatibility
             expect(countryGroup.getDataValue('athleteGroupCol')).toBeNull();
+            // athleteGroup (level 1) on countryGroupCol (showRowGroup:'country', index 0): level check doesn't trigger
             expect(athleteGroup.getDataValue('countryGroupCol')).toBeUndefined();
 
             // Aggregated gold values work on both levels

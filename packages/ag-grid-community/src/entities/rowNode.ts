@@ -511,18 +511,22 @@ export class RowNode<TData = any>
      * @param newValue The new value
      * @param eventSource The source of the event. Controls where the value is written:
      *
+     *   - `'edit'` — If an editor is open, updates the editor value without closing it or committing.
+     *     The grid calls `editor.refresh(params)` so custom editors can update their DOM.
+     *     If no editor is open: stages as pending (batch mode) or writes to data (no batch).
+     *
+     *   - `'batch'` — Writes to batch pending value when batch mode is active (closing any open editor).
+     *     When batch mode is not active, writes directly to data (ignoring any open editor).
+     *
      *   - `'data'` — Always writes directly to data, bypassing batch mode and edit state entirely.
      *
-     *   - `'batch'` — Writes to batch pending value when batch mode is active (ignoring any open editor).
-     *     When batch mode is not active, writes directly to data (also ignoring any open editor).
-     *
-     *   - `undefined` (default), `'ui'`, `'edit'`, `'api'`, `'fillHandle'`, `'cellClear'` —
-     *     Batch mode: stages as pending batch value (commits any open editor first).
+     *   - `undefined` (default), `'ui'`, `'api'`, `'fillHandle'`, `'cellClear'` —
+     *     Batch mode: stages as pending batch value (closes any open editor first).
      *     No batch mode + editor open: writes through the editor.
      *     No batch mode + no editor: writes directly to data.
      *
      *   - `'bulk'`, `'paste'`, `'rangeSvc'`, `'undo'`, `'redo'` —
-     *     Same as above, except when an editor is open during batch mode it is kept open rather than committed.
+     *     Same as above, except when an editor is open during batch mode it is kept open rather than closed.
      * @returns `true` if the value was changed, otherwise `false`.
      */
     public setDataValue(colKey: string | AgColumn, newValue: any, eventSource?: string): boolean {

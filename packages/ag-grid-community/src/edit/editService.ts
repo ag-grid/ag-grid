@@ -32,6 +32,7 @@ import type { UserCompDetails } from '../interfaces/iUserCompDetails';
 import { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { ValueService } from '../valueService/valueService';
+import { AgAbstractCellEditor } from './cellEditors/agAbstractCellEditor';
 import { PopupEditorWrapper } from './cellEditors/popupEditorWrapper';
 import type { EditModelService } from './editModelService';
 import type { BaseEditStrategy } from './strategy/baseEditStrategy';
@@ -1091,9 +1092,20 @@ export class EditService extends BeanStub implements NamedBean {
                 return; // Not in batch mode, fall through to direct data write
             }
 
+            // 'edit' source: update the open editor's value without closing it or committing.
+            // If no editor is open, stage as pending (batch) or fall through to direct data write.
+            if (eventSource === 'edit') {
+                if (editing && this.applyEditorValue(position, newValue)) {
+                    return true;
+                }
+                if (!batch) {
+                    return; // No editor and not in batch → fall through to direct data write
+                }
+            }
+
             this.strategy ??= this.createStrategy();
 
-            if (eventSource === 'batch') {
+            if (eventSource === 'batch' || eventSource === 'edit') {
                 return this.applyDirectValue(position, newValue, eventSource);
             }
 
@@ -1166,6 +1178,52 @@ export class EditService extends BeanStub implements NamedBean {
         });
 
         return true; // edit removed and cell refreshed, so return true to indicate the event was handled
+    }
+
+    /**
+     * Pushes a value into an open cell editor without closing it or committing.
+     * Updates editorValue and pendingValue in the edit model, then refreshes the editor DOM.
+     * Returns true if an editor was open and updated, false otherwise.
+     */
+    private applyEditorValue(position: Required<EditPosition>, newValue: any): boolean {
+        const beans = this.beans;
+        const cellCtrl = _getCellCtrl(beans, position);
+        const editor = cellCtrl?.comp?.getCellEditor();
+        if (!cellCtrl || !editor) {
+            return false;
+        }
+
+        // Update both editorValue and pendingValue in the edit model
+        _syncFromEditor(beans, position, newValue, 'edit', undefined, { persist: true });
+
+        // Fast path for built-in editors: update value in-place without recreating
+        if (editor instanceof AgAbstractCellEditor) {
+            editor.setEditValue(newValue);
+            return true;
+        }
+
+        // Fast path for framework wrappers (React/Angular/Vue): update via refresh()
+        if (editor.refresh && cellCtrl.editCompDetails) {
+            editor.refresh({ ...cellCtrl.editCompDetails.params, value: newValue });
+            return true;
+        }
+
+        // Fallback for editors that don't implement refresh(): recreate the editor to pick up the new value.
+        const restoreFocus = cellCtrl.hasBrowserFocus();
+        if (restoreFocus) {
+            cellCtrl.onEditorAttachedFuncs.push(() => {
+                const latestCellCtrl = _getCellCtrl(this.beans, position);
+                latestCellCtrl?.focusCell(true);
+                latestCellCtrl?.comp?.getCellEditor()?.focusIn?.();
+            });
+        }
+
+        _destroyEditors(beans, [position], { silent: true, cancel: true });
+        _setupEditor(beans, position, { silent: true });
+        _populateModelValidationErrors(beans);
+        _getCellCtrl(beans, position)?.refreshCell(FORCE_REFRESH);
+
+        return true;
     }
 
     /** editApi or undoRedoApi apply change without involving the editor. */

@@ -46,6 +46,11 @@ export abstract class AgAbstractCellEditor<P extends ICellEditorParams = any, TV
         this.eEditor.onValueChange(() => params.validate());
     }
 
+    public setEditValue(value: TValue | null | undefined): void {
+        this.params.value = value;
+        this.eEditor.setValue(value as any, true);
+    }
+
     public override destroy(): void {
         this.eEditor.destroy();
         this.errorMessages = null;

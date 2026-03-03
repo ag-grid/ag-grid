@@ -76,6 +76,12 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
         return value?.toString() ?? value;
     }
 
+    public override setEditValue(value: any): void {
+        this.params.value = value;
+        const startValue = this.getStartValue(this.params);
+        this.eEditor.setValue(startValue ?? '', true);
+    }
+
     private onKeyDown(event: KeyboardEvent): void {
         const key = event.key;
 

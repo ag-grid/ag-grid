@@ -114,6 +114,12 @@ export class SimpleCellEditor<
         return this.cellEditorInput.getValue();
     }
 
+    public override setEditValue(value: TValue | null | undefined): void {
+        this.params.value = value;
+        const startValue = this.cellEditorInput.getStartValue();
+        this.eEditor.setStartValue(startValue ?? null);
+    }
+
     public override isPopup() {
         return false;
     }
