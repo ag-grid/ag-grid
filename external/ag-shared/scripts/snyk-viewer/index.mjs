@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { createServer } from 'http';
-import { readFileSync, writeFileSync, mkdirSync, unlinkSync, readdirSync, renameSync, existsSync } from 'fs';
+import { readFileSync, writeFileSync, mkdirSync, unlinkSync, readdirSync, renameSync, existsSync, statSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import jsYaml from 'js-yaml';
@@ -276,8 +276,11 @@ if (!args.file) {
 }
 
 let rawData;
+let snykFileMtime;
 try {
-    rawData = JSON.parse(readFileSync(resolve(args.file), 'utf8'));
+    const snykFilePath = resolve(args.file);
+    rawData = JSON.parse(readFileSync(snykFilePath, 'utf8'));
+    snykFileMtime = statSync(snykFilePath).mtime.toISOString();
 } catch (err) {
     console.error(`Failed to read/parse JSON file: ${args.file}`);
     console.error(err.message);
@@ -329,7 +332,7 @@ const server = createServer((req, res) => {
             rootPackageName = rootPkg.name || null;
         } catch { /* ignore */ }
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ projects: snykData, ignorePatternsByFile, sharedExpiry, rootPackageName }));
+        res.end(JSON.stringify({ projects: snykData, ignorePatternsByFile, sharedExpiry, rootPackageName, scanDate: snykFileMtime }));
         return;
     }
 
@@ -375,6 +378,7 @@ const server = createServer((req, res) => {
                     const newData = normaliseSnykData(newRaw);
                     snykData.length = 0;
                     newData.forEach(p => snykData.push(p));
+                    snykFileMtime = statSync(snykJsonPath).mtime.toISOString();
                     console.log(`Re-run complete: loaded ${snykData.length} project(s) from ${args.file}`);
                     send('done', { ok: true });
                 } catch (e) {

@@ -118,7 +118,7 @@
     // ════════════════════════════════════════════
     // Browse All tab initialisation
     // ════════════════════════════════════════════
-    window.initBrowseAll = function (projects, ignorePatternsByFile) {
+    window.initBrowseAll = function (projects, ignorePatternsByFile, scanDate) {
 
         // ── State ──
         const state = { search: '', sevFilter: 'all', groupBy: 'project', showIgnored: false };
@@ -185,6 +185,10 @@
                     `<a href="https://security.snyk.io/vuln/${esc(v.id)}" target="_blank" rel="noopener" class="popover-vuln-id">${esc(v.id)}</a>` +
                     `<span class="popover-vuln-title">${esc(v.title)}</span></div>`
                 ).join('')}</div>`;
+
+            if (scanDate) {
+                document.getElementById('stat-scan-date').textContent = 'Scanned ' + new Date(scanDate).toLocaleString();
+            }
 
             const copyBtn = document.getElementById('copy-summary-btn');
             if (copyBtn) {

@@ -26,6 +26,7 @@
             <div class="summary-stat" id="stat-projects"></div>
             <div class="summary-stat" id="stat-deps"></div>
             <div class="summary-stat" id="stat-packages"></div>
+            <div class="summary-stat" id="stat-scan-date"></div>
             <button id="copy-summary-btn" class="btn btn-sm btn-outline" style="margin-left:auto" title="Copy summary to clipboard">&#x2398; Copy summary</button>
         </div>
     </div>
@@ -120,7 +121,7 @@
     ]).then(function (results) {
         var data = results[0], rs = results[1];
         document.getElementById('loading').remove();
-        window.initBrowseAll(data.projects, data.ignorePatternsByFile || {});
+        window.initBrowseAll(data.projects, data.ignorePatternsByFile || {}, data.scanDate || null);
         window.initReviewQueue(data.projects, data.ignorePatternsByFile || {}, rs, data.sharedExpiry || null, data.rootPackageName || null);
         initTabs();
     }).catch(function (err) {
