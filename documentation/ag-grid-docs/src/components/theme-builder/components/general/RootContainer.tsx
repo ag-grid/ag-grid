@@ -122,6 +122,7 @@ async function warnOfUnknownCssVariables() {
     // This uses vite's glob import feature to import all CSS files in the source tree
     const cssModules = import.meta.glob('../../../../../../../packages/ag-grid-community/src/**/*.css', {
         import: 'default',
+        query: { inline: true },
     });
 
     const cssFiles = await Promise.all(
