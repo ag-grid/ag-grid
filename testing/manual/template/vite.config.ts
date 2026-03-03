@@ -14,7 +14,7 @@ export default defineConfig({
             disableTypeChecking: true,
             transformFilter: (_code: string, id: string) => {
                 // Only let the Angular plugin transform files in the angular
-                // directory or ag-grid-angular source - not React/Vue/Vanilla files
+                // directory or ag-grid-angular source - not React/Vue/JavaScript files
                 return id.includes('/src/angular/') || id.includes('/ag-grid-angular/');
             },
         }),
@@ -40,7 +40,7 @@ export default defineConfig({
                 main: path.resolve(__dirname, 'index.html'),
                 angular: path.resolve(__dirname, 'src/angular/index.html'),
                 react: path.resolve(__dirname, 'src/react/index.html'),
-                vanilla: path.resolve(__dirname, 'src/vanilla/index.html'),
+                javascript: path.resolve(__dirname, 'src/javascript/index.html'),
                 vue: path.resolve(__dirname, 'src/vue/index.html'),
             },
         },

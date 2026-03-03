@@ -1,10 +1,6 @@
-import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
-import { AllEnterpriseModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
-import { gridOptions } from '../gridOptions';
-
-ModuleRegistry.registerModules([AllCommunityModule, AllEnterpriseModule]);
+import { gridOptions } from '../config';
 
 export function App() {
     return (
