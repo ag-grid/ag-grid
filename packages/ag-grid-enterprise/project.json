@@ -25,7 +25,7 @@
       "outputs": ["{projectRoot}/dist/ag-grid-enterprise*.js"],
       "options": {
         "cwd": "packages/ag-grid-enterprise",
-        "commands": ["./webpackBuild.sh"]
+        "commands": ["node esbuildBuild.cjs"]
       },
       "configurations": {
         "production": {},
@@ -120,6 +120,19 @@
       "options": {
         "jestConfig": "{projectRoot}/jest.config.ts",
         "testPathPattern": ["e2e"]
+      },
+      "configurations": {
+        "production": {},
+        "staging": {}
+      }
+    },
+    "test:umd:browser": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build:umd"],
+      "options": {
+        "commands": ["npx playwright test"],
+        "parallel": false,
+        "cwd": "packages/ag-grid-enterprise"
       },
       "configurations": {
         "production": {},

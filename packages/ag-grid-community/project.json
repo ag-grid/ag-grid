@@ -17,7 +17,7 @@
       "outputs": ["{projectRoot}/dist/ag-grid-community*.js"],
       "options": {
         "cwd": "packages/ag-grid-community",
-        "commands": ["./webpackBuild.sh"]
+        "commands": ["node esbuildBuild.cjs"]
       },
       "configurations": {
         "production": {},
@@ -126,11 +126,27 @@
       }
     },
     "test:e2e": {
+      "dependsOn": ["test:umd:browser", "test:umd"]
+    },
+    "test:umd": {
       "executor": "@nx/jest:jest",
-      "dependsOn": ["pack"],
+      "dependsOn": ["build:umd"],
       "options": {
         "jestConfig": "{projectRoot}/jest.config.ts",
         "testPathPattern": ["e2e"]
+      },
+      "configurations": {
+        "production": {},
+        "staging": {}
+      }
+    },
+    "test:umd:browser": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build:umd"],
+      "options": {
+        "commands": ["npx playwright test"],
+        "parallel": false,
+        "cwd": "packages/ag-grid-community"
       },
       "configurations": {
         "production": {},

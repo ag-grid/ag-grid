@@ -35,6 +35,15 @@ const cssPlugin = {
                     ],
                 }),
             ]).process(css, { from: args.path, to: args.path });
+
+            // UMD builds: non-source CSS (legacy themes) gets injected as <style> tags
+            const isUmd = process.env.NX_TASK_TARGET_TARGET?.endsWith(':umd');
+            if (isUmd && !args.path.includes('/src/')) {
+                return {
+                    contents: `(function(){if(typeof document!=="undefined"){var s=document.createElement("style");s.setAttribute("data-ag-scope","legacy");s.textContent=${JSON.stringify(result.css)};document.head.appendChild(s);}})();`,
+                    loader: 'js',
+                };
+            }
             return { contents: result.css, loader: 'text' };
         });
     },
@@ -133,7 +142,7 @@ if (typeof require === 'undefined') {
 
 const plugins = [cssPlugin];
 let outExtension = {};
-if (process.env.NX_TASK_TARGET_TARGET?.endsWith('umd')) {
+if (process.env.NX_TASK_TARGET_TARGET?.endsWith(':umd')) {
     plugins.push(umdWrapperAdaptorPlugin);
     outExtension = {
         '.cjs': '.js',
