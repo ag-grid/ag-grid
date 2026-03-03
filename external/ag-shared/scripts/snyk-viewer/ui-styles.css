@@ -856,7 +856,7 @@ a:hover { text-decoration: underline; }
     border: 1px solid var(--c-border);
     border-radius: var(--radius);
     margin-bottom: 8px;
-    overflow: hidden;
+    overflow: clip;
 }
 .rq-card-header {
     padding: 10px 14px;
@@ -1232,7 +1232,7 @@ a:hover { text-decoration: underline; }
     border: 1px solid var(--c-border);
     border-radius: var(--radius);
     margin-bottom: 16px;
-    overflow: hidden;
+    overflow: clip;
 }
 .tool-section-header {
     display: flex;
@@ -1284,6 +1284,9 @@ a:hover { text-decoration: underline; }
 summary.tool-section-header {
     list-style: none;
     cursor: pointer;
+    position: sticky;
+    top: 0;
+    z-index: 20;
 }
 summary.tool-section-header::-webkit-details-marker { display: none; }
 .tool-section-chevron {
@@ -1451,6 +1454,9 @@ details.tool-section:not([open]) .tool-section-chevron {
 summary.rq-card-header {
     list-style: none;
     cursor: pointer;
+    position: sticky;
+    top: 43px;
+    z-index: 19;
 }
 summary.rq-card-header::-webkit-details-marker { display: none; }
 .s3-card-chevron {
