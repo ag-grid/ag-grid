@@ -7,19 +7,15 @@ import type { CellValueResolveFrom } from '../interfaces/iEditService';
 
 /**
  * Specifies how to resolve the value returned by `rowNode.getDataValue()`.
- * - `'data'` (default): Returns the committed data value, ignoring all edit state.
- *   For group rows with aggregation functions that return wrapped objects (e.g. `avg`, `count`),
- *   the raw aggregation object is returned as `IAggFuncResult`. Formulas are resolved to their computed value.
- * - `'data-raw'`: Returns the raw underlying data, bypassing aggregation and formula resolution.
- *   On group rows, returns the value from `rowNode.data` (typically `undefined`) instead of aggregated values.
- *   On formula cells, returns the raw formula string instead of the computed result.
- * - `'value'`: Returns the committed data value with aggregation wrappers resolved to their scalar value.
- * - `'edit'`: Returns the live editor value if a cell is being edited, otherwise the resolved committed value.
- *   Aggregation wrappers are resolved to scalars.
- * - `'batch'`: Returns pending batch values (but not live editor typing), otherwise the resolved committed value.
- *   Aggregation wrappers are resolved to scalars.
+ *
+ * - `'data'` (default) — Committed data, ignoring pending edits.
+ *   For aggregation columns using `avg` or `count`, the raw `IAggFuncResult` wrapper is returned.
+ * - `'data-raw'` — Raw underlying data, bypassing aggregation, valueGetters, and formula resolution.
+ * - `'value'` — Same as `'data'`, but aggregation wrappers are resolved to their scalar value.
+ * - `'edit'` — Live editor value if a cell is being edited, then pending batch value, then committed data.
+ * - `'batch'` — Pending batch value (excludes live editor typing), then committed data.
  */
-export type GetDataValueFrom = 'data' | 'data-raw' | 'value' | CellValueResolveFrom;
+export type DataValueFrom = 'data' | 'data-raw' | 'value' | CellValueResolveFrom;
 
 export type RowNodeEventType =
     | 'rowSelected'
@@ -340,20 +336,20 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
      *
      * ### How `eventSource` controls writes
      *
-     * | `eventSource` | Batch mode active | Batch mode inactive |
-     * |---|---|---|
-     * | (default) | Stages a pending batch edit. Any open cell editor is **closed**. | If that cell's editor is open, it is closed and the value is written to data. Otherwise writes directly to data. |
-    * | `'edit'` | If an editor is open, updates the live editor value without committing. If the editor doesn't support `refresh()`, the grid may recreate it and restore focus. Otherwise stages a pending batch edit. | If an editor is open, updates the live editor value without committing. If the editor doesn't support `refresh()`, the grid may recreate it and restore focus. Otherwise writes directly to data. |
-     * | `'batch'` | Stages a pending batch edit. Any open cell editor is **closed**. | Writes directly to data. Any open editor on that cell stays open (editor value is not affected). |
-     * | `'data'` | Writes directly to data, **bypassing batch mode entirely**. The value is not staged — it skips pending state and is immediately committed to the row's data. | Writes directly to data. |
+     * - **(default)** — Batch active: stages a pending batch edit; any open editor is closed.
+     *   Batch inactive: closes the editor and writes to data, or writes directly if no editor is open.
+     * - **`'edit'`** — Batch active: updates the live editor value without committing; stages pending if no editor.
+     *   Batch inactive: updates the live editor value; writes directly if no editor is open.
+     * - **`'batch'`** — Batch active: stages a pending batch edit; any open editor is closed.
+     *   Batch inactive: writes directly to data; any open editor stays open.
+     * - **`'data'`** — Always writes directly to data, bypassing batch mode entirely.
      *
-    * The `'edit'` source mirrors `getDataValue(col, 'edit')`: it targets the live editor value.
-    * The grid updates the editor value in the edit model and calls `editor.refresh(params)` when available.
-    * Editors that don't implement `refresh()` are recreated to pick up the value while preserving focus.
+     * With `'edit'`, the grid calls `editor.refresh(params)` so custom editors can update their display.
+     * Editors that don't implement `refresh()` are recreated to pick up the new value while preserving focus.
      *
      * @param colKey The column to update (field name, `colId`, or `Column` object)
      * @param newValue The new value to set
-     * @param eventSource Controls how the value is written — see table above
+     * @param eventSource Controls how the value is written
      * @returns `true` if the value changed, `false` otherwise
      */
     setDataValue(colKey: string | Column, newValue: any, eventSource?: string): boolean;
@@ -370,19 +366,20 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
      *
      * ### The `from` parameter
      *
-     * | `from` | What it returns | Aggregation wrappers |
-     * |---|---|---|
-     * | `'data'` (default) | Committed data, ignoring pending edits | Raw objects (e.g. `{ value, count, toNumber() }` for `avg`) |
-     * | `'value'` | Same as `'data'` | Resolved to scalars (via `toNumber()` or `.value`) |
-     * | `'edit'` | Live editor value if cell is being edited, then pending batch value, then committed data | Resolved to scalars |
-     * | `'batch'` | Pending batch value (excludes live editor typing), then committed data | Resolved to scalars |
-     * | `'data-raw'` | Raw underlying data — bypasses aggregation and formula resolution | N/A (aggregation bypassed) |
-     *
-     * `'data-raw'` is useful on group rows to read `rowNode.data` instead of the aggregated value,
-     * or on formula cells to get the raw formula string instead of the computed result.
+     * - **`'data'`** (default) — Committed data, ignoring pending edits.
+     *   Aggregation wrappers are returned as raw objects (e.g. `{ value, count, toNumber() }` for `avg`).
+     * - **`'value'`** — Same as `'data'`, but aggregation wrappers are resolved to scalars
+     *   (via `toNumber()` or `.value`).
+     * - **`'edit'`** — Live editor value if the cell is being edited, then pending batch value,
+     *   then committed data. Aggregation wrappers resolved to scalars.
+     * - **`'batch'`** — Pending batch value (excludes live editor typing), then committed data.
+     *   Aggregation wrappers resolved to scalars.
+     * - **`'data-raw'`** — Raw underlying data — bypasses aggregation and formula resolution.
+     *   Useful on group rows to read `rowNode.data` instead of the aggregated value,
+     *   or on formula cells to get the raw formula string instead of the computed result.
      *
      * @param colKey The column to read (field name, `colId`, or `Column` object)
-     * @param from Controls value resolution — see table above. Defaults to `'data'`.
+     * @param from Controls value resolution. Defaults to `'data'`.
      * @returns The value, or `undefined` if the column is not found
      */
     getDataValue<TValue = any>(
@@ -395,7 +392,7 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
     ): TValue | IAggFuncResult<TValue> | null | undefined;
     getDataValue<TValue = any>(
         colKey: ColKey<TValue>,
-        from?: GetDataValueFrom
+        from?: DataValueFrom
     ): TValue | IAggFuncResult<TValue> | null | undefined;
 
     /**

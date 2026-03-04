@@ -78,7 +78,7 @@ describe('Cell Editing: full-row batch', () => {
 
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 2,
-            cellEditingStopped: 3,
+            cellEditingStopped: 2,
             cellValueChanged: action === 'commit' ? 1 : 0,
             rowValueChanged: action === 'commit' ? 1 : 0,
             cellEditRequest: 0,
@@ -241,7 +241,7 @@ describe('Cell Editing: full-row batch', () => {
             // Full event counts after commit/cancel
             expect(eventTracker.counts).toEqual({
                 cellEditingStarted: 0,
-                cellEditingStopped: 3,
+                cellEditingStopped: 2,
                 cellValueChanged: action === 'commit' ? 1 : 0,
                 rowValueChanged: action === 'commit' ? 1 : 0,
                 cellEditRequest: 0,
@@ -349,7 +349,7 @@ describe('Cell Editing: full-row batch', () => {
 
             expect(eventTracker.counts).toEqual({
                 cellEditingStarted: 2,
-                cellEditingStopped: 4,
+                cellEditingStopped: 2,
                 cellValueChanged: action === 'commit' ? 2 : 0,
                 rowValueChanged: action === 'commit' ? 1 : 0,
                 cellEditRequest: 0,
@@ -358,6 +358,107 @@ describe('Cell Editing: full-row batch', () => {
                 batchEditingStarted: 1,
                 batchEditingStopped: 1,
             });
+        }
+    );
+
+    test.each(['commit', 'cancel'] as const)(
+        "setDataValue('edit') updates single cell editor during full-row batch (%s)",
+        async (action) => {
+            const api = await gridMgr.createGridAndWait(`cellEditingFullRowBatch-editPush-${action}`, {
+                editType: 'fullRow',
+                defaultColDef: { editable: true },
+                columnDefs: [
+                    { field: 'a', editable: true },
+                    { field: 'b', editable: true },
+                ],
+                rowData: [{ id: 'ROW_0', a: 'A0', b: 'B0' }],
+                getRowId: (params) => params.data.id,
+            });
+            const eventTracker = new EditEventTracker(api);
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            const user = userEvent.setup({ skipHover: true });
+            await asyncSetTimeout(0);
+
+            api.startBatchEdit();
+
+            // Start full-row editing by clicking on cell 'a'
+            const cellA = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'));
+            await user.click(cellA);
+            api.startEditingCell({ rowIndex: 0, colKey: 'a' });
+            await waitForInput(gridDiv, cellA);
+            await asyncSetTimeout(0);
+
+            // Both cells in the row should have active editors (full-row mode)
+            const inputs = gridDiv.querySelectorAll<HTMLInputElement>('input');
+            expect(inputs).toHaveLength(2);
+            const inputA = Array.from(inputs).find((i) => i.value === 'A0');
+            const inputB = Array.from(inputs).find((i) => i.value === 'B0');
+            expect(inputA).toBeInTheDocument();
+            expect(inputB).toBeInTheDocument();
+
+            const rowNode = api.getDisplayedRowAtIndex(0)!;
+
+            // Push a new value via 'edit' source — only cell 'a' is updated
+            rowNode.setDataValue('a', 'PUSHED', 'edit');
+            await asyncSetTimeout(1);
+
+            // Editor 'a' should reflect pushed value; editor 'b' unchanged
+            const inputsAfter = gridDiv.querySelectorAll<HTMLInputElement>('input');
+            const inputAAfter = Array.from(inputsAfter).find((i) => i.value === 'PUSHED');
+            const inputBStillOriginal = Array.from(inputsAfter).find((i) => i.value === 'B0');
+            expect(inputAAfter).toBeInTheDocument();
+            expect(inputBStillOriginal).toBeInTheDocument();
+
+            // Data still unchanged until commit
+            expect(rowNode.data.a).toBe('A0');
+            expect(rowNode.data.b).toBe('B0');
+
+            // getCellValue from 'edit' and 'batch' return pushed value for 'a'
+            expect(api.getCellValue({ rowNode, colKey: 'a', from: 'edit' })).toBe('PUSHED');
+            expect(api.getCellValue({ rowNode, colKey: 'a', from: 'batch' })).toBe('PUSHED');
+            expect(api.getCellValue({ rowNode, colKey: 'a', from: 'data' })).toBe('A0');
+
+            // No value-change events should fire until commit
+            expect(eventTracker.counts.cellValueChanged).toBe(0);
+            expect(eventTracker.counts.rowValueChanged).toBe(0);
+
+            // Stop editing (keeps batch pending)
+            api.stopEditing();
+            await asyncSetTimeout(0);
+
+            if (action === 'commit') {
+                api.commitBatchEdit();
+            } else {
+                api.cancelBatchEdit();
+            }
+            await asyncSetTimeout(0);
+
+            if (action === 'commit') {
+                expect(rowNode.data.a).toBe('PUSHED');
+                expect(rowNode.data.b).toBe('B0');
+
+                await new GridRows(api, 'after commit').check(`
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:ROW_0 a:"PUSHED" b:"B0"
+                `);
+
+                expect(eventTracker.counts.cellValueChanged).toBe(1);
+                expect(eventTracker.counts.rowValueChanged).toBe(1);
+            } else {
+                expect(rowNode.data.a).toBe('A0');
+                expect(rowNode.data.b).toBe('B0');
+
+                await new GridRows(api, 'after cancel').check(`
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:ROW_0 a:"A0" b:"B0"
+                `);
+
+                expect(eventTracker.counts.cellValueChanged).toBe(0);
+                expect(eventTracker.counts.rowValueChanged).toBe(0);
+            }
+
+            eventTracker.destroy();
         }
     );
 });

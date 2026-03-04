@@ -184,7 +184,7 @@ describe('Cell Editing: undo/redo', () => {
             // 1 initial edit + 1 undo + 1 redo = 3 cellValueChanged
             expect(eventTracker.counts).toEqual({
                 cellEditingStarted: 2,
-                cellEditingStopped: batchEnabled ? 3 : 2,
+                cellEditingStopped: 2,
                 cellValueChanged: 3,
                 rowValueChanged: 1,
                 cellEditRequest: 0,

@@ -9,7 +9,7 @@ import type {
     AgRowNodeEventListener,
     CellChangedEvent,
     DataChangedEvent,
-    GetDataValueFrom,
+    DataValueFrom,
     IRowNode,
     RowNodeEvent,
     RowNodeEventType,
@@ -498,36 +498,29 @@ export class RowNode<TData = any>
     }
 
     /**
-     * Replaces the value on the `rowNode` for the specified column. When complete,
-     * the grid refreshes the rendered cell on the required row only.
+     * Sets the value on the `rowNode` for the specified column and refreshes the rendered cell.
      *
-     * **Note**: This method only fires `onCellEditRequest` when the Grid is in **Read Only** mode.
+     * In **Read Only** mode, this fires `onCellEditRequest` instead of writing directly.
      *
-     * **Note**: This method defers to EditModule if available and batches the edit when `fullRow` or `batchEdit` is enabled.
+     * In **Pivot Mode**, pivot columns on leaf rows resolve to their underlying value column.
      *
-     * **Pivot Mode**: On leaf data rows (non-group rows), pivot columns resolve to their underlying value column.
+     * ### How `eventSource` controls writes
      *
-     * @param colKey The column where the value should be updated
-     * @param newValue The new value
-     * @param eventSource The source of the event. Controls where the value is written:
+     * - **(default)** — Batch active: stages a pending batch edit; any open editor is closed.
+     *   Batch inactive: closes the editor and writes to data, or writes directly if no editor is open.
+     * - **`'edit'`** — Batch active: updates the live editor value without committing; stages pending if no editor.
+     *   Batch inactive: updates the live editor value; writes directly if no editor is open.
+     * - **`'batch'`** — Batch active: stages a pending batch edit; any open editor is closed.
+     *   Batch inactive: writes directly to data; any open editor stays open.
+     * - **`'data'`** — Always writes directly to data, bypassing batch mode entirely.
      *
-     *   - `'edit'` — If an editor is open, updates the editor value without closing it or committing.
-     *     The grid calls `editor.refresh(params)` so custom editors can update their DOM.
-     *     If no editor is open: stages as pending (batch mode) or writes to data (no batch).
+     * With `'edit'`, the grid calls `editor.refresh(params)` so custom editors can update their display.
+     * Editors that don't implement `refresh()` are recreated to pick up the new value while preserving focus.
      *
-     *   - `'batch'` — Writes to batch pending value when batch mode is active (closing any open editor).
-     *     When batch mode is not active, writes directly to data (ignoring any open editor).
-     *
-     *   - `'data'` — Always writes directly to data, bypassing batch mode and edit state entirely.
-     *
-     *   - `undefined` (default), `'ui'`, `'api'`, `'fillHandle'`, `'cellClear'` —
-     *     Batch mode: stages as pending batch value (closes any open editor first).
-     *     No batch mode + editor open: writes through the editor.
-     *     No batch mode + no editor: writes directly to data.
-     *
-     *   - `'bulk'`, `'paste'`, `'rangeSvc'`, `'undo'`, `'redo'` —
-     *     Same as above, except when an editor is open during batch mode it is kept open rather than closed.
-     * @returns `true` if the value was changed, otherwise `false`.
+     * @param colKey The column to update (field name, `colId`, or `Column` object)
+     * @param newValue The new value to set
+     * @param eventSource Controls how the value is written
+     * @returns `true` if the value changed, `false` otherwise
      */
     public setDataValue(colKey: string | AgColumn, newValue: any, eventSource?: string): boolean {
         const { colModel, valueSvc, gos, editSvc } = this.beans;
@@ -609,7 +602,7 @@ export class RowNode<TData = any>
     ): TValue | IAggFuncResult<TValue> | null | undefined;
     public getDataValue<TValue = any>(
         colKey: ColKey<TValue>,
-        from: GetDataValueFrom = 'data'
+        from: DataValueFrom = 'data'
     ): TValue | IAggFuncResult<TValue> | null | undefined {
         const { colModel, valueSvc, formula } = this.beans;
 

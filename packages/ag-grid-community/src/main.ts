@@ -37,7 +37,7 @@ export {
     GroupChangedEvent,
     HasChildrenChangedEvent,
     HeightChangedEvent,
-    GetDataValueFrom,
+    DataValueFrom,
     IRowNode,
     LastChildChangedEvent,
     MasterChangedEvent,

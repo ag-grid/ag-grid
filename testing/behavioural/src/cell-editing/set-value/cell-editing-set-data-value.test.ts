@@ -69,7 +69,7 @@ describe('Cell Editing: setDataValue', () => {
 
                 expect(eventTracker.counts).toEqual({
                     cellEditingStarted: 0,
-                    cellEditingStopped: source === 'cellClear' ? 1 : 0,
+                    cellEditingStopped: 0,
                     cellValueChanged: 1,
                     rowValueChanged: 0,
                     cellEditRequest: 0,
