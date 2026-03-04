@@ -704,6 +704,10 @@ export const AG_GRID_LOCALE_DE = {
     ariaPageSizeSelectorLabel: 'Seitengröße',
     ariaChartMenuClose: 'Diagramm-Bearbeitungsmenü schließen',
     ariaChartSelected: 'Ausgewählt',
+    ariaSparklineChartDescription:
+        'Sparkline - ${chartType} mit ${count} Werten zwischen ${min} und ${max}. Beginnt bei ${start} und endet bei ${end}.',
+    ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} mit 1 Wert, ${value}.',
+    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${chartType} ohne Werte.',
     ariaSkeletonCellLoadingFailed: 'Das Laden der Zeile ist fehlgeschlagen',
     ariaSkeletonCellLoading: 'Zeilendaten werden geladen',
     ariaDeferSkeletonCellLoading: 'Zelle wird geladen',

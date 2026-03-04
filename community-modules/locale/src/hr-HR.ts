@@ -699,6 +699,10 @@ export const AG_GRID_LOCALE_HR = {
     ariaPageSizeSelectorLabel: 'Veličina stranice',
     ariaChartMenuClose: 'Zatvori izbornik uređivanja grafikona',
     ariaChartSelected: 'Odabrano',
+    ariaSparklineChartDescription:
+        'Sparkline - ${chartType} prikazuje ${count} vrijednosti između ${min} i ${max}. Počinje na ${start} i završava na ${end}.',
+    ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} prikazuje 1 vrijednost: ${value}.',
+    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${chartType} bez vrijednosti.',
     ariaSkeletonCellLoadingFailed: 'Redak nije uspješno učitan',
     ariaSkeletonCellLoading: 'Podaci retka se učitavaju',
     ariaDeferSkeletonCellLoading: 'Ćelija se učitava',

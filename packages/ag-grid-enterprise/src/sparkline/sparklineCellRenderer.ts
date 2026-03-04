@@ -8,9 +8,22 @@ import type {
 } from 'ag-charts-types';
 
 import type { AgColumn, Environment, ICellRenderer, ISparklineCellRendererParams, RowNode } from 'ag-grid-community';
-import { Component, RefPlaceholder, _batchCall } from 'ag-grid-community';
+import {
+    Component,
+    RefPlaceholder,
+    _batchCall,
+    _formatNumberCommas,
+    _setAriaLabel,
+    _setAriaLabelledBy,
+} from 'ag-grid-community';
 
-import { wrapFn } from './sparklinesUtils';
+import {
+    getChartTypeLabel,
+    getSparklineAriaTemplate,
+    getSparklineSummary,
+    interpolateTemplate,
+    wrapFn,
+} from './sparklinesUtils';
 
 function tooltipRendererWithXValue(
     params: AgSparklineTooltipRendererParams<unknown>
@@ -21,6 +34,8 @@ function tooltipRendererWithXValue(
 function tooltipRenderer(params: AgSparklineTooltipRendererParams<unknown>): AgSparklineTooltipRendererResult {
     return { content: `${params.yValue}` };
 }
+
+const COMPONENT_PREFIX = 'ag-sparkline';
 
 export class SparklineCellRenderer extends Component implements ICellRenderer {
     private readonly eSparkline: HTMLElement = RefPlaceholder;
@@ -36,7 +51,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
     constructor() {
         super({
             tag: 'div',
-            cls: 'ag-sparkline-wrapper',
+            cls: `${COMPONENT_PREFIX}-wrapper`,
             children: [{ tag: 'span', ref: 'eSparkline' }],
         });
     }
@@ -94,11 +109,18 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
 
     public init(params: ISparklineCellRendererParams): void {
         this.params = params;
+        const { eParentOfValue } = params;
+        const id = `${COMPONENT_PREFIX}-cell-renderer-${this.getCompId()}`;
+        this.getGui().setAttribute('id', id);
+        _setAriaLabelledBy(eParentOfValue, id);
+        this.addDestroyFunc(() => _setAriaLabelledBy(eParentOfValue));
         this.initGridObserver();
     }
 
     public refresh(params: ISparklineCellRendererParams = this.params): boolean {
         this.params = params;
+        const data = this.processData(params?.value);
+        this.refreshAriaLabel(data);
 
         const width = this.cachedWidth;
         const height = this.cachedHeight;
@@ -111,7 +133,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
                 height,
                 ...params.sparklineOptions,
                 ...(styleNonce ? { styleNonce } : {}),
-                data: this.processData(params.value),
+                data,
             } as AgSparklineOptions;
 
             this.sparklineOptions.type ??= 'line';
@@ -140,7 +162,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
         } else if (this.sparklineInstance) {
             this.sparklineInstance.update({
                 ...this.sparklineOptions,
-                data: this.processData(params?.value),
+                data,
                 width,
                 height,
                 ...(styleNonce ? { styleNonce } : {}),
@@ -149,6 +171,21 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
             return true;
         }
         return false;
+    }
+
+    private refreshAriaLabel(data: any[]): void {
+        const translate = this.getLocaleTextFunc();
+        const getLocaleText = this.getLocaleTextFunc.bind(this);
+        const yKey = (this.params?.sparklineOptions as any)?.yKey ?? (this.sparklineOptions as any)?.yKey ?? 'y';
+        const summary = getSparklineSummary(data, yKey);
+        const sparklineOptions = this.params?.sparklineOptions ?? this.sparklineOptions;
+        const { template, values } = getSparklineAriaTemplate({
+            translate,
+            chartType: getChartTypeLabel(translate, sparklineOptions),
+            summary,
+            formatNumber: (value) => _formatNumberCommas(value, getLocaleText),
+        });
+        _setAriaLabel(this.getGui(), interpolateTemplate(template, values));
     }
 
     private processData(data: any[] | null | undefined) {

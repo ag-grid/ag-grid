@@ -697,6 +697,10 @@ export const AG_GRID_LOCALE_CZ = {
     ariaPageSizeSelectorLabel: 'Velikost stránky',
     ariaChartMenuClose: 'Zavřít nabídku úpravy grafu',
     ariaChartSelected: 'Vybráno',
+    ariaSparklineChartDescription:
+        'Mini graf - ${chartType} zobrazuje ${count} hodnot mezi ${min} a ${max}. Začíná na ${start} a končí na ${end}.',
+    ariaSparklineChartDescriptionSingleValue: 'Mini graf - ${chartType} zobrazuje 1 hodnotu: ${value}.',
+    ariaSparklineChartDescriptionEmpty: 'Mini graf - ${chartType} bez hodnot.',
     ariaSkeletonCellLoadingFailed: 'Řádek se nepodařilo načíst',
     ariaSkeletonCellLoading: 'Data řádku se načítají',
     ariaDeferSkeletonCellLoading: 'Načítá se buňka',
