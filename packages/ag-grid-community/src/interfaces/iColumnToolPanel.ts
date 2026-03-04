@@ -28,4 +28,4 @@ export interface IColumnToolPanelEdits {
     reset(): void;
 }
 
-export type ColumnToolPanelEditsBeans = 'columnToolPanelSyncEditStrategy' | 'columnToolPanelDeferredEditStrategy';
+export type ColumnToolPanelEditStrategyBean = 'columnToolPanelSynchronousEdit' | 'columnToolPanelDeferredEdit';
