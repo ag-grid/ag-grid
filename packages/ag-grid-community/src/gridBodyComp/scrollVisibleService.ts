@@ -5,6 +5,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface SetScrollsVisibleParams {
     horizontalScrollShowing: boolean;
     verticalScrollShowing: boolean;

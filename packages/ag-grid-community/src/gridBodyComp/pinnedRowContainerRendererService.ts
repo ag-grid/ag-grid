@@ -7,6 +7,7 @@ export type PinnedSection = 'top' | 'bottom';
 export type PinnedSectionStream = 'center' | 'fullWidth';
 export type PinnedSectionLane = 'edge' | 'pinned' | 'sticky';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface PinnedRowContainerRendererSourceConfig {
     id: string;
     section: PinnedSection;
@@ -18,6 +19,7 @@ export interface PinnedRowContainerRendererSourceConfig {
     insertAfterHeadersBeforeRows?: boolean;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface PinnedRowContainerRendererSource {
     setRows(rows: HTMLElement[]): void;
     setElements(elements: HTMLElement[]): void;
@@ -32,6 +34,7 @@ interface SourceState extends PinnedRowContainerRendererSourceConfig {
     elements: HTMLElement[];
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface PinnedRowContainerRendererHosts {
     topCenter: HTMLElement;
     topFullWidth: HTMLElement;
