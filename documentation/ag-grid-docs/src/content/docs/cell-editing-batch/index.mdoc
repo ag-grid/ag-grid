@@ -3,7 +3,7 @@ title: 'Batch Editing'
 enterprise: true
 ---
 
-Batch editing allows you to edit multiple cells or rows in the grid before committing or reverting these edits. This is useful for scenarios where you want to make several edits at once without immediately updating the data source.
+Batch editing lets you queue edits across multiple cells or rows, then commit or discard them all at once without immediately writing to the data source.
 
 {% note %}
 Batch editing is an advanced feature only available via the API to allow you to tailor it to your specific needs.
@@ -35,7 +35,7 @@ The following example demonstrates a simple batch editing scenario: starting a b
 
 {% gridExampleRunner title="Batch Editing API" name="batch-editing-api" exampleHeight=560 /%}
 
-The grid API methods `startEditingCell()` and `stopEditing()` can be used to control the editing state of individual cells. When you start editing a cell after enabling Batch Editing, the grid enters a batch editing mode where it can track changes. `isBatchEditing()` can be used to check if the grid is currently in batch editing mode. In this mode, `startEditingCell()` and `stopEditing()` affect only the cell editors, not the overall batch.
+`startEditingCell()` and `stopEditing()` control individual cell editors — they do not start or stop the overall batch. Use `isBatchEditing()` to check whether a batch is currently active.
 
 {% apiDocumentation source="grid-api/api.json" section="batch-editing" names=["isBatchEditing", "startBatchEdit", "commitBatchEdit", "cancelBatchEdit"] /%}
 
@@ -88,12 +88,12 @@ Both accept a `from` parameter:
 api.startBatchEdit();
 rowNode.setDataValue('price', 99, 'batch');
 
-rowNode.getDataValue('price');            // 42 (committed data)
-rowNode.getDataValue('price', 'batch');  // 99 (pending value)
-rowNode.getDataValue('price', 'edit');   // 99 (no editor open, same as 'batch')
+console.log(rowNode.getDataValue('price'));           // 42 (committed data)
+console.log(rowNode.getDataValue('price', 'batch')); // 99 (pending value)
+console.log(rowNode.getDataValue('price', 'edit'));  // 99 (no editor open, same as 'batch')
 
 api.commitBatchEdit();
-rowNode.getDataValue('price');            // 99 (now committed)
+console.log(rowNode.getDataValue('price'));           // 99 (now committed)
 ```
 
 `rowNode.getDataValue()` also supports `'value'` and `'data-raw'` — see [Advanced Modes](#advanced-getdatavalue-modes) below.
@@ -109,7 +109,7 @@ rowNode.getDataValue('price');            // 99 (now committed)
 | `'batch'`     | Stages a pending edit. Closes any open editor.                                     | Writes to data. Leaves any open editor untouched.                           |
 | `'data'`      | Writes directly to data, **bypassing batch mode**.                                 | Writes to data.                                                             |
 
-With `'edit'`, custom editors receive the new value via `editor.refresh(params)`. Editors without `refresh()` are recreated with focus preserved.
+With `'edit'`, custom editors that implement `refresh()` receive the new value in place; otherwise the editor is recreated with focus preserved.
 
 ```js
 api.startBatchEdit();
@@ -117,12 +117,12 @@ api.startEditingCell({ rowIndex: 0, colKey: 'price' });
 
 // Update the open editor without closing it
 rowNode.setDataValue('price', 99, 'edit');
-api.getCellValue({ rowNode, colKey: 'price', from: 'edit' }); // 99
-rowNode.data.price;                                             // 42 (unchanged)
+console.log(api.getCellValue({ rowNode, colKey: 'price', from: 'edit' })); // 99
+console.log(rowNode.data.price);                                            // 42 (unchanged)
 
 api.stopEditing();
 api.commitBatchEdit();
-rowNode.getDataValue('price');  // 99 (committed)
+console.log(rowNode.getDataValue('price')); // 99 (committed)
 ```
 
 ```js
@@ -131,47 +131,36 @@ api.startBatchEdit();
 rowNode.setDataValue('price', 99, 'batch');
 rowNode.setDataValue('qty', 5, 'batch');
 
-rowNode.getDataValue('price');           // 42 (committed data)
-rowNode.getDataValue('price', 'batch'); // 99 (pending)
+console.log(rowNode.getDataValue('price'));           // 42 (committed data)
+console.log(rowNode.getDataValue('price', 'batch')); // 99 (pending)
 
 api.commitBatchEdit();
-rowNode.getDataValue('price');           // 99
+console.log(rowNode.getDataValue('price'));           // 99
 ```
 
 ```js
 // 'data' — bypass batch, write immediately
 api.startBatchEdit();
 rowNode.setDataValue('price', 99, 'data');
-rowNode.data.price;                      // 99 (already committed)
-api.cancelBatchEdit();                   // 'data' writes are permanent
+console.log(rowNode.data.price); // 99 (already committed)
+api.cancelBatchEdit();           // 'data' writes are permanent
 ```
 
 ### Advanced getDataValue Modes
 
 `rowNode.getDataValue()` supports two additional `from` modes:
 
--   **`'value'`** — same as `'data'`, but unwraps aggregation wrapper objects (`avg`, `count`) to their scalar value. For other agg functions (`sum`, `min`, `max`, etc.) this is identical to `'data'`.
--   **`'data-raw'`** — reads directly from `rowNode.data`, bypassing aggregation, valueGetters, and formula resolution.
-
-#### Aggregation Wrappers
-
-The built-in `avg` and `count` aggregation functions return `IAggFuncResult` wrapper objects. Use `'value'` to get the unwrapped scalar:
+-   **`'value'`** — same as `'data'`, but unwraps the aggregation result returned by `avg` and `count` to its scalar value. For all other aggregation functions this is identical to `'data'`.
+-   **`'data-raw'`** — reads directly from `rowNode.data`, bypassing valueGetters and aggregation.
 
 ```js
 // Column 'revenue' uses aggFunc: 'avg' — average is 420 across 3 rows
+console.log(groupRowNode.getDataValue('revenue'));           // aggregation result object (avg + count)
+console.log(groupRowNode.getDataValue('revenue', 'value')); // 420 (scalar)
 
-console.log(groupRowNode.getDataValue('revenue'));              // { value: 420, count: 3, toString(), toNumber() }
-console.log(groupRowNode.getDataValue('revenue', 'value'));     // 420 (unwrapped scalar)
-console.log(groupRowNode.getDataValue('revenue', 'data-raw'));  // undefined (group rows have no leaf data)
-```
-
-#### Raw Data vs valueGetters
-
-```js
 // Column 'total' has: valueGetter: p => p.data.price * p.data.qty
-
-console.log(rowNode.getDataValue('total', 'value'));     // 600 (valueGetter result)
-console.log(rowNode.getDataValue('total', 'data-raw'));  // undefined (no 'total' field in data)
+console.log(rowNode.getDataValue('total', 'value'));        // 600 (valueGetter result)
+console.log(rowNode.getDataValue('total', 'data-raw'));     // undefined (no 'total' field in raw data)
 ```
 
 ## Undo / Redo
@@ -182,11 +171,9 @@ When [Undo / Redo](./undo-redo-edits/) is enabled, a committed batch is treated 
 
 ### Custom Renderers & Editors
 
-The `ICellRendererComp` interface provides a means for your cell renderer to update when edits are batched, to reflect the pending nature of the values. The `refresh` method that the grid calls when the cell needs to be re-rendered. The parameters include the latest pending value.
+Implement `refresh()` in your custom cell renderers and editors to receive updated values during a batch. The `params` passed to `refresh()` include the latest pending value.
 
 {% interfaceDocumentation interfaceName="ICellRendererComp" names=["refresh"] /%}
-
-As with custom renderers, the `ICellEditor` interface includes the `refresh` method, which the grid calls when the cell needs to be re-rendered. The parameters include the latest pending value.
 
 {% interfaceDocumentation interfaceName="ICellEditor" names=["refresh"] /%}
 
