@@ -15,7 +15,10 @@ import { legacyFilterCSS } from './legacyFilter.css-GENERATED';
 
 const FilterElement: ElementParams = { tag: 'div', cls: 'ag-filter' };
 
-/** Wraps column filters for use in menus, tool panel etc. */
+/**
+ * Wraps column filters for use in menus, tool panel etc.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
 export class FilterComp extends Component {
     private wrapper: AgPromise<FilterDisplayWrapper> | null = null;
     private comp?: FilterWrapperComp;
