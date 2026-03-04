@@ -214,3 +214,51 @@ reason = "used by expressjs which is only used for dev purposes"
 id = "GHSA-34x7-hfp2-rc4v"
 reason = "tar not used directly and not accessible to end users/external users"
 
+[[IgnoredVulns]]
+id = "GHSA-prjf-86w9-mfqv"
+reason = "Downstream dependency of angular - the user would be responsible for XSS in the i18n pipeline"
+
+[[IgnoredVulns]]
+id = "GHSA-2g4f-4pwh-qvx6"
+reason = "ajv is used in build & dev - not included in final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-43fc-jf86-j433"
+reason = "axios is only used during development"
+
+[[IgnoredVulns]]
+id = "GHSA-5rq4-664w-9x2c"
+reason = "basic-ftp is used in dev - not included in final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-7gcc-r8m5-44qm"
+reason = "koa is used in build & dev - not included in final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-23c5-xmqv-rm74"
+reason = "minimatch is used in build & dev - not included in final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-3ppc-4f35-3m26"
+reason = "minimatch is used in build & dev - not included in final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-7r86-cg39-jmmj"
+reason = "minimatch is used in build & dev - not included in final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-w7fw-mjwx-w883"
+reason = "qs is used in build & dev - not included in final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-mw96-cpmx-2vgc"
+reason = "rollup is used in build & dev - not included in final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-5c6j-r48x-rmvq"
+reason = "serialize-javascript is used in build & dev - not included in final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-83g3-92jg-28cx"
+reason = "tar is used in build & dev - not included in final production build"
+
