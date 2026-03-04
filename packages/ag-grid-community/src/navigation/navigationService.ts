@@ -42,6 +42,7 @@ type FindNextCellToFocusOnParams = {
     skipToNextEditableCell?: boolean;
 };
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class NavigationService extends BeanStub implements NamedBean {
     beanName = 'navigation' as const;
 

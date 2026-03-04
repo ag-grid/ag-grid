@@ -8,11 +8,13 @@ const AG_GRID_STOP_PROPAGATION = '__ag_Grid_Stop_Propagation';
  * to get around this, we have a pattern to stop propagation for the purposes of AG Grid,
  * but we still let the event pass back to the body.
  * @param {Event} event
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _stopPropagationForAgGrid(event: Event): void {
     (event as any)[AG_GRID_STOP_PROPAGATION] = true;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isStopPropagationForAgGrid(event: Event): boolean {
     return (event as any)[AG_GRID_STOP_PROPAGATION] === true;
 }

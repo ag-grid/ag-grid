@@ -14,6 +14,7 @@ interface PathItem {
 // this class keeps track of all groups that were impacted by a transaction.
 // the the different CSRM operations (filter, sort etc) use the forEach method
 // to visit each group that was changed.
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class ChangedPath {
     // we keep columns when doing changed detection after user edits.
     // when a user edits, we only need to re-aggregate the column

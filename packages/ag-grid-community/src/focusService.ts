@@ -41,6 +41,7 @@ import {
 
 type FocusDirection = 'Before' | 'After' | null;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class FocusService extends BeanStub implements NamedBean {
     beanName = 'focusSvc' as const;
 

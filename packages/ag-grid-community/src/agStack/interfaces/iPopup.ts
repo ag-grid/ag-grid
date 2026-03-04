@@ -1,5 +1,6 @@
 import type { AfterGuiAttachedParams } from './iAfterGuiAttachedParams';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type AddPopupParams<TContainerType extends string> =
     | LabelAddPopupParams<TContainerType>
     | OwnsAddPopupParams<TContainerType>;
@@ -49,6 +50,7 @@ export interface PopupEventParams {
     forceHide?: boolean;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface AddPopupResult {
     hideFunc: (params?: PopupEventParams) => void;
 }

@@ -43,6 +43,7 @@ type ShowColumnMenuParams = (MouseShowMenuParams | ButtonShowMenuParams | AutoSh
 type ShowFilterMenuParams = (MouseShowMenuParams | ButtonShowMenuParams | AutoShowMenuParams) &
     BaseShowFilterMenuParams;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class MenuService extends BeanStub implements NamedBean {
     beanName = 'menuSvc' as const;
 
@@ -188,6 +189,7 @@ export class MenuService extends BeanStub implements NamedBean {
     }
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _setColMenuVisible(column: AgColumn, visible: boolean, source: ColumnEventType): void {
     if (column.menuVisible !== visible) {
         column.menuVisible = visible;

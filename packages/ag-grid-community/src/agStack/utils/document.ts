@@ -1,14 +1,17 @@
 import type { UtilBeanCollection } from '../interfaces/agCoreBeanCollection';
 import { _exists } from './generic';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getRootNode(beans: UtilBeanCollection): Document | ShadowRoot {
     return beans.eRootDiv.getRootNode() as Document | ShadowRoot;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getActiveDomElement(beans: UtilBeanCollection): Element | null {
     return _getRootNode(beans).activeElement;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getDocument(beans: UtilBeanCollection): Document {
     // if user is providing document, we use the users one,
     // otherwise we use the document on the global namespace.
@@ -28,17 +31,20 @@ export function _getDocument(beans: UtilBeanCollection): Document {
     return document;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isNothingFocused(beans: UtilBeanCollection): boolean {
     const activeEl = _getActiveDomElement(beans);
 
     return activeEl === null || activeEl === _getDocument(beans).body;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getWindow(beans: UtilBeanCollection) {
     const eDocument = _getDocument(beans);
     return eDocument.defaultView || window;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getPageBody(beans: UtilBeanCollection): HTMLElement | ShadowRoot {
     let rootNode: Document | ShadowRoot | HTMLElement | null = null;
     let targetEl: HTMLElement | ShadowRoot | null = null;

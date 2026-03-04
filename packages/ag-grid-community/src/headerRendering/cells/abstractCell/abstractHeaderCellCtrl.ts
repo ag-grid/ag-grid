@@ -19,6 +19,7 @@ import { refreshFirstAndLastStyles } from '../cssClassApplier';
 
 let instanceIdSequence = 0;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IAbstractHeaderCellComp {
     toggleCss(cssClassName: string, on: boolean): void;
     setUserStyles(styles: HeaderStyle): void;
@@ -32,6 +33,7 @@ export type HeaderCellCtrlInstanceId = BrandedType<string, 'HeaderCellCtrlInstan
 
 export const DOM_DATA_KEY_HEADER_CTRL = 'headerCtrl';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export abstract class AbstractHeaderCellCtrl<
     TComp extends IAbstractHeaderCellComp = IAbstractHeaderCellComp,
     TColumn extends AgColumn | AgColumnGroup = AgColumn | AgColumnGroup,

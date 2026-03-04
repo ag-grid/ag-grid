@@ -14,10 +14,12 @@ import type { ColumnGroup } from '../interfaces/iColumn';
 import type { CellValueResolveFrom } from '../interfaces/iEditService';
 import type { ValueService } from '../valueService/valueService';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface RowAccumulator {
     onColumn(column: AgColumn, index: number, node?: RowNode): void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface RowSpanningAccumulator {
     onColumn(
         columnGroup: ColumnGroup,
@@ -28,6 +30,7 @@ export interface RowSpanningAccumulator {
     ): void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface GridSerializingParams {
     colModel: ColumnModel;
     rowGroupColsSvc?: IColsService;

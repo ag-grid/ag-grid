@@ -47,6 +47,7 @@ interface RowNodeMap {
 
 const ROW_ANIMATION_TIMEOUT = 400;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class RowRenderer extends BeanStub implements NamedBean {
     beanName = 'rowRenderer' as const;
 

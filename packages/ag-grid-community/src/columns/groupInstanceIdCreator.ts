@@ -8,6 +8,7 @@
 // getInstanceIdForKey('age') => 0
 // getInstanceIdForKey('age') => 1
 // getInstanceIdForKey('country') => 4
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class GroupInstanceIdCreator {
     // this map contains keys to numbers, so we remember what the last call was
     private existingIds: any = {};

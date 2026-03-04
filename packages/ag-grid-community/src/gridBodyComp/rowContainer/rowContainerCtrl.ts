@@ -12,6 +12,7 @@ import { ViewportSizeFeature } from '../viewportSizeFeature';
 import { RowContainerEventsFeature } from './rowContainerEventsFeature';
 import { SetHeightFeature } from './setHeightFeature';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type RowContainerName =
     | 'scrollingCenter'
     | 'scrollingFullWidth'
@@ -24,10 +25,12 @@ export type RowContainerName =
     | 'pinnedBottomCenter'
     | 'pinnedBottomFullWidth';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type RowContainerType = 'center' | 'fullWidth';
 
 type GetRowCtrls = (renderer: RowRenderer) => RowCtrl[];
 type GetSpannedRowCtrls = (renderer: SpannedRowRenderer) => RowCtrl[];
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type RowContainerOptions = {
     type: RowContainerType;
     name: string;
@@ -110,18 +113,22 @@ const ContainerCssClasses: Record<RowContainerName, RowContainerOptions> = {
         getRowCtrls: getBottomRowCtrls,
     },
 };
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getRowViewportClass(name: RowContainerName): `ag-${string}-viewport` {
     const options = _getRowContainerOptions(name);
     return `ag-${options.name}-viewport`;
 }
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getRowContainerClass(name: RowContainerName): `ag-${string}` {
     const options = _getRowContainerOptions(name);
     return `ag-${options.name}-container`;
 }
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getRowSpanContainerClass(name: RowContainerName): `ag-${string}-spanned-cells-container` {
     const options = _getRowContainerOptions(name);
     return `ag-${options.name}-spanned-cells-container`;
 }
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getRowContainerOptions(name: RowContainerName): RowContainerOptions {
     return ContainerCssClasses[name];
 }
@@ -143,6 +150,7 @@ const allStickyContainers: RowContainerName[] = [
     'stickyBottomFullWidth',
 ];
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowContainerComp {
     setViewportHeight(height: string): void;
     setHorizontalScroll(offset: number): void;
@@ -153,6 +161,7 @@ export interface IRowContainerComp {
     setOffsetTop(offset: string): void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     private readonly options: RowContainerOptions;
 

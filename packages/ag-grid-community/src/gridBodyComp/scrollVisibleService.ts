@@ -10,6 +10,7 @@ export interface SetScrollsVisibleParams {
     verticalScrollShowing: boolean;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class ScrollVisibleService extends BeanStub implements NamedBean {
     beanName = 'scrollVisibleSvc' as const;
 

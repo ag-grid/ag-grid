@@ -42,6 +42,7 @@ export type ThemeDefaultParams = CoreParams &
  */
 export type AllThemeParamsForAPIDocumentation = ThemeDefaultParams & FormulaStyleParams;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const themeQuartzParams = () => ({
     fontFamily: [
         { googleFont: 'IBM Plex Sans' },
@@ -68,6 +69,7 @@ export const themeQuartz: Theme<ThemeDefaultParams> =
     /*#__PURE__*/
     makeThemeQuartzTreeShakeable();
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const themeAlpineParams = () => ({
     accentColor: '#2196f3',
     selectedRowBackgroundColor: accentMix(0.3),
@@ -125,6 +127,7 @@ export const themeAlpine: Theme<ThemeDefaultParams> =
     /*#__PURE__*/
     makeThemeAlpineTreeShakeable();
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const themeBalhamParams = () => ({
     accentColor: '#0091ea',
     borderColor: foregroundMix(0.2),
@@ -300,6 +303,7 @@ const makeStyleMaterialTreeShakeable = () => {
 
 export const styleMaterial = /*#__PURE__*/ makeStyleMaterialTreeShakeable();
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const themeMaterialParams = () => ({
     rowHeight: {
         calc: 'max(iconSize, cellFontSize) + spacing * 3.75 * rowVerticalPaddingScale',

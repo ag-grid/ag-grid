@@ -7,6 +7,7 @@ import type {
     AgPopupPositionParams,
 } from './iPopup';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IPopupService<TPopupPositionParams> {
     readonly beanName: 'popupSvc';
 

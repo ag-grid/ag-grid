@@ -10,6 +10,7 @@ import { _clearElement, _isVisible } from '../utils/dom';
 import { agListCSS } from './agList.css-GENERATED';
 import { AgListItem } from './agListItem';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface ListOption<TValue = string> {
     value: TValue;
     text?: string;

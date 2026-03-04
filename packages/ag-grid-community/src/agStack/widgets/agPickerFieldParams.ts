@@ -2,6 +2,7 @@ import type { AgComponentSelector } from '../interfaces/agComponent';
 import type { AgElementParams } from '../utils/dom';
 import type { AgFieldParams } from './agFieldParams';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface AgPickerFieldParams<TComponentSelectorType extends string> extends AgFieldParams {
     pickerType: string;
     pickerGap?: number;

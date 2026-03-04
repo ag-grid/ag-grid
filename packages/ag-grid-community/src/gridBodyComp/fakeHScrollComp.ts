@@ -21,6 +21,7 @@ const FakeHScrollElement: ElementParams = {
         { tag: 'div', ref: 'eEndSpacer', cls: 'ag-body-horizontal-scroll-end-spacer' },
     ],
 };
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class FakeHScrollComp extends AbstractFakeScrollComp {
     private visibleCols: VisibleColsService;
     private scrollVisibleSvc: ScrollVisibleService;

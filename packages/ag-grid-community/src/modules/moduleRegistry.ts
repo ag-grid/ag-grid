@@ -47,6 +47,7 @@ function runVersionChecks(module: Module) {
     }
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _registerModule(module: Module, gridId: string | undefined, isInternalRegistration = false): void {
     if (!isInternalRegistration) {
         userHasRegistered = true;
@@ -109,6 +110,7 @@ export function _getAllRegisteredModules(): Set<Module> {
     return new Set(allRegisteredModules);
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getGridRegisteredModules(gridId: string, rowModel: RowModelType): Module[] {
     const gridModules = gridModulesMap[gridId] ?? {};
     return [...Object.values(gridModules['all'] ?? {}), ...Object.values(gridModules[rowModel] ?? {})];
@@ -123,7 +125,10 @@ export function _isUmd(): boolean {
     return isUmd;
 }
 
-/** Internal use to provide clear error messages for UMD users. */
+/**
+ * Internal use to provide clear error messages for UMD users.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
 export function _setUmd(): void {
     isUmd = true;
 }
@@ -146,6 +151,7 @@ export class ModuleRegistry {
     }
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _findEnterpriseCoreModule(modules: Module[]): _ModuleWithLicenseManager | undefined {
     for (const module of modules) {
         if ('setLicenseKey' in module) {

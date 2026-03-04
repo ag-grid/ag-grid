@@ -83,6 +83,7 @@ const FILTER_LOCALE_TEXT = {
 
 export type FilterLocaleTextKey = keyof typeof FILTER_LOCALE_TEXT;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function translateForFilter(
     bean: { getLocaleTextFunc(): LocaleTextFunc },
     key: keyof typeof FILTER_LOCALE_TEXT,
