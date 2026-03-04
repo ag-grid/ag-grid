@@ -199,14 +199,17 @@ export class ValueService extends BeanStub implements NamedBean {
         let result = this.resolveValue(column, rowNode, ignoreAggData);
 
         if (result === undefined) {
-            // For showRowGroup columns, if no value was resolved and the row's group level is shallower
-            // than the column's associated row group, return null for retro-compatibility
-            // (previously getValue returned null early in this case).
-            const rowGroupColId = rowNode.group && column.getColDef().showRowGroup;
-            if (typeof rowGroupColId === 'string') {
-                const colRowGroupIndex = this.beans.rowGroupColsSvc?.getColumnIndex(rowGroupColId);
-                if (colRowGroupIndex != null && colRowGroupIndex > rowNode.level) {
-                    return null;
+            // For showRowGroup columns on group rows, if no value was resolved and the row's
+            // group level is shallower than the column's associated row group, return null for
+            // retro-compatibility (previously getValue returned null early in this case).
+            // This guard applies to group rows only — leaf rows always return undefined here.
+            if (rowNode.group) {
+                const rowGroupColId = column.getColDef().showRowGroup;
+                if (typeof rowGroupColId === 'string') {
+                    const colRowGroupIndex = this.beans.rowGroupColsSvc?.getColumnIndex(rowGroupColId);
+                    if (colRowGroupIndex != null && colRowGroupIndex > rowNode.level) {
+                        return null;
+                    }
                 }
             }
             return undefined;

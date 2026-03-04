@@ -4,7 +4,7 @@ import type { BeanCollection } from '../../context/context';
 import type { AgEventTypeParams } from '../../events';
 import type { GridOptionsWithDefaults } from '../../gridOptionsDefault';
 import type { GridOptionsService } from '../../gridOptionsService';
-import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
+import type { AgBaseCellEditor, ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import type { AgGridCommon } from '../../interfaces/iCommon';
 import type { AgComponentSelectorType } from '../../widgets/component';
 
@@ -17,7 +17,7 @@ export abstract class AgAbstractCellEditor<P extends ICellEditorParams = any, TV
         GridOptionsService,
         AgComponentSelectorType
     >
-    implements ICellEditorComp
+    implements ICellEditorComp, AgBaseCellEditor
 {
     protected abstract eEditor: AgAbstractField<
         BeanCollection,
@@ -46,7 +46,7 @@ export abstract class AgAbstractCellEditor<P extends ICellEditorParams = any, TV
         this.eEditor.onValueChange(() => params.validate());
     }
 
-    public setEditValue(value: TValue | null | undefined): void {
+    public agSetEditValue(value: TValue | null | undefined): void {
         this.params.value = value;
         this.eEditor.setValue(value as any, true);
     }

@@ -141,7 +141,7 @@ export function _setupEditor(
     }
 ): void {
     const { key, event, cellStartedEdit, silent } = params ?? {};
-    const { editModelSvc, editSvc, gos, userCompFactory } = beans;
+    const { editModelSvc, gos, userCompFactory } = beans;
 
     const cellCtrl = _getCellCtrl(beans, position);
     const editorComp = cellCtrl?.comp?.getCellEditor();

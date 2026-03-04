@@ -25,7 +25,7 @@ export class CheckboxCellEditor extends AgAbstractCellEditor<ICellEditorParams<a
     protected readonly eEditor: GridCheckbox = RefPlaceholder;
 
     public initialiseEditor(params: ICellEditorParams<any, boolean>): void {
-        this.setEditValue(params.value);
+        this.agSetEditValue(params.value);
 
         const inputEl = this.eEditor.getInputElement();
         inputEl.setAttribute('tabindex', '-1');
@@ -35,7 +35,7 @@ export class CheckboxCellEditor extends AgAbstractCellEditor<ICellEditorParams<a
         });
     }
 
-    public override setEditValue(value: boolean | null | undefined): void {
+    public override agSetEditValue(value: boolean | null | undefined): void {
         this.params.value = value;
         const isSelected = value ?? undefined;
         this.eEditor.setValue(isSelected, true);

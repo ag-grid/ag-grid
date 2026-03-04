@@ -10,7 +10,12 @@ import type { GridOptionsService } from '../gridOptionsService';
 import { _addGridCommonParams, _isClientSideRowModel } from '../gridOptionsUtils';
 import type { CellRange, IRangeService } from '../interfaces/IRangeService';
 import type { EditStrategyType } from '../interfaces/editStrategyType';
-import type { EditingCellPosition, ICellEditorParams, ICellEditorValidationError } from '../interfaces/iCellEditor';
+import type {
+    AgBaseCellEditor,
+    EditingCellPosition,
+    ICellEditorParams,
+    ICellEditorValidationError,
+} from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { RefreshCellsParams } from '../interfaces/iCellsParams';
 import type { Column } from '../interfaces/iColumn';
@@ -32,7 +37,6 @@ import type { UserCompDetails } from '../interfaces/iUserCompDetails';
 import { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { ValueService } from '../valueService/valueService';
-import { AgAbstractCellEditor } from './cellEditors/agAbstractCellEditor';
 import { PopupEditorWrapper } from './cellEditors/popupEditorWrapper';
 import type { EditModelService } from './editModelService';
 import type { BaseEditStrategy } from './strategy/baseEditStrategy';
@@ -1200,8 +1204,8 @@ export class EditService extends BeanStub implements NamedBean {
         cellCtrl.editStyleFeature?.applyCellStyles?.();
 
         // Fast path for built-in editors: update value in-place without recreating
-        if (editor instanceof AgAbstractCellEditor) {
-            editor.setEditValue(newValue);
+        if ('agSetEditValue' in editor) {
+            (editor as AgBaseCellEditor).agSetEditValue(newValue);
             return true;
         }
 

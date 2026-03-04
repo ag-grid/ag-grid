@@ -81,6 +81,12 @@ export class FormulaCellEditor extends AgAbstractCellEditor<IFormulaCellEditorPa
         return value?.toString() ?? value;
     }
 
+    public override agSetEditValue(value: any): void {
+        this.params.value = value;
+        const startValue = this.getStartValue(this.params);
+        this.eEditor.setValue(startValue ?? '', true);
+    }
+
     public override isPopup(): boolean {
         return false;
     }

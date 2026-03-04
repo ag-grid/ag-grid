@@ -76,7 +76,7 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
         return value?.toString() ?? value;
     }
 
-    public override setEditValue(value: any): void {
+    public override agSetEditValue(value: any): void {
         this.params.value = value;
         const startValue = this.getStartValue(this.params);
         this.eEditor.setValue(startValue ?? '', true);
