@@ -17,7 +17,7 @@ export abstract class AgAbstractCellEditor<P extends ICellEditorParams = any, TV
         GridOptionsService,
         AgComponentSelectorType
     >
-    implements ICellEditorComp, AgBaseCellEditor
+    implements ICellEditorComp, AgBaseCellEditor<TValue>
 {
     protected abstract eEditor: AgAbstractField<
         BeanCollection,

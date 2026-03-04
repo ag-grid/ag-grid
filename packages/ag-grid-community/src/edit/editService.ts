@@ -1238,9 +1238,29 @@ export class EditService extends BeanStub implements NamedBean {
         const beans = this.beans;
 
         if (this.batch) {
-            _syncFromEditor(beans, position, newValue, eventSource, undefined, { persist: true });
+            if (eventSource === 'batch' && _getCellCtrl(beans, position)?.comp?.getCellEditor()) {
+                // 'batch' source with an open editor: write ONLY to pendingValue,
+                // leaving editorValue untouched so the editor keeps showing what
+                // the user typed. The staged value is accessible via getCellValue 'batch'.
+                const { editModelSvc, valueSvc } = beans;
+                const { rowNode, column } = position;
+                const existingEdit = editModelSvc?.getEdit(position);
+                if (existingEdit?.sourceValue === undefined) {
+                    editModelSvc?.setEdit(position, {
+                        sourceValue: valueSvc.getValue(column as AgColumn, rowNode, 'data'),
+                    });
+                }
+                editModelSvc?.setEdit(position, { pendingValue: newValue, state: 'changed' });
+            } else {
+                // All other sources: sync through the editor model layer.
+                _syncFromEditor(beans, position, newValue, eventSource, undefined, { persist: true });
 
-            this.cleanupEditors();
+                // 'batch' source (no open editor) stages a pending value without disrupting display;
+                // other sources close the editor, symmetrically with how default setDataValue works.
+                if (eventSource !== 'batch') {
+                    this.cleanupEditors();
+                }
+            }
 
             _purgeUnchangedEdits(beans);
 

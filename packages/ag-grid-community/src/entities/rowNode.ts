@@ -514,7 +514,7 @@ export class RowNode<TData = any>
      *   Batch inactive: closes the editor and writes to data, or writes directly if no editor is open.
      * - **`'edit'`** — Batch active: updates the live editor value without committing; stages pending if no editor.
      *   Batch inactive: updates the live editor value; writes directly if no editor is open.
-     * - **`'batch'`** — Batch active: stages a pending batch edit; any open editor is closed.
+     * - **`'batch'`** — Batch active: stages a pending batch edit; any open editor stays open (its value is not modified).
      *   Batch inactive: writes directly to data; any open editor stays open.
      * - **`'data'`** — Always writes directly to data, bypassing batch mode entirely.
      *

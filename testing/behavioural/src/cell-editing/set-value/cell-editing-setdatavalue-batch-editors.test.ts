@@ -97,6 +97,53 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
         api.cancelBatchEdit();
     });
 
+    test("'batch' source with open editor: stages pending value without closing or modifying the editor", async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [{ field: 'a', editable: true, cellEditor: 'agTextCellEditor' }],
+            rowData: [{ id: '0', a: 'initial' }],
+            getRowId: (params) => params.data.id,
+        });
+
+        api.startBatchEdit();
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(1);
+
+        // Open editor and type a value
+        api.startEditingCell({ rowIndex: 0, colKey: 'a' });
+        await asyncSetTimeout(1);
+
+        const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+        const editor = await waitForInput(gridDiv, cellA, { popup: false });
+        expect(editor).toBeInTheDocument();
+
+        await userEvent.clear(editor);
+        await userEvent.keyboard('typed');
+        await asyncSetTimeout(1);
+
+        expect(editor).toHaveValue('typed');
+
+        const rowNode = api.getDisplayedRowAtIndex(0)!;
+
+        // Push a different value using 'batch' source — should NOT modify the editor
+        rowNode.setDataValue('a', 'staged', 'batch');
+        await asyncSetTimeout(1);
+
+        // Editor is still open and still shows what the user typed
+        const editorAfter = gridDiv.querySelector<HTMLInputElement>('input');
+        expect(editorAfter).toBe(editor); // same element, not recreated
+        expect(editorAfter).toHaveValue('typed'); // editor value unchanged
+
+        // The 'edit' layer (active editor) takes precedence over the pending 'batch' value
+        expect(api.getCellValue({ rowNode, colKey: 'a', from: 'edit' })).toBe('typed');
+        expect(api.getCellValue({ rowNode, colKey: 'a', from: 'batch' })).toBe('staged');
+
+        // Data unchanged
+        expect(rowNode.data.a).toBe('initial');
+        expect(rowNode.getDataValue('a')).toBe('initial');
+
+        api.cancelBatchEdit();
+    });
+
     test("'edit' updates editor value outside batch mode and preserves focus", async () => {
         const api = await gridMgr.createGridAndWait('myGrid', {
             columnDefs: [{ field: 'a', editable: true, cellEditor: 'agTextCellEditor' }],
@@ -1008,7 +1055,7 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             expect(rowNode.getDataValue('a')).toBe('val');
         });
 
-        test("'edit' on UNEDITED editor on null cell then 'batch' on second null cell both create pending", async () => {
+        test("'edit' on UNEDITED editor on null cell then 'batch' on second null cell both create pending, editor stays open", async () => {
             const api = await gridMgr.createGridAndWait('myGrid', {
                 columnDefs: [
                     { field: 'a', editable: true, cellEditor: 'agTextCellEditor' },
@@ -1037,12 +1084,12 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             rowNode.setDataValue('b', 'b-val', 'batch');
             await asyncSetTimeout(1);
 
-            // Row shows ⏳ (not 🖍️) because calling setDataValue('b', 'batch') triggers
-            // cleanupEditors() which closes the open 'a' editor, transitioning it from
-            // 'editing' state to 'changed' state.
+            // 'batch' source does not call cleanupEditors(), so it does not forcibly
+            // close the editor. Cell 'a' may still transition to pending-only state
+            // due to async rendering; both cells have the expected pending values.
             await new GridRows(api, 'both cells pending').check(`
                 ROOT id:ROOT_NODE_ID
-                └── LEAF ⏳ id:0 a:⏳"a-val" null b:⏳"b-val" null
+                └── LEAF 🖍️ ⏳ id:0 a:⏳"a-val" null b:⏳"b-val" null
             `);
 
             expect(rowNode.data.a).toBeNull();
