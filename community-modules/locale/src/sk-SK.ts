@@ -700,6 +700,7 @@ export const AG_GRID_LOCALE_SK = {
     ariaChartSelected: 'Vybrané',
     ariaSparklineChartDescription:
         'Mini graf - ${chartType} zobrazuje ${count} hodnôt medzi ${min} a ${max}. Začína na ${start} a končí na ${end}.',
+    ariaSparklineChartDescriptionSingleValue: 'Mini graf - ${chartType} zobrazuje 1 hodnotu: ${value}.',
     ariaSparklineChartDescriptionEmpty: 'Mini graf - ${chartType} bez hodnôt.',
     ariaSkeletonCellLoadingFailed: 'Nahrávanie riadku zlyhalo',
     ariaSkeletonCellLoading: 'Údaje riadku sa nahrávajú',

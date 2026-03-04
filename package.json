@@ -120,6 +120,7 @@
       "testing/csp",
       "testing/vue3-tests",
       "testing/public-recipes/e2e",
+      "testing/angular-tests",
       "external/ag-shared"
     ],
     "nohoist": [

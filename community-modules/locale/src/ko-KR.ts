@@ -699,6 +699,7 @@ export const AG_GRID_LOCALE_KR = {
     ariaChartSelected: '선택됨',
     ariaSparklineChartDescription:
         '스파크라인 - ${chartType}, 값 ${count}개를 ${min}부터 ${max} 사이에서 표시합니다. ${start}에서 시작해 ${end}에서 끝납니다.',
+    ariaSparklineChartDescriptionSingleValue: '스파크라인 - ${chartType}, 값 1개(${value})를 표시합니다.',
     ariaSparklineChartDescriptionEmpty: '스파크라인 - ${chartType}, 값이 없습니다.',
     ariaSkeletonCellLoadingFailed: '행 로드 실패',
     ariaSkeletonCellLoading: '행 데이터 로드 중',

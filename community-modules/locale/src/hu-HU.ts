@@ -705,6 +705,7 @@ export const AG_GRID_LOCALE_HU = {
     ariaChartSelected: 'Kiválasztva',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType}, ${count} értéket jelenít meg ${min} és ${max} között. ${start} értéknél kezdődik és ${end} értéknél végződik.',
+    ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType}, 1 értéket jelenít meg: ${value}.',
     ariaSparklineChartDescriptionEmpty: 'Sparkline - ${chartType}, értékek nélkül.',
     ariaSkeletonCellLoadingFailed: 'A sor betöltése sikertelen volt',
     ariaSkeletonCellLoading: 'A sor adatai betöltődnek',

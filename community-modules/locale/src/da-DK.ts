@@ -702,6 +702,7 @@ export const AG_GRID_LOCALE_DK = {
     ariaChartSelected: 'Valgt',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} viser ${count} værdier mellem ${min} og ${max}. Starter ved ${start} og slutter ved ${end}.',
+    ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} viser 1 værdi, ${value}.',
     ariaSparklineChartDescriptionEmpty: 'Sparkline - ${chartType} uden værdier.',
     ariaSkeletonCellLoadingFailed: 'Række kunne ikke indlæses',
     ariaSkeletonCellLoading: 'Række data indlæses',

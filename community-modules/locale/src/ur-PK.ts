@@ -699,6 +699,7 @@ export const AG_GRID_LOCALE_PK = {
     ariaChartSelected: 'منتخب شدہ',
     ariaSparklineChartDescription:
         'اسپارک لائن - ${chartType}، ${count} اقدار دکھاتا ہے، ${min} اور ${max} کے درمیان۔ ${start} سے شروع ہوتا ہے اور ${end} پر ختم ہوتا ہے۔',
+    ariaSparklineChartDescriptionSingleValue: 'اسپارک لائن - ${chartType}، 1 قدر دکھاتا ہے: ${value}۔',
     ariaSparklineChartDescriptionEmpty: 'اسپارک لائن - ${chartType} بغیر اقدار کے۔',
     ariaSkeletonCellLoadingFailed: 'صف لوڈ کرنے میں ناکام',
     ariaSkeletonCellLoading: 'صف کا ڈیٹا لوڈ ہو رہا ہے',

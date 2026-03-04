@@ -13,7 +13,7 @@ import type { Theme } from '../theming/theme';
 import { ThemeImpl } from '../theming/themeImpl';
 import type { ParamType } from '../theming/themeTypeUtils';
 import { paramToVariableName } from '../theming/themeUtils';
-import { _createAgElement, _isInDOM, _observeResize } from '../utils/dom';
+import { _createAgElement, _observeResize } from '../utils/dom';
 import { AgBeanStub } from './agBeanStub';
 
 const LIST_ITEM_HEIGHT: CssVariable<BaseCssChangeKeys> = {
@@ -330,7 +330,7 @@ const warnOnAttachToShadowRoot = (
             errorCallback();
             clearInterval(interval);
         }
-        if (_isInDOM(el) || --retries < 0) {
+        if (el.isConnected || --retries < 0) {
             clearInterval(interval);
         }
     }, 1000);

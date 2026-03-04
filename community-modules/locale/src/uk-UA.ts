@@ -701,6 +701,7 @@ export const AG_GRID_LOCALE_UA = {
     ariaChartSelected: 'Вибрано',
     ariaSparklineChartDescription:
         'Спарклайн - ${chartType}, відображає ${count} значень між ${min} і ${max}. Починається з ${start} і закінчується на ${end}.',
+    ariaSparklineChartDescriptionSingleValue: 'Спарклайн - ${chartType}, показує 1 значення: ${value}.',
     ariaSparklineChartDescriptionEmpty: 'Спарклайн - ${chartType}, без значень.',
     ariaSkeletonCellLoadingFailed: 'Помилка завантаження рядка',
     ariaSkeletonCellLoading: 'Дані рядка завантажуються',

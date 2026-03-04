@@ -698,6 +698,7 @@ export const AG_GRID_LOCALE_EG = {
     ariaChartSelected: 'محدد',
     ariaSparklineChartDescription:
         'مخطط شراري - ${chartType} يعرض ${count} قيمة بين ${min} و ${max}. يبدأ عند ${start} وينتهي عند ${end}.',
+    ariaSparklineChartDescriptionSingleValue: 'مخطط شراري - ${chartType} يعرض قيمة واحدة، ${value}.',
     ariaSparklineChartDescriptionEmpty: 'مخطط شراري - ${chartType} بدون قيم.',
     ariaSkeletonCellLoadingFailed: 'فشل تحميل الصف',
     ariaSkeletonCellLoading: 'جاري تحميل بيانات الصف',

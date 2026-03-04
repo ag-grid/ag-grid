@@ -703,6 +703,7 @@ export const AG_GRID_LOCALE_RO = {
     ariaChartSelected: 'Selectat',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} afișează ${count} valori între ${min} și ${max}. Începe la ${start} și se termină la ${end}.',
+    ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} afișează 1 valoare: ${value}.',
     ariaSparklineChartDescriptionEmpty: 'Sparkline - ${chartType} fără valori.',
     ariaSkeletonCellLoadingFailed: 'Încărcarea rândului a eșuat',
     ariaSkeletonCellLoading: 'Datele rândului se încarcă',

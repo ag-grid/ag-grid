@@ -702,6 +702,7 @@ export const AG_GRID_LOCALE_EN = {
     ariaChartSelected: 'Selected',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} displaying ${count} values between ${min} and ${max}. Starts at ${start} and ends at ${end}.',
+    ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} displaying 1 value, ${value}.',
     ariaSparklineChartDescriptionEmpty: 'Sparkline - ${chartType} displaying no values.',
     ariaSkeletonCellLoadingFailed: 'Row failed to load',
     ariaSkeletonCellLoading: 'Row data is loading',
