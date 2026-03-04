@@ -1,12 +1,12 @@
 import type { AgColumn, DragAndDropIcon, GridDraggingEvent } from 'ag-grid-community';
 import { _createIconNoSpan } from 'ag-grid-community';
 
-import type { BaseColumnToolPanelEdits } from '../../columnToolPanel/columnToolPanelEdits';
+import type { ColumnToolPanelEditParams } from '../../columnToolPanel/columnToolPanelEdits';
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
 export class ValuesDropZonePanel extends BaseDropZonePanel {
-    constructor(horizontal: boolean) {
-        super(horizontal, 'aggregation');
+    constructor(horizontal: boolean, params?: ColumnToolPanelEditParams) {
+        super(horizontal, 'aggregation', params);
     }
 
     public postConstruct(): void {
@@ -44,9 +44,7 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
     }
 
     protected updateItems(columns: AgColumn[]): void {
-        const { beans } = this;
-        const strategy = (beans.columnToolPanelSyncEditStrategy ||
-            beans.columnToolPanelDeferredEditStrategy) as BaseColumnToolPanelEdits; // todo this should be more decisive
+        const strategy = this.getEdits();
         if (strategy) {
             strategy.setValueColumns(columns, 'toolPanelUi');
         } else {
@@ -55,6 +53,6 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
     }
 
     protected getExistingItems(): AgColumn[] {
-        return this.beans.valueColsSvc?.columns ?? [];
+        return this.getDeferredEdits()?.getDraftValueColumns() ?? this.beans.valueColsSvc?.columns ?? [];
     }
 }
