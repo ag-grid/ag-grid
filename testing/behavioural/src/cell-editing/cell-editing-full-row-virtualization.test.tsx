@@ -65,6 +65,7 @@ describe('Cell Editing: full-row virtualization', () => {
     // more than once when editing was eventually stopped.
     test('onRowEditingStopped fires exactly once after scrolling during full-row edit', async () => {
         const onRowEditingStopped = vi.fn();
+        const onCellValueChanged = vi.fn();
 
         const api = await gridMgr.createGridAndWait('fullRowVirtualization', {
             rowData: makeRowData(),
@@ -73,6 +74,7 @@ describe('Cell Editing: full-row virtualization', () => {
             defaultColDef: { editable: true, cellDataType: false },
             editType: 'fullRow',
             onRowEditingStopped,
+            onCellValueChanged,
             // Must explicitly enable virtualisation — TestGridsManager disables it by default
             // because jsdom has no layout engine. The bug only manifests when row/column
             // recycling is active.
@@ -90,7 +92,13 @@ describe('Cell Editing: full-row virtualization', () => {
         // Start editing row 0 by double-clicking field1
         const firstCell = getByTestId(gridDiv, agTestIdFor.cell('0', 'field1'));
         await user.dblClick(firstCell);
-        await waitForInput(gridDiv, firstCell);
+        const input = await waitForInput(gridDiv, firstCell);
+
+        // Type a new value into the editor — this becomes the pending edit value.
+        // After scrolling (which re-invokes model.start() for virtualised columns),
+        // this pending value must survive intact and be committed on stop.
+        await user.clear(input);
+        await user.type(input, 'edited-r0-c1');
 
         // ----- Verify initial state -----
         // Row 0 (editing) and a mid-range row (row 5) are both rendered.
@@ -135,6 +143,15 @@ describe('Cell Editing: full-row virtualization', () => {
 
         expect(onRowEditingStopped).toHaveBeenCalledTimes(1);
         expect(onRowEditingStopped.mock.calls[0][0].rowIndex).toBe(0);
+
+        // The typed value must have survived the scroll cycle and been committed.
+        // This verifies that model.start() (re-invoked by virtualisation recycling)
+        // is idempotent and does not overwrite an already-started pending edit.
+        const committedChanges = onCellValueChanged.mock.calls.map((c) => ({
+            field: c[0].colDef.field,
+            newValue: c[0].newValue,
+        }));
+        expect(committedChanges).toContainEqual({ field: 'field1', newValue: 'edited-r0-c1' });
     }, 15_000);
 });
 

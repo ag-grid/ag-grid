@@ -149,6 +149,61 @@ describe('ag-grid grouping edge cases', () => {
         `);
     });
 
+    // Regression for AG-16708: valueService.getDataValue() for a showRowGroup column
+    // used to apply an early null-return guard to all rows (group and leaf alike) when
+    // colRowGroupIndex > rowNode.level.  After the fix the guard is restricted to group
+    // rows only (rowNode.group === true), so leaf rows now correctly receive undefined
+    // (no value) instead of null from this path.
+    test('showRowGroup column getDataValue: null on shallower group rows, undefined on leaf rows', () => {
+        const rowData = cachedJSONObjects.array([
+            { id: '1', country: 'Ireland', year: '2000', athlete: 'Alice' },
+            { id: '2', country: 'Italy', year: '2001', athlete: 'Bob' },
+        ]);
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                // Two levels of row grouping: country (index 0), year (index 1).
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', rowGroup: true, hide: true },
+                { field: 'athlete' },
+                // showRowGroup column for 'year': renders the year group key.
+                // On a country-level group row (rowNode.level=0, colRowGroupIndex=1),
+                // 1 > 0 is true → should return null (retro-compat).
+                // On leaf rows the guard is intentionally skipped → should return undefined.
+                {
+                    colId: 'showYear',
+                    showRowGroup: 'year',
+                    cellRenderer: 'agGroupCellRenderer',
+                    hide: false,
+                },
+            ],
+            groupDefaultExpanded: -1,
+            rowData,
+            getRowId: (params) => params.data.id,
+        });
+
+        // Find one country-level group row (level 0) and one leaf row (level 2).
+        let countryGroupNode: any = null;
+        let leafNode: any = null;
+        api.forEachNode((node) => {
+            if (node.group && node.level === 0 && !countryGroupNode) {
+                countryGroupNode = node;
+            }
+            if (!node.group && !leafNode) {
+                leafNode = node;
+            }
+        });
+
+        expect(countryGroupNode).not.toBeNull();
+        expect(leafNode).not.toBeNull();
+
+        // Country-level group row: showRowGroup column for 'year' (deeper level) → null.
+        expect(countryGroupNode.getDataValue('showYear')).toBeNull();
+
+        // Leaf row: showRowGroup guard is skipped for non-group rows → undefined.
+        expect(leafNode.getDataValue('showYear')).toBeUndefined();
+    });
+
     test('groupSuppressBlankHeader behavior', async () => {
         const rowData = cachedJSONObjects.array([
             { id: '1', category: '', subcategory: 'Sub1', name: 'Item 1' },

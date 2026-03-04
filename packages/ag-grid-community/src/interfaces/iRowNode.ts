@@ -380,7 +380,10 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
      *
      * @param colKey The column to read (field name, `colId`, or `Column` object)
      * @param from Controls value resolution. Defaults to `'data'`.
-     * @returns The value, or `undefined` if the column is not found
+     * @returns The value, or `undefined` if the column is not found.
+     *   When `from` is omitted or `'data'`, aggregation columns may return an
+     *   `IAggFuncResult<TValue>` wrapper object instead of a plain `TValue`.
+     *   Pass `from: 'value'` to always receive a scalar `TValue`.
      */
     getDataValue<TValue = any>(
         colKey: ColKey<TValue>,
