@@ -11,14 +11,13 @@ import type { IHeaderRowContainerComp } from './rowContainer/headerRowContainerC
 import { HeaderRowContainerCtrl } from './rowContainer/headerRowContainerCtrl';
 
 const GridHeaderElement: ElementParams = { tag: 'div', cls: 'ag-header', role: 'rowgroup' };
-let nextFlattenedHeaderSourceId = 0;
 
 class GridHeaderComp extends Component {
     private headerRowComps: { [ctrlId: HeaderRowCtrlInstanceId]: HeaderRowComp } = {};
+    private orderedHeaderRowGuis: HTMLElement[] = [];
     private eHeaderHost: HTMLElement | null = null;
     private ePinnedTopRowsHost: HTMLElement | null = null;
     private flattenedHeaderRowsSource: PinnedRowContainerRendererSource | undefined;
-    private readonly flattenedHeaderSourceId = nextFlattenedHeaderSourceId++;
     private isFlattened = false;
     private initialised = false;
 
@@ -27,67 +26,41 @@ class GridHeaderComp extends Component {
     }
 
     public postConstruct(): void {
-        this.initialiseWhenAttached();
+        this.initialise();
     }
 
-    private getGridViewportFromParentChain(start: HTMLElement | null): HTMLElement | null {
-        let current: HTMLElement | null = start;
-        while (current) {
-            if (current.classList.contains('ag-grid-viewport')) {
-                return current;
-            }
-            current = current.parentElement;
-        }
-        return null;
-    }
-
-    private getFlattenedHostFromParent(): HTMLElement | null {
+    private resolveFlattenedHost(): HTMLElement | null {
         const parentComp = this.getParentComponent<Component>();
         return parentComp?.getGui().querySelector('.ag-grid-pinned-top-rows-container') ?? null;
     }
 
-    private initialiseWhenAttached(): void {
+    private resolveGridViewport(host: HTMLElement): HTMLElement {
+        return (
+            this.beans.ctrlsSvc.get('gridBodyCtrl')?.eGridViewport ??
+            (host.closest('.ag-grid-viewport') as HTMLElement | null) ??
+            host
+        );
+    }
+
+    private initialise(): void {
         if (!this.isAlive() || this.initialised) {
             return;
         }
 
         const eGui = this.getGui();
-        const parent = eGui.parentElement;
-        const flattenedHost = this.getFlattenedHostFromParent();
-        if (!parent && !flattenedHost) {
-            window.requestAnimationFrame(() => this.initialiseWhenAttached());
-            return;
-        }
-        const isInPinnedTopSection =
-            !!parent?.classList.contains('ag-grid-pinned-top-rows') || !!parent?.closest('.ag-grid-pinned-top-rows');
-        if (isInPinnedTopSection && !flattenedHost) {
-            window.requestAnimationFrame(() => this.initialiseWhenAttached());
-            return;
-        }
-
-        const gridBodyCtrl = this.beans.ctrlsSvc.get('gridBodyCtrl');
-        const eGridViewport =
-            gridBodyCtrl?.eGridViewport ?? this.getGridViewportFromParentChain(parent ?? flattenedHost);
+        const flattenedHost = this.resolveFlattenedHost();
+        const eHeaderHost = flattenedHost ?? eGui;
+        const eGridViewport = this.resolveGridViewport(eHeaderHost);
 
         if (flattenedHost) {
-            if (!eGridViewport) {
-                window.requestAnimationFrame(() => this.initialiseWhenAttached());
-                return;
-            }
-            this.eHeaderHost = flattenedHost;
+            this.eHeaderHost = eHeaderHost;
             this.ePinnedTopRowsHost = flattenedHost.parentElement ?? flattenedHost;
             this.isFlattened = true;
-            const pinnedRowContainerRendererFeature = gridBodyCtrl?.getPinnedRowContainerRendererFeature();
-            this.flattenedHeaderRowsSource = pinnedRowContainerRendererFeature?.registerSource({
-                id: `header-rows-${this.flattenedHeaderSourceId}`,
-                section: 'top',
-                stream: 'center',
-                lane: 'edge',
-                order: 0,
-            });
             this.removeFlattenedGui();
+            this.tryRegisterFlattenedSource();
+            this.beans.ctrlsSvc.whenReady(this, () => this.tryRegisterFlattenedSource());
         } else {
-            this.eHeaderHost = eGui;
+            this.eHeaderHost = eHeaderHost;
         }
         this.initialised = true;
 
@@ -120,8 +93,33 @@ class GridHeaderComp extends Component {
         };
 
         const rowContainerCtrl = this.createManagedBean(new HeaderRowContainerCtrl());
-        const eScrollViewport = this.isFlattened ? eGridViewport! : this.eHeaderHost!;
+        const eScrollViewport = this.isFlattened ? eGridViewport : this.eHeaderHost!;
         rowContainerCtrl.setComp(rowContainerCompProxy, this.eHeaderHost!, eScrollViewport);
+    }
+
+    private tryRegisterFlattenedSource(): void {
+        if (!this.isFlattened || this.flattenedHeaderRowsSource) {
+            return;
+        }
+
+        const pinnedRowContainerRendererFeature = this.beans.ctrlsSvc
+            .get('gridBodyCtrl')
+            ?.getPinnedRowContainerRendererFeature();
+        if (!pinnedRowContainerRendererFeature) {
+            return;
+        }
+
+        this.flattenedHeaderRowsSource = pinnedRowContainerRendererFeature.registerSource({
+            id: 'header-rows',
+            section: 'top',
+            stream: 'center',
+            lane: 'edge',
+            order: 0,
+        });
+
+        if (this.orderedHeaderRowGuis.length) {
+            this.flattenedHeaderRowsSource.setRows(this.orderedHeaderRowGuis);
+        }
     }
 
     private removeFlattenedGui(): void {
@@ -176,27 +174,12 @@ class GridHeaderComp extends Component {
                 if (prevGui) {
                     _ensureDomOrder(eHeader, eGui, prevGui);
                 }
-            } else if (!this.flattenedHeaderRowsSource) {
-                const firstNonHeaderRow = Array.from(eHeader.children).find((child) => {
-                    const eChild = child as HTMLElement;
-                    return !eChild.classList.contains('ag-header-row');
-                }) as HTMLElement | undefined;
-
-                if (eGui.parentElement !== eHeader) {
-                    if (firstNonHeaderRow) {
-                        firstNonHeaderRow.before(eGui);
-                    } else {
-                        eHeader.appendChild(eGui);
-                    }
-                }
-
-                if (prevGui) {
-                    _ensureDomOrder(eHeader, eGui, prevGui);
-                }
             }
             prevGui = eGui;
             orderedGuis.push(eGui);
         }
+
+        this.orderedHeaderRowGuis = orderedGuis;
 
         if (this.isFlattened) {
             this.flattenedHeaderRowsSource?.setRows(orderedGuis);

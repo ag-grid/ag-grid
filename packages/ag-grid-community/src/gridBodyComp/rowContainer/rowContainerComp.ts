@@ -86,25 +86,15 @@ export class RowContainerComp extends Component {
         this.initialiseComp();
     }
 
-    private getGridViewportFromController(): HTMLElement | null {
+    private getExternalViewport(): HTMLElement | null {
         const gridBodyCtrl = this.beans.ctrlsSvc.get('gridBodyCtrl');
-        return gridBodyCtrl?.eGridViewport ?? null;
-    }
-
-    private getGridViewportFromParentComponent(): HTMLElement | null {
-        const parentComp = this.getParentComponent<Component>();
-        return parentComp?.getGui().querySelector('.ag-grid-viewport') ?? null;
-    }
-
-    private getGridViewportFromParentChain(start: HTMLElement | null): HTMLElement | null {
-        let current: HTMLElement | null = start;
-        while (current) {
-            if (current.classList.contains('ag-grid-viewport')) {
-                return current;
-            }
-            current = current.parentElement;
+        if (gridBodyCtrl?.eGridViewport) {
+            return gridBodyCtrl.eGridViewport;
         }
-        return null;
+
+        const parentComp = this.getParentComponent<Component>();
+        const viewportFromParent = parentComp?.getGui().querySelector('.ag-grid-viewport') as HTMLElement | null;
+        return viewportFromParent ?? (this.eContainer.closest('.ag-grid-viewport') as HTMLElement | null);
     }
 
     private initialiseComp(): void {
@@ -112,15 +102,8 @@ export class RowContainerComp extends Component {
             return;
         }
 
-        const eGridViewport =
-            this.getGridViewportFromController() ??
-            this.getGridViewportFromParentChain(this.eContainer) ??
-            this.getGridViewportFromParentComponent();
         const needsExternalViewport = usesGridViewportForScrolling(this.name);
-        if (needsExternalViewport && !eGridViewport) {
-            window.requestAnimationFrame(() => this.initialiseComp());
-            return;
-        }
+        const eGridViewport = needsExternalViewport ? this.getExternalViewport() : null;
 
         const eContainerForRows = this.eContainer;
         const eSpannedContainerForRows: HTMLElement | undefined = this.eSpannedContainer;
