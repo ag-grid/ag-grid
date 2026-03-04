@@ -411,6 +411,7 @@ export type { IGroupFilterService } from './interfaces/iGroupFilterService';
 export type { IGroupHierarchyColService } from './interfaces/iGroupHierarchyColService';
 export { IMenuFactory } from './interfaces/iMenuFactory';
 export { IMultiFilterService } from './interfaces/iMultiFilterService';
+export { IPinnedSectionCompHost } from './interfaces/iPinnedSectionCompHost';
 export { IPinnedRowModel } from './interfaces/iPinnedRowModel';
 export { IPivotColDefService } from './interfaces/iPivotColDefService';
 export { IPivotResultColsService } from './interfaces/iPivotResultColsService';

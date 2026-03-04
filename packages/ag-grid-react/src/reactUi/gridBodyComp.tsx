@@ -78,7 +78,11 @@ const GridBodyComp = () => {
             !eGridViewport.current ||
             !eBody.current ||
             !eTop.current ||
-            !eBottom.current
+            !eBottom.current ||
+            !topRowsHost ||
+            !topRowsFullWidthHost ||
+            !bottomRowsHost ||
+            !bottomRowsFullWidthHost
         ) {
             return;
         }
@@ -158,7 +162,11 @@ const GridBodyComp = () => {
             eGridViewport.current,
             eBody.current,
             scrollingFullWidthContainer,
+            topRowsHost,
+            topRowsFullWidthHost,
             eTop.current,
+            bottomRowsHost,
+            bottomRowsFullWidthHost,
             eBottom.current
         );
 
@@ -168,7 +176,16 @@ const GridBodyComp = () => {
                 f();
             }
         };
-    }, [context, overlays, rootElement, scrollingFullWidthContainer]);
+    }, [
+        context,
+        overlays,
+        rootElement,
+        scrollingFullWidthContainer,
+        topRowsHost,
+        topRowsFullWidthHost,
+        bottomRowsHost,
+        bottomRowsFullWidthHost,
+    ]);
 
     const rootClasses = useMemo(() => classesList('ag-root', 'ag-unselectable', layoutClass), [layoutClass]);
     const gridViewportClasses = useMemo(

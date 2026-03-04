@@ -13,6 +13,7 @@ import type { LayoutView } from '../styling/layoutFeature';
 import { LayoutFeature } from '../styling/layoutFeature';
 import type { PopupService } from '../widgets/popupService';
 import { GridBodyScrollFeature } from './gridBodyScrollFeature';
+import type { PinnedRowContainerRendererService } from './pinnedRowContainerRendererService';
 import type { ScrollVisibleService } from './scrollVisibleService';
 
 export type RowAnimationCssClasses = 'ag-row-animation' | 'ag-row-no-animation';
@@ -49,6 +50,7 @@ export class GridBodyCtrl extends BeanStub {
     private rowGroupColsSvc?: IColsService;
     private pinnedRowModel?: IPinnedRowModel;
     private filterManager?: FilterManager;
+    private pinnedRowContainerRenderer: PinnedRowContainerRendererService;
 
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsSvc = beans.ctrlsSvc;
@@ -57,6 +59,7 @@ export class GridBodyCtrl extends BeanStub {
         this.pinnedRowModel = beans.pinnedRowModel;
         this.filterManager = beans.filterManager;
         this.rowGroupColsSvc = beans.rowGroupColsSvc;
+        this.pinnedRowContainerRenderer = beans.pinnedRowContainerRenderer;
     }
 
     private comp: IGridBodyComp;
@@ -80,7 +83,11 @@ export class GridBodyCtrl extends BeanStub {
         eGridViewport: HTMLElement,
         eScrollingRows: HTMLElement,
         eFullWidthContainer: HTMLElement,
+        eTopRowsContainer: HTMLElement,
+        eTopRowsFullWidthContainer: HTMLElement,
         eTop: HTMLElement,
+        eBottomRowsContainer: HTMLElement,
+        eBottomRowsFullWidthContainer: HTMLElement,
         eBottom: HTMLElement
     ): void {
         this.comp = comp;
@@ -90,6 +97,15 @@ export class GridBodyCtrl extends BeanStub {
         this.eFullWidthContainer = eFullWidthContainer;
         this.eTop = eTop;
         this.eBottom = eBottom;
+        this.pinnedRowContainerRenderer.setComp(
+            {
+                topCenter: eTopRowsContainer,
+                topFullWidth: eTopRowsFullWidthContainer,
+                bottomCenter: eBottomRowsContainer,
+                bottomFullWidth: eBottomRowsFullWidthContainer,
+            },
+            eGridViewport
+        );
 
         this.setCellTextSelection(this.gos.get('enableCellTextSelection'));
         this.addManagedPropertyListener('enableCellTextSelection', (props) =>
@@ -112,7 +128,17 @@ export class GridBodyCtrl extends BeanStub {
         this.addStopEditingWhenGridLosesFocus();
         this.updateScrollingClasses();
 
-        this.filterManager?.setupAdvFilterHeaderComp(eTop);
+        this.filterManager?.setupAdvFilterHeaderComp(
+            this.pinnedRowContainerRenderer.createCompHost({
+                section: 'top',
+                stream: 'center',
+                lane: 'edge',
+                order: 1,
+                pinToViewportX: true,
+                getViewportOffsetTop: () => this.ctrlsSvc.get('gridHeaderCtrl')?.headerHeight ?? 0,
+                insertAfterHeadersBeforeRows: true,
+            })
+        );
 
         this.ctrlsSvc.register('gridBodyCtrl', this);
     }
@@ -132,6 +158,9 @@ export class GridBodyCtrl extends BeanStub {
             pinnedRowDataChanged: setPinnedRowsHeights,
             pinnedHeightChanged: setPinnedRowsHeights,
             pinnedRowsChanged: setPinnedRowsHeights,
+            headerHeightChanged: setPinnedRowsHeights,
+            headerRowsChanged: () => this.pinnedRowContainerRenderer.refresh(),
+            gridSizeChanged: () => this.pinnedRowContainerRenderer.refresh(),
             columnRowGroupChanged: setGridRootRole,
             columnPivotChanged: setGridRootRole,
             rowResizeStarted: toggleRowResizeStyle,
@@ -159,6 +188,7 @@ export class GridBodyCtrl extends BeanStub {
         this.setStickyBottomOffsetBottom();
         this.updateScrollableAreaWidth();
         _requestAnimationFrame(this.beans, () => this.comp.setBodyViewportWidth('100%'));
+        this.pinnedRowContainerRenderer.refresh();
 
         this.updateScrollingClasses();
     }
@@ -342,6 +372,7 @@ export class GridBodyCtrl extends BeanStub {
 
         this.addManagedElementListeners(eGridViewport, {
             wheel: this.onBodyViewportWheel.bind(this, popupSvc),
+            scroll: () => this.pinnedRowContainerRenderer.refresh(),
         });
 
         const onStickyWheel = this.onStickyWheel.bind(this);
@@ -466,6 +497,7 @@ export class GridBodyCtrl extends BeanStub {
 
         const pinnedTopHeight = pinnedRowModel?.getPinnedTopTotalHeight();
         const pinnedBottomHeight = pinnedRowModel?.getPinnedBottomTotalHeight();
+        const advancedFilterHeaderHeight = this.filterManager?.getHeaderHeight() ?? 0;
 
         // We need to account for the row border and the pinned row borders.
         // The pinned rows container has box-sizing: border-box, so its border is
@@ -484,11 +516,12 @@ export class GridBodyCtrl extends BeanStub {
         this.topPinnedRowsHeight = normalisedPinnedTopHeight;
         this.bottomPinnedRowsHeight = normalisedPinnedBottomHeight;
 
-        this.comp.setTopHeight(normalisedPinnedTopHeight);
+        this.comp.setTopHeight(normalisedPinnedTopHeight + advancedFilterHeaderHeight);
         this.comp.setBottomHeight(normalisedPinnedBottomHeight);
         this.comp.setTopInvisible(normalisedPinnedTopHeight <= 0);
         this.comp.setBottomInvisible(normalisedPinnedBottomHeight <= 0);
         this.setStickyBottomOffsetBottom();
+        this.pinnedRowContainerRenderer.refresh();
     }
 
     public setStickyTopHeight(height: number = 0): void {

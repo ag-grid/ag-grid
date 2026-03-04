@@ -10,6 +10,7 @@ import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { ColumnFilterState, FilterModel, IFilter } from '../interfaces/iFilter';
+import type { IPinnedSectionCompHost } from '../interfaces/iPinnedSectionCompHost';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _mergeDeep } from '../utils/mergeDeep';
 import { _warn } from '../validation/logging';
@@ -347,8 +348,8 @@ export class FilterManager extends BeanStub implements NamedBean {
         _warn(68);
     }
 
-    public setupAdvFilterHeaderComp(eCompToInsertBefore: HTMLElement): void {
-        this.advancedFilter?.getCtrl().setupHeaderComp(eCompToInsertBefore);
+    public setupAdvFilterHeaderComp(headerCompHost: IPinnedSectionCompHost): void {
+        this.advancedFilter?.getCtrl().setupHeaderComp(headerCompHost);
     }
 
     public getHeaderRowCount(): number {

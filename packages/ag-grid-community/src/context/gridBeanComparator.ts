@@ -88,6 +88,7 @@ const orderedCoreBeans: BeanName[] = [
     'colViewport',
     'pivotResultCols',
     'showRowGroupCols',
+    'pinnedRowContainerRenderer',
     'validation', // Have validations run last
 ];
 

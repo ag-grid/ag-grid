@@ -44,20 +44,17 @@ export class AdvancedFilterHeaderComp extends Component {
 
         this.addDestroyFunc(() => this.destroyBean(this.eAdvancedFilter));
 
-        const heightListener = () => {
-            if (this.enabled) {
-                this.setEnabledHeight();
-            }
-        };
+        const refreshLayout = this.refreshLayout.bind(this);
 
         this.addManagedEventListeners({
             gridColumnsChanged: () => this.onGridColumnsChanged(),
-            columnHeaderHeightChanged: heightListener,
-            stylesChanged: heightListener,
+            headerRowsChanged: () => this.setAriaRowIndex(),
+            columnHeaderHeightChanged: refreshLayout,
+            stylesChanged: refreshLayout,
         });
 
-        this.addManagedPropertyListener('headerHeight', heightListener);
-        this.addManagedPropertyListener('floatingFiltersHeight', heightListener);
+        this.addManagedPropertyListener('headerHeight', refreshLayout);
+        this.addManagedPropertyListener('floatingFiltersHeight', refreshLayout);
 
         this.addGuiEventListener('keydown', (event: KeyboardEvent) => this.onKeyDown(event));
 
@@ -81,6 +78,12 @@ export class AdvancedFilterHeaderComp extends Component {
 
     public refresh(): void {
         this.eAdvancedFilter?.refresh();
+    }
+
+    public refreshLayout(): void {
+        if (this.enabled) {
+            this.setEnabledHeight();
+        }
     }
 
     public getHeight(): number {
@@ -129,7 +132,8 @@ export class AdvancedFilterHeaderComp extends Component {
     }
 
     private setAriaRowIndex(): void {
-        _setAriaRowIndex(this.getGui(), this.ctrlsSvc.getHeaderRowContainerCtrl()?.getRowCount() ?? 0);
+        const headerRowCount = this.ctrlsSvc.getHeaderRowContainerCtrl()?.getRowCount() ?? 0;
+        _setAriaRowIndex(this.getGui(), headerRowCount + 1);
     }
 
     private onGridColumnsChanged(): void {

@@ -6,6 +6,13 @@ import type { RowCtrl, RowCtrlInstanceId } from '../../rendering/row/rowCtrl';
 import type { ElementParams } from '../../utils/element';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';
+import type {
+    PinnedRowContainerRendererSource,
+    PinnedRowContainerRendererSourceConfig,
+    PinnedSection,
+    PinnedSectionLane,
+    PinnedSectionStream,
+} from '../pinnedRowContainerRendererService';
 import type { IRowContainerComp, RowContainerName, RowContainerOptions } from './rowContainerCtrl';
 import {
     RowContainerCtrl,
@@ -28,23 +35,25 @@ function isFlattenedPinnedRowContainer(name: RowContainerName): boolean {
     );
 }
 
-function getFlattenedPinnedRowPriority(name: RowContainerName | null): number {
-    if (!name) {
-        return 0;
+let nextFlattenedSourceId = 0;
+
+function getFlattenedPinnedSourceConfig(
+    name: RowContainerName
+): Omit<PinnedRowContainerRendererSourceConfig, 'id'> | undefined {
+    if (!isFlattenedPinnedRowContainer(name)) {
+        return undefined;
     }
-    if (name === 'pinnedTopCenter' || name === 'pinnedTopFullWidth') {
-        return 1;
-    }
-    if (name === 'stickyTopCenter' || name === 'stickyTopFullWidth') {
-        return 2;
-    }
-    if (name === 'stickyBottomCenter' || name === 'stickyBottomFullWidth') {
-        return 1;
-    }
-    if (name === 'pinnedBottomCenter' || name === 'pinnedBottomFullWidth') {
-        return 2;
-    }
-    return 1;
+
+    const section: PinnedSection = name.includes('Top') ? 'top' : 'bottom';
+    const stream: PinnedSectionStream = name.includes('FullWidth') ? 'fullWidth' : 'center';
+    const lane: PinnedSectionLane = name.startsWith('sticky') ? 'sticky' : 'pinned';
+
+    return {
+        section,
+        stream,
+        lane,
+        order: 0,
+    };
 }
 
 function getElementParams(name: RowContainerName, options: RowContainerOptions, beans: BeanCollection): ElementParams {
@@ -101,6 +110,9 @@ export class RowContainerComp extends Component {
     private eRowsContainer: HTMLElement = RefPlaceholder;
     private eSpannedRowsContainer: HTMLElement | undefined;
     private flattenedPinnedContainer = false;
+    private flattenedRowsSource: PinnedRowContainerRendererSource | undefined;
+    private flattenedSpannedRowsSource: PinnedRowContainerRendererSource | undefined;
+    private readonly flattenedSourceId = nextFlattenedSourceId++;
 
     private readonly name: RowContainerName;
     private readonly options: RowContainerOptions;
@@ -183,6 +195,8 @@ export class RowContainerComp extends Component {
         let eViewportForCtrl = (this.name === 'scrollingCenter' ? eGridViewport : this.eViewport) ?? this.eContainer;
 
         if (pinnedRowsParent && isFlattenedPinnedRowContainer(this.name)) {
+            const { pinnedRowContainerRenderer } = this.beans;
+
             this.flattenedPinnedContainer = true;
             eContainerForRows = pinnedRowsParent;
             // keep spanned rows rendered for pinned top/bottom containers by using the same host
@@ -190,6 +204,21 @@ export class RowContainerComp extends Component {
             const shouldRenderSpannedRows = !!this.options.getSpannedRowCtrls && !!this.beans.gos.get('enableCellSpan');
             eSpannedContainerForRows = shouldRenderSpannedRows ? eContainerForRows : undefined;
             eViewportForCtrl = eGridViewport ?? pinnedRowsParent;
+            const sourceConfig = getFlattenedPinnedSourceConfig(this.name);
+            if (!sourceConfig) {
+                throw new Error(`Missing pinned section source config for "${this.name}"`);
+            }
+            this.flattenedRowsSource = pinnedRowContainerRenderer.registerSource({
+                ...sourceConfig,
+                id: `${this.name}-rows-${this.flattenedSourceId}`,
+            });
+            if (shouldRenderSpannedRows) {
+                this.flattenedSpannedRowsSource = pinnedRowContainerRenderer.registerSource({
+                    ...sourceConfig,
+                    id: `${this.name}-spanned-rows-${this.flattenedSourceId}`,
+                    order: 1,
+                });
+            }
         }
 
         this.eRowsContainer = eContainerForRows;
@@ -237,6 +266,10 @@ export class RowContainerComp extends Component {
         // destroys all row comps
         this.setRowCtrls([]);
         this.setRowCtrls([], true);
+        this.flattenedRowsSource?.destroy();
+        this.flattenedRowsSource = undefined;
+        this.flattenedSpannedRowsSource?.destroy();
+        this.flattenedSpannedRowsSource = undefined;
         super.destroy();
         this.lastPlacedElement = null;
     }
@@ -281,6 +314,13 @@ export class RowContainerComp extends Component {
         }
 
         this.removeOldRows(Object.values(oldRows));
+        if (this.flattenedPinnedContainer) {
+            const source = spanContainer ? this.flattenedSpannedRowsSource : this.flattenedRowsSource;
+            const rowElements = orderedRows.map(([rowComp]) => rowComp.getGui());
+            rowElements.sort((a, b) => getFlattenedPinnedRowPosition(a) - getFlattenedPinnedRowPosition(b));
+            source?.setRows(rowElements);
+            return;
+        }
         this.addRowNodes(orderedRows, container);
     }
 
@@ -288,11 +328,6 @@ export class RowContainerComp extends Component {
         const { domOrder } = this;
         for (const [rowComp, isNew] of rows) {
             const eGui = rowComp.getGui();
-            if (this.flattenedPinnedContainer) {
-                eGui.setAttribute('row-container-name', this.name);
-                this.insertFlattenedPinnedRow(eGui, container);
-                continue;
-            }
             if (!domOrder) {
                 if (isNew) {
                     container.appendChild(eGui);
@@ -301,59 +336,6 @@ export class RowContainerComp extends Component {
                 this.ensureDomOrder(eGui, container);
             }
         }
-    }
-
-    private insertFlattenedPinnedRow(eRow: HTMLElement, container: HTMLElement): void {
-        const rowPriority = getFlattenedPinnedRowPriority(this.name);
-        const rowTop = this.getFlattenedPinnedRowPosition(eRow);
-        let insertBefore: HTMLElement | null = null;
-
-        for (const child of Array.from(container.children) as HTMLElement[]) {
-            if (child === eRow) {
-                continue;
-            }
-            const childPriority = getFlattenedPinnedRowPriority(
-                child.getAttribute('row-container-name') as RowContainerName
-            );
-            if (childPriority > rowPriority) {
-                insertBefore = child;
-                break;
-            }
-            if (childPriority === rowPriority) {
-                const childTop = this.getFlattenedPinnedRowPosition(child);
-                if (childTop > rowTop) {
-                    insertBefore = child;
-                    break;
-                }
-            }
-        }
-
-        if (insertBefore) {
-            insertBefore.before(eRow);
-        } else if (eRow.parentElement !== container || eRow !== container.lastElementChild) {
-            container.appendChild(eRow);
-        }
-    }
-
-    private getFlattenedPinnedRowPosition(eRow: HTMLElement): number {
-        const top = Number.parseFloat(eRow.style.top);
-        if (Number.isFinite(top)) {
-            return top;
-        }
-
-        const transform = eRow.style.transform;
-        if (transform) {
-            const transformMatch = /translateY\((-?\d+(?:\.\d+)?)px\)/.exec(transform);
-            if (transformMatch) {
-                const transformTop = Number.parseFloat(transformMatch[1]);
-                if (Number.isFinite(transformTop)) {
-                    return transformTop;
-                }
-            }
-        }
-
-        const rowIndex = Number.parseFloat(eRow.getAttribute('row-index') ?? '');
-        return Number.isFinite(rowIndex) ? rowIndex : 0;
     }
 
     private removeOldRows(rowComps: RowComp[]): void {
@@ -373,3 +355,24 @@ export const RowContainerSelector: ComponentSelector = {
     selector: 'AG-ROW-CONTAINER',
     component: RowContainerComp,
 };
+
+function getFlattenedPinnedRowPosition(eRow: HTMLElement): number {
+    const top = Number.parseFloat(eRow.style.top);
+    if (Number.isFinite(top)) {
+        return top;
+    }
+
+    const transform = eRow.style.transform;
+    if (transform) {
+        const transformMatch = /translateY\((-?\d+(?:\.\d+)?)px\)/.exec(transform);
+        if (transformMatch) {
+            const transformTop = Number.parseFloat(transformMatch[1]);
+            if (Number.isFinite(transformTop)) {
+                return transformTop;
+            }
+        }
+    }
+
+    const rowIndex = Number.parseFloat(eRow.getAttribute('row-index') ?? '');
+    return Number.isFinite(rowIndex) ? rowIndex : 0;
+}
