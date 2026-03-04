@@ -1,12 +1,18 @@
 import type {
     AgColumn,
+    IAggFunc,
     BeanName,
     ColumnEventType,
     ColumnState,
     IColumnToolPanelEdits,
     NamedBean,
+    SortDef,
+    SortDirection,
 } from 'ag-grid-community';
 import { BeanStub, _applyColumnState } from 'ag-grid-community';
+import type { ColumnToolPanelEditStrategyBean } from 'ag-grid-community';
+
+export type ColumnToolPanelEditParams = { deferApply?: boolean };
 
 const noop = () => {};
 
@@ -17,13 +23,22 @@ export abstract class BaseColumnToolPanelEdits extends BeanStub implements IColu
     abstract setColumnsVisible(columns: AgColumn[], visible: boolean, eventType: ColumnEventType): void;
     abstract setRowGroupColumns(columns: AgColumn[], eventType: ColumnEventType): void;
     abstract setValueColumns(columns: AgColumn[], eventType: ColumnEventType): void;
+    abstract setColumnAggFunc(
+        column: AgColumn,
+        aggFunc: string | IAggFunc | null | undefined,
+        eventType: ColumnEventType
+    ): void;
+    abstract getColumnAggFunc(column: AgColumn): string | IAggFunc | null | undefined;
     abstract setPivotColumns(columns: AgColumn[], eventType: ColumnEventType): void;
+    abstract setPivotMode(pivotMode: boolean, eventType: ColumnEventType): void;
+    abstract progressSortFromEvent(column: AgColumn, event: MouseEvent | KeyboardEvent): void;
     abstract commit(): void;
     abstract reset(): void;
 }
 
-export class ColumnToolPanelSyncEditStrategy extends BaseColumnToolPanelEdits {
-    beanName: BeanName = 'columnToolPanelSyncEditStrategy';
+export class ColumnToolPanelSynchronousEdit extends BaseColumnToolPanelEdits {
+    static beanName = 'colToolPanelSynchronousEdit';
+    beanName = ColumnToolPanelSynchronousEdit.beanName as ColumnToolPanelEditStrategyBean;
 
     public reset = noop;
     public commit = noop;
@@ -53,23 +68,61 @@ export class ColumnToolPanelSyncEditStrategy extends BaseColumnToolPanelEdits {
         this.beans.valueColsSvc?.setColumns(columns, eventType);
     }
 
+    public setColumnAggFunc(
+        column: AgColumn,
+        aggFunc: string | IAggFunc | null | undefined,
+        eventType: ColumnEventType
+    ): void {
+        this.beans.valueColsSvc?.setColumnAggFunc?.(column, aggFunc, eventType);
+    }
+
+    public getColumnAggFunc(column: AgColumn): string | IAggFunc | null | undefined {
+        return column.getAggFunc();
+    }
+
     public setPivotColumns(columns: AgColumn[], eventType: ColumnEventType): void {
         this.beans.pivotColsSvc?.setColumns(columns, eventType);
     }
+
+    public setPivotMode(pivotMode: boolean, eventType: ColumnEventType): void {
+        const { colModel, gos, ctrlsSvc } = this.beans;
+        if (pivotMode === colModel.isPivotMode()) {
+            return;
+        }
+
+        gos.updateGridOptions({ options: { pivotMode }, source: eventType as any });
+        for (const c of ctrlsSvc.getHeaderRowContainerCtrls()) {
+            c.refresh();
+        }
+    }
+
+    public progressSortFromEvent(column: AgColumn, event: MouseEvent | KeyboardEvent): void {
+        this.beans.sortSvc?.progressSortFromEvent(column, event);
+    }
 }
 
-export class ColumnToolPanelDeferredEditStrategy extends BaseColumnToolPanelEdits {
-    beanName: BeanName = 'columnToolPanelDeferredEditStrategy';
+export class ColumnToolPanelDeferredEdit extends BaseColumnToolPanelEdits {
+    static beanName = 'colToolPanelDeferredEdit';
+    beanName = ColumnToolPanelDeferredEdit.beanName as ColumnToolPanelEditStrategyBean;
+
     private state = this.getDefaultState();
+
+    private static getLastValue<T>(values: T[]): T | undefined {
+        return values[values.length - 1];
+    }
 
     private getDefaultState() {
         return {
-            applyColumnState: null as null | [ColumnState[], ColumnEventType],
-            moveColumns: null as null | [AgColumn[], number, ColumnEventType],
-            setRowGroupColumns: null as null | [AgColumn[], ColumnEventType],
-            setColumnsVisible: null as null | [AgColumn[], boolean, ColumnEventType],
-            setValueColumns: null as null | [AgColumn[], ColumnEventType],
-            setPivotColumns: null as null | [AgColumn[], ColumnEventType],
+            applyColumnState: [] as [ColumnState[], ColumnEventType][],
+            moveColumns: [] as [AgColumn[], number, ColumnEventType][],
+            setRowGroupColumns: [] as [AgColumn[], ColumnEventType][],
+            setColumnsVisible: [] as [AgColumn[], boolean, ColumnEventType][],
+            setValueColumns: [] as [AgColumn[], ColumnEventType][],
+            setColumnAggFunc: [] as [AgColumn, string | IAggFunc | null | undefined, ColumnEventType][],
+            setPivotColumns: [] as [AgColumn[], ColumnEventType][],
+            setPivotMode: [] as [boolean, ColumnEventType][],
+            progressSortFromEvent: [] as [AgColumn, MouseEvent | KeyboardEvent][],
+            draftAggFuncsByColId: new Map<string, string | IAggFunc | null | undefined>(),
         };
     }
 
@@ -77,29 +130,128 @@ export class ColumnToolPanelDeferredEditStrategy extends BaseColumnToolPanelEdit
         this.state = this.getDefaultState();
     }
 
-    public commit() {}
+    public commit() {
+        console.log(this.state);
+    }
 
     public applyColumnState(state: ColumnState[], eventType: ColumnEventType): void {
-        this.state.applyColumnState = [state, eventType];
+        this.state.applyColumnState.push([state, eventType]);
     }
 
     public moveColumns(columns: AgColumn[], targetIndex: number, eventType: ColumnEventType): void {
-        this.state.moveColumns = [columns, targetIndex, eventType];
+        this.state.moveColumns.push([columns, targetIndex, eventType]);
     }
 
     public setColumnsVisible(columns: AgColumn[], visible: boolean, eventType: ColumnEventType): void {
-        this.state.setColumnsVisible = [columns, visible, eventType];
+        this.state.setColumnsVisible.push([columns, visible, eventType]);
     }
 
     public setRowGroupColumns(columns: AgColumn[], eventType: ColumnEventType): void {
-        this.state.setRowGroupColumns = [columns, eventType];
+        this.state.setRowGroupColumns.push([columns, eventType]);
     }
 
     public setValueColumns(columns: AgColumn[], eventType: ColumnEventType): void {
-        this.state.setValueColumns = [columns, eventType];
+        this.state.setValueColumns.push([columns, eventType]);
+    }
+
+    public setColumnAggFunc(
+        column: AgColumn,
+        aggFunc: string | IAggFunc | null | undefined,
+        eventType: ColumnEventType
+    ): void {
+        this.state.setColumnAggFunc.push([column, aggFunc, eventType]);
+        this.state.draftAggFuncsByColId.set(column.getColId(), aggFunc);
+    }
+
+    public getColumnAggFunc(column: AgColumn): string | IAggFunc | null | undefined {
+        const colId = column.getColId();
+        if (this.state.draftAggFuncsByColId.has(colId)) {
+            return this.state.draftAggFuncsByColId.get(colId);
+        }
+        return column.getAggFunc();
     }
 
     public setPivotColumns(columns: AgColumn[], eventType: ColumnEventType): void {
-        this.state.setPivotColumns = [columns, eventType];
+        this.state.setPivotColumns.push([columns, eventType]);
+    }
+
+    public setPivotMode(pivotMode: boolean, eventType: ColumnEventType): void {
+        this.state.setPivotMode.push([pivotMode, eventType]);
+    }
+
+    public getDraftRowGroupColumns(): AgColumn[] {
+        const latest = ColumnToolPanelDeferredEdit.getLastValue(this.state.setRowGroupColumns);
+        return latest ? latest[0] : this.beans.rowGroupColsSvc?.columns ?? [];
+    }
+
+    public getDraftValueColumns(): AgColumn[] {
+        const latest = ColumnToolPanelDeferredEdit.getLastValue(this.state.setValueColumns);
+        return latest ? latest[0] : this.beans.valueColsSvc?.columns ?? [];
+    }
+
+    public getDraftPivotColumns(): AgColumn[] {
+        const latest = ColumnToolPanelDeferredEdit.getLastValue(this.state.setPivotColumns);
+        return latest ? latest[0] : this.beans.pivotColsSvc?.columns ?? [];
+    }
+
+    public getDraftPivotMode(): boolean {
+        const latest = ColumnToolPanelDeferredEdit.getLastValue(this.state.setPivotMode);
+        return latest ? latest[0] : this.beans.colModel.isPivotMode();
+    }
+
+    public getDraftSortDirection(column: AgColumn): SortDirection {
+        const draftSortDefs = this.getDraftSortDefsMap();
+        const colId = column.getColId();
+        if (draftSortDefs.has(colId)) {
+            return draftSortDefs.get(colId)?.direction ?? null;
+        }
+        return column.getSort();
+    }
+
+    public getDraftSortDef(column: AgColumn): SortDef | null {
+        const draftSortDefs = this.getDraftSortDefsMap();
+        const colId = column.getColId();
+        if (draftSortDefs.has(colId)) {
+            return draftSortDefs.get(colId)!;
+        }
+        return column.getSortDef();
+    }
+
+    public progressSortFromEvent(column: AgColumn, event: MouseEvent | KeyboardEvent): void {
+        this.state.progressSortFromEvent.push([column, event]);
+    }
+
+    private getDraftSortDefsMap(): Map<string, SortDef> {
+        const draftSortDefs = new Map<string, SortDef>();
+        const { colModel, sortSvc } = this.beans;
+
+        colModel.forAllCols((col) => {
+            const current = col.getSortDef();
+            if (current) {
+                draftSortDefs.set(col.getColId(), current);
+            }
+        });
+
+        for (const [column, event] of this.state.progressSortFromEvent) {
+            const colId = column.getColId();
+            const currentSortDef = draftSortDefs.has(colId) ? draftSortDefs.get(colId) : column.getSortDef();
+            const nextSortDef = sortSvc!.getNextSortDirection(column, currentSortDef);
+
+            const sortUsingCtrl = this.gos.get('multiSortKey') === 'ctrl';
+            const multiSort = sortUsingCtrl ? event.ctrlKey || event.metaKey : event.shiftKey;
+            const doingMultiSort = (multiSort || this.gos.get('alwaysMultiSort')) && !this.gos.get('suppressMultiSort');
+
+            if (!doingMultiSort) {
+                draftSortDefs.clear();
+            }
+
+            if (nextSortDef.direction) {
+                draftSortDefs.set(colId, nextSortDef);
+            } else {
+                draftSortDefs.delete(colId);
+            }
+        }
+
+        return draftSortDefs;
     }
 }
