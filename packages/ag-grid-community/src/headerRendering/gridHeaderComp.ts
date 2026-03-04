@@ -52,29 +52,33 @@ class GridHeaderComp extends Component {
         }
 
         const eGui = this.getGui();
-        const parent = eGui.parentElement ?? this.getFlattenedHostFromParent();
-        if (!parent) {
+        const parent = eGui.parentElement;
+        const flattenedHost = this.getFlattenedHostFromParent();
+        if (!parent && !flattenedHost) {
+            window.requestAnimationFrame(() => this.initialiseWhenAttached());
+            return;
+        }
+        const isInPinnedTopSection =
+            !!parent?.classList.contains('ag-grid-pinned-top-rows') || !!parent?.closest('.ag-grid-pinned-top-rows');
+        if (isInPinnedTopSection && !flattenedHost) {
             window.requestAnimationFrame(() => this.initialiseWhenAttached());
             return;
         }
 
         const gridBodyCtrl = this.beans.ctrlsSvc.get('gridBodyCtrl');
-        const eGridViewport = gridBodyCtrl?.eGridViewport ?? this.getGridViewportFromParentChain(parent);
+        const eGridViewport =
+            gridBodyCtrl?.eGridViewport ?? this.getGridViewportFromParentChain(parent ?? flattenedHost);
 
-        if (parent.classList.contains('ag-grid-pinned-top-rows-container')) {
+        if (flattenedHost) {
             if (!eGridViewport) {
                 window.requestAnimationFrame(() => this.initialiseWhenAttached());
                 return;
             }
-            const pinnedRowContainerRendererFeature = gridBodyCtrl?.getPinnedRowContainerRendererFeature();
-            if (!pinnedRowContainerRendererFeature) {
-                window.requestAnimationFrame(() => this.initialiseWhenAttached());
-                return;
-            }
-            this.eHeaderHost = parent;
-            this.ePinnedTopRowsHost = parent.parentElement ?? parent;
+            this.eHeaderHost = flattenedHost;
+            this.ePinnedTopRowsHost = flattenedHost.parentElement ?? flattenedHost;
             this.isFlattened = true;
-            this.flattenedHeaderRowsSource = pinnedRowContainerRendererFeature.registerSource({
+            const pinnedRowContainerRendererFeature = gridBodyCtrl?.getPinnedRowContainerRendererFeature();
+            this.flattenedHeaderRowsSource = pinnedRowContainerRendererFeature?.registerSource({
                 id: `header-rows-${this.flattenedHeaderSourceId}`,
                 section: 'top',
                 stream: 'center',
@@ -169,6 +173,23 @@ class GridHeaderComp extends Component {
                 if (eGui.parentElement !== eHeader) {
                     eHeader.appendChild(eGui);
                 }
+                if (prevGui) {
+                    _ensureDomOrder(eHeader, eGui, prevGui);
+                }
+            } else if (!this.flattenedHeaderRowsSource) {
+                const firstNonHeaderRow = Array.from(eHeader.children).find((child) => {
+                    const eChild = child as HTMLElement;
+                    return !eChild.classList.contains('ag-header-row');
+                }) as HTMLElement | undefined;
+
+                if (eGui.parentElement !== eHeader) {
+                    if (firstNonHeaderRow) {
+                        firstNonHeaderRow.before(eGui);
+                    } else {
+                        eHeader.appendChild(eGui);
+                    }
+                }
+
                 if (prevGui) {
                     _ensureDomOrder(eHeader, eGui, prevGui);
                 }

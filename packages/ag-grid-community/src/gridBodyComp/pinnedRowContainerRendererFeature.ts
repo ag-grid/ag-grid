@@ -2,11 +2,11 @@ import { _ensureDomOrder } from '../agStack/utils/dom';
 import { BeanStub } from '../context/beanStub';
 import type { IPinnedSectionCompHost } from '../interfaces/iPinnedSectionCompHost';
 
-export type PinnedSection = 'top' | 'bottom';
-export type PinnedSectionStream = 'center' | 'fullWidth';
-export type PinnedSectionLane = 'edge' | 'pinned' | 'sticky';
+type PinnedSection = 'top' | 'bottom';
+type PinnedSectionStream = 'center' | 'fullWidth';
+type PinnedSectionLane = 'edge' | 'pinned' | 'sticky';
 
-export interface PinnedRowContainerRendererSourceConfig {
+interface PinnedRowContainerRendererSourceConfig {
     id: string;
     section: PinnedSection;
     stream: PinnedSectionStream;

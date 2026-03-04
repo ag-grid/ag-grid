@@ -18,10 +18,6 @@ export type RowContainerName =
     | 'scrollingFullWidth'
     | 'pinnedTopCenter'
     | 'pinnedTopFullWidth'
-    | 'stickyTopCenter'
-    | 'stickyTopFullWidth'
-    | 'stickyBottomCenter'
-    | 'stickyBottomFullWidth'
     | 'pinnedBottomCenter'
     | 'pinnedBottomFullWidth';
 
@@ -40,10 +36,10 @@ export type RowContainerOptions = {
 };
 
 const getTopRowCtrls: GetRowCtrls = (r) => r.topRowCtrls;
-const getStickyTopRowCtrls: GetRowCtrls = (r) => r.getStickyTopRowCtrls();
-const getStickyBottomRowCtrls: GetRowCtrls = (r) => r.getStickyBottomRowCtrls();
 const getBottomRowCtrls: GetRowCtrls = (r) => r.bottomRowCtrls;
 const getCentreRowCtrls: GetRowCtrls = (r) => r.allRowCtrls;
+const getPinnedAndStickyTopRowCtrls: GetRowCtrls = (r) => [...getTopRowCtrls(r), ...r.getStickyTopRowCtrls()];
+const getStickyAndPinnedBottomRowCtrls: GetRowCtrls = (r) => [...r.getStickyBottomRowCtrls(), ...getBottomRowCtrls(r)];
 
 const getSpannedTopRowCtrls: GetSpannedRowCtrls = (r) => r.getCtrls('top');
 const getSpannedCenterRowCtrls: GetSpannedRowCtrls = (r) => r.getCtrls('center');
@@ -66,51 +62,27 @@ const ContainerCssClasses: Record<RowContainerName, RowContainerOptions> = {
     pinnedTopCenter: {
         type: 'center',
         name: 'grid-pinned-top-rows',
-        getRowCtrls: getTopRowCtrls,
+        getRowCtrls: getPinnedAndStickyTopRowCtrls,
         getSpannedRowCtrls: getSpannedTopRowCtrls,
     },
     pinnedTopFullWidth: {
         type: 'fullWidth',
         name: 'grid-pinned-top-rows-full-width',
         fullWidth: true,
-        getRowCtrls: getTopRowCtrls,
-    },
-
-    stickyTopCenter: {
-        type: 'center',
-        name: 'grid-sticky-top-rows',
-        getRowCtrls: getStickyTopRowCtrls,
-    },
-    stickyTopFullWidth: {
-        type: 'fullWidth',
-        name: 'grid-sticky-top-rows-full-width',
-        fullWidth: true,
-        getRowCtrls: getStickyTopRowCtrls,
-    },
-
-    stickyBottomCenter: {
-        type: 'center',
-        name: 'grid-sticky-bottom-rows',
-        getRowCtrls: getStickyBottomRowCtrls,
-    },
-    stickyBottomFullWidth: {
-        type: 'fullWidth',
-        name: 'grid-sticky-bottom-rows-full-width',
-        fullWidth: true,
-        getRowCtrls: getStickyBottomRowCtrls,
+        getRowCtrls: getPinnedAndStickyTopRowCtrls,
     },
 
     pinnedBottomCenter: {
         type: 'center',
         name: 'grid-pinned-bottom-rows',
-        getRowCtrls: getBottomRowCtrls,
+        getRowCtrls: getStickyAndPinnedBottomRowCtrls,
         getSpannedRowCtrls: getSpannedBottomRowCtrls,
     },
     pinnedBottomFullWidth: {
         type: 'fullWidth',
         name: 'grid-pinned-bottom-rows-full-width',
         fullWidth: true,
-        getRowCtrls: getBottomRowCtrls,
+        getRowCtrls: getStickyAndPinnedBottomRowCtrls,
     },
 };
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -134,20 +106,14 @@ export function _getRowContainerOptions(name: RowContainerName): RowContainerOpt
 }
 
 const allMiddle: RowContainerName[] = ['scrollingCenter', 'scrollingFullWidth'];
-const allCenter: RowContainerName[] = [
-    'stickyTopCenter',
-    'stickyBottomCenter',
-    'scrollingCenter',
-    'pinnedTopCenter',
-    'pinnedBottomCenter',
-];
+const allCenter: RowContainerName[] = ['scrollingCenter', 'pinnedTopCenter', 'pinnedBottomCenter'];
 
 // sticky section must show rows in set order
 const allStickyContainers: RowContainerName[] = [
-    'stickyTopCenter',
-    'stickyTopFullWidth',
-    'stickyBottomCenter',
-    'stickyBottomFullWidth',
+    'pinnedTopCenter',
+    'pinnedTopFullWidth',
+    'pinnedBottomCenter',
+    'pinnedBottomFullWidth',
 ];
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

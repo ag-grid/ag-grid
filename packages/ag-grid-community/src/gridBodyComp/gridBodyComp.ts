@@ -12,7 +12,8 @@ import { FakeHScrollSelector } from './fakeHScrollComp';
 import { FakeVScrollSelector } from './fakeVScrollComp';
 import type { IGridBodyComp, RowAnimationCssClasses } from './gridBodyCtrl';
 import { CSS_CLASS_FORCE_VERTICAL_SCROLL, GridBodyCtrl } from './gridBodyCtrl';
-import { RowContainerComp, RowContainerSelector } from './rowContainer/rowContainerComp';
+import type { RowContainerComp } from './rowContainer/rowContainerComp';
+import { RowContainerSelector } from './rowContainer/rowContainerComp';
 import type { RowContainerName } from './rowContainer/rowContainerCtrl';
 
 function makeRowContainers(paramsMap: Record<string, { name: string }>, names: RowContainerName[]): ElementParams[] {
@@ -59,19 +60,8 @@ function getGridBodyTemplate(includeOverlay?: boolean): {
                                 cls: 'ag-grid-pinned-top-rows',
                                 role: 'presentation',
                                 children: [
-                                    {
-                                        tag: 'div',
-                                        ref: 'eTopRowsContainer',
-                                        cls: 'ag-grid-pinned-top-rows-container',
-                                        role: 'rowgroup',
-                                        children: [{ tag: 'ag-header-root' }],
-                                    },
-                                    {
-                                        tag: 'div',
-                                        ref: 'eTopRowsFullWidthContainer',
-                                        cls: 'ag-grid-pinned-top-rows-full-width-container',
-                                        role: 'rowgroup',
-                                    },
+                                    ...makeRowContainers(paramsMap, ['pinnedTopCenter', 'pinnedTopFullWidth']),
+                                    { tag: 'ag-header-root' },
                                 ],
                             },
                             {
@@ -86,20 +76,7 @@ function getGridBodyTemplate(includeOverlay?: boolean): {
                                 ref: 'eBottom',
                                 cls: 'ag-grid-pinned-bottom-rows',
                                 role: 'presentation',
-                                children: [
-                                    {
-                                        tag: 'div',
-                                        ref: 'eBottomRowsContainer',
-                                        cls: 'ag-grid-pinned-bottom-rows-container',
-                                        role: 'rowgroup',
-                                    },
-                                    {
-                                        tag: 'div',
-                                        ref: 'eBottomRowsFullWidthContainer',
-                                        cls: 'ag-grid-pinned-bottom-rows-full-width-container',
-                                        role: 'rowgroup',
-                                    },
-                                ],
+                                children: makeRowContainers(paramsMap, ['pinnedBottomCenter', 'pinnedBottomFullWidth']),
                             },
                         ],
                     },
@@ -118,11 +95,11 @@ export class GridBodyComp extends Component implements FocusableContainer {
     private readonly eGridViewport: HTMLElement = RefPlaceholder;
     private readonly eGridScrollableArea: HTMLElement = RefPlaceholder;
     private readonly eTop: HTMLElement = RefPlaceholder;
-    private readonly eTopRowsContainer: HTMLElement = RefPlaceholder;
-    private readonly eTopRowsFullWidthContainer: HTMLElement = RefPlaceholder;
+    private readonly ePinnedTopCenterRowContainer: RowContainerComp = RefPlaceholder;
+    private readonly ePinnedTopFullWidthRowContainer: RowContainerComp = RefPlaceholder;
     private readonly eBottom: HTMLElement = RefPlaceholder;
-    private readonly eBottomRowsContainer: HTMLElement = RefPlaceholder;
-    private readonly eBottomRowsFullWidthContainer: HTMLElement = RefPlaceholder;
+    private readonly ePinnedBottomCenterRowContainer: RowContainerComp = RefPlaceholder;
+    private readonly ePinnedBottomFullWidthRowContainer: RowContainerComp = RefPlaceholder;
     private readonly eBody: HTMLElement = RefPlaceholder;
     private readonly scrollingFullWidthRowContainerComp: RowContainerComp = RefPlaceholder;
 
@@ -215,33 +192,17 @@ export class GridBodyComp extends Component implements FocusableContainer {
             this.eGridViewport,
             this.eBody,
             this.scrollingFullWidthRowContainerComp.getGui(),
-            this.eTopRowsContainer,
-            this.eTopRowsFullWidthContainer,
+            this.ePinnedTopCenterRowContainer.getGui(),
+            this.ePinnedTopFullWidthRowContainer.getGui(),
             this.eTop,
-            this.eBottomRowsContainer,
-            this.eBottomRowsFullWidthContainer,
+            this.ePinnedBottomCenterRowContainer.getGui(),
+            this.ePinnedBottomFullWidthRowContainer.getGui(),
             this.eBottom
         );
-        this.initialiseFlattenedPinnedRowContainers();
 
         if ((rangeSvc && _isCellSelectionEnabled(this.gos)) || _isMultiRowSelection(this.gos)) {
             _setAriaMultiSelectable(this.getGui(), true);
         }
-    }
-
-    private initialiseFlattenedPinnedRowContainers(): void {
-        const createFlattened = (name: RowContainerName, hostElement: HTMLElement) =>
-            this.createManagedBean(new RowContainerComp({ name, hostElement, viewportElement: this.eGridViewport }));
-
-        createFlattened('pinnedTopCenter', this.eTopRowsContainer);
-        createFlattened('stickyTopCenter', this.eTopRowsContainer);
-        createFlattened('pinnedTopFullWidth', this.eTopRowsFullWidthContainer);
-        createFlattened('stickyTopFullWidth', this.eTopRowsFullWidthContainer);
-
-        createFlattened('stickyBottomCenter', this.eBottomRowsContainer);
-        createFlattened('pinnedBottomCenter', this.eBottomRowsContainer);
-        createFlattened('stickyBottomFullWidth', this.eBottomRowsFullWidthContainer);
-        createFlattened('pinnedBottomFullWidth', this.eBottomRowsFullWidthContainer);
     }
 
     private setRowAnimationCssOnBodyViewport(cssClass: RowAnimationCssClasses, animateRows: boolean): void {

@@ -18,10 +18,6 @@ interface ReadyParams {
     pinnedBottomCenter: RowContainerCtrl;
     pinnedTopCenter: RowContainerCtrl;
 
-    stickyTopCenter: RowContainerCtrl;
-
-    stickyBottomCenter: RowContainerCtrl;
-
     fakeHScrollComp: FakeHScrollComp;
     fakeVScrollComp: FakeVScrollComp;
     gridHeaderCtrl: GridHeaderCtrl;
@@ -29,13 +25,18 @@ interface ReadyParams {
     centerHeader: HeaderRowContainerCtrl;
 }
 
-/**
- * This is the number of controls defined above in `ReadyParams`.
- * This allows us to quickly know when all controls have been registered.
- */
-const NUM_CTRLS = 11;
-
 type CtrlType = keyof ReadyParams;
+const REQUIRED_CTRLS: CtrlType[] = [
+    'gridCtrl',
+    'gridBodyCtrl',
+    'scrollingCenter',
+    'pinnedBottomCenter',
+    'pinnedTopCenter',
+    'fakeHScrollComp',
+    'fakeVScrollComp',
+    'gridHeaderCtrl',
+    'centerHeader',
+];
 
 type BeanDestroyFunc = Pick<BeanStub<any>, 'addDestroyFunc'>;
 
@@ -70,13 +71,11 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
         );
     }
     private updateReady(): void {
-        const values = Object.values(this.params);
-        // ready when all ctrls have been registered and are alive
-        this.ready =
-            values.length === NUM_CTRLS &&
-            values.every((ctrl: BeanStub<any> | undefined) => {
-                return ctrl?.isAlive() ?? false;
-            });
+        // ready when all required controls have been registered and are alive
+        this.ready = REQUIRED_CTRLS.every((ctrlType) => {
+            const ctrl = this.params[ctrlType];
+            return ctrl?.isAlive() ?? false;
+        });
     }
 
     public whenReady(caller: BeanDestroyFunc, callback: (p: ReadyParams) => void): void {

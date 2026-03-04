@@ -234,38 +234,14 @@ const GridBodyComp = () => {
         [bottomHeight, stickyBottomHeight, stickyBottomBottom, stickyBottomWidth]
     );
 
-    const getContainerHost = (container: ReactRowContainerName): HTMLElement | null | undefined => {
-        switch (container) {
-            case 'pinnedTopCenter':
-            case 'stickyTopCenter':
-                return topRowsHost;
-            case 'pinnedTopFullWidth':
-            case 'stickyTopFullWidth':
-                return topRowsFullWidthHost;
-            case 'pinnedBottomCenter':
-            case 'stickyBottomCenter':
-                return bottomRowsHost;
-            case 'pinnedBottomFullWidth':
-            case 'stickyBottomFullWidth':
-                return bottomRowsFullWidthHost;
-            default:
-                return undefined;
-        }
-    };
-
     const createRowContainer = (container: ReactRowContainerName) => (
         <RowContainerComp
             name={container}
-            hostElement={getContainerHost(container)}
             viewportElement={gridViewportElement}
             onContainerElementChanged={container === 'scrollingFullWidth' ? setScrollingFullWidthContainer : undefined}
             key={`${container}-container`}
         />
     );
-
-    const setBottomRowsContainerRef = useCallback((el: HTMLDivElement | null) => {
-        setBottomRowsHost(el);
-    }, []);
 
     const setGridViewportRef = useCallback((el: HTMLDivElement | null) => {
         eGridViewport.current = el;
@@ -277,40 +253,30 @@ const GridBodyComp = () => {
             <div ref={setGridViewportRef} className={gridViewportClasses} role="presentation">
                 <div ref={eGridScrollableArea} className="ag-grid-scrollable-area" role="presentation">
                     <div ref={eTop} className={topClasses} role="presentation" style={topStyle}>
-                        <div className="ag-grid-pinned-top-rows-container" role="rowgroup" ref={setTopRowsHost}>
-                            <GridHeaderComp hostElement={topRowsHost} flattened viewportElement={gridViewportElement} />
-                            {createRowContainer('pinnedTopCenter')}
-                            {createRowContainer('stickyTopCenter')}
-                        </div>
-                        <div
-                            className="ag-grid-pinned-top-rows-full-width-container"
-                            role="rowgroup"
-                            ref={setTopRowsFullWidthHost}
-                        >
-                            {createRowContainer('pinnedTopFullWidth')}
-                            {createRowContainer('stickyTopFullWidth')}
-                        </div>
+                        <GridHeaderComp hostElement={topRowsHost} flattened viewportElement={gridViewportElement} />
+                        <RowContainerComp
+                            name="pinnedTopCenter"
+                            viewportElement={gridViewportElement}
+                            onContainerElementChanged={setTopRowsHost}
+                        />
+                        <RowContainerComp
+                            name="pinnedTopFullWidth"
+                            onContainerElementChanged={setTopRowsFullWidthHost}
+                        />
                     </div>
                     <div className={bodyClasses} ref={eBody} role="presentation">
                         {(['scrollingCenter', 'scrollingFullWidth'] as const).map(createRowContainer)}
                     </div>
                     <div className={bottomClasses} ref={eBottom} role="presentation" style={bottomStyle}>
-                        <div
-                            className="ag-grid-pinned-bottom-rows-container"
-                            role="rowgroup"
-                            ref={setBottomRowsContainerRef}
-                        >
-                            {createRowContainer('stickyBottomCenter')}
-                            {createRowContainer('pinnedBottomCenter')}
-                        </div>
-                        <div
-                            className="ag-grid-pinned-bottom-rows-full-width-container"
-                            role="rowgroup"
-                            ref={setBottomRowsFullWidthHost}
-                        >
-                            {createRowContainer('stickyBottomFullWidth')}
-                            {createRowContainer('pinnedBottomFullWidth')}
-                        </div>
+                        <RowContainerComp
+                            name="pinnedBottomCenter"
+                            viewportElement={gridViewportElement}
+                            onContainerElementChanged={setBottomRowsHost}
+                        />
+                        <RowContainerComp
+                            name="pinnedBottomFullWidth"
+                            onContainerElementChanged={setBottomRowsFullWidthHost}
+                        />
                     </div>
                 </div>
             </div>
