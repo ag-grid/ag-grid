@@ -149,8 +149,6 @@ export class GridBodyComp extends Component implements FocusableContainer {
             paramsMap
         );
 
-        this.initialiseFlattenedPinnedRowContainers();
-
         const compProxy: IGridBodyComp = {
             setRowAnimationCssOnBodyViewport: (cssClass, animate) =>
                 this.setRowAnimationCssOnBodyViewport(cssClass, animate),
@@ -224,6 +222,7 @@ export class GridBodyComp extends Component implements FocusableContainer {
             this.eBottomRowsFullWidthContainer,
             this.eBottom
         );
+        this.initialiseFlattenedPinnedRowContainers();
 
         if ((rangeSvc && _isCellSelectionEnabled(this.gos)) || _isMultiRowSelection(this.gos)) {
             _setAriaMultiSelectable(this.getGui(), true);

@@ -24,7 +24,6 @@ import { CtrlsService } from './ctrlsService';
 import { Environment } from './environment';
 import { EventService } from './eventService';
 import { FocusService } from './focusService';
-import { PinnedRowContainerRendererService } from './gridBodyComp/pinnedRowContainerRendererService';
 import { ScrollVisibleService } from './gridBodyComp/scrollVisibleService';
 import { GridDestroyService } from './gridDestroyService';
 import { GridOptionsService } from './gridOptionsService';
@@ -70,7 +69,6 @@ export const CommunityCoreModule: _ModuleWithApi<_CoreGridApi> = {
         RowRenderer,
         ValueService,
         FocusService,
-        PinnedRowContainerRendererService,
         Environment,
         ScrollVisibleService,
         CtrlsService,

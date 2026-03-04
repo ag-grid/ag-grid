@@ -40,7 +40,6 @@ import type { FilterManager } from '../filter/filterManager';
 import type { FilterValueService } from '../filter/filterValueService';
 import type { QuickFilterService } from '../filter/quickFilterService';
 import type { FocusService } from '../focusService';
-import type { PinnedRowContainerRendererService } from '../gridBodyComp/pinnedRowContainerRendererService';
 import type { ScrollVisibleService } from '../gridBodyComp/scrollVisibleService';
 import type { GridDestroyService } from '../gridDestroyService';
 import type { GridOptionsWithDefaults } from '../gridOptionsDefault';
@@ -255,7 +254,6 @@ interface CoreBeanCollection
     colViewport: ColumnViewportService;
     colNames: ColumnNameService;
     visibleCols: VisibleColsService;
-    pinnedRowContainerRenderer: PinnedRowContainerRendererService;
     colMoves?: ColumnMoveService;
     colFlex?: ColumnFlexService;
     colResize?: ColumnResizeService;

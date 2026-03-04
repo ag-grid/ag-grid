@@ -1,5 +1,5 @@
 import { _ensureDomOrder, _requestAnimationFrame } from '../agStack/utils/dom';
-import type { PinnedRowContainerRendererSource } from '../gridBodyComp/pinnedRowContainerRendererService';
+import type { PinnedRowContainerRendererSource } from '../gridBodyComp/pinnedRowContainerRendererFeature';
 import type { ElementParams } from '../utils/element';
 import type { ComponentSelector } from '../widgets/component';
 import { Component } from '../widgets/component';
@@ -59,7 +59,6 @@ class GridHeaderComp extends Component {
         }
 
         const gridBodyCtrl = this.beans.ctrlsSvc.get('gridBodyCtrl');
-        const { pinnedRowContainerRenderer } = this.beans;
         const eGridViewport = gridBodyCtrl?.eGridViewport ?? this.getGridViewportFromParentChain(parent);
 
         if (parent.classList.contains('ag-grid-pinned-top-rows-container')) {
@@ -67,10 +66,15 @@ class GridHeaderComp extends Component {
                 window.requestAnimationFrame(() => this.initialiseWhenAttached());
                 return;
             }
+            const pinnedRowContainerRendererFeature = gridBodyCtrl?.getPinnedRowContainerRendererFeature();
+            if (!pinnedRowContainerRendererFeature) {
+                window.requestAnimationFrame(() => this.initialiseWhenAttached());
+                return;
+            }
             this.eHeaderHost = parent;
             this.ePinnedTopRowsHost = parent.parentElement ?? parent;
             this.isFlattened = true;
-            this.flattenedHeaderRowsSource = pinnedRowContainerRenderer.registerSource({
+            this.flattenedHeaderRowsSource = pinnedRowContainerRendererFeature.registerSource({
                 id: `header-rows-${this.flattenedHeaderSourceId}`,
                 section: 'top',
                 stream: 'center',

@@ -12,7 +12,7 @@ import type {
     PinnedSection,
     PinnedSectionLane,
     PinnedSectionStream,
-} from '../pinnedRowContainerRendererService';
+} from '../pinnedRowContainerRendererFeature';
 import type { IRowContainerComp, RowContainerName, RowContainerOptions } from './rowContainerCtrl';
 import {
     RowContainerCtrl,
@@ -195,25 +195,29 @@ export class RowContainerComp extends Component {
         let eViewportForCtrl = (this.name === 'scrollingCenter' ? eGridViewport : this.eViewport) ?? this.eContainer;
 
         if (pinnedRowsParent && isFlattenedPinnedRowContainer(this.name)) {
-            const { pinnedRowContainerRenderer } = this.beans;
+            const { ctrlsSvc, gos } = this.beans;
+            const pinnedRowContainerRendererFeature = ctrlsSvc.getGridBodyCtrl().getPinnedRowContainerRendererFeature();
+            if (!pinnedRowContainerRendererFeature) {
+                throw new Error('PinnedRowContainerRendererFeature is not available');
+            }
 
             this.flattenedPinnedContainer = true;
             eContainerForRows = pinnedRowsParent;
             // keep spanned rows rendered for pinned top/bottom containers by using the same host
             // rowgroup when flattened.
-            const shouldRenderSpannedRows = !!this.options.getSpannedRowCtrls && !!this.beans.gos.get('enableCellSpan');
+            const shouldRenderSpannedRows = !!this.options.getSpannedRowCtrls && !!gos.get('enableCellSpan');
             eSpannedContainerForRows = shouldRenderSpannedRows ? eContainerForRows : undefined;
             eViewportForCtrl = eGridViewport ?? pinnedRowsParent;
             const sourceConfig = getFlattenedPinnedSourceConfig(this.name);
             if (!sourceConfig) {
                 throw new Error(`Missing pinned section source config for "${this.name}"`);
             }
-            this.flattenedRowsSource = pinnedRowContainerRenderer.registerSource({
+            this.flattenedRowsSource = pinnedRowContainerRendererFeature.registerSource({
                 ...sourceConfig,
                 id: `${this.name}-rows-${this.flattenedSourceId}`,
             });
             if (shouldRenderSpannedRows) {
-                this.flattenedSpannedRowsSource = pinnedRowContainerRenderer.registerSource({
+                this.flattenedSpannedRowsSource = pinnedRowContainerRendererFeature.registerSource({
                     ...sourceConfig,
                     id: `${this.name}-spanned-rows-${this.flattenedSourceId}`,
                     order: 1,

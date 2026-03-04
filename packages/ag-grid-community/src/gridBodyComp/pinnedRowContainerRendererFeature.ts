@@ -1,5 +1,4 @@
 import { _ensureDomOrder } from '../agStack/utils/dom';
-import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { IPinnedSectionCompHost } from '../interfaces/iPinnedSectionCompHost';
 
@@ -32,33 +31,46 @@ interface SourceState extends PinnedRowContainerRendererSourceConfig {
     elements: HTMLElement[];
 }
 
-interface PinnedRowContainerRendererHosts {
-    topCenter: HTMLElement;
-    topFullWidth: HTMLElement;
-    bottomCenter: HTMLElement;
-    bottomFullWidth: HTMLElement;
+export interface IPinnedRowContainerRendererFeature {
+    registerSource(config: PinnedRowContainerRendererSourceConfig): PinnedRowContainerRendererSource;
+    createCompHost(config: Omit<PinnedRowContainerRendererSourceConfig, 'id'>): IPinnedSectionCompHost;
+    refresh(): void;
 }
 
 let nextCompHostId = 0;
 
-export class PinnedRowContainerRendererService extends BeanStub implements NamedBean {
-    public beanName = 'pinnedRowContainerRenderer' as const;
-
+export class PinnedRowContainerRendererFeature extends BeanStub implements IPinnedRowContainerRendererFeature {
     private readonly sources = new Map<string, SourceState>();
     private readonly managedByHost = new Map<HostKey, Set<HTMLElement>>();
+    private readonly hosts: {
+        topCenter: HTMLElement;
+        topFullWidth: HTMLElement;
+        bottomCenter: HTMLElement;
+        bottomFullWidth: HTMLElement;
+    };
+    private readonly eGridViewport: HTMLElement;
     private sourceSequence = 0;
-    private hosts?: PinnedRowContainerRendererHosts;
-    private eGridViewport?: HTMLElement;
 
-    public setComp(hosts: PinnedRowContainerRendererHosts, eGridViewport: HTMLElement): void {
-        this.hosts = hosts;
+    constructor(
+        topCenter: HTMLElement,
+        topFullWidth: HTMLElement,
+        bottomCenter: HTMLElement,
+        bottomFullWidth: HTMLElement,
+        eGridViewport: HTMLElement
+    ) {
+        super();
+        this.hosts = {
+            topCenter,
+            topFullWidth,
+            bottomCenter,
+            bottomFullWidth,
+        };
         this.eGridViewport = eGridViewport;
-        this.refresh();
     }
 
     public registerSource(config: PinnedRowContainerRendererSourceConfig): PinnedRowContainerRendererSource {
         if (this.sources.has(config.id)) {
-            throw new Error(`PinnedRowContainerRendererService source already exists: ${config.id}`);
+            throw new Error(`PinnedRowContainerRendererFeature source already exists: ${config.id}`);
         }
 
         const state: SourceState = {
@@ -98,9 +110,6 @@ export class PinnedRowContainerRendererService extends BeanStub implements Named
     }
 
     public refresh(): void {
-        if (!this.hosts) {
-            return;
-        }
         this.refreshHost('top', 'center');
         this.refreshHost('top', 'fullWidth');
         this.refreshHost('bottom', 'center');
@@ -126,9 +135,6 @@ export class PinnedRowContainerRendererService extends BeanStub implements Named
     }
 
     private refreshHost(section: PinnedSection, stream: PinnedSectionStream): void {
-        if (!this.hosts || !this.eGridViewport) {
-            return;
-        }
         const host = this.getHost(section, stream);
         const hostKey = this.toHostKey(section, stream);
         const sortedSources = this.getSortedSources(section, stream);
@@ -220,9 +226,6 @@ export class PinnedRowContainerRendererService extends BeanStub implements Named
     }
 
     private applyViewportPinnedLayout(source: SourceState, eGui: HTMLElement): void {
-        if (!this.eGridViewport) {
-            return;
-        }
         const scrollLeft = Math.abs(this.eGridViewport.scrollLeft);
         eGui.style.position = 'absolute';
         eGui.style.width = `${this.eGridViewport.clientWidth}px`;
@@ -242,9 +245,6 @@ export class PinnedRowContainerRendererService extends BeanStub implements Named
     }
 
     private getHost(section: PinnedSection, stream: PinnedSectionStream): HTMLElement {
-        if (!this.hosts) {
-            throw new Error('PinnedRowContainerRendererService not initialised');
-        }
         if (section === 'top') {
             return stream === 'center' ? this.hosts.topCenter : this.hosts.topFullWidth;
         }
