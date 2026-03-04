@@ -1,10 +1,10 @@
-import type { AgColumn, DragAndDropIcon, GridDraggingEvent } from 'ag-grid-community';
-import { _createIconNoSpan } from 'ag-grid-community';
+import type { AgColumn, DragAndDropIcon, FocusableContainer, GridDraggingEvent } from 'ag-grid-community';
+import { _addFocusableContainerListener, _createIconNoSpan } from 'ag-grid-community';
 
 import type { ColumnToolPanelSyncEditStrategy } from '../../columnToolPanel/columnToolPanelEdits';
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
-export class RowGroupDropZonePanel extends BaseDropZonePanel {
+export class RowGroupDropZonePanel extends BaseDropZonePanel implements FocusableContainer {
     constructor(horizontal: boolean) {
         super(horizontal, 'rowGroup');
     }
@@ -19,6 +19,11 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
             emptyMessage: emptyMessage,
             title,
         });
+
+        // only the top (horizontal) drop zone participates in core grid container tabbing.
+        if (this.horizontal) {
+            _addFocusableContainerListener(this.beans, this, this.getGui());
+        }
 
         this.addManagedEventListeners({ columnRowGroupChanged: this.refreshGui.bind(this) });
     }
@@ -54,5 +59,9 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
 
     protected getExistingItems(): AgColumn[] {
         return this.beans.rowGroupColsSvc?.columns ?? [];
+    }
+
+    public getFocusableContainerName(): 'rowGroupToolbar' {
+        return 'rowGroupToolbar';
     }
 }

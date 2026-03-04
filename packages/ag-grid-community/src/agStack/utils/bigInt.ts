@@ -1,3 +1,4 @@
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const _parseBigIntOrNull = (value: unknown): bigint | null => {
     if (typeof value === 'bigint') {
         return value;

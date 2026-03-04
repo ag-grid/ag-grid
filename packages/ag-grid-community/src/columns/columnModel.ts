@@ -8,7 +8,7 @@ import type { ColDef, ColGroupDef, ColKey } from '../entities/colDef';
 import type { GridOptions } from '../entities/gridOptions';
 import type { ColumnEventType } from '../events';
 import type { PropertyChangedEvent, PropertyValueChangedEvent } from '../gridOptionsService';
-import { _isRowNumbers, _shouldMaintainColumnOrder } from '../gridOptionsUtils';
+import { _isGroupHideColumnsUntilExpanded, _isRowNumbers, _shouldMaintainColumnOrder } from '../gridOptionsUtils';
 import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
 import { _createColumnTree } from './columnFactoryUtils';
@@ -26,6 +26,7 @@ import {
 
 export type Maybe<T> = T | null | undefined;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface ColumnCollections {
     // columns in a tree, leaf levels are columns, everything above is group column
     tree: (AgColumn | AgProvidedColumnGroup)[];
@@ -36,6 +37,7 @@ export interface ColumnCollections {
     map: { [id: string]: AgColumn };
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class ColumnModel extends BeanStub implements NamedBean {
     beanName = 'colModel' as const;
 
@@ -74,6 +76,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
                 'treeData',
                 'treeDataDisplayType',
                 'groupHideOpenParents',
+                'groupHideColumnsUntilExpanded',
                 'rowNumbers',
                 'hidePaddedHeaderRows',
             ],
@@ -285,25 +288,26 @@ export class ColumnModel extends BeanStub implements NamedBean {
         // show columns we are aggregating on and possibly the selection/row numbers column
         const { beans, showingPivotResult, cols } = this;
 
-        const { valueColsSvc, selectionColSvc } = beans;
+        const { valueColsSvc, selectionColSvc, gos } = beans;
         const showAutoGroupAndValuesOnly = this.isPivotMode() && !showingPivotResult;
         const showSelectionColumn = selectionColSvc?.isSelectionColumnEnabled();
         const showRowNumbers = _isRowNumbers(beans);
         const valueColumns = valueColsSvc?.columns;
+        const hideEmptyAutoColGroups = _isGroupHideColumnsUntilExpanded(gos);
 
         const res = cols.list.filter((col) => {
             const isAutoGroupCol = isColumnGroupAutoCol(col);
             if (showAutoGroupAndValuesOnly) {
                 const isValueCol = valueColumns?.includes(col);
                 return (
-                    isAutoGroupCol ||
                     isValueCol ||
+                    (isAutoGroupCol && (!hideEmptyAutoColGroups || col.isVisible())) ||
                     (showSelectionColumn && isColumnSelectionCol(col)) ||
                     (showRowNumbers && isRowNumberCol(col))
                 );
             } else {
-                // keep col if a) it's auto-group or b) it's visible
-                return isAutoGroupCol || col.isVisible();
+                // keep col if a) it's auto-group (and feature not managing visibility) or b) it's visible
+                return (isAutoGroupCol && !hideEmptyAutoColGroups) || col.isVisible();
             }
         });
 

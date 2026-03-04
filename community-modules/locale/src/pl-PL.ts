@@ -685,7 +685,11 @@ export const AG_GRID_LOCALE_PL = {
     ariaFilterColumn: 'Naciśnij CTRL ENTER, aby otworzyć filtr',
     ariaRowDeselect: 'Naciśnij SPACJĘ, aby odznaczyć ten wiersz',
     ariaHeaderSelection: 'Kolumna z wyborem nagłówka',
-    ariaSelectAllCells: 'Naciśnij Spację, aby zaznaczyć wszystkie komórki',
+    ariaSelectAllCells: 'Naciśnij Spację lub Enter, aby zaznaczyć wszystkie komórki',
+    ariaSelectAllRowCells: 'Naciśnij Enter, aby zaznaczyć wszystkie komórki w tym wierszu',
+    ariaColumnCellSelection: 'Naciśnij Enter, aby przełączyć zaznaczenie wszystkich widocznych komórek w tej kolumnie',
+    ariaColumnGroupCellSelection:
+        'Naciśnij Enter, aby przełączyć zaznaczenie wszystkich widocznych komórek w tej grupie kolumn',
     ariaRowSelectAll: 'Naciśnij SPACJĘ, aby przełączyć zaznaczenie wszystkich wierszy',
     ariaRowToggleSelection: 'Naciśnij SPACJĘ, aby przełączyć zaznaczenie wiersza',
     ariaRowSelect: 'Naciśnij SPACJĘ, aby zaznaczyć ten wiersz',
@@ -700,6 +704,10 @@ export const AG_GRID_LOCALE_PL = {
     ariaPageSizeSelectorLabel: 'Rozmiar Strony',
     ariaChartMenuClose: 'Zamknij Menu Edycji Wykresu',
     ariaChartSelected: 'Wybrane',
+    ariaSparklineChartDescription:
+        'Wykres iskrowy - ${chartType} wyświetla ${count} wartości między ${min} a ${max}. Zaczyna się od ${start} i kończy na ${end}.',
+    ariaSparklineChartDescriptionSingleValue: 'Wykres iskrowy - ${chartType} wyświetla 1 wartość: ${value}.',
+    ariaSparklineChartDescriptionEmpty: 'Wykres iskrowy - ${chartType} bez wartości.',
     ariaSkeletonCellLoadingFailed: 'Wiersza nie udało się załadować',
     ariaSkeletonCellLoading: 'Dane wiersza ładują się',
     ariaDeferSkeletonCellLoading: 'Komórka się ładuje',

@@ -28,6 +28,7 @@ import {
     KeyCode,
     RefPlaceholder,
     _addGridCommonParams,
+    _addOrRemoveAttribute,
     _clearElement,
     _createIconNoSpan,
     _debounce,
@@ -123,8 +124,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     private skipWrapperAnnouncement?: boolean = false;
     private tooltipFeature?: TooltipFeature;
     private shouldDisplayTooltip?: () => boolean;
+    private readonly valueFormatter: (value: TValue | TValue[] | null | undefined) => string;
 
     constructor(config?: RichSelectParams<TValue>) {
+        const valueFormatter = resolveRichSelectValueFormatter<TValue>(config?.valueFormatter);
         const resolvedAgComponents = config?.agComponents?.includes(AgInputTextFieldSelector)
             ? config.agComponents
             : [AgInputTextFieldSelector, ...(config?.agComponents ?? [])];
@@ -142,10 +145,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             template: config?.template ?? AgRichSelectElement,
             agComponents: resolvedAgComponents,
             modalPicker: config?.modalPicker ?? false,
-            valueFormatter:
-                config?.valueFormatter ?? ((value: TValue | TValue[] | null | undefined) => String(value ?? '')),
+            valueFormatter,
             maxPickerHeight: config?.maxPickerHeight ?? 'calc(var(--ag-row-height) * 6.5)',
         });
+        this.valueFormatter = valueFormatter;
 
         const { value, valueList, searchStringCreator, onSearch } = config ?? {};
 
@@ -207,6 +210,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         if (allowTyping) {
             this.eInput.onValueChange((value) => {
+                this.openPickerOnTypingIfNeeded(value);
                 this.updateTypingMultiSelectPlaceholder(value);
                 this.searchTextFromString(value);
             });
@@ -262,11 +266,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             multiSelect,
             suppressDeselectAll,
             suppressMultiSelectPillRenderer,
-            valueFormatter,
             onSearch,
         } = config;
 
-        const valueFormatted = formatValueFn(value, valueFormatter);
+        const valueFormatted = this.valueFormatter(value);
         const isTypingMultiSelect = !!(allowTyping && multiSelect);
 
         if (allowTyping) {
@@ -421,14 +424,21 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         refresh?: boolean;
         isInitial?: boolean;
         scrollToCurrentValue?: boolean;
+        prependedRowCount?: number;
     }): void {
         const { listComponent, isPickerDisplayed, value } = this;
-        const { valueList, refresh, isInitial, scrollToCurrentValue = true } = params;
+        const { valueList, refresh, isInitial, scrollToCurrentValue = true, prependedRowCount = 0 } = params;
         if (isInitial) {
             this.setValues(valueList);
         }
         if (!listComponent) {
             return;
+        }
+
+        const previousScrollTop = prependedRowCount > 0 ? listComponent.getScrollTop() : undefined;
+
+        if (prependedRowCount > 0) {
+            listComponent.offsetHoveredIndexOnPrependedRows(prependedRowCount);
         }
 
         // we need to update the list component even if the 'values' is undefined
@@ -437,12 +447,15 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         if (!refresh) {
             return;
         }
+
+        if (isPickerDisplayed && previousScrollTop != null && prependedRowCount > 0) {
+            listComponent.restoreScrollOnPrependedRows?.(previousScrollTop, prependedRowCount);
+        }
+
         if (this.values) {
             listComponent.refresh(true);
             const hasCurrentValueInLoadedList = value != null && listComponent.getIndicesForValues(value).length > 0;
             if (isPickerDisplayed && hasCurrentValueInLoadedList && scrollToCurrentValue) {
-                // keep async/paged behaviour aligned with sync lists: when the loaded page contains
-                // the current value, select and scroll it into view.
                 listComponent.selectValue(value);
             }
         } else if (isPickerDisplayed) {
@@ -459,6 +472,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         refresh?: boolean;
         isInitial?: boolean;
         scrollToCurrentValue?: boolean;
+        prependedRowCount?: number;
     }): void {
         const { valueList } = params;
 
@@ -526,11 +540,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             container.appendChild(pillContainer.getGui());
 
             const { config, eWrapper, ariaDeleteSelection } = this;
-            const { valueFormatter } = config;
 
             pillContainer.init({
                 eWrapper,
-                valueFormatter,
+                valueFormatter: this.valueFormatter,
                 onPillMouseDown: (e: MouseEvent) => {
                     e.stopImmediatePropagation();
                 },
@@ -607,7 +620,12 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             return _getActiveDomElement(this.beans);
         }
 
-        const inputEl = this.eInput.getInputElement();
+        const inputEl = this.getTypingInputElement();
+
+        if (!inputEl) {
+            return document.activeElement;
+        }
+
         return inputEl.ownerDocument?.activeElement ?? document.activeElement;
     }
 
@@ -672,14 +690,11 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     }
 
     private getSearchStringsFromValues(values: TValue[]): string[] | undefined {
-        const {
-            config: { valueFormatter },
-        } = this;
         if (typeof values[0] === 'object' && this.searchStringCreator) {
             return this.searchStringCreator(values);
         }
 
-        return values.map((value) => (value === '' ? '' : formatValueFn(value, valueFormatter)));
+        return values.map((value) => (value === '' ? '' : this.valueFormatter(value)));
     }
 
     private filterListModel(filteredValues: TValue[]): void {
@@ -751,7 +766,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 // active-descendant is managed on the focusable element (wrapper/input),
                 // so clear it there to avoid stale references after filtering to no results.
                 const eAriaEl = this.getFocusableElement();
-                eAriaEl.removeAttribute('data-active-option');
+                _addOrRemoveAttribute(eAriaEl, 'data-active-option', null);
                 _setAriaActiveDescendant(eAriaEl, null);
             }
         }
@@ -910,9 +925,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
 
         if (typeof left === 'object' && typeof right === 'object' && left != null && right != null) {
-            const valueFormatter =
-                this.config.valueFormatter ?? ((value: TValue | TValue[] | null | undefined) => String(value ?? ''));
-            return valueFormatter(left) === valueFormatter(right);
+            return this.valueFormatter(left) === this.valueFormatter(right);
         }
 
         return false;
@@ -953,12 +966,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     }
 
     private updateTypingMultiSelectInputSize(inputValue: string, placeholder?: string): void {
-        const getInputElement = (this.eInput as Partial<GridInputTextField>).getInputElement;
-        if (typeof getInputElement !== 'function') {
-            return;
-        }
+        const inputEl = this.getTypingInputElement();
 
-        const inputEl = getInputElement.call(this.eInput);
         if (!inputEl) {
             return;
         }
@@ -976,6 +985,26 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             if (ePillContainer) {
                 _setScrollLeft(ePillContainer, ePillContainer.scrollWidth, this.isRtl());
             }
+        }
+    }
+
+    private getTypingInputElement(): HTMLInputElement | undefined {
+        const getInputElement = (this.eInput as Partial<GridInputTextField>).getInputElement;
+        if (typeof getInputElement !== 'function') {
+            return;
+        }
+
+        return getInputElement.call(this.eInput);
+    }
+
+    private openPickerOnTypingIfNeeded(value: string | null | undefined): void {
+        const {
+            isPickerDisplayed,
+            config: { allowTyping, multiSelect },
+        } = this;
+
+        if (allowTyping && multiSelect && !isPickerDisplayed && !!value) {
+            this.showPicker();
         }
     }
 
@@ -1053,7 +1082,12 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         this.setValue(newValue, false, true);
 
-        if (!this.config.multiSelect) {
+        const { multiSelect, allowTyping } = this.config;
+
+        if (multiSelect && allowTyping) {
+            this.resetTypingMultiSelectSearchState();
+            this.hidePicker();
+        } else if (!multiSelect) {
             this.dispatchPickerEventAndHidePicker(newValue, fromEnterKey);
         }
     }
@@ -1274,14 +1308,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     }
 }
 
-// helper function that users a provided value formatter or
-// converts the value to a string, or to '' if the original
-// value is `null` or `undefined`
-const formatValueFn = <TValue>(
-    value: TValue | null | undefined,
-    valueFormatter?: ((value: TValue | TValue[] | null | undefined) => string) | undefined
-) => valueFormatter?.(value) ?? String(value ?? '');
-
 /**
  * cell renderers are used in a few places. they bind to dom slightly differently to other cell renders as they
  * can return back strings (instead of html element) in the getGui() method. common code placed here to handle that.
@@ -1299,4 +1325,12 @@ export function _bindCellRendererToHtmlElement(
             eTarget.appendChild(gui);
         }
     });
+}
+
+type RichSelectValueFormatter<TValue> = (value: TValue | TValue[] | null | undefined) => string;
+
+export function resolveRichSelectValueFormatter<TValue>(
+    valueFormatter?: RichSelectParams<TValue>['valueFormatter']
+): RichSelectValueFormatter<TValue> {
+    return (value) => valueFormatter?.(value) ?? String(value ?? '');
 }

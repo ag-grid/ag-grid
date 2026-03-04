@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Snyk Vulnerability Viewer</title>
+<link rel="stylesheet" href="/ui-styles.css">
+</head>
+<body>
+<div id="loading">
+    <div class="spinner"></div>
+    <div class="loading-text">Loading vulnerability data…</div>
+</div>
+<div id="app">
+    <div id="header">
+        <h1><span class="icon">🔒</span> Snyk Vulnerability Viewer
+            <div class="tab-bar-run">
+                <label class="toggle-label">
+                    <input type="checkbox" id="backup-cb"> Backup old results
+                </label>
+                <button id="run-snyk-btn" class="run-snyk-btn">&#x21BB; Re-run Snyk scan</button>
+            </div>
+        </h1>
+        <div class="summary-row">
+            <div class="sev-pills" id="sev-pills"></div>
+            <div class="summary-stat" id="stat-projects"></div>
+            <div class="summary-stat" id="stat-deps"></div>
+            <div class="summary-stat" id="stat-packages"></div>
+            <div class="summary-stat" id="stat-scan-date"></div>
+            <button id="copy-summary-btn" class="btn btn-sm btn-outline" style="margin-left:auto" title="Copy summary to clipboard">&#x2398; Copy summary</button>
+        </div>
+    </div>
+
+    <div id="tab-bar">
+        <button class="tab-btn active" data-tab="review-queue">
+            Review Queue <span class="tab-badge" id="queue-badge">0</span>
+        </button>
+        <button class="tab-btn" data-tab="browse-all">Browse All</button>
+    </div>
+
+    <div id="run-log-panel" style="display:none"></div>
+
+    <!-- Review Queue Tab -->
+    <div id="tab-review-queue" class="tab-panel">
+        <div class="rq-header">
+            <div class="rq-progress">
+                <span class="rq-progress-label">Progress</span>
+                <div class="rq-progress-bar-wrap">
+                    <div class="rq-progress-bar-fill" id="rq-progress-fill" style="width:0%"></div>
+                </div>
+                <span class="rq-progress-text" id="rq-progress-text">0 / 0 reviewed</span>
+            </div>
+            <button class="reset-review-btn" id="reset-review-btn">Reset review state</button>
+        </div>
+        <div id="rq-content"></div>
+    </div>
+
+    <!-- Browse All Tab -->
+    <div id="tab-browse-all" class="tab-panel" style="display:none">
+        <div id="controls">
+            <div class="ctrl-group">
+                <input id="search" type="text" placeholder="Search package, vuln ID, CVE…">
+            </div>
+            <div class="ctrl-group">
+                <span class="ctrl-label">Severity:</span>
+                <div class="filter-chips">
+                    <div class="chip active" data-sev="all">All</div>
+                    <div class="chip critical" data-sev="critical">Critical</div>
+                    <div class="chip high" data-sev="high">High</div>
+                    <div class="chip medium" data-sev="medium">Medium</div>
+                    <div class="chip low" data-sev="low">Low</div>
+                </div>
+            </div>
+            <div class="ctrl-group">
+                <span class="ctrl-label">Group by:</span>
+                <div class="seg-btn-group">
+                    <button class="seg-btn" data-group="vuln">Vulnerability</button>
+                    <button class="seg-btn" data-group="package">Package</button>
+                    <button class="seg-btn active" data-group="project">Project</button>
+                </div>
+            </div>
+            <div class="ctrl-group">
+                <label class="toggle-label">
+                    <input type="checkbox" id="show-ignored"> Show ignored
+                </label>
+            </div>
+
+        </div>
+        <div id="count-bar"></div>
+        <div id="vuln-list"></div>
+        <div id="ignored-section">
+            <button class="section-toggle" id="ignored-toggle">
+                <span>🚫 Ignored Vulnerabilities</span>
+                <span class="ignored-count-badge"></span>
+                <span class="toggle-arrow">▼</span>
+            </button>
+            <div id="ignored-list"></div>
+        </div>
+    </div>
+</div>
+
+<script src="/ui-browse.js"></script>
+<script src="/ui-review.js"></script>
+<script>
+(function () {
+    function initTabs() {
+        document.querySelectorAll('.tab-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var tab = btn.dataset.tab;
+                document.querySelectorAll('.tab-btn').forEach(function (b) { b.classList.remove('active'); });
+                document.querySelectorAll('.tab-panel').forEach(function (p) { p.style.display = 'none'; });
+                btn.classList.add('active');
+                document.getElementById('tab-' + tab).style.display = 'block';
+            });
+        });
+    }
+
+    Promise.all([
+        fetch('/data').then(function (r) { return r.json(); }),
+        fetch('/review-state').then(function (r) { return r.json(); }),
+    ]).then(function (results) {
+        var data = results[0], rs = results[1];
+        document.getElementById('loading').remove();
+        window.initBrowseAll(data.projects, data.ignorePatternsByFile || {}, data.scanDate || null);
+        window.initReviewQueue(data.projects, data.ignorePatternsByFile || {}, rs, data.sharedExpiry || null, data.rootPackageName || null);
+        initTabs();
+    }).catch(function (err) {
+        document.getElementById('loading').remove();
+        document.getElementById('app').innerHTML =
+            '<div id="empty-state"><div class="empty-icon">&#x26A0;&#xFE0F;</div><div>Failed to load data: ' + err.message + '</div></div>';
+    });
+}());
+</script>
+</body>
+</html>

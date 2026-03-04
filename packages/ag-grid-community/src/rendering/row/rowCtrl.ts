@@ -70,6 +70,7 @@ type RowType = 'Normal' | 'FullWidth' | 'FullWidthLoading' | 'FullWidthGroup' | 
 let instanceIdSequence = 0;
 export type RowCtrlInstanceId = BrandedType<string, 'RowCtrlInstanceId'>;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowComp {
     setDomOrder(domOrder: boolean): void;
     toggleCss(cssClassName: string, on: boolean): void;
@@ -99,6 +100,7 @@ interface CellCtrlListAndMap {
 }
 
 type RowCtrlEvent = RenderedRowEvent;
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class RowCtrl extends BeanStub<RowCtrlEvent> {
     public readonly instanceId: RowCtrlInstanceId;
 
@@ -153,6 +155,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     private updateColumnListsPending = false;
 
     public rowId: string | null = null;
+    public ariaRowIndex: number | null = null;
     /** sanitised */
     public businessKey: string | null = null;
     private businessKeyForNodeFunc: ((node: IRowNode<any>) => string) | undefined;
@@ -1963,7 +1966,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             (this.beans.ctrlsSvc.getHeaderRowContainerCtrl()?.getRowCount() ?? 0) +
             (this.beans.filterManager?.getHeaderRowCount() ?? 0);
         const rowIsEven = this.rowNode.rowIndex! % 2 === 0;
-        const ariaRowIndex = headerRowCount + this.rowNode.rowIndex! + 1;
+        const ariaRowIndex = (this.ariaRowIndex = headerRowCount + this.rowNode.rowIndex! + 1);
 
         this.forEachGui(gui, (c) => {
             c.rowComp.setRowIndex(rowIndexStr);

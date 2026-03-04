@@ -11,11 +11,13 @@ import { AgAbstractInputField } from './agAbstractInputField';
 import type { AgInputFieldParams } from './agFieldParams';
 import type { AgWidgetSelectorType } from './agWidgetSelectorType';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface AgInputTextFieldParams<TComponentSelectorType extends string>
     extends AgInputFieldParams<TComponentSelectorType> {
     allowedCharPattern?: string;
 }
 export type AgInputTextFieldEvent = AgAbstractInputFieldEvent;
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgInputTextField<
     TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
@@ -103,6 +105,7 @@ export class AgInputTextField<
         });
     }
 }
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const AgInputTextFieldSelector: AgComponentSelector<AgWidgetSelectorType> = {
     selector: 'AG-INPUT-TEXT-FIELD',
     component: AgInputTextField,

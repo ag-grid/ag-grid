@@ -9,13 +9,13 @@ import type { BeanCollection } from '../context/context';
 import type { EditService } from '../edit/editService';
 import type { AgColumn } from '../entities/agColumn';
 import type {
+    ColDef,
     KeyCreatorParams,
     ValueFormatterParams,
     ValueGetterParams,
     ValueParserParams,
     ValueSetterParams,
 } from '../entities/colDef';
-import type { ColDefInternal } from '../entities/colDefInternal';
 import type { RowNode } from '../entities/rowNode';
 import type { CellValueChangedEvent } from '../events';
 import { _addGridCommonParams, _isServerSideRowModel } from '../gridOptionsUtils';
@@ -26,6 +26,7 @@ import { _warn } from '../validation/logging';
 import type { ExpressionService } from './expressionService';
 import type { ValueCache } from './valueCache';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class ValueService extends BeanStub implements NamedBean {
     beanName = 'valueSvc' as const;
 
@@ -418,7 +419,7 @@ export class ValueService extends BeanStub implements NamedBean {
      * @returns `true` if the value has been updated, otherwise `false`.
      */
     public setValue(rowNode: IRowNode, column: AgColumn, newValue: any, eventSource?: string): boolean {
-        const colDef = column.getColDef() as ColDefInternal;
+        const colDef = column.getColDef();
 
         if (!rowNode.data && this.canCreateRowNodeData(rowNode, colDef)) {
             rowNode.data = {}; // enableGroupEdit allows editing group rows without data.
@@ -500,7 +501,7 @@ export class ValueService extends BeanStub implements NamedBean {
         return this.finishValueChange(rowNode, column, params, eventSource);
     }
 
-    private canCreateRowNodeData(rowNode: IRowNode, colDef: ColDefInternal): boolean {
+    private canCreateRowNodeData(rowNode: IRowNode, colDef: ColDef): boolean {
         if (!rowNode.group) {
             return true; // not a group row
         }

@@ -684,7 +684,11 @@ export const AG_GRID_LOCALE_BG = {
     ariaFilterColumn: 'Натиснете CTRL + ENTER, за да отворите филтъра',
     ariaRowDeselect: 'Натиснете SPACE, за да отмаркирате този ред',
     ariaHeaderSelection: 'Колона с избор на заглавие',
-    ariaSelectAllCells: 'Натиснете интервал, за да изберете всички клетки',
+    ariaSelectAllCells: 'Натиснете интервал или Enter, за да изберете всички клетки',
+    ariaSelectAllRowCells: 'Натиснете Enter, за да изберете всички клетки в този ред',
+    ariaColumnCellSelection: 'Натиснете Enter, за да превключите избора на всички видими клетки в тази колона',
+    ariaColumnGroupCellSelection:
+        'Натиснете Enter, за да превключите избора на всички видими клетки в тази група колони',
     ariaRowSelectAll: 'Натиснете SPACE, за да превключите избора на всички редове',
     ariaRowToggleSelection: 'Натиснете SPACE, за да превключите избора на реда',
     ariaRowSelect: 'Натиснете SPACE, за да изберете този ред',
@@ -699,6 +703,10 @@ export const AG_GRID_LOCALE_BG = {
     ariaPageSizeSelectorLabel: 'Размер на страницата',
     ariaChartMenuClose: 'Затворете менюто за редактиране на диаграмата',
     ariaChartSelected: 'Избрано',
+    ariaSparklineChartDescription:
+        'Спарклайн - ${chartType}, показва ${count} стойности между ${min} и ${max}. Започва от ${start} и завършва на ${end}.',
+    ariaSparklineChartDescriptionSingleValue: 'Спарклайн - ${chartType}, показва 1 стойност: ${value}.',
+    ariaSparklineChartDescriptionEmpty: 'Спарклайн - ${chartType}, без стойности.',
     ariaSkeletonCellLoadingFailed: 'Редът не можа да се зареди',
     ariaSkeletonCellLoading: 'Данните на реда се зареждат',
     ariaDeferSkeletonCellLoading: 'Зарежда се клетка',

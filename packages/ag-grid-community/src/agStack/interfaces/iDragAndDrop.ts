@@ -1,5 +1,6 @@
 import type { HorizontalDirection, VerticalDirection } from '../constants/direction';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IDragAndDropService<
     TDragSourceType extends number,
     TDragItem,
@@ -28,6 +29,7 @@ export interface IDragAndDropService<
     ): AgDropTarget<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent> | null;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface AgDragSource<
     TDragSourceType extends number,
     TDragItem,
@@ -58,6 +60,7 @@ export interface AgDragSource<
     onDragCancelled?: () => void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface AgDraggingEvent<
     TDragSourceType extends number,
     TDragItem,
@@ -92,6 +95,7 @@ export interface AgDraggingEvent<
     changed: boolean;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface AgDropTarget<
     TDragSourceType extends number,
     TDragItem,
@@ -128,6 +132,7 @@ export interface AgDropTarget<
     external?: boolean;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IDragAndDropImage {
     setIcon(iconName: string | null, shake: boolean): void;
     setLabel(label: string): void;

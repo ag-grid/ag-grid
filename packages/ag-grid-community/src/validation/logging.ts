@@ -133,6 +133,7 @@ const minifiedLog = (errorNum: ErrorId, args: GetErrorParams<any>, defaultMessag
     return `${prefix}${defaultMessage ? '' : ' \n  Alternatively register the ValidationModule to see the full message in the console.'}`;
 };
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _warn<
     TId extends ErrorId,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -141,6 +142,7 @@ export function _warn<
     getMsgOrDefault(_warnOnce, args[0], args[1] as any, true);
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _error<
     TId extends ErrorId,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -158,6 +160,7 @@ export function _logPreInitErr<
     getMsgOrDefault(_errorOnce, id, args as any, false, defaultMessage);
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _logPreInitWarn<
     TId extends ErrorId,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -174,6 +177,7 @@ function getErrMsg<TId extends ErrorId>(
     return `error #${id} ` + getErrorParts(id, args[1] as any, defaultMessage).join(' ');
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _errMsg<
     TId extends ErrorId,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -182,7 +186,10 @@ export function _errMsg<
     return getErrMsg(undefined, args);
 }
 
-/** Used for messages before the ValidationService has been created */
+/**
+ * Used for messages before the ValidationService has been created
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
 export function _preInitErrMsg<
     TId extends ErrorId,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

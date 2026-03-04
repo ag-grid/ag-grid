@@ -29,6 +29,7 @@ export interface AgContextParams<
     destroyCallback?: () => void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type AgSingletonBeanClass<TBeanCollection> = new () => AgSingletonBean<TBeanCollection>;
 
 interface DerivedBean<TBeanCollection, K extends keyof TBeanCollection> {
@@ -39,6 +40,7 @@ interface DerivedBean<TBeanCollection, K extends keyof TBeanCollection> {
 /** Instance Id used by React to reset the state of a component tree when the context changes. */
 let contextId = 1;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgContext<
     TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,

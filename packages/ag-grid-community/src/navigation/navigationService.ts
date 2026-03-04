@@ -2,6 +2,7 @@ import { KeyCode } from '../agStack/constants/keyCode';
 import { _last } from '../agStack/utils/array';
 import { _throttle } from '../agStack/utils/function';
 import { _exists, _missing } from '../agStack/utils/generic';
+import { isRowNumberCol } from '../columns/columnUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -41,6 +42,7 @@ type FindNextCellToFocusOnParams = {
     skipToNextEditableCell?: boolean;
 };
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class NavigationService extends BeanStub implements NamedBean {
     beanName = 'navigation' as const;
 
@@ -153,7 +155,7 @@ export class NavigationService extends BeanStub implements NamedBean {
             scrollFeature.ensureIndexVisible(focusIndex);
         }
 
-        const { focusSvc, rangeSvc } = this.beans;
+        const { focusSvc } = this.beans;
 
         // if we don't do this, the range will be left on the last cell, which will leave the last focused cell
         // highlighted.
@@ -164,7 +166,7 @@ export class NavigationService extends BeanStub implements NamedBean {
             forceBrowserFocus: true,
         });
 
-        rangeSvc?.setRangeToCell({ rowIndex: focusIndex, rowPinned, column: focusColumn });
+        this.setRangeToCellIfSupported({ rowIndex: focusIndex, rowPinned, column: focusColumn });
     }
 
     // this method is throttled, see the `constructor`
@@ -347,7 +349,12 @@ export class NavigationService extends BeanStub implements NamedBean {
     }
 
     private onCtrlUpDownLeftRight(key: string, gridCell: CellPosition): void {
-        const cellToFocus = this.beans.cellNavigation!.getNextCellToFocus(key, gridCell, true)!;
+        const cellToFocus = this.beans.cellNavigation!.getNextCellToFocus(key, gridCell, true);
+
+        if (!cellToFocus) {
+            return;
+        }
+
         // in case we have col spanning we get the cellComp and use it to get the
         // position. This was we always focus the first cell inside the spanning.
         const normalisedPosition = this.getNormalisedPosition(cellToFocus);
@@ -378,7 +385,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         }
 
         const columnToSelect = (homeKey ? allColumns : [...allColumns].reverse()).find(
-            (col) => !col.isSuppressNavigable(rowNode)
+            (col) => !col.isSuppressNavigable(rowNode) && !isRowNumberCol(col)
         );
 
         if (!columnToSelect) {
@@ -541,7 +548,7 @@ export class NavigationService extends BeanStub implements NamedBean {
     ): CellCtrl | CellPosition | null | false {
         let nextPosition: CellPosition | null | undefined = previousPosition;
         const beans = this.beans;
-        const { cellNavigation, gos, focusSvc, rowRenderer, rangeSvc } = beans;
+        const { cellNavigation, gos, focusSvc, rowRenderer } = beans;
 
         while (true) {
             if (previousPosition !== nextPosition) {
@@ -637,7 +644,7 @@ export class NavigationService extends BeanStub implements NamedBean {
 
             // by default, when we click a cell, it gets selected into a range, so to keep keyboard navigation
             // consistent, we set into range here also.
-            rangeSvc?.setRangeToCell(nextPosition);
+            this.setRangeToCellIfSupported(nextPosition);
 
             // we successfully tabbed onto a grid cell, so return true
             return nextCell;
@@ -740,7 +747,10 @@ export class NavigationService extends BeanStub implements NamedBean {
             const headerLen = getFocusHeaderRowCount(beans);
 
             focusSvc.focusHeaderPosition({
-                headerPosition: { headerRowIndex: headerLen + nextCell.rowIndex, column: currentCell.column },
+                headerPosition: {
+                    headerRowIndex: headerLen + nextCell.rowIndex,
+                    column: nextCell.column ?? currentCell.column,
+                },
                 event: event || undefined,
                 fromCell: true,
             });
@@ -822,7 +832,7 @@ export class NavigationService extends BeanStub implements NamedBean {
     }
 
     private focusPosition(cellPosition: CellPosition) {
-        const { focusSvc, rangeSvc } = this.beans;
+        const { focusSvc } = this.beans;
         focusSvc.setFocusedCell({
             rowIndex: cellPosition.rowIndex,
             column: cellPosition.column,
@@ -830,7 +840,15 @@ export class NavigationService extends BeanStub implements NamedBean {
             forceBrowserFocus: true,
         });
 
-        rangeSvc?.setRangeToCell(cellPosition);
+        this.setRangeToCellIfSupported(cellPosition);
+    }
+
+    private setRangeToCellIfSupported(cellPosition: CellPosition): void {
+        if (isRowNumberCol(cellPosition.column)) {
+            return;
+        }
+
+        this.beans.rangeSvc?.setRangeToCell(cellPosition);
     }
 
     private isValidNavigateCell(cell: CellPosition): boolean {

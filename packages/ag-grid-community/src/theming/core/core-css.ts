@@ -64,7 +64,7 @@ export interface CoreParams extends SharedThemeParams {
     cellHorizontalPaddingScale: ScaleValue;
 
     /**
-     * Color of text in grid cells.
+     * Color of text in cells in the grid data area
      */
     cellTextColor: ColorValue;
 
@@ -189,7 +189,7 @@ export interface CoreParams extends SharedThemeParams {
     footerRowBorder: BorderValue;
 
     /**
-     * Duration in seconds of the background color transition if headerCellHoverBackgroundColor or headerCellMovingBackgroundColor is set.
+     * Duration in seconds of the background color transition if headerCellHoverBackgroundColor or headerCellMovingBackgroundColor is set
      */
     headerCellBackgroundTransitionDuration: DurationValue;
 
@@ -232,6 +232,16 @@ export interface CoreParams extends SharedThemeParams {
      * Font family of text in grid cells
      */
     cellFontFamily: FontFamilyValue;
+
+    /**
+     * Font size of text in grid cells
+     */
+    cellFontSize: LengthValue;
+
+    /**
+     * Font weight of text in grid cells
+     */
+    cellFontWeight: FontWeightValue;
 
     /**
      * Borders between and below header rows.
@@ -289,7 +299,7 @@ export interface CoreParams extends SharedThemeParams {
     modalOverlayBackgroundColor: ColorValue;
 
     /**
-     * Background color applied to grid rows
+     * Background color applied to grid rows. Should be a solid color, semi-transparent colors will cause issues.
      */
     dataBackgroundColor: ColorValue;
 
@@ -309,32 +319,32 @@ export interface CoreParams extends SharedThemeParams {
     pinnedRowBorder: BorderValue;
 
     /**
-     * Font-weight for the rows that have been pinned to the top or bottom.
+     * Font-weight for the rows that have been pinned to the top or bottom
      */
     pinnedRowFontWeight: FontWeightValue;
 
     /**
-     * Background color for the rows that have been pinned to the top or bottom.
+     * Background color for the rows that have been pinned to the top or bottom
      */
     pinnedRowBackgroundColor: ColorValue;
 
     /**
-     * Text color for the rows that have been pinned to the top or bottom.
+     * Text color for rows that have been pinned to the top or bottom
      */
     pinnedRowTextColor: ColorValue;
 
     /**
-     * Text color for row in the main viewport that has been pinned to the top or bottom.
+     * Text color for row in the main viewport that has been pinned to the top or bottom
      */
     pinnedSourceRowTextColor: ColorValue;
 
     /**
-     * Background color for the row in the main viewport that has been pinned to the top or bottom.
+     * Background color for the row in the main viewport that has been pinned to the top or bottom
      */
     pinnedSourceRowBackgroundColor: ColorValue;
 
     /**
-     * Font-weight for the row in the main viewport that has been pinned to the top or bottom.
+     * Font-weight for the row in the main viewport that has been pinned to the top or bottom
      */
     pinnedSourceRowFontWeight: FontWeightValue;
 
@@ -469,6 +479,13 @@ export interface CoreParams extends SharedThemeParams {
     sideBarPanelWidth: LengthValue;
 
     /**
+     * Duration of the animation when a sidebar panel opens or closes. Set to 0
+     * to disable animations. Automatically disabled if the user has requested
+     * reduced motion in their OS accessibility settings.
+     */
+    sideBarPanelAnimationDuration: DurationValue;
+
+    /**
      * Borders between the grid and side panels including the column and filter tool bars, and chart settings
      */
     sidePanelBorder: BorderValue;
@@ -599,6 +616,7 @@ export interface CoreParams extends SharedThemeParams {
     statusBarValueFontWeight: FontWeightValue;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> = {
     wrapperBorder: true,
     rowBorder: true,
@@ -617,6 +635,7 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     pinnedRowBorder: true,
     sidePanelBorder: true,
     sideBarPanelWidth: 250,
+    sideBarPanelAnimationDuration: 0,
     sideBarBackgroundColor: {
         ref: 'chromeBackgroundColor',
     },
@@ -640,6 +659,12 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     sideButtonVerticalPadding: { calc: 'spacing * 3' },
     cellFontFamily: {
         ref: 'fontFamily',
+    },
+    cellFontSize: {
+        ref: 'dataFontSize',
+    },
+    cellFontWeight: {
+        ref: 'fontWeight',
     },
     headerCellHoverBackgroundColor: 'transparent',
     headerCellMovingBackgroundColor: { ref: 'headerCellHoverBackgroundColor' },
@@ -679,7 +704,7 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     valueChangeDeltaDownColor: '#e53935',
     valueChangeValueHighlightBackgroundColor: '#16a08580',
     rowHeight: {
-        calc: 'max(iconSize, dataFontSize) + spacing * 3.25 * rowVerticalPaddingScale',
+        calc: 'max(iconSize, cellFontSize) + spacing * 3.25 * rowVerticalPaddingScale',
     },
     rowVerticalPaddingScale: 1,
     paginationPanelHeight: {

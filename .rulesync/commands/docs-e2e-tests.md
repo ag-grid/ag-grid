@@ -205,10 +205,9 @@ Group footer rows display `"Total {groupName}"` in the auto group column. Grand 
 
 ```typescript
 // Group footer
-await expect(agIdFor.autoGroupCell('rowGroupFooter_row-group-country-Netherlands')).toContainText(
-    'Total Netherlands',
-    { useInnerText: true }
-);
+await expect(agIdFor.autoGroupCell('rowGroupFooter_row-group-country-Netherlands')).toContainText('Total Netherlands', {
+    useInnerText: true,
+});
 
 // Grand total footer
 await expect(agIdFor.autoGroupCell('rowGroupFooter_ROOT_NODE_ID').first()).toContainText('Total', {

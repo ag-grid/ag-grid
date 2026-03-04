@@ -37,6 +37,7 @@ import { NoModulesRegisteredError, missingRowModelTypeError } from './validation
 import { _error, _logPreInitErr } from './validation/logging';
 import { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface GridParams {
     // INTERNAL - used by Web Components
     globalListener?: (...args: any[]) => any;
@@ -48,6 +49,8 @@ export interface GridParams {
     providedBeanInstances?: { [key: string]: any };
     // INTERNAL - set by frameworks if the provided grid div is safe to set a theme class on
     setThemeOnGridDiv?: boolean;
+    // INTERNAL - set by studio
+    withinStudio?: boolean;
 
     /**
      * Modules to be registered directly with this grid instance.
@@ -115,6 +118,7 @@ let nextGridId = 1;
 
 // creates services of grid only, no UI, so frameworks can use this if providing
 // their own UI
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class GridCoreCreator {
     public create(
         eGridDiv: HTMLElement,
@@ -231,6 +235,7 @@ export class GridCoreCreator {
             globalListener: params ? params.globalListener : null,
             globalSyncListener: params ? params.globalSyncListener : null,
             frameworkOverrides: frameworkOverrides,
+            withinStudio: params?.withinStudio,
         };
         if (params?.providedBeanInstances) {
             Object.assign(seed, params.providedBeanInstances);

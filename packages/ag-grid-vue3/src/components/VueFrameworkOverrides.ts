@@ -28,6 +28,7 @@ export class VueFrameworkOverrides extends VanillaFrameworkOverrides {
     }
 
     public override isFrameworkComponent(comp: any): boolean {
-        return typeof comp === 'object';
+        // Reject null (typeof null === 'object') and arrays (which pass typeof check but aren't Vue components)
+        return comp !== null && typeof comp === 'object' && !Array.isArray(comp);
     }
 }

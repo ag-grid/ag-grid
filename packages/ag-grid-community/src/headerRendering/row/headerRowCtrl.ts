@@ -12,6 +12,7 @@ import type { HeaderFilterCellCtrl } from '../cells/floatingFilter/headerFilterC
 import { getColumnHeaderRowHeight, getFloatingFiltersHeight, getGroupRowsHeight } from '../headerUtils';
 import type { HeaderRowType } from './headerRowComp';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IHeaderRowComp {
     setTop(top: string): void;
     setHeight(height: string): void;
@@ -23,6 +24,7 @@ export interface IHeaderRowComp {
 let instanceIdSequence = 0;
 export type HeaderRowCtrlInstanceId = BrandedType<number, 'HeaderRowCtrlInstanceId'>;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class HeaderRowCtrl extends BeanStub {
     public readonly instanceId: HeaderRowCtrlInstanceId = instanceIdSequence++ as HeaderRowCtrlInstanceId;
 

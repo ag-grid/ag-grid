@@ -213,8 +213,8 @@ describe('Clipboard Paste Behaviour: paste into range / multi-range', () => {
         await new GridRows(api, 'staged').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:ROW_0 a:"a0" b:"b0"
-            ├── LEAF id:ROW_1 a:"B0" b:"b1"
-            ├── LEAF id:ROW_2 a:"B1" b:"b2"
+            ├── LEAF ⏳ id:ROW_1 a:⏳"B0" "a1" b:"b1"
+            ├── LEAF ⏳ id:ROW_2 a:⏳"B1" "a2" b:"b2"
             └── LEAF id:ROW_3 a:"a3" b:"b3"
         `);
 
@@ -259,10 +259,10 @@ describe('Clipboard Paste Behaviour: paste into range / multi-range', () => {
         // Staged values visible
         await new GridRows(api, 'staged multi-range').check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:ROW_0 a:"Q" b:"b0"
+            ├── LEAF ⏳ id:ROW_0 a:⏳"Q" "a0" b:"b0"
             ├── LEAF id:ROW_1 a:"a1" b:"b1"
             ├── LEAF id:ROW_2 a:"a2" b:"b2"
-            └── LEAF id:ROW_3 a:"a3" b:"Q"
+            └── LEAF ⏳ id:ROW_3 a:"a3" b:⏳"Q" "b3"
         `);
 
         // Underlying data unchanged before commit

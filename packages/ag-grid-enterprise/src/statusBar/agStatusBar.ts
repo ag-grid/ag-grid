@@ -3,6 +3,7 @@ import type {
     ComponentSelector,
     ComponentType,
     ElementParams,
+    FocusableContainer,
     IStatusPanelComp,
     IStatusPanelParams,
     RowModelType,
@@ -15,6 +16,7 @@ import {
     AgPromise,
     Component,
     RefPlaceholder,
+    _addFocusableContainerListener,
     _addGridCommonParams,
     _clearElement,
     _removeFromParent,
@@ -69,7 +71,7 @@ const AgStatusBarElement: ElementParams = {
         },
     ],
 };
-class AgStatusBar extends Component {
+class AgStatusBar extends Component implements FocusableContainer {
     private userCompFactory: UserComponentFactory;
     private statusBarSvc: StatusBarService;
     private updateQueued: boolean = false;
@@ -94,6 +96,11 @@ class AgStatusBar extends Component {
     public postConstruct(): void {
         this.processStatusPanels(new Map());
         this.addManagedPropertyListeners(['statusBar'], this.handleStatusBarChanged.bind(this));
+        _addFocusableContainerListener(this.beans, this, this.getGui());
+    }
+
+    public getFocusableContainerName(): 'statusBar' {
+        return 'statusBar';
     }
 
     private getValidPanels(): StatusPanelDef[] | undefined {

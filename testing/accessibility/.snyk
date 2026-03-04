@@ -2,6 +2,12 @@
 version: v1.25.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
+    SNYK-JS-ANGULARCORE-15353393:
+        - '@angular/core@19.2.15':
+              reason: >-
+                  Test dependency - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T12:21:25.919Z
     SNYK-JS-ANGULARCOMMON-14135651:
         - '@angular/common':
               reason: Only used for testing

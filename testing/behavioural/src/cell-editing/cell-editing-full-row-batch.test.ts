@@ -151,10 +151,10 @@ describe('Cell Editing: full-row batch', () => {
         await asyncSetTimeout(0);
 
         // Before commit: pending edits visible in batch mode, but data not yet committed
-        await new GridRows(api, 'before commit', { checkDom: false }).check(`
+        await new GridRows(api, 'before commit').check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:ROW_0 a:"X" b:"B0"
-            └── LEAF id:ROW_1 a:"A1" b:"B1"
+            ├── LEAF ⏳ id:ROW_0 a:⏳"X" "A0" b:"B0"
+            └── LEAF 🖍️ id:ROW_1 a:"A1" b:"B1"
         `);
 
         // Before commit: no value events should have fired

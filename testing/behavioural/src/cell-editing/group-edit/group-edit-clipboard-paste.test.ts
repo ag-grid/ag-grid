@@ -12,8 +12,6 @@ import {
     clipboardUtils,
     waitForEvent,
 } from '../../test-utils';
-import { expect } from '../../test-utils/matchers';
-import type { ColDefInternal } from './group-edit-test-utils';
 
 describe('Group Edit: clipboard paste', () => {
     const gridMgr = new TestGridsManager({
@@ -65,7 +63,7 @@ describe('Group Edit: clipboard paste', () => {
                     editable: true,
                     groupRowEditable: true,
                     valueSetter,
-                } as ColDefInternal,
+                },
                 { field: 'category', rowGroup: true, hide: true },
             ],
             rowData: [

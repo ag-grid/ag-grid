@@ -7,6 +7,10 @@ It is however useful here to step back and focus on the component registration p
 Nuxt's auto-import component is not supported with custom components within the grid. Please register any custom components manually as described below.
 {% /note %}
 
+{% note %}
+Async components (e.g. `defineAsyncComponent`) are not supported as custom grid components. Use regular synchronous components instead.
+{% /note %}
+
 Custom Components can be registered in two ways:
 
 -   Globally

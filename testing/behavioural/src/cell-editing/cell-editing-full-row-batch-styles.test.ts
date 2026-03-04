@@ -5,7 +5,7 @@ import { userEvent } from '@testing-library/user-event';
 import { TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule, CellSelectionModule } from 'ag-grid-enterprise';
 
-import { EditEventTracker, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
+import { EditEventTracker, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
 
 describe('Cell Editing: full-row batch styles', () => {
     const gridMgr = new TestGridsManager({
@@ -69,6 +69,14 @@ describe('Cell Editing: full-row batch styles', () => {
         // Tab from row 0 col b to row 1 col a (crossing row boundary)
         await user.keyboard('{Tab}');
         await asyncSetTimeout(0);
+
+        // Snapshot: row 0 has pending edit after tabbing to row 1
+        await new GridRows(api, 'pending after tab to next row').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF ⏳ id:ROW_0 a:⏳"CHANGED" "A0" b:"B0"
+            ├── LEAF 🖍️ id:ROW_1 a:"A1" b:"B1"
+            └── LEAF id:ROW_2 a:"A2" b:"B2"
+        `);
 
         // Row 0 cell a should retain the batch edit style because it was changed
         const cellA0After = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'));

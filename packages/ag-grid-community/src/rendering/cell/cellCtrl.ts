@@ -1,5 +1,5 @@
 import { KeyCode } from '../../agStack/constants/keyCode';
-import { _setAriaColIndex } from '../../agStack/utils/aria';
+import { _setAriaColIndex, _setAriaRowIndex } from '../../agStack/utils/aria';
 import { _getActiveDomElement } from '../../agStack/utils/document';
 import { _addOrRemoveAttribute, _placeCaretAtEnd, _requestAnimationFrame } from '../../agStack/utils/dom';
 import { _findFocusableElements } from '../../agStack/utils/focus';
@@ -60,6 +60,7 @@ const CSS_CELL_LAST_LEFT_PINNED = 'ag-cell-last-left-pinned';
 const CSS_CELL_NOT_INLINE_EDITING = 'ag-cell-not-inline-editing';
 const CSS_CELL_WRAP_TEXT = 'ag-cell-wrap-text';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface ICellComp {
     toggleCss(cssClassName: string, on: boolean): void;
     setUserStyles(styles: CellStyle): void;
@@ -68,6 +69,7 @@ export interface ICellComp {
     setIncludeSelection(include: boolean): void;
     setIncludeRowDrag(include: boolean): void;
     setIncludeDndSource(include: boolean): void;
+    setRowResizerElement(element: HTMLElement | null): void;
 
     getCellEditor(): ICellEditor | null;
     getCellRenderer(): ICellRenderer | null;
@@ -90,6 +92,7 @@ export interface ICellComp {
 let instanceIdSequence = 0;
 export type CellCtrlInstanceId = BrandedType<string, 'CellCtrlInstanceId'>;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class CellCtrl extends BeanStub {
     public readonly instanceId: CellCtrlInstanceId;
 
@@ -254,6 +257,7 @@ export class CellCtrl extends BeanStub {
 
         this.refreshFirstAndLastStyles();
         this.checkFormulaError();
+        this.refreshAriaRowIndex();
         this.refreshAriaColIndex();
 
         this.positionFeature?.init();
@@ -816,6 +820,7 @@ export class CellCtrl extends BeanStub {
         // when index changes, this influences items that need the index, so we update the
         // grid cell so they are working off the new index.
         this.createCellPosition();
+        this.refreshAriaRowIndex();
         // when the index of the row changes, ie means the cell may have lost or gained focus
         this.onCellFocused();
 
@@ -832,9 +837,6 @@ export class CellCtrl extends BeanStub {
         const element = this.eGui;
         if (!element) {
             return;
-        }
-        if (isRowNumberCol(this.column)) {
-            suppressCellFocus = true;
         }
         _addOrRemoveAttribute(element, 'tabindex', suppressCellFocus ? undefined : -1);
     }
@@ -1099,7 +1101,15 @@ export class CellCtrl extends BeanStub {
     }
 
     public refreshAriaRowIndex(): void {
-        // noop, used by spannedCellCtrl
+        if (!isRowNumberCol(this.column) || !this.eGui) {
+            return;
+        }
+
+        const { ariaRowIndex } = this.rowCtrl;
+
+        if (ariaRowIndex != null) {
+            _setAriaRowIndex(this.eGui, ariaRowIndex);
+        }
     }
 
     /**

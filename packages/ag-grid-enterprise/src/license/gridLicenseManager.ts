@@ -5,18 +5,32 @@ import type { ILicenseManager } from './shared/licenseManager';
 import { LicenseManager } from './shared/licenseManager';
 import { AgWatermarkSelector } from './watermark';
 
+interface BaseLicenseManager {
+    isDisplayWatermark(): boolean;
+    getWatermarkMessage(): string;
+}
+
 export class GridLicenseManager extends BeanStub implements NamedBean, IWatermark {
     beanName = 'licenseManager' as const;
 
-    private licenseManager: LicenseManager;
+    private licenseManager: BaseLicenseManager;
 
     public postConstruct(): void {
         this.validateLicense();
     }
 
     public validateLicense(): void {
-        this.licenseManager = new LicenseManager(_getDocument(this.beans));
-        this.licenseManager.validateLicense();
+        const beans = this.beans;
+        if (beans.withinStudio) {
+            this.licenseManager = {
+                isDisplayWatermark: () => false,
+                getWatermarkMessage: () => '',
+            };
+        } else {
+            const licenseManager = new LicenseManager(_getDocument(beans));
+            this.licenseManager = licenseManager;
+            licenseManager.validateLicense();
+        }
     }
 
     static getLicenseDetails(licenseKey: string) {

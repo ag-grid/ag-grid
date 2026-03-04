@@ -5,7 +5,6 @@ import { _getCellEditorDetails } from '../../components/framework/userCompUtils'
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ColDef } from '../../entities/colDef';
-import type { ColDefInternal } from '../../entities/colDefInternal';
 import type { CellEditingStoppedEvent } from '../../events';
 import { _addGridCommonParams } from '../../gridOptionsUtils';
 import type {
@@ -616,7 +615,7 @@ function _columnDefsRequireValidation(columnDefs?: ColDef[]): boolean {
         return false;
     }
     for (let i = 0, len = columnDefs.length; i < len; ++i) {
-        const colDef: ColDefInternal = columnDefs[i];
+        const colDef = columnDefs[i];
         const params = colDef.cellEditorParams;
         if (!params || (!colDef.editable && !colDef.groupRowEditable)) {
             continue;

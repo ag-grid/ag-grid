@@ -1,1 +1,0 @@
-../../external/ag-shared/prompts/commands/plan/review.md

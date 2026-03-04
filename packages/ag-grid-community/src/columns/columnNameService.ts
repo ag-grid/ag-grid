@@ -7,6 +7,7 @@ import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { AbstractColDef, ColDef, HeaderLocation, HeaderValueGetterParams } from '../entities/colDef';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class ColumnNameService extends BeanStub implements NamedBean {
     beanName = 'colNames' as const;
 

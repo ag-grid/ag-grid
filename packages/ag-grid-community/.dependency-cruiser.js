@@ -8,7 +8,7 @@ module.exports = {
             severity: 'error',
             from: { path: ['^src/agStack/'] },
             to: {
-                pathNot: ['^src/agStack/'],
+                pathNot: ['^src/agStack/', '^src/version\\.ts$'],
             },
         },
     ],

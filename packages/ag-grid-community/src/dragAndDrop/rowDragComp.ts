@@ -18,6 +18,7 @@ const RowDragElement: ElementParams = {
 
 const SKIP_ARIA_HIDDEN = { skipAriaHidden: true };
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class RowDragComp extends Component {
     private dragSource: GridDragSource<RowDraggingEvent> | null = null;
     private mouseDownListener: (() => void) | undefined;

@@ -17,7 +17,7 @@ test.agExample(import.meta, () => {
             const source = agIdFor.cell('0', 'athlete');
             const target = agIdFor.cell('1', 'athlete');
 
-            await dragOverTo(source, target);
+            await dragOverTo(source, target, undefined);
 
             await source.press('F2');
             await page.keyboard.type(' test');
@@ -42,7 +42,7 @@ test.agExample(import.meta, () => {
             const source = agIdFor.cell('0', 'athlete');
             const target = agIdFor.cell('1', 'athlete');
 
-            await dragOverTo(source, target);
+            await dragOverTo(source, target, undefined);
 
             await page.keyboard.press('t');
             await page.waitForTimeout(10);

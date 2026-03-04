@@ -15,6 +15,7 @@ import type { AgPickerFieldParams } from './agPickerFieldParams';
 import { agSelectCSS } from './agSelect.css-GENERATED';
 import type { AgWidgetSelectorType } from './agWidgetSelectorType';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface AgSelectParams<TComponentSelectorType extends string, TValue = string>
     extends Omit<
         AgPickerFieldParams<TComponentSelectorType>,
@@ -27,6 +28,7 @@ export interface AgSelectParams<TComponentSelectorType extends string, TValue = 
     placeholder?: string;
 }
 type AgSelectEvent = 'selectedItem';
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgSelect<
     TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
@@ -285,6 +287,7 @@ export class AgSelect<
     }
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const AgSelectSelector: AgComponentSelector<AgWidgetSelectorType> = {
     selector: 'AG-SELECT',
     component: AgSelect,

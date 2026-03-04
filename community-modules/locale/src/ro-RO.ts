@@ -684,7 +684,11 @@ export const AG_GRID_LOCALE_RO = {
     ariaFilterColumn: 'Apăsați CTRL ENTER pentru a deschide filtrul',
     ariaRowDeselect: 'Apăsați SPACE pentru a deselecta acest rând',
     ariaHeaderSelection: 'Coloană cu selecție antet',
-    ariaSelectAllCells: 'Apăsați Spațiu pentru a selecta toate celulele',
+    ariaSelectAllCells: 'Apăsați Spațiu sau Enter pentru a selecta toate celulele',
+    ariaSelectAllRowCells: 'Apăsați Enter pentru a selecta toate celulele din acest rând',
+    ariaColumnCellSelection: 'Apăsați Enter pentru a comuta selecția tuturor celulelor vizibile din această coloană',
+    ariaColumnGroupCellSelection:
+        'Apăsați Enter pentru a comuta selecția tuturor celulelor vizibile din acest grup de coloane',
     ariaRowSelectAll: 'Apăsați Space pentru a comuta selecția tuturor rândurilor',
     ariaRowToggleSelection: 'Apăsați Space pentru a comuta selecția rândului',
     ariaRowSelect: 'Apăsați SPACE pentru a selecta acest rând',
@@ -699,6 +703,10 @@ export const AG_GRID_LOCALE_RO = {
     ariaPageSizeSelectorLabel: 'Dimensiunea Paginii',
     ariaChartMenuClose: 'Închide meniul de editare a graficului',
     ariaChartSelected: 'Selectat',
+    ariaSparklineChartDescription:
+        'Sparkline - ${chartType} afișează ${count} valori între ${min} și ${max}. Începe la ${start} și se termină la ${end}.',
+    ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} afișează 1 valoare: ${value}.',
+    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${chartType} fără valori.',
     ariaSkeletonCellLoadingFailed: 'Încărcarea rândului a eșuat',
     ariaSkeletonCellLoading: 'Datele rândului se încarcă',
     ariaDeferSkeletonCellLoading: 'Celula se încarcă',

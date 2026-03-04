@@ -1,7 +1,7 @@
+import { PaginationModule, TextEditorModule } from 'ag-grid-community';
 import { FindModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, asyncSetTimeout } from '../test-utils';
-import { expect } from '../test-utils/matchers';
 
 /**
  * Tests for find options: case sensitivity, pagination, etc.
@@ -9,7 +9,7 @@ import { expect } from '../test-utils/matchers';
 describe('Find Options', () => {
     const gridMgr = new TestGridsManager({
         includeDefaultModules: true,
-        modules: [FindModule],
+        modules: [PaginationModule, FindModule, TextEditorModule],
     });
 
     afterEach(() => {
@@ -78,6 +78,16 @@ describe('Find Options', () => {
     });
 
     describe('Pagination', () => {
+        // paginationPageSize=3 is intentionally not in the default paginationPageSizeSelector,
+        // which triggers warnings #94 and #95. Suppress the console output and assert they fire.
+        let warnSpy: ReturnType<typeof vitest.spyOn>;
+        beforeEach(() => {
+            warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+        });
+        afterEach(() => {
+            warnSpy.mockRestore();
+        });
+
         test('currentPageOnly option limits find to current page', async () => {
             const api = await gridMgr.createGridAndWait('myGrid', {
                 columnDefs: [{ field: 'value' }],
@@ -93,6 +103,17 @@ describe('Find Options', () => {
                 paginationPageSize: 3,
                 findOptions: { currentPageOnly: true },
             });
+
+            expect(warnSpy).toHaveBeenCalledWith(
+                expect.stringContaining('warning #94'),
+                expect.any(String),
+                expect.any(String)
+            );
+            expect(warnSpy).toHaveBeenCalledWith(
+                expect.stringContaining('warning #95'),
+                expect.any(String),
+                expect.any(String)
+            );
 
             api.setGridOption('findSearchValue', 'apple');
             await asyncSetTimeout(1);
@@ -124,6 +145,17 @@ describe('Find Options', () => {
                 pagination: true,
                 paginationPageSize: 3,
             });
+
+            expect(warnSpy).toHaveBeenCalledWith(
+                expect.stringContaining('warning #94'),
+                expect.any(String),
+                expect.any(String)
+            );
+            expect(warnSpy).toHaveBeenCalledWith(
+                expect.stringContaining('warning #95'),
+                expect.any(String),
+                expect.any(String)
+            );
 
             api.setGridOption('findSearchValue', 'apple');
             await asyncSetTimeout(1);

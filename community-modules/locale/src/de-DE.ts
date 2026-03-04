@@ -686,7 +686,12 @@ export const AG_GRID_LOCALE_DE = {
     ariaFilterColumn: 'Drücken Sie STRG EINGABETASTE, um den Filter zu öffnen',
     ariaRowDeselect: 'Drücken Sie LEERTASTE, um diese Zeile abzuwaehlen',
     ariaHeaderSelection: 'Spalte mit Header-Auswahl',
-    ariaSelectAllCells: 'Drücken Sie die Leertaste, um alle Zellen auszuwählen',
+    ariaSelectAllCells: 'Drücken Sie die Leertaste oder EINGABETASTE, um alle Zellen auszuwählen',
+    ariaSelectAllRowCells: 'Drücken Sie EINGABETASTE, um alle Zellen in dieser Zeile auszuwählen',
+    ariaColumnCellSelection:
+        'Drücken Sie EINGABETASTE, um die Auswahl aller sichtbaren Zellen in dieser Spalte umzuschalten',
+    ariaColumnGroupCellSelection:
+        'Drücken Sie EINGABETASTE, um die Auswahl aller sichtbaren Zellen in dieser Spaltengruppe umzuschalten',
     ariaRowSelectAll: 'Drücken Sie LEERTASTE, um die Auswahl aller Zeilen umzuschalten',
     ariaRowToggleSelection: 'Drücken Sie LEERTASTE, um die Zeilenauswahl umzuschalten',
     ariaRowSelect: 'Drücken Sie LEERTASTE, um diese Zeile auszuwählen',
@@ -701,6 +706,10 @@ export const AG_GRID_LOCALE_DE = {
     ariaPageSizeSelectorLabel: 'Seitengröße',
     ariaChartMenuClose: 'Diagramm-Bearbeitungsmenü schließen',
     ariaChartSelected: 'Ausgewählt',
+    ariaSparklineChartDescription:
+        'Sparkline - ${chartType} mit ${count} Werten zwischen ${min} und ${max}. Beginnt bei ${start} und endet bei ${end}.',
+    ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} mit 1 Wert, ${value}.',
+    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${chartType} ohne Werte.',
     ariaSkeletonCellLoadingFailed: 'Das Laden der Zeile ist fehlgeschlagen',
     ariaSkeletonCellLoading: 'Zeilendaten werden geladen',
     ariaDeferSkeletonCellLoading: 'Zelle wird geladen',

@@ -93,13 +93,14 @@ The example below has grouped headers, headers and floating filters to demonstra
 
 ## Custom Navigation
 
-Most people will be happy with the default navigation the grid does when you use the arrow keys and the {% kbd "⇥ Tab" /%} key. Some people will want to override this (e.g. you may want the {% kbd "⇥ Tab" /%} key to navigate to the cell below, not the cell to the right). To facilitate this, the grid offers four methods: `navigateToNextCell`, `tabToNextCell`, `navigateToNextHeader` and `tabToNextHeader`.
+Most people will be happy with the default navigation the grid does when you use the arrow keys and the {% kbd "⇥ Tab" /%} key. Some people will want to override this (e.g. you may want the {% kbd "⇥ Tab" /%} key to navigate to the cell below, not the cell to the right). To facilitate this, the grid offers five methods: `navigateToNextCell`, `tabToNextCell`, `navigateToNextHeader`, `tabToNextHeader` and `tabToNextGridContainer`.
 
-{% apiDocumentation source="grid-options/properties.json" section="nav" names=["focusGridInnerElement", "navigateToNextCell", "tabToNextCell", "navigateToNextHeader", "tabToNextHeader"] /%}
+{% apiDocumentation source="grid-options/properties.json" section="nav" names=["focusGridInnerElement", "navigateToNextCell", "tabToNextCell", "navigateToNextHeader", "tabToNextHeader", "tabToNextGridContainer"] /%}
 
 {% note %}
 The `navigateToNextCell` and `tabToNextCell` are only called while navigating across grid cells, while
-`navigateToNextHeader` and `tabToNextHeader` are only called while navigating across grid headers.
+`navigateToNextHeader` and `tabToNextHeader` are only called while navigating across grid headers. The
+`tabToNextGridContainer` callback is called when tab navigation moves between core grid containers.
 If you need to navigate from one container to another, pass `rowIndex: -1` in `CellPosition`
 or `headerRowIndex: -1` in `HeaderPosition`.
 {% /note %}
@@ -165,6 +166,19 @@ In the following example there are two input box provided to test tabbing into t
 -   When the last column is out of view due to horizontal scroll, shift tabbing into the grid will cause the grid to scroll to focus the last cell.
 
 {% gridExampleRunner title="Tabbing into the Grid" name="tabbing-into-grid" /%}
+
+### Custom Tabbing Between Grid Containers
+
+Use `tabToNextGridContainer` to override focus behaviour when tabbing between grid containers such as the grid body, pagination toolbar and external elements.
+
+In the following example:
+
+-   Tabbing out of the last grid cell is redirected to the pagination toolbar by returning `'pagination'`.
+-   Shift tabbing from the pagination toolbar back into the grid restores the last focused cell by returning a `CellPosition`.
+-   Tabbing forward from pagination returns `false`, allowing browser default behaviour to move focus outside the grid.
+-   All other transitions return `undefined`, which keeps the grid's default behaviour.
+
+{% gridExampleRunner title="Custom Tab to Next Grid Container" name="tab-to-next-grid-container" /%}
 
 ### Custom Tabbing into the Grid
 

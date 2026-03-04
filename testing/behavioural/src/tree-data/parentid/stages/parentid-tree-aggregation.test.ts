@@ -1,4 +1,4 @@
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import {
@@ -12,7 +12,7 @@ import {
 
 describe('ag-grid parentId tree aggregation', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, TreeDataModule],
+        modules: [ClientSideRowModelModule, RowSelectionModule, TreeDataModule],
     });
 
     beforeEach(() => {

@@ -1,5 +1,6 @@
 import type { RowNode } from '../entities/rowNode';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class ChangedRowNodes<TData = any> {
     public reordered = false;
     public readonly removals: RowNode<TData>[] = [];

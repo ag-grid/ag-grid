@@ -3,6 +3,7 @@ import { BeanStub } from '../context/beanStub';
 import type { RowBounds } from '../interfaces/iRowModel';
 
 // note that everything in this service is used even when pagination is off
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class PageBoundsService extends BeanStub implements NamedBean {
     beanName = 'pageBounds' as const;
 

@@ -10,6 +10,7 @@ import type { AgGridCommon, WithoutGridCommon } from '../interfaces/iCommon';
 import type { PopupPositionParams } from '../interfaces/iPopupPositionParams';
 import { _isStopPropagationForAgGrid } from '../utils/gridEvent';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class PopupService
     extends BasePopupService<
         BeanCollection,

@@ -681,7 +681,11 @@ export const AG_GRID_LOCALE_SK = {
     ariaFilterColumn: 'Stlačte CTRL ENTER na otvorenie filtra',
     ariaRowDeselect: 'Stlačte SPACE na zrušenie výberu tohto riadku',
     ariaHeaderSelection: 'Stĺpec s výberom hlavičky',
-    ariaSelectAllCells: 'Stlačte medzerník pre výber všetkých buniek',
+    ariaSelectAllCells: 'Stlačte medzerník alebo Enter pre výber všetkých buniek',
+    ariaSelectAllRowCells: 'Stlačte Enter pre výber všetkých buniek v tomto riadku',
+    ariaColumnCellSelection: 'Stlačte Enter na prepnutie výberu všetkých viditeľných buniek v tomto stĺpci',
+    ariaColumnGroupCellSelection:
+        'Stlačte Enter na prepnutie výberu všetkých viditeľných buniek v tejto skupine stĺpcov',
     ariaRowSelectAll: 'Stlačte SPACE na prepínanie výberu všetkých riadkov',
     ariaRowToggleSelection: 'Stlačte SPACE na prepínanie výberu riadku',
     ariaRowSelect: 'Stlačte SPACE na výber tohto riadku',
@@ -696,6 +700,10 @@ export const AG_GRID_LOCALE_SK = {
     ariaPageSizeSelectorLabel: 'Veľkosť Strany',
     ariaChartMenuClose: 'Zatvoriť Menu Úpravy Grafu',
     ariaChartSelected: 'Vybrané',
+    ariaSparklineChartDescription:
+        'Mini graf - ${chartType} zobrazuje ${count} hodnôt medzi ${min} a ${max}. Začína na ${start} a končí na ${end}.',
+    ariaSparklineChartDescriptionSingleValue: 'Mini graf - ${chartType} zobrazuje 1 hodnotu: ${value}.',
+    ariaSparklineChartDescriptionEmpty: 'Mini graf - ${chartType} bez hodnôt.',
     ariaSkeletonCellLoadingFailed: 'Nahrávanie riadku zlyhalo',
     ariaSkeletonCellLoading: 'Údaje riadku sa nahrávajú',
     ariaDeferSkeletonCellLoading: 'Načítava sa bunka',

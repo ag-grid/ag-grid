@@ -117,6 +117,7 @@ export const GRID_OPTION_DEFAULTS = {
     groupRemoveSingleChildren: false,
     groupRemoveLowestSingleChildren: false,
     groupHideOpenParents: false,
+    groupHideColumnsUntilExpanded: false,
     groupAllowUnbalanced: false,
     rowGroupPanelShow: 'never',
     suppressMakeColumnVisibleAfterUnGroup: false,

@@ -7,9 +7,11 @@ import { AgCheckbox } from './agCheckbox';
 import type { AgCheckboxParams } from './agFieldParams';
 import type { AgWidgetSelectorType } from './agWidgetSelectorType';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface AgRadioButtonParams<TComponentSelectorType extends string>
     extends AgCheckboxParams<TComponentSelectorType> {}
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgRadioButton<
     TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
@@ -72,6 +74,7 @@ export class AgRadioButton<
     }
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const AgRadioButtonSelector: AgComponentSelector<AgWidgetSelectorType> = {
     selector: 'AG-RADIO-BUTTON',
     component: AgRadioButton,

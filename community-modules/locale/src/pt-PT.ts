@@ -684,7 +684,11 @@ export const AG_GRID_LOCALE_PT = {
     ariaFilterColumn: 'Pressione CTRL ENTER para abrir o filtro',
     ariaRowDeselect: 'Pressione ESPAÇO para desmarcar esta linha',
     ariaHeaderSelection: 'Coluna com seleção de cabeçalho',
-    ariaSelectAllCells: 'Pressione Espaço para selecionar todas as células',
+    ariaSelectAllCells: 'Pressione Espaço ou Enter para selecionar todas as células',
+    ariaSelectAllRowCells: 'Pressione Enter para selecionar todas as células desta linha',
+    ariaColumnCellSelection: 'Pressione Enter para alternar a seleção de todas as células visíveis nesta coluna',
+    ariaColumnGroupCellSelection:
+        'Pressione Enter para alternar a seleção de todas as células visíveis neste grupo de colunas',
     ariaRowSelectAll: 'Pressione Espaço para alternar a seleção de todas as linhas',
     ariaRowToggleSelection: 'Pressione Espaço para alternar a seleção da linha',
     ariaRowSelect: 'Pressione ESPAÇO para selecionar esta linha',
@@ -699,6 +703,10 @@ export const AG_GRID_LOCALE_PT = {
     ariaPageSizeSelectorLabel: 'Tamanho da Página',
     ariaChartMenuClose: 'Fechar Menu de Edição de Gráfico',
     ariaChartSelected: 'Selecionado',
+    ariaSparklineChartDescription:
+        'Sparkline - ${chartType} a apresentar ${count} valores entre ${min} e ${max}. Começa em ${start} e termina em ${end}.',
+    ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} a mostrar 1 valor, ${value}.',
+    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${chartType} sem valores.',
     ariaSkeletonCellLoadingFailed: 'Falha ao carregar a linha',
     ariaSkeletonCellLoading: 'Os dados da linha estão carregando',
     ariaDeferSkeletonCellLoading: 'Célula está carregando',

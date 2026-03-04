@@ -8,37 +8,62 @@ Mocking is to be avoided as much as possible here, and the use of fakes is prefe
 
 ## Running tests
 
-To execute all test, run in the root folder:
+To execute all tests, run from the repo root:
 
 ```sh
-nx test ag-behavioural-testing
+./behave.sh
 ```
 
-To execute a single test file
+To execute tests matching a file pattern:
 
 ```sh
-nx test ag-behavioural-testing -- src/folder/filename.test.ts
+./behave.sh "filename"
 ```
 
-By default, the tests run in watch mode, but to run without watching
+To run in watch mode:
 
 ```sh
-nx test ag-behavioural-testing -c run
+./behave.sh --watch
 ```
 
-To overwrite the snapshots for snapshot tests
+To overwrite the snapshots for snapshot tests:
 
 ```sh
-nx test ag-behavioural-testing -c update
+./behave.sh --update
 ```
 
-To execute benchmarks
+### Updating GridRows inline snapshots
+
+When diagram formatting or grid behaviour changes, you can automatically update all GridRows inline
+snapshots (the template literals passed to `.check()`):
+
+```sh
+# Update all GridRows snapshots
+./behave.sh --update-grid-rows
+
+# Update snapshots in matching test files only
+./behave.sh --update-grid-rows "cell-editing"
+
+# Dry-run: show what would change without writing files
+./behave.sh --update-grid-rows=dry
+
+# Equivalent env var form
+UPDATE_GRID_ROWS_SNAPSHOTS=1 ./behave.sh
+UPDATE_GRID_ROWS_SNAPSHOTS=dry ./behave.sh
+```
+
+The updater uses TypeScript's parser to locate `.check()` calls and precisely rewrite the template
+literal argument, preserving surrounding code and indentation. It handles direct inline template
+literals, variable references (`const x = \`...\`; gridRows.check(x)`), and tagged templates.
+Dynamic strings with `${}` interpolation are skipped with a warning.
+
+To execute benchmarks:
 
 ```sh
 nx run ag-behavioural-testing:benchmark
 ```
 
-To execute benchmarks on a single file
+To execute benchmarks on a single file:
 
 ```sh
 nx run ag-behavioural-testing:benchmark -- src/tree-data/datapath/benchmarks/tree-data-path.bench.ts

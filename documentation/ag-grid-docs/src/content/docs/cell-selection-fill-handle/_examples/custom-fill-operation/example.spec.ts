@@ -1,4 +1,4 @@
-import { dragOverTo, expect, test } from '@utils/grid/test-utils';
+import { dragFillHandleOverTo, expect, test } from '@utils/grid/test-utils';
 
 const daysList = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const validDays = /^(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)$/;
@@ -26,7 +26,7 @@ test.agExample(import.meta, () => {
             await expect(fillHandle).toBeVisible();
 
             const targetCell = agIdFor.cell('2', 'dayOfTheWeek');
-            await dragOverTo(fillHandle, targetCell);
+            await dragFillHandleOverTo(fillHandle, targetCell);
 
             const expectedDay1 = daysList[(initialIndex + 1) % daysList.length];
             const expectedDay2 = daysList[(initialIndex + 2) % daysList.length];

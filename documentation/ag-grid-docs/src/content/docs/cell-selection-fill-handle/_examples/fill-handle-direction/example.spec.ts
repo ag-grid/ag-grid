@@ -1,4 +1,4 @@
-import { dragOverTo, expect, test } from '@utils/grid/test-utils';
+import { dragFillHandleOverTo, expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('should load grid with correct initial data', async ({ agIdFor }) => {
@@ -30,7 +30,7 @@ test.agExample(import.meta, () => {
             await expect(fillHandle).toBeVisible();
 
             const targetCell = agIdFor.cell('0', 'age');
-            await dragOverTo(fillHandle, targetCell);
+            await dragFillHandleOverTo(fillHandle, targetCell);
 
             await expect(agIdFor.cell('0', 'athlete')).toContainText('Natalie Coughlin');
             await expect(agIdFor.cell('0', 'age')).toContainText('Natalie Coughlin');

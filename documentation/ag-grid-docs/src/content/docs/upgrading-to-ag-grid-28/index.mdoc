@@ -19,8 +19,6 @@ NOTE: This will not show if the current library version is the same as the migra
 
 ## Breaking Changes
 
-{% metaTag tags=["appendContent", "prependContent", "getCustomContentBelowRow", "rowDataChanged"] /%}
-
 {% if isFramework("angular") %}
 
 -   **Angular v12+**: Remove `.withxComponents()` from the module declaration of `AgGridModule` as this is no longer required.
@@ -51,8 +49,6 @@ This release includes the following deprecations:
 
 ### Grid Options
 
-{% metaTag tags=["serverSideSortingAlwaysResets", "serverSideFilteringAlwaysResets", "processSecondaryColDef", "processSecondaryColGroupDef", "serverSideStoreType" ] /%}
-
 -   `serverSideSortingAlwaysResets` is deprecated, use `serverSideSortAllLevels` instead
 -   `serverSideFilteringAlwaysResets` is deprecated, use `serverSideFilterAllLevels` instead
 -   `processSecondaryColDef()` is deprecated, use `processPivotResultColDef()` instead
@@ -61,15 +57,11 @@ This release includes the following deprecations:
 
 ### Column API
 
-{% metaTag tags=["getSecondaryPivotColumn", "setSecondaryColumns", "getPrimaryColumns" ] /%}
-
 -   `getSecondaryPivotColumn()` is deprecated, use `getPivotResultColumn()` instead
 -   `setSecondaryColumns()` is deprecated, use `setPivotResultColumns()` instead
 -   `getPrimaryColumns()` is deprecated, use `getColumns()` instead
 
 ### Grid API
-
-{% metaTag tags=["getServerSideStoreParams", "getServerSideStoreState", "refreshServerSideStore", "serverSideSortingAlwaysResets" ] /%}
 
 -   `getServerSideStoreParams(GetServerSideStoreParamsParams)` is deprecated, use `getServerSideGroupLevelParams(GetServerSideGroupLevelParamsParams)` instead
 -   `getServerSideStoreState()` is deprecated, use `getServerSideGroupLevelState()` instead
@@ -77,8 +69,6 @@ This release includes the following deprecations:
 -   `serverSideSortingAlwaysResets` is deprecated, use `serverSideSortAllLevels` instead
 
 ### Interfaces
-
-{% metaTag tags=["storeInfo"] /%}
 
 **IsApplyServerSideTransactionParams**
 

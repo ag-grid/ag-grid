@@ -25,7 +25,6 @@ describe('Aggregate Filters', () => {
     ];
 
     beforeAll(() => setupAgTestIds());
-    beforeEach(() => gridsManager.reset());
     afterEach(() => gridsManager.reset());
 
     test('Filtered aggregate values should update after pivot mode is enabled and disabled', async () => {

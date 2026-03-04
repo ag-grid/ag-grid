@@ -1,0 +1,161 @@
+---
+title: "Rich Select Cell Editor - Customisation"
+enterprise: true
+---
+
+The Rich Select Cell Editor supports cell renderers, value formatting, search and typing behaviour, multi-selection, and complex object values.
+
+## Cell Renderer
+
+The cell renderer used within the editor can be customised as shown below:
+
+{% gridExampleRunner title="Rich Select with Cell Renderer" name="rich-select-cell-renderer" /%}
+
+```js
+columnDefs: [
+    {
+        cellEditor: 'agRichSelectCellEditor',
+        cellRenderer: ColourCellRenderer,
+        cellEditorParams: {
+            values: ['AliceBlue', 'AntiqueWhite', 'Aqua', /* .... many colours */ ],
+            cellRenderer: ColourCellRenderer,
+            valueListMaxHeight: 220
+        }
+        // ...other props
+    }
+]
+```
+
+{% partial file="./_component-interface-angular.mdoc" /%}
+{% partial file="./_component-interface-javascript.mdoc" /%}
+{% partial file="./_component-interface-react.mdoc" /%}
+{% partial file="./_component-interface-vue.mdoc" /%}
+
+{% interfaceDocumentation interfaceName="IRichCellEditorRendererParams" config={ "description": "" } /%}
+
+## Search Values
+
+Different types of search are possible within the editor list as shown below:
+
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["searchType"] config={ "description": "" } /%}
+
+{% gridExampleRunner title="Rich Select Editor" name="rich-select-search-values" /%}
+
+```js
+columnDefs: [
+    {
+        cellEditor: 'agRichSelectCellEditor',
+        cellEditorParams: {
+            values: ['AliceBlue', 'AntiqueWhite', 'Aqua', /* .... many colours */ ],
+            searchType: 'match',
+        }
+        // ...other props
+    }
+]
+```
+
+## Allow Typing
+
+The editor input can be configured to allow text input, which is used to match different parts of the editor list items as shown below:
+
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["allowTyping"] config={ "description": "" } /%}
+
+{% gridExampleRunner title="Rich Select Editor" name="rich-select-allow-typing" /%}
+
+```js
+columnDefs: [
+    {
+        cellEditor: 'agRichSelectCellEditor',
+        cellRenderer: ColourCellRenderer,
+        cellEditorParams: {
+            values: ['AliceBlue', 'AntiqueWhite', 'Aqua', /* .... many colours */ ],
+            allowTyping: true,
+            filterList: true,
+            highlightMatch: true,
+        }
+        // ...other props
+    }
+]
+```
+
+## Format Values
+
+Items in the editor list can be formatted as shown below:
+
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["formatValue"] config={ "description": "" } /%}
+
+{% gridExampleRunner title="Rich Select Format Values" name="rich-select-format-values" /%}
+
+```js
+columnDefs: [
+    {
+        cellEditor: 'agRichSelectCellEditor',
+        cellEditorParams: {
+            values: ['English', 'Spanish', 'French', 'Portuguese', '(other)'],
+            formatValue: value => value.toUpperCase()
+        }
+        // ...other props
+    }
+]
+```
+
+## Multi Selection
+
+The editor can be configured to allow the selection of multiple values as shown below:
+
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["multiSelect","suppressMultiSelectPillRenderer"] config={ "description": "" } /%}
+
+{% gridExampleRunner title="Rich Select Editor" name="rich-select-multi-select" /%}
+
+```js
+columnDefs: [
+    {
+        cellEditor: 'agRichSelectCellEditor',
+        cellEditorParams: {
+            values: ['AliceBlue', 'AntiqueWhite', 'Aqua', /* .... many colours */ ],
+            multiSelect: true,
+        }
+        // ...other props
+    }
+]
+```
+
+## Complex Objects
+
+When working with complex objects, a `formatValue` callback function is required to convert that complex object into a string that can be rendered by the Rich Select Editor.
+If the `Grid Column` being edited is not using complex values, or if the Rich Select Editor value object has a different format (different properties) than the object
+used by the `Grid Column`, a `parseValue` callback function is required to convert the editor format into the grid column's format.
+
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["formatValue","parseValue"] config={ "description": "" } /%}
+
+{% note %}
+When working with `Cell Renderers`, a `formatValue` callback should still be provided so it will be possible to use functionality that
+relies on string values such as `allowTyping`.
+{% /note %}
+
+{% gridExampleRunner title="Rich Select Editor" name="rich-select-complex-objects" exampleHeight=300 /%}
+
+```js
+const colors = [
+  { name: "Pink", code: "#FFC0CB" },
+  // ...other values
+];
+
+columnDefs: [
+    {
+        cellEditor: 'agRichSelectCellEditor',
+        valueFormatter: (p) => `${p.value.name} (${p.value.code})`,
+        valueParser: (p) => p.newValue,
+        cellDataType: 'object',
+        cellEditorParams: {
+            values: colors,
+            formatValue: (v) => v.name,
+        }
+        // ...other props
+    }
+]
+```
+
+## API
+
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" /%}

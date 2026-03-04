@@ -1,6 +1,7 @@
 import type { BeanCollection } from '../context/context';
 import type { RowPinnedType } from '../interfaces/iRowNode';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _selectAllCells(beans: BeanCollection) {
     const { pinnedRowModel, rowModel, rangeSvc, visibleCols } = beans;
 

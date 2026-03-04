@@ -1,4 +1,4 @@
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { CellStyleModule, ClientSideRowModelModule, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import {
@@ -11,7 +11,7 @@ import {
 
 describe('ag-grid parentId tree data parentId filter sort', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, TreeDataModule],
+        modules: [CellStyleModule, TextFilterModule, NumberFilterModule, ClientSideRowModelModule, TreeDataModule],
     });
 
     beforeEach(() => {

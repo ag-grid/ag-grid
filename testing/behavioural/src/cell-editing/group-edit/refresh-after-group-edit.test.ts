@@ -1,6 +1,6 @@
 import { userEvent } from '@testing-library/user-event';
 
-import { ClientSideRowModelModule, UndoRedoEditModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, TextEditorModule, UndoRedoEditModule } from 'ag-grid-community';
 import type { GridOptions } from 'ag-grid-community';
 import { BatchEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -8,7 +8,7 @@ import { GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../..
 
 describe('cell editing with refreshAfterGroupEdit', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, BatchEditModule, UndoRedoEditModule],
+        modules: [TextEditorModule, ClientSideRowModelModule, RowGroupingModule, BatchEditModule, UndoRedoEditModule],
     });
 
     beforeEach(() => {
