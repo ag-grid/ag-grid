@@ -34,8 +34,7 @@ interface SourceState extends PinnedRowContainerRendererSourceConfig {
     elements: HTMLElement[];
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export interface PinnedRowContainerRendererHosts {
+interface PinnedRowContainerRendererHosts {
     topCenter: HTMLElement;
     topFullWidth: HTMLElement;
     bottomCenter: HTMLElement;
