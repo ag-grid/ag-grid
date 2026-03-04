@@ -51,10 +51,12 @@ export const getPropertiesFromSource = async ({
         });
     const codeConfigs = Object.fromEntries(codeConfigEntries);
 
-    // Validate that theming-api/properties.json keys match the theming-api.AUTO.json keys
-    // Only run when actually processing the theming-api source
     if (sources.some((s) => s.includes('theming-api'))) {
-        validateThemingApiProperties(propertiesFromFiles, codeConfigs);
+        validateDocumentedProperties(propertiesFromFiles, codeConfigs, 'theming-api');
+    }
+
+    if (sources.some((s) => s.includes('grid-options'))) {
+        validateDocumentedProperties(propertiesFromFiles, codeConfigs, 'grid-options', gridOptionsApiKeyFilter);
     }
 
     return {
@@ -65,32 +67,59 @@ export const getPropertiesFromSource = async ({
     };
 };
 
-function validateThemingApiProperties(properties: any[], codeConfigs: any) {
-    const codeSrc = 'theming-api.AUTO.json';
+// Grid options that exist in the API but are intentionally not documented
+const UNDOCUMENTED_GRID_OPTIONS = new Set([
+    'enableGroupEdit', // AG-2995 - "Remove the grid option enableGroupEdit from docs API page to discourage its use"
+]);
+
+function gridOptionsApiKeyFilter(key: string, entry: any): boolean {
+    if (UNDOCUMENTED_GRID_OPTIONS.has(key)) return false;
+    const meta = entry?.meta;
+    if (!meta) return true;
+    if (meta.isEvent) return false;
+    if (meta.tags?.some((t: any) => t.name === 'deprecated')) return false;
+    return true;
+}
+
+function validateDocumentedProperties(
+    properties: any[],
+    codeConfigs: any,
+    slug: string,
+    apiKeyFilter?: (key: string, entry: any) => boolean
+) {
+    const codeSrc = `${slug}.AUTO.json`;
+    const label = `${slug} keys`;
+
     const propsFile = properties.find((p) => p['_config_']?.codeSrc === codeSrc);
     if (!propsFile) {
         throw new Error(`No properties.json with codeSrc: "${codeSrc}"`);
     }
     const codeConfig = codeConfigs[codeSrc];
     if (!codeConfig) {
-        throw new Error(`Theme params codeSrc file not found: ${codeSrc}`);
+        throw new Error(`${label} codeSrc file not found: ${codeSrc}`);
     }
-    const codeKeys = new Set(Object.keys(codeConfig));
-    const propsKeys = Object.entries(propsFile)
+
+    const apiKeys = new Set(
+        apiKeyFilter ? Object.keys(codeConfig).filter((k) => apiKeyFilter(k, codeConfig[k])) : Object.keys(codeConfig)
+    );
+
+    const documentedKeys = Object.entries(propsFile)
         .filter(([k]) => k !== '_config_')
         .flatMap(([, section]) => Object.keys(section as object).filter((k) => k !== 'meta'));
-    const missing = propsKeys.filter((k) => !codeKeys.has(k));
-    const extra = [...codeKeys].filter((k) => !propsKeys.includes(k));
-    if (missing.length || extra.length) {
+
+    const stale = documentedKeys.filter((k) => !apiKeys.has(k));
+    const undocumented = [...apiKeys].filter((k) => !documentedKeys.includes(k));
+
+    if (stale.length || undocumented.length) {
         const msgs: string[] = [];
-        if (missing.length) {
+        if (stale.length) {
             msgs.push(
-                `These theme params are documented in theming-api/properties.json but not in the API (checking ${codeSrc}): ${missing.join(', ')}`
+                `These ${label} are documented in ${slug}/properties.json but not in the API (checking ${codeSrc}): ${stale.join(', ')}`
             );
         }
-        if (extra.length) {
+        if (undocumented.length) {
             msgs.push(
-                `These theme params are present in the API (checking ${codeSrc}) but not documented in theming-api/properties.json: ${extra.join(', ')}`
+                `These ${label} are present in the API (checking ${codeSrc}) but not documented in ${slug}/properties.json: ${undocumented.join(', ')}`
             );
         }
         throw new Error(msgs.join('\n'));
