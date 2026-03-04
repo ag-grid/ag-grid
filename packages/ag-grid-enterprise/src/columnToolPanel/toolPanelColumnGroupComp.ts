@@ -29,6 +29,7 @@ import {
 } from 'ag-grid-community';
 
 import type { ColumnModelItem } from './columnModelItem';
+import type { ColumnToolPanelEditParams } from './columnToolPanelEdits';
 import { createPivotState, selectAllChildren, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
 
@@ -71,7 +72,8 @@ export class ToolPanelColumnGroupComp extends Component {
         public readonly modelItem: ColumnModelItem,
         private readonly allowDragging: boolean,
         private readonly eventType: ColumnEventType,
-        private readonly focusWrapper: HTMLElement
+        private readonly focusWrapper: HTMLElement,
+        private readonly params: ColumnToolPanelEditParams
     ) {
         super();
         const { columnGroup, depth, displayName } = modelItem;
@@ -185,7 +187,7 @@ export class ToolPanelColumnGroupComp extends Component {
             return;
         }
 
-        const contextMenu = this.createBean(new ToolPanelContextMenu(columnGroup, e, this.focusWrapper));
+        const contextMenu = this.createBean(new ToolPanelContextMenu(columnGroup, e, this.focusWrapper, this.params));
         this.addDestroyFunc(() => {
             if (contextMenu.isAlive()) {
                 this.destroyBean(contextMenu);
@@ -241,6 +243,7 @@ export class ToolPanelColumnGroupComp extends Component {
                         visibleState: dragItem?.visibleState,
                         pivotState: dragItem?.pivotState,
                         eventType: this.eventType,
+                        deferApply: this.params.deferApply,
                     });
                 }
             },
@@ -330,7 +333,7 @@ export class ToolPanelColumnGroupComp extends Component {
             return;
         }
 
-        selectAllChildren(this.beans, this.modelItem.children, nextState, this.eventType);
+        selectAllChildren(this.beans, this.modelItem.children, nextState, this.eventType, this.params);
     }
 
     private refreshAriaLabel(): void {

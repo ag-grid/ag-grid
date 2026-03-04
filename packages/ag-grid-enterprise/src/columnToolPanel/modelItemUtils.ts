@@ -1,33 +1,36 @@
 import type { AgColumn, BeanCollection, ColumnEventType, ColumnState, IAggFunc } from 'ag-grid-community';
 
-import { ColumnToolPanelSyncEditStrategy } from './columnToolPanelEdits';
-
 import type { ColumnModelItem } from './columnModelItem';
+import type { BaseColumnToolPanelEdits, ColumnToolPanelEditParams } from './columnToolPanelEdits';
 
 export function selectAllChildren(
     beans: BeanCollection,
     colTree: ColumnModelItem[],
     selectAllChecked: boolean,
-    eventType: ColumnEventType
+    eventType: ColumnEventType,
+    params: ColumnToolPanelEditParams
 ): void {
     const cols = extractAllLeafColumns(colTree);
-    setAllColumns(beans, cols, selectAllChecked, eventType);
+    setAllColumns(beans, cols, selectAllChecked, eventType, params);
 }
 
-function getEdits(beans: BeanCollection): ColumnToolPanelSyncEditStrategy {
-    return beans.colToolPanelEdits as ColumnToolPanelSyncEditStrategy;
+function getEdits(beans: BeanCollection, params: ColumnToolPanelEditParams): BaseColumnToolPanelEdits {
+    return (
+        params.deferApply ? beans.colToolPanelDeferredEdit : beans.colToolPanelSynchronousEdit
+    ) as BaseColumnToolPanelEdits;
 }
 
 export function setAllColumns(
     beans: BeanCollection,
     cols: AgColumn[],
     selectAllChecked: boolean,
-    eventType: ColumnEventType
+    eventType: ColumnEventType,
+    params: ColumnToolPanelEditParams
 ): void {
     if (beans.colModel.isPivotMode()) {
-        setAllPivot(beans, cols, selectAllChecked, eventType);
+        setAllPivot(beans, cols, selectAllChecked, eventType, params);
     } else {
-        setAllVisible(beans, cols, selectAllChecked, eventType);
+        setAllVisible(beans, cols, selectAllChecked, eventType, params);
     }
 }
 
@@ -52,7 +55,13 @@ function extractAllLeafColumns(allItems: ColumnModelItem[]): AgColumn[] {
     return res;
 }
 
-function setAllVisible(beans: BeanCollection, columns: AgColumn[], visible: boolean, eventType: ColumnEventType): void {
+function setAllVisible(
+    beans: BeanCollection,
+    columns: AgColumn[],
+    visible: boolean,
+    eventType: ColumnEventType,
+    params: ColumnToolPanelEditParams
+): void {
     const colStateItems: ColumnState[] = [];
 
     for (const col of columns) {
@@ -67,18 +76,25 @@ function setAllVisible(beans: BeanCollection, columns: AgColumn[], visible: bool
         }
     }
 
-    getEdits(beans).applyColumnState(colStateItems, eventType);
+    getEdits(beans, params).applyColumnState(colStateItems, eventType);
 }
 
-function setAllPivot(beans: BeanCollection, columns: AgColumn[], value: boolean, eventType: ColumnEventType): void {
-    setAllPivotActive(beans, columns, value, eventType);
+function setAllPivot(
+    beans: BeanCollection,
+    columns: AgColumn[],
+    value: boolean,
+    eventType: ColumnEventType,
+    params: ColumnToolPanelEditParams
+): void {
+    setAllPivotActive(beans, columns, value, eventType, params);
 }
 
 function setAllPivotActive(
     beans: BeanCollection,
     columns: AgColumn[],
     value: boolean,
-    eventType: ColumnEventType
+    eventType: ColumnEventType,
+    params: ColumnToolPanelEditParams
 ): void {
     const colStateItems: ColumnState[] = [];
 
@@ -124,7 +140,7 @@ function setAllPivotActive(
 
     columns.forEach(action);
 
-    getEdits(beans).applyColumnState(colStateItems, eventType);
+    getEdits(beans, params).applyColumnState(colStateItems, eventType);
 }
 
 export function updateColumns(
@@ -140,6 +156,7 @@ export function updateColumns(
             };
         };
         eventType: ColumnEventType;
+        deferApply?: boolean;
     }
 ): void {
     const { columns, visibleState, pivotState, eventType } = params;
@@ -160,7 +177,7 @@ export function updateColumns(
             };
         }
     });
-    getEdits(beans).applyColumnState(state, eventType);
+    getEdits(beans, params).applyColumnState(state, eventType);
 }
 
 export function createPivotState(column: AgColumn): {

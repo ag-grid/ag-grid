@@ -176,7 +176,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 moveItem: (
                     currentDragValue: AgColumn | AgProvidedColumnGroup | null,
                     lastHoveredListItem: VirtualListDragItem<ToolPanelColumnGroupComp | ToolPanelColumnComp> | null
-                ) => moveItem(beans, getCurrentColumnsBeingMoved(currentDragValue), lastHoveredListItem),
+                ) => moveItem(beans, getCurrentColumnsBeingMoved(currentDragValue), lastHoveredListItem, this.params),
             })
         );
     }
@@ -207,11 +207,16 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         const nextItem = Math.min(Math.max(currentIndex + movePadding + diff, 0), this.displayedColsList.length - 1);
 
         this.skipRefocus = true;
-        moveItem(beans, currentColumns, {
-            rowIndex: nextItem,
-            position: isUp ? 'top' : 'bottom',
-            component: this.virtualList.getComponentAt(nextItem) as ToolPanelColumnComp | ToolPanelColumnGroupComp,
-        });
+        moveItem(
+            beans,
+            currentColumns,
+            {
+                rowIndex: nextItem,
+                position: isUp ? 'top' : 'bottom',
+                component: this.virtualList.getComponentAt(nextItem) as ToolPanelColumnComp | ToolPanelColumnGroupComp,
+            },
+            this.params
+        );
 
         this.focusRowIfAlive(nextItem - movePadding).then(() => {
             this.skipRefocus = false;
@@ -224,13 +229,19 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     ): ToolPanelColumnGroupComp | ToolPanelColumnComp {
         const allowDragging = this.allowDragging;
         if (item.group) {
-            const renderedGroup = new ToolPanelColumnGroupComp(item, allowDragging, this.eventType, listItemElement);
+            const renderedGroup = new ToolPanelColumnGroupComp(
+                item,
+                allowDragging,
+                this.eventType,
+                listItemElement,
+                this.params
+            );
             this.createBean(renderedGroup);
 
             return renderedGroup;
         }
 
-        const columnComp = new ToolPanelColumnComp(item, allowDragging, this.groupsExist, listItemElement);
+        const columnComp = new ToolPanelColumnComp(item, allowDragging, this.groupsExist, listItemElement, this.params);
         this.createBean(columnComp);
 
         return columnComp;
@@ -549,7 +560,9 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     }
 
     public doSetSelectedAll(selectAllChecked: boolean): void {
-        selectAllChildren(this.beans, this.allColsTree, selectAllChecked, this.eventType);
+        selectAllChildren(this.beans, this.allColsTree, selectAllChecked, this.eventType, {
+            deferApply: !!this.params.deferApply,
+        });
     }
 
     private getSelectionState(): boolean | undefined {

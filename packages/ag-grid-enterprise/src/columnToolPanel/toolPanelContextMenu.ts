@@ -3,7 +3,7 @@ import { Component, _createIconNoSpan, _focusInto, isColumn, isProvidedColumnGro
 
 import { getGroupingLocaleText, isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import { MenuList } from '../widgets/menuList';
-import { ColumnToolPanelSyncEditStrategy } from './columnToolPanelEdits';
+import type { BaseColumnToolPanelEdits, ColumnToolPanelEditParams } from './columnToolPanelEdits';
 
 type MenuItemName = 'scrollIntoView' | 'rowGroup' | 'value' | 'pivot';
 
@@ -30,7 +30,8 @@ export class ToolPanelContextMenu extends Component {
     constructor(
         private readonly column: AgColumn | AgProvidedColumnGroup,
         private readonly mouseEventOrTouch: MouseEvent | Touch,
-        private readonly parentEl: HTMLElement
+        private readonly parentEl: HTMLElement,
+        private readonly params: ColumnToolPanelEditParams
     ) {
         super({ tag: 'div', cls: 'ag-menu' });
     }
@@ -87,7 +88,9 @@ export class ToolPanelContextMenu extends Component {
         const localeTextFunc = this.getLocaleTextFunc();
         const { beans, displayName } = this;
         const { rowGroupColsSvc, valueColsSvc, pivotColsSvc, colModel } = beans;
-        const edits = beans.colToolPanelEdits as ColumnToolPanelSyncEditStrategy;
+        const edits = (
+            this.params.deferApply ? beans.colToolPanelDeferredEdit : beans.colToolPanelSynchronousEdit
+        ) as BaseColumnToolPanelEdits;
 
         const menuItemMap = new Map<MenuItemName, MenuItemProperty>();
         this.menuItemMap = menuItemMap;

@@ -25,6 +25,7 @@ import {
 } from 'ag-grid-community';
 
 import type { ColumnModelItem } from './columnModelItem';
+import type { ToolPanelColumnCompParams } from './columnToolPanel';
 import { createPivotState, setAllColumns, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
 
@@ -51,7 +52,8 @@ export class ToolPanelColumnComp extends Component {
         public modelItem: ColumnModelItem,
         private readonly allowDragging: boolean,
         private readonly groupsExist: boolean,
-        private readonly focusWrapper: HTMLElement
+        private readonly focusWrapper: HTMLElement,
+        private readonly params: ToolPanelColumnCompParams
     ) {
         super();
         const { column, depth, displayName } = modelItem;
@@ -159,7 +161,11 @@ export class ToolPanelColumnComp extends Component {
             return;
         }
 
-        const contextMenu = this.createBean(new ToolPanelContextMenu(column, e, this.focusWrapper));
+        const contextMenu = this.createBean(
+            new ToolPanelContextMenu(column, e, this.focusWrapper, {
+                deferApply: !!this.params.deferApply,
+            })
+        );
         this.addDestroyFunc(() => {
             if (contextMenu.isAlive()) {
                 this.destroyBean(contextMenu);
@@ -203,7 +209,9 @@ export class ToolPanelColumnComp extends Component {
             return;
         }
 
-        setAllColumns(this.beans, [this.column], nextState, 'toolPanelUi');
+        setAllColumns(this.beans, [this.column], nextState, 'toolPanelUi', {
+            deferApply: !!this.params.deferApply,
+        });
     }
 
     private refreshAriaLabel(): void {
@@ -255,6 +263,7 @@ export class ToolPanelColumnComp extends Component {
                         visibleState: dragItem?.visibleState,
                         pivotState: dragItem?.pivotState,
                         eventType: 'toolPanelUi',
+                        deferApply: this.params.deferApply,
                     });
                 }
             },
