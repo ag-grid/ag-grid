@@ -11,7 +11,7 @@
       "dependsOn": ["build:types", "build:package", "build:copy-styles", "build:umd"]
     },
     "build:umd": {
-      "executor": "nx:run-commands",
+      "executor": "@nx/esbuild:esbuild",
       "dependsOn": ["^build", "build:copy-styles", "build:package"],
       "inputs": [
         "tsDefaults",
@@ -24,12 +24,27 @@
       ],
       "outputs": ["{projectRoot}/dist/ag-grid-enterprise*.js"],
       "options": {
-        "cwd": "packages/ag-grid-enterprise",
-        "commands": ["node esbuildBuild.cjs"]
+        "outputPath": "{projectRoot}/dist",
+        "deleteOutputPath": false,
+        "main": "{projectRoot}/src/main-umd-styles.ts",
+        "tsConfig": "{projectRoot}/tsconfig.lib.json",
+        "skipTypeCheck": true,
+        "esbuildConfig": "packages/ag-grid-enterprise/esbuildBuild.cjs",
+        "platform": "browser",
+        "target": "es2020",
+        "format": ["cjs"],
+        "bundle": true,
+        "thirdParty": true,
+        "sourcemap": false,
+        "metafile": false
       },
       "configurations": {
-        "production": {},
-        "staging": {}
+        "production": {
+          "additionalEntryPoints": ["{projectRoot}/src/main-umd-noStyles.ts"]
+        },
+        "staging": {
+          "additionalEntryPoints": ["{projectRoot}/src/main-umd-noStyles.ts"]
+        }
       },
       "cache": true
     },
