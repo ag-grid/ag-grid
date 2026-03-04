@@ -31,7 +31,7 @@ import { findFocusableElementBeforeTabGuard, isTargetUnderManagedComponent } fro
 import { agSideBarCSS } from './agSideBar.css-GENERATED';
 import type { AgSideBarButtons, SideBarButtonClickedEvent } from './agSideBarButtons';
 import { AgSideBarButtonsSelector } from './agSideBarButtons';
-import { parseOneComponent, parseSideBarDef } from './sideBarDefParser';
+import { parseSideBarDef } from './sideBarDefParser';
 import type { SideBarService } from './sideBarService';
 import { ToolPanelWrapper } from './toolPanelWrapper';
 
@@ -338,19 +338,13 @@ class AgSideBar extends Component implements ISideBar, FocusableContainer {
         }
         wrapper.setDisplayed(false);
 
-        const wrapperGui = wrapper.getGui();
-        const parent = def.parent instanceof HTMLElement ? def.parent : this;
-        if (parent === def.parent) {
-            this.beans.environment.applyThemeClasses(parent, ['ag-external', 'ag-tool-panel-external']);
-            wrapperGui.classList.add(this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr');
-        }
-        parent.appendChild(wrapperGui);
+        this.renderToolPanelUnderParent(wrapper, def.parent);
 
         this.toolPanelWrappers.push(wrapper);
 
         const button = this.sideBarButtons.addButtonComp(def);
 
-        _setAriaControlsAndLabel(button.eToggleButton, wrapperGui);
+        _setAriaControlsAndLabel(button.eToggleButton, wrapper.getGui());
     }
 
     public refresh(): void {
@@ -359,18 +353,23 @@ class AgSideBar extends Component implements ISideBar, FocusableContainer {
         }
     }
 
-    private renderToolPanelUnderParent(key: string, parent: HTMLElement) {
-        const selfDefOrStr = this.sideBar?.toolPanels?.find((tp) => (typeof tp === 'string' ? tp : tp.id) === key);
-        // toolpanel def should exist, otherwise no way to find it by the key
-        if (selfDefOrStr) {
-            const panelDef = parseOneComponent(selfDefOrStr);
-            if (panelDef) {
-                const state = this.gos.get('initialState')?.sideBar?.toolPanels?.[panelDef.id];
-                panelDef.parent = parent;
-                const wrapper = this.toolPanelWrappers.find((wrapper) => wrapper.getToolPanelId() === key);
-                this.createToolPanelAndSideButton(panelDef, state, wrapper);
-            }
+    private renderToolPanelUnderParent(
+        wrapper: ToolPanelWrapper,
+        externalParent: HTMLElement | null | undefined
+    ): void {
+        const wrapperGui = wrapper.getGui();
+        if (externalParent) {
+            this.beans.environment.applyThemeClasses(externalParent, ['ag-external', 'ag-tool-panel-external']);
+            wrapperGui.classList.add(this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr');
         }
+        const correctParent = externalParent ?? wrapper.getDefParent() ?? this.getGui();
+        if (wrapperGui.parentElement !== correctParent) {
+            correctParent.appendChild(wrapperGui);
+        }
+    }
+
+    private getWrapper(key: string | null | undefined): ToolPanelWrapper | undefined {
+        return this.toolPanelWrappers.find((wrapper) => wrapper.getToolPanelId() === key);
     }
 
     public openToolPanel(
@@ -378,20 +377,15 @@ class AgSideBar extends Component implements ISideBar, FocusableContainer {
         source: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api' = 'api',
         parent?: HTMLElement | null
     ): void {
-        if (parent && key) {
-            this.renderToolPanelUnderParent(key, parent);
-        }
-
         const currentlyOpenedKey = this.openedItem();
-        if (currentlyOpenedKey === key) {
-            return;
-        }
-
         const switchingToolPanel = !!key && !!currentlyOpenedKey;
         const skipAnimation = switchingToolPanel || source === 'sideBarInitializing';
 
         for (const wrapper of this.toolPanelWrappers) {
             const show = key === wrapper.getToolPanelId();
+            if (show) {
+                this.renderToolPanelUnderParent(wrapper, parent ?? null);
+            }
             if (skipAnimation) {
                 wrapper.setDisplayed(show);
             } else {
@@ -408,7 +402,7 @@ class AgSideBar extends Component implements ISideBar, FocusableContainer {
     }
 
     public getToolPanelInstance(key: string): IToolPanel | undefined {
-        const toolPanelWrapper = this.toolPanelWrappers.filter((toolPanel) => toolPanel.getToolPanelId() === key)[0];
+        const toolPanelWrapper = this.getWrapper(key);
 
         if (!toolPanelWrapper) {
             _warn(214, { key });
@@ -479,7 +473,7 @@ class AgSideBar extends Component implements ISideBar, FocusableContainer {
                 if (!existingToolPanelDef || toolPanelDef.toolPanel !== existingToolPanelDef.toolPanel) {
                     return;
                 }
-                const toolPanelWrapper = this.toolPanelWrappers.find((toolPanel) => toolPanel.getToolPanelId() === id);
+                const toolPanelWrapper = this.getWrapper(id);
                 if (!toolPanelWrapper) {
                     return;
                 }

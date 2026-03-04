@@ -97,7 +97,7 @@ function parseComponents(from?: (ToolPanelDef | string)[]): ToolPanelDef[] {
     return result;
 }
 
-export function parseOneComponent(it: ToolPanelDef | string): ToolPanelDef | null {
+function parseOneComponent(it: ToolPanelDef | string): ToolPanelDef | null {
     if (typeof it !== 'string') {
         return it;
     }
