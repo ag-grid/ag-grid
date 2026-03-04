@@ -404,6 +404,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
             }
 
             this.potentialDndItems = [];
+            this.refreshGui();
         }
 
         this.state = 'notDragging';
