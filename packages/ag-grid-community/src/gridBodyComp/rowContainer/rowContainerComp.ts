@@ -86,24 +86,16 @@ export class RowContainerComp extends Component {
         this.initialiseComp();
     }
 
-    private getExternalViewport(): HTMLElement | null {
-        const gridBodyCtrl = this.beans.ctrlsSvc.get('gridBodyCtrl');
-        if (gridBodyCtrl?.eGridViewport) {
-            return gridBodyCtrl.eGridViewport;
-        }
-
-        const parentComp = this.getParentComponent<Component>();
-        const viewportFromParent = parentComp?.getGui().querySelector('.ag-grid-viewport') as HTMLElement | null;
-        return viewportFromParent ?? (this.eContainer.closest('.ag-grid-viewport') as HTMLElement | null);
-    }
-
     private initialiseComp(): void {
         if (this.initialised || !this.isAlive()) {
             return;
         }
 
         const needsExternalViewport = usesGridViewportForScrolling(this.name);
-        const eGridViewport = needsExternalViewport ? this.getExternalViewport() : null;
+        const eGridViewport = needsExternalViewport
+            ? this.beans.ctrlsSvc.getGridBodyCtrl()?.eGridViewport ??
+              (this.eContainer.closest('.ag-grid-viewport') as HTMLElement | null)
+            : null;
 
         const eContainerForRows = this.eContainer;
         const eSpannedContainerForRows: HTMLElement | undefined = this.eSpannedContainer;

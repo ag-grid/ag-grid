@@ -192,26 +192,14 @@
     //  * Viewports
     //  ****************************
     // */
-    .ag-floating-bottom-viewport,
     .ag-body-horizontal-scroll-viewport,
     .ag-body-vertical-scroll-viewport,
-    .ag-virtual-list-viewport,
-    .ag-sticky-bottom-viewport {
+    .ag-virtual-list-viewport {
         position: relative;
         height: 100%;
         min-width: 0px;
         overflow: hidden;
         flex: 1 1 auto;
-    }
-
-    .ag-floating-bottom-viewport,
-    .ag-sticky-bottom-viewport {
-        overflow-x: hidden;
-        &::-webkit-scrollbar {
-            display: none !important;
-        }
-        -ms-overflow-style: none !important;
-        scrollbar-width: none !important;
     }
 
     .ag-viewport {
@@ -275,23 +263,11 @@
     //  ****************************
     // */
     .ag-grid-scrolling-container,
-    .ag-floating-bottom-container,
     .ag-body-horizontal-scroll-container,
     .ag-body-vertical-scroll-container,
     .ag-full-width-container,
-    .ag-floating-bottom-full-width-container,
-    .ag-virtual-list-container,
-    .ag-sticky-bottom-container {
+    .ag-virtual-list-container {
         position: relative;
-    }
-
-    // for when auto height is used but there is no row data
-    .ag-floating-bottom-container,
-    .ag-sticky-bottom-container {
-        // these containers need at least one 1px height so scrollLeft can be set even when empty
-        min-height: 1px;
-        height: 100%;
-        white-space: nowrap;
     }
 
     .ag-body-horizontal-scroll-container {
@@ -302,9 +278,7 @@
         width: 100%;
     }
 
-    .ag-full-width-container,
-    .ag-floating-bottom-full-width-container,
-    .ag-sticky-bottom-full-width-container {
+    .ag-full-width-container {
         position: absolute;
         top: 0px;
         @include ag.unthemed-rtl(
@@ -322,13 +296,6 @@
     }
 
     .ag-full-width-container {
-        width: 100%;
-    }
-
-    .ag-floating-bottom-full-width-container {
-        display: inline-block;
-        overflow: hidden;
-        height: 100%;
         width: 100%;
     }
 

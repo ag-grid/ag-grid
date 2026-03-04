@@ -43,10 +43,8 @@
  * Viewports
  ****************************
  */
-.ag-floating-bottom-viewport,
 .ag-body-horizontal-scroll-viewport,
-.ag-body-vertical-scroll-viewport,
-.ag-sticky-bottom-viewport {
+.ag-body-vertical-scroll-viewport {
     position: relative;
     height: 100%;
     min-width: 0;
@@ -90,18 +88,6 @@
     z-index: 1;
 }
 
-.ag-floating-bottom-viewport,
-.ag-sticky-bottom-viewport {
-    overflow-x: hidden;
-    -ms-overflow-style: none !important;
-    scrollbar-width: none !important;
-}
-
-.ag-floating-bottom-viewport::-webkit-scrollbar,
-.ag-sticky-bottom-viewport::-webkit-scrollbar {
-    display: none !important;
-}
-
 .ag-grid-scrolling-container {
     display: block;
     min-height: 100%;
@@ -122,21 +108,10 @@
   ****************************
   */
 .ag-grid-scrolling-container,
-.ag-floating-bottom-container,
 .ag-body-horizontal-scroll-container,
 .ag-body-vertical-scroll-container,
-.ag-full-width-container,
-.ag-floating-bottom-full-width-container,
-.ag-sticky-bottom-container {
+.ag-full-width-container {
     position: relative;
-}
-
-.ag-floating-bottom-container,
-.ag-sticky-bottom-container {
-    /* these containers need at least 1px height so scrollLeft can be set even when empty */
-    min-height: 1px;
-    height: 100%;
-    white-space: nowrap;
 }
 
 .ag-body-horizontal-scroll-container {
@@ -147,9 +122,8 @@
     width: 100%;
 }
 
-.ag-full-width-container,
-.ag-floating-bottom-full-width-container,
-.ag-sticky-bottom-full-width-container {
+.ag-full-width-container {
+    width: 100%;
     position: absolute;
     top: 0;
     left: 0;
@@ -161,17 +135,6 @@
          opens a group the children are shown in the other containers - we want to make sure we
          don't block mouse clicks to those other containers with the children. */
     pointer-events: none;
-}
-
-.ag-full-width-container {
-    width: 100%;
-}
-
-.ag-floating-bottom-full-width-container {
-    display: inline-block;
-    overflow: hidden;
-    height: 100%;
-    width: 100%;
 }
 
 /**
