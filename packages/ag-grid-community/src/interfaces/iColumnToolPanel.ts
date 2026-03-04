@@ -22,10 +22,11 @@ export interface IColumnToolPanelEdits {
     moveColumns(columns: AgColumn[], targetIndex: number, eventType: ColumnEventType): void;
     setValueColumns(columns: AgColumn[], eventType: ColumnEventType): void;
     setPivotColumns(columns: AgColumn[], eventType: ColumnEventType): void;
+    setPivotMode(pivotMode: boolean, eventType: ColumnEventType): void;
     setColumnsVisible(columns: AgColumn[], visible: boolean, eventType: ColumnEventType): void;
     setRowGroupColumns(columns: AgColumn[], eventType: ColumnEventType): void;
     commit(): void;
     reset(): void;
 }
 
-export type ColumnToolPanelEditStrategyBean = 'columnToolPanelSynchronousEdit' | 'columnToolPanelDeferredEdit';
+export type ColumnToolPanelEditStrategyBean = 'colToolPanelSynchronousEdit' | 'colToolPanelDeferredEdit';
