@@ -31,11 +31,11 @@ const batchedCallsRaf: BatchedCalls = {
     funcs: [],
 };
 
-/*
+/**
  * Batch calls to execute after the next macro task (mode = setTimeout) / or in the next requestAnimationFrame.
  * @param {Function} func The function to be batched
+ *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _batchCall(func: () => void): void;
 export function _batchCall(func: () => void, mode: 'raf', beans: UtilBeanCollection): void;
 export function _batchCall(
