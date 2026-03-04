@@ -29,6 +29,7 @@ const INTERACTIVE_HIDE_DELAY = 100;
 let lastTooltipHideTime: number;
 let isLocked = false;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface BaseTooltipParams<TLocation extends string, TValue = any> {
     location: TLocation;
     /** The value to be rendered by the tooltip. */
@@ -37,6 +38,7 @@ export interface BaseTooltipParams<TLocation extends string, TValue = any> {
     hideTooltipCallback?: () => void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export abstract class BaseTooltipStateManager<
     TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,

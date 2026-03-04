@@ -70,6 +70,7 @@ export interface ApplyColumnStateParams {
     defaultState?: ColumnStateParams;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _applyColumnState(
     beans: BeanCollection,
     params: ApplyColumnStateParams,
@@ -282,6 +283,7 @@ export function _applyColumnState(
     return unmatchedCount === 0; // Successful if no states unaccounted for
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _resetColumnState(beans: BeanCollection, source: ColumnEventType): void {
     const { colModel, autoColSvc, selectionColSvc, eventSvc, gos } = beans;
 
@@ -461,6 +463,7 @@ export function _compareColumnStatesAndDispatchEvents(beans: BeanCollection, sou
     };
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getColumnState(beans: BeanCollection): ColumnState[] {
     const { colModel, rowGroupColsSvc, pivotColsSvc } = beans;
     const primaryCols = colModel.getColDefCols();

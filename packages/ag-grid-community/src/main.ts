@@ -68,7 +68,6 @@ export {
 } from './agStack/interfaces/iPopup';
 export { AgPromise } from './agStack/utils/promise';
 export { IDragAndDropImageComponent, IDragAndDropImageParams } from './dragAndDrop/dragAndDropImageComponent';
-export type { RowDragComp } from './dragAndDrop/rowDragComp';
 export type {
     DropIndicatorPosition,
     RowDropPositionIndicator,
@@ -76,7 +75,6 @@ export type {
 } from './dragAndDrop/rowDropHighlightService';
 
 // Excel Export
-export { GridSerializingParams, RowAccumulator, RowSpanningAccumulator } from './export/iGridSerializer';
 export {
     ColumnWidthCallbackParams,
     ExcelAlignment,
@@ -147,9 +145,6 @@ export { DragItem } from './interfaces/iDragItem';
 export { IRowDragItem, RowDragTextFunc } from './interfaces/iRowDragItem';
 
 // Filtering
-export { AgFilterButtonSelector, FilterButton, FilterButtonComp, FilterButtonEvent } from './filter/filterButtonComp';
-export { FilterComp } from './filter/filterComp';
-export { FilterWrapperComp } from './filter/filterWrapperComp';
 export {
     BaseFloatingFilter,
     FloatingFilterDisplay,
@@ -319,21 +314,7 @@ export {
 } from './interfaces/iFind';
 
 // Headers
-export type {
-    AbstractHeaderCellCtrl,
-    IAbstractHeaderCellComp,
-} from './headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
-export type { HeaderCellCtrl, IHeaderCellComp } from './headerRendering/cells/column/headerCellCtrl';
-export type {
-    HeaderGroupCellCtrl,
-    IHeaderGroupCellComp,
-} from './headerRendering/cells/columnGroup/headerGroupCellCtrl';
-export type { HeaderFilterCellCtrl } from './headerRendering/cells/floatingFilter/headerFilterCellCtrl';
-export { IHeaderFilterCellComp } from './headerRendering/cells/floatingFilter/iHeaderFilterCellComp';
-export { GridHeaderCtrl, IGridHeaderComp } from './headerRendering/gridHeaderCtrl';
 export { HeaderRowType } from './headerRendering/row/headerRowComp';
-export type { HeaderRowCtrl, IHeaderRowComp } from './headerRendering/row/headerRowCtrl';
-export { HeaderRowContainerCtrl, IHeaderRowContainerComp } from './headerRendering/rowContainer/headerRowContainerCtrl';
 export type { SortIndicatorComp } from './sort/sortIndicatorComp';
 
 // AlignedGrid
@@ -572,7 +553,6 @@ export {
     ShouldRowBeSkippedParams,
 } from './interfaces/exportParams';
 export { ICsvCreator } from './interfaces/iCsvCreator';
-export { HeaderElement, PrefixedXmlAttributes, XmlAttributes, XmlElement } from './interfaces/iXmlFactory';
 
 // Clipboard
 export { IClipboardCopyParams, IClipboardCopyRowsParams } from './interfaces/iClipboardService';

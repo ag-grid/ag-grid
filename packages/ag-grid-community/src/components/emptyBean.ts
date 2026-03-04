@@ -6,6 +6,7 @@ import type { Context } from '../context/context';
  * Used in React to avoid duplicating listeners and setup logic while React is running in StrictMode where setComp will be called multiple times.
  * This is only required for the Components where the ctrl is managed by AG Grid and passed into the React component.
  * Both React and the Ctrl can decide to destroy the EmptyBean which will clean up listeners setup against it.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export class EmptyBean extends BeanStub {}
 

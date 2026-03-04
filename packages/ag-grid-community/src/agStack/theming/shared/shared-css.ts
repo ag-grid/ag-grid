@@ -17,6 +17,7 @@ import {
     foregroundMix,
 } from '../themeUtils';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface SharedThemeParams {
     /**
      * The 'brand color' for the grid, used wherever a non-neutral color is required. Selections, focus outlines and checkboxes use the accent color by default.
@@ -362,6 +363,7 @@ export const defaultLightColorSchemeParams = {
     browserColorScheme: 'light',
 } as const;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const sharedDefaults: Readonly<SharedThemeParams> = {
     ...defaultLightColorSchemeParams,
     textColor: foregroundColor,

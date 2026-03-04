@@ -11,6 +11,7 @@ interface HorizontalResizeParams {
     onResizeEnd: (delta: number) => void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class HorizontalResizeService extends BeanStub implements NamedBean {
     beanName = 'horizontalResizeSvc' as const;
 

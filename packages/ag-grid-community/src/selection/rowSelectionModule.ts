@@ -17,7 +17,7 @@ import {
 import { SelectionService } from './selectionService';
 
 /**
- * @internal
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export const SharedRowSelectionModule: _ModuleWithApi<_RowSelectionGridApi> = {
     moduleName: 'SharedRowSelection',

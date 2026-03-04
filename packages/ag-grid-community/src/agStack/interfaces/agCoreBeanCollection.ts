@@ -13,6 +13,7 @@ import type { IPopupService } from './iPopupService';
 import type { IPropertiesService } from './iProperties';
 import type { IRegistry } from './iRegistry';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface AgCoreBeanCollection<
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,

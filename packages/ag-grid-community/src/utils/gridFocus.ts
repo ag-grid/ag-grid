@@ -9,6 +9,7 @@ import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import type { Component } from '../widgets/component';
 import { _isStopPropagationForAgGrid } from './gridEvent';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _addFocusableContainerListener(beans: BeanCollection, comp: Component, eGui: HTMLElement): void {
     comp.addManagedElementListeners(eGui, {
         keydown: (e: KeyboardEvent) => {
@@ -24,6 +25,7 @@ export function _addFocusableContainerListener(beans: BeanCollection, comp: Comp
     });
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _focusGridInnerElement(beans: BeanCollection, fromBottom?: boolean): boolean {
     return beans.ctrlsSvc.get('gridCtrl').focusInnerElement(fromBottom);
 }
@@ -36,6 +38,7 @@ export function _isCellFocusSuppressed(beans: BeanCollection): boolean {
     return beans.gos.get('suppressCellFocus') || !!beans.overlays?.exclusive;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _focusNextGridCoreContainer(
     beans: BeanCollection,
     backwards: boolean,
@@ -60,6 +63,7 @@ export function _focusNextGridCoreContainer(
     return false;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _attemptToRestoreCellFocus(beans: BeanCollection, focusedCell: CellPosition | null): void {
     const focusSvc = beans.focusSvc;
     const currentFocusedCell = focusSvc.getFocusedCell();

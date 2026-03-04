@@ -19,7 +19,8 @@ import { FilterButtonComp } from './filterButtonComp';
 import { translateForFilter } from './filterLocaleText';
 import { _isUseApplyButton } from './provided/providedFilterUtils';
 
-/** Used with filter handlers. This adds filter buttons. */
+/** Used with filter handlers. This adds filter buttons.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class FilterWrapperComp extends Component {
     private eButtons?: FilterButtonComp;
     private params?: FilterWrapperParams;

@@ -13,10 +13,12 @@ interface FilterButtonCompParams {
     className?: string;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface FilterButtonEvent extends AgEvent<FilterAction> {
     event?: Event;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface FilterButton {
     type: FilterAction;
     label: string;
@@ -29,6 +31,7 @@ function getElement(className: string): ElementParams {
     };
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class FilterButtonComp extends Component<FilterAction> {
     private buttons: FilterButton[];
     private listeners: (() => void)[] = [];
@@ -158,6 +161,7 @@ export class FilterButtonComp extends Component<FilterAction> {
     }
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const AgFilterButtonSelector: ComponentSelector = {
     selector: 'AG-FILTER-BUTTON',
     component: FilterButtonComp,
