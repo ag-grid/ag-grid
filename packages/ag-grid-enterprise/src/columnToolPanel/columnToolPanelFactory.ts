@@ -1,6 +1,7 @@
 import type { BeanName, Component, NamedBean } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
+import type { ColumnToolPanelEditParams } from './columnToolPanelEdits';
 import { PivotDropZonePanel } from '../rowGrouping/columnDropZones/pivotDropZonePanel';
 import { RowGroupDropZonePanel } from '../rowGrouping/columnDropZones/rowGroupDropZonePanel';
 import { ValuesDropZonePanel } from '../rowGrouping/columnDropZones/valueDropZonePanel';
@@ -22,20 +23,37 @@ export class ColumnToolPanelFactory extends BeanStub implements NamedBean {
         return existingPanel;
     }
 
-    public createRowGroupPanel(parent: Component, destroyFuncs: (() => void)[]): RowGroupDropZonePanel {
-        return this.createPanel(parent, destroyFuncs, new RowGroupDropZonePanel(false));
+    public createRowGroupPanel(
+        parent: Component,
+        destroyFuncs: (() => void)[],
+        params?: ColumnToolPanelEditParams
+    ): RowGroupDropZonePanel {
+        return this.createPanel(parent, destroyFuncs, new RowGroupDropZonePanel(false, params));
     }
 
-    public createValuesPanel(parent: Component, destroyFuncs: (() => void)[]): ValuesDropZonePanel {
-        return this.createPanel(parent, destroyFuncs, new ValuesDropZonePanel(false));
+    public createValuesPanel(
+        parent: Component,
+        destroyFuncs: (() => void)[],
+        params?: ColumnToolPanelEditParams
+    ): ValuesDropZonePanel {
+        return this.createPanel(parent, destroyFuncs, new ValuesDropZonePanel(false, params));
     }
 
-    public createPivotPanel(parent: Component, destroyFuncs: (() => void)[]): PivotDropZonePanel {
-        return this.createPanel(parent, destroyFuncs, new PivotDropZonePanel(false));
+    public createPivotPanel(
+        parent: Component,
+        destroyFuncs: (() => void)[],
+        params?: ColumnToolPanelEditParams
+    ): PivotDropZonePanel {
+        return this.createPanel(parent, destroyFuncs, new PivotDropZonePanel(false, params));
     }
 
-    public createPivotModePanel(parent: Component, destroyFuncs: (() => void)[], prepend?: boolean): PivotModePanel {
-        return this.createPanel(parent, destroyFuncs, new PivotModePanel(), prepend);
+    public createPivotModePanel(
+        parent: Component,
+        destroyFuncs: (() => void)[],
+        params: ColumnToolPanelEditParams,
+        prepend?: boolean
+    ): PivotModePanel {
+        return this.createPanel(parent, destroyFuncs, new PivotModePanel(params), prepend);
     }
 
     private createPanel<C extends RowGroupDropZonePanel | ValuesDropZonePanel | PivotDropZonePanel | PivotModePanel>(
