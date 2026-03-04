@@ -1,7 +1,11 @@
 import type { AgColumn, ColumnEventType, DragItem, DropTarget, GridDraggingEvent } from 'ag-grid-community';
 import { DragSourceType, _shouldUpdateColVisibilityAfterGroup } from 'ag-grid-community';
 
-import type { BaseColumnToolPanelEdits } from '../../columnToolPanel/columnToolPanelEdits';
+import {
+    ColumnToolPanelDeferredEdit,
+    type BaseColumnToolPanelEdits,
+    type ColumnToolPanelEditParams,
+} from '../../columnToolPanel/columnToolPanelEdits';
 import type { PillDropZonePanelParams } from '../../widgets/pillDropZonePanel';
 import { PillDropZonePanel } from '../../widgets/pillDropZonePanel';
 import { DropZoneColumnComp } from './dropZoneColumnComp';
@@ -9,12 +13,30 @@ import { DropZoneColumnComp } from './dropZoneColumnComp';
 export type TDropZone = 'rowGroup' | 'pivot' | 'aggregation';
 
 export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumnComp, AgColumn> {
+    private readonly deferApply: boolean;
+
     constructor(
         horizontal: boolean,
-        private readonly dropZonePurpose: TDropZone
+        private readonly dropZonePurpose: TDropZone,
+        private readonly editParams?: ColumnToolPanelEditParams
     ) {
         super(horizontal);
+        this.deferApply = !!editParams?.deferApply;
         this.addElementClasses(this.getGui(), this.dropZonePurpose.toLowerCase());
+    }
+
+    protected getEdits(): BaseColumnToolPanelEdits | undefined {
+        return (this.deferApply
+            ? this.beans.colToolPanelDeferredEdit
+            : this.beans.colToolPanelSynchronousEdit) as BaseColumnToolPanelEdits | undefined;
+    }
+
+    protected getDeferredEdits(): ColumnToolPanelDeferredEdit | undefined {
+        if (!this.deferApply) {
+            return undefined;
+        }
+
+        return this.beans.colToolPanelDeferredEdit as ColumnToolPanelDeferredEdit | undefined;
     }
 
     public override init(params: PillDropZonePanelParams): void {
@@ -78,8 +100,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
             return;
         }
         const { beans } = this;
-        const strategy = (beans.columnToolPanelSyncEditStrategy ||
-            beans.columnToolPanelDeferredEditStrategy) as BaseColumnToolPanelEdits; // todo this should be more decisive
+        const strategy = this.getEdits();
         const allowedCols = columns.filter((c) => !c.getColDef().lockVisible);
         if (strategy) {
             strategy.setColumnsVisible(allowedCols, visible, source);
@@ -98,6 +119,6 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         ghost: boolean,
         horizontal: boolean
     ): DropZoneColumnComp {
-        return new DropZoneColumnComp(column, dropTarget, ghost, this.dropZonePurpose, horizontal);
+        return new DropZoneColumnComp(column, dropTarget, ghost, this.dropZonePurpose, horizontal, this.editParams);
     }
 }
