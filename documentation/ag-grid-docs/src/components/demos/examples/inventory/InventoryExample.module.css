@@ -15,8 +15,8 @@
     }
 }
 
-:global(.ag-theme-quartz .ag-body-viewport),
-:global(.ag-theme-quartz-dark .ag-body-viewport) {
+:global(.ag-theme-quartz .ag-grid-scrolling-rows),
+:global(.ag-theme-quartz-dark .ag-grid-scrolling-rows) {
     padding-top: 8px;
 }
 
@@ -125,7 +125,7 @@
     margin-right: 0;
 }
 
-:global(.ag-center-cols-viewport) {
+:global(.ag-grid-viewport) {
     min-height: unset !important;
 }
 

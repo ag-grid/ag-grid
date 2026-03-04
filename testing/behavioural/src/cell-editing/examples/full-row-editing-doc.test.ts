@@ -129,10 +129,7 @@ describe('Full-row editing documentation examples', () => {
         const gridElement = getGridElement(api)! as HTMLElement;
         const user = userEvent.setup();
         const findCell = (rowIndex: number, colId: string): HTMLElement => {
-            const selector = [
-                `.ag-grid-scrolling-container [row-index="${rowIndex}"] [col-id="${colId}"]`,
-                `.ag-center-cols-container [row-index="${rowIndex}"] [col-id="${colId}"]`,
-            ].join(', ');
+            const selector = `.ag-grid-scrolling-container [row-index="${rowIndex}"] [col-id="${colId}"]`;
             const cell = gridElement.querySelector<HTMLElement>(selector);
             if (!cell) {
                 throw new Error(`Unable to locate cell row-index=${rowIndex} colId=${colId}`);

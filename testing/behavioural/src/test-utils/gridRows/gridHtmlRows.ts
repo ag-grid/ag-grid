@@ -8,7 +8,7 @@ export type RowElementReference = string | Element | { readonly id: string | nul
 export type CheckboxState = boolean | 'mixed';
 
 const ROW_SELECTOR = '[row-id]';
-const CENTER_CONTAINER_SELECTORS = ['.ag-grid-scrolling-container', '.ag-center-cols-container'];
+const CENTER_CONTAINER_SELECTORS = ['.ag-grid-scrolling-container'];
 const ROW_SELECTION_CHECKBOX_QUERIES = [
     '.ag-selection-checkbox input[type="checkbox"]',
     '.ag-selection-checkbox [aria-checked]',

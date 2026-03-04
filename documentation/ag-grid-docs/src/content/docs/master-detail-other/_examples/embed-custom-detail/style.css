@@ -1,11 +1,11 @@
-.ag-pinned-left-cols-container .custom-detail {
+.ag-grid-pinned-left-cells .custom-detail {
     background-color: #cc222244;
 }
 
-.ag-pinned-right-cols-container .custom-detail {
+.ag-grid-pinned-right-cells .custom-detail {
     background-color: #33cc3344;
 }
 
-.ag-center-cols-container .custom-detail {
+.ag-grid-scrolling-cells .custom-detail {
     background-color: #2244cc44;
 }

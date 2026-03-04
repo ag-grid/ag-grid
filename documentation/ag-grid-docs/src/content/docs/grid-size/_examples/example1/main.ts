@@ -36,7 +36,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 
 function onGridSizeChanged(params: GridSizeChangedEvent) {
     // get the current grids width
-    const gridWidth = document.querySelector('.ag-body-viewport')!.clientWidth;
+    const gridWidth = document.querySelector('.ag-grid-viewport')!.clientWidth;
 
     // keep track of which columns to hide/show
     const columnsToShow = [];

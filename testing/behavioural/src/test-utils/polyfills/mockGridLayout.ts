@@ -28,7 +28,7 @@ const getElementType = (el: HTMLElement) => {
     if (classList.contains('ag-header')) {
         return 'header';
     }
-    if (classList.contains('ag-grid-viewport') || classList.contains('ag-body-viewport')) {
+    if (classList.contains('ag-grid-viewport')) {
         return 'viewport';
     }
     if (classList.contains('ag-root')) {
@@ -189,7 +189,7 @@ function init(): boolean {
 }
 
 function getPaginationOffset(el: HTMLElement): number {
-    const body = el.closest('.ag-grid-scrolling-rows, .ag-body');
+    const body = el.closest('.ag-grid-scrolling-rows');
     if (!body) {
         return 0;
     }

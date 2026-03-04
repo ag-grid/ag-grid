@@ -9,8 +9,8 @@ export async function scrollGridRelative(
     waitForTimeout = 10
 ) {
     async function scrollElement() {
-        const verticalView = page.locator('.ag-body-viewport.ag-row-animation.ag-layout-normal');
-        const horizontalView = page.locator('.ag-viewport.ag-center-cols-viewport');
+        const verticalView = page.locator('.ag-grid-viewport.ag-layout-normal');
+        const horizontalView = page.locator('.ag-grid-viewport.ag-layout-normal');
 
         if (y !== undefined) {
             if (yStep !== undefined) {
