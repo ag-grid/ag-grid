@@ -200,19 +200,27 @@ export class ColumnToolPanelDeferredEdit extends BaseColumnToolPanelEdits {
     }
 
     public getDraftSortDirection(column: AgColumn): SortDirection {
-        const draftSortDefs = this.getDraftSortDefsMap();
+        const draftSortState = this.getDraftSortState();
+        const draftSortDefs = draftSortState.sortDefs;
         const colId = column.getColId();
         if (draftSortDefs.has(colId)) {
             return draftSortDefs.get(colId)?.direction ?? null;
+        }
+        if (draftSortState.baselineCleared) {
+            return null;
         }
         return column.getSort();
     }
 
     public getDraftSortDef(column: AgColumn): SortDef | null {
-        const draftSortDefs = this.getDraftSortDefsMap();
+        const draftSortState = this.getDraftSortState();
+        const draftSortDefs = draftSortState.sortDefs;
         const colId = column.getColId();
         if (draftSortDefs.has(colId)) {
             return draftSortDefs.get(colId)!;
+        }
+        if (draftSortState.baselineCleared) {
+            return null;
         }
         return column.getSortDef();
     }
@@ -221,20 +229,25 @@ export class ColumnToolPanelDeferredEdit extends BaseColumnToolPanelEdits {
         this.state.progressSortFromEvent.push([column, event]);
     }
 
-    private getDraftSortDefsMap(): Map<string, SortDef> {
+    /**
+     * @returns { baselineCleared: boolean } indicates that at least one queued sort event was single-sort (not multi-sort),
+     *                                       so the original live sort state for other columns should be treated as wiped.
+     *
+     * TODO: there is an opportunity to move deferred sort replay helpers into SortService
+     *       as pure utilities so queue squashing logic is shared with core sorting behaviour.
+     */
+    private getDraftSortState(): { sortDefs: Map<string, SortDef>; baselineCleared: boolean } {
         const draftSortDefs = new Map<string, SortDef>();
-        const { colModel, sortSvc } = this.beans;
-
-        colModel.forAllCols((col) => {
-            const current = col.getSortDef();
-            if (current) {
-                draftSortDefs.set(col.getColId(), current);
-            }
-        });
+        const { sortSvc } = this.beans;
+        let baselineCleared = false;
 
         for (const [column, event] of this.state.progressSortFromEvent) {
             const colId = column.getColId();
-            const currentSortDef = draftSortDefs.has(colId) ? draftSortDefs.get(colId) : column.getSortDef();
+            const currentSortDef = draftSortDefs.has(colId)
+                ? draftSortDefs.get(colId)
+                : baselineCleared
+                  ? null
+                  : column.getSortDef();
             const nextSortDef = sortSvc!.getNextSortDirection(column, currentSortDef);
 
             const sortUsingCtrl = this.gos.get('multiSortKey') === 'ctrl';
@@ -243,6 +256,7 @@ export class ColumnToolPanelDeferredEdit extends BaseColumnToolPanelEdits {
 
             if (!doingMultiSort) {
                 draftSortDefs.clear();
+                baselineCleared = true;
             }
 
             if (nextSortDef.direction) {
@@ -252,6 +266,6 @@ export class ColumnToolPanelDeferredEdit extends BaseColumnToolPanelEdits {
             }
         }
 
-        return draftSortDefs;
+        return { sortDefs: draftSortDefs, baselineCleared };
     }
 }
