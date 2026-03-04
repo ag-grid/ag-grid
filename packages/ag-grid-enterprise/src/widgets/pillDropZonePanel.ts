@@ -404,7 +404,6 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
             }
 
             this.potentialDndItems = [];
-            this.refreshGui();
         }
 
         this.state = 'notDragging';
@@ -413,6 +412,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     private removeItems(itemsToRemove: TItem[]): void {
         const newItemList = this.getExistingItems().filter((item) => !itemsToRemove.includes(item));
         this.updateItems(newItemList);
+        this.refreshGui();
     }
 
     private addItems(itemsToAdd: TItem[]): void {
@@ -423,12 +423,12 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         const itemsToAddNoDuplicates = itemsToAdd.filter((item) => newItemList.indexOf(item) < 0);
         _insertArrayIntoArray(newItemList, itemsToAddNoDuplicates, this.insertIndex);
         this.updateItems(newItemList);
+        this.refreshGui();
     }
 
     public addItem(item: TItem): void {
         this.insertIndex = this.getExistingItems().length;
         this.addItems([item]);
-        this.refreshGui();
     }
 
     private rearrangeItems(itemsToAdd: TItem[], fromKeyboard?: boolean): boolean {
@@ -447,6 +447,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         }
 
         this.updateItems(newItemList);
+        this.refreshGui();
         return true;
     }
 
