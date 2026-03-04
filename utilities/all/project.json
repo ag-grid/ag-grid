@@ -225,7 +225,7 @@
       "command": "./scripts/removeLocalDeps.sh"
     },
     "snyk:test": {
-      "command": "npx snyk test --yarn-workspaces --dev --strict-out-of-sync=false --severity-threshold=high --exclude=.nx,project.json,dist --remote-repo-url=https://github.com/ag-grid/ag-grid",
+      "command": "npx snyk test --yarn-workspaces --dev --strict-out-of-sync=false --severity-threshold=high --exclude=.nx,project.json,dist,.claude --remote-repo-url=https://github.com/ag-grid/ag-grid",
       "options": {
         "cwd": "{workspaceRoot}"
       }
@@ -240,6 +240,30 @@
       "command": "node ./external/ag-shared/scripts/snyk/getSnykIgnore.mjs",
       "options": {
         "cwd": "{workspaceRoot}"
+      }
+    },
+    "snyk:test:json": {
+      "command": "mkdir -p tmp && { npx snyk test --yarn-workspaces --dev --strict-out-of-sync=false --severity-threshold=high --exclude=.nx,project.json,dist,.claude --remote-repo-url=https://github.com/ag-grid/ag-grid --json > tmp/snyk.json; code=$?; [ $code -le 1 ]; }",
+      "cache": true,
+      "inputs": ["{workspaceRoot}/yarn.lock"],
+      "outputs": ["{workspaceRoot}/tmp/snyk.json"],
+      "options": {
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "snyk:view": {
+      "command": "node ./external/ag-shared/scripts/snyk-viewer/index.mjs {args.file} --port {args.port} --name \"{args.name}\"",
+      "dependsOn": ["snyk:test:json"],
+      "options": {
+        "cwd": "{workspaceRoot}",
+        "file": "tmp/snyk.json",
+        "port": 4615,
+        "name": "AG Grid"
+      },
+      "configurations": {
+        "open": {
+          "args": ["--open"]
+        }
       }
     }
   },
