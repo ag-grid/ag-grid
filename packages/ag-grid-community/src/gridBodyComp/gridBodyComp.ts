@@ -2,7 +2,6 @@ import { RefPlaceholder } from '../agStack/interfaces/agComponent';
 import { _setAriaColCount, _setAriaMultiSelectable, _setAriaRole, _setAriaRowCount } from '../agStack/utils/aria';
 import { _observeResize } from '../agStack/utils/dom';
 import { _isCellSelectionEnabled, _isMultiRowSelection } from '../gridOptionsUtils';
-import { GridHeaderSelector } from '../headerRendering/gridHeaderComp';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import { LayoutCssClasses } from '../styling/layoutFeature';
 import type { ElementParams } from '../utils/element';
@@ -59,10 +58,7 @@ function getGridBodyTemplate(includeOverlay?: boolean): {
                                 ref: 'eTop',
                                 cls: 'ag-grid-pinned-top-rows',
                                 role: 'presentation',
-                                children: [
-                                    ...makeRowContainers(paramsMap, ['pinnedTopCenter', 'pinnedTopFullWidth']),
-                                    { tag: 'ag-header-root' },
-                                ],
+                                children: makeRowContainers(paramsMap, ['pinnedTopCenter', 'pinnedTopFullWidth']),
                             },
                             {
                                 tag: 'div',
@@ -120,7 +116,6 @@ export class GridBodyComp extends Component implements FocusableContainer {
                 ...(overlaySelector ? [overlaySelector] : []),
                 FakeHScrollSelector,
                 FakeVScrollSelector,
-                GridHeaderSelector,
                 RowContainerSelector,
             ],
             paramsMap

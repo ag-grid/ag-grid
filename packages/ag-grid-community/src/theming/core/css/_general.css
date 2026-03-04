@@ -500,7 +500,7 @@
     .ag-grid-scrolling-rows,
     .ag-grid-pinned-top-rows,
     .ag-grid-pinned-bottom-rows,
-    .ag-header,
+    .ag-grid-pinned-top-rows-container,
     .ag-body-horizontal-scroll {
         flex-direction: row;
     }
@@ -518,7 +518,7 @@
     .ag-grid-scrolling-rows,
     .ag-grid-pinned-top-rows,
     .ag-grid-pinned-bottom-rows,
-    .ag-header,
+    .ag-grid-pinned-top-rows-container,
     .ag-body-horizontal-scroll {
         flex-direction: row-reverse;
     }

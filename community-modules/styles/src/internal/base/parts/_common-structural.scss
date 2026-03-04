@@ -405,21 +405,9 @@
     //  * Headers
     //  ****************************
     // */
-    .ag-header {
-        display: inline-block;
-        overflow: hidden;
-        position: relative;
-    }
-
     .ag-header-cell-sortable .ag-header-cell-label,
     .ag-header-group-cell-selectable .ag-header-cell-comp-wrapper {
         cursor: pointer;
-    }
-
-    .ag-header {
-        display: flex;
-        width: 100%;
-        white-space: nowrap;
     }
 
     .ag-header-row {
@@ -431,7 +419,6 @@
         overflow: visible;
     }
 
-    .ag-header.ag-header-allow-overflow .ag-header-row,
     .ag-grid-pinned-top-rows-container.ag-header-allow-overflow .ag-header-row {
         overflow: visible;
     }
@@ -1144,6 +1131,7 @@
     }
 
     .ag-grid-pinned-top-rows-container {
+        display: flex;
         position: relative;
         width: 100%;
         min-height: 100%;
@@ -2102,7 +2090,7 @@
         .ag-grid-scrolling-rows,
         .ag-grid-pinned-top-rows,
         .ag-grid-pinned-bottom-rows,
-        .ag-header,
+        .ag-grid-pinned-top-rows-container,
         .ag-body-horizontal-scroll {
             flex-direction: row;
         }
@@ -2118,7 +2106,7 @@
         .ag-grid-scrolling-rows,
         .ag-grid-pinned-top-rows,
         .ag-grid-pinned-bottom-rows,
-        .ag-header,
+        .ag-grid-pinned-top-rows-container,
         .ag-body-horizontal-scroll {
             flex-direction: row-reverse;
         }

@@ -13,7 +13,6 @@ import {
 } from 'ag-grid-community';
 
 import { BeansContext } from './beansContext';
-import GridHeaderComp from './header/gridHeaderComp';
 import useReactCommentEffect from './reactComment';
 import RowContainerComp from './rows/rowContainerComp';
 import type { ReactRowContainerName } from './rows/rowContainerComp';
@@ -253,7 +252,6 @@ const GridBodyComp = () => {
             <div ref={setGridViewportRef} className={gridViewportClasses} role="presentation">
                 <div ref={eGridScrollableArea} className="ag-grid-scrollable-area" role="presentation">
                     <div ref={eTop} className={topClasses} role="presentation" style={topStyle}>
-                        <GridHeaderComp hostElement={topRowsHost} flattened viewportElement={gridViewportElement} />
                         <RowContainerComp
                             name="pinnedTopCenter"
                             viewportElement={gridViewportElement}
