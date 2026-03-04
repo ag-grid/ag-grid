@@ -1,12 +1,12 @@
 import type { AgColumn, DragAndDropIcon, FocusableContainer, GridDraggingEvent } from 'ag-grid-community';
 import { _addFocusableContainerListener, _createIconNoSpan } from 'ag-grid-community';
 
-import type { ColumnToolPanelSyncEditStrategy } from '../../columnToolPanel/columnToolPanelEdits';
+import type { ColumnToolPanelEditParams } from '../../columnToolPanel/columnToolPanelEdits';
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
 export class PivotDropZonePanel extends BaseDropZonePanel implements FocusableContainer {
-    constructor(horizontal: boolean) {
-        super(horizontal, 'pivot');
+    constructor(horizontal: boolean, params?: ColumnToolPanelEditParams) {
+        super(horizontal, 'pivot', params);
     }
 
     public postConstruct(): void {
@@ -83,7 +83,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel implements FocusableCo
     }
 
     protected updateItems(columns: AgColumn[]): void {
-        const edits = this.beans.colToolPanelEdits as ColumnToolPanelSyncEditStrategy | undefined;
+        const edits = this.getEdits();
         if (edits) {
             edits.setPivotColumns(columns, 'toolPanelUi');
             return;
@@ -96,7 +96,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel implements FocusableCo
     }
 
     protected getExistingItems(): AgColumn[] {
-        return this.beans.pivotColsSvc?.columns ?? [];
+        return this.getDeferredEdits()?.getDraftPivotColumns() ?? this.beans.pivotColsSvc?.columns ?? [];
     }
 
     public getFocusableContainerName(): 'pivotToolbar' {
