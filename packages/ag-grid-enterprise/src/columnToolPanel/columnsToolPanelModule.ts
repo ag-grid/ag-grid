@@ -6,7 +6,7 @@ import { SideBarModule } from '../sideBar/sideBarModule';
 import { VERSION } from '../version';
 import { MenuItemModule } from '../widgets/menuItemModule';
 import { ColumnToolPanel } from './columnToolPanel';
-import { ColumnToolPanelDeferredEditStrategy, ColumnToolPanelSyncEditStrategy } from './columnToolPanelEdits';
+import { ColumnToolPanelDeferredEdit, ColumnToolPanelSynchronousEdit } from './columnToolPanelEdits';
 import { ColumnToolPanelFactory } from './columnToolPanelFactory';
 
 /**
@@ -15,11 +15,7 @@ import { ColumnToolPanelFactory } from './columnToolPanelFactory';
 export const ColumnsToolPanelModule: _ModuleWithoutApi = {
     moduleName: 'ColumnsToolPanel',
     version: VERSION,
-    beans: [ColumnToolPanelFactory],
-    dynamicBeans: {
-        columnToolPanelDeferredEditStrategy: ColumnToolPanelSyncEditStrategy,
-        columnToolPanelSyncEditStrategy: ColumnToolPanelDeferredEditStrategy,
-    },
+    beans: [ColumnToolPanelFactory, ColumnToolPanelSynchronousEdit, ColumnToolPanelDeferredEdit],
     userComponents: { agColumnsToolPanel: ColumnToolPanel },
     icons: {
         ensureColumnVisible: 'column-arrow',
