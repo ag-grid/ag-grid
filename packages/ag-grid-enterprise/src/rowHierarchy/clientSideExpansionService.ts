@@ -68,7 +68,7 @@ export class ClientSideExpansionService
         const pivotMode = colModel.isPivotMode();
 
         rowModel.forEachNode((node) => {
-            if (!node.isExpandable()) {
+            if (!node.group && !node.master) {
                 return;
             }
             node.expanded = _getGroupNodeDefaultExpanded(this.beans, pivotMode, node);

@@ -94,10 +94,8 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             if (changedRowNodes) {
                 this.handleDeltaUpdate(rootNode, changedPath, changedRowNodes, !!params.animate);
             } else {
-                this.shotgunResetEverything(
-                    rootNode,
-                    refreshResult === 'groupColsChanged' ? this.getExpansionSnapshot() : null
-                );
+                const snapshot = refreshResult === 'groupColsChanged' ? this.getExpansionSnapshot() : null;
+                this.shotgunResetEverything(rootNode, snapshot);
             }
         }
 
@@ -160,7 +158,6 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         }, false);
     }
 
-    /** Returns 'skip' if no refresh needed, 'refresh' for a normal refresh, or 'groupColsChanged' when group columns changed */
     private initRefresh(params: RefreshModelParams): 'skip' | 'refresh' | 'groupColsChanged' {
         const { rowGroupColsSvc, colModel, gos } = this.beans;
 
@@ -176,11 +173,12 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                     return 'skip'; // no change to grouping
                 }
             } else {
-                // Group columns changed
-                // if grouping columns change, we don't animate the regrouping
                 params.animate = false;
+                // If the top-level group column changed, every existing node ID will differ after
+                // rebuild, so skip the snapshot. Check before makeGroupColumns overwrites groupCols.
+                const topLevelChanged = groupCols[0]?.col.getId() !== cols?.[0]?.getId();
                 makeGroupColumns(cols, groupCols);
-                return 'groupColsChanged';
+                return topLevelChanged ? 'refresh' : 'groupColsChanged';
             }
         }
 
