@@ -888,7 +888,6 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
                 └── LEAF 🖍️ id:0 a:⏳"pushed" null
             `);
 
-
             expect(api.getCellValue({ rowNode, colKey: 'a', from: 'edit' })).toBe('pushed');
             expect(api.getCellValue({ rowNode, colKey: 'a', from: 'batch' })).toBe('pushed');
             expect(api.getCellValue({ rowNode, colKey: 'a', from: 'data' })).toBeNull();
@@ -966,7 +965,6 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
                 ROOT id:ROOT_NODE_ID
                 └── LEAF ⏳ id:0 a:⏳"val" null
             `);
-
 
             expect(api.getCellValue({ rowNode, colKey: 'a', from: 'batch' })).toBe('val');
             expect(api.getCellValue({ rowNode, colKey: 'a', from: 'data' })).toBeNull();
@@ -1047,7 +1045,6 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
                 └── LEAF ⏳ id:0 a:⏳"a-val" null b:⏳"b-val" null
             `);
 
-
             expect(rowNode.data.a).toBeNull();
             expect(rowNode.data.b).toBeNull();
             expect(rowNode.getDataValue('a')).toBeNull();
@@ -1100,9 +1097,7 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             const errors = api.validateEdit();
             expect(errors).not.toEqual([]);
             expect(errors).toHaveLength(1);
-            expect(errors![0].messages).toEqual(
-                expect.arrayContaining([expect.stringContaining('100')])
-            );
+            expect(errors![0].messages).toEqual(expect.arrayContaining([expect.stringContaining('100')]));
 
             // ag-cell-editing-error class is set on the cell after validateEdit() refreshes styles
             expect(cellA.classList.contains('ag-cell-editing-error')).toBe(true);
