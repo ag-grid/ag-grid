@@ -44,6 +44,7 @@ export class ToolPanelWrapper extends Component {
     private resizeBar: AgHorizontalResize;
     private params: IToolPanelParams;
     private animationId: number = 0;
+    private defParent: HTMLElement | null = null;
 
     constructor() {
         super(ToolPanelElement);
@@ -63,10 +64,15 @@ export class ToolPanelWrapper extends Component {
         return this.toolPanelId;
     }
 
+    public getDefParent(): HTMLElement | null {
+        return this.defParent;
+    }
+
     public setToolPanelDef(toolPanelDef: ToolPanelDef, params: IToolPanelParams): boolean {
-        const { id, minWidth, maxWidth, width } = toolPanelDef;
+        const { id, minWidth, maxWidth, width, parent } = toolPanelDef;
 
         this.toolPanelId = id;
+        this.defParent = parent ?? null;
 
         if (width) {
             this.getGui().style.setProperty('--ag-side-bar-panel-width', `${width}px`);
