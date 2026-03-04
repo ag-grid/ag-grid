@@ -1203,6 +1203,12 @@
                                     "title": "Group Rows",
                                     "path": "grouping-group-rows",
                                     "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Custom Group Columns",
+                                    "path": "grouping-custom-group-columns",
+                                    "isEnterprise": true
                                 }
                             ]
                         },
