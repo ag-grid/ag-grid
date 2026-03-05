@@ -1,4 +1,5 @@
 .ag-cell-inline-editing {
+    /* inline cell editors should layer above non-editing cell content. */
     z-index: 1;
     border-radius: var(--ag-border-radius);
     padding: 0;

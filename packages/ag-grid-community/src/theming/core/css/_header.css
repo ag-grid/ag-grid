@@ -16,7 +16,6 @@
 
     position: absolute;
     height: var(--ag-header-height);
-    z-index: 3;
     color: var(--ag-header-text-color);
     font-size: var(--ag-header-font-size);
     font-family: var(--ag-header-font-family);
@@ -143,6 +142,8 @@
 :where(.ag-header-cell:not(.ag-floating-filter) > *, .ag-header-group-cell > *) {
     /* Ensure cell content shows above cell hover background */
     position: relative;
+
+    /* keep interactive header content above the hover/move pseudo-backgrounds. */
     z-index: 1;
 }
 
@@ -252,6 +253,8 @@
 .ag-header-group-cell::after {
     content: '';
     position: absolute;
+
+    /* render separators above header backgrounds and below interactive controls. */
     z-index: 1;
     height: var(--ag-header-column-border-height);
     top: calc(50% - var(--ag-header-column-border-height) * 0.5);
@@ -290,19 +293,23 @@
     display: flex;
     align-items: center;
     position: absolute;
+
+    /* keep the resize hit-target above header text/icons in the same cell. */
     z-index: 2;
     height: 100%;
     width: 8px;
     top: 0;
     cursor: ew-resize;
 
-    /* unpinned headers get their rezise handle on the right in normal mode and left in RTL mode */
+    /* unpinned headers get their resize handle on the right in normal mode and left in RTL mode */
     right: -3px;
 }
 
 .ag-header-cell-resize::after {
     content: '';
     position: absolute;
+
+    /* draw the visual resize marker above header backgrounds. */
     z-index: 1;
     top: calc(50% - var(--ag-header-column-resize-handle-height) * 0.5);
     left: calc(50% - var(--ag-header-column-resize-handle-width));

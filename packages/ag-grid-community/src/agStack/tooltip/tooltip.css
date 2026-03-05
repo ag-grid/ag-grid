@@ -6,6 +6,8 @@
     border: var(--ag-tooltip-border);
     border-radius: var(--ag-border-radius);
     white-space: normal;
+
+    /* tooltips must sit above all in-grid layers and popups. */
     z-index: 99999;
 
     &:where(.ag-cell-editor-tooltip),
@@ -19,6 +21,8 @@
 
 .ag-tooltip-custom {
     position: absolute;
+
+    /* custom tooltips share the same top-most layer as built-in tooltips. */
     z-index: 99999;
 }
 

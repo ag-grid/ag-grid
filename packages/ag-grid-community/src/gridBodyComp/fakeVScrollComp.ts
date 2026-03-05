@@ -63,7 +63,6 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         eGui.style.position = 'absolute';
         eGui.style.top = `${headerRowsOffset}px`;
         eGui.style.bottom = `${horizontalScrollHeight}px`;
-        eGui.style.zIndex = '3';
         if (this.enableRtl) {
             eGui.style.left = '0';
             eGui.style.right = '';

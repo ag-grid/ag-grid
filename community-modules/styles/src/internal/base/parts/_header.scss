@@ -10,7 +10,6 @@
         border-bottom: none;
         color: var(--ag-header-foreground-color);
         height: var(--ag-header-height);
-        z-index: 3;
 
         .ag-grid-pinned-left-cells,
         .ag-grid-scrolling-cells,
@@ -118,6 +117,7 @@
     .ag-header-group-cell::before {
         content: '';
         position: absolute;
+        // render separators above header backgrounds and below interactive controls.
         z-index: 1;
         display: var(--ag-header-column-separator-display);
         width: var(--ag-header-column-separator-width);
@@ -162,6 +162,7 @@
     .ag-header-cell-resize::after {
         content: '';
         position: absolute;
+        // draw the visual resize marker above header backgrounds.
         z-index: 1;
         display: var(--ag-header-column-resize-handle-display);
         width: var(--ag-header-column-resize-handle-width);
@@ -220,6 +221,7 @@
         padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
         position: absolute;
         width: 100%;
+        // keep loading overlays above filter body content.
         z-index: 1;
         align-items: unset;
     }

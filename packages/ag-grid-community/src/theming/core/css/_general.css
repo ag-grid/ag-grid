@@ -1,4 +1,5 @@
 .ag-aria-description-container {
+    /* keep the live-region in the top layer so screen readers always receive updates. */
     z-index: 9999;
     border: 0;
     clip: rect(1px, 1px, 1px, 1px);
@@ -84,7 +85,7 @@
     position: absolute;
     top: 0;
 
-    /* z-index: 1 appears over editing rows but under dragging rows */
+    /* row-span overlays must sit above regular cells but below dragged rows. */
     z-index: 1;
 }
 
@@ -191,6 +192,9 @@
 }
 
 .ag-body-vertical-scroll {
+    /* keep the fake vertical scrollbar above row content so its thumb remains interactive. */
+    z-index: 2;
+
     &:where(.ag-scrollbar-invisible) {
         top: 0;
         right: 0;
@@ -257,11 +261,16 @@
 .ag-grid-scrolling-cells {
     flex: 1 1 auto;
     min-width: 0;
+
+    /* create a base stacking context for center cells so pinned lanes can always layer above. */
+    z-index: 0;
 }
 
 .ag-grid-pinned-left-cells,
 .ag-grid-pinned-right-cells {
     position: sticky;
+
+    /* pinned lanes must paint above the scrolling lane across all row types. */
     z-index: 2;
     overflow: hidden;
     flex: 0 0 auto;
@@ -291,10 +300,12 @@
 }
 
 .ag-row-inline-editing {
+    /* inline row editors must float above standard rows. */
     z-index: 1;
 }
 
 .ag-row-dragging {
+    /* dragged rows must float above inline editors. */
     z-index: 2;
 }
 
@@ -358,6 +369,8 @@
 .ag-grid-pinned-bottom-rows {
     width: 100%;
     position: sticky;
+
+    /* keep pinned top/bottom sections above scrolling rows. */
     z-index: 2;
     background-color: var(--ag-data-background-color);
     border-bottom: var(--ag-header-row-border);

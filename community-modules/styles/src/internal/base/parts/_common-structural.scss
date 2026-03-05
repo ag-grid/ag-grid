@@ -18,6 +18,7 @@
 
     // ARIA
     .ag-aria-description-container {
+        // keep the live-region in the top layer so screen readers always receive updates.
         z-index: 9999;
         border: 0px;
         clip: rect(1px, 1px, 1px, 1px);
@@ -234,7 +235,7 @@
         position: absolute;
         top: 0;
 
-        // /* z-index: 1 appears over editing rows but under dragging rows */
+        // row-span overlays must sit above regular cells but below dragged rows.
         z-index: 1;
     }
 
@@ -353,6 +354,9 @@
     }
 
     .ag-body-vertical-scroll {
+        // keep the fake vertical scrollbar above row content so its thumb remains interactive.
+        z-index: 2;
+
         &.ag-scrollbar-invisible {
             top: 0;
             @include ag.unthemed-rtl(
@@ -469,6 +473,7 @@
 
     .ag-header-cell-resize {
         position: absolute;
+        // keep the resize hit-target above header text/icons in the same cell.
         z-index: 2;
         height: 100%;
         width: 8px;
@@ -748,11 +753,14 @@
     .ag-grid-scrolling-cells {
         flex: 1 1 auto;
         min-width: 0;
+        // create a base stacking context for center cells so pinned lanes can always layer above.
+        z-index: 0;
     }
 
     .ag-grid-pinned-left-cells,
     .ag-grid-pinned-right-cells {
         position: sticky;
+        // pinned lanes must paint above the scrolling lane across all row types.
         z-index: 2;
         overflow: hidden;
         flex: 0 0 auto;
@@ -781,10 +789,12 @@
     }
 
     .ag-row-inline-editing {
+        // inline row editors must float above standard rows.
         z-index: 1;
     }
 
     .ag-row-dragging {
+        // dragged rows must float above inline editors.
         z-index: 2;
     }
 
@@ -861,6 +871,7 @@
     }
 
     .ag-cell-inline-editing {
+        // inline cell editors should layer above non-editing cell content.
         z-index: 1;
 
         .ag-cell-wrapper,
@@ -997,6 +1008,7 @@
         position: absolute;
         top: 0;
         width: 100%;
+        // overlays must sit above grid rows while still below popup layers.
         z-index: 2;
     }
 
@@ -1030,6 +1042,7 @@
     // */
 
     .ag-popup-child {
+        // grid-managed popups must sit above overlays and row content.
         z-index: 5;
         top: 0;
     }
@@ -1062,6 +1075,7 @@
     .ag-grid-pinned-bottom-rows {
         width: 100%;
         position: sticky;
+        // keep pinned top/bottom sections above scrolling rows.
         z-index: 2;
         background-color: var(--ag-data-background-color);
         border-bottom: var(--ag-borders-critical) var(--ag-border-color);
@@ -1180,6 +1194,7 @@
     .ag-resizer {
         position: absolute;
         pointer-events: none;
+        // keep resize handles above popup body content.
         z-index: 1;
         @include ag.selectable(none);
         &.ag-resizer-topLeft {
@@ -1248,11 +1263,13 @@
 
     .ag-tooltip {
         position: absolute;
+        // tooltips must sit above all in-grid layers and popups.
         z-index: 99999;
     }
 
     .ag-tooltip-custom {
         position: absolute;
+        // custom tooltips share the same top-most layer as built-in tooltips.
         z-index: 99999;
     }
 
@@ -1588,6 +1605,7 @@
         position: absolute;
         top: 0;
         width: 5px;
+        // keep sidebar resize affordance above panel content.
         z-index: 1;
     }
 

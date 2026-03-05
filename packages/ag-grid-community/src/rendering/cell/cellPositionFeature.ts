@@ -207,6 +207,7 @@ export class CellPositionFeature extends BeanStub {
         const totalRowHeight = singleRowHeight * this.rowSpan;
 
         this.eContent.style.height = `${totalRowHeight}px`;
+        // row-spanned cell content must sit above normal cells in the same row.
         this.eContent.style.zIndex = '1';
     }
 
