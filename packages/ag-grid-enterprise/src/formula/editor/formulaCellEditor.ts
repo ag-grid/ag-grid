@@ -4,7 +4,11 @@ import type { IFormulaCellEditorParams } from 'ag-grid-community';
 import { AgFormulaInputField } from '../../widgets/agFormulaInputField';
 import { translateFormulaError } from '../i18n';
 
-export class FormulaCellEditor extends AgAbstractCellEditor<IFormulaCellEditorParams> {
+export class FormulaCellEditor<TData = any, TValue = any, TContext = any> extends AgAbstractCellEditor<
+    IFormulaCellEditorParams<TData, TValue, TContext>,
+    TValue,
+    string
+> {
     protected eEditor: AgFormulaInputField = RefPlaceholder;
     private focusAfterAttached = false;
 
@@ -130,15 +134,15 @@ export class FormulaCellEditor extends AgAbstractCellEditor<IFormulaCellEditorPa
 
     public getValidationErrors(): string[] | null {
         const { params } = this;
-        const value = this.eEditor.getCurrentValue();
+        const rawValue = this.eEditor.getCurrentValue();
         const translate = this.getLocaleTextFunc();
         const { getValidationErrors, validateFormulas } = params;
 
         let internalErrors: string[] | null = null;
         const shouldValidate = validateFormulas === true || !!getValidationErrors;
 
-        if (shouldValidate && typeof value === 'string' && this.isFormulaText(value)) {
-            const normalised = this.beans.formula?.normaliseFormula(value, true);
+        if (shouldValidate && typeof rawValue === 'string' && this.isFormulaText(rawValue)) {
+            const normalised = this.beans.formula?.normaliseFormula(rawValue, true);
 
             if (!normalised) {
                 internalErrors = [translateFormulaError(translate, 1)];
@@ -146,7 +150,7 @@ export class FormulaCellEditor extends AgAbstractCellEditor<IFormulaCellEditorPa
         }
 
         if (getValidationErrors) {
-            return getValidationErrors({ value, internalErrors, cellEditorParams: params });
+            return getValidationErrors({ value: this.getValue(), internalErrors, cellEditorParams: params });
         }
 
         return internalErrors;
