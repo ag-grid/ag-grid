@@ -602,6 +602,7 @@
                 </details>`;
             }).join('');
 
+            const unresolvedCount = vulnCards.filter(c => !c.skipped && ![...c.byDep.values()].every(dps => dps.every(p => p.alreadyIgnored))).length;
             const allVulnIds = [...ignoreVulns.keys()].filter(id => !skipState.vulns.has(id)).join(',');
             const globalActionsHtml = `<div class="rq-actions s3-global-actions">
                 <button class="btn btn-primary" data-action="resolve"
@@ -621,7 +622,7 @@
                         <button class="seg-btn${s3ViewMode === 'by-file' ? ' active' : ''}" data-action="set-s3-view" data-mode="by-file">By File</button>
                         <button class="seg-btn${s3ViewMode === 'all' ? ' active' : ''}" data-action="set-s3-view" data-mode="all">All</button>
                     </div>
-                    <span class="tool-section-badge">${ignoreVulns.size}</span>
+                    <span class="tool-section-badge">${unresolvedCount} / ${ignoreVulns.size}</span>
                 </summary>
                 <div class="tool-section-body">
                     ${expiryHtml}
