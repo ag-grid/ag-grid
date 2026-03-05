@@ -16,6 +16,7 @@ import { _warn } from '../validation/logging';
 import type { ColumnFilterService } from './columnFilterService';
 import type { QuickFilterService } from './quickFilterService';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class FilterManager extends BeanStub implements NamedBean {
     beanName = 'filterManager' as const;
 

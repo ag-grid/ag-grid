@@ -17,7 +17,7 @@ import { RowDragService } from './rowDragService';
 import { RowDropHighlightService } from './rowDropHighlightService';
 
 /**
- * @internal
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export const DragModule: _ModuleWithoutApi = {
     moduleName: 'Drag',
@@ -42,7 +42,7 @@ export const DragAndDropModule: _ModuleWithoutApi = {
 };
 
 /**
- * @internal
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export const SharedDragAndDropModule: _ModuleWithoutApi = {
     moduleName: 'SharedDragAndDrop',
@@ -96,7 +96,7 @@ export const RowDragModule: _ModuleWithApi<_DragGridApi<any>> = {
 };
 
 /**
- * @internal
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export const HorizontalResizeModule: _ModuleWithoutApi = {
     moduleName: 'HorizontalResize',

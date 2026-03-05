@@ -137,7 +137,10 @@ export interface RowDraggingEvent<TData = any, TContext = any>
     extends AgDraggingEvent<DragSourceType, DragItem, DragAndDropIcon, RowDraggingEvent, RowsDrop<TData, TContext>>,
         AgGridCommon<TData, TContext> {}
 
-/** This is only used internally */
+/**
+ * This is only used internally
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
 export interface RowsDrop<TData = any, TContext = any>
     extends Omit<IsRowValidDropPositionParams<TData, TContext>, 'draggingEvent'> {
     /** The dragging event that originated this drop operation */

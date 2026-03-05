@@ -1,0 +1,44 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.25.1
+
+ignore:
+    SNYK-JS-SERIALIZEJAVASCRIPT-570062:
+        - terser-webpack-plugin@5.3.14 > serialize-javascript@6.0.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T11:42:06.089Z
+    SNYK-JS-AJV-15274295:
+        - terser-webpack-plugin@5.3.14 > schema-utils@4.3.3 > ajv-formats@2.1.1 > ajv@8.17.1:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T11:00:34.965Z
+        - terser-webpack-plugin@5.3.14 > schema-utils@4.3.3 > ajv@8.17.1:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T11:00:34.961Z
+    SNYK-JS-MINIMATCH-15353389:
+        - jest@29.7.0 > @jest/core@29.7.0 > @jest/reporters@29.7.0 > @jest/transform@29.7.0 > babel-plugin-istanbul@6.1.1 > test-exclude@6.0.0 > glob@7.2.3 > minimatch@3.1.2:
+              reason: >-
+                  Test dependency - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:23:06.965Z
+        - jest@29.7.0 > @jest/core@29.7.0 > @jest/reporters@29.7.0 > @jest/transform@29.7.0 > babel-plugin-istanbul@6.1.1 > test-exclude@6.0.0 > minimatch@3.1.2:
+              reason: >-
+                  Test dependency - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:23:06.961Z
+    SNYK-JS-MINIMATCH-15309438:
+        - jest@29.7.0 > @jest/core@29.7.0 > @jest/reporters@29.7.0 > @jest/transform@29.7.0 > babel-plugin-istanbul@6.1.1 > test-exclude@6.0.0 > glob@7.2.3 > minimatch@3.1.2:
+              reason: >-
+                  Used in testing - ReDOS attack would only affect developer machines
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-02-27T18:33:09.599Z
+        - jest@29.7.0 > @jest/core@29.7.0 > @jest/reporters@29.7.0 > @jest/transform@29.7.0 > babel-plugin-istanbul@6.1.1 > test-exclude@6.0.0 > minimatch@3.1.2:
+              reason: >-
+                  Used in testing - ReDOS attack would only affect developer machines
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-02-27T18:33:09.594Z
+patch: {}

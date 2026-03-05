@@ -13,6 +13,7 @@ import { _isCellFocusSuppressed, _isHeaderFocusSuppressed, _runWithContainerFocu
 import { _consoleWarn } from '../utils/log';
 import type { Component, ComponentSelector } from '../widgets/component';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IGridComp extends LayoutView {
     setRtlClass(cssClass: string): void;
     destroyGridUi(): void;
@@ -46,6 +47,7 @@ const getDefaultTabToNextGridContainerTargetName = (target: TabToNextGridContain
     return typeof target === 'string' ? target : 'gridBody';
 };
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class GridCtrl extends BeanStub {
     private view: IGridComp;
     private eGridHostDiv: HTMLElement;

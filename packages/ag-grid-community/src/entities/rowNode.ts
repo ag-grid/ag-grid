@@ -19,12 +19,16 @@ import { _error, _warn } from '../validation/logging';
 import type { AgColumn } from './agColumn';
 import type { ColKey } from './colDef';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const ROW_ID_PREFIX_ROW_GROUP = 'row-group-';
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const ROW_ID_PREFIX_TOP_PINNED = 't-';
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const ROW_ID_PREFIX_BOTTOM_PINNED = 'b-';
 
 let OBJECT_ID_SEQUENCE = 0;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class RowNode<TData = any>
     implements IEventEmitter<RowNodeEventType>, IAgEventEmitter<RowNodeEventType>, IRowNode<TData>
 {

@@ -49,7 +49,7 @@ export class AgHorizontalResize extends Component {
         if (this.maxWidth != null) {
             newWidth = Math.min(this.maxWidth, newWidth);
         }
-        this.elementToResize.style.width = `${newWidth}px`;
+        this.elementToResize.style.setProperty('--ag-horizontal-size', `${newWidth}px`);
         this.dispatchResizeEvent(false, isEnd, newWidth);
     }
 }

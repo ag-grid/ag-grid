@@ -60,6 +60,7 @@ const CSS_CELL_LAST_LEFT_PINNED = 'ag-cell-last-left-pinned';
 const CSS_CELL_NOT_INLINE_EDITING = 'ag-cell-not-inline-editing';
 const CSS_CELL_WRAP_TEXT = 'ag-cell-wrap-text';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface ICellComp {
     toggleCss(cssClassName: string, on: boolean): void;
     setUserStyles(styles: CellStyle): void;
@@ -91,6 +92,7 @@ export interface ICellComp {
 let instanceIdSequence = 0;
 export type CellCtrlInstanceId = BrandedType<string, 'CellCtrlInstanceId'>;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class CellCtrl extends BeanStub {
     public readonly instanceId: CellCtrlInstanceId;
 

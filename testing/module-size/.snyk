@@ -2,6 +2,96 @@
 version: v1.25.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
+    SNYK-JS-ROLLUP-15340920:
+        - vite@5.4.21 > rollup@4.52.5:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T11:40:23.816Z
+    SNYK-JS-AJV-15274295:
+        - eslint@9.39.1 > @eslint/eslintrc@3.3.1 > ajv@6.12.6:
+              reason: >-
+                  Lint dependency - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T11:00:44.807Z
+        - eslint@9.39.1 > ajv@6.12.6:
+              reason: >-
+                  Lint dependency - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T11:00:44.803Z
+    SNYK-JS-MINIMATCH-15353387:
+        - typescript-eslint@8.46.3 > @typescript-eslint/eslint-plugin@8.46.3 > @typescript-eslint/type-utils@8.46.3 > @typescript-eslint/typescript-estree@8.46.3 > minimatch@9.0.5:
+              reason: >-
+                  Test dependency - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:38:22.957Z
+        - glob@11.1.0 > minimatch@10.1.1:
+              reason: >-
+                  Test dependency - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:38:22.951Z
+    SNYK-JS-MINIMATCH-15353389:
+        - typescript-eslint@8.46.3 > @typescript-eslint/eslint-plugin@8.46.3 > @typescript-eslint/type-utils@8.46.3 > @typescript-eslint/typescript-estree@8.46.3 > minimatch@9.0.5:
+              reason: >-
+                  Test dependency - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:14:50.111Z
+        - glob@11.1.0 > minimatch@10.1.1:
+              reason: >-
+                  Test dependency - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:14:50.106Z
+        - eslint@9.39.1 > @eslint/eslintrc@3.3.1 > minimatch@3.1.2:
+              reason: >-
+                  Test dependency - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:14:50.104Z
+        - eslint@9.39.1 > @eslint/config-array@0.21.1 > minimatch@3.1.2:
+              reason: >-
+                  Test dependency - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:14:50.098Z
+        - eslint@9.39.1 > minimatch@3.1.2:
+              reason: >-
+                  Test dependency - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:14:50.090Z
+        - npm-run-all@4.1.5 > minimatch@3.1.2:
+              reason: >-
+                  Test dependency - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T10:14:50.086Z
+    SNYK-JS-MINIMATCH-15309438:
+        - typescript-eslint@8.46.3 > @typescript-eslint/eslint-plugin@8.46.3 > @typescript-eslint/type-utils@8.46.3 > @typescript-eslint/typescript-estree@8.46.3 > minimatch@9.0.5:
+              reason: >-
+                  Used in testing - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T09:19:22.650Z
+        - glob@11.1.0 > minimatch@10.1.1:
+              reason: >-
+                  Used in testing - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T09:19:22.641Z
+        - eslint@9.39.1 > @eslint/eslintrc@3.3.1 > minimatch@3.1.2:
+              reason: >-
+                  Used in testing - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T09:19:22.635Z
+        - eslint@9.39.1 > @eslint/config-array@0.21.1 > minimatch@3.1.2:
+              reason: >-
+                  Used in testing - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T09:19:22.633Z
+        - eslint@9.39.1 > minimatch@3.1.2:
+              reason: >-
+                  Used in testing - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T09:19:22.629Z
+        - npm-run-all@4.1.5 > minimatch@3.1.2:
+              reason: >-
+                  Used in testing - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-02T09:19:22.625Z
     SNYK-JS-ESLINTPLUGINKIT-8340627:
         - eslint@9.14.0 > @eslint/plugin-kit@0.2.5:
               reason: >-

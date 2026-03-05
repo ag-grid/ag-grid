@@ -16,7 +16,10 @@ function getPackageJsonVersion(packageName: string, isModule: boolean = false) {
         : `${process.cwd()}/packages/${packageName}/package.json`;
     const packageJsonStr = readFileSync(path, 'utf-8');
     const packageJson = JSON.parse(packageJsonStr);
-    return packageJson.version;
+    // Strip pre-release suffix (e.g. "35.1.0-beta.20260218.1143" → "35.1.0")
+    // This enables Plunker to locate types via the dummy package.json.
+    // These have to be published externally.
+    return (packageJson.version as string).replace(/-.*$/, '');
 }
 
 export function getPackageJson({ isLocale, internalFramework, isIntegratedCharts }: Params) {

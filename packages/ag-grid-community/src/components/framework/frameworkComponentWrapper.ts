@@ -5,6 +5,7 @@ import { _warn } from '../../validation/logging';
 /**
  * B the business interface (ie IHeader)
  * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export interface FrameworkComponentWrapper {
     wrap<A extends IComponent<any>>(
@@ -15,6 +16,7 @@ export interface FrameworkComponentWrapper {
     ): A;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface WrappableInterface {
     hasMethod(name: string): boolean;
 
@@ -23,6 +25,7 @@ export interface WrappableInterface {
     addMethod(name: string, callback: (...args: any[]) => any): void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export abstract class BaseComponentWrapper<F extends WrappableInterface> implements FrameworkComponentWrapper {
     public wrap<A extends IComponent<any>>(
         OriginalConstructor: new () => any,

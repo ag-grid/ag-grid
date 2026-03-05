@@ -701,6 +701,10 @@ export const AG_GRID_LOCALE_ES = {
     ariaPageSizeSelectorLabel: 'Tamaño de Página',
     ariaChartMenuClose: 'Cerrar Menú de Edición de Gráfica',
     ariaChartSelected: 'Seleccionado',
+    ariaSparklineChartDescription:
+        'Sparkline - ${chartType} que muestra ${count} valores entre ${min} y ${max}. Empieza en ${start} y termina en ${end}.',
+    ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} que muestra 1 valor: ${value}.',
+    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${chartType} que no muestra valores.',
     ariaSkeletonCellLoadingFailed: 'Carga de fila fallida',
     ariaSkeletonCellLoading: 'Cargando datos de la fila',
     ariaDeferSkeletonCellLoading: 'Cargando celda',

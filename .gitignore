@@ -143,4 +143,5 @@ documentation/ag-grid-docs/test-results/.last-run.json
 **/WARP.md
 **/modular-mcp.json
 !.rulesync/.aiignore
+.rulesync/skills/rulesync
 /.junie/

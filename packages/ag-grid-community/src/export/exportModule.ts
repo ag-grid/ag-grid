@@ -4,7 +4,7 @@ import { GridSerializer } from './gridSerializer';
 
 // Shared CSV and Excel logic
 /**
- * @internal
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export const SharedExportModule: _ModuleWithoutApi = {
     moduleName: 'SharedExport',

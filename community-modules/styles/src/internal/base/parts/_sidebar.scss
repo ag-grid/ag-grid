@@ -6,7 +6,7 @@
     }
 
     .ag-tool-panel-wrapper {
-        width: var(--ag-side-bar-panel-width);
+        width: var(--ag-horizontal-size, var(--ag-side-bar-panel-width));
         background-color: var(--ag-control-panel-background-color);
     }
 

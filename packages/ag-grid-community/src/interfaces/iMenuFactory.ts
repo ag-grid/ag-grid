@@ -4,6 +4,7 @@ import type { ContainerType } from './iAfterGuiAttachedParams';
 
 type MenuColumn = AgColumn | AgProvidedColumnGroup | undefined;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IMenuFactory {
     showMenuAfterButtonClick(
         column: MenuColumn,

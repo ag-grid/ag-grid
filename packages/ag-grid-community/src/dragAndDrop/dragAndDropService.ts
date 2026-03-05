@@ -59,6 +59,7 @@ export type DragAndDropIcon =
     | 'notAllowed'
     | 'hide';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class DragAndDropService extends BaseDragAndDropService<
     BeanCollection,
     GridOptionsWithDefaults,

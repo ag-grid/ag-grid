@@ -37,6 +37,7 @@ import { NoModulesRegisteredError, missingRowModelTypeError } from './validation
 import { _error, _logPreInitErr } from './validation/logging';
 import { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface GridParams {
     // INTERNAL - used by Web Components
     globalListener?: (...args: any[]) => any;
@@ -117,6 +118,7 @@ let nextGridId = 1;
 
 // creates services of grid only, no UI, so frameworks can use this if providing
 // their own UI
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class GridCoreCreator {
     public create(
         eGridDiv: HTMLElement,

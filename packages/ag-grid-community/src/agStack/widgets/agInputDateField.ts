@@ -11,6 +11,7 @@ import type { AgInputTextFieldParams } from './agInputTextField';
 import { AgInputTextField } from './agInputTextField';
 import type { AgWidgetSelectorType } from './agWidgetSelectorType';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgInputDateField<
     TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,

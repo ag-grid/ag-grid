@@ -19,6 +19,7 @@ type ThemeErrorValue<TId extends ThemeErrorId | null> = TId extends ThemeErrorId
 type GetThemeErrorParams<TId extends ThemeErrorId> =
     ThemeErrorValue<TId> extends (params: infer P) => any ? (P extends Record<string, any> ? P : undefined) : never;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type ThemeLogger = {
     error: <
         TId extends ThemeErrorId,

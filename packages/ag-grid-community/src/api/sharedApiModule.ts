@@ -13,7 +13,7 @@ import { getCacheBlockState, isLastRowIndexKnown, setRowCount } from './ssrmInfi
 // these modules are not used in core, but are shared between multiple other modules
 
 /**
- * @internal
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export const CsrmSsrmSharedApiModule: _ModuleWithApi<_CsrmSsrmSharedGridApi> = {
     moduleName: 'CsrmSsrmSharedApi',
@@ -22,7 +22,7 @@ export const CsrmSsrmSharedApiModule: _ModuleWithApi<_CsrmSsrmSharedGridApi> = {
 };
 
 /**
- * @internal
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export const RowModelSharedApiModule: _ModuleWithApi<_RowModelSharedApi> = {
     moduleName: 'RowModelSharedApi',
@@ -31,7 +31,7 @@ export const RowModelSharedApiModule: _ModuleWithApi<_RowModelSharedApi> = {
 };
 
 /**
- * @internal
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export const SsrmInfiniteSharedApiModule: _ModuleWithApi<_SsrmInfiniteSharedGridApi> = {
     moduleName: 'SsrmInfiniteSharedApi',

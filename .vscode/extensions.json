@@ -12,8 +12,6 @@
     "syler.sass-indented",
     // shows the cost of each import
     "wix.vscode-import-cost",
-    // shows the cost of CSS properties
-    "kisstkondoros.csstriggers",
     // es6 string HTML highlight
     "tobermory.es6-string-html",
     // prettier

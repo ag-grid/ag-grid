@@ -2,6 +2,7 @@ import type { AgEvent } from '../interfaces/agEvent';
 import type { AgFrameworkOverrides } from '../interfaces/agFrameworkOverrides';
 import type { IEventEmitter, IEventListener, IGlobalEventListener } from '../interfaces/iEventEmitter';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class LocalEventService<TEventType extends string> implements IEventEmitter<TEventType> {
     private readonly allSyncListeners = new Map<TEventType, Set<IEventListener<TEventType>>>();
     private readonly allAsyncListeners = new Map<TEventType, Set<IEventListener<TEventType>>>();

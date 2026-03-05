@@ -8,6 +8,7 @@ import { _getDocument, _getWindow } from './document';
  * @param {HTMLElement} element The element to receive the class
  * @param {string} elementClass The class to be assigned to the element
  * @param {boolean} otherElementClass The class to be assigned to siblings of the element, but not the element itself
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _radioCssClass(element: HTMLElement, elementClass: string | null, otherElementClass?: string | null) {
     const parent = element.parentElement;
@@ -27,6 +28,7 @@ export function _radioCssClass(element: HTMLElement, elementClass: string | null
 export const FOCUSABLE_SELECTOR = '[tabindex], input, select, button, textarea, [href]';
 export const FOCUSABLE_EXCLUDE = '[disabled], .ag-disabled:not(.ag-button), .ag-disabled *';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isFocusableFormField(element: Element | null): boolean {
     if (!element) {
         return false;
@@ -42,6 +44,7 @@ export function _isFocusableFormField(element: Element | null): boolean {
     return _isVisible(element);
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _setDisplayed(element: Element, displayed: boolean, options: { skipAriaHidden?: boolean } = {}) {
     const { skipAriaHidden } = options;
     element.classList.toggle('ag-hidden', !displayed);
@@ -50,6 +53,7 @@ export function _setDisplayed(element: Element, displayed: boolean, options: { s
     }
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _setVisible(element: HTMLElement, visible: boolean, options: { skipAriaHidden?: boolean } = {}) {
     const { skipAriaHidden } = options;
     element.classList.toggle('ag-invisible', !visible);
@@ -58,6 +62,7 @@ export function _setVisible(element: HTMLElement, visible: boolean, options: { s
     }
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _setDisabled(element: HTMLElement, disabled: boolean) {
     const attributeName = 'disabled';
     const addOrRemoveDisabledAttribute = disabled
@@ -157,6 +162,7 @@ export function _getElementSize(el: HTMLElement): {
     };
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getInnerHeight(el: HTMLElement): number {
     const size = _getElementSize(el);
 
@@ -167,6 +173,7 @@ export function _getInnerHeight(el: HTMLElement): number {
     return size.height;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getInnerWidth(el: HTMLElement): number {
     const size = _getElementSize(el);
 
@@ -177,12 +184,14 @@ export function _getInnerWidth(el: HTMLElement): number {
     return size.width;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getAbsoluteHeight(el: HTMLElement): number {
     const { height, marginBottom, marginTop } = _getElementSize(el);
 
     return Math.floor(height + marginBottom + marginTop);
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getAbsoluteWidth(el: HTMLElement): number {
     const { width, marginLeft, marginRight } = _getElementSize(el);
 
@@ -216,6 +225,7 @@ export function _getScrollLeft(element: HTMLElement, rtl: boolean): number {
     return scrollLeft;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _setScrollLeft(element: HTMLElement, value: number, rtl: boolean): void {
     if (rtl) {
         value *= -1;
@@ -223,12 +233,14 @@ export function _setScrollLeft(element: HTMLElement, value: number, rtl: boolean
     element.scrollLeft = value;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _clearElement(el: HTMLElement | null | undefined): void {
     while (el?.firstChild) {
         el.firstChild.remove();
     }
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _removeFromParent(node: Element | null | undefined): void {
     if (node?.parentNode) {
         node.remove();
@@ -239,6 +251,7 @@ export function _isInDOM(element: Element): element is HTMLElement {
     return !!(element as HTMLElement).offsetParent;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isVisible(element: Element) {
     if (element.checkVisibility) {
         return element.checkVisibility({ checkVisibilityCSS: true });
@@ -252,6 +265,7 @@ export function _isVisible(element: Element) {
  * NOTE: Prefer _createElement
  * @param {string} template
  * @returns {HTMLElement}
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _loadTemplate(template: string | undefined | null): HTMLElement {
     const tempDiv = document.createElement('div');
@@ -333,6 +347,7 @@ export function _addStylesToElement(
     }
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isElementOverflowingCallback(getElement: () => HTMLElement | undefined): () => boolean {
     return () => {
         const element = getElement();
@@ -363,6 +378,7 @@ export function _setElementWidth(element: HTMLElement, width: string | number) {
     }
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _setFixedWidth(element: HTMLElement, width: string | number) {
     width = _formatSize(width);
     element.style.width = width;
@@ -381,10 +397,12 @@ export function _formatSize(size: number | string) {
     return typeof size === 'number' ? `${size}px` : size;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isNodeOrElement(o: any): o is Node | Element {
     return o instanceof Node || o instanceof HTMLElement;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _addOrRemoveAttribute(element: HTMLElement, name: string, value: string | number | null | undefined) {
     if (value == null || value === '') {
         element.removeAttribute(name);
@@ -393,6 +411,7 @@ export function _addOrRemoveAttribute(element: HTMLElement, name: string, value:
     }
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _placeCaretAtEnd(beans: UtilBeanCollection, contentElement: HTMLElement): void {
     if (!contentElement.isContentEditable) {
         return;
@@ -410,6 +429,7 @@ export function _placeCaretAtEnd(beans: UtilBeanCollection, contentElement: HTML
     selection.addRange(range);
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _observeResize(
     beans: UtilBeanCollection,
     element: HTMLElement,
@@ -422,6 +442,7 @@ export function _observeResize(
     return () => resizeObserver?.disconnect();
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _requestAnimationFrame(beans: UtilBeanCollection, callback: any) {
     const win = _getWindow(beans);
 
@@ -455,6 +476,7 @@ type RoleType =
     | 'tabpanel'
     | 'treeitem';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type AgElementParams<SelectorType extends string> = {
     /** The tag name to use for the element, either browser tag or one of the AG Grid components such as ag-checkbox
      */
@@ -500,6 +522,7 @@ function getWhitespaceNode() {
     whitespaceNode ??= document.createTextNode(' ');
     return whitespaceNode.cloneNode();
 }
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _createAgElement<T extends HTMLElement = HTMLElement, TComponentSelector extends string = string>(
     params: AgElementParams<TComponentSelector>
 ): T {

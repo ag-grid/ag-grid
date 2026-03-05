@@ -7,6 +7,7 @@ import { AgPopupComponent } from '../popup/agPopupComponent';
 import { _toString } from '../utils/string';
 import type { BaseTooltipParams } from './baseTooltipStateManager';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgTooltipComponent<
         TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
         TProperties extends BaseProperties,

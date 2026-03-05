@@ -700,6 +700,10 @@ export const AG_GRID_LOCALE_FI = {
     ariaPageSizeSelectorLabel: 'Sivun koko',
     ariaChartMenuClose: 'Sulje kaavion muokkausvalikko',
     ariaChartSelected: 'Valittu',
+    ariaSparklineChartDescription:
+        'Sparkline - ${chartType}, joka näyttää ${count} arvoa välillä ${min} ja ${max}. Alkaa arvosta ${start} ja päättyy arvoon ${end}.',
+    ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType}, 1 arvo, ${value}.',
+    ariaSparklineChartDescriptionEmpty: 'Sparkline - ${chartType}, ei arvoja.',
     ariaSkeletonCellLoadingFailed: 'Rivin lataus epäonnistui',
     ariaSkeletonCellLoading: 'Rivin tietoja ladataan',
     ariaDeferSkeletonCellLoading: 'Solu latautuu',

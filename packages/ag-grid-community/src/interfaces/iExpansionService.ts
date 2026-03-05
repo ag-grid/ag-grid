@@ -25,6 +25,7 @@ export interface RowGroupBulkExpansionState {
     invertedRowGroupIds: string[];
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IExpansionService<
     T extends RowGroupExpansionState | RowGroupBulkExpansionState = RowGroupExpansionState,
 > {

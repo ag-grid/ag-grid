@@ -1,0 +1,16 @@
+{
+  "name": "angular-tests",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "testing/angular-tests",
+  "projectType": "application",
+  "targets": {
+    "test:e2e": {
+      "executor": "nx:run-script",
+      "dependsOn": ["ag-grid-community:build:package", "ag-grid-angular:build"],
+      "options": {
+        "script": "test:e2e"
+      }
+    }
+  },
+  "implicitDependencies": ["ag-grid-community", "ag-grid-angular"]
+}

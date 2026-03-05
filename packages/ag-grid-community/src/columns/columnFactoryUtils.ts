@@ -24,6 +24,7 @@ const depthFirstCallback = (child: AgColumn | AgProvidedColumnGroup, parent: AgP
 /**
  * A performant approach to _createColumnTree where the function assumes all defs have an ID.
  * Used for Pivoting.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _createColumnTreeWithIds(
     beans: BeanCollection,
@@ -92,6 +93,7 @@ export function _createColumnTreeWithIds(
     };
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _createColumnTree(
     beans: BeanCollection,
     defs: (ColDef | ColGroupDef)[] | null | undefined = null,
@@ -267,6 +269,7 @@ export function updateSomeColumnState(
     }
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _updateColumnState(
     beans: BeanCollection,
     column: AgColumn,
@@ -339,6 +342,7 @@ function findExistingColumn(
     return undefined;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _addColumnDefaultAndTypes(
     beans: BeanCollection,
     colDef: ColDef,

@@ -1,5 +1,6 @@
 /**
  * This function provides fuzzy matching suggestions based on the input value and a list of all suggestions.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _fuzzySuggestions(params: {
     inputValue: string;
