@@ -10,7 +10,12 @@ import type { GridOptionsService } from '../gridOptionsService';
 import { _addGridCommonParams, _isClientSideRowModel } from '../gridOptionsUtils';
 import type { CellRange, IRangeService } from '../interfaces/IRangeService';
 import type { EditStrategyType } from '../interfaces/editStrategyType';
-import type { EditingCellPosition, ICellEditorParams, ICellEditorValidationError } from '../interfaces/iCellEditor';
+import type {
+    AgBaseCellEditor,
+    EditingCellPosition,
+    ICellEditorParams,
+    ICellEditorValidationError,
+} from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { RefreshCellsParams } from '../interfaces/iCellsParams';
 import type { Column } from '../interfaces/iColumn';
@@ -370,7 +375,9 @@ export class EditService extends BeanStub implements NamedBean {
 
         if (STOP_EDIT_SOURCE_TRANSFORM_KEYS.has(source) && this.batch) {
             // if we are in batch editing, we do not stop editing on paste
-            this.bulkRefresh(position);
+            if (position?.rowNode && position?.column) {
+                this.bulkRefreshCell(position as Required<EditPosition>);
+            }
             return null;
         }
 
@@ -459,7 +466,7 @@ export class EditService extends BeanStub implements NamedBean {
             model.clearEditValue(position);
         }
 
-        this.bulkRefresh(undefined, edits);
+        this.bulkRefreshMap(edits);
 
         // refresh previously edited cells
         for (const pos of model.getEditPositions(freshEdits)) {
@@ -519,7 +526,7 @@ export class EditService extends BeanStub implements NamedBean {
 
             event.preventDefault();
 
-            this.bulkRefresh(position, edits, { suppressFlash: true });
+            this.bulkRefreshMap(edits, { suppressFlash: true });
 
             return model.getEditMap();
         }
@@ -553,8 +560,6 @@ export class EditService extends BeanStub implements NamedBean {
         _purgeUnchangedEdits(beans);
 
         this.clearValidationIfNoOpenEditors();
-
-        this.bulkRefresh();
 
         const { rowRenderer, formula } = beans;
 
@@ -730,7 +735,7 @@ export class EditService extends BeanStub implements NamedBean {
         this.strategy ??= this.createStrategy();
         this.strategy?.setEditMap(edits, params);
 
-        this.bulkRefresh();
+        this.bulkRefreshMap(edits);
 
         // force refresh of all row cells as custom renderers may depend on multiple cell values
         let refreshParams = FORCE_REFRESH;
@@ -769,20 +774,19 @@ export class EditService extends BeanStub implements NamedBean {
         });
     }
 
-    public bulkRefresh(position: EditPosition = {}, editMap?: EditMap, params: RefreshCellsParams = {}): void {
-        const { beans, gos } = this;
-        const { editModelSvc, rowModel } = beans;
+    private bulkRefreshCell(position: Required<EditPosition>, params?: RefreshCellsParams): void {
+        if (_isClientSideRowModel(this.gos, this.beans.rowModel)) {
+            this.refCell(position, this.model.getEdit(position), params);
+        }
+    }
 
-        if (_isClientSideRowModel(gos, rowModel)) {
-            if (position.rowNode && position.column) {
-                this.refCell(position as Required<EditPosition>, this.model.getEdit(position), params);
-            } else if (editMap) {
-                editModelSvc?.getEditMap(false)?.forEach((editRow, rowNode) => {
-                    for (const column of editRow.keys()) {
-                        this.refCell({ rowNode, column }, editRow.get(column), params);
-                    }
-                });
-            }
+    private bulkRefreshMap(editMap: EditMap, params?: RefreshCellsParams): void {
+        if (_isClientSideRowModel(this.gos, this.beans.rowModel)) {
+            editMap.forEach((editRow, rowNode) => {
+                for (const column of editRow.keys()) {
+                    this.refCell({ rowNode, column }, editRow.get(column), params);
+                }
+            });
         }
     }
 
@@ -1065,7 +1069,7 @@ export class EditService extends BeanStub implements NamedBean {
 
         this.dispatchEditValuesChanged(position, { ...existing, pendingValue: sourceValue });
         this.beans.editModelSvc?.removeEdits(position);
-        this.bulkRefresh(position);
+        _getCellCtrl(this.beans, position)?.refreshCell(FORCE_REFRESH);
         return true; // toggled back to source value
     }
 
@@ -1077,17 +1081,39 @@ export class EditService extends BeanStub implements NamedBean {
             const batch = this.batch;
             const editing = this.isEditing(batch ? undefined : position);
 
-            if ((!editing || this.committing) && !SET_DATA_SOURCE_AS_API.has(eventSource)) {
-                return; // Ignore non-edit edits that are not treated as API sources.
+            if ((!editing || this.committing) && !batch && !SET_DATA_SOURCE_AS_API.has(eventSource)) {
+                return; // Ignore non-edit edits that are not treated as API sources and not in batch mode.
             }
 
             if (!editing && !batch && eventSource === 'paste') {
                 return; // Paste on non editable cells and not batching
             }
 
-            const beans = this.beans;
+            // 'batch' source: write to batch pending value if batch is active (ignoring any open editor),
+            // otherwise fall through to direct data write in rowNode.setDataValue.
+            if (eventSource === 'batch' && !batch) {
+                return; // Not in batch mode, fall through to direct data write
+            }
+
+            // 'edit' source: update the open editor's value without closing it or committing.
+            // If no editor is open, stage as pending (batch) or fall through to direct data write.
+            if (eventSource === 'edit') {
+                if (editing && this.applyEditorValue(position, newValue)) {
+                    return true;
+                }
+                if (!batch) {
+                    return; // No editor and not in batch → fall through to direct data write
+                }
+            }
 
             this.strategy ??= this.createStrategy();
+
+            if (eventSource === 'batch' || eventSource === 'edit') {
+                return this.applyDirectValue(position, newValue, eventSource);
+            }
+
+            const beans = this.beans;
+
             let source: string;
             if (batch) {
                 source = 'ui';
@@ -1157,22 +1183,93 @@ export class EditService extends BeanStub implements NamedBean {
         return true; // edit removed and cell refreshed, so return true to indicate the event was handled
     }
 
+    /**
+     * Pushes a value into an open cell editor without closing it or committing.
+     * Updates editorValue and pendingValue in the edit model, then refreshes the editor DOM.
+     * Returns true if an editor was open and updated, false otherwise.
+     */
+    private applyEditorValue(position: Required<EditPosition>, newValue: any): boolean {
+        const beans = this.beans;
+        const cellCtrl = _getCellCtrl(beans, position);
+        const editor = cellCtrl?.comp?.getCellEditor();
+        if (!cellCtrl || !editor) {
+            return false;
+        }
+
+        // Update both editorValue and pendingValue in the edit model
+        _syncFromEditor(beans, position, newValue, 'edit', undefined, { persist: true });
+
+        // Refresh cell styles after updating the edit model so that the ag-cell-editing
+        // class and batch-edit styling reflect the new pending value.
+        cellCtrl.editStyleFeature?.applyCellStyles?.();
+
+        // Fast path for built-in editors: update value in-place without recreating
+        if ('agSetEditValue' in editor) {
+            (editor as AgBaseCellEditor).agSetEditValue(newValue);
+            return true;
+        }
+
+        // Fast path for framework wrappers (React/Angular/Vue): update via refresh()
+        if (editor.refresh && cellCtrl.editCompDetails) {
+            editor.refresh({ ...cellCtrl.editCompDetails.params, value: newValue });
+            return true;
+        }
+
+        // Fallback for editors that don't implement refresh(): recreate the editor to pick up the new value.
+        const restoreFocus = cellCtrl.hasBrowserFocus();
+        if (restoreFocus) {
+            cellCtrl.onEditorAttachedFuncs.push(() => {
+                const latestCellCtrl = _getCellCtrl(this.beans, position);
+                latestCellCtrl?.focusCell(true);
+                latestCellCtrl?.comp?.getCellEditor()?.focusIn?.();
+            });
+        }
+
+        _destroyEditors(beans, [position], { silent: true, cancel: true });
+        _setupEditor(beans, position, { silent: true });
+        _populateModelValidationErrors(beans);
+        _getCellCtrl(beans, position)?.refreshCell(FORCE_REFRESH);
+
+        return true;
+    }
+
     /** editApi or undoRedoApi apply change without involving the editor. */
     private applyDirectValue(position: Required<EditPosition>, newValue: any, eventSource?: string): boolean {
         const beans = this.beans;
 
         if (this.batch) {
-            _syncFromEditor(beans, position, newValue, eventSource, undefined, { persist: true });
+            if (eventSource === 'batch' && _getCellCtrl(beans, position)?.comp?.getCellEditor()) {
+                // 'batch' source with an open editor: write ONLY to pendingValue,
+                // leaving editorValue untouched so the editor keeps showing what
+                // the user typed. The staged value is accessible via getCellValue 'batch'.
+                const { editModelSvc, valueSvc } = beans;
+                const { rowNode, column } = position;
+                const existingEdit = editModelSvc?.getEdit(position);
+                if (existingEdit?.sourceValue === undefined) {
+                    editModelSvc?.setEdit(position, {
+                        sourceValue: valueSvc.getValue(column as AgColumn, rowNode, 'data'),
+                    });
+                }
+                editModelSvc?.setEdit(position, { pendingValue: newValue, state: 'changed' });
+            } else {
+                // All other sources: sync through the editor model layer.
+                _syncFromEditor(beans, position, newValue, eventSource, undefined, { persist: true });
 
-            this.cleanupEditors();
+                // 'batch' source (no open editor) stages a pending value without disrupting display;
+                // other sources close the editor, symmetrically with how default setDataValue works.
+                if (eventSource !== 'batch') {
+                    this.cleanupEditors();
+                }
+            }
 
             _purgeUnchangedEdits(beans);
 
             // Lazily dispatch batchEditingStarted for direct API writes during batch.
             this.ensureBatchStarted();
 
-            // force refresh of all row cells as custom renderers may depend on multiple cell values
-            this.bulkRefresh();
+            // Refresh the changed cell and dispatch cellEditValuesChanged so consumers
+            // (e.g. find service) react to the pending value update.
+            this.bulkRefreshCell(position);
             return true;
         }
 
@@ -1350,8 +1447,6 @@ export class EditService extends BeanStub implements NamedBean {
 
                 this.ensureBatchStarted();
 
-                // force refresh of all row cells as custom renderers may depend on multiple cell values
-                this.bulkRefresh();
                 return;
             }
 
@@ -1365,8 +1460,6 @@ export class EditService extends BeanStub implements NamedBean {
                 }
             }
         });
-
-        this.bulkRefresh();
 
         // focus the first cell in the range
         const cellCtrl = _getCellCtrl(beans, { rowNode, column })!;

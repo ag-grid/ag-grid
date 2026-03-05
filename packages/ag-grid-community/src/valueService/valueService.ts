@@ -197,17 +197,24 @@ export class ValueService extends BeanStub implements NamedBean {
             return pending;
         }
 
-        // when using multiple columns, the group column should have no value higher than its level
-        const rowGroupColId = colDef.showRowGroup;
-        if (typeof rowGroupColId === 'string') {
-            // if multiple columns, don't show values in cells grouped at a higher level
-            const colRowGroupIndex = this.beans.rowGroupColsSvc?.getColumnIndex(rowGroupColId) ?? -1;
-            if (colRowGroupIndex > rowNode.level) {
-                return null;
-            }
-        }
-
         let result = this.resolveValue(column, rowNode, ignoreAggData);
+
+        if (result === undefined) {
+            // For showRowGroup columns on group rows, if no value was resolved and the row's
+            // group level is shallower than the column's associated row group, return null for
+            // retro-compatibility (previously getValue returned null early in this case).
+            // This guard applies to group rows only — leaf rows always return undefined here.
+            if (rowNode.group) {
+                const rowGroupColId = column.getColDef().showRowGroup;
+                if (typeof rowGroupColId === 'string') {
+                    const colRowGroupIndex = this.beans.rowGroupColsSvc?.getColumnIndex(rowGroupColId);
+                    if (colRowGroupIndex != null && colRowGroupIndex > rowNode.level) {
+                        return null;
+                    }
+                }
+            }
+            return undefined;
+        }
 
         // the result could be an expression itself, if we are allowing cell values to be expressions
         if (this.cellExpressions && _isExpressionString(result)) {
