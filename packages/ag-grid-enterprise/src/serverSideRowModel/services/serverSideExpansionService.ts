@@ -31,6 +31,7 @@ export class ServerSideExpansionService
     private strategy: IExpansionStrategy<RowGroupExpansionState> | IExpansionStrategy<RowGroupBulkExpansionState>;
     private serverSideRowModel: ServerSideRowModel;
     private storeFactory: StoreFactory;
+    private prevGroupColIds: string[] = [];
 
     public wireBeans(beans: BeanCollection) {
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
@@ -43,20 +44,43 @@ export class ServerSideExpansionService
         };
 
         const preserveAndResetExpand = () => {
+            const newGroupColIds = (this.beans.rowGroupColsSvc?.columns ?? []).map((col) => col.getId());
+            const oldGroupColIds = this.prevGroupColIds;
+            this.prevGroupColIds = newGroupColIds;
+
             const newStrategy = this.createManagedBean(new ExpandStrategy());
             // Preserve expansion state from the previous default strategy across group column changes
             if (this.strategy && !this.isExpandAllStrategy(this.strategy)) {
                 const oldStrategy = this.strategy as ExpandStrategy;
+
+                // Find the first level where group columns diverged — no IDs at or beyond this
+                // level can survive since those nodes will all have different IDs or cease to exist.
+                const minLen = Math.min(oldGroupColIds.length, newGroupColIds.length);
+                let firstDirtyLevel = minLen; // default: columns added/removed at end
+                for (let i = 0; i < minLen; i++) {
+                    if (oldGroupColIds[i] !== newGroupColIds[i]) {
+                        firstDirtyLevel = i;
+                        break;
+                    }
+                }
+
+                // If the top-level group column changed, no existing IDs survive — skip snapshot.
+                if (firstDirtyLevel === 0) {
+                    this.strategy = newStrategy;
+                    return;
+                }
+
                 let { expandedRowGroupIds, collapsedRowGroupIds } = oldStrategy.getExpandedState();
 
-                // Filter out IDs at levels that no longer exist or that will become leaf groups
-                // in pivot mode (leaf groups in pivot have no rows to display)
-                const newGroupColCount = this.beans.rowGroupColsSvc?.columns.length ?? 0;
+                // Filter out IDs at levels that no longer exist, that will become leaf groups in
+                // pivot mode, or that are at/beyond the first dirty group column level.
+                const newGroupColCount = newGroupColIds.length;
                 const maxValidLevel = this.beans.colModel.isPivotMode() ? newGroupColCount - 1 : newGroupColCount;
-                if (maxValidLevel >= 0) {
+                const upperBound = Math.min(maxValidLevel, firstDirtyLevel);
+                if (upperBound >= 0) {
                     const isValidLevel = (id: string) => {
                         const level = oldStrategy.getNodeLevel(id);
-                        return level != null && level < maxValidLevel;
+                        return level != null && level < upperBound;
                     };
                     expandedRowGroupIds = expandedRowGroupIds.filter(isValidLevel);
                     collapsedRowGroupIds = collapsedRowGroupIds?.filter(isValidLevel);
@@ -88,6 +112,7 @@ export class ServerSideExpansionService
         });
 
         resetExpand();
+        this.prevGroupColIds = (this.beans.rowGroupColsSvc?.columns ?? []).map((col) => col.getId());
     }
 
     public setExpansionState(state: RowGroupExpansionState | RowGroupBulkExpansionState): void {

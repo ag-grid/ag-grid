@@ -1,12 +1,12 @@
 import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, GridStateModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager } from '../test-utils';
+import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('ag-grid grouping simple data', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule],
+        modules: [ClientSideRowModelModule, GridStateModule, RowGroupingModule],
     });
 
     beforeEach(() => {
@@ -81,6 +81,15 @@ describe('ag-grid grouping simple data', () => {
             · └── LEAF hidden id:3 country:"France" year:2020
         `);
 
+        // Flush the debounced state update (rowExpansionStateChanged is debounced with 0ms)
+        await asyncSetTimeout(0);
+
+        // Expansion state debounce has settled — Ireland is in the expanded set
+        expect(api.getState().rowGroupExpansion).toEqual({
+            expandedRowGroupIds: ['row-group-country-Ireland'],
+            collapsedRowGroupIds: [],
+        });
+
         // Add year as a second grouping column
         api.setGridOption('columnDefs', [
             { field: 'country', rowGroup: true, hide: true },
@@ -99,6 +108,15 @@ describe('ag-grid grouping simple data', () => {
             · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020
             · · └── LEAF hidden id:3 country:"France" year:2020
         `);
+
+        // Flush the debounced state update
+        await asyncSetTimeout(0);
+
+        // Ireland's ID is unchanged so it remains in the expanded set after the column change
+        expect(api.getState().rowGroupExpansion).toEqual({
+            expandedRowGroupIds: ['row-group-country-Ireland'],
+            collapsedRowGroupIds: [],
+        });
     });
 
     test('expanding groups then removing the deepest group column preserves expansion state', async () => {
@@ -132,6 +150,15 @@ describe('ag-grid grouping simple data', () => {
             · · └── LEAF hidden id:3 country:"France" year:2020
         `);
 
+        // Flush the debounced state update
+        await asyncSetTimeout(0);
+
+        // Expansion state debounce has settled — both expanded nodes are in the set
+        expect(api.getState().rowGroupExpansion).toEqual({
+            expandedRowGroupIds: ['row-group-country-Ireland', 'row-group-country-Ireland-year-2020'],
+            collapsedRowGroupIds: [],
+        });
+
         // Remove year from grouping - only country remains
         api.setGridOption('columnDefs', [
             { field: 'country', rowGroup: true, hide: true },
@@ -147,6 +174,15 @@ describe('ag-grid grouping simple data', () => {
             └─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France"
             · └── LEAF hidden id:3 country:"France" year:2020
         `);
+
+        // Flush the debounced state update
+        await asyncSetTimeout(0);
+
+        // Year sub-group nodes are gone — only Ireland remains in the expanded set
+        expect(api.getState().rowGroupExpansion).toEqual({
+            expandedRowGroupIds: ['row-group-country-Ireland'],
+            collapsedRowGroupIds: [],
+        });
     });
 
     test('removing the top group column resets all expansion to default', async () => {
@@ -180,6 +216,15 @@ describe('ag-grid grouping simple data', () => {
             · · └── LEAF hidden id:3 country:"France" year:2020
         `);
 
+        // Flush the debounced state update
+        await asyncSetTimeout(0);
+
+        // Expansion state debounce has settled — both expanded nodes are in the set
+        expect(api.getState().rowGroupExpansion).toEqual({
+            expandedRowGroupIds: ['row-group-country-Ireland', 'row-group-country-Ireland-year-2020'],
+            collapsedRowGroupIds: [],
+        });
+
         // Remove country (top level) from grouping — only year remains
         api.setGridOption('columnDefs', [
             { field: 'country', rowGroup: false },
@@ -196,6 +241,15 @@ describe('ag-grid grouping simple data', () => {
             └─┬ LEAF_GROUP collapsed id:row-group-year-2021 ag-Grid-AutoColumn:2021
             · └── LEAF hidden id:2 country:"Ireland" year:2021
         `);
+
+        // Flush the debounced state update
+        await asyncSetTimeout(0);
+
+        // All year-level IDs changed so none matched — state resets to empty
+        expect(api.getState().rowGroupExpansion).toEqual({
+            expandedRowGroupIds: [],
+            collapsedRowGroupIds: [],
+        });
     });
 
     test('removing a middle group column does not preserve deeper level expansion state', async () => {
@@ -653,6 +707,15 @@ describe('ag-grid grouping simple data', () => {
                 · · └── LEAF hidden id:3 country:"France" year:2020
             `);
 
+            // Flush the debounced state update
+            await asyncSetTimeout(0);
+
+            // Expansion state debounce has settled — both expanded nodes are in the set
+            expect(api.getState().rowGroupExpansion).toEqual({
+                expandedRowGroupIds: ['row-group-country-Ireland', 'row-group-country-Ireland-year-2020'],
+                collapsedRowGroupIds: [],
+            });
+
             api.resetRowGroupExpansion();
 
             // All groups should be collapsed (groupDefaultExpanded defaults to 0)
@@ -667,6 +730,15 @@ describe('ag-grid grouping simple data', () => {
                 · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020
                 · · └── LEAF hidden id:3 country:"France" year:2020
             `);
+
+            // Flush the debounced state update
+            await asyncSetTimeout(0);
+
+            // Expansion state debounce settled — reset returns state to empty
+            expect(api.getState().rowGroupExpansion).toEqual({
+                expandedRowGroupIds: [],
+                collapsedRowGroupIds: [],
+            });
         });
 
         test('resets to groupDefaultExpanded: -1 (all expanded)', async () => {
@@ -852,6 +924,12 @@ describe('ag-grid grouping simple data', () => {
                 { field: 'year', rowGroup: true, hide: true },
             ]);
 
+            // columnRowGroupChanged updates state synchronously — Ireland's ID is unchanged so it remains expanded
+            expect(api.getState().rowGroupExpansion).toEqual({
+                expandedRowGroupIds: ['row-group-country-Ireland'],
+                collapsedRowGroupIds: [],
+            });
+
             await new GridRows(api, 'Ireland preserved expanded after column change').check(`
                 ROOT id:ROOT_NODE_ID
                 ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
@@ -878,12 +956,21 @@ describe('ag-grid grouping simple data', () => {
                 · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020
                 · · └── LEAF hidden id:3 country:"France" year:2020
             `);
+
+            // Flush the debounced state update
+            await asyncSetTimeout(0);
+
+            // Expansion state debounce settled — reset returns state to empty
+            expect(api.getState().rowGroupExpansion).toEqual({
+                expandedRowGroupIds: [],
+                collapsedRowGroupIds: [],
+            });
         });
     });
 
     describe('pivot mode', () => {
         const pivotGridsManager = new TestGridsManager({
-            modules: [ClientSideRowModelModule, RowGroupingModule, PivotModule],
+            modules: [ClientSideRowModelModule, GridStateModule, RowGroupingModule, PivotModule],
         });
 
         beforeEach(() => {

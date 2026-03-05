@@ -122,7 +122,12 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             storeUpdated: this.onStoreUpdated.bind(this),
             columnValueChanged: resetListener,
             columnPivotChanged: resetListener,
-            columnRowGroupChanged: resetListener,
+            columnRowGroupChanged: () => {
+                if (this.beans.colModel.changeEventsDispatching) {
+                    return; // defer to onColumnEverything
+                }
+                this.refreshAfterGroupColumnChange();
+            },
             columnPivotModeChanged: resetListener,
         });
 
@@ -250,7 +255,9 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
         const resetRequired = sortModelDifferent || rowGroupDifferent || pivotDifferent || valuesDifferent;
 
-        if (resetRequired) {
+        if (rowGroupDifferent && !sortModelDifferent && !pivotDifferent && !valuesDifferent) {
+            this.refreshAfterGroupColumnChange();
+        } else if (resetRequired) {
             this.resetRootStore();
         } else {
             // cols may have changed even if we didn't do a reset. storeParams ref will be provided when getRows
@@ -372,6 +379,47 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
                     field: col.getColDef().field,
                 }) as ColumnVO
         );
+    }
+
+    private refreshAfterGroupColumnChange(): void {
+        const { storeParams, datasource } = this;
+        if (!storeParams || !datasource) {
+            this.resetRootStore();
+            return;
+        }
+
+        const oldRowGroupCols = storeParams.rowGroupCols;
+        const newRowGroupCols = this.columnsToValueObjects(this.rowGroupColsSvc?.columns);
+
+        // Find the first level where group columns diverge
+        const minLen = Math.min(oldRowGroupCols.length, newRowGroupCols.length);
+        let firstDirtyLevel = -1;
+        for (let i = 0; i < minLen; i++) {
+            if (oldRowGroupCols[i].id !== newRowGroupCols[i].id) {
+                firstDirtyLevel = i;
+                break;
+            }
+        }
+        if (firstDirtyLevel === -1) {
+            firstDirtyLevel = minLen; // columns added/removed at the end
+        }
+
+        // Update storeParams (shared reference propagates to all stores)
+        this.storeParams.rowGroupCols = newRowGroupCols;
+
+        if (firstDirtyLevel === 0) {
+            this.resetRootStore();
+            return;
+        }
+
+        const rootStore = this.getRootStore();
+        if (!rootStore) {
+            return;
+        }
+
+        rootStore.refreshAfterGroupColumnChange(firstDirtyLevel);
+        this.updateRowIndexesAndBounds();
+        this.dispatchModelUpdated(false);
     }
 
     private createStoreParams(): SSRMParams {
