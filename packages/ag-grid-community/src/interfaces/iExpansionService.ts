@@ -26,9 +26,7 @@ export interface RowGroupBulkExpansionState {
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export interface IExpansionService<
-    T extends RowGroupExpansionState | RowGroupBulkExpansionState = RowGroupExpansionState,
-> {
+export interface IExpansionService<T extends RowGroupExpansionState | RowGroupBulkExpansionState> {
     addExpandedCss(classes: string[], rowNode: RowNode): void;
 
     getRowExpandedListeners(rowCtrl: RowCtrl): {
