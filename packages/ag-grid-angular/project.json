@@ -49,12 +49,11 @@
       "inputs": ["allTransitiveOutputs"],
       "outputs": ["{workspaceRoot}/dist/artifacts/{projectRoot}.tgz"],
       "options": {
-        "cwd": "{projectRoot}/dist/ag-grid-angular",
         "parallel": false,
         "commands": [
-          "mkdir -p ../../../../dist/artifacts/{projectRoot}",
-          "yarn pack -f ../../../../dist/artifacts/{projectRoot}.tgz",
-          "rm -rf ../../../../dist/artifacts/{projectRoot}"
+          "mkdir -p dist/artifacts/{projectRoot}",
+          "cd {projectRoot}/dist/ag-grid-angular && yarn pack -f ../../../../dist/artifacts/{projectRoot}.tgz",
+          "rm -rf dist/artifacts/{projectRoot}"
         ]
       }
     },

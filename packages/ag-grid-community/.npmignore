@@ -28,4 +28,6 @@ coverage
 .swcrc
 osv-scanner.toml
 .snyk
-e2e/umd.test.ts
+e2e/*
+playwright.config.ts
+esbuildBuild.cjs
