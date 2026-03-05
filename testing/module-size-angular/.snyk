@@ -2,6 +2,12 @@
 version: v1.25.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
+    SNYK-JS-IMMUTABLE-15423650:
+        - '@angular-devkit/build-angular@19.2.19 > @angular/build@19.2.19 > sass@1.85.0 > immutable@5.1.4':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-05T11:42:40.121Z
     SNYK-JS-ANGULARCORE-15353393:
         - '@angular/core@19.2.15':
               reason: >-
