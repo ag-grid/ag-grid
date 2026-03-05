@@ -572,11 +572,11 @@ const server = createServer((req, res) => {
                 pkg.resolutions = pkg.resolutions || {};
                 pkg.resolutions[key] = version;
                 writeFileSync(absPath, JSON.stringify(pkg, null, 2) + '\n', 'utf8');
-                res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ ok: true, key, version }));
+                res.writeHead(200, { 'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff' });
+                res.end(JSON.stringify({ ok: true }));
             } catch (err) {
-                res.writeHead(400, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ ok: false, error: err.message }));
+                res.writeHead(400, { 'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff' });
+                res.end(JSON.stringify({ ok: false, error: String(err.message) }));
             }
         });
         return;
@@ -633,28 +633,37 @@ const server = createServer((req, res) => {
             let foundField = null;
             let foundVersion = null;
             for (const f of fields) {
-                if (pkgJson[f] && pkg in pkgJson[f]) {
-                    foundField = f;
-                    foundVersion = pkgJson[f][pkg];
-                    break;
+                const section = pkgJson[f];
+                if (section && typeof section === 'object') {
+                    // Iterate own keys to avoid using unsanitised input as a direct property accessor
+                    const match = Object.entries(section).find(([k]) => k === pkg);
+                    if (match) {
+                        foundField = f;
+                        foundVersion = match[1];
+                        break;
+                    }
                 }
             }
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ ok: true, field: foundField, version: foundVersion }));
+            res.writeHead(200, { 'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff' });
+            res.end(JSON.stringify({ ok: true, field: foundField ?? '', version: String(foundVersion ?? '') }));
         } catch (err) {
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ ok: false, error: err.message }));
+            res.writeHead(200, { 'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff' });
+            res.end(JSON.stringify({ ok: false, error: String(err.message) }));
         }
         return;
     }
 
     // Serve static UI files (.css/.js) from the same directory as ui.html
-    const staticMatch = url.pathname.match(/^\/([a-zA-Z0-9-]+)\.(css|js)$/);
-    if (staticMatch) {
-        const mimeTypes = { css: 'text/css', js: 'application/javascript' };
+    const STATIC_FILES = {
+        '/ui-styles.css': { file: 'ui-styles.css', type: 'text/css' },
+        '/ui-browse.js':  { file: 'ui-browse.js',  type: 'application/javascript' },
+        '/ui-review.js':  { file: 'ui-review.js',  type: 'application/javascript' },
+    };
+    const staticEntry = STATIC_FILES[url.pathname];
+    if (staticEntry) {
         try {
-            const content = readFileSync(resolve(__dirname, staticMatch[1] + '.' + staticMatch[2]));
-            res.writeHead(200, { 'Content-Type': mimeTypes[staticMatch[2]] });
+            const content = readFileSync(resolve(__dirname, staticEntry.file));
+            res.writeHead(200, { 'Content-Type': staticEntry.type });
             res.end(content);
         } catch {
             res.writeHead(404);
