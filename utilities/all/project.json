@@ -263,6 +263,9 @@
       "configurations": {
         "open": {
           "args": ["--open"]
+        },
+        "watch": {
+          "command": "node --watch-path=./external/ag-shared/scripts/snyk-viewer ./external/ag-shared/scripts/snyk-viewer/index.mjs {args.file} --port {args.port} --name \"{args.name}\""
         }
       }
     }
