@@ -16,7 +16,7 @@ import {
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { BatchEditModule, CellSelectionModule, RowGroupingModule } from 'ag-grid-enterprise';
+import { BatchEditModule, CellSelectionModule, ClipboardModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     NumberEditorModule,
@@ -24,11 +24,13 @@ ModuleRegistry.registerModules([
     TextEditorModule,
     ClientSideRowModelModule,
     BatchEditModule,
+    ClipboardModule,
     RowGroupingModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let gridApi: GridApi;
+let pendingEditCount = 0;
 
 function sumTotalValueGetter(params: ValueGetterParams): number {
     const { node, data, api } = params;
@@ -65,16 +67,28 @@ const gridOptions: GridOptions = {
     onRowEditingStopped: (_event: RowEditingStoppedEvent) => {
         console.log('rowEditingStopped');
     },
-    onCellEditingStarted: (_event: CellEditingStartedEvent) => {
+    onCellEditingStarted: (event: CellEditingStartedEvent) => {
         console.log('cellEditingStarted');
+        updateEditCount(event.api);
     },
-    onCellEditingStopped: (_event: CellEditingStoppedEvent) => {
+    onCellEditingStopped: (event: CellEditingStoppedEvent) => {
         console.log('cellEditingStopped');
+        updateEditCount(event.api);
     },
     onCellValueChanged: (_event: CellValueChangedEvent) => {
         console.log('Cell value changed');
     },
 };
+
+function updateEditCount(api: GridApi) {
+    if (api.isBatchEditing()) {
+        pendingEditCount = api.getEditingCells().length;
+        const el = document.querySelector<HTMLElement>('#batchStatusValue');
+        if (el) {
+            el.textContent = `Active (${pendingEditCount} edit${pendingEditCount !== 1 ? 's' : ''})`;
+        }
+    }
+}
 
 function getEditingCells() {
     const cells = gridApi!.getEditingCells();
@@ -82,33 +96,24 @@ function getEditingCells() {
 }
 
 function startBatchEdit() {
-    console.log('Starting batch edit');
+    pendingEditCount = 0;
     gridApi!.startBatchEdit();
+    const el = document.querySelector<HTMLElement>('#batchStatusValue');
+    if (el) el.textContent = 'Active (0 edits)';
 }
 
 function commitBatchEdit() {
-    console.log('Committing batch edit');
     gridApi!.commitBatchEdit();
+    pendingEditCount = 0;
+    const el = document.querySelector<HTMLElement>('#batchStatusValue');
+    if (el) el.textContent = 'Inactive';
 }
 
 function cancelBatchEdit() {
-    console.log('Cancelling batch edit');
     gridApi!.cancelBatchEdit();
-}
-
-function startEdit() {
-    gridApi!.startEditingCell({
-        rowIndex: 0,
-        colKey: 'athlete',
-    });
-}
-
-function cancelEdit() {
-    gridApi!.stopEditing(true);
-}
-
-function stopEdit() {
-    gridApi!.stopEditing();
+    pendingEditCount = 0;
+    const el = document.querySelector<HTMLElement>('#batchStatusValue');
+    if (el) el.textContent = 'Inactive';
 }
 
 // setup the grid after the page has finished loading

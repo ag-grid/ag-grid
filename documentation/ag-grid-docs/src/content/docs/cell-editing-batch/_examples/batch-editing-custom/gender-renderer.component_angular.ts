@@ -21,6 +21,7 @@ export class GenderRenderer implements ICellRendererAngularComp {
     }
 
     refresh(params: ICellRendererParams) {
-        return false;
+        this.value.set(params.value);
+        return true;
     }
 }
