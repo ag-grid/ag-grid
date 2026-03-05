@@ -618,7 +618,7 @@ export class RowNode<TData = any>
             return undefined;
         }
 
-        // 'data-raw' bypasses aggregation and formula resolution — returns raw underlying data
+        // 'data-raw' skips aggData (aggregation results) and formula resolution, but still calls valueGetters
         // 'value' reads committed data like 'data' but resolves agg wrappers (handled below)
         const dataRaw = from === 'data-raw';
         const resolvedFrom = dataRaw || from === 'value' ? 'data' : from;

@@ -10,7 +10,7 @@ import type { CellValueResolveFrom } from '../interfaces/iEditService';
  *
  * - `'data'` (default) — Committed data, ignoring pending edits.
  *   For aggregation columns using `avg` or `count`, the raw `IAggFuncResult` wrapper is returned.
- * - `'data-raw'` — Raw underlying data, bypassing aggregation, valueGetters, and formula resolution.
+ * - `'data-raw'` — Same as `'data'` but skips aggregation results (`rowNode.aggData`) and formula resolution.
  * - `'value'` — Same as `'data'`, but aggregation wrappers are resolved to their scalar value.
  * - `'edit'` — Live editor value if a cell is being edited, then pending batch value, then committed data.
  * - `'batch'` — Pending batch value (excludes live editor typing), then committed data.

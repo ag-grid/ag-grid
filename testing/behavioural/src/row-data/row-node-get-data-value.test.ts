@@ -670,6 +670,76 @@ describe('RowNode.getDataValue', () => {
                 api.getCellValue({ rowNode: franceGroup, colKey: pivotCol2020! })
             );
         });
+
+        test('getDataValue on true leaf data row resolves pivot column to underlying value column', async () => {
+            const api = await gridsManager.createGridAndWait('pivot-true-leaf-row', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'year', pivot: true, hide: true },
+                    { field: 'sales', aggFunc: 'sum' },
+                ],
+                pivotMode: true,
+                groupDefaultExpanded: -1,
+                getRowId: ({ data }) => data.id,
+                rowData: createPivotRowData(),
+            });
+
+            await asyncSetTimeout(1);
+
+            const pivotColumns = api.getPivotResultColumns();
+            const pivotCol2020 = pivotColumns?.find((col) => col.getColId().includes('2020_sales'));
+            const pivotCol2021 = pivotColumns?.find((col) => col.getColId().includes('2021_sales'));
+            expect(pivotCol2020).toBeDefined();
+            expect(pivotCol2021).toBeDefined();
+
+            // True leaf data rows (group === false)
+            const leafRow2020 = api.getRowNode('1')!; // France, year=2020, sales=1000
+            const leafRow2021 = api.getRowNode('2')!; // France, year=2021, sales=1200
+            expect(leafRow2020.group).toBe(false);
+            expect(leafRow2021.group).toBe(false);
+
+            // Leaf rows resolve pivot columns to the underlying value column (sales).
+            // Both pivotCol2020 and pivotCol2021 share the same pivotValueColumn (sales),
+            // so getDataValue returns the leaf row's own sales value regardless of which
+            // pivot column is queried — the pivot dimension is not applicable at leaf level.
+            expect(leafRow2020.getDataValue(pivotCol2020!)).toBe(1000);
+            expect(leafRow2020.getDataValue(pivotCol2021!)).toBe(1000);
+
+            expect(leafRow2021.getDataValue(pivotCol2020!)).toBe(1200);
+            expect(leafRow2021.getDataValue(pivotCol2021!)).toBe(1200);
+        });
+
+        test('getDataValue on true leaf data row: all from modes return underlying value column', async () => {
+            const api = await gridsManager.createGridAndWait('pivot-true-leaf-from', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'year', pivot: true, hide: true },
+                    { field: 'sales', aggFunc: 'sum' },
+                ],
+                pivotMode: true,
+                groupDefaultExpanded: -1,
+                getRowId: ({ data }) => data.id,
+                rowData: createPivotRowData(),
+            });
+
+            await asyncSetTimeout(1);
+
+            const pivotColumns = api.getPivotResultColumns();
+            const pivotCol2020 = pivotColumns?.find((col) => col.getColId().includes('2020_sales'));
+            expect(pivotCol2020).toBeDefined();
+
+            const leafRow = api.getRowNode('1')!; // France, year=2020, sales=1000
+            expect(leafRow.group).toBe(false);
+
+            // All from modes resolve to the underlying sales value for true leaf rows.
+            // Leaf rows have no aggregation or pending edits, so all modes return the same committed value.
+            expect(leafRow.getDataValue(pivotCol2020!)).toBe(1000);
+            expect(leafRow.getDataValue(pivotCol2020!, 'data')).toBe(1000);
+            expect(leafRow.getDataValue(pivotCol2020!, 'data-raw')).toBe(1000);
+            expect(leafRow.getDataValue(pivotCol2020!, 'edit')).toBe(1000);
+            expect(leafRow.getDataValue(pivotCol2020!, 'batch')).toBe(1000);
+            expect(leafRow.getDataValue(pivotCol2020!, 'value')).toBe(1000);
+        });
     });
 
     describe('aggregation without pivot', () => {
@@ -2090,6 +2160,102 @@ describe('RowNode.getDataValue', () => {
 
             // 'data-raw' bypasses aggregation — returns the parent's own data value
             expect(parent.getDataValue('v', 'data-raw')).toBe(5);
+        });
+    });
+
+    describe('from parameter with valueGetter', () => {
+        test('from: all modes call valueGetter on leaf rows', async () => {
+            const api = await gridsManager.createGridAndWait('from-vg-all-modes', {
+                columnDefs: [
+                    { field: 'price' },
+                    { field: 'quantity' },
+                    {
+                        colId: 'total',
+                        valueGetter: (params) => params.data.price * params.data.quantity,
+                    },
+                ],
+                rowData: [{ id: '1', price: 10, quantity: 5 }],
+                getRowId: (params) => params.data.id,
+            });
+
+            const row = api.getRowNode('1')!;
+
+            // All from modes call the valueGetter — there is no aggregation or pending edit on a plain leaf row
+            expect(row.getDataValue('total')).toBe(50);
+            expect(row.getDataValue('total', 'data')).toBe(50);
+            expect(row.getDataValue('total', 'data-raw')).toBe(50);
+            expect(row.getDataValue('total', 'edit')).toBe(50);
+            expect(row.getDataValue('total', 'batch')).toBe(50);
+            expect(row.getDataValue('total', 'value')).toBe(50);
+        });
+
+        test('from: data-raw calls valueGetter (skips aggData, not valueGetters)', async () => {
+            // data-raw only bypasses rowNode.aggData (aggregation results).
+            // valueGetters are still executed — they read from rowNode.data directly.
+            const api = await gridsManager.createGridAndWait('from-vg-data-raw', {
+                columnDefs: [
+                    { field: 'cat', rowGroup: true, hide: true },
+                    { field: 'v', aggFunc: 'sum' },
+                    {
+                        colId: 'label',
+                        // valueGetter that reads from the leaf row data
+                        valueGetter: (params) => (params.data ? `item-${params.data.v}` : null),
+                    },
+                ],
+                rowData: [
+                    { id: '1', cat: 'A', v: 10 },
+                    { id: '2', cat: 'A', v: 20 },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: 1,
+            });
+
+            await asyncSetTimeout(1);
+
+            // Leaf row: data-raw still calls the valueGetter
+            const leaf = api.getRowNode('1')!;
+            expect(leaf.group).toBe(false);
+            expect(leaf.getDataValue('label', 'data')).toBe('item-10');
+            expect(leaf.getDataValue('label', 'data-raw')).toBe('item-10');
+
+            // Group row: data-raw skips aggData then calls valueGetter.
+            // Group rows have no data, so valueGetter returns null.
+            let group: any;
+            api.forEachNode((node: any) => {
+                if (node.group && node.key === 'A') group = node;
+            });
+            expect(group!.getDataValue('label', 'data-raw')).toBeNull();
+            expect(group!.getDataValue('label', 'data')).toBeNull();
+        });
+
+        test('from: batch returns pending value for field column; valueGetter always reads committed data', async () => {
+            const api = await gridsManager.createGridAndWait('from-vg-batch-pending', {
+                columnDefs: [
+                    { field: 'price', editable: true },
+                    { field: 'quantity' },
+                    {
+                        colId: 'total',
+                        valueGetter: (params) => params.data.price * params.data.quantity,
+                    },
+                ],
+                rowData: [{ id: '1', price: 10, quantity: 5 }],
+                getRowId: (params) => params.data.id,
+            });
+
+            api.startBatchEdit();
+            const row = api.getRowNode('1')!;
+            row.setDataValue('price', 20, 'batch');
+
+            // 'data' returns committed price; 'batch' returns the pending value
+            expect(row.getDataValue('price', 'data')).toBe(10);
+            expect(row.getDataValue('price', 'batch')).toBe(20);
+
+            // valueGetter reads from params.data which holds committed data,
+            // so 'total' returns committed result for all modes
+            expect(row.getDataValue('total', 'data')).toBe(50); // 10 * 5
+            expect(row.getDataValue('total', 'batch')).toBe(50); // still 10 * 5 (valueGetter sees committed data)
+
+            api.cancelBatchEdit();
         });
     });
 
