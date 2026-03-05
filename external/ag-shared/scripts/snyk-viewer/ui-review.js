@@ -763,7 +763,9 @@
             const badge = document.getElementById('s3-heading-badge');
             if (badge) {
                 const { ignoreVulns, autoResolvedIds } = ignoreData;
-                const unresolvedCount = ignoreVulns.size - autoResolvedIds.size;
+                const unresolvedCount = [...ignoreVulns.keys()].filter(
+                    id => !skipState.vulns.has(id) && !autoResolvedIds.has(id)
+                ).length;
                 badge.textContent = `${unresolvedCount} / ${ignoreVulns.size}`;
             }
         }
