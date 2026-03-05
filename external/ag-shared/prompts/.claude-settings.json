@@ -1,73 +1,73 @@
 {
-  "attribution": {
-    "commit": "",
-    "pr": ""
-  },
-  "permissions": {
-    "allow": [
-      "Bash(command -v:*)",
-      "Bash(find:*)",
-      "Bash(gh pr checkout:*)",
-      "Bash(gh pr checks:*)",
-      "Bash(gh pr diff:*)",
-      "Bash(gh pr list:*)",
-      "Bash(gh pr review:*)",
-      "Bash(gh pr view:*)",
-      "Bash(git fetch:*)",
-      "Bash(git ls-tree:*)",
-      "Bash(grep:*)",
-      "Bash(jq:*)",
-      "Bash(ls:*)",
-      "Bash(mkdir:*)",
-      "Bash(npx tsc:*)",
-      "Bash(nx benchmark:*)",
-      "Bash(nx build:*)",
-      "Bash(nx dev)",
-      "Bash(nx e2e:*)",
-      "Bash(nx format:*)",
-      "Bash(nx lint:*)",
-      "Bash(nx run:*)",
-      "Bash(nx show projects:*)",
-      "Bash(nx test:*)",
-      "Bash(rg:*)",
-      "Bash(touch:*)",
-      "Bash(yarn nx build:*)",
-      "Bash(yarn nx format:write:*)",
-      "Bash(yarn nx:*)",
-      "Bash(yarn test:*)",
-      "WebFetch(domain:ag-grid.atlassian.net)",
-      "WebFetch(domain:docs.anthropic.com)",
-      "WebFetch(domain:docs.github.com)",
-      "WebFetch(domain:github.com)",
-      "WebFetch(domain:localhost)",
-      "WebFetch(domain:www.npmjs.com)",
-      "mcp__ide__getDiagnostics",
-      "mcp__sequential-thinking__sequentialthinking"
-    ],
-    "deny": []
-  },
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Edit|MultiEdit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "jq -r '.tool_input.file_path' | ( read file_path; yarn nx format --files \"$file_path\" )"
-          }
+    "attribution": {
+        "commit": "",
+        "pr": ""
+    },
+    "permissions": {
+        "allow": [
+            "Bash(command -v:*)",
+            "Bash(find:*)",
+            "Bash(gh pr checkout:*)",
+            "Bash(gh pr checks:*)",
+            "Bash(gh pr diff:*)",
+            "Bash(gh pr list:*)",
+            "Bash(gh pr review:*)",
+            "Bash(gh pr view:*)",
+            "Bash(git fetch:*)",
+            "Bash(git ls-tree:*)",
+            "Bash(grep:*)",
+            "Bash(jq:*)",
+            "Bash(ls:*)",
+            "Bash(mkdir:*)",
+            "Bash(npx tsc:*)",
+            "Bash(nx benchmark:*)",
+            "Bash(nx build:*)",
+            "Bash(nx dev)",
+            "Bash(nx e2e:*)",
+            "Bash(nx format:*)",
+            "Bash(nx lint:*)",
+            "Bash(nx run:*)",
+            "Bash(nx show projects:*)",
+            "Bash(nx test:*)",
+            "Bash(rg:*)",
+            "Bash(touch:*)",
+            "Bash(yarn nx build:*)",
+            "Bash(yarn nx format:write:*)",
+            "Bash(yarn nx:*)",
+            "Bash(yarn test:*)",
+            "WebFetch(domain:ag-grid.atlassian.net)",
+            "WebFetch(domain:docs.anthropic.com)",
+            "WebFetch(domain:docs.github.com)",
+            "WebFetch(domain:github.com)",
+            "WebFetch(domain:localhost)",
+            "WebFetch(domain:www.npmjs.com)",
+            "mcp__ide__getDiagnostics",
+            "mcp__sequential-thinking__sequentialthinking"
+        ],
+        "deny": []
+    },
+    "hooks": {
+        "PostToolUse": [
+            {
+                "matcher": "Edit|MultiEdit|Write",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "jq -r '.tool_input.file_path' | ( read file_path; yarn nx format --files \"$file_path\" )"
+                    }
+                ]
+            }
+        ],
+        "SessionStart": [
+            {
+                "matcher": "startup",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "\"$CLAUDE_PROJECT_DIR\"/external/ag-shared/scripts/install-for-cloud/install-for-cloud.sh"
+                    }
+                ]
+            }
         ]
-      }
-    ],
-    "SessionStart": [
-      {
-        "matcher": "startup",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/external/ag-shared/scripts/install-for-cloud/install-for-cloud.sh"
-          }
-        ]
-      }
-    ]
-  }
+    }
 }
