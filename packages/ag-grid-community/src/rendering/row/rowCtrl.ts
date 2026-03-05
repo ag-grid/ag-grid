@@ -311,6 +311,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
 
         if (this.isFullWidth()) {
+            if (this.rowType === 'FullWidthLoading') {
+                gui.element.style.setProperty('--ag-indentation-level', String(this.rowLevel));
+            }
             this.setupFullWidth(gui);
         }
 

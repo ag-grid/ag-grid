@@ -391,7 +391,9 @@
 }
 
 .ag-loading {
-    padding-left: var(--ag-cell-horizontal-padding);
+    padding-left: calc(
+        var(--ag-cell-horizontal-padding) + var(--ag-row-group-indent-size) * var(--ag-indentation-level)
+    );
     display: flex;
     height: 100%;
     align-items: center;
