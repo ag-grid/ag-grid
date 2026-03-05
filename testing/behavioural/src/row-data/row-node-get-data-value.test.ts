@@ -2222,7 +2222,9 @@ describe('RowNode.getDataValue', () => {
             // Group rows have no data, so valueGetter returns null.
             let group: any;
             api.forEachNode((node: any) => {
-                if (node.group && node.key === 'A') group = node;
+                if (node.group && node.key === 'A') {
+                    group = node;
+                }
             });
             expect(group!.getDataValue('label', 'data-raw')).toBeNull();
             expect(group!.getDataValue('label', 'data')).toBeNull();
