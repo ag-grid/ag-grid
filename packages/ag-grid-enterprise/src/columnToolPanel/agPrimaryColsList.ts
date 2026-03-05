@@ -30,6 +30,8 @@ import { ExpandState } from './agPrimaryColsHeader';
 import { ColumnModelItem } from './columnModelItem';
 import { getCurrentColumnsBeingMoved, getCurrentDragValue, isMoveBlocked, moveItem } from './columnMoveUtils';
 import type { ToolPanelColumnCompParams } from './columnToolPanel';
+import { addDeferredDraftChangedListener } from './columnToolPanelEdits';
+import type { BaseColumnToolPanelEdits, DeferredDraftChangedListenerContext } from './columnToolPanelEdits';
 import { selectAllChildren } from './modelItemUtils';
 import { ToolPanelColumnComp } from './toolPanelColumnComp';
 import { ToolPanelColumnGroupComp } from './toolPanelColumnGroupComp';
@@ -49,7 +51,10 @@ class UIColumnModel implements VirtualListModel {
 const PRIMARY_COLS_LIST_PANEL_CLASS = 'ag-column-select-list';
 
 type AgPrimaryColsListEvent = 'groupExpanded' | 'selectionChanged';
-export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
+export class AgPrimaryColsList
+    extends Component<AgPrimaryColsListEvent>
+    implements DeferredDraftChangedListenerContext
+{
     private colModel: ColumnModel;
 
     public wireBeans(beans: BeanCollection) {
@@ -113,6 +118,9 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             columnVisible: listener,
             newColumnsLoaded: listener,
         });
+        if (this.params.deferApply) {
+            addDeferredDraftChangedListener(this, listener);
+        }
 
         this.expandGroupsByDefault = !contractColumnSelection;
 
@@ -569,7 +577,8 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         let checkedCount = 0;
         let uncheckedCount = 0;
 
-        const pivotMode = this.colModel.isPivotMode();
+        const edits = this.getEdits();
+        const pivotMode = edits.isPivotMode();
 
         this.forEachItem((item) => {
             if (item.group) {
@@ -590,13 +599,13 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 if (noPivotModeOptionsAllowed) {
                     return;
                 }
-                checked = column.isValueActive() || column.isPivotActive() || column.isRowGroupActive();
+                checked = edits.isColumnAnyFunctionActive(column);
             } else {
                 if (colDef.lockVisible) {
                     return;
                 }
 
-                checked = column.isVisible();
+                checked = edits.isColumnVisible(column);
             }
 
             if (checked) {
@@ -668,6 +677,12 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         }
         const selectionState = this.getSelectionState();
         this.dispatchLocalEvent({ type: 'selectionChanged', state: selectionState });
+    }
+
+    public getEdits(): BaseColumnToolPanelEdits {
+        return (
+            this.params.deferApply ? this.beans.colToolPanelDeferredEdit : this.beans.colToolPanelSynchronousEdit
+        ) as BaseColumnToolPanelEdits;
     }
 
     public getExpandedGroups(): string[] {

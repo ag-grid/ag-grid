@@ -29,7 +29,12 @@ import {
 } from 'ag-grid-community';
 
 import type { ColumnModelItem } from './columnModelItem';
-import type { ColumnToolPanelEditParams } from './columnToolPanelEdits';
+import { addDeferredDraftChangedListener } from './columnToolPanelEdits';
+import type {
+    BaseColumnToolPanelEdits,
+    ColumnToolPanelEditParams,
+    DeferredDraftChangedListenerContext,
+} from './columnToolPanelEdits';
 import { createPivotState, selectAllChildren, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
 
@@ -51,7 +56,7 @@ const ToolPanelColumnGroupElement: ElementParams = {
     ],
 };
 
-export class ToolPanelColumnGroupComp extends Component {
+export class ToolPanelColumnGroupComp extends Component implements DeferredDraftChangedListenerContext {
     private readonly cbSelect: GridCheckbox = RefPlaceholder;
     private readonly eLabel: HTMLElement = RefPlaceholder;
 
@@ -112,7 +117,11 @@ export class ToolPanelColumnGroupComp extends Component {
             } as ITooltipCtrl)
         );
 
-        this.addManagedEventListeners({ columnPivotModeChanged: this.onColumnStateChanged.bind(this) });
+        const onColumnStateChanged = this.onColumnStateChanged.bind(this);
+        this.addManagedEventListeners({ columnPivotModeChanged: onColumnStateChanged });
+        if (this.params.deferApply) {
+            addDeferredDraftChangedListener(this, onColumnStateChanged);
+        }
 
         this.addManagedElementListeners(eLabel, { click: this.onLabelClicked.bind(this) });
         this.addManagedListeners(cbSelect, { fieldValueChanged: this.onCheckboxChanged.bind(this) });
@@ -366,7 +375,8 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private workOutSelectedValue(): boolean | undefined {
-        const pivotMode = this.beans.colModel.isPivotMode();
+        const edits = this.getEdits();
+        const pivotMode = edits.isPivotMode();
 
         const visibleLeafColumns = this.getVisibleLeafColumns();
 
@@ -375,7 +385,7 @@ export class ToolPanelColumnGroupComp extends Component {
 
         for (const column of visibleLeafColumns) {
             if (pivotMode || !column.getColDef().lockVisible) {
-                if (this.isColumnChecked(column, pivotMode)) {
+                if (this.isColumnChecked(column, pivotMode, edits)) {
                     checkedCount++;
                 } else {
                     uncheckedCount++;
@@ -391,7 +401,7 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private workOutReadOnlyValue(): boolean {
-        const pivotMode = this.beans.colModel.isPivotMode();
+        const pivotMode = this.getEdits().isPivotMode();
 
         let colsThatCanAction = 0;
 
@@ -408,15 +418,21 @@ export class ToolPanelColumnGroupComp extends Component {
         return colsThatCanAction === 0;
     }
 
-    private isColumnChecked(column: AgColumn, pivotMode: boolean): boolean {
+    private isColumnChecked(column: AgColumn, pivotMode: boolean, edits: BaseColumnToolPanelEdits): boolean {
         if (pivotMode) {
-            const pivoted = column.isPivotActive();
-            const grouped = column.isRowGroupActive();
-            const aggregated = column.isValueActive();
+            const pivoted = edits.isColumnPivotActive(column);
+            const grouped = edits.isColumnRowGroupActive(column);
+            const aggregated = edits.isColumnValueActive(column);
             return pivoted || grouped || aggregated;
         }
 
-        return column.isVisible();
+        return edits.isColumnVisible(column);
+    }
+
+    public getEdits(): BaseColumnToolPanelEdits {
+        return (
+            this.params.deferApply ? this.beans.colToolPanelDeferredEdit : this.beans.colToolPanelSynchronousEdit
+        ) as BaseColumnToolPanelEdits;
     }
 
     private onExpandOrContractClicked(): void {

@@ -1,7 +1,8 @@
 import type { AgColumn, DragAndDropIcon, FocusableContainer, GridDraggingEvent } from 'ag-grid-community';
 import { _addFocusableContainerListener, _createIconNoSpan } from 'ag-grid-community';
 
-import type { ColumnToolPanelEditParams } from '../../columnToolPanel/columnToolPanelEdits';
+import { addDeferredDraftChangedListener } from '../../columnToolPanel/columnToolPanelEdits';
+import type { ColumnToolPanelDeferredEdit, ColumnToolPanelEditParams } from '../../columnToolPanel/columnToolPanelEdits';
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
 export class RowGroupDropZonePanel extends BaseDropZonePanel implements FocusableContainer {
@@ -26,6 +27,9 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel implements Focusabl
         }
 
         this.addManagedEventListeners({ columnRowGroupChanged: this.refreshGui.bind(this) });
+        if (this.deferApply) {
+            addDeferredDraftChangedListener(this, this.refreshGui.bind(this));
+        }
     }
 
     protected getAriaLabel(): string {
@@ -58,7 +62,11 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel implements Focusabl
     }
 
     protected getExistingItems(): AgColumn[] {
-        return this.getDeferredEdits()?.getDraftRowGroupColumns() ?? this.beans.rowGroupColsSvc?.columns ?? [];
+        if (this.deferApply) {
+            return (this.getEdits() as ColumnToolPanelDeferredEdit).getDraftRowGroupColumns();
+        }
+
+        return this.beans.rowGroupColsSvc?.columns ?? [];
     }
 
     public getFocusableContainerName(): 'rowGroupToolbar' {

@@ -1,22 +1,39 @@
 import type {
     AgColumn,
-    IAggFunc,
     BeanName,
     ColumnEventType,
     ColumnState,
+    ColumnToolPanelEditStrategyBean,
+    IAggFunc,
     IColumnToolPanelEdits,
     NamedBean,
     SortDef,
     SortDirection,
 } from 'ag-grid-community';
 import { BeanStub, _applyColumnState } from 'ag-grid-community';
-import type { ColumnToolPanelEditStrategyBean } from 'ag-grid-community';
 
 export type ColumnToolPanelEditParams = { deferApply?: boolean };
+const columnToolPanelDeferredDraftChanged = 'columnToolPanelDeferredDraftChanged';
+type ColumnToolPanelEditEvent = typeof columnToolPanelDeferredDraftChanged;
+
+export interface DeferredDraftChangedListenerContext {
+    getEdits(): BaseColumnToolPanelEdits;
+    addManagedListeners(edits: BaseColumnToolPanelEdits, events: Record<string, () => void>): any;
+}
+
+export function addDeferredDraftChangedListener(
+    context: DeferredDraftChangedListenerContext,
+    listener: () => void
+): void {
+    context.addManagedListeners(context.getEdits(), { [columnToolPanelDeferredDraftChanged]: listener });
+}
 
 const noop = () => {};
 
-export abstract class BaseColumnToolPanelEdits extends BeanStub implements IColumnToolPanelEdits, NamedBean {
+export abstract class BaseColumnToolPanelEdits
+    extends BeanStub<ColumnToolPanelEditEvent>
+    implements IColumnToolPanelEdits, NamedBean
+{
     abstract beanName: BeanName;
     abstract applyColumnState(state: ColumnState[], eventType: ColumnEventType): void;
     abstract moveColumns(columns: AgColumn[], targetIndex: number, eventType: ColumnEventType): void;
@@ -28,6 +45,12 @@ export abstract class BaseColumnToolPanelEdits extends BeanStub implements IColu
         aggFunc: string | IAggFunc | null | undefined,
         eventType: ColumnEventType
     ): void;
+    abstract isPivotMode(): boolean;
+    abstract isColumnVisible(column: AgColumn): boolean;
+    abstract isColumnRowGroupActive(column: AgColumn): boolean;
+    abstract isColumnValueActive(column: AgColumn): boolean;
+    abstract isColumnPivotActive(column: AgColumn): boolean;
+    abstract isColumnAnyFunctionActive(column: AgColumn): boolean;
     abstract getColumnAggFunc(column: AgColumn): string | IAggFunc | null | undefined;
     abstract setPivotColumns(columns: AgColumn[], eventType: ColumnEventType): void;
     abstract setPivotMode(pivotMode: boolean, eventType: ColumnEventType): void;
@@ -36,9 +59,9 @@ export abstract class BaseColumnToolPanelEdits extends BeanStub implements IColu
     abstract reset(): void;
 }
 
+export const ColumnToolPanelSynchronousEditBeanName: ColumnToolPanelEditStrategyBean = 'colToolPanelSynchronousEdit';
 export class ColumnToolPanelSynchronousEdit extends BaseColumnToolPanelEdits {
-    static beanName = 'colToolPanelSynchronousEdit';
-    beanName = ColumnToolPanelSynchronousEdit.beanName as ColumnToolPanelEditStrategyBean;
+    beanName = ColumnToolPanelSynchronousEditBeanName;
 
     public reset = noop;
     public commit = noop;
@@ -76,6 +99,30 @@ export class ColumnToolPanelSynchronousEdit extends BaseColumnToolPanelEdits {
         this.beans.valueColsSvc?.setColumnAggFunc?.(column, aggFunc, eventType);
     }
 
+    public isPivotMode(): boolean {
+        return this.beans.colModel.isPivotMode();
+    }
+
+    public isColumnVisible(column: AgColumn): boolean {
+        return column.isVisible();
+    }
+
+    public isColumnRowGroupActive(column: AgColumn): boolean {
+        return column.isRowGroupActive();
+    }
+
+    public isColumnValueActive(column: AgColumn): boolean {
+        return column.isValueActive();
+    }
+
+    public isColumnPivotActive(column: AgColumn): boolean {
+        return column.isPivotActive();
+    }
+
+    public isColumnAnyFunctionActive(column: AgColumn): boolean {
+        return column.isAnyFunctionActive();
+    }
+
     public getColumnAggFunc(column: AgColumn): string | IAggFunc | null | undefined {
         return column.getAggFunc();
     }
@@ -100,12 +147,15 @@ export class ColumnToolPanelSynchronousEdit extends BaseColumnToolPanelEdits {
         this.beans.sortSvc?.progressSortFromEvent(column, event);
     }
 }
-
+export const ColumnToolPanelDeferredEditBeanName: ColumnToolPanelEditStrategyBean = 'colToolPanelDeferredEdit';
 export class ColumnToolPanelDeferredEdit extends BaseColumnToolPanelEdits {
-    static beanName = 'colToolPanelDeferredEdit';
-    beanName = ColumnToolPanelDeferredEdit.beanName as ColumnToolPanelEditStrategyBean;
+    beanName = ColumnToolPanelDeferredEditBeanName;
 
     private state = this.getDefaultState();
+
+    private dispatchDraftChanged(): void {
+        this.dispatchLocalEvent({ type: columnToolPanelDeferredDraftChanged });
+    }
 
     private static getLastValue<T>(values: T[]): T | undefined {
         return values[values.length - 1];
@@ -128,30 +178,43 @@ export class ColumnToolPanelDeferredEdit extends BaseColumnToolPanelEdits {
 
     public reset() {
         this.state = this.getDefaultState();
+        this.dispatchDraftChanged();
     }
 
     public commit() {
         console.log(this.state);
+        this.dispatchDraftChanged();
     }
 
     public applyColumnState(state: ColumnState[], eventType: ColumnEventType): void {
+        if (state.length === 0) {
+            return;
+        }
         this.state.applyColumnState.push([state, eventType]);
+        this.dispatchDraftChanged();
     }
 
     public moveColumns(columns: AgColumn[], targetIndex: number, eventType: ColumnEventType): void {
         this.state.moveColumns.push([columns, targetIndex, eventType]);
+        this.dispatchDraftChanged();
     }
 
     public setColumnsVisible(columns: AgColumn[], visible: boolean, eventType: ColumnEventType): void {
+        if (columns.length === 0) {
+            return;
+        }
         this.state.setColumnsVisible.push([columns, visible, eventType]);
+        this.dispatchDraftChanged();
     }
 
     public setRowGroupColumns(columns: AgColumn[], eventType: ColumnEventType): void {
         this.state.setRowGroupColumns.push([columns, eventType]);
+        this.dispatchDraftChanged();
     }
 
     public setValueColumns(columns: AgColumn[], eventType: ColumnEventType): void {
         this.state.setValueColumns.push([columns, eventType]);
+        this.dispatchDraftChanged();
     }
 
     public setColumnAggFunc(
@@ -171,12 +234,39 @@ export class ColumnToolPanelDeferredEdit extends BaseColumnToolPanelEdits {
         return column.getAggFunc();
     }
 
+    public isPivotMode(): boolean {
+        return this.getDraftPivotMode();
+    }
+
+    public isColumnVisible(column: AgColumn): boolean {
+        return this.getDraftColumnState(column).visible;
+    }
+
+    public isColumnRowGroupActive(column: AgColumn): boolean {
+        return this.getDraftColumnState(column).rowGroup;
+    }
+
+    public isColumnValueActive(column: AgColumn): boolean {
+        return this.getDraftColumnState(column).value;
+    }
+
+    public isColumnPivotActive(column: AgColumn): boolean {
+        return this.getDraftColumnState(column).pivot;
+    }
+
+    public isColumnAnyFunctionActive(column: AgColumn): boolean {
+        const draft = this.getDraftColumnState(column);
+        return draft.pivot || draft.rowGroup || draft.value;
+    }
+
     public setPivotColumns(columns: AgColumn[], eventType: ColumnEventType): void {
         this.state.setPivotColumns.push([columns, eventType]);
+        this.dispatchDraftChanged();
     }
 
     public setPivotMode(pivotMode: boolean, eventType: ColumnEventType): void {
         this.state.setPivotMode.push([pivotMode, eventType]);
+        this.dispatchDraftChanged();
     }
 
     public getDraftRowGroupColumns(): AgColumn[] {
@@ -227,6 +317,60 @@ export class ColumnToolPanelDeferredEdit extends BaseColumnToolPanelEdits {
 
     public progressSortFromEvent(column: AgColumn, event: MouseEvent | KeyboardEvent): void {
         this.state.progressSortFromEvent.push([column, event]);
+    }
+
+    private getDraftColumnState(column: AgColumn): {
+        visible: boolean;
+        rowGroup: boolean;
+        value: boolean;
+        pivot: boolean;
+    } {
+        const colId = column.getColId();
+        let visible = column.isVisible();
+        let rowGroup = column.isRowGroupActive();
+        let value = column.isValueActive();
+        let pivot = column.isPivotActive();
+
+        for (const [state] of this.state.applyColumnState) {
+            for (const stateItem of state) {
+                if (stateItem.colId !== colId) {
+                    continue;
+                }
+
+                if (stateItem.hide != null) {
+                    visible = !stateItem.hide;
+                }
+                if (stateItem.rowGroup != null) {
+                    rowGroup = !!stateItem.rowGroup;
+                }
+                if (stateItem.aggFunc !== undefined) {
+                    value = stateItem.aggFunc != null;
+                }
+                if (stateItem.pivot != null) {
+                    pivot = !!stateItem.pivot;
+                }
+            }
+        }
+
+        for (const [columns, visibleState] of this.state.setColumnsVisible) {
+            if (columns.includes(column)) {
+                visible = visibleState;
+            }
+        }
+
+        for (const [columns] of this.state.setRowGroupColumns) {
+            rowGroup = columns.includes(column);
+        }
+
+        for (const [columns] of this.state.setValueColumns) {
+            value = columns.includes(column);
+        }
+
+        for (const [columns] of this.state.setPivotColumns) {
+            pivot = columns.includes(column);
+        }
+
+        return { visible, rowGroup, value, pivot };
     }
 
     /**

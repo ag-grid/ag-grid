@@ -1,10 +1,10 @@
 import type { AgColumn, ColumnEventType, DragItem, DropTarget, GridDraggingEvent } from 'ag-grid-community';
 import { DragSourceType, _shouldUpdateColVisibilityAfterGroup } from 'ag-grid-community';
 
-import {
-    ColumnToolPanelDeferredEdit,
-    type BaseColumnToolPanelEdits,
-    type ColumnToolPanelEditParams,
+import type {
+    BaseColumnToolPanelEdits,
+    ColumnToolPanelEditParams,
+    DeferredDraftChangedListenerContext,
 } from '../../columnToolPanel/columnToolPanelEdits';
 import type { PillDropZonePanelParams } from '../../widgets/pillDropZonePanel';
 import { PillDropZonePanel } from '../../widgets/pillDropZonePanel';
@@ -12,8 +12,11 @@ import { DropZoneColumnComp } from './dropZoneColumnComp';
 
 export type TDropZone = 'rowGroup' | 'pivot' | 'aggregation';
 
-export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumnComp, AgColumn> {
-    private readonly deferApply: boolean;
+export abstract class BaseDropZonePanel
+    extends PillDropZonePanel<DropZoneColumnComp, AgColumn>
+    implements DeferredDraftChangedListenerContext
+{
+    protected readonly deferApply: boolean;
 
     constructor(
         horizontal: boolean,
@@ -25,18 +28,10 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         this.addElementClasses(this.getGui(), this.dropZonePurpose.toLowerCase());
     }
 
-    protected getEdits(): BaseColumnToolPanelEdits | undefined {
-        return (this.deferApply
-            ? this.beans.colToolPanelDeferredEdit
-            : this.beans.colToolPanelSynchronousEdit) as BaseColumnToolPanelEdits | undefined;
-    }
-
-    protected getDeferredEdits(): ColumnToolPanelDeferredEdit | undefined {
-        if (!this.deferApply) {
-            return undefined;
-        }
-
-        return this.beans.colToolPanelDeferredEdit as ColumnToolPanelDeferredEdit | undefined;
+    public getEdits(): BaseColumnToolPanelEdits {
+        return (
+            this.deferApply ? this.beans.colToolPanelDeferredEdit : this.beans.colToolPanelSynchronousEdit
+        ) as BaseColumnToolPanelEdits;
     }
 
     public override init(params: PillDropZonePanelParams): void {

@@ -26,6 +26,8 @@ import {
 
 import type { ColumnModelItem } from './columnModelItem';
 import type { ToolPanelColumnCompParams } from './columnToolPanel';
+import type { BaseColumnToolPanelEdits, DeferredDraftChangedListenerContext } from './columnToolPanelEdits';
+import { addDeferredDraftChangedListener } from './columnToolPanelEdits';
 import { createPivotState, setAllColumns, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
 
@@ -37,7 +39,7 @@ const ToolPanelColumnElement: ElementParams = {
         { tag: 'span', ref: 'eLabel', cls: 'ag-column-select-column-label' },
     ],
 };
-export class ToolPanelColumnComp extends Component {
+export class ToolPanelColumnComp extends Component implements DeferredDraftChangedListenerContext {
     private readonly eLabel: HTMLElement = RefPlaceholder;
     private readonly cbSelect: GridCheckbox = RefPlaceholder;
 
@@ -109,6 +111,10 @@ export class ToolPanelColumnComp extends Component {
 
         const onColStateChanged = this.onColumnStateChanged.bind(this);
         this.addManagedEventListeners({ columnPivotModeChanged: onColStateChanged });
+
+        if (this.params.deferApply) {
+            addDeferredDraftChangedListener(this, onColStateChanged);
+        }
 
         this.addManagedListeners(column, {
             columnValueChanged: onColStateChanged,
@@ -293,18 +299,19 @@ export class ToolPanelColumnComp extends Component {
 
     private onColumnStateChanged(): void {
         this.processingColumnStateChange = true;
-        const isPivotMode = this.beans.colModel.isPivotMode();
+        const edits = this.getEdits();
+        const isPivotMode = edits.isPivotMode();
         if (isPivotMode) {
             // if reducing, checkbox means column is one of pivot, value or group
-            const anyFunctionActive = this.column.isAnyFunctionActive();
+            const anyFunctionActive = edits.isColumnAnyFunctionActive(this.column);
             this.cbSelect.setValue(anyFunctionActive);
         } else {
             // if not reducing, the checkbox tells us if column is visible or not
-            this.cbSelect.setValue(this.column.isVisible());
+            this.cbSelect.setValue(edits.isColumnVisible(this.column));
         }
 
-        let canBeToggled = true;
-        let canBeDragged = true;
+        let canBeToggled;
+        let canBeDragged;
         if (isPivotMode) {
             // when in pivot mode, the item should be read only if:
             //  a) gui is not allowed make any changes
@@ -328,6 +335,12 @@ export class ToolPanelColumnComp extends Component {
         this.cbSelect.setPassive(false);
 
         this.processingColumnStateChange = false;
+    }
+
+    public getEdits(): BaseColumnToolPanelEdits {
+        return (
+            this.params.deferApply ? this.beans.colToolPanelDeferredEdit : this.beans.colToolPanelSynchronousEdit
+        ) as BaseColumnToolPanelEdits;
     }
 
     public getDisplayName(): string | null {

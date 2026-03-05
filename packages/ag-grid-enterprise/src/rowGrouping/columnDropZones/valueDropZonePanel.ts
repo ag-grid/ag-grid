@@ -1,7 +1,11 @@
 import type { AgColumn, DragAndDropIcon, GridDraggingEvent } from 'ag-grid-community';
 import { _createIconNoSpan } from 'ag-grid-community';
 
-import type { ColumnToolPanelEditParams } from '../../columnToolPanel/columnToolPanelEdits';
+import type {
+    ColumnToolPanelDeferredEdit,
+    ColumnToolPanelEditParams,
+} from '../../columnToolPanel/columnToolPanelEdits';
+import { addDeferredDraftChangedListener } from '../../columnToolPanel/columnToolPanelEdits';
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
 export class ValuesDropZonePanel extends BaseDropZonePanel {
@@ -21,6 +25,9 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
         });
 
         this.addManagedEventListeners({ columnValueChanged: this.refreshGui.bind(this) });
+        if (this.deferApply) {
+            addDeferredDraftChangedListener(this, this.refreshGui.bind(this));
+        }
     }
 
     protected getAriaLabel(): string {
@@ -53,6 +60,10 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
     }
 
     protected getExistingItems(): AgColumn[] {
-        return this.getDeferredEdits()?.getDraftValueColumns() ?? this.beans.valueColsSvc?.columns ?? [];
+        if (this.deferApply) {
+            return (this.getEdits() as ColumnToolPanelDeferredEdit).getDraftValueColumns();
+        }
+
+        return this.beans.valueColsSvc?.columns ?? [];
     }
 }

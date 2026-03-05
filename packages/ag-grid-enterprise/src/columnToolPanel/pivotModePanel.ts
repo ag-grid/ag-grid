@@ -3,7 +3,6 @@ import { AgToggleButtonSelector, Component, RefPlaceholder } from 'ag-grid-commu
 
 import {
     type BaseColumnToolPanelEdits,
-    ColumnToolPanelDeferredEdit,
     type ColumnToolPanelEditParams,
 } from './columnToolPanelEdits';
 
@@ -26,12 +25,7 @@ export class PivotModePanel extends Component {
     }
 
     private getCurrentPivotMode(): boolean {
-        if (this.params.deferApply) {
-            const deferred = this.beans.colToolPanelDeferredEdit as ColumnToolPanelDeferredEdit | undefined;
-            return deferred?.getDraftPivotMode() ?? this.beans.colModel.isPivotMode();
-        }
-
-        return this.beans.colModel.isPivotMode();
+        return this.getStrategy()?.isPivotMode() ?? this.beans.colModel.isPivotMode();
     }
 
     public syncFromGrid(): void {
@@ -64,5 +58,11 @@ export class PivotModePanel extends Component {
             newColumnsLoaded: onPivotModeChanged,
             columnPivotModeChanged: onPivotModeChanged,
         });
+    }
+
+    private getStrategy(): BaseColumnToolPanelEdits | undefined {
+        return (
+            this.params.deferApply ? this.beans.colToolPanelDeferredEdit : this.beans.colToolPanelSynchronousEdit
+        ) as BaseColumnToolPanelEdits | undefined;
     }
 }
