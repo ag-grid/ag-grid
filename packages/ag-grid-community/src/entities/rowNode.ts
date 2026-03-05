@@ -508,18 +508,17 @@ export class RowNode<TData = any>
      *
      * In **Pivot Mode**, pivot columns on leaf rows resolve to their underlying value column.
      *
-     * ### How `eventSource` controls writes
+     * The `eventSource` parameter controls how the value is written:
      *
-     * - **(default)** — Batch active: stages a pending batch edit; any open editor is closed.
-     *   Batch inactive: closes the editor and writes to data, or writes directly if no editor is open.
-     * - **`'edit'`** — Batch active: updates the live editor value without committing; stages pending if no editor.
-     *   Batch inactive: updates the live editor value; writes directly if no editor is open.
-     * - **`'batch'`** — Batch active: stages a pending batch edit; any open editor stays open (its value is not modified).
-     *   Batch inactive: writes directly to data; any open editor stays open.
-     * - **`'data'`** — Always writes directly to data, bypassing batch mode entirely.
+     * | `eventSource` | Active Editor        | Pending Batch        | Committed Data                 |
+     * | ------------- | -------------------- | -------------------- | ------------------------------ |
+     * | (default)     | Closed               | Written              | Written if no batch            |
+     * | `'edit'`      | Written              | Written if no editor | Written if no editor, no batch |
+     * | `'batch'`     | Left open            | Written              | Written if no batch            |
+     * | `'data'`      | Left open            | —                    | Always written                 |
      *
-     * With `'edit'`, the grid calls `editor.refresh(params)` so custom editors can update their display.
-     * Editors that don't implement `refresh()` are recreated to pick up the new value while preserving focus.
+     * With `'edit'`, the active editor receives the new value via `refresh()` if implemented;
+     * otherwise the editor is recreated with focus preserved.
      *
      * @param colKey The column to update (field name, `colId`, or `Column` object)
      * @param newValue The new value to set

@@ -8,7 +8,7 @@ import type { AgBaseCellEditor, ICellEditorComp, ICellEditorParams } from '../..
 import type { AgGridCommon } from '../../interfaces/iCommon';
 import type { AgComponentSelectorType } from '../../widgets/component';
 
-export abstract class AgAbstractCellEditor<P extends ICellEditorParams = any, TValue = any>
+export abstract class AgAbstractCellEditor<P extends ICellEditorParams, TValue, TEditorValue = TValue>
     extends AgPopupComponent<
         BeanCollection,
         GridOptionsWithDefaults,
@@ -26,7 +26,7 @@ export abstract class AgAbstractCellEditor<P extends ICellEditorParams = any, TV
         AgGridCommon<any, any>,
         GridOptionsService,
         AgComponentSelectorType,
-        any,
+        TEditorValue,
         any,
         any
     >;
@@ -46,10 +46,7 @@ export abstract class AgAbstractCellEditor<P extends ICellEditorParams = any, TV
         this.eEditor.onValueChange(() => params.validate());
     }
 
-    public agSetEditValue(value: TValue | null | undefined): void {
-        this.params.value = value;
-        this.eEditor.setValue(value as any, true);
-    }
+    public abstract agSetEditValue(value: TValue | null | undefined): void;
 
     public override destroy(): void {
         this.eEditor.destroy();

@@ -334,18 +334,17 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
      *
      * In **Pivot Mode**, pivot columns on leaf rows resolve to their underlying value column.
      *
-     * ### How `eventSource` controls writes
+     * The `eventSource` parameter controls how the value is written:
      *
-     * - **(default)** — Batch active: stages a pending batch edit; any open editor is closed.
-     *   Batch inactive: closes the editor and writes to data, or writes directly if no editor is open.
-     * - **`'edit'`** — Batch active: updates the live editor value without committing; stages pending if no editor.
-     *   Batch inactive: updates the live editor value; writes directly if no editor is open.
-     * - **`'batch'`** — Batch active: stages a pending batch edit; any open editor is closed.
-     *   Batch inactive: writes directly to data; any open editor stays open.
-     * - **`'data'`** — Always writes directly to data, bypassing batch mode entirely.
+     * | `eventSource` | Active Editor        | Pending Batch        | Committed Data                 |
+     * | ------------- | -------------------- | -------------------- | ------------------------------ |
+     * | (default)     | Closed               | Written              | Written if no batch            |
+     * | `'edit'`      | Written              | Written if no editor | Written if no editor, no batch |
+     * | `'batch'`     | Left open            | Written              | Written if no batch            |
+     * | `'data'`      | Left open            | —                    | Always written                 |
      *
-     * With `'edit'`, the grid calls `editor.refresh(params)` so custom editors can update their display.
-     * Editors that don't implement `refresh()` are recreated to pick up the new value while preserving focus.
+     * With `'edit'`, the active editor receives the new value via `refresh()` if implemented;
+     * otherwise the editor is recreated with focus preserved.
      *
      * @param colKey The column to update (field name, `colId`, or `Column` object)
      * @param newValue The new value to set
@@ -364,19 +363,19 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
      *
      * In **Pivot Mode**, pivot columns on leaf rows resolve to their underlying value column.
      *
-     * ### The `from` parameter
+     * The `from` parameter controls value resolution (first non-empty source wins):
      *
-     * - **`'data'`** (default) — Committed data, ignoring pending edits.
-     *   Aggregation wrappers are returned as raw objects (e.g. `{ value, count, toNumber() }` for `avg`).
-     * - **`'value'`** — Same as `'data'`, but aggregation wrappers are resolved to scalars
-     *   (via `toNumber()` or `.value`).
-     * - **`'edit'`** — Live editor value if the cell is being edited, then pending batch value,
-     *   then committed data. Aggregation wrappers resolved to scalars.
-     * - **`'batch'`** — Pending batch value (excludes live editor typing), then committed data.
-     *   Aggregation wrappers resolved to scalars.
-     * - **`'data-raw'`** — Raw underlying data — bypasses aggregation and formula resolution.
-     *   Useful on group rows to read `rowNode.data` instead of the aggregated value,
-     *   or on formula cells to get the raw formula string instead of the computed result.
+     * | `from`               | Active Editor (if editing) | Pending Batch (if batching) | Aggregation (if present) | Committed Data |
+     * | -------------------- | -------------------------- | --------------------------- | ------------------------ | -------------- |
+     * | `'data'` (default)   | —                          | —                           | Agg value                | Fallback       |
+     * | `'edit'`             | Used if present            | Used if no editor           | Agg value                | Fallback       |
+     * | `'batch'`            | —                          | Used if present             | Agg value                | Fallback       |
+     * | `'value'`            | —                          | —                           | Scalar (unwrapped)       | Fallback       |
+     * | `'data-raw'`         | —                          | —                           | —                        | Always used    |
+     *
+     * - **`'value'`** — same as `'data'`, but unwraps the aggregation result returned by `avg` and `count` to its scalar value.
+     * - **`'data-raw'`** — same as `'data'` but skips aggregation results (`rowNode.aggData`). For group rows the
+     *   valueGetter or field value is returned instead, which is typically `undefined` since group rows do not hold leaf data.
      *
      * @param colKey The column to read (field name, `colId`, or `Column` object)
      * @param from Controls value resolution. Defaults to `'data'`.

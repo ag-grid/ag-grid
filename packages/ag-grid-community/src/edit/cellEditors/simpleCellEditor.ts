@@ -10,7 +10,7 @@ export class SimpleCellEditor<
     TValue,
     P extends ICellEditorParams & DefaultProvidedCellEditorParams,
     I extends GridInputTextField,
-> extends AgAbstractCellEditor<ICellEditorParams, TValue> {
+> extends AgAbstractCellEditor<ICellEditorParams, TValue, string> {
     private highlightAllOnFocus: boolean;
     private focusAfterAttached: boolean;
     protected readonly eEditor: I = RefPlaceholder;
