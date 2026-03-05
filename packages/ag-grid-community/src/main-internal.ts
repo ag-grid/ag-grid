@@ -485,7 +485,6 @@ export type { RowNodeSorter } from './sort/rowNodeSorter';
 export type { SortService } from './sort/sortService';
 export type { CellStyleService } from './styling/cellStyleService';
 export { coreDefaults as _coreThemeDefaults } from './theming/core/core-css';
-export { gridThemeLogger as _gridThemeLogger } from './theming/createTheme';
 export {
     themeAlpineParams as _themeAlpineParams,
     themeBalhamParams as _themeBalhamParams,

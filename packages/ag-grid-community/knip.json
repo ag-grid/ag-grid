@@ -5,10 +5,7 @@
         "./src/typings.ts",
         "./src/interfaces/iAgChartOptions.ts",
         "./src/theming/createTheme.ts",
-        "./src/theming/private-theming-api.ts",
-        "./src/utils/debug.ts",
-        "./src/agStack/theming/themeTypes.ts",
-        "./src/agStack/theming/themeTypeUtils.ts"
+        "./src/utils/debug.ts"
     ],
     "rules": {
         "unlisted": "off",
