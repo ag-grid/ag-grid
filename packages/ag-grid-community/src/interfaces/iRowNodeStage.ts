@@ -18,10 +18,12 @@ export interface IRowNodeFilterStage<TData = any> extends IRowNodeStage<TData> {
     execute(changedPath: ChangedPath): void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowNodePivotStage<TData = any> extends IRowNodeStage<TData> {
     execute(changedPath: ChangedPath): void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowNodeAggregationStage<TData = any> extends IRowNodeStage<TData> {
     execute(changedPath: ChangedPath): void;
 
@@ -35,16 +37,20 @@ export interface IRowNodeAggregationStage<TData = any> extends IRowNodeStage<TDa
     ): RowNode<TData>[];
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowNodeFilterAggregateStage<TData = any> extends IRowNodeStage<TData> {
     execute(changedPath: ChangedPath): void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowNodeFlattenStage<TData = any> extends IRowNodeStage<TData> {
     execute(): RowNode<TData>[];
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type NestedDataGetter<TData = any> = (data: TData) => TData[] | null | undefined;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowNodeGroupStage<TData = any> extends IRowNodeStage<TData> {
     readonly treeData: boolean;
 

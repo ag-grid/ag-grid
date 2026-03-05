@@ -53,7 +53,7 @@ const ClientSideRowModelFilterModule: _ModuleWithoutApi = {
 };
 
 /**
- * @internal
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export const FilterCoreModule: _ModuleWithApi<_FilterGridApi> = {
     moduleName: 'FilterCore',
@@ -68,7 +68,7 @@ export const FilterCoreModule: _ModuleWithApi<_FilterGridApi> = {
 };
 
 /**
- * @internal
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export const FilterValueModule: _ModuleWithoutApi = {
     moduleName: 'FilterValue',
@@ -77,7 +77,7 @@ export const FilterValueModule: _ModuleWithoutApi = {
 };
 
 /**
- * @internal
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export const ColumnFilterModule: _ModuleWithApi<_ColumnFilterGridApi> = {
     moduleName: 'ColumnFilter',

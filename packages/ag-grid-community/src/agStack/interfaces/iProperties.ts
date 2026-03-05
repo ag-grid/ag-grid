@@ -2,8 +2,10 @@ import type { AgEvent } from './agEvent';
 import type { BaseProperties } from './baseProperties';
 import type { WithoutCommon } from './iEvent';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type AgPropertyChangedSource = 'api' | 'optionsUpdated';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface AgPropertyChangeSet<TProperties extends BaseProperties> {
     /** Unique id which can be used to link changes of multiple properties that were updated together.
      * i.e a user updated multiple properties at the same time.
@@ -18,8 +20,10 @@ export interface AgPropertyChangedEvent<TProperties extends BaseProperties> exte
     source: AgPropertyChangedSource;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type AgPropertyKey<TProperties extends BaseProperties> = keyof TProperties & string;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface AgPropertyValueChangedEvent<TProperties extends BaseProperties, K extends AgPropertyKey<TProperties>>
     extends AgEvent {
     type: K;
@@ -33,10 +37,12 @@ export type AgPropertyChangedListener<TProperties extends BaseProperties> = (
     event: AgPropertyChangedEvent<TProperties>
 ) => void;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type AgPropertyValueChangedListener<TProperties extends BaseProperties, K extends AgPropertyKey<TProperties>> = (
     event: AgPropertyValueChangedEvent<TProperties, K>
 ) => void;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IPropertiesService<TProperties extends BaseProperties, TCommon> {
     readonly beanName: 'gos';
 

@@ -86,6 +86,7 @@ export function provideGlobalGridOptions(
     GlobalGridOptions.mergeStrategy = mergeStrategy;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getGlobalGridOption<K extends keyof GridOptions>(gridOption: K): GridOptions[K] {
     return GlobalGridOptions.gridOptions?.[gridOption];
 }

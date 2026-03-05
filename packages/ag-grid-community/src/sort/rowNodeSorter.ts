@@ -11,6 +11,7 @@ import type { SortOption } from '../interfaces/iSortOption';
 
 // this logic is used by both SSRM and CSRM
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class RowNodeSorter extends BeanStub implements NamedBean {
     beanName = 'rowNodeSorter' as const;
 

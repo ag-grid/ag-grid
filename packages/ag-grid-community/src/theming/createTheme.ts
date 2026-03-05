@@ -11,6 +11,7 @@ import type { ButtonStyleParams } from './parts/button-style/button-styles';
 import { columnDropStyleBordered } from './parts/column-drop-style/column-drop-styles';
 import { formulaStyleBase } from './parts/formula-style/formula-styles';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const gridThemeLogger: ThemeLogger = {
     warn: (...args) => {
         // temp typing needed here to link theme error type and grid error type

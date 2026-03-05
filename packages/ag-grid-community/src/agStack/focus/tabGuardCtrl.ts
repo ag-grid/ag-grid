@@ -8,12 +8,14 @@ import { _findFocusableElements, _findNextFocusableElement } from '../utils/focu
 import type { StopPropagationCallbacks } from './agManagedFocusFeature';
 import { AgManagedFocusFeature } from './agManagedFocusFeature';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const TabGuardClassNames = {
     TAB_GUARD: 'ag-tab-guard',
     TAB_GUARD_TOP: 'ag-tab-guard-top',
     TAB_GUARD_BOTTOM: 'ag-tab-guard-bottom',
 } as const;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface ITabGuard {
     setTabIndex(tabIndex?: string): void;
 }

@@ -1,7 +1,9 @@
 import type { AgElementParams } from '../utils/dom';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type LabelAlignment = 'left' | 'right' | 'top';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface AgLabelParams {
     label?: HTMLElement | string;
     labelWidth?: number | 'flex';
@@ -11,6 +13,7 @@ export interface AgLabelParams {
     labelEllipsis?: boolean;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface AgFieldParams extends AgLabelParams {
     value?: any;
     width?: number;
@@ -18,6 +21,7 @@ export interface AgFieldParams extends AgLabelParams {
     ariaLabel?: string | null;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface AgInputFieldParams<TComponentSelectorType extends string> extends AgFieldParams {
     inputName?: string;
     inputWidth?: number | 'flex';
@@ -27,6 +31,7 @@ export interface AgInputFieldParams<TComponentSelectorType extends string> exten
     tabIndex?: number;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface AgCheckboxParams<TComponentSelectorType extends string>
     extends AgInputFieldParams<TComponentSelectorType> {
     readOnly?: boolean;

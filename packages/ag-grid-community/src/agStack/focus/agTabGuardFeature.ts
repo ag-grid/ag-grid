@@ -11,6 +11,7 @@ import type { StopPropagationCallbacks } from './agManagedFocusFeature';
 import type { ITabGuard } from './tabGuardCtrl';
 import { AgTabGuardCtrl, TabGuardClassNames } from './tabGuardCtrl';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface AgTabGuardParams {
     focusInnerElement?: (fromBottom: boolean) => boolean;
     shouldStopEventPropagation?: () => boolean;
@@ -40,6 +41,7 @@ export interface AgTabGuardParams {
     isFocusableContainer?: boolean;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgTabGuardFeature<
     TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,

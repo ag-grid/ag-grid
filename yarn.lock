@@ -5515,9 +5515,9 @@
     tmp "~0.2.1"
     tslib "^2.3.0"
 
-"@nx/devkit@18.3.5", "@nx/devkit@^18.3.4":
+"@nx/devkit@18.3.5", "@nx/devkit@^18.3.5":
   version "18.3.5"
-  resolved "http://52.50.158.57:4873/@nx/devkit/-/devkit-18.3.5.tgz#6ea0306e9658ae59a3728108b0d1a75b8d51d928"
+  resolved "https://registry.ag-grid.com/@nx/devkit/-/devkit-18.3.5.tgz#6ea0306e9658ae59a3728108b0d1a75b8d51d928"
   integrity sha512-9I0L17t0MN87fL4m4MjDiBxJIx7h5RQY/pTYtt5TBjye0ANb165JeE4oh3ibzfjMzXv42Aej2Gm+cOuSPwzT9g==
   dependencies:
     "@nrwl/devkit" "18.3.5"
@@ -12772,9 +12772,9 @@ effect@3.19.16:
     "@standard-schema/spec" "^1.0.0"
     fast-check "^3.23.1"
 
-ejs@^3.1.5, ejs@^3.1.7:
+ejs@3.1.10, ejs@^3.1.5, ejs@^3.1.7:
   version "3.1.10"
-  resolved "http://52.50.158.57:4873/ejs/-/ejs-3.1.10.tgz#69ab8358b14e896f80cc39e62087b88500c3ac3b"
+  resolved "https://registry.ag-grid.com/ejs/-/ejs-3.1.10.tgz#69ab8358b14e896f80cc39e62087b88500c3ac3b"
   integrity sha512-UeJmFfOrAQS8OJWPZ4qtgHyWExa088/MtK5UEyoJGFH67cDEXkZSviOiKRCZ4Xij0zxI3JECgYs3oKx+AizQBA==
   dependencies:
     jake "^10.8.5"
@@ -16482,7 +16482,7 @@ jackspeak@^4.1.1:
   dependencies:
     "@isaacs/cliui" "^8.0.2"
 
-jake@^10.8.5:
+jake@10.9.4, jake@^10.8.5:
   version "10.9.4"
   resolved "http://52.50.158.57:4873/jake/-/jake-10.9.4.tgz#d626da108c63d5cfb00ab5c25fadc7e0084af8e6"
   integrity sha512-wpHYzhxiVQL+IV05BLE2Xn34zW1S223hvjtqk0+gsPrwd/8JNLXJgZZM/iPFsYc1xyphF+6M6EvdE5E9MBGkDA==

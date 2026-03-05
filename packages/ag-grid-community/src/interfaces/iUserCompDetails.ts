@@ -1,6 +1,7 @@
 import type { IComponent } from '../agStack/interfaces/iComponent';
 import type { AgPromise } from '../agStack/utils/promise';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface UserCompDetails<TComp extends IComponent<any> = any> {
     componentClass: any;
     componentFromFramework: boolean;
@@ -11,6 +12,7 @@ export interface UserCompDetails<TComp extends IComponent<any> = any> {
     newAgStackInstance: () => AgPromise<TComp>;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface ComponentType<TComp = any> {
     name: string;
     cellRenderer?: boolean;

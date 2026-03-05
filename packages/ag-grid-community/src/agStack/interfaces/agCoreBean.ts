@@ -5,7 +5,10 @@ export interface AgSingletonBean<TBeanCollection> extends AgBaseBean<TBeanCollec
     /** AG Grid internal - do not use */
     beanName?: keyof TBeanCollection & string;
 }
-/** Includes bean creation and destruction logic */
+/**
+ * Includes bean creation and destruction logic
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
 
 export interface AgCoreBean<TBeanCollection> extends AgBaseBean<TBeanCollection> {
     isAlive(): boolean;
