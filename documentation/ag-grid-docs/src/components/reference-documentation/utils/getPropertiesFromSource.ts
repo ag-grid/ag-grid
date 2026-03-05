@@ -55,7 +55,9 @@ export const getPropertiesFromSource = async ({
         validateDocumentedProperties(propertiesFromFiles, codeConfigs, 'theming-api');
     }
 
-    if (sources.some((s) => s.includes('grid-options'))) {
+    // Match 'grid-options/properties' specifically to avoid triggering on
+    // react-grid-options.json, which documents a small React-specific subset
+    if (sources.some((s) => s.includes('grid-options/properties'))) {
         validateDocumentedProperties(propertiesFromFiles, codeConfigs, 'grid-options', gridOptionsApiKeyFilter);
     }
 
@@ -73,11 +75,19 @@ const UNDOCUMENTED_GRID_OPTIONS = new Set([
 ]);
 
 function gridOptionsApiKeyFilter(key: string, entry: any): boolean {
-    if (UNDOCUMENTED_GRID_OPTIONS.has(key)) return false;
+    if (UNDOCUMENTED_GRID_OPTIONS.has(key)) {
+        return false;
+    }
     const meta = entry?.meta;
-    if (!meta) return true;
-    if (meta.isEvent) return false;
-    if (meta.tags?.some((t: any) => t.name === 'deprecated')) return false;
+    if (!meta) {
+        return true;
+    }
+    if (meta.isEvent) {
+        return false;
+    }
+    if (meta.tags?.some((t: any) => t.name === 'deprecated')) {
+        return false;
+    }
     return true;
 }
 
