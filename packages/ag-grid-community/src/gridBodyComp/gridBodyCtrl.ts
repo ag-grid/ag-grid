@@ -133,6 +133,7 @@ export class GridBodyCtrl extends BeanStub {
         this.setPinnedRowsHeights();
         this.disableBrowserDragging();
         this.addStopEditingWhenGridLosesFocus();
+        this.updatePinnedColumnStickyOffsets();
         this.updateScrollingClasses();
 
         this.filterManager?.setupAdvFilterHeaderComp(
@@ -154,6 +155,7 @@ export class GridBodyCtrl extends BeanStub {
         const setPinnedRowsHeights = this.setPinnedRowsHeights.bind(this);
         const setGridRootRole = this.setGridRootRole.bind(this);
         const toggleRowResizeStyle = this.toggleRowResizeStyles.bind(this);
+        const updatePinnedColumnStickyOffsets = this.updatePinnedColumnStickyOffsets.bind(this);
 
         this.addManagedEventListeners({
             gridColumnsChanged: this.onGridColumnsChanged.bind(this),
@@ -161,6 +163,7 @@ export class GridBodyCtrl extends BeanStub {
             leftPinnedWidthChanged: this.updateScrollableAreaWidth.bind(this),
             rightPinnedWidthChanged: this.updateScrollableAreaWidth.bind(this),
             scrollVisibilityChanged: this.onScrollVisibilityChanged.bind(this),
+            scrollbarWidthChanged: updatePinnedColumnStickyOffsets,
             scrollGapChanged: this.updateScrollingClasses.bind(this),
             pinnedRowDataChanged: setPinnedRowsHeights,
             pinnedHeightChanged: setPinnedRowsHeights,
@@ -175,6 +178,7 @@ export class GridBodyCtrl extends BeanStub {
         });
 
         this.addManagedPropertyListener('treeData', setGridRootRole);
+        this.addManagedPropertyListener('enableRtl', updatePinnedColumnStickyOffsets);
     }
 
     private toggleRowResizeStyles(params: RowResizeStartedEvent | RowResizeEndedEvent) {
@@ -193,6 +197,7 @@ export class GridBodyCtrl extends BeanStub {
         const visible = scrollVisibleSvc.verticalScrollShowing;
         this.setStickyWidth(visible);
         this.setStickyBottomOffsetBottom();
+        this.updatePinnedColumnStickyOffsets();
         this.updateScrollableAreaWidth();
         _requestAnimationFrame(this.beans, () => this.comp.setBodyViewportWidth('100%'));
         this.pinnedRowContainerRendererFeature.refresh();
@@ -277,6 +282,17 @@ export class GridBodyCtrl extends BeanStub {
         } = this;
         classList.toggle('ag-body-vertical-content-no-gap', !scrollVisibleSvc.verticalScrollGap);
         classList.toggle('ag-body-horizontal-content-no-gap', !scrollVisibleSvc.horizontalScrollGap);
+    }
+
+    private updatePinnedColumnStickyOffsets(): void {
+        const { scrollVisibleSvc, gos, eGridBody } = this;
+        const scrollbarWidth = scrollVisibleSvc.verticalScrollShowing ? this.getVerticalScrollbarWidth() : 0;
+        const isRtl = gos.get('enableRtl');
+        const leftOffset = isRtl ? scrollbarWidth : 0;
+        const rightOffset = isRtl ? 0 : scrollbarWidth;
+
+        eGridBody.style.setProperty('--ag-pinned-left-sticky-offset', `${leftOffset}px`);
+        eGridBody.style.setProperty('--ag-pinned-right-sticky-offset', `${rightOffset}px`);
     }
 
     // if we do not do this, then the user can select a pic in the grid (eg an image in a custom cell renderer)

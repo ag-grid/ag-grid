@@ -767,11 +767,31 @@
     }
 
     .ag-grid-pinned-left-cells {
-        left: 0;
+        left: var(--ag-pinned-left-sticky-offset, 0px);
     }
 
     .ag-grid-pinned-right-cells {
-        right: 0;
+        right: var(--ag-pinned-right-sticky-offset, 0px);
+    }
+
+    .ag-ltr .ag-grid-pinned-right-cells::after,
+    .ag-rtl .ag-grid-pinned-left-cells::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        height: 100%;
+        pointer-events: none;
+        background-color: inherit;
+    }
+
+    .ag-ltr .ag-grid-pinned-right-cells::after {
+        right: calc(-1 * var(--ag-pinned-right-sticky-offset, 0px));
+        width: var(--ag-pinned-right-sticky-offset, 0px);
+    }
+
+    .ag-rtl .ag-grid-pinned-left-cells::after {
+        left: calc(-1 * var(--ag-pinned-left-sticky-offset, 0px));
+        width: var(--ag-pinned-left-sticky-offset, 0px);
     }
 
     .ag-row-position-absolute {
@@ -1084,6 +1104,13 @@
     .ag-grid-pinned-top-rows {
         top: 0;
         white-space: nowrap;
+        background-image: linear-gradient(var(--ag-header-background-color), var(--ag-header-background-color)),
+            linear-gradient(var(--ag-data-background-color), var(--ag-data-background-color));
+        background-size:
+            100% var(--ag-header-rows-height, 0px),
+            100% 100%;
+        background-repeat: no-repeat;
+        background-position: top left;
     }
 
     .ag-grid-pinned-bottom-rows {

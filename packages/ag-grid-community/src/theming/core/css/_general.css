@@ -277,11 +277,35 @@
 }
 
 .ag-grid-pinned-left-cells {
-    left: 0;
+    /* offset pinned-left cells when the vertical scrollbar is rendered on the left (RTL). */
+    left: var(--ag-pinned-left-sticky-offset, 0);
 }
 
 .ag-grid-pinned-right-cells {
-    right: 0;
+    /* offset pinned-right cells when the vertical scrollbar is rendered on the right (LTR). */
+    right: var(--ag-pinned-right-sticky-offset, 0);
+}
+
+:where(.ag-ltr) .ag-grid-pinned-right-cells::after,
+:where(.ag-rtl) .ag-grid-pinned-left-cells::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    height: 100%;
+    pointer-events: none;
+
+    /* fill the sticky-offset gutter using the pinned lane's background. */
+    background-color: inherit;
+}
+
+:where(.ag-ltr) .ag-grid-pinned-right-cells::after {
+    right: calc(-1 * var(--ag-pinned-right-sticky-offset, 0));
+    width: var(--ag-pinned-right-sticky-offset, 0);
+}
+
+:where(.ag-rtl) .ag-grid-pinned-left-cells::after {
+    left: calc(-1 * var(--ag-pinned-left-sticky-offset, 0));
+    width: var(--ag-pinned-left-sticky-offset, 0);
 }
 
 .ag-row-position-absolute {
@@ -379,6 +403,15 @@
 .ag-grid-pinned-top-rows {
     top: 0;
     white-space: nowrap;
+
+    /* preserve a full-width header backdrop even when rendered header rows are narrower than the viewport. */
+    background-image: linear-gradient(var(--ag-header-background-color), var(--ag-header-background-color)),
+        linear-gradient(var(--ag-data-background-color), var(--ag-data-background-color));
+    background-size:
+        100% var(--ag-header-rows-height, 0),
+        100% 100%;
+    background-repeat: no-repeat;
+    background-position: top left;
 }
 
 .ag-grid-pinned-bottom-rows {
