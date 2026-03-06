@@ -19,6 +19,9 @@ export class HeaderRowComp extends Component {
     private readonly ePinnedLeftCells: HTMLElement;
     private readonly eScrollingCells: HTMLElement;
     private readonly ePinnedRightCells: HTMLElement;
+    private pinnedLeftWidth: number | undefined;
+    private centerWidth: number | undefined;
+    private pinnedRightWidth: number | undefined;
 
     constructor(private readonly ctrl: HeaderRowCtrl) {
         super({ tag: 'div', cls: ctrl.headerRowClass, role: 'row' });
@@ -161,24 +164,46 @@ export class HeaderRowComp extends Component {
         const {
             gos,
             ePinnedLeftCells,
+            eScrollingCells,
             ePinnedRightCells,
             beans: { visibleCols },
         } = this;
         if (gos.get('domLayout') === 'print') {
-            ePinnedLeftCells.style.width = '0px';
-            ePinnedRightCells.style.width = '0px';
-            ePinnedLeftCells.style.display = 'none';
-            ePinnedRightCells.style.display = 'none';
+            if (this.pinnedLeftWidth !== 0) {
+                ePinnedLeftCells.style.width = '0px';
+                ePinnedLeftCells.style.display = 'none';
+                this.pinnedLeftWidth = 0;
+            }
+            if (this.pinnedRightWidth !== 0) {
+                ePinnedRightCells.style.width = '0px';
+                ePinnedRightCells.style.display = 'none';
+                this.pinnedRightWidth = 0;
+            }
+            const centerWidth = visibleCols.bodyWidth;
+            if (this.centerWidth !== centerWidth) {
+                eScrollingCells.style.width = `${centerWidth}px`;
+                this.centerWidth = centerWidth;
+            }
             return;
         }
 
         const leftWidth = visibleCols.getLeftStickyColumnContainerWidth();
+        const centerWidth = visibleCols.bodyWidth;
         const rightWidth = visibleCols.getRightStickyColumnContainerWidth();
-
-        ePinnedLeftCells.style.width = `${leftWidth}px`;
-        ePinnedRightCells.style.width = `${rightWidth}px`;
-        ePinnedLeftCells.style.display = leftWidth > 0 ? '' : 'none';
-        ePinnedRightCells.style.display = rightWidth > 0 ? '' : 'none';
+        if (this.pinnedLeftWidth !== leftWidth) {
+            ePinnedLeftCells.style.width = `${leftWidth}px`;
+            ePinnedLeftCells.style.display = leftWidth > 0 ? '' : 'none';
+            this.pinnedLeftWidth = leftWidth;
+        }
+        if (this.centerWidth !== centerWidth) {
+            eScrollingCells.style.width = `${centerWidth}px`;
+            this.centerWidth = centerWidth;
+        }
+        if (this.pinnedRightWidth !== rightWidth) {
+            ePinnedRightCells.style.width = `${rightWidth}px`;
+            ePinnedRightCells.style.display = rightWidth > 0 ? '' : 'none';
+            this.pinnedRightWidth = rightWidth;
+        }
     }
 
     private refreshPinnedCellGroupWidths(): void {

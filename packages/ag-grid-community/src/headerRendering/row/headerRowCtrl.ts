@@ -103,7 +103,6 @@ export class HeaderRowCtrl extends BeanStub {
         const onDisplayedColumnsChanged = this.onDisplayedColumnsChanged.bind(this);
         compBean.addManagedEventListeners({
             columnResized: this.setWidth.bind(this),
-            displayedColumnsWidthChanged: this.refreshPinnedCellGroupWidths.bind(this),
             leftPinnedWidthChanged: this.refreshPinnedCellGroupWidths.bind(this),
             rightPinnedWidthChanged: this.refreshPinnedCellGroupWidths.bind(this),
             displayedColumnsChanged: onDisplayedColumnsChanged,
@@ -143,6 +142,7 @@ export class HeaderRowCtrl extends BeanStub {
         }
         const width = this.getWidthForRow();
         this.comp.setWidth(`${width}px`);
+        this.refreshPinnedCellGroupWidths();
     }
 
     private refreshPinnedCellGroupWidths(): void {
@@ -151,11 +151,12 @@ export class HeaderRowCtrl extends BeanStub {
 
     private getWidthForRow(): number {
         const { visibleCols } = this.beans;
-        return (
+        const contentWidth =
             visibleCols.getContainerWidth('right') +
             visibleCols.getContainerWidth('left') +
-            visibleCols.getContainerWidth(null)
-        );
+            visibleCols.getContainerWidth(null);
+        const viewportWidth = this.beans.ctrlsSvc.getGridBodyCtrl()?.eGridViewport.clientWidth ?? 0;
+        return Math.max(contentWidth, viewportWidth);
     }
 
     private onRowHeightChanged(): void {

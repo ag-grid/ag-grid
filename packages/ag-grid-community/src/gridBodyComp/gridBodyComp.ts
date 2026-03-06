@@ -175,7 +175,6 @@ export class GridBodyComp extends Component implements FocusableContainer {
                     ct.classList.toggle(cssClass, selectable);
                 }
             },
-            setBodyViewportWidth: (width) => (this.eGridScrollableArea.style.minWidth = width),
             setGridScrollableAreaWidth: (width) => (this.eGridScrollableArea.style.width = width),
             setGridRootRole: (role: 'grid' | 'treegrid') => _setAriaRole(this.eGridRoot, role),
         };

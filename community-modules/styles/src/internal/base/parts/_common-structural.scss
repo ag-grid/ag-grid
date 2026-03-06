@@ -751,8 +751,7 @@
     }
 
     .ag-grid-scrolling-cells {
-        flex: 1 1 auto;
-        min-width: 0;
+        flex: 0 0 auto;
         // create a base stacking context for center cells so pinned lanes can always layer above.
         z-index: 0;
     }
@@ -772,6 +771,7 @@
 
     .ag-grid-pinned-right-cells {
         right: var(--ag-pinned-right-sticky-offset, 0px);
+        margin-inline-start: auto;
     }
 
     .ag-ltr .ag-grid-pinned-right-cells::after,

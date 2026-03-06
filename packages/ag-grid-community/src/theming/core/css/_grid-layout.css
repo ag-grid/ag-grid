@@ -79,11 +79,20 @@
 .ag-row {
     width: 100%;
     height: var(--ag-row-height);
-    border-bottom: var(--ag-row-border);
 
     &.ag-row-editing-invalid {
         background-color: var(--ag-full-row-edit-invalid-background-color);
     }
+}
+
+.ag-row.ag-full-width-row {
+    border-bottom: var(--ag-row-border);
+}
+
+.ag-row:where(:not(.ag-header-row, .ag-full-width-row)) > .ag-grid-pinned-left-cells,
+.ag-row:where(:not(.ag-header-row, .ag-full-width-row)) > .ag-grid-scrolling-cells,
+.ag-row:where(:not(.ag-header-row, .ag-full-width-row)) > .ag-grid-pinned-right-cells {
+    border-bottom: var(--ag-row-border);
 }
 
 :where(.ag-row:not(.ag-header-row)) {
@@ -100,24 +109,30 @@
     background-color: inherit;
 }
 
-/* Hide the border of the last last row when there is no gap between the row and
+/* Hide the border of the last row when there is no gap between the row and
    grid edge to prevent a double border. The use of the child  combinator `>`
    is to ensure that the ag-body-vertical-content-no-gap class only hides the
    border of rows in the same grid, not in nested detail grids  */
-:where(
-        .ag-body-vertical-content-no-gap
-            > .ag-grid-viewport
-            > .ag-grid-scrollable-area
-            > .ag-grid-scrolling-rows
-            > .ag-full-width-container,
-        .ag-body-vertical-content-no-gap
-            > .ag-grid-viewport
-            > .ag-grid-scrollable-area
-            > .ag-grid-scrolling-rows
-            > .ag-grid-scrolling-container
-    )
-    > .ag-row-last {
+.ag-body-vertical-content-no-gap
+    > .ag-grid-viewport
+    > .ag-grid-scrollable-area
+    > .ag-grid-scrolling-rows
+    > :is(.ag-full-width-container, .ag-grid-scrolling-container)
+    > .ag-row-last.ag-full-width-row {
     border-bottom-color: transparent;
+}
+
+.ag-body-vertical-content-no-gap
+    > .ag-grid-viewport
+    > .ag-grid-scrollable-area
+    > .ag-grid-scrolling-rows
+    > :is(.ag-full-width-container, .ag-grid-scrolling-container)
+    > .ag-row-last:not(.ag-full-width-row) {
+    > .ag-grid-pinned-left-cells,
+    > .ag-grid-scrolling-cells,
+    > .ag-grid-pinned-right-cells {
+        border-bottom-color: transparent;
+    }
 }
 
 .ag-group-expanded,
@@ -269,7 +284,6 @@
 }
 
 .ag-grid-scrolling-rows,
-.ag-grid-pinned-top-rows-container,
 .ag-grid-pinned-bottom-rows-container {
     background-color: var(--ag-data-background-color);
 }

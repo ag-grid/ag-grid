@@ -18,6 +18,9 @@ export class RowComp extends Component {
     private readonly ePinnedLeftCells: HTMLElement | undefined;
     private readonly eScrollingCells: HTMLElement | undefined;
     private readonly ePinnedRightCells: HTMLElement | undefined;
+    private pinnedLeftWidth: number | undefined;
+    private centerWidth: number | undefined;
+    private pinnedRightWidth: number | undefined;
 
     private domOrder: boolean;
     private readonly cellComps: Map<CellCtrlInstanceId, CellComp | null> = new Map();
@@ -179,17 +182,28 @@ export class RowComp extends Component {
     }
 
     private updatePinnedCellGroupWidths(): void {
-        if (!this.ePinnedLeftCells || !this.ePinnedRightCells) {
+        if (!this.ePinnedLeftCells || !this.ePinnedRightCells || !this.eScrollingCells) {
             return;
         }
 
-        const leftWidth = this.beans.visibleCols.getLeftStickyColumnContainerWidth();
-        const rightWidth = this.beans.visibleCols.getRightStickyColumnContainerWidth();
-
-        this.ePinnedLeftCells.style.width = `${leftWidth}px`;
-        this.ePinnedRightCells.style.width = `${rightWidth}px`;
-        this.ePinnedLeftCells.style.display = leftWidth > 0 ? '' : 'none';
-        this.ePinnedRightCells.style.display = rightWidth > 0 ? '' : 'none';
+        const { visibleCols } = this.beans;
+        const leftWidth = visibleCols.getLeftStickyColumnContainerWidth();
+        const centerWidth = visibleCols.bodyWidth;
+        const rightWidth = visibleCols.getRightStickyColumnContainerWidth();
+        if (this.pinnedLeftWidth !== leftWidth) {
+            this.ePinnedLeftCells.style.width = `${leftWidth}px`;
+            this.ePinnedLeftCells.style.display = leftWidth > 0 ? '' : 'none';
+            this.pinnedLeftWidth = leftWidth;
+        }
+        if (this.centerWidth !== centerWidth) {
+            this.eScrollingCells.style.width = `${centerWidth}px`;
+            this.centerWidth = centerWidth;
+        }
+        if (this.pinnedRightWidth !== rightWidth) {
+            this.ePinnedRightCells.style.width = `${rightWidth}px`;
+            this.ePinnedRightCells.style.display = rightWidth > 0 ? '' : 'none';
+            this.pinnedRightWidth = rightWidth;
+        }
     }
 
     private refreshPinnedCellGroupWidths(): void {

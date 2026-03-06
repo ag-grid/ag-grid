@@ -76,7 +76,6 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         this.addManagedPropertyListener('groupHeaderHeight', this.refreshMaxHeaderHeight.bind(this));
         this.refreshMaxHeaderHeight();
 
-        const pinned = column.getPinned();
         const leafCols = column.getProvidedColumnGroup().getLeafColumns();
 
         colHover?.createHoverFeature(compBean, leafCols, eGui);
@@ -84,9 +83,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         compBean.createManagedBean(new SetLeftFeature(column, eGui, beans));
         compBean.createManagedBean(new GroupWidthFeature(comp, column));
         if (colResize) {
-            this.resizeFeature = compBean.createManagedBean(
-                colResize.createGroupResizeFeature(comp, eResize, pinned, column)
-            );
+            this.resizeFeature = compBean.createManagedBean(colResize.createGroupResizeFeature(comp, eResize, column));
         } else {
             comp.setResizableDisplayed(false);
         }

@@ -103,9 +103,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.refreshAria();
 
         if (colResize) {
-            this.resizeFeature = compBean.createManagedBean(
-                colResize.createResizeFeature(column.getPinned(), column, eResize, comp, this)
-            );
+            this.resizeFeature = compBean.createManagedBean(colResize.createResizeFeature(column, eResize, comp, this));
         } else {
             _setDisplayed(eResize, false);
         }

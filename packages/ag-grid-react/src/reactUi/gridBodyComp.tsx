@@ -131,11 +131,6 @@ const GridBodyComp = () => {
             setAlwaysVerticalScrollClass: setForceVerticalScrollClass,
             setCellSelectableCss: (cssClass: string | null, flag: boolean) =>
                 setCellSelectableCss(flag ? cssClass : null),
-            setBodyViewportWidth: (width: string) => {
-                if (eGridScrollableArea.current) {
-                    eGridScrollableArea.current.style.minWidth = width;
-                }
-            },
             setGridScrollableAreaWidth: (width: string) => {
                 if (eGridScrollableArea.current) {
                     eGridScrollableArea.current.style.width = width;

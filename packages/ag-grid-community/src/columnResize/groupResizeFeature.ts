@@ -4,7 +4,6 @@ import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { ColumnEventType } from '../events';
 import type { IHeaderResizeFeature } from '../headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 import type { IHeaderGroupCellComp } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
-import type { ColumnPinnedType } from '../interfaces/iColumn';
 import type { ColumnResizeSet } from './columnResizeService';
 
 interface ColumnSizeAndRatios {
@@ -27,7 +26,6 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
     constructor(
         private readonly comp: IHeaderGroupCellComp,
         private readonly eResize: HTMLElement,
-        private readonly pinned: ColumnPinnedType,
         private readonly columnGroup: AgColumnGroup
     ) {
         super();
@@ -208,13 +206,16 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
     // note - this method is duplicated in RenderedHeaderCell - should refactor out?
     private normaliseDragChange(dragChange: number): number {
         let result = dragChange;
+        const { columnGroup } = this;
+        const firstDisplayedLeafCol = columnGroup.getDisplayedLeafColumns()[0];
+        const pinned = firstDisplayedLeafCol?.getPinned() ?? columnGroup.getPinned();
 
         if (this.gos.get('enableRtl')) {
             // for RTL, dragging left makes the col bigger, except when pinning left
-            if (this.pinned !== 'left') {
+            if (pinned !== 'left') {
                 result *= -1;
             }
-        } else if (this.pinned === 'right') {
+        } else if (pinned === 'right') {
             // for LTR (ie normal), dragging left makes the col smaller, except when pinning right
             result *= -1;
         }

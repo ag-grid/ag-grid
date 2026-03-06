@@ -259,8 +259,7 @@
 }
 
 .ag-grid-scrolling-cells {
-    flex: 1 1 auto;
-    min-width: 0;
+    flex: 0 0 auto;
 
     /* create a base stacking context for center cells so pinned lanes can always layer above. */
     z-index: 0;
@@ -284,6 +283,9 @@
 .ag-grid-pinned-right-cells {
     /* offset pinned-right cells when the vertical scrollbar is rendered on the right (LTR). */
     right: var(--ag-pinned-right-sticky-offset, 0);
+
+    /* when rows are wider than displayed columns, consume spare inline space before right-pinned lane. */
+    margin-inline-start: auto;
 }
 
 :where(.ag-ltr) .ag-grid-pinned-right-cells::after,

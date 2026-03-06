@@ -1,4 +1,4 @@
-import { _isElementChildOfClass, _requestAnimationFrame } from '../agStack/utils/dom';
+import { _isElementChildOfClass } from '../agStack/utils/dom';
 import { _isEventFromThisInstance } from '../agStack/utils/event';
 import type { ColumnModel } from '../columns/columnModel';
 import { BeanStub } from '../context/beanStub';
@@ -42,7 +42,6 @@ export interface IGridBodyComp extends LayoutView {
     setRowAnimationCssOnBodyViewport(cssClass: RowAnimationCssClasses, animate: boolean): void;
     setAlwaysVerticalScrollClass(cssClass: string | null, on: boolean): void;
     registerBodyViewportResizeListener(listener: () => void): void;
-    setBodyViewportWidth(width: string): void;
     setGridScrollableAreaWidth(width: string): void;
     setGridRootRole(role: 'grid' | 'treegrid'): void;
 }
@@ -199,7 +198,6 @@ export class GridBodyCtrl extends BeanStub {
         this.setStickyBottomOffsetBottom();
         this.updatePinnedColumnStickyOffsets();
         this.updateScrollableAreaWidth();
-        _requestAnimationFrame(this.beans, () => this.comp.setBodyViewportWidth('100%'));
         this.pinnedRowContainerRendererFeature.refresh();
 
         this.updateScrollingClasses();
@@ -207,12 +205,13 @@ export class GridBodyCtrl extends BeanStub {
 
     private updateScrollableAreaWidth(): void {
         const { visibleCols } = this.beans;
-        const width =
+        const contentWidth =
             visibleCols.bodyWidth +
             visibleCols.getLeftStickyColumnContainerWidth() +
             visibleCols.getRightStickyColumnContainerWidth() +
             this.getVerticalScrollbarWidth();
-        this.comp.setGridScrollableAreaWidth(`${Math.max(width, 1)}px`);
+        const viewportWidth = this.eGridViewport.clientWidth;
+        this.comp.setGridScrollableAreaWidth(`${Math.max(contentWidth, viewportWidth, 1)}px`);
     }
 
     private setGridRootRole(): void {

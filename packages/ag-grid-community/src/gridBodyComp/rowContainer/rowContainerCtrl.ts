@@ -204,10 +204,12 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
             this.createManagedBean(
                 new CenterWidthFeature(() => {
                     const { visibleCols } = this.beans;
-                    const width =
+                    const contentWidth =
                         visibleCols.bodyWidth +
                         visibleCols.getLeftStickyColumnContainerWidth() +
                         visibleCols.getRightStickyColumnContainerWidth();
+                    const viewportWidth = _getInnerWidth(this.eViewport);
+                    const width = Math.max(contentWidth, viewportWidth);
                     this.comp.setContainerWidth(`${width}px`);
                 })
             )

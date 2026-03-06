@@ -794,7 +794,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             displayedColumnsWidthChanged: this.refreshPinnedCellGroupWidths.bind(this),
             leftPinnedWidthChanged: this.refreshPinnedCellGroupWidths.bind(this),
             rightPinnedWidthChanged: this.refreshPinnedCellGroupWidths.bind(this),
-            columnResized: this.refreshPinnedCellGroupWidths.bind(this),
             virtualColumnsChanged: this.onVirtualColumnsChanged.bind(this),
             cellFocused: this.onCellFocusChanged.bind(this),
             cellFocusCleared: this.onCellFocusChanged.bind(this),

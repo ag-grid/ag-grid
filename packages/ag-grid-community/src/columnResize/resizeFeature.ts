@@ -3,7 +3,6 @@ import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { IHeaderResizeFeature } from '../headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 import type { HeaderCellCtrl, IHeaderCellComp } from '../headerRendering/cells/column/headerCellCtrl';
-import type { ColumnPinnedType } from '../interfaces/iColumn';
 
 export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     private lastResizeAmount: number;
@@ -11,7 +10,6 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     private resizeWithShiftKey: boolean;
 
     constructor(
-        private readonly pinned: ColumnPinnedType,
         private readonly column: AgColumn,
         private readonly eResize: HTMLElement,
         private readonly comp: IHeaderCellComp,
@@ -119,8 +117,9 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     private normaliseResizeAmount(dragChange: number): number {
         let result = dragChange;
 
-        const notPinningLeft = this.pinned !== 'left';
-        const pinningRight = this.pinned === 'right';
+        const pinned = this.column.getPinned();
+        const notPinningLeft = pinned !== 'left';
+        const pinningRight = pinned === 'right';
 
         if (this.gos.get('enableRtl')) {
             // for RTL, dragging left makes the col bigger, except when pinning left
