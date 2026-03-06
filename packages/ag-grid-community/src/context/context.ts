@@ -148,7 +148,6 @@ export type DynamicBeanName =
     | 'tooltipStateManager'
     | 'groupStrategy'
     | 'treeGroupStrategy'
-    | ColumnToolPanelEditStrategyBean
     | EditStrategyType
     | 'rowNumberRowResizer'
     | 'agSetColumnFilterHandler'

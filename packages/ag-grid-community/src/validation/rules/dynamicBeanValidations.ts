@@ -2,8 +2,6 @@ import type { DynamicBeanName } from '../../context/context';
 import type { ValidationModuleName } from '../../interfaces/iModule';
 
 export const DYNAMIC_BEAN_MODULES: Record<DynamicBeanName, ValidationModuleName> = {
-    colToolPanelDeferredEdit: 'ColumnsToolPanel',
-    colToolPanelSynchronousEdit: 'ColumnsToolPanel',
     detailCellRendererCtrl: 'SharedMasterDetail',
     dndSourceComp: 'DragAndDrop',
     fillHandle: 'CellSelection',
