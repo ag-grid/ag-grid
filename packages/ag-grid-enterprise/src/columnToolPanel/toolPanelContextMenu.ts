@@ -33,7 +33,7 @@ export class ToolPanelContextMenu extends Component {
         private readonly column: AgColumn | AgProvidedColumnGroup,
         private readonly mouseEventOrTouch: MouseEvent | Touch,
         private readonly parentEl: HTMLElement,
-        private readonly params: ColumnToolPanelEditParams
+        private readonly params: ColumnToolPanelEditParams = {}
     ) {
         super({ tag: 'div', cls: 'ag-menu' });
     }
@@ -74,6 +74,7 @@ export class ToolPanelContextMenu extends Component {
     }
 
     private initializeProperties(column: AgColumn | AgProvidedColumnGroup): void {
+        const edits = this.getEditStrategy();
         let columns: AgColumn[];
         if (isProvidedColumnGroup(column)) {
             columns = column.getLeafColumns();
@@ -82,7 +83,7 @@ export class ToolPanelContextMenu extends Component {
         }
         this.columns = columns;
 
-        const isPivotMode = this.beans.colModel.isPivotMode();
+        const isPivotMode = edits.getPivotModeForToolPanel();
 
         this.allowScrollIntoView = !isPivotMode && columns.some(this.isColumnValidForScrollIntoView);
         this.allowGrouping = columns.some((col) => col.isPrimary() && col.isAllowRowGroup());
@@ -93,13 +94,15 @@ export class ToolPanelContextMenu extends Component {
     private buildMenuItemMap(): void {
         const localeTextFunc = this.getLocaleTextFunc();
         const { beans, displayName } = this;
-        const { rowGroupColsSvc, valueColsSvc, pivotColsSvc, colModel } = beans;
         const edits = this.getEditStrategy();
 
         const menuItemMap = new Map<MenuItemName, MenuItemProperty>();
         this.menuItemMap = menuItemMap;
 
-        const isPivotMode = colModel.isPivotMode();
+        const isPivotMode = edits.getPivotModeForToolPanel();
+        const rowGroupColIdSet = new Set(edits.getRowGroupColumns().map((col) => col.getColId()));
+        const valueColIdSet = new Set(edits.getValueColumns().map((col) => col.getColId()));
+        const pivotColIdSet = new Set(edits.getPivotColumns().map((col) => col.getColId()));
 
         menuItemMap.set('scrollIntoView', {
             allowedFunction: (col) => !col.isPinned() && !isPivotMode && this.isColumnValidForScrollIntoView(col),
@@ -121,17 +124,14 @@ export class ToolPanelContextMenu extends Component {
             col.isPrimary() && col.isAllowRowGroup() && !isRowGroupColLocked(col, beans);
         menuItemMap.set('rowGroup', {
             allowedFunction: rowGroupAllowed,
-            activeFunction: (col) => col.isRowGroupActive(),
+            activeFunction: (col) => rowGroupColIdSet.has(col.getColId()),
             activateLabel: () => getGroupingLocaleText(localeTextFunc, 'groupBy', displayName!),
             deactivateLabel: () => getGroupingLocaleText(localeTextFunc, 'ungroupBy', displayName!),
             activateFunction: () =>
-                edits.setRowGroupColumns(
-                    this.addColumnsToList(rowGroupColsSvc?.columns ?? [], rowGroupAllowed),
-                    'toolPanelUi'
-                ),
+                edits.setRowGroupColumns(this.addColumnsToList(edits.getRowGroupColumns(), rowGroupAllowed), 'toolPanelUi'),
             deActivateFunction: () =>
                 edits.setRowGroupColumns(
-                    this.removeColumnsFromList(rowGroupColsSvc?.columns ?? [], rowGroupAllowed),
+                    this.removeColumnsFromList(edits.getRowGroupColumns(), rowGroupAllowed),
                     'toolPanelUi'
                 ),
             addIcon: 'menuAddRowGroup',
@@ -141,15 +141,15 @@ export class ToolPanelContextMenu extends Component {
         const valueAllowed = (col: AgColumn) => col.isPrimary() && col.isAllowValue();
         menuItemMap.set('value', {
             allowedFunction: valueAllowed,
-            activeFunction: (col) => col.isValueActive(),
+            activeFunction: (col) => valueColIdSet.has(col.getColId()),
             activateLabel: () => localeTextFunc('addToValues', `Add ${displayName} to values`, [displayName!]),
             deactivateLabel: () =>
                 localeTextFunc('removeFromValues', `Remove ${displayName} from values`, [displayName!]),
             activateFunction: () =>
-                edits.setValueColumns(this.addColumnsToList(valueColsSvc?.columns ?? [], valueAllowed), 'toolPanelUi'),
+                edits.setValueColumns(this.addColumnsToList(edits.getValueColumns(), valueAllowed), 'toolPanelUi'),
             deActivateFunction: () =>
                 edits.setValueColumns(
-                    this.removeColumnsFromList(valueColsSvc?.columns ?? [], valueAllowed),
+                    this.removeColumnsFromList(edits.getValueColumns(), valueAllowed),
                     'toolPanelUi'
                 ),
             addIcon: 'valuePanel',
@@ -159,15 +159,15 @@ export class ToolPanelContextMenu extends Component {
         const pivotAllowed = (col: AgColumn) => isPivotMode && col.isPrimary() && col.isAllowPivot();
         menuItemMap.set('pivot', {
             allowedFunction: pivotAllowed,
-            activeFunction: (col) => col.isPivotActive(),
+            activeFunction: (col) => pivotColIdSet.has(col.getColId()),
             activateLabel: () => localeTextFunc('addToLabels', `Add ${displayName} to labels`, [displayName!]),
             deactivateLabel: () =>
                 localeTextFunc('removeFromLabels', `Remove ${displayName} from labels`, [displayName!]),
             activateFunction: () =>
-                edits.setPivotColumns(this.addColumnsToList(pivotColsSvc?.columns ?? [], pivotAllowed), 'toolPanelUi'),
+                edits.setPivotColumns(this.addColumnsToList(edits.getPivotColumns(), pivotAllowed), 'toolPanelUi'),
             deActivateFunction: () =>
                 edits.setPivotColumns(
-                    this.removeColumnsFromList(pivotColsSvc?.columns ?? [], pivotAllowed),
+                    this.removeColumnsFromList(edits.getPivotColumns(), pivotAllowed),
                     'toolPanelUi'
                 ),
             addIcon: 'pivotPanel',
