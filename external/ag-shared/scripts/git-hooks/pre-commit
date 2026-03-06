@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+#
+# pre-commit - Protected branch guard
+#
+# Blocks non-interactive (agentic/CI) commits to protected branches.
+# Prompts human developers for confirmation when a TTY is present.
+#
+
+HOOKS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=_protected-branch.sh
+source "$HOOKS_DIR/_protected-branch.sh"
+# shellcheck source=_detect-agent.sh
+source "$HOOKS_DIR/_detect-agent.sh"
+# shellcheck source=_run-hook-chain.sh
+source "$HOOKS_DIR/_run-hook-chain.sh"
+
+BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")
+
+# Not on a protected branch — pass through
+if ! is_protected_branch "$BRANCH"; then
+    run_hook_chain "pre-commit"
+    exit $?
+fi
+
+# On a protected branch — check for a known AI agent first
+if AGENT_NAME=$(detect_agent); then
+    agent_block_message "$AGENT_NAME" "commit" "$BRANCH"
+    exit 1
+fi
+
+# No known agent — fall back to TTY check
+if ! [ -t 0 ]; then
+    # No TTY: unknown agentic tool or CI — block the commit
+    echo ""
+    echo "==========================================================================="
+    echo "BLOCKED: Commit to protected branch '$BRANCH'"
+    echo "==========================================================================="
+    echo "Direct commits to '$BRANCH' from non-interactive tools"
+    echo "are not allowed."
+    echo ""
+    echo "Work on a feature branch and open a pull request instead."
+    echo "To bypass manually: git commit --no-verify"
+    echo "==========================================================================="
+    echo ""
+    exit 1
+fi
+
+# TTY present — interactive confirmation
+echo ""
+echo "⚠  You are about to commit directly to protected branch '$BRANCH'."
+echo "   Direct commits to this branch should only be made by release"
+echo "   engineers. Consider using a feature branch instead."
+echo ""
+read -p "   Continue with this commit? [y/N] " -r REPLY
+echo ""
+
+if [[ ! "$REPLY" =~ ^[Yy]$ ]]; then
+    echo "Commit aborted."
+    exit 1
+fi
+
+run_hook_chain "pre-commit"
+exit $?

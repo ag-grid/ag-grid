@@ -1,5 +1,5 @@
 module.exports = {
-    QUIET_PERIOD_MS: 1000,
+    QUIET_PERIOD_MS: 50,
     BATCH_LIMIT: 50,
     PROJECT_ECHO_LIMIT: 3,
     NX_ARGS: ['--output-style', 'compact'],

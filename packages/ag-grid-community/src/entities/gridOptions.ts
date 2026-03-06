@@ -2550,11 +2550,12 @@ export interface GridOptions<TData = any> {
      */
     onBulkEditingStopped?(event: BulkEditingStoppedEvent<TData>): void;
     /**
-     * Batch editing has started (when batch editing is enabled).
+     * Fired when the first edit is made after `api.startBatchEdit()` is called.
+     * This event fires lazily — not immediately on `api.startBatchEdit()`, but on the first cell value change or editor open within the batch session.
      */
     onBatchEditingStarted?(event: BatchEditingStartedEvent<TData>): void;
     /**
-     * Batch editing has stopped (when batch editing is enabled).
+     * Batch editing has stopped (when batch editing is enabled). Contains a list of edits if the batch was committed via `api.commitBatchEdit()`.
      */
     onBatchEditingStopped?(event: BatchEditingStoppedEvent<TData>): void;
     /**

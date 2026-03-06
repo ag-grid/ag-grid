@@ -65,6 +65,10 @@
                     {
                         "type": "command",
                         "command": "\"$CLAUDE_PROJECT_DIR\"/external/ag-shared/scripts/install-for-cloud/install-for-cloud.sh"
+                    },
+                    {
+                        "type": "command",
+                        "command": "if [ -n \"$CLAUDE_ENV_FILE\" ]; then echo 'export NX_DAEMON=false' >> \"$CLAUDE_ENV_FILE\"; fi"
                     }
                 ]
             }

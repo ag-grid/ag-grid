@@ -152,7 +152,7 @@ reason = "Low risk and determined to not be exploitable in our use case"
 
 [[IgnoredVulns]]
 id = "GHSA-67mh-4wv8-2f99"
-reason = "esbuild dev server is only used for development/testing - it's not used in the final production build"
+reason = "Dev/build deps that don't appear in the libraries distributables"
 
 [[IgnoredVulns]]
 id = "GHSA-4hjh-wcwx-xvwj"
@@ -261,4 +261,72 @@ reason = "serialize-javascript is used in build & dev - not included in final pr
 [[IgnoredVulns]]
 id = "GHSA-83g3-92jg-28cx"
 reason = "tar is used in build & dev - not included in final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-wc8c-qw6v-h7f6"
+reason = "Dev/build deps that don't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-vpq2-c234-7xj6"
+reason = "Dev/build deps that don't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-33hq-fvwr-56pm"
+reason = "Dev/build deps that don't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-8qm3-746x-r74r"
+reason = "Dev/build deps that don't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-73rr-hh4g-fpgx"
+reason = "Dev/build deps that don't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-v2wj-7wpq-c8vv"
+reason = "Dev/build deps that don't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-5pq2-9x2x-5p6w"
+reason = "Dev/build deps that don't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-gq3j-xvxp-8hrf"
+reason = "Dev/build deps that don't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-p6xx-57qc-3wxr"
+reason = "Dev/build deps that don't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-q5qw-h33p-qvwr"
+reason = "Dev/build deps that don't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-wf6x-7x77-mvgw"
+reason = "Dev/build deps that don't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-xpqw-6gx7-v673"
+reason = "Dev/build deps that don't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-qffp-2rhf-9h96"
+reason = "Dev/build deps that don't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-qpx9-hpmf-5gmw"
+reason = "Dev/build deps that don't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-g9mf-h72j-4rw9"
+reason = "Dev/build deps that don't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-38r7-794h-5758"
+reason = "Dev/build deps that don't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-8fgc-7cc6-rx7x"
+reason = "Dev/build deps that don't appear in the libraries distributables"
 
