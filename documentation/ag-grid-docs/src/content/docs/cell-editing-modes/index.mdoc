@@ -1,0 +1,37 @@
+---
+title: "Editing Modes"
+---
+
+By default the grid edits one cell at a time. Two alternative editing modes change this behaviour
+for specialised workflows where the unit of work is an entire row, or where multiple edits must
+be staged and committed together.
+
+## Full Row Editing
+
+[Full Row Editing](./cell-editing-full-row/) makes all cells in a row editable simultaneously, giving users the impression
+that the record as a whole is being edited.
+
+### When to Use
+
+Full row editing is particularly useful when:
+
+- **Form-like Editing**: Your data represents complete records (such as user profiles, orders, or inventory items) where editing multiple fields together makes sense.
+- **Related Fields**: Changes to one field often require updates to related fields in the same row.
+- **User Experience**: You want a clear visual indication that a record is being edited.
+- **Cross-field Validation**: You need to validate relationships between fields before saving (e.g. ensuring a start date is before an end date).
+
+When a row is in edit mode, pressing {% kbd "⇥ Tab" /%} moves between editable cells; {% kbd "↵ Enter" /%} or clicking outside commits all changes; {% kbd "⎋ Esc" /%} discards them. Popup editors are not compatible with full row editing.
+
+## Batch Editing {% enterpriseIcon /%}
+
+[Batch Editing](./cell-editing-batch/) queues edits across multiple cells or rows without immediately writing them to your data. Changes accumulate as **pending values** and are applied in one operation when the batch is committed, or discarded entirely if cancelled.
+
+This is useful for bulk data entry workflows, spreadsheet-like experiences, and scenarios where you need to preview changes before saving to a back end. Batch Editing is available only via the API and is compatible with the Client-Side Row Model only.
+
+## Choosing a Mode
+
+| Mode | When to use |
+|------|-------------|
+| **Single cell** (default) | Standard editing; the user edits one cell at a time |
+| **[Full Row Editing](./cell-editing-full-row/)** | The row represents a record; fields are edited together as a unit |
+| **[Batch Editing](./cell-editing-batch/)** {% enterpriseIcon /%} | Many edits must be staged and reviewed before committing to the data |

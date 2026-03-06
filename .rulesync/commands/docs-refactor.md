@@ -9,7 +9,7 @@ Systematically improve the documentation section specified in `${ARGUMENTS}` —
 
 > **Primary goal: reorganise, not rewrite.** Move content, restructure navigation, merge or split pages. Add new prose only where genuinely missing and clearly justified — never pad for length or to hit a line-count target.
 >
-> Apply the writing style guidelines from the [Documentation Pages Guide](../rules/docs-pages.md) to any new or revised prose.
+> Apply the writing style guidelines from the [Documentation Pages Guide](.rulesync/rules/docs-pages.md) to any new or revised prose.
 
 ## When to Use
 
@@ -77,23 +77,31 @@ Use this command when a documentation section:
             "path": "section-overview"
         },
         {
-            "type": "group",
+            "type": "item",
             "title": "Basics",
+            "path": "section-basics",
             "children": [
                 { "type": "item", "title": "Step 1", "path": "step-1" },
                 { "type": "item", "title": "Step 2", "path": "step-2" }
             ]
         },
         {
-            "type": "group",
+            "type": "item",
             "title": "Advanced",
+            "path": "section-advanced",
             "children": [{ "type": "item", "title": "Feature A", "path": "feature-a" }]
         }
     ]
 }
 ```
 
+> **Inner groupings require a page:** Unlike top-level sections (`type: "group"` at the nav root level), inner groupings must use `type: "item"` with a `path` pointing to an actual overview page. A `type: "group"` without a `path` inside another group creates a non-clickable section label with no page behind it — an anti-pattern not found elsewhere in the docs. If no suitable overview page exists for a sub-grouping, flatten the structure instead of creating an empty parent.
+
+> **⚠️ Nesting depth limit:** Items nested more than 4 levels deep from the nav root will not render in the sidebar. Count carefully: top-level section (1) → parent item with children (2) → child items (3). If adding an inner grouping would push grandchild items to level 4+, flatten instead — promote the grandchildren as siblings of the parent rather than children of children.
+
 > **Hub and spoke:** When a topic has 5+ distinct sub-features, organise with a hub page (breadth: overview + navigation, ~100–150 lines) and spoke pages (depth: comprehensive coverage of one aspect, ~80–150 lines each). For simpler topics, a single focused page is better.
+
+For guidance on what content belongs on parent/overview pages, see [Parent / Overview Pages](.rulesync/rules/docs-pages.md#parent--overview-pages) in the Documentation Pages Guide.
 
 ### Phase 3: Value Propositions
 
@@ -109,7 +117,7 @@ One-sentence value proposition describing the user benefit.
 ## First Section Heading
 ```
 
-See the [Documentation Pages Guide](../rules/docs-pages.md#value-propositions) for writing guidelines on value propositions.
+See the [Documentation Pages Guide](.rulesync/rules/docs-pages.md#value-propositions) for writing guidelines on value propositions.
 
 ### Phase 4: Cross-References
 
@@ -128,9 +136,11 @@ Note: Use actual paths like `./cell-editing/`, `./value-parsers/`, etc. The exam
 **Cross-reference principles**:
 
 -   Hub pages (Overview) could link to pages in the section
--   Feature pages should link to 0-3 closely related pages
+-   Feature pages could link to 0-3 closely related pages (if highly relevant and necessary)
 -   Create bi-directional links if meaningful (if A links to B meaningfully, B can link to A meaningfully)
 -   Link descriptions should clarify the relationship
+
+See [Section Ordering — See Also](.rulesync/rules/docs-pages.md#section-ordering) in the Documentation Pages Guide for rules on when See Also is and isn't appropriate.
 
 ### Phase 5: Content Balance
 
@@ -263,24 +273,24 @@ When moving content from a long page to sub-pages, the prose must be transplante
 
 **Cosmetically acceptable changes** (do not alter content):
 
-| Change | Example |
-| --- | --- |
+| Change                  | Example                                                        |
+| ----------------------- | -------------------------------------------------------------- |
 | Heading level promotion | `###` → `##` when a section becomes a page's top-level heading |
-| Section reordering | Moving a logically misplaced section to a better sub-page |
-| Example relocation | Moving an example to the sub-page where it fits best |
+| Section reordering      | Moving a logically misplaced section to a better sub-page      |
+| Example relocation      | Moving an example to the sub-page where it fits best           |
 
 **Not acceptable** (reverts required):
 
-| Change | Example |
-| --- | --- |
-| Prose paraphrase | "In a nutshell, every time..." → "The grid calls `getRows()` each time..." |
-| Paragraph → bullet list | 3 sentences converted to bullet points covering the same content |
-| Dropped sentence | Removing a factual sentence to "simplify" |
-| Invented section | Adding "Performance Tips", "How it Works" numbered lists, marketing bullets |
-| Invented code example | Adding a `fetch()`-based usage example that wasn't in the original |
-| Code syntax modernisation | `function(params)` → `(params) =>` (arrow function) |
-| Spelling normalisation | `initialised` → `initialized` (repo uses UK English in prose and comments) |
-| Embellished descriptions | "Calls for the cache to be purged" → "Clears the cache and reloads from scratch" |
+| Change                    | Example                                                                          |
+| ------------------------- | -------------------------------------------------------------------------------- |
+| Prose paraphrase          | "In a nutshell, every time..." → "The grid calls `getRows()` each time..."       |
+| Paragraph → bullet list   | 3 sentences converted to bullet points covering the same content                 |
+| Dropped sentence          | Removing a factual sentence to "simplify"                                        |
+| Invented section          | Adding "Performance Tips", "How it Works" numbered lists, marketing bullets      |
+| Invented code example     | Adding a `fetch()`-based usage example that wasn't in the original               |
+| Code syntax modernisation | `function(params)` → `(params) =>` (arrow function)                              |
+| Spelling normalisation    | `initialised` → `initialized` (repo uses UK English in prose and comments)       |
+| Embellished descriptions  | "Calls for the cache to be purged" → "Clears the cache and reloads from scratch" |
 
 **Review step**: After writing sub-pages, diff each sub-page section-by-section against the corresponding section in the source file. For every difference, ask: is this cosmetic (heading level, new nav section) or a content change? Content changes must be reverted.
 
@@ -297,8 +307,8 @@ Before completing, verify:
 
 ### Content
 
--   [ ] Every page has a value proposition (see [Documentation Pages Guide](../rules/docs-pages.md#value-propositions) for writing guidelines)
--   [ ] Writing style follows [Documentation Pages Guide](../rules/docs-pages.md#writing-style) (active voice, imperative mood, positive framing)
+-   [ ] Every page has a value proposition (see [Documentation Pages Guide](.rulesync/rules/docs-pages.md#value-propositions) for writing guidelines)
+-   [ ] Writing style follows [Documentation Pages Guide](.rulesync/rules/docs-pages.md#writing-style) (active voice, imperative mood, positive framing)
 -   [ ] Each page includes at least one working example
 -   [ ] No orphan pages (all pages are 50+ lines or merged)
 -   [ ] No new prose added without clear justification
@@ -306,9 +316,11 @@ Before completing, verify:
 ### Cross-References
 
 -   [ ] Hub page links to all section pages
--   [ ] See Also sections added where they add genuine discovery value (not required on every page)
+-   [ ] (Optional if necessary and highly relevant) See Also sections only contain links to other sections of the docs (not child/sibling pages)
 -   [ ] Bi-directional links are in place where meaningful
 -   [ ] Link descriptions clarify relationships
+-   [ ] Parent pages use inline links to children (not standalone "See [X]..." sentences)
+-   [ ] No code or prose duplicated between parent and child pages
 
 ### Balance
 
@@ -353,25 +365,32 @@ Editing (flat structure)
 
 ```
 Editing
-├── Overview (now links to all 8 pages)
-├── Editing Basics (workflow group)
-│   ├── Start / Stop Editing
-│   ├── Parsing Values
-│   └── Saving Values
-├── Cell Editors (feature group)
-│   ├── Provided Cell Editors (7 children)
-│   └── Custom Edit Components (renamed)
-├── Editing Modes (alternative approaches)
-│   ├── Full Row Editing (merged from 36-line orphan)
-│   └── Batch Editing
-└── Data Quality (safety features)
-    ├── Validation
-    └── Undo / Redo Edits
+├── Overview                        → cell-editing
+├── Editing Basics                  → cell-editing-basics  (type: item, new overview page)
+│   ├── Start / Stop Editing        → cell-editing-start-stop
+│   ├── Parsing Values              → value-parsers
+│   └── Saving Values               → value-setters
+├── Provided Cell Editors           → provided-cell-editors  (type: item, existing page)
+│   ├── Text Editor                 → provided-cell-editors-text
+│   ├── Large Text Editor           → provided-cell-editors-large-text
+│   ├── Number Editor               → provided-cell-editors-number
+│   ├── Date Editors                → provided-cell-editors-date
+│   ├── Checkbox Editor             → provided-cell-editors-checkbox
+│   ├── Select Editor               → provided-cell-editors-select
+│   ├── Rich Select Editor          → provided-cell-editors-rich-select
+│   ├── Rich Select Customisation   → provided-cell-editors-rich-select-customisation
+│   └── Rich Select Async Values    → provided-cell-editors-rich-select-async
+├── Custom Edit Components          → cell-editors
+├── Editing Modes                   → cell-editing-modes  (type: item, new overview page)
+│   ├── Full Row Editing            → cell-editing-full-row
+│   └── Batch Editing               → cell-editing-batch
+├── Validation                      → cell-editing-validation
+└── Undo / Redo Edits               → undo-redo-edits
 ```
 
 ## Related Documentation
 
 -   Row Grouping section: `documentation/ag-grid-docs/src/content/docs/grouping-data/index.mdoc` - Model for excellent organisation
--   [Documentation Pages Guide](../rules/docs-pages.md) - Writing style, tone, and content standards
--   [Examples Guide](../rules/examples.md) - Working with examples
--   [Code Quality Guide](../rules/code-quality.md) - Writing quality standards
+-   [Documentation Pages Guide](.rulesync/rules/docs-pages.md) - Writing style, tone, and content standards
+-   [Examples Guide](.rulesync/rules/examples.md) - Working with examples
+-   [Code Quality Guide](.rulesync/rules/code-quality.md) - Writing quality standards

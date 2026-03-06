@@ -136,7 +136,29 @@ Not every page will include all sections; follow this order for the sections tha
 6. Advanced features (power user territory)
 7. API reference (programmatic control)
 8. Events (lifecycle hooks)
-9. See Also (discovery, only where it adds genuine value)
+9. See Also — only for pages in **other sections** of the docs that are highly relevant. Never use See Also to link to child pages or sibling pages within the same nav section — those are already visible in the sidebar. If all candidate links are within the same section, omit the section entirely.
+
+### Parent / Overview Pages
+
+Pages that act as nav parents (they have both a `path` and `children` in `nav.json`) follow a different content model from leaf pages.
+
+**Do include:**
+
+-   A brief mental model or lifecycle overview — conceptual content that ties the children together and doesn't duplicate any single child
+-   Per-child introductions: 1–3 sentences on what each child covers, when to use it, and any key limitations
+-   Inline links to child pages embedded in the prose (preferred over standalone "See [X] for details" sentences)
+-   A comparison table when children represent mutually exclusive alternative approaches
+
+**Do not include:**
+
+-   Code examples or prose duplicated from child pages — the same content must not appear in both places
+-   Detailed "how it works" steps or event lists that live in child pages
+-   API reference sections (those belong in child pages)
+-   Standalone "See [Child] for full details" sentences — the nav already exposes children
+
+A basic enabling snippet or brief illustrative example may appear on the parent page if it is removed from (or never added to) the child page — the same code must not exist in both places.
+
+**URL format for internal links in `.mdoc` files:** Use `./page-path/` (framework-relative prefix). Do not use `../` (not supported by the docs URL resolver).
 
 ## Validation
 
