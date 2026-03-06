@@ -41,7 +41,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel implements FocusableCo
         return label;
     }
 
-    private refresh(): void {
+    public refresh(): void {
         this.checkVisibility();
         this.refreshGui();
     }
@@ -69,7 +69,8 @@ export class PivotDropZonePanel extends BaseDropZonePanel implements FocusableCo
             }
         } else {
             // in toolPanel, the pivot panel is always shown when pivot mode is on
-            this.setDisplayed(pivotMode);
+            const draftPivotMode = this.getEditStrategy()?.getPivotModeForToolPanel();
+            this.setDisplayed(draftPivotMode ?? pivotMode);
         }
     }
 
@@ -79,7 +80,8 @@ export class PivotDropZonePanel extends BaseDropZonePanel implements FocusableCo
             return false;
         }
 
-        return column.isAllowPivot() && (!column.isPivotActive() || this.isSourceEventFromTarget(draggingEvent));
+        const isActive = this.getEditStrategy()?.getPivotColumns().includes(column) ?? column.isPivotActive();
+        return column.isAllowPivot() && (!isActive || this.isSourceEventFromTarget(draggingEvent));
     }
 
     protected updateItems(columns: AgColumn[]): void {

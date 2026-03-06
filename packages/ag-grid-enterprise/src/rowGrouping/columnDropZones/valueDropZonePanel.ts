@@ -40,7 +40,8 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
             return false;
         }
 
-        return column.isAllowValue() && (!column.isValueActive() || this.isSourceEventFromTarget(draggingEvent));
+        const isActive = this.getEditStrategy()?.getValueColumns().includes(column) ?? column.isValueActive();
+        return column.isAllowValue() && (!isActive || this.isSourceEventFromTarget(draggingEvent));
     }
 
     protected updateItems(columns: AgColumn[]): void {
