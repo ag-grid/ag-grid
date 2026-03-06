@@ -34,7 +34,6 @@ ModuleRegistry.registerModules([
 ]);
 
 let gridApi: GridApi;
-let pendingEditCount = 0;
 
 const gridOptions: GridOptions = {
     columnDefs: [
@@ -82,7 +81,7 @@ const gridOptions: GridOptions = {
 
 function updateEditCount(api: GridApi) {
     if (api.isBatchEditing()) {
-        pendingEditCount = api.getEditingCells().length;
+        const pendingEditCount = api.getEditingCells().length;
         const el = document.querySelector<HTMLElement>('#batchStatusValue');
         if (el) {
             el.textContent = `Active (${pendingEditCount} edit${pendingEditCount !== 1 ? 's' : ''})`;
@@ -96,7 +95,6 @@ function getEditingCells() {
 }
 
 function startBatchEdit() {
-    pendingEditCount = 0;
     gridApi!.startBatchEdit();
     const el = document.querySelector<HTMLElement>('#batchStatusValue');
     if (el) el.textContent = 'Active (0 edits)';
@@ -104,14 +102,12 @@ function startBatchEdit() {
 
 function commitBatchEdit() {
     gridApi!.commitBatchEdit();
-    pendingEditCount = 0;
     const el = document.querySelector<HTMLElement>('#batchStatusValue');
     if (el) el.textContent = 'Inactive';
 }
 
 function cancelBatchEdit() {
     gridApi!.cancelBatchEdit();
-    pendingEditCount = 0;
     const el = document.querySelector<HTMLElement>('#batchStatusValue');
     if (el) el.textContent = 'Inactive';
 }
