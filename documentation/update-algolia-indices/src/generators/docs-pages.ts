@@ -42,6 +42,10 @@ export const extractCodeWords = (text: string): string[] => {
     // and shouldn't be searchable
     text = text.replace(/<style.*?>.*?<\/style>/gs, '');
 
+    // Remove <wbr> tags without replacing with space, so that camelCase words
+    // split for display (e.g. process<wbr/>Cell<wbr/>Callback) are rejoined
+    text = text.replace(/<wbr\s*\/?>/gi, '');
+
     // strip all HTML tags so that names and content of attributes aren't searchable
     text = text.replace(/<.*?>/gs, ' ');
 
@@ -146,6 +150,39 @@ export const parseDocPage = async (item: FlattenedMenuItem) => {
                     continue;
                 }
 
+                // Process API reference tables by extracting each property as a
+                // separate record with the property name as a subHeading
+                if (currentTag.hasAttribute?.('data-api-reference-table')) {
+                    createPreviousRecord();
+                    for (const prop of currentTag.querySelectorAll('[data-api-property]')) {
+                        const h4 = prop.querySelector('h4');
+                        if (!h4) continue;
+                        const propertyName = getHeadingContent(h4);
+                        const anchor = h4.id;
+                        const descEl = prop.querySelector('[data-api-property-description]');
+                        const descHtml = descEl?.innerHTML ?? '';
+                        const descCodeWords = extractCodeWords(descHtml);
+                        const positionInPage = position++;
+                        const propertyPath = anchor ? `${path}#${anchor}` : path;
+                        records.push({
+                            source: 'docs',
+                            objectID: `${propertyPath}:${positionInPage}`,
+                            breadcrumb,
+                            title: pageTitle || title,
+                            heading: [(subHeading || heading), propertyName].filter(Boolean).join(' > ') || undefined,
+                            subHeading: propertyName,
+                            path: propertyPath,
+                            text: truncateAtWordBoundary(cleanContents(descHtml), 120, 250),
+                            codeWords: descCodeWords.length > 0 ? descCodeWords : undefined,
+                            rank,
+                            positionInPage,
+                        });
+                    }
+                    subHeading = undefined;
+                    text = '';
+                    continue;
+                }
+
                 switch (currentTag.nodeName) {
                     // split records based on H2 and H3 tags
                     case 'H2': {
@@ -164,9 +201,10 @@ export const parseDocPage = async (item: FlattenedMenuItem) => {
                         break;
                     }
 
-                    case 'DIV': {
+                    case 'DIV':
+                    case 'ASTRO-ISLAND': {
                         createPreviousRecord();
-                        // process content inside div containers
+                        // process content inside div/astro-island containers
                         recursivelyParseContent(currentTag.firstChild as Element | null);
                         break;
                     }

@@ -12,6 +12,9 @@
         "getChildren": {},
         "getColGroupDef": {},
         "getLeafColumns": {},
-        "isColumn": {}
+        "isColumn": {},
+        "isVisible": {},
+        "getColumnGroupShow": {},
+        "getId": {}
     }
 }

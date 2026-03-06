@@ -52,13 +52,69 @@ export const getPropertiesFromSource = async ({
     const codeConfigs = Object.fromEntries(codeConfigEntries);
 
     if (sources.some((s) => s.includes('theming-api'))) {
-        validateDocumentedProperties(propertiesFromFiles, codeConfigs, 'theming-api');
+        validateDocumentedProperties(propertiesFromFiles, codeConfigs, 'theming-api.AUTO.json', 'theming-api');
     }
 
     // Match 'grid-options/properties' specifically to avoid triggering on
     // react-grid-options.json, which documents a small React-specific subset
     if (sources.some((s) => s.includes('grid-options/properties'))) {
-        validateDocumentedProperties(propertiesFromFiles, codeConfigs, 'grid-options', gridOptionsApiKeyFilter);
+        validateDocumentedProperties(
+            propertiesFromFiles,
+            codeConfigs,
+            'grid-options.AUTO.json',
+            'grid-options',
+            gridOptionsApiKeyFilter
+        );
+    }
+
+    if (sources.some((s) => s.includes('column-object/properties'))) {
+        validateDocumentedProperties(
+            propertiesFromFiles,
+            codeConfigs,
+            'column.AUTO.json',
+            'column-object',
+            deprecatedFilter
+        );
+    }
+
+    if (sources.some((s) => s.includes('column-object-group/properties'))) {
+        validateDocumentedProperties(
+            propertiesFromFiles,
+            codeConfigs,
+            'columnGroup.AUTO.json',
+            'column-object-group',
+            deprecatedFilter
+        );
+    }
+
+    if (sources.some((s) => s.includes('column-object-group/provided-properties'))) {
+        validateDocumentedProperties(
+            propertiesFromFiles,
+            codeConfigs,
+            'providedColumnGroup.AUTO.json',
+            'column-object-group/provided',
+            deprecatedFilter
+        );
+    }
+
+    if (sources.some((s) => s.includes('column-properties/properties'))) {
+        validateDocumentedProperties(
+            propertiesFromFiles,
+            codeConfigs,
+            'column-options.AUTO.json',
+            'column-properties',
+            deprecatedFilter
+        );
+    }
+
+    if (sources.some((s) => s.includes('row-object/properties'))) {
+        validateDocumentedProperties(
+            propertiesFromFiles,
+            codeConfigs,
+            'row-node.AUTO.json',
+            'row-object',
+            deprecatedFilter
+        );
     }
 
     return {
@@ -69,23 +125,23 @@ export const getPropertiesFromSource = async ({
     };
 };
 
-// Grid options that exist in the API but are intentionally not documented
-const UNDOCUMENTED_GRID_OPTIONS = new Set([
+// Properties that exist in the public API but are intentionally not documented
+const INTENTIONALLY_UNDOCUMENTED = new Set([
     'enableGroupEdit', // AG-2995 - "Remove the grid option enableGroupEdit from docs API page to discourage its use"
+    'pivotKeys', // Internal use only, doc comment says "Never set this"
+    'pivotValueColumn', // Internal use only, doc comment says "Never set this"
+    'pivotTotalColumnIds', // Internal use only, doc comment says "Never set this"
 ]);
 
+function deprecatedFilter(_key: string, entry: any): boolean {
+    return !entry?.meta?.tags?.some((t: any) => t.name === 'deprecated');
+}
+
 function gridOptionsApiKeyFilter(key: string, entry: any): boolean {
-    if (UNDOCUMENTED_GRID_OPTIONS.has(key)) {
+    if (!deprecatedFilter(key, entry)) {
         return false;
     }
-    const meta = entry?.meta;
-    if (!meta) {
-        return true;
-    }
-    if (meta.isEvent) {
-        return false;
-    }
-    if (meta.tags?.some((t: any) => t.name === 'deprecated')) {
+    if (entry?.meta?.isEvent) {
         return false;
     }
     return true;
@@ -94,12 +150,10 @@ function gridOptionsApiKeyFilter(key: string, entry: any): boolean {
 function validateDocumentedProperties(
     properties: any[],
     codeConfigs: any,
-    slug: string,
+    codeSrc: string,
+    label: string,
     apiKeyFilter?: (key: string, entry: any) => boolean
 ) {
-    const codeSrc = `${slug}.AUTO.json`;
-    const label = `${slug} keys`;
-
     const propsFile = properties.find((p) => p['_config_']?.codeSrc === codeSrc);
     if (!propsFile) {
         throw new Error(`No properties.json with codeSrc: "${codeSrc}"`);
@@ -110,7 +164,9 @@ function validateDocumentedProperties(
     }
 
     const apiKeys = new Set(
-        apiKeyFilter ? Object.keys(codeConfig).filter((k) => apiKeyFilter(k, codeConfig[k])) : Object.keys(codeConfig)
+        Object.keys(codeConfig).filter(
+            (k) => !INTENTIONALLY_UNDOCUMENTED.has(k) && (!apiKeyFilter || apiKeyFilter(k, codeConfig[k]))
+        )
     );
 
     const documentedKeys = Object.entries(propsFile)
@@ -124,12 +180,12 @@ function validateDocumentedProperties(
         const msgs: string[] = [];
         if (stale.length) {
             msgs.push(
-                `These ${label} are documented in ${slug}/properties.json but not in the API (checking ${codeSrc}): ${stale.join(', ')}`
+                `These ${label} keys are documented but not in the API (checking ${codeSrc}): ${stale.join(', ')}`
             );
         }
         if (undocumented.length) {
             msgs.push(
-                `These ${label} are present in the API (checking ${codeSrc}) but not documented in ${slug}/properties.json: ${undocumented.join(', ')}`
+                `These ${label} keys are present in the API (checking ${codeSrc}) but not documented: ${undocumented.join(', ')}`
             );
         }
         throw new Error(msgs.join('\n'));

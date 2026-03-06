@@ -9,7 +9,10 @@
         "getColId": {},
         "getColDef": {},
         "getUserProvidedColDef": {},
-        "isColumn": {}
+        "isColumn": {},
+        "getId": {},
+        "getUniqueId": {},
+        "getDefinition": {}
     },
     "editing": {
         "meta": {
@@ -103,7 +106,8 @@
         "meta": {
             "displayName": "Spanning"
         },
-        "getColSpan": {}
+        "getColSpan": {},
+        "getRowSpan": {}
     },
     "selection": {
         "meta": {
@@ -155,5 +159,11 @@
             "displayName": "Keyboard"
         },
         "isSuppressNavigable": {}
+    },
+    "formulas": {
+        "meta": {
+            "displayName": "Formulas"
+        },
+        "isAllowFormula": {}
     }
 }

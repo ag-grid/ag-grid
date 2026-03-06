@@ -15,6 +15,16 @@
         "isExpanded": {},
         "isPadding": {},
         "getPaddingLevel": {},
-        "isColumn": {}
+        "isColumn": {},
+        "getUniqueId": {},
+        "getActualWidth": {},
+        "getMinWidth": {},
+        "getLeft": {},
+        "getDefinition": {},
+        "getColumnGroupShow": {},
+        "getParent": {},
+        "isEmptyGroup": {},
+        "isMoving": {},
+        "getPinned": {}
     }
 }

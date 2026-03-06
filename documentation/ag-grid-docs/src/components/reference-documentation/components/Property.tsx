@@ -260,9 +260,9 @@ export const Property: FunctionComponent<{
     return (
         <tr ref={propertyRef} className={legacyStyles.tableRow}>
             <td className={legacyStyles.propertyNameDescription}>
-                <div className={classnames(styles.propertyRow)}>
+                <div className={classnames(styles.propertyRow)} data-api-property>
                     <div className={styles.leftColumn}>
-                        <div id={idName} className={classnames(styles.name, 'side-menu-exclude')}>
+                        <h4 id={idName} className={classnames(styles.name, 'side-menu-exclude')}>
                             <span dangerouslySetInnerHTML={{ __html: displayNameSplit }}></span>
                             <LinkIcon
                                 href={`#${idName}`}
@@ -270,7 +270,7 @@ export const Property: FunctionComponent<{
                                 className={styles.linkIcon}
                                 aria-label={`Link to ${name} property`}
                             />
-                        </div>
+                        </h4>
 
                         <div className={styles.metaItem}>
                             <div className={styles.metaRow}>
@@ -331,6 +331,7 @@ export const Property: FunctionComponent<{
                         <div
                             role="presentation"
                             className={styles.description}
+                            data-api-property-description
                             dangerouslySetInnerHTML={{ __html: removeDefaultValue(description) }}
                         ></div>
 

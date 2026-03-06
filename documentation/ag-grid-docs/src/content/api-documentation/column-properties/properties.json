@@ -265,6 +265,7 @@
             "description": "See [Column](./column-spanning/) / [Row](./row-spanning/) Spanning"
         },
         "colSpan": {},
+        "rowSpan": {},
         "spanRows": {
             "more": {
                 "name": "Row Spanning",
@@ -466,6 +467,8 @@
         "cellEditorPopup": {},
         "cellEditorPopupPosition": {},
         "singleClickEdit": {},
+        "groupRowEditable": {},
+        "groupRowValueSetter": {},
         "useValueParserForImport": {
             "more": {
                 "name": "Using Value Parsers with Other Grid Features",
