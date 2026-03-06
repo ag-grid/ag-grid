@@ -88,26 +88,37 @@ Sorting must be performed server-side.
 
 **Pattern:** Lead with solution, then explain why.
 
-### Value Propositions
+### Value Propositions (Page Subtitles)
 
-Every page should open with a value proposition immediately after the frontmatter:
+Every page opens with a subtitle — the first paragraph immediately after the frontmatter. This is what renders visually as the page subtitle and is distinct from the frontmatter `description` field.
 
 ```markdown
 ---
 title: 'Page Title'
 ---
 
-One-sentence value proposition describing the user benefit.
+One-sentence subtitle describing what the feature is or does.
 
 ## First Section Heading
 ```
 
 **Writing guidelines**:
 
--   Start with an action verb (e.g., "Create", "Control", "Prevent", "Recover")
--   Focus on user benefit, not implementation
--   Keep it under 15 words
--   Answer "Why would I use this?"
+-   **One sentence.** Two sentences are occasionally acceptable; never more.
+-   **Declarative** — describe what the feature IS or DOES, not what the user should do or learn.
+-   Start with the subject ("The grid...", "Row selection...", "The datasource...") or an action verb ("Configure...", "Stage...", "Prevent...").
+-   Focus on the feature's purpose, not implementation detail.
+-   Answer "What does this page cover?" not "How do I use this?"
+
+**Before / after examples:**
+
+| ❌ Avoid | ✅ Prefer |
+|---------|---------|
+| "Understand the complete cell editing lifecycle — how edits begin and end, how user input is converted to the correct data type, and how changes are written back to your data." | "The cell editing lifecycle covers how edits start and stop, how user input is parsed, and how changes are written back to your data." |
+| "The grid keeps the blocks in a cache. You have the choice to never expire the blocks, or to set a limit to the number of blocks kept. If you set a limit, then as you scroll down, previous blocks will be discarded…" | "The grid caches row data in blocks, with configurable limits on how many blocks are kept in memory." |
+| "The grid comes with some cell editors provided out of the box. These cell editors are listed here." | "The grid provides several built-in cell editors for common data types." |
+| "An alternative to using the browser's `select` popup for dropdowns inside the grid. The Rich Select Cell Editor allows users to enter a cell value from a list of provided values by searching or filtering the list." | "Drop-down cell editor with search and filter support, as an alternative to the browser's native `select` element." |
+| "Batch editing allows you to edit multiple cells or rows in the grid before committing or reverting these edits. This is useful for scenarios where you want to make several edits at once without immediately updating the data source." | "Stage multiple cell edits before committing or discarding them all at once." |
 
 ### Code Snippets
 
