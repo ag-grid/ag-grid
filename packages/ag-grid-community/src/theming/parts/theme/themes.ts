@@ -309,7 +309,7 @@ export const themeMaterialParams = () => ({
         calc: 'max(iconSize, cellFontSize) + spacing * 3.75 * rowVerticalPaddingScale',
     },
     headerHeight: {
-        calc: 'max(iconSize, cellFontSize) + spacing * 4.75 * headerVerticalPaddingScale',
+        calc: 'max(iconSize, dataFontSize) + spacing * 4.75 * headerVerticalPaddingScale',
     },
     widgetVerticalSpacing: {
         calc: 'spacing * 1.75',

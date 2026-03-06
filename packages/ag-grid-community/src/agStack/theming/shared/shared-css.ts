@@ -505,7 +505,7 @@ export const sharedDefaults: Readonly<SharedThemeParams> = {
         ref: 'textColor',
     },
     headerHeight: {
-        calc: 'max(iconSize, headerFontSize) + spacing * 4 * headerVerticalPaddingScale',
+        calc: 'max(iconSize, dataFontSize) + spacing * 4 * headerVerticalPaddingScale',
     },
     headerVerticalPaddingScale: 1,
     menuBorder: {

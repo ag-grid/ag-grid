@@ -4,7 +4,8 @@ import { type FontWeightValue } from '@components/theme-builder/api';
 import type { ValueEditorProps } from './ValueEditorProps';
 
 export const FontWeightValueEditor = ({ value, onChange }: ValueEditorProps<FontWeightValue>) => {
-    const selectedOption = fontWeightOptions.find((o) => o.value === value) || fontWeightOptions[0];
+    const selectedOption =
+        fontWeightOptions.find((o) => o.value === value || o.names?.includes(value as string)) || fontWeightOptions[0];
 
     return (
         <Select
@@ -22,6 +23,7 @@ const fontWeightOptions = [
     {
         label: 'Thin (100)',
         value: 100,
+        names: ['lighter'],
     },
     {
         label: 'Extra Light (200)',
@@ -34,6 +36,7 @@ const fontWeightOptions = [
     {
         label: 'Normal (400)',
         value: 400,
+        names: ['normal', 'inherit'],
     },
     {
         label: 'Medium (500)',
@@ -46,6 +49,7 @@ const fontWeightOptions = [
     {
         label: 'Bold (700)',
         value: 700,
+        names: ['bold', 'bolder'],
     },
     {
         label: 'Extra Bold (800)',
