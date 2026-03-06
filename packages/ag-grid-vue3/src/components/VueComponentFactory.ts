@@ -3,6 +3,9 @@ import { createVNode, defineComponent, render } from 'vue';
 import { _error } from 'ag-grid-community';
 
 export class VueComponentFactory {
+    // WeakMap avoids repeat component tree traversals and allows GC of parent components
+    private static componentCache = new WeakMap<any, Map<string, any>>();
+
     private static getComponentDefinition(component: any, parent: any) {
         let componentDefinition: any;
 
@@ -85,6 +88,15 @@ export class VueComponentFactory {
     }
 
     public static searchForComponentInstance(parent: any, component: any, maxDepth = 10, suppressError = false) {
+        // Check cache first
+        let parentCache = this.componentCache.get(parent);
+        if (parentCache) {
+            const cached = parentCache.get(component);
+            if (cached !== undefined) {
+                return cached;
+            }
+        }
+
         let componentInstance: any = null;
 
         // options first
@@ -140,6 +152,16 @@ export class VueComponentFactory {
             _error(114, { component });
             return null;
         }
+
+        // Cache the result
+        if (componentInstance) {
+            if (!parentCache) {
+                parentCache = new Map();
+                this.componentCache.set(parent, parentCache);
+            }
+            parentCache.set(component, componentInstance);
+        }
+
         return componentInstance;
     }
 }

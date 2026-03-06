@@ -454,20 +454,8 @@ describe('Cell editing start/stop documentation examples', () => {
                 await eventsUser.dblClick(cell);
             },
             {
-                false: [
-                    ['isCancelBeforeStart', []],
-                    ['cellEditingStopped', { newValue: undefined, oldValue: 'Ali', value: 'Ali', valueChanged: false }],
-                    ['cellEditingStarted', { value: 'Ali' }],
-                ],
-                true: [
-                    ['isCancelBeforeStart', []],
-                    [
-                        'cellEditingStopped',
-                        { newValue: undefined, oldValue: undefined, value: 'Ali', valueChanged: false },
-                    ],
-                    ['cellEditingStopped', { newValue: undefined, oldValue: 'Ali', value: 'Ali', valueChanged: false }],
-                    ['cellEditingStarted', { value: 'Ali' }],
-                ],
+                false: [['isCancelBeforeStart', []]],
+                true: [['isCancelBeforeStart', []]],
             },
             {
                 beforeStart: true,
@@ -490,10 +478,6 @@ describe('Cell editing start/stop documentation examples', () => {
             {
                 false: [
                     ['isCancelBeforeStart', []],
-                    [
-                        'cellEditingStopped',
-                        { newValue: undefined, oldValue: undefined, value: 'Ali', valueChanged: false },
-                    ],
                     ['cellEditingStarted', { value: 'Ali' }],
                     ['isCancelAfterEnd', []],
                     ['cellEditingStopped', { newValue: undefined, oldValue: 'Ali', value: 'Ali', valueChanged: false }],

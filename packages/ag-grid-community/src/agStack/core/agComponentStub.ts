@@ -24,6 +24,7 @@ import { AgBeanStub } from './agBeanStub';
 
 let compIdSequence = 0;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgComponentStub<
         TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
         TProperties extends BaseProperties,

@@ -13,7 +13,7 @@ import type { Theme } from '../theming/theme';
 import { ThemeImpl } from '../theming/themeImpl';
 import type { ParamType } from '../theming/themeTypeUtils';
 import { paramToVariableName } from '../theming/themeUtils';
-import { _createAgElement, _isInDOM, _observeResize } from '../utils/dom';
+import { _createAgElement, _observeResize } from '../utils/dom';
 import { AgBeanStub } from './agBeanStub';
 
 const LIST_ITEM_HEIGHT: CssVariable<BaseCssChangeKeys> = {
@@ -22,6 +22,7 @@ const LIST_ITEM_HEIGHT: CssVariable<BaseCssChangeKeys> = {
     defaultValue: 24,
 };
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export abstract class BaseEnvironment<
         TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
         TProperties extends BaseProperties,
@@ -301,6 +302,7 @@ export abstract class BaseEnvironment<
     }
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type CssVariable<TChangeKeys extends BaseCssChangeKeys> = {
     changeKey: keyof TChangeKeys & string;
     type: ParamType;
@@ -309,6 +311,7 @@ export type CssVariable<TChangeKeys extends BaseCssChangeKeys> = {
     cacheDefault?: boolean;
 };
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface BaseCssChangeKeys {
     theme: true;
     listItemHeight: true;
@@ -330,7 +333,7 @@ const warnOnAttachToShadowRoot = (
             errorCallback();
             clearInterval(interval);
         }
-        if (_isInDOM(el) || --retries < 0) {
+        if (el.isConnected || --retries < 0) {
             clearInterval(interval);
         }
     }, 1000);

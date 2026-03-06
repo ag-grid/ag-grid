@@ -40,7 +40,7 @@ inputs:
     prompt-file:
         description: 'Path to the prompt file'
         required: false
-        default: 'external/ag-shared/prompts/commands/pr/review.md'
+        default: 'external/ag-shared/prompts/skills/pr-review/SKILL.md'
     github-token:
         description: 'GitHub token for PR access and commenting'
         required: true
@@ -278,12 +278,11 @@ runs:
           id: prompt
           shell: bash
           run: |
-              # Use JSON prompt if inline comments enabled, otherwise use configured prompt
+              # Use same prompt file for both modes; JSON mode is controlled via --json in ARGUMENTS
+              prompt_file="${{ inputs.prompt-file }}"
               if [[ "${{ inputs.inline-comments }}" == "true" ]]; then
-                prompt_file="external/ag-shared/prompts/commands/pr/review-json.md"
                 output_ext="json"
               else
-                prompt_file="${{ inputs.prompt-file }}"
                 output_ext="md"
               fi
               echo "prompt_file=${prompt_file}" >> $GITHUB_OUTPUT
@@ -296,7 +295,7 @@ runs:
           env:
               OPENAI_API_KEY: ${{ inputs.codex-api-key }}
               CODEX_API_KEY: ${{ inputs.codex-api-key }}
-              ARGUMENTS: ${{ inputs.pr-number }}
+              ARGUMENTS: ${{ inputs.inline-comments == 'true' && format('--json {0}', inputs.pr-number) || inputs.pr-number }}
               BASE_REF: ${{ inputs.base-ref }}
               HEAD_REF: ${{ inputs.head-ref }}
               PR_TITLE: ${{ inputs.pr-title }}

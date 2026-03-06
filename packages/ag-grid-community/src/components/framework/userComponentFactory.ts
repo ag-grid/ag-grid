@@ -84,6 +84,7 @@ export function _getUserCompKeys<TDefinition>(
     return { compName, jsComp, fwComp, paramsFromSelector, popupFromSelector, popupPositionFromSelector };
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class UserComponentFactory extends BeanStub implements NamedBean {
     beanName = 'userCompFactory' as const;
 

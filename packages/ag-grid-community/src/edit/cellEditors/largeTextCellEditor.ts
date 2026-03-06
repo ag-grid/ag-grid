@@ -18,7 +18,7 @@ const LargeTextCellElement: ElementParams = {
         },
     ],
 };
-export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorParams> {
+export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorParams, string> {
     protected readonly eEditor: GridInputTextArea = RefPlaceholder;
     private focusAfterAttached: boolean;
     private highlightAllOnFocus: boolean;
@@ -74,6 +74,12 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
     private getStartValue(params: ILargeTextEditorParams): string | null | undefined {
         const { value } = params;
         return value?.toString() ?? value;
+    }
+
+    public override agSetEditValue(value: string | null | undefined): void {
+        this.params.value = value;
+        const startValue = this.getStartValue(this.params);
+        this.eEditor.setValue(startValue ?? '', true);
     }
 
     private onKeyDown(event: KeyboardEvent): void {

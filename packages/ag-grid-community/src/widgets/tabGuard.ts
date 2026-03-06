@@ -9,6 +9,7 @@ import type { AgGridCommon } from '../interfaces/iCommon';
 import type { Component } from './component';
 import { STOP_PROPAGATION_CALLBACKS } from './managedFocusFeature';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class TabGuardCtrl extends AgTabGuardCtrl<
     BeanCollection,
     GridOptionsWithDefaults,
@@ -21,6 +22,7 @@ export class TabGuardCtrl extends AgTabGuardCtrl<
     }
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class TabGuardFeature extends AgTabGuardFeature<
     BeanCollection,
     GridOptionsWithDefaults,

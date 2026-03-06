@@ -696,6 +696,10 @@ export const AG_GRID_LOCALE_TW = {
     ariaPageSizeSelectorLabel: '每頁大小',
     ariaChartMenuClose: '關閉圖表編輯選單',
     ariaChartSelected: '已選擇',
+    ariaSparklineChartDescription:
+        '迷你圖 - ${chartType} 顯示 ${count} 個值，介於 ${min} 和 ${max} 之間。從 ${start} 開始，到 ${end} 結束。',
+    ariaSparklineChartDescriptionSingleValue: '迷你圖 - ${chartType} 顯示 1 個數值：${value}。',
+    ariaSparklineChartDescriptionEmpty: '迷你圖 - ${chartType}，沒有數值。',
     ariaSkeletonCellLoadingFailed: '行加載失敗',
     ariaSkeletonCellLoading: '行數據加載中',
     ariaDeferSkeletonCellLoading: '儲存格正在載入',

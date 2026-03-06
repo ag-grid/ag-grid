@@ -49,6 +49,7 @@ const RESIZE_TEMPLATE: AgElementParams<string> = {
     ],
 };
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface PositionableOptions {
     popup?: boolean;
     minWidth?: number | null;
@@ -67,6 +68,7 @@ export interface PositionableOptions {
     y?: number | null;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type ResizableSides =
     | 'topLeft'
     | 'top'
@@ -77,6 +79,7 @@ export type ResizableSides =
     | 'bottomLeft'
     | 'left';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type ResizableStructure = {
     [key in ResizableSides]?: boolean;
 };
@@ -86,6 +89,7 @@ interface MappedResizer {
 }
 type PositionableFeatureEvent = 'resize';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgPositionableFeature<
     TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,

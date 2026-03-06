@@ -236,6 +236,20 @@ const gridOptions = {
 
 See the [Columns Tool Panel](./tool-panel-columns/) documentation for the full list of possible parameters to this Tool Panel.
 
+## Animation
+
+By default, sidebar panels open and close instantly. You can enable a smooth slide animation using the [Theming API](./theming-api/) parameter `sideBarPanelAnimationDuration`. Set it to a value in seconds:
+
+```js
+const myTheme = themeQuartz.withParams({
+    sideBarPanelAnimationDuration: 0.3,
+});
+```
+
+The animation is automatically disabled for users who have requested reduced motion in their OS accessibility settings.
+
+{% gridExampleRunner title="Side Bar Animation" name="animation" exampleHeight=400 /%}
+
 ## Side Bar API
 
 {% note %}

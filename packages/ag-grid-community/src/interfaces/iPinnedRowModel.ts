@@ -3,6 +3,7 @@ import type { RowNode } from '../entities/rowNode';
 import type { RowPinningState } from './gridState';
 import type { RowPinnedType } from './iRowNode';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IPinnedRowModel {
     /** Reset the pinned row state. This is a no-op for the static pinned row model. */
     reset(): void;

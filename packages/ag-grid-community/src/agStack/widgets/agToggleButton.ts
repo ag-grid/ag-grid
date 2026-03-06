@@ -8,9 +8,11 @@ import type { AgCheckboxParams } from './agFieldParams';
 import { agToggleButtonCSS } from './agToggleButton.css-GENERATED';
 import type { AgWidgetSelectorType } from './agWidgetSelectorType';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface AgToggleButtonParams<TComponentSelectorType extends string>
     extends AgCheckboxParams<TComponentSelectorType> {}
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgToggleButton<
     TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
@@ -40,6 +42,7 @@ export class AgToggleButton<
         return this;
     }
 }
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const AgToggleButtonSelector: AgComponentSelector<AgWidgetSelectorType> = {
     selector: 'AG-TOGGLE-BUTTON',
     component: AgToggleButton,

@@ -5,7 +5,9 @@ import type { GridOptionsWithDefaults } from '../gridOptionsDefault';
 import type { GridOptionsService } from '../gridOptionsService';
 import type { AgGridCommon } from '../interfaces/iCommon';
 
-/** Adds drag listening onto an element. In AG Grid this is used twice, first is resizing columns,
+/**
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ * Adds drag listening onto an element. In AG Grid this is used twice, first is resizing columns,
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
 export class DragService extends BaseDragService<
     BeanCollection,

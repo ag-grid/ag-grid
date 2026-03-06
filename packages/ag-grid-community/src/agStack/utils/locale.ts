@@ -4,12 +4,14 @@ function defaultLocaleTextFunc(_key: string, defaultValue: string): string {
     return defaultValue;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getLocaleTextFunc<TKey extends string = string>(
     localeSvc?: ILocaleService<TKey>
 ): LocaleTextFunc<TKey> {
     return localeSvc?.getLocaleTextFunc() ?? defaultLocaleTextFunc;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _translate<T extends Record<string, string | ((variableValues: string[]) => string)>>(
     bean: { getLocaleTextFunc(): LocaleTextFunc },
     localeValues: T,
@@ -24,6 +26,7 @@ export function _translate<T extends Record<string, string | ((variableValues: s
     );
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getLocaleTextFromFunc(
     getLocaleText: (params: { key: string; defaultValue: string; variableValues?: string[] }) => string
 ): LocaleTextFunc {
@@ -36,6 +39,7 @@ export function _getLocaleTextFromFunc(
     };
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getLocaleTextFromMap(localeText?: { [key: string]: string }): LocaleTextFunc {
     return (key: string, defaultValue: string, variableValues?: string[]) => {
         let localisedText = localeText?.[key];

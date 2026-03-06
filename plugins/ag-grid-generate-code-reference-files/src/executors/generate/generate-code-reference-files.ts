@@ -147,6 +147,27 @@ function extractNestedTypes<T extends ts.Node>(
     }
 }
 
+/**
+ * Merges `newEntries` into `existing`, preserving the `meta` (JSDoc) from the existing entry
+ * when the incoming entry has none. This handles TypeScript function overloads where JSDoc
+ * is on the first overload signature but subsequent signatures have no JSDoc.
+ */
+function mergeMembersPreservingMeta(
+    existing: Record<string, any>,
+    newEntries: Record<string, any>
+): Record<string, any> {
+    const result = { ...existing };
+    for (const [key, value] of Object.entries(newEntries)) {
+        if (result[key] !== undefined && value?.meta == null && result[key]?.meta != null) {
+            // Overload without JSDoc: keep existing meta from the first overload
+            result[key] = { ...value, meta: result[key].meta };
+        } else {
+            result[key] = value;
+        }
+    }
+    return result;
+}
+
 function extractTypesFromNode(
     node,
     srcFile: ts.SourceFile,
@@ -542,7 +563,7 @@ export function buildInterfaceProps(globs: string[]) {
             let props: any = {};
             iNode.forEachChild((ch) => {
                 const prop = extractTypesFromNode(ch, parsedFile, true);
-                props = { ...props, ...prop };
+                props = mergeMembersPreservingMeta(props, prop);
             });
 
             const kind = ts.SyntaxKind[iNode.kind];
@@ -616,9 +637,12 @@ export function getGridOptions(gridOpsFile: string) {
     const otherTrees = parseImportedDefinitions(path.dirname(gridOpsFile), srcFile);
     const gridOptionsNode = findNode('GridOptions', srcFile);
 
-    const gridOpsMembers = {};
+    let gridOpsMembers = {};
     ts.forEachChild(gridOptionsNode, (n) => {
-        Object.assign(gridOpsMembers, extractTypesFromNode(n, srcFile, false, true, otherTrees));
+        gridOpsMembers = mergeMembersPreservingMeta(
+            gridOpsMembers,
+            extractTypesFromNode(n, srcFile, false, true, otherTrees)
+        );
     });
 
     return gridOpsMembers;
@@ -635,7 +659,7 @@ export function getColumnOptions(colDefFile: string, filterFile: string) {
     let members = {};
     const addToMembers = (node, src) => {
         ts.forEachChild(node, (n) => {
-            members = { ...members, ...extractTypesFromNode(n, src, false) };
+            members = mergeMembersPreservingMeta(members, extractTypesFromNode(n, src, false));
         });
     };
     addToMembers(abstractColDefNode, srcFile);
@@ -668,7 +692,7 @@ export function getGridApi(gridApiFile: string) {
             }
         }
 
-        members = { ...members, ...typesFromNode };
+        members = mergeMembersPreservingMeta(members, typesFromNode);
     };
 
     const processedInterfaces = new Set<ts.InterfaceDeclaration>();
@@ -713,7 +737,7 @@ export function getRowNode(rowNodeFile: string) {
     let rowNodeMembers = {};
     const addToMembers = (node) => {
         ts.forEachChild(node, (n) => {
-            rowNodeMembers = { ...rowNodeMembers, ...extractTypesFromNode(n, srcFile, false) };
+            rowNodeMembers = mergeMembersPreservingMeta(rowNodeMembers, extractTypesFromNode(n, srcFile, false));
         });
     };
     addToMembers(baseRowNode);
@@ -729,7 +753,7 @@ export function getColumnTypes(columnFile: string, interfaces: string[]) {
 
     const addToMembers = (node) => {
         ts.forEachChild(node, (n) => {
-            members = { ...members, ...extractTypesFromNode(n, srcFile, false) };
+            members = mergeMembersPreservingMeta(members, extractTypesFromNode(n, srcFile, false));
         });
     };
 
@@ -745,7 +769,7 @@ export function getThemeParams(themesFile: string) {
     const srcFile = parseFile(themesFile);
     const auxSrcFiles = parseImportedDefinitions(path.dirname(themesFile), srcFile);
 
-    const members = {};
+    let members = {};
 
     const resolveAndCollect = (name: string) => {
         const node = silentFindNode(name, srcFile, auxSrcFiles);
@@ -768,7 +792,9 @@ export function getThemeParams(themesFile: string) {
                     }
                 }
             } else if (ts.isTypeLiteralNode(node.type)) {
-                node.type.members.forEach((m) => Object.assign(members, extractTypesFromNode(m, nodeFile, false)));
+                node.type.members.forEach(
+                    (m) => (members = mergeMembersPreservingMeta(members, extractTypesFromNode(m, nodeFile, false)))
+                );
             }
         } else if (ts.isInterfaceDeclaration(node)) {
             // Process parents first (e.g. CoreParams extends SharedThemeParams)
@@ -776,7 +802,7 @@ export function getThemeParams(themesFile: string) {
                 clause.types.forEach((t) => resolveAndCollect(formatNode(t.expression, nodeFile)));
             });
             ts.forEachChild(node, (n) => {
-                Object.assign(members, extractTypesFromNode(n, nodeFile, false));
+                members = mergeMembersPreservingMeta(members, extractTypesFromNode(n, nodeFile, false));
             });
         }
     };

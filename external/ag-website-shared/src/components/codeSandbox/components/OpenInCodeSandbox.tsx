@@ -38,6 +38,7 @@ export const OpenInCodeSandbox: FunctionComponent<Props> = ({
                 const sandboxFiles = {
                     ...localFiles,
                     'package.json': JSON.stringify(packageJson, null, 2),
+
                     'index.html': indexHtml,
                 };
                 openCodeSandbox({

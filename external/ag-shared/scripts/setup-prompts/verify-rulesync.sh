@@ -322,8 +322,16 @@ build_expected_inventory() {
                 local dirname
                 dirname=$(basename "$skill_dir")
                 EXPECTED_FILES+=("skills/$dirname/SKILL.md")
-                # Include _ prefixed helper files (e.g., _dev-server-core.md)
-                for helper_file in "$skill_dir"_*.md; do
+                # Include all non-SKILL.md markdown files (helpers, templates, guides)
+                for helper_file in "$skill_dir"*.md; do
+                    if [[ -f "$helper_file" && "$(basename "$helper_file")" != "SKILL.md" ]]; then
+                        local helper_basename
+                        helper_basename=$(basename "$helper_file")
+                        EXPECTED_FILES+=("skills/$dirname/$helper_basename")
+                    fi
+                done
+                # Include co-located shell scripts (e.g., context-path.sh)
+                for helper_file in "$skill_dir"*.sh; do
                     if [[ -f "$helper_file" ]]; then
                         local helper_basename
                         helper_basename=$(basename "$helper_file")
@@ -617,6 +625,34 @@ verify_content() {
                     log_success "Content verified: skills/$dirname/SKILL.md"
                 fi
             fi
+
+            # Verify non-SKILL.md helper files (templates, guides, etc.)
+            for helper_file in "$skill_dir"*.md; do
+                if [[ -f "$helper_file" && "$(basename "$helper_file")" != "SKILL.md" ]]; then
+                    local helper_basename
+                    helper_basename=$(basename "$helper_file")
+                    local helper_source
+                    helper_source=$(resolve_symlink "$helper_file")
+                    local helper_output="$temp_output/skills/$dirname/$helper_basename"
+
+                    if [[ -f "$helper_output" ]]; then
+                        local source_content
+                        local output_content
+                        source_content=$(strip_frontmatter "$helper_source" | normalise_content)
+                        output_content=$(strip_frontmatter "$helper_output" | normalise_content)
+
+                        if [[ "$source_content" != "$output_content" ]]; then
+                            log_error "Content mismatch: skills/$dirname/$helper_basename"
+                            log_info "  Source: $helper_source"
+                            log_info "  Output: $helper_output"
+                            diff <(echo "$source_content") <(echo "$output_content") | head -20 || true
+                            ((content_errors++)) || true
+                        else
+                            log_success "Content verified: skills/$dirname/$helper_basename"
+                        fi
+                    fi
+                fi
+            done
         done
     fi
 

@@ -8,11 +8,13 @@ import type { HeaderNavigationDirection } from '../navigation/headerNavigationSe
 import { ManagedFocusFeature } from '../widgets/managedFocusFeature';
 import { getColumnHeaderRowHeight, getFloatingFiltersHeight, getGroupRowsHeight } from './headerUtils';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IGridHeaderComp {
     toggleCss(cssClassName: string, on: boolean): void;
     setHeightAndMinHeight(height: string): void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class GridHeaderCtrl extends BeanStub {
     private comp: IGridHeaderComp;
     public eGui: HTMLElement;

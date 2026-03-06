@@ -5,17 +5,17 @@ import type { CellValueResolveFrom } from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
 
 export interface GetCellValueParams<TValue = any> {
-    /** The row node to get the value from */
+    /** The row to read from */
     rowNode: IRowNode;
-    /** The column to get the value from */
+    /** The column to read (field name, `colId`, or `Column` object) */
     colKey: string | Column<TValue>;
-    /** If `true` formatted value will be returned. */
+    /** If `true`, returns the formatted string (via the column's `valueFormatter`) instead of the raw value. */
     useFormatter?: boolean;
     /**
-     * Specifies how to resolve the cell value when edits are pending.
-     * - `'edit'` (default): Returns the current editing value, including live editor typing and pending batch values
-     * - `'batch'`: Returns pending batch values but excludes live editor typing (useful for dependent calculations in valueGetters)
-     * - `'data'`: Returns the actual stored data value, ignoring all edit state
+     * Controls how pending edits affect the returned value.
+     * - `'edit'` (default): Returns the live editor value if the cell is being edited, then any pending batch value, then committed data.
+     * - `'batch'`: Returns pending batch values but excludes live editor typing. Useful for dependent calculations in `valueGetter`.
+     * - `'data'`: Returns committed data only, ignoring all edit state.
      */
     from?: CellValueResolveFrom;
 }

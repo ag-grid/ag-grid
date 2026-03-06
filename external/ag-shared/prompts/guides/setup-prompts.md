@@ -51,6 +51,31 @@ case "dir":
   }).map((item) => join(item.parentPath, item.name));
 ```
 
+## Patching `fromRulesyncSkill()` for New Frontmatter Fields
+
+Rulesync's `fromRulesyncSkill()` methods explicitly construct new frontmatter objects, picking only known fields (`name`, `description`, tool-specific extras). The `looseObject` schema preserves unknown fields through _parsing_, but the conversion code discards them. To propagate a rulesync-level field to tool-specific output, you must patch each tool's `fromRulesyncSkill()` — there is no passthrough.
+
+Tool-specific skill classes with `fromRulesyncSkill()`:
+
+- **ClaudecodeSkill** — extracts `name`, `description`, `allowed-tools`
+- **CursorSkill** — extracts `name`, `description`
+- **CopilotSkill** — extracts `name`, `description`, `license`
+- **SimulatedSkill** (AgentsmdSkill, FactorydroidSkill) — extracts `name`, `description` via `fromRulesyncSkillDefault()`
+
+## Skill Invocability (`disable-model-invocation`)
+
+`disable-model-invocation: true` is a de facto standard shared by Claude Code, Cursor, and GitHub Copilot (VS Code agent). It is NOT part of the Agent Skills open standard (agentskills.io).
+
+| Tool | Supports per-skill invocation control? | Mechanism |
+|------|----------------------------------------|-----------|
+| Claude Code | Yes | `disable-model-invocation: true` in SKILL.md |
+| Cursor | Yes | `disable-model-invocation: true` in SKILL.md |
+| GitHub Copilot | Yes (VS Code agent) | `disable-model-invocation: true` in SKILL.md |
+| Codex CLI | Yes (different) | `allow_implicit_invocation: false` in agents yaml |
+| Gemini CLI / Cline / OpenCode | No | No per-skill control |
+
+In rulesync source files, use `invocable: user-only` — the patched `fromRulesyncSkill()` methods translate this to `disable-model-invocation: true` for Claude Code, Cursor, and Copilot.
+
 ## AGENTS.md Handling
 
 The `--postinstall` flag triggers `stash_agents_md()` and `restore_agents_md()` functions which:
@@ -70,6 +95,10 @@ npx patch-package rulesync
 ```
 
 This updates `patches/rulesync+*.patch` (which symlinks to `external/ag-shared/prompts/patches/`).
+
+## Verify-rulesync Skill File Patterns
+
+`verify-rulesync.sh` builds an expected file inventory and content-verifies each file. Skill directories can contain arbitrary `.md` resource files (templates, page guides) beyond `SKILL.md`, `_*.md` helpers, and `*.sh` scripts. Both `build_expected_inventory()` and `verify_content()` must glob `*.md` (excluding `SKILL.md`) rather than `_*.md` to capture all of them.
 
 ## Shared Prompt Conventions
 
