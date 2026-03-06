@@ -2,7 +2,7 @@
 title: "Infinite Row Model - Block Cache & Performance"
 ---
 
-The grid keeps the blocks in a cache. You have the choice to never expire the blocks, or to set a limit to the number of blocks kept. If you set a limit, then as you scroll down, previous blocks will be discarded and will be loaded again if the user scrolls back up. The maximum blocks to keep in the cache is set using the `maxBlocksInCache` property.
+The grid caches row data in blocks, with configurable limits on how many blocks are kept in memory.
 
 ## Block Size
 
