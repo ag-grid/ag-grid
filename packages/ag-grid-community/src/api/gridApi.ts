@@ -399,10 +399,18 @@ export interface _ValueCacheApi {
 
 export interface _ValueApi<TData> {
     /**
-     * Gets the cell value for the given column and `rowNode` (row).
-     * Based on params.useFormatter with either return the value as specified by the `field` or `valueGetter` on the column definition or the formatted value.
+     * Returns the cell value for the given column and row, as it would appear in the grid.
      *
-     * **Pivot Mode**: On leaf data rows (non-group rows), pivot columns resolve to their underlying value column.
+     * By default (`from: 'edit'`), returns the live editing value if the cell is being edited,
+     * any pending batch value, or the committed data value. Set `from: 'data'` to always
+     * return the committed data value, ignoring all edit state.
+     *
+     * With `useFormatter: true`, returns the formatted string (via the column's `valueFormatter`).
+     *
+     * For group rows with `showRowGroup` columns, returns the display value handled by the
+     * group column renderer (including `groupHideOpenParents` and `showOpenedGroup` logic).
+     *
+     * To get the raw data value without display logic, use `rowNode.getDataValue()` instead.
      *
      * @agModule `CellApiModule`
      */
@@ -433,6 +441,7 @@ export interface _SortGridApi {
     onSortChanged(): void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _ClientSideRowModelGridApi<TData> extends _RowModelSharedApi {
     /**
      * Informs the grid that row group expanded state has changed and it needs to rerender the group nodes.
@@ -881,6 +890,7 @@ export interface _EditGridApi<TData> {
     validateEdit(): ICellEditorValidationError[] | null;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _BatchEditApi {
     /**
      * Starts a batch editing session. While batch editing is active, cell edits are accumulated
@@ -1083,6 +1093,7 @@ export interface _QuickFilterGridApi {
     resetQuickFilter(): void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _FindApi<TData> {
     /**
      * Go to the next match.
@@ -1222,6 +1233,7 @@ export interface _PaginationGridApi {
     paginationGoToPage(page: number): void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _PinnedRowGridApi {
     /**
      * Gets the number of top pinned rows.
@@ -1314,6 +1326,7 @@ export interface _HighlightChangesGridApi<TData> {
     flashCells(params?: FlashCellsParams<TData>): void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _SideBarGridApi<TData> {
     /**
      * Returns `true` if the side bar is visible.
@@ -1381,6 +1394,7 @@ export interface _SideBarGridApi<TData> {
     getSideBar(): SideBarDef | undefined;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _StatusBarGridApi<TData = any> {
     /**
      * Gets the status panel instance corresponding to the supplied `id`.
@@ -1388,6 +1402,7 @@ export interface _StatusBarGridApi<TData = any> {
     getStatusPanel<TStatusPanel = IStatusPanel<TData>>(key: string): TStatusPanel | undefined;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _InfiniteRowModelGridApi {
     /**
      * Marks all the currently loaded blocks in the cache for reload.
@@ -1412,6 +1427,7 @@ export interface _InfiniteRowModelGridApi {
     getInfiniteRowCount(): number | undefined;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _CsvExportGridApi {
     /**
      * Similar to `exportDataAsCsv`, except returns the result as a string rather than download it.
@@ -1426,6 +1442,7 @@ export interface _CsvExportGridApi {
     exportDataAsCsv(params?: CsvExportParams): void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _RowGroupingGridApi {
     /**
      * Set the row group columns.
@@ -1458,6 +1475,7 @@ export interface _RowGroupingGridApi {
     getRowGroupColumns(): Column[];
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _AggregationGridApi<TData> {
     /**
      * Add aggregations function with the specified keys.
@@ -1481,6 +1499,7 @@ export interface _AggregationGridApi<TData> {
     ): void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _PivotGridApi<TData> {
     /**
      * Returns whether pivot mode is currently active.
@@ -1555,6 +1574,7 @@ export interface _PivotGridApi<TData> {
     getPivotResultColumns(): Column[] | null;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _CellSelectionGridApi {
     /**
      * Returns the list of selected cell ranges.
@@ -1586,6 +1606,7 @@ export interface _CellSelectionGridApi {
     clearCellSelection(): void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _ServerSideRowModelGridApi<TData> extends _RowModelSharedApi {
     /**
      * Returns an object containing rules matching the selected rows in the SSRM.
@@ -1658,6 +1679,7 @@ export interface _ServerSideRowModelGridApi<TData> extends _RowModelSharedApi {
     getServerSideGroupLevelState(): ServerSideGroupLevelState[];
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _ContextMenuGridApi {
     /**
      * Displays the AG Grid context menu
@@ -1666,6 +1688,7 @@ export interface _ContextMenuGridApi {
     showContextMenu(params?: IContextMenuParams): void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _ColumnChooserGridApi {
     /**
      * Show the column chooser.
@@ -1680,6 +1703,7 @@ export interface _ColumnChooserGridApi {
     hideColumnChooser(): void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _MasterDetailGridApi {
     /**
      * Register a detail grid with the master grid when it is created.
@@ -1706,6 +1730,7 @@ export interface _MasterDetailGridApi {
     forEachDetailGridInfo(callback: (gridInfo: DetailGridInfo, index: number) => void): void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _ExcelExportGridApi {
     /**
      * Similar to `exportDataAsExcel`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user.
@@ -1738,6 +1763,7 @@ export interface _ExcelExportGridApi {
     exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _ClipboardGridApi {
     /**
      * Copies data to clipboard by following the same rules as pressing Ctrl+C.
@@ -1776,6 +1802,7 @@ export interface _ClipboardGridApi {
     pasteFromClipboard(): void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _GridChartsGridApi {
     /**
      * Returns a list of models with information about the charts that are currently rendered from the grid.
@@ -1844,6 +1871,7 @@ export interface _GridChartsGridApi {
     restoreChart(chartModel: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _AdvancedFilterGridApi {
     /**
      * Get the state of the Advanced Filter. Used for saving Advanced Filter state
@@ -1873,6 +1901,7 @@ export interface _AdvancedFilterGridApi {
     hideAdvancedFilterBuilder(): void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _AiToolkitGridApi {
     /**
      * Returns the structured schema of the grid, which includes information about columns, data types, and relationships.

@@ -1,5 +1,18 @@
 let initialized = false;
 
+// Stores per-element scroll positions, since jsdom does not persist scrollTop/scrollLeft
+// when those properties are set, and does not fire 'scroll' events on assignment.
+const scrollPositions = new WeakMap<Element, { top: number; left: number }>();
+
+function getScrollPos(el: Element): { top: number; left: number } {
+    let pos = scrollPositions.get(el);
+    if (!pos) {
+        pos = { top: 0, left: 0 };
+        scrollPositions.set(el, pos);
+    }
+    return pos;
+}
+
 export const mockGridLayout = {
     /** Same as standard default rowHeight, --ag-row-height */
     rowHeight: 42,
@@ -150,7 +163,39 @@ function init(): boolean {
         value: getBoundingClientRect,
     });
 
-    for (const prop of ['offsetHeight', 'scrollHeight', 'clientHeight']) {
+    // Patch window.getComputedStyle so that _getElementSize / _getInnerWidth return values
+    // consistent with getBoundingClientRect. Without this, getComputedStyle returns '0' for
+    // width/height in jsdom, which causes column virtualisation to be suppressed (viewportRight === 0).
+    const origGetComputedStyle = window.getComputedStyle;
+    window.getComputedStyle = function patchedGetComputedStyle(
+        el: Element,
+        pseudoElement?: string | null
+    ): CSSStyleDeclaration {
+        const style = origGetComputedStyle.call(window, el, pseudoElement);
+        if (!pseudoElement && el instanceof HTMLElement) {
+            const rect = el.getBoundingClientRect();
+            // Only override width/height if they are still the jsdom default of '' or '0px'
+            const origWidth = style.width;
+            const origHeight = style.height;
+            if (rect.width > 0 && (!origWidth || origWidth === '' || origWidth === '0px' || origWidth === '0')) {
+                Object.defineProperty(style, 'width', {
+                    value: `${rect.width}px`,
+                    writable: true,
+                    configurable: true,
+                });
+            }
+            if (rect.height > 0 && (!origHeight || origHeight === '' || origHeight === '0px' || origHeight === '0')) {
+                Object.defineProperty(style, 'height', {
+                    value: `${rect.height}px`,
+                    writable: true,
+                    configurable: true,
+                });
+            }
+        }
+        return style;
+    };
+
+    for (const prop of ['offsetHeight', 'clientHeight']) {
         Object.defineProperty(Element.prototype, prop, {
             get(this: HTMLElement) {
                 return this.getBoundingClientRect().height;
@@ -158,13 +203,87 @@ function init(): boolean {
         });
     }
 
-    for (const prop of ['offsetWidth', 'scrollWidth', 'clientWidth']) {
+    for (const prop of ['offsetWidth', 'clientWidth']) {
         Object.defineProperty(Element.prototype, prop, {
             get(this: Element) {
                 return this.getBoundingClientRect().width;
             },
         });
     }
+
+    // scrollHeight must account for the virtual scroll container height set by the grid (e.g.
+    // ag-center-cols-container gets style.height = rowCount * rowHeight). This is nested 2 levels
+    // below the scroll root (ag-body-viewport → ag-center-cols-clipper → ag-center-cols-viewport),
+    // so we recurse into children's scrollHeight to propagate the value upwards.
+    Object.defineProperty(Element.prototype, 'scrollHeight', {
+        get(this: HTMLElement) {
+            let max = this.getBoundingClientRect().height;
+            const styleH = parseFloat(this.style?.height);
+            if (!isNaN(styleH) && styleH > max) {
+                max = styleH;
+            }
+            for (let i = 0; i < this.children.length; i++) {
+                const childH = (this.children[i] as HTMLElement).scrollHeight;
+                if (childH > max) {
+                    max = childH;
+                }
+            }
+            return max;
+        },
+    });
+
+    // scrollWidth must account for the total columns width (style.width on ag-center-cols-container).
+    // ag-center-cols-container is a direct child of ag-center-cols-viewport, so one level suffices,
+    // but we recurse for consistency in case the structure changes.
+    Object.defineProperty(Element.prototype, 'scrollWidth', {
+        get(this: HTMLElement) {
+            let max = this.getBoundingClientRect().width;
+            const styleW = parseFloat(this.style?.width);
+            if (!isNaN(styleW) && styleW > max) {
+                max = styleW;
+            }
+            for (let i = 0; i < this.children.length; i++) {
+                const childW = (this.children[i] as HTMLElement).scrollWidth;
+                if (childW > max) {
+                    max = childW;
+                }
+            }
+            return max;
+        },
+    });
+
+    // jsdom does not fire 'scroll' events when scrollTop/scrollLeft are set programmatically.
+    // The grid's virtualisation is driven by these scroll events, so we patch the setters to
+    // dispatch them. Values are stored in a WeakMap since jsdom resets them on read.
+    Object.defineProperty(Element.prototype, 'scrollTop', {
+        get(this: Element) {
+            return getScrollPos(this).top;
+        },
+        set(this: Element, value: number) {
+            const pos = getScrollPos(this);
+            const clamped = Math.max(0, value);
+            if (pos.top !== clamped) {
+                pos.top = clamped;
+                this.dispatchEvent(new Event('scroll'));
+            }
+        },
+        configurable: true,
+    });
+
+    Object.defineProperty(Element.prototype, 'scrollLeft', {
+        get(this: Element) {
+            return getScrollPos(this).left;
+        },
+        set(this: Element, value: number) {
+            const pos = getScrollPos(this);
+            const clamped = Math.max(0, value);
+            if (pos.left !== clamped) {
+                pos.left = clamped;
+                this.dispatchEvent(new Event('scroll'));
+            }
+        },
+        configurable: true,
+    });
 
     Object.defineProperty(Element.prototype, 'offsetTop', {
         get(this: Element) {

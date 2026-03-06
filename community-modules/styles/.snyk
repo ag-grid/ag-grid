@@ -2,6 +2,29 @@
 version: v1.25.1
 
 ignore:
+    SNYK-JS-UNDERSCORE-15369786:
+        - '@vusion/webfonts-generator@0.8.0 > underscore@1.13.7':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-05T11:49:56.069Z
+    SNYK-JS-TAR-15416075:
+        - '@vusion/webfonts-generator@0.8.0 > ttf2woff2@4.0.5 > node-gyp@9.4.1 > make-fetch-happen@10.2.1 > cacache@16.1.3 > tar@6.2.1':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-05T11:46:05.232Z
+        - '@vusion/webfonts-generator@0.8.0 > ttf2woff2@4.0.5 > node-gyp@9.4.1 > tar@6.2.1':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-05T11:46:05.228Z
+    SNYK-JS-IMMUTABLE-15423650:
+        - sass@1.79.3 > immutable@4.3.7:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-05T11:42:22.178Z
     SNYK-JS-TAR-15307072:
         - '@vusion/webfonts-generator@0.8.0 > ttf2woff2@4.0.5 > node-gyp@9.4.1 > make-fetch-happen@10.2.1 > cacache@16.1.3 > tar@6.2.1':
               reason: >-

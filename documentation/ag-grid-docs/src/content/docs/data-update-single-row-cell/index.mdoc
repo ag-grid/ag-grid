@@ -11,11 +11,13 @@ Once you have access to the required Row Node, you can update its data with the 
 
 ## Reading Cell Values
 
-Use `rowNode.getDataValue(colKey)` to retrieve the committed data value for a column. This returns the resolved value (including valueGetters, aggregation for group rows, and computed formulas) but excludes any pending edits.
+There are two ways to read cell values:
 
-{% note %}
-To retrieve display values, pending edits, or formatted values, use [`api.getCellValue()`](./grid-api/#reference-miscellaneous-getCellValue).
-{% /note %}
+- **`rowNode.getDataValue(colKey)`** — returns the underlying data value for a column. This includes resolved valueGetters, aggregation on group rows, and computed formulas, but excludes any pending edits. Use this when you need the raw data (e.g. for calculations or external updates).
+
+- **`api.getCellValue({ rowNode, colKey })`** — returns the display value as shown in the grid, including pending edits and group column display logic. Pass `useFormatter: true` to get the formatted string. Use this when you need the value as the user sees it.
+
+Both methods accept an optional `from` parameter to control how pending edits are resolved — see [Batch Editing - Reading Values](./cell-editing-batch/#reading-values) for details.
 
 ## View Refresh
 

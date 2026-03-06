@@ -9,6 +9,7 @@ import { AgTooltipFeature } from './agTooltipFeature';
 import type { BaseTooltipParams } from './baseTooltipStateManager';
 import { TooltipTrigger } from './baseTooltipStateManager';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type HighlightTooltipEventType = 'itemHighlighted';
 export interface HighlightTooltipEvent extends AgEvent<HighlightTooltipEventType> {
     highlighted: boolean;

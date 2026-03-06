@@ -20,6 +20,7 @@ import type { ColumnModel, Maybe } from './columnModel';
 import type { ColumnState, ColumnStateParams } from './columnStateUtils';
 import type { VisibleColsService } from './visibleColsService';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export abstract class BaseColsService extends BeanStub implements IColsService {
     protected colModel: ColumnModel;
     protected aggFuncSvc?: IAggFuncService;

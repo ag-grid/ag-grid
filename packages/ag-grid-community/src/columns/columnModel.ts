@@ -26,6 +26,7 @@ import {
 
 export type Maybe<T> = T | null | undefined;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface ColumnCollections {
     // columns in a tree, leaf levels are columns, everything above is group column
     tree: (AgColumn | AgProvidedColumnGroup)[];
@@ -36,6 +37,7 @@ export interface ColumnCollections {
     map: { [id: string]: AgColumn };
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class ColumnModel extends BeanStub implements NamedBean {
     beanName = 'colModel' as const;
 

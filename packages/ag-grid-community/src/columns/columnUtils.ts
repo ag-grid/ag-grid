@@ -19,6 +19,7 @@ export const ROW_NUMBERS_COLUMN_ID = 'ag-Grid-RowNumbersColumn';
 export const GROUP_HIERARCHY_COLUMN_ID_PREFIX = 'ag-Grid-HierarchyColumn';
 
 // Possible candidate for reuse (alot of recursive traversal duplication)
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getColumnsFromTree(rootColumns: (AgColumn | AgProvidedColumnGroup)[]): AgColumn[] {
     const result: AgColumn[] = [];
 
@@ -42,6 +43,7 @@ export function getWidthOfColsInList(columnList: AgColumn[]) {
     return columnList.reduce((width, col) => width + col.getActualWidth(), 0);
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _destroyColumnTree(
     beans: BeanCollection,
     oldTree: (AgColumn | AgProvidedColumnGroup)[] | null | undefined,
@@ -70,21 +72,25 @@ export function _destroyColumnTree(
     beans.context.destroyBeans(colsToDestroy);
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function isColumnGroupAutoCol(col: AgColumn): boolean {
     const colId = col.getId();
     return colId.startsWith(GROUP_AUTO_COLUMN_ID);
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function isColumnSelectionCol(col: ColKey): boolean {
     const id = typeof col === 'string' ? col : 'getColId' in col ? col.getColId() : col.colId;
     return id?.startsWith(SELECTION_COLUMN_ID) ?? false;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function isRowNumberCol(col: ColKey): boolean {
     const id = typeof col === 'string' ? col : 'getColId' in col ? col.getColId() : col.colId;
     return id?.startsWith(ROW_NUMBERS_COLUMN_ID) ?? false;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function isSpecialCol(col: ColKey): boolean {
     return isColumnSelectionCol(col) || isRowNumberCol(col);
 }
@@ -100,10 +106,12 @@ export function convertColumnTypes(type: string | string[]): string[] {
     return typeKeys;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _areColIdsEqual(colsA: AgColumn[] | null, colsB: AgColumn[] | null): boolean {
     return _areEqual(colsA, colsB, (a, b) => a.getColId() === b.getColId());
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _updateColsMap(cols: ColumnCollections): void {
     cols.map = {};
     for (const col of cols.list) {
@@ -111,11 +119,13 @@ export function _updateColsMap(cols: ColumnCollections): void {
     }
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _convertColumnEventSourceType(source: AgPropertyChangedSource): ColumnEventType {
     // unfortunately they do not match so need to perform conversion
     return source === 'optionsUpdated' ? 'gridOptionsChanged' : source;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _columnsMatch(column: AgColumn, key: ColKey): boolean {
     return column === key || column.colId == key || column.getColDef() === key;
 }
@@ -155,6 +165,7 @@ export const getValueFactory =
         return obj;
     };
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getColumnStateFromColDef(colDef: ColDef, colId: string): ColumnState {
     const state: ColumnState = {
         ...colDef,
@@ -170,6 +181,7 @@ export function _getColumnStateFromColDef(colDef: ColDef, colId: string): Column
     return state;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getSortDefFromColDef(colDef: ColDef) {
     const { sort, initialSort } = colDef;
     const sortIsValid = _isSortDefValid(sort) || _isSortDirectionValid(sort);

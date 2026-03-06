@@ -141,7 +141,7 @@ export function _setupEditor(
     }
 ): void {
     const { key, event, cellStartedEdit, silent } = params ?? {};
-    const { editModelSvc, editSvc, gos, userCompFactory } = beans;
+    const { editModelSvc, gos, userCompFactory } = beans;
 
     const cellCtrl = _getCellCtrl(beans, position);
     const editorComp = cellCtrl?.comp?.getCellEditor();
@@ -185,6 +185,9 @@ export function _setupEditor(
     editModelSvc?.setEdit(position, {
         editorValue: getNormalisedFormula(beans, newValue, true, position.column),
         state: 'editing',
+        // Reset lifecycle flags for this new editor session. Previous sessions may have left
+        // cellStartedEditing/cellStoppedEditing set on a reused row node.
+        editorState: { cellStartedEditing: undefined, cellStoppedEditing: undefined },
     });
 
     cellCtrl.editCompDetails = compDetails;
@@ -192,10 +195,25 @@ export function _setupEditor(
     comp?.setEditDetails(compDetails, popup, popupLocation, gos.get('reactiveCustomComponents'));
     rowCtrl?.refreshRow({ suppressFlash: true });
 
+    dispatchEditingStarted(beans, position, event, newValue, silent);
+}
+
+/** Dispatches cellEditingStarted if the edit is in 'editing' state and no prior start was dispatched. */
+function dispatchEditingStarted(
+    beans: BeanCollection,
+    position: Required<EditPosition>,
+    event?: Event | null,
+    value?: any,
+    silent?: boolean
+) {
+    const { editSvc, editModelSvc } = beans;
     const edit = editModelSvc?.getEdit(position);
 
-    if (!silent && !edit?.editorState?.cellStartedEditing) {
-        editSvc?.dispatchCellEvent(position, event, 'cellEditingStarted', { value: newValue });
+    // Only dispatch cellEditingStarted if the edit is still in 'editing' state.
+    // If isCancelBeforeStart() cancelled the edit synchronously inside setEditDetails,
+    // the edit state will have been set to 'changed' or removed entirely.
+    if (!silent && edit?.state === 'editing' && !edit?.editorState?.cellStartedEditing) {
+        editSvc?.dispatchCellEvent(position, event, 'cellEditingStarted', { value });
         editModelSvc?.setEdit(position, { editorState: { cellStartedEditing: true } });
     }
 }
@@ -360,7 +378,10 @@ export function _syncFromEditors(
         const { editorValue, editorValueExists, isCancelAfterEnd } = _valueFromEditor(beans, editor, params);
 
         if (isCancelAfterEnd) {
-            beans.editModelSvc?.setEdit(cellId, { editorState: { isCancelAfterEnd } });
+            const { cellStartedEditing, cellStoppedEditing } = beans.editModelSvc?.getEdit(cellId)?.editorState || {};
+            beans.editModelSvc?.setEdit(cellId, {
+                editorState: { isCancelAfterEnd, cellStartedEditing, cellStoppedEditing },
+            });
         }
 
         _syncFromEditor(beans, cellId, editorValue, undefined, !editorValueExists, params);
@@ -602,9 +623,13 @@ function dispatchEditingStopped(
 
     const latest = editModelSvc?.getEdit(position);
     const { editorState } = latest || {};
-    const { isCancelBeforeStart } = editorState || {};
+    const { isCancelBeforeStart, cellStartedEditing, cellStoppedEditing } = editorState || {};
 
-    if (!silent && !isCancelBeforeStart) {
+    // Only dispatch cellEditingStopped if cellEditingStarted was previously fired for this cell
+    // and cellEditingStopped has not already been dispatched (at-most-once guarantee).
+    // Batch-only edits (set via setDataValue with 'batch'/'data' source) never open an editor
+    // and never fire cellEditingStarted, so they must not fire cellEditingStopped either.
+    if (!silent && !isCancelBeforeStart && cellStartedEditing && !cellStoppedEditing) {
         editSvc?.dispatchCellEvent(position, event, 'cellEditingStopped', args);
         editModelSvc?.setEdit(position, { editorState: { cellStoppedEditing: true } });
     }

@@ -18,6 +18,7 @@ import { _getRowContainerClass, _getRowViewportClass } from './rowContainer/rowC
 import type { ScrollVisibleService } from './scrollVisibleService';
 import { _shouldShowVerticalScroll } from './scrollbarVisibilityHelper';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type RowAnimationCssClasses = 'ag-row-animation' | 'ag-row-no-animation';
 
 export const CSS_CLASS_FORCE_VERTICAL_SCROLL = 'ag-force-vertical-scroll';
@@ -25,6 +26,7 @@ export const CSS_CLASS_FORCE_VERTICAL_SCROLL = 'ag-force-vertical-scroll';
 const CSS_CLASS_CELL_SELECTABLE = 'ag-selectable';
 const CSS_CLASS_COLUMN_MOVING = 'ag-column-moving';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IGridBodyComp extends LayoutView {
     setColumnMovingCss(cssClass: string, on: boolean): void;
     setCellSelectableCss(cssClass: string | null, on: boolean): void;
@@ -48,6 +50,7 @@ export interface IGridBodyComp extends LayoutView {
     setGridRootRole(role: 'grid' | 'treegrid'): void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class GridBodyCtrl extends BeanStub {
     private ctrlsSvc: CtrlsService;
     private colModel: ColumnModel;

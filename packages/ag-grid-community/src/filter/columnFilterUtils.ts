@@ -101,6 +101,7 @@ export function getFilterUiFromWrapper<TComp extends IFilterComp | FilterDisplay
     return promise;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _refreshHandlerAndUi(
     getFilterUi: () => AgPromise<{ filter: FilterDisplayComp; filterParams: FilterDisplayParams } | undefined>,
     handler: FilterHandler,
@@ -120,6 +121,7 @@ export function _refreshHandlerAndUi(
     });
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _refreshFilterUi(
     filter: FilterDisplayComp | null | undefined,
     filterParams: FilterDisplayParams,
@@ -159,6 +161,7 @@ export function getAndRefreshFilterUi(
     }
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _updateFilterModel(params: {
     action: FilterAction;
     filterParams?: FilterWrapperParams;
@@ -229,6 +232,7 @@ export function _updateFilterModel(params: {
     }
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getFilterModel<TModel = any>(model: FilterModel, colId: string): TModel | null {
     return model[colId] ?? null;
 }

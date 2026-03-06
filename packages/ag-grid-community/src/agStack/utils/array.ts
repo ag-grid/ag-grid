@@ -1,6 +1,10 @@
-/** An array that is always empty and that cannot be modified */
+/**
+ * An array that is always empty and that cannot be modified
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
 export const _EmptyArray = Object.freeze([]) as unknown as any[];
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _last<T>(arr: readonly T[]): T;
 export function _last<T extends Node>(arr: NodeListOf<T>): T;
 export function _last(arr: any): any {
@@ -11,6 +15,7 @@ export function _last(arr: any): any {
     return arr[arr.length - 1];
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _areEqual<T>(
     a: readonly T[] | null | undefined,
     b: readonly T[] | null | undefined,
@@ -51,6 +56,7 @@ export function _forAll<T>(array: T[] | undefined, callback: (value: T) => boole
     }
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _removeFromArray<T>(array: T[], object: T): void {
     const index = array.indexOf(object);
 
@@ -63,6 +69,7 @@ export function _removeFromArray<T>(array: T[], object: T): void {
  * O(N+M) way to remove M elements from an array of size N. Better than calling _removeFromArray in a loop
  *
  * Note: this implementation removes _any_ instances of the `elementsToRemove`
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _removeAllFromArray<T>(array: T[], elementsToRemove: readonly T[]): void {
     let i = 0;
@@ -96,6 +103,7 @@ export function _moveInArray<T>(array: T[], objectsToMove: T[], toIndex: number)
     }
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _flatten<T>(arrays: Array<T[]>): T[] {
     // Currently the fastest way to flatten an array according to https://jsbench.me/adlib26t2y/2
     return ([] as T[]).concat.apply([], arrays);

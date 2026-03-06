@@ -43,6 +43,7 @@ export type {
     GroupChangedEvent,
     HasChildrenChangedEvent,
     HeightChangedEvent,
+    DataValueFrom,
     IRowNode,
     LastChildChangedEvent,
     MasterChangedEvent,
@@ -73,7 +74,6 @@ export type {
 } from './agStack/interfaces/iPopup';
 export { AgPromise } from './agStack/utils/promise';
 export type { IDragAndDropImageComponent, IDragAndDropImageParams } from './dragAndDrop/dragAndDropImageComponent';
-export type { RowDragComp } from './dragAndDrop/rowDragComp';
 export type {
     DropIndicatorPosition,
     RowDropPositionIndicator,
@@ -81,7 +81,6 @@ export type {
 } from './dragAndDrop/rowDropHighlightService';
 
 // Excel Export
-export type { GridSerializingParams, RowAccumulator, RowSpanningAccumulator } from './export/iGridSerializer';
 export type {
     ColumnWidthCallbackParams,
     ExcelAlignment,
@@ -147,10 +146,6 @@ export type { DragItem } from './interfaces/iDragItem';
 export type { IRowDragItem, RowDragTextFunc } from './interfaces/iRowDragItem';
 
 // Filtering
-export { AgFilterButtonSelector, FilterButtonComp } from './filter/filterButtonComp';
-export type { FilterButton, FilterButtonEvent } from './filter/filterButtonComp';
-export { FilterComp } from './filter/filterComp';
-export { FilterWrapperComp } from './filter/filterWrapperComp';
 export type {
     BaseFloatingFilter,
     FloatingFilterDisplay,
@@ -320,23 +315,7 @@ export type {
 } from './interfaces/iFind';
 
 // Headers
-export type {
-    AbstractHeaderCellCtrl,
-    IAbstractHeaderCellComp,
-} from './headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
-export type { HeaderCellCtrl, IHeaderCellComp } from './headerRendering/cells/column/headerCellCtrl';
-export type {
-    HeaderGroupCellCtrl,
-    IHeaderGroupCellComp,
-} from './headerRendering/cells/columnGroup/headerGroupCellCtrl';
-export type { HeaderFilterCellCtrl } from './headerRendering/cells/floatingFilter/headerFilterCellCtrl';
-export type { IHeaderFilterCellComp } from './headerRendering/cells/floatingFilter/iHeaderFilterCellComp';
-export { GridHeaderCtrl } from './headerRendering/gridHeaderCtrl';
-export type { IGridHeaderComp } from './headerRendering/gridHeaderCtrl';
 export type { HeaderRowType } from './headerRendering/row/headerRowComp';
-export type { HeaderRowCtrl, IHeaderRowComp } from './headerRendering/row/headerRowCtrl';
-export { HeaderRowContainerCtrl } from './headerRendering/rowContainer/headerRowContainerCtrl';
-export type { IHeaderRowContainerComp } from './headerRendering/rowContainer/headerRowContainerCtrl';
 export type { SortIndicatorComp } from './sort/sortIndicatorComp';
 
 // AlignedGrid
@@ -577,7 +556,6 @@ export type {
     ShouldRowBeSkippedParams,
 } from './interfaces/exportParams';
 export type { ICsvCreator } from './interfaces/iCsvCreator';
-export type { HeaderElement, PrefixedXmlAttributes, XmlAttributes, XmlElement } from './interfaces/iXmlFactory';
 
 // Clipboard
 export type { IClipboardCopyParams, IClipboardCopyRowsParams } from './interfaces/iClipboardService';
@@ -682,6 +660,7 @@ export type {
     HeaderValueGetterParams,
     IAggFunc,
     IAggFuncParams,
+    IAggFuncResult,
     IAggFuncs,
     ILoadingCellRendererSelectorFunc,
     KeyCreatorFunc,

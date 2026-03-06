@@ -1,4 +1,8 @@
 {
+    "attribution": {
+        "commit": "",
+        "pr": ""
+    },
     "permissions": {
         "allow": [
             "Bash(command -v:*)",
@@ -41,10 +45,6 @@
             "mcp__sequential-thinking__sequentialthinking"
         ],
         "deny": []
-    },
-    "attribution": {
-        "commit": "",
-        "pr": ""
     },
     "hooks": {
         "PostToolUse": [

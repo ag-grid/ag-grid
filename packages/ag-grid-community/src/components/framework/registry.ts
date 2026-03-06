@@ -13,6 +13,7 @@ import type { IconName } from '../../utils/icon';
 import { _errMsg } from '../../validation/logging';
 import type { AgComponentSelectorType, ComponentSelector } from '../../widgets/component';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class Registry
     extends BaseRegistry<
         BeanCollection,

@@ -10,6 +10,7 @@ import type { CellPosition } from './iCellPosition';
 import type { ICellRangeFeature } from './iCellRangeFeature';
 import type { RowPosition } from './iRowPosition';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRangeService {
     readonly autoScrollService: AutoScrollService;
     isEmpty(): boolean;
