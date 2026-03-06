@@ -1057,19 +1057,21 @@
                                     "type": "item",
                                     "title": "Rich Select Editor",
                                     "path": "provided-cell-editors-rich-select",
-                                    "isEnterprise": true
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Rich Select Customisation",
-                                    "path": "provided-cell-editors-rich-select-customisation",
-                                    "isEnterprise": true
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Rich Select Async Values",
-                                    "path": "provided-cell-editors-rich-select-async",
-                                    "isEnterprise": true
+                                    "isEnterprise": true,
+                                    "children": [
+                                        {
+                                            "type": "item",
+                                            "title": "Customisation",
+                                            "path": "provided-cell-editors-rich-select-customisation",
+                                            "isEnterprise": true
+                                        },
+                                        {
+                                            "type": "item",
+                                            "title": "Async Values",
+                                            "path": "provided-cell-editors-rich-select-async",
+                                            "isEnterprise": true
+                                        }
+                                    ]
                                 }
                             ]
                         },

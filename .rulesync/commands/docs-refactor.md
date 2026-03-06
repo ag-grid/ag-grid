@@ -97,7 +97,7 @@ Use this command when a documentation section:
 
 > **Inner groupings require a page:** Unlike top-level sections (`type: "group"` at the nav root level), inner groupings must use `type: "item"` with a `path` pointing to an actual overview page. A `type: "group"` without a `path` inside another group creates a non-clickable section label with no page behind it — an anti-pattern not found elsewhere in the docs. If no suitable overview page exists for a sub-grouping, flatten the structure instead of creating an empty parent.
 
-> **⚠️ Nesting depth limit:** Items nested more than 4 levels deep from the nav root will not render in the sidebar. Count carefully: top-level section (1) → parent item with children (2) → child items (3). If adding an inner grouping would push grandchild items to level 4+, flatten instead — promote the grandchildren as siblings of the parent rather than children of children.
+> **⚠️ Nesting depth limit:** Items nested more than 4 levels deep from the nav root will not render in the sidebar. Count carefully from the first rendered sidebar level: top-level group (1) → item with children (2) → child items (3) → grandchild items (4). Level 4 is the maximum that renders; if adding an inner grouping would push items to level 5+, come up with another way to organise the pages maybe by flattening instead, promoting items as siblings of the parent rather than children of children or a new way of organizing pages.
 
 > **Hub and spoke:** When a topic has 5+ distinct sub-features, organise with a hub page (breadth: overview + navigation, ~100–150 lines) and spoke pages (depth: comprehensive coverage of one aspect, ~80–150 lines each). For simpler topics, a single focused page is better.
 
