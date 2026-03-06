@@ -28,7 +28,6 @@ ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     RowApiModule,
     CheckboxEditorModule,
-    CheckboxEditorModule,
     BatchEditModule,
     ClipboardModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),

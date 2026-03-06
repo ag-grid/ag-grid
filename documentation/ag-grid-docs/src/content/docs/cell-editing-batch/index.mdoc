@@ -38,7 +38,7 @@ Edits made during a batch are stored as **pending values** — they are not appl
 
 ## Reading Values
 
-There are two main apis to read cell values but they differ in their default behaviour.
+There are two main APIs to read cell values but they differ in their default behaviour.
 
 -   **`rowNode.getDataValue()`** — defaults to `from: 'data'` (ignores pending edits). Use for data-facing reads.
 -   **`api.getCellValue()`** — defaults to `from: 'edit'` (shows pending edits). Use for UI-facing reads.
@@ -127,14 +127,13 @@ With `'edit'`, the active editor receives the new value via `refresh()` if imple
 api.startBatchEdit();                                         // Start Batch
 api.startEditingCell({ rowIndex: 0, colKey: 'price' });       // Open editor
 
-
 rowNode.setDataValue('price', 99, 'edit');                    // Update open editor without closing
-api.getCellValue({ rowNode, colKey: 'price', from: 'edit' }); // Live edit value 99
-rowNode.data.price;                                           // 42 original value unchanged
+api.getCellValue({ rowNode, colKey: 'price', from: 'edit' }); // 99 (live edit value)
+rowNode.data.price;                                           // 42 (unchanged)
 
-api.stopEditing();                                            // Close editor 99 pending value
+api.stopEditing();                                            // Close editor
 api.commitBatchEdit();                                        // Commit Batch
-rowNode.getDataValue('price');                                // 99 committed to data
+rowNode.getDataValue('price');                                // 99 (committed)
 ```
 
 ```js
@@ -145,14 +144,14 @@ rowNode.setDataValue('qty', 5, 'batch');    // Update qty
 rowNode.getDataValue('price');              // 42 (committed data)
 rowNode.getDataValue('price', 'batch');     // 99 (pending)
 
-api.commitBatchEdit();
+api.commitBatchEdit();                      // Commit Batch
 rowNode.getDataValue('price');              // 99 (committed data)
 ```
 
 ```js
 api.startBatchEdit();                       // Start Batch
 rowNode.setDataValue('price', 99, 'data');  // 'data' — bypass batch, write immediately
-rowNode.data.price);                        // 99 (already committed)
+rowNode.data.price;                         // 99 (already committed)
 api.cancelBatchEdit();                      // 'data' writes are permanent
 ```
 
@@ -164,7 +163,7 @@ If `cancelBatchEdit()` is called instead, the pending edits are discarded withou
 
 ## Full Row Batch Editing
 
-In [Full Row](./cell-editing-full-row/) Batch Editing starting an edit in any cell opens all editors for the current row. When completed editing the row only the changed cells are part of the pending batch edits.
+In [Full Row](./cell-editing-full-row/) Batch Editing, starting an edit in any cell opens all editors for the current row. When row editing is completed, only the changed cells are included in the pending batch edits.
 
 {% gridExampleRunner title="Batch Editing FullRow" name="batch-editing-fullrow" exampleHeight=560 /%}
 
