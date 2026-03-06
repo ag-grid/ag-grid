@@ -26,6 +26,7 @@ import {
 
 import type { ColumnModelItem } from './columnModelItem';
 import type { ToolPanelColumnCompParams } from './columnToolPanel';
+import { getColumnToolPanelEditStrategy } from './columnToolPanelEditUtils';
 import { createPivotState, setAllColumns, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
 
@@ -47,6 +48,7 @@ export class ToolPanelColumnComp extends Component {
     private readonly displayName: string | null;
     private processingColumnStateChange = false;
     private tooltipFeature?: TooltipFeature;
+    private editStrategy?: ReturnType<typeof getColumnToolPanelEditStrategy>;
 
     constructor(
         public modelItem: ColumnModelItem,
@@ -145,6 +147,10 @@ export class ToolPanelColumnComp extends Component {
 
     public getColumn(): AgColumn {
         return this.column;
+    }
+
+    private getEditStrategy() {
+        return (this.editStrategy ??= getColumnToolPanelEditStrategy(this.beans, this.params.deferApply));
     }
 
     private setupTooltip(): void {
@@ -293,14 +299,15 @@ export class ToolPanelColumnComp extends Component {
 
     private onColumnStateChanged(): void {
         this.processingColumnStateChange = true;
-        const isPivotMode = this.beans.colModel.isPivotMode();
+        const edits = this.getEditStrategy();
+        const isPivotMode = edits.getPivotModeForToolPanel();
         if (isPivotMode) {
             // if reducing, checkbox means column is one of pivot, value or group
-            const anyFunctionActive = this.column.isAnyFunctionActive();
+            const anyFunctionActive = edits.isColumnSelectedInPivotModeToolPanel(this.column);
             this.cbSelect.setValue(anyFunctionActive);
         } else {
             // if not reducing, the checkbox tells us if column is visible or not
-            this.cbSelect.setValue(this.column.isVisible());
+            this.cbSelect.setValue(edits.isColumnVisibleInToolPanel(this.column));
         }
 
         let canBeToggled = true;

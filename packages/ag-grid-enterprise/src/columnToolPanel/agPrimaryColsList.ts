@@ -28,6 +28,7 @@ import { syncLayoutWithGrid, toolPanelCreateColumnTree } from '../sideBar/common
 import { VirtualList } from '../widgets/virtualList';
 import { ExpandState } from './agPrimaryColsHeader';
 import { ColumnModelItem } from './columnModelItem';
+import { getColumnToolPanelEditStrategy } from './columnToolPanelEditUtils';
 import { getCurrentColumnsBeingMoved, getCurrentDragValue, isMoveBlocked, moveItem } from './columnMoveUtils';
 import type { ToolPanelColumnCompParams } from './columnToolPanel';
 import { selectAllChildren } from './modelItemUtils';
@@ -72,6 +73,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     private hasLoadedInitialState: boolean = false;
     private isInitialState: boolean = false;
     private skipRefocus: boolean = false;
+    private editStrategy?: ReturnType<typeof getColumnToolPanelEditStrategy>;
 
     constructor() {
         super({ tag: 'div', cls: PRIMARY_COLS_LIST_PANEL_CLASS, role: 'presentation' });
@@ -92,6 +94,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
     public init(params: ToolPanelColumnCompParams, allowDragging: boolean, eventType: ColumnEventType): void {
         this.params = params;
+        this.editStrategy = undefined;
         const { suppressSyncLayoutWithGrid, contractColumnSelection, suppressColumnMove } = params;
         this.allowDragging = allowDragging;
         this.eventType = eventType;
@@ -149,6 +152,10 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         }
 
         this.createItemDragFeature();
+    }
+
+    private getEditStrategy() {
+        return (this.editStrategy ??= getColumnToolPanelEditStrategy(this.beans, this.params.deferApply));
     }
 
     private createItemDragFeature(): void {
@@ -563,13 +570,23 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         selectAllChildren(this.beans, this.allColsTree, selectAllChecked, this.eventType, {
             deferApply: !!this.params.deferApply,
         });
+        this.syncVisibleSelectionState();
+        this.fireSelectionChangedEvent();
+    }
+
+    private syncVisibleSelectionState(): void {
+        for (let i = 0; i < this.displayedColsList.length; i++) {
+            const comp = this.virtualList.getComponentAt(i) as any;
+            comp?.onColumnStateChanged?.();
+        }
     }
 
     private getSelectionState(): boolean | undefined {
         let checkedCount = 0;
         let uncheckedCount = 0;
 
-        const pivotMode = this.colModel.isPivotMode();
+        const edits = this.getEditStrategy();
+        const pivotMode = edits.getPivotModeForToolPanel();
 
         this.forEachItem((item) => {
             if (item.group) {
@@ -590,13 +607,13 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 if (noPivotModeOptionsAllowed) {
                     return;
                 }
-                checked = column.isValueActive() || column.isPivotActive() || column.isRowGroupActive();
+                checked = edits.isColumnSelectedInPivotModeToolPanel(column) ?? false;
             } else {
                 if (colDef.lockVisible) {
                     return;
                 }
 
-                checked = column.isVisible();
+                checked = edits.isColumnVisibleInToolPanel(column) ?? false;
             }
 
             if (checked) {

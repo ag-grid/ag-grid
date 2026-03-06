@@ -29,6 +29,7 @@ import {
 } from 'ag-grid-community';
 
 import type { ColumnModelItem } from './columnModelItem';
+import { getColumnToolPanelEditStrategy } from './columnToolPanelEditUtils';
 import type { ColumnToolPanelEditParams } from './columnToolPanelEdits';
 import { createPivotState, selectAllChildren, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
@@ -67,6 +68,7 @@ export class ToolPanelColumnGroupComp extends Component {
     private readonly displayName: string | null;
     private processingColumnStateChange = false;
     private tooltipFeature?: TooltipFeature;
+    private editStrategy?: ReturnType<typeof getColumnToolPanelEditStrategy>;
 
     constructor(
         public readonly modelItem: ColumnModelItem,
@@ -145,6 +147,10 @@ export class ToolPanelColumnGroupComp extends Component {
 
     public getColumns(): AgColumn[] {
         return this.columnGroup.getLeafColumns();
+    }
+
+    private getEditStrategy() {
+        return (this.editStrategy ??= getColumnToolPanelEditStrategy(this.beans, this.params.deferApply));
     }
 
     private setupTooltip(): void {
@@ -366,7 +372,8 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private workOutSelectedValue(): boolean | undefined {
-        const pivotMode = this.beans.colModel.isPivotMode();
+        const edits = this.getEditStrategy();
+        const pivotMode = edits.getPivotModeForToolPanel();
 
         const visibleLeafColumns = this.getVisibleLeafColumns();
 
@@ -375,7 +382,7 @@ export class ToolPanelColumnGroupComp extends Component {
 
         for (const column of visibleLeafColumns) {
             if (pivotMode || !column.getColDef().lockVisible) {
-                if (this.isColumnChecked(column, pivotMode)) {
+                if (this.isColumnChecked(column)) {
                     checkedCount++;
                 } else {
                     uncheckedCount++;
@@ -391,7 +398,7 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private workOutReadOnlyValue(): boolean {
-        const pivotMode = this.beans.colModel.isPivotMode();
+        const pivotMode = this.getEditStrategy().getPivotModeForToolPanel();
 
         let colsThatCanAction = 0;
 
@@ -408,15 +415,12 @@ export class ToolPanelColumnGroupComp extends Component {
         return colsThatCanAction === 0;
     }
 
-    private isColumnChecked(column: AgColumn, pivotMode: boolean): boolean {
-        if (pivotMode) {
-            const pivoted = column.isPivotActive();
-            const grouped = column.isRowGroupActive();
-            const aggregated = column.isValueActive();
-            return pivoted || grouped || aggregated;
+    private isColumnChecked(column: AgColumn): boolean {
+        const edits = this.getEditStrategy();
+        if (edits.getPivotModeForToolPanel()) {
+            return edits.isColumnSelectedInPivotModeToolPanel(column);
         }
-
-        return column.isVisible();
+        return edits.isColumnVisibleInToolPanel(column);
     }
 
     private onExpandOrContractClicked(): void {
