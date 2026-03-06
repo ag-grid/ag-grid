@@ -1689,31 +1689,9 @@
                             ]
                         },
                         {
-                            "type": "group",
+                            "type": "item",
                             "title": "Infinite Row Model",
-                            "path": "infinite-scrolling",
-                            "children": [
-                                {
-                                    "type": "item",
-                                    "title": "Datasource",
-                                    "path": "infinite-scrolling-datasource"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Block Cache & Performance",
-                                    "path": "infinite-scrolling-cache"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Row Selection",
-                                    "path": "infinite-scrolling-selection"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Sorting, Filtering & Pagination",
-                                    "path": "infinite-scrolling-advanced"
-                                }
-                            ]
+                            "path": "infinite-scrolling"
                         },
                         {
                             "type": "item",
