@@ -35,13 +35,11 @@ is getting the rows from a database in a remote server.
 
 Enable infinite scrolling by setting `rowModelType` to `'infinite'` and providing a datasource:
 
-```js
-// before grid initialised
-gridOptions.rowModelType = 'infinite';
-gridOptions.datasource = myDataSource;
-
-// after grid initialised, you can set or change the datasource
-api.setGridOption('datasource', myDataSource);
+```{% frameworkTransform=true %}
+const gridOptions = {
+    rowModelType: 'infinite',
+    datasource: myDataSource
+};
 ```
 
 ## Next Steps

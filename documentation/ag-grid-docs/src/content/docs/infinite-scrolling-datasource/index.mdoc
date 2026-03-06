@@ -45,12 +45,11 @@ Under normal operation, you will return `null` or `undefined` for `lastRow` for 
 A datasource must be provided to do infinite scrolling. You specify the datasource as a grid
 property or using the grid API.
 
-```js
-// set as a property
-gridOptions.datasource = myDatasource;
-
-// or use the api after the grid is initialised
-api.setGridOption('datasource', myDatasource);
+```{% frameworkTransform=true %}
+const gridOptions = {
+    rowModelType: 'infinite',
+    datasource: myDataSource
+};
 ```
 
 ## Changing the Datasource
@@ -80,5 +79,3 @@ The example below makes use of infinite scrolling and caching. Notice that the g
 The examples above use old-style JavaScript objects for the datasource. This example turns things around slightly and creates a datasource Class. The example also just generates data on the fly.
 
 {% gridExampleRunner title="Made Up Data" name="made-up-data" /%}
-
-
