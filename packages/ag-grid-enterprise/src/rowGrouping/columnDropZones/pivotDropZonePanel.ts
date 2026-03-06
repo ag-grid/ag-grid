@@ -83,12 +83,12 @@ export class PivotDropZonePanel extends BaseDropZonePanel implements FocusableCo
     }
 
     protected updateItems(columns: AgColumn[]): void {
-        const edits = this.getEdits();
-        if (edits) {
-            edits.setPivotColumns(columns, 'toolPanelUi');
-            return;
+        const strategy = this.getEditStrategy();
+        if (strategy) {
+            strategy.setPivotColumns(columns, 'toolPanelUi');
+        } else {
+            this.beans.pivotColsSvc?.setColumns(columns, 'toolPanelUi');
         }
-        this.beans.pivotColsSvc?.setColumns(columns, 'toolPanelUi');
     }
 
     protected getIconName(): DragAndDropIcon {
@@ -96,7 +96,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel implements FocusableCo
     }
 
     protected getExistingItems(): AgColumn[] {
-        return this.getDeferredEdits()?.getDraftPivotColumns() ?? this.beans.pivotColsSvc?.columns ?? [];
+        return this.getEditStrategy()?.getPivotColumns() ?? this.beans.pivotColsSvc?.columns ?? [];
     }
 
     public getFocusableContainerName(): 'pivotToolbar' {

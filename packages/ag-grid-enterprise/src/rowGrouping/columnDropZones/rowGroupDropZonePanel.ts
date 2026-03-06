@@ -45,12 +45,12 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel implements Focusabl
     }
 
     protected updateItems(columns: AgColumn[]) {
-        const edits = this.getEdits();
-        if (edits) {
-            edits.setRowGroupColumns(columns, 'toolPanelUi');
-            return;
+        const strategy = this.getEditStrategy();
+        if (strategy) {
+            strategy.setRowGroupColumns(columns, 'toolPanelUi');
+        } else {
+            this.beans.rowGroupColsSvc?.setColumns(columns, 'toolPanelUi');
         }
-        this.beans.rowGroupColsSvc?.setColumns(columns, 'toolPanelUi');
     }
 
     protected getIconName(): DragAndDropIcon {
@@ -58,7 +58,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel implements Focusabl
     }
 
     protected getExistingItems(): AgColumn[] {
-        return this.getDeferredEdits()?.getDraftRowGroupColumns() ?? this.beans.rowGroupColsSvc?.columns ?? [];
+        return this.getEditStrategy()?.getRowGroupColumns() ?? this.beans.rowGroupColsSvc?.columns ?? [];
     }
 
     public getFocusableContainerName(): 'rowGroupToolbar' {

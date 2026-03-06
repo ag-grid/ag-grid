@@ -44,7 +44,7 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
     }
 
     protected updateItems(columns: AgColumn[]): void {
-        const strategy = this.getEdits();
+        const strategy = this.getEditStrategy();
         if (strategy) {
             strategy.setValueColumns(columns, 'toolPanelUi');
         } else {
@@ -53,6 +53,6 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
     }
 
     protected getExistingItems(): AgColumn[] {
-        return this.getDeferredEdits()?.getDraftValueColumns() ?? this.beans.valueColsSvc?.columns ?? [];
+        return this.getEditStrategy()?.getValueColumns() ?? this.beans.valueColsSvc?.columns ?? [];
     }
 }
