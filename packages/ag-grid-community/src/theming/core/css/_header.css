@@ -1,16 +1,6 @@
-.ag-grid-pinned-top-rows-container {
-    display: flex;
-    width: 100%;
-    white-space: nowrap;
-    overflow: visible;
-}
-
 /* stylelint-disable selector-max-specificity */
 
 .ag-header-row {
-    /* keep header rows above sticky top rows while both share the pinned-top host. */
-    z-index: 2;
-
     .ag-grid-pinned-left-cells,
     .ag-grid-scrolling-cells,
     .ag-grid-pinned-right-cells {
@@ -23,6 +13,17 @@
     font-size: var(--ag-header-font-size);
     font-family: var(--ag-header-font-family);
     font-weight: var(--ag-header-font-weight);
+}
+
+.ag-header-row > .ag-grid-scrolling-cells {
+    /* Header center cells must paint above non-header rows, including sticky rows. */
+    z-index: 1;
+}
+
+.ag-header-row > .ag-grid-pinned-left-cells,
+.ag-header-row > .ag-grid-pinned-right-cells {
+    /* Header pinned lanes must always mask center-lane span-up content. */
+    z-index: 3;
 }
 
 .ag-row.ag-header-row {

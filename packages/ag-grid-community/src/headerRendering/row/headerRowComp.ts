@@ -51,7 +51,7 @@ export class HeaderRowComp extends Component {
 
         const compProxy: IHeaderRowComp = {
             setHeight: (height) => (this.getGui().style.height = height),
-            setTransform: (transform) => (this.getGui().style.transform = transform),
+            setTop: (top) => (this.getGui().style.top = top),
             setHeaderCtrls: (ctrls, forceOrder) => this.setHeaderCtrls(ctrls, forceOrder),
             refreshPinnedCellGroupWidths: () => this.refreshPinnedCellGroupWidths(),
             setWidth: (width) => (this.getGui().style.width = width),

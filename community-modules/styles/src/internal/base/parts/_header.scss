@@ -7,8 +7,6 @@
     }
 
     .ag-header-row {
-        // keep header rows above sticky top rows while both share the pinned-top host.
-        z-index: 2;
         border-bottom: none;
         color: var(--ag-header-foreground-color);
         height: var(--ag-header-height);
@@ -28,6 +26,17 @@
             border-right: var(--ag-borders-critical) var(--ag-border-color);
             overflow: visible;
         }
+    }
+
+    .ag-header-row > .ag-grid-scrolling-cells {
+        // header center cells must paint above non-header rows, including sticky rows.
+        z-index: 1;
+    }
+
+    .ag-header-row > .ag-grid-pinned-left-cells,
+    .ag-header-row > .ag-grid-pinned-right-cells {
+        // header pinned lanes must always mask center-lane span-up content.
+        z-index: 3;
     }
 
     .ag-header-cell:not(.ag-right-aligned-header) {

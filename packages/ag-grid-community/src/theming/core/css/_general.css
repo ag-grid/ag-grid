@@ -457,25 +457,6 @@
     white-space: nowrap;
 }
 
-.ag-grid-pinned-bottom-rows-container {
-    overflow: hidden;
-    white-space: nowrap;
-    width: 100%;
-    position: relative;
-    min-height: 100%;
-    height: 100%;
-}
-
-.ag-grid-pinned-bottom-rows-full-width-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    overflow: visible;
-}
-
 :where(.ag-grid-pinned-top-rows:not(.ag-no-top-rows)) {
     border-bottom-color: transparent;
 }
@@ -484,7 +465,8 @@
     border-top: var(--ag-pinned-row-border);
 }
 
-.ag-grid-pinned-top-rows-container {
+.ag-grid-pinned-top-rows-container,
+.ag-grid-pinned-bottom-rows-container {
     position: relative;
     width: 100%;
     min-height: 100%;
@@ -492,7 +474,18 @@
     white-space: nowrap;
 }
 
-.ag-grid-pinned-top-rows-full-width-container {
+.ag-grid-pinned-top-rows-container {
+    display: flex;
+    overflow: visible;
+}
+
+.ag-grid-pinned-bottom-rows-container {
+    /* Keep horizontal sticky pinned lanes active for bottom pinned rows. */
+    overflow: visible;
+}
+
+.ag-grid-pinned-top-rows-full-width-container,
+.ag-grid-pinned-bottom-rows-full-width-container {
     position: absolute;
     top: 0;
     left: 0;
