@@ -14,7 +14,7 @@ import type { HeaderRowType } from './headerRowComp';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IHeaderRowComp {
-    setTop(top: string): void;
+    setTransform(transform: string): void;
     setHeight(height: string): void;
     setHeaderCtrls(ctrls: AbstractHeaderCellCtrl[], forceOrder: boolean, afterScroll: boolean): void;
     refreshPinnedCellGroupWidths(): void;
@@ -166,7 +166,7 @@ export class HeaderRowCtrl extends BeanStub {
         }
         const { topOffset, rowHeight } = this.getTopAndHeight();
 
-        this.comp.setTop(topOffset + 'px');
+        this.comp.setTransform(`translateY(${topOffset}px)`);
         this.comp.setHeight(rowHeight + 'px');
     }
 

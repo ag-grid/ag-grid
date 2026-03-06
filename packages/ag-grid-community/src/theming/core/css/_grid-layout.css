@@ -109,6 +109,20 @@
     background-color: inherit;
 }
 
+.ag-grid-pinned-top-rows:not(.ag-no-top-rows) > .ag-grid-pinned-top-rows-container > .ag-row.ag-row-pinned:last-child {
+    > .ag-grid-pinned-left-cells,
+    > .ag-grid-scrolling-cells,
+    > .ag-grid-pinned-right-cells {
+        border-bottom-color: transparent;
+    }
+}
+
+.ag-grid-pinned-top-rows:not(.ag-no-top-rows)
+    > .ag-grid-pinned-top-rows-full-width-container
+    > .ag-row.ag-row-pinned:last-child {
+    border-bottom-color: transparent;
+}
+
 /* Hide the border of the last row when there is no gap between the row and
    grid edge to prevent a double border. The use of the child  combinator `>`
    is to ensure that the ag-body-vertical-content-no-gap class only hides the

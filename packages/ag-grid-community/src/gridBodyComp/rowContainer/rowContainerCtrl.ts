@@ -38,7 +38,13 @@ export type RowContainerOptions = {
 const getTopRowCtrls: GetRowCtrls = (r) => r.topRowCtrls;
 const getBottomRowCtrls: GetRowCtrls = (r) => r.bottomRowCtrls;
 const getCentreRowCtrls: GetRowCtrls = (r) => r.allRowCtrls;
-const getPinnedAndStickyTopRowCtrls: GetRowCtrls = (r) => [...getTopRowCtrls(r), ...r.getStickyTopRowCtrls()];
+const getPinnedAndStickyTopRowCtrls: GetRowCtrls = (r) => {
+    // DOM order for top pinned section is intentionally:
+    // header rows (separate source), then sticky rows (reverse), then pinned rows.
+    // Visual order is still controlled by each row's top position.
+    const stickyRowsInReverseDomOrder = [...r.getStickyTopRowCtrls()].reverse();
+    return [...stickyRowsInReverseDomOrder, ...getTopRowCtrls(r)];
+};
 const getStickyAndPinnedBottomRowCtrls: GetRowCtrls = (r) => [...r.getStickyBottomRowCtrls(), ...getBottomRowCtrls(r)];
 
 const getSpannedTopRowCtrls: GetSpannedRowCtrls = (r) => r.getCtrls('top');

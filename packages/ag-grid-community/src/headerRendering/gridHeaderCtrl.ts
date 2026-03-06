@@ -93,12 +93,9 @@ export class GridHeaderCtrl extends BeanStub {
 
         totalHeaderHeight += groupHeight;
         totalHeaderHeight += headerHeight;
-        const headerBorderWidth = beans.environment.getHeaderRowBorderWidth();
-        const totalHeaderHeightWithBorder = totalHeaderHeight + headerBorderWidth;
-
-        if (this.headerHeightWithBorder !== totalHeaderHeightWithBorder) {
-            this.headerHeightWithBorder = totalHeaderHeightWithBorder;
-            const px = `${totalHeaderHeightWithBorder}px`;
+        if (this.headerHeightWithBorder !== totalHeaderHeight) {
+            this.headerHeightWithBorder = totalHeaderHeight;
+            const px = `${totalHeaderHeight}px`;
             this.comp.setHeightAndMinHeight(px);
         }
 

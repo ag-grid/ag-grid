@@ -28,6 +28,7 @@ const GridBodyComp = () => {
     const [stickyBottomWidth, setStickyBottomWidth] = useState<string>('100%');
     const [topInvisible, setTopInvisible] = useState<boolean>(true);
     const [bottomInvisible, setBottomInvisible] = useState<boolean>(true);
+    const [scrollingRowsMarginTop, setScrollingRowsMarginTop] = useState<number>(0);
 
     const [forceVerticalScrollClass, setForceVerticalScrollClass] = useState<string | null>(null);
     const [cellSelectableCss, setCellSelectableCss] = useState<string | null>(null);
@@ -138,6 +139,7 @@ const GridBodyComp = () => {
             setStickyBottomHeight,
             setStickyBottomBottom,
             setStickyBottomWidth,
+            setScrollingRowsMarginTop,
             setGridRootRole: (role: 'grid' | 'treegrid') => _setAriaRole(rootElement, role),
         };
 
@@ -211,6 +213,13 @@ const GridBodyComp = () => {
         } as React.CSSProperties;
     }, [topHeight]);
 
+    const bodyStyle: React.CSSProperties = useMemo(
+        () => ({
+            marginTop: scrollingRowsMarginTop > 0 ? `${scrollingRowsMarginTop}px` : undefined,
+        }),
+        [scrollingRowsMarginTop]
+    );
+
     const bottomStyle: React.CSSProperties = useMemo(
         () => ({
             height: `calc(${bottomHeight}px + ${stickyBottomHeight})`,
@@ -250,7 +259,7 @@ const GridBodyComp = () => {
                             onContainerElementChanged={setTopRowsFullWidthHost}
                         />
                     </div>
-                    <div className={bodyClasses} ref={eBody} role="presentation">
+                    <div className={bodyClasses} ref={eBody} role="presentation" style={bodyStyle}>
                         {(['scrollingCenter', 'scrollingFullWidth'] as const).map(createRowContainer)}
                     </div>
                     <div className={bottomClasses} ref={eBottom} role="presentation" style={bottomStyle}>

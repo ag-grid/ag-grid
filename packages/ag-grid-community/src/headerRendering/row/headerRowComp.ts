@@ -47,15 +47,15 @@ export class HeaderRowComp extends Component {
     public postConstruct(): void {
         const eGui = this.getGui();
         eGui.setAttribute('tabindex', String(this.gos.get('tabIndex')));
-        _setAriaRowIndex(this.getGui(), this.ctrl.getAriaRowIndex());
+        this.setRowIndex(this.ctrl.getAriaRowIndex());
 
         const compProxy: IHeaderRowComp = {
             setHeight: (height) => (this.getGui().style.height = height),
-            setTop: (top) => (this.getGui().style.top = top),
+            setTransform: (transform) => (this.getGui().style.transform = transform),
             setHeaderCtrls: (ctrls, forceOrder) => this.setHeaderCtrls(ctrls, forceOrder),
             refreshPinnedCellGroupWidths: () => this.refreshPinnedCellGroupWidths(),
             setWidth: (width) => (this.getGui().style.width = width),
-            setRowIndex: (rowIndex) => _setAriaRowIndex(this.getGui(), rowIndex),
+            setRowIndex: (rowIndex) => this.setRowIndex(rowIndex),
         };
 
         this.ctrl.setComp(compProxy, undefined);
@@ -208,6 +208,12 @@ export class HeaderRowComp extends Component {
 
     private refreshPinnedCellGroupWidths(): void {
         this.updatePinnedCellGroupWidths();
+    }
+
+    private setRowIndex(ariaRowIndex: number): void {
+        const eGui = this.getGui();
+        _setAriaRowIndex(eGui, ariaRowIndex);
+        eGui.classList.toggle('ag-header-row-not-first', ariaRowIndex !== 1);
     }
 
     private createHeaderComp(headerCtrl: AbstractHeaderCellCtrl): AbstractHeaderCellComp<AbstractHeaderCellCtrl> {

@@ -42,6 +42,7 @@ export interface IGridBodyComp extends LayoutView {
     setRowAnimationCssOnBodyViewport(cssClass: RowAnimationCssClasses, animate: boolean): void;
     setAlwaysVerticalScrollClass(cssClass: string | null, on: boolean): void;
     setGridScrollableAreaWidth(width: string): void;
+    setScrollingRowsMarginTop(marginTop: number): void;
     setGridRootRole(role: 'grid' | 'treegrid'): void;
 }
 
@@ -73,6 +74,7 @@ export class GridBodyCtrl extends BeanStub {
     private eBottom: HTMLElement;
     private topPinnedRowsHeight = 0;
     private bottomPinnedRowsHeight = 0;
+    private topRowsMarginTop = 0;
 
     public stickyTopHeight: number = 0;
     public stickyBottomHeight: number = 0;
@@ -523,36 +525,37 @@ export class GridBodyCtrl extends BeanStub {
         const pinnedBottomHeight = pinnedRowModel?.getPinnedBottomTotalHeight();
         const advancedFilterHeaderHeight = this.filterManager?.getHeaderHeight() ?? 0;
 
-        // We need to account for the row border and the pinned row borders.
-        // The pinned rows container has box-sizing: border-box, so its border is
-        // part of its total height. Therefore we add it on to the total pinned row heights.
-        // However, we don't want a double border on the final row of the pinned container,
-        // we instead want the pinned row border to "replace" the row border. As such, we
-        // subtract the row border width from the pinned border width to arrive at the final
-        // additional height to add to the container.
+        // Bottom pinned rows still need a border-height compensation as the section
+        // uses its own border. Top pinned rows are rendered with an overlay separator,
+        // so their height must stay equal to the actual pinned row heights.
         const pinnedBorderWidth = environment.getPinnedRowBorderWidth();
         const rowBorderWidth = environment.getRowBorderWidth();
         const additionalHeight = pinnedBorderWidth - rowBorderWidth;
 
-        // We only add the border-related adjustment if there's actually pinned rows visible
-        const normalisedPinnedTopHeight = !pinnedTopHeight ? 0 : additionalHeight + pinnedTopHeight;
+        const normalisedPinnedTopHeight = pinnedTopHeight ?? 0;
         const normalisedPinnedBottomHeight = !pinnedBottomHeight ? 0 : additionalHeight + pinnedBottomHeight;
+        const topRowsMarginTop = !pinnedTopHeight ? 0 : Math.max(0, additionalHeight);
+        this.topRowsMarginTop = topRowsMarginTop;
         this.topPinnedRowsHeight = normalisedPinnedTopHeight;
         this.bottomPinnedRowsHeight = normalisedPinnedBottomHeight;
 
         this.comp.setTopHeight(normalisedPinnedTopHeight + advancedFilterHeaderHeight);
         this.comp.setBottomHeight(normalisedPinnedBottomHeight);
+        this.comp.setScrollingRowsMarginTop(topRowsMarginTop);
         this.comp.setTopInvisible(normalisedPinnedTopHeight <= 0);
         this.comp.setBottomInvisible(normalisedPinnedBottomHeight <= 0);
         this.setStickyBottomOffsetBottom();
         this.pinnedRowContainerRendererFeature.refresh();
     }
 
-    public getPinnedRowContainerRendererFeature(): IPinnedRowContainerRendererFeature | undefined {
+    public getPinnedRowContainerRendererFeature(): IPinnedRowContainerRendererFeature {
         return this.pinnedRowContainerRendererFeature;
     }
 
     public setStickyTopHeight(height: number = 0): void {
+        if (this.stickyTopHeight === height) {
+            return;
+        }
         this.stickyTopHeight = height;
     }
 
@@ -581,12 +584,11 @@ export class GridBodyCtrl extends BeanStub {
         const gridHeaderCtrl = this.ctrlsSvc.get('gridHeaderCtrl');
         const headerHeight = gridHeaderCtrl?.headerHeight ?? 0;
         const advancedFilterHeaderHeight = this.filterManager?.getHeaderHeight() ?? 0;
-        const headerBorder = headerHeight > 0 ? this.beans.environment.getHeaderRowBorderWidth() : 0;
-        return advancedFilterHeaderHeight + headerHeight + headerBorder;
+        return advancedFilterHeaderHeight + headerHeight;
     }
 
     public getTopPinnedRowsOffset(): number {
-        return this.getHeaderRowsOffset() + this.topPinnedRowsHeight;
+        return this.getHeaderRowsOffset() + this.topPinnedRowsHeight + this.topRowsMarginTop;
     }
 
     public getBodyViewportHeight(totalViewportHeight: number): number {

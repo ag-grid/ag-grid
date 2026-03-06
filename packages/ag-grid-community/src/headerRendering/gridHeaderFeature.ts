@@ -29,7 +29,6 @@ export class GridHeaderFeature extends BeanStub {
             section: 'top',
             stream: 'center',
             lane: 'edge',
-            order: 0,
         });
 
         const compProxy: IGridHeaderComp = {

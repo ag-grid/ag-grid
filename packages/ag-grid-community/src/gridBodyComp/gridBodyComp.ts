@@ -147,6 +147,9 @@ export class GridBodyComp extends Component implements FocusableContainer {
             setStickyBottomBottom: (bottom) => (this.eBottom.style.bottom = bottom),
             setStickyBottomWidth: (width) => (this.eBottom.style.width = width),
             setColumnMovingCss: (cssClass, flag) => this.toggleCss(cssClass, flag),
+            setScrollingRowsMarginTop: (marginTop) => {
+                this.eBody.style.marginTop = marginTop > 0 ? `${marginTop}px` : '';
+            },
             updateLayoutClasses: (cssClass, params) => {
                 const classLists = [this.eGridViewport.classList, this.eBody.classList];
 

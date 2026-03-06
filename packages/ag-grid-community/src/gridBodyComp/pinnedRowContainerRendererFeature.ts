@@ -1,6 +1,7 @@
 import { _ensureDomOrder } from '../agStack/utils/dom';
 import { BeanStub } from '../context/beanStub';
 import type { IPinnedSectionCompHost } from '../interfaces/iPinnedSectionCompHost';
+import type { RowContainerName } from './rowContainer/rowContainerCtrl';
 
 type PinnedSection = 'top' | 'bottom';
 type PinnedSectionStream = 'center' | 'fullWidth';
@@ -27,12 +28,14 @@ export interface PinnedRowContainerRendererSource {
 type HostKey = `${PinnedSection}:${PinnedSectionStream}`;
 
 interface SourceState extends PinnedRowContainerRendererSourceConfig {
+    order: number;
     sequence: number;
     elements: HTMLElement[];
 }
 
 export interface IPinnedRowContainerRendererFeature {
     registerSource(config: PinnedRowContainerRendererSourceConfig): PinnedRowContainerRendererSource;
+    registerRowContainerSource(name: RowContainerName): PinnedRowContainerRendererSource | undefined;
     createCompHost(config: Omit<PinnedRowContainerRendererSourceConfig, 'id'>): IPinnedSectionCompHost;
     refresh(): void;
 }
@@ -50,6 +53,7 @@ export class PinnedRowContainerRendererFeature extends BeanStub implements IPinn
     };
     private readonly eGridViewport: HTMLElement;
     private sourceSequence = 0;
+    private rowContainerSourceSequence = 0;
 
     constructor(
         topCenter: HTMLElement,
@@ -75,6 +79,7 @@ export class PinnedRowContainerRendererFeature extends BeanStub implements IPinn
 
         const state: SourceState = {
             ...config,
+            order: config.order ?? 0,
             sequence: this.sourceSequence++,
             elements: [],
         };
@@ -107,6 +112,43 @@ export class PinnedRowContainerRendererFeature extends BeanStub implements IPinn
                 source.setElements(Array.from(comps));
             },
         };
+    }
+
+    public registerRowContainerSource(name: RowContainerName): PinnedRowContainerRendererSource | undefined {
+        const id = `row-container-${name}-${this.rowContainerSourceSequence++}`;
+
+        switch (name) {
+            case 'pinnedTopCenter':
+                return this.registerSource({
+                    id,
+                    section: 'top',
+                    stream: 'center',
+                    lane: 'pinned',
+                });
+            case 'pinnedTopFullWidth':
+                return this.registerSource({
+                    id,
+                    section: 'top',
+                    stream: 'fullWidth',
+                    lane: 'pinned',
+                });
+            case 'pinnedBottomCenter':
+                return this.registerSource({
+                    id,
+                    section: 'bottom',
+                    stream: 'center',
+                    lane: 'sticky',
+                });
+            case 'pinnedBottomFullWidth':
+                return this.registerSource({
+                    id,
+                    section: 'bottom',
+                    stream: 'fullWidth',
+                    lane: 'sticky',
+                });
+            default:
+                return;
+        }
     }
 
     public refresh(): void {
@@ -188,7 +230,7 @@ export class PinnedRowContainerRendererFeature extends BeanStub implements IPinn
                 if (laneDiff !== 0) {
                     return laneDiff;
                 }
-                const orderDiff = (a.order ?? 0) - (b.order ?? 0);
+                const orderDiff = a.order - b.order;
                 if (orderDiff !== 0) {
                     return orderDiff;
                 }

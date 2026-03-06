@@ -194,6 +194,7 @@
 .ag-body-vertical-scroll {
     /* keep the fake vertical scrollbar above row content so its thumb remains interactive. */
     z-index: 2;
+    border-top: solid var(--ag-border-width) transparent;
 
     &:where(.ag-scrollbar-invisible) {
         top: 0;
@@ -416,6 +417,40 @@
     background-position: top left;
 }
 
+.ag-grid-pinned-top-rows::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: var(--ag-header-rows-height, 0);
+    background-color: var(--ag-header-background-color);
+    pointer-events: none;
+    z-index: 1;
+}
+
+:where(.ag-grid-pinned-top-rows) > .ag-grid-pinned-top-rows-container::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: var(--ag-header-rows-height, 0);
+    border-top: var(--ag-header-row-border);
+    pointer-events: none;
+    z-index: 3;
+}
+
+:where(.ag-grid-pinned-top-rows:not(.ag-no-top-rows)) > .ag-grid-pinned-top-rows-container::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(var(--ag-header-rows-height, 0) + var(--ag-top-rows-height, 0));
+    border-top: var(--ag-pinned-row-border);
+    pointer-events: none;
+    z-index: 3;
+}
+
 .ag-grid-pinned-bottom-rows {
     bottom: 0;
     border-bottom: none;
@@ -442,7 +477,7 @@
 }
 
 :where(.ag-grid-pinned-top-rows:not(.ag-no-top-rows)) {
-    border-bottom: var(--ag-pinned-row-border);
+    border-bottom-color: transparent;
 }
 
 :where(.ag-grid-pinned-bottom-rows:not(.ag-no-bottom-rows)) {

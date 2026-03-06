@@ -6,6 +6,7 @@ import type { RowCtrl, RowCtrlInstanceId } from '../../rendering/row/rowCtrl';
 import type { ElementParams } from '../../utils/element';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';
+import type { PinnedRowContainerRendererSource } from '../pinnedRowContainerRendererFeature';
 import type { IRowContainerComp, RowContainerName, RowContainerOptions } from './rowContainerCtrl';
 import {
     RowContainerCtrl,
@@ -17,6 +18,15 @@ import {
 
 function usesGridViewportForScrolling(name: RowContainerName): boolean {
     return name === 'scrollingCenter' || name === 'pinnedTopCenter' || name === 'pinnedBottomCenter';
+}
+
+function usesPinnedRowsSource(name: RowContainerName): boolean {
+    return (
+        name === 'pinnedTopCenter' ||
+        name === 'pinnedTopFullWidth' ||
+        name === 'pinnedBottomCenter' ||
+        name === 'pinnedBottomFullWidth'
+    );
 }
 
 function getElementParams(name: RowContainerName, options: RowContainerOptions, beans: BeanCollection): ElementParams {
@@ -74,6 +84,8 @@ export class RowContainerComp extends Component {
     private domOrder: boolean;
     private lastPlacedElement: HTMLElement | null;
     private initialised = false;
+    private pinnedRowsSource: PinnedRowContainerRendererSource | undefined;
+    private pendingPinnedRowGuis: HTMLElement[] = [];
 
     constructor(params?: { name: string }) {
         super();
@@ -110,6 +122,7 @@ export class RowContainerComp extends Component {
 
         this.eRowsContainer = eContainerForRows;
         this.eSpannedRowsContainer = eSpannedContainerForRows;
+        this.setupPinnedRowsSource();
 
         const compProxy: IRowContainerComp = {
             setHorizontalScroll: (offset: number) => (eViewportForCtrl.scrollLeft = offset),
@@ -142,6 +155,9 @@ export class RowContainerComp extends Component {
     }
 
     public override destroy(): void {
+        this.pinnedRowsSource?.destroy();
+        this.pinnedRowsSource = undefined;
+        this.pendingPinnedRowGuis = [];
         // destroys all row comps
         this.setRowCtrls([]);
         this.setRowCtrls([], true);
@@ -189,6 +205,14 @@ export class RowContainerComp extends Component {
         }
 
         this.removeOldRows(Object.values(oldRows));
+
+        if (!spanContainer && usesPinnedRowsSource(this.name)) {
+            const orderedGuis = orderedRows.map(([rowComp]) => rowComp.getGui());
+            this.pendingPinnedRowGuis = orderedGuis;
+            this.pinnedRowsSource?.setRows(orderedGuis);
+            return;
+        }
+
         this.addRowNodes(orderedRows, container);
     }
 
@@ -216,6 +240,27 @@ export class RowContainerComp extends Component {
     private ensureDomOrder(eRow: HTMLElement, container: HTMLElement): void {
         _ensureDomOrder(container, eRow, this.lastPlacedElement);
         this.lastPlacedElement = eRow;
+    }
+
+    private setupPinnedRowsSource(): void {
+        if (!usesPinnedRowsSource(this.name)) {
+            return;
+        }
+
+        this.beans.ctrlsSvc.whenReady(this, ({ gridBodyCtrl }) => {
+            if (!this.isAlive() || this.pinnedRowsSource) {
+                return;
+            }
+
+            this.pinnedRowsSource = gridBodyCtrl
+                .getPinnedRowContainerRendererFeature()
+                .registerRowContainerSource(this.name);
+            if (!this.pinnedRowsSource) {
+                return;
+            }
+            this.pinnedRowsSource.setRows(this.pendingPinnedRowGuis);
+            this.pendingPinnedRowGuis = [];
+        });
     }
 }
 

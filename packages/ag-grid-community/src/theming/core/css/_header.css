@@ -8,6 +8,9 @@
 /* stylelint-disable selector-max-specificity */
 
 .ag-header-row {
+    /* keep header rows above sticky top rows while both share the pinned-top host. */
+    z-index: 2;
+
     .ag-grid-pinned-left-cells,
     .ag-grid-scrolling-cells,
     .ag-grid-pinned-right-cells {
@@ -47,7 +50,7 @@
     margin-left: 4px;
 }
 
-.ag-header-row:where(:not(:first-child)) {
+:where(.ag-header-row.ag-header-row-not-first) {
     :where(.ag-header-cell:not(.ag-header-span-height.ag-header-span-total, .ag-header-parent-hidden)),
     :where(.ag-header-group-cell.ag-header-group-cell-with-group) {
         border-top: var(--ag-header-row-border);

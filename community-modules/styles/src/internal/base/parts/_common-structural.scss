@@ -356,6 +356,7 @@
     .ag-body-vertical-scroll {
         // keep the fake vertical scrollbar above row content so its thumb remains interactive.
         z-index: 2;
+        border-top: solid var(--ag-border-width) transparent;
 
         &.ag-scrollbar-invisible {
             top: 0;
@@ -1111,6 +1112,18 @@
             100% 100%;
         background-repeat: no-repeat;
         background-position: top left;
+    }
+
+    .ag-grid-pinned-top-rows::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: var(--ag-header-rows-height, 0px);
+        background-color: var(--ag-header-background-color);
+        pointer-events: none;
+        z-index: 1;
     }
 
     .ag-grid-pinned-bottom-rows {

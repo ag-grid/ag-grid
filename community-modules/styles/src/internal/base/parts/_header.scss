@@ -7,6 +7,8 @@
     }
 
     .ag-header-row {
+        // keep header rows above sticky top rows while both share the pinned-top host.
+        z-index: 2;
         border-bottom: none;
         color: var(--ag-header-foreground-color);
         height: var(--ag-header-height);
@@ -93,7 +95,7 @@
         );
     }
 
-    .ag-header-row:not(:first-child) {
+    .ag-header-row.ag-header-row-not-first {
         .ag-header-cell:not(.ag-header-span-height.ag-header-span-total, .ag-header-parent-hidden),
         .ag-header-group-cell.ag-header-group-cell-with-group {
             border-top: var(--ag-borders-critical) var(--ag-border-color);
