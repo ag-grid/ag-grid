@@ -1,3 +1,4 @@
+import type { SortDef } from '../agStack/utils/aria';
 import type { ColumnState } from '../columns/columnStateUtils';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
@@ -21,10 +22,15 @@ export interface IColumnToolPanelEdits {
     applyColumnState(state: ColumnState[], eventType: ColumnEventType): void;
     moveColumns(columns: AgColumn[], targetIndex: number, eventType: ColumnEventType): void;
     setValueColumns(columns: AgColumn[], eventType: ColumnEventType): void;
+    getValueColumns(): AgColumn[];
     setPivotColumns(columns: AgColumn[], eventType: ColumnEventType): void;
+    getPivotColumns(): AgColumn[];
     setPivotMode(pivotMode: boolean, eventType: ColumnEventType): void;
+    getPivotMode(): boolean;
     setColumnsVisible(columns: AgColumn[], visible: boolean, eventType: ColumnEventType): void;
     setRowGroupColumns(columns: AgColumn[], eventType: ColumnEventType): void;
+    getRowGroupColumns(): AgColumn[];
+    getSortDef(column: AgColumn): SortDef | null;
     commit(): void;
     reset(): void;
 }
