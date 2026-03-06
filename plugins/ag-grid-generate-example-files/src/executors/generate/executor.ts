@@ -301,7 +301,7 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
                 if (aiApiToken) {
                     updated = updated.replace(
                         "const AI_API_DEV_TOKEN = '';",
-                        `const AI_API_DEV_TOKEN = '${aiApiToken}';`
+                        `const AI_API_DEV_TOKEN = ${JSON.stringify(aiApiToken)};`
                     );
                 }
                 if (updated !== content) {
