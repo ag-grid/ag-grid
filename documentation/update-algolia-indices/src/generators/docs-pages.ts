@@ -61,12 +61,14 @@ export const getAllDocPages = (): FlattenedMenuItem[] => {
     const apiMenu = getApiMenuData();
     pageRank = 0;
 
-    const allSections = [...docsMenu.sections, ...apiMenu.sections];
-
-    const flattenedMenuItems = getFlattenedMenuItems(allSections);
-    const flattenedDocMigrationItems = getFlattenedDocMigrationItems();
-
-    return [...flattenedMenuItems, ...flattenedDocMigrationItems];
+    return [
+        ...getFlattenedMenuItems(docsMenu.sections),
+        ...getFlattenedMenuItems(apiMenu.sections).map((item) => ({
+            ...item,
+            isApiPage: true,
+        })),
+        ...getFlattenedDocMigrationItems(),
+    ];
 };
 
 function getHeadingContent(heading: Element) {
@@ -153,6 +155,9 @@ export const parseDocPage = async (item: FlattenedMenuItem) => {
                 // Process API reference tables by extracting each property as a
                 // separate record with the property name as a subHeading
                 if (currentTag.hasAttribute?.('data-api-reference-table')) {
+                    if (item.isApiPage) {
+                        continue;
+                    }
                     createPreviousRecord();
                     for (const prop of currentTag.querySelectorAll('[data-api-property]')) {
                         const h4 = prop.querySelector('h4');
@@ -169,7 +174,7 @@ export const parseDocPage = async (item: FlattenedMenuItem) => {
                             objectID: `${propertyPath}:${positionInPage}`,
                             breadcrumb,
                             title: pageTitle || title,
-                            heading: [(subHeading || heading), propertyName].filter(Boolean).join(' > ') || undefined,
+                            heading: [subHeading || heading, propertyName].filter(Boolean).join(' > ') || undefined,
                             subHeading: propertyName,
                             path: propertyPath,
                             text: truncateAtWordBoundary(cleanContents(descHtml), 120, 250),
@@ -282,6 +287,7 @@ export interface FlattenedMenuItem {
     path: string;
     rank: number;
     breadcrumb: string;
+    isApiPage?: boolean;
 }
 
 const getFlattenedMenuItems = (
