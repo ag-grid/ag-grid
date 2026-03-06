@@ -286,6 +286,30 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
             mergedFiles = useAgRandom(mergedFiles);
         }
 
+        // Replace AI API URL and token from environment
+        const aiApiUrl = process.env.AG_AI_API_URL;
+        const aiApiToken = process.env.AG_AI_API_DEV_TOKEN;
+        if (aiApiUrl || aiApiToken) {
+            for (const [fileName, content] of Object.entries(mergedFiles)) {
+                if (typeof content !== 'string') {
+                    continue;
+                }
+                let updated = content;
+                if (aiApiUrl) {
+                    updated = updated.replace('[AG_AI_API_URL placeholder]', aiApiUrl);
+                }
+                if (aiApiToken) {
+                    updated = updated.replace(
+                        "const AI_API_DEV_TOKEN = '';",
+                        `const AI_API_DEV_TOKEN = '${aiApiToken}';`
+                    );
+                }
+                if (updated !== content) {
+                    mergedFiles[fileName] = updated;
+                }
+            }
+        }
+
         // Replace files with provided examples
         const result: GeneratedContents = {
             isEnterprise,

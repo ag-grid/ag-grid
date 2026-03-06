@@ -35,6 +35,8 @@ plugins/ag-grid-task-autogen/dist
 testing/accessibility/all-examples.json
 testing/accessibility/e2e
 
+.env.local
+
 # latest only
 dist
 

@@ -1,6 +1,9 @@
 import type { GridApi } from 'ag-grid-community';
 
-export const BASE_URL = 'https://ai-api.ag-grid.com/api/openai/v1';
+export const BASE_URL = '[AG_AI_API_URL placeholder]';
+/** AI AUTH START **/
+const AI_API_DEV_TOKEN = '';
+/** AI AUTH END **/
 
 const ajv = new ajv7({
     validateSchema: true, // Validate schemas against meta-schema
@@ -106,6 +109,9 @@ async function generateObject(options: any): Promise<any> {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            /** AI AUTH START **/
+            ...(AI_API_DEV_TOKEN ? { Authorization: `Bearer ${AI_API_DEV_TOKEN}` } : {}),
+            /** AI AUTH END **/
         },
         body: JSON.stringify(requestBody),
     });

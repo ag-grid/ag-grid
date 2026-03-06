@@ -2,6 +2,7 @@ import type { InternalFramework } from '@ag-grid-types';
 import Code from '@ag-website-shared/components/code/Code';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import {
+    AI_AUTH_REGEX,
     CONSOLE_LOG_REGEX,
     DARK_INTEGRATED_REGEX,
     TEAR_DOWN_REGEX,
@@ -36,6 +37,16 @@ export function stripOutExampleGeneratorCode(files: FileContents) {
 
             // Hide the test id setup code
             files[mainFile] = files[mainFile]?.replace(TEST_ID_REGEX, '').trim() + '\n';
+        }
+    });
+
+    // Strip AI auth tokens from all files
+    Object.keys(files).forEach((file) => {
+        if (files[file]) {
+            const stripped = files[file]?.replace(AI_AUTH_REGEX, '');
+            if (stripped !== files[file]) {
+                files[file] = stripped.trim() + '\n';
+            }
         }
     });
 }
