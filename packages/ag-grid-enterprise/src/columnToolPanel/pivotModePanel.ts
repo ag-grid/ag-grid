@@ -1,11 +1,8 @@
 import type { ElementParams, GridCheckbox } from 'ag-grid-community';
 import { AgToggleButtonSelector, Component, RefPlaceholder } from 'ag-grid-community';
 
-import {
-    type BaseColumnToolPanelEdits,
-    ColumnToolPanelDeferredEdit,
-    type ColumnToolPanelEditParams,
-} from './columnToolPanelEdits';
+import { getColumnToolPanelEditStrategy } from './columnToolPanelEditUtils';
+import type { BaseColumnToolPanelEdits, ColumnToolPanelEditParams } from './columnToolPanelEdits';
 
 const PivotModePanelElement: ElementParams = {
     tag: 'div',
@@ -20,18 +17,18 @@ const PivotModePanelElement: ElementParams = {
 };
 export class PivotModePanel extends Component {
     private readonly cbPivotMode: GridCheckbox = RefPlaceholder;
+    private editStrategy?: BaseColumnToolPanelEdits;
 
     constructor(private readonly params: ColumnToolPanelEditParams) {
         super();
     }
 
-    private getCurrentPivotMode(): boolean {
-        if (this.params.deferApply) {
-            const deferred = this.beans.colToolPanelDeferredEdit as ColumnToolPanelDeferredEdit | undefined;
-            return deferred?.getDraftPivotMode() ?? this.beans.colModel.isPivotMode();
-        }
+    private getEditStrategy(): BaseColumnToolPanelEdits {
+        return (this.editStrategy ??= getColumnToolPanelEditStrategy(this.beans, this.params.deferApply));
+    }
 
-        return this.beans.colModel.isPivotMode();
+    private getCurrentPivotMode(): boolean {
+        return this.getEditStrategy().getPivotModeForToolPanel();
     }
 
     public syncFromGrid(): void {
@@ -49,10 +46,7 @@ export class PivotModePanel extends Component {
 
         const onBtPivotMode = () => {
             const newValue = !!cbPivotMode.getValue();
-            const strategy = (
-                this.params.deferApply ? this.beans.colToolPanelDeferredEdit : this.beans.colToolPanelSynchronousEdit
-            ) as BaseColumnToolPanelEdits | undefined;
-            strategy?.setPivotMode(newValue, 'toolPanelUi');
+            this.getEditStrategy().setPivotMode(newValue, 'toolPanelUi');
         };
 
         const onPivotModeChanged = () => {

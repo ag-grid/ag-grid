@@ -8,7 +8,8 @@ import type {
 import { isProvidedColumnGroup } from 'ag-grid-community';
 
 import type { VirtualListDragItem } from '../agStack/iVirtualListDragFeature';
-import type { BaseColumnToolPanelEdits, ColumnToolPanelEditParams } from './columnToolPanelEdits';
+import { getColumnToolPanelEditStrategy } from './columnToolPanelEditUtils';
+import type { ColumnToolPanelEditParams } from './columnToolPanelEdits';
 import type { ToolPanelColumnComp } from './toolPanelColumnComp';
 import { ToolPanelColumnGroupComp } from './toolPanelColumnGroupComp';
 
@@ -95,10 +96,7 @@ export const moveItem = (
     const targetIndex: number | null = getMoveTargetIndex(beans, currentColumns, lastHoveredColumn, isBefore);
 
     if (targetIndex != null) {
-        const strategy: BaseColumnToolPanelEdits = params?.deferApply
-            ? (beans.colToolPanelDeferredEdit as BaseColumnToolPanelEdits)
-            : (beans.colToolPanelSynchronousEdit as BaseColumnToolPanelEdits);
-        strategy.moveColumns(currentColumns, targetIndex, 'toolPanelUi');
+        getColumnToolPanelEditStrategy(beans, params?.deferApply).moveColumns(currentColumns, targetIndex, 'toolPanelUi');
     }
 };
 

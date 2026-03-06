@@ -3,6 +3,7 @@ import { Component, _createIconNoSpan, _focusInto, isColumn, isProvidedColumnGro
 
 import { getGroupingLocaleText, isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import { MenuList } from '../widgets/menuList';
+import { getColumnToolPanelEditStrategy } from './columnToolPanelEditUtils';
 import type { BaseColumnToolPanelEdits, ColumnToolPanelEditParams } from './columnToolPanelEdits';
 
 type MenuItemName = 'scrollIntoView' | 'rowGroup' | 'value' | 'pivot';
@@ -26,6 +27,7 @@ export class ToolPanelContextMenu extends Component {
     private allowPivoting: boolean;
     private menuItemMap: Map<MenuItemName, MenuItemProperty>;
     private displayName: string | null = null;
+    private editStrategy?: BaseColumnToolPanelEdits;
 
     constructor(
         private readonly column: AgColumn | AgProvidedColumnGroup,
@@ -67,6 +69,10 @@ export class ToolPanelContextMenu extends Component {
         }
     }
 
+    private getEditStrategy(): BaseColumnToolPanelEdits {
+        return (this.editStrategy ??= getColumnToolPanelEditStrategy(this.beans, this.params.deferApply));
+    }
+
     private initializeProperties(column: AgColumn | AgProvidedColumnGroup): void {
         let columns: AgColumn[];
         if (isProvidedColumnGroup(column)) {
@@ -88,9 +94,7 @@ export class ToolPanelContextMenu extends Component {
         const localeTextFunc = this.getLocaleTextFunc();
         const { beans, displayName } = this;
         const { rowGroupColsSvc, valueColsSvc, pivotColsSvc, colModel } = beans;
-        const edits = (
-            this.params.deferApply ? beans.colToolPanelDeferredEdit : beans.colToolPanelSynchronousEdit
-        ) as BaseColumnToolPanelEdits;
+        const edits = this.getEditStrategy();
 
         const menuItemMap = new Map<MenuItemName, MenuItemProperty>();
         this.menuItemMap = menuItemMap;
