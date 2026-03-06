@@ -107,8 +107,13 @@ jobs:
                 }
                 const matches = pr.body?.match(regex);
                 if (matches) {
-                    const isMove = !!pr.body.match(/fix(es)? \[?((AG|RTI)-\d{3,})/gi);
-                    matches.map(m => m.match(/(AG|RTI)-\d{3,}/i)[0].toUpperCase()).forEach(ticket => issue_keys[ticket] = isMove ? 'move' : 'mention');
+                    matches.forEach(m => {
+                        const ticket = m.match(/(AG|RTI)-\d{3,}/i)[0].toUpperCase();
+                        const isFix = !!m.match(/fix(es)?/i);
+                        if (isFix || !issue_keys[ticket]) {
+                            issue_keys[ticket] = isFix ? 'move' : 'mention';
+                        }
+                    });
                 }
                 if (!Object.keys(issue_keys).length) {
                     throw new Error('No JIRA ticket found in PR body.');
