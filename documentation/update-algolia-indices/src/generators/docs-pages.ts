@@ -158,7 +158,6 @@ export const parseDocPage = async (item: FlattenedMenuItem) => {
                     if (item.isApiPage) {
                         continue;
                     }
-                    createPreviousRecord();
                     for (const prop of currentTag.querySelectorAll('[data-api-property]')) {
                         const h4 = prop.querySelector('h4');
                         if (!h4) continue;
@@ -183,8 +182,6 @@ export const parseDocPage = async (item: FlattenedMenuItem) => {
                             positionInPage,
                         });
                     }
-                    subHeading = undefined;
-                    text = '';
                     continue;
                 }
 
