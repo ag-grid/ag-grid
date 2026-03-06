@@ -19,7 +19,10 @@ export class PivotModePanel extends Component {
     private readonly cbPivotMode: GridCheckbox = RefPlaceholder;
     private editStrategy?: BaseColumnToolPanelEdits;
 
-    constructor(private readonly params: ColumnToolPanelEditParams) {
+    constructor(
+        private readonly params: ColumnToolPanelEditParams,
+        private readonly onPivotModeValueChanged?: () => void
+    ) {
         super();
     }
 
@@ -47,6 +50,7 @@ export class PivotModePanel extends Component {
         const onBtPivotMode = () => {
             const newValue = !!cbPivotMode.getValue();
             this.getEditStrategy().setPivotMode(newValue, 'toolPanelUi');
+            this.onPivotModeValueChanged?.();
         };
 
         const onPivotModeChanged = () => {

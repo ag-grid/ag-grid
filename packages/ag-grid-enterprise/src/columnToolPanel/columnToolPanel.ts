@@ -86,7 +86,12 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         this.editStrategy = mergedParams.deferApply ? deferredStrat : syncStrat;
 
         if (!mergedParams.suppressPivotMode && colToolPanelFactory && hasPivotModule) {
-            this.pivotModePanel = colToolPanelFactory.createPivotModePanel(this, childDestroyFuncs, mergedParams);
+            this.pivotModePanel = colToolPanelFactory.createPivotModePanel(
+                this,
+                childDestroyFuncs,
+                mergedParams,
+                this.onPivotModePanelValueChanged
+            );
         }
 
         // DO NOT CHANGE TO createManagedBean
@@ -165,8 +170,16 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         this.primaryColsPanel.syncLayoutWithGrid();
         this.rowGroupDropZonePanel?.refreshGui();
         this.valuesDropZonePanel?.refreshGui();
-        this.pivotDropZonePanel?.refreshGui();
+        this.pivotDropZonePanel?.refresh();
         this.pivotModePanel?.syncFromGrid();
+    };
+
+    private readonly onPivotModePanelValueChanged = (): void => {
+        this.primaryColsPanel.syncLayoutWithGrid();
+        this.rowGroupDropZonePanel?.refreshGui();
+        this.valuesDropZonePanel?.refreshGui();
+        this.pivotDropZonePanel?.refresh();
+        this.setLastVisible();
     };
 
     public setPivotModeSectionVisible(visible: boolean): void {
@@ -183,6 +196,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
                 this,
                 this.childDestroyFuncs,
                 this.params,
+                this.onPivotModePanelValueChanged,
                 true
             )
         );

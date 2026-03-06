@@ -51,9 +51,10 @@ export class ColumnToolPanelFactory extends BeanStub implements NamedBean {
         parent: Component,
         destroyFuncs: (() => void)[],
         params: ColumnToolPanelEditParams,
+        onPivotModeValueChanged?: () => void,
         prepend?: boolean
     ): PivotModePanel {
-        return this.createPanel(parent, destroyFuncs, new PivotModePanel(params), prepend);
+        return this.createPanel(parent, destroyFuncs, new PivotModePanel(params, onPivotModeValueChanged), prepend);
     }
 
     private createPanel<C extends RowGroupDropZonePanel | ValuesDropZonePanel | PivotDropZonePanel | PivotModePanel>(
