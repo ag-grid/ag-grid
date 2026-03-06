@@ -15,6 +15,31 @@ describe('ViewportSizeFeature', () => {
         jest.clearAllMocks();
     });
 
+    function createFakeFeature(params: {
+        centerContainer: HTMLDivElement;
+        centerViewport: HTMLDivElement;
+        registerViewportResizeListener: jest.Mock;
+        onCenterViewportResized: jest.Mock;
+        updateScrollVisibleServiceImpl: jest.Mock;
+    }): ViewportSizeFeature {
+        return Object.assign(Object.create(ViewportSizeFeature.prototype), {
+            beans: {},
+            centerContainerCtrl: {
+                eContainer: params.centerContainer,
+                eViewport: params.centerViewport,
+                registerViewportResizeListener: params.registerViewportResizeListener,
+            },
+            gridBodyCtrl: {
+                eGridViewport: params.centerViewport,
+            },
+            addDestroyFunc: jest.fn(),
+            onCenterViewportResized: params.onCenterViewportResized,
+            updateScrollVisibleServiceImpl: params.updateScrollVisibleServiceImpl,
+            centerViewportResizeQueued: false,
+            scrollVisibilityRefreshQueued: false,
+        }) as ViewportSizeFeature;
+    }
+
     test('listens to center container resize and refreshes scroll visibility', () => {
         let resizeCallback: (() => void) | undefined;
 
@@ -26,28 +51,21 @@ describe('ViewportSizeFeature', () => {
         const onCenterViewportResized = jest.fn();
         const updateScrollVisibleServiceImpl = jest.fn();
         const registerViewportResizeListener = jest.fn();
-        const registerBodyViewportResizeListener = jest.fn();
 
         const centerContainer = document.createElement('div');
+        const centerViewport = document.createElement('div');
 
-        const fakeFeature = {
-            beans: {},
-            centerContainerCtrl: {
-                eContainer: centerContainer,
-                registerViewportResizeListener,
-            },
-            gridBodyCtrl: {
-                registerBodyViewportResizeListener,
-            },
-            addDestroyFunc: jest.fn(),
+        const fakeFeature = createFakeFeature({
+            centerContainer,
+            centerViewport,
+            registerViewportResizeListener,
             onCenterViewportResized,
             updateScrollVisibleServiceImpl,
-        } as unknown as ViewportSizeFeature;
+        });
 
         (ViewportSizeFeature.prototype as unknown as { listenForResize: () => void }).listenForResize.call(fakeFeature);
 
         expect(registerViewportResizeListener).toHaveBeenCalledTimes(1);
-        expect(registerBodyViewportResizeListener).toHaveBeenCalledTimes(1);
         expect(_observeResize).toHaveBeenCalledWith(fakeFeature.beans, centerContainer, expect.any(Function));
 
         const viewportResizeListener = registerViewportResizeListener.mock.calls[0][0] as () => void;

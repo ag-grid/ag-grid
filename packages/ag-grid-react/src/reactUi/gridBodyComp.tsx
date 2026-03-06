@@ -6,7 +6,6 @@ import {
     FakeHScrollComp,
     FakeVScrollComp,
     GridBodyCtrl,
-    _observeResize,
     _setAriaColCount,
     _setAriaRole,
     _setAriaRowCount,
@@ -134,12 +133,6 @@ const GridBodyComp = () => {
             setGridScrollableAreaWidth: (width: string) => {
                 if (eGridScrollableArea.current) {
                     eGridScrollableArea.current.style.width = width;
-                }
-            },
-            registerBodyViewportResizeListener: (listener: () => void) => {
-                if (eGridViewport.current) {
-                    const unsubscribeFromResize = _observeResize(context.getBeans(), eGridViewport.current, listener);
-                    destroyFuncs.push(() => unsubscribeFromResize());
                 }
             },
             setStickyBottomHeight,

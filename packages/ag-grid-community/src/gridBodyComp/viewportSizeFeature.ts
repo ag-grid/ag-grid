@@ -5,9 +5,8 @@ import type { ScrollVisibleService, SetScrollsVisibleParams } from '../gridBodyC
 import type { GridBodyCtrl } from './gridBodyCtrl';
 import type { RowContainerCtrl } from './rowContainer/rowContainerCtrl';
 
-// listens to changes in the center viewport size, for column and row virtualisation,
-// and adjusts grid as necessary. there are two viewports, one for horizontal and one for
-// vertical scrolling.
+// listens to changes in the shared grid viewport and center container size for
+// column/row virtualisation and scrollbar visibility updates.
 export class ViewportSizeFeature extends BeanStub {
     private scrollVisibleSvc: ScrollVisibleService;
 
@@ -19,6 +18,8 @@ export class ViewportSizeFeature extends BeanStub {
 
     private centerWidth: number;
     private bodyHeight: number;
+    private centerViewportResizeQueued = false;
+    private scrollVisibilityRefreshQueued = false;
 
     constructor(private readonly centerContainerCtrl: RowContainerCtrl) {
         super();
@@ -46,33 +47,43 @@ export class ViewportSizeFeature extends BeanStub {
             return;
         }
 
-        const listener = () => {
-            // onCenterViewportResize causes resize events to be fired (flex-columns).
-            // when any resize event happens, style and layout are re-evaluated — which in turn may
-            // trigger more resize events. Infinite loops from cyclic dependencies are addressed by
-            // only processing elements deeper in the DOM during each iteration.
-            // so the solution here is to use the animation frame service to avoid infinite loops.
-            // For more info, see: https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver#observation_errors
-            _requestAnimationFrame(beans, () => {
-                this.onCenterViewportResized();
-            });
-        };
+        const scheduleCenterViewportResize = () => this.scheduleCenterViewportResize();
 
-        // centerContainer gets horizontal resizes
-        centerContainerCtrl.registerViewportResizeListener(listener);
+        // In the flattened layout this viewport is the shared horizontal+vertical scroll container.
+        centerContainerCtrl.registerViewportResizeListener(scheduleCenterViewportResize);
 
-        // eGridViewport gets vertical resizes
-        gridBodyCtrl.registerBodyViewportResizeListener(listener);
-
-        const refreshScrollVisibility = () => {
-            _requestAnimationFrame(beans, () => this.updateScrollVisibleServiceImpl());
-        };
-        const unsubscribeFromContainerResize = _observeResize(
-            beans,
-            centerContainerCtrl.eContainer,
-            refreshScrollVisibility
+        const unsubscribeFromContainerResize = _observeResize(beans, centerContainerCtrl.eContainer, () =>
+            this.scheduleScrollVisibilityRefresh()
         );
         this.addDestroyFunc(() => unsubscribeFromContainerResize());
+    }
+
+    private scheduleCenterViewportResize(): void {
+        if (this.centerViewportResizeQueued) {
+            return;
+        }
+        this.centerViewportResizeQueued = true;
+
+        const { beans } = this;
+        // onCenterViewportResize can trigger flex recalculations, which in turn trigger more resizes.
+        // Queueing once per frame prevents duplicate work and avoids resize-observer loops.
+        _requestAnimationFrame(beans, () => {
+            this.centerViewportResizeQueued = false;
+            this.onCenterViewportResized();
+        });
+    }
+
+    private scheduleScrollVisibilityRefresh(): void {
+        if (this.scrollVisibilityRefreshQueued) {
+            return;
+        }
+        this.scrollVisibilityRefreshQueued = true;
+
+        const { beans } = this;
+        _requestAnimationFrame(beans, () => {
+            this.scrollVisibilityRefreshQueued = false;
+            this.updateScrollVisibleServiceImpl();
+        });
     }
 
     private onScrollbarWidthChanged() {

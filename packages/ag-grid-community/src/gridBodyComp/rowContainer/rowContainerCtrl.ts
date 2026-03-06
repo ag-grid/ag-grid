@@ -105,11 +105,11 @@ export function _getRowContainerOptions(name: RowContainerName): RowContainerOpt
     return ContainerCssClasses[name];
 }
 
-const allMiddle: RowContainerName[] = ['scrollingCenter', 'scrollingFullWidth'];
-const allCenter: RowContainerName[] = ['scrollingCenter', 'pinnedTopCenter', 'pinnedBottomCenter'];
+const middleContainers: RowContainerName[] = ['scrollingCenter', 'scrollingFullWidth'];
+const centerContainers: RowContainerName[] = ['scrollingCenter', 'pinnedTopCenter', 'pinnedBottomCenter'];
 
 // sticky section must show rows in set order
-const allStickyContainers: RowContainerName[] = [
+const stickyContainers: RowContainerName[] = [
     'pinnedTopCenter',
     'pinnedTopFullWidth',
     'pinnedBottomCenter',
@@ -149,12 +149,12 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     public postConstruct(): void {
         this.enableRtl = this.gos.get('enableRtl');
 
-        this.forContainers(['scrollingCenter'], () => {
+        if (this.isScrollingCenterContainer()) {
             this.viewportSizeFeature = this.createManagedBean(new ViewportSizeFeature(this));
             this.addManagedEventListeners({
                 stickyTopOffsetChanged: this.onStickyTopOffsetChanged.bind(this),
             });
-        });
+        }
     }
 
     private onStickyTopOffsetChanged(event: StickyTopOffsetChangedEvent): void {
@@ -169,10 +169,12 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
         this.beans.ctrlsSvc.register(this.name as any, this);
     }
 
-    private forContainers(names: RowContainerName[], callback: () => void): void {
-        if (names.indexOf(this.name) >= 0) {
-            callback();
-        }
+    private isScrollingCenterContainer(): boolean {
+        return this.name === 'scrollingCenter';
+    }
+
+    private isContainer(names: RowContainerName[]): boolean {
+        return names.includes(this.name);
     }
 
     public setComp(
@@ -186,34 +188,36 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
         this.eSpannedContainer = eSpannedContainer;
         this.eViewport = eViewport;
 
-        this.forContainers(['scrollingCenter'], () =>
-            this.createManagedBean(new RowContainerEventsFeature(this.eViewport ?? this.eContainer))
-        );
-        this.forContainers(['scrollingCenter'], () => this.addPreventScrollWhileDragging());
+        const { rangeSvc } = this.beans;
+
+        if (this.isScrollingCenterContainer()) {
+            this.createManagedBean(new RowContainerEventsFeature(this.eViewport ?? this.eContainer));
+            this.addPreventScrollWhileDragging();
+            if (rangeSvc) {
+                this.createManagedBean(rangeSvc.createDragListenerFeature(this.eViewport ?? this.eContainer));
+            }
+        }
         this.listenOnDomOrder();
 
-        const { rangeSvc } = this.beans;
-        this.forContainers(allMiddle, () => this.createManagedBean(new SetHeightFeature(this.eContainer)));
-        if (rangeSvc) {
-            this.forContainers(['scrollingCenter'], () =>
-                this.createManagedBean(rangeSvc.createDragListenerFeature(this.eViewport ?? this.eContainer))
-            );
+        if (this.isContainer(middleContainers)) {
+            this.createManagedBean(new SetHeightFeature(this.eContainer));
         }
 
-        this.forContainers(allCenter, () =>
-            this.createManagedBean(
-                new CenterWidthFeature(() => {
-                    const { visibleCols } = this.beans;
-                    const contentWidth =
-                        visibleCols.bodyWidth +
-                        visibleCols.getLeftStickyColumnContainerWidth() +
-                        visibleCols.getRightStickyColumnContainerWidth();
-                    const viewportWidth = _getInnerWidth(this.eViewport);
-                    const width = Math.max(contentWidth, viewportWidth);
-                    this.comp.setContainerWidth(`${width}px`);
-                })
-            )
-        );
+        if (this.isContainer(centerContainers)) {
+            const updateContainerWidth = () => {
+                const { visibleCols } = this.beans;
+                const contentWidth =
+                    visibleCols.bodyWidth +
+                    visibleCols.getLeftStickyColumnContainerWidth() +
+                    visibleCols.getRightStickyColumnContainerWidth();
+                const viewportWidth = _getInnerWidth(this.eViewport);
+                const width = Math.max(contentWidth, viewportWidth);
+                this.comp.setContainerWidth(`${width}px`);
+            };
+
+            this.createManagedBean(new CenterWidthFeature(updateContainerWidth));
+            this.registerViewportResizeListener(updateContainerWidth);
+        }
 
         this.addListeners();
         this.registerWithCtrlsService();
@@ -250,8 +254,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     }
 
     private listenOnDomOrder(): void {
-        const isStickContainer = allStickyContainers.indexOf(this.name) >= 0;
-        if (isStickContainer) {
+        if (this.isContainer(stickyContainers)) {
             this.comp.setDomOrder(true);
             return;
         }
@@ -267,7 +270,9 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     }
 
     public onDisplayedColumnsChanged(): void {
-        this.forContainers(['scrollingCenter'], () => this.onHorizontalViewportChanged());
+        if (this.isScrollingCenterContainer()) {
+            this.onHorizontalViewportChanged();
+        }
     }
 
     // this methods prevents the grid views from being scrolled while the dragService is being used

@@ -41,7 +41,6 @@ export interface IGridBodyComp extends LayoutView {
     setRowCount(count: number): void;
     setRowAnimationCssOnBodyViewport(cssClass: RowAnimationCssClasses, animate: boolean): void;
     setAlwaysVerticalScrollClass(cssClass: string | null, on: boolean): void;
-    registerBodyViewportResizeListener(listener: () => void): void;
     setGridScrollableAreaWidth(width: string): void;
     setGridRootRole(role: 'grid' | 'treegrid'): void;
 }
@@ -155,6 +154,7 @@ export class GridBodyCtrl extends BeanStub {
         const setGridRootRole = this.setGridRootRole.bind(this);
         const toggleRowResizeStyle = this.toggleRowResizeStyles.bind(this);
         const updatePinnedColumnStickyOffsets = this.updatePinnedColumnStickyOffsets.bind(this);
+        const onGridSizeChanged = this.onGridSizeChanged.bind(this);
 
         this.addManagedEventListeners({
             gridColumnsChanged: this.onGridColumnsChanged.bind(this),
@@ -169,7 +169,7 @@ export class GridBodyCtrl extends BeanStub {
             pinnedRowsChanged: setPinnedRowsHeights,
             headerHeightChanged: setPinnedRowsHeights,
             headerRowsChanged: () => this.pinnedRowContainerRendererFeature.refresh(),
-            gridSizeChanged: () => this.pinnedRowContainerRendererFeature.refresh(),
+            gridSizeChanged: onGridSizeChanged,
             columnRowGroupChanged: setGridRootRole,
             columnPivotChanged: setGridRootRole,
             rowResizeStarted: toggleRowResizeStyle,
@@ -201,6 +201,12 @@ export class GridBodyCtrl extends BeanStub {
         this.pinnedRowContainerRendererFeature.refresh();
 
         this.updateScrollingClasses();
+    }
+
+    private onGridSizeChanged(): void {
+        this.updateScrollableAreaWidth();
+        this.updatePinnedColumnStickyOffsets();
+        this.pinnedRowContainerRendererFeature.refresh();
     }
 
     private updateScrollableAreaWidth(): void {
@@ -321,10 +327,6 @@ export class GridBodyCtrl extends BeanStub {
         const total = rowCount === -1 ? -1 : headerCount + rowCount;
 
         this.comp.setRowCount(total);
-    }
-
-    public registerBodyViewportResizeListener(listener: () => void): void {
-        this.comp.registerBodyViewportResizeListener(listener);
     }
 
     public isVerticalScrollShowing(): boolean {

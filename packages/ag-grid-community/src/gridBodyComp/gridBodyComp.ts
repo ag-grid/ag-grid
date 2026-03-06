@@ -1,6 +1,5 @@
 import { RefPlaceholder } from '../agStack/interfaces/agComponent';
 import { _setAriaColCount, _setAriaMultiSelectable, _setAriaRole, _setAriaRowCount } from '../agStack/utils/aria';
-import { _observeResize } from '../agStack/utils/dom';
 import { _isCellSelectionEnabled, _isMultiRowSelection } from '../gridOptionsUtils';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import { LayoutCssClasses } from '../styling/layoutFeature';
@@ -163,10 +162,6 @@ export class GridBodyComp extends Component implements FocusableContainer {
             },
             setAlwaysVerticalScrollClass: (cssClass, on) =>
                 this.eGridViewport.classList.toggle(CSS_CLASS_FORCE_VERTICAL_SCROLL, on),
-            registerBodyViewportResizeListener: (listener) => {
-                const unsubscribeFromResize = _observeResize(this.beans, this.eGridViewport, listener);
-                this.addDestroyFunc(() => unsubscribeFromResize());
-            },
             setCellSelectableCss: (cssClass: string | null, selectable: boolean) => {
                 if (!cssClass) {
                     return;

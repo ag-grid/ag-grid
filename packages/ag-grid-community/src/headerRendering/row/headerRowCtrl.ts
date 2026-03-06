@@ -106,6 +106,7 @@ export class HeaderRowCtrl extends BeanStub {
             leftPinnedWidthChanged: this.refreshPinnedCellGroupWidths.bind(this),
             rightPinnedWidthChanged: this.refreshPinnedCellGroupWidths.bind(this),
             displayedColumnsChanged: onDisplayedColumnsChanged,
+            gridSizeChanged: this.setWidth.bind(this),
             virtualColumnsChanged: (params) => this.onVirtualColumnsChanged(params.afterScroll),
             columnGroupHeaderHeightChanged: onHeightChanged,
             columnHeaderHeightChanged: onHeightChanged,
