@@ -1834,7 +1834,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             const afterScalingPixels = skipScaling
                 ? afterPaginationPixels
                 : this.beans.rowContainerHeight.getRealPixelPosition(afterPaginationPixels);
-            const topPx = `${afterScalingPixels + this.getPinnedTopOffset() + this.getPinnedBottomOffset()}px`;
+            const topPx = `${afterScalingPixels + this.getPinnedOffset('top') + this.getPinnedOffset('bottom')}px`;
             this.setRowTopStyle(topPx);
         }
     }
@@ -1874,31 +1874,26 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
                 : this.beans.rowContainerHeight.getRealPixelPosition(afterPaginationPixels);
         }
 
-        rowTop += this.getPinnedTopOffset() + this.getPinnedBottomOffset();
+        rowTop += this.getPinnedOffset('top') + this.getPinnedOffset('bottom');
         return rowTop + 'px';
     }
 
-    private getPinnedTopOffset(): number {
-        if (this.rowNode.rowPinned !== 'top') {
+    private getPinnedOffset(position: 'top' | 'bottom'): number {
+        if (this.rowNode.rowPinned !== position) {
             return 0;
         }
 
-        const gridHeaderCtrl = this.beans.ctrlsSvc.get('gridHeaderCtrl');
-        if (!gridHeaderCtrl) {
+        const gridBodyCtrl = this.beans.ctrlsSvc.getGridBodyCtrl();
+
+        if (!gridBodyCtrl) {
             return 0;
         }
 
-        const headerHeight = gridHeaderCtrl.headerHeight;
-        const headerBorder = headerHeight > 0 ? this.beans.environment.getHeaderRowBorderWidth() : 0;
-        return headerHeight + headerBorder;
-    }
-
-    private getPinnedBottomOffset(): number {
-        if (this.rowNode.rowPinned !== 'bottom') {
-            return 0;
+        if (position === 'top') {
+            return gridBodyCtrl.getHeaderRowsOffset() ?? 0;
         }
 
-        return this.beans.ctrlsSvc.getGridBodyCtrl()?.stickyBottomHeight ?? 0;
+        return gridBodyCtrl.stickyBottomHeight;
     }
 
     private setRowTopStyle(topPx: string): void {

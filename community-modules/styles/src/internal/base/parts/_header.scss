@@ -3,7 +3,7 @@
 @mixin output {
     .ag-advanced-filter-header {
         background-color: var(--ag-header-background-color);
-        border-top: var(--ag-borders-critical) var(--ag-border-color);
+        border-bottom: var(--ag-borders-critical) var(--ag-border-color);
     }
 
     .ag-header-row {

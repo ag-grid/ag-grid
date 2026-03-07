@@ -1135,7 +1135,6 @@
         .ag-grid-pinned-left-cells,
         .ag-grid-scrolling-cells,
         .ag-grid-pinned-right-cells {
-            border-top: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
             // reset box-sizing as some customers override global box-sizing to
             // "inherit" and we only want .ag-grid-pinned-bottom-rows to be content-box
             box-sizing: border-box;

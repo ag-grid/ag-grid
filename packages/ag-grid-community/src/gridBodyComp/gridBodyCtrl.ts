@@ -18,7 +18,6 @@ import { PinnedRowContainerRendererFeature } from './pinnedRowContainerRendererF
 import type { IPinnedRowContainerRendererFeature } from './pinnedRowContainerRendererFeature';
 import type { ScrollVisibleService } from './scrollVisibleService';
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type RowAnimationCssClasses = 'ag-row-animation' | 'ag-row-no-animation';
 
 export const CSS_CLASS_FORCE_VERTICAL_SCROLL = 'ag-force-vertical-scroll';
@@ -26,14 +25,18 @@ export const CSS_CLASS_FORCE_VERTICAL_SCROLL = 'ag-force-vertical-scroll';
 const CSS_CLASS_CELL_SELECTABLE = 'ag-selectable';
 const CSS_CLASS_COLUMN_MOVING = 'ag-column-moving';
 
+export type PinnedSection = 'top' | 'bottom';
+
+export interface PinnedSectionState {
+    height: number;
+    invisible: boolean;
+}
+
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IGridBodyComp extends LayoutView {
     setColumnMovingCss(cssClass: string, on: boolean): void;
     setCellSelectableCss(cssClass: string | null, on: boolean): void;
-    setTopHeight(height: number): void;
-    setTopInvisible(invisible: boolean): void;
-    setBottomHeight(height: number): void;
-    setBottomInvisible(invisible: boolean): void;
+    setPinnedSection(section: PinnedSection, state: PinnedSectionState): void;
     setStickyBottomHeight(height: string): void;
     setStickyBottomBottom(offsetBottom: string): void;
     setStickyBottomWidth(width: string): void;
@@ -46,7 +49,6 @@ export interface IGridBodyComp extends LayoutView {
     setGridRootRole(role: 'grid' | 'treegrid'): void;
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class GridBodyCtrl extends BeanStub {
     private ctrlsSvc: CtrlsService;
     private colModel: ColumnModel;
@@ -525,25 +527,29 @@ export class GridBodyCtrl extends BeanStub {
         const pinnedBottomHeight = pinnedRowModel?.getPinnedBottomTotalHeight();
         const advancedFilterHeaderHeight = this.filterManager?.getHeaderHeight() ?? 0;
 
-        // Bottom pinned rows still need a border-height compensation as the section
-        // uses its own border. Top pinned rows are rendered with an overlay separator,
-        // so their height must stay equal to the actual pinned row heights.
+        // Top pinned rows can require an extra margin when pinned-row and regular-row
+        // border widths differ. Bottom pinned rows are rendered with an overlay separator,
+        // so their height must remain equal to the real pinned-row heights.
         const pinnedBorderWidth = environment.getPinnedRowBorderWidth();
         const rowBorderWidth = environment.getRowBorderWidth();
         const additionalHeight = pinnedBorderWidth - rowBorderWidth;
 
         const normalisedPinnedTopHeight = pinnedTopHeight ?? 0;
-        const normalisedPinnedBottomHeight = !pinnedBottomHeight ? 0 : additionalHeight + pinnedBottomHeight;
+        const normalisedPinnedBottomHeight = pinnedBottomHeight ?? 0;
         const topRowsMarginTop = !pinnedTopHeight ? 0 : Math.max(0, additionalHeight);
         this.topRowsMarginTop = topRowsMarginTop;
         this.topPinnedRowsHeight = normalisedPinnedTopHeight;
         this.bottomPinnedRowsHeight = normalisedPinnedBottomHeight;
 
-        this.comp.setTopHeight(normalisedPinnedTopHeight + advancedFilterHeaderHeight);
-        this.comp.setBottomHeight(normalisedPinnedBottomHeight);
+        this.comp.setPinnedSection('top', {
+            height: normalisedPinnedTopHeight + advancedFilterHeaderHeight,
+            invisible: normalisedPinnedTopHeight <= 0,
+        });
+        this.comp.setPinnedSection('bottom', {
+            height: normalisedPinnedBottomHeight,
+            invisible: normalisedPinnedBottomHeight <= 0,
+        });
         this.comp.setScrollingRowsMarginTop(topRowsMarginTop);
-        this.comp.setTopInvisible(normalisedPinnedTopHeight <= 0);
-        this.comp.setBottomInvisible(normalisedPinnedBottomHeight <= 0);
         this.setStickyBottomOffsetBottom();
         this.pinnedRowContainerRendererFeature.refresh();
     }

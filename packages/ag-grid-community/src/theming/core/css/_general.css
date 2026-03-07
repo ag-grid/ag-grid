@@ -461,8 +461,15 @@
     border-bottom-color: transparent;
 }
 
-:where(.ag-grid-pinned-bottom-rows:not(.ag-no-bottom-rows)) {
+:where(.ag-grid-pinned-bottom-rows.ag-has-bottom-pinned-rows) > .ag-grid-pinned-bottom-rows-container::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(100% - var(--ag-bottom-rows-height, 0px));
     border-top: var(--ag-pinned-row-border);
+    pointer-events: none;
+    z-index: 3;
 }
 
 .ag-grid-pinned-top-rows-container,

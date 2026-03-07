@@ -123,6 +123,40 @@
     border-bottom-color: transparent;
 }
 
+/* stylelint-disable no-descending-specificity */
+
+.ag-grid-pinned-bottom-rows {
+    > .ag-grid-pinned-bottom-rows-container {
+        > .ag-row:first-child:not(.ag-row-pinned) {
+            > .ag-grid-pinned-left-cells,
+            > .ag-grid-scrolling-cells,
+            > .ag-grid-pinned-right-cells {
+                border-top: var(--ag-row-border);
+            }
+        }
+
+        > .ag-row.ag-row-last-sticky-bottom {
+            > .ag-grid-pinned-left-cells,
+            > .ag-grid-scrolling-cells,
+            > .ag-grid-pinned-right-cells {
+                border-bottom-color: transparent;
+            }
+        }
+    }
+
+    > .ag-grid-pinned-bottom-rows-full-width-container {
+        > .ag-row:first-child:not(.ag-row-pinned) {
+            border-top: var(--ag-row-border);
+        }
+
+        > .ag-row.ag-row-last-sticky-bottom {
+            border-bottom-color: transparent;
+        }
+    }
+}
+
+/* stylelint-enable no-descending-specificity */
+
 /* Hide the border of the last row when there is no gap between the row and
    grid edge to prevent a double border. The use of the child  combinator `>`
    is to ensure that the ag-body-vertical-content-no-gap class only hides the

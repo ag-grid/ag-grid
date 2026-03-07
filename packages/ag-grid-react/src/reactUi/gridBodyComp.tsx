@@ -17,17 +17,20 @@ import RowContainerComp from './rows/rowContainerComp';
 import type { ReactRowContainerName } from './rows/rowContainerComp';
 import { classesList } from './utils';
 
+type PinnedSection = 'top' | 'bottom';
+type PinnedSectionState = { height: number; invisible: boolean };
+
 const GridBodyComp = () => {
     const { context, overlays } = useContext(BeansContext);
 
     const [rowAnimationClass, setRowAnimationClass] = useState<string>('');
-    const [topHeight, setTopHeight] = useState<number>(0);
-    const [bottomHeight, setBottomHeight] = useState<number>(0);
+    const [pinnedSections, setPinnedSections] = useState<Record<PinnedSection, PinnedSectionState>>({
+        top: { height: 0, invisible: true },
+        bottom: { height: 0, invisible: true },
+    });
     const [stickyBottomHeight, setStickyBottomHeight] = useState<string>('0px');
     const [stickyBottomBottom, setStickyBottomBottom] = useState<string>('0px');
     const [stickyBottomWidth, setStickyBottomWidth] = useState<string>('100%');
-    const [topInvisible, setTopInvisible] = useState<boolean>(true);
-    const [bottomInvisible, setBottomInvisible] = useState<boolean>(true);
     const [scrollingRowsMarginTop, setScrollingRowsMarginTop] = useState<number>(0);
 
     const [forceVerticalScrollClass, setForceVerticalScrollClass] = useState<string | null>(null);
@@ -67,6 +70,16 @@ const GridBodyComp = () => {
     const setRootRef = useCallback((eRef: HTMLDivElement | null) => {
         eRoot.current = eRef;
         setRootElement(eRef);
+    }, []);
+
+    const setPinnedSection = useCallback((section: PinnedSection, state: PinnedSectionState) => {
+        setPinnedSections((prev) => {
+            const current = prev[section];
+            if (current.height === state.height && current.invisible === state.invisible) {
+                return prev;
+            }
+            return { ...prev, [section]: state };
+        });
     }, []);
 
     useEffect(() => {
@@ -122,10 +135,7 @@ const GridBodyComp = () => {
                     _setAriaRowCount(eRoot.current, count);
                 }
             },
-            setTopHeight,
-            setBottomHeight,
-            setTopInvisible,
-            setBottomInvisible,
+            setPinnedSection,
             setColumnMovingCss: (cssClass: string, flag: boolean) => cssManager.current!.toggleCss(cssClass, flag),
             updateLayoutClasses: setLayoutClass,
             setAlwaysVerticalScrollClass: setForceVerticalScrollClass,
@@ -185,33 +195,36 @@ const GridBodyComp = () => {
         () => classesList('ag-grid-scrolling-rows', rowAnimationClass, layoutClass, cellSelectableCss),
         [rowAnimationClass, layoutClass, cellSelectableCss]
     );
+    const topSection = pinnedSections.top;
+    const bottomSection = pinnedSections.bottom;
     const topClasses = useMemo(
-        () => classesList('ag-grid-pinned-top-rows', topInvisible ? 'ag-no-top-rows' : null, cellSelectableCss),
-        [cellSelectableCss, topInvisible]
+        () => classesList('ag-grid-pinned-top-rows', topSection.invisible ? 'ag-no-top-rows' : null, cellSelectableCss),
+        [cellSelectableCss, topSection.invisible]
     );
     const stickyBottomHeightNumber = Number.parseFloat(stickyBottomHeight) || 0;
-    const bottomSectionInvisible = bottomHeight <= 0 && stickyBottomHeightNumber <= 0;
-    const bottomNoRows = bottomInvisible && stickyBottomHeightNumber <= 0;
+    const bottomSectionInvisible = bottomSection.height <= 0 && stickyBottomHeightNumber <= 0;
+    const bottomNoRows = bottomSection.invisible && stickyBottomHeightNumber <= 0;
     const bottomClasses = useMemo(
         () =>
             classesList(
                 'ag-grid-pinned-bottom-rows',
+                !bottomSection.invisible ? 'ag-has-bottom-pinned-rows' : null,
                 bottomNoRows ? 'ag-no-bottom-rows' : null,
                 bottomSectionInvisible ? 'ag-invisible' : null,
                 cellSelectableCss
             ),
-        [bottomNoRows, bottomSectionInvisible, cellSelectableCss]
+        [bottomSection.invisible, bottomNoRows, bottomSectionInvisible, cellSelectableCss]
     );
 
     const topStyle: React.CSSProperties = useMemo(() => {
-        const topRowsHeight = `${topHeight}px`;
+        const topRowsHeight = `${topSection.height}px`;
         const topSectionHeight = `calc(var(--ag-header-rows-height, 0px) + ${topRowsHeight})`;
         return {
             '--ag-top-rows-height': topRowsHeight,
             minHeight: topSectionHeight,
             height: topSectionHeight,
         } as React.CSSProperties;
-    }, [topHeight]);
+    }, [topSection.height]);
 
     const bodyStyle: React.CSSProperties = useMemo(
         () => ({
@@ -222,12 +235,13 @@ const GridBodyComp = () => {
 
     const bottomStyle: React.CSSProperties = useMemo(
         () => ({
-            height: `calc(${bottomHeight}px + ${stickyBottomHeight})`,
-            minHeight: `calc(${bottomHeight}px + ${stickyBottomHeight})`,
+            '--ag-bottom-rows-height': `${bottomSection.height}px`,
+            height: `calc(${bottomSection.height}px + ${stickyBottomHeight})`,
+            minHeight: `calc(${bottomSection.height}px + ${stickyBottomHeight})`,
             bottom: stickyBottomBottom,
             width: stickyBottomWidth,
-        }),
-        [bottomHeight, stickyBottomHeight, stickyBottomBottom, stickyBottomWidth]
+        } as React.CSSProperties),
+        [bottomSection.height, stickyBottomHeight, stickyBottomBottom, stickyBottomWidth]
     );
 
     const createRowContainer = (container: ReactRowContainerName) => (

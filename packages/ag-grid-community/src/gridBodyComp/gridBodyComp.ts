@@ -8,7 +8,7 @@ import type { ComponentSelector } from '../widgets/component';
 import { Component } from '../widgets/component';
 import { FakeHScrollSelector } from './fakeHScrollComp';
 import { FakeVScrollSelector } from './fakeVScrollComp';
-import type { IGridBodyComp, RowAnimationCssClasses } from './gridBodyCtrl';
+import type { IGridBodyComp, PinnedSection, PinnedSectionState, RowAnimationCssClasses } from './gridBodyCtrl';
 import { CSS_CLASS_FORCE_VERTICAL_SCROLL, GridBodyCtrl } from './gridBodyCtrl';
 import type { RowContainerComp } from './rowContainer/rowContainerComp';
 import { RowContainerSelector } from './rowContainer/rowContainerComp';
@@ -99,9 +99,11 @@ export class GridBodyComp extends Component implements FocusableContainer {
     private readonly scrollingFullWidthRowContainerComp: RowContainerComp = RefPlaceholder;
 
     private ctrl: GridBodyCtrl;
-    private bottomRowsHeight = 0;
+    private pinnedSectionState: Record<PinnedSection, PinnedSectionState> = {
+        top: { height: 0, invisible: true },
+        bottom: { height: 0, invisible: true },
+    };
     private stickyBottomRowsHeight = 0;
-    private bottomRowsInvisible = true;
 
     public postConstruct() {
         const { overlays, rangeSvc } = this.beans;
@@ -125,21 +127,7 @@ export class GridBodyComp extends Component implements FocusableContainer {
                 this.setRowAnimationCssOnBodyViewport(cssClass, animate),
             setColumnCount: (count) => _setAriaColCount(this.getGui(), count),
             setRowCount: (count) => _setAriaRowCount(this.getGui(), count),
-            setTopHeight: (height) => {
-                this.eTop.style.setProperty('--ag-top-rows-height', `${height}px`);
-                const topSectionHeight = `calc(var(--ag-header-rows-height, 0px) + ${height}px)`;
-                this.eTop.style.minHeight = topSectionHeight;
-                this.eTop.style.height = topSectionHeight;
-            },
-            setBottomHeight: (height) => {
-                this.bottomRowsHeight = height;
-                this.refreshBottomSectionHeight();
-            },
-            setTopInvisible: (invisible) => this.eTop.classList.toggle('ag-no-top-rows', invisible),
-            setBottomInvisible: (invisible) => {
-                this.bottomRowsInvisible = invisible;
-                this.refreshBottomSectionHeight();
-            },
+            setPinnedSection: (section, state) => this.setPinnedSection(section, state),
             setStickyBottomHeight: (height) => {
                 this.stickyBottomRowsHeight = Number.parseFloat(height) || 0;
                 this.refreshBottomSectionHeight();
@@ -203,14 +191,32 @@ export class GridBodyComp extends Component implements FocusableContainer {
         bodyViewportClassList.toggle('ag-row-no-animation' as RowAnimationCssClasses, !animateRows);
     }
 
+    private setPinnedSection(section: PinnedSection, state: PinnedSectionState): void {
+        this.pinnedSectionState[section] = state;
+
+        if (section === 'top') {
+            this.eTop.style.setProperty('--ag-top-rows-height', `${state.height}px`);
+            const topSectionHeight = `calc(var(--ag-header-rows-height, 0px) + ${state.height}px)`;
+            this.eTop.style.minHeight = topSectionHeight;
+            this.eTop.style.height = topSectionHeight;
+            this.eTop.classList.toggle('ag-no-top-rows', state.invisible);
+            return;
+        }
+
+        this.eBottom.style.setProperty('--ag-bottom-rows-height', `${state.height}px`);
+        this.eBottom.classList.toggle('ag-has-bottom-pinned-rows', !state.invisible);
+        this.refreshBottomSectionHeight();
+    }
+
     private refreshBottomSectionHeight(): void {
-        const totalHeight = this.bottomRowsHeight + this.stickyBottomRowsHeight;
+        const bottomSection = this.pinnedSectionState.bottom;
+        const totalHeight = bottomSection.height + this.stickyBottomRowsHeight;
         const heightString = `${totalHeight}px`;
         this.eBottom.style.minHeight = heightString;
         this.eBottom.style.height = heightString;
         this.eBottom.classList.toggle(
             'ag-no-bottom-rows',
-            this.bottomRowsInvisible && this.stickyBottomRowsHeight <= 0
+            bottomSection.invisible && this.stickyBottomRowsHeight <= 0
         );
         this.eBottom.classList.toggle('ag-invisible', totalHeight <= 0);
     }

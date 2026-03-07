@@ -175,11 +175,17 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
                 if (suppressFootersSticky === 'group' && row.level > -1) {
                     return false;
                 }
-                const isFooterFirstRowInGroup = row.sibling.rowIndex
-                    ? row.sibling.rowIndex + 1 === row.rowIndex
-                    : false;
-                if (container === 'bottom' && isFooterFirstRowInGroup) {
-                    return false;
+                if (row.level > -1) {
+                    const siblingIndex = row.sibling?.rowIndex;
+                    const rowIndex = row.rowIndex;
+                    const isFooterFirstRowInGroup =
+                        siblingIndex != null && rowIndex != null ? siblingIndex + 1 === rowIndex : false;
+                    if (container === 'bottom' && isFooterFirstRowInGroup) {
+                        return false;
+                    }
+                    if (container === 'top' && !isFooterFirstRowInGroup) {
+                        return false;
+                    }
                 }
                 if (row.level === -1 && pinnedRowModel?.getGrandTotalPinned()) {
                     return false;

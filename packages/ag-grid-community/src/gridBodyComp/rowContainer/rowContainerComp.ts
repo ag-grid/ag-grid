@@ -29,6 +29,12 @@ function usesPinnedRowsSource(name: RowContainerName): boolean {
     );
 }
 
+function isBottomPinnedContainer(name: RowContainerName): boolean {
+    return name === 'pinnedBottomCenter' || name === 'pinnedBottomFullWidth';
+}
+
+const LAST_STICKY_BOTTOM_ROW_CLASS = 'ag-row-last-sticky-bottom';
+
 function getElementParams(name: RowContainerName, options: RowContainerOptions, beans: BeanCollection): ElementParams {
     const isCellSpanning = !!beans.gos.get('enableCellSpan') && !!options.getSpannedRowCtrls;
 
@@ -204,6 +210,8 @@ export class RowContainerComp extends Component {
             orderedRows.push([rowComp, !existingRowComp]);
         }
 
+        this.updateLastStickyBottomRowClass(rowCtrls, orderedRows);
+
         this.removeOldRows(Object.values(oldRows));
 
         if (!spanContainer && usesPinnedRowsSource(this.name)) {
@@ -214,6 +222,27 @@ export class RowContainerComp extends Component {
         }
 
         this.addRowNodes(orderedRows, container);
+    }
+
+    private updateLastStickyBottomRowClass(
+        rowCtrls: RowCtrl[],
+        orderedRows: [rowComp: RowComp, isNew: boolean][]
+    ): void {
+        if (!isBottomPinnedContainer(this.name)) {
+            return;
+        }
+
+        for (const [rowComp] of orderedRows) {
+            rowComp.getGui().classList.remove(LAST_STICKY_BOTTOM_ROW_CLASS);
+        }
+
+        const firstPinnedRowIndex = rowCtrls.findIndex((rowCtrl) => rowCtrl.rowNode.isRowPinned());
+        if (firstPinnedRowIndex <= 0) {
+            return;
+        }
+
+        const [lastStickyBottomRowComp] = orderedRows[firstPinnedRowIndex - 1];
+        lastStickyBottomRowComp.getGui().classList.add(LAST_STICKY_BOTTOM_ROW_CLASS);
     }
 
     private addRowNodes(rows: [rowComp: RowComp, isNew: boolean][], container: HTMLElement): void {
