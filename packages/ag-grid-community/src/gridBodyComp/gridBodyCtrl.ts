@@ -214,14 +214,28 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private updateScrollableAreaWidth(): void {
+        const contentWidth = this.getHorizontalContentWidth();
+        const viewportWidth = this.getHorizontalViewportWidth();
+        this.comp.setGridScrollableAreaWidth(`${Math.max(contentWidth, viewportWidth, 1)}px`);
+    }
+
+    public getHorizontalContentWidth(): number {
         const { visibleCols } = this.beans;
-        const contentWidth =
+        const baseWidth =
             visibleCols.bodyWidth +
             visibleCols.getLeftStickyColumnContainerWidth() +
-            visibleCols.getRightStickyColumnContainerWidth() +
-            this.getVerticalScrollbarWidth();
-        const viewportWidth = this.eGridViewport.clientWidth;
-        this.comp.setGridScrollableAreaWidth(`${Math.max(contentWidth, viewportWidth, 1)}px`);
+            visibleCols.getRightStickyColumnContainerWidth();
+
+        if (!this.scrollVisibleSvc.verticalScrollShowing) {
+            return baseWidth;
+        }
+
+        const viewportWidth = this.getHorizontalViewportWidth();
+        return baseWidth - viewportWidth > 0.5 ? baseWidth + this.getVerticalScrollbarWidth() : baseWidth;
+    }
+
+    public getHorizontalViewportWidth(): number {
+        return this.eGridViewport.getBoundingClientRect().width;
     }
 
     private setGridRootRole(): void {

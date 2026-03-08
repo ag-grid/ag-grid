@@ -7,7 +7,6 @@ import type { RowRenderer } from '../../rendering/rowRenderer';
 import type { SpannedRowRenderer } from '../../rendering/spanning/spannedRowRenderer';
 import { CenterWidthFeature } from '../centerWidthFeature';
 import type { ScrollPartner } from '../gridBodyScrollFeature';
-import { _shouldShowHorizontalScroll } from '../scrollbarVisibilityHelper';
 import { ViewportSizeFeature } from '../viewportSizeFeature';
 import { RowContainerEventsFeature } from './rowContainerEventsFeature';
 import { SetHeightFeature } from './setHeightFeature';
@@ -304,11 +303,15 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     }
 
     public hasHorizontalScrollGap(): boolean {
-        return this.eContainer.clientWidth - this.eViewport.clientWidth < 0;
+        const containerWidth = this.eContainer.getBoundingClientRect().width;
+        const viewportWidth = this.eViewport.getBoundingClientRect().width;
+        return containerWidth - viewportWidth < -0.5;
     }
 
     public hasVerticalScrollGap(): boolean {
-        return this.eContainer.clientHeight - this.eViewport.clientHeight < 0;
+        const containerHeight = this.eContainer.getBoundingClientRect().height;
+        const viewportHeight = this.eViewport.getBoundingClientRect().height;
+        return containerHeight - viewportHeight < -0.5;
     }
 
     public getCenterWidth(): number {
@@ -342,18 +345,19 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     }
 
     public isHorizontalScrollShowing(): boolean {
-        const { beans, gos, eViewport } = this;
-        const isAlwaysShowHorizontalScroll = gos.get('alwaysShowHorizontalScroll');
-        const { ctrlsSvc } = beans;
-        const verticalScrollElement = ctrlsSvc.getGridBodyCtrl()?.eGridViewport;
-        const oppositeAxisElement = verticalScrollElement === eViewport ? undefined : verticalScrollElement;
-        const hScrollEl = ctrlsSvc.get('fakeHScrollComp')?.getGui();
-        const vScrollEl = ctrlsSvc.get('fakeVScrollComp')?.getGui();
+        if (this.gos.get('alwaysShowHorizontalScroll')) {
+            return true;
+        }
 
-        return (
-            isAlwaysShowHorizontalScroll ||
-            _shouldShowHorizontalScroll(eViewport, oppositeAxisElement, undefined, hScrollEl, vScrollEl)
-        );
+        const gridBodyCtrl = this.beans.ctrlsSvc.getGridBodyCtrl();
+        if (!gridBodyCtrl) {
+            return false;
+        }
+
+        const contentWidth = gridBodyCtrl.getHorizontalContentWidth();
+        const viewportWidth = gridBodyCtrl.getHorizontalViewportWidth();
+
+        return contentWidth - viewportWidth > 0.5;
     }
 
     public setHorizontalScroll(offset: number): void {

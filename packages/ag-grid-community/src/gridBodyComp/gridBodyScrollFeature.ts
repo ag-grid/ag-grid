@@ -245,6 +245,12 @@ export class GridBodyScrollFeature extends BeanStub {
 
         let newScrollLeft = _getScrollLeft(this.getViewportForSource(source), this.enableRtl);
 
+        const clampedScrollLeft = this.clampHorizontalScrollPosition(newScrollLeft);
+        if (Math.abs(clampedScrollLeft - newScrollLeft) > 0.1) {
+            _setScrollLeft(this.getViewportForSource(source), Math.abs(clampedScrollLeft), this.enableRtl);
+            newScrollLeft = clampedScrollLeft;
+        }
+
         if (this.shouldBlockScrollUpdate(Direction.Horizontal, newScrollLeft, true)) {
             return;
         }
@@ -373,18 +379,7 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private shouldBlockHorizontalScroll(scrollTo: number): boolean {
-        const clientWidth = _getInnerWidth(this.eGridViewport);
-        const { scrollWidth } = this.eGridViewport;
-
-        if (this.enableRtl) {
-            if (scrollTo > 0) {
-                return true;
-            }
-        } else if (scrollTo < 0) {
-            return true;
-        }
-
-        return Math.abs(scrollTo) + clientWidth > scrollWidth;
+        return Math.abs(this.clampHorizontalScrollPosition(scrollTo) - scrollTo) > 0.1;
     }
 
     private redrawRowsAfterScroll(): void {
@@ -428,19 +423,8 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     // called by scrollHorizontally method and alignedGridsService
-    public setHorizontalScrollPosition(hScrollPosition: number, fromAlignedGridsService = false): void {
-        const minScrollLeft = 0;
-        const maxScrollLeft = this.eGridViewport.scrollWidth - _getInnerWidth(this.eGridViewport);
-
-        // if this is call is coming from the alignedGridsSvc, we don't need to validate the
-        // scroll, because it has already been validated by the grid firing the scroll event.
-        if (!fromAlignedGridsService && this.shouldBlockScrollUpdate(Direction.Horizontal, hScrollPosition)) {
-            if (this.enableRtl) {
-                hScrollPosition = hScrollPosition > 0 ? 0 : maxScrollLeft;
-            } else {
-                hScrollPosition = Math.min(Math.max(hScrollPosition, minScrollLeft), maxScrollLeft);
-            }
-        }
+    public setHorizontalScrollPosition(hScrollPosition: number, _fromAlignedGridsService = false): void {
+        hScrollPosition = this.clampHorizontalScrollPosition(hScrollPosition);
 
         _setScrollLeft(this.eGridViewport, Math.abs(hScrollPosition), this.enableRtl);
         hScrollPosition = _getScrollLeft(this.eGridViewport, this.enableRtl);
@@ -449,6 +433,26 @@ export class GridBodyScrollFeature extends BeanStub {
         // notified async, and then it's 'consuming' flag doesn't get used right, and
         // we can end up with an infinite loop
         this.doHorizontalScroll(hScrollPosition);
+    }
+
+    private getMaxHorizontalScrollLeft(): number {
+        const viewportWidth = _getInnerWidth(this.eGridViewport);
+        const gridBodyCtrl = this.ctrlsSvc.getGridBodyCtrl();
+        if (!gridBodyCtrl) {
+            const contentWidth = this.eGridViewport.scrollWidth;
+            return Math.max(0, contentWidth - viewportWidth);
+        }
+
+        const contentWidth = Math.max(gridBodyCtrl.getHorizontalContentWidth(), viewportWidth);
+        return Math.max(0, contentWidth - viewportWidth);
+    }
+
+    private clampHorizontalScrollPosition(scrollLeft: number): number {
+        const maxScrollLeft = this.getMaxHorizontalScrollLeft();
+        if (this.enableRtl) {
+            return Math.max(-maxScrollLeft, Math.min(0, scrollLeft));
+        }
+        return Math.max(0, Math.min(maxScrollLeft, scrollLeft));
     }
 
     public setVerticalScrollPosition(vScrollPosition: number): void {

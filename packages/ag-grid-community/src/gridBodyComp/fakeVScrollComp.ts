@@ -106,8 +106,10 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
             return;
         }
 
-        const rowContainerHeight = this.beans.rowContainerHeight.uiContainerHeight ?? 1;
-        const scrollHeight = rowContainerHeight + gridBodyCtrl.getHorizontalScrollbarHeight();
+        const realViewport = gridBodyCtrl.eGridViewport;
+        const realScrollRange = Math.max(0, realViewport.scrollHeight - realViewport.clientHeight);
+        const fakeViewportHeight = this.eViewport.clientHeight;
+        const scrollHeight = fakeViewportHeight + realScrollRange;
         this.eContainer.style.height = `${Math.max(1, scrollHeight)}px`;
     }
 

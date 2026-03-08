@@ -268,8 +268,10 @@ export class PinnedRowContainerRendererFeature extends BeanStub implements IPinn
     }
 
     private applyViewportPinnedLayout(source: SourceState, eGui: HTMLElement): void {
-        const viewportWidth = this.eGridViewport.clientWidth;
-        const maxScrollLeft = Math.max(0, this.eGridViewport.scrollWidth - viewportWidth);
+        const viewportWidth = this.eGridViewport.getBoundingClientRect().width;
+        const contentWidth =
+            this.beans.ctrlsSvc.getGridBodyCtrl()?.getHorizontalContentWidth() ?? this.eGridViewport.scrollWidth;
+        const maxScrollLeft = Math.max(0, contentWidth - viewportWidth);
         const scrollLeft = Math.min(Math.abs(this.eGridViewport.scrollLeft), maxScrollLeft);
 
         eGui.style.position = 'absolute';
