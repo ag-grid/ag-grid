@@ -1,6 +1,7 @@
 import type { AgColumn, ColumnEventType, DragItem, DropTarget, GridDraggingEvent } from 'ag-grid-community';
 import { DragSourceType, _shouldUpdateColVisibilityAfterGroup } from 'ag-grid-community';
 
+import { getColumnToolPanelEditStrategy } from '../../columnToolPanel/columnToolPanelEditUtils';
 import type { BaseColumnToolPanelEdits, ColumnToolPanelEditParams } from '../../columnToolPanel/columnToolPanelEdits';
 import type { PillDropZonePanelParams } from '../../widgets/pillDropZonePanel';
 import { PillDropZonePanel } from '../../widgets/pillDropZonePanel';
@@ -46,11 +47,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
             return this.editStrategy;
         }
 
-        const strategy = (this.deferApply
-            ? this.beans.colToolPanelDeferredEdit
-            : this.beans.colToolPanelSynchronousEdit) as BaseColumnToolPanelEdits | undefined;
-        this.editStrategy = strategy ?? null;
-        return this.editStrategy;
+        return (this.editStrategy = getColumnToolPanelEditStrategy(this.beans, this.deferApply) ?? null);
     }
 
     protected getItems(dragItem: DragItem): AgColumn[] {

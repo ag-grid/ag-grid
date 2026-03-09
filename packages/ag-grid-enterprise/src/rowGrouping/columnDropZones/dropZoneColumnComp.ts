@@ -10,6 +10,7 @@ import type {
 } from 'ag-grid-community';
 import { Component, DragSourceType, KeyCode, RefPlaceholder, _createElement } from 'ag-grid-community';
 
+import { getColumnToolPanelEditStrategy } from '../../columnToolPanel/columnToolPanelEditUtils';
 import {
     type BaseColumnToolPanelEdits,
     type ColumnToolPanelEditParams,
@@ -87,11 +88,8 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         if (this.editStrategy !== undefined) {
             return this.editStrategy;
         }
-        const strategy = (this.deferApply
-            ? this.beans.colToolPanelDeferredEdit
-            : this.beans.colToolPanelSynchronousEdit) as BaseColumnToolPanelEdits | undefined;
-        this.editStrategy = strategy ?? null;
-        return this.editStrategy;
+
+        return (this.editStrategy = getColumnToolPanelEditStrategy(this.beans, this.deferApply) ?? null);
     }
 
     public getItem(): AgColumn {
@@ -206,7 +204,9 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     }
 
     private getCurrentSortDirection(column: AgColumn): SortDirection {
-        return this.getEditStrategy()?.getSortDefForToolPanel(column)?.direction ?? column.getSortDef()?.direction ?? null;
+        return (
+            this.getEditStrategy()?.getSortDefForToolPanel(column)?.direction ?? column.getSortDef()?.direction ?? null
+        );
     }
 
     private getSortDefOverride(): SortDef | null | undefined {
