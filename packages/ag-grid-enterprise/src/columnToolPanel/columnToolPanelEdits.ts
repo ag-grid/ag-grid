@@ -3,16 +3,17 @@ import type {
     BeanName,
     ColumnEventType,
     ColumnState,
+    ColumnToolPanelEditStrategyBean,
     IAggFunc,
     IColumnToolPanelEdits,
     NamedBean,
     SortDef,
-    SortDirection,
 } from 'ag-grid-community';
 import { BeanStub, _applyColumnState } from 'ag-grid-community';
-import type { ColumnToolPanelEditStrategyBean } from 'ag-grid-community';
 
 export type ColumnToolPanelEditParams = { deferApply?: boolean };
+export const COLUMN_TOOL_PANEL_SYNCHRONOUS_EDIT_BEAN_NAME = 'colToolPanelSynchronousEdit';
+export const COLUMN_TOOL_PANEL_DEFERRED_EDIT_BEAN_NAME = 'colToolPanelDeferredEdit';
 
 const noop = () => {};
 
@@ -46,8 +47,7 @@ export abstract class BaseColumnToolPanelEdits extends BeanStub implements IColu
 }
 
 export class ColumnToolPanelSynchronousEdit extends BaseColumnToolPanelEdits {
-    static beanName = 'colToolPanelSynchronousEdit';
-    beanName = ColumnToolPanelSynchronousEdit.beanName as ColumnToolPanelEditStrategyBean;
+    beanName = COLUMN_TOOL_PANEL_SYNCHRONOUS_EDIT_BEAN_NAME as ColumnToolPanelEditStrategyBean;
 
     public reset = noop;
     public commit = noop;
@@ -147,15 +147,14 @@ export class ColumnToolPanelSynchronousEdit extends BaseColumnToolPanelEdits {
 }
 
 export class ColumnToolPanelDeferredEdit extends BaseColumnToolPanelEdits {
-    static beanName = 'colToolPanelDeferredEdit';
-    beanName = ColumnToolPanelDeferredEdit.beanName as ColumnToolPanelEditStrategyBean;
+    beanName = COLUMN_TOOL_PANEL_DEFERRED_EDIT_BEAN_NAME as ColumnToolPanelEditStrategyBean;
 
     private state = this.getDefaultState();
     private sequence = 0;
 
     private getDefaultState() {
         return {
-            // Draft mirrors grid-state style slices and collapses repeated changes to latest effective values.
+            // Draft is intentionally empty. Live grid state remains the baseline via the getter fallbacks.
             columnStateByColId: new Map<string, ColumnState>(),
             columnStateSeq: 0,
             columnStateEventType: 'toolPanelUi' as ColumnEventType,
@@ -175,6 +174,10 @@ export class ColumnToolPanelDeferredEdit extends BaseColumnToolPanelEdits {
         };
     }
 
+    public postConstruct(): void {
+        this.reset();
+    }
+
     private nextSeq(): number {
         this.sequence += 1;
         return this.sequence;
@@ -191,7 +194,18 @@ export class ColumnToolPanelDeferredEdit extends BaseColumnToolPanelEdits {
     }
 
     public commit() {
-        const cols = this.beans.colModel.getCols();
+        if (this.state.pivotMode) {
+            const { pivotMode, eventType: pivotModeEventType } = this.state.pivotMode;
+            const { colModel, gos, ctrlsSvc } = this.beans;
+            if (pivotMode !== colModel.isPivotMode()) {
+                gos.updateGridOptions({ options: { pivotMode }, source: pivotModeEventType as any });
+                for (const c of ctrlsSvc.getHeaderRowContainerCtrls()) {
+                    c.refresh();
+                }
+            }
+        }
+
+        const cols = this.beans.colModel.getColDefCols() ?? [];
         const colIds = cols.map((column) => column.getColId());
         const colStateByColId = new Map<string, ColumnState>();
         const ensureState = (colId: string): ColumnState => {
@@ -291,10 +305,13 @@ export class ColumnToolPanelDeferredEdit extends BaseColumnToolPanelEdits {
                         const colId = column.getColId();
                         const state = ensureState(colId);
                         if (valueColIdSet.has(colId)) {
-                            const draftAggFunc = this.state.draftAggFuncsByColId.get(colId);
+                            const hasDraftAggFunc = this.state.draftAggFuncsByColId.has(colId);
+                            const draftAggFunc = hasDraftAggFunc
+                                ? this.state.draftAggFuncsByColId.get(colId)
+                                : undefined;
                             const currentAggFunc = column.getAggFunc();
                             const fallbackAggFunc = this.beans.aggFuncSvc?.getDefaultAggFunc(column) ?? null;
-                            state.aggFunc = draftAggFunc ?? currentAggFunc ?? fallbackAggFunc;
+                            state.aggFunc = hasDraftAggFunc ? draftAggFunc : currentAggFunc ?? fallbackAggFunc;
                         } else {
                             state.aggFunc = null;
                         }
@@ -349,17 +366,6 @@ export class ColumnToolPanelDeferredEdit extends BaseColumnToolPanelEdits {
                 },
                 eventType
             );
-        }
-
-        if (this.state.pivotMode) {
-            const { pivotMode, eventType: pivotModeEventType } = this.state.pivotMode;
-            const { colModel, gos, ctrlsSvc } = this.beans;
-            if (pivotMode !== colModel.isPivotMode()) {
-                gos.updateGridOptions({ options: { pivotMode }, source: pivotModeEventType as any });
-                for (const c of ctrlsSvc.getHeaderRowContainerCtrls()) {
-                    c.refresh();
-                }
-            }
         }
 
         this.reset();
@@ -494,6 +500,10 @@ export class ColumnToolPanelDeferredEdit extends BaseColumnToolPanelEdits {
     }
 
     public getRowGroupColumns(): AgColumn[] {
+        if (!this.getPivotModeForToolPanel()) {
+            return [];
+        }
+
         const colIds = this.state.rowGroup?.groupColIds;
         if (!colIds) {
             return this.beans.rowGroupColsSvc?.columns ?? [];
@@ -505,6 +515,10 @@ export class ColumnToolPanelDeferredEdit extends BaseColumnToolPanelEdits {
     }
 
     public getValueColumns(): AgColumn[] {
+        if (!this.getPivotModeForToolPanel()) {
+            return [];
+        }
+
         const colIds = this.state.aggregation?.valueColIds;
         if (!colIds) {
             return this.beans.valueColsSvc?.columns ?? [];
@@ -516,6 +530,10 @@ export class ColumnToolPanelDeferredEdit extends BaseColumnToolPanelEdits {
     }
 
     public getPivotColumns(): AgColumn[] {
+        if (!this.getPivotModeForToolPanel()) {
+            return [];
+        }
+
         const colIds = this.state.pivot?.pivotColIds;
         if (!colIds) {
             return this.beans.pivotColsSvc?.columns ?? [];
