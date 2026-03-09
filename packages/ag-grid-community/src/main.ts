@@ -403,7 +403,7 @@ export {
 } from './interfaces/iStatusPanel';
 
 // Tool Panel
-export { IColumnToolPanel, IColumnToolPanelEdits, ColumnToolPanelEditStrategyBean } from './interfaces/iColumnToolPanel';
+export { IColumnToolPanel, ColumnToolPanelEditStrategyBean } from './interfaces/iColumnToolPanel';
 export { IFiltersToolPanel } from './interfaces/iFiltersToolPanel';
 export {
     FilterPanelDetailState,

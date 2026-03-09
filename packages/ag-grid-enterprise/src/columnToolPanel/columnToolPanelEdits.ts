@@ -5,7 +5,6 @@ import type {
     ColumnState,
     ColumnToolPanelEditStrategyBean,
     IAggFunc,
-    IColumnToolPanelEdits,
     NamedBean,
     SortDef,
 } from 'ag-grid-community';
@@ -17,7 +16,7 @@ export const COLUMN_TOOL_PANEL_DEFERRED_EDIT_BEAN_NAME = 'colToolPanelDeferredEd
 
 const noop = () => {};
 
-export abstract class BaseColumnToolPanelEdits extends BeanStub implements IColumnToolPanelEdits, NamedBean {
+export abstract class BaseColumnToolPanelEdits extends BeanStub implements NamedBean {
     abstract beanName: BeanName;
     abstract applyColumnState(state: ColumnState[], eventType: ColumnEventType): void;
     abstract commit(): void;
