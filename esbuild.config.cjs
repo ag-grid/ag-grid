@@ -2,6 +2,52 @@ const esbuild = require('esbuild');
 const { umdWrapper } = require('esbuild-plugin-umd-wrapper');
 const fs = require('fs/promises');
 const path = require('path');
+const postcss = require('postcss');
+const cssAutoPrefix = require('autoprefixer');
+const cssNano = require('cssnano');
+const cssImport = require('postcss-import');
+const cssRtl = require('postcss-rtlcss');
+const cssUrl = require('postcss-url');
+
+/** @type {import('esbuild').Plugin} */
+const cssPlugin = {
+    name: 'css-plugin',
+    setup(build) {
+        build.onLoad({ filter: /\.css$/ }, async (args) => {
+            const css = await require('fs').promises.readFile(args.path, 'utf8');
+            const result = await postcss([
+                cssImport(),
+                cssUrl({ url: 'inline' }),
+                cssAutoPrefix(),
+                cssRtl({
+                    ltrPrefix: `:where(.ag-ltr)`,
+                    rtlPrefix: `:where(.ag-rtl)`,
+                    bothPrefix: `:where(.ag-ltr, .ag-rtl)`,
+                }),
+                cssNano({
+                    preset: [
+                        'default',
+                        {
+                            discardComments: true,
+                            normalizeWhitespace: true,
+                            minifySelectors: true,
+                        },
+                    ],
+                }),
+            ]).process(css, { from: args.path, to: args.path });
+
+            // UMD builds: non-source CSS (legacy themes) gets injected as <style> tags
+            const isUmd = /:(umd|umd:watch)$/.test(process.env.NX_TASK_TARGET_TARGET ?? '');
+            if (isUmd && !args.path.includes('/src/')) {
+                return {
+                    contents: `(function(){if(typeof document!=="undefined"){var s=document.createElement("style");s.setAttribute("data-ag-scope","legacy");s.textContent=${JSON.stringify(result.css)};document.head.appendChild(s);}})();`,
+                    loader: 'js',
+                };
+            }
+            return { contents: result.css, loader: 'text' };
+        });
+    },
+};
 
 const exportedNames = {
     react: 'React',
@@ -94,9 +140,9 @@ if (typeof require === 'undefined') {
     },
 };
 
-const plugins = [];
+const plugins = [cssPlugin];
 let outExtension = {};
-if (process.env.NX_TASK_TARGET_TARGET?.endsWith('umd')) {
+if (/:(umd|umd:watch)$/.test(process.env.NX_TASK_TARGET_TARGET ?? '')) {
     plugins.push(umdWrapperAdaptorPlugin);
     outExtension = {
         '.cjs': '.js',

@@ -66,28 +66,16 @@ const gridOptions: GridOptions = {
     onRowEditingStopped: (_event: RowEditingStoppedEvent) => {
         console.log('rowEditingStopped');
     },
-    onCellEditingStarted: (event: CellEditingStartedEvent) => {
+    onCellEditingStarted: (_event: CellEditingStartedEvent) => {
         console.log('cellEditingStarted');
-        updateEditCount(event.api);
     },
-    onCellEditingStopped: (event: CellEditingStoppedEvent) => {
+    onCellEditingStopped: (_event: CellEditingStoppedEvent) => {
         console.log('cellEditingStopped');
-        updateEditCount(event.api);
     },
     onCellValueChanged: (_event: CellValueChangedEvent) => {
         console.log('Cell value changed');
     },
 };
-
-function updateEditCount(api: GridApi) {
-    if (api.isBatchEditing()) {
-        const pendingEditCount = api.getEditingCells().length;
-        const el = document.querySelector<HTMLElement>('#batchStatusValue');
-        if (el) {
-            el.textContent = `Active (${pendingEditCount} edit${pendingEditCount !== 1 ? 's' : ''})`;
-        }
-    }
-}
 
 function getEditingCells() {
     const cells = gridApi!.getEditingCells();
@@ -97,7 +85,7 @@ function getEditingCells() {
 function startBatchEdit() {
     gridApi!.startBatchEdit();
     const el = document.querySelector<HTMLElement>('#batchStatusValue');
-    if (el) el.textContent = 'Active (0 edits)';
+    if (el) el.textContent = 'Active';
 }
 
 function commitBatchEdit() {

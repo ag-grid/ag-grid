@@ -1,7 +1,7 @@
 import type { Part } from '../../../agStack/theming/part';
 import { createPart } from '../../../agStack/theming/partImpl';
 import type { ColorValue } from '../../../agStack/theming/themeTypes';
-import { batchEditStyleDefaultCSS } from './batch-edit-style-default.css-GENERATED';
+import batchEditStyleDefaultCSS from './batch-edit-style-default.css';
 
 export type BatchEditStyleParams = {
     /**

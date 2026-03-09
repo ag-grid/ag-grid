@@ -7,7 +7,7 @@ import type { ElementParams } from '../utils/element';
 import type { IconName } from '../utils/icon';
 import { _createIcon } from '../utils/icon';
 import { Component } from '../widgets/component';
-import { dragAndDropImageComponentCSS } from './dragAndDropImageComponent.css-GENERATED';
+import dragAndDropImageComponentCSS from './dragAndDropImageComponent.css';
 import type { DragAndDropIcon, GridDragSource } from './dragAndDropService';
 import type { DragSource } from './rowDragTypes';
 

@@ -119,20 +119,18 @@ async function warnOfUnknownCssVariables() {
     allowedVariables.add('--ag-indentation-level');
     allowedVariables.add('--ag-row-highlight-level');
 
-    // This uses vite's glob import feature to import all generated CSS files in the source tree
-    const cssFiles = (
-        await Promise.all(
-            Object.values(
-                import.meta.glob('../../../../../../../packages/ag-grid-community/src/**/*.css-GENERATED.ts')
-            ).map((moduleFunc) =>
-                moduleFunc().then((module) =>
-                    Object.entries(module as any)
-                        .filter(([key]) => key.endsWith('CSS'))
-                        .map(([source, css]) => ({ source, css }))
-                )
-            )
-        )
-    ).flat();
+    // This uses vite's glob import feature to import all CSS files in the source tree
+    const cssModules = import.meta.glob('../../../../../../../packages/ag-grid-community/src/**/*.css', {
+        import: 'default',
+        query: { inline: true },
+    });
+
+    const cssFiles = await Promise.all(
+        Object.entries(cssModules).map(async ([filePath, moduleFunc]) => ({
+            source: filePath,
+            css: (await moduleFunc()) as string,
+        }))
+    );
 
     for (const { source, css } of cssFiles) {
         if (typeof css === 'string') {

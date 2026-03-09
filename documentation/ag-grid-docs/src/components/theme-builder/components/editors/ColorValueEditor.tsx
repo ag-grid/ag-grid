@@ -1,4 +1,4 @@
-import { type ColorValue, gridThemeLogger, paramValueToCss } from '@components/theme-builder/api';
+import { type ColorValue, paramValueToCss } from '@components/theme-builder/api';
 import styled from '@emotion/styled';
 import { FloatingPortal, autoPlacement, autoUpdate, offset, useFloating } from '@floating-ui/react';
 import { useEffect, useRef, useState } from 'react';
@@ -13,7 +13,7 @@ import { type ValueEditorProps } from './ValueEditorProps';
 export const ColorValueEditor = ({ param, value, onChange }: ValueEditorProps<ColorValue>) => (
     <ColorEditor
         preventTransparency={param.property === 'backgroundColor' || param.property === 'dataBackgroundColor'}
-        value={paramValueToCss(param.property, value, gridThemeLogger) || ''}
+        value={paramValueToCss(param.property, value, null) || ''}
         onChange={onChange}
     />
 );

@@ -14,6 +14,11 @@ on:
         type: string
         default: ''
         required: false
+      debug_skip_merge_check:
+        description: 'Skip the merged check (used for debugging this workflow)'
+        type: string
+        default: ''
+        required: false
 
 permissions:
   contents: read
@@ -36,6 +41,7 @@ jobs:
         env:
           PR_ID: ${{ github.event.inputs.debug_pr_id || github.event.pull_request.number }}
           DEBUG_JIRA_TICKET: ${{ github.event.inputs.debug_jira_ticket }}
+          DEBUG_SKIP_MERGE_CHECK: ${{ github.event.inputs.debug_skip_merge_check }}
           JIRA_API_AUTH: ${{ secrets.JIRA_API_AUTH }}
           GH_USER_JIRA_MAPPING: ${{ secrets.GH_USER_JIRA_MAPPING }}
           JOB_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
@@ -97,7 +103,7 @@ jobs:
                 }
                 const pr = pull_number ? (await github.rest.pulls.get({owner, repo, pull_number})).data : {};
                 const is_merged = !!pr.merged_at;
-                if (!is_merged) {
+                if (!is_merged && !process.env.DEBUG_SKIP_MERGE_CHECK) {
                     console.log(`PR #${pull_number} is not merged, skipping JIRA ticket update.`);
                     return;
                 }

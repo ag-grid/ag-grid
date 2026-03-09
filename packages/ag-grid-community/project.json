@@ -4,6 +4,14 @@
   "sourceRoot": "packages/ag-grid-community/src",
   "projectType": "library",
   "targets": {
+    "setup": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["npx playwright install --with-deps chromium"],
+        "parallel": false,
+        "cwd": "packages/ag-grid-community"
+      }
+    },
     "build": {
       "executor": "nx:noop",
       "inputs": [],
@@ -11,16 +19,55 @@
       "dependsOn": ["build:types", "build:package", "build:copy-styles", "build:umd"]
     },
     "build:umd": {
-      "executor": "nx:run-commands",
+      "executor": "@nx/esbuild:esbuild",
       "dependsOn": ["^build", "build:copy-styles", "build:package"],
       "inputs": ["tsDefaults", "styleOutputs"],
       "outputs": ["{projectRoot}/dist/ag-grid-community*.js"],
       "options": {
-        "cwd": "packages/ag-grid-community",
-        "commands": ["./webpackBuild.sh"]
+        "outputPath": "{projectRoot}/dist",
+        "deleteOutputPath": false,
+        "main": "{projectRoot}/src/main-umd-styles.ts",
+        "tsConfig": "{projectRoot}/tsconfig.lib.json",
+        "esbuildConfig": "packages/ag-grid-community/esbuildBuild.cjs",
+        "platform": "browser",
+        "target": "es2020",
+        "format": ["cjs"],
+        "bundle": true,
+        "thirdParty": true,
+        "sourcemap": false,
+        "metafile": false
       },
       "configurations": {
-        "production": {}
+        "production": {
+          "additionalEntryPoints": ["{projectRoot}/src/main-umd-noStyles.ts"]
+        },
+        "staging": {
+          "additionalEntryPoints": ["{projectRoot}/src/main-umd-noStyles.ts"]
+        }
+      },
+      "cache": true
+    },
+    "build:umd:watch": {
+      "executor": "@nx/esbuild:esbuild",
+      "dependsOn": [],
+      "inputs": ["tsDefaults", "styleOutputs"],
+      "outputs": ["{projectRoot}/dist/ag-grid-community*.js"],
+      "options": {
+        "outputPath": "{projectRoot}/dist",
+        "deleteOutputPath": false,
+        "main": "{projectRoot}/src/main-umd-styles.ts",
+        "tsConfig": "{projectRoot}/tsconfig.watch.json",
+        "esbuildConfig": "packages/ag-grid-community/esbuildBuild.cjs",
+        "platform": "browser",
+        "target": "es2020",
+        "format": ["cjs"],
+        "bundle": true,
+        "thirdParty": true,
+        "sourcemap": false,
+        "metafile": false
+      },
+      "configurations": {
+        "watch": {}
       },
       "cache": true
     },
@@ -36,7 +83,7 @@
     },
     "build:types": {
       "executor": "@nx/js:tsc",
-      "dependsOn": ["^build:types", "build:css"],
+      "dependsOn": ["^build:types"],
       "inputs": [
         "{projectRoot}/package.json",
         "{projectRoot}/src/**/*",
@@ -62,23 +109,9 @@
         "production": {}
       }
     },
-    "build:css": {
-      "command": "tsx ./scripts/build-css.ts --package ag-grid-community",
-      "cache": true,
-      "options": {
-        "cwd": "{workspaceRoot}"
-      },
-      "inputs": ["{projectRoot}/src/**/*.css"],
-      "outputs": ["{projectRoot}/**/*.css-GENERATED.ts"],
-      "configurations": {
-        "debug": {
-          "command": "CSS_DEBUG=1 tsx ./scripts/build-css.ts --package ag-grid-community"
-        }
-      }
-    },
     "build:package": {
       "executor": "@nx/esbuild:esbuild",
-      "dependsOn": ["^build", "build:css"],
+      "dependsOn": ["^build"],
       "inputs": [
         "{projectRoot}/package.json",
         "{projectRoot}/src/**/*",
@@ -122,9 +155,7 @@
         "cwd": "{projectRoot}"
       }
     },
-    "lint:depcruise": {
-      "dependsOn": ["build:css"]
-    },
+    "lint:depcruise": {},
     "lint": {
       "dependsOn": ["lint:knip", "lint:depcruise"],
       "command": "eslint && stylelint './src/**/*css'",
@@ -134,11 +165,43 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "dependsOn": ["build:css"],
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}", "{workspaceRoot}/reports/ag-grid-community.xml"],
       "parallelism": false,
       "options": {
-        "jestConfig": "{projectRoot}/jest.config.ts"
+        "jestConfig": "{projectRoot}/jest.config.ts",
+        "testPathIgnorePatterns": ["e2e"]
+      }
+    },
+    "test:e2e": {
+      "dependsOn": ["test:umd:browser", "test:umd"]
+    },
+    "test:umd": {
+      "executor": "@nx/jest:jest",
+      "dependsOn": ["build:umd"],
+      "options": {
+        "jestConfig": "{projectRoot}/jest.config.ts",
+        "testPathPattern": ["e2e"]
+      },
+      "configurations": {
+        "production": {},
+        "staging": {}
+      }
+    },
+    "test:umd:browser": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build:umd", "setup"],
+      "options": {
+        "commands": ["echo 'Skipping test:umd:browser - requires staging or production configuration'"],
+        "parallel": false,
+        "cwd": "packages/ag-grid-community"
+      },
+      "configurations": {
+        "production": {
+          "commands": ["npx playwright test"]
+        },
+        "staging": {
+          "commands": ["npx playwright test"]
+        }
       }
     },
     "pack": {
@@ -180,5 +243,5 @@
       }
     }
   },
-  "tags": ["package", "community"]
+  "tags": ["package", "community", "core"]
 }

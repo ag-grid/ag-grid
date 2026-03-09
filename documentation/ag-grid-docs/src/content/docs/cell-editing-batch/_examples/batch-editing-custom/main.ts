@@ -1,4 +1,4 @@
-import type { CellEditingStartedEvent, CellEditingStoppedEvent, ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     CustomEditorModule,
@@ -68,23 +68,7 @@ const gridOptions: GridOptions = {
         flex: 1,
         minWidth: 100,
     },
-    onCellEditingStarted: (event: CellEditingStartedEvent) => {
-        updateEditCount(event.api);
-    },
-    onCellEditingStopped: (event: CellEditingStoppedEvent) => {
-        updateEditCount(event.api);
-    },
 };
-
-function updateEditCount(api: GridApi) {
-    if (api.isBatchEditing()) {
-        const pendingEditCount = api.getEditingCells().length;
-        const el = document.querySelector<HTMLElement>('#batchStatusValue');
-        if (el) {
-            el.textContent = `Active (${pendingEditCount} edit${pendingEditCount !== 1 ? 's' : ''})`;
-        }
-    }
-}
 
 function getEditingCells() {
     const cells = gridApi!.getEditingCells();
@@ -94,7 +78,7 @@ function getEditingCells() {
 function startBatchEdit() {
     gridApi!.startBatchEdit();
     const el = document.querySelector<HTMLElement>('#batchStatusValue');
-    if (el) el.textContent = 'Active (0 edits)';
+    if (el) el.textContent = 'Active';
 }
 
 function commitBatchEdit() {

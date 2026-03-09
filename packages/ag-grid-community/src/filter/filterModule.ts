@@ -6,7 +6,7 @@ import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
 import { SharedMenuModule } from '../misc/menu/sharedMenuModule';
 import { VERSION } from '../version';
 import { PopupModule } from '../widgets/popupModule';
-import { columnFiltersCSS } from './column-filters.css-GENERATED';
+import columnFiltersCSS from './column-filters.css';
 import {
     destroyFilter,
     doFilterAction,

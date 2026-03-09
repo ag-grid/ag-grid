@@ -1,7 +1,7 @@
 import type { _ModuleWithoutApi } from 'ag-grid-community';
 
 import { VERSION } from '../version';
-import { menuCSS } from './menu.css-GENERATED';
+import menuCSS from './menu.css';
 import { MenuItemRenderer } from './menuItemRenderer';
 
 /**

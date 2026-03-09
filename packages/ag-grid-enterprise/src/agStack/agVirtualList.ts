@@ -24,7 +24,7 @@ import {
     _waitUntil,
 } from 'ag-grid-community';
 
-import { agVirtualListCSS } from './agVirtualList.css-GENERATED';
+import agVirtualListCSS from './agVirtualList.css';
 import type { VirtualListModel } from './iVirtualList';
 
 export interface VirtualListParams<C> {

@@ -1,7 +1,12 @@
 {
     "entry": ["./src/main.ts", "./src/main-umd-noStyles.ts"],
     "project": ["./src/**"],
-    "ignore": ["./src/charts/chartComp/menu/settings/miniCharts/**", "./src/excelExport/**/*.ts"],
+    "ignore": [
+        "./src/typings.ts",
+        "./src/charts/chartComp/menu/settings/miniCharts/**",
+        "./src/excelExport/**/*.ts",
+        "./src/main-umd-styles.ts"
+    ],
     "rules": {
         "unlisted": "off",
         "unresolved": "off",

@@ -1,6 +1,6 @@
 import { VERSION } from '../../version';
 import type { IEnvironment } from '../interfaces/iEnvironment';
-import { sharedCSS } from './shared/shared.css-GENERATED';
+import sharedCSS from './shared/shared.css';
 
 export const IS_SSR = typeof window !== 'object' || !window?.document?.fonts?.forEach;
 
