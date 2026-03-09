@@ -326,6 +326,7 @@
         &.ag-scrollbar-invisible {
             position: absolute;
             bottom: 0;
+            z-index: 2;
             &.ag-apple-scrollbar {
                 opacity: 0;
                 transition: opacity 400ms;
@@ -366,6 +367,7 @@
                 )
             );
         }
+
     }
 
     .ag-force-vertical-scroll {

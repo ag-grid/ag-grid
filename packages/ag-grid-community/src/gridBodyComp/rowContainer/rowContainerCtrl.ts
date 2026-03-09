@@ -202,17 +202,23 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
 
         if (this.isContainer(centerContainers)) {
             const updateContainerWidth = () => {
-                const { visibleCols } = this.beans;
-                const contentWidth =
+                const { visibleCols, ctrlsSvc } = this.beans;
+                const gridBodyCtrl = ctrlsSvc.getGridBodyCtrl();
+                const fallbackContentWidth =
                     visibleCols.bodyWidth +
                     visibleCols.getLeftStickyColumnContainerWidth() +
                     visibleCols.getRightStickyColumnContainerWidth();
-                const viewportWidth = _getInnerWidth(this.eViewport);
-                const width = Math.max(contentWidth, viewportWidth);
+                const contentWidth = gridBodyCtrl?.getHorizontalContentWidth() ?? fallbackContentWidth;
+                const viewportWidth = gridBodyCtrl?.getHorizontalViewportWidth() ?? _getInnerWidth(this.eViewport);
+                const width = Math.max(contentWidth, viewportWidth, 1);
                 this.comp.setContainerWidth(`${width}px`);
             };
 
             this.createManagedBean(new CenterWidthFeature(updateContainerWidth));
+            this.addManagedEventListeners({
+                scrollVisibilityChanged: updateContainerWidth,
+                scrollbarWidthChanged: updateContainerWidth,
+            });
             this.registerViewportResizeListener(updateContainerWidth);
         }
 

@@ -76,7 +76,6 @@ export class GridBodyCtrl extends BeanStub {
     private eBottom: HTMLElement;
     private topPinnedRowsHeight = 0;
     private bottomPinnedRowsHeight = 0;
-    private topRowsMarginTop = 0;
 
     public stickyTopHeight: number = 0;
     public stickyBottomHeight: number = 0;
@@ -532,26 +531,14 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private setPinnedRowsHeights(): void {
-        const {
-            pinnedRowModel,
-            beans: { environment },
-        } = this;
+        const { pinnedRowModel } = this;
 
         const pinnedTopHeight = pinnedRowModel?.getPinnedTopTotalHeight();
         const pinnedBottomHeight = pinnedRowModel?.getPinnedBottomTotalHeight();
         const advancedFilterHeaderHeight = this.filterManager?.getHeaderHeight() ?? 0;
 
-        // Top pinned rows can require an extra margin when pinned-row and regular-row
-        // border widths differ. Bottom pinned rows are rendered with an overlay separator,
-        // so their height must remain equal to the real pinned-row heights.
-        const pinnedBorderWidth = environment.getPinnedRowBorderWidth();
-        const rowBorderWidth = environment.getRowBorderWidth();
-        const additionalHeight = pinnedBorderWidth - rowBorderWidth;
-
         const normalisedPinnedTopHeight = pinnedTopHeight ?? 0;
         const normalisedPinnedBottomHeight = pinnedBottomHeight ?? 0;
-        const topRowsMarginTop = !pinnedTopHeight ? 0 : Math.max(0, additionalHeight);
-        this.topRowsMarginTop = topRowsMarginTop;
         this.topPinnedRowsHeight = normalisedPinnedTopHeight;
         this.bottomPinnedRowsHeight = normalisedPinnedBottomHeight;
 
@@ -563,7 +550,7 @@ export class GridBodyCtrl extends BeanStub {
             height: normalisedPinnedBottomHeight,
             invisible: normalisedPinnedBottomHeight <= 0,
         });
-        this.comp.setScrollingRowsMarginTop(topRowsMarginTop);
+        this.comp.setScrollingRowsMarginTop(0);
         this.setStickyBottomOffsetBottom();
         this.pinnedRowContainerRendererFeature.refresh();
     }
@@ -608,7 +595,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     public getTopPinnedRowsOffset(): number {
-        return this.getHeaderRowsOffset() + this.topPinnedRowsHeight + this.topRowsMarginTop;
+        return this.getHeaderRowsOffset() + this.topPinnedRowsHeight;
     }
 
     public getBodyViewportHeight(totalViewportHeight: number): number {
@@ -617,18 +604,18 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     public getVerticalScrollbarWidth(): number {
-        if (!this.scrollVisibleSvc.verticalScrollShowing) {
+        const { scrollVisibleSvc } = this;
+        if (!scrollVisibleSvc.verticalScrollShowing) {
             return 0;
         }
 
-        const fakeVScrollComp = this.ctrlsSvc.get('fakeVScrollComp');
-        const fakeScrollbarWidth = fakeVScrollComp?.getGui().offsetWidth ?? 0;
-        if (fakeScrollbarWidth > 0) {
-            return fakeScrollbarWidth;
+        const configuredScrollbarWidth = scrollVisibleSvc.getScrollbarWidth() || 0;
+
+        if (configuredScrollbarWidth === 0) {
+            return 0;
         }
 
-        const scrollbarWidth = this.scrollVisibleSvc.getScrollbarWidth() || 0;
-        return scrollbarWidth;
+        return configuredScrollbarWidth;
     }
 
     public getHorizontalScrollbarHeight(): number {

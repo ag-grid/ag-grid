@@ -161,6 +161,7 @@
     &:where(.ag-scrollbar-invisible) {
         position: absolute;
         bottom: 0;
+        z-index: 2;
 
         &:where(.ag-apple-scrollbar) {
             opacity: 0;
