@@ -449,8 +449,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
     private clampHorizontalScrollPosition(scrollLeft: number): number {
         const maxScrollLeft = this.getMaxHorizontalScrollLeft();
-        const normalisedScrollLeft = this.enableRtl ? Math.abs(scrollLeft) : scrollLeft;
-        return Math.max(0, Math.min(maxScrollLeft, normalisedScrollLeft));
+        return Math.max(0, Math.min(maxScrollLeft, scrollLeft));
     }
 
     public setVerticalScrollPosition(vScrollPosition: number): void {

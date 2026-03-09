@@ -773,7 +773,15 @@
 
     .ag-grid-pinned-right-cells {
         right: var(--ag-pinned-right-sticky-offset, 0px);
-        margin-inline-start: auto;
+    }
+
+    .ag-ltr .ag-grid-pinned-right-cells {
+        margin-left: auto;
+    }
+
+    .ag-rtl .ag-grid-scrolling-cells {
+        // in rtl the vertical scrollbar is on the left; offset the center lane to leave room.
+        margin-left: var(--ag-pinned-left-sticky-offset, 0px);
     }
 
     .ag-ltr .ag-grid-pinned-right-cells::after,

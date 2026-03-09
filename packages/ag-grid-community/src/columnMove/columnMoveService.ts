@@ -147,6 +147,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
             x: isLeft ? left - 20 : left + width + 20,
             pinned,
             fromKeyboard: true,
+            useHeaderRow: gos.get('enableRtl'),
             gos,
             ctrlsSvc,
             visibleCols,

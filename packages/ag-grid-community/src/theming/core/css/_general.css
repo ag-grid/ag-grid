@@ -287,9 +287,18 @@
     /* offset pinned-right cells when the vertical scrollbar is rendered on the right (LTR). */
     /* rtl:ignore */
     right: var(--ag-pinned-right-sticky-offset, 0);
+}
 
+/* rtl:ignore */
+:where(.ag-ltr) .ag-grid-pinned-right-cells {
     /* when rows are wider than displayed columns, consume spare inline space before right-pinned lane. */
-    margin-inline-start: auto;
+    margin-left: auto;
+}
+
+/* rtl:ignore */
+:where(.ag-rtl) .ag-grid-scrolling-cells {
+    /* in rtl the vertical scrollbar is on the left; offset the center lane to leave room. */
+    margin-left: var(--ag-pinned-left-sticky-offset, 0);
 }
 
 .ag-grid-pinned-right-cells::after,

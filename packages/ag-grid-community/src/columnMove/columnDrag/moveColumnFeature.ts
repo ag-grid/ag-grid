@@ -114,7 +114,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         fakeEvent = false,
         finished = false
     ): void {
-        const { gos, ctrlsSvc, visibleCols } = this.beans;
+        const { gos, ctrlsSvc } = this.beans;
         const isSuppressMoveWhenDragging = gos.get('suppressMoveWhenColumnDragging');
 
         if (finished && !isSuppressMoveWhenDragging) {
@@ -129,20 +129,24 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             return;
         }
 
-        let sectionX: number;
-        if (this.pinned == null) {
-            sectionX = draggingEvent.x - visibleCols.getLeftStickyColumnContainerWidth();
-        } else {
-            const viewportRect = this.gridBodyCon.eGridViewport.getBoundingClientRect();
-            sectionX = draggingEvent.event.clientX - viewportRect.left;
-            if (this.pinned === 'right') {
-                sectionX -= Math.max(0, viewportRect.width - visibleCols.getRightStickyColumnContainerWidth());
-            }
-        }
+        const isRtl = gos.get('enableRtl');
+
+        // use the physical position of the section sub-container to avoid assumptions about CSS gaps
+        const sectionClass =
+            this.pinned === 'left'
+                ? 'ag-grid-pinned-left-cells'
+                : this.pinned === 'right'
+                  ? 'ag-grid-pinned-right-cells'
+                  : 'ag-grid-scrolling-cells';
+        const eSection = ctrlsSvc
+            .getHeaderRowContainerCtrl()
+            ?.eViewport?.querySelector(`.ag-header-row .${sectionClass}`) as HTMLElement | null;
+        const sectionX = draggingEvent.event.clientX - (eSection?.getBoundingClientRect().left ?? 0);
 
         const mouseX = normaliseX({
             x: sectionX,
             pinned: this.pinned,
+            useHeaderRow: isRtl,
             gos,
             ctrlsSvc,
         });
@@ -151,9 +155,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         // we don't want to scroll the grid this time, it would appear like the table is jumping
         // each time a column is dragged in.
         if (!fromEnter) {
-            // auto-scroll boundaries are computed in full-row coordinates (including pinned sections),
-            // so use raw drag x rather than centre-section-adjusted x used for move index calculations.
-            this.checkCenterForScrolling(draggingEvent.x);
+            this.checkCenterForScrolling(draggingEvent);
         }
 
         if (isSuppressMoveWhenDragging) {
@@ -584,36 +586,38 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         this.lastHighlightedColumn = null;
     }
 
-    private checkCenterForScrolling(xAdjustedForScroll: number): void {
+    private checkCenterForScrolling(draggingEvent: GridDraggingEvent): void {
         if (!this.isCenterContainer) {
             return;
         }
 
-        const { ctrlsSvc, gos, visibleCols } = this.beans;
+        const { gos, visibleCols } = this.beans;
+        const isRtl = gos.get('enableRtl');
+        const viewportRect = this.gridBodyCon.eGridViewport.getBoundingClientRect();
+        const physicalX = draggingEvent.event.clientX - viewportRect.left;
 
-        // scroll if the mouse has gone outside the grid (or just outside the scrollable part if pinning)
-        // putting in 50 buffer, so even if user gets to edge of grid, a scroll will happen
-        const centerCtrl = ctrlsSvc.get('scrollingCenter');
-        const pinnedSectionWidth = gos.get('enableRtl')
+        // physical edges of center section within viewport
+        const physicalLeftPinnedWidth = isRtl
             ? visibleCols.getRightStickyColumnContainerWidth()
             : visibleCols.getLeftStickyColumnContainerWidth();
-        const firstVisiblePixel = centerCtrl.getCenterViewportScrollLeft() + pinnedSectionWidth;
-        const lastVisiblePixel = firstVisiblePixel + centerCtrl.getCenterWidth();
+        const physicalRightPinnedWidth = isRtl
+            ? visibleCols.getLeftStickyColumnContainerWidth()
+            : visibleCols.getRightStickyColumnContainerWidth();
 
-        let needToMoveRight: boolean;
-        let needToMoveLeft: boolean;
+        const nearPhysicalLeft = physicalX < physicalLeftPinnedWidth + SCROLL_GAP_NEEDED_BEFORE_MOVE;
+        const nearPhysicalRight =
+            physicalX > viewportRect.width - physicalRightPinnedWidth - SCROLL_GAP_NEEDED_BEFORE_MOVE;
 
-        if (gos.get('enableRtl')) {
-            needToMoveRight = xAdjustedForScroll < firstVisiblePixel + SCROLL_GAP_NEEDED_BEFORE_MOVE;
-            needToMoveLeft = xAdjustedForScroll > lastVisiblePixel - SCROLL_GAP_NEEDED_BEFORE_MOVE;
+        // in rtl, physical left edge = scroll right, physical right edge = scroll left
+        if (isRtl) {
+            this.needToMoveRight = nearPhysicalLeft;
+            this.needToMoveLeft = nearPhysicalRight;
         } else {
-            needToMoveLeft = xAdjustedForScroll < firstVisiblePixel + SCROLL_GAP_NEEDED_BEFORE_MOVE;
-            needToMoveRight = xAdjustedForScroll > lastVisiblePixel - SCROLL_GAP_NEEDED_BEFORE_MOVE;
+            this.needToMoveLeft = nearPhysicalLeft;
+            this.needToMoveRight = nearPhysicalRight;
         }
-        this.needToMoveRight = needToMoveRight;
-        this.needToMoveLeft = needToMoveLeft;
 
-        if (needToMoveLeft || needToMoveRight) {
+        if (this.needToMoveLeft || this.needToMoveRight) {
             this.ensureIntervalStarted();
         } else {
             this.ensureIntervalCleared();

@@ -408,14 +408,31 @@ export function normaliseX(params: {
         return 0;
     }
 
+    const isRtl = gos.get('enableRtl');
+
+    // section-element coords are already in content-space (the section scrolls with content).
+    // fallback coords are in visual-space and need scroll padding added later.
+    let usedSectionElement = false;
+
     if (fromKeyboard) {
-        x -= eViewport.getBoundingClientRect().left;
-        if (visibleCols) {
-            x -= getPinnedSectionOffset(pinned, visibleCols, eViewport.clientWidth);
+        // use the physical position of the section sub-container to avoid assumptions about CSS gaps
+        const sectionClass =
+            pinned === 'left'
+                ? 'ag-grid-pinned-left-cells'
+                : pinned === 'right'
+                  ? 'ag-grid-pinned-right-cells'
+                  : 'ag-grid-scrolling-cells';
+        const eSection = eViewport.querySelector(`.ag-header-row .${sectionClass}`) as HTMLElement | null;
+        if (eSection) {
+            x -= eSection.getBoundingClientRect().left;
+            usedSectionElement = true;
+        } else {
+            x -= eViewport.getBoundingClientRect().left;
+            if (visibleCols) {
+                x -= getPinnedSectionOffset(pinned, visibleCols, eViewport.clientWidth, isRtl);
+            }
         }
     }
-
-    const isRtl = gos.get('enableRtl');
     // flip the coordinate if doing RTL
     if (isRtl) {
         if (useHeaderRow) {
@@ -424,9 +441,9 @@ export function normaliseX(params: {
         x = eViewport.clientWidth - x;
     }
 
-    // keyboard-derived x is viewport-relative, so it still needs scroll padding.
-    // drag-derived x is already in scroll-content coordinates in the flattened layout.
-    if (fromKeyboard && pinned == null && !skipScrollPadding) {
+    // fallback path produces visual-space coords that need scroll padding.
+    // section-element path already produces content-space coords — no scroll adjustment needed.
+    if (!usedSectionElement && fromKeyboard && pinned == null && !skipScrollPadding) {
         x += ctrlsSvc.get('scrollingCenter').getCenterViewportScrollLeft();
     }
 
@@ -436,16 +453,26 @@ export function normaliseX(params: {
 function getPinnedSectionOffset(
     pinned: ColumnPinnedType | undefined,
     visibleCols: VisibleColsService,
-    viewportWidth: number
+    viewportWidth: number,
+    isRtl: boolean
 ): number {
+    if (isRtl) {
+        // rtl: right-pinned is physically left, left-pinned is physically right
+        if (pinned === 'right') {
+            return 0;
+        }
+        if (pinned === 'left') {
+            return Math.max(0, viewportWidth - visibleCols.getLeftStickyColumnContainerWidth());
+        }
+        return visibleCols.getRightStickyColumnContainerWidth();
+    }
+
     if (pinned === 'left') {
         return 0;
     }
-
     if (pinned === 'right') {
         return Math.max(0, viewportWidth - visibleCols.getRightStickyColumnContainerWidth());
     }
-
     return visibleCols.getLeftStickyColumnContainerWidth();
 }
 

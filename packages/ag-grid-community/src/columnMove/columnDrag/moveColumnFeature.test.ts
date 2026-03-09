@@ -3,13 +3,42 @@ import type { GridOptionsService } from '../../gridOptionsService';
 import { MoveColumnFeature } from './moveColumnFeature';
 
 describe('MoveColumnFeature', () => {
-    function createFeature(pinned: 'left' | 'right' | null) {
+    function createFeature(pinned: 'left' | 'right' | null, rtl = false) {
         const feature = new MoveColumnFeature(pinned) as any;
         const eViewport = document.createElement('div');
         Object.defineProperty(eViewport, 'clientWidth', {
             configurable: true,
             get: () => 1000,
         });
+        const eHeaderRow = document.createElement('div');
+        eHeaderRow.classList.add('ag-header-row');
+        Object.defineProperty(eHeaderRow, 'clientWidth', {
+            configurable: true,
+            get: () => 1000,
+        });
+        eViewport.appendChild(eHeaderRow);
+
+        // Section sub-containers inside the header row
+        // Physical layout: viewport starts at x=100, width=1000
+        // LTR: [pinnedLeft:100..150][scrolling:150..1050][pinnedRight:1050..1100]
+        // RTL: [pinnedRight:100..150][scrolling:150..1050][pinnedLeft:1050..1100]
+        const pinnedLeftCells = document.createElement('div');
+        pinnedLeftCells.classList.add('ag-grid-pinned-left-cells');
+        const scrollingCells = document.createElement('div');
+        scrollingCells.classList.add('ag-grid-scrolling-cells');
+        const pinnedRightCells = document.createElement('div');
+        pinnedRightCells.classList.add('ag-grid-pinned-right-cells');
+        eHeaderRow.append(pinnedLeftCells, scrollingCells, pinnedRightCells);
+
+        if (rtl) {
+            pinnedRightCells.getBoundingClientRect = () => ({ left: 100, width: 50 }) as DOMRect;
+            scrollingCells.getBoundingClientRect = () => ({ left: 150, width: 900 }) as DOMRect;
+            pinnedLeftCells.getBoundingClientRect = () => ({ left: 1050, width: 50 }) as DOMRect;
+        } else {
+            pinnedLeftCells.getBoundingClientRect = () => ({ left: 100, width: 50 }) as DOMRect;
+            scrollingCells.getBoundingClientRect = () => ({ left: 150, width: 900 }) as DOMRect;
+            pinnedRightCells.getBoundingClientRect = () => ({ left: 1050, width: 50 }) as DOMRect;
+        }
 
         const eGridViewport = document.createElement('div');
         eGridViewport.getBoundingClientRect = () =>
@@ -22,7 +51,7 @@ describe('MoveColumnFeature', () => {
                         return true;
                     }
                     if (key === 'enableRtl') {
-                        return false;
+                        return rtl;
                     }
                     return undefined;
                 },
@@ -48,7 +77,7 @@ describe('MoveColumnFeature', () => {
         return feature;
     }
 
-    test('uses raw drag x for center auto-scroll checks', () => {
+    test('passes dragging event to center auto-scroll checks', () => {
         const feature = createFeature(null);
 
         const draggingEvent = {
@@ -57,11 +86,13 @@ describe('MoveColumnFeature', () => {
             hDirection: 'right',
             vDirection: null,
             dragItem: { columns: [] },
+            event: { clientX: 877 },
         } as unknown as GridDraggingEvent;
 
         feature.onDragging(draggingEvent, false, false, false);
 
-        expect(feature.checkCenterForScrolling).toHaveBeenCalledWith(777);
+        // sectionX = clientX(877) - scrollingCells.rect.left(150) = 727
+        expect(feature.checkCenterForScrolling).toHaveBeenCalledWith(draggingEvent);
         expect(feature.handleColumnDragWhileSuppressingMovement).toHaveBeenCalledWith(
             draggingEvent,
             false,
@@ -75,17 +106,17 @@ describe('MoveColumnFeature', () => {
         const feature = createFeature('left');
 
         const draggingEvent = {
-            x: 500, // content-relative (includes scroll offset) — should be ignored for pinned
+            x: 500,
             y: 0,
             hDirection: 'right',
             vDirection: null,
             dragItem: { columns: [] },
-            event: { clientX: 130 }, // viewport left is 100, so viewport-relative = 30
+            event: { clientX: 130 },
         } as unknown as GridDraggingEvent;
 
         feature.onDragging(draggingEvent, false, false, false);
 
-        // sectionX = clientX(130) - viewportRect.left(100) = 30
+        // sectionX = clientX(130) - pinnedLeftCells.rect.left(100) = 30
         expect(feature.handleColumnDragWhileSuppressingMovement).toHaveBeenCalledWith(
             draggingEvent,
             false,
@@ -104,13 +135,12 @@ describe('MoveColumnFeature', () => {
             hDirection: 'left',
             vDirection: null,
             dragItem: { columns: [] },
-            event: { clientX: 1080 }, // viewport left=100, width=1000, rightPinned=50
+            event: { clientX: 1080 },
         } as unknown as GridDraggingEvent;
 
         feature.onDragging(draggingEvent, false, false, false);
 
-        // sectionX = clientX(1080) - viewportRect.left(100) - max(0, 1000 - 50)
-        //          = 980 - 950 = 30
+        // sectionX = clientX(1080) - pinnedRightCells.rect.left(1050) = 30
         expect(feature.handleColumnDragWhileSuppressingMovement).toHaveBeenCalledWith(
             draggingEvent,
             false,
@@ -118,5 +148,82 @@ describe('MoveColumnFeature', () => {
             30,
             false
         );
+    });
+
+    describe('RTL mode', () => {
+        test('rtl center sectionX subtracts right pinned width instead of left', () => {
+            const feature = createFeature(null, true);
+
+            const draggingEvent = {
+                x: 777,
+                y: 0,
+                hDirection: 'left',
+                vDirection: null,
+                dragItem: { columns: [] },
+                event: { clientX: 877 },
+            } as unknown as GridDraggingEvent;
+
+            feature.onDragging(draggingEvent, false, false, false);
+
+            // sectionX = clientX(877) - scrollingCells.rect.left(150) = 727
+            // normaliseX flips: 1000 - 727 = 273
+            expect(feature.handleColumnDragWhileSuppressingMovement).toHaveBeenCalledWith(
+                draggingEvent,
+                false,
+                false,
+                273,
+                false
+            );
+        });
+
+        test('rtl pinned-left sectionX subtracts offset (physically right)', () => {
+            const feature = createFeature('left', true);
+
+            const draggingEvent = {
+                x: 500,
+                y: 0,
+                hDirection: 'left',
+                vDirection: null,
+                dragItem: { columns: [] },
+                event: { clientX: 1080 },
+            } as unknown as GridDraggingEvent;
+
+            feature.onDragging(draggingEvent, false, false, false);
+
+            // sectionX = clientX(1080) - pinnedLeftCells.rect.left(1050) = 30
+            // normaliseX flips: 1000 - 30 = 970
+            expect(feature.handleColumnDragWhileSuppressingMovement).toHaveBeenCalledWith(
+                draggingEvent,
+                false,
+                false,
+                970,
+                false
+            );
+        });
+
+        test('rtl pinned-right sectionX uses viewport-relative (physically left)', () => {
+            const feature = createFeature('right', true);
+
+            const draggingEvent = {
+                x: 500,
+                y: 0,
+                hDirection: 'right',
+                vDirection: null,
+                dragItem: { columns: [] },
+                event: { clientX: 130 },
+            } as unknown as GridDraggingEvent;
+
+            feature.onDragging(draggingEvent, false, false, false);
+
+            // sectionX = clientX(130) - pinnedRightCells.rect.left(100) = 30
+            // normaliseX flips: 1000 - 30 = 970
+            expect(feature.handleColumnDragWhileSuppressingMovement).toHaveBeenCalledWith(
+                draggingEvent,
+                false,
+                false,
+                970,
+                false
+            );
+        });
     });
 });
