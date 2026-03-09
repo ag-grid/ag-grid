@@ -1,4 +1,4 @@
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { CellEditingStartedEvent, CellEditingStoppedEvent, ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     CustomEditorModule,
@@ -8,7 +8,7 @@ import {
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { BatchEditModule, RichSelectModule } from 'ag-grid-enterprise';
+import { BatchEditModule, ClipboardModule, RichSelectModule } from 'ag-grid-enterprise';
 
 import { getData } from './data';
 import { GenderRenderer } from './genderRenderer_typescript';
@@ -20,6 +20,7 @@ ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     RichSelectModule,
     BatchEditModule,
+    ClipboardModule,
     NumberEditorModule,
     TextEditorModule,
     CustomEditorModule,
@@ -67,7 +68,23 @@ const gridOptions: GridOptions = {
         flex: 1,
         minWidth: 100,
     },
+    onCellEditingStarted: (event: CellEditingStartedEvent) => {
+        updateEditCount(event.api);
+    },
+    onCellEditingStopped: (event: CellEditingStoppedEvent) => {
+        updateEditCount(event.api);
+    },
 };
+
+function updateEditCount(api: GridApi) {
+    if (api.isBatchEditing()) {
+        const pendingEditCount = api.getEditingCells().length;
+        const el = document.querySelector<HTMLElement>('#batchStatusValue');
+        if (el) {
+            el.textContent = `Active (${pendingEditCount} edit${pendingEditCount !== 1 ? 's' : ''})`;
+        }
+    }
+}
 
 function getEditingCells() {
     const cells = gridApi!.getEditingCells();
@@ -75,33 +92,21 @@ function getEditingCells() {
 }
 
 function startBatchEdit() {
-    console.log('Starting batch edit');
     gridApi!.startBatchEdit();
+    const el = document.querySelector<HTMLElement>('#batchStatusValue');
+    if (el) el.textContent = 'Active (0 edits)';
 }
 
 function commitBatchEdit() {
-    console.log('Committing batch edit');
     gridApi!.commitBatchEdit();
+    const el = document.querySelector<HTMLElement>('#batchStatusValue');
+    if (el) el.textContent = 'Inactive';
 }
 
 function cancelBatchEdit() {
-    console.log('Cancelling batch edit');
     gridApi!.cancelBatchEdit();
-}
-
-function startEdit() {
-    gridApi!.startEditingCell({
-        rowIndex: 0,
-        colKey: 'first_name',
-    });
-}
-
-function cancelEdit() {
-    gridApi!.stopEditing(true);
-}
-
-function stopEdit() {
-    gridApi!.stopEditing();
+    const el = document.querySelector<HTMLElement>('#batchStatusValue');
+    if (el) el.textContent = 'Inactive';
 }
 
 // setup the grid after the page has finished loading

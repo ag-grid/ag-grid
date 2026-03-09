@@ -91,7 +91,7 @@ export function formatRowColumns(
             if (batchDiffers) {
                 result += '⏳' + serialiseValue(batchValue) + ' ';
             }
-            result += serialiseValue(dataValue ?? value);
+            result += serialiseValue(dataValue !== undefined ? dataValue : value);
         } else {
             // Use default resolution (no from param) to decide if column should be printed
             const value = getCellDisplayValue(gridRows, row, column);

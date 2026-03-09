@@ -15,7 +15,11 @@ const DEFAULT_VALUES_PAGE_LOAD_THRESHOLD = 10;
 type RichSelectValuesPageResult<TValue> = { values: TValue[]; lastRow?: number; cursor?: string | null };
 type RichSelectAsyncMode = { isValuesPaged: boolean; isFullAsync: boolean };
 
-export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> extends AgAbstractCellEditor {
+export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> extends AgAbstractCellEditor<
+    any,
+    TValue,
+    TValue | TValue[]
+> {
     protected override params: RichCellEditorParams<TData, TValue>;
     private focusAfterAttached: boolean;
     protected eEditor: AgRichSelect<TValue>;
@@ -405,6 +409,11 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
 
     public focusIn(): void {
         this.eEditor.getFocusableElement().focus();
+    }
+
+    public agSetEditValue(value: TValue | null | undefined): void {
+        this.params.value = value;
+        this.eEditor.setValue(value ?? null, true);
     }
 
     public getValue(): any {

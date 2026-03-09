@@ -85,7 +85,7 @@ describe('Cell Editing: delete and range clearing', () => {
 
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 0,
-            cellEditingStopped: 1,
+            cellEditingStopped: 0,
             cellValueChanged: valueSetterCalls,
             rowValueChanged: 0,
             cellEditRequest: 0,
@@ -253,7 +253,7 @@ describe('Cell Editing: delete and range clearing', () => {
 
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 0,
-            cellEditingStopped: batchEnabled ? 5 : 0,
+            cellEditingStopped: 0,
             cellValueChanged: valueSetterCalls,
             rowValueChanged: 0,
             cellEditRequest: 0,
@@ -351,7 +351,7 @@ describe('Cell Editing: delete and range clearing', () => {
 
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 0,
-            cellEditingStopped: batchEnabled ? 14 : 0,
+            cellEditingStopped: 0,
             cellValueChanged: valueSetterCalls,
             rowValueChanged: 0,
             cellEditRequest: 0,

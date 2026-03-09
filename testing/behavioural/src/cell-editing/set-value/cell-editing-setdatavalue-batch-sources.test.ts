@@ -1,19 +1,40 @@
-import { TextEditorModule, setupAgTestIds } from 'ag-grid-community';
+import '@testing-library/jest-dom';
+
+import {
+    CheckboxEditorModule,
+    DateEditorModule,
+    LargeTextEditorModule,
+    NumberEditorModule,
+    RenderApiModule,
+    SelectEditorModule,
+    TextEditorModule,
+    setupAgTestIds,
+} from 'ag-grid-community';
 import { BatchEditModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 
 /**
- * Tests for setDataValue behavior during batch editing.
+ * Tests for setDataValue behaviour during batch editing — source routing.
  *
- * Key behavior:
- * - Sources in SET_DATA_SOURCE_AS_API ('paste', 'rangeSvc', 'cellClear', 'redo', 'undo') create pending batch values
- * - Other sources (undefined, 'ui', 'api', etc.) bypass batch mode and write directly to data
+ * Key behaviour after fix:
+ * - All sources (except 'data') create pending batch values when batch mode is active
+ * - 'data' source always writes directly to data, bypassing batch mode entirely
+ * - 'batch' source writes to batch pending value when batch is active, otherwise directly to data
  */
-describe('Cell Editing: setDataValue in Batch Mode', () => {
+describe('Cell Editing: setDataValue in Batch Mode — sources', () => {
     const gridMgr = new TestGridsManager({
         includeDefaultModules: true,
-        modules: [BatchEditModule, TextEditorModule],
+        modules: [
+            BatchEditModule,
+            TextEditorModule,
+            NumberEditorModule,
+            DateEditorModule,
+            SelectEditorModule,
+            CheckboxEditorModule,
+            LargeTextEditorModule,
+            RenderApiModule,
+        ],
     });
 
     beforeAll(() => {
@@ -24,14 +45,24 @@ describe('Cell Editing: setDataValue in Batch Mode', () => {
         gridMgr.reset();
     });
 
-    // Sources that create pending batch values (SET_DATA_SOURCE_AS_API)
-    const batchSources = ['paste', 'rangeSvc', 'cellClear', 'undo', 'redo'] as const;
-
-    // Sources that bypass batch and write directly to data
-    const bypassSources = [undefined, 'ui', 'api', 'edit', 'fillHandle', 'bulk'] as const;
+    // All sources that create pending batch values during batch mode
+    const allBatchSources = [
+        undefined,
+        'ui',
+        'api',
+        'edit',
+        'fillHandle',
+        'bulk',
+        'paste',
+        'rangeSvc',
+        'cellClear',
+        'undo',
+        'redo',
+        'batch',
+    ] as const;
 
     describe('sources that create pending batch values', () => {
-        test.each(batchSources)("'%s' creates pending value during batch mode", async (eventSource) => {
+        test.each(allBatchSources)("'%s' creates pending value during batch mode", async (eventSource) => {
             const api = await gridMgr.createGridAndWait('myGrid', {
                 columnDefs: [{ field: 'a', editable: true }],
                 rowData: [{ id: '0', a: 'initial' }],
@@ -39,9 +70,9 @@ describe('Cell Editing: setDataValue in Batch Mode', () => {
             });
 
             await new GridRows(api, 'before batch edit').check(`
-                ROOT id:ROOT_NODE_ID
-                └── LEAF id:0 a:"initial"
-            `);
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0 a:"initial"
+                `);
 
             api.startBatchEdit();
             await asyncSetTimeout(1);
@@ -50,10 +81,10 @@ describe('Cell Editing: setDataValue in Batch Mode', () => {
             const result = rowNode.setDataValue('a', 'changed', eventSource);
 
             // GridRows shows rendered values (pending in batch mode)
-            await new GridRows(api, `after ${eventSource} setDataValue`).check(`
-                ROOT id:ROOT_NODE_ID
-                └── LEAF ⏳ id:0 a:⏳"changed" "initial"
-            `);
+            await new GridRows(api, `after ${eventSource ?? 'undefined'} setDataValue`).check(`
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF ⏳ id:0 a:⏳"changed" "initial"
+                `);
 
             expect(result).toBe(true);
             expect(rowNode.data.a).toBe('initial'); // Data unchanged
@@ -66,7 +97,7 @@ describe('Cell Editing: setDataValue in Batch Mode', () => {
             api.cancelBatchEdit();
         });
 
-        test.each(batchSources)("'%s' pending value is committed on commitBatchEdit", async (eventSource) => {
+        test.each(allBatchSources)("'%s' pending value is committed on commitBatchEdit", async (eventSource) => {
             const api = await gridMgr.createGridAndWait('myGrid', {
                 columnDefs: [{ field: 'a', editable: true }],
                 rowData: [{ id: '0', a: 'initial' }],
@@ -80,22 +111,22 @@ describe('Cell Editing: setDataValue in Batch Mode', () => {
             rowNode.setDataValue('a', 'committed', eventSource);
 
             await new GridRows(api, 'before commit').check(`
-                ROOT id:ROOT_NODE_ID
-                └── LEAF ⏳ id:0 a:⏳"committed" "initial"
-            `);
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF ⏳ id:0 a:⏳"committed" "initial"
+                `);
 
             api.commitBatchEdit();
             await asyncSetTimeout(1);
 
             await new GridRows(api, 'after commit').check(`
-                ROOT id:ROOT_NODE_ID
-                └── LEAF id:0 a:"committed"
-            `);
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0 a:"committed"
+                `);
 
             expect(rowNode.data.a).toBe('committed');
         });
 
-        test.each(batchSources)("'%s' pending value is reverted on cancelBatchEdit", async (eventSource) => {
+        test.each(allBatchSources)("'%s' pending value is reverted on cancelBatchEdit", async (eventSource) => {
             const api = await gridMgr.createGridAndWait('myGrid', {
                 columnDefs: [{ field: 'a', editable: true }],
                 rowData: [{ id: '0', a: 'initial' }],
@@ -109,24 +140,24 @@ describe('Cell Editing: setDataValue in Batch Mode', () => {
             rowNode.setDataValue('a', 'pending', eventSource);
 
             await new GridRows(api, 'before cancel').check(`
-                ROOT id:ROOT_NODE_ID
-                └── LEAF ⏳ id:0 a:⏳"pending" "initial"
-            `);
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF ⏳ id:0 a:⏳"pending" "initial"
+                `);
 
             api.cancelBatchEdit();
             await asyncSetTimeout(1);
 
             await new GridRows(api, 'after cancel').check(`
-                ROOT id:ROOT_NODE_ID
-                └── LEAF id:0 a:"initial"
-            `);
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0 a:"initial"
+                `);
 
             expect(rowNode.data.a).toBe('initial');
         });
     });
 
-    describe('sources that bypass batch mode', () => {
-        test.each(bypassSources)("'%s' writes directly to data during batch mode", async (eventSource) => {
+    describe("'data' source bypasses batch mode", () => {
+        test("'data' writes directly to data during batch mode", async () => {
             const api = await gridMgr.createGridAndWait('myGrid', {
                 columnDefs: [{ field: 'a', editable: true }],
                 rowData: [{ id: '0', a: 'initial' }],
@@ -142,27 +173,51 @@ describe('Cell Editing: setDataValue in Batch Mode', () => {
             await asyncSetTimeout(1);
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
-            const result = rowNode.setDataValue('a', 'changed', eventSource);
+            const result = rowNode.setDataValue('a', 'changed', 'data');
 
-            await new GridRows(api, `after ${eventSource ?? 'undefined'} setDataValue`).check(`
+            await new GridRows(api, 'after data setDataValue').check(`
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:0 a:"changed"
             `);
 
             expect(result).toBe(true);
             expect(rowNode.data.a).toBe('changed'); // Written directly to data
-            expect(rowNode.getDataValue('a')).toBe('changed'); // getDataValue returns committed data
-            expect(api.getCellValue({ rowNode, colKey: 'a' })).toBe('changed'); // Default
+            expect(rowNode.getDataValue('a')).toBe('changed');
+            expect(api.getCellValue({ rowNode, colKey: 'a' })).toBe('changed');
             expect(api.getCellValue({ rowNode, colKey: 'a', from: 'batch' })).toBe('changed');
             expect(api.getCellValue({ rowNode, colKey: 'a', from: 'data' })).toBe('changed');
             expect(api.getCellValue({ rowNode, colKey: 'a', from: 'edit' })).toBe('changed');
 
             api.cancelBatchEdit();
         });
+
+        test("'data' writes directly to data when not in batch mode", async () => {
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [{ field: 'a', editable: true }],
+                rowData: [{ id: '0', a: 'initial' }],
+                getRowId: (params) => params.data.id,
+            });
+
+            const rowNode = api.getDisplayedRowAtIndex(0)!;
+            const result = rowNode.setDataValue('a', 'changed', 'data');
+
+            await new GridRows(api, 'after data setDataValue').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"changed"
+            `);
+
+            expect(result).toBe(true);
+            expect(rowNode.data.a).toBe('changed');
+            expect(rowNode.getDataValue('a')).toBe('changed');
+            expect(api.getCellValue({ rowNode, colKey: 'a' })).toBe('changed');
+            expect(api.getCellValue({ rowNode, colKey: 'a', from: 'data' })).toBe('changed');
+        });
     });
 
     describe('behavior outside batch mode', () => {
-        test.each(bypassSources)("'%s' updates data directly when not in batch mode", async (eventSource) => {
+        const outsideBatchSources = [undefined, 'ui', 'api', 'edit', 'batch'] as const;
+
+        test.each(outsideBatchSources)("'%s' updates data directly when not in batch mode", async (eventSource) => {
             const api = await gridMgr.createGridAndWait('myGrid', {
                 columnDefs: [{ field: 'a', editable: true }],
                 rowData: [{ id: '0', a: 'initial' }],
@@ -170,17 +225,17 @@ describe('Cell Editing: setDataValue in Batch Mode', () => {
             });
 
             await new GridRows(api, 'before setDataValue').check(`
-                ROOT id:ROOT_NODE_ID
-                └── LEAF id:0 a:"initial"
-            `);
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0 a:"initial"
+                `);
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
             const result = rowNode.setDataValue('a', 'changed', eventSource);
 
             await new GridRows(api, `after ${eventSource ?? 'undefined'} setDataValue`).check(`
-                ROOT id:ROOT_NODE_ID
-                └── LEAF id:0 a:"changed"
-            `);
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0 a:"changed"
+                `);
 
             expect(result).toBe(true);
             expect(rowNode.data.a).toBe('changed');
@@ -269,6 +324,93 @@ describe('Cell Editing: setDataValue in Batch Mode', () => {
             expect(rowNode.getDataValue('b')).toBe('b-changed');
             expect(api.getCellValue({ rowNode, colKey: 'a' })).toBe('a-changed');
             expect(api.getCellValue({ rowNode, colKey: 'b' })).toBe('b-changed');
+        });
+
+        test('default setDataValue stages as pending when no editor is open (TC1)', async () => {
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [
+                    { field: 'athlete', editable: true },
+                    { field: 'age', editable: true },
+                ],
+                rowData: [{ id: '0', athlete: 'Michael Phelps', age: 23 }],
+                getRowId: (params) => params.data.id,
+            });
+
+            // Start batch and immediately call setDataValue without opening any editor
+            api.startBatchEdit();
+            await asyncSetTimeout(1);
+
+            const rowNode = api.getDisplayedRowAtIndex(0)!;
+            rowNode.setDataValue('age', 10);
+
+            // Value should be staged as pending, NOT written to data
+            await new GridRows(api, 'after setDataValue in batch without editor').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF ⏳ id:0 athlete:"Michael Phelps" age:⏳10 23
+            `);
+
+            expect(rowNode.data.age).toBe(23); // Data unchanged
+            expect(api.getCellValue({ rowNode, colKey: 'age', from: 'batch' })).toBe(10); // Pending value
+            expect(api.getCellValue({ rowNode, colKey: 'age', from: 'data' })).toBe(23); // Data unchanged
+
+            api.cancelBatchEdit();
+            await asyncSetTimeout(1);
+
+            // After cancel, value should be reverted
+            expect(rowNode.data.age).toBe(23);
+            await new GridRows(api, 'after cancel').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 athlete:"Michael Phelps" age:23
+            `);
+        });
+
+        test('mass update via setDataValue stages all rows as pending (TC2)', async () => {
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [
+                    { field: 'athlete', editable: true },
+                    { field: 'age', editable: true },
+                ],
+                rowData: [
+                    { id: '0', athlete: 'Michael Phelps', age: 23 },
+                    { id: '1', athlete: 'Natalie Coughlin', age: 25 },
+                    { id: '2', athlete: 'Aleksey Nemov', age: 24 },
+                ],
+                getRowId: (params) => params.data.id,
+            });
+
+            api.startBatchEdit();
+            await asyncSetTimeout(1);
+
+            // Mass update: call setDataValue on multiple rows without opening any editor
+            const row0 = api.getDisplayedRowAtIndex(0)!;
+            const row1 = api.getDisplayedRowAtIndex(1)!;
+            row0.setDataValue('athlete', 'Mass Updated');
+            row1.setDataValue('athlete', 'Mass Updated');
+
+            // Both rows should have pending values, NOT written to data
+            await new GridRows(api, 'after mass update').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF ⏳ id:0 athlete:⏳"Mass Updated" "Michael Phelps" age:23
+                ├── LEAF ⏳ id:1 athlete:⏳"Mass Updated" "Natalie Coughlin" age:25
+                └── LEAF id:2 athlete:"Aleksey Nemov" age:24
+            `);
+
+            expect(row0.data.athlete).toBe('Michael Phelps'); // Data unchanged
+            expect(row1.data.athlete).toBe('Natalie Coughlin'); // Data unchanged
+
+            // Commit batch: values should now be written to data
+            api.commitBatchEdit();
+            await asyncSetTimeout(1);
+
+            await new GridRows(api, 'after commit').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 athlete:"Mass Updated" age:23
+                ├── LEAF id:1 athlete:"Mass Updated" age:25
+                └── LEAF id:2 athlete:"Aleksey Nemov" age:24
+            `);
+
+            expect(row0.data.athlete).toBe('Mass Updated');
+            expect(row1.data.athlete).toBe('Mass Updated');
         });
     });
 });

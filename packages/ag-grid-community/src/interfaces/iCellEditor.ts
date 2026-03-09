@@ -52,6 +52,18 @@ export interface BaseCellEditor {
     getValidationErrors?(): string[] | null;
 }
 
+/**
+ * Internal protocol implemented by built-in cell editors that support in-place value
+ * updates (via `setDataValue(..., 'edit')`). Not part of the public `ICellEditor` API.
+ * Custom editors opt in by implementing `agSetEditValue`; without it the grid falls
+ * back to `refresh()` or editor recreation.
+ *
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export interface AgBaseCellEditor<TValue = any> extends ICellEditor<TValue> {
+    agSetEditValue(value: TValue | null | undefined): void;
+}
+
 export interface ICellEditor<TValue = any> extends BaseCellEditor {
     /**
      * Mandatory - Return the final value. Called by the grid once after editing is complete.

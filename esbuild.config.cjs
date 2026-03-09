@@ -154,7 +154,9 @@ if (process.env.NX_TASK_TARGET_TARGET?.endsWith(':umd')) {
     };
 }
 
-plugins.push(postBuildMinificationPlugin);
+if (process.env.NX_TASK_TARGET_CONFIGURATION !== 'watch') {
+    plugins.push(postBuildMinificationPlugin);
+}
 
 /** @type {import('esbuild').BuildOptions} */
 const options = {
