@@ -80,6 +80,52 @@ const columnDefs: ColDef[] = [
 
 let gridApi: GridApi<IOlympicData>;
 
+function logToolPanelDebugState() {
+    console.log('grid state', gridApi.getState());
+}
+
+function installToolPanelDebugLogging() {
+    const toolPanel = gridApi.getToolPanelInstance('columns') as any;
+    const editStrategy = toolPanel?.editStrategy as any;
+
+    if (!editStrategy) {
+        window.setTimeout(installToolPanelDebugLogging, 100);
+        return;
+    }
+
+    if (editStrategy.__debugLoggingInstalled) {
+        return;
+    }
+
+    editStrategy.__debugLoggingInstalled = true;
+
+    const methodsThatChangeGridState = [
+        'applyColumnState',
+        'moveColumns',
+        'setColumnsVisible',
+        'setRowGroupColumns',
+        'setValueColumns',
+        'setColumnAggFunc',
+        'setPivotColumns',
+        'setPivotMode',
+        'progressSortFromEvent',
+    ] as const;
+
+    for (const methodName of methodsThatChangeGridState) {
+        const original = editStrategy[methodName];
+        if (typeof original !== 'function') {
+            continue;
+        }
+
+        editStrategy[methodName] = (...args: any[]) => {
+            const result = original.apply(editStrategy, args);
+            console.log(methodName);
+            logToolPanelDebugState();
+            return result;
+        };
+    }
+}
+
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
     defaultColDef: {
@@ -101,12 +147,15 @@ const gridOptions: GridOptions<IOlympicData> = {
 
 function setReadOnly() {
     gridApi!.setGridOption('functionsReadOnly', (document.getElementById('read-only') as HTMLInputElement).checked);
+    console.log('setReadOnly');
+    logToolPanelDebugState();
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
+    installToolPanelDebugLogging();
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then((response) => response.json())

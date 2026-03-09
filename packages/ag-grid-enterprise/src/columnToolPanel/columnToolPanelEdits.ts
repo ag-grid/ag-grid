@@ -4,11 +4,12 @@ import type {
     ColumnEventType,
     ColumnState,
     ColumnToolPanelEditStrategyBean,
+    GridState,
     IAggFunc,
     NamedBean,
     SortDef,
 } from 'ag-grid-community';
-import { BeanStub, _applyColumnState } from 'ag-grid-community';
+import { BeanStub, _applyColumnState, _getColumnState, convertColumnState } from 'ag-grid-community';
 
 export type ColumnToolPanelEditParams = { deferApply?: boolean };
 export const COLUMN_TOOL_PANEL_SYNCHRONOUS_EDIT_BEAN_NAME = 'colToolPanelSynchronousEdit';
@@ -28,11 +29,7 @@ export interface BaseColumnToolPanelEdits extends NamedBean {
     getRowGroupColumns(): AgColumn[];
     setValueColumns(columns: AgColumn[], eventType: ColumnEventType): void;
     getValueColumns(): AgColumn[];
-    setColumnAggFunc(
-        column: AgColumn,
-        aggFunc: string | IAggFunc | null | undefined,
-        eventType: ColumnEventType
-    ): void;
+    setColumnAggFunc(column: AgColumn, aggFunc: string | IAggFunc | null | undefined, eventType: ColumnEventType): void;
     getColumnAggFunc(column: AgColumn): string | IAggFunc | null | undefined;
     setPivotColumns(columns: AgColumn[], eventType: ColumnEventType): void;
     getPivotColumns(): AgColumn[];
@@ -42,6 +39,35 @@ export interface BaseColumnToolPanelEdits extends NamedBean {
     progressSortFromEvent(column: AgColumn, event: MouseEvent | KeyboardEvent): void;
     getSortDef(column: AgColumn): SortDef | null;
 }
+
+type Seq = { seq: number; eventType: ColumnEventType };
+type ColIdsDraft = { colIds: string[] } & Seq;
+type ColumnStateDraft = { patches: Map<string, ColumnState> } & Seq;
+type PivotModeDraft = { pivotMode: boolean } & Seq;
+type SortDraft = { sortDefsByColId: Map<string, SortDef | null>; baselineCleared: boolean } & Seq;
+type AggFuncsDraft = { values: Map<string, string | IAggFunc | null | undefined> } & Seq;
+
+type DeferredState = {
+    columnState?: ColumnStateDraft;
+    columnOrder?: ColIdsDraft;
+    rowGroup?: ColIdsDraft;
+    aggregation?: ColIdsDraft;
+    pivot?: ColIdsDraft;
+    pivotMode?: PivotModeDraft;
+    sort?: SortDraft;
+    aggFuncs?: AggFuncsDraft;
+};
+
+type CommitOperation =
+    | ({ type: 'columnState' } & ColumnStateDraft)
+    | ({ type: 'columnOrder' } & ColIdsDraft)
+    | ({ type: 'rowGroup' } & ColIdsDraft)
+    | ({ type: 'aggregation' } & ColIdsDraft)
+    | ({ type: 'pivot' } & ColIdsDraft)
+    | ({ type: 'pivotMode' } & PivotModeDraft)
+    | ({ type: 'sort' } & SortDraft)
+    | ({ type: 'aggFuncs' } & AggFuncsDraft);
+type CommitOperations = CommitOperation[];
 
 export class ColumnToolPanelSynchronousEdit extends BeanStub implements BaseColumnToolPanelEdits {
     beanName = COLUMN_TOOL_PANEL_SYNCHRONOUS_EDIT_BEAN_NAME as ColumnToolPanelEditStrategyBean;
@@ -123,7 +149,7 @@ export class ColumnToolPanelSynchronousEdit extends BeanStub implements BaseColu
     }
 
     public isColumnSelectedInPivotModeToolPanel(column: AgColumn): boolean {
-        return column.isValueActive() || column.isPivotActive() || column.isRowGroupActive();
+        return column.isAnyFunctionActive();
     }
 
     public getPivotMode(): boolean {
@@ -138,65 +164,22 @@ export class ColumnToolPanelSynchronousEdit extends BeanStub implements BaseColu
 export class ColumnToolPanelDeferredEdit extends BeanStub implements BaseColumnToolPanelEdits {
     beanName = COLUMN_TOOL_PANEL_DEFERRED_EDIT_BEAN_NAME as ColumnToolPanelEditStrategyBean;
 
-    private state = this.getDefaultState();
+    private state = createDefaultState();
     private sequence = 0;
-
-    private getDefaultState() {
-        return {
-            // Draft is intentionally empty. Live grid state remains the baseline via the getter fallbacks.
-            columnStateByColId: new Map<string, ColumnState>(),
-            columnStateSeq: 0,
-            columnStateEventType: 'toolPanelUi' as ColumnEventType,
-            columnOrder: undefined as { orderedColIds: string[]; eventType: ColumnEventType; seq: number } | undefined,
-            rowGroup: undefined as { groupColIds: string[]; eventType: ColumnEventType; seq: number } | undefined,
-            aggregation: undefined as { valueColIds: string[]; eventType: ColumnEventType; seq: number } | undefined,
-            pivot: undefined as { pivotColIds: string[]; eventType: ColumnEventType; seq: number } | undefined,
-            pivotMode: undefined as { pivotMode: boolean; eventType: ColumnEventType; seq: number } | undefined,
-            sort: undefined as
-                | {
-                      sortDefsByColId: Map<string, SortDef | null>;
-                      baselineCleared: boolean;
-                      seq: number;
-                  }
-                | undefined,
-            draftAggFuncsByColId: new Map<string, string | IAggFunc | null | undefined>(),
-        };
-    }
-
-    public postConstruct(): void {
-        this.reset();
-    }
-
-    private nextSeq(): number {
-        this.sequence += 1;
-        return this.sequence;
-    }
-
-    private mergeColumnStatePatch(patch: ColumnState): void {
-        const existing = this.state.columnStateByColId.get(patch.colId);
-        this.state.columnStateByColId.set(patch.colId, existing ? { ...existing, ...patch } : patch);
-    }
 
     public reset() {
         this.sequence = 0;
-        this.state = this.getDefaultState();
+        this.state = createDefaultState();
     }
 
     public commit() {
-        if (this.state.pivotMode) {
-            const { pivotMode, eventType: pivotModeEventType } = this.state.pivotMode;
-            const { colModel, gos, ctrlsSvc } = this.beans;
-            if (pivotMode !== colModel.isPivotMode()) {
-                gos.updateGridOptions({ options: { pivotMode }, source: pivotModeEventType as any });
-                for (const c of ctrlsSvc.getHeaderRowContainerCtrls()) {
-                    c.refresh();
-                }
-            }
-        }
-
         const cols = this.beans.colModel.getColDefCols() ?? [];
         const colIds = cols.map((column) => column.getColId());
-        const colStateByColId = new Map<string, ColumnState>();
+        const liveColumnState = _getColumnState(this.beans);
+        const liveOrder = liveColumnState.map((columnState) => columnState.colId);
+        const colStateByColId = new Map<string, ColumnState>(
+            liveColumnState.map((columnState) => [columnState.colId, { ...columnState }])
+        );
         const ensureState = (colId: string): ColumnState => {
             const existing = colStateByColId.get(colId);
             if (existing) {
@@ -206,98 +189,49 @@ export class ColumnToolPanelDeferredEdit extends BeanStub implements BaseColumnT
             colStateByColId.set(colId, created);
             return created;
         };
-
-        let eventType: ColumnEventType = 'toolPanelUi';
         let applyOrder = false;
         let orderedColIds: string[] | undefined;
-        let defaultSortCleared = false;
+        let finalPivotMode = this.beans.colModel.isPivotMode();
+        const aggFuncByColId = new Map<string, string | IAggFunc | null | undefined>();
+        const { state } = this;
+        const operations: CommitOperations = [];
+        for (const [type, operation] of Object.entries(state) as [
+            CommitOperation['type'],
+            DeferredState[CommitOperation['type']],
+        ][]) {
+            if (!operation) {
+                continue;
+            }
 
-        const operations: Array<
-            | { type: 'columnState'; seq: number; eventType: ColumnEventType; state: Map<string, ColumnState> }
-            | { type: 'columnOrder'; seq: number; eventType: ColumnEventType; orderedColIds: string[] }
-            | { type: 'rowGroup'; seq: number; eventType: ColumnEventType; groupColIds: string[] }
-            | { type: 'aggregation'; seq: number; eventType: ColumnEventType; valueColIds: string[] }
-            | { type: 'pivot'; seq: number; eventType: ColumnEventType; pivotColIds: string[] }
-            | {
-                  type: 'sort';
-                  seq: number;
-                  eventType: ColumnEventType;
-                  sortDefsByColId: Map<string, SortDef | null>;
-                  baselineCleared: boolean;
-              }
-        > = [];
+            operations.push({ type, ...operation } as CommitOperation);
+        }
+        const sortedEntries = operations.sort((a, b) => a.seq - b.seq);
 
-        if (this.state.columnStateByColId.size > 0) {
-            operations.push({
-                type: 'columnState',
-                seq: this.state.columnStateSeq,
-                eventType: this.state.columnStateEventType,
-                state: this.state.columnStateByColId,
-            });
-        }
-        if (this.state.columnOrder) {
-            operations.push({ type: 'columnOrder', ...this.state.columnOrder });
-        }
-        if (this.state.rowGroup) {
-            operations.push({ type: 'rowGroup', ...this.state.rowGroup });
-        }
-        if (this.state.aggregation) {
-            operations.push({ type: 'aggregation', ...this.state.aggregation });
-        }
-        if (this.state.pivot) {
-            operations.push({ type: 'pivot', ...this.state.pivot });
-        }
-        if (this.state.sort) {
-            operations.push({
-                type: 'sort',
-                seq: this.state.sort.seq,
-                eventType: 'toolPanelUi',
-                sortDefsByColId: this.state.sort.sortDefsByColId,
-                baselineCleared: this.state.sort.baselineCleared,
-            });
-        }
-
-        operations.sort((a, b) => a.seq - b.seq);
-
-        for (const operation of operations) {
-            eventType = operation.eventType;
+        for (const operation of sortedEntries) {
             switch (operation.type) {
                 case 'columnState': {
-                    for (const [colId, patch] of operation.state) {
+                    for (const [colId, patch] of operation.patches) {
                         Object.assign(ensureState(colId), patch);
                     }
                     break;
                 }
                 case 'columnOrder': {
                     applyOrder = true;
-                    orderedColIds = operation.orderedColIds;
+                    orderedColIds = operation.colIds;
                     break;
                 }
                 case 'rowGroup': {
-                    const groupIndexByColId = new Map<string, number>();
-                    operation.groupColIds.forEach((colId, index) => groupIndexByColId.set(colId, index));
-                    for (const colId of colIds) {
-                        const state = ensureState(colId);
-                        if (groupIndexByColId.has(colId)) {
-                            state.rowGroup = true;
-                            state.rowGroupIndex = groupIndexByColId.get(colId);
-                        } else {
-                            state.rowGroup = false;
-                            state.rowGroupIndex = null;
-                        }
-                    }
+                    applyIndexedColumnState(operation.colIds, colIds, ensureState, 'rowGroup', 'rowGroupIndex');
                     break;
                 }
                 case 'aggregation': {
-                    const valueColIdSet = new Set(operation.valueColIds);
+                    const valueColIdSet = new Set(operation.colIds);
                     for (const column of cols) {
                         const colId = column.getColId();
                         const state = ensureState(colId);
                         if (valueColIdSet.has(colId)) {
-                            const hasDraftAggFunc = this.state.draftAggFuncsByColId.has(colId);
-                            const draftAggFunc = hasDraftAggFunc
-                                ? this.state.draftAggFuncsByColId.get(colId)
-                                : undefined;
+                            const hasDraftAggFunc = aggFuncByColId.has(colId);
+                            const draftAggFunc = hasDraftAggFunc ? aggFuncByColId.get(colId) : undefined;
                             const currentAggFunc = column.getAggFunc();
                             const fallbackAggFunc = this.beans.aggFuncSvc?.getDefaultAggFunc(column) ?? null;
                             state.aggFunc = hasDraftAggFunc ? draftAggFunc : currentAggFunc ?? fallbackAggFunc;
@@ -308,53 +242,45 @@ export class ColumnToolPanelDeferredEdit extends BeanStub implements BaseColumnT
                     break;
                 }
                 case 'pivot': {
-                    const pivotIndexByColId = new Map<string, number>();
-                    operation.pivotColIds.forEach((colId, index) => pivotIndexByColId.set(colId, index));
-                    for (const colId of colIds) {
-                        const state = ensureState(colId);
-                        if (pivotIndexByColId.has(colId)) {
-                            state.pivot = true;
-                            state.pivotIndex = pivotIndexByColId.get(colId);
-                        } else {
-                            state.pivot = false;
-                            state.pivotIndex = null;
-                        }
-                    }
+                    applyIndexedColumnState(operation.colIds, colIds, ensureState, 'pivot', 'pivotIndex');
+                    break;
+                }
+                case 'pivotMode': {
+                    finalPivotMode = operation.pivotMode;
                     break;
                 }
                 case 'sort': {
-                    defaultSortCleared = defaultSortCleared || operation.baselineCleared;
+                    if (operation.baselineCleared) {
+                        for (const columnState of colStateByColId.values()) {
+                            columnState.sort = null;
+                            columnState.sortIndex = null;
+                            columnState.sortType = undefined;
+                        }
+                    }
+
                     let sortIndex = 0;
                     for (const [colId, sortDef] of operation.sortDefsByColId) {
                         const state = ensureState(colId);
                         state.sort = sortDef?.direction ?? null;
                         state.sortIndex = sortDef?.direction ? sortIndex++ : null;
+                        state.sortType = sortDef?.type ?? undefined;
+                    }
+                    break;
+                }
+                case 'aggFuncs': {
+                    for (const [colId, aggFunc] of operation.values) {
+                        aggFuncByColId.set(colId, aggFunc);
+                        ensureState(colId).aggFunc = aggFunc;
                     }
                     break;
                 }
             }
         }
 
-        if (applyOrder && orderedColIds) {
-            for (const colId of orderedColIds) {
-                ensureState(colId);
-            }
-        }
-
-        if (colStateByColId.size > 0 || applyOrder || defaultSortCleared) {
-            const finalState =
-                applyOrder && orderedColIds
-                    ? orderedColIds.map((colId) => colStateByColId.get(colId) ?? { colId })
-                    : [...colStateByColId.values()];
-            _applyColumnState(
-                this.beans,
-                {
-                    state: finalState,
-                    applyOrder,
-                    defaultState: defaultSortCleared ? { sort: null, sortIndex: null } : undefined,
-                },
-                eventType
-            );
+        if (sortedEntries.length > 0) {
+            const finalStateColIds = applyOrder && orderedColIds ? orderedColIds : liveOrder;
+            const finalColumnState = finalStateColIds.map((colId) => ensureState(colId));
+            this.beans.stateSvc?.setState(buildCommitState(finalColumnState, finalPivotMode));
         }
 
         this.reset();
@@ -362,31 +288,31 @@ export class ColumnToolPanelDeferredEdit extends BeanStub implements BaseColumnT
 
     public applyColumnState(state: ColumnState[], eventType: ColumnEventType): void {
         for (const patch of state) {
-            this.mergeColumnStatePatch(patch);
+            mergeColumnStatePatch(this.state, patch);
         }
-        this.state.columnStateSeq = this.nextSeq();
-        this.state.columnStateEventType = eventType;
+        const columnState = ensureColumnStateDraft(this.state);
+        columnState.seq = nextSeq(this.sequence);
+        this.sequence = columnState.seq;
+        columnState.eventType = eventType;
     }
 
     public moveColumns(columns: AgColumn[], targetIndex: number, eventType: ColumnEventType): void {
         const movingColIds = new Set(columns.map((column) => column.getColId()));
         const orderedColIds =
-            this.state.columnOrder?.orderedColIds ?? this.beans.colModel.getCols().map((column) => column.getColId());
+            this.state.columnOrder?.colIds ?? this.beans.colModel.getCols().map((column) => column.getColId());
 
         const remaining = orderedColIds.filter((colId) => !movingColIds.has(colId));
         const beforeTarget = orderedColIds.slice(0, targetIndex);
         const movedBeforeTargetCount = beforeTarget.filter((colId) => movingColIds.has(colId)).length;
         const adjustedTargetIndex = Math.min(Math.max(targetIndex - movedBeforeTargetCount, 0), remaining.length);
         const movedIds = columns.map((column) => column.getColId());
+        const seq = nextSeq(this.sequence);
+        this.sequence = seq;
 
         this.state.columnOrder = {
-            orderedColIds: [
-                ...remaining.slice(0, adjustedTargetIndex),
-                ...movedIds,
-                ...remaining.slice(adjustedTargetIndex),
-            ],
+            colIds: [...remaining.slice(0, adjustedTargetIndex), ...movedIds, ...remaining.slice(adjustedTargetIndex)],
             eventType,
-            seq: this.nextSeq(),
+            seq,
         };
     }
 
@@ -395,25 +321,31 @@ export class ColumnToolPanelDeferredEdit extends BeanStub implements BaseColumnT
             if (column.getColDef().lockVisible) {
                 continue;
             }
-            this.mergeColumnStatePatch({ colId: column.getColId(), hide: !visible });
+            mergeColumnStatePatch(this.state, { colId: column.getColId(), hide: !visible });
         }
-        this.state.columnStateSeq = this.nextSeq();
-        this.state.columnStateEventType = eventType;
+        const columnState = ensureColumnStateDraft(this.state);
+        columnState.seq = nextSeq(this.sequence);
+        this.sequence = columnState.seq;
+        columnState.eventType = eventType;
     }
 
     public setRowGroupColumns(columns: AgColumn[], eventType: ColumnEventType): void {
+        const seq = nextSeq(this.sequence);
+        this.sequence = seq;
         this.state.rowGroup = {
-            groupColIds: columns.map((column) => column.getColId()),
+            colIds: columns.map((column) => column.getColId()),
             eventType,
-            seq: this.nextSeq(),
+            seq,
         };
     }
 
     public setValueColumns(columns: AgColumn[], eventType: ColumnEventType): void {
+        const seq = nextSeq(this.sequence);
+        this.sequence = seq;
         this.state.aggregation = {
-            valueColIds: columns.map((column) => column.getColId()),
+            colIds: columns.map((column) => column.getColId()),
             eventType,
-            seq: this.nextSeq(),
+            seq,
         };
     }
 
@@ -422,22 +354,27 @@ export class ColumnToolPanelDeferredEdit extends BeanStub implements BaseColumnT
         aggFunc: string | IAggFunc | null | undefined,
         eventType: ColumnEventType
     ): void {
-        this.mergeColumnStatePatch({ colId: column.getColId(), aggFunc });
-        this.state.columnStateSeq = this.nextSeq();
-        this.state.columnStateEventType = eventType;
-        this.state.draftAggFuncsByColId.set(column.getColId(), aggFunc);
+        mergeColumnStatePatch(this.state, { colId: column.getColId(), aggFunc });
+        const columnState = ensureColumnStateDraft(this.state);
+        columnState.seq = nextSeq(this.sequence);
+        this.sequence = columnState.seq;
+        columnState.eventType = eventType;
+        const aggFuncs = ensureAggFuncsDraft(this.state);
+        aggFuncs.seq = columnState.seq;
+        aggFuncs.eventType = eventType;
+        aggFuncs.values.set(column.getColId(), aggFunc);
     }
 
     public getColumnAggFunc(column: AgColumn): string | IAggFunc | null | undefined {
         const colId = column.getColId();
-        if (this.state.draftAggFuncsByColId.has(colId)) {
-            return this.state.draftAggFuncsByColId.get(colId);
+        if (this.state.aggFuncs?.values.has(colId)) {
+            return this.state.aggFuncs.values.get(colId);
         }
         return column.getAggFunc();
     }
 
     public isColumnVisibleInToolPanel(column: AgColumn): boolean {
-        const columnState = this.state.columnStateByColId.get(column.getColId());
+        const columnState = this.state.columnState?.patches.get(column.getColId());
         if (columnState?.hide !== undefined) {
             return !columnState.hide;
         }
@@ -446,45 +383,49 @@ export class ColumnToolPanelDeferredEdit extends BeanStub implements BaseColumnT
 
     public isColumnSelectedInPivotModeToolPanel(column: AgColumn): boolean {
         const colId = column.getColId();
-        const columnState = this.state.columnStateByColId.get(colId);
+        const columnState = this.state.columnState?.patches.get(colId);
 
         const rowGroupActive =
             columnState?.rowGroup !== undefined
                 ? !!columnState.rowGroup
                 : this.state.rowGroup
-                  ? this.state.rowGroup.groupColIds.includes(colId)
+                  ? this.state.rowGroup.colIds.includes(colId)
                   : column.isRowGroupActive();
 
         const pivotActive =
             columnState?.pivot !== undefined
                 ? !!columnState.pivot
                 : this.state.pivot
-                  ? this.state.pivot.pivotColIds.includes(colId)
+                  ? this.state.pivot.colIds.includes(colId)
                   : column.isPivotActive();
 
         const valueActive =
             columnState?.aggFunc !== undefined
                 ? columnState.aggFunc != null
                 : this.state.aggregation
-                  ? this.state.aggregation.valueColIds.includes(colId)
+                  ? this.state.aggregation.colIds.includes(colId)
                   : column.isValueActive();
 
         return rowGroupActive || pivotActive || valueActive;
     }
 
     public setPivotColumns(columns: AgColumn[], eventType: ColumnEventType): void {
+        const seq = nextSeq(this.sequence);
+        this.sequence = seq;
         this.state.pivot = {
-            pivotColIds: columns.map((column) => column.getColId()),
+            colIds: columns.map((column) => column.getColId()),
             eventType,
-            seq: this.nextSeq(),
+            seq,
         };
     }
 
     public setPivotMode(pivotMode: boolean, eventType: ColumnEventType): void {
+        const seq = nextSeq(this.sequence);
+        this.sequence = seq;
         this.state.pivotMode = {
             pivotMode,
             eventType,
-            seq: this.nextSeq(),
+            seq,
         };
     }
 
@@ -493,14 +434,7 @@ export class ColumnToolPanelDeferredEdit extends BeanStub implements BaseColumnT
             return [];
         }
 
-        const colIds = this.state.rowGroup?.groupColIds;
-        if (!colIds) {
-            return this.beans.rowGroupColsSvc?.columns ?? [];
-        }
-
-        return colIds
-            .map((colId) => this.beans.colModel.getColDefCol(colId))
-            .filter((column): column is AgColumn => !!column);
+        return getDraftColumns(this.beans, this.state.rowGroup?.colIds, this.beans.rowGroupColsSvc?.columns);
     }
 
     public getValueColumns(): AgColumn[] {
@@ -508,14 +442,7 @@ export class ColumnToolPanelDeferredEdit extends BeanStub implements BaseColumnT
             return [];
         }
 
-        const colIds = this.state.aggregation?.valueColIds;
-        if (!colIds) {
-            return this.beans.valueColsSvc?.columns ?? [];
-        }
-
-        return colIds
-            .map((colId) => this.beans.colModel.getColDefCol(colId))
-            .filter((column): column is AgColumn => !!column);
+        return getDraftColumns(this.beans, this.state.aggregation?.colIds, this.beans.valueColsSvc?.columns);
     }
 
     public getPivotColumns(): AgColumn[] {
@@ -523,14 +450,7 @@ export class ColumnToolPanelDeferredEdit extends BeanStub implements BaseColumnT
             return [];
         }
 
-        const colIds = this.state.pivot?.pivotColIds;
-        if (!colIds) {
-            return this.beans.pivotColsSvc?.columns ?? [];
-        }
-
-        return colIds
-            .map((colId) => this.beans.colModel.getColDefCol(colId))
-            .filter((column): column is AgColumn => !!column);
+        return getDraftColumns(this.beans, this.state.pivot?.colIds, this.beans.pivotColsSvc?.columns);
     }
 
     public getPivotMode(): boolean {
@@ -555,6 +475,7 @@ export class ColumnToolPanelDeferredEdit extends BeanStub implements BaseColumnT
             sortDefsByColId: new Map<string, SortDef | null>(),
             baselineCleared: false,
             seq: 0,
+            eventType: 'toolPanelUi',
         };
         const { sortSvc } = this.beans;
         const colId = column.getColId();
@@ -575,7 +496,86 @@ export class ColumnToolPanelDeferredEdit extends BeanStub implements BaseColumnT
         }
 
         currentDraft.sortDefsByColId.set(colId, nextSortDef.direction ? nextSortDef : null);
-        currentDraft.seq = this.nextSeq();
+        currentDraft.seq = nextSeq(this.sequence);
+        this.sequence = currentDraft.seq;
         this.state.sort = currentDraft;
     }
+}
+
+function getDraftColumns(
+    beans: BeanStub['beans'],
+    colIds: string[] | undefined,
+    fallback: AgColumn[] | undefined
+): AgColumn[] {
+    if (!colIds) {
+        return fallback ?? [];
+    }
+
+    return colIds.map((colId) => beans.colModel.getColDefCol(colId)).filter((column): column is AgColumn => !!column);
+}
+
+function applyIndexedColumnState(
+    activeColIds: string[],
+    allColIds: string[],
+    ensureState: (colId: string) => ColumnState,
+    activeKey: 'rowGroup' | 'pivot',
+    indexKey: 'rowGroupIndex' | 'pivotIndex'
+): void {
+    const indexByColId = new Map<string, number>();
+    activeColIds.forEach((colId, index) => indexByColId.set(colId, index));
+
+    for (const colId of allColIds) {
+        const state = ensureState(colId);
+        if (indexByColId.has(colId)) {
+            state[activeKey] = true;
+            state[indexKey] = indexByColId.get(colId);
+        } else {
+            state[activeKey] = false;
+            state[indexKey] = null;
+        }
+    }
+}
+
+function buildCommitState(finalColumnState: ColumnState[], finalPivotMode: boolean): GridState {
+    return convertColumnState(finalColumnState, finalPivotMode);
+}
+
+function createDefaultState(): DeferredState {
+    return {};
+}
+
+function nextSeq(sequence: number): number {
+    return sequence + 1;
+}
+
+function mergeColumnStatePatch(state: DeferredState, patch: ColumnState): void {
+    const columnState = ensureColumnStateDraft(state);
+    const existing = columnState.patches.get(patch.colId);
+    columnState.patches.set(patch.colId, existing ? { ...existing, ...patch } : patch);
+}
+
+function ensureColumnStateDraft(state: DeferredState): NonNullable<DeferredState['columnState']> {
+    let { columnState } = state;
+    if (!columnState) {
+        columnState = {
+            patches: new Map<string, ColumnState>(),
+            seq: 0,
+            eventType: 'toolPanelUi',
+        };
+        state.columnState = columnState;
+    }
+    return columnState;
+}
+
+function ensureAggFuncsDraft(state: DeferredState): NonNullable<DeferredState['aggFuncs']> {
+    let { aggFuncs } = state;
+    if (!aggFuncs) {
+        aggFuncs = {
+            values: new Map<string, string | IAggFunc | null | undefined>(),
+            seq: 0,
+            eventType: 'toolPanelUi',
+        };
+        state.aggFuncs = aggFuncs;
+    }
+    return aggFuncs;
 }
