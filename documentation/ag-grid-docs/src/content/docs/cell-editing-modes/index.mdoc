@@ -6,19 +6,7 @@ Two alternative editing modes support specialised workflows: full row editing an
 
 ## Full Row Editing
 
-[Full Row Editing](./cell-editing-full-row/) makes all cells in a row editable simultaneously, giving users the impression
-that the record as a whole is being edited.
-
-### When to Use
-
-Full row editing is particularly useful when:
-
-- **Form-like Editing**: Your data represents complete records (such as user profiles, orders, or inventory items) where editing multiple fields together makes sense.
-- **Related Fields**: Changes to one field often require updates to related fields in the same row.
-- **User Experience**: You want a clear visual indication that a record is being edited.
-- **Cross-field Validation**: You need to validate relationships between fields before saving (e.g. ensuring a start date is before an end date).
-
-When a row is in edit mode, pressing {% kbd "⇥ Tab" /%} moves between editable cells; {% kbd "↵ Enter" /%} or clicking outside commits all changes; {% kbd "⎋ Esc" /%} discards them. Popup editors are not compatible with full row editing.
+[Full Row Editing](./cell-editing-full-row/) makes all cells in a row editable simultaneously, giving users the impression that the record as a whole is being edited. It's well-suited to form-like workflows where fields are related and should be edited together. When a row is in edit mode, pressing {% kbd "⇥ Tab" /%} moves between editable cells; {% kbd "↵ Enter" /%} or clicking outside commits all changes; {% kbd "⎋ Esc" /%} discards them. Popup editors are not compatible with full row editing.
 
 ## Batch Editing {% enterpriseIcon /%}
 

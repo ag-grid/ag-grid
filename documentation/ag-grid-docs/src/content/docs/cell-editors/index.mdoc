@@ -3,7 +3,7 @@ title: "Custom Edit Components"
 description: "Cell Editors handle the edit operation in the $framework data grid. Use one of seven provided Cell Editors or create a custom cell editor component."
 ---
 
-Create custom cell editors to provide specialized input controls for your data.
+Create custom cell editors to provide specialised input controls for your data.
 
 A Cell Editor Component is the UI that appears, normally inside the Cell, that takes care of the Edit operation. You can select from the [Provided Cell Editors](./provided-cell-editors/) or create your own Custom Cell Editor Components.
 
@@ -210,7 +210,7 @@ In Custom Editors, you may wish to disable some of the Grids keyboard navigation
 
 Because different cell editors will have different requirements on what the grid does, it is up to the cell editor to decide which event it wants the grid to handle and which it does not.
 
-You have two options to stop the grid from doing it's default action on certain key events:
+You have two options to stop the grid from doing its default action on certain key events:
 
 1. Stop propagation of the event to the grid in the cell editor.
 1. Tell the grid to do nothing via the `colDef.suppressKeyEvent()` callback.
@@ -310,8 +310,3 @@ The example below shows using `getCellEditorInstances`. The following can be not
 {% interfaceDocumentation interfaceName="CustomCellEditorProps"  /%}
 {% /if %}
 
-## See Also
-
-- [Cell Editing](./cell-editing/) - Enable and configure cell editing
-- [Provided Cell Editors](./provided-cell-editors/) - Built-in editor types
-- [Validation](./cell-editing-validation/) - Validate edited values

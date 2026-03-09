@@ -15,7 +15,7 @@ When `values` is provided as a callback function, the callback receives `params`
 
 {% gridExampleRunner title="Rich Select Async Values" name="rich-select-async-values" /%}
 
-```js
+```{% frameworkTransform=true %}
 columnDefs: [
     {
         field: 'language',
@@ -35,7 +35,7 @@ For large datasets, `valuesPage` avoids loading all items at once and instead lo
 
 {% gridExampleRunner title="Rich Select Paged Async Values" name="rich-select-paged-async-values" /%}
 
-```js
+```{% frameworkTransform=true %}
 columnDefs: [
     {
         cellEditor: 'agRichSelectCellEditor',
@@ -72,7 +72,7 @@ This is shown in the example below:
 
 {% gridExampleRunner title="Rich Select Async Filtering" name="rich-select-full-async-values" /%}
 
-```js
+```{% frameworkTransform=true %}
 columnDefs: [
     {
         field: 'language',
@@ -106,7 +106,7 @@ In this mode each request includes:
 
 {% gridExampleRunner title="Rich Select Paged Async Filtering" name="rich-select-paged-async-filtering" /%}
 
-```js
+```{% frameworkTransform=true %}
 columnDefs: [
     {
         cellEditor: 'agRichSelectCellEditor',
@@ -128,6 +128,6 @@ columnDefs: [
 ]
 ```
 
-## API
+## API Reference
 
-{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" /%}
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["values", "valuesPage", "valuesPageSize", "valuesPageLoadThreshold", "valuesPageInitialStartRow", "filterListAsync", "searchDebounceDelay"] /%}

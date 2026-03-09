@@ -141,8 +141,8 @@ Not every page will include all sections; follow this order for the sections tha
 
 1. Value proposition (what & why)
 2. Context statement (prerequisites, when to use)
-3. Basic configuration (enable/setup)
-4. Simple example (get users running)
+3. Simple example (get users running)
+4. Basic configuration (enable/setup)
 5. Core concepts (ordered by complexity)
 6. Advanced features (power user territory)
 7. API reference (programmatic control)

@@ -12,7 +12,7 @@ Edit any cell in the grid below to see the Select Cell Editor.
 
 Enabled with `agSelectCellEditor` and configured with `ISelectCellEditorParams`.
 
-```js
+```{% frameworkTransform=true %}
 columnDefs: [
     {
         cellEditor: 'agSelectCellEditor',
@@ -34,7 +34,7 @@ It is possible to customise the space between the editor input and the popup whe
 
 This can be customised by setting the `valueListGap` parameter as shown below:
 
-```js
+```{% frameworkTransform=true %}
 columnDefs: [
     {
         cellEditor: 'agSelectCellEditor',
@@ -55,7 +55,7 @@ It is possible to customise the size of the list popup when opened. In the grid 
 
 This can be customised by setting the `valueListMaxHeight` and `valueListMaxWidth` parameters as shown below:
 
-```js
+```{% frameworkTransform=true %}
 columnDefs: [
     {
         cellEditor: 'agSelectCellEditor',
@@ -74,18 +74,9 @@ columnDefs: [
 {% interfaceDocumentation interfaceName="ISelectCellEditorParams" names=["values", "valueListGap", "valueListMaxHeight", "valueListMaxWidth"] /%}
 
 {% note %}
-We have found the standard HTML Select doesn't have an API that's rich enough to play
-properly with the grid. When a cell is double clicked to start editing, it is desired that
-the Select is a) shown and b) opened ready for selection. There is no API to open a browsers
-Select. For this reason to edit there are two interactions needed 1) double click to start
-editing and 2) single click to open the Select.
+The browser's `select` element doesn't expose an API to open it programmatically. When double-clicking to start editing, two interactions are needed: 1) double click to start editing and 2) single click to open the select popup.
 
-We also observed different results while using keyboard navigation to control editing, e.g.
-while using `Enter` to start editing. Some browsers would open the Select, others would not.
-This is down to the browser implementation and given there is no API for opening the
-Select, there is nothing the grid can do.
+Keyboard navigation behaviour also varies across browsers — some open the select when pressing `Enter`, others don't.
 
-If you are unhappy with the additional click required, we advise you don't depend on the
-browsers standard Select (ie avoid `agSelectCellEditor`) and instead use [Rich Select Cell Editor](./provided-cell-editors-rich-select/) or
-create your own using a [Cell Editor Component](./cell-editors/).
+To avoid these limitations, use the [Rich Select Cell Editor](./provided-cell-editors-rich-select/) or a custom [Cell Editor Component](./cell-editors/) instead.
 {% /note %}

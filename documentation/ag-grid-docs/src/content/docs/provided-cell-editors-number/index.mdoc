@@ -2,9 +2,7 @@
 title: "Number Cell Editor"
 ---
 
-Simple number editor that uses the standard HTML number `input`.
-
-The Number Cell Editor allows users to enter numeric values and to modify them using the {% kbd "↑" /%} {% kbd "↓" /%} keys.
+Simple number editor using the standard HTML `number` input, with optional step/precision controls via the {% kbd "↑" /%} {% kbd "↓" /%} keys.
 
 ## Enabling Number Cell Editor
 
@@ -14,7 +12,7 @@ Edit any cell in the grid below to see the Number Cell Editor.
 
 Enabled with `agNumberCellEditor` and configured with `INumberCellEditorParams`.
 
-```js
+```{% frameworkTransform=true %}
 columnDefs: [
     {
         cellEditor: 'agNumberCellEditor',
@@ -37,7 +35,7 @@ It is possible to configure the step and precision of the stepping behaviour tha
 
 The stepping behaviour to increment/decrement the numeric value can be customised using the properties below:
 
-```js
+```{% frameworkTransform=true %}
 columnDefs: [
     {
         cellEditor: 'agNumberCellEditor',
@@ -59,7 +57,7 @@ The stepping behaviour can be disabled. Edit any cell in the grid below to see t
 
 The stepping behaviour to increment/decrement the numeric value can be disabled as shown below:
 
-```js
+```{% frameworkTransform=true %}
 columnDefs: [
     {
         cellEditor: 'agNumberCellEditor',
