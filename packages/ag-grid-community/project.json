@@ -158,13 +158,17 @@
       "executor": "nx:run-commands",
       "dependsOn": ["build:umd"],
       "options": {
-        "commands": ["npx playwright test"],
+        "commands": ["echo 'Skipping test:umd:browser - requires staging or production configuration'"],
         "parallel": false,
         "cwd": "packages/ag-grid-community"
       },
       "configurations": {
-        "production": {},
-        "staging": {}
+        "production": {
+          "commands": ["npx playwright test"]
+        },
+        "staging": {
+          "commands": ["npx playwright test"]
+        }
       }
     },
     "pack": {

@@ -130,8 +130,11 @@
       }
     },
     "test:e2e": {
+      "dependsOn": ["test:umd:browser", "test:umd"]
+    },
+    "test:umd": {
       "executor": "@nx/jest:jest",
-      "dependsOn": ["pack"],
+      "dependsOn": ["build:umd"],
       "options": {
         "jestConfig": "{projectRoot}/jest.config.ts",
         "testPathPattern": ["e2e"]
@@ -145,13 +148,17 @@
       "executor": "nx:run-commands",
       "dependsOn": ["build:umd"],
       "options": {
-        "commands": ["npx playwright test"],
+        "commands": ["echo 'Skipping test:umd:browser - requires staging or production configuration'"],
         "parallel": false,
         "cwd": "packages/ag-grid-enterprise"
       },
       "configurations": {
-        "production": {},
-        "staging": {}
+        "production": {
+          "commands": ["npx playwright test"]
+        },
+        "staging": {
+          "commands": ["npx playwright test"]
+        }
       }
     },
     "pack": {
