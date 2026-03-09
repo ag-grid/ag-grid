@@ -129,12 +129,15 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             return;
         }
 
-        let sectionX = draggingEvent.x;
+        let sectionX: number;
         if (this.pinned == null) {
-            sectionX -= visibleCols.getLeftStickyColumnContainerWidth();
-        } else if (this.pinned === 'right') {
-            const viewportWidth = ctrlsSvc.getHeaderRowContainerCtrl()?.eViewport.clientWidth ?? 0;
-            sectionX -= Math.max(0, viewportWidth - visibleCols.getRightStickyColumnContainerWidth());
+            sectionX = draggingEvent.x - visibleCols.getLeftStickyColumnContainerWidth();
+        } else {
+            const viewportRect = this.gridBodyCon.eGridViewport.getBoundingClientRect();
+            sectionX = draggingEvent.event.clientX - viewportRect.left;
+            if (this.pinned === 'right') {
+                sectionX -= Math.max(0, viewportRect.width - visibleCols.getRightStickyColumnContainerWidth());
+            }
         }
 
         const mouseX = normaliseX({

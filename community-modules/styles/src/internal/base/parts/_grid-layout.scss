@@ -174,13 +174,12 @@
     }
 
     .ag-row-hover:not(.ag-full-width-row),
-    .ag-row-hover.ag-full-width-row.ag-row-group {
+    .ag-row-hover.ag-full-width-row {
         --ag-internal-row-overlay-color: var(--ag-row-hover-color);
     }
 
     .ag-row-selected,
-    .ag-row-hover:not(.ag-full-width-row),
-    .ag-row-hover.ag-full-width-row.ag-row-group {
+    .ag-row-hover:not(.ag-full-width-row) {
         .ag-grid-pinned-left-cells::before,
         .ag-grid-pinned-right-cells::before,
         .ag-grid-scrolling-cells::before {
@@ -200,9 +199,23 @@
         }
     }
 
+    .ag-row-selected.ag-full-width-row::before,
+    .ag-row-hover.ag-full-width-row::before {
+        content: '';
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+        background-color: var(--ag-internal-row-overlay-color);
+        background-image: var(--ag-internal-row-overlay-image);
+    }
+
     // Default the content position to relative so that it doesn't
     // appear under the background
-    .ag-row.ag-full-width-row.ag-row-group > * {
+    .ag-row.ag-full-width-row > * {
         position: relative;
     }
 

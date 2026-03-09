@@ -132,12 +132,8 @@ export class GridBodyComp extends Component implements FocusableContainer {
                 this.stickyBottomRowsHeight = Number.parseFloat(height) || 0;
                 this.refreshBottomSectionHeight();
             },
-            setStickyBottomBottom: (bottom) => (this.eBottom.style.bottom = bottom),
             setStickyBottomWidth: (width) => (this.eBottom.style.width = width),
             setColumnMovingCss: (cssClass, flag) => this.toggleCss(cssClass, flag),
-            setScrollingRowsMarginTop: (marginTop) => {
-                this.eBody.style.marginTop = marginTop > 0 ? `${marginTop}px` : '';
-            },
             updateLayoutClasses: (cssClass, params) => {
                 const classLists = [this.eGridViewport.classList, this.eBody.classList];
 
@@ -214,10 +210,7 @@ export class GridBodyComp extends Component implements FocusableContainer {
         const heightString = `${totalHeight}px`;
         this.eBottom.style.minHeight = heightString;
         this.eBottom.style.height = heightString;
-        this.eBottom.classList.toggle(
-            'ag-no-bottom-rows',
-            bottomSection.invisible && this.stickyBottomRowsHeight <= 0
-        );
+        this.eBottom.classList.toggle('ag-no-bottom-rows', bottomSection.invisible && this.stickyBottomRowsHeight <= 0);
         this.eBottom.classList.toggle('ag-invisible', totalHeight <= 0);
     }
 

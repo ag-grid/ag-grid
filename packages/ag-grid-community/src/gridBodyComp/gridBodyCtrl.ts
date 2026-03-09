@@ -18,6 +18,7 @@ import { PinnedRowContainerRendererFeature } from './pinnedRowContainerRendererF
 import type { IPinnedRowContainerRendererFeature } from './pinnedRowContainerRendererFeature';
 import type { ScrollVisibleService } from './scrollVisibleService';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type RowAnimationCssClasses = 'ag-row-animation' | 'ag-row-no-animation';
 
 export const CSS_CLASS_FORCE_VERTICAL_SCROLL = 'ag-force-vertical-scroll';
@@ -38,17 +39,16 @@ export interface IGridBodyComp extends LayoutView {
     setCellSelectableCss(cssClass: string | null, on: boolean): void;
     setPinnedSection(section: PinnedSection, state: PinnedSectionState): void;
     setStickyBottomHeight(height: string): void;
-    setStickyBottomBottom(offsetBottom: string): void;
     setStickyBottomWidth(width: string): void;
     setColumnCount(count: number): void;
     setRowCount(count: number): void;
     setRowAnimationCssOnBodyViewport(cssClass: RowAnimationCssClasses, animate: boolean): void;
     setAlwaysVerticalScrollClass(cssClass: string | null, on: boolean): void;
     setGridScrollableAreaWidth(width: string): void;
-    setScrollingRowsMarginTop(marginTop: number): void;
     setGridRootRole(role: 'grid' | 'treegrid'): void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class GridBodyCtrl extends BeanStub {
     private ctrlsSvc: CtrlsService;
     private colModel: ColumnModel;
@@ -198,7 +198,6 @@ export class GridBodyCtrl extends BeanStub {
         const { scrollVisibleSvc } = this;
         const visible = scrollVisibleSvc.verticalScrollShowing;
         this.setStickyWidth(visible);
-        this.setStickyBottomOffsetBottom();
         this.updatePinnedColumnStickyOffsets();
         this.updateScrollableAreaWidth();
         this.pinnedRowContainerRendererFeature.refresh();
@@ -413,7 +412,7 @@ export class GridBodyCtrl extends BeanStub {
 
         this.addManagedElementListeners(eGridViewport, {
             wheel: this.onBodyViewportWheel.bind(this, popupSvc),
-            scroll: () => this.pinnedRowContainerRendererFeature.refresh(),
+            scroll: () => this.pinnedRowContainerRendererFeature.refreshViewportPinned(),
         });
 
         const onStickyWheel = this.onStickyWheel.bind(this);
@@ -537,8 +536,11 @@ export class GridBodyCtrl extends BeanStub {
         const pinnedBottomHeight = pinnedRowModel?.getPinnedBottomTotalHeight();
         const advancedFilterHeaderHeight = this.filterManager?.getHeaderHeight() ?? 0;
 
-        const normalisedPinnedTopHeight = pinnedTopHeight ?? 0;
-        const normalisedPinnedBottomHeight = pinnedBottomHeight ?? 0;
+        const { environment } = this.beans;
+        const borderAdjustment = environment.getPinnedRowBorderWidth() - environment.getRowBorderWidth();
+
+        const normalisedPinnedTopHeight = (pinnedTopHeight ?? 0) + (pinnedTopHeight ? borderAdjustment : 0);
+        const normalisedPinnedBottomHeight = (pinnedBottomHeight ?? 0) + (pinnedBottomHeight ? borderAdjustment : 0);
         this.topPinnedRowsHeight = normalisedPinnedTopHeight;
         this.bottomPinnedRowsHeight = normalisedPinnedBottomHeight;
 
@@ -550,8 +552,6 @@ export class GridBodyCtrl extends BeanStub {
             height: normalisedPinnedBottomHeight,
             invisible: normalisedPinnedBottomHeight <= 0,
         });
-        this.comp.setScrollingRowsMarginTop(0);
-        this.setStickyBottomOffsetBottom();
         this.pinnedRowContainerRendererFeature.refresh();
     }
 
@@ -633,9 +633,5 @@ export class GridBodyCtrl extends BeanStub {
 
         const scrollbarWidth = this.scrollVisibleSvc.getScrollbarWidth() || 0;
         return scrollbarWidth;
-    }
-
-    private setStickyBottomOffsetBottom(): void {
-        this.comp.setStickyBottomBottom('0px');
     }
 }

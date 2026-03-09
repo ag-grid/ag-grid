@@ -9,7 +9,7 @@ import type { GridCtrl } from './gridComp/gridCtrl';
 import type { GridHeaderCtrl } from './headerRendering/gridHeaderCtrl';
 import type { HeaderRowContainerCtrl } from './headerRendering/rowContainer/headerRowContainerCtrl';
 
-/** If adding or removing a control, update `NUM_CTRLS` below. */
+/** If adding or removing a control, update `REQUIRED_CTRLS` below. */
 interface ReadyParams {
     gridCtrl: GridCtrl;
     gridBodyCtrl: GridBodyCtrl;

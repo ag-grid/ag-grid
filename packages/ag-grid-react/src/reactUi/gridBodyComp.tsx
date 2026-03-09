@@ -29,10 +29,7 @@ const GridBodyComp = () => {
         bottom: { height: 0, invisible: true },
     });
     const [stickyBottomHeight, setStickyBottomHeight] = useState<string>('0px');
-    const [stickyBottomBottom, setStickyBottomBottom] = useState<string>('0px');
     const [stickyBottomWidth, setStickyBottomWidth] = useState<string>('100%');
-    const [scrollingRowsMarginTop, setScrollingRowsMarginTop] = useState<number>(0);
-
     const [forceVerticalScrollClass, setForceVerticalScrollClass] = useState<string | null>(null);
     const [cellSelectableCss, setCellSelectableCss] = useState<string | null>(null);
 
@@ -147,9 +144,7 @@ const GridBodyComp = () => {
                 }
             },
             setStickyBottomHeight,
-            setStickyBottomBottom,
             setStickyBottomWidth,
-            setScrollingRowsMarginTop,
             setGridRootRole: (role: 'grid' | 'treegrid') => _setAriaRole(rootElement, role),
         };
 
@@ -226,22 +221,15 @@ const GridBodyComp = () => {
         } as React.CSSProperties;
     }, [topSection.height]);
 
-    const bodyStyle: React.CSSProperties = useMemo(
-        () => ({
-            marginTop: scrollingRowsMarginTop > 0 ? `${scrollingRowsMarginTop}px` : undefined,
-        }),
-        [scrollingRowsMarginTop]
-    );
-
     const bottomStyle: React.CSSProperties = useMemo(
-        () => ({
-            '--ag-bottom-rows-height': `${bottomSection.height}px`,
-            height: `calc(${bottomSection.height}px + ${stickyBottomHeight})`,
-            minHeight: `calc(${bottomSection.height}px + ${stickyBottomHeight})`,
-            bottom: stickyBottomBottom,
-            width: stickyBottomWidth,
-        } as React.CSSProperties),
-        [bottomSection.height, stickyBottomHeight, stickyBottomBottom, stickyBottomWidth]
+        () =>
+            ({
+                '--ag-bottom-rows-height': `${bottomSection.height}px`,
+                height: `calc(${bottomSection.height}px + ${stickyBottomHeight})`,
+                minHeight: `calc(${bottomSection.height}px + ${stickyBottomHeight})`,
+                width: stickyBottomWidth,
+            }) as React.CSSProperties,
+        [bottomSection.height, stickyBottomHeight, stickyBottomWidth]
     );
 
     const createRowContainer = (container: ReactRowContainerName) => (
@@ -273,7 +261,7 @@ const GridBodyComp = () => {
                             onContainerElementChanged={setTopRowsFullWidthHost}
                         />
                     </div>
-                    <div className={bodyClasses} ref={eBody} role="presentation" style={bodyStyle}>
+                    <div className={bodyClasses} ref={eBody} role="presentation">
                         {(['scrollingCenter', 'scrollingFullWidth'] as const).map(createRowContainer)}
                     </div>
                     <div className={bottomClasses} ref={eBottom} role="presentation" style={bottomStyle}>

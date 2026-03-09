@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { asyncSetTimeout, GridRows, TestGridsManager, cachedJSONObjects } from '../test-utils';
+import { GridRows, TestGridsManager, asyncSetTimeout, cachedJSONObjects } from '../test-utils';
 
 describe('ag-grid grouping display types and footers', () => {
     const gridsManager = new TestGridsManager({

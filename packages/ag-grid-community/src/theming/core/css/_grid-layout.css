@@ -344,8 +344,7 @@
       that they overlay on top of the alternating row backgrounds rather than
       replacing them */
 .ag-row-selected,
-.ag-row-hover:not(.ag-full-width-row),
-.ag-row-hover.ag-full-width-row.ag-row-group {
+.ag-row-hover:not(.ag-full-width-row) {
     .ag-grid-pinned-left-cells::before,
     .ag-grid-pinned-right-cells::before,
     .ag-grid-scrolling-cells::before {
@@ -359,12 +358,23 @@
     }
 }
 
+.ag-row-selected.ag-full-width-row::before,
+.ag-row-hover.ag-full-width-row::before {
+    content: '';
+    display: block;
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-color: var(--ag-internal-row-overlay-color);
+    background-image: var(--ag-internal-row-overlay-image);
+}
+
 .ag-row.ag-row-selected {
     --ag-internal-row-overlay-color: var(--ag-selected-row-background-color);
 }
 
 .ag-row-hover:not(.ag-full-width-row),
-.ag-row-hover.ag-full-width-row.ag-row-group {
+.ag-row-hover.ag-full-width-row {
     --ag-internal-row-overlay-color: var(--ag-row-hover-color);
 }
 

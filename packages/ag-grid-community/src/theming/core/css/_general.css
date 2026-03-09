@@ -460,6 +460,7 @@
     bottom: 0;
     border-bottom: none;
     white-space: nowrap;
+    box-sizing: content-box !important;
 }
 
 :where(.ag-grid-pinned-top-rows:not(.ag-no-top-rows)) {

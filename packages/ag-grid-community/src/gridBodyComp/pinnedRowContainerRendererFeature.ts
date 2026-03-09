@@ -38,6 +38,7 @@ export interface IPinnedRowContainerRendererFeature {
     registerRowContainerSource(name: RowContainerName): PinnedRowContainerRendererSource | undefined;
     createCompHost(config: Omit<PinnedRowContainerRendererSourceConfig, 'id'>): IPinnedSectionCompHost;
     refresh(): void;
+    refreshViewportPinned(): void;
 }
 
 let nextCompHostId = 0;
@@ -156,6 +157,19 @@ export class PinnedRowContainerRendererFeature extends BeanStub implements IPinn
         this.refreshHost('top', 'fullWidth');
         this.refreshHost('bottom', 'center');
         this.refreshHost('bottom', 'fullWidth');
+    }
+
+    public refreshViewportPinned(): void {
+        const visited = new Set<HostKey>();
+        for (const source of this.sources.values()) {
+            if (source.pinToViewportX) {
+                const key = this.toHostKey(source.section, source.stream);
+                if (!visited.has(key)) {
+                    visited.add(key);
+                    this.refreshHost(source.section, source.stream);
+                }
+            }
+        }
     }
 
     private setSourceElements(id: string, elements: HTMLElement[]): void {
