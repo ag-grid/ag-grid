@@ -1,14 +1,15 @@
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
-import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule, PivotModule, RowGroupingPanelModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
-
-
+import {
+    ColumnMenuModule,
+    ColumnsToolPanelModule,
+    ContextMenuModule,
+    PivotModule,
+    RowGroupingPanelModule,
+    ServerSideRowModelModule,
+} from 'ag-grid-enterprise';
 
 import { createFakeServer, createServerSideDatasource } from './fakeServer';
-
-
-
-
 
 ModuleRegistry.registerModules([
     ColumnsToolPanelModule,
@@ -64,7 +65,6 @@ const columnDefs: ColDef[] = [
 ];
 
 let gridApi: GridApi<IOlympicData>;
-
 
 function getDeferredDebugState() {
     return (gridApi.getToolPanelInstance('columns') as any).editStrategy.state;
