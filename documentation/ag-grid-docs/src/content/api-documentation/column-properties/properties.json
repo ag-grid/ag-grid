@@ -1,6 +1,12 @@
 {
     "_config_": {
-        "codeSrc": "column-options.AUTO.json"
+        "codeSrc": "column-options.AUTO.json",
+        "validate": true,
+        "undocumentedProperties": {
+            "pivotKeys": "Internal use only, doc comment says 'Never set this'",
+            "pivotValueColumn": "Internal use only, doc comment says 'Never set this'",
+            "pivotTotalColumnIds": "Internal use only, doc comment says 'Never set this'"
+        }
     },
     "columns": {
         "meta": {

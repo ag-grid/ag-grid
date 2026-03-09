@@ -1,6 +1,12 @@
 {
     "_config_": {
-        "codeSrc": "column.AUTO.json"
+        "codeSrc": "column.AUTO.json",
+        "validate": true,
+        "undocumentedProperties": {
+            "getDefinition": "Alias of getColDef, the specific version is preferred",
+            "getUniqueId": "Alias of getColId",
+            "getId": "Alias of getColId"
+        }
     },
     "definitions": {
         "meta": {
@@ -9,10 +15,7 @@
         "getColId": {},
         "getColDef": {},
         "getUserProvidedColDef": {},
-        "isColumn": {},
-        "getId": {},
-        "getUniqueId": {},
-        "getDefinition": {}
+        "isColumn": {}
     },
     "editing": {
         "meta": {

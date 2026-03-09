@@ -1,6 +1,11 @@
 {
     "_config_": {
-        "codeSrc": "columnGroup.AUTO.json"
+        "codeSrc": "columnGroup.AUTO.json",
+        "validate": true,
+        "undocumentedProperties": {
+            "getDefinition": "Alias of getColGroupDef, the specific version is preferred",
+            "getUniqueId": "Alias of getColId on the underlying columns"
+        }
     },
     "ColumnGroup": {
         "getColGroupDef": {},
@@ -16,11 +21,9 @@
         "isPadding": {},
         "getPaddingLevel": {},
         "isColumn": {},
-        "getUniqueId": {},
         "getActualWidth": {},
         "getMinWidth": {},
         "getLeft": {},
-        "getDefinition": {},
         "getColumnGroupShow": {},
         "getParent": {},
         "isEmptyGroup": {},

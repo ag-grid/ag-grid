@@ -1,6 +1,12 @@
 {
     "_config_": {
-        "codeSrc": "grid-options.AUTO.json"
+        "codeSrc": "grid-options.AUTO.json",
+        "validate": true,
+        "excludeEvents": true,
+        "undocumentedProperties": {
+            "renderingMode": "React-only, so needs to be omitted from grid-options/properties.json (it is documented in grid-options/react-grid-options.json)",
+            "enableGroupEdit": "AG-2995 - 'Remove the grid option enableGroupEdit from docs API page to discourage its use'"
+        }
     },
     "accessories": {
         "meta": {
@@ -1272,8 +1278,7 @@
                 "url": "./row-spanning/"
             }
         },
-        "suppressRowTransform": {},
-        "renderingMode": {}
+        "suppressRowTransform": {}
     },
     "rowDragging": {
         "meta": {

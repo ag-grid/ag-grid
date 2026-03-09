@@ -1,6 +1,7 @@
 {
     "_config_": {
-        "codeSrc": "row-node.AUTO.json"
+        "codeSrc": "row-node.AUTO.json",
+        "validate": true
     },
     "display": {
         "meta": {
