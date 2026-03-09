@@ -120,7 +120,6 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
             this.eEndSpacer.style.display = verticalScrollbarWidth > 0 ? '' : 'none';
             this.eViewport.style.width =
                 verticalScrollbarWidth > 0 ? `calc(100% - ${verticalScrollbarWidth}px)` : '100%';
-            this.getGui().style.flexDirection = this.enableRtl ? 'row-reverse' : 'row';
 
             if (!scrollContainerSize) {
                 // the container needs a min-height of 1px to be

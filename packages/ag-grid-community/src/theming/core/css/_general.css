@@ -279,19 +279,21 @@
 
 .ag-grid-pinned-left-cells {
     /* offset pinned-left cells when the vertical scrollbar is rendered on the left (RTL). */
+    /* rtl:ignore */
     left: var(--ag-pinned-left-sticky-offset, 0);
 }
 
 .ag-grid-pinned-right-cells {
     /* offset pinned-right cells when the vertical scrollbar is rendered on the right (LTR). */
+    /* rtl:ignore */
     right: var(--ag-pinned-right-sticky-offset, 0);
 
     /* when rows are wider than displayed columns, consume spare inline space before right-pinned lane. */
     margin-inline-start: auto;
 }
 
-:where(.ag-ltr) .ag-grid-pinned-right-cells::after,
-:where(.ag-rtl) .ag-grid-pinned-left-cells::after {
+.ag-grid-pinned-right-cells::after,
+.ag-grid-pinned-left-cells::after {
     content: '';
     position: absolute;
     top: 0;
@@ -303,11 +305,13 @@
 }
 
 :where(.ag-ltr) .ag-grid-pinned-right-cells::after {
+    /* rtl:ignore */
     right: calc(-1 * var(--ag-pinned-right-sticky-offset, 0));
     width: var(--ag-pinned-right-sticky-offset, 0);
 }
 
 :where(.ag-rtl) .ag-grid-pinned-left-cells::after {
+    /* rtl:ignore */
     left: calc(-1 * var(--ag-pinned-left-sticky-offset, 0));
     width: var(--ag-pinned-left-sticky-offset, 0);
 }
@@ -547,8 +551,7 @@
     .ag-grid-scrolling-rows,
     .ag-grid-pinned-top-rows,
     .ag-grid-pinned-bottom-rows,
-    .ag-grid-pinned-top-rows-container,
-    .ag-body-horizontal-scroll {
+    .ag-grid-pinned-top-rows-container {
         flex-direction: row;
     }
 
@@ -565,8 +568,7 @@
     .ag-grid-scrolling-rows,
     .ag-grid-pinned-top-rows,
     .ag-grid-pinned-bottom-rows,
-    .ag-grid-pinned-top-rows-container,
-    .ag-body-horizontal-scroll {
+    .ag-grid-pinned-top-rows-container {
         flex-direction: row-reverse;
     }
 
