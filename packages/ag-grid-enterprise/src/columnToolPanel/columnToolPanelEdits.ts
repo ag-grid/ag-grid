@@ -16,34 +16,34 @@ export const COLUMN_TOOL_PANEL_DEFERRED_EDIT_BEAN_NAME = 'colToolPanelDeferredEd
 
 const noop = () => {};
 
-export abstract class BaseColumnToolPanelEdits extends BeanStub implements NamedBean {
-    abstract beanName: BeanName;
-    abstract applyColumnState(state: ColumnState[], eventType: ColumnEventType): void;
-    abstract commit(): void;
-    abstract moveColumns(columns: AgColumn[], targetIndex: number, eventType: ColumnEventType): void;
-    abstract reset(): void;
-    abstract setColumnsVisible(columns: AgColumn[], visible: boolean, eventType: ColumnEventType): void;
-    abstract isColumnVisibleInToolPanel(column: AgColumn): boolean;
-    abstract setRowGroupColumns(columns: AgColumn[], eventType: ColumnEventType): void;
-    abstract getRowGroupColumns(): AgColumn[];
-    abstract setValueColumns(columns: AgColumn[], eventType: ColumnEventType): void;
-    abstract getValueColumns(): AgColumn[];
-    abstract setColumnAggFunc(
+export interface BaseColumnToolPanelEdits extends NamedBean {
+    beanName: BeanName;
+    applyColumnState(state: ColumnState[], eventType: ColumnEventType): void;
+    commit(): void;
+    moveColumns(columns: AgColumn[], targetIndex: number, eventType: ColumnEventType): void;
+    reset(): void;
+    setColumnsVisible(columns: AgColumn[], visible: boolean, eventType: ColumnEventType): void;
+    isColumnVisibleInToolPanel(column: AgColumn): boolean;
+    setRowGroupColumns(columns: AgColumn[], eventType: ColumnEventType): void;
+    getRowGroupColumns(): AgColumn[];
+    setValueColumns(columns: AgColumn[], eventType: ColumnEventType): void;
+    getValueColumns(): AgColumn[];
+    setColumnAggFunc(
         column: AgColumn,
         aggFunc: string | IAggFunc | null | undefined,
         eventType: ColumnEventType
     ): void;
-    abstract getColumnAggFunc(column: AgColumn): string | IAggFunc | null | undefined;
-    abstract setPivotColumns(columns: AgColumn[], eventType: ColumnEventType): void;
-    abstract getPivotColumns(): AgColumn[];
-    abstract setPivotMode(pivotMode: boolean, eventType: ColumnEventType): void;
-    abstract getPivotMode(): boolean;
-    abstract isColumnSelectedInPivotModeToolPanel(column: AgColumn): boolean;
-    abstract progressSortFromEvent(column: AgColumn, event: MouseEvent | KeyboardEvent): void;
-    abstract getSortDef(column: AgColumn): SortDef | null;
+    getColumnAggFunc(column: AgColumn): string | IAggFunc | null | undefined;
+    setPivotColumns(columns: AgColumn[], eventType: ColumnEventType): void;
+    getPivotColumns(): AgColumn[];
+    setPivotMode(pivotMode: boolean, eventType: ColumnEventType): void;
+    getPivotMode(): boolean;
+    isColumnSelectedInPivotModeToolPanel(column: AgColumn): boolean;
+    progressSortFromEvent(column: AgColumn, event: MouseEvent | KeyboardEvent): void;
+    getSortDef(column: AgColumn): SortDef | null;
 }
 
-export class ColumnToolPanelSynchronousEdit extends BaseColumnToolPanelEdits {
+export class ColumnToolPanelSynchronousEdit extends BeanStub implements BaseColumnToolPanelEdits {
     beanName = COLUMN_TOOL_PANEL_SYNCHRONOUS_EDIT_BEAN_NAME as ColumnToolPanelEditStrategyBean;
 
     public reset = noop;
@@ -135,7 +135,7 @@ export class ColumnToolPanelSynchronousEdit extends BaseColumnToolPanelEdits {
     }
 }
 
-export class ColumnToolPanelDeferredEdit extends BaseColumnToolPanelEdits {
+export class ColumnToolPanelDeferredEdit extends BeanStub implements BaseColumnToolPanelEdits {
     beanName = COLUMN_TOOL_PANEL_DEFERRED_EDIT_BEAN_NAME as ColumnToolPanelEditStrategyBean;
 
     private state = this.getDefaultState();
