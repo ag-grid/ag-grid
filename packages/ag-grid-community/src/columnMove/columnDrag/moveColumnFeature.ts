@@ -591,31 +591,22 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             return;
         }
 
-        const { gos, visibleCols } = this.beans;
-        const isRtl = gos.get('enableRtl');
+        const { visibleCols } = this.beans;
         const viewportRect = this.gridBodyCon.eGridViewport.getBoundingClientRect();
         const physicalX = draggingEvent.event.clientX - viewportRect.left;
 
         // physical edges of center section within viewport
-        const physicalLeftPinnedWidth = isRtl
-            ? visibleCols.getRightStickyColumnContainerWidth()
-            : visibleCols.getLeftStickyColumnContainerWidth();
-        const physicalRightPinnedWidth = isRtl
-            ? visibleCols.getLeftStickyColumnContainerWidth()
-            : visibleCols.getRightStickyColumnContainerWidth();
+        const physicalLeftPinnedWidth = visibleCols.getLeftStickyColumnContainerWidth();
+        const physicalRightPinnedWidth = visibleCols.getRightStickyColumnContainerWidth();
 
-        const nearPhysicalLeft = physicalX < physicalLeftPinnedWidth + SCROLL_GAP_NEEDED_BEFORE_MOVE;
-        const nearPhysicalRight =
-            physicalX > viewportRect.width - physicalRightPinnedWidth - SCROLL_GAP_NEEDED_BEFORE_MOVE;
+        let nearPhysicalLeft = false;
+        let nearPhysicalRight = false;
 
-        // in rtl, physical left edge = scroll right, physical right edge = scroll left
-        if (isRtl) {
-            this.needToMoveRight = nearPhysicalLeft;
-            this.needToMoveLeft = nearPhysicalRight;
-        } else {
-            this.needToMoveLeft = nearPhysicalLeft;
-            this.needToMoveRight = nearPhysicalRight;
-        }
+        nearPhysicalLeft = physicalX < physicalLeftPinnedWidth + SCROLL_GAP_NEEDED_BEFORE_MOVE;
+        nearPhysicalRight = physicalX > viewportRect.width - physicalRightPinnedWidth - SCROLL_GAP_NEEDED_BEFORE_MOVE;
+
+        this.needToMoveLeft = nearPhysicalLeft;
+        this.needToMoveRight = nearPhysicalRight;
 
         if (this.needToMoveLeft || this.needToMoveRight) {
             this.ensureIntervalStarted();
@@ -659,10 +650,12 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         let pixelsMoved: number | null = null;
         const scrollFeature = this.gridBodyCon.scrollFeature;
 
+        const diff = this.gos.get('enableRtl') ? -1 : 1;
+
         if (this.needToMoveLeft) {
-            pixelsMoved = scrollFeature.scrollHorizontally(-pixelsToMove);
+            pixelsMoved = scrollFeature.scrollHorizontally(-pixelsToMove * diff);
         } else if (this.needToMoveRight) {
-            pixelsMoved = scrollFeature.scrollHorizontally(pixelsToMove);
+            pixelsMoved = scrollFeature.scrollHorizontally(pixelsToMove * diff);
         }
 
         if (pixelsMoved !== 0) {

@@ -429,7 +429,7 @@ export function normaliseX(params: {
         } else {
             x -= eViewport.getBoundingClientRect().left;
             if (visibleCols) {
-                x -= getPinnedSectionOffset(pinned, visibleCols, eViewport.clientWidth, isRtl);
+                x -= getPinnedSectionOffset(pinned, visibleCols, eViewport.clientWidth);
             }
         }
     }
@@ -453,20 +453,8 @@ export function normaliseX(params: {
 function getPinnedSectionOffset(
     pinned: ColumnPinnedType | undefined,
     visibleCols: VisibleColsService,
-    viewportWidth: number,
-    isRtl: boolean
+    viewportWidth: number
 ): number {
-    if (isRtl) {
-        // rtl: right-pinned is physically left, left-pinned is physically right
-        if (pinned === 'right') {
-            return 0;
-        }
-        if (pinned === 'left') {
-            return Math.max(0, viewportWidth - visibleCols.getLeftStickyColumnContainerWidth());
-        }
-        return visibleCols.getRightStickyColumnContainerWidth();
-    }
-
     if (pinned === 'left') {
         return 0;
     }

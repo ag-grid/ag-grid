@@ -156,19 +156,12 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
         const { visibleCols } = this.beans;
         const leftPinnedWidth = visibleCols.getLeftStickyColumnContainerWidth();
         const rightPinnedWidth = visibleCols.getRightStickyColumnContainerWidth();
-        const isRtl = this.gos.get('enableRtl');
-
-        // rtl flips physical layout: right-pinned is physically left, left-pinned physically right
-        const physicalLeftWidth = isRtl ? rightPinnedWidth : leftPinnedWidth;
-        const physicalRightWidth = isRtl ? leftPinnedWidth : rightPinnedWidth;
-        const physicalLeftSection: ColumnPinnedType = isRtl ? 'right' : 'left';
-        const physicalRightSection: ColumnPinnedType = isRtl ? 'left' : 'right';
 
         let section: ColumnPinnedType = null;
-        if (x < physicalLeftWidth) {
-            section = physicalLeftSection;
-        } else if (x > rect.width - physicalRightWidth) {
-            section = physicalRightSection;
+        if (x < leftPinnedWidth) {
+            section = 'left';
+        } else if (x > rect.width - rightPinnedWidth) {
+            section = 'right';
         }
 
         // suppress oscillation from nudge-triggered re-detection
