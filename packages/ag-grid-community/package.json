@@ -122,15 +122,6 @@
     "ag-charts-types": "13.1.0-beta.20260308"
   },
   "devDependencies": {
-    "source-map-loader": "^5.0.0",
-    "ts-loader": "^9.5.1",
-    "esbuild-loader": "^4.4.0",
-    "style-loader": "^3.3.4",
-    "css-loader": "^6.10.0",
-    "postcss-loader": "^8.1.0",
-    "webpack-cli": "^5.1.4",
-    "terser-webpack-plugin": "^5.3.10",
-    "postcss-preset-env": "^9.5.0",
     "web-streams-polyfill": "^3.3.2",
     "blob-polyfill": "^7.0.20220408",
     "compression-streams-polyfill": "^0.1.7",

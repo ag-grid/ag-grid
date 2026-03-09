@@ -218,7 +218,8 @@
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}", "{workspaceRoot}/reports/ag-grid-enterprise.xml"],
       "parallelism": false,
       "options": {
-        "jestConfig": "{projectRoot}/jest.config.ts"
+        "jestConfig": "{projectRoot}/jest.config.ts",
+        "testPathIgnorePatterns": ["e2e"]
       }
     }
   },

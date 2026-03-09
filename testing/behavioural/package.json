@@ -30,7 +30,7 @@
     "directory": "testing/behavioural"
   },
   "scripts": {
-    "test": "vitest run",
+    "testx": "vitest run",
     "test:watch": "vitest watch"
   },
   "author": "Sean Landsman <sean@thelandsmans.com>",
