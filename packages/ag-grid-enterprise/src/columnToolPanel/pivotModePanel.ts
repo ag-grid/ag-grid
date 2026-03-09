@@ -31,7 +31,7 @@ export class PivotModePanel extends Component {
     }
 
     private getCurrentPivotMode(): boolean {
-        return this.getEditStrategy().getPivotModeForToolPanel();
+        return this.getEditStrategy().getPivotMode();
     }
 
     public syncFromGrid(): void {

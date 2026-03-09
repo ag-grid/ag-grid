@@ -83,7 +83,7 @@ export class ToolPanelContextMenu extends Component {
         }
         this.columns = columns;
 
-        const isPivotMode = edits.getPivotModeForToolPanel();
+        const isPivotMode = edits.getPivotMode();
 
         this.allowScrollIntoView = !isPivotMode && columns.some(this.isColumnValidForScrollIntoView);
         this.allowGrouping = columns.some((col) => col.isPrimary() && col.isAllowRowGroup());
@@ -99,7 +99,7 @@ export class ToolPanelContextMenu extends Component {
         const menuItemMap = new Map<MenuItemName, MenuItemProperty>();
         this.menuItemMap = menuItemMap;
 
-        const isPivotMode = edits.getPivotModeForToolPanel();
+        const isPivotMode = edits.getPivotMode();
         const rowGroupColIdSet = new Set(edits.getRowGroupColumns().map((col) => col.getColId()));
         const valueColIdSet = new Set(edits.getValueColumns().map((col) => col.getColId()));
         const pivotColIdSet = new Set(edits.getPivotColumns().map((col) => col.getColId()));

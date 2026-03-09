@@ -69,7 +69,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel implements FocusableCo
             }
         } else {
             // in toolPanel, the pivot panel is always shown when pivot mode is on
-            const draftPivotMode = this.getEditStrategy()?.getPivotModeForToolPanel();
+            const draftPivotMode = this.getEditStrategy()?.getPivotMode();
             this.setDisplayed(draftPivotMode ?? pivotMode);
         }
     }

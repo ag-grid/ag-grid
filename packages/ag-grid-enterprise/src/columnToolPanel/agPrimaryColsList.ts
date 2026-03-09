@@ -586,7 +586,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         let uncheckedCount = 0;
 
         const edits = this.getEditStrategy();
-        const pivotMode = edits.getPivotModeForToolPanel();
+        const pivotMode = edits.getPivotMode();
 
         this.forEachItem((item) => {
             if (item.group) {

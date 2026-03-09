@@ -205,7 +205,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
 
     private getCurrentSortDirection(column: AgColumn): SortDirection {
         return (
-            this.getEditStrategy()?.getSortDefForToolPanel(column)?.direction ?? column.getSortDef()?.direction ?? null
+            this.getEditStrategy()?.getSortDef(column)?.direction ?? column.getSortDef()?.direction ?? null
         );
     }
 
@@ -214,7 +214,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
             return undefined;
         }
 
-        return this.getEditStrategy()?.getSortDefForToolPanel(this.column);
+        return this.getEditStrategy()?.getSortDef(this.column);
     }
 
     protected override getDefaultIconName(): DragAndDropIcon {

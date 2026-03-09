@@ -373,7 +373,7 @@ export class ToolPanelColumnGroupComp extends Component {
 
     private workOutSelectedValue(): boolean | undefined {
         const edits = this.getEditStrategy();
-        const pivotMode = edits.getPivotModeForToolPanel();
+        const pivotMode = edits.getPivotMode();
 
         const visibleLeafColumns = this.getVisibleLeafColumns();
 
@@ -398,7 +398,7 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private workOutReadOnlyValue(): boolean {
-        const pivotMode = this.getEditStrategy().getPivotModeForToolPanel();
+        const pivotMode = this.getEditStrategy().getPivotMode();
 
         let colsThatCanAction = 0;
 
@@ -417,7 +417,7 @@ export class ToolPanelColumnGroupComp extends Component {
 
     private isColumnChecked(column: AgColumn): boolean {
         const edits = this.getEditStrategy();
-        if (edits.getPivotModeForToolPanel()) {
+        if (edits.getPivotMode()) {
             return edits.isColumnSelectedInPivotModeToolPanel(column);
         }
         return edits.isColumnVisibleInToolPanel(column);

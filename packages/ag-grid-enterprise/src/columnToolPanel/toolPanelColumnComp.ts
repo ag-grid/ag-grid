@@ -300,7 +300,7 @@ export class ToolPanelColumnComp extends Component {
     private onColumnStateChanged(): void {
         this.processingColumnStateChange = true;
         const edits = this.getEditStrategy();
-        const isPivotMode = edits.getPivotModeForToolPanel();
+        const isPivotMode = edits.getPivotMode();
         if (isPivotMode) {
             // if reducing, checkbox means column is one of pivot, value or group
             const anyFunctionActive = edits.isColumnSelectedInPivotModeToolPanel(this.column);

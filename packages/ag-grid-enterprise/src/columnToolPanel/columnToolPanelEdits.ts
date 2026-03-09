@@ -21,29 +21,27 @@ export abstract class BaseColumnToolPanelEdits extends BeanStub implements IColu
     abstract beanName: BeanName;
     abstract applyColumnState(state: ColumnState[], eventType: ColumnEventType): void;
     abstract commit(): void;
-    abstract getColumnAggFunc(column: AgColumn): string | IAggFunc | null | undefined;
-    abstract getPivotColumns(): AgColumn[];
-    abstract getPivotMode(): boolean;
-    abstract getPivotModeForToolPanel(): boolean;
-    abstract getRowGroupColumns(): AgColumn[];
-    abstract getSortDef(column: AgColumn): SortDef | null;
-    abstract getSortDefForToolPanel(column: AgColumn): SortDef | null;
-    abstract getValueColumns(): AgColumn[];
-    abstract isColumnSelectedInPivotModeToolPanel(column: AgColumn): boolean;
-    abstract isColumnVisibleInToolPanel(column: AgColumn): boolean;
     abstract moveColumns(columns: AgColumn[], targetIndex: number, eventType: ColumnEventType): void;
-    abstract progressSortFromEvent(column: AgColumn, event: MouseEvent | KeyboardEvent): void;
     abstract reset(): void;
+    abstract setColumnsVisible(columns: AgColumn[], visible: boolean, eventType: ColumnEventType): void;
+    abstract isColumnVisibleInToolPanel(column: AgColumn): boolean;
+    abstract setRowGroupColumns(columns: AgColumn[], eventType: ColumnEventType): void;
+    abstract getRowGroupColumns(): AgColumn[];
+    abstract setValueColumns(columns: AgColumn[], eventType: ColumnEventType): void;
+    abstract getValueColumns(): AgColumn[];
     abstract setColumnAggFunc(
         column: AgColumn,
         aggFunc: string | IAggFunc | null | undefined,
         eventType: ColumnEventType
     ): void;
-    abstract setColumnsVisible(columns: AgColumn[], visible: boolean, eventType: ColumnEventType): void;
+    abstract getColumnAggFunc(column: AgColumn): string | IAggFunc | null | undefined;
     abstract setPivotColumns(columns: AgColumn[], eventType: ColumnEventType): void;
+    abstract getPivotColumns(): AgColumn[];
     abstract setPivotMode(pivotMode: boolean, eventType: ColumnEventType): void;
-    abstract setRowGroupColumns(columns: AgColumn[], eventType: ColumnEventType): void;
-    abstract setValueColumns(columns: AgColumn[], eventType: ColumnEventType): void;
+    abstract getPivotMode(): boolean;
+    abstract isColumnSelectedInPivotModeToolPanel(column: AgColumn): boolean;
+    abstract progressSortFromEvent(column: AgColumn, event: MouseEvent | KeyboardEvent): void;
+    abstract getSortDef(column: AgColumn): SortDef | null;
 }
 
 export class ColumnToolPanelSynchronousEdit extends BaseColumnToolPanelEdits {
@@ -129,20 +127,12 @@ export class ColumnToolPanelSynchronousEdit extends BaseColumnToolPanelEdits {
         return column.isValueActive() || column.isPivotActive() || column.isRowGroupActive();
     }
 
-    public getPivotModeForToolPanel(): boolean {
-        return this.getPivotMode();
-    }
-
     public getPivotMode(): boolean {
         return this.beans.colModel.isPivotMode();
     }
 
     public getSortDef(column: AgColumn): SortDef | null {
         return column.getSortDef();
-    }
-
-    public getSortDefForToolPanel(column: AgColumn): SortDef | null {
-        return this.getSortDef(column);
     }
 }
 
@@ -500,7 +490,7 @@ export class ColumnToolPanelDeferredEdit extends BaseColumnToolPanelEdits {
     }
 
     public getRowGroupColumns(): AgColumn[] {
-        if (!this.getPivotModeForToolPanel()) {
+        if (!this.getPivotMode()) {
             return [];
         }
 
@@ -515,7 +505,7 @@ export class ColumnToolPanelDeferredEdit extends BaseColumnToolPanelEdits {
     }
 
     public getValueColumns(): AgColumn[] {
-        if (!this.getPivotModeForToolPanel()) {
+        if (!this.getPivotMode()) {
             return [];
         }
 
@@ -530,7 +520,7 @@ export class ColumnToolPanelDeferredEdit extends BaseColumnToolPanelEdits {
     }
 
     public getPivotColumns(): AgColumn[] {
-        if (!this.getPivotModeForToolPanel()) {
+        if (!this.getPivotMode()) {
             return [];
         }
 
@@ -548,10 +538,6 @@ export class ColumnToolPanelDeferredEdit extends BaseColumnToolPanelEdits {
         return this.state.pivotMode?.pivotMode ?? this.beans.colModel.isPivotMode();
     }
 
-    public getPivotModeForToolPanel(): boolean {
-        return this.getPivotMode();
-    }
-
     public getSortDef(column: AgColumn): SortDef | null {
         const draftSortState = this.state.sort;
         const colId = column.getColId();
@@ -563,10 +549,6 @@ export class ColumnToolPanelDeferredEdit extends BaseColumnToolPanelEdits {
             return null;
         }
         return column.getSortDef();
-    }
-
-    public getSortDefForToolPanel(column: AgColumn): SortDef | null {
-        return this.getSortDef(column);
     }
 
     public progressSortFromEvent(column: AgColumn, event: MouseEvent | KeyboardEvent): void {
