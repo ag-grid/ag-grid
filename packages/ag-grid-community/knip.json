@@ -5,7 +5,8 @@
         "./src/typings.ts",
         "./src/interfaces/iAgChartOptions.ts",
         "./src/theming/createTheme.ts",
-        "./src/utils/debug.ts"
+        "./src/utils/debug.ts",
+        "./src/main-umd-styles.ts"
     ],
     "rules": {
         "unlisted": "off",

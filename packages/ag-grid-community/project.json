@@ -4,6 +4,14 @@
   "sourceRoot": "packages/ag-grid-community/src",
   "projectType": "library",
   "targets": {
+    "setup": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["npx playwright install --with-deps chromium"],
+        "parallel": false,
+        "cwd": "packages/ag-grid-community"
+      }
+    },
     "build": {
       "executor": "nx:noop",
       "inputs": [],
@@ -181,7 +189,7 @@
     },
     "test:umd:browser": {
       "executor": "nx:run-commands",
-      "dependsOn": ["build:umd"],
+      "dependsOn": ["build:umd", "setup"],
       "options": {
         "commands": ["echo 'Skipping test:umd:browser - requires staging or production configuration'"],
         "parallel": false,
