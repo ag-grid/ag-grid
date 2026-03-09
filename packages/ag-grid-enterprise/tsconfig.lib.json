@@ -1,9 +1,9 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "types": [],
+    "types": ["vite/client"],
     "baseUrl": "src",
-    "module": "esnext",
+    "module": "preserve",
     "moduleResolution": "bundler"
   },
   "include": ["src/**/*.ts"],
