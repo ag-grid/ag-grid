@@ -363,15 +363,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
             return true;
         }
 
-        const gridBodyCtrl = this.beans.ctrlsSvc.getGridBodyCtrl();
-        if (!gridBodyCtrl) {
-            return false;
-        }
-
-        const contentWidth = gridBodyCtrl.getHorizontalContentWidth();
-        const viewportWidth = gridBodyCtrl.getHorizontalViewportWidth();
-
-        return contentWidth - viewportWidth > 0.5;
+        return this.beans.visibleCols.bodyWidth - this.getCenterWidth() > 0.5;
     }
 
     public setHorizontalScroll(offset: number): void {

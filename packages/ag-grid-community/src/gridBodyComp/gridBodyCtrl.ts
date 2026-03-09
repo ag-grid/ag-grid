@@ -228,8 +228,7 @@ export class GridBodyCtrl extends BeanStub {
             return baseWidth;
         }
 
-        const viewportWidth = this.getHorizontalViewportWidth();
-        return baseWidth - viewportWidth > 0.5 ? baseWidth + this.getVerticalScrollbarWidth() : baseWidth;
+        return baseWidth + this.getVerticalScrollbarWidth();
     }
 
     public getHorizontalViewportWidth(): number {
@@ -303,6 +302,7 @@ export class GridBodyCtrl extends BeanStub {
         } = this;
         classList.toggle('ag-body-vertical-content-no-gap', !scrollVisibleSvc.verticalScrollGap);
         classList.toggle('ag-body-horizontal-content-no-gap', !scrollVisibleSvc.horizontalScrollGap);
+        classList.toggle('ag-body-horizontal-scroll', scrollVisibleSvc.horizontalScrollShowing);
     }
 
     private updatePinnedColumnStickyOffsets(): void {
