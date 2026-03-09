@@ -86,6 +86,7 @@ export function createGrid<TData>(
         _error(11);
         return {} as GridApi;
     }
+    console.log("Hello World!!! Too slow");
     const gridParams: GridParams | undefined = params;
     let destroyCallback: (() => void) | undefined;
     if (!gridParams?.setThemeOnGridDiv) {
