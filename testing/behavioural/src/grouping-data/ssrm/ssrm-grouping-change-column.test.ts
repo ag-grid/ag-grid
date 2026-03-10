@@ -1117,4 +1117,69 @@ describe('ssrm grouping column changes preserve expansion state', () => {
             collapsedRowGroupIds: [],
         });
     });
+
+    test('setState-restored expansion IDs survive a subsequent group column change', async () => {
+        const api = await gridManager.createGridAndWait(null, {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'year' }, { field: 'medals' }],
+            autoGroupColumnDef: { headerName: 'Group' },
+            rowModelType: 'serverSide',
+            serverSideDatasource: createDatasource(),
+            getRowId,
+        });
+
+        await waitForNoLoadingRows(api);
+
+        // Expand Ireland via the UI so the strategy records its level
+        api.setRowNodeExpanded(api.getRowNode('country:Ireland')!, true);
+        await waitForNoLoadingRows(api);
+
+        // Save the state, then reset expansion
+        const savedState = api.getState();
+        expect(savedState.rowGroupExpansion).toEqual({
+            expandedRowGroupIds: ['country:Ireland'],
+            collapsedRowGroupIds: [],
+        });
+
+        api.resetRowGroupExpansion();
+        await waitForNoLoadingRows(api);
+
+        // Restore expansion via setState — this calls setExpandedState which does NOT
+        // populate nodeLevels in the strategy
+        api.setState(savedState);
+        await waitForNoLoadingRows(api);
+
+        // Ireland should be expanded again from the restored state
+        await new GridRows(api, 'after setState — Ireland re-expanded').check(`
+            ROOT id:<no-id>
+            ├─┬ GROUP-leafGroup id:"country:Ireland" ag-Grid-AutoColumn:"Ireland" country:"Ireland" medals:5
+            │ ├── LEAF id:ie-2020-1 country:"Ireland" year:"2020" medals:2
+            │ └── LEAF id:ie-2021-1 country:"Ireland" year:"2021" medals:3
+            └── GROUP-leafGroup collapsed id:"country:France" ag-Grid-AutoColumn:"France" country:"France" medals:4
+        `);
+
+        // Now add year as a second group column — this triggers preserveAndResetExpand
+        // which filters IDs by getNodeLevel(). The bug: setState-restored IDs have no
+        // recorded level, so getNodeLevel returns undefined and isValidLevel drops them.
+        api.setGridOption('columnDefs', [
+            { field: 'country', rowGroup: true, hide: true },
+            { field: 'year', rowGroup: true, hide: true },
+            { field: 'medals' },
+        ]);
+        await waitForNoLoadingRows(api);
+
+        // Ireland's expansion should be preserved — it's a level-0 ID and only level ≥ 1 changed
+        await new GridRows(api, 'after adding year — Ireland should remain expanded').check(`
+            ROOT id:<no-id>
+            ├─┬ GROUP id:"country:Ireland" ag-Grid-AutoColumn:"Ireland" country:"Ireland" medals:5
+            │ ├── GROUP-leafGroup collapsed id:"Ireland|year:2020" ag-Grid-AutoColumn:"2020" year:"2020" medals:2
+            │ └── GROUP-leafGroup collapsed id:"Ireland|year:2021" ag-Grid-AutoColumn:"2021" year:"2021" medals:3
+            └── GROUP collapsed id:"country:France" ag-Grid-AutoColumn:"France" country:"France" medals:4
+        `);
+
+        // The setState-restored ID should survive the column change
+        expect(api.getState().rowGroupExpansion).toEqual({
+            expandedRowGroupIds: ['country:Ireland'],
+            collapsedRowGroupIds: [],
+        });
+    });
 });

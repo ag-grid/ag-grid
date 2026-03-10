@@ -73,7 +73,9 @@ export class ServerSideExpansionService
                 if (upperBound >= 0) {
                     const isValidLevel = (id: string) => {
                         const level = oldStrategy.getNodeLevel(id);
-                        return level != null && level < upperBound;
+                        // If level is unknown (e.g. restored via setState/initialState rather than
+                        // user interaction), keep the ID — dropping it would lose valid state.
+                        return level == null || level < upperBound;
                     };
                     expandedRowGroupIds = expandedRowGroupIds.filter(isValidLevel);
                     collapsedRowGroupIds = collapsedRowGroupIds?.filter(isValidLevel);
