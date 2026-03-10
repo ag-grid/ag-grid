@@ -14,51 +14,58 @@ export const getPropertiesFromSource = async ({
     sources: string[];
 }) => {
     const sources = source ? [source] : sourcesProp;
+    const fileEntryPromises = sources.map(async (s: string) => {
+        // NOTE: Need to remove `.json` for getEntry
+        const fileName = s.replace('.json', '');
+        const fileEntry = await getEntry('apiDocumentation', fileName);
+        if (!fileEntry) {
+            const message = `ApiDocumentation source not found: src/content/api-documentation/${fileName}.json`;
+            if (getIsDev()) {
+                // eslint-disable-next-line no-console
+                console.error(message);
+            } else {
+                throw new Error(message);
+            }
+        }
+        return fileEntry;
+    });
+    const fileEntries = await Promise.all(fileEntryPromises);
+
     const propertiesFromFiles: any[] = [];
     const propertyConfigs: any[] = [];
     const codeConfigs: Record<string, any> = {};
 
-    await Promise.all(
-        sources.map(async (s: string) => {
-            // NOTE: Need to remove `.json` for getEntry
-            const fileName = s.replace('.json', '');
-            const fileEntry = await getEntry('apiDocumentation', fileName);
-            if (!fileEntry) {
-                const message = `ApiDocumentation source not found: src/content/api-documentation/${fileName}.json`;
-                if (getIsDev()) {
-                    // eslint-disable-next-line no-console
-                    console.error(message);
-                } else {
-                    throw new Error(message);
-                }
-                return;
-            }
+    for (let i = 0; i < sources.length; i++) {
+        const fileEntry = fileEntries[i];
+        if (!fileEntry) {
+            continue;
+        }
 
-            const propsFile = fileEntry.data;
-            propertiesFromFiles.push(propsFile);
+        const s = sources[i];
+        const propsFile = fileEntry.data;
+        propertiesFromFiles.push(propsFile);
 
-            const config = propsFile['_config_'];
-            if (!config) {
-                // eslint-disable-next-line no-console
-                console.warn(`ApiDocumentation: _config_ property missing from source ${s}.`);
-                return;
-            }
-            propertyConfigs.push(config);
+        const config = propsFile['_config_'];
+        if (!config) {
+            // eslint-disable-next-line no-console
+            console.warn(`ApiDocumentation: _config_ property missing from source ${s}.`);
+            continue;
+        }
+        propertyConfigs.push(config);
 
-            const codeSrc = config.codeSrc;
-            if (codeSrc && !(codeSrc in codeConfigs)) {
-                codeConfigs[codeSrc] = getJsonFile(`reference/${codeSrc}`);
-            }
+        const codeSrc = config.codeSrc;
+        if (codeSrc && !(codeSrc in codeConfigs)) {
+            codeConfigs[codeSrc] = getJsonFile(`reference/${codeSrc}`);
+        }
 
-            if (config.validate) {
-                const codeConfig = codeConfigs[codeSrc];
-                if (!codeConfig) {
-                    throw new Error(`${s} codeSrc file not found: ${codeSrc}`);
-                }
-                validateDocumentedProperties(propsFile, codeConfig, s);
+        if (config.validate) {
+            const codeConfig = codeConfigs[codeSrc];
+            if (!codeConfig) {
+                throw new Error(`${s} codeSrc file not found: ${codeSrc}`);
             }
-        })
-    );
+            validateDocumentedProperties(propsFile, codeConfig, s);
+        }
+    }
 
     return {
         sources,
