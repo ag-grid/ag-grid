@@ -37,6 +37,7 @@ import {
 } from 'ag-grid-community';
 
 import type { NodeManager } from './nodeManager';
+import { findFirstChangedGroupLevel } from './services/serverSideExpansionService';
 import type { LazyStore } from './stores/lazy/lazyStore';
 import type { StoreFactory } from './stores/storeFactory';
 
@@ -213,9 +214,9 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
         // check if anything pertaining to fetching data has changed, and if it has, reset, but if
         // it has not, don't reset
-        const rowGroupColumnVos = this.columnsToValueObjects(this.rowGroupColsSvc);
-        const valueColumnVos = this.columnsToValueObjects(this.valueColsSvc);
-        const pivotColumnVos = this.columnsToValueObjects(this.pivotColsSvc);
+        const rowGroupColumnVos = this.columnsToValueObjects(this.rowGroupColsSvc?.columns);
+        const valueColumnVos = this.columnsToValueObjects(this.valueColsSvc?.columns);
+        const pivotColumnVos = this.columnsToValueObjects(this.pivotColsSvc?.columns);
 
         // compares two sets of columns, ensuring no columns have been added or removed (unless specified via allowRemovedColumns)
         // if the columns are found, also ensures the field and aggFunc properties have not been changed.
@@ -382,8 +383,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         this.dispatchModelUpdated(true);
     }
 
-    public columnsToValueObjects(colsSvc: IColsService | undefined): ColumnVO[] {
-        const columns = colsSvc?.columns ?? [];
+    public columnsToValueObjects(columns: AgColumn[] = []): ColumnVO[] {
         return columns.map(
             (col) =>
                 ({
@@ -403,23 +403,17 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         }
 
         const oldRowGroupCols = storeParams.rowGroupCols;
-        const newRowGroupCols = this.columnsToValueObjects(this.rowGroupColsSvc);
+        const newRowGroupCols = this.columnsToValueObjects(this.rowGroupColsSvc?.columns);
 
-        // Find the first level where group columns diverge
-        const minLen = Math.min(oldRowGroupCols.length, newRowGroupCols.length);
-        let firstDirtyLevel = -1;
-        for (let i = 0; i < minLen; i++) {
-            if (oldRowGroupCols[i].id !== newRowGroupCols[i].id) {
-                firstDirtyLevel = i;
-                break;
-            }
-        }
-        if (firstDirtyLevel === -1) {
-            firstDirtyLevel = minLen; // columns added/removed at the end
-        }
+        // Find the first level where group columns diverged — no IDs at or beyond this
+        // level can survive since those nodes will all have different IDs or cease to exist.
+        const firstDirtyLevel = findFirstChangedGroupLevel(
+            oldRowGroupCols.map((c) => c.id),
+            newRowGroupCols.map((c) => c.id)
+        );
 
         // Update storeParams (shared reference propagates to all stores)
-        this.storeParams.rowGroupCols = newRowGroupCols;
+        storeParams.rowGroupCols = newRowGroupCols;
 
         if (firstDirtyLevel === 0) {
             this.resetRootStore();
@@ -437,9 +431,9 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     }
 
     private createStoreParams(): SSRMParams {
-        const rowGroupColumnVos = this.columnsToValueObjects(this.rowGroupColsSvc);
-        const valueColumnVos = this.columnsToValueObjects(this.valueColsSvc);
-        const pivotColumnVos = this.columnsToValueObjects(this.pivotColsSvc);
+        const rowGroupColumnVos = this.columnsToValueObjects(this.rowGroupColsSvc?.columns);
+        const valueColumnVos = this.columnsToValueObjects(this.valueColsSvc?.columns);
+        const pivotColumnVos = this.columnsToValueObjects(this.pivotColsSvc?.columns);
 
         const dynamicRowHeight = _isGetRowHeightFunction(this.gos);
 

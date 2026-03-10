@@ -55,15 +55,7 @@ export class ServerSideExpansionService
 
                 // Find the first level where group columns diverged — no IDs at or beyond this
                 // level can survive since those nodes will all have different IDs or cease to exist.
-                const minLen = Math.min(oldGroupColIds.length, newGroupColIds.length);
-                let firstDirtyLevel = minLen; // default: columns added/removed at end
-                for (let i = 0; i < minLen; i++) {
-                    if (oldGroupColIds[i] !== newGroupColIds[i]) {
-                        firstDirtyLevel = i;
-                        break;
-                    }
-                }
-
+                const firstDirtyLevel = findFirstChangedGroupLevel(oldGroupColIds, newGroupColIds);
                 // If the top-level group column changed, no existing IDs survive — skip snapshot.
                 if (firstDirtyLevel === 0) {
                     this.strategy = newStrategy;
@@ -266,4 +258,22 @@ export class ServerSideExpansionService
 
         return detailNode;
     }
+}
+
+/**
+ * Find the first level at which the group cols have changed. Used to know how many levels can be preserved when col groups have changed
+ * @param oldGroupColIds
+ * @param newGroupColIds
+ * @returns
+ */
+export function findFirstChangedGroupLevel(oldGroupColIds: string[], newGroupColIds: string[]) {
+    const minLen = Math.min(oldGroupColIds.length, newGroupColIds.length);
+    let firstDirtyLevel = minLen; // default: columns added/removed at end
+    for (let i = 0; i < minLen; i++) {
+        if (oldGroupColIds[i] !== newGroupColIds[i]) {
+            firstDirtyLevel = i;
+            break;
+        }
+    }
+    return firstDirtyLevel;
 }
