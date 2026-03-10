@@ -44,7 +44,7 @@ import type { ICellRendererParams } from 'ag-grid-community';
                 border: 2px solid grey;
                 border-style: ridge;
                 padding: 5px;
-                background-color: #99999944;
+                background-color: #404650;
             }
             .full-width-flag {
                 float: left;
@@ -66,7 +66,7 @@ import type { ICellRendererParams } from 'ag-grid-community';
                 padding: 2px;
                 height: 100%;
                 font-family: cursive;
-                background-color: #99999944;
+                background-color: #404650;
             }
             .full-width-center p {
                 margin-top: 0px;

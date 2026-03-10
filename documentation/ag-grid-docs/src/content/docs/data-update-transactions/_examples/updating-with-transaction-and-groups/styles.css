@@ -11,16 +11,19 @@
 
 .category-for-sale {
     font-weight: bold;
-    background-color: #33cc3344;
+    background-color: #265538;
 }
+
 .category-sold {
     font-weight: bold;
-    background-color: #2244cc44;
+    background-color: #1c305e;
 }
+
 .category-in-workshop {
     font-weight: bold;
-    background-color: #ccaa22a9;
+    background-color: #927e2f;
 }
+
 .bt-action {
-    margin: 0px;
+    margin: 0;
 }

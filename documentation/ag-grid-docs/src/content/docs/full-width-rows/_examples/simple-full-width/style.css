@@ -7,7 +7,7 @@
     border-style: ridge;
     box-sizing: border-box;
     padding: 5px;
-    background-color: #99999944;
+    background-color: #404650;
 }
 
 .full-width-flag {
@@ -33,12 +33,13 @@
     height: 100%;
     box-sizing: border-box;
     font-family: cursive;
-    background-color: #99999944;
+    background-color: #404650;
 }
 
 .full-width-center p {
     margin-top: 0px;
 }
+
 .full-width-title {
     font-size: 20px;
 }

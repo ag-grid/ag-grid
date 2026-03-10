@@ -16,7 +16,7 @@ ModuleRegistry.registerModules([
 ]);
 
 let colorIndex = 0;
-const colors = ['#99999944', '#CC333344', '#33CC3344', '#2244CC44'];
+const colors = ['#404650', '#4d2b36', '#265538', '#1c305e'];
 
 let gridApi: GridApi;
 

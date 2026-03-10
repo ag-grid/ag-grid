@@ -54,21 +54,25 @@ button i {
 }
 
 .factory-red {
-    background-color: #cc333344;
+    background-color: #4d2b36;
 }
+
 .factory-green {
-    background-color: #33cc3344;
+    background-color: #265538;
 }
+
 .factory-blue {
-    background-color: #2244cc44;
+    background-color: #1c305e;
 }
 
 .red-row {
-    background-color: #cc333344 !important;
+    background-color: #4d2b36 !important;
 }
+
 .green-row {
-    background-color: #33cc3344 !important;
+    background-color: #265538 !important;
 }
+
 .blue-row {
-    background-color: #2244cc44 !important;
+    background-color: #1c305e !important;
 }

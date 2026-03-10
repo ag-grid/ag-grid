@@ -41,14 +41,14 @@ body {
 
 .drop-target {
     border: 1px solid #888;
-    background-color: #99999966;
+    background-color: #50555d;
     padding: 10px;
 }
 
 .tile-container {
     box-sizing: border-box;
     border: 1px solid #888;
-    background-color: #99999944;
+    background-color: #404650;
     overflow: auto;
     display: flex;
     align-items: flex-start;
@@ -65,21 +65,25 @@ body {
 }
 
 .red-row {
-    background-color: #cc333344;
+    background-color: #4d2b36;
 }
+
 .green-row {
-    background-color: #33cc3344;
+    background-color: #265538;
 }
+
 .blue-row {
-    background-color: #2244cc44;
+    background-color: #1c305e;
 }
 
 .tile.red {
-    background-color: #cc333344;
+    background-color: #4d2b36;
 }
+
 .tile.green {
-    background-color: #33cc3344;
+    background-color: #265538;
 }
+
 .tile.blue {
-    background-color: #2244cc44;
+    background-color: #1c305e;
 }

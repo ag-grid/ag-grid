@@ -23,7 +23,7 @@
     box-sizing: border-box;
     flex: 1 1 auto;
     border: 1px solid #888;
-    background-color: #99999944;
+    background-color: #404650;
     overflow: auto;
 }
 
@@ -40,15 +40,15 @@
 }
 
 .red-row {
-    background-color: #cc222244;
+    background-color: #4d2632;
 }
 
 .green-row {
-    background-color: #33cc3344;
+    background-color: #265538;
 }
 
 .blue-row {
-    background-color: #2244cc44;
+    background-color: #1c305e;
 }
 
 #myGrid {
