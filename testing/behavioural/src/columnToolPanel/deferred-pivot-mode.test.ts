@@ -7,8 +7,8 @@ import {
     createServerSideDatasource,
 } from '../../../../documentation/ag-grid-docs/src/content/docs/tool-panel-columns/_examples/deferred-apply-mode/fakeServer';
 import { AgGridHeaderDropZonesSelector } from '../../../../packages/ag-grid-enterprise/src/rowGrouping/columnDropZones/agGridHeaderDropZones';
-import { waitForNoLoadingRows } from '../test-utils/ssrm-test-utils';
 import { TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { waitForNoLoadingRows } from '../test-utils/ssrm-test-utils';
 
 describe('deferred column tool panel pivot mode', () => {
     const gridMgr = new TestGridsManager({
@@ -206,17 +206,11 @@ describe('deferred column tool panel pivot mode', () => {
             columnDefs: [
                 {
                     headerName: 'Group A',
-                    children: [
-                        { field: 'athlete' },
-                        { field: 'age' },
-                    ],
+                    children: [{ field: 'athlete' }, { field: 'age' }],
                 },
                 {
                     headerName: 'Group B',
-                    children: [
-                        { field: 'country' },
-                        { field: 'year' },
-                    ],
+                    children: [{ field: 'country' }, { field: 'year' }],
                 },
             ],
             rowData,
@@ -363,6 +357,42 @@ describe('deferred column tool panel pivot mode', () => {
         );
         expect(hasYearHeaderGroupText).toBe(false);
         expect(gridApi.getPivotResultColumns() == null).toBe(true);
+    });
+
+    test('turning defer mode off then toggling pivot mode should remove and restore the year label immediately', async () => {
+        const { gridApi, toolPanel } = await createDeferredPivotModeGrid();
+        const toolPanelGui = toolPanel.getGui() as HTMLElement;
+        const deferModeToggle = toolPanelGui.querySelector<HTMLInputElement>(
+            '.ag-column-panel-defer-mode-toggle input[type="checkbox"]'
+        );
+        const pivotModeToggle = toolPanelGui.querySelector<HTMLInputElement>(
+            '.ag-pivot-mode-panel input[type="checkbox"]'
+        );
+
+        expect(deferModeToggle).not.toBeNull();
+        expect(pivotModeToggle).not.toBeNull();
+
+        deferModeToggle!.click();
+        toolPanel.editStrategy.setPivotMode(false, 'toolPanelUi');
+        toolPanel['onPivotModePanelValueChanged']();
+        await waitForNoLoadingRows(gridApi);
+
+        expect(gridApi.isPivotMode()).toBe(false);
+        const gridEl = getGridElement(gridApi)! as HTMLElement;
+        const hasYearHeaderGroupText = Array.from(gridEl.querySelectorAll('.ag-header-group-text')).some(
+            (el) => el.textContent?.trim() === '2000'
+        );
+        expect(hasYearHeaderGroupText).toBe(false);
+        expect(gridApi.getPivotResultColumns() == null).toBe(true);
+
+        toolPanel.editStrategy.setPivotMode(true, 'toolPanelUi');
+        toolPanel['onPivotModePanelValueChanged']();
+        await waitForNoLoadingRows(gridApi);
+        await asyncSetTimeout(50);
+
+        expect(gridApi.isPivotMode()).toBe(true);
+        expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['year']);
+        expect(toolPanel.pivotDropZonePanel.getGui().textContent).toContain('Year');
     });
 
     test('reordering columns in non-pivot mode applies only after commit', async () => {
@@ -875,6 +905,25 @@ describe('deferred column tool panel pivot mode', () => {
         expect(pivotPanel.isInterestedIn(DragSourceType.ToolPanel)).toBe(false);
     });
 
+    test('dragging into column groups is allowed after clearing groups, labels and aggregations then committing non-pivot mode', async () => {
+        const { gridApi, toolPanel } = await createDeferredPivotAggregationGrid();
+
+        toolPanel.editStrategy.setRowGroupColumns([], 'toolPanelUi');
+        toolPanel.editStrategy.setPivotColumns([], 'toolPanelUi');
+        toolPanel.editStrategy.setValueColumns([], 'toolPanelUi');
+        toolPanel.editStrategy.setPivotMode(false, 'toolPanelUi');
+        toolPanel['onPivotModePanelValueChanged']();
+        toolPanel.editStrategy.commit();
+        await waitForNoLoadingRows(gridApi);
+
+        expect(gridApi.isPivotMode()).toBe(false);
+        expect(gridApi.getRowGroupColumns()).toEqual([]);
+        expect(gridApi.getPivotColumns()).toEqual([]);
+        expect(gridApi.getValueColumns()).toEqual([]);
+
+        expect(toolPanel.rowGroupDropZonePanel.isInterestedIn(DragSourceType.ToolPanel)).toBe(true);
+    });
+
     test('reordering columns and cancelling in non-pivot mode should keep the original order', async () => {
         const { gridApi, toolPanel } = await createDeferredNonPivotGrid();
         const athlete = gridApi.getColumn('athlete')!;
@@ -1090,13 +1139,40 @@ describe('deferred column tool panel pivot mode', () => {
         );
         expect(deferModeToggle).not.toBeNull();
 
-        expect(toolPanelGui.querySelectorAll('.ag-column-panel-buttons .ag-column-panel-buttons-button').length).toBe(2);
+        expect(toolPanelGui.querySelectorAll('.ag-column-panel-buttons .ag-column-panel-buttons-button').length).toBe(
+            2
+        );
 
         deferModeToggle!.click();
 
-        expect(toolPanelGui.querySelectorAll('.ag-column-panel-buttons .ag-column-panel-buttons-button').length).toBe(0);
+        expect(toolPanelGui.querySelectorAll('.ag-column-panel-buttons .ag-column-panel-buttons-button').length).toBe(
+            0
+        );
         expect(toolPanelGui.textContent).not.toContain('Apply');
         expect(toolPanelGui.textContent).not.toContain('Cancel');
+    });
+
+    test('turning defer mode off then turning pivot mode off updates the live grid immediately', async () => {
+        const { gridApi, toolPanel } = await createDeferredPivotModeGrid();
+        const toolPanelGui = toolPanel.getGui() as HTMLElement;
+        const deferModeToggle = toolPanelGui.querySelector<HTMLInputElement>(
+            '.ag-column-panel-defer-mode-toggle input[type="checkbox"]'
+        );
+        const pivotModeToggle = toolPanelGui.querySelector<HTMLInputElement>(
+            '.ag-pivot-mode-panel input[type="checkbox"]'
+        );
+
+        expect(deferModeToggle).not.toBeNull();
+        expect(pivotModeToggle).not.toBeNull();
+        expect(gridApi.isPivotMode()).toBe(true);
+
+        deferModeToggle!.click();
+        expect(gridApi.isPivotMode()).toBe(true);
+
+        pivotModeToggle!.click();
+        await waitForNoLoadingRows(gridApi);
+
+        expect(gridApi.isPivotMode()).toBe(false);
     });
 
     test('commit should call exactly one state-application path', async () => {

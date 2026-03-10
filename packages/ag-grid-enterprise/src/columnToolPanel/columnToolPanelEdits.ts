@@ -17,7 +17,6 @@ export const COLUMN_TOOL_PANEL_DEFERRED_EDIT_BEAN_NAME = 'colToolPanelDeferredEd
 const noop = () => {};
 
 export interface BaseColumnToolPanelEdits extends NamedBean {
-    beanName: BeanName;
     applyColumnState(state: ColumnState[], eventType: ColumnEventType): void;
     commit(): void;
     moveColumns(columns: AgColumn[], targetIndex: number, eventType: ColumnEventType): void;
@@ -70,6 +69,7 @@ type CommitOperations = CommitOperation[];
 
 export class ColumnToolPanelSynchronousEdit extends BeanStub implements BaseColumnToolPanelEdits {
     beanName = COLUMN_TOOL_PANEL_SYNCHRONOUS_EDIT_BEAN_NAME as ColumnToolPanelEditStrategyBean;
+    private lastPivotColIds: string[] = [];
 
     public reset = noop;
     public commit = noop;
@@ -121,6 +121,7 @@ export class ColumnToolPanelSynchronousEdit extends BeanStub implements BaseColu
     }
 
     public setPivotColumns(columns: AgColumn[], eventType: ColumnEventType): void {
+        this.lastPivotColIds = columns.map((column) => column.getColId());
         this.beans.pivotColsSvc?.setColumns(columns, eventType); // computes which columns actually changed + dispatchEvent
     }
 
@@ -134,7 +135,29 @@ export class ColumnToolPanelSynchronousEdit extends BeanStub implements BaseColu
             return;
         }
 
+        const currentPivotColIds = this.beans.pivotColsSvc?.columns.map((col) => col.getColId()) ?? [];
+        if (currentPivotColIds.length > 0) {
+            this.lastPivotColIds = currentPivotColIds;
+        }
+
+        if (!pivotMode) {
+            const cols = this.beans.colModel.getColDefCols() ?? [];
+            _applyColumnState(
+                this.beans,
+                {
+                    state: cols.map((col) => ({
+                        colId: col.getColId(),
+                        pivot: false,
+                        pivotIndex: null,
+                    })),
+                },
+                eventType
+            );
+        }
         gos.updateGridOptions({ options: { pivotMode }, source: eventType as any }); // update grid option + refresh
+        if (pivotMode && this.lastPivotColIds.length > 0) {
+            this.beans.pivotColsSvc?.setColumns(this.lastPivotColIds, eventType);
+        }
         for (const c of ctrlsSvc.getHeaderRowContainerCtrls()) {
             c.refresh();
         }
@@ -231,13 +254,15 @@ export class ColumnToolPanelDeferredEdit extends BeanStub implements BaseColumnT
                     const { colModel, ctrlsSvc, stateSvc } = this.beans;
                     if (operation.pivotMode !== colModel.isPivotMode()) {
                         const currentPivotColIds = this.beans.pivotColsSvc?.columns.map((col) => col.getColId()) ?? [];
-                        const pivotColIds = operation.pivotMode ? this.state.pivot?.colIds ?? currentPivotColIds : [];
+                        const previousPivotColIds = stateSvc?.getState().pivot?.pivotColIds ?? currentPivotColIds;
                         stateSvc?.setState(
                             {
                                 ...stateSvc.getState(),
                                 pivot: {
                                     pivotMode: operation.pivotMode,
-                                    pivotColIds,
+                                    pivotColIds: operation.pivotMode
+                                        ? this.state.pivot?.colIds ?? currentPivotColIds
+                                        : previousPivotColIds,
                                 },
                             },
                             ['pivot']
