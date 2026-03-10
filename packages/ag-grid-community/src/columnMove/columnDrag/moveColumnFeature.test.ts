@@ -20,8 +20,8 @@ describe('MoveColumnFeature', () => {
 
         // Section sub-containers inside the header row
         // Physical layout: viewport starts at x=100, width=1000
-        // LTR: [pinnedLeft:100..150][scrolling:150..1050][pinnedRight:1050..1100]
-        // RTL: [pinnedRight:100..150][scrolling:150..1050][pinnedLeft:1050..1100]
+        // Pinned-left is always physically left and pinned-right is always physically right.
+        // Both LTR and RTL: [pinnedLeft:100..150][scrolling:150..1050][pinnedRight:1050..1100]
         const pinnedLeftCells = document.createElement('div');
         pinnedLeftCells.classList.add('ag-grid-pinned-left-cells');
         const scrollingCells = document.createElement('div');
@@ -30,15 +30,9 @@ describe('MoveColumnFeature', () => {
         pinnedRightCells.classList.add('ag-grid-pinned-right-cells');
         eHeaderRow.append(pinnedLeftCells, scrollingCells, pinnedRightCells);
 
-        if (rtl) {
-            pinnedRightCells.getBoundingClientRect = () => ({ left: 100, width: 50 }) as DOMRect;
-            scrollingCells.getBoundingClientRect = () => ({ left: 150, width: 900 }) as DOMRect;
-            pinnedLeftCells.getBoundingClientRect = () => ({ left: 1050, width: 50 }) as DOMRect;
-        } else {
-            pinnedLeftCells.getBoundingClientRect = () => ({ left: 100, width: 50 }) as DOMRect;
-            scrollingCells.getBoundingClientRect = () => ({ left: 150, width: 900 }) as DOMRect;
-            pinnedRightCells.getBoundingClientRect = () => ({ left: 1050, width: 50 }) as DOMRect;
-        }
+        pinnedLeftCells.getBoundingClientRect = () => ({ left: 100, width: 50 }) as DOMRect;
+        scrollingCells.getBoundingClientRect = () => ({ left: 150, width: 900 }) as DOMRect;
+        pinnedRightCells.getBoundingClientRect = () => ({ left: 1050, width: 50 }) as DOMRect;
 
         const eGridViewport = document.createElement('div');
         eGridViewport.getBoundingClientRect = () =>
@@ -185,12 +179,12 @@ describe('MoveColumnFeature', () => {
                 hDirection: 'left',
                 vDirection: null,
                 dragItem: { columns: [] },
-                event: { clientX: 1080 },
+                event: { clientX: 130 },
             } as unknown as GridDraggingEvent;
 
             feature.onDragging(draggingEvent, false, false, false);
 
-            // sectionX = clientX(1080) - pinnedLeftCells.rect.left(1050) = 30
+            // sectionX = clientX(130) - pinnedLeftCells.rect.left(100) = 30
             // normaliseX flips within section: pinnedLeftCells.width(50) - 30 = 20
             expect(feature.handleColumnDragWhileSuppressingMovement).toHaveBeenCalledWith(
                 draggingEvent,
@@ -210,12 +204,12 @@ describe('MoveColumnFeature', () => {
                 hDirection: 'right',
                 vDirection: null,
                 dragItem: { columns: [] },
-                event: { clientX: 130 },
+                event: { clientX: 1080 },
             } as unknown as GridDraggingEvent;
 
             feature.onDragging(draggingEvent, false, false, false);
 
-            // sectionX = clientX(130) - pinnedRightCells.rect.left(100) = 30
+            // sectionX = clientX(1080) - pinnedRightCells.rect.left(1050) = 30
             // normaliseX flips within section: pinnedRightCells.width(50) - 30 = 20
             expect(feature.handleColumnDragWhileSuppressingMovement).toHaveBeenCalledWith(
                 draggingEvent,
