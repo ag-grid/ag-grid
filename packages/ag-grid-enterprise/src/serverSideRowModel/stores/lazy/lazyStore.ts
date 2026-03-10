@@ -624,7 +624,8 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @param firstDirtyLevel the first group level where columns diverged
      */
     refreshAfterGroupColumnChange(firstDirtyLevel: number): void {
-        // Update existing row nodes' leafGroup using the updated ssrmParams (shared reference)
+        // ssrmParams is a shared reference already mutated by serverSideRowModel.refreshAfterGroupColumnChange
+        // Update existing row nodes' leafGroup using the updated rowGroupCols
         const leafGroup = this.ssrmParams.rowGroupCols ? this.level === this.ssrmParams.rowGroupCols.length - 1 : false;
         this.cache.getNodes().forEach(({ node }) => {
             node.leafGroup = leafGroup;
