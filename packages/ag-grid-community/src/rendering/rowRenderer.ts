@@ -290,6 +290,14 @@ export class RowRenderer extends BeanStub implements NamedBean {
     // registering and de-registering for events is a performance bottleneck. so we register here once and inform
     // all active cells.
     private registerCellEventListeners(): void {
+        const refreshRightPinnedCellPositions = () => {
+            for (const cellCtrl of this.getAllCellCtrls()) {
+                if (cellCtrl.column.getPinned() === 'right') {
+                    cellCtrl.onLeftChanged();
+                }
+            }
+        };
+
         this.addManagedEventListeners({
             cellFocused: (event) => this.onCellFocusChanged(event),
             cellFocusCleared: () => this.updateCellFocus(),
@@ -323,6 +331,9 @@ export class RowRenderer extends BeanStub implements NamedBean {
                     }
                 }
             },
+            // right-pinned cells are anchored via `right` in the flattened layout and depend on
+            // the total pinned-right lane width, even when their own column left does not change.
+            rightPinnedWidthChanged: refreshRightPinnedCellPositions,
         });
 
         this.setupRangeSelectionListeners();

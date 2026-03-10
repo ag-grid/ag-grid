@@ -93,6 +93,7 @@ export class AutoWidthCalculator extends BeanStub implements NamedBean {
         // the original has position = absolute, we need to remove this so it's positioned normally
         eCellClone.style.position = 'static';
         eCellClone.style.left = '';
+        eCellClone.style.right = '';
         // we put the cell into a containing div, as otherwise the cells would just line up
         // on the same line, standard flow layout, by putting them into divs, they are laid
         // out one per line

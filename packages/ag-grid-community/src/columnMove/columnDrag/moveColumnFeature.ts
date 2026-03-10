@@ -327,8 +327,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     }
 
     private highlightHoveredColumn(movingColumns: AgColumn[], mouseX: number) {
-        const { gos, colModel } = this.beans;
-        const isRtl = gos.get('enableRtl');
+        const { colModel } = this.beans;
         const consideredColumns = colModel
             .getCols()
             .filter((col) => col.isVisible() && col.getPinned() === this.pinned);
@@ -339,7 +338,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
 
         for (const col of consideredColumns) {
             width = col.getActualWidth();
-            start = this.getNormalisedColumnLeft(col, 0, isRtl);
+            start = this.getNormalisedColumnLeft(col, 0);
 
             if (start != null) {
                 const end = start + width;
@@ -377,7 +376,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
                 return;
             }
 
-            start = this.getNormalisedColumnLeft(targetColumn, 0, isRtl);
+            start = this.getNormalisedColumnLeft(targetColumn, 0);
             width = targetColumn.getActualWidth();
         } else if (movingColumns.indexOf(targetColumn) !== -1) {
             targetColumn = null;
@@ -454,7 +453,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             return;
         }
 
-        const xPosition = this.getNormalisedColumnLeft(targetColumn, 20, isRtl)!;
+        const xPosition = this.getNormalisedColumnLeft(targetColumn, 20)!;
 
         return { fromLeft, xPosition };
     }
@@ -504,7 +503,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         return hDirection;
     }
 
-    private getNormalisedColumnLeft(col: AgColumn, padding: number, isRtl: boolean): number | null {
+    private getNormalisedColumnLeft(col: AgColumn, padding: number): number | null {
         const { gos, ctrlsSvc } = this.beans;
         const left = col.getLeft();
 
@@ -512,14 +511,16 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             return null;
         }
 
-        const width = col.getActualWidth();
+        if (gos.get('enableRtl') && col.getPinned() === 'left') {
+            return normaliseX({
+                x: left + col.getActualWidth() - padding,
+                pinned: col.getPinned(),
+                gos,
+                ctrlsSvc,
+            });
+        }
 
-        return normaliseX({
-            x: isRtl ? left + width - padding : left + padding,
-            pinned: col.getPinned(),
-            gos,
-            ctrlsSvc,
-        });
+        return left + padding;
     }
 
     private isAttemptingToPin(columns: AgColumn[]) {

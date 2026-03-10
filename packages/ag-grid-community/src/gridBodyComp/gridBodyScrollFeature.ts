@@ -745,10 +745,10 @@ export class GridBodyScrollFeature extends BeanStub {
         const viewportTooSmallForColumn = this.scrollingRowsCtrl.getCenterWidth() < column.getActualWidth();
         const viewportWidth = this.scrollingRowsCtrl.getCenterWidth();
 
-        const isRtl = this.enableRtl;
-
-        let alignColToStart = (isRtl ? columnBeforeStart : columnAfterEnd) || viewportTooSmallForColumn;
-        let alignColToEnd = isRtl ? columnAfterEnd : columnBeforeStart;
+        // column left values and scroll positions are both "distance from start edge",
+        // so the alignment logic is the same in LTR and RTL.
+        let alignColToStart = columnAfterEnd || viewportTooSmallForColumn;
+        let alignColToEnd = columnBeforeStart;
 
         if (position !== 'auto') {
             alignColToStart = position === 'start';
@@ -765,10 +765,10 @@ export class GridBodyScrollFeature extends BeanStub {
             }
 
             if (alignColToStart) {
-                return isRtl ? colRight : colLeft;
+                return colLeft;
             }
 
-            return isRtl ? colLeft - viewportWidth : colRight - viewportWidth;
+            return colRight - viewportWidth;
         }
 
         return null;
@@ -778,26 +778,21 @@ export class GridBodyScrollFeature extends BeanStub {
         const { start: viewportStart, end: viewportEnd } = this.getViewportBounds();
         const { colLeft, colRight } = this.getColumnBounds(column);
 
-        const isRtl = this.enableRtl;
-
-        const columnBeforeStart = isRtl ? viewportStart > colRight : viewportEnd < colRight;
-        const columnAfterEnd = isRtl ? viewportEnd < colLeft : viewportStart > colLeft;
+        const columnBeforeStart = viewportEnd < colRight;
+        const columnAfterEnd = viewportStart > colLeft;
 
         return { columnBeforeStart, columnAfterEnd };
     }
 
     private getColumnBounds(column: AgColumn): { colLeft: number; colMiddle: number; colRight: number } {
-        const isRtl = this.enableRtl;
-        const bodyWidth = this.visibleCols.bodyWidth;
-        const colWidth = column.getActualWidth();
         const colLeft = column.getLeft()!;
-        const multiplier = isRtl ? -1 : 1;
+        const colWidth = column.getActualWidth();
 
-        const colLeftPixel = isRtl ? bodyWidth - colLeft : colLeft;
-        const colRightPixel = colLeftPixel + colWidth * multiplier;
-        const colMidPixel = colLeftPixel + (colWidth / 2) * multiplier;
-
-        return { colLeft: colLeftPixel, colMiddle: colMidPixel, colRight: colRightPixel };
+        return {
+            colLeft,
+            colMiddle: colLeft + colWidth / 2,
+            colRight: colLeft + colWidth,
+        };
     }
 
     private getViewportBounds(): { start: number; end: number; width: number } {

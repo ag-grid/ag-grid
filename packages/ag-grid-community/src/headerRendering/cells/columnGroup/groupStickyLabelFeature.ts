@@ -68,17 +68,16 @@ export class GroupStickyLabelFeature extends BeanStub {
     }
 
     private updateSticky(scrollLeft: number): void {
-        const { beans, left, right } = this;
+        const { left, right } = this;
 
         if (left == null || right == null) {
             this.setSticky(false);
             return;
         }
 
-        const { gos, visibleCols } = beans;
-        const isRtl = gos.get('enableRtl');
-        const viewportEdge = isRtl ? visibleCols.bodyWidth - scrollLeft : scrollLeft;
-        this.setSticky(left < viewportEdge && right > viewportEdge);
+        // column left values and scroll positions are both "distance from start edge",
+        // so the viewport edge computation is the same in LTR and RTL.
+        this.setSticky(left < scrollLeft && right > scrollLeft);
     }
 
     private setSticky(value: boolean): void {
@@ -102,16 +101,19 @@ export class GroupStickyLabelFeature extends BeanStub {
             beans: { gos, visibleCols },
             eLabel,
         } = this;
-        const pinnedOffset = visibleCols.getLeftStickyColumnContainerWidth();
+        const isRtl = gos.get('enableRtl');
+        const pinnedOffset = isRtl
+            ? visibleCols.getRightStickyColumnContainerWidth()
+            : visibleCols.getLeftStickyColumnContainerWidth();
+
         const offset = `calc(var(--ag-cell-horizontal-padding) + ${pinnedOffset}px)`;
 
-        if (gos.get('enableRtl')) {
+        if (isRtl) {
             eLabel.style.removeProperty('left');
             eLabel.style.setProperty('right', offset);
-            return;
+        } else {
+            eLabel.style.removeProperty('right');
+            eLabel.style.setProperty('left', offset);
         }
-
-        eLabel.style.removeProperty('right');
-        eLabel.style.setProperty('left', offset);
     }
 }

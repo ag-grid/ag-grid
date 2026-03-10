@@ -163,16 +163,8 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         rightCols: AgColumn[],
         source: ColumnEventType
     ): void {
-        let lastLeft: AgColumn | null;
-        let firstRight: AgColumn | null;
-
-        if (this.gos.get('enableRtl')) {
-            lastLeft = leftCols ? leftCols[0] : null;
-            firstRight = rightCols ? _last(rightCols) : null;
-        } else {
-            lastLeft = leftCols ? _last(leftCols) : null;
-            firstRight = rightCols ? rightCols[0] : null;
-        }
+        const lastLeft = leftCols.length ? _last(leftCols) : null;
+        const firstRight = rightCols.length ? (this.gos.get('enableRtl') ? _last(rightCols) : rightCols[0]) : null;
 
         for (const col of colModel.getCols()) {
             col.setLastLeftPinned(col === lastLeft, source);
@@ -276,23 +268,11 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         // go through each list of displayed columns
         const allColumns = colModel.getCols().slice(0);
 
-        const doingRtl = this.gos.get('enableRtl');
-
         for (const columns of [this.leftCols, this.rightCols, this.centerCols]) {
-            if (doingRtl) {
-                // when doing RTL, we start at the top most pixel (ie RHS) and work backwards
-                let left = getWidthOfColsInList(columns);
-                for (const column of columns) {
-                    left -= column.getActualWidth();
-                    column.setLeft(left, source);
-                }
-            } else {
-                // otherwise normal LTR, we start at zero
-                let left = 0;
-                for (const column of columns) {
-                    column.setLeft(left, source);
-                    left += column.getActualWidth();
-                }
+            let left = 0;
+            for (const column of columns) {
+                column.setLeft(left, source);
+                left += column.getActualWidth();
             }
             _removeAllFromUnorderedArray(allColumns, columns);
         }
@@ -493,14 +473,16 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
     // used by:
     // + angularGrid -> setting pinned body width
-    // note: this should be cached
+    // note: the cache value `leftWidth` can be stale while actively moving column, so prefer getWidthOfColsInList.
     public getLeftStickyColumnContainerWidth() {
-        return getWidthOfColsInList(this.leftCols);
+        // sometimes the leftCols are empty after a refresh, so attempt to grab cached values.
+        return this.leftCols.length ? getWidthOfColsInList(this.leftCols) : this.leftWidth;
     }
 
-    // note: this should be cached
+    // note: the cache value `rightWidth` can be stale while actively moving columns, so prefer getWidthOfColsInList.
     public getRightStickyColumnContainerWidth() {
-        return getWidthOfColsInList(this.rightCols);
+        // sometimes the rightCols are empty after a refresh, so attempt to grab cached values.
+        return this.rightCols.length ? getWidthOfColsInList(this.rightCols) : this.rightWidth;
     }
 
     public isColAtEdge(col: AgColumn | AgColumnGroup, edge: 'first' | 'last'): boolean {
