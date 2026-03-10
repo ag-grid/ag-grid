@@ -1,5 +1,4 @@
 import { _isElementChildOfClass } from '../agStack/utils/dom';
-import { _isEventFromThisInstance } from '../agStack/utils/event';
 import type { ColumnModel } from '../columns/columnModel';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -71,7 +70,6 @@ export class GridBodyCtrl extends BeanStub {
     public eGridBody: HTMLElement;
     public eGridViewport: HTMLElement;
     public eScrollingRows: HTMLElement;
-    private eFullWidthContainer: HTMLElement;
     private eTop: HTMLElement;
     private eBottom: HTMLElement;
     private topPinnedRowsHeight = 0;
@@ -87,7 +85,6 @@ export class GridBodyCtrl extends BeanStub {
         eGridBody: HTMLElement,
         eGridViewport: HTMLElement,
         eScrollingRows: HTMLElement,
-        eFullWidthContainer: HTMLElement,
         eTopRowsContainer: HTMLElement,
         eTopRowsFullWidthContainer: HTMLElement,
         eTop: HTMLElement,
@@ -99,7 +96,6 @@ export class GridBodyCtrl extends BeanStub {
         this.eGridBody = eGridBody;
         this.eGridViewport = eGridViewport;
         this.eScrollingRows = eScrollingRows;
-        this.eFullWidthContainer = eFullWidthContainer;
         this.eTop = eTop;
         this.eBottom = eBottom;
         this.pinnedRowContainerRendererFeature = this.createManagedBean(
@@ -419,37 +415,6 @@ export class GridBodyCtrl extends BeanStub {
         for (const container of [eTop, eBottom]) {
             this.addManagedElementListeners(container, { wheel: onStickyWheel });
         }
-
-        const onHorizontalWheel = this.onHorizontalWheel.bind(this);
-        this.ctrlsSvc.whenReady(this, () => {
-            for (const container of ['scrollingCenter', 'pinnedTopCenter', 'pinnedBottomCenter'] as const) {
-                const rowContainer = this.ctrlsSvc.get(container);
-                if (!rowContainer) {
-                    continue;
-                }
-                this.addManagedElementListeners(rowContainer.eContainer, {
-                    wheel: onHorizontalWheel,
-                });
-            }
-        });
-
-        // allow mouseWheel on the Full Width Container to Scroll the Viewport
-        this.addFullWidthContainerWheelListener();
-    }
-
-    private addFullWidthContainerWheelListener(): void {
-        this.addManagedElementListeners(this.eFullWidthContainer, {
-            wheel: (e: WheelEvent) => this.onFullWidthContainerWheel(e),
-        });
-    }
-
-    private onFullWidthContainerWheel(e: WheelEvent): void {
-        const { deltaX, deltaY, shiftKey } = e;
-        const isHorizontalScroll = shiftKey || Math.abs(deltaX) > Math.abs(deltaY);
-
-        if (isHorizontalScroll && _isEventFromThisInstance(this.beans, e)) {
-            this.scrollGridBodyToMatchEvent(e);
-        }
     }
 
     private onStickyWheel(e: WheelEvent): void {
@@ -459,26 +424,6 @@ export class GridBodyCtrl extends BeanStub {
         if (scrolled > 0) {
             e.preventDefault();
         }
-    }
-
-    private onHorizontalWheel(e: WheelEvent): void {
-        const { deltaX, deltaY, shiftKey } = e;
-
-        const isHorizontalScroll = shiftKey || Math.abs(deltaX) > Math.abs(deltaY);
-
-        if (!isHorizontalScroll) {
-            return;
-        }
-
-        this.scrollGridBodyToMatchEvent(e);
-    }
-
-    private scrollGridBodyToMatchEvent(e: WheelEvent): void {
-        const { deltaX, deltaY } = e;
-        e.preventDefault();
-        // if it is a horizontal scroll and deltaX is zero,
-        // it means the OS has flipped the axis and it's using deltaY
-        this.eGridViewport.scrollBy({ left: deltaX || deltaY });
     }
 
     private onBodyViewportContextMenu(mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent): void {

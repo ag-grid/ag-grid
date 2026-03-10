@@ -167,7 +167,6 @@ export class GridBodyComp extends Component implements FocusableContainer {
             this.getGui(),
             this.eGridViewport,
             this.eBody,
-            this.scrollingFullWidthRowContainerComp.getGui(),
             this.ePinnedTopCenterRowContainer.getGui(),
             this.ePinnedTopFullWidthRowContainer.getGui(),
             this.eTop,

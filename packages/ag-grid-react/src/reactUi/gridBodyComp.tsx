@@ -155,7 +155,6 @@ const GridBodyComp = () => {
             rootElement,
             eGridViewport.current,
             eBody.current,
-            scrollingFullWidthContainer,
             topRowsHost,
             topRowsFullWidthHost,
             eTop.current,
