@@ -188,7 +188,11 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
             const performSort = (event: MouseEvent | KeyboardEvent) => {
                 event.preventDefault();
                 const edits = this.getEditStrategy();
-                edits?.progressSortFromEvent(column, event);
+                if (edits) {
+                    edits.progressSortFromEvent(column, event);
+                } else {
+                    this.beans.sortSvc?.progressSortFromEvent(column, event);
+                }
                 eSortIndicator.refresh();
                 this.setupAria();
             };
