@@ -1050,4 +1050,79 @@ describe('deferred column tool panel pivot mode', () => {
         expect(toolPanelGui.textContent).toContain('Apply');
         expect(toolPanelGui.textContent).toContain('Cancel');
     });
+
+    test('Defer mode toggle should work (toggle between deferMode and normal)', async () => {
+        const { gridApi, toolPanel } = await createDeferredNonPivotGrid();
+        const toolPanelGui = toolPanel.getGui() as HTMLElement;
+
+        const deferModeToggle = toolPanelGui.querySelector<HTMLInputElement>(
+            '.ag-column-panel-defer-mode-toggle input[type="checkbox"]'
+        );
+        expect(deferModeToggle).not.toBeNull();
+
+        const athlete = gridApi.getColumn('athlete')!;
+        expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['athlete', 'age', 'country']);
+
+        // Defer mode: column move should not apply until commit.
+        toolPanel.editStrategy.moveColumns([athlete], 2, 'toolPanelUi');
+        expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['athlete', 'age', 'country']);
+        toolPanel.editStrategy.commit();
+        expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['age', 'athlete', 'country']);
+
+        // Normal mode: after toggle, column move should apply immediately.
+        deferModeToggle!.click();
+        toolPanel.editStrategy.moveColumns([athlete], 0, 'toolPanelUi');
+        expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['athlete', 'age', 'country']);
+
+        // Defer mode again: after toggling back, move should require commit.
+        deferModeToggle!.click();
+        toolPanel.editStrategy.moveColumns([athlete], 2, 'toolPanelUi');
+        expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['athlete', 'age', 'country']);
+        toolPanel.editStrategy.commit();
+        expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['age', 'athlete', 'country']);
+    });
+
+    test('defer mode buttons should not render when defer mode is not selected', async () => {
+        const { toolPanel } = await createDeferredNonPivotGrid();
+        const toolPanelGui = toolPanel.getGui() as HTMLElement;
+        const deferModeToggle = toolPanelGui.querySelector<HTMLInputElement>(
+            '.ag-column-panel-defer-mode-toggle input[type="checkbox"]'
+        );
+        expect(deferModeToggle).not.toBeNull();
+
+        expect(toolPanelGui.querySelectorAll('.ag-column-panel-buttons .ag-column-panel-buttons-button').length).toBe(2);
+
+        deferModeToggle!.click();
+
+        expect(toolPanelGui.querySelectorAll('.ag-column-panel-buttons .ag-column-panel-buttons-button').length).toBe(0);
+        expect(toolPanelGui.textContent).not.toContain('Apply');
+        expect(toolPanelGui.textContent).not.toContain('Cancel');
+    });
+
+    test('commit should call exactly one state-application path', async () => {
+        const { toolPanel } = await createDeferredPivotModeGrid();
+        const { gos, stateSvc, colModel, colMoves, rowGroupColsSvc, valueColsSvc, pivotColsSvc } =
+            toolPanel.editStrategy.beans;
+
+        const updateGridOptionsSpy = vi.spyOn(gos, 'updateGridOptions');
+        const setStateSpy = stateSvc ? vi.spyOn(stateSvc, 'setState') : undefined;
+        const setPivotModeSpy = vi.spyOn(colModel as any, 'setPivotMode');
+        const moveColumnsSpy = colMoves ? vi.spyOn(colMoves, 'moveColumns') : undefined;
+        const setRowGroupColumnsSpy = rowGroupColsSvc ? vi.spyOn(rowGroupColsSvc, 'setColumns') : undefined;
+        const setValueColumnsSpy = valueColsSvc ? vi.spyOn(valueColsSvc, 'setColumns') : undefined;
+        const setColumnAggFuncSpy = valueColsSvc ? vi.spyOn(valueColsSvc, 'setColumnAggFunc') : undefined;
+        const setPivotColumnsSpy = pivotColsSvc ? vi.spyOn(pivotColsSvc, 'setColumns') : undefined;
+
+        toolPanel.editStrategy.setPivotMode(false, 'toolPanelUi');
+        toolPanel.editStrategy.commit();
+
+        expect(setStateSpy?.mock.calls.length ?? 0).toBe(1);
+        expect(updateGridOptionsSpy).not.toHaveBeenCalled();
+        expect(setPivotModeSpy).not.toHaveBeenCalled();
+        expect(moveColumnsSpy).not.toHaveBeenCalled();
+        expect(setRowGroupColumnsSpy).not.toHaveBeenCalled();
+        expect(setValueColumnsSpy).not.toHaveBeenCalled();
+        expect(setColumnAggFuncSpy).not.toHaveBeenCalled();
+        expect(setPivotColumnsSpy).not.toHaveBeenCalled();
+    });
 });

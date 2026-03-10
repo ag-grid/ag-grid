@@ -3,12 +3,22 @@ import type {
     ColDef,
     ColGroupDef,
     ColumnToolPanelState,
+    ElementParams,
+    GridCheckbox,
     IColumnToolPanel,
     IToolPanelColumnCompParams,
     IToolPanelComp,
     IToolPanelParams,
 } from 'ag-grid-community';
-import { Component, FilterButtonComp, _addGridCommonParams, _clearElement, _last } from 'ag-grid-community';
+import {
+    AgToggleButtonSelector,
+    Component,
+    FilterButtonComp,
+    RefPlaceholder,
+    _addGridCommonParams,
+    _clearElement,
+    _last,
+} from 'ag-grid-community';
 
 import type { PivotDropZonePanel } from '../rowGrouping/columnDropZones/pivotDropZonePanel';
 import type { RowGroupDropZonePanel } from '../rowGrouping/columnDropZones/rowGroupDropZonePanel';
@@ -23,6 +33,44 @@ export interface ToolPanelColumnCompParams<TData = any, TContext = any>
     extends IToolPanelParams<TData, TContext, ColumnToolPanelState>,
         IToolPanelColumnCompParams {}
 
+const DeferModeToggleElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-column-panel-defer-mode-toggle',
+    children: [
+        {
+            tag: 'ag-toggle-button',
+            ref: 'cbDeferMode',
+            cls: 'ag-column-panel-defer-mode-select',
+        },
+    ],
+};
+
+class DeferModeToggleComp extends Component {
+    private readonly cbDeferMode: GridCheckbox = RefPlaceholder;
+
+    constructor(
+        private readonly isDeferModeEnabled: () => boolean,
+        private readonly onDeferModeChanged: (nextDeferMode: boolean) => void
+    ) {
+        super();
+    }
+
+    public postConstruct(): void {
+        this.setTemplate(DeferModeToggleElement, [AgToggleButtonSelector]);
+        const cbDeferMode = this.cbDeferMode;
+
+        cbDeferMode.setValue(this.isDeferModeEnabled());
+        cbDeferMode.setLabel(this.getLocaleTextFunc()('deferMode', 'Defer mode'));
+        this.addManagedListeners(cbDeferMode, {
+            fieldValueChanged: () => this.onDeferModeChanged(!!cbDeferMode.getValue()),
+        });
+    }
+
+    public sync(value: boolean): void {
+        this.cbDeferMode.setValue(value);
+    }
+}
+
 export class ColumnToolPanel extends Component implements IColumnToolPanel, IToolPanelComp {
     private initialised = false;
     private params: ToolPanelColumnCompParams;
@@ -35,7 +83,10 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     private valuesDropZonePanel?: ValuesDropZonePanel;
     private pivotDropZonePanel?: PivotDropZonePanel;
     private colToolPanelFactory?: ColumnToolPanelFactory;
+    private deferModeToggleComp?: DeferModeToggleComp;
     private deferredButtonsComp?: FilterButtonComp;
+    private deferredButtonDefs: Array<{ type: 'cancel' | 'apply'; label: string }> = [];
+    private isDeferModeEnabled = false;
     private editStrategy?: BaseColumnToolPanelEdits;
 
     constructor() {
@@ -83,7 +134,8 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
         const deferredStrat = beans.colToolPanelDeferredEdit as BaseColumnToolPanelEdits | undefined;
         const syncStrat = beans.colToolPanelSynchronousEdit as BaseColumnToolPanelEdits | undefined;
-        this.editStrategy = mergedParams.deferApply ? deferredStrat : syncStrat;
+        this.isDeferModeEnabled = !!mergedParams.deferApply;
+        this.editStrategy = this.isDeferModeEnabled ? deferredStrat : syncStrat;
 
         if (!mergedParams.suppressPivotMode && colToolPanelFactory && hasPivotModule) {
             this.pivotModePanel = colToolPanelFactory.createPivotModePanel(
@@ -138,9 +190,18 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     private initDeferredButtons(): void {
+        this.deferModeToggleComp = this.createBean(
+            new DeferModeToggleComp(
+                () => this.isDeferModeEnabled,
+                (nextDeferMode) => this.onDeferModeChanged(nextDeferMode)
+            )
+        );
+        this.appendChild(this.deferModeToggleComp);
+
         const buttonComp = this.createBean(new FilterButtonComp({ className: 'ag-column-panel-buttons' }));
         this.deferredButtonsComp = buttonComp;
         this.childDestroyFuncs.push(() => {
+            this.deferModeToggleComp = this.destroyBean(this.deferModeToggleComp);
             this.deferredButtonsComp = this.destroyBean(this.deferredButtonsComp);
         });
 
@@ -152,7 +213,8 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
                 type === 'apply' ? 'Apply' : 'Cancel'
             ),
         }));
-        buttonComp.updateButtons(buttons);
+        this.deferredButtonDefs = buttons;
+        buttonComp.updateButtons(this.isDeferModeEnabled ? this.deferredButtonDefs : []);
         buttonComp.addManagedListeners(buttonComp, {
             apply: this.onDeferredApply,
             cancel: this.onDeferredCancel,
@@ -163,6 +225,31 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
     private readonly onDeferredApply = (): void => {
         this.editStrategy?.commit();
+    };
+
+    private readonly onDeferModeChanged = (nextDeferMode: boolean): void => {
+        if (nextDeferMode === this.isDeferModeEnabled) {
+            return;
+        }
+
+        if (this.isDeferModeEnabled) {
+            this.editStrategy?.reset();
+        }
+
+        this.isDeferModeEnabled = nextDeferMode;
+        this.params.deferApply = nextDeferMode;
+
+        const deferredStrat = this.beans.colToolPanelDeferredEdit as BaseColumnToolPanelEdits | undefined;
+        const syncStrat = this.beans.colToolPanelSynchronousEdit as BaseColumnToolPanelEdits | undefined;
+        this.editStrategy = nextDeferMode ? deferredStrat : syncStrat;
+        this.deferModeToggleComp?.sync(nextDeferMode);
+        this.deferredButtonsComp?.updateButtons(nextDeferMode ? this.deferredButtonDefs : []);
+
+        this.primaryColsPanel.syncLayoutWithGrid();
+        this.rowGroupDropZonePanel?.refreshGui();
+        this.valuesDropZonePanel?.refreshGui();
+        this.pivotDropZonePanel?.refresh();
+        this.pivotModePanel?.syncFromGrid();
     };
 
     private readonly onDeferredCancel = (): void => {

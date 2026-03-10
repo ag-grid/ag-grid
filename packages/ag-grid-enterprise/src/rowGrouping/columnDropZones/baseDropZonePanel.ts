@@ -56,7 +56,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
 
     protected isInterestedIn(type: DragSourceType): boolean {
         // not interested in row drags
-        return type === DragSourceType.HeaderCell || type === DragSourceType.ToolPanel;
+        return type === DragSourceType.HeaderCell;
     }
 
     protected override minimumAllowedNewInsertIndex(): number {

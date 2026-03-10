@@ -47,6 +47,19 @@
     border-top: var(--ag-tool-panel-separator-border);
 }
 
+.ag-column-panel-defer-mode-toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--ag-widget-horizontal-spacing);
+    padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
+    border-top: var(--ag-tool-panel-separator-border);
+}
+
+.ag-column-panel-defer-mode-select {
+    display: flex;
+    align-items: center;
+}
+
 .ag-column-panel-buttons-button {
     line-height: 1.5;
 }

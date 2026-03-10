@@ -4,12 +4,11 @@ import type {
     ColumnEventType,
     ColumnState,
     ColumnToolPanelEditStrategyBean,
-    GridState,
     IAggFunc,
     NamedBean,
     SortDef,
 } from 'ag-grid-community';
-import { BeanStub, _applyColumnState, _getColumnState, convertColumnState } from 'ag-grid-community';
+import { BeanStub, _applyColumnState } from 'ag-grid-community';
 
 export type ColumnToolPanelEditParams = { deferApply?: boolean };
 export const COLUMN_TOOL_PANEL_SYNCHRONOUS_EDIT_BEAN_NAME = 'colToolPanelSynchronousEdit';
@@ -85,6 +84,7 @@ export class ColumnToolPanelSynchronousEdit extends BeanStub implements BaseColu
 
     public moveColumns(columns: AgColumn[], targetIndex: number, eventType: ColumnEventType): void {
         this.beans.colMoves?.moveColumns(columns, targetIndex, eventType); // animation + dispatchEvent
+        syncPrimaryColDefOrderFromCurrentColumns(this.beans);
     }
 
     public setColumnsVisible(columns: AgColumn[], visible: boolean, eventType: ColumnEventType): void {
@@ -164,123 +164,146 @@ export class ColumnToolPanelSynchronousEdit extends BeanStub implements BaseColu
 export class ColumnToolPanelDeferredEdit extends BeanStub implements BaseColumnToolPanelEdits {
     beanName = COLUMN_TOOL_PANEL_DEFERRED_EDIT_BEAN_NAME as ColumnToolPanelEditStrategyBean;
 
-    private state = createDefaultState();
+    private state: DeferredState = {};
     private sequence = 0;
 
     public reset() {
         this.sequence = 0;
-        this.state = createDefaultState();
+        this.state = {};
     }
 
     public commit() {
-        const cols = this.beans.colModel.getColDefCols() ?? [];
-        const colIds = cols.map((column) => column.getColId());
-        const liveColumnState = _getColumnState(this.beans);
-        const liveOrder = liveColumnState.map((columnState) => columnState.colId);
-        const colStateByColId = new Map<string, ColumnState>(
-            liveColumnState.map((columnState) => [columnState.colId, { ...columnState }])
-        );
-        const ensureState = (colId: string): ColumnState => {
-            const existing = colStateByColId.get(colId);
-            if (existing) {
-                return existing;
-            }
-            const created: ColumnState = { colId };
-            colStateByColId.set(colId, created);
-            return created;
-        };
-        let applyOrder = false;
-        let orderedColIds: string[] | undefined;
-        let finalPivotMode = this.beans.colModel.isPivotMode();
-        const aggFuncByColId = new Map<string, string | IAggFunc | null | undefined>();
         const { state } = this;
         const operations: CommitOperations = [];
         for (const [type, operation] of Object.entries(state) as [
             CommitOperation['type'],
             DeferredState[CommitOperation['type']],
         ][]) {
-            if (!operation) {
-                continue;
+            if (operation) {
+                operations.push({ type, ...operation } as CommitOperation);
             }
-
-            operations.push({ type, ...operation } as CommitOperation);
         }
-        const sortedEntries = operations.sort((a, b) => a.seq - b.seq);
 
+        const sortedEntries = operations.sort((a, b) => a.seq - b.seq);
         for (const operation of sortedEntries) {
             switch (operation.type) {
                 case 'columnState': {
-                    for (const [colId, patch] of operation.patches) {
-                        Object.assign(ensureState(colId), patch);
-                    }
+                    _applyColumnState(this.beans, { state: [...operation.patches.values()] }, operation.eventType);
                     break;
                 }
                 case 'columnOrder': {
-                    applyOrder = true;
-                    orderedColIds = operation.colIds;
+                    const orderedColumns = operation.colIds
+                        .map((colId) => this.beans.colModel.getColDefCol(colId))
+                        .filter((column): column is AgColumn => !!column && isPrimaryColDefColumn(column));
+                    if (!this.beans.colModel.isPivotMode()) {
+                        const allColumns = this.beans.colModel.getCols();
+                        for (let targetIndex = 0; targetIndex < orderedColumns.length; targetIndex++) {
+                            const column = orderedColumns[targetIndex];
+                            if (allColumns[targetIndex] !== column) {
+                                this.beans.colMoves?.moveColumns([column], targetIndex, operation.eventType, true);
+                            }
+                        }
+                    }
+                    const colDefCols = (this.beans.colModel as any).colDefCols;
+                    const colDefList = colDefCols?.list as AgColumn[] | undefined;
+                    if (colDefList) {
+                        const orderedSet = new Set(orderedColumns);
+                        colDefCols.list = [
+                            ...orderedColumns,
+                            ...colDefList.filter((col) => isPrimaryColDefColumn(col) && !orderedSet.has(col)),
+                        ];
+                    }
                     break;
                 }
                 case 'rowGroup': {
-                    applyIndexedColumnState(operation.colIds, colIds, ensureState, 'rowGroup', 'rowGroupIndex');
+                    this.beans.rowGroupColsSvc?.setColumns(operation.colIds, operation.eventType);
                     break;
                 }
                 case 'aggregation': {
-                    const valueColIdSet = new Set(operation.colIds);
-                    for (const column of cols) {
-                        const colId = column.getColId();
-                        const state = ensureState(colId);
-                        if (valueColIdSet.has(colId)) {
-                            const hasDraftAggFunc = aggFuncByColId.has(colId);
-                            const draftAggFunc = hasDraftAggFunc ? aggFuncByColId.get(colId) : undefined;
-                            const currentAggFunc = column.getAggFunc();
-                            const fallbackAggFunc = this.beans.aggFuncSvc?.getDefaultAggFunc(column) ?? null;
-                            state.aggFunc = hasDraftAggFunc ? draftAggFunc : currentAggFunc ?? fallbackAggFunc;
-                        } else {
-                            state.aggFunc = null;
-                        }
-                    }
+                    this.beans.valueColsSvc?.setColumns(operation.colIds, operation.eventType);
                     break;
                 }
                 case 'pivot': {
-                    applyIndexedColumnState(operation.colIds, colIds, ensureState, 'pivot', 'pivotIndex');
+                    this.beans.pivotColsSvc?.setColumns(operation.colIds, operation.eventType);
                     break;
                 }
                 case 'pivotMode': {
-                    finalPivotMode = operation.pivotMode;
+                    const { colModel, ctrlsSvc, stateSvc } = this.beans;
+                    if (operation.pivotMode !== colModel.isPivotMode()) {
+                        const currentPivotColIds = this.beans.pivotColsSvc?.columns.map((col) => col.getColId()) ?? [];
+                        const pivotColIds = operation.pivotMode ? this.state.pivot?.colIds ?? currentPivotColIds : [];
+                        stateSvc?.setState(
+                            {
+                                ...stateSvc.getState(),
+                                pivot: {
+                                    pivotMode: operation.pivotMode,
+                                    pivotColIds,
+                                },
+                            },
+                            ['pivot']
+                        );
+
+                        if (!operation.pivotMode) {
+                            const cols = this.beans.colModel.getColDefCols() ?? [];
+                            _applyColumnState(
+                                this.beans,
+                                {
+                                    state: cols.map((col) => ({
+                                        colId: col.getColId(),
+                                        pivot: false,
+                                        pivotIndex: null,
+                                    })),
+                                },
+                                operation.eventType
+                            );
+                        }
+
+                        // Keep runtime pivot mode in sync without using extra mutating APIs.
+                        (colModel as any).pivotMode = operation.pivotMode;
+                        colModel.refreshCols(false, operation.eventType);
+                        this.beans.visibleCols.refresh(operation.eventType);
+                        this.beans.eventSvc.dispatchEvent({ type: 'columnPivotModeChanged' });
+                        for (const c of ctrlsSvc.getHeaderRowContainerCtrls()) {
+                            c.refresh();
+                        }
+                    }
                     break;
                 }
                 case 'sort': {
-                    if (operation.baselineCleared) {
-                        for (const columnState of colStateByColId.values()) {
-                            columnState.sort = null;
-                            columnState.sortIndex = null;
-                            columnState.sortType = undefined;
-                        }
-                    }
-
+                    const sortState: ColumnState[] = [];
                     let sortIndex = 0;
                     for (const [colId, sortDef] of operation.sortDefsByColId) {
-                        const state = ensureState(colId);
-                        state.sort = sortDef?.direction ?? null;
-                        state.sortIndex = sortDef?.direction ? sortIndex++ : null;
-                        state.sortType = sortDef?.type ?? undefined;
+                        sortState.push({
+                            colId,
+                            sort: sortDef?.direction ?? null,
+                            sortIndex: sortDef?.direction ? sortIndex++ : null,
+                            sortType: sortDef?.type ?? undefined,
+                        });
                     }
+
+                    _applyColumnState(
+                        this.beans,
+                        {
+                            state: sortState,
+                            defaultState: operation.baselineCleared
+                                ? { sort: null, sortIndex: null, sortType: undefined }
+                                : undefined,
+                        },
+                        operation.eventType
+                    );
                     break;
                 }
                 case 'aggFuncs': {
                     for (const [colId, aggFunc] of operation.values) {
-                        aggFuncByColId.set(colId, aggFunc);
-                        ensureState(colId).aggFunc = aggFunc;
+                        const column = this.beans.colModel.getColDefCol(colId);
+                        if (!column) {
+                            continue;
+                        }
+                        this.beans.valueColsSvc?.setColumnAggFunc?.(column, aggFunc, operation.eventType);
                     }
                     break;
                 }
             }
-        }
-
-        if (sortedEntries.length > 0) {
-            const finalStateColIds = applyOrder && orderedColIds ? orderedColIds : liveOrder;
-            const finalColumnState = finalStateColIds.map((colId) => ensureState(colId));
-            this.beans.stateSvc?.setState(buildCommitState(finalColumnState, finalPivotMode));
         }
 
         this.reset();
@@ -299,7 +322,10 @@ export class ColumnToolPanelDeferredEdit extends BeanStub implements BaseColumnT
     public moveColumns(columns: AgColumn[], targetIndex: number, eventType: ColumnEventType): void {
         const movingColIds = new Set(columns.map((column) => column.getColId()));
         const orderedColIds =
-            this.state.columnOrder?.colIds ?? this.beans.colModel.getCols().map((column) => column.getColId());
+            this.state.columnOrder?.colIds ??
+            (this.beans.colModel.getColDefCols() ?? this.beans.colModel.getCols())
+                .filter((column) => isPrimaryColDefColumn(column))
+                .map((column) => column.getColId());
 
         const remaining = orderedColIds.filter((colId) => !movingColIds.has(colId));
         const beforeTarget = orderedColIds.slice(0, targetIndex);
@@ -514,34 +540,35 @@ function getDraftColumns(
     return colIds.map((colId) => beans.colModel.getColDefCol(colId)).filter((column): column is AgColumn => !!column);
 }
 
-function applyIndexedColumnState(
-    activeColIds: string[],
-    allColIds: string[],
-    ensureState: (colId: string) => ColumnState,
-    activeKey: 'rowGroup' | 'pivot',
-    indexKey: 'rowGroupIndex' | 'pivotIndex'
-): void {
-    const indexByColId = new Map<string, number>();
-    activeColIds.forEach((colId, index) => indexByColId.set(colId, index));
-
-    for (const colId of allColIds) {
-        const state = ensureState(colId);
-        if (indexByColId.has(colId)) {
-            state[activeKey] = true;
-            state[indexKey] = indexByColId.get(colId);
-        } else {
-            state[activeKey] = false;
-            state[indexKey] = null;
-        }
+function syncPrimaryColDefOrderFromCurrentColumns(beans: BeanStub['beans']): void {
+    const colDefCols = (beans.colModel as any).colDefCols;
+    const colDefList = colDefCols?.list as AgColumn[] | undefined;
+    if (!colDefList) {
+        return;
     }
+
+    const orderedPrimaryColumns = beans.colModel
+        .getCols()
+        .filter((column) => isPrimaryColDefColumn(column))
+        .map((column) => beans.colModel.getColDefCol(column.getColId()))
+        .filter((column): column is AgColumn => !!column);
+    const orderedSet = new Set(orderedPrimaryColumns);
+    colDefCols.list = [
+        ...orderedPrimaryColumns,
+        ...colDefList.filter((col) => isPrimaryColDefColumn(col) && !orderedSet.has(col)),
+    ];
 }
 
-function buildCommitState(finalColumnState: ColumnState[], finalPivotMode: boolean): GridState {
-    return convertColumnState(finalColumnState, finalPivotMode);
-}
-
-function createDefaultState(): DeferredState {
-    return {};
+function isPrimaryColDefColumn(column: AgColumn): boolean {
+    if (!column.isPrimary()) {
+        return false;
+    }
+    const colId = column.getColId();
+    return (
+        !colId.startsWith('ag-Grid-AutoColumn') &&
+        !colId.startsWith('ag-Grid-SelectionColumn') &&
+        !colId.startsWith('ag-Grid-RowNumbers')
+    );
 }
 
 function nextSeq(sequence: number): number {
