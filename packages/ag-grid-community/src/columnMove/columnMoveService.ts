@@ -14,7 +14,7 @@ import type { DragItem } from '../interfaces/iDragItem';
 import { _warn } from '../validation/logging';
 import { BodyDropTarget } from './columnDrag/bodyDropTarget';
 import { doesMovePassMarryChildren } from './columnMoveUtils';
-import { attemptMoveColumns, normaliseX, setColumnsMoving } from './internalColumnMoveUtils';
+import { attemptMoveColumns, clientXToSectionX, normaliseX, setColumnsMoving } from './internalColumnMoveUtils';
 
 enum MoveDirection {
     LEFT = -1,
@@ -143,15 +143,9 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         const width = isGroup ? rect.width : column.getActualWidth();
         const isLeft = (hDirection === 'left') !== gos.get('enableRtl');
 
-        const xPosition = normaliseX({
-            x: isLeft ? left - 20 : left + width + 20,
-            pinned,
-            fromKeyboard: true,
-            useHeaderRow: gos.get('enableRtl'),
-            gos,
-            ctrlsSvc,
-            visibleCols,
-        });
+        const screenX = isLeft ? left - 20 : left + width + 20;
+        const sectionX = clientXToSectionX(screenX, pinned, ctrlsSvc);
+        const xPosition = normaliseX({ x: sectionX, pinned, gos, ctrlsSvc });
         const headerPosition = focusSvc.focusedHeader;
 
         attemptMoveColumns({

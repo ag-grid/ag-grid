@@ -389,79 +389,44 @@ function calculateValidMoves(params: {
     return validMoves;
 }
 
+function getSectionElement(pinned: ColumnPinnedType, ctrlsSvc: CtrlsService): HTMLElement | null {
+    const sectionClass =
+        pinned === 'left'
+            ? 'ag-grid-pinned-left-cells'
+            : pinned === 'right'
+              ? 'ag-grid-pinned-right-cells'
+              : 'ag-grid-scrolling-cells';
+    return ctrlsSvc
+        .getHeaderRowContainerCtrl()
+        ?.eViewport?.querySelector(`.ag-header-row .${sectionClass}`) as HTMLElement | null;
+}
+
+export function clientXToSectionX(clientX: number, pinned: ColumnPinnedType, ctrlsSvc: CtrlsService): number {
+    const eSection = getSectionElement(pinned, ctrlsSvc);
+    if (!eSection) {
+        return clientX;
+    }
+    return clientX - eSection.getBoundingClientRect().left;
+}
+
 export function normaliseX(params: {
     x: number;
     pinned?: ColumnPinnedType;
-    fromKeyboard?: boolean;
-    useHeaderRow?: boolean;
-    skipScrollPadding?: boolean;
     gos: GridOptionsService;
     ctrlsSvc: CtrlsService;
-    visibleCols?: VisibleColsService;
 }): number {
-    const { pinned, fromKeyboard, gos, ctrlsSvc, visibleCols, useHeaderRow, skipScrollPadding } = params;
-    let eViewport = ctrlsSvc.getHeaderRowContainerCtrl()?.eViewport;
-
+    const { gos, ctrlsSvc, pinned } = params;
     let { x } = params;
 
-    if (!eViewport) {
-        return 0;
-    }
-
-    const isRtl = gos.get('enableRtl');
-
-    // section-element coords are already in content-space (the section scrolls with content).
-    // fallback coords are in visual-space and need scroll padding added later.
-    let usedSectionElement = false;
-
-    if (fromKeyboard) {
-        // use the physical position of the section sub-container to avoid assumptions about CSS gaps
-        const sectionClass =
-            pinned === 'left'
-                ? 'ag-grid-pinned-left-cells'
-                : pinned === 'right'
-                  ? 'ag-grid-pinned-right-cells'
-                  : 'ag-grid-scrolling-cells';
-        const eSection = eViewport.querySelector(`.ag-header-row .${sectionClass}`) as HTMLElement | null;
-        if (eSection) {
-            x -= eSection.getBoundingClientRect().left;
-            usedSectionElement = true;
-        } else {
-            x -= eViewport.getBoundingClientRect().left;
-            if (visibleCols) {
-                x -= getPinnedSectionOffset(pinned, visibleCols, eViewport.clientWidth);
-            }
+    if (gos.get('enableRtl')) {
+        const eSection = getSectionElement(pinned ?? null, ctrlsSvc);
+        if (!eSection) {
+            return 0;
         }
-    }
-    // flip the coordinate if doing RTL
-    if (isRtl) {
-        if (useHeaderRow) {
-            eViewport = eViewport.querySelector('.ag-header-row') as HTMLElement;
-        }
-        x = eViewport.clientWidth - x;
-    }
-
-    // fallback path produces visual-space coords that need scroll padding.
-    // section-element path already produces content-space coords — no scroll adjustment needed.
-    if (!usedSectionElement && fromKeyboard && pinned == null && !skipScrollPadding) {
-        x += ctrlsSvc.get('scrollingCenter').getCenterViewportScrollLeft();
+        x = eSection.getBoundingClientRect().width - x;
     }
 
     return x;
-}
-
-function getPinnedSectionOffset(
-    pinned: ColumnPinnedType | undefined,
-    visibleCols: VisibleColsService,
-    viewportWidth: number
-): number {
-    if (pinned === 'left') {
-        return 0;
-    }
-    if (pinned === 'right') {
-        return Math.max(0, viewportWidth - visibleCols.getRightStickyColumnContainerWidth());
-    }
-    return visibleCols.getLeftStickyColumnContainerWidth();
 }
 
 export function setColumnsMoving(columns: AgColumn[], isMoving: boolean): void {

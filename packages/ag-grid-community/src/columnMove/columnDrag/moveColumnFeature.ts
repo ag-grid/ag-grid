@@ -10,7 +10,12 @@ import type { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import { ColumnHighlightPosition } from '../../interfaces/iColumn';
 import type { ColumnMoveParams } from '../internalColumnMoveUtils';
-import { attemptMoveColumns, getBestColumnMoveIndexFromXPosition, normaliseX } from '../internalColumnMoveUtils';
+import {
+    attemptMoveColumns,
+    clientXToSectionX,
+    getBestColumnMoveIndexFromXPosition,
+    normaliseX,
+} from '../internalColumnMoveUtils';
 import type { DropListener } from './bodyDropTarget';
 
 const MOVE_FAIL_THRESHOLD = 7;
@@ -129,27 +134,8 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             return;
         }
 
-        const isRtl = gos.get('enableRtl');
-
-        // use the physical position of the section sub-container to avoid assumptions about CSS gaps
-        const sectionClass =
-            this.pinned === 'left'
-                ? 'ag-grid-pinned-left-cells'
-                : this.pinned === 'right'
-                  ? 'ag-grid-pinned-right-cells'
-                  : 'ag-grid-scrolling-cells';
-        const eSection = ctrlsSvc
-            .getHeaderRowContainerCtrl()
-            ?.eViewport?.querySelector(`.ag-header-row .${sectionClass}`) as HTMLElement | null;
-        const sectionX = draggingEvent.event.clientX - (eSection?.getBoundingClientRect().left ?? 0);
-
-        const mouseX = normaliseX({
-            x: sectionX,
-            pinned: this.pinned,
-            useHeaderRow: isRtl,
-            gos,
-            ctrlsSvc,
-        });
+        const sectionX = clientXToSectionX(draggingEvent.event.clientX, this.pinned, ctrlsSvc);
+        const mouseX = normaliseX({ x: sectionX, pinned: this.pinned, gos, ctrlsSvc });
 
         // if the user is dragging into the panel, ie coming from the side panel into the main grid,
         // we don't want to scroll the grid this time, it would appear like the table is jumping
@@ -531,8 +517,6 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         return normaliseX({
             x: isRtl ? left + width - padding : left + padding,
             pinned: col.getPinned(),
-            useHeaderRow: isRtl,
-            skipScrollPadding: true,
             gos,
             ctrlsSvc,
         });

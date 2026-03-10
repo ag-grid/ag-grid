@@ -151,7 +151,7 @@ describe('MoveColumnFeature', () => {
     });
 
     describe('RTL mode', () => {
-        test('rtl center sectionX subtracts right pinned width instead of left', () => {
+        test('rtl center sectionX flips within scrolling section width', () => {
             const feature = createFeature(null, true);
 
             const draggingEvent = {
@@ -166,17 +166,17 @@ describe('MoveColumnFeature', () => {
             feature.onDragging(draggingEvent, false, false, false);
 
             // sectionX = clientX(877) - scrollingCells.rect.left(150) = 727
-            // normaliseX flips: 1000 - 727 = 273
+            // normaliseX flips within section: scrollingCells.width(900) - 727 = 173
             expect(feature.handleColumnDragWhileSuppressingMovement).toHaveBeenCalledWith(
                 draggingEvent,
                 false,
                 false,
-                273,
+                173,
                 false
             );
         });
 
-        test('rtl pinned-left sectionX subtracts offset (physically right)', () => {
+        test('rtl pinned-left sectionX flips within pinned-left section width', () => {
             const feature = createFeature('left', true);
 
             const draggingEvent = {
@@ -191,17 +191,17 @@ describe('MoveColumnFeature', () => {
             feature.onDragging(draggingEvent, false, false, false);
 
             // sectionX = clientX(1080) - pinnedLeftCells.rect.left(1050) = 30
-            // normaliseX flips: 1000 - 30 = 970
+            // normaliseX flips within section: pinnedLeftCells.width(50) - 30 = 20
             expect(feature.handleColumnDragWhileSuppressingMovement).toHaveBeenCalledWith(
                 draggingEvent,
                 false,
                 false,
-                970,
+                20,
                 false
             );
         });
 
-        test('rtl pinned-right sectionX uses viewport-relative (physically left)', () => {
+        test('rtl pinned-right sectionX flips within pinned-right section width', () => {
             const feature = createFeature('right', true);
 
             const draggingEvent = {
@@ -216,12 +216,12 @@ describe('MoveColumnFeature', () => {
             feature.onDragging(draggingEvent, false, false, false);
 
             // sectionX = clientX(130) - pinnedRightCells.rect.left(100) = 30
-            // normaliseX flips: 1000 - 30 = 970
+            // normaliseX flips within section: pinnedRightCells.width(50) - 30 = 20
             expect(feature.handleColumnDragWhileSuppressingMovement).toHaveBeenCalledWith(
                 draggingEvent,
                 false,
                 false,
-                970,
+                20,
                 false
             );
         });
