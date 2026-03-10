@@ -10,16 +10,12 @@ import { DropZoneColumnComp } from './dropZoneColumnComp';
 export type TDropZone = 'rowGroup' | 'pivot' | 'aggregation';
 
 export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumnComp, AgColumn> {
-    protected readonly deferApply: boolean;
-    private editStrategy?: BaseColumnToolPanelEdits | null;
-
     constructor(
         horizontal: boolean,
         private readonly dropZonePurpose: TDropZone,
         private readonly editParams?: ColumnToolPanelEditParams
     ) {
         super(horizontal);
-        this.deferApply = !!editParams?.deferApply;
         this.addElementClasses(this.getGui(), this.dropZonePurpose.toLowerCase());
     }
 
@@ -43,11 +39,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
      * rather than hard-coupling drop zones directly to column tool panel beans.
      */
     protected getEditStrategy(): BaseColumnToolPanelEdits | null {
-        if (this.editStrategy !== undefined) {
-            return this.editStrategy;
-        }
-
-        return (this.editStrategy = getColumnToolPanelEditStrategy(this.beans, this.deferApply) ?? null);
+        return getColumnToolPanelEditStrategy(this.beans, !!this.editParams?.deferApply) ?? null;
     }
 
     protected getItems(dragItem: DragItem): AgColumn[] {
@@ -56,7 +48,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
 
     protected isInterestedIn(type: DragSourceType): boolean {
         // not interested in row drags
-        return type === DragSourceType.HeaderCell;
+        return type === DragSourceType.HeaderCell || (!!this.editParams && type === DragSourceType.ToolPanel);
     }
 
     protected override minimumAllowedNewInsertIndex(): number {

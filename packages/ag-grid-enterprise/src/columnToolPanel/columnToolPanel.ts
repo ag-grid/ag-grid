@@ -249,7 +249,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         this.rowGroupDropZonePanel?.refreshGui();
         this.valuesDropZonePanel?.refreshGui();
         this.pivotDropZonePanel?.refresh();
-        this.pivotModePanel?.syncFromGrid();
+        this.pivotModePanel?.refreshEditStrategy();
     };
 
     private readonly onDeferredCancel = (): void => {

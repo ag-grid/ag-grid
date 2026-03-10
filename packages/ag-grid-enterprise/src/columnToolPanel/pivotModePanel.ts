@@ -38,6 +38,11 @@ export class PivotModePanel extends Component {
         this.cbPivotMode.setValue(this.getCurrentPivotMode());
     }
 
+    public refreshEditStrategy(): void {
+        this.editStrategy = undefined;
+        this.syncFromGrid();
+    }
+
     public postConstruct(): void {
         this.setTemplate(PivotModePanelElement, [AgToggleButtonSelector]);
 
