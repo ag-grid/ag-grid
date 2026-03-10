@@ -1,6 +1,16 @@
 {
     "_config_": {
-        "codeSrc": "grid-api.AUTO.json"
+        "codeSrc": "grid-api.AUTO.json",
+        "validate": true,
+        "undocumentedProperties": {
+            "sortChanged": "TODO: undocumented property, to resolve in AG-16879",
+            "flushAllAnimationFrames": "TODO: undocumented property, to resolve in AG-16879",
+            "getColumnDef": "TODO: undocumented property, to resolve in AG-16879",
+            "filterChanged": "TODO: undocumented property, to resolve in AG-16879",
+            "getInfiniteRowCount": "TODO: undocumented property, to resolve in AG-16879",
+            "flushServerSideAsyncTransactions": "TODO: undocumented property, to resolve in AG-16879",
+            "dispatchEvent": "TODO: undocumented property, to resolve in AG-16879"
+        }
     },
     "gridOptions": {
         "meta": {

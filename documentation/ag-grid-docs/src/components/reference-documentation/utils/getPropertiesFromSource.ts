@@ -85,6 +85,12 @@ function validateDocumentedProperties(propsFile: any, codeConfig: any, source: s
             if (config.excludeEvents && entry?.meta?.isEvent) {
                 return false;
             }
+            if (config.onlyEvents) {
+                if (!entry?.meta?.isEvent) return false;
+                // Events like onCellClicked are the grid option callback form;
+                // event docs use the unprefixed name (cellClicked)
+                if (/^on[A-Z]/.test(k)) return false;
+            }
             return true;
         })
     );
