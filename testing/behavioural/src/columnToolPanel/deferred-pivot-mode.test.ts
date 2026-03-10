@@ -103,7 +103,13 @@ describe('deferred column tool panel pivot mode', () => {
         vi.clearAllMocks();
     });
 
-    async function createDeferredPivotModeGrid(): Promise<{ gridApi: GridApi; toolPanel: any }> {
+    async function createDeferredPivotModeGrid(): Promise<{
+        gridApi: GridApi;
+        toolPanel: any;
+        serverGetDataSpy: ReturnType<typeof vi.spyOn>;
+    }> {
+        const fakeServer = createFakeServer(rowData as any);
+        const serverGetDataSpy = vi.spyOn(fakeServer, 'getData');
         const gridApi: GridApi = await gridMgr.createGridAndWait('myGrid', {
             columnDefs,
             pivotMode: true,
@@ -125,7 +131,7 @@ describe('deferred column tool panel pivot mode', () => {
                 ],
                 defaultToolPanel: 'columns',
             },
-            serverSideDatasource: createServerSideDatasource(createFakeServer(rowData as any)),
+            serverSideDatasource: createServerSideDatasource(fakeServer),
         });
 
         await waitForNoLoadingRows(gridApi);
@@ -134,6 +140,7 @@ describe('deferred column tool panel pivot mode', () => {
         return {
             gridApi,
             toolPanel: gridApi.getToolPanelInstance('columns') as any,
+            serverGetDataSpy,
         };
     }
 
@@ -393,6 +400,41 @@ describe('deferred column tool panel pivot mode', () => {
         expect(gridApi.isPivotMode()).toBe(true);
         expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['year']);
         expect(toolPanel.pivotDropZonePanel.getGui().textContent).toContain('Year');
+    });
+
+    test('turning defer mode back on after leaving pivot mode should keep row groups and values populated', async () => {
+        const { gridApi, toolPanel } = await createDeferredPivotModeGrid();
+        const toolPanelGui = toolPanel.getGui() as HTMLElement;
+        const deferModeToggle = toolPanelGui.querySelector<HTMLInputElement>(
+            '.ag-column-panel-defer-mode-toggle input[type="checkbox"]'
+        );
+        const pivotModeToggle = toolPanelGui.querySelector<HTMLInputElement>(
+            '.ag-pivot-mode-panel input[type="checkbox"]'
+        );
+
+        expect(deferModeToggle).not.toBeNull();
+        expect(pivotModeToggle).not.toBeNull();
+
+        deferModeToggle!.click();
+        pivotModeToggle!.click();
+        await waitForNoLoadingRows(gridApi);
+
+        expect(gridApi.isPivotMode()).toBe(false);
+        const liveRowGroupColIds = gridApi.getRowGroupColumns().map((col) => col.getColId());
+        const liveValueColIds = getValueColumnIds(gridApi);
+        expect(liveRowGroupColIds).toEqual(['country', 'sport']);
+        expect(liveValueColIds.length).toBeGreaterThan(0);
+
+        deferModeToggle!.click();
+
+        expect(toolPanel.editStrategy.getRowGroupColumns().map((col) => col.getColId())).toEqual(liveRowGroupColIds);
+        expect(toolPanel.editStrategy.getValueColumns().map((col) => col.getColId())).toEqual(liveValueColIds);
+        expect(toolPanel.rowGroupDropZonePanel.getGui().textContent).toContain('Country');
+        expect(toolPanel.rowGroupDropZonePanel.getGui().textContent).toContain('Sport');
+        for (const colId of liveValueColIds) {
+            const expectedLabel = colId[0].toUpperCase() + colId.slice(1);
+            expect(toolPanel.valuesDropZonePanel.getGui().textContent).toContain(expectedLabel);
+        }
     });
 
     test('reordering columns in non-pivot mode applies only after commit', async () => {
@@ -1200,5 +1242,17 @@ describe('deferred column tool panel pivot mode', () => {
         expect(setValueColumnsSpy).not.toHaveBeenCalled();
         expect(setColumnAggFuncSpy).not.toHaveBeenCalled();
         expect(setPivotColumnsSpy).not.toHaveBeenCalled();
+    });
+
+    test('commit should make exactly one server call', async () => {
+        const { gridApi, toolPanel, serverGetDataSpy } = await createDeferredPivotModeGrid();
+        const initialCallCount = serverGetDataSpy.mock.calls.length;
+
+        toolPanel.editStrategy.setPivotMode(false, 'toolPanelUi');
+        toolPanel['onPivotModePanelValueChanged']();
+        toolPanel.editStrategy.commit();
+        await waitForNoLoadingRows(gridApi);
+
+        expect(serverGetDataSpy.mock.calls.length - initialCallCount).toBe(1);
     });
 });

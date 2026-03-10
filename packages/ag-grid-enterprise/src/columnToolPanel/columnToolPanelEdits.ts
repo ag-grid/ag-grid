@@ -481,18 +481,10 @@ export class ColumnToolPanelDeferredEdit extends BeanStub implements BaseColumnT
     }
 
     public getRowGroupColumns(): AgColumn[] {
-        if (!this.getPivotMode()) {
-            return [];
-        }
-
         return getDraftColumns(this.beans, this.state.rowGroup?.colIds, this.beans.rowGroupColsSvc?.columns);
     }
 
     public getValueColumns(): AgColumn[] {
-        if (!this.getPivotMode()) {
-            return [];
-        }
-
         return getDraftColumns(this.beans, this.state.aggregation?.colIds, this.beans.valueColsSvc?.columns);
     }
 
