@@ -12,6 +12,13 @@ export function createServerSideDatasource(server: {
 }): IServerSideDatasource {
     return {
         getRows: (params) => {
+            console.log('server request', {
+                rowGroups: params.request.rowGroupCols?.map((col) => col.id) ?? [],
+                groupKeys: params.request.groupKeys ?? [],
+                pivots: params.request.pivotCols?.map((col) => col.id) ?? [],
+                values: params.request.valueCols?.map((col) => `${col.id}:${col.aggFunc ?? 'sum'}`) ?? [],
+                sortModel: params.request.sortModel ?? [],
+            });
             const response = server.getData(params.request);
 
             setTimeout(() => {
