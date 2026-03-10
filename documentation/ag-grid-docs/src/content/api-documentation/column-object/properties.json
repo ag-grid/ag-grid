@@ -5,7 +5,8 @@
         "undocumentedProperties": {
             "getDefinition": "Alias of getColDef, the specific version is preferred",
             "getUniqueId": "Alias of getColId",
-            "getId": "Alias of getColId"
+            "getId": "Alias of getColId",
+            "getRowSpan": "Same functionality as rowSpan"
         }
     },
     "definitions": {
@@ -109,8 +110,7 @@
         "meta": {
             "displayName": "Spanning"
         },
-        "getColSpan": {},
-        "getRowSpan": {}
+        "getColSpan": {}
     },
     "selection": {
         "meta": {

@@ -5,7 +5,8 @@
         "undocumentedProperties": {
             "pivotKeys": "Internal use only, doc comment says 'Never set this'",
             "pivotValueColumn": "Internal use only, doc comment says 'Never set this'",
-            "pivotTotalColumnIds": "Internal use only, doc comment says 'Never set this'"
+            "pivotTotalColumnIds": "Internal use only, doc comment says 'Never set this'",
+            "rowSpan": "Old API, not deprecated, but not encouraged either"
         }
     },
     "columns": {
@@ -271,7 +272,6 @@
             "description": "See [Column](./column-spanning/) / [Row](./row-spanning/) Spanning"
         },
         "colSpan": {},
-        "rowSpan": {},
         "spanRows": {
             "more": {
                 "name": "Row Spanning",
