@@ -173,6 +173,35 @@ describe('deferred column tool panel pivot mode', () => {
         };
     }
 
+    async function createNonDeferredPivotModeGrid(): Promise<{ gridApi: GridApi; toolPanel: any }> {
+        const gridApi: GridApi = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs,
+            pivotMode: true,
+            rowData,
+            rowGroupPanelShow: 'always',
+            pivotPanelShow: 'always',
+            sideBar: {
+                toolPanels: [
+                    {
+                        id: 'columns',
+                        labelDefault: 'Columns',
+                        labelKey: 'columns',
+                        iconKey: 'columns',
+                        toolPanel: 'agColumnsToolPanel',
+                    },
+                ],
+                defaultToolPanel: 'columns',
+            },
+        });
+
+        await asyncSetTimeout(50);
+
+        return {
+            gridApi,
+            toolPanel: gridApi.getToolPanelInstance('columns') as any,
+        };
+    }
+
     async function createDeferredNonPivotAggregationGrid(): Promise<{ gridApi: GridApi; toolPanel: any }> {
         const gridApi: GridApi = await gridMgr.createGridAndWait('myGrid', {
             columnDefs: [
@@ -338,6 +367,12 @@ describe('deferred column tool panel pivot mode', () => {
 
     function getValueColumnIds(gridApi: GridApi): string[] {
         return gridApi.getValueColumns().map((col) => col.getColId());
+    }
+
+    function getToolPanelDragHandle(toolPanel: any): Element {
+        const dragHandle = toolPanel.getGui().querySelector('.ag-drag-handle');
+        expect(dragHandle).toBeTruthy();
+        return dragHandle!;
     }
 
     function createSortEvent(): MouseEvent {
@@ -936,15 +971,29 @@ describe('deferred column tool panel pivot mode', () => {
     });
 
     test('dragging from the deferred tool panel into external non-tool-panel drop zones should be prohibited', async () => {
-        const { gridApi } = await createDeferredPivotModeGrid();
+        const { gridApi, toolPanel } = await createDeferredPivotModeGrid();
         const country = gridApi.getColumn('country')! as any;
         const HeaderDropZones = AgGridHeaderDropZonesSelector.component as any;
         const headerDropZones = country.createBean(new HeaderDropZones()) as any;
         const rowGroupPanel = headerDropZones.rowGroupComp;
         const pivotPanel = headerDropZones.pivotComp;
+        const dragHandle = getToolPanelDragHandle(toolPanel);
 
-        expect(rowGroupPanel.isInterestedIn(DragSourceType.ToolPanel)).toBe(false);
-        expect(pivotPanel.isInterestedIn(DragSourceType.ToolPanel)).toBe(false);
+        expect(rowGroupPanel.isInterestedIn(DragSourceType.ToolPanel, dragHandle)).toBe(false);
+        expect(pivotPanel.isInterestedIn(DragSourceType.ToolPanel, dragHandle)).toBe(false);
+    });
+
+    test('dragging from the non-deferred tool panel into external header drop zones should remain allowed', async () => {
+        const { gridApi, toolPanel } = await createNonDeferredPivotModeGrid();
+        const country = gridApi.getColumn('country')! as any;
+        const HeaderDropZones = AgGridHeaderDropZonesSelector.component as any;
+        const headerDropZones = country.createBean(new HeaderDropZones()) as any;
+        const rowGroupPanel = headerDropZones.rowGroupComp;
+        const pivotPanel = headerDropZones.pivotComp;
+        const dragHandle = getToolPanelDragHandle(toolPanel);
+
+        expect(rowGroupPanel.isInterestedIn(DragSourceType.ToolPanel, dragHandle)).toBe(true);
+        expect(pivotPanel.isInterestedIn(DragSourceType.ToolPanel, dragHandle)).toBe(true);
     });
 
     test('dragging into column groups is allowed after clearing groups, labels and aggregations then committing non-pivot mode', async () => {
