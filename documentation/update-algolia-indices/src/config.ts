@@ -54,8 +54,9 @@ export const TYPE_PROPERTY_INDEXING: Record<string, 'never' | 'not-for-function-
     // when we search for "ColDef" but not when we search for any property of a
     // ColDef like "suppressStickyLabel"
     ColDef: 'not-for-function-argument',
+    GridOptions: 'not-for-function-argument',
     ColGroupDef: 'not-for-function-argument',
 
-    defaultColumnDef: 'never',
+    defaultColDef: 'never',
     defaultColGroupDef: 'never',
 };
