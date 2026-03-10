@@ -42,9 +42,10 @@ export class ServerSideExpansionService
         const resetExpand = () => {
             this.strategy = this.createManagedBean(new ExpandStrategy());
         };
+        const getRowGroupIds = () => (this.beans.rowGroupColsSvc?.columns ?? []).map((col) => col.getId());
 
         const preserveAndResetExpand = () => {
-            const newGroupColIds = (this.beans.rowGroupColsSvc?.columns ?? []).map((col) => col.getId());
+            const newGroupColIds = getRowGroupIds();
             const oldGroupColIds = this.prevGroupColIds;
             this.prevGroupColIds = newGroupColIds;
 
@@ -104,7 +105,7 @@ export class ServerSideExpansionService
         });
 
         resetExpand();
-        this.prevGroupColIds = (this.beans.rowGroupColsSvc?.columns ?? []).map((col) => col.getId());
+        this.prevGroupColIds = getRowGroupIds();
     }
 
     public setExpansionState(state: RowGroupExpansionState | RowGroupBulkExpansionState): void {
