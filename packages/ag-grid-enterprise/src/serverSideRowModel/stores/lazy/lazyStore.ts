@@ -626,7 +626,8 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     refreshAfterGroupColumnChange(firstDirtyLevel: number): void {
         // ssrmParams is a shared reference already mutated by serverSideRowModel.refreshAfterGroupColumnChange
         // Update existing row nodes' leafGroup using the updated rowGroupCols
-        const leafGroup = this.ssrmParams.rowGroupCols ? this.level === this.ssrmParams.rowGroupCols.length - 1 : false;
+        const { rowGroupCols } = this.ssrmParams;
+        const leafGroup = rowGroupCols ? this.level === rowGroupCols.length - 1 : false;
         this.cache.getNodes().forEach(({ node }) => {
             node.leafGroup = leafGroup;
             if (node.sibling) {
