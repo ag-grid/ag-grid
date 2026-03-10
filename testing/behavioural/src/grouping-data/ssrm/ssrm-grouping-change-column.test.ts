@@ -861,6 +861,49 @@ describe('ssrm grouping column changes preserve expansion state', () => {
         });
     });
 
+    test('reversing all group columns resets root — all expansion lost', async () => {
+        const api = await gridManager.createGridAndWait(null, {
+            columnDefs: [
+                { field: 'country', rowGroupIndex: 0, hide: true },
+                { field: 'year', rowGroupIndex: 1, hide: true },
+                { field: 'sport', rowGroupIndex: 2, hide: true },
+                { field: 'medals' },
+            ],
+            autoGroupColumnDef: { headerName: 'Group' },
+            rowModelType: 'serverSide',
+            serverSideDatasource: createDatasource(serverSideRows3Level),
+            getRowId,
+        });
+
+        await waitForNoLoadingRows(api);
+
+        // Expand Ireland → 2020
+        api.setRowNodeExpanded(api.getRowNode('country:Ireland')!, true);
+        await waitForNoLoadingRows(api);
+        api.setRowNodeExpanded(api.getRowNode('Ireland|year:2020')!, true);
+        await waitForNoLoadingRows(api);
+
+        // Reverse all three: sport(0) → year(1) → country(2). firstDirtyLevel=0 — root resets.
+        api.setGridOption('columnDefs', [
+            { field: 'country', rowGroupIndex: 2, hide: true },
+            { field: 'year', rowGroupIndex: 1, hide: true },
+            { field: 'sport', rowGroupIndex: 0, hide: true },
+            { field: 'medals' },
+        ]);
+        await waitForNoLoadingRows(api);
+
+        await new GridRows(api, 'after reversing all group columns').check(`
+            ROOT id:<no-id>
+            ├── GROUP collapsed id:"sport:Football" ag-Grid-AutoColumn:"Football" sport:"Football" medals:9
+            └── GROUP collapsed id:"sport:Rugby" ag-Grid-AutoColumn:"Rugby" sport:"Rugby" medals:1
+        `);
+
+        expect(api.getState().rowGroupExpansion).toEqual({
+            expandedRowGroupIds: [],
+            collapsedRowGroupIds: [],
+        });
+    });
+
     test('resetRowGroupExpansion clears preserved expansion state after column change', async () => {
         const api = await gridManager.createGridAndWait(null, {
             columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'year' }, { field: 'medals' }],
