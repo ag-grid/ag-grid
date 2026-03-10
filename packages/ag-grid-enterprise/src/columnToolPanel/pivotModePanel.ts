@@ -2,7 +2,7 @@ import type { ElementParams, GridCheckbox } from 'ag-grid-community';
 import { AgToggleButtonSelector, Component, RefPlaceholder } from 'ag-grid-community';
 
 import { getColumnToolPanelEditStrategy } from './columnToolPanelEditUtils';
-import type { BaseColumnToolPanelEdits, ColumnToolPanelEditParams } from './columnToolPanelEdits';
+import type { BaseColumnToolPanelEdits, ColumnToolPanelEditParams } from './columnToolPanelEditsTypes';
 
 const PivotModePanelElement: ElementParams = {
     tag: 'div',

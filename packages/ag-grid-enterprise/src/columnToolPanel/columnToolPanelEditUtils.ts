@@ -1,6 +1,6 @@
 import type { BeanCollection } from 'ag-grid-community';
 
-import type { BaseColumnToolPanelEdits } from './columnToolPanelEdits';
+import type { BaseColumnToolPanelEdits } from './columnToolPanelEditsTypes';
 
 export function getColumnToolPanelEditStrategy(
     beans: BeanCollection,

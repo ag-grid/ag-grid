@@ -9,7 +9,7 @@ import { isProvidedColumnGroup } from 'ag-grid-community';
 
 import type { VirtualListDragItem } from '../agStack/iVirtualListDragFeature';
 import { getColumnToolPanelEditStrategy } from './columnToolPanelEditUtils';
-import type { ColumnToolPanelEditParams } from './columnToolPanelEdits';
+import type { ColumnToolPanelEditParams } from './columnToolPanelEditsTypes';
 import type { ToolPanelColumnComp } from './toolPanelColumnComp';
 import { ToolPanelColumnGroupComp } from './toolPanelColumnGroupComp';
 

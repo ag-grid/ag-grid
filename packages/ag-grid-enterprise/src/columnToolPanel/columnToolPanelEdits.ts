@@ -5,67 +5,20 @@ import type {
     ColumnState,
     ColumnToolPanelEditStrategyBean,
     IAggFunc,
-    NamedBean,
     SortDef,
 } from 'ag-grid-community';
 import { BeanStub, _applyColumnState } from 'ag-grid-community';
+import type {
+    BaseColumnToolPanelEdits,
+    CommitOperation,
+    CommitOperations,
+    DeferredState,
+} from './columnToolPanelEditsTypes';
 
-export type ColumnToolPanelEditParams = { deferApply?: boolean };
 export const COLUMN_TOOL_PANEL_SYNCHRONOUS_EDIT_BEAN_NAME = 'colToolPanelSynchronousEdit';
 export const COLUMN_TOOL_PANEL_DEFERRED_EDIT_BEAN_NAME = 'colToolPanelDeferredEdit';
 
 const noop = () => {};
-
-export interface BaseColumnToolPanelEdits extends NamedBean {
-    applyColumnState(state: ColumnState[], eventType: ColumnEventType): void;
-    commit(): void;
-    moveColumns(columns: AgColumn[], targetIndex: number, eventType: ColumnEventType): void;
-    reset(): void;
-    setColumnsVisible(columns: AgColumn[], visible: boolean, eventType: ColumnEventType): void;
-    isColumnVisibleInToolPanel(column: AgColumn): boolean;
-    setRowGroupColumns(columns: AgColumn[], eventType: ColumnEventType): void;
-    getRowGroupColumns(): AgColumn[];
-    setValueColumns(columns: AgColumn[], eventType: ColumnEventType): void;
-    getValueColumns(): AgColumn[];
-    setColumnAggFunc(column: AgColumn, aggFunc: string | IAggFunc | null | undefined, eventType: ColumnEventType): void;
-    getColumnAggFunc(column: AgColumn): string | IAggFunc | null | undefined;
-    setPivotColumns(columns: AgColumn[], eventType: ColumnEventType): void;
-    getPivotColumns(): AgColumn[];
-    setPivotMode(pivotMode: boolean, eventType: ColumnEventType): void;
-    getPivotMode(): boolean;
-    isColumnSelectedInPivotModeToolPanel(column: AgColumn): boolean;
-    progressSortFromEvent(column: AgColumn, event: MouseEvent | KeyboardEvent): void;
-    getSortDef(column: AgColumn): SortDef | null;
-}
-
-type Seq = { seq: number; eventType: ColumnEventType };
-type ColIdsDraft = { colIds: string[] } & Seq;
-type ColumnStateDraft = { patches: Map<string, ColumnState> } & Seq;
-type PivotModeDraft = { pivotMode: boolean } & Seq;
-type SortDraft = { sortDefsByColId: Map<string, SortDef | null>; baselineCleared: boolean } & Seq;
-type AggFuncsDraft = { values: Map<string, string | IAggFunc | null | undefined> } & Seq;
-
-type DeferredState = {
-    columnState?: ColumnStateDraft;
-    columnOrder?: ColIdsDraft;
-    rowGroup?: ColIdsDraft;
-    aggregation?: ColIdsDraft;
-    pivot?: ColIdsDraft;
-    pivotMode?: PivotModeDraft;
-    sort?: SortDraft;
-    aggFuncs?: AggFuncsDraft;
-};
-
-type CommitOperation =
-    | ({ type: 'columnState' } & ColumnStateDraft)
-    | ({ type: 'columnOrder' } & ColIdsDraft)
-    | ({ type: 'rowGroup' } & ColIdsDraft)
-    | ({ type: 'aggregation' } & ColIdsDraft)
-    | ({ type: 'pivot' } & ColIdsDraft)
-    | ({ type: 'pivotMode' } & PivotModeDraft)
-    | ({ type: 'sort' } & SortDraft)
-    | ({ type: 'aggFuncs' } & AggFuncsDraft);
-type CommitOperations = CommitOperation[];
 
 export class ColumnToolPanelSynchronousEdit extends BeanStub implements BaseColumnToolPanelEdits {
     beanName = COLUMN_TOOL_PANEL_SYNCHRONOUS_EDIT_BEAN_NAME as ColumnToolPanelEditStrategyBean;

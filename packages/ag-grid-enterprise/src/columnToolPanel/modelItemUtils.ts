@@ -2,7 +2,7 @@ import type { AgColumn, BeanCollection, ColumnEventType, ColumnState, IAggFunc }
 
 import type { ColumnModelItem } from './columnModelItem';
 import { getColumnToolPanelEditStrategy } from './columnToolPanelEditUtils';
-import type { ColumnToolPanelEditParams } from './columnToolPanelEdits';
+import type { ColumnToolPanelEditParams } from './columnToolPanelEditsTypes';
 
 export function selectAllChildren(
     beans: BeanCollection,

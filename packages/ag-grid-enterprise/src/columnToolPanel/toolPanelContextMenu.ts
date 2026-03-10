@@ -4,7 +4,7 @@ import { Component, _createIconNoSpan, _focusInto, isColumn, isProvidedColumnGro
 import { getGroupingLocaleText, isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import { MenuList } from '../widgets/menuList';
 import { getColumnToolPanelEditStrategy } from './columnToolPanelEditUtils';
-import type { BaseColumnToolPanelEdits, ColumnToolPanelEditParams } from './columnToolPanelEdits';
+import type { BaseColumnToolPanelEdits, ColumnToolPanelEditParams } from './columnToolPanelEditsTypes';
 
 type MenuItemName = 'scrollIntoView' | 'rowGroup' | 'value' | 'pivot';
 

@@ -30,7 +30,7 @@ import {
 
 import type { ColumnModelItem } from './columnModelItem';
 import { getColumnToolPanelEditStrategy } from './columnToolPanelEditUtils';
-import type { ColumnToolPanelEditParams } from './columnToolPanelEdits';
+import type { ColumnToolPanelEditParams } from './columnToolPanelEditsTypes';
 import { createPivotState, selectAllChildren, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
 

@@ -14,7 +14,7 @@ import { getColumnToolPanelEditStrategy } from '../../columnToolPanel/columnTool
 import {
     type BaseColumnToolPanelEdits,
     type ColumnToolPanelEditParams,
-} from '../../columnToolPanel/columnToolPanelEdits';
+} from '../../columnToolPanel/columnToolPanelEditsTypes';
 import { PillDragComp } from '../../widgets/pillDragComp';
 import { VirtualList } from '../../widgets/virtualList';
 import { isRowGroupColLocked } from '../rowGroupingUtils';
