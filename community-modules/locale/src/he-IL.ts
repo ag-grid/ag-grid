@@ -75,6 +75,7 @@ export const AG_GRID_LOCALE_IL = {
     // Filter Buttons
     applyFilter: 'החל',
     applyColumnToolPanel: 'החל',
+    deferMode: 'Defer mode',
     resetFilter: 'אפס',
     clearFilter: 'נקה',
     cancelFilter: 'בטל',

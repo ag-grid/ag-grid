@@ -75,6 +75,7 @@ export const AG_GRID_LOCALE_PK = {
     // Filter Buttons
     applyFilter: 'لاگو کریں',
     applyColumnToolPanel: 'لاگو کریں',
+    deferMode: 'Defer mode',
     resetFilter: 'ری سیٹ کریں',
     clearFilter: 'صاف کریں',
     cancelFilter: 'منسوخ کریں',

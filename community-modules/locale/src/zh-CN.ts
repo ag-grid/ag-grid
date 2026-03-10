@@ -75,6 +75,7 @@ export const AG_GRID_LOCALE_CN = {
     // Filter Buttons
     applyFilter: '应用',
     applyColumnToolPanel: '应用',
+    deferMode: 'Defer mode',
     resetFilter: '重置',
     clearFilter: '清除',
     cancelFilter: '取消',
