@@ -126,7 +126,11 @@ export class ServerSideExpansionService
         }
         this.strategy.setExpandedState(state as any); // cast to any, as we know the type is correct due to the previous assertion
         this.dispatchStateUpdatedEvent();
-        this.updateAllNodes();
+        if (this.updateAllNodes()) {
+            // Trigger display recalculation — needed when child stores already have cached data
+            // and no async load fires storeUpdated as a side effect
+            this.eventSvc.dispatchEvent({ type: 'storeUpdated' });
+        }
     }
 
     public getExpansionState(): RowGroupExpansionState | RowGroupBulkExpansionState {
@@ -134,12 +138,20 @@ export class ServerSideExpansionService
     }
 
     /**
-     * Updates all nodes to the correct expanded/collapsed state.
+     * Updates all nodes to the correct expanded/collapsed state,
+     * creating or destroying child stores as needed.
+     * @returns true if any node's expanded state changed
      */
-    private updateAllNodes() {
+    private updateAllNodes(): boolean {
+        let changed = false;
         this.serverSideRowModel.forEachNode((node) => {
-            super.setExpanded(node, this.isNodeExpanded(node));
+            const desired = this.isNodeExpanded(node);
+            if (node.expanded !== desired) {
+                changed = true;
+            }
+            super.setExpanded(node, desired);
         });
+        return changed;
     }
 
     public isNodeExpanded(node: RowNode): boolean {
