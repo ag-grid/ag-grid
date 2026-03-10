@@ -252,6 +252,22 @@
     width: 100%;
 }
 
+/* fill the gap between the last content section and pinned-right without allowing
+   the row's own background to bleed into the empty viewport area. */
+:where(.ag-row:not(.ag-full-width-row))::after {
+    content: '';
+    flex: 1 0 0px;
+    align-self: stretch;
+}
+
+:where(.ag-row:not(.ag-header-row, .ag-full-width-row))::after {
+    background-color: var(--ag-data-background-color);
+}
+
+.ag-header-row::after {
+    background-color: var(--ag-header-background-color);
+}
+
 .ag-grid-pinned-left-cells,
 .ag-grid-scrolling-cells,
 .ag-grid-pinned-right-cells {
@@ -289,16 +305,17 @@
     right: var(--ag-pinned-right-sticky-offset, 0);
 }
 
-/* rtl:ignore */
-:where(.ag-ltr) .ag-grid-pinned-right-cells {
-    /* when rows are wider than displayed columns, consume spare inline space before right-pinned lane. */
-    margin-left: auto;
+/* place pinned-right after the ::after spacer so the spacer fills the gap between
+   the scrolling section and pinned-right. */
+:where(.ag-row:not(.ag-full-width-row)) > .ag-grid-pinned-right-cells {
+    order: 1;
 }
 
+/* in RTL (row-reverse), the gap is between pinned-left and scrolling-cells.
+   move scrolling-cells after the spacer so it sits next to pinned-right on the left. */
 /* rtl:ignore */
-:where(.ag-rtl) .ag-grid-scrolling-cells {
-    /* when rows are wider than displayed columns, consume spare inline space after right-pinned lane. */
-    margin-left: auto;
+:where(.ag-rtl) :where(.ag-row:not(.ag-full-width-row)) > .ag-grid-scrolling-cells {
+    order: 1;
 }
 
 /* rtl:ignore */

@@ -744,6 +744,22 @@
         width: 100%;
     }
 
+    // fill the gap between the last content section and pinned-right without allowing
+    // the row's own background to bleed into the empty viewport area.
+    .ag-row:not(.ag-full-width-row)::after {
+        content: '';
+        flex: 1 0 0px;
+        align-self: stretch;
+    }
+
+    .ag-row:not(.ag-header-row, .ag-full-width-row)::after {
+        background-color: var(--ag-data-background-color);
+    }
+
+    .ag-header-row::after {
+        background-color: var(--ag-header-background-color);
+    }
+
     .ag-grid-pinned-left-cells,
     .ag-grid-scrolling-cells,
     .ag-grid-pinned-right-cells {
@@ -775,12 +791,16 @@
         right: var(--ag-pinned-right-sticky-offset, 0px);
     }
 
-    .ag-ltr .ag-grid-pinned-right-cells {
-        margin-left: auto;
+    // place pinned-right after the ::after spacer so the spacer fills the gap between
+    // the scrolling section and pinned-right.
+    .ag-row:not(.ag-full-width-row) > .ag-grid-pinned-right-cells {
+        order: 1;
     }
 
-    .ag-rtl .ag-grid-scrolling-cells {
-        margin-left: auto;
+    // in RTL (row-reverse), the gap is between pinned-left and scrolling-cells.
+    // move scrolling-cells after the spacer so it sits next to pinned-right on the left.
+    .ag-rtl .ag-row:not(.ag-full-width-row) > .ag-grid-scrolling-cells {
+        order: 1;
     }
 
     .ag-rtl .ag-body-horizontal-scroll .ag-grid-scrolling-cells {
