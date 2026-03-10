@@ -174,7 +174,7 @@
     }
 
     .ag-row-hover:not(.ag-full-width-row),
-    .ag-row-hover.ag-full-width-row {
+    .ag-row-hover.ag-full-width-row.ag-row-group {
         --ag-internal-row-overlay-color: var(--ag-row-hover-color);
     }
 
@@ -200,7 +200,7 @@
     }
 
     .ag-row-selected.ag-full-width-row::before,
-    .ag-row-hover.ag-full-width-row::before {
+    .ag-row-hover.ag-full-width-row.ag-row-group::before {
         content: '';
         display: block;
         position: absolute;
