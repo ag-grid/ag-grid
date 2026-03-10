@@ -57,33 +57,32 @@ export class ServerSideExpansionService
                 return;
             }
 
+            const firstDirtyLevel = findFirstChangedGroupLevel(oldGroupColIds, newGroupColIds);
+            // If the top-level group column changed, no existing IDs survive — skip snapshot.
+            if (firstDirtyLevel === 0) {
+                this.strategy = newStrategy;
+                return;
+            }
+
+            // Only preserve IDs at levels below the first dirty level and within the new group depth.
+            const newGroupColCount = newGroupColIds.length;
+            const maxValidLevel = colModel.isPivotMode() ? newGroupColCount - 1 : newGroupColCount;
+            const upperBound = Math.min(maxValidLevel, firstDirtyLevel);
+
             // When transitioning from ExpandAllStrategy, hydrate the new strategy from loaded nodes
             // so getState() stays consistent with the visual expansion state.
             if (this.isExpandAllStrategy(this.strategy)) {
                 rowModel.forEachNode((node) => {
-                    if (node.group) {
+                    if (node.group && node.level < upperBound) {
                         newStrategy.setRowExpanded(node, !!node.expanded);
                     }
                 });
             } else {
                 // Preserve expansion state from the previous default strategy across group column changes
                 const oldStrategy = this.strategy as ExpandStrategy;
-                // Find the first level where group columns diverged — no IDs at or beyond this
-                // level can survive since those nodes will all have different IDs or cease to exist.
-                const firstDirtyLevel = findFirstChangedGroupLevel(oldGroupColIds, newGroupColIds);
-                // If the top-level group column changed, no existing IDs survive — skip snapshot.
-                if (firstDirtyLevel === 0) {
-                    this.strategy = newStrategy;
-                    return;
-                }
 
                 let { expandedRowGroupIds, collapsedRowGroupIds } = oldStrategy.getExpandedState();
 
-                // Filter out IDs at levels that no longer exist, that will become leaf groups in
-                // pivot mode, or that are at/beyond the first dirty group column level.
-                const newGroupColCount = newGroupColIds.length;
-                const maxValidLevel = colModel.isPivotMode() ? newGroupColCount - 1 : newGroupColCount;
-                const upperBound = Math.min(maxValidLevel, firstDirtyLevel);
                 if (upperBound >= 0) {
                     const isValidLevel = (id: string) => {
                         const level = oldStrategy.getNodeLevel(id);
