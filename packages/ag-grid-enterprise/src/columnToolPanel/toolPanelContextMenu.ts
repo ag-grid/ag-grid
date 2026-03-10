@@ -128,7 +128,10 @@ export class ToolPanelContextMenu extends Component {
             activateLabel: () => getGroupingLocaleText(localeTextFunc, 'groupBy', displayName!),
             deactivateLabel: () => getGroupingLocaleText(localeTextFunc, 'ungroupBy', displayName!),
             activateFunction: () =>
-                edits.setRowGroupColumns(this.addColumnsToList(edits.getRowGroupColumns(), rowGroupAllowed), 'toolPanelUi'),
+                edits.setRowGroupColumns(
+                    this.addColumnsToList(edits.getRowGroupColumns(), rowGroupAllowed),
+                    'toolPanelUi'
+                ),
             deActivateFunction: () =>
                 edits.setRowGroupColumns(
                     this.removeColumnsFromList(edits.getRowGroupColumns(), rowGroupAllowed),
@@ -148,10 +151,7 @@ export class ToolPanelContextMenu extends Component {
             activateFunction: () =>
                 edits.setValueColumns(this.addColumnsToList(edits.getValueColumns(), valueAllowed), 'toolPanelUi'),
             deActivateFunction: () =>
-                edits.setValueColumns(
-                    this.removeColumnsFromList(edits.getValueColumns(), valueAllowed),
-                    'toolPanelUi'
-                ),
+                edits.setValueColumns(this.removeColumnsFromList(edits.getValueColumns(), valueAllowed), 'toolPanelUi'),
             addIcon: 'valuePanel',
             removeIcon: 'valuePanel',
         });
@@ -166,10 +166,7 @@ export class ToolPanelContextMenu extends Component {
             activateFunction: () =>
                 edits.setPivotColumns(this.addColumnsToList(edits.getPivotColumns(), pivotAllowed), 'toolPanelUi'),
             deActivateFunction: () =>
-                edits.setPivotColumns(
-                    this.removeColumnsFromList(edits.getPivotColumns(), pivotAllowed),
-                    'toolPanelUi'
-                ),
+                edits.setPivotColumns(this.removeColumnsFromList(edits.getPivotColumns(), pivotAllowed), 'toolPanelUi'),
             addIcon: 'pivotPanel',
             removeIcon: 'pivotPanel',
         });

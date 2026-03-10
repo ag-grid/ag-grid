@@ -28,9 +28,9 @@ import { syncLayoutWithGrid, toolPanelCreateColumnTree } from '../sideBar/common
 import { VirtualList } from '../widgets/virtualList';
 import { ExpandState } from './agPrimaryColsHeader';
 import { ColumnModelItem } from './columnModelItem';
-import { getColumnToolPanelEditStrategy } from './columnToolPanelEditUtils';
 import { getCurrentColumnsBeingMoved, getCurrentDragValue, isMoveBlocked, moveItem } from './columnMoveUtils';
 import type { ToolPanelColumnCompParams } from './columnToolPanel';
+import { getColumnToolPanelEditStrategy } from './columnToolPanelEditUtils';
 import { selectAllChildren } from './modelItemUtils';
 import { ToolPanelColumnComp } from './toolPanelColumnComp';
 import { ToolPanelColumnGroupComp } from './toolPanelColumnGroupComp';

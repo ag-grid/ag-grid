@@ -1,10 +1,10 @@
 import type { BeanName, Component, NamedBean } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
-import type { ColumnToolPanelEditParams } from './columnToolPanelEditsTypes';
 import { PivotDropZonePanel } from '../rowGrouping/columnDropZones/pivotDropZonePanel';
 import { RowGroupDropZonePanel } from '../rowGrouping/columnDropZones/rowGroupDropZonePanel';
 import { ValuesDropZonePanel } from '../rowGrouping/columnDropZones/valueDropZonePanel';
+import type { ColumnToolPanelEditParams } from './columnToolPanelEditsTypes';
 import { PivotModePanel } from './pivotModePanel';
 
 export class ColumnToolPanelFactory extends BeanStub implements NamedBean {

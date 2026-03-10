@@ -2,7 +2,10 @@ import type { AgColumn, ColumnEventType, DragItem, DropTarget, GridDraggingEvent
 import { DragSourceType, _shouldUpdateColVisibilityAfterGroup } from 'ag-grid-community';
 
 import { getColumnToolPanelEditStrategy } from '../../columnToolPanel/columnToolPanelEditUtils';
-import type { BaseColumnToolPanelEdits, ColumnToolPanelEditParams } from '../../columnToolPanel/columnToolPanelEditsTypes';
+import type {
+    BaseColumnToolPanelEdits,
+    ColumnToolPanelEditParams,
+} from '../../columnToolPanel/columnToolPanelEditsTypes';
 import type { PillDropZonePanelParams } from '../../widgets/pillDropZonePanel';
 import { PillDropZonePanel } from '../../widgets/pillDropZonePanel';
 import { DropZoneColumnComp } from './dropZoneColumnComp';

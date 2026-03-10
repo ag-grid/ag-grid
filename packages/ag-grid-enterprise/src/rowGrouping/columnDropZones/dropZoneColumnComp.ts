@@ -208,9 +208,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     }
 
     private getCurrentSortDirection(column: AgColumn): SortDirection {
-        return (
-            this.getEditStrategy()?.getSortDef(column)?.direction ?? column.getSortDef()?.direction ?? null
-        );
+        return this.getEditStrategy()?.getSortDef(column)?.direction ?? column.getSortDef()?.direction ?? null;
     }
 
     private getSortDefOverride(): SortDef | null | undefined {

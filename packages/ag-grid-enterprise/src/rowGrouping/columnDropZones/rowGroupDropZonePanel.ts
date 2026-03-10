@@ -41,8 +41,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel implements Focusabl
             return false;
         }
 
-        const isActive =
-            this.getEditStrategy()?.getRowGroupColumns().includes(column) ?? column.isRowGroupActive();
+        const isActive = this.getEditStrategy()?.getRowGroupColumns().includes(column) ?? column.isRowGroupActive();
         return column.isAllowRowGroup() && (!isActive || this.isSourceEventFromTarget(draggingEvent));
     }
 
