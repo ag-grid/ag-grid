@@ -1,6 +1,7 @@
-import { getByTestId, waitFor } from '@testing-library/dom';
+import { getAllByTestId, getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 
+import type { DateFilterModel } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     DateFilterModule,
@@ -99,5 +100,189 @@ describe('Number Range Filter', () => {
         expect(toNumberInput.valueAsNumber).toBe(5);
         expect(toNumberInput.validity.valid).toBe(true);
         expect(toNumberInput).toHaveAttribute('aria-invalid', 'false');
+    });
+});
+
+async function selectFilterOption(gridDiv: HTMLElement, userSession: any, optionText: string): Promise<void> {
+    const pickerDisplay = getAllByTestId(
+        gridDiv,
+        agTestIdFor.filterInstancePickerDisplay({ source: 'column-filter' })
+    )[0];
+    await userSession.click(pickerDisplay);
+
+    await asyncSetTimeout(0);
+
+    const listItems = document.querySelectorAll('.ag-list-item');
+    let targetItem: Element | null = null;
+    listItems.forEach((item) => {
+        if (item.textContent?.trim() === optionText) {
+            targetItem = item;
+        }
+    });
+    expect(targetItem).not.toBeNull();
+    await userSession.click(targetItem!);
+
+    await asyncSetTimeout(0);
+}
+
+describe('Date Range Filter', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [DateFilterModule, ClientSideRowModelModule, TextFilterModule],
+    });
+
+    beforeAll(() => setupAgTestIds());
+    afterEach(() => gridsManager.reset());
+
+    test('Switching from inRange to equals clears range validation on the from input', async () => {
+        const userSession = userEvent.setup();
+
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'date',
+                    filter: 'agDateColumnFilter',
+                    filterParams: {
+                        filterOptions: ['inRange', 'equals'],
+                    },
+                },
+            ],
+            rowData: [{ date: '2024-01-15' }, { date: '2024-06-15' }, { date: '2024-12-15' }],
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        await asyncSetTimeout(0);
+
+        // Open the filter popup
+        const filterBtn = getByTestId(gridDiv, agTestIdFor.headerFilterButton('date'));
+        await userSession.click(filterBtn);
+
+        await asyncSetTimeout(0);
+
+        // Enter dates into the inRange inputs: from=2024-01-15, to=2024-06-15
+        const fromDateInput = getByTestId<HTMLInputElement>(
+            gridDiv,
+            agTestIdFor.dateFilterInstanceInput({ source: 'column-filter', index: 0 })
+        );
+        const toDateInput = getByTestId<HTMLInputElement>(
+            gridDiv,
+            agTestIdFor.dateFilterInstanceInput({ source: 'column-filter', index: 1 })
+        );
+
+        // Use fireEvent to set date values (userEvent.type doesn't work well with date inputs)
+        fromDateInput.valueAsDate = new Date('2024-01-15');
+        fromDateInput.dispatchEvent(new Event('input', { bubbles: true }));
+        fromDateInput.dispatchEvent(new Event('change', { bubbles: true }));
+
+        toDateInput.valueAsDate = new Date('2024-06-15');
+        toDateInput.dispatchEvent(new Event('input', { bubbles: true }));
+        toDateInput.dispatchEvent(new Event('change', { bubbles: true }));
+
+        await asyncSetTimeout(0);
+
+        // Both inputs should be valid (from < to)
+        expect(fromDateInput.validity.valid).toBe(true);
+        expect(toDateInput.validity.valid).toBe(true);
+
+        await waitFor(() => {
+            const model = api.getFilterModel()?.date as DateFilterModel;
+            expect(model).toBeTruthy();
+            expect(model.type).toBe('inRange');
+        });
+
+        // Switch to "equals" via the filter type picker
+        await selectFilterOption(gridDiv, userSession, 'Equals');
+
+        // Now the filter is "equals" - the to input is hidden but still has its value.
+        // Change the from date to match what was in the to date.
+        const fromDateInputEquals = getByTestId<HTMLInputElement>(
+            gridDiv,
+            agTestIdFor.dateFilterInstanceInput({ source: 'column-filter' })
+        );
+
+        fromDateInputEquals.valueAsDate = new Date('2024-06-15');
+        fromDateInputEquals.dispatchEvent(new Event('input', { bubbles: true }));
+        fromDateInputEquals.dispatchEvent(new Event('change', { bubbles: true }));
+
+        await asyncSetTimeout(0);
+
+        // The from input should be valid - no range validation should apply for "equals"
+        expect(fromDateInputEquals.validity.valid).toBe(true);
+    });
+
+    test('Switching from equals back to inRange re-enables range validation', async () => {
+        const userSession = userEvent.setup();
+
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'date',
+                    filter: 'agDateColumnFilter',
+                    filterParams: {
+                        filterOptions: ['inRange', 'equals'],
+                    },
+                },
+            ],
+            rowData: [{ date: '2024-01-15' }, { date: '2024-06-15' }, { date: '2024-12-15' }],
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        await asyncSetTimeout(0);
+
+        // Open the filter popup
+        const filterBtn = getByTestId(gridDiv, agTestIdFor.headerFilterButton('date'));
+        await userSession.click(filterBtn);
+
+        await asyncSetTimeout(0);
+
+        // Enter valid inRange dates: from=2024-01-15, to=2024-06-15
+        const fromDateInput = getByTestId<HTMLInputElement>(
+            gridDiv,
+            agTestIdFor.dateFilterInstanceInput({ source: 'column-filter', index: 0 })
+        );
+        const toDateInput = getByTestId<HTMLInputElement>(
+            gridDiv,
+            agTestIdFor.dateFilterInstanceInput({ source: 'column-filter', index: 1 })
+        );
+
+        fromDateInput.valueAsDate = new Date('2024-01-15');
+        fromDateInput.dispatchEvent(new Event('input', { bubbles: true }));
+        toDateInput.valueAsDate = new Date('2024-06-15');
+        toDateInput.dispatchEvent(new Event('input', { bubbles: true }));
+
+        await asyncSetTimeout(0);
+
+        // Switch to "equals"
+        await selectFilterOption(gridDiv, userSession, 'Equals');
+
+        // Change the from date to be after what was in the to date
+        const fromDateInputEquals = getByTestId<HTMLInputElement>(
+            gridDiv,
+            agTestIdFor.dateFilterInstanceInput({ source: 'column-filter' })
+        );
+
+        fromDateInputEquals.valueAsDate = new Date('2024-12-15');
+        fromDateInputEquals.dispatchEvent(new Event('input', { bubbles: true }));
+
+        await asyncSetTimeout(0);
+
+        // Valid in "equals" mode - no range validation
+        expect(fromDateInputEquals.validity.valid).toBe(true);
+
+        // Switch back to "inRange" - the from date (2024-12-15) is now after the to date (2024-06-15)
+        await selectFilterOption(gridDiv, userSession, 'Between');
+
+        // Trigger validation by interacting with the from input
+        const fromDateInputRange = getByTestId<HTMLInputElement>(
+            gridDiv,
+            agTestIdFor.dateFilterInstanceInput({ source: 'column-filter', index: 0 })
+        );
+        fromDateInputRange.dispatchEvent(new Event('focusin', { bubbles: true }));
+
+        await asyncSetTimeout(0);
+
+        // Range validation should now be active again - from > to is invalid
+        expect(fromDateInputRange.validity.valid).toBe(false);
     });
 });
