@@ -83,7 +83,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         horizontal: boolean
     ): TPill;
     protected abstract getItems(dragItem: DragItem<TItem>): TItem[];
-    protected abstract isInterestedIn(type: DragSourceType): boolean;
+    protected abstract isInterestedIn(type: DragSourceType, sourceElement: Element): boolean;
 
     constructor(protected readonly horizontal: boolean) {
         super(PillDropZonePanelElement);

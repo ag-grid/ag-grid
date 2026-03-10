@@ -15,8 +15,8 @@ import type {
     DeferredState,
 } from './columnToolPanelEditsTypes';
 
-export const COLUMN_TOOL_PANEL_SYNCHRONOUS_EDIT_BEAN_NAME = 'colToolPanelSynchronousEdit';
-export const COLUMN_TOOL_PANEL_DEFERRED_EDIT_BEAN_NAME = 'colToolPanelDeferredEdit';
+const COLUMN_TOOL_PANEL_SYNCHRONOUS_EDIT_BEAN_NAME = 'colToolPanelSynchronousEdit';
+const COLUMN_TOOL_PANEL_DEFERRED_EDIT_BEAN_NAME = 'colToolPanelDeferredEdit';
 
 const noop = () => {};
 
