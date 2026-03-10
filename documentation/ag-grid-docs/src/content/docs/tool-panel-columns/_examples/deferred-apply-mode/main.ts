@@ -66,71 +66,6 @@ const columnDefs: ColDef[] = [
 
 let gridApi: GridApi<IOlympicData>;
 
-function getDeferredDebugState() {
-    return (gridApi.getToolPanelInstance('columns') as any).editStrategy.state;
-}
-
-function logToolPanelDebugState() {
-    console.log('deferred state', getDeferredDebugState());
-    console.log('grid state', gridApi.getState());
-}
-
-function installToolPanelDebugLogging() {
-    const toolPanel = gridApi.getToolPanelInstance('columns') as any;
-    const panelGui = toolPanel?.getGui?.() as HTMLElement | undefined;
-    const editStrategy = toolPanel?.editStrategy as any;
-
-    if (!panelGui || !editStrategy) {
-        window.setTimeout(installToolPanelDebugLogging, 100);
-        return;
-    }
-
-    if ((panelGui as any).__debugClickLoggingInstalled) {
-        return;
-    }
-
-    (panelGui as any).__debugClickLoggingInstalled = true;
-
-    const methodsThatChangeDeferredState = [
-        'applyColumnState',
-        'moveColumns',
-        'setColumnsVisible',
-        'setRowGroupColumns',
-        'setValueColumns',
-        'setColumnAggFunc',
-        'setPivotColumns',
-        'setPivotMode',
-        'progressSortFromEvent',
-        'reset',
-    ] as const;
-
-    for (const methodName of methodsThatChangeDeferredState) {
-        const original = editStrategy[methodName];
-        if (typeof original !== 'function') {
-            continue;
-        }
-
-        editStrategy[methodName] = (...args: any[]) => {
-            const result = original.apply(editStrategy, args);
-            console.log('deferred state', getDeferredDebugState());
-            return result;
-        };
-    }
-
-    panelGui.addEventListener('click', (event) => {
-        const button = (event.target as HTMLElement | null)?.closest('button');
-        const label = button?.textContent?.trim();
-        if (label !== 'Apply' && label !== 'Cancel') {
-            return;
-        }
-
-        // Let the tool panel button handler update state before taking the snapshot.
-        window.setTimeout(() => logToolPanelDebugState(), 0);
-    });
-
-    (window as any).gridApi = gridApi;
-}
-
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs,
     defaultColDef: {
@@ -166,7 +101,6 @@ const gridOptions: GridOptions<IOlympicData> = {
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
-    installToolPanelDebugLogging();
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then((response) => response.json())
