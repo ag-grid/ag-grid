@@ -6,8 +6,6 @@
         "undocumentedProperties": {
             "bulkEditingStarted": "TODO: undocumented property, to resolve in AG-16879",
             "bulkEditingStopped": "TODO: undocumented property, to resolve in AG-16879",
-            "batchEditingStarted": "TODO: undocumented property, to resolve in AG-16879",
-            "batchEditingStopped": "TODO: undocumented property, to resolve in AG-16879",
             "dragCancelled": "TODO: undocumented property, to resolve in AG-16879",
             "rowResizeStarted": "TODO: undocumented property, to resolve in AG-16879",
             "rowResizeEnded": "TODO: undocumented property, to resolve in AG-16879"

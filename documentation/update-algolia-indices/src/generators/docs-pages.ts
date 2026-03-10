@@ -159,10 +159,10 @@ export const parseDocPage = async (item: FlattenedMenuItem) => {
                         continue;
                     }
                     for (const prop of currentTag.querySelectorAll('[data-api-property]')) {
-                        const h4 = prop.querySelector('h4');
-                        if (!h4) continue;
-                        const propertyName = getHeadingContent(h4);
-                        const anchor = h4.id;
+                        const nameEl = prop.querySelector('[data-api-property-name]');
+                        if (!nameEl) continue;
+                        const propertyName = getHeadingContent(nameEl);
+                        const anchor = nameEl.id;
                         const descEl = prop.querySelector('[data-api-property-description]');
                         const descHtml = descEl?.innerHTML ?? '';
                         const descCodeWords = extractCodeWords(descHtml);

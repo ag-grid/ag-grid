@@ -262,7 +262,11 @@ export const Property: FunctionComponent<{
             <td className={legacyStyles.propertyNameDescription}>
                 <div className={classnames(styles.propertyRow)} data-api-property>
                     <div className={styles.leftColumn}>
-                        <h4 id={idName} className={classnames(styles.name, 'side-menu-exclude')}>
+                        <div
+                            id={idName}
+                            className={classnames(styles.name, 'side-menu-exclude')}
+                            data-api-property-name
+                        >
                             <span dangerouslySetInnerHTML={{ __html: displayNameSplit }}></span>
                             <LinkIcon
                                 href={`#${idName}`}
@@ -270,7 +274,7 @@ export const Property: FunctionComponent<{
                                 className={styles.linkIcon}
                                 aria-label={`Link to ${name} property`}
                             />
-                        </h4>
+                        </div>
 
                         <div className={styles.metaItem}>
                             <div className={styles.metaRow}>
