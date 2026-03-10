@@ -70,6 +70,7 @@ type RowType = 'Normal' | 'FullWidth' | 'FullWidthLoading' | 'FullWidthGroup' | 
 let instanceIdSequence = 0;
 export type RowCtrlInstanceId = BrandedType<string, 'RowCtrlInstanceId'>;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowComp {
     setDomOrder(domOrder: boolean): void;
     toggleCss(cssClassName: string, on: boolean): void;
@@ -99,6 +100,7 @@ interface CellCtrlListAndMap {
 }
 
 type RowCtrlEvent = RenderedRowEvent;
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class RowCtrl extends BeanStub<RowCtrlEvent> {
     public readonly instanceId: RowCtrlInstanceId;
 

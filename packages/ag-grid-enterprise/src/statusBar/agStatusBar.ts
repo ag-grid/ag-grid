@@ -23,7 +23,7 @@ import {
     _warn,
 } from 'ag-grid-community';
 
-import { agStatusBarCSS } from './agStatusBar.css-GENERATED';
+import agStatusBarCSS from './agStatusBar.css';
 import type { StatusBarService } from './statusBarService';
 
 function getStatusPanelCompDetails(

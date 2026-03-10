@@ -14,7 +14,7 @@ import type { AgFiltersToolPanelHeader } from './agFiltersToolPanelHeader';
 import { AgFiltersToolPanelHeaderSelector } from './agFiltersToolPanelHeader';
 import type { AgFiltersToolPanelList } from './agFiltersToolPanelList';
 import { AgFiltersToolPanelListSelector } from './agFiltersToolPanelList';
-import { filtersToolPanelCSS } from './filtersToolPanel.css-GENERATED';
+import filtersToolPanelCSS from './filtersToolPanel.css';
 
 export interface ToolPanelFiltersCompParams<TData = any, TContext = any>
     extends IToolPanelParams<TData, TContext, FiltersToolPanelState>,

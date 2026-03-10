@@ -357,17 +357,13 @@ export const wrapAgTestIdFor = <TLocator>(fn: (str: string) => TLocator): Locato
 };
 
 function mapKeys(obj: Record<string, any>, keys: Partial<Record<string, string | null>>): Record<string, any> {
-    return Object.fromEntries(
-        Object.entries(obj).reduce(
-            (acc, [k, v]) => {
-                if (keys[k] !== null) {
-                    acc.push([keys[k] ?? k, v]);
-                }
-                return acc;
-            },
-            [] as [string, string][]
-        )
-    );
+    const result: Record<string, any> = {};
+    for (const k of Object.keys(obj)) {
+        if (keys[k] !== null) {
+            result[keys[k] ?? k] = obj[k];
+        }
+    }
+    return result;
 }
 
 function applySpecDefaults(obj: FilterSpec): FilterSpec {

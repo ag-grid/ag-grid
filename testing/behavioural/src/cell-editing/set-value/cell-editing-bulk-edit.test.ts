@@ -115,7 +115,7 @@ describe('Cell Editing: bulk edit', () => {
 
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 1,
-            cellEditingStopped: batchEnabled ? 9 : 5,
+            cellEditingStopped: 1,
             cellValueChanged: valueSetterCalls,
             rowValueChanged: 0,
             cellEditRequest: 0,
@@ -199,7 +199,7 @@ describe('Cell Editing: bulk edit', () => {
 
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 1,
-            cellEditingStopped: 4,
+            cellEditingStopped: 1,
             cellValueChanged: 3,
             rowValueChanged: 0,
             cellEditRequest: 0,
@@ -282,7 +282,7 @@ describe('Cell Editing: bulk edit', () => {
 
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 1,
-            cellEditingStopped: 2,
+            cellEditingStopped: 1,
             cellValueChanged: 1,
             rowValueChanged: 0,
             cellEditRequest: 0,

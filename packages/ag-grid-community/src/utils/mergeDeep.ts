@@ -23,6 +23,7 @@ function _iterateObject<T>(
     }
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _mergeDeep(dest: any, source: any, copyUndefined = true, makeCopyOfSimpleObjects = false): void {
     if (!_exists(source)) {
         return;

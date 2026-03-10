@@ -19,6 +19,11 @@ button {
     padding-bottom: 8px;
 }
 
+.batch-status {
+    padding-top: 4px;
+    font-size: 0.875rem;
+}
+
 .grid-wrapper {
     flex: 1 1 0px;
 }

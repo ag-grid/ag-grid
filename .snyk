@@ -2,6 +2,22 @@
 version: v1.25.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
+    SNYK-JS-SVGO-15423912:
+        - cssnano@7.1.2 > cssnano-preset-default@7.0.10 > postcss-svgo@7.1.0 > svgo@4.0.0:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-05T11:44:40.848Z
+        - '@nx/rollup@20.3.1 > rollup-plugin-postcss@4.0.2 > cssnano@5.1.15 > cssnano-preset-default@5.2.14 > postcss-svgo@5.1.0 > svgo@2.8.0':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-05T11:44:32.352Z
+        - '@nx/react@20.3.1 > @svgr/webpack@8.1.0 > @svgr/plugin-svgo@8.1.0 > svgo@3.3.2':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-05T11:44:26.888Z
     SNYK-JS-SERIALIZEJAVASCRIPT-570062:
         - '@nx/react@20.3.1 > @nx/module-federation@20.3.1 > webpack@5.88.0 > terser-webpack-plugin@5.3.14 > serialize-javascript@6.0.2':
               reason: >-

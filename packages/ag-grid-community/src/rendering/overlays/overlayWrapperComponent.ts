@@ -13,7 +13,7 @@ import { _focusNextGridCoreContainer } from '../../utils/gridFocus';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';
 import type { IOverlayComp } from './overlayComponent';
-import { overlayWrapperComponentCSS } from './overlayWrapperComponent.css-GENERATED';
+import overlayWrapperComponentCSS from './overlayWrapperComponent.css';
 
 const OverlayWrapperElement: ElementParams = {
     tag: 'div',

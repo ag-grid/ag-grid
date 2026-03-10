@@ -11,7 +11,8 @@ This file provides guidance to AI Agents when working with code in this reposito
 -   **Build:** `yarn nx build <package>`
 -   **Test:** `yarn nx test <package>`
 -   **E2E:** `yarn nx e2e ag-grid-docs`
--   **Dev server:** `yarn nx dev`
+-   **Dev server:** `yarn nx dev` (launches on https://localhost:4610/, check if it is already running before trying to run it)
+-   **NX daemon:** Always use `NX_DAEMON=false` for nx commands to avoid pipe hangs (set automatically via SessionStart hook)
 
 ### Content Locations
 

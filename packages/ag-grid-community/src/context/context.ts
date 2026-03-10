@@ -131,6 +131,7 @@ import type { ValueCache } from '../valueService/valueCache';
 import type { ValueService } from '../valueService/valueService';
 import type { PopupService } from '../widgets/popupService';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface SingletonBean extends AgSingletonBeanClass<BeanCollection> {}
 
 export type DynamicBeanName =
@@ -156,6 +157,7 @@ export type DynamicBeanName =
     | 'agDateColumnFilterHandler'
     | 'agTextColumnFilterHandler';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type StatusPanelComponentName =
     | 'agAggregationComponent'
     | 'agSelectedRowCountComponent'
@@ -379,13 +381,16 @@ interface CoreBeanCollection
     formulaInputManager?: IFormulaInputManagerService;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type BeanCollection = CoreBeanCollection & {
     // `unknown | undefined` to make sure the type is handled correctly when used
     [key in UntypedBeanNames]?: unknown;
 };
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type Context = IContext<BeanCollection>;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type BeanName = keyof BeanCollection;
 
 /** Things used in enterprise or elsewhere that we haven't created interfaces for */

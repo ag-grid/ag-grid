@@ -31,6 +31,7 @@ export const _isEventSupported = (() => {
     return eventChecker;
 })();
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isElementInEventPath(element: HTMLElement, event: Event): boolean {
     if (!event || !element) {
         return false;
@@ -143,6 +144,7 @@ export function _isEventFromThisInstance(beans: UtilBeanCollection, event: UIEve
     return beans.gos.isElementInThisInstance(event.target as HTMLElement);
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _anchorElementToMouseMoveEvent(
     element: HTMLElement,
     mouseMoveEvent: MouseEvent | Touch,

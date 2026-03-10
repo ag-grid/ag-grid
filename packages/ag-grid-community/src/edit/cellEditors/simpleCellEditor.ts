@@ -10,7 +10,7 @@ export class SimpleCellEditor<
     TValue,
     P extends ICellEditorParams & DefaultProvidedCellEditorParams,
     I extends GridInputTextField,
-> extends AgAbstractCellEditor<ICellEditorParams, TValue> {
+> extends AgAbstractCellEditor<ICellEditorParams, TValue, string> {
     private highlightAllOnFocus: boolean;
     private focusAfterAttached: boolean;
     protected readonly eEditor: I = RefPlaceholder;
@@ -112,6 +112,12 @@ export class SimpleCellEditor<
 
     public getValue(): TValue | null | undefined {
         return this.cellEditorInput.getValue();
+    }
+
+    public override agSetEditValue(value: TValue | null | undefined): void {
+        this.params.value = value;
+        const startValue = this.cellEditorInput.getStartValue();
+        this.eEditor.setStartValue(startValue ?? null);
     }
 
     public override isPopup() {

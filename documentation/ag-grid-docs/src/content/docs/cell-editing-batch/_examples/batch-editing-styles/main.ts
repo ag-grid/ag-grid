@@ -12,31 +12,25 @@ import {
     ClientSideRowModelModule,
     ModuleRegistry,
     NumberEditorModule,
+    RowApiModule,
     TextEditorModule,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { BatchEditModule, CellSelectionModule } from 'ag-grid-enterprise';
+import { BatchEditModule, CellSelectionModule, ClipboardModule } from 'ag-grid-enterprise';
 
 import { getData } from './data';
-import {
-    _decorate,
-    _getAllLeafSiblings,
-    _getAncestors,
-    _getCellCtrl,
-    _getDependentCells,
-    _getRelatedRows,
-} from './utils';
 
 ModuleRegistry.registerModules([
     NumberEditorModule,
     CellSelectionModule,
     TextEditorModule,
     ClientSideRowModelModule,
-    CheckboxEditorModule,
+    RowApiModule,
     CheckboxEditorModule,
     BatchEditModule,
-    ValidationModule /* Development Only */,
+    ClipboardModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let gridApi: GridApi;
@@ -76,23 +70,11 @@ const gridOptions: GridOptions = {
         gridApi = params.api;
         gridApi.startBatchEdit();
 
-        gridApi.startEditingCell({
-            rowIndex: 0,
-            colKey: 'firstName',
-            key: 'Justine',
-        });
+        gridApi.getDisplayedRowAtIndex(0)?.setDataValue('firstName', 'Justine');
+        gridApi.getDisplayedRowAtIndex(1)?.setDataValue('age', 101);
 
-        gridApi.startEditingCell({
-            rowIndex: 1,
-            colKey: 'age',
-            key: '101',
-        });
-
-        // Close editors
-        // gridApi!.stopEditing();
-
-        // Commit the batch edit
-        // gridApi!.commitBatchEdit();
+        const el = document.querySelector<HTMLElement>('#batchStatusValue');
+        if (el) el.textContent = 'Active';
     },
 };
 
@@ -103,29 +85,20 @@ function getEditingCells() {
 
 function startBatchEdit() {
     gridApi!.startBatchEdit();
+    const el = document.querySelector<HTMLElement>('#batchStatusValue');
+    if (el) el.textContent = 'Active';
 }
 
 function commitBatchEdit() {
     gridApi!.commitBatchEdit();
+    const el = document.querySelector<HTMLElement>('#batchStatusValue');
+    if (el) el.textContent = 'Inactive';
 }
 
 function cancelBatchEdit() {
     gridApi!.cancelBatchEdit();
-}
-
-function startEdit() {
-    gridApi!.startEditingCell({
-        rowIndex: 0,
-        colKey: 'firstName',
-    });
-}
-
-function cancelEdit() {
-    gridApi!.stopEditing(true);
-}
-
-function stopEdit() {
-    gridApi!.stopEditing();
+    const el = document.querySelector<HTMLElement>('#batchStatusValue');
+    if (el) el.textContent = 'Inactive';
 }
 
 // setup the grid after the page has finished loading

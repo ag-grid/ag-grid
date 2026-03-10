@@ -25,3 +25,6 @@ jest.jsdom-env.cjs
 coverage
 .swcrc
 .snyk
+e2e/*
+playwright.config.ts
+esbuildBuild.cjs

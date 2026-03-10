@@ -6,6 +6,7 @@ import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPopupComponent } from '../interfaces/iPopupComponent';
 import type { IPropertiesService } from '../interfaces/iProperties';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgPopupComponent<
         TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
         TProperties extends BaseProperties,

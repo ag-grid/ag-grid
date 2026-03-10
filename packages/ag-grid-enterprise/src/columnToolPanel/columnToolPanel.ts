@@ -14,7 +14,7 @@ import type { PivotDropZonePanel } from '../rowGrouping/columnDropZones/pivotDro
 import type { RowGroupDropZonePanel } from '../rowGrouping/columnDropZones/rowGroupDropZonePanel';
 import type { ValuesDropZonePanel } from '../rowGrouping/columnDropZones/valueDropZonePanel';
 import { AgPrimaryCols } from './agPrimaryCols';
-import { columnToolPanelCSS } from './columnToolPanel.css-GENERATED';
+import columnToolPanelCSS from './columnToolPanel.css';
 import type { ColumnToolPanelFactory } from './columnToolPanelFactory';
 import type { PivotModePanel } from './pivotModePanel';
 

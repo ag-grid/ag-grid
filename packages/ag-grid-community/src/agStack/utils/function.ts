@@ -3,7 +3,10 @@ import { _requestAnimationFrame } from './dom';
 
 const doOnceSet = new Set<string>();
 
-/** If the key was passed before, then doesn't execute the func */
+/**
+ * If the key was passed before, then doesn't execute the func
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
 export const _doOnce = (func: () => void, key: string) => {
     if (!doOnceSet.has(key)) {
         doOnceSet.add(key);
@@ -28,9 +31,10 @@ const batchedCallsRaf: BatchedCalls = {
     funcs: [],
 };
 
-/*
+/**
  * Batch calls to execute after the next macro task (mode = setTimeout) / or in the next requestAnimationFrame.
  * @param {Function} func The function to be batched
+ *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _batchCall(func: () => void): void;
 export function _batchCall(func: () => void, mode: 'raf', beans: UtilBeanCollection): void;
@@ -69,6 +73,7 @@ export function _batchCall(
  * @param {Function} func The function to be debounced
  * @param {number} delay The time in ms to debounce
  * @returns {Function} The debounced function
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _debounce<TArgs extends any[], TContext>(
     bean: { isAlive(): boolean },
@@ -118,6 +123,7 @@ export function _throttle(func: (...args: any[]) => void, wait: number): (...arg
     };
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _waitUntil(
     bean: { addDestroyFunc(func: () => void): void },
     condition: () => boolean,

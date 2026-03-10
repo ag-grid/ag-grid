@@ -12,7 +12,7 @@ test.agExample(import.meta, () => {
         const cell = agIdFor.cell('0', 'gold');
         await expect(cell).toBeVisible();
 
-        await page.locator('button', { hasText: 'Start Batch Edit' }).click(); // click the button to start batch editing
+        await page.locator('button', { hasText: 'Start Batch' }).click(); // click the button to start batch editing
 
         // initiate cell editing by double clicking the cell
         await cell.dblclick();
@@ -133,6 +133,83 @@ test.agExample(import.meta, () => {
         const totalCell = agIdFor.cell('0', 'total');
         await expect(totalCell).toHaveText('105'); // verify the total cell has the new value
         await expect(totalCell).not.toHaveClass(/ag-cell-batch-edit/);
+    });
+
+    test.typescript('Paste in batch stages value as pending edit', async ({ page, agIdFor }) => {
+        // Grant clipboard permissions so AG Grid can use navigator.clipboard
+        await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
+
+        // Row 0: gold=1, silver=2, bronze=3. Row 1: gold=2, silver=1, bronze=3
+        const sourceCell = agIdFor.cell('0', 'gold'); // value = 1
+        const targetCell = agIdFor.cell('1', 'bronze'); // value = 3
+
+        await expect(sourceCell).toBeVisible();
+
+        // Start batch then copy the source cell
+        await page.locator('button', { hasText: 'Start Batch' }).click();
+        await sourceCell.click();
+        await page.keyboard.press('Control+c');
+
+        // Paste into target cell — should stage as pending batch edit
+        await targetCell.click();
+        await page.keyboard.press('Control+v');
+
+        // Wait for cell to exit editing state after paste
+        await expect(targetCell).not.toHaveClass(/ag-cell-editing/);
+
+        await expect(targetCell).toHaveText('1'); // pasted value from source
+        await expect(targetCell).toHaveClass(/ag-cell-batch-edit/); // pending, not committed
+
+        // Source cell is unmodified and not marked as pending
+        await expect(sourceCell).toHaveText('1');
+        await expect(sourceCell).not.toHaveClass(/ag-cell-batch-edit/);
+
+        // Commit — pending paste value is now written to data
+        await page.locator('button', { hasText: 'Commit Batch' }).click();
+        await expect(targetCell).toHaveText('1');
+        await expect(targetCell).not.toHaveClass(/ag-cell-batch-edit/);
+    });
+
+    test.typescript('Copy reflects pending batch value not committed data', async ({ page, agIdFor }) => {
+        // Grant clipboard permissions so AG Grid can use navigator.clipboard
+        await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
+
+        // Row 0: gold=1. Row 1: silver=1 (initial)
+        const editCell = agIdFor.cell('0', 'gold');
+        const targetCell = agIdFor.cell('1', 'silver'); // initial value = 1
+
+        await expect(editCell).toBeVisible();
+
+        // Start batch and edit row 0 gold to 99 — this is now a pending batch value
+        await page.locator('button', { hasText: 'Start Batch' }).click();
+        await editCell.dblclick();
+        const cellEditor = editCell.locator('input');
+        await expect(cellEditor).toBeVisible();
+        await page.keyboard.type('99');
+        await page.keyboard.press('Enter');
+        await expect(editCell).toHaveText('99');
+        await expect(editCell).toHaveClass(/ag-cell-batch-edit/);
+
+        // Copy the cell — clipboard should contain the pending value (99), not committed data (1)
+        await editCell.click();
+        await page.keyboard.press('Control+c');
+
+        // Paste into another cell — should receive the pending value 99
+        await targetCell.click();
+        await page.keyboard.press('Control+v');
+
+        // Wait for cell to exit editing state after paste
+        await expect(targetCell).not.toHaveClass(/ag-cell-editing/);
+
+        await expect(targetCell).toHaveText('99'); // pending value was copied, not committed value
+        await expect(targetCell).toHaveClass(/ag-cell-batch-edit/); // paste staged as pending
+
+        // Cancel — both cells revert to committed data
+        await page.locator('button', { hasText: 'Cancel Batch' }).click();
+        await expect(editCell).not.toHaveClass(/ag-cell-batch-edit/);
+        await expect(targetCell).not.toHaveClass(/ag-cell-batch-edit/);
+        await expect(editCell).toHaveText('1'); // reverted to original
+        await expect(targetCell).toHaveText('1'); // reverted to original
     });
 
     test.eachFramework('GridApi + Styles: multiple batches', async ({ agIdFor, page, remoteGrid }) => {

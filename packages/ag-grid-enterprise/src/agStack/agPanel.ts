@@ -19,7 +19,7 @@ import {
     _setDisplayed,
 } from 'ag-grid-community';
 
-import { agPanelCSS } from './agPanel.css-GENERATED';
+import agPanelCSS from './agPanel.css';
 
 export interface AgPanelPostProcessPopupParams {
     type: string;

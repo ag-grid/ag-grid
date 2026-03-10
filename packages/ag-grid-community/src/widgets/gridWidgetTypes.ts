@@ -18,6 +18,7 @@ import type { GridOptionsService } from '../gridOptionsService';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { AgComponentSelectorType } from './component';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type GridInputTextArea = AgInputTextArea<
     BeanCollection,
     GridOptionsWithDefaults,
@@ -27,6 +28,7 @@ export type GridInputTextArea = AgInputTextArea<
     AgComponentSelectorType
 >;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type GridInputTextField<
     TConfig extends AgInputTextFieldParams<AgComponentSelectorType> = AgInputTextFieldParams<AgComponentSelectorType>,
     TEventType extends string = AgInputTextFieldEvent,
@@ -41,6 +43,7 @@ export type GridInputTextField<
     TEventType
 >;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type GridInputNumberField = AgInputNumberField<
     BeanCollection,
     GridOptionsWithDefaults,
@@ -50,6 +53,7 @@ export type GridInputNumberField = AgInputNumberField<
     AgComponentSelectorType
 >;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type GridInputDateField = AgInputDateField<
     BeanCollection,
     GridOptionsWithDefaults,
@@ -59,6 +63,7 @@ export type GridInputDateField = AgInputDateField<
     AgComponentSelectorType
 >;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type GridCheckbox<
     TConfig extends AgCheckboxParams<AgComponentSelectorType> = AgCheckboxParams<AgComponentSelectorType>,
 > = AgCheckbox<
@@ -71,6 +76,7 @@ export type GridCheckbox<
     TConfig
 >;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type GridRadioButton = AgRadioButton<
     BeanCollection,
     GridOptionsWithDefaults,
@@ -80,6 +86,7 @@ export type GridRadioButton = AgRadioButton<
     AgComponentSelectorType
 >;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type GridToggleButton = AgToggleButton<
     BeanCollection,
     GridOptionsWithDefaults,
@@ -89,6 +96,7 @@ export type GridToggleButton = AgToggleButton<
     AgComponentSelectorType
 >;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type GridSelect<TValue = string | null> = AgSelect<
     BeanCollection,
     GridOptionsWithDefaults,

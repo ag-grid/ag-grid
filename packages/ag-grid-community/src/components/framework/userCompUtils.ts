@@ -125,6 +125,7 @@ export function _getDragAndDropImageCompDetails(
     return userCompFactory.getCompDetailsFromGridOptions(DragAndDropImageComponent, 'agDragAndDropImage', params, true);
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getInnerCellRendererDetails<TDefinition = any>(
     userCompFactory: UserComponentFactory,
     def: TDefinition,
@@ -196,6 +197,7 @@ export function _getFullWidthDetailCellRendererDetails(
 }
 // CELL RENDERER
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getCellRendererDetails<
     TDefinition = ColDef,
     TParams extends AgGridCommon<any, any> = ICellRendererParams,
@@ -207,6 +209,7 @@ export function _getCellRendererDetails<
     return userCompFactory.getCompDetails(def, CellRendererComponent, undefined, params);
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getEditorRendererDetails<TDefinition, TEditorParams extends AgGridCommon<any, any>>(
     userCompFactory: UserComponentFactory,
     def: TDefinition,
@@ -240,6 +243,7 @@ export function _getCellEditorDetails(
 
 /**
  * @param defaultFilter provided filters only
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _getFilterDetails<TFilter extends SharedFilterUi & IComponent<SharedFilterParams> = IFilterComp>(
     userCompFactory: UserComponentFactory,
@@ -274,6 +278,7 @@ export function _getTooltipCompDetails(
 
 /**
  * @param defaultFloatingFilter provided floating filters only
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _getFloatingFilterCompDetails(
     userCompFactory: UserComponentFactory,
