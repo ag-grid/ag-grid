@@ -1,6 +1,6 @@
 import type { ColDef, GridApi } from 'ag-grid-community';
 import { DragSourceType, getGridElement } from 'ag-grid-community';
-import { AllEnterpriseModule } from 'ag-grid-enterprise';
+import { AllEnterpriseModule, RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
 
 import {
     createFakeServer,
@@ -13,6 +13,9 @@ import { waitForNoLoadingRows } from '../test-utils/ssrm-test-utils';
 describe('deferred column tool panel pivot mode', () => {
     const gridMgr = new TestGridsManager({
         modules: [AllEnterpriseModule],
+    });
+    const rowGroupingOnlyGridMgr = new TestGridsManager({
+        modules: [RowGroupingModule, RowGroupingPanelModule],
     });
 
     const rowData = [
@@ -99,6 +102,7 @@ describe('deferred column tool panel pivot mode', () => {
 
     afterEach(() => {
         gridMgr.reset();
+        rowGroupingOnlyGridMgr.reset();
         vi.resetAllMocks();
         vi.clearAllMocks();
     });
@@ -200,6 +204,22 @@ describe('deferred column tool panel pivot mode', () => {
             gridApi,
             toolPanel: gridApi.getToolPanelInstance('columns') as any,
         };
+    }
+
+    async function createRowGroupingOnlyGrid(): Promise<GridApi> {
+        const gridApi: GridApi = await rowGroupingOnlyGridMgr.createGridAndWait('rowGroupingOnlyGrid', {
+            columnDefs: [
+                { field: 'athlete' },
+                { field: 'country', rowGroup: true, enableRowGroup: true },
+                { field: 'gold' },
+            ],
+            rowData,
+            rowGroupPanelShow: 'always',
+        });
+
+        await asyncSetTimeout(50);
+
+        return gridApi;
     }
 
     async function createDeferredNonPivotAggregationGrid(): Promise<{ gridApi: GridApi; toolPanel: any }> {
@@ -994,6 +1014,22 @@ describe('deferred column tool panel pivot mode', () => {
 
         expect(rowGroupPanel.isInterestedIn(DragSourceType.ToolPanel, dragHandle)).toBe(true);
         expect(pivotPanel.isInterestedIn(DragSourceType.ToolPanel, dragHandle)).toBe(true);
+    });
+
+    test('sorting a header row-group pill still works without the columns tool panel module', async () => {
+        const gridApi = await createRowGroupingOnlyGrid();
+
+        const country = gridApi.getColumn('country')! as any;
+        const HeaderDropZones = AgGridHeaderDropZonesSelector.component as any;
+        const headerDropZones = country.createBean(new HeaderDropZones()) as any;
+        const rowGroupPanel = headerDropZones.rowGroupComp as any;
+        const rowGroupPill = rowGroupPanel.getGui().querySelector('.ag-column-drop-cell') as HTMLElement | null;
+
+        expect(rowGroupPill).toBeTruthy();
+
+        rowGroupPill!.click();
+
+        expect(gridApi.getColumn('country')!.getSort()).toBe('asc');
     });
 
     test('dragging into column groups is allowed after clearing groups, labels and aggregations then committing non-pivot mode', async () => {
