@@ -1787,7 +1787,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private onTopChanged(): void {
-        const rowTop = this.rowNode.sticky ? this.rowNode.stickyRowTop : this.rowNode.rowTop;
+        const rowTop = this.getCalculatedRowTop();
         if (!_exists(rowTop)) {
             return;
         }
@@ -1861,7 +1861,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const rowNode = this.rowNode;
         let rowTop: number;
         if (rowNode.sticky) {
-            rowTop = rowNode.stickyRowTop;
+            const calculatedRowTop = this.getCalculatedRowTop();
+            rowTop = _exists(calculatedRowTop) ? calculatedRowTop : rowNode.stickyRowTop;
         } else {
             // if sliding in, we take the old row top. otherwise we just set the current row top.
             const pixels = this.slideInAnimation[rowContainerType]
@@ -1876,6 +1877,27 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         rowTop += this.getPinnedOffset('top') + this.getPinnedOffset('bottom');
         return rowTop + 'px';
+    }
+
+    private getCalculatedRowTop(): number | null | undefined {
+        const { sticky, rowTop, stickyRowTop } = this.rowNode;
+
+        if (!sticky) {
+            return rowTop;
+        }
+
+        const { rowRenderer, ctrlsSvc } = this.beans;
+        const stickyTopCtrls = rowRenderer.getStickyTopRowCtrls();
+        const isStickyTopRow = stickyTopCtrls.includes(this);
+
+        if (!isStickyTopRow) {
+            return stickyRowTop;
+        }
+
+        // stickyRowTop is relative to the sticky lane. Top sticky rows need
+        // header + pinned-top offset added to get viewport-relative row top.
+        const stickyTopOffset = ctrlsSvc.getGridBodyCtrl()?.getTopPinnedRowsOffset() ?? 0;
+        return stickyRowTop + stickyTopOffset;
     }
 
     private getPinnedOffset(position: 'top' | 'bottom'): number {
