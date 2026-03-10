@@ -50,7 +50,7 @@ import type {
 } from '../richSelect/richSelectAsyncRequestsFeature';
 import { createRichSelectAsyncRequestBindings } from '../richSelect/richSelectAsyncRequestsFeature';
 import { AgPillContainer } from './AgPillContainer';
-import { agRichSelectCSS } from './agRichSelect.css-GENERATED';
+import agRichSelectCSS from './agRichSelect.css';
 import type { AgRichSelectListEvent } from './agRichSelectList';
 import { AgRichSelectList } from './agRichSelectList';
 

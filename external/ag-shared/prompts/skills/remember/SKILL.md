@@ -157,6 +157,7 @@ Determine the best location for each memory:
 | New rule file | `.rulesync/rules/{new}.md` | Distinct topic, 3+ guidelines |
 
 **Constraints**:
+- **Never target `.claude/` directly** — `.claude/` is a synced output directory; the source of truth is `.rulesync/`. Always propose paths under `.rulesync/rules/`, `.rulesync/commands/`, etc. Never propose `.claude/rules/` or `.claude/commands/`.
 - **Never update root files directly** — `CLAUDE.md`, `AGENTS.md`, and files with `root: true` frontmatter are managed separately. If a memory belongs there, recommend creating/updating a non-root rule that gets referenced instead.
 - **Prefer existing files** — only create new files when the topic is clearly distinct and has sufficient content.
 
@@ -206,6 +207,7 @@ Files modified:
 
 ### Project Memory Constraints
 
+- **Never target `.claude/` directly** — `.claude/` is a synced output; the source of truth is `.rulesync/`. Always write to `.rulesync/rules/`, `.rulesync/commands/`, etc.
 - **Never update root files** — Do not modify `CLAUDE.md`, `AGENTS.md`, or any file with `root: true` in frontmatter. These are managed separately. Instead, create or update a non-root rule file that can be referenced.
 - Keep memories atomic — one concept per update
 - Match the writing style of the target file

@@ -7,7 +7,7 @@ import {
     foregroundBackgroundMix,
     foregroundColor,
 } from '../../../agStack/theming/themeUtils';
-import { buttonStyleBaseCSS } from './button-style-base.css-GENERATED';
+import buttonStyleBaseCSS from './button-style-base.css';
 
 export type ButtonStyleParams = {
     /**

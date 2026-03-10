@@ -28,7 +28,7 @@ import {
 } from 'ag-grid-community';
 
 import type { PillDragComp } from './pillDragComp';
-import { pillDropZonePanelCSS } from './pillDropZonePanel.css-GENERATED';
+import pillDropZonePanelCSS from './pillDropZonePanel.css';
 
 export interface PillDropZonePanelParams {
     emptyMessage?: string;

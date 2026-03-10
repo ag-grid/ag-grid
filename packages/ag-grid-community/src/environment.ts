@@ -11,7 +11,7 @@ import type { GridOptionsService } from './gridOptionsService';
 import type { AgGridCommon } from './interfaces/iCommon';
 import type { Module } from './interfaces/iModule';
 import { _getAllRegisteredModules } from './modules/moduleRegistry';
-import { coreCSS } from './theming/core/core.css-GENERATED';
+import coreCSS from './theming/core/core.css';
 import { themeQuartz } from './theming/parts/theme/themes';
 import { _error, _warn } from './validation/logging';
 

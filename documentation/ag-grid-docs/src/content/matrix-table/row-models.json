@@ -114,9 +114,9 @@
     {
         "feature": "[Row Spanning](./row-spanning)",
         "clientSide": true,
-        "infinite": true,
+        "infinite": false,
         "serverSide": true,
-        "viewport": true
+        "viewport": false
     },
     {
         "feature": "[Column Pinning](./column-pinning)",

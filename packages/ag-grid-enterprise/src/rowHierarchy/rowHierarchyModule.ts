@@ -12,7 +12,7 @@ import { GroupEditService } from './groupEditService';
 import { GroupStage } from './groupStage';
 import { GroupCellRenderer } from './rendering/groupCellRenderer';
 import { GroupCellRendererCtrl } from './rendering/groupCellRendererCtrl';
-import { groupCellStylesCSS } from './rendering/groupCellStyles.css-GENERATED';
+import groupCellStylesCSS from './rendering/groupCellStyles.css';
 import { ShowRowGroupColValueService } from './showRowGroupColValueService';
 import { ShowRowGroupColsService } from './showRowGroupColsService';
 import { StickyRowService } from './stickyRowService';

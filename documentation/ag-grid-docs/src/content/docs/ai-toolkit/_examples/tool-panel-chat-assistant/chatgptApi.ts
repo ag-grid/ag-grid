@@ -4,7 +4,8 @@ import { ChatMessage } from './ChatToolPanel';
 import { generateSystemPrompt } from './systemPrompt';
 
 const CHATGPT_MODEL = 'gpt-5-mini';
-const BASE_URL = 'https://ai-api.ag-grid.com/api/openai/v1';
+const BASE_URL = '{{EXAMPLE_ENV:AI_API_URL}}';
+const AI_API_TOKEN = '{{EXAMPLE_ENV:AI_API_TOKEN}}';
 
 export const callChatGPT = async (
     userRequest: string,
@@ -117,6 +118,7 @@ export const sendRequest = async (options: any): Promise<any> => {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            ...(AI_API_TOKEN ? { Authorization: `Bearer ${AI_API_TOKEN}` } : {}),
         },
         body: JSON.stringify(requestBody),
     });

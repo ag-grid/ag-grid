@@ -2,7 +2,7 @@ import type { _ColumnMoveApi } from '../api/gridApi';
 import { SharedDragAndDropModule } from '../dragAndDrop/dragModule';
 import type { _ModuleWithApi } from '../interfaces/iModule';
 import { VERSION } from '../version';
-import { columnMovingCSS } from './column-moving.css-GENERATED';
+import columnMovingCSS from './column-moving.css';
 import { ColumnAnimationService } from './columnAnimationService';
 import { moveColumnByIndex, moveColumns } from './columnMoveApi';
 import { ColumnMoveService } from './columnMoveService';

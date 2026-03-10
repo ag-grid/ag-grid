@@ -67,14 +67,18 @@ const getCodeSandboxFiles = ({
     internalFramework: InternalFramework;
 }) => {
     const sandboxFiles: SandboxFiles = {};
-    const allFiles = isReactInternalFramework(internalFramework)
+    const isUsingSandboxTemplate = getCodeSandboxRuntime(internalFramework) !== 'static';
+    const allFiles = isUsingSandboxTemplate
         ? {
               ...files,
           }
         : { ...boilerPlateFiles, ...files };
 
-    if (allFiles['package.json'] == undefined) {
+    if (allFiles['package.json'] == undefined || !isUsingSandboxTemplate) {
         // don't include undefined package.json
+        // Don't include package.json if not using a sandbox template so that users do not get
+        // confused about why changing the versions in package.json does not impact the code example
+        // which is pulling the code version directly from the index.html file.
         delete allFiles['package.json'];
     }
 

@@ -1088,10 +1088,10 @@ describe('Cell Editing Regression', () => {
         expect(valueSetterCalls[1].oldValue).toBe(42);
         expect(scoreCell).toHaveTextContent('0');
 
-        // Delete key triggers value change without opening editor, but fires stop events
+        // Delete key triggers value change without opening editor
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 0,
-            cellEditingStopped: 2,
+            cellEditingStopped: 0,
             cellValueChanged: 2,
             rowValueChanged: 0,
             cellEditRequest: 0,
@@ -1585,11 +1585,10 @@ describe('Cell Editing Regression', () => {
         // Verify final event counts:
         // - cellValueChanged should be 0 (valueSetter returned false for Delete, and edit was cancelled)
         // - cellEditingStarted should be 1 (double-click on sport cell)
-        // - cellEditingStopped: The DELETE key clears the edit value triggering one stop,
-        //   and ESC on the sport cell triggers another stop = 2 total
+        // - cellEditingStopped: 1 for the cancelled edit (ESC on the sport cell)
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 1,
-            cellEditingStopped: 2,
+            cellEditingStopped: 1,
             cellValueChanged: 0,
             rowValueChanged: 0,
             cellEditRequest: 0,

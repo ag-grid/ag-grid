@@ -14,4 +14,10 @@ export default {
         this.iconClass = this.params.value === 'Male' ? 'fa fa-male' : 'fa fa-female';
         this.value = this.params.value;
     },
+    methods: {
+        refresh(params) {
+            this.iconClass = params.value === 'Male' ? 'fa fa-male' : 'fa fa-female';
+            this.value = params.value;
+        },
+    },
 };

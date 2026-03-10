@@ -23,7 +23,7 @@ import {
     _setDisplayed,
 } from 'ag-grid-community';
 
-import { agGroupComponentCSS } from './agGroupComponent.css-GENERATED';
+import agGroupComponentCSS from './agGroupComponent.css';
 
 type GroupItem<TBeanCollection> = AgBaseComponent<TBeanCollection> | HTMLElement;
 type Align = 'start' | 'end' | 'center' | 'stretch';

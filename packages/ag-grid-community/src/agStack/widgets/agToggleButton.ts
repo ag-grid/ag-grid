@@ -5,7 +5,7 @@ import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import { AgCheckbox } from './agCheckbox';
 import type { AgCheckboxParams } from './agFieldParams';
-import { agToggleButtonCSS } from './agToggleButton.css-GENERATED';
+import agToggleButtonCSS from './agToggleButton.css';
 import type { AgWidgetSelectorType } from './agWidgetSelectorType';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

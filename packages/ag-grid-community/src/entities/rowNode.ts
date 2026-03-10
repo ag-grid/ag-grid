@@ -9,6 +9,7 @@ import type {
     AgRowNodeEventListener,
     CellChangedEvent,
     DataChangedEvent,
+    DataValueFrom,
     IRowNode,
     RowNodeEvent,
     RowNodeEventType,
@@ -17,7 +18,7 @@ import type {
 import type { DetailGridInfo } from '../interfaces/masterDetail';
 import { _error, _warn } from '../validation/logging';
 import type { AgColumn } from './agColumn';
-import type { ColKey } from './colDef';
+import type { ColKey, IAggFuncResult } from './colDef';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const ROW_ID_PREFIX_ROW_GROUP = 'row-group-';
@@ -501,19 +502,28 @@ export class RowNode<TData = any>
     }
 
     /**
-     * Replaces the value on the `rowNode` for the specified column. When complete,
-     * the grid refreshes the rendered cell on the required row only.
+     * Sets the value on the `rowNode` for the specified column and refreshes the rendered cell.
      *
-     * **Note**: This method only fires `onCellEditRequest` when the Grid is in **Read Only** mode.
+     * In **Read Only** mode, this fires `onCellEditRequest` instead of writing directly.
      *
-     * **Note**: This method defers to EditModule if available and batches the edit when `fullRow` or `batchEdit` is enabled.
+     * In **Pivot Mode**, pivot columns on leaf rows resolve to their underlying value column.
      *
-     * **Pivot Mode**: On leaf data rows (non-group rows), pivot columns resolve to their underlying value column.
+     * The `eventSource` parameter controls how the value is written:
      *
-     * @param colKey The column where the value should be updated
-     * @param newValue The new value
-     * @param eventSource The source of the event
-     * @returns `true` if the value was changed, otherwise `false`.
+     * | `eventSource` | Active Editor        | Pending Batch        | Committed Data                 |
+     * | ------------- | -------------------- | -------------------- | ------------------------------ |
+     * | (default)     | Closed               | Written              | Written if no batch            |
+     * | `'edit'`      | Written              | Written if no editor | Written if no editor, no batch |
+     * | `'batch'`     | Left open            | Written              | Written if no batch            |
+     * | `'data'`      | Left open            | —                    | Always written                 |
+     *
+     * With `'edit'`, the active editor receives the new value via `refresh()` if implemented;
+     * otherwise the editor is recreated with focus preserved.
+     *
+     * @param colKey The column to update (field name, `colId`, or `Column` object)
+     * @param newValue The new value to set
+     * @param eventSource Controls how the value is written
+     * @returns `true` if the value changed, `false` otherwise
      */
     public setDataValue(colKey: string | AgColumn, newValue: any, eventSource?: string): boolean {
         const { colModel, valueSvc, gos, editSvc } = this.beans;
@@ -564,7 +574,8 @@ export class RowNode<TData = any>
             return false;
         }
 
-        if (editSvc && !editSvc.committing) {
+        // 'data' source: bypass batch mode and edit state entirely, write directly to data
+        if (eventSource !== 'data' && editSvc && !editSvc.committing) {
             const result = editSvc.setDataValue({ rowNode: this, column }, newValue, eventSource);
 
             if (result != null) {
@@ -584,7 +595,18 @@ export class RowNode<TData = any>
         return valueChanged;
     }
 
-    public getDataValue<TValue = any>(colKey: ColKey<TValue>): TValue | null | undefined {
+    public getDataValue<TValue = any>(
+        colKey: ColKey<TValue>,
+        from: 'value' | 'data-raw' | 'edit' | 'batch'
+    ): TValue | null | undefined;
+    public getDataValue<TValue = any>(
+        colKey: ColKey<TValue>,
+        from?: 'data'
+    ): TValue | IAggFuncResult<TValue> | null | undefined;
+    public getDataValue<TValue = any>(
+        colKey: ColKey<TValue>,
+        from: DataValueFrom = 'data'
+    ): TValue | IAggFuncResult<TValue> | null | undefined {
         const { colModel, valueSvc, formula } = this.beans;
 
         if (colKey == null) {
@@ -596,11 +618,29 @@ export class RowNode<TData = any>
             return undefined;
         }
 
-        let value = valueSvc.getValue(column, this, 'data');
+        // 'data-raw' skips aggData (aggregation results) and formula resolution, but still calls valueGetters
+        // 'value' reads committed data like 'data' but resolves agg wrappers (handled below)
+        const dataRaw = from === 'data-raw';
+        const resolvedFrom = dataRaw || from === 'value' ? 'data' : from;
+        let value = valueSvc.getValue(column, this, resolvedFrom, dataRaw);
 
-        // Resolve formulas to their computed value
-        if (formula && column.isAllowFormula() && formula.isFormula(value)) {
-            value = formula.resolveValue(column, this);
+        if (!dataRaw) {
+            // Resolve formulas to their computed value (skip for 'data-raw')
+            if (formula && column.isAllowFormula() && formula.isFormula(value)) {
+                value = formula.resolveValue(column, this);
+            }
+
+            // For 'value', 'edit', and 'batch' modes, resolve aggregation wrapper objects to their scalar value
+            // on agg columns. Matches the resolution pattern in dataTypeService:
+            // first try toNumber(), then fall back to .value property.
+            if (from !== 'data' && column.getAggFunc() && typeof value === 'object' && value != null) {
+                if (typeof value.toNumber === 'function') {
+                    return value.toNumber();
+                }
+                if ('value' in value) {
+                    return value.value;
+                }
+            }
         }
 
         return value;

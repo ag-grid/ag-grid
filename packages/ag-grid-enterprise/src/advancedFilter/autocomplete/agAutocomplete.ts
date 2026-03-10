@@ -17,7 +17,7 @@ import {
     _makeNull,
 } from 'ag-grid-community';
 
-import { agAutocompleteCSS } from './agAutocomplete.css-GENERATED';
+import agAutocompleteCSS from './agAutocomplete.css';
 import { AgAutocompleteList } from './agAutocompleteList';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocompleteParams';
 

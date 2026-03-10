@@ -144,6 +144,19 @@ symlink_nx_cache() {
     fi
 }
 
+# Clone a directory using APFS COW clone, with rsync fallback.
+# Args: $1 = source, $2 = destination
+clone_directory() {
+    local src="$1" dest="$2"
+    if cp -cR "${src}/" "${dest}/" 2>/dev/null; then
+        return 0
+    fi
+    if rsync -a "${src}/" "${dest}/"; then
+        return 0
+    fi
+    return 1
+}
+
 # Try to copy node_modules from root worktree if lockfiles match.
 # Uses APFS COW clone (cp -cR) for speed and disk savings, with rsync fallback.
 # Returns 0 if copy succeeded (node_modules now exists), 1 if fallback to install needed.
@@ -173,20 +186,32 @@ try_copy_node_modules() {
     log_info "yarn.lock matches root worktree, copying node_modules"
 
     # Try APFS COW clone first (fast, minimal disk usage), fall back to rsync
-    if cp -cR "${root_path}/node_modules/" ./node_modules/ 2>/dev/null; then
-        log_info "Successfully cloned node_modules from ${root_path} (COW)"
-        return 0
+    if clone_directory "${root_path}/node_modules" ./node_modules; then
+        log_info "Successfully cloned node_modules from ${root_path}"
+    else
+        log_error "Failed to copy node_modules"
+        rm -rf ./node_modules
+        return 1
     fi
 
-    log_info "COW clone not available, falling back to rsync"
-    if rsync -a "${root_path}/node_modules/" ./node_modules/; then
-        log_info "Successfully rsynced node_modules from ${root_path}"
-        return 0
-    fi
+    # Clone nested workspace node_modules (created by Yarn 1 nohoist/version conflicts)
+    local nested
+    while IFS= read -r nested; do
+        local rel_path="${nested#${root_path}/}"
+        if [ ! -d "${rel_path}" ]; then
+            mkdir -p "$(dirname "${rel_path}")"
+            if clone_directory "${nested}" "${rel_path}"; then
+                log_info "Cloned nested ${rel_path}"
+            else
+                log_info "Failed to clone nested ${rel_path}, skipping"
+            fi
+        fi
+    done < <(find "${root_path}" -name "node_modules" -type d \
+        -not -path "${root_path}/node_modules/*" \
+        -not -path "${root_path}/node_modules" \
+        -maxdepth 3 2>/dev/null)
 
-    log_error "Failed to copy node_modules"
-    rm -rf ./node_modules
-    return 1
+    return 0
 }
 
 # Function to install/update dependencies when node_modules exists

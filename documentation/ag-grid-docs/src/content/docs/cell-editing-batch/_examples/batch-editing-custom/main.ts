@@ -8,7 +8,7 @@ import {
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { BatchEditModule, RichSelectModule } from 'ag-grid-enterprise';
+import { BatchEditModule, ClipboardModule, RichSelectModule } from 'ag-grid-enterprise';
 
 import { getData } from './data';
 import { GenderRenderer } from './genderRenderer_typescript';
@@ -20,6 +20,7 @@ ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     RichSelectModule,
     BatchEditModule,
+    ClipboardModule,
     NumberEditorModule,
     TextEditorModule,
     CustomEditorModule,
@@ -75,33 +76,21 @@ function getEditingCells() {
 }
 
 function startBatchEdit() {
-    console.log('Starting batch edit');
     gridApi!.startBatchEdit();
+    const el = document.querySelector<HTMLElement>('#batchStatusValue');
+    if (el) el.textContent = 'Active';
 }
 
 function commitBatchEdit() {
-    console.log('Committing batch edit');
     gridApi!.commitBatchEdit();
+    const el = document.querySelector<HTMLElement>('#batchStatusValue');
+    if (el) el.textContent = 'Inactive';
 }
 
 function cancelBatchEdit() {
-    console.log('Cancelling batch edit');
     gridApi!.cancelBatchEdit();
-}
-
-function startEdit() {
-    gridApi!.startEditingCell({
-        rowIndex: 0,
-        colKey: 'first_name',
-    });
-}
-
-function cancelEdit() {
-    gridApi!.stopEditing(true);
-}
-
-function stopEdit() {
-    gridApi!.stopEditing();
+    const el = document.querySelector<HTMLElement>('#batchStatusValue');
+    if (el) el.textContent = 'Inactive';
 }
 
 // setup the grid after the page has finished loading
