@@ -33,6 +33,8 @@ export interface ToolPanelColumnCompParams<TData = any, TContext = any>
     extends IToolPanelParams<TData, TContext, ColumnToolPanelState>,
         IToolPanelColumnCompParams {}
 
+const DEFERRED_TOOL_PANEL_CLASS = 'ag-column-panel-deferred';
+
 const DeferModeToggleElement: ElementParams = {
     tag: 'div',
     cls: 'ag-column-panel-defer-mode-toggle',
@@ -136,6 +138,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         const syncStrat = beans.colToolPanelSynchronousEdit as BaseColumnToolPanelEdits | undefined;
         this.isDeferModeEnabled = !!mergedParams.deferApply;
         this.editStrategy = this.isDeferModeEnabled ? deferredStrat : syncStrat;
+        this.toggleCss(DEFERRED_TOOL_PANEL_CLASS, this.isDeferModeEnabled);
 
         if (!mergedParams.suppressPivotMode && colToolPanelFactory && hasPivotModule) {
             this.pivotModePanel = colToolPanelFactory.createPivotModePanel(
@@ -238,6 +241,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
         this.isDeferModeEnabled = nextDeferMode;
         this.params.deferApply = nextDeferMode;
+        this.toggleCss(DEFERRED_TOOL_PANEL_CLASS, nextDeferMode);
 
         const deferredStrat = this.beans.colToolPanelDeferredEdit as BaseColumnToolPanelEdits | undefined;
         const syncStrat = this.beans.colToolPanelSynchronousEdit as BaseColumnToolPanelEdits | undefined;

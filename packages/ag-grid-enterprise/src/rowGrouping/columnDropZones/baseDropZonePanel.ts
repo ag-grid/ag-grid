@@ -9,6 +9,8 @@ import { DropZoneColumnComp } from './dropZoneColumnComp';
 
 export type TDropZone = 'rowGroup' | 'pivot' | 'aggregation';
 
+const DEFERRED_TOOL_PANEL_CLASS = 'ag-column-panel-deferred';
+
 export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumnComp, AgColumn> {
     constructor(
         horizontal: boolean,
@@ -46,9 +48,20 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         return (dragItem.columns as AgColumn[]) ?? [];
     }
 
-    protected isInterestedIn(type: DragSourceType): boolean {
-        // not interested in row drags
-        return type === DragSourceType.HeaderCell || (!!this.editParams && type === DragSourceType.ToolPanel);
+    protected isInterestedIn(type: DragSourceType, sourceElement: Element): boolean {
+        if (type === DragSourceType.HeaderCell) {
+            return true;
+        }
+
+        if (type !== DragSourceType.ToolPanel) {
+            return false;
+        }
+
+        if (!this.horizontal) {
+            return true;
+        }
+
+        return !sourceElement.closest(`.${DEFERRED_TOOL_PANEL_CLASS}`);
     }
 
     protected override minimumAllowedNewInsertIndex(): number {
