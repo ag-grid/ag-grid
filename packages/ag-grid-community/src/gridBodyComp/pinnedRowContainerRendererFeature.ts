@@ -13,9 +13,9 @@ interface PinnedRowContainerRendererSourceConfig {
     stream: PinnedSectionStream;
     lane: PinnedSectionLane;
     order?: number;
-    pinToViewportX?: boolean;
-    getViewportOffsetTop?: () => number;
-    insertAfterHeadersBeforeRows?: boolean;
+    lockToViewportX?: boolean;
+    getTopOffsetPx?: () => number;
+    placeAfterHeaderRows?: boolean;
 }
 
 export interface PinnedRowContainerRendererSource {
@@ -162,7 +162,7 @@ export class PinnedRowContainerRendererFeature extends BeanStub implements IPinn
     public refreshViewportPinned(): void {
         const visited = new Set<HostKey>();
         for (const source of this.sources.values()) {
-            if (source.pinToViewportX) {
+            if (source.lockToViewportX) {
                 const key = this.toHostKey(source.section, source.stream);
                 if (!visited.has(key)) {
                     visited.add(key);
@@ -204,7 +204,7 @@ export class PinnedRowContainerRendererFeature extends BeanStub implements IPinn
                 }
                 activeElements.add(eGui);
                 orderedEntries.push({ eGui, source });
-                if (source.pinToViewportX) {
+                if (source.lockToViewportX) {
                     this.applyViewportPinnedLayout(source, eGui);
                 }
             }
@@ -223,8 +223,8 @@ export class PinnedRowContainerRendererFeature extends BeanStub implements IPinn
 
         let previous: HTMLElement | null = null;
         for (const { eGui, source } of orderedEntries) {
-            if (source.insertAfterHeadersBeforeRows) {
-                this.insertAfterHeadersBeforeRows(host, eGui);
+            if (source.placeAfterHeaderRows) {
+                this.placeAfterHeaderRows(host, eGui);
             } else {
                 if (eGui.parentElement !== host) {
                     host.appendChild(eGui);
@@ -252,7 +252,7 @@ export class PinnedRowContainerRendererFeature extends BeanStub implements IPinn
             });
     }
 
-    private insertAfterHeadersBeforeRows(host: HTMLElement, eGui: HTMLElement): void {
+    private placeAfterHeaderRows(host: HTMLElement, eGui: HTMLElement): void {
         const firstNonHeaderRow = Array.from(host.children).find((child) => {
             if (child === eGui) {
                 return false;
@@ -290,8 +290,8 @@ export class PinnedRowContainerRendererFeature extends BeanStub implements IPinn
 
         eGui.style.position = 'absolute';
         eGui.style.width = `${viewportWidth}px`;
-        if (source.getViewportOffsetTop) {
-            eGui.style.top = `${source.getViewportOffsetTop()}px`;
+        if (source.getTopOffsetPx) {
+            eGui.style.top = `${source.getTopOffsetPx()}px`;
         }
 
         if (this.gos.get('enableRtl')) {

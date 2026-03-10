@@ -27,9 +27,7 @@ export function refreshCells<TData = any>(beans: BeanCollection, params: Refresh
 
 export function refreshHeader(beans: BeanCollection) {
     beans.frameworkOverrides.wrapIncoming(() => {
-        for (const c of beans.ctrlsSvc.getHeaderRowContainerCtrls()) {
-            c.refresh();
-        }
+        beans.ctrlsSvc.getHeaderRowsCtrl()?.refresh();
     });
 }
 

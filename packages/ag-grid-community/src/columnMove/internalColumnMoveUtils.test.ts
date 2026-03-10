@@ -35,14 +35,14 @@ function createSectionElements(layout: { left: number; pinnedLeftWidth: number; 
 
 function createCtrlsSvc(viewport: HTMLElement): CtrlsService {
     return {
-        getHeaderRowContainerCtrl: () => ({ eViewport: viewport }),
-    } as unknown as CtrlsService;
+        getHeaderRowsCtrl: () => ({ eViewport: viewport }),
+    } as CtrlsService;
 }
 
 function createGos(enableRtl = false): GridOptionsService {
     return {
         get: (key: string) => (key === 'enableRtl' ? enableRtl : undefined),
-    } as unknown as GridOptionsService;
+    } as GridOptionsService;
 }
 
 describe('normaliseX', () => {

@@ -452,7 +452,15 @@ export class FocusService extends BeanStub implements NamedBean {
         const { column, headerRowIndex } = headerPosition;
         const { filterManager, ctrlsSvc, headerNavigation } = this.beans;
 
-        if (this.focusedHeader && isHeaderPositionEqual(params.headerPosition, this.focusedHeader)) {
+        const browserFocusOnHeader = this.isDomDataPresentInHierarchy(
+            _getActiveDomElement(this.beans),
+            DOM_DATA_KEY_HEADER_CTRL
+        );
+        if (
+            browserFocusOnHeader &&
+            this.focusedHeader &&
+            isHeaderPositionEqual(params.headerPosition, this.focusedHeader)
+        ) {
             return false;
         }
 
@@ -467,11 +475,11 @@ export class FocusService extends BeanStub implements NamedBean {
             headerNavigation?.scrollToColumn(column as AgColumn, direction);
         }
 
-        const headerRowContainerCtrl = ctrlsSvc.getHeaderRowContainerCtrl();
+        const headerRowsCtrl = ctrlsSvc.getHeaderRowsCtrl();
 
         // this will automatically set the focused header
         const focusSuccess =
-            headerRowContainerCtrl?.focusHeader(headerPosition.headerRowIndex, column as AgColumn, event) || false;
+            headerRowsCtrl?.focusHeader(headerPosition.headerRowIndex, column as AgColumn, event) || false;
 
         if (headerNavigation && focusSuccess && (rowWithoutSpanValue != null || fromCell)) {
             headerNavigation.currentHeaderRowWithoutSpan = rowWithoutSpanValue ?? -1;

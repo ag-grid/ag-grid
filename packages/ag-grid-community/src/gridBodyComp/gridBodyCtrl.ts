@@ -137,15 +137,15 @@ export class GridBodyCtrl extends BeanStub {
         this.updatePinnedColumnStickyOffsets();
         this.updateScrollingClasses();
 
-        this.filterManager?.setupAdvFilterHeaderComp(
+        this.filterManager?.mountAdvFilterTopSectionComp(
             this.pinnedRowContainerRendererFeature.createCompHost({
                 section: 'top',
                 stream: 'center',
                 lane: 'edge',
                 order: 1,
-                pinToViewportX: true,
-                getViewportOffsetTop: () => this.ctrlsSvc.get('gridHeaderCtrl')?.headerHeight ?? 0,
-                insertAfterHeadersBeforeRows: true,
+                lockToViewportX: true,
+                getTopOffsetPx: () => this.ctrlsSvc.get('gridHeaderCtrl')?.headerHeight ?? 0,
+                placeAfterHeaderRows: true,
             })
         );
 
@@ -335,8 +335,7 @@ export class GridBodyCtrl extends BeanStub {
 
     public updateRowCount(): void {
         const headerCount =
-            (this.ctrlsSvc.getHeaderRowContainerCtrl()?.getRowCount() ?? 0) +
-            (this.filterManager?.getHeaderRowCount() ?? 0);
+            (this.ctrlsSvc.getHeaderRowsCtrl()?.getRowCount() ?? 0) + (this.filterManager?.getHeaderRowCount() ?? 0);
 
         const { rowModel } = this.beans;
         const rowCount = rowModel.isLastRowIndexKnown() ? rowModel.getRowCount() : -1;

@@ -11,14 +11,14 @@ import type { HeaderRowType } from '../row/headerRowComp';
 import { HeaderRowCtrl } from '../row/headerRowCtrl';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export interface IHeaderRowContainerComp {
+export interface IHeaderRowsComp {
     setViewportScrollLeft(left: number): void;
     setCtrls(ctrls: HeaderRowCtrl[]): void;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
-    public comp: IHeaderRowContainerComp;
+export class HeaderRowsCtrl extends BeanStub implements ScrollPartner {
+    public comp: IHeaderRowsComp;
     private includeFloatingFilter: boolean = false;
 
     private filtersRowCtrl: HeaderRowCtrl | undefined;
@@ -26,7 +26,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     private groupsRowCtrls: HeaderRowCtrl[] = [];
     public eViewport: HTMLElement;
 
-    public setComp(comp: IHeaderRowContainerComp, eGui: HTMLElement, eScrollViewport: HTMLElement = eGui): void {
+    public setComp(comp: IHeaderRowsComp, eGui: HTMLElement, eScrollViewport: HTMLElement = eGui): void {
         this.comp = comp;
         this.eViewport = eScrollViewport;
 
@@ -40,7 +40,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
             advancedFilterEnabledChanged: onDisplayedColsChanged,
         });
 
-        ctrlsSvc.register('centerHeader', this);
+        ctrlsSvc.register('headerRowsCenter', this);
 
         if (colModel.ready) {
             this.refresh();

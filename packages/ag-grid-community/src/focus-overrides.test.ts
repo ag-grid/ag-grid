@@ -93,7 +93,7 @@ describe('Focus override callbacks', () => {
                     headerGroupRowCount: 0,
                 },
                 ctrlsSvc: {
-                    getHeaderRowContainerCtrl: () => ({ getRowCount: () => 2 }),
+                    getHeaderRowsCtrl: () => ({ getRowCount: () => 2 }),
                 },
             };
             focusSvcAny.focusedHeader = currentHeader;
@@ -482,7 +482,7 @@ describe('Focus override callbacks', () => {
                     getRowByPosition: jest.fn(),
                 },
                 ctrlsSvc: {
-                    getHeaderRowContainerCtrl: () => ({ getRowCount: () => 2 }),
+                    getHeaderRowsCtrl: () => ({ getRowCount: () => 2 }),
                 },
             };
 

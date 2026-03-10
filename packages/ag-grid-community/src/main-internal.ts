@@ -407,8 +407,8 @@ export {
     getHeaderRowCount as _getHeaderRowCount,
 } from './headerRendering/headerUtils';
 export type { HeaderRowCtrl, IHeaderRowComp } from './headerRendering/row/headerRowCtrl';
-export { HeaderRowContainerCtrl } from './headerRendering/rowContainer/headerRowContainerCtrl';
-export type { IHeaderRowContainerComp } from './headerRendering/rowContainer/headerRowContainerCtrl';
+export { HeaderRowsCtrl } from './headerRendering/rowContainer/headerRowsCtrl';
+export type { IHeaderRowsComp } from './headerRendering/rowContainer/headerRowsCtrl';
 export type { IAdvancedFilterCtrl } from './interfaces/iAdvancedFilterCtrl';
 export type { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
 export type { IAggColumnNameService } from './interfaces/iAggColumnNameService';

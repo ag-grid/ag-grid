@@ -20,23 +20,14 @@ export class GridHeaderCtrl extends BeanStub {
     public eGui: HTMLElement;
     public headerHeight: number;
     private headerHeightWithBorder: number;
+    private headerRowFocusFeatures: ManagedFocusFeature[] = [];
 
-    public setComp(comp: IGridHeaderComp, eGui: HTMLElement, eFocusableElement: HTMLElement): void {
+    public setComp(comp: IGridHeaderComp, eGui: HTMLElement): void {
         this.comp = comp;
         this.eGui = eGui;
 
         const { beans } = this;
-        const { headerNavigation, touchSvc, ctrlsSvc } = beans;
-
-        if (headerNavigation) {
-            this.createManagedBean(
-                new ManagedFocusFeature(eFocusableElement, {
-                    onTabKeyDown: this.onTabKeyDown.bind(this),
-                    handleKeyDown: this.handleKeyDown.bind(this),
-                    onFocusOut: this.onFocusOut.bind(this),
-                })
-            );
-        }
+        const { touchSvc, ctrlsSvc } = beans;
 
         // for setting ag-pivot-on / ag-pivot-off CSS classes
         this.addManagedEventListeners({
@@ -52,6 +43,26 @@ export class GridHeaderCtrl extends BeanStub {
         touchSvc?.mockHeaderContextMenu(this, listener);
 
         ctrlsSvc.register('gridHeaderCtrl', this);
+    }
+
+    public setHeaderRowFocusableElements(eFocusableElements: HTMLElement[]): void {
+        this.headerRowFocusFeatures = this.destroyBeans(this.headerRowFocusFeatures);
+
+        if (!this.beans.headerNavigation) {
+            return;
+        }
+
+        for (const eFocusableElement of eFocusableElements) {
+            this.headerRowFocusFeatures.push(
+                this.createManagedBean(
+                    new ManagedFocusFeature(eFocusableElement, {
+                        onTabKeyDown: this.onTabKeyDown.bind(this),
+                        handleKeyDown: this.handleKeyDown.bind(this),
+                        onFocusOut: this.onFocusOut.bind(this),
+                    })
+                )
+            );
+        }
     }
 
     private setupHeaderHeight(): void {
@@ -193,7 +204,8 @@ export class GridHeaderCtrl extends BeanStub {
             return;
         }
 
-        if (!eGui.contains(relatedTarget as HTMLElement)) {
+        const nextFocusInHeaderRow = relatedTarget instanceof HTMLElement && !!relatedTarget.closest('.ag-header-row');
+        if (!nextFocusInHeaderRow) {
             beans.focusSvc.focusedHeader = null;
         }
     }
@@ -206,7 +218,7 @@ export class GridHeaderCtrl extends BeanStub {
 
         const { target } = (mouseEvent ?? touch)!;
 
-        if (target === this.eGui || target === ctrlsSvc.getHeaderRowContainerCtrl()?.eViewport) {
+        if (target === this.eGui || target === ctrlsSvc.getHeaderRowsCtrl()?.eViewport) {
             menuSvc.showHeaderContextMenu(undefined, mouseEvent, touchEvent);
         }
     }

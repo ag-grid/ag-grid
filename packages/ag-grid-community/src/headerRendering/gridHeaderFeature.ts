@@ -7,16 +7,17 @@ import { GridHeaderCtrl } from './gridHeaderCtrl';
 import type { IGridHeaderComp } from './gridHeaderCtrl';
 import { HeaderRowComp } from './row/headerRowComp';
 import type { HeaderRowCtrl, HeaderRowCtrlInstanceId } from './row/headerRowCtrl';
-import { HeaderRowContainerCtrl } from './rowContainer/headerRowContainerCtrl';
-import type { IHeaderRowContainerComp } from './rowContainer/headerRowContainerCtrl';
+import { HeaderRowsCtrl } from './rowContainer/headerRowsCtrl';
+import type { IHeaderRowsComp } from './rowContainer/headerRowsCtrl';
 
 export class GridHeaderFeature extends BeanStub {
     private headerRowComps: { [ctrlId: HeaderRowCtrlInstanceId]: HeaderRowComp } = {};
-    private pinnedTopHeaderRowsSource: PinnedRowContainerRendererSource | undefined;
+    private topSectionHeaderRowsSource: PinnedRowContainerRendererSource | undefined;
+    private gridHeaderCtrl: GridHeaderCtrl | undefined;
 
     constructor(
-        private readonly eHeaderHost: HTMLElement,
-        private readonly ePinnedTopRowsHost: HTMLElement,
+        private readonly eTopSectionCenterHost: HTMLElement,
+        private readonly eTopSectionWrapper: HTMLElement,
         private readonly eGridViewport: HTMLElement,
         private readonly pinnedRowContainerRendererFeature: IPinnedRowContainerRendererFeature
     ) {
@@ -24,7 +25,7 @@ export class GridHeaderFeature extends BeanStub {
     }
 
     public postConstruct(): void {
-        this.pinnedTopHeaderRowsSource = this.pinnedRowContainerRendererFeature.registerSource({
+        this.topSectionHeaderRowsSource = this.pinnedRowContainerRendererFeature.registerSource({
             id: 'header-rows',
             section: 'top',
             stream: 'center',
@@ -32,27 +33,28 @@ export class GridHeaderFeature extends BeanStub {
         });
 
         const compProxy: IGridHeaderComp = {
-            toggleCss: (cssClassName, on) => this.eHeaderHost.classList.toggle(cssClassName, on),
+            toggleCss: (cssClassName, on) => this.eTopSectionCenterHost.classList.toggle(cssClassName, on),
             setHeightAndMinHeight: (height) =>
-                this.ePinnedTopRowsHost.style.setProperty('--ag-header-rows-height', height),
+                this.eTopSectionWrapper.style.setProperty('--ag-header-rows-height', height),
         };
-        const rowContainerCompProxy: IHeaderRowContainerComp = {
+        const rowContainerCompProxy: IHeaderRowsComp = {
             setCtrls: (ctrls) => this.setCtrls(ctrls),
             setViewportScrollLeft: (_left) => {},
         };
 
-        const ctrl = this.createManagedBean(new GridHeaderCtrl());
-        ctrl.setComp(compProxy, this.eHeaderHost, this.eHeaderHost);
+        this.gridHeaderCtrl = this.createManagedBean(new GridHeaderCtrl());
+        this.gridHeaderCtrl.setComp(compProxy, this.eTopSectionCenterHost);
 
-        const rowContainerCtrl = this.createManagedBean(new HeaderRowContainerCtrl());
-        rowContainerCtrl.setComp(rowContainerCompProxy, this.eHeaderHost, this.eGridViewport);
+        const rowContainerCtrl = this.createManagedBean(new HeaderRowsCtrl());
+        rowContainerCtrl.setComp(rowContainerCompProxy, this.eTopSectionCenterHost, this.eGridViewport);
     }
 
     public override destroy(): void {
         this.setCtrls([]);
-        this.pinnedTopHeaderRowsSource?.destroy();
-        this.pinnedTopHeaderRowsSource = undefined;
-        this.ePinnedTopRowsHost.style.removeProperty('--ag-header-rows-height');
+        this.topSectionHeaderRowsSource?.destroy();
+        this.topSectionHeaderRowsSource = undefined;
+        this.gridHeaderCtrl = undefined;
+        this.eTopSectionWrapper.style.removeProperty('--ag-header-rows-height');
         super.destroy();
     }
 
@@ -77,7 +79,8 @@ export class GridHeaderFeature extends BeanStub {
             orderedGuis.push(rowComp.getGui());
         }
 
-        this.pinnedTopHeaderRowsSource?.setRows(orderedGuis);
+        this.topSectionHeaderRowsSource?.setRows(orderedGuis);
+        this.gridHeaderCtrl?.setHeaderRowFocusableElements(orderedGuis);
 
         for (const oldComp of Object.values(oldRowComps)) {
             this.destroyRowComp(oldComp);

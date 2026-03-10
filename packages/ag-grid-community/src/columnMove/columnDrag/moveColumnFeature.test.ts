@@ -51,7 +51,7 @@ describe('MoveColumnFeature', () => {
                 },
             } as GridOptionsService,
             ctrlsSvc: {
-                getHeaderRowContainerCtrl: () => ({ eViewport }),
+                getHeaderRowsCtrl: () => ({ eViewport }),
                 get: () => ({
                     getCenterViewportScrollLeft: () => 0,
                 }),

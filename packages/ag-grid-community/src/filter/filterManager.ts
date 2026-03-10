@@ -349,8 +349,8 @@ export class FilterManager extends BeanStub implements NamedBean {
         _warn(68);
     }
 
-    public setupAdvFilterHeaderComp(headerCompHost: IPinnedSectionCompHost): void {
-        this.advancedFilter?.getCtrl().setupHeaderComp(headerCompHost);
+    public mountAdvFilterTopSectionComp(host: IPinnedSectionCompHost): void {
+        this.advancedFilter?.getCtrl().mountTopSectionComp(host);
     }
 
     public getHeaderRowCount(): number {

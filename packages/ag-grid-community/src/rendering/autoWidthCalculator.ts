@@ -82,16 +82,7 @@ export class AutoWidthCalculator extends BeanStub implements NamedBean {
     }
 
     private getHeaderCellForColumn(column: AgColumnGroup | AgColumn): HTMLElement | null {
-        let element: HTMLElement | null = null;
-
-        for (const container of this.beans.ctrlsSvc.getHeaderRowContainerCtrls()) {
-            const res = container.getHtmlElementForColumnHeader(column);
-            if (res != null) {
-                element = res;
-            }
-        }
-
-        return element;
+        return this.beans.ctrlsSvc.getHeaderRowsCtrl()?.getHtmlElementForColumnHeader(column) ?? null;
     }
 
     private cloneItemIntoDummy(eCell: HTMLElement, eDummyContainer: HTMLElement): void {

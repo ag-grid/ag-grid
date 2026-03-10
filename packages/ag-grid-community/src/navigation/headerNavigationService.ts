@@ -94,8 +94,8 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
             return null;
         }
 
-        const centerHeaderContainer = ctrlsSvc.getHeaderRowContainerCtrl();
-        const allCtrls = centerHeaderContainer?.getAllCtrls();
+        const headerRowsCtrl = ctrlsSvc.getHeaderRowsCtrl();
+        const allCtrls = headerRowsCtrl?.getAllCtrls();
         const isFloatingFilterVisible = _last(allCtrls || []).type === 'filter';
         const headerRowCount = getFocusHeaderRowCount(this.beans) - 1;
 
@@ -346,9 +346,9 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
     }
 
     private getHeaderRowType(rowIndex: number): HeaderRowType | undefined {
-        const centerHeaderContainer = this.beans.ctrlsSvc.getHeaderRowContainerCtrl();
-        if (centerHeaderContainer) {
-            return centerHeaderContainer.getRowType(rowIndex);
+        const headerRowsCtrl = this.beans.ctrlsSvc.getHeaderRowsCtrl();
+        if (headerRowsCtrl) {
+            return headerRowsCtrl.getRowType(rowIndex);
         }
     }
 }

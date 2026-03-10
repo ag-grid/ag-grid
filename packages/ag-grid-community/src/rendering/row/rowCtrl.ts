@@ -1974,7 +1974,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
 
         const headerRowCount =
-            (this.beans.ctrlsSvc.getHeaderRowContainerCtrl()?.getRowCount() ?? 0) +
+            (this.beans.ctrlsSvc.getHeaderRowsCtrl()?.getRowCount() ?? 0) +
             (this.beans.filterManager?.getHeaderRowCount() ?? 0);
         const rowIsEven = this.rowNode.rowIndex! % 2 === 0;
         const ariaRowIndex = (this.ariaRowIndex = headerRowCount + this.rowNode.rowIndex! + 1);

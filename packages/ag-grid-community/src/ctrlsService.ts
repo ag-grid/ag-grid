@@ -7,7 +7,7 @@ import type { GridBodyScrollFeature } from './gridBodyComp/gridBodyScrollFeature
 import type { RowContainerCtrl } from './gridBodyComp/rowContainer/rowContainerCtrl';
 import type { GridCtrl } from './gridComp/gridCtrl';
 import type { GridHeaderCtrl } from './headerRendering/gridHeaderCtrl';
-import type { HeaderRowContainerCtrl } from './headerRendering/rowContainer/headerRowContainerCtrl';
+import type { HeaderRowsCtrl } from './headerRendering/rowContainer/headerRowsCtrl';
 
 /** If adding or removing a control, update `REQUIRED_CTRLS` below. */
 interface ReadyParams {
@@ -22,7 +22,7 @@ interface ReadyParams {
     fakeVScrollComp: FakeVScrollComp;
     gridHeaderCtrl: GridHeaderCtrl;
 
-    centerHeader: HeaderRowContainerCtrl;
+    headerRowsCenter: HeaderRowsCtrl;
 }
 
 type CtrlType = keyof ReadyParams;
@@ -35,7 +35,7 @@ const REQUIRED_CTRLS: CtrlType[] = [
     'fakeHScrollComp',
     'fakeVScrollComp',
     'gridHeaderCtrl',
-    'centerHeader',
+    'headerRowsCenter',
 ];
 
 type BeanDestroyFunc = Pick<BeanStub<any>, 'addDestroyFunc'>;
@@ -116,13 +116,8 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
         return this.params.gridBodyCtrl;
     }
 
-    public getHeaderRowContainerCtrls(): HeaderRowContainerCtrl[] {
-        const { centerHeader } = this.params;
-        return centerHeader ? [centerHeader] : [];
-    }
-
-    public getHeaderRowContainerCtrl(): HeaderRowContainerCtrl | undefined {
-        return this.params.centerHeader;
+    public getHeaderRowsCtrl(): HeaderRowsCtrl | undefined {
+        return this.params.headerRowsCenter;
     }
 
     public getScrollFeature(): GridBodyScrollFeature {

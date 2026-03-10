@@ -14,29 +14,26 @@ export function getHeaderRowCount(colModel: ColumnModel): number {
 }
 
 export function getFocusHeaderRowCount(beans: BeanCollection): number {
-    return beans.ctrlsSvc.getHeaderRowContainerCtrl()?.getRowCount() ?? 0;
+    return beans.ctrlsSvc.getHeaderRowsCtrl()?.getRowCount() ?? 0;
 }
 
 export function getGroupRowsHeight(beans: BeanCollection): number[] {
     const heights: number[] = [];
-    const headerRowContainerCtrls = beans.ctrlsSvc.getHeaderRowContainerCtrls();
+    const headerRowsCtrl = beans.ctrlsSvc.getHeaderRowsCtrl();
+    if (!headerRowsCtrl) {
+        return heights;
+    }
 
-    for (const headerRowContainerCtrl of headerRowContainerCtrls) {
-        if (!headerRowContainerCtrl) {
-            continue;
-        }
+    const groupRowCount = headerRowsCtrl.getGroupRowCount() || 0;
 
-        const groupRowCount = headerRowContainerCtrl.getGroupRowCount() || 0;
+    for (let i = 0; i < groupRowCount; i++) {
+        const headerRowCtrl = headerRowsCtrl.getGroupRowCtrlAtIndex(i);
 
-        for (let i = 0; i < groupRowCount; i++) {
-            const headerRowCtrl = headerRowContainerCtrl.getGroupRowCtrlAtIndex(i);
-
-            const currentHeightAtPos = heights[i];
-            if (headerRowCtrl) {
-                const newHeight = getColumnGroupHeaderRowHeight(beans, headerRowCtrl);
-                if (currentHeightAtPos == null || newHeight > currentHeightAtPos) {
-                    heights[i] = newHeight;
-                }
+        const currentHeightAtPos = heights[i];
+        if (headerRowCtrl) {
+            const newHeight = getColumnGroupHeaderRowHeight(beans, headerRowCtrl);
+            if (currentHeightAtPos == null || newHeight > currentHeightAtPos) {
+                heights[i] = newHeight;
             }
         }
     }

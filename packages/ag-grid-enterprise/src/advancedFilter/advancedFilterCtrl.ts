@@ -71,8 +71,8 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
         });
     }
 
-    public setupHeaderComp(headerCompHost: IPinnedSectionCompHost): void {
-        this.headerCompHost = headerCompHost;
+    public mountTopSectionComp(host: IPinnedSectionCompHost): void {
+        this.headerCompHost = host;
         this.syncHeaderComp();
     }
 
