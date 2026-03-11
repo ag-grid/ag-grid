@@ -143,7 +143,10 @@
 
     .ag-column-panel-column-select {
         border-top: none;
-        border-bottom: 1px solid var(--ag-secondary-border-color);
+
+        &:not(.ag-last-visible-child) {
+            border-bottom: 1px solid var(--ag-secondary-border-color);
+        }
     }
 
     .ag-filter-toolpanel-search {
