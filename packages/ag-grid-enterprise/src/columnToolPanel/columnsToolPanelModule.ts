@@ -1,12 +1,12 @@
 import type { _ModuleWithoutApi } from 'ag-grid-community';
 import { _ColumnMoveModule, _PopupModule, _SharedDragAndDropModule } from 'ag-grid-community';
 
-import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { SideBarModule } from '../sideBar/sideBarModule';
 import { VERSION } from '../version';
 import { MenuItemModule } from '../widgets/menuItemModule';
 import { ColumnToolPanel } from './columnToolPanel';
-import { ColumnToolPanelDeferredEdit, ColumnToolPanelSynchronousEdit } from './columnToolPanelEdits';
+import { SharedColumnToolPanelEditModule } from './columnToolPanelEditModule';
+import { ColumnToolPanelDeferredEdit } from './columnToolPanelEdits';
 import { ColumnToolPanelFactory } from './columnToolPanelFactory';
 
 /**
@@ -15,7 +15,7 @@ import { ColumnToolPanelFactory } from './columnToolPanelFactory';
 export const ColumnsToolPanelModule: _ModuleWithoutApi = {
     moduleName: 'ColumnsToolPanel',
     version: VERSION,
-    beans: [ColumnToolPanelFactory, ColumnToolPanelSynchronousEdit, ColumnToolPanelDeferredEdit],
+    beans: [ColumnToolPanelFactory, ColumnToolPanelDeferredEdit],
     userComponents: { agColumnsToolPanel: ColumnToolPanel },
     icons: {
         ensureColumnVisible: 'column-arrow',
@@ -40,7 +40,7 @@ export const ColumnsToolPanelModule: _ModuleWithoutApi = {
         columnSelectIndeterminate: 'tree-indeterminate',
     },
     dependsOn: [
-        EnterpriseCoreModule,
+        SharedColumnToolPanelEditModule,
         SideBarModule,
         _ColumnMoveModule,
         _SharedDragAndDropModule,

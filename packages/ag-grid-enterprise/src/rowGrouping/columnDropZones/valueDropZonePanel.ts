@@ -40,20 +40,15 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
             return false;
         }
 
-        const isActive = this.getEditStrategy()?.getValueColumns().includes(column) ?? column.isValueActive();
+        const isActive = this.getEditStrategy().getValueColumns().includes(column);
         return column.isAllowValue() && (!isActive || this.isSourceEventFromTarget(draggingEvent));
     }
 
     protected updateItems(columns: AgColumn[]): void {
-        const strategy = this.getEditStrategy();
-        if (strategy) {
-            strategy.setValueColumns(columns, 'toolPanelUi');
-        } else {
-            this.beans.valueColsSvc?.setColumns(columns, 'toolPanelUi');
-        }
+        this.getEditStrategy().setValueColumns(columns, 'toolPanelUi');
     }
 
     protected getExistingItems(): AgColumn[] {
-        return this.getEditStrategy()?.getValueColumns() ?? this.beans.valueColsSvc?.columns ?? [];
+        return this.getEditStrategy().getValueColumns();
     }
 }

@@ -1,6 +1,5 @@
 import type {
     AgColumn,
-    BeanName,
     ColumnEventType,
     ColumnState,
     ColumnToolPanelEditStrategyBean,

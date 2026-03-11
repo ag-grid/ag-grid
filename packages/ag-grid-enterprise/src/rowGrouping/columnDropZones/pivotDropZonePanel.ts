@@ -48,9 +48,9 @@ export class PivotDropZonePanel extends BaseDropZonePanel implements FocusableCo
 
     private checkVisibility(): void {
         const colModel = this.beans.colModel;
-        const pivotMode = colModel.isPivotMode();
 
         if (this.horizontal) {
+            const pivotMode = colModel.isPivotMode();
             // what we do for horizontal (ie the pivot panel at the top) depends
             // on the user property as well as pivotMode.
             switch (this.gos.get('pivotPanelShow')) {
@@ -69,8 +69,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel implements FocusableCo
             }
         } else {
             // in toolPanel, the pivot panel is always shown when pivot mode is on
-            const draftPivotMode = this.getEditStrategy()?.getPivotMode();
-            this.setDisplayed(draftPivotMode ?? pivotMode);
+            this.setDisplayed(this.getEditStrategy().getPivotMode());
         }
     }
 
@@ -80,17 +79,12 @@ export class PivotDropZonePanel extends BaseDropZonePanel implements FocusableCo
             return false;
         }
 
-        const isActive = this.getEditStrategy()?.getPivotColumns().includes(column) ?? column.isPivotActive();
+        const isActive = this.getEditStrategy().getPivotColumns().includes(column);
         return column.isAllowPivot() && (!isActive || this.isSourceEventFromTarget(draggingEvent));
     }
 
     protected updateItems(columns: AgColumn[]): void {
-        const strategy = this.getEditStrategy();
-        if (strategy) {
-            strategy.setPivotColumns(columns, 'toolPanelUi');
-        } else {
-            this.beans.pivotColsSvc?.setColumns(columns, 'toolPanelUi');
-        }
+        this.getEditStrategy().setPivotColumns(columns, 'toolPanelUi');
     }
 
     protected getIconName(): DragAndDropIcon {
@@ -98,7 +92,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel implements FocusableCo
     }
 
     protected getExistingItems(): AgColumn[] {
-        return this.getEditStrategy()?.getPivotColumns() ?? this.beans.pivotColsSvc?.columns ?? [];
+        return this.getEditStrategy().getPivotColumns();
     }
 
     public getFocusableContainerName(): 'pivotToolbar' {

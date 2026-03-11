@@ -35,16 +35,8 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         );
     }
 
-    /**
-     * Drop zones are shared between header panels and the Columns Tool Panel.
-     * The column tool panel edit beans are not guaranteed to exist in all module combinations,
-     * so this accessor must stay optional and callers must fall back to core services.
-     *
-     * If we later introduce a global deferred mode, extract common behaviour behind a shared abstraction
-     * rather than hard-coupling drop zones directly to column tool panel beans.
-     */
-    protected getEditStrategy(): BaseColumnToolPanelEdits | null {
-        return getColumnToolPanelEditStrategy(this.beans, !!this.editParams?.deferApply) ?? null;
+    protected getEditStrategy(): BaseColumnToolPanelEdits {
+        return getColumnToolPanelEditStrategy(this.beans, !!this.editParams?.deferApply);
     }
 
     protected getItems(dragItem: DragItem): AgColumn[] {
@@ -108,12 +100,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
             return;
         }
         const allowedCols = columns.filter((c) => !c.getColDef().lockVisible);
-        const strategy = this.getEditStrategy();
-        if (strategy) {
-            strategy.setColumnsVisible(allowedCols, visible, source);
-        } else {
-            this.beans.colModel.setColsVisible(allowedCols, visible, source);
-        }
+        this.getEditStrategy().setColumnsVisible(allowedCols, visible, source);
     }
 
     private isRowGroupPanel() {
