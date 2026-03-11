@@ -72,11 +72,13 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         const valueColumns = beans.valueColsSvc?.columns;
 
         if (!valueColumns?.length && !userAggFunc) {
-            if (this.hadAggregation) {
-                // Transition: value columns were removed. Clear stale aggData once.
+            if (this.hadAggregation && !changedPath) {
+                // Full refresh with no value columns: clear stale aggData from all groups.
+                // Skip during transaction updates (changedPath defined) — the config-change
+                // full refresh will handle it.
                 this.hadAggregation = false;
                 const colModel = beans.colModel;
-                _forEachChangedGroupDepthFirst(beans.rowModel.rootNode, changedPath, (rowNode) => {
+                _forEachChangedGroupDepthFirst(beans.rowModel.rootNode, undefined, (rowNode) => {
                     setAggDataWithSiblings(rowNode, null, colModel);
                 });
             }
