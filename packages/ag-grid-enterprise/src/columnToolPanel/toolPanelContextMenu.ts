@@ -70,7 +70,7 @@ export class ToolPanelContextMenu extends Component {
     }
 
     private getEditStrategy(): BaseColumnToolPanelEdits {
-        return (this.editStrategy ??= getColumnToolPanelEditStrategy(this.beans, this.params.deferApply));
+        return (this.editStrategy ??= getColumnToolPanelEditStrategy(this.beans, this.params.deferApply)!);
     }
 
     private initializeProperties(column: AgColumn | AgProvidedColumnGroup): void {
@@ -192,7 +192,7 @@ export class ToolPanelContextMenu extends Component {
     }
 
     private removeColumnsFromList(columnList: AgColumn[], predicate: (col: AgColumn) => boolean): AgColumn[] {
-        return columnList.filter((col) => predicate(col) && !this.columns.includes(col));
+        return columnList.filter((col) => !predicate(col) || !this.columns.includes(col));
     }
 
     private displayContextMenu(menuItemsMapped: MenuItemDef[]): void {

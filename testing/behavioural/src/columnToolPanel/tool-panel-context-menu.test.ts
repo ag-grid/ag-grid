@@ -133,5 +133,16 @@ describe('Cell Editing Start', async () => {
             contextMenu['menuItemMap'].get('rowGroup').deActivateFunction(); // already removed
             expect(getGroupedRowIds()).toStrictEqual(['age']);
         });
+
+        test('removeColumnsFromList keeps columns that do not match the predicate', () => {
+            const col = gridApi.getColumns()![0] as any;
+            const athlete = gridApi.getColumn('athlete')!;
+            const year = gridApi.getColumn('year')!;
+            const contextMenu = col.createBean(new ToolPanelContextMenu(col, new MouseEvent(''), gridDiv));
+
+            expect(
+                contextMenu['removeColumnsFromList']([athlete, year], (candidate: any) => candidate.getColId() !== 'year')
+            ).toStrictEqual([year]);
+        });
     });
 });
