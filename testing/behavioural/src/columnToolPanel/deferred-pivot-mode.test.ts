@@ -548,6 +548,16 @@ describe('deferred column tool panel pivot mode', () => {
         expect(getPrimaryColumnOrder(toolPanel)).toEqual(['age', 'athlete', 'year', 'country']);
     });
 
+    test('moving a deferred column to the bottom should append it', async () => {
+        const { gridApi, toolPanel } = await createDeferredGroupedNonPivotGrid();
+        const athlete = gridApi.getColumn('athlete')!;
+
+        toolPanel.editStrategy.moveColumns([athlete], 3, 'toolPanelUi');
+        toolPanel.editStrategy.commit();
+
+        expect(getPrimaryColumnOrder(toolPanel)).toEqual(['age', 'country', 'year', 'athlete']);
+    });
+
     test('reordering column groups in non-pivot mode applies only after commit', async () => {
         const { gridApi, toolPanel } = await createDeferredGroupedNonPivotGrid();
         const athlete = gridApi.getColumn('athlete')!;
