@@ -1,6 +1,10 @@
 {
     "_config_": {
-        "codeSrc": "providedColumnGroup.AUTO.json"
+        "codeSrc": "providedColumnGroup.AUTO.json",
+        "validate": true,
+        "undocumentedProperties": {
+            "getId": "Alias of getGroupId"
+        }
     },
     "ProvidedColumnGroup": {
         "getOriginalParent": {},
@@ -12,6 +16,8 @@
         "getChildren": {},
         "getColGroupDef": {},
         "getLeafColumns": {},
-        "isColumn": {}
+        "isColumn": {},
+        "isVisible": {},
+        "getColumnGroupShow": {}
     }
 }

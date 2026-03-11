@@ -154,6 +154,26 @@ export type IAggFunc<TData = any, TValue = any, TContext = any> = (
 
 export type IAggFuncs<TData = any, TValue = any, TContext = any> = { [key: string]: IAggFunc<TData, TValue, TContext> };
 
+/**
+ * Wrapper object returned by built-in aggregation functions `avg` and `count` on group rows.
+ *
+ * - `avg` returns `{ value: number | bigint | null, count: number, toString(), toNumber() }`
+ * - `count` returns `{ value: number, toString(), toNumber() }`
+ *
+ * Other built-in agg functions (`sum`, `min`, `max`, `first`, `last`) return plain scalar values.
+ * Custom aggregation functions may return any value.
+ */
+export interface IAggFuncResult<TAggValue = number | bigint | null> {
+    /** The aggregated scalar value */
+    value?: TAggValue;
+    /** The count of aggregated values. Present on `avg` results. */
+    count?: number;
+    /** Returns a string representation of the aggregated value */
+    toString(): string;
+    /** Returns the numeric representation of the aggregated value */
+    toNumber?(): TAggValue;
+}
+
 export interface IAggFuncParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** Values to aggregate */
     values: (TValue | null)[];

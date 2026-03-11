@@ -7,6 +7,7 @@ import type { RowNode } from '../entities/rowNode';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { IRowNode } from '../interfaces/iRowNode';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class FilterValueService extends BeanStub implements NamedBean {
     beanName: BeanName = 'filterValueSvc';
 

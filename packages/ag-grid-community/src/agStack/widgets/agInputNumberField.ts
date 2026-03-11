@@ -10,6 +10,7 @@ import type { AgInputTextFieldParams } from './agInputTextField';
 import { AgInputTextField } from './agInputTextField';
 import type { AgWidgetSelectorType } from './agWidgetSelectorType';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface AgInputNumberFieldParams<TComponentSelectorType extends string>
     extends AgInputTextFieldParams<TComponentSelectorType> {
     precision?: number;
@@ -18,6 +19,7 @@ export interface AgInputNumberFieldParams<TComponentSelectorType extends string>
     max?: number;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgInputNumberField<
     TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
@@ -219,6 +221,7 @@ export class AgInputNumberField<
     }
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const AgInputNumberFieldSelector: AgComponentSelector<AgWidgetSelectorType> = {
     selector: 'AG-INPUT-NUMBER-FIELD',
     component: AgInputNumberField,

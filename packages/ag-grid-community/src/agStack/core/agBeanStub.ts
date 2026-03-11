@@ -19,11 +19,13 @@ import type {
 import { _addSafePassiveEventListener } from '../utils/event';
 import { _getLocaleTextFunc } from '../utils/locale';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type AgBeanStubEvent = 'destroyed';
 type AgEventOrDestroyed<TEventType extends string> = TEventType | AgBeanStubEvent;
 
 type EventHandlers<TEventKey extends string, TEvent = any> = { [K in TEventKey]?: (event?: TEvent) => void };
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export abstract class AgBeanStub<
         TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
         TProperties extends BaseProperties,

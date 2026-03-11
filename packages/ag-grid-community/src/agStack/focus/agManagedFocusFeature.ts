@@ -6,6 +6,7 @@ import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import { _findNextFocusableElement } from '../utils/focus';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface ManagedFocusCallbacks {
     shouldStopEventPropagation?: (e: KeyboardEvent) => boolean;
     onTabKeyDown?: (e: KeyboardEvent) => void;
@@ -14,8 +15,10 @@ export interface ManagedFocusCallbacks {
     onFocusOut?: (e: FocusEvent) => void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const FOCUS_MANAGED_CLASS = 'ag-focus-managed';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface StopPropagationCallbacks {
     isStopPropagation: (e: Event) => boolean;
     stopPropagation: (e: Event) => void;

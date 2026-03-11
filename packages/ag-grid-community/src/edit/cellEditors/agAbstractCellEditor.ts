@@ -4,11 +4,11 @@ import type { BeanCollection } from '../../context/context';
 import type { AgEventTypeParams } from '../../events';
 import type { GridOptionsWithDefaults } from '../../gridOptionsDefault';
 import type { GridOptionsService } from '../../gridOptionsService';
-import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
+import type { AgBaseCellEditor, ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import type { AgGridCommon } from '../../interfaces/iCommon';
 import type { AgComponentSelectorType } from '../../widgets/component';
 
-export abstract class AgAbstractCellEditor<P extends ICellEditorParams = any, TValue = any>
+export abstract class AgAbstractCellEditor<P extends ICellEditorParams, TValue, TEditorValue = TValue>
     extends AgPopupComponent<
         BeanCollection,
         GridOptionsWithDefaults,
@@ -17,7 +17,7 @@ export abstract class AgAbstractCellEditor<P extends ICellEditorParams = any, TV
         GridOptionsService,
         AgComponentSelectorType
     >
-    implements ICellEditorComp
+    implements ICellEditorComp, AgBaseCellEditor<TValue>
 {
     protected abstract eEditor: AgAbstractField<
         BeanCollection,
@@ -26,7 +26,7 @@ export abstract class AgAbstractCellEditor<P extends ICellEditorParams = any, TV
         AgGridCommon<any, any>,
         GridOptionsService,
         AgComponentSelectorType,
-        any,
+        TEditorValue,
         any,
         any
     >;
@@ -45,6 +45,8 @@ export abstract class AgAbstractCellEditor<P extends ICellEditorParams = any, TV
         this.initialiseEditor(params);
         this.eEditor.onValueChange(() => params.validate());
     }
+
+    public abstract agSetEditValue(value: TValue | null | undefined): void;
 
     public override destroy(): void {
         this.eEditor.destroy();

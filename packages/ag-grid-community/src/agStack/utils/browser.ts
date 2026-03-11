@@ -10,6 +10,7 @@ let invisibleScrollbar: boolean;
 let browserScrollbarWidth: number;
 let maxDivHeight: number;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isBrowserSafari(): boolean {
     if (isSafari === undefined) {
         isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
@@ -17,6 +18,7 @@ export function _isBrowserSafari(): boolean {
     return isSafari;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isBrowserFirefox(): boolean {
     if (isFirefox === undefined) {
         isFirefox = /(firefox)/i.test(navigator.userAgent);
@@ -33,6 +35,7 @@ export function _isMacOsUserAgent(): boolean {
     return isMacOs;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isIOSUserAgent(): boolean {
     if (isIOS === undefined) {
         isIOS =

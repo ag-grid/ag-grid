@@ -16,6 +16,7 @@ interface RangePartition {
  * represents the "root" of a selection range, and subsequent selections are based off that root.
  *
  * See AG-9620 for more
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export class RowRangeSelectionContext {
     /** Whether the user is currently selecting all nodes either via the header checkbox or API */

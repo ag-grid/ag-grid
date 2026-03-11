@@ -1,7 +1,6 @@
 {
     "_config_": {
-        "codeSrc": "row-node.AUTO.json",
-        "suppressMissingPropCheck": true
+        "codeSrc": "row-node.AUTO.json"
     },
     "rowNodeEvents": {
         "meta": {

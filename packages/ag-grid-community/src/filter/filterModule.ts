@@ -6,7 +6,7 @@ import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
 import { SharedMenuModule } from '../misc/menu/sharedMenuModule';
 import { VERSION } from '../version';
 import { PopupModule } from '../widgets/popupModule';
-import { columnFiltersCSS } from './column-filters.css-GENERATED';
+import columnFiltersCSS from './column-filters.css';
 import {
     destroyFilter,
     doFilterAction,
@@ -53,7 +53,7 @@ const ClientSideRowModelFilterModule: _ModuleWithoutApi = {
 };
 
 /**
- * @internal
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export const FilterCoreModule: _ModuleWithApi<_FilterGridApi> = {
     moduleName: 'FilterCore',
@@ -68,7 +68,7 @@ export const FilterCoreModule: _ModuleWithApi<_FilterGridApi> = {
 };
 
 /**
- * @internal
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export const FilterValueModule: _ModuleWithoutApi = {
     moduleName: 'FilterValue',
@@ -77,7 +77,7 @@ export const FilterValueModule: _ModuleWithoutApi = {
 };
 
 /**
- * @internal
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export const ColumnFilterModule: _ModuleWithApi<_ColumnFilterGridApi> = {
     moduleName: 'ColumnFilter',

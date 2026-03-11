@@ -11,7 +11,7 @@ import { VERSION } from '../version';
 import { DetailCellRenderer } from './detailCellRenderer';
 import { DetailCellRendererCtrl } from './detailCellRendererCtrl';
 import { addDetailGridInfo, forEachDetailGridInfo, getDetailGridInfo, removeDetailGridInfo } from './masterDetailApi';
-import { masterDetailModuleCSS } from './masterDetailModule.css-GENERATED';
+import masterDetailModuleCSS from './masterDetailModule.css';
 import { MasterDetailService } from './masterDetailService';
 
 /**

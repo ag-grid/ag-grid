@@ -3,6 +3,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, ColGroupDef, ColKey } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IPivotResultColsService {
     isPivotResultColsPresent(): boolean;
 

@@ -14,7 +14,7 @@ export const getPropertiesFromSource = async ({
     sources: string[];
 }) => {
     const sources = source ? [source] : sourcesProp;
-    const propertiesFromFilesPromises = sources.map(async (s: string) => {
+    const fileEntryPromises = sources.map(async (s: string) => {
         // NOTE: Need to remove `.json` for getEntry
         const fileName = s.replace('.json', '');
         const fileEntry = await getEntry('apiDocumentation', fileName);
@@ -26,35 +26,45 @@ export const getPropertiesFromSource = async ({
             } else {
                 throw new Error(message);
             }
-        } else {
-            return fileEntry.data;
         }
+        return fileEntry;
     });
-    const propertiesFromFiles = (await Promise.all(propertiesFromFilesPromises)).filter(Boolean);
+    const fileEntries = await Promise.all(fileEntryPromises);
 
-    const propertyConfigs = propertiesFromFiles
-        .map((p) => {
-            const config = p['_config_'];
-            if (!config) {
-                // eslint-disable-next-line no-console
-                console.warn(`ApiDocumentation: _config_ property missing from source ${sources.join()}.`);
+    const propertiesFromFiles: any[] = [];
+    const propertyConfigs: any[] = [];
+    const codeConfigs: Record<string, any> = {};
+
+    for (let i = 0; i < sources.length; i++) {
+        const fileEntry = fileEntries[i];
+        if (!fileEntry) {
+            continue;
+        }
+
+        const s = sources[i];
+        const propsFile = fileEntry.data;
+        propertiesFromFiles.push(propsFile);
+
+        const config = propsFile['_config_'];
+        if (!config) {
+            // eslint-disable-next-line no-console
+            console.warn(`ApiDocumentation: _config_ property missing from source ${s}.`);
+            continue;
+        }
+        propertyConfigs.push(config);
+
+        const codeSrc = config.codeSrc;
+        if (codeSrc && !(codeSrc in codeConfigs)) {
+            codeConfigs[codeSrc] = getJsonFile(`reference/${codeSrc}`);
+        }
+
+        if (config.validate) {
+            const codeConfig = codeConfigs[codeSrc];
+            if (!codeConfig) {
+                throw new Error(`${s} codeSrc file not found: ${codeSrc}`);
             }
-            return config;
-        })
-        .filter(Boolean);
-    const codeConfigEntries = propertyConfigs
-        .map((config) => config.codeSrc)
-        .map((fileName) => {
-            const referenceFileName = `reference/${fileName}`;
-            const file = getJsonFile(referenceFileName);
-            return [fileName, file];
-        });
-    const codeConfigs = Object.fromEntries(codeConfigEntries);
-
-    // Validate that theming-api/properties.json keys match the theming-api.AUTO.json keys
-    // Only run when actually processing the theming-api source
-    if (sources.some((s) => s.includes('theming-api'))) {
-        validateThemingApiProperties(propertiesFromFiles, codeConfigs);
+            validateDocumentedProperties(propsFile, codeConfig, s);
+        }
     }
 
     return {
@@ -65,32 +75,54 @@ export const getPropertiesFromSource = async ({
     };
 };
 
-function validateThemingApiProperties(properties: any[], codeConfigs: any) {
-    const codeSrc = 'theming-api.AUTO.json';
-    const propsFile = properties.find((p) => p['_config_']?.codeSrc === codeSrc);
-    if (!propsFile) {
-        throw new Error(`No properties.json with codeSrc: "${codeSrc}"`);
-    }
-    const codeConfig = codeConfigs[codeSrc];
-    if (!codeConfig) {
-        throw new Error(`Theme params codeSrc file not found: ${codeSrc}`);
-    }
-    const codeKeys = new Set(Object.keys(codeConfig));
-    const propsKeys = Object.entries(propsFile)
+function validateDocumentedProperties(propsFile: any, codeConfig: any, source: string) {
+    const config = propsFile['_config_'];
+    const codeSrc = config.codeSrc;
+    const undocumentedProperties = config.undocumentedProperties ?? {};
+
+    const keysToDocument = new Set(
+        Object.keys(codeConfig).filter((k) => {
+            if (k in undocumentedProperties) {
+                return false;
+            }
+            const entry = codeConfig[k];
+            if (entry?.meta?.tags?.some((t: any) => t.name === 'deprecated')) {
+                return false;
+            }
+            if (config.excludeEvents && entry?.meta?.isEvent) {
+                return false;
+            }
+            if (config.onlyEvents) {
+                if (!entry?.meta?.isEvent) {
+                    return false;
+                }
+                // Events like onCellClicked are the grid option callback form;
+                // event docs use the unprefixed name (cellClicked)
+                if (/^on[A-Z]/.test(k)) {
+                    return false;
+                }
+            }
+            return true;
+        })
+    );
+
+    const documentedKeys = Object.entries(propsFile)
         .filter(([k]) => k !== '_config_')
         .flatMap(([, section]) => Object.keys(section as object).filter((k) => k !== 'meta'));
-    const missing = propsKeys.filter((k) => !codeKeys.has(k));
-    const extra = [...codeKeys].filter((k) => !propsKeys.includes(k));
-    if (missing.length || extra.length) {
+
+    const stale = documentedKeys.filter((k) => !keysToDocument.has(k));
+    const undocumented = [...keysToDocument].filter((k) => !documentedKeys.includes(k));
+
+    if (stale.length || undocumented.length) {
         const msgs: string[] = [];
-        if (missing.length) {
+        if (stale.length) {
             msgs.push(
-                `These theme params are documented in theming-api/properties.json but not in the API (checking ${codeSrc}): ${missing.join(', ')}`
+                `These ${source} keys are documented but not in the API (checking ${codeSrc}): ${stale.join(', ')}`
             );
         }
-        if (extra.length) {
+        if (undocumented.length) {
             msgs.push(
-                `These theme params are present in the API (checking ${codeSrc}) but not documented in theming-api/properties.json: ${extra.join(', ')}`
+                `These ${source} keys are present in the API (checking ${codeSrc}) but not documented: ${undocumented.join(', ')}`
             );
         }
         throw new Error(msgs.join('\n'));

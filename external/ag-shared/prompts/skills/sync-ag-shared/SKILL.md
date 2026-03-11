@@ -7,7 +7,7 @@ invocable: user-only
 
 # Sync ag-shared Subrepo Across AG Repos
 
-Orchestrate syncing `external/ag-shared/` changes from the current repo to all other AG repos that consume the subrepo. This handles the full `git subrepo push` / `pull` cycle, companion changes, and cross-linked PRs.
+Orchestrate syncing `external/ag-shared/` changes from the current repo to all other AG repos that consume the subrepo. This handles the full `yarn subrepo push` / `pull` cycle, companion changes, and cross-linked PRs.
 
 ## Help
 
@@ -21,6 +21,8 @@ If the user provides a command option of `help`:
 
 -   Git CLI, GitHub CLI (`gh`), and `yarn` must be available.
 -   `git subrepo` must be installed (`git subrepo --version`).
+-   **Use `yarn subrepo` for push and pull** (never raw `git subrepo push`/`pull`). The wrapper handles edge cases like stale parent references. Other subrepo commands (e.g. `git subrepo status`, `git subrepo clean`) use `git subrepo` directly.
+-   **Never edit `external/ag-shared/.gitrepo` manually.** Only subrepo commands should modify this file.
 -   Must be on a **feature branch** (not `latest`, `main`, or `master`).
 -   Working tree must be **clean** (`git status --porcelain` is empty).
 -   The current repo must have `external/ag-shared/.gitrepo`.
@@ -192,7 +194,7 @@ yarn subrepo pull ag-shared
 git diff HEAD~1 --stat
 
 # Verify the pull succeeded
-git subrepo status ag-shared
+git subrepo status external/ag-shared
 ```
 
 If `subrepo pull` fails in any repo, report the error and **STOP** — ask the user how to proceed.
@@ -231,7 +233,7 @@ For each repo (source + all destinations):
 
 ```bash
 # Check subrepo status
-git subrepo status ag-shared
+git subrepo status external/ag-shared
 
 # Verify clean working tree
 git status --porcelain
@@ -340,7 +342,8 @@ All repos verified. Working trees clean.
 -   **Merge conflicts during subrepo pull:** Stop and ask the user to resolve manually. Provide the conflicting files and repo path.
 -   **Auth failures:** Check `gh auth status` and `git remote -v`. Ask the user to authenticate.
 -   **Dirty working tree:** Always stop and report. Never force-clean a destination repo.
--   **Subrepo push/pull failures:** Report the full error output. Common causes: diverged history (pull first, then push), missing remote access.
+-   **Subrepo push/pull failures:** Report the full error output. Common causes: diverged history (pull first, then push), missing remote access. Always use `yarn subrepo` for push/pull — the wrapper handles stale parent references and other edge cases.
+-   **Never edit `.gitrepo` manually:** Only `yarn subrepo` commands should modify `external/ag-shared/.gitrepo`. If the subrepo state is broken, ask the user to resolve it rather than editing the file directly.
 -   **Stale git lock files:** A failed subrepo operation may leave `index.lock` in the git dir. Remove it and restore `.gitrepo` before retrying (see Step 4).
 -   **Worktree branch conflicts:** Never try to `git checkout` the source branch in the main repo — it's already checked out in the worktree. Always `cd` to the worktree working directory for source repo commands.
 

@@ -10,12 +10,14 @@ export type AgEventServiceListener<TGlobalEvents, TEventType extends keyof TGlob
     params: TGlobalEvents[TEventType]
 ) => void;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type WithoutCommon<TCommon, T> = Omit<T, keyof TCommon>;
 
 export type AgRawEvents<TGlobalEvents extends BaseEvents, TCommon> = {
     [K in keyof TGlobalEvents]: WithoutCommon<TCommon, TGlobalEvents[K]>;
 }[keyof TGlobalEvents];
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface AgEventService<TGlobalEvents extends BaseEvents, TCommon> {
     readonly eventServiceType: 'global';
     readonly beanName: 'eventSvc';

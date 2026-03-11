@@ -8,6 +8,7 @@ import type { AgGridCommon } from '../interfaces/iCommon';
 import type { AgComponentSelectorType, ComponentEvent } from './component';
 import { STOP_PROPAGATION_CALLBACKS } from './managedFocusFeature';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class TabGuardComp<TLocalEvent extends string = ComponentEvent> extends AgTabGuardComp<
     BeanCollection,
     GridOptionsWithDefaults,

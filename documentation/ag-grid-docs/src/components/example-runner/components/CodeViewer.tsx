@@ -22,6 +22,8 @@ const ExtensionMap = {
     json: 'js',
 };
 
+const AI_API_TOKEN_REGEX = /(const AI_API_TOKEN\s*=\s*)(['"`])[^'"`]+\2/g;
+
 export function stripOutExampleGeneratorCode(files: FileContents) {
     const mainFiles = ['main.js', 'main.ts', 'index.tsx', 'index.jsx', 'app.component.ts'];
 
@@ -38,6 +40,14 @@ export function stripOutExampleGeneratorCode(files: FileContents) {
             files[mainFile] = files[mainFile]?.replace(TEST_ID_REGEX, '').trim() + '\n';
         }
     });
+
+    // Strip AI API token values from all files before displaying in the code viewer
+    // and show as redacted. If empty, it will show as empty string.
+    for (const fileName of Object.keys(files)) {
+        if (typeof files[fileName] === 'string') {
+            files[fileName] = files[fileName]!.replace(AI_API_TOKEN_REGEX, '$1$2<TOKEN_REDACTED>$2');
+        }
+    }
 }
 
 /**

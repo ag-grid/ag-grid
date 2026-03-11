@@ -2,7 +2,7 @@ import type { _RowSelectionGridApi } from '../api/gridApi';
 import { SelectionColService } from '../columns/selectionColService';
 import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
 import { VERSION } from '../version';
-import { rowSelectionCSS } from './rowSelection.css-GENERATED';
+import rowSelectionCSS from './rowSelection.css';
 import {
     deselectAll,
     deselectAllFiltered,
@@ -17,7 +17,7 @@ import {
 import { SelectionService } from './selectionService';
 
 /**
- * @internal
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export const SharedRowSelectionModule: _ModuleWithApi<_RowSelectionGridApi> = {
     moduleName: 'SharedRowSelection',

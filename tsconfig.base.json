@@ -13,6 +13,7 @@
     "module": "commonjs",
     "lib": ["ES2022", "DOM", "dom.iterable"],
     "skipLibCheck": true,
+    "isolatedModules": true,
     "strictBindCallApply": true,
     "skipDefaultLibCheck": true,
     "noImplicitThis": true,

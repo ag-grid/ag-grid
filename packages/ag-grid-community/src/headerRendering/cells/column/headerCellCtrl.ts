@@ -26,6 +26,7 @@ import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
 import { _getHeaderClassesFromColDef } from '../cssClassApplier';
 import type { HeaderComp } from './headerComp';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     setWidth(width: string): void;
     setAriaSort(sort?: AriaSortState): void;
@@ -45,6 +46,7 @@ type RefreshFunction =
     | 'measuring'
     | 'resize';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgColumn, ResizeFeature> {
     private refreshFunctions: { [key in RefreshFunction]?: () => void } = {};
     private selectAllFeature?: SelectAllFeature;

@@ -9,7 +9,7 @@ import { Component, _warn } from 'ag-grid-community';
 
 import type { FilterPanelRefreshParams } from './filterPanel';
 import { FilterPanel } from './filterPanel';
-import { newFiltersToolPanelCSS } from './newFiltersToolPanel.css-GENERATED';
+import newFiltersToolPanelCSS from './newFiltersToolPanel.css';
 
 interface ToolPanelNewFiltersCompParams<TData = any, TContext = any>
     extends IToolPanelParams<TData, TContext, NewFiltersToolPanelState>,

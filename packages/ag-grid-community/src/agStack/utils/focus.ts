@@ -52,10 +52,12 @@ export function _registerKeyboardFocusEvents(beans: UtilBeanCollection): () => v
     };
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isKeyboardMode(): boolean {
     return keyboardModeActive;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _findFocusableElements(
     rootNode: HTMLElement,
     exclude?: string | null,
@@ -87,6 +89,7 @@ export function _findFocusableElements(
     return diff(nodes, excludeNodes);
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _focusInto(
     rootNode: HTMLElement,
     up = false,
@@ -108,6 +111,7 @@ export function _focusInto(
     return false;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _findNextFocusableElement(
     beans: UtilBeanCollection,
     rootNode: HTMLElement,
@@ -133,6 +137,7 @@ export function _findNextFocusableElement(
     return focusable[nextIndex];
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _findTabbableParent(node: HTMLElement | null, limit: number = 5): HTMLElement | null {
     let counter = 0;
 

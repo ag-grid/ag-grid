@@ -11,7 +11,7 @@ import type { GridOptionsService } from './gridOptionsService';
 import type { AgGridCommon } from './interfaces/iCommon';
 import type { Module } from './interfaces/iModule';
 import { _getAllRegisteredModules } from './modules/moduleRegistry';
-import { coreCSS } from './theming/core/core.css-GENERATED';
+import coreCSS from './theming/core/core.css';
 import { themeQuartz } from './theming/parts/theme/themes';
 import { _error, _warn } from './validation/logging';
 
@@ -32,6 +32,7 @@ const ROW_BORDER_WIDTH = cssVariable('rowBorderWidth', 'border', 1);
 const PINNED_BORDER_WIDTH = cssVariable('pinnedRowBorderWidth', 'border', 1);
 const HEADER_ROW_BORDER_WIDTH = cssVariable('headerRowBorderWidth', 'border', 1);
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _addAdditionalCss(cssMap: Map<string, string[]>, modules: Module[]): void {
     for (const module of modules.sort((a, b) => a.moduleName.localeCompare(b.moduleName))) {
         const moduleCss = module.css;
@@ -41,6 +42,7 @@ export function _addAdditionalCss(cssMap: Map<string, string[]>, modules: Module
     }
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class Environment
     extends BaseEnvironment<
         BeanCollection,

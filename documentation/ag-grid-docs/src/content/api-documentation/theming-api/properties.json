@@ -1,6 +1,7 @@
 {
     "_config_": {
         "codeSrc": "theming-api.AUTO.json",
+        "validate": true,
         "codeWordsMode": "cssVariable"
     },
     "colorsAndDarkMode": {

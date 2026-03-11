@@ -21,6 +21,8 @@ const pathToGlob = (path: string) => path.replace('./', '**/');
 const tests = glob.sync('packages/ag-grid-community/src/**/*.test.ts');
 const unitTests = tests.map(pathToGlob); //.filter((path) => !e2eTests.includes(path));
 
+const e2eTests = glob.sync('packages/ag-grid-community/e2e/**/*.test.ts').map(pathToGlob);
+
 const commonConfig = {
     resolver: undefined, // NX redirects CSS imports https://github.com/nrwl/nx/blob/7495f0664b19e8fa32ef693f43d709173b6a2bc4/packages/jest/plugins/resolver.ts#L43
     prettierPath: null,
@@ -46,6 +48,11 @@ export default {
         {
             displayName: 'ag-grid-community - unit',
             testMatch: unitTests.map(pathFix),
+            ...commonConfig,
+        },
+        {
+            displayName: 'ag-grid-community - e2e',
+            testMatch: e2eTests.map(pathFix),
             ...commonConfig,
         },
     ],

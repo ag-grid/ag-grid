@@ -204,6 +204,9 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 enableRangeSelection: { required: [true] },
             },
         },
+        enableCellSpan: {
+            supportedRowModels: ['clientSide', 'serverSide'],
+        },
         enableRangeSelection: {
             dependencies: {
                 rowDragEntireRow: { required: [false, undefined] },

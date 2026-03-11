@@ -118,7 +118,7 @@ describe('Cell Editing: single-cell batch styles', () => {
 
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 2,
-            cellEditingStopped: 6,
+            cellEditingStopped: 2,
             cellValueChanged: 2,
             rowValueChanged: 0,
             cellEditRequest: 0,
@@ -177,7 +177,7 @@ describe('Cell Editing: single-cell batch styles', () => {
 
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 2,
-            cellEditingStopped: 4,
+            cellEditingStopped: 2,
             cellValueChanged: 0,
             rowValueChanged: 0,
             cellEditRequest: 0,
@@ -229,7 +229,7 @@ describe('Cell Editing: single-cell batch styles', () => {
 
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 1,
-            cellEditingStopped: 2,
+            cellEditingStopped: 1,
             cellValueChanged: 0,
             rowValueChanged: 0,
             cellEditRequest: 0,
@@ -370,7 +370,7 @@ describe('Cell Editing: single-cell batch styles', () => {
 
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 2,
-            cellEditingStopped: 3,
+            cellEditingStopped: 1,
             cellValueChanged: 0,
             rowValueChanged: 0,
             cellEditRequest: 0,
@@ -661,7 +661,7 @@ describe('Cell Editing: single-cell batch styles', () => {
 
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 0,
-            cellEditingStopped: 5,
+            cellEditingStopped: 0,
             cellValueChanged: 2,
             rowValueChanged: 0,
             cellEditRequest: 0,
@@ -722,7 +722,7 @@ describe('Cell Editing: single-cell batch styles', () => {
 
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 2,
-            cellEditingStopped: 6,
+            cellEditingStopped: 2,
             cellValueChanged: 2,
             rowValueChanged: 0,
             cellEditRequest: 0,
@@ -783,7 +783,7 @@ describe('Cell Editing: single-cell batch styles', () => {
 
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 2,
-            cellEditingStopped: 6,
+            cellEditingStopped: 2,
             cellValueChanged: 0,
             rowValueChanged: 0,
             cellEditRequest: 0,
@@ -840,7 +840,7 @@ describe('Cell Editing: single-cell batch styles', () => {
 
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 0,
-            cellEditingStopped: 14,
+            cellEditingStopped: 0,
             cellValueChanged: 0,
             rowValueChanged: 0,
             cellEditRequest: 0,

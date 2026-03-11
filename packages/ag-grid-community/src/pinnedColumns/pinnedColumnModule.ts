@@ -1,6 +1,6 @@
 import type { _ModuleWithoutApi } from '../interfaces/iModule';
 import { VERSION } from '../version';
-import { pinnedColumnModuleCSS } from './pinnedColumnModule.css-GENERATED';
+import pinnedColumnModuleCSS from './pinnedColumnModule.css';
 import { PinnedColumnService } from './pinnedColumnService';
 
 /**
