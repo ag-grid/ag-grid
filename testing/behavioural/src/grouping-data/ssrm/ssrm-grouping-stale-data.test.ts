@@ -54,7 +54,9 @@ describe('ssrm refreshServerSide with expanded groups', () => {
 
             for (const row of matching) {
                 const rawValue = String(row[nextField] ?? '');
-                if (seen.has(rawValue)) continue;
+                if (seen.has(rawValue)) {
+                    continue;
+                }
                 seen.add(rawValue);
 
                 const keyValue = rawValue === '' ? null : rawValue;
