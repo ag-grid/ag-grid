@@ -18,7 +18,7 @@ import { showJsComp } from '../jsComp';
 import { agFlushSync, agUseSyncExternalStore, getNextValueIfDifferent, isComponentStateless } from '../utils';
 
 const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: RowContainerType }) => {
-    const { context, gos, editSvc, visibleCols } = useContext(BeansContext);
+    const { context, gos, editSvc } = useContext(BeansContext);
 
     const enableUses = useContext(RenderModeContext) === 'default';
 
@@ -35,11 +35,6 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
     );
     const [rowId, setRowId] = useState<string | null>(() => rowCtrl.rowId);
     const [rowBusinessKey, setRowBusinessKey] = useState<string | null>(() => rowCtrl.businessKey);
-    const [pinnedWidthsVersion, setPinnedWidthsVersion] = useState(0);
-    const lastPinnedWidthsRef = useRef<{ left: number; center: number; right: number; printLayout: boolean } | null>(
-        null
-    );
-
     const [userStyles, setUserStyles] = useState<RowStyle | undefined>(() => rowCtrl.rowStyles);
     const cellCtrlsRef = useRef<CellCtrl[] | null>(null);
     const [cellCtrlsFlushSync, setCellCtrlsFlushSync] = useState<CellCtrl[] | null>(() => null);
@@ -56,6 +51,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
 
     const eGui = useRef<HTMLDivElement | null>(null);
     const ePinnedLeftCells = useRef<HTMLDivElement | null>(null);
+    const eScrollingCells = useRef<HTMLDivElement | null>(null);
     const ePinnedRightCells = useRef<HTMLDivElement | null>(null);
     const fullWidthCompRef = useRef<ICellRenderer>();
     const fullWidthParamsRef = useRef<ICellRendererParams>();
@@ -153,25 +149,8 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
                 }
             },
             getPinnedLeftRowElement: () => ePinnedLeftCells.current ?? undefined,
+            getScrollingRowElement: () => eScrollingCells.current ?? undefined,
             getPinnedRightRowElement: () => ePinnedRightCells.current ?? undefined,
-            refreshPinnedCellGroupWidths: () => {
-                const printLayout = rowCtrl.printLayout;
-                const left = printLayout ? 0 : visibleCols.getLeftStickyColumnContainerWidth();
-                const center = visibleCols.bodyWidth;
-                const right = printLayout ? 0 : visibleCols.getRightStickyColumnContainerWidth();
-                const prev = lastPinnedWidthsRef.current;
-                if (
-                    prev &&
-                    prev.left === left &&
-                    prev.center === center &&
-                    prev.right === right &&
-                    prev.printLayout === printLayout
-                ) {
-                    return;
-                }
-                lastPinnedWidthsRef.current = { left, center, right, printLayout };
-                setPinnedWidthsVersion((v) => v + 1);
-            },
             showFullWidth: (compDetails) => {
                 fullWidthParamsRef.current = compDetails.params;
                 setFullWidthCompDetails(compDetails);
@@ -213,7 +192,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
     const showFullWidthFramework = isFullWidth && fullWidthCompDetails?.componentFromFramework;
     const showCells = !isFullWidth && cellCtrlsMerged != null;
 
-    const { leftCellCtrls, centerCellCtrls, rightCellCtrls, leftWidth, centerWidth, rightWidth } = useMemo(() => {
+    const { leftCellCtrls, centerCellCtrls, rightCellCtrls } = useMemo(() => {
         const left: CellCtrl[] = [];
         const center: CellCtrl[] = [];
         const right: CellCtrl[] = [];
@@ -229,19 +208,14 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
             }
         }
 
-        const leftWidth = rowCtrl.printLayout ? 0 : visibleCols.getLeftStickyColumnContainerWidth();
-        const centerWidth = visibleCols.bodyWidth;
-        const rightWidth = rowCtrl.printLayout ? 0 : visibleCols.getRightStickyColumnContainerWidth();
-
         return {
             leftCellCtrls: left,
             centerCellCtrls: center,
             rightCellCtrls: right,
-            leftWidth,
-            centerWidth,
-            rightWidth,
         };
-    }, [cellCtrlsMerged, pinnedWidthsVersion, rowCtrl.printLayout, visibleCols]);
+    }, [cellCtrlsMerged]);
+
+    const { leftWidth, centerWidth, rightWidth } = rowCtrl.getPinnedCellGroupWidths();
 
     const reactFullWidthCellRendererStateless = useMemo(() => {
         const res =
@@ -294,7 +268,12 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
                     >
                         {showCellsJsx(leftCellCtrls)}
                     </div>
-                    <div className="ag-grid-scrolling-cells" role="presentation" style={{ width: centerWidth }}>
+                    <div
+                        className="ag-grid-scrolling-cells"
+                        role="presentation"
+                        ref={eScrollingCells}
+                        style={{ width: centerWidth }}
+                    >
                         {showCellsJsx(centerCellCtrls)}
                     </div>
                     <div

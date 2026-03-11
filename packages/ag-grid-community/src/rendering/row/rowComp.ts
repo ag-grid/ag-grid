@@ -18,9 +18,6 @@ export class RowComp extends Component {
     private readonly ePinnedLeftCells: HTMLElement | undefined;
     private readonly eScrollingCells: HTMLElement | undefined;
     private readonly ePinnedRightCells: HTMLElement | undefined;
-    private pinnedLeftWidth: number | undefined;
-    private centerWidth: number | undefined;
-    private pinnedRightWidth: number | undefined;
 
     private domOrder: boolean;
     private readonly cellComps: Map<CellCtrlInstanceId, CellComp | null> = new Map();
@@ -60,8 +57,8 @@ export class RowComp extends Component {
             setDomOrder: (domOrder) => (this.domOrder = domOrder),
             setCellCtrls: (cellCtrls) => this.setCellCtrls(cellCtrls),
             getPinnedLeftRowElement: () => this.ePinnedLeftCells,
+            getScrollingRowElement: () => this.eScrollingCells,
             getPinnedRightRowElement: () => this.ePinnedRightCells,
-            refreshPinnedCellGroupWidths: () => this.refreshPinnedCellGroupWidths(),
             showFullWidth: (compDetails) => this.showFullWidth(compDetails),
             getFullWidthCellRenderer: () => this.fullWidthCellRenderer,
             getFullWidthCellRendererParams: () => this.fullWidthCellRendererParams,
@@ -130,7 +127,6 @@ export class RowComp extends Component {
         }
 
         this.destroyCells(cellsToRemove);
-        this.updatePinnedCellGroupWidths();
         this.ensureDomOrder(cellCtrls);
     }
 
@@ -179,35 +175,6 @@ export class RowComp extends Component {
         const cellComp = new CellComp(this.beans, cellCtrl, this.rowCtrl.printLayout, eParent, editing);
         this.cellComps.set(cellCtrl.instanceId, cellComp);
         eParent.appendChild(cellComp.getGui());
-    }
-
-    private updatePinnedCellGroupWidths(): void {
-        if (!this.ePinnedLeftCells || !this.ePinnedRightCells || !this.eScrollingCells) {
-            return;
-        }
-
-        const { visibleCols } = this.beans;
-        const leftWidth = visibleCols.getLeftStickyColumnContainerWidth();
-        const centerWidth = visibleCols.bodyWidth;
-        const rightWidth = visibleCols.getRightStickyColumnContainerWidth();
-        if (this.pinnedLeftWidth !== leftWidth) {
-            this.ePinnedLeftCells.style.width = `${leftWidth}px`;
-            this.ePinnedLeftCells.style.display = leftWidth > 0 ? '' : 'none';
-            this.pinnedLeftWidth = leftWidth;
-        }
-        if (this.centerWidth !== centerWidth) {
-            this.eScrollingCells.style.width = `${centerWidth}px`;
-            this.centerWidth = centerWidth;
-        }
-        if (this.pinnedRightWidth !== rightWidth) {
-            this.ePinnedRightCells.style.width = `${rightWidth}px`;
-            this.ePinnedRightCells.style.display = rightWidth > 0 ? '' : 'none';
-            this.pinnedRightWidth = rightWidth;
-        }
-    }
-
-    private refreshPinnedCellGroupWidths(): void {
-        this.updatePinnedCellGroupWidths();
     }
 
     public override destroy(): void {

@@ -76,8 +76,8 @@ export interface IRowComp {
     toggleCss(cssClassName: string, on: boolean): void;
     setCellCtrls(cellCtrls: CellCtrl[], useFlushSync: boolean): void;
     getPinnedLeftRowElement(): HTMLElement | undefined;
+    getScrollingRowElement(): HTMLElement | undefined;
     getPinnedRightRowElement(): HTMLElement | undefined;
-    refreshPinnedCellGroupWidths(): void;
     showFullWidth(compDetails: UserCompDetails): void;
     getFullWidthCellRenderer(): ICellRenderer | null | undefined;
     getFullWidthCellRendererParams(): ICellRendererParams | undefined;
@@ -100,6 +100,35 @@ export interface RowGui {
 interface CellCtrlListAndMap {
     list: CellCtrl[];
     map: { [key: ColumnInstanceId]: CellCtrl };
+}
+
+interface PinnedCellGroupWidths {
+    leftWidth: number;
+    centerWidth: number;
+    rightWidth: number;
+}
+
+function applyPinnedCellGroupWidthsToElements(
+    widths: PinnedCellGroupWidths,
+    ePinnedLeftCells: HTMLElement | undefined,
+    eScrollingCells: HTMLElement | undefined,
+    ePinnedRightCells: HTMLElement | undefined
+): void {
+    const { leftWidth, centerWidth, rightWidth } = widths;
+
+    if (ePinnedLeftCells) {
+        ePinnedLeftCells.style.width = `${leftWidth}px`;
+        ePinnedLeftCells.style.display = leftWidth > 0 ? '' : 'none';
+    }
+
+    if (eScrollingCells) {
+        eScrollingCells.style.width = `${centerWidth}px`;
+    }
+
+    if (ePinnedRightCells) {
+        ePinnedRightCells.style.width = `${rightWidth}px`;
+        ePinnedRightCells.style.display = rightWidth > 0 ? '' : 'none';
+    }
 }
 
 type RowCtrlEvent = RenderedRowEvent;
@@ -627,12 +656,37 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             const cellControls = this.getCellCtrlsForContainer(item.containerType);
             item.rowComp.setCellCtrls(cellControls, useFlushSync);
         }
+
+        this.refreshPinnedCellGroupWidths();
     }
 
     private refreshPinnedCellGroupWidths(): void {
+        const widths = this.getPinnedCellGroupWidths();
         for (const gui of this.allRowGuis) {
-            gui.rowComp.refreshPinnedCellGroupWidths();
+            applyPinnedCellGroupWidthsToElements(
+                widths,
+                gui.rowComp.getPinnedLeftRowElement(),
+                gui.rowComp.getScrollingRowElement(),
+                gui.rowComp.getPinnedRightRowElement()
+            );
         }
+    }
+
+    public getPinnedCellGroupWidths(): PinnedCellGroupWidths {
+        const { visibleCols } = this.beans;
+        if (this.printLayout) {
+            return {
+                leftWidth: 0,
+                centerWidth: visibleCols.bodyWidth,
+                rightWidth: 0,
+            };
+        }
+
+        return {
+            leftWidth: visibleCols.getLeftStickyColumnContainerWidth(),
+            centerWidth: visibleCols.bodyWidth,
+            rightWidth: visibleCols.getRightStickyColumnContainerWidth(),
+        };
     }
 
     private getCellCtrlsForContainer(containerType: RowContainerType) {
