@@ -395,8 +395,8 @@ describe('deferred column tool panel pivot mode', () => {
         return dragHandle!;
     }
 
-    function createSortEvent(): MouseEvent {
-        return new MouseEvent('click', { bubbles: true });
+    function createSortEvent(init: MouseEventInit = {}): MouseEvent {
+        return new MouseEvent('click', { bubbles: true, ...init });
     }
 
     function cancelDeferredChanges(toolPanel: any): void {
@@ -419,6 +419,20 @@ describe('deferred column tool panel pivot mode', () => {
         );
         expect(hasYearHeaderGroupText).toBe(false);
         expect(gridApi.getPivotResultColumns() == null).toBe(true);
+    });
+
+    test('turning pivot mode off and applying should update the pivotMode grid option', async () => {
+        const { gridApi, toolPanel } = await createDeferredPivotModeGrid();
+
+        expect(gridApi.getGridOption('pivotMode')).toBe(true);
+
+        toolPanel.editStrategy.setPivotMode(false, 'toolPanelUi');
+        toolPanel['onPivotModePanelValueChanged']();
+        toolPanel.editStrategy.commit();
+        await waitForNoLoadingRows(gridApi);
+
+        expect(gridApi.isPivotMode()).toBe(false);
+        expect(gridApi.getGridOption('pivotMode')).toBe(false);
     });
 
     test('turning defer mode off then toggling pivot mode should remove and restore the year label immediately', async () => {
@@ -520,6 +534,18 @@ describe('deferred column tool panel pivot mode', () => {
         toolPanel.editStrategy.commit();
 
         expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['age', 'athlete', 'country']);
+    });
+
+    test('multiple deferred column moves should interpret target indices against the live order', async () => {
+        const { gridApi, toolPanel } = await createDeferredGroupedNonPivotGrid();
+        const athlete = gridApi.getColumn('athlete')!;
+        const year = gridApi.getColumn('year')!;
+
+        toolPanel.editStrategy.moveColumns([athlete], 2, 'toolPanelUi');
+        toolPanel.editStrategy.moveColumns([year], 1, 'toolPanelUi');
+        toolPanel.editStrategy.commit();
+
+        expect(getPrimaryColumnOrder(toolPanel)).toEqual(['age', 'athlete', 'year', 'country']);
     });
 
     test('reordering column groups in non-pivot mode applies only after commit', async () => {
@@ -816,6 +842,18 @@ describe('deferred column tool panel pivot mode', () => {
         expect(gridApi.getColumn('gold')!.getAggFunc()).toBe('sum');
     });
 
+    test('getColumnAggFunc returns the staged agg function before commit', async () => {
+        const { gridApi, toolPanel } = await createDeferredNonPivotAggregationGrid();
+        const gold = gridApi.getColumn('gold')!;
+
+        expect(toolPanel.editStrategy.getColumnAggFunc(gold)).toBe('sum');
+
+        toolPanel.editStrategy.setColumnAggFunc(gold, 'max', 'toolPanelUi');
+
+        expect(gold.getAggFunc()).toBe('sum');
+        expect(toolPanel.editStrategy.getColumnAggFunc(gold)).toBe('max');
+    });
+
     test('changing agg function on an existing value pill applies only after commit in pivot mode', async () => {
         const { gridApi, toolPanel } = await createDeferredPivotAggregationGrid();
         const gold = gridApi.getColumn('gold')!;
@@ -864,6 +902,38 @@ describe('deferred column tool panel pivot mode', () => {
 
         toolPanel.editStrategy.progressSortFromEvent(country, createSortEvent());
         cancelDeferredChanges(toolPanel);
+
+        expect(gridApi.getColumn('country')!.getSort()).toBeNull();
+    });
+
+    test('multi-sort in deferred mode applies all staged sorts after commit', async () => {
+        const { gridApi, toolPanel } = await createDeferredNonPivotGrid();
+        const country = gridApi.getColumn('country')!;
+        const sport = gridApi.getColumn('sport')!;
+
+        toolPanel.editStrategy.progressSortFromEvent(country, createSortEvent());
+        toolPanel.editStrategy.progressSortFromEvent(sport, createSortEvent({ shiftKey: true }));
+
+        expect(gridApi.getColumn('country')!.getSort()).toBeNull();
+        expect(gridApi.getColumn('sport')!.getSort()).toBeNull();
+
+        toolPanel.editStrategy.commit();
+
+        expect(gridApi.getColumn('country')!.getSort()).toBe('asc');
+        expect(gridApi.getColumn('country')!.getSortIndex()).toBe(0);
+        expect(gridApi.getColumn('sport')!.getSort()).toBe('asc');
+        expect(gridApi.getColumn('sport')!.getSortIndex()).toBe(1);
+    });
+
+    test('sorting in deferred mode should no-op when sort service is unavailable', async () => {
+        const { gridApi, toolPanel } = await createDeferredNonPivotGrid();
+        const country = gridApi.getColumn('country')!;
+
+        (toolPanel.editStrategy.beans as any).sortSvc = undefined;
+
+        expect(() => toolPanel.editStrategy.progressSortFromEvent(country, createSortEvent())).not.toThrow();
+
+        toolPanel.editStrategy.commit();
 
         expect(gridApi.getColumn('country')!.getSort()).toBeNull();
     });
@@ -1302,7 +1372,7 @@ describe('deferred column tool panel pivot mode', () => {
         expect(gridApi.isPivotMode()).toBe(false);
     });
 
-    test('commit should call exactly one state-application path', async () => {
+    test('commit should update pivot mode through grid options once', async () => {
         const { toolPanel } = await createDeferredPivotModeGrid();
         const { gos, stateSvc, colModel, colMoves, rowGroupColsSvc, valueColsSvc, pivotColsSvc } =
             toolPanel.editStrategy.beans;
@@ -1320,8 +1390,8 @@ describe('deferred column tool panel pivot mode', () => {
         toolPanel.editStrategy.commit();
 
         expect(setStateSpy?.mock.calls.length ?? 0).toBe(1);
-        expect(updateGridOptionsSpy).not.toHaveBeenCalled();
-        expect(setPivotModeSpy).not.toHaveBeenCalled();
+        expect(updateGridOptionsSpy).toHaveBeenCalledTimes(1);
+        expect(setPivotModeSpy).toHaveBeenCalledTimes(1);
         expect(moveColumnsSpy).not.toHaveBeenCalled();
         expect(setRowGroupColumnsSpy).not.toHaveBeenCalled();
         expect(setValueColumnsSpy).not.toHaveBeenCalled();
