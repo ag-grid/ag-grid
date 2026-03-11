@@ -1,3 +1,4 @@
+import type { HorizontalDirection } from '../agStack/constants/direction';
 import { _areEqual, _last } from '../agStack/utils/array';
 import type { ColumnModel } from '../columns/columnModel';
 import type { VisibleColsService } from '../columns/visibleColsService';
@@ -409,16 +410,33 @@ export function clientXToSectionX(clientX: number, pinned: ColumnPinnedType, ctr
     return clientX - eSection.getBoundingClientRect().left;
 }
 
+export const normaliseDirection = (
+    hDirection: HorizontalDirection,
+    isRtl: boolean,
+    pinned: ColumnPinnedType | null
+): HorizontalDirection => {
+    if (isRtl && pinned !== 'left') {
+        switch (hDirection) {
+            case 'left':
+                return 'right';
+            case 'right':
+                return 'left';
+        }
+    }
+
+    return hDirection;
+};
+
 export function normaliseX(params: {
     x: number;
     pinned?: ColumnPinnedType;
-    gos: GridOptionsService;
+    isRtl: boolean;
     ctrlsSvc: CtrlsService;
 }): number {
-    const { gos, ctrlsSvc, pinned } = params;
+    const { isRtl, ctrlsSvc, pinned } = params;
     let { x } = params;
 
-    if (gos.get('enableRtl')) {
+    if (isRtl && pinned !== 'left') {
         const eSection = getSectionElement(pinned ?? null, ctrlsSvc);
         if (!eSection) {
             return 0;

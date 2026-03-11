@@ -1,4 +1,3 @@
-import type { HorizontalDirection } from '../../agStack/constants/direction';
 import { _last } from '../../agStack/utils/array';
 import { _exists, _missing } from '../../agStack/utils/generic';
 import { BeanStub } from '../../context/beanStub';
@@ -14,6 +13,7 @@ import {
     attemptMoveColumns,
     clientXToSectionX,
     getBestColumnMoveIndexFromXPosition,
+    normaliseDirection,
     normaliseX,
 } from '../internalColumnMoveUtils';
 import type { DropListener } from './bodyDropTarget';
@@ -135,7 +135,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         }
 
         const sectionX = clientXToSectionX(draggingEvent.event.clientX, this.pinned, ctrlsSvc);
-        const mouseX = normaliseX({ x: sectionX, pinned: this.pinned, gos, ctrlsSvc });
+        const mouseX = normaliseX({ x: sectionX, pinned: this.pinned, isRtl: gos.get('enableRtl'), ctrlsSvc });
 
         // if the user is dragging into the panel, ie coming from the side panel into the main grid,
         // we don't want to scroll the grid this time, it would appear like the table is jumping
@@ -256,7 +256,8 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         finished: boolean
     ): void {
         const allMovingColumns = this.getAllMovingColumns(draggingEvent);
-        const fromLeft = this.normaliseDirection(draggingEvent.hDirection!) === 'right';
+        const fromLeft =
+            normaliseDirection(draggingEvent.hDirection!, this.gos.get('enableRtl'), this.pinned) === 'right';
         const isFromHeader = draggingEvent.dragSource.type === DragSourceType.HeaderCell;
 
         const params = this.getMoveColumnParams({
@@ -490,37 +491,21 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         };
     }
 
-    private normaliseDirection(hDirection: HorizontalDirection): HorizontalDirection {
-        if (this.gos.get('enableRtl')) {
-            switch (hDirection) {
-                case 'left':
-                    return 'right';
-                case 'right':
-                    return 'left';
-            }
-        }
-
-        return hDirection;
-    }
-
     private getNormalisedColumnLeft(col: AgColumn, padding: number): number | null {
-        const { gos, ctrlsSvc } = this.beans;
+        const { gos } = this.beans;
         const left = col.getLeft();
 
         if (left == null) {
             return null;
         }
 
+        let diff = padding;
+
         if (gos.get('enableRtl') && col.getPinned() === 'left') {
-            return normaliseX({
-                x: left + col.getActualWidth() - padding,
-                pinned: col.getPinned(),
-                gos,
-                ctrlsSvc,
-            });
+            diff = col.getActualWidth() - padding;
         }
 
-        return left + padding;
+        return left + diff;
     }
 
     private isAttemptingToPin(columns: AgColumn[]) {

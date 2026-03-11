@@ -1,5 +1,4 @@
 import type { CtrlsService } from '../ctrlsService';
-import type { GridOptionsService } from '../gridOptionsService';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
 import { clientXToSectionX, normaliseX } from './internalColumnMoveUtils';
 
@@ -39,18 +38,12 @@ function createCtrlsSvc(viewport: HTMLElement): CtrlsService {
     } as CtrlsService;
 }
 
-function createGos(enableRtl = false): GridOptionsService {
-    return {
-        get: (key: string) => (key === 'enableRtl' ? enableRtl : undefined),
-    } as GridOptionsService;
-}
-
 describe('normaliseX', () => {
     test('returns x unchanged in LTR mode', () => {
         const viewport = createSectionElements({ left: 100, pinnedLeftWidth: 50, scrollingWidth: 900 });
         const result = normaliseX({
             x: 250,
-            gos: createGos(false),
+            isRtl: false,
             ctrlsSvc: createCtrlsSvc(viewport),
         });
 

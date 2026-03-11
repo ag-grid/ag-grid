@@ -141,11 +141,12 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         const left = rect.left;
         const isGroup = isColumnGroup(column);
         const width = isGroup ? rect.width : column.getActualWidth();
-        const isLeft = (hDirection === 'left') !== gos.get('enableRtl');
+        const isRtl = gos.get('enableRtl');
+        const isLeft = (hDirection === 'left') !== isRtl;
 
         const screenX = isLeft ? left - 20 : left + width + 20;
         const sectionX = clientXToSectionX(screenX, pinned, ctrlsSvc);
-        const xPosition = normaliseX({ x: sectionX, pinned, gos, ctrlsSvc });
+        const xPosition = normaliseX({ x: sectionX, pinned, isRtl, ctrlsSvc });
         const headerPosition = focusSvc.focusedHeader;
 
         attemptMoveColumns({
