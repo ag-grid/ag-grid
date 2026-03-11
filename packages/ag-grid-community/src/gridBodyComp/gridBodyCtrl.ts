@@ -1,4 +1,4 @@
-import { _isElementChildOfClass } from '../agStack/utils/dom';
+import { _getInnerWidth, _isElementChildOfClass } from '../agStack/utils/dom';
 import type { ColumnModel } from '../columns/columnModel';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -229,6 +229,10 @@ export class GridBodyCtrl extends BeanStub {
 
     public getHorizontalViewportWidth(): number {
         return this.eGridViewport.getBoundingClientRect().width;
+    }
+
+    public getViewportWidthWithoutScrollbar(): number {
+        return Math.max(0, _getInnerWidth(this.eGridViewport) - this.getVerticalScrollbarWidth());
     }
 
     private setGridRootRole(): void {

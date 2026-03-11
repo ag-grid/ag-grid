@@ -1,4 +1,3 @@
-import { _getInnerWidth } from '../agStack/utils/dom';
 import { dispatchColumnPinnedEvent } from '../columns/columnEventUtils';
 import { isRowNumberCol } from '../columns/columnUtils';
 import type { NamedBean } from '../context/bean';
@@ -18,7 +17,7 @@ import { _warn } from '../validation/logging';
 export class PinnedColumnService extends BeanStub implements NamedBean {
     beanName = 'pinnedCols' as const;
 
-    private gridBodyCtrl: GridBodyCtrl;
+    private gridBodyCtrl?: GridBodyCtrl;
 
     public leftWidth: number;
     public rightWidth: number;
@@ -31,6 +30,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         this.addManagedEventListeners({
             displayedColumnsChanged: listener,
             displayedColumnsWidthChanged: listener,
+            columnPinned: this.keepPinnedColumnsNarrowerThanViewport.bind(this),
         });
         this.addManagedPropertyListener('domLayout', listener);
     }
@@ -54,7 +54,11 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
     }
 
     public keepPinnedColumnsNarrowerThanViewport(): void {
-        const bodyWidth = _getInnerWidth(this.gridBodyCtrl.eGridViewport);
+        if (!this.gridBodyCtrl) {
+            return;
+        }
+
+        const bodyWidth = this.getAvailableViewportWidth();
 
         if (bodyWidth <= 50) {
             return;
@@ -165,7 +169,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         const pinned = column.getPinned();
         if (pinned) {
             const { leftWidth, rightWidth } = this;
-            const bodyWidth = _getInnerWidth(this.beans.ctrlsSvc.getGridBodyCtrl().eGridViewport) - 50;
+            const bodyWidth = this.getAvailableViewportWidth() - 50;
 
             if (leftWidth + rightWidth + diff > bodyWidth) {
                 if (bodyWidth > leftWidth + rightWidth) {
@@ -178,6 +182,10 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         }
 
         return diff;
+    }
+
+    private getAvailableViewportWidth(): number {
+        return this.gridBodyCtrl?.getViewportWidthWithoutScrollbar() ?? 0;
     }
 
     private getPinnedColumnsOverflowingViewport(viewportWidth: number): {

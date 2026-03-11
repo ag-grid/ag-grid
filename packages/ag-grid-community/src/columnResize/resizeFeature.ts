@@ -1,4 +1,4 @@
-import { _getInnerWidth, _setDisplayed } from '../agStack/utils/dom';
+import { _setDisplayed } from '../agStack/utils/dom';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { IHeaderResizeFeature } from '../headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
@@ -83,7 +83,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
         if (this.column.getPinned()) {
             const leftWidth = pinnedCols?.leftWidth ?? 0;
             const rightWidth = pinnedCols?.rightWidth ?? 0;
-            const bodyWidth = _getInnerWidth(ctrlsSvc.getGridBodyCtrl().eGridViewport) - 50;
+            const bodyWidth = ctrlsSvc.getGridBodyCtrl().getViewportWidthWithoutScrollbar() - 50;
 
             if (leftWidth + rightWidth + (resizeAmountNormalised - lastResizeAmount) > bodyWidth) {
                 return;

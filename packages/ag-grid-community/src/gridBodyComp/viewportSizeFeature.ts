@@ -19,6 +19,7 @@ export class ViewportSizeFeature extends BeanStub {
     private centerWidth: number;
     private bodyHeight: number;
     private centerViewportResizeQueued = false;
+    private viewportGeometryRefreshQueued = false;
     private scrollVisibilityRefreshQueued = false;
 
     constructor(private readonly centerContainerCtrl: RowContainerCtrl) {
@@ -31,13 +32,13 @@ export class ViewportSizeFeature extends BeanStub {
             this.listenForResize();
         });
 
-        const scheduleCenterViewportResize = this.scheduleCenterViewportResize.bind(this);
+        const scheduleViewportGeometryRefresh = this.scheduleViewportGeometryRefresh.bind(this);
         this.addManagedEventListeners({
             scrollbarWidthChanged: this.onScrollbarWidthChanged.bind(this),
-            scrollVisibilityChanged: this.onCenterViewportResized.bind(this),
-            pinnedHeightChanged: scheduleCenterViewportResize,
-            pinnedRowsChanged: scheduleCenterViewportResize,
-            headerHeightChanged: scheduleCenterViewportResize,
+            scrollVisibilityChanged: this.onViewportGeometryChanged.bind(this),
+            pinnedHeightChanged: scheduleViewportGeometryRefresh,
+            pinnedRowsChanged: scheduleViewportGeometryRefresh,
+            headerHeightChanged: scheduleViewportGeometryRefresh,
         });
 
         this.addManagedPropertyListeners(['alwaysShowHorizontalScroll', 'alwaysShowVerticalScroll'], () => {
@@ -91,6 +92,26 @@ export class ViewportSizeFeature extends BeanStub {
     }
 
     private onScrollbarWidthChanged() {
+        this.checkViewportAndScrolls();
+    }
+
+    private scheduleViewportGeometryRefresh(): void {
+        if (this.viewportGeometryRefreshQueued) {
+            return;
+        }
+        this.viewportGeometryRefreshQueued = true;
+
+        const { beans } = this;
+        _requestAnimationFrame(beans, () => {
+            this.viewportGeometryRefreshQueued = false;
+            this.onViewportGeometryChanged();
+        });
+    }
+
+    private onViewportGeometryChanged(): void {
+        if (!this.gridBodyCtrl) {
+            return;
+        }
         this.checkViewportAndScrolls();
     }
 
