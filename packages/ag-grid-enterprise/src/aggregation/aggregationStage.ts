@@ -62,17 +62,28 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         'grandTotalRow',
     ];
 
-    // Aggregation is only meaningful when group/treeData nodes exist.
+    /** Tracks whether the previous execute() call produced aggData, so we only clear once on transition. */
+    private hadAggregation = false;
+
     // Stale aggData on demoted nodes is cleared by the group stage (setRowNodeGroup), not here.
     public execute(changedPath: ChangedPath | undefined): void {
         const { gos, beans } = this;
         const userAggFunc = gos.getCallback('getGroupRowAgg');
         const valueColumns = beans.valueColsSvc?.columns;
 
-        // Nothing to aggregate without value columns or a user agg callback.
         if (!valueColumns?.length && !userAggFunc) {
+            if (this.hadAggregation) {
+                // Transition: value columns were removed. Clear stale aggData once.
+                this.hadAggregation = false;
+                const colModel = beans.colModel;
+                _forEachChangedGroupDepthFirst(beans.rowModel.rootNode, changedPath, (rowNode) => {
+                    setAggDataWithSiblings(rowNode, null, colModel);
+                });
+            }
             return;
         }
+
+        this.hadAggregation = true;
 
         const colModel = beans.colModel;
         const aggFuncSvc = beans.aggFuncSvc;
