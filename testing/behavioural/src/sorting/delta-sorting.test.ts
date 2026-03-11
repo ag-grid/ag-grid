@@ -1,4 +1,5 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
+import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
 
@@ -666,5 +667,46 @@ describe('Delta Sorting', () => {
             ├── LEAF id:delta-ar17 value:17
             └── LEAF id:delta-ar18 value:18
         `);
+    });
+});
+
+describe('Delta Sorting — pivot-triggered changedPath deactivation', () => {
+    const gridMgr = new TestGridsManager({
+        modules: [ClientSideRowModelModule, RowGroupingModule, PivotModule],
+    });
+
+    test('falls back to full sort when pivotStage nullifies the changedPath', () => {
+        // When a transaction introduces a new unique pivot column value, pivotStage returns true
+        // because the set of generated pivot columns changed (uniqueValuesChanged=true in
+        // executePivotOn). CSRM then sets changedPath to undefined, so sortStage receives
+        // undefined and doDeltaSort takes the direct full-sort path.
+        //
+        // Initial data has year 2020 only. Adding a row with year 2021 triggers the nullification.
+        // After the transaction, groups must still be in correct sorted order (A < B < C).
+        const api = gridMgr.createGrid('deltaSort-pivot-deactivate', {
+            columnDefs: [
+                { field: 'region', rowGroup: true, hide: true },
+                { field: 'year', pivot: true, hide: true },
+                { field: 'sales', aggFunc: 'sum', hide: true },
+            ],
+            autoGroupColumnDef: { sort: 'asc' },
+            pivotMode: true,
+            deltaSort: true,
+            rowData: [
+                { id: '1', region: 'B', year: 2020, sales: 100 },
+                { id: '2', region: 'A', year: 2020, sales: 200 },
+            ],
+            getRowId: ({ data }) => data.id,
+        });
+
+        // Adding year 2021 → uniqueValuesChanged → pivotStage returns true →
+        // CSRM sets changedPath=undefined → doDeltaSort receives undefined → full sort.
+        applyTransactionChecked(api, { add: [{ id: '3', region: 'C', year: 2021, sales: 50 }] });
+
+        // Groups must be sorted A < B < C despite the nullified changedPath.
+        expect(api.getDisplayedRowCount()).toBe(3);
+        expect(api.getDisplayedRowAtIndex(0)?.key).toBe('A');
+        expect(api.getDisplayedRowAtIndex(1)?.key).toBe('B');
+        expect(api.getDisplayedRowAtIndex(2)?.key).toBe('C');
     });
 });

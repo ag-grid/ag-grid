@@ -9,8 +9,7 @@ import { SimplePRNG, TestGridsManager } from '../../../test-utils';
 
 suite('treeData with getDataPath', () => {
     const gridsManager = new TestGridsManager({
-        includeDefaultModules: false,
-        mockGridLayout: false,
+        benchmark: true,
         modules: [ClientSideRowModelModule, ClientSideRowModelApiModule, TreeDataModule],
     });
 
@@ -30,9 +29,6 @@ suite('treeData with getDataPath', () => {
                 groupDefaultExpanded: -1,
                 getDataPath: (data: { path: string[] }) => data.path,
                 getRowId: ({ data }: { data: { id: string } }) => data.id,
-                ensureDomOrder: false,
-                suppressRowVirtualisation: false,
-                suppressColumnVirtualisation: false,
             });
         },
         teardown: () => {

@@ -1,0 +1,1 @@
+export const agVirtualListDragFeatureCSS = /*css*/ `.ag-list-item-hovered:after{background-color:var(--ag-accent-color);content:"";height:1px;left:0;position:absolute;right:0}.ag-item-highlight-top:after{top:0}.ag-item-highlight-bottom:after{bottom:0}`;

@@ -8,7 +8,7 @@ import type {
     RowNode,
     _IRowNodeFilterAggregateStage,
 } from 'ag-grid-community';
-import { BeanStub, _getGroupAggFiltering } from 'ag-grid-community';
+import { BeanStub, _forEachChangedGroupDepthFirst, _getGroupAggFiltering } from 'ag-grid-community';
 
 export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowNodeFilterAggregateStage {
     beanName = 'filterAggStage' as const;
@@ -22,7 +22,7 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowN
         this.filterManager = beans.filterManager;
     }
 
-    public execute(changedPath: ChangedPath): void {
+    public execute(changedPath: ChangedPath | undefined): void {
         const isPivotMode = this.beans.colModel.isPivotMode();
         const isAggFilterActive =
             this.filterManager?.isAggregateFilterPresent() || this.filterManager?.isAggregateQuickFilterPresent();
@@ -44,8 +44,9 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowN
             if (node.childrenAfterFilter) {
                 node.childrenAfterAggFilter = node.childrenAfterFilter;
                 if (recursive) {
-                    for (const child of node.childrenAfterAggFilter) {
-                        preserveChildren(child, recursive);
+                    const children = node.childrenAfterAggFilter;
+                    for (let i = 0, len = children.length; i < len; ++i) {
+                        preserveChildren(children[i], recursive);
                     }
                 }
                 this.setAllChildrenCount(node);
@@ -78,7 +79,11 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowN
             }
         };
 
-        changedPath.forEachChangedNodeDepthFirst(isAggFilterActive ? filterChildren : preserveChildren, true);
+        _forEachChangedGroupDepthFirst(
+            this.beans.rowModel.rootNode,
+            changedPath,
+            isAggFilterActive ? filterChildren : preserveChildren
+        );
     }
 
     /** for tree data, we include all children, groups and leafs */
@@ -102,14 +107,16 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowN
 
     /* for grid data, we only count the leafs */
     private setAllChildrenCountGridGrouping(rowNode: RowNode) {
+        const children = rowNode.childrenAfterAggFilter!;
         let allChildrenCount = 0;
-        rowNode.childrenAfterAggFilter!.forEach((child: RowNode) => {
+        for (let i = 0, len = children.length; i < len; ++i) {
+            const child = children[i];
             if (child.group) {
                 allChildrenCount += child.allChildrenCount as any;
             } else {
                 allChildrenCount++;
             }
-        });
+        }
         rowNode.setAllChildrenCount(allChildrenCount);
     }
 
@@ -119,7 +126,7 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowN
             return;
         }
 
-        if (this.gos.get('treeData')) {
+        if (this.beans.groupStage?.treeData) {
             this.setAllChildrenCountTreeData(rowNode);
         } else {
             this.setAllChildrenCountGridGrouping(rowNode);

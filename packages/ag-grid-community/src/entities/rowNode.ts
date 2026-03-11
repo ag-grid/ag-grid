@@ -72,7 +72,12 @@ export class RowNode<TData = any>
     /** When using group rows, contains the value without casting to string */
     public groupValue: any;
 
-    /** If using row grouping and aggregation, contains the aggregation data. */
+    /**
+     * If using row grouping and aggregation, contains the aggregation data.
+     * This is a null-prototype object (created via `Object.create(null)`) to prevent prototype pollution:
+     * it has no inherited properties, so bracket access with user-controlled column IDs cannot
+     * reach `__proto__`, `constructor`, or other Object.prototype members.
+     */
     public aggData: any;
 
     /**
@@ -197,19 +202,19 @@ export class RowNode<TData = any>
      * Children of this group. If multi levels of grouping, shows only immediate children.
      * Do not modify this array directly. The grouping module relies on mutable references to the array.
      */
-    public childrenAfterGroup: RowNode<TData>[] | null;
+    public childrenAfterGroup: RowNode<TData>[] | null = null;
 
     /** Filtered children of this group. */
-    public childrenAfterFilter: RowNode<TData>[] | null;
+    public childrenAfterFilter: RowNode<TData>[] | null = null;
 
     /** Aggregated and re-filtered children of this group. */
-    public childrenAfterAggFilter: RowNode<TData>[] | null;
+    public childrenAfterAggFilter: RowNode<TData>[] | null = null;
 
     /** Sorted children of this group. */
-    public childrenAfterSort: RowNode<TData>[] | null;
+    public childrenAfterSort: RowNode<TData>[] | null = null;
 
     /** Number of children and grand children. */
-    public allChildrenCount: number | null;
+    public allChildrenCount: number | null = null;
 
     /** Children mapped by the pivot columns or group key */
     public childrenMapped: { [key: string]: any } | null = null;

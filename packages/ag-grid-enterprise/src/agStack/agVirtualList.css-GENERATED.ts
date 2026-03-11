@@ -1,0 +1,1 @@
+export const agVirtualListCSS = /*css*/ `:where(.ag-virtual-list-viewport) .ag-tab-guard{position:sticky}.ag-virtual-list-viewport{flex:1 1 auto;height:100%;min-width:0;overflow:auto;position:relative;width:100%}.ag-virtual-list-container{overflow:hidden;position:relative}.ag-virtual-list-item{height:var(--ag-list-item-height);position:absolute;width:100%}`;
