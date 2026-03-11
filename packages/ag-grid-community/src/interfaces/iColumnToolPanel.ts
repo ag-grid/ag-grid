@@ -14,4 +14,4 @@ export interface IColumnToolPanel extends IToolPanel {
     getState(): ColumnToolPanelState;
 }
 
-export type ColumnToolPanelEditStrategyBean = 'colToolPanelSynchronousEdit' | 'colToolPanelDeferredEdit';
+export type ColumnToolPanelEditStrategyBean = 'colToolPanelSyncUpdateStrategy' | 'colToolPanelDeferredEdit';

@@ -6,7 +6,7 @@ export function getColumnToolPanelEditStrategy(
     beans: BeanCollection,
     deferApply: boolean | undefined
 ): BaseColumnToolPanelEdits | undefined {
-    return (deferApply ? beans.colToolPanelDeferredEdit : beans.colToolPanelSynchronousEdit) as
+    return (deferApply ? beans.colToolPanelDeferredEdit : beans.colToolPanelSyncUpdateStrategy) as
         | BaseColumnToolPanelEdits
         | undefined;
 }

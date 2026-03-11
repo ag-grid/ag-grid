@@ -125,27 +125,10 @@ export class SortIndicatorComp extends Component {
     private updateIcons(): void {
         const { eSortAsc, eSortDesc, eSortAbsoluteAsc, eSortAbsoluteDesc, eSortNone, column, gos, beans } = this;
 
-        const displaySort = _getDisplaySortForColumn(column, beans);
+        const displaySort = _getDisplaySortForColumn(column, beans, this.getSortDefOverride);
         const isDefaultSortAllowed = displaySort.isDefaultSortAllowed;
         const isAbsoluteSortAllowed = displaySort.isAbsoluteSortAllowed;
-
-        let isAbsoluteSort = displaySort.isAbsoluteSort;
-        let isDefaultSort = displaySort.isDefaultSort;
-        let isAscending = displaySort.isAscending;
-        let isDescending = displaySort.isDescending;
-        let direction = displaySort.direction;
-
-        if (this.getSortDefOverride) {
-            const overrideSortDef = this.getSortDefOverride();
-            const overrideDirection = overrideSortDef?.direction ?? null;
-            const isOverrideAbsoluteSort = overrideSortDef?.type === 'absolute';
-
-            direction = overrideDirection;
-            isAscending = overrideDirection === 'asc';
-            isDescending = overrideDirection === 'desc';
-            isAbsoluteSort = !!overrideDirection && isOverrideAbsoluteSort;
-            isDefaultSort = !!overrideDirection && !isOverrideAbsoluteSort;
-        }
+        const { isAbsoluteSort, isDefaultSort, isAscending, isDescending, direction } = displaySort;
 
         if (eSortAsc) {
             _setDisplayed(eSortAsc, isAscending && isDefaultSort && isDefaultSortAllowed, { skipAriaHidden: true });

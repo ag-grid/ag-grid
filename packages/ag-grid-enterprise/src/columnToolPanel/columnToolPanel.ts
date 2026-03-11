@@ -135,7 +135,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         const hasRowGroupingModule = hasPivotModule || gos.isModuleRegistered('SharedRowGrouping');
 
         const deferredStrat = beans.colToolPanelDeferredEdit as BaseColumnToolPanelEdits | undefined;
-        const syncStrat = beans.colToolPanelSynchronousEdit as BaseColumnToolPanelEdits | undefined;
+        const syncStrat = beans.colToolPanelSyncUpdateStrategy as BaseColumnToolPanelEdits | undefined;
         this.isDeferModeEnabled = !!mergedParams.deferApply;
         this.editStrategy = this.isDeferModeEnabled ? deferredStrat : syncStrat;
         this.toggleCss(DEFERRED_TOOL_PANEL_CLASS, this.isDeferModeEnabled);
@@ -244,34 +244,32 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         this.toggleCss(DEFERRED_TOOL_PANEL_CLASS, nextDeferMode);
 
         const deferredStrat = this.beans.colToolPanelDeferredEdit as BaseColumnToolPanelEdits | undefined;
-        const syncStrat = this.beans.colToolPanelSynchronousEdit as BaseColumnToolPanelEdits | undefined;
+        const syncStrat = this.beans.colToolPanelSyncUpdateStrategy as BaseColumnToolPanelEdits | undefined;
         this.editStrategy = nextDeferMode ? deferredStrat : syncStrat;
         this.deferModeToggleComp?.sync(nextDeferMode);
         this.deferredButtonsComp?.updateButtons(nextDeferMode ? this.deferredButtonDefs : []);
 
-        this.primaryColsPanel.syncLayoutWithGrid();
-        this.rowGroupDropZonePanel?.refreshGui();
-        this.valuesDropZonePanel?.refreshGui();
-        this.pivotDropZonePanel?.refresh();
+        this.refreshToolPanelLayouts();
         this.pivotModePanel?.refreshEditStrategy();
     };
 
     private readonly onDeferredCancel = (): void => {
         this.editStrategy?.reset();
-        this.primaryColsPanel.syncLayoutWithGrid();
-        this.rowGroupDropZonePanel?.refreshGui();
-        this.valuesDropZonePanel?.refreshGui();
-        this.pivotDropZonePanel?.refresh();
+        this.refreshToolPanelLayouts();
         this.pivotModePanel?.refreshEditStrategy();
     };
 
     private readonly onPivotModePanelValueChanged = (): void => {
+        this.refreshToolPanelLayouts();
+        this.setLastVisible();
+    };
+
+    private refreshToolPanelLayouts(): void {
         this.primaryColsPanel.syncLayoutWithGrid();
         this.rowGroupDropZonePanel?.refreshGui();
         this.valuesDropZonePanel?.refreshGui();
         this.pivotDropZonePanel?.refresh();
-        this.setLastVisible();
-    };
+    }
 
     public setPivotModeSectionVisible(visible: boolean): void {
         const colToolPanelFactory = this.colToolPanelFactory;
