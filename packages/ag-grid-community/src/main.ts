@@ -129,7 +129,7 @@ export type {
 } from './interfaces/iExcelCreator';
 
 // PDF Export
-export {
+export type {
     IPdfCreator,
     PdfCell,
     PdfCellData,
