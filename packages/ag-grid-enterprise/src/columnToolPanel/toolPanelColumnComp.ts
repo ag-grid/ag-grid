@@ -150,7 +150,7 @@ export class ToolPanelColumnComp extends Component {
     }
 
     private getEditStrategy() {
-        return (this.editStrategy ??= getColumnToolPanelEditStrategy(this.beans, this.params.deferApply));
+        return (this.editStrategy ??= getColumnToolPanelEditStrategy(this.beans, this.params.deferApply)!);
     }
 
     private setupTooltip(): void {

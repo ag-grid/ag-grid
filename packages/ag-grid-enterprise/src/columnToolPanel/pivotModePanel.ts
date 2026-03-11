@@ -27,7 +27,7 @@ export class PivotModePanel extends Component {
     }
 
     private getEditStrategy(): BaseColumnToolPanelEdits {
-        return (this.editStrategy ??= getColumnToolPanelEditStrategy(this.beans, this.params.deferApply));
+        return (this.editStrategy ??= getColumnToolPanelEditStrategy(this.beans, this.params.deferApply)!);
     }
 
     private getCurrentPivotMode(): boolean {

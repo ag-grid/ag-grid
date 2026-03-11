@@ -5,8 +5,8 @@ import type { BaseColumnToolPanelEdits } from './columnToolPanelEditsTypes';
 export function getColumnToolPanelEditStrategy(
     beans: BeanCollection,
     deferApply: boolean | undefined
-): BaseColumnToolPanelEdits {
-    return (
-        deferApply ? beans.colToolPanelDeferredEdit : beans.colToolPanelSynchronousEdit
-    ) as BaseColumnToolPanelEdits;
+): BaseColumnToolPanelEdits | undefined {
+    return (deferApply ? beans.colToolPanelDeferredEdit : beans.colToolPanelSynchronousEdit) as
+        | BaseColumnToolPanelEdits
+        | undefined;
 }

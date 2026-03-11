@@ -58,6 +58,9 @@ function setAllVisible(
     params: ColumnToolPanelEditParams
 ): void {
     const edits = getColumnToolPanelEditStrategy(beans, params.deferApply);
+    if (!edits) {
+        return;
+    }
     const colStateItems: ColumnState[] = [];
 
     for (const col of columns) {
@@ -93,6 +96,9 @@ function setAllPivotActive(
     params: ColumnToolPanelEditParams
 ): void {
     const edits = getColumnToolPanelEditStrategy(beans, params.deferApply);
+    if (!edits) {
+        return;
+    }
     const colStateItems: ColumnState[] = [];
 
     const turnOnAction = (col: AgColumn) => {
@@ -174,7 +180,7 @@ export function updateColumns(
             };
         }
     });
-    getColumnToolPanelEditStrategy(beans, params.deferApply).applyColumnState(state, eventType);
+    getColumnToolPanelEditStrategy(beans, params.deferApply)?.applyColumnState(state, eventType);
 }
 
 export function createPivotState(column: AgColumn): {

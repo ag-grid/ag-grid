@@ -180,15 +180,7 @@ export class ColumnToolPanelDeferredEdit extends BeanStub implements BaseColumnT
                             }
                         }
                     }
-                    const colDefCols = (this.beans.colModel as any).colDefCols;
-                    const colDefList = colDefCols?.list as AgColumn[] | undefined;
-                    if (colDefList) {
-                        const orderedSet = new Set(orderedColumns);
-                        colDefCols.list = [
-                            ...orderedColumns,
-                            ...colDefList.filter((col) => isPrimaryColDefColumn(col) && !orderedSet.has(col)),
-                        ];
-                    }
+                    syncPrimaryColDefOrder(this.beans, orderedColumns);
                     break;
                 }
                 case 'rowGroup': {
@@ -204,7 +196,7 @@ export class ColumnToolPanelDeferredEdit extends BeanStub implements BaseColumnT
                     break;
                 }
                 case 'pivotMode': {
-                    const { colModel, ctrlsSvc, stateSvc } = this.beans;
+                    const { colModel, ctrlsSvc, gos, stateSvc } = this.beans;
                     if (operation.pivotMode !== colModel.isPivotMode()) {
                         const currentPivotColIds = this.beans.pivotColsSvc?.columns.map((col) => col.getColId()) ?? [];
                         const previousPivotColIds = stateSvc?.getState().pivot?.pivotColIds ?? currentPivotColIds;
@@ -236,11 +228,10 @@ export class ColumnToolPanelDeferredEdit extends BeanStub implements BaseColumnT
                             );
                         }
 
-                        // Keep runtime pivot mode in sync without using extra mutating APIs.
-                        (colModel as any).pivotMode = operation.pivotMode;
-                        colModel.refreshCols(false, operation.eventType);
-                        this.beans.visibleCols.refresh(operation.eventType);
-                        this.beans.eventSvc.dispatchEvent({ type: 'columnPivotModeChanged' });
+                        gos.updateGridOptions({
+                            options: { pivotMode: operation.pivotMode },
+                            source: operation.eventType as any,
+                        });
                         for (const c of ctrlsSvc.getHeaderRowContainerCtrls()) {
                             c.refresh();
                         }
@@ -299,17 +290,12 @@ export class ColumnToolPanelDeferredEdit extends BeanStub implements BaseColumnT
 
     public moveColumns(columns: AgColumn[], targetIndex: number, eventType: ColumnEventType): void {
         const movingColIds = new Set(columns.map((column) => column.getColId()));
-        const orderedColIds =
-            this.state.columnOrder?.colIds ??
-            (this.beans.colModel.getColDefCols() ?? this.beans.colModel.getCols())
-                .filter((column) => isPrimaryColDefColumn(column))
-                .map((column) => column.getColId());
+        const liveOrderedColIds = getPrimaryColumnIds(this.beans);
+        const orderedColIds = this.state.columnOrder?.colIds ?? liveOrderedColIds;
 
         const remaining = orderedColIds.filter((colId) => !movingColIds.has(colId));
-        const beforeTarget = orderedColIds.slice(0, targetIndex);
-        const movedBeforeTargetCount = beforeTarget.filter((colId) => movingColIds.has(colId)).length;
-        const adjustedTargetIndex = Math.min(Math.max(targetIndex - movedBeforeTargetCount, 0), remaining.length);
         const movedIds = columns.map((column) => column.getColId());
+        const adjustedTargetIndex = getDeferredMoveTargetIndex(liveOrderedColIds, remaining, movingColIds, targetIndex);
         const seq = nextSeq(this.sequence);
         this.sequence = seq;
 
@@ -480,7 +466,10 @@ export class ColumnToolPanelDeferredEdit extends BeanStub implements BaseColumnT
             : currentDraft.baselineCleared
               ? null
               : column.getSortDef();
-        const nextSortDef = sortSvc!.getNextSortDirection(column, currentSortDef);
+        const nextSortDef = sortSvc?.getNextSortDirection(column, currentSortDef);
+        if (!nextSortDef) {
+            return;
+        }
 
         const sortUsingCtrl = this.gos.get('multiSortKey') === 'ctrl';
         const multiSort = sortUsingCtrl ? event.ctrlKey || event.metaKey : event.shiftKey;
@@ -511,22 +500,84 @@ function getDraftColumns(
 }
 
 function syncPrimaryColDefOrderFromCurrentColumns(beans: BeanStub['beans']): void {
-    const colDefCols = (beans.colModel as any).colDefCols;
-    const colDefList = colDefCols?.list as AgColumn[] | undefined;
-    if (!colDefList) {
-        return;
-    }
-
     const orderedPrimaryColumns = beans.colModel
         .getCols()
         .filter((column) => isPrimaryColDefColumn(column))
         .map((column) => beans.colModel.getColDefCol(column.getColId()))
         .filter((column): column is AgColumn => !!column);
+    syncPrimaryColDefOrder(beans, orderedPrimaryColumns);
+}
+
+function syncPrimaryColDefOrder(beans: BeanStub['beans'], orderedPrimaryColumns: AgColumn[]): void {
+    const colDefCols = getMutablePrimaryColDefCollection(beans);
+    if (!colDefCols) {
+        return;
+    }
+
     const orderedSet = new Set(orderedPrimaryColumns);
     colDefCols.list = [
         ...orderedPrimaryColumns,
-        ...colDefList.filter((col) => isPrimaryColDefColumn(col) && !orderedSet.has(col)),
+        ...colDefCols.list.filter((col) => isPrimaryColDefColumn(col) && !orderedSet.has(col)),
     ];
+}
+
+function getPrimaryColumnIds(beans: BeanStub['beans']): string[] {
+    return (beans.colModel.getColDefCols() ?? beans.colModel.getCols())
+        .filter((column) => isPrimaryColDefColumn(column))
+        .map((column) => column.getColId());
+}
+
+function getDeferredMoveTargetIndex(
+    liveOrderedColIds: string[],
+    remainingDraftColIds: string[],
+    movingColIds: Set<string>,
+    targetIndex: number
+): number {
+    if (targetIndex <= 0) {
+        return 0;
+    }
+    if (targetIndex >= liveOrderedColIds.length) {
+        return remainingDraftColIds.length;
+    }
+
+    for (let i = targetIndex - 1; i >= 0; i--) {
+        const colId = liveOrderedColIds[i];
+        if (movingColIds.has(colId)) {
+            continue;
+        }
+
+        const draftIndex = remainingDraftColIds.indexOf(colId);
+        if (draftIndex >= 0) {
+            return draftIndex + 1;
+        }
+    }
+
+    for (let i = targetIndex; i < liveOrderedColIds.length; i++) {
+        const colId = liveOrderedColIds[i];
+        if (movingColIds.has(colId)) {
+            continue;
+        }
+
+        const draftIndex = remainingDraftColIds.indexOf(colId);
+        if (draftIndex >= 0) {
+            return draftIndex;
+        }
+    }
+
+    return remainingDraftColIds.length;
+}
+
+function getMutablePrimaryColDefCollection(
+    beans: BeanStub['beans']
+): { list: AgColumn[] } | undefined {
+    const colDefCols = (beans.colModel as any).colDefCols;
+    const colDefList = colDefCols?.list;
+
+    if (!Array.isArray(colDefList)) {
+        return undefined;
+    }
+
+    return colDefCols as { list: AgColumn[] };
 }
 
 function isPrimaryColDefColumn(column: AgColumn): boolean {

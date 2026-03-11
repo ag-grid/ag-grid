@@ -96,11 +96,7 @@ export const moveItem = (
     const targetIndex: number | null = getMoveTargetIndex(beans, currentColumns, lastHoveredColumn, isBefore);
 
     if (targetIndex != null) {
-        getColumnToolPanelEditStrategy(beans, params?.deferApply).moveColumns(
-            currentColumns,
-            targetIndex,
-            'toolPanelUi'
-        );
+        getColumnToolPanelEditStrategy(beans, params?.deferApply)?.moveColumns(currentColumns, targetIndex, 'toolPanelUi');
     }
 };
 
