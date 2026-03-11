@@ -11,7 +11,7 @@ import type {
 import { AutoScrollService, _AgBeanStub, _radioCssClass } from 'ag-grid-community';
 
 import type { AgVirtualList } from './agVirtualList';
-import { agVirtualListDragFeatureCSS } from './agVirtualListDragFeature.css-GENERATED';
+import agVirtualListDragFeatureCSS from './agVirtualListDragFeature.css';
 import type { AgVirtualListDragParams, VirtualListDragItem } from './iVirtualListDragFeature';
 
 const LIST_ITEM_HOVERED = 'ag-list-item-hovered';

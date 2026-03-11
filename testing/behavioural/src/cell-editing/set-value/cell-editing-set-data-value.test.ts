@@ -69,7 +69,7 @@ describe('Cell Editing: setDataValue', () => {
 
                 expect(eventTracker.counts).toEqual({
                     cellEditingStarted: 0,
-                    cellEditingStopped: source === 'cellClear' ? 1 : 0,
+                    cellEditingStopped: 0,
                     cellValueChanged: 1,
                     rowValueChanged: 0,
                     cellEditRequest: 0,
@@ -84,67 +84,70 @@ describe('Cell Editing: setDataValue', () => {
             }
         );
 
-        test.each([undefined, 'ui', 'api', 'edit'] as const)("'%s' source updates data directly", async (source) => {
-            let valueSetterCalls = 0;
-            const valueSetterTargets: string[] = [];
-            const valueSetter = ({ data, newValue }: { data: { id: string; field: string }; newValue: string }) => {
-                valueSetterCalls += 1;
-                valueSetterTargets.push(data.id);
-                data.field = newValue;
-                return true;
-            };
+        test.each([undefined, 'ui', 'api', 'edit', 'data', 'batch'] as const)(
+            "'%s' source updates data directly",
+            async (source) => {
+                let valueSetterCalls = 0;
+                const valueSetterTargets: string[] = [];
+                const valueSetter = ({ data, newValue }: { data: { id: string; field: string }; newValue: string }) => {
+                    valueSetterCalls += 1;
+                    valueSetterTargets.push(data.id);
+                    data.field = newValue;
+                    return true;
+                };
 
-            const api = await gridMgr.createGridAndWait(`cellEditingSetDataValue-${source ?? 'default'}`, {
-                columnDefs: [
-                    {
-                        field: 'field',
-                        editable: true,
-                        valueSetter,
-                    },
-                ],
-                rowData: [{ id: 'ROW_0', field: 'Initial Value' }],
-                getRowId: (params) => params.data.id,
-            });
-            const eventTracker = new EditEventTracker(api);
+                const api = await gridMgr.createGridAndWait(`cellEditingSetDataValue-${source ?? 'default'}`, {
+                    columnDefs: [
+                        {
+                            field: 'field',
+                            editable: true,
+                            valueSetter,
+                        },
+                    ],
+                    rowData: [{ id: 'ROW_0', field: 'Initial Value' }],
+                    getRowId: (params) => params.data.id,
+                });
+                const eventTracker = new EditEventTracker(api);
 
-            const beforeRows = new GridRows(api, `before ${source ?? 'default'} setDataValue`);
-            await beforeRows.check(`
+                const beforeRows = new GridRows(api, `before ${source ?? 'default'} setDataValue`);
+                await beforeRows.check(`
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:ROW_0 field:"Initial Value"
             `);
 
-            const rowNode = api.getDisplayedRowAtIndex(0);
-            rowNode?.setDataValue('field', `${source ?? 'default'}-value`, source);
-            await asyncSetTimeout(0);
+                const rowNode = api.getDisplayedRowAtIndex(0);
+                rowNode?.setDataValue('field', `${source ?? 'default'}-value`, source);
+                await asyncSetTimeout(0);
 
-            const afterRows = new GridRows(api, `after ${source ?? 'default'} setDataValue`);
-            await afterRows.check(`
+                const afterRows = new GridRows(api, `after ${source ?? 'default'} setDataValue`);
+                await afterRows.check(`
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:ROW_0 field:"${source ?? 'default'}-value"
             `);
 
-            // Verify data access methods
-            expect(rowNode?.data?.field).toBe(`${source ?? 'default'}-value`);
-            expect(rowNode?.getDataValue('field')).toBe(`${source ?? 'default'}-value`);
-            expect(api.getCellValue({ rowNode: rowNode!, colKey: 'field' })).toBe(`${source ?? 'default'}-value`);
-            expect(api.getCellValue({ rowNode: rowNode!, colKey: 'field', from: 'data' })).toBe(
-                `${source ?? 'default'}-value`
-            );
+                // Verify data access methods
+                expect(rowNode?.data?.field).toBe(`${source ?? 'default'}-value`);
+                expect(rowNode?.getDataValue('field')).toBe(`${source ?? 'default'}-value`);
+                expect(api.getCellValue({ rowNode: rowNode!, colKey: 'field' })).toBe(`${source ?? 'default'}-value`);
+                expect(api.getCellValue({ rowNode: rowNode!, colKey: 'field', from: 'data' })).toBe(
+                    `${source ?? 'default'}-value`
+                );
 
-            expect(eventTracker.counts).toEqual({
-                cellEditingStarted: 0,
-                cellEditingStopped: 0,
-                cellValueChanged: 1,
-                rowValueChanged: 0,
-                cellEditRequest: 0,
-                bulkEditingStarted: 0,
-                bulkEditingStopped: 0,
-                batchEditingStarted: 0,
-                batchEditingStopped: 0,
-            });
-            expect(valueSetterTargets).toEqual(['ROW_0']);
-            expect(valueSetterCalls).toBe(1);
-        });
+                expect(eventTracker.counts).toEqual({
+                    cellEditingStarted: 0,
+                    cellEditingStopped: 0,
+                    cellValueChanged: 1,
+                    rowValueChanged: 0,
+                    cellEditRequest: 0,
+                    bulkEditingStarted: 0,
+                    bulkEditingStopped: 0,
+                    batchEditingStarted: 0,
+                    batchEditingStopped: 0,
+                });
+                expect(valueSetterTargets).toEqual(['ROW_0']);
+                expect(valueSetterCalls).toBe(1);
+            }
+        );
     });
 
     describe('readOnlyEdit mode', () => {
@@ -275,5 +278,50 @@ describe('Cell Editing: setDataValue', () => {
 
             expect(valueSetterCalls).toBe(2);
         });
+
+        test.each(['data', 'batch'] as const)(
+            "'%s' writes directly to data even when editor is open",
+            async (source) => {
+                let valueSetterCalls = 0;
+                const valueSetter = ({ data, newValue }: { data: { id: string; field: string }; newValue: string }) => {
+                    valueSetterCalls += 1;
+                    data.field = newValue;
+                    return true;
+                };
+
+                const api = await gridMgr.createGridAndWait(`cellEditingSetDataValue-${source}-editing`, {
+                    columnDefs: [
+                        {
+                            field: 'field',
+                            editable: true,
+                            valueSetter,
+                        },
+                    ],
+                    rowData: [{ id: 'ROW_0', field: 'Initial Value' }],
+                    getRowId: (params) => params.data.id,
+                });
+
+                const gridDiv = getGridElement(api)! as HTMLElement;
+                await asyncSetTimeout(5);
+                const cell = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'field'));
+                await userEvent.click(cell);
+                await asyncSetTimeout(3);
+                api.startEditingCell({ rowIndex: 0, colKey: 'field' });
+                const input = await waitForInput(gridDiv, cell);
+                await userEvent.clear(input);
+                await userEvent.type(input, 'Editor Value');
+
+                const rowNode = api.getDisplayedRowAtIndex(0)!;
+                rowNode.setDataValue('field', 'Direct Value', source);
+                await asyncSetTimeout(0);
+
+                // 'data' and 'batch' (when not in batch mode) bypass the editor and write directly to data
+                expect(rowNode.data.field).toBe('Direct Value');
+                expect(rowNode.getDataValue('field')).toBe('Direct Value');
+                expect(api.getCellValue({ rowNode, colKey: 'field', from: 'data' })).toBe('Direct Value');
+
+                expect(valueSetterCalls).toBe(1);
+            }
+        );
     });
 });

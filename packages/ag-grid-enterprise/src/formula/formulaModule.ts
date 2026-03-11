@@ -3,7 +3,7 @@ import type { _ModuleWithoutApi } from 'ag-grid-community';
 import { RowNumbersModule } from '../rowNumbers/rowNumbersModule';
 import { VERSION } from '../version';
 import { FormulaCellEditor } from './editor/formulaCellEditor';
-import { formulaCSS } from './formula.css-GENERATED';
+import formulaCSS from './formula.css';
 import { FormulaDataService } from './formulaDataService';
 import { FormulaInputManagerService } from './formulaInputManagerService';
 import { FormulaService } from './formulaService';

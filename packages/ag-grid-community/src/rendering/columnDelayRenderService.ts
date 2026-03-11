@@ -3,7 +3,7 @@ import { BeanStub } from '../context/beanStub';
 import type { AutoSizeStrategy } from '../interfaces/autoSize';
 import type { _ModuleWithoutApi } from '../interfaces/iModule';
 import { VERSION } from '../version';
-import { columnDelayRenderCSS } from './column-delay-render.css-GENERATED';
+import columnDelayRenderCSS from './column-delay-render.css';
 
 const HideClass = 'ag-delay-render';
 type ColumnDelayRenderKey = 'colFlex' | 'columnState' | AutoSizeStrategy['type'];

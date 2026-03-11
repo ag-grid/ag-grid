@@ -1,4 +1,3 @@
-import { getAdditionalCss } from '@components/theme-builder/api';
 import { getChangedModelItemCount } from '@components/theme-builder/model/changed-model-items';
 import styled from '@emotion/styled';
 import { useStore } from 'jotai';
@@ -61,7 +60,7 @@ const SelectButton = ({ preset, scrollerRef }: SelectButtonProps) => {
                 loadThemeGoogleFonts: true,
                 cssLayer: undefined,
                 nonce: undefined,
-                moduleCss: getAdditionalCss(),
+                moduleCss: undefined,
             });
             setThemeClass(theme._getCssClass());
 

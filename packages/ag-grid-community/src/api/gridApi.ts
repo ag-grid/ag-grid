@@ -399,10 +399,18 @@ export interface _ValueCacheApi {
 
 export interface _ValueApi<TData> {
     /**
-     * Gets the cell value for the given column and `rowNode` (row).
-     * Based on params.useFormatter with either return the value as specified by the `field` or `valueGetter` on the column definition or the formatted value.
+     * Returns the cell value for the given column and row, as it would appear in the grid.
      *
-     * **Pivot Mode**: On leaf data rows (non-group rows), pivot columns resolve to their underlying value column.
+     * By default (`from: 'edit'`), returns the live editing value if the cell is being edited,
+     * any pending batch value, or the committed data value. Set `from: 'data'` to always
+     * return the committed data value, ignoring all edit state.
+     *
+     * With `useFormatter: true`, returns the formatted string (via the column's `valueFormatter`).
+     *
+     * For group rows with `showRowGroup` columns, returns the display value handled by the
+     * group column renderer (including `groupHideOpenParents` and `showOpenedGroup` logic).
+     *
+     * To get the raw data value without display logic, use `rowNode.getDataValue()` instead.
      *
      * @agModule `CellApiModule`
      */

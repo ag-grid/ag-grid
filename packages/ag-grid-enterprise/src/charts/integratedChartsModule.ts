@@ -30,7 +30,7 @@ import {
     restoreChart,
     updateChart,
 } from './chartsApi';
-import { integratedChartsModuleCSS } from './integratedChartsModule.css-GENERATED';
+import integratedChartsModuleCSS from './integratedChartsModule.css';
 import { validGridChartsVersion } from './utils/validGridChartsVersion';
 
 type IntegratedChartsModuleType = {

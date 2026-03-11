@@ -12,7 +12,7 @@ import type { AgElementParams } from '../utils/dom';
 import { _formatSize, _getAbsoluteWidth, _getInnerHeight, _setElementWidth } from '../utils/dom';
 import type { AgAbstractFieldEvent } from './agAbstractField';
 import { AgAbstractField } from './agAbstractField';
-import { agPickerFieldCSS } from './agPickerField.css-GENERATED';
+import agPickerFieldCSS from './agPickerField.css';
 import type { AgPickerFieldParams } from './agPickerFieldParams';
 
 type AgPickerFieldEvent = AgAbstractFieldEvent | 'pickerHidden';

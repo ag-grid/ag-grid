@@ -2,7 +2,7 @@ import type { BeanCollection, ComponentSelector, ElementParams } from 'ag-grid-c
 import { Component, RefPlaceholder } from 'ag-grid-community';
 
 import type { GridLicenseManager as LicenseManager } from './gridLicenseManager';
-import { watermarkCSS } from './watermark.css-GENERATED';
+import watermarkCSS from './watermark.css';
 
 const WatermarkElement: ElementParams = {
     tag: 'div',

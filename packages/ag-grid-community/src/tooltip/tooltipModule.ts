@@ -1,7 +1,7 @@
 import { AgHighlightTooltipFeature } from '../agStack/tooltip/agHighlightTooltipFeature';
 import { AgTooltipComponent } from '../agStack/tooltip/agTooltipComponent';
 import { AgTooltipFeature } from '../agStack/tooltip/agTooltipFeature';
-import { tooltipCSS } from '../agStack/tooltip/tooltip.css-GENERATED';
+import tooltipCSS from '../agStack/tooltip/tooltip.css';
 import type { _ModuleWithoutApi } from '../interfaces/iModule';
 import { VERSION } from '../version';
 import { PopupModule } from '../widgets/popupModule';

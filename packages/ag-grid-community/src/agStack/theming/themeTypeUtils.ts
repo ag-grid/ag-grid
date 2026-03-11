@@ -11,7 +11,7 @@ import type {
 } from './themeTypes';
 import { clamp, memoize, paramToVariableExpression } from './themeUtils';
 
-export const paramTypes = [
+const paramTypes = [
     'colorScheme',
     'color',
     'length',
@@ -64,9 +64,9 @@ export const colorValueToCss = (value: ColorValue): string | false => {
     return false;
 };
 
-export const colorSchemeValueToCss = literalToCSS;
+const colorSchemeValueToCss = literalToCSS;
 
-export const lengthValueToCss = (value: LengthValue): string | false => {
+const lengthValueToCss = (value: LengthValue): string | false => {
     if (typeof value === 'string') {
         return value;
     }
@@ -86,9 +86,9 @@ export const lengthValueToCss = (value: LengthValue): string | false => {
     return false;
 };
 
-export const scaleValueToCss = literalToCSS;
+const scaleValueToCss = literalToCSS;
 
-export const borderValueToCss = (value: BorderValue, param: string): string => {
+const borderValueToCss = (value: BorderValue, param: string): string => {
     if (typeof value === 'string') {
         return value;
     }
@@ -121,7 +121,7 @@ const shadowValueParamsToCss = (value: ShadowValueParams): string => {
     ].join(' ');
 };
 
-export const shadowValueToCss = (value: ShadowValue): string | false => {
+const shadowValueToCss = (value: ShadowValue): string | false => {
     if (typeof value === 'string') {
         return value;
     }
@@ -137,7 +137,7 @@ export const shadowValueToCss = (value: ShadowValue): string | false => {
     return shadowValueParamsToCss(value);
 };
 
-export const borderStyleValueToCss = literalToCSS;
+const borderStyleValueToCss = literalToCSS;
 
 export const fontFamilyValueToCss = (value: FontFamilyValue): string | false => {
     // normally string values are passed through as CSS without modification,
@@ -192,13 +192,13 @@ export const imageValueToCss = (value: ImageValue): string | false => {
     return false;
 };
 
-export const durationValueToCss = (value: DurationValue, param: string, themeLogger: ThemeLogger): string | false => {
+const durationValueToCss = (value: DurationValue, param: string, themeLogger: ThemeLogger | null): string | false => {
     if (typeof value === 'string') {
         return value;
     }
     if (typeof value === 'number') {
         if (value >= 10) {
-            themeLogger.warn(104, { value, param });
+            themeLogger?.warn(104, { value, param });
         }
         return `${value}s`;
     }
@@ -208,23 +208,25 @@ export const durationValueToCss = (value: DurationValue, param: string, themeLog
     return false;
 };
 
-const paramValidators: Record<ParamType, (value: unknown, param: string, themeLogger: ThemeLogger) => string | false> =
-    {
-        color: colorValueToCss,
-        colorScheme: colorSchemeValueToCss,
-        length: lengthValueToCss,
-        scale: scaleValueToCss,
-        border: borderValueToCss,
-        borderStyle: borderStyleValueToCss,
-        shadow: shadowValueToCss,
-        image: imageValueToCss,
-        fontFamily: fontFamilyValueToCss,
-        fontWeight: fontWeightValueToCss,
-        duration: durationValueToCss,
-    };
+const paramValidators: Record<
+    ParamType,
+    (value: unknown, param: string, themeLogger: ThemeLogger | null) => string | false
+> = {
+    color: colorValueToCss,
+    colorScheme: colorSchemeValueToCss,
+    length: lengthValueToCss,
+    scale: scaleValueToCss,
+    border: borderValueToCss,
+    borderStyle: borderStyleValueToCss,
+    shadow: shadowValueToCss,
+    image: imageValueToCss,
+    fontFamily: fontFamilyValueToCss,
+    fontWeight: fontWeightValueToCss,
+    duration: durationValueToCss,
+};
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export const paramValueToCss = (param: string, value: unknown, themeLogger: ThemeLogger): string | false => {
+export const paramValueToCss = (param: string, value: unknown, themeLogger: ThemeLogger | null): string | false => {
     const type = getParamType(param);
     return paramValidators[type](value, param, themeLogger);
 };

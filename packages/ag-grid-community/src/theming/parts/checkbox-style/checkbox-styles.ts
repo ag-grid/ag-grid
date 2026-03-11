@@ -2,7 +2,7 @@ import type { Part } from '../../../agStack/theming/part';
 import { createPart } from '../../../agStack/theming/partImpl';
 import type { ColorValue, ImageValue, LengthValue } from '../../../agStack/theming/themeTypes';
 import { accentColor, backgroundColor, foregroundBackgroundMix } from '../../../agStack/theming/themeUtils';
-import { checkboxStyleDefaultCSS } from './checkbox-style-default.css-GENERATED';
+import checkboxStyleDefaultCSS from './checkbox-style-default.css';
 
 export type CheckboxStyleParams = {
     /**

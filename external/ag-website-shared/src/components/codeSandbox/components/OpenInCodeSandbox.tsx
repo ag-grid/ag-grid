@@ -4,7 +4,6 @@ import { cleanIndexHtml } from '@ag-website-shared/utils/cleanIndexHtml';
 import type { FileContents } from '@components/example-generator/types';
 import { stripOutExampleGeneratorCode } from '@components/example-runner/components/CodeViewer';
 import { fetchTextFile } from '@utils/fetchTextFile';
-import { isReactInternalFramework } from '@utils/framework';
 import type { FunctionComponent } from 'react';
 
 import { openCodeSandbox } from '../utils/codeSandbox';
@@ -36,14 +35,10 @@ export const OpenInCodeSandbox: FunctionComponent<Props> = ({
                 const indexHtml = isDev ? cleanIndexHtml(html) : html;
                 const localFiles = { ...files };
                 stripOutExampleGeneratorCode(localFiles);
-                // Only include package.json for React (CRA template uses it for versions).
-                // Non-React examples use SystemJS with versions hardcoded in index.html,
-                // so including package.json would be misleading — editing it has no effect.
                 const sandboxFiles = {
                     ...localFiles,
-                    ...(isReactInternalFramework(internalFramework)
-                        ? { 'package.json': JSON.stringify(packageJson, null, 2) }
-                        : {}),
+                    'package.json': JSON.stringify(packageJson, null, 2),
+
                     'index.html': indexHtml,
                 };
                 openCodeSandbox({

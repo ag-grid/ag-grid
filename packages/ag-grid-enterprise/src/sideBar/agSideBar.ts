@@ -28,7 +28,7 @@ import {
 } from 'ag-grid-community';
 
 import { findFocusableElementBeforeTabGuard, isTargetUnderManagedComponent } from '../misc/enterpriseFocusUtils';
-import { agSideBarCSS } from './agSideBar.css-GENERATED';
+import agSideBarCSS from './agSideBar.css';
 import type { AgSideBarButtons, SideBarButtonClickedEvent } from './agSideBarButtons';
 import { AgSideBarButtonsSelector } from './agSideBarButtons';
 import { parseSideBarDef } from './sideBarDefParser';

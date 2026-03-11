@@ -12,7 +12,7 @@ import type { ListOption } from './agList';
 import { AgList } from './agList';
 import { AgPickerField } from './agPickerField';
 import type { AgPickerFieldParams } from './agPickerFieldParams';
-import { agSelectCSS } from './agSelect.css-GENERATED';
+import agSelectCSS from './agSelect.css';
 import type { AgWidgetSelectorType } from './agWidgetSelectorType';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

@@ -1,6 +1,6 @@
 import { createPart } from '../../../agStack/theming/partImpl';
-import { columnDropStyleBorderedCSS } from './column-drop-style-bordered.css-GENERATED';
-import { columnDropStylePlainCSS } from './column-drop-style-plain.css-GENERATED';
+import columnDropStyleBorderedCSS from './column-drop-style-bordered.css';
+import columnDropStylePlainCSS from './column-drop-style-plain.css';
 
 const makeColumnDropStyleBorderedTreeShakeable = () => {
     return createPart({

@@ -25,7 +25,7 @@ import type { InputStyleParams } from '../input-style/input-styles';
 import { inputStyleBordered, inputStyleUnderlined } from '../input-style/input-styles';
 import type { TabStyleParams } from '../tab-style/tab-styles';
 import { tabStyleAlpine, tabStyleMaterial, tabStyleQuartz, tabStyleRolodex } from '../tab-style/tab-styles';
-import { materialAdjustmentsCSS } from './material-adjustments.css-GENERATED';
+import materialAdjustmentsCSS from './material-adjustments.css';
 
 export type ThemeDefaultParams = CoreParams &
     ButtonStyleParams &
@@ -309,7 +309,7 @@ export const themeMaterialParams = () => ({
         calc: 'max(iconSize, cellFontSize) + spacing * 3.75 * rowVerticalPaddingScale',
     },
     headerHeight: {
-        calc: 'max(iconSize, cellFontSize) + spacing * 4.75 * headerVerticalPaddingScale',
+        calc: 'max(iconSize, dataFontSize) + spacing * 4.75 * headerVerticalPaddingScale',
     },
     widgetVerticalSpacing: {
         calc: 'spacing * 1.75',

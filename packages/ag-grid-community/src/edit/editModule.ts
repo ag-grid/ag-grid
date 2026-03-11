@@ -4,7 +4,7 @@ import { TooltipModule } from '../tooltip/tooltipModule';
 import { UndoRedoService } from '../undoRedo/undoRedoService';
 import { VERSION } from '../version';
 import { PopupModule } from '../widgets/popupModule';
-import { cellEditingCSS } from './cell-editing.css-GENERATED';
+import cellEditingCSS from './cell-editing.css';
 import { CheckboxCellEditor } from './cellEditors/checkboxCellEditor';
 import { DateCellEditor } from './cellEditors/dateCellEditor';
 import { DateStringCellEditor } from './cellEditors/dateStringCellEditor';

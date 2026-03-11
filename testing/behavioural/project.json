@@ -13,7 +13,6 @@
     "test": {
       "command": "npx vitest run",
       "outputs": ["{workspaceRoot}/reports/ag-behavioural-testing.xml"],
-      "dependsOn": ["ag-grid-community:build:css", "ag-grid-enterprise:build:css"],
       "options": {
         "cwd": "{projectRoot}",
         "config": "vitest.config.ts"
@@ -36,7 +35,6 @@
     },
     "benchmark": {
       "command": "vitest bench --run",
-      "dependsOn": ["ag-grid-community:build:css", "ag-grid-enterprise:build:css"],
       "options": {
         "cwd": "{projectRoot}"
       },

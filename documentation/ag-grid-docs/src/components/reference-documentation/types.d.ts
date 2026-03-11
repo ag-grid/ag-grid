@@ -14,8 +14,6 @@ interface MetaTag {
     };
     type?: string;
     isEvent?: boolean;
-    /** Suppress the missing property check. Needed for events as they are dynamic and so do not appear in src code */
-    suppressMissingPropCheck?: true;
 }
 export type DocEntryMap = Record<string, DocEntry | ChildDocEntry>;
 type DocEntry = {
@@ -173,9 +171,6 @@ export interface Config {
     headerLevel?: number;
     /** Set the margin-bottom value to override the default of 3em */
     overrideBottomMargin?: string;
-    /** Suppress the missing property check. Needed for events as they are dynamic and so do not appear in src code */
-    suppressMissingPropCheck?: true;
-
     /** A regular expression limiting the names that should appear */
     namePattern: string;
 

@@ -1,6 +1,12 @@
 {
     "_config_": {
-        "codeSrc": "grid-options.AUTO.json"
+        "codeSrc": "grid-options.AUTO.json",
+        "validate": true,
+        "excludeEvents": true,
+        "undocumentedProperties": {
+            "renderingMode": "React-only, so needs to be omitted from grid-options/properties.json (it is documented in grid-options/react-grid-options.json)",
+            "enableGroupEdit": "AG-2995 - 'Remove the grid option enableGroupEdit from docs API page to discourage its use'"
+        }
     },
     "accessories": {
         "meta": {
@@ -1152,6 +1158,12 @@
                 "url": "./pivoting-totals/#row-totals"
             }
         },
+        "pivotColumnGroupTotals": {
+            "more": {
+                "name": "Pivot Column Group Totals",
+                "url": "./pivoting-totals/#column-group-totals"
+            }
+        },
         "pivotSuppressAutoColumn": {
             "description": "If `true`, the grid will not swap in the grouping column when pivoting. Useful if pivoting using [Server Side Row Model](./server-side-model/) or [Viewport Row Model](./viewport/) and you want full control of all columns including the group column."
         },
@@ -1265,7 +1277,8 @@
                 "name": "Row Spanning",
                 "url": "./row-spanning/"
             }
-        }
+        },
+        "suppressRowTransform": {}
     },
     "rowDragging": {
         "meta": {
@@ -1357,6 +1370,12 @@
             "more": {
                 "name": "Embedded Full Width Rows",
                 "url": "./full-width-rows/#embedded-full-width-rows"
+            }
+        },
+        "isFullWidthRow": {
+            "more": {
+                "name": "Full Width Rows",
+                "url": "./full-width-rows/"
             }
         }
     },
@@ -1536,6 +1555,7 @@
                 "url": "./tree-data/"
             }
         },
+        "treeDataDisplayType": {},
         "autoGroupColumnDef": {
             "more": {
                 "name": "Group Column Configuration",

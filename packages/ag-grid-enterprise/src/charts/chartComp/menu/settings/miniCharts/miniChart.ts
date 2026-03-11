@@ -30,9 +30,13 @@ export abstract class MiniChart extends Component {
         const { _Scene } = agChartsExports;
 
         this.root = new _Scene.Group();
+        const canvasElement = container.ownerDocument.createElement('canvas');
         const scene = new _Scene.Scene({
+            canvasElement,
+            pixelRatio: container.ownerDocument.defaultView?.devicePixelRatio ?? 1,
             width: this.size,
             height: this.size,
+            willReadFrequently: false,
         });
 
         scene.canvas.element.classList.add(CANVAS_CLASS);

@@ -3,7 +3,7 @@ import { CellStyleModule, _SharedDragAndDropModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
-import { rowNumbersCSS } from './rowNumbers.css-GENERATED';
+import rowNumbersCSS from './rowNumbers.css';
 import { AgRowNumbersRowResizer } from './rowNumbersRowResizer';
 import { RowNumbersService } from './rowNumbersService';
 

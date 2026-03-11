@@ -28,7 +28,7 @@ const SelectCellElement: ElementParams = {
         },
     ],
 };
-export class SelectCellEditor extends AgAbstractCellEditor<SelectCellEditorParams> {
+export class SelectCellEditor<TValue = any> extends AgAbstractCellEditor<SelectCellEditorParams<any, TValue>, TValue> {
     private focusAfterAttached: boolean;
     private valueSvc: ValueService;
 
@@ -36,14 +36,14 @@ export class SelectCellEditor extends AgAbstractCellEditor<SelectCellEditorParam
         this.valueSvc = beans.valueSvc;
     }
 
-    protected readonly eEditor: GridSelect = RefPlaceholder;
+    protected readonly eEditor: GridSelect<TValue> = RefPlaceholder;
     private startedByEnter: boolean = false;
 
     constructor() {
         super(SelectCellElement, [AgSelectSelector]);
     }
 
-    public initialiseEditor(params: SelectCellEditorParams): void {
+    public initialiseEditor(params: SelectCellEditorParams<any, TValue>): void {
         this.focusAfterAttached = params.cellStartedEdit;
 
         const { eEditor, valueSvc, gos } = this;
@@ -58,7 +58,7 @@ export class SelectCellEditor extends AgAbstractCellEditor<SelectCellEditorParam
 
         let hasValue = false;
         values.forEach((currentValue: any) => {
-            const option: ListOption = { value: currentValue };
+            const option: ListOption<TValue> = { value: currentValue };
             const valueFormatted = valueSvc.formatValue(params.column as AgColumn, null, currentValue);
             const valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
             option.text = valueFormattedExits ? valueFormatted : currentValue;
@@ -68,7 +68,7 @@ export class SelectCellEditor extends AgAbstractCellEditor<SelectCellEditorParam
         });
 
         if (hasValue) {
-            eEditor.setValue(params.value, true);
+            eEditor.setValue(params.value ?? undefined, true);
         } else if (params.values.length) {
             eEditor.setValue(params.values[0], true);
         }
@@ -112,7 +112,12 @@ export class SelectCellEditor extends AgAbstractCellEditor<SelectCellEditorParam
         this.eEditor.getFocusableElement().focus();
     }
 
-    public getValue(): any {
+    public agSetEditValue(value: TValue | null | undefined): void {
+        this.params.value = value;
+        this.eEditor.setValue(value ?? undefined, true);
+    }
+
+    public getValue(): TValue | null | undefined {
         return this.eEditor.getValue();
     }
 
@@ -130,7 +135,7 @@ export class SelectCellEditor extends AgAbstractCellEditor<SelectCellEditorParam
         const value = this.getValue();
         let internalErrors: string[] | null = [];
 
-        if (values && !values.includes(value)) {
+        if (values && value != null && !values.includes(value)) {
             const translate = this.getLocaleTextFunc();
             internalErrors.push(translate('invalidSelectionValidation', 'Invalid selection.'));
         } else {

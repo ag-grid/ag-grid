@@ -2,6 +2,18 @@
 version: v1.25.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
+    SNYK-JS-SVGO-15423912:
+        - astro@5.16.6 > svgo@4.0.0:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-05T11:44:52.250Z
+    SNYK-JS-IMMUTABLE-15423650:
+        - sass@1.93.3 > immutable@5.1.4:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-05T11:42:22.184Z
     SNYK-JS-ASTRO-15338138:
         - astro@5.16.6:
               reason: >-

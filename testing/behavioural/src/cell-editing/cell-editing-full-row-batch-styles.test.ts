@@ -100,7 +100,7 @@ describe('Cell Editing: full-row batch styles', () => {
 
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 5,
-            cellEditingStopped: 8,
+            cellEditingStopped: 5,
             cellValueChanged: 1,
             rowValueChanged: 1,
             cellEditRequest: 0,
@@ -165,7 +165,7 @@ describe('Cell Editing: full-row batch styles', () => {
 
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 8,
-            cellEditingStopped: 14,
+            cellEditingStopped: 6,
             cellValueChanged: 0,
             rowValueChanged: 0,
             cellEditRequest: 0,
@@ -217,7 +217,7 @@ describe('Cell Editing: full-row batch styles', () => {
 
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 5,
-            cellEditingStopped: 8,
+            cellEditingStopped: 5,
             cellValueChanged: 0,
             rowValueChanged: 0,
             cellEditRequest: 0,
@@ -310,7 +310,7 @@ describe('Cell Editing: full-row batch styles', () => {
 
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 17,
-            cellEditingStopped: 21,
+            cellEditingStopped: 15,
             cellValueChanged: 0,
             rowValueChanged: 0,
             cellEditRequest: 0,
@@ -453,7 +453,7 @@ describe('Cell Editing: full-row batch styles', () => {
 
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 23,
-            cellEditingStopped: 35,
+            cellEditingStopped: 21,
             cellValueChanged: 0,
             rowValueChanged: 0,
             cellEditRequest: 0,
@@ -518,7 +518,7 @@ describe('Cell Editing: full-row batch styles', () => {
 
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 5,
-            cellEditingStopped: 7,
+            cellEditingStopped: 4,
             cellValueChanged: 0,
             rowValueChanged: 0,
             cellEditRequest: 0,
@@ -578,7 +578,7 @@ describe('Cell Editing: full-row batch styles', () => {
 
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 8,
-            cellEditingStopped: 12,
+            cellEditingStopped: 8,
             cellValueChanged: 0,
             rowValueChanged: 0,
             cellEditRequest: 0,
@@ -647,7 +647,7 @@ describe('Cell Editing: full-row batch styles', () => {
 
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 11,
-            cellEditingStopped: 13,
+            cellEditingStopped: 9,
             cellValueChanged: 0,
             rowValueChanged: 0,
             cellEditRequest: 0,
@@ -705,7 +705,7 @@ describe('Cell Editing: full-row batch styles', () => {
 
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 5,
-            cellEditingStopped: 8,
+            cellEditingStopped: 5,
             cellValueChanged: 0,
             rowValueChanged: 0,
             cellEditRequest: 0,
@@ -788,7 +788,7 @@ describe('Cell Editing: full-row batch styles', () => {
 
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 8,
-            cellEditingStopped: 18,
+            cellEditingStopped: 8,
             cellValueChanged: 2,
             rowValueChanged: 2,
             cellEditRequest: 0,
@@ -871,7 +871,7 @@ describe('Cell Editing: full-row batch styles', () => {
 
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 8,
-            cellEditingStopped: 18,
+            cellEditingStopped: 8,
             cellValueChanged: 0,
             rowValueChanged: 0,
             cellEditRequest: 0,
@@ -1022,7 +1022,7 @@ describe('Cell Editing: full-row batch styles', () => {
 
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 0,
-            cellEditingStopped: 5,
+            cellEditingStopped: 0,
             cellValueChanged: 2,
             rowValueChanged: 2,
             cellEditRequest: 0,
@@ -1080,7 +1080,7 @@ describe('Cell Editing: full-row batch styles', () => {
 
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 0,
-            cellEditingStopped: 14,
+            cellEditingStopped: 0,
             cellValueChanged: 0,
             rowValueChanged: 0,
             cellEditRequest: 0,

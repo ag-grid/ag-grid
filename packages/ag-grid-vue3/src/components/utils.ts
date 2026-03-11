@@ -1638,7 +1638,14 @@ export interface Props<TData> {
          * @default false
          */
     deltaSort?: boolean,
-    /**/
+    /** Specifies how tree data should be displayed.
+         *
+         * The options are:
+         *
+         * - `'auto'`: group column automatically added by the grid.
+         * - `'custom'`: informs the grid that group columns will be provided.
+         * @agModule `TreeDataModule`
+         */
     treeDataDisplayType?: TreeDataDisplayType,
     /** @initial
          */
