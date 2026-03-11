@@ -167,7 +167,7 @@
       }
     },
     "format-write": {
-      "command": "nx format:write --sort-root-tsconfig-paths=false"
+      "command": "nx format:write --all --sort-root-tsconfig-paths=false"
     },
     "format-check": {
       "executor": "nx:run-commands",
