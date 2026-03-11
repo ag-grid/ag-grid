@@ -284,8 +284,7 @@
 
     .ag-layout-auto-height,
     .ag-layout-print {
-        .ag-center-cols-viewport,
-        .ag-center-cols-container {
+        .ag-grid-scrolling-container {
             min-height: 150px;
         }
     }

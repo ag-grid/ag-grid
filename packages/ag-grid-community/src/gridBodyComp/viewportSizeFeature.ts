@@ -31,9 +31,13 @@ export class ViewportSizeFeature extends BeanStub {
             this.listenForResize();
         });
 
+        const scheduleCenterViewportResize = this.scheduleCenterViewportResize.bind(this);
         this.addManagedEventListeners({
             scrollbarWidthChanged: this.onScrollbarWidthChanged.bind(this),
             scrollVisibilityChanged: this.onCenterViewportResized.bind(this),
+            pinnedHeightChanged: scheduleCenterViewportResize,
+            pinnedRowsChanged: scheduleCenterViewportResize,
+            headerHeightChanged: scheduleCenterViewportResize,
         });
 
         this.addManagedPropertyListeners(['alwaysShowHorizontalScroll', 'alwaysShowVerticalScroll'], () => {
