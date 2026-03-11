@@ -99,6 +99,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
 };
 
+// @ts-expect-error used in html
 function setReadOnly() {
     gridApi!.setGridOption('functionsReadOnly', (document.getElementById('read-only') as HTMLInputElement).checked);
 }
