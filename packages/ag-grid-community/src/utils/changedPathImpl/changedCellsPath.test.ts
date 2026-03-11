@@ -1,20 +1,17 @@
 import type { RowNode } from '../../entities/rowNode';
 import { ChangedCellsPath } from './changedCellsPath';
 
-function makeNode(
-    id: string,
-    parent: RowNode | null = null,
-    opts: { pinned?: boolean; children?: RowNode[] } = {}
-): RowNode {
-    const rowPinned = opts.pinned ? 'top' : null;
+// ─── Minimal stubs ────────────────────────────────────────────────────────────
+
+function makeNode(id: string, parent: RowNode | null = null): RowNode {
     return {
         id,
         parent,
         level: parent ? (parent as any).level + 1 : -1,
-        rowPinned,
-        childrenAfterGroup: opts.children ?? null,
+        rowPinned: null,
+        childrenAfterGroup: null,
         destroyed: false,
-        isRowPinned: () => !!rowPinned,
+        isRowPinned: () => false,
     } as unknown as RowNode;
 }
 
@@ -34,24 +31,10 @@ function makeChain(depth: number): RowNode[] {
     return chain;
 }
 
+// ─── ChangedCellsPath-specific tests ─────────────────────────────────────────
+
 describe('ChangedCellsPath', () => {
-    describe('addRow', () => {
-        test('null or undefined rowNode is a no-op', () => {
-            const path = new ChangedCellsPath();
-            path.addRow(null);
-            path.addRow(undefined);
-            expect(collectRows(path)).toEqual([]);
-        });
-
-        test('adds node and ancestors', () => {
-            const root = makeNode('root');
-            const group = makeNode('group', root);
-            const leaf = makeNode('leaf', group);
-            const path = new ChangedCellsPath();
-            path.addRow(leaf);
-            expect(collectRows(path)).toEqual([leaf, group, root]);
-        });
-
+    describe('addRow — all-columns semantics', () => {
         test('getSlot returns -1 for addRow node (all columns changed)', () => {
             const root = makeNode('root');
             const leaf = makeNode('leaf', root);
@@ -61,42 +44,9 @@ describe('ChangedCellsPath', () => {
             expect(path.getSlot(root)).toBe(-1);
             expect(hasCol(path, leaf, 'any')).toBe(true);
         });
-
-        test('adding same node twice does not duplicate', () => {
-            const root = makeNode('root');
-            const leaf = makeNode('leaf', root);
-            const path = new ChangedCellsPath();
-            path.addRow(leaf);
-            path.addRow(leaf);
-            expect(collectRows(path)).toEqual([leaf, root]);
-        });
     });
 
-    // ── addCell ───────────────────────────────────────────────
-
-    describe('addCell', () => {
-        test('null or undefined rowNode is a no-op', () => {
-            const path = new ChangedCellsPath();
-            path.addCell(null, 'value');
-            path.addCell(undefined, 'value');
-            path.addCell(null, null);
-            path.addCell(undefined, undefined);
-            expect(collectRows(path)).toEqual([]);
-        });
-
-        test('null or undefined colId delegates to addRow (all columns changed)', () => {
-            const root = makeNode('root');
-            const leaf1 = makeNode('leaf1', root);
-            const leaf2 = makeNode('leaf2', root);
-            const path = new ChangedCellsPath();
-            path.addCell(leaf1, null);
-            path.addCell(leaf2, undefined);
-            expect(path.getSlot(leaf1)).toBe(-1);
-            expect(path.getSlot(leaf2)).toBe(-1);
-            expect(hasCol(path, leaf1, 'anything')).toBe(true);
-            expect(hasCol(path, leaf2, 'anything')).toBe(true);
-        });
-
+    describe('addCell — column tracking', () => {
         test('column is registered on the leaf and all ancestors up to root', () => {
             const root = makeNode('root');
             const group = makeNode('group', root);
@@ -187,8 +137,6 @@ describe('ChangedCellsPath', () => {
         });
     });
 
-    // ── getSlot + hasCellBySlot ──────────────────────────────────────
-
     describe('getSlot + hasCellBySlot', () => {
         test('getSlot returns -1 for node not in path', () => {
             const root = makeNode('root');
@@ -220,8 +168,6 @@ describe('ChangedCellsPath', () => {
             expect(path.hasCellBySlot(idx, path.getSlot('C'))).toBe(false);
         });
     });
-
-    // ── Mixed addRow/addCell usage ───────────────────────────────────────
 
     describe('mixed addRow/addCell usage', () => {
         test('addRow then addCell on same node — all columns still changed', () => {
@@ -317,7 +263,6 @@ describe('ChangedCellsPath', () => {
                 nodes.push(makeNode(`n${i}`, root));
             }
             const path = new ChangedCellsPath();
-            // Alternate between addRow and addCell
             for (let i = 0; i < 20; i++) {
                 if (i % 2 === 0) {
                     path.addRow(nodes[i]);
@@ -485,24 +430,20 @@ describe('ChangedCellsPath', () => {
                 leaves.push(makeNode(`leaf${i}`, root));
             }
             const path = new ChangedCellsPath();
-            // Each leaf gets a unique set of columns, crossing word boundaries
             for (let i = 0; i < 10; i++) {
                 for (let c = 0; c < 40; c++) {
                     path.addCell(leaves[i], `col_${i}_${c}`);
                 }
             }
-            // Verify each leaf has its own columns
             for (let i = 0; i < 10; i++) {
                 const idx = path.getSlot(leaves[i]);
                 expect(idx).toBeGreaterThanOrEqual(0);
                 for (let c = 0; c < 40; c++) {
                     expect(path.hasCellBySlot(idx, path.getSlot(`col_${i}_${c}`))).toBe(true);
                 }
-                // Columns from other leaves should not be on this leaf
                 const otherLeaf = (i + 1) % 10;
                 expect(path.hasCellBySlot(idx, path.getSlot(`col_${otherLeaf}_0`))).toBe(false);
             }
-            // Root should have all columns
             for (let i = 0; i < 10; i++) {
                 for (let c = 0; c < 40; c++) {
                     expect(hasCol(path, root, `col_${i}_${c}`)).toBe(true);
@@ -517,31 +458,24 @@ describe('ChangedCellsPath', () => {
             const leaf3 = makeNode('leaf3', root);
             const path = new ChangedCellsPath();
 
-            // Add some cells on leaf1
             for (let i = 0; i < 20; i++) {
                 path.addCell(leaf1, `col${i}`);
             }
-            // addRow on leaf2
             path.addRow(leaf2);
-            // Add more cells on leaf1 to trigger word growth
             for (let i = 20; i < 40; i++) {
                 path.addCell(leaf1, `col${i}`);
             }
-            // Add cells on leaf3
             for (let i = 0; i < 10; i++) {
                 path.addCell(leaf3, `other${i}`);
             }
 
-            // Verify leaf1 has all 40 columns
             const leaf1Id = path.getSlot(leaf1);
             expect(leaf1Id).toBeGreaterThanOrEqual(0);
             for (let i = 0; i < 40; i++) {
                 expect(path.hasCellBySlot(leaf1Id, path.getSlot(`col${i}`))).toBe(true);
             }
-            // Verify leaf2 is all-columns
             expect(path.getSlot(leaf2)).toBe(-1);
             expect(hasCol(path, leaf2, 'anything')).toBe(true);
-            // Verify leaf3 tracks its columns
             const leaf3Id = path.getSlot(leaf3);
             expect(leaf3Id).toBeGreaterThanOrEqual(0);
             for (let i = 0; i < 10; i++) {
@@ -550,24 +484,19 @@ describe('ChangedCellsPath', () => {
         });
 
         test('no false positives at 32-column boundary', () => {
-            // Regression: with all 32 bits of word 0 set, old sentinel used -1 in bits which was a false positive
             const root = makeNode('root');
             const leaf = makeNode('leaf', root);
             const path = new ChangedCellsPath();
-            // Fill exactly 32 columns (word 0 becomes 0xFFFFFFFF)
             for (let i = 0; i < 32; i++) {
                 path.addCell(leaf, `col${i}`);
             }
             const leafIdx = path.getSlot(leaf);
             const rootIdx = path.getSlot(root);
-            // Should NOT be -1 (all-columns), should be cell-tracked
             expect(leafIdx).toBeGreaterThanOrEqual(0);
             expect(rootIdx).toBeGreaterThanOrEqual(0);
-            // All 32 columns present
             for (let i = 0; i < 32; i++) {
                 expect(path.hasCellBySlot(leafIdx, path.getSlot(`col${i}`))).toBe(true);
             }
-            // Column 32 not present
             expect(path.hasCellBySlot(leafIdx, path.getSlot('col32'))).toBe(false);
         });
 
@@ -577,7 +506,6 @@ describe('ChangedCellsPath', () => {
             for (let i = 0; i < 200; i++) {
                 path.addCell(chain[5], `c${i}`);
             }
-            // Verify all nodes in the chain have all 200 columns
             for (let n = 0; n <= 5; n++) {
                 const id = path.getSlot(chain[n]);
                 expect(id).toBeGreaterThanOrEqual(0);
@@ -587,8 +515,6 @@ describe('ChangedCellsPath', () => {
             }
         });
     });
-
-    // ── Cache invalidation ───────────────────────────────────────────────────
 
     describe('cache invalidation', () => {
         test('addCell after getSortedRows — new node appears in next traversal', () => {

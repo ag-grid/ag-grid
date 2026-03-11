@@ -234,7 +234,7 @@ describe('_sortNodesByDepthFirst', () => {
         expect(result).toHaveLength(1001);
         expectDeepestFirst(result);
         expect(result[0].level).toBe(1000);
-        expect(result[result.length - 1].level).toBe(0);
+        expect(result.at(-1)!.level).toBe(0);
         // All original nodes present
         expect(new Set(result)).toEqual(new Set(nodes));
     });
