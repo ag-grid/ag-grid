@@ -201,12 +201,7 @@ interface GroupRowNode<TData = any> {
 
     /** If using row grouping, contains the group values for this group. */
     groupData: { [key: string]: any | null } | null;
-    /**
-     * If using row grouping and aggregation, contains the aggregation data.
-     * This is a null-prototype object (created via `Object.create(null)`) to prevent prototype pollution:
-     * it has no inherited properties, so bracket access with user-controlled column IDs cannot
-     * reach `__proto__`, `constructor`, or other Object.prototype members.
-     */
+    /** If using row grouping and aggregation, contains the aggregation data. Created via `Object.create(null)` to avoid prototype conflicts. */
     aggData: any;
 
     /** The row group column used for this group. */

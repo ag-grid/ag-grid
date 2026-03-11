@@ -1,1 +1,0 @@
-export const formulaCSS = /*css*/ `.formula-error:after{background-color:var(--ag-invalid-color);content:"";height:12px;position:absolute;top:-6px;width:12px}:where(.ag-ltr) .formula-error:after{right:-6px;transform:rotate(45deg)}:where(.ag-rtl) .formula-error:after{left:-6px;transform:rotate(-45deg)}`;

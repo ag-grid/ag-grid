@@ -496,13 +496,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.refreshModel({ step: this.beans.colModel.isPivotActive() ? 'pivot' : 'aggregate' });
     }
 
-    private createChangePath(enabled: boolean): ChangedPath | undefined {
-        // When enabled (row data update, not new data), create a ChangedPath so that only
-        // impacted parent rows are recalculated. When disabled (full reload), return
-        // undefined so all pipeline stages do full tree traversal.
-        return enabled ? new ChangedRowsPath() : undefined;
-    }
-
     private isSuppressModelUpdateAfterUpdateTransaction(params: RefreshModelParams): boolean {
         if (!this.gos.get('suppressModelUpdateAfterUpdateTransaction')) {
             return false; // Not suppressed
@@ -545,7 +538,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
 
         const rowDataUpdated = !!params.rowDataUpdated;
-        params.changedPath ??= this.createChangePath(!params.newData && rowDataUpdated);
+        params.changedPath ??= !params.newData && rowDataUpdated ? new ChangedRowsPath() : undefined;
 
         if (started && rowDataUpdated) {
             eventSvc.dispatchEvent({ type: 'rowDataUpdated' });
@@ -1107,7 +1100,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             keepRenderedRows: true,
             animate,
             changedRowNodes,
-            changedPath: this.createChangePath(true),
+            changedPath: new ChangedRowsPath(),
         });
     }
 

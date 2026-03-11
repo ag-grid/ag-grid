@@ -72,12 +72,7 @@ export class RowNode<TData = any>
     /** When using group rows, contains the value without casting to string */
     public groupValue: any;
 
-    /**
-     * If using row grouping and aggregation, contains the aggregation data.
-     * This is a null-prototype object (created via `Object.create(null)`) to prevent prototype pollution:
-     * it has no inherited properties, so bracket access with user-controlled column IDs cannot
-     * reach `__proto__`, `constructor`, or other Object.prototype members.
-     */
+    /** If using row grouping and aggregation, contains the aggregation data. Created via `Object.create(null)` to avoid prototype conflicts. */
     public aggData: any;
 
     /**

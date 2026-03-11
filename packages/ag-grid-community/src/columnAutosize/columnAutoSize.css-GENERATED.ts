@@ -1,1 +1,0 @@
-export const columnAutoSizeCSS = /*css*/ `:where(.ag-ltr) :where(.ag-animate-autosize){.ag-cell,.ag-header-cell,.ag-header-group-cell{transition:width .2s ease-in-out,left .2s ease-in-out}}:where(.ag-rtl) :where(.ag-animate-autosize){.ag-cell,.ag-header-cell,.ag-header-group-cell{transition:width .2s ease-in-out,right .2s ease-in-out}}`;
