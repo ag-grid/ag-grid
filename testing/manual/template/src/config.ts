@@ -1,10 +1,5 @@
-import {
-    AllCommunityModule,
-    type ColDef,
-    type GridOptions,
-    type GridReadyEvent,
-    ModuleRegistry,
-} from 'ag-grid-community';
+import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
+import type { ColDef, GridOptions, GridReadyEvent } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([AllCommunityModule, AllEnterpriseModule]);
