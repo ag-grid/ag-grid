@@ -9,18 +9,6 @@
     </head>
     <body>
         <app-root></app-root>
-        <div id="angular-disabled" style="display: none; padding: 40px; font-family: system-ui, sans-serif">
-            <h2>Angular not enabled</h2>
-            <p>The Angular plugin is disabled by default to keep dev server startup fast.</p>
-            <p>Restart with: <code>ANGULAR=1 yarn dev</code></p>
-        </div>
-        <script type="module">
-            try {
-                await import('./main.ts');
-            } catch {
-                document.querySelector('app-root').style.display = 'none';
-                document.getElementById('angular-disabled').style.display = 'block';
-            }
-        </script>
+        <script type="module" src="main.ts"></script>
     </body>
 </html>
