@@ -536,7 +536,7 @@ function getDeferredMoveTargetIndex(
     if (targetIndex <= 0) {
         return 0;
     }
-    if (targetIndex >= liveOrderedColIds.length) {
+    if (targetIndex >= remainingDraftColIds.length || targetIndex >= liveOrderedColIds.length) {
         return remainingDraftColIds.length;
     }
 

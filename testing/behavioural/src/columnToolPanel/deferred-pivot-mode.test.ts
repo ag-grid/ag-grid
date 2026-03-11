@@ -6,6 +6,7 @@ import {
     createFakeServer,
     createServerSideDatasource,
 } from '../../../../documentation/ag-grid-docs/src/content/docs/tool-panel-columns/_examples/deferred-apply-mode/fakeServer';
+import { moveItem } from '../../../../packages/ag-grid-enterprise/src/columnToolPanel/columnMoveUtils';
 import { AgGridHeaderDropZonesSelector } from '../../../../packages/ag-grid-enterprise/src/rowGrouping/columnDropZones/agGridHeaderDropZones';
 import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 import { waitForNoLoadingRows } from '../test-utils/ssrm-test-utils';
@@ -404,6 +405,31 @@ describe('deferred column tool panel pivot mode', () => {
         toolPanel.editStrategy.commit();
     }
 
+    function expectPrimaryColumnOrder(toolPanel: any, expectedOrder: string[]): void {
+        expect(getPrimaryColumnOrder(toolPanel)).toEqual(expectedOrder);
+    }
+
+    function expectLeadingPrimaryColumnOrder(toolPanel: any, expectedOrder: string[]): void {
+        expect(getPrimaryColumnOrder(toolPanel).slice(0, expectedOrder.length)).toEqual(expectedOrder);
+    }
+
+    function moveColumnFromToolPanelToListEnd(toolPanel: any, columnId: string): void {
+        const currentColumns = [toolPanel.editStrategy.beans.colModel.getColDefCol(columnId)];
+        const liveColumns = toolPanel.editStrategy.beans.colModel.getCols();
+        const lastColumn = liveColumns[liveColumns.length - 1];
+
+        moveItem(
+            toolPanel.editStrategy.beans,
+            currentColumns,
+            {
+                rowIndex: liveColumns.length - 1,
+                position: 'bottom',
+                component: { column: lastColumn } as any,
+            },
+            { deferApply: true }
+        );
+    }
+
     test('turning pivot mode off and applying should remove year header group text', async () => {
         const { gridApi, toolPanel } = await createDeferredPivotModeGrid();
 
@@ -510,30 +536,30 @@ describe('deferred column tool panel pivot mode', () => {
         const { gridApi, toolPanel } = await createDeferredNonPivotGrid();
         const athlete = gridApi.getColumn('athlete')!;
 
-        expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['athlete', 'age', 'country']);
+        expectLeadingPrimaryColumnOrder(toolPanel, ['athlete', 'age', 'country']);
 
         toolPanel.editStrategy.moveColumns([athlete], 2, 'toolPanelUi');
 
-        expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['athlete', 'age', 'country']);
+        expectLeadingPrimaryColumnOrder(toolPanel, ['athlete', 'age', 'country']);
 
         toolPanel.editStrategy.commit();
 
-        expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['age', 'athlete', 'country']);
+        expectLeadingPrimaryColumnOrder(toolPanel, ['age', 'athlete', 'country']);
     });
 
     test('reordering columns in pivot mode applies primary column order only after commit', async () => {
         const { toolPanel } = await createDeferredPivotModeGrid();
         const athlete = toolPanel.editStrategy.beans.colModel.getColDefCol('athlete');
 
-        expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['athlete', 'age', 'country']);
+        expectLeadingPrimaryColumnOrder(toolPanel, ['athlete', 'age', 'country']);
 
         toolPanel.editStrategy.moveColumns([athlete], 2, 'toolPanelUi');
 
-        expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['athlete', 'age', 'country']);
+        expectLeadingPrimaryColumnOrder(toolPanel, ['athlete', 'age', 'country']);
 
         toolPanel.editStrategy.commit();
 
-        expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['age', 'athlete', 'country']);
+        expectLeadingPrimaryColumnOrder(toolPanel, ['age', 'athlete', 'country']);
     });
 
     test('multiple deferred column moves should interpret target indices against the live order', async () => {
@@ -545,17 +571,16 @@ describe('deferred column tool panel pivot mode', () => {
         toolPanel.editStrategy.moveColumns([year], 1, 'toolPanelUi');
         toolPanel.editStrategy.commit();
 
-        expect(getPrimaryColumnOrder(toolPanel)).toEqual(['age', 'athlete', 'year', 'country']);
+        expectPrimaryColumnOrder(toolPanel, ['age', 'athlete', 'year', 'country']);
     });
 
-    test('moving a deferred column to the bottom should append it', async () => {
-        const { gridApi, toolPanel } = await createDeferredGroupedNonPivotGrid();
-        const athlete = gridApi.getColumn('athlete')!;
+    test('moving a deferred column to the bottom through the tool panel should append it', async () => {
+        const { toolPanel } = await createDeferredGroupedNonPivotGrid();
 
-        toolPanel.editStrategy.moveColumns([athlete], 3, 'toolPanelUi');
+        moveColumnFromToolPanelToListEnd(toolPanel, 'athlete');
         toolPanel.editStrategy.commit();
 
-        expect(getPrimaryColumnOrder(toolPanel)).toEqual(['age', 'country', 'year', 'athlete']);
+        expectPrimaryColumnOrder(toolPanel, ['age', 'country', 'year', 'athlete']);
     });
 
     test('reordering column groups in non-pivot mode applies only after commit', async () => {
