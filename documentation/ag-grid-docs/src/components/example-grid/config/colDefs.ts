@@ -114,9 +114,6 @@ const mobileDefaultCols: ColDef<RowItem>[] = [
         field: 'country',
         width: 150,
         cellRenderer: CountryCellRenderer,
-        cellRendererParams: {
-            deferRender: true,
-        },
         cellClass: 'v-align',
         cellEditor: 'agRichSelectCellEditor',
         cellEditorParams: {
@@ -199,9 +196,6 @@ const desktopDefaultCols: (ColDef<RowItem> | ColGroupDef<RowItem>)[] = [
                 field: 'country',
                 width: 150,
                 cellRenderer: CountryCellRenderer,
-                cellRendererParams: {
-                    deferRender: true,
-                },
                 cellClass: ['country-cell', 'v-align'],
                 enableRowGroup: true,
                 enablePivot: true,
