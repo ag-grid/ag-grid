@@ -105,6 +105,12 @@ export class ColumnToolPanelUpdateStrategy extends BeanStub implements IColumnTo
     }
 }
 
+export function createSyncColumnToolPanelConcreteUpdateStrategy(
+    beans: BeanStub['beans']
+): ColumnToolPanelConcreteUpdateStrategy {
+    return new ColumnToolPanelSynchronousUpdateStrategy(beans);
+}
+
 class ColumnToolPanelSynchronousUpdateStrategy implements ColumnToolPanelConcreteUpdateStrategy {
     private lastPivotColIds: string[] = [];
 

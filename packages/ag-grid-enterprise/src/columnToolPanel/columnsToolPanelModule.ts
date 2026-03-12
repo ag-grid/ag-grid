@@ -7,6 +7,7 @@ import { VERSION } from '../version';
 import { MenuItemModule } from '../widgets/menuItemModule';
 import { ColumnToolPanel } from './columnToolPanel';
 import { ColumnToolPanelFactory } from './columnToolPanelFactory';
+import { SharedColumnToolPanelUpdateModule } from './updates/columnToolPanelUpdateModule';
 import { ColumnToolPanelUpdateStrategy } from './updates/columnToolPanelUpdates';
 
 /**
@@ -41,6 +42,7 @@ export const ColumnsToolPanelModule: _ModuleWithoutApi = {
     },
     dependsOn: [
         EnterpriseCoreModule,
+        SharedColumnToolPanelUpdateModule,
         SideBarModule,
         _ColumnMoveModule,
         _SharedDragAndDropModule,

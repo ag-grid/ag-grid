@@ -55,7 +55,7 @@ import type { IAggFuncService } from '../interfaces/iAggFuncService';
 import type { IClipboardService } from '../interfaces/iClipboardService';
 import type { IColsService } from '../interfaces/iColsService';
 import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
-import type { ColumnToolPanelUpdateStrategyBean } from '../interfaces/iColumnToolPanel';
+import type { ColumnToolPanelUpdatesBean, ColumnToolPanelUpdateStrategyBean } from '../interfaces/iColumnToolPanel';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IContextMenuService } from '../interfaces/iContextMenu';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
@@ -406,6 +406,7 @@ type UntypedBeanNames =
     | 'chartTranslation'
     | 'colChooserFactory'
     | 'colMenuFactory'
+    | ColumnToolPanelUpdatesBean
     | ColumnToolPanelUpdateStrategyBean
     | 'colToolPanelFactory'
     | 'enterpriseChartProxyFactory'

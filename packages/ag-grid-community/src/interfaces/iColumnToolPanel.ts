@@ -15,3 +15,4 @@ export interface IColumnToolPanel extends IToolPanel {
 }
 
 export type ColumnToolPanelUpdateStrategyBean = 'colToolPanelUpdateStrategy';
+export type ColumnToolPanelUpdatesBean = 'colToolPanelUpdates';
