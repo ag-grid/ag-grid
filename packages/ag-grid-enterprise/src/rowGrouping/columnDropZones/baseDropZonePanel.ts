@@ -1,10 +1,8 @@
 import type { AgColumn, ColumnEventType, DragItem, DropTarget, GridDraggingEvent } from 'ag-grid-community';
 import { DragSourceType, _shouldUpdateColVisibilityAfterGroup } from 'ag-grid-community';
 
-import type {
-    ColumnToolPanelUpdateParams,
-    IColumnToolPanelUpdateStrategy,
-} from '../../columnToolPanel/updates/columnToolPanelUpdatesTypes';
+import type { ColumnToolPanelUpdateParams } from '../../columnToolPanel/updates/columnToolPanelUpdatesTypes';
+import { getColumnToolPanelUpdates } from '../../columnToolPanel/updates/columnToolPanelUpdateUtils';
 import type { PillDropZonePanelParams } from '../../widgets/pillDropZonePanel';
 import { PillDropZonePanel } from '../../widgets/pillDropZonePanel';
 import { DropZoneColumnComp } from './dropZoneColumnComp';
@@ -95,12 +93,12 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
             return;
         }
         const allowedCols = columns.filter((c) => !c.getColDef().lockVisible);
-        const strategy = (this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy | undefined) ?? null;
-        if (strategy) {
-            strategy.setColumnsVisible(!!this.updateParams?.deferApply, allowedCols, visible, source);
-        } else {
-            this.beans.colModel.setColsVisible(allowedCols, visible, source);
-        }
+        getColumnToolPanelUpdates(this.beans).setColumnsVisible(
+            !!this.updateParams?.deferApply,
+            allowedCols,
+            visible,
+            source
+        );
     }
 
     private isRowGroupPanel() {

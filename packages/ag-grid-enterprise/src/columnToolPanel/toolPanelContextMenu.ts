@@ -3,10 +3,8 @@ import { Component, _createIconNoSpan, _focusInto, isColumn, isProvidedColumnGro
 
 import { getGroupingLocaleText, isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import { MenuList } from '../widgets/menuList';
-import type {
-    ColumnToolPanelUpdateParams,
-    IColumnToolPanelUpdateStrategy,
-} from './updates/columnToolPanelUpdatesTypes';
+import type { ColumnToolPanelUpdateParams } from './updates/columnToolPanelUpdatesTypes';
+import { getColumnToolPanelUpdates } from './updates/columnToolPanelUpdateUtils';
 
 type MenuItemName = 'scrollIntoView' | 'rowGroup' | 'value' | 'pivot';
 
@@ -71,7 +69,7 @@ export class ToolPanelContextMenu extends Component {
     }
 
     private initializeProperties(column: AgColumn | AgProvidedColumnGroup): void {
-        const updateStrategy = this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy;
+        const updateStrategy = getColumnToolPanelUpdates(this.beans);
         let columns: AgColumn[];
         if (isProvidedColumnGroup(column)) {
             columns = column.getLeafColumns();
@@ -91,7 +89,7 @@ export class ToolPanelContextMenu extends Component {
     private buildMenuItemMap(): void {
         const localeTextFunc = this.getLocaleTextFunc();
         const { beans, displayName } = this;
-        const updateStrategy = this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy;
+        const updateStrategy = getColumnToolPanelUpdates(this.beans);
 
         const menuItemMap = new Map<MenuItemName, MenuItemProperty>();
         this.menuItemMap = menuItemMap;

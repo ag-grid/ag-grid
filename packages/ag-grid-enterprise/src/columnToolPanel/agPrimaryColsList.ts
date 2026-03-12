@@ -33,7 +33,7 @@ import type { ToolPanelColumnCompParams } from './columnToolPanel';
 import { selectAllChildren } from './modelItemUtils';
 import { ToolPanelColumnComp } from './toolPanelColumnComp';
 import { ToolPanelColumnGroupComp } from './toolPanelColumnGroupComp';
-import type { IColumnToolPanelUpdateStrategy } from './updates/columnToolPanelUpdatesTypes';
+import { getColumnToolPanelUpdates } from './updates/columnToolPanelUpdateUtils';
 
 class UIColumnModel implements VirtualListModel {
     constructor(private readonly items: ColumnModelItem[]) {}
@@ -579,7 +579,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         let checkedCount = 0;
         let uncheckedCount = 0;
 
-        const updateStrategy = this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy;
+        const updateStrategy = getColumnToolPanelUpdates(this.beans);
         const pivotMode = updateStrategy.getPivotMode(!!this.params.deferApply);
 
         this.forEachItem((item) => {

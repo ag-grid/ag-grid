@@ -1,10 +1,8 @@
 import type { AgColumn, DragAndDropIcon, GridDraggingEvent } from 'ag-grid-community';
 import { _createIconNoSpan } from 'ag-grid-community';
 
-import type {
-    ColumnToolPanelUpdateParams,
-    IColumnToolPanelUpdateStrategy,
-} from '../../columnToolPanel/updates/columnToolPanelUpdatesTypes';
+import type { ColumnToolPanelUpdateParams } from '../../columnToolPanel/updates/columnToolPanelUpdatesTypes';
+import { getColumnToolPanelUpdates } from '../../columnToolPanel/updates/columnToolPanelUpdateUtils';
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
 export class ValuesDropZonePanel extends BaseDropZonePanel {
@@ -43,23 +41,17 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
             return false;
         }
 
-        const strategy = this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy | undefined;
-        const isActive =
-            strategy?.getValueColumns(!!this.updateParams?.deferApply).includes(column) ?? column.isValueActive();
+        const isActive = getColumnToolPanelUpdates(this.beans)
+            .getValueColumns(!!this.updateParams?.deferApply)
+            .includes(column);
         return column.isAllowValue() && (!isActive || this.isSourceEventFromTarget(draggingEvent));
     }
 
     protected updateItems(columns: AgColumn[]): void {
-        const strategy = this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy | undefined;
-        if (strategy) {
-            strategy.setValueColumns(!!this.updateParams?.deferApply, columns, 'toolPanelUi');
-        } else {
-            this.beans.valueColsSvc?.setColumns(columns, 'toolPanelUi');
-        }
+        getColumnToolPanelUpdates(this.beans).setValueColumns(!!this.updateParams?.deferApply, columns, 'toolPanelUi');
     }
 
     protected getExistingItems(): AgColumn[] {
-        const strategy = this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy | undefined;
-        return strategy?.getValueColumns(!!this.updateParams?.deferApply) ?? this.beans.valueColsSvc?.columns ?? [];
+        return getColumnToolPanelUpdates(this.beans).getValueColumns(!!this.updateParams?.deferApply);
     }
 }
