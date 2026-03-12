@@ -38,7 +38,7 @@ describe('Cell Editing Start', async () => {
     });
 
     describe('ToolPanelContextMenu addColumnsToList and removeColumnsFromList', async () => {
-        let gridApi: GridApi, gridDiv: HTMLElement, toolPanelGui: HTMLElement;
+        let gridApi: GridApi, gridDiv: HTMLElement;
         beforeEach(async () => {
             gridApi = await gridMgr.createGridAndWait('myGrid', {
                 columnDefs,
@@ -53,7 +53,6 @@ describe('Cell Editing Start', async () => {
             });
 
             gridDiv = getGridElement(gridApi)! as HTMLElement;
-            toolPanelGui = (gridApi.getToolPanelInstance('columns') as any).getGui();
             await asyncSetTimeout(1);
         });
 
@@ -159,7 +158,9 @@ describe('Cell Editing Start', async () => {
             params: { deferApply: boolean } = { deferApply: true }
         ): any {
             const column = gridApi.getColumn(columnId)! as AgColumn;
-            return column.createBean(new ToolPanelContextMenu(column as any, new MouseEvent('contextmenu'), gridDiv, params));
+            return column.createBean(
+                new ToolPanelContextMenu(column as any, new MouseEvent('contextmenu'), gridDiv, params)
+            );
         }
 
         test('row group context menu action in deferred mode applies only after clicking Apply', async () => {
