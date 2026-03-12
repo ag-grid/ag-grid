@@ -1,4 +1,5 @@
 import type { RowNode } from '../../entities/rowNode';
+import type { IRowNode } from '../../interfaces/iRowNode';
 import { _sortNodesByDepthFirst } from '../sortNodesByDepthFirst';
 
 /**
@@ -64,12 +65,12 @@ export class ChangedCellsPath {
      * Time: O(D), D = depth.
      * Space: O(D) for new ancestors.
      */
-    public addRow(rowNode: RowNode | null | undefined): void {
-        if (rowNode == null) {
+    public addRow(rowNode: IRowNode | null | undefined): void {
+        let node: RowNode | null | undefined = rowNode as RowNode | null | undefined;
+        if (node == null) {
             return;
         }
         const slots = this.slots;
-        let node: RowNode | null = rowNode;
         if (slots.get(node) !== undefined) {
             // Upgrade cell-tracked ancestors to all-columns until we hit one already at -1.
             while (node != null && slots.get(node)! >= 0) {
@@ -93,7 +94,7 @@ export class ChangedCellsPath {
      * Time: O(D × ⌈C/32⌉), D = depth, C = number of tracked columns.
      * Space: O(D × ⌈C/32⌉) for new ancestors.
      */
-    public addCell(rowNode: RowNode | null | undefined, colId: string | null | undefined): void {
+    public addCell(rowNode: IRowNode | null | undefined, colId: string | null | undefined): void {
         if (colId == null) {
             this.addRow(rowNode);
             return;
@@ -104,9 +105,9 @@ export class ChangedCellsPath {
         const slots = this.slots;
         const bits = this.bits;
         const colSlot = slots.get(colId) ?? this.ensureCol(colId);
-        let rowSlot = slots.get(rowNode);
+        let rowSlot = slots.get(rowNode as RowNode);
         if (rowSlot === undefined) {
-            rowSlot = this.ensureRow(rowNode);
+            rowSlot = this.ensureRow(rowNode as RowNode);
         } else if (rowSlot < 0) {
             return; // already all-columns-changed
         }
@@ -120,9 +121,9 @@ export class ChangedCellsPath {
         }
         word[rowSlot] = rowBits | bit;
         // Propagate bit up the ancestor chain. All ancestors are registered by ensureRow.
-        let p = rowNode.parent;
-        while (p != null) {
-            const pSlot = slots.get(p)!;
+        let parent = (rowNode as RowNode).parent;
+        while (parent != null) {
+            const pSlot = slots.get(parent)!;
             if (pSlot < 0) {
                 break;
             }
@@ -131,7 +132,7 @@ export class ChangedCellsPath {
                 break;
             }
             word[pSlot] = pBits | bit;
-            p = p.parent;
+            parent = parent.parent;
         }
     }
 
@@ -139,8 +140,8 @@ export class ChangedCellsPath {
      * Returns true if `rowNode` is tracked (added via `addRow` or `addCell`, or as an ancestor of either).
      * Time: O(1).
      */
-    public hasRow(rowNode: RowNode): boolean {
-        return this.slots.has(rowNode);
+    public hasRow(rowNode: IRowNode): boolean {
+        return this.slots.has(rowNode as RowNode);
     }
 
     /**
@@ -164,8 +165,8 @@ export class ChangedCellsPath {
      * Read-only — does not allocate slots.
      * Time: O(1).
      */
-    public getSlot(key: RowNode | string): number {
-        return this.slots.get(key) ?? -1;
+    public getSlot(key: IRowNode | string): number {
+        return this.slots.get(key as RowNode | string) ?? -1;
     }
 
     /**
@@ -193,7 +194,7 @@ export class ChangedCellsPath {
      * C < 32 is the common case (single bitmask word per row, no extraBits loop).
      * Space: O(D × ⌈C/32⌉).
      */
-    private ensureRow(rowNode: RowNode): number {
+    private ensureRow(rowNode: IRowNode): number {
         const slots = this.slots;
         const rows = this.rows;
         const bits = this.bits;
@@ -206,10 +207,10 @@ export class ChangedCellsPath {
                 extraBits[w].push(0);
             }
         }
-        slots.set(rowNode, originSlot);
-        rows.push(rowNode);
+        slots.set(rowNode as RowNode, originSlot);
+        rows.push(rowNode as RowNode);
         this.unsorted = true;
-        let p = rowNode.parent;
+        let p = rowNode.parent as RowNode | null;
         while (p != null && !slots.has(p)) {
             slots.set(p, nextSlot);
             rows.push(p);

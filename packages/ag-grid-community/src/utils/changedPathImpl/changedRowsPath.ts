@@ -1,4 +1,5 @@
 import type { RowNode } from '../../entities/rowNode';
+import type { IRowNode } from '../../interfaces/iRowNode';
 import { _sortNodesByDepthFirst } from '../sortNodesByDepthFirst';
 
 /**
@@ -35,16 +36,16 @@ export class ChangedRowsPath {
      * Time: O(D), D = depth.
      * Space: O(D) for new ancestors
      */
-    public addRow(rowNode: RowNode | null | undefined): void {
-        if (rowNode == null) {
+    public addRow(rowNode: IRowNode | null | undefined): void {
+        let node = rowNode as RowNode | null | undefined;
+        if (node == null) {
             return;
         }
         const rowSet = this.rowSet;
-        if (rowSet.has(rowNode)) {
+        if (rowSet.has(node)) {
             return;
         }
         const rows = this.rows;
-        let node: RowNode | null = rowNode;
         do {
             rowSet.add(node);
             rows.push(node);
@@ -54,13 +55,13 @@ export class ChangedRowsPath {
     }
 
     /** Delegates to `addRow` — column tracking is ignored for `ChangedRowsPath`. */
-    public addCell(rowNode: RowNode | null | undefined, _colId: string | null | undefined): void {
+    public addCell(rowNode: IRowNode | null | undefined, _colId: string | null | undefined): void {
         this.addRow(rowNode);
     }
 
     /** Time: O(1). */
-    public hasRow(rowNode: RowNode): boolean {
-        return this.rowSet.has(rowNode);
+    public hasRow(rowNode: IRowNode): boolean {
+        return this.rowSet.has(rowNode as RowNode);
     }
 
     /**
