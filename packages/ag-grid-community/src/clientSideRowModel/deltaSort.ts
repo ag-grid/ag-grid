@@ -60,9 +60,10 @@ export const doDeltaSort = (
 
     // Classify rows as touched or untouched and build an index map.
     // Map stores current index with sign encoding: negative = touched, non-negative = untouched.
-    // For flat grids (hierarchical=false), only direct updates/adds matter — no group membership changes.
-    // For hierarchical grids, also check changedPath for indirectly affected rows; when changedPath
-    // is undefined (e.g. pivot cleared it), all rows are considered touched.
+    // Flat grids (hierarchical=false) never have a changedPath — only direct updates/adds matter
+    // because there are no group membership changes. Hierarchical grids also check changedPath for
+    // indirectly affected rows; when changedPath is undefined (e.g. pivot cleared it), all rows
+    // are considered touched.
     const { updates, adds } = changedRowNodes;
     const touchedRows: RowNode[] = [];
     for (let i = 0; i < unsortedRowsLen; ++i) {

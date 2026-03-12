@@ -62,7 +62,8 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         'grandTotalRow',
     ];
 
-    /** Tracks whether the previous execute() call produced aggData. Null before first run. */
+    /** Tracks whether the previous execute() call produced aggData.
+     * Null before first run. Safe because this bean is a singleton for the grid's lifetime. */
     private hadAggregation: boolean | null = null;
 
     // Stale aggData on demoted nodes is cleared by the group stage (setRowNodeGroup), not here.

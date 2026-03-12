@@ -625,7 +625,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             changedPath ??= params.changedPath;
         }
 
-        // Flat grids skip changedPath — all stages have flat fast paths.
+        // Flat grids (hierarchical=false) never use changedPath — all pipeline stages have O(n) flat
+        // fast paths that process root's children directly. ChangedPath only matters for hierarchical
+        // grids where incremental traversal of the group tree avoids visiting unchanged subtrees.
         changedPath ??= beans.changedPathFactory?.ensureRowsPath(params, rootNode);
 
         // Pipeline of stages — fallthrough is on purpose, e.g. if 'filter', then all steps after run too.

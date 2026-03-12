@@ -14,6 +14,8 @@ export class FilterStage extends BeanStub implements IRowNodeFilterStage, NamedB
     public readonly step: ClientSideRowModelStage = 'filter';
     public readonly refreshProps: (keyof GridOptions<any>)[] = ['excludeChildrenWhenTreeDataFiltering'];
 
+    /** Tracks filter active/inactive state across execute() calls to detect transitions.
+     * Null before first run. Safe because this bean is a singleton for the grid's lifetime. */
     private wasFilterActive: boolean | null = null;
 
     public execute(changedPath: ChangedPath | undefined): void {
@@ -131,9 +133,11 @@ const passThrough = (rowNode: RowNode): void => {
 
 /**
  * Filters children, keeping only those that pass the filter (or have passing descendants when checkDescendants is true).
- * Returns `childrenAfterGroup` when all children pass (zero allocation).
- * Returns the previous `childrenAfterFilter` if the filtered result is identical (reference stability, zero allocation).
- * Defers new array allocation until the first excluded child.
+ *
+ * Uses a deferred-allocation pattern (result/writeIdx/diffFromPrev) that is intentionally duplicated
+ * in filterAggregatesStage and treeDataFilterStage rather than generalized into a shared helper,
+ * because each call site has different filter predicates and side effects that would require
+ * callbacks or indirection, hurting hot-path performance.
  */
 const filterChildren = (
     children: RowNode[],
@@ -170,16 +174,15 @@ const filterChildren = (
             }
             writeIdx++;
         } else if (result === null) {
-            // First excluded child: allocate result and copy all previously included children
-            result = new Array<RowNode>(len);
-            for (let j = 0; j < writeIdx; ++j) {
-                result[j] = children[j];
-            }
+            // First excluded child: clone via slice() (native memcpy, packed array).
+            // Safe to read/write the same array since writeIdx <= i.
+            result = children.slice();
+            children = result;
         }
     }
 
     if (result === null) {
-        return children; // All passed — reuse childrenAfterGroup, zero allocation
+        return children; // All passed — reuse source, zero allocation
     }
     if (!diffFromPrev && prev!.length === writeIdx) {
         return prev!; // Identical to previous result — reuse old array, zero allocation

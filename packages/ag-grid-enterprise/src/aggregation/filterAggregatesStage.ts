@@ -89,7 +89,7 @@ const filterChildren = (
     filterManager: FilterManager,
     applyFilterToNode: AggFilterPredicate
 ): void => {
-    const children = node.childrenAfterFilter;
+    let children = node.childrenAfterFilter;
     if (!children) {
         node.childrenAfterAggFilter = null;
         setAllChildrenCount(node, null, treeData);
@@ -130,11 +130,10 @@ const filterChildren = (
             }
             writeIdx++;
         } else if (result === null) {
-            // First excluded child: allocate result and copy all previously included children
-            result = new Array<RowNode>(len);
-            for (let j = 0; j < writeIdx; ++j) {
-                result[j] = children[j];
-            }
+            // First excluded child: clone via slice() (native memcpy, packed array).
+            // Safe to read/write the same array since writeIdx <= i.
+            result = children.slice();
+            children = result;
         }
     }
 

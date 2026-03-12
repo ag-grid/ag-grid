@@ -1,5 +1,6 @@
 import type {
     ChangedPath,
+    GridOptionsService,
     NamedBean,
     PostSortRowsParams,
     RowNode,
@@ -108,13 +109,13 @@ export class HierarchicalSortStage extends BeanStub implements NamedBean, _IHier
     }
 }
 
-const shouldSortContainsGroupCols = (gos: { get(key: any): any }, sortOptions: SortOption[]): boolean => {
+const shouldSortContainsGroupCols = (gos: GridOptionsService, sortOptions: SortOption[]): boolean => {
     const sortOptionsLen = sortOptions.length;
     if (!sortOptionsLen) {
         return false;
     }
 
-    if (_isColumnsSortingCoupledToGroup(gos as any)) {
+    if (_isColumnsSortingCoupledToGroup(gos)) {
         for (let i = 0; i < sortOptionsLen; ++i) {
             const column = sortOptions[i].column;
             if (column.isPrimary() && column.isRowGroupActive()) {

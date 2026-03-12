@@ -29,7 +29,7 @@ export class TreeDataFilterStage extends BeanStub implements NamedBean, _ITreeDa
          * Skips recursion into unchanged subtrees when changedPath is provided.
          */
         const filterNode = (rowNode: RowNode, alreadyFoundInParent: boolean): void => {
-            const children = rowNode.childrenAfterGroup;
+            let children = rowNode.childrenAfterGroup;
             if (!children) {
                 rowNode.childrenAfterFilter = null;
                 return;
@@ -76,10 +76,10 @@ export class TreeDataFilterStage extends BeanStub implements NamedBean, _ITreeDa
                     }
                     writeIdx++;
                 } else if (result === null) {
-                    result = new Array<RowNode>(len);
-                    for (let j = 0; j < writeIdx; ++j) {
-                        result[j] = children[j];
-                    }
+                    // First excluded child: clone via slice() (native memcpy, packed array).
+                    // Safe to read/write the same array since writeIdx <= i.
+                    result = children.slice();
+                    children = result;
                 }
             }
 
