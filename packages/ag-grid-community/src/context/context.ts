@@ -75,6 +75,7 @@ import type { IPivotResultColsService } from '../interfaces/iPivotResultColsServ
 import type { IRowChildrenService } from '../interfaces/iRowChildrenService';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type {
+    IHierarchicalSortStage,
     IRowNodeAggregationStage,
     IRowNodeFilterAggregateStage,
     IRowNodeFilterStage,
@@ -82,6 +83,7 @@ import type {
     IRowNodeGroupStage,
     IRowNodePivotStage,
     IRowNodeSortStage,
+    ITreeDataFilterStage,
 } from '../interfaces/iRowNodeStage';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { IServerSideTransactionManager } from '../interfaces/iServerSideRowModel';
@@ -124,6 +126,7 @@ import type { RowStyleService } from '../styling/rowStyleService';
 import type { SyncService } from '../syncService';
 import type { TooltipService } from '../tooltip/tooltipService';
 import type { UndoRedoService } from '../undoRedo/undoRedoService';
+import type { IChangedPathFactory } from '../utils/changedPath';
 import type { ValidationService } from '../validation/validationService';
 import type { ChangeDetectionService } from '../valueService/changeDetectionService';
 import type { ExpressionService } from '../valueService/expressionService';
@@ -344,6 +347,9 @@ interface CoreBeanCollection
     aggStage?: IRowNodeAggregationStage;
     pivotStage?: IRowNodePivotStage;
     filterAggStage?: IRowNodeFilterAggregateStage;
+    treeDataFilterSvc?: ITreeDataFilterStage;
+    hierarchicalSortSvc?: IHierarchicalSortStage;
+    changedPathFactory?: IChangedPathFactory;
     rowNodeSorter?: RowNodeSorter;
     pivotColDefSvc?: IPivotColDefService;
     chartSvc?: IChartService;

@@ -4,18 +4,15 @@
  * Scenario A (changeDetectionService): single cell edit triggers addCell once, then full pipeline.
  * Scenario B (clipboardService paste): paste 500 cells across different rows/columns, then pipeline.
  * Scenario C (ChangedRowsPath): addRow per changed row (no column tracking), then pipeline.
- *
- * Run with:
- *   ./behave.sh "changedPath.bench" --bench
  */
 import { bench, suite } from 'vitest';
 
-import type { RowNode } from 'ag-grid-community';
-import { ChangedCellsPath, ChangedRowsPath, _forEachChangedGroupDepthFirst } from 'ag-grid-community';
+import type { ChangedCellsPath, ChangedRowsPath, RowNode } from 'ag-grid-community';
+import { _forEachChangedGroupDepthFirst } from 'ag-grid-community';
+import { ChangedCellsPathImpl } from 'ag-grid-enterprise/src/rowHierarchy/changedPath/changedCellsPath';
+import { ChangedRowsPathImpl } from 'ag-grid-enterprise/src/rowHierarchy/changedPath/changedRowsPath';
 
 import { SimplePRNG } from '../../test-utils';
-
-// ── Stubs ─────────────────────────────────────────────────────────────────────
 
 let nodeCounter = 0;
 function makeNode(id: string, parent: RowNode | null = null): RowNode {
@@ -27,8 +24,6 @@ function makeNode(id: string, parent: RowNode | null = null): RowNode {
         destroyed: false,
     } as unknown as RowNode;
 }
-
-// ── Tree builder ──────────────────────────────────────────────────────────────
 
 function buildTree(groupsPerLevel: number, levels: number, leavesPerLeafGroup: number) {
     const root = makeNode('root', null);
@@ -111,8 +106,6 @@ function runPipelineWithColumnChecks(
     void n;
 }
 
-// ── Fixture: 500 changed, 10 levels ──────────────────────────────────────────
-
 const tree = buildTree(2, 10, 4);
 const prng = new SimplePRNG(0xc4a3b1d9);
 const shuffled = tree.leaves.slice();
@@ -124,11 +117,9 @@ const colIds25 = Array.from({ length: 25 }, (_, i) => `col${i}`);
 const allNodes = tree.allNodes;
 const tag = `500/${allNodes.length} nodes, 10 levels`;
 
-// ── Benchmarks ───────────────────────────────────────────────────────────────
-
 suite(`CSRM pipeline — ${tag}`, () => {
     bench('ChangedRowsPath: addRow (no column tracking)', () => {
-        const path = new ChangedRowsPath();
+        const path = new ChangedRowsPathImpl();
         for (let i = 0; i < changed.length; i++) {
             path.addRow(changed[i]);
         }
@@ -136,7 +127,7 @@ suite(`CSRM pipeline — ${tag}`, () => {
     });
 
     bench('ChangedCellsPath: paste 500 cells, 3 columns', () => {
-        const path = new ChangedCellsPath();
+        const path = new ChangedCellsPathImpl();
         for (let i = 0; i < changed.length; i++) {
             path.addCell(changed[i], colIds3[i % colIds3.length]);
         }
@@ -144,7 +135,7 @@ suite(`CSRM pipeline — ${tag}`, () => {
     });
 
     bench('ChangedCellsPath: paste 500 cells, 25 columns', () => {
-        const path = new ChangedCellsPath();
+        const path = new ChangedCellsPathImpl();
         for (let i = 0; i < changed.length; i++) {
             path.addCell(changed[i], colIds25[i % colIds25.length]);
         }
@@ -152,7 +143,7 @@ suite(`CSRM pipeline — ${tag}`, () => {
     });
 
     bench('ChangedCellsPath: single cell edit', () => {
-        const path = new ChangedCellsPath();
+        const path = new ChangedCellsPathImpl();
         path.addCell(changed[0], colIds3[0]);
         runPipelineWithColumnChecks(path, tree.root, allNodes, colIds3);
     });

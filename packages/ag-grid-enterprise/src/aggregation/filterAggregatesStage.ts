@@ -1,5 +1,4 @@
 import type {
-    BeanCollection,
     ChangedPath,
     ClientSideRowModelStage,
     FilterManager,
@@ -10,93 +9,166 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, _forEachChangedGroupDepthFirst, _getGroupAggFiltering } from 'ag-grid-community';
 
+/** Predicate that determines whether aggregate filters should apply to a given row. */
+type AggFilterPredicate = (params: { node: RowNode }) => boolean;
+
+// Default predicate for primary columns: apply filters only to leaf nodes.
+const defaultPrimaryColumnPredicate: AggFilterPredicate = (params) => !params.node.group;
+
+// Default predicate for pivot mode: apply filters only to leaf-level groups.
+const defaultSecondaryColumnPredicate: AggFilterPredicate = (params) => !!params.node.leafGroup;
+
 export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowNodeFilterAggregateStage {
     beanName = 'filterAggStage' as const;
 
     public readonly step: ClientSideRowModelStage = 'filter_aggregates';
     public readonly refreshProps: (keyof GridOptions<any>)[] = [];
 
-    private filterManager?: FilterManager;
-
-    public wireBeans(beans: BeanCollection): void {
-        this.filterManager = beans.filterManager;
-    }
-
     public execute(changedPath: ChangedPath | undefined): void {
-        const isPivotMode = this.beans.colModel.isPivotMode();
+        const { filterManager } = this.beans;
         const isAggFilterActive =
-            this.filterManager?.isAggregateFilterPresent() || this.filterManager?.isAggregateQuickFilterPresent();
+            filterManager?.isAggregateFilterPresent() || filterManager?.isAggregateQuickFilterPresent();
 
-        // This is the default filter for applying only to leaf nodes, realistically this should not apply as primary agg columns,
-        // should not be applied by the filterManager if getGroupAggFiltering is missing. Predicate will apply filters to leaf level.
-        const defaultPrimaryColumnPredicate = (params: { node: RowNode }) => !params.node.group;
+        const applyFilterToNode: AggFilterPredicate | undefined = isAggFilterActive
+            ? _getGroupAggFiltering(this.gos) ||
+              (this.beans.colModel.isPivotMode() ? defaultSecondaryColumnPredicate : defaultPrimaryColumnPredicate)
+            : undefined;
 
-        // Default secondary column predicate, selecting only leaf level groups.
-        const defaultSecondaryColumnPredicate = (params: { node: RowNode }) => params.node.leafGroup;
-
-        // The predicate to determine whether filters should apply to this row. Either defined by the user in groupAggFiltering or a default depending
-        // on current pivot mode status.
-        const applyFilterToNode =
-            _getGroupAggFiltering(this.gos) ||
-            (isPivotMode ? defaultSecondaryColumnPredicate : defaultPrimaryColumnPredicate);
-
-        const preserveChildren = (node: RowNode, recursive = false) => {
-            if (node.childrenAfterFilter) {
-                node.childrenAfterAggFilter = node.childrenAfterFilter;
-                if (recursive) {
-                    const children = node.childrenAfterAggFilter;
-                    for (let i = 0, len = children.length; i < len; ++i) {
-                        preserveChildren(children[i], recursive);
-                    }
-                }
-                this.setAllChildrenCount(node);
-            }
-
-            if (node.sibling) {
-                node.sibling.childrenAfterAggFilter = node.childrenAfterAggFilter;
-            }
-        };
-
-        const filterChildren = (node: RowNode) => {
-            node.childrenAfterAggFilter =
-                node.childrenAfterFilter?.filter((child: RowNode) => {
-                    const shouldFilterRow = applyFilterToNode({ node: child });
-                    if (shouldFilterRow) {
-                        const doesNodePassFilter = this.filterManager!.doesRowPassAggregateFilters({ rowNode: child });
-                        if (doesNodePassFilter) {
-                            // Node has passed, so preserve children
-                            preserveChildren(child, true);
-                            return true;
-                        }
-                    }
-                    const hasChildPassed = child.childrenAfterAggFilter?.length;
-                    return hasChildPassed;
-                }) || null;
-
-            this.setAllChildrenCount(node);
-            if (node.sibling) {
-                node.sibling.childrenAfterAggFilter = node.childrenAfterAggFilter;
-            }
-        };
+        const treeData = !!this.beans.groupStage?.treeData;
 
         // This stage is only called when hierarchical (flat grids are handled inline by CSRM).
         _forEachChangedGroupDepthFirst(
             this.beans.rowModel.rootNode,
             true,
             changedPath,
-            isAggFilterActive ? filterChildren : preserveChildren
+            applyFilterToNode
+                ? (node) => filterChildren(node, treeData, filterManager!, applyFilterToNode)
+                : (node) => preserveNode(node, treeData)
         );
     }
+}
 
-    /** for tree data, we include all children, groups and leafs */
-    private setAllChildrenCountTreeData(rowNode: RowNode): void {
-        const childrenAfterAggFilter = rowNode.childrenAfterAggFilter;
+/** Passthrough for a single node visited by the depth-first traversal (no recursion needed). */
+const preserveNode = (node: RowNode, treeData: boolean): void => {
+    const children = node.childrenAfterFilter;
+    if (children) {
+        node.childrenAfterAggFilter = children;
+        setAllChildrenCount(node, children, treeData);
+    }
+    const sibling = node.sibling;
+    if (sibling) {
+        sibling.childrenAfterAggFilter = node.childrenAfterAggFilter;
+    }
+};
+
+/** Recursively preserves a subtree (sets childrenAfterAggFilter = childrenAfterFilter for all descendants). */
+const preserveSubtree = (node: RowNode, treeData: boolean): void => {
+    const children = node.childrenAfterFilter;
+    if (children) {
+        node.childrenAfterAggFilter = children;
+        for (let i = 0, len = children.length; i < len; ++i) {
+            preserveSubtree(children[i], treeData);
+        }
+        setAllChildrenCount(node, children, treeData);
+    }
+    const sibling = node.sibling;
+    if (sibling) {
+        sibling.childrenAfterAggFilter = node.childrenAfterAggFilter;
+    }
+};
+
+/**
+ * Filters children by aggregate filter, using deferred allocation.
+ * Reuses `childrenAfterFilter` when all children pass (zero allocation).
+ * Reuses the previous `childrenAfterAggFilter` if the filtered result is identical (reference stability).
+ * Defers new array allocation until the first excluded child.
+ */
+const filterChildren = (
+    node: RowNode,
+    treeData: boolean,
+    filterManager: FilterManager,
+    applyFilterToNode: AggFilterPredicate
+): void => {
+    const children = node.childrenAfterFilter;
+    if (!children) {
+        node.childrenAfterAggFilter = null;
+        setAllChildrenCount(node, null, treeData);
+        const sibling = node.sibling;
+        if (sibling) {
+            sibling.childrenAfterAggFilter = null;
+        }
+        return;
+    }
+
+    const len = children.length;
+    const prev = node.childrenAfterAggFilter;
+    let result: RowNode[] | null = null;
+    let writeIdx = 0;
+    let diffFromPrev = !prev;
+
+    for (let i = 0; i < len; ++i) {
+        const child = children[i];
+
+        let passes: boolean;
+        if (applyFilterToNode({ node: child })) {
+            passes = filterManager.doesRowPassAggregateFilters(child);
+            if (passes) {
+                preserveSubtree(child, treeData);
+            }
+        } else {
+            // Not subject to aggregate filter — include if it has descendants that passed
+            const childResult = child.childrenAfterAggFilter;
+            passes = childResult !== null && childResult !== undefined && childResult.length > 0;
+        }
+
+        if (passes) {
+            if (!diffFromPrev && prev![writeIdx] !== child) {
+                diffFromPrev = true;
+            }
+            if (result !== null) {
+                result[writeIdx] = child;
+            }
+            writeIdx++;
+        } else if (result === null) {
+            // First excluded child: allocate result and copy all previously included children
+            result = new Array<RowNode>(len);
+            for (let j = 0; j < writeIdx; ++j) {
+                result[j] = children[j];
+            }
+        }
+    }
+
+    let filtered: RowNode[];
+    if (result === null) {
+        filtered = children; // All passed — reuse childrenAfterFilter
+    } else if (!diffFromPrev && prev!.length === writeIdx) {
+        filtered = prev!; // Identical to previous — reuse old array
+    } else {
+        result.length = writeIdx;
+        filtered = result;
+    }
+
+    node.childrenAfterAggFilter = filtered;
+    setAllChildrenCount(node, filtered, treeData);
+    const sibling = node.sibling;
+    if (sibling) {
+        sibling.childrenAfterAggFilter = filtered;
+    }
+};
+
+const setAllChildrenCount = (rowNode: RowNode, childrenAfterAggFilter: RowNode[] | null, treeData: boolean): void => {
+    if (!rowNode.hasChildren()) {
+        rowNode.setAllChildrenCount(null);
+        return;
+    }
+    if (treeData) {
+        // For tree data, count all children (groups and leafs)
         let allChildrenCount = 0;
         if (childrenAfterAggFilter) {
             const length = childrenAfterAggFilter.length;
-            allChildrenCount = length; // include direct children too
+            allChildrenCount = length;
             for (let i = 0; i < length; ++i) {
-                allChildrenCount += childrenAfterAggFilter[i].allChildrenCount ?? 0; // include children of children
+                allChildrenCount += childrenAfterAggFilter[i].allChildrenCount ?? 0;
             }
         }
         rowNode.setAllChildrenCount(
@@ -105,33 +177,17 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowN
             // - allChildrenCount is null in any non-root row if there are no children
             allChildrenCount === 0 && rowNode.level >= 0 ? null : allChildrenCount
         );
+        return;
     }
-
-    /* for grid data, we only count the leafs */
-    private setAllChildrenCountGridGrouping(rowNode: RowNode) {
-        const children = rowNode.childrenAfterAggFilter!;
-        let allChildrenCount = 0;
-        for (let i = 0, len = children.length; i < len; ++i) {
-            const child = children[i];
-            if (child.group) {
-                allChildrenCount += child.allChildrenCount as any;
-            } else {
-                allChildrenCount++;
-            }
-        }
-        rowNode.setAllChildrenCount(allChildrenCount);
-    }
-
-    private setAllChildrenCount(rowNode: RowNode) {
-        if (!rowNode.hasChildren()) {
-            rowNode.setAllChildrenCount(null);
-            return;
-        }
-
-        if (this.beans.groupStage?.treeData) {
-            this.setAllChildrenCountTreeData(rowNode);
+    // For grid grouping, count only the leafs
+    let allChildrenCount = 0;
+    for (let i = 0, len = childrenAfterAggFilter!.length; i < len; ++i) {
+        const child = childrenAfterAggFilter![i];
+        if (child.group) {
+            allChildrenCount += child.allChildrenCount as any;
         } else {
-            this.setAllChildrenCountGridGrouping(rowNode);
+            allChildrenCount++;
         }
     }
-}
+    rowNode.setAllChildrenCount(allChildrenCount);
+};

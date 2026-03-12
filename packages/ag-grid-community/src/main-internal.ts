@@ -207,11 +207,9 @@ export type {
 } from './api/gridApi';
 export { _getClientSideRowModel, _getServerSideRowModel, _getViewportRowModel } from './api/rowModelApiUtils';
 export { ChangedRowNodes as _ChangedRowNodes } from './clientSideRowModel/changedRowNodes';
-export {
-    _csrmEnsureChangedPath,
-    _csrmFirstLeaf,
-    _csrmReorderAllLeafs,
-} from './clientSideRowModel/clientSideRowModelUtils';
+export { _csrmFirstLeaf, _csrmReorderAllLeafs } from './clientSideRowModel/clientSideRowModelUtils';
+export { doDeltaSort as _doDeltaSort } from './clientSideRowModel/deltaSort';
+export { updateRowNodeAfterSort as _updateRowNodeAfterSort } from './clientSideRowModel/sortStage';
 export { BaseColsService } from './columns/baseColsService';
 export {
     _addColumnDefaultAndTypes,
@@ -443,6 +441,8 @@ export type {
     IRowNodeFlattenStage as _IRowNodeFlattenStage,
     IRowNodeGroupStage as _IRowNodeGroupStage,
     IRowNodePivotStage as _IRowNodePivotStage,
+    ITreeDataFilterStage as _ITreeDataFilterStage,
+    IHierarchicalSortStage as _IHierarchicalSortStage,
     NestedDataGetter,
 } from './interfaces/iRowNodeStage';
 export type { ISelectionService, ISetNodesSelectedParams } from './interfaces/iSelectionService';
@@ -497,8 +497,8 @@ export {
 } from './theming/parts/theme/themes';
 export { _getShouldDisplayTooltip, _isShowTooltipWhenTruncated } from './tooltip/tooltipFeature';
 export type { ITooltipCtrl, ITooltipCtrlParams, TooltipFeature } from './tooltip/tooltipFeature';
-export type { ChangedPath } from './utils/changedPath';
-export { ChangedCellsPath, ChangedRowsPath, _forEachChangedGroupDepthFirst } from './utils/changedPath';
+export type { ChangedCellsPath, ChangedPath, ChangedRowsPath, IChangedPathFactory } from './utils/changedPath';
+export { _forEachChangedGroupDepthFirst } from './utils/changedPath';
 export { _createElement } from './utils/element';
 export type { ElementParams } from './utils/element';
 export { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from './utils/gridEvent';

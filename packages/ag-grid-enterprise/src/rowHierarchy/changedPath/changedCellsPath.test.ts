@@ -1,5 +1,6 @@
-import type { RowNode } from '../../entities/rowNode';
-import { ChangedCellsPath } from './changedCellsPath';
+import type { ChangedCellsPath, RowNode } from 'ag-grid-community';
+
+import { ChangedCellsPathImpl } from './changedCellsPath';
 
 // ─── Minimal stubs ────────────────────────────────────────────────────────────
 
@@ -38,7 +39,7 @@ describe('ChangedCellsPath', () => {
         test('getSlot returns -1 for addRow node (all columns changed)', () => {
             const root = makeNode('root');
             const leaf = makeNode('leaf', root);
-            const path = new ChangedCellsPath();
+            const path = new ChangedCellsPathImpl();
             path.addRow(leaf);
             expect(path.getSlot(leaf)).toBe(-1);
             expect(path.getSlot(root)).toBe(-1);
@@ -51,7 +52,7 @@ describe('ChangedCellsPath', () => {
             const root = makeNode('root');
             const group = makeNode('group', root);
             const leaf = makeNode('leaf', group);
-            const path = new ChangedCellsPath();
+            const path = new ChangedCellsPathImpl();
             path.addCell(leaf, 'value');
 
             expect(hasCol(path, leaf, 'value')).toBe(true);
@@ -63,7 +64,7 @@ describe('ChangedCellsPath', () => {
         test('two different columns on same leaf are both tracked', () => {
             const root = makeNode('root');
             const leaf = makeNode('leaf', root);
-            const path = new ChangedCellsPath();
+            const path = new ChangedCellsPathImpl();
             path.addCell(leaf, 'A');
             path.addCell(leaf, 'B');
 
@@ -76,7 +77,7 @@ describe('ChangedCellsPath', () => {
             const group = makeNode('group', root);
             const leaf1 = makeNode('leaf1', group);
             const leaf2 = makeNode('leaf2', group);
-            const path = new ChangedCellsPath();
+            const path = new ChangedCellsPathImpl();
             path.addCell(leaf1, 'A');
             path.addCell(leaf2, 'B');
 
@@ -93,7 +94,7 @@ describe('ChangedCellsPath', () => {
         test('adding same column twice on same node is idempotent', () => {
             const root = makeNode('root');
             const leaf = makeNode('leaf', root);
-            const path = new ChangedCellsPath();
+            const path = new ChangedCellsPathImpl();
             path.addCell(leaf, 'value');
             path.addCell(leaf, 'value');
             expect(hasCol(path, leaf, 'value')).toBe(true);
@@ -101,7 +102,7 @@ describe('ChangedCellsPath', () => {
 
         test('addCell on root registers column on root', () => {
             const root = makeNode('root');
-            const path = new ChangedCellsPath();
+            const path = new ChangedCellsPathImpl();
             path.addCell(root, 'A');
 
             expect(hasCol(path, root, 'A')).toBe(true);
@@ -114,7 +115,7 @@ describe('ChangedCellsPath', () => {
             const groupB = makeNode('groupB', root);
             const leafA = makeNode('leafA', groupA);
             const leafB = makeNode('leafB', groupB);
-            const path = new ChangedCellsPath();
+            const path = new ChangedCellsPathImpl();
             path.addCell(leafA, 'X');
             path.addCell(leafB, 'X');
 
@@ -127,7 +128,7 @@ describe('ChangedCellsPath', () => {
 
         test('column propagated through all intermediate nodes in a deep chain', () => {
             const chain = makeChain(10);
-            const path = new ChangedCellsPath();
+            const path = new ChangedCellsPathImpl();
             path.addCell(chain[10], 'deep');
 
             for (let i = 0; i <= 10; i++) {
@@ -141,7 +142,7 @@ describe('ChangedCellsPath', () => {
         test('getSlot returns -1 for node not in path', () => {
             const root = makeNode('root');
             const other = makeNode('other', root);
-            const path = new ChangedCellsPath();
+            const path = new ChangedCellsPathImpl();
             path.addRow(root);
             expect(path.getSlot(other)).toBe(-1);
             expect(path.hasCellBySlot(-1, path.getSlot('any'))).toBe(true);
@@ -150,7 +151,7 @@ describe('ChangedCellsPath', () => {
         test('getSlot returns >= 0 for cell-tracked node', () => {
             const root = makeNode('root');
             const leaf = makeNode('leaf', root);
-            const path = new ChangedCellsPath();
+            const path = new ChangedCellsPathImpl();
             path.addCell(leaf, 'A');
             expect(path.getSlot(leaf)).toBeGreaterThanOrEqual(0);
         });
@@ -158,7 +159,7 @@ describe('ChangedCellsPath', () => {
         test('hasCellBySlot returns true for tracked column, false for untracked', () => {
             const root = makeNode('root');
             const leaf = makeNode('leaf', root);
-            const path = new ChangedCellsPath();
+            const path = new ChangedCellsPathImpl();
             path.addCell(leaf, 'A');
             path.addCell(leaf, 'B');
             const idx = path.getSlot(leaf);
@@ -174,7 +175,7 @@ describe('ChangedCellsPath', () => {
             const root = makeNode('root');
             const group = makeNode('group', root);
             const leaf = makeNode('leaf', group);
-            const path = new ChangedCellsPath();
+            const path = new ChangedCellsPathImpl();
             path.addRow(leaf);
             path.addCell(leaf, 'A');
 
@@ -187,7 +188,7 @@ describe('ChangedCellsPath', () => {
         test('addCell then addRow on same node — upgrades to all columns', () => {
             const root = makeNode('root');
             const leaf = makeNode('leaf', root);
-            const path = new ChangedCellsPath();
+            const path = new ChangedCellsPathImpl();
             path.addCell(leaf, 'A');
             expect(path.getSlot(leaf)).toBeGreaterThanOrEqual(0);
             path.addRow(leaf);
@@ -198,7 +199,7 @@ describe('ChangedCellsPath', () => {
         test('addCell with colId then addCell with null colId — upgrades to all columns', () => {
             const root = makeNode('root');
             const leaf = makeNode('leaf', root);
-            const path = new ChangedCellsPath();
+            const path = new ChangedCellsPathImpl();
             path.addCell(leaf, 'A');
             expect(path.getSlot(leaf)).toBeGreaterThanOrEqual(0);
             path.addCell(leaf, null);
@@ -211,7 +212,7 @@ describe('ChangedCellsPath', () => {
             const group = makeNode('group', root);
             const leaf1 = makeNode('leaf1', group);
             const leaf2 = makeNode('leaf2', group);
-            const path = new ChangedCellsPath();
+            const path = new ChangedCellsPathImpl();
             path.addCell(leaf1, 'A');
             path.addRow(leaf2);
 
@@ -227,7 +228,7 @@ describe('ChangedCellsPath', () => {
             const root = makeNode('root');
             const group = makeNode('group', root);
             const leaf = makeNode('leaf', group);
-            const path = new ChangedCellsPath();
+            const path = new ChangedCellsPathImpl();
             path.addCell(leaf, 'A');
             path.addRow(group);
 
@@ -244,7 +245,7 @@ describe('ChangedCellsPath', () => {
             const root = makeNode('root');
             const leaf1 = makeNode('leaf1', root);
             const leaf2 = makeNode('leaf2', root);
-            const path = new ChangedCellsPath();
+            const path = new ChangedCellsPathImpl();
             path.addRow(leaf1);
             path.addCell(leaf2, 'X');
 
@@ -262,7 +263,7 @@ describe('ChangedCellsPath', () => {
             for (let i = 0; i < 20; i++) {
                 nodes.push(makeNode(`n${i}`, root));
             }
-            const path = new ChangedCellsPath();
+            const path = new ChangedCellsPathImpl();
             for (let i = 0; i < 20; i++) {
                 if (i % 2 === 0) {
                     path.addRow(nodes[i]);
@@ -286,7 +287,7 @@ describe('ChangedCellsPath', () => {
         test('handles exactly 32 columns without word growth', () => {
             const root = makeNode('root');
             const leaf = makeNode('leaf', root);
-            const path = new ChangedCellsPath();
+            const path = new ChangedCellsPathImpl();
             for (let i = 0; i < 32; i++) {
                 path.addCell(leaf, `col${i}`);
             }
@@ -301,7 +302,7 @@ describe('ChangedCellsPath', () => {
         test('handles 33 columns (first word growth: 1→2 words)', () => {
             const root = makeNode('root');
             const leaf = makeNode('leaf', root);
-            const path = new ChangedCellsPath();
+            const path = new ChangedCellsPathImpl();
             for (let i = 0; i < 33; i++) {
                 path.addCell(leaf, `col${i}`);
             }
@@ -316,7 +317,7 @@ describe('ChangedCellsPath', () => {
         test('handles 64 columns (fills 2 words exactly)', () => {
             const root = makeNode('root');
             const leaf = makeNode('leaf', root);
-            const path = new ChangedCellsPath();
+            const path = new ChangedCellsPathImpl();
             for (let i = 0; i < 64; i++) {
                 path.addCell(leaf, `col${i}`);
             }
@@ -331,7 +332,7 @@ describe('ChangedCellsPath', () => {
         test('handles 65 columns (word growth: 2→3 words)', () => {
             const root = makeNode('root');
             const leaf = makeNode('leaf', root);
-            const path = new ChangedCellsPath();
+            const path = new ChangedCellsPathImpl();
             for (let i = 0; i < 65; i++) {
                 path.addCell(leaf, `col${i}`);
             }
@@ -347,7 +348,7 @@ describe('ChangedCellsPath', () => {
             const root = makeNode('root');
             const group = makeNode('group', root);
             const leaf = makeNode('leaf', group);
-            const path = new ChangedCellsPath();
+            const path = new ChangedCellsPathImpl();
             for (let i = 0; i < 100; i++) {
                 path.addCell(leaf, `col${i}`);
             }
@@ -368,7 +369,7 @@ describe('ChangedCellsPath', () => {
         test('handles 129 columns (5 words)', () => {
             const root = makeNode('root');
             const leaf = makeNode('leaf', root);
-            const path = new ChangedCellsPath();
+            const path = new ChangedCellsPathImpl();
             for (let i = 0; i < 129; i++) {
                 path.addCell(leaf, `col${i}`);
             }
@@ -387,7 +388,7 @@ describe('ChangedCellsPath', () => {
             const root = makeNode('root');
             const leaf1 = makeNode('leaf1', root);
             const leaf2 = makeNode('leaf2', root);
-            const path = new ChangedCellsPath();
+            const path = new ChangedCellsPathImpl();
             path.addRow(leaf1);
             // Add 40 columns on leaf2, triggering word growth
             for (let i = 0; i < 40; i++) {
@@ -408,7 +409,7 @@ describe('ChangedCellsPath', () => {
             const groupB = makeNode('groupB', root);
             const leafA = makeNode('leafA', groupA);
             const leafB = makeNode('leafB', groupB);
-            const path = new ChangedCellsPath();
+            const path = new ChangedCellsPathImpl();
             path.addCell(leafA, 'colA');
             path.addCell(leafB, 'colB');
             // Force word growth
@@ -429,7 +430,7 @@ describe('ChangedCellsPath', () => {
             for (let i = 0; i < 10; i++) {
                 leaves.push(makeNode(`leaf${i}`, root));
             }
-            const path = new ChangedCellsPath();
+            const path = new ChangedCellsPathImpl();
             for (let i = 0; i < 10; i++) {
                 for (let c = 0; c < 40; c++) {
                     path.addCell(leaves[i], `col_${i}_${c}`);
@@ -456,7 +457,7 @@ describe('ChangedCellsPath', () => {
             const leaf1 = makeNode('leaf1', root);
             const leaf2 = makeNode('leaf2', root);
             const leaf3 = makeNode('leaf3', root);
-            const path = new ChangedCellsPath();
+            const path = new ChangedCellsPathImpl();
 
             for (let i = 0; i < 20; i++) {
                 path.addCell(leaf1, `col${i}`);
@@ -486,7 +487,7 @@ describe('ChangedCellsPath', () => {
         test('no false positives at 32-column boundary', () => {
             const root = makeNode('root');
             const leaf = makeNode('leaf', root);
-            const path = new ChangedCellsPath();
+            const path = new ChangedCellsPathImpl();
             for (let i = 0; i < 32; i++) {
                 path.addCell(leaf, `col${i}`);
             }
@@ -502,7 +503,7 @@ describe('ChangedCellsPath', () => {
 
         test('200 columns across a deep chain (7 words)', () => {
             const chain = makeChain(5);
-            const path = new ChangedCellsPath();
+            const path = new ChangedCellsPathImpl();
             for (let i = 0; i < 200; i++) {
                 path.addCell(chain[5], `c${i}`);
             }
@@ -521,7 +522,7 @@ describe('ChangedCellsPath', () => {
             const root = makeNode('root');
             const leaf1 = makeNode('leaf1', root);
             const leaf2 = makeNode('leaf2', root);
-            const path = new ChangedCellsPath();
+            const path = new ChangedCellsPathImpl();
 
             path.addCell(leaf1, 'value');
             collectRows(path); // triggers sort

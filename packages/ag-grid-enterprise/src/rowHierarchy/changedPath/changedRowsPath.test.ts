@@ -1,9 +1,7 @@
-import type { RowNode } from '../../entities/rowNode';
-import type { ChangedPath } from '../changedPath';
-import { _forEachChangedGroupDepthFirst } from '../changedPath';
-import { ChangedRowsPath } from './changedRowsPath';
+import type { ChangedPath, RowNode } from 'ag-grid-community';
+import { _forEachChangedGroupDepthFirst } from 'ag-grid-community';
 
-// ─── Minimal stubs ────────────────────────────────────────────────────────────
+import { ChangedRowsPathImpl } from './changedRowsPath';
 
 function makeNode(id: string, parent: RowNode | null = null, opts: { children?: RowNode[] } = {}): RowNode {
     return {
@@ -27,14 +25,12 @@ function collectRows(path: ChangedPath): RowNode[] {
     return [...path.getSortedRows()];
 }
 
-// ─── ChangedRowsPath-specific tests ──────────────────────────────────────────
-
 describe('ChangedRowsPath', () => {
     describe('addCell delegates to addRow — colId is ignored', () => {
         test('addCell with colId tracks the row, not the column', () => {
             const root = makeNode('root');
             const leaf = makeNode('leaf', root);
-            const path = new ChangedRowsPath();
+            const path = new ChangedRowsPathImpl();
             path.addCell(leaf, 'someColumn');
             expect(path.hasRow(leaf)).toBe(true);
             expect(path.hasRow(root)).toBe(true);
@@ -48,7 +44,7 @@ describe('ChangedRowsPath', () => {
             const group = makeNode('group', root);
             const leaf = makeNode('leaf', group);
             const unrelated = makeNode('unrelated', root);
-            const path = new ChangedRowsPath();
+            const path = new ChangedRowsPathImpl();
             path.addRow(leaf);
 
             const visited = collectRows(path);
@@ -90,7 +86,7 @@ describe('ChangedRowsPath', () => {
             const root = makeNode('root', null, { children: [] });
             const group = makeNode('group', root, { children: [] });
             const leaf = makeNode('leaf', group);
-            const path = new ChangedRowsPath();
+            const path = new ChangedRowsPathImpl();
             path.addRow(leaf);
 
             // All three are in getSortedRows
@@ -121,7 +117,7 @@ describe('ChangedRowsPath', () => {
             const groupA = makeNode('groupA', root);
             const groupB = makeNode('groupB', root);
             const leaf = makeNode('leaf', groupA);
-            const path = new ChangedRowsPath();
+            const path = new ChangedRowsPathImpl();
             path.addRow(leaf);
 
             (leaf as any).parent = groupB;
@@ -143,7 +139,7 @@ describe('ChangedRowsPath', () => {
             }
             const root = chain[0];
             const shallowLeaf = makeNode('shallow', chain[3]);
-            const path = new ChangedRowsPath();
+            const path = new ChangedRowsPathImpl();
             path.addRow(chain[500]);
             path.addRow(shallowLeaf);
 
@@ -154,8 +150,6 @@ describe('ChangedRowsPath', () => {
         });
     });
 });
-
-// ─── Standalone traversal function tests ─────────────────────────────────────
 
 describe('_forEachChangedGroupDepthFirst', () => {
     test('root with no childrenAfterGroup (leaf root) is not visited', () => {

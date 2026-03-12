@@ -1,16 +1,14 @@
-import type { RowNode } from '../../entities/rowNode';
-import type { IRowNode } from '../../interfaces/iRowNode';
-import { _sortNodesByDepthFirst } from '../sortNodesByDepthFirst';
+import type { ChangedRowsPath, IRowNode, RowNode } from 'ag-grid-community';
+
+import { _sortNodesByDepthFirst } from './sortNodesByDepthFirst';
 
 /**
  * Set-based ChangedPath — no column tracking.
  * All columns are considered changed for every node in the path.
  *
  * Total space: O(R), where R = number of tracked rows (including ancestors).
- *
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
-export class ChangedRowsPath {
+export class ChangedRowsPathImpl implements ChangedRowsPath {
     readonly kind = 'rows' as const;
 
     /**
@@ -31,11 +29,7 @@ export class ChangedRowsPath {
      */
     private readonly rowSet: Set<RowNode> = new Set();
 
-    /**
-     * Adds `rowNode` and all its ancestors. No-op if null/undefined or already present.
-     * Time: O(D), D = depth.
-     * Space: O(D) for new ancestors
-     */
+    /** {@inheritDoc ChangedRowsPath.addRow} Time: O(D), D = depth. */
     public addRow(rowNode: IRowNode | null | undefined): void {
         let node = rowNode as RowNode | null | undefined;
         if (node == null) {
@@ -54,21 +48,17 @@ export class ChangedRowsPath {
         this.unsorted = true;
     }
 
-    /** Delegates to `addRow` — column tracking is ignored for `ChangedRowsPath`. */
+    /** {@inheritDoc ChangedRowsPath.addCell} */
     public addCell(rowNode: IRowNode | null | undefined, _colId: string | null | undefined): void {
         this.addRow(rowNode);
     }
 
-    /** Time: O(1). */
+    /** {@inheritDoc ChangedRowsPath.hasRow} Time: O(1). */
     public hasRow(rowNode: IRowNode): boolean {
         return this.rowSet.has(rowNode as RowNode);
     }
 
-    /**
-     * Returns the changed rows sorted deepest-first. Cached — do not modify the returned array.
-     * Time: O(1) cached, O(R) if sort was invalidated.
-     * Space: O(1) best case if sort happens in place, O(R) where R = number of tracked rows (including ancestors) worst case.
-     */
+    /** {@inheritDoc ChangedRowsPath.getSortedRows} Time: O(1) cached, O(R) if sort was invalidated. */
     public getSortedRows(): RowNode[] {
         if (!this.unsorted) {
             return this.rows;

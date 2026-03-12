@@ -1,6 +1,5 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import type { FilterManager } from '../filter/filterManager';
@@ -9,159 +8,180 @@ import type { IRowNodeFilterStage } from '../interfaces/iRowNodeStage';
 import type { ChangedPath } from '../utils/changedPath';
 import { _forEachChangedGroupDepthFirst } from '../utils/changedPath';
 
-export function updateRowNodeAfterFilter(rowNode: RowNode): void {
-    const sibling = rowNode.sibling;
-    if (sibling) {
-        sibling.childrenAfterFilter = rowNode.childrenAfterFilter;
-    }
-}
-
 export class FilterStage extends BeanStub implements IRowNodeFilterStage, NamedBean {
     beanName = 'filterStage' as const;
 
     public readonly step: ClientSideRowModelStage = 'filter';
     public readonly refreshProps: (keyof GridOptions<any>)[] = ['excludeChildrenWhenTreeDataFiltering'];
 
-    private filterManager?: FilterManager;
-
-    public wireBeans(beans: BeanCollection): void {
-        this.filterManager = beans.filterManager;
-    }
+    private wasFilterActive = false;
 
     public execute(changedPath: ChangedPath | undefined): void {
-        const filterActive = !!this.filterManager?.isChildFilterPresent();
+        const { filterManager } = this.beans;
+        const filterActive = !!filterManager?.isChildFilterPresent();
+
+        // If filter state changed, force full refresh so every node is re-evaluated.
+        if (filterActive !== this.wasFilterActive) {
+            this.wasFilterActive = filterActive;
+            changedPath = undefined;
+        }
+
         if (this.beans.formula?.active) {
-            this.softFilter(filterActive, changedPath);
+            this.softFilter(filterActive, filterManager, changedPath);
         } else {
-            this.filterNodes(filterActive, changedPath);
+            this.filterNodes(filterActive, filterManager, changedPath);
         }
     }
 
-    private filterNodes(filterActive: boolean, changedPath: ChangedPath | undefined): void {
-        if (this.doingTreeDataFiltering()) {
-            this.filterNodesTreeData(filterActive);
-            return;
-        }
-
-        const rowModel = this.beans.rowModel;
+    private filterNodes(
+        filterActive: boolean,
+        filterManager: FilterManager | undefined,
+        changedPath: ChangedPath | undefined
+    ): void {
+        const { rowModel } = this.beans;
         const rootNode = rowModel.rootNode;
         if (!rootNode) {
             return;
         }
 
-        if (!rowModel.hierarchical) {
-            // Fast path: flat grid — root's children are all leaves, no group hierarchy to check
-            this.filterRootFlat(rootNode, filterActive);
+        // When filter is inactive, all paths do the same passthrough.
+        if (!filterActive) {
+            if (!rowModel.hierarchical) {
+                // Flat grid: only the root needs passthrough
+                passThrough(rootNode);
+            } else {
+                _forEachChangedGroupDepthFirst(rootNode, true, changedPath, passThrough);
+            }
             return;
         }
 
-        const filterManager = this.filterManager!;
-        const filterCallback = (rowNode: RowNode) => {
-            if (rowNode.hasChildren()) {
-                if (filterActive) {
-                    rowNode.childrenAfterFilter = rowNode.childrenAfterGroup!.filter((childNode) => {
-                        // a group is included in the result if it has any children of it's own.
-                        // by this stage, the child groups are already filtered
-                        const passBecauseChildren =
-                            childNode.childrenAfterFilter && childNode.childrenAfterFilter.length > 0;
-
-                        // both leaf level nodes and tree data nodes have data. these get added if
-                        // the data passes the filter
-                        const passBecauseDataPasses =
-                            childNode.data && filterManager.doesRowPassFilter({ rowNode: childNode });
-
-                        return passBecauseChildren || passBecauseDataPasses;
-                    });
-                } else {
-                    rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
-                }
-            } else {
-                rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
-            }
-
-            updateRowNodeAfterFilter(rowNode);
-        };
-
-        _forEachChangedGroupDepthFirst(rootNode, true, changedPath, filterCallback);
-    }
-
-    /** Fast path for flat grids: all root children are leaves, no group checks needed. */
-    private filterRootFlat(rootNode: RowNode, filterActive: boolean): void {
-        if (filterActive) {
-            const filterManager = this.filterManager!;
-            rootNode.childrenAfterFilter = rootNode.childrenAfterGroup!.filter(
-                (childNode) => childNode.data && filterManager.doesRowPassFilter({ rowNode: childNode })
+        // Fast path for flat grids: all root children are leaves, no group/descendant checks needed.
+        if (!rowModel.hierarchical) {
+            const filtered = filterChildren(
+                rootNode.childrenAfterGroup!,
+                rootNode.childrenAfterFilter,
+                filterManager!,
+                false
             );
-        } else {
-            rootNode.childrenAfterFilter = rootNode.childrenAfterGroup;
+            rootNode.childrenAfterFilter = filtered;
+            const sibling = rootNode.sibling;
+            if (sibling) {
+                sibling.childrenAfterFilter = filtered;
+            }
+            return;
         }
-        updateRowNodeAfterFilter(rootNode);
+
+        // Tree data with excludeChildrenWhenTreeDataFiltering disabled: delegate to enterprise service.
+        const { groupStage, treeDataFilterSvc } = this.beans;
+        if (groupStage?.treeData && treeDataFilterSvc && !this.gos.get('excludeChildrenWhenTreeDataFiltering')) {
+            treeDataFilterSvc.execute(rootNode, changedPath);
+            return;
+        }
+
+        // Hierarchical grid with active filter — groups include children that either
+        // pass the filter themselves or have descendants that passed (already filtered depth-first).
+        _forEachChangedGroupDepthFirst(rootNode, true, changedPath, (rowNode) => {
+            const childrenAfterGroup = rowNode.childrenAfterGroup;
+            const filtered = rowNode.hasChildren()
+                ? filterChildren(childrenAfterGroup!, rowNode.childrenAfterFilter, filterManager!, true)
+                : childrenAfterGroup;
+            rowNode.childrenAfterFilter = filtered;
+            const sibling = rowNode.sibling;
+            if (sibling) {
+                sibling.childrenAfterFilter = filtered;
+            }
+        });
     }
 
-    private filterNodesTreeData(filterActive: boolean): void {
-        const filterCallback = (rowNode: RowNode, includeChildNodes: boolean) => {
-            if (rowNode.hasChildren()) {
-                if (filterActive && !includeChildNodes) {
-                    rowNode.childrenAfterFilter = rowNode.childrenAfterGroup!.filter((childNode) => {
-                        const passBecauseChildren =
-                            childNode.childrenAfterFilter && childNode.childrenAfterFilter.length > 0;
-                        const passBecauseDataPasses =
-                            childNode.data && this.filterManager!.doesRowPassFilter({ rowNode: childNode });
-                        return passBecauseChildren || passBecauseDataPasses;
-                    });
-                } else {
-                    rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
-                }
-            } else {
-                rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
-            }
-            updateRowNodeAfterFilter(rowNode);
-        };
-
-        const treeDataDepthFirstFilter = (rowNode: RowNode, alreadyFoundInParent: boolean) => {
-            // tree data filter traverses the hierarchy depth first and includes child nodes if parent passes
-            // filter, and parent nodes will be include if any children exist.
-
-            if (rowNode.childrenAfterGroup) {
-                for (let i = 0; i < rowNode.childrenAfterGroup.length; i++) {
-                    const childNode = rowNode.childrenAfterGroup[i];
-
-                    // first check if current node passes filter before invoking child nodes
-                    const foundInParent =
-                        alreadyFoundInParent || this.filterManager!.doesRowPassFilter({ rowNode: childNode });
-                    if (childNode.childrenAfterGroup) {
-                        treeDataDepthFirstFilter(rowNode.childrenAfterGroup[i], foundInParent);
-                    } else {
-                        filterCallback(childNode, foundInParent);
-                    }
-                }
-            }
-            filterCallback(rowNode, alreadyFoundInParent);
-        };
-
-        treeDataDepthFirstFilter(this.beans.rowModel.rootNode!, false);
-    }
-
-    private softFilter(filterActive: boolean, changedPath: ChangedPath | undefined): void {
-        const filterCallback = (rowNode: RowNode) => {
-            rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
-            if (rowNode.hasChildren()) {
-                for (const childNode of rowNode.childrenAfterGroup!) {
-                    childNode.softFiltered =
-                        filterActive &&
-                        !(childNode.data && this.filterManager!.doesRowPassFilter({ rowNode: childNode }));
-                }
-            }
-
-            updateRowNodeAfterFilter(rowNode);
-        };
-
+    private softFilter(
+        filterActive: boolean,
+        filterManager: FilterManager | undefined,
+        changedPath: ChangedPath | undefined
+    ): void {
         const rowModel = this.beans.rowModel;
-        _forEachChangedGroupDepthFirst(rowModel.rootNode, rowModel.hierarchical, changedPath, filterCallback);
-    }
-
-    private doingTreeDataFiltering() {
-        const { gos } = this;
-        return !!this.beans.groupStage?.treeData && !gos.get('excludeChildrenWhenTreeDataFiltering');
+        _forEachChangedGroupDepthFirst(rowModel.rootNode, rowModel.hierarchical, changedPath, (rowNode) => {
+            const children = rowNode.childrenAfterGroup;
+            rowNode.childrenAfterFilter = children;
+            if (children) {
+                for (let i = 0, len = children.length; i < len; ++i) {
+                    const childNode = children[i];
+                    childNode.softFiltered =
+                        filterActive && !(childNode.data && filterManager!.doesRowPassFilter(childNode));
+                }
+            }
+            const sibling = rowNode.sibling;
+            if (sibling) {
+                sibling.childrenAfterFilter = children;
+            }
+        });
     }
 }
+
+/** No-filter pass-through: propagate childrenAfterGroup → childrenAfterFilter unchanged. */
+const passThrough = (rowNode: RowNode): void => {
+    const childrenAfterGroup = rowNode.childrenAfterGroup;
+    rowNode.childrenAfterFilter = childrenAfterGroup;
+    const sibling = rowNode.sibling;
+    if (sibling) {
+        sibling.childrenAfterFilter = childrenAfterGroup;
+    }
+};
+
+/**
+ * Filters children, keeping only those that pass the filter (or have passing descendants when checkDescendants is true).
+ * Returns `childrenAfterGroup` when all children pass (zero allocation).
+ * Returns the previous `childrenAfterFilter` if the filtered result is identical (reference stability, zero allocation).
+ * Defers new array allocation until the first excluded child.
+ */
+const filterChildren = (
+    children: RowNode[],
+    prev: RowNode[] | null | undefined,
+    filterManager: FilterManager,
+    checkDescendants: boolean
+): RowNode[] => {
+    const len = children.length;
+    let result: RowNode[] | null = null;
+    let writeIdx = 0;
+    let diffFromPrev = !prev;
+
+    for (let i = 0; i < len; ++i) {
+        const childNode = children[i];
+
+        // Determine if this child passes the filter
+        let passes: boolean;
+        const childFiltered = childNode.childrenAfterFilter;
+        if (checkDescendants && childFiltered && childFiltered.length > 0) {
+            // Group with visible descendants — include without calling doesRowPassFilter
+            passes = true;
+        } else if (childNode.data) {
+            passes = filterManager.doesRowPassFilter(childNode);
+        } else {
+            passes = false;
+        }
+
+        if (passes) {
+            if (!diffFromPrev && prev![writeIdx] !== childNode) {
+                diffFromPrev = true;
+            }
+            if (result !== null) {
+                result[writeIdx] = childNode;
+            }
+            writeIdx++;
+        } else if (result === null) {
+            // First excluded child: allocate result and copy all previously included children
+            result = new Array<RowNode>(len);
+            for (let j = 0; j < writeIdx; ++j) {
+                result[j] = children[j];
+            }
+        }
+    }
+
+    if (result === null) {
+        return children; // All passed — reuse childrenAfterGroup, zero allocation
+    }
+    if (!diffFromPrev && prev!.length === writeIdx) {
+        return prev!; // Identical to previous result — reuse old array, zero allocation
+    }
+    result.length = writeIdx;
+    return result;
+};

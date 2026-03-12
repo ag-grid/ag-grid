@@ -6,10 +6,12 @@ import { PivotColsSvc } from '../pivot/pivotColsSvc';
 import { RowGroupColsSvc } from '../rowGrouping/rowGroupColsSvc';
 import { VERSION } from '../version';
 import { AutoColService } from './autoColService';
+import { ChangedPathFactory } from './changedPath/changedPathFactory';
 import { ClientSideExpansionService } from './clientSideExpansionService';
 import { FlattenStage } from './flattenStage';
 import { GroupEditService } from './groupEditService';
 import { GroupStage } from './groupStage';
+import { HierarchicalSortStage } from './hierarchicalSortStage';
 import { GroupCellRenderer } from './rendering/groupCellRenderer';
 import { GroupCellRendererCtrl } from './rendering/groupCellRendererCtrl';
 import groupCellStylesCSS from './rendering/groupCellStyles.css';
@@ -57,14 +59,25 @@ export const GroupColumnModule: _ModuleWithoutApi = {
 };
 
 /**
+ * Shared ChangedPath factory — not row-model restricted
+ * @internal
+ */
+export const ChangedPathModule: _ModuleWithoutApi = {
+    moduleName: 'ChangedPath',
+    version: VERSION,
+    beans: [ChangedPathFactory],
+    dependsOn: [EnterpriseCoreModule],
+};
+
+/**
  * @internal
  */
 export const ClientSideRowModelHierarchyModule: _ModuleWithoutApi = {
     moduleName: 'ClientSideRowModelHierarchy',
     version: VERSION,
     rowModels: ['clientSide'],
-    beans: [GroupStage, FlattenStage, ClientSideExpansionService],
-    dependsOn: [EnterpriseCoreModule],
+    beans: [GroupStage, FlattenStage, ClientSideExpansionService, HierarchicalSortStage],
+    dependsOn: [EnterpriseCoreModule, ChangedPathModule],
 };
 
 /**

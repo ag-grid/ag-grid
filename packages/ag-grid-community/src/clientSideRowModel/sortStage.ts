@@ -2,7 +2,6 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
-import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
 import type { PostSortRowsParams } from '../interfaces/iCallbackParams';
 import type { ClientSideRowModelStage } from '../interfaces/iClientSideRowModel';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
@@ -10,10 +9,12 @@ import type { IRowNodeSortStage } from '../interfaces/iRowNodeStage';
 import type { SortOption } from '../interfaces/iSortOption';
 import type { RowNodeSorter } from '../sort/rowNodeSorter';
 import type { ChangedPath } from '../utils/changedPath';
-import { _forEachChangedGroupDepthFirst } from '../utils/changedPath';
 import type { ChangedRowNodes } from './changedRowNodes';
 import { doDeltaSort } from './deltaSort';
 
+/** Updates childIndex, firstChild, lastChild on each child and syncs to the sibling (footer) node.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
 export const updateRowNodeAfterSort = (rowNode: RowNode): void => {
     const childrenAfterSort = rowNode.childrenAfterSort;
     const sibling = rowNode.sibling;
@@ -49,104 +50,19 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage 
     public readonly refreshProps: (keyof GridOptions<any>)[] = ['postSortRows', 'groupDisplayType', 'accentedSort'];
 
     public execute(changedPath: ChangedPath | undefined, changedRowNodes: ChangedRowNodes | undefined): void {
+        const { rowModel } = this.beans;
+
+        if (rowModel.hierarchical) {
+            // Delegate to enterprise hierarchical sort service (handles grouping, pivot, maintainOrder).
+            this.beans.hierarchicalSortSvc!.execute(changedPath, changedRowNodes);
+            return;
+        }
+
         const { gos, rowNodeSorter } = this.beans;
         const sortOptions = this.beans.sortSvc!.getSortOptions();
         const postSortFunc = gos.getCallback('postSortRows');
 
-        const rowModel = this.beans.rowModel;
-        if (!rowModel.hierarchical) {
-            // Fast path: flat grid — sort root's children directly, no group/pivot logic needed
-            this.sortFlat(rowModel.rootNode!, sortOptions, changedRowNodes, changedPath, postSortFunc, rowNodeSorter!);
-            return;
-        }
-
-        const useDeltaSort =
-            sortOptions.length > 0 &&
-            !!changedRowNodes &&
-            // in time we can remove this check, so that delta sort is always
-            // on if transactions are present. it's off for now so that we can
-            // selectively turn it on and test it with some select users before
-            // rolling out to everyone.
-            gos.get('deltaSort');
-
-        const { colModel, rowGroupColsSvc, rowRenderer, showRowGroupCols } = this.beans;
-        const groupMaintainOrder = gos.get('groupMaintainOrder');
-        const groupColumnsPresent = colModel.getCols().some((c) => c.isRowGroupActive());
-        const groupCols = rowGroupColsSvc?.columns;
-
-        const isPivotMode = colModel.isPivotMode();
-
-        let hasAnyFirstChildChanged = false;
-        let sortContainsGroupColumns: boolean | undefined;
-
-        const callback = (rowNode: RowNode) => {
-            // It's pointless to sort rows which aren't being displayed. in pivot mode we don't need to sort the leaf group children.
-            const skipSortingPivotLeafs = isPivotMode && rowNode.leafGroup;
-
-            let skipSortingGroups = groupMaintainOrder && groupColumnsPresent && !rowNode.leafGroup;
-            if (skipSortingGroups) {
-                sortContainsGroupColumns ??= this.shouldSortContainsGroupCols(sortOptions);
-                skipSortingGroups &&= !sortContainsGroupColumns;
-            }
-
-            let newChildrenAfterSort: RowNode[] | null = null;
-            if (skipSortingGroups) {
-                // Maintain previous visual order in O(n).
-
-                let wasSortExplicitlyRemoved = false;
-                if (groupCols) {
-                    const nextGroupIndex = rowNode.level + 1;
-                    if (nextGroupIndex < groupCols.length) {
-                        wasSortExplicitlyRemoved = groupCols[nextGroupIndex].wasSortExplicitlyRemoved;
-                    }
-                }
-
-                if (!wasSortExplicitlyRemoved) {
-                    newChildrenAfterSort = preserveGroupOrder(rowNode);
-                }
-            } else if (!sortOptions.length || skipSortingPivotLeafs) {
-                // if there's no sort to make, skip this step
-            } else if (useDeltaSort && changedRowNodes) {
-                newChildrenAfterSort = doDeltaSort(
-                    rowNodeSorter!,
-                    rowNode,
-                    changedRowNodes,
-                    changedPath,
-                    true,
-                    sortOptions
-                );
-            } else {
-                newChildrenAfterSort = rowNodeSorter!.doFullSortInPlace(
-                    rowNode.childrenAfterAggFilter!.slice(),
-                    sortOptions
-                );
-            }
-
-            newChildrenAfterSort ||= rowNode.childrenAfterAggFilter?.slice() ?? [];
-
-            hasAnyFirstChildChanged ||= rowNode.childrenAfterSort?.[0] !== newChildrenAfterSort[0];
-
-            rowNode.childrenAfterSort = newChildrenAfterSort;
-
-            updateRowNodeAfterSort(rowNode);
-
-            if (postSortFunc) {
-                const params: WithoutGridCommon<PostSortRowsParams> = { nodes: rowNode.childrenAfterSort };
-                postSortFunc(params);
-            }
-        };
-
-        _forEachChangedGroupDepthFirst(rowModel.rootNode, true, changedPath, callback);
-
-        // if using group hide open parents and a sort has happened, refresh the group cells as the first child
-        // displays the parent grouping - it's cheaper here to refresh all cells in col rather than fire events for every potential
-        // child cell
-        if (hasAnyFirstChildChanged && gos.get('groupHideOpenParents')) {
-            const columns = showRowGroupCols?.columns;
-            if (columns?.length) {
-                rowRenderer.refreshCells({ columns, force: true });
-            }
-        }
+        this.sortFlat(rowModel.rootNode!, sortOptions, changedRowNodes, changedPath, postSortFunc, rowNodeSorter!);
     }
 
     /** Fast path for flat grids: sorts root's children directly, skipping group/pivot/maintainOrder logic. */
@@ -158,26 +74,23 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage 
         postSortFunc: ((params: WithoutGridCommon<PostSortRowsParams>) => void) | undefined,
         rowNodeSorter: RowNodeSorter
     ): void {
-        let newChildrenAfterSort: RowNode[] | null = null;
+        const childrenAfterAggFilter = rootNode.childrenAfterAggFilter;
+        let sorted: RowNode[];
         if (sortOptions.length > 0) {
             if (changedRowNodes && this.gos.get('deltaSort')) {
-                newChildrenAfterSort = doDeltaSort(
-                    rowNodeSorter,
-                    rootNode,
-                    changedRowNodes,
-                    changedPath,
-                    false,
-                    sortOptions
-                );
+                sorted = doDeltaSort(rowNodeSorter, rootNode, changedRowNodes, changedPath, false, sortOptions);
             } else {
-                newChildrenAfterSort = rowNodeSorter.doFullSortInPlace(
-                    rootNode.childrenAfterAggFilter!.slice(),
-                    sortOptions
-                );
+                sorted = rowNodeSorter.doFullSortInPlace(childrenAfterAggFilter!.slice(), sortOptions);
             }
+        } else if (postSortFunc) {
+            // No sort active but postSortFunc needs a mutable copy it can safely modify
+            sorted = childrenAfterAggFilter?.slice() ?? [];
+        } else {
+            // No sort, no postSortFunc — reuse the reference directly, no copy needed.
+            // This avoids a potentially large O(n) array copy on flat grids with no sorting.
+            sorted = childrenAfterAggFilter ?? [];
         }
 
-        const sorted = newChildrenAfterSort || rootNode.childrenAfterAggFilter?.slice() || [];
         rootNode.childrenAfterSort = sorted;
         updateRowNodeAfterSort(rootNode);
 
@@ -186,72 +99,4 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage 
             postSortFunc(params);
         }
     }
-
-    private shouldSortContainsGroupCols(sortOptions: SortOption[]): boolean {
-        const sortOptionsLen = sortOptions.length;
-        if (!sortOptionsLen) {
-            return false;
-        }
-
-        if (_isColumnsSortingCoupledToGroup(this.gos)) {
-            for (let i = 0; i < sortOptionsLen; ++i) {
-                const column = sortOptions[i].column;
-                if (column.isPrimary() && column.isRowGroupActive()) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        for (let i = 0; i < sortOptionsLen; ++i) {
-            if (sortOptions[i].column.getColDef().showRowGroup) {
-                return true;
-            }
-        }
-        return false;
-    }
 }
-
-/**
- * O(n) merge preserving previous visual order and appending new items in current order.
- */
-const preserveGroupOrder = (node: RowNode): RowNode[] | null => {
-    const childrenAfterSort = node.childrenAfterSort;
-    const childrenAfterAggFilter = node.childrenAfterAggFilter;
-
-    const childrenAfterSortLen = childrenAfterSort?.length;
-    const childrenAfterAggFilterLen = childrenAfterAggFilter?.length;
-
-    if (!childrenAfterSortLen || !childrenAfterAggFilterLen) {
-        return null;
-    }
-
-    const result = new Array<RowNode>(childrenAfterAggFilterLen);
-
-    // Track all present nodes.
-    const processed = new Set<RowNode>();
-    for (let i = 0; i < childrenAfterAggFilterLen; ++i) {
-        processed.add(childrenAfterAggFilter[i]);
-    }
-
-    // Keep nodes that are still present, in previous visual order.
-    let writeIdx = 0;
-    for (let i = 0; i < childrenAfterSortLen; ++i) {
-        const node = childrenAfterSort[i];
-        if (processed.delete(node)) {
-            result[writeIdx++] = node;
-        }
-    }
-
-    if (processed.size === 0 && writeIdx === childrenAfterSortLen) {
-        return childrenAfterSort; // No change, return the previous array
-    }
-
-    // Add new nodes
-    for (const newNode of processed) {
-        result[writeIdx++] = newNode;
-    }
-
-    result.length = writeIdx;
-    return result;
-};

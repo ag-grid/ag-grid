@@ -1,5 +1,4 @@
-import type { RowNode } from '../entities/rowNode';
-import type { IRowNode } from '../interfaces/iRowNode';
+import type { IRowNode, RowNode } from 'ag-grid-community';
 
 /**
  * Reusable counting-sort bucket buffer, one entry per tree level.
@@ -143,8 +142,6 @@ const countingSort = (nodes: IRowNode[], nodesLen: number): RowNode[] => {
  * Sorts `nodes` by `RowNode.level` descending (deepest first).
  * Returns the input array (mutated in-place) or a new sorted array.
  * The sort is stable: nodes at the same level preserve their input order.
- *
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export const _sortNodesByDepthFirst = (nodes: IRowNode[], nodesLen = nodes.length): RowNode[] => {
     // Just two nodes - swap them if we need to, O(1).

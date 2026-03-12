@@ -20,8 +20,6 @@ import type {
 } from 'ag-grid-community';
 import {
     BeanStub,
-    ChangedCellsPath,
-    ChangedRowsPath,
     _createCellId,
     _exists,
     _forEachChangedGroupDepthFirst,
@@ -284,7 +282,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     ): void {
         const source = 'clipboard';
 
-        const { gos, rowModel, eventSvc, focusSvc, rowRenderer } = this.beans;
+        const { gos, rowModel, eventSvc, focusSvc, rowRenderer, changedPathFactory } = this.beans;
 
         eventSvc.dispatchEvent({
             type: 'pasteStart',
@@ -293,8 +291,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
         const { clientSideRowModel } = this;
         const rootNode = clientSideRowModel?.rootNode;
-        const changedPath =
-            rootNode && (gos.get('aggregateOnlyChangedColumns') ? new ChangedCellsPath() : new ChangedRowsPath());
+        const changedPath = rootNode && changedPathFactory?.newPath(gos.get('aggregateOnlyChangedColumns'));
 
         const cellsToFlash: Record<string, boolean> = {};
         const updatedRowNodes: RowNode[] = [];

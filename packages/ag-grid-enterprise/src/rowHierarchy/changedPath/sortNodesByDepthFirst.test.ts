@@ -1,4 +1,5 @@
-import type { RowNode } from '../entities/rowNode';
+import type { RowNode } from 'ag-grid-community';
+
 import { _sortNodesByDepthFirst } from './sortNodesByDepthFirst';
 
 function makeNode(id: string, level: number): RowNode {

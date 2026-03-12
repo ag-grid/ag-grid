@@ -78,6 +78,7 @@ type InternalModuleName =
     | 'Aria'
     | 'AutoWidth'
     | 'CellRendererFunction'
+    | 'ChangedPath'
     | 'ChangeDetection'
     | 'CheckboxCellRenderer'
     | 'ClientSideRowModelFilter'

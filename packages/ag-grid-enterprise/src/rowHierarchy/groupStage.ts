@@ -9,7 +9,7 @@ import type {
     RowNode,
     _IRowNodeGroupStage,
 } from 'ag-grid-community';
-import { BeanStub, _csrmEnsureChangedPath } from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
 
 import { setRowNodeGroup } from '../rowGrouping/rowGroupingUtils';
 import type { IRowGroupingStrategy } from './rowHierarchyUtils';
@@ -129,7 +129,7 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, _IRowNodeG
 
         // Create changedPath for hierarchical grids before the strategy runs (it reads changedPath).
         // Flat grids skip changedPath — all pipeline stages have flat fast paths.
-        _csrmEnsureChangedPath(params, rootNode, true);
+        beans.changedPathFactory!.ensureRowsPath(params, rootNode);
 
         const executeResult = strategy.execute(rootNode, params);
 

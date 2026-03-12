@@ -20,8 +20,6 @@ import { _forEachChangedGroupDepthFirst } from '../utils/changedPath';
 import { _warn } from '../validation/logging';
 import { ChangedRowNodes } from './changedRowNodes';
 import { ClientSideNodeManager } from './clientSideNodeManager';
-import { _csrmEnsureChangedPath } from './clientSideRowModelUtils';
-import { updateRowNodeAfterFilter } from './filterStage';
 import { updateRowNodeAfterSort } from './sortStage';
 
 interface BatchTransactionItem<TData = any> {
@@ -621,14 +619,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         let changedPath = params.changedPath;
         changedPath?.addRow(rootNode);
 
-        // Run grouping first if needed — sets this.hierarchical and may create changedPath via _csrmEnsureChangedPath.
+        // Run grouping first if needed — sets this.hierarchical and may create changedPath.
         if (params.step === 'group') {
             this.doGrouping(rootNode!, params);
             changedPath ??= params.changedPath;
         }
 
         // Flat grids skip changedPath — all stages have flat fast paths.
-        changedPath ??= _csrmEnsureChangedPath(params, rootNode, this.hierarchical);
+        changedPath ??= beans.changedPathFactory?.ensureRowsPath(params, rootNode);
 
         // Pipeline of stages — fallthrough is on purpose, e.g. if 'filter', then all steps after run too.
         /* eslint-disable no-fallthrough */
@@ -1026,8 +1024,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             return;
         }
         _forEachChangedGroupDepthFirst(this.rootNode, this.hierarchical, changedPath, (rowNode) => {
-            rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
-            updateRowNodeAfterFilter(rowNode);
+            const childrenAfterGroup = rowNode.childrenAfterGroup;
+            rowNode.childrenAfterFilter = childrenAfterGroup;
+            const sibling = rowNode.sibling;
+            if (sibling) {
+                sibling.childrenAfterFilter = childrenAfterGroup;
+            }
         });
     }
 

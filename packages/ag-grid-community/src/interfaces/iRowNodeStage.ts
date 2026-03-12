@@ -43,6 +43,29 @@ export interface IRowNodeFilterAggregateStage<TData = any> extends IRowNodeStage
     execute(changedPath: ChangedPath | undefined): void;
 }
 
+/**
+ * Enterprise service for tree data filtering. Called by `FilterStage` when tree data is active
+ * and `excludeChildrenWhenTreeDataFiltering` is disabled, to ensure parent rows remain visible
+ * when their children pass the filter.
+ *
+ * Implemented by `TreeDataFilterStage` (enterprise), registered as bean `treeDataFilterSvc`.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export interface ITreeDataFilterStage {
+    execute(rootNode: RowNode, changedPath: ChangedPath | undefined): void;
+}
+
+/**
+ * Enterprise service for hierarchical sorting. Called by `SortStage` when `rowModel.hierarchical`
+ * is true, to handle group-aware sorting including pivot columns and `maintainOrder` logic.
+ *
+ * Implemented by `HierarchicalSortStage` (enterprise), registered as bean `hierarchicalSortSvc`.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export interface IHierarchicalSortStage {
+    execute(changedPath: ChangedPath | undefined, changedRowNodes: ChangedRowNodes | undefined): void;
+}
+
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowNodeFlattenStage<TData = any> extends IRowNodeStage<TData> {
     execute(): RowNode<TData>[];
