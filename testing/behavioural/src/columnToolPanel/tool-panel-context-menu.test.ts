@@ -1,4 +1,7 @@
-import type { ColDef, GridApi } from 'ag-grid-community';
+import { findByText } from '@testing-library/dom';
+import userEvent from '@testing-library/user-event';
+
+import type { AgColumn, ColDef, GridApi } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
@@ -35,7 +38,7 @@ describe('Cell Editing Start', async () => {
     });
 
     describe('ToolPanelContextMenu addColumnsToList and removeColumnsFromList', async () => {
-        let gridApi: GridApi, gridDiv: HTMLElement, firstTwoColumns: string[];
+        let gridApi: GridApi, gridDiv: HTMLElement, toolPanelGui: HTMLElement;
         beforeEach(async () => {
             gridApi = await gridMgr.createGridAndWait('myGrid', {
                 columnDefs,
@@ -49,53 +52,44 @@ describe('Cell Editing Start', async () => {
                 sideBar: 'columns',
             });
 
-            firstTwoColumns = gridApi
-                .getColumns()!
-                .slice(0, 2)
-                .map((c) => c.getId());
             gridDiv = getGridElement(gridApi)! as HTMLElement;
+            toolPanelGui = (gridApi.getToolPanelInstance('columns') as any).getGui();
             await asyncSetTimeout(1);
         });
 
         const getGroupedRowIds = () => gridApi.getRowGroupColumns().map((col) => col.getId());
 
-        /**
-         * TODO: these tests use private apis like createBean and 'menuItemMap'
-         * reason we do it this way is because virtualized list is not rendered in jsdom
-         * so we cannot simulate user interaction that way.
-         *
-         * once that is added to mockGridLayout, use the tests below instead:
-         *
-         *
-         *
-         *         test('addColumnsToList adds columns that meet predicate and are not already in list', async () => {
-         *             expect(gridApi.getRowGroupColumns()).toStrictEqual([]);
-         *             const panelColId = agTestIdFor.columnSelectListItemDragHandle(`${firstTwoColumns[0].headerName} Column`);
-         *             await asyncSetTimeout(1000);
-         *             const menu = gridDiv.querySelector(`[data-testid="${panelColId}"]`)!;
-         *             expect(menu).not.toBeNull();
-         *             fireEvent.contextMenu(menu);
-         *             await asyncSetTimeout(1);
-         *             const menuItem = await findByText(gridDiv, 'Group by ' + firstTwoColumns[0].headerName);
-         *             await userEvent.click(menuItem);
-         *             expect(gridApi.getRowGroupColumns()).toBe([]);
-         *         });
-         *
-         *         test('removeColumnsFromList removes columns that meet predicate and are in list', async () => {
-         *             gridApi.addRowGroupColumns(firstTwoColumns.map((col) => col.field!));
-         *             expect(gridApi.getRowGroupColumns().length).toBe(2);
-         *             const panelColId = agTestIdFor.columnSelectListItemDragHandle(`${firstTwoColumns[0].headerName} Column`);
-         *             await asyncSetTimeout(1000);
-         *             const menu = gridDiv.querySelector(`[data-testid="${panelColId}"]`)!;
-         *             expect(menu).not.toBeNull();
-         *             fireEvent.contextMenu(menu);
-         *             await asyncSetTimeout(1);
-         *             const menuItem = await findByText(gridDiv, 'Un-Group by ' + firstTwoColumns[0].headerName);
-         *             await userEvent.click(menuItem);
-         *             expect(gridApi.getRowGroupColumns()).toBe([]);
-         *         });
-         *
-         */
+        async function createContextMenu(columnId: string): Promise<any> {
+            const column = gridApi.getColumn(columnId)! as AgColumn;
+            const contextMenu = column.createBean(
+                new ToolPanelContextMenu(column as any, new MouseEvent('contextmenu'), gridDiv)
+            );
+            await asyncSetTimeout(1);
+            return contextMenu;
+        }
+
+        test('user can add a row group by clicking the tool panel context menu item', async () => {
+            expect(getGroupedRowIds()).toStrictEqual([]);
+
+            await createContextMenu('athlete');
+
+            const menuItem = await findByText(gridDiv, 'Group by Athlete');
+            await userEvent.click(menuItem);
+
+            expect(getGroupedRowIds()).toStrictEqual(['athlete']);
+        });
+
+        test('user can remove a row group by clicking the tool panel context menu item', async () => {
+            gridApi.addRowGroupColumns(['athlete', 'age']);
+            expect(getGroupedRowIds()).toStrictEqual(['athlete', 'age']);
+
+            await createContextMenu('athlete');
+
+            const menuItem = await findByText(gridDiv, 'Un-Group by Athlete');
+            await userEvent.click(menuItem);
+
+            expect(getGroupedRowIds()).toStrictEqual(['age']);
+        });
 
         test('addColumnsToList adds columns that meet predicate and are not already in list', async () => {
             expect(getGroupedRowIds()).toStrictEqual([]);
@@ -106,7 +100,7 @@ describe('Cell Editing Start', async () => {
         });
 
         test('addColumnsToList does not add columns that are already in list', () => {
-            gridApi.addRowGroupColumns(firstTwoColumns);
+            gridApi.addRowGroupColumns(['athlete', 'age']);
             expect(getGroupedRowIds()).toStrictEqual(['athlete', 'age']);
             const col = gridApi.getColumns()![0] as any;
             const contextMenu = col.createBean(new ToolPanelContextMenu(col, new MouseEvent(''), gridDiv));
@@ -115,7 +109,7 @@ describe('Cell Editing Start', async () => {
         });
 
         test('removeColumnsFromList removes columns that meet predicate and are in list', async () => {
-            gridApi.addRowGroupColumns(firstTwoColumns);
+            gridApi.addRowGroupColumns(['athlete', 'age']);
             expect(getGroupedRowIds()).toStrictEqual(['athlete', 'age']);
             const col = gridApi.getColumns()![0] as any;
             const contextMenu = col.createBean(new ToolPanelContextMenu(col, new MouseEvent(''), gridDiv));
@@ -124,11 +118,11 @@ describe('Cell Editing Start', async () => {
         });
 
         test('removeColumnsFromList does not remove columns not in list', () => {
-            gridApi.addRowGroupColumns(firstTwoColumns);
+            gridApi.addRowGroupColumns(['athlete', 'age']);
             expect(getGroupedRowIds()).toStrictEqual(['athlete', 'age']);
             const col = gridApi.getColumns()![0] as any;
             const contextMenu = col.createBean(new ToolPanelContextMenu(col, new MouseEvent(''), gridDiv));
-            gridApi.removeRowGroupColumns(firstTwoColumns.slice(0, 1));
+            gridApi.removeRowGroupColumns(['athlete']);
             expect(getGroupedRowIds()).toStrictEqual(['age']);
             contextMenu['menuItemMap'].get('rowGroup').deActivateFunction(); // already removed
             expect(getGroupedRowIds()).toStrictEqual(['age']);
@@ -136,21 +130,24 @@ describe('Cell Editing Start', async () => {
 
         test('removeColumnsFromList keeps columns that do not match the predicate', () => {
             const col = gridApi.getColumns()![0] as any;
-            const athlete = gridApi.getColumn('athlete')!;
-            const year = gridApi.getColumn('year')!;
+            const athlete = gridApi.getColumn('athlete')! as AgColumn;
+            const year = gridApi.getColumn('year')! as AgColumn;
             const contextMenu = col.createBean(new ToolPanelContextMenu(col, new MouseEvent(''), gridDiv));
 
             expect(
-                contextMenu['removeColumnsFromList']([athlete, year], (candidate: any) => candidate.getColId() !== 'year')
+                contextMenu['removeColumnsFromList'](
+                    [athlete, year],
+                    (candidate: any) => candidate.getColId() !== 'year'
+                )
             ).toStrictEqual([year]);
         });
     });
 
     describe('ToolPanelContextMenu deferred mode', () => {
         function getDeferredActionButton(toolPanel: any, action: 'Apply' | 'Cancel'): HTMLButtonElement {
-            const button = Array.from(
-                toolPanel.getGui().querySelectorAll<HTMLButtonElement>('.ag-column-panel-buttons-button')
-            ).find((candidate) => candidate.textContent?.trim() === action);
+            const button = Array.from(toolPanel.getGui().querySelectorAll('.ag-column-panel-buttons-button')).find(
+                (candidate: HTMLButtonElement) => candidate.textContent?.trim() === action
+            ) as HTMLButtonElement;
             expect(button).toBeTruthy();
             return button!;
         }
@@ -161,8 +158,8 @@ describe('Cell Editing Start', async () => {
             columnId: string,
             params: { deferApply: boolean } = { deferApply: true }
         ): any {
-            const column = gridApi.getColumn(columnId)! as any;
-            return column.createBean(new ToolPanelContextMenu(column, new MouseEvent('contextmenu'), gridDiv, params));
+            const column = gridApi.getColumn(columnId)! as AgColumn;
+            return column.createBean(new ToolPanelContextMenu(column as any, new MouseEvent('contextmenu'), gridDiv, params));
         }
 
         test('row group context menu action in deferred mode applies only after clicking Apply', async () => {
