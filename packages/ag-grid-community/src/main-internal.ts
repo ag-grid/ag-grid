@@ -122,7 +122,7 @@ export {
     _setAriaSort,
 } from './agStack/utils/aria';
 export type { AriaSortState } from './agStack/utils/aria';
-export { _areEqual, _EmptyArray, _flatten, _last, _removeAllFromArray, _removeFromArray } from './agStack/utils/array';
+export { _areEqual, _flatten, _last, _removeAllFromArray, _removeFromArray } from './agStack/utils/array';
 export { _parseBigIntOrNull } from './agStack/utils/bigInt';
 export { _isBrowserFirefox, _isBrowserSafari, _isIOSUserAgent } from './agStack/utils/browser';
 export { _getDateParts, MONTHS as _MONTHS, _parseDateTimeFromString, _serialiseDate } from './agStack/utils/date';
@@ -493,7 +493,8 @@ export {
 } from './theming/parts/theme/themes';
 export { _getShouldDisplayTooltip, _isShowTooltipWhenTruncated } from './tooltip/tooltipFeature';
 export type { ITooltipCtrl, ITooltipCtrlParams, TooltipFeature } from './tooltip/tooltipFeature';
-export { ChangedPath } from './utils/changedPath';
+export type { ChangedPath } from './utils/changedPath';
+export { ChangedCellsPath, ChangedRowsPath, _forEachChangedGroupDepthFirst } from './utils/changedPath';
 export { _createElement } from './utils/element';
 export type { ElementParams } from './utils/element';
 export { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from './utils/gridEvent';

@@ -7,6 +7,7 @@ import type { FilterManager } from '../filter/filterManager';
 import type { ClientSideRowModelStage } from '../interfaces/iClientSideRowModel';
 import type { IRowNodeFilterStage } from '../interfaces/iRowNodeStage';
 import type { ChangedPath } from '../utils/changedPath';
+import { _forEachChangedGroupDepthFirst } from '../utils/changedPath';
 
 export function updateRowNodeAfterFilter(rowNode: RowNode): void {
     const sibling = rowNode.sibling;
@@ -27,7 +28,7 @@ export class FilterStage extends BeanStub implements IRowNodeFilterStage, NamedB
         this.filterManager = beans.filterManager;
     }
 
-    public execute(changedPath: ChangedPath): void {
+    public execute(changedPath: ChangedPath | undefined): void {
         const filterActive = !!this.filterManager?.isChildFilterPresent();
         if (this.beans.formula?.active) {
             this.softFilter(filterActive, changedPath);
@@ -36,7 +37,7 @@ export class FilterStage extends BeanStub implements IRowNodeFilterStage, NamedB
         }
     }
 
-    private filterNodes(filterActive: boolean, changedPath: ChangedPath): void {
+    private filterNodes(filterActive: boolean, changedPath: ChangedPath | undefined): void {
         const filterCallback = (rowNode: RowNode, includeChildNodes: boolean) => {
             // recursively get all children that are groups to also filter
             if (rowNode.hasChildren()) {
@@ -90,15 +91,14 @@ export class FilterStage extends BeanStub implements IRowNodeFilterStage, NamedB
                 filterCallback(rowNode, alreadyFoundInParent);
             };
 
-            const treeDataFilterCallback = (rowNode: RowNode) => treeDataDepthFirstFilter(rowNode, false);
-            changedPath.executeFromRootNode(treeDataFilterCallback);
+            treeDataDepthFirstFilter(this.beans.rowModel.rootNode!, false);
         } else {
             const defaultFilterCallback = (rowNode: RowNode) => filterCallback(rowNode, false);
-            changedPath.forEachChangedNodeDepthFirst(defaultFilterCallback, true);
+            _forEachChangedGroupDepthFirst(this.beans.rowModel.rootNode, changedPath, defaultFilterCallback);
         }
     }
 
-    private softFilter(filterActive: boolean, changedPath: ChangedPath): void {
+    private softFilter(filterActive: boolean, changedPath: ChangedPath | undefined): void {
         const filterCallback = (rowNode: RowNode) => {
             rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
             if (rowNode.hasChildren()) {
@@ -112,11 +112,11 @@ export class FilterStage extends BeanStub implements IRowNodeFilterStage, NamedB
             updateRowNodeAfterFilter(rowNode);
         };
 
-        changedPath.forEachChangedNodeDepthFirst(filterCallback, true);
+        _forEachChangedGroupDepthFirst(this.beans.rowModel.rootNode, changedPath, filterCallback);
     }
 
     private doingTreeDataFiltering() {
         const { gos } = this;
-        return gos.get('treeData') && !gos.get('excludeChildrenWhenTreeDataFiltering');
+        return !!this.beans.groupStage?.treeData && !gos.get('excludeChildrenWhenTreeDataFiltering');
     }
 }

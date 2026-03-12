@@ -11,21 +11,22 @@ export interface IRowNodeStage<TData = any> {
 }
 
 export interface IRowNodeSortStage<TData = any> extends IRowNodeStage<TData> {
-    execute(changedPath: ChangedPath, changedRowNodes: ChangedRowNodes<TData> | undefined): void;
+    execute(changedPath: ChangedPath | undefined, changedRowNodes: ChangedRowNodes<TData> | undefined): void;
 }
 
 export interface IRowNodeFilterStage<TData = any> extends IRowNodeStage<TData> {
-    execute(changedPath: ChangedPath): void;
+    execute(changedPath: ChangedPath | undefined): void;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowNodePivotStage<TData = any> extends IRowNodeStage<TData> {
-    execute(changedPath: ChangedPath): void;
+    /** Returns `true` if the changedPath should be deactivated (e.g. pivot columns changed). */
+    execute(changedPath: ChangedPath | undefined): boolean;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowNodeAggregationStage<TData = any> extends IRowNodeStage<TData> {
-    execute(changedPath: ChangedPath): void;
+    execute(changedPath: ChangedPath | undefined): void;
 
     /**
      * Returns the immediate children that contribute to the aggregation of a group RowNode.
@@ -39,7 +40,7 @@ export interface IRowNodeAggregationStage<TData = any> extends IRowNodeStage<TDa
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowNodeFilterAggregateStage<TData = any> extends IRowNodeStage<TData> {
-    execute(changedPath: ChangedPath): void;
+    execute(changedPath: ChangedPath | undefined): void;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

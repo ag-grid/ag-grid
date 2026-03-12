@@ -110,6 +110,15 @@ function findDeclarationNode(sourceFile: ts.SourceFile, symbolName: string): ts.
                 }
             }
         }
+
+        // Named re-exports: export { Foo } from '...' or export { Bar as Foo } from '...'
+        if (ts.isExportDeclaration(stmt) && stmt.exportClause && ts.isNamedExports(stmt.exportClause)) {
+            for (const element of stmt.exportClause.elements) {
+                if (element.name.text === symbolName) {
+                    return stmt;
+                }
+            }
+        }
     }
 
     return null;

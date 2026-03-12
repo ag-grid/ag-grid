@@ -9,6 +9,7 @@ import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowNodeSortStage } from '../interfaces/iRowNodeStage';
 import type { SortOption } from '../interfaces/iSortOption';
 import type { ChangedPath } from '../utils/changedPath';
+import { _forEachChangedGroupDepthFirst } from '../utils/changedPath';
 import type { ChangedRowNodes } from './changedRowNodes';
 import { doDeltaSort } from './deltaSort';
 
@@ -97,7 +98,7 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage 
             } else if (!sortOptions.length || skipSortingPivotLeafs) {
                 // if there's no sort to make, skip this step
             } else if (useDeltaSort && changedRowNodes) {
-                newChildrenAfterSort = doDeltaSort(rowNodeSorter!, rowNode, changedRowNodes, changedPath!, sortOptions);
+                newChildrenAfterSort = doDeltaSort(rowNodeSorter!, rowNode, changedRowNodes, changedPath, sortOptions);
             } else {
                 newChildrenAfterSort = rowNodeSorter!.doFullSortInPlace(
                     rowNode.childrenAfterAggFilter!.slice(),
@@ -119,7 +120,7 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage 
             }
         };
 
-        changedPath?.forEachChangedNodeDepthFirst(callback);
+        _forEachChangedGroupDepthFirst(this.beans.rowModel.rootNode, changedPath, callback);
 
         // if using group hide open parents and a sort has happened, refresh the group cells as the first child
         // displays the parent grouping - it's cheaper here to refresh all cells in col rather than fire events for every potential

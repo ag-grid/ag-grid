@@ -1,3 +1,4 @@
+import type { IAggFuncParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -273,6 +274,44 @@ describe('ag-grid grouping aggregation', () => {
         `);
     });
 
+    test('custom aggFunc receives api and context in params', async () => {
+        const myContext = { myKey: 'myContextValue' };
+        const capturedParams: IAggFuncParams[] = [];
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'category', rowGroup: true, hide: true },
+                {
+                    field: 'value',
+                    aggFunc: (params: IAggFuncParams) => {
+                        capturedParams.push({ ...params });
+                        return params.values.reduce((a: number, b: number) => a + b, 0);
+                    },
+                },
+            ],
+            autoGroupColumnDef: { headerName: 'Category' },
+            groupDefaultExpanded: -1,
+            context: myContext,
+            rowData: [
+                { id: '1', category: 'A', value: 10 },
+                { id: '2', category: 'A', value: 20 },
+            ],
+            getRowId: (params) => params.data.id,
+        });
+
+        expect(capturedParams.length).toBeGreaterThan(0);
+
+        for (const params of capturedParams) {
+            expect(params.api).toBe(api);
+            expect(params.context).toBe(myContext);
+            expect(params.rowNode).toBeDefined();
+            expect(params.column).toBeDefined();
+            expect(params.colDef).toBeDefined();
+            expect(params.values).toBeDefined();
+            expect(Array.isArray(params.values)).toBe(true);
+        }
+    });
+
     test('grouping with mixed data types and null values in aggregation', async () => {
         const rowData = cachedJSONObjects.array([
             { id: '1', category: 'A', amount: 100, quantity: null, active: true },
@@ -326,6 +365,81 @@ describe('ag-grid grouping aggregation', () => {
             │ ├── LEAF id:4 category:"B" amount:150 quantity:null active:null
             │ └── LEAF id:5 category:"B" amount:0 quantity:0 active:false
             └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " amount:450 quantity:{"count":3,"value":20} active:{"value":5}
+        `);
+    });
+
+    test('cross-column valueGetter dependencies during aggregation', async () => {
+        // Column 'total' uses a valueGetter that reads 'price' and 'qty' via params.getValue().
+        // This verifies that aggregation correctly handles valueGetters with cross-column
+        // dependencies — getValue must resolve the other column's value for the same row,
+        // including when intermediate group nodes propagate aggregated values upward.
+        const rowData = cachedJSONObjects.array([
+            { id: '1', region: 'EU', category: 'A', price: 10, qty: 3 },
+            { id: '2', region: 'EU', category: 'A', price: 20, qty: 2 },
+            { id: '3', region: 'EU', category: 'B', price: 15, qty: 4 },
+            { id: '4', region: 'US', category: 'A', price: 25, qty: 1 },
+            { id: '5', region: 'US', category: 'B', price: 30, qty: 2 },
+        ]);
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'region', rowGroup: true, hide: true },
+                { field: 'category', rowGroup: true, hide: true },
+                { field: 'price', aggFunc: 'sum' },
+                { field: 'qty', aggFunc: 'sum' },
+                {
+                    colId: 'total',
+                    headerName: 'Total',
+                    valueGetter: (params) => {
+                        const price = params.getValue('price');
+                        const qty = params.getValue('qty');
+                        return (price ?? 0) * (qty ?? 0);
+                    },
+                    aggFunc: 'sum',
+                },
+            ],
+            autoGroupColumnDef: { headerName: 'Group' },
+            groupDefaultExpanded: -1,
+            rowData,
+            getRowId: (params) => params.data.id,
+        });
+
+        // Leaf totals: 10*3=30, 20*2=40, 15*4=60, 25*1=25, 30*2=60
+        // EU/A: sum(30,40)=70. EU/B: sum(60)=60. EU: sum(70,60)=130
+        // US/A: sum(25)=25. US/B: sum(60)=60. US: sum(25,60)=85
+        await new GridRows(api, 'initial', { useFormatter: false }).check(`
+            ROOT id:ROOT_NODE_ID total:0
+            ├─┬ filler id:row-group-region-EU ag-Grid-AutoColumn:"EU" price:45 qty:9 total:130
+            │ ├─┬ LEAF_GROUP id:row-group-region-EU-category-A ag-Grid-AutoColumn:"A" price:30 qty:5 total:70
+            │ │ ├── LEAF id:1 region:"EU" category:"A" price:10 qty:3 total:30
+            │ │ └── LEAF id:2 region:"EU" category:"A" price:20 qty:2 total:40
+            │ └─┬ LEAF_GROUP id:row-group-region-EU-category-B ag-Grid-AutoColumn:"B" price:15 qty:4 total:60
+            │ · └── LEAF id:3 region:"EU" category:"B" price:15 qty:4 total:60
+            └─┬ filler id:row-group-region-US ag-Grid-AutoColumn:"US" price:55 qty:3 total:85
+            · ├─┬ LEAF_GROUP id:row-group-region-US-category-A ag-Grid-AutoColumn:"A" price:25 qty:1 total:25
+            · │ └── LEAF id:4 region:"US" category:"A" price:25 qty:1 total:25
+            · └─┬ LEAF_GROUP id:row-group-region-US-category-B ag-Grid-AutoColumn:"B" price:30 qty:2 total:60
+            · · └── LEAF id:5 region:"US" category:"B" price:30 qty:2 total:60
+        `);
+
+        applyTransactionChecked(api, {
+            update: [{ id: '1', region: 'EU', category: 'A', price: 100, qty: 5 }],
+        });
+
+        // EU/A: sum(100*5=500, 40)=540. EU: sum(540,60)=600
+        await new GridRows(api, 'after transaction', { useFormatter: false }).check(`
+            ROOT id:ROOT_NODE_ID total:0
+            ├─┬ filler id:row-group-region-EU ag-Grid-AutoColumn:"EU" price:135 qty:11 total:600
+            │ ├─┬ LEAF_GROUP id:row-group-region-EU-category-A ag-Grid-AutoColumn:"A" price:120 qty:7 total:540
+            │ │ ├── LEAF id:1 region:"EU" category:"A" price:100 qty:5 total:500
+            │ │ └── LEAF id:2 region:"EU" category:"A" price:20 qty:2 total:40
+            │ └─┬ LEAF_GROUP id:row-group-region-EU-category-B ag-Grid-AutoColumn:"B" price:15 qty:4 total:60
+            │ · └── LEAF id:3 region:"EU" category:"B" price:15 qty:4 total:60
+            └─┬ filler id:row-group-region-US ag-Grid-AutoColumn:"US" price:55 qty:3 total:85
+            · ├─┬ LEAF_GROUP id:row-group-region-US-category-A ag-Grid-AutoColumn:"A" price:25 qty:1 total:25
+            · │ └── LEAF id:4 region:"US" category:"A" price:25 qty:1 total:25
+            · └─┬ LEAF_GROUP id:row-group-region-US-category-B ag-Grid-AutoColumn:"B" price:30 qty:2 total:60
+            · · └── LEAF id:5 region:"US" category:"B" price:30 qty:2 total:60
         `);
     });
 });

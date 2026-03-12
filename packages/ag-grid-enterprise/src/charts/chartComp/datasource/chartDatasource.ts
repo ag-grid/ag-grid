@@ -23,7 +23,6 @@ import {
     _warn,
 } from 'ag-grid-community';
 
-import { _aggregateValues } from '../../../aggregation/aggUtils';
 import type { ColState } from '../model/chartDataModel';
 import { DEFAULT_CHART_CATEGORY } from '../model/chartDataModel';
 
@@ -342,23 +341,43 @@ export class ChartDatasource extends BeanStub {
         }
 
         if (this.gos.assertModuleRegistered('SharedAggregation', 1)) {
+            // Resolve the aggFunc once for all columns/groups.
+            const aggFuncOrString = params.aggFunc;
+            const aggFunc: IAggFunc | null =
+                typeof aggFuncOrString === 'function'
+                    ? aggFuncOrString
+                    : typeof aggFuncOrString === 'string'
+                      ? this.beans.aggFuncSvc!.getAggFunc(aggFuncOrString)
+                      : null;
+
+            if (typeof aggFunc !== 'function') {
+                _warn(109, { inputValue: String(aggFuncOrString), allSuggestions: [] });
+                return dataAggregated;
+            }
+
+            const api = this.beans.gridApi;
+            const context = this.gos.get('context');
+
             for (const groupItem of dataAggregated) {
                 for (const col of params.valueCols) {
                     const colId = col.getColId();
+
                     if (params.crossFiltering) {
                         // filtered data
                         const dataToAgg = groupItem.__children
                             .filter((child: any) => typeof child[colId] !== 'undefined')
                             .map((child: any) => child[colId]);
 
-                        const aggResult: any = _aggregateValues({
-                            beans: this.beans,
+                        const aggResult: any = aggFunc({
                             values: dataToAgg,
-                            aggFuncOrString: params.aggFunc,
                             column: col,
-                            rowNode: undefined,
-                            pivotResultColumn: undefined,
+                            colDef: col.colDef,
+                            pivotResultColumn: undefined as any,
+                            rowNode: undefined!,
+                            data: undefined,
                             aggregatedChildren: [],
+                            api,
+                            context,
                         });
                         groupItem[colId] =
                             aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
@@ -369,14 +388,16 @@ export class ChartDatasource extends BeanStub {
                             .filter((child: any) => typeof child[filteredOutColId] !== 'undefined')
                             .map((child: any) => child[filteredOutColId]);
 
-                        const aggResultFiltered: any = _aggregateValues({
-                            beans: this.beans,
+                        const aggResultFiltered: any = aggFunc({
                             values: dataToAggFiltered,
-                            aggFuncOrString: params.aggFunc,
                             column: col,
-                            rowNode: undefined,
-                            pivotResultColumn: undefined,
+                            colDef: col.colDef,
+                            pivotResultColumn: undefined as any,
+                            rowNode: undefined!,
+                            data: undefined,
                             aggregatedChildren: [],
+                            api,
+                            context,
                         });
                         groupItem[filteredOutColId] =
                             aggResultFiltered && typeof aggResultFiltered.value !== 'undefined'
@@ -384,14 +405,16 @@ export class ChartDatasource extends BeanStub {
                                 : aggResultFiltered;
                     } else {
                         const dataToAgg = groupItem.__children.map((child: any) => child[colId]);
-                        const aggResult = _aggregateValues({
-                            beans: this.beans,
+                        const aggResult = aggFunc({
                             values: dataToAgg,
-                            aggFuncOrString: params.aggFunc,
                             column: col,
-                            rowNode: undefined,
-                            pivotResultColumn: undefined,
+                            colDef: col.colDef,
+                            pivotResultColumn: undefined as any,
+                            rowNode: undefined!,
+                            data: undefined,
                             aggregatedChildren: [],
+                            api,
+                            context,
                         });
 
                         groupItem[colId] =
