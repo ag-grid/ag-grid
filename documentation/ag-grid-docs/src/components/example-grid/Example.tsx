@@ -281,21 +281,14 @@ const ExampleInner = ({ darkMode, theme, isSmall }: { darkMode: boolean; theme: 
 
         const newRowsCols = [
             [100, defaultColCount],
-            [1000, defaultColCount],
+            [1_000, defaultColCount],
         ];
 
         if (!isSmall) {
-            newRowsCols.push(
-                [10000, 100],
-                [50000, defaultColCount],
-                [100000, defaultColCount],
-                [250000, defaultColCount],
-                [500000, defaultColCount],
-                [1000000, defaultColCount]
-            );
+            newRowsCols.push([10_000, 100], [50_000, defaultColCount], [100_000, defaultColCount]);
         }
 
-        setDataSize(createDataSizeValue(newRowsCols[0][0], newRowsCols[0][1]));
+        setDataSize(createDataSizeValue(newRowsCols[1][0], newRowsCols[1][1]));
         setRowCols(newRowsCols);
     }, [isSmall]);
 
@@ -345,8 +338,7 @@ const ExampleInner = ({ darkMode, theme, isSmall }: { darkMode: boolean; theme: 
                     break;
                 case 'percent':
                     colDef.filter = 'agNumberColumnFilter';
-                    colDef.valueFormatter = (params) =>
-                        params.value != null ? `${params.value.toFixed(1)}%` : '';
+                    colDef.valueFormatter = (params) => (params.value != null ? `${params.value.toFixed(1)}%` : '');
                     colDef.width = 130;
                     break;
                 case 'rating':
