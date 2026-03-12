@@ -1,11 +1,4 @@
-import type {
-    AgColumn,
-    ColumnEventType,
-    ColumnState,
-    ColumnToolPanelUpdatesBean,
-    IAggFunc,
-    SortDef,
-} from 'ag-grid-community';
+import type { AgColumn, ColumnEventType, ColumnState, IAggFunc, SortDef } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
 import { createSyncColumnToolPanelConcreteUpdateStrategy } from './columnToolPanelUpdates';
@@ -15,7 +8,7 @@ import type {
 } from './columnToolPanelUpdatesTypes';
 
 export class ColumnToolPanelUpdates extends BeanStub implements IColumnToolPanelUpdateStrategy {
-    public beanName = 'colToolPanelUpdates' as ColumnToolPanelUpdatesBean;
+    public beanName = 'colToolPanelUpdates' as const;
     private fallbackUpdates?: ColumnToolPanelConcreteUpdateStrategy;
 
     public applyColumnState(deferMode: boolean, state: ColumnState[], eventType: ColumnEventType): void {

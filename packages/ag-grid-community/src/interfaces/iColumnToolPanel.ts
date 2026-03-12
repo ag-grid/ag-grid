@@ -13,6 +13,3 @@ export interface IColumnToolPanel extends IToolPanel {
     setPivotSectionVisible(visible: boolean): void;
     getState(): ColumnToolPanelState;
 }
-
-export type ColumnToolPanelUpdateStrategyBean = 'colToolPanelUpdateStrategy';
-export type ColumnToolPanelUpdatesBean = 'colToolPanelUpdates';
