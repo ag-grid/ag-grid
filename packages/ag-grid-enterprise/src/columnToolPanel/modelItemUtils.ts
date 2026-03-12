@@ -1,15 +1,17 @@
 import type { AgColumn, BeanCollection, ColumnEventType, ColumnState, IAggFunc } from 'ag-grid-community';
 
 import type { ColumnModelItem } from './columnModelItem';
-import { getColumnToolPanelEditStrategy } from './columnToolPanelEditUtils';
-import type { ColumnToolPanelEditParams } from './columnToolPanelEditsTypes';
+import type {
+    ColumnToolPanelUpdateParams,
+    IColumnToolPanelUpdateStrategy,
+} from './updates/columnToolPanelUpdatesTypes';
 
 export function selectAllChildren(
     beans: BeanCollection,
     colTree: ColumnModelItem[],
     selectAllChecked: boolean,
     eventType: ColumnEventType,
-    params: ColumnToolPanelEditParams
+    params: ColumnToolPanelUpdateParams
 ): void {
     const cols = extractAllLeafColumns(colTree);
     setAllColumns(beans, cols, selectAllChecked, eventType, params);
@@ -20,9 +22,14 @@ export function setAllColumns(
     cols: AgColumn[],
     selectAllChecked: boolean,
     eventType: ColumnEventType,
-    params: ColumnToolPanelEditParams
+    params: ColumnToolPanelUpdateParams
 ): void {
-    if (beans.colModel.isPivotMode()) {
+    const updateStrategy = beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy | undefined;
+    const isPivotMode = updateStrategy
+        ? updateStrategy.getPivotMode(!!params.deferApply)
+        : beans.colModel.isPivotMode();
+
+    if (isPivotMode) {
         setAllPivot(beans, cols, selectAllChecked, eventType, params);
     } else {
         setAllVisible(beans, cols, selectAllChecked, eventType, params);
@@ -55,10 +62,10 @@ function setAllVisible(
     columns: AgColumn[],
     visible: boolean,
     eventType: ColumnEventType,
-    params: ColumnToolPanelEditParams
+    params: ColumnToolPanelUpdateParams
 ): void {
-    const edits = getColumnToolPanelEditStrategy(beans, params.deferApply);
-    if (!edits) {
+    const updateStrategy = beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy | undefined;
+    if (!updateStrategy) {
         return;
     }
     const colStateItems: ColumnState[] = [];
@@ -67,7 +74,7 @@ function setAllVisible(
         if (col.getColDef().lockVisible) {
             continue;
         }
-        if (edits.isColumnVisibleInToolPanel(col) !== visible) {
+        if (updateStrategy.isColumnVisibleInToolPanel(!!params.deferApply, col) !== visible) {
             colStateItems.push({
                 colId: col.getId(),
                 hide: !visible,
@@ -75,7 +82,7 @@ function setAllVisible(
         }
     }
 
-    edits.applyColumnState(colStateItems, eventType);
+    updateStrategy.applyColumnState(!!params.deferApply, colStateItems, eventType);
 }
 
 function setAllPivot(
@@ -83,7 +90,7 @@ function setAllPivot(
     columns: AgColumn[],
     value: boolean,
     eventType: ColumnEventType,
-    params: ColumnToolPanelEditParams
+    params: ColumnToolPanelUpdateParams
 ): void {
     setAllPivotActive(beans, columns, value, eventType, params);
 }
@@ -93,17 +100,17 @@ function setAllPivotActive(
     columns: AgColumn[],
     value: boolean,
     eventType: ColumnEventType,
-    params: ColumnToolPanelEditParams
+    params: ColumnToolPanelUpdateParams
 ): void {
-    const edits = getColumnToolPanelEditStrategy(beans, params.deferApply);
-    if (!edits) {
+    const updateStrategy = beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy | undefined;
+    if (!updateStrategy) {
         return;
     }
     const colStateItems: ColumnState[] = [];
 
     const turnOnAction = (col: AgColumn) => {
         // don't change any column that's already got a function active
-        if (edits.isColumnSelectedInPivotModeToolPanel(col)) {
+        if (updateStrategy.isColumnSelectedInPivotModeToolPanel(!!params.deferApply, col)) {
             return;
         }
 
@@ -128,7 +135,7 @@ function setAllPivotActive(
     };
 
     const turnOffAction = (col: AgColumn) => {
-        const isActive = edits.isColumnSelectedInPivotModeToolPanel(col);
+        const isActive = updateStrategy.isColumnSelectedInPivotModeToolPanel(!!params.deferApply, col);
         if (isActive) {
             colStateItems.push({
                 colId: col.getId(),
@@ -143,7 +150,7 @@ function setAllPivotActive(
 
     columns.forEach(action);
 
-    edits.applyColumnState(colStateItems, eventType);
+    updateStrategy.applyColumnState(!!params.deferApply, colStateItems, eventType);
 }
 
 export function updateColumns(
@@ -163,9 +170,11 @@ export function updateColumns(
     }
 ): void {
     const { columns, visibleState, pivotState, eventType } = params;
+    const updateStrategy = beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy | undefined;
+    const isPivotMode = updateStrategy ? updateStrategy.getPivotMode(!!params.deferApply) : beans.colModel.isPivotMode();
     const state: ColumnState[] = columns.map((column) => {
         const colId = column.getColId();
-        if (beans.colModel.isPivotMode()) {
+        if (isPivotMode) {
             const pivotStateForColumn = pivotState?.[colId];
             return {
                 colId,
@@ -180,7 +189,7 @@ export function updateColumns(
             };
         }
     });
-    getColumnToolPanelEditStrategy(beans, params.deferApply)?.applyColumnState(state, eventType);
+    updateStrategy?.applyColumnState(!!params.deferApply, state, eventType);
 }
 
 export function createPivotState(column: AgColumn): {

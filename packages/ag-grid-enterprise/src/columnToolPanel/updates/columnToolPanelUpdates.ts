@@ -2,7 +2,7 @@ import type {
     AgColumn,
     ColumnEventType,
     ColumnState,
-    ColumnToolPanelEditStrategyBean,
+    ColumnToolPanelUpdateStrategyBean,
     IAggFunc,
     SortDef,
 } from 'ag-grid-community';
@@ -20,7 +20,7 @@ const noop = () => {};
 type StrategyBeans = BeanStub['beans'];
 
 export class ColumnToolPanelUpdateStrategy extends BeanStub implements IColumnToolPanelUpdateStrategy {
-    public beanName = 'colToolPanelUpdateStrategy' as ColumnToolPanelEditStrategyBean;
+    public beanName = 'colToolPanelUpdateStrategy' as ColumnToolPanelUpdateStrategyBean;
     private syncUpdateStrategy?: ColumnToolPanelSynchronousUpdateStrategy;
     private deferredUpdateStrategy?: ColumnToolPanelDeferredUpdateStrategy;
 
@@ -226,6 +226,7 @@ class ColumnToolPanelSynchronousUpdateStrategy implements ColumnToolPanelConcret
 class ColumnToolPanelDeferredUpdateStrategy implements ColumnToolPanelConcreteUpdateStrategy {
     private state: DeferredState = {};
     private sequence = 0;
+    private lastPivotColIds: string[] = [];
 
     constructor(private readonly beans: StrategyBeans) {}
 
@@ -278,6 +279,7 @@ class ColumnToolPanelDeferredUpdateStrategy implements ColumnToolPanelConcreteUp
                     break;
                 }
                 case 'pivot': {
+                    this.lastPivotColIds = operation.colIds;
                     beans.pivotColsSvc?.setColumns(operation.colIds, operation.eventType);
                     break;
                 }
@@ -285,15 +287,19 @@ class ColumnToolPanelDeferredUpdateStrategy implements ColumnToolPanelConcreteUp
                     const { colModel, ctrlsSvc, gos, stateSvc } = beans;
                     if (operation.pivotMode !== colModel.isPivotMode()) {
                         const currentPivotColIds = beans.pivotColsSvc?.columns.map((col) => col.getColId()) ?? [];
+                        if (currentPivotColIds.length > 0) {
+                            this.lastPivotColIds = currentPivotColIds;
+                        }
                         const previousPivotColIds = stateSvc?.getState().pivot?.pivotColIds ?? currentPivotColIds;
+                        const pivotColIds = operation.pivotMode
+                            ? this.state.pivot?.colIds ?? this.lastPivotColIds
+                            : previousPivotColIds;
                         stateSvc?.setState(
                             {
                                 ...stateSvc.getState(),
                                 pivot: {
                                     pivotMode: operation.pivotMode,
-                                    pivotColIds: operation.pivotMode
-                                        ? this.state.pivot?.colIds ?? currentPivotColIds
-                                        : previousPivotColIds,
+                                    pivotColIds,
                                 },
                             },
                             ['pivot']
@@ -318,6 +324,9 @@ class ColumnToolPanelDeferredUpdateStrategy implements ColumnToolPanelConcreteUp
                             options: { pivotMode: operation.pivotMode },
                             source: operation.eventType as any,
                         });
+                        if (operation.pivotMode && pivotColIds.length > 0) {
+                            beans.pivotColsSvc?.setColumns(pivotColIds, operation.eventType);
+                        }
                         for (const c of ctrlsSvc.getHeaderRowContainerCtrls()) {
                             c.refresh();
                         }
