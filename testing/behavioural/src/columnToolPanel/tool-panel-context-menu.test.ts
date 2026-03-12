@@ -145,4 +145,136 @@ describe('Cell Editing Start', async () => {
             ).toStrictEqual([year]);
         });
     });
+
+    describe('ToolPanelContextMenu deferred mode', () => {
+        function getDeferredActionButton(toolPanel: any, action: 'Apply' | 'Cancel'): HTMLButtonElement {
+            const button = Array.from(
+                toolPanel.getGui().querySelectorAll<HTMLButtonElement>('.ag-column-panel-buttons-button')
+            ).find((candidate) => candidate.textContent?.trim() === action);
+            expect(button).toBeTruthy();
+            return button!;
+        }
+
+        function createDeferredContextMenu(
+            gridApi: GridApi,
+            gridDiv: HTMLElement,
+            columnId: string,
+            params: { deferApply: boolean } = { deferApply: true }
+        ): any {
+            const column = gridApi.getColumn(columnId)! as any;
+            return column.createBean(new ToolPanelContextMenu(column, new MouseEvent('contextmenu'), gridDiv, params));
+        }
+
+        test('row group context menu action in deferred mode applies only after clicking Apply', async () => {
+            const gridApi = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs,
+                rowData,
+                defaultColDef: {
+                    flex: 1,
+                    minWidth: 100,
+                    enableRowGroup: true,
+                },
+                sideBar: {
+                    toolPanels: [
+                        {
+                            id: 'columns',
+                            labelDefault: 'Columns',
+                            labelKey: 'columns',
+                            iconKey: 'columns',
+                            toolPanel: 'agColumnsToolPanel',
+                            toolPanelParams: { deferApply: true },
+                        },
+                    ],
+                    defaultToolPanel: 'columns',
+                },
+            });
+            const gridDiv = getGridElement(gridApi)! as HTMLElement;
+            const toolPanel = gridApi.getToolPanelInstance('columns') as any;
+            const contextMenu = createDeferredContextMenu(gridApi, gridDiv, 'athlete');
+
+            contextMenu['menuItemMap'].get('rowGroup').activateFunction();
+
+            expect(gridApi.getRowGroupColumns()).toEqual([]);
+
+            getDeferredActionButton(toolPanel, 'Apply').click();
+
+            expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['athlete']);
+        });
+
+        test('value context menu action in deferred mode is discarded by Cancel', async () => {
+            const gridApi = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs,
+                rowData,
+                defaultColDef: {
+                    flex: 1,
+                    minWidth: 100,
+                    enableValue: true,
+                },
+                sideBar: {
+                    toolPanels: [
+                        {
+                            id: 'columns',
+                            labelDefault: 'Columns',
+                            labelKey: 'columns',
+                            iconKey: 'columns',
+                            toolPanel: 'agColumnsToolPanel',
+                            toolPanelParams: { deferApply: true },
+                        },
+                    ],
+                    defaultToolPanel: 'columns',
+                },
+            });
+            const gridDiv = getGridElement(gridApi)! as HTMLElement;
+            const toolPanel = gridApi.getToolPanelInstance('columns') as any;
+            const contextMenu = createDeferredContextMenu(gridApi, gridDiv, 'age');
+
+            contextMenu['menuItemMap'].get('value').activateFunction();
+
+            expect(gridApi.getValueColumns()).toEqual([]);
+
+            getDeferredActionButton(toolPanel, 'Cancel').click();
+
+            expect(gridApi.getValueColumns()).toEqual([]);
+        });
+
+        test('pivot context menu action in deferred pivot mode applies only after clicking Apply', async () => {
+            const gridApi = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [
+                    { field: 'athlete', enableRowGroup: true, enablePivot: true, rowGroup: true },
+                    { field: 'country', enableRowGroup: true, enablePivot: true },
+                    { field: 'year', enableRowGroup: true, enablePivot: true, pivot: true },
+                    { field: 'age', enableValue: true, aggFunc: 'sum' },
+                ],
+                rowData,
+                pivotMode: true,
+                sideBar: {
+                    toolPanels: [
+                        {
+                            id: 'columns',
+                            labelDefault: 'Columns',
+                            labelKey: 'columns',
+                            iconKey: 'columns',
+                            toolPanel: 'agColumnsToolPanel',
+                            toolPanelParams: { deferApply: true },
+                        },
+                    ],
+                    defaultToolPanel: 'columns',
+                },
+            });
+            await asyncSetTimeout(1);
+            const gridDiv = getGridElement(gridApi)! as HTMLElement;
+            const toolPanel = gridApi.getToolPanelInstance('columns') as any;
+            const contextMenu = createDeferredContextMenu(gridApi, gridDiv, 'country');
+
+            expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['year']);
+
+            contextMenu['menuItemMap'].get('pivot').activateFunction();
+
+            expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['year']);
+
+            getDeferredActionButton(toolPanel, 'Apply').click();
+
+            expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['year', 'country']);
+        });
+    });
 });
