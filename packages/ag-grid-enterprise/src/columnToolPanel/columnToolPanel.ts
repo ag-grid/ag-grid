@@ -255,6 +255,12 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         this.setLastVisible();
     };
 
+    public refreshDeferredUi(): void {
+        this.refreshToolPanelLayouts();
+        this.setLastVisible();
+        this.pivotModePanel?.refreshEditStrategy();
+    }
+
     private refreshToolPanelLayouts(): void {
         this.primaryColsPanel.syncLayoutWithGrid();
         this.rowGroupDropZonePanel?.refreshGui();

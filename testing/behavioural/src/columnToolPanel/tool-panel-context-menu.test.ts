@@ -38,7 +38,7 @@ describe('Cell Editing Start', async () => {
     });
 
     describe('ToolPanelContextMenu addColumnsToList and removeColumnsFromList', async () => {
-        let gridApi: GridApi, gridDiv: HTMLElement;
+        let gridApi: GridApi, gridDiv: HTMLElement, toolPanel: any;
         beforeEach(async () => {
             gridApi = await gridMgr.createGridAndWait('myGrid', {
                 columnDefs,
@@ -53,10 +53,15 @@ describe('Cell Editing Start', async () => {
             });
 
             gridDiv = getGridElement(gridApi)! as HTMLElement;
+            toolPanel = gridApi.getToolPanelInstance('columns') as any;
             await asyncSetTimeout(1);
         });
 
         const getGroupedRowIds = () => gridApi.getRowGroupColumns().map((col) => col.getId());
+        const getToolPanelRowGroupLabels = () =>
+            Array.from(toolPanel.rowGroupDropZonePanel.getGui().querySelectorAll('.ag-column-drop-cell-text')).map(
+                (element: HTMLElement) => element.textContent?.trim()
+            );
 
         async function createContextMenu(columnId: string): Promise<any> {
             const column = gridApi.getColumn(columnId)! as AgColumn;
@@ -88,6 +93,22 @@ describe('Cell Editing Start', async () => {
             await userEvent.click(menuItem);
 
             expect(getGroupedRowIds()).toStrictEqual(['age']);
+        });
+
+        test('group and ungroup context menu actions update the tool panel row group pills', async () => {
+            expect(getToolPanelRowGroupLabels()).toStrictEqual([]);
+
+            await createContextMenu('athlete');
+            await userEvent.click(await findByText(gridDiv, 'Group by Athlete'));
+
+            expect(getGroupedRowIds()).toStrictEqual(['athlete']);
+            expect(getToolPanelRowGroupLabels()).toStrictEqual(['Athlete']);
+
+            await createContextMenu('athlete');
+            await userEvent.click(await findByText(gridDiv, 'Un-Group by Athlete'));
+
+            expect(getGroupedRowIds()).toStrictEqual([]);
+            expect(getToolPanelRowGroupLabels()).toStrictEqual([]);
         });
 
         test('addColumnsToList adds columns that meet predicate and are not already in list', async () => {
@@ -151,6 +172,16 @@ describe('Cell Editing Start', async () => {
             return button!;
         }
 
+        function getToolPanelRowGroupLabels(toolPanel: any): Array<string | undefined> {
+            return Array.from(
+                toolPanel.rowGroupDropZonePanel.getGui().querySelectorAll('.ag-column-drop-cell-text')
+            ).map((element: HTMLElement) => element.textContent?.trim());
+        }
+
+        function getToolPanelDropZoneText(panel: any): string {
+            return panel.getGui().textContent ?? '';
+        }
+
         function createDeferredContextMenu(
             gridApi: GridApi,
             gridDiv: HTMLElement,
@@ -199,6 +230,46 @@ describe('Cell Editing Start', async () => {
             expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['athlete']);
         });
 
+        test('row group context menu actions in deferred mode update the tool panel pills immediately', async () => {
+            const gridApi = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs,
+                rowData,
+                defaultColDef: {
+                    flex: 1,
+                    minWidth: 100,
+                    enableRowGroup: true,
+                },
+                sideBar: {
+                    toolPanels: [
+                        {
+                            id: 'columns',
+                            labelDefault: 'Columns',
+                            labelKey: 'columns',
+                            iconKey: 'columns',
+                            toolPanel: 'agColumnsToolPanel',
+                            toolPanelParams: { deferApply: true },
+                        },
+                    ],
+                    defaultToolPanel: 'columns',
+                },
+            });
+            const gridDiv = getGridElement(gridApi)! as HTMLElement;
+            const toolPanel = gridApi.getToolPanelInstance('columns') as any;
+            const contextMenu = createDeferredContextMenu(gridApi, gridDiv, 'athlete');
+
+            expect(getToolPanelRowGroupLabels(toolPanel)).toStrictEqual([]);
+
+            contextMenu['menuItemMap'].get('rowGroup').activateFunction();
+
+            expect(gridApi.getRowGroupColumns()).toEqual([]);
+            expect(getToolPanelRowGroupLabels(toolPanel)).toStrictEqual(['Athlete']);
+
+            getDeferredActionButton(toolPanel, 'Cancel').click();
+
+            expect(gridApi.getRowGroupColumns()).toEqual([]);
+            expect(getToolPanelRowGroupLabels(toolPanel)).toStrictEqual([]);
+        });
+
         test('value context menu action in deferred mode is discarded by Cancel', async () => {
             const gridApi = await gridMgr.createGridAndWait('myGrid', {
                 columnDefs,
@@ -233,6 +304,46 @@ describe('Cell Editing Start', async () => {
             getDeferredActionButton(toolPanel, 'Cancel').click();
 
             expect(gridApi.getValueColumns()).toEqual([]);
+        });
+
+        test('value context menu actions in deferred mode update the tool panel pills immediately', async () => {
+            const gridApi = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs,
+                rowData,
+                defaultColDef: {
+                    flex: 1,
+                    minWidth: 100,
+                    enableValue: true,
+                },
+                sideBar: {
+                    toolPanels: [
+                        {
+                            id: 'columns',
+                            labelDefault: 'Columns',
+                            labelKey: 'columns',
+                            iconKey: 'columns',
+                            toolPanel: 'agColumnsToolPanel',
+                            toolPanelParams: { deferApply: true },
+                        },
+                    ],
+                    defaultToolPanel: 'columns',
+                },
+            });
+            const gridDiv = getGridElement(gridApi)! as HTMLElement;
+            const toolPanel = gridApi.getToolPanelInstance('columns') as any;
+            const contextMenu = createDeferredContextMenu(gridApi, gridDiv, 'age');
+
+            expect(getToolPanelDropZoneText(toolPanel.valuesDropZonePanel)).not.toContain('Age');
+
+            contextMenu['menuItemMap'].get('value').activateFunction();
+
+            expect(gridApi.getValueColumns()).toEqual([]);
+            expect(getToolPanelDropZoneText(toolPanel.valuesDropZonePanel)).toContain('Age');
+
+            getDeferredActionButton(toolPanel, 'Cancel').click();
+
+            expect(gridApi.getValueColumns()).toEqual([]);
+            expect(getToolPanelDropZoneText(toolPanel.valuesDropZonePanel)).not.toContain('Age');
         });
 
         test('pivot context menu action in deferred pivot mode applies only after clicking Apply', async () => {
@@ -273,6 +384,48 @@ describe('Cell Editing Start', async () => {
             getDeferredActionButton(toolPanel, 'Apply').click();
 
             expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['year', 'country']);
+        });
+
+        test('pivot context menu actions in deferred pivot mode update the tool panel pills immediately', async () => {
+            const gridApi = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [
+                    { field: 'athlete', enableRowGroup: true, enablePivot: true, rowGroup: true },
+                    { field: 'country', enableRowGroup: true, enablePivot: true },
+                    { field: 'year', enableRowGroup: true, enablePivot: true, pivot: true },
+                    { field: 'age', enableValue: true, aggFunc: 'sum' },
+                ],
+                rowData,
+                pivotMode: true,
+                sideBar: {
+                    toolPanels: [
+                        {
+                            id: 'columns',
+                            labelDefault: 'Columns',
+                            labelKey: 'columns',
+                            iconKey: 'columns',
+                            toolPanel: 'agColumnsToolPanel',
+                            toolPanelParams: { deferApply: true },
+                        },
+                    ],
+                    defaultToolPanel: 'columns',
+                },
+            });
+            await asyncSetTimeout(1);
+            const gridDiv = getGridElement(gridApi)! as HTMLElement;
+            const toolPanel = gridApi.getToolPanelInstance('columns') as any;
+            const contextMenu = createDeferredContextMenu(gridApi, gridDiv, 'country');
+
+            expect(getToolPanelDropZoneText(toolPanel.pivotDropZonePanel)).not.toContain('Country');
+
+            contextMenu['menuItemMap'].get('pivot').activateFunction();
+
+            expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['year']);
+            expect(getToolPanelDropZoneText(toolPanel.pivotDropZonePanel)).toContain('Country');
+
+            getDeferredActionButton(toolPanel, 'Cancel').click();
+
+            expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['year']);
+            expect(getToolPanelDropZoneText(toolPanel.pivotDropZonePanel)).not.toContain('Country');
         });
     });
 });

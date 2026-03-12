@@ -1,8 +1,9 @@
 import type { AgColumn, BeanCollection, ColumnEventType, ColumnState, IAggFunc } from 'ag-grid-community';
 
 import type { ColumnModelItem } from './columnModelItem';
-import type { ColumnToolPanelUpdateParams } from './updates/columnToolPanelUpdatesTypes';
+import { refreshDeferredToolPanelUi } from './toolPanelDeferredUiUtils';
 import { getColumnToolPanelUpdates } from './updates/columnToolPanelUpdateUtils';
+import type { ColumnToolPanelUpdateParams } from './updates/columnToolPanelUpdatesTypes';
 
 export function selectAllChildren(
     beans: BeanCollection,
@@ -76,6 +77,7 @@ function setAllVisible(
     }
 
     updateStrategy.applyColumnState(!!params.deferApply, colStateItems, eventType);
+    refreshDeferredToolPanelUi(beans, params);
 }
 
 function setAllPivot(
@@ -141,6 +143,7 @@ function setAllPivotActive(
     columns.forEach(action);
 
     updateStrategy.applyColumnState(!!params.deferApply, colStateItems, eventType);
+    refreshDeferredToolPanelUi(beans, params);
 }
 
 export function updateColumns(
@@ -180,6 +183,7 @@ export function updateColumns(
         }
     });
     updateStrategy.applyColumnState(!!params.deferApply, state, eventType);
+    refreshDeferredToolPanelUi(beans, params);
 }
 
 export function createPivotState(column: AgColumn): {

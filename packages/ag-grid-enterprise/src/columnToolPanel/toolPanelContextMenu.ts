@@ -3,8 +3,9 @@ import { Component, _createIconNoSpan, _focusInto, isColumn, isProvidedColumnGro
 
 import { getGroupingLocaleText, isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import { MenuList } from '../widgets/menuList';
-import type { ColumnToolPanelUpdateParams } from './updates/columnToolPanelUpdatesTypes';
+import { refreshDeferredToolPanelUi } from './toolPanelDeferredUiUtils';
 import { getColumnToolPanelUpdates } from './updates/columnToolPanelUpdateUtils';
+import type { ColumnToolPanelUpdateParams } from './updates/columnToolPanelUpdatesTypes';
 
 type MenuItemName = 'scrollIntoView' | 'rowGroup' | 'value' | 'pivot';
 
@@ -126,6 +127,7 @@ export class ToolPanelContextMenu extends Component {
             activateFunction: () => {
                 const columns = this.addColumnsToList(updateStrategy.getRowGroupColumns(deferMode), rowGroupAllowed);
                 updateStrategy.setRowGroupColumns(deferMode, columns, 'toolPanelUi');
+                refreshDeferredToolPanelUi(this.beans, this.params);
             },
             deActivateFunction: () => {
                 const columns = this.removeColumnsFromList(
@@ -133,6 +135,7 @@ export class ToolPanelContextMenu extends Component {
                     rowGroupAllowed
                 );
                 updateStrategy.setRowGroupColumns(deferMode, columns, 'toolPanelUi');
+                refreshDeferredToolPanelUi(this.beans, this.params);
             },
             addIcon: 'menuAddRowGroup',
             removeIcon: 'menuRemoveRowGroup',
@@ -148,10 +151,12 @@ export class ToolPanelContextMenu extends Component {
             activateFunction: () => {
                 const columns = this.addColumnsToList(updateStrategy.getValueColumns(deferMode), valueAllowed);
                 updateStrategy.setValueColumns(deferMode, columns, 'toolPanelUi');
+                refreshDeferredToolPanelUi(this.beans, this.params);
             },
             deActivateFunction: () => {
                 const columns = this.removeColumnsFromList(updateStrategy.getValueColumns(deferMode), valueAllowed);
                 updateStrategy.setValueColumns(deferMode, columns, 'toolPanelUi');
+                refreshDeferredToolPanelUi(this.beans, this.params);
             },
             addIcon: 'valuePanel',
             removeIcon: 'valuePanel',
@@ -167,10 +172,12 @@ export class ToolPanelContextMenu extends Component {
             activateFunction: () => {
                 const columns = this.addColumnsToList(updateStrategy.getPivotColumns(deferMode), pivotAllowed);
                 updateStrategy.setPivotColumns(deferMode, columns, 'toolPanelUi');
+                refreshDeferredToolPanelUi(this.beans, this.params);
             },
             deActivateFunction: () => {
                 const columns = this.removeColumnsFromList(updateStrategy.getPivotColumns(deferMode), pivotAllowed);
                 updateStrategy.setPivotColumns(deferMode, columns, 'toolPanelUi');
+                refreshDeferredToolPanelUi(this.beans, this.params);
             },
             addIcon: 'pivotPanel',
             removeIcon: 'pivotPanel',
