@@ -48,7 +48,7 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
             clientSideRowModel.doAggregate(changedPath);
 
             // add all nodes impacted by aggregation, as they need refreshed also.
-            _forEachChangedGroupDepthFirst(rootNode, changedPath, (rowNode) => {
+            _forEachChangedGroupDepthFirst(rootNode, clientSideRowModel.hierarchical, changedPath, (rowNode) => {
                 nodesToRefresh.push(rowNode);
                 if (rowNode.sibling) {
                     nodesToRefresh.push(rowNode.sibling);

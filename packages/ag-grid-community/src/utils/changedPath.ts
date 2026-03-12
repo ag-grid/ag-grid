@@ -39,10 +39,12 @@ const forEachGroupDepthFirst = (children: RowNode[], callback: (rowNode: RowNode
  * Visits group nodes in post-order (deepest-first), skipping leaf nodes.
  * When `changedPath` is provided, visits only changed nodes with `childrenAfterGroup` set.
  * When `changedPath` is `null`/`undefined`, performs a full post-order traversal of nodes with `childrenAfterGroup`.
+ * When `hierarchical` is `false`, skips child traversal (only the root is visited) — use when no grouping or tree data is active.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export const _forEachChangedGroupDepthFirst = (
     rootNode: RowNode | null | undefined,
+    hierarchical: boolean,
     changedPath: ChangedPath | null | undefined,
     callback: (rowNode: RowNode) => void
 ): void => {
@@ -56,11 +58,15 @@ export const _forEachChangedGroupDepthFirst = (
         }
         return;
     }
-    if (rootNode != null) {
-        const children = rootNode.childrenAfterGroup;
-        if (children !== null) {
-            forEachGroupDepthFirst(children, callback);
-            callback(rootNode);
-        }
+    if (rootNode == null) {
+        return;
     }
+    const children = rootNode.childrenAfterGroup;
+    if (children === null) {
+        return;
+    }
+    if (hierarchical) {
+        forEachGroupDepthFirst(children, callback);
+    }
+    callback(rootNode);
 };

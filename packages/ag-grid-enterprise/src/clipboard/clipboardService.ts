@@ -284,7 +284,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     ): void {
         const source = 'clipboard';
 
-        const { eventSvc, focusSvc, rowRenderer, gos } = this.beans;
+        const { gos, rowModel, eventSvc, focusSvc, rowRenderer } = this.beans;
 
         eventSvc.dispatchEvent({
             type: 'pasteStart',
@@ -307,7 +307,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             clientSideRowModel.doAggregate(changedPath);
 
             // add all nodes impacted by aggregation, as they need refreshed also.
-            _forEachChangedGroupDepthFirst(rootNode, changedPath, (rowNode) => {
+            _forEachChangedGroupDepthFirst(rootNode, rowModel.hierarchical, changedPath, (rowNode) => {
                 nodesToRefresh.push(rowNode);
             });
         }

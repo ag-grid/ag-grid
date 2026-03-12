@@ -77,8 +77,8 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
                 // Skip during transaction updates (changedPath defined) — the config-change
                 // full refresh will handle it.
                 this.hadAggregation = false;
-                const colModel = beans.colModel;
-                _forEachChangedGroupDepthFirst(beans.rowModel.rootNode, undefined, (rowNode) => {
+                const { colModel, rowModel } = beans;
+                _forEachChangedGroupDepthFirst(rowModel.rootNode, rowModel.hierarchical, undefined, (rowNode) => {
                     setAggDataWithSiblings(rowNode, null, colModel);
                 });
             }
@@ -87,6 +87,7 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
 
         this.hadAggregation = true;
 
+        const rowModel = beans.rowModel;
         const colModel = beans.colModel;
         const aggFuncSvc = beans.aggFuncSvc;
         const aggregateRoot =
@@ -129,7 +130,7 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         // per-group allocation. Inner arrays are still fresh per group (user-facing via aggFunc params).
         const values2d = colCount > 0 ? new Array<any[] | null>(colCount) : null;
 
-        _forEachChangedGroupDepthFirst(beans.rowModel.rootNode, changedPath, (rowNode) => {
+        _forEachChangedGroupDepthFirst(rowModel.rootNode, rowModel.hierarchical, changedPath, (rowNode) => {
             if (rowNode.level === -1 && !aggregateRoot) {
                 setAggData(rowNode, null, colModel);
                 return;

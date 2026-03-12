@@ -321,4 +321,77 @@ describe('ag-grid parentId tree aggregation and filter', () => {
             · · └── 10 LEAF id:10 ag-Grid-AutoColumn:"10" n:"J" y:9
         `);
     });
+
+    test('tree data filter clears correctly with filler nodes', async () => {
+        // Regression: filterNodesTreeData must check filterActive before filtering children.
+        // Without the filterActive guard, the tree data depth-first filter runs filtering logic
+        // even when no filter is active, which is unnecessary and potentially incorrect.
+        const rowData = cachedJSONObjects.array([
+            { id: '0', y: 1, n: 'A' },
+            { id: '1', y: 2, parentId: '0', n: 'B' },
+            { id: '2', x: 13, y: 3, parentId: '0', n: 'C' },
+            { id: '3', x: 14, y: 4, parentId: '1', n: 'D' },
+            { id: '4', x: 15, y: 5, parentId: '1', n: 'E' },
+            { id: '5', x: 16, y: 1, parentId: '2', n: 'F' },
+            { id: '6', x: 17, y: 2, parentId: '2', n: 'G' },
+            { id: 'H', x: 18, parentId: '2', n: 'H' }, // filler-like group
+            { id: '7', x: 18, y: 3, parentId: 'H', n: 'I' },
+        ]);
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'n' },
+                { field: 'x', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
+                { field: 'y', filter: 'agNumberColumnFilter' },
+            ],
+            autoGroupColumnDef: { headerName: 'Parent' },
+            treeData: true,
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            rowData,
+            getRowId: (params) => params.data.id,
+            treeDataParentIdField: 'parentId',
+        });
+
+        await new GridRows(api, 'initial - no filter').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"0" n:"A" x:80 y:1
+            · ├─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" n:"B" x:29 y:2
+            · │ ├── 3 LEAF id:3 ag-Grid-AutoColumn:"3" n:"D" x:14 y:4
+            · │ └── 4 LEAF id:4 ag-Grid-AutoColumn:"4" n:"E" x:15 y:5
+            · └─┬ 2 GROUP id:2 ag-Grid-AutoColumn:"2" n:"C" x:51 y:3
+            · · ├── 5 LEAF id:5 ag-Grid-AutoColumn:"5" n:"F" x:16 y:1
+            · · ├── 6 LEAF id:6 ag-Grid-AutoColumn:"6" n:"G" x:17 y:2
+            · · └─┬ H GROUP id:H ag-Grid-AutoColumn:"H" n:"H" x:18
+            · · · └── 7 LEAF id:7 ag-Grid-AutoColumn:"7" n:"I" x:18 y:3
+        `);
+
+        // Apply filter
+        api.setFilterModel({
+            y: { filterType: 'number', type: 'greaterThan', filter: 4 },
+        });
+
+        await new GridRows(api, 'filter y > 4').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"0" n:"A" x:15 y:1
+            · └─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" n:"B" x:15 y:2
+            · · └── 4 LEAF id:4 ag-Grid-AutoColumn:"4" n:"E" x:15 y:5
+        `);
+
+        // Clear filter — all nodes including filler-like group H must reappear
+        api.setFilterModel(null);
+
+        await new GridRows(api, 'filter cleared - all nodes restored').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"0" n:"A" x:80 y:1
+            · ├─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" n:"B" x:29 y:2
+            · │ ├── 3 LEAF id:3 ag-Grid-AutoColumn:"3" n:"D" x:14 y:4
+            · │ └── 4 LEAF id:4 ag-Grid-AutoColumn:"4" n:"E" x:15 y:5
+            · └─┬ 2 GROUP id:2 ag-Grid-AutoColumn:"2" n:"C" x:51 y:3
+            · · ├── 5 LEAF id:5 ag-Grid-AutoColumn:"5" n:"F" x:16 y:1
+            · · ├── 6 LEAF id:6 ag-Grid-AutoColumn:"6" n:"G" x:17 y:2
+            · · └─┬ H GROUP id:H ag-Grid-AutoColumn:"H" n:"H" x:18
+            · · · └── 7 LEAF id:7 ag-Grid-AutoColumn:"7" n:"I" x:18 y:3
+        `);
+    });
 });

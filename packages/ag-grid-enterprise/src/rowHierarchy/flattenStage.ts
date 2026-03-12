@@ -49,7 +49,11 @@ export class FlattenStage extends BeanStub implements _IRowNodeFlattenStage, Nam
 
         const details = _getFlattenDetails(gos);
 
-        this.recursivelyAddToRowsToDisplay(details, topList, result, skipLeafNodes, 0);
+        if (!beans.rowModel.hierarchical && !skipLeafNodes) {
+            this.flatAddToRowsToDisplay(topList, result);
+        } else {
+            this.recursivelyAddToRowsToDisplay(details, topList, result, skipLeafNodes, 0);
+        }
 
         // we do not want the footer total if the grid is empty
         const atLeastOneRowPresent = result.length > 0;
@@ -73,6 +77,27 @@ export class FlattenStage extends BeanStub implements _IRowNodeFlattenStage, Nam
         }
 
         return result;
+    }
+
+    /** Fast path for flat (non-hierarchical) grids: all rows are leaves, no group checks needed. */
+    private flatAddToRowsToDisplay(rowsToFlatten: RowNode[] | null, result: RowNode[]): void {
+        const len = rowsToFlatten?.length;
+        if (!len) {
+            return;
+        }
+        const masterDetailSvc = this.beans.masterDetailSvc;
+        for (let i = 0; i < len; ++i) {
+            const rowNode = rowsToFlatten[i];
+            result.push(rowNode);
+            rowNode.setUiLevel(0);
+            if (masterDetailSvc) {
+                const detailNode = masterDetailSvc.getDetail(rowNode);
+                if (detailNode) {
+                    result.push(detailNode);
+                    detailNode.setUiLevel(0);
+                }
+            }
+        }
     }
 
     private recursivelyAddToRowsToDisplay(

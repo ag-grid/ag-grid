@@ -55,6 +55,9 @@ export type NestedDataGetter<TData = any> = (data: TData) => TData[] | null | un
 export interface IRowNodeGroupStage<TData = any> extends IRowNodeStage<TData> {
     readonly treeData: boolean;
 
+    /** True when a grouping or tree data strategy is active (i.e. there may be group nodes in the tree). */
+    readonly hierarchical: boolean;
+
     execute(params: RefreshModelParams<TData>): boolean | undefined;
 
     getNestedDataGetter(): NestedDataGetter<TData> | null | undefined;

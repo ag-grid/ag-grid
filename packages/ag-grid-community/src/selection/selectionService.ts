@@ -295,7 +295,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             }
         };
 
-        _forEachChangedGroupDepthFirst(rootNode, changedPath, nodeCallback);
+        _forEachChangedGroupDepthFirst(rootNode, rowModel.hierarchical, changedPath, nodeCallback);
 
         return selectionChanged;
     }
@@ -687,7 +687,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             const rootNode = (rowModel as IClientSideRowModel).rootNode;
             if (rootNode) {
                 // isRowSelectable changed: update leaf children before checking group.
-                _forEachChangedGroupDepthFirst(rootNode, changedPath, (node) => {
+                _forEachChangedGroupDepthFirst(rootNode, rowModel.hierarchical, changedPath, (node) => {
                     let childSelectable = false;
                     for (const child of node.childrenAfterGroup!) {
                         childSelectable ||= child.selectable;

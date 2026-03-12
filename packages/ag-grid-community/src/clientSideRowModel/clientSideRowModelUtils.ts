@@ -1,5 +1,8 @@
 import type { RowNode } from '../entities/rowNode';
+import type { RefreshModelParams } from '../interfaces/iClientSideRowModel';
 import type { IRowNode } from '../interfaces/iRowNode';
+import type { ChangedPath } from '../utils/changedPath';
+import { ChangedRowsPath } from '../utils/changedPath';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const _csrmFirstLeaf = (node: IRowNode): RowNode | undefined => {
@@ -102,4 +105,23 @@ export const _csrmReorderAllLeafs = (
     }
 
     return orderChanged;
+};
+
+/**
+ * Creates a ChangedRowsPath on `params` if hierarchical and conditions warrant it.
+ * Adds rootNode to the newly created changedPath. No-op if changedPath already exists or grid is flat.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export const _csrmEnsureChangedPath = (
+    params: RefreshModelParams,
+    rootNode: IRowNode | null | undefined,
+    hierarchical: boolean
+): ChangedPath | undefined => {
+    let changedPath = params.changedPath;
+    if (!changedPath && hierarchical && params.changedRowNodes && !params.newData) {
+        changedPath = new ChangedRowsPath();
+        params.changedPath = changedPath;
+        changedPath.addRow(rootNode);
+    }
+    return changedPath;
 };

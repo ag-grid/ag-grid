@@ -8,6 +8,7 @@ import type { ClientSideRowModelStage } from '../interfaces/iClientSideRowModel'
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowNodeSortStage } from '../interfaces/iRowNodeStage';
 import type { SortOption } from '../interfaces/iSortOption';
+import type { RowNodeSorter } from '../sort/rowNodeSorter';
 import type { ChangedPath } from '../utils/changedPath';
 import { _forEachChangedGroupDepthFirst } from '../utils/changedPath';
 import type { ChangedRowNodes } from './changedRowNodes';
@@ -48,7 +49,16 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage 
     public readonly refreshProps: (keyof GridOptions<any>)[] = ['postSortRows', 'groupDisplayType', 'accentedSort'];
 
     public execute(changedPath: ChangedPath | undefined, changedRowNodes: ChangedRowNodes | undefined): void {
+        const { gos, rowNodeSorter } = this.beans;
         const sortOptions = this.beans.sortSvc!.getSortOptions();
+        const postSortFunc = gos.getCallback('postSortRows');
+
+        const rowModel = this.beans.rowModel;
+        if (!rowModel.hierarchical) {
+            // Fast path: flat grid — sort root's children directly, no group/pivot logic needed
+            this.sortFlat(rowModel.rootNode!, sortOptions, changedRowNodes, changedPath, postSortFunc, rowNodeSorter!);
+            return;
+        }
 
         const useDeltaSort =
             sortOptions.length > 0 &&
@@ -57,15 +67,14 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage 
             // on if transactions are present. it's off for now so that we can
             // selectively turn it on and test it with some select users before
             // rolling out to everyone.
-            this.gos.get('deltaSort');
+            gos.get('deltaSort');
 
-        const { gos, colModel, rowGroupColsSvc, rowNodeSorter, rowRenderer, showRowGroupCols } = this.beans;
+        const { colModel, rowGroupColsSvc, rowRenderer, showRowGroupCols } = this.beans;
         const groupMaintainOrder = gos.get('groupMaintainOrder');
         const groupColumnsPresent = colModel.getCols().some((c) => c.isRowGroupActive());
         const groupCols = rowGroupColsSvc?.columns;
 
         const isPivotMode = colModel.isPivotMode();
-        const postSortFunc = gos.getCallback('postSortRows');
 
         let hasAnyFirstChildChanged = false;
         let sortContainsGroupColumns: boolean | undefined;
@@ -98,7 +107,14 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage 
             } else if (!sortOptions.length || skipSortingPivotLeafs) {
                 // if there's no sort to make, skip this step
             } else if (useDeltaSort && changedRowNodes) {
-                newChildrenAfterSort = doDeltaSort(rowNodeSorter!, rowNode, changedRowNodes, changedPath, sortOptions);
+                newChildrenAfterSort = doDeltaSort(
+                    rowNodeSorter!,
+                    rowNode,
+                    changedRowNodes,
+                    changedPath,
+                    true,
+                    sortOptions
+                );
             } else {
                 newChildrenAfterSort = rowNodeSorter!.doFullSortInPlace(
                     rowNode.childrenAfterAggFilter!.slice(),
@@ -120,7 +136,7 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage 
             }
         };
 
-        _forEachChangedGroupDepthFirst(this.beans.rowModel.rootNode, changedPath, callback);
+        _forEachChangedGroupDepthFirst(rowModel.rootNode, true, changedPath, callback);
 
         // if using group hide open parents and a sort has happened, refresh the group cells as the first child
         // displays the parent grouping - it's cheaper here to refresh all cells in col rather than fire events for every potential
@@ -130,6 +146,44 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage 
             if (columns?.length) {
                 rowRenderer.refreshCells({ columns, force: true });
             }
+        }
+    }
+
+    /** Fast path for flat grids: sorts root's children directly, skipping group/pivot/maintainOrder logic. */
+    private sortFlat(
+        rootNode: RowNode,
+        sortOptions: SortOption[],
+        changedRowNodes: ChangedRowNodes | undefined,
+        changedPath: ChangedPath | undefined,
+        postSortFunc: ((params: WithoutGridCommon<PostSortRowsParams>) => void) | undefined,
+        rowNodeSorter: RowNodeSorter
+    ): void {
+        let newChildrenAfterSort: RowNode[] | null = null;
+        if (sortOptions.length > 0) {
+            if (changedRowNodes && this.gos.get('deltaSort')) {
+                newChildrenAfterSort = doDeltaSort(
+                    rowNodeSorter,
+                    rootNode,
+                    changedRowNodes,
+                    changedPath,
+                    false,
+                    sortOptions
+                );
+            } else {
+                newChildrenAfterSort = rowNodeSorter.doFullSortInPlace(
+                    rootNode.childrenAfterAggFilter!.slice(),
+                    sortOptions
+                );
+            }
+        }
+
+        const sorted = newChildrenAfterSort || rootNode.childrenAfterAggFilter?.slice() || [];
+        rootNode.childrenAfterSort = sorted;
+        updateRowNodeAfterSort(rootNode);
+
+        if (postSortFunc) {
+            const params: WithoutGridCommon<PostSortRowsParams> = { nodes: sorted };
+            postSortFunc(params);
         }
     }
 

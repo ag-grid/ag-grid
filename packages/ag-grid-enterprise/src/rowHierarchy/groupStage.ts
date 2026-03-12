@@ -9,7 +9,7 @@ import type {
     RowNode,
     _IRowNodeGroupStage,
 } from 'ag-grid-community';
-import { BeanStub } from 'ag-grid-community';
+import { BeanStub, _csrmEnsureChangedPath } from 'ag-grid-community';
 
 import { setRowNodeGroup } from '../rowGrouping/rowGroupingUtils';
 import type { IRowGroupingStrategy } from './rowHierarchyUtils';
@@ -30,6 +30,7 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, _IRowNodeG
     ];
 
     public treeData: boolean = false;
+    public hierarchical: boolean = false;
     private hasTreeData: boolean = false;
     private needReset: boolean = false;
     private nested: boolean = false;
@@ -100,7 +101,8 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, _IRowNodeG
 
     public execute(params: RefreshModelParams<TData>): boolean | undefined {
         const beans = this.beans;
-        const rootNode = beans.rowModel.rootNode;
+        const rowModel: IClientSideRowModel = beans.rowModel as IClientSideRowModel;
+        const rootNode = rowModel.rootNode;
         if (!rootNode) {
             return false;
         }
@@ -114,7 +116,24 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, _IRowNodeG
             params.animate = false; // resetting grouping / treeData, so no animation
             resetGrouping(rootNode, !nested, beans);
         }
-        return strategy ? strategy.execute(rootNode, params) || needReset : undefined;
+        if (!strategy) {
+            this.hierarchical = false;
+            return undefined;
+        }
+
+        this.hierarchical = true;
+
+        // Set rowModel.hierarchical to true early so code called during strategy.execute()
+        // (e.g. updateSelectableAfterGrouping) sees the correct value.
+        rowModel.hierarchical = true;
+
+        // Create changedPath for hierarchical grids before the strategy runs (it reads changedPath).
+        // Flat grids skip changedPath — all pipeline stages have flat fast paths.
+        _csrmEnsureChangedPath(params, rootNode, true);
+
+        const executeResult = strategy.execute(rootNode, params);
+
+        return executeResult || needReset;
     }
 
     public loadLeafs(node: RowNode): RowNode[] | null {

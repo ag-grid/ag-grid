@@ -11,12 +11,7 @@
 import { bench, suite } from 'vitest';
 
 import type { RowNode } from 'ag-grid-community';
-import {
-    ChangedCellsPath,
-    ChangedRowsPath,
-    _forEachChangedGroupDepthFirst,
-    _forEachChangedNodeDepthFirst,
-} from 'ag-grid-community';
+import { ChangedCellsPath, ChangedRowsPath, _forEachChangedGroupDepthFirst } from 'ag-grid-community';
 
 import { SimplePRNG } from '../../test-utils';
 
@@ -69,7 +64,7 @@ function buildTree(groupsPerLevel: number, levels: number, leavesPerLeafGroup: n
 
 function runPipeline(path: ChangedRowsPath | ChangedCellsPath, root: RowNode, allNodes: RowNode[]): void {
     // Filter stage
-    _forEachChangedNodeDepthFirst(root, path, () => {});
+    _forEachChangedGroupDepthFirst(root, true, path, () => {});
     // Sort stage: membership checks on all rows
     let n = 0;
     for (let i = 0; i < allNodes.length; i++) {
@@ -78,11 +73,11 @@ function runPipeline(path: ChangedRowsPath | ChangedCellsPath, root: RowNode, al
         }
     }
     // Aggregation stage
-    _forEachChangedGroupDepthFirst(root, path, () => {
+    _forEachChangedGroupDepthFirst(root, true, path, () => {
         n++;
     });
     // Pivot stage
-    _forEachChangedGroupDepthFirst(root, path, () => {});
+    _forEachChangedGroupDepthFirst(root, true, path, () => {});
     void n;
 }
 
@@ -93,7 +88,7 @@ function runPipelineWithColumnChecks(
     colIds: string[]
 ): void {
     // Filter stage
-    _forEachChangedNodeDepthFirst(root, path, () => {});
+    _forEachChangedGroupDepthFirst(root, true, path, () => {});
     // Sort stage: membership checks on all rows
     let n = 0;
     for (let i = 0; i < allNodes.length; i++) {
@@ -103,7 +98,7 @@ function runPipelineWithColumnChecks(
     }
     // Aggregation stage: check per-column changes (real aggregation skips unchanged columns)
     const colSlots = colIds.map((id) => path.getSlot(id));
-    _forEachChangedGroupDepthFirst(root, path, (rowNode) => {
+    _forEachChangedGroupDepthFirst(root, true, path, (rowNode) => {
         const rowSlot = path.getSlot(rowNode);
         for (let c = 0; c < colSlots.length; c++) {
             if (path.hasCellBySlot(rowSlot, colSlots[c])) {
@@ -112,7 +107,7 @@ function runPipelineWithColumnChecks(
         }
     });
     // Pivot stage
-    _forEachChangedGroupDepthFirst(root, path, () => {});
+    _forEachChangedGroupDepthFirst(root, true, path, () => {});
     void n;
 }
 

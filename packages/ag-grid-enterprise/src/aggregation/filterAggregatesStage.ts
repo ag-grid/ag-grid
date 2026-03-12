@@ -79,8 +79,10 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowN
             }
         };
 
+        // This stage is only called when hierarchical (flat grids are handled inline by CSRM).
         _forEachChangedGroupDepthFirst(
             this.beans.rowModel.rootNode,
+            true,
             changedPath,
             isAggFilterActive ? filterChildren : preserveChildren
         );

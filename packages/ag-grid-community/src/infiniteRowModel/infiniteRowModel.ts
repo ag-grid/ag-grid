@@ -15,6 +15,8 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IRowModel {
     /** Dummy root node */
     public rootNode: RowNode | null = null;
 
+    public readonly hierarchical: boolean = false;
+
     private infiniteCache: InfiniteCache | null | undefined;
     private datasource: IDatasource | null | undefined;
     private rowHeight: number;

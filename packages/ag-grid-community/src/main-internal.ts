@@ -207,7 +207,11 @@ export type {
 } from './api/gridApi';
 export { _getClientSideRowModel, _getServerSideRowModel, _getViewportRowModel } from './api/rowModelApiUtils';
 export { ChangedRowNodes as _ChangedRowNodes } from './clientSideRowModel/changedRowNodes';
-export { _csrmFirstLeaf, _csrmReorderAllLeafs } from './clientSideRowModel/clientSideRowModelUtils';
+export {
+    _csrmEnsureChangedPath,
+    _csrmFirstLeaf,
+    _csrmReorderAllLeafs,
+} from './clientSideRowModel/clientSideRowModelUtils';
 export { BaseColsService } from './columns/baseColsService';
 export {
     _addColumnDefaultAndTypes,

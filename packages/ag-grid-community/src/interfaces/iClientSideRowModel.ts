@@ -34,6 +34,9 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
     readonly rootNode: RowNode | null;
     readonly rowCountReady: boolean;
 
+    /** @inheritdoc */
+    hierarchical: boolean;
+
     updateRowData(rowDataTran: RowDataTransaction<TData>): RowNodeTransaction<TData> | null;
 
     refreshModel(params: RefreshModelParams): void;

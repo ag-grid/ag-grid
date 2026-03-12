@@ -84,6 +84,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     }
 
     public rootNode: RowNode;
+    public readonly hierarchical: boolean = true;
     private datasource: IServerSideDatasource | undefined;
 
     private storeParams: SSRMParams;

@@ -31,6 +31,8 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     /** Dummy root node */
     public rootNode: RowNode | null = null;
 
+    public readonly hierarchical: boolean = false;
+
     /**
      * Used to see if setRowData has been called inside of the viewportChanged event context,
      * if so the new rows are already being calculated, and the model does not need updated
