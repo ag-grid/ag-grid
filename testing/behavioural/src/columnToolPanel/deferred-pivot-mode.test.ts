@@ -580,7 +580,7 @@ describe('deferred column tool panel pivot mode', () => {
     });
 
     test('turning defer mode off then toggling pivot mode should remove and restore the year label immediately', async () => {
-        const { gridApi, toolPanel } = await createDeferredPivotModeGrid();
+        const { gridApi, toolPanel, toolPanelGui } = await createDeferredPivotModeGrid();
 
         getDeferModeToggle(toolPanelGui).click();
         getPivotModeToggle(toolPanelGui).click();
