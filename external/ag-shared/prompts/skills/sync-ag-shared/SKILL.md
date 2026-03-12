@@ -214,7 +214,7 @@ Common companion tasks:
 -   Update `.rulesync/` symlinks if skills/rules were added, renamed, or removed.
 -   Update product-specific configurations if ag-shared scripts changed.
 -   Run verification: `./external/ag-shared/scripts/setup-prompts/verify-rulesync.sh`.
--   **Run `npx nx format` (or equivalent formatter) before committing** to avoid CI formatting check failures.
+-   **Run `npx nx format --sort-root-tsconfig-paths=false` (or equivalent formatter) before committing** to avoid CI formatting check failures.
 
 ### Iterative Push/Pull (if needed)
 

@@ -184,7 +184,9 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             }
             const eGui = panel.getGui();
             panel.toggleResizable(
-                !eGui.classList.contains('ag-last-column-drop') && !eGui.classList.contains('ag-hidden')
+                !eGui.classList.contains('ag-last-column-drop') &&
+                    !eGui.classList.contains('ag-hidden') &&
+                    !eGui.classList.contains('ag-last-visible-child')
             );
         }
     }
@@ -205,6 +207,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             lastVisible.classList.add('ag-last-column-drop');
         }
 
+        this.primaryColsPanel.getGui().classList.toggle('ag-last-visible-child', !lastVisible);
         this.setResizers();
     }
 

@@ -51,7 +51,7 @@ The core grid logic is framework-agnostic. Framework-specific wrappers (`ag-grid
 ## Code Style
 
 -   **ESLint**: Linting with custom rules
--   **Prettier**: Code formatting (via `yarn nx format`)
+-   **Prettier**: Code formatting (via `yarn nx format --sort-root-tsconfig-paths=false`)
 -   **TypeScript Strict Mode**: Enforced across all packages
 
 ## Browser Support

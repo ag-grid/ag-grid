@@ -3,11 +3,7 @@ const { umdWrapper } = require('esbuild-plugin-umd-wrapper');
 const fs = require('fs/promises');
 const path = require('path');
 const postcss = require('postcss');
-const cssAutoPrefix = require('autoprefixer');
-const cssNano = require('cssnano');
-const cssImport = require('postcss-import');
-const cssRtl = require('postcss-rtlcss');
-const cssUrl = require('postcss-url');
+const postcssPlugins = require('./postcss-plugins.cjs');
 
 /** @type {import('esbuild').Plugin} */
 const cssPlugin = {
@@ -15,26 +11,10 @@ const cssPlugin = {
     setup(build) {
         build.onLoad({ filter: /\.css$/ }, async (args) => {
             const css = await require('fs').promises.readFile(args.path, 'utf8');
-            const result = await postcss([
-                cssImport(),
-                cssUrl({ url: 'inline' }),
-                cssAutoPrefix(),
-                cssRtl({
-                    ltrPrefix: `:where(.ag-ltr)`,
-                    rtlPrefix: `:where(.ag-rtl)`,
-                    bothPrefix: `:where(.ag-ltr, .ag-rtl)`,
-                }),
-                cssNano({
-                    preset: [
-                        'default',
-                        {
-                            discardComments: true,
-                            normalizeWhitespace: true,
-                            minifySelectors: true,
-                        },
-                    ],
-                }),
-            ]).process(css, { from: args.path, to: args.path });
+            const result = await postcss(postcssPlugins).process(css, {
+                from: args.path,
+                to: args.path,
+            });
 
             // UMD builds: non-source CSS (legacy themes) gets injected as <style> tags
             const isUmd = /:(umd|umd:watch)$/.test(process.env.NX_TASK_TARGET_TARGET ?? '');
