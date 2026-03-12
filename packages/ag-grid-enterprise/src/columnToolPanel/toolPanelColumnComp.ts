@@ -26,9 +26,9 @@ import {
 
 import type { ColumnModelItem } from './columnModelItem';
 import type { ToolPanelColumnCompParams } from './columnToolPanel';
-import type { IColumnToolPanelUpdateStrategy } from './updates/columnToolPanelUpdatesTypes';
 import { createPivotState, setAllColumns, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
+import type { IColumnToolPanelUpdateStrategy } from './updates/columnToolPanelUpdatesTypes';
 
 const ToolPanelColumnElement: ElementParams = {
     tag: 'div',

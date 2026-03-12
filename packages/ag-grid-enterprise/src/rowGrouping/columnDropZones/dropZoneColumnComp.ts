@@ -10,9 +10,9 @@ import type {
 } from 'ag-grid-community';
 import { Component, DragSourceType, KeyCode, RefPlaceholder, _createElement } from 'ag-grid-community';
 
-import {
-    type ColumnToolPanelUpdateParams,
-    type IColumnToolPanelUpdateStrategy,
+import type {
+    ColumnToolPanelUpdateParams,
+    IColumnToolPanelUpdateStrategy,
 } from '../../columnToolPanel/updates/columnToolPanelUpdatesTypes';
 import { PillDragComp } from '../../widgets/pillDragComp';
 import { VirtualList } from '../../widgets/virtualList';
@@ -181,8 +181,9 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
             eSortIndicator.setupSort(column, true, this.getSortDefOverride.bind(this));
             const performSort = (event: MouseEvent | KeyboardEvent) => {
                 event.preventDefault();
-                const updateStrategy =
-                    this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy | undefined;
+                const updateStrategy = this.beans.colToolPanelUpdateStrategy as
+                    | IColumnToolPanelUpdateStrategy
+                    | undefined;
                 if (updateStrategy) {
                     updateStrategy.progressSortFromEvent(this.deferApply, column, event);
                 } else {

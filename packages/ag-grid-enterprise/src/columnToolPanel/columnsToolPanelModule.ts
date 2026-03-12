@@ -6,8 +6,8 @@ import { SideBarModule } from '../sideBar/sideBarModule';
 import { VERSION } from '../version';
 import { MenuItemModule } from '../widgets/menuItemModule';
 import { ColumnToolPanel } from './columnToolPanel';
-import { ColumnToolPanelUpdateStrategy } from './updates/columnToolPanelUpdates';
 import { ColumnToolPanelFactory } from './columnToolPanelFactory';
+import { ColumnToolPanelUpdateStrategy } from './updates/columnToolPanelUpdates';
 
 /**
  * @feature Accessories -> Columns Tool Panel

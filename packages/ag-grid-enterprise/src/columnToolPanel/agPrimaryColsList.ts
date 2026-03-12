@@ -30,10 +30,10 @@ import { ExpandState } from './agPrimaryColsHeader';
 import { ColumnModelItem } from './columnModelItem';
 import { getCurrentColumnsBeingMoved, getCurrentDragValue, isMoveBlocked, moveItem } from './columnMoveUtils';
 import type { ToolPanelColumnCompParams } from './columnToolPanel';
-import type { IColumnToolPanelUpdateStrategy } from './updates/columnToolPanelUpdatesTypes';
 import { selectAllChildren } from './modelItemUtils';
 import { ToolPanelColumnComp } from './toolPanelColumnComp';
 import { ToolPanelColumnGroupComp } from './toolPanelColumnGroupComp';
+import type { IColumnToolPanelUpdateStrategy } from './updates/columnToolPanelUpdatesTypes';
 
 class UIColumnModel implements VirtualListModel {
     constructor(private readonly items: ColumnModelItem[]) {}
@@ -601,7 +601,8 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 if (noPivotModeOptionsAllowed) {
                     return;
                 }
-                checked = updateStrategy.isColumnSelectedInPivotModeToolPanel(!!this.params.deferApply, column) ?? false;
+                checked =
+                    updateStrategy.isColumnSelectedInPivotModeToolPanel(!!this.params.deferApply, column) ?? false;
             } else {
                 if (colDef.lockVisible) {
                     return;

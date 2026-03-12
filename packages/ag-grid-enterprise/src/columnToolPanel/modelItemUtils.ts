@@ -171,7 +171,9 @@ export function updateColumns(
 ): void {
     const { columns, visibleState, pivotState, eventType } = params;
     const updateStrategy = beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy | undefined;
-    const isPivotMode = updateStrategy ? updateStrategy.getPivotMode(!!params.deferApply) : beans.colModel.isPivotMode();
+    const isPivotMode = updateStrategy
+        ? updateStrategy.getPivotMode(!!params.deferApply)
+        : beans.colModel.isPivotMode();
     const state: ColumnState[] = columns.map((column) => {
         const colId = column.getColId();
         if (isPivotMode) {

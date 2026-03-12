@@ -94,15 +94,14 @@ const gridOptions: GridOptions<IOlympicData> = {
     rowGroupPanelShow: 'always',
     pivotPanelShow: 'always',
     functionsReadOnly: true,
-    onGridReady: (params) => {
+    onGridReady: () => {
         (document.getElementById('read-only') as HTMLInputElement).checked = true;
     },
 };
 
-// @ts-expect-error used in html
-function setReadOnly() {
+window.setReadOnly = function setReadOnly() {
     gridApi!.setGridOption('functionsReadOnly', (document.getElementById('read-only') as HTMLInputElement).checked);
-}
+};
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {

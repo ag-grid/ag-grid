@@ -4,8 +4,8 @@ import { BeanStub } from 'ag-grid-community';
 import { PivotDropZonePanel } from '../rowGrouping/columnDropZones/pivotDropZonePanel';
 import { RowGroupDropZonePanel } from '../rowGrouping/columnDropZones/rowGroupDropZonePanel';
 import { ValuesDropZonePanel } from '../rowGrouping/columnDropZones/valueDropZonePanel';
-import type { ColumnToolPanelUpdateParams } from './updates/columnToolPanelUpdatesTypes';
 import { PivotModePanel } from './pivotModePanel';
+import type { ColumnToolPanelUpdateParams } from './updates/columnToolPanelUpdatesTypes';
 
 export class ColumnToolPanelFactory extends BeanStub implements NamedBean {
     beanName: BeanName = 'colToolPanelFactory';
