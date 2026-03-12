@@ -29,8 +29,11 @@
     }
 
     .ag-column-panel-column-select {
-        border-bottom: var(--ag-borders-secondary) var(--ag-secondary-border-color);
         border-top: var(--ag-borders-secondary) var(--ag-secondary-border-color);
+
+        &:not(.ag-last-visible-child) {
+            border-bottom: var(--ag-borders-secondary) var(--ag-secondary-border-color);
+        }
     }
 
     .ag-column-group-icons,
