@@ -166,12 +166,15 @@
         "commands": ["node external/ag-shared/scripts/watch/watch.js grid", "nx run ag-grid-docs:dev"]
       }
     },
+    "format-write": {
+      "command": "nx format:write --all --sort-root-tsconfig-paths=false"
+    },
     "format-check": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
           {
-            "command": "nx format:check --all"
+            "command": "nx format:check --all --sort-root-tsconfig-paths=false"
           }
         ]
       }
