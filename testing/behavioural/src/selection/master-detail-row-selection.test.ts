@@ -263,9 +263,9 @@ describe('Row Selection Grid Options', () => {
         // Collapse and re-expand master row to hide/show detail grid
         await actions.collapseGroupRowByIndex(1, { count: 1 });
         await actions.expandGroupRowByIndex(1, { count: 1 });
-        await asyncSetTimeout(10);
 
         info = api.getDetailGridInfo('detail_1')!;
+        await waitForEvent('firstDataRendered', info.api!);
         detailActions = new GridActions(info.api!, '[row-id="detail_1"]');
 
         // Detail grid should have same rows selected
