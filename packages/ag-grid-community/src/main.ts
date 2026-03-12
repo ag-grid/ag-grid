@@ -405,7 +405,7 @@ export type {
 } from './interfaces/iStatusPanel';
 
 // Tool Panel
-export type { ColumnToolPanelEditStrategyBean, IColumnToolPanel } from './interfaces/iColumnToolPanel';
+export type { ColumnToolPanelUpdateStrategyBean, IColumnToolPanel } from './interfaces/iColumnToolPanel';
 export type { IFiltersToolPanel } from './interfaces/iFiltersToolPanel';
 export type {
     FilterPanelDetailState,

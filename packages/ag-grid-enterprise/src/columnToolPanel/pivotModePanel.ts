@@ -1,8 +1,10 @@
 import type { ElementParams, GridCheckbox } from 'ag-grid-community';
 import { AgToggleButtonSelector, Component, RefPlaceholder } from 'ag-grid-community';
 
-import { getColumnToolPanelEditStrategy } from './columnToolPanelEditUtils';
-import type { BaseColumnToolPanelEdits, ColumnToolPanelEditParams } from './columnToolPanelEditsTypes';
+import type {
+    ColumnToolPanelUpdateParams,
+    IColumnToolPanelUpdateStrategy,
+} from './updates/columnToolPanelUpdatesTypes';
 
 const PivotModePanelElement: ElementParams = {
     tag: 'div',
@@ -17,21 +19,18 @@ const PivotModePanelElement: ElementParams = {
 };
 export class PivotModePanel extends Component {
     private readonly cbPivotMode: GridCheckbox = RefPlaceholder;
-    private editStrategy?: BaseColumnToolPanelEdits;
 
     constructor(
-        private readonly params: ColumnToolPanelEditParams,
+        private readonly params: ColumnToolPanelUpdateParams,
         private readonly onPivotModeValueChanged?: () => void
     ) {
         super();
     }
 
-    private getEditStrategy(): BaseColumnToolPanelEdits {
-        return (this.editStrategy ??= getColumnToolPanelEditStrategy(this.beans, this.params.deferApply)!);
-    }
-
     private getCurrentPivotMode(): boolean {
-        return this.getEditStrategy().getPivotMode();
+        return (this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy).getPivotMode(
+            !!this.params.deferApply
+        );
     }
 
     public syncFromGrid(): void {
@@ -39,7 +38,6 @@ export class PivotModePanel extends Component {
     }
 
     public refreshEditStrategy(): void {
-        this.editStrategy = undefined;
         this.syncFromGrid();
     }
 
@@ -54,7 +52,11 @@ export class PivotModePanel extends Component {
 
         const onBtPivotMode = () => {
             const newValue = !!cbPivotMode.getValue();
-            this.getEditStrategy().setPivotMode(newValue, 'toolPanelUi');
+            (this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy).setPivotMode(
+                !!this.params.deferApply,
+                newValue,
+                'toolPanelUi'
+            );
             this.onPivotModeValueChanged?.();
         };
 

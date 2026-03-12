@@ -1,11 +1,14 @@
 import type { AgColumn, DragAndDropIcon, GridDraggingEvent } from 'ag-grid-community';
 import { _createIconNoSpan } from 'ag-grid-community';
 
-import type { ColumnToolPanelEditParams } from '../../columnToolPanel/columnToolPanelEditsTypes';
+import type {
+    ColumnToolPanelUpdateParams,
+    IColumnToolPanelUpdateStrategy,
+} from '../../columnToolPanel/updates/columnToolPanelUpdatesTypes';
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
 export class ValuesDropZonePanel extends BaseDropZonePanel {
-    constructor(horizontal: boolean, params?: ColumnToolPanelEditParams) {
+    constructor(horizontal: boolean, params?: ColumnToolPanelUpdateParams) {
         super(horizontal, 'aggregation', params);
     }
 
@@ -40,20 +43,23 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
             return false;
         }
 
-        const isActive = this.getEditStrategy()?.getValueColumns().includes(column) ?? column.isValueActive();
+        const strategy = this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy | undefined;
+        const isActive =
+            strategy?.getValueColumns(!!this.updateParams?.deferApply).includes(column) ?? column.isValueActive();
         return column.isAllowValue() && (!isActive || this.isSourceEventFromTarget(draggingEvent));
     }
 
     protected updateItems(columns: AgColumn[]): void {
-        const strategy = this.getEditStrategy();
+        const strategy = this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy | undefined;
         if (strategy) {
-            strategy.setValueColumns(columns, 'toolPanelUi');
+            strategy.setValueColumns(!!this.updateParams?.deferApply, columns, 'toolPanelUi');
         } else {
             this.beans.valueColsSvc?.setColumns(columns, 'toolPanelUi');
         }
     }
 
     protected getExistingItems(): AgColumn[] {
-        return this.getEditStrategy()?.getValueColumns() ?? this.beans.valueColsSvc?.columns ?? [];
+        const strategy = this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy | undefined;
+        return strategy?.getValueColumns(!!this.updateParams?.deferApply) ?? this.beans.valueColsSvc?.columns ?? [];
     }
 }

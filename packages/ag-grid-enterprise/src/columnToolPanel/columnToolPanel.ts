@@ -25,9 +25,9 @@ import type { RowGroupDropZonePanel } from '../rowGrouping/columnDropZones/rowGr
 import type { ValuesDropZonePanel } from '../rowGrouping/columnDropZones/valueDropZonePanel';
 import { AgPrimaryCols } from './agPrimaryCols';
 import columnToolPanelCSS from './columnToolPanel.css';
-import type { BaseColumnToolPanelEdits } from './columnToolPanelEditsTypes';
 import type { ColumnToolPanelFactory } from './columnToolPanelFactory';
 import type { PivotModePanel } from './pivotModePanel';
+import type { IColumnToolPanelUpdateStrategy } from './updates/columnToolPanelUpdatesTypes';
 
 export interface ToolPanelColumnCompParams<TData = any, TContext = any>
     extends IToolPanelParams<TData, TContext, ColumnToolPanelState>,
@@ -89,7 +89,6 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     private deferredButtonsComp?: FilterButtonComp;
     private deferredButtonDefs: Array<{ type: 'cancel' | 'apply'; label: string }> = [];
     private isDeferModeEnabled = false;
-    private editStrategy?: BaseColumnToolPanelEdits;
 
     constructor() {
         super({ tag: 'div', cls: 'ag-column-panel' });
@@ -127,17 +126,13 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             ...params,
         };
         this.params = mergedParams;
-        this.editStrategy = undefined;
 
-        const { childDestroyFuncs, colToolPanelFactory, gos, beans } = this;
+        const { childDestroyFuncs, colToolPanelFactory, gos } = this;
 
         const hasPivotModule = gos.isModuleRegistered('SharedPivot');
         const hasRowGroupingModule = hasPivotModule || gos.isModuleRegistered('SharedRowGrouping');
 
-        const deferredStrat = beans.colToolPanelDeferredEdit as BaseColumnToolPanelEdits | undefined;
-        const syncStrat = beans.colToolPanelSyncUpdateStrategy as BaseColumnToolPanelEdits | undefined;
         this.isDeferModeEnabled = !!mergedParams.deferApply;
-        this.editStrategy = this.isDeferModeEnabled ? deferredStrat : syncStrat;
         this.toggleCss(DEFERRED_TOOL_PANEL_CLASS, this.isDeferModeEnabled);
 
         if (!mergedParams.suppressPivotMode && colToolPanelFactory && hasPivotModule) {
@@ -209,14 +204,14 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         });
 
         const translate = this.getLocaleTextFunc();
-        const buttons = (['cancel', 'apply'] as const).map((type) => ({
+
+        this.deferredButtonDefs = (['cancel', 'apply'] as const).map((type) => ({
             type,
             label: translate(
                 type === 'apply' ? 'applyColumnToolPanel' : 'cancelColumnToolPanel',
                 type === 'apply' ? 'Apply' : 'Cancel'
             ),
         }));
-        this.deferredButtonDefs = buttons;
         buttonComp.updateButtons(this.isDeferModeEnabled ? this.deferredButtonDefs : []);
         buttonComp.addManagedListeners(buttonComp, {
             apply: this.onDeferredApply,
@@ -227,7 +222,9 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     private readonly onDeferredApply = (): void => {
-        this.editStrategy?.commit();
+        (this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy | undefined)?.commit(
+            this.isDeferModeEnabled
+        );
     };
 
     private readonly onDeferModeChanged = (nextDeferMode: boolean): void => {
@@ -236,16 +233,14 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         }
 
         if (this.isDeferModeEnabled) {
-            this.editStrategy?.reset();
+            (this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy | undefined)?.reset(
+                this.isDeferModeEnabled
+            );
         }
 
         this.isDeferModeEnabled = nextDeferMode;
         this.params.deferApply = nextDeferMode;
         this.toggleCss(DEFERRED_TOOL_PANEL_CLASS, nextDeferMode);
-
-        const deferredStrat = this.beans.colToolPanelDeferredEdit as BaseColumnToolPanelEdits | undefined;
-        const syncStrat = this.beans.colToolPanelSyncUpdateStrategy as BaseColumnToolPanelEdits | undefined;
-        this.editStrategy = nextDeferMode ? deferredStrat : syncStrat;
         this.deferModeToggleComp?.sync(nextDeferMode);
         this.deferredButtonsComp?.updateButtons(nextDeferMode ? this.deferredButtonDefs : []);
 
@@ -254,7 +249,9 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     };
 
     private readonly onDeferredCancel = (): void => {
-        this.editStrategy?.reset();
+        (this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy | undefined)?.reset(
+            this.isDeferModeEnabled
+        );
         this.refreshToolPanelLayouts();
         this.pivotModePanel?.refreshEditStrategy();
     };

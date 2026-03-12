@@ -1,11 +1,10 @@
 import type { AgColumn, ColumnEventType, DragItem, DropTarget, GridDraggingEvent } from 'ag-grid-community';
 import { DragSourceType, _shouldUpdateColVisibilityAfterGroup } from 'ag-grid-community';
 
-import { getColumnToolPanelEditStrategy } from '../../columnToolPanel/columnToolPanelEditUtils';
 import type {
-    BaseColumnToolPanelEdits,
-    ColumnToolPanelEditParams,
-} from '../../columnToolPanel/columnToolPanelEditsTypes';
+    ColumnToolPanelUpdateParams,
+    IColumnToolPanelUpdateStrategy,
+} from '../../columnToolPanel/updates/columnToolPanelUpdatesTypes';
 import type { PillDropZonePanelParams } from '../../widgets/pillDropZonePanel';
 import { PillDropZonePanel } from '../../widgets/pillDropZonePanel';
 import { DropZoneColumnComp } from './dropZoneColumnComp';
@@ -18,7 +17,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
     constructor(
         horizontal: boolean,
         private readonly dropZonePurpose: TDropZone,
-        private readonly editParams?: ColumnToolPanelEditParams
+        protected readonly updateParams?: ColumnToolPanelUpdateParams
     ) {
         super(horizontal);
         this.addElementClasses(this.getGui(), this.dropZonePurpose.toLowerCase());
@@ -33,18 +32,6 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
             ['functionsReadOnly', 'rowGroupPanelSuppressSort', 'groupLockGroupColumns'],
             this.refreshGui.bind(this)
         );
-    }
-
-    /**
-     * Drop zones are shared between header panels and the Columns Tool Panel.
-     * The column tool panel edit beans are not guaranteed to exist in all module combinations,
-     * so this accessor must stay optional and callers must fall back to core services.
-     *
-     * If we later introduce a global deferred mode, extract common behaviour behind a shared abstraction
-     * rather than hard-coupling drop zones directly to column tool panel beans.
-     */
-    protected getEditStrategy(): BaseColumnToolPanelEdits | null {
-        return getColumnToolPanelEditStrategy(this.beans, !!this.editParams?.deferApply) ?? null;
     }
 
     protected getItems(dragItem: DragItem): AgColumn[] {
@@ -108,9 +95,9 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
             return;
         }
         const allowedCols = columns.filter((c) => !c.getColDef().lockVisible);
-        const strategy = this.getEditStrategy();
+        const strategy = (this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy | undefined) ?? null;
         if (strategy) {
-            strategy.setColumnsVisible(allowedCols, visible, source);
+            strategy.setColumnsVisible(!!this.updateParams?.deferApply, allowedCols, visible, source);
         } else {
             this.beans.colModel.setColsVisible(allowedCols, visible, source);
         }
@@ -126,6 +113,6 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         ghost: boolean,
         horizontal: boolean
     ): DropZoneColumnComp {
-        return new DropZoneColumnComp(column, dropTarget, ghost, this.dropZonePurpose, horizontal, this.editParams);
+        return new DropZoneColumnComp(column, dropTarget, ghost, this.dropZonePurpose, horizontal, this.updateParams);
     }
 }

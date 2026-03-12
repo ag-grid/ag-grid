@@ -30,7 +30,7 @@ import { ExpandState } from './agPrimaryColsHeader';
 import { ColumnModelItem } from './columnModelItem';
 import { getCurrentColumnsBeingMoved, getCurrentDragValue, isMoveBlocked, moveItem } from './columnMoveUtils';
 import type { ToolPanelColumnCompParams } from './columnToolPanel';
-import { getColumnToolPanelEditStrategy } from './columnToolPanelEditUtils';
+import type { IColumnToolPanelUpdateStrategy } from './updates/columnToolPanelUpdatesTypes';
 import { selectAllChildren } from './modelItemUtils';
 import { ToolPanelColumnComp } from './toolPanelColumnComp';
 import { ToolPanelColumnGroupComp } from './toolPanelColumnGroupComp';
@@ -73,7 +73,6 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     private hasLoadedInitialState: boolean = false;
     private isInitialState: boolean = false;
     private skipRefocus: boolean = false;
-    private editStrategy?: ReturnType<typeof getColumnToolPanelEditStrategy>;
 
     constructor() {
         super({ tag: 'div', cls: PRIMARY_COLS_LIST_PANEL_CLASS, role: 'presentation' });
@@ -94,7 +93,6 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
     public init(params: ToolPanelColumnCompParams, allowDragging: boolean, eventType: ColumnEventType): void {
         this.params = params;
-        this.editStrategy = undefined;
         const { suppressSyncLayoutWithGrid, contractColumnSelection, suppressColumnMove } = params;
         this.allowDragging = allowDragging;
         this.eventType = eventType;
@@ -152,10 +150,6 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         }
 
         this.createItemDragFeature();
-    }
-
-    private getEditStrategy() {
-        return (this.editStrategy ??= getColumnToolPanelEditStrategy(this.beans, this.params.deferApply)!);
     }
 
     private createItemDragFeature(): void {
@@ -585,8 +579,8 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         let checkedCount = 0;
         let uncheckedCount = 0;
 
-        const edits = this.getEditStrategy();
-        const pivotMode = edits.getPivotMode();
+        const updateStrategy = this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy;
+        const pivotMode = updateStrategy.getPivotMode(!!this.params.deferApply);
 
         this.forEachItem((item) => {
             if (item.group) {
@@ -607,13 +601,13 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 if (noPivotModeOptionsAllowed) {
                     return;
                 }
-                checked = edits.isColumnSelectedInPivotModeToolPanel(column) ?? false;
+                checked = updateStrategy.isColumnSelectedInPivotModeToolPanel(!!this.params.deferApply, column) ?? false;
             } else {
                 if (colDef.lockVisible) {
                     return;
                 }
 
-                checked = edits.isColumnVisibleInToolPanel(column) ?? false;
+                checked = updateStrategy.isColumnVisibleInToolPanel(!!this.params.deferApply, column) ?? false;
             }
 
             if (checked) {

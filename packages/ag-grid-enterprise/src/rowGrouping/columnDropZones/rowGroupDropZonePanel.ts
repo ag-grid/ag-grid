@@ -1,11 +1,14 @@
 import type { AgColumn, DragAndDropIcon, FocusableContainer, GridDraggingEvent } from 'ag-grid-community';
 import { _addFocusableContainerListener, _createIconNoSpan } from 'ag-grid-community';
 
-import type { ColumnToolPanelEditParams } from '../../columnToolPanel/columnToolPanelEditsTypes';
+import type {
+    ColumnToolPanelUpdateParams,
+    IColumnToolPanelUpdateStrategy,
+} from '../../columnToolPanel/updates/columnToolPanelUpdatesTypes';
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
 export class RowGroupDropZonePanel extends BaseDropZonePanel implements FocusableContainer {
-    constructor(horizontal: boolean, params?: ColumnToolPanelEditParams) {
+    constructor(horizontal: boolean, params?: ColumnToolPanelUpdateParams) {
         super(horizontal, 'rowGroup', params);
     }
 
@@ -41,14 +44,16 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel implements Focusabl
             return false;
         }
 
-        const isActive = this.getEditStrategy()?.getRowGroupColumns().includes(column) ?? column.isRowGroupActive();
+        const strategy = this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy | undefined;
+        const isActive =
+            strategy?.getRowGroupColumns(!!this.updateParams?.deferApply).includes(column) ?? column.isRowGroupActive();
         return column.isAllowRowGroup() && (!isActive || this.isSourceEventFromTarget(draggingEvent));
     }
 
     protected updateItems(columns: AgColumn[]) {
-        const strategy = this.getEditStrategy();
+        const strategy = this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy | undefined;
         if (strategy) {
-            strategy.setRowGroupColumns(columns, 'toolPanelUi');
+            strategy.setRowGroupColumns(!!this.updateParams?.deferApply, columns, 'toolPanelUi');
         } else {
             this.beans.rowGroupColsSvc?.setColumns(columns, 'toolPanelUi');
         }
@@ -59,7 +64,10 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel implements Focusabl
     }
 
     protected getExistingItems(): AgColumn[] {
-        return this.getEditStrategy()?.getRowGroupColumns() ?? this.beans.rowGroupColsSvc?.columns ?? [];
+        const strategy = this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy | undefined;
+        return (
+            strategy?.getRowGroupColumns(!!this.updateParams?.deferApply) ?? this.beans.rowGroupColsSvc?.columns ?? []
+        );
     }
 
     public getFocusableContainerName(): 'rowGroupToolbar' {

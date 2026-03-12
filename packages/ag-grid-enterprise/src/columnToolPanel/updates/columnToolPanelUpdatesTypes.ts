@@ -1,6 +1,6 @@
-import type { AgColumn, ColumnEventType, ColumnState, IAggFunc, NamedBean, SortDef } from 'ag-grid-community';
+import type { AgColumn, ColumnEventType, ColumnState, IAggFunc, SortDef } from 'ag-grid-community';
 
-export type ColumnToolPanelEditParams = { deferApply?: boolean };
+export type ColumnToolPanelUpdateParams = { deferApply?: boolean };
 
 export interface IColumnToolPanelUpdateStrategy {
     applyColumnState(deferMode: boolean, state: ColumnState[], eventType: ColumnEventType): void;

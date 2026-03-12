@@ -8,10 +8,12 @@ import type {
 import { isProvidedColumnGroup } from 'ag-grid-community';
 
 import type { VirtualListDragItem } from '../agStack/iVirtualListDragFeature';
-import { getColumnToolPanelEditStrategy } from './columnToolPanelEditUtils';
-import type { ColumnToolPanelEditParams } from './columnToolPanelEditsTypes';
 import type { ToolPanelColumnComp } from './toolPanelColumnComp';
 import { ToolPanelColumnGroupComp } from './toolPanelColumnGroupComp';
+import type {
+    ColumnToolPanelUpdateParams,
+    IColumnToolPanelUpdateStrategy,
+} from './updates/columnToolPanelUpdatesTypes';
 
 export const getCurrentColumnsBeingMoved = (column: AgColumn | AgProvidedColumnGroup | null): AgColumn[] => {
     if (isProvidedColumnGroup(column)) {
@@ -70,7 +72,7 @@ export const moveItem = (
     beans: BeanCollection,
     currentColumns: AgColumn[],
     lastHoveredListItem: VirtualListDragItem<ToolPanelColumnGroupComp | ToolPanelColumnComp> | null,
-    params: ColumnToolPanelEditParams
+    params: ColumnToolPanelUpdateParams
 ): void => {
     if (!lastHoveredListItem) {
         return;
@@ -96,7 +98,12 @@ export const moveItem = (
     const targetIndex: number | null = getMoveTargetIndex(beans, currentColumns, lastHoveredColumn, isBefore);
 
     if (targetIndex != null) {
-        getColumnToolPanelEditStrategy(beans, params?.deferApply)?.moveColumns(currentColumns, targetIndex, 'toolPanelUi');
+        (beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy | undefined)?.moveColumns(
+            !!params?.deferApply,
+            currentColumns,
+            targetIndex,
+            'toolPanelUi'
+        );
     }
 };
 

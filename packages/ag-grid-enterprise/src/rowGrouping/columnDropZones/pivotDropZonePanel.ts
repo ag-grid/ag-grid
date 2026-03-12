@@ -1,11 +1,14 @@
 import type { AgColumn, DragAndDropIcon, FocusableContainer, GridDraggingEvent } from 'ag-grid-community';
 import { _addFocusableContainerListener, _createIconNoSpan } from 'ag-grid-community';
 
-import type { ColumnToolPanelEditParams } from '../../columnToolPanel/columnToolPanelEditsTypes';
+import type {
+    ColumnToolPanelUpdateParams,
+    IColumnToolPanelUpdateStrategy,
+} from '../../columnToolPanel/updates/columnToolPanelUpdatesTypes';
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
 export class PivotDropZonePanel extends BaseDropZonePanel implements FocusableContainer {
-    constructor(horizontal: boolean, params?: ColumnToolPanelEditParams) {
+    constructor(horizontal: boolean, params?: ColumnToolPanelUpdateParams) {
         super(horizontal, 'pivot', params);
     }
 
@@ -36,9 +39,8 @@ export class PivotDropZonePanel extends BaseDropZonePanel implements FocusableCo
 
     protected getAriaLabel(): string {
         const translate = this.getLocaleTextFunc();
-        const label = translate('ariaPivotDropZonePanelLabel', 'Column Labels');
 
-        return label;
+        return translate('ariaPivotDropZonePanelLabel', 'Column Labels');
     }
 
     public refresh(): void {
@@ -69,7 +71,9 @@ export class PivotDropZonePanel extends BaseDropZonePanel implements FocusableCo
             }
         } else {
             // in toolPanel, the pivot panel is always shown when pivot mode is on
-            const draftPivotMode = this.getEditStrategy()?.getPivotMode();
+            const draftPivotMode = (
+                this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy | undefined
+            )?.getPivotMode(!!this.updateParams?.deferApply);
             this.setDisplayed(draftPivotMode ?? pivotMode);
         }
     }
@@ -80,14 +84,16 @@ export class PivotDropZonePanel extends BaseDropZonePanel implements FocusableCo
             return false;
         }
 
-        const isActive = this.getEditStrategy()?.getPivotColumns().includes(column) ?? column.isPivotActive();
+        const strategy = this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy | undefined;
+        const isActive =
+            strategy?.getPivotColumns(!!this.updateParams?.deferApply).includes(column) ?? column.isPivotActive();
         return column.isAllowPivot() && (!isActive || this.isSourceEventFromTarget(draggingEvent));
     }
 
     protected updateItems(columns: AgColumn[]): void {
-        const strategy = this.getEditStrategy();
+        const strategy = this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy | undefined;
         if (strategy) {
-            strategy.setPivotColumns(columns, 'toolPanelUi');
+            strategy.setPivotColumns(!!this.updateParams?.deferApply, columns, 'toolPanelUi');
         } else {
             this.beans.pivotColsSvc?.setColumns(columns, 'toolPanelUi');
         }
@@ -98,7 +104,8 @@ export class PivotDropZonePanel extends BaseDropZonePanel implements FocusableCo
     }
 
     protected getExistingItems(): AgColumn[] {
-        return this.getEditStrategy()?.getPivotColumns() ?? this.beans.pivotColsSvc?.columns ?? [];
+        const strategy = this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy | undefined;
+        return strategy?.getPivotColumns(!!this.updateParams?.deferApply) ?? this.beans.pivotColsSvc?.columns ?? [];
     }
 
     public getFocusableContainerName(): 'pivotToolbar' {

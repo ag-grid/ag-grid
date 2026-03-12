@@ -10,11 +10,10 @@ import type {
 } from 'ag-grid-community';
 import { Component, DragSourceType, KeyCode, RefPlaceholder, _createElement } from 'ag-grid-community';
 
-import { getColumnToolPanelEditStrategy } from '../../columnToolPanel/columnToolPanelEditUtils';
 import {
-    type BaseColumnToolPanelEdits,
-    type ColumnToolPanelEditParams,
-} from '../../columnToolPanel/columnToolPanelEditsTypes';
+    type ColumnToolPanelUpdateParams,
+    type IColumnToolPanelUpdateStrategy,
+} from '../../columnToolPanel/updates/columnToolPanelUpdatesTypes';
 import { PillDragComp } from '../../widgets/pillDragComp';
 import { VirtualList } from '../../widgets/virtualList';
 import { isRowGroupColLocked } from '../rowGroupingUtils';
@@ -23,7 +22,6 @@ import type { TDropZone } from './baseDropZonePanel';
 export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     private readonly eSortIndicator: SortIndicatorComp = RefPlaceholder;
     private readonly deferApply: boolean;
-    private editStrategy?: BaseColumnToolPanelEdits | null;
 
     private displayName: string | null;
     private popupShowing = false;
@@ -34,10 +32,10 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         ghost: boolean,
         private readonly dropZonePurpose: TDropZone,
         horizontal: boolean,
-        private readonly editParams?: ColumnToolPanelEditParams
+        private readonly updateParams?: ColumnToolPanelUpdateParams
     ) {
         super(dragSourceDropTarget, ghost, horizontal);
-        this.deferApply = !!editParams?.deferApply;
+        this.deferApply = !!updateParams?.deferApply;
     }
 
     public override postConstruct(): void {
@@ -82,14 +80,6 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
                 this.setupAria();
             });
         }
-    }
-
-    private getEditStrategy(): BaseColumnToolPanelEdits | null {
-        if (this.editStrategy !== undefined) {
-            return this.editStrategy;
-        }
-
-        return (this.editStrategy = getColumnToolPanelEditStrategy(this.beans, this.deferApply) ?? null);
     }
 
     public getItem(): AgColumn {
@@ -167,7 +157,11 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         let aggFuncName: string = '';
 
         if (this.isAggregationZone()) {
-            const aggFunc = this.getEditStrategy()?.getColumnAggFunc(this.column) ?? this.column.getAggFunc();
+            const aggFunc =
+                (this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy | undefined)?.getColumnAggFunc(
+                    this.deferApply,
+                    this.column
+                ) ?? this.column.getAggFunc();
             // if aggFunc is a string, we can use it, but if it's a function, then we swap with 'func'
             const aggFuncString = typeof aggFunc === 'string' ? aggFunc : 'agg';
             const localeTextFunc = this.getLocaleTextFunc();
@@ -187,9 +181,10 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
             eSortIndicator.setupSort(column, true, this.getSortDefOverride.bind(this));
             const performSort = (event: MouseEvent | KeyboardEvent) => {
                 event.preventDefault();
-                const edits = this.getEditStrategy();
-                if (edits) {
-                    edits.progressSortFromEvent(column, event);
+                const updateStrategy =
+                    this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy | undefined;
+                if (updateStrategy) {
+                    updateStrategy.progressSortFromEvent(this.deferApply, column, event);
                 } else {
                     this.beans.sortSvc?.progressSortFromEvent(column, event);
                 }
@@ -208,7 +203,14 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     }
 
     private getCurrentSortDirection(column: AgColumn): SortDirection {
-        return this.getEditStrategy()?.getSortDef(column)?.direction ?? column.getSortDef()?.direction ?? null;
+        return (
+            (this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy | undefined)?.getSortDef(
+                this.deferApply,
+                column
+            )?.direction ??
+            column.getSortDef()?.direction ??
+            null
+        );
     }
 
     private getSortDefOverride(): SortDef | null | undefined {
@@ -216,7 +218,10 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
             return undefined;
         }
 
-        return this.getEditStrategy()?.getSortDef(this.column);
+        return (this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy | undefined)?.getSortDef(
+            this.deferApply,
+            this.column
+        );
     }
 
     protected override getDefaultIconName(): DragAndDropIcon {
@@ -353,7 +358,11 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
 
         virtualList.refresh();
 
-        const currentAggFunc = this.getEditStrategy()?.getColumnAggFunc(this.column) ?? this.column.getAggFunc();
+        const currentAggFunc =
+            (this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy | undefined)?.getColumnAggFunc(
+                this.deferApply,
+                this.column
+            ) ?? this.column.getAggFunc();
         let rowToFocus = rows.findIndex((r) => r === currentAggFunc);
         if (rowToFocus === -1) {
             rowToFocus = 0;
@@ -366,9 +375,9 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         const itemSelected = () => {
             hidePopup();
             this.getGui().focus();
-            const strategy = this.getEditStrategy();
+            const strategy = this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy | undefined;
             if (strategy) {
-                strategy.setColumnAggFunc(this.column, value, 'toolPanelDragAndDrop');
+                strategy.setColumnAggFunc(this.deferApply, this.column, value, 'toolPanelDragAndDrop');
             } else {
                 this.beans.valueColsSvc?.setColumnAggFunc?.(this.column, value, 'toolPanelDragAndDrop');
             }

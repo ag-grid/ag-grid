@@ -29,8 +29,8 @@ import {
 } from 'ag-grid-community';
 
 import type { ColumnModelItem } from './columnModelItem';
-import { getColumnToolPanelEditStrategy } from './columnToolPanelEditUtils';
-import type { ColumnToolPanelEditParams } from './columnToolPanelEditsTypes';
+import type { IColumnToolPanelUpdateStrategy } from './updates/columnToolPanelUpdatesTypes';
+import type { ColumnToolPanelUpdateParams } from './updates/columnToolPanelUpdatesTypes';
 import { createPivotState, selectAllChildren, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
 
@@ -68,14 +68,13 @@ export class ToolPanelColumnGroupComp extends Component {
     private readonly displayName: string | null;
     private processingColumnStateChange = false;
     private tooltipFeature?: TooltipFeature;
-    private editStrategy?: ReturnType<typeof getColumnToolPanelEditStrategy>;
 
     constructor(
         public readonly modelItem: ColumnModelItem,
         private readonly allowDragging: boolean,
         private readonly eventType: ColumnEventType,
         private readonly focusWrapper: HTMLElement,
-        private readonly params: ColumnToolPanelEditParams
+        private readonly params: ColumnToolPanelUpdateParams
     ) {
         super();
         const { columnGroup, depth, displayName } = modelItem;
@@ -147,10 +146,6 @@ export class ToolPanelColumnGroupComp extends Component {
 
     public getColumns(): AgColumn[] {
         return this.columnGroup.getLeafColumns();
-    }
-
-    private getEditStrategy() {
-        return (this.editStrategy ??= getColumnToolPanelEditStrategy(this.beans, this.params.deferApply)!);
     }
 
     private setupTooltip(): void {
@@ -372,8 +367,8 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private workOutSelectedValue(): boolean | undefined {
-        const edits = this.getEditStrategy();
-        const pivotMode = edits.getPivotMode();
+        const updateStrategy = this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy;
+        const pivotMode = updateStrategy.getPivotMode(!!this.params.deferApply);
 
         const visibleLeafColumns = this.getVisibleLeafColumns();
 
@@ -398,7 +393,9 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private workOutReadOnlyValue(): boolean {
-        const pivotMode = this.getEditStrategy().getPivotMode();
+        const pivotMode = (this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy).getPivotMode(
+            !!this.params.deferApply
+        );
 
         let colsThatCanAction = 0;
 
@@ -416,11 +413,11 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private isColumnChecked(column: AgColumn): boolean {
-        const edits = this.getEditStrategy();
-        if (edits.getPivotMode()) {
-            return edits.isColumnSelectedInPivotModeToolPanel(column);
+        const updateStrategy = this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy;
+        if (updateStrategy.getPivotMode(!!this.params.deferApply)) {
+            return updateStrategy.isColumnSelectedInPivotModeToolPanel(!!this.params.deferApply, column);
         }
-        return edits.isColumnVisibleInToolPanel(column);
+        return updateStrategy.isColumnVisibleInToolPanel(!!this.params.deferApply, column);
     }
 
     private onExpandOrContractClicked(): void {

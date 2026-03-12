@@ -3,8 +3,10 @@ import { Component, _createIconNoSpan, _focusInto, isColumn, isProvidedColumnGro
 
 import { getGroupingLocaleText, isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import { MenuList } from '../widgets/menuList';
-import { getColumnToolPanelEditStrategy } from './columnToolPanelEditUtils';
-import type { BaseColumnToolPanelEdits, ColumnToolPanelEditParams } from './columnToolPanelEditsTypes';
+import type {
+    ColumnToolPanelUpdateParams,
+    IColumnToolPanelUpdateStrategy,
+} from './updates/columnToolPanelUpdatesTypes';
 
 type MenuItemName = 'scrollIntoView' | 'rowGroup' | 'value' | 'pivot';
 
@@ -27,13 +29,12 @@ export class ToolPanelContextMenu extends Component {
     private allowPivoting: boolean;
     private menuItemMap: Map<MenuItemName, MenuItemProperty>;
     private displayName: string | null = null;
-    private editStrategy?: BaseColumnToolPanelEdits;
 
     constructor(
         private readonly column: AgColumn | AgProvidedColumnGroup,
         private readonly mouseEventOrTouch: MouseEvent | Touch,
         private readonly parentEl: HTMLElement,
-        private readonly params: ColumnToolPanelEditParams = {}
+        private readonly params: ColumnToolPanelUpdateParams = {}
     ) {
         super({ tag: 'div', cls: 'ag-menu' });
     }
@@ -69,12 +70,8 @@ export class ToolPanelContextMenu extends Component {
         }
     }
 
-    private getEditStrategy(): BaseColumnToolPanelEdits {
-        return (this.editStrategy ??= getColumnToolPanelEditStrategy(this.beans, this.params.deferApply)!);
-    }
-
     private initializeProperties(column: AgColumn | AgProvidedColumnGroup): void {
-        const edits = this.getEditStrategy();
+        const updateStrategy = this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy;
         let columns: AgColumn[];
         if (isProvidedColumnGroup(column)) {
             columns = column.getLeafColumns();
@@ -83,7 +80,7 @@ export class ToolPanelContextMenu extends Component {
         }
         this.columns = columns;
 
-        const isPivotMode = edits.getPivotMode();
+        const isPivotMode = updateStrategy.getPivotMode(!!this.params.deferApply);
 
         this.allowScrollIntoView = !isPivotMode && columns.some(this.isColumnValidForScrollIntoView);
         this.allowGrouping = columns.some((col) => col.isPrimary() && col.isAllowRowGroup());
@@ -94,15 +91,16 @@ export class ToolPanelContextMenu extends Component {
     private buildMenuItemMap(): void {
         const localeTextFunc = this.getLocaleTextFunc();
         const { beans, displayName } = this;
-        const edits = this.getEditStrategy();
+        const updateStrategy = this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy;
 
         const menuItemMap = new Map<MenuItemName, MenuItemProperty>();
         this.menuItemMap = menuItemMap;
 
-        const isPivotMode = edits.getPivotMode();
-        const rowGroupColIdSet = new Set(edits.getRowGroupColumns().map((col) => col.getColId()));
-        const valueColIdSet = new Set(edits.getValueColumns().map((col) => col.getColId()));
-        const pivotColIdSet = new Set(edits.getPivotColumns().map((col) => col.getColId()));
+        const deferMode = !!this.params.deferApply;
+        const isPivotMode = updateStrategy.getPivotMode(deferMode);
+        const rowGroupColIdSet = new Set(updateStrategy.getRowGroupColumns(deferMode).map((col) => col.getColId()));
+        const valueColIdSet = new Set(updateStrategy.getValueColumns(deferMode).map((col) => col.getColId()));
+        const pivotColIdSet = new Set(updateStrategy.getPivotColumns(deferMode).map((col) => col.getColId()));
 
         menuItemMap.set('scrollIntoView', {
             allowedFunction: (col) => !col.isPinned() && !isPivotMode && this.isColumnValidForScrollIntoView(col),
@@ -127,16 +125,17 @@ export class ToolPanelContextMenu extends Component {
             activeFunction: (col) => rowGroupColIdSet.has(col.getColId()),
             activateLabel: () => getGroupingLocaleText(localeTextFunc, 'groupBy', displayName!),
             deactivateLabel: () => getGroupingLocaleText(localeTextFunc, 'ungroupBy', displayName!),
-            activateFunction: () =>
-                edits.setRowGroupColumns(
-                    this.addColumnsToList(edits.getRowGroupColumns(), rowGroupAllowed),
-                    'toolPanelUi'
-                ),
-            deActivateFunction: () =>
-                edits.setRowGroupColumns(
-                    this.removeColumnsFromList(edits.getRowGroupColumns(), rowGroupAllowed),
-                    'toolPanelUi'
-                ),
+            activateFunction: () => {
+                const columns = this.addColumnsToList(updateStrategy.getRowGroupColumns(deferMode), rowGroupAllowed);
+                updateStrategy.setRowGroupColumns(deferMode, columns, 'toolPanelUi');
+            },
+            deActivateFunction: () => {
+                const columns = this.removeColumnsFromList(
+                    updateStrategy.getRowGroupColumns(deferMode),
+                    rowGroupAllowed
+                );
+                updateStrategy.setRowGroupColumns(deferMode, columns, 'toolPanelUi');
+            },
             addIcon: 'menuAddRowGroup',
             removeIcon: 'menuRemoveRowGroup',
         });
@@ -148,10 +147,14 @@ export class ToolPanelContextMenu extends Component {
             activateLabel: () => localeTextFunc('addToValues', `Add ${displayName} to values`, [displayName!]),
             deactivateLabel: () =>
                 localeTextFunc('removeFromValues', `Remove ${displayName} from values`, [displayName!]),
-            activateFunction: () =>
-                edits.setValueColumns(this.addColumnsToList(edits.getValueColumns(), valueAllowed), 'toolPanelUi'),
-            deActivateFunction: () =>
-                edits.setValueColumns(this.removeColumnsFromList(edits.getValueColumns(), valueAllowed), 'toolPanelUi'),
+            activateFunction: () => {
+                const columns = this.addColumnsToList(updateStrategy.getValueColumns(deferMode), valueAllowed);
+                updateStrategy.setValueColumns(deferMode, columns, 'toolPanelUi');
+            },
+            deActivateFunction: () => {
+                const columns = this.removeColumnsFromList(updateStrategy.getValueColumns(deferMode), valueAllowed);
+                updateStrategy.setValueColumns(deferMode, columns, 'toolPanelUi');
+            },
             addIcon: 'valuePanel',
             removeIcon: 'valuePanel',
         });
@@ -163,10 +166,14 @@ export class ToolPanelContextMenu extends Component {
             activateLabel: () => localeTextFunc('addToLabels', `Add ${displayName} to labels`, [displayName!]),
             deactivateLabel: () =>
                 localeTextFunc('removeFromLabels', `Remove ${displayName} from labels`, [displayName!]),
-            activateFunction: () =>
-                edits.setPivotColumns(this.addColumnsToList(edits.getPivotColumns(), pivotAllowed), 'toolPanelUi'),
-            deActivateFunction: () =>
-                edits.setPivotColumns(this.removeColumnsFromList(edits.getPivotColumns(), pivotAllowed), 'toolPanelUi'),
+            activateFunction: () => {
+                const columns = this.addColumnsToList(updateStrategy.getPivotColumns(deferMode), pivotAllowed);
+                updateStrategy.setPivotColumns(deferMode, columns, 'toolPanelUi');
+            },
+            deActivateFunction: () => {
+                const columns = this.removeColumnsFromList(updateStrategy.getPivotColumns(deferMode), pivotAllowed);
+                updateStrategy.setPivotColumns(deferMode, columns, 'toolPanelUi');
+            },
             addIcon: 'pivotPanel',
             removeIcon: 'pivotPanel',
         });

@@ -4,7 +4,7 @@ import { BeanStub } from 'ag-grid-community';
 import { PivotDropZonePanel } from '../rowGrouping/columnDropZones/pivotDropZonePanel';
 import { RowGroupDropZonePanel } from '../rowGrouping/columnDropZones/rowGroupDropZonePanel';
 import { ValuesDropZonePanel } from '../rowGrouping/columnDropZones/valueDropZonePanel';
-import type { ColumnToolPanelEditParams } from './columnToolPanelEditsTypes';
+import type { ColumnToolPanelUpdateParams } from './updates/columnToolPanelUpdatesTypes';
 import { PivotModePanel } from './pivotModePanel';
 
 export class ColumnToolPanelFactory extends BeanStub implements NamedBean {
@@ -26,7 +26,7 @@ export class ColumnToolPanelFactory extends BeanStub implements NamedBean {
     public createRowGroupPanel(
         parent: Component,
         destroyFuncs: (() => void)[],
-        params?: ColumnToolPanelEditParams
+        params?: ColumnToolPanelUpdateParams
     ): RowGroupDropZonePanel {
         return this.createPanel(parent, destroyFuncs, new RowGroupDropZonePanel(false, params));
     }
@@ -34,7 +34,7 @@ export class ColumnToolPanelFactory extends BeanStub implements NamedBean {
     public createValuesPanel(
         parent: Component,
         destroyFuncs: (() => void)[],
-        params?: ColumnToolPanelEditParams
+        params?: ColumnToolPanelUpdateParams
     ): ValuesDropZonePanel {
         return this.createPanel(parent, destroyFuncs, new ValuesDropZonePanel(false, params));
     }
@@ -42,7 +42,7 @@ export class ColumnToolPanelFactory extends BeanStub implements NamedBean {
     public createPivotPanel(
         parent: Component,
         destroyFuncs: (() => void)[],
-        params?: ColumnToolPanelEditParams
+        params?: ColumnToolPanelUpdateParams
     ): PivotDropZonePanel {
         return this.createPanel(parent, destroyFuncs, new PivotDropZonePanel(false, params));
     }
@@ -50,7 +50,7 @@ export class ColumnToolPanelFactory extends BeanStub implements NamedBean {
     public createPivotModePanel(
         parent: Component,
         destroyFuncs: (() => void)[],
-        params: ColumnToolPanelEditParams,
+        params: ColumnToolPanelUpdateParams,
         onPivotModeValueChanged?: () => void,
         prepend?: boolean
     ): PivotModePanel {
