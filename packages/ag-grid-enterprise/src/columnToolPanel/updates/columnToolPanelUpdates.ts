@@ -533,7 +533,7 @@ class ColumnToolPanelDeferredUpdateStrategy implements ColumnToolPanelConcreteUp
                 this.state.rowGroup?.colIds,
                 this.beans.rowGroupColsSvc?.columns,
                 this.state.columnState?.patches,
-                (patch) => patch.rowGroup
+                (patch) => (patch.rowGroup == null ? undefined : !!patch.rowGroup)
             )
         );
     }
@@ -561,7 +561,7 @@ class ColumnToolPanelDeferredUpdateStrategy implements ColumnToolPanelConcreteUp
                 this.state.pivot?.colIds,
                 this.beans.pivotColsSvc?.columns,
                 this.state.columnState?.patches,
-                (patch) => patch.pivot
+                (patch) => (patch.pivot == null ? undefined : !!patch.pivot)
             )
         );
     }
