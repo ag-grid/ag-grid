@@ -1,11 +1,6 @@
 import { fireEvent, getByTestId, getByText } from '@testing-library/dom';
 
-import type {
-    AgColumn,
-    ColDef,
-    ColGroupDef,
-    GridApi,
-} from 'ag-grid-community';
+import type { AgColumn, ColDef, ColGroupDef, GridApi } from 'ag-grid-community';
 import { DragSourceType, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import {
     createFakeServer,
@@ -322,6 +317,15 @@ describe('deferred column tool panel pivot mode', () => {
         return getByTestId(toolPanelGui, agTestIdFor.columnPanelSelectHeaderCheckbox()) as HTMLInputElement;
     }
 
+    function createPrimaryColumnComp(toolPanel: any, label: string): any {
+        const listPanel = toolPanel.primaryColsPanel.primaryColsListPanel;
+        const displayedColsList = listPanel.getDisplayedColsList() as any[];
+        const rowIndex = displayedColsList.findIndex((item) => item.displayName === label);
+        expect(rowIndex).toBeGreaterThanOrEqual(0);
+
+        return listPanel['createComponentFromItem'](displayedColsList[rowIndex], document.createElement('div'));
+    }
+
     function getUpdateStrategy(toolPanel: any): IColumnToolPanelUpdateStrategy {
         return toolPanel.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy;
     }
@@ -350,6 +354,10 @@ describe('deferred column tool panel pivot mode', () => {
         const dragHandle = toolPanel.getGui().querySelector('.ag-drag-handle');
         expect(dragHandle).toBeTruthy();
         return dragHandle!;
+    }
+
+    function getDropZoneText(panel: any): string {
+        return panel.getGui().textContent ?? '';
     }
 
     function createSortEvent(init: MouseEventInit = {}): MouseEvent {
@@ -624,6 +632,97 @@ describe('deferred column tool panel pivot mode', () => {
         ).toEqual(liveValueColIds);
         expect(toolPanel.rowGroupDropZonePanel.getGui().textContent).toContain('Country');
         expect(toolPanel.rowGroupDropZonePanel.getGui().textContent).toContain('Sport');
+    });
+
+    test('checking a row-group column in deferred pivot mode draws a staged row-group pill immediately', async () => {
+        const { gridApi, toolPanel, toolPanelGui } = await createDeferredPivotModeGrid();
+
+        expect(getDropZoneText(toolPanel.rowGroupDropZonePanel)).toContain('Country');
+        expect(getDropZoneText(toolPanel.rowGroupDropZonePanel)).toContain('Sport');
+        expect(getDropZoneText(toolPanel.rowGroupDropZonePanel)).not.toContain('Athlete');
+
+        createPrimaryColumnComp(toolPanel, 'Athlete')['onChangeCommon'](true);
+        await asyncSetTimeout(50);
+
+        expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['country', 'sport']);
+        expect(
+            getUpdateStrategy(toolPanel)
+                .getRowGroupColumns(true)
+                .map((col) => col.getColId())
+        ).toEqual(['country', 'sport', 'athlete']);
+        expect(getDropZoneText(toolPanel.rowGroupDropZonePanel)).toContain('Athlete');
+
+        cancelDeferredChanges(toolPanel);
+
+        expect(getDropZoneText(toolPanel.rowGroupDropZonePanel)).not.toContain('Athlete');
+    });
+
+    test('checking a value column in deferred pivot mode draws a staged value pill immediately', async () => {
+        const { gridApi, toolPanel } = await createDeferredPivotModeGrid();
+
+        expect(getValueColumnIds(gridApi)).toEqual(['silver', 'bronze']);
+        expect(getDropZoneText(toolPanel.valuesDropZonePanel)).not.toContain('Age');
+
+        createPrimaryColumnComp(toolPanel, 'Age')['onChangeCommon'](true);
+        await asyncSetTimeout(50);
+
+        expect(getValueColumnIds(gridApi)).toEqual(['silver', 'bronze']);
+        expect(
+            getUpdateStrategy(toolPanel)
+                .getValueColumns(true)
+                .map((col) => col.getColId())
+        ).toEqual(['silver', 'bronze', 'age']);
+        expect(getDropZoneText(toolPanel.valuesDropZonePanel)).toContain('Age');
+
+        cancelDeferredChanges(toolPanel);
+
+        expect(getDropZoneText(toolPanel.valuesDropZonePanel)).not.toContain('Age');
+    });
+
+    test('checking a pivot-only column in deferred pivot mode draws a staged label pill immediately', async () => {
+        const gridApi = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'athlete', enableRowGroup: true, rowGroup: true },
+                { field: 'year', enablePivot: true, pivot: true },
+                { field: 'date', enablePivot: true },
+                { field: 'gold', enableValue: true, aggFunc: 'sum' },
+            ],
+            rowData,
+            pivotMode: true,
+            sideBar: {
+                toolPanels: [
+                    {
+                        id: 'columns',
+                        labelDefault: 'Columns',
+                        labelKey: 'columns',
+                        iconKey: 'columns',
+                        toolPanel: 'agColumnsToolPanel',
+                        toolPanelParams: { deferApply: true },
+                    },
+                ],
+                defaultToolPanel: 'columns',
+            },
+        });
+        await asyncSetTimeout(50);
+
+        const toolPanel = gridApi.getToolPanelInstance('columns') as any;
+        expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['year']);
+        expect(getDropZoneText(toolPanel.pivotDropZonePanel)).not.toContain('Date');
+
+        createPrimaryColumnComp(toolPanel, 'Date')['onChangeCommon'](true);
+        await asyncSetTimeout(50);
+
+        expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['year']);
+        expect(
+            getUpdateStrategy(toolPanel)
+                .getPivotColumns(true)
+                .map((col) => col.getColId())
+        ).toEqual(['year', 'date']);
+        expect(getDropZoneText(toolPanel.pivotDropZonePanel)).toContain('Date');
+
+        cancelDeferredChanges(toolPanel);
+
+        expect(getDropZoneText(toolPanel.pivotDropZonePanel)).not.toContain('Date');
     });
 
     test('reordering columns in non-pivot mode applies only after commit', async () => {

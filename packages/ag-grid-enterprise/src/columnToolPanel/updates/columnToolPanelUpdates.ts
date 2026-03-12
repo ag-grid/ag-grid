@@ -527,11 +527,27 @@ class ColumnToolPanelDeferredUpdateStrategy implements ColumnToolPanelConcreteUp
     }
 
     public getRowGroupColumns(): AgColumn[] {
-        return getDraftColumns(this.beans, this.state.rowGroup?.colIds, this.beans.rowGroupColsSvc?.columns);
+        return getDraftColumns(
+            this.beans,
+            getDraftFunctionColumnIds(
+                this.state.rowGroup?.colIds,
+                this.beans.rowGroupColsSvc?.columns,
+                this.state.columnState?.patches,
+                (patch) => patch.rowGroup
+            )
+        );
     }
 
     public getValueColumns(): AgColumn[] {
-        return getDraftColumns(this.beans, this.state.aggregation?.colIds, this.beans.valueColsSvc?.columns);
+        return getDraftColumns(
+            this.beans,
+            getDraftFunctionColumnIds(
+                this.state.aggregation?.colIds,
+                this.beans.valueColsSvc?.columns,
+                this.state.columnState?.patches,
+                (patch) => (patch.aggFunc === undefined ? undefined : patch.aggFunc != null)
+            )
+        );
     }
 
     public getPivotColumns(): AgColumn[] {
@@ -539,7 +555,15 @@ class ColumnToolPanelDeferredUpdateStrategy implements ColumnToolPanelConcreteUp
             return [];
         }
 
-        return getDraftColumns(this.beans, this.state.pivot?.colIds, this.beans.pivotColsSvc?.columns);
+        return getDraftColumns(
+            this.beans,
+            getDraftFunctionColumnIds(
+                this.state.pivot?.colIds,
+                this.beans.pivotColsSvc?.columns,
+                this.state.columnState?.patches,
+                (patch) => patch.pivot
+            )
+        );
     }
 
     public getPivotMode(): boolean {
@@ -598,16 +622,52 @@ class ColumnToolPanelDeferredUpdateStrategy implements ColumnToolPanelConcreteUp
     }
 }
 
-function getDraftColumns(
-    beans: BeanStub['beans'],
-    colIds: string[] | undefined,
-    fallback: AgColumn[] | undefined
-): AgColumn[] {
+function getDraftColumns(beans: BeanStub['beans'], colIds: string[] | undefined): AgColumn[] {
     if (!colIds) {
-        return fallback ?? [];
+        return [];
+    }
+    return colIds.map((colId) => beans.colModel.getColDefCol(colId)).filter((column): column is AgColumn => !!column);
+}
+
+function getDraftFunctionColumnIds(
+    draftColIds: string[] | undefined,
+    liveColumns: AgColumn[] | undefined,
+    columnStatePatches: Map<string, ColumnState> | undefined,
+    getPatchState: (patch: ColumnState) => boolean | undefined
+): string[] {
+    const colIds = [...(draftColIds ?? liveColumns?.map((column) => column.getColId()) ?? [])];
+
+    if (!columnStatePatches?.size) {
+        return colIds;
     }
 
-    return colIds.map((colId) => beans.colModel.getColDefCol(colId)).filter((column): column is AgColumn => !!column);
+    const colIdsSet = new Set(colIds);
+    for (const [colId, patch] of columnStatePatches) {
+        const nextState = getPatchState(patch);
+        if (nextState === undefined) {
+            continue;
+        }
+
+        if (nextState) {
+            if (!colIdsSet.has(colId)) {
+                colIds.push(colId);
+                colIdsSet.add(colId);
+            }
+            continue;
+        }
+
+        if (!colIdsSet.has(colId)) {
+            continue;
+        }
+
+        colIdsSet.delete(colId);
+        const index = colIds.indexOf(colId);
+        if (index >= 0) {
+            colIds.splice(index, 1);
+        }
+    }
+
+    return colIds;
 }
 
 function syncPrimaryColDefOrderFromCurrentColumns(beans: BeanStub['beans']): void {
