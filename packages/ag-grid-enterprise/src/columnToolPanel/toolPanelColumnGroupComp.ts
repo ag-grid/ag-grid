@@ -31,8 +31,8 @@ import {
 import type { ColumnModelItem } from './columnModelItem';
 import { createPivotState, selectAllChildren, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
-import type { ColumnToolPanelUpdateParams } from './updates/columnToolPanelUpdatesTypes';
 import { getColumnToolPanelUpdates } from './updates/columnToolPanelUpdateUtils';
+import type { ColumnToolPanelUpdateParams } from './updates/columnToolPanelUpdatesTypes';
 
 const ToolPanelColumnGroupElement: ElementParams = {
     tag: 'div',

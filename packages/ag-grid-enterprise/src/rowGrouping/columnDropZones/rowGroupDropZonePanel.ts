@@ -1,8 +1,8 @@
 import type { AgColumn, DragAndDropIcon, FocusableContainer, GridDraggingEvent } from 'ag-grid-community';
 import { _addFocusableContainerListener, _createIconNoSpan } from 'ag-grid-community';
 
-import type { ColumnToolPanelUpdateParams } from '../../columnToolPanel/updates/columnToolPanelUpdatesTypes';
 import { getColumnToolPanelUpdates } from '../../columnToolPanel/updates/columnToolPanelUpdateUtils';
+import type { ColumnToolPanelUpdateParams } from '../../columnToolPanel/updates/columnToolPanelUpdatesTypes';
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
 export class RowGroupDropZonePanel extends BaseDropZonePanel implements FocusableContainer {
@@ -49,7 +49,11 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel implements Focusabl
     }
 
     protected updateItems(columns: AgColumn[]) {
-        getColumnToolPanelUpdates(this.beans).setRowGroupColumns(!!this.updateParams?.deferApply, columns, 'toolPanelUi');
+        getColumnToolPanelUpdates(this.beans).setRowGroupColumns(
+            !!this.updateParams?.deferApply,
+            columns,
+            'toolPanelUi'
+        );
     }
 
     protected getIconName(): DragAndDropIcon {
