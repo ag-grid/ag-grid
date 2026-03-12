@@ -63,7 +63,14 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
     ];
 
     /** Tracks whether the previous execute() call produced aggData, so we only clear once on transition. */
-    private hadAggregation = false;
+    private hadAgg = false;
+
+    /** Cached once — row model type never changes after init. */
+    private csrm = false;
+
+    public postConstruct(): void {
+        this.csrm = _isClientSideRowModel(this.gos);
+    }
 
     // Stale aggData on demoted nodes is cleared by the group stage (setRowNodeGroup), not here.
     public execute(changedPath: ChangedPath | undefined): void {
@@ -72,11 +79,11 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         const valueColumns = beans.valueColsSvc?.columns;
 
         if (!valueColumns?.length && !userAggFunc) {
-            if (this.hadAggregation && !changedPath) {
+            if (this.hadAgg && !changedPath) {
                 // Full refresh with no value columns: clear stale aggData from all groups.
                 // Skip during transaction updates (changedPath defined) — the config-change
                 // full refresh will handle it.
-                this.hadAggregation = false;
+                this.hadAgg = false;
                 const colModel = beans.colModel;
                 _forEachChangedGroupDepthFirst(beans.rowModel.rootNode, undefined, (rowNode) => {
                     setAggDataWithSiblings(rowNode, null, colModel);
@@ -85,7 +92,7 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
             return;
         }
 
-        this.hadAggregation = true;
+        this.hadAgg = true;
 
         const colModel = beans.colModel;
         const aggFuncSvc = beans.aggFuncSvc;
@@ -162,7 +169,7 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
 
     public getAggregatedChildren(rowNode: RowNode | null | undefined, col: AgColumn | null | undefined): RowNode[] {
         const { gos } = this;
-        if (!rowNode?.group || !_isClientSideRowModel(gos)) {
+        if (!rowNode?.group || !this.csrm) {
             return [];
         }
 
