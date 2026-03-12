@@ -193,6 +193,34 @@
         "sideButtonVerticalPadding": {},
         "toolPanelSeparatorBorder": {}
     },
+    "tabs": {
+        "meta": {
+            "displayName": "Tabs",
+            "page": {
+                "name": "Theming: Customising Tool Panels",
+                "url": "./theming-tool-panels/"
+            }
+        },
+        "tabBackgroundColor": {},
+        "tabBarBackgroundColor": {},
+        "tabBarBorder": {},
+        "tabBarHorizontalPadding": {},
+        "tabBarTopPadding": {},
+        "tabBottomPadding": {},
+        "tabHorizontalPadding": {},
+        "tabHoverBackgroundColor": {},
+        "tabHoverTextColor": {},
+        "tabSelectedBackgroundColor": {},
+        "tabSelectedBorderColor": {},
+        "tabSelectedBorderWidth": {},
+        "tabSelectedTextColor": {},
+        "tabSelectedUnderlineColor": {},
+        "tabSelectedUnderlineTransitionDuration": {},
+        "tabSelectedUnderlineWidth": {},
+        "tabSpacing": {},
+        "tabTextColor": {},
+        "tabTopPadding": {}
+    },
     "inputs": {
         "meta": {
             "displayName": "Inputs",
@@ -351,34 +379,6 @@
         "panelTitleBarHeight": {},
         "panelTitleBarIconColor": {},
         "panelTitleBarTextColor": {}
-    },
-    "tabs": {
-        "meta": {
-            "displayName": "Tabs",
-            "page": {
-                "name": "Theming: Customising Tool Panels",
-                "url": "./theming-tool-panels/"
-            }
-        },
-        "tabBackgroundColor": {},
-        "tabBarBackgroundColor": {},
-        "tabBarBorder": {},
-        "tabBarHorizontalPadding": {},
-        "tabBarTopPadding": {},
-        "tabBottomPadding": {},
-        "tabHorizontalPadding": {},
-        "tabHoverBackgroundColor": {},
-        "tabHoverTextColor": {},
-        "tabSelectedBackgroundColor": {},
-        "tabSelectedBorderColor": {},
-        "tabSelectedBorderWidth": {},
-        "tabSelectedTextColor": {},
-        "tabSelectedUnderlineColor": {},
-        "tabSelectedUnderlineTransitionDuration": {},
-        "tabSelectedUnderlineWidth": {},
-        "tabSpacing": {},
-        "tabTextColor": {},
-        "tabTopPadding": {}
     },
     "editing": {
         "meta": {
