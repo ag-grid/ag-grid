@@ -1,18 +1,28 @@
 import { fireEvent, getByTestId, getByText } from '@testing-library/dom';
-import type { ColDef, GridApi } from 'ag-grid-community';
-import { agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
-import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
+import type {
+    AgColumn,
+    ColDef,
+    ColGroupDef,
+    GridApi,
+} from 'ag-grid-community';
+import { DragSourceType, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import {
     createFakeServer,
     createServerSideDatasource,
-} from '../../../../documentation/ag-grid-docs/src/content/docs/tool-panel-columns/_examples/deferred-apply-mode/fakeServer';
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
-import { waitForNoLoadingRows } from '../test-utils/ssrm-test-utils';
+} from 'ag-grid-docs/src/content/docs/tool-panel-columns/_examples/deferred-apply-mode/fakeServer';
+import { AllEnterpriseModule, RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
+
+import type { IColumnToolPanelUpdateStrategy } from '../../../../packages/ag-grid-enterprise/src/columnToolPanel/updates/columnToolPanelUpdatesTypes';
+import { AgGridHeaderDropZonesSelector } from '../../../../packages/ag-grid-enterprise/src/rowGrouping/columnDropZones/agGridHeaderDropZones';
+import { TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from '../test-utils';
 
 describe('deferred column tool panel pivot mode', () => {
     const gridMgr = new TestGridsManager({
         modules: [AllEnterpriseModule],
+    });
+    const rowGroupingOnlyGridMgr = new TestGridsManager({
+        modules: [RowGroupingModule, RowGroupingPanelModule],
     });
 
     const rowData = [
@@ -73,12 +83,14 @@ describe('deferred column tool panel pivot mode', () => {
 
     afterEach(() => {
         gridMgr.reset();
+        rowGroupingOnlyGridMgr.reset();
         vi.resetAllMocks();
         vi.clearAllMocks();
     });
 
     async function createDeferredPivotModeGrid(): Promise<{
         gridApi: GridApi;
+        toolPanel: any;
         toolPanelGui: HTMLElement;
         serverGetDataSpy: ReturnType<typeof vi.spyOn>;
     }> {
@@ -109,15 +121,18 @@ describe('deferred column tool panel pivot mode', () => {
         await waitForNoLoadingRows(gridApi);
         await asyncSetTimeout(50);
 
+        const toolPanel = gridApi.getToolPanelInstance('columns') as any;
         return {
             gridApi,
-            toolPanelGui: (gridApi.getToolPanelInstance('columns') as any).getGui(),
+            toolPanel,
+            toolPanelGui: toolPanel.getGui(),
             serverGetDataSpy,
         };
     }
 
     async function createDeferredNonPivotGrid(columnDefs: ColDef[] = baseColumnDefs): Promise<{
         gridApi: GridApi;
+        toolPanel: any;
         toolPanelGui: HTMLElement;
     }> {
         const gridApi = await gridMgr.createGridAndWait('myGrid', {
@@ -140,9 +155,146 @@ describe('deferred column tool panel pivot mode', () => {
 
         await asyncSetTimeout(50);
 
+        const toolPanel = gridApi.getToolPanelInstance('columns') as any;
         return {
             gridApi,
-            toolPanelGui: (gridApi.getToolPanelInstance('columns') as any).getGui(),
+            toolPanel,
+            toolPanelGui: toolPanel.getGui(),
+        };
+    }
+
+    async function createNonDeferredPivotModeGrid(): Promise<{ gridApi: GridApi; toolPanel: any }> {
+        const gridApi = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: baseColumnDefs,
+            pivotMode: true,
+            rowData,
+            rowGroupPanelShow: 'always',
+            pivotPanelShow: 'always',
+            sideBar: {
+                toolPanels: [
+                    {
+                        id: 'columns',
+                        labelDefault: 'Columns',
+                        labelKey: 'columns',
+                        iconKey: 'columns',
+                        toolPanel: 'agColumnsToolPanel',
+                    },
+                ],
+                defaultToolPanel: 'columns',
+            },
+        });
+
+        await asyncSetTimeout(50);
+
+        return {
+            gridApi,
+            toolPanel: gridApi.getToolPanelInstance('columns') as any,
+        };
+    }
+
+    async function createRowGroupingOnlyGrid(): Promise<GridApi> {
+        const gridApi = await rowGroupingOnlyGridMgr.createGridAndWait('rowGroupingOnlyGrid', {
+            columnDefs: [
+                { field: 'athlete' },
+                { field: 'country', rowGroup: true, enableRowGroup: true },
+                { field: 'gold' },
+            ],
+            rowData,
+            rowGroupPanelShow: 'always',
+        });
+
+        await asyncSetTimeout(50);
+        return gridApi;
+    }
+
+    async function createDeferredNonPivotAggregationGrid(): Promise<{ gridApi: GridApi; toolPanel: any }> {
+        const { gridApi, toolPanel } = await createDeferredNonPivotGrid([
+            { field: 'athlete', rowGroup: true, enableRowGroup: true },
+            { field: 'country', rowGroup: true, enableRowGroup: true },
+            { field: 'gold', enableValue: true, aggFunc: 'sum' },
+            { field: 'silver', enableValue: true, aggFunc: 'sum' },
+            { field: 'bronze', enableValue: true },
+        ]);
+
+        return { gridApi, toolPanel };
+    }
+
+    async function createDeferredGroupedNonPivotGrid(): Promise<{ gridApi: GridApi; toolPanel: any }> {
+        const { gridApi, toolPanel } = await createDeferredNonPivotGrid([
+            {
+                headerName: 'Group A',
+                children: [{ field: 'athlete' }, { field: 'age' }],
+            },
+            {
+                headerName: 'Group B',
+                children: [{ field: 'country' }, { field: 'year' }],
+            },
+        ] as ColGroupDef[]);
+
+        return { gridApi, toolPanel };
+    }
+
+    async function createDeferredGroupedPivotGrid(): Promise<{ gridApi: GridApi; toolPanel: any }> {
+        const { gridApi, toolPanel } = await createDeferredNonPivotGrid([
+            {
+                headerName: 'Group A',
+                children: [
+                    { field: 'athlete', enableRowGroup: true, enablePivot: true },
+                    { field: 'age', enableValue: true },
+                ],
+            },
+            {
+                headerName: 'Group B',
+                children: [
+                    { field: 'country', rowGroup: true, enableRowGroup: true, enablePivot: true },
+                    { field: 'year', pivot: true, enableRowGroup: true, enablePivot: true },
+                ],
+            },
+        ] as ColGroupDef[]);
+
+        gridApi.setGridOption('pivotMode', true);
+        await asyncSetTimeout(50);
+
+        return { gridApi, toolPanel };
+    }
+
+    async function createDeferredPivotAggregationGrid(): Promise<{ gridApi: GridApi; toolPanel: any }> {
+        const fakeServer = createFakeServer(rowData as any);
+        const gridApi = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'athlete', rowGroup: true, enableRowGroup: true, enablePivot: true },
+                { field: 'country', rowGroup: true, enableRowGroup: true, enablePivot: true },
+                { field: 'year', pivot: true, enableRowGroup: true, enablePivot: true },
+                { field: 'gold', enableValue: true, aggFunc: 'sum' },
+                { field: 'silver', enableValue: true, aggFunc: 'sum' },
+                { field: 'bronze', enableValue: true },
+            ],
+            pivotMode: true,
+            rowModelType: 'serverSide',
+            rowGroupPanelShow: 'always',
+            pivotPanelShow: 'always',
+            sideBar: {
+                toolPanels: [
+                    {
+                        id: 'columns',
+                        labelDefault: 'Columns',
+                        labelKey: 'columns',
+                        iconKey: 'columns',
+                        toolPanel: 'agColumnsToolPanel',
+                        toolPanelParams: { deferApply: true },
+                    },
+                ],
+                defaultToolPanel: 'columns',
+            },
+            serverSideDatasource: createServerSideDatasource(fakeServer),
+        });
+
+        await waitForNoLoadingRows(gridApi);
+        await asyncSetTimeout(50);
+
+        return {
+            gridApi,
+            toolPanel: gridApi.getToolPanelInstance('columns') as any,
         };
     }
 
@@ -168,6 +320,40 @@ describe('deferred column tool panel pivot mode', () => {
 
     function getSelectAllCheckbox(toolPanelGui: HTMLElement): HTMLInputElement {
         return getByTestId(toolPanelGui, agTestIdFor.columnPanelSelectHeaderCheckbox()) as HTMLInputElement;
+    }
+
+    function getUpdateStrategy(toolPanel: any): IColumnToolPanelUpdateStrategy {
+        return toolPanel.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy;
+    }
+
+    function isDeferred(toolPanel: any): boolean {
+        return !!toolPanel['isDeferModeEnabled'];
+    }
+
+    function commitChanges(toolPanel: any): void {
+        getUpdateStrategy(toolPanel).commit(isDeferred(toolPanel));
+    }
+
+    function cancelDeferredChanges(toolPanel: any): void {
+        toolPanel['onDeferredCancel']();
+    }
+
+    function getPrimaryColumnOrder(toolPanel: any): string[] {
+        return toolPanel.beans.colModel.getColDefCols().map((col: any) => col.getColId());
+    }
+
+    function getValueColumnIds(gridApi: GridApi): string[] {
+        return gridApi.getValueColumns().map((col) => col.getColId());
+    }
+
+    function getToolPanelDragHandle(toolPanel: any): Element {
+        const dragHandle = toolPanel.getGui().querySelector('.ag-drag-handle');
+        expect(dragHandle).toBeTruthy();
+        return dragHandle!;
+    }
+
+    function createSortEvent(init: MouseEventInit = {}): MouseEvent {
+        return new MouseEvent('click', { bubbles: true, ...init });
     }
 
     function removeDropZonePill(toolPanelGui: HTMLElement, label: string): void {
@@ -383,5 +569,640 @@ describe('deferred column tool panel pivot mode', () => {
 
         expect(toolPanelGui.textContent).not.toContain('Apply');
         expect(toolPanelGui.textContent).not.toContain('Cancel');
+    });
+
+    test('turning defer mode off then toggling pivot mode should remove and restore the year label immediately', async () => {
+        const { gridApi, toolPanel, toolPanelGui } = await createDeferredPivotModeGrid();
+
+        getDeferModeToggle(toolPanelGui).click();
+        getPivotModeToggle(toolPanelGui).click();
+        await waitForNoLoadingRows(gridApi);
+
+        expect(gridApi.isPivotMode()).toBe(false);
+        let hasYearHeaderGroupText = Array.from(
+            getGridElement(gridApi)!.querySelectorAll('.ag-header-group-text')
+        ).some((el) => el.textContent?.trim() === '2000');
+        expect(hasYearHeaderGroupText).toBe(false);
+
+        getPivotModeToggle(toolPanelGui).click();
+        await waitForNoLoadingRows(gridApi);
+        await asyncSetTimeout(50);
+
+        expect(gridApi.isPivotMode()).toBe(true);
+        expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['year']);
+        hasYearHeaderGroupText = Array.from(getGridElement(gridApi)!.querySelectorAll('.ag-header-group-text')).some(
+            (el) => el.textContent?.trim() === '2000'
+        );
+        expect(hasYearHeaderGroupText).toBe(true);
+        expect(toolPanel.pivotDropZonePanel.getGui().textContent).toContain('Year');
+    });
+
+    test('turning defer mode back on after leaving pivot mode should keep row groups and values populated', async () => {
+        const { gridApi, toolPanel, toolPanelGui } = await createDeferredPivotModeGrid();
+
+        getDeferModeToggle(toolPanelGui).click();
+        getPivotModeToggle(toolPanelGui).click();
+        await waitForNoLoadingRows(gridApi);
+
+        expect(gridApi.isPivotMode()).toBe(false);
+        const liveRowGroupColIds = gridApi.getRowGroupColumns().map((col) => col.getColId());
+        const liveValueColIds = getValueColumnIds(gridApi);
+        expect(liveRowGroupColIds).toEqual(['country', 'sport']);
+        expect(liveValueColIds.length).toBeGreaterThan(0);
+
+        getDeferModeToggle(toolPanelGui).click();
+
+        expect(
+            getUpdateStrategy(toolPanel)
+                .getRowGroupColumns(true)
+                .map((col) => col.getColId())
+        ).toEqual(liveRowGroupColIds);
+        expect(
+            getUpdateStrategy(toolPanel)
+                .getValueColumns(true)
+                .map((col) => col.getColId())
+        ).toEqual(liveValueColIds);
+        expect(toolPanel.rowGroupDropZonePanel.getGui().textContent).toContain('Country');
+        expect(toolPanel.rowGroupDropZonePanel.getGui().textContent).toContain('Sport');
+    });
+
+    test('reordering columns in non-pivot mode applies only after commit', async () => {
+        const { gridApi, toolPanel } = await createDeferredNonPivotGrid();
+        const athlete = gridApi.getColumn('athlete')! as AgColumn;
+
+        expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['athlete', 'age', 'country']);
+
+        getUpdateStrategy(toolPanel).moveColumns(true, [athlete], 2, 'toolPanelUi');
+
+        expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['athlete', 'age', 'country']);
+
+        commitChanges(toolPanel);
+
+        expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['age', 'athlete', 'country']);
+    });
+
+    test('reordering columns in pivot mode applies primary column order only after commit', async () => {
+        const { toolPanel } = await createDeferredPivotModeGrid();
+        const athlete = toolPanel.beans.colModel.getColDefCol('athlete') as AgColumn;
+
+        expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['athlete', 'age', 'country']);
+
+        getUpdateStrategy(toolPanel).moveColumns(true, [athlete], 2, 'toolPanelUi');
+
+        expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['athlete', 'age', 'country']);
+
+        commitChanges(toolPanel);
+
+        expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['age', 'athlete', 'country']);
+    });
+
+    test('reordering column groups in non-pivot mode applies only after commit', async () => {
+        const { gridApi, toolPanel } = await createDeferredGroupedNonPivotGrid();
+        const athlete = gridApi.getColumn('athlete')! as AgColumn;
+        const age = gridApi.getColumn('age')! as AgColumn;
+
+        expect(getPrimaryColumnOrder(toolPanel)).toEqual(['athlete', 'age', 'country', 'year']);
+
+        getUpdateStrategy(toolPanel).moveColumns(true, [athlete, age], 4, 'toolPanelUi');
+
+        expect(getPrimaryColumnOrder(toolPanel)).toEqual(['athlete', 'age', 'country', 'year']);
+
+        commitChanges(toolPanel);
+
+        expect(getPrimaryColumnOrder(toolPanel)).toEqual(['country', 'year', 'athlete', 'age']);
+    });
+
+    test('reordering column groups in pivot mode applies only after commit', async () => {
+        const { gridApi, toolPanel } = await createDeferredGroupedPivotGrid();
+        const athlete = gridApi.getColumn('athlete')! as AgColumn;
+        const age = gridApi.getColumn('age')! as AgColumn;
+
+        expect(getPrimaryColumnOrder(toolPanel)).toEqual(['athlete', 'age', 'country', 'year']);
+
+        getUpdateStrategy(toolPanel).moveColumns(true, [athlete, age], 4, 'toolPanelUi');
+
+        expect(getPrimaryColumnOrder(toolPanel)).toEqual(['athlete', 'age', 'country', 'year']);
+
+        commitChanges(toolPanel);
+
+        expect(getPrimaryColumnOrder(toolPanel)).toEqual(['country', 'year', 'athlete', 'age']);
+    });
+
+    test('changing column visibility in non-pivot mode applies only after commit', async () => {
+        const { gridApi, toolPanel } = await createDeferredNonPivotGrid();
+        const country = gridApi.getColumn('country')! as AgColumn;
+
+        expect(country.isVisible()).toBe(true);
+
+        getUpdateStrategy(toolPanel).setColumnsVisible(true, [country], false, 'toolPanelUi');
+
+        expect(country.isVisible()).toBe(true);
+
+        commitChanges(toolPanel);
+
+        expect(country.isVisible()).toBe(false);
+    });
+
+    test('reordering row groups in non-pivot mode applies only after commit', async () => {
+        const { gridApi, toolPanel } = await createDeferredNonPivotGrid();
+        const country = gridApi.getColumn('country')! as AgColumn;
+        const sport = gridApi.getColumn('sport')! as AgColumn;
+
+        expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['country', 'sport']);
+
+        getUpdateStrategy(toolPanel).setRowGroupColumns(true, [sport, country], 'toolPanelUi');
+
+        expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['country', 'sport']);
+
+        commitChanges(toolPanel);
+
+        expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['sport', 'country']);
+    });
+
+    test('adding row groups in pivot mode applies only after commit', async () => {
+        const { gridApi, toolPanel } = await createDeferredPivotModeGrid();
+        const country = gridApi.getColumn('country')! as AgColumn;
+        const sport = gridApi.getColumn('sport')! as AgColumn;
+        const date = gridApi.getColumn('date')! as AgColumn;
+
+        getUpdateStrategy(toolPanel).setRowGroupColumns(true, [country, sport, date], 'toolPanelUi');
+
+        expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['country', 'sport']);
+
+        commitChanges(toolPanel);
+        await waitForNoLoadingRows(gridApi);
+
+        expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['country', 'sport', 'date']);
+    });
+
+    test('reordering row groups in pivot mode applies only after commit', async () => {
+        const { gridApi, toolPanel } = await createDeferredPivotModeGrid();
+        const country = gridApi.getColumn('country')! as AgColumn;
+        const sport = gridApi.getColumn('sport')! as AgColumn;
+
+        getUpdateStrategy(toolPanel).setRowGroupColumns(true, [sport, country], 'toolPanelUi');
+
+        expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['country', 'sport']);
+
+        commitChanges(toolPanel);
+        await waitForNoLoadingRows(gridApi);
+
+        expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['sport', 'country']);
+    });
+
+    test('adding aggregation values in non-pivot mode applies only after commit', async () => {
+        const { gridApi, toolPanel } = await createDeferredNonPivotAggregationGrid();
+        const gold = gridApi.getColumn('gold')! as AgColumn;
+        const silver = gridApi.getColumn('silver')! as AgColumn;
+        const bronze = gridApi.getColumn('bronze')! as AgColumn;
+
+        getUpdateStrategy(toolPanel).setValueColumns(true, [gold, silver, bronze], 'toolPanelUi');
+
+        expect(getValueColumnIds(gridApi)).toEqual(['gold', 'silver']);
+
+        commitChanges(toolPanel);
+
+        expect(getValueColumnIds(gridApi)).toEqual(['gold', 'silver', 'bronze']);
+    });
+
+    test('removing aggregation values in non-pivot mode applies only after commit', async () => {
+        const { gridApi, toolPanel } = await createDeferredNonPivotAggregationGrid();
+        const gold = gridApi.getColumn('gold')! as AgColumn;
+
+        getUpdateStrategy(toolPanel).setValueColumns(true, [gold], 'toolPanelUi');
+
+        expect(getValueColumnIds(gridApi)).toEqual(['gold', 'silver']);
+
+        commitChanges(toolPanel);
+
+        expect(getValueColumnIds(gridApi)).toEqual(['gold']);
+    });
+
+    test('reordering aggregation values in non-pivot mode applies only after commit', async () => {
+        const { gridApi, toolPanel } = await createDeferredNonPivotAggregationGrid();
+        const gold = gridApi.getColumn('gold')! as AgColumn;
+        const silver = gridApi.getColumn('silver')! as AgColumn;
+
+        getUpdateStrategy(toolPanel).setValueColumns(true, [silver, gold], 'toolPanelUi');
+
+        expect(getValueColumnIds(gridApi)).toEqual(['gold', 'silver']);
+
+        commitChanges(toolPanel);
+
+        expect(getValueColumnIds(gridApi)).toEqual(['silver', 'gold']);
+    });
+
+    test('adding aggregation values in pivot mode applies only after commit', async () => {
+        const { gridApi, toolPanel } = await createDeferredPivotAggregationGrid();
+        const gold = gridApi.getColumn('gold')! as AgColumn;
+        const silver = gridApi.getColumn('silver')! as AgColumn;
+        const bronze = gridApi.getColumn('bronze')! as AgColumn;
+
+        getUpdateStrategy(toolPanel).setValueColumns(true, [gold, silver, bronze], 'toolPanelUi');
+
+        expect(getValueColumnIds(gridApi)).toEqual(['gold', 'silver']);
+
+        commitChanges(toolPanel);
+        await waitForNoLoadingRows(gridApi);
+
+        expect(getValueColumnIds(gridApi)).toEqual(['gold', 'silver', 'bronze']);
+    });
+
+    test('reordering aggregation values in pivot mode applies only after commit', async () => {
+        const { gridApi, toolPanel } = await createDeferredPivotAggregationGrid();
+        const gold = gridApi.getColumn('gold')! as AgColumn;
+        const silver = gridApi.getColumn('silver')! as AgColumn;
+
+        getUpdateStrategy(toolPanel).setValueColumns(true, [silver, gold], 'toolPanelUi');
+
+        expect(getValueColumnIds(gridApi)).toEqual(['gold', 'silver']);
+
+        commitChanges(toolPanel);
+        await waitForNoLoadingRows(gridApi);
+
+        expect(getValueColumnIds(gridApi)).toEqual(['silver', 'gold']);
+    });
+
+    test('changing agg function on an existing value pill applies only after commit in non-pivot mode', async () => {
+        const { gridApi, toolPanel } = await createDeferredNonPivotAggregationGrid();
+        const gold = gridApi.getColumn('gold')! as AgColumn;
+
+        getUpdateStrategy(toolPanel).setColumnAggFunc(true, gold, 'max', 'toolPanelUi');
+
+        expect(gold.getAggFunc()).toBe('sum');
+
+        commitChanges(toolPanel);
+
+        expect(gridApi.getColumn('gold')!.getAggFunc()).toBe('max');
+    });
+
+    test('changing agg function on an existing value pill and cancelling keeps it unchanged in non-pivot mode', async () => {
+        const { gridApi, toolPanel } = await createDeferredNonPivotAggregationGrid();
+        const gold = gridApi.getColumn('gold')! as AgColumn;
+
+        getUpdateStrategy(toolPanel).setColumnAggFunc(true, gold, 'max', 'toolPanelUi');
+        cancelDeferredChanges(toolPanel);
+
+        expect(gridApi.getColumn('gold')!.getAggFunc()).toBe('sum');
+    });
+
+    test('changing agg function on an existing value pill applies only after commit in pivot mode', async () => {
+        const { gridApi, toolPanel } = await createDeferredPivotAggregationGrid();
+        const gold = gridApi.getColumn('gold')! as AgColumn;
+
+        getUpdateStrategy(toolPanel).setColumnAggFunc(true, gold, 'max', 'toolPanelUi');
+
+        expect(gold.getAggFunc()).toBe('sum');
+
+        commitChanges(toolPanel);
+        await waitForNoLoadingRows(gridApi);
+
+        expect(gridApi.getColumn('gold')!.getAggFunc()).toBe('max');
+    });
+
+    test('changing agg function on an existing value pill and cancelling keeps it unchanged in pivot mode', async () => {
+        const { gridApi, toolPanel } = await createDeferredPivotAggregationGrid();
+        const gold = gridApi.getColumn('gold')! as AgColumn;
+
+        getUpdateStrategy(toolPanel).setColumnAggFunc(true, gold, 'max', 'toolPanelUi');
+        cancelDeferredChanges(toolPanel);
+        await waitForNoLoadingRows(gridApi);
+
+        expect(gridApi.getColumn('gold')!.getAggFunc()).toBe('sum');
+    });
+
+    test('sorting a row-group pill applies only after commit in non-pivot mode', async () => {
+        const { gridApi, toolPanel } = await createDeferredNonPivotGrid();
+        const country = gridApi.getColumn('country')! as AgColumn;
+
+        getUpdateStrategy(toolPanel).progressSortFromEvent(true, country, createSortEvent());
+
+        expect(country.getSort()).toBeNull();
+
+        commitChanges(toolPanel);
+
+        expect(gridApi.getColumn('country')!.getSort()).toBe('asc');
+    });
+
+    test('sorting a row-group pill and cancelling keeps it unchanged in non-pivot mode', async () => {
+        const { gridApi, toolPanel } = await createDeferredNonPivotGrid();
+        const country = gridApi.getColumn('country')! as AgColumn;
+
+        getUpdateStrategy(toolPanel).progressSortFromEvent(true, country, createSortEvent());
+        cancelDeferredChanges(toolPanel);
+
+        expect(gridApi.getColumn('country')!.getSort()).toBeNull();
+    });
+
+    test('sorting a row-group pill applies only after commit in pivot mode', async () => {
+        const { gridApi, toolPanel } = await createDeferredPivotModeGrid();
+        const country = gridApi.getColumn('country')! as AgColumn;
+
+        getUpdateStrategy(toolPanel).progressSortFromEvent(true, country, createSortEvent());
+
+        expect(country.getSort()).toBeNull();
+
+        commitChanges(toolPanel);
+        await waitForNoLoadingRows(gridApi);
+
+        expect(gridApi.getColumn('country')!.getSort()).toBe('asc');
+    });
+
+    test('sorting a row-group pill and cancelling keeps it unchanged in pivot mode', async () => {
+        const { gridApi, toolPanel } = await createDeferredPivotModeGrid();
+        const country = gridApi.getColumn('country')! as AgColumn;
+
+        getUpdateStrategy(toolPanel).progressSortFromEvent(true, country, createSortEvent());
+        cancelDeferredChanges(toolPanel);
+        await waitForNoLoadingRows(gridApi);
+
+        expect(gridApi.getColumn('country')!.getSort()).toBeNull();
+    });
+
+    test('reordering column labels in pivot mode applies only after commit', async () => {
+        const { gridApi, toolPanel } = await createDeferredPivotModeGrid();
+        const year = gridApi.getColumn('year')! as AgColumn;
+        const date = gridApi.getColumn('date')! as AgColumn;
+
+        getUpdateStrategy(toolPanel).setPivotColumns(true, [year, date], 'toolPanelUi');
+        commitChanges(toolPanel);
+        await waitForNoLoadingRows(gridApi);
+
+        getUpdateStrategy(toolPanel).setPivotColumns(true, [date, year], 'toolPanelUi');
+
+        expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['year', 'date']);
+
+        commitChanges(toolPanel);
+        await waitForNoLoadingRows(gridApi);
+
+        expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['date', 'year']);
+    });
+
+    test('turning pivot mode off, applying, then cancelling should keep the primary list populated', async () => {
+        const { gridApi, toolPanel, toolPanelGui } = await createDeferredPivotModeGrid();
+
+        getPivotModeToggle(toolPanelGui).click();
+        getApplyButton(toolPanelGui).click();
+        await waitForNoLoadingRows(gridApi);
+        await asyncSetTimeout(50);
+
+        getCancelButton(toolPanelGui).click();
+
+        expect(toolPanel.primaryColsPanel.primaryColsListPanel.getDisplayedColsList().length).toBeGreaterThan(0);
+    });
+
+    test('turning pivot mode off then on and cancelling should keep pivot mode on', async () => {
+        const { gridApi, toolPanel, toolPanelGui } = await createDeferredPivotModeGrid();
+
+        getPivotModeToggle(toolPanelGui).click();
+        getPivotModeToggle(toolPanelGui).click();
+        getCancelButton(toolPanelGui).click();
+        await waitForNoLoadingRows(gridApi);
+
+        expect(gridApi.isPivotMode()).toBe(true);
+        expect(toolPanel.primaryColsPanel.primaryColsListPanel.getDisplayedColsList().length).toBeGreaterThan(0);
+    });
+
+    test('dragging from the deferred tool panel into external non-tool-panel drop zones should be prohibited', async () => {
+        const { gridApi, toolPanel } = await createDeferredPivotModeGrid();
+        const country = gridApi.getColumn('country')! as any;
+        const HeaderDropZones = AgGridHeaderDropZonesSelector.component as any;
+        const headerDropZones = country.createBean(new HeaderDropZones()) as any;
+        const dragHandle = getToolPanelDragHandle(toolPanel);
+
+        expect(headerDropZones.rowGroupComp.isInterestedIn(DragSourceType.ToolPanel, dragHandle)).toBe(false);
+        expect(headerDropZones.pivotComp.isInterestedIn(DragSourceType.ToolPanel, dragHandle)).toBe(false);
+    });
+
+    test('dragging from the non-deferred tool panel into external header drop zones should remain allowed', async () => {
+        const { gridApi, toolPanel } = await createNonDeferredPivotModeGrid();
+        const country = gridApi.getColumn('country')! as any;
+        const HeaderDropZones = AgGridHeaderDropZonesSelector.component as any;
+        const headerDropZones = country.createBean(new HeaderDropZones()) as any;
+        const dragHandle = getToolPanelDragHandle(toolPanel);
+
+        expect(headerDropZones.rowGroupComp.isInterestedIn(DragSourceType.ToolPanel, dragHandle)).toBe(true);
+        expect(headerDropZones.pivotComp.isInterestedIn(DragSourceType.ToolPanel, dragHandle)).toBe(true);
+    });
+
+    test('sorting a header row-group pill still works without the columns tool panel module', async () => {
+        const gridApi = await createRowGroupingOnlyGrid();
+        const country = gridApi.getColumn('country')! as any;
+        const HeaderDropZones = AgGridHeaderDropZonesSelector.component as any;
+        const headerDropZones = country.createBean(new HeaderDropZones()) as any;
+        const rowGroupPill = headerDropZones.rowGroupComp
+            .getGui()
+            .querySelector('.ag-column-drop-cell') as HTMLElement | null;
+
+        expect(rowGroupPill).toBeTruthy();
+
+        rowGroupPill!.click();
+
+        expect(gridApi.getColumn('country')!.getSort()).toBe('asc');
+    });
+
+    test('dragging into column groups is allowed after clearing groups, labels and aggregations then committing non-pivot mode', async () => {
+        const { gridApi, toolPanel } = await createDeferredPivotAggregationGrid();
+
+        getUpdateStrategy(toolPanel).setRowGroupColumns(true, [], 'toolPanelUi');
+        getUpdateStrategy(toolPanel).setPivotColumns(true, [], 'toolPanelUi');
+        getUpdateStrategy(toolPanel).setValueColumns(true, [], 'toolPanelUi');
+        getUpdateStrategy(toolPanel).setPivotMode(true, false, 'toolPanelUi');
+        toolPanel['onPivotModePanelValueChanged']();
+        commitChanges(toolPanel);
+        await waitForNoLoadingRows(gridApi);
+
+        expect(gridApi.isPivotMode()).toBe(false);
+        expect(gridApi.getRowGroupColumns()).toEqual([]);
+        expect(gridApi.getPivotColumns()).toEqual([]);
+        expect(gridApi.getValueColumns()).toEqual([]);
+        expect(toolPanel.rowGroupDropZonePanel.isInterestedIn(DragSourceType.ToolPanel)).toBe(true);
+    });
+
+    test('reordering columns and cancelling in non-pivot mode should keep the original order', async () => {
+        const { gridApi, toolPanel } = await createDeferredNonPivotGrid();
+        const athlete = gridApi.getColumn('athlete')! as AgColumn;
+
+        getUpdateStrategy(toolPanel).moveColumns(true, [athlete], 2, 'toolPanelUi');
+        cancelDeferredChanges(toolPanel);
+
+        expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['athlete', 'age', 'country']);
+    });
+
+    test('reordering columns and cancelling in pivot mode should keep the original order', async () => {
+        const { toolPanel } = await createDeferredPivotModeGrid();
+        const athlete = toolPanel.beans.colModel.getColDefCol('athlete') as AgColumn;
+
+        getUpdateStrategy(toolPanel).moveColumns(true, [athlete], 2, 'toolPanelUi');
+        cancelDeferredChanges(toolPanel);
+
+        expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['athlete', 'age', 'country']);
+    });
+
+    test('reordering column groups and cancelling in non-pivot mode should keep the original order', async () => {
+        const { gridApi, toolPanel } = await createDeferredGroupedNonPivotGrid();
+        const athlete = gridApi.getColumn('athlete')! as AgColumn;
+        const age = gridApi.getColumn('age')! as AgColumn;
+
+        getUpdateStrategy(toolPanel).moveColumns(true, [athlete, age], 4, 'toolPanelUi');
+        cancelDeferredChanges(toolPanel);
+
+        expect(getPrimaryColumnOrder(toolPanel)).toEqual(['athlete', 'age', 'country', 'year']);
+    });
+
+    test('reordering column groups and cancelling in pivot mode should keep the original order', async () => {
+        const { gridApi, toolPanel } = await createDeferredGroupedPivotGrid();
+        const athlete = gridApi.getColumn('athlete')! as AgColumn;
+        const age = gridApi.getColumn('age')! as AgColumn;
+
+        getUpdateStrategy(toolPanel).moveColumns(true, [athlete, age], 4, 'toolPanelUi');
+        cancelDeferredChanges(toolPanel);
+
+        expect(getPrimaryColumnOrder(toolPanel)).toEqual(['athlete', 'age', 'country', 'year']);
+    });
+
+    test('changing column visibility and cancelling in non-pivot mode should keep visibility unchanged', async () => {
+        const { gridApi, toolPanel } = await createDeferredNonPivotGrid();
+        const country = gridApi.getColumn('country')! as AgColumn;
+
+        getUpdateStrategy(toolPanel).setColumnsVisible(true, [country], false, 'toolPanelUi');
+        cancelDeferredChanges(toolPanel);
+
+        expect(country.isVisible()).toBe(true);
+    });
+
+    test('row group changes and cancelling in non-pivot mode should keep row groups unchanged', async () => {
+        const { gridApi, toolPanel } = await createDeferredNonPivotGrid();
+        const country = gridApi.getColumn('country')! as AgColumn;
+        const sport = gridApi.getColumn('sport')! as AgColumn;
+        const date = gridApi.getColumn('date')! as AgColumn;
+
+        getUpdateStrategy(toolPanel).setRowGroupColumns(true, [sport, country], 'toolPanelUi');
+        cancelDeferredChanges(toolPanel);
+        expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['country', 'sport']);
+
+        getUpdateStrategy(toolPanel).setRowGroupColumns(true, [country, sport, date], 'toolPanelUi');
+        cancelDeferredChanges(toolPanel);
+        expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['country', 'sport']);
+
+        getUpdateStrategy(toolPanel).setRowGroupColumns(true, [country], 'toolPanelUi');
+        cancelDeferredChanges(toolPanel);
+        expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['country', 'sport']);
+    });
+
+    test('row group changes and cancelling in pivot mode should keep row groups unchanged', async () => {
+        const { gridApi, toolPanel } = await createDeferredPivotModeGrid();
+        const country = gridApi.getColumn('country')! as AgColumn;
+        const sport = gridApi.getColumn('sport')! as AgColumn;
+        const date = gridApi.getColumn('date')! as AgColumn;
+
+        getUpdateStrategy(toolPanel).setRowGroupColumns(true, [sport, country], 'toolPanelUi');
+        cancelDeferredChanges(toolPanel);
+        await waitForNoLoadingRows(gridApi);
+        expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['country', 'sport']);
+
+        getUpdateStrategy(toolPanel).setRowGroupColumns(true, [country, sport, date], 'toolPanelUi');
+        cancelDeferredChanges(toolPanel);
+        await waitForNoLoadingRows(gridApi);
+        expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['country', 'sport']);
+
+        getUpdateStrategy(toolPanel).setRowGroupColumns(true, [country], 'toolPanelUi');
+        cancelDeferredChanges(toolPanel);
+        await waitForNoLoadingRows(gridApi);
+        expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['country', 'sport']);
+    });
+
+    test('aggregation value changes and cancelling in non-pivot mode should keep values unchanged', async () => {
+        const { gridApi, toolPanel } = await createDeferredNonPivotAggregationGrid();
+        const gold = gridApi.getColumn('gold')! as AgColumn;
+        const silver = gridApi.getColumn('silver')! as AgColumn;
+        const bronze = gridApi.getColumn('bronze')! as AgColumn;
+
+        getUpdateStrategy(toolPanel).setValueColumns(true, [gold, silver, bronze], 'toolPanelUi');
+        cancelDeferredChanges(toolPanel);
+        expect(getValueColumnIds(gridApi)).toEqual(['gold', 'silver']);
+
+        getUpdateStrategy(toolPanel).setValueColumns(true, [gold], 'toolPanelUi');
+        cancelDeferredChanges(toolPanel);
+        expect(getValueColumnIds(gridApi)).toEqual(['gold', 'silver']);
+
+        getUpdateStrategy(toolPanel).setValueColumns(true, [silver, gold], 'toolPanelUi');
+        cancelDeferredChanges(toolPanel);
+        expect(getValueColumnIds(gridApi)).toEqual(['gold', 'silver']);
+    });
+
+    test('column label changes and cancelling in pivot mode should keep labels unchanged', async () => {
+        const { gridApi, toolPanel } = await createDeferredPivotModeGrid();
+        const year = gridApi.getColumn('year')! as AgColumn;
+        const date = gridApi.getColumn('date')! as AgColumn;
+
+        getUpdateStrategy(toolPanel).setPivotColumns(true, [year, date], 'toolPanelUi');
+        cancelDeferredChanges(toolPanel);
+        await waitForNoLoadingRows(gridApi);
+        expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['year']);
+
+        getUpdateStrategy(toolPanel).setPivotColumns(true, [], 'toolPanelUi');
+        cancelDeferredChanges(toolPanel);
+        await waitForNoLoadingRows(gridApi);
+        expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['year']);
+
+        getUpdateStrategy(toolPanel).setPivotColumns(true, [date, year], 'toolPanelUi');
+        cancelDeferredChanges(toolPanel);
+        await waitForNoLoadingRows(gridApi);
+        expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['year']);
+    });
+
+    test('deferred mode should show a Defer mode toggle in the column tool panel footer', async () => {
+        const { toolPanelGui } = await createDeferredNonPivotGrid();
+
+        expect(toolPanelGui.textContent).toContain('Defer mode');
+        expect(toolPanelGui.textContent).toContain('Apply');
+        expect(toolPanelGui.textContent).toContain('Cancel');
+    });
+
+    test('Defer mode toggle should work (toggle between deferMode and normal)', async () => {
+        const { gridApi, toolPanel, toolPanelGui } = await createDeferredNonPivotGrid();
+        const athlete = gridApi.getColumn('athlete')! as AgColumn;
+
+        getUpdateStrategy(toolPanel).moveColumns(true, [athlete], 2, 'toolPanelUi');
+        expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['athlete', 'age', 'country']);
+        commitChanges(toolPanel);
+        expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['age', 'athlete', 'country']);
+
+        getDeferModeToggle(toolPanelGui).click();
+        getUpdateStrategy(toolPanel).moveColumns(false, [athlete], 0, 'toolPanelUi');
+        expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['athlete', 'age', 'country']);
+
+        getDeferModeToggle(toolPanelGui).click();
+        getUpdateStrategy(toolPanel).moveColumns(true, [athlete], 2, 'toolPanelUi');
+        expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['athlete', 'age', 'country']);
+        commitChanges(toolPanel);
+        expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['age', 'athlete', 'country']);
+    });
+
+    test('commit should call exactly one state-application path', async () => {
+        const { toolPanel } = await createDeferredPivotModeGrid();
+        const { gos, stateSvc, colModel, colMoves, rowGroupColsSvc, valueColsSvc, pivotColsSvc } = toolPanel.beans;
+
+        const updateGridOptionsSpy = vi.spyOn(gos, 'updateGridOptions');
+        const setStateSpy = stateSvc ? vi.spyOn(stateSvc, 'setState') : undefined;
+        const setPivotModeSpy = vi.spyOn(colModel as any, 'setPivotMode');
+        const moveColumnsSpy = colMoves ? vi.spyOn(colMoves, 'moveColumns') : undefined;
+        const setRowGroupColumnsSpy = rowGroupColsSvc ? vi.spyOn(rowGroupColsSvc, 'setColumns') : undefined;
+        const setValueColumnsSpy = valueColsSvc ? vi.spyOn(valueColsSvc, 'setColumns') : undefined;
+        const setColumnAggFuncSpy = valueColsSvc ? vi.spyOn(valueColsSvc, 'setColumnAggFunc') : undefined;
+        const setPivotColumnsSpy = pivotColsSvc ? vi.spyOn(pivotColsSvc, 'setColumns') : undefined;
+
+        getUpdateStrategy(toolPanel).setPivotMode(true, false, 'toolPanelUi');
+        commitChanges(toolPanel);
+
+        expect(setStateSpy?.mock.calls.length ?? 0).toBe(1);
+        expect(updateGridOptionsSpy).toHaveBeenCalledTimes(1);
+        expect(setPivotModeSpy).toHaveBeenCalledTimes(1);
+        expect(moveColumnsSpy).not.toHaveBeenCalled();
+        expect(setRowGroupColumnsSpy).not.toHaveBeenCalled();
+        expect(setValueColumnsSpy).not.toHaveBeenCalled();
+        expect(setColumnAggFuncSpy).not.toHaveBeenCalled();
+        expect(setPivotColumnsSpy).not.toHaveBeenCalled();
     });
 });
