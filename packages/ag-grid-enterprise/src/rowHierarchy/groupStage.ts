@@ -129,7 +129,7 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, _IRowNodeG
 
         // Create changedPath for hierarchical grids before the strategy runs (it reads changedPath).
         // Flat grids skip changedPath — all pipeline stages have flat fast paths.
-        beans.changedPathFactory!.ensureRowsPath(params, rootNode);
+        beans.changedPathFactory?.ensureRowsPath(params, rootNode);
 
         const executeResult = strategy.execute(rootNode, params);
 

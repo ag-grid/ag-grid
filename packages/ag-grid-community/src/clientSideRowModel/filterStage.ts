@@ -14,7 +14,7 @@ export class FilterStage extends BeanStub implements IRowNodeFilterStage, NamedB
     public readonly step: ClientSideRowModelStage = 'filter';
     public readonly refreshProps: (keyof GridOptions<any>)[] = ['excludeChildrenWhenTreeDataFiltering'];
 
-    private wasFilterActive = false;
+    private wasFilterActive: boolean | null = null;
 
     public execute(changedPath: ChangedPath | undefined): void {
         const { filterManager } = this.beans;
@@ -22,8 +22,10 @@ export class FilterStage extends BeanStub implements IRowNodeFilterStage, NamedB
 
         // If filter state changed, force full refresh so every node is re-evaluated.
         if (filterActive !== this.wasFilterActive) {
-            this.wasFilterActive = filterActive;
             changedPath = undefined;
+        }
+        if (!changedPath) {
+            this.wasFilterActive = filterActive;
         }
 
         if (this.beans.formula?.active) {

@@ -62,8 +62,8 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         'grandTotalRow',
     ];
 
-    /** Tracks whether the previous execute() call produced aggData, so we only clear once on transition. */
-    private hadAggregation = false;
+    /** Tracks whether the previous execute() call produced aggData. Null before first run. */
+    private hadAggregation: boolean | null = null;
 
     // Stale aggData on demoted nodes is cleared by the group stage (setRowNodeGroup), not here.
     public execute(changedPath: ChangedPath | undefined): void {
@@ -71,12 +71,17 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         const userAggFunc = gos.getCallback('getGroupRowAgg');
         const valueColumns = beans.valueColsSvc?.columns;
 
-        if (!valueColumns?.length && !userAggFunc) {
-            if (this.hadAggregation && !changedPath) {
-                // Full refresh with no value columns: clear stale aggData from all groups.
-                // Skip during transaction updates (changedPath defined) — the config-change
-                // full refresh will handle it.
-                this.hadAggregation = false;
+        const hasAggregation = !!(valueColumns?.length || userAggFunc);
+
+        // If aggregation state changed, force full refresh so all nodes are re-evaluated.
+        if (hasAggregation !== this.hadAggregation) {
+            changedPath = undefined;
+        }
+
+        if (!hasAggregation) {
+            this.hadAggregation = false;
+            if (!changedPath) {
+                // Full refresh with no aggregation: clear any stale aggData from all groups.
                 const { colModel, rowModel } = beans;
                 _forEachChangedGroupDepthFirst(rowModel.rootNode, rowModel.hierarchical, undefined, (rowNode) => {
                     setAggDataWithSiblings(rowNode, null, colModel);
@@ -191,8 +196,6 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         return rowNode.childrenAfterFilter ?? rowNode.childrenAfterGroup ?? [];
     }
 }
-
-// ── Module-level aggregation functions ────────────────────────────────────
 
 /** Aggregates value columns for a single group node (non-pivot path). */
 const aggregateValuesOnly = (
