@@ -12,7 +12,7 @@ This file provides guidance to AI Agents when working with code in this reposito
 ### Quick Reference
 
 -   **Main branch:** `latest`
--   **Format:** `yarn nx format` (run before commits)
+-   **Format:** `yarn nx format --sort-root-tsconfig-paths=false` (run before commits)
 -   **Type-check:** `yarn nx build:types <package>` (run before commits)
 -   **Lint:** `yarn nx lint <package>` (run before commits)
 -   **Build:** `yarn nx build <package>`
@@ -34,7 +34,7 @@ This file provides guidance to AI Agents when working with code in this reposito
 -   **Main constraint:** Community and enterprise runtime bundles stay dependency-free beyond AG Grid code.
 -   **Default branch:** Target `latest`; follow release/JIRA naming conventions below for topic branches.
 -   **Build monitoring:** Check `node_modules/.cache/ag-watch-status.json` to monitor watch state (`yarn nx dev`) and build health (see [Development Server Guide](.rulesync/rules/dev-server.md)).
--   **Formatting:** Run `yarn nx format` from the repo root before proposing commits.
+-   **Formatting:** Run `yarn nx format --sort-root-tsconfig-paths=false` from the repo root before proposing commits.
 -   **Typechecking:** Run `yarn nx build:types <package>` from the repo root before proposing commits.
 -   **Linting:** Run `yarn nx lint <package>` from the repo root before proposing commits.
 -   **Baseline verification:** Expect to run `yarn nx test ag-grid-community`, `yarn nx test ag-grid-enterprise`, and `yarn nx e2e ag-grid-docs` after meaningful grid changes.
@@ -75,7 +75,7 @@ For detailed information about preferred technologies and architectural constrai
 -   `yarn install` – install dependencies after cloning or when the Yarn lockfile changes.
     -   `./external/ag-shared/scripts/install-for-cloud/install-for-cloud.sh` – install dependencies and tooling in a remote environment - use this in preference to `yarn install` to ensure all global tools are installed.
 -   `yarn nx clean` – purge all dist folders when switching branches or before packaging releases.
--   `yarn nx format` – format repo files; run from the project root before committing.
+-   `yarn nx format --sort-root-tsconfig-paths=false` – format repo files; run from the project root before committing.
 -   `yarn nx build <package>` – compile a specific package after code edits.
 -   `yarn nx build:types <package>` – regenerate declaration files when touching exported APIs.
 -   `yarn nx build:package <package>` – create ESM/CJS bundles to validate publishable output.
@@ -154,7 +154,7 @@ For code quality guidelines, see [Code Quality Guide](.rulesync/rules/code-quali
 
 Essential practices:
 
--   Run `yarn nx format` before committing
+-   Run `yarn nx format --sort-root-tsconfig-paths=false` before committing
 -   Self-review your changes before proposing commits
 -   Ensure tests exercise real implementations, not test helpers
 
