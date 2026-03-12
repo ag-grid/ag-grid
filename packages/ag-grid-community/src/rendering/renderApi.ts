@@ -73,12 +73,9 @@ export function getCellRendererInstances<TData = any>(
             continue;
         }
 
-        const renderers = rowCtrl.getFullWidthCellRenderers();
-        for (let i = 0; i < renderers.length; i++) {
-            const renderer = renderers[i];
-            if (renderer != null) {
-                fullWidthRenderers.push(_unwrapUserComp(renderer));
-            }
+        const renderer = rowCtrl.getFullWidthCellRenderer();
+        if (renderer != null) {
+            fullWidthRenderers.push(_unwrapUserComp(renderer));
         }
     }
 

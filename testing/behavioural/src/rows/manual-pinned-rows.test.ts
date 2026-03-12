@@ -95,6 +95,25 @@ describe('Manual pinned rows', () => {
         assertPinnedRows(api, 'top', ['t-top-0-rugby']);
     });
 
+    test('isRowPinned updates aria-rowindex for rows below pinned top rows', async () => {
+        await gridsManager.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            enableRowPinning: true,
+            isRowPinned: (node) => (node.data?.sport === 'rugby' ? 'top' : null),
+        });
+
+        await asyncSetTimeout(0);
+
+        const firstBodyRow = document.querySelector(
+            '#myGrid .ag-grid-scrolling-container > .ag-row[row-index="0"]'
+        ) as HTMLElement | null;
+
+        expect(firstBodyRow).toBeTruthy();
+        // 1 header row + 1 pinned top row + row index (0) + 1 (aria is 1-based)
+        expect(firstBodyRow?.getAttribute('aria-rowindex')).toBe('3');
+    });
+
     test('Setting `grandTotalRow` to pinned value does not reset pinned row state', async () => {
         const api = await gridsManager.createGridAndWait('myGrid', {
             columnDefs,

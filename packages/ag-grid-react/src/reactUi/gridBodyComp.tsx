@@ -6,7 +6,10 @@ import {
     FakeHScrollComp,
     FakeVScrollComp,
     GridBodyCtrl,
+    _isCellSelectionEnabled,
+    _isMultiRowSelection,
     _setAriaColCount,
+    _setAriaMultiSelectable,
     _setAriaRole,
     _setAriaRowCount,
 } from 'ag-grid-community';
@@ -21,7 +24,7 @@ type PinnedSection = 'top' | 'bottom';
 type PinnedSectionState = { height: number; invisible: boolean };
 
 const GridBodyComp = () => {
-    const { context, overlays } = useContext(BeansContext);
+    const { context, gos, overlays, rangeSvc } = useContext(BeansContext);
 
     const [rowAnimationClass, setRowAnimationClass] = useState<string>('');
     const [pinnedSections, setPinnedSections] = useState<Record<PinnedSection, PinnedSectionState>>({
@@ -163,6 +166,10 @@ const GridBodyComp = () => {
             eBottom.current
         );
 
+        if ((rangeSvc && _isCellSelectionEnabled(gos)) || _isMultiRowSelection(gos)) {
+            _setAriaMultiSelectable(rootElement, true);
+        }
+
         return () => {
             context.destroyBeans(beansToDestroy);
             for (const f of destroyFuncs) {
@@ -171,7 +178,9 @@ const GridBodyComp = () => {
         };
     }, [
         context,
+        gos,
         overlays,
+        rangeSvc,
         rootElement,
         scrollingFullWidthContainer,
         topRowsHost,

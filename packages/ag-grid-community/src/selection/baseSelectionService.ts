@@ -22,7 +22,7 @@ import {
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { ISetNodesSelectedParams } from '../interfaces/iSelectionService';
 import { _isManualPinnedRow } from '../pinnedRowModel/pinnedRowUtils';
-import type { RowCtrl, RowGui } from '../rendering/row/rowCtrl';
+import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { ChangedPath } from '../utils/changedPath';
 import { CheckboxSelectionComponent } from './checkboxSelectionComponent';
 import { RowRangeSelectionContext } from './rowRangeSelectionContext';
@@ -72,20 +72,23 @@ export abstract class BaseSelectionService extends BeanStub {
         return _isMultiRowSelection(this.gos);
     }
 
-    public onRowCtrlSelected(rowCtrl: RowCtrl, hasFocusFunc: (gui: RowGui) => void, gui?: RowGui): void {
+    public onRowCtrlSelected(rowCtrl: RowCtrl, hasFocusFunc: () => void): void {
+        const gui = rowCtrl.getGui();
+        if (!gui) {
+            return;
+        }
+
         // Treat undefined as false, if we pass undefined down it gets treated as toggle class, rather than explicitly
         // setting the required value
         const selected = !!rowCtrl.rowNode.isSelected();
-        rowCtrl.forEachGui(gui, (gui) => {
-            gui.rowComp.toggleCss('ag-row-selected', selected);
-            const element = gui.element;
-            _setAriaSelected(element, selected);
+        gui.rowComp.toggleCss('ag-row-selected', selected);
+        const element = gui.element;
+        _setAriaSelected(element, selected);
 
-            const hasFocus = element.contains(_getActiveDomElement(this.beans));
-            if (hasFocus) {
-                hasFocusFunc(gui);
-            }
-        });
+        const hasFocus = element.contains(_getActiveDomElement(this.beans));
+        if (hasFocus) {
+            hasFocusFunc();
+        }
     }
 
     public announceAriaRowSelection(rowNode: RowNode): void {

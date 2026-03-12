@@ -7,6 +7,7 @@ import type { RowResizeEndedEvent, RowResizeStartedEvent } from '../events';
 import type { FilterManager } from '../filter/filterManager';
 import { _isAnimateRows, _isDomLayout } from '../gridOptionsUtils';
 import { GridHeaderFeature } from '../headerRendering/gridHeaderFeature';
+import { getAriaHeaderRowCount } from '../headerRendering/headerUtils';
 import type { IColsService } from '../interfaces/iColsService';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { LayoutView } from '../styling/layoutFeature';
@@ -334,12 +335,13 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     public updateRowCount(): void {
-        const headerCount =
-            (this.ctrlsSvc.getHeaderRowsCtrl()?.getRowCount() ?? 0) + (this.filterManager?.getHeaderRowCount() ?? 0);
+        const headerCount = getAriaHeaderRowCount(this.beans);
 
-        const { rowModel } = this.beans;
+        const { rowModel, pinnedRowModel } = this.beans;
+        const pinnedTopCount = pinnedRowModel?.getPinnedTopRowCount() ?? 0;
+        const pinnedBottomCount = pinnedRowModel?.getPinnedBottomRowCount() ?? 0;
         const rowCount = rowModel.isLastRowIndexKnown() ? rowModel.getRowCount() : -1;
-        const total = rowCount === -1 ? -1 : headerCount + rowCount;
+        const total = rowCount === -1 ? -1 : headerCount + pinnedTopCount + rowCount + pinnedBottomCount;
 
         this.comp.setRowCount(total);
     }

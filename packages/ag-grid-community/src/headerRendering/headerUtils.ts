@@ -17,6 +17,16 @@ export function getFocusHeaderRowCount(beans: BeanCollection): number {
     return beans.ctrlsSvc.getHeaderRowsCtrl()?.getRowCount() ?? 0;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function getAriaHeaderRowCount(beans: BeanCollection): number {
+    const { ctrlsSvc, colModel, filterManager } = beans;
+    const renderedHeaderRowCount = ctrlsSvc.getHeaderRowsCtrl()?.getRowCount();
+    const configuredHeaderRowCount =
+        Math.max(getHeaderRowCount(colModel), 0) + (filterManager?.hasFloatingFilters() ? 1 : 0);
+    const baseHeaderRowCount = renderedHeaderRowCount ?? configuredHeaderRowCount;
+    return baseHeaderRowCount + (filterManager?.getHeaderRowCount() ?? 0);
+}
+
 export function getGroupRowsHeight(beans: BeanCollection): number[] {
     const heights: number[] = [];
     const headerRowsCtrl = beans.ctrlsSvc.getHeaderRowsCtrl();

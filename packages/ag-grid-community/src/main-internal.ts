@@ -112,6 +112,7 @@ export {
     _setAriaLabel,
     _setAriaLabelledBy,
     _setAriaLevel,
+    _setAriaMultiSelectable,
     _setAriaOrientation,
     _setAriaPosInSet,
     _setAriaRole,

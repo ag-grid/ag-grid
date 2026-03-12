@@ -55,15 +55,18 @@ export class RowEditStyleFeature extends BeanStub implements IRowStyleFeature {
         const batchEdit = !!this.editSvc?.isBatchEditing();
         const fullRow = this.gos.get('editType') === 'fullRow';
 
-        this.rowCtrl?.forEachGui(undefined, ({ rowComp }) => {
-            rowComp.toggleCss('ag-row-editing', fullRow && editing);
-            rowComp.toggleCss('ag-row-batch-edit', fullRow && editing && batchEdit);
+        const rowComp = this.rowCtrl.getGui()?.rowComp;
+        if (!rowComp) {
+            return;
+        }
 
-            // required for Material theme
-            rowComp.toggleCss('ag-row-inline-editing', editing);
-            rowComp.toggleCss('ag-row-not-inline-editing', !editing);
+        rowComp.toggleCss('ag-row-editing', fullRow && editing);
+        rowComp.toggleCss('ag-row-batch-edit', fullRow && editing && batchEdit);
 
-            rowComp.toggleCss('ag-row-editing-invalid', fullRow && editing && hasErrors);
-        });
+        // required for Material theme
+        rowComp.toggleCss('ag-row-inline-editing', editing);
+        rowComp.toggleCss('ag-row-not-inline-editing', !editing);
+
+        rowComp.toggleCss('ag-row-editing-invalid', fullRow && editing && hasErrors);
     }
 }
