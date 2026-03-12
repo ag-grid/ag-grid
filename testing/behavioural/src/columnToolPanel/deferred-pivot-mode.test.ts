@@ -635,7 +635,7 @@ describe('deferred column tool panel pivot mode', () => {
     });
 
     test('checking a row-group column in deferred pivot mode draws a staged row-group pill immediately', async () => {
-        const { gridApi, toolPanel, toolPanelGui } = await createDeferredPivotModeGrid();
+        const { gridApi, toolPanel } = await createDeferredPivotModeGrid();
 
         expect(getDropZoneText(toolPanel.rowGroupDropZonePanel)).toContain('Country');
         expect(getDropZoneText(toolPanel.rowGroupDropZonePanel)).toContain('Sport');

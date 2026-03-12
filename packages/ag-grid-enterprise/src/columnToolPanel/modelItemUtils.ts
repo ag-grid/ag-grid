@@ -2,8 +2,10 @@ import type { AgColumn, BeanCollection, ColumnEventType, ColumnState, IAggFunc }
 
 import type { ColumnModelItem } from './columnModelItem';
 import { refreshDeferredToolPanelUi } from './toolPanelDeferredUiUtils';
-import { getColumnToolPanelUpdates } from './updates/columnToolPanelUpdateUtils';
-import type { ColumnToolPanelUpdateParams } from './updates/columnToolPanelUpdatesTypes';
+import type {
+    ColumnToolPanelUpdateParams,
+    IColumnToolPanelUpdateStrategy,
+} from './updates/columnToolPanelUpdatesTypes';
 
 export function selectAllChildren(
     beans: BeanCollection,
@@ -23,7 +25,7 @@ export function setAllColumns(
     eventType: ColumnEventType,
     params: ColumnToolPanelUpdateParams
 ): void {
-    const updateStrategy = getColumnToolPanelUpdates(beans);
+    const updateStrategy = beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy;
     const isPivotMode = updateStrategy.getPivotMode(!!params.deferApply);
 
     if (isPivotMode) {
@@ -61,7 +63,7 @@ function setAllVisible(
     eventType: ColumnEventType,
     params: ColumnToolPanelUpdateParams
 ): void {
-    const updateStrategy = getColumnToolPanelUpdates(beans);
+    const updateStrategy = beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy;
     const colStateItems: ColumnState[] = [];
 
     for (const col of columns) {
@@ -97,7 +99,7 @@ function setAllPivotActive(
     eventType: ColumnEventType,
     params: ColumnToolPanelUpdateParams
 ): void {
-    const updateStrategy = getColumnToolPanelUpdates(beans);
+    const updateStrategy = beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy;
     const colStateItems: ColumnState[] = [];
 
     const turnOnAction = (col: AgColumn) => {
@@ -163,7 +165,7 @@ export function updateColumns(
     }
 ): void {
     const { columns, visibleState, pivotState, eventType } = params;
-    const updateStrategy = getColumnToolPanelUpdates(beans);
+    const updateStrategy = beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy;
     const isPivotMode = updateStrategy.getPivotMode(!!params.deferApply);
     const state: ColumnState[] = columns.map((column) => {
         const colId = column.getColId();

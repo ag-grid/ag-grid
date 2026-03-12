@@ -27,7 +27,7 @@ import { AgPrimaryCols } from './agPrimaryCols';
 import columnToolPanelCSS from './columnToolPanel.css';
 import type { ColumnToolPanelFactory } from './columnToolPanelFactory';
 import type { PivotModePanel } from './pivotModePanel';
-import { getColumnToolPanelUpdates } from './updates/columnToolPanelUpdateUtils';
+import type { IColumnToolPanelUpdateStrategy } from './updates/columnToolPanelUpdatesTypes';
 
 export interface ToolPanelColumnCompParams<TData = any, TContext = any>
     extends IToolPanelParams<TData, TContext, ColumnToolPanelState>,
@@ -222,7 +222,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     private readonly onDeferredApply = (): void => {
-        getColumnToolPanelUpdates(this.beans).commit(this.isDeferModeEnabled);
+        (this.beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy).commit(this.isDeferModeEnabled);
     };
 
     private readonly onDeferModeChanged = (nextDeferMode: boolean): void => {
@@ -231,7 +231,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         }
 
         if (this.isDeferModeEnabled) {
-            getColumnToolPanelUpdates(this.beans).reset(this.isDeferModeEnabled);
+            (this.beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy).reset(this.isDeferModeEnabled);
         }
 
         this.isDeferModeEnabled = nextDeferMode;
@@ -245,7 +245,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     };
 
     private readonly onDeferredCancel = (): void => {
-        getColumnToolPanelUpdates(this.beans).reset(this.isDeferModeEnabled);
+        (this.beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy).reset(this.isDeferModeEnabled);
         this.refreshToolPanelLayouts();
         this.pivotModePanel?.refreshEditStrategy();
     };

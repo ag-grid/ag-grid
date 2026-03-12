@@ -31,8 +31,10 @@ import {
 import type { ColumnModelItem } from './columnModelItem';
 import { createPivotState, selectAllChildren, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
-import { getColumnToolPanelUpdates } from './updates/columnToolPanelUpdateUtils';
-import type { ColumnToolPanelUpdateParams } from './updates/columnToolPanelUpdatesTypes';
+import type {
+    ColumnToolPanelUpdateParams,
+    IColumnToolPanelUpdateStrategy,
+} from './updates/columnToolPanelUpdatesTypes';
 
 const ToolPanelColumnGroupElement: ElementParams = {
     tag: 'div',
@@ -367,7 +369,7 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private workOutSelectedValue(): boolean | undefined {
-        const updateStrategy = getColumnToolPanelUpdates(this.beans);
+        const updateStrategy = this.beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy;
         const pivotMode = updateStrategy.getPivotMode(!!this.params.deferApply);
 
         const visibleLeafColumns = this.getVisibleLeafColumns();
@@ -393,7 +395,9 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private workOutReadOnlyValue(): boolean {
-        const pivotMode = getColumnToolPanelUpdates(this.beans).getPivotMode(!!this.params.deferApply);
+        const pivotMode = (this.beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy).getPivotMode(
+            !!this.params.deferApply
+        );
 
         let colsThatCanAction = 0;
 
@@ -411,7 +415,7 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private isColumnChecked(column: AgColumn): boolean {
-        const updateStrategy = getColumnToolPanelUpdates(this.beans);
+        const updateStrategy = this.beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy;
         if (updateStrategy.getPivotMode(!!this.params.deferApply)) {
             return updateStrategy.isColumnSelectedInPivotModeToolPanel(!!this.params.deferApply, column);
         }

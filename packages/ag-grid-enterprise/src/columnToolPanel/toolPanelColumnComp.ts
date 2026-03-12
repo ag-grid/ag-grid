@@ -28,7 +28,7 @@ import type { ColumnModelItem } from './columnModelItem';
 import type { ToolPanelColumnCompParams } from './columnToolPanel';
 import { createPivotState, setAllColumns, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
-import { getColumnToolPanelUpdates } from './updates/columnToolPanelUpdateUtils';
+import type { IColumnToolPanelUpdateStrategy } from './updates/columnToolPanelUpdatesTypes';
 
 const ToolPanelColumnElement: ElementParams = {
     tag: 'div',
@@ -294,7 +294,7 @@ export class ToolPanelColumnComp extends Component {
 
     private onColumnStateChanged(): void {
         this.processingColumnStateChange = true;
-        const updateStrategy = getColumnToolPanelUpdates(this.beans);
+        const updateStrategy = this.beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy;
         const isPivotMode = updateStrategy.getPivotMode(!!this.params.deferApply);
         if (isPivotMode) {
             // if reducing, checkbox means column is one of pivot, value or group
