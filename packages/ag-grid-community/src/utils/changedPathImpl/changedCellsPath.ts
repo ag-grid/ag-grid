@@ -181,11 +181,10 @@ export class ChangedCellsPath {
         if (rowSlot < 0) {
             return true;
         }
-        if (colSlot < 0) {
-            return false;
+        if (colSlot < 32) {
+            return colSlot >= 0 && (this.bits[rowSlot] & (1 << colSlot)) !== 0;
         }
-        const word = colSlot < 32 ? this.bits : this.extraBits![(colSlot >>> 5) - 1];
-        return (word[rowSlot] & (1 << (colSlot & 31))) !== 0;
+        return (this.extraBits![(colSlot >>> 5) - 1][rowSlot] & (1 << (colSlot & 31))) !== 0;
     }
 
     /** Registers a new row and all its unregistered ancestors. Returns the row's bitmask index.
