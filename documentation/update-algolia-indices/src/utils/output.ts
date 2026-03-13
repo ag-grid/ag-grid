@@ -62,6 +62,8 @@ export const updateAlgolia = async (indexName: string, records: Record<string, a
         attributeForDistinct: 'breadcrumb', // configure what is used to decide if a page is the same
         customRanking: ['asc(rank)', 'asc(positionInPage)'], // custom tweaks to the ranking
         camelCaseAttributes: ['heading', 'subHeading'], // split camelCased text so it can match regular text
+        indexLanguages: ['en'], // enable English stemming at index time
+        queryLanguages: ['en'], // enable English stemming at query time
         hitsPerPage: 10, // how many results should be returned per page
         snippetEllipsisText: '…', // the character used when truncating content for snippets
     });

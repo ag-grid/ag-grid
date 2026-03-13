@@ -1,5 +1,5 @@
 import { createPart } from '../../../../agStack/theming/partImpl';
-import { iconSetMaterialCSS } from './icon-set-material.css-GENERATED';
+import iconSetMaterialCSS from './icon-set-material.css';
 
 export const iconSetMaterial = /*#__PURE__*/ createPart({
     feature: 'iconSet',

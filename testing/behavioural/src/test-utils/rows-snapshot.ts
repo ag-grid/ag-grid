@@ -38,7 +38,7 @@ export function getRowSnapshot<TData = any>(row: IRowNode<TData>) {
     } = row;
 
     return {
-        allChildrenCount: allChildrenCount as typeof allChildrenCount | undefined,
+        allChildrenCount,
         allLeafChildren: mapArray(allLeafChildren, getRowKey),
         childIndex,
         childrenAfterFilter: mapArray(childrenAfterFilter, getRowKey),

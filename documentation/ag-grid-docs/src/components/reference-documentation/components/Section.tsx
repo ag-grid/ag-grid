@@ -198,6 +198,7 @@ export const Section: FunctionComponent<SectionProps> = ({
                 />
             )}
             <table
+                data-api-reference-table
                 className={classnames(styles.reference, styles.apiReference, legacyStyles.apiReference, 'no-zebra')}
                 style={config.overrideBottomMargin ? { marginBottom: config.overrideBottomMargin } : {}}
             >

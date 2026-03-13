@@ -5,7 +5,7 @@ import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
 import { AgFillHandle } from './agFillHandle';
 import { AgRangeHandle } from './agRangeHandle';
-import { rangeSelectionCSS } from './rangeSelection.css-GENERATED';
+import rangeSelectionCSS from './rangeSelection.css';
 import { addCellRange, clearRangeSelection, getCellRanges } from './rangeSelectionApi';
 import { RangeService } from './rangeService';
 

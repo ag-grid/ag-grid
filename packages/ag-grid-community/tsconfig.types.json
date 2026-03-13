@@ -2,8 +2,11 @@
   "extends": "./tsconfig.lib.json",
   "compilerOptions": {
     "declaration": true,
-    "emitDeclarationOnly": true
+    "emitDeclarationOnly": true,
+    "types": ["vite/client"],
+    "module": "preserve",
+    "moduleResolution": "bundler"
   },
-  "include": ["src/main.ts"],
+  "include": ["src/main.ts", "src/typings.ts"],
   "exclude": ["src/main-styles.ts", "src/*.test.ts"]
 }

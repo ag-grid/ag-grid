@@ -1,5 +1,5 @@
 import type { GridApi } from 'ag-grid-community';
-import { ClientSideRowModelModule, QuickFilterModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, QuickFilterModule, getGridElement } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, cachedJSONObjects } from '../test-utils';
@@ -9,6 +9,19 @@ function getVisibleAutoGroupColIds(api: GridApi): string[] {
         .getAllDisplayedColumns()
         .filter((col) => col.getColId().startsWith('ag-Grid-AutoColumn'))
         .map((col) => col.getColId());
+}
+
+/** Returns col-id attributes from the first data row's cells in DOM order */
+function getCellColIdsFromDom(api: GridApi): string[] {
+    const gridElement = getGridElement(api);
+    if (!gridElement) {
+        return [];
+    }
+    const firstRow = gridElement.querySelector('[role="row"][row-index="0"]');
+    if (!firstRow) {
+        return [];
+    }
+    return Array.from(firstRow.querySelectorAll('[role="gridcell"]')).map((cell) => cell.getAttribute('col-id') ?? '');
 }
 
 describe('ag-grid groupHideColumnsUntilExpanded', () => {
@@ -863,6 +876,40 @@ describe('ag-grid groupHideColumnsUntilExpanded', () => {
 
         // Single auto group column should always be visible
         expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn']);
+    });
+
+    test('DOM order of cells matches display order when group columns are revealed', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true },
+                { field: 'year', rowGroup: true },
+                { field: 'athlete' },
+                { field: 'gold' },
+            ],
+            groupDisplayType: 'multipleColumns',
+            groupHideColumnsUntilExpanded: true,
+            groupDefaultExpanded: 0,
+            ensureDomOrder: true,
+            rowData: twoLevelRowData,
+            getRowId: (params) => params.data.id,
+        });
+
+        // Initially only the country auto-group column is visible
+        expect(getCellColIdsFromDom(api)).toEqual(['ag-Grid-AutoColumn-country', 'country', 'year', 'athlete', 'gold']);
+
+        // Expand Ireland - year auto-group column becomes visible
+        api.setRowNodeExpanded(api.getRowNode('row-group-country-Ireland')!, true, false, true);
+
+        // The newly revealed auto-group-year column should appear in the correct DOM position
+        // (after auto-group-country, before the data columns)
+        expect(getCellColIdsFromDom(api)).toEqual([
+            'ag-Grid-AutoColumn-country',
+            'ag-Grid-AutoColumn-year',
+            'country',
+            'year',
+            'athlete',
+            'gold',
+        ]);
     });
 
     test('has no effect with groupRows display type', async () => {

@@ -14,7 +14,7 @@ import type { PivotDropZonePanel } from '../rowGrouping/columnDropZones/pivotDro
 import type { RowGroupDropZonePanel } from '../rowGrouping/columnDropZones/rowGroupDropZonePanel';
 import type { ValuesDropZonePanel } from '../rowGrouping/columnDropZones/valueDropZonePanel';
 import { AgPrimaryCols } from './agPrimaryCols';
-import { columnToolPanelCSS } from './columnToolPanel.css-GENERATED';
+import columnToolPanelCSS from './columnToolPanel.css';
 import type { ColumnToolPanelFactory } from './columnToolPanelFactory';
 import type { PivotModePanel } from './pivotModePanel';
 
@@ -184,7 +184,9 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             }
             const eGui = panel.getGui();
             panel.toggleResizable(
-                !eGui.classList.contains('ag-last-column-drop') && !eGui.classList.contains('ag-hidden')
+                !eGui.classList.contains('ag-last-column-drop') &&
+                    !eGui.classList.contains('ag-hidden') &&
+                    !eGui.classList.contains('ag-last-visible-child')
             );
         }
     }
@@ -205,6 +207,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             lastVisible.classList.add('ag-last-column-drop');
         }
 
+        this.primaryColsPanel.getGui().classList.toggle('ag-last-visible-child', !lastVisible);
         this.setResizers();
     }
 

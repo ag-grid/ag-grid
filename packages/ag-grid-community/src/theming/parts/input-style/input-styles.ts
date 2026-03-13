@@ -7,9 +7,9 @@ import {
     foregroundBackgroundMix,
     foregroundMix,
 } from '../../../agStack/theming/themeUtils';
-import { inputStyleBaseCSS } from './input-style-base.css-GENERATED';
-import { inputStyleBorderedCSS } from './input-style-bordered.css-GENERATED';
-import { inputStyleUnderlinedCSS } from './input-style-underlined.css-GENERATED';
+import inputStyleBaseCSS from './input-style-base.css';
+import inputStyleBorderedCSS from './input-style-bordered.css';
+import inputStyleUnderlinedCSS from './input-style-underlined.css';
 
 export type InputStyleParams = {
     /**

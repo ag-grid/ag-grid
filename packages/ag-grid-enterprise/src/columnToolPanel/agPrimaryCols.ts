@@ -1,7 +1,7 @@
 import type { ColDef, ColGroupDef, ColumnEventType, ElementParams } from 'ag-grid-community';
 import { Component, PositionableFeature, RefPlaceholder } from 'ag-grid-community';
 
-import { agPrimaryColsCSS } from './agPrimaryCols.css-GENERATED';
+import agPrimaryColsCSS from './agPrimaryCols.css';
 import type { AgPrimaryColsHeader } from './agPrimaryColsHeader';
 import { AgPrimaryColsHeaderSelector } from './agPrimaryColsHeader';
 import type { AgPrimaryColsList } from './agPrimaryColsList';

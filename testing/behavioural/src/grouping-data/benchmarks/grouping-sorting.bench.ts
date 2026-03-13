@@ -12,6 +12,7 @@ const COLUMN_COUNTS = [5];
 
 suite('sorting', () => {
     const gridsManager = new TestGridsManager({
+        benchmark: true,
         modules: [ClientSideRowModelModule, ClientSideRowModelApiModule, RowGroupingModule],
     });
 

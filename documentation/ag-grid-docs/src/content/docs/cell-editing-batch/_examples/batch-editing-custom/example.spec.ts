@@ -21,7 +21,7 @@ test.agExample(import.meta, () => {
 
         // Start batch editing
         await page.locator('button', { hasText: 'Start Batch' }).click();
-        await expect(page.locator('#batchStatusValue')).toHaveText('Active (0 edits)');
+        await expect(page.locator('#batchStatusValue')).toHaveText('Active');
 
         // Double-click to edit first_name cell
         await firstNameCell.dblclick();

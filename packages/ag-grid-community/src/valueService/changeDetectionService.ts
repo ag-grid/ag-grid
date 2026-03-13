@@ -1,11 +1,10 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import type { CellValueChangedEvent } from '../events';
 import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
-import { ChangedPath } from '../utils/changedPath';
+import { ChangedCellsPath, ChangedRowsPath, _forEachChangedGroupDepthFirst } from '../utils/changedPath';
 
 // Matches value in clipboard module
 const SOURCE_PASTE = 'paste';
@@ -44,13 +43,12 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
 
         // step 1 of change detection is to update the aggregated values
         if (rootNode && !rowNode.isRowPinned()) {
-            const onlyChangedColumns = gos.get('aggregateOnlyChangedColumns');
-            const changedPath = new ChangedPath(onlyChangedColumns, rootNode);
-            changedPath.addParentNode(rowNode.parent, [event.column as AgColumn]);
+            const changedPath = gos.get('aggregateOnlyChangedColumns') ? new ChangedCellsPath() : new ChangedRowsPath();
+            changedPath.addCell(rowNode.parent, event.column?.getId());
             clientSideRowModel.doAggregate(changedPath);
 
             // add all nodes impacted by aggregation, as they need refreshed also.
-            changedPath.forEachChangedNodeDepthFirst((rowNode) => {
+            _forEachChangedGroupDepthFirst(rootNode, changedPath, (rowNode) => {
                 nodesToRefresh.push(rowNode);
                 if (rowNode.sibling) {
                     nodesToRefresh.push(rowNode.sibling);

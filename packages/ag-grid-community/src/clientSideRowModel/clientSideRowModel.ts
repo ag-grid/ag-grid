@@ -15,7 +15,8 @@ import type { IRowNodeStage } from '../interfaces/iRowNodeStage';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import type { OverlayType } from '../rendering/overlays/overlayComponent';
-import { ChangedPath } from '../utils/changedPath';
+import type { ChangedPath } from '../utils/changedPath';
+import { ChangedRowsPath, _forEachChangedGroupDepthFirst } from '../utils/changedPath';
 import { _warn } from '../validation/logging';
 import { ChangedRowNodes } from './changedRowNodes';
 import { ClientSideNodeManager } from './clientSideNodeManager';
@@ -336,9 +337,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
     }
 
-    private clearRowTopAndRowIndex(changedPath: ChangedPath, displayedRowsMapped: Set<string>): void {
-        const changedPathActive = changedPath.active;
-
+    private clearRowTopAndRowIndex(changedPath: ChangedPath | undefined, displayedRowsMapped: Set<string>): void {
         const clearIfNotDisplayed = (rowNode?: RowNode) => {
             if (rowNode?.id != null && !displayedRowsMapped.has(rowNode.id)) {
                 rowNode.clearRowTopAndRowIndex();
@@ -355,15 +354,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 return;
             }
 
-            // if a changedPath is active, it means we are here because of a transaction update or
-            // a change detection. neither of these impacts the open/closed state of groups. so if
-            // a group is not open this time, it was not open last time. so we know all closed groups
-            // already have their top positions cleared. so there is no need to traverse all the way
-            // when changedPath is active and the rowNode is not expanded.
-            const isRootNode = rowNode.level == -1; // we need to give special consideration for root node,
-            // as expanded=undefined for root node
-            const skipChildren = changedPathActive && !isRootNode && !rowNode.expanded;
-            if (skipChildren) {
+            // When changedPath is provided, we are here because of a transaction update or
+            // a change detection. Neither of these impacts the open/closed state of groups. So if
+            // a group is not open this time, it was not open last time. So we know all closed groups
+            // already have their top positions cleared — no need to traverse further.
+            if (changedPath && rowNode.level !== -1 && !rowNode.expanded) {
                 return;
             }
             for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
@@ -501,19 +496,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.refreshModel({ step: this.beans.colModel.isPivotActive() ? 'pivot' : 'aggregate' });
     }
 
-    private createChangePath(enabled: boolean): ChangedPath {
-        // for updates, if the row is updated at all, then we re-calc all the values
-        // in that row. we could compare each value to each old value, however if we
-        // did this, we would be calling the valueSvc twice, once on the old value
-        // and once on the new value. so it's less valueGetter calls if we just assume
-        // each column is different. that way the changedPath is used so that only
-        // the impacted parent rows are recalculated, parents who's children have
-        // not changed are not impacted.
-        const changedPath = new ChangedPath(false, this.rootNode!);
-        changedPath.active = enabled;
-        return changedPath;
-    }
-
     private isSuppressModelUpdateAfterUpdateTransaction(params: RefreshModelParams): boolean {
         if (!this.gos.get('suppressModelUpdateAfterUpdateTransaction')) {
             return false; // Not suppressed
@@ -556,7 +538,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
 
         const rowDataUpdated = !!params.rowDataUpdated;
-        const changedPath = (params.changedPath ??= this.createChangePath(!params.newData && rowDataUpdated));
+        params.changedPath ??= !params.newData && rowDataUpdated ? new ChangedRowsPath() : undefined;
 
         if (started && rowDataUpdated) {
             eventSvc.dispatchEvent({ type: 'rowDataUpdated' });
@@ -581,7 +563,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         let succeeded = false;
         this.refreshingModel = true; // Prevent nested refreshModel calls
         try {
-            this.executeRefresh(params, changedPath, rowDataUpdated);
+            this.executeRefresh(params, rowDataUpdated);
             succeeded = true;
         } finally {
             // Reset lock flags even on failure to prevent the grid from being stuck
@@ -609,7 +591,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     /** Executes the refresh pipeline stages and updates row positions. */
-    private executeRefresh(params: RefreshModelParams, changedPath: ChangedPath, rowDataUpdated: boolean): void {
+    private executeRefresh(params: RefreshModelParams, rowDataUpdated: boolean): void {
         const { beans } = this;
 
         beans.masterDetailSvc?.refreshModel(params);
@@ -617,11 +599,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             beans.colFilter?.refreshModel();
         }
 
-        // this goes through the pipeline of stages. what's in my head is similar to the diagram on this page:
-        // http://commons.apache.org/sandbox/commons-pipeline/pipeline_basics.html
-        // however we want to keep the results of each stage, hence we manually call each step
-        // rather than have them chain each other.
-        // fallthrough in below switch is on purpose, eg if STEP_FILTER, then all steps after runs too
+        let changedPath = params.changedPath;
+
+        // Ensure the root node is always visited by pipeline stages even for empty transactions.
+        changedPath?.addRow(this.rootNode);
+
+        // Pipeline of stages — fallthrough is on purpose, e.g. if 'filter', then all steps after run too.
         /* eslint-disable no-fallthrough */
         switch (params.step) {
             case 'group':
@@ -629,7 +612,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             case 'filter':
                 this.doFilter(changedPath);
             case 'pivot':
-                this.doPivot(changedPath);
+                // Pivot may signal that columns changed, requiring full traversal for subsequent stages.
+                if (this.doPivot(changedPath)) {
+                    changedPath = undefined;
+                    params.changedPath = undefined;
+                }
             case 'aggregate': // depends on agg fields
                 this.doAggregate(changedPath);
             case 'filter_aggregates':
@@ -940,14 +927,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     // it's possible to recompute the aggregate without doing the other parts + api.refreshClientSideRowModel('aggregate')
-    public doAggregate(changedPath: ChangedPath): void {
+    public doAggregate(changedPath: ChangedPath | undefined): void {
         const rootNode = this.rootNode;
         if (rootNode) {
             this.beans.aggStage?.execute(changedPath);
         }
     }
 
-    private doFilterAggregates(changedPath: ChangedPath): void {
+    private doFilterAggregates(changedPath: ChangedPath | undefined): void {
         const rootNode = this.rootNode!;
         const filterAggStage = this.beans.filterAggStage;
         if (filterAggStage) {
@@ -958,13 +945,13 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         rootNode.childrenAfterAggFilter = rootNode.childrenAfterFilter;
     }
 
-    private doSort(changedPath: ChangedPath, changedRowNodes: ChangedRowNodes | undefined): void {
+    private doSort(changedPath: ChangedPath | undefined, changedRowNodes: ChangedRowNodes | undefined): void {
         const sortStage = this.beans.sortStage;
         if (sortStage) {
             sortStage.execute(changedPath, changedRowNodes);
             return;
         }
-        changedPath.forEachChangedNodeDepthFirst((rowNode) => {
+        _forEachChangedGroupDepthFirst(this.rootNode, changedPath, (rowNode) => {
             rowNode.childrenAfterSort = rowNode.childrenAfterAggFilter!.slice(0);
             updateRowNodeAfterSort(rowNode);
         });
@@ -995,20 +982,21 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
     }
 
-    private doFilter(changedPath: ChangedPath): void {
+    private doFilter(changedPath: ChangedPath | undefined): void {
         const filterStage = this.beans.filterStage;
         if (filterStage) {
             filterStage.execute(changedPath);
             return;
         }
-        changedPath.forEachChangedNodeDepthFirst((rowNode) => {
+        _forEachChangedGroupDepthFirst(this.rootNode, changedPath, (rowNode) => {
             rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
             updateRowNodeAfterFilter(rowNode);
-        }, true);
+        });
     }
 
-    private doPivot(changedPath: ChangedPath) {
-        this.beans.pivotStage?.execute(changedPath);
+    /** Returns `true` if pivot columns changed and changedPath should be deactivated. */
+    private doPivot(changedPath: ChangedPath | undefined): boolean {
+        return this.beans.pivotStage?.execute(changedPath) ?? false;
     }
 
     public getRowNode(id: string): RowNode | undefined {
@@ -1112,7 +1100,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             keepRenderedRows: true,
             animate,
             changedRowNodes,
-            changedPath: this.createChangePath(true),
+            changedPath: new ChangedRowsPath(),
         });
     }
 

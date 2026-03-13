@@ -38,12 +38,13 @@ Quick-reference for all AI agent commands, skills, sub-agents, and rules availab
 
 ## Testing and Quality
 
-| Type    | Name                    | Invoke                       | What it does                                   |
-| ------- | ----------------------- | ---------------------------- | ---------------------------------------------- |
-| Skill   | 🔵 `git-bisect`         | `/git-bisect` (user)         | Find the commit that introduced a regression   |
-| Skill   | 🔵 `batch-lint-cleanup` | `/batch-lint-cleanup` (user) | Auto-fix ESLint violations by rule             |
-| Command | 🟢 `/docs-e2e-tests`    | `/docs-e2e-tests`            | Write/update Playwright tests for doc examples |
-| Agent   | 🔵 `playwright-expert`  | Auto                         | Playwright test architecture and debugging     |
+| Type    | Name                    | Invoke                       | What it does                                                    |
+| ------- | ----------------------- | ---------------------------- | --------------------------------------------------------------- |
+| Skill   | 🔵 `git-bisect`         | `/git-bisect` (user)         | Find the commit that introduced a regression                    |
+| Skill   | 🔵 `batch-lint-cleanup` | `/batch-lint-cleanup` (user) | Auto-fix ESLint violations by rule                              |
+| Command | 🟢 `/docs-e2e-tests`    | `/docs-e2e-tests`            | Write/update Playwright tests for doc examples                  |
+| Command | 🟢 `/manual-test`       | `/manual-test <url>`         | Create a manual test project from a docs example or plunker URL |
+| Agent   | 🔵 `playwright-expert`  | Auto                         | Playwright test architecture and debugging                      |
 
 ## Planning and Analysis
 

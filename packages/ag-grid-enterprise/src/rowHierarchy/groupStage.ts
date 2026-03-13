@@ -1,4 +1,5 @@
 import type {
+    BeanCollection,
     ClientSideRowModelStage,
     GridOptions,
     IClientSideRowModel,
@@ -10,6 +11,7 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
+import { setRowNodeGroup } from '../rowGrouping/rowGroupingUtils';
 import type { IRowGroupingStrategy } from './rowHierarchyUtils';
 
 export class GroupStage<TData> extends BeanStub implements NamedBean, _IRowNodeGroupStage {
@@ -110,7 +112,7 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, _IRowNodeG
             this.needReset = false;
             beans.rowDragSvc?.cancelRowDrag();
             params.animate = false; // resetting grouping / treeData, so no animation
-            resetGrouping(rootNode, !nested);
+            resetGrouping(rootNode, !nested, beans);
         }
         return strategy ? strategy.execute(rootNode, params) || needReset : undefined;
     }
@@ -197,13 +199,14 @@ const loadRealLeafs = (node: RowNode): RowNode[] | null => {
     return leafs;
 };
 
-const resetGrouping = <TData>(rootNode: RowNode<TData>, canResetTreeNode: boolean): void => {
+const resetGrouping = <TData>(rootNode: RowNode<TData>, canResetTreeNode: boolean, beans: BeanCollection): void => {
     const allLeafs = rootNode._leafs!;
     const rootSibling = rootNode.sibling;
     rootNode.treeNodeFlags = 0;
     rootNode.childrenAfterGroup = allLeafs;
     rootNode.childrenMapped = null;
     rootNode._groupData = undefined;
+    rootNode.aggData = null;
     if (rootSibling) {
         rootSibling.childrenAfterGroup = rootNode.childrenAfterGroup;
         rootSibling.childrenAfterAggFilter = rootNode.childrenAfterAggFilter;
@@ -211,6 +214,7 @@ const resetGrouping = <TData>(rootNode: RowNode<TData>, canResetTreeNode: boolea
         rootSibling.childrenAfterSort = rootNode.childrenAfterSort;
         rootSibling.childrenMapped = null;
         rootSibling._groupData = undefined;
+        rootSibling.aggData = null;
     }
     for (let i = 0, allLeafsLen = allLeafs.length ?? 0; i < allLeafsLen; ++i) {
         const row = allLeafs[i];
@@ -224,8 +228,7 @@ const resetGrouping = <TData>(rootNode: RowNode<TData>, canResetTreeNode: boolea
         if (canResetTreeNode) {
             row.treeParent = null;
         }
-        row.group = false;
-        row.updateHasChildren();
+        setRowNodeGroup(row, beans, false);
     }
     rootNode.updateHasChildren();
 };

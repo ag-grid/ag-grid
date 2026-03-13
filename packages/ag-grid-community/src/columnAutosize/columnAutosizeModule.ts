@@ -2,7 +2,7 @@ import type { _ColumnAutosizeApi } from '../api/gridApi';
 import type { _ModuleWithApi } from '../interfaces/iModule';
 import { AutoWidthModule } from '../rendering/autoWidthModule';
 import { VERSION } from '../version';
-import { columnAutoSizeCSS } from './columnAutoSize.css-GENERATED';
+import columnAutoSizeCSS from './columnAutoSize.css';
 import { autoSizeAllColumns, autoSizeColumns, sizeColumnsToFit } from './columnAutosizeApi';
 import { ColumnAutosizeService } from './columnAutosizeService';
 

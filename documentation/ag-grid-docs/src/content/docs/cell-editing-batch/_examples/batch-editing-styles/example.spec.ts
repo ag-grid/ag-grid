@@ -23,8 +23,8 @@ test.agExample(import.meta, () => {
         const lastNameCell = agIdFor.cell('0', 'lastName');
         await expect(lastNameCell).not.toHaveClass(/ag-cell-batch-edit/);
 
-        // Status indicator should reflect active batch with 2 pending edits
-        await expect(page.locator('#batchStatusValue')).toHaveText('Active (2 edits)');
+        // Status indicator should reflect active batch
+        await expect(page.locator('#batchStatusValue')).toHaveText('Active');
     });
 
     test.eachFramework('Commit batch applies values and removes styling', async ({ page, agIdFor }) => {

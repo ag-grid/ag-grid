@@ -560,7 +560,7 @@ jobs:
             -Dsonar.sources=./ag-grid-community,./ag-grid-angular/projects/ag-grid-angular,./ag-grid-react,./ag-grid-vue3
             -Dsonar.typescript.tsconfigPaths=./ag-grid-community/tsconfig.lib.json,./ag-grid-angular/projects/ag-grid-angular/tsconfig.lib.prod.json,./ag-grid-react/tsconfig.json,./ag-grid-vue3/tsconfig.json
             -Dsonar.projectKey=ag-grid_community_latest
-            -Dsonar.exclusions=**/__tests__/*,**/test.ts,**/tsconfig.typings.json,**/LICENSE.html,**/*.md,**/dist,**/node_modules,**/typings,**/lib,**/*spec.js
+            -Dsonar.exclusions=**/__tests__/*,**/test.ts,**/tsconfig.typings.json,**/LICENSE.html,**/*.md,**/dist,**/node_modules,**/typings,**/lib,**/*spec.js,**/e2e
             -Dsonar.scanner.force-deprecated-java-version=true
             -Dsonar.coverage.exclusions=**/*
 
@@ -586,6 +586,6 @@ jobs:
             -Dsonar.typescript.tsconfigPaths=./ag-grid-enterprise/tsconfig.lib.json
             -Dsonar.branch.name=master
             -Dsonar.projectKey=ag-grid-enterprise-latest
-            -Dsonar.exclusions=**/tsconfig.typings.json,**/LICENSE.html,**/*.md,**/dist,**/node_modules,**/typings,**/lib,**/*spec.js
+            -Dsonar.exclusions=**/tsconfig.typings.json,**/LICENSE.html,**/*.md,**/dist,**/node_modules,**/typings,**/lib,**/*spec.js,**/e2e
             -Dsonar.scanner.force-deprecated-java-version=true
             -Dsonar.coverage.exclusions=**/*
