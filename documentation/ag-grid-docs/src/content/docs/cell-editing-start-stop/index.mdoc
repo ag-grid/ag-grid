@@ -4,9 +4,7 @@ title: "Start/Stop Cell Editing"
 
 Customize when and how editing starts and stops using configuration options, keyboard shortcuts, or the Grid API.
 
-Once you've [enabled editing](./cell-editing/) on your columns, the grid provides several ways to customize editing behavior beyond the defaults.
-
-## Customizing Start Triggers
+## Start Triggers
 
 Assuming `editable=true` or `editable` has a callback that returns `true` for the Column Definition, editing will start upon any of the following:
 
@@ -34,7 +32,7 @@ The grid below has `suppressClickEdit = true` so that clicking doesn't started e
 
 {% gridExampleRunner title="No Click Editing" name="single-click-editing-renderer"  exampleHeight=520 /%}
 
-## Customizing Stop Behavior
+## Stop Triggers
 
 The grid will stop editing when any of the following happen:
 
@@ -58,6 +56,12 @@ The example below shows the editing with `stopEditingWhenCellsLoseFocus = true`.
 -   Double-click to start editing 'Year', a custom popup editor appears, you can click anywhere on the popup editor, but once you click outside the editor, the popup closes.
 
 {% gridExampleRunner title="Stop Editing When Grid Loses Focus" name="stop-edit-when-grid-loses-focus"  exampleHeight=510 /%}
+
+## Start/Stop Events
+
+Listen for editing lifecycle events:
+
+{% apiDocumentation source="grid-events/events.json" section="editing" names=["cellEditingStarted", "cellEditingStopped"] /%}
 
 ## Navigation During Editing
 
@@ -84,9 +88,9 @@ The example below demonstrates the focus moving down when {% kbd "↵ Enter" /%}
 
 {% gridExampleRunner title="Enter Key Navigation" name="enter-key-navigation"  exampleHeight=555 /%}
 
-## Programmatic Control
+## Editing API
 
-Control editing programmatically with the Grid API:
+The grid has the following API methods for editing:
 
 {% apiDocumentation source="grid-api/api.json" section="editing" names=["startEditingCell", "stopEditing", "getEditingCells", "getEditRowValues", "isEditing"] /%}
 
@@ -107,30 +111,3 @@ The example below illustrates different parts of the editing API. Each button st
 Events are logged in the developer console.
 
 {% gridExampleRunner title="Cell Editing API" name="cell-editing"  exampleHeight=545 /%}
-
-Below is a code example showing how to use the editing API methods:
-
-```{% frameworkTransform=true %}
-// Start editing country cell on first row
-api.startEditingCell({
-    rowIndex: 0,
-    colKey: 'country'
-});
-
-// Stop editing
-api.stopEditing();
-
-// Print details of editing cells
-const cellDefs = api.getEditingCells();
-cellDefs.forEach(cellDef => {
-    console.log(cellDef.rowIndex);
-    console.log(cellDef.column.getId());
-    console.log(cellDef.floating);
-});
-```
-
-## Start/Stop Events
-
-Listen for editing lifecycle events:
-
-{% apiDocumentation source="grid-events/events.json" section="editing" names=["cellEditingStarted", "cellEditingStopped"] /%}

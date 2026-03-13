@@ -53,7 +53,7 @@ Use this command when a documentation section:
 
 **Grouping principles**:
 
--   **Workflow groups**: Steps in a process (e.g., "Editing Basics" for start → parse → save)
+-   **Workflow groups**: Steps in a process (e.g., "Editing Lifecycle" for start → parse → save)
 -   **Feature groups**: Related functionality (e.g., "Cell Editors" for provided vs custom)
 -   **Mode groups**: Alternative approaches (e.g., "Editing Modes" for full row vs batch)
 -   **Quality groups**: Safety/validation features (e.g., "Data Quality" for validation and undo)
@@ -118,6 +118,16 @@ One-sentence value proposition describing the user benefit.
 ```
 
 See the [Documentation Pages Guide](.rulesync/rules/docs-pages.md#value-propositions) for writing guidelines on value propositions.
+
+### Phase 3b: Prose and Heading Cleanup
+
+After adding value propositions, scan every page for two common artefacts:
+
+**Redundant intro paragraphs**: Delete the opening line of the first section if it restates context the value proposition already provides. The canonical anti-pattern is:
+
+> "Once you've [enabled editing](./cell-editing/) on your columns, the grid provides several ways to…"
+
+When a page already has a value proposition (and the nav gives structural context), that opener is redundant. Delete it.
 
 ### Phase 4: Cross-References
 
@@ -312,6 +322,7 @@ Before completing, verify:
 -   [ ] Each page includes at least one working example
 -   [ ] No orphan pages (all pages are 50+ lines or merged)
 -   [ ] No new prose added without clear justification
+-   [ ] Redundant "Once you've X, the grid provides…" intro paragraphs removed where value proposition covers that context
 
 ### Cross-References
 
@@ -366,7 +377,7 @@ Editing (flat structure)
 ```
 Editing
 ├── Overview                        → cell-editing
-├── Editing Basics                  → cell-editing-basics  (type: item, new overview page)
+├── Editing Lifecycle                  → cell-editing-lifecycle  (type: item, new overview page)
 │   ├── Start / Stop Editing        → cell-editing-start-stop
 │   ├── Parsing Values              → value-parsers
 │   └── Saving Values               → value-setters

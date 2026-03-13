@@ -68,6 +68,19 @@ description: Brief description of the feature
 | **Framing**      | "Use X instead" (positive)       | "cannot do Y" (negative)         |
 | **Structure**    | Value prop → examples → advanced | API reference first, no examples |
 
+### Section Headings
+
+Use concise noun or action phrases:
+
+| ✅ Do This       | ❌ Avoid This                |
+| ---------------- | ---------------------------- |
+| "Start Triggers" | "Customizing Start Triggers" |
+| "Stop Triggers"  | "Customizing Stop Behavior"  |
+| "Editing API"    | "Programmatic Control"       |
+| "Navigation"     | "Understanding Navigation"   |
+
+"Programmatic Control" is always a rename candidate — replace it with `[Feature] API` (e.g. "Editing API", "Navigation API").
+
 ### Positive Framing
 
 Transform limitations into requirements or alternatives:
@@ -112,17 +125,19 @@ One-sentence subtitle describing what the feature is or does.
 
 **Before / after examples:**
 
-| ❌ Avoid | ✅ Prefer |
-|---------|---------|
-| "Understand the complete cell editing lifecycle — how edits begin and end, how user input is converted to the correct data type, and how changes are written back to your data." | "The cell editing lifecycle covers how edits start and stop, how user input is parsed, and how changes are written back to your data." |
-| "The grid keeps the blocks in a cache. You have the choice to never expire the blocks, or to set a limit to the number of blocks kept. If you set a limit, then as you scroll down, previous blocks will be discarded…" | "The grid caches row data in blocks, with configurable limits on how many blocks are kept in memory." |
-| "The grid comes with some cell editors provided out of the box. These cell editors are listed here." | "The grid provides several built-in cell editors for common data types." |
-| "An alternative to using the browser's `select` popup for dropdowns inside the grid. The Rich Select Cell Editor allows users to enter a cell value from a list of provided values by searching or filtering the list." | "Drop-down cell editor with search and filter support, as an alternative to the browser's native `select` element." |
-| "Batch editing allows you to edit multiple cells or rows in the grid before committing or reverting these edits. This is useful for scenarios where you want to make several edits at once without immediately updating the data source." | "Stage multiple cell edits before committing or discarding them all at once." |
+| ❌ Avoid                                                                                                                                                                                                                                  | ✅ Prefer                                                                                                                              |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| "Understand the complete cell editing lifecycle — how edits begin and end, how user input is converted to the correct data type, and how changes are written back to your data."                                                          | "The cell editing lifecycle covers how edits start and stop, how user input is parsed, and how changes are written back to your data." |
+| "The grid keeps the blocks in a cache. You have the choice to never expire the blocks, or to set a limit to the number of blocks kept. If you set a limit, then as you scroll down, previous blocks will be discarded…"                   | "The grid caches row data in blocks, with configurable limits on how many blocks are kept in memory."                                  |
+| "The grid comes with some cell editors provided out of the box. These cell editors are listed here."                                                                                                                                      | "The grid provides several built-in cell editors for common data types."                                                               |
+| "An alternative to using the browser's `select` popup for dropdowns inside the grid. The Rich Select Cell Editor allows users to enter a cell value from a list of provided values by searching or filtering the list."                   | "Drop-down cell editor with search and filter support, as an alternative to the browser's native `select` element."                    |
+| "Batch editing allows you to edit multiple cells or rows in the grid before committing or reverting these edits. This is useful for scenarios where you want to make several edits at once without immediately updating the data source." | "Stage multiple cell edits before committing or discarding them all at once."                                                          |
 
 ### Code Snippets
 
-Use `frameworkTransform=true` and show only relevant code with clarifying comments:
+Show only relevant code with clarifying comments. Apply `frameworkTransform=true` only when the snippet contains `gridOptions` configuration — the transform rewrites `gridOptions` object syntax into framework-idiomatic equivalents (e.g. React props, Angular bindings).
+
+**With `gridOptions` — requires `frameworkTransform=true`:**
 
 ````markdown
 ```{% frameworkTransform=true %}
@@ -131,6 +146,17 @@ const gridOptions = {
         { field: 'country', rowGroup: true }, // enable row grouping on this column
     ],
     // ...other options
+};
+```
+````
+
+**`colDef` only — no transform needed:**
+
+````markdown
+```js
+const colDef = {
+    field: 'country',
+    rowGroup: true, // enable row grouping on this column
 };
 ```
 ````
@@ -148,6 +174,34 @@ Not every page will include all sections; follow this order for the sections tha
 7. API reference (programmatic control)
 8. Events (lifecycle hooks)
 9. See Also — only for pages in **other sections** of the docs that are highly relevant. Never use See Also to link to child pages or sibling pages within the same nav section — those are already visible in the sidebar. If all candidate links are within the same section, omit the section entirely.
+
+Within each section, always use **show then tell** ordering — the live demo before the code snippet. The canonical pattern is:
+
+```markdown
+[Optional: brief prose or bullet list only when context is needed to work the demo]
+
+{% gridExampleRunner title="Example" name="example" /%}
+
+The example above uses the following configuration:
+
+​```{% frameworkTransform=true %}
+const gridOptions = { ... };
+​```
+```
+
+The optional preamble exists only to explain what to interact with or what to look for — never to explain the code. The code explanation always follows the demo. Use "The example above uses the following configuration:" as the standard connector phrase.
+
+### Inline Cross-References
+
+For sibling-page links that are too important to omit but don't qualify for See Also (which is reserved for other sections), use an inline `{% note %}` block:
+
+```markdown
+{% note %}
+Cell Editing can also be performed via [Cell Editor Components](./cell-editors/).
+{% /note %}
+```
+
+Use sparingly — only when users commonly miss or confuse a closely related feature.
 
 ### Parent / Overview Pages
 
