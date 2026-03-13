@@ -417,6 +417,7 @@ export type { ICellRangeFeature } from './interfaces/iCellRangeFeature';
 export type { IClipboardService } from './interfaces/iClipboardService';
 export type { IColsService } from './interfaces/iColsService';
 export type { IColumnCollectionService } from './interfaces/iColumnCollectionService';
+export type { IColumnToolPanelUpdateStrategy } from './interfaces/iColumnToolPanelUpdateStrategy';
 export type { IEventService } from './interfaces/iEventService';
 export type { IExpansionService } from './interfaces/iExpansionService';
 export type { FocusableContainer } from './interfaces/iFocusableContainer';

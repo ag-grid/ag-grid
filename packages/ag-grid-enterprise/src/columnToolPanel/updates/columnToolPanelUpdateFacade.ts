@@ -1,11 +1,8 @@
-import type { AgColumn, ColumnEventType, ColumnState, IAggFunc, SortDef } from 'ag-grid-community';
+import type { AgColumn, ColumnEventType, ColumnState, IAggFunc, IColumnToolPanelUpdateStrategy, SortDef } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
 import { createSyncColumnToolPanelConcreteUpdateStrategy } from './columnToolPanelUpdates';
-import type {
-    ColumnToolPanelConcreteUpdateStrategy,
-    IColumnToolPanelUpdateStrategy,
-} from './columnToolPanelUpdatesTypes';
+import type { ColumnToolPanelConcreteUpdateStrategy } from './columnToolPanelUpdatesTypes';
 
 export class ColumnToolPanelUpdates extends BeanStub implements IColumnToolPanelUpdateStrategy {
     public beanName = 'colToolPanelUpdates' as const;
@@ -165,7 +162,7 @@ export class ColumnToolPanelUpdates extends BeanStub implements IColumnToolPanel
     }
 
     private getUpdateStrategy(): IColumnToolPanelUpdateStrategy | undefined {
-        return this.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy | undefined;
+        return this.beans.colToolPanelUpdateStrategy;
     }
 
     private getFallbackUpdates(): ColumnToolPanelConcreteUpdateStrategy {

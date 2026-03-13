@@ -2,10 +2,8 @@ import type { AgColumn, BeanCollection, ColumnEventType, ColumnState, IAggFunc }
 
 import type { ColumnModelItem } from './columnModelItem';
 import { refreshDeferredToolPanelUi } from './toolPanelDeferredUiUtils';
-import type {
-    ColumnToolPanelUpdateParams,
-    IColumnToolPanelUpdateStrategy,
-} from './updates/columnToolPanelUpdatesTypes';
+import type { IColumnToolPanelUpdateStrategy } from 'ag-grid-community';
+import type { ColumnToolPanelUpdateParams } from './updates/columnToolPanelUpdatesTypes';
 
 export function selectAllChildren(
     beans: BeanCollection,
@@ -25,7 +23,7 @@ export function setAllColumns(
     eventType: ColumnEventType,
     params: ColumnToolPanelUpdateParams
 ): void {
-    const updateStrategy = beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy;
+    const updateStrategy = beans.colToolPanelUpdates;
     const isPivotMode = updateStrategy.getPivotMode(!!params.deferApply);
 
     if (isPivotMode) {
@@ -63,7 +61,7 @@ function setAllVisible(
     eventType: ColumnEventType,
     params: ColumnToolPanelUpdateParams
 ): void {
-    const updateStrategy = beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy;
+    const updateStrategy = beans.colToolPanelUpdates;
     const colStateItems: ColumnState[] = [];
 
     for (const col of columns) {
@@ -99,7 +97,7 @@ function setAllPivotActive(
     eventType: ColumnEventType,
     params: ColumnToolPanelUpdateParams
 ): void {
-    const updateStrategy = beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy;
+    const updateStrategy = beans.colToolPanelUpdates;
     const colStateItems: ColumnState[] = [];
 
     const turnOnAction = (col: AgColumn) => {
@@ -165,7 +163,7 @@ export function updateColumns(
     }
 ): void {
     const { columns, visibleState, pivotState, eventType } = params;
-    const updateStrategy = beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy;
+    const updateStrategy = beans.colToolPanelUpdates;
     const isPivotMode = updateStrategy.getPivotMode(!!params.deferApply);
     const state: ColumnState[] = columns.map((column) => {
         const colId = column.getColId();

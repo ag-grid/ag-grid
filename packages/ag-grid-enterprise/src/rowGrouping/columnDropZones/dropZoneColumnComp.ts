@@ -10,10 +10,7 @@ import type {
 } from 'ag-grid-community';
 import { Component, DragSourceType, KeyCode, RefPlaceholder, _createElement } from 'ag-grid-community';
 
-import type {
-    ColumnToolPanelUpdateParams,
-    IColumnToolPanelUpdateStrategy,
-} from '../../columnToolPanel/updates/columnToolPanelUpdatesTypes';
+import type { ColumnToolPanelUpdateParams } from '../../columnToolPanel/updates/columnToolPanelUpdatesTypes';
 import { PillDragComp } from '../../widgets/pillDragComp';
 import { VirtualList } from '../../widgets/virtualList';
 import { isRowGroupColLocked } from '../rowGroupingUtils';
@@ -157,7 +154,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         let aggFuncName: string = '';
 
         if (this.isAggregationZone()) {
-            const aggFunc = (this.beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy).getColumnAggFunc(
+            const aggFunc = this.beans.colToolPanelUpdates.getColumnAggFunc(
                 this.deferApply,
                 this.column
             );
@@ -180,7 +177,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
             eSortIndicator.setupSort(column, true, this.getSortDefOverride.bind(this));
             const performSort = (event: MouseEvent | KeyboardEvent) => {
                 event.preventDefault();
-                (this.beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy).progressSortFromEvent(
+                this.beans.colToolPanelUpdates.progressSortFromEvent(
                     this.deferApply,
                     column,
                     event
@@ -201,7 +198,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
 
     private getCurrentSortDirection(column: AgColumn): SortDirection {
         return (
-            (this.beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy).getSortDef(this.deferApply, column)
+            this.beans.colToolPanelUpdates.getSortDef(this.deferApply, column)
                 ?.direction ?? null
         );
     }
@@ -211,7 +208,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
             return undefined;
         }
 
-        return (this.beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy).getSortDef(
+        return this.beans.colToolPanelUpdates.getSortDef(
             this.deferApply,
             this.column
         );
@@ -351,7 +348,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
 
         virtualList.refresh();
 
-        const currentAggFunc = (this.beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy).getColumnAggFunc(
+        const currentAggFunc = this.beans.colToolPanelUpdates.getColumnAggFunc(
             this.deferApply,
             this.column
         );
@@ -367,7 +364,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         const itemSelected = () => {
             hidePopup();
             this.getGui().focus();
-            (this.beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy).setColumnAggFunc(
+            this.beans.colToolPanelUpdates.setColumnAggFunc(
                 this.deferApply,
                 this.column,
                 value,

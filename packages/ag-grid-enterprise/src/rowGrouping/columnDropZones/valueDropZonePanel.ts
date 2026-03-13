@@ -1,10 +1,7 @@
 import type { AgColumn, DragAndDropIcon, GridDraggingEvent } from 'ag-grid-community';
 import { _createIconNoSpan } from 'ag-grid-community';
 
-import type {
-    ColumnToolPanelUpdateParams,
-    IColumnToolPanelUpdateStrategy,
-} from '../../columnToolPanel/updates/columnToolPanelUpdatesTypes';
+import type { ColumnToolPanelUpdateParams } from '../../columnToolPanel/updates/columnToolPanelUpdatesTypes';
 import { refreshDeferredToolPanelUi } from '../../columnToolPanel/toolPanelDeferredUiUtils';
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
@@ -44,14 +41,14 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
             return false;
         }
 
-        const isActive = (this.beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy)
+        const isActive = this.beans.colToolPanelUpdates
             .getValueColumns(!!this.updateParams?.deferApply)
             .includes(column);
         return column.isAllowValue() && (!isActive || this.isSourceEventFromTarget(draggingEvent));
     }
 
     protected updateItems(columns: AgColumn[]): void {
-        (this.beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy).setValueColumns(
+        this.beans.colToolPanelUpdates.setValueColumns(
             !!this.updateParams?.deferApply,
             columns,
             'toolPanelUi'
@@ -60,7 +57,7 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
     }
 
     protected getExistingItems(): AgColumn[] {
-        return (this.beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy).getValueColumns(
+        return this.beans.colToolPanelUpdates.getValueColumns(
             !!this.updateParams?.deferApply
         );
     }

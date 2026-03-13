@@ -31,10 +31,7 @@ import {
 import type { ColumnModelItem } from './columnModelItem';
 import { createPivotStateForToolPanel, selectAllChildren, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
-import type {
-    ColumnToolPanelUpdateParams,
-    IColumnToolPanelUpdateStrategy,
-} from './updates/columnToolPanelUpdatesTypes';
+import type { ColumnToolPanelUpdateParams } from './updates/columnToolPanelUpdatesTypes';
 
 const ToolPanelColumnGroupElement: ElementParams = {
     tag: 'div',
@@ -273,7 +270,7 @@ export class ToolPanelColumnGroupComp extends Component {
                 aggFunc?: string | IAggFunc | null;
             };
         } = {};
-        const updateStrategy = this.beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy;
+        const updateStrategy = this.beans.colToolPanelUpdates;
         const deferApply = !!this.params.deferApply;
         for (const col of columns) {
             const colId = col.getId();
@@ -371,7 +368,7 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private workOutSelectedValue(): boolean | undefined {
-        const updateStrategy = this.beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy;
+        const updateStrategy = this.beans.colToolPanelUpdates;
         const pivotMode = updateStrategy.getPivotMode(!!this.params.deferApply);
 
         const visibleLeafColumns = this.getVisibleLeafColumns();
@@ -397,7 +394,7 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private workOutReadOnlyValue(): boolean {
-        const pivotMode = (this.beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy).getPivotMode(
+        const pivotMode = this.beans.colToolPanelUpdates.getPivotMode(
             !!this.params.deferApply
         );
 
@@ -417,7 +414,7 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private isColumnChecked(column: AgColumn): boolean {
-        const updateStrategy = this.beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy;
+        const updateStrategy = this.beans.colToolPanelUpdates;
         if (updateStrategy.getPivotMode(!!this.params.deferApply)) {
             return updateStrategy.isColumnSelectedInPivotModeToolPanel(!!this.params.deferApply, column);
         }

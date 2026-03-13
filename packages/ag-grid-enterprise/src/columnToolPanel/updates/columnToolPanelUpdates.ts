@@ -1,4 +1,4 @@
-import type { AgColumn, ColumnEventType, ColumnState, IAggFunc, SortDef } from 'ag-grid-community';
+import type { AgColumn, BeanCollection, ColumnEventType, ColumnState, IAggFunc, IColumnToolPanelUpdateStrategy, SortDef } from 'ag-grid-community';
 import { BeanStub, _applyColumnState, isColumnGroupAutoCol, isSpecialCol } from 'ag-grid-community';
 
 import type {
@@ -6,11 +6,10 @@ import type {
     CommitOperation,
     CommitOperations,
     DeferredState,
-    IColumnToolPanelUpdateStrategy,
 } from './columnToolPanelUpdatesTypes';
 
 const noop = () => {};
-type StrategyBeans = BeanStub['beans'];
+type StrategyBeans = BeanCollection;
 
 export class ColumnToolPanelUpdateStrategy extends BeanStub implements IColumnToolPanelUpdateStrategy {
     public beanName = 'colToolPanelUpdateStrategy' as const;
@@ -99,7 +98,7 @@ export class ColumnToolPanelUpdateStrategy extends BeanStub implements IColumnTo
 }
 
 export function createSyncColumnToolPanelConcreteUpdateStrategy(
-    beans: BeanStub['beans']
+    beans: BeanCollection
 ): ColumnToolPanelConcreteUpdateStrategy {
     return new ColumnToolPanelSynchronousUpdateStrategy(beans);
 }

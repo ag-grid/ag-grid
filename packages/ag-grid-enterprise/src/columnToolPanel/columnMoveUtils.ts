@@ -10,10 +10,7 @@ import { isProvidedColumnGroup } from 'ag-grid-community';
 import type { VirtualListDragItem } from '../agStack/iVirtualListDragFeature';
 import type { ToolPanelColumnComp } from './toolPanelColumnComp';
 import { ToolPanelColumnGroupComp } from './toolPanelColumnGroupComp';
-import type {
-    ColumnToolPanelUpdateParams,
-    IColumnToolPanelUpdateStrategy,
-} from './updates/columnToolPanelUpdatesTypes';
+import type { ColumnToolPanelUpdateParams } from './updates/columnToolPanelUpdatesTypes';
 
 export const getCurrentColumnsBeingMoved = (column: AgColumn | AgProvidedColumnGroup | null): AgColumn[] => {
     if (isProvidedColumnGroup(column)) {
@@ -98,7 +95,7 @@ export const moveItem = (
     const targetIndex: number | null = getMoveTargetIndex(beans, currentColumns, lastHoveredColumn, isBefore);
 
     if (targetIndex != null) {
-        (beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy).moveColumns(
+        beans.colToolPanelUpdates.moveColumns(
             !!params?.deferApply,
             currentColumns,
             targetIndex,

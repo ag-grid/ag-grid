@@ -28,7 +28,6 @@ import type { ColumnModelItem } from './columnModelItem';
 import type { ToolPanelColumnCompParams } from './columnToolPanel';
 import { createPivotStateForToolPanel, setAllColumns, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
-import type { IColumnToolPanelUpdateStrategy } from './updates/columnToolPanelUpdatesTypes';
 
 const ToolPanelColumnElement: ElementParams = {
     tag: 'div',
@@ -284,7 +283,7 @@ export class ToolPanelColumnComp extends Component {
     private createDragItem() {
         const colId = this.column.getColId();
         const visibleState = { [colId]: this.column.isVisible() };
-        const updateStrategy = this.beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy;
+        const updateStrategy = this.beans.colToolPanelUpdates;
         const pivotState = { [colId]: createPivotStateForToolPanel(this.column, updateStrategy, !!this.params.deferApply) };
         return {
             columns: [this.column],
@@ -295,7 +294,7 @@ export class ToolPanelColumnComp extends Component {
 
     private onColumnStateChanged(): void {
         this.processingColumnStateChange = true;
-        const updateStrategy = this.beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy;
+        const updateStrategy = this.beans.colToolPanelUpdates;
         const isPivotMode = updateStrategy.getPivotMode(!!this.params.deferApply);
         if (isPivotMode) {
             // if reducing, checkbox means column is one of pivot, value or group

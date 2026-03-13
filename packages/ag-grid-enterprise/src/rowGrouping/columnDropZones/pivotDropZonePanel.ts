@@ -1,10 +1,7 @@
 import type { AgColumn, DragAndDropIcon, FocusableContainer, GridDraggingEvent } from 'ag-grid-community';
 import { _addFocusableContainerListener, _createIconNoSpan } from 'ag-grid-community';
 
-import type {
-    ColumnToolPanelUpdateParams,
-    IColumnToolPanelUpdateStrategy,
-} from '../../columnToolPanel/updates/columnToolPanelUpdatesTypes';
+import type { ColumnToolPanelUpdateParams } from '../../columnToolPanel/updates/columnToolPanelUpdatesTypes';
 import { refreshDeferredToolPanelUi } from '../../columnToolPanel/toolPanelDeferredUiUtils';
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
@@ -73,7 +70,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel implements FocusableCo
         } else {
             // in toolPanel, the pivot panel is always shown when pivot mode is on
             this.setDisplayed(
-                (this.beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy).getPivotMode(
+                this.beans.colToolPanelUpdates.getPivotMode(
                     !!this.updateParams?.deferApply
                 )
             );
@@ -86,14 +83,14 @@ export class PivotDropZonePanel extends BaseDropZonePanel implements FocusableCo
             return false;
         }
 
-        const isActive = (this.beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy)
+        const isActive = this.beans.colToolPanelUpdates
             .getPivotColumns(!!this.updateParams?.deferApply)
             .includes(column);
         return column.isAllowPivot() && (!isActive || this.isSourceEventFromTarget(draggingEvent));
     }
 
     protected updateItems(columns: AgColumn[]): void {
-        (this.beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy).setPivotColumns(
+        this.beans.colToolPanelUpdates.setPivotColumns(
             !!this.updateParams?.deferApply,
             columns,
             'toolPanelUi'
@@ -106,7 +103,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel implements FocusableCo
     }
 
     protected getExistingItems(): AgColumn[] {
-        return (this.beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy).getPivotColumns(
+        return this.beans.colToolPanelUpdates.getPivotColumns(
             !!this.updateParams?.deferApply
         );
     }

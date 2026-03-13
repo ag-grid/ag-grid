@@ -8,7 +8,7 @@ import {
 } from 'ag-grid-docs/src/content/docs/tool-panel-columns/_examples/deferred-apply-mode/fakeServer';
 import { AllEnterpriseModule, RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
 
-import type { IColumnToolPanelUpdateStrategy } from '../../../../packages/ag-grid-enterprise/src/columnToolPanel/updates/columnToolPanelUpdatesTypes';
+import type { IColumnToolPanelUpdateStrategy } from 'ag-grid-community';
 import { AgGridHeaderDropZonesSelector } from '../../../../packages/ag-grid-enterprise/src/rowGrouping/columnDropZones/agGridHeaderDropZones';
 import { DragEventDispatcher, TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from '../test-utils';
 
@@ -327,7 +327,7 @@ describe('deferred column tool panel pivot mode', () => {
     }
 
     function getUpdateStrategy(toolPanel: any): IColumnToolPanelUpdateStrategy {
-        return toolPanel.beans.colToolPanelUpdateStrategy as IColumnToolPanelUpdateStrategy;
+        return toolPanel.beans.colToolPanelUpdateStrategy;
     }
 
     function isDeferred(toolPanel: any): boolean {
