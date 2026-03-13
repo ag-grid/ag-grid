@@ -521,67 +521,64 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         const col = groupCol.col;
         const id = (parent.level >= 0 ? parent.id! + '-' : 'row-group-') + (col.getColId() + '-' + key);
 
-        const { pivotMode } = this;
         const groupsById = this.nonLeafsById;
-        const groupNode = groupsById.get(id);
-        if (groupNode !== undefined) {
-            if (groupNode.childrenAfterGroup === null) {
-                // Reused existing group node from a shotgun reset.
-                // Reset children but preserve selection and expansion state.
-                groupNode.childrenAfterGroup = [];
-                groupNode.childrenMapped = {};
-                const sibling = groupNode.sibling;
-                if (sibling) {
-                    sibling.childrenAfterGroup = groupNode.childrenAfterGroup;
-                    sibling.childrenMapped = groupNode.childrenMapped;
-                }
-                groupNode.parent = parent;
-                groupNode.level = level;
-                const leafGroupChanged = groupNode.leafGroup !== isLeafLevel;
-                groupNode.leafGroup = isLeafLevel;
-                groupNode.rowGroupIndex = level;
-                groupNode.field = groupCol.field ?? null;
-                groupNode.rowGroupColumn = col;
-                groupNode.groupValue = this.beans.valueSvc.getValue(col, leafNode, 'data');
-                invalidateAllLeafChildren(groupNode);
-                // In pivot mode, leafGroup affects isExpandable() and expanded getter.
-                // Notify row rendering so ag-row-group CSS classes are updated.
-                if (leafGroupChanged && pivotMode) {
-                    groupNode.dispatchRowEvent('hasChildrenChanged');
-                }
+        let node = groupsById.get(id);
+        let reused = false;
+
+        if (node !== undefined) {
+            if (node.childrenAfterGroup !== null) {
+                // Already active — just ensure lazy expansion state.
+                node._expanded ??= null;
+                return node;
             }
-            // null triggers lazy default resolution in the expanded getter.
-            groupNode._expanded ??= null;
-            return groupNode;
+            reused = true;
+            // Reused existing group node from a shotgun reset.
+            // Reset children but preserve selection and expansion state.
+            invalidateAllLeafChildren(node);
+        } else {
+            // Brand new group node.
+            node = new RowNode(this.beans);
+            node.group = true;
+            node.key = key;
+            node.id = id;
+            node.aggData = null;
+            groupsById.set(id, node);
         }
 
-        const newNode = new RowNode(this.beans);
-        newNode.group = true;
-        newNode.parent = parent;
-        newNode.field = groupCol.field ?? null;
-        newNode.rowGroupColumn = col;
-
-        newNode.key = key;
-        newNode.id = id;
-
-        newNode.level = level;
-        newNode.leafGroup = isLeafLevel;
-
-        newNode.rowGroupIndex = level;
-        newNode.childrenAfterGroup = [];
-        newNode.childrenMapped = {};
-
-        groupsById.set(id, newNode);
-
-        newNode.groupValue = leafNode && this.beans.valueSvc.getValue(col, leafNode, 'data');
-        newNode.aggData = null;
-
-        newNode.setAllChildrenCount(0);
-        newNode.updateHasChildren();
+        // Shared setup for both reused and new nodes.
+        const children: RowNode[] = [];
+        const mapped = {};
+        node.childrenAfterGroup = children;
+        node.childrenMapped = mapped;
+        node.parent = parent;
+        node.level = level;
+        node.rowGroupIndex = level;
+        node.field = groupCol.field ?? null;
+        node.rowGroupColumn = col;
+        node.leafGroup = isLeafLevel;
+        node.groupValue = this.beans.valueSvc.getValue(col, leafNode, 'data');
         // null triggers lazy default resolution in the expanded getter.
-        newNode._expanded ??= null;
+        node._expanded ??= null;
 
-        return newNode;
+        if (!reused) {
+            node.setAllChildrenCount(0);
+            node.updateHasChildren();
+            return node;
+        }
+
+        const sibling = node.sibling;
+        if (sibling) {
+            sibling.childrenAfterGroup = children;
+            sibling.childrenMapped = mapped;
+            sibling.parent = parent;
+            sibling.level = level;
+            sibling.rowGroupIndex = level;
+            sibling.leafGroup = isLeafLevel;
+        }
+
+        node.dispatchRowEvent('hasChildrenChanged');
+
+        return node;
     }
 
     private getChildrenMappedKey(key: string, rowGroupColumn: AgColumn | null): string {
