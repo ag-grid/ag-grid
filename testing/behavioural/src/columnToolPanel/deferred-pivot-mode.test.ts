@@ -1178,7 +1178,7 @@ describe('deferred column tool panel pivot mode', () => {
     });
 
     test('dragging a column to the end in non-pivot mode should update the deferred tool panel order before commit', async () => {
-        const { gridApi, toolPanel } = await createDeferredNonPivotGrid();
+        const { toolPanel } = await createDeferredNonPivotGrid();
 
         expect(getDisplayedPrimaryColumnOrder(toolPanel)).toEqual([
             'athlete',
