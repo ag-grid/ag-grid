@@ -1,6 +1,6 @@
 {
   "name": "ag-grid",
-  "version": "35.1.0-beta.20260312.1528",
+  "version": "35.1.0-beta.20260313.1538",
   "license": "MIT",
   "scripts": {
     "compressVideo": "tsx external/ag-website-shared/scripts/compress-video",
@@ -55,7 +55,6 @@
     "@types/prompts": "^2.4.9",
     "@typescript-eslint/eslint-plugin": "7.18.0",
     "@typescript-eslint/parser": "7.18.0",
-    "@vitejs/plugin-react-swc": "^4.2.3",
     "@vue/compiler-sfc": "3.5.13",
     "JSONStream": "1.3.5",
     "autoprefixer": "^10.4.20",

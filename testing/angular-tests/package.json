@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-angular-tests",
-  "version": "35.1.0-beta.20260312.1528",
+  "version": "35.1.0-beta.20260313.1538",
   "private": true,
   "scripts": {
     "test:e2e": "jest --no-cache"
@@ -11,8 +11,8 @@
     "@angular/core": "^21.0.0",
     "@angular/platform-browser": "^21.0.0",
     "@angular/platform-browser-dynamic": "^21.0.0",
-    "ag-grid-angular": "35.1.0-beta.20260312.1528",
-    "ag-grid-community": "35.1.0-beta.20260312.1528",
+    "ag-grid-angular": "35.1.0-beta.20260313.1538",
+    "ag-grid-community": "35.1.0-beta.20260313.1538",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"

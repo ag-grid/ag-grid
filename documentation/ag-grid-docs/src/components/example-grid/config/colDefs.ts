@@ -1,4 +1,11 @@
-import type { CellStyleFunc, ColDef, ColGroupDef, GridOptions, ValueFormatterParams } from 'ag-grid-community';
+import type {
+    CellStyleFunc,
+    ColDef,
+    ColGroupDef,
+    GridOptions,
+    ValueFormatterParams,
+    ValueGetterParams,
+} from 'ag-grid-community';
 
 import { COUNTRY_NAMES, LANGUAGES, type RowItem, games, months } from '../data';
 import { CountryCellRenderer, RatingRenderer } from './renderers';
@@ -107,9 +114,6 @@ const mobileDefaultCols: ColDef<RowItem>[] = [
         field: 'country',
         width: 150,
         cellRenderer: CountryCellRenderer,
-        cellRendererParams: {
-            deferRender: true,
-        },
         cellClass: 'v-align',
         cellEditor: 'agRichSelectCellEditor',
         cellEditorParams: {
@@ -192,9 +196,6 @@ const desktopDefaultCols: (ColDef<RowItem> | ColGroupDef<RowItem>)[] = [
                 field: 'country',
                 width: 150,
                 cellRenderer: CountryCellRenderer,
-                cellRendererParams: {
-                    deferRender: true,
-                },
                 cellClass: ['country-cell', 'v-align'],
                 enableRowGroup: true,
                 enablePivot: true,
@@ -308,7 +309,43 @@ const desktopDefaultCols: (ColDef<RowItem> | ColGroupDef<RowItem>)[] = [
     },
     {
         headerName: 'Monthly Breakdown',
-        children: monthCols,
+        openByDefault: false,
+        children: [
+            {
+                headerName: 'Winning Trends',
+                colId: 'winningTrends',
+                sortable: false,
+                cellRenderer: 'agSparklineCellRenderer',
+                cellRendererParams: {
+                    deferRender: true,
+                    sparklineOptions: {
+                        type: 'area',
+                        xKey: 'month',
+                        yKey: 'value',
+                        tooltip: {
+                            renderer: (params: { datum: { month: string; value: number } }) => {
+                                const { month, value } = params.datum;
+                                const formatted = '$' + Math.floor(Math.abs(value)).toLocaleString();
+                                const currency = value < 0 ? `(${formatted})` : formatted;
+                                return { content: `${month.charAt(0).toUpperCase() + month.slice(1)}: ${currency}` };
+                            },
+                        },
+                    },
+                },
+                valueGetter: (params: ValueGetterParams) => {
+                    const data = params.data;
+                    if (!data) {
+                        return undefined;
+                    }
+                    return months.map((month) => ({ month, value: data[month] }));
+                },
+                width: 200,
+            } as ColDef,
+            ...monthCols.map((col) => ({
+                ...col,
+                columnGroupShow: 'open' as const,
+            })),
+        ],
     },
 ];
 

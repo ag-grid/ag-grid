@@ -41,17 +41,46 @@ function main() {
 }
 
 function createRootEnvFiles() {
-    console.log('Creating Root Env Files');
+    console.log('Updating Root Env Files');
 
-    const data = `# Production Build
-BUILD_GRID_VERSION=${gridNewVersion}
-BUILD_CHARTS_VERSION=${chartsDependencyVersion}
-ENV=${environment}
-NX_BATCH_MODE=true
-NX_ADD_PLUGINS=false
-BUILD_FWS=1
-`;
-    fs.writeFileSync('./.env', data, 'utf-8');
+    const envPath = './.env';
+    const updates = {
+        BUILD_GRID_VERSION: gridNewVersion,
+        BUILD_CHARTS_VERSION: chartsDependencyVersion,
+        ENV: environment,
+    };
+
+    let lines = [];
+    if (fs.existsSync(envPath)) {
+        lines = fs.readFileSync(envPath, 'utf-8').split('\n');
+    }
+
+    // Update existing keys or track which ones need appending
+    const updatedKeys = new Set();
+    lines = lines.map((line) => {
+        const match = line.match(/^([A-Z_][A-Z0-9_]*)=/);
+        if (match && match[1] in updates) {
+            updatedKeys.add(match[1]);
+            return `${match[1]}=${updates[match[1]]}`;
+        }
+        return line;
+    });
+
+    // Append any keys not already present
+    for (const [key, value] of Object.entries(updates)) {
+        if (!updatedKeys.has(key)) {
+            lines.push(`${key}=${value}`);
+        }
+    }
+
+    // Ensure header comment
+    if (!lines[0]?.startsWith('# Production Build')) {
+        lines.unshift('# Production Build');
+    }
+
+    // Ensure trailing newline
+    const content = lines.join('\n').replace(/\n*$/, '\n');
+    fs.writeFileSync(envPath, content, 'utf-8');
 }
 
 function updateAngularProject(CWD, packageDirectory) {

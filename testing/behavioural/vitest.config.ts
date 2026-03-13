@@ -1,4 +1,3 @@
-import react from '@vitejs/plugin-react-swc';
 import { existsSync } from 'fs';
 import { readFile, readdir } from 'fs/promises';
 import path from 'path';
@@ -31,8 +30,7 @@ if (process.env.TESTS_USE_ORIGINAL_SOURCE_CODE !== 'false') {
 }
 
 export default defineConfig({
-    plugins: [react({ include: /\.tsx$/ })],
-    esbuild: { target: 'esnext' },
+    esbuild: { target: 'esnext', jsx: 'automatic' },
     resolve: { alias: aliases },
     test: {
         globals: true,
