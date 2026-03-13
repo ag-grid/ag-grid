@@ -199,3 +199,27 @@ export function createPivotState(column: AgColumn): {
         aggFunc: column.isValueActive() ? column.getAggFunc() : undefined,
     };
 }
+
+export function createPivotStateForToolPanel(
+    column: AgColumn,
+    updateStrategy: IColumnToolPanelUpdateStrategy,
+    deferApply: boolean
+): {
+    pivot?: boolean;
+    rowGroup?: boolean;
+    aggFunc?: string | IAggFunc | null;
+} {
+    if (!deferApply) {
+        return createPivotState(column);
+    }
+
+    const rowGroup = updateStrategy.getRowGroupColumns(deferApply).includes(column);
+    const pivot = updateStrategy.getPivotColumns(deferApply).includes(column);
+    const value = updateStrategy.getValueColumns(deferApply).includes(column);
+
+    return {
+        pivot,
+        rowGroup,
+        aggFunc: value ? updateStrategy.getColumnAggFunc(deferApply, column) : undefined,
+    };
+}

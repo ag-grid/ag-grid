@@ -26,7 +26,7 @@ import {
 
 import type { ColumnModelItem } from './columnModelItem';
 import type { ToolPanelColumnCompParams } from './columnToolPanel';
-import { createPivotState, setAllColumns, updateColumns } from './modelItemUtils';
+import { createPivotStateForToolPanel, setAllColumns, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
 import type { IColumnToolPanelUpdateStrategy } from './updates/columnToolPanelUpdatesTypes';
 
@@ -284,7 +284,8 @@ export class ToolPanelColumnComp extends Component {
     private createDragItem() {
         const colId = this.column.getColId();
         const visibleState = { [colId]: this.column.isVisible() };
-        const pivotState = { [colId]: createPivotState(this.column) };
+        const updateStrategy = this.beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy;
+        const pivotState = { [colId]: createPivotStateForToolPanel(this.column, updateStrategy, !!this.params.deferApply) };
         return {
             columns: [this.column],
             visibleState,

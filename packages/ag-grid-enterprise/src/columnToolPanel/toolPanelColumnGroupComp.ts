@@ -29,7 +29,7 @@ import {
 } from 'ag-grid-community';
 
 import type { ColumnModelItem } from './columnModelItem';
-import { createPivotState, selectAllChildren, updateColumns } from './modelItemUtils';
+import { createPivotStateForToolPanel, selectAllChildren, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
 import type {
     ColumnToolPanelUpdateParams,
@@ -273,10 +273,12 @@ export class ToolPanelColumnGroupComp extends Component {
                 aggFunc?: string | IAggFunc | null;
             };
         } = {};
+        const updateStrategy = this.beans.colToolPanelUpdates as IColumnToolPanelUpdateStrategy;
+        const deferApply = !!this.params.deferApply;
         for (const col of columns) {
             const colId = col.getId();
             visibleState[colId] = col.isVisible();
-            pivotState[colId] = createPivotState(col);
+            pivotState[colId] = createPivotStateForToolPanel(col, updateStrategy, deferApply);
         }
 
         return {

@@ -414,6 +414,7 @@ class ColumnToolPanelDeferredUpdateStrategy implements ColumnToolPanelConcreteUp
     }
 
     public setRowGroupColumns(columns: AgColumn[], eventType: ColumnEventType): void {
+        clearDeferredFunctionPatches(this.state, 'rowGroup');
         const seq = nextSeq(this.sequence);
         this.sequence = seq;
         this.state.rowGroup = {
@@ -424,6 +425,7 @@ class ColumnToolPanelDeferredUpdateStrategy implements ColumnToolPanelConcreteUp
     }
 
     public setValueColumns(columns: AgColumn[], eventType: ColumnEventType): void {
+        clearDeferredFunctionPatches(this.state, 'aggFunc');
         const seq = nextSeq(this.sequence);
         this.sequence = seq;
         this.state.aggregation = {
@@ -500,6 +502,7 @@ class ColumnToolPanelDeferredUpdateStrategy implements ColumnToolPanelConcreteUp
     }
 
     public setPivotColumns(columns: AgColumn[], eventType: ColumnEventType): void {
+        clearDeferredFunctionPatches(this.state, 'pivot');
         const seq = nextSeq(this.sequence);
         this.sequence = seq;
         this.state.pivot = {
@@ -757,6 +760,32 @@ function mergeColumnStatePatch(state: DeferredState, patch: ColumnState): void {
     const columnState = ensureColumnStateDraft(state);
     const existing = columnState.patches.get(patch.colId);
     columnState.patches.set(patch.colId, existing ? { ...existing, ...patch } : patch);
+}
+
+function clearDeferredFunctionPatches(
+    state: DeferredState,
+    patchKey: 'rowGroup' | 'pivot' | 'aggFunc'
+): void {
+    const patches = state.columnState?.patches;
+    if (!patches?.size) {
+        return;
+    }
+
+    for (const [colId, patch] of patches) {
+        if (!(patchKey in patch)) {
+            continue;
+        }
+
+        const nextPatch = { ...patch } as Partial<ColumnState>;
+        delete nextPatch[patchKey];
+
+        if (Object.keys(nextPatch).length === 1) {
+            patches.delete(colId);
+            continue;
+        }
+
+        patches.set(colId, nextPatch as ColumnState);
+    }
 }
 
 function ensureColumnStateDraft(state: DeferredState): NonNullable<DeferredState['columnState']> {
