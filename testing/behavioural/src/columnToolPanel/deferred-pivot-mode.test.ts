@@ -488,13 +488,17 @@ describe('deferred column tool panel pivot mode', () => {
     });
 
     test('removing a value pill in pivot mode stages the change until Apply', async () => {
-        const { gridApi, toolPanelGui } = await createDeferredPivotModeGrid();
+        const { gridApi, toolPanel, toolPanelGui } = await createDeferredPivotModeGrid();
+        const refreshDeferredUiSpy = vi.spyOn(toolPanel, 'refreshDeferredUi');
 
         expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['silver', 'bronze']);
+        expect(createPrimaryColumnComp(toolPanel, 'Bronze').isSelected()).toBe(true);
 
         removeDropZonePill(toolPanelGui, 'sum of Bronze');
 
         expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['silver', 'bronze']);
+        expect(refreshDeferredUiSpy).toHaveBeenCalled();
+        expect(createPrimaryColumnComp(toolPanel, 'Bronze').isSelected()).toBe(false);
 
         getApplyButton(toolPanelGui).click();
         await waitForNoLoadingRows(gridApi);
@@ -545,22 +549,26 @@ describe('deferred column tool panel pivot mode', () => {
     });
 
     test('removing a pivot label pill in deferred pivot mode applies only after clicking Apply', async () => {
-        const { gridApi, toolPanelGui } = await createDeferredNonPivotGrid([
+        const { gridApi, toolPanel, toolPanelGui } = await createDeferredNonPivotGrid([
             { field: 'athlete', enableRowGroup: true, enablePivot: true, rowGroup: true },
             { field: 'country', enableRowGroup: true, enablePivot: true },
             { field: 'year', enableRowGroup: true, enablePivot: true, pivot: true },
             { field: 'age', enableValue: true, aggFunc: 'sum' },
         ]);
+        const refreshDeferredUiSpy = vi.spyOn(toolPanel, 'refreshDeferredUi');
 
         getPivotModeToggle(toolPanelGui).click();
         getApplyButton(toolPanelGui).click();
         await asyncSetTimeout(50);
 
         expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['year']);
+        expect(createPrimaryColumnComp(toolPanel, 'Year').isSelected()).toBe(true);
 
         removeDropZonePill(toolPanelGui, 'Year');
 
         expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['year']);
+        expect(refreshDeferredUiSpy).toHaveBeenCalled();
+        expect(createPrimaryColumnComp(toolPanel, 'Year').isSelected()).toBe(false);
 
         getApplyButton(toolPanelGui).click();
 
@@ -660,6 +668,7 @@ describe('deferred column tool panel pivot mode', () => {
     test('removing the first row-group pill in deferred pivot mode clears the staged Country checkbox immediately', async () => {
         const { gridApi, toolPanel, toolPanelGui } = await createDeferredPivotModeGrid();
         const countryColumnComp = createPrimaryColumnComp(toolPanel, 'Country');
+        const refreshDeferredUiSpy = vi.spyOn(toolPanel, 'refreshDeferredUi');
 
         expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['country', 'sport']);
         expect(countryColumnComp.isSelected()).toBe(true);
@@ -675,6 +684,7 @@ describe('deferred column tool panel pivot mode', () => {
                 .getRowGroupColumns(true)
                 .map((col) => col.getColId())
         ).toEqual(['sport']);
+        expect(refreshDeferredUiSpy).toHaveBeenCalled();
         expect(createPrimaryColumnComp(toolPanel, 'Country').isSelected()).toBe(false);
         expect(getDropZoneText(toolPanel.rowGroupDropZonePanel)).not.toContain('Country');
         expect(getDropZoneText(toolPanel.rowGroupDropZonePanel)).toContain('Sport');

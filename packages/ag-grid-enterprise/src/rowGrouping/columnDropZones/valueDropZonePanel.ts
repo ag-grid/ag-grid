@@ -5,6 +5,7 @@ import type {
     ColumnToolPanelUpdateParams,
     IColumnToolPanelUpdateStrategy,
 } from '../../columnToolPanel/updates/columnToolPanelUpdatesTypes';
+import { refreshDeferredToolPanelUi } from '../../columnToolPanel/toolPanelDeferredUiUtils';
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
 export class ValuesDropZonePanel extends BaseDropZonePanel {
@@ -55,6 +56,7 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
             columns,
             'toolPanelUi'
         );
+        refreshDeferredToolPanelUi(this.beans, this.updateParams);
     }
 
     protected getExistingItems(): AgColumn[] {

@@ -5,6 +5,7 @@ import type {
     ColumnToolPanelUpdateParams,
     IColumnToolPanelUpdateStrategy,
 } from '../../columnToolPanel/updates/columnToolPanelUpdatesTypes';
+import { refreshDeferredToolPanelUi } from '../../columnToolPanel/toolPanelDeferredUiUtils';
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
 export class PivotDropZonePanel extends BaseDropZonePanel implements FocusableContainer {
@@ -97,6 +98,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel implements FocusableCo
             columns,
             'toolPanelUi'
         );
+        refreshDeferredToolPanelUi(this.beans, this.updateParams);
     }
 
     protected getIconName(): DragAndDropIcon {
