@@ -70,7 +70,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
         rowNode.__needsRefreshWhenVisible = false;
 
         if (rowNode.group) {
-            // rowNode.expanded = false;
+            rowNode.expanded = false;
             rowNode.field = params.field;
             rowNode.rowGroupColumn = params.rowGroupColumn;
             rowNode.rowGroupIndex = params.level;
@@ -110,9 +110,9 @@ export class BlockUtils extends BeanStub implements NamedBean {
         if (!hasChildren && rowNode.childStore != null) {
             this.destroyBean(rowNode.childStore);
             rowNode.childStore = null;
-            // if (!rowNode.master) {
-            //     rowNode.expanded = false;
-            // }
+            if (!rowNode.master) {
+                rowNode.expanded = false;
+            }
         }
     }
 
@@ -284,7 +284,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
         uiLevel: number
     ): void {
         const isUnbalancedGroup = this.gos.get('groupAllowUnbalanced') && rowNode.group && rowNode.key === '';
-        const isHiddenOpenGroup = this.gos.get('groupHideOpenParents') && rowNode.expanded;
+        const isHiddenOpenGroup = this.gos.get('groupHideOpenParents') && rowNode.group && rowNode.expanded;
         if (isHiddenOpenGroup || isUnbalancedGroup) {
             rowNode.setRowIndex(null);
             rowNode.setRowTop(null);

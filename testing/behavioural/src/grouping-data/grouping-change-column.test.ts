@@ -1147,10 +1147,12 @@ describe('ag-grid grouping simple data', () => {
             api.setRowNodeExpanded(api.getRowNode('row-group-country-Ireland')!, false, false, true);
             api.setRowNodeExpanded(api.getRowNode('row-group-country-Ireland-year-2020')!, true, false, true);
 
+            // Leaf groups in pivot mode are never expanded (getter returns false),
+            // so setRowNodeExpanded(true) has no visible effect on leaf groups.
             await new GridRows(api, 'user overrides: Ireland collapsed, year 2020 expanded').check(`
                 ROOT id:ROOT_NODE_ID
                 ├─┬ filler collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
-                │ ├─┬ LEAF_GROUP hidden id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
+                │ ├─┬ LEAF_GROUP collapsed hidden id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
                 │ │ └── LEAF hidden id:1 country:"Ireland" year:2020
                 │ └─┬ LEAF_GROUP collapsed hidden id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
                 │ · └── LEAF hidden id:2 country:"Ireland" year:2021

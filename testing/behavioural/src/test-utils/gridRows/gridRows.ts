@@ -265,19 +265,18 @@ export class GridRows<TData = any> {
             attempt.loadErrors();
             lastError = attempt.#tryCheck(diagramSnapshot);
             if (!lastError) {
+                if (i > 0) {
+                    console.error(
+                        `GridRows flaky check detected for "${this.label}" — passed only after retrying with delays. ` +
+                            `Add \`await asyncSetTimeout(N)\` before this check to avoid intermittent failures.`
+                    );
+                }
                 return this;
             }
             if (i < retryDelays.length) {
                 await asyncSetTimeout(retryDelays[i]);
                 attempt = new GridRows<TData>(this.api, this.label, this.options);
             }
-        }
-
-        if (attempt !== this) {
-            console.error(
-                `GridRows flaky check detected for "${this.label}" — passed only after retrying with delays. ` +
-                    `Add \`await asyncSetTimeout(N)\` before this check to avoid intermittent failures.`
-            );
         }
 
         addDiagramToError(lastError, attempt.makeDiagram(false), this.label);

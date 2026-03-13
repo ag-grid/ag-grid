@@ -18,8 +18,6 @@ import {
     _observeResize,
 } from 'ag-grid-community';
 
-import { _getRowDefaultExpanded } from '../rowHierarchy/rowHierarchyUtils';
-
 export class MasterDetailService extends BeanStub implements NamedBean, IMasterDetailService {
     beanName: BeanName = 'masterDetailSvc' as const;
 
@@ -96,15 +94,14 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
             }
         }
 
-        const beans = this.beans;
         if (!treeData) {
             // Note that with treeData the initialization of the expansed state is delegated to treeGroupStrategy
-            if (newMaster && created) {
-                const level = beans.rowGroupColsSvc?.columns.length ?? 0;
-                row._expanded ??= _getRowDefaultExpanded(beans, row, level, false);
-            } else if (!newMaster && oldMaster) {
-                // if changing AWAY from master, then un-expand, otherwise next time it's shown it is expanded again
-                row._expanded = false;
+            if (
+                (newMaster && created) ||
+                // if changing AWAY from master, forget current state
+                (!newMaster && oldMaster)
+            ) {
+                row._expanded ??= null;
             }
         }
 
@@ -135,7 +132,7 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
 
     /** Used by flatten stage to get or create a detail node from a master node */
     public getDetail(masterNode: RowNode): RowNode | null {
-        if (!masterNode.master || !masterNode._expanded) {
+        if (!masterNode.master || !masterNode.expanded) {
             return null;
         }
 

@@ -154,12 +154,21 @@ export class ServerSideExpansionService
         let changed = false;
         this.serverSideRowModel.forEachNode((node) => {
             const desired = this.isNodeExpanded(node);
-            if (node.expanded !== desired) {
+            if (!!node.expanded !== desired) {
                 changed = true;
             }
             super.setExpanded(node, desired);
         });
         return changed;
+    }
+
+    public isExpanded(rowNode: RowNode): boolean {
+        let value = rowNode._expanded;
+        if (value === null) {
+            value = this.defaultExpanded(rowNode);
+            rowNode._expanded = value;
+        }
+        return value as boolean;
     }
 
     public isNodeExpanded(node: RowNode): boolean {

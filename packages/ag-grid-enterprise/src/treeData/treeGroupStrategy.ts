@@ -9,7 +9,6 @@ import { BeanStub, RowNode, _removeFromArray, _warn } from 'ag-grid-community';
 
 import { setRowNodeGroup } from '../rowGrouping/rowGroupingUtils';
 import type { IRowGroupingStrategy } from '../rowHierarchy/rowHierarchyUtils';
-import { _getRowDefaultExpanded } from '../rowHierarchy/rowHierarchyUtils';
 import { fieldGetter } from './fieldAccess';
 
 // The approach used here avoids complex incremental updates by using linear passes and a final traversal.
@@ -384,7 +383,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             }
         } else if ((flags & FLAG_EXPANDED_INITIALIZED) === 0) {
             row.treeNodeFlags |= FLAG_EXPANDED_INITIALIZED;
-            row.expanded = _getRowDefaultExpanded(this.beans, row, level); // Initialize the expanded state
+            row._expanded ??= null; // null triggers lazy default resolution in the expanded getter
         }
 
         if (collapsed && row.rowIndex !== null) {
