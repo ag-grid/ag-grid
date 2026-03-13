@@ -6,7 +6,6 @@ import {
     _getRowContainerClass,
     _getRowContainerOptions,
     _getRowSpanContainerClass,
-    _getRowViewportClass,
 } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
@@ -43,7 +42,6 @@ const RowContainerComp = ({
 
     const containerOptions = useMemo(() => _getRowContainerOptions(asCommunityRowContainerName(name)), [name]);
 
-    const eViewport = useRef<HTMLDivElement | null>(null);
     const eContainer = useRef<HTMLDivElement | null>(null);
     const eSpanContainer = useRef<HTMLDivElement | null>(null);
     const eFullWidthAnchor = useRef<HTMLDivElement | null>(null);
@@ -60,10 +58,6 @@ const RowContainerComp = ({
     const domOrderRef = useRef<boolean>(false);
     const rowContainerCtrlRef = useRef<RowContainerCtrl>();
 
-    const viewportClasses = useMemo(
-        () => classesList('ag-viewport', _getRowViewportClass(asCommunityRowContainerName(name))),
-        [name]
-    );
     const containerClasses = useMemo(
         () => classesList(_getRowContainerClass(asCommunityRowContainerName(name))),
         [name]
@@ -73,16 +67,12 @@ const RowContainerComp = ({
         [name]
     );
 
-    const shouldRenderViewport =
-        !usesGridViewportForScrolling(name) && (containerOptions.type === 'center' || isSpanning);
     const requiresExternalViewport = usesGridViewportForScrolling(name);
 
-    const topLevelRef = shouldRenderViewport ? eViewport : eContainer;
-
-    useReactCommentEffect(' AG Row Container ' + name + ' ', topLevelRef);
+    useReactCommentEffect(' AG Row Container ' + name + ' ', eContainer);
 
     const setRef = useCallback(() => {
-        if (eViewport.current == null && eContainer.current == null && eSpanContainer.current == null) {
+        if (eContainer.current == null && eSpanContainer.current == null) {
             rowContainerCtrlRef.current = context.destroyBean(rowContainerCtrlRef.current);
         }
         if (context.isDestroyed()) {
@@ -90,7 +80,7 @@ const RowContainerComp = ({
         }
 
         const eContainerForCtrl = eContainer.current;
-        const eViewportForCtrl = requiresExternalViewport ? viewportElement : eViewport.current;
+        const eViewportForCtrl = requiresExternalViewport ? viewportElement : eContainer.current;
         if (!eContainerForCtrl || !eViewportForCtrl || (isSpanning && !eSpanContainer.current)) {
             return;
         }
@@ -123,11 +113,6 @@ const RowContainerComp = ({
         const compProxy: IRowContainerComp = {
             setHorizontalScroll: (offset: number) => {
                 eViewportForCtrl.scrollLeft = offset;
-            },
-            setViewportHeight: (height: string) => {
-                if (name !== 'scrollingCenter') {
-                    eViewportForCtrl.style.height = height;
-                }
             },
             setRowCtrls: ({ rowCtrls, useFlushSync }: { rowCtrls: RowCtrl[]; useFlushSync?: boolean }) => {
                 const useFlush = !!useFlushSync && rowCtrlsRef.current.length > 0 && rowCtrls.length > 0;
@@ -189,13 +174,6 @@ const RowContainerComp = ({
         },
         [setRef]
     );
-    const setViewportRef = useCallback(
-        (e: HTMLDivElement | null) => {
-            eViewport.current = e;
-            setRef();
-        },
-        [setRef]
-    );
 
     const buildSpanContainer = () => (
         <div className={spanClasses} ref={setSpanContainerRef} role={'presentation'}>
@@ -205,40 +183,23 @@ const RowContainerComp = ({
         </div>
     );
 
-    const buildContainer = () => {
-        const rows = rowCtrlsOrdered.map((rowCtrl) => (
-            <RowComp rowCtrl={rowCtrl} containerType={containerOptions.type} key={rowCtrl.instanceId}></RowComp>
-        ));
+    const rows = rowCtrlsOrdered.map((rowCtrl) => (
+        <RowComp rowCtrl={rowCtrl} containerType={containerOptions.type} key={rowCtrl.instanceId}></RowComp>
+    ));
 
-        if (isFullWidth) {
-            return (
-                <div className={containerClasses} ref={setContainerRef} role={'rowgroup'}>
-                    <div className="ag-full-width-anchor" ref={eFullWidthAnchor} role="presentation">
-                        {rows}
-                    </div>
-                </div>
-            );
-        }
-
+    if (isFullWidth) {
         return (
-            <div
-                className={containerClasses}
-                ref={setContainerRef}
-                role={shouldRenderViewport ? 'presentation' : 'rowgroup'}
-            >
-                {rows}
-                {!shouldRenderViewport && isSpanning ? buildSpanContainer() : null}
+            <div className={containerClasses} ref={setContainerRef} role={'rowgroup'}>
+                <div className="ag-full-width-anchor" ref={eFullWidthAnchor} role="presentation">
+                    {rows}
+                </div>
             </div>
         );
-    };
-
-    if (!shouldRenderViewport) {
-        return buildContainer();
     }
 
     return (
-        <div className={viewportClasses} ref={setViewportRef} role="rowgroup">
-            {buildContainer()}
+        <div className={containerClasses} ref={setContainerRef} role={'rowgroup'}>
+            {rows}
             {isSpanning ? buildSpanContainer() : null}
         </div>
     );

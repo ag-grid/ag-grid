@@ -329,7 +329,6 @@ export {
     _getRowContainerClass,
     _getRowContainerOptions,
     _getRowSpanContainerClass,
-    _getRowViewportClass,
     RowContainerCtrl,
 } from './gridBodyComp/rowContainer/rowContainerCtrl';
 export type {

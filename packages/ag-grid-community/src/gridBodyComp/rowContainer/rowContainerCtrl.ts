@@ -91,11 +91,6 @@ const ContainerCssClasses: Record<RowContainerName, RowContainerOptions> = {
     },
 };
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _getRowViewportClass(name: RowContainerName): `ag-${string}-viewport` {
-    const options = _getRowContainerOptions(name);
-    return `ag-${options.name}-viewport`;
-}
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getRowContainerClass(name: RowContainerName): `ag-${string}` {
     const options = _getRowContainerOptions(name);
     return `ag-${options.name}-container`;
@@ -123,7 +118,6 @@ const stickyContainers: RowContainerName[] = [
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowContainerComp {
-    setViewportHeight(height: string): void;
     setHorizontalScroll(offset: number): void;
     setRowCtrls(params: { rowCtrls: RowCtrl[]; useFlushSync?: boolean }): void;
     setSpannedRowCtrls(rowCtrls: RowCtrl[], useFlushSync: boolean): void;

@@ -13,7 +13,6 @@ import {
     _getRowContainerClass,
     _getRowContainerOptions,
     _getRowSpanContainerClass,
-    _getRowViewportClass,
 } from './rowContainerCtrl';
 
 function usesGridViewportForScrolling(name: RowContainerName): boolean {
@@ -36,37 +35,27 @@ function isBottomPinnedContainer(name: RowContainerName): boolean {
 const LAST_STICKY_BOTTOM_ROW_CLASS = 'ag-row-last-sticky-bottom';
 
 function getElementParams(name: RowContainerName, options: RowContainerOptions, beans: BeanCollection): ElementParams {
-    const isCellSpanning = !!beans.gos.get('enableCellSpan') && !!options.getSpannedRowCtrls;
-
     const eContainerElement: ElementParams = {
         tag: 'div',
         ref: 'eContainer',
         cls: _getRowContainerClass(name),
         role: 'rowgroup',
     };
-    const eSpannedContainerElement: ElementParams = {
-        tag: 'div',
-        ref: 'eSpannedContainer',
-        cls: `ag-spanning-container ${_getRowSpanContainerClass(name)}`,
-        role: 'presentation',
-    };
 
     if (usesGridViewportForScrolling(name)) {
+        const isCellSpanning = !!beans.gos.get('enableCellSpan') && !!options.getSpannedRowCtrls;
         return {
             ...eContainerElement,
-            children: [isCellSpanning ? eSpannedContainerElement : null],
-        };
-    }
-
-    if (options.type === 'center' || isCellSpanning) {
-        eContainerElement.role = 'presentation';
-
-        return {
-            tag: 'div',
-            ref: 'eViewport',
-            cls: `ag-viewport ${_getRowViewportClass(name)}`,
-            role: 'rowgroup',
-            children: [eContainerElement, isCellSpanning ? eSpannedContainerElement : null],
+            children: [
+                isCellSpanning
+                    ? {
+                          tag: 'div',
+                          ref: 'eSpannedContainer',
+                          cls: `ag-spanning-container ${_getRowSpanContainerClass(name)}`,
+                          role: 'presentation',
+                      }
+                    : null,
+            ],
         };
     }
 
@@ -90,7 +79,6 @@ function getElementParams(name: RowContainerName, options: RowContainerOptions, 
 }
 
 export class RowContainerComp extends Component {
-    private readonly eViewport: HTMLElement = RefPlaceholder;
     private readonly eContainer: HTMLElement = RefPlaceholder;
     private readonly eSpannedContainer: HTMLElement = RefPlaceholder;
     private readonly eFullWidthAnchor: HTMLElement = RefPlaceholder;
@@ -143,7 +131,7 @@ export class RowContainerComp extends Component {
         // For full-width containers, rows go into the sticky anchor element
         const eContainerForRows = this.options.fullWidth ? this.eFullWidthAnchor : this.eContainer;
         const eSpannedContainerForRows: HTMLElement | undefined = this.eSpannedContainer;
-        const eViewportForCtrl = (needsExternalViewport ? eGridViewport : this.eViewport) ?? this.eContainer;
+        const eViewportForCtrl = eGridViewport ?? this.eContainer;
 
         this.eRowsContainer = eContainerForRows;
         this.eSpannedRowsContainer = eSpannedContainerForRows;
@@ -151,11 +139,6 @@ export class RowContainerComp extends Component {
 
         const compProxy: IRowContainerComp = {
             setHorizontalScroll: (offset: number) => (eViewportForCtrl.scrollLeft = offset),
-            setViewportHeight: (height) => {
-                if (this.name !== 'scrollingCenter') {
-                    eViewportForCtrl.style.height = height;
-                }
-            },
             setRowCtrls: ({ rowCtrls }) => this.setRowCtrls(rowCtrls),
             setSpannedRowCtrls: (rowCtrls: RowCtrl[]) => this.setRowCtrls(rowCtrls, true),
             setDomOrder: (domOrder) => (this.domOrder = domOrder),

@@ -243,7 +243,7 @@ const GridBodyComp = () => {
     const createRowContainer = (container: ReactRowContainerName) => (
         <RowContainerComp
             name={container}
-            viewportElement={gridViewportElement}
+            viewportElement={container === 'scrollingCenter' ? gridViewportElement : undefined}
             onContainerElementChanged={container === 'scrollingFullWidth' ? setScrollingFullWidthContainer : undefined}
             key={`${container}-container`}
         />
