@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 4,
   "Donald Knuth": 4,
@@ -10,7 +10,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 4,
   "Donald Knuth": 4,
@@ -20,7 +20,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 4,
   "Donald Knuth": 4,
@@ -30,7 +30,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 4,
   "Donald Knuth": 4,
@@ -40,7 +40,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 4,
   "Donald Knuth": 0,
@@ -50,7 +50,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 4,
   "Donald Knuth": 0,
@@ -60,67 +60,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
-{
-  "2000": 4,
-  "Donald Knuth": 0,
-  "Ireland": 2,
-  "Total": 8,
-  "autoColDef.cellRendererParams.totalValueGetter": 8,
-}
-`;
-
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
-{
-  "2000": 4,
-  "Donald Knuth": 0,
-  "Ireland": 2,
-  "Total": 8,
-  "autoColDef.cellRendererParams.totalValueGetter": 0,
-}
-`;
-
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
-{
-  "2000": 4,
-  "Donald Knuth": 4,
-  "Ireland": 2,
-  "Total": 8,
-  "autoColDef.cellRendererParams.totalValueGetter": 8,
-}
-`;
-
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
-{
-  "2000": 4,
-  "Donald Knuth": 4,
-  "Ireland": 2,
-  "Total": 8,
-  "autoColDef.cellRendererParams.totalValueGetter": 0,
-}
-`;
-
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
-{
-  "2000": 4,
-  "Donald Knuth": 4,
-  "Ireland": 2,
-  "Total": 8,
-  "autoColDef.cellRendererParams.totalValueGetter": 8,
-}
-`;
-
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
-{
-  "2000": 4,
-  "Donald Knuth": 4,
-  "Ireland": 2,
-  "Total": 8,
-  "autoColDef.cellRendererParams.totalValueGetter": 0,
-}
-`;
-
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 4,
   "Donald Knuth": 0,
@@ -130,7 +70,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 4,
   "Donald Knuth": 0,
@@ -140,7 +80,67 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+{
+  "2000": 4,
+  "Donald Knuth": 4,
+  "Ireland": 2,
+  "Total": 8,
+  "autoColDef.cellRendererParams.totalValueGetter": 8,
+}
+`;
+
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+{
+  "2000": 4,
+  "Donald Knuth": 4,
+  "Ireland": 2,
+  "Total": 8,
+  "autoColDef.cellRendererParams.totalValueGetter": 0,
+}
+`;
+
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+{
+  "2000": 4,
+  "Donald Knuth": 4,
+  "Ireland": 2,
+  "Total": 8,
+  "autoColDef.cellRendererParams.totalValueGetter": 8,
+}
+`;
+
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+{
+  "2000": 4,
+  "Donald Knuth": 4,
+  "Ireland": 2,
+  "Total": 8,
+  "autoColDef.cellRendererParams.totalValueGetter": 0,
+}
+`;
+
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+{
+  "2000": 4,
+  "Donald Knuth": 0,
+  "Ireland": 2,
+  "Total": 8,
+  "autoColDef.cellRendererParams.totalValueGetter": 8,
+}
+`;
+
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+{
+  "2000": 4,
+  "Donald Knuth": 0,
+  "Ireland": 2,
+  "Total": 8,
+  "autoColDef.cellRendererParams.totalValueGetter": 0,
+}
+`;
+
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 4,
   "Donald Knuth": 0,
@@ -160,7 +160,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=true > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=true > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 7,
   "Donald Knuth": 0,
@@ -170,7 +170,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=true > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=true > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 7,
   "Donald Knuth": 0,
@@ -180,7 +180,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=true > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=true > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 7,
   "Donald Knuth": 0,
@@ -190,7 +190,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=true > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=true > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 7,
   "Donald Knuth": 0,
@@ -200,7 +200,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=true > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=true > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 7,
   "Donald Knuth": 0,
@@ -210,7 +210,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=true > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=true > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 7,
   "Donald Knuth": 0,
@@ -220,7 +220,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=true > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=false > showOpenedGroup=true > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 7,
   "Donald Knuth": 0,
@@ -240,7 +240,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 2,
   "Donald Knuth": 1,
@@ -250,7 +250,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 2,
   "Donald Knuth": 1,
@@ -260,7 +260,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 2,
   "Donald Knuth": 1,
@@ -270,7 +270,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 2,
   "Donald Knuth": 1,
@@ -280,7 +280,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 2,
   "Donald Knuth": 0,
@@ -290,7 +290,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 2,
   "Donald Knuth": 0,
@@ -300,67 +300,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
-{
-  "2000": 2,
-  "Donald Knuth": 0,
-  "Ireland": 1,
-  "Total": 1,
-  "autoColDef.cellRendererParams.totalValueGetter": 1,
-}
-`;
-
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
-{
-  "2000": 2,
-  "Donald Knuth": 0,
-  "Ireland": 1,
-  "Total": 1,
-  "autoColDef.cellRendererParams.totalValueGetter": 0,
-}
-`;
-
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
-{
-  "2000": 2,
-  "Donald Knuth": 1,
-  "Ireland": 1,
-  "Total": 1,
-  "autoColDef.cellRendererParams.totalValueGetter": 1,
-}
-`;
-
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
-{
-  "2000": 2,
-  "Donald Knuth": 1,
-  "Ireland": 1,
-  "Total": 1,
-  "autoColDef.cellRendererParams.totalValueGetter": 0,
-}
-`;
-
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
-{
-  "2000": 2,
-  "Donald Knuth": 1,
-  "Ireland": 1,
-  "Total": 1,
-  "autoColDef.cellRendererParams.totalValueGetter": 1,
-}
-`;
-
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
-{
-  "2000": 2,
-  "Donald Knuth": 1,
-  "Ireland": 1,
-  "Total": 1,
-  "autoColDef.cellRendererParams.totalValueGetter": 0,
-}
-`;
-
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 2,
   "Donald Knuth": 0,
@@ -370,7 +310,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 2,
   "Donald Knuth": 0,
@@ -380,7 +320,67 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+{
+  "2000": 2,
+  "Donald Knuth": 1,
+  "Ireland": 1,
+  "Total": 1,
+  "autoColDef.cellRendererParams.totalValueGetter": 1,
+}
+`;
+
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+{
+  "2000": 2,
+  "Donald Knuth": 1,
+  "Ireland": 1,
+  "Total": 1,
+  "autoColDef.cellRendererParams.totalValueGetter": 0,
+}
+`;
+
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+{
+  "2000": 2,
+  "Donald Knuth": 1,
+  "Ireland": 1,
+  "Total": 1,
+  "autoColDef.cellRendererParams.totalValueGetter": 1,
+}
+`;
+
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+{
+  "2000": 2,
+  "Donald Knuth": 1,
+  "Ireland": 1,
+  "Total": 1,
+  "autoColDef.cellRendererParams.totalValueGetter": 0,
+}
+`;
+
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+{
+  "2000": 2,
+  "Donald Knuth": 0,
+  "Ireland": 1,
+  "Total": 1,
+  "autoColDef.cellRendererParams.totalValueGetter": 1,
+}
+`;
+
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+{
+  "2000": 2,
+  "Donald Knuth": 0,
+  "Ireland": 1,
+  "Total": 1,
+  "autoColDef.cellRendererParams.totalValueGetter": 0,
+}
+`;
+
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 2,
   "Donald Knuth": 0,
@@ -400,7 +400,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=true > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=true > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 3,
   "Donald Knuth": 0,
@@ -410,7 +410,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=true > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=true > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 3,
   "Donald Knuth": 0,
@@ -420,7 +420,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=true > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=true > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 3,
   "Donald Knuth": 0,
@@ -430,7 +430,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=true > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=true > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 3,
   "Donald Knuth": 0,
@@ -440,7 +440,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=true > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=true > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 3,
   "Donald Knuth": 0,
@@ -450,7 +450,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=true > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=true > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 3,
   "Donald Knuth": 0,
@@ -460,7 +460,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=true > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=-1 > showOpenedGroup=true > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 3,
   "Donald Knuth": 0,
@@ -480,7 +480,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 2,
   "Donald Knuth": 0,
@@ -490,7 +490,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 2,
   "Donald Knuth": 0,
@@ -500,7 +500,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 2,
   "Donald Knuth": 0,
@@ -510,7 +510,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 2,
   "Donald Knuth": 0,
@@ -520,7 +520,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 2,
   "Donald Knuth": 0,
@@ -530,7 +530,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 2,
   "Donald Knuth": 0,
@@ -540,7 +540,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 2,
   "Donald Knuth": 0,
@@ -550,7 +550,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 2,
   "Donald Knuth": 0,
@@ -560,7 +560,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 2,
   "Donald Knuth": 0,
@@ -570,7 +570,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 2,
   "Donald Knuth": 0,
@@ -580,7 +580,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 2,
   "Donald Knuth": 0,
@@ -590,7 +590,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 2,
   "Donald Knuth": 0,
@@ -600,7 +600,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 2,
   "Donald Knuth": 0,
@@ -610,7 +610,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 2,
   "Donald Knuth": 0,
@@ -620,7 +620,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 2,
   "Donald Knuth": 0,
@@ -640,7 +640,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=true > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=true > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 3,
   "Donald Knuth": 0,
@@ -650,7 +650,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=true > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=true > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 3,
   "Donald Knuth": 0,
@@ -660,7 +660,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=true > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=true > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 3,
   "Donald Knuth": 0,
@@ -670,7 +670,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=true > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=true > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 3,
   "Donald Knuth": 0,
@@ -680,7 +680,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=true > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=true > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 3,
   "Donald Knuth": 0,
@@ -690,7 +690,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=true > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=true > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 3,
   "Donald Knuth": 0,
@@ -700,7 +700,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=true > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=0 > showOpenedGroup=true > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 3,
   "Donald Knuth": 0,
@@ -720,7 +720,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 4,
   "Donald Knuth": 0,
@@ -730,7 +730,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 4,
   "Donald Knuth": 0,
@@ -740,7 +740,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 4,
   "Donald Knuth": 0,
@@ -750,7 +750,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 4,
   "Donald Knuth": 0,
@@ -760,7 +760,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 4,
   "Donald Knuth": 0,
@@ -770,7 +770,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 4,
   "Donald Knuth": 0,
@@ -780,7 +780,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 4,
   "Donald Knuth": 0,
@@ -790,7 +790,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 4,
   "Donald Knuth": 0,
@@ -800,7 +800,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 4,
   "Donald Knuth": 0,
@@ -810,7 +810,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 4,
   "Donald Knuth": 0,
@@ -820,7 +820,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 4,
   "Donald Knuth": 0,
@@ -830,7 +830,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 4,
   "Donald Knuth": 0,
@@ -840,7 +840,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 4,
   "Donald Knuth": 0,
@@ -850,7 +850,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 4,
   "Donald Knuth": 0,
@@ -860,7 +860,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 4,
   "Donald Knuth": 0,
@@ -880,7 +880,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=true > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=true > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 5,
   "Donald Knuth": 0,
@@ -890,7 +890,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=true > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=true > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 5,
   "Donald Knuth": 0,
@@ -900,7 +900,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=true > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=true > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 5,
   "Donald Knuth": 0,
@@ -910,7 +910,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=true > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=true > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 5,
   "Donald Knuth": 0,
@@ -920,7 +920,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=true > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=true > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 5,
   "Donald Knuth": 0,
@@ -930,7 +930,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=true > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=true > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 5,
   "Donald Knuth": 0,
@@ -940,7 +940,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=true > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=multipleColumns > groupHideOpenParents=true > groupDefaultExpanded=1 > showOpenedGroup=true > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 5,
   "Donald Knuth": 0,
@@ -960,7 +960,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 4,
   "Donald Knuth": 2,
@@ -970,7 +970,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 4,
   "Donald Knuth": 2,
@@ -980,7 +980,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 4,
   "Donald Knuth": 2,
@@ -990,7 +990,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 4,
   "Donald Knuth": 2,
@@ -1000,7 +1000,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 4,
   "Donald Knuth": 0,
@@ -1010,7 +1010,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 4,
   "Donald Knuth": 0,
@@ -1020,67 +1020,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
-{
-  "2000": 4,
-  "Donald Knuth": 0,
-  "Ireland": 2,
-  "Total": 8,
-  "autoColDef.cellRendererParams.totalValueGetter": 8,
-}
-`;
-
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=false > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
-{
-  "2000": 4,
-  "Donald Knuth": 0,
-  "Ireland": 2,
-  "Total": 8,
-  "autoColDef.cellRendererParams.totalValueGetter": 0,
-}
-`;
-
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
-{
-  "2000": 4,
-  "Donald Knuth": 2,
-  "Ireland": 2,
-  "Total": 8,
-  "autoColDef.cellRendererParams.totalValueGetter": 8,
-}
-`;
-
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
-{
-  "2000": 4,
-  "Donald Knuth": 2,
-  "Ireland": 2,
-  "Total": 8,
-  "autoColDef.cellRendererParams.totalValueGetter": 0,
-}
-`;
-
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
-{
-  "2000": 4,
-  "Donald Knuth": 2,
-  "Ireland": 2,
-  "Total": 8,
-  "autoColDef.cellRendererParams.totalValueGetter": 8,
-}
-`;
-
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p)=>\`autoColDef.valueGetter(\${p.data?.athlete ?? 'MISSING'})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
-{
-  "2000": 4,
-  "Donald Knuth": 2,
-  "Ireland": 2,
-  "Total": 8,
-  "autoColDef.cellRendererParams.totalValueGetter": 0,
-}
-`;
-
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 4,
   "Donald Knuth": 0,
@@ -1090,7 +1030,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=false > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 4,
   "Donald Knuth": 0,
@@ -1100,7 +1040,67 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+{
+  "2000": 4,
+  "Donald Knuth": 2,
+  "Ireland": 2,
+  "Total": 8,
+  "autoColDef.cellRendererParams.totalValueGetter": 8,
+}
+`;
+
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+{
+  "2000": 4,
+  "Donald Knuth": 2,
+  "Ireland": 2,
+  "Total": 8,
+  "autoColDef.cellRendererParams.totalValueGetter": 0,
+}
+`;
+
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+{
+  "2000": 4,
+  "Donald Knuth": 2,
+  "Ireland": 2,
+  "Total": 8,
+  "autoColDef.cellRendererParams.totalValueGetter": 8,
+}
+`;
+
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=(p) => \`autoColDef.valueGetter(\${p.data?.athlete ?? "MISSING"})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+{
+  "2000": 4,
+  "Donald Knuth": 2,
+  "Ireland": 2,
+  "Total": 8,
+  "autoColDef.cellRendererParams.totalValueGetter": 0,
+}
+`;
+
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+{
+  "2000": 4,
+  "Donald Knuth": 0,
+  "Ireland": 2,
+  "Total": 8,
+  "autoColDef.cellRendererParams.totalValueGetter": 8,
+}
+`;
+
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+{
+  "2000": 4,
+  "Donald Knuth": 0,
+  "Ireland": 2,
+  "Total": 8,
+  "autoColDef.cellRendererParams.totalValueGetter": 0,
+}
+`;
+
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=false > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueGetter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 4,
   "Donald Knuth": 0,
@@ -1120,7 +1120,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=true > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=true > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 7,
   "Donald Knuth": 0,
@@ -1130,7 +1130,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=true > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=true > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 7,
   "Donald Knuth": 0,
@@ -1140,7 +1140,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=true > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=true > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 7,
   "Donald Knuth": 0,
@@ -1150,7 +1150,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=true > colDef[1].valueFormatter=(p)=>\`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=true > colDef[1].valueFormatter=(p) => \`columnDef[1].valueFormatter(\${p.value})\` > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 7,
   "Donald Knuth": 0,
@@ -1160,7 +1160,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=true > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=true > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 7,
   "Donald Knuth": 0,
@@ -1170,7 +1170,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=true > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueFormatter=(p)=>\`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=true > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueFormatter=(p) => \`autoColDef.valueFormatter(\${p.value})\` > autoGroupColumnDef.cellRendererParams.totalValueGetter=undefined 1`] = `
 {
   "2000": 7,
   "Donald Knuth": 0,
@@ -1180,7 +1180,7 @@ exports[`ag-grid find API > with rowModelType=clientSide - correct values are di
 }
 `;
 
-exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=true > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p)=>\`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
+exports[`ag-grid find API > with rowModelType=clientSide - correct values are displayed - autoColDef inner renderer > groupDisplayType=singleColumn > showOpenedGroup=true > colDef[1].valueFormatter=undefined > autoGroupColumnDef.valueFormatter=undefined > autoGroupColumnDef.cellRendererParams.totalValueGetter=(p) => \`autoColDef.cellRendererParams.totalValueGetter(\${p.valueFormatted ?? p.value})\` 1`] = `
 {
   "2000": 7,
   "Donald Knuth": 0,
