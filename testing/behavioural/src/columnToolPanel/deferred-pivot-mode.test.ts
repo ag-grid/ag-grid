@@ -8,8 +8,8 @@ import {
 } from 'ag-grid-docs/src/content/docs/tool-panel-columns/_examples/deferred-apply-mode/fakeServer';
 import { AllEnterpriseModule, RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
 
-import { AgGridHeaderDropZonesSelector } from '../../../../packages/ag-grid-enterprise/src/rowGrouping/columnDropZones/agGridHeaderDropZones';
 import { moveItem } from '../../../../packages/ag-grid-enterprise/src/columnToolPanel/columnMoveUtils';
+import { AgGridHeaderDropZonesSelector } from '../../../../packages/ag-grid-enterprise/src/rowGrouping/columnDropZones/agGridHeaderDropZones';
 import { DragEventDispatcher, TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from '../test-utils';
 
 describe('deferred column tool panel pivot mode', () => {
@@ -459,7 +459,10 @@ describe('deferred column tool panel pivot mode', () => {
 
         let component = virtualList.getComponentAt(lastIndex) as any;
         if (!component) {
-            component = listPanel['createComponentFromItem'](displayedColsList[lastIndex], document.createElement('div'));
+            component = listPanel['createComponentFromItem'](
+                displayedColsList[lastIndex],
+                document.createElement('div')
+            );
         }
 
         moveItem(

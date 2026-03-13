@@ -7,7 +7,6 @@ import { VERSION } from '../version';
 import { MenuItemModule } from '../widgets/menuItemModule';
 import { ColumnToolPanel } from './columnToolPanel';
 import { ColumnToolPanelFactory } from './columnToolPanelFactory';
-import { ColumnStateUpdateExecutionStrategy } from './updates/columnStateUpdateExecutionStrategy';
 import { SharedColumnStateUpdateStrategyModule } from './updates/columnStateUpdateStrategyModule';
 
 /**
@@ -16,7 +15,7 @@ import { SharedColumnStateUpdateStrategyModule } from './updates/columnStateUpda
 export const ColumnsToolPanelModule: _ModuleWithoutApi = {
     moduleName: 'ColumnsToolPanel',
     version: VERSION,
-    beans: [ColumnToolPanelFactory, ColumnStateUpdateExecutionStrategy],
+    beans: [ColumnToolPanelFactory],
     userComponents: { agColumnsToolPanel: ColumnToolPanel },
     icons: {
         ensureColumnVisible: 'column-arrow',

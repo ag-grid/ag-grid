@@ -8,11 +8,15 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
-import { createSyncColumnStateUpdateExecutionStrategy } from './columnStateUpdateExecutionStrategy';
+import {
+    ColumnStateUpdateExecutionStrategy,
+    createSyncColumnStateUpdateExecutionStrategy,
+} from './columnStateUpdateExecutionStrategy';
 import type { ColumnStateConcreteUpdateStrategy } from './columnStateUpdateTypes';
 
 export class ColumnStateUpdateStrategy extends BeanStub implements IColumnStateUpdateStrategy {
     public beanName = 'columnStateUpdateStrategy' as const;
+    private executionStrategy?: ColumnStateUpdateExecutionStrategy;
     private fallbackUpdates?: ColumnStateConcreteUpdateStrategy;
 
     public applyColumnState(deferMode: boolean, state: ColumnState[], eventType: ColumnEventType): void {
@@ -174,7 +178,7 @@ export class ColumnStateUpdateStrategy extends BeanStub implements IColumnStateU
     }
 
     private getUpdateStrategy(): IColumnStateUpdateStrategy | undefined {
-        return this.beans.columnStateUpdateExecutionStrategy;
+        return (this.executionStrategy ??= this.createManagedBean(new ColumnStateUpdateExecutionStrategy()));
     }
 
     private getFallbackUpdates(): ColumnStateConcreteUpdateStrategy {

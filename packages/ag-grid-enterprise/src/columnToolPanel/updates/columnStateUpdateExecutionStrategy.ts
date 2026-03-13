@@ -709,7 +709,9 @@ function getPrimaryColumnIds(beans: BeanStub['beans']): string[] {
 }
 
 function getPrimaryColumns(beans: BeanStub['beans']): AgColumn[] {
-    return (beans.colModel.getColDefCols() ?? beans.colModel.getCols()).filter((column) => isPrimaryColDefColumn(column));
+    return (beans.colModel.getColDefCols() ?? beans.colModel.getCols()).filter((column) =>
+        isPrimaryColDefColumn(column)
+    );
 }
 
 function getDeferredMoveTargetIndex(

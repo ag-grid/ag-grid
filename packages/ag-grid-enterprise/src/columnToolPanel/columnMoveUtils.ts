@@ -8,9 +8,9 @@ import type {
 import { isProvidedColumnGroup } from 'ag-grid-community';
 
 import type { VirtualListDragItem } from '../agStack/iVirtualListDragFeature';
-import { refreshDeferredToolPanelUi } from './toolPanelDeferredUiUtils';
 import type { ToolPanelColumnComp } from './toolPanelColumnComp';
 import { ToolPanelColumnGroupComp } from './toolPanelColumnGroupComp';
+import { refreshDeferredToolPanelUi } from './toolPanelDeferredUiUtils';
 import type { ColumnStateUpdateParams } from './updates/columnStateUpdateTypes';
 
 export const getCurrentColumnsBeingMoved = (column: AgColumn | AgProvidedColumnGroup | null): AgColumn[] => {

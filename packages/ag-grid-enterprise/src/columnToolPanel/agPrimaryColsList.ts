@@ -24,7 +24,11 @@ import {
 import type { VirtualListModel } from '../agStack/iVirtualList';
 import type { VirtualListDragItem } from '../agStack/iVirtualListDragFeature';
 import { VirtualListDragFeature } from '../features/virtualListDragFeature';
-import { syncLayoutWithColumns, syncLayoutWithGrid, toolPanelCreateColumnTree } from '../sideBar/common/toolPanelColDefService';
+import {
+    syncLayoutWithColumns,
+    syncLayoutWithGrid,
+    toolPanelCreateColumnTree,
+} from '../sideBar/common/toolPanelColDefService';
 import { VirtualList } from '../widgets/virtualList';
 import { ExpandState } from './agPrimaryColsHeader';
 import { ColumnModelItem } from './columnModelItem';
