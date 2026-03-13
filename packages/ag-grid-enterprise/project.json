@@ -20,7 +20,7 @@
     },
     "build:umd": {
       "executor": "@nx/esbuild:esbuild",
-      "dependsOn": ["^build", "build:copy-styles", "build:package"],
+      "dependsOn": ["build:copy-styles"],
       "inputs": [
         "tsDefaults",
         "styleOutputs",
