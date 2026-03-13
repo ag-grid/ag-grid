@@ -192,7 +192,7 @@ export function updateColumns(
     refreshDeferredToolPanelUi(beans, params);
 }
 
-export function createPivotState(column: AgColumn): {
+function createPivotState(column: AgColumn): {
     pivot?: boolean;
     rowGroup?: boolean;
     aggFunc?: string | IAggFunc | null;

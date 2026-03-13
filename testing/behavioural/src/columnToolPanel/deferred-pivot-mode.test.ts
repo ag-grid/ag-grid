@@ -1,8 +1,14 @@
 import { fireEvent, getByTestId, getByText } from '@testing-library/dom';
 
-import type { AgColumn, ColDef, ColGroupDef, GridApi } from 'ag-grid-community';
-import { DragSourceType, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
-import type { IColumnStateUpdateStrategy } from 'ag-grid-community';
+import type {
+    AgColumn,
+    ColDef,
+    ColGroupDef,
+    DragSourceType,
+    GridApi,
+    IColumnStateUpdateStrategy,
+} from 'ag-grid-community';
+import { agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import {
     createFakeServer,
     createServerSideDatasource,
