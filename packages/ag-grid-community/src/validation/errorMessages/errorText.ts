@@ -488,7 +488,7 @@ export const AG_GRID_ERRORS = {
             itemsToConsider,
         ] as const,
     176: ({ key }: { key: string }) => `unknown menu item type ${key}` as const,
-    177: () => `valid values for cellSelection.handle.direction are 'x', 'y' and 'xy'. Default to 'xy'.` as const,
+    // 177: () => `valid values for cellSelection.handle.direction are 'x', 'y' and 'xy'. Default to 'xy'.` as const,
     178: ({ colId }: { colId: string }) => `column ${colId} is not visible` as const,
     179: () => 'totalValueGetter should be either a function or a string (expression)' as const,
     180: () => 'agRichSelectCellEditor requires cellEditorParams.values to be set' as const,

@@ -179,6 +179,22 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 return toConstrainedNum('cacheOverflowSize', cacheOverflowSize, 1);
             },
         },
+        cellSelection: {
+            validate({ cellSelection }) {
+                if (typeof cellSelection !== 'object') {
+                    return null;
+                }
+
+                if (cellSelection.handle?.mode === 'fill') {
+                    const { direction } = cellSelection.handle;
+                    if (direction && !['x', 'y', 'xy'].includes(direction)) {
+                        return "valid values for cellSelection.handle.direction are 'x', 'y' and 'xy'. Defaults to 'xy'.";
+                    }
+                }
+
+                return null;
+            },
+        },
 
         datasource: {
             supportedRowModels: ['infinite'],
