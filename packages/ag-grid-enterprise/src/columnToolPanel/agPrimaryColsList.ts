@@ -578,7 +578,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         let checkedCount = 0;
         let uncheckedCount = 0;
 
-        const updateStrategy = this.beans.colToolPanelUpdates;
+        const updateStrategy = this.beans.columnStateUpdateStrategy;
         const pivotMode = updateStrategy.getPivotMode(!!this.params.deferApply);
 
         this.forEachItem((item) => {

@@ -221,7 +221,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     private readonly onDeferredApply = (): void => {
-        this.beans.colToolPanelUpdates.commit(this.isDeferModeEnabled);
+        this.beans.columnStateUpdateStrategy.commit(this.isDeferModeEnabled);
     };
 
     private readonly onDeferModeChanged = (nextDeferMode: boolean): void => {
@@ -230,7 +230,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         }
 
         if (this.isDeferModeEnabled) {
-            this.beans.colToolPanelUpdates.reset(this.isDeferModeEnabled);
+            this.beans.columnStateUpdateStrategy.reset(this.isDeferModeEnabled);
         }
 
         this.isDeferModeEnabled = nextDeferMode;
@@ -244,7 +244,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     };
 
     private readonly onDeferredCancel = (): void => {
-        this.beans.colToolPanelUpdates.reset(this.isDeferModeEnabled);
+        this.beans.columnStateUpdateStrategy.reset(this.isDeferModeEnabled);
         this.refreshToolPanelLayouts();
         this.pivotModePanel?.refreshEditStrategy();
     };

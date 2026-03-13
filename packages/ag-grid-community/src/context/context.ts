@@ -55,7 +55,7 @@ import type { IAggFuncService } from '../interfaces/iAggFuncService';
 import type { IClipboardService } from '../interfaces/iClipboardService';
 import type { IColsService } from '../interfaces/iColsService';
 import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
-import type { IColumnToolPanelUpdateStrategy } from '../interfaces/iColumnToolPanelUpdateStrategy';
+import type { IColumnStateUpdateStrategy } from '../interfaces/iColumnStateUpdateStrategy';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IContextMenuService } from '../interfaces/iContextMenu';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
@@ -380,8 +380,8 @@ interface CoreBeanCollection
     formulaDataSvc?: IFormulaDataService;
     formula?: IFormulaService;
     formulaInputManager?: IFormulaInputManagerService;
-    colToolPanelUpdates: IColumnToolPanelUpdateStrategy;
-    colToolPanelUpdateStrategy: IColumnToolPanelUpdateStrategy;
+    columnStateUpdateStrategy: IColumnStateUpdateStrategy;
+    columnStateUpdateExecutionStrategy: IColumnStateUpdateStrategy;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

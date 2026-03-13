@@ -1,9 +1,9 @@
 import type { BeanCollection } from 'ag-grid-community';
 
 import type { ColumnToolPanel } from './columnToolPanel';
-import type { ColumnToolPanelUpdateParams } from './updates/columnToolPanelUpdatesTypes';
+import type { ColumnStateUpdateParams } from './updates/columnStateUpdateTypes';
 
-export function refreshDeferredToolPanelUi(beans: BeanCollection, params?: ColumnToolPanelUpdateParams): void {
+export function refreshDeferredToolPanelUi(beans: BeanCollection, params?: ColumnStateUpdateParams): void {
     if (!params?.deferApply) {
         return;
     }

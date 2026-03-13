@@ -105,9 +105,7 @@ export class ColumnStateUpdateExecutionStrategy extends BeanStub implements ICol
     }
 }
 
-export function createSyncColumnStateUpdateExecutionStrategy(
-    beans: BeanCollection
-): ColumnStateConcreteUpdateStrategy {
+export function createSyncColumnStateUpdateExecutionStrategy(beans: BeanCollection): ColumnStateConcreteUpdateStrategy {
     return new SynchronousColumnStateUpdateStrategy(beans);
 }
 
