@@ -137,6 +137,13 @@
     pointer-events: none;
 }
 
+.ag-full-width-anchor {
+    position: sticky;
+    left: 0;
+    height: 100%;
+    pointer-events: none;
+}
+
 /**
   ****************************
   * Scrollers
@@ -246,6 +253,7 @@
 }
 
 .ag-row:where(:not(.ag-full-width-row)),
+:where(.ag-row.ag-embedded-full-width-row),
 .ag-header-row {
     display: flex;
     width: 100%;
@@ -253,13 +261,15 @@
 
 /* fill the gap between the last content section and pinned-right without allowing
    the row's own background to bleed into the empty viewport area. */
-:where(.ag-row:not(.ag-full-width-row))::after {
+:where(.ag-row:not(.ag-full-width-row))::after,
+:where(.ag-row.ag-embedded-full-width-row::after) {
     content: '';
     flex: 1 0 0px;
     align-self: stretch;
 }
 
-:where(.ag-row:not(.ag-header-row, .ag-full-width-row))::after {
+:where(.ag-row:not(.ag-header-row, .ag-full-width-row))::after,
+:where(.ag-row.ag-embedded-full-width-row::after) {
     background-color: var(--ag-data-background-color);
 }
 
@@ -306,21 +316,28 @@
 
 /* place pinned-right after the ::after spacer so the spacer fills the gap between
    the scrolling section and pinned-right. */
-:where(.ag-row:not(.ag-full-width-row)) > .ag-grid-pinned-right-cells {
-    order: 1;
+:where(.ag-row:not(.ag-full-width-row)),
+:where(.ag-row.ag-embedded-full-width-row) {
+    > .ag-grid-pinned-right-cells {
+        order: 1;
+    }
 }
 
 /* in RTL (row-reverse), the gap is between pinned-left and scrolling-cells.
    move scrolling-cells after the spacer so it sits next to pinned-right on the left. */
 /* rtl:ignore */
-:where(.ag-rtl) :where(.ag-row:not(.ag-full-width-row)) > .ag-grid-scrolling-cells {
-    order: 1;
-}
+.ag-rtl {
+    :where(.ag-row:not(.ag-full-width-row)),
+    :where(.ag-row.ag-embedded-full-width-row) {
+        :where(> .ag-grid-scrolling-cells) {
+            order: 1;
+        }
+    }
 
-/* rtl:ignore */
-:where(.ag-rtl) :where(.ag-body-horizontal-scroll) .ag-grid-scrolling-cells {
-    /* when scrollable, offset for the vertical scrollbar on the left in rtl. */
-    margin-left: var(--ag-pinned-left-sticky-offset, 0);
+    :where(.ag-body-horizontal-scroll .ag-grid-scrolling-cells) {
+        /* when scrollable, offset for the vertical scrollbar on the left in rtl. */
+        margin-left: var(--ag-pinned-left-sticky-offset, 0);
+    }
 }
 
 .ag-grid-pinned-right-cells::after,
@@ -355,7 +372,7 @@
     position: relative;
 }
 
-.ag-full-width-row {
+.ag-full-width-row:not(:where(.ag-embedded-full-width-row)) {
     overflow: hidden;
 
     /* turn events back on, as we removed them in the parent */
@@ -588,6 +605,7 @@
     }
 
     .ag-row:where(:not(.ag-full-width-row)),
+    .ag-row:where(.ag-embedded-full-width-row),
     .ag-header-row {
         flex-direction: row;
     }
@@ -605,6 +623,7 @@
     }
 
     .ag-row:where(:not(.ag-full-width-row)),
+    .ag-row:where(.ag-embedded-full-width-row),
     .ag-header-row {
         flex-direction: row-reverse;
     }

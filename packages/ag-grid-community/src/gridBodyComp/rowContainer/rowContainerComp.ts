@@ -69,6 +69,23 @@ function getElementParams(name: RowContainerName, options: RowContainerOptions, 
             children: [eContainerElement, isCellSpanning ? eSpannedContainerElement : null],
         };
     }
+
+    // Full-width containers get an anchor child that uses position:sticky to stay
+    // pinned to the viewport edge during horizontal scrolling.
+    if (options.fullWidth) {
+        return {
+            ...eContainerElement,
+            children: [
+                {
+                    tag: 'div',
+                    ref: 'eFullWidthAnchor',
+                    cls: 'ag-full-width-anchor',
+                    role: 'presentation',
+                },
+            ],
+        };
+    }
+
     return eContainerElement;
 }
 
@@ -76,6 +93,7 @@ export class RowContainerComp extends Component {
     private readonly eViewport: HTMLElement = RefPlaceholder;
     private readonly eContainer: HTMLElement = RefPlaceholder;
     private readonly eSpannedContainer: HTMLElement = RefPlaceholder;
+    private readonly eFullWidthAnchor: HTMLElement = RefPlaceholder;
     private eRowsContainer: HTMLElement = RefPlaceholder;
     private eSpannedRowsContainer: HTMLElement | undefined;
 
@@ -122,7 +140,8 @@ export class RowContainerComp extends Component {
             }
         }
 
-        const eContainerForRows = this.eContainer;
+        // For full-width containers, rows go into the sticky anchor element
+        const eContainerForRows = this.options.fullWidth ? this.eFullWidthAnchor : this.eContainer;
         const eSpannedContainerForRows: HTMLElement | undefined = this.eSpannedContainer;
         const eViewportForCtrl = (needsExternalViewport ? eGridViewport : this.eViewport) ?? this.eContainer;
 
@@ -141,6 +160,7 @@ export class RowContainerComp extends Component {
             setSpannedRowCtrls: (rowCtrls: RowCtrl[]) => this.setRowCtrls(rowCtrls, true),
             setDomOrder: (domOrder) => (this.domOrder = domOrder),
             setContainerWidth: (width) => {
+                // For full-width containers, set width on the anchor (which is eContainerForRows)
                 eContainerForRows.style.width = width;
                 if (eSpannedContainerForRows) {
                     eSpannedContainerForRows.style.width = width;

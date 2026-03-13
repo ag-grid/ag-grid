@@ -884,39 +884,19 @@ export class RowRenderer extends BeanStub implements NamedBean {
             cellCtrl.refreshOrDestroyCell(refreshCellParams);
         }
 
-        // refresh the full width rows too
-        this.refreshFullWidth(rowNodes);
+        // full-width rows are mode-rendered and not represented by CellCtrls.
+        if (rowNodes?.length) {
+            for (const rowCtrl of this.getRowCtrls(rowNodes)) {
+                if (rowCtrl.isFullWidth()) {
+                    rowCtrl.refreshRow(refreshCellParams);
+                }
+            }
+        }
     }
 
     public refreshRows(params: RefreshRowsParams = {}): void {
         for (const rowCtrl of this.getRowCtrls(params.rowNodes)) {
             rowCtrl.refreshRow(params);
-        }
-
-        // refresh the full width rows too
-        this.refreshFullWidth(params.rowNodes);
-    }
-
-    private refreshFullWidth(rowNodes?: IRowNode[]): void {
-        if (!rowNodes) {
-            return;
-        }
-
-        let rowRedrawn = false;
-        for (const rowCtrl of this.getRowCtrls(rowNodes)) {
-            if (!rowCtrl.isFullWidth()) {
-                continue;
-            }
-
-            const refreshed = rowCtrl.refreshFullWidth();
-            if (!refreshed) {
-                rowRedrawn = true;
-                this.redrawRow(rowCtrl.rowNode, true);
-            }
-        }
-
-        if (rowRedrawn) {
-            this.dispatchDisplayedRowsChanged(false);
         }
     }
 

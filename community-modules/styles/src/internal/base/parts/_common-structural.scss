@@ -299,6 +299,13 @@
         width: 100%;
     }
 
+    .ag-full-width-anchor {
+        position: sticky;
+        left: 0;
+        height: 100%;
+        pointer-events: none;
+    }
+
     .ag-virtual-list-container {
         overflow: hidden;
     }
@@ -745,6 +752,7 @@
     }
 
     .ag-row:not(.ag-full-width-row),
+    .ag-row.ag-embedded-full-width-row,
     .ag-header-row {
         display: flex;
         width: 100%;
@@ -752,13 +760,15 @@
 
     // fill the gap between the last content section and pinned-right without allowing
     // the row's own background to bleed into the empty viewport area.
-    .ag-row:not(.ag-full-width-row)::after {
+    .ag-row:not(.ag-full-width-row)::after,
+    .ag-row.ag-embedded-full-width-row::after {
         content: '';
         flex: 1 0 0px;
         align-self: stretch;
     }
 
-    .ag-row:not(.ag-header-row, .ag-full-width-row)::after {
+    .ag-row:not(.ag-header-row, .ag-full-width-row)::after,
+    .ag-row.ag-embedded-full-width-row::after {
         background-color: var(--ag-data-background-color);
     }
 
@@ -799,14 +809,20 @@
 
     // place pinned-right after the ::after spacer so the spacer fills the gap between
     // the scrolling section and pinned-right.
-    .ag-row:not(.ag-full-width-row) > .ag-grid-pinned-right-cells {
-        order: 1;
+    .ag-row:not(.ag-full-width-row),
+    .ag-row.ag-embedded-full-width-row {
+        > .ag-grid-pinned-right-cells {
+            order: 1;
+        }
     }
 
     // in RTL (row-reverse), the gap is between pinned-left and scrolling-cells.
     // move scrolling-cells after the spacer so it sits next to pinned-right on the left.
-    .ag-rtl .ag-row:not(.ag-full-width-row) > .ag-grid-scrolling-cells {
-        order: 1;
+    .ag-rtl .ag-row:not(.ag-full-width-row),
+    .ag-rtl .ag-row.ag-embedded-full-width-row {
+        > .ag-grid-scrolling-cells {
+            order: 1;
+        }
     }
 
     .ag-rtl .ag-body-horizontal-scroll .ag-grid-scrolling-cells {
@@ -842,7 +858,7 @@
         position: relative;
     }
 
-    .ag-full-width-row {
+    .ag-full-width-row:not(.ag-embedded-full-width-row) {
         overflow: hidden;
         // turn events back on, as we removed them in the parent
         pointer-events: all;
@@ -2147,6 +2163,7 @@
         }
 
         .ag-row:not(.ag-full-width-row),
+        .ag-row.ag-embedded-full-width-row,
         .ag-header-row {
             flex-direction: row;
         }
@@ -2163,6 +2180,7 @@
         }
 
         .ag-row:not(.ag-full-width-row),
+        .ag-row.ag-embedded-full-width-row,
         .ag-header-row {
             flex-direction: row-reverse;
         }

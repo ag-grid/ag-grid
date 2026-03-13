@@ -13,7 +13,6 @@ interface PinnedRowContainerRendererSourceConfig {
     stream: PinnedSectionStream;
     lane: PinnedSectionLane;
     order?: number;
-    lockToViewportX?: boolean;
     getTopOffsetPx?: () => number;
     placeAfterHeaderRows?: boolean;
 }
@@ -38,7 +37,6 @@ export interface IPinnedRowContainerRendererFeature {
     registerRowContainerSource(name: RowContainerName): PinnedRowContainerRendererSource | undefined;
     createCompHost(config: Omit<PinnedRowContainerRendererSourceConfig, 'id'>): IPinnedSectionCompHost;
     refresh(): void;
-    refreshViewportPinned(): void;
 }
 
 let nextCompHostId = 0;
@@ -52,7 +50,6 @@ export class PinnedRowContainerRendererFeature extends BeanStub implements IPinn
         bottomCenter: HTMLElement;
         bottomFullWidth: HTMLElement;
     };
-    private readonly eGridViewport: HTMLElement;
     private sourceSequence = 0;
     private rowContainerSourceSequence = 0;
 
@@ -60,8 +57,7 @@ export class PinnedRowContainerRendererFeature extends BeanStub implements IPinn
         topCenter: HTMLElement,
         topFullWidth: HTMLElement,
         bottomCenter: HTMLElement,
-        bottomFullWidth: HTMLElement,
-        eGridViewport: HTMLElement
+        bottomFullWidth: HTMLElement
     ) {
         super();
         this.hosts = {
@@ -70,7 +66,6 @@ export class PinnedRowContainerRendererFeature extends BeanStub implements IPinn
             bottomCenter,
             bottomFullWidth,
         };
-        this.eGridViewport = eGridViewport;
     }
 
     public registerSource(config: PinnedRowContainerRendererSourceConfig): PinnedRowContainerRendererSource {
@@ -159,19 +154,6 @@ export class PinnedRowContainerRendererFeature extends BeanStub implements IPinn
         this.refreshHost('bottom', 'fullWidth');
     }
 
-    public refreshViewportPinned(): void {
-        const visited = new Set<HostKey>();
-        for (const source of this.sources.values()) {
-            if (source.lockToViewportX) {
-                const key = this.toHostKey(source.section, source.stream);
-                if (!visited.has(key)) {
-                    visited.add(key);
-                    this.refreshHost(source.section, source.stream);
-                }
-            }
-        }
-    }
-
     private setSourceElements(id: string, elements: HTMLElement[]): void {
         const source = this.sources.get(id);
         if (!source) {
@@ -192,6 +174,8 @@ export class PinnedRowContainerRendererFeature extends BeanStub implements IPinn
 
     private refreshHost(section: PinnedSection, stream: PinnedSectionStream): void {
         const host = this.getHost(section, stream);
+        // For full-width hosts, place elements inside the sticky anchor if present
+        const target = (host.querySelector(':scope > .ag-full-width-anchor') as HTMLElement | null) ?? host;
         const hostKey = this.toHostKey(section, stream);
         const sortedSources = this.getSortedSources(section, stream);
         const orderedEntries: { eGui: HTMLElement; source: SourceState }[] = [];
@@ -204,8 +188,13 @@ export class PinnedRowContainerRendererFeature extends BeanStub implements IPinn
                 }
                 activeElements.add(eGui);
                 orderedEntries.push({ eGui, source });
-                if (source.lockToViewportX) {
-                    this.applyViewportPinnedLayout(source, eGui);
+                if (source.getTopOffsetPx) {
+                    eGui.style.position = 'absolute';
+                    eGui.style.top = `${source.getTopOffsetPx()}px`;
+                    const gridBodyCtrl = this.beans.ctrlsSvc.getGridBodyCtrl();
+                    const viewportWidth = gridBodyCtrl?.getHorizontalViewportWidth();
+                    eGui.style.width = viewportWidth ? `${viewportWidth}px` : '100%';
+                    eGui.style.pointerEvents = 'auto';
                 }
             }
         }
@@ -213,7 +202,7 @@ export class PinnedRowContainerRendererFeature extends BeanStub implements IPinn
         const previousElements = this.managedByHost.get(hostKey);
         if (previousElements) {
             for (const eGui of previousElements) {
-                if (!activeElements.has(eGui) && eGui.parentElement === host) {
+                if (!activeElements.has(eGui) && eGui.parentElement === target) {
                     eGui.remove();
                 }
             }
@@ -224,12 +213,12 @@ export class PinnedRowContainerRendererFeature extends BeanStub implements IPinn
         let previous: HTMLElement | null = null;
         for (const { eGui, source } of orderedEntries) {
             if (source.placeAfterHeaderRows) {
-                this.placeAfterHeaderRows(host, eGui);
+                this.placeAfterHeaderRows(target, eGui);
             } else {
-                if (eGui.parentElement !== host) {
-                    host.appendChild(eGui);
+                if (eGui.parentElement !== target) {
+                    target.appendChild(eGui);
                 }
-                _ensureDomOrder(host, eGui, previous);
+                _ensureDomOrder(target, eGui, previous);
             }
             previous = eGui;
         }
@@ -279,30 +268,6 @@ export class PinnedRowContainerRendererFeature extends BeanStub implements IPinn
         }
 
         host.appendChild(eGui);
-    }
-
-    private applyViewportPinnedLayout(source: SourceState, eGui: HTMLElement): void {
-        const viewportWidth = this.eGridViewport.getBoundingClientRect().width;
-        const contentWidth =
-            this.beans.ctrlsSvc.getGridBodyCtrl()?.getHorizontalContentWidth() ?? this.eGridViewport.scrollWidth;
-        const maxScrollLeft = Math.max(0, contentWidth - viewportWidth);
-        const scrollLeft = Math.min(Math.abs(this.eGridViewport.scrollLeft), maxScrollLeft);
-
-        eGui.style.position = 'absolute';
-        eGui.style.width = `${viewportWidth}px`;
-        if (source.getTopOffsetPx) {
-            eGui.style.top = `${source.getTopOffsetPx()}px`;
-        }
-
-        if (this.gos.get('enableRtl')) {
-            eGui.style.right = '0px';
-            eGui.style.removeProperty('left');
-            eGui.style.transform = `translateX(${-scrollLeft}px)`;
-        } else {
-            eGui.style.left = '0px';
-            eGui.style.removeProperty('right');
-            eGui.style.transform = `translateX(${scrollLeft}px)`;
-        }
     }
 
     private getHost(section: PinnedSection, stream: PinnedSectionStream): HTMLElement {

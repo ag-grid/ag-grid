@@ -230,6 +230,25 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
             this.registerViewportResizeListener(updateContainerWidth);
         }
 
+        // Full-width containers set the sticky anchor width to the viewport width
+        // so rows don't scroll horizontally with the columns.
+        if (this.options.fullWidth) {
+            const updateAnchorWidth = () => {
+                const gridBodyCtrl = this.beans.ctrlsSvc.getGridBodyCtrl();
+                const viewportWidth =
+                    gridBodyCtrl?.getViewportWidthWithoutScrollbar() ?? _getInnerWidth(this.eViewport);
+                this.comp.setContainerWidth(`${viewportWidth}px`);
+            };
+
+            this.createManagedBean(new CenterWidthFeature(updateAnchorWidth));
+            this.addManagedEventListeners({
+                scrollVisibilityChanged: updateAnchorWidth,
+                scrollbarWidthChanged: updateAnchorWidth,
+                gridSizeChanged: updateAnchorWidth,
+            });
+            this.registerViewportResizeListener(updateAnchorWidth);
+        }
+
         this.addListeners();
         this.registerWithCtrlsService();
     }

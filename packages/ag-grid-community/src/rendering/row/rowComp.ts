@@ -2,17 +2,28 @@ import { _addStylesToElement, _setDomChildOrder } from '../../agStack/utils/dom'
 import type { BeanCollection } from '../../context/context';
 import type { RowStyle } from '../../entities/gridOptions';
 import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
+import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { _createElement } from '../../utils/element';
 import { Component } from '../../widgets/component';
 import { CellComp } from '../cell/cellComp';
 import type { CellCtrl, CellCtrlInstanceId } from '../cell/cellCtrl';
 import type { ICellRendererComp, ICellRendererParams } from '../cellRenderers/iCellRenderer';
-import type { IRowComp, RowCtrl } from './rowCtrl';
+import type { IRowComp, PinnedCellGroupWidths, RowCtrl } from './rowCtrl';
+
+type EmbeddedFullWidthSection = 'left' | 'center' | 'right';
 
 export class RowComp extends Component {
     private fullWidthCellRenderer: ICellRendererComp | null | undefined;
     private fullWidthCellRendererParams: ICellRendererParams | undefined;
+    private fullWidthCellRenderersBySection: Partial<Record<EmbeddedFullWidthSection, ICellRendererComp | null>> = {};
+    private fullWidthCellRendererParamsBySection: Partial<Record<EmbeddedFullWidthSection, ICellRendererParams>> = {};
+    private isEmbeddedFullWidth = false;
+    private embeddedSectionHasContent: Record<EmbeddedFullWidthSection, boolean> = {
+        left: true,
+        center: true,
+        right: true,
+    };
 
     private readonly rowCtrl: RowCtrl;
     private readonly ePinnedLeftCells: HTMLElement | undefined;
@@ -27,9 +38,10 @@ export class RowComp extends Component {
 
         this.beans = beans;
         this.rowCtrl = ctrl;
+        const shouldCreateCellSections = ctrl.shouldCreateCellSections();
 
         const rowDiv = _createElement({ tag: 'div', role: 'row', attrs: { 'comp-id': `${this.getCompId()}` } });
-        if (!ctrl.isFullWidth()) {
+        if (shouldCreateCellSections) {
             this.ePinnedLeftCells = _createElement({
                 tag: 'div',
                 cls: 'ag-grid-pinned-left-cells',
@@ -60,8 +72,11 @@ export class RowComp extends Component {
             getScrollingRowElement: () => this.eScrollingCells,
             getPinnedRightRowElement: () => this.ePinnedRightCells,
             showFullWidth: (compDetails) => this.showFullWidth(compDetails),
-            getFullWidthCellRenderer: () => this.fullWidthCellRenderer,
-            getFullWidthCellRendererParams: () => this.fullWidthCellRendererParams,
+            showEmbeddedFullWidth: (compDetails) => this.showEmbeddedFullWidth(compDetails),
+            getFullWidthCellRenderer: () => this.getPrimaryFullWidthCellRenderer(),
+            getFullWidthCellRendererParams: () => this.getPrimaryFullWidthCellRendererParams(),
+            getFullWidthCellRendererParamsForPinned: (pinned: ColumnPinnedType) =>
+                this.getFullWidthCellRendererParamsForPinned(pinned),
             toggleCss: (name, on) => this.toggleCss(name, on),
             setUserStyles: (styles: RowStyle | undefined) => _addStylesToElement(rowDiv, styles),
             setTop: (top) => (style.top = top),
@@ -69,11 +84,13 @@ export class RowComp extends Component {
             setRowIndex: (rowIndex) => rowDiv.setAttribute('row-index', rowIndex),
             setRowId: (rowId: string) => rowDiv.setAttribute('row-id', rowId),
             setRowBusinessKey: (businessKey) => rowDiv.setAttribute('row-business-key', businessKey),
+            mapPinnedCellGroupWidths: (widths) => this.mapPinnedCellGroupWidths(widths),
             refreshFullWidth: (getUpdatedParams) => {
                 const params = getUpdatedParams();
                 this.fullWidthCellRendererParams = params;
                 return this.fullWidthCellRenderer?.refresh?.(params) ?? false;
             },
+            refreshEmbeddedFullWidth: (getUpdatedParams) => this.refreshEmbeddedFullWidth(getUpdatedParams),
         };
 
         ctrl.setComp(compProxy, this.getGui(), containerType, undefined);
@@ -96,6 +113,7 @@ export class RowComp extends Component {
     }
 
     private showFullWidth(compDetails: UserCompDetails): void {
+        this.isEmbeddedFullWidth = false;
         const callback = (cellRenderer: ICellRendererComp) => {
             if (this.isAlive()) {
                 const eGui = cellRenderer.getGui();
@@ -111,6 +129,112 @@ export class RowComp extends Component {
         const res = compDetails.newAgStackInstance();
 
         res.then(callback);
+    }
+
+    private showEmbeddedFullWidth(compDetails: {
+        left: UserCompDetails;
+        center: UserCompDetails;
+        right: UserCompDetails;
+    }): void {
+        this.isEmbeddedFullWidth = true;
+        this.embeddedSectionHasContent.left = true;
+        this.embeddedSectionHasContent.center = true;
+        this.embeddedSectionHasContent.right = true;
+        this.showEmbeddedFullWidthSection('left', compDetails.left, this.ePinnedLeftCells);
+        this.showEmbeddedFullWidthSection('center', compDetails.center, this.eScrollingCells);
+        this.showEmbeddedFullWidthSection('right', compDetails.right, this.ePinnedRightCells);
+    }
+
+    private showEmbeddedFullWidthSection(
+        section: EmbeddedFullWidthSection,
+        compDetails: UserCompDetails,
+        sectionHost: HTMLElement | undefined
+    ): void {
+        const host = sectionHost ?? this.getGui();
+        const callback = (cellRenderer: ICellRendererComp) => {
+            if (!this.isAlive()) {
+                this.beans.context.destroyBean(cellRenderer);
+                return;
+            }
+
+            const eGui = cellRenderer.getGui();
+            if (eGui) {
+                host.replaceChildren(eGui);
+            } else {
+                host.replaceChildren();
+            }
+            // Check the host for actual visible content after appending. Framework wrappers
+            // (Angular/Vue) return container elements from getGui() even when the component
+            // renders nothing, so a simple null check on eGui is insufficient. We check if
+            // the first child element has any child elements or text content.
+            const firstEl = host.firstElementChild;
+            const hasContent = firstEl != null && (firstEl.childElementCount > 0 || !!firstEl.textContent?.trim());
+            this.embeddedSectionHasContent[section] = hasContent;
+            this.setEmbeddedFullWidthRowComp(section, cellRenderer, compDetails.params);
+            this.rowCtrl.refreshPinnedCellGroupWidths();
+        };
+
+        compDetails.newAgStackInstance().then(callback);
+    }
+
+    private refreshEmbeddedFullWidth(getUpdatedParams: (pinned: ColumnPinnedType) => ICellRendererParams): boolean {
+        let refreshed = true;
+        const sections: [EmbeddedFullWidthSection, ColumnPinnedType][] = [
+            ['left', 'left'],
+            ['center', null],
+            ['right', 'right'],
+        ];
+
+        for (const [section, pinned] of sections) {
+            const params = getUpdatedParams(pinned);
+            this.fullWidthCellRendererParamsBySection[section] = params;
+
+            const renderer = this.fullWidthCellRenderersBySection[section];
+            if (renderer?.refresh && !renderer.refresh(params)) {
+                refreshed = false;
+            }
+        }
+
+        this.fullWidthCellRenderer = this.fullWidthCellRenderersBySection.center ?? null;
+        this.fullWidthCellRendererParams = this.fullWidthCellRendererParamsBySection.center;
+        return refreshed;
+    }
+
+    private getPrimaryFullWidthCellRenderer(): ICellRendererComp | null | undefined {
+        return this.fullWidthCellRenderer ?? this.fullWidthCellRenderersBySection.center;
+    }
+
+    private getPrimaryFullWidthCellRendererParams(): ICellRendererParams | undefined {
+        return this.fullWidthCellRendererParams ?? this.fullWidthCellRendererParamsBySection.center;
+    }
+
+    private getFullWidthCellRendererParamsForPinned(pinned: ColumnPinnedType): ICellRendererParams | undefined {
+        return this.fullWidthCellRendererParamsBySection[this.getEmbeddedSectionForPinned(pinned)];
+    }
+
+    private getEmbeddedSectionForPinned(pinned: ColumnPinnedType): EmbeddedFullWidthSection {
+        if (pinned === 'left') {
+            return 'left';
+        }
+        if (pinned === 'right') {
+            return 'right';
+        }
+        return 'center';
+    }
+
+    private mapPinnedCellGroupWidths(widths: PinnedCellGroupWidths): PinnedCellGroupWidths {
+        if (!this.isEmbeddedFullWidth) {
+            return widths;
+        }
+
+        const hasLeft = this.embeddedSectionHasContent.left;
+        const hasRight = this.embeddedSectionHasContent.right;
+
+        return {
+            leftWidth: hasLeft ? widths.leftWidth : 0,
+            centerWidth: widths.centerWidth + (hasLeft ? 0 : widths.leftWidth) + (hasRight ? 0 : widths.rightWidth),
+            rightWidth: hasRight ? widths.rightWidth : 0,
+        };
     }
 
     private setCellCtrls(cellCtrls: CellCtrl[]): void {
@@ -189,6 +313,31 @@ export class RowComp extends Component {
         this.addDestroyFunc(() => {
             this.fullWidthCellRenderer = this.beans.context.destroyBean(this.fullWidthCellRenderer);
             this.fullWidthCellRendererParams = undefined;
+        });
+    }
+
+    private setEmbeddedFullWidthRowComp(
+        section: EmbeddedFullWidthSection,
+        fullWidthRowComponent: ICellRendererComp,
+        params: ICellRendererParams
+    ): void {
+        this.fullWidthCellRenderersBySection[section] = fullWidthRowComponent;
+        this.fullWidthCellRendererParamsBySection[section] = params;
+
+        if (section === 'center') {
+            this.fullWidthCellRenderer = fullWidthRowComponent;
+            this.fullWidthCellRendererParams = params;
+        }
+
+        this.addDestroyFunc(() => {
+            this.fullWidthCellRenderersBySection[section] = this.beans.context.destroyBean(
+                this.fullWidthCellRenderersBySection[section]
+            );
+            this.fullWidthCellRendererParamsBySection[section] = undefined;
+            if (section === 'center') {
+                this.fullWidthCellRenderer = null;
+                this.fullWidthCellRendererParams = undefined;
+            }
         });
     }
 

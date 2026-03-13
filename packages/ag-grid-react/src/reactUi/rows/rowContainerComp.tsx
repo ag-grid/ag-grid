@@ -46,6 +46,8 @@ const RowContainerComp = ({
     const eViewport = useRef<HTMLDivElement | null>(null);
     const eContainer = useRef<HTMLDivElement | null>(null);
     const eSpanContainer = useRef<HTMLDivElement | null>(null);
+    const eFullWidthAnchor = useRef<HTMLDivElement | null>(null);
+    const isFullWidth = !!containerOptions.fullWidth;
     const rowCtrlsRef = useRef<RowCtrl[]>([]);
     const prevRowCtrlsRef = useRef<RowCtrl[]>([]);
     const [rowCtrlsOrdered, setRowCtrlsOrdered] = useState<RowCtrl[]>(() => []);
@@ -144,7 +146,11 @@ const RowContainerComp = ({
                 }
             },
             setContainerWidth: (width: string) => {
-                eContainerForCtrl.style.width = width;
+                // For full-width containers, set width on the sticky anchor element
+                const target = isFullWidth ? eFullWidthAnchor.current : eContainerForCtrl;
+                if (target) {
+                    target.style.width = width;
+                }
                 if (eSpanContainerForCtrl) {
                     eSpanContainerForCtrl.style.width = width;
                 }
@@ -199,18 +205,32 @@ const RowContainerComp = ({
         </div>
     );
 
-    const buildContainer = () => (
-        <div
-            className={containerClasses}
-            ref={setContainerRef}
-            role={shouldRenderViewport ? 'presentation' : 'rowgroup'}
-        >
-            {rowCtrlsOrdered.map((rowCtrl) => (
-                <RowComp rowCtrl={rowCtrl} containerType={containerOptions.type} key={rowCtrl.instanceId}></RowComp>
-            ))}
-            {!shouldRenderViewport && isSpanning ? buildSpanContainer() : null}
-        </div>
-    );
+    const buildContainer = () => {
+        const rows = rowCtrlsOrdered.map((rowCtrl) => (
+            <RowComp rowCtrl={rowCtrl} containerType={containerOptions.type} key={rowCtrl.instanceId}></RowComp>
+        ));
+
+        if (isFullWidth) {
+            return (
+                <div className={containerClasses} ref={setContainerRef} role={'rowgroup'}>
+                    <div className="ag-full-width-anchor" ref={eFullWidthAnchor} role="presentation">
+                        {rows}
+                    </div>
+                </div>
+            );
+        }
+
+        return (
+            <div
+                className={containerClasses}
+                ref={setContainerRef}
+                role={shouldRenderViewport ? 'presentation' : 'rowgroup'}
+            >
+                {rows}
+                {!shouldRenderViewport && isSpanning ? buildSpanContainer() : null}
+            </div>
+        );
+    };
 
     if (!shouldRenderViewport) {
         return buildContainer();

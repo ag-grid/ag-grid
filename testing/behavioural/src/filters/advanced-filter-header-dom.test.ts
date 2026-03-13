@@ -60,11 +60,11 @@ describe('Advanced Filter Header DOM', () => {
             pinnedTopRowData: [{ athlete: 'Pinned Top', age: 99 }],
         });
 
-        const topRowsContainer = document.querySelector<HTMLElement>('.ag-grid-pinned-top-rows-container');
-        const advancedFilterHeader = topRowsContainer?.querySelector<HTMLElement>('.ag-advanced-filter-header');
-        const pinnedTopRow = topRowsContainer?.querySelector<HTMLElement>('.ag-row.ag-row-pinned');
+        const topRowsSection = document.querySelector<HTMLElement>('.ag-grid-pinned-top-rows');
+        const advancedFilterHeader = topRowsSection?.querySelector<HTMLElement>('.ag-advanced-filter-header');
+        const pinnedTopRow = topRowsSection?.querySelector<HTMLElement>('.ag-row.ag-row-pinned');
 
-        expect(topRowsContainer).toBeTruthy();
+        expect(topRowsSection).toBeTruthy();
         expect(advancedFilterHeader).toBeTruthy();
         expect(pinnedTopRow).toBeTruthy();
 

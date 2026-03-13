@@ -104,8 +104,7 @@ export class GridBodyCtrl extends BeanStub {
                 eTopRowsContainer,
                 eTopRowsFullWidthContainer,
                 eBottomRowsContainer,
-                eBottomRowsFullWidthContainer,
-                eGridViewport
+                eBottomRowsFullWidthContainer
             )
         );
         this.createManagedBean(
@@ -137,10 +136,9 @@ export class GridBodyCtrl extends BeanStub {
         this.filterManager?.mountAdvFilterTopSectionComp(
             this.pinnedRowContainerRendererFeature.createCompHost({
                 section: 'top',
-                stream: 'center',
+                stream: 'fullWidth',
                 lane: 'edge',
                 order: 1,
-                lockToViewportX: true,
                 getTopOffsetPx: () => this.ctrlsSvc.get('gridHeaderCtrl')?.headerHeight ?? 0,
                 placeAfterHeaderRows: true,
             })
@@ -413,7 +411,6 @@ export class GridBodyCtrl extends BeanStub {
 
         this.addManagedElementListeners(eGridViewport, {
             wheel: this.onBodyViewportWheel.bind(this, popupSvc),
-            scroll: () => this.pinnedRowContainerRendererFeature.refreshViewportPinned(),
         });
 
         const onStickyWheel = this.onStickyWheel.bind(this);
@@ -529,12 +526,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private setStickyWidth(vScrollVisible: boolean) {
-        if (!vScrollVisible) {
-            this.comp.setStickyBottomWidth('100%');
-        } else {
-            const scrollbarWidth = this.getVerticalScrollbarWidth();
-            this.comp.setStickyBottomWidth(`calc(100% - ${scrollbarWidth}px)`);
-        }
+        this.comp.setStickyBottomWidth(!vScrollVisible ? '100%' : `calc(100% - ${this.getVerticalScrollbarWidth()}px)`);
     }
 
     public getHeaderRowsOffset(): number {
