@@ -18,7 +18,8 @@ import type { IRowNode } from '../interfaces/iRowNode';
 import type { ISelectionService, ISetNodesSelectedParams } from '../interfaces/iSelectionService';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../interfaces/selectionState';
 import { _isManualPinnedRow } from '../pinnedRowModel/pinnedRowUtils';
-import { ChangedPath } from '../utils/changedPath';
+import type { ChangedPath } from '../utils/changedPath';
+import { _forEachChangedGroupDepthFirst } from '../utils/changedPath';
 import { _error, _warn } from '../validation/logging';
 import { BaseSelectionService } from './baseSelectionService';
 
@@ -283,21 +284,18 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             return false;
         }
 
-        if (!changedPath) {
-            changedPath = new ChangedPath(true, rootNode);
-            changedPath.active = false;
-        }
-
         let selectionChanged = false;
 
-        changedPath.forEachChangedNodeDepthFirst((rowNode) => {
+        const nodeCallback = (rowNode: RowNode): void => {
             if (rowNode !== rootNode) {
                 const selected = this.calculateSelectedFromChildren(rowNode);
                 selectionChanged =
                     this.selectRowNode(rowNode, selected === null ? false : selected, undefined, source) ||
                     selectionChanged;
             }
-        });
+        };
+
+        _forEachChangedGroupDepthFirst(rootNode, changedPath, nodeCallback);
 
         return selectionChanged;
     }
@@ -550,7 +548,12 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                     // are considered as the current page
                     const recursivelyAddChildren = (child: RowNode) => {
                         addToResult(child);
-                        child.childrenAfterFilter?.forEach(recursivelyAddChildren);
+                        const children = child.childrenAfterFilter;
+                        if (children) {
+                            for (let i = 0, len = children.length; i < len; ++i) {
+                                recursivelyAddChildren(children[i]);
+                            }
+                        }
                     };
                     recursivelyAddChildren(node);
                     return;
@@ -675,40 +678,32 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         }
 
         const source: SelectionEventSourceType = 'selectableChanged';
-        const skipLeafNodes = changedPath !== undefined;
         const isCSRMGroupSelectsDescendants = _isClientSideRowModel(gos) && this.groupSelectsDescendants;
 
         const nodesToDeselect: RowNode[] = [];
 
-        const nodeCallback = (node: RowNode): void => {
-            if (skipLeafNodes && !node.group) {
-                return;
-            }
-
-            // Only in the CSRM, we allow group node selection if a child has a selectable=true when using groupSelectsChildren
-            if (isCSRMGroupSelectsDescendants && node.group) {
-                const hasSelectableChild = node.childrenAfterGroup?.some((rowNode) => rowNode.selectable) ?? false;
-                this.setRowSelectable(node, hasSelectableChild, true);
-                return;
-            }
-
-            const rowSelectable = this.updateRowSelectable(node, true);
-
-            if (!rowSelectable && node.isSelected()) {
-                nodesToDeselect.push(node);
-            }
-        };
-
-        // Needs to be depth first in this case, so that parents can be updated based on child.
+        // Post-order depth-first: child groups are processed before parents, so selectable state propagates up.
         if (isCSRMGroupSelectsDescendants) {
-            if (changedPath === undefined) {
-                const rootNode = (rowModel as IClientSideRowModel).rootNode;
-                changedPath = rootNode ? new ChangedPath(false, rootNode) : undefined;
+            const rootNode = (rowModel as IClientSideRowModel).rootNode;
+            if (rootNode) {
+                // isRowSelectable changed: update leaf children before checking group.
+                _forEachChangedGroupDepthFirst(rootNode, changedPath, (node) => {
+                    let childSelectable = false;
+                    for (const child of node.childrenAfterGroup!) {
+                        childSelectable ||= child.selectable;
+                        if (!child.group && !this.updateRowSelectable(child, true) && child.isSelected()) {
+                            nodesToDeselect.push(child);
+                        }
+                    }
+                    this.setRowSelectable(node, childSelectable, true);
+                });
             }
-            changedPath?.forEachChangedNodeDepthFirst(nodeCallback, !skipLeafNodes, !skipLeafNodes);
         } else {
-            // Normal case, update all rows
-            rowModel.forEachNode(nodeCallback);
+            rowModel.forEachNode((node) => {
+                if (!this.updateRowSelectable(node, true) && node.isSelected()) {
+                    nodesToDeselect.push(node);
+                }
+            });
         }
 
         if (nodesToDeselect.length) {
@@ -720,7 +715,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         }
 
         // if csrm and group selects children, update the groups after deselecting leaf nodes.
-        if (!skipLeafNodes && isCSRMGroupSelectsDescendants) {
+        if (!changedPath && isCSRMGroupSelectsDescendants) {
             this.updateGroupsFromChildrenSelections?.(source);
         }
     }

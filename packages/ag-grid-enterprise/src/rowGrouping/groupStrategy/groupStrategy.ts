@@ -6,7 +6,7 @@ import type {
     RefreshModelParams,
     _ChangedRowNodes,
 } from 'ag-grid-community';
-import { BeanStub, RowNode, _csrmFirstLeaf, _warn } from 'ag-grid-community';
+import { BeanStub, RowNode, _csrmFirstLeaf, _forEachChangedGroupDepthFirst, _warn } from 'ag-grid-community';
 
 import type { IRowGroupingStrategy } from '../../rowHierarchy/rowHierarchyUtils';
 import { _getRowDefaultExpanded } from '../../rowHierarchy/rowHierarchyUtils';
@@ -82,7 +82,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     }
 
     public execute(rootNode: RowNode, params: RefreshModelParams): void {
-        const changedPath = params.changedPath!;
+        const changedPath = params.changedPath;
         if (this.initRefresh(params)) {
             const changedRowNodes = params.changedRowNodes;
             if (changedRowNodes) {
@@ -92,14 +92,14 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             }
         }
 
-        this.positionLeafsAndGroups(changedPath);
+        this.positionLeafsAndGroups(rootNode, changedPath);
         this.orderGroups(rootNode);
 
         this.beans.selectionSvc?.updateSelectableAfterGrouping(changedPath);
     }
 
-    private positionLeafsAndGroups(changedPath: ChangedPath) {
-        changedPath.forEachChangedNodeDepthFirst((group: RowNode) => {
+    private positionLeafsAndGroups(rootNode: RowNode, changedPath: ChangedPath | undefined) {
+        _forEachChangedGroupDepthFirst(rootNode, changedPath, (group: RowNode) => {
             const children = group.childrenAfterGroup;
             const childrenLen = children?.length;
             if (!childrenLen) {
@@ -134,7 +134,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                     sibling.childrenAfterGroup = newChildren;
                 }
             }
-        }, false);
+        });
     }
 
     private initRefresh(params: RefreshModelParams): boolean {
@@ -163,35 +163,30 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
     private handleDeltaUpdate(
         rootNode: RowNode,
-        changedPath: ChangedPath,
+        changedPath: ChangedPath | undefined,
         { removals, updates, adds, reordered }: _ChangedRowNodes,
         animate: boolean
     ): void {
         const parentsWithRemovals = new Set<RowNode | null>();
-
-        let activeChangedPath: ChangedPath | null = changedPath;
-        if (!activeChangedPath.active) {
-            activeChangedPath = null;
-        }
 
         for (let i = 0, len = removals.length; i < len; ++i) {
             const rowNode = removals[i];
             const oldParent = this.removeFromParent(rowNode);
             if (!parentsWithRemovals.has(oldParent)) {
                 parentsWithRemovals.add(oldParent);
-                activeChangedPath?.addParentNode(oldParent);
+                changedPath?.addRow(oldParent);
             }
         }
 
         for (const rowNode of updates) {
             const oldParent = rowNode.parent;
             // we add even if parent has not changed, as the data could have changed, or aggregations will be wrong
-            activeChangedPath?.addParentNode(oldParent);
+            changedPath?.addRow(oldParent);
 
             if (this.moveNodeInWrongPath(rootNode, rowNode)) {
                 parentsWithRemovals.add(oldParent);
                 const newParent = rowNode.parent;
-                activeChangedPath?.addParentNode(newParent);
+                changedPath?.addRow(newParent);
 
                 reordered ||= (newParent?.childrenAfterGroup?.length ?? 0) > 1; // Order may be wrong after move
             }
@@ -201,7 +196,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             for (const rowNode of adds) {
                 this.insertOneNode(rootNode, rowNode);
                 const newParent = rowNode.parent;
-                activeChangedPath?.addParentNode(newParent);
+                changedPath?.addRow(newParent);
 
                 reordered ||= (newParent?.childrenAfterGroup?.length ?? 0) > 1; // Order may be wrong after add
             }
@@ -213,22 +208,18 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         }
 
         if (reordered) {
-            this.sortChildren(changedPath);
+            this.sortChildren(rootNode, changedPath);
         }
     }
 
     // this is used when doing delta updates, eg Redux, keeps nodes in right order
-    private sortChildren(changedPath: ChangedPath): void {
-        changedPath.forEachChangedNodeDepthFirst(
-            (node) => {
-                const didSort = sortGroupChildren(node.childrenAfterGroup);
-                if (didSort && changedPath.active) {
-                    changedPath.addParentNode(node);
-                }
-            },
-            false,
-            true
-        );
+    private sortChildren(rootNode: RowNode, changedPath: ChangedPath | undefined): void {
+        _forEachChangedGroupDepthFirst(rootNode, undefined, (node) => {
+            const didSort = sortGroupChildren(node.childrenAfterGroup);
+            if (didSort) {
+                changedPath?.addRow(node);
+            }
+        });
     }
 
     private orderGroups(rootNode: RowNode): void {

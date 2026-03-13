@@ -9,7 +9,7 @@ import type {
 } from 'ag-grid-community';
 import {
     BeanStub,
-    ChangedPath,
+    ChangedRowsPath,
     _ChangedRowNodes,
     _csrmFirstLeaf,
     _csrmReorderAllLeafs,
@@ -432,7 +432,7 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
             step: 'group',
             keepRenderedRows: true,
             animate: !this.gos.get('suppressAnimationFrame'),
-            changedPath: new ChangedPath(false, rootNode),
+            changedPath: new ChangedRowsPath(),
             changedRowNodes,
         });
     }

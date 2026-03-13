@@ -12,7 +12,7 @@ import type {
     ValueService,
     _IRowNodePivotStage,
 } from 'ag-grid-community';
-import { BeanStub, _jsonEquals, _missing } from 'ag-grid-community';
+import { BeanStub, _forEachChangedGroupDepthFirst, _jsonEquals, _missing } from 'ag-grid-community';
 
 import type { PivotColDefService } from './pivotColDefService';
 
@@ -69,26 +69,26 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
 
     private maxUniqueValues: number = -1;
 
-    public execute(changedPath: ChangedPath): void {
+    /** Returns `true` if the changedPath should be deactivated (e.g. pivot columns changed). */
+    public execute(changedPath: ChangedPath | undefined): boolean {
         if (this.colModel.isPivotActive()) {
-            this.executePivotOn(changedPath!);
+            return this.executePivotOn(changedPath);
         } else {
-            this.executePivotOff(changedPath!);
+            return this.executePivotOff();
         }
     }
 
-    private executePivotOff(changedPath: ChangedPath): void {
+    private executePivotOff(): boolean {
         this.aggregationColumnsHashLastTime = null;
         this.uniqueValues = new Map();
         if (this.pivotResultCols.isPivotResultColsPresent()) {
             this.pivotResultCols.setPivotResultCols(null, 'rowModelUpdated');
-            if (changedPath) {
-                changedPath.active = false;
-            }
+            return true; // columns changed, deactivate changedPath
         }
+        return false;
     }
 
-    private executePivotOn(changedPath: ChangedPath): void {
+    private executePivotOn(changedPath: ChangedPath | undefined): boolean {
         const numberOfAggregationColumns = this.valueColsSvc?.columns.length ?? 1;
 
         // As unique values creates one column per aggregation column, divide max columns by number of aggregation columns
@@ -108,7 +108,7 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
                     message: e.message,
                 });
                 this.lastTimeFailed = true;
-                return;
+                return false;
             }
             throw e;
         }
@@ -156,13 +156,13 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
         ) {
             const pivotColumnGroupDefs = this.pivotColDefSvc.createPivotColumnDefs(this.uniqueValues);
             this.pivotResultCols.setPivotResultCols(pivotColumnGroupDefs, 'rowModelUpdated');
-            // because the secondary columns have changed, then the aggregation needs to visit the whole
-            // tree again, so we make the changedPath not active, to force aggregation to visit all paths.
-            if (changedPath) {
-                changedPath.active = false;
-            }
+            // Because the secondary columns have changed, the aggregation needs to visit the whole
+            // tree again, so signal the caller to deactivate the changedPath.
+            this.lastTimeFailed = false;
+            return true;
         }
         this.lastTimeFailed = false;
+        return false;
     }
 
     private setUniqueValues(newValues: Map<string, any>): boolean {
@@ -177,13 +177,13 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
     }
 
     private currentUniqueCount = 0;
-    private bucketUpRowNodes(changedPath: ChangedPath): Map<string, any> {
+    private bucketUpRowNodes(changedPath: ChangedPath | undefined): Map<string, any> {
         this.currentUniqueCount = 0;
         // accessed from inside inner function
         const uniqueValues: Map<string, any> = new Map();
 
         // ensure childrenMapped is cleared, as if a node has been filtered out it should not have mapped children.
-        changedPath.forEachChangedNodeDepthFirst((node) => {
+        _forEachChangedGroupDepthFirst(this.beans.rowModel.rootNode, changedPath, (node) => {
             if (node.leafGroup) {
                 node.childrenMapped = null;
             }
@@ -193,11 +193,16 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
             if (node.leafGroup) {
                 this.bucketRowNode(node, uniqueValues);
             } else {
-                node.childrenAfterFilter?.forEach(recursivelyBucketFilteredChildren);
+                const children = node.childrenAfterFilter;
+                if (children) {
+                    for (let i = 0, len = children.length; i < len; ++i) {
+                        recursivelyBucketFilteredChildren(children[i]);
+                    }
+                }
             }
         };
 
-        changedPath.executeFromRootNode(recursivelyBucketFilteredChildren);
+        recursivelyBucketFilteredChildren(this.beans.rowModel.rootNode!);
 
         return uniqueValues;
     }
@@ -229,7 +234,8 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
         const doesGeneratedColMaxExist = this.maxUniqueValues !== -1;
 
         // map the children out based on the pivot column
-        children.forEach((child: RowNode) => {
+        for (let i = 0, len = children.length; i < len; ++i) {
+            const child = children[i];
             let key: string | null | undefined = this.valueSvc.getKeyForNode(pivotColumn, child);
 
             if (_missing(key)) {
@@ -251,7 +257,7 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
                 mappedChildren.set(key, []);
             }
             mappedChildren.get(key)!.push(child);
-        });
+        }
 
         // if it's the last pivot column, return as is, otherwise go one level further in the map
         if (pivotIndex === pivotColumns.length - 1) {
