@@ -657,6 +657,29 @@ describe('deferred column tool panel pivot mode', () => {
         expect(getDropZoneText(toolPanel.rowGroupDropZonePanel)).not.toContain('Athlete');
     });
 
+    test('removing the first row-group pill in deferred pivot mode clears the staged Country checkbox immediately', async () => {
+        const { gridApi, toolPanel, toolPanelGui } = await createDeferredPivotModeGrid();
+        const countryColumnComp = createPrimaryColumnComp(toolPanel, 'Country');
+
+        expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['country', 'sport']);
+        expect(countryColumnComp.isSelected()).toBe(true);
+        expect(getDropZoneText(toolPanel.rowGroupDropZonePanel)).toContain('Country');
+        expect(getDropZoneText(toolPanel.rowGroupDropZonePanel)).toContain('Sport');
+
+        removeDropZonePill(toolPanelGui, 'Country');
+        await asyncSetTimeout(50);
+
+        expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['country', 'sport']);
+        expect(
+            getUpdateStrategy(toolPanel)
+                .getRowGroupColumns(true)
+                .map((col) => col.getColId())
+        ).toEqual(['sport']);
+        expect(createPrimaryColumnComp(toolPanel, 'Country').isSelected()).toBe(false);
+        expect(getDropZoneText(toolPanel.rowGroupDropZonePanel)).not.toContain('Country');
+        expect(getDropZoneText(toolPanel.rowGroupDropZonePanel)).toContain('Sport');
+    });
+
     test('checking a value column in deferred pivot mode draws a staged value pill immediately', async () => {
         const { gridApi, toolPanel } = await createDeferredPivotModeGrid();
 
