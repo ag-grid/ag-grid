@@ -232,7 +232,16 @@ export class RowNode<TData = any>
     public childStore: IServerSideStore | null;
 
     /** `true` if group is expanded, otherwise `false`. */
-    public expanded: boolean;
+    // public expanded: boolean;
+
+    public get expanded(): boolean {
+        return (this.group || this.master) && (!!this._expanded || this.level === -1);
+    }
+    public set expanded(value: boolean | undefined) {
+        this._expanded = value;
+    }
+
+    public _expanded: boolean | undefined;
 
     /** If using footers, reference to the footer node for this group. */
     public sibling: RowNode;

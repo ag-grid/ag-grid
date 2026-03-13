@@ -36,7 +36,7 @@ export class ClientSideExpansionService
                 return;
             }
 
-            node.expanded = rowIdsToExpandSet.has(id);
+            node._expanded = rowIdsToExpandSet.has(id);
         });
         this.onGroupExpandedOrCollapsed();
     }
@@ -50,6 +50,9 @@ export class ClientSideExpansionService
                 return;
             }
 
+            if (node._expanded === undefined) {
+                return;
+            }
             if (node.expanded) {
                 expandedRowGroupIds.push(id);
             } else if (allowCollapsed && node.isExpandable()) {
@@ -71,7 +74,7 @@ export class ClientSideExpansionService
             if (!node.group && !node.master) {
                 return;
             }
-            node.expanded = _getGroupNodeDefaultExpanded(this.beans, pivotMode, node);
+            node._expanded = _getGroupNodeDefaultExpanded(this.beans, pivotMode, node);
         });
 
         this.onGroupExpandedOrCollapsed();
@@ -88,7 +91,7 @@ export class ClientSideExpansionService
             }
             for (const rowNode of rowNodes) {
                 const actionRow = () => {
-                    rowNode.expanded = expand;
+                    rowNode._expanded = expand;
                     recursiveExpandOrCollapse(rowNode.childrenAfterGroup);
                 };
 

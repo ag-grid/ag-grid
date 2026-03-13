@@ -89,27 +89,13 @@ export const _getRowDefaultExpanded = (
 
 /**
  * Returns the default expansion value for a group node.
- * Evaluation order: pivot leaf groups are always collapsed, then snapshot overrides are checked,
+ * Evaluation order: pivot leaf groups are always collapsed,
  * then `isGroupOpenByDefault` / `groupDefaultExpanded` defaults apply.
  */
-export function _getGroupNodeDefaultExpanded(
-    beans: BeanCollection,
-    pivotMode: boolean,
-    groupNode: RowNode,
-    snapshot?: { expanded: ReadonlySet<string>; collapsed: ReadonlySet<string> } | null
-): boolean {
+export function _getGroupNodeDefaultExpanded(beans: BeanCollection, pivotMode: boolean, groupNode: RowNode): boolean {
     // if pivoting the leaf group is never expanded as we do not show leaf rows
     if (pivotMode && groupNode.leafGroup) {
         return false;
-    }
-    if (snapshot) {
-        const id = groupNode.id!;
-        if (snapshot.expanded.has(id)) {
-            return true;
-        }
-        if (snapshot.collapsed.has(id)) {
-            return false;
-        }
     }
     return _getRowDefaultExpanded(beans, groupNode, groupNode.level);
 }

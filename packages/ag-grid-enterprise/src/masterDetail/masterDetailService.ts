@@ -101,10 +101,10 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
             // Note that with treeData the initialization of the expansed state is delegated to treeGroupStrategy
             if (newMaster && created) {
                 const level = beans.rowGroupColsSvc?.columns.length ?? 0;
-                row.expanded = _getRowDefaultExpanded(beans, row, level, false);
+                row._expanded ??= _getRowDefaultExpanded(beans, row, level, false);
             } else if (!newMaster && oldMaster) {
                 // if changing AWAY from master, then un-expand, otherwise next time it's shown it is expanded again
-                row.expanded = false;
+                row._expanded = false;
             }
         }
 
@@ -135,7 +135,7 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
 
     /** Used by flatten stage to get or create a detail node from a master node */
     public getDetail(masterNode: RowNode): RowNode | null {
-        if (!masterNode.master || !masterNode.expanded) {
+        if (!masterNode.master || !masterNode._expanded) {
             return null;
         }
 

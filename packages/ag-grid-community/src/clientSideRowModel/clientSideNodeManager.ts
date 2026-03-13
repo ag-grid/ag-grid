@@ -338,7 +338,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         node.parent = this.rootNode;
         node.level = level;
         node.group = false;
-        node.expanded = false;
+        // node.expanded = false;
         if (sourceRowIndex != null) {
             node.sourceRowIndex = sourceRowIndex;
         }

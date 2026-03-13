@@ -1,5 +1,5 @@
 import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, GridStateModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, GridStateModule, RowSelectionModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
@@ -1173,6 +1173,134 @@ describe('ag-grid grouping simple data', () => {
                 └─┬ filler id:row-group-country-France ag-Grid-AutoColumn:"France"
                 · └─┬ LEAF_GROUP collapsed id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020
                 · · └── LEAF hidden id:3 country:"France" year:2020
+            `);
+        });
+    });
+
+    describe('selection during group column changes', () => {
+        const gridsManagerWithSelection = new TestGridsManager({
+            modules: [ClientSideRowModelModule, GridStateModule, RowSelectionModule, RowGroupingModule],
+        });
+
+        beforeEach(() => {
+            gridsManagerWithSelection.reset();
+        });
+
+        afterEach(() => {
+            gridsManagerWithSelection.reset();
+        });
+
+        test('group and leaf selections are preserved when adding a deeper group column', async () => {
+            const rowData = [
+                { id: '1', country: 'Ireland', year: 2020 },
+                { id: '2', country: 'Ireland', year: 2021 },
+                { id: '3', country: 'France', year: 2020 },
+                { id: '4', country: 'France', year: 2021 },
+            ];
+
+            const api = gridsManagerWithSelection.createGrid('myGrid', {
+                columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'year' }],
+                rowSelection: { mode: 'multiRow' },
+                groupDefaultExpanded: -1,
+                rowData,
+                getRowId: (params) => params.data.id,
+            });
+
+            // Select a group node and some leaf nodes
+            api.setNodesSelected({
+                nodes: [api.getRowNode('row-group-country-Ireland')!, api.getRowNode('1')!, api.getRowNode('3')!],
+                newValue: true,
+            });
+
+            await new GridRows(api, 'initial selection').check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ LEAF_GROUP selected id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+                │ ├── LEAF selected id:1 country:"Ireland" year:2020
+                │ └── LEAF id:2 country:"Ireland" year:2021
+                └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+                · ├── LEAF selected id:3 country:"France" year:2020
+                · └── LEAF id:4 country:"France" year:2021
+            `);
+
+            // Add year as a second grouping column — triggers shotgunResetEverything
+            api.setGridOption('columnDefs', [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', rowGroup: true, hide: true },
+            ]);
+
+            // Leaf selections (id:1, id:3) and the Ireland group selection are preserved
+            // because group nodes with the same ID are reused during the regroup.
+            await new GridRows(api, 'after adding year group column').check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ filler selected id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+                │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
+                │ │ └── LEAF selected id:1 country:"Ireland" year:2020
+                │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
+                │ · └── LEAF id:2 country:"Ireland" year:2021
+                └─┬ filler id:row-group-country-France ag-Grid-AutoColumn:"France"
+                · ├─┬ LEAF_GROUP id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020
+                · │ └── LEAF selected id:3 country:"France" year:2020
+                · └─┬ LEAF_GROUP id:row-group-country-France-year-2021 ag-Grid-AutoColumn:2021
+                · · └── LEAF id:4 country:"France" year:2021
+            `);
+        });
+
+        test('group selections are preserved for reused nodes but lost for destroyed nodes when removing a group column', async () => {
+            const rowData = [
+                { id: '1', country: 'Ireland', year: 2020 },
+                { id: '2', country: 'Ireland', year: 2021 },
+                { id: '3', country: 'France', year: 2020 },
+            ];
+
+            const api = gridsManagerWithSelection.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'year', rowGroup: true, hide: true },
+                ],
+                rowSelection: { mode: 'multiRow' },
+                groupDefaultExpanded: -1,
+                rowData,
+                getRowId: (params) => params.data.id,
+            });
+
+            // Select group nodes and leaf nodes
+            api.setNodesSelected({
+                nodes: [
+                    api.getRowNode('row-group-country-Ireland')!,
+                    api.getRowNode('row-group-country-Ireland-year-2020')!,
+                    api.getRowNode('1')!,
+                    api.getRowNode('3')!,
+                ],
+                newValue: true,
+            });
+
+            await new GridRows(api, 'initial selection').check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ filler selected id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+                │ ├─┬ LEAF_GROUP selected id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
+                │ │ └── LEAF selected id:1 country:"Ireland" year:2020
+                │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
+                │ · └── LEAF id:2 country:"Ireland" year:2021
+                └─┬ filler id:row-group-country-France ag-Grid-AutoColumn:"France"
+                · └─┬ LEAF_GROUP id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020
+                · · └── LEAF selected id:3 country:"France" year:2020
+            `);
+
+            // Remove year from grouping
+            api.setGridOption('columnDefs', [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', rowGroup: false },
+            ]);
+
+            // Leaf selections preserved. Ireland group selection preserved (same ID reused).
+            // Year sub-group selections lost (those nodes are destroyed).
+            await new GridRows(api, 'after removing year group column').check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ LEAF_GROUP selected id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+                │ ├── LEAF selected id:1 country:"Ireland" year:2020
+                │ └── LEAF id:2 country:"Ireland" year:2021
+                └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+                · └── LEAF selected id:3 country:"France" year:2020
             `);
         });
     });

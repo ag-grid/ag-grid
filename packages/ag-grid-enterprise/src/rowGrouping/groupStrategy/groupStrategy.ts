@@ -15,11 +15,6 @@ import type { GroupColumn } from './groupColumns';
 import { groupColumnsChanged, makeGroupColumns } from './groupColumns';
 import { sortGroupChildren } from './sortGroupChildren';
 
-interface ExpansionSnapshot {
-    expanded: Set<string>;
-    collapsed: Set<string>;
-}
-
 export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     // when grouping, these items are of note:
     // rowNode.parent: RowNode: set to the parent
@@ -94,8 +89,8 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             if (changedRowNodes) {
                 this.handleDeltaUpdate(rootNode, changedPath, changedRowNodes, !!params.animate);
             } else {
-                const snapshot = refreshResult === 'groupColsChanged' ? this.getExpansionSnapshot() : null;
-                this.shotgunResetEverything(rootNode, snapshot);
+                const groupColsChanged = refreshResult === 'groupColsChanged';
+                this.shotgunResetEverything(rootNode, groupColsChanged);
             }
         }
 
@@ -103,20 +98,6 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         this.orderGroups(rootNode);
 
         this.beans.selectionSvc?.updateSelectableAfterGrouping(changedPath);
-    }
-
-    /** When group columns change, snapshot expanded and collapsed group node IDs so they can be restored after rebuild */
-    private getExpansionSnapshot(): ExpansionSnapshot {
-        const expanded = new Set<string>();
-        const collapsed = new Set<string>();
-        for (const [id, node] of this.nonLeafsById) {
-            if (node.expanded) {
-                expanded.add(id);
-            } else if (node.isExpandable()) {
-                collapsed.add(id);
-            }
-        }
-        return { expanded, collapsed };
     }
 
     private positionLeafsAndGroups(rootNode: RowNode, changedPath: ChangedPath | undefined) {
@@ -175,7 +156,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             } else {
                 params.animate = false;
                 // If the top-level group column changed, every existing node ID will differ after
-                // rebuild, so skip the snapshot. Check before makeGroupColumns overwrites groupCols.
+                // rebuild, so no group nodes can be reused. Check before makeGroupColumns overwrites groupCols.
                 const topLevelChanged = groupCols[0]?.col.getId() !== cols?.[0]?.getId();
                 makeGroupColumns(cols, groupCols);
                 return topLevelChanged ? 'refresh' : 'groupColsChanged';
@@ -431,11 +412,19 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         }
     }
 
-    private shotgunResetEverything(rootNode: RowNode, snapshot: ExpansionSnapshot | null): void {
-        // groups are about to get disposed, so need to deselect any that are selected
-        this.beans.selectionSvc?.filterFromSelection?.((node) => !node.group);
+    private shotgunResetEverything(rootNode: RowNode, groupColsChanged: boolean): void {
+        const groupsById = this.nonLeafsById;
 
-        this.nonLeafsById.clear();
+        // groupsById.clear();
+
+        // Mark all existing group nodes as stale by nulling childrenAfterGroup.
+        // Nodes that are reused during insertion will have childrenAfterGroup reset to [].
+        // Nodes still null after insertion are stale and will be destroyed.
+        for (const node of groupsById.values()) {
+            node.childrenAfterGroup = null;
+            node.childrenMapped = null;
+        }
+
         // because we are not creating the root node each time, we have the logic
         // here to change leafGroup once.
         rootNode.leafGroup = !this.groupCols?.length;
@@ -453,11 +442,37 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
         const allLeafs = rootNode._leafs!;
         for (let i = 0, len = allLeafs.length; i < len; ++i) {
-            this.insertOneNode(rootNode, allLeafs[i], snapshot);
+            this.insertOneNode(rootNode, allLeafs[i], groupColsChanged);
+        }
+
+        // Destroy stale group nodes that were not reused during insertion
+        this.destroyStaleGroups(groupsById);
+    }
+
+    /** Remove and destroy group nodes that were not reused (still have childrenAfterGroup === null) */
+    private destroyStaleGroups(groupsById: Map<string, RowNode>): void {
+        const selectionSvc = this.beans.selectionSvc;
+        let nodesToDeselect: RowNode[] | undefined;
+        for (const [id, node] of groupsById) {
+            if (node.childrenAfterGroup !== null) {
+                continue;
+            }
+            if (selectionSvc && node.isSelected()) {
+                (nodesToDeselect ??= []).push(node);
+            }
+            groupsById.delete(id);
+            node._destroy(false);
+        }
+        if (nodesToDeselect) {
+            selectionSvc!.setNodesSelected({
+                nodes: nodesToDeselect,
+                newValue: false,
+                source: 'rowGroupChanged',
+            });
         }
     }
 
-    private insertOneNode(rootNode: RowNode, childNode: RowNode, snapshot?: ExpansionSnapshot | null): void {
+    private insertOneNode(rootNode: RowNode, childNode: RowNode, groupColsChanged?: boolean): void {
         let parentGroup = rootNode;
         const { beans, pivotMode, groupCols, groupEmpty } = this;
         const valueSvc = beans.valueSvc;
@@ -483,8 +498,40 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             const nextLevel = parentGroup.level + 1;
             const isLeafLevel = nextLevel >= len - 1;
             const newGroup = this.createGroup(parentGroup, groupCol, key, nextLevel, isLeafLevel, childNode);
+            // if (newGroup.childrenAfterGroup === null) {
+            //     // Reused existing group node from before the shotgun reset.
+            //     // Reset children but preserve selection and expansion state.
+            //     newGroup.childrenAfterGroup = [];
+            //     newGroup.childrenMapped = {};
+            //     const sibling = newGroup.sibling;
+            //     if (sibling) {
+            //         sibling.childrenAfterGroup = newGroup.childrenAfterGroup;
+            //         sibling.childrenMapped = newGroup.childrenMapped;
+            //     }
+            //     newGroup.parent = parentGroup;
+            //     newGroup.level = nextLevel;
+            //     newGroup.leafGroup = isLeafLevel;
+            //     newGroup.rowGroupIndex = nextLevel;
+            //     invalidateAllLeafChildren(newGroup);
+            //     if (groupColsChanged) {
+            //         // Column change: preserve the node's existing expansion state
+            //         // but still force leaf groups collapsed in pivot mode.
+            //         if (pivotMode && isLeafLevel) {
+            //             newGroup.expanded = false;
+            //         }
+            //     } else {
+            //         // Non-column-change reset (e.g. pivot toggle): re-evaluate expansion defaults
+            //         this.setExpandedInitialValue(pivotMode, newGroup);
+            //     }
+            //     // Notify the renderer that the node's expandability may have changed
+            //     // (e.g. leafGroup changed in pivot mode), so CSS classes are updated.
+            //     newGroup.dispatchRowEvent('hasChildrenChanged');
+            // } else {
+            //     this.setExpandedInitialValue(pivotMode, newGroup);
+            // }
             this.addToParent(newGroup, parentGroup);
-            this.setExpandedInitialValue(pivotMode, newGroup, snapshot);
+            this.setExpandedInitialValue(pivotMode, newGroup);
+
             parentGroup = newGroup;
         }
         if (!parentGroup.group) {
@@ -547,8 +594,8 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         return rowGroupColumn ? rowGroupColumn.getId() + '-' + key : key;
     }
 
-    private setExpandedInitialValue(pivotMode: boolean, groupNode: RowNode, snapshot?: ExpansionSnapshot | null): void {
-        groupNode.expanded = _getGroupNodeDefaultExpanded(this.beans, pivotMode, groupNode, snapshot);
+    private setExpandedInitialValue(pivotMode: boolean, groupNode: RowNode): void {
+        groupNode._expanded ??= _getGroupNodeDefaultExpanded(this.beans, pivotMode, groupNode);
     }
 
     public onShowRowGroupColsSetChanged(): void {
