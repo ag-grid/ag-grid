@@ -1,11 +1,10 @@
 import type { AgColumn } from '../../entities/agColumn';
-import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import type { CellCtrl } from '../cell/cellCtrl';
 import { RowCtrl } from '../row/rowCtrl';
 import { SpannedCellCtrl } from './spannedCellCtrl';
 
 export class SpannedRowCtrl extends RowCtrl {
-    protected override getInitialRowClasses(_rowContainerType: RowContainerType): string[] {
+    protected override getInitialRowClasses(): string[] {
         return ['ag-spanned-row'];
     }
 

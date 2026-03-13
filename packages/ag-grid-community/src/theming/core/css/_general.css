@@ -109,8 +109,7 @@
   */
 .ag-grid-scrolling-container,
 .ag-body-horizontal-scroll-container,
-.ag-body-vertical-scroll-container,
-.ag-full-width-container {
+.ag-body-vertical-scroll-container {
     position: relative;
 }
 
@@ -122,26 +121,11 @@
     width: 100%;
 }
 
-.ag-full-width-container {
-    width: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-
-    /* turn off pointer events, because this container overlays the main row containers.
-         so when user clicks on space between full width rows, we want the mouse clicks to
-         pass onto the underlying container where the real rows are. eg if using full width
-         for row grouping, the groups will be in the full width container, but when user
-         opens a group the children are shown in the other containers - we want to make sure we
-         don't block mouse clicks to those other containers with the children. */
-    pointer-events: none;
-}
-
 .ag-full-width-anchor {
     position: sticky;
     left: 0;
+    width: var(--ag-fw-anchor-width, 100%);
     height: 100%;
-    pointer-events: none;
 }
 
 /**
@@ -372,13 +356,6 @@
     position: relative;
 }
 
-.ag-full-width-row:not(:where(.ag-embedded-full-width-row)) {
-    overflow: hidden;
-
-    /* turn events back on, as we removed them in the parent */
-    pointer-events: all;
-}
-
 .ag-row-inline-editing {
     /* inline row editors must float above standard rows. */
     z-index: 1;
@@ -542,17 +519,6 @@
 
 .ag-grid-pinned-bottom-rows-container {
     /* Keep horizontal sticky pinned lanes active for bottom pinned rows. */
-    overflow: visible;
-}
-
-.ag-grid-pinned-top-rows-full-width-container,
-.ag-grid-pinned-bottom-rows-full-width-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
     overflow: visible;
 }
 

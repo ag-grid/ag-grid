@@ -4,7 +4,6 @@ export function getRowContainerType(el: HTMLElement): string {
         ['.ag-grid-scrolling-rows', 'center'],
         ['.ag-grid-pinned-top-rows-container', 'pinned-top'],
         ['.ag-grid-pinned-bottom-rows-container', 'pinned-bottom'],
-        ['.ag-full-width-container', 'full-width'],
     ];
     for (const [selector, name] of containerSelectors) {
         if (el.closest(selector)) {

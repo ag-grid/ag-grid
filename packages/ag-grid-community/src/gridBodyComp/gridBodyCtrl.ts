@@ -87,10 +87,8 @@ export class GridBodyCtrl extends BeanStub {
         eGridViewport: HTMLElement,
         eScrollingRows: HTMLElement,
         eTopRowsContainer: HTMLElement,
-        eTopRowsFullWidthContainer: HTMLElement,
         eTop: HTMLElement,
         eBottomRowsContainer: HTMLElement,
-        eBottomRowsFullWidthContainer: HTMLElement,
         eBottom: HTMLElement
     ): void {
         this.comp = comp;
@@ -100,12 +98,7 @@ export class GridBodyCtrl extends BeanStub {
         this.eTop = eTop;
         this.eBottom = eBottom;
         this.pinnedRowContainerRendererFeature = this.createManagedBean(
-            new PinnedRowContainerRendererFeature(
-                eTopRowsContainer,
-                eTopRowsFullWidthContainer,
-                eBottomRowsContainer,
-                eBottomRowsFullWidthContainer
-            )
+            new PinnedRowContainerRendererFeature(eTopRowsContainer, eBottomRowsContainer)
         );
         this.createManagedBean(
             new GridHeaderFeature(eTopRowsContainer, eTop, eGridViewport, this.pinnedRowContainerRendererFeature)
@@ -134,9 +127,8 @@ export class GridBodyCtrl extends BeanStub {
         this.updateScrollingClasses();
 
         this.filterManager?.mountAdvFilterTopSectionComp(
-            this.pinnedRowContainerRendererFeature.createCompHost({
+            this.pinnedRowContainerRendererFeature.createCompSide({
                 section: 'top',
-                stream: 'fullWidth',
                 lane: 'edge',
                 order: 1,
                 getTopOffsetPx: () => this.ctrlsSvc.get('gridHeaderCtrl')?.headerHeight ?? 0,

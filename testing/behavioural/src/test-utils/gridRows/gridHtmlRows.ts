@@ -29,7 +29,16 @@ export function getGridOwnerDocument<TData = any>(api: GridApi<TData>): Document
 
 export function getGridRowsHtmlElements<TData = any>(api: GridApi<TData>): HTMLElement[] {
     const gridElement = getGridHTMLElement(api);
-    return gridElement ? Array.from(gridElement.querySelectorAll<HTMLElement>(ROW_SELECTOR)) : [];
+    if (!gridElement) {
+        return [];
+    }
+    // Find this grid's own root wrapper to exclude rows from nested detail grids
+    const gridRoot = gridElement.querySelector('.ag-root-wrapper');
+    const allRows = Array.from(gridElement.querySelectorAll<HTMLElement>(ROW_SELECTOR));
+    if (!gridRoot) {
+        return allRows;
+    }
+    return allRows.filter((row) => row.closest('.ag-root-wrapper') === gridRoot);
 }
 
 export function getRowHtmlElements<TData = any>(api: GridApi<TData>, reference: RowElementReference): HTMLElement[] {

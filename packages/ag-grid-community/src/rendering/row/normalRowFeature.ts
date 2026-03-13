@@ -129,13 +129,8 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         this.rowCtrl.refreshPinnedCellGroupWidths();
     }
 
-    private getCellCtrlsForContainer(containerType: RowContainerType): CellCtrl[] {
-        switch (containerType) {
-            case 'fullWidth':
-                return [];
-            case 'center':
-                return [...this.leftCellCtrls.list, ...this.centerCellCtrls.list, ...this.rightCellCtrls.list];
-        }
+    private getCellCtrlsForContainer(_containerType: RowContainerType): CellCtrl[] {
+        return [...this.leftCellCtrls.list, ...this.centerCellCtrls.list, ...this.rightCellCtrls.list];
     }
 
     private createAllCellCtrls(): void {

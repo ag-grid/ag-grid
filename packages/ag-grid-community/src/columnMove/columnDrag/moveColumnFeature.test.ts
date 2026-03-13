@@ -185,12 +185,12 @@ describe('MoveColumnFeature', () => {
             feature.onDragging(draggingEvent, false, false, false);
 
             // sectionX = clientX(130) - pinnedLeftCells.rect.left(100) = 30
-            // normaliseX flips within section: pinnedLeftCells.width(50) - 30 = 20
+            // normaliseX does NOT flip for pinned-left in RTL mode
             expect(feature.handleColumnDragWhileSuppressingMovement).toHaveBeenCalledWith(
                 draggingEvent,
                 false,
                 false,
-                20,
+                30,
                 false
             );
         });

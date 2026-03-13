@@ -12,16 +12,10 @@ import { RowContainerEventsFeature } from './rowContainerEventsFeature';
 import { SetHeightFeature } from './setHeightFeature';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export type RowContainerName =
-    | 'scrollingCenter'
-    | 'scrollingFullWidth'
-    | 'pinnedTopCenter'
-    | 'pinnedTopFullWidth'
-    | 'pinnedBottomCenter'
-    | 'pinnedBottomFullWidth';
+export type RowContainerName = 'scrollingCenter' | 'pinnedTopCenter' | 'pinnedBottomCenter';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export type RowContainerType = 'center' | 'fullWidth';
+export type RowContainerType = 'center';
 
 type GetRowCtrls = (renderer: RowRenderer) => RowCtrl[];
 type GetSpannedRowCtrls = (renderer: SpannedRowRenderer) => RowCtrl[];
@@ -29,7 +23,6 @@ type GetSpannedRowCtrls = (renderer: SpannedRowRenderer) => RowCtrl[];
 export type RowContainerOptions = {
     type: RowContainerType;
     name: string;
-    fullWidth?: boolean;
     getRowCtrls: GetRowCtrls;
     getSpannedRowCtrls?: GetSpannedRowCtrls;
 };
@@ -57,12 +50,6 @@ const ContainerCssClasses: Record<RowContainerName, RowContainerOptions> = {
         getRowCtrls: getCentreRowCtrls,
         getSpannedRowCtrls: getSpannedCenterRowCtrls,
     },
-    scrollingFullWidth: {
-        type: 'fullWidth',
-        name: 'full-width',
-        fullWidth: true,
-        getRowCtrls: getCentreRowCtrls,
-    },
 
     pinnedTopCenter: {
         type: 'center',
@@ -70,24 +57,12 @@ const ContainerCssClasses: Record<RowContainerName, RowContainerOptions> = {
         getRowCtrls: getPinnedAndStickyTopRowCtrls,
         getSpannedRowCtrls: getSpannedTopRowCtrls,
     },
-    pinnedTopFullWidth: {
-        type: 'fullWidth',
-        name: 'grid-pinned-top-rows-full-width',
-        fullWidth: true,
-        getRowCtrls: getPinnedAndStickyTopRowCtrls,
-    },
 
     pinnedBottomCenter: {
         type: 'center',
         name: 'grid-pinned-bottom-rows',
         getRowCtrls: getStickyAndPinnedBottomRowCtrls,
         getSpannedRowCtrls: getSpannedBottomRowCtrls,
-    },
-    pinnedBottomFullWidth: {
-        type: 'fullWidth',
-        name: 'grid-pinned-bottom-rows-full-width',
-        fullWidth: true,
-        getRowCtrls: getStickyAndPinnedBottomRowCtrls,
     },
 };
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -105,16 +80,11 @@ export function _getRowContainerOptions(name: RowContainerName): RowContainerOpt
     return ContainerCssClasses[name];
 }
 
-const middleContainers: RowContainerName[] = ['scrollingCenter', 'scrollingFullWidth'];
+const middleContainers: RowContainerName[] = ['scrollingCenter'];
 const centerContainers: RowContainerName[] = ['scrollingCenter', 'pinnedTopCenter', 'pinnedBottomCenter'];
 
 // sticky section must show rows in set order
-const stickyContainers: RowContainerName[] = [
-    'pinnedTopCenter',
-    'pinnedTopFullWidth',
-    'pinnedBottomCenter',
-    'pinnedBottomFullWidth',
-];
+const stickyContainers: RowContainerName[] = ['pinnedTopCenter', 'pinnedBottomCenter'];
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowContainerComp {
@@ -161,10 +131,6 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     }
 
     private registerWithCtrlsService(): void {
-        // we don't register full width containers
-        if (this.options.fullWidth) {
-            return;
-        }
         this.beans.ctrlsSvc.register(this.name as any, this);
     }
 
@@ -214,6 +180,11 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
                 const viewportWidth = gridBodyCtrl?.getHorizontalViewportWidth() ?? _getInnerWidth(this.eViewport);
                 const width = Math.max(contentWidth, viewportWidth, 1);
                 this.comp.setContainerWidth(`${width}px`);
+
+                // Set viewport width (without scrollbar) as a CSS variable so full-width
+                // row anchors can size themselves without per-row JS listeners.
+                const anchorWidth = gridBodyCtrl?.getViewportWidthWithoutScrollbar() ?? _getInnerWidth(this.eViewport);
+                this.eContainer.style.setProperty('--ag-fw-anchor-width', `${anchorWidth}px`);
             };
 
             this.createManagedBean(new CenterWidthFeature(updateContainerWidth));
@@ -222,25 +193,6 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
                 scrollbarWidthChanged: updateContainerWidth,
             });
             this.registerViewportResizeListener(updateContainerWidth);
-        }
-
-        // Full-width containers set the sticky anchor width to the viewport width
-        // so rows don't scroll horizontally with the columns.
-        if (this.options.fullWidth) {
-            const updateAnchorWidth = () => {
-                const gridBodyCtrl = this.beans.ctrlsSvc.getGridBodyCtrl();
-                const viewportWidth =
-                    gridBodyCtrl?.getViewportWidthWithoutScrollbar() ?? _getInnerWidth(this.eViewport);
-                this.comp.setContainerWidth(`${viewportWidth}px`);
-            };
-
-            this.createManagedBean(new CenterWidthFeature(updateAnchorWidth));
-            this.addManagedEventListeners({
-                scrollVisibilityChanged: updateAnchorWidth,
-                scrollbarWidthChanged: updateAnchorWidth,
-                gridSizeChanged: updateAnchorWidth,
-            });
-            this.registerViewportResizeListener(updateAnchorWidth);
         }
 
         this.addListeners();
@@ -406,29 +358,10 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     }
 
     private onDisplayedRowsChanged(afterScroll: boolean = false): void {
-        const rows = this.options.getRowCtrls(this.beans.rowRenderer);
-        if (rows.length === 0) {
-            this.comp.setRowCtrls({ rowCtrls: this.EMPTY_CTRLS });
-            return;
-        }
-
-        const printLayout = _isDomLayout(this.gos, 'print');
-        const embedFullWidthRows = this.gos.get('embedFullWidthRows');
-        const embedFW = embedFullWidthRows || printLayout;
-
-        // this list contains either all pinned top, center or pinned bottom rows
-        // this filters out rows not for this container, eg if it's a full with row, but we are not full with container
-        const rowsThisContainer = rows.filter((rowCtrl) => {
-            // this just justifies if the ctrl is in the correct place, this will be fed with zombie rows by the
-            // row renderer, so should not block them as they still need to animate -  the row renderer
-            // will clean these up when they finish animating
-            const fullWidthRow = rowCtrl.isFullWidth();
-
-            const match = this.options.fullWidth ? !embedFW && fullWidthRow : embedFW || !fullWidthRow;
-
-            return match;
+        const rowCtrls = this.options.getRowCtrls(this.beans.rowRenderer);
+        this.comp.setRowCtrls({
+            rowCtrls: rowCtrls.length === 0 ? this.EMPTY_CTRLS : rowCtrls,
+            useFlushSync: afterScroll,
         });
-
-        this.comp.setRowCtrls({ rowCtrls: rowsThisContainer, useFlushSync: afterScroll });
     }
 }

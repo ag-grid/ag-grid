@@ -15,75 +15,39 @@ import {
     _getRowSpanContainerClass,
 } from './rowContainerCtrl';
 
-function usesGridViewportForScrolling(name: RowContainerName): boolean {
-    return name === 'scrollingCenter' || name === 'pinnedTopCenter' || name === 'pinnedBottomCenter';
-}
-
 function usesPinnedRowsSource(name: RowContainerName): boolean {
-    return (
-        name === 'pinnedTopCenter' ||
-        name === 'pinnedTopFullWidth' ||
-        name === 'pinnedBottomCenter' ||
-        name === 'pinnedBottomFullWidth'
-    );
+    return name === 'pinnedTopCenter' || name === 'pinnedBottomCenter';
 }
 
 function isBottomPinnedContainer(name: RowContainerName): boolean {
-    return name === 'pinnedBottomCenter' || name === 'pinnedBottomFullWidth';
+    return name === 'pinnedBottomCenter';
 }
 
 const LAST_STICKY_BOTTOM_ROW_CLASS = 'ag-row-last-sticky-bottom';
 
 function getElementParams(name: RowContainerName, options: RowContainerOptions, beans: BeanCollection): ElementParams {
-    const eContainerElement: ElementParams = {
+    const isCellSpanning = !!beans.gos.get('enableCellSpan') && !!options.getSpannedRowCtrls;
+    return {
         tag: 'div',
         ref: 'eContainer',
         cls: _getRowContainerClass(name),
         role: 'rowgroup',
+        children: [
+            isCellSpanning
+                ? {
+                      tag: 'div',
+                      ref: 'eSpannedContainer',
+                      cls: `ag-spanning-container ${_getRowSpanContainerClass(name)}`,
+                      role: 'presentation',
+                  }
+                : null,
+        ],
     };
-
-    if (usesGridViewportForScrolling(name)) {
-        const isCellSpanning = !!beans.gos.get('enableCellSpan') && !!options.getSpannedRowCtrls;
-        return {
-            ...eContainerElement,
-            children: [
-                isCellSpanning
-                    ? {
-                          tag: 'div',
-                          ref: 'eSpannedContainer',
-                          cls: `ag-spanning-container ${_getRowSpanContainerClass(name)}`,
-                          role: 'presentation',
-                      }
-                    : null,
-            ],
-        };
-    }
-
-    // Full-width containers get an anchor child that uses position:sticky to stay
-    // pinned to the viewport edge during horizontal scrolling.
-    if (options.fullWidth) {
-        return {
-            ...eContainerElement,
-            children: [
-                {
-                    tag: 'div',
-                    ref: 'eFullWidthAnchor',
-                    cls: 'ag-full-width-anchor',
-                    role: 'presentation',
-                },
-            ],
-        };
-    }
-
-    return eContainerElement;
 }
 
 export class RowContainerComp extends Component {
     private readonly eContainer: HTMLElement = RefPlaceholder;
     private readonly eSpannedContainer: HTMLElement = RefPlaceholder;
-    private readonly eFullWidthAnchor: HTMLElement = RefPlaceholder;
-    private eRowsContainer: HTMLElement = RefPlaceholder;
-    private eSpannedRowsContainer: HTMLElement | undefined;
 
     private readonly name: RowContainerName;
     private readonly options: RowContainerOptions;
@@ -115,51 +79,41 @@ export class RowContainerComp extends Component {
             return;
         }
 
-        const needsExternalViewport = usesGridViewportForScrolling(this.name);
-        let eGridViewport: HTMLElement | null = null;
-
-        if (needsExternalViewport) {
-            const gridBodyCtrl = this.beans.ctrlsSvc.getGridBodyCtrl();
-            eGridViewport = gridBodyCtrl?.eGridViewport;
-
-            if (!eGridViewport) {
-                const parentComponent = this.getParentComponent() as { eGridViewport?: HTMLElement };
-                eGridViewport = parentComponent?.eGridViewport ?? null;
-            }
+        const gridBodyCtrl = this.beans.ctrlsSvc.getGridBodyCtrl();
+        let eGridViewport: HTMLElement | undefined = gridBodyCtrl?.eGridViewport;
+        if (!eGridViewport) {
+            const parentComponent = this.getParentComponent() as { eGridViewport?: HTMLElement };
+            eGridViewport = parentComponent?.eGridViewport;
         }
 
-        // For full-width containers, rows go into the sticky anchor element
-        const eContainerForRows = this.options.fullWidth ? this.eFullWidthAnchor : this.eContainer;
-        const eSpannedContainerForRows: HTMLElement | undefined = this.eSpannedContainer;
-        const eViewportForCtrl = eGridViewport ?? this.eContainer;
+        const eContainer = this.eContainer;
+        const eSpannedContainer: HTMLElement | undefined = this.eSpannedContainer;
+        const eViewport = eGridViewport ?? eContainer;
 
-        this.eRowsContainer = eContainerForRows;
-        this.eSpannedRowsContainer = eSpannedContainerForRows;
         this.setupPinnedRowsSource();
 
         const compProxy: IRowContainerComp = {
-            setHorizontalScroll: (offset: number) => (eViewportForCtrl.scrollLeft = offset),
+            setHorizontalScroll: (offset: number) => (eViewport.scrollLeft = offset),
             setRowCtrls: ({ rowCtrls }) => this.setRowCtrls(rowCtrls),
             setSpannedRowCtrls: (rowCtrls: RowCtrl[]) => this.setRowCtrls(rowCtrls, true),
             setDomOrder: (domOrder) => (this.domOrder = domOrder),
             setContainerWidth: (width) => {
-                // For full-width containers, set width on the anchor (which is eContainerForRows)
-                eContainerForRows.style.width = width;
-                if (eSpannedContainerForRows) {
-                    eSpannedContainerForRows.style.width = width;
+                eContainer.style.width = width;
+                if (eSpannedContainer) {
+                    eSpannedContainer.style.width = width;
                 }
             },
             setOffsetTop: (offset) => {
                 const top = `translateY(${offset})`;
-                eContainerForRows.style.transform = top;
-                if (eSpannedContainerForRows) {
-                    eSpannedContainerForRows.style.transform = top;
+                eContainer.style.transform = top;
+                if (eSpannedContainer) {
+                    eSpannedContainer.style.transform = top;
                 }
             },
         };
 
         const ctrl = this.createManagedBean(new RowContainerCtrl(this.name));
-        ctrl.setComp(compProxy, eContainerForRows, eSpannedContainerForRows, eViewportForCtrl);
+        ctrl.setComp(compProxy, eContainer, eSpannedContainer, eViewport);
         this.initialised = true;
     }
 
@@ -177,7 +131,7 @@ export class RowContainerComp extends Component {
     private setRowCtrls(rowCtrls: RowCtrl[], spanContainer?: boolean): void {
         const { beans, options } = this;
 
-        const container = spanContainer ? this.eSpannedRowsContainer : this.eRowsContainer;
+        const container = spanContainer ? this.eSpannedContainer : this.eContainer;
         if (!container) {
             return;
         }

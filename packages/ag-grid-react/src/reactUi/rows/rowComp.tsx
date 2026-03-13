@@ -49,14 +49,13 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
 
     // these styles have initial values, so element is placed into the DOM with them,
     // rather than an transition getting applied.
-    const [top, setTop] = useState<string | undefined>(() =>
-        isDisplayed ? rowCtrl.getInitialRowTop(containerType) : undefined
-    );
+    const [top, setTop] = useState<string | undefined>(() => (isDisplayed ? rowCtrl.getInitialRowTop() : undefined));
     const [transform, setTransform] = useState<string | undefined>(() =>
-        isDisplayed ? rowCtrl.getInitialTransform(containerType) : undefined
+        isDisplayed ? rowCtrl.getInitialTransform() : undefined
     );
 
     const eGui = useRef<HTMLDivElement | null>(null);
+    const eFullWidthAnchor = useRef<HTMLDivElement | null>(null);
     const ePinnedLeftCells = useRef<HTMLDivElement | null>(null);
     const eScrollingCells = useRef<HTMLDivElement | null>(null);
     const ePinnedRightCells = useRef<HTMLDivElement | null>(null);
@@ -251,7 +250,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
     const showEmbeddedFullWidth = isFullWidth && !!embeddedFullWidthCompDetails;
 
     useLayoutEffect(
-        () => showJsComp(fullWidthCompDetails, context, eGui.current!, fullWidthCompRef),
+        () => showJsComp(fullWidthCompDetails, context, eFullWidthAnchor.current ?? eGui.current!, fullWidthCompRef),
         [fullWidthCompDetails]
     );
     useLayoutEffect(() => {
@@ -482,7 +481,11 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
                     </div>
                 </>
             ) : showFullWidthFramework ? (
-                showFullWidthFrameworkJsx()
+                <div className="ag-full-width-anchor" role="presentation" ref={eFullWidthAnchor}>
+                    {showFullWidthFrameworkJsx()}
+                </div>
+            ) : isFullWidth ? (
+                <div className="ag-full-width-anchor" role="presentation" ref={eFullWidthAnchor} />
             ) : null}
         </div>
     );

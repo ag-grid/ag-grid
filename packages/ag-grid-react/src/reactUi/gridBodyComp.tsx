@@ -17,7 +17,6 @@ import {
 import { BeansContext } from './beansContext';
 import useReactCommentEffect from './reactComment';
 import RowContainerComp from './rows/rowContainerComp';
-import type { ReactRowContainerName } from './rows/rowContainerComp';
 import { classesList } from './utils';
 
 type PinnedSection = 'top' | 'bottom';
@@ -57,10 +56,7 @@ const GridBodyComp = () => {
     const eBody = useRef<HTMLDivElement | null>(null);
     const eBottom = useRef<HTMLDivElement | null>(null);
     const [topRowsHost, setTopRowsHost] = useState<HTMLDivElement | null>(null);
-    const [topRowsFullWidthHost, setTopRowsFullWidthHost] = useState<HTMLDivElement | null>(null);
     const [bottomRowsHost, setBottomRowsHost] = useState<HTMLDivElement | null>(null);
-    const [bottomRowsFullWidthHost, setBottomRowsFullWidthHost] = useState<HTMLDivElement | null>(null);
-    const [scrollingFullWidthContainer, setScrollingFullWidthContainer] = useState<HTMLDivElement | null>(null);
 
     useReactCommentEffect(' AG Grid Body ', eRoot);
     useReactCommentEffect(' AG Pinned Top ', eTop);
@@ -85,16 +81,13 @@ const GridBodyComp = () => {
     useEffect(() => {
         if (
             !rootElement ||
-            !scrollingFullWidthContainer ||
             context.isDestroyed() ||
             !eGridViewport.current ||
             !eBody.current ||
             !eTop.current ||
             !eBottom.current ||
             !topRowsHost ||
-            !topRowsFullWidthHost ||
-            !bottomRowsHost ||
-            !bottomRowsFullWidthHost
+            !bottomRowsHost
         ) {
             return;
         }
@@ -159,10 +152,8 @@ const GridBodyComp = () => {
             eGridViewport.current,
             eBody.current,
             topRowsHost,
-            topRowsFullWidthHost,
             eTop.current,
             bottomRowsHost,
-            bottomRowsFullWidthHost,
             eBottom.current
         );
 
@@ -176,18 +167,7 @@ const GridBodyComp = () => {
                 f();
             }
         };
-    }, [
-        context,
-        gos,
-        overlays,
-        rangeSvc,
-        rootElement,
-        scrollingFullWidthContainer,
-        topRowsHost,
-        topRowsFullWidthHost,
-        bottomRowsHost,
-        bottomRowsFullWidthHost,
-    ]);
+    }, [context, gos, overlays, rangeSvc, rootElement, topRowsHost, bottomRowsHost]);
 
     const rootClasses = useMemo(() => classesList('ag-root', 'ag-unselectable', layoutClass), [layoutClass]);
     const gridViewportClasses = useMemo(
@@ -240,15 +220,6 @@ const GridBodyComp = () => {
         [bottomSection.height, stickyBottomHeight, stickyBottomWidth]
     );
 
-    const createRowContainer = (container: ReactRowContainerName) => (
-        <RowContainerComp
-            name={container}
-            viewportElement={container === 'scrollingCenter' ? gridViewportElement : undefined}
-            onContainerElementChanged={container === 'scrollingFullWidth' ? setScrollingFullWidthContainer : undefined}
-            key={`${container}-container`}
-        />
-    );
-
     const setGridViewportRef = useCallback((el: HTMLDivElement | null) => {
         eGridViewport.current = el;
         setGridViewportElement(el);
@@ -264,23 +235,15 @@ const GridBodyComp = () => {
                             viewportElement={gridViewportElement}
                             onContainerElementChanged={setTopRowsHost}
                         />
-                        <RowContainerComp
-                            name="pinnedTopFullWidth"
-                            onContainerElementChanged={setTopRowsFullWidthHost}
-                        />
                     </div>
                     <div className={bodyClasses} ref={eBody} role="presentation">
-                        {(['scrollingCenter', 'scrollingFullWidth'] as const).map(createRowContainer)}
+                        <RowContainerComp name="scrollingCenter" viewportElement={gridViewportElement} />
                     </div>
                     <div className={bottomClasses} ref={eBottom} role="presentation" style={bottomStyle}>
                         <RowContainerComp
                             name="pinnedBottomCenter"
                             viewportElement={gridViewportElement}
                             onContainerElementChanged={setBottomRowsHost}
-                        />
-                        <RowContainerComp
-                            name="pinnedBottomFullWidth"
-                            onContainerElementChanged={setBottomRowsFullWidthHost}
                         />
                     </div>
                 </div>

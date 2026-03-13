@@ -28,7 +28,6 @@ export class GridHeaderFeature extends BeanStub {
         this.topSectionHeaderRowsSource = this.pinnedRowContainerRendererFeature.registerSource({
             id: 'header-rows',
             section: 'top',
-            stream: 'center',
             lane: 'edge',
         });
 

@@ -4,13 +4,11 @@ import type { IPinnedSectionCompHost } from '../interfaces/iPinnedSectionCompHos
 import type { RowContainerName } from './rowContainer/rowContainerCtrl';
 
 type PinnedSection = 'top' | 'bottom';
-type PinnedSectionStream = 'center' | 'fullWidth';
 type PinnedSectionLane = 'edge' | 'pinned' | 'sticky';
 
 interface PinnedRowContainerRendererSourceConfig {
     id: string;
     section: PinnedSection;
-    stream: PinnedSectionStream;
     lane: PinnedSectionLane;
     order?: number;
     getTopOffsetPx?: () => number;
@@ -24,8 +22,6 @@ export interface PinnedRowContainerRendererSource {
     destroy(): void;
 }
 
-type HostKey = `${PinnedSection}:${PinnedSectionStream}`;
-
 interface SourceState extends PinnedRowContainerRendererSourceConfig {
     order: number;
     sequence: number;
@@ -35,36 +31,27 @@ interface SourceState extends PinnedRowContainerRendererSourceConfig {
 export interface IPinnedRowContainerRendererFeature {
     registerSource(config: PinnedRowContainerRendererSourceConfig): PinnedRowContainerRendererSource;
     registerRowContainerSource(name: RowContainerName): PinnedRowContainerRendererSource | undefined;
-    createCompHost(config: Omit<PinnedRowContainerRendererSourceConfig, 'id'>): IPinnedSectionCompHost;
+    createCompSide(config: Omit<PinnedRowContainerRendererSourceConfig, 'id'>): IPinnedSectionCompHost;
     refresh(): void;
 }
 
-let nextCompHostId = 0;
+let nextCompSideId = 0;
 
 export class PinnedRowContainerRendererFeature extends BeanStub implements IPinnedRowContainerRendererFeature {
     private readonly sources = new Map<string, SourceState>();
-    private readonly managedByHost = new Map<HostKey, Set<HTMLElement>>();
-    private readonly hosts: {
-        topCenter: HTMLElement;
-        topFullWidth: HTMLElement;
-        bottomCenter: HTMLElement;
-        bottomFullWidth: HTMLElement;
+    private readonly managedBySide = new Map<PinnedSection, Set<HTMLElement>>();
+    private readonly sides: {
+        top: HTMLElement;
+        bottom: HTMLElement;
     };
     private sourceSequence = 0;
     private rowContainerSourceSequence = 0;
 
-    constructor(
-        topCenter: HTMLElement,
-        topFullWidth: HTMLElement,
-        bottomCenter: HTMLElement,
-        bottomFullWidth: HTMLElement
-    ) {
+    constructor(topCenter: HTMLElement, bottomCenter: HTMLElement) {
         super();
-        this.hosts = {
-            topCenter,
-            topFullWidth,
-            bottomCenter,
-            bottomFullWidth,
+        this.sides = {
+            top: topCenter,
+            bottom: bottomCenter,
         };
     }
 
@@ -80,7 +67,7 @@ export class PinnedRowContainerRendererFeature extends BeanStub implements IPinn
             elements: [],
         };
         this.sources.set(config.id, state);
-        this.refreshHost(state.section, state.stream);
+        this.refreshSide(state.section);
 
         return {
             setRows: (rows) => this.setSourceElements(config.id, rows),
@@ -90,8 +77,8 @@ export class PinnedRowContainerRendererFeature extends BeanStub implements IPinn
         };
     }
 
-    public createCompHost(config: Omit<PinnedRowContainerRendererSourceConfig, 'id'>): IPinnedSectionCompHost {
-        const sourceId = `pinned-row-container-comp-${nextCompHostId++}`;
+    public createCompSide(config: Omit<PinnedRowContainerRendererSourceConfig, 'id'>): IPinnedSectionCompHost {
+        const sourceId = `pinned-row-container-comp-${nextCompSideId++}`;
         const source = this.registerSource({
             ...config,
             id: sourceId,
@@ -118,28 +105,12 @@ export class PinnedRowContainerRendererFeature extends BeanStub implements IPinn
                 return this.registerSource({
                     id,
                     section: 'top',
-                    stream: 'center',
-                    lane: 'pinned',
-                });
-            case 'pinnedTopFullWidth':
-                return this.registerSource({
-                    id,
-                    section: 'top',
-                    stream: 'fullWidth',
                     lane: 'pinned',
                 });
             case 'pinnedBottomCenter':
                 return this.registerSource({
                     id,
                     section: 'bottom',
-                    stream: 'center',
-                    lane: 'sticky',
-                });
-            case 'pinnedBottomFullWidth':
-                return this.registerSource({
-                    id,
-                    section: 'bottom',
-                    stream: 'fullWidth',
                     lane: 'sticky',
                 });
             default:
@@ -148,10 +119,8 @@ export class PinnedRowContainerRendererFeature extends BeanStub implements IPinn
     }
 
     public refresh(): void {
-        this.refreshHost('top', 'center');
-        this.refreshHost('top', 'fullWidth');
-        this.refreshHost('bottom', 'center');
-        this.refreshHost('bottom', 'fullWidth');
+        this.refreshSide('top');
+        this.refreshSide('bottom');
     }
 
     private setSourceElements(id: string, elements: HTMLElement[]): void {
@@ -160,7 +129,7 @@ export class PinnedRowContainerRendererFeature extends BeanStub implements IPinn
             return;
         }
         source.elements = elements;
-        this.refreshHost(source.section, source.stream);
+        this.refreshSide(source.section);
     }
 
     private destroySource(id: string): void {
@@ -169,15 +138,12 @@ export class PinnedRowContainerRendererFeature extends BeanStub implements IPinn
             return;
         }
         this.sources.delete(id);
-        this.refreshHost(source.section, source.stream);
+        this.refreshSide(source.section);
     }
 
-    private refreshHost(section: PinnedSection, stream: PinnedSectionStream): void {
-        const host = this.getHost(section, stream);
-        // For full-width hosts, place elements inside the sticky anchor if present
-        const target = (host.querySelector(':scope > .ag-full-width-anchor') as HTMLElement | null) ?? host;
-        const hostKey = this.toHostKey(section, stream);
-        const sortedSources = this.getSortedSources(section, stream);
+    private refreshSide(section: PinnedSection): void {
+        const side = this.sides[section];
+        const sortedSources = this.getSortedSources(section);
         const orderedEntries: { eGui: HTMLElement; source: SourceState }[] = [];
         const activeElements = new Set<HTMLElement>();
 
@@ -191,43 +157,39 @@ export class PinnedRowContainerRendererFeature extends BeanStub implements IPinn
                 if (source.getTopOffsetPx) {
                     eGui.style.position = 'absolute';
                     eGui.style.top = `${source.getTopOffsetPx()}px`;
-                    const gridBodyCtrl = this.beans.ctrlsSvc.getGridBodyCtrl();
-                    const viewportWidth = gridBodyCtrl?.getHorizontalViewportWidth();
-                    eGui.style.width = viewportWidth ? `${viewportWidth}px` : '100%';
-                    eGui.style.pointerEvents = 'auto';
                 }
             }
         }
 
-        const previousElements = this.managedByHost.get(hostKey);
+        const previousElements = this.managedBySide.get(section);
         if (previousElements) {
             for (const eGui of previousElements) {
-                if (!activeElements.has(eGui) && eGui.parentElement === target) {
+                if (!activeElements.has(eGui) && eGui.parentElement === side) {
                     eGui.remove();
                 }
             }
         }
 
-        this.managedByHost.set(hostKey, activeElements);
+        this.managedBySide.set(section, activeElements);
 
         let previous: HTMLElement | null = null;
         for (const { eGui, source } of orderedEntries) {
             if (source.placeAfterHeaderRows) {
-                this.placeAfterHeaderRows(target, eGui);
+                this.placeAfterHeaderRows(side, eGui);
             } else {
-                if (eGui.parentElement !== target) {
-                    target.appendChild(eGui);
+                if (eGui.parentElement !== side) {
+                    side.appendChild(eGui);
                 }
-                _ensureDomOrder(target, eGui, previous);
+                _ensureDomOrder(side, eGui, previous);
             }
             previous = eGui;
         }
     }
 
-    private getSortedSources(section: PinnedSection, stream: PinnedSectionStream): SourceState[] {
+    private getSortedSources(section: PinnedSection): SourceState[] {
         const laneOrder = section === 'top' ? TOP_LANE_ORDER : BOTTOM_LANE_ORDER;
         return Array.from(this.sources.values())
-            .filter((source) => source.section === section && source.stream === stream)
+            .filter((source) => source.section === section)
             .sort((a, b) => {
                 const laneDiff = laneOrder[a.lane] - laneOrder[b.lane];
                 if (laneDiff !== 0) {
@@ -241,8 +203,8 @@ export class PinnedRowContainerRendererFeature extends BeanStub implements IPinn
             });
     }
 
-    private placeAfterHeaderRows(host: HTMLElement, eGui: HTMLElement): void {
-        const firstNonHeaderRow = Array.from(host.children).find((child) => {
+    private placeAfterHeaderRows(side: HTMLElement, eGui: HTMLElement): void {
+        const firstNonHeaderRow = Array.from(side.children).find((child) => {
             if (child === eGui) {
                 return false;
             }
@@ -255,7 +217,7 @@ export class PinnedRowContainerRendererFeature extends BeanStub implements IPinn
             return;
         }
 
-        const headerRows = Array.from(host.children).filter((child) => {
+        const headerRows = Array.from(side.children).filter((child) => {
             if (child === eGui) {
                 return false;
             }
@@ -267,18 +229,7 @@ export class PinnedRowContainerRendererFeature extends BeanStub implements IPinn
             return;
         }
 
-        host.appendChild(eGui);
-    }
-
-    private getHost(section: PinnedSection, stream: PinnedSectionStream): HTMLElement {
-        if (section === 'top') {
-            return stream === 'center' ? this.hosts.topCenter : this.hosts.topFullWidth;
-        }
-        return stream === 'center' ? this.hosts.bottomCenter : this.hosts.bottomFullWidth;
-    }
-
-    private toHostKey(section: PinnedSection, stream: PinnedSectionStream): HostKey {
-        return `${section}:${stream}`;
+        side.appendChild(eGui);
     }
 }
 

@@ -13,21 +13,11 @@ import useReactCommentEffect from '../reactComment';
 import { agFlushSync, classesList, getNextValueIfDifferent } from '../utils';
 import RowComp from './rowComp';
 
-export type ReactRowContainerName =
-    | 'scrollingCenter'
-    | 'scrollingFullWidth'
-    | 'pinnedTopCenter'
-    | 'pinnedTopFullWidth'
-    | 'pinnedBottomCenter'
-    | 'pinnedBottomFullWidth';
+export type ReactRowContainerName = 'scrollingCenter' | 'pinnedTopCenter' | 'pinnedBottomCenter';
 
 type CommunityRowContainerName = Parameters<typeof _getRowContainerOptions>[0];
 const asCommunityRowContainerName = (name: ReactRowContainerName): CommunityRowContainerName =>
     name as CommunityRowContainerName;
-
-function usesGridViewportForScrolling(name: ReactRowContainerName): boolean {
-    return name === 'scrollingCenter' || name === 'pinnedTopCenter' || name === 'pinnedBottomCenter';
-}
 
 const RowContainerComp = ({
     name,
@@ -44,8 +34,6 @@ const RowContainerComp = ({
 
     const eContainer = useRef<HTMLDivElement | null>(null);
     const eSpanContainer = useRef<HTMLDivElement | null>(null);
-    const eFullWidthAnchor = useRef<HTMLDivElement | null>(null);
-    const isFullWidth = !!containerOptions.fullWidth;
     const rowCtrlsRef = useRef<RowCtrl[]>([]);
     const prevRowCtrlsRef = useRef<RowCtrl[]>([]);
     const [rowCtrlsOrdered, setRowCtrlsOrdered] = useState<RowCtrl[]>(() => []);
@@ -67,8 +55,6 @@ const RowContainerComp = ({
         [name]
     );
 
-    const requiresExternalViewport = usesGridViewportForScrolling(name);
-
     useReactCommentEffect(' AG Row Container ' + name + ' ', eContainer);
 
     const setRef = useCallback(() => {
@@ -80,7 +66,7 @@ const RowContainerComp = ({
         }
 
         const eContainerForCtrl = eContainer.current;
-        const eViewportForCtrl = requiresExternalViewport ? viewportElement : eContainer.current;
+        const eViewportForCtrl = viewportElement ?? eContainer.current;
         if (!eContainerForCtrl || !eViewportForCtrl || (isSpanning && !eSpanContainer.current)) {
             return;
         }
@@ -131,10 +117,8 @@ const RowContainerComp = ({
                 }
             },
             setContainerWidth: (width: string) => {
-                // For full-width containers, set width on the sticky anchor element
-                const target = isFullWidth ? eFullWidthAnchor.current : eContainerForCtrl;
-                if (target) {
-                    target.style.width = width;
+                if (eContainerForCtrl) {
+                    eContainerForCtrl.style.width = width;
                 }
                 if (eSpanContainerForCtrl) {
                     eSpanContainerForCtrl.style.width = width;
@@ -150,7 +134,7 @@ const RowContainerComp = ({
 
         rowContainerCtrlRef.current = context.createBean(new RowContainerCtrl(asCommunityRowContainerName(name)));
         rowContainerCtrlRef.current.setComp(compProxy, eContainerForCtrl, eSpanContainerForCtrl, eViewportForCtrl);
-    }, [context, isSpanning, name, requiresExternalViewport, viewportElement]);
+    }, [context, isSpanning, name, viewportElement]);
 
     useEffect(
         () => () => {
@@ -186,16 +170,6 @@ const RowContainerComp = ({
     const rows = rowCtrlsOrdered.map((rowCtrl) => (
         <RowComp rowCtrl={rowCtrl} containerType={containerOptions.type} key={rowCtrl.instanceId}></RowComp>
     ));
-
-    if (isFullWidth) {
-        return (
-            <div className={containerClasses} ref={setContainerRef} role={'rowgroup'}>
-                <div className="ag-full-width-anchor" ref={eFullWidthAnchor} role="presentation">
-                    {rows}
-                </div>
-            </div>
-        );
-    }
 
     return (
         <div className={containerClasses} ref={setContainerRef} role={'rowgroup'}>

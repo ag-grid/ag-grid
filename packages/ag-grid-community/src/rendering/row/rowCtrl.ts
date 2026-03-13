@@ -136,15 +136,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private rowFocused: boolean;
 
-    private slideInAnimation: { [key in RowContainerType]: boolean } = {
-        center: false,
-        fullWidth: false,
-    };
-
-    private fadeInAnimation: { [key in RowContainerType]: boolean } = {
-        center: false,
-        fullWidth: false,
-    };
+    private slideInAnimation = false;
+    private fadeInAnimation = false;
 
     private rowDragComps: Component[] = [];
 
@@ -283,7 +276,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         const comp = rowGui.rowComp;
 
-        const initialRowClasses = this.getInitialRowClasses(rowGui.containerType);
+        const initialRowClasses = this.getInitialRowClasses();
         for (const name of initialRowClasses) {
             comp.toggleCss(name, true);
         }
@@ -357,22 +350,19 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         if (!rowGui) {
             return;
         }
-        const { containerType } = rowGui;
 
-        const shouldSlide = this.slideInAnimation[containerType];
-        if (shouldSlide) {
+        if (this.slideInAnimation) {
             _batchCall(() => {
                 this.onTopChanged();
             });
-            this.slideInAnimation[containerType] = false;
+            this.slideInAnimation = false;
         }
 
-        const shouldFade = this.fadeInAnimation[containerType];
-        if (shouldFade) {
+        if (this.fadeInAnimation) {
             _batchCall(() => {
                 rowGui.rowComp.toggleCss('ag-opacity-zero', false);
             });
-            this.fadeInAnimation[containerType] = false;
+            this.fadeInAnimation = false;
         }
     }
 
@@ -520,26 +510,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             return;
         }
 
-        const oldRowTopExists = _exists(this.rowNode.oldRowTop);
-
-        if (oldRowTopExists) {
-            const { slideInAnimation } = this;
-            if (this.isFullWidth() && !this.gos.get('embedFullWidthRows')) {
-                slideInAnimation.fullWidth = true;
-                return;
-            }
-
-            // if the row had a previous position, we slide it in
-            slideInAnimation.center = true;
+        if (_exists(this.rowNode.oldRowTop)) {
+            this.slideInAnimation = true;
         } else {
-            const { fadeInAnimation } = this;
-            if (this.isFullWidth() && !this.gos.get('embedFullWidthRows')) {
-                fadeInAnimation.fullWidth = true;
-                return;
-            }
-
-            // if the row had no previous position, we fade it in
-            fadeInAnimation.center = true;
+            this.fadeInAnimation = true;
         }
     }
 
@@ -940,7 +914,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.rowGui?.rowComp.setUserStyles(this.rowStyles);
     }
 
-    protected getInitialRowClasses(rowContainerType: RowContainerType): string[] {
+    protected getInitialRowClasses(): string[] {
         const fullWidthRow = this.isFullWidth();
         const { rowNode, beans } = this;
 
@@ -949,7 +923,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         classes.push('ag-row');
         classes.push(this.rowFocused ? 'ag-row-focus' : 'ag-row-no-focus');
 
-        if (this.fadeInAnimation[rowContainerType]) {
+        if (this.fadeInAnimation) {
             classes.push('ag-opacity-zero');
         }
 
@@ -1265,13 +1239,13 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     // but now is in the viewport) then a new RowComp is created, however it should have it's position initialised
     // to below the viewport, so the row will appear to animate up. if we didn't set the initial position at creation
     // time, the row would animate down (ie from position zero).
-    public getInitialRowTop(rowContainerType: RowContainerType): string | undefined {
-        return this.suppressRowTransform ? this.getInitialRowTopShared(rowContainerType) : undefined;
+    public getInitialRowTop(): string | undefined {
+        return this.suppressRowTransform ? this.getInitialRowTopShared() : undefined;
     }
-    public getInitialTransform(rowContainerType: RowContainerType): string | undefined {
-        return this.suppressRowTransform ? undefined : `translateY(${this.getInitialRowTopShared(rowContainerType)})`;
+    public getInitialTransform(): string | undefined {
+        return this.suppressRowTransform ? undefined : `translateY(${this.getInitialRowTopShared()})`;
     }
-    private getInitialRowTopShared(rowContainerType: RowContainerType): string {
+    private getInitialRowTopShared(): string {
         // print layout uses normal flow layout for row positioning
         if (this.printLayout) {
             return '';
@@ -1284,9 +1258,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             rowTop = _exists(calculatedRowTop) ? calculatedRowTop : rowNode.stickyRowTop;
         } else {
             // if sliding in, we take the old row top. otherwise we just set the current row top.
-            const pixels = this.slideInAnimation[rowContainerType]
-                ? this.roundRowTopToBounds(rowNode.oldRowTop!)
-                : rowNode.rowTop;
+            const pixels = this.slideInAnimation ? this.roundRowTopToBounds(rowNode.oldRowTop!) : rowNode.rowTop;
             const afterPaginationPixels = this.applyPaginationOffset(pixels!);
             // we don't apply scaling if row is pinned
             rowTop = rowNode.isRowPinned()

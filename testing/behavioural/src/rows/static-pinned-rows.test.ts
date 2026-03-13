@@ -15,9 +15,7 @@ describe('Pinned rows', () => {
     const bottomData = [{ athlete: 'Bottom Athlete', sport: 'Bottom Sport', age: 22 }];
 
     function assertPinnedRowData(data: any[], location: 'top' | 'bottom', rowIndices?: string[]) {
-        const pinnedRows = document.querySelectorAll(
-            `.ag-grid-pinned-${location}-rows-container .ag-row-pinned, .ag-grid-pinned-${location}-rows-full-width-container .ag-row-pinned`
-        );
+        const pinnedRows = document.querySelectorAll(`.ag-grid-pinned-${location}-rows-container .ag-row-pinned`);
 
         expect(pinnedRows.length).toBe(data.length);
 

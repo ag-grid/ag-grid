@@ -16,10 +16,7 @@ import type { RowContainerName } from './rowContainer/rowContainerCtrl';
 
 function makeRowContainers(paramsMap: Record<string, { name: string }>, names: RowContainerName[]): ElementParams[] {
     return names.map((name) => {
-        const refName =
-            name === 'scrollingFullWidth'
-                ? 'scrollingFullWidthRowContainerComp'
-                : `e${name[0].toUpperCase() + name.substring(1)}RowContainer`;
+        const refName = `e${name[0].toUpperCase() + name.substring(1)}RowContainer`;
         paramsMap[refName] = { name };
         return {
             tag: 'ag-row-container',
@@ -57,21 +54,21 @@ function getGridBodyTemplate(includeOverlay?: boolean): {
                                 ref: 'eTop',
                                 cls: 'ag-grid-pinned-top-rows',
                                 role: 'presentation',
-                                children: makeRowContainers(paramsMap, ['pinnedTopCenter', 'pinnedTopFullWidth']),
+                                children: makeRowContainers(paramsMap, ['pinnedTopCenter']),
                             },
                             {
                                 tag: 'div',
                                 ref: 'eBody',
                                 cls: 'ag-grid-scrolling-rows',
                                 role: 'presentation',
-                                children: makeRowContainers(paramsMap, ['scrollingCenter', 'scrollingFullWidth']),
+                                children: makeRowContainers(paramsMap, ['scrollingCenter']),
                             },
                             {
                                 tag: 'div',
                                 ref: 'eBottom',
                                 cls: 'ag-grid-pinned-bottom-rows',
                                 role: 'presentation',
-                                children: makeRowContainers(paramsMap, ['pinnedBottomCenter', 'pinnedBottomFullWidth']),
+                                children: makeRowContainers(paramsMap, ['pinnedBottomCenter']),
                             },
                         ],
                     },
@@ -91,12 +88,9 @@ export class GridBodyComp extends Component implements FocusableContainer {
     private readonly eGridScrollableArea: HTMLElement = RefPlaceholder;
     private readonly eTop: HTMLElement = RefPlaceholder;
     private readonly ePinnedTopCenterRowContainer: RowContainerComp = RefPlaceholder;
-    private readonly ePinnedTopFullWidthRowContainer: RowContainerComp = RefPlaceholder;
     private readonly eBottom: HTMLElement = RefPlaceholder;
     private readonly ePinnedBottomCenterRowContainer: RowContainerComp = RefPlaceholder;
-    private readonly ePinnedBottomFullWidthRowContainer: RowContainerComp = RefPlaceholder;
     private readonly eBody: HTMLElement = RefPlaceholder;
-    private readonly scrollingFullWidthRowContainerComp: RowContainerComp = RefPlaceholder;
 
     private ctrl: GridBodyCtrl;
     private pinnedSectionState: Record<PinnedSection, PinnedSectionState> = {
@@ -168,10 +162,8 @@ export class GridBodyComp extends Component implements FocusableContainer {
             this.eGridViewport,
             this.eBody,
             this.ePinnedTopCenterRowContainer.getGui(),
-            this.ePinnedTopFullWidthRowContainer.getGui(),
             this.eTop,
             this.ePinnedBottomCenterRowContainer.getGui(),
-            this.ePinnedBottomFullWidthRowContainer.getGui(),
             this.eBottom
         );
 

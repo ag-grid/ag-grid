@@ -84,10 +84,6 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
     }
 
     public shouldCreateCellSections(): boolean {
-        if (this.rowCtrl.isFullWidthDetailRow()) {
-            return false;
-        }
-
         return this.rowCtrl.shouldEmbedFullWidthRowSections();
     }
 
@@ -340,11 +336,7 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
     }
 
     private getFullWidthColumn(): AgColumn {
-        const { visibleCols } = this.beans;
-        if (this.rowCtrl.getContainerType() === 'center') {
-            return visibleCols.centerCols[0];
-        }
-        return visibleCols.allCols[0];
+        return this.beans.visibleCols.centerCols[0];
     }
 
     // --- Mouse events ---

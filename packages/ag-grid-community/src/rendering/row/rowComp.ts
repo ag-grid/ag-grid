@@ -59,7 +59,7 @@ export class RowComp extends Component {
             });
             rowDiv.append(this.ePinnedLeftCells, this.eScrollingCells, this.ePinnedRightCells);
         }
-        this.setInitialStyle(rowDiv, containerType);
+        this.setInitialStyle(rowDiv);
         this.setTemplateFromElement(rowDiv);
 
         const style = rowDiv.style;
@@ -99,13 +99,13 @@ export class RowComp extends Component {
         });
     }
 
-    private setInitialStyle(container: HTMLElement, containerType: RowContainerType): void {
-        const transform = this.rowCtrl.getInitialTransform(containerType);
+    private setInitialStyle(container: HTMLElement): void {
+        const transform = this.rowCtrl.getInitialTransform();
 
         if (transform) {
             container.style.setProperty('transform', transform);
         } else {
-            const top = this.rowCtrl.getInitialRowTop(containerType);
+            const top = this.rowCtrl.getInitialRowTop();
             if (top) {
                 container.style.setProperty('top', top);
             }
@@ -114,10 +114,14 @@ export class RowComp extends Component {
 
     private showFullWidth(compDetails: UserCompDetails): void {
         this.isEmbeddedFullWidth = false;
+        const eRow = this.getGui();
+        const eAnchor = _createElement({ tag: 'div', cls: 'ag-full-width-anchor', role: 'presentation' });
+        eRow.appendChild(eAnchor);
+
         const callback = (cellRenderer: ICellRendererComp) => {
             if (this.isAlive()) {
                 const eGui = cellRenderer.getGui();
-                this.getGui().appendChild(eGui);
+                eAnchor.appendChild(eGui);
                 this.rowCtrl.setupDetailRowAutoHeight(eGui);
                 this.setFullWidthRowComp(cellRenderer, compDetails.params);
             } else {
@@ -125,10 +129,7 @@ export class RowComp extends Component {
             }
         };
 
-        // if not in cache, create new one
-        const res = compDetails.newAgStackInstance();
-
-        res.then(callback);
+        compDetails.newAgStackInstance().then(callback);
     }
 
     private showEmbeddedFullWidth(compDetails: {
