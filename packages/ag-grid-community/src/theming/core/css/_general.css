@@ -273,8 +273,13 @@
     background-color: var(--ag-data-background-color);
 }
 
-.ag-header-row::after {
+.ag-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
     background-color: var(--ag-header-background-color);
+    border-bottom: var(--ag-header-row-border);
 }
 
 .ag-grid-pinned-left-cells,
@@ -459,60 +464,14 @@
 .ag-grid-pinned-top-rows {
     top: 0;
     white-space: nowrap;
-
-    /* preserve a full-width header backdrop even when rendered header rows are narrower than the viewport. */
-    background-image: linear-gradient(var(--ag-header-background-color), var(--ag-header-background-color)),
-        linear-gradient(var(--ag-data-background-color), var(--ag-data-background-color));
-    background-size:
-        100% var(--ag-header-rows-height, 0),
-        100% 100%;
-    background-repeat: no-repeat;
-    background-position: top left;
 }
 
-.ag-grid-pinned-top-rows::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    height: var(--ag-header-rows-height, 0);
-    background-color: var(--ag-header-background-color);
-    pointer-events: none;
-    z-index: 1;
-}
-
-:where(.ag-grid-pinned-top-rows) > .ag-grid-pinned-top-rows-container::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: var(--ag-header-rows-height, 0);
-    border-top: var(--ag-header-row-border);
-    pointer-events: none;
-    z-index: 3;
-}
-
-:where(.ag-grid-pinned-top-rows:not(.ag-no-top-rows)) > .ag-grid-pinned-top-rows-container::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: calc(var(--ag-header-rows-height, 0) + var(--ag-top-rows-height, 0));
-    border-top: var(--ag-pinned-row-border);
-    pointer-events: none;
-    z-index: 3;
-}
 
 .ag-grid-pinned-bottom-rows {
     bottom: 0;
     border-bottom: none;
     white-space: nowrap;
     box-sizing: content-box !important;
-}
-
-:where(.ag-grid-pinned-top-rows:not(.ag-no-top-rows)) {
-    border-bottom-color: transparent;
 }
 
 :where(.ag-grid-pinned-bottom-rows.ag-has-bottom-pinned-rows) > .ag-grid-pinned-bottom-rows-container::before {

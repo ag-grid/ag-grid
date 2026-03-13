@@ -772,8 +772,13 @@
         background-color: var(--ag-data-background-color);
     }
 
-    .ag-header-row::after {
+    .ag-header {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
         background-color: var(--ag-header-background-color);
+        border-bottom: var(--ag-borders-critical) var(--ag-border-color);
     }
 
     .ag-grid-pinned-left-cells,
@@ -1160,25 +1165,6 @@
     .ag-grid-pinned-top-rows {
         top: 0;
         white-space: nowrap;
-        background-image: linear-gradient(var(--ag-header-background-color), var(--ag-header-background-color)),
-            linear-gradient(var(--ag-data-background-color), var(--ag-data-background-color));
-        background-size:
-            100% var(--ag-header-rows-height, 0px),
-            100% 100%;
-        background-repeat: no-repeat;
-        background-position: top left;
-    }
-
-    .ag-grid-pinned-top-rows::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 0;
-        height: var(--ag-header-rows-height, 0px);
-        background-color: var(--ag-header-background-color);
-        pointer-events: none;
-        z-index: 1;
     }
 
     .ag-grid-pinned-bottom-rows {

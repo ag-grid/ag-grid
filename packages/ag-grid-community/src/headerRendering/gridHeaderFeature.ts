@@ -14,6 +14,7 @@ export class GridHeaderFeature extends BeanStub {
     private headerRowComps: { [ctrlId: HeaderRowCtrlInstanceId]: HeaderRowComp } = {};
     private topSectionHeaderRowsSource: PinnedRowContainerRendererSource | undefined;
     private gridHeaderCtrl: GridHeaderCtrl | undefined;
+    private readonly eHeaderWrapper: HTMLDivElement;
 
     constructor(
         private readonly eTopSectionCenterHost: HTMLElement,
@@ -22,6 +23,9 @@ export class GridHeaderFeature extends BeanStub {
         private readonly pinnedRowContainerRendererFeature: IPinnedRowContainerRendererFeature
     ) {
         super();
+        this.eHeaderWrapper = document.createElement('div');
+        this.eHeaderWrapper.classList.add('ag-header');
+        this.eHeaderWrapper.setAttribute('role', 'presentation');
     }
 
     public postConstruct(): void {
@@ -31,11 +35,16 @@ export class GridHeaderFeature extends BeanStub {
             stream: 'center',
             lane: 'edge',
         });
+        this.topSectionHeaderRowsSource.setElements([this.eHeaderWrapper]);
 
         const compProxy: IGridHeaderComp = {
             toggleCss: (cssClassName, on) => this.eTopSectionCenterHost.classList.toggle(cssClassName, on),
-            setHeightAndMinHeight: (height) =>
-                this.eTopSectionWrapper.style.setProperty('--ag-header-rows-height', height),
+            setHeightAndMinHeight: (height) => {
+                const borderWidth = this.beans.environment.getHeaderRowBorderWidth();
+                const heightWithBorder = height + borderWidth;
+                this.eTopSectionWrapper.style.setProperty('--ag-header-rows-height', `${heightWithBorder}px`);
+                this.eHeaderWrapper.style.height = `${heightWithBorder}px`;
+            },
         };
         const rowContainerCompProxy: IHeaderRowsComp = {
             setCtrls: (ctrls) => this.setCtrls(ctrls),
@@ -55,6 +64,7 @@ export class GridHeaderFeature extends BeanStub {
         this.topSectionHeaderRowsSource = undefined;
         this.gridHeaderCtrl = undefined;
         this.eTopSectionWrapper.style.removeProperty('--ag-header-rows-height');
+        this.eHeaderWrapper.remove();
         super.destroy();
     }
 
@@ -79,7 +89,21 @@ export class GridHeaderFeature extends BeanStub {
             orderedGuis.push(rowComp.getGui());
         }
 
-        this.topSectionHeaderRowsSource?.setRows(orderedGuis);
+        // Append header rows inside the wrapper div
+        const wrapper = this.eHeaderWrapper;
+        for (const eGui of orderedGuis) {
+            if (eGui.parentElement !== wrapper) {
+                wrapper.appendChild(eGui);
+            }
+        }
+        // Remove any stale children no longer in the ordered list
+        const guiSet = new Set(orderedGuis);
+        for (const child of Array.from(wrapper.children)) {
+            if (!guiSet.has(child as HTMLElement)) {
+                child.remove();
+            }
+        }
+
         this.gridHeaderCtrl?.setHeaderRowFocusableElements(orderedGuis);
 
         for (const oldComp of Object.values(oldRowComps)) {

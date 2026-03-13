@@ -114,21 +114,6 @@
     }
 }
 
-.ag-grid-pinned-top-rows:not(.ag-no-top-rows) > .ag-grid-pinned-top-rows-container > .ag-row.ag-row-pinned:last-child {
-    > .ag-grid-pinned-left-cells,
-    > .ag-grid-scrolling-cells,
-    > .ag-grid-pinned-right-cells {
-        border-bottom-color: transparent;
-    }
-}
-
-.ag-grid-pinned-top-rows:not(.ag-no-top-rows)
-    > .ag-grid-pinned-top-rows-full-width-container
-    > .ag-full-width-anchor
-    > .ag-row.ag-row-pinned:last-child {
-    border-bottom-color: transparent;
-}
-
 /* stylelint-disable no-descending-specificity */
 
 .ag-grid-pinned-bottom-rows {
