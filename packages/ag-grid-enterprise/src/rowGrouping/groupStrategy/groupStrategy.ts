@@ -119,20 +119,6 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         return { expanded, collapsed };
     }
 
-    /** When group columns change, snapshot expanded and collapsed group node IDs so they can be restored after rebuild */
-    private getExpansionSnapshot(): ExpansionSnapshot {
-        const expanded = new Set<string>();
-        const collapsed = new Set<string>();
-        for (const [id, node] of this.nonLeafsById) {
-            if (node.expanded) {
-                expanded.add(id);
-            } else if (node.isExpandable()) {
-                collapsed.add(id);
-            }
-        }
-        return { expanded, collapsed };
-    }
-
     private positionLeafsAndGroups(rootNode: RowNode, changedPath: ChangedPath | undefined) {
         _forEachChangedGroupDepthFirst(rootNode, changedPath, (group: RowNode) => {
             const children = group.childrenAfterGroup;
