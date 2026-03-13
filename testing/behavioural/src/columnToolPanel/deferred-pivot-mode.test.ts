@@ -9,6 +9,7 @@ import {
 import { AllEnterpriseModule, RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
 
 import { AgGridHeaderDropZonesSelector } from '../../../../packages/ag-grid-enterprise/src/rowGrouping/columnDropZones/agGridHeaderDropZones';
+import { moveItem } from '../../../../packages/ag-grid-enterprise/src/columnToolPanel/columnMoveUtils';
 import { DragEventDispatcher, TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from '../test-utils';
 
 describe('deferred column tool panel pivot mode', () => {
@@ -345,6 +346,13 @@ describe('deferred column tool panel pivot mode', () => {
         return toolPanel.beans.colModel.getColDefCols().map((col: any) => col.getColId());
     }
 
+    function getDisplayedPrimaryColumnOrder(toolPanel: any): string[] {
+        return toolPanel.primaryColsPanel.primaryColsListPanel
+            .getDisplayedColsList()
+            .filter((item: any) => !item.group)
+            .map((item: any) => item.column.getColId());
+    }
+
     function getValueColumnIds(gridApi: GridApi): string[] {
         return gridApi.getValueColumns().map((col) => col.getColId());
     }
@@ -435,6 +443,36 @@ describe('deferred column tool panel pivot mode', () => {
             dragHandle.getBoundingClientRect = originalDragRect;
             dropZoneGui.getBoundingClientRect = originalDropZoneRect;
         }
+    }
+
+    async function dragRenderedPrimaryColumnToEndOfPrimaryList(toolPanel: any, label: string): Promise<void> {
+        const listPanel = toolPanel.primaryColsPanel.primaryColsListPanel;
+        const virtualList = listPanel['virtualList'];
+        const displayedColsList = listPanel.getDisplayedColsList() as any[];
+        const lastIndex = displayedColsList.length - 1;
+        const movingItem = displayedColsList.find((item: any) => item.displayName === label);
+
+        expect(movingItem).toBeTruthy();
+
+        virtualList.ensureIndexVisible(lastIndex);
+        await asyncSetTimeout(50);
+
+        let component = virtualList.getComponentAt(lastIndex) as any;
+        if (!component) {
+            component = listPanel['createComponentFromItem'](displayedColsList[lastIndex], document.createElement('div'));
+        }
+
+        moveItem(
+            toolPanel.beans,
+            [movingItem.column as AgColumn],
+            {
+                rowIndex: lastIndex,
+                position: 'bottom',
+                component,
+            },
+            { deferApply: true }
+        );
+        await asyncSetTimeout(50);
     }
 
     test('adding aggregation values in non-pivot mode applies only after commit', async () => {
@@ -1134,6 +1172,65 @@ describe('deferred column tool panel pivot mode', () => {
         commitChanges(toolPanel);
 
         expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['age', 'athlete', 'country']);
+    });
+
+    test('dragging a column to the end in non-pivot mode should update the deferred tool panel order before commit', async () => {
+        const { gridApi, toolPanel } = await createDeferredNonPivotGrid();
+
+        expect(getDisplayedPrimaryColumnOrder(toolPanel)).toEqual([
+            'athlete',
+            'age',
+            'country',
+            'year',
+            'date',
+            'sport',
+            'gold',
+            'silver',
+            'bronze',
+            'total',
+        ]);
+
+        await dragRenderedPrimaryColumnToEndOfPrimaryList(toolPanel, 'Athlete');
+
+        expect(getDisplayedPrimaryColumnOrder(toolPanel)).toEqual([
+            'age',
+            'country',
+            'year',
+            'date',
+            'sport',
+            'gold',
+            'silver',
+            'bronze',
+            'total',
+            'athlete',
+        ]);
+        expect(getPrimaryColumnOrder(toolPanel)).toEqual([
+            'athlete',
+            'age',
+            'country',
+            'year',
+            'date',
+            'sport',
+            'gold',
+            'silver',
+            'bronze',
+            'total',
+        ]);
+
+        commitChanges(toolPanel);
+
+        expect(getPrimaryColumnOrder(toolPanel)).toEqual([
+            'age',
+            'country',
+            'year',
+            'date',
+            'sport',
+            'gold',
+            'silver',
+            'bronze',
+            'total',
+            'athlete',
+        ]);
     });
 
     test('reordering columns in pivot mode applies primary column order only after commit', async () => {

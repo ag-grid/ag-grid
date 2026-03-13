@@ -86,6 +86,11 @@ export class ColumnStateUpdateStrategy extends BeanStub implements IColumnStateU
         return strategy ? strategy.getRowGroupColumns(deferMode) : fallback.getRowGroupColumns();
     }
 
+    public getPrimaryColumns(deferMode: boolean): AgColumn[] {
+        const { strategy, fallback } = this.resolveUpdates();
+        return strategy ? strategy.getPrimaryColumns(deferMode) : fallback.getPrimaryColumns();
+    }
+
     public setValueColumns(deferMode: boolean, columns: AgColumn[], eventType: ColumnEventType): void {
         const { strategy, fallback } = this.resolveUpdates();
         if (strategy) {

@@ -381,7 +381,6 @@ interface CoreBeanCollection
     formula?: IFormulaService;
     formulaInputManager?: IFormulaInputManagerService;
     columnStateUpdateStrategy: IColumnStateUpdateStrategy;
-    columnStateUpdateExecutionStrategy: IColumnStateUpdateStrategy;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

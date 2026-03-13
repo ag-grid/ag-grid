@@ -24,7 +24,7 @@ import {
 import type { VirtualListModel } from '../agStack/iVirtualList';
 import type { VirtualListDragItem } from '../agStack/iVirtualListDragFeature';
 import { VirtualListDragFeature } from '../features/virtualListDragFeature';
-import { syncLayoutWithGrid, toolPanelCreateColumnTree } from '../sideBar/common/toolPanelColDefService';
+import { syncLayoutWithColumns, syncLayoutWithGrid, toolPanelCreateColumnTree } from '../sideBar/common/toolPanelColDefService';
 import { VirtualList } from '../widgets/virtualList';
 import { ExpandState } from './agPrimaryColsHeader';
 import { ColumnModelItem } from './columnModelItem';
@@ -329,6 +329,14 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     }
 
     private buildTreeFromWhatGridIsDisplaying(): void {
+        const deferApply = !!this.params.deferApply;
+        const columnOrder = this.beans.columnStateUpdateStrategy.getPrimaryColumns(deferApply);
+
+        if (deferApply && columnOrder.length > 0) {
+            syncLayoutWithColumns(columnOrder, this.setColumnLayout.bind(this));
+            return;
+        }
+
         syncLayoutWithGrid(this.colModel, this.setColumnLayout.bind(this));
     }
 

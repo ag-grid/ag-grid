@@ -11,6 +11,7 @@ export interface ColumnStateConcreteUpdateStrategy {
     isColumnVisibleInToolPanel(column: AgColumn): boolean;
     setRowGroupColumns(columns: AgColumn[], eventType: ColumnEventType): void;
     getRowGroupColumns(): AgColumn[];
+    getPrimaryColumns(): AgColumn[];
     setValueColumns(columns: AgColumn[], eventType: ColumnEventType): void;
     getValueColumns(): AgColumn[];
     setColumnAggFunc(column: AgColumn, aggFunc: string | IAggFunc | null | undefined, eventType: ColumnEventType): void;

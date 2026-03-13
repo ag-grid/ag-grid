@@ -13,6 +13,7 @@ export interface IColumnStateUpdateStrategy {
     isColumnVisibleInToolPanel(deferMode: boolean, column: AgColumn): boolean;
     setRowGroupColumns(deferMode: boolean, columns: AgColumn[], eventType: ColumnEventType): void;
     getRowGroupColumns(deferMode: boolean): AgColumn[];
+    getPrimaryColumns(deferMode: boolean): AgColumn[];
     setValueColumns(deferMode: boolean, columns: AgColumn[], eventType: ColumnEventType): void;
     getValueColumns(deferMode: boolean): AgColumn[];
     setColumnAggFunc(

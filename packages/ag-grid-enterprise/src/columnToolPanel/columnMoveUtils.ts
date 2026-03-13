@@ -8,6 +8,7 @@ import type {
 import { isProvidedColumnGroup } from 'ag-grid-community';
 
 import type { VirtualListDragItem } from '../agStack/iVirtualListDragFeature';
+import { refreshDeferredToolPanelUi } from './toolPanelDeferredUiUtils';
 import type { ToolPanelColumnComp } from './toolPanelColumnComp';
 import { ToolPanelColumnGroupComp } from './toolPanelColumnGroupComp';
 import type { ColumnStateUpdateParams } from './updates/columnStateUpdateTypes';
@@ -96,6 +97,7 @@ export const moveItem = (
 
     if (targetIndex != null) {
         beans.columnStateUpdateStrategy.moveColumns(!!params?.deferApply, currentColumns, targetIndex, 'toolPanelUi');
+        refreshDeferredToolPanelUi(beans, params);
     }
 };
 

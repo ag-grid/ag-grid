@@ -53,6 +53,9 @@ export class ColumnStateUpdateExecutionStrategy extends BeanStub implements ICol
     public getRowGroupColumns(deferMode: boolean): AgColumn[] {
         return this.getUpdateStrategy(deferMode).getRowGroupColumns();
     }
+    public getPrimaryColumns(deferMode: boolean): AgColumn[] {
+        return this.getUpdateStrategy(deferMode).getPrimaryColumns();
+    }
     public setValueColumns(deferMode: boolean, columns: AgColumn[], eventType: ColumnEventType): void {
         this.getUpdateStrategy(deferMode).setValueColumns(columns, eventType);
     }
@@ -141,6 +144,10 @@ class SynchronousColumnStateUpdateStrategy implements ColumnStateConcreteUpdateS
 
     public getRowGroupColumns(): AgColumn[] {
         return this.beans.rowGroupColsSvc?.columns ?? [];
+    }
+
+    public getPrimaryColumns(): AgColumn[] {
+        return getPrimaryColumns(this.beans);
     }
 
     public setValueColumns(columns: AgColumn[], eventType: ColumnEventType): void {
@@ -539,6 +546,10 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
         );
     }
 
+    public getPrimaryColumns(): AgColumn[] {
+        return getDraftColumns(this.beans, this.state.columnOrder?.colIds ?? getPrimaryColumnIds(this.beans));
+    }
+
     public getValueColumns(): AgColumn[] {
         return getDraftColumns(
             this.beans,
@@ -694,9 +705,11 @@ function syncPrimaryColDefOrder(beans: BeanStub['beans'], orderedPrimaryColumns:
 }
 
 function getPrimaryColumnIds(beans: BeanStub['beans']): string[] {
-    return (beans.colModel.getColDefCols() ?? beans.colModel.getCols())
-        .filter((column) => isPrimaryColDefColumn(column))
-        .map((column) => column.getColId());
+    return getPrimaryColumns(beans).map((column) => column.getColId());
+}
+
+function getPrimaryColumns(beans: BeanStub['beans']): AgColumn[] {
+    return (beans.colModel.getColDefCols() ?? beans.colModel.getCols()).filter((column) => isPrimaryColDefColumn(column));
 }
 
 function getDeferredMoveTargetIndex(
