@@ -7,11 +7,11 @@ The Rich Select Cell Editor supports cell renderers, value formatting, search an
 
 ## Cell Renderer
 
-The cell renderer used within the editor can be customised as shown below:
-
 {% gridExampleRunner title="Rich Select with Cell Renderer" name="rich-select-cell-renderer" /%}
 
-```
+The example above uses the following configuration:
+
+```js
 columnDefs: [
     {
         cellEditor: 'agRichSelectCellEditor',
@@ -35,13 +35,11 @@ columnDefs: [
 
 ## Search Values
 
-Different types of search are possible within the editor list as shown below:
-
-{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["searchType"] config={ "description": "" } /%}
-
 {% gridExampleRunner title="Rich Select Editor" name="rich-select-search-values" /%}
 
-```
+The example above uses the following configuration:
+
+```js
 columnDefs: [
     {
         cellEditor: 'agRichSelectCellEditor',
@@ -54,15 +52,17 @@ columnDefs: [
 ]
 ```
 
+Different search types are available via the `searchType` parameter:
+
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["searchType"] config={ "description": "" } /%}
+
 ## Allow Typing
-
-The editor input can be configured to allow text input, which is used to match different parts of the editor list items as shown below:
-
-{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["allowTyping"] config={ "description": "" } /%}
 
 {% gridExampleRunner title="Rich Select Editor" name="rich-select-allow-typing" /%}
 
-```
+The example above uses the following configuration:
+
+```js
 columnDefs: [
     {
         cellEditor: 'agRichSelectCellEditor',
@@ -78,15 +78,17 @@ columnDefs: [
 ]
 ```
 
+The editor input can be configured to allow text input, which is used to match different parts of the editor list items:
+
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["allowTyping"] config={ "description": "" } /%}
+
 ## Format Values
-
-Items in the editor list can be formatted as shown below:
-
-{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["formatValue"] config={ "description": "" } /%}
 
 {% gridExampleRunner title="Rich Select Format Values" name="rich-select-format-values" /%}
 
-```
+The example above uses the following configuration:
+
+```js
 columnDefs: [
     {
         cellEditor: 'agRichSelectCellEditor',
@@ -99,15 +101,17 @@ columnDefs: [
 ]
 ```
 
+Items in the editor list can be formatted via `formatValue`:
+
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["formatValue"] config={ "description": "" } /%}
+
 ## Multi Selection
-
-The editor can be configured to allow the selection of multiple values as shown below:
-
-{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["multiSelect","suppressMultiSelectPillRenderer"] config={ "description": "" } /%}
 
 {% gridExampleRunner title="Rich Select Editor" name="rich-select-multi-select" /%}
 
-```
+The example above uses the following configuration:
+
+```js
 columnDefs: [
     {
         cellEditor: 'agRichSelectCellEditor',
@@ -119,6 +123,8 @@ columnDefs: [
     }
 ]
 ```
+
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["multiSelect","suppressMultiSelectPillRenderer"] config={ "description": "" } /%}
 
 ## Complex Objects
 
@@ -135,7 +141,9 @@ relies on string values such as `allowTyping`.
 
 {% gridExampleRunner title="Rich Select Editor" name="rich-select-complex-objects" exampleHeight=300 /%}
 
-```
+The example above uses the following configuration:
+
+```js
 const colors = [
   { name: "Pink", code: "#FFC0CB" },
   // ...other values

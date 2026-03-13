@@ -7,15 +7,15 @@ The Rich Select Cell Editor supports loading values asynchronously, including pa
 
 ## Async Values
 
-List values can be provided asynchronously to the editor as shown below:
-
-When `values` is provided as a callback function, the callback receives `params` with type `RichCellEditorValuesCallbackParams`.
+When `values` is provided as a callback function, the callback receives `params` with type `RichCellEditorValuesCallbackParams`:
 
 {% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["values"] config={ "description": "" } /%}
 
 {% gridExampleRunner title="Rich Select Async Values" name="rich-select-async-values" /%}
 
-```
+The example above uses the following configuration:
+
+```js
 columnDefs: [
     {
         field: 'language',
@@ -35,7 +35,9 @@ For large datasets, `valuesPage` avoids loading all items at once and instead lo
 
 {% gridExampleRunner title="Rich Select Paged Async Values" name="rich-select-paged-async-values" /%}
 
-```
+The example above uses the following configuration:
+
+```js
 columnDefs: [
     {
         cellEditor: 'agRichSelectCellEditor',
@@ -57,7 +59,10 @@ columnDefs: [
 ## Async Filtering
 
 For advanced filtering scenarios, combine async `values` callback, `allowTyping`, and `filterListAsync` to enable async filtering.
+
+{% note %}
 The `values` callback params remain typed as `RichCellEditorValuesCallbackParams`.
+{% /note %}
 
 When `filterListAsync` is set to `true`, the cell editor behaves as follows:
 
@@ -68,11 +73,11 @@ When `filterListAsync` is set to `true`, the cell editor behaves as follows:
 
 {% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["filterListAsync", "searchDebounceDelay", "values"]  config={ "description": "" } /%}
 
-This is shown in the example below:
-
 {% gridExampleRunner title="Rich Select Async Filtering" name="rich-select-full-async-values" /%}
 
-```
+The example above uses the following configuration:
+
+```js
 columnDefs: [
     {
         field: 'language',
@@ -94,7 +99,10 @@ columnDefs: [
 ## Paged Async Filtering
 
 For very large, server-backed datasets, combine async filtering with `valuesPage` so filtered results are also loaded incrementally.
+
+{% note %}
 `valuesPageInitialStartRow` is only used for the initial unfiltered load; once the user types, filtered paging starts from row `0`.
+{% /note %}
 
 In this mode each request includes:
 
@@ -106,7 +114,9 @@ In this mode each request includes:
 
 {% gridExampleRunner title="Rich Select Paged Async Filtering" name="rich-select-paged-async-filtering" /%}
 
-```
+The example above uses the following configuration:
+
+```js
 columnDefs: [
     {
         cellEditor: 'agRichSelectCellEditor',

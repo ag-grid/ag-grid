@@ -55,18 +55,15 @@ The `params` passed to `cellEditorSelector` are the same as those passed to the 
 
 The result is an object with `component` and `params` to use instead of `cellEditor` and `cellEditorParams`.
 
-This following shows the Selector always returning back the provided Rich Select Editor:
+The following example demonstrates dynamic editor selection, note that:
 
-```js
-cellEditorSelector: params => {
-    return {
-        component: 'agRichSelectCellEditor',
-        params: { values: ['Male', 'Female'] }
-    };
-}
-```
+-   The column 'Value' holds data of different types as shown in the column 'Type' (numbers/genders/moods).
+-   `colDef.cellEditorSelector` is a function that returns the name of the component to use to edit based on the type of data for that row.
+-   Edit a cell by double clicking to observe the different editors used.
 
-However a selector only makes sense when a selection is made. The following demonstrates selecting between Cell Editors:
+{% gridExampleRunner title="Dynamic Editor Component" name="dynamic-editor-component"  exampleHeight=450 /%}
+
+The example above uses the following configuration:
 
 ```js
 cellEditorSelector: params => {
@@ -98,14 +95,6 @@ cellEditorSelector: params => {
 }
 ```
 
-Here is a full example:
-
--   The column 'Value' holds data of different types as shown in the column 'Type' (numbers/genders/moods).
--   `colDef.cellEditorSelector` is a function that returns the name of the component to use to edit based on the type of data for that row
--   Edit a cell by double clicking to observe the different editors used.
-
-{% gridExampleRunner title="Dynamic Editor Component" name="dynamic-editor-component"  exampleHeight=450 /%}
-
 ## Custom Props
 
 The property `colDef.cellEditorParams` allows custom props to be passed to editors.
@@ -120,6 +109,17 @@ The property `colDef.cellEditorParams` allows custom props to be passed to edito
 ## Dynamic Props
 
 The `colDef.cellEditorParams` function allows dynamic props independently of the Editor selection. For example you might have a 'City' column that has values based on the 'Country' column.
+
+The following example demonstrates dynamic props, note that:
+
+-   Column **Gender** uses a Cell Component for both the grid and the editor.
+-   Column **Country** allows country selection, with `cellHeight` being used to make each entry 50px tall. If the currently selected city for the row doesn't match a newly selected country, the city cell is cleared.
+-   Column **City** uses dynamic parameters to display values for the selected country, and uses `formatValue` to add the selected city's country as a suffix.
+-   Column **Address** uses the large text area editor.
+
+{% gridExampleRunner title="Dynamic Parameters" name="dynamic-parameters"  exampleHeight=520 /%}
+
+The example above uses the following configuration:
 
 ```js
 cellEditorParams: params => {
@@ -136,15 +136,6 @@ cellEditorParams: params => {
     }
 }
 ```
-
-Below shows an example with dynamic props. The following can be noted:
-
--   Column **Gender** uses a Cell Component for both the grid and the editor.
--   Column **Country** allows country selection, with `cellHeight` being used to make each entry 50px tall. If the currently selected city for the row doesn't match a newly selected country, the city cell is cleared.
--   Column **City** uses dynamic parameters to display values for the selected country, and uses `formatValue` to add the selected city's country as a suffix.
--   Column **Address** uses the large text area editor.
-
-{% gridExampleRunner title="Dynamic Parameters" name="dynamic-parameters"  exampleHeight=520 /%}
 
 ## Popup Editor
 
@@ -166,7 +157,7 @@ Configure that a Custom Cell Editor is in a popup in one of the following ways:
 
 {% /if %}
 
-```{% frameworkTransform=true %}
+```js
 colDefs = [
   {
     cellEditor: MyPopupEditor,
@@ -188,7 +179,7 @@ Popup Editors appear over the editing Cell. Configure the Popup Editor to appear
 
 {% /if %}
 
-```{% frameworkTransform=true %}
+```js
 colDef = {
   cellEditorPopup: true,
   cellEditorPopupPosition: 'under',
@@ -309,4 +300,3 @@ The example below shows using `getCellEditorInstances`. The following can be not
 
 {% interfaceDocumentation interfaceName="CustomCellEditorProps"  /%}
 {% /if %}
-

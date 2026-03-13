@@ -3,7 +3,7 @@ title: "Rich Select Cell Editor"
 enterprise: true
 ---
 
-Drop-down cell editor with search and filter support, as an alternative to the browser's native `select` element.
+Drop-down cell editor with DOM row virtualisation, search and filter support, and custom renderer support — as an alternative to the browser's native `select` element.
 
 ## Enabling Rich Select Cell Editor
 
@@ -13,7 +13,7 @@ Edit any cell in the grid below to see the Rich Select Cell Editor.
 
 Enabled with `agRichSelectCellEditor` and configured with `IRichCellEditorParams`.
 
-```
+```js
 columnDefs: [
     {
         cellEditor: 'agRichSelectCellEditor',
@@ -25,7 +25,7 @@ columnDefs: [
 ]
 ```
 
-Benefits over browser's `select` are as follows:
+Benefits over the browser's `select`:
 
 -   Uses DOM row virtualisation so very large lists can be displayed.
 -   Integrates with the grid perfectly, avoiding glitches seen with the standard select.
