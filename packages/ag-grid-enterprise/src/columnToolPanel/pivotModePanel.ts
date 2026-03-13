@@ -1,7 +1,7 @@
 import type { ElementParams, GridCheckbox } from 'ag-grid-community';
 import { AgToggleButtonSelector, Component, RefPlaceholder } from 'ag-grid-community';
 
-import type { ColumnToolPanelUpdateParams } from './updates/columnToolPanelUpdatesTypes';
+import type { ColumnStateUpdateParams } from './updates/columnStateUpdateTypes';
 
 const PivotModePanelElement: ElementParams = {
     tag: 'div',
@@ -18,16 +18,14 @@ export class PivotModePanel extends Component {
     private readonly cbPivotMode: GridCheckbox = RefPlaceholder;
 
     constructor(
-        private readonly params: ColumnToolPanelUpdateParams,
+        private readonly params: ColumnStateUpdateParams,
         private readonly onPivotModeValueChanged?: () => void
     ) {
         super();
     }
 
     private getCurrentPivotMode(): boolean {
-        return this.beans.colToolPanelUpdates.getPivotMode(
-            !!this.params.deferApply
-        );
+        return this.beans.columnStateUpdateStrategy.getPivotMode(!!this.params.deferApply);
     }
 
     public syncFromGrid(): void {
@@ -49,11 +47,7 @@ export class PivotModePanel extends Component {
 
         const onBtPivotMode = () => {
             const newValue = !!cbPivotMode.getValue();
-            this.beans.colToolPanelUpdates.setPivotMode(
-                !!this.params.deferApply,
-                newValue,
-                'toolPanelUi'
-            );
+            this.beans.columnStateUpdateStrategy.setPivotMode(!!this.params.deferApply, newValue, 'toolPanelUi');
             this.onPivotModeValueChanged?.();
         };
 

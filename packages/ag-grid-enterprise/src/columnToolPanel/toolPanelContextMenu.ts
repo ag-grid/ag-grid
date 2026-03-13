@@ -4,7 +4,7 @@ import { Component, _createIconNoSpan, _focusInto, isColumn, isProvidedColumnGro
 import { getGroupingLocaleText, isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import { MenuList } from '../widgets/menuList';
 import { refreshDeferredToolPanelUi } from './toolPanelDeferredUiUtils';
-import type { ColumnToolPanelUpdateParams } from './updates/columnToolPanelUpdatesTypes';
+import type { ColumnStateUpdateParams } from './updates/columnStateUpdateTypes';
 
 type MenuItemName = 'scrollIntoView' | 'rowGroup' | 'value' | 'pivot';
 
@@ -32,7 +32,7 @@ export class ToolPanelContextMenu extends Component {
         private readonly column: AgColumn | AgProvidedColumnGroup,
         private readonly mouseEventOrTouch: MouseEvent | Touch,
         private readonly parentEl: HTMLElement,
-        private readonly params: ColumnToolPanelUpdateParams = {}
+        private readonly params: ColumnStateUpdateParams = {}
     ) {
         super({ tag: 'div', cls: 'ag-menu' });
     }
@@ -69,7 +69,7 @@ export class ToolPanelContextMenu extends Component {
     }
 
     private initializeProperties(column: AgColumn | AgProvidedColumnGroup): void {
-        const updateStrategy = this.beans.colToolPanelUpdates;
+        const updateStrategy = this.beans.columnStateUpdateStrategy;
         let columns: AgColumn[];
         if (isProvidedColumnGroup(column)) {
             columns = column.getLeafColumns();
@@ -89,14 +89,16 @@ export class ToolPanelContextMenu extends Component {
     private buildMenuItemMap(): void {
         const localeTextFunc = this.getLocaleTextFunc();
         const { beans, displayName } = this;
-        const updateStrategy = this.beans.colToolPanelUpdates;
+        const updateStrategy = this.beans.columnStateUpdateStrategy;
 
         const menuItemMap = new Map<MenuItemName, MenuItemProperty>();
         this.menuItemMap = menuItemMap;
 
         const deferMode = !!this.params.deferApply;
         const isPivotMode = updateStrategy.getPivotMode(deferMode);
-        const rowGroupColIdSet = new Set(updateStrategy.getRowGroupColumns(deferMode).map((col: AgColumn) => col.getColId()));
+        const rowGroupColIdSet = new Set(
+            updateStrategy.getRowGroupColumns(deferMode).map((col: AgColumn) => col.getColId())
+        );
         const valueColIdSet = new Set(updateStrategy.getValueColumns(deferMode).map((col: AgColumn) => col.getColId()));
         const pivotColIdSet = new Set(updateStrategy.getPivotColumns(deferMode).map((col: AgColumn) => col.getColId()));
 

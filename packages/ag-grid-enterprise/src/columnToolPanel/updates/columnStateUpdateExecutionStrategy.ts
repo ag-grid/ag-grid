@@ -1,20 +1,28 @@
-import type { AgColumn, BeanCollection, ColumnEventType, ColumnState, IAggFunc, IColumnToolPanelUpdateStrategy, SortDef } from 'ag-grid-community';
+import type {
+    AgColumn,
+    BeanCollection,
+    ColumnEventType,
+    ColumnState,
+    IAggFunc,
+    IColumnStateUpdateStrategy,
+    SortDef,
+} from 'ag-grid-community';
 import { BeanStub, _applyColumnState, isColumnGroupAutoCol, isSpecialCol } from 'ag-grid-community';
 
 import type {
-    ColumnToolPanelConcreteUpdateStrategy,
+    ColumnStateConcreteUpdateStrategy,
     CommitOperation,
     CommitOperations,
     DeferredState,
-} from './columnToolPanelUpdatesTypes';
+} from './columnStateUpdateTypes';
 
 const noop = () => {};
 type StrategyBeans = BeanCollection;
 
-export class ColumnToolPanelUpdateStrategy extends BeanStub implements IColumnToolPanelUpdateStrategy {
-    public beanName = 'colToolPanelUpdateStrategy' as const;
-    private syncUpdateStrategy?: ColumnToolPanelSynchronousUpdateStrategy;
-    private deferredUpdateStrategy?: ColumnToolPanelDeferredUpdateStrategy;
+export class ColumnStateUpdateExecutionStrategy extends BeanStub implements IColumnStateUpdateStrategy {
+    public beanName = 'columnStateUpdateExecutionStrategy' as const;
+    private syncUpdateStrategy?: SynchronousColumnStateUpdateStrategy;
+    private deferredUpdateStrategy?: DeferredColumnStateUpdateStrategy;
 
     public applyColumnState(deferMode: boolean, state: ColumnState[], eventType: ColumnEventType): void {
         this.getUpdateStrategy(deferMode).applyColumnState(state, eventType);
@@ -84,26 +92,26 @@ export class ColumnToolPanelUpdateStrategy extends BeanStub implements IColumnTo
         return this.getUpdateStrategy(deferMode).getSortDef(column);
     }
 
-    private getUpdateStrategy(deferApply: boolean): ColumnToolPanelConcreteUpdateStrategy {
+    private getUpdateStrategy(deferApply: boolean): ColumnStateConcreteUpdateStrategy {
         return deferApply ? this.getDeferredUpdateStrategy() : this.getSyncUpdateStrategy();
     }
 
-    private getSyncUpdateStrategy(): ColumnToolPanelSynchronousUpdateStrategy {
-        return (this.syncUpdateStrategy ??= new ColumnToolPanelSynchronousUpdateStrategy(this.beans));
+    private getSyncUpdateStrategy(): SynchronousColumnStateUpdateStrategy {
+        return (this.syncUpdateStrategy ??= new SynchronousColumnStateUpdateStrategy(this.beans));
     }
 
-    private getDeferredUpdateStrategy(): ColumnToolPanelDeferredUpdateStrategy {
-        return (this.deferredUpdateStrategy ??= new ColumnToolPanelDeferredUpdateStrategy(this.beans));
+    private getDeferredUpdateStrategy(): DeferredColumnStateUpdateStrategy {
+        return (this.deferredUpdateStrategy ??= new DeferredColumnStateUpdateStrategy(this.beans));
     }
 }
 
-export function createSyncColumnToolPanelConcreteUpdateStrategy(
+export function createSyncColumnStateUpdateExecutionStrategy(
     beans: BeanCollection
-): ColumnToolPanelConcreteUpdateStrategy {
-    return new ColumnToolPanelSynchronousUpdateStrategy(beans);
+): ColumnStateConcreteUpdateStrategy {
+    return new SynchronousColumnStateUpdateStrategy(beans);
 }
 
-class ColumnToolPanelSynchronousUpdateStrategy implements ColumnToolPanelConcreteUpdateStrategy {
+class SynchronousColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStrategy {
     private lastPivotColIds: string[] = [];
 
     constructor(private readonly beans: StrategyBeans) {}
@@ -221,7 +229,7 @@ class ColumnToolPanelSynchronousUpdateStrategy implements ColumnToolPanelConcret
     }
 }
 
-class ColumnToolPanelDeferredUpdateStrategy implements ColumnToolPanelConcreteUpdateStrategy {
+class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStrategy {
     private state: DeferredState = {};
     private sequence = 0;
     private lastPivotColIds: string[] = [];
@@ -761,10 +769,7 @@ function mergeColumnStatePatch(state: DeferredState, patch: ColumnState): void {
     columnState.patches.set(patch.colId, existing ? { ...existing, ...patch } : patch);
 }
 
-function clearDeferredFunctionPatches(
-    state: DeferredState,
-    patchKey: 'rowGroup' | 'pivot' | 'aggFunc'
-): void {
+function clearDeferredFunctionPatches(state: DeferredState, patchKey: 'rowGroup' | 'pivot' | 'aggFunc'): void {
     const patches = state.columnState?.patches;
     if (!patches?.size) {
         return;

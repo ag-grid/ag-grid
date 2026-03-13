@@ -1,7 +1,7 @@
 import type { AgColumn, ColumnEventType, DragItem, DropTarget, GridDraggingEvent } from 'ag-grid-community';
 import { DragSourceType, _shouldUpdateColVisibilityAfterGroup } from 'ag-grid-community';
 
-import type { ColumnToolPanelUpdateParams } from '../../columnToolPanel/updates/columnToolPanelUpdatesTypes';
+import type { ColumnStateUpdateParams } from '../../columnToolPanel/updates/columnStateUpdateTypes';
 import type { PillDropZonePanelParams } from '../../widgets/pillDropZonePanel';
 import { PillDropZonePanel } from '../../widgets/pillDropZonePanel';
 import { DropZoneColumnComp } from './dropZoneColumnComp';
@@ -14,7 +14,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
     constructor(
         horizontal: boolean,
         private readonly dropZonePurpose: TDropZone,
-        protected readonly updateParams?: ColumnToolPanelUpdateParams
+        protected readonly updateParams?: ColumnStateUpdateParams
     ) {
         super(horizontal);
         this.addElementClasses(this.getGui(), this.dropZonePurpose.toLowerCase());
@@ -92,7 +92,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
             return;
         }
         const allowedCols = columns.filter((c) => !c.getColDef().lockVisible);
-        this.beans.colToolPanelUpdates.setColumnsVisible(
+        this.beans.columnStateUpdateStrategy.setColumnsVisible(
             !!this.updateParams?.deferApply,
             allowedCols,
             visible,

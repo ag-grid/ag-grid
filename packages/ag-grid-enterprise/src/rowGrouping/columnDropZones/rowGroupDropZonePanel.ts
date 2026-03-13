@@ -1,12 +1,12 @@
 import type { AgColumn, DragAndDropIcon, FocusableContainer, GridDraggingEvent } from 'ag-grid-community';
 import { _addFocusableContainerListener, _createIconNoSpan } from 'ag-grid-community';
 
-import type { ColumnToolPanelUpdateParams } from '../../columnToolPanel/updates/columnToolPanelUpdatesTypes';
 import { refreshDeferredToolPanelUi } from '../../columnToolPanel/toolPanelDeferredUiUtils';
+import type { ColumnStateUpdateParams } from '../../columnToolPanel/updates/columnStateUpdateTypes';
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
 export class RowGroupDropZonePanel extends BaseDropZonePanel implements FocusableContainer {
-    constructor(horizontal: boolean, params?: ColumnToolPanelUpdateParams) {
+    constructor(horizontal: boolean, params?: ColumnStateUpdateParams) {
         super(horizontal, 'rowGroup', params);
     }
 
@@ -42,14 +42,14 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel implements Focusabl
             return false;
         }
 
-        const isActive = this.beans.colToolPanelUpdates
+        const isActive = this.beans.columnStateUpdateStrategy
             .getRowGroupColumns(!!this.updateParams?.deferApply)
             .includes(column);
         return column.isAllowRowGroup() && (!isActive || this.isSourceEventFromTarget(draggingEvent));
     }
 
     protected updateItems(columns: AgColumn[]) {
-        this.beans.colToolPanelUpdates.setRowGroupColumns(
+        this.beans.columnStateUpdateStrategy.setRowGroupColumns(
             !!this.updateParams?.deferApply,
             columns,
             'toolPanelUi'
@@ -62,9 +62,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel implements Focusabl
     }
 
     protected getExistingItems(): AgColumn[] {
-        return this.beans.colToolPanelUpdates.getRowGroupColumns(
-            !!this.updateParams?.deferApply
-        );
+        return this.beans.columnStateUpdateStrategy.getRowGroupColumns(!!this.updateParams?.deferApply);
     }
 
     public getFocusableContainerName(): 'rowGroupToolbar' {

@@ -31,7 +31,7 @@ import {
 import type { ColumnModelItem } from './columnModelItem';
 import { createPivotStateForToolPanel, selectAllChildren, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
-import type { ColumnToolPanelUpdateParams } from './updates/columnToolPanelUpdatesTypes';
+import type { ColumnStateUpdateParams } from './updates/columnStateUpdateTypes';
 
 const ToolPanelColumnGroupElement: ElementParams = {
     tag: 'div',
@@ -73,7 +73,7 @@ export class ToolPanelColumnGroupComp extends Component {
         private readonly allowDragging: boolean,
         private readonly eventType: ColumnEventType,
         private readonly focusWrapper: HTMLElement,
-        private readonly params: ColumnToolPanelUpdateParams
+        private readonly params: ColumnStateUpdateParams
     ) {
         super();
         const { columnGroup, depth, displayName } = modelItem;
@@ -270,7 +270,7 @@ export class ToolPanelColumnGroupComp extends Component {
                 aggFunc?: string | IAggFunc | null;
             };
         } = {};
-        const updateStrategy = this.beans.colToolPanelUpdates;
+        const updateStrategy = this.beans.columnStateUpdateStrategy;
         const deferApply = !!this.params.deferApply;
         for (const col of columns) {
             const colId = col.getId();
@@ -368,7 +368,7 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private workOutSelectedValue(): boolean | undefined {
-        const updateStrategy = this.beans.colToolPanelUpdates;
+        const updateStrategy = this.beans.columnStateUpdateStrategy;
         const pivotMode = updateStrategy.getPivotMode(!!this.params.deferApply);
 
         const visibleLeafColumns = this.getVisibleLeafColumns();
@@ -394,9 +394,7 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private workOutReadOnlyValue(): boolean {
-        const pivotMode = this.beans.colToolPanelUpdates.getPivotMode(
-            !!this.params.deferApply
-        );
+        const pivotMode = this.beans.columnStateUpdateStrategy.getPivotMode(!!this.params.deferApply);
 
         let colsThatCanAction = 0;
 
@@ -414,7 +412,7 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private isColumnChecked(column: AgColumn): boolean {
-        const updateStrategy = this.beans.colToolPanelUpdates;
+        const updateStrategy = this.beans.columnStateUpdateStrategy;
         if (updateStrategy.getPivotMode(!!this.params.deferApply)) {
             return updateStrategy.isColumnSelectedInPivotModeToolPanel(!!this.params.deferApply, column);
         }

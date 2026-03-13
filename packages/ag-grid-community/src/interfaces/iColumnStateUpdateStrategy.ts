@@ -1,10 +1,10 @@
-import type { AgColumn } from '../entities/agColumn';
 import type { ColumnState } from '../columns/columnStateUtils';
+import type { AgColumn } from '../entities/agColumn';
 import type { IAggFunc, SortDef } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export interface IColumnToolPanelUpdateStrategy {
+export interface IColumnStateUpdateStrategy {
     applyColumnState(deferMode: boolean, state: ColumnState[], eventType: ColumnEventType): void;
     commit(deferMode: boolean): void;
     moveColumns(deferMode: boolean, columns: AgColumn[], targetIndex: number, eventType: ColumnEventType): void;

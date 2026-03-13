@@ -2,13 +2,13 @@ import { fireEvent, getByTestId, getByText } from '@testing-library/dom';
 
 import type { AgColumn, ColDef, ColGroupDef, GridApi } from 'ag-grid-community';
 import { DragSourceType, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import type { IColumnStateUpdateStrategy } from 'ag-grid-community';
 import {
     createFakeServer,
     createServerSideDatasource,
 } from 'ag-grid-docs/src/content/docs/tool-panel-columns/_examples/deferred-apply-mode/fakeServer';
 import { AllEnterpriseModule, RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
 
-import type { IColumnToolPanelUpdateStrategy } from 'ag-grid-community';
 import { AgGridHeaderDropZonesSelector } from '../../../../packages/ag-grid-enterprise/src/rowGrouping/columnDropZones/agGridHeaderDropZones';
 import { DragEventDispatcher, TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from '../test-utils';
 
@@ -326,8 +326,8 @@ describe('deferred column tool panel pivot mode', () => {
         return listPanel['createComponentFromItem'](displayedColsList[rowIndex], document.createElement('div'));
     }
 
-    function getUpdateStrategy(toolPanel: any): IColumnToolPanelUpdateStrategy {
-        return toolPanel.beans.colToolPanelUpdateStrategy;
+    function getUpdateStrategy(toolPanel: any): IColumnStateUpdateStrategy {
+        return toolPanel.beans.columnStateUpdateStrategy;
     }
 
     function isDeferred(toolPanel: any): boolean {
@@ -372,7 +372,11 @@ describe('deferred column tool panel pivot mode', () => {
         fireEvent.keyDown(pill!, { key: 'Delete' });
     }
 
-    async function getRenderedPrimaryColumnDragHandle(toolPanel: any, toolPanelGui: HTMLElement, label: string): Promise<HTMLElement> {
+    async function getRenderedPrimaryColumnDragHandle(
+        toolPanel: any,
+        toolPanelGui: HTMLElement,
+        label: string
+    ): Promise<HTMLElement> {
         const listPanel = toolPanel.primaryColsPanel.primaryColsListPanel;
         const displayedColsList = listPanel.getDisplayedColsList() as any[];
         const rowIndex = displayedColsList.findIndex((item) => item.displayName === label);
@@ -1486,4 +1490,5 @@ describe('deferred column tool panel pivot mode', () => {
         getCancelButton(toolPanelGui).click();
 
         expect(toolPanel.primaryColsPanel.primaryColsListPanel.getDisplayedColsList().length).toBeGreaterThan(0);
-    });});
+    });
+});

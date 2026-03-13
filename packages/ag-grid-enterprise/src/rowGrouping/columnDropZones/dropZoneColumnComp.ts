@@ -10,7 +10,7 @@ import type {
 } from 'ag-grid-community';
 import { Component, DragSourceType, KeyCode, RefPlaceholder, _createElement } from 'ag-grid-community';
 
-import type { ColumnToolPanelUpdateParams } from '../../columnToolPanel/updates/columnToolPanelUpdatesTypes';
+import type { ColumnStateUpdateParams } from '../../columnToolPanel/updates/columnStateUpdateTypes';
 import { PillDragComp } from '../../widgets/pillDragComp';
 import { VirtualList } from '../../widgets/virtualList';
 import { isRowGroupColLocked } from '../rowGroupingUtils';
@@ -29,7 +29,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         ghost: boolean,
         private readonly dropZonePurpose: TDropZone,
         horizontal: boolean,
-        private readonly updateParams?: ColumnToolPanelUpdateParams
+        private readonly updateParams?: ColumnStateUpdateParams
     ) {
         super(dragSourceDropTarget, ghost, horizontal);
         this.deferApply = !!updateParams?.deferApply;
@@ -154,10 +154,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         let aggFuncName: string = '';
 
         if (this.isAggregationZone()) {
-            const aggFunc = this.beans.colToolPanelUpdates.getColumnAggFunc(
-                this.deferApply,
-                this.column
-            );
+            const aggFunc = this.beans.columnStateUpdateStrategy.getColumnAggFunc(this.deferApply, this.column);
             // if aggFunc is a string, we can use it, but if it's a function, then we swap with 'func'
             const aggFuncString = typeof aggFunc === 'string' ? aggFunc : 'agg';
             const localeTextFunc = this.getLocaleTextFunc();
@@ -177,11 +174,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
             eSortIndicator.setupSort(column, true, this.getSortDefOverride.bind(this));
             const performSort = (event: MouseEvent | KeyboardEvent) => {
                 event.preventDefault();
-                this.beans.colToolPanelUpdates.progressSortFromEvent(
-                    this.deferApply,
-                    column,
-                    event
-                );
+                this.beans.columnStateUpdateStrategy.progressSortFromEvent(this.deferApply, column, event);
                 eSortIndicator.refresh();
                 this.setupAria();
             };
@@ -197,10 +190,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     }
 
     private getCurrentSortDirection(column: AgColumn): SortDirection {
-        return (
-            this.beans.colToolPanelUpdates.getSortDef(this.deferApply, column)
-                ?.direction ?? null
-        );
+        return this.beans.columnStateUpdateStrategy.getSortDef(this.deferApply, column)?.direction ?? null;
     }
 
     private getSortDefOverride(): SortDef | null | undefined {
@@ -208,10 +198,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
             return undefined;
         }
 
-        return this.beans.colToolPanelUpdates.getSortDef(
-            this.deferApply,
-            this.column
-        );
+        return this.beans.columnStateUpdateStrategy.getSortDef(this.deferApply, this.column);
     }
 
     protected override getDefaultIconName(): DragAndDropIcon {
@@ -348,10 +335,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
 
         virtualList.refresh();
 
-        const currentAggFunc = this.beans.colToolPanelUpdates.getColumnAggFunc(
-            this.deferApply,
-            this.column
-        );
+        const currentAggFunc = this.beans.columnStateUpdateStrategy.getColumnAggFunc(this.deferApply, this.column);
         let rowToFocus = rows.findIndex((r) => r === currentAggFunc);
         if (rowToFocus === -1) {
             rowToFocus = 0;
@@ -364,7 +348,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         const itemSelected = () => {
             hidePopup();
             this.getGui().focus();
-            this.beans.colToolPanelUpdates.setColumnAggFunc(
+            this.beans.columnStateUpdateStrategy.setColumnAggFunc(
                 this.deferApply,
                 this.column,
                 value,

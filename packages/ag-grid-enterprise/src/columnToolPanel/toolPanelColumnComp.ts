@@ -283,8 +283,10 @@ export class ToolPanelColumnComp extends Component {
     private createDragItem() {
         const colId = this.column.getColId();
         const visibleState = { [colId]: this.column.isVisible() };
-        const updateStrategy = this.beans.colToolPanelUpdates;
-        const pivotState = { [colId]: createPivotStateForToolPanel(this.column, updateStrategy, !!this.params.deferApply) };
+        const updateStrategy = this.beans.columnStateUpdateStrategy;
+        const pivotState = {
+            [colId]: createPivotStateForToolPanel(this.column, updateStrategy, !!this.params.deferApply),
+        };
         return {
             columns: [this.column],
             visibleState,
@@ -294,7 +296,7 @@ export class ToolPanelColumnComp extends Component {
 
     private onColumnStateChanged(): void {
         this.processingColumnStateChange = true;
-        const updateStrategy = this.beans.colToolPanelUpdates;
+        const updateStrategy = this.beans.columnStateUpdateStrategy;
         const isPivotMode = updateStrategy.getPivotMode(!!this.params.deferApply);
         if (isPivotMode) {
             // if reducing, checkbox means column is one of pivot, value or group

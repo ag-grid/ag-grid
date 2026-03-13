@@ -1,12 +1,19 @@
-import type { AgColumn, ColumnEventType, ColumnState, IAggFunc, IColumnToolPanelUpdateStrategy, SortDef } from 'ag-grid-community';
+import type {
+    AgColumn,
+    ColumnEventType,
+    ColumnState,
+    IAggFunc,
+    IColumnStateUpdateStrategy,
+    SortDef,
+} from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
-import { createSyncColumnToolPanelConcreteUpdateStrategy } from './columnToolPanelUpdates';
-import type { ColumnToolPanelConcreteUpdateStrategy } from './columnToolPanelUpdatesTypes';
+import { createSyncColumnStateUpdateExecutionStrategy } from './columnStateUpdateExecutionStrategy';
+import type { ColumnStateConcreteUpdateStrategy } from './columnStateUpdateTypes';
 
-export class ColumnToolPanelUpdates extends BeanStub implements IColumnToolPanelUpdateStrategy {
-    public beanName = 'colToolPanelUpdates' as const;
-    private fallbackUpdates?: ColumnToolPanelConcreteUpdateStrategy;
+export class ColumnStateUpdateStrategy extends BeanStub implements IColumnStateUpdateStrategy {
+    public beanName = 'columnStateUpdateStrategy' as const;
+    private fallbackUpdates?: ColumnStateConcreteUpdateStrategy;
 
     public applyColumnState(deferMode: boolean, state: ColumnState[], eventType: ColumnEventType): void {
         const { strategy, fallback } = this.resolveUpdates();
@@ -161,17 +168,17 @@ export class ColumnToolPanelUpdates extends BeanStub implements IColumnToolPanel
         return strategy ? strategy.getSortDef(deferMode, column) : fallback.getSortDef(column);
     }
 
-    private getUpdateStrategy(): IColumnToolPanelUpdateStrategy | undefined {
-        return this.beans.colToolPanelUpdateStrategy;
+    private getUpdateStrategy(): IColumnStateUpdateStrategy | undefined {
+        return this.beans.columnStateUpdateExecutionStrategy;
     }
 
-    private getFallbackUpdates(): ColumnToolPanelConcreteUpdateStrategy {
-        return (this.fallbackUpdates ??= createSyncColumnToolPanelConcreteUpdateStrategy(this.beans));
+    private getFallbackUpdates(): ColumnStateConcreteUpdateStrategy {
+        return (this.fallbackUpdates ??= createSyncColumnStateUpdateExecutionStrategy(this.beans));
     }
 
     private resolveUpdates(): {
-        strategy: IColumnToolPanelUpdateStrategy | undefined;
-        fallback: ColumnToolPanelConcreteUpdateStrategy;
+        strategy: IColumnStateUpdateStrategy | undefined;
+        fallback: ColumnStateConcreteUpdateStrategy;
     } {
         return {
             strategy: this.getUpdateStrategy(),
