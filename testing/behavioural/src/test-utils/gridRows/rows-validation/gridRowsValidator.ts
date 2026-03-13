@@ -46,6 +46,7 @@ export class GridRowsValidator {
         this.validatePinnedRows(state);
         this.validateSelectedRows(state);
         this.validateDisplayedRowCounts(state);
+        this.validateNoAggDataWithoutGrouping(state);
         return this;
     }
 
@@ -183,6 +184,9 @@ export class GridRowsValidator {
         // Group and detail are mutually exclusive
         rowErrors.add(!!row.group && !!row.detail && 'Row is both group and detail');
 
+        // Non-group rows should not have aggData — it must be cleared during group demotion
+        rowErrors.add(!row.group && row.aggData != null && 'Non-group row should not have aggData');
+
         // Master/detail bidirectional consistency
         const detailNode = row.detailNode;
         if (row.master && detailNode) {
@@ -247,7 +251,7 @@ export class GridRowsValidator {
                 );
             }
             verifyLeafs(this.errors, this.#allLeafsMap, gridRows, row);
-            if (row.allChildrenCount !== undefined) {
+            if (row.allChildrenCount != null) {
                 validateAllChildrenCount(state, rowErrors, row);
             }
         }
@@ -348,14 +352,15 @@ export class GridRowsValidator {
             children = [];
         }
 
-        if (!children) {
-            if (gridRows.treeData) {
-                if (!gridRows.isDuplicateIdRow(parentRow) && name !== 'allLeafChildren') {
-                    if (!parentRow.detail) {
-                        this.errors.add(parentRow, `${name} is missing`);
-                    }
-                }
-            } else if (parentRow.group && (name === 'childrenAfterGroup' || name === 'allLeafChildren')) {
+        if (children) {
+            if (name === 'childrenAfterGroup' && children.length === 0) {
+                this.errors.add(parentRow, `${name} is an empty array`);
+            }
+        } else if (parentRow.group && !parentRow.detail && !gridRows.isDuplicateIdRow(parentRow)) {
+            const required = gridRows.treeData
+                ? name !== 'allLeafChildren'
+                : name === 'childrenAfterGroup' || name === 'allLeafChildren';
+            if (required) {
                 this.errors.add(parentRow, `${name} is missing`);
             }
         }
@@ -523,5 +528,38 @@ export class GridRowsValidator {
                 row.level === 0 &&
                 'Leaf data row displayed in pivot mode with active grouping/pivoting'
         );
+    }
+
+    /** When grouping/treeData/pivot are not active, no node should have aggData. */
+    private validateNoAggDataWithoutGrouping(state: GridRowsValidationState): void {
+        if (!state.csrm || state.pivotMode) {
+            return;
+        }
+        const { api, treeData } = state.gridRows;
+        if (treeData) {
+            return;
+        }
+        // Check if any grouping is active
+        if (api.isModuleRegistered('RowGroupingModule') && api.getRowGroupColumns().length > 0) {
+            return;
+        }
+        if (
+            api.getGridOption('getGroupRowAgg') ||
+            api.getGridOption('alwaysAggregateAtRootLevel') ||
+            api.getGridOption('grandTotalRow')
+        ) {
+            return;
+        }
+        // No grouping/treeData/pivot — no node should have aggData
+        for (const row of state.gridRows.rowNodes) {
+            this.errors.add(row, row.aggData != null && 'Row has aggData but grouping/treeData/pivot are not active');
+        }
+        const root = state.gridRows.rootRowNode;
+        if (root) {
+            this.errors.add(
+                root,
+                root.aggData != null && 'Root node has aggData but grouping/treeData/pivot are not active'
+            );
+        }
     }
 }

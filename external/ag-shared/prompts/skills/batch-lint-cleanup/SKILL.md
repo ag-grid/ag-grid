@@ -134,7 +134,7 @@ grep -c "<rule-name>" /tmp/lint-fix.txt || echo "0"
 
 ```bash
 # Format all changes
-yarn nx format
+yarn nx format --sort-root-tsconfig-paths=false
 
 # Run full lint to ensure no new issues
 yarn nx lint <affected-packages>
@@ -178,7 +178,7 @@ For non-auto-fixable rules or remaining violations after auto-fix:
 5. **When complete:**
 
     ```bash
-    yarn nx format
+    yarn nx format --sort-root-tsconfig-paths=false
     yarn nx lint <affected-packages>
     yarn nx build:types <affected-packages>
 
@@ -206,7 +206,7 @@ For non-auto-fixable rules or remaining violations after auto-fix:
 
 **Before ANY commit:**
 
-1. ✅ `yarn nx format` passes
+1. ✅ `yarn nx format --sort-root-tsconfig-paths=false` passes
 2. ✅ `yarn nx lint <affected-packages>` passes
 3. ✅ `yarn nx build:types <affected-packages>` passes
 4. ✅ Only files related to the rule are changed

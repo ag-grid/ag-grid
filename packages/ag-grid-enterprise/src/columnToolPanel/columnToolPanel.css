@@ -16,7 +16,7 @@
     margin-left: var(--ag-widget-container-horizontal-padding);
 }
 
-.ag-column-panel-column-select {
+.ag-column-panel-column-select:where(:not(.ag-last-visible-child)) {
     border-bottom: var(--ag-tool-panel-separator-border);
 }
 

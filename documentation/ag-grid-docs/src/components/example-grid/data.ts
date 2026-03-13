@@ -1,15 +1,124 @@
 import { pseudoRandom } from './utils';
 
-export const colNames = [
-    'Station',
-    'Railway',
-    'Street',
-    'Address',
-    'Toy',
-    'Soft Box',
-    'Make and Model',
-    'Longest Day',
-    'Shortest Night',
+export type ExtraColDataType = 'number' | 'currency' | 'percent' | 'text' | 'rating';
+
+export interface ExtraColConfig {
+    headerName: string;
+    group: string;
+    dataType: ExtraColDataType;
+    values?: string[];
+}
+
+const difficulties = ['Beginner', 'Intermediate', 'Advanced', 'Expert', 'Master'];
+const roles = ['Attacker', 'Defender', 'Strategist', 'Support', 'Wildcard'];
+const teamNames = [
+    'Phoenix Rising',
+    'Shadow Wolves',
+    'Thunder Hawks',
+    'Iron Bears',
+    'Storm Riders',
+    'Silver Foxes',
+    'Dark Knights',
+    'Golden Eagles',
+    'Arctic Falcons',
+    'Crimson Tide',
+];
+const strategies = ['Aggressive', 'Defensive', 'Balanced', 'Counter-Attack', 'Positional'];
+const controllerTypes = ['Keyboard', 'Gamepad', 'Touchscreen', 'Joystick', 'Custom'];
+const regions = ['North', 'South', 'East', 'West', 'Central'];
+const tiers = ['Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond'];
+const platforms = ['PC', 'Console', 'Mobile', 'Tablet', 'VR'];
+const statuses = ['Active', 'Inactive', 'Suspended', 'Retired', 'Probation'];
+const divisions = ['Alpha', 'Beta', 'Gamma', 'Delta', 'Omega'];
+
+export const extraColumns: ExtraColConfig[] = [
+    // Performance Metrics
+    { headerName: 'Win Rate', group: 'Performance', dataType: 'percent' },
+    { headerName: 'Avg Score', group: 'Performance', dataType: 'number' },
+    { headerName: 'Best Score', group: 'Performance', dataType: 'number' },
+    { headerName: 'Matches Played', group: 'Performance', dataType: 'number' },
+    { headerName: 'Hours Played', group: 'Performance', dataType: 'number' },
+    { headerName: 'XP Points', group: 'Performance', dataType: 'number' },
+    { headerName: 'Level', group: 'Performance', dataType: 'number' },
+    { headerName: 'Accuracy', group: 'Performance', dataType: 'percent' },
+    { headerName: 'Win Streak', group: 'Performance', dataType: 'number' },
+    { headerName: 'Rank Points', group: 'Performance', dataType: 'number' },
+
+    // Tournament History
+    { headerName: 'Tournaments Entered', group: 'Tournaments', dataType: 'number' },
+    { headerName: 'Tournaments Won', group: 'Tournaments', dataType: 'number' },
+    { headerName: 'Runner Up Finishes', group: 'Tournaments', dataType: 'number' },
+    { headerName: 'Prize Money', group: 'Tournaments', dataType: 'currency' },
+    { headerName: 'Best Finish', group: 'Tournaments', dataType: 'number' },
+    { headerName: 'Entry Fees', group: 'Tournaments', dataType: 'currency' },
+    { headerName: 'Forfeits', group: 'Tournaments', dataType: 'number' },
+    { headerName: 'Disqualifications', group: 'Tournaments', dataType: 'number' },
+
+    // Social
+    { headerName: 'Friends', group: 'Social', dataType: 'number' },
+    { headerName: 'Followers', group: 'Social', dataType: 'number' },
+    { headerName: 'Posts', group: 'Social', dataType: 'number' },
+    { headerName: 'Achievements', group: 'Social', dataType: 'number' },
+    { headerName: 'Reputation', group: 'Social', dataType: 'number' },
+    { headerName: 'Community Rating', group: 'Social', dataType: 'rating' },
+
+    // Financial
+    { headerName: 'Equipment Cost', group: 'Financial', dataType: 'currency' },
+    { headerName: 'Travel Expenses', group: 'Financial', dataType: 'currency' },
+    { headerName: 'Sponsorship', group: 'Financial', dataType: 'currency' },
+    { headerName: 'Net Profit', group: 'Financial', dataType: 'currency' },
+    { headerName: 'Tax Paid', group: 'Financial', dataType: 'currency' },
+    { headerName: 'Insurance Cost', group: 'Financial', dataType: 'currency' },
+    { headerName: 'Coaching Fees', group: 'Financial', dataType: 'currency' },
+    { headerName: 'Subscription Cost', group: 'Financial', dataType: 'currency' },
+
+    // Game Details
+    { headerName: 'Difficulty', group: 'Game Details', dataType: 'text', values: difficulties },
+    { headerName: 'Team Name', group: 'Game Details', dataType: 'text', values: teamNames },
+    { headerName: 'Role', group: 'Game Details', dataType: 'text', values: roles },
+    { headerName: 'Strategy', group: 'Game Details', dataType: 'text', values: strategies },
+    { headerName: 'Controller Type', group: 'Game Details', dataType: 'text', values: controllerTypes },
+    { headerName: 'Division', group: 'Game Details', dataType: 'text', values: divisions },
+    { headerName: 'Platform', group: 'Game Details', dataType: 'text', values: platforms },
+    { headerName: 'Status', group: 'Game Details', dataType: 'text', values: statuses },
+
+    // Training
+    { headerName: 'Training Hours', group: 'Training', dataType: 'number' },
+    { headerName: 'Sessions Completed', group: 'Training', dataType: 'number' },
+    { headerName: 'Drills Passed', group: 'Training', dataType: 'number' },
+    { headerName: 'Coaching Score', group: 'Training', dataType: 'percent' },
+    { headerName: 'Fitness Level', group: 'Training', dataType: 'rating' },
+    { headerName: 'Reaction Time (ms)', group: 'Training', dataType: 'number' },
+    { headerName: 'Training Cost', group: 'Training', dataType: 'currency' },
+    { headerName: 'Improvement Rate', group: 'Training', dataType: 'percent' },
+
+    // Seasonal Stats
+    { headerName: 'Q1 Earnings', group: 'Seasonal', dataType: 'currency' },
+    { headerName: 'Q2 Earnings', group: 'Seasonal', dataType: 'currency' },
+    { headerName: 'Q3 Earnings', group: 'Seasonal', dataType: 'currency' },
+    { headerName: 'Q4 Earnings', group: 'Seasonal', dataType: 'currency' },
+    { headerName: 'Q1 Wins', group: 'Seasonal', dataType: 'number' },
+    { headerName: 'Q2 Wins', group: 'Seasonal', dataType: 'number' },
+    { headerName: 'Q3 Wins', group: 'Seasonal', dataType: 'number' },
+    { headerName: 'Q4 Wins', group: 'Seasonal', dataType: 'number' },
+
+    // Equipment
+    { headerName: 'Setup Cost', group: 'Equipment', dataType: 'currency' },
+    { headerName: 'Monitor Size', group: 'Equipment', dataType: 'number' },
+    { headerName: 'Peripherals Cost', group: 'Equipment', dataType: 'currency' },
+    { headerName: 'Upgrades', group: 'Equipment', dataType: 'number' },
+    { headerName: 'Tier', group: 'Equipment', dataType: 'text', values: tiers },
+    { headerName: 'Region', group: 'Equipment', dataType: 'text', values: regions },
+
+    // Misc
+    { headerName: 'Penalties', group: 'Miscellaneous', dataType: 'number' },
+    { headerName: 'Bonus Points', group: 'Miscellaneous', dataType: 'number' },
+    { headerName: 'Referrals', group: 'Miscellaneous', dataType: 'number' },
+    { headerName: 'Complaints', group: 'Miscellaneous', dataType: 'number' },
+    { headerName: 'Awards', group: 'Miscellaneous', dataType: 'number' },
+    { headerName: 'Loyalty Points', group: 'Miscellaneous', dataType: 'number' },
+    { headerName: 'Event Attendance', group: 'Miscellaneous', dataType: 'number' },
+    { headerName: 'Feedback Score', group: 'Miscellaneous', dataType: 'percent' },
 ];
 
 export const countries = [
@@ -120,8 +229,8 @@ export const firstNames = [
     'Andrew',
     'Kevin',
     'Bricker',
-    'Dimple',
-    'Gil',
+    'Harper',
+    'Noel',
     'Sophie',
     'Isabelle',
     'Emily',
@@ -152,7 +261,7 @@ export const lastNames = [
     'Connell',
     'Flanagan',
     'McGee',
-    'Unalkat',
+    'Thornton',
     'Lopes',
     'Beckham',
     'Black',
@@ -287,10 +396,29 @@ export const createRowItem = (row: number, colCount: number, defaultCols: number
         }
     }
 
-    //create dummy data for the additional columns
+    //create data for the additional columns
     for (let col = defaultColCount; col < colCount; col++) {
-        const randomBit = pseudoRandom().toString().substring(2, 5);
-        const value = colNames[col % colNames.length] + '-' + randomBit + ' - (' + (row + 1) + ',' + col + ')';
+        const extraColIndex = col - defaultColCount;
+        const colConfig = extraColumns[extraColIndex % extraColumns.length];
+        let value: string | number;
+        switch (colConfig.dataType) {
+            case 'currency':
+                value = Math.round(pseudoRandom() * 50000) - 5000;
+                break;
+            case 'percent':
+                value = Math.round(pseudoRandom() * 10000) / 100;
+                break;
+            case 'rating':
+                value = Math.round(pseudoRandom() * 5);
+                break;
+            case 'text':
+                value = colConfig.values![Math.floor(pseudoRandom() * colConfig.values!.length)];
+                break;
+            case 'number':
+            default:
+                value = Math.round(pseudoRandom() * 1000);
+                break;
+        }
         rowItem['col' + col] = value;
     }
 

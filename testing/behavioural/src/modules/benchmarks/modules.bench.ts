@@ -13,10 +13,7 @@ suite('render cells with different module sets', () => {
     const element = document.createElement('div');
     let params: Params | undefined;
 
-    const gridsManager = new TestGridsManager({
-        includeDefaultModules: false,
-        mockGridLayout: false,
-    });
+    const gridsManager = new TestGridsManager({ benchmark: true });
 
     const makeBenchOptions = (modules: Module[] = []): BenchOptions => {
         return {

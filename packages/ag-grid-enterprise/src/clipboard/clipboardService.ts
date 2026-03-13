@@ -2,6 +2,7 @@ import type {
     AgColumn,
     CellPosition,
     CellRange,
+    ChangedPath,
     CsvExportParams,
     GridCtrl,
     GridOptions,
@@ -19,9 +20,11 @@ import type {
 } from 'ag-grid-community';
 import {
     BeanStub,
-    ChangedPath,
+    ChangedCellsPath,
+    ChangedRowsPath,
     _createCellId,
     _exists,
+    _forEachChangedGroupDepthFirst,
     _getActiveDomElement,
     _getDocument,
     _getRowBelow,
@@ -290,7 +293,8 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
         const { clientSideRowModel } = this;
         const rootNode = clientSideRowModel?.rootNode;
-        const changedPath = rootNode && new ChangedPath(gos.get('aggregateOnlyChangedColumns'), rootNode);
+        const changedPath =
+            rootNode && (gos.get('aggregateOnlyChangedColumns') ? new ChangedCellsPath() : new ChangedRowsPath());
 
         const cellsToFlash: Record<string, boolean> = {};
         const updatedRowNodes: RowNode[] = [];
@@ -298,12 +302,12 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
         pasteOperationFunc(cellsToFlash, updatedRowNodes, focusedCell, changedPath);
 
-        const nodesToRefresh: RowNode[] = [...updatedRowNodes];
+        const nodesToRefresh: RowNode[] = updatedRowNodes.slice();
         if (changedPath) {
             clientSideRowModel.doAggregate(changedPath);
 
             // add all nodes impacted by aggregation, as they need refreshed also.
-            changedPath.forEachChangedNodeDepthFirst((rowNode) => {
+            _forEachChangedGroupDepthFirst(rootNode, changedPath, (rowNode) => {
                 nodesToRefresh.push(rowNode);
             });
         }
@@ -430,7 +434,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 );
 
                 rowNode.setDataValue(column, newValue, SOURCE_PASTE);
-                changedPath?.addParentNode(rowNode.parent, [column]);
+                changedPath?.addCell(rowNode.parent, column.getId());
 
                 const { rowIndex, rowPinned } = currentRow;
                 const cellId = _createCellId({ rowIndex, column, rowPinned });
@@ -581,10 +585,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                         );
 
                         rowNode.setDataValue(column, firstRowValue, SOURCE_PASTE);
-
-                        if (changedPath) {
-                            changedPath.addParentNode(rowNode.parent, [column]);
-                        }
+                        changedPath?.addCell(rowNode.parent, column.getId());
 
                         const { rowIndex, rowPinned } = currentRow;
                         const cellId = _createCellId({ rowIndex, column, rowPinned });
@@ -716,10 +717,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         const { rowIndex, rowPinned } = rowNode;
         const cellId = _createCellId({ rowIndex: rowIndex!, column, rowPinned });
         cellsToFlash[cellId] = true;
-
-        if (changedPath) {
-            changedPath.addParentNode(rowNode.parent, [column]);
-        }
+        changedPath?.addCell(rowNode.parent, column.getId());
     }
 
     public copyToClipboard(params: IClipboardCopyParams = {}): void {

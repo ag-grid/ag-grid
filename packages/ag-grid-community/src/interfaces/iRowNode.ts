@@ -201,7 +201,7 @@ interface GroupRowNode<TData = any> {
 
     /** If using row grouping, contains the group values for this group. */
     groupData: { [key: string]: any | null } | null;
-    /** If using row grouping and aggregation, contains the aggregation data. */
+    /** If using row grouping and aggregation, contains the aggregation data. Created via `Object.create(null)` to avoid prototype conflicts. */
     aggData: any;
 
     /** The row group column used for this group. */
@@ -226,11 +226,11 @@ interface GroupRowNode<TData = any> {
     allLeafChildren: IRowNode<TData>[] | null;
     /** Number of children and grand children. */
     allChildrenCount: number | null;
-    /** Children of this group. If multi levels of grouping, shows only immediate children. */
+    /** Children of this group. `null` for leaf nodes, non-empty array for groups. Never an empty array. */
     childrenAfterGroup: IRowNode<TData>[] | null;
-    /** Sorted children of this group. */
+    /** Sorted children of this group after aggregation filtering. `null` for leaf nodes. */
     childrenAfterSort: IRowNode<TData>[] | null;
-    /** Filtered children of this group. */
+    /** Filtered children of this group. `null` for leaf nodes. */
     childrenAfterFilter: IRowNode<TData>[] | null;
 
     /** `true` if row is a footer. Footers have `group = true` and `footer = true`. */
