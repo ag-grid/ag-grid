@@ -33,6 +33,7 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
     /** The root row containing all the rows */
     readonly rootNode: RowNode | null;
     readonly rowCountReady: boolean;
+    hierarchical: boolean;
 
     updateRowData(rowDataTran: RowDataTransaction<TData>): RowNodeTransaction<TData> | null;
 

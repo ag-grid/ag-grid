@@ -19,6 +19,9 @@ export interface IRowModel {
      */
     readonly rootNode: RowNode | null;
 
+    /** True when grouping or tree data is active (i.e. there may be group nodes below root). */
+    readonly hierarchical: boolean;
+
     /** Returns the rowNode at the given index. */
     getRow(index: number): RowNode | undefined;
 

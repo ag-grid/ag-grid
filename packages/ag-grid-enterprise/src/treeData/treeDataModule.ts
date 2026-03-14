@@ -3,6 +3,7 @@ import type { _ModuleWithoutApi } from 'ag-grid-community';
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { AggregationModule, SharedAggregationModule } from '../aggregation/aggregationModule';
 import {
+    ChangedPathModule,
     ClientSideRowModelHierarchyModule,
     GroupColumnModule,
     GroupEditModule,
@@ -17,7 +18,7 @@ import { TreeGroupStrategy } from './treeGroupStrategy';
 export const SharedTreeDataModule: _ModuleWithoutApi = {
     moduleName: 'SharedTreeData',
     version: VERSION,
-    dependsOn: [EnterpriseCoreModule, SharedAggregationModule, GroupColumnModule, StickyRowModule],
+    dependsOn: [EnterpriseCoreModule, SharedAggregationModule, GroupColumnModule, ChangedPathModule, StickyRowModule],
 };
 
 /**

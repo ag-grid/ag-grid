@@ -1,5 +1,4 @@
-import type { RowNode } from '../entities/rowNode';
-import type { IRowNode } from '../interfaces/iRowNode';
+import type { IRowNode, RowNode } from 'ag-grid-community';
 
 /**
  * Reusable counting-sort bucket buffer, one entry per tree level.

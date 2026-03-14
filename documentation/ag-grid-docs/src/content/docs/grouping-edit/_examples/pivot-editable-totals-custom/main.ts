@@ -7,7 +7,13 @@ import {
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { ColumnsToolPanelModule, PivotModule, RowGroupingModule, SideBarModule } from 'ag-grid-enterprise';
+import {
+    ColumnsToolPanelModule,
+    PivotModule,
+    RowGroupingEditModule,
+    RowGroupingModule,
+    SideBarModule,
+} from 'ag-grid-enterprise';
 
 import { getData } from './data';
 
@@ -23,6 +29,7 @@ let gridApi: GridApi<SalesRecord>;
 
 ModuleRegistry.registerModules([
     RowGroupingModule,
+    RowGroupingEditModule,
     ClientSideRowModelModule,
     NumberFilterModule,
     TextEditorModule,

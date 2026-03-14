@@ -45,7 +45,7 @@ export function _getRowCtrl(beans: BeanCollection, inputs: ResolveRowControllerT
         }
     }
 
-    return rowRenderer.getRowCtrls(rowNode ? [rowNode] : [])?.[0];
+    return rowNode ? rowRenderer.getRowCtrlByNode(rowNode) : undefined;
 }
 
 export function _getCellCtrl(beans: BeanCollection, inputs: ResolveControllerType = {}): CellCtrl | undefined {

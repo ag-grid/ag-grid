@@ -27,6 +27,10 @@ connecting the grid with a store.
 
 ## Editing Group Row Cells
 
+{% note %}
+`groupRowEditable` and `groupRowValueSetter` require the `RowGroupingEditModule` to be registered.
+{% /note %}
+
 Set `groupRowEditable` on any column that should accept edits on group nodes.
 Provide either a boolean or a callback; callbacks only run for nodes where `rowNode.group === true`, while leaf rows continue to honour `editable`.
 

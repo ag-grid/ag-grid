@@ -54,6 +54,7 @@ export type NestedDataGetter<TData = any> = (data: TData) => TData[] | null | un
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowNodeGroupStage<TData = any> extends IRowNodeStage<TData> {
     readonly treeData: boolean;
+    readonly grouping: boolean;
 
     execute(params: RefreshModelParams<TData>): boolean | undefined;
 

@@ -493,8 +493,8 @@ export {
 } from './theming/parts/theme/themes';
 export { _getShouldDisplayTooltip, _isShowTooltipWhenTruncated } from './tooltip/tooltipFeature';
 export type { ITooltipCtrl, ITooltipCtrlParams, TooltipFeature } from './tooltip/tooltipFeature';
-export type { ChangedPath } from './utils/changedPath';
-export { ChangedCellsPath, ChangedRowsPath, _forEachChangedGroupDepthFirst } from './utils/changedPath';
+export type { ChangedCellsPath, ChangedPath, ChangedRowsPath, IChangedPathFactory } from './utils/changedPath';
+export { _forEachChangedGroupDepthFirst } from './utils/changedPath';
 export { _createElement } from './utils/element';
 export type { ElementParams } from './utils/element';
 export { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from './utils/gridEvent';

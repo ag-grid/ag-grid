@@ -20,6 +20,7 @@ import type { RowNode } from '../entities/rowNode';
 import type { CellValueChangedEvent } from '../events';
 import { _addGridCommonParams, _isServerSideRowModel } from '../gridOptionsUtils';
 import type { IFormulaDataService } from '../interfaces/formulas';
+import type { IColsService } from '../interfaces/iColsService';
 import type { CellValueResolveFrom } from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _warn } from '../validation/logging';
@@ -36,6 +37,7 @@ export class ValueService extends BeanStub implements NamedBean {
     private dataTypeSvc?: DataTypeService;
     private editSvc?: EditService;
     private formulaDataSvc?: IFormulaDataService;
+    private rowGroupColsSvc?: IColsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.expressionSvc = beans.expressionSvc;
@@ -44,6 +46,7 @@ export class ValueService extends BeanStub implements NamedBean {
         this.dataTypeSvc = beans.dataTypeSvc;
         this.editSvc = beans.editSvc;
         this.formulaDataSvc = beans.formulaDataSvc;
+        this.rowGroupColsSvc = beans.rowGroupColsSvc;
     }
 
     private cellExpressions: boolean;
@@ -179,12 +182,13 @@ export class ValueService extends BeanStub implements NamedBean {
             return;
         }
 
-        const colDef = column.getColDef();
+        const colDef = column.colDef;
+        const isGroup = rowNode.group;
 
         // For leaf (non-group) rows with pivot result columns, resolve to the underlying value column.
         // Pivot columns don't map to real data fields on leaf rows — only the source value column does.
         // This matches the behaviour of setDataValue which also resolves pivot columns for leaf rows.
-        if (!rowNode.group) {
+        if (!isGroup) {
             const pivotValueColumn = colDef.pivotValueColumn as AgColumn | undefined;
             if (pivotValueColumn) {
                 column = pivotValueColumn;
@@ -197,17 +201,17 @@ export class ValueService extends BeanStub implements NamedBean {
             return pending;
         }
 
-        let result = this.resolveValue(column, rowNode, ignoreAggData);
+        let result = this.resolveValue(column, rowNode, ignoreAggData, isGroup);
 
         if (result === undefined) {
             // For showRowGroup columns on group rows, if no value was resolved and the row's
             // group level is shallower than the column's associated row group, return null for
             // retro-compatibility (previously getValue returned null early in this case).
             // This guard applies to group rows only — leaf rows always return undefined here.
-            if (rowNode.group) {
-                const rowGroupColId = column.getColDef().showRowGroup;
+            if (isGroup) {
+                const rowGroupColId = colDef.showRowGroup;
                 if (typeof rowGroupColId === 'string') {
-                    const colRowGroupIndex = this.beans.rowGroupColsSvc?.getColumnIndex(rowGroupColId);
+                    const colRowGroupIndex = this.rowGroupColsSvc?.getColumnIndex(rowGroupColId);
                     if (colRowGroupIndex != null && colRowGroupIndex > rowNode.level) {
                         return null;
                     }
@@ -223,16 +227,6 @@ export class ValueService extends BeanStub implements NamedBean {
         }
 
         return result;
-    }
-
-    private getFormulaFromDataSource(column: AgColumn, rowNode: IRowNode): string | undefined {
-        const dataSource = this.formulaDataSvc;
-        if (!dataSource?.hasDataSource() || !column.isAllowFormula()) {
-            return undefined;
-        }
-
-        const formula = dataSource.getFormula({ column, rowNode });
-        return _isExpressionString(formula) ? formula : undefined;
     }
 
     /** Computes whether to ignore aggregation data for display purposes. */
@@ -256,69 +250,74 @@ export class ValueService extends BeanStub implements NamedBean {
         return !!node.sibling && !this.gos.get('groupSuppressBlankHeader');
     }
 
-    private resolveValue(column: AgColumn, rowNode: IRowNode, ignoreAggData: boolean): any {
-        const colDef = column.getColDef();
-        const colId = column.getColId();
+    private resolveValue(
+        column: AgColumn,
+        rowNode: IRowNode,
+        ignoreAggData: boolean,
+        isGroup: boolean | undefined
+    ): any {
+        const colDef = column.colDef;
+        const colId = column.colId;
 
-        const isTreeData = this.isTreeData;
-
-        const dataSourceFormula = this.getFormulaFromDataSource(column, rowNode);
-        if (dataSourceFormula !== undefined) {
-            return dataSourceFormula;
+        // Formula datasource is skipped for group rows — formulas and row grouping are not supported together.
+        const formulaDataSvc = !isGroup && this.formulaDataSvc;
+        if (formulaDataSvc && formulaDataSvc.hasDataSource() && colDef.allowFormula === true) {
+            const formula = formulaDataSvc.getFormula({ column, rowNode });
+            if (_isExpressionString(formula)) {
+                return formula;
+            }
         }
 
-        // if there is a value getter, this gets precedence over a field
-        const aggDataExists = !ignoreAggData && rowNode.aggData && rowNode.aggData[colId] !== undefined;
-        if (isTreeData && aggDataExists) {
-            return rowNode.aggData[colId];
+        // Only group rows have aggData — skip for leaf rows
+        const aggData = isGroup && !ignoreAggData ? rowNode.aggData : undefined;
+        const isTreeData = this.isTreeData;
+        if (isTreeData && aggData?.[colId] !== undefined) {
+            return aggData[colId];
         }
 
         const data = rowNode.data;
         const field = colDef.field;
-        if (isTreeData && colDef.valueGetter) {
-            return this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
-        }
-        if (isTreeData && field && data) {
-            return _getValueUsingField(data, field, column.isFieldContainsDots());
+        const valueGetter = colDef.valueGetter;
+
+        if (isTreeData) {
+            if (valueGetter) {
+                return this.executeValueGetter(valueGetter, data, column, rowNode);
+            }
+            if (field && data) {
+                return _getValueUsingField(data, field, column.isFieldContainsDots());
+            }
         }
 
         const groupData = rowNode.groupData;
-        const groupDataExists = groupData && colId in groupData;
-        if (groupDataExists) {
-            return rowNode.groupData![colId];
+        if (groupData && colId in groupData) {
+            return groupData[colId];
         }
-        if (aggDataExists) {
-            return rowNode.aggData[colId];
+        if (aggData?.[colId] !== undefined) {
+            return aggData[colId];
         }
 
         // don't retrieve group values from field or valueGetter for multiple auto cols
         const rowGroupColId = colDef.showRowGroup;
-        const allowUserValuesForCell = typeof rowGroupColId !== 'string' || !rowNode.group;
+        const allowUserValuesForCell = typeof rowGroupColId !== 'string' || !isGroup;
 
         // SSRM agg data comes from the data attribute, so ignore that instead
-        const ignoreSsrmAggData = this.isSsrm && ignoreAggData && !!colDef.aggFunc;
-        const ssrmFooterGroupCol =
-            this.isSsrm &&
-            rowNode.footer &&
-            rowNode.field &&
-            (rowGroupColId === true || rowGroupColId === rowNode.field);
+        const isSsrm = this.isSsrm;
+        const ignoreSsrmAggData = isSsrm && ignoreAggData && !!colDef.aggFunc;
 
-        if (colDef.valueGetter && !ignoreSsrmAggData) {
-            if (!allowUserValuesForCell) {
-                return undefined;
-            }
-            return this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
+        if (valueGetter && !ignoreSsrmAggData) {
+            return allowUserValuesForCell ? this.executeValueGetter(valueGetter, data, column, rowNode) : undefined;
         }
+
+        const ssrmFooterGroupCol =
+            isSsrm && rowNode.footer && rowNode.field && (rowGroupColId === true || rowGroupColId === rowNode.field);
         if (ssrmFooterGroupCol) {
             // this is for group footers in SSRM, as the SSRM row won't have groupData, need to extract
             // the group value from the data using the row field
             return _getValueUsingField(data, rowNode.field!, column.isFieldContainsDots());
         }
+
         if (field && data && !ignoreSsrmAggData) {
-            if (!allowUserValuesForCell) {
-                return undefined;
-            }
-            return _getValueUsingField(data, field, column.isFieldContainsDots());
+            return allowUserValuesForCell ? _getValueUsingField(data, field, column.isFieldContainsDots()) : undefined;
         }
 
         return undefined;
@@ -448,8 +447,6 @@ export class ValueService extends BeanStub implements NamedBean {
             column: column,
         });
 
-        const groupRowValueSetter = rowNode.group ? colDef.groupRowValueSetter : undefined;
-
         let valueSetterChanged = false;
         let groupRowValueSetterChanged = false;
 
@@ -479,33 +476,58 @@ export class ValueService extends BeanStub implements NamedBean {
             valueSetterChanged = result ?? true;
         }
 
-        if (groupRowValueSetter) {
-            const result = groupRowValueSetter(
-                _addGridCommonParams(this.gos, {
-                    node: rowNode,
-                    data: rowNode.data,
-                    oldValue,
-                    newValue,
-                    colDef,
-                    column,
-                    eventSource,
-                    valueChanged: valueSetterChanged || newValue !== oldValue,
-                    aggregatedChildren: this.beans.aggStage?.getAggregatedChildren(rowNode as RowNode, column) ?? [],
-                })
-            );
+        const groupRowValueSetter = rowNode.group ? colDef.groupRowValueSetter : undefined;
 
-            // default to true if user forgot to return a value (possible without TypeScript)
-            groupRowValueSetterChanged = result ?? true;
+        // Wrap cascade + finishValueChange together in one deferred block.
+        // - For group rows the cascade triggers child setDataValue → child setValue calls, each of
+        //   which increments deferredDepth again, so their cellValueChanged events accumulate in this
+        //   same batch and do not each trigger an individual doAggregate pass.
+        // - For leaf rows the single cellValueChanged is accumulated and flushed once at endDeferred.
+        // - Nested callers (clipboard, fill handle) just increment/decrement the same counter; the
+        //   outermost endDeferred() performs the single aggregation + refresh pass.
+        const changeDetectionSvc = this.beans.changeDetectionSvc;
+        changeDetectionSvc?.beginDeferred();
+        try {
+            if (groupRowValueSetter) {
+                groupRowValueSetterChanged =
+                    groupRowValueSetter(
+                        _addGridCommonParams(this.gos, {
+                            node: rowNode,
+                            data: rowNode.data,
+                            oldValue,
+                            newValue,
+                            colDef,
+                            column,
+                            eventSource,
+                            valueChanged: valueSetterChanged || newValue !== oldValue,
+                            aggregatedChildren:
+                                this.beans.aggStage?.getAggregatedChildren(rowNode as RowNode, column) ?? [],
+                        })
+                    ) ??
+                    // Default to true if user forgot to return a value (possible without TypeScript).
+                    true;
+
+                if (!valueSetterChanged && !groupRowValueSetterChanged) {
+                    return false;
+                }
+
+                // Use params.newValue (the user's scalar input) as the event value rather than re-reading
+                // aggData. aggData is stale until the outermost endDeferred() flushes, and for avg/count
+                // columns it stores an IAggFuncResult wrapper rather than a plain scalar.
+                return this.finishValueChange(rowNode, column, params, eventSource, params.newValue);
+            }
+
+            if (!valueSetterChanged && !groupRowValueSetterChanged) {
+                // if no change to the value, then no need to do the updating, or notifying via events.
+                // otherwise the user could be tabbing around the grid, and cellValueChange would get called
+                // all the time.
+                return false;
+            }
+
+            return this.finishValueChange(rowNode, column, params, eventSource);
+        } finally {
+            changeDetectionSvc?.endDeferred();
         }
-
-        if (!valueSetterChanged && !groupRowValueSetterChanged) {
-            // if no change to the value, then no need to do the updating, or notifying via events.
-            // otherwise the user could be tabbing around the grid, and cellValueChange would get called
-            // all the time.
-            return false;
-        }
-
-        return this.finishValueChange(rowNode, column, params, eventSource);
     }
 
     private canCreateRowNodeData(rowNode: IRowNode, colDef: ColDef): boolean {
@@ -534,14 +556,16 @@ export class ValueService extends BeanStub implements NamedBean {
         rowNode: IRowNode,
         column: AgColumn,
         params: ValueSetterParams,
-        eventSource?: string
+        eventSource?: string,
+        savedValueOverride?: any
     ): boolean {
         // reset quick filter on this row
         rowNode.resetQuickFilterAggregateText();
 
         this.valueCache?.onDataChanged();
 
-        const savedValue = this.getValue(column, rowNode, 'data');
+        const savedValue =
+            savedValueOverride === undefined ? this.getValue(column, rowNode, 'data') : savedValueOverride;
 
         this.dispatchCellValueChangedEvent(rowNode, params, savedValue, eventSource);
         if ((rowNode as RowNode).pinnedSibling) {

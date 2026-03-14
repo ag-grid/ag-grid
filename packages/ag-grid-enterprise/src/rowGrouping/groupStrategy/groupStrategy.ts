@@ -99,7 +99,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     }
 
     private positionLeafsAndGroups(rootNode: RowNode, changedPath: ChangedPath | undefined) {
-        _forEachChangedGroupDepthFirst(rootNode, changedPath, (group: RowNode) => {
+        _forEachChangedGroupDepthFirst(rootNode, true, changedPath, (group: RowNode) => {
             const children = group.childrenAfterGroup;
             const childrenLen = children?.length;
             if (!childrenLen) {
@@ -214,7 +214,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
     // this is used when doing delta updates, eg Redux, keeps nodes in right order
     private sortChildren(rootNode: RowNode, changedPath: ChangedPath | undefined): void {
-        _forEachChangedGroupDepthFirst(rootNode, undefined, (node) => {
+        _forEachChangedGroupDepthFirst(rootNode, true, undefined, (node) => {
             const didSort = sortGroupChildren(node.childrenAfterGroup);
             if (didSort) {
                 changedPath?.addRow(node);

@@ -140,7 +140,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             const rowNode = nodes[i];
             // if node is a footer, we don't do selection, just pass the info
             // to the sibling (the parent of the group)
-            const node = _normaliseSiblingRef(rowNode);
+            const node = rowNode.primaryRow;
 
             if (node.rowPinned && !_isManualPinnedRow(node)) {
                 _warn(59);
@@ -174,12 +174,12 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         // clear other nodes if not doing multi select
         if (!suppressFinishActions) {
             if (nodes.length === 1 && source === 'api') {
-                this.selectionCtx.setRoot(_normaliseSiblingRef(nodes[0]));
+                this.selectionCtx.setRoot(nodes[0].primaryRow);
             }
 
             const clearOtherNodes = newValue && (clearSelection || !this.isMultiSelect());
             if (clearOtherNodes) {
-                updatedCount += this.clearOtherNodes(_normaliseSiblingRef(nodes[0]), keepDescendants, source);
+                updatedCount += this.clearOtherNodes(nodes[0].primaryRow, keepDescendants, source);
             }
 
             // only if we selected something, then update groups and fire events
@@ -200,7 +200,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         let updatedCount = 0;
 
         nodesToSelect.forEach((node) => {
-            const rowNode = _normaliseSiblingRef(node);
+            const rowNode = node.primaryRow;
 
             if (rowNode.group && this.groupSelectsDescendants) {
                 return;
@@ -295,7 +295,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             }
         };
 
-        _forEachChangedGroupDepthFirst(rootNode, changedPath, nodeCallback);
+        _forEachChangedGroupDepthFirst(rootNode, this.beans.rowModel.hierarchical, changedPath, nodeCallback);
 
         return selectionChanged;
     }
@@ -463,7 +463,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
         let updatedNodes = false;
         const callback = (rowNode: RowNode) => {
-            const updated = this.selectRowNode(_normaliseSiblingRef(rowNode), false, undefined, source);
+            const updated = this.selectRowNode(rowNode.primaryRow, false, undefined, source);
             updatedNodes ||= updated;
         };
 
@@ -608,7 +608,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         let updatedNodes = false;
 
         this.getNodesToSelect(selectAll).forEach((rowNode) => {
-            const updated = this.selectRowNode(_normaliseSiblingRef(rowNode), true, undefined, source);
+            const updated = this.selectRowNode(rowNode.primaryRow, true, undefined, source);
             updatedNodes ||= updated;
         });
 
@@ -687,7 +687,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             const rootNode = (rowModel as IClientSideRowModel).rootNode;
             if (rootNode) {
                 // isRowSelectable changed: update leaf children before checking group.
-                _forEachChangedGroupDepthFirst(rootNode, changedPath, (node) => {
+                _forEachChangedGroupDepthFirst(rootNode, rowModel.hierarchical, changedPath, (node) => {
                     let childSelectable = false;
                     for (const child of node.childrenAfterGroup!) {
                         childSelectable ||= child.selectable;
@@ -805,11 +805,6 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             serverSideState: null,
         });
     }
-}
-
-/** Selection state of sibling nodes is a clone of their siblings, so always act on sibling rather than footer */
-function _normaliseSiblingRef(node: RowNode): RowNode {
-    return _isManualPinnedRow(node) ? node.pinnedSibling! : node.footer ? node.sibling : node;
 }
 
 function _isAllSelected(api: GridApi): boolean | undefined {

@@ -442,6 +442,20 @@
             }
         },
         "editable": {},
+        "groupRowEditable": {
+            "description": "Works like `editable`, but is evaluated only for group rows. Requires `RowGroupingEditModule`.",
+            "more": {
+                "name": "Editing Group Row Cells",
+                "url": "./grouping-edit/"
+            }
+        },
+        "groupRowValueSetter": {
+            "description": "Runs after a group row value changes so custom code can push edits down to descendant rows. Requires `RowGroupingEditModule`.",
+            "more": {
+                "name": "Editing Group Row Cells",
+                "url": "./grouping-edit/"
+            }
+        },
         "valueSetter": {
             "description": "Function or [expression](./cell-expressions/#column-definition-expressions). Custom function to modify your data based off the new value for saving. Return `true` if the data changed.",
             "more": {

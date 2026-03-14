@@ -1,9 +1,7 @@
-import type { RowNode } from '../../entities/rowNode';
-import type { ChangedPath } from '../changedPath';
-import { _forEachChangedGroupDepthFirst } from '../changedPath';
-import { ChangedRowsPath } from './changedRowsPath';
+import type { ChangedPath, RowNode } from 'ag-grid-community';
+import { _forEachChangedGroupDepthFirst } from 'ag-grid-community';
 
-// ─── Minimal stubs ────────────────────────────────────────────────────────────
+import { ChangedRowsPathImpl as ChangedRowsPath } from './changedRowsPath';
 
 function makeNode(id: string, parent: RowNode | null = null, opts: { children?: RowNode[] } = {}): RowNode {
     return {
@@ -19,15 +17,13 @@ function makeNode(id: string, parent: RowNode | null = null, opts: { children?: 
 
 function collectGroups(root: RowNode, path: ChangedPath | undefined): RowNode[] {
     const nodes: RowNode[] = [];
-    _forEachChangedGroupDepthFirst(root, path, (n) => nodes.push(n));
+    _forEachChangedGroupDepthFirst(root, true, path, (n) => nodes.push(n));
     return nodes;
 }
 
 function collectRows(path: ChangedPath): RowNode[] {
     return [...path.getSortedRows()];
 }
-
-// ─── ChangedRowsPath-specific tests ──────────────────────────────────────────
 
 describe('ChangedRowsPath', () => {
     describe('addCell delegates to addRow — colId is ignored', () => {
@@ -80,7 +76,7 @@ describe('ChangedRowsPath', () => {
             const root = makeNode('root', null, { children: [makeNode('leaf1')] });
 
             const visitedAll: RowNode[] = [];
-            _forEachChangedGroupDepthFirst(root, null, (n) => visitedAll.push(n));
+            _forEachChangedGroupDepthFirst(root, true, null, (n) => visitedAll.push(n));
             expect(visitedAll).toContain(root);
         });
     });
@@ -101,7 +97,7 @@ describe('ChangedRowsPath', () => {
 
             // _forEachChangedGroupDepthFirst visits only nodes with childrenAfterGroup
             const visited: RowNode[] = [];
-            _forEachChangedGroupDepthFirst(root, path, (n) => visited.push(n));
+            _forEachChangedGroupDepthFirst(root, true, path, (n) => visited.push(n));
             expect(visited).toContain(root);
             expect(visited).toContain(group);
             expect(visited).not.toContain(leaf); // leaf has no childrenAfterGroup
@@ -109,7 +105,7 @@ describe('ChangedRowsPath', () => {
             // Clearing childrenAfterGroup causes a node to be skipped
             (group as any).childrenAfterGroup = null;
             const visited2: RowNode[] = [];
-            _forEachChangedGroupDepthFirst(root, path, (n) => visited2.push(n));
+            _forEachChangedGroupDepthFirst(root, true, path, (n) => visited2.push(n));
             expect(visited2).toContain(root);
             expect(visited2).not.toContain(group);
         });
@@ -155,20 +151,18 @@ describe('ChangedRowsPath', () => {
     });
 });
 
-// ─── Standalone traversal function tests ─────────────────────────────────────
-
 describe('_forEachChangedGroupDepthFirst', () => {
     test('root with no childrenAfterGroup (leaf root) is not visited', () => {
         const root = makeNode('root');
         const visited: RowNode[] = [];
-        _forEachChangedGroupDepthFirst(root, null, (n) => visited.push(n));
+        _forEachChangedGroupDepthFirst(root, true, null, (n) => visited.push(n));
         expect(visited).toEqual([]);
     });
 
     test('root with empty children (group root) visits only root', () => {
         const root = makeNode('root', null, { children: [] });
         const visited: RowNode[] = [];
-        _forEachChangedGroupDepthFirst(root, null, (n) => visited.push(n));
+        _forEachChangedGroupDepthFirst(root, true, null, (n) => visited.push(n));
         expect(visited).toEqual([root]);
     });
 
@@ -177,7 +171,7 @@ describe('_forEachChangedGroupDepthFirst', () => {
         const leaf2 = makeNode('leaf2');
         const root = makeNode('root', null, { children: [leaf1, leaf2] });
         const visited: RowNode[] = [];
-        _forEachChangedGroupDepthFirst(root, null, (n) => visited.push(n));
+        _forEachChangedGroupDepthFirst(root, true, null, (n) => visited.push(n));
         expect(visited).toEqual([root]);
     });
 
@@ -186,7 +180,7 @@ describe('_forEachChangedGroupDepthFirst', () => {
         const group = makeNode('group', null, { children: [leaf] });
         const root = makeNode('root', null, { children: [group] });
         const visited: RowNode[] = [];
-        _forEachChangedGroupDepthFirst(root, null, (n) => visited.push(n));
+        _forEachChangedGroupDepthFirst(root, true, null, (n) => visited.push(n));
         expect(visited).toHaveLength(2);
         expect(visited).not.toContain(leaf);
         expect(visited.indexOf(group)).toBeLessThan(visited.indexOf(root));
@@ -198,7 +192,7 @@ describe('_forEachChangedGroupDepthFirst', () => {
         const groupA = makeNode('groupA', null, { children: [leaf1] });
         const root = makeNode('root', null, { children: [groupA, leaf2] });
         const visited: RowNode[] = [];
-        _forEachChangedGroupDepthFirst(root, null, (n) => visited.push(n));
+        _forEachChangedGroupDepthFirst(root, true, null, (n) => visited.push(n));
         expect(visited).toContain(groupA);
         expect(visited).toContain(root);
         expect(visited).not.toContain(leaf1);

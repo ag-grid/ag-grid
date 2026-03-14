@@ -1,4 +1,5 @@
-import type { RowNode } from '../../entities/rowNode';
+import type { ChangedCellsPath, IRowNode, RowNode } from 'ag-grid-community';
+
 import { _sortNodesByDepthFirst } from '../sortNodesByDepthFirst';
 
 /**
@@ -14,10 +15,8 @@ import { _sortNodesByDepthFirst } from '../sortNodesByDepthFirst';
  * one array per group of 32 columns.
  *
  * Total space: O(R × ⌈C/32⌉ + C), where R = tracked rows (including ancestors), C = tracked columns.
- *
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
-export class ChangedCellsPath {
+export class ChangedCellsPathImpl implements ChangedCellsPath {
     readonly kind = 'cells' as const;
 
     /**
@@ -59,17 +58,13 @@ export class ChangedCellsPath {
      */
     private colCount: number = 0;
 
-    /**
-     * Adds `rowNode` and all its ancestors. All columns are considered changed. No-op if null/undefined.
-     * Time: O(D), D = depth.
-     * Space: O(D) for new ancestors.
-     */
-    public addRow(rowNode: RowNode | null | undefined): void {
-        if (rowNode == null) {
+    /** {@inheritDoc ChangedCellsPath.addRow} Time: O(D), D = depth. */
+    public addRow(rowNode: IRowNode | null | undefined): void {
+        let node: RowNode | null | undefined = rowNode as RowNode | null | undefined;
+        if (node == null) {
             return;
         }
         const slots = this.slots;
-        let node: RowNode | null = rowNode;
         if (slots.get(node) !== undefined) {
             // Upgrade cell-tracked ancestors to all-columns until we hit one already at -1.
             while (node != null && slots.get(node)! >= 0) {
@@ -87,13 +82,8 @@ export class ChangedCellsPath {
         this.unsorted = true;
     }
 
-    /**
-     * Adds `rowNode` and its ancestors with a specific column marked as changed.
-     * When `colId` is `null`/`undefined`, delegates to `addRow` (all columns changed).
-     * Time: O(D × ⌈C/32⌉), D = depth, C = number of tracked columns.
-     * Space: O(D × ⌈C/32⌉) for new ancestors.
-     */
-    public addCell(rowNode: RowNode | null | undefined, colId: string | null | undefined): void {
+    /** {@inheritDoc ChangedCellsPath.addCell} Time: O(D × ⌈C/32⌉), D = depth, C = tracked columns. */
+    public addCell(rowNode: IRowNode | null | undefined, colId: string | null | undefined): void {
         if (colId == null) {
             this.addRow(rowNode);
             return;
@@ -104,9 +94,9 @@ export class ChangedCellsPath {
         const slots = this.slots;
         const bits = this.bits;
         const colSlot = slots.get(colId) ?? this.ensureCol(colId);
-        let rowSlot = slots.get(rowNode);
+        let rowSlot = slots.get(rowNode as RowNode);
         if (rowSlot === undefined) {
-            rowSlot = this.ensureRow(rowNode);
+            rowSlot = this.ensureRow(rowNode as RowNode);
         } else if (rowSlot < 0) {
             return; // already all-columns-changed
         }
@@ -120,9 +110,9 @@ export class ChangedCellsPath {
         }
         word[rowSlot] = rowBits | bit;
         // Propagate bit up the ancestor chain. All ancestors are registered by ensureRow.
-        let p = rowNode.parent;
-        while (p != null) {
-            const pSlot = slots.get(p)!;
+        let parent = (rowNode as RowNode).parent;
+        while (parent != null) {
+            const pSlot = slots.get(parent)!;
             if (pSlot < 0) {
                 break;
             }
@@ -131,23 +121,16 @@ export class ChangedCellsPath {
                 break;
             }
             word[pSlot] = pBits | bit;
-            p = p.parent;
+            parent = parent.parent;
         }
     }
 
-    /**
-     * Returns true if `rowNode` is tracked (added via `addRow` or `addCell`, or as an ancestor of either).
-     * Time: O(1).
-     */
-    public hasRow(rowNode: RowNode): boolean {
-        return this.slots.has(rowNode);
+    /** {@inheritDoc ChangedCellsPath.hasRow} Time: O(1). */
+    public hasRow(rowNode: IRowNode): boolean {
+        return this.slots.has(rowNode as RowNode);
     }
 
-    /**
-     * Returns the changed rows sorted deepest-first. Cached — do not modify the returned array.
-     * Time: O(1) cached, O(R) if sort was invalidated.
-     * Space: O(1) best case if sort happens in place, O(R) where R = number of tracked rows (including ancestors) worst case.
-     */
+    /** {@inheritDoc ChangedCellsPath.getSortedRows} Time: O(1) cached, O(R) if sort was invalidated. */
     public getSortedRows(): RowNode[] {
         if (!this.unsorted) {
             return this.rows;
@@ -158,25 +141,12 @@ export class ChangedCellsPath {
         return rows;
     }
 
-    /**
-     * Returns the slot index for a row or column, or -1 if not tracked.
-     * For RowNode keys, -1 also means all-columns-changed (via `addRow`).
-     * Read-only — does not allocate slots.
-     * Time: O(1).
-     */
-    public getSlot(key: RowNode | string): number {
-        return this.slots.get(key) ?? -1;
+    /** {@inheritDoc ChangedCellsPath.getSlot} Read-only — does not allocate slots. Time: O(1). */
+    public getSlot(key: IRowNode | string): number {
+        return this.slots.get(key as RowNode | string) ?? -1;
     }
 
-    /**
-     * Returns true if the column is changed for the row. Always true when `rowSlot < 0`.
-     * Time: O(1).
-     *
-     * ```ts
-     * const rowSlot = path.getSlot(rowNode);
-     * if (path.hasCellBySlot(rowSlot, colSlot)) { … }
-     * ```
-     */
+    /** {@inheritDoc ChangedCellsPath.hasCellBySlot} Time: O(1). */
     public hasCellBySlot(rowSlot: number, colSlot: number): boolean {
         if (rowSlot < 0) {
             return true;
@@ -184,6 +154,8 @@ export class ChangedCellsPath {
         if (colSlot < 32) {
             return colSlot >= 0 && (this.bits[rowSlot] & (1 << colSlot)) !== 0;
         }
+        // extraBits is guaranteed non-null here: colSlot >= 32 can only originate from ensureCol which
+        // populates extraBits, and getSlot returns -1 for unknown columns (handled by the colSlot < 32 branch).
         return (this.extraBits![(colSlot >>> 5) - 1][rowSlot] & (1 << (colSlot & 31))) !== 0;
     }
 
@@ -192,7 +164,7 @@ export class ChangedCellsPath {
      * C < 32 is the common case (single bitmask word per row, no extraBits loop).
      * Space: O(D × ⌈C/32⌉).
      */
-    private ensureRow(rowNode: RowNode): number {
+    private ensureRow(rowNode: IRowNode): number {
         const slots = this.slots;
         const rows = this.rows;
         const bits = this.bits;
@@ -205,10 +177,10 @@ export class ChangedCellsPath {
                 extraBits[w].push(0);
             }
         }
-        slots.set(rowNode, originSlot);
-        rows.push(rowNode);
+        slots.set(rowNode as RowNode, originSlot);
+        rows.push(rowNode as RowNode);
         this.unsorted = true;
-        let p = rowNode.parent;
+        let p = rowNode.parent as RowNode | null;
         while (p != null && !slots.has(p)) {
             slots.set(p, nextSlot);
             rows.push(p);

@@ -1,4 +1,4 @@
-import type { GridOptions, RowNode, ValueSetterParams } from 'ag-grid-community';
+import type { GridOptions, GroupRowValueSetterParams, RowNode, ValueSetterParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     NumberEditorModule,
@@ -7,7 +7,7 @@ import {
     TextEditorModule,
     UndoRedoEditModule,
 } from 'ag-grid-community';
-import { PivotModule, RowGroupingModule, SetFilterModule } from 'ag-grid-enterprise';
+import { PivotModule, RowGroupingEditModule, RowGroupingModule, SetFilterModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 import { EDIT_MODES, cascadeGroupRowValueSetter, editCell } from './group-edit-test-utils';
@@ -20,6 +20,7 @@ import { EDIT_MODES, cascadeGroupRowValueSetter, editCell } from './group-edit-t
 describe('editing with pinned sibling rows', () => {
     const gridsManager = new TestGridsManager({
         modules: [
+            RowGroupingEditModule,
             NumberEditorModule,
             TextEditorModule,
             NumberFilterModule,

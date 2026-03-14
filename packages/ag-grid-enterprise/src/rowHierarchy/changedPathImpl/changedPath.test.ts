@@ -1,7 +1,7 @@
-import type { RowNode } from '../../entities/rowNode';
-import type { ChangedPath } from '../changedPath';
-import { ChangedCellsPath } from './changedCellsPath';
-import { ChangedRowsPath } from './changedRowsPath';
+import type { ChangedPath, RowNode } from 'ag-grid-community';
+
+import { ChangedCellsPathImpl } from './changedCellsPath';
+import { ChangedRowsPathImpl } from './changedRowsPath';
 
 // ─── Shared stubs ────────────────────────────────────────────────────────────
 
@@ -54,8 +54,8 @@ function makeWideBranchTree(branches: number, depth: number): { root: RowNode; l
 // ─── Shared interface tests ──────────────────────────────────────────────────
 
 describe.each([
-    { label: 'ChangedRowsPath', create: () => new ChangedRowsPath() },
-    { label: 'ChangedCellsPath', create: () => new ChangedCellsPath() },
+    { label: 'ChangedRowsPath', create: () => new ChangedRowsPathImpl() },
+    { label: 'ChangedCellsPath', create: () => new ChangedCellsPathImpl() },
 ])('$label — shared ChangedPath interface', ({ create }) => {
     describe('addRow', () => {
         test('null or undefined rowNode is a no-op', () => {

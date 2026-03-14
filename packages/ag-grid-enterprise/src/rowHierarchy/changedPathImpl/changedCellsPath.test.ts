@@ -1,5 +1,6 @@
-import type { RowNode } from '../../entities/rowNode';
-import { ChangedCellsPath } from './changedCellsPath';
+import type { RowNode } from 'ag-grid-community';
+
+import { ChangedCellsPathImpl as ChangedCellsPath } from './changedCellsPath';
 
 // ─── Minimal stubs ────────────────────────────────────────────────────────────
 
