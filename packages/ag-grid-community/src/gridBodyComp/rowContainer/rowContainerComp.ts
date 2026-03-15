@@ -31,7 +31,7 @@ function getElementParams(name: RowContainerName, options: RowContainerOptions, 
         tag: 'div',
         ref: 'eContainer',
         cls: _getRowContainerClass(name),
-        role: 'rowgroup',
+        role: 'presentation',
         children: [
             isCellSpanning
                 ? {

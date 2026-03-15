@@ -430,7 +430,6 @@
     /* keep pinned top/bottom sections above scrolling rows. */
     z-index: 2;
     background-color: var(--ag-data-background-color);
-    border-bottom: var(--ag-header-row-border);
 }
 
 .ag-grid-pinned-top-rows {
@@ -475,7 +474,7 @@
     position: absolute;
     left: 0;
     right: 0;
-    top: calc(var(--ag-header-rows-height, 0) + var(--ag-top-rows-height, 0));
+    top: calc(var(--ag-header-rows-height, 0) + var(--ag-top-rows-height, 0) - var(--ag-pinned-row-border-width, 0));
     border-top: var(--ag-pinned-row-border);
     pointer-events: none;
     z-index: 3;

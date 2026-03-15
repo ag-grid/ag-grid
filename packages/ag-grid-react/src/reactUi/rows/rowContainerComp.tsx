@@ -172,7 +172,7 @@ const RowContainerComp = ({
     ));
 
     return (
-        <div className={containerClasses} ref={setContainerRef} role={'rowgroup'}>
+        <div className={containerClasses} ref={setContainerRef} role={'presentation'}>
             {rows}
             {isSpanning ? buildSpanContainer() : null}
         </div>

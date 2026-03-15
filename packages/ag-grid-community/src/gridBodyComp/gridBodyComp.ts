@@ -47,7 +47,7 @@ function getGridBodyTemplate(includeOverlay?: boolean): {
                         tag: 'div',
                         ref: 'eGridScrollableArea',
                         cls: 'ag-grid-scrollable-area',
-                        role: 'presentation',
+                        role: 'rowgroup',
                         children: [
                             {
                                 tag: 'div',

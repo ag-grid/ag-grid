@@ -228,7 +228,7 @@ const GridBodyComp = () => {
     return (
         <div ref={setRootRef} className={rootClasses}>
             <div ref={setGridViewportRef} className={gridViewportClasses} role="presentation">
-                <div ref={eGridScrollableArea} className="ag-grid-scrollable-area" role="presentation">
+                <div ref={eGridScrollableArea} className="ag-grid-scrollable-area" role="rowgroup">
                     <div ref={eTop} className={topClasses} role="presentation" style={topStyle}>
                         <RowContainerComp
                             name="pinnedTopCenter"

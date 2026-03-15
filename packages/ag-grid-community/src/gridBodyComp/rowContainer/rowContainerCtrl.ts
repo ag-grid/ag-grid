@@ -185,6 +185,10 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
                 // row anchors can size themselves without per-row JS listeners.
                 const anchorWidth = gridBodyCtrl?.getViewportWidthWithoutScrollbar() ?? _getInnerWidth(this.eViewport);
                 this.eContainer.style.setProperty('--ag-fw-anchor-width', `${anchorWidth}px`);
+                this.eContainer.style.setProperty(
+                    '--ag-pinned-row-border-width',
+                    `${this.beans.environment.getPinnedRowBorderWidth()}px`
+                );
             };
 
             this.createManagedBean(new CenterWidthFeature(updateContainerWidth));

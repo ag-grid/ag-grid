@@ -431,7 +431,9 @@
         position: absolute;
         left: 0;
         right: 0;
-        top: calc(var(--ag-header-rows-height, 0) + var(--ag-top-rows-height, 0));
+        top: calc(
+            var(--ag-header-rows-height, 0) + var(--ag-top-rows-height, 0) - var(--ag-pinned-row-border-width, 0)
+        );
         border-top: var(--ag-borders-critical) var(--ag-border-color);
         pointer-events: none;
         z-index: 3;

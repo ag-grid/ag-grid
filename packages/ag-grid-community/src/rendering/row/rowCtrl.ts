@@ -862,11 +862,34 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private isFirstRowOnPage(): boolean {
-        return this.rowNode.rowIndex === this.beans.pageBounds.getFirstRow();
+        const {
+            rowNode: { rowIndex, rowPinned },
+            beans: { pageBounds },
+        } = this;
+
+        if (rowPinned) {
+            return rowIndex === 0;
+        }
+        return rowIndex === pageBounds.getFirstRow();
     }
 
     private isLastRowOnPage(): boolean {
-        return this.rowNode.rowIndex === this.beans.pageBounds.getLastRow();
+        const {
+            rowNode: { rowIndex, rowPinned },
+            beans: { pageBounds, pinnedRowModel },
+        } = this;
+
+        if (rowPinned) {
+            const rowCount =
+                rowPinned === 'top'
+                    ? pinnedRowModel?.getPinnedTopRowCount()
+                    : pinnedRowModel?.getPinnedBottomRowCount();
+            if (rowCount == null) {
+                return false;
+            }
+            return rowIndex === rowCount - 1;
+        }
+        return rowIndex === pageBounds.getLastRow();
     }
 
     protected refreshFirstAndLastRowStyles(): void {
@@ -1222,12 +1245,20 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         // need to make sure rowTop is not null, as this can happen if the node was once
         // visible (ie parent group was expanded) but is now not visible
         if (_exists(pixels)) {
+            const {
+                rowNode,
+                beans: { environment, rowContainerHeight },
+            } = this;
+            const { sticky, rowPinned } = rowNode;
             const afterPaginationPixels = this.applyPaginationOffset(pixels);
-            const skipScaling = this.rowNode.isRowPinned() || this.rowNode.sticky;
+            const skipScaling = rowNode.isRowPinned() || sticky;
             const afterScalingPixels = skipScaling
                 ? afterPaginationPixels
-                : this.beans.rowContainerHeight.getRealPixelPosition(afterPaginationPixels);
-            const topPx = `${afterScalingPixels + this.getPinnedOffset('top') + this.getPinnedOffset('bottom')}px`;
+                : rowContainerHeight.getRealPixelPosition(afterPaginationPixels);
+
+            const borderOffset = rowPinned === 'bottom' ? environment.getPinnedRowBorderWidth() : 0;
+
+            const topPx = `${borderOffset + afterScalingPixels + this.getPinnedOffset('top') + this.getPinnedOffset('bottom')}px`;
             this.setRowTopStyle(topPx);
         }
     }
