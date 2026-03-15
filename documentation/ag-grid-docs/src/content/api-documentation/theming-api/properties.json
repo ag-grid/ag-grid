@@ -187,7 +187,6 @@
         },
         "iconColor": {},
         "iconSize": {},
-        "dragHandleColor": {},
         "iconButtonColor": {},
         "iconButtonBackgroundColor": {},
         "iconButtonBackgroundSpread": {},
@@ -313,7 +312,8 @@
         "dragAndDropImageBackgroundColor": {},
         "dragAndDropImageBorder": {},
         "dragAndDropImageShadow": {},
-        "dragAndDropImageNotAllowedBorder": {}
+        "dragAndDropImageNotAllowedBorder": {},
+        "dragHandleColor": {}
     },
     "tooltips": {
         "meta": {
