@@ -298,7 +298,8 @@
         "panelTitleBarFontWeight": {},
         "panelTitleBarHeight": {},
         "panelTitleBarBorder": {},
-        "panelTitleBarIconColor": {}
+        "panelTitleBarIconColor": {},
+        "columnSelectIndentSize": {}
     },
     "dragAndDrop": {
         "meta": {
@@ -457,7 +458,6 @@
         "filterPanelApplyButtonColor": {},
         "filterPanelCardSubtleColor": {},
         "filterPanelCardSubtleHoverColor": {},
-        "columnSelectIndentSize": {},
         "filterToolPanelGroupIndent": {},
         "setFilterIndentSize": {}
     },
