@@ -15,17 +15,6 @@
     font-weight: var(--ag-header-font-weight);
 }
 
-.ag-header-row > .ag-grid-scrolling-cells {
-    /* Header center cells must paint above non-header rows, including sticky rows. */
-    z-index: 1;
-}
-
-.ag-header-row > .ag-grid-pinned-left-cells,
-.ag-header-row > .ag-grid-pinned-right-cells {
-    /* Header pinned lanes must always mask center-lane span-up content. */
-    z-index: 3;
-}
-
 .ag-row.ag-header-row {
     border-bottom: none;
 

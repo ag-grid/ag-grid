@@ -108,8 +108,7 @@ export function validateNoDuplicateRowIds(gridRows: GridRows): void {
 
 /** Counts the number of header rows in the grid DOM to compute expected aria-rowindex values. */
 export function countHeaderRows(gridElement: HTMLElement): number {
-    const header =
-        gridElement.querySelector('.ag-grid-pinned-top-rows-container') ?? gridElement.querySelector('.ag-header');
+    const header = gridElement.querySelector('.ag-header');
     if (!header) {
         return 0;
     }

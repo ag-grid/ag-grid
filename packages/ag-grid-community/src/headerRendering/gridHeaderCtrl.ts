@@ -11,7 +11,7 @@ import { getColumnHeaderRowHeight, getFloatingFiltersHeight, getGroupRowsHeight 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IGridHeaderComp {
     toggleCss(cssClassName: string, on: boolean): void;
-    setHeightAndMinHeight(height: string): void;
+    setHeightAndMinHeight(height: number): void;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -106,8 +106,7 @@ export class GridHeaderCtrl extends BeanStub {
         totalHeaderHeight += headerHeight;
         if (this.headerHeightWithBorder !== totalHeaderHeight) {
             this.headerHeightWithBorder = totalHeaderHeight;
-            const px = `${totalHeaderHeight}px`;
-            this.comp.setHeightAndMinHeight(px);
+            this.comp.setHeightAndMinHeight(totalHeaderHeight);
         }
 
         if (this.headerHeight !== totalHeaderHeight) {

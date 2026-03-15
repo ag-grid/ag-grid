@@ -3,6 +3,8 @@ import type {
     IPinnedRowContainerRendererFeature,
     PinnedRowContainerRendererSource,
 } from '../gridBodyComp/pinnedRowContainerRendererFeature';
+import type { ElementParams } from '../utils/element';
+import { _createElement } from '../utils/element';
 import { GridHeaderCtrl } from './gridHeaderCtrl';
 import type { IGridHeaderComp } from './gridHeaderCtrl';
 import { HeaderRowComp } from './row/headerRowComp';
@@ -10,10 +12,17 @@ import type { HeaderRowCtrl, HeaderRowCtrlInstanceId } from './row/headerRowCtrl
 import { HeaderRowsCtrl } from './rowContainer/headerRowsCtrl';
 import type { IHeaderRowsComp } from './rowContainer/headerRowsCtrl';
 
+const HeaderWrapperElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-header',
+    attrs: { role: 'presentation' },
+};
+
 export class GridHeaderFeature extends BeanStub {
     private headerRowComps: { [ctrlId: HeaderRowCtrlInstanceId]: HeaderRowComp } = {};
     private topSectionHeaderRowsSource: PinnedRowContainerRendererSource | undefined;
     private gridHeaderCtrl: GridHeaderCtrl | undefined;
+    private readonly eHeaderWrapper: HTMLDivElement;
 
     constructor(
         private readonly eTopSectionCenterHost: HTMLElement,
@@ -22,6 +31,7 @@ export class GridHeaderFeature extends BeanStub {
         private readonly pinnedRowContainerRendererFeature: IPinnedRowContainerRendererFeature
     ) {
         super();
+        this.eHeaderWrapper = _createElement(HeaderWrapperElement);
     }
 
     public postConstruct(): void {
@@ -29,12 +39,17 @@ export class GridHeaderFeature extends BeanStub {
             id: 'header-rows',
             section: 'top',
             lane: 'edge',
+            wrapper: this.eHeaderWrapper,
         });
 
         const compProxy: IGridHeaderComp = {
             toggleCss: (cssClassName, on) => this.eTopSectionCenterHost.classList.toggle(cssClassName, on),
-            setHeightAndMinHeight: (height) =>
-                this.eTopSectionWrapper.style.setProperty('--ag-header-rows-height', height),
+            setHeightAndMinHeight: (height) => {
+                const borderWidth = this.beans.environment.getHeaderRowBorderWidth();
+                const heightWithBorder = height + borderWidth;
+                this.eTopSectionWrapper.style.setProperty('--ag-header-rows-height', `${heightWithBorder}px`);
+                this.eHeaderWrapper.style.height = `${heightWithBorder}px`;
+            },
         };
         const rowContainerCompProxy: IHeaderRowsComp = {
             setCtrls: (ctrls) => this.setCtrls(ctrls),
@@ -79,6 +94,7 @@ export class GridHeaderFeature extends BeanStub {
         }
 
         this.topSectionHeaderRowsSource?.setRows(orderedGuis);
+
         this.gridHeaderCtrl?.setHeaderRowFocusableElements(orderedGuis);
 
         for (const oldComp of Object.values(oldRowComps)) {

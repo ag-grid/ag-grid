@@ -13,6 +13,7 @@ interface PinnedRowContainerRendererSourceConfig {
     order?: number;
     getTopOffsetPx?: () => number;
     placeAfterHeaderRows?: boolean;
+    wrapper?: HTMLElement;
 }
 
 export interface PinnedRowContainerRendererSource {
@@ -144,10 +145,19 @@ export class PinnedRowContainerRendererFeature extends BeanStub implements IPinn
     private refreshSide(section: PinnedSection): void {
         const side = this.sides[section];
         const sortedSources = this.getSortedSources(section);
-        const orderedEntries: { eGui: HTMLElement; source: SourceState }[] = [];
+
+        // collect active elements and ensure wrappers are in the DOM
         const activeElements = new Set<HTMLElement>();
+        const wrapperElements = new Set<HTMLElement>();
+        const orderedEntries: { eGui: HTMLElement; source: SourceState }[] = [];
 
         for (const source of sortedSources) {
+            if (source.wrapper) {
+                wrapperElements.add(source.wrapper);
+                if (source.wrapper.parentElement !== side) {
+                    side.appendChild(source.wrapper);
+                }
+            }
             for (const eGui of source.elements) {
                 if (activeElements.has(eGui)) {
                     continue;
@@ -161,26 +171,33 @@ export class PinnedRowContainerRendererFeature extends BeanStub implements IPinn
             }
         }
 
+        // remove stale elements (but not wrappers — they're managed separately)
         const previousElements = this.managedBySide.get(section);
         if (previousElements) {
             for (const eGui of previousElements) {
-                if (!activeElements.has(eGui) && eGui.parentElement === side) {
+                if (!activeElements.has(eGui) && !wrapperElements.has(eGui) && side.contains(eGui)) {
                     eGui.remove();
                 }
             }
         }
-
         this.managedBySide.set(section, activeElements);
 
+        // place elements in their containers with correct ordering
         let previous: HTMLElement | null = null;
+        let previousContainer: HTMLElement | null = null;
         for (const { eGui, source } of orderedEntries) {
             if (source.placeAfterHeaderRows) {
                 this.placeAfterHeaderRows(side, eGui);
             } else {
-                if (eGui.parentElement !== side) {
-                    side.appendChild(eGui);
+                const container = source.wrapper ?? side;
+                if (container !== previousContainer) {
+                    previous = null;
+                    previousContainer = container;
                 }
-                _ensureDomOrder(side, eGui, previous);
+                if (eGui.parentElement !== container) {
+                    container.appendChild(eGui);
+                }
+                _ensureDomOrder(container, eGui, previous);
             }
             previous = eGui;
         }

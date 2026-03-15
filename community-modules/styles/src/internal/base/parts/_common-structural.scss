@@ -341,7 +341,6 @@
     .ag-body-vertical-scroll {
         // keep the fake vertical scrollbar above row content so its thumb remains interactive.
         z-index: 2;
-        border-top: solid var(--ag-border-width) transparent;
 
         &.ag-scrollbar-invisible {
             top: 0;
@@ -750,8 +749,15 @@
         background-color: var(--ag-data-background-color);
     }
 
-    .ag-header-row::after {
+    .ag-header {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
         background-color: var(--ag-header-background-color);
+        border-bottom: var(--ag-borders-critical) var(--ag-border-color);
+        // do not allow sticky rows to scroll in front of the header
+        z-index: 1;
     }
 
     .ag-grid-pinned-left-cells,
@@ -1132,25 +1138,6 @@
     .ag-grid-pinned-top-rows {
         top: 0;
         white-space: nowrap;
-        background-image: linear-gradient(var(--ag-header-background-color), var(--ag-header-background-color)),
-            linear-gradient(var(--ag-data-background-color), var(--ag-data-background-color));
-        background-size:
-            100% var(--ag-header-rows-height, 0px),
-            100% 100%;
-        background-repeat: no-repeat;
-        background-position: top left;
-    }
-
-    .ag-grid-pinned-top-rows::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 0;
-        height: var(--ag-header-rows-height, 0px);
-        background-color: var(--ag-header-background-color);
-        pointer-events: none;
-        z-index: 1;
     }
 
     .ag-grid-pinned-bottom-rows {
@@ -1172,17 +1159,19 @@
     .ag-grid-pinned-bottom-rows-container {
         position: relative;
         width: 100%;
-        min-height: 100%;
-        height: 100%;
         white-space: nowrap;
     }
 
     .ag-grid-pinned-top-rows-container {
         display: flex;
         overflow: visible;
+        height: var(--ag-top-rows-height, 0px);
+        min-height: var(--ag-top-rows-height, 0px);
     }
 
     .ag-grid-pinned-bottom-rows-container {
+        min-height: 100%;
+        height: 100%;
         // keep horizontal sticky pinned lanes active for bottom pinned rows.
         overflow: visible;
     }

@@ -1222,9 +1222,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.onTopChanged();
     }
 
-    // applies pagination offset, eg if on second page, and page height is 500px, then removes
-    // 500px from the top position, so a row with rowTop 600px is displayed at location 100px.
-    // reverse will take the offset away rather than add.
+    /**
+     * Applies pagination offset, eg if on second page, and page height is 500px, then removes
+     * 500px from the top position, so a row with rowTop 600px is displayed at location 100px.
+     * reverse will take the offset away rather than add.
+     */
     private applyPaginationOffset(topPx: number, reverse = false): number {
         if (this.rowNode.isRowPinned() || this.rowNode.sticky) {
             return topPx;
@@ -1237,39 +1239,38 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     public setRowTop(pixels: number): void {
-        // print layout uses normal flow layout for row positioning
         if (this.printLayout) {
             return;
         }
-
-        // need to make sure rowTop is not null, as this can happen if the node was once
-        // visible (ie parent group was expanded) but is now not visible
-        if (_exists(pixels)) {
-            const {
-                rowNode,
-                beans: { environment, rowContainerHeight },
-            } = this;
-            const { sticky, rowPinned } = rowNode;
-            const afterPaginationPixels = this.applyPaginationOffset(pixels);
-            const skipScaling = rowNode.isRowPinned() || sticky;
-            const afterScalingPixels = skipScaling
-                ? afterPaginationPixels
-                : rowContainerHeight.getRealPixelPosition(afterPaginationPixels);
-
-            const borderOffset = rowPinned === 'bottom' ? environment.getPinnedRowBorderWidth() : 0;
-
-            const topPx = `${borderOffset + afterScalingPixels + this.getPinnedOffset('top') + this.getPinnedOffset('bottom')}px`;
-            this.setRowTopStyle(topPx);
+        if (!_exists(pixels)) {
+            return;
         }
+        this.setRowTopStyle(`${this.calculateRowTopPx(pixels)}px`);
     }
 
-    // the top needs to be set into the DOM element when the element is created, not updated afterwards.
-    // otherwise the transition would not work, as it would be transitioning from zero (the unset value).
-    // for example, suppose a row that is outside the viewport, then user does a filter to remove other rows
-    // and this row now appears in the viewport, and the row moves up (ie it was under the viewport and not rendered,
-    // but now is in the viewport) then a new RowComp is created, however it should have it's position initialised
-    // to below the viewport, so the row will appear to animate up. if we didn't set the initial position at creation
-    // time, the row would animate down (ie from position zero).
+    /**
+     * Applies pagination offset, pixel scaling, and pinned offsets to produce final top position.
+     */
+    private calculateRowTopPx(pixels: number): number {
+        const {
+            rowNode,
+            beans: { rowContainerHeight },
+        } = this;
+        const afterPagination = this.applyPaginationOffset(pixels);
+        const skipScaling = rowNode.isRowPinned() || rowNode.sticky;
+        const scaled = skipScaling ? afterPagination : rowContainerHeight.getRealPixelPosition(afterPagination);
+        return scaled + this.getPinnedOffset('top') + this.getPinnedOffset('bottom');
+    }
+
+    /**
+     * The top needs to be set into the DOM element when the element is created, not updated afterwards.
+     * otherwise the transition would not work, as it would be transitioning from zero (the unset value).
+     * for example, suppose a row that is outside the viewport, then user does a filter to remove other rows
+     * and this row now appears in the viewport, and the row moves up (ie it was under the viewport and not rendered,
+     * but now is in the viewport) then a new RowComp is created, however it should have it's position initialised
+     * to below the viewport, so the row will appear to animate up. if we didn't set the initial position at creation
+     * time, the row would animate down (ie from position zero).
+     */
     public getInitialRowTop(): string | undefined {
         return this.suppressRowTransform ? this.getInitialRowTopShared() : undefined;
     }
@@ -1277,28 +1278,21 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         return this.suppressRowTransform ? undefined : `translateY(${this.getInitialRowTopShared()})`;
     }
     private getInitialRowTopShared(): string {
-        // print layout uses normal flow layout for row positioning
         if (this.printLayout) {
             return '';
         }
 
-        const rowNode = this.rowNode;
-        let rowTop: number;
+        const { rowNode } = this;
+        let pixels: number;
+
         if (rowNode.sticky) {
             const calculatedRowTop = this.getCalculatedRowTop();
-            rowTop = _exists(calculatedRowTop) ? calculatedRowTop : rowNode.stickyRowTop;
+            pixels = _exists(calculatedRowTop) ? calculatedRowTop : rowNode.stickyRowTop;
         } else {
-            // if sliding in, we take the old row top. otherwise we just set the current row top.
-            const pixels = this.slideInAnimation ? this.roundRowTopToBounds(rowNode.oldRowTop!) : rowNode.rowTop;
-            const afterPaginationPixels = this.applyPaginationOffset(pixels!);
-            // we don't apply scaling if row is pinned
-            rowTop = rowNode.isRowPinned()
-                ? afterPaginationPixels
-                : this.beans.rowContainerHeight.getRealPixelPosition(afterPaginationPixels);
+            pixels = this.slideInAnimation ? this.roundRowTopToBounds(rowNode.oldRowTop!) : rowNode.rowTop!;
         }
 
-        rowTop += this.getPinnedOffset('top') + this.getPinnedOffset('bottom');
-        return rowTop + 'px';
+        return `${this.calculateRowTopPx(pixels)}px`;
     }
 
     private getCalculatedRowTop(): number | null | undefined {
@@ -1342,7 +1336,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             return gridBodyCtrl.getHeaderRowsOffset() ?? 0;
         }
 
-        return gridBodyCtrl.stickyBottomHeight;
+        return gridBodyCtrl.stickyBottomHeight + this.beans.environment.getPinnedRowBorderWidth();
     }
 
     private setRowTopStyle(topPx: string): void {

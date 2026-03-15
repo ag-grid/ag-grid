@@ -525,7 +525,9 @@ export class GridBodyCtrl extends BeanStub {
         const gridHeaderCtrl = this.ctrlsSvc.get('gridHeaderCtrl');
         const headerHeight = gridHeaderCtrl?.headerHeight ?? 0;
         const advancedFilterHeaderHeight = this.filterManager?.getHeaderHeight() ?? 0;
-        return advancedFilterHeaderHeight + headerHeight;
+        const borderWidth = this.beans.environment.getHeaderRowBorderWidth();
+
+        return advancedFilterHeaderHeight + headerHeight + borderWidth;
     }
 
     public getTopPinnedRowsOffset(): number {
