@@ -476,34 +476,34 @@
         "advancedFilterBuilderButtonBarBorder": {},
         "advancedFilterBuilderIndentSize": {}
     },
-    "formulaBar": {
+    "formulas": {
         "meta": {
-            "displayName": "Formula Bar",
+            "displayName": "Formulas",
             "page": {
                 "name": "Formulas",
                 "url": "./formulas/"
             }
         },
-        "formulaToken1BackgroundColor": {},
         "formulaToken1Color": {},
-        "formulaToken1Border": {},
-        "formulaToken2BackgroundColor": {},
         "formulaToken2Color": {},
-        "formulaToken2Border": {},
-        "formulaToken3BackgroundColor": {},
         "formulaToken3Color": {},
-        "formulaToken3Border": {},
-        "formulaToken4BackgroundColor": {},
         "formulaToken4Color": {},
-        "formulaToken4Border": {},
-        "formulaToken5BackgroundColor": {},
         "formulaToken5Color": {},
-        "formulaToken5Border": {},
-        "formulaToken6BackgroundColor": {},
         "formulaToken6Color": {},
-        "formulaToken6Border": {},
-        "formulaToken7BackgroundColor": {},
         "formulaToken7Color": {},
+        "formulaToken1BackgroundColor": {},
+        "formulaToken2BackgroundColor": {},
+        "formulaToken3BackgroundColor": {},
+        "formulaToken4BackgroundColor": {},
+        "formulaToken5BackgroundColor": {},
+        "formulaToken6BackgroundColor": {},
+        "formulaToken7BackgroundColor": {},
+        "formulaToken1Border": {},
+        "formulaToken2Border": {},
+        "formulaToken3Border": {},
+        "formulaToken4Border": {},
+        "formulaToken5Border": {},
+        "formulaToken6Border": {},
         "formulaToken7Border": {}
     },
     "find": {
