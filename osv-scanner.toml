@@ -330,3 +330,63 @@ reason = "Dev/build deps that don't appear in the libraries distributables"
 id = "GHSA-8fgc-7cc6-rx7x"
 reason = "Dev/build deps that don't appear in the libraries distributables"
 
+[[IgnoredVulns]]
+id = "GHSA-g93w-mfhg-p222"
+reason = "Downstream dependency of angular - the user would be responsible for XSS in the i18n pipeline"
+
+[[IgnoredVulns]]
+id = "GHSA-cfw5-2vxh-hr84"
+reason = "Dev/build deps that don't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-mwv9-gp5h-frr4"
+reason = "Dev/build deps that don't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-46wh-pxpv-q5gq"
+reason = "Dev/build deps that don't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-5v7r-6r5c-r473"
+reason = "Dev/build deps that don't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-j47w-4g3g-c36v"
+reason = "Dev/build deps that don't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-25h7-pfq9-p65f"
+reason = "Dev/build deps that don't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-v8w9-8mx6-g223"
+reason = "Dev/build deps that don't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-9ppj-qmqm-q256"
+reason = "tar not used directly and not accessible to end users/external users"
+
+[[IgnoredVulns]]
+id = "GHSA-2mjp-6q6p-2qxm"
+reason = "Dev/build deps that don't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-4992-7rv2-5pvq"
+reason = "Dev/build deps that don't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-f269-vfmq-vjvj"
+reason = "Dev/build deps that don't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-v9p9-hfj2-hcw8"
+reason = "Dev/build deps that don't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-vrm6-8vpv-qv8q"
+reason = "Dev/build deps that don't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-gmq8-994r-jv83"
+reason = "Dev/build deps that don't appear in the libraries distributables"
+
