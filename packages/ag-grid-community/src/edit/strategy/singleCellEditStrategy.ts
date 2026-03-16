@@ -245,12 +245,16 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
                 nextCell.focusCell(true, event);
             } else if (!nextCell.comp?.getCellEditor()) {
                 // Two possibilities:
-                // * Editor should be visible (but was destroyed due to column virtualisation)
-                //   = we shouldn't re-emit a startEdit event, so stay silent
-                // * Editor wasn't created because edit came from API and didn't trigger EditService.startEditing
-                //   = shouldn't be silent
+                // * Editor setup is already in progress (startEditing was called above but the
+                //   editor component hasn't been created yet — happens in React where editor
+                //   creation is asynchronous). Skip the redundant _setupEditor call to avoid
+                //   overwriting the correctly-parameterised first call.
+                // * Editor wasn't created because edit came from API and didn't trigger
+                //   EditService.startEditing — set it up now.
                 const alreadyEditing = this.editSvc?.isEditing(nextCell, { withOpenEditor: true });
-                _setupEditor(this.beans, nextCell, { event, cellStartedEdit: true, silent: alreadyEditing });
+                if (!alreadyEditing) {
+                    _setupEditor(this.beans, nextCell, { event, cellStartedEdit: true });
+                }
                 this.setFocusInOnEditor(nextCell);
 
                 this.cleanupEditors(nextCell);
