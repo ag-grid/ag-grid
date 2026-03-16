@@ -565,9 +565,7 @@ export function _destroyEditor(
     }
 }
 
-type EditingStoppedArgs = Partial<
-    Pick<CellEditingStoppedEvent, 'valueChanged' | 'newValue' | 'newRawValue' | 'oldValue' | 'value'>
->;
+type EditingStoppedArgs = Partial<Pick<CellEditingStoppedEvent, 'valueChanged' | 'newValue' | 'oldValue' | 'value'>>;
 
 /** Group editing event args (AG-15792): uses sourceValue for oldValue/value, does not check isCancelAfterEnd. */
 function _enabledGroupEditStoppedArgs(latest: Readonly<EditValue>, cancel: boolean | undefined): EditingStoppedArgs {
@@ -581,7 +579,6 @@ function _enabledGroupEditStoppedArgs(latest: Readonly<EditValue>, cancel: boole
     return {
         valueChanged: !cancel && _sourceAndPendingDiffer(latest),
         newValue,
-        newRawValue: newValue,
         oldValue: sourceValue,
         value: sourceValue,
     };
@@ -597,7 +594,6 @@ function _cellEditStoppedArgs(
         return {
             valueChanged: false,
             newValue: undefined,
-            newRawValue: undefined,
             oldValue: latest.sourceValue,
         };
     }
@@ -613,7 +609,6 @@ function _cellEditStoppedArgs(
     return {
         valueChanged: _sourceAndPendingDiffer(latest),
         newValue,
-        newRawValue: newValue,
         oldValue: latest.sourceValue,
     };
 }
