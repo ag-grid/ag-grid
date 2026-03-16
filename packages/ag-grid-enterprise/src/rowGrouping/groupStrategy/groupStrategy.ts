@@ -543,17 +543,21 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             groupsById.set(id, node);
         }
 
+        const applyValuesToNode = (n: RowNode) => {
+            n.childrenAfterGroup = children;
+            n.childrenMapped = mapped;
+            n.parent = parent;
+            n.level = level;
+            n.rowGroupIndex = level;
+            n.leafGroup = isLeafLevel;
+        };
+
         // Shared setup for both reused and new nodes.
         const children: RowNode[] = [];
         const mapped = {};
-        node.childrenAfterGroup = children;
-        node.childrenMapped = mapped;
-        node.parent = parent;
-        node.level = level;
-        node.rowGroupIndex = level;
+        applyValuesToNode(node);
         node.field = groupCol.field ?? null;
         node.rowGroupColumn = col;
-        node.leafGroup = isLeafLevel;
         node.groupValue = this.beans.valueSvc.getValue(col, leafNode, 'data');
         // null triggers lazy default resolution in the expanded getter.
         node._expanded ??= null;
@@ -566,12 +570,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
         const sibling = node.sibling;
         if (sibling) {
-            sibling.childrenAfterGroup = children;
-            sibling.childrenMapped = mapped;
-            sibling.parent = parent;
-            sibling.level = level;
-            sibling.rowGroupIndex = level;
-            sibling.leafGroup = isLeafLevel;
+            applyValuesToNode(sibling);
         }
 
         node.dispatchRowEvent('hasChildrenChanged');
