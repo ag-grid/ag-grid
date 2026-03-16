@@ -38,15 +38,15 @@ export class ServerSideExpansionService
     }
 
     public postConstruct(): void {
-        const resetExpand = () => {
+        const setDefaultExpand = () => {
             this.strategy = this.createManagedBean(new ExpandStrategy());
         };
 
         this.addManagedEventListeners({
             // when row grouping / pivot changes, the old expand all state is no longer valid as rows changed
-            columnRowGroupChanged: resetExpand,
-            columnPivotChanged: resetExpand,
-            columnPivotModeChanged: resetExpand,
+            columnRowGroupChanged: setDefaultExpand,
+            columnPivotChanged: setDefaultExpand,
+            columnPivotModeChanged: setDefaultExpand,
         });
 
         this.addManagedPropertyListener('ssrmExpandAllAffectsAllRows', (p) => {
@@ -59,7 +59,7 @@ export class ServerSideExpansionService
             }
         });
 
-        resetExpand();
+        setDefaultExpand();
     }
 
     public setExpansionState(state: RowGroupExpansionState | RowGroupBulkExpansionState): void {
