@@ -114,53 +114,27 @@
     }
 }
 
-.ag-grid-pinned-top-rows:not(.ag-no-top-rows) > .ag-grid-pinned-top-rows-container > .ag-row.ag-row-last {
+.ag-body-vertical-content-no-gap .ag-has-bottom-pinned-rows {
+    .ag-grid-scrolling-container .ag-row-last,
+    .ag-grid-pinned-bottom-rows .ag-row-last-sticky-bottom {
+        > .ag-grid-pinned-left-cells,
+        > .ag-grid-scrolling-cells,
+        > .ag-grid-pinned-right-cells {
+            border-bottom: none;
+        }
+    }
+}
+
+.ag-grid-scrollable-area.ag-has-top-pinned-rows
+    .ag-grid-pinned-top-rows
+    > .ag-grid-pinned-top-rows-container
+    > .ag-row.ag-row-last {
     > .ag-grid-pinned-left-cells,
     > .ag-grid-scrolling-cells,
     > .ag-grid-pinned-right-cells {
         border-bottom: none;
     }
 }
-
-.ag-grid-pinned-top-rows:not(.ag-no-top-rows) > .ag-grid-pinned-top-rows-container > .ag-row.ag-row-last::before {
-    content: '';
-    width: 100%;
-    position: absolute;
-    border-bottom: var(--ag-pinned-row-border);
-    bottom: calc(var(--ag-pinned-row-border-width) * -1);
-}
-
-/* stylelint-disable no-descending-specificity */
-
-.ag-grid-pinned-bottom-rows {
-    > .ag-grid-pinned-bottom-rows-container {
-        > .ag-row:first-child:not(.ag-row-pinned) {
-            > .ag-grid-pinned-left-cells,
-            > .ag-grid-scrolling-cells,
-            > .ag-grid-pinned-right-cells {
-                border-top: var(--ag-row-border);
-            }
-
-            > .ag-full-width-anchor {
-                border-top: var(--ag-row-border);
-            }
-        }
-
-        > .ag-row.ag-row-last-sticky-bottom {
-            > .ag-grid-pinned-left-cells,
-            > .ag-grid-scrolling-cells,
-            > .ag-grid-pinned-right-cells {
-                border-bottom-color: transparent;
-            }
-
-            &.ag-full-width-row {
-                border-bottom-color: transparent;
-            }
-        }
-    }
-}
-
-/* stylelint-enable no-descending-specificity */
 
 /* Hide the border of the last row when there is no gap between the row and
    grid edge to prevent a double border. The use of the child  combinator `>`

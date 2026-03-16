@@ -597,7 +597,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             advancedFilterEnabledChanged: this.updateRowIndexes.bind(this),
             // Manual row pinning (`isRowPinned`) can change pinned row counts without changing a body row's rowIndex.
             // Recompute aria row index whenever pinned rows change so absolute row order stays correct.
-            pinnedRowsChanged: this.updateRowIndexes.bind(this),
+            pinnedRowsChanged: this.onPinnedRowsChanged.bind(this),
             stickyBottomOffsetChanged: this.onStickyBottomOffsetChanged.bind(this),
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
             displayedColumnsWidthChanged: this.refreshPinnedCellGroupWidths.bind(this),
@@ -1190,6 +1190,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
     }
 
+    private onPinnedRowsChanged(): void {
+        this.updateRowIndexes();
+        this.refreshFirstAndLastRowStyles();
+    }
+
     private onPaginationChanged(): void {
         const currentPage = this.beans.pagination?.getCurrentPage() ?? 0;
         // it is possible this row is in the new page, but the page number has changed, which means
@@ -1249,7 +1254,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     /**
-     * Applies pagination offset, pixel scaling, and pinned offsets to produce final top position.
+     * Applies pagination offset and pixel scaling to produce final top position.
+     * Rows are positioned relative to their container, not the section.
      */
     private calculateRowTopPx(pixels: number): number {
         const {
@@ -1258,8 +1264,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         } = this;
         const afterPagination = this.applyPaginationOffset(pixels);
         const skipScaling = rowNode.isRowPinned() || rowNode.sticky;
-        const scaled = skipScaling ? afterPagination : rowContainerHeight.getRealPixelPosition(afterPagination);
-        return scaled + this.getPinnedOffset('top') + this.getPinnedOffset('bottom');
+        return skipScaling ? afterPagination : rowContainerHeight.getRealPixelPosition(afterPagination);
     }
 
     /**
@@ -1297,46 +1302,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private getCalculatedRowTop(): number | null | undefined {
         const { sticky, rowTop, stickyRowTop } = this.rowNode;
-
         if (!sticky) {
             return rowTop;
         }
-
-        const { rowRenderer, ctrlsSvc } = this.beans;
-        const stickyTopCtrls = rowRenderer.getStickyTopRowCtrls();
-        const isStickyTopRow = stickyTopCtrls.includes(this);
-
-        if (!isStickyTopRow) {
-            return stickyRowTop;
-        }
-
-        // stickyRowTop is relative to the sticky lane. Top sticky rows need
-        // header + pinned-top offset added to get viewport-relative row top.
-        const stickyTopOffset = ctrlsSvc.getGridBodyCtrl()?.getTopPinnedRowsOffset() ?? 0;
-        return stickyRowTop + stickyTopOffset;
-    }
-
-    private getPinnedOffset(position: 'top' | 'bottom'): number {
-        const {
-            rowNode,
-            beans: { ctrlsSvc },
-        } = this;
-
-        if (rowNode.rowPinned !== position) {
-            return 0;
-        }
-
-        const gridBodyCtrl = ctrlsSvc.getGridBodyCtrl();
-
-        if (!gridBodyCtrl) {
-            return 0;
-        }
-
-        if (position === 'top') {
-            return gridBodyCtrl.getHeaderRowsOffset() ?? 0;
-        }
-
-        return gridBodyCtrl.stickyBottomHeight + this.beans.environment.getPinnedRowBorderWidth();
+        return stickyRowTop;
     }
 
     private setRowTopStyle(topPx: string): void {

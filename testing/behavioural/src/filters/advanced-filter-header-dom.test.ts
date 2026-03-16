@@ -71,7 +71,12 @@ describe('Advanced Filter Header DOM', () => {
         const advancedFilterTop = Number.parseFloat(advancedFilterHeader!.style.top || '0');
         const advancedFilterHeight = Number.parseFloat(advancedFilterHeader!.style.height || '0');
         const advancedFilterBottom = advancedFilterTop + advancedFilterHeight;
-        const pinnedTopRowTop = getElementY(pinnedTopRow!);
+
+        // The pinned top container has a `top` that positions it below the header and advanced filter.
+        // The row's own transform/top is container-relative (starts at 0).
+        const pinnedTopContainer = topRowsSection?.querySelector<HTMLElement>('.ag-grid-pinned-top-rows-container');
+        const containerTop = Number.parseFloat(pinnedTopContainer?.style.top || '0');
+        const pinnedTopRowTop = containerTop + getElementY(pinnedTopRow!);
 
         // Pinned top rows must start at or below the advanced filter row.
         expect(pinnedTopRowTop).toBeGreaterThanOrEqual(advancedFilterBottom - 1);

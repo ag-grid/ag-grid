@@ -11,7 +11,7 @@ export class AutoWidthCalculator extends BeanStub implements NamedBean {
 
     public postConstruct(): void {
         this.beans.ctrlsSvc.whenReady(this, (p) => {
-            this.scrollingRowContainerCtrl = p.scrollingCenter;
+            this.scrollingRowContainerCtrl = p.scrolling;
         });
     }
 

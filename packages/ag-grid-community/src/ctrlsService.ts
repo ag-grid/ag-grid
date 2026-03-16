@@ -14,9 +14,11 @@ interface ReadyParams {
     gridCtrl: GridCtrl;
     gridBodyCtrl: GridBodyCtrl;
 
-    scrollingCenter: RowContainerCtrl;
-    pinnedBottomCenter: RowContainerCtrl;
-    pinnedTopCenter: RowContainerCtrl;
+    scrolling: RowContainerCtrl;
+    pinnedTop: RowContainerCtrl;
+    pinnedBottom: RowContainerCtrl;
+    stickyTop: RowContainerCtrl;
+    stickyBottom: RowContainerCtrl;
 
     fakeHScrollComp: FakeHScrollComp;
     fakeVScrollComp: FakeVScrollComp;
@@ -29,9 +31,11 @@ type CtrlType = keyof ReadyParams;
 const REQUIRED_CTRLS: CtrlType[] = [
     'gridCtrl',
     'gridBodyCtrl',
-    'scrollingCenter',
-    'pinnedBottomCenter',
-    'pinnedTopCenter',
+    'scrolling',
+    'pinnedTop',
+    'pinnedBottom',
+    'stickyTop',
+    'stickyBottom',
     'fakeHScrollComp',
     'fakeVScrollComp',
     'gridHeaderCtrl',

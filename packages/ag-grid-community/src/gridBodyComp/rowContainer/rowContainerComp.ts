@@ -6,7 +6,6 @@ import type { RowCtrl, RowCtrlInstanceId } from '../../rendering/row/rowCtrl';
 import type { ElementParams } from '../../utils/element';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';
-import type { PinnedRowContainerRendererSource } from '../pinnedRowContainerRendererFeature';
 import type { IRowContainerComp, RowContainerName, RowContainerOptions } from './rowContainerCtrl';
 import {
     RowContainerCtrl,
@@ -14,16 +13,6 @@ import {
     _getRowContainerOptions,
     _getRowSpanContainerClass,
 } from './rowContainerCtrl';
-
-function usesPinnedRowsSource(name: RowContainerName): boolean {
-    return name === 'pinnedTopCenter' || name === 'pinnedBottomCenter';
-}
-
-function isBottomPinnedContainer(name: RowContainerName): boolean {
-    return name === 'pinnedBottomCenter';
-}
-
-const LAST_STICKY_BOTTOM_ROW_CLASS = 'ag-row-last-sticky-bottom';
 
 function getElementParams(name: RowContainerName, options: RowContainerOptions, beans: BeanCollection): ElementParams {
     const isCellSpanning = !!beans.gos.get('enableCellSpan') && !!options.getSpannedRowCtrls;
@@ -45,7 +34,7 @@ function getElementParams(name: RowContainerName, options: RowContainerOptions, 
     };
 }
 
-export class RowContainerComp extends Component {
+class RowContainerComp extends Component {
     private readonly eContainer: HTMLElement = RefPlaceholder;
     private readonly eSpannedContainer: HTMLElement = RefPlaceholder;
 
@@ -60,8 +49,6 @@ export class RowContainerComp extends Component {
     private domOrder: boolean;
     private lastPlacedElement: HTMLElement | null;
     private initialised = false;
-    private pinnedRowsSource: PinnedRowContainerRendererSource | undefined;
-    private pendingPinnedRowGuis: HTMLElement[] = [];
 
     constructor(params?: { name: string }) {
         super();
@@ -90,8 +77,6 @@ export class RowContainerComp extends Component {
         const eSpannedContainer: HTMLElement | undefined = this.eSpannedContainer;
         const eViewport = eGridViewport ?? eContainer;
 
-        this.setupPinnedRowsSource();
-
         const compProxy: IRowContainerComp = {
             setHorizontalScroll: (offset: number) => (eViewport.scrollLeft = offset),
             setRowCtrls: ({ rowCtrls }) => this.setRowCtrls(rowCtrls),
@@ -118,9 +103,6 @@ export class RowContainerComp extends Component {
     }
 
     public override destroy(): void {
-        this.pinnedRowsSource?.destroy();
-        this.pinnedRowsSource = undefined;
-        this.pendingPinnedRowGuis = [];
         // destroys all row comps
         this.setRowCtrls([]);
         this.setRowCtrls([], true);
@@ -167,39 +149,8 @@ export class RowContainerComp extends Component {
             orderedRows.push([rowComp, !existingRowComp]);
         }
 
-        this.updateLastStickyBottomRowClass(rowCtrls, orderedRows);
-
         this.removeOldRows(Object.values(oldRows));
-
-        if (!spanContainer && usesPinnedRowsSource(this.name)) {
-            const orderedGuis = orderedRows.map(([rowComp]) => rowComp.getGui());
-            this.pendingPinnedRowGuis = orderedGuis;
-            this.pinnedRowsSource?.setRows(orderedGuis);
-            return;
-        }
-
         this.addRowNodes(orderedRows, container);
-    }
-
-    private updateLastStickyBottomRowClass(
-        rowCtrls: RowCtrl[],
-        orderedRows: [rowComp: RowComp, isNew: boolean][]
-    ): void {
-        if (!isBottomPinnedContainer(this.name)) {
-            return;
-        }
-
-        for (const [rowComp] of orderedRows) {
-            rowComp.getGui().classList.remove(LAST_STICKY_BOTTOM_ROW_CLASS);
-        }
-
-        const firstPinnedRowIndex = rowCtrls.findIndex((rowCtrl) => rowCtrl.rowNode.isRowPinned());
-        if (firstPinnedRowIndex <= 0) {
-            return;
-        }
-
-        const [lastStickyBottomRowComp] = orderedRows[firstPinnedRowIndex - 1];
-        lastStickyBottomRowComp.getGui().classList.add(LAST_STICKY_BOTTOM_ROW_CLASS);
     }
 
     private addRowNodes(rows: [rowComp: RowComp, isNew: boolean][], container: HTMLElement): void {
@@ -226,27 +177,6 @@ export class RowContainerComp extends Component {
     private ensureDomOrder(eRow: HTMLElement, container: HTMLElement): void {
         _ensureDomOrder(container, eRow, this.lastPlacedElement);
         this.lastPlacedElement = eRow;
-    }
-
-    private setupPinnedRowsSource(): void {
-        if (!usesPinnedRowsSource(this.name)) {
-            return;
-        }
-
-        this.beans.ctrlsSvc.whenReady(this, ({ gridBodyCtrl }) => {
-            if (!this.isAlive() || this.pinnedRowsSource) {
-                return;
-            }
-
-            this.pinnedRowsSource = gridBodyCtrl
-                .getPinnedRowContainerRendererFeature()
-                .registerRowContainerSource(this.name);
-            if (!this.pinnedRowsSource) {
-                return;
-            }
-            this.pinnedRowsSource.setRows(this.pendingPinnedRowGuis);
-            this.pendingPinnedRowGuis = [];
-        });
     }
 }
 

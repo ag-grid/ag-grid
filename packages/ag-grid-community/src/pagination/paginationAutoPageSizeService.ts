@@ -15,7 +15,7 @@ export class PaginationAutoPageSizeService extends BeanStub implements NamedBean
 
     public postConstruct(): void {
         this.beans.ctrlsSvc.whenReady(this, (p) => {
-            this.scrollingRowsCtrl = p.scrollingCenter;
+            this.scrollingRowsCtrl = p.scrolling;
 
             const listener = this.checkPageSize.bind(this);
             this.addManagedEventListeners({

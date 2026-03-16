@@ -130,7 +130,7 @@ export class GridBodyScrollFeature extends BeanStub {
         });
 
         this.ctrlsSvc.whenReady(this, (p) => {
-            this.scrollingRowsCtrl = p.scrollingCenter;
+            this.scrollingRowsCtrl = p.scrolling;
             this.fakeVScrollComp = p.fakeVScrollComp;
             this.fakeHScrollComp = p.fakeHScrollComp;
             this.onDisplayedColumnsWidthChanged();

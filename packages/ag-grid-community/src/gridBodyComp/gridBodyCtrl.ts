@@ -14,8 +14,6 @@ import type { LayoutView } from '../styling/layoutFeature';
 import { LayoutFeature } from '../styling/layoutFeature';
 import type { PopupService } from '../widgets/popupService';
 import { GridBodyScrollFeature } from './gridBodyScrollFeature';
-import { PinnedRowContainerRendererFeature } from './pinnedRowContainerRendererFeature';
-import type { IPinnedRowContainerRendererFeature } from './pinnedRowContainerRendererFeature';
 import type { ScrollVisibleService } from './scrollVisibleService';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -56,7 +54,6 @@ export class GridBodyCtrl extends BeanStub {
     private rowGroupColsSvc?: IColsService;
     private pinnedRowModel?: IPinnedRowModel;
     private filterManager?: FilterManager;
-    private pinnedRowContainerRendererFeature!: IPinnedRowContainerRendererFeature;
 
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsSvc = beans.ctrlsSvc;
@@ -72,6 +69,7 @@ export class GridBodyCtrl extends BeanStub {
     public eGridViewport: HTMLElement;
     public eScrollingRows: HTMLElement;
     private eTop: HTMLElement;
+    private eTopExtraRows: HTMLElement;
     private eBottom: HTMLElement;
     private topPinnedRowsHeight = 0;
     private bottomPinnedRowsHeight = 0;
@@ -86,9 +84,8 @@ export class GridBodyCtrl extends BeanStub {
         eGridBody: HTMLElement,
         eGridViewport: HTMLElement,
         eScrollingRows: HTMLElement,
-        eTopRowsContainer: HTMLElement,
         eTop: HTMLElement,
-        eBottomRowsContainer: HTMLElement,
+        eTopExtraRows: HTMLElement,
         eBottom: HTMLElement
     ): void {
         this.comp = comp;
@@ -96,13 +93,9 @@ export class GridBodyCtrl extends BeanStub {
         this.eGridViewport = eGridViewport;
         this.eScrollingRows = eScrollingRows;
         this.eTop = eTop;
+        this.eTopExtraRows = eTopExtraRows;
         this.eBottom = eBottom;
-        this.pinnedRowContainerRendererFeature = this.createManagedBean(
-            new PinnedRowContainerRendererFeature(eTopRowsContainer, eBottomRowsContainer)
-        );
-        this.createManagedBean(
-            new GridHeaderFeature(eTopRowsContainer, eTop, eGridViewport, this.pinnedRowContainerRendererFeature)
-        );
+        this.createManagedBean(new GridHeaderFeature(eTop, eGridViewport));
 
         this.setCellTextSelection(this.gos.get('enableCellTextSelection'));
         this.addManagedPropertyListener('enableCellTextSelection', (props) =>
@@ -126,15 +119,10 @@ export class GridBodyCtrl extends BeanStub {
         this.updatePinnedColumnStickyOffsets();
         this.updateScrollingClasses();
 
-        this.filterManager?.mountAdvFilterTopSectionComp(
-            this.pinnedRowContainerRendererFeature.createCompSide({
-                section: 'top',
-                lane: 'edge',
-                order: 1,
-                getTopOffsetPx: () => this.ctrlsSvc.get('gridHeaderCtrl')?.headerHeight ?? 0,
-                placeAfterHeaderRows: true,
-            })
-        );
+        this.filterManager?.mountAdvFilterTopSectionComp({
+            mountComp: (eGui) => eTopExtraRows.appendChild(eGui),
+            unmountComp: (eGui) => eGui.remove(),
+        });
 
         this.ctrlsSvc.register('gridBodyCtrl', this);
     }
@@ -158,7 +146,6 @@ export class GridBodyCtrl extends BeanStub {
             pinnedHeightChanged: setPinnedRowsHeights,
             pinnedRowsChanged: setPinnedRowsHeights,
             headerHeightChanged: setPinnedRowsHeights,
-            headerRowsChanged: () => this.pinnedRowContainerRendererFeature.refresh(),
             gridSizeChanged: onGridSizeChanged,
             columnRowGroupChanged: setGridRootRole,
             columnPivotChanged: setGridRootRole,
@@ -187,15 +174,14 @@ export class GridBodyCtrl extends BeanStub {
         this.setStickyWidth(visible);
         this.updatePinnedColumnStickyOffsets();
         this.updateScrollableAreaWidth();
-        this.pinnedRowContainerRendererFeature.refresh();
-
         this.updateScrollingClasses();
+        this.updateExtraRowsWidth();
     }
 
     private onGridSizeChanged(): void {
         this.updateScrollableAreaWidth();
         this.updatePinnedColumnStickyOffsets();
-        this.pinnedRowContainerRendererFeature.refresh();
+        this.updateExtraRowsWidth();
     }
 
     private updateScrollableAreaWidth(): void {
@@ -224,6 +210,11 @@ export class GridBodyCtrl extends BeanStub {
 
     public getViewportWidthWithoutScrollbar(): number {
         return Math.max(0, _getInnerWidth(this.eGridViewport) - this.getVerticalScrollbarWidth());
+    }
+
+    private updateExtraRowsWidth(): void {
+        const anchorWidth = this.getViewportWidthWithoutScrollbar();
+        this.eTopExtraRows.style.setProperty('--ag-fw-anchor-width', `${anchorWidth}px`);
     }
 
     private setGridRootRole(): void {
@@ -473,7 +464,6 @@ export class GridBodyCtrl extends BeanStub {
 
         const pinnedTopHeight = pinnedRowModel?.getPinnedTopTotalHeight();
         const pinnedBottomHeight = pinnedRowModel?.getPinnedBottomTotalHeight();
-        const advancedFilterHeaderHeight = this.filterManager?.getHeaderHeight() ?? 0;
 
         const { environment } = this.beans;
         const borderAdjustment = environment.getPinnedRowBorderWidth() - environment.getRowBorderWidth();
@@ -483,19 +473,44 @@ export class GridBodyCtrl extends BeanStub {
         this.topPinnedRowsHeight = normalisedPinnedTopHeight;
         this.bottomPinnedRowsHeight = normalisedPinnedBottomHeight;
 
-        this.comp.setPinnedSection('top', {
-            height: normalisedPinnedTopHeight + advancedFilterHeaderHeight,
-            invisible: normalisedPinnedTopHeight <= 0,
-        });
-        this.comp.setPinnedSection('bottom', {
-            height: normalisedPinnedBottomHeight,
-            invisible: normalisedPinnedBottomHeight <= 0,
-        });
-        this.pinnedRowContainerRendererFeature.refresh();
+        this.ctrlsSvc.get('pinnedTop')?.setContainerHeight(normalisedPinnedTopHeight);
+        this.ctrlsSvc.get('pinnedBottom')?.setContainerHeight(normalisedPinnedBottomHeight);
+
+        this.refreshTopSection();
+        this.refreshBottomSection();
     }
 
-    public getPinnedRowContainerRendererFeature(): IPinnedRowContainerRendererFeature {
-        return this.pinnedRowContainerRendererFeature;
+    private refreshTopSection(): void {
+        const advancedFilterHeaderHeight = this.filterManager?.getHeaderHeight() ?? 0;
+        const headerRowsOffset = this.getHeaderRowsOffset();
+
+        // set top on eTopExtraRows
+        const gridHeaderCtrl = this.ctrlsSvc.get('gridHeaderCtrl');
+        const headerHeight = (gridHeaderCtrl?.headerHeight ?? 0) + this.beans.environment.getHeaderRowBorderWidth();
+        this.eTopExtraRows.style.top = `${headerHeight}px`;
+
+        // set top on pinnedTop container
+        const pinnedTopTop = headerRowsOffset;
+        this.ctrlsSvc.get('pinnedTop')?.setContainerTop(pinnedTopTop);
+
+        // set top on stickyTop container
+        const stickyTopTop = pinnedTopTop + this.topPinnedRowsHeight;
+        this.ctrlsSvc.get('stickyTop')?.setContainerTop(stickyTopTop);
+
+        this.comp.setPinnedSection('top', {
+            height: this.topPinnedRowsHeight + advancedFilterHeaderHeight,
+            invisible: this.topPinnedRowsHeight <= 0,
+        });
+    }
+
+    private refreshBottomSection(): void {
+        this.ctrlsSvc.get('stickyBottom')?.setContainerTop(0);
+        this.ctrlsSvc.get('pinnedBottom')?.setContainerTop(this.stickyBottomHeight);
+
+        this.comp.setPinnedSection('bottom', {
+            height: this.bottomPinnedRowsHeight,
+            invisible: this.bottomPinnedRowsHeight <= 0,
+        });
     }
 
     public setStickyTopHeight(height: number = 0): void {
@@ -503,18 +518,35 @@ export class GridBodyCtrl extends BeanStub {
             return;
         }
         this.stickyTopHeight = height;
+        this.ctrlsSvc.get('stickyTop')?.setContainerHeight(height);
+        this.refreshTopSection();
     }
 
     public setStickyBottomHeight(height: number = 0): void {
         if (this.stickyBottomHeight === height) {
             return;
         }
-        this.comp.setStickyBottomHeight(`${height}px`);
         this.stickyBottomHeight = height;
+        this.ctrlsSvc.get('stickyBottom')?.setContainerHeight(height);
+        this.comp.setStickyBottomHeight(`${height}px`);
+        this.refreshBottomSection();
+        this.updateStickyRowsHeightAdjustment();
         this.eventSvc.dispatchEvent({
             type: 'stickyBottomOffsetChanged',
             offset: height,
         });
+    }
+
+    private updateStickyRowsHeightAdjustment(): void {
+        const {
+            stickyBottomHeight,
+            beans: { rowContainerHeight },
+        } = this;
+        // only adjust for stickyBottom as stickyTopRows overflow the container
+        if (rowContainerHeight.stickyBottomRowsHeight !== stickyBottomHeight) {
+            rowContainerHeight.stickyBottomRowsHeight = stickyBottomHeight;
+            this.eventSvc.dispatchEvent({ type: 'rowContainerHeightChanged' });
+        }
     }
 
     private setStickyWidth(vScrollVisible: boolean) {

@@ -1,8 +1,5 @@
+import { _ensureDomOrder } from '../agStack/utils/dom';
 import { BeanStub } from '../context/beanStub';
-import type {
-    IPinnedRowContainerRendererFeature,
-    PinnedRowContainerRendererSource,
-} from '../gridBodyComp/pinnedRowContainerRendererFeature';
 import type { ElementParams } from '../utils/element';
 import { _createElement } from '../utils/element';
 import { GridHeaderCtrl } from './gridHeaderCtrl';
@@ -20,34 +17,27 @@ const HeaderWrapperElement: ElementParams = {
 
 export class GridHeaderFeature extends BeanStub {
     private headerRowComps: { [ctrlId: HeaderRowCtrlInstanceId]: HeaderRowComp } = {};
-    private topSectionHeaderRowsSource: PinnedRowContainerRendererSource | undefined;
     private gridHeaderCtrl: GridHeaderCtrl | undefined;
     private readonly eHeaderWrapper: HTMLDivElement;
 
     constructor(
-        private readonly eTopSectionCenterHost: HTMLElement,
-        private readonly eTopSectionWrapper: HTMLElement,
-        private readonly eGridViewport: HTMLElement,
-        private readonly pinnedRowContainerRendererFeature: IPinnedRowContainerRendererFeature
+        private readonly eTopSection: HTMLElement,
+        private readonly eGridViewport: HTMLElement
     ) {
         super();
         this.eHeaderWrapper = _createElement(HeaderWrapperElement);
     }
 
     public postConstruct(): void {
-        this.topSectionHeaderRowsSource = this.pinnedRowContainerRendererFeature.registerSource({
-            id: 'header-rows',
-            section: 'top',
-            lane: 'edge',
-            wrapper: this.eHeaderWrapper,
-        });
+        // Prepend .ag-header as the first child of eTop
+        this.eTopSection.prepend(this.eHeaderWrapper);
 
         const compProxy: IGridHeaderComp = {
-            toggleCss: (cssClassName, on) => this.eTopSectionCenterHost.classList.toggle(cssClassName, on),
+            toggleCss: (cssClassName, on) => this.eHeaderWrapper.classList.toggle(cssClassName, on),
             setHeightAndMinHeight: (height) => {
                 const borderWidth = this.beans.environment.getHeaderRowBorderWidth();
                 const heightWithBorder = height + borderWidth;
-                this.eTopSectionWrapper.style.setProperty('--ag-header-rows-height', `${heightWithBorder}px`);
+                this.eTopSection.style.setProperty('--ag-header-rows-height', `${heightWithBorder}px`);
                 this.eHeaderWrapper.style.height = `${heightWithBorder}px`;
             },
         };
@@ -57,18 +47,17 @@ export class GridHeaderFeature extends BeanStub {
         };
 
         this.gridHeaderCtrl = this.createManagedBean(new GridHeaderCtrl());
-        this.gridHeaderCtrl.setComp(compProxy, this.eTopSectionCenterHost);
+        this.gridHeaderCtrl.setComp(compProxy, this.eHeaderWrapper);
 
         const rowContainerCtrl = this.createManagedBean(new HeaderRowsCtrl());
-        rowContainerCtrl.setComp(rowContainerCompProxy, this.eTopSectionCenterHost, this.eGridViewport);
+        rowContainerCtrl.setComp(rowContainerCompProxy, this.eHeaderWrapper, this.eGridViewport);
     }
 
     public override destroy(): void {
         this.setCtrls([]);
-        this.topSectionHeaderRowsSource?.destroy();
-        this.topSectionHeaderRowsSource = undefined;
         this.gridHeaderCtrl = undefined;
-        this.eTopSectionWrapper.style.removeProperty('--ag-header-rows-height');
+        this.eTopSection.style.removeProperty('--ag-header-rows-height');
+        this.eHeaderWrapper.remove();
         super.destroy();
     }
 
@@ -81,6 +70,7 @@ export class GridHeaderFeature extends BeanStub {
         const oldRowComps = this.headerRowComps;
         this.headerRowComps = {};
 
+        let previous: HTMLElement | null = null;
         const orderedGuis: HTMLElement[] = [];
 
         for (const ctrl of ctrls) {
@@ -90,10 +80,16 @@ export class GridHeaderFeature extends BeanStub {
 
             const rowComp = existingComp ?? this.createBean(new HeaderRowComp(ctrl));
             this.headerRowComps[ctrlId] = rowComp;
-            orderedGuis.push(rowComp.getGui());
-        }
 
-        this.topSectionHeaderRowsSource?.setRows(orderedGuis);
+            const eGui = rowComp.getGui();
+            orderedGuis.push(eGui);
+
+            if (eGui.parentElement !== this.eHeaderWrapper) {
+                this.eHeaderWrapper.appendChild(eGui);
+            }
+            _ensureDomOrder(this.eHeaderWrapper, eGui, previous);
+            previous = eGui;
+        }
 
         this.gridHeaderCtrl?.setHeaderRowFocusableElements(orderedGuis);
 

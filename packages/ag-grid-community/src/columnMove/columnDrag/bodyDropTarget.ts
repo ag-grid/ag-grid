@@ -36,7 +36,7 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
         ctrlsSvc.whenReady(this, (p) => {
             this.eGridViewport = p.gridBodyCtrl.eGridViewport;
             const uniqueViewports: HTMLElement[] = [];
-            for (const viewport of [this.eGridViewport, p.pinnedTopCenter.eViewport, p.pinnedBottomCenter.eViewport]) {
+            for (const viewport of [this.eGridViewport, p.pinnedTop.eViewport, p.pinnedBottom.eViewport]) {
                 if (viewport && !uniqueViewports.includes(viewport)) {
                     uniqueViewports.push(viewport);
                 }

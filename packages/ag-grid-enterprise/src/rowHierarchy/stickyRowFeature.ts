@@ -7,7 +7,6 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
     private gridBodyCtrl: GridBodyCtrl;
     private topContainerHeight: number;
     private bottomContainerHeight: number;
-    private topRowsOffset = 0;
     private isClientSide: boolean;
 
     // sticky rows pulls in extra rows from other pages which impacts row position
@@ -31,29 +30,7 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
             this.gridBodyCtrl = params.gridBodyCtrl;
         });
 
-        this.addManagedEventListeners({
-            headerHeightChanged: this.refreshStickyTopRowPositions.bind(this),
-            pinnedRowsChanged: this.refreshStickyTopRowPositions.bind(this),
-            pinnedHeightChanged: this.refreshStickyTopRowPositions.bind(this),
-            pinnedRowDataChanged: this.refreshStickyTopRowPositions.bind(this),
-        });
-
         this.resetStickyContainers();
-    }
-
-    private getStickyTopRowsOffset(): number {
-        return this.gridBodyCtrl?.getTopPinnedRowsOffset() ?? 0;
-    }
-
-    private refreshStickyTopRowPositions(): void {
-        const topOffset = this.getStickyTopRowsOffset();
-        if (topOffset === this.topRowsOffset) {
-            return;
-        }
-        this.topRowsOffset = topOffset;
-        for (const ctrl of this.stickyTopRowCtrls) {
-            ctrl.setRowTop(ctrl.rowNode.stickyRowTop + topOffset);
-        }
     }
 
     private setOffsetTop(offset: number): void {
@@ -447,13 +424,8 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
         if (!isTop) {
             newCtrlsList.reverse();
         }
-        const topOffset = isTop ? this.getStickyTopRowsOffset() : 0;
-        if (isTop) {
-            this.topRowsOffset = topOffset;
-        }
         for (const ctrl of newCtrlsList) {
-            const rowTop = isTop ? ctrl.rowNode.stickyRowTop + topOffset : ctrl.rowNode.stickyRowTop;
-            ctrl.setRowTop(rowTop);
+            ctrl.setRowTop(ctrl.rowNode.stickyRowTop);
         }
 
         const pageBounds = this.beans.pageBounds;

@@ -522,6 +522,6 @@ function assertBottomPinnedContainerAllowsStickyLanes(): void {
         'utf8'
     );
 
-    expect(themingCss).toMatch(/\.ag-grid-pinned-bottom-rows-container\s*\{[^}]*overflow:\s*visible;/s);
-    expect(legacyScss).toMatch(/\.ag-grid-pinned-bottom-rows-container\s*\{[^}]*overflow:\s*visible;/s);
+    expect(themingCss).toMatch(/\.ag-grid-pinned-bottom-rows-container[\s\S]*?\{[^}]*overflow:\s*visible;/s);
+    expect(legacyScss).toMatch(/\.ag-grid-pinned-bottom-rows-container[\s\S]*?\{[^}]*overflow:\s*visible;/s);
 }

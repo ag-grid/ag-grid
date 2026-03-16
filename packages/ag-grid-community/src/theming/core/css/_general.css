@@ -146,7 +146,6 @@
     min-height: 0;
     min-width: 0;
     display: flex;
-    position: relative;
 
     &:where(.ag-scrollbar-invisible) {
         position: absolute;
@@ -169,6 +168,8 @@
 
 .ag-body-horizontal-scroll {
     width: 100%;
+    position: relative;
+    flex: none;
 
     &:where(.ag-scrollbar-invisible) {
         left: 0;
@@ -183,12 +184,14 @@
 }
 
 .ag-body-vertical-scroll {
+    position: absolute;
+    right: 0;
+
     /* keep the fake vertical scrollbar above row content so its thumb remains interactive. */
     z-index: 2;
 
     &:where(.ag-scrollbar-invisible) {
         top: 0;
-        right: 0;
     }
 }
 
@@ -451,37 +454,32 @@
     box-sizing: content-box !important;
 }
 
-:where(.ag-grid-pinned-bottom-rows.ag-has-bottom-pinned-rows) > .ag-grid-pinned-bottom-rows-container::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: calc(100% - var(--ag-bottom-rows-height, 0));
-    border-top: var(--ag-pinned-row-border);
-    pointer-events: none;
-    z-index: 3;
-}
-
 .ag-grid-pinned-top-rows-container,
-.ag-grid-pinned-bottom-rows-container {
-    position: relative;
+.ag-grid-pinned-bottom-rows-container,
+.ag-grid-sticky-top-rows-container,
+.ag-grid-sticky-bottom-rows-container {
+    position: absolute;
     width: 100%;
     white-space: nowrap;
+    overflow: visible;
 }
 
 .ag-grid-pinned-top-rows-container {
     display: flex;
-    overflow: visible;
-    height: var(--ag-top-rows-height, 0);
-    min-height: var(--ag-top-rows-height, 0);
+    border-bottom: var(--ag-pinned-row-border);
+
+    /* prevent sticky rows from scrolling in front of pinned rows */
+    z-index: 1;
 }
 
 .ag-grid-pinned-bottom-rows-container {
-    min-height: 100%;
-    height: 100%;
+    display: flex;
+    border-top: var(--ag-pinned-row-border);
+}
 
-    /* Keep horizontal sticky pinned lanes active for bottom pinned rows. */
-    overflow: visible;
+.ag-extra-rows-container {
+    position: absolute;
+    width: 100%;
 }
 
 .ag-opacity-zero {
@@ -528,7 +526,10 @@
     .ag-grid-scrolling-rows,
     .ag-grid-pinned-top-rows,
     .ag-grid-pinned-bottom-rows,
-    .ag-grid-pinned-top-rows-container {
+    .ag-grid-pinned-top-rows-container,
+    .ag-grid-pinned-bottom-rows-container,
+    .ag-grid-sticky-top-rows-container,
+    .ag-grid-sticky-bottom-rows-container {
         flex-direction: row;
     }
 
@@ -546,7 +547,10 @@
     .ag-grid-scrolling-rows,
     .ag-grid-pinned-top-rows,
     .ag-grid-pinned-bottom-rows,
-    .ag-grid-pinned-top-rows-container {
+    .ag-grid-pinned-top-rows-container,
+    .ag-grid-pinned-bottom-rows-container,
+    .ag-grid-sticky-top-rows-container,
+    .ag-grid-sticky-bottom-rows-container {
         flex-direction: row-reverse;
     }
 

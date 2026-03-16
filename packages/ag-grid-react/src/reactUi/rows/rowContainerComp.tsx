@@ -13,7 +13,7 @@ import useReactCommentEffect from '../reactComment';
 import { agFlushSync, classesList, getNextValueIfDifferent } from '../utils';
 import RowComp from './rowComp';
 
-export type ReactRowContainerName = 'scrollingCenter' | 'pinnedTopCenter' | 'pinnedBottomCenter';
+export type ReactRowContainerName = 'scrolling' | 'pinnedTop' | 'pinnedBottom' | 'stickyTop' | 'stickyBottom';
 
 type CommunityRowContainerName = Parameters<typeof _getRowContainerOptions>[0];
 const asCommunityRowContainerName = (name: ReactRowContainerName): CommunityRowContainerName =>
@@ -22,11 +22,9 @@ const asCommunityRowContainerName = (name: ReactRowContainerName): CommunityRowC
 const RowContainerComp = ({
     name,
     viewportElement,
-    onContainerElementChanged,
 }: {
     name: ReactRowContainerName;
     viewportElement?: HTMLElement | null;
-    onContainerElementChanged?: (element: HTMLDivElement | null) => void;
 }) => {
     const { context, gos } = useContext(BeansContext);
 
@@ -146,10 +144,9 @@ const RowContainerComp = ({
     const setContainerRef = useCallback(
         (e: HTMLDivElement | null) => {
             eContainer.current = e;
-            onContainerElementChanged?.(e);
             setRef();
         },
-        [onContainerElementChanged, setRef]
+        [setRef]
     );
     const setSpanContainerRef = useCallback(
         (e: HTMLDivElement | null) => {

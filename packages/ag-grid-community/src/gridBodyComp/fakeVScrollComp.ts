@@ -38,7 +38,6 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
             pinnedRowsChanged: this.queueContainerHeightSync.bind(this),
             pinnedHeightChanged: this.queueContainerHeightSync.bind(this),
             pinnedRowDataChanged: this.queueContainerHeightSync.bind(this),
-            stickyBottomOffsetChanged: this.queueContainerHeightSync.bind(this),
         });
         this.addManagedPropertyListeners(
             ['suppressHorizontalScroll', 'enableRtl'],
@@ -60,16 +59,9 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         const headerRowsOffset = gridBodyCtrl?.getHeaderRowsOffset() ?? 0;
 
         const eGui = this.getGui();
-        eGui.style.position = 'absolute';
+
         eGui.style.top = `${headerRowsOffset}px`;
         eGui.style.bottom = `${horizontalScrollHeight}px`;
-        if (this.enableRtl) {
-            eGui.style.left = '0';
-            eGui.style.right = '';
-        } else {
-            eGui.style.right = '0';
-            eGui.style.left = '';
-        }
 
         this.toggleCss('ag-scrollbar-invisible', invisibleScrollbar);
         _setFixedWidth(eGui, adjustedScrollbarWidth);
@@ -106,11 +98,11 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
             return;
         }
 
-        const realViewport = gridBodyCtrl.eGridViewport;
-        const realScrollRange = Math.max(0, realViewport.scrollHeight - realViewport.clientHeight);
-        const fakeViewportHeight = this.eViewport.clientHeight;
-        const scrollHeight = fakeViewportHeight + realScrollRange;
-        this.eContainer.style.height = `${Math.max(1, scrollHeight)}px`;
+        const { eGridViewport } = gridBodyCtrl;
+        const { clientHeight: gridHeight, scrollHeight: gridScrollHeight } = eGridViewport;
+        const fakeVScrollHeight = this.eViewport.clientHeight;
+        const diff = gridHeight - fakeVScrollHeight;
+        this.eContainer.style.height = `${Math.max(1, gridScrollHeight - diff)}px`;
     }
 
     public getScrollPosition(): number {

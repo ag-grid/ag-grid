@@ -55,8 +55,7 @@ const GridBodyComp = () => {
     const eGridScrollableArea = useRef<HTMLDivElement | null>(null);
     const eBody = useRef<HTMLDivElement | null>(null);
     const eBottom = useRef<HTMLDivElement | null>(null);
-    const [topRowsHost, setTopRowsHost] = useState<HTMLDivElement | null>(null);
-    const [bottomRowsHost, setBottomRowsHost] = useState<HTMLDivElement | null>(null);
+    const eTopExtraRows = useRef<HTMLDivElement | null>(null);
 
     useReactCommentEffect(' AG Grid Body ', eRoot);
     useReactCommentEffect(' AG Pinned Top ', eTop);
@@ -86,8 +85,7 @@ const GridBodyComp = () => {
             !eBody.current ||
             !eTop.current ||
             !eBottom.current ||
-            !topRowsHost ||
-            !bottomRowsHost
+            !eTopExtraRows.current
         ) {
             return;
         }
@@ -151,9 +149,8 @@ const GridBodyComp = () => {
             rootElement,
             eGridViewport.current,
             eBody.current,
-            topRowsHost,
             eTop.current,
-            bottomRowsHost,
+            eTopExtraRows.current,
             eBottom.current
         );
 
@@ -167,7 +164,7 @@ const GridBodyComp = () => {
                 f();
             }
         };
-    }, [context, gos, overlays, rangeSvc, rootElement, topRowsHost, bottomRowsHost]);
+    }, [context, gos, overlays, rangeSvc, rootElement]);
 
     const rootClasses = useMemo(() => classesList('ag-root', 'ag-unselectable', layoutClass), [layoutClass]);
     const gridViewportClasses = useMemo(
@@ -181,22 +178,29 @@ const GridBodyComp = () => {
     const topSection = pinnedSections.top;
     const bottomSection = pinnedSections.bottom;
     const topClasses = useMemo(
-        () => classesList('ag-grid-pinned-top-rows', topSection.invisible ? 'ag-no-top-rows' : null, cellSelectableCss),
+        () => classesList('ag-grid-pinned-top-rows', cellSelectableCss),
         [cellSelectableCss, topSection.invisible]
     );
     const stickyBottomHeightNumber = Number.parseFloat(stickyBottomHeight) || 0;
     const bottomSectionInvisible = bottomSection.height <= 0 && stickyBottomHeightNumber <= 0;
-    const bottomNoRows = bottomSection.invisible && stickyBottomHeightNumber <= 0;
+
+    const scrollableClasses = useMemo(
+        () =>
+            classesList(
+                'ag-grid-scrollable-area',
+                !topSection.invisible ? 'ag-has-top-pinned-rows' : null,
+                !bottomSection.invisible ? 'ag-has-bottom-pinned-rows' : null
+            ),
+        [bottomSection.invisible, topSection.invisible]
+    );
     const bottomClasses = useMemo(
         () =>
             classesList(
                 'ag-grid-pinned-bottom-rows',
-                !bottomSection.invisible ? 'ag-has-bottom-pinned-rows' : null,
-                bottomNoRows ? 'ag-no-bottom-rows' : null,
                 bottomSectionInvisible ? 'ag-invisible' : null,
                 cellSelectableCss
             ),
-        [bottomSection.invisible, bottomNoRows, bottomSectionInvisible, cellSelectableCss]
+        [bottomSection.invisible, bottomSectionInvisible, cellSelectableCss]
     );
 
     const topStyle: React.CSSProperties = useMemo(() => {
@@ -228,23 +232,18 @@ const GridBodyComp = () => {
     return (
         <div ref={setRootRef} className={rootClasses}>
             <div ref={setGridViewportRef} className={gridViewportClasses} role="presentation">
-                <div ref={eGridScrollableArea} className="ag-grid-scrollable-area" role="rowgroup">
+                <div ref={eGridScrollableArea} className={scrollableClasses} role="rowgroup">
                     <div ref={eTop} className={topClasses} role="presentation" style={topStyle}>
-                        <RowContainerComp
-                            name="pinnedTopCenter"
-                            viewportElement={gridViewportElement}
-                            onContainerElementChanged={setTopRowsHost}
-                        />
+                        <div ref={eTopExtraRows} className="ag-extra-rows-container" role="presentation" />
+                        <RowContainerComp name="pinnedTop" viewportElement={gridViewportElement} />
+                        <RowContainerComp name="stickyTop" viewportElement={gridViewportElement} />
                     </div>
                     <div className={bodyClasses} ref={eBody} role="presentation">
-                        <RowContainerComp name="scrollingCenter" viewportElement={gridViewportElement} />
+                        <RowContainerComp name="scrolling" viewportElement={gridViewportElement} />
                     </div>
                     <div className={bottomClasses} ref={eBottom} role="presentation" style={bottomStyle}>
-                        <RowContainerComp
-                            name="pinnedBottomCenter"
-                            viewportElement={gridViewportElement}
-                            onContainerElementChanged={setBottomRowsHost}
-                        />
+                        <RowContainerComp name="stickyBottom" viewportElement={gridViewportElement} />
+                        <RowContainerComp name="pinnedBottom" viewportElement={gridViewportElement} />
                     </div>
                 </div>
             </div>

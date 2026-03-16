@@ -10,7 +10,6 @@ import { FakeHScrollSelector } from './fakeHScrollComp';
 import { FakeVScrollSelector } from './fakeVScrollComp';
 import type { IGridBodyComp, PinnedSection, PinnedSectionState, RowAnimationCssClasses } from './gridBodyCtrl';
 import { CSS_CLASS_FORCE_VERTICAL_SCROLL, GridBodyCtrl } from './gridBodyCtrl';
-import type { RowContainerComp } from './rowContainer/rowContainerComp';
 import { RowContainerSelector } from './rowContainer/rowContainerComp';
 import type { RowContainerName } from './rowContainer/rowContainerCtrl';
 
@@ -54,21 +53,29 @@ function getGridBodyTemplate(includeOverlay?: boolean): {
                                 ref: 'eTop',
                                 cls: 'ag-grid-pinned-top-rows',
                                 role: 'presentation',
-                                children: makeRowContainers(paramsMap, ['pinnedTopCenter']),
+                                children: [
+                                    {
+                                        tag: 'div',
+                                        ref: 'eTopExtraRows',
+                                        cls: 'ag-extra-rows-container',
+                                        role: 'presentation',
+                                    },
+                                    ...makeRowContainers(paramsMap, ['pinnedTop', 'stickyTop']),
+                                ],
                             },
                             {
                                 tag: 'div',
                                 ref: 'eBody',
                                 cls: 'ag-grid-scrolling-rows',
                                 role: 'presentation',
-                                children: makeRowContainers(paramsMap, ['scrollingCenter']),
+                                children: makeRowContainers(paramsMap, ['scrolling']),
                             },
                             {
                                 tag: 'div',
                                 ref: 'eBottom',
                                 cls: 'ag-grid-pinned-bottom-rows',
                                 role: 'presentation',
-                                children: makeRowContainers(paramsMap, ['pinnedBottomCenter']),
+                                children: makeRowContainers(paramsMap, ['stickyBottom', 'pinnedBottom']),
                             },
                         ],
                     },
@@ -87,9 +94,8 @@ export class GridBodyComp extends Component implements FocusableContainer {
     private readonly eGridViewport: HTMLElement = RefPlaceholder;
     private readonly eGridScrollableArea: HTMLElement = RefPlaceholder;
     private readonly eTop: HTMLElement = RefPlaceholder;
-    private readonly ePinnedTopCenterRowContainer: RowContainerComp = RefPlaceholder;
+    private readonly eTopExtraRows: HTMLElement = RefPlaceholder;
     private readonly eBottom: HTMLElement = RefPlaceholder;
-    private readonly ePinnedBottomCenterRowContainer: RowContainerComp = RefPlaceholder;
     private readonly eBody: HTMLElement = RefPlaceholder;
 
     private ctrl: GridBodyCtrl;
@@ -161,9 +167,8 @@ export class GridBodyComp extends Component implements FocusableContainer {
             this.getGui(),
             this.eGridViewport,
             this.eBody,
-            this.ePinnedTopCenterRowContainer.getGui(),
             this.eTop,
-            this.ePinnedBottomCenterRowContainer.getGui(),
+            this.eTopExtraRows,
             this.eBottom
         );
 
@@ -186,13 +191,12 @@ export class GridBodyComp extends Component implements FocusableContainer {
             const topSectionHeight = `calc(var(--ag-header-rows-height, 0px) + ${state.height}px)`;
             this.eTop.style.minHeight = topSectionHeight;
             this.eTop.style.height = topSectionHeight;
-            this.eTop.classList.toggle('ag-no-top-rows', state.invisible);
-            return;
+            this.eGridScrollableArea.classList.toggle('ag-has-top-pinned-rows', !state.invisible);
+        } else {
+            this.eBottom.style.setProperty('--ag-bottom-rows-height', `${state.height}px`);
+            this.eGridScrollableArea.classList.toggle('ag-has-bottom-pinned-rows', !state.invisible);
+            this.refreshBottomSectionHeight();
         }
-
-        this.eBottom.style.setProperty('--ag-bottom-rows-height', `${state.height}px`);
-        this.eBottom.classList.toggle('ag-has-bottom-pinned-rows', !state.invisible);
-        this.refreshBottomSectionHeight();
     }
 
     private refreshBottomSectionHeight(): void {
@@ -201,7 +205,6 @@ export class GridBodyComp extends Component implements FocusableContainer {
         const heightString = `${totalHeight}px`;
         this.eBottom.style.minHeight = heightString;
         this.eBottom.style.height = heightString;
-        this.eBottom.classList.toggle('ag-no-bottom-rows', bottomSection.invisible && this.stickyBottomRowsHeight <= 0);
         this.eBottom.classList.toggle('ag-invisible', totalHeight <= 0);
     }
 

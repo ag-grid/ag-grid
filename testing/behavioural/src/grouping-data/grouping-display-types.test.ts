@@ -325,18 +325,18 @@ describe('ag-grid grouping display types and footers', () => {
 
         const root = TestGridsManager.getHTMLElement(api)!;
         const viewport = root.querySelector<HTMLElement>('.ag-grid-viewport')!;
-        const topContainer = root.querySelector<HTMLElement>('.ag-grid-pinned-top-rows-container')!;
-        const bottomContainer = root.querySelector<HTMLElement>('.ag-grid-pinned-bottom-rows-container')!;
+        const stickyTopContainer = root.querySelector<HTMLElement>('.ag-grid-sticky-top-rows-container')!;
+        const stickyBottomContainer = root.querySelector<HTMLElement>('.ag-grid-sticky-bottom-rows-container')!;
 
         const maxScrollTop = Math.max(0, viewport.scrollHeight - viewport.clientHeight);
         let sawBottomStickyFooter = false;
         for (let scrollTop = 0; scrollTop <= maxScrollTop; scrollTop += 48) {
             viewport.scrollTop = scrollTop;
             await asyncSetTimeout(0);
-            if (bottomContainer.querySelector('.ag-row-footer')) {
+            if (stickyBottomContainer.querySelector('.ag-row-footer')) {
                 sawBottomStickyFooter = true;
             }
-            expect(topContainer.querySelector('.ag-row-footer')).toBeNull();
+            expect(stickyTopContainer.querySelector('.ag-row-footer')).toBeNull();
         }
 
         expect(sawBottomStickyFooter).toBe(true);
@@ -367,7 +367,7 @@ describe('ag-grid grouping display types and footers', () => {
 
         const root = TestGridsManager.getHTMLElement(api)!;
         const viewport = root.querySelector<HTMLElement>('.ag-grid-viewport')!;
-        const topContainer = root.querySelector<HTMLElement>('.ag-grid-pinned-top-rows-container')!;
+        const stickyTopContainer = root.querySelector<HTMLElement>('.ag-grid-sticky-top-rows-container')!;
 
         const maxScrollTop = Math.max(0, viewport.scrollHeight - viewport.clientHeight);
         let observedTwoStickyRows = false;
@@ -375,7 +375,7 @@ describe('ag-grid grouping display types and footers', () => {
             viewport.scrollTop = scrollTop;
             await asyncSetTimeout(0);
 
-            const stickyRows = Array.from(topContainer.querySelectorAll<HTMLElement>('.ag-row:not(.ag-header-row)'));
+            const stickyRows = Array.from(stickyTopContainer.querySelectorAll<HTMLElement>('.ag-row'));
             if (stickyRows.length < 2) {
                 continue;
             }
