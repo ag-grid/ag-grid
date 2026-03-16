@@ -105,6 +105,7 @@ const COMMIT_PARAMS: StopEditParams = { cancel: false, source: 'api' };
 const CHECK_SIBLING = { checkSiblings: true };
 
 const FORCE_REFRESH = { force: true, suppressFlash: true };
+const FORCE_REFRESH_FLASH = { force: true };
 
 export class EditService extends BeanStub implements NamedBean {
     public beanName = 'editSvc' as const;
@@ -1299,7 +1300,7 @@ export class EditService extends BeanStub implements NamedBean {
         _purgeUnchangedEdits(beans);
 
         // Re-fetch: change detection during setDataValue may have recreated the CellCtrl.
-        _getCellCtrl(beans, position)?.refreshCell(FORCE_REFRESH);
+        _getCellCtrl(beans, position)?.refreshCell(FORCE_REFRESH_FLASH);
         return success;
     }
 
