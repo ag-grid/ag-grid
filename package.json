@@ -147,6 +147,8 @@
     "dependency-cruiser/**/cross-spawn": "7.0.6",
     "@modelcontextprotocol/sdk": "1.26.0",
     "@nx/devkit/**/ejs": "3.1.10",
-    "@nx/devkit/**/ejs/jake": "10.9.4"
+    "@nx/devkit/**/ejs/jake": "10.9.4",
+    "**/flatted": "3.4.0",
+    "**/undici": "6.24.0"
   }
 }

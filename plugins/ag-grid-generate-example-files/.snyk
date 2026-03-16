@@ -2,6 +2,24 @@
 version: v1.25.1
 
 ignore:
+    SNYK-JS-UNDICI-15518068:
+        - cheerio@1.1.2 > undici@6.21.3:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-16T10:17:16.079Z
+    SNYK-JS-UNDICI-15518070:
+        - cheerio@1.1.2 > undici@6.21.3:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-16T10:17:09.164Z
+    SNYK-JS-UNDICI-15518064:
+        - cheerio@1.1.2 > undici@6.21.3:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-16T10:12:38.493Z
     SNYK-JS-MINIMATCH-15353389:
         - '@nx/devkit@17.2.6 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
               reason: >-
