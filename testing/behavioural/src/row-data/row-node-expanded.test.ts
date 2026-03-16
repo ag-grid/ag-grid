@@ -1,4 +1,5 @@
-import { ClientSideRowModelModule, RowNode } from 'ag-grid-community';
+import type { RowNode } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 
 import { GridRows, TestGridsManager } from '../test-utils';
 
