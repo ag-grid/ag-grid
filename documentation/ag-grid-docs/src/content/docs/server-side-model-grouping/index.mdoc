@@ -147,8 +147,6 @@ api.forEachNode(node => {
 });
 ```
 
-To discard all user-initiated expand/collapse overrides and re-evaluate each group against the configured defaults (e.g. `isServerSideGroupOpenByDefault`), use `resetRowGroupExpansion()`.
-
 The example below demonstrates these techniques. Note the following:
 
 -   Clicking 'Expand All' expands all loaded group rows. Doing this when the grid initially loads expands all Year groups. Clicking it a second time (after Year groups have loaded) causes all Year groups as well as their children Country groups to be expanded - this is a heavier operation with 100's of rows to expand.
@@ -156,8 +154,6 @@ The example below demonstrates these techniques. Note the following:
 -   Clicking 'Collapse All' collapses all rows.
 
 -   Clicking 'Expand Top Level Only' expands Years only, even if more group rows are loaded.
-
--   Clicking 'Reset to Defaults' calls `resetRowGroupExpansion()` to reset all groups back to their default collapsed state.
 
 {% gridExampleRunner title="Expand All" name="expand-all" /%}
 

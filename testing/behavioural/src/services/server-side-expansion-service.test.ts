@@ -21,7 +21,6 @@ describe('ServerSideExpansionService', () => {
                 },
                 addCommon: (params) => params,
             },
-            rowModel: { getType: () => 'serverSide' },
             serverSideRowModel: {
                 forEachNode: (cb) => cb(rowNode),
             },

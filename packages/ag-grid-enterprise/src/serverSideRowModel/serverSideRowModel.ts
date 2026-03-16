@@ -37,7 +37,6 @@ import {
 } from 'ag-grid-community';
 
 import type { NodeManager } from './nodeManager';
-import { findFirstChangedGroupLevel } from './services/serverSideExpansionService';
 import type { LazyStore } from './stores/lazy/lazyStore';
 import type { StoreFactory } from './stores/storeFactory';
 
@@ -125,12 +124,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             storeUpdated: this.onStoreUpdated.bind(this),
             columnValueChanged: resetListener,
             columnPivotChanged: resetListener,
-            columnRowGroupChanged: () => {
-                if (this.beans.colModel.changeEventsDispatching) {
-                    return; // defer to onColumnEverything
-                }
-                this.refreshAfterGroupColumnChange();
-            },
+            columnRowGroupChanged: resetListener,
             columnPivotModeChanged: resetListener,
         });
 
@@ -208,8 +202,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
     private onColumnEverything(): void {
         // if first time, always reset
-        const { storeParams } = this;
-        if (!storeParams) {
+        if (!this.storeParams) {
             this.resetRootStore();
             return;
         }
@@ -240,48 +233,34 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             return allColsUnchanged && !missingCols;
         };
 
-        const sortModelDifferent = !_jsonEquals(storeParams.sortModel, this.sortSvc?.getSortModel() ?? []);
+        const sortModelDifferent = !_jsonEquals(this.storeParams.sortModel, this.sortSvc?.getSortModel() ?? []);
         const rowGroupDifferent = !areColsSame({
-            oldCols: storeParams.rowGroupCols,
+            oldCols: this.storeParams.rowGroupCols,
             newCols: rowGroupColumnVos,
         });
         const pivotDifferent = !areColsSame({
-            oldCols: storeParams.pivotCols,
+            oldCols: this.storeParams.pivotCols,
             newCols: pivotColumnVos,
         });
         const valuesDifferent =
             !!rowGroupColumnVos?.length &&
             !areColsSame({
-                oldCols: storeParams.valueCols,
+                oldCols: this.storeParams.valueCols,
                 newCols: valueColumnVos,
                 allowRemovedColumns: true,
             });
 
-        // areColsSame checks set membership but not order. Row group column order matters
-        // because it determines the grouping hierarchy, so detect order changes separately.
-        const rowGroupOrderDifferent =
-            !rowGroupDifferent &&
-            storeParams.rowGroupCols.length === rowGroupColumnVos.length &&
-            storeParams.rowGroupCols.some((col, i) => col.id !== rowGroupColumnVos[i].id);
-
         const resetRequired = sortModelDifferent || rowGroupDifferent || pivotDifferent || valuesDifferent;
 
-        if (
-            (rowGroupDifferent || rowGroupOrderDifferent) &&
-            !sortModelDifferent &&
-            !pivotDifferent &&
-            !valuesDifferent
-        ) {
-            this.refreshAfterGroupColumnChange();
-        } else if (resetRequired) {
+        if (resetRequired) {
             this.resetRootStore();
         } else {
             // cols may have changed even if we didn't do a reset. storeParams ref will be provided when getRows
             // is called, so it's important to keep it up to date.
             const newParams = this.createStoreParams();
-            storeParams.rowGroupCols = newParams.rowGroupCols;
-            storeParams.pivotCols = newParams.pivotCols;
-            storeParams.valueCols = newParams.valueCols;
+            this.storeParams.rowGroupCols = newParams.rowGroupCols;
+            this.storeParams.pivotCols = newParams.pivotCols;
+            this.storeParams.valueCols = newParams.valueCols;
         }
     }
 
@@ -397,41 +376,6 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         );
     }
 
-    private refreshAfterGroupColumnChange(): void {
-        const { storeParams, datasource } = this;
-        if (!storeParams || !datasource) {
-            this.resetRootStore();
-            return;
-        }
-
-        const oldRowGroupCols = storeParams.rowGroupCols;
-        const newRowGroupCols = this.columnsToValueObjects(this.rowGroupColsSvc?.columns);
-
-        // Find the first level where group columns diverged — no IDs at or beyond this
-        // level can survive since those nodes will all have different IDs or cease to exist.
-        const firstDirtyLevel = findFirstChangedGroupLevel(
-            oldRowGroupCols.map((c) => c.id),
-            newRowGroupCols.map((c) => c.id)
-        );
-
-        // Update storeParams (shared reference propagates to all stores)
-        storeParams.rowGroupCols = newRowGroupCols;
-
-        if (firstDirtyLevel === 0) {
-            this.resetRootStore();
-            return;
-        }
-
-        const rootStore = this.getRootStore();
-        if (!rootStore) {
-            return;
-        }
-
-        rootStore.refreshAfterGroupColumnChange(firstDirtyLevel);
-        this.updateRowIndexesAndBounds();
-        this.dispatchModelUpdated(false);
-    }
-
     private createStoreParams(): SSRMParams {
         const rowGroupColumnVos = this.columnsToValueObjects(this.rowGroupColsSvc?.columns);
         const valueColumnVos = this.columnsToValueObjects(this.valueColsSvc?.columns);
@@ -439,7 +383,6 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
         const dynamicRowHeight = _isGetRowHeightFunction(this.gos);
 
-        const filterManager = this.filterManager;
         const params: SSRMParams = {
             // the columns the user has grouped and aggregated by
             valueCols: valueColumnVos,
@@ -448,9 +391,9 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             pivotMode: this.colModel.isPivotMode(),
 
             // sort and filter model
-            filterModel: filterManager?.isAdvFilterEnabled()
-                ? filterManager?.getAdvFilterModel()
-                : filterManager?.getFilterModel() ?? {},
+            filterModel: this.filterManager?.isAdvFilterEnabled()
+                ? this.filterManager?.getAdvFilterModel()
+                : this.filterManager?.getFilterModel() ?? {},
             sortModel: this.sortSvc?.getSortModel() ?? [],
 
             datasource: this.datasource,

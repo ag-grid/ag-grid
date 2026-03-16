@@ -31,7 +31,6 @@ export class ServerSideExpansionService
     private strategy: IExpansionStrategy<RowGroupExpansionState> | IExpansionStrategy<RowGroupBulkExpansionState>;
     private serverSideRowModel: ServerSideRowModel;
     private storeFactory: StoreFactory;
-    private prevGroupColIds: string[] = [];
 
     public wireBeans(beans: BeanCollection) {
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
@@ -39,73 +38,13 @@ export class ServerSideExpansionService
     }
 
     public postConstruct(): void {
-        const { rowGroupColsSvc, rowModel, colModel } = this.beans;
-        const getRowGroupIds = () => (rowGroupColsSvc?.columns ?? []).map((col) => col.getId());
         const resetExpand = () => {
             this.strategy = this.createManagedBean(new ExpandStrategy());
-            this.prevGroupColIds = getRowGroupIds();
-        };
-
-        const preserveAndResetExpand = () => {
-            const newGroupColIds = getRowGroupIds();
-            const oldGroupColIds = this.prevGroupColIds;
-            this.prevGroupColIds = newGroupColIds;
-
-            const newStrategy = this.createManagedBean(new ExpandStrategy());
-
-            if (!this.strategy) {
-                this.strategy = newStrategy;
-                return;
-            }
-
-            const firstDirtyLevel = findFirstChangedGroupLevel(oldGroupColIds, newGroupColIds);
-            // If the top-level group column changed, no existing IDs survive — skip snapshot.
-            if (firstDirtyLevel === 0) {
-                this.strategy = newStrategy;
-                return;
-            }
-
-            // Only preserve IDs at levels below the first dirty level and within the new group depth.
-            const newGroupColCount = newGroupColIds.length;
-            const maxValidLevel = colModel.isPivotMode() ? newGroupColCount - 1 : newGroupColCount;
-            const upperBound = Math.min(maxValidLevel, firstDirtyLevel);
-
-            // When transitioning from ExpandAllStrategy, hydrate the new strategy from loaded nodes
-            // so getState() stays consistent with the visual expansion state.
-            if (this.isExpandAllStrategy(this.strategy)) {
-                rowModel.forEachNode((node) => {
-                    if (node.group && node.level < upperBound) {
-                        newStrategy.setRowExpanded(node, !!node.expanded);
-                    }
-                });
-            } else {
-                // Preserve expansion state from the previous default strategy across group column changes
-                const oldStrategy = this.strategy as ExpandStrategy;
-
-                let { expandedRowGroupIds, collapsedRowGroupIds } = oldStrategy.getExpandedState();
-
-                if (upperBound >= 0) {
-                    const isValidLevel = (id: string) => {
-                        const level = oldStrategy.getNodeLevel(id);
-                        // If level is unknown (e.g. restored via setState/initialState rather than
-                        // user interaction), keep the ID — dropping it would lose valid state.
-                        return level == null || level < upperBound;
-                    };
-                    expandedRowGroupIds = expandedRowGroupIds.filter(isValidLevel);
-                    collapsedRowGroupIds = collapsedRowGroupIds?.filter(isValidLevel);
-                }
-
-                if (expandedRowGroupIds.length || collapsedRowGroupIds?.length) {
-                    newStrategy.setExpandedState({ expandedRowGroupIds, collapsedRowGroupIds });
-                }
-            }
-            this.strategy = newStrategy;
         };
 
         this.addManagedEventListeners({
-            // preserve expansion state across row group column changes (IDs may still match)
-            columnRowGroupChanged: preserveAndResetExpand,
-            // pivot changes restructure rows entirely — reset without preserving
+            // when row grouping / pivot changes, the old expand all state is no longer valid as rows changed
+            columnRowGroupChanged: resetExpand,
             columnPivotChanged: resetExpand,
             columnPivotModeChanged: resetExpand,
         });
@@ -283,22 +222,4 @@ export class ServerSideExpansionService
 
         return detailNode;
     }
-}
-
-/**
- * Find the first level at which the group cols have changed. Used to know how many levels can be preserved when col groups have changed
- * @param oldGroupColIds
- * @param newGroupColIds
- * @returns
- */
-export function findFirstChangedGroupLevel(oldGroupColIds: string[], newGroupColIds: string[]) {
-    const minLen = Math.min(oldGroupColIds.length, newGroupColIds.length);
-    let firstDirtyLevel = minLen; // default: columns added/removed at end
-    for (let i = 0; i < minLen; i++) {
-        if (oldGroupColIds[i] !== newGroupColIds[i]) {
-            firstDirtyLevel = i;
-            break;
-        }
-    }
-    return firstDirtyLevel;
 }

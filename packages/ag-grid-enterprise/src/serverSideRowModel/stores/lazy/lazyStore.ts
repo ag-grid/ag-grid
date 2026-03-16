@@ -28,7 +28,6 @@ import {
 import { _createRowNodeFooter, _destroyRowNodeFooter } from '../../../aggregation/footerUtils';
 import type { BlockUtils } from '../../blocks/blockUtils';
 import type { SSRMParams } from '../../serverSideRowModel';
-import type { StoreFactory } from '../storeFactory';
 import type { StoreUtils } from '../storeUtils';
 import { LazyCache } from './lazyCache';
 
@@ -37,14 +36,12 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     private storeUtils: StoreUtils;
     private selectionSvc?: ISelectionService;
     private rowGroupColsSvc?: IColsService;
-    private storeFactory: StoreFactory;
 
     public wireBeans(beans: BeanCollection) {
         this.blockUtils = beans.ssrmBlockUtils as BlockUtils;
         this.storeUtils = beans.ssrmStoreUtils as StoreUtils;
         this.selectionSvc = beans.selectionSvc;
         this.rowGroupColsSvc = beans.rowGroupColsSvc;
-        this.storeFactory = beans.ssrmStoreFactory as StoreFactory;
     }
 
     // display indexes
@@ -615,42 +612,6 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         // call refreshAfterFilter on children, as we did not purge.
         // if we did purge, no need to do this as all children were destroyed
         this.forEachChildStoreShallow((store) => store.refreshAfterFilter(params));
-    }
-
-    /**
-     * Executes after row group columns change, selectively destroying child stores at and beyond
-     * the first dirty level while preserving stores at shallower levels.
-     *
-     * @param firstDirtyLevel the first group level where columns diverged
-     */
-    refreshAfterGroupColumnChange(firstDirtyLevel: number): void {
-        // ssrmParams is a shared reference already mutated by serverSideRowModel.refreshAfterGroupColumnChange
-        // Update existing row nodes' leafGroup using the updated rowGroupCols
-        const { rowGroupCols } = this.ssrmParams;
-        const leafGroup = rowGroupCols ? this.level === rowGroupCols.length - 1 : false;
-        this.cache.getNodes().forEach(({ node }) => {
-            node.leafGroup = leafGroup;
-            if (node.sibling) {
-                node.sibling.leafGroup = leafGroup;
-            }
-        });
-
-        if (this.level + 1 >= firstDirtyLevel) {
-            // Children are at or beyond the dirty level — destroy and recreate for expanded nodes
-            this.cache.getNodes().forEach(({ node }) => {
-                if (node.childStore) {
-                    this.destroyBean(node.childStore);
-                    node.childStore = null;
-                    if (node.expanded) {
-                        node.childStore = this.createBean(this.storeFactory.createStore(this.ssrmParams, node));
-                    }
-                }
-            });
-            this.fireStoreUpdatedEvent();
-        } else {
-            // Recurse into child stores at preserved levels
-            this.forEachChildStoreShallow((store) => store.refreshAfterGroupColumnChange(firstDirtyLevel));
-        }
     }
 
     /**
