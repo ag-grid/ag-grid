@@ -571,6 +571,17 @@ export class GridBodyCtrl extends BeanStub {
         return Math.max(0, bodyHeight);
     }
 
+    /** Total scroll content height calculated from JS values. Used by FakeVScrollComp
+     *  to avoid reading eGridViewport.scrollHeight which can return stale intermediate values. */
+    public getScrollContentHeight(): number {
+        const topSectionHeight = this.getTopPinnedRowsOffset();
+        const scrollingHeight = this.beans.rowContainerHeight.getAdjustedUiContainerHeight() ?? 0;
+        const bottomSectionHeight = this.bottomPinnedRowsHeight + this.stickyBottomHeight;
+        const contentHeight = topSectionHeight + scrollingHeight + bottomSectionHeight;
+        // scrollHeight is never less than clientHeight (min-height: 100% on scrollable area)
+        return Math.max(contentHeight, this.eGridViewport.clientHeight);
+    }
+
     public getVerticalScrollbarWidth(): number {
         const { scrollVisibleSvc } = this;
         if (!scrollVisibleSvc.verticalScrollShowing) {

@@ -116,7 +116,7 @@
 
 .ag-body-vertical-content-no-gap .ag-has-bottom-pinned-rows {
     .ag-grid-scrolling-container .ag-row-last,
-    .ag-grid-pinned-bottom-rows .ag-row-last-sticky-bottom {
+    .ag-grid-pinned-bottom-rows .ag-grid-sticky-bottom-rows-container .ag-row-last {
         > .ag-grid-pinned-left-cells,
         > .ag-grid-scrolling-cells,
         > .ag-grid-pinned-right-cells {

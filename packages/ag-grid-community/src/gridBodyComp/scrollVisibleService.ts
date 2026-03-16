@@ -66,18 +66,18 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
 
     private updateScrollVisibleImpl(): void {
         const centerRowCtrl = this.ctrlsSvc.get('scrolling');
+        const gridBodyCtrl = this.ctrlsSvc.getGridBodyCtrl();
 
-        if (!centerRowCtrl || this.colAnimation?.isActive()) {
+        if (!centerRowCtrl || !gridBodyCtrl || this.colAnimation?.isActive()) {
             return;
         }
 
         const params: SetScrollsVisibleParams = {
             horizontalScrollShowing: centerRowCtrl.isHorizontalScrollShowing(),
-            verticalScrollShowing: this.verticalScrollShowing,
+            verticalScrollShowing: gridBodyCtrl.isVerticalScrollShowing(),
         };
 
         this.setScrollsVisible(params);
-        this.updateScrollGap();
     }
 
     public updateScrollGap(): void {
@@ -112,6 +112,8 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
                 type: 'scrollVisibilityChanged',
             });
         }
+
+        this.updateScrollGap();
     }
 
     // the user might be using some non-standard scrollbar, eg a scrollbar that has zero
