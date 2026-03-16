@@ -1,5 +1,6 @@
-# Needed to avoid nx format failing on symlinks.
-.rulesync/
+# Ignore .rulesync symlinks as nx format doesn't handle these well.
+.rulesync/**
+!.rulesync/README.md
 .patches/
 patches/
 

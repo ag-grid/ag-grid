@@ -2,6 +2,52 @@
 version: v1.25.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
+    SNYK-JS-UNDICI-15518070:
+        - rulesync@7.0.0 > fastmcp@3.31.0 > undici@6.21.3:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-16T10:18:19.780Z
+    SNYK-JS-UNDICI-15518068:
+        - rulesync@7.0.0 > fastmcp@3.31.0 > undici@6.21.3:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-16T10:18:17.019Z
+    SNYK-JS-UNDICI-15518064:
+        - rulesync@7.0.0 > fastmcp@3.31.0 > undici@6.21.3:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-16T10:18:13.556Z
+    SNYK-JS-FLATTED-15518041:
+        - stylelint@16.25.0 > file-entry-cache@10.1.4 > flat-cache@6.1.18 > flatted@3.3.3:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-16T10:07:31.450Z
+        - eslint@9.39.1 > file-entry-cache@8.0.0 > flat-cache@4.0.1 > flatted@3.3.3:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-16T10:07:27.919Z
+    SNYK-JS-FILETYPE-15609896:
+        - rulesync@7.0.0 > fastmcp@3.31.0 > file-type@21.3.0:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-16T10:07:14.433Z
+    SNYK-JS-EXPRESSRATELIMIT-15440710:
+        - rulesync@7.0.0 > @modelcontextprotocol/sdk@1.26.0 > express-rate-limit@8.2.1:
+              reason: >-
+                  Downstream dependency of mcp - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-16T10:06:58.808Z
+        - '@modelcontextprotocol/server-sequential-thinking@2025.12.18 > @modelcontextprotocol/sdk@1.26.0 > express-rate-limit@8.2.1':
+              reason: >-
+                  Downstream dependency of mcp - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-16T10:06:57.894Z
     SNYK-JS-SVGO-15423912:
         - cssnano@7.1.2 > cssnano-preset-default@7.0.10 > postcss-svgo@7.1.0 > svgo@4.0.0:
               reason: >-

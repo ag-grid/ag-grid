@@ -74,9 +74,12 @@ export const AG_GRID_LOCALE_UA = {
 
     // Filter Buttons
     applyFilter: 'Застосувати',
+    applyColumnToolPanel: 'Застосувати',
+    deferMode: 'Defer mode',
     resetFilter: 'Скинути',
     clearFilter: 'Очистити',
     cancelFilter: 'Скасувати',
+    cancelColumnToolPanel: 'Скасувати',
 
     // Filter Titles
     textFilter: 'Текстовий фільтр',

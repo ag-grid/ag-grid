@@ -1,3 +1,7 @@
+<!-- This is a human-readable adoption guide for integrating docs-review into other repos.
+     It is NOT an agent-loaded prompt. The underscore prefix and lack of frontmatter
+     intentionally prevent it from being loaded by setup-prompts or rulesync. -->
+
 # Docs Review Integration Guide
 
 This guide covers how to integrate the shared docs review methodology into any AG product repo (ag-grid, ag-studio, etc.).

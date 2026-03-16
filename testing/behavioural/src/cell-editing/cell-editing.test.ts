@@ -2,7 +2,7 @@ import { getByTestId } from '@testing-library/dom';
 import '@testing-library/jest-dom';
 import { userEvent } from '@testing-library/user-event';
 
-import type { ColDef } from 'ag-grid-community';
+import type { CellValueChangedEvent, ColDef } from 'ag-grid-community';
 import {
     CheckboxEditorModule,
     DateEditorModule,
@@ -690,5 +690,63 @@ describe('Cell Editing Start', () => {
         await asyncSetTimeout(1);
 
         expect(valueGetterCallCount).toBeGreaterThan(initialCallCount);
+    });
+
+    test('cellValueChanged newRawValue is the raw edit value, newValue is the resolved value via valueGetter', async () => {
+        const cellValueChangedEvents: Pick<CellValueChangedEvent, 'oldValue' | 'newValue' | 'newRawValue'>[] = [];
+
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                {
+                    field: 'a',
+                    editable: true,
+                    valueGetter: (params) => (params.data?.a != null ? `prefix_${params.data.a}` : null),
+                    valueSetter: (params) => {
+                        params.data.a = params.newValue;
+                        return true;
+                    },
+                },
+            ],
+            rowData: [{ id: '0', a: 'initial' }],
+            getRowId: (params) => params.data.id,
+            onCellValueChanged: ({ oldValue, newValue, newRawValue }) => {
+                cellValueChangedEvents.push({ oldValue, newValue, newRawValue });
+            },
+        });
+
+        const rowNode = api.getDisplayedRowAtIndex(0)!;
+        rowNode.setDataValue('a', 'changed');
+        await asyncSetTimeout(1);
+
+        expect(cellValueChangedEvents).toHaveLength(1);
+        expect(cellValueChangedEvents[0]).toEqual({
+            oldValue: 'prefix_initial',
+            newValue: 'prefix_changed',
+            newRawValue: 'changed',
+        });
+    });
+
+    test('cellValueChanged newRawValue equals newValue when no valueGetter is configured', async () => {
+        const cellValueChangedEvents: Pick<CellValueChangedEvent, 'oldValue' | 'newValue' | 'newRawValue'>[] = [];
+
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [{ field: 'a', editable: true }],
+            rowData: [{ id: '0', a: 'initial' }],
+            getRowId: (params) => params.data.id,
+            onCellValueChanged: ({ oldValue, newValue, newRawValue }) => {
+                cellValueChangedEvents.push({ oldValue, newValue, newRawValue });
+            },
+        });
+
+        const rowNode = api.getDisplayedRowAtIndex(0)!;
+        rowNode.setDataValue('a', 'changed');
+        await asyncSetTimeout(1);
+
+        expect(cellValueChangedEvents).toHaveLength(1);
+        expect(cellValueChangedEvents[0]).toEqual({
+            oldValue: 'initial',
+            newValue: 'changed',
+            newRawValue: 'changed',
+        });
     });
 });

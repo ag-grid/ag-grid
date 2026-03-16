@@ -74,9 +74,12 @@ export const AG_GRID_LOCALE_DK = {
 
     // Filter Buttons
     applyFilter: 'Anvend',
+    applyColumnToolPanel: 'Anvend',
+    deferMode: 'Defer mode',
     resetFilter: 'Nulstil',
     clearFilter: 'Ryd',
     cancelFilter: 'Annuller',
+    cancelColumnToolPanel: 'Annuller',
 
     // Filter Titles
     textFilter: 'Tekstfilter',

@@ -41,10 +41,42 @@
             "WebFetch(domain:github.com)",
             "WebFetch(domain:localhost)",
             "WebFetch(domain:www.npmjs.com)",
+            "mcp__atlassian__atlassianUserInfo",
+            "mcp__atlassian__fetch",
+            "mcp__atlassian__getAccessibleAtlassianResources",
+            "mcp__atlassian__getIssueLinkTypes",
+            "mcp__atlassian__getJiraIssue",
+            "mcp__atlassian__getJiraIssueRemoteIssueLinks",
+            "mcp__atlassian__getJiraIssueTypeMetaWithFields",
+            "mcp__atlassian__getJiraProjectIssueTypesMetadata",
+            "mcp__atlassian__getTransitionsForJiraIssue",
+            "mcp__atlassian__getVisibleJiraProjects",
+            "mcp__atlassian__lookupJiraAccountId",
+            "mcp__atlassian__search",
+            "mcp__atlassian__searchJiraIssuesUsingJql",
+            "mcp__claude_ai_Atlassian__atlassianUserInfo",
+            "mcp__claude_ai_Atlassian__fetch",
+            "mcp__claude_ai_Atlassian__getAccessibleAtlassianResources",
+            "mcp__claude_ai_Atlassian__getIssueLinkTypes",
+            "mcp__claude_ai_Atlassian__getJiraIssue",
+            "mcp__claude_ai_Atlassian__getJiraIssueRemoteIssueLinks",
+            "mcp__claude_ai_Atlassian__getJiraIssueTypeMetaWithFields",
+            "mcp__claude_ai_Atlassian__getJiraProjectIssueTypesMetadata",
+            "mcp__claude_ai_Atlassian__getTransitionsForJiraIssue",
+            "mcp__claude_ai_Atlassian__getVisibleJiraProjects",
+            "mcp__claude_ai_Atlassian__lookupJiraAccountId",
+            "mcp__claude_ai_Atlassian__search",
+            "mcp__claude_ai_Atlassian__searchJiraIssuesUsingJql",
             "mcp__ide__getDiagnostics",
             "mcp__sequential-thinking__sequentialthinking"
         ],
         "deny": []
+    },
+    "env": {
+        "ENABLE_TOOL_SEARCH": "true"
+    },
+    "enabledPlugins": {
+        "skill-creator@claude-plugins-official": true
     },
     "hooks": {
         "PostToolUse": [
@@ -69,6 +101,31 @@
                     {
                         "type": "command",
                         "command": "if [ -n \"$CLAUDE_ENV_FILE\" ]; then echo 'export NX_DAEMON=false' >> \"$CLAUDE_ENV_FILE\"; fi"
+                    },
+                    {
+                        "type": "command",
+                        "command": "\"$CLAUDE_PROJECT_DIR\"/external/ag-shared/scripts/install-for-cloud/setup-terminal-title.sh"
+                    }
+                ]
+            }
+        ],
+        "WorktreeCreate": [
+            {
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "\"$CLAUDE_PROJECT_DIR\"/external/ag-shared/scripts/setup-worktree/claude-worktree-create.sh",
+                        "timeout": 300
+                    }
+                ]
+            }
+        ],
+        "WorktreeRemove": [
+            {
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "\"$CLAUDE_PROJECT_DIR\"/external/ag-shared/scripts/setup-worktree/claude-worktree-remove.sh"
                     }
                 ]
             }

@@ -105,6 +105,7 @@ const COMMIT_PARAMS: StopEditParams = { cancel: false, source: 'api' };
 const CHECK_SIBLING = { checkSiblings: true };
 
 const FORCE_REFRESH = { force: true, suppressFlash: true };
+const FORCE_REFRESH_FLASH = { force: true };
 
 export class EditService extends BeanStub implements NamedBean {
     public beanName = 'editSvc' as const;
@@ -648,20 +649,32 @@ export class EditService extends BeanStub implements NamedBean {
 
         const editsToDelete: EditPosition[] = [];
 
-        for (const rowNode of rowNodes) {
-            const editRow = edits.get(rowNode)!;
-            for (const column of editRow.keys()) {
-                const editValue = editRow.get(column)!;
-                const position: Required<EditPosition> = { rowNode, column };
+        const { changeDetectionSvc } = this.beans;
+        changeDetectionSvc?.beginDeferred();
+        try {
+            for (const rowNode of rowNodes) {
+                const editRow = edits.get(rowNode)!;
+                for (const column of editRow.keys()) {
+                    const editValue = editRow.get(column)!;
+                    const position: Required<EditPosition> = { rowNode, column };
 
-                if (_sourceAndPendingDiffer(editValue) && !hasValidationErrors) {
-                    const cellCtrl = _getCellCtrl(this.beans, position);
-                    const success = this.setNodeDataValue(rowNode, column, editValue.pendingValue, cellCtrl, source);
-                    if (!success) {
-                        editsToDelete.push(position);
+                    if (_sourceAndPendingDiffer(editValue) && !hasValidationErrors) {
+                        const cellCtrl = _getCellCtrl(this.beans, position);
+                        const success = this.setNodeDataValue(
+                            rowNode,
+                            column,
+                            editValue.pendingValue,
+                            cellCtrl,
+                            source
+                        );
+                        if (!success) {
+                            editsToDelete.push(position);
+                        }
                     }
                 }
             }
+        } finally {
+            changeDetectionSvc?.endDeferred();
         }
 
         return editsToDelete;
@@ -722,9 +735,11 @@ export class EditService extends BeanStub implements NamedBean {
         const edit = this.model.getEdit(position);
         if (edit && edit.state !== 'editing') {
             if (success) {
-                this.beans.editModelSvc?.setEdit(position, {
-                    sourceValue: this.valueSvc.getValue(position.column as AgColumn, position.rowNode, 'data'),
-                });
+                // Use pendingValue as the new sourceValue: we just committed it, so it IS the source.
+                // Reading from valueSvc.getValue('data') can return stale aggData for group nodes when
+                // aggregation is deferred (e.g. inside a changeDetectionSvc batch), causing the edit
+                // to appear as pending (⏳) even after undo/redo restores the original value.
+                this.beans.editModelSvc?.setEdit(position, { sourceValue: edit.pendingValue });
             } else {
                 this.model.clearEditValue(position);
             }
@@ -1280,8 +1295,14 @@ export class EditService extends BeanStub implements NamedBean {
 
         this.syncEditAfterCommit(position, success);
 
+        // After undo/redo or direct data writes, the edit's pendingValue may now match sourceValue.
+        // Purge such entries so they don't show as batch-pending (⏳) when the value was restored.
+        _purgeUnchangedEdits(beans);
+
         // Re-fetch: change detection during setDataValue may have recreated the CellCtrl.
-        _getCellCtrl(beans, position)?.refreshCell(FORCE_REFRESH);
+        // Only allow flash when the value was actually committed; suppress when setDataValue
+        // returned false (e.g. readOnlyEdit, rejected valueSetter, unchanged value).
+        _getCellCtrl(beans, position)?.refreshCell(success ? FORCE_REFRESH_FLASH : FORCE_REFRESH);
         return success;
     }
 

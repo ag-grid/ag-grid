@@ -137,6 +137,19 @@ export class RowNode<TData = any>
      */
     public pinnedSibling?: RowNode<TData>;
 
+    /** @inheritDoc */
+    public get primaryRow(): RowNode<TData> {
+        let node: RowNode = this.footer && this.sibling ? this.sibling : this;
+        const { pinnedSibling } = node;
+        if (pinnedSibling && node.rowPinned) {
+            node = pinnedSibling;
+            if (node.footer && node.sibling) {
+                node = node.sibling;
+            }
+        }
+        return node as RowNode<TData>;
+    }
+
     /** When true, this row sticks to the top */
     public sticky: boolean;
 
@@ -510,12 +523,10 @@ export class RowNode<TData = any>
      *
      * The `eventSource` parameter controls how the value is written:
      *
-     * | `eventSource` | Active Editor        | Pending Batch        | Committed Data                 |
-     * | ------------- | -------------------- | -------------------- | ------------------------------ |
-     * | (default)     | Closed               | Written              | Written if no batch            |
-     * | `'edit'`      | Written              | Written if no editor | Written if no editor, no batch |
-     * | `'batch'`     | Left open            | Written              | Written if no batch            |
-     * | `'data'`      | Left open            | —                    | Always written                 |
+     * - `(default)` — Closes the active editor, writes to the pending batch if batching, otherwise writes to committed data.
+     * - `'edit'` — Writes directly into the active editor if present (via `refresh()` or recreation); falls back to pending batch or committed data.
+     * - `'batch'` — Leaves the active editor open, writes to the pending batch if batching, otherwise writes to committed data.
+     * - `'data'` — Leaves the active editor open, skips the pending batch, always writes to committed data.
      *
      * With `'edit'`, the active editor receives the new value via `refresh()` if implemented;
      * otherwise the editor is recreated with focus preserved.

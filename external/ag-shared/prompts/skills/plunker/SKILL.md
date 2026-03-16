@@ -1,13 +1,23 @@
 ---
 targets: ['*']
 name: plunker
-description: 'Create and manage Plunker (plnkr.co) code examples. Use when working with plnkr.co URLs, creating shareable code demos, forking existing plunks, or troubleshooting Plunker structure issues.'
+description: 'Create and manage Plunker (plnkr.co) code examples for AG Charts and AG Grid. Use this skill whenever the user mentions plunker, plnkr, or plunk, wants to create a shareable code demo or bug reproduction, needs to fork or modify an existing plunk, or asks for a live code example they can share via URL. This includes creating repros for JIRA tickets, building demos for stakeholders, downloading plunks to inspect them, or making any interactive code example hosted on plnkr.co. Also trigger when users ask for "a shareable example", "a repro", "a demo I can send", or "a live example" — even without explicitly saying "plunker".'
 context: fork
 ---
 
 # Plunker Guide
 
 This guide covers working with Plunker for creating and sharing code examples.
+
+## Product Detection
+
+Detect the product from the repository context:
+
+- **AG Charts**: repos containing `ag-charts-community` — read `ag-charts-guide.md`
+- **AG Grid**: repos containing `ag-grid-community` — read `ag-grid-guide.md`
+- **AG Studio**: repos containing `ag-studio-core` — read `ag-studio-guide.md`
+
+Read the appropriate product guide **before** creating or modifying any plunker files. The guide contains the correct CDN URLs, HTML structure, package names, and styling.
 
 ## Framework Preference
 
@@ -21,32 +31,28 @@ This guide covers working with Plunker for creating and sharing code examples.
 1. Convert it to vanilla JS before using or creating a repro
 2. Only keep the framework version if the issue is framework-specific
 
-**Rationale:**
-
--   Vanilla JS examples are simpler and load faster
--   They work without framework dependencies or build systems
--   Easier to debug and share
--   Framework wrappers are thin - most bugs reproduce in vanilla JS
+Vanilla JS is preferred because it's simpler, loads faster, needs no build system, and most bugs reproduce without framework wrappers.
 
 ## Plan Mode
 
 When creating a plan that involves building or modifying a plunker, the plan **must explicitly state** that the `/plunker` skill will be invoked before writing any files. Do not assume the skill will be used implicitly — name it directly, e.g.:
 
-> "Invoke `/plunker` skill to load the AG Charts guide before writing any files."
+> "Invoke `/plunker` skill to load the product guide before writing any files."
 
-This ensures the implementation step uses the correct axis format, CDN URLs, CSS, and API patterns from the skill guide rather than relying on training data.
+This ensures the implementation step uses the correct CDN URLs, CSS, and API patterns from the skill guide rather than relying on training data.
 
 ## Workflows
 
 ### Create a New Plunker
 
 1. Create a working directory: `PLNKR_DIR=$(mktemp -d /tmp/plnkr-new-XXXXXX)`
-2. Write files per the product-specific guide (index.html, main.js, etc.)
-3. Upload:
+2. Copy the CSS asset: `cp "<skill-base-directory>/assets/ag-example-styles.css" "$PLNKR_DIR/ag-example-styles.css"`
+3. Write remaining files per the product-specific guide (index.html, main.js, package.json, etc.)
+4. Upload:
    ```bash
    bash "<skill-base-directory>/plnkr.sh" upload "$PLNKR_DIR" --title "Example Title"
    ```
-4. Parse output for `URL=` — the shareable link.
+5. Parse output for `URL=` — the shareable link.
 
 ### Fork/Modify an Existing Plunker
 
@@ -85,5 +91,4 @@ Errors: `ERROR=<message>` on stderr, exit code 1.
 
 ## Product-Specific Guide
 
-Read all `*-guide.md` files in this skill directory for product-specific
-example structure, required files, CDN URLs, and styling requirements.
+Use the **Product Detection** section above to identify which guide to read. Each guide contains the exact HTML structure, CDN URLs, package.json format, and product-specific patterns.

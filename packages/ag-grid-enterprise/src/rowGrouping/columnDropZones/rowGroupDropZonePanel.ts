@@ -1,11 +1,13 @@
 import type { AgColumn, DragAndDropIcon, FocusableContainer, GridDraggingEvent } from 'ag-grid-community';
 import { _addFocusableContainerListener, _createIconNoSpan } from 'ag-grid-community';
 
+import { refreshDeferredToolPanelUi } from '../../columnToolPanel/toolPanelDeferredUiUtils';
+import type { ColumnStateUpdateParams } from '../../columnToolPanel/updates/columnStateUpdateTypes';
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
 export class RowGroupDropZonePanel extends BaseDropZonePanel implements FocusableContainer {
-    constructor(horizontal: boolean) {
-        super(horizontal, 'rowGroup');
+    constructor(horizontal: boolean, params?: ColumnStateUpdateParams) {
+        super(horizontal, 'rowGroup', params);
     }
 
     public postConstruct(): void {
@@ -40,11 +42,19 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel implements Focusabl
             return false;
         }
 
-        return column.isAllowRowGroup() && (!column.isRowGroupActive() || this.isSourceEventFromTarget(draggingEvent));
+        const isActive = this.beans.columnStateUpdateStrategy
+            .getRowGroupColumns(!!this.updateParams?.deferApply)
+            .includes(column);
+        return column.isAllowRowGroup() && (!isActive || this.isSourceEventFromTarget(draggingEvent));
     }
 
     protected updateItems(columns: AgColumn[]) {
-        this.beans.rowGroupColsSvc?.setColumns(columns, 'toolPanelUi');
+        this.beans.columnStateUpdateStrategy.setRowGroupColumns(
+            !!this.updateParams?.deferApply,
+            columns,
+            'toolPanelUi'
+        );
+        refreshDeferredToolPanelUi(this.beans, this.updateParams);
     }
 
     protected getIconName(): DragAndDropIcon {
@@ -52,7 +62,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel implements Focusabl
     }
 
     protected getExistingItems(): AgColumn[] {
-        return this.beans.rowGroupColsSvc?.columns ?? [];
+        return this.beans.columnStateUpdateStrategy.getRowGroupColumns(!!this.updateParams?.deferApply);
     }
 
     public getFocusableContainerName(): 'rowGroupToolbar' {

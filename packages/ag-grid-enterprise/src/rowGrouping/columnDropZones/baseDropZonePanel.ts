@@ -1,16 +1,20 @@
 import type { AgColumn, ColumnEventType, DragItem, DropTarget, GridDraggingEvent } from 'ag-grid-community';
 import { DragSourceType, _shouldUpdateColVisibilityAfterGroup } from 'ag-grid-community';
 
+import type { ColumnStateUpdateParams } from '../../columnToolPanel/updates/columnStateUpdateTypes';
 import type { PillDropZonePanelParams } from '../../widgets/pillDropZonePanel';
 import { PillDropZonePanel } from '../../widgets/pillDropZonePanel';
 import { DropZoneColumnComp } from './dropZoneColumnComp';
 
 export type TDropZone = 'rowGroup' | 'pivot' | 'aggregation';
 
+const DEFERRED_TOOL_PANEL_CLASS = 'ag-column-panel-deferred';
+
 export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumnComp, AgColumn> {
     constructor(
         horizontal: boolean,
-        private readonly dropZonePurpose: TDropZone
+        private readonly dropZonePurpose: TDropZone,
+        protected readonly updateParams?: ColumnStateUpdateParams
     ) {
         super(horizontal);
         this.addElementClasses(this.getGui(), this.dropZonePurpose.toLowerCase());
@@ -31,9 +35,20 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         return (dragItem.columns as AgColumn[]) ?? [];
     }
 
-    protected isInterestedIn(type: DragSourceType): boolean {
-        // not interested in row drags
-        return type === DragSourceType.HeaderCell || type === DragSourceType.ToolPanel;
+    protected isInterestedIn(type: DragSourceType, sourceElement: Element): boolean {
+        if (type === DragSourceType.HeaderCell) {
+            return true;
+        }
+
+        if (type !== DragSourceType.ToolPanel) {
+            return false;
+        }
+
+        if (!this.horizontal) {
+            return true;
+        }
+
+        return !sourceElement.closest(`.${DEFERRED_TOOL_PANEL_CLASS}`);
     }
 
     protected override minimumAllowedNewInsertIndex(): number {
@@ -73,10 +88,16 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
     }
 
     public setColumnsVisible(columns: AgColumn[] | null | undefined, visible: boolean, source: ColumnEventType) {
-        if (columns) {
-            const allowedCols = columns.filter((c) => !c.getColDef().lockVisible);
-            this.beans.colModel.setColsVisible(allowedCols, visible, source);
+        if (!columns) {
+            return;
         }
+        const allowedCols = columns.filter((c) => !c.getColDef().lockVisible);
+        this.beans.columnStateUpdateStrategy.setColumnsVisible(
+            !!this.updateParams?.deferApply,
+            allowedCols,
+            visible,
+            source
+        );
     }
 
     private isRowGroupPanel() {
@@ -89,6 +110,6 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         ghost: boolean,
         horizontal: boolean
     ): DropZoneColumnComp {
-        return new DropZoneColumnComp(column, dropTarget, ghost, this.dropZonePurpose, horizontal);
+        return new DropZoneColumnComp(column, dropTarget, ghost, this.dropZonePurpose, horizontal, this.updateParams);
     }
 }

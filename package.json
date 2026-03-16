@@ -1,6 +1,6 @@
 {
   "name": "ag-grid",
-  "version": "35.1.0-beta.20260313.1538",
+  "version": "35.1.0-beta.20260316.108",
   "license": "MIT",
   "scripts": {
     "compressVideo": "tsx external/ag-website-shared/scripts/compress-video",
@@ -139,7 +139,6 @@
     "**/axios/form-data": "4.0.4",
     "**/jsdom/form-data": "4.0.4",
     "**/node-fetch/form-data": "3.0.4",
-    "undici": "6.21.3",
     "**/@babel/core": "7.27.1",
     "**/prismjs": "1.30.0",
     "**/jpeg-js": "0.4.0",
@@ -147,6 +146,8 @@
     "dependency-cruiser/**/cross-spawn": "7.0.6",
     "@modelcontextprotocol/sdk": "1.26.0",
     "@nx/devkit/**/ejs": "3.1.10",
-    "@nx/devkit/**/ejs/jake": "10.9.4"
+    "@nx/devkit/**/ejs/jake": "10.9.4",
+    "**/flatted": "3.4.0",
+    "**/undici": "6.24.0"
   }
 }

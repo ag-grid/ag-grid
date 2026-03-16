@@ -15,13 +15,7 @@
         "spacing": {},
         "fontFamily": {},
         "fontSize": {},
-        "fontWeight": {},
-        "borderColor": {},
-        "borderWidth": {},
-        "borderRadius": {},
-        "headerHeight": {},
-        "rowHeight": {},
-        "browserColorScheme": {}
+        "fontWeight": {}
     },
     "colours": {
         "meta": {
@@ -34,7 +28,8 @@
         "textColor": {},
         "chromeBackgroundColor": {},
         "invalidColor": {},
-        "subtleTextColor": {}
+        "subtleTextColor": {},
+        "browserColorScheme": {}
     },
     "spacingAndSizing": {
         "meta": {
@@ -44,6 +39,8 @@
                 "url": "./theming-compactness/"
             }
         },
+        "headerHeight": {},
+        "rowHeight": {},
         "listItemHeight": {},
         "paginationPanelHeight": {},
         "widgetContainerHorizontalPadding": {},
@@ -59,6 +56,9 @@
                 "url": "./theming-borders/"
             }
         },
+        "borderColor": {},
+        "borderWidth": {},
+        "borderRadius": {},
         "wrapperBorder": {},
         "wrapperBorderRadius": {},
         "columnBorder": {},
@@ -187,7 +187,6 @@
         },
         "iconColor": {},
         "iconSize": {},
-        "dragHandleColor": {},
         "iconButtonColor": {},
         "iconButtonBackgroundColor": {},
         "iconButtonBackgroundSpread": {},
@@ -299,7 +298,8 @@
         "panelTitleBarFontWeight": {},
         "panelTitleBarHeight": {},
         "panelTitleBarBorder": {},
-        "panelTitleBarIconColor": {}
+        "panelTitleBarIconColor": {},
+        "columnSelectIndentSize": {}
     },
     "dragAndDrop": {
         "meta": {
@@ -313,7 +313,8 @@
         "dragAndDropImageBackgroundColor": {},
         "dragAndDropImageBorder": {},
         "dragAndDropImageShadow": {},
-        "dragAndDropImageNotAllowedBorder": {}
+        "dragAndDropImageNotAllowedBorder": {},
+        "dragHandleColor": {}
     },
     "tooltips": {
         "meta": {
@@ -457,7 +458,6 @@
         "filterPanelApplyButtonColor": {},
         "filterPanelCardSubtleColor": {},
         "filterPanelCardSubtleHoverColor": {},
-        "columnSelectIndentSize": {},
         "filterToolPanelGroupIndent": {},
         "setFilterIndentSize": {}
     },
@@ -476,34 +476,34 @@
         "advancedFilterBuilderButtonBarBorder": {},
         "advancedFilterBuilderIndentSize": {}
     },
-    "formulaBar": {
+    "formulas": {
         "meta": {
-            "displayName": "Formula Bar",
+            "displayName": "Formulas",
             "page": {
                 "name": "Formulas",
                 "url": "./formulas/"
             }
         },
-        "formulaToken1BackgroundColor": {},
         "formulaToken1Color": {},
-        "formulaToken1Border": {},
-        "formulaToken2BackgroundColor": {},
         "formulaToken2Color": {},
-        "formulaToken2Border": {},
-        "formulaToken3BackgroundColor": {},
         "formulaToken3Color": {},
-        "formulaToken3Border": {},
-        "formulaToken4BackgroundColor": {},
         "formulaToken4Color": {},
-        "formulaToken4Border": {},
-        "formulaToken5BackgroundColor": {},
         "formulaToken5Color": {},
-        "formulaToken5Border": {},
-        "formulaToken6BackgroundColor": {},
         "formulaToken6Color": {},
-        "formulaToken6Border": {},
-        "formulaToken7BackgroundColor": {},
         "formulaToken7Color": {},
+        "formulaToken1BackgroundColor": {},
+        "formulaToken2BackgroundColor": {},
+        "formulaToken3BackgroundColor": {},
+        "formulaToken4BackgroundColor": {},
+        "formulaToken5BackgroundColor": {},
+        "formulaToken6BackgroundColor": {},
+        "formulaToken7BackgroundColor": {},
+        "formulaToken1Border": {},
+        "formulaToken2Border": {},
+        "formulaToken3Border": {},
+        "formulaToken4Border": {},
+        "formulaToken5Border": {},
+        "formulaToken6Border": {},
         "formulaToken7Border": {}
     },
     "find": {

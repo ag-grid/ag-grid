@@ -552,9 +552,8 @@ export class CellCtrl extends BeanStub {
 
     public onCellChanged(event: CellChangedEvent): void {
         const eventImpactsThisCell = event.column === this.column;
-
         if (eventImpactsThisCell) {
-            this.refreshCell({});
+            this.refreshCell();
         }
     }
 
@@ -581,7 +580,7 @@ export class CellCtrl extends BeanStub {
     // + rowCtrl: event dataChanged {suppressFlash: !update, newData: !update}
     // + rowCtrl: api refreshCells() {animate: true/false}
     // + rowRenderer: api softRefreshView() {}
-    public refreshCell({ force, suppressFlash, newData }: RefreshCellsParams & { newData?: boolean } = {}): void {
+    public refreshCell(params?: RefreshCellsParams & { newData?: boolean }): void {
         const {
             editStyleFeature,
             customStyleFeature,
@@ -605,7 +604,9 @@ export class CellCtrl extends BeanStub {
         // best always refresh and take the performance hit rather than never refresh and users complaining in support
         // that cells are not updating.
         const noValueProvided = field == null && valueGetter == null && showRowGroup == null;
-        const forceRefresh = force || noValueProvided || newData;
+
+        const newData = params?.newData ?? false;
+        const forceRefresh = noValueProvided || (params && (params.force || newData));
 
         const isCellCompReady = !!comp;
         // Only worth comparing values if the cellComp is ready
@@ -628,7 +629,7 @@ export class CellCtrl extends BeanStub {
             // be to busy. see comment in FilterManager with regards processingFilterChange
             const processingFilterChange = filterManager?.isSuppressFlashingCellsBecauseFiltering();
 
-            const flashCell = !suppressFlash && !processingFilterChange && enableCellChangeFlash;
+            const flashCell = !params?.suppressFlash && !processingFilterChange && enableCellChangeFlash;
 
             if (flashCell) {
                 cellFlashSvc?.flashCell(this);

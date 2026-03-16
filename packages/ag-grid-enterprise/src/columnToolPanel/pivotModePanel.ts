@@ -1,6 +1,8 @@
 import type { ElementParams, GridCheckbox } from 'ag-grid-community';
 import { AgToggleButtonSelector, Component, RefPlaceholder } from 'ag-grid-community';
 
+import type { ColumnStateUpdateParams } from './updates/columnStateUpdateTypes';
+
 const PivotModePanelElement: ElementParams = {
     tag: 'div',
     cls: 'ag-pivot-mode-panel',
@@ -15,27 +17,44 @@ const PivotModePanelElement: ElementParams = {
 export class PivotModePanel extends Component {
     private readonly cbPivotMode: GridCheckbox = RefPlaceholder;
 
+    constructor(
+        private readonly params: ColumnStateUpdateParams,
+        private readonly onPivotModeValueChanged?: () => void
+    ) {
+        super();
+    }
+
+    private getCurrentPivotMode(): boolean {
+        return this.beans.columnStateUpdateStrategy.getPivotMode(!!this.params.deferApply);
+    }
+
+    public syncFromGrid(): void {
+        this.cbPivotMode.setValue(this.getCurrentPivotMode());
+    }
+
+    public refreshEditStrategy(): void {
+        this.syncFromGrid();
+    }
+
     public postConstruct(): void {
+        const { columnStateUpdateStrategy, ctrlsSvc } = this.beans;
         this.setTemplate(PivotModePanelElement, [AgToggleButtonSelector]);
 
         const cbPivotMode = this.cbPivotMode;
-        const { colModel, ctrlsSvc, gos } = this.beans;
 
-        cbPivotMode.setValue(colModel.isPivotMode());
+        cbPivotMode.setValue(this.getCurrentPivotMode());
         const localeTextFunc = this.getLocaleTextFunc();
         cbPivotMode.setLabel(localeTextFunc('pivotMode', 'Pivot Mode'));
 
         const onBtPivotMode = () => {
             const newValue = !!cbPivotMode.getValue();
-            if (newValue !== colModel.isPivotMode()) {
-                gos.updateGridOptions({ options: { pivotMode: newValue }, source: 'toolPanelUi' as any });
-                ctrlsSvc.getHeaderRowsCtrl()?.refresh();
-            }
+            columnStateUpdateStrategy.setPivotMode(!!this.params.deferApply, newValue, 'toolPanelUi');
+            this.onPivotModeValueChanged?.();
         };
 
         const onPivotModeChanged = () => {
-            const pivotModeActive = colModel.isPivotMode();
-            cbPivotMode.setValue(pivotModeActive);
+            cbPivotMode.setValue(this.getCurrentPivotMode());
+            ctrlsSvc.getHeaderRowsCtrl()?.refresh();
         };
 
         this.addManagedListeners(cbPivotMode, { fieldValueChanged: onBtPivotMode });

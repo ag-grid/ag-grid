@@ -51,7 +51,10 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
     test.each(['commit', 'cancel'] as const)(
         'setDataValue in batch mode fires correct events on %s',
         async (action) => {
-            const cellValueChangedEvents: Pick<CellValueChangedEvent, 'oldValue' | 'newValue' | 'source'>[] = [];
+            const cellValueChangedEvents: Pick<
+                CellValueChangedEvent,
+                'oldValue' | 'newValue' | 'newRawValue' | 'source'
+            >[] = [];
             const batchStartedEvents: BatchEditingStartedEvent[] = [];
             const batchStoppedEvents: BatchEditingStoppedEvent[] = [];
 
@@ -59,8 +62,8 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
                 columnDefs: [{ field: 'a', editable: true }],
                 rowData: [{ id: '0', a: 'initial' }],
                 getRowId: (params) => params.data.id,
-                onCellValueChanged: ({ oldValue, newValue, source }) => {
-                    cellValueChangedEvents.push({ oldValue, newValue, source });
+                onCellValueChanged: ({ oldValue, newValue, newRawValue, source }) => {
+                    cellValueChangedEvents.push({ oldValue, newValue, newRawValue, source });
                 },
                 onBatchEditingStarted: (event) => batchStartedEvents.push(event),
                 onBatchEditingStopped: (event) => batchStoppedEvents.push(event),
@@ -104,6 +107,7 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
                     expect.objectContaining({
                         oldValue: 'initial',
                         newValue: 'changed',
+                        newRawValue: 'changed',
                     })
                 );
             } else {
@@ -130,7 +134,10 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
     );
 
     test('setDataValue with multiple cells fires cellValueChanged for each on commit', async () => {
-        const cellValueChangedEvents: Pick<CellValueChangedEvent, 'oldValue' | 'newValue' | 'source'>[] = [];
+        const cellValueChangedEvents: Pick<
+            CellValueChangedEvent,
+            'oldValue' | 'newValue' | 'newRawValue' | 'source'
+        >[] = [];
         const batchStoppedEvents: BatchEditingStoppedEvent[] = [];
 
         const api = await gridMgr.createGridAndWait('events-multi-cell', {
@@ -140,8 +147,8 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
             ],
             rowData: [{ id: '0', a: 'a-init', b: 'b-init' }],
             getRowId: (params) => params.data.id,
-            onCellValueChanged: ({ oldValue, newValue, source }) => {
-                cellValueChangedEvents.push({ oldValue, newValue, source });
+            onCellValueChanged: ({ oldValue, newValue, newRawValue, source }) => {
+                cellValueChangedEvents.push({ oldValue, newValue, newRawValue, source });
             },
             onBatchEditingStopped: (event) => batchStoppedEvents.push(event),
         });
@@ -177,8 +184,8 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
         expect(cellValueChangedEvents).toHaveLength(2);
         expect(cellValueChangedEvents).toEqual(
             expect.arrayContaining([
-                expect.objectContaining({ oldValue: 'a-init', newValue: 'a-new' }),
-                expect.objectContaining({ oldValue: 'b-init', newValue: 'b-new' }),
+                expect.objectContaining({ oldValue: 'a-init', newValue: 'a-new', newRawValue: 'a-new' }),
+                expect.objectContaining({ oldValue: 'b-init', newValue: 'b-new', newRawValue: 'b-new' }),
             ])
         );
 
@@ -196,14 +203,17 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
     });
 
     test("'data' source during batch fires cellValueChanged immediately, not deferred", async () => {
-        const cellValueChangedEvents: Pick<CellValueChangedEvent, 'oldValue' | 'newValue' | 'source'>[] = [];
+        const cellValueChangedEvents: Pick<
+            CellValueChangedEvent,
+            'oldValue' | 'newValue' | 'newRawValue' | 'source'
+        >[] = [];
 
         const api = await gridMgr.createGridAndWait('events-data-source', {
             columnDefs: [{ field: 'a', editable: true }],
             rowData: [{ id: '0', a: 'initial' }],
             getRowId: (params) => params.data.id,
-            onCellValueChanged: ({ oldValue, newValue, source }) => {
-                cellValueChangedEvents.push({ oldValue, newValue, source });
+            onCellValueChanged: ({ oldValue, newValue, newRawValue, source }) => {
+                cellValueChangedEvents.push({ oldValue, newValue, newRawValue, source });
             },
         });
         const eventTracker = new EditEventTracker(api);
@@ -221,6 +231,7 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
             expect.objectContaining({
                 oldValue: 'initial',
                 newValue: 'direct',
+                newRawValue: 'direct',
                 source: 'data',
             })
         );
@@ -243,14 +254,17 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
     });
 
     test("'edit' source with open editor fires no events until commit", async () => {
-        const cellValueChangedEvents: Pick<CellValueChangedEvent, 'oldValue' | 'newValue' | 'source'>[] = [];
+        const cellValueChangedEvents: Pick<
+            CellValueChangedEvent,
+            'oldValue' | 'newValue' | 'newRawValue' | 'source'
+        >[] = [];
 
         const api = await gridMgr.createGridAndWait('events-edit-source', {
             columnDefs: [{ field: 'a', editable: true, cellEditor: 'agTextCellEditor' }],
             rowData: [{ id: '0', a: 'initial' }],
             getRowId: (params) => params.data.id,
-            onCellValueChanged: ({ oldValue, newValue, source }) => {
-                cellValueChangedEvents.push({ oldValue, newValue, source });
+            onCellValueChanged: ({ oldValue, newValue, newRawValue, source }) => {
+                cellValueChangedEvents.push({ oldValue, newValue, newRawValue, source });
             },
         });
         const eventTracker = new EditEventTracker(api);
@@ -291,6 +305,7 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
             expect.objectContaining({
                 oldValue: 'initial',
                 newValue: 'pushed',
+                newRawValue: 'pushed',
             })
         );
 
@@ -310,14 +325,17 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
     });
 
     test("'edit' source with no editor and no batch fires cellValueChanged immediately", async () => {
-        const cellValueChangedEvents: Pick<CellValueChangedEvent, 'oldValue' | 'newValue' | 'source'>[] = [];
+        const cellValueChangedEvents: Pick<
+            CellValueChangedEvent,
+            'oldValue' | 'newValue' | 'newRawValue' | 'source'
+        >[] = [];
 
         const api = await gridMgr.createGridAndWait('events-edit-no-batch', {
             columnDefs: [{ field: 'a', editable: true }],
             rowData: [{ id: '0', a: 'initial' }],
             getRowId: (params) => params.data.id,
-            onCellValueChanged: ({ oldValue, newValue, source }) => {
-                cellValueChangedEvents.push({ oldValue, newValue, source });
+            onCellValueChanged: ({ oldValue, newValue, newRawValue, source }) => {
+                cellValueChangedEvents.push({ oldValue, newValue, newRawValue, source });
             },
         });
         const eventTracker = new EditEventTracker(api);
@@ -332,6 +350,7 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
             expect.objectContaining({
                 oldValue: 'initial',
                 newValue: 'direct',
+                newRawValue: 'direct',
                 source: 'edit',
             })
         );
@@ -352,14 +371,17 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
     });
 
     test('default source outside batch fires cellValueChanged immediately with correct source', async () => {
-        const cellValueChangedEvents: Pick<CellValueChangedEvent, 'oldValue' | 'newValue' | 'source'>[] = [];
+        const cellValueChangedEvents: Pick<
+            CellValueChangedEvent,
+            'oldValue' | 'newValue' | 'newRawValue' | 'source'
+        >[] = [];
 
         const api = await gridMgr.createGridAndWait('events-default-no-batch', {
             columnDefs: [{ field: 'a', editable: true }],
             rowData: [{ id: '0', a: 'initial' }],
             getRowId: (params) => params.data.id,
-            onCellValueChanged: ({ oldValue, newValue, source }) => {
-                cellValueChangedEvents.push({ oldValue, newValue, source });
+            onCellValueChanged: ({ oldValue, newValue, newRawValue, source }) => {
+                cellValueChangedEvents.push({ oldValue, newValue, newRawValue, source });
             },
         });
         const eventTracker = new EditEventTracker(api);
@@ -373,6 +395,7 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
             expect.objectContaining({
                 oldValue: 'initial',
                 newValue: 'changed',
+                newRawValue: 'changed',
                 source: undefined,
             })
         );
@@ -393,14 +416,17 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
     });
 
     test("'batch' source outside batch fires cellValueChanged immediately", async () => {
-        const cellValueChangedEvents: Pick<CellValueChangedEvent, 'oldValue' | 'newValue' | 'source'>[] = [];
+        const cellValueChangedEvents: Pick<
+            CellValueChangedEvent,
+            'oldValue' | 'newValue' | 'newRawValue' | 'source'
+        >[] = [];
 
         const api = await gridMgr.createGridAndWait('events-batch-outside', {
             columnDefs: [{ field: 'a', editable: true }],
             rowData: [{ id: '0', a: 'initial' }],
             getRowId: (params) => params.data.id,
-            onCellValueChanged: ({ oldValue, newValue, source }) => {
-                cellValueChangedEvents.push({ oldValue, newValue, source });
+            onCellValueChanged: ({ oldValue, newValue, newRawValue, source }) => {
+                cellValueChangedEvents.push({ oldValue, newValue, newRawValue, source });
             },
         });
         const eventTracker = new EditEventTracker(api);
@@ -414,6 +440,7 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
             expect.objectContaining({
                 oldValue: 'initial',
                 newValue: 'changed',
+                newRawValue: 'changed',
                 source: 'batch',
             })
         );
@@ -434,14 +461,17 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
     });
 
     test('overwriting a pending value fires only one cellValueChanged on commit (latest value)', async () => {
-        const cellValueChangedEvents: Pick<CellValueChangedEvent, 'oldValue' | 'newValue' | 'source'>[] = [];
+        const cellValueChangedEvents: Pick<
+            CellValueChangedEvent,
+            'oldValue' | 'newValue' | 'newRawValue' | 'source'
+        >[] = [];
 
         const api = await gridMgr.createGridAndWait('events-overwrite', {
             columnDefs: [{ field: 'a', editable: true }],
             rowData: [{ id: '0', a: 'initial' }],
             getRowId: (params) => params.data.id,
-            onCellValueChanged: ({ oldValue, newValue, source }) => {
-                cellValueChangedEvents.push({ oldValue, newValue, source });
+            onCellValueChanged: ({ oldValue, newValue, newRawValue, source }) => {
+                cellValueChangedEvents.push({ oldValue, newValue, newRawValue, source });
             },
         });
         const eventTracker = new EditEventTracker(api);
@@ -466,6 +496,7 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
             expect.objectContaining({
                 oldValue: 'initial',
                 newValue: 'third',
+                newRawValue: 'third',
             })
         );
 
@@ -523,7 +554,10 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
     });
 
     test('multiple rows: cellValueChanged fires for each changed cell on commit', async () => {
-        const cellValueChangedEvents: Pick<CellValueChangedEvent, 'oldValue' | 'newValue' | 'source'>[] = [];
+        const cellValueChangedEvents: Pick<
+            CellValueChangedEvent,
+            'oldValue' | 'newValue' | 'newRawValue' | 'source'
+        >[] = [];
         const batchStoppedEvents: BatchEditingStoppedEvent[] = [];
 
         const api = await gridMgr.createGridAndWait('events-multi-row', {
@@ -536,8 +570,8 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
                 { id: '1', a: 'a1', b: 'b1' },
             ],
             getRowId: (params) => params.data.id,
-            onCellValueChanged: ({ oldValue, newValue, source }) => {
-                cellValueChangedEvents.push({ oldValue, newValue, source });
+            onCellValueChanged: ({ oldValue, newValue, newRawValue, source }) => {
+                cellValueChangedEvents.push({ oldValue, newValue, newRawValue, source });
             },
             onBatchEditingStopped: (event) => batchStoppedEvents.push(event),
         });
@@ -573,8 +607,8 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
         expect(cellValueChangedEvents).toHaveLength(2);
         expect(cellValueChangedEvents).toEqual(
             expect.arrayContaining([
-                expect.objectContaining({ oldValue: 'a0', newValue: 'a0-new' }),
-                expect.objectContaining({ oldValue: 'b1', newValue: 'b1-new' }),
+                expect.objectContaining({ oldValue: 'a0', newValue: 'a0-new', newRawValue: 'a0-new' }),
+                expect.objectContaining({ oldValue: 'b1', newValue: 'b1-new', newRawValue: 'b1-new' }),
             ])
         );
 

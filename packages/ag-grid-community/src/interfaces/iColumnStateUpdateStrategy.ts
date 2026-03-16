@@ -1,0 +1,33 @@
+import type { ColumnState } from '../columns/columnStateUtils';
+import type { AgColumn } from '../entities/agColumn';
+import type { IAggFunc, SortDef } from '../entities/colDef';
+import type { ColumnEventType } from '../events';
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface IColumnStateUpdateStrategy {
+    applyColumnState(deferMode: boolean, state: ColumnState[], eventType: ColumnEventType): void;
+    commit(deferMode: boolean): void;
+    moveColumns(deferMode: boolean, columns: AgColumn[], targetIndex: number, eventType: ColumnEventType): void;
+    reset(deferMode: boolean): void;
+    setColumnsVisible(deferMode: boolean, columns: AgColumn[], visible: boolean, eventType: ColumnEventType): void;
+    isColumnVisibleInToolPanel(deferMode: boolean, column: AgColumn): boolean;
+    setRowGroupColumns(deferMode: boolean, columns: AgColumn[], eventType: ColumnEventType): void;
+    getRowGroupColumns(deferMode: boolean): AgColumn[];
+    getPrimaryColumns(deferMode: boolean): AgColumn[];
+    setValueColumns(deferMode: boolean, columns: AgColumn[], eventType: ColumnEventType): void;
+    getValueColumns(deferMode: boolean): AgColumn[];
+    setColumnAggFunc(
+        deferMode: boolean,
+        column: AgColumn,
+        aggFunc: string | IAggFunc | null | undefined,
+        eventType: ColumnEventType
+    ): void;
+    getColumnAggFunc(deferMode: boolean, column: AgColumn): string | IAggFunc | null | undefined;
+    setPivotColumns(deferMode: boolean, columns: AgColumn[], eventType: ColumnEventType): void;
+    getPivotColumns(deferMode: boolean): AgColumn[];
+    setPivotMode(deferMode: boolean, pivotMode: boolean, eventType: ColumnEventType): void;
+    getPivotMode(deferMode: boolean): boolean;
+    isColumnSelectedInPivotModeToolPanel(deferMode: boolean, column: AgColumn): boolean;
+    progressSortFromEvent(deferMode: boolean, column: AgColumn, event: MouseEvent | KeyboardEvent): void;
+    getSortDef(deferMode: boolean, column: AgColumn): SortDef | null;
+}

@@ -24,6 +24,43 @@ Selecting columns means different things depending on whether the grid is in piv
 -   **Pivot Mode Off**: When pivot mode is off, selecting a column toggles the visibility of the column. A selected column is visible and an unselected column is hidden. With `allowDragFromColumnsToolPanel=true`, you can drag a column from the tool panel onto the grid and it will become visible.
 -   **Pivot Mode On**: When pivot mode is on, selecting a column will trigger the column to be either aggregated, grouped or pivoted depending on what is allowed for that column.
 
+## Deferred Apply Mode
+
+You can configure the Columns Tool Panel to stage changes and require an explicit **Apply** action before they are committed.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    sideBar: {
+        toolPanels: [
+            {
+                id: 'columns',
+                labelDefault: 'Columns',
+                labelKey: 'columns',
+                iconKey: 'columns',
+                toolPanel: 'agColumnsToolPanel',
+                toolPanelParams: {
+                    deferApply: true,
+                },
+            },
+        ],
+        defaultToolPanel: 'columns',
+    },
+};
+```
+
+When `deferApply=true`:
+
+-   Changes made in the Columns Tool Panel are staged as pending changes.
+-   The Columns Tool Panel shows **Apply** and **Cancel** actions.
+-   **Apply** commits pending changes.
+-   **Cancel** discards pending changes.
+
+Changes made outside the Columns Tool Panel (for example via other grid entry points) continue to apply immediately.
+
+The example below uses the Server-Side Row Model.
+
+{% gridExampleRunner title="Deferred Apply Mode" name="deferred-apply-mode"  exampleHeight=830 /%}
+
 ## Columns Tool Panel Sections
 
 The Columns Tool Panel is split into different sections as described from the top:

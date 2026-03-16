@@ -3,8 +3,10 @@ import { _ColumnFilterModule, _PopupModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { AggregationModule, SharedAggregationModule } from '../aggregation/aggregationModule';
+import { SharedColumnStateUpdateStrategyModule } from '../columnToolPanel/updates/columnStateUpdateStrategyModule';
 import { GroupHierarchyModule } from '../groupHierarchy/groupHierarchyModule';
 import {
+    ChangedPathModule,
     ClientSideRowModelHierarchyModule,
     GroupColumnModule,
     GroupEditModule,
@@ -42,6 +44,7 @@ export const SharedRowGroupingModule: _ModuleWithApi<_RowGroupingGridApi> = {
         EnterpriseCoreModule,
         SharedAggregationModule,
         GroupColumnModule,
+        ChangedPathModule,
         StickyRowModule,
         GroupHierarchyModule,
     ],
@@ -76,7 +79,7 @@ export const RowGroupingPanelModule: _ModuleWithoutApi = {
         // version of panelDelimiter used in RTL mode
         panelDelimiterRtl: 'small-left',
     },
-    dependsOn: [EnterpriseCoreModule, _PopupModule],
+    dependsOn: [SharedColumnStateUpdateStrategyModule, _PopupModule],
 };
 
 /**

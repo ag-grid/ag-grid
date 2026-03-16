@@ -25,7 +25,8 @@ import {
 } from 'ag-grid-community';
 
 import type { ColumnModelItem } from './columnModelItem';
-import { createPivotState, setAllColumns, updateColumns } from './modelItemUtils';
+import type { ToolPanelColumnCompParams } from './columnToolPanel';
+import { createPivotStateForToolPanel, setAllColumns, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
 
 const ToolPanelColumnElement: ElementParams = {
@@ -51,7 +52,8 @@ export class ToolPanelColumnComp extends Component {
         public modelItem: ColumnModelItem,
         private readonly allowDragging: boolean,
         private readonly groupsExist: boolean,
-        private readonly focusWrapper: HTMLElement
+        private readonly focusWrapper: HTMLElement,
+        private readonly params: ToolPanelColumnCompParams
     ) {
         super();
         const { column, depth, displayName } = modelItem;
@@ -159,7 +161,11 @@ export class ToolPanelColumnComp extends Component {
             return;
         }
 
-        const contextMenu = this.createBean(new ToolPanelContextMenu(column, e, this.focusWrapper));
+        const contextMenu = this.createBean(
+            new ToolPanelContextMenu(column, e, this.focusWrapper, {
+                deferApply: !!this.params.deferApply,
+            })
+        );
         this.addDestroyFunc(() => {
             if (contextMenu.isAlive()) {
                 this.destroyBean(contextMenu);
@@ -203,7 +209,9 @@ export class ToolPanelColumnComp extends Component {
             return;
         }
 
-        setAllColumns(this.beans, [this.column], nextState, 'toolPanelUi');
+        setAllColumns(this.beans, [this.column], nextState, 'toolPanelUi', {
+            deferApply: !!this.params.deferApply,
+        });
     }
 
     private refreshAriaLabel(): void {
@@ -255,6 +263,7 @@ export class ToolPanelColumnComp extends Component {
                         visibleState: dragItem?.visibleState,
                         pivotState: dragItem?.pivotState,
                         eventType: 'toolPanelUi',
+                        deferApply: this.params.deferApply,
                     });
                 }
             },
@@ -274,7 +283,10 @@ export class ToolPanelColumnComp extends Component {
     private createDragItem() {
         const colId = this.column.getColId();
         const visibleState = { [colId]: this.column.isVisible() };
-        const pivotState = { [colId]: createPivotState(this.column) };
+        const updateStrategy = this.beans.columnStateUpdateStrategy;
+        const pivotState = {
+            [colId]: createPivotStateForToolPanel(this.column, updateStrategy, !!this.params.deferApply),
+        };
         return {
             columns: [this.column],
             visibleState,
@@ -284,14 +296,18 @@ export class ToolPanelColumnComp extends Component {
 
     private onColumnStateChanged(): void {
         this.processingColumnStateChange = true;
-        const isPivotMode = this.beans.colModel.isPivotMode();
+        const updateStrategy = this.beans.columnStateUpdateStrategy;
+        const isPivotMode = updateStrategy.getPivotMode(!!this.params.deferApply);
         if (isPivotMode) {
             // if reducing, checkbox means column is one of pivot, value or group
-            const anyFunctionActive = this.column.isAnyFunctionActive();
+            const anyFunctionActive = updateStrategy.isColumnSelectedInPivotModeToolPanel(
+                !!this.params.deferApply,
+                this.column
+            );
             this.cbSelect.setValue(anyFunctionActive);
         } else {
             // if not reducing, the checkbox tells us if column is visible or not
-            this.cbSelect.setValue(this.column.isVisible());
+            this.cbSelect.setValue(updateStrategy.isColumnVisibleInToolPanel(!!this.params.deferApply, this.column));
         }
 
         let canBeToggled = true;

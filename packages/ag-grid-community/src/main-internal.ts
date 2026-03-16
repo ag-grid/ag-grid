@@ -417,6 +417,7 @@ export type { ICellRangeFeature } from './interfaces/iCellRangeFeature';
 export type { IClipboardService } from './interfaces/iClipboardService';
 export type { IColsService } from './interfaces/iColsService';
 export type { IColumnCollectionService } from './interfaces/iColumnCollectionService';
+export type { IColumnStateUpdateStrategy } from './interfaces/iColumnStateUpdateStrategy';
 export type { IEventService } from './interfaces/iEventService';
 export type { IExpansionService } from './interfaces/iExpansionService';
 export type { FocusableContainer } from './interfaces/iFocusableContainer';
@@ -496,8 +497,8 @@ export {
 } from './theming/parts/theme/themes';
 export { _getShouldDisplayTooltip, _isShowTooltipWhenTruncated } from './tooltip/tooltipFeature';
 export type { ITooltipCtrl, ITooltipCtrlParams, TooltipFeature } from './tooltip/tooltipFeature';
-export type { ChangedPath } from './utils/changedPath';
-export { ChangedCellsPath, ChangedRowsPath, _forEachChangedGroupDepthFirst } from './utils/changedPath';
+export type { ChangedCellsPath, ChangedPath, ChangedRowsPath, IChangedPathFactory } from './utils/changedPath';
+export { _forEachChangedGroupDepthFirst } from './utils/changedPath';
 export { _createElement } from './utils/element';
 export type { ElementParams } from './utils/element';
 export { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from './utils/gridEvent';

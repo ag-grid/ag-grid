@@ -9,7 +9,6 @@ import type {
 } from 'ag-grid-community';
 import {
     BeanStub,
-    ChangedRowsPath,
     _ChangedRowNodes,
     _csrmFirstLeaf,
     _csrmReorderAllLeafs,
@@ -432,7 +431,6 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
             step: 'group',
             keepRenderedRows: true,
             animate: !this.gos.get('suppressAnimationFrame'),
-            changedPath: new ChangedRowsPath(),
             changedRowNodes,
         });
     }
@@ -461,27 +459,32 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         if (maxLevel < 0) {
             return false;
         }
-        const { valueSvc } = this.beans;
+        const { valueSvc, changeDetectionSvc } = this.beans;
         let changed = false;
-        for (let level = 0; level < columns.length; ++level) {
-            const column = columns[level];
-            if (!column || level > maxLevel) {
-                continue;
+        changeDetectionSvc?.beginDeferred();
+        try {
+            for (let level = 0; level < columns.length; ++level) {
+                const column = columns[level];
+                if (!column || level > maxLevel) {
+                    continue;
+                }
+                const newValue = values[level];
+                const currentValue = valueSvc.getValue(column, row, 'data');
+                if (currentValue === newValue || (currentValue == null && newValue == null)) {
+                    continue;
+                }
+                let valueToSet = newValue;
+                const parsedValue = valueSvc.parseValue(column, row, newValue, currentValue);
+                if (parsedValue !== undefined) {
+                    valueToSet = parsedValue;
+                }
+                const updated = row.setDataValue(column, valueToSet, 'rowDrag');
+                if (updated) {
+                    changed = true;
+                }
             }
-            const newValue = values[level];
-            const currentValue = valueSvc.getValue(column, row, 'data');
-            if (currentValue === newValue || (currentValue == null && newValue == null)) {
-                continue;
-            }
-            let valueToSet = newValue;
-            const parsedValue = valueSvc.parseValue(column, row, newValue, currentValue);
-            if (parsedValue !== undefined) {
-                valueToSet = parsedValue;
-            }
-            const updated = row.setDataValue(column, valueToSet, 'rowDrag');
-            if (updated) {
-                changed = true;
-            }
+        } finally {
+            changeDetectionSvc?.endDeferred();
         }
         return changed;
     }

@@ -26,8 +26,10 @@ function getProjectBuildTargets(project) {
         buildTargets.push(['ag-studio-docs', ['generate-doc-references']]);
 
         if (project === 'ag-studio') {
-            buildTargets.push(['ag-studio', ['build'], 'watch']);
+            buildTargets.push(['ag-studio', ['build:umd', 'build'], 'watch']);
         }
+    } else {
+        buildTargets.push([project, ['build'], undefined]);
     }
 
     return buildTargets;
@@ -47,7 +49,6 @@ module.exports = {
     devServerReloadTargets: [
         'generate',
         'generate-doc-references',
-        'build',
         'build:umd',
         'build:package',
         'generate-examples',

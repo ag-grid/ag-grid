@@ -74,9 +74,12 @@ export const AG_GRID_LOCALE_RO = {
 
     // Filter Buttons
     applyFilter: 'Aplică',
+    applyColumnToolPanel: 'Aplică',
+    deferMode: 'Defer mode',
     resetFilter: 'Resetează',
     clearFilter: 'Curăță',
     cancelFilter: 'Anulează',
+    cancelColumnToolPanel: 'Anulează',
 
     // Filter Titles
     textFilter: 'Filtru text',

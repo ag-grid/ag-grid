@@ -6,7 +6,7 @@ import type {
     ServerSideTransactionResult,
     ValueCache,
 } from 'ag-grid-community';
-import { BeanStub, ServerSideTransactionResultStatus, _isServerSideRowModel } from 'ag-grid-community';
+import { BeanStub, ServerSideTransactionResultStatus } from 'ag-grid-community';
 
 import type { ServerSideRowModel } from './serverSideRowModel';
 import type { ServerSideSelectionService } from './services/serverSideSelectionService';
@@ -31,13 +31,6 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
 
     private asyncTransactionsTimeout: number | undefined;
     private asyncTransactions: AsyncTransactionWrapper[] = [];
-
-    public postConstruct(): void {
-        // only want to be active if SSRM active, otherwise would be interfering with other row models
-        if (!_isServerSideRowModel(this.gos)) {
-            return;
-        }
-    }
 
     public applyTransactionAsync(
         transaction: ServerSideTransaction,

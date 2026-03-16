@@ -156,7 +156,7 @@ export class ServerSideExpansionService
         // when using footers we need to refresh the group row, as the aggregation
         // values jump between group and footer, because the footer can be callback
         // we refresh regardless as the output of the callback could be a moving target
-        this.beans.rowRenderer.refreshCells({ rowNodes: [event.node] });
+        this.beans.rowRenderer.refreshRowByNode(event.node);
     }
 
     public updateExpandedState(rowNode: RowNode): void {

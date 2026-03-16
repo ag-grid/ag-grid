@@ -301,6 +301,12 @@
                     "path": "grouping-single-group-column/#inherit-row-grouped-columns-filters",
                     "name": "Group Filter",
                     "isEnterprise": true
+                },
+                {
+                    "moduleName": "RowGroupingEditModule",
+                    "name": "Editing and Updating Group Row Cells",
+                    "path": "grouping-edit",
+                    "isEnterprise": true
                 }
             ]
         },

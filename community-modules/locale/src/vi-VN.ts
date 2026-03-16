@@ -74,9 +74,12 @@ export const AG_GRID_LOCALE_VN = {
 
     // Filter Buttons
     applyFilter: 'Áp dụng',
+    applyColumnToolPanel: 'Áp dụng',
+    deferMode: 'Defer mode',
     resetFilter: 'Đặt lại',
     clearFilter: 'Xóa',
     cancelFilter: 'Hủy',
+    cancelColumnToolPanel: 'Hủy',
 
     // Filter Titles
     textFilter: 'Bộ lọc văn bản',

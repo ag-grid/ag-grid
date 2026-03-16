@@ -85,7 +85,8 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
                 // full refresh will handle it.
                 this.hadAgg = false;
                 const colModel = beans.colModel;
-                _forEachChangedGroupDepthFirst(beans.rowModel.rootNode, undefined, (rowNode) => {
+                const rowModel = beans.rowModel;
+                _forEachChangedGroupDepthFirst(rowModel.rootNode, rowModel.hierarchical, undefined, (rowNode) => {
                     setAggDataWithSiblings(rowNode, null, colModel);
                 });
             }
@@ -136,7 +137,8 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         // per-group allocation. Inner arrays are still fresh per group (user-facing via aggFunc params).
         const values2d = colCount > 0 ? new Array<any[] | null>(colCount) : null;
 
-        _forEachChangedGroupDepthFirst(beans.rowModel.rootNode, changedPath, (rowNode) => {
+        const rowModel = beans.rowModel;
+        _forEachChangedGroupDepthFirst(rowModel.rootNode, rowModel.hierarchical, changedPath, (rowNode) => {
             if (rowNode.level === -1 && !aggregateRoot) {
                 setAggData(rowNode, null, colModel);
                 return;
@@ -376,8 +378,6 @@ const aggregateValuesAndPivot = (
 
     return result;
 };
-
-// ── Module-level helpers ───────────────────────────────────────────────────
 
 /** Resolves aggFunc from a string name or returns the function directly. Returns null with a warning for invalid names. */
 const resolveAggFunc = (

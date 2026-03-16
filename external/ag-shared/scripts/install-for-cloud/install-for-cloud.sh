@@ -48,7 +48,7 @@ elif [ "${CLAUDE_CODE_REMOTE:-}" == "true" ]; then
     log_info "CLAUDE_CODE_REMOTE set, initializing environment"
     RUN_MODE="full"
 elif is_claude_worktree; then
-    log_info "Claude Code worktree detected, symlinking nx cache only"
+    log_info "Claude Code worktree detected, cloning nx cache only"
     RUN_MODE="full"
 else
     log_info "No cloud/worktree environment detected, skipping initialization"
@@ -119,7 +119,7 @@ EOF
     log_info "yarn@1 installed successfully"
 }
 
-symlink_nx_cache() {
+clone_nx_cache() {
     if [ -d .nx ]; then
         log_info "nx cache directory already exists, skipping"
         return 0
@@ -133,14 +133,12 @@ symlink_nx_cache() {
         return 0
     fi
 
-    mkdir -p .nx
-    if [ -d "${root_path}/.nx/cache" ]; then
-        log_info "Symlinking nx cache from ${root_path}"
-        ln -sf "${root_path}/.nx/cache" .nx/cache
-    fi
-    if [ -d "${root_path}/.nx/workspace-data" ]; then
-        log_info "Copying nx workspace data from ${root_path}"
-        cp -r "${root_path}/.nx/workspace-data" .nx/workspace-data
+    log_info "Cloning .nx directory from ${root_path} using CoW"
+    if clone_directory "${root_path}/.nx" ./.nx; then
+        log_info "Successfully cloned .nx from ${root_path}"
+    else
+        log_info "Failed to clone .nx, continuing without cache"
+        rm -rf ./.nx
     fi
 }
 
@@ -244,13 +242,13 @@ main() {
     # Full mode: install dependencies, yarn, nx, etc.
     if [ -d node_modules ]; then
         log_info "node_modules directory exists, checking dependencies"
-        symlink_nx_cache
+        clone_nx_cache
         if ! install_dependencies; then
             exit 2
         fi
     elif try_copy_node_modules; then
         log_info "Validating copied node_modules"
-        symlink_nx_cache
+        clone_nx_cache
         if ! install_dependencies; then
             exit 2
         fi
@@ -262,7 +260,7 @@ main() {
         if ! install_nx; then
             exit 2
         fi
-        symlink_nx_cache
+        clone_nx_cache
         if ! install_dependencies; then
             exit 2
         fi
