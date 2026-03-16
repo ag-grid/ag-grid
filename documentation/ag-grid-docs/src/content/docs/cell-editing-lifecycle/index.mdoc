@@ -25,3 +25,7 @@ Value Parsers also apply to values entered via paste, fill handle, and copy-rang
 By default, the grid writes the parsed value back to your row data using the column `field`. A **[Value Setter](./value-setters/)** lets you customise this — useful when your data structure is not a simple key/value map, or when you need to update multiple fields together.
 
 For applications that manage data state externally (e.g. Redux), use **[Read Only Edit](./value-setters/#read-only-edit)** (`readOnlyEdit: true`) to prevent the grid from writing changes — the grid fires a `cellEditRequest` event instead, and your application applies the update.
+
+{% note %}
+Cell Editing can also be performed via [Cell Editor Components](./cell-editors/).
+{% /note %}

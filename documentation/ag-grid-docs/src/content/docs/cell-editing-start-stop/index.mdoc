@@ -92,7 +92,7 @@ The grid has the following API methods for editing:
 
 {% apiDocumentation source="grid-api/api.json" section="editing" names=["startEditingCell", "stopEditing", "getEditingCells", "getEditRowValues", "isEditing"] /%}
 
-`getEditingCells()` returns an array of objects containing details of currently editing cells. Typically this array contains one entry, but when using [Full Row Edit](./cell-editing-full-row/), multiple cells may be editing simultaneously.
+When the grid is editing, `getEditingCells()` returns an array of objects describing each editing cell. In the default mode this array has a single entry; when multiple cells are editing (e.g. [Full Row Edit](./cell-editing-full-row/) or [Batch Edit](./cell-editing-batch)), it contains one entry per editing cell.
 
 The example below illustrates different parts of the editing API. Each button starts editing the 'Last Name' column of the first row with the following differences:
 
@@ -101,9 +101,15 @@ The example below illustrates different parts of the editing API. Each button st
 -   `edit('T')`: Edit as if 'T' was pressed (places 'T' into cell).
 -   `edit(top)`: Edits top pinned row.
 -   `edit(bottom)`: Edits bottom pinned row.
+
+The example also demonstrates the following buttons for edit navigation:
+
 -   `stop()`: Stops editing.
 -   `next()`: Edits the next cell.
 -   `previous()`: Edits the previous cell.
+
+Finally, the example also demonstrates querying which cell is editing:
+
 -   `which()`: If the grid is editing, prints to the console which cell is in edit mode.
 
 Events are logged in the developer console.
