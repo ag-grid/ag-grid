@@ -16,7 +16,7 @@ import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import type { OverlayType } from '../rendering/overlays/overlayComponent';
 import type { ChangedPath } from '../utils/changedPath';
-import { ChangedRowsPath, _forEachChangedGroupDepthFirst } from '../utils/changedPath';
+import { _forEachChangedGroupDepthFirst } from '../utils/changedPath';
 import { _warn } from '../validation/logging';
 import { ChangedRowNodes } from './changedRowNodes';
 import { ClientSideNodeManager } from './clientSideNodeManager';
@@ -36,6 +36,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     /** Public-readonly flag indicating row count is ready for external consumers. */
     public rowCountReady: boolean = false;
+
+    /** True when grouping or tree data is active. Updated after grouping stage runs. */
+    public hierarchical: boolean = false;
 
     /** Manages the row nodes, including creation, update, and removal. */
     private nodeManager: ClientSideNodeManager<any> | undefined = undefined;
@@ -538,7 +541,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
 
         const rowDataUpdated = !!params.rowDataUpdated;
-        params.changedPath ??= !params.newData && rowDataUpdated ? new ChangedRowsPath() : undefined;
 
         if (started && rowDataUpdated) {
             eventSvc.dispatchEvent({ type: 'rowDataUpdated' });
@@ -592,23 +594,34 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     /** Executes the refresh pipeline stages and updates row positions. */
     private executeRefresh(params: RefreshModelParams, rowDataUpdated: boolean): void {
-        const { beans } = this;
+        const { beans, rootNode } = this;
 
         beans.masterDetailSvc?.refreshModel(params);
         if (rowDataUpdated && params.step !== 'group') {
             beans.colFilter?.refreshModel();
         }
 
+        // For externally-provided changedPath, add rootNode before the pipeline.
         let changedPath = params.changedPath;
 
         // Ensure the root node is always visited by pipeline stages even for empty transactions.
-        changedPath?.addRow(this.rootNode);
+        changedPath?.addRow(rootNode);
+
+        // Run grouping first if needed — sets this.hierarchical and may create changedPath.
+        if (params.step === 'group') {
+            this.doGrouping(rootNode!, params);
+            changedPath ??= params.changedPath;
+        }
+
+        // Flat grids (hierarchical=false) never use changedPath — all pipeline stages have O(n) flat
+        // fast paths that process root's children directly. ChangedPath only matters for hierarchical
+        // grids where incremental traversal of the group tree avoids visiting unchanged subtrees.
+        changedPath ??= beans.changedPathFactory?.ensureRowsPath(params, rootNode);
 
         // Pipeline of stages — fallthrough is on purpose, e.g. if 'filter', then all steps after run too.
         /* eslint-disable no-fallthrough */
         switch (params.step) {
             case 'group':
-                this.doGrouping(params);
             case 'filter':
                 this.doFilter(changedPath);
             case 'pivot':
@@ -911,7 +924,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
 
         if (node.hasChildren() && !node.footer) {
-            const children = getChildren(node);
+            const children = isRootNode || this.hierarchical ? getChildren(node) : null;
             if (children) {
                 const footerSvc = this.beans.footerSvc;
                 index = footerSvc?.addTotalRows(index, node, callback, includeFooterNodes, isRootNode, 'top') ?? index;
@@ -937,12 +950,16 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private doFilterAggregates(changedPath: ChangedPath | undefined): void {
         const rootNode = this.rootNode!;
         const filterAggStage = this.beans.filterAggStage;
-        if (filterAggStage) {
+        if (filterAggStage && this.hierarchical) {
             filterAggStage.execute(changedPath);
             return;
         }
-        // If filterAggStage is undefined, then so is the grouping stage, so all children should be on the rootNode.
+        // Flat mode or no filterAggStage: no group nodes with aggregated values to filter.
         rootNode.childrenAfterAggFilter = rootNode.childrenAfterFilter;
+        const sibling = rootNode.sibling;
+        if (sibling) {
+            sibling.childrenAfterAggFilter = rootNode.childrenAfterFilter;
+        }
     }
 
     private doSort(changedPath: ChangedPath | undefined, changedRowNodes: ChangedRowNodes | undefined): void {
@@ -951,17 +968,13 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             sortStage.execute(changedPath, changedRowNodes);
             return;
         }
-        _forEachChangedGroupDepthFirst(this.rootNode, changedPath, (rowNode) => {
+        _forEachChangedGroupDepthFirst(this.rootNode, this.hierarchical, changedPath, (rowNode) => {
             rowNode.childrenAfterSort = rowNode.childrenAfterAggFilter!.slice(0);
             updateRowNodeAfterSort(rowNode);
         });
     }
 
-    private doGrouping(params: RefreshModelParams): void {
-        const rootNode = this.rootNode;
-        if (!rootNode) {
-            return; // destroyed
-        }
+    private doGrouping(rootNode: RowNode, params: RefreshModelParams): void {
         const groupStage = this.beans.groupStage;
         const groupingChanged = groupStage?.execute(params);
         if (groupingChanged === undefined) {
@@ -988,7 +1001,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             filterStage.execute(changedPath);
             return;
         }
-        _forEachChangedGroupDepthFirst(this.rootNode, changedPath, (rowNode) => {
+        _forEachChangedGroupDepthFirst(this.rootNode, this.hierarchical, changedPath, (rowNode) => {
             rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
             updateRowNodeAfterFilter(rowNode);
         });
@@ -1100,7 +1113,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             keepRenderedRows: true,
             animate,
             changedRowNodes,
-            changedPath: new ChangedRowsPath(),
         });
     }
 

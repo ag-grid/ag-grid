@@ -60,7 +60,7 @@ export function syncLayoutWithGrid(
     syncLayoutCallback: (colDefs: AbstractColDef[]) => void
 ): void {
     // extract ordered list of leaf path trees (column group hierarchy for each individual leaf column)
-    const leafPathTrees: AbstractColDef[] = getLeafPathTrees(colModel);
+    const leafPathTrees: AbstractColDef[] = getLeafPathTrees(getGridPrimaryColumns(colModel));
 
     // merge leaf path tree taking split column groups into account
     const mergedColumnTrees = mergeLeafPathTrees(leafPathTrees);
@@ -69,7 +69,20 @@ export function syncLayoutWithGrid(
     syncLayoutCallback(mergedColumnTrees);
 }
 
-function getLeafPathTrees(colModel: ColumnModel): AbstractColDef[] {
+export function syncLayoutWithColumns(
+    columns: AgColumn[],
+    syncLayoutCallback: (colDefs: AbstractColDef[]) => void
+): void {
+    const leafPathTrees: AbstractColDef[] = getLeafPathTrees(columns);
+
+    // merge leaf path tree taking split column groups into account
+    const mergedColumnTrees = mergeLeafPathTrees(leafPathTrees);
+
+    // sync layout with merged column trees
+    syncLayoutCallback(mergedColumnTrees);
+}
+
+function getLeafPathTrees(columns: AgColumn[]): AbstractColDef[] {
     // leaf tree paths are obtained by walking up the tree starting at a column until we reach the top level group.
     const getLeafPathTree = (node: AgColumn | AgProvidedColumnGroup, childDef: AbstractColDef): AbstractColDef => {
         let leafPathTree: AbstractColDef;
@@ -104,15 +117,13 @@ function getLeafPathTrees(colModel: ColumnModel): AbstractColDef[] {
         }
     };
 
-    // obtain a sorted list of all grid columns
-    const allGridColumns = colModel.getCols();
+    // construct a leaf path tree for each column
+    return columns.map((col) => getLeafPathTree(col, col.getColDef()));
+}
 
-    // only primary columns and non row group columns should appear in the tool panel
-    const allPrimaryGridColumns = allGridColumns.filter((column) => {
+function getGridPrimaryColumns(colModel: ColumnModel): AgColumn[] {
+    return colModel.getCols().filter((column) => {
         const colDef = column.getColDef();
         return column.isPrimary() && !colDef.showRowGroup;
     });
-
-    // construct a leaf path tree for each column
-    return allPrimaryGridColumns.map((col) => getLeafPathTree(col, col.getColDef()));
 }

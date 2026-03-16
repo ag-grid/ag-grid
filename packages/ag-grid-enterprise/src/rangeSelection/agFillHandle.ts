@@ -416,16 +416,23 @@ export class AgFillHandle extends AbstractSelectionHandle {
             }
         };
 
-        if (isVertical) {
-            initialRange.columns.forEach((col: AgColumn) => {
-                iterateAcrossCells(col);
-            });
-        } else {
-            const columns = (this.isLeft ? [...finalRange.columns].reverse() : finalRange.columns) as AgColumn[];
-            iterateAcrossCells(undefined, columns);
+        const { changeDetectionSvc } = this.beans;
+        changeDetectionSvc?.beginDeferred();
+        try {
+            if (isVertical) {
+                initialRange.columns.forEach((col: AgColumn) => {
+                    iterateAcrossCells(col);
+                });
+            } else {
+                const columns = (this.isLeft ? [...finalRange.columns].reverse() : finalRange.columns) as AgColumn[];
+                iterateAcrossCells(undefined, columns);
+            }
+            // Stop the editor inside the deferred block so the commit (if any) is included
+            // in the same doAggregate pass as the fill writes.
+            this.beans.editSvc?.stopEditing(undefined, { source: 'fillHandle' });
+        } finally {
+            changeDetectionSvc?.endDeferred();
         }
-
-        this.beans.editSvc?.stopEditing(undefined, { source: 'fillHandle' });
     }
 
     private clearCellsInRange(startRow: RowPosition, endRow: RowPosition, columns: AgColumn[]) {

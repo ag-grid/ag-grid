@@ -2,7 +2,7 @@ import { userEvent } from '@testing-library/user-event';
 
 import type { ColDef, GridApi, IRowNode } from 'ag-grid-community';
 import { AllCommunityModule, ClientSideRowModelModule, UndoRedoEditModule } from 'ag-grid-community';
-import { RowGroupingModule, SetFilterModule, TreeDataModule } from 'ag-grid-enterprise';
+import { RowGroupingEditModule, RowGroupingModule, SetFilterModule, TreeDataModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, asyncSetTimeout, waitForInput } from '../../test-utils';
 
@@ -14,6 +14,7 @@ export const gridsManager = new TestGridsManager({
         TreeDataModule,
         UndoRedoEditModule,
         SetFilterModule,
+        RowGroupingEditModule,
     ],
 });
 

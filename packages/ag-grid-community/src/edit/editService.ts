@@ -648,20 +648,32 @@ export class EditService extends BeanStub implements NamedBean {
 
         const editsToDelete: EditPosition[] = [];
 
-        for (const rowNode of rowNodes) {
-            const editRow = edits.get(rowNode)!;
-            for (const column of editRow.keys()) {
-                const editValue = editRow.get(column)!;
-                const position: Required<EditPosition> = { rowNode, column };
+        const { changeDetectionSvc } = this.beans;
+        changeDetectionSvc?.beginDeferred();
+        try {
+            for (const rowNode of rowNodes) {
+                const editRow = edits.get(rowNode)!;
+                for (const column of editRow.keys()) {
+                    const editValue = editRow.get(column)!;
+                    const position: Required<EditPosition> = { rowNode, column };
 
-                if (_sourceAndPendingDiffer(editValue) && !hasValidationErrors) {
-                    const cellCtrl = _getCellCtrl(this.beans, position);
-                    const success = this.setNodeDataValue(rowNode, column, editValue.pendingValue, cellCtrl, source);
-                    if (!success) {
-                        editsToDelete.push(position);
+                    if (_sourceAndPendingDiffer(editValue) && !hasValidationErrors) {
+                        const cellCtrl = _getCellCtrl(this.beans, position);
+                        const success = this.setNodeDataValue(
+                            rowNode,
+                            column,
+                            editValue.pendingValue,
+                            cellCtrl,
+                            source
+                        );
+                        if (!success) {
+                            editsToDelete.push(position);
+                        }
                     }
                 }
             }
+        } finally {
+            changeDetectionSvc?.endDeferred();
         }
 
         return editsToDelete;
@@ -722,9 +734,11 @@ export class EditService extends BeanStub implements NamedBean {
         const edit = this.model.getEdit(position);
         if (edit && edit.state !== 'editing') {
             if (success) {
-                this.beans.editModelSvc?.setEdit(position, {
-                    sourceValue: this.valueSvc.getValue(position.column as AgColumn, position.rowNode, 'data'),
-                });
+                // Use pendingValue as the new sourceValue: we just committed it, so it IS the source.
+                // Reading from valueSvc.getValue('data') can return stale aggData for group nodes when
+                // aggregation is deferred (e.g. inside a changeDetectionSvc batch), causing the edit
+                // to appear as pending (⏳) even after undo/redo restores the original value.
+                this.beans.editModelSvc?.setEdit(position, { sourceValue: edit.pendingValue });
             } else {
                 this.model.clearEditValue(position);
             }
@@ -1279,6 +1293,10 @@ export class EditService extends BeanStub implements NamedBean {
         const success = this.setNodeDataValue(position.rowNode, position.column, newValue, cellCtrl, eventSource);
 
         this.syncEditAfterCommit(position, success);
+
+        // After undo/redo or direct data writes, the edit's pendingValue may now match sourceValue.
+        // Purge such entries so they don't show as batch-pending (⏳) when the value was restored.
+        _purgeUnchangedEdits(beans);
 
         // Re-fetch: change detection during setDataValue may have recreated the CellCtrl.
         _getCellCtrl(beans, position)?.refreshCell(FORCE_REFRESH);

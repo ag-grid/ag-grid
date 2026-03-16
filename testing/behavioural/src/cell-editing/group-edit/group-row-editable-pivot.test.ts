@@ -1,6 +1,6 @@
 import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, NumberEditorModule, TextEditorModule, UndoRedoEditModule } from 'ag-grid-community';
-import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
+import { PivotModule, RowGroupingEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../../test-utils';
 import { EditEventTracker, GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
@@ -14,6 +14,7 @@ import { EDIT_MODES, callsForRowNode, cascadeGroupRowValueSetter, editCell } fro
 describe('groupRowEditable with pivot mode', () => {
     const gridsManager = new TestGridsManager({
         modules: [
+            RowGroupingEditModule,
             TextEditorModule,
             NumberEditorModule,
             ClientSideRowModelModule,

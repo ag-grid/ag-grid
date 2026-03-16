@@ -886,6 +886,53 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.refreshFullWidth(params.rowNodes);
     }
 
+    /** O(1) lookup of a RowCtrl by its RowNode (O(k) for sticky rows, where k is the sticky row count). */
+    public getRowCtrlByNode(node: IRowNode): RowCtrl | undefined {
+        const rowIndex = node.rowIndex;
+        if (rowIndex == null) {
+            return undefined;
+        }
+        const rowPinned = node.rowPinned;
+        if (rowPinned === 'top') {
+            const ctrl = this.topRowCtrls[rowIndex];
+            return ctrl?.rowNode === node ? ctrl : undefined;
+        }
+        if (rowPinned === 'bottom') {
+            const ctrl = this.bottomRowCtrls[rowIndex];
+            return ctrl?.rowNode === node ? ctrl : undefined;
+        }
+        const ctrl = this.rowCtrlsByRowIndex[rowIndex];
+        if (ctrl?.rowNode === node) {
+            return ctrl;
+        }
+        return this.getStickyRowCtrlByNode(node);
+    }
+
+    private getStickyRowCtrlByNode(node: IRowNode): RowCtrl | undefined {
+        const stickyRowFeature = this.stickyRowFeature;
+        if (!stickyRowFeature) {
+            return undefined;
+        }
+        for (const c of stickyRowFeature.stickyTopRowCtrls) {
+            if (c.rowNode === node) {
+                return c;
+            }
+        }
+        for (const c of stickyRowFeature.stickyBottomRowCtrls) {
+            if (c.rowNode === node) {
+                return c;
+            }
+        }
+        return undefined;
+    }
+
+    /** Refreshes the rendered row for the given node if it is currently in the viewport. Null-safe: no-op when node is null or undefined. */
+    public refreshRowByNode(node: IRowNode | null | undefined): void {
+        if (node) {
+            this.getRowCtrlByNode(node)?.refreshRow();
+        }
+    }
+
     private refreshFullWidth(rowNodes?: IRowNode[]): void {
         if (!rowNodes) {
             return;

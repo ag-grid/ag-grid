@@ -32,4 +32,4 @@ The only exception is if the user has explicitly asked to change the build, lint
 
 -   Run the `yarn nx build`, `yarn nx lint` show no warnings or errors.
 -   We have NOT changed build/lint/typecheck configurations to workaround
--   Verify the `mcp__ide__getDiagnostics` tool to check for any errors or warnings in the codebase in the users IDE.
+-   If the IDE MCP is available, verify the `mcp__ide__getDiagnostics` tool to check for any errors or warnings in the codebase in the user's IDE. If IDE MCP is unavailable (e.g. in CLI mode), verify via `yarn nx build:types` and `yarn nx lint` instead.

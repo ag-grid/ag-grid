@@ -3,6 +3,7 @@ targets: ['*']
 name: sync-ag-shared
 description: 'Sync ag-shared subrepo changes across ag-charts, ag-grid, and ag-studio repos'
 invocable: user-only
+context: fork
 ---
 
 # Sync ag-shared Subrepo Across AG Repos
@@ -135,6 +136,7 @@ Display to the user:
 4. Apply companion changes in each destination
 5. Verify all repos
 6. Push branches and create cross-linked PRs (reuse existing source PR if one exists)
+7. Post-sync housekeeping (README updates, migration verification, user summary)
 ```
 
 Use `AskUserQuestion` to confirm before proceeding. The user may want to adjust the plan or skip certain destinations.
@@ -336,6 +338,42 @@ Output a summary:
 
 All repos verified. Working trees clean.
 ```
+
+## STEP 9: Post-Sync Housekeeping
+
+After all repos are synced, PRs created, and verification passed, complete these final tasks.
+
+### 9a. Update `.rulesync/README.md`
+
+Each repo's `.rulesync/README.md` is a crib-sheet of available agentic tools. Update it in every repo (source + destinations) to reflect the sync:
+
+-   Add new skills to the Skills Reference table (alphabetical, with provenance emoji).
+-   Add new skills to the relevant section tables (Everyday Development, Testing, Planning, etc.).
+-   Remove deleted agents/skills/commands from all tables.
+-   Ensure provenance emojis are correct (🔵 for shared, 🟢 for local).
+
+### 9b. Verify SYNC-LOG Migration Actions
+
+Cross-check every migration action in `external/ag-shared/docs/SYNC-LOG.md` against each destination repo:
+
+-   Verify broken symlinks are removed.
+-   Verify new skill/rule/command symlinks are created.
+-   Verify slim pointer rules replaced monolithic versions (if applicable).
+-   Run `find .rulesync/ -type l -exec test ! -e {} \; -print` to detect broken symlinks.
+-   Note: some actions may be repo-specific (🟠 Private skills) — skip those for repos that don't use them.
+
+### 9c. Write User Summary
+
+Output a concise summary of what changed for users of the agentic tooling:
+
+-   New skills/commands/capabilities added.
+-   Removed or replaced items.
+-   Performance improvements (e.g. context optimisation).
+-   Any breaking changes to existing workflows.
+
+### 9d. Commit and Push
+
+Commit the README and any other post-sync changes in each repo, then push to the existing PR branches.
 
 ## Error Handling
 

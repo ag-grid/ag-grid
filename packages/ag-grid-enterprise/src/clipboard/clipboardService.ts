@@ -20,8 +20,6 @@ import type {
 } from 'ag-grid-community';
 import {
     BeanStub,
-    ChangedCellsPath,
-    ChangedRowsPath,
     _createCellId,
     _exists,
     _forEachChangedGroupDepthFirst,
@@ -293,8 +291,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
         const { clientSideRowModel } = this;
         const rootNode = clientSideRowModel?.rootNode;
-        const changedPath =
-            rootNode && (gos.get('aggregateOnlyChangedColumns') ? new ChangedCellsPath() : new ChangedRowsPath());
+        const changedPath = rootNode && this.beans.changedPathFactory?.newPath(gos.get('aggregateOnlyChangedColumns'));
 
         const cellsToFlash: Record<string, boolean> = {};
         const updatedRowNodes: RowNode[] = [];
@@ -307,7 +304,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             clientSideRowModel.doAggregate(changedPath);
 
             // add all nodes impacted by aggregation, as they need refreshed also.
-            _forEachChangedGroupDepthFirst(rootNode, changedPath, (rowNode) => {
+            _forEachChangedGroupDepthFirst(rootNode, clientSideRowModel.hierarchical, changedPath, (rowNode) => {
                 nodesToRefresh.push(rowNode);
             });
         }

@@ -1,28 +1,41 @@
-import type { AgColumn, BeanCollection, ColumnEventType, ColumnState, IAggFunc } from 'ag-grid-community';
-import { _applyColumnState } from 'ag-grid-community';
+import type {
+    AgColumn,
+    BeanCollection,
+    ColumnEventType,
+    ColumnState,
+    IAggFunc,
+    IColumnStateUpdateStrategy,
+} from 'ag-grid-community';
 
 import type { ColumnModelItem } from './columnModelItem';
+import { refreshDeferredToolPanelUi } from './toolPanelDeferredUiUtils';
+import type { ColumnStateUpdateParams } from './updates/columnStateUpdateTypes';
 
 export function selectAllChildren(
     beans: BeanCollection,
     colTree: ColumnModelItem[],
     selectAllChecked: boolean,
-    eventType: ColumnEventType
+    eventType: ColumnEventType,
+    params: ColumnStateUpdateParams
 ): void {
     const cols = extractAllLeafColumns(colTree);
-    setAllColumns(beans, cols, selectAllChecked, eventType);
+    setAllColumns(beans, cols, selectAllChecked, eventType, params);
 }
 
 export function setAllColumns(
     beans: BeanCollection,
     cols: AgColumn[],
     selectAllChecked: boolean,
-    eventType: ColumnEventType
+    eventType: ColumnEventType,
+    params: ColumnStateUpdateParams
 ): void {
-    if (beans.colModel.isPivotMode()) {
-        setAllPivot(beans, cols, selectAllChecked, eventType);
+    const updateStrategy = beans.columnStateUpdateStrategy;
+    const isPivotMode = updateStrategy.getPivotMode(!!params.deferApply);
+
+    if (isPivotMode) {
+        setAllPivot(beans, cols, selectAllChecked, eventType, params);
     } else {
-        setAllVisible(beans, cols, selectAllChecked, eventType);
+        setAllVisible(beans, cols, selectAllChecked, eventType, params);
     }
 }
 
@@ -47,14 +60,21 @@ function extractAllLeafColumns(allItems: ColumnModelItem[]): AgColumn[] {
     return res;
 }
 
-function setAllVisible(beans: BeanCollection, columns: AgColumn[], visible: boolean, eventType: ColumnEventType): void {
+function setAllVisible(
+    beans: BeanCollection,
+    columns: AgColumn[],
+    visible: boolean,
+    eventType: ColumnEventType,
+    params: ColumnStateUpdateParams
+): void {
+    const updateStrategy = beans.columnStateUpdateStrategy;
     const colStateItems: ColumnState[] = [];
 
     for (const col of columns) {
         if (col.getColDef().lockVisible) {
             continue;
         }
-        if (col.isVisible() != visible) {
+        if (updateStrategy.isColumnVisibleInToolPanel(!!params.deferApply, col) !== visible) {
             colStateItems.push({
                 colId: col.getId(),
                 hide: !visible,
@@ -62,26 +82,33 @@ function setAllVisible(beans: BeanCollection, columns: AgColumn[], visible: bool
         }
     }
 
-    if (colStateItems.length > 0) {
-        _applyColumnState(beans, { state: colStateItems }, eventType);
-    }
+    updateStrategy.applyColumnState(!!params.deferApply, colStateItems, eventType);
+    refreshDeferredToolPanelUi(beans, params);
 }
 
-function setAllPivot(beans: BeanCollection, columns: AgColumn[], value: boolean, eventType: ColumnEventType): void {
-    setAllPivotActive(beans, columns, value, eventType);
+function setAllPivot(
+    beans: BeanCollection,
+    columns: AgColumn[],
+    value: boolean,
+    eventType: ColumnEventType,
+    params: ColumnStateUpdateParams
+): void {
+    setAllPivotActive(beans, columns, value, eventType, params);
 }
 
 function setAllPivotActive(
     beans: BeanCollection,
     columns: AgColumn[],
     value: boolean,
-    eventType: ColumnEventType
+    eventType: ColumnEventType,
+    params: ColumnStateUpdateParams
 ): void {
+    const updateStrategy = beans.columnStateUpdateStrategy;
     const colStateItems: ColumnState[] = [];
 
     const turnOnAction = (col: AgColumn) => {
         // don't change any column that's already got a function active
-        if (col.isAnyFunctionActive()) {
+        if (updateStrategy.isColumnSelectedInPivotModeToolPanel(!!params.deferApply, col)) {
             return;
         }
 
@@ -106,7 +133,7 @@ function setAllPivotActive(
     };
 
     const turnOffAction = (col: AgColumn) => {
-        const isActive = col.isPivotActive() || col.isRowGroupActive() || col.isValueActive();
+        const isActive = updateStrategy.isColumnSelectedInPivotModeToolPanel(!!params.deferApply, col);
         if (isActive) {
             colStateItems.push({
                 colId: col.getId(),
@@ -121,9 +148,8 @@ function setAllPivotActive(
 
     columns.forEach(action);
 
-    if (colStateItems.length > 0) {
-        _applyColumnState(beans, { state: colStateItems }, eventType);
-    }
+    updateStrategy.applyColumnState(!!params.deferApply, colStateItems, eventType);
+    refreshDeferredToolPanelUi(beans, params);
 }
 
 export function updateColumns(
@@ -139,12 +165,15 @@ export function updateColumns(
             };
         };
         eventType: ColumnEventType;
+        deferApply?: boolean;
     }
 ): void {
     const { columns, visibleState, pivotState, eventType } = params;
+    const updateStrategy = beans.columnStateUpdateStrategy;
+    const isPivotMode = updateStrategy.getPivotMode(!!params.deferApply);
     const state: ColumnState[] = columns.map((column) => {
         const colId = column.getColId();
-        if (beans.colModel.isPivotMode()) {
+        if (isPivotMode) {
             const pivotStateForColumn = pivotState?.[colId];
             return {
                 colId,
@@ -159,10 +188,11 @@ export function updateColumns(
             };
         }
     });
-    _applyColumnState(beans, { state }, eventType);
+    updateStrategy.applyColumnState(!!params.deferApply, state, eventType);
+    refreshDeferredToolPanelUi(beans, params);
 }
 
-export function createPivotState(column: AgColumn): {
+function createPivotState(column: AgColumn): {
     pivot?: boolean;
     rowGroup?: boolean;
     aggFunc?: string | IAggFunc | null;
@@ -171,5 +201,29 @@ export function createPivotState(column: AgColumn): {
         pivot: column.isPivotActive(),
         rowGroup: column.isRowGroupActive(),
         aggFunc: column.isValueActive() ? column.getAggFunc() : undefined,
+    };
+}
+
+export function createPivotStateForToolPanel(
+    column: AgColumn,
+    updateStrategy: IColumnStateUpdateStrategy,
+    deferApply: boolean
+): {
+    pivot?: boolean;
+    rowGroup?: boolean;
+    aggFunc?: string | IAggFunc | null;
+} {
+    if (!deferApply) {
+        return createPivotState(column);
+    }
+
+    const rowGroup = updateStrategy.getRowGroupColumns(deferApply).includes(column);
+    const pivot = updateStrategy.getPivotColumns(deferApply).includes(column);
+    const value = updateStrategy.getValueColumns(deferApply).includes(column);
+
+    return {
+        pivot,
+        rowGroup,
+        aggFunc: value ? updateStrategy.getColumnAggFunc(deferApply, column) : undefined,
     };
 }

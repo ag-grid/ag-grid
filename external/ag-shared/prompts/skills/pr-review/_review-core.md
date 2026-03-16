@@ -153,3 +153,19 @@ To determine which method to use:
 2. **Fallback**: Check for pre-fetched refs with `git rev-parse origin/pr/$ARGUMENTS 2>/dev/null`
    - If successful: Use git diff commands
    - If fails: Use `gh` CLI commands
+
+## 10. Devil's Advocate Mode
+
+When the `--devils-advocate` flag is passed, the review skill runs a second pass using an adversarial sub-agent defined in `agents/devils-advocate.md`. This agent challenges assumptions, stress-tests edge cases, questions necessity, and probes for gaps in testing.
+
+The Devil's Advocate agent follows the same priority scheme (P0-P3), line number guidelines, and environment detection described in this file. Its findings are prefixed with `[DA]` and merged with the standard review output. See `SKILL.md` for the full workflow and merge logic.
+
+## 11. Full Review Mode
+
+When the `--full` flag is passed, the review skill runs all additional passes in parallel:
+
+1. **Devil's Advocate** (Section 10) — adversarial review, findings prefixed `[DA]`.
+2. **JIRA Completeness** — verifies associated JIRA tickets (matching `AG-\d+` or `ST-\d+` in branch name, commits, or PR metadata) are well-maintained and aligned with the PR. Agent defined in `agents/jira-completeness.md`, findings prefixed `[JIRA]`.
+3. **Code Simplification** — reviews changed files for reuse, duplication, and unnecessary complexity (mirrors the `/simplify` skill). Findings prefixed `[SIMPLIFY]`.
+
+See `SKILL.md` for extraction logic, sub-agent spawning, and merge details.

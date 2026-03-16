@@ -78,6 +78,7 @@ type InternalModuleName =
     | 'Aria'
     | 'AutoWidth'
     | 'CellRendererFunction'
+    | 'ChangedPath'
     | 'ChangeDetection'
     | 'CheckboxCellRenderer'
     | 'ClientSideRowModelFilter'
@@ -116,6 +117,7 @@ type InternalModuleName =
     | 'Popup'
     | 'QuickFilterCore'
     | 'SharedAggregation'
+    | 'SharedColumnStateUpdateStrategy'
     | 'SharedDragAndDrop'
     | 'SharedExport'
     | 'SharedMasterDetail'
@@ -212,7 +214,8 @@ export type EnterpriseModuleName =
     | 'StatusBar'
     | 'TreeData'
     | 'ViewportRowModel'
-    | 'Formula';
+    | 'Formula'
+    | 'RowGroupingEdit';
 
 /** The names of all publicly available AG Grid modules */
 export type AgModuleName =
@@ -236,6 +239,7 @@ export type AgModuleName =
     | 'EventApiModule'
     | 'ExternalFilterModule'
     | 'GridStateModule'
+    | 'RowGroupingEditModule'
     | 'HighlightChangesModule'
     | 'InfiniteRowModelModule'
     | 'LargeTextEditorModule'

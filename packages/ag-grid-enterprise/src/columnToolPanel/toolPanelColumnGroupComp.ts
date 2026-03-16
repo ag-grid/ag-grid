@@ -29,8 +29,9 @@ import {
 } from 'ag-grid-community';
 
 import type { ColumnModelItem } from './columnModelItem';
-import { createPivotState, selectAllChildren, updateColumns } from './modelItemUtils';
+import { createPivotStateForToolPanel, selectAllChildren, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
+import type { ColumnStateUpdateParams } from './updates/columnStateUpdateTypes';
 
 const ToolPanelColumnGroupElement: ElementParams = {
     tag: 'div',
@@ -71,7 +72,8 @@ export class ToolPanelColumnGroupComp extends Component {
         public readonly modelItem: ColumnModelItem,
         private readonly allowDragging: boolean,
         private readonly eventType: ColumnEventType,
-        private readonly focusWrapper: HTMLElement
+        private readonly focusWrapper: HTMLElement,
+        private readonly params: ColumnStateUpdateParams
     ) {
         super();
         const { columnGroup, depth, displayName } = modelItem;
@@ -185,7 +187,7 @@ export class ToolPanelColumnGroupComp extends Component {
             return;
         }
 
-        const contextMenu = this.createBean(new ToolPanelContextMenu(columnGroup, e, this.focusWrapper));
+        const contextMenu = this.createBean(new ToolPanelContextMenu(columnGroup, e, this.focusWrapper, this.params));
         this.addDestroyFunc(() => {
             if (contextMenu.isAlive()) {
                 this.destroyBean(contextMenu);
@@ -241,6 +243,7 @@ export class ToolPanelColumnGroupComp extends Component {
                         visibleState: dragItem?.visibleState,
                         pivotState: dragItem?.pivotState,
                         eventType: this.eventType,
+                        deferApply: this.params.deferApply,
                     });
                 }
             },
@@ -267,10 +270,12 @@ export class ToolPanelColumnGroupComp extends Component {
                 aggFunc?: string | IAggFunc | null;
             };
         } = {};
+        const updateStrategy = this.beans.columnStateUpdateStrategy;
+        const deferApply = !!this.params.deferApply;
         for (const col of columns) {
             const colId = col.getId();
             visibleState[colId] = col.isVisible();
-            pivotState[colId] = createPivotState(col);
+            pivotState[colId] = createPivotStateForToolPanel(col, updateStrategy, deferApply);
         }
 
         return {
@@ -330,7 +335,7 @@ export class ToolPanelColumnGroupComp extends Component {
             return;
         }
 
-        selectAllChildren(this.beans, this.modelItem.children, nextState, this.eventType);
+        selectAllChildren(this.beans, this.modelItem.children, nextState, this.eventType, this.params);
     }
 
     private refreshAriaLabel(): void {
@@ -363,7 +368,8 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private workOutSelectedValue(): boolean | undefined {
-        const pivotMode = this.beans.colModel.isPivotMode();
+        const updateStrategy = this.beans.columnStateUpdateStrategy;
+        const pivotMode = updateStrategy.getPivotMode(!!this.params.deferApply);
 
         const visibleLeafColumns = this.getVisibleLeafColumns();
 
@@ -372,7 +378,7 @@ export class ToolPanelColumnGroupComp extends Component {
 
         for (const column of visibleLeafColumns) {
             if (pivotMode || !column.getColDef().lockVisible) {
-                if (this.isColumnChecked(column, pivotMode)) {
+                if (this.isColumnChecked(column)) {
                     checkedCount++;
                 } else {
                     uncheckedCount++;
@@ -388,7 +394,7 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private workOutReadOnlyValue(): boolean {
-        const pivotMode = this.beans.colModel.isPivotMode();
+        const pivotMode = this.beans.columnStateUpdateStrategy.getPivotMode(!!this.params.deferApply);
 
         let colsThatCanAction = 0;
 
@@ -405,15 +411,12 @@ export class ToolPanelColumnGroupComp extends Component {
         return colsThatCanAction === 0;
     }
 
-    private isColumnChecked(column: AgColumn, pivotMode: boolean): boolean {
-        if (pivotMode) {
-            const pivoted = column.isPivotActive();
-            const grouped = column.isRowGroupActive();
-            const aggregated = column.isValueActive();
-            return pivoted || grouped || aggregated;
+    private isColumnChecked(column: AgColumn): boolean {
+        const updateStrategy = this.beans.columnStateUpdateStrategy;
+        if (updateStrategy.getPivotMode(!!this.params.deferApply)) {
+            return updateStrategy.isColumnSelectedInPivotModeToolPanel(!!this.params.deferApply, column);
         }
-
-        return column.isVisible();
+        return updateStrategy.isColumnVisibleInToolPanel(!!this.params.deferApply, column);
     }
 
     private onExpandOrContractClicked(): void {

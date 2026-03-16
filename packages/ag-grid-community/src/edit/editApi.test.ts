@@ -87,6 +87,14 @@ describe('Edit API', () => {
                     }
                     return undefined;
                 }),
+                getRowCtrlByNode: jest.fn((node: IRowNode) => {
+                    if (node === rowNode1) {
+                        return rowCtrl1;
+                    } else if (node === rowNode2) {
+                        return rowCtrl2;
+                    }
+                    return undefined;
+                }),
                 refreshCells: jest.fn(),
                 getRowCtrls: jest.fn(() => [rowCtrl1, rowCtrl2]),
             } as unknown as RowRenderer,

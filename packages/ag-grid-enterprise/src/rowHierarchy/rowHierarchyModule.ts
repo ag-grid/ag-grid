@@ -6,6 +6,7 @@ import { PivotColsSvc } from '../pivot/pivotColsSvc';
 import { RowGroupColsSvc } from '../rowGrouping/rowGroupColsSvc';
 import { VERSION } from '../version';
 import { AutoColService } from './autoColService';
+import { ChangedPathFactory } from './changedPathImpl/changedPathFactory';
 import { ClientSideExpansionService } from './clientSideExpansionService';
 import { FlattenStage } from './flattenStage';
 import { GroupEditService } from './groupEditService';
@@ -57,6 +58,17 @@ export const GroupColumnModule: _ModuleWithoutApi = {
 };
 
 /**
+ * Shared ChangedPath factory — not row-model restricted
+ * @internal
+ */
+export const ChangedPathModule: _ModuleWithoutApi = {
+    moduleName: 'ChangedPath',
+    version: VERSION,
+    beans: [ChangedPathFactory],
+    dependsOn: [EnterpriseCoreModule],
+};
+
+/**
  * @internal
  */
 export const ClientSideRowModelHierarchyModule: _ModuleWithoutApi = {
@@ -64,7 +76,7 @@ export const ClientSideRowModelHierarchyModule: _ModuleWithoutApi = {
     version: VERSION,
     rowModels: ['clientSide'],
     beans: [GroupStage, FlattenStage, ClientSideExpansionService],
-    dependsOn: [EnterpriseCoreModule],
+    dependsOn: [EnterpriseCoreModule, ChangedPathModule],
 };
 
 /**

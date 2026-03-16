@@ -23,9 +23,13 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowN
     }
 
     public execute(changedPath: ChangedPath | undefined): void {
-        const isPivotMode = this.beans.colModel.isPivotMode();
+        const { rowModel, colModel, groupStage } = this.beans;
+        const { filterManager } = this;
+
+        const isPivotMode = colModel.isPivotMode();
         const isAggFilterActive =
-            this.filterManager?.isAggregateFilterPresent() || this.filterManager?.isAggregateQuickFilterPresent();
+            filterManager?.isAggregateFilterPresent() || filterManager?.isAggregateQuickFilterPresent();
+        const isTreeData = !!groupStage?.treeData;
 
         // This is the default filter for applying only to leaf nodes, realistically this should not apply as primary agg columns,
         // should not be applied by the filterManager if getGroupAggFiltering is missing. Predicate will apply filters to leaf level.
@@ -40,6 +44,10 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowN
             _getGroupAggFiltering(this.gos) ||
             (isPivotMode ? defaultSecondaryColumnPredicate : defaultPrimaryColumnPredicate);
 
+        const setAllChildrenCount = isTreeData
+            ? this.setAllChildrenCountTreeData
+            : this.setAllChildrenCountGridGrouping;
+
         const preserveChildren = (node: RowNode, recursive = false) => {
             if (node.childrenAfterFilter) {
                 node.childrenAfterAggFilter = node.childrenAfterFilter;
@@ -49,7 +57,11 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowN
                         preserveChildren(children[i], recursive);
                     }
                 }
-                this.setAllChildrenCount(node);
+                if (node.hasChildren()) {
+                    setAllChildrenCount(node);
+                } else {
+                    node.setAllChildrenCount(null);
+                }
             }
 
             if (node.sibling) {
@@ -62,7 +74,7 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowN
                 node.childrenAfterFilter?.filter((child: RowNode) => {
                     const shouldFilterRow = applyFilterToNode({ node: child });
                     if (shouldFilterRow) {
-                        const doesNodePassFilter = this.filterManager!.doesRowPassAggregateFilters({ rowNode: child });
+                        const doesNodePassFilter = filterManager!.doesRowPassAggregateFilters({ rowNode: child });
                         if (doesNodePassFilter) {
                             // Node has passed, so preserve children
                             preserveChildren(child, true);
@@ -73,21 +85,26 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowN
                     return hasChildPassed;
                 }) || null;
 
-            this.setAllChildrenCount(node);
+            if (node.hasChildren()) {
+                setAllChildrenCount(node);
+            } else {
+                node.setAllChildrenCount(null);
+            }
             if (node.sibling) {
                 node.sibling.childrenAfterAggFilter = node.childrenAfterAggFilter;
             }
         };
 
         _forEachChangedGroupDepthFirst(
-            this.beans.rowModel.rootNode,
+            rowModel.rootNode,
+            rowModel.hierarchical,
             changedPath,
             isAggFilterActive ? filterChildren : preserveChildren
         );
     }
 
     /** for tree data, we include all children, groups and leafs */
-    private setAllChildrenCountTreeData(rowNode: RowNode): void {
+    private readonly setAllChildrenCountTreeData = (rowNode: RowNode): void => {
         const childrenAfterAggFilter = rowNode.childrenAfterAggFilter;
         let allChildrenCount = 0;
         if (childrenAfterAggFilter) {
@@ -103,10 +120,10 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowN
             // - allChildrenCount is null in any non-root row if there are no children
             allChildrenCount === 0 && rowNode.level >= 0 ? null : allChildrenCount
         );
-    }
+    };
 
     /* for grid data, we only count the leafs */
-    private setAllChildrenCountGridGrouping(rowNode: RowNode) {
+    private readonly setAllChildrenCountGridGrouping = (rowNode: RowNode): void => {
         const children = rowNode.childrenAfterAggFilter!;
         let allChildrenCount = 0;
         for (let i = 0, len = children.length; i < len; ++i) {
@@ -118,18 +135,5 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowN
             }
         }
         rowNode.setAllChildrenCount(allChildrenCount);
-    }
-
-    private setAllChildrenCount(rowNode: RowNode) {
-        if (!rowNode.hasChildren()) {
-            rowNode.setAllChildrenCount(null);
-            return;
-        }
-
-        if (this.beans.groupStage?.treeData) {
-            this.setAllChildrenCountTreeData(rowNode);
-        } else {
-            this.setAllChildrenCountGridGrouping(rowNode);
-        }
-    }
+    };
 }

@@ -8,7 +8,6 @@
     <excludedPredefinedLibrary name="ag-grid/documentation/ag-grid-docs/node_modules" />
     <excludedPredefinedLibrary name="ag-grid/documentation/update-algolia-indices/node_modules" />
     <excludedPredefinedLibrary name="ag-grid/external/ag-shared/node_modules" />
-    <excludedPredefinedLibrary name="ag-grid/external/ag-website-shared/node_modules" />
     <excludedPredefinedLibrary name="ag-grid/node_modules" />
     <excludedPredefinedLibrary name="ag-grid/packages/ag-grid-angular/node_modules" />
     <excludedPredefinedLibrary name="ag-grid/packages/ag-grid-community/node_modules" />
@@ -19,10 +18,12 @@
     <excludedPredefinedLibrary name="ag-grid/plugins/ag-grid-generate-example-files/node_modules" />
     <excludedPredefinedLibrary name="ag-grid/plugins/ag-grid-task-autogen/node_modules" />
     <excludedPredefinedLibrary name="ag-grid/testing/accessibility/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/testing/angular-tests/node_modules" />
     <excludedPredefinedLibrary name="ag-grid/testing/behavioural/node_modules" />
     <excludedPredefinedLibrary name="ag-grid/testing/csp/node_modules" />
     <excludedPredefinedLibrary name="ag-grid/testing/module-size-angular/node_modules" />
     <excludedPredefinedLibrary name="ag-grid/testing/module-size/node_modules" />
     <excludedPredefinedLibrary name="ag-grid/testing/public-recipes/e2e/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/testing/vue3-tests/node_modules" />
   </component>
 </project>

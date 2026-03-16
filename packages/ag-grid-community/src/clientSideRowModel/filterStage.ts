@@ -94,7 +94,12 @@ export class FilterStage extends BeanStub implements IRowNodeFilterStage, NamedB
             treeDataDepthFirstFilter(this.beans.rowModel.rootNode!, false);
         } else {
             const defaultFilterCallback = (rowNode: RowNode) => filterCallback(rowNode, false);
-            _forEachChangedGroupDepthFirst(this.beans.rowModel.rootNode, changedPath, defaultFilterCallback);
+            _forEachChangedGroupDepthFirst(
+                this.beans.rowModel.rootNode,
+                this.beans.rowModel.hierarchical,
+                changedPath,
+                defaultFilterCallback
+            );
         }
     }
 
@@ -112,7 +117,8 @@ export class FilterStage extends BeanStub implements IRowNodeFilterStage, NamedB
             updateRowNodeAfterFilter(rowNode);
         };
 
-        _forEachChangedGroupDepthFirst(this.beans.rowModel.rootNode, changedPath, filterCallback);
+        const rowModel = this.beans.rowModel;
+        _forEachChangedGroupDepthFirst(rowModel.rootNode, rowModel.hierarchical, changedPath, filterCallback);
     }
 
     private doingTreeDataFiltering() {

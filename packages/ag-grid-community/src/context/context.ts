@@ -55,6 +55,7 @@ import type { IAggFuncService } from '../interfaces/iAggFuncService';
 import type { IClipboardService } from '../interfaces/iClipboardService';
 import type { IColsService } from '../interfaces/iColsService';
 import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
+import type { IColumnStateUpdateStrategy } from '../interfaces/iColumnStateUpdateStrategy';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IContextMenuService } from '../interfaces/iContextMenu';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
@@ -98,6 +99,7 @@ import type { IWatermark } from '../interfaces/iWatermark';
 import type { IMasterDetailService } from '../interfaces/masterDetail';
 import type { IRenderStatusService } from '../interfaces/renderStatusService';
 import type { IRowNumbersService } from '../interfaces/rowNumbers';
+import type { IChangedPathFactory } from '../main-internal';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 import type { ApiEventService } from '../misc/apiEvents/apiEventService';
 import type { IconService } from '../misc/iconService';
@@ -377,12 +379,14 @@ interface CoreBeanCollection
     colDelayRenderSvc?: ColumnDelayRenderService;
     gridSerializer?: GridSerializer;
     licenseManager?: IWatermark;
+    changedPathFactory?: IChangedPathFactory;
     changeDetectionSvc?: ChangeDetectionService;
     iconSvc: IconService;
     groupHierarchyColSvc?: IGroupHierarchyColService;
     formulaDataSvc?: IFormulaDataService;
     formula?: IFormulaService;
     formulaInputManager?: IFormulaInputManagerService;
+    columnStateUpdateStrategy: IColumnStateUpdateStrategy;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

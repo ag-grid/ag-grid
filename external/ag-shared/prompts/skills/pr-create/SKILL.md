@@ -43,7 +43,55 @@ Determine:
 -   **Whether there are uncommitted changes** (staged, unstaged, or untracked).
 -   **Whether there are unpushed commits** on this branch.
 
-### STEP 2: Identify Base Branch
+### STEP 2: Check Symlinked Repos
+
+Scan the `external/` directory for symlinked directories that resolve to separate git repos with changes. These need their own branches and PRs before the outer repo's PR is created.
+
+1.  Identify symlinked repo candidates:
+    ```bash
+    for dir in external/*/; do
+      [ -L "${dir%/}" ] && [ -d "$(readlink -f "${dir%/}")/.git" ] && echo "${dir%/}"
+    done
+    ```
+    Skip any directory that is NOT a symlink (e.g., `external/ag-shared` is a real directory tracked in the outer repo — ignore it).
+
+2.  For each symlinked repo found, check for uncommitted or unpushed changes:
+    ```bash
+    RESOLVED_PATH="$(readlink -f "<symlink>")"
+    git -C "$RESOLVED_PATH" status --porcelain
+    git -C "$RESOLVED_PATH" log --oneline @{upstream}..HEAD 2>/dev/null
+    ```
+    If there are no uncommitted changes AND no unpushed commits, skip that repo silently.
+
+3.  For each symlinked repo WITH changes, create a matching branch, commit, push, and open a PR:
+    -   Use the same branch name as the outer repo (`CURRENT_BRANCH` or the topic branch name determined in STEP 4) for traceability.
+    -   If the repo is not already on that branch, create and switch to it:
+        ```bash
+        git -C "$RESOLVED_PATH" checkout -b <branch-name> 2>/dev/null || git -C "$RESOLVED_PATH" checkout <branch-name>
+        ```
+    -   Stage and commit changes with a message referencing the outer repo's work:
+        ```bash
+        git -C "$RESOLVED_PATH" add -A
+        git -C "$RESOLVED_PATH" commit -m "$(cat <<'EOF'
+        Update for <outer-repo-name>: <brief description>
+        EOF
+        )"
+        ```
+    -   Push and create a PR:
+        ```bash
+        git -C "$RESOLVED_PATH" push -u origin <branch-name>
+        cd "$RESOLVED_PATH" && gh pr create --title "<title>" --body "$(cat <<'EOF'
+        Companion PR for changes in <outer-repo-name>.
+        EOF
+        )"
+        ```
+    -   Record each created PR URL in `SYMLINKED_REPO_PRS` for the final report.
+
+4.  If no symlinked repos have changes, proceed to the next step without comment.
+
+**Note:** This step may execute before the outer repo's topic branch is fully determined (STEP 4). If a topic branch has not yet been created, defer symlinked repo processing until after STEP 4 and execute it between STEP 4 and STEP 5. The key requirement is that symlinked repo PRs are created BEFORE the outer repo's PR (STEP 7).
+
+### STEP 3: Identify Base Branch
 
 Determine the correct base branch for the PR:
 
@@ -58,7 +106,7 @@ Determine the correct base branch for the PR:
 
 Store the result as `BASE_BRANCH`.
 
-### STEP 3: Ensure Topic Branch
+### STEP 4: Ensure Topic Branch
 
 If currently on `latest` or a `bX.Y.Z` branch, a new topic branch is required:
 
@@ -73,7 +121,7 @@ If currently on `latest` or a `bX.Y.Z` branch, a new topic branch is required:
 
 If already on a topic branch (not `latest` or `bX.Y.Z`), continue on the current branch.
 
-### STEP 4: Commit Changes (If Any)
+### STEP 5: Commit Changes (If Any)
 
 If there are uncommitted changes:
 
@@ -84,11 +132,7 @@ If there are uncommitted changes:
     git status
     ```
 2.  Stage relevant files (prefer specific files over `git add -A`).
-3.  Write a commit message following git-conventions:
-    -   JIRA-linked: `AG-XXXX <description>` (uppercase JIRA number)
-    -   No JIRA: `<description>` (concise, imperative mood)
-    -   Under 72 characters.
-    -   Never attribute agentic tooling.
+3.  Write a commit message following git-conventions (see Commits section).
 4.  Commit:
     ```bash
     git commit -m "$(cat <<'EOF'
@@ -99,7 +143,7 @@ If there are uncommitted changes:
 
 If there are no uncommitted changes and no unpushed commits, inform the user there is nothing to submit and **STOP**.
 
-### STEP 5: Push Branch
+### STEP 6: Push Branch
 
 Push the branch to the remote, setting the upstream:
 
@@ -107,7 +151,7 @@ Push the branch to the remote, setting the upstream:
 git push -u origin <branch-name>
 ```
 
-### STEP 6: Create Pull Request
+### STEP 7: Create Pull Request
 
 Create the PR using `gh`:
 
@@ -118,22 +162,24 @@ EOF
 )"
 ```
 
-Follow git-conventions for the PR:
+Follow git-conventions (see Pull Requests section). If JIRA-linked, include "Fix #AG-XXXX" in the body.
 
--   **Title:** Under 70 characters. JIRA-linked: `AG-XXXX <description>`. No JIRA: `<description>`.
--   **Body:** JIRA-linked: include link(s) to the JIRA ticket(s). No JIRA: concise description of the change.
--   Keep descriptions concise - this is a public repo.
--   Never attribute agentic tooling.
--   If JIRA-linked include "Fix #AG-XXXX"
+### STEP 8: Report Result
 
-### STEP 7: Report Result
-
-Output the PR URL and a brief summary:
+Output the PR URL and a brief summary. If any symlinked repo PRs were created in STEP 2, include them as well:
 
 ```
 PR created: <URL>
   Base: <BASE_BRANCH> ← Head: <branch-name>
   Title: <title>
+```
+
+If `SYMLINKED_REPO_PRS` is non-empty, also report:
+
+```
+Companion PRs (symlinked repos):
+  <repo-name>: <URL>
+  <repo-name>: <URL>
 ```
 
 ## Arguments

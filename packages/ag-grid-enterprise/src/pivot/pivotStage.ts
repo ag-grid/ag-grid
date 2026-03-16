@@ -183,11 +183,16 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
         const uniqueValues: Map<string, any> = new Map();
 
         // ensure childrenMapped is cleared, as if a node has been filtered out it should not have mapped children.
-        _forEachChangedGroupDepthFirst(this.beans.rowModel.rootNode, changedPath, (node) => {
-            if (node.leafGroup) {
-                node.childrenMapped = null;
+        _forEachChangedGroupDepthFirst(
+            this.beans.rowModel.rootNode,
+            this.beans.rowModel.hierarchical,
+            changedPath,
+            (node) => {
+                if (node.leafGroup) {
+                    node.childrenMapped = null;
+                }
             }
-        });
+        );
 
         const recursivelyBucketFilteredChildren = (node: RowNode) => {
             if (node.leafGroup) {

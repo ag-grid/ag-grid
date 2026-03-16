@@ -18,6 +18,8 @@ import {
 export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     beanName = 'rowModel' as const;
 
+    public readonly hierarchical: boolean = false;
+
     // rowRenderer tells us these
     private firstRow = -1;
     private lastRow = -1;

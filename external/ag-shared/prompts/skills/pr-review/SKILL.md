@@ -16,9 +16,13 @@ You are acting as a reviewer for a proposed code change. Your goal is to identif
 Parse the `ARGUMENTS` environment variable (or skill arguments) for flags and the PR number:
 
 - `--json` — output structured JSON instead of Markdown (used for inline commenting in CI)
+- `--devils-advocate` — run an additional Devil's Advocate review pass after the standard review (see below)
+- `--full` — run all additional review passes: Devil's Advocate + JIRA Completeness verification (see below)
 - Remaining positional argument — the PR number
 
-Examples: `123`, `--json 123`, `123 --json`
+Examples: `123`, `--json 123`, `123 --json`, `--devils-advocate 123`, `--full 123`, `--json --full 123`
+
+**Note:** `--full` implies `--devils-advocate`. You do not need to pass both.
 
 ## Output Format
 
@@ -196,3 +200,88 @@ When `--json` is specified, output **ONLY** valid JSON. No markdown code fences,
   }
 }
 ```
+
+## Devil's Advocate Mode (`--devils-advocate`)
+
+When the `--devils-advocate` flag is present, run an additional adversarial review pass after the standard review completes. This mode challenges assumptions, stress-tests edge cases, and questions whether the PR's approach is the right one.
+
+### Workflow
+
+1. **Run the standard review first.** Complete the full review as described above and collect all findings.
+2. **Spawn a sub-agent with the Devil's Advocate instructions.** Use the Agent tool to spawn a sub-agent with the following prompt structure:
+   - Include the full contents of `agents/devils-advocate.md` (co-located in this skill's directory) as the sub-agent's instructions.
+   - Pass the PR diff, PR metadata, and the `--json` flag state to the sub-agent so it has full context.
+   - The sub-agent should read and follow `_review-core.md` for shared methodology.
+3. **Merge findings from both passes.**
+   - Combine standard review findings with Devil's Advocate findings (prefixed with `[DA]`).
+   - Deduplicate: if both passes flag the same file and line for the same issue, keep the higher-priority version and note it was flagged by both passes.
+   - In Markdown mode, add a `## Devil's Advocate Findings` section after the standard `## Findings` section.
+   - In JSON mode, merge the Devil's Advocate findings into the `findings` array (the `[DA]` prefix in the title distinguishes them).
+4. **Update the verdict.** If the Devil's Advocate pass surfaces P0 or P1 issues not found in the standard review, adjust the verdict and confidence accordingly.
+
+## Full Review Mode (`--full`)
+
+When `--full` is present, run **all** additional review passes in parallel after the standard review completes:
+
+1. Devil's Advocate (as described above)
+2. JIRA Completeness Verification (described below)
+3. Code Simplification Review (described below)
+
+All three sub-agents can be spawned simultaneously since they are independent of each other.
+
+### JIRA Completeness Verification
+
+#### 1. Extract JIRA IDs
+
+Scan these sources (in order) for JIRA ticket references matching the pattern `AG-\d+` or `ST-\d+`:
+
+1. **Branch name** — e.g., `ag-12345/fix-tooltip` or `ST-6789-update-utils`
+2. **PR title and description** — from `gh pr view` or `$PR_TITLE`
+3. **Commit messages** — from `git log` of the PR's commits
+
+Collect all unique ticket IDs found. The pattern match is case-insensitive (both `ag-12345` and `AG-12345` should match). Normalise to uppercase for the sub-agent (e.g., `AG-12345`).
+
+#### 2. Spawn the JIRA Completeness Sub-agent
+
+Use the Agent tool to spawn a sub-agent with:
+
+- The full contents of `agents/jira-completeness.md` (co-located in this skill's directory) as instructions.
+- The extracted JIRA IDs.
+- A brief PR summary (from the standard review or PR metadata).
+- The list of changed files and diff stats.
+- The `--json` flag state.
+
+#### 3. Merge JIRA Findings
+
+- Combine JIRA findings (prefixed with `[JIRA]`) with the standard review and Devil's Advocate findings.
+- In Markdown mode, add a `## JIRA Completeness` section after `## Devil's Advocate Findings` (or after `## Findings` if Devil's Advocate is not separately flagged).
+- In JSON mode, merge the JIRA findings into the `findings` array. Additionally, include the `jira_summary` object as a top-level field in the JSON output.
+- If no JIRA IDs were found at all, include a P1 finding noting the PR has no associated JIRA ticket.
+
+#### 4. Update the Verdict
+
+If the JIRA verification reveals significant scope mismatches (PR does substantially different work than the ticket describes) or a missing JIRA link, factor this into the confidence score. JIRA hygiene findings alone (missing components, wrong status) should not change the code correctness verdict but should appear in `required_actions`.
+
+### Code Simplification Review
+
+#### 1. Spawn the Simplification Sub-agent
+
+Use the Agent tool to spawn a sub-agent that performs the `/simplify` skill's analysis on the files changed by this PR. The sub-agent prompt should:
+
+- List the files changed in the PR (from `git diff --name-only`).
+- Instruct the agent to read those files and review the **changed sections** for opportunities to simplify — reuse existing utilities, reduce duplication, improve clarity, or eliminate unnecessary complexity.
+- Instruct the agent to **report findings only, not make edits** — this is a review, not an auto-fix.
+- Pass the `--json` flag state so output format matches.
+
+The sub-agent should focus on the same concerns as the `/simplify` skill: reuse, quality, and efficiency. It should not flag style issues handled by linters or raise concerns about code it hasn't read.
+
+#### 2. Merge Simplification Findings
+
+- Combine simplification findings (prefixed with `[SIMPLIFY]`) with other findings.
+- In Markdown mode, add a `## Simplification Opportunities` section after the JIRA section (or after whatever the last preceding section is).
+- In JSON mode, merge findings into the `findings` array with the `[SIMPLIFY]` title prefix.
+- Deduplicate against standard review findings — if the standard review already flagged the same issue (e.g., duplicated logic), keep the standard review version.
+
+#### 3. Verdict Impact
+
+Simplification findings are advisory and should not change the code correctness verdict or confidence score. They appear as P2 or P3 suggestions in `required_actions` only if they represent genuine quality concerns (e.g., copy-pasted logic that should be extracted).

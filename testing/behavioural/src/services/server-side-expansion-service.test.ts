@@ -10,7 +10,7 @@ describe('ServerSideExpansionService', () => {
     let rowNode: RowNode;
     beforeEach(() => {
         beans = {
-            rowRenderer: { refreshCells: vi.fn() },
+            rowRenderer: { refreshCells: vi.fn(), refreshRowByNode: vi.fn() },
             eventSvc: { dispatchEvent: vitest.fn() },
             gos: {
                 get: (key: string) => {

@@ -2,7 +2,7 @@ import '@testing-library/jest-dom';
 
 import type { GridOptions } from 'ag-grid-community';
 import { AllCommunityModule, ClientSideRowModelModule, setupAgTestIds } from 'ag-grid-community';
-import { BatchEditModule, ClipboardModule, RowGroupingModule } from 'ag-grid-enterprise';
+import { BatchEditModule, ClipboardModule, RowGroupingEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import {
     EditEventTracker,
@@ -15,7 +15,14 @@ import {
 
 describe('Group Edit: clipboard paste', () => {
     const gridMgr = new TestGridsManager({
-        modules: [AllCommunityModule, ClientSideRowModelModule, RowGroupingModule, ClipboardModule, BatchEditModule],
+        modules: [
+            AllCommunityModule,
+            ClientSideRowModelModule,
+            RowGroupingEditModule,
+            RowGroupingModule,
+            ClipboardModule,
+            BatchEditModule,
+        ],
     });
 
     beforeAll(() => {

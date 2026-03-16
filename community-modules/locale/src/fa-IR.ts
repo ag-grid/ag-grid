@@ -74,9 +74,12 @@ export const AG_GRID_LOCALE_IR = {
 
     // Filter Buttons
     applyFilter: 'اعمال',
+    applyColumnToolPanel: 'اعمال',
+    deferMode: 'Defer mode',
     resetFilter: 'بازنشانی',
     clearFilter: 'پاک کردن',
     cancelFilter: 'لغو',
+    cancelColumnToolPanel: 'لغو',
 
     // Filter Titles
     textFilter: 'فیلتر متنی',

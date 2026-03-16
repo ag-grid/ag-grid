@@ -1,1 +1,0 @@
-../../external/ag-shared/prompts/agents/code-reviewer.md
