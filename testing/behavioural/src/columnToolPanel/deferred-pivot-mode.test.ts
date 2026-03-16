@@ -2,15 +2,12 @@ import { fireEvent, getByTestId, getByText } from '@testing-library/dom';
 
 import type { AgColumn, ColDef, ColGroupDef, GridApi, IColumnStateUpdateStrategy } from 'ag-grid-community';
 import { DragSourceType, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
-import {
-    createFakeServer,
-    createServerSideDatasource,
-} from 'ag-grid-docs/src/content/docs/tool-panel-columns/_examples/deferred-apply-mode/fakeServer';
 import { AllEnterpriseModule, RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
 
 import { moveItem } from '../../../../packages/ag-grid-enterprise/src/columnToolPanel/columnMoveUtils';
 import { AgGridHeaderDropZonesSelector } from '../../../../packages/ag-grid-enterprise/src/rowGrouping/columnDropZones/agGridHeaderDropZones';
 import { DragEventDispatcher, TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from '../test-utils';
+import { createFakeServer, createServerSideDatasource } from './deferredPivotModeFakeServer';
 
 describe('deferred column tool panel pivot mode', () => {
     const gridMgr = new TestGridsManager({
