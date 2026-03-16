@@ -47,7 +47,7 @@ const RowContainerComp = ({
     const rowContainerCtrlRef = useRef<RowContainerCtrl>();
 
     const containerClasses = useMemo(
-        () => classesList(_getRowContainerClass(asCommunityRowContainerName(name))),
+        () => classesList(_getRowContainerClass(asCommunityRowContainerName(name)), hidden ? 'ag-hidden' : null),
         [name, hidden]
     );
     const spanClasses = useMemo(
