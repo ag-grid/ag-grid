@@ -5,6 +5,14 @@
     flex: 1 1 auto;
 }
 
+.ag-column-panel.ag-column-panel-deferred,
+.ag-column-panel.ag-column-panel-deferred .ag-column-panel-column-select,
+.ag-column-panel.ag-column-panel-deferred .ag-column-drop-vertical,
+.ag-column-panel.ag-column-panel-deferred .ag-column-panel-defer-mode-toggle,
+.ag-column-panel.ag-column-panel-deferred .ag-column-panel-buttons {
+    background-color: var(--ag-cell-batch-edit-background-color);
+}
+
 .ag-pivot-mode-panel {
     height: var(--ag-header-height);
     display: flex;

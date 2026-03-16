@@ -1,6 +1,14 @@
 @use 'ag';
 
 @mixin output {
+    .ag-column-panel.ag-column-panel-deferred,
+    .ag-column-panel.ag-column-panel-deferred .ag-column-panel-column-select,
+    .ag-column-panel.ag-column-panel-deferred .ag-column-drop-vertical,
+    .ag-column-panel.ag-column-panel-deferred .ag-column-panel-defer-mode-toggle,
+    .ag-column-panel.ag-column-panel-deferred .ag-column-panel-buttons {
+        background-color: var(--ag-cell-batch-edit-background-color);
+    }
+
     .ag-pivot-mode-panel {
         min-height: var(--ag-header-height);
         height: var(--ag-header-height);
