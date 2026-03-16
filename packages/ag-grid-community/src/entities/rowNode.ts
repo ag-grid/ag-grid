@@ -255,7 +255,7 @@ export class RowNode<TData = any>
     /** `true` if group or master row is expanded. */
     public get expanded(): boolean {
         const expansionSvc = this.beans.expansionSvc;
-        return expansionSvc ? expansionSvc.isExpanded(this) : (this._expanded as boolean);
+        return expansionSvc ? expansionSvc.isExpanded(this) : this.level === -1 ? true : !!this._expanded;
     }
 
     public set expanded(value: boolean) {

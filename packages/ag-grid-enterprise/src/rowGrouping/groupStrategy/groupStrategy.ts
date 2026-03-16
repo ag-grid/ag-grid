@@ -413,8 +413,6 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     private shotgunResetEverything(rootNode: RowNode): void {
         const groupsById = this.nonLeafsById;
 
-        // groupsById.clear();
-
         // Mark all existing group nodes as stale by nulling childrenAfterGroup.
         // Nodes that are reused during insertion will have childrenAfterGroup reset to [].
         // Nodes still null after insertion are stale and will be destroyed.
