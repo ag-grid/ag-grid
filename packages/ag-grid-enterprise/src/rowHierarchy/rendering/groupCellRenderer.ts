@@ -5,7 +5,7 @@ import type {
     IGroupCellRenderer,
     UserCompDetails,
 } from 'ag-grid-community';
-import { Component, RefPlaceholder, _setAriaRole, _setDisplayed } from 'ag-grid-community';
+import { Component, RefPlaceholder, _setAriaRole, _setDisplayed, _setVisible } from 'ag-grid-community';
 
 import { GroupCellRendererCtrl } from './groupCellRendererCtrl';
 
@@ -42,7 +42,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
             toggleCss: (cssClass, value) => this.toggleCss(cssClass, value),
             setContractedDisplayed: (expanded) => _setDisplayed(this.eContracted, expanded),
             setExpandedDisplayed: (expanded) => _setDisplayed(this.eExpanded, expanded),
-            setCheckboxVisible: (visible) => this.eCheckbox.classList.toggle('ag-invisible', !visible),
+            setCheckboxVisible: (visible) => _setVisible(this.eCheckbox, visible),
             setCheckboxSpacing: (add) => this.eCheckbox.classList.toggle('ag-group-checkbox-spacing', add),
         };
 

@@ -2,6 +2,7 @@ import { RefPlaceholder } from '../agStack/interfaces/agComponent';
 import { _setAriaColCount, _setAriaMultiSelectable, _setAriaRole, _setAriaRowCount } from '../agStack/utils/aria';
 import { _isCellSelectionEnabled, _isMultiRowSelection } from '../gridOptionsUtils';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
+import { _setDisplayed } from '../main-internal';
 import { LayoutCssClasses } from '../styling/layoutFeature';
 import type { ElementParams } from '../utils/element';
 import type { ComponentSelector } from '../widgets/component';
@@ -205,7 +206,7 @@ export class GridBodyComp extends Component implements FocusableContainer {
         const heightString = `${totalHeight}px`;
         this.eBottom.style.minHeight = heightString;
         this.eBottom.style.height = heightString;
-        this.eBottom.classList.toggle('ag-invisible', totalHeight <= 0);
+        _setDisplayed(this.eBottom, totalHeight > 0);
     }
 
     public getFocusableContainerName(): 'gridBody' {

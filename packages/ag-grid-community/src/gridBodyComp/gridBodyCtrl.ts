@@ -466,7 +466,7 @@ export class GridBodyCtrl extends BeanStub {
         const pinnedBottomHeight = pinnedRowModel?.getPinnedBottomTotalHeight();
 
         const { environment } = this.beans;
-        const borderAdjustment = environment.getPinnedRowBorderWidth() - environment.getRowBorderWidth();
+        const borderAdjustment = environment.getPinnedRowBorderWidth();
 
         const normalisedPinnedTopHeight = (pinnedTopHeight ?? 0) + (pinnedTopHeight ? borderAdjustment : 0);
         const normalisedPinnedBottomHeight = (pinnedBottomHeight ?? 0) + (pinnedBottomHeight ? borderAdjustment : 0);

@@ -34,6 +34,8 @@ const RowContainerComp = ({
     const eSpanContainer = useRef<HTMLDivElement | null>(null);
     const rowCtrlsRef = useRef<RowCtrl[]>([]);
     const prevRowCtrlsRef = useRef<RowCtrl[]>([]);
+    const [hidden, setHidden] = useState<boolean>(true);
+
     const [rowCtrlsOrdered, setRowCtrlsOrdered] = useState<RowCtrl[]>(() => []);
 
     const isSpanning = !!gos.get('enableCellSpan') && !!containerOptions.getSpannedRowCtrls;
@@ -46,7 +48,7 @@ const RowContainerComp = ({
 
     const containerClasses = useMemo(
         () => classesList(_getRowContainerClass(asCommunityRowContainerName(name))),
-        [name]
+        [name, hidden]
     );
     const spanClasses = useMemo(
         () => classesList('ag-spanning-container', _getRowSpanContainerClass(asCommunityRowContainerName(name))),
@@ -128,6 +130,7 @@ const RowContainerComp = ({
                     eSpanContainerForCtrl.style.transform = `translateY(${offset})`;
                 }
             },
+            setHidden: (hidden: boolean) => setHidden(hidden),
         };
 
         rowContainerCtrlRef.current = context.createBean(new RowContainerCtrl(asCommunityRowContainerName(name)));

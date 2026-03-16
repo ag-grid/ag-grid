@@ -99,6 +99,7 @@ export interface IRowContainerComp {
     setDomOrder(domOrder: boolean): void;
     setContainerWidth(width: string): void;
     setOffsetTop(offset: string): void;
+    setHidden(hidden: boolean): void;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -377,9 +378,12 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
 
     private onDisplayedRowsChanged(afterScroll: boolean = false): void {
         const rowCtrls = this.options.getRowCtrls(this.beans.rowRenderer);
+        const isEmpty = rowCtrls.length === 0;
         this.comp.setRowCtrls({
-            rowCtrls: rowCtrls.length === 0 ? this.EMPTY_CTRLS : rowCtrls,
+            rowCtrls: isEmpty ? this.EMPTY_CTRLS : rowCtrls,
             useFlushSync: afterScroll,
         });
+
+        this.comp.setHidden(isEmpty);
     }
 }

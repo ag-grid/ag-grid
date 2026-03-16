@@ -1,5 +1,5 @@
 import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
-import { _ensureDomOrder } from '../../agStack/utils/dom';
+import { _ensureDomOrder, _setDisplayed } from '../../agStack/utils/dom';
 import type { BeanCollection } from '../../context/context';
 import { RowComp } from '../../rendering/row/rowComp';
 import type { RowCtrl, RowCtrlInstanceId } from '../../rendering/row/rowCtrl';
@@ -95,6 +95,7 @@ class RowContainerComp extends Component {
                     eSpannedContainer.style.transform = top;
                 }
             },
+            setHidden: (hidden: boolean) => _setDisplayed(eContainer, !hidden, { skipAriaHidden: true }),
         };
 
         const ctrl = this.createManagedBean(new RowContainerCtrl(this.name));

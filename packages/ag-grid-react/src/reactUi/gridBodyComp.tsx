@@ -182,7 +182,7 @@ const GridBodyComp = () => {
         [cellSelectableCss, topSection.invisible]
     );
     const stickyBottomHeightNumber = Number.parseFloat(stickyBottomHeight) || 0;
-    const bottomSectionInvisible = bottomSection.height <= 0 && stickyBottomHeightNumber <= 0;
+    const bottomSectionHidden = bottomSection.height <= 0 && stickyBottomHeightNumber <= 0;
 
     const scrollableClasses = useMemo(
         () =>
@@ -194,13 +194,8 @@ const GridBodyComp = () => {
         [bottomSection.invisible, topSection.invisible]
     );
     const bottomClasses = useMemo(
-        () =>
-            classesList(
-                'ag-grid-pinned-bottom-rows',
-                bottomSectionInvisible ? 'ag-invisible' : null,
-                cellSelectableCss
-            ),
-        [bottomSection.invisible, bottomSectionInvisible, cellSelectableCss]
+        () => classesList('ag-grid-pinned-bottom-rows', bottomSectionHidden ? 'ag-hidden' : null, cellSelectableCss),
+        [bottomSection.invisible, bottomSectionHidden, cellSelectableCss]
     );
 
     const topStyle: React.CSSProperties = useMemo(() => {
