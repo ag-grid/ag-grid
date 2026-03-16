@@ -86,9 +86,10 @@ PROMPTS_DIR="$MAIN_REPO_ROOT/../$PROMPTS_DIR_NAME"
 # Each function returns 0 if tool is detected, 1 otherwise
 
 detect_claudecode() {
-    command -v claude &>/dev/null && return 0
-    [[ -d "$HOME/.claude" ]] && return 0
-    return 1
+    # Always enable — Claude Code is the primary agentic tool across all AG repos.
+    # Generating its config is cheap and avoids issues in environments where the
+    # binary isn't on $PATH (CI, containers, remote dev boxes).
+    return 0
 }
 
 detect_cursor() {
@@ -203,6 +204,72 @@ kiro:Kiro IDE:detect_kiro
 # Use --targets=agentsmd explicitly if needed
 EXCLUDED_TOOLS="agentsmd"
 
+# Determine the expected branch for symlinked repos based on the outer repo's branch.
+# Only "latest" and release branches (bX.Y.Z) are expected to match; topic branches default to "latest".
+get_expected_symlink_branch() {
+    local outer_branch
+    outer_branch=$(git -C "$REPO_ROOT" branch --show-current 2>/dev/null || echo "")
+    case "$outer_branch" in
+        latest|b[0-9]*.*)
+            echo "$outer_branch"
+            ;;
+        *)
+            echo "latest"
+            ;;
+    esac
+}
+
+# Check if a symlinked repo is on the expected branch and offer to switch if not.
+# Arguments: $1 = repo path, $2 = display name, $3 = expected branch
+check_symlinked_repo_branch() {
+    local repo_path="$1"
+    local display_name="$2"
+    local expected_branch="$3"
+
+    local current_branch
+    current_branch=$(git -C "$repo_path" branch --show-current 2>/dev/null || echo "")
+
+    # Nothing to do if already on the expected branch (or we cannot determine current branch)
+    if [[ -z "$current_branch" || "$current_branch" == "$expected_branch" ]]; then
+        return 0
+    fi
+
+    # Check for uncommitted changes
+    local is_dirty="false"
+    if ! git -C "$repo_path" diff --quiet 2>/dev/null || ! git -C "$repo_path" diff --cached --quiet 2>/dev/null; then
+        is_dirty="true"
+    fi
+
+    if [[ "$is_dirty" == "true" ]]; then
+        echo -e "${YELLOW}$display_name is on branch '$current_branch' (expected '$expected_branch') with local changes${NC}"
+        if is_interactive && prompt_yes_no "Stash changes and checkout $expected_branch?"; then
+            (
+                cd "$repo_path"
+                git stash --quiet
+                if git checkout "$expected_branch" --quiet 2>/dev/null; then
+                    echo -e "${GREEN}✓${NC} Switched $display_name to '$expected_branch'"
+                else
+                    echo -e "${YELLOW}Warning: Failed to checkout '$expected_branch' in $display_name${NC}"
+                fi
+                git stash pop --quiet 2>/dev/null || true
+            )
+        else
+            echo -e "${YELLOW}Warning: $display_name remains on branch '$current_branch'${NC}"
+        fi
+    else
+        echo -e "${YELLOW}$display_name is on branch '$current_branch' (expected '$expected_branch')${NC}"
+        if is_interactive && prompt_yes_no "Checkout $expected_branch?"; then
+            if git -C "$repo_path" checkout "$expected_branch" --quiet 2>/dev/null; then
+                echo -e "${GREEN}✓${NC} Switched $display_name to '$expected_branch'"
+            else
+                echo -e "${YELLOW}Warning: Failed to checkout '$expected_branch' in $display_name${NC}"
+            fi
+        else
+            echo -e "${YELLOW}Warning: $display_name remains on branch '$current_branch'${NC}"
+        fi
+    fi
+}
+
 # Check if prompts checkout is behind remote
 is_prompts_behind() {
     (
@@ -262,6 +329,13 @@ setup_prompts_repo() {
                     echo -e "${YELLOW}Warning: Failed to update $PROMPTS_DIR_NAME, continuing with current version${NC}"
                 fi
             fi
+        fi
+
+        # Check if prompts repo is on the expected branch
+        if is_interactive; then
+            local expected_branch
+            expected_branch=$(get_expected_symlink_branch)
+            check_symlinked_repo_branch "$PROMPTS_DIR" "$PROMPTS_DIR_NAME" "$expected_branch"
         fi
 
         # Setup worktree symlink if needed
@@ -454,6 +528,33 @@ get_rulesync_cmd() {
     fi
 }
 
+# Strip the TOON rules block from AGENTS.md
+# Rulesync's OpenCode target prepends a TOON-format rules index to AGENTS.md.
+# This adds noise for other tools that read AGENTS.md (Codex, Gemini, etc.)
+# and is redundant — OpenCode loads rules from .opencode/memories/ directly.
+strip_agents_md_toon() {
+    local verbose="$1"
+    local agents_file="$REPO_ROOT/AGENTS.md"
+
+    [[ -f "$agents_file" ]] || return 0
+
+    # Check if file starts with the TOON preamble
+    if head -1 "$agents_file" | grep -q "TOON format"; then
+        # Find the first markdown heading (# or ##) after the TOON block
+        local first_heading_line
+        first_heading_line=$(grep -n '^#' "$agents_file" | head -1 | cut -d: -f1)
+
+        if [[ -n "$first_heading_line" ]]; then
+            # Remove everything before the first heading
+            tail -n +"$first_heading_line" "$agents_file" > "$agents_file.tmp"
+            mv "$agents_file.tmp" "$agents_file"
+            if [[ "$verbose" == "true" ]]; then
+                echo -e "${GREEN}✓${NC} Stripped TOON rules block from AGENTS.md"
+            fi
+        fi
+    fi
+}
+
 # Generate rulesync configuration
 generate_config() {
     local targets="$1"
@@ -480,6 +581,7 @@ generate_config() {
 
     if [[ $exit_code -eq 0 ]]; then
         copy_extra_configs "$verbose" "$targets"
+        strip_agents_md_toon "$verbose"
 
         if [[ "$verbose" == "true" ]]; then
             echo "$output"

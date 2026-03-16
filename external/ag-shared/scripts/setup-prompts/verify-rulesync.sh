@@ -338,6 +338,11 @@ build_expected_inventory() {
                         EXPECTED_FILES+=("skills/$dirname/$helper_basename")
                     fi
                 done
+                # Include files in subdirectories (e.g., assets/)
+                while IFS= read -r -d '' sub_file; do
+                    local rel_path="${sub_file#$skill_dir}"
+                    EXPECTED_FILES+=("skills/$dirname/$rel_path")
+                done < <(find "$skill_dir" -mindepth 2 -type f -print0 2>/dev/null)
             fi
         done
     fi

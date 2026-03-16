@@ -11,7 +11,7 @@ Clean up a worktree branch by fetching fresh state from origin and hard-resettin
 
 ## Usage
 
-`/worktree-clean [branch]`
+`/git-worktree-clean [branch]`
 
 **Arguments:**
 
