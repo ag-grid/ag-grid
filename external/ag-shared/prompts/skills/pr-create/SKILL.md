@@ -162,7 +162,7 @@ EOF
 )"
 ```
 
-Follow git-conventions (see Pull Requests section). If JIRA-linked, include "Fix #AG-XXXX" in the body.
+Follow git-conventions (see Pull Requests section). If JIRA-linked, include "Fix #AG-XXXX" at the end of the body.
 
 ### STEP 8: Report Result
 
