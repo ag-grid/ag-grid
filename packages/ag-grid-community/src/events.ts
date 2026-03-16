@@ -1089,34 +1089,51 @@ export interface CellContextMenuEvent<TData = any, TValue = any, TContext = any>
 export interface CellEditingStartedEvent<TData = any, TValue = any, TContext = any>
     extends CellEvent<'cellEditingStarted', TData, TValue, TContext> {}
 
-export interface CellEditingStoppedEvent<TData = any, TValue = any, TContext = any>
+export interface CellEditingStoppedEvent<TData = any, TValue = any, TContext = any, TRawValue = TValue>
     extends CellEvent<'cellEditingStopped', TData, TValue, TContext> {
-    /** The old value before editing */
+    /** The value of the cell before the edit. */
     oldValue: TValue | null | undefined;
-    /** The new value after editing */
-    newValue: TValue | null | undefined;
-    /** Property indicating if the value of the editor has changed */
+    /** The value produced by the editor. This is the raw editor value, not resolved through the value getter. */
+    newValue: TRawValue | null | undefined;
+    /** The raw value from the edit, before any value getter is applied. Same as `newValue` for this event. */
+    newRawValue: TRawValue | null | undefined;
+    /** Whether the value of the editor has changed. */
     valueChanged: boolean;
 }
 
-export interface CellValueChangedEvent<TData = any, TValue = any, TContext = any>
+export interface CellValueChangedEvent<TData = any, TValue = any, TContext = any, TRawValue = any>
     extends CellWithDataEvent<'cellValueChanged', TData, TValue, TContext> {
+    /** The value of the cell before the edit. */
     oldValue: TValue | null | undefined;
+    /** The new value of the cell after the edit, resolved through the value getter if one is configured. */
     newValue: TValue | null | undefined;
+    /** The raw value from the edit, before any value getter is applied. */
+    newRawValue: TRawValue | null | undefined;
+    /** The source of the value change, e.g. `'edit'`, `'paste'`, `'undo'`, `'redo'`, `'data'`. */
     source: string | undefined;
 }
 
-export interface CellEditValuesChangedEvent<TData = any, TValue = any, TContext = any>
+export interface CellEditValuesChangedEvent<TData = any, TValue = any, TContext = any, TRawValue = TValue>
     extends CellWithDataEvent<'cellEditValuesChanged', TData, TValue, TContext> {
+    /** The value of the cell before the edit. */
     oldValue: TValue | null | undefined;
-    newValue: TValue | null | undefined;
+    /** The pending edit value. This is the raw value, not resolved through the value getter. */
+    newValue: TRawValue | null | undefined;
+    /** The raw value from the edit, before any value getter is applied. Same as `newValue` for this event. */
+    newRawValue: TRawValue | null | undefined;
+    /** The source of the value change, e.g. `'edit'`, `'paste'`, `'undo'`, `'redo'`, `'data'`. */
     source: string | undefined;
 }
 
-export interface CellEditRequestEvent<TData = any, TValue = any, TContext = any>
+export interface CellEditRequestEvent<TData = any, TValue = any, TContext = any, TRawValue = TValue>
     extends CellWithDataEvent<'cellEditRequest', TData, TValue, TContext> {
+    /** The value of the cell before the edit. */
     oldValue: TValue | null | undefined;
-    newValue: TValue | null | undefined;
+    /** The requested edit value. This is the raw value, not resolved through the value getter. */
+    newValue: TRawValue | null | undefined;
+    /** The raw value from the edit, before any value getter is applied. Same as `newValue` for this event. */
+    newRawValue: TRawValue | null | undefined;
+    /** The source of the value change, e.g. `'edit'`, `'paste'`, `'undo'`, `'redo'`, `'data'`. */
     source: string | undefined;
 }
 

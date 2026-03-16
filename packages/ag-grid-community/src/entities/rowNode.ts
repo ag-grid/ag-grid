@@ -568,6 +568,7 @@ export class RowNode<TData = any>
                 node: this,
                 oldValue,
                 newValue,
+                newRawValue: newValue,
                 value: newValue,
                 source: eventSource,
             });

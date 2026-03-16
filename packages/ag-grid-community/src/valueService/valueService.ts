@@ -665,6 +665,7 @@ export class ValueService extends BeanStub implements NamedBean {
             node: rowNode,
             oldValue: params.oldValue,
             newValue: value,
+            newRawValue: params.newValue,
             value,
             source,
         });

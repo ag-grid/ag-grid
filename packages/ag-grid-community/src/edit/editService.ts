@@ -768,6 +768,7 @@ export class EditService extends BeanStub implements NamedBean {
             source: 'api',
             data,
             newValue: pendingValue,
+            newRawValue: pendingValue,
             oldValue: sourceValue,
             value: pendingValue,
             colDef: column.getColDef(),
