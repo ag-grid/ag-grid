@@ -37,9 +37,14 @@ export class ServerSideExpansionService
         this.storeFactory = beans.ssrmStoreFactory as StoreFactory;
     }
 
+    private setStrategy(strategy: ExpandStrategy | ExpandAllStrategy): void {
+        this.destroyBean(this.strategy as any);
+        this.strategy = this.createManagedBean(strategy);
+    }
+
     public postConstruct(): void {
         const setDefaultExpand = () => {
-            this.strategy = this.createManagedBean(new ExpandStrategy());
+            this.setStrategy(new ExpandStrategy());
         };
 
         this.addManagedEventListeners({
@@ -53,7 +58,7 @@ export class ServerSideExpansionService
             // reset strategy if explicitly disabled, otherwise state is fine to remain until new
             // select all value is set/removed
             if (!p.currentValue) {
-                this.strategy = this.createManagedBean(new ExpandStrategy());
+                this.setStrategy(new ExpandStrategy());
                 this.updateAllNodes();
                 this.dispatchStateUpdatedEvent();
             }
@@ -67,9 +72,7 @@ export class ServerSideExpansionService
         const isExpandAllStrategy = this.isExpandAllStrategy(this.strategy);
 
         if (isExpandAllState !== isExpandAllStrategy) {
-            this.strategy = isExpandAllState
-                ? this.createManagedBean(new ExpandAllStrategy())
-                : this.createManagedBean(new ExpandStrategy());
+            this.setStrategy(isExpandAllState ? new ExpandAllStrategy() : new ExpandStrategy());
         }
         this.strategy.setExpandedState(state as any); // cast to any, as we know the type is correct due to the previous assertion
         this.dispatchStateUpdatedEvent();
@@ -110,7 +113,7 @@ export class ServerSideExpansionService
     }
 
     public resetExpansion(): void {
-        this.strategy = this.createManagedBean(new ExpandStrategy());
+        this.setStrategy(new ExpandStrategy());
         this.updateAllNodes();
         this.dispatchStateUpdatedEvent();
     }
@@ -120,7 +123,9 @@ export class ServerSideExpansionService
         // if allowed, swap to expand all strategy
         const shouldUseExpandAllStrategy = !this.isExpandAllStrategy(this.strategy) && ssrmExpandAllAffectsAllRows;
 
-        this.strategy = shouldUseExpandAllStrategy ? new ExpandAllStrategy() : this.strategy;
+        if (shouldUseExpandAllStrategy) {
+            this.setStrategy(new ExpandAllStrategy());
+        }
         this.strategy.expandAll(expanded);
         this.updateAllNodes();
         this.dispatchStateUpdatedEvent();
