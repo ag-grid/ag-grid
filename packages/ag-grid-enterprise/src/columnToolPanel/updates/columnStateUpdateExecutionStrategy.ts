@@ -180,7 +180,7 @@ class SynchronousColumnStateUpdateStrategy implements ColumnStateConcreteUpdateS
     }
 
     public setPivotMode(pivotMode: boolean, eventType: ColumnEventType): void {
-        const { colModel, gos, ctrlsSvc } = this.beans;
+        const { colModel, gos } = this.beans;
         if (pivotMode === colModel.isPivotMode()) {
             return;
         }
@@ -207,9 +207,6 @@ class SynchronousColumnStateUpdateStrategy implements ColumnStateConcreteUpdateS
         gos.updateGridOptions({ options: { pivotMode }, source: eventType as any }); // update grid option + refresh
         if (pivotMode && this.lastPivotColIds.length > 0) {
             this.beans.pivotColsSvc?.setColumns(this.lastPivotColIds, eventType);
-        }
-        for (const c of ctrlsSvc.getHeaderRowContainerCtrls()) {
-            c.refresh();
         }
     }
 
@@ -249,10 +246,8 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
     public commit() {
         const { beans, state } = this;
         const operations: CommitOperations = [];
-        for (const [type, operation] of Object.entries(state) as [
-            CommitOperation['type'],
-            DeferredState[CommitOperation['type']],
-        ][]) {
+        for (const type of Object.keys(state) as CommitOperation['type'][]) {
+            const operation = state[type];
             if (operation) {
                 operations.push({ type, ...operation } as CommitOperation);
             }
@@ -295,7 +290,7 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
                     break;
                 }
                 case 'pivotMode': {
-                    const { colModel, ctrlsSvc, gos, stateSvc } = beans;
+                    const { colModel, gos, stateSvc } = beans;
                     if (operation.pivotMode !== colModel.isPivotMode()) {
                         const currentPivotColIds = beans.pivotColsSvc?.columns.map((col) => col.getColId()) ?? [];
                         if (currentPivotColIds.length > 0) {
@@ -337,9 +332,6 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
                         });
                         if (operation.pivotMode && pivotColIds.length > 0) {
                             beans.pivotColsSvc?.setColumns(pivotColIds, operation.eventType);
-                        }
-                        for (const c of ctrlsSvc.getHeaderRowContainerCtrls()) {
-                            c.refresh();
                         }
                     }
                     break;

@@ -666,7 +666,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             return;
         }
 
-        this.rowModeFeature.refreshRow(params);
+        this.rowModeFeature.refreshRow(params ?? {});
     }
 
     private postProcessCss(): void {
