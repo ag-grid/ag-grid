@@ -222,12 +222,14 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         // Don't start editing the next cell, focus only
         const suppressStartEditOnTab = this.gos.get('suppressStartEditOnTab');
 
+        let startEditingCalled = false;
         if (!rowsMatch && !preventNavigation) {
             super.cleanupEditors(nextCell, true);
 
             if (suppressStartEditOnTab) {
                 nextCell.focusCell(true, event);
             } else {
+                startEditingCalled = true;
                 this.editSvc.startEditing(nextCell, {
                     startedEdit: true,
                     event,
@@ -244,16 +246,16 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             if (suppressStartEditOnTab) {
                 nextCell.focusCell(true, event);
             } else if (!nextCell.comp?.getCellEditor()) {
-                // Two possibilities:
-                // * Editor setup is already in progress (startEditing was called above but the
-                //   editor component hasn't been created yet — happens in React where editor
-                //   creation is asynchronous). Skip the redundant _setupEditor call to avoid
-                //   overwriting the correctly-parameterised first call.
-                // * Editor wasn't created because edit came from API and didn't trigger
-                //   EditService.startEditing — set it up now.
-                const alreadyEditing = this.editSvc?.isEditing(nextCell, { withOpenEditor: true });
-                if (!alreadyEditing) {
-                    _setupEditor(this.beans, nextCell, { event, cellStartedEdit: true });
+                // If startEditing was called above (cross-row navigation), the editor may not
+                // exist yet because React creates editor components asynchronously. In that case
+                // skip the redundant _setupEditor call to avoid overwriting the correctly-
+                // parameterised first call. Otherwise, the editor is genuinely missing (e.g.
+                // destroyed by column virtualisation while edit state remained open) and must
+                // be re-created — silently if the cell is already in editing state to avoid
+                // re-emitting cellEditingStarted.
+                if (!startEditingCalled) {
+                    const alreadyEditing = this.editSvc?.isEditing(nextCell, { withOpenEditor: true });
+                    _setupEditor(this.beans, nextCell, { event, cellStartedEdit: true, silent: alreadyEditing });
                 }
                 this.setFocusInOnEditor(nextCell);
 
