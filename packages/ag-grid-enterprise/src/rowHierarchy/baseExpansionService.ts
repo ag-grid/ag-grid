@@ -1,5 +1,5 @@
-import type { RowCtrl, RowGroupOpenedEvent, RowNode } from 'ag-grid-community';
-import { BeanStub, _createGlobalRowEvent, _setAriaExpanded } from 'ag-grid-community';
+import type { IsGroupOpenByDefaultParams, RowCtrl, RowGroupOpenedEvent, RowNode } from 'ag-grid-community';
+import { BeanStub, _addGridCommonParams, _createGlobalRowEvent, _setAriaExpanded } from 'ag-grid-community';
 
 export abstract class BaseExpansionService extends BeanStub {
     protected abstract dispatchExpandedEvent(event: RowGroupOpenedEvent, forceSync?: boolean): void;
@@ -48,15 +48,13 @@ export abstract class BaseExpansionService extends BeanStub {
             const groupDefaultExpanded = gos.get('groupDefaultExpanded');
             return groupDefaultExpanded === -1 || level < groupDefaultExpanded;
         }
-        const params = {
-            api: beans.gridApi,
-            context: beans.gridOptions.context,
+        const params = _addGridCommonParams<IsGroupOpenByDefaultParams>(gos, {
             rowNode,
             field: rowNode.field!,
             key: rowNode.key!,
             level,
             rowGroupColumn: rowNode.rowGroupColumn!,
-        };
+        });
         return isGroupOpenByDefault(params) == true;
     }
 
