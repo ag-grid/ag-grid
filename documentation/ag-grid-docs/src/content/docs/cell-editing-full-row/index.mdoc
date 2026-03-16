@@ -6,11 +6,11 @@ Configure the grid to enter and exit edit mode for an entire row at once.
 
 Try these interactions in the example below:
 
--   Pressing {% kbd "⇥ Tab" /%} / {% kbd "⇧ Shift" /%} & {% kbd "⇥ Tab" /%} while editing will move the focus between the cells on the editing row. Read only cells will be focusable while the row is in edit mode.
--   The button will start editing line two. It uses the API to start editing a cell, however the result is that the whole row will become editable starting with the specified cell.
--   `cellValueChanged` and `rowValueChanged` events are logged to console.
+-   Double-click any cell to start editing the entire row.
+-   Press {% kbd "⇥ Tab" /%} / {% kbd "⇧ Shift" /%} & {% kbd "⇥ Tab" /%} to move between cells on the editing row.
+-   Press {% kbd "↵ Enter" /%} or click outside the row to stop editing.
 
-{% gridExampleRunner title="Full Row Editing" name="full-row-editing"  exampleHeight=527 /%}
+{% gridExampleRunner title="Full Row Editing" name="simple-full-row-editing" exampleHeight=400 /%}
 
 The example above uses the following configuration:
 
@@ -20,16 +20,6 @@ const gridOptions = {
 };
 ```
 
-The example also demonstrates:
-
--   The 'Price' column has a custom editor demonstrating how you should implement the `focusIn()` method.
-    Both `focusIn()` and `focusOut()` for this editor are logged to the console. Note that `focusIn()`
-    and `focusOut()` are only called when the user is tabbing between cells when editing, they are not called
-    as the user double clicks on a cell to start editing that cell, or the user finishes editing that cell by
-    e.g. hitting the {% kbd "↵ Enter" /%} key.
--   The 'Suppress Navigable' column is not navigable using {% kbd "⇥ Tab" /%} / {% kbd "⇧ Shift" /%} & {% kbd "⇥ Tab" /%}. In other words, when tabbing around the grid, you cannot tab onto this cell.
--   The **Read Only** column is not editable, so when the row goes into edit mode, the cell in the **Read Only** column cannot be edited.
-
 ## Custom Cell Editors
 
 If using custom cell editors, the cell editors will work in the exact same way with the following additions:
@@ -38,7 +28,21 @@ If using custom cell editors, the cell editors will work in the exact same way w
 -   `focusOut`: If your cell editor has a `focusOut()` method, it will get called when the user tabs out of the cell. There is no intended use for this; it's just there to complement the `focusIn()` method.
 -   Events: When a row stops editing, the `cellValueChanged` event gets called for each column and `rowValueChanged` gets called once for the row.
 
-## Popup Editors
+Note that `focusIn()` and `focusOut()` are only called when the user tabs between cells — not when double-clicking to start editing or pressing {% kbd "↵ Enter" /%} to stop.
+
+## Example: Full Row Edit
+
+The example below uses the API to start editing a cell and demonstrates a custom editor on the **Price** column, along with two additional column configurations:
+
+-   The **Price** column uses a custom `NumericCellEditor` with `focusIn()` and `focusOut()` implemented. Both methods are logged to the console when triggered.
+-   The **Read Only** column is not editable, so when the row enters edit mode the cell cannot be changed. It remains focusable via {% kbd "⇥ Tab" /%}.
+-   The **Suppress Navigable** column is skipped entirely during {% kbd "⇥ Tab" /%} / {% kbd "⇧ Shift" /%} & {% kbd "⇥ Tab" /%} navigation.
+-   The button starts editing line two via the API. Even though a single cell is targeted, the entire row enters edit mode.
+-   `cellValueChanged` and `rowValueChanged` events are logged to the console.
+
+{% gridExampleRunner title="Full Row Editing" name="full-row-editing" exampleHeight=527 /%}
+
+## Full Row Edit and Popup Editors
 
 Full row editing is not compatible with popup editors. This is because a) the grid would look confusing to pop up an editor for each cell in the row at the same time and b) the complexity of navigation and popup is almost impossible to model, so the grid and your application code would be messy and very error prone. If you are using full row edit, then you are prevented from using popup editors.
 
