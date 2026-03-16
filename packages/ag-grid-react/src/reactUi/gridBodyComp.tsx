@@ -117,13 +117,13 @@ const GridBodyComp = () => {
         const compProxy: IGridBodyComp = {
             setRowAnimationCssOnBodyViewport: setRowAnimationClass,
             setColumnCount: (count: number) => {
-                if (eRoot.current) {
-                    _setAriaColCount(eRoot.current, count);
+                if (eGridViewport.current) {
+                    _setAriaColCount(eGridViewport.current, count);
                 }
             },
             setRowCount: (count: number) => {
-                if (eRoot.current) {
-                    _setAriaRowCount(eRoot.current, count);
+                if (eGridViewport.current) {
+                    _setAriaRowCount(eGridViewport.current, count);
                 }
             },
             setPinnedSection,
@@ -139,7 +139,11 @@ const GridBodyComp = () => {
             },
             setStickyBottomHeight,
             setStickyBottomWidth,
-            setGridRootRole: (role: 'grid' | 'treegrid') => _setAriaRole(rootElement, role),
+            setGridRole: (role: 'grid' | 'treegrid') => {
+                if (eGridViewport.current) {
+                    _setAriaRole(eGridViewport.current, role);
+                }
+            },
         };
 
         const ctrl = context.createBean(new GridBodyCtrl());
@@ -154,8 +158,8 @@ const GridBodyComp = () => {
             eBottom.current
         );
 
-        if ((rangeSvc && _isCellSelectionEnabled(gos)) || _isMultiRowSelection(gos)) {
-            _setAriaMultiSelectable(rootElement, true);
+        if (eGridViewport.current && ((rangeSvc && _isCellSelectionEnabled(gos)) || _isMultiRowSelection(gos))) {
+            _setAriaMultiSelectable(eGridViewport.current, true);
         }
 
         return () => {
@@ -225,7 +229,7 @@ const GridBodyComp = () => {
     }, []);
 
     return (
-        <div ref={setRootRef} className={rootClasses}>
+        <div ref={setRootRef} className={rootClasses} role="presentation">
             <div ref={setGridViewportRef} className={gridViewportClasses} role="presentation">
                 <div ref={eGridScrollableArea} className={scrollableClasses} role="rowgroup">
                     <div ref={eTop} className={topClasses} role="presentation" style={topStyle}>

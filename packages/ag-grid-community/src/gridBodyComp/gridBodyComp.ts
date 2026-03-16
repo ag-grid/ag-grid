@@ -34,8 +34,8 @@ function getGridBodyTemplate(includeOverlay?: boolean): {
 
     const elementParams: ElementParams = {
         tag: 'div',
-        ref: 'eGridRoot',
         cls: 'ag-root ag-unselectable',
+        role: 'presentation',
         children: [
             {
                 tag: 'div',
@@ -91,7 +91,6 @@ function getGridBodyTemplate(includeOverlay?: boolean): {
 }
 
 export class GridBodyComp extends Component implements FocusableContainer {
-    private readonly eGridRoot: HTMLElement = RefPlaceholder;
     private readonly eGridViewport: HTMLElement = RefPlaceholder;
     private readonly eGridScrollableArea: HTMLElement = RefPlaceholder;
     private readonly eTop: HTMLElement = RefPlaceholder;
@@ -126,8 +125,8 @@ export class GridBodyComp extends Component implements FocusableContainer {
         const compProxy: IGridBodyComp = {
             setRowAnimationCssOnBodyViewport: (cssClass, animate) =>
                 this.setRowAnimationCssOnBodyViewport(cssClass, animate),
-            setColumnCount: (count) => _setAriaColCount(this.getGui(), count),
-            setRowCount: (count) => _setAriaRowCount(this.getGui(), count),
+            setColumnCount: (count) => _setAriaColCount(this.eGridViewport, count),
+            setRowCount: (count) => _setAriaRowCount(this.eGridViewport, count),
             setPinnedSection: (section, state) => this.setPinnedSection(section, state),
             setStickyBottomHeight: (height) => {
                 this.stickyBottomRowsHeight = Number.parseFloat(height) || 0;
@@ -159,7 +158,7 @@ export class GridBodyComp extends Component implements FocusableContainer {
                 }
             },
             setGridScrollableAreaWidth: (width) => (this.eGridScrollableArea.style.width = width),
-            setGridRootRole: (role: 'grid' | 'treegrid') => _setAriaRole(this.eGridRoot, role),
+            setGridRole: (role: 'grid' | 'treegrid') => _setAriaRole(this.eGridViewport, role),
         };
 
         this.ctrl = this.createManagedBean(new GridBodyCtrl());
@@ -174,7 +173,7 @@ export class GridBodyComp extends Component implements FocusableContainer {
         );
 
         if ((rangeSvc && _isCellSelectionEnabled(this.gos)) || _isMultiRowSelection(this.gos)) {
-            _setAriaMultiSelectable(this.getGui(), true);
+            _setAriaMultiSelectable(this.eGridViewport, true);
         }
     }
 
@@ -206,7 +205,7 @@ export class GridBodyComp extends Component implements FocusableContainer {
         const heightString = `${totalHeight}px`;
         this.eBottom.style.minHeight = heightString;
         this.eBottom.style.height = heightString;
-        _setDisplayed(this.eBottom, totalHeight > 0);
+        _setDisplayed(this.eBottom, totalHeight > 0, { skipAriaHidden: true });
     }
 
     public getFocusableContainerName(): 'gridBody' {

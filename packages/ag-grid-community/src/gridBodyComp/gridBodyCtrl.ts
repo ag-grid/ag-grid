@@ -43,7 +43,7 @@ export interface IGridBodyComp extends LayoutView {
     setRowAnimationCssOnBodyViewport(cssClass: RowAnimationCssClasses, animate: boolean): void;
     setAlwaysVerticalScrollClass(cssClass: string | null, on: boolean): void;
     setGridScrollableAreaWidth(width: string): void;
-    setGridRootRole(role: 'grid' | 'treegrid'): void;
+    setGridRole(role: 'grid' | 'treegrid'): void;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -110,7 +110,7 @@ export class GridBodyCtrl extends BeanStub {
 
         this.addEventListeners();
         this.addFocusListeners([eTop, eGridViewport, eBottom]);
-        this.setGridRootRole();
+        this.setGridRole();
         this.onGridColumnsChanged();
         this.addBodyViewportListener();
         this.setPinnedRowsHeights();
@@ -129,7 +129,7 @@ export class GridBodyCtrl extends BeanStub {
 
     private addEventListeners(): void {
         const setPinnedRowsHeights = this.setPinnedRowsHeights.bind(this);
-        const setGridRootRole = this.setGridRootRole.bind(this);
+        const setGridRootRole = this.setGridRole.bind(this);
         const toggleRowResizeStyle = this.toggleRowResizeStyles.bind(this);
         const updatePinnedColumnStickyOffsets = this.updatePinnedColumnStickyOffsets.bind(this);
         const onGridSizeChanged = this.onGridSizeChanged.bind(this);
@@ -217,7 +217,7 @@ export class GridBodyCtrl extends BeanStub {
         this.eTopExtraRows.style.setProperty('--ag-fw-anchor-width', `${anchorWidth}px`);
     }
 
-    private setGridRootRole(): void {
+    private setGridRole(): void {
         const { rowGroupColsSvc, colModel, gos } = this;
 
         let isTreeGrid = gos.get('treeData');
@@ -229,7 +229,7 @@ export class GridBodyCtrl extends BeanStub {
             isTreeGrid = rowGroupColumnLen >= columnsNeededForGrouping;
         }
 
-        this.comp.setGridRootRole(isTreeGrid ? 'treegrid' : 'grid');
+        this.comp.setGridRole(isTreeGrid ? 'treegrid' : 'grid');
     }
 
     private addFocusListeners(elements: HTMLElement[]): void {
