@@ -166,6 +166,76 @@ describe('Cell change flashing after undo and redo', () => {
     });
 });
 
+describe('Cell change flashing suppressed when value not committed', () => {
+    const gridMgr = new TestGridsManager({
+        modules: [HighlightChangesModule, UndoRedoEditModule, TextEditorModule],
+    });
+
+    beforeAll(() => {
+        setupAgTestIds();
+    });
+
+    afterEach(() => {
+        gridMgr.reset();
+    });
+
+    test('cell does not flash when undo valueSetter rejects the change', async () => {
+        let callCount = 0;
+        const api = await gridMgr.createGridAndWait('flashRejectedUndoValueSetter', {
+            undoRedoCellEditing: true,
+            defaultColDef: {
+                editable: true,
+                enableCellChangeFlash: true,
+            },
+            columnDefs: [
+                {
+                    field: 'make',
+                    valueSetter: ({ data, newValue }) => {
+                        callCount++;
+                        if (callCount <= 1) {
+                            // Accept the first edit
+                            data.make = newValue;
+                            return true;
+                        }
+                        // Reject the undo write
+                        return false;
+                    },
+                },
+            ],
+            rowData: [{ id: 'ROW_0', make: 'Toyota' }],
+            getRowId: (params) => params.data.id,
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const user = userEvent.setup({ skipHover: true });
+        await asyncSetTimeout(0);
+
+        const cell = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'make'));
+
+        // First edit — valueSetter accepts
+        api.startEditingCell({ rowIndex: 0, colKey: 'make' });
+        const input = await waitForInput(gridDiv, cell);
+        await user.clear(input);
+        await user.type(input, 'Honda');
+        await user.keyboard('{Enter}');
+        await asyncSetTimeout(0);
+
+        expect(api.getDisplayedRowAtIndex(0)?.data?.make).toBe('Honda');
+
+        // Wait for edit flash to complete
+        await asyncSetTimeout(600);
+        expect(cell).not.toHaveClass(FLASH_CSS_CLASS);
+
+        // Undo — valueSetter rejects (callCount > 1)
+        api.undoCellEditing();
+        await asyncSetTimeout(0);
+
+        // Value should NOT have reverted and cell should NOT flash
+        expect(api.getDisplayedRowAtIndex(0)?.data?.make).toBe('Honda');
+        expect(cell).not.toHaveClass(FLASH_CSS_CLASS);
+    });
+});
+
 describe('Cell change flashing after delete', () => {
     const gridMgr = new TestGridsManager({
         modules: [HighlightChangesModule, TextEditorModule],
