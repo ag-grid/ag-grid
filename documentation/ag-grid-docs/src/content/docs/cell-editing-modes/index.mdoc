@@ -13,11 +13,3 @@ Two alternative editing modes support specialised workflows: full row editing an
 [Batch Editing](./cell-editing-batch/) queues edits across multiple cells or rows without immediately writing them to your data. Changes accumulate as **pending values** and are applied in one operation when the batch is committed, or discarded entirely if cancelled.
 
 This is useful for bulk data entry workflows, spreadsheet-like experiences, and scenarios where you need to preview changes before saving to a back end. Batch Editing is available only via the API and is compatible with the Client-Side Row Model only.
-
-## Choosing a Mode
-
-| Mode | When to use |
-|------|-------------|
-| **Single cell** (default) | Standard editing; the user edits one cell at a time |
-| **[Full Row Editing](./cell-editing-full-row/)** | The row represents a record; fields are edited together as a unit |
-| **[Batch Editing](./cell-editing-batch/)** {% enterpriseIcon /%} | Many edits must be staged and reviewed before committing to the data |
