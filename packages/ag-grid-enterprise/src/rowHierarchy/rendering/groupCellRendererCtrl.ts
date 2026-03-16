@@ -212,7 +212,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             comp.setExpandedDisplayed(expanded);
             comp.setContractedDisplayed(!expanded);
 
-            _setAriaExpanded(eGridCell, !!this.displayedNode.expanded);
+            _setAriaExpanded(eGridCell, expanded);
         };
 
         const onExpandableChanged = () => {

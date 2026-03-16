@@ -1,9 +1,7 @@
 import type {
     Bean,
-    BeanCollection,
     GridOptions,
     GridOptionsService,
-    IRowNode,
     NestedDataGetter,
     RefreshModelParams,
     RowNode,
@@ -59,57 +57,4 @@ export function _isHiddenParent(node: RowNode, ancestor: RowNode, gos: GridOptio
         currentNode = currentNode.parent!;
     }
     return currentNode === ancestor;
-}
-
-export const _getRowDefaultExpanded = (
-    beans: BeanCollection,
-    rowNode: IRowNode,
-    level: number,
-    group = rowNode.group
-): boolean => {
-    const gos = beans.gos;
-    // see AG-11476 isGroupOpenByDefault callback doesn't apply to master/detail grid
-    // We call isGroupOpenByDefault only for group nodes and not for master/detail leafs
-    const isGroupOpenByDefault = group && gos.get('isGroupOpenByDefault');
-    if (!isGroupOpenByDefault) {
-        const groupDefaultExpanded = gos.get('groupDefaultExpanded');
-        return groupDefaultExpanded === -1 || level < groupDefaultExpanded;
-    }
-    const params = {
-        api: beans.gridApi,
-        context: beans.gridOptions.context,
-        rowNode,
-        field: rowNode.field!,
-        key: rowNode.key!,
-        level,
-        rowGroupColumn: rowNode.rowGroupColumn!,
-    };
-    return isGroupOpenByDefault(params) == true;
-};
-
-/**
- * Returns the default expansion value for a group node.
- * Evaluation order: pivot leaf groups are always collapsed, then snapshot overrides are checked,
- * then `isGroupOpenByDefault` / `groupDefaultExpanded` defaults apply.
- */
-export function _getGroupNodeDefaultExpanded(
-    beans: BeanCollection,
-    pivotMode: boolean,
-    groupNode: RowNode,
-    snapshot?: { expanded: ReadonlySet<string>; collapsed: ReadonlySet<string> } | null
-): boolean {
-    // if pivoting the leaf group is never expanded as we do not show leaf rows
-    if (pivotMode && groupNode.leafGroup) {
-        return false;
-    }
-    if (snapshot) {
-        const id = groupNode.id!;
-        if (snapshot.expanded.has(id)) {
-            return true;
-        }
-        if (snapshot.collapsed.has(id)) {
-            return false;
-        }
-    }
-    return _getRowDefaultExpanded(beans, groupNode, groupNode.level);
 }

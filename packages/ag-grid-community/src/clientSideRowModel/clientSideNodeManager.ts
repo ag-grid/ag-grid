@@ -338,7 +338,6 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         node.parent = this.rootNode;
         node.level = level;
         node.group = false;
-        node.expanded = false;
         if (sourceRowIndex != null) {
             node.sourceRowIndex = sourceRowIndex;
         }
@@ -413,6 +412,7 @@ const adjustAddIndexForDataPath = <TData>(allLeafs: RowNode<TData>[], addIndex: 
 const initRootNode = <TData = any>(rootNode: RowNode<TData>): RowNode<TData> => {
     rootNode.group = true;
     rootNode.level = -1;
+    rootNode._expanded = true;
     rootNode.id = 'ROOT_NODE_ID';
     if (rootNode._leafs?.length !== 0) {
         rootNode._leafs = [];

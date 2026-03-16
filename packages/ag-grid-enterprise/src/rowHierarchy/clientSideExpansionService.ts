@@ -11,7 +11,6 @@ import type {
 import { _exists } from 'ag-grid-community';
 
 import { BaseExpansionService } from './baseExpansionService';
-import { _getGroupNodeDefaultExpanded } from './rowHierarchyUtils';
 
 export class ClientSideExpansionService
     extends BaseExpansionService
@@ -36,7 +35,7 @@ export class ClientSideExpansionService
                 return;
             }
 
-            node.expanded = rowIdsToExpandSet.has(id);
+            node._expanded = rowIdsToExpandSet.has(id);
         });
         this.onGroupExpandedOrCollapsed();
     }
@@ -63,15 +62,32 @@ export class ClientSideExpansionService
         return this.getInternalExpansionState();
     }
 
+    public isExpanded(rowNode: RowNode<any>): boolean {
+        // Footer nodes use their own _expanded backing field directly (copied from group at creation time).
+        // This preserves the snapshot semantics from when expanded was a plain field.
+        if (rowNode.footer) {
+            return !!rowNode._expanded;
+        }
+        if (!(rowNode.group || rowNode.master) || (rowNode.leafGroup && this.beans.colModel.isPivotMode())) {
+            return false; // Not expandable, so always return false
+        }
+        let value = rowNode._expanded;
+        if (value === null) {
+            // Lazy resolution of the default expansion state via the enterprise expansion service.
+            value = this.defaultExpanded(rowNode) ?? false;
+            rowNode._expanded = value;
+        }
+        return !!value;
+    }
+
     public resetExpansion(): void {
-        const { colModel, rowModel } = this.beans;
-        const pivotMode = colModel.isPivotMode();
+        const { rowModel } = this.beans;
 
         rowModel.forEachNode((node) => {
             if (!node.group && !node.master) {
                 return;
             }
-            node.expanded = _getGroupNodeDefaultExpanded(this.beans, pivotMode, node);
+            node._expanded = null; // null triggers lazy default resolution in the expanded getter
         });
 
         this.onGroupExpandedOrCollapsed();
@@ -88,7 +104,7 @@ export class ClientSideExpansionService
             }
             for (const rowNode of rowNodes) {
                 const actionRow = () => {
-                    rowNode.expanded = expand;
+                    rowNode._expanded = expand;
                     recursiveExpandOrCollapse(rowNode.childrenAfterGroup);
                 };
 
