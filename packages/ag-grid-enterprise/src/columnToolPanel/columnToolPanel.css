@@ -5,11 +5,7 @@
     flex: 1 1 auto;
 }
 
-:where(.ag-column-panel.ag-column-panel-deferred),
-:where(.ag-column-panel.ag-column-panel-deferred) :where(.ag-column-panel-column-select),
-:where(.ag-column-panel.ag-column-panel-deferred) :where(.ag-column-drop-vertical),
-:where(.ag-column-panel.ag-column-panel-deferred) :where(.ag-column-panel-defer-mode-toggle),
-:where(.ag-column-panel.ag-column-panel-deferred) :where(.ag-column-panel-buttons) {
+:where(.ag-column-panel.ag-column-panel-deferred) {
     background-color: var(--ag-cell-batch-edit-background-color);
 }
 
