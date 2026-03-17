@@ -55,7 +55,7 @@ export abstract class BaseExpansionService extends BeanStub {
             level,
             rowGroupColumn: rowNode.rowGroupColumn!,
         });
-        return isGroupOpenByDefault(params) == true;
+        return !!isGroupOpenByDefault(params);
     }
 
     public isExpandable(rowNode: RowNode): boolean {
@@ -72,7 +72,7 @@ export abstract class BaseExpansionService extends BeanStub {
 
     private updateExpandedCss(rowCtrl: RowCtrl, rowNode: RowNode): void {
         const expandable = rowNode.isExpandable();
-        const expanded = !!rowNode.expanded;
+        const expanded = rowNode.expanded;
 
         rowCtrl.forEachGui(undefined, (gui) => {
             const rowComp = gui.rowComp;

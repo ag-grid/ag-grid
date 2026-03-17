@@ -521,15 +521,15 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
         const groupsById = this.nonLeafsById;
         let node = groupsById.get(id);
-        let reused = false;
+        let singleUse = true;
 
-        if (node !== undefined) {
+        if (node) {
             if (node.childrenAfterGroup !== null) {
                 // Already active — just ensure lazy expansion state.
                 node._expanded ??= null;
                 return node;
             }
-            reused = true;
+            singleUse = false;
             // Reused existing group node from a shotgun reset.
             // Reset children but preserve selection and expansion state.
             invalidateAllLeafChildren(node);
@@ -562,7 +562,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         // null triggers lazy default resolution in the expanded getter.
         node._expanded ??= null;
 
-        if (!reused) {
+        if (singleUse) {
             node.setAllChildrenCount(0);
             node.updateHasChildren();
             return node;

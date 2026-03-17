@@ -250,7 +250,7 @@ export class ValueService extends BeanStub implements NamedBean {
             return false;
         }
         // node.expanded (getter with side effects) evaluated last
-        return !!node.expanded;
+        return node.expanded;
     }
 
     private resolveValue(

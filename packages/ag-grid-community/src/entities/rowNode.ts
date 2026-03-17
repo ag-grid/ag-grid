@@ -247,7 +247,7 @@ export class RowNode<TData = any>
     /**
      * Backing field for `expanded` property.
      * - `true`/`false`: explicit expansion state.
-     * - `null`: lazy — in CSRM, getter resolves the default on first access and caches it.
+     * - `null`: triggers lazy evaluation — in CSRM, SSRM, getter resolves the default on first access and caches it.
      * - `undefined`: uninitialized, means false.
      */
     public _expanded: boolean | null | undefined = undefined;

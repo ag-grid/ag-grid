@@ -71,13 +71,15 @@ export function _shouldRowBeRendered(
         return true;
     }
 
-    if (!rowNode.master && rowNode.level !== -1) {
-        const neverAllowToExpand = skipLeafNodes && rowNode.leafGroup;
+    if (rowNode.master || rowNode.level === -1) {
+        return true;
+    }
 
-        // rowNode.expanded evaluated LAST because it has side effects
-        if (!neverAllowToExpand && rowNode.expanded) {
-            return false;
-        }
+    const neverAllowToExpand = skipLeafNodes && rowNode.leafGroup;
+
+    // rowNode.expanded evaluated LAST because it has side effects
+    if (!neverAllowToExpand && rowNode.expanded) {
+        return false;
     }
 
     return true;

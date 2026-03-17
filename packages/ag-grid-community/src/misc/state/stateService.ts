@@ -822,13 +822,10 @@ export class StateService extends BeanStub implements NamedBean {
         this.beans.selectionSvc?.setSelectionState(rowSelectionState, source, source === 'api');
     }
 
-    private getRowGroupExpansionState(): RowGroupExpansionState | RowGroupBulkExpansionState | undefined {
-        return this.beans.expansionSvc?.getExpansionState();
-    }
-
     private updateGroupExpansionState(): void {
-        const state = this.getRowGroupExpansionState();
-        const ssrmExpandAllAffectsAllRows = this.beans.gos.get('ssrmExpandAllAffectsAllRows');
+        const { expansionSvc, gos } = this.beans;
+        const state = expansionSvc?.getExpansionState();
+        const ssrmExpandAllAffectsAllRows = gos.get('ssrmExpandAllAffectsAllRows');
 
         this.updateCachedState('ssrmRowGroupExpansion', ssrmExpandAllAffectsAllRows ? state : undefined);
         this.updateCachedState(
@@ -855,11 +852,9 @@ export class StateService extends BeanStub implements NamedBean {
         rowGroupExpansionState: RowGroupExpansionState | undefined,
         source: 'gridInitializing' | 'api'
     ): void {
-        this.beans.expansionSvc?.setExpansionState(
-            ssrmRowGroupExpansionState ??
-                rowGroupExpansionState ?? { expandedRowGroupIds: [], collapsedRowGroupIds: [] },
-            source
-        );
+        const state = ssrmRowGroupExpansionState ??
+            rowGroupExpansionState ?? { expandedRowGroupIds: [], collapsedRowGroupIds: [] };
+        this.beans.expansionSvc?.setExpansionState(state, source);
     }
 
     private updateColumnState(features: (keyof GridState)[]): void {
