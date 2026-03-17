@@ -137,7 +137,7 @@ export class ServerSideExpansionService
         if (this.updateAllNodes()) {
             // Trigger display recalculation — needed when child stores already have cached data
             // and no async load fires storeUpdated as a side effect
-            this.eventSvc.dispatchEvent({ type: 'storeUpdated' });
+            // this.eventSvc.dispatchEvent({ type: 'storeUpdated' });
         }
     }
 
@@ -151,6 +151,7 @@ export class ServerSideExpansionService
      * @returns true if any node's expanded state changed
      */
     private updateAllNodes(): boolean {
+         Make sure this is not overridden
         let changed = false;
         this.serverSideRowModel.forEachNode((node) => {
             const desired = this.isNodeExpanded(node);
