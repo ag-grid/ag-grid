@@ -208,7 +208,7 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
                     return false;
                 }
                 const alreadySticking = newStickyRows.has(row);
-                return !alreadySticking && row.expanded;
+                return !alreadySticking && !!row.expanded;
             }
 
             return false;

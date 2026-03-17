@@ -274,24 +274,24 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         this.rowModeFeature.initialiseComp();
 
-        const comp = rowGui.rowComp;
+        const { rowComp, element, compBean } = rowGui;
 
         const initialRowClasses = this.getInitialRowClasses();
         for (const name of initialRowClasses) {
-            comp.toggleCss(name, true);
+            rowComp.toggleCss(name, true);
         }
         this.executeSlideAndFadeAnimations();
 
         if (this.rowNode.group) {
-            _setAriaExpanded(rowGui.element, this.rowNode.expanded == true);
+            _setAriaExpanded(element, !!this.rowNode.expanded);
         }
 
         this.setRowCompRowId();
         this.setRowCompRowBusinessKey();
 
         // DOM DATA
-        _setDomData(gos, rowGui.element, DOM_DATA_KEY_ROW_CTRL, this);
-        rowGui.compBean.addDestroyFunc(() => _setDomData(gos, rowGui.element, DOM_DATA_KEY_ROW_CTRL, null));
+        _setDomData(gos, element, DOM_DATA_KEY_ROW_CTRL, this);
+        compBean.addDestroyFunc(() => _setDomData(gos, element, DOM_DATA_KEY_ROW_CTRL, null));
 
         // adding hover functionality adds listener to this row, so we
         // do it lazily in an animation frame
@@ -321,7 +321,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
                 if (!this.isAlive()) {
                     return;
                 }
-                rowGui.rowComp.toggleCss('ag-after-created', true);
+                rowComp.toggleCss('ag-after-created', true);
             });
         }
 

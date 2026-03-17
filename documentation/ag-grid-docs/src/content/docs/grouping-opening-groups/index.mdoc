@@ -75,7 +75,7 @@ The row group expansion state can be saved and restored as part of [Grid State](
 {% /note %}
 
 The grid exposes API methods to expand or collapse groups programmatically.
-{% apiDocumentation source="grid-api/api.json" section="rowExpansion" names=["setRowNodeExpanded", "expandAll", "collapseAll"] /%}
+{% apiDocumentation source="grid-api/api.json" section="rowExpansion" names=["setRowNodeExpanded", "expandAll", "collapseAll", "resetRowGroupExpansion"] /%}
 
 ### Expand Row Ancestors
 
@@ -93,3 +93,11 @@ const expandToRow = () => {
   }
 }
 ```
+
+### Reset Group Expansion
+
+After users have expanded or collapsed groups, `resetRowGroupExpansion()` discards all overrides and re-evaluates each group against the configured defaults (`groupDefaultExpanded` or `isGroupOpenByDefault`).
+
+In the example below, the `isGroupOpenByDefault` callback expands the `Australia > 2004` path by default. Try expanding or collapsing groups, then click **Reset to Defaults** to restore the original expansion state.
+
+{% gridExampleRunner title="Reset Group Expansion" name="reset-group-expansion" /%}

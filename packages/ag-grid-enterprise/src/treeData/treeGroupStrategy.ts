@@ -9,7 +9,6 @@ import { BeanStub, RowNode, _removeFromArray, _warn } from 'ag-grid-community';
 
 import { setRowNodeGroup } from '../rowGrouping/rowGroupingUtils';
 import type { IRowGroupingStrategy } from '../rowHierarchy/rowHierarchyUtils';
-import { _getRowDefaultExpanded } from '../rowHierarchy/rowHierarchyUtils';
 import { fieldGetter } from './fieldAccess';
 
 // The approach used here avoids complex incremental updates by using linear passes and a final traversal.
@@ -20,7 +19,7 @@ import { fieldGetter } from './fieldAccess';
 // This guarantees correct parent-child relationships without requiring sorting or post-processing.
 //
 // No new arrays are allocated for childrenAfterGroup — existing arrays are reused.
-// The treeNodeFlags field encodes temporary state, child counters, and expanded status.
+// The treeNodeFlags field encodes temporary state and child counters.
 // The treeParent field tracks hierarchy changes and supports re-parenting (e.g., drag-and-drop).
 // Setting a node treeParent to a desired node and then executing grouping without full reload will generate a valid tree.
 //
@@ -33,9 +32,6 @@ const FLAG_CHANGED = 0x40000000;
 
 /** Toggling this flag is used to mark a filler node as used or already processed */
 const FLAG_MARKED_FILLER = 0x20000000;
-
-/** This is the only flag that stays in the node, to indicate that the expanded state was initialized */
-const FLAG_EXPANDED_INITIALIZED = 0x10000000;
 
 /** Mask used to keep track of the number of children in a node */
 const MASK_CHILDREN_LEN = 0x0fffffff; // This equates to 268,435,455 maximum children per parent, more than enough
@@ -219,8 +215,8 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             }
 
             if (parentChanged && oldParent) {
-                if (oldParent.destroyed && maybeExpandFromRemovedParent(parent, oldParent)) {
-                    parentFlags |= FLAG_EXPANDED_INITIALIZED;
+                if (oldParent.destroyed) {
+                    maybeExpandFromRemovedParent(parent, oldParent);
                 }
                 oldParent.treeNodeFlags |= FLAG_CHANGED;
             }
@@ -360,7 +356,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         const len = children?.length ?? 0;
         let flags = row.treeNodeFlags;
 
-        row.treeNodeFlags = flags & FLAG_EXPANDED_INITIALIZED;
+        row.treeNodeFlags = 0;
         row.level = level;
 
         // Update group state and children markers
@@ -376,21 +372,16 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
 
         const canBeExpanded = len !== 0 || row.master;
         if (!canBeExpanded) {
-            if (row.expanded) {
-                row.expanded = false;
-            }
-            if ((flags & FLAG_EXPANDED_INITIALIZED) !== 0) {
-                row.treeNodeFlags &= ~FLAG_EXPANDED_INITIALIZED;
-            }
-        } else if ((flags & FLAG_EXPANDED_INITIALIZED) === 0) {
-            row.treeNodeFlags |= FLAG_EXPANDED_INITIALIZED;
-            row.expanded = _getRowDefaultExpanded(this.beans, row, level); // Initialize the expanded state
+            row._expanded = undefined;
+        } else {
+            // null triggers lazy default resolution in the expanded getter
+            row._expanded ??= null;
         }
 
         if (collapsed && row.rowIndex !== null) {
             row.clearRowTopAndRowIndex(); // Mark row hidden if collapsed
         }
-        collapsed ||= row.expanded === false;
+        collapsed ||= !row.expanded;
 
         ++level; // Increment level as it is passed down to children
         flags &= FLAG_CHILDREN_CHANGED;
@@ -861,19 +852,16 @@ type DuplicatePathsMap<TData> = Map<string, RowNode<TData>[]>;
 
 /**
  * If parent is a new filler node, copy the expanded flag from old removed parent.
- * Returns true if the expanded flag was copied.
  */
-const maybeExpandFromRemovedParent = <TData>(parent: RowNode<TData>, oldParent: RowNode<TData>): boolean => {
+const maybeExpandFromRemovedParent = <TData>(parent: RowNode<TData>, oldParent: RowNode<TData>): void => {
     if (
-        (oldParent.treeNodeFlags & FLAG_EXPANDED_INITIALIZED) !== 0 &&
-        (parent.treeNodeFlags & FLAG_EXPANDED_INITIALIZED) === 0 &&
+        oldParent._expanded !== undefined &&
+        parent._expanded === undefined &&
         parent.treeParent !== null &&
         parent.sourceRowIndex < 0
     ) {
-        parent.expanded = oldParent.expanded;
-        return true;
+        parent._expanded = oldParent._expanded;
     }
-    return false;
 };
 
 const updateNodeKey = (node: RowNode, key: string): void => {

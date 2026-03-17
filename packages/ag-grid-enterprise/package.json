@@ -116,12 +116,12 @@
     "ag-grid-community": "35.1.0-beta.20260316.108"
   },
   "optionalDependencies": {
-    "ag-charts-community": "13.1.0-beta.20260316",
-    "ag-charts-enterprise": "13.1.0-beta.20260316"
+    "ag-charts-community": "13.1.0-beta.20260317",
+    "ag-charts-enterprise": "13.1.0-beta.20260317"
   },
   "devDependencies": {
-    "ag-charts-community": "13.1.0-beta.20260316",
-    "ag-charts-enterprise": "13.1.0-beta.20260316",
+    "ag-charts-community": "13.1.0-beta.20260317",
+    "ag-charts-enterprise": "13.1.0-beta.20260317",
     "@types/jest": "^29.5.0",
     "jest": "^29.5.0",
     "jest-environment-jsdom": "^29.7.0",

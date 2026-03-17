@@ -1731,8 +1731,18 @@
                 "url": "./server-side-model-pivoting/#supplying-pivot-result-fields-simple"
             }
         },
-        "serverSideSortAllLevels": {},
-        "serverSideEnableClientSideSort": {},
+        "serverSideSortAllLevels": {
+            "more": {
+                "name": "Sorting All Levels",
+                "url": "./server-side-model-sorting/#sorting-all-levels"
+            }
+        },
+        "serverSideEnableClientSideSort": {
+            "more": {
+                "name": "Client-side Sorting",
+                "url": "./server-side-model-sorting/#client-side-sorting"
+            }
+        },
         "serverSideOnlyRefreshFilteredGroups": {
             "more": {
                 "name": "Filters",

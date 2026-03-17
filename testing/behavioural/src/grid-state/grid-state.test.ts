@@ -1,7 +1,7 @@
-import type { GridState } from 'ag-grid-community';
+import type { GridState, IServerSideDatasource, IServerSideGetRowsParams } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from '../test-utils';
 
 describe('StateService - Grid State Management', () => {
     const gridsManager = new TestGridsManager({
@@ -257,26 +257,30 @@ describe('StateService - Grid State Management', () => {
             expect(api.getState().rowSelection).toEqual(['0', '2']);
         });
 
-        test('should capture row group expansion state - TODO FIX', async () => {
+        test('CSRM: getState captures rowGroupExpansion, setState restores it', async () => {
             const columnDefs = [
                 { field: 'id', hide: false },
                 { field: 'sport', hide: false, rowGroup: true },
                 { field: 'name', hide: false },
                 { field: 'age', hide: false },
             ];
-            const api = gridsManager.createGrid('myGrid', {
+            const api = gridsManager.createGrid('source', {
                 columnDefs,
                 rowData: defaultRowData,
+                getRowId: ({ data }) => data.id,
             });
 
+            // Initially all groups collapsed
             expect(api.getState().rowGroupExpansion).toEqual({
                 collapsedRowGroupIds: [],
                 expandedRowGroupIds: [],
             });
+            expect(api.getState().ssrmRowGroupExpansion).toBeUndefined();
 
             api.expandAll();
 
-            expect(api.getState().rowGroupExpansion).toEqual({
+            const savedState = api.getState();
+            expect(savedState.rowGroupExpansion).toEqual({
                 collapsedRowGroupIds: [],
                 expandedRowGroupIds: [
                     'row-group-sport-Football',
@@ -286,6 +290,199 @@ describe('StateService - Grid State Management', () => {
                     'row-group-sport-Swimming',
                 ],
             });
+            expect(savedState.ssrmRowGroupExpansion).toBeUndefined();
+
+            // Restore into a fresh grid
+            const api2 = gridsManager.createGrid('target', {
+                columnDefs,
+                rowData: defaultRowData,
+                getRowId: ({ data }) => data.id,
+                initialState: savedState,
+            });
+
+            expect(api2.getState().rowGroupExpansion).toEqual(savedState.rowGroupExpansion);
+        });
+
+        test('SSRM: getState captures rowGroupExpansion, setState restores it', async () => {
+            const datasource: IServerSideDatasource = {
+                getRows({ request, success }: IServerSideGetRowsParams) {
+                    if (request.groupKeys.length === 0) {
+                        success({
+                            rowData: [
+                                { id: 'ie', country: 'Ireland' },
+                                { id: 'fr', country: 'France' },
+                            ],
+                        });
+                    } else {
+                        success({
+                            rowData: [{ id: `${request.groupKeys[0]}-leaf`, country: request.groupKeys[0], medals: 5 }],
+                        });
+                    }
+                },
+            };
+
+            const api = gridsManager.createGrid('ssrmSource', {
+                columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'medals' }],
+                rowModelType: 'serverSide',
+                serverSideDatasource: datasource,
+                getRowId: ({ data }) => data.id,
+            });
+
+            await waitForNoLoadingRows(api);
+
+            // Without ssrmExpandAllAffectsAllRows, SSRM uses rowGroupExpansion (same as CSRM)
+            expect(api.getState().rowGroupExpansion).toEqual({ expandedRowGroupIds: [], collapsedRowGroupIds: [] });
+            expect(api.getState().ssrmRowGroupExpansion).toBeUndefined();
+
+            // Expand Ireland
+            api.setRowNodeExpanded(api.getRowNode('ie')!, true);
+            await waitForNoLoadingRows(api);
+
+            const savedState = api.getState();
+            expect(savedState.rowGroupExpansion).toEqual({
+                expandedRowGroupIds: ['ie'],
+                collapsedRowGroupIds: [],
+            });
+            expect(savedState.ssrmRowGroupExpansion).toBeUndefined();
+
+            // Collapse Ireland
+            api.setRowNodeExpanded(api.getRowNode('ie')!, false);
+            expect(api.getRowNode('ie')!.expanded).toBe(false);
+
+            // Restore the saved state
+            api.setState(savedState);
+            await waitForNoLoadingRows(api);
+
+            expect(api.getRowNode('ie')!.expanded).toBe(true);
+            expect(api.getState().rowGroupExpansion).toEqual(savedState.rowGroupExpansion);
+        });
+
+        test('SSRM expandAll strategy: getState captures RowGroupBulkExpansionState, setState restores it', async () => {
+            const datasource: IServerSideDatasource = {
+                getRows({ request, success }: IServerSideGetRowsParams) {
+                    if (request.groupKeys.length === 0) {
+                        success({
+                            rowData: [
+                                { id: 'ie', key: 'Ireland', country: 'Ireland', group: true },
+                                { id: 'fr', key: 'France', country: 'France', group: true },
+                            ],
+                        });
+                    } else {
+                        success({
+                            rowData: [{ id: `${request.groupKeys[0]}-leaf`, country: request.groupKeys[0], medals: 1 }],
+                        });
+                    }
+                },
+            };
+
+            const gridOpts = {
+                columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'medals' }],
+                rowModelType: 'serverSide' as const,
+                serverSideDatasource: datasource,
+                getRowId: ({ data }: any) => data.id,
+                ssrmExpandAllAffectsAllRows: true,
+            };
+
+            const api = gridsManager.createGrid('ssrmBulkSource', gridOpts);
+            await waitForNoLoadingRows(api);
+
+            // Expand all — switches to ExpandAllStrategy
+            api.expandAll();
+            await waitForNoLoadingRows(api);
+
+            // Collapse France individually — recorded as an exception in ExpandAllStrategy
+            api.setRowNodeExpanded(api.getRowNode('fr')!, false);
+            await asyncSetTimeout(0); // allow debounced state update to flush
+
+            const savedState = api.getState();
+            expect(savedState.ssrmRowGroupExpansion).toEqual({
+                expandAll: true,
+                invertedRowGroupIds: ['fr'],
+            });
+            expect(savedState.rowGroupExpansion).toBeUndefined();
+
+            // Collapse all to reset state
+            api.collapseAll();
+            expect(api.getRowNode('ie')!.expanded).toBe(false);
+            expect(api.getRowNode('fr')!.expanded).toBe(false);
+
+            // Restore saved state — previously broken (ssrmRowGroupExpansion was ignored)
+            api.setState(savedState);
+            await waitForNoLoadingRows(api);
+
+            // Ireland should be expanded (expandAll: true), France collapsed (in invertedRowGroupIds)
+            expect(api.getRowNode('ie')!.expanded).toBe(true);
+            expect(api.getRowNode('fr')!.expanded).toBe(false);
+        });
+
+        test('SSRM expandAll strategy: initialState with ssrmRowGroupExpansion restores on grid creation', async () => {
+            // Tests the gridInitializing path: ssrmRowGroupExpansion must be checked (not just
+            // rowGroupExpansion) when deciding whether to call setRowGroupExpansionState.
+            const datasource: IServerSideDatasource = {
+                getRows({ request, success }: IServerSideGetRowsParams) {
+                    if (request.groupKeys.length === 0) {
+                        success({
+                            rowData: [
+                                { id: 'ie', country: 'Ireland' },
+                                { id: 'fr', country: 'France' },
+                            ],
+                        });
+                    } else {
+                        success({
+                            rowData: [{ id: `${request.groupKeys[0]}-leaf`, country: request.groupKeys[0], medals: 1 }],
+                        });
+                    }
+                },
+            };
+
+            const gridOpts = {
+                columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'medals' }],
+                rowModelType: 'serverSide' as const,
+                serverSideDatasource: datasource,
+                getRowId: ({ data }: any) => data.id,
+                ssrmExpandAllAffectsAllRows: true,
+                initialState: {
+                    ssrmRowGroupExpansion: { expandAll: true, invertedRowGroupIds: ['fr'] },
+                },
+            };
+
+            const api = gridsManager.createGrid('ssrmBulkInit', gridOpts);
+            await waitForNoLoadingRows(api);
+
+            // Ireland should be expanded (expandAll: true), France collapsed (in invertedRowGroupIds)
+            expect(api.getRowNode('ie')!.expanded).toBe(true);
+            expect(api.getRowNode('fr')!.expanded).toBe(false);
+        });
+
+        test('CSRM: getState reflects new node IDs after group column change via setGridOption', async () => {
+            // columnRowGroupChanged fires while changeEventsDispatching=true (before CSRM re-groups),
+            // so expansion state must be refreshed on newColumnsLoaded instead.
+            const api = gridsManager.createGrid('csrmRegroup', {
+                columnDefs: [
+                    { field: 'sport', rowGroup: true, hide: true },
+                    { field: 'name', rowGroup: false, hide: true },
+                    { field: 'age' },
+                ],
+                rowData: defaultRowData,
+                getRowId: ({ data }) => data.id,
+            });
+
+            // expandAll uses the synchronous onGroupExpandedOrCollapsed path
+            api.expandAll();
+            await asyncSetTimeout(0);
+            expect(api.getState().rowGroupExpansion?.expandedRowGroupIds).toContain('row-group-sport-Football');
+
+            // Switch grouping to name — all sport-based IDs are gone
+            api.setGridOption('columnDefs', [
+                { field: 'sport', rowGroup: false, hide: true },
+                { field: 'name', rowGroup: true, hide: true },
+                { field: 'age' },
+            ]);
+            await asyncSetTimeout(0);
+
+            // Cached state must reflect the new name-based IDs, not stale sport-based IDs
+            const expansion = api.getState().rowGroupExpansion;
+            expect(expansion?.expandedRowGroupIds).not.toContain('row-group-sport-Football');
         });
 
         test('should capture pagination state', async () => {

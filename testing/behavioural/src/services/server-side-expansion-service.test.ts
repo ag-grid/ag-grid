@@ -30,7 +30,9 @@ describe('ServerSideExpansionService', () => {
         expansionService['serverSideRowModel'] = beans.serverSideRowModel as any;
         expansionService['eventSvc'] = beans.eventSvc;
         expansionService['beans'] = beans;
+        expansionService['createBean'] = (bean: any) => bean;
         expansionService['createManagedBean'] = (bean: any) => bean;
+        expansionService['destroyBean'] = () => undefined;
         expansionService['addManagedEventListeners'] = () => [];
         expansionService['addManagedPropertyListener'] = () => () => null;
         expansionService.postConstruct();

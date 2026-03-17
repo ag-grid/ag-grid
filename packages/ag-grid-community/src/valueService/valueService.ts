@@ -235,19 +235,22 @@ export class ValueService extends BeanStub implements NamedBean {
         // in the header when the group is open.
         // Result is: isOpenedGroup && !groupShowsAggData
 
-        // Check isOpenedGroup conditions: node.group && node.expanded && !node.footer && !isPivotLeaf
-        if (!node.group || !node.expanded || node.footer) {
+        // Check isOpenedGroup conditions: node.group && !node.footer && !isPivotLeaf && node.expanded
+        // The root node (level -1) is always expanded but should not suppress its agg data display.
+        if (!node.group || node.footer || node.level === -1) {
+            return false;
+        }
+        // groupShowsAggData = this.gos.get('groupSuppressBlankHeader') || !node.sibling
+        // We return true only if !groupShowsAggData, i.e., !groupSuppressBlankHeader && node.sibling
+        if (!node.sibling || this.gos.get('groupSuppressBlankHeader')) {
             return false;
         }
         // When in pivot mode, leafGroups cannot be expanded
         if (node.leafGroup && this.colModel.isPivotMode()) {
-            return false; // isPivotLeaf - not an opened group
+            return false;
         }
-
-        // isOpenedGroup is true. Now check if groupShowsAggData.
-        // groupShowsAggData = this.gos.get('groupSuppressBlankHeader') || !node.sibling
-        // We return true only if !groupShowsAggData, i.e., !groupSuppressBlankHeader && node.sibling
-        return !!node.sibling && !this.gos.get('groupSuppressBlankHeader');
+        // node.expanded (getter with side effects) evaluated last
+        return !!node.expanded;
     }
 
     private resolveValue(

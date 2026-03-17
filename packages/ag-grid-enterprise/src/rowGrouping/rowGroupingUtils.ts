@@ -34,7 +34,6 @@ export function setRowNodeGroup(rowNode: RowNode, beans: BeanCollection, group: 
 
     // if we used to be a group, and no longer, then close the node
     if (rowNode.group && !group) {
-        rowNode.expanded = false;
         // Clear stale aggData when demoting from group to leaf.
         const colModel = beans.colModel;
         setAggData(rowNode, null, colModel);
