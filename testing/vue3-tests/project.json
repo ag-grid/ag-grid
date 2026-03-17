@@ -19,6 +19,13 @@
       }
     },
     "build": {
+      "dependsOn": [
+        "ag-grid-community:build:types",
+        "ag-grid-community:build:package",
+        "ag-grid-enterprise:build:types",
+        "ag-grid-enterprise:build:package",
+        "ag-grid-vue3:build"
+      ],
       "command": "npx vue-tsc && npx vite build",
       "options": {
         "cwd": "testing/vue3-tests"
