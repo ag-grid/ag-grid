@@ -1,5 +1,5 @@
-const { spawnSync, existsSync } = require('child_process');
 const { execSync } = require('child_process');
+const { existsSync } = require('fs');
 
 // Find and log large website cache entries
 if (existsSync('.nx/cache')) {
