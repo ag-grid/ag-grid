@@ -98,6 +98,10 @@ export class ServerSideExpansionService
             value = this.defaultExpanded(rowNode);
             rowNode._expanded = value;
         }
+        // This could be returning undefined which is currently
+        // handled via coercion in SSRM. When fixing this to always
+        // return a boolean must validate that the undefined state is
+        // correctly handled.
         return value as boolean;
     }
 

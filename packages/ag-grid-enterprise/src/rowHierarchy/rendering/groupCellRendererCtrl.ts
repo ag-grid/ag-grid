@@ -208,7 +208,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
                 return;
             }
 
-            const expanded = this.displayedNode.expanded;
+            const expanded = !!this.displayedNode.expanded;
             comp.setExpandedDisplayed(expanded);
             comp.setContractedDisplayed(!expanded);
 

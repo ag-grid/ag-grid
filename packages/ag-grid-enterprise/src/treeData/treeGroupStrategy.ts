@@ -381,7 +381,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         if (collapsed && row.rowIndex !== null) {
             row.clearRowTopAndRowIndex(); // Mark row hidden if collapsed
         }
-        collapsed ||= row.expanded === false;
+        collapsed ||= !row.expanded;
 
         ++level; // Increment level as it is passed down to children
         flags &= FLAG_CHILDREN_CHANGED;

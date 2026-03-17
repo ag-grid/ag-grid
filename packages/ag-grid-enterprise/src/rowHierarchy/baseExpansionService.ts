@@ -72,7 +72,7 @@ export abstract class BaseExpansionService extends BeanStub {
 
     private updateExpandedCss(rowCtrl: RowCtrl, rowNode: RowNode): void {
         const expandable = rowNode.isExpandable();
-        const expanded = rowNode.expanded;
+        const expanded = rowNode.expanded == true;
 
         rowCtrl.forEachGui(undefined, (gui) => {
             const rowComp = gui.rowComp;
