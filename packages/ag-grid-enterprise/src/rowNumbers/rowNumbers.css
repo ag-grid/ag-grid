@@ -22,7 +22,7 @@
 }
 
 /* stylelint-disable-next-line selector-max-specificity */
-.ag-floating-bottom .ag-row-numbers-resizer {
+.ag-grid-pinned-bottom-rows .ag-row-numbers-resizer {
     bottom: unset;
     top: -2px;
 }

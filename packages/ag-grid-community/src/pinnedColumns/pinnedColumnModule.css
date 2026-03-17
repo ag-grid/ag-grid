@@ -8,12 +8,6 @@
  * visually on the left
  */
 
-.ag-sticky-bottom-full-width-container {
-    overflow: hidden;
-    width: 100%;
-    height: 100%;
-}
-
 .ag-header-row .ag-grid-pinned-right-cells {
     /* rtl:ignore */
     border-left: var(--ag-pinned-column-border);
