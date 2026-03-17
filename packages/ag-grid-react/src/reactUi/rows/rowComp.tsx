@@ -89,7 +89,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
             return;
         }
 
-        const eChild = eGui.current?.firstChild as HTMLElement;
+        const eChild = eFullWidthAnchor.current?.firstChild as HTMLElement;
         if (eChild) {
             rowCtrl.setupDetailRowAutoHeight(eChild);
             autoHeightSetup.current = true;
