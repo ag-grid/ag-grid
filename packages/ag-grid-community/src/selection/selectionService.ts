@@ -543,7 +543,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                     return;
                 }
 
-                if (!node.expanded && !node.footer) {
+                if (!node.footer && !node.expanded) {
                     // even with groupSelectsChildren, do this recursively as only the filtered children
                     // are considered as the current page
                     const recursivelyAddChildren = (child: RowNode) => {

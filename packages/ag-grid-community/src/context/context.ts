@@ -60,7 +60,11 @@ import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IContextMenuService } from '../interfaces/iContextMenu';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
 import type { IExcelCreator } from '../interfaces/iExcelCreator';
-import type { IExpansionService } from '../interfaces/iExpansionService';
+import type {
+    IExpansionService,
+    RowGroupBulkExpansionState,
+    RowGroupExpansionState,
+} from '../interfaces/iExpansionService';
 import type { IFindService } from '../interfaces/iFind';
 import type { IFooterService } from '../interfaces/iFooterService';
 import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
@@ -334,7 +338,7 @@ interface CoreBeanCollection
     pageBounds: PageBoundsService;
     apiFunctionSvc: ApiFunctionService;
     gridDestroySvc: GridDestroyService;
-    expansionSvc?: IExpansionService;
+    expansionSvc?: IExpansionService<RowGroupExpansionState | RowGroupBulkExpansionState>;
     sideBar?: ISideBarService;
     ssrmTxnManager?: IServerSideTransactionManager;
     aggFuncSvc?: IAggFuncService;

@@ -287,7 +287,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.executeSlideAndFadeAnimations(gui);
 
         if (this.rowNode.group) {
-            _setAriaExpanded(gui.element, this.rowNode.expanded == true);
+            _setAriaExpanded(gui.element, !!this.rowNode.expanded);
         }
 
         this.setRowCompRowId(comp);

@@ -244,8 +244,23 @@ export class RowNode<TData = any>
     /** Server Side Row Model Only - the children are in an infinite cache. */
     public childStore: IServerSideStore | null;
 
-    /** `true` if group is expanded, otherwise `false`. */
-    public expanded: boolean;
+    /**
+     * Backing field for `expanded` property.
+     * - `true`/`false`: explicit expansion state.
+     * - `null`: triggers lazy evaluation — in CSRM, SSRM, getter resolves the default on first access and caches it.
+     * - `undefined`: uninitialized, means false.
+     */
+    public _expanded: boolean | null | undefined = undefined;
+
+    /** `true` if group or master row is expanded. */
+    public get expanded(): boolean {
+        const expansionSvc = this.beans.expansionSvc;
+        return expansionSvc ? expansionSvc.isExpanded(this) : this.level === -1 ? true : !!this._expanded;
+    }
+
+    public set expanded(value: boolean) {
+        this._expanded = value;
+    }
 
     /** If using footers, reference to the footer node for this group. */
     public sibling: RowNode;

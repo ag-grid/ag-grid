@@ -404,11 +404,11 @@ export class BlockUtils extends BeanStub implements NamedBean {
 
     public checkOpenByDefault(rowNode: RowNode): void {
         const expanded = !!this.expansionSvc?.isNodeExpanded(rowNode);
-        const oldExpanded = rowNode.expanded;
+        const oldExpanded = rowNode._expanded;
         if (!!oldExpanded !== expanded) {
             rowNode.setExpanded(expanded);
         } else if (oldExpanded === undefined) {
-            rowNode.expanded = expanded; // Initial state, don't fire event
+            rowNode._expanded = expanded; // Initial state, don't fire event
         }
     }
 }

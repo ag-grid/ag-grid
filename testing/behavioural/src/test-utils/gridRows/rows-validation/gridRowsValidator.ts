@@ -54,7 +54,6 @@ export class GridRowsValidator {
         const rowErrors = this.errors.get(root);
         rowErrors.expectValueEqual('id', root.id, csrm ? 'ROOT_NODE_ID' : undefined);
         rowErrors.expectValueEqual('level', root.level, -1);
-        rowErrors.expectValueEqual('expanded', root.expanded, undefined);
         rowErrors.add(!!root.key && 'Root node has key ' + root.key);
         rowErrors.add(root.destroyed && 'Root node is destroyed');
         rowErrors.add(root.rowIndex !== null && 'Root node has rowIndex ' + root.rowIndex);

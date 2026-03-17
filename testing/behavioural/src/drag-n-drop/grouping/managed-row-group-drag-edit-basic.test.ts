@@ -90,13 +90,14 @@ describe('drag refreshAfterGroupEdit multi-step interactions', () => {
         `;
 
         const assertIntermediateStep = async (expectedParentId: string, snapshot: string, label: string) => {
-            await asyncSetTimeout(0);
-            const rowDragMoveEvents = dispatcher.rowDragMoveEvents;
-            expect(rowDragMoveEvents.some((event) => event.rowsDrop?.newParent?.id === expectedParentId)).toBe(true);
-            const latestRowsDrop = rowDragMoveEvents[rowDragMoveEvents.length - 1]?.rowsDrop;
-            expect(latestRowsDrop?.allowed).toBe(true);
-            expect(latestRowsDrop?.moved).toBe(true);
             await waitFor(async () => {
+                const rowDragMoveEvents = dispatcher.rowDragMoveEvents;
+                expect(rowDragMoveEvents.some((event) => event.rowsDrop?.newParent?.id === expectedParentId)).toBe(
+                    true
+                );
+                const latestRowsDrop = rowDragMoveEvents[rowDragMoveEvents.length - 1]?.rowsDrop;
+                expect(latestRowsDrop?.allowed).toBe(true);
+                expect(latestRowsDrop?.moved).toBe(true);
                 const intermediateRows = new GridRows(api, label);
                 await intermediateRows.check(snapshot);
                 const draggedRowElement = getRowHtmlElement(api, '2');
@@ -109,10 +110,8 @@ describe('drag refreshAfterGroupEdit multi-step interactions', () => {
         await dispatcher.start('2');
         await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('A2'));
         await dispatcher.move('3', { yOffsetPercent: 0.4 });
-        await asyncSetTimeout(15);
         await assertIntermediateStep('row-group-group-B', intermediateHoverLeaf, 'after hover over group B leaf');
         await dispatcher.move('row-group-group-C', { center: true });
-        await asyncSetTimeout(8);
         await assertIntermediateStep('row-group-group-C', intermediateHoverLeaf, 'after hover over group C group node');
         await dispatcher.move('6', { yOffsetPercent: 0.9 });
         await dispatcher.finish();
