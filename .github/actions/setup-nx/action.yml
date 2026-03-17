@@ -40,6 +40,23 @@ outputs:
 runs:
     using: 'composite'
     steps:
+        - name: Set Nx parallelization
+          shell: bash
+          run: |
+              if [ -z "${NX_PARALLEL}" ]; then
+                # Get CPU count in a cross-platform way
+                if command -v nproc >/dev/null 2>&1; then
+                  CPUS=$(nproc)
+                else
+                  # macOS fallback
+                  CPUS=$(sysctl -n hw.logicalcpu)
+                fi
+                echo "NX_PARALLEL=${CPUS}" >> $GITHUB_ENV
+                echo "Setting NX_PARALLEL to ${CPUS}"
+              else
+                echo "NX_PARALLEL already set to ${NX_PARALLEL}, skipping"
+              fi
+
         - name: Nx Affected SHA Setup
           id: nx_config
           shell: bash
@@ -136,8 +153,11 @@ runs:
             key: cache-nx-v20-${{ hashFiles('yarn.lock','patches/*.patch', 'packages/*/package.json', 'plugins/*/package.json', 'documentation/*/package.json', 'testing/*/package.json', 'community-modules/*/package.json') }}-${{ github.sha }}
             restore-keys: cache-nx-v20-${{ hashFiles('yarn.lock','patches/*.patch', 'packages/*/package.json', 'plugins/*/package.json', 'documentation/*/package.json', 'testing/*/package.json', 'community-modules/*/package.json') }}-
 
-        #- name: Tidy Nx Cache (Post Job)
-        #  uses: ./.github/actions/tidy-nx-cache
+        - name: Tidy Nx Cache
+          uses: ./.github/actions/tidy-nx-cache
+          if: inputs.cache_mode == 'rw' && inputs.nx_restore != 'false'
+          with:
+              branch_type: ${{ steps.nx_config.outputs.type }}
 
         - name: Setup Node.js
           id: setup_node

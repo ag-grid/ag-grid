@@ -17,7 +17,9 @@
     },
     "build:styles": {
       "executor": "nx:noop",
-      "dependsOn": ["^build:styles"]
+      "dependsOn": ["^build:styles"],
+      "inputs": [],
+      "outputs": []
     },
     "lint": {
       "executor": "nx:noop",

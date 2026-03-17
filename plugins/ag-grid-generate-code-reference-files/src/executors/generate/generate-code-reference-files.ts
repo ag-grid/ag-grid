@@ -77,7 +77,7 @@ function extractNestedTypes<T extends ts.Node>(
     if (ts.isTypeReferenceNode(node)) {
         const typeRef = silentFindNode(node.typeName.getText(), srcFile, auxSrcFiles);
         if (typeRef === undefined) {
-            console.error('failed to find', node.typeName.getText());
+            // console.error('failed to find', node.typeName.getText());
             return;
         }
         visited.add(node);

@@ -20,7 +20,7 @@
     },
     "build:umd": {
       "executor": "@nx/esbuild:esbuild",
-      "dependsOn": ["^build", "build:copy-styles", "build:package"],
+      "dependsOn": ["^build:package", "build:copy-styles", "build:package"],
       "inputs": [
         "tsDefaults",
         "styleOutputs",
@@ -247,7 +247,7 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "dependsOn": ["ag-grid-community:build"],
+      "dependsOn": ["ag-grid-community:build:package"],
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}", "{workspaceRoot}/reports/ag-grid-enterprise.xml"],
       "parallelism": false,
       "options": {

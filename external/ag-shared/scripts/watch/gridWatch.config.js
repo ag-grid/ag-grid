@@ -32,15 +32,13 @@ function getProjectBuildTargets(project) {
         buildTargets.push(['ag-grid-docs', ['generate-examples']]);
     } else {
         if (PACKAGE_PROJECTS.includes(project)) {
-            // Rebuild doc references first so the dev server gets updated API docs.
-            buildTargets.push(['ag-grid-docs', ['generate-doc-references']]);
-
             // Fast UMD build first — no deps, reloadable → triggers browser refresh ASAP
             buildTargets.push(
                 ['ag-grid-community', ['build:umd:watch'], 'watch'],
                 ['ag-grid-enterprise', ['build:umd:watch'], 'watch']
             );
-            // Types + package after — non-reloadable, runs in background for IDE support
+            // Doc references + types/package run after — browser already has updated code
+            buildTargets.push(['ag-grid-docs', ['generate-doc-references']]);
             buildTargets.push(
                 ['ag-grid-community', ['build:types', 'build:package'], 'watch'],
                 ['ag-grid-enterprise', ['build:types', 'build:package'], 'watch']
@@ -86,7 +84,7 @@ module.exports = {
     ignoredProjects: getIgnoredProjects(),
     // Targets whose completion can trigger a browser reload (via ag-build-queue.empty).
     // The reload fires only when the last reloadable target in the current queue finishes.
-    devServerReloadTargets: ['generate', 'generate-doc-references', 'build', 'build:umd:watch', 'build:package', 'generate-examples'],
+    devServerReloadTargets: ['generate', 'build', 'build:umd:watch', 'build:package', 'generate-examples'],
     getProjectBuildTargets,
     externalBuildTriggers,
 };
