@@ -101,6 +101,18 @@
         }
     }
 
+    :where(.ag-grid-sticky-bottom-rows-container) {
+        .ag-row:where(:not(.ag-header-row, .ag-full-width-row)),
+        .ag-row:where(.ag-embedded-full-width-row) {
+            > .ag-grid-pinned-left-cells,
+            > .ag-grid-scrolling-cells,
+            > .ag-grid-pinned-right-cells {
+                border-bottom: none;
+                border-top: var(--ag-row-border);
+            }
+        }
+    }
+
     :where(.ag-row:not(.ag-header-row)) {
         background-color: var(--ag-data-background-color);
         --ag-internal-row-overlay-color: transparent;
