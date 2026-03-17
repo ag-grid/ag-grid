@@ -104,7 +104,7 @@ export class GridBodyCtrl extends BeanStub {
 
         this.createManagedBean(new LayoutFeature(this.comp));
         this.scrollFeature = this.createManagedBean(new GridBodyScrollFeature(eGridViewport));
-        this.beans.rowDragSvc?.setupRowDrag(eGridViewport, this);
+        this.beans.rowDragSvc?.setupRowDrag(eScrollingRows, this);
 
         this.setupRowAnimationCssClass();
 
