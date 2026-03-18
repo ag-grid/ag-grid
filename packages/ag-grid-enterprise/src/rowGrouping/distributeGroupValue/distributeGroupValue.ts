@@ -17,10 +17,10 @@ import { DistributorNumber } from './distributorNumber';
  * colDef.groupRowValueSetter = distributeGroupValue;
  * ```
  *
- * With options (constraints, integer rounding, per-aggFunc record):
+ * With options (integer rounding, per-aggFunc record):
  * ```ts
  * colDef.groupRowValueSetter = (params) =>
- *     distributeGroupValue(params, { distribution: 'percentage', min: 0, max: 100 });
+ *     distributeGroupValue(params, { distribution: 'percentage', integerDistribution: true });
  * ```
  *
  * @returns `true` if at least one child value was changed, `false` otherwise.
@@ -51,15 +51,13 @@ export const distributeGroupValue = (
             if (typeof perAgg === 'function') {
                 return perAgg(params) ?? true;
             }
-            const { integerDistribution, min, max, getValue, setValue } = options;
+            const { integerDistribution, getValue, setValue } = options;
             if (typeof perAgg === 'string') {
-                entry = { distribution: perAgg, integerDistribution, min, max, getValue, setValue };
+                entry = { distribution: perAgg, integerDistribution, getValue, setValue };
             } else if (perAgg != null) {
                 entry = {
                     distribution: perAgg.distribution,
                     integerDistribution: perAgg.integerDistribution ?? integerDistribution,
-                    min: perAgg.min ?? min,
-                    max: perAgg.max ?? max,
                     getValue: perAgg.getValue ?? getValue,
                     setValue: perAgg.setValue ?? setValue,
                 };
@@ -68,7 +66,7 @@ export const distributeGroupValue = (
                 if (defaultHandler) {
                     return defaultHandler(params) ?? true;
                 }
-                entry = { distribution: 'overwrite', integerDistribution, min, max, getValue, setValue };
+                entry = { distribution: 'overwrite', integerDistribution, getValue, setValue };
             }
             // Record mode handles unmatched aggFuncs above — the distributor doesn't need defaultHandler
             defaultHandler = undefined;

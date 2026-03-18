@@ -168,7 +168,7 @@ const gridOptions = {
             integerDistribution: true,
             distribution: {
                 sum: 'percentage',
-                avg: { distribution: 'increment', min: 0 },
+                avg: { distribution: 'increment' },
                 myCustomAgg: (params) => {
                     // Full custom logic for this aggregation function
                     for (const child of params.aggregatedChildren) {
@@ -183,7 +183,7 @@ const gridOptions = {
 ```
 
 Aggregation functions not present in the record fall through to the `default` callback,
-then to the built-in default behaviour (overwrite all children).
+then to overwriting all children (or the aggFunc's own strategy for `first`/`last`/`min`/`max`).
 
 ## Custom Distribution with a Callback
 
@@ -252,7 +252,7 @@ import { distributeGroupValue } from 'ag-grid-enterprise';
 colDef.groupRowValueSetter = (params) => {
     // Custom pre-processing
     const adjusted = Math.max(0, Number(params.newValue));
-    return distributeGroupValue({ ...params, newValue: adjusted }, { distribution: 'percentage', min: 0 });
+    return distributeGroupValue({ ...params, newValue: adjusted }, { distribution: 'percentage' });
 };
 ```
 

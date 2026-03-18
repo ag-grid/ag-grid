@@ -19,8 +19,6 @@ export class DistributorBigInt {
     private readonly oldTarget: bigint;
     private readonly newValue: unknown;
     private readonly strategy: DistributionStrategy;
-    private readonly min: bigint | undefined;
-    private readonly max: bigint | undefined;
     private readonly getVal: ((child: IRowNode, column: Column) => unknown) | undefined;
     private readonly setVal: ((child: IRowNode, column: Column, value: unknown) => boolean) | undefined;
 
@@ -48,8 +46,6 @@ export class DistributorBigInt {
             this.target = newBigInt;
             this.oldTarget = oldBigInt;
         }
-        this.min = opts?.min != null ? toBigInt(opts.min) : undefined;
-        this.max = opts?.max != null ? toBigInt(opts.max) : undefined;
         this.getVal = opts?.getValue;
         this.setVal = opts?.setValue;
     }
@@ -63,21 +59,21 @@ export class DistributorBigInt {
             if (handler) {
                 return handler(this.params) ?? true;
             }
-            return this.writeAll(this.clampValue(newValue));
+            return this.writeAll(newValue);
         }
 
-        // Single-child or overwrite strategies — write the (clamped) raw value
+        // Single-child or overwrite strategies — write the raw value
         switch (strategy) {
             case 'first':
-                return this.writeOne(0, this.clampValue(newValue));
+                return this.writeOne(0, newValue);
             case 'last':
-                return this.writeOne(this.count - 1, this.clampValue(newValue));
+                return this.writeOne(this.count - 1, newValue);
             case 'min':
                 return this.writeToExtremum(true);
             case 'max':
                 return this.writeToExtremum(false);
             case 'overwrite':
-                return this.writeAll(this.clampValue(newValue));
+                return this.writeAll(newValue);
         }
 
         // Non-numeric value (e.g. null, non-numeric string) — write raw value to all children
@@ -91,8 +87,15 @@ export class DistributorBigInt {
             return false;
         }
 
-        // Compute distribution values and write (with clamping when min/max are set)
-        return this.computeAndWrite(strategy);
+        // Compute distribution values and write
+        if (strategy === 'uniform') {
+            return this.writeUniformDirect(target);
+        }
+        if (strategy === 'increment') {
+            return this.writeIncrementDirect(target - oldTarget);
+        }
+        // percentage
+        return this.writePercentage();
     }
 
     /** Reads a child's current value as a bigint. */
@@ -133,109 +136,7 @@ export class DistributorBigInt {
                 targetIdx = i;
             }
         }
-        return this.writeOne(targetIdx, this.clampValue(newValue));
-    }
-
-    /**
-     * Clamps a single value to [min, max] using bigint comparison.
-     * Only clamps bigint and number values. Other types pass through unchanged.
-     */
-    private clampValue(value: unknown): unknown {
-        const { min, max } = this;
-        if (min == null && max == null) {
-            return value;
-        }
-        let v: bigint;
-        if (typeof value === 'bigint') {
-            v = value;
-        } else if (typeof value === 'number') {
-            if (!Number.isFinite(value)) {
-                return value;
-            }
-            v = BigInt(Math.round(value));
-        } else {
-            return value;
-        }
-        if (min != null && v < min) {
-            return min;
-        }
-        if (max != null && v > max) {
-            return max;
-        }
-        return v;
-    }
-
-    /**
-     * Clamps values to [min, max] and iteratively redistributes excess among unclamped children.
-     * Uses integer division with remainder spreading so the sum is preserved exactly.
-     */
-    private clampArray(values: bigint[]): void {
-        const { count, min, max } = this;
-        const clamped = new Uint8Array(count);
-        for (let iter = 0; iter < count; ++iter) {
-            let excess = 0n;
-            let unclamped = 0;
-            for (let i = 0; i < count; ++i) {
-                if (clamped[i]) {
-                    continue;
-                }
-                const v = values[i];
-                if (min != null && v < min) {
-                    excess += v - min;
-                    values[i] = min;
-                    clamped[i] = 1;
-                } else if (max != null && v > max) {
-                    excess += v - max;
-                    values[i] = max;
-                    clamped[i] = 1;
-                } else {
-                    ++unclamped;
-                }
-            }
-            if (excess === 0n || unclamped === 0) {
-                break;
-            }
-            const bigUnclamped = BigInt(unclamped);
-            const base = excess / bigUnclamped;
-            const rem = excess - base * bigUnclamped;
-            const absRem = Number(rem < 0n ? -rem : rem);
-            const step = rem >= 0n ? 1n : -1n;
-            let j = 0;
-            for (let i = 0; i < count; ++i) {
-                if (!clamped[i]) {
-                    values[i] += base + (j < absRem ? step : 0n);
-                    ++j;
-                }
-            }
-        }
-    }
-
-    /** Computes distribution values and writes them, applying min/max clamping when needed. */
-    private computeAndWrite(strategy: 'uniform' | 'percentage' | 'increment'): boolean {
-        const { target, oldTarget, min, max } = this;
-
-        // Fast paths without constraints: write directly without array allocation
-        if (min == null && max == null) {
-            if (strategy === 'uniform') {
-                return this.writeUniformDirect(target);
-            }
-            if (strategy === 'increment') {
-                return this.writeIncrementDirect(target - oldTarget);
-            }
-        }
-
-        // Compute values into an array, apply clamping, then write
-        const values =
-            strategy === 'percentage'
-                ? this.computePercentage()
-                : strategy === 'increment'
-                  ? this.computeIncrement(target - oldTarget)
-                  : this.computeUniform(target);
-
-        if (min != null || max != null) {
-            this.clampArray(values);
-        }
-        return this.writeArrayValues(values);
+        return this.writeOne(targetIdx, newValue);
     }
 
     /** Writes uniform values directly without array allocation. */
@@ -270,34 +171,8 @@ export class DistributorBigInt {
         return changed;
     }
 
-    /** Divides total evenly, spreading the remainder ±1 across the first N children. */
-    private computeUniform(total: bigint): bigint[] {
-        const { count, bigCount } = this;
-        const base = total / bigCount;
-        const rem = total - base * bigCount;
-        const absRem = Number(rem < 0n ? -rem : rem);
-        const step = rem >= 0n ? 1n : -1n;
-        const values = new Array<bigint>(count);
-        for (let i = 0; i < count; ++i) {
-            values[i] = i < absRem ? base + step : base;
-        }
-        return values;
-    }
-
-    private computeIncrement(totalDelta: bigint): bigint[] {
-        const { count, bigCount } = this;
-        const base = totalDelta / bigCount;
-        const rem = totalDelta - base * bigCount;
-        const absRem = Number(rem < 0n ? -rem : rem);
-        const step = rem >= 0n ? 1n : -1n;
-        const values = new Array<bigint>(count);
-        for (let i = 0; i < count; ++i) {
-            values[i] = this.readOne(i) + base + (i < absRem ? step : 0n);
-        }
-        return values;
-    }
-
-    private computePercentage(): bigint[] {
+    /** Computes percentage distribution and writes values. */
+    private writePercentage(): boolean {
         const { count, target } = this;
         let total = 0n;
         const values = new Array<bigint>(count);
@@ -307,9 +182,9 @@ export class DistributorBigInt {
             total += v;
         }
         if (total === 0n) {
-            return this.computeUniform(target);
+            return this.writeUniformDirect(target);
         }
-        // Scale in-place, reusing the same array
+        // Scale in-place
         let scaledSum = 0n;
         for (let i = 0; i < count; ++i) {
             const v = (values[i] * target) / total;
@@ -324,11 +199,7 @@ export class DistributorBigInt {
         for (let i = 0; diff < 0n && i < count; ++i, ++diff) {
             --values[i];
         }
-        return values;
-    }
-
-    private writeArrayValues(values: bigint[]): boolean {
-        const { count } = this;
+        // Write values
         let changed = false;
         for (let i = 0; i < count; ++i) {
             if (this.writeOne(i, values[i])) {

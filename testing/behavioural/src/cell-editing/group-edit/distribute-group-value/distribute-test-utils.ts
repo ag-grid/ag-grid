@@ -56,7 +56,8 @@ export function createSimpleGrid(
     id: string,
     rowData: any[],
     extraColProps?: Record<string, any>,
-    extraColumnDefs?: ColDef[]
+    extraColumnDefs?: ColDef[],
+    extraGridOptions?: Record<string, any>
 ) {
     return gridsManager.createGridAndWait(id, {
         defaultColDef: { cellEditor: 'agTextCellEditor' },
@@ -78,5 +79,6 @@ export function createSimpleGrid(
         rowData,
         groupDefaultExpanded: -1,
         getRowId: (params) => params.data?.id,
+        ...extraGridOptions,
     });
 }

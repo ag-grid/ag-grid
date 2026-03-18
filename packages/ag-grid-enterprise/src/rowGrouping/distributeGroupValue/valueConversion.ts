@@ -1,22 +1,16 @@
-import type { ColDef } from 'ag-grid-community';
+import type { ColDef, GroupRowValueSetterDistribution } from 'ag-grid-community';
 
 /** Resolved distribution strategy. `null` means no strategy — use default handler or overwrite. */
-export type DistributionStrategy =
-    | 'first'
-    | 'last'
-    | 'min'
-    | 'max'
-    | 'overwrite'
-    | 'uniform'
-    | 'percentage'
-    | 'increment'
-    | null;
+export type DistributionStrategy = 'first' | 'last' | 'min' | 'max' | GroupRowValueSetterDistribution | null;
 
 /**
  * Resolves the distribution strategy from the aggFunc and explicit distribution option.
  * first/last/min/max aggFuncs always use their own strategy, ignoring any explicit option.
  */
-export const resolveStrategy = (aggFunc: string | null, distribution: string | undefined): DistributionStrategy => {
+export const resolveStrategy = (
+    aggFunc: string | null,
+    distribution: GroupRowValueSetterDistribution | undefined
+): DistributionStrategy => {
     switch (aggFunc) {
         case 'first':
         case 'last':
@@ -25,7 +19,7 @@ export const resolveStrategy = (aggFunc: string | null, distribution: string | u
             return aggFunc;
     }
     if (distribution) {
-        return distribution as DistributionStrategy;
+        return distribution;
     }
     switch (aggFunc) {
         case 'sum':

@@ -1,13 +1,23 @@
 import type { GroupRowValueSetterParams } from 'ag-grid-community';
 
 import {
-    GridRows,
     SETTER_MODES,
     asyncSetTimeout,
     createSimpleGrid,
     distributeGroupValue,
     gridsManager,
 } from './distribute-test-utils';
+
+/** A dummy aggFunc used to test unknown/custom string aggFunc handling. */
+const myCustomAgg = (params: any) => {
+    let total = 0;
+    for (const v of params.values) {
+        total += typeof v === 'number' ? v : 0;
+    }
+    return total;
+};
+
+const CUSTOM_AGG_FUNCS = { myCustomAgg };
 
 afterEach(() => {
     gridsManager.reset();
@@ -114,97 +124,6 @@ describe.each(SETTER_MODES)('distribution modes via %s', (_label, makeSetter) =>
         expect(api.getRowNode('a3')?.data?.amount).toBe(3);
         expect(group.aggData?.amount).toBe(10);
     });
-
-    test('min constraint clamps and redistributes', async () => {
-        const api = await createSimpleGrid(
-            'dual-min',
-            [
-                { id: 'a1', region: 'R', country: 'C', amount: 50 },
-                { id: 'a2', region: 'R', country: 'C', amount: 50 },
-            ],
-            makeSetter({ distribution: 'uniform', min: 15 })
-        );
-
-        // 20 / 2 = 10 per child, but min is 15, so both get clamped up → 15 each
-        // Actually: uniform gives 10 each, a1 clamped to 15 (excess = -5), a2 clamped to 15 (excess = -5)
-        // Total after clamping = 30 (but target was 20, excess can't redistribute)
-        // When both are clamped, no unclamped children left, loop breaks.
-        const group = api.getRowNode('row-group-region-R-country-C')!;
-        group.setDataValue('amount', 20, 'ui');
-        await asyncSetTimeout(0);
-
-        expect(api.getRowNode('a1')?.data?.amount).toBe(15);
-        expect(api.getRowNode('a2')?.data?.amount).toBe(15);
-    });
-
-    test('max constraint clamps and redistributes', async () => {
-        const api = await createSimpleGrid(
-            'dual-max',
-            [
-                { id: 'a1', region: 'R', country: 'C', amount: 10 },
-                { id: 'a2', region: 'R', country: 'C', amount: 10 },
-                { id: 'a3', region: 'R', country: 'C', amount: 10 },
-            ],
-            makeSetter({ distribution: 'uniform', max: 40 })
-        );
-
-        // 120 / 3 = 40 each, all at max, no redistribution needed
-        const group = api.getRowNode('row-group-region-R-country-C')!;
-        group.setDataValue('amount', 120, 'ui');
-        await asyncSetTimeout(0);
-
-        expect(api.getRowNode('a1')?.data?.amount).toBe(40);
-        expect(api.getRowNode('a2')?.data?.amount).toBe(40);
-        expect(api.getRowNode('a3')?.data?.amount).toBe(40);
-        expect(group.aggData?.amount).toBe(120);
-    });
-
-    test('max constraint redistributes excess to unclamped children', async () => {
-        const api = await createSimpleGrid(
-            'dual-max-redist',
-            [
-                { id: 'a1', region: 'R', country: 'C', amount: 80 },
-                { id: 'a2', region: 'R', country: 'C', amount: 10 },
-                { id: 'a3', region: 'R', country: 'C', amount: 10 },
-            ],
-            makeSetter({ distribution: 'percentage', max: 60 })
-        );
-
-        // [80, 10, 10] = 100 total, set to 100 (same total), percentage keeps [80, 10, 10]
-        // Then max=60 clamps a1 to 60 (excess=20), redistributed to a2, a3: each gets +10 → [60, 20, 20]
-        const group = api.getRowNode('row-group-region-R-country-C')!;
-        group.setDataValue('amount', 100, 'ui');
-        await asyncSetTimeout(0);
-
-        expect(api.getRowNode('a1')?.data?.amount).toBe(60);
-        expect(api.getRowNode('a2')?.data?.amount).toBe(20);
-        expect(api.getRowNode('a3')?.data?.amount).toBe(20);
-        expect(group.aggData?.amount).toBe(100);
-    });
-
-    test('min and max together', async () => {
-        const api = await createSimpleGrid(
-            'dual-minmax',
-            [
-                { id: 'a1', region: 'R', country: 'C', amount: 60 },
-                { id: 'a2', region: 'R', country: 'C', amount: 30 },
-                { id: 'a3', region: 'R', country: 'C', amount: 10 },
-            ],
-            makeSetter({ distribution: 'percentage', min: 10, max: 50 })
-        );
-
-        // [60, 30, 10] = 100, set to 100 → percentage keeps [60, 30, 10]
-        // max=50 clamps a1 to 50 (excess=10), redistributed to a2, a3: +5 each → [50, 35, 15]
-        // all within [10, 50], no further clamping
-        const group = api.getRowNode('row-group-region-R-country-C')!;
-        group.setDataValue('amount', 100, 'ui');
-        await asyncSetTimeout(0);
-
-        expect(api.getRowNode('a1')?.data?.amount).toBe(50);
-        expect(api.getRowNode('a2')?.data?.amount).toBe(35);
-        expect(api.getRowNode('a3')?.data?.amount).toBe(15);
-        expect(group.aggData?.amount).toBe(100);
-    });
 });
 
 // --- Distribution record ---
@@ -300,7 +219,9 @@ describe('distribution default handler', () => {
                             }
                         },
                     }),
-            }
+            },
+            undefined,
+            { aggFuncs: CUSTOM_AGG_FUNCS }
         );
 
         const group = api.getRowNode('row-group-region-R-country-C')!;
@@ -443,6 +364,7 @@ describe('distribution default handler', () => {
         const api = await gridsManager.createGridAndWait('coldef-record-default', {
             defaultColDef: { cellEditor: 'agTextCellEditor' },
             groupDisplayType: 'custom',
+            aggFuncs: CUSTOM_AGG_FUNCS,
             columnDefs: [
                 { colId: 'group', headerName: 'Group', cellRenderer: 'agGroupCellRenderer' },
                 { field: 'region', rowGroup: true, hide: true },
@@ -536,29 +458,6 @@ describe('increment with constraints', () => {
         expect(Number.isInteger(v3)).toBe(true);
     });
 
-    test('increment sum with min constraint', async () => {
-        const api = await createSimpleGrid(
-            'inc-sum-min',
-            [
-                { id: 'a1', region: 'R', country: 'C', amount: 5 },
-                { id: 'a2', region: 'R', country: 'C', amount: 20 },
-            ],
-            {
-                groupRowValueSetter: (params) => distributeGroupValue(params, { distribution: 'increment', min: 0 }),
-            }
-        );
-
-        // sum=25, set to 5, delta=-20, per child=-10
-        // a1 would be 5-10=-5, clamped to 0; a2 would be 20-10=10
-        // excess from a1 = -5-0 = -5, redistributed to a2: 10+(-5) = 5
-        const group = api.getRowNode('row-group-region-R-country-C')!;
-        group.setDataValue('amount', 5, 'ui');
-        await asyncSetTimeout(0);
-
-        expect(api.getRowNode('a1')?.data?.amount).toBe(0);
-        expect(api.getRowNode('a2')?.data?.amount).toBe(5);
-    });
-
     test('increment avg with integer distribution', async () => {
         const api = await createSimpleGrid(
             'inc-avg-int',
@@ -621,7 +520,9 @@ describe('string aggFunc edge cases', () => {
             {
                 aggFunc: 'myCustomAgg',
                 groupRowValueSetter: distributeGroupValue,
-            }
+            },
+            undefined,
+            { aggFuncs: CUSTOM_AGG_FUNCS }
         );
 
         const group = api.getRowNode('row-group-region-R-country-C')!;
@@ -651,7 +552,9 @@ describe('string aggFunc edge cases', () => {
                             }
                         },
                     }),
-            }
+            },
+            undefined,
+            { aggFuncs: CUSTOM_AGG_FUNCS }
         );
 
         const group = api.getRowNode('row-group-region-R-country-C')!;
@@ -741,72 +644,6 @@ describe('distribution record edge cases', () => {
         expect(api.getRowNode('a2')?.data?.amount).toBe(42);
     });
 
-    test('record per-aggFunc min/max overrides top-level min/max', async () => {
-        const api = await createSimpleGrid(
-            'record-override-minmax',
-            [
-                { id: 'a1', region: 'R', country: 'C', amount: 10 },
-                { id: 'a2', region: 'R', country: 'C', amount: 10 },
-            ],
-            {
-                groupRowValueSetter: (params) =>
-                    distributeGroupValue(params, {
-                        distribution: { sum: { distribution: 'uniform', min: 30 } },
-                        min: 0, // top-level min=0 should be overridden by per-aggFunc min=30
-                    }),
-            }
-        );
-
-        // 20 / 2 = 10 each, but per-aggFunc min=30 → both clamped to 30
-        const group = api.getRowNode('row-group-region-R-country-C')!;
-        group.setDataValue('amount', 20, 'ui');
-        await asyncSetTimeout(0);
-
-        expect(api.getRowNode('a1')?.data?.amount).toBe(30);
-        expect(api.getRowNode('a2')?.data?.amount).toBe(30);
-
-        await new GridRows(api, 'after override min/max').check(`
-            ROOT id:ROOT_NODE_ID
-            └─┬ filler id:row-group-region-R amount:60
-            · └─┬ LEAF_GROUP id:row-group-region-R-country-C amount:60
-            · · ├── LEAF id:a1 region:"R" country:"C" amount:30
-            · · └── LEAF id:a2 region:"R" country:"C" amount:30
-        `);
-    });
-
-    test('record per-aggFunc inherits top-level min when not overridden', async () => {
-        const api = await createSimpleGrid(
-            'record-inherit-min',
-            [
-                { id: 'a1', region: 'R', country: 'C', amount: 10 },
-                { id: 'a2', region: 'R', country: 'C', amount: 10 },
-            ],
-            {
-                groupRowValueSetter: (params) =>
-                    distributeGroupValue(params, {
-                        distribution: { sum: { distribution: 'uniform' } }, // no min in per-aggFunc
-                        min: 8, // top-level min=8 should be inherited
-                    }),
-            }
-        );
-
-        // 10 / 2 = 5 each, but inherited min=8 → both clamped to 8
-        const group = api.getRowNode('row-group-region-R-country-C')!;
-        group.setDataValue('amount', 10, 'ui');
-        await asyncSetTimeout(0);
-
-        expect(api.getRowNode('a1')?.data?.amount).toBe(8);
-        expect(api.getRowNode('a2')?.data?.amount).toBe(8);
-
-        await new GridRows(api, 'after inherited min').check(`
-            ROOT id:ROOT_NODE_ID
-            └─┬ filler id:row-group-region-R amount:16
-            · └─┬ LEAF_GROUP id:row-group-region-R-country-C amount:16
-            · · ├── LEAF id:a1 region:"R" country:"C" amount:8
-            · · └── LEAF id:a2 region:"R" country:"C" amount:8
-        `);
-    });
-
     test('record with custom function returning false propagates false', async () => {
         const api = await createSimpleGrid(
             'record-fn-false',
@@ -865,25 +702,6 @@ describe('distribution record edge cases', () => {
 // --- Options object on colDef (not function wrapper) edge cases ---
 
 describe('options object directly on colDef', () => {
-    test('only constraints (no distribution) uses uniform + constraints for sum', async () => {
-        const api = await createSimpleGrid(
-            'coldef-only-constraints',
-            [
-                { id: 'a1', region: 'R', country: 'C', amount: 50 },
-                { id: 'a2', region: 'R', country: 'C', amount: 50 },
-            ],
-            { groupRowValueSetter: { min: 8 } }
-        );
-
-        // 10 / 2 = 5 each, but min=8 → both clamped to 8
-        const group = api.getRowNode('row-group-region-R-country-C')!;
-        group.setDataValue('amount', 10, 'ui');
-        await asyncSetTimeout(0);
-
-        expect(api.getRowNode('a1')?.data?.amount).toBe(8);
-        expect(api.getRowNode('a2')?.data?.amount).toBe(8);
-    });
-
     test('only integerDistribution (no distribution) uses uniform + integer rounding for sum', async () => {
         const api = await createSimpleGrid(
             'coldef-only-int-dist',
@@ -1126,27 +944,6 @@ describe('options object directly on colDef', () => {
         expect(api.getRowNode('a2')?.data?.amount).toBe(42);
     });
 
-    test('increment with max constraint via options on colDef', async () => {
-        const api = await createSimpleGrid(
-            'coldef-inc-max',
-            [
-                { id: 'a1', region: 'R', country: 'C', amount: 90 },
-                { id: 'a2', region: 'R', country: 'C', amount: 10 },
-            ],
-            { groupRowValueSetter: { distribution: 'increment', max: 95 } }
-        );
-
-        // sum=100, set to 130, delta=30, each gets +15 → [105, 25]
-        // max=95 clamps a1 to 95 (excess=10), redistributed to a2: 25+10=35
-        const group = api.getRowNode('row-group-region-R-country-C')!;
-        group.setDataValue('amount', 130, 'ui');
-        await asyncSetTimeout(0);
-
-        expect(api.getRowNode('a1')?.data?.amount).toBe(95);
-        expect(api.getRowNode('a2')?.data?.amount).toBe(35);
-        expect(group.aggData?.amount).toBe(130);
-    });
-
     test('consecutive edits with options object on colDef', async () => {
         const api = await createSimpleGrid(
             'coldef-consecutive',
@@ -1173,207 +970,5 @@ describe('options object directly on colDef', () => {
         expect(api.getRowNode('a1')?.data?.amount).toBe(30);
         expect(api.getRowNode('a2')?.data?.amount).toBe(70);
         expect(group.aggData?.amount).toBe(100);
-    });
-});
-
-describe('integer rounding with min/max clamping', () => {
-    test('uniform integer rounding respects max during remainder spreading', async () => {
-        const api = await createSimpleGrid(
-            'round-clamp-max',
-            [
-                { id: 'a1', region: 'R', country: 'C', amount: 10 },
-                { id: 'a2', region: 'R', country: 'C', amount: 10 },
-                { id: 'a3', region: 'R', country: 'C', amount: 10 },
-            ],
-            { groupRowValueSetter: { distribution: 'uniform', integerDistribution: true, max: 7 } }
-        );
-
-        // 20 / 3 = 6.67 each → rounds to 7, but max=7 so remainder can't push above 7
-        // Without the fix, remainder spreading could push a value to 8
-        const group = api.getRowNode('row-group-region-R-country-C')!;
-        group.setDataValue('amount', 20, 'ui');
-        await asyncSetTimeout(0);
-
-        const a1 = api.getRowNode('a1')?.data?.amount;
-        const a2 = api.getRowNode('a2')?.data?.amount;
-        const a3 = api.getRowNode('a3')?.data?.amount;
-        expect(a1).toBeLessThanOrEqual(7);
-        expect(a2).toBeLessThanOrEqual(7);
-        expect(a3).toBeLessThanOrEqual(7);
-    });
-
-    test('uniform integer rounding respects min during remainder spreading', async () => {
-        const api = await createSimpleGrid(
-            'round-clamp-min',
-            [
-                { id: 'a1', region: 'R', country: 'C', amount: 10 },
-                { id: 'a2', region: 'R', country: 'C', amount: 10 },
-                { id: 'a3', region: 'R', country: 'C', amount: 10 },
-            ],
-            { groupRowValueSetter: { distribution: 'uniform', integerDistribution: true, min: 3 } }
-        );
-
-        // 10 / 3 = 3.33 each → rounds to 3, remainder spreading subtracts
-        // min=3 prevents values going below 3
-        const group = api.getRowNode('row-group-region-R-country-C')!;
-        group.setDataValue('amount', 10, 'ui');
-        await asyncSetTimeout(0);
-
-        const a1 = api.getRowNode('a1')?.data?.amount;
-        const a2 = api.getRowNode('a2')?.data?.amount;
-        const a3 = api.getRowNode('a3')?.data?.amount;
-        expect(a1).toBeGreaterThanOrEqual(3);
-        expect(a2).toBeGreaterThanOrEqual(3);
-        expect(a3).toBeGreaterThanOrEqual(3);
-    });
-
-    test('percentage integer rounding with max does not exceed bounds', async () => {
-        const api = await createSimpleGrid(
-            'round-clamp-pct-max',
-            [
-                { id: 'a1', region: 'R', country: 'C', amount: 40 },
-                { id: 'a2', region: 'R', country: 'C', amount: 60 },
-            ],
-            { groupRowValueSetter: { distribution: 'percentage', integerDistribution: true, max: 55 } }
-        );
-
-        // [40, 60] total=100, target=100 → percentage keeps [40, 60] but max=55 clamps a2 to 55
-        // After clamping: [45, 55], then rounding should respect max=55
-        const group = api.getRowNode('row-group-region-R-country-C')!;
-        group.setDataValue('amount', 100, 'ui');
-        await asyncSetTimeout(0);
-
-        expect(api.getRowNode('a1')?.data?.amount).toBeLessThanOrEqual(55);
-        expect(api.getRowNode('a2')?.data?.amount).toBeLessThanOrEqual(55);
-    });
-});
-
-describe('min/max clamping on single-child strategies', () => {
-    test('first aggFunc with min/max clamps the value', async () => {
-        const api = await createSimpleGrid(
-            'clamp-first',
-            [
-                { id: 'a1', region: 'R', country: 'C', amount: 10 },
-                { id: 'a2', region: 'R', country: 'C', amount: 20 },
-            ],
-            { aggFunc: 'first', groupRowValueSetter: { min: 5, max: 50 } }
-        );
-
-        const group = api.getRowNode('row-group-region-R-country-C')!;
-
-        // Value within range: first child gets 30
-        group.setDataValue('amount', 30, 'ui');
-        await asyncSetTimeout(0);
-        expect(api.getRowNode('a1')?.data?.amount).toBe(30);
-        expect(api.getRowNode('a2')?.data?.amount).toBe(20);
-
-        // Value above max: clamped to 50
-        group.setDataValue('amount', 100, 'ui');
-        await asyncSetTimeout(0);
-        expect(api.getRowNode('a1')?.data?.amount).toBe(50);
-
-        // Value below min: clamped to 5
-        group.setDataValue('amount', 1, 'ui');
-        await asyncSetTimeout(0);
-        expect(api.getRowNode('a1')?.data?.amount).toBe(5);
-    });
-
-    test('last aggFunc with min/max clamps the value', async () => {
-        const api = await createSimpleGrid(
-            'clamp-last',
-            [
-                { id: 'a1', region: 'R', country: 'C', amount: 10 },
-                { id: 'a2', region: 'R', country: 'C', amount: 20 },
-            ],
-            { aggFunc: 'last', groupRowValueSetter: { min: 0, max: 80 } }
-        );
-
-        const group = api.getRowNode('row-group-region-R-country-C')!;
-
-        group.setDataValue('amount', 200, 'ui');
-        await asyncSetTimeout(0);
-        expect(api.getRowNode('a1')?.data?.amount).toBe(10); // untouched
-        expect(api.getRowNode('a2')?.data?.amount).toBe(80); // clamped to max
-    });
-
-    test('min aggFunc with min/max clamps the value written to the target holder', async () => {
-        const api = await createSimpleGrid(
-            'clamp-min-agg',
-            [
-                { id: 'a1', region: 'R', country: 'C', amount: 50 },
-                { id: 'a2', region: 'R', country: 'C', amount: 10 },
-            ],
-            { aggFunc: 'min', groupRowValueSetter: { min: 0, max: 30 } }
-        );
-
-        const group = api.getRowNode('row-group-region-R-country-C')!;
-
-        // min holder is a2 (10). Setting to 100 should clamp to max=30.
-        group.setDataValue('amount', 100, 'ui');
-        await asyncSetTimeout(0);
-        expect(api.getRowNode('a1')?.data?.amount).toBe(50); // untouched
-        expect(api.getRowNode('a2')?.data?.amount).toBe(30); // clamped to max
-
-        // Setting to -5 should clamp to min=0.
-        group.setDataValue('amount', -5, 'ui');
-        await asyncSetTimeout(0);
-        expect(api.getRowNode('a2')?.data?.amount).toBe(0); // clamped to min
-    });
-
-    test('max aggFunc with min/max clamps the value written to the target holder', async () => {
-        const api = await createSimpleGrid(
-            'clamp-max-agg',
-            [
-                { id: 'a1', region: 'R', country: 'C', amount: 10 },
-                { id: 'a2', region: 'R', country: 'C', amount: 50 },
-            ],
-            { aggFunc: 'max', groupRowValueSetter: { min: 5, max: 40 } }
-        );
-
-        const group = api.getRowNode('row-group-region-R-country-C')!;
-
-        // max holder is a2 (50). Setting to 100 should clamp to max=40.
-        group.setDataValue('amount', 100, 'ui');
-        await asyncSetTimeout(0);
-        expect(api.getRowNode('a1')?.data?.amount).toBe(10); // untouched
-        expect(api.getRowNode('a2')?.data?.amount).toBe(40); // clamped to max
-    });
-
-    test('overwrite strategy with min/max clamps the value written to all children', async () => {
-        const api = await createSimpleGrid(
-            'clamp-overwrite',
-            [
-                { id: 'a1', region: 'R', country: 'C', amount: 10 },
-                { id: 'a2', region: 'R', country: 'C', amount: 20 },
-            ],
-            { aggFunc: 'avg', groupRowValueSetter: { min: 0, max: 50 } }
-        );
-
-        const group = api.getRowNode('row-group-region-R-country-C')!;
-
-        // avg defaults to overwrite. Setting to 100 should clamp to max=50.
-        group.setDataValue('amount', 100, 'ui');
-        await asyncSetTimeout(0);
-        expect(api.getRowNode('a1')?.data?.amount).toBe(50);
-        expect(api.getRowNode('a2')?.data?.amount).toBe(50);
-    });
-
-    test('first/last with non-numeric value does not apply min/max', async () => {
-        const api = await createSimpleGrid(
-            'clamp-non-numeric',
-            [
-                { id: 'a1', region: 'R', country: 'C', amount: 'alpha' },
-                { id: 'a2', region: 'R', country: 'C', amount: 'beta' },
-            ],
-            { aggFunc: 'first', groupRowValueSetter: { min: 0, max: 100 } }
-        );
-
-        const group = api.getRowNode('row-group-region-R-country-C')!;
-
-        // String value should pass through without clamping
-        group.setDataValue('amount', 'gamma', 'ui');
-        await asyncSetTimeout(0);
-        expect(api.getRowNode('a1')?.data?.amount).toBe('gamma');
-        expect(api.getRowNode('a2')?.data?.amount).toBe('beta');
     });
 });

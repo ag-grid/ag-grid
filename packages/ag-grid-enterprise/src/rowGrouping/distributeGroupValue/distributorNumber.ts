@@ -19,8 +19,6 @@ export class DistributorNumber {
     private readonly roundToInt: boolean;
     private readonly newValue: unknown;
     private readonly strategy: DistributionStrategy;
-    private readonly min: number | undefined;
-    private readonly max: number | undefined;
     private readonly getVal: ((child: IRowNode, column: Column) => unknown) | undefined;
     private readonly setVal: ((child: IRowNode, column: Column, value: unknown) => boolean) | undefined;
 
@@ -46,8 +44,6 @@ export class DistributorNumber {
             this.oldTarget = toNumber(params.oldValue);
         }
         this.roundToInt = opts?.integerDistribution ?? isIntegerColDef(colDef);
-        this.min = opts?.min != null ? Number(opts.min) : undefined;
-        this.max = opts?.max != null ? Number(opts.max) : undefined;
         this.getVal = opts?.getValue;
         this.setVal = opts?.setValue;
     }
@@ -61,25 +57,25 @@ export class DistributorNumber {
             if (handler) {
                 return handler(this.params) ?? true;
             }
-            return this.writeAll(this.clampValue(newValue));
+            return this.writeAll(newValue);
         }
 
-        // Single-child or overwrite strategies — write the (clamped) raw value
+        // Single-child or overwrite strategies — write the raw value
         switch (strategy) {
             case 'first':
-                return this.writeOne(0, this.clampValue(newValue));
+                return this.writeOne(0, newValue);
             case 'last':
-                return this.writeOne(this.count - 1, this.clampValue(newValue));
+                return this.writeOne(this.count - 1, newValue);
             case 'min':
                 return this.writeToExtremum(true);
             case 'max':
                 return this.writeToExtremum(false);
             case 'overwrite':
-                return this.writeAll(this.clampValue(newValue));
+                return this.writeAll(newValue);
         }
 
         // Non-numeric value (e.g. null, non-numeric string) — write raw value to all children
-        const { target, oldTarget, roundToInt, min, max } = this;
+        const { target, oldTarget, roundToInt } = this;
         if (target === 0 && !isNumericLike(newValue)) {
             return this.writeAll(newValue);
         }
@@ -89,24 +85,19 @@ export class DistributorNumber {
             return false;
         }
 
-        // Fast path: no rounding or clamping needed — write directly without array allocation
-        if (!roundToInt && min == null && max == null) {
+        // Fast path: no rounding needed — write directly without array allocation
+        if (!roundToInt) {
             return this.writeDirect(strategy);
         }
 
-        // Fast path: uniform + integer rounding, no clamping — direct integer division with remainder
-        if (strategy === 'uniform' && roundToInt && min == null && max == null) {
+        // Fast path: uniform + integer rounding — direct integer division with remainder
+        if (strategy === 'uniform') {
             return this.writeUniformRounded();
         }
 
-        // Array path: compute values, apply clamping and rounding, then write
+        // Array path: compute values, apply rounding, then write
         const values = this.computeValues(strategy);
-        if (min != null || max != null) {
-            this.clampArray(values);
-        }
-        if (roundToInt) {
-            this.roundArray(values);
-        }
+        this.roundArray(values);
         return this.writeArrayValues(values);
     }
 
@@ -148,88 +139,7 @@ export class DistributorNumber {
                 targetIdx = i;
             }
         }
-        return this.writeOne(targetIdx, this.clampValue(newValue));
-    }
-
-    /**
-     * Clamps a single value to [min, max]. Only clamps number, bigint, and Date values.
-     * Non-clampable types (string, object, null, undefined) pass through unchanged.
-     */
-    private clampValue(value: unknown): unknown {
-        const { min, max } = this;
-        if (min == null && max == null) {
-            return value;
-        }
-        if (value instanceof Date) {
-            const t = value.getTime();
-            if (min != null && t < min) {
-                return new Date(min);
-            }
-            if (max != null && t > max) {
-                return new Date(max);
-            }
-            return value;
-        }
-        let n: number;
-        if (typeof value === 'number') {
-            if (!Number.isFinite(value)) {
-                return value;
-            }
-            n = value;
-        } else if (typeof value === 'bigint') {
-            n = Number(value);
-            if (!Number.isFinite(n)) {
-                return value;
-            }
-        } else {
-            return value;
-        }
-        if (min != null && n < min) {
-            return min;
-        }
-        if (max != null && n > max) {
-            return max;
-        }
-        return value;
-    }
-
-    /**
-     * Clamps values to [min, max] and iteratively redistributes excess among unclamped children.
-     * Float division distributes excess evenly — precision loss is negligible (~1e-15).
-     */
-    private clampArray(values: number[]): void {
-        const { count, min, max } = this;
-        const clamped = new Uint8Array(count);
-        for (let iter = 0; iter < count; ++iter) {
-            let excess = 0;
-            let unclamped = 0;
-            for (let i = 0; i < count; ++i) {
-                if (clamped[i]) {
-                    continue;
-                }
-                const v = values[i];
-                if (min != null && v < min) {
-                    excess += v - min;
-                    values[i] = min;
-                    clamped[i] = 1;
-                } else if (max != null && v > max) {
-                    excess += v - max;
-                    values[i] = max;
-                    clamped[i] = 1;
-                } else {
-                    ++unclamped;
-                }
-            }
-            if (excess === 0 || unclamped === 0) {
-                break;
-            }
-            const perUnclamped = excess / unclamped;
-            for (let i = 0; i < count; ++i) {
-                if (!clamped[i]) {
-                    values[i] += perUnclamped;
-                }
-            }
-        }
+        return this.writeOne(targetIdx, newValue);
     }
 
     private writeDirect(strategy: 'uniform' | 'percentage' | 'increment'): boolean {
@@ -256,7 +166,7 @@ export class DistributorNumber {
         return this.readAndWrite((v) => v * scale);
     }
 
-    /** Direct path for uniform + integer rounding without clamping. Avoids array allocation. */
+    /** Direct path for uniform + integer rounding. Avoids array allocation. */
     private writeUniformRounded(): boolean {
         const { count, target } = this;
         const roundedTarget = Math.round(target);
@@ -351,35 +261,22 @@ export class DistributorNumber {
 
     /** Rounds values to integers and spreads the remainder so the integer sum matches the target. */
     private roundArray(values: number[]): void {
-        const { count, target, min, max } = this;
+        const { count, target } = this;
         const roundedTarget = Math.round(target);
         let roundedSum = 0;
         for (let i = 0; i < count; ++i) {
-            let r = Math.round(values[i]);
-            if (min != null && r < min) {
-                r = Math.ceil(min);
-            }
-            if (max != null && r > max) {
-                r = Math.floor(max);
-            }
+            const r = Math.round(values[i]);
             values[i] = r;
             roundedSum += r;
         }
         let diff = roundedTarget - roundedSum;
-        // Spread remainder ±1, skipping values already at their min/max bound
-        const intMax = max != null ? Math.floor(max) : undefined;
-        const intMin = min != null ? Math.ceil(min) : undefined;
         for (let i = 0; diff > 0 && i < count; ++i) {
-            if (intMax == null || values[i] < intMax) {
-                ++values[i];
-                --diff;
-            }
+            ++values[i];
+            --diff;
         }
         for (let i = 0; diff < 0 && i < count; ++i) {
-            if (intMin == null || values[i] > intMin) {
-                --values[i];
-                ++diff;
-            }
+            --values[i];
+            ++diff;
         }
     }
 }

@@ -72,8 +72,8 @@ export interface GroupRowValueSetterParams<TData = any, TValue = any, TContext =
     /** The group row node being edited. */
     node: IRowNode<TData>;
 
-    /** Row data for the group node. `undefined` for filler groups (groups created automatically by the grid). */
-    data?: TData | null;
+    /** Row data for the group node. Can be `null` or `undefined` for filler groups (groups created automatically by the grid). */
+    data: TData | null | undefined;
 
     /** Source string provided to `rowNode.setDataValue()`, indicating what triggered the edit (e.g. `'ui'`). */
     eventSource: string | undefined;
@@ -125,7 +125,7 @@ export interface GroupRowValueSetterParams<TData = any, TValue = any, TContext =
  * import { distributeGroupValue } from 'ag-grid-enterprise';
  *
  * colDef.groupRowValueSetter = (params) =>
- *     distributeGroupValue(params, { distribution: 'percentage', min: 0 });
+ *     distributeGroupValue(params, { distribution: 'percentage' });
  * ```
  */
 export type GroupRowValueSetterFunc<TData = any, TValue = any, TContext = any> = (
@@ -162,16 +162,16 @@ export type GroupRowValueSetterDistribution = 'uniform' | 'percentage' | 'increm
  *
  * Can be:
  * - A {@link GroupRowValueSetterDistribution} strategy string (e.g. `'percentage'`).
- * - A {@link GroupRowValueSetterDistributionOptions} object with strategy and constraints.
+ * - A {@link GroupRowValueSetterDistributionOptions} object with strategy and per-aggFunc overrides.
  * - A custom {@link GroupRowValueSetterFunc} callback for full control.
  *
  * @example
  * ```ts
  * colDef.groupRowValueSetter = {
  *     distribution: {
- *         sum: 'percentage',                                    // string
- *         avg: { distribution: 'increment', min: 0, max: 100 }, // options object
- *         myCustomAgg: (params) => { ... },                     // custom function
+ *         sum: 'percentage',                                        // string
+ *         avg: { distribution: 'increment', integerDistribution: true }, // options object
+ *         myCustomAgg: (params) => { ... },                             // custom function
  *     },
  * };
  * ```
@@ -196,7 +196,7 @@ export type GroupRowValueSetterDistributionEntry<TData = any, TValue = any, TCon
  * colDef.groupRowValueSetter = {
  *     distribution: {
  *         sum: 'percentage',
- *         avg: { distribution: 'increment', min: 0 },
+ *         avg: { distribution: 'increment' },
  *     },
  * };
  * ```
@@ -214,12 +214,10 @@ export type GroupRowValueSetterDistributionRecord<TData = any, TValue = any, TCo
  *
  * @example
  * ```ts
- * // Per-aggFunc entry with its own min, inheriting top-level integerDistribution
+ * // As a per-aggFunc record entry with its own options
  * colDef.groupRowValueSetter = {
- *     integerDistribution: true,
  *     distribution: {
- *         sum: { distribution: 'percentage', min: 0 },  // min=0 for sum, inherits integerDistribution=true
- *         avg: 'increment',                             // inherits integerDistribution=true, no min/max
+ *         sum: { distribution: 'percentage', integerDistribution: true },
  *     },
  * };
  * ```
@@ -251,36 +249,6 @@ export interface GroupRowValueSetterDistributionOptions {
      * ```
      */
     integerDistribution?: boolean;
-
-    /**
-     * Minimum value per child after distribution.
-     *
-     * Children whose computed value falls below this threshold are clamped to `min`,
-     * and the excess is redistributed among the remaining unclamped children
-     * so the aggregate total is preserved as closely as possible.
-     *
-     * @example
-     * ```ts
-     * colDef.groupRowValueSetter = { distribution: 'uniform', min: 0 };
-     * // Prevents any child from going negative
-     * ```
-     */
-    min?: number | bigint;
-
-    /**
-     * Maximum value per child after distribution.
-     *
-     * Children whose computed value exceeds this threshold are clamped to `max`,
-     * and the excess is redistributed among the remaining unclamped children
-     * so the aggregate total is preserved as closely as possible.
-     *
-     * @example
-     * ```ts
-     * colDef.groupRowValueSetter = { distribution: 'percentage', max: 100 };
-     * // No child can exceed 100; overflow is spread to other children
-     * ```
-     */
-    max?: number | bigint;
 
     /**
      * Custom function to read a child's current value during distribution.
@@ -347,17 +315,12 @@ export interface GroupRowValueSetterDistributionOptions {
  * colDef.groupRowValueSetter = { distribution: 'uniform', integerDistribution: true };
  * ```
  *
- * @example Percentage distribution with constraints:
- * ```ts
- * colDef.groupRowValueSetter = { distribution: 'percentage', min: 0, max: 100 };
- * ```
- *
  * @example Per-aggregation-function strategies:
  * ```ts
  * colDef.groupRowValueSetter = {
  *     distribution: {
  *         sum: 'percentage',
- *         avg: { distribution: 'increment', min: 0 },
+ *         avg: { distribution: 'increment' },
  *         myCustomAgg: (params) => {
  *             // Full custom logic for this aggregation function
  *             for (const child of params.aggregatedChildren) {
@@ -395,8 +358,8 @@ export interface GroupRowValueSetterOptions<TData = any, TValue = any, TContext 
      * or custom callbacks. Each entry can be:
      * - A {@link GroupRowValueSetterDistribution} string (e.g. `'percentage'`)
      * - A {@link GroupRowValueSetterDistributionOptions} object with per-aggFunc overrides for
-     *   `distribution`, `integerDistribution`, `min`, and `max`. Fields left `undefined` inherit
-     *   from the top-level options.
+     *   `distribution` and `integerDistribution`. Fields left unspecified inherit from the
+     *   top-level options.
      * - A custom {@link GroupRowValueSetterFunc} callback for full control.
      *
      * Aggregation functions not present in the record fall through to {@link default},
@@ -413,7 +376,7 @@ export interface GroupRowValueSetterOptions<TData = any, TValue = any, TContext 
      * colDef.groupRowValueSetter = {
      *     distribution: {
      *         sum: 'percentage',
-     *         avg: { distribution: 'increment', min: 0 },
+     *         avg: { distribution: 'increment' },
      *     },
      * };
      * ```

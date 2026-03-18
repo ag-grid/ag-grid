@@ -253,14 +253,6 @@ describe('numeric-like newValue handling (direct distributeGroupValue calls)', (
         expect(children[1].data.amount).toBe(0);
         expect(children[2].data.amount).toBe(0);
     });
-
-    test('object with .value=0 with min/max clamp distributes 0 clamped to min', () => {
-        const children = mockChildren([10, 20]);
-        callDistribute({ value: 0 }, 30, children, { min: 5 });
-        // IS numeric, target=0, uniform → 0 each, clamped to min=5
-        expect(children[0].data.amount).toBe(5);
-        expect(children[1].data.amount).toBe(5);
-    });
 });
 
 // --- Integration tests with cellDataType: false (objects flow through full grid pipeline) ---
