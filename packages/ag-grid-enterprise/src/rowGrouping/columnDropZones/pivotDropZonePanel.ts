@@ -1,7 +1,7 @@
 import type { AgColumn, DragAndDropIcon, FocusableContainer, GridDraggingEvent } from 'ag-grid-community';
 import { _addFocusableContainerListener, _createIconNoSpan } from 'ag-grid-community';
 
-import { refreshDeferredToolPanelUi } from '../../columnToolPanel/toolPanelDeferredUiUtils';
+import { isDeferredMode, refreshDeferredToolPanelUi } from '../../columnToolPanel/toolPanelDeferredUiUtils';
 import type { ColumnStateUpdateParams } from '../../columnToolPanel/updates/columnStateUpdateTypes';
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
@@ -69,7 +69,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel implements FocusableCo
             }
         } else {
             // in toolPanel, the pivot panel is always shown when pivot mode is on
-            this.setDisplayed(this.beans.columnStateUpdateStrategy.getPivotMode(!!this.updateParams?.deferApply));
+            this.setDisplayed(this.beans.columnStateUpdateStrategy.getPivotMode(isDeferredMode(this.updateParams)));
         }
     }
 
@@ -80,13 +80,13 @@ export class PivotDropZonePanel extends BaseDropZonePanel implements FocusableCo
         }
 
         const isActive = this.beans.columnStateUpdateStrategy
-            .getPivotColumns(!!this.updateParams?.deferApply)
+            .getPivotColumns(isDeferredMode(this.updateParams))
             .includes(column);
         return column.isAllowPivot() && (!isActive || this.isSourceEventFromTarget(draggingEvent));
     }
 
     protected updateItems(columns: AgColumn[]): void {
-        this.beans.columnStateUpdateStrategy.setPivotColumns(!!this.updateParams?.deferApply, columns, 'toolPanelUi');
+        this.beans.columnStateUpdateStrategy.setPivotColumns(isDeferredMode(this.updateParams), columns, 'toolPanelUi');
         refreshDeferredToolPanelUi(this.beans, this.updateParams);
     }
 
@@ -95,7 +95,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel implements FocusableCo
     }
 
     protected getExistingItems(): AgColumn[] {
-        return this.beans.columnStateUpdateStrategy.getPivotColumns(!!this.updateParams?.deferApply);
+        return this.beans.columnStateUpdateStrategy.getPivotColumns(isDeferredMode(this.updateParams));
     }
 
     public getFocusableContainerName(): 'pivotToolbar' {
