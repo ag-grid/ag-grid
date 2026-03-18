@@ -30,6 +30,9 @@ export class ColumnStateUpdateExecutionStrategy extends BeanStub implements ICol
     public commit(deferMode: boolean): void {
         this.getUpdateStrategy(deferMode).commit();
     }
+    public hasPendingChanges(deferMode: boolean): boolean {
+        return this.getUpdateStrategy(deferMode).hasPendingChanges();
+    }
     public moveColumns(deferMode: boolean, columns: AgColumn[], targetIndex: number, eventType: ColumnEventType): void {
         this.getUpdateStrategy(deferMode).moveColumns(columns, targetIndex, eventType);
     }
@@ -119,6 +122,7 @@ class SynchronousColumnStateUpdateStrategy implements ColumnStateConcreteUpdateS
 
     public reset = noop;
     public commit = noop;
+    public hasPendingChanges = () => false;
 
     public applyColumnState(state: ColumnState[], eventType: ColumnEventType): void {
         if (state.length === 0) {
@@ -244,6 +248,86 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
     public reset() {
         this.sequence = 0;
         this.state = {};
+    }
+
+    public hasPendingChanges(): boolean {
+        const { state, beans } = this;
+        const { columnState, columnOrder, rowGroup, aggregation, pivot, pivotMode, sort, aggFuncs } = state;
+
+        if (columnState) {
+            for (const [colId, patch] of columnState.patches) {
+                const column = beans.colModel.getColDefCol(colId);
+                if (!column) continue;
+                if (patch.hide !== undefined && patch.hide !== !column.isVisible()) return true;
+                if (patch.rowGroup !== undefined && !!patch.rowGroup !== column.isRowGroupActive()) return true;
+                if (patch.pivot !== undefined && !!patch.pivot !== column.isPivotActive()) return true;
+                if (patch.aggFunc !== undefined && patch.aggFunc !== column.getAggFunc()) return true;
+                if (patch.sort !== undefined && patch.sort !== column.getSortDef()?.sort) return true;
+            }
+        }
+
+        if (columnOrder) {
+            if (!arraysEqual(columnOrder.colIds, getPrimaryColumnIds(beans))) return true;
+        }
+
+        if (rowGroup) {
+            if (
+                !arraysEqual(
+                    rowGroup.colIds,
+                    (beans.rowGroupColsSvc?.columns ?? []).map((c) => c.getColId())
+                )
+            ) {
+                return true;
+            }
+        }
+
+        if (aggregation) {
+            if (
+                !arraysEqual(
+                    aggregation.colIds,
+                    (beans.valueColsSvc?.columns ?? []).map((c) => c.getColId())
+                )
+            ) {
+                return true;
+            }
+        }
+
+        if (pivot) {
+            if (
+                !arraysEqual(
+                    pivot.colIds,
+                    (beans.pivotColsSvc?.columns ?? []).map((c) => c.getColId())
+                )
+            )
+                return true;
+        }
+
+        if (pivotMode) {
+            if (pivotMode.pivotMode !== beans.colModel.isPivotMode()) return true;
+        }
+
+        if (sort) {
+            for (const [colId, sortDef] of sort.sortDefsByColId) {
+                const column = beans.colModel.getColDefCol(colId);
+                if (!column) continue;
+                if ((sortDef?.sort ?? null) !== (column.getSortDef()?.sort ?? null)) return true;
+            }
+            if (sort.baselineCleared) {
+                for (const col of getPrimaryColumns(beans)) {
+                    if (!sort.sortDefsByColId.has(col.getColId()) && col.getSortDef() !== null) return true;
+                }
+            }
+        }
+
+        if (aggFuncs) {
+            for (const [colId, aggFunc] of aggFuncs.values) {
+                const column = beans.colModel.getColDefCol(colId);
+                if (!column) continue;
+                if (aggFunc !== column.getAggFunc()) return true;
+            }
+        }
+
+        return false;
     }
 
     public commit() {
@@ -680,6 +764,14 @@ function getDraftFunctionColumnIds(
     }
 
     return colIds;
+}
+
+function arraysEqual(a: string[], b: string[]): boolean {
+    if (a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i]) return false;
+    }
+    return true;
 }
 
 function syncPrimaryColDefOrderFromCurrentColumns(beans: BeanStub['beans']): void {

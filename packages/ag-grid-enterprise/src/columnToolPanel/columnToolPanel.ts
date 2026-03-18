@@ -156,6 +156,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             ),
         }));
         buttonComp.updateButtons(buttonDefs);
+        buttonComp.updateValidity(false);
         buttonComp.addManagedListeners(buttonComp, {
             apply: this.onDeferredApply,
             cancel: this.onDeferredCancel,
@@ -166,10 +167,12 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
     private readonly onDeferredApply = (): void => {
         this.beans.columnStateUpdateStrategy.commit(this.isDeferModeEnabled);
+        this.deferredButtonsComp?.updateValidity(false);
     };
 
     private readonly onDeferredCancel = (): void => {
         this.beans.columnStateUpdateStrategy.reset(this.isDeferModeEnabled);
+        this.deferredButtonsComp?.updateValidity(false);
         this.refreshToolPanelLayouts();
         this.pivotModePanel?.refreshEditStrategy();
     };
@@ -183,6 +186,9 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         this.refreshToolPanelLayouts();
         this.setLastVisible();
         this.pivotModePanel?.refreshEditStrategy();
+        this.deferredButtonsComp?.updateValidity(
+            this.beans.columnStateUpdateStrategy.hasPendingChanges(this.isDeferModeEnabled)
+        );
     }
 
     private refreshToolPanelLayouts(): void {

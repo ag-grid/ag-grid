@@ -5,6 +5,7 @@ export type ColumnStateUpdateParams = { buttons?: Array<'apply' | 'cancel'> };
 export interface ColumnStateConcreteUpdateStrategy {
     applyColumnState(state: ColumnState[], eventType: ColumnEventType): void;
     commit(): void;
+    hasPendingChanges(): boolean;
     moveColumns(columns: AgColumn[], targetIndex: number, eventType: ColumnEventType): void;
     reset(): void;
     setColumnsVisible(columns: AgColumn[], visible: boolean, eventType: ColumnEventType): void;
