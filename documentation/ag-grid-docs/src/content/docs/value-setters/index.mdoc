@@ -121,9 +121,13 @@ this.onCellEditRequest = event => {
 
 {% /if %}
 
+### Without Application Handling
+
 The example below has Cell Editing enabled, however the editing does nothing because `readOnlyEdit=true` is set. The application listens for `cellEditRequest` event and prints to the console. As the application does not try to update the data, the cell keeps its old value, giving the impression that editing is not working.
 
 {% gridExampleRunner title="Read Only Edit - Not Implemented" name="read-only"  exampleHeight=350 /%}
+
+### Updating Row Data
 
 This next example extends the above by getting the application to update the data.
 
@@ -131,6 +135,8 @@ This next example extends the above by getting the application to update the dat
 1. The Row Data has IDs and `getRowId` is implemented. This allows the grid to only refresh the desired row after new Row Data is set.
 
 {% gridExampleRunner title="Read Only Edit - Row Data" name="read-only-row-data" /%}
+
+### Updating via Transactions
 
 This variation uses Transactions to update the data after the edit rather than replacing the whole Row Data.
 
