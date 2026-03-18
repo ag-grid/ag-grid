@@ -47,20 +47,18 @@ There are two main APIs to read cell values but they differ in their default beh
 
 {% apiDocumentation source="row-object/properties.json" section="data" names=["getDataValue"] /%}
 
-The table below shows the impact of the `from` parameter on the value that is returned. The first non-empty source reading left-to-right is used. The Aggregation column only applies to group rows with an `aggFunc`.
+The `from` parameter controls which source to read from:
 
-| `from`             | Active Editor (if editing) | Pending Batch (if batching) | Aggregation (if present) | Committed Data |
-| ------------------ | -------------------------- | --------------------------- | ------------------------ | -------------- |
-| `'data'` (default) | —                          | —                           | Agg value                | Fallback       |
-| `'edit'`           | Used if present            | Used if no editor           | Agg value                | Fallback       |
-| `'batch'`          | —                          | Used if present             | Agg value                | Fallback       |
-| `'value'`          | —                          | —                           | Scalar (unwrapped)       | Fallback       |
-| `'data-raw'`       | —                          | —                           | —                        | Always used    |
+-   **`'data'` (default)** — returns the committed row data. Ignores any pending batch edits or open editors.
+-   **`'batch'`** — returns the pending batch value if one exists, otherwise falls back to committed data.
+-   **`'edit'`** — returns the value from the active cell editor if the cell is being edited, then the pending batch value if one exists, otherwise falls back to committed data.
 
-**Aggregate Values**
+**Aggregation (group rows only)**
 
--   **`'value'`** — same as `'data'`, but unwraps the aggregation result returned by `avg` and `count` to its scalar value.
--   **`'data-raw'`** — same as `'data'` but skips aggregation results (`rowNode.aggData`). For group rows the valueGetter or field value is returned instead, which is typically `undefined` since group rows do not hold leaf data.
+For group rows with an `aggFunc`, `'data'`, `'batch'`, and `'edit'` all return the aggregated value in preference to committed data. Two additional values let you control this behaviour:
+
+-   **`'value'`** — same as `'data'`, but unwraps the aggregation result from `avg` and `count` to its scalar number.
+-   **`'data-raw'`** — skips the aggregation result entirely and returns the raw field or valueGetter value, which is typically `undefined` for group rows.
 
 ### Example getDataValue()
 
@@ -90,11 +88,13 @@ groupRowNode.getDataValue('revenue', 'data-raw'); // undefined (skips aggData; g
 
 {% apiDocumentation source="grid-api/api.json" section="miscellaneous" names=["getCellValue"] /%}
 
-| `from`             | Active Editor   | Pending Batch     | Aggregation | Committed Data |
-| ------------------ | --------------- | ----------------- | ----------- | -------------- |
-| `'edit'` (default) | Used if present | Used if no editor | Agg value   | Fallback       |
-| `'batch'`          | —               | Used if present   | Agg value   | Fallback       |
-| `'data'`           | —               | —                 | Agg value   | Fallback       |
+The `from` parameter controls which source to read from:
+
+-   **`'edit'` (default)** — returns the value from the active cell editor if the cell is being edited, then the pending batch value if one exists, otherwise falls back to committed data.
+-   **`'batch'`** — returns the pending batch value if one exists, otherwise falls back to committed data. Ignores any open editor.
+-   **`'data'`** — returns the committed row data. Ignores any pending batch edits or open editors.
+
+For group rows with an `aggFunc`, all three values return the aggregated value in preference to committed data.
 
 ### Example getCellValue()
 
@@ -114,12 +114,12 @@ api.getCellValue({ rowNode, colKey: 'price', from: 'data' }); // 42 (original da
 
 `rowNode.setDataValue(colKey, newValue, eventSource?)` writes a value programmatically. The `eventSource` parameter controls how.
 
-| `eventSource` | Active Editor | Pending Batch        | Committed Data                 |
-| ------------- | ------------- | -------------------- | ------------------------------ |
-| (default)     | Closed        | Written              | Written if no batch            |
-| `'edit'`      | Written       | Written if no editor | Written if no editor, no batch |
-| `'batch'`     | Left open     | Written              | Written if no batch            |
-| `'data'`      | Left open     | —                    | Always written                 |
+The `eventSource` parameter controls where the value is written:
+
+-   **(default)** — closes any open editor, writes to the pending batch if one is active, otherwise writes directly to committed data.
+-   **`'batch'`** — leaves any open editor untouched and writes to the pending batch if one is active, otherwise writes directly to committed data.
+-   **`'edit'`** — writes the value into the active cell editor without closing it. If no editor is open, falls back to the pending batch or committed data.
+-   **`'data'`** — writes directly to committed data, bypassing both the editor and any pending batch.
 
 With `'edit'`, the active editor receives the new value via `refresh()` if implemented; otherwise the editor is recreated with focus preserved.
 
