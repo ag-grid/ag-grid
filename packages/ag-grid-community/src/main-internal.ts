@@ -504,6 +504,7 @@ export {
     _attemptToRestoreCellFocus,
     _focusGridInnerElement,
     _focusNextGridCoreContainer,
+    _skipFocusableContainerListenerForAgGrid,
 } from './utils/gridFocus';
 export { _createIcon, _createIconNoSpan } from './utils/icon';
 export { _consoleError, _warnOnce } from './utils/log';
