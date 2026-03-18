@@ -79,8 +79,8 @@ export class AutoScrollService {
         const scrollTick = this.scrollByTick;
         this.tickLeft = !skipHorizontalScroll && mouseEvent.clientX < rect.left + scrollTick;
         this.tickRight = !skipHorizontalScroll && mouseEvent.clientX > rect.right - scrollTick;
-        this.tickUp = !skipVerticalScroll && mouseEvent.clientY < rect.top + scrollTick && !skipVerticalScroll;
-        this.tickDown = !skipVerticalScroll && mouseEvent.clientY > rect.bottom - scrollTick && !skipVerticalScroll;
+        this.tickUp = !skipVerticalScroll && mouseEvent.clientY < rect.top + scrollTick;
+        this.tickDown = !skipVerticalScroll && mouseEvent.clientY > rect.bottom - scrollTick;
 
         if (this.tickLeft || this.tickRight || this.tickUp || this.tickDown) {
             this.ensureTickingStarted();
