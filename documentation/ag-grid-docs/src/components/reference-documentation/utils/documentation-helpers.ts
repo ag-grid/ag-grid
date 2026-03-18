@@ -240,7 +240,7 @@ export function formatJsDocString(docString: string) {
         .replace('/**', '')
         .replace('*/', '')
         .replace(paramReg, '<span class="param"> `$1` $2 </span>\n')
-        .replace(returnsReg, '<strong>Returns: </strong> $2 \n')
+        .replace(returnsReg, '\n<br/><strong>Returns: </strong> $2 \n')
         // Render @example blocks as formatted code snippets
         .replace(/\s*\*?\s*@example\b([^\n]*)([\s\S]*?)(?=\s*\*?\s*@\w|$)/g, (_match, desc: string, body: string) => {
             const descText = desc.replace(/^\s*\*?\s*/, '').trim();
@@ -256,7 +256,7 @@ export function formatJsDocString(docString: string) {
             if (!descText && !code) {
                 return '';
             }
-            let result = `\n<br>\n<strong>Example${descText ? `: ${descText}` : ''}</strong>`;
+            let result = `\n\n<br/><strong>Example${descText ? `: ${descText}` : ''}</strong>`;
             if (code) {
                 result += `\n<pre class="code"><code>${code}</code></pre>`;
             }

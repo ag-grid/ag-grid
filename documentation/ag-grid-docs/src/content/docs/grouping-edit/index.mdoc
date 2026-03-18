@@ -74,11 +74,17 @@ the strategy is chosen automatically based on the column's `aggFunc`:
 | `'overwrite'`  | Writes the new value directly to every child.                                                                            | `avg`, `count`, and custom functions |
 | `'percentage'` | Scales each child proportionally, preserving relative weights. Falls back to `'uniform'` when the current total is zero. | —                                    |
 | `'increment'`  | Distributes only the difference (`newValue − oldValue`) among children, adding it to current values.                     | —                                    |
-| `'none'`       | Suppresses distribution entirely. The edit is accepted but no child values are modified. Equivalent to `false` or `null`. | —                                    |
+| `'none'`       | Suppresses distribution entirely. No child values are modified. Equivalent to `false` or `null`.                         | —                                    |
 
 The `first` and `last` aggregation functions always write to the first or last child respectively,
 regardless of any `distribution` setting. The `min` and `max` aggregation functions always write
 to the single child that currently holds the minimum or maximum value.
+
+{% note %}
+For `avg` aggregation, the distributor internally adjusts the target so the average equals the edited value.
+With `'uniform'`, each child is set to `newValue` directly (since the average of identical values equals that value).
+With `'increment'`, the full delta is added to every child (since shifting all children by the same amount shifts the average by that amount).
+{% /note %}
 
 ### Distribution Options
 
@@ -255,6 +261,14 @@ colDef.groupRowValueSetter = (params) => {
     const adjusted = Math.max(0, Number(params.newValue));
     return distributeGroupValue({ ...params, newValue: adjusted }, { distribution: 'percentage' });
 };
+```
+
+You can also assign `distributeGroupValue` directly without a wrapper for default behaviour:
+
+```ts
+import { distributeGroupValue } from 'ag-grid-enterprise';
+
+colDef.groupRowValueSetter = distributeGroupValue;
 ```
 
 ### Custom Read/Write with getValue and setValue
