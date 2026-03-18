@@ -1,12 +1,12 @@
 ---
 targets: ['*']
-description: 'Creating and maintaining documentation pages for AG Grid'
-globs: ['documentation/**/*.mdoc', 'documentation/**/*.md']
+name: docs-pages
+description: 'Use this skill when creating, editing, reviewing, or restructuring AG Grid documentation pages. Trigger whenever working with .mdoc files, writing new documentation, improving page structure or prose quality, or reviewing docs for consistency — even if the user doesn't say "documentation" explicitly.'
 ---
 
 # Documentation Pages Guide
 
-This guide covers creating and maintaining documentation pages for AG Grid — its structure, writing style, tone, and quality standards. Documentation is located in `documentation/ag-grid-docs/` and uses Astro with Markdoc for content.
+This guide covers creating and maintaining documentation pages for AG Grid — structure, writing style, tone, and quality standards. Documentation lives in `documentation/ag-grid-docs/` and uses Astro with Markdoc for content.
 
 ## Page Structure
 
@@ -23,7 +23,7 @@ documentation/ag-grid-docs/src/content/docs/
 
 1. Create the `.mdoc` file in the appropriate directory
 2. Add frontmatter with title and description
-3. Write content following existing patterns and the [writing guidelines](#writing-style) below
+3. Write content following the [writing guidelines](#writing-style) below
 4. Add examples in `_examples/` if needed
 5. Update navigation in `nav.json` if required
 
@@ -36,6 +36,8 @@ description: Brief description of the feature
 ---
 ```
 
+**Internal links in `.mdoc` files:** Always use `./page-path/` (framework-relative prefix). Do not use `../` — it's not supported by the docs URL resolver.
+
 ## Language Conventions
 
 -   **Documentation text**: UK/British English (e.g., "colour", "behaviour")
@@ -46,23 +48,22 @@ description: Brief description of the feature
 
 ### Core Principles
 
-1. **Example-driven** - Illustrate concepts with examples rather than prose alone
-2. **Progressive disclosure** - Present simple concepts before complex ones
-3. **Active voice** - Direct and clear; say who does what
-4. **Present tense** - Describe current behaviour, not future state
-5. **Positive framing** - Lead with solutions, not limitations
-6. **Appropriate length** - Calibrate to content complexity; don't pad or compress artificially
-7. **Consistent structure** - Predictable patterns that start with user benefit aid navigation
-8. **Cross-reference** - Link to related documentation where it adds context or discovery value
+Content and structure decisions should follow these principles:
 
-### Quick Reference
+1. **Example-driven** — Illustrate concepts with live demos rather than prose alone; let examples do the heavy lifting
+2. **Progressive disclosure** — Simple concepts before complex ones; don't front-load edge cases
+3. **Consistent structure** — Predictable section ordering (see [Section Ordering](#section-ordering)) that starts with user benefit
+4. **Cross-reference** — Link to related documentation where it adds genuine context or aids discovery; avoid gratuitous links
+
+For prose style (voice, tense, contractions, framing), see [Prose Style](#prose-style) below.
+
+### Prose Style
 
 | Principle        | ✅ Do This                       | ❌ Avoid This                    |
 | ---------------- | -------------------------------- | -------------------------------- |
 | **Voice**        | "The grid requests rows"         | "Rows are requested" (passive)   |
-| **Voice**        | "Set `rowGroup` to true"         | "rowGroup should be set"         |
-| **Tense**        | "The grid calls" (present)       | "will call" (future)             |
 | **Mood**         | "Enable editing" (imperative)    | "Editing can be enabled"         |
+| **Tense**        | "The grid calls" (present)       | "will call" (future)             |
 | **Contractions** | "doesn't", "can't", "won't"      | "does not", "cannot", "will not" |
 | **Clarity**      | Direct statements                | "In a nutshell", "Basically"     |
 | **Framing**      | "Use X instead" (positive)       | "cannot do Y" (negative)         |
@@ -78,8 +79,6 @@ Use concise noun or action phrases:
 | "Stop Triggers"  | "Customizing Stop Behavior"  |
 | "Editing API"    | "Programmatic Control"       |
 | "Navigation"     | "Understanding Navigation"   |
-
-"Programmatic Control" is always a rename candidate — replace it with `[Feature] API` (e.g. "Editing API", "Navigation API").
 
 ### Positive Framing
 
@@ -99,11 +98,11 @@ For aggregation and grouping, use [Server-Side Row Model](./server-side-model/) 
 Sorting must be performed server-side.
 ```
 
-**Pattern:** Lead with solution, then explain why.
+**Pattern:** Lead with the solution, then explain why.
 
 ### Value Propositions (Page Subtitles)
 
-Every page opens with a subtitle — the first paragraph immediately after the frontmatter. This is what renders visually as the page subtitle and is distinct from the frontmatter `description` field.
+Every page opens with a subtitle — the first paragraph immediately after the frontmatter. This renders as the page subtitle and is distinct from the frontmatter `description` field.
 
 ```markdown
 ---
@@ -115,11 +114,11 @@ One-sentence subtitle describing what the feature is or does.
 ## First Section Heading
 ```
 
-**Writing guidelines**:
+**Writing guidelines:**
 
 -   **One sentence.** Two sentences are occasionally acceptable; never more.
 -   **Declarative** — describe what the feature IS or DOES, not what the user should do or learn.
--   Start with the subject ("The grid...", "Row selection...", "The datasource...") or an action verb ("Configure...", "Stage...", "Prevent...").
+-   Start with the subject ("The grid...", "Row selection...") or an action verb ("Configure...", "Stage...", "Prevent...").
 -   Focus on the feature's purpose, not implementation detail.
 -   Answer "What does this page cover?" not "How do I use this?"
 
@@ -163,7 +162,7 @@ const colDef = {
 
 ### Section Ordering
 
-Not every page will include all sections; follow this order for the sections that are relevant:
+Not every page includes all sections; follow this order for the sections that are relevant:
 
 1. Value proposition (what & why)
 2. Context statement (prerequisites, when to use)
@@ -171,9 +170,8 @@ Not every page will include all sections; follow this order for the sections tha
 4. Basic configuration (enable/setup)
 5. Core concepts (ordered by complexity)
 6. Advanced features (power user territory)
-7. API reference (programmatic control)
-8. Events (lifecycle hooks)
-9. See Also — only for pages in **other sections** of the docs that are highly relevant. Never use See Also to link to child pages or sibling pages within the same nav section — those are already visible in the sidebar. If all candidate links are within the same section, omit the section entirely.
+7. Events (lifecycle hooks)
+8. See Also — only when linking to a page in a **different nav section** that is directly relevant and not discoverable from the sidebar. Omit it for sibling or child pages — those are already visible in the nav.
 
 Within each section, always use **show then tell** ordering — the live demo before the code snippet. The canonical pattern is:
 
@@ -184,16 +182,16 @@ Within each section, always use **show then tell** ordering — the live demo be
 
 The example above uses the following configuration:
 
-​```{% frameworkTransform=true %}
+​`{% frameworkTransform=true %}
 const gridOptions = { ... };
-​```
+​`
 ```
 
 The optional preamble exists only to explain what to interact with or what to look for — never to explain the code. The code explanation always follows the demo. Use "The example above uses the following configuration:" as the standard connector phrase.
 
 ### Inline Cross-References
 
-For sibling-page links that are too important to omit but don't qualify for See Also (which is reserved for other sections), use an inline `{% note %}` block:
+For sibling-page links that are too important to omit but don't qualify for See Also, use an inline `{% note %}` block:
 
 ```markdown
 {% note %}
@@ -202,6 +200,15 @@ Cell Editing can also be performed via [Cell Editor Components](./cell-editors/)
 ```
 
 Use sparingly — only when users commonly miss or confuse a closely related feature.
+
+### API Documentation Blocks
+
+Use `{% apiDocumentation %}` sparingly and inline — place it **immediately after the relevant code snippet** within the section it relates to. Do not create a standalone "API reference" section at the end of a page.
+
+**Rules:**
+
+-   **Max 2 `names` entries** per block — the purpose is to show users how to use the main API member based on its type and a brief description, not to provide exhaustive documentation. Pages that need to introduce many API members should use a dedicated API section at the bottom instead (as seen in other parts of the docs).
+-   **Object/complex types only** — use `{% apiDocumentation %}` for members whose values are objects, interfaces, or callback signatures where the shape needs explaining. For members that accept only a boolean, string, or number, explain them inline in prose or code snippet comments instead.
 
 ### Parent / Overview Pages
 
@@ -222,17 +229,3 @@ Pages that act as nav parents (they have both a `path` and `children` in `nav.js
 -   Standalone "See [Child] for full details" sentences — the nav already exposes children
 
 A basic enabling snippet or brief illustrative example may appear on the parent page if it is removed from (or never added to) the child page — the same code must not exist in both places.
-
-**URL format for internal links in `.mdoc` files:** Use `./page-path/` (framework-relative prefix). Do not use `../` (not supported by the docs URL resolver).
-
-## Validation
-
-Test documentation changes:
-
-```bash
-# Start dev server
-yarn nx dev
-
-# Run E2E tests
-yarn nx e2e ag-grid-docs
-```

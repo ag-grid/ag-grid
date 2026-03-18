@@ -110,10 +110,9 @@ Rules load automatically when you edit files matching their glob patterns.
 
 ### Documentation and Examples
 
-| Rule            | Activates on                                        | Description                                  |
-| --------------- | --------------------------------------------------- | -------------------------------------------- |
-| 🟢 `docs-pages` | `documentation/**/*.mdoc`, `documentation/**/*.md`  | Creating and maintaining documentation pages |
-| 🟢 `examples`   | `_examples/**/*`, `documentation/**/_examples/**/*` | Working with examples in AG Grid             |
+| Rule          | Activates on                                        | Description              |
+| ------------- | --------------------------------------------------- | ------------------------ |
+| 🟢 `examples` | `_examples/**/*`, `documentation/**/_examples/**/*` | Working with examples in AG Grid |
 
 ---
 
@@ -127,6 +126,7 @@ Skills load on-demand when invoked. All skills are invoked via `/skill-name`. Al
 | 🔵 `code-cleanup`               | Remove bloat, duplication; improve clarity                  |
 | 🔵 `code-fixup`                 | Fix build and lint errors across a package                  |
 | 🟢 `dev-server`                 | Start dev server, check build status                        |
+| 🟢 `docs-pages`                 | Writing, reviewing, and refactoring AG Grid docs pages      |
 | 🔵 `git-bisect`                 | Find the commit that introduced a regression                |
 | 🔵 `git-conventions`            | Branch, commit, and PR naming conventions                   |
 | 🔵 `git-split`                  | Split large files preserving git history                    |
