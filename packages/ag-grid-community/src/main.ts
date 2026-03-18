@@ -702,6 +702,11 @@ export type {
     GroupRowEditableCallbackParams,
     GroupRowValueSetterParams,
     GroupRowValueSetterFunc,
+    GroupRowValueSetterDistribution,
+    GroupRowValueSetterDistributionEntry,
+    GroupRowValueSetterDistributionOptions,
+    GroupRowValueSetterDistributionRecord,
+    GroupRowValueSetterOptions,
 } from './entities/colDef';
 export type {
     BaseCellDataType,

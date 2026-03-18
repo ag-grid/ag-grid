@@ -413,6 +413,7 @@ export type { IAdvancedFilterCtrl } from './interfaces/iAdvancedFilterCtrl';
 export type { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
 export type { IAggColumnNameService } from './interfaces/iAggColumnNameService';
 export type { IAggFuncService } from './interfaces/iAggFuncService';
+export type { IAggregatedChildrenSvc as _IAggregatedChildrenSvc } from './interfaces/iAggregatedChildrenSvc';
 export type { ICellRangeFeature } from './interfaces/iCellRangeFeature';
 export type { IClipboardService } from './interfaces/iClipboardService';
 export type { IColsService } from './interfaces/iColsService';
@@ -426,6 +427,7 @@ export type { IFrameworkEventListenerService } from './interfaces/iFrameworkEven
 export type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 export type { IGroupEditService as _IGroupEditService } from './interfaces/iGroupEditService';
 export type { IGroupFilterService } from './interfaces/iGroupFilterService';
+export type { IRowGroupingEditValueSvc as _IRowGroupingEditValueSvc } from './interfaces/iRowGroupingEditValueSvc';
 export type { IGroupHierarchyColService } from './interfaces/iGroupHierarchyColService';
 export type { IMenuFactory } from './interfaces/iMenuFactory';
 export type { IMultiFilterService } from './interfaces/iMultiFilterService';

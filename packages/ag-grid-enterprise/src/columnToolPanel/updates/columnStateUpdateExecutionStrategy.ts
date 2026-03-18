@@ -249,10 +249,8 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
     public commit() {
         const { beans, state } = this;
         const operations: CommitOperations = [];
-        for (const [type, operation] of Object.entries(state) as [
-            CommitOperation['type'],
-            DeferredState[CommitOperation['type']],
-        ][]) {
+        for (const type of Object.keys(state) as CommitOperation['type'][]) {
+            const operation = state[type];
             if (operation) {
                 operations.push({ type, ...operation } as CommitOperation);
             }

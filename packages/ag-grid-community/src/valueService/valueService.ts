@@ -451,7 +451,6 @@ export class ValueService extends BeanStub implements NamedBean {
         });
 
         let valueSetterChanged = false;
-        let groupRowValueSetterChanged = false;
 
         if (rowNode.data) {
             const externalFormulaResult = this.handleExternalFormulaChange({
@@ -479,8 +478,6 @@ export class ValueService extends BeanStub implements NamedBean {
             valueSetterChanged = result ?? true;
         }
 
-        const groupRowValueSetter = rowNode.group ? colDef.groupRowValueSetter : undefined;
-
         // Wrap cascade + finishValueChange together in one deferred block.
         // - For group rows the cascade triggers child setDataValue → child setValue calls, each of
         //   which increments deferredDepth again, so their cellValueChanged events accumulate in this
@@ -491,38 +488,31 @@ export class ValueService extends BeanStub implements NamedBean {
         const changeDetectionSvc = this.beans.changeDetectionSvc;
         changeDetectionSvc?.beginDeferred();
         try {
-            if (groupRowValueSetter) {
-                groupRowValueSetterChanged =
-                    groupRowValueSetter(
-                        _addGridCommonParams(this.gos, {
-                            node: rowNode,
-                            data: rowNode.data,
-                            oldValue,
-                            newValue,
-                            colDef,
-                            column,
-                            eventSource,
-                            valueChanged: valueSetterChanged || newValue !== oldValue,
-                            aggregatedChildren:
-                                this.beans.aggStage?.getAggregatedChildren(rowNode as RowNode, column) ?? [],
-                        })
-                    ) ??
-                    // Default to true if user forgot to return a value (possible without TypeScript).
-                    true;
-
-                if (!valueSetterChanged && !groupRowValueSetterChanged) {
-                    return false;
+            // Delegate groupRowValueSetter handling to the enterprise service.
+            // Returns undefined if no groupRowValueSetter is configured.
+            if (rowNode.group) {
+                const groupResult = this.beans.rowGroupingEditValueSvc?.setGroupDataValue(
+                    rowNode as RowNode,
+                    column,
+                    newValue,
+                    oldValue,
+                    eventSource,
+                    valueSetterChanged || newValue !== oldValue
+                );
+                if (groupResult !== undefined) {
+                    if (!valueSetterChanged && !groupResult) {
+                        return false;
+                    }
+                    // Use newValue (the user's scalar input) as the event value rather than re-reading
+                    // aggData. aggData is stale until the outermost endDeferred() flushes, and for avg/count
+                    // columns it stores an IAggFuncResult wrapper rather than a plain scalar.
+                    return this.finishValueChange(rowNode, column, params, eventSource, newValue);
                 }
-
-                // Use params.newValue (the user's scalar input) as the event value rather than re-reading
-                // aggData. aggData is stale until the outermost endDeferred() flushes, and for avg/count
-                // columns it stores an IAggFuncResult wrapper rather than a plain scalar.
-                return this.finishValueChange(rowNode, column, params, eventSource, params.newValue);
             }
 
-            if (!valueSetterChanged && !groupRowValueSetterChanged) {
-                // if no change to the value, then no need to do the updating, or notifying via events.
-                // otherwise the user could be tabbing around the grid, and cellValueChange would get called
+            if (!valueSetterChanged) {
+                // If no change to the value, then no need to do the updating, or notifying via events.
+                // Otherwise the user could be tabbing around the grid, and cellValueChange would get called
                 // all the time.
                 return false;
             }

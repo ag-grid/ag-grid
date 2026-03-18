@@ -752,12 +752,12 @@ export class RowNode<TData = any>
         callback(this);
     }
 
-    public getAggregatedChildren(colKey: ColKey | null | undefined): RowNode<TData>[] {
+    public getAggregatedChildren(colKey: ColKey | null | undefined, recursive?: boolean): RowNode<TData>[] {
         const beans = this.beans;
         // Use getCol() instead of fallback to getColDefCol() because we need just pivot result columns for performance.
         // getCol() searches in cols (which includes pivot result columns), whereas getColDefCol()
         // only searches in colDefCols (user-defined columns, excluding generated pivot columns).
-        return beans.aggStage?.getAggregatedChildren(this, beans.colModel.getCol(colKey)) ?? [];
+        return beans.aggChildrenSvc?.getAggregatedChildren(this, beans.colModel.getCol(colKey), recursive) ?? [];
     }
 
     public dispatchRowEvent<T extends RowNodeEventType>(type: T): void {

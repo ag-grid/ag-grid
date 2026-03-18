@@ -5,9 +5,23 @@ import { rowIdToString } from '../../grid-test-utils';
 import type { GridRows } from '../gridRows';
 import { getRowStateFlags, getRowTypePrefix } from './nodeInfo';
 
-/** Serialises a value for diagram output, handling bigint specially. */
+/** Serialises a value for diagram output, handling bigint and non-finite numbers specially. */
 export function serialiseValue(value: unknown): string {
-    return typeof value === 'bigint' ? JSON.stringify(`${value}n`) : JSON.stringify(value);
+    if (typeof value === 'bigint') {
+        return JSON.stringify(`${value}n`);
+    }
+    if (typeof value === 'number') {
+        if (value !== value) {
+            return 'NaN';
+        }
+        if (value === Infinity) {
+            return 'Infinity';
+        }
+        if (value === -Infinity) {
+            return '-Infinity';
+        }
+    }
+    return JSON.stringify(value);
 }
 
 /** Gets a cell value with optional formatting, returning the resolved display value. */

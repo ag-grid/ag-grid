@@ -1,5 +1,4 @@
 import type { ChangedRowNodes } from '../clientSideRowModel/changedRowNodes';
-import type { AgColumn } from '../entities/agColumn';
 import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import type { ChangedPath } from '../utils/changedPath';
@@ -27,15 +26,6 @@ export interface IRowNodePivotStage<TData = any> extends IRowNodeStage<TData> {
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowNodeAggregationStage<TData = any> extends IRowNodeStage<TData> {
     execute(changedPath: ChangedPath | undefined): void;
-
-    /**
-     * Returns the immediate children that contribute to the aggregation of a group RowNode.
-     * For pivot columns on leaf groups, only children matching the pivot keys are returned.
-     */
-    getAggregatedChildren(
-        rowNode: RowNode<TData> | null | undefined,
-        col: AgColumn | null | undefined
-    ): RowNode<TData>[];
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

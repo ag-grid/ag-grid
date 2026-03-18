@@ -19,11 +19,10 @@ import {
     _forEachChangedGroupDepthFirst,
     _getGrandTotalRow,
     _getGroupAggFiltering,
-    _isClientSideRowModel,
     _warn,
 } from 'ag-grid-community';
 
-import { setAggData, setAggDataWithSiblings } from './aggDataUtils';
+import { getNodesFromMappedSet, setAggData, setAggDataWithSiblings } from './aggDataUtils';
 
 /** Pre-resolved value column metadata for the per-group aggregation loop. */
 interface ResolvedValueColumn {
@@ -64,13 +63,6 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
 
     /** Tracks whether the previous execute() call produced aggData, so we only clear once on transition. */
     private hadAgg = false;
-
-    /** Cached once — row model type never changes after init. */
-    private csrm = false;
-
-    public postConstruct(): void {
-        this.csrm = _isClientSideRowModel(this.gos);
-    }
 
     // Stale aggData on demoted nodes is cleared by the group stage (setRowNodeGroup), not here.
     public execute(changedPath: ChangedPath | undefined): void {
@@ -168,39 +160,7 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
             setAggDataWithSiblings(rowNode, aggResult, colModel);
         });
     }
-
-    public getAggregatedChildren(rowNode: RowNode | null | undefined, col: AgColumn | null | undefined): RowNode[] {
-        const { gos } = this;
-        if (!rowNode?.group || !this.csrm) {
-            return [];
-        }
-
-        // For pinned siblings, delegate to the source row which has the actual children.
-        if (rowNode.rowPinned) {
-            rowNode = rowNode.pinnedSibling;
-            if (!rowNode) {
-                return [];
-            }
-        }
-
-        const colDef = col?.colDef;
-        const pivotKeys = colDef?.pivotKeys;
-        if (pivotKeys) {
-            if (rowNode.leafGroup && pivotKeys.length && !colDef.pivotTotalColumnIds) {
-                return getNodesFromMappedSet(rowNode.childrenMapped, pivotKeys);
-            }
-            return rowNode.childrenAfterFilter ?? rowNode.childrenAfterGroup ?? [];
-        }
-
-        if (_getGroupAggFiltering(gos) || gos.get('suppressAggFilteredOnly')) {
-            return rowNode.childrenAfterGroup ?? [];
-        }
-
-        return rowNode.childrenAfterFilter ?? rowNode.childrenAfterGroup ?? [];
-    }
 }
-
-// ── Module-level aggregation functions ────────────────────────────────────
 
 /** Aggregates value columns for a single group node (non-pivot path). */
 const aggregateValuesOnly = (
@@ -440,16 +400,4 @@ const resolvePivotColumns = (
     }
     resolved.length = count;
     return resolved;
-};
-
-/** Traverses childrenMapped using pivot keys to get the matching RowNode array. */
-const getNodesFromMappedSet = (mappedSet: any, keys: string[] | null | undefined): RowNode[] => {
-    if (!keys) {
-        return [];
-    }
-    let mapPointer = mappedSet;
-    for (let i = 0, len = keys.length; i < len && mapPointer; ++i) {
-        mapPointer = mapPointer[keys[i]];
-    }
-    return Array.isArray(mapPointer) ? mapPointer : [];
 };

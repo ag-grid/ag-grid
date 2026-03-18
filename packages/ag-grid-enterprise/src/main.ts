@@ -81,6 +81,7 @@ export { PivotModule } from './pivot/pivotModule';
 export { FindModule } from './find/findModule';
 export { BatchEditModule } from './batch-edit/batchEditModule';
 export { RowGroupingEditModule } from './rowGrouping/rowGroupingEditModule';
+export { distributeGroupValue } from './rowGrouping/distributeGroupValue/distributeGroupValue';
 
 export { GridChartsModule, IntegratedChartsModule } from './charts/integratedChartsModule';
 

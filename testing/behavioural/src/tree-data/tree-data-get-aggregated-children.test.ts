@@ -131,4 +131,47 @@ describe('IRowNode.getAggregatedChildren() with tree data', () => {
         expect(children.length).toBe(2);
         expect(children.map((n) => n.data?.name).sort()).toEqual(['file1.txt', 'file2.txt']);
     });
+
+    test('recursive returns all leaf descendants through nested folders', async () => {
+        const gridOptions: GridOptions = {
+            treeData: true,
+            columnDefs: [{ field: 'name' }, { field: 'size', aggFunc: 'sum' }],
+            autoGroupColumnDef: { headerName: 'File' },
+            getDataPath: (data) => data.path,
+            getRowId: ({ data }) => data.id,
+            groupDefaultExpanded: -1,
+        };
+
+        const api = gridsManager.createGrid('myGrid', gridOptions);
+
+        applyTransactionChecked(api, {
+            add: [
+                { id: '1', path: ['Documents'], name: 'Documents', size: 0 },
+                { id: '2', path: ['Documents', 'Work'], name: 'Work', size: 0 },
+                { id: '3', path: ['Documents', 'Work', 'report.pdf'], name: 'report.pdf', size: 100 },
+                { id: '4', path: ['Documents', 'Work', 'data.xlsx'], name: 'data.xlsx', size: 200 },
+                { id: '5', path: ['Documents', 'Personal'], name: 'Personal', size: 0 },
+                { id: '6', path: ['Documents', 'Personal', 'photo.jpg'], name: 'photo.jpg', size: 50 },
+            ],
+        });
+
+        const documentsNode = api.getRowNode('1')!;
+
+        // Without recursive: returns Work and Personal subfolders
+        const immediateChildren = documentsNode.getAggregatedChildren('size');
+        expect(immediateChildren.length).toBe(2);
+        expect(immediateChildren.map((n) => n.data?.name).sort()).toEqual(['Personal', 'Work']);
+
+        // With recursive: returns all 3 leaf files
+        const allLeaves = documentsNode.getAggregatedChildren('size', true);
+        expect(allLeaves.length).toBe(3);
+        expect(allLeaves.every((n) => !n.group)).toBe(true);
+        expect(allLeaves.map((n) => n.data?.name).sort()).toEqual(['data.xlsx', 'photo.jpg', 'report.pdf']);
+
+        // For a leaf folder (Work), recursive returns same as non-recursive
+        const workNode = api.getRowNode('2')!;
+        const workLeaves = workNode.getAggregatedChildren('size', true);
+        expect(workLeaves.length).toBe(2);
+        expect(workLeaves.map((n) => n.data?.name).sort()).toEqual(['data.xlsx', 'report.pdf']);
+    });
 });
