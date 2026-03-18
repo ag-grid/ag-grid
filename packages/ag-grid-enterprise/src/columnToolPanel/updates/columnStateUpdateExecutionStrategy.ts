@@ -254,6 +254,7 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
     public hasPendingChanges(): boolean {
         const { state, beans } = this;
         const { columnState, columnOrder, rowGroup, aggregation, pivot, pivotMode, sort, aggFuncs } = state;
+        const getColIds = (cols: AgColumn[] | undefined) => (cols ?? []).map((c) => c.getColId());
 
         if (columnState) {
             for (const [colId, patch] of columnState.patches) {
@@ -266,8 +267,6 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
                 if (patch.sort !== undefined && patch.sort !== column.getSortDef()?.direction) return true;
             }
         }
-
-        const getColIds = (cols: AgColumn[] | undefined) => (cols ?? []).map((c) => c.getColId());
 
         if (columnOrder && !_areEqual(columnOrder.colIds, getPrimaryColumnIds(beans))) return true;
         if (rowGroup && !_areEqual(rowGroup.colIds, getColIds(beans.rowGroupColsSvc?.columns))) return true;
