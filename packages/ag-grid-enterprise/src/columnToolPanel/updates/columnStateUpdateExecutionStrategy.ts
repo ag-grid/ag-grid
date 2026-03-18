@@ -262,7 +262,7 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
                 if (patch.rowGroup !== undefined && !!patch.rowGroup !== column.isRowGroupActive()) return true;
                 if (patch.pivot !== undefined && !!patch.pivot !== column.isPivotActive()) return true;
                 if (patch.aggFunc !== undefined && patch.aggFunc !== column.getAggFunc()) return true;
-                if (patch.sort !== undefined && patch.sort !== column.getSortDef()?.sort) return true;
+                if (patch.sort !== undefined && patch.sort !== column.getSortDef()?.direction) return true;
             }
         }
 
@@ -310,7 +310,7 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
             for (const [colId, sortDef] of sort.sortDefsByColId) {
                 const column = beans.colModel.getColDefCol(colId);
                 if (!column) continue;
-                if ((sortDef?.sort ?? null) !== (column.getSortDef()?.sort ?? null)) return true;
+                if ((sortDef?.direction ?? null) !== (column.getSortDef()?.direction ?? null)) return true;
             }
             if (sort.baselineCleared) {
                 for (const col of getPrimaryColumns(beans)) {

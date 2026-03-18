@@ -37,6 +37,14 @@ export class ColumnStateUpdateStrategy extends BeanStub implements IColumnStateU
         fallback.commit();
     }
 
+    public hasPendingChanges(deferMode: boolean): boolean {
+        const { strategy, fallback } = this.resolveUpdates();
+        if (strategy) {
+            return strategy.hasPendingChanges(deferMode);
+        }
+        return fallback.hasPendingChanges();
+    }
+
     public moveColumns(deferMode: boolean, columns: AgColumn[], targetIndex: number, eventType: ColumnEventType): void {
         const { strategy, fallback } = this.resolveUpdates();
         if (strategy) {
