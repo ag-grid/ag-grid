@@ -1,4 +1,4 @@
-import {
+import type {
     AgColumn,
     BeanCollection,
     ColumnEventType,
@@ -6,9 +6,8 @@ import {
     IAggFunc,
     IColumnStateUpdateStrategy,
     SortDef,
-    _areEqual,
 } from 'ag-grid-community';
-import { BeanStub, _applyColumnState, isColumnGroupAutoCol, isSpecialCol } from 'ag-grid-community';
+import { BeanStub, _applyColumnState, _areEqual, isColumnGroupAutoCol, isSpecialCol } from 'ag-grid-community';
 
 import type {
     ColumnStateConcreteUpdateStrategy,
@@ -255,30 +254,52 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
         if (columnState) {
             for (const [colId, patch] of columnState.patches) {
                 const column = beans.colModel.getColDefCol(colId);
-                if (!column) continue;
-                if (patch.hide !== undefined && patch.hide !== !column.isVisible()) return true;
-                if (patch.rowGroup !== undefined && !!patch.rowGroup !== column.isRowGroupActive()) return true;
-                if (patch.pivot !== undefined && !!patch.pivot !== column.isPivotActive()) return true;
-                if (patch.aggFunc !== undefined && patch.aggFunc !== column.getAggFunc()) return true;
-                if (patch.sort !== undefined && patch.sort !== column.getSortDef()?.direction) return true;
+                if (!column) {
+                    continue;
+                }
+                if (
+                    (patch.hide !== undefined && patch.hide !== !column.isVisible()) ||
+                    (patch.rowGroup !== undefined && !!patch.rowGroup !== column.isRowGroupActive()) ||
+                    (patch.pivot !== undefined && !!patch.pivot !== column.isPivotActive()) ||
+                    (patch.aggFunc !== undefined && patch.aggFunc !== column.getAggFunc()) ||
+                    (patch.aggFunc !== undefined && patch.aggFunc !== column.getAggFunc())
+                ) {
+                    return true;
+                }
             }
         }
 
-        if (columnOrder && !_areEqual(columnOrder.colIds, getPrimaryColumnIds(beans))) return true;
-        if (rowGroup && !_areEqual(rowGroup.colIds, getColIds(beans.rowGroupColsSvc?.columns))) return true;
-        if (aggregation && !_areEqual(aggregation.colIds, getColIds(beans.valueColsSvc?.columns))) return true;
-        if (pivot && !_areEqual(pivot.colIds, getColIds(beans.pivotColsSvc?.columns))) return true;
-        if (pivotMode && pivotMode.pivotMode !== beans.colModel.isPivotMode()) return true;
+        if (columnOrder && !_areEqual(columnOrder.colIds, getPrimaryColumnIds(beans))) {
+            return true;
+        }
+        if (rowGroup && !_areEqual(rowGroup.colIds, getColIds(beans.rowGroupColsSvc?.columns))) {
+            return true;
+        }
+        if (aggregation && !_areEqual(aggregation.colIds, getColIds(beans.valueColsSvc?.columns))) {
+            return true;
+        }
+        if (pivot && !_areEqual(pivot.colIds, getColIds(beans.pivotColsSvc?.columns))) {
+            return true;
+        }
+        if (pivotMode && pivotMode.pivotMode !== beans.colModel.isPivotMode()) {
+            return true;
+        }
 
         if (sort) {
             for (const [colId, sortDef] of sort.sortDefsByColId) {
                 const column = beans.colModel.getColDefCol(colId);
-                if (!column) continue;
-                if ((sortDef?.direction ?? null) !== (column.getSortDef()?.direction ?? null)) return true;
+                if (!column) {
+                    continue;
+                }
+                if ((sortDef?.direction ?? null) !== (column.getSortDef()?.direction ?? null)) {
+                    return true;
+                }
             }
             if (sort.baselineCleared) {
                 for (const col of getPrimaryColumns(beans)) {
-                    if (!sort.sortDefsByColId.has(col.getColId()) && col.getSortDef() !== null) return true;
+                    if (!sort.sortDefsByColId.has(col.getColId()) && col.getSortDef() !== null) {
+                        return true;
+                    }
                 }
             }
         }
@@ -286,8 +307,12 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
         if (aggFuncs) {
             for (const [colId, aggFunc] of aggFuncs.values) {
                 const column = beans.colModel.getColDefCol(colId);
-                if (!column) continue;
-                if (aggFunc !== column.getAggFunc()) return true;
+                if (!column) {
+                    continue;
+                }
+                if (aggFunc !== column.getAggFunc()) {
+                    return true;
+                }
             }
         }
 
