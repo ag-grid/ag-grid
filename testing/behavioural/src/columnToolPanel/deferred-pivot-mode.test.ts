@@ -1485,6 +1485,16 @@ describe('deferred column tool panel pivot mode', () => {
         expect(getApplyButton(toolPanelGui).disabled).toBe(true);
     });
 
+    test('apply button becomes enabled when pivot mode is toggled off', async () => {
+        const { toolPanelGui } = await createDeferredPivotModeGrid();
+
+        expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+
+        getPivotModeToggle(toolPanelGui).click();
+
+        expect(getApplyButton(toolPanelGui).disabled).toBe(false);
+    });
+
     test('apply button becomes enabled when a column is toggled and disabled again when toggled back to original state', async () => {
         const { gridApi, toolPanel, toolPanelGui } = await createDeferredNonPivotGrid();
         const athlete = gridApi.getColumn('athlete')! as AgColumn;

@@ -180,6 +180,9 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     private readonly onPivotModePanelValueChanged = (): void => {
         this.refreshToolPanelLayouts();
         this.setLastVisible();
+        this.deferredButtonsComp?.updateValidity(
+            this.beans.columnStateUpdateStrategy.hasPendingChanges(this.isDeferModeEnabled)
+        );
     };
 
     public refreshDeferredUi(): void {
