@@ -1,4 +1,4 @@
-import type {
+import {
     AgColumn,
     BeanCollection,
     ColumnEventType,
@@ -6,6 +6,7 @@ import type {
     IAggFunc,
     IColumnStateUpdateStrategy,
     SortDef,
+    _areEqual,
 } from 'ag-grid-community';
 import { BeanStub, _applyColumnState, isColumnGroupAutoCol, isSpecialCol } from 'ag-grid-community';
 
@@ -266,45 +267,13 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
             }
         }
 
-        if (columnOrder) {
-            if (!arraysEqual(columnOrder.colIds, getPrimaryColumnIds(beans))) return true;
-        }
+        const getColIds = (cols: AgColumn[] | undefined) => (cols ?? []).map((c) => c.getColId());
 
-        if (rowGroup) {
-            if (
-                !arraysEqual(
-                    rowGroup.colIds,
-                    (beans.rowGroupColsSvc?.columns ?? []).map((c) => c.getColId())
-                )
-            ) {
-                return true;
-            }
-        }
-
-        if (aggregation) {
-            if (
-                !arraysEqual(
-                    aggregation.colIds,
-                    (beans.valueColsSvc?.columns ?? []).map((c) => c.getColId())
-                )
-            ) {
-                return true;
-            }
-        }
-
-        if (pivot) {
-            if (
-                !arraysEqual(
-                    pivot.colIds,
-                    (beans.pivotColsSvc?.columns ?? []).map((c) => c.getColId())
-                )
-            )
-                return true;
-        }
-
-        if (pivotMode) {
-            if (pivotMode.pivotMode !== beans.colModel.isPivotMode()) return true;
-        }
+        if (columnOrder && !_areEqual(columnOrder.colIds, getPrimaryColumnIds(beans))) return true;
+        if (rowGroup && !_areEqual(rowGroup.colIds, getColIds(beans.rowGroupColsSvc?.columns))) return true;
+        if (aggregation && !_areEqual(aggregation.colIds, getColIds(beans.valueColsSvc?.columns))) return true;
+        if (pivot && !_areEqual(pivot.colIds, getColIds(beans.pivotColsSvc?.columns))) return true;
+        if (pivotMode && pivotMode.pivotMode !== beans.colModel.isPivotMode()) return true;
 
         if (sort) {
             for (const [colId, sortDef] of sort.sortDefsByColId) {
@@ -764,14 +733,6 @@ function getDraftFunctionColumnIds(
     }
 
     return colIds;
-}
-
-function arraysEqual(a: string[], b: string[]): boolean {
-    if (a.length !== b.length) return false;
-    for (let i = 0; i < a.length; i++) {
-        if (a[i] !== b[i]) return false;
-    }
-    return true;
 }
 
 function syncPrimaryColDefOrderFromCurrentColumns(beans: BeanStub['beans']): void {
