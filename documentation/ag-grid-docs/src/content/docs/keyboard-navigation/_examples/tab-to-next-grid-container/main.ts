@@ -42,21 +42,21 @@ let lastFocusedCell: CellPosition | null = null;
 const tabToNextGridContainer: TabToNextGridContainer<IOlympicData> = (
     params: TabToNextGridContainerParams<IOlympicData>
 ) => {
-    const { backwards, fromContainer, toContainer, defaultTarget } = params;
+    const { backwards, previousContainer, nextContainer, defaultTarget } = params;
 
     // route tabbing out of the last grid cell into pagination controls first.
-    if (!backwards && fromContainer === 'gridBody' && toContainer === 'external') {
+    if (!backwards && previousContainer === 'gridBody' && nextContainer === 'external') {
         return 'pagination';
     }
 
     // restore last focused cell when shift-tabbing from pagination back into the grid.
-    if (backwards && fromContainer === 'pagination' && toContainer === 'gridBody') {
+    if (backwards && previousContainer === 'pagination' && nextContainer === 'gridBody') {
         const target = lastFocusedCell ?? defaultTarget;
         return target == null ? undefined : target;
     }
 
     // from pagination forwards, allow browser default focus flow to leave the grid.
-    if (!backwards && fromContainer === 'pagination' && toContainer === 'external') {
+    if (!backwards && previousContainer === 'pagination' && nextContainer === 'external') {
         return false;
     }
 
