@@ -730,7 +730,7 @@ export const AG_GRID_ERRORS = {
     297: () =>
         '`api.hideOverlay()` does not hide the no matching rows overlay as it is only controlled by grid state. Set `suppressOverlays=["noMatchingRows"] to not show it.' as const,
     298: () =>
-        `Columns Tool Panel 'buttons' is configured without 'apply'. Without an apply button, changes will not be deferred and the cancel button will have no effect. Include 'apply' in the buttons array to enable deferred mode.` as const,
+        `Columns Tool Panel 'buttons' requires 'apply' to enable deferred mode. Without it, other buttons have no effect.` as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;
