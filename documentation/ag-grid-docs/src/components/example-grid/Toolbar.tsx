@@ -8,7 +8,10 @@ import type { GridApi } from 'ag-grid-community';
 import styles from './Toolbar.module.scss';
 import { createDataSizeValue } from './utils';
 
+const IS_SSR = typeof window === 'undefined';
+
 function updateUrlParam(key: string, value: string) {
+    if (IS_SSR) return;
     const url = new URL(window.location.href);
     url.searchParams.set(key, value);
     history.replaceState({}, '', url);
