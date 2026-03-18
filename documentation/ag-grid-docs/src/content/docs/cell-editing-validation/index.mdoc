@@ -17,6 +17,31 @@ Validation is performed when editing ends, and the grid will handle invalid valu
 
 {% gridExampleRunner title="Cell Editor Validation" name="cell-editor-validation" /%}
 
+The example above uses the following configuration:
+
+```
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'athlete',
+            cellEditor: 'agTextCellEditor',
+            cellEditorParams: { maxLength: 10 },
+        },
+        {
+            field: 'age',
+            cellEditor: 'agNumberCellEditor',
+            cellEditorParams: { min: 0, max: 100 },
+        },
+        {
+            field: 'date',
+            cellEditor: 'agDateStringCellEditor',
+            cellEditorParams: { min: '2008-12-31' },
+        },
+    ],
+    defaultColDef: { editable: true },
+}
+```
+
 ## Overriding Validation
 
 To add custom validation logic to a Provided Editor, use the `getValidationErrors()` callback inside the `ICellEditorParams`. This allows you to define additional rules that are specific to your application.

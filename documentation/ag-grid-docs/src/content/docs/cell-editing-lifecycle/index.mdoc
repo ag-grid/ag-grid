@@ -2,7 +2,7 @@
 title: "Editing Lifecycle"
 ---
 
-The cell editing lifecycle covers how edits start and stop, how user input is parsed, and how changes are written back to your data.
+Tracks the stages between an edit starting and the final value being written to your data.
 
 Once a column is [enabled for editing](./cell-editing/), three concepts govern the editing lifecycle:
 
@@ -10,9 +10,7 @@ Once a column is [enabled for editing](./cell-editing/), three concepts govern t
 
 Editing starts when a trigger fires (keyboard, mouse, or API), the cell enters edit mode, and a stop condition (Tab, Enter, Escape, focus loss) ends it.
 
-Editing stops when the user presses {% kbd "⇥ Tab" /%} (moves to next cell), {% kbd "↵ Enter" /%} (confirms), {% kbd "⎋ Esc" /%} (cancels), clicks another cell, or calls `api.stopEditing()`.
-
-Read more about how to start and end editing in [Start / Stop Editing](./cell-editing-start-stop/).
+Editing stops when the user presses {% kbd "⇥ Tab" /%} (moves to next cell), {% kbd "↵ Enter" /%} (confirms), {% kbd "⎋ Esc" /%} (cancels), clicks another cell, or calls `api.stopEditing()`. See [Start / Stop Editing](./cell-editing-start-stop/) to customise these triggers and behaviours.
 
 ## Parsing Values
 

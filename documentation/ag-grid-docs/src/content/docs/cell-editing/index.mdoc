@@ -26,7 +26,7 @@ By default, the grid uses [Cell Data Types](./cell-data-types/) to provide diffe
 
 The example above uses the following configuration:
 
-```
+```js
 columnDefs: [
     {
         field: 'athlete',
@@ -94,6 +94,6 @@ Cell editing results in the following events.
 
 {% apiDocumentation source="grid-events/events.json" section="editing" names=["cellValueChanged","cellEditingStarted","cellEditingStopped","rowEditingStarted","rowEditingStopped","cellEditRequest","rowValueChanged"] config={"overrideBottomMargin":"0rem", "hideMore":false} /%}
 
-## Row Grouping and Cell Editing
-
+{% note %}
 For cell editing with row grouping, see [Row Grouping - Editing Groups](./grouping-edit/).
+{% /note %}

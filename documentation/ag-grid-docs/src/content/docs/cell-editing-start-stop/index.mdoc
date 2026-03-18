@@ -2,11 +2,11 @@
 title: "Start/Stop Cell Editing"
 ---
 
-Customize when and how editing starts and stops using configuration options, keyboard shortcuts, or the Grid API.
+Customise when and how editing starts and stops using configuration options, keyboard shortcuts, or the Grid API.
 
 ## Start Triggers
 
-Assuming `editable=true` or `editable` has a callback that returns `true` for the Column Definition, editing will start upon any of the following:
+Assuming `editable=true` or `editable` has a callback that returns `true` for the Column Definition, editing starts on any of the following:
 
 -   **Edit Key Pressed**: One of the following is pressed: {% kbd "↵ Enter" /%}, {% kbd "F2" /%}.
 -   **Backspace**: The default editor will start and clear the contents of the cell if {% kbd "Backspace" /%} is pressed on Windows. To mimic this behaviour on MacOS, use the `enableCellEditingOnBackspace=true` grid option.
@@ -24,6 +24,14 @@ The grid below has `singleClickEdit=true` so that editing will start on a cell w
 
 {% gridExampleRunner title="Single Click Editing" name="single-click-editing"  exampleHeight=520 /%}
 
+The example above uses the following configuration:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    singleClickEdit: true,
+}
+```
+
 ### No-Click Editing
 
 To configure the grid so neither Single-Click nor Double-Click starts editing, set `suppressClickEdit=true`. This is useful when you want to start the editing in another way, such as including a button in your cell renderer.
@@ -32,9 +40,17 @@ The grid below has `suppressClickEdit=true` so that clicking doesn't start editi
 
 {% gridExampleRunner title="No Click Editing" name="single-click-editing-renderer"  exampleHeight=520 /%}
 
+The example above uses the following configuration:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    suppressClickEdit: true,
+}
+```
+
 ## Stop Triggers
 
-The grid will stop editing when any of the following happen:
+The grid stops editing when any of the following occur:
 
 -   **Callback stopEditing**: The callback `stopEditing` (from the params above) gets called by the editor. This is how your cell editor informs the grid to stop editing.
 -   **Other Cell Focus**: If focus in the grid goes to another cell, the editing will stop.
@@ -80,7 +96,7 @@ By default pressing {% kbd "↵ Enter" /%} will start editing on a cell, or stop
 To allow consistency with Excel the grid has the following properties:
 
 -   `enterNavigatesVertically`: Set to `true` to have {% kbd "↵ Enter" /%} key move focus to the cell below if not editing. The default is {% kbd "↵ Enter" /%} key starts editing the currently focused cell.
--   `enterNavigatesVerticallyAfterEdit:` Set to `true` to have {% kbd "↵ Enter" /%} key move focus to the cell below after {% kbd "↵ Enter" /%} is pressed while editing. The default is editing will stop and focus will remain on the editing cell.
+-   `enterNavigatesVerticallyAfterEdit` Set to `true` to have {% kbd "↵ Enter" /%} key move focus to the cell below after {% kbd "↵ Enter" /%} is pressed while editing. The default is editing will stop and focus will remain on the editing cell.
 
 The example below demonstrates the focus moving down when {% kbd "↵ Enter" /%} is pressed.
 
