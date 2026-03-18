@@ -10,7 +10,7 @@ import { BeanStub } from 'ag-grid-community';
 
 import {
     ColumnStateUpdateExecutionStrategy,
-    createSyncColumnStateUpdateExecutionStrategy,
+    SynchronousColumnStateUpdateStrategy,
 } from './columnStateUpdateExecutionStrategy';
 import type { ColumnStateConcreteUpdateStrategy } from './columnStateUpdateTypes';
 
@@ -190,7 +190,7 @@ export class ColumnStateUpdateStrategy extends BeanStub implements IColumnStateU
     }
 
     private getFallbackUpdates(): ColumnStateConcreteUpdateStrategy {
-        return (this.fallbackUpdates ??= createSyncColumnStateUpdateExecutionStrategy(this.beans));
+        return (this.fallbackUpdates ??= new SynchronousColumnStateUpdateStrategy(this.beans));
     }
 
     private resolveUpdates(): {
