@@ -8,7 +8,11 @@ import type { GridApi } from 'ag-grid-community';
 import styles from './Toolbar.module.scss';
 import { createDataSizeValue } from './utils';
 
-const IS_SSR = typeof window === 'undefined';
+function updateUrlParam(key: string, value: string) {
+    const url = new URL(window.location.href);
+    url.searchParams.set(key, value);
+    history.replaceState({}, '', url);
+}
 
 interface SelectOption {
     label: string;
@@ -48,6 +52,8 @@ export const Toolbar = ({
             type: 'dataSize',
             value,
         });
+
+        updateUrlParam('datasize', value);
     }
 
     function onThemeChanged(newValue: SelectOption) {
@@ -63,16 +69,7 @@ export const Toolbar = ({
             value: newTheme,
         });
 
-        if (!IS_SSR) {
-            let url = window.location.href;
-            if (url.indexOf('?theme=') !== -1) {
-                url = url.replace(/\?theme=[\w:-]+/, `?theme=${newTheme}`);
-            } else {
-                const sep = url.indexOf('?') === -1 ? '?' : '&';
-                url += `${sep}theme=${newTheme}`;
-            }
-            history.replaceState({}, '', url);
-        }
+        updateUrlParam('theme', newTheme);
     }
 
     const [quickFilterText, setQuickFilterText] = useState('');

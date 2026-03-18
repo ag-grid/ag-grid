@@ -309,12 +309,13 @@ const desktopDefaultCols: (ColDef<RowItem> | ColGroupDef<RowItem>)[] = [
     },
     {
         headerName: 'Monthly Breakdown',
-        openByDefault: false,
+        openByDefault: true,
         children: [
             {
                 headerName: 'Winning Trends',
                 colId: 'winningTrends',
                 sortable: false,
+                columnGroupShow: 'closed',
                 cellRenderer: 'agSparklineCellRenderer',
                 cellRendererParams: {
                     deferRender: true,
