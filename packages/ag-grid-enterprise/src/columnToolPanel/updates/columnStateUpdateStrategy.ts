@@ -20,47 +20,23 @@ export class ColumnStateUpdateStrategy extends BeanStub implements IColumnStateU
     private fallbackUpdates?: ColumnStateConcreteUpdateStrategy;
 
     public applyColumnState(deferMode: boolean, state: ColumnState[], eventType: ColumnEventType): void {
-        const { strategy, fallback } = this.resolveUpdates();
-        if (strategy) {
-            strategy.applyColumnState(deferMode, state, eventType);
-            return;
-        }
-        fallback.applyColumnState(state, eventType);
+        this.dispatch('applyColumnState', deferMode, state, eventType);
     }
 
     public commit(deferMode: boolean): void {
-        const { strategy, fallback } = this.resolveUpdates();
-        if (strategy) {
-            strategy.commit(deferMode);
-            return;
-        }
-        fallback.commit();
+        this.dispatch('commit', deferMode);
     }
 
     public hasPendingChanges(deferMode: boolean): boolean {
-        const { strategy, fallback } = this.resolveUpdates();
-        if (strategy) {
-            return strategy.hasPendingChanges(deferMode);
-        }
-        return fallback.hasPendingChanges();
+        return this.dispatch('hasPendingChanges', deferMode);
     }
 
     public moveColumns(deferMode: boolean, columns: AgColumn[], targetIndex: number, eventType: ColumnEventType): void {
-        const { strategy, fallback } = this.resolveUpdates();
-        if (strategy) {
-            strategy.moveColumns(deferMode, columns, targetIndex, eventType);
-            return;
-        }
-        fallback.moveColumns(columns, targetIndex, eventType);
+        this.dispatch('moveColumns', deferMode, columns, targetIndex, eventType);
     }
 
     public reset(deferMode: boolean): void {
-        const { strategy, fallback } = this.resolveUpdates();
-        if (strategy) {
-            strategy.reset(deferMode);
-            return;
-        }
-        fallback.reset();
+        this.dispatch('reset', deferMode);
     }
 
     public setColumnsVisible(
@@ -69,52 +45,31 @@ export class ColumnStateUpdateStrategy extends BeanStub implements IColumnStateU
         visible: boolean,
         eventType: ColumnEventType
     ): void {
-        const { strategy, fallback } = this.resolveUpdates();
-        if (strategy) {
-            strategy.setColumnsVisible(deferMode, columns, visible, eventType);
-            return;
-        }
-        fallback.setColumnsVisible(columns, visible, eventType);
+        this.dispatch('setColumnsVisible', deferMode, columns, visible, eventType);
     }
 
     public isColumnVisibleInToolPanel(deferMode: boolean, column: AgColumn): boolean {
-        const { strategy, fallback } = this.resolveUpdates();
-        return strategy
-            ? strategy.isColumnVisibleInToolPanel(deferMode, column)
-            : fallback.isColumnVisibleInToolPanel(column);
+        return this.dispatch('isColumnVisibleInToolPanel', deferMode, column);
     }
 
     public setRowGroupColumns(deferMode: boolean, columns: AgColumn[], eventType: ColumnEventType): void {
-        const { strategy, fallback } = this.resolveUpdates();
-        if (strategy) {
-            strategy.setRowGroupColumns(deferMode, columns, eventType);
-            return;
-        }
-        fallback.setRowGroupColumns(columns, eventType);
+        this.dispatch('setRowGroupColumns', deferMode, columns, eventType);
     }
 
     public getRowGroupColumns(deferMode: boolean): AgColumn[] {
-        const { strategy, fallback } = this.resolveUpdates();
-        return strategy ? strategy.getRowGroupColumns(deferMode) : fallback.getRowGroupColumns();
+        return this.dispatch('getRowGroupColumns', deferMode);
     }
 
     public getPrimaryColumns(deferMode: boolean): AgColumn[] {
-        const { strategy, fallback } = this.resolveUpdates();
-        return strategy ? strategy.getPrimaryColumns(deferMode) : fallback.getPrimaryColumns();
+        return this.dispatch('getPrimaryColumns', deferMode);
     }
 
     public setValueColumns(deferMode: boolean, columns: AgColumn[], eventType: ColumnEventType): void {
-        const { strategy, fallback } = this.resolveUpdates();
-        if (strategy) {
-            strategy.setValueColumns(deferMode, columns, eventType);
-            return;
-        }
-        fallback.setValueColumns(columns, eventType);
+        this.dispatch('setValueColumns', deferMode, columns, eventType);
     }
 
     public getValueColumns(deferMode: boolean): AgColumn[] {
-        const { strategy, fallback } = this.resolveUpdates();
-        return strategy ? strategy.getValueColumns(deferMode) : fallback.getValueColumns();
+        return this.dispatch('getValueColumns', deferMode);
     }
 
     public setColumnAggFunc(
@@ -123,66 +78,39 @@ export class ColumnStateUpdateStrategy extends BeanStub implements IColumnStateU
         aggFunc: string | IAggFunc | null | undefined,
         eventType: ColumnEventType
     ): void {
-        const { strategy, fallback } = this.resolveUpdates();
-        if (strategy) {
-            strategy.setColumnAggFunc(deferMode, column, aggFunc, eventType);
-            return;
-        }
-        fallback.setColumnAggFunc(column, aggFunc, eventType);
+        this.dispatch('setColumnAggFunc', deferMode, column, aggFunc, eventType);
     }
 
     public getColumnAggFunc(deferMode: boolean, column: AgColumn): string | IAggFunc | null | undefined {
-        const { strategy, fallback } = this.resolveUpdates();
-        return strategy ? strategy.getColumnAggFunc(deferMode, column) : fallback.getColumnAggFunc(column);
+        return this.dispatch('getColumnAggFunc', deferMode, column);
     }
 
     public setPivotColumns(deferMode: boolean, columns: AgColumn[], eventType: ColumnEventType): void {
-        const { strategy, fallback } = this.resolveUpdates();
-        if (strategy) {
-            strategy.setPivotColumns(deferMode, columns, eventType);
-            return;
-        }
-        fallback.setPivotColumns(columns, eventType);
+        this.dispatch('setPivotColumns', deferMode, columns, eventType);
     }
 
     public getPivotColumns(deferMode: boolean): AgColumn[] {
-        const { strategy, fallback } = this.resolveUpdates();
-        return strategy ? strategy.getPivotColumns(deferMode) : fallback.getPivotColumns();
+        return this.dispatch('getPivotColumns', deferMode);
     }
 
     public setPivotMode(deferMode: boolean, pivotMode: boolean, eventType: ColumnEventType): void {
-        const { strategy, fallback } = this.resolveUpdates();
-        if (strategy) {
-            strategy.setPivotMode(deferMode, pivotMode, eventType);
-            return;
-        }
-        fallback.setPivotMode(pivotMode, eventType);
+        this.dispatch('setPivotMode', deferMode, pivotMode, eventType);
     }
 
     public getPivotMode(deferMode: boolean): boolean {
-        const { strategy, fallback } = this.resolveUpdates();
-        return strategy ? strategy.getPivotMode(deferMode) : fallback.getPivotMode();
+        return this.dispatch('getPivotMode', deferMode);
     }
 
     public isColumnSelectedInPivotModeToolPanel(deferMode: boolean, column: AgColumn): boolean {
-        const { strategy, fallback } = this.resolveUpdates();
-        return strategy
-            ? strategy.isColumnSelectedInPivotModeToolPanel(deferMode, column)
-            : fallback.isColumnSelectedInPivotModeToolPanel(column);
+        return this.dispatch('isColumnSelectedInPivotModeToolPanel', deferMode, column);
     }
 
     public progressSortFromEvent(deferMode: boolean, column: AgColumn, event: MouseEvent | KeyboardEvent): void {
-        const { strategy, fallback } = this.resolveUpdates();
-        if (strategy) {
-            strategy.progressSortFromEvent(deferMode, column, event);
-            return;
-        }
-        fallback.progressSortFromEvent(column, event);
+        this.dispatch('progressSortFromEvent', deferMode, column, event);
     }
 
     public getSortDef(deferMode: boolean, column: AgColumn): SortDef | null {
-        const { strategy, fallback } = this.resolveUpdates();
-        return strategy ? strategy.getSortDef(deferMode, column) : fallback.getSortDef(column);
+        return this.dispatch('getSortDef', deferMode, column);
     }
 
     private getUpdateStrategy(): IColumnStateUpdateStrategy | undefined {
@@ -193,13 +121,15 @@ export class ColumnStateUpdateStrategy extends BeanStub implements IColumnStateU
         return (this.fallbackUpdates ??= new SynchronousColumnStateUpdateStrategy(this.beans));
     }
 
-    private resolveUpdates(): {
-        strategy: IColumnStateUpdateStrategy | undefined;
-        fallback: ColumnStateConcreteUpdateStrategy;
-    } {
-        return {
-            strategy: this.getUpdateStrategy(),
-            fallback: this.getFallbackUpdates(),
-        };
+    private dispatch<M extends keyof IColumnStateUpdateStrategy>(
+        method: M,
+        deferMode: boolean,
+        ...args: Parameters<IColumnStateUpdateStrategy[M]> extends [any, ...infer Rest] ? Rest : []
+    ): ReturnType<IColumnStateUpdateStrategy[M]> {
+        const strategy = this.getUpdateStrategy();
+        if (strategy) {
+            return (strategy as any)[method](deferMode, ...args);
+        }
+        return (this.getFallbackUpdates() as any)[method](...args);
     }
 }
