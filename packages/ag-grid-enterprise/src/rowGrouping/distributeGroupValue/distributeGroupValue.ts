@@ -70,6 +70,8 @@ export const distributeGroupValue = (
                 }
                 entry = { distribution: 'overwrite', integerDistribution, min, max, getValue, setValue };
             }
+            // Record mode handles unmatched aggFuncs above — the distributor doesn't need defaultHandler
+            defaultHandler = undefined;
         }
     }
 

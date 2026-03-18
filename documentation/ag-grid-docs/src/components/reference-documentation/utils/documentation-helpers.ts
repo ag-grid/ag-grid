@@ -245,14 +245,14 @@ export function formatJsDocString(docString: string) {
         .replace(/\s*\*?\s*@example\b([^\n]*)([\s\S]*?)(?=\s*\*?\s*@\w|$)/g, (_match, desc: string, body: string) => {
             const descText = desc.replace(/^\s*\*?\s*/, '').trim();
             const fenceMatch = body.match(/```\w*\n([\s\S]*?)```/);
-            const code = fenceMatch
-                ? fenceMatch[1]
-                      .replace(/^\s*\*\s?/gm, '')
-                      .trim()
-                      .replace(/&/g, '&amp;')
-                      .replace(/</g, '&lt;')
-                      .replace(/>/g, '&gt;')
-                : null;
+            const rawCode = fenceMatch ? fenceMatch[1] : body;
+            const code =
+                rawCode
+                    .replace(/^\s*\*\s?/gm, '')
+                    .trim()
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;') || null;
             if (!descText && !code) {
                 return '';
             }

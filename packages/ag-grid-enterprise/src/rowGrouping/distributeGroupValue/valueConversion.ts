@@ -38,7 +38,7 @@ export const resolveStrategy = (aggFunc: string | null, distribution: string | u
     }
 };
 
-/** Coerces an unknown value to a number. Returns 0 for non-convertible inputs. Preserves NaN, Infinity, and -Infinity. */
+/** Coerces an unknown value to a number. Returns 0 for non-convertible inputs. Preserves NaN, Infinity, and -Infinity for number inputs. */
 export const toNumber = (raw: unknown): number => {
     if (typeof raw === 'number') {
         return raw;

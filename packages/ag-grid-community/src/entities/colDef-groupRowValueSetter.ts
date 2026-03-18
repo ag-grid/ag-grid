@@ -105,7 +105,8 @@ export interface GroupRowValueSetterParams<TData = any, TValue = any, TContext =
  * When set on `colDef.groupRowValueSetter`, this function is called whenever a group row cell
  * value is edited. Use it to distribute the edited value to descendant rows in any way you choose.
  *
- * Return `true` if at least one child value was changed, or `false` / `void` otherwise.
+ * Return `true` if at least one child value was changed, or `false` otherwise.
+ * If the function returns `void` or `undefined`, the grid assumes the value was changed (`true`).
  *
  * @example
  * ```ts
@@ -227,8 +228,9 @@ export interface GroupRowValueSetterDistributionOptions {
     /**
      * Distribution strategy to use. See {@link GroupRowValueSetterDistribution} for details.
      *
-     * When omitted, defaults to `'uniform'` for `sum` aggregation, `'overwrite'` for `avg`,
-     * and overwrite for all other aggregation functions.
+     * When omitted (in simple mode or inside a per-aggFunc record entry), defaults to
+     * `'uniform'` for `sum`, `'overwrite'` for `avg`/`count`, and the aggFunc's own
+     * strategy for `first`/`last`/`min`/`max`.
      */
     distribution?: GroupRowValueSetterDistribution;
 
@@ -372,7 +374,7 @@ export interface GroupRowValueSetterDistributionOptions {
  * colDef.groupRowValueSetter = {
  *     distribution: { sum: 'percentage' },
  *     default: (params) => {
- *         // Called for any aggFunc not listed in the record (e.g. 'count', 'max', custom)
+ *         // Called for any aggFunc not listed in the record (e.g. 'avg', 'count', custom)
  *         for (const child of params.aggregatedChildren) {
  *             child.setDataValue(params.column, params.newValue, 'data');
  *         }
@@ -398,7 +400,7 @@ export interface GroupRowValueSetterOptions<TData = any, TValue = any, TContext 
      * - A custom {@link GroupRowValueSetterFunc} callback for full control.
      *
      * Aggregation functions not present in the record fall through to {@link default},
-     * then to the built-in default behaviour.
+     * then to overwriting all children (or the aggFunc's built-in strategy for `first`/`last`/`min`/`max`).
      *
      * Defaults to `'uniform'` for `sum`, `'overwrite'` for `avg` and other aggregation functions.
      *
@@ -419,17 +421,22 @@ export interface GroupRowValueSetterOptions<TData = any, TValue = any, TContext 
     distribution?: GroupRowValueSetterDistribution | GroupRowValueSetterDistributionRecord<TData, TValue, TContext>;
 
     /**
-     * Fallback handler invoked for aggregation functions not matched by `distribution`
-     * (when it is a record) and not handled by the built-in strategies (`sum`, `avg`, `first`, `last`).
+     * Fallback handler invoked for aggregation functions not present in the `distribution` record.
      *
-     * If not provided, unmatched aggregation functions default to overwriting all children with `newValue`.
+     * When `distribution` is a record, any aggregation function whose name is not a key in the record
+     * triggers this handler. If not provided, unmatched aggregation functions fall back to
+     * overwriting all children with `newValue` (or the aggFunc's built-in strategy for
+     * `first`/`last`/`min`/`max`).
+     *
+     * This handler is only used in record mode. When `distribution` is a string or omitted,
+     * the built-in defaults apply and `default` is not called.
      *
      * @example
      * ```ts
      * colDef.groupRowValueSetter = {
      *     distribution: { sum: 'percentage' },
      *     default: (params) => {
-     *         // Custom logic for 'count', 'max', or any other aggFunc
+     *         // Called for any aggFunc not listed in the record (e.g. 'avg', 'count', custom)
      *         for (const child of params.aggregatedChildren) {
      *             child.setDataValue(params.column, params.newValue, 'data');
      *         }

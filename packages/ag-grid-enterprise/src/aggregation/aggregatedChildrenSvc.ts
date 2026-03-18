@@ -64,7 +64,8 @@ const getImmediateAggChildren = (
     return rowNode.childrenAfterFilter ?? rowNode.childrenAfterGroup ?? [];
 };
 
-/** Recursively collects leaf (non-group) descendants from aggregated children. */
+/** Recursively collects leaf (non-group) descendants from aggregated children.
+ * Recursion depth equals the number of group levels, which is small in practice. */
 const collectLeafDescendants = (
     children: RowNode[],
     col: AgColumn | null | undefined,
