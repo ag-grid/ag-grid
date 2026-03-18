@@ -58,7 +58,7 @@ export const Toolbar = ({
             value,
         });
 
-        updateUrlParam('datasize', value);
+        updateUrlParam('dataSize', value);
     }
 
     function onThemeChanged(newValue: SelectOption) {
