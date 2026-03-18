@@ -24,6 +24,7 @@ import type { ICellEditorAngularComp } from 'ag-grid-angular';
                 height: 100%;
                 box-sizing: border-box;
                 border: 1px solid transparent;
+                padding: 0.25rem 0.5rem;
             }
 
             .phone-cell-editor:focus {
@@ -54,6 +55,12 @@ export class PhoneEditor implements ICellEditorAngularComp, AfterViewInit {
         setTimeout(() => {
             this.inputRef.nativeElement.focus();
             this.inputRef.nativeElement.select();
+
+            const { cellStartedEdit, eventKey } = this.params;
+
+            if (cellStartedEdit && eventKey.length === 1) {
+                this.inputRef.nativeElement.value = eventKey;
+            }
         });
     }
 

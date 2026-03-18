@@ -24,7 +24,7 @@ If the user provides a command option of `help`:
 -   `git subrepo` must be installed (`git subrepo --version`).
 -   **Use `yarn subrepo` for push and pull** (never raw `git subrepo push`/`pull`). The wrapper handles edge cases like stale parent references. Other subrepo commands (e.g. `git subrepo status`, `git subrepo clean`) use `git subrepo` directly.
 -   **Never edit `external/ag-shared/.gitrepo` manually.** Only subrepo commands should modify this file.
--   Must be on a **feature branch** (not `latest`, `main`, or `master`).
+-   Should be on a **feature branch**. If on `latest`/`main`/`master`, the skill will offer to create one.
 -   Working tree must be **clean** (`git status --porcelain` is empty).
 -   The current repo must have `external/ag-shared/.gitrepo`.
 
@@ -55,11 +55,17 @@ SOURCE_REPO=$(basename "$SOURCE_ROOT")
 
 Validate:
 
--   `SOURCE_BRANCH` is not `latest`, `main`, or `master`.
 -   `git status --porcelain` is empty.
 -   `external/ag-shared/.gitrepo` exists.
 
-If any validation fails, report the issue and **STOP**.
+**If on `latest`, `main`, or `master`:** offer to create and switch to a `sync-ag-shared` feature branch. If the user confirms:
+
+```bash
+git checkout -b sync-ag-shared
+SOURCE_BRANCH="sync-ag-shared"
+```
+
+If the user declines or any other validation fails, report the issue and **STOP**.
 
 ### 1b. Discover Destination Repos
 
@@ -109,6 +115,18 @@ The sub-agent should produce:
     -   Changed rule globs may need `.claude/settings.json` updates.
     -   Script changes may need `package.json` or CI updates.
     -   Setup-prompts changes need `setup-prompts.sh` re-run in each repo.
+
+### No Changes Detected (Force Sync)
+
+If `git diff latest...HEAD` shows no changes (i.e., the branch is at the same commit as `latest` or has no ag-shared changes):
+
+1.  Inform the user that no local changes were found relative to `latest`.
+2.  Use `AskUserQuestion` to ask whether they want to proceed with a **force sync** — this will `yarn subrepo push ag-shared` to push the current `external/ag-shared/` state to the ag-shared remote, then pull it into all destination repos. This is useful when:
+    -   The ag-shared remote is out of sync with the consuming repos.
+    -   A previous sync was incomplete or failed partway through.
+    -   Changes were committed directly to `latest` and need propagating.
+3.  If the user confirms, continue to Step 3 with an empty change summary. The plan should note this is a **force sync** with no new changes on the branch.
+4.  If the user declines, **STOP**.
 
 ## STEP 3: Present Plan and Confirm
 

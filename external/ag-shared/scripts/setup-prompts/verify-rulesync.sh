@@ -207,14 +207,15 @@ generate_to_temp() {
 
     # Resolve symlinks in the copied .rulesync to actual file content
     # This is needed because symlinks point to relative paths that won't work in temp
-    for f in "$TEMP_DIR/.rulesync/commands/"*.md "$TEMP_DIR/.rulesync/subagents/"*.md "$TEMP_DIR/.rulesync/rules/"*.md; do
+    # Handles both top-level files and files in subdirectories (e.g., rules/data-engine/)
+    while IFS= read -r -d '' f; do
         if [[ -L "$f" ]]; then
             local target
             target=$(resolve_symlink "$REPO_ROOT/.rulesync/${f#$TEMP_DIR/.rulesync/}")
             rm "$f"
             cp "$target" "$f"
         fi
-    done 2>/dev/null || true
+    done < <(find "$TEMP_DIR/.rulesync/commands" "$TEMP_DIR/.rulesync/subagents" "$TEMP_DIR/.rulesync/rules" -name "*.md" -print0 2>/dev/null) || true
 
     # Copy original AGENTS.md from repo (the expected final state)
     if [[ -f "$REPO_ROOT/AGENTS.md" ]]; then
@@ -287,6 +288,12 @@ build_expected_inventory() {
             EXPECTED_FILES+=("$rules_dir/$basename")
         fi
     done
+
+    # Rules in subdirectories (e.g., rules/data-engine/*.md)
+    while IFS= read -r -d '' rule_file; do
+        local rel_path="${rule_file#$REPO_ROOT/.rulesync/rules/}"
+        EXPECTED_FILES+=("$rules_dir/$rel_path")
+    done < <(find "$REPO_ROOT/.rulesync/rules" -mindepth 2 -type f -name "*.md" -print0 2>/dev/null)
 
     # Commands (claudecode only - goes to commands/)
     # Skip files with _ prefix as they are internal helper files (e.g., _review-core.md)
@@ -530,6 +537,31 @@ verify_content() {
             fi
         fi
     done
+
+    # Verify rules in subdirectories (e.g., rules/data-engine/*.md)
+    while IFS= read -r -d '' rule_file; do
+        local rel_path="${rule_file#$REPO_ROOT/.rulesync/rules/}"
+        local source_file
+        source_file=$(resolve_symlink "$rule_file")
+        local output_file="$temp_output/$rules_dir/$rel_path"
+
+        if [[ -f "$output_file" ]]; then
+            local source_content
+            local output_content
+            source_content=$(strip_frontmatter "$source_file" | normalise_content)
+            output_content=$(strip_frontmatter "$output_file" | normalise_content)
+
+            if [[ "$source_content" != "$output_content" ]]; then
+                log_error "Content mismatch: $rules_dir/$rel_path"
+                log_info "  Source: $source_file"
+                log_info "  Output: $output_file"
+                diff <(echo "$source_content") <(echo "$output_content") | head -20 || true
+                ((content_errors++)) || true
+            else
+                log_success "Content verified: $rel_path"
+            fi
+        fi
+    done < <(find "$REPO_ROOT/.rulesync/rules" -mindepth 2 -type f -name "*.md" -print0 2>/dev/null)
 
     # Verify commands content (claudecode only)
     # Skip files with _ prefix as they are internal helper files (e.g., _review-core.md)

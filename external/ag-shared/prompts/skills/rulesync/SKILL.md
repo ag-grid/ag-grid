@@ -1,7 +1,7 @@
 ---
 targets: ['*']
 name: rulesync
-description: 'Configure AI/agentic tooling using rulesync. Use when asking about .rulesync/, adding or editing commands, rules, skills, or subagents, configuring AI tools like Claude Code or Cursor, understanding where AI config files live, editing prompt files, or asking how to add a new command/rule/skill/agent. Also use when someone references .claude/, .cursor/, .copilot/ or similar tool-specific config directories.'
+description: 'Use this skill whenever creating, editing, registering, or troubleshooting skills, commands, rules, subagents, or any AI prompt file. Covers SKILL.md authoring, frontmatter syntax (targets, description, globs, alwaysApply), symlink setup between .rulesync/ and external/ tiers, and regeneration/verification via setup-prompts.sh and verify-rulesync.sh. Also use when referencing .rulesync/, .claude/, .cursor/, .copilot/, or any AI tooling config directory — .rulesync/ is the single source of truth and generated directories must never be edited directly. IMPORTANT: Always load this skill alongside the skill-creator plugin — when creating or improving any skill, this skill provides the correct file locations, registration steps, and content tier decisions that the skill-creator workflow depends on.'
 ---
 
 # Rulesync Configuration Guide

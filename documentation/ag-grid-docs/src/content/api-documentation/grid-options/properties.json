@@ -1000,7 +1000,7 @@
         "tabToNextGridContainer": {
             "more": {
                 "name": "Custom Navigation",
-                "url": "./keyboard-navigation/#custom-navigation"
+                "url": "./keyboard-navigation/#custom-tabbing-between-grid-containers"
             }
         }
     },

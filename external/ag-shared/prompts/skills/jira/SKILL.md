@@ -23,6 +23,21 @@ context: fork
 
 Unified skill for creating, estimating, and analysing JIRA tickets across AG products.
 
+## Step 0: Verify Atlassian MCP Connection
+
+Before doing anything else, verify the Atlassian MCP is available by calling `mcp__atlassian__atlassianUserInfo`. If the tool is not available, returns an error, or the MCP server is not connected:
+
+**Hard stop.** Output the following and do not proceed:
+
+```
+Cannot proceed — Atlassian MCP is not connected.
+
+This skill requires the Atlassian MCP server to interact with JIRA.
+Please ensure the MCP connection is configured and active, then retry.
+```
+
+Do not attempt to work around the missing connection or produce partial results.
+
 ## Product Detection
 
 Detect the product from the repository context:
