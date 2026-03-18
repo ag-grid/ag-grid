@@ -31,8 +31,11 @@ export default {
             nextTick(() => {
                 this.$refs.input.focus();
                 this.$refs.input.select();
-                if (this.params.cellStartedEdit) {
-                    this.$refs.input.value = this.params.eventKey;
+
+                const { cellStartedEdit, eventKey } = this.params;
+
+                if (cellStartedEdit && eventKey.length === 1) {
+                    this.$refs.input.value = eventKey;
                 }
             });
         },

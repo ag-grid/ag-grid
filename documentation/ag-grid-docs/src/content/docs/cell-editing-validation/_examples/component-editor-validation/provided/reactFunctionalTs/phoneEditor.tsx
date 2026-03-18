@@ -26,7 +26,8 @@ export default memo(({ value, onValueChange, validate, cellStartedEdit, eventKey
     useEffect(() => {
         inputRef.current?.focus();
         inputRef.current?.select();
-        if (cellStartedEdit) {
+
+        if (cellStartedEdit && eventKey.length === 1) {
             setInternalValue(eventKey);
         }
     }, []);

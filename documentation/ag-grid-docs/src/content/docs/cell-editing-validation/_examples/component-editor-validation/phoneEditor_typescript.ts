@@ -33,8 +33,10 @@ export class PhoneEditor implements ICellEditorComp<string> {
         this.eInput.focus();
         this.eInput.select();
 
-        if (this.params.cellStartedEdit) {
-            this.eInput.value = this.params.eventKey!;
+        const { cellStartedEdit, eventKey } = this.params;
+
+        if (cellStartedEdit && eventKey.length === 1) {
+            this.eInput.value = eventKey;
         }
     }
 

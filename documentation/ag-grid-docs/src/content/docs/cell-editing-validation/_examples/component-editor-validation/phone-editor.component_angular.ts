@@ -55,8 +55,11 @@ export class PhoneEditor implements ICellEditorAngularComp, AfterViewInit {
         setTimeout(() => {
             this.inputRef.nativeElement.focus();
             this.inputRef.nativeElement.select();
-            if (this.params.cellStartedEdit) {
-                this.inputRef.nativeElement.value = this.params.eventKey;
+
+            const { cellStartedEdit, eventKey } = this.params;
+
+            if (cellStartedEdit && eventKey.length === 1) {
+                this.inputRef.nativeElement.value = eventKey;
             }
         });
     }
