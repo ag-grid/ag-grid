@@ -55,19 +55,21 @@ Quick-reference for all AI agent commands, skills, sub-agents, and rules availab
 
 ## Planning and Analysis
 
-| Type  | Name                            | Invoke                               | What it does                                     |
-| ----- | ------------------------------- | ------------------------------------ | ------------------------------------------------ |
-| Skill | 🔵 `plan-review`                | `/plan-review` (user)                | Review plans for completeness and correctness    |
-| Skill | 🔵 `plan-implementation-review` | `/plan-implementation-review` (user) | Review plan execution, identify delivery gaps    |
-| Skill | 🔵 `jira`                       | `/jira`                              | Create, estimate, or analyse JIRA tickets        |
-| Agent | 🔵 `nx-expert`                  | Auto                                 | Nx monorepo configuration and build optimisation |
+| Type  | Name                            | Invoke                               | What it does                                         |
+| ----- | ------------------------------- | ------------------------------------ | ---------------------------------------------------- |
+| Skill | 🔵 `jira`                       | `/jira`                              | Create, estimate, or analyse JIRA tickets            |
+| Skill | 🔵 `nx-performance`             | `/nx-performance`                    | Nx monorepo performance diagnostics and optimization |
+| Skill | 🔵 `plan-implementation-review` | `/plan-implementation-review` (user) | Review plan execution, identify delivery gaps        |
+| Skill | 🔵 `plan-review`                | `/plan-review` (user)                | Review plans for completeness and correctness        |
+| Agent | 🔵 `nx-expert`                  | Auto                                 | Nx monorepo configuration and build optimisation     |
 
 ## Prompt Hygiene
 
 | Type  | Name                  | Invoke                     | What it does                                     |
 | ----- | --------------------- | -------------------------- | ------------------------------------------------ |
-| Skill | 🔵 `validate-prompts` | `/validate-prompts` (user) | Validate prompt file references for path hygiene |
+| Skill | 🔵 `reflect`          | `/reflect` (user)          | Self-reflection and meta-cognitive analysis      |
 | Skill | 🔵 `rulesync`         | `/rulesync`                | Configure AI/agentic tooling via `.rulesync/`    |
+| Skill | 🔵 `validate-prompts` | `/validate-prompts` (user) | Validate prompt file references for path hygiene |
 
 ## Memory
 
@@ -144,12 +146,14 @@ Skills load on-demand when invoked. All skills are invoked via `/skill-name`. Al
 | 🔵 `git-split`                  | Split large files preserving git history                    |
 | 🔵 `git-worktree-clean`         | Hard-reset worktree to `origin/latest`                      |
 | 🔵 `jira`                       | Create, estimate, or analyse JIRA tickets                   |
+| 🔵 `nx-performance`             | Nx monorepo performance diagnostics and optimization        |
 | 🔵 `plan-implementation-review` | Review plan execution, identify delivery gaps               |
 | 🔵 `plan-review`                | Review plans for completeness and correctness               |
 | 🔵 `pr-create`                  | Commit, push, and open a PR                                 |
 | 🔵 `pr-review`                  | Review a PR (Markdown default, JSON with `--json`)          |
 | 🔵 `pr-split`                   | Split a branch into stacked PRs                             |
 | 🔵 `recall`                     | Load branch context, browse project memories                |
+| 🔵 `reflect`                    | Self-reflection and meta-cognitive analysis                 |
 | 🔵 `remember`                   | Save branch context or project learnings as memory          |
 | 🔵 `rulesync`                   | Configure AI/agentic tooling via `.rulesync/`               |
 | 🔵 `sync-ag-shared`             | Sync ag-shared subrepo changes across AG repos              |
