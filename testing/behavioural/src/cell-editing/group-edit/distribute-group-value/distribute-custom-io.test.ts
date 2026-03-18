@@ -17,7 +17,7 @@ describe('distributeGroupValue with custom getValue/setValue', () => {
                 groupRowValueSetter: (params) =>
                     distributeGroupValue(params, {
                         distribution: 'percentage',
-                        getValue: (child) => child.data?.customAmount ?? 0,
+                        getValue: ({ node }) => node.data?.customAmount ?? 0,
                     }),
             }
         );
@@ -43,9 +43,9 @@ describe('distributeGroupValue with custom getValue/setValue', () => {
             {
                 groupRowValueSetter: (params) =>
                     distributeGroupValue(params, {
-                        setValue: (child, _column, value) => {
-                            const old = child.data?.output;
-                            child.data.output = value;
+                        setValue: ({ node, value }) => {
+                            const old = node.data?.output;
+                            node.data.output = value;
                             return old !== value;
                         },
                     }),
@@ -76,10 +76,10 @@ describe('distributeGroupValue with custom getValue/setValue', () => {
                 groupRowValueSetter: (params) =>
                     distributeGroupValue(params, {
                         distribution: 'increment',
-                        getValue: (child) => child.data?.weight ?? 0,
-                        setValue: (child, _column, value) => {
-                            const old = child.data?.weight;
-                            child.data.weight = value;
+                        getValue: ({ node }) => node.data?.weight ?? 0,
+                        setValue: ({ node, value }) => {
+                            const old = node.data?.weight;
+                            node.data.weight = value;
                             return old !== value;
                         },
                     }),
@@ -105,10 +105,10 @@ describe('distributeGroupValue with custom getValue/setValue', () => {
             ],
             {
                 groupRowValueSetter: {
-                    integerDistribution: true,
-                    setValue: (child, _column, value) => {
-                        const old = child.data?.target;
-                        child.data.target = value;
+                    precision: 0,
+                    setValue: ({ node, value }) => {
+                        const old = node.data?.target;
+                        node.data.target = value;
                         return old !== value;
                     },
                 },
@@ -140,7 +140,7 @@ describe('distributeGroupValue with custom getValue/setValue', () => {
                 aggFunc: 'min',
                 groupRowValueSetter: (params) =>
                     distributeGroupValue(params, {
-                        getValue: (child) => child.data?.score ?? 0,
+                        getValue: ({ node }) => node.data?.score ?? 0,
                     }),
             }
         );
@@ -153,5 +153,57 @@ describe('distributeGroupValue with custom getValue/setValue', () => {
         expect(api.getRowNode('a1')?.data?.amount).toBe(5); // unchanged
         expect(api.getRowNode('a2')?.data?.amount).toBe(42); // min holder gets new value
         expect(api.getRowNode('a3')?.data?.amount).toBe(25); // unchanged
+    });
+
+    test('getValue/setValue receive api, context, node, colDef', async () => {
+        const receivedGetParams: any[] = [];
+        const receivedSetParams: any[] = [];
+
+        const api = await createSimpleGrid(
+            'custom-io-params',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 20 },
+            ],
+            {
+                groupRowValueSetter: (params) =>
+                    distributeGroupValue(params, {
+                        distribution: 'percentage',
+                        getValue: (p) => {
+                            receivedGetParams.push(p);
+                            return p.node.getDataValue(p.column, 'value');
+                        },
+                        setValue: (p) => {
+                            receivedSetParams.push(p);
+                            return p.node.setDataValue(p.column, p.value, 'data');
+                        },
+                    }),
+            }
+        );
+
+        const groupNode = api.getRowNode('row-group-region-R-country-C')!;
+        groupNode.setDataValue('amount', 60, 'ui');
+        await asyncSetTimeout(0);
+
+        // getValue called for percentage (reads each child)
+        expect(receivedGetParams.length).toBeGreaterThan(0);
+        const gp = receivedGetParams[0];
+        expect(gp.api).toBe(api);
+        expect(gp.groupParams.node).toBe(groupNode);
+        expect(gp.node).toBeDefined();
+        expect(gp.data).toBe(gp.node.data);
+        expect(gp.column).toBeDefined();
+        expect(gp.colDef).toBeDefined();
+        expect(gp.colDef.field).toBe('amount');
+
+        // setValue called for each child
+        expect(receivedSetParams.length).toBe(2);
+        const sp = receivedSetParams[0];
+        expect(sp.api).toBe(api);
+        expect(sp.groupParams.node).toBe(groupNode);
+        expect(sp.node).toBeDefined();
+        expect(sp.data).toBe(sp.node.data);
+        expect(sp.value).toBeDefined();
+        expect(typeof sp.value).toBe('number');
     });
 });

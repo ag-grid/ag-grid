@@ -5,12 +5,17 @@ export type DistributionStrategy = 'first' | 'last' | 'min' | 'max' | GroupRowVa
 
 /**
  * Resolves the distribution strategy from the aggFunc and explicit distribution option.
- * first/last/min/max aggFuncs always use their own strategy, ignoring any explicit option.
+ * 'none', false, and null always suppress distribution, overriding even first/last/min/max.
+ * first/last/min/max aggFuncs use their own strategy unless explicitly overridden.
  */
 export const resolveStrategy = (
     aggFunc: string | null,
-    distribution: GroupRowValueSetterDistribution | undefined
+    distribution: GroupRowValueSetterDistribution | false | null | undefined
 ): DistributionStrategy => {
+    // Explicit suppression always wins
+    if (distribution === 'none' || distribution === false || distribution === null) {
+        return 'none';
+    }
     switch (aggFunc) {
         case 'first':
         case 'last':
@@ -110,18 +115,25 @@ export const isNumericLike = (value: unknown): boolean => {
     return false;
 };
 
-/** Auto-detects whether a column expects integer values based on cellDataType and cellEditorParams. */
-export const isIntegerColDef = (colDef: ColDef): boolean => {
+/**
+ * Auto-detects rounding precision from the column definition.
+ * Returns the number of decimal places, or `undefined` if no rounding should be applied.
+ */
+export const detectPrecision = (colDef: ColDef): number | undefined => {
     if (colDef.cellDataType === 'bigint') {
-        return true;
+        return 0;
     }
     const ep = colDef.cellEditorParams;
     if (ep == null || typeof ep !== 'object') {
-        return false;
+        return undefined;
     }
-    if ((ep as { precision?: unknown }).precision === 0) {
-        return true;
+    const precision = (ep as { precision?: unknown }).precision;
+    if (typeof precision === 'number' && Number.isInteger(precision) && precision >= 0) {
+        return precision;
     }
     const step = (ep as { step?: unknown }).step;
-    return typeof step === 'number' && Number.isInteger(step);
+    if (typeof step === 'number' && Number.isInteger(step)) {
+        return 0;
+    }
+    return undefined;
 };

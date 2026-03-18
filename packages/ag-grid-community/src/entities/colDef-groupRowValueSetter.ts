@@ -2,7 +2,7 @@ import type { GridApi } from '../api/gridApi';
 import type { ColDef } from '../entities/colDef';
 import type { Column } from '../interfaces/iColumn';
 import type { IRowNode } from '../interfaces/iRowNode';
-import type { ColumnFunctionCallbackParams } from './colDef-base';
+import type { BaseColDefOptionalDataParams, ColumnFunctionCallbackParams } from './colDef-base';
 
 // --- Group Row Editable ---
 
@@ -132,6 +132,53 @@ export type GroupRowValueSetterFunc<TData = any, TValue = any, TContext = any> =
     params: GroupRowValueSetterParams<TData, TValue, TContext>
 ) => void | boolean | undefined;
 
+// --- Distribution getValue/setValue Callback Params ---
+
+/**
+ * Parameters passed to the {@link GroupRowValueSetterDistributionOptions.getValue | getValue} callback
+ * during value distribution.
+ *
+ * Extends the same base as `ValueGetterParams` — `node` is the child row being read,
+ * `data` is the child's row data. Access the group edit context via `groupParams`.
+ *
+ * @example
+ * ```ts
+ * colDef.groupRowValueSetter = {
+ *     getValue: (params) => params.data?.weight ?? 0,
+ * };
+ * ```
+ */
+export interface DistributionGetValueParams<TData = any, TValue = any, TContext = any>
+    extends BaseColDefOptionalDataParams<TData, TValue, TContext> {
+    /** The child RowNode whose value is being read. */
+    node: IRowNode<TData>;
+
+    /** The group row edit parameters that triggered this distribution. */
+    groupParams: GroupRowValueSetterParams<TData, TValue, TContext>;
+}
+
+/**
+ * Parameters passed to the {@link GroupRowValueSetterDistributionOptions.setValue | setValue} callback
+ * during value distribution.
+ *
+ * Extends {@link DistributionGetValueParams} with the `value` to write.
+ *
+ * @example
+ * ```ts
+ * colDef.groupRowValueSetter = {
+ *     setValue: (params) =>
+ *         params.node.setDataValue(params.column, Math.max(0, Number(params.value)), 'data'),
+ * };
+ * ```
+ */
+export interface DistributionSetValueParams<TData = any, TValue = any, TContext = any>
+    extends DistributionGetValueParams<TData, TValue, TContext> {
+    /** The distributed value to write to this child. */
+    value: unknown;
+}
+
+// --- Distribution Strategy ---
+
 /**
  * Distribution strategy that controls how a group-level value edit is spread across descendant rows.
  *
@@ -149,19 +196,23 @@ export type GroupRowValueSetterFunc<TData = any, TValue = any, TContext = any> =
  *
  * - **`'overwrite'`** — Writes `newValue` directly to every child, ignoring the aggregation function.
  *
+ * - **`'none'`** — Suppresses distribution entirely. The edit is accepted but no child values
+ *   are modified. Equivalent to using `false` or `null`.
+ *
  * @example
  * ```ts
  * // Assign a strategy directly on the column definition
  * colDef.groupRowValueSetter = { distribution: 'percentage' };
  * ```
  */
-export type GroupRowValueSetterDistribution = 'uniform' | 'percentage' | 'increment' | 'overwrite';
+export type GroupRowValueSetterDistribution = 'uniform' | 'percentage' | 'increment' | 'overwrite' | 'none';
 
 /**
  * A per-aggregation-function distribution entry, used as a value in the `distribution` record.
  *
  * Can be:
  * - A {@link GroupRowValueSetterDistribution} strategy string (e.g. `'percentage'`).
+ * - `false` or `null` — equivalent to `'none'`, suppresses distribution for this aggregation function.
  * - A {@link GroupRowValueSetterDistributionOptions} object with strategy and per-aggFunc overrides.
  * - A custom {@link GroupRowValueSetterFunc} callback for full control.
  *
@@ -169,15 +220,18 @@ export type GroupRowValueSetterDistribution = 'uniform' | 'percentage' | 'increm
  * ```ts
  * colDef.groupRowValueSetter = {
  *     distribution: {
- *         sum: 'percentage',                                        // string
- *         avg: { distribution: 'increment', integerDistribution: true }, // options object
- *         myCustomAgg: (params) => { ... },                             // custom function
+ *         sum: 'percentage',                                  // string strategy
+ *         avg: { distribution: 'increment', precision: 0 },   // options object
+ *         count: false,                                        // suppress distribution
+ *         myCustomAgg: (params) => { ... },                    // custom function
  *     },
  * };
  * ```
  */
 export type GroupRowValueSetterDistributionEntry<TData = any, TValue = any, TContext = any> =
     | GroupRowValueSetterDistribution
+    | false
+    | null
     | GroupRowValueSetterDistributionOptions
     | GroupRowValueSetterFunc<TData, TValue, TContext>;
 
@@ -217,7 +271,7 @@ export type GroupRowValueSetterDistributionRecord<TData = any, TValue = any, TCo
  * // As a per-aggFunc record entry with its own options
  * colDef.groupRowValueSetter = {
  *     distribution: {
- *         sum: { distribution: 'percentage', integerDistribution: true },
+ *         sum: { distribution: 'percentage', precision: 2 },
  *     },
  * };
  * ```
@@ -226,74 +280,85 @@ export interface GroupRowValueSetterDistributionOptions {
     /**
      * Distribution strategy to use. See {@link GroupRowValueSetterDistribution} for details.
      *
+     * Set to `'none'`, `false`, or `null` to suppress distribution entirely.
+     *
      * When omitted (in simple mode or inside a per-aggFunc record entry), defaults to
      * `'uniform'` for `sum`, `'overwrite'` for `avg`/`count`, and the aggFunc's own
      * strategy for `first`/`last`/`min`/`max`.
      */
-    distribution?: GroupRowValueSetterDistribution;
+    distribution?: GroupRowValueSetterDistribution | false | null;
 
     /**
-     * When `true`, rounds distributed values to integers and spreads any rounding remainder
-     * across the first N children (each adjusted by ±1) so the integer total matches the target exactly.
+     * Number of decimal places to round distributed values to. Spreads any rounding remainder
+     * across the first N children (each adjusted by ±1 unit at the given precision) so the
+     * rounded total matches the target exactly.
      *
-     * When `undefined`, the grid auto-detects from the column definition:
-     * - `true` if `colDef.cellDataType` is `'bigint'`
-     * - `true` if `colDef.cellEditorParams.precision` is `0`
-     * - `true` if `colDef.cellEditorParams.step` is a whole number
-     * - `false` otherwise
+     * - `0` — round to integers (e.g. 10 across 3 children → `[4, 3, 3]`)
+     * - `2` — round to 2 decimal places (e.g. 10 across 3 children → `[3.34, 3.33, 3.33]`)
+     * - `false` — no rounding, even if the column definition would auto-detect a precision
+     * - `undefined` — auto-detect from the column definition:
+     *   - `0` if `colDef.cellDataType` is `'bigint'`
+     *   - `colDef.cellEditorParams.precision` if it is a non-negative integer
+     *   - `0` if `colDef.cellEditorParams.step` is a whole number
+     *   - no rounding otherwise
+     *
+     * Invalid values (negative, `NaN`, non-integer, `Infinity`) are treated as `undefined`
+     * (auto-detect). The value must be a non-negative integer.
+     *
+     * **Note:** Due to IEEE 754 floating-point representation, not all decimal values can
+     * be represented exactly (e.g. `0.1 + 0.2 !== 0.3`). The distributor uses scaled integer
+     * arithmetic internally to minimise rounding errors, but the final values written to
+     * children are standard JavaScript numbers and may exhibit small floating-point
+     * imprecisions inherent to the `number` type.
      *
      * @example
      * ```ts
-     * colDef.groupRowValueSetter = { integerDistribution: true };
+     * // Integer rounding
+     * colDef.groupRowValueSetter = { precision: 0 };
      * // 10 distributed across 3 children → [4, 3, 3]
+     *
+     * // Currency rounding (2 decimal places)
+     * colDef.groupRowValueSetter = { precision: 2 };
+     * // 10 distributed across 3 children → [3.34, 3.33, 3.33]
      * ```
      */
-    integerDistribution?: boolean;
+    precision?: number | false;
 
     /**
      * Custom function to read a child's current value during distribution.
      *
-     * By default, the distributor reads values via `child.getDataValue(column, 'value')`.
+     * By default, the distributor reads values via `node.getDataValue(column, 'value')`.
      * Override this to read from a custom data structure, computed field, or alternative source.
-     *
-     * @param child - The child RowNode whose value is being read.
-     * @param column - The column being distributed.
-     * @returns The current value for this child.
      *
      * @example
      * ```ts
      * colDef.groupRowValueSetter = {
-     *     getValue: (child, column) => child.data?.myComputedField ?? 0,
-     *     setValue: (child, column, value) => { child.data.myComputedField = value; return true; },
+     *     getValue: (params) => params.data?.myComputedField ?? 0,
+     *     setValue: (params) => { params.node.data.myComputedField = params.value; return true; },
      * };
      * ```
      */
-    getValue?: (child: IRowNode, column: Column) => unknown;
+    getValue?: (params: DistributionGetValueParams) => unknown;
 
     /**
      * Custom function to write a distributed value to a child.
      *
-     * By default, the distributor writes values via `child.setDataValue(column, value, 'data')`.
+     * By default, the distributor writes values via `node.setDataValue(column, value, 'data')`.
      * Override this to write to a custom data structure, apply transformations, or trigger side effects.
      *
      * Return `true` if the value was changed, `false` otherwise.
      *
-     * @param child - The child RowNode to write to.
-     * @param column - The column being distributed.
-     * @param value - The distributed value to write.
-     * @returns `true` if the child's value was changed.
-     *
      * @example
      * ```ts
      * colDef.groupRowValueSetter = {
-     *     setValue: (child, column, value) => {
+     *     setValue: (params) => {
      *         // Apply a minimum of 0 before writing
-     *         return child.setDataValue(column, Math.max(0, Number(value)), 'data');
+     *         return params.node.setDataValue(params.column, Math.max(0, Number(params.value)), 'data');
      *     },
      * };
      * ```
      */
-    setValue?: (child: IRowNode, column: Column, value: unknown) => boolean;
+    setValue?: (params: DistributionSetValueParams) => boolean;
 }
 
 /**
@@ -312,7 +377,7 @@ export interface GroupRowValueSetterDistributionOptions {
  *
  * @example Simple usage — uniform distribution with integer rounding:
  * ```ts
- * colDef.groupRowValueSetter = { distribution: 'uniform', integerDistribution: true };
+ * colDef.groupRowValueSetter = { distribution: 'uniform', precision: 0 };
  * ```
  *
  * @example Per-aggregation-function strategies:
@@ -328,7 +393,7 @@ export interface GroupRowValueSetterDistributionOptions {
  *             }
  *         },
  *     },
- *     integerDistribution: true, // applies to all unless overridden per-aggFunc
+ *     precision: 0, // applies to all unless overridden per-aggFunc
  * };
  * ```
  *
@@ -353,12 +418,14 @@ export interface GroupRowValueSetterOptions<TData = any, TValue = any, TContext 
      * Distribution strategy or per-aggregation-function strategy map.
      *
      * **As a string:** applies the chosen {@link GroupRowValueSetterDistribution} strategy to all aggregation functions.
+     * Set to `'none'`, `false`, or `null` to suppress distribution entirely.
      *
      * **As a record:** maps aggregation function names to individual strategies, options objects,
      * or custom callbacks. Each entry can be:
      * - A {@link GroupRowValueSetterDistribution} string (e.g. `'percentage'`)
+     * - `false` or `null` — equivalent to `'none'`, suppresses distribution for that aggFunc.
      * - A {@link GroupRowValueSetterDistributionOptions} object with per-aggFunc overrides for
-     *   `distribution` and `integerDistribution`. Fields left unspecified inherit from the
+     *   `distribution` and `precision`. Fields left unspecified inherit from the
      *   top-level options.
      * - A custom {@link GroupRowValueSetterFunc} callback for full control.
      *
@@ -377,11 +444,16 @@ export interface GroupRowValueSetterOptions<TData = any, TValue = any, TContext 
      *     distribution: {
      *         sum: 'percentage',
      *         avg: { distribution: 'increment' },
+     *         count: false,  // suppress distribution for count
      *     },
      * };
      * ```
      */
-    distribution?: GroupRowValueSetterDistribution | GroupRowValueSetterDistributionRecord<TData, TValue, TContext>;
+    distribution?:
+        | GroupRowValueSetterDistribution
+        | false
+        | null
+        | GroupRowValueSetterDistributionRecord<TData, TValue, TContext>;
 
     /**
      * Fallback handler invoked for aggregation functions not present in the `distribution` record.

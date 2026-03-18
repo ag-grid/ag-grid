@@ -1022,6 +1022,8 @@ export type {
     GroupRowEditableCallbackParams,
     GroupRowValueSetterDistribution,
     GroupRowValueSetterDistributionEntry,
+    DistributionGetValueParams,
+    DistributionSetValueParams,
     GroupRowValueSetterDistributionOptions,
     GroupRowValueSetterDistributionRecord,
     GroupRowValueSetterFunc,

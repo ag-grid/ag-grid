@@ -124,6 +124,7 @@ describe('numeric-like newValue handling (direct distributeGroupValue calls)', (
                 colDef: { aggFunc: 'sum' } as any,
                 newValue,
                 oldValue,
+                data: undefined,
                 eventSource: 'ui',
                 valueChanged: true,
                 node: {} as any,
@@ -248,7 +249,7 @@ describe('numeric-like newValue handling (direct distributeGroupValue calls)', (
 
     test('object with .toNumber() returning 0 with integer distribution distributes 0', () => {
         const children = mockChildren([10, 20, 30]);
-        callDistribute({ toNumber: () => 0 }, 60, children, { integerDistribution: true });
+        callDistribute({ toNumber: () => 0 }, 60, children, { precision: 0 });
         expect(children[0].data.amount).toBe(0);
         expect(children[1].data.amount).toBe(0);
         expect(children[2].data.amount).toBe(0);

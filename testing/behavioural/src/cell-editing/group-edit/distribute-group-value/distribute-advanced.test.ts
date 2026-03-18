@@ -111,7 +111,7 @@ describe.each(SETTER_MODES)('distribution modes via %s', (_label, makeSetter) =>
                 { id: 'a2', region: 'R', country: 'C', amount: 10 },
                 { id: 'a3', region: 'R', country: 'C', amount: 10 },
             ],
-            makeSetter({ distribution: 'uniform', integerDistribution: true })
+            makeSetter({ distribution: 'uniform', precision: 0 })
         );
 
         // 10 / 3 = 3 remainder 1
@@ -157,7 +157,7 @@ describe.each(SETTER_MODES)('distribution record via %s', (_label, makeSetter) =
                 { id: 'a3', region: 'R', country: 'C', amount: 10 },
             ],
             makeSetter({
-                distribution: { sum: { distribution: 'uniform', integerDistribution: true } },
+                distribution: { sum: { distribution: 'uniform', precision: 0 } },
             })
         );
 
@@ -171,7 +171,7 @@ describe.each(SETTER_MODES)('distribution record via %s', (_label, makeSetter) =
         expect(api.getRowNode('a3')?.data?.amount).toBe(3);
     });
 
-    test('record inherits top-level integerDistribution', async () => {
+    test('record inherits top-level precision', async () => {
         const api = await createSimpleGrid(
             'record-inherit',
             [
@@ -181,7 +181,7 @@ describe.each(SETTER_MODES)('distribution record via %s', (_label, makeSetter) =
             ],
             makeSetter({
                 distribution: { sum: 'uniform' },
-                integerDistribution: true,
+                precision: 0,
             })
         );
 
@@ -439,7 +439,7 @@ describe('increment with constraints', () => {
             ],
             {
                 groupRowValueSetter: (params) =>
-                    distributeGroupValue(params, { distribution: 'increment', integerDistribution: true }),
+                    distributeGroupValue(params, { distribution: 'increment', precision: 0 }),
             }
         );
 
@@ -469,7 +469,7 @@ describe('increment with constraints', () => {
             {
                 aggFunc: 'avg',
                 groupRowValueSetter: (params) =>
-                    distributeGroupValue(params, { distribution: 'increment', integerDistribution: true }),
+                    distributeGroupValue(params, { distribution: 'increment', precision: 0 }),
             }
         );
 
@@ -589,6 +589,455 @@ describe('options as distribution string', () => {
     });
 });
 
+// --- Precision > 0 (decimal rounding) ---
+
+describe.each(SETTER_MODES)('decimal precision via %s', (_label, makeSetter) => {
+    test('precision: 2 rounds uniform distribution to 2 decimal places', async () => {
+        const api = await createSimpleGrid(
+            'precision-2-uniform',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 10 },
+                { id: 'a3', region: 'R', country: 'C', amount: 10 },
+            ],
+            makeSetter({ distribution: 'uniform', precision: 2 })
+        );
+
+        // 10 / 3 = 3.333..., precision: 2 → [3.34, 3.33, 3.33]
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 10, 'ui');
+        await asyncSetTimeout(0);
+
+        const v1 = api.getRowNode('a1')?.data?.amount;
+        const v2 = api.getRowNode('a2')?.data?.amount;
+        const v3 = api.getRowNode('a3')?.data?.amount;
+        expect(v1).toBe(3.34);
+        expect(v2).toBe(3.33);
+        expect(v3).toBe(3.33);
+        expect(+(v1 + v2 + v3).toFixed(2)).toBe(10);
+    });
+
+    test('precision: 2 rounds percentage distribution to 2 decimal places', async () => {
+        const api = await createSimpleGrid(
+            'precision-2-pct',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 20 },
+                { id: 'a3', region: 'R', country: 'C', amount: 30 },
+            ],
+            makeSetter({ distribution: 'percentage', precision: 2 })
+        );
+
+        // [10, 20, 30] total=60, target=100
+        // 10/60*100=16.666.., 20/60*100=33.333.., 30/60*100=50
+        // Rounded: [16.67, 33.33, 50.00]
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 100, 'ui');
+        await asyncSetTimeout(0);
+
+        const v1 = api.getRowNode('a1')?.data?.amount;
+        const v2 = api.getRowNode('a2')?.data?.amount;
+        const v3 = api.getRowNode('a3')?.data?.amount;
+        expect(v1).toBe(16.67);
+        expect(v2).toBe(33.33);
+        expect(v3).toBe(50);
+        expect(+(v1 + v2 + v3).toFixed(2)).toBe(100);
+    });
+
+    test('precision: 2 rounds increment distribution to 2 decimal places', async () => {
+        const api = await createSimpleGrid(
+            'precision-2-inc',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 20 },
+                { id: 'a3', region: 'R', country: 'C', amount: 30 },
+            ],
+            makeSetter({ distribution: 'increment', precision: 2 })
+        );
+
+        // sum=60, set to 70, delta=10, per child=10/3=3.333..
+        // [13.33, 23.33, 33.33] rounded to 2dp, remainder spread
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 70, 'ui');
+        await asyncSetTimeout(0);
+
+        const v1 = api.getRowNode('a1')?.data?.amount;
+        const v2 = api.getRowNode('a2')?.data?.amount;
+        const v3 = api.getRowNode('a3')?.data?.amount;
+        expect(+(v1 + v2 + v3).toFixed(2)).toBe(70);
+        // Each should be rounded to 2dp
+        expect(Math.round(v1 * 100)).toBe(v1 * 100);
+        expect(Math.round(v2 * 100)).toBe(v2 * 100);
+        expect(Math.round(v3 * 100)).toBe(v3 * 100);
+    });
+
+    test('precision: 1 rounds to 1 decimal place', async () => {
+        const api = await createSimpleGrid(
+            'precision-1-uniform',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 10 },
+                { id: 'a3', region: 'R', country: 'C', amount: 10 },
+            ],
+            makeSetter({ distribution: 'uniform', precision: 1 })
+        );
+
+        // 10 / 3 = 3.333..., precision: 1 → [3.4, 3.3, 3.3]
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 10, 'ui');
+        await asyncSetTimeout(0);
+
+        const v1 = api.getRowNode('a1')?.data?.amount;
+        const v2 = api.getRowNode('a2')?.data?.amount;
+        const v3 = api.getRowNode('a3')?.data?.amount;
+        expect(v1).toBe(3.4);
+        expect(v2).toBe(3.3);
+        expect(v3).toBe(3.3);
+        expect(+(v1 + v2 + v3).toFixed(1)).toBe(10);
+    });
+
+    test('precision: false disables auto-detected rounding', async () => {
+        const api = await createSimpleGrid(
+            'precision-false',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 10 },
+                { id: 'a3', region: 'R', country: 'C', amount: 10 },
+            ],
+            {
+                // cellEditorParams.precision=0 would auto-detect integer rounding
+                cellEditorParams: { precision: 0 },
+                ...makeSetter({ precision: false }),
+            }
+        );
+
+        // 10 / 3 = 3.333..., precision: false overrides auto-detect → no rounding
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 10, 'ui');
+        await asyncSetTimeout(0);
+
+        const v1 = api.getRowNode('a1')?.data?.amount;
+        expect(v1).toBeCloseTo(10 / 3, 10);
+    });
+});
+
+// --- 'none' strategy ---
+
+describe("'none' distribution strategy", () => {
+    test("'none' string suppresses distribution", async () => {
+        const api = await createSimpleGrid(
+            'none-string',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 20 },
+            ],
+            { groupRowValueSetter: (params) => distributeGroupValue(params, { distribution: 'none' }) }
+        );
+
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 100, 'ui');
+        await asyncSetTimeout(0);
+
+        // No distribution — values unchanged
+        expect(api.getRowNode('a1')?.data?.amount).toBe(10);
+        expect(api.getRowNode('a2')?.data?.amount).toBe(20);
+    });
+
+    test('false suppresses distribution', async () => {
+        const api = await createSimpleGrid(
+            'none-false',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 20 },
+            ],
+            { groupRowValueSetter: (params) => distributeGroupValue(params, { distribution: false }) }
+        );
+
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 100, 'ui');
+        await asyncSetTimeout(0);
+
+        expect(api.getRowNode('a1')?.data?.amount).toBe(10);
+        expect(api.getRowNode('a2')?.data?.amount).toBe(20);
+    });
+
+    test('null suppresses distribution', async () => {
+        const api = await createSimpleGrid(
+            'none-null',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 20 },
+            ],
+            { groupRowValueSetter: (params) => distributeGroupValue(params, { distribution: null }) }
+        );
+
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 100, 'ui');
+        await asyncSetTimeout(0);
+
+        expect(api.getRowNode('a1')?.data?.amount).toBe(10);
+        expect(api.getRowNode('a2')?.data?.amount).toBe(20);
+    });
+
+    test("'none' in per-aggFunc record suppresses for that aggFunc only", async () => {
+        const api = await createSimpleGrid(
+            'none-record',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 20 },
+            ],
+            { groupRowValueSetter: (params) => distributeGroupValue(params, { distribution: { sum: 'none' } }) }
+        );
+
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 100, 'ui');
+        await asyncSetTimeout(0);
+
+        expect(api.getRowNode('a1')?.data?.amount).toBe(10);
+        expect(api.getRowNode('a2')?.data?.amount).toBe(20);
+    });
+
+    test('false in per-aggFunc record suppresses for that aggFunc only', async () => {
+        const api = await createSimpleGrid(
+            'none-false-record',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 20 },
+            ],
+            { groupRowValueSetter: (params) => distributeGroupValue(params, { distribution: { sum: false } }) }
+        );
+
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 100, 'ui');
+        await asyncSetTimeout(0);
+
+        expect(api.getRowNode('a1')?.data?.amount).toBe(10);
+        expect(api.getRowNode('a2')?.data?.amount).toBe(20);
+    });
+
+    test("'none' on colDef options object suppresses distribution", async () => {
+        const api = await createSimpleGrid(
+            'none-coldef',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 20 },
+            ],
+            { groupRowValueSetter: { distribution: 'none' } }
+        );
+
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 100, 'ui');
+        await asyncSetTimeout(0);
+
+        expect(api.getRowNode('a1')?.data?.amount).toBe(10);
+        expect(api.getRowNode('a2')?.data?.amount).toBe(20);
+    });
+});
+
+// --- precision: 0 guarantees exact integers ---
+
+describe('precision: 0 always produces exact integers', () => {
+    test('uniform: 100 across 7 children → all integers summing to 100', async () => {
+        const api = await createSimpleGrid(
+            'p0-uniform-7',
+            Array.from({ length: 7 }, (_, i) => ({ id: `a${i}`, region: 'R', country: 'C', amount: 10 })),
+            { groupRowValueSetter: (params) => distributeGroupValue(params, { precision: 0 }) }
+        );
+
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 100, 'ui');
+        await asyncSetTimeout(0);
+
+        let sum = 0;
+        for (let i = 0; i < 7; i++) {
+            const v = api.getRowNode(`a${i}`)?.data?.amount;
+            expect(Number.isInteger(v)).toBe(true);
+            sum += v;
+        }
+        expect(sum).toBe(100);
+    });
+
+    test('percentage: 100 across 3 children with weights [1, 2, 3] → all integers summing to 100', async () => {
+        const api = await createSimpleGrid(
+            'p0-pct-3',
+            [
+                { id: 'a0', region: 'R', country: 'C', amount: 1 },
+                { id: 'a1', region: 'R', country: 'C', amount: 2 },
+                { id: 'a2', region: 'R', country: 'C', amount: 3 },
+            ],
+            {
+                groupRowValueSetter: (params) =>
+                    distributeGroupValue(params, { distribution: 'percentage', precision: 0 }),
+            }
+        );
+
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 100, 'ui');
+        await asyncSetTimeout(0);
+
+        let sum = 0;
+        for (let i = 0; i < 3; i++) {
+            const v = api.getRowNode(`a${i}`)?.data?.amount;
+            expect(Number.isInteger(v)).toBe(true);
+            sum += v;
+        }
+        expect(sum).toBe(100);
+    });
+
+    test('increment: delta of 10 across 3 children → all integers summing to old+10', async () => {
+        const api = await createSimpleGrid(
+            'p0-inc-3',
+            [
+                { id: 'a0', region: 'R', country: 'C', amount: 5 },
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 15 },
+            ],
+            {
+                groupRowValueSetter: (params) =>
+                    distributeGroupValue(params, { distribution: 'increment', precision: 0 }),
+            }
+        );
+
+        // sum=30, set to 40, delta=10
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 40, 'ui');
+        await asyncSetTimeout(0);
+
+        let sum = 0;
+        for (let i = 0; i < 3; i++) {
+            const v = api.getRowNode(`a${i}`)?.data?.amount;
+            expect(Number.isInteger(v)).toBe(true);
+            sum += v;
+        }
+        expect(sum).toBe(40);
+    });
+
+    test('uniform: 1 across 3 children → [1, 0, 0] (no floating point artefacts)', async () => {
+        const api = await createSimpleGrid(
+            'p0-uniform-1-of-3',
+            [
+                { id: 'a0', region: 'R', country: 'C', amount: 10 },
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 10 },
+            ],
+            { groupRowValueSetter: (params) => distributeGroupValue(params, { precision: 0 }) }
+        );
+
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 1, 'ui');
+        await asyncSetTimeout(0);
+
+        expect(api.getRowNode('a0')?.data?.amount).toBe(1);
+        expect(api.getRowNode('a1')?.data?.amount).toBe(0);
+        expect(api.getRowNode('a2')?.data?.amount).toBe(0);
+    });
+
+    test('uniform: negative value -10 across 3 children → all integers summing to -10', async () => {
+        const api = await createSimpleGrid(
+            'p0-uniform-neg',
+            [
+                { id: 'a0', region: 'R', country: 'C', amount: 10 },
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 10 },
+            ],
+            { groupRowValueSetter: (params) => distributeGroupValue(params, { precision: 0 }) }
+        );
+
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', -10, 'ui');
+        await asyncSetTimeout(0);
+
+        let sum = 0;
+        for (let i = 0; i < 3; i++) {
+            const v = api.getRowNode(`a${i}`)?.data?.amount;
+            expect(Number.isInteger(v)).toBe(true);
+            sum += v;
+        }
+        expect(sum).toBe(-10);
+    });
+});
+
+// --- Invalid precision values ---
+
+describe('invalid precision values', () => {
+    test('negative precision is treated as no rounding', async () => {
+        const api = await createSimpleGrid(
+            'precision-negative',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 10 },
+                { id: 'a3', region: 'R', country: 'C', amount: 10 },
+            ],
+            { groupRowValueSetter: (params) => distributeGroupValue(params, { precision: -1 }) }
+        );
+
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 10, 'ui');
+        await asyncSetTimeout(0);
+
+        // Invalid precision → no rounding → 10/3 = 3.333...
+        const v1 = api.getRowNode('a1')?.data?.amount;
+        expect(v1).toBeCloseTo(10 / 3, 10);
+    });
+
+    test('NaN precision is treated as no rounding', async () => {
+        const api = await createSimpleGrid(
+            'precision-nan',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 10 },
+                { id: 'a3', region: 'R', country: 'C', amount: 10 },
+            ],
+            { groupRowValueSetter: (params) => distributeGroupValue(params, { precision: NaN }) }
+        );
+
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 10, 'ui');
+        await asyncSetTimeout(0);
+
+        const v1 = api.getRowNode('a1')?.data?.amount;
+        expect(v1).toBeCloseTo(10 / 3, 10);
+    });
+
+    test('non-integer precision is treated as no rounding', async () => {
+        const api = await createSimpleGrid(
+            'precision-non-integer',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 10 },
+                { id: 'a3', region: 'R', country: 'C', amount: 10 },
+            ],
+            { groupRowValueSetter: (params) => distributeGroupValue(params, { precision: 1.5 }) }
+        );
+
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 10, 'ui');
+        await asyncSetTimeout(0);
+
+        const v1 = api.getRowNode('a1')?.data?.amount;
+        expect(v1).toBeCloseTo(10 / 3, 10);
+    });
+
+    test('Infinity precision is treated as no rounding', async () => {
+        const api = await createSimpleGrid(
+            'precision-infinity',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 10 },
+                { id: 'a3', region: 'R', country: 'C', amount: 10 },
+            ],
+            { groupRowValueSetter: (params) => distributeGroupValue(params, { precision: Infinity }) }
+        );
+
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 10, 'ui');
+        await asyncSetTimeout(0);
+
+        const v1 = api.getRowNode('a1')?.data?.amount;
+        expect(v1).toBeCloseTo(10 / 3, 10);
+    });
+});
+
 // --- Avg with percentage (tests percentage direct path with avg target) ---
 
 describe('avg with percentage via direct path', () => {
@@ -702,7 +1151,7 @@ describe('distribution record edge cases', () => {
 // --- Options object on colDef (not function wrapper) edge cases ---
 
 describe('options object directly on colDef', () => {
-    test('only integerDistribution (no distribution) uses uniform + integer rounding for sum', async () => {
+    test('only precision (no distribution) uses uniform + integer rounding for sum', async () => {
         const api = await createSimpleGrid(
             'coldef-only-int-dist',
             [
@@ -710,7 +1159,7 @@ describe('options object directly on colDef', () => {
                 { id: 'a2', region: 'R', country: 'C', amount: 10 },
                 { id: 'a3', region: 'R', country: 'C', amount: 10 },
             ],
-            { groupRowValueSetter: { integerDistribution: true } }
+            { groupRowValueSetter: { precision: 0 } }
         );
 
         // 10 / 3 = 3.33, integer rounds to [4, 3, 3]

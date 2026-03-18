@@ -38,11 +38,11 @@ const gridOptions: GridOptions<SalesRecord> = {
             // Enable editing on group rows and use the built-in distribution.
             // With 'sum' aggregation, the default strategy is 'uniform' — the new total
             // is divided equally among all children.
-            // integerDistribution: true rounds values to whole numbers and spreads the
-            // rounding remainder across children so the integer total matches exactly.
+            // precision: 0 rounds values to integers and spreads the rounding remainder
+            // across children so the total matches exactly.
             groupRowEditable: true,
             groupRowValueSetter: {
-                integerDistribution: true,
+                precision: 0,
             },
         },
     ],

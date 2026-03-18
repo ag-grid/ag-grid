@@ -17,10 +17,10 @@ import { DistributorNumber } from './distributorNumber';
  * colDef.groupRowValueSetter = distributeGroupValue;
  * ```
  *
- * With options (integer rounding, per-aggFunc record):
+ * With options (precision rounding, per-aggFunc record):
  * ```ts
  * colDef.groupRowValueSetter = (params) =>
- *     distributeGroupValue(params, { distribution: 'percentage', integerDistribution: true });
+ *     distributeGroupValue(params, { distribution: 'percentage', precision: 2 });
  * ```
  *
  * @returns `true` if at least one child value was changed, `false` otherwise.
@@ -42,22 +42,34 @@ export const distributeGroupValue = (
     if (options) {
         const dist = options.distribution;
         defaultHandler = options.default;
-        if (dist == null || typeof dist === 'string') {
+
+        // Explicit suppression at top level
+        if (dist === false || dist === null) {
+            return false;
+        }
+
+        if (dist === undefined || typeof dist === 'string') {
             // Simple string or undefined distribution — pass options directly (extra properties are ignored)
             entry = options as GroupRowValueSetterDistributionOptions;
         } else {
             // Per-aggFunc record — look up the entry for the current aggFunc
             const perAgg = aggFunc != null ? dist[aggFunc] : undefined;
+
+            // Explicit suppression for this aggFunc
+            if (perAgg === false || perAgg === null) {
+                return false;
+            }
+
             if (typeof perAgg === 'function') {
                 return perAgg(params) ?? true;
             }
-            const { integerDistribution, getValue, setValue } = options;
+            const { precision, getValue, setValue } = options;
             if (typeof perAgg === 'string') {
-                entry = { distribution: perAgg, integerDistribution, getValue, setValue };
+                entry = { distribution: perAgg, precision, getValue, setValue };
             } else if (perAgg != null) {
                 entry = {
                     distribution: perAgg.distribution,
-                    integerDistribution: perAgg.integerDistribution ?? integerDistribution,
+                    precision: perAgg.precision ?? precision,
                     getValue: perAgg.getValue ?? getValue,
                     setValue: perAgg.setValue ?? setValue,
                 };
@@ -66,7 +78,7 @@ export const distributeGroupValue = (
                 if (defaultHandler) {
                     return defaultHandler(params) ?? true;
                 }
-                entry = { distribution: 'overwrite', integerDistribution, getValue, setValue };
+                entry = { distribution: 'overwrite', precision, getValue, setValue };
             }
             // Record mode handles unmatched aggFuncs above — the distributor doesn't need defaultHandler
             defaultHandler = undefined;

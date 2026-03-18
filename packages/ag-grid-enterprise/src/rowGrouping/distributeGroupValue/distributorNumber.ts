@@ -1,5 +1,7 @@
 import type {
     Column,
+    DistributionGetValueParams,
+    DistributionSetValueParams,
     GroupRowValueSetterDistributionOptions,
     GroupRowValueSetterFunc,
     GroupRowValueSetterParams,
@@ -7,7 +9,7 @@ import type {
 } from 'ag-grid-community';
 
 import type { DistributionStrategy } from './valueConversion';
-import { isIntegerColDef, isNumericLike, resolveStrategy, toNumber } from './valueConversion';
+import { detectPrecision, isNumericLike, resolveStrategy, toNumber } from './valueConversion';
 
 /** Distributes a numeric value to children using the chosen strategy. */
 export class DistributorNumber {
@@ -16,11 +18,11 @@ export class DistributorNumber {
     private readonly count: number;
     private readonly target: number;
     private readonly oldTarget: number;
-    private readonly roundToInt: boolean;
+    private readonly precision: number | undefined;
     private readonly newValue: unknown;
     private readonly strategy: DistributionStrategy;
-    private readonly getVal: ((child: IRowNode, column: Column) => unknown) | undefined;
-    private readonly setVal: ((child: IRowNode, column: Column, value: unknown) => boolean) | undefined;
+    private readonly getVal: ((params: DistributionGetValueParams) => unknown) | undefined;
+    private readonly setVal: ((params: DistributionSetValueParams) => boolean) | undefined;
 
     constructor(
         private readonly params: GroupRowValueSetterParams,
@@ -43,7 +45,18 @@ export class DistributorNumber {
             this.target = newNumber;
             this.oldTarget = toNumber(params.oldValue);
         }
-        this.roundToInt = opts?.integerDistribution ?? isIntegerColDef(colDef);
+
+        const explicitPrecision = opts?.precision;
+        if (explicitPrecision === false) {
+            this.precision = undefined;
+        } else if (typeof explicitPrecision === 'number') {
+            // Invalid precision values (NaN, negative, non-integer, Infinity) → no rounding
+            this.precision =
+                Number.isInteger(explicitPrecision) && explicitPrecision >= 0 ? explicitPrecision : undefined;
+        } else {
+            this.precision = detectPrecision(colDef);
+        }
+
         this.getVal = opts?.getValue;
         this.setVal = opts?.setValue;
     }
@@ -51,7 +64,10 @@ export class DistributorNumber {
     run(): boolean {
         const { strategy, newValue } = this;
 
-        // Unknown aggFunc with no matching strategy — use default handler or overwrite
+        if (strategy === 'none') {
+            return false;
+        }
+
         if (strategy === null) {
             const handler = this.defaultHandler;
             if (handler) {
@@ -60,7 +76,6 @@ export class DistributorNumber {
             return this.writeAll(newValue);
         }
 
-        // Single-child or overwrite strategies — write the raw value
         switch (strategy) {
             case 'first':
                 return this.writeOne(0, newValue);
@@ -75,47 +90,44 @@ export class DistributorNumber {
         }
 
         // Non-numeric value (e.g. null, non-numeric string) — write raw value to all children
-        const { target, oldTarget, roundToInt } = this;
-        if (target === 0 && !isNumericLike(newValue)) {
+        if (this.target === 0 && !isNumericLike(newValue)) {
             return this.writeAll(newValue);
         }
 
-        // Early exit: increment with no change
-        if (strategy === 'increment' && target === oldTarget) {
+        if (strategy === 'increment' && this.target === this.oldTarget) {
             return false;
         }
 
-        // Fast path: no rounding needed — write directly without array allocation
-        if (!roundToInt) {
-            return this.writeDirect(strategy);
+        switch (strategy) {
+            case 'uniform':
+                return this.distributeUniform();
+            case 'increment':
+                return this.distributeIncrement();
+            default:
+                return this.distributePercentage();
         }
-
-        // Fast path: uniform + integer rounding — direct integer division with remainder
-        if (strategy === 'uniform') {
-            return this.writeUniformRounded();
-        }
-
-        // Array path: compute values, apply rounding, then write
-        const values = this.computeValues(strategy);
-        this.roundArray(values);
-        return this.writeArrayValues(values);
     }
 
-    /** Reads a child's current value as a number. */
     private readOne(index: number): number {
         const { children, column, getVal } = this;
-        const child = children[index];
-        return toNumber(getVal ? getVal(child, column) : child.getDataValue(column, 'value'));
+        const node = children[index];
+        if (getVal) {
+            const { colDef, api, context } = this.params;
+            return toNumber(getVal({ node, data: node.data, column, colDef, api, context, groupParams: this.params }));
+        }
+        return toNumber(node.getDataValue(column, 'value'));
     }
 
-    /** Writes a value to a single child. */
     private writeOne(index: number, value: unknown): boolean {
         const { children, column, setVal } = this;
-        const child = children[index];
-        return setVal ? setVal(child, column, value) : child.setDataValue(column, value, 'data');
+        const node = children[index];
+        if (setVal) {
+            const { colDef, api, context } = this.params;
+            return setVal({ node, data: node.data, column, colDef, api, context, groupParams: this.params, value });
+        }
+        return node.setDataValue(column, value, 'data');
     }
 
-    /** Writes the same value to every child. */
     private writeAll(value: unknown): boolean {
         const { count } = this;
         let changed = false;
@@ -127,156 +139,126 @@ export class DistributorNumber {
         return changed;
     }
 
-    /** Writes the new value to the child currently holding the min or max. */
     private writeToExtremum(isMin: boolean): boolean {
         const { count, newValue } = this;
-        let targetIdx = 0;
-        let targetVal = this.readOne(0);
+        let bestIdx = 0;
+        let bestVal = this.readOne(0);
         for (let i = 1; i < count; i++) {
             const v = this.readOne(i);
-            if (isMin ? v < targetVal : v > targetVal) {
-                targetVal = v;
-                targetIdx = i;
+            if (isMin ? v < bestVal : v > bestVal) {
+                bestVal = v;
+                bestIdx = i;
             }
         }
-        return this.writeOne(targetIdx, newValue);
+        return this.writeOne(bestIdx, newValue);
     }
 
-    private writeDirect(strategy: 'uniform' | 'percentage' | 'increment'): boolean {
-        const { target, oldTarget, count } = this;
+    private distributeUniform(): boolean {
+        const { count, target, precision } = this;
 
-        if (strategy === 'uniform') {
+        // No rounding — write same float to every child
+        if (precision === undefined) {
             return this.writeAll(target / count);
         }
 
-        if (strategy === 'increment') {
-            return this.readAndWrite((v) => v + (target - oldTarget) / count);
-        }
-
-        // percentage
-        const total = this.readTotal();
-        if (total === 0) {
-            return this.writeAll(target / count);
-        }
-        // (v * target) / total gives better precision for values below ~1e150.
-        if (Math.abs(target) < 1e150 && Math.abs(total) < 1e150) {
-            return this.readAndWrite((v) => (v * target) / total);
-        }
-        const scale = target / total;
-        return this.readAndWrite((v) => v * scale);
-    }
-
-    /** Direct path for uniform + integer rounding. Avoids array allocation. */
-    private writeUniformRounded(): boolean {
-        const { count, target } = this;
-        const roundedTarget = Math.round(target);
-        const base = Math.trunc(roundedTarget / count);
-        const rem = roundedTarget - base * count;
+        // Scaled integer division with remainder spread to first N children
+        const scale = 10 ** precision;
+        const intTarget = Math.round(target * scale);
+        const base = Math.trunc(intTarget / count);
+        const rem = intTarget - base * count;
         const absRem = Math.abs(rem);
         const step = rem >= 0 ? 1 : -1;
         let changed = false;
         for (let i = 0; i < count; ++i) {
-            if (this.writeOne(i, i < absRem ? base + step : base)) {
+            if (this.writeOne(i, (i < absRem ? base + step : base) / scale)) {
                 changed = true;
             }
         }
         return changed;
     }
 
-    private computeValues(strategy: 'uniform' | 'percentage' | 'increment'): number[] {
-        const { target, oldTarget, count } = this;
+    private distributeIncrement(): boolean {
+        const { count, target, oldTarget, precision } = this;
 
-        if (strategy === 'increment') {
+        // No rounding — add delta / count to each child
+        if (precision === undefined) {
             const add = (target - oldTarget) / count;
-            const values = new Array<number>(count);
+            let changed = false;
             for (let i = 0; i < count; ++i) {
-                values[i] = this.readOne(i) + add;
-            }
-            return values;
-        }
-
-        if (strategy === 'percentage') {
-            let total = 0;
-            const values = new Array<number>(count);
-            for (let i = 0; i < count; ++i) {
-                const v = this.readOne(i);
-                values[i] = v;
-                total += v;
-            }
-            if (total !== 0) {
-                if (Math.abs(target) < 1e150 && Math.abs(total) < 1e150) {
-                    for (let i = 0; i < count; ++i) {
-                        values[i] = (values[i] * target) / total;
-                    }
-                } else {
-                    const scale = target / total;
-                    for (let i = 0; i < count; ++i) {
-                        values[i] *= scale;
-                    }
+                if (this.writeOne(i, this.readOne(i) + add)) {
+                    changed = true;
                 }
-                return values;
             }
-            // Zero total — fall back to uniform
+            return changed;
         }
 
-        // Uniform (also fallback for percentage with zero total)
-        const perChild = target / count;
-        const values = new Array<number>(count);
+        // Scaled integer delta with remainder spread to first N children
+        const scale = 10 ** precision;
+        const intDelta = Math.round(target * scale) - Math.round(oldTarget * scale);
+        const base = Math.trunc(intDelta / count);
+        const rem = intDelta - base * count;
+        const absRem = Math.abs(rem);
+        const step = rem >= 0 ? 1 : -1;
+        let changed = false;
         for (let i = 0; i < count; ++i) {
-            values[i] = perChild;
+            const cur = Math.round(this.readOne(i) * scale);
+            if (this.writeOne(i, (cur + base + (i < absRem ? step : 0)) / scale)) {
+                changed = true;
+            }
         }
-        return values;
+        return changed;
     }
 
-    private readTotal(): number {
-        const { count } = this;
+    private distributePercentage(): boolean {
+        const { count, target, precision } = this;
+
+        // Read all child values and compute total
+        const values = new Array<number>(count);
         let total = 0;
         for (let i = 0; i < count; ++i) {
-            total += this.readOne(i);
+            const v = this.readOne(i);
+            values[i] = v;
+            total += v;
         }
-        return total;
-    }
 
-    private readAndWrite(fn: (value: number) => number): boolean {
-        const { count } = this;
-        let changed = false;
-        for (let i = 0; i < count; ++i) {
-            if (this.writeOne(i, fn(this.readOne(i)))) {
-                changed = true;
+        // Zero total — fall back to uniform
+        if (total === 0) {
+            return this.distributeUniform();
+        }
+
+        // No rounding — direct float proportional scaling
+        if (precision === undefined) {
+            const ratio = target / total;
+            let changed = false;
+            for (let i = 0; i < count; ++i) {
+                if (this.writeOne(i, values[i] * ratio)) {
+                    changed = true;
+                }
             }
+            return changed;
         }
-        return changed;
-    }
 
-    private writeArrayValues(values: number[]): boolean {
-        const { count } = this;
-        let changed = false;
-        for (let i = 0; i < count; ++i) {
-            if (this.writeOne(i, values[i])) {
-                changed = true;
-            }
-        }
-        return changed;
-    }
-
-    /** Rounds values to integers and spreads the remainder so the integer sum matches the target. */
-    private roundArray(values: number[]): void {
-        const { count, target } = this;
-        const roundedTarget = Math.round(target);
+        // Rounding — scaled integer proportional distribution.
+        // (v / total) * intTarget avoids overflow from v * intTarget for large values.
+        const scale = 10 ** precision;
+        const intTarget = Math.round(target * scale);
         let roundedSum = 0;
         for (let i = 0; i < count; ++i) {
-            const r = Math.round(values[i]);
+            const r = Math.round((values[i] / total) * intTarget);
             values[i] = r;
             roundedSum += r;
         }
-        let diff = roundedTarget - roundedSum;
-        for (let i = 0; diff > 0 && i < count; ++i) {
-            ++values[i];
-            --diff;
+
+        // Spread rounding remainder to first N children so the total is exact
+        const rem = intTarget - roundedSum;
+        const absRem = Math.abs(rem);
+        const step = rem >= 0 ? 1 : -1;
+        let changed = false;
+        for (let i = 0; i < count; ++i) {
+            if (this.writeOne(i, (values[i] + (i < absRem ? step : 0)) / scale)) {
+                changed = true;
+            }
         }
-        for (let i = 0; diff < 0 && i < count; ++i) {
-            --values[i];
-            ++diff;
-        }
+        return changed;
     }
 }

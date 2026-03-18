@@ -71,7 +71,7 @@ const gridOptions: GridOptions<MetricsRecord> = {
         {
             field: 'salary',
             aggFunc: 'sum',
-            groupRowValueSetter: { integerDistribution: true },
+            groupRowValueSetter: { precision: 0 },
         },
 
         // avg: overwrites every child with the edited value

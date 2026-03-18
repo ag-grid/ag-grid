@@ -1,5 +1,7 @@
 import type {
     Column,
+    DistributionGetValueParams,
+    DistributionSetValueParams,
     GroupRowValueSetterDistributionOptions,
     GroupRowValueSetterFunc,
     GroupRowValueSetterParams,
@@ -19,8 +21,8 @@ export class DistributorBigInt {
     private readonly oldTarget: bigint;
     private readonly newValue: unknown;
     private readonly strategy: DistributionStrategy;
-    private readonly getVal: ((child: IRowNode, column: Column) => unknown) | undefined;
-    private readonly setVal: ((child: IRowNode, column: Column, value: unknown) => boolean) | undefined;
+    private readonly getVal: ((params: DistributionGetValueParams) => unknown) | undefined;
+    private readonly setVal: ((params: DistributionSetValueParams) => boolean) | undefined;
 
     constructor(
         private readonly params: GroupRowValueSetterParams,
@@ -52,6 +54,11 @@ export class DistributorBigInt {
 
     run(): boolean {
         const { strategy, newValue } = this;
+
+        // Explicit 'none' — suppress distribution
+        if (strategy === 'none') {
+            return false;
+        }
 
         // Unknown aggFunc with no matching strategy — use default handler or overwrite
         if (strategy === null) {
@@ -101,15 +108,23 @@ export class DistributorBigInt {
     /** Reads a child's current value as a bigint. */
     private readOne(index: number): bigint {
         const { children, column, getVal } = this;
-        const child = children[index];
-        return toBigInt(getVal ? getVal(child, column) : child.getDataValue(column, 'value'));
+        const node = children[index];
+        if (getVal) {
+            const { colDef, api, context } = this.params;
+            return toBigInt(getVal({ node, data: node.data, column, colDef, api, context, groupParams: this.params }));
+        }
+        return toBigInt(node.getDataValue(column, 'value'));
     }
 
     /** Writes a value to a single child. */
     private writeOne(index: number, value: unknown): boolean {
         const { children, column, setVal } = this;
-        const child = children[index];
-        return setVal ? setVal(child, column, value) : child.setDataValue(column, value, 'data');
+        const node = children[index];
+        if (setVal) {
+            const { colDef, api, context } = this.params;
+            return setVal({ node, data: node.data, column, colDef, api, context, groupParams: this.params, value });
+        }
+        return node.setDataValue(column, value, 'data');
     }
 
     /** Writes the same value to every child. */

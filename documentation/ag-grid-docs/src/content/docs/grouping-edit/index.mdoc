@@ -49,9 +49,9 @@ const gridOptions = {
             aggFunc: 'sum',
             editable: true,
             groupRowEditable: true,
-            // Built-in distribution: divides the sum equally among children,
-            // rounding to integers and spreading the remainder.
-            groupRowValueSetter: { integerDistribution: true },
+            // Built-in distribution: divides the sum equally among children.
+            // precision: 0 rounds to integers and spreads the remainder.
+            groupRowValueSetter: { precision: 0 },
         },
     ],
 }
@@ -74,6 +74,7 @@ the strategy is chosen automatically based on the column's `aggFunc`:
 | `'overwrite'`  | Writes the new value directly to every child.                                                                            | `avg`, `count`, and custom functions |
 | `'percentage'` | Scales each child proportionally, preserving relative weights. Falls back to `'uniform'` when the current total is zero. | —                                    |
 | `'increment'`  | Distributes only the difference (`newValue − oldValue`) among children, adding it to current values.                     | —                                    |
+| `'none'`       | Suppresses distribution entirely. The edit is accepted but no child values are modified. Equivalent to `false` or `null`. | —                                    |
 
 The `first` and `last` aggregation functions always write to the first or last child respectively,
 regardless of any `distribution` setting. The `min` and `max` aggregation functions always write
@@ -95,21 +96,21 @@ const gridOptions = {
     defaultColDef: {
         editable: true,
         groupRowEditable: true,
-        // Default: integer rounding for all columns
-        groupRowValueSetter: { integerDistribution: true },
+        // Default: round to integers for all columns
+        groupRowValueSetter: { precision: 0 },
     },
     columnDefs: [
         {
             field: 'sales',
             aggFunc: 'sum',
             // Column-level override: use percentage distribution.
-            // integerDistribution: true is inherited from defaultColDef.
+            // precision: 0 is inherited from defaultColDef.
             groupRowValueSetter: { distribution: 'percentage' },
         },
         {
             field: 'profit',
             aggFunc: 'sum',
-            // No column-level override — inherits { integerDistribution: true } from defaultColDef.
+            // No column-level override — inherits { precision: 0 } from defaultColDef.
         },
     ],
 }
@@ -127,7 +128,7 @@ demonstrates a mix of built-in strategies and a custom aggregation function:
 
 -   **Built-in columns** (`sum`, `avg`, `min`, `max`, `count`, `first`, `last`) use the automatic
     defaults via `groupRowEditable: true`. The `Salary (sum)` column overrides with
-    `integerDistribution: true` to show per-column configuration.
+    `precision: 0` to show per-column configuration.
 -   **Custom column** (`sumOfSquares`) uses a custom `groupRowValueSetter` callback that distributes
     by computing `√(newValue / count)` per child — the correct inverse of sum-of-squares.
 
@@ -165,7 +166,7 @@ const gridOptions = {
         editable: true,
         groupRowEditable: true,
         groupRowValueSetter: {
-            integerDistribution: true,
+            precision: 0,
             distribution: {
                 sum: 'percentage',
                 avg: { distribution: 'increment' },
@@ -259,8 +260,8 @@ colDef.groupRowValueSetter = (params) => {
 ### Custom Read/Write with getValue and setValue
 
 The `getValue` and `setValue` callbacks let you override how the built-in distributor reads from
-and writes to child rows. By default, the distributor uses `child.getDataValue(column, 'value')`
-to read and `child.setDataValue(column, value, 'data')` to write.
+and writes to child rows. By default, the distributor uses `node.getDataValue(column, 'value')`
+to read and `node.setDataValue(column, value, 'data')` to write.
 
 This is useful when:
 
@@ -279,10 +280,10 @@ const gridOptions = {
             groupRowValueSetter: {
                 distribution: 'percentage',
                 // Read proportions from a separate 'weight' field
-                getValue: (child, column) => child.data?.weight ?? 0,
+                getValue: (params) => params.data?.weight ?? 0,
                 // Write distributed values to the standard column
-                setValue: (child, column, value) =>
-                    child.setDataValue(column, Math.round(Number(value)), 'data'),
+                setValue: (params) =>
+                    params.node.setDataValue(params.column, Math.max(0, Number(params.value)), 'data'),
             },
         },
     ],

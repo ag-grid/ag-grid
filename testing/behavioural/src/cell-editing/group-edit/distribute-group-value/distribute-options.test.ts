@@ -19,7 +19,7 @@ describe('distributeGroupValue integer distribution via closure', () => {
                     aggFunc: 'sum',
                     editable: true,
                     groupRowEditable: true,
-                    groupRowValueSetter: (params) => distributeGroupValue(params, { integerDistribution: true }),
+                    groupRowValueSetter: (params) => distributeGroupValue(params, { precision: 0 }),
                 },
             ],
             rowData: [
@@ -65,7 +65,7 @@ describe('distributeGroupValue integer distribution via closure', () => {
                     editable: true,
                     groupRowEditable: true,
                     groupRowValueSetter: (params) =>
-                        distributeGroupValue(params, { distribution: 'percentage', integerDistribution: true }),
+                        distributeGroupValue(params, { distribution: 'percentage', precision: 0 }),
                 },
             ],
             rowData: [

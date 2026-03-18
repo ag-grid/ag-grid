@@ -699,6 +699,8 @@ export type {
     ValueSetterFunc,
     ValueSetterParams,
     GroupRowEditableCallback,
+    DistributionGetValueParams,
+    DistributionSetValueParams,
     GroupRowEditableCallbackParams,
     GroupRowValueSetterParams,
     GroupRowValueSetterFunc,

@@ -33,7 +33,7 @@ const gridOptions: GridOptions<FileRecord> = {
             // The built-in distribution divides the new total equally among
             // children, cascading through the full tree hierarchy.
             groupRowEditable: true,
-            groupRowValueSetter: { integerDistribution: true },
+            groupRowValueSetter: { precision: 0 },
         },
     ],
     defaultColDef: {
