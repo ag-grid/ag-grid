@@ -1,4 +1,4 @@
-import { fireEvent, getByTestId, getByText } from '@testing-library/dom';
+import { fireEvent, getByTestId } from '@testing-library/dom';
 
 import type { AgColumn, ColDef, ColGroupDef, GridApi, IColumnStateUpdateStrategy } from 'ag-grid-community';
 import { DragSourceType, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
@@ -1480,7 +1480,7 @@ describe('deferred column tool panel pivot mode', () => {
     });
 
     test('apply button is disabled when there are no pending changes', async () => {
-        const { toolPanel, toolPanelGui } = await createDeferredNonPivotGrid();
+        const { toolPanelGui } = await createDeferredNonPivotGrid();
 
         expect(getApplyButton(toolPanelGui).disabled).toBe(true);
     });
