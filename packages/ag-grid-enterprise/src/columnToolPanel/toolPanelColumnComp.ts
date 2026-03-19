@@ -268,7 +268,7 @@ export class ToolPanelColumnComp extends Component {
             },
             onGridExit: () => {
                 if (hideColumnOnExit && !isDeferredMode(this.params)) {
-                    // when dragged outside of the grid, mimic what happens when checkbox is disabled
+                    // when dragged outside of the grid, copy what happens when checkbox is disabled
                     // this handles the behaviour for pivot which is different to just hiding a column.
                     this.onChangeCommon(false);
                 }
