@@ -20,23 +20,23 @@ export class ColumnStateUpdateStrategy extends BeanStub implements IColumnStateU
     private fallbackUpdates?: ColumnStateConcreteUpdateStrategy;
 
     public applyColumnState(deferMode: boolean, state: ColumnState[], eventType: ColumnEventType): void {
-        this.dispatch('applyColumnState', deferMode, state, eventType);
+        this.delegate('applyColumnState', deferMode, state, eventType);
     }
 
     public commit(deferMode: boolean): void {
-        this.dispatch('commit', deferMode);
+        this.delegate('commit', deferMode);
     }
 
     public hasPendingChanges(deferMode: boolean): boolean {
-        return this.dispatch('hasPendingChanges', deferMode);
+        return this.delegate('hasPendingChanges', deferMode);
     }
 
     public moveColumns(deferMode: boolean, columns: AgColumn[], targetIndex: number, eventType: ColumnEventType): void {
-        this.dispatch('moveColumns', deferMode, columns, targetIndex, eventType);
+        this.delegate('moveColumns', deferMode, columns, targetIndex, eventType);
     }
 
     public reset(deferMode: boolean): void {
-        this.dispatch('reset', deferMode);
+        this.delegate('reset', deferMode);
     }
 
     public setColumnsVisible(
@@ -45,31 +45,31 @@ export class ColumnStateUpdateStrategy extends BeanStub implements IColumnStateU
         visible: boolean,
         eventType: ColumnEventType
     ): void {
-        this.dispatch('setColumnsVisible', deferMode, columns, visible, eventType);
+        this.delegate('setColumnsVisible', deferMode, columns, visible, eventType);
     }
 
     public isColumnVisibleInToolPanel(deferMode: boolean, column: AgColumn): boolean {
-        return this.dispatch('isColumnVisibleInToolPanel', deferMode, column);
+        return this.delegate('isColumnVisibleInToolPanel', deferMode, column);
     }
 
     public setRowGroupColumns(deferMode: boolean, columns: AgColumn[], eventType: ColumnEventType): void {
-        this.dispatch('setRowGroupColumns', deferMode, columns, eventType);
+        this.delegate('setRowGroupColumns', deferMode, columns, eventType);
     }
 
     public getRowGroupColumns(deferMode: boolean): AgColumn[] {
-        return this.dispatch('getRowGroupColumns', deferMode);
+        return this.delegate('getRowGroupColumns', deferMode);
     }
 
     public getPrimaryColumns(deferMode: boolean): AgColumn[] {
-        return this.dispatch('getPrimaryColumns', deferMode);
+        return this.delegate('getPrimaryColumns', deferMode);
     }
 
     public setValueColumns(deferMode: boolean, columns: AgColumn[], eventType: ColumnEventType): void {
-        this.dispatch('setValueColumns', deferMode, columns, eventType);
+        this.delegate('setValueColumns', deferMode, columns, eventType);
     }
 
     public getValueColumns(deferMode: boolean): AgColumn[] {
-        return this.dispatch('getValueColumns', deferMode);
+        return this.delegate('getValueColumns', deferMode);
     }
 
     public setColumnAggFunc(
@@ -78,39 +78,39 @@ export class ColumnStateUpdateStrategy extends BeanStub implements IColumnStateU
         aggFunc: string | IAggFunc | null | undefined,
         eventType: ColumnEventType
     ): void {
-        this.dispatch('setColumnAggFunc', deferMode, column, aggFunc, eventType);
+        this.delegate('setColumnAggFunc', deferMode, column, aggFunc, eventType);
     }
 
     public getColumnAggFunc(deferMode: boolean, column: AgColumn): string | IAggFunc | null | undefined {
-        return this.dispatch('getColumnAggFunc', deferMode, column);
+        return this.delegate('getColumnAggFunc', deferMode, column);
     }
 
     public setPivotColumns(deferMode: boolean, columns: AgColumn[], eventType: ColumnEventType): void {
-        this.dispatch('setPivotColumns', deferMode, columns, eventType);
+        this.delegate('setPivotColumns', deferMode, columns, eventType);
     }
 
     public getPivotColumns(deferMode: boolean): AgColumn[] {
-        return this.dispatch('getPivotColumns', deferMode);
+        return this.delegate('getPivotColumns', deferMode);
     }
 
     public setPivotMode(deferMode: boolean, pivotMode: boolean, eventType: ColumnEventType): void {
-        this.dispatch('setPivotMode', deferMode, pivotMode, eventType);
+        this.delegate('setPivotMode', deferMode, pivotMode, eventType);
     }
 
     public getPivotMode(deferMode: boolean): boolean {
-        return this.dispatch('getPivotMode', deferMode);
+        return this.delegate('getPivotMode', deferMode);
     }
 
     public isColumnSelectedInPivotModeToolPanel(deferMode: boolean, column: AgColumn): boolean {
-        return this.dispatch('isColumnSelectedInPivotModeToolPanel', deferMode, column);
+        return this.delegate('isColumnSelectedInPivotModeToolPanel', deferMode, column);
     }
 
     public progressSortFromEvent(deferMode: boolean, column: AgColumn, event: MouseEvent | KeyboardEvent): void {
-        this.dispatch('progressSortFromEvent', deferMode, column, event);
+        this.delegate('progressSortFromEvent', deferMode, column, event);
     }
 
     public getSortDef(deferMode: boolean, column: AgColumn): SortDef | null {
-        return this.dispatch('getSortDef', deferMode, column);
+        return this.delegate('getSortDef', deferMode, column);
     }
 
     private getUpdateStrategy(): IColumnStateUpdateStrategy | undefined {
@@ -121,7 +121,7 @@ export class ColumnStateUpdateStrategy extends BeanStub implements IColumnStateU
         return (this.fallbackUpdates ??= new SynchronousColumnStateUpdateStrategy(this.beans));
     }
 
-    private dispatch<M extends keyof IColumnStateUpdateStrategy>(
+    private delegate<M extends keyof IColumnStateUpdateStrategy>(
         method: M,
         deferMode: boolean,
         ...args: Parameters<IColumnStateUpdateStrategy[M]> extends [any, ...infer Rest] ? Rest : []
