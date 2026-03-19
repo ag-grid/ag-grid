@@ -61,6 +61,10 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
 
         super.postConstruct();
 
+        if (this.deferApply) {
+            this.eDragHandle.classList.add('ag-column-panel-deferred');
+        }
+
         if (sortSvc) {
             this.setupSort();
 

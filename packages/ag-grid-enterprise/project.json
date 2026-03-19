@@ -122,7 +122,7 @@
     },
     "build:package": {
       "executor": "@nx/esbuild:esbuild",
-      "dependsOn": ["^build:types", "chartsPackages"],
+      "dependsOn": ["^build:types", "^build:package", "chartsPackages"],
       "inputs": [
         "{projectRoot}/package.json",
         "{projectRoot}/src/**/*",

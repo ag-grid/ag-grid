@@ -838,6 +838,32 @@ describe('deferred column tool panel pivot mode', () => {
         expect(headerDropZones.pivotComp.isInterestedIn(DragSourceType.ToolPanel, dragHandle)).toBe(false);
     });
 
+    test('dragging a pill from a deferred CTP drop zone into header drop zones should be prohibited even when detached', async () => {
+        const { gridApi, toolPanel } = await createDeferredPivotModeGrid();
+        const country = gridApi.getColumn('country')! as any;
+        const HeaderDropZones = AgGridHeaderDropZonesSelector.component as any;
+        const headerDropZones = country.createBean(new HeaderDropZones()) as any;
+
+        // Get a pill drag handle from the CTP's row group drop zone
+        const pillDragHandle = toolPanel.rowGroupDropZonePanel
+            .getGui()
+            .querySelector('.ag-column-drop-cell-drag-handle') as Element;
+        expect(pillDragHandle).toBeTruthy();
+
+        // While attached: should be blocked
+        expect(headerDropZones.rowGroupComp.isInterestedIn(DragSourceType.ToolPanel, pillDragHandle)).toBe(false);
+
+        // Simulate what happens during drag: the pill gets detached from the DOM
+        // (source panel's onDragLeave -> removeItems -> refreshGui -> destroyGui)
+        const parent = pillDragHandle.parentElement!;
+        parent.removeChild(pillDragHandle);
+        expect(pillDragHandle.isConnected).toBe(false);
+
+        // Even when detached, should still be blocked (pill has ag-column-panel-deferred class)
+        expect(headerDropZones.rowGroupComp.isInterestedIn(DragSourceType.ToolPanel, pillDragHandle)).toBe(false);
+        expect(headerDropZones.pivotComp.isInterestedIn(DragSourceType.ToolPanel, pillDragHandle)).toBe(false);
+    });
+
     test('dragging a CTP column to the header pivot panel in deferred mode should not apply changes', async () => {
         const { gridApi, toolPanel, toolPanelGui } = await createDeferredPivotModeGrid();
 
