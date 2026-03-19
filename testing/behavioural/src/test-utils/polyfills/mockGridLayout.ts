@@ -32,6 +32,12 @@ const getElementType = (el: HTMLElement) => {
         return 'body';
     }
     const classList = el.classList;
+    if (classList.contains('ag-grid-scrollable-area')) {
+        return 'scrollable-area';
+    }
+    if (classList.contains('ag-grid-scrolling-rows')) {
+        return 'scrolling-rows';
+    }
     if (classList.contains('ag-header-row')) {
         return 'header-row';
     }
@@ -70,6 +76,14 @@ function getBoundingClientRect(this: HTMLElement): DOMRect {
     let left = 0;
 
     switch (type) {
+        case 'scrollable-area': {
+            height = gridHeight;
+            break;
+        }
+        case 'scrolling-rows': {
+            height = gridHeight;
+            break;
+        }
         case 'header': {
             height = headerHeight;
             break;
@@ -133,6 +147,16 @@ function getBoundingClientRect(this: HTMLElement): DOMRect {
             height = 20;
             break;
         }
+    }
+
+    const styleWidth = parseFloat(this.style?.width);
+    if (!isNaN(styleWidth) && styleWidth > 0) {
+        width = styleWidth;
+    }
+
+    const styleHeight = parseFloat(this.style?.height);
+    if (!isNaN(styleHeight) && styleHeight > 0) {
+        height = styleHeight;
     }
 
     const offsetParent = this.offsetParent ?? this.parentElement;

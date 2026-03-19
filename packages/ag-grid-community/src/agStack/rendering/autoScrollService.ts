@@ -43,7 +43,7 @@ export class AutoScrollService {
         setHorizontalPosition?: (position: number) => void;
         shouldSkipVerticalScroll?: () => boolean;
         shouldSkipHorizontalScroll?: () => boolean;
-        /** Offset from the top of the scroll container to the start of the scrollable row area. */
+        // offset from the top of the scroll container to the start of the scrollable row area.
         getTopOffset?: () => number;
         onScrollCallback?: () => void;
     }) {

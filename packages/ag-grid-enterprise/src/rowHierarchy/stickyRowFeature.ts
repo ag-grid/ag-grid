@@ -1,4 +1,4 @@
-import type { GridBodyCtrl, IStickyRowFeature, RowCtrl, RowNode } from 'ag-grid-community';
+import type { GridBodyCtrl, IStickyRowFeature, RowCtrl, RowNode, VerticalSection } from 'ag-grid-community';
 import { BeanStub, _getRowHeightForNode, _isClientSideRowModel, _isGroupRowsSticky, _last } from 'ag-grid-community';
 
 export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
@@ -79,7 +79,7 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
         return 0;
     }
 
-    private updateStickyRows(container: 'top' | 'bottom'): boolean {
+    private updateStickyRows(container: VerticalSection): boolean {
         const isTop = container === 'top';
         let newStickyContainerHeight = 0;
 
@@ -360,7 +360,7 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
      * Destroy old ctrls and create new ctrls where necessary.
      */
     private refreshNodesAndContainerHeight(
-        container: 'top' | 'bottom',
+        container: VerticalSection,
         newStickyNodes: Set<RowNode>,
         height: number
     ): boolean {

@@ -2,6 +2,7 @@ import { RefPlaceholder } from '../agStack/interfaces/agComponent';
 import { _setAriaColCount, _setAriaMultiSelectable, _setAriaRole, _setAriaRowCount } from '../agStack/utils/aria';
 import { _isCellSelectionEnabled, _isMultiRowSelection } from '../gridOptionsUtils';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
+import type { VerticalSection, VerticalSectionMap } from '../interfaces/iGridSection';
 import { _setDisplayed } from '../main-internal';
 import { LayoutCssClasses } from '../styling/layoutFeature';
 import type { ElementParams } from '../utils/element';
@@ -9,7 +10,7 @@ import type { ComponentSelector } from '../widgets/component';
 import { Component } from '../widgets/component';
 import { FakeHScrollSelector } from './fakeHScrollComp';
 import { FakeVScrollSelector } from './fakeVScrollComp';
-import type { IGridBodyComp, PinnedSection, PinnedSectionState, RowAnimationCssClasses } from './gridBodyCtrl';
+import type { IGridBodyComp, PinnedSectionState, RowAnimationCssClasses } from './gridBodyCtrl';
 import { CSS_CLASS_FORCE_VERTICAL_SCROLL, GridBodyCtrl } from './gridBodyCtrl';
 import { RowContainerSelector } from './rowContainer/rowContainerComp';
 import type { RowContainerName } from './rowContainer/rowContainerCtrl';
@@ -99,7 +100,7 @@ export class GridBodyComp extends Component implements FocusableContainer {
     private readonly eBody: HTMLElement = RefPlaceholder;
 
     private ctrl: GridBodyCtrl;
-    private pinnedSectionState: Record<PinnedSection, PinnedSectionState> = {
+    private pinnedSectionState: VerticalSectionMap<PinnedSectionState> = {
         top: { height: 0, invisible: true },
         bottom: { height: 0, invisible: true },
     };
@@ -183,7 +184,7 @@ export class GridBodyComp extends Component implements FocusableContainer {
         bodyViewportClassList.toggle('ag-row-no-animation' as RowAnimationCssClasses, !animateRows);
     }
 
-    private setPinnedSection(section: PinnedSection, state: PinnedSectionState): void {
+    private setPinnedSection(section: VerticalSection, state: PinnedSectionState): void {
         this.pinnedSectionState[section] = state;
 
         if (section === 'top') {

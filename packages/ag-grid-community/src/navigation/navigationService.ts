@@ -327,7 +327,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         const scrollbarWidth = this.beans.scrollVisibleSvc.getScrollbarWidth();
         let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
 
-        if (beans.ctrlsSvc.get('scrolling').isHorizontalScrollShowing()) {
+        if (beans.scrollVisibleSvc.isHorizontalScrollShowing()) {
             pixelsInOnePage -= scrollbarWidth;
         }
 

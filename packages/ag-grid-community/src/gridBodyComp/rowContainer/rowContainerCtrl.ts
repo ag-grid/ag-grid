@@ -1,4 +1,4 @@
-import { _getInnerWidth, _getScrollLeft, _isInDOM, _observeResize, _setScrollLeft } from '../../agStack/utils/dom';
+import { _getInnerWidth, _isInDOM, _observeResize } from '../../agStack/utils/dom';
 import { BeanStub } from '../../context/beanStub';
 import type { StickyTopOffsetChangedEvent } from '../../events';
 import { _isDomLayout } from '../../gridOptionsUtils';
@@ -6,7 +6,6 @@ import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import type { RowRenderer } from '../../rendering/rowRenderer';
 import type { SpannedRowRenderer } from '../../rendering/spanning/spannedRowRenderer';
 import { CenterWidthFeature } from '../centerWidthFeature';
-import type { ScrollPartner } from '../gridBodyScrollFeature';
 import { ViewportSizeFeature } from '../viewportSizeFeature';
 import { RowContainerEventsFeature } from './rowContainerEventsFeature';
 import { SetHeightFeature } from './setHeightFeature';
@@ -93,7 +92,6 @@ const stickyContainers: RowContainerName[] = ['stickyTop', 'stickyBottom'];
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowContainerComp {
-    setHorizontalScroll(offset: number): void;
     setRowCtrls(params: { rowCtrls: RowCtrl[]; useFlushSync?: boolean }): void;
     setSpannedRowCtrls(rowCtrls: RowCtrl[], useFlushSync: boolean): void;
     setDomOrder(domOrder: boolean): void;
@@ -103,14 +101,12 @@ export interface IRowContainerComp {
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export class RowContainerCtrl extends BeanStub implements ScrollPartner {
+export class RowContainerCtrl extends BeanStub {
     private readonly options: RowContainerOptions;
 
     private comp: IRowContainerComp;
     public eContainer: HTMLElement;
-    private eSpannedContainer: HTMLElement | undefined;
     public eViewport: HTMLElement;
-    private enableRtl: boolean;
 
     public viewportSizeFeature: ViewportSizeFeature | undefined; // only center has this
     // Maintaining a constant reference enables optimization in React.
@@ -122,8 +118,6 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     }
 
     public postConstruct(): void {
-        this.enableRtl = this.gos.get('enableRtl');
-
         if (this.isScrollingCenterContainer()) {
             this.viewportSizeFeature = this.createManagedBean(new ViewportSizeFeature(this));
             this.addManagedEventListeners({
@@ -159,7 +153,6 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     ): void {
         this.comp = view;
         this.eContainer = eContainer;
-        this.eSpannedContainer = eSpannedContainer;
         this.eViewport = eViewport;
 
         const { rangeSvc } = this.beans;
@@ -203,10 +196,6 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
             '--ag-pinned-row-border-width',
             `${this.beans.environment.getPinnedRowBorderWidth()}px`
         );
-    }
-
-    public onScrollCallback(fn: () => void): void {
-        this.addManagedElementListeners(this.eViewport, { scroll: fn });
     }
 
     private addListeners(): void {
@@ -258,7 +247,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
 
     public onDisplayedColumnsChanged(): void {
         if (this.isScrollingCenterContainer()) {
-            this.onHorizontalViewportChanged();
+            this.beans.ctrlsSvc.getGridBodyCtrl()?.updateColumnViewport();
         }
     }
 
@@ -282,45 +271,6 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
         this.addDestroyFunc(() => ePreventScroll.removeEventListener('touchmove', preventScroll));
     }
 
-    // this gets called whenever a change in the viewport, so we can inform column controller it has to work
-    // out the virtual columns again. gets called from following locations:
-    // + ensureColVisible, scroll, init, layoutChanged, displayedColumnsChanged
-    public onHorizontalViewportChanged(afterScroll: boolean = false): void {
-        const scrollWidth = this.getCenterWidth();
-        const scrollPosition = this.getCenterViewportScrollLeft();
-
-        this.beans.colViewport.setScrollPosition(scrollWidth, scrollPosition, afterScroll);
-    }
-
-    public hasHorizontalScrollGap(): boolean {
-        const containerWidth = this.eContainer.getBoundingClientRect().width;
-        const viewportWidth = this.eViewport.getBoundingClientRect().width;
-        return containerWidth - viewportWidth < -0.5;
-    }
-
-    public hasVerticalScrollGap(): boolean {
-        const containerHeight = this.eContainer.getBoundingClientRect().height;
-        const viewportHeight = this.eViewport.getBoundingClientRect().height;
-        return containerHeight - viewportHeight < -0.5;
-    }
-
-    public getCenterWidth(): number {
-        const viewportWidth = _getInnerWidth(this.eViewport);
-        if (this.name !== 'scrolling') {
-            return viewportWidth;
-        }
-
-        const { visibleCols } = this.beans;
-        const pinnedWidth =
-            visibleCols.getLeftStickyColumnContainerWidth() + visibleCols.getRightStickyColumnContainerWidth();
-        return Math.max(0, viewportWidth - pinnedWidth - this.getVisibleVerticalScrollbarWidth());
-    }
-
-    public getCenterViewportScrollLeft(): number {
-        // we defer to a util, as how you calculated scrollLeft when doing RTL depends on the browser
-        return _getScrollLeft(this.eViewport, this.enableRtl);
-    }
-
     public registerViewportResizeListener(listener: () => void) {
         const unsubscribeFromResize = _observeResize(this.beans, this.eViewport, listener);
         this.addDestroyFunc(() => unsubscribeFromResize());
@@ -330,50 +280,12 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
         return _isInDOM(this.eViewport);
     }
 
-    public getViewportScrollLeft(): number {
-        return _getScrollLeft(this.eViewport, this.enableRtl);
-    }
-
-    public isHorizontalScrollShowing(): boolean {
-        if (this.gos.get('alwaysShowHorizontalScroll')) {
-            return true;
-        }
-
-        return this.beans.visibleCols.bodyWidth - this.getCenterWidth() > 0.5;
-    }
-
-    public setHorizontalScroll(offset: number): void {
-        this.comp.setHorizontalScroll(offset);
-    }
-
-    public getHScrollPosition(): { left: number; right: number } {
-        const left = this.eViewport.scrollLeft;
-        const res = {
-            left,
-            right: left + this.getCenterWidth(),
-        };
-        return res;
-    }
-
     public setContainerHeight(height: number): void {
         this.eContainer.style.height = height > 0 ? `${height}px` : '';
     }
 
     public setContainerTop(top: number): void {
         this.eContainer.style.top = `${top}px`;
-    }
-
-    public setCenterViewportScrollLeft(value: number): void {
-        // we defer to a util, as how you calculated scrollLeft when doing RTL depends on the browser
-        _setScrollLeft(this.eViewport, value, this.enableRtl);
-    }
-
-    private getVisibleVerticalScrollbarWidth(): number {
-        const { scrollVisibleSvc, ctrlsSvc } = this.beans;
-        if (!scrollVisibleSvc.verticalScrollShowing) {
-            return 0;
-        }
-        return ctrlsSvc.getGridBodyCtrl()?.getVerticalScrollbarWidth() ?? scrollVisibleSvc.getScrollbarWidth() ?? 0;
     }
 
     private onDisplayedRowsChanged(afterScroll: boolean = false): void {

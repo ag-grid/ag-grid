@@ -39,7 +39,7 @@ describe('FakeVScrollComp', () => {
 
         expect(eGui.style.top).toBe('41px');
         expect(eGui.style.bottom).toBe('17px');
-        expect(eGui.style.right).toBe('0px');
+        expect(eGui.style.right).toBe('');
         expect(eGui.style.left).toBe('');
         expect(eGui.style.width).toBe('13px');
         expect(eViewport.style.width).toBe('13px');

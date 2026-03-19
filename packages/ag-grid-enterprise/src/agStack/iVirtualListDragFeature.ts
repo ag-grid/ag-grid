@@ -1,5 +1,6 @@
 import type {
     AgEvent,
+    VerticalSection,
     _AgBeanStub,
     _AgCoreBeanCollection,
     _BaseEvents,
@@ -9,7 +10,7 @@ import type {
 
 export interface VirtualListDragItem<R> {
     rowIndex: number;
-    position: 'top' | 'bottom';
+    position: VerticalSection;
     component: R;
 }
 

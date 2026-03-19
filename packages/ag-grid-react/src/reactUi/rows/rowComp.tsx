@@ -2,6 +2,8 @@ import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMe
 
 import type {
     CellCtrl,
+    HorizontalSection,
+    HorizontalSectionMap,
     ICellRenderer,
     ICellRendererParams,
     IRowComp,
@@ -16,12 +18,6 @@ import { BeansContext, RenderModeContext } from '../beansContext';
 import CellComp from '../cells/cellComp';
 import { showJsComp } from '../jsComp';
 import { agFlushSync, agUseSyncExternalStore, getNextValueIfDifferent, isComponentStateless } from '../utils';
-
-type EmbeddedFullWidthCompDetails = {
-    left: UserCompDetails;
-    center: UserCompDetails;
-    right: UserCompDetails;
-};
 
 const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: RowContainerType }) => {
     const { context, gos, editSvc } = useContext(BeansContext);
@@ -45,7 +41,8 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
     const cellCtrlsRef = useRef<CellCtrl[] | null>(null);
     const [cellCtrlsFlushSync, setCellCtrlsFlushSync] = useState<CellCtrl[] | null>(() => null);
     const [fullWidthCompDetails, setFullWidthCompDetails] = useState<UserCompDetails>();
-    const [embeddedFullWidthCompDetails, setEmbeddedFullWidthCompDetails] = useState<EmbeddedFullWidthCompDetails>();
+    const [embeddedFullWidthCompDetails, setEmbeddedFullWidthCompDetails] =
+        useState<HorizontalSectionMap<UserCompDetails>>();
 
     // these styles have initial values, so element is placed into the DOM with them,
     // rather than an transition getting applied.
@@ -400,7 +397,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
         );
     };
 
-    const showEmbeddedFrameworkSection = (section: 'left' | 'center' | 'right') => {
+    const showEmbeddedFrameworkSection = (section: HorizontalSection) => {
         const details = embeddedFullWidthCompDetails?.[section];
         if (!details?.componentFromFramework) {
             return null;

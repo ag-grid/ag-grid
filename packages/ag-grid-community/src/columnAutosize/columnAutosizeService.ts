@@ -597,7 +597,7 @@ function normaliseColumnWidth(
 
 function getAvailableWidth({ ctrlsSvc, scrollVisibleSvc }: BeanCollection): number {
     const gridBodyCtrl = ctrlsSvc.getGridBodyCtrl();
-    const removeScrollWidth = gridBodyCtrl.isVerticalScrollShowing();
+    const removeScrollWidth = scrollVisibleSvc.isVerticalScrollShowing();
     const scrollWidthToRemove = removeScrollWidth ? scrollVisibleSvc.getScrollbarWidth() : 0;
     // bodyViewportWidth should be calculated from eGridBody, not eBodyViewport
     // because we change the width of the bodyViewport to hide the real browser scrollbar

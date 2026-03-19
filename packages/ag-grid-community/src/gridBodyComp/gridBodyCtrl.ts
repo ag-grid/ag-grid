@@ -1,14 +1,15 @@
-import { _getInnerWidth, _isElementChildOfClass } from '../agStack/utils/dom';
+import { _getInnerWidth, _getScrollLeft, _isElementChildOfClass, _setScrollLeft } from '../agStack/utils/dom';
 import type { ColumnModel } from '../columns/columnModel';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { RowResizeEndedEvent, RowResizeStartedEvent } from '../events';
 import type { FilterManager } from '../filter/filterManager';
-import { _isAnimateRows, _isDomLayout } from '../gridOptionsUtils';
+import { _isAnimateRows } from '../gridOptionsUtils';
 import { GridHeaderFeature } from '../headerRendering/gridHeaderFeature';
 import { getAriaHeaderRowCount } from '../headerRendering/headerUtils';
 import type { IColsService } from '../interfaces/iColsService';
+import type { VerticalSection } from '../interfaces/iGridSection';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { LayoutView } from '../styling/layoutFeature';
 import { LayoutFeature } from '../styling/layoutFeature';
@@ -24,8 +25,6 @@ export const CSS_CLASS_FORCE_VERTICAL_SCROLL = 'ag-force-vertical-scroll';
 const CSS_CLASS_CELL_SELECTABLE = 'ag-selectable';
 const CSS_CLASS_COLUMN_MOVING = 'ag-column-moving';
 
-export type PinnedSection = 'top' | 'bottom';
-
 export interface PinnedSectionState {
     height: number;
     invisible: boolean;
@@ -35,7 +34,7 @@ export interface PinnedSectionState {
 export interface IGridBodyComp extends LayoutView {
     setColumnMovingCss(cssClass: string, on: boolean): void;
     setCellSelectableCss(cssClass: string | null, on: boolean): void;
-    setPinnedSection(section: PinnedSection, state: PinnedSectionState): void;
+    setPinnedSection(section: VerticalSection, state: PinnedSectionState): void;
     setStickyBottomHeight(height: string): void;
     setStickyBottomWidth(width: string): void;
     setColumnCount(count: number): void;
@@ -101,6 +100,8 @@ export class GridBodyCtrl extends BeanStub {
         this.addManagedPropertyListener('enableCellTextSelection', (props) =>
             this.setCellTextSelection(props.currentValue)
         );
+        this.syncAlwaysVerticalScrollClass();
+        this.addManagedPropertyListener('alwaysShowVerticalScroll', () => this.syncAlwaysVerticalScrollClass());
 
         this.createManagedBean(new LayoutFeature(this.comp));
         this.scrollFeature = this.createManagedBean(new GridBodyScrollFeature(eGridViewport));
@@ -162,6 +163,13 @@ export class GridBodyCtrl extends BeanStub {
         this.eGridViewport.classList.toggle('ag-prevent-animation', isResizingRow);
     }
 
+    private syncAlwaysVerticalScrollClass(): void {
+        this.comp.setAlwaysVerticalScrollClass(
+            CSS_CLASS_FORCE_VERTICAL_SCROLL,
+            this.gos.get('alwaysShowVerticalScroll')
+        );
+    }
+
     private onGridColumnsChanged(): void {
         const columns = this.beans.colModel.getCols();
         this.comp.setColumnCount(columns.length);
@@ -190,26 +198,57 @@ export class GridBodyCtrl extends BeanStub {
         this.comp.setGridScrollableAreaWidth(`${Math.max(contentWidth, viewportWidth, 1)}px`);
     }
 
-    public getHorizontalContentWidth(): number {
+    public getHorizontalContentWidth(
+        verticalScrollShowing: boolean = this.scrollVisibleSvc.verticalScrollShowing
+    ): number {
         const { visibleCols } = this.beans;
         const baseWidth =
             visibleCols.bodyWidth +
             visibleCols.getLeftStickyColumnContainerWidth() +
             visibleCols.getRightStickyColumnContainerWidth();
 
-        if (!this.scrollVisibleSvc.verticalScrollShowing) {
+        if (!verticalScrollShowing) {
             return baseWidth;
         }
 
-        return baseWidth + this.getVerticalScrollbarWidth();
+        return baseWidth + this.getVerticalScrollbarWidth(verticalScrollShowing);
     }
 
     public getHorizontalViewportWidth(): number {
         return this.eGridViewport.getBoundingClientRect().width;
     }
 
-    public getViewportWidthWithoutScrollbar(): number {
-        return Math.max(0, _getInnerWidth(this.eGridViewport) - this.getVerticalScrollbarWidth());
+    public getViewportWidthWithoutScrollbar(
+        verticalScrollShowing: boolean = this.scrollVisibleSvc.verticalScrollShowing
+    ): number {
+        return Math.max(0, _getInnerWidth(this.eGridViewport) - this.getVerticalScrollbarWidth(verticalScrollShowing));
+    }
+
+    public getCenterWidth(verticalScrollShowing: boolean = this.scrollVisibleSvc.verticalScrollShowing): number {
+        const { visibleCols } = this.beans;
+        const pinnedWidth =
+            visibleCols.getLeftStickyColumnContainerWidth() + visibleCols.getRightStickyColumnContainerWidth();
+        return Math.max(0, this.getViewportWidthWithoutScrollbar(verticalScrollShowing) - pinnedWidth);
+    }
+
+    public getHorizontalScrollLeft(): number {
+        return _getScrollLeft(this.eGridViewport, this.gos.get('enableRtl'));
+    }
+
+    public setHorizontalScrollLeft(value: number): void {
+        _setScrollLeft(this.eGridViewport, value, this.gos.get('enableRtl'));
+    }
+
+    public getHorizontalScrollPosition(): { left: number; right: number } {
+        const left = this.eGridViewport.scrollLeft;
+        return {
+            left,
+            right: left + this.getCenterWidth(),
+        };
+    }
+
+    public updateColumnViewport(afterScroll: boolean = false): void {
+        this.beans.colViewport.setScrollPosition(this.getCenterWidth(), this.getHorizontalScrollLeft(), afterScroll);
     }
 
     private updateExtraRowsWidth(): void {
@@ -325,28 +364,6 @@ export class GridBodyCtrl extends BeanStub {
         const total = rowCount === -1 ? -1 : headerCount + pinnedTopCount + rowCount + pinnedBottomCount;
 
         this.comp.setRowCount(total);
-    }
-
-    public isVerticalScrollShowing(): boolean {
-        const { gos, comp } = this;
-        const show = gos.get('alwaysShowVerticalScroll');
-
-        const cssClass = show ? CSS_CLASS_FORCE_VERTICAL_SCROLL : null;
-        const allowVerticalScroll = _isDomLayout(gos, 'normal');
-
-        comp.setAlwaysVerticalScrollClass(cssClass, show);
-
-        if (show) {
-            return true;
-        }
-
-        if (!allowVerticalScroll) {
-            return false;
-        }
-
-        const bodyViewportHeight = this.getBodyViewportHeight(this.eGridViewport.clientHeight);
-        const rowContainerHeight = this.beans.rowContainerHeight.uiContainerHeight ?? 0;
-        return rowContainerHeight > bodyViewportHeight;
     }
 
     private setupRowAnimationCssClass(): void {
@@ -582,9 +599,11 @@ export class GridBodyCtrl extends BeanStub {
         return Math.max(contentHeight, this.eGridViewport.clientHeight);
     }
 
-    public getVerticalScrollbarWidth(): number {
+    public getVerticalScrollbarWidth(
+        verticalScrollShowing: boolean = this.scrollVisibleSvc.verticalScrollShowing
+    ): number {
         const { scrollVisibleSvc } = this;
-        if (!scrollVisibleSvc.verticalScrollShowing) {
+        if (!verticalScrollShowing) {
             return 0;
         }
 

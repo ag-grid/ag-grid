@@ -20,10 +20,13 @@ describe('ViewportSizeFeature', () => {
         centerViewport: HTMLDivElement;
         registerViewportResizeListener: jest.Mock;
         onCenterViewportResized: jest.Mock;
-        updateScrollVisibleServiceImpl: jest.Mock;
+        refreshScrollVisible: jest.Mock;
     }): ViewportSizeFeature {
         return Object.assign(Object.create(ViewportSizeFeature.prototype), {
             beans: {},
+            scrollVisibleSvc: {
+                refresh: params.refreshScrollVisible,
+            },
             centerContainerCtrl: {
                 eContainer: params.centerContainer,
                 eViewport: params.centerViewport,
@@ -34,7 +37,6 @@ describe('ViewportSizeFeature', () => {
             },
             addDestroyFunc: jest.fn(),
             onCenterViewportResized: params.onCenterViewportResized,
-            updateScrollVisibleServiceImpl: params.updateScrollVisibleServiceImpl,
             centerViewportResizeQueued: false,
             scrollVisibilityRefreshQueued: false,
         }) as ViewportSizeFeature;
@@ -49,7 +51,7 @@ describe('ViewportSizeFeature', () => {
         });
 
         const onCenterViewportResized = jest.fn();
-        const updateScrollVisibleServiceImpl = jest.fn();
+        const refreshScrollVisible = jest.fn();
         const registerViewportResizeListener = jest.fn();
 
         const centerContainer = document.createElement('div');
@@ -60,7 +62,7 @@ describe('ViewportSizeFeature', () => {
             centerViewport,
             registerViewportResizeListener,
             onCenterViewportResized,
-            updateScrollVisibleServiceImpl,
+            refreshScrollVisible,
         });
 
         (ViewportSizeFeature.prototype as unknown as { listenForResize: () => void }).listenForResize.call(fakeFeature);
@@ -73,7 +75,7 @@ describe('ViewportSizeFeature', () => {
         expect(onCenterViewportResized).toHaveBeenCalledTimes(1);
 
         resizeCallback?.();
-        expect(updateScrollVisibleServiceImpl).toHaveBeenCalledTimes(1);
+        expect(refreshScrollVisible).toHaveBeenCalledTimes(1);
         expect(_requestAnimationFrame).toHaveBeenCalled();
     });
 });

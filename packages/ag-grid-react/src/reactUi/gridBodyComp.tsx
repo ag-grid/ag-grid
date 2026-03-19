@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
-import type { ComponentSelector, IGridBodyComp } from 'ag-grid-community';
+import type { ComponentSelector, IGridBodyComp, VerticalSection, VerticalSectionMap } from 'ag-grid-community';
 import {
     CssClassManager,
     FakeHScrollComp,
@@ -19,14 +19,13 @@ import useReactCommentEffect from './reactComment';
 import RowContainerComp from './rows/rowContainerComp';
 import { classesList } from './utils';
 
-type PinnedSection = 'top' | 'bottom';
 type PinnedSectionState = { height: number; invisible: boolean };
 
 const GridBodyComp = () => {
     const { context, gos, overlays, rangeSvc } = useContext(BeansContext);
 
     const [rowAnimationClass, setRowAnimationClass] = useState<string>('');
-    const [pinnedSections, setPinnedSections] = useState<Record<PinnedSection, PinnedSectionState>>({
+    const [pinnedSections, setPinnedSections] = useState<VerticalSectionMap<PinnedSectionState>>({
         top: { height: 0, invisible: true },
         bottom: { height: 0, invisible: true },
     });
@@ -67,7 +66,7 @@ const GridBodyComp = () => {
         setRootElement(eRef);
     }, []);
 
-    const setPinnedSection = useCallback((section: PinnedSection, state: PinnedSectionState) => {
+    const setPinnedSection = useCallback((section: VerticalSection, state: PinnedSectionState) => {
         setPinnedSections((prev) => {
             const current = prev[section];
             if (current.height === state.height && current.invisible === state.invisible) {

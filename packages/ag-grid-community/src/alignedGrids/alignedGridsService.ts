@@ -195,7 +195,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
         let otherColumn: AgColumn | null = null;
 
         const beans = this.beans;
-        const { colResize, ctrlsSvc, colModel } = beans;
+        const { colResize, colModel, scrollVisibleSvc } = beans;
         if (masterColumn) {
             otherColumn = colModel.getColDefCol(masterColumn.getColId());
         }
@@ -263,8 +263,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
                 break;
             }
         }
-        const gridBodyCon = ctrlsSvc.getGridBodyCtrl();
-        const isVerticalScrollShowing = gridBodyCon.isVerticalScrollShowing();
+        const isVerticalScrollShowing = scrollVisibleSvc.isVerticalScrollShowing();
         for (const api of this.getAlignedGridApis()) {
             api.setGridOption('alwaysShowVerticalScroll', isVerticalScrollShowing);
         }

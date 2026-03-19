@@ -1,7 +1,7 @@
 import { _getInnerHeight, _observeResize, _requestAnimationFrame } from '../agStack/utils/dom';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import type { ScrollVisibleService, SetScrollsVisibleParams } from '../gridBodyComp/scrollVisibleService';
+import type { ScrollVisibleService } from '../gridBodyComp/scrollVisibleService';
 import type { GridBodyCtrl } from './gridBodyCtrl';
 import type { RowContainerCtrl } from './rowContainer/rowContainerCtrl';
 
@@ -87,7 +87,7 @@ export class ViewportSizeFeature extends BeanStub {
         const { beans } = this;
         _requestAnimationFrame(beans, () => {
             this.scrollVisibilityRefreshQueued = false;
-            this.updateScrollVisibleServiceImpl();
+            this.scrollVisibleSvc.refresh();
         });
     }
 
@@ -120,13 +120,12 @@ export class ViewportSizeFeature extends BeanStub {
             return;
         }
 
-        this.scrollVisibleSvc.updateScrollGap();
         if (this.centerContainerCtrl.isViewportInTheDOMTree()) {
             const { pinnedCols, colFlex } = this.beans;
             pinnedCols?.keepPinnedColumnsNarrowerThanViewport();
             this.checkViewportAndScrolls();
 
-            const newWidth = this.centerContainerCtrl.getCenterWidth();
+            const newWidth = this.gridBodyCtrl.getCenterWidth();
 
             if (newWidth !== this.centerWidth) {
                 this.centerWidth = newWidth;
@@ -150,7 +149,7 @@ export class ViewportSizeFeature extends BeanStub {
         }
 
         // results in updating anything that depends on scroll showing
-        this.updateScrollVisibleService();
+        this.scrollVisibleSvc.refresh();
 
         // fires event if height changes, used by PaginationService, HeightScalerService, RowRenderer
         this.checkBodyHeight();
@@ -182,39 +181,10 @@ export class ViewportSizeFeature extends BeanStub {
         }
     }
 
-    private updateScrollVisibleService(): void {
-        // because of column animation (which takes 200ms), we have to do this twice.
-        // eg if user removes cols anywhere except at the RHS, then the cols on the RHS
-        // will animate to the left to fill the gap. this animation means just after
-        // the cols are removed, the remaining cols are still in the original location
-        // at the start of the animation, so pre animation the H scrollbar is still needed,
-        // but post animation it is not.
-        this.updateScrollVisibleServiceImpl();
-        setTimeout(this.updateScrollVisibleServiceImpl.bind(this), 500);
-    }
-
-    private updateScrollVisibleServiceImpl(): void {
-        const gridBodyCtrl = this.gridBodyCtrl;
-        if (!this.isAlive() || !gridBodyCtrl) {
-            return;
-        }
-
-        const params: SetScrollsVisibleParams = {
-            horizontalScrollShowing: this.centerContainerCtrl.isHorizontalScrollShowing(),
-            verticalScrollShowing: gridBodyCtrl.isVerticalScrollShowing(),
-        };
-
-        this.scrollVisibleSvc.setScrollsVisible(params);
-    }
-
     // this gets called whenever a change in the viewport, so we can inform column controller it has to work
     // out the virtual columns again. gets called from following locations:
     // + ensureColVisible, scroll, init, layoutChanged, displayedColumnsChanged
     private onHorizontalViewportChanged(): void {
-        const { centerContainerCtrl, beans } = this;
-        const scrollWidth = centerContainerCtrl.getCenterWidth();
-        const scrollPosition = centerContainerCtrl.getViewportScrollLeft();
-
-        beans.colViewport.setScrollPosition(scrollWidth, scrollPosition);
+        this.gridBodyCtrl?.updateColumnViewport();
     }
 }

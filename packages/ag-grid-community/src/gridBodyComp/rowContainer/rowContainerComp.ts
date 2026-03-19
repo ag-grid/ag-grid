@@ -78,7 +78,6 @@ class RowContainerComp extends Component {
         const eViewport = eGridViewport ?? eContainer;
 
         const compProxy: IRowContainerComp = {
-            setHorizontalScroll: (offset: number) => (eViewport.scrollLeft = offset),
             setRowCtrls: ({ rowCtrls }) => this.setRowCtrls(rowCtrls),
             setSpannedRowCtrls: (rowCtrls: RowCtrl[]) => this.setRowCtrls(rowCtrls, true),
             setDomOrder: (domOrder) => (this.domOrder = domOrder),

@@ -2,6 +2,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { DragAndDropIcon, DropTarget, GridDraggingEvent } from '../../dragAndDrop/dragAndDropService';
 import { DragSourceType } from '../../dragAndDrop/dragAndDropService';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
+import type { HorizontalSection } from '../../interfaces/iGridSection';
 import { BodyDropPivotTarget } from './bodyDropPivotTarget';
 import { MoveColumnFeature } from './moveColumnFeature';
 
@@ -20,12 +21,8 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
     private currentDropListener: DropListener | null = null;
     private lastDetectedSection: ColumnPinnedType = null;
 
-    private moveColumnFeatureCenter: MoveColumnFeature;
-    private moveColumnFeatureLeft: MoveColumnFeature;
-    private moveColumnFeatureRight: MoveColumnFeature;
-    private bodyDropPivotTargetCenter: BodyDropPivotTarget;
-    private bodyDropPivotTargetLeft: BodyDropPivotTarget;
-    private bodyDropPivotTargetRight: BodyDropPivotTarget;
+    private moveColumnFeatures: Record<HorizontalSection, MoveColumnFeature>;
+    private bodyDropPivotTargets: Record<HorizontalSection, BodyDropPivotTarget>;
 
     constructor(private readonly eContainer: HTMLElement) {
         super();
@@ -44,12 +41,16 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
             this.eSecondaryContainers = uniqueViewports.map((viewport) => [viewport]);
         });
 
-        this.moveColumnFeatureCenter = this.createManagedBean(new MoveColumnFeature(null));
-        this.moveColumnFeatureLeft = this.createManagedBean(new MoveColumnFeature('left'));
-        this.moveColumnFeatureRight = this.createManagedBean(new MoveColumnFeature('right'));
-        this.bodyDropPivotTargetCenter = this.createManagedBean(new BodyDropPivotTarget(null));
-        this.bodyDropPivotTargetLeft = this.createManagedBean(new BodyDropPivotTarget('left'));
-        this.bodyDropPivotTargetRight = this.createManagedBean(new BodyDropPivotTarget('right'));
+        this.moveColumnFeatures = {
+            left: this.createManagedBean(new MoveColumnFeature('left')),
+            center: this.createManagedBean(new MoveColumnFeature(null)),
+            right: this.createManagedBean(new MoveColumnFeature('right')),
+        };
+        this.bodyDropPivotTargets = {
+            left: this.createManagedBean(new BodyDropPivotTarget('left')),
+            center: this.createManagedBean(new BodyDropPivotTarget(null)),
+            right: this.createManagedBean(new BodyDropPivotTarget('right')),
+        };
 
         dragAndDrop!.addDropTarget(this);
         this.addDestroyFunc(() => dragAndDrop!.removeDropTarget(this));
@@ -122,32 +123,23 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
         this.currentDropListener = null;
     }
 
-    private getMoveColumnFeature(draggingEvent: GridDraggingEvent): MoveColumnFeature {
-        switch (this.getPinnedSection(draggingEvent)) {
-            case 'left':
-                return this.moveColumnFeatureLeft;
-            case 'right':
-                return this.moveColumnFeatureRight;
-            default:
-                return this.moveColumnFeatureCenter;
-        }
-    }
+    private getSection(draggingEvent: GridDraggingEvent): HorizontalSection {
+        const pinnedSection = this.getPinnedSection(draggingEvent);
 
-    private getBodyDropPivotTarget(draggingEvent: GridDraggingEvent): BodyDropPivotTarget {
-        switch (this.getPinnedSection(draggingEvent)) {
+        switch (pinnedSection) {
             case 'left':
-                return this.bodyDropPivotTargetLeft;
             case 'right':
-                return this.bodyDropPivotTargetRight;
+                return pinnedSection;
             default:
-                return this.bodyDropPivotTargetCenter;
+                return 'center';
         }
     }
 
     private getDropListener(draggingEvent: GridDraggingEvent): DropListener {
+        const section = this.getSection(draggingEvent);
         return this.isDropColumnInPivotMode(draggingEvent)
-            ? this.getBodyDropPivotTarget(draggingEvent)
-            : this.getMoveColumnFeature(draggingEvent);
+            ? this.bodyDropPivotTargets[section]
+            : this.moveColumnFeatures[section];
     }
 
     private getPinnedSection(draggingEvent: GridDraggingEvent): ColumnPinnedType {

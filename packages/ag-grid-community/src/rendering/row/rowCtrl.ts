@@ -36,6 +36,7 @@ import type { ProcessRowParams, RenderedRowEvent } from '../../interfaces/iCallb
 import type { RefreshRowsParams } from '../../interfaces/iCellsParams';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
+import type { HorizontalSectionMap } from '../../interfaces/iGridSection';
 import type { DataChangedEvent, IRowNode } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { IRowStyleFeature } from '../../interfaces/iRowStyleFeature';
@@ -64,11 +65,7 @@ export interface IRowComp {
     getScrollingRowElement(): HTMLElement | undefined;
     getPinnedRightRowElement(): HTMLElement | undefined;
     showFullWidth(compDetails: UserCompDetails): void;
-    showEmbeddedFullWidth?(compDetails: {
-        left: UserCompDetails;
-        center: UserCompDetails;
-        right: UserCompDetails;
-    }): void;
+    showEmbeddedFullWidth?(compDetails: HorizontalSectionMap<UserCompDetails>): void;
     getFullWidthCellRenderer(): ICellRenderer | null | undefined;
     getFullWidthCellRendererParams(): ICellRendererParams | undefined;
     getFullWidthCellRendererParamsForPinned?(pinned: ColumnPinnedType): ICellRendererParams | undefined;

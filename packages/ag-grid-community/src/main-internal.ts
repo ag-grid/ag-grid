@@ -432,6 +432,12 @@ export type { IGroupHierarchyColService } from './interfaces/iGroupHierarchyColS
 
 export type { IMenuFactory } from './interfaces/iMenuFactory';
 export type { IMultiFilterService } from './interfaces/iMultiFilterService';
+export type {
+    HorizontalSection,
+    HorizontalSectionMap,
+    VerticalSection,
+    VerticalSectionMap,
+} from './interfaces/iGridSection';
 export type { IPinnedSectionCompHost } from './interfaces/iPinnedSectionCompHost';
 export type { IPinnedRowModel } from './interfaces/iPinnedRowModel';
 export type { IPivotColDefService } from './interfaces/iPivotColDefService';

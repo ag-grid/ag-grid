@@ -97,9 +97,6 @@ const RowContainerComp = ({
         };
 
         const compProxy: IRowContainerComp = {
-            setHorizontalScroll: (offset: number) => {
-                eViewportForCtrl.scrollLeft = offset;
-            },
             setRowCtrls: ({ rowCtrls, useFlushSync }: { rowCtrls: RowCtrl[]; useFlushSync?: boolean }) => {
                 const useFlush = !!useFlushSync && rowCtrlsRef.current.length > 0 && rowCtrls.length > 0;
                 rowCtrlsRef.current = rowCtrls;

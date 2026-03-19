@@ -3,6 +3,7 @@ import type { BeanCollection } from '../../context/context';
 import type { RowStyle } from '../../entities/gridOptions';
 import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
+import type { HorizontalSection, HorizontalSectionMap } from '../../interfaces/iGridSection';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { _createElement } from '../../utils/element';
 import { Component } from '../../widgets/component';
@@ -11,15 +12,13 @@ import type { CellCtrl, CellCtrlInstanceId } from '../cell/cellCtrl';
 import type { ICellRendererComp, ICellRendererParams } from '../cellRenderers/iCellRenderer';
 import type { IRowComp, PinnedCellGroupWidths, RowCtrl } from './rowCtrl';
 
-type EmbeddedFullWidthSection = 'left' | 'center' | 'right';
-
 export class RowComp extends Component {
     private fullWidthCellRenderer: ICellRendererComp | null | undefined;
     private fullWidthCellRendererParams: ICellRendererParams | undefined;
-    private fullWidthCellRenderersBySection: Partial<Record<EmbeddedFullWidthSection, ICellRendererComp | null>> = {};
-    private fullWidthCellRendererParamsBySection: Partial<Record<EmbeddedFullWidthSection, ICellRendererParams>> = {};
+    private fullWidthCellRenderersBySection: Partial<HorizontalSectionMap<ICellRendererComp | null>> = {};
+    private fullWidthCellRendererParamsBySection: Partial<HorizontalSectionMap<ICellRendererParams>> = {};
     private isEmbeddedFullWidth = false;
-    private embeddedSectionHasContent: Record<EmbeddedFullWidthSection, boolean> = {
+    private embeddedSectionHasContent: HorizontalSectionMap<boolean> = {
         left: true,
         center: true,
         right: true,
@@ -132,11 +131,7 @@ export class RowComp extends Component {
         compDetails.newAgStackInstance().then(callback);
     }
 
-    private showEmbeddedFullWidth(compDetails: {
-        left: UserCompDetails;
-        center: UserCompDetails;
-        right: UserCompDetails;
-    }): void {
+    private showEmbeddedFullWidth(compDetails: HorizontalSectionMap<UserCompDetails>): void {
         this.isEmbeddedFullWidth = true;
         this.embeddedSectionHasContent.left = true;
         this.embeddedSectionHasContent.center = true;
@@ -147,7 +142,7 @@ export class RowComp extends Component {
     }
 
     private showEmbeddedFullWidthSection(
-        section: EmbeddedFullWidthSection,
+        section: HorizontalSection,
         compDetails: UserCompDetails,
         sectionHost: HTMLElement | undefined
     ): void {
@@ -180,7 +175,7 @@ export class RowComp extends Component {
 
     private refreshEmbeddedFullWidth(getUpdatedParams: (pinned: ColumnPinnedType) => ICellRendererParams): boolean {
         let refreshed = true;
-        const sections: [EmbeddedFullWidthSection, ColumnPinnedType][] = [
+        const sections: [HorizontalSection, ColumnPinnedType][] = [
             ['left', 'left'],
             ['center', null],
             ['right', 'right'],
@@ -213,7 +208,7 @@ export class RowComp extends Component {
         return this.fullWidthCellRendererParamsBySection[this.getEmbeddedSectionForPinned(pinned)];
     }
 
-    private getEmbeddedSectionForPinned(pinned: ColumnPinnedType): EmbeddedFullWidthSection {
+    private getEmbeddedSectionForPinned(pinned: ColumnPinnedType): HorizontalSection {
         if (pinned === 'left') {
             return 'left';
         }
@@ -318,7 +313,7 @@ export class RowComp extends Component {
     }
 
     private setEmbeddedFullWidthRowComp(
-        section: EmbeddedFullWidthSection,
+        section: HorizontalSection,
         fullWidthRowComponent: ICellRendererComp,
         params: ICellRendererParams
     ): void {
