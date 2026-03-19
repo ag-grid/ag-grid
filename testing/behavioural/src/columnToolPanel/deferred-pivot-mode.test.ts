@@ -1623,6 +1623,42 @@ describe('deferred column tool panel pivot mode', () => {
         expect(getApplyButton(toolPanelGui).disabled).toBe(true);
     });
 
+    test('apply button is disabled after reverting a staged column visibility change via checkbox', async () => {
+        const { toolPanel, toolPanelGui } = await createDeferredNonPivotGrid();
+
+        expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+
+        // Toggle Athlete checkbox off (hide column)
+        const athleteComp = createPrimaryColumnComp(toolPanel, 'Athlete');
+        athleteComp['onChangeCommon'](false);
+
+        expect(getApplyButton(toolPanelGui).disabled).toBe(false);
+
+        // Toggle Athlete checkbox back on (show column — revert to original state)
+        const athleteComp2 = createPrimaryColumnComp(toolPanel, 'Athlete');
+        athleteComp2['onChangeCommon'](true);
+
+        expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+    });
+
+    test('apply button is disabled after reverting a staged pivot column change via checkbox', async () => {
+        const { toolPanel, toolPanelGui } = await createDeferredPivotModeGrid();
+
+        expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+
+        // Toggle Athlete checkbox on (add to row group in pivot mode)
+        const athleteComp = createPrimaryColumnComp(toolPanel, 'Athlete');
+        athleteComp['onChangeCommon'](true);
+
+        expect(getApplyButton(toolPanelGui).disabled).toBe(false);
+
+        // Toggle Athlete checkbox back off (revert)
+        const athleteComp2 = createPrimaryColumnComp(toolPanel, 'Athlete');
+        athleteComp2['onChangeCommon'](false);
+
+        expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+    });
+
     test('apply button becomes enabled when a row group pill sort direction is changed', async () => {
         const { toolPanel, toolPanelGui } = await createDeferredPivotModeGrid();
 

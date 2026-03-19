@@ -265,7 +265,7 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
                     (patch.hide !== undefined && patch.hide !== !column.isVisible()) ||
                     (patch.rowGroup !== undefined && !!patch.rowGroup !== column.isRowGroupActive()) ||
                     (patch.pivot !== undefined && !!patch.pivot !== column.isPivotActive()) ||
-                    (patch.aggFunc !== undefined && patch.aggFunc !== column.getAggFunc())
+                    (patch.aggFunc !== undefined && (patch.aggFunc ?? null) !== (column.getAggFunc() ?? null))
                 ) {
                     return true;
                 }
