@@ -58,26 +58,13 @@ const gridOptions = {
 };
 ```
 
-### External Changes Are Not Deferred
+{% note %}
+Changes made outside the Columns Tool Panel — such as dragging columns into the Row Group or Pivot Panels, using the Column Menu, or calling the Grid / Column API — are always applied immediately.
+{% /note %}
 
-Changes made outside the Columns Tool Panel are always applied immediately.
-
-This includes interactions such as:
-
--   Dragging columns into the Row Group Panel.
--   Dragging columns into the Pivot Panel.
--   Using the Column Menu (e.g. sorting, row grouping, reset).
--   Applying changes via the Grid / Column API.
-
-### Interaction with Pending Changes
-
-Changes made outside the Columns Tool Panel (CTP) clear any pending changes and revert the CTP to match the current grid state.
-
-The following operations do not clear pending changes:
-
--   Column Pinning
--   Column Resizing
--   Column Group Expansion
+{% note %}
+External changes clear any pending changes and revert the Columns Tool Panel to match the current grid state. Column pinning, resizing, and group expansion do not clear pending changes.
+{% /note %}
 
 ## Columns Tool Panel Sections
 
