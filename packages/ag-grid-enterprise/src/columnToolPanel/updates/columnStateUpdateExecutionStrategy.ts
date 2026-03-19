@@ -646,11 +646,16 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
             return [];
         }
 
+        const livePivotColumns = this.beans.pivotColsSvc?.columns;
+        const fallbackColumns = livePivotColumns?.length
+            ? livePivotColumns
+            : getDraftColumns(this.beans, this.lastPivotColIds);
+
         return getDraftColumns(
             this.beans,
             getDraftFunctionColumnIds(
                 this.state.pivot?.colIds,
-                this.beans.pivotColsSvc?.columns,
+                fallbackColumns,
                 this.state.columnState?.patches,
                 (patch) => (patch.pivot == null ? undefined : !!patch.pivot)
             )

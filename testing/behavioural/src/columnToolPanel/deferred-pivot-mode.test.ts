@@ -1509,6 +1509,34 @@ describe('deferred column tool panel pivot mode', () => {
         expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['year']);
     });
 
+    test('column labels section shows previous pivot columns after toggling pivot mode off, applying, then back on', async () => {
+        const { gridApi, toolPanel, toolPanelGui } = await createDeferredPivotModeGrid();
+
+        // Initially Year is a pivot column
+        expect(
+            getUpdateStrategy(toolPanel)
+                .getPivotColumns(true)
+                .map((col) => col.getColId())
+        ).toEqual(['year']);
+
+        // Toggle pivot off and apply
+        getPivotModeToggle(toolPanelGui).click();
+        getApplyButton(toolPanelGui).click();
+        await waitForNoLoadingRows(gridApi);
+
+        expect(gridApi.isPivotMode()).toBe(false);
+
+        // Toggle pivot back on (before Apply)
+        getPivotModeToggle(toolPanelGui).click();
+
+        // Deferred state should show Year in pivot columns
+        expect(
+            getUpdateStrategy(toolPanel)
+                .getPivotColumns(true)
+                .map((col) => col.getColId())
+        ).toEqual(['year']);
+    });
+
     test('turning pivot mode off and applying should remove year header group text and update the grid option', async () => {
         const { gridApi, toolPanelGui } = await createDeferredPivotModeGrid();
 
