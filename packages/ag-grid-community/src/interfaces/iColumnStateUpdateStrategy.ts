@@ -15,6 +15,7 @@ export interface IColumnStateUpdateStrategy {
     setRowGroupColumns(deferMode: boolean, columns: AgColumn[], eventType: ColumnEventType): void;
     getRowGroupColumns(deferMode: boolean): AgColumn[];
     getPrimaryColumns(deferMode: boolean): AgColumn[];
+    hasDeferredColumnOrder(deferMode: boolean): boolean;
     setValueColumns(deferMode: boolean, columns: AgColumn[], eventType: ColumnEventType): void;
     getValueColumns(deferMode: boolean): AgColumn[];
     setColumnAggFunc(

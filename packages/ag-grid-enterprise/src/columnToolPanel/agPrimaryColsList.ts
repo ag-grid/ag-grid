@@ -121,7 +121,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
         this.expandGroupsByDefault = !contractColumnSelection;
 
-        const isPreventMove = suppressColumnMove || suppressSyncLayoutWithGrid;
+        const isPreventMove = suppressColumnMove || (suppressSyncLayoutWithGrid && !isDeferredMode(params));
 
         const virtualList = this.createManagedBean(
             new VirtualList<ToolPanelColumnGroupComp | ToolPanelColumnComp, ColumnModelItem>({
@@ -262,7 +262,8 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         const expandedStates = this.getExpandedStates();
 
         const pivotModeActive = this.colModel.isPivotMode();
-        const shouldSyncColumnLayoutWithGrid = !params.suppressSyncLayoutWithGrid && !pivotModeActive;
+        const deferApply = isDeferredMode(params);
+        const shouldSyncColumnLayoutWithGrid = (!params.suppressSyncLayoutWithGrid || deferApply) && !pivotModeActive;
 
         if (shouldSyncColumnLayoutWithGrid) {
             this.buildTreeFromWhatGridIsDisplaying();
@@ -335,13 +336,17 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
     private buildTreeFromWhatGridIsDisplaying(): void {
         const deferApply = isDeferredMode(this.params);
-        const columnOrder = this.beans.columnStateUpdateStrategy.getPrimaryColumns(deferApply);
-
-        if (deferApply && columnOrder.length > 0) {
-            syncLayoutWithColumns(columnOrder, this.setColumnLayout.bind(this));
+        if (deferApply && this.beans.columnStateUpdateStrategy.hasDeferredColumnOrder(deferApply)) {
+            const columnOrder = this.beans.columnStateUpdateStrategy.getPrimaryColumns(deferApply);
+            if (columnOrder.length > 0) {
+                syncLayoutWithColumns(columnOrder, this.setColumnLayout.bind(this));
+                return;
+            }
+        }
+        if (this.params.suppressSyncLayoutWithGrid) {
+            this.buildTreeFromProvidedColumnDefs();
             return;
         }
-
         syncLayoutWithGrid(this.colModel, this.setColumnLayout.bind(this));
     }
 

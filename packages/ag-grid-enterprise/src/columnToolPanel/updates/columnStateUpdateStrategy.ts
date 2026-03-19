@@ -59,6 +59,10 @@ export class ColumnStateUpdateStrategy extends BeanStub implements IColumnStateU
         return this.delegate('getPrimaryColumns', deferMode);
     }
 
+    public hasDeferredColumnOrder(deferMode: boolean): boolean {
+        return this.delegate('hasDeferredColumnOrder', deferMode);
+    }
+
     public setValueColumns(deferMode: boolean, columns: AgColumn[], eventType: ColumnEventType): void {
         this.delegate('setValueColumns', deferMode, columns, eventType);
     }

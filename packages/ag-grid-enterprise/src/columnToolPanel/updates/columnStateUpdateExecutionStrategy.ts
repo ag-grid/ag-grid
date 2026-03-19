@@ -59,6 +59,9 @@ export class ColumnStateUpdateExecutionStrategy extends BeanStub implements ICol
     public getPrimaryColumns(deferMode: boolean): AgColumn[] {
         return this.getUpdateStrategy(deferMode).getPrimaryColumns();
     }
+    public hasDeferredColumnOrder(deferMode: boolean): boolean {
+        return this.getUpdateStrategy(deferMode).hasDeferredColumnOrder();
+    }
     public setValueColumns(deferMode: boolean, columns: AgColumn[], eventType: ColumnEventType): void {
         this.getUpdateStrategy(deferMode).setValueColumns(columns, eventType);
     }
@@ -119,6 +122,7 @@ export class SynchronousColumnStateUpdateStrategy implements ColumnStateConcrete
     public reset = noop;
     public commit = noop;
     public hasPendingChanges = () => false;
+    public hasDeferredColumnOrder = () => false;
 
     public applyColumnState(state: ColumnState[], eventType: ColumnEventType): void {
         if (state.length === 0) {
@@ -619,6 +623,10 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
 
     public getPrimaryColumns(): AgColumn[] {
         return getDraftColumns(this.beans, this.state.columnOrder?.colIds ?? getPrimaryColumnIds(this.beans));
+    }
+
+    public hasDeferredColumnOrder(): boolean {
+        return !!this.state.columnOrder;
     }
 
     public getValueColumns(): AgColumn[] {
