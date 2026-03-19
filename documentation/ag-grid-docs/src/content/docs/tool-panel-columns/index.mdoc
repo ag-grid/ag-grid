@@ -24,9 +24,19 @@ Selecting columns means different things depending on whether the grid is in piv
 -   **Pivot Mode Off**: When pivot mode is off, selecting a column toggles the visibility of the column. A selected column is visible and an unselected column is hidden. With `allowDragFromColumnsToolPanel=true`, you can drag a column from the tool panel onto the grid and it will become visible.
 -   **Pivot Mode On**: When pivot mode is on, selecting a column will trigger the column to be either aggregated, grouped or pivoted depending on what is allowed for that column.
 
-## Deferred Apply Mode
+## Deferred Updates
 
-You can configure the Columns Tool Panel to stage changes and require an explicit **Apply** action before they are committed.
+You can configure the Columns Tool Panel to stage changes and require an explicit **Apply** action before they are committed. This allows multiple configuration changes to be made and applied in a single update, avoiding unnecessary intermediate recomputations or requests.
+
+Deferred Updates are enabled by including the **Apply** button in `toolPanelParams.buttons`.
+
+The example below uses the Server-Side Row Model. Note that in the example below:
+
+-   Changes made in the Columns Tool Panel (CTP) are staged as pending changes.
+-   **Apply** commits all pending changes in a single operation.
+-   **Cancel** discards all pending changes and restores the last applied state.
+
+{% gridExampleRunner title="Deferred Updates" name="deferred-apply-mode"  exampleHeight=830 /%}
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -48,18 +58,26 @@ const gridOptions = {
 };
 ```
 
-When `buttons` includes `'apply'`:
+### External Changes Are Not Deferred
 
--   Changes made in the Columns Tool Panel are staged as pending changes.
--   The configured buttons are displayed at the bottom of the tool panel.
--   **Apply** commits pending changes.
--   **Cancel** discards pending changes.
+Changes made outside the Columns Tool Panel are always applied immediately.
 
-Changes made outside the Columns Tool Panel (for example via other grid entry points) continue to apply immediately.
+This includes interactions such as:
 
-The example below uses the Server-Side Row Model.
+-   Dragging columns into the Row Group Panel.
+-   Dragging columns into the Pivot Panel.
+-   Using the Column Menu (e.g. sorting, row grouping, reset).
+-   Applying changes via the Grid / Column API.
 
-{% gridExampleRunner title="Deferred Apply Mode" name="deferred-apply-mode"  exampleHeight=830 /%}
+### Interaction with Pending Changes
+
+Changes made outside the Columns Tool Panel (CTP) clear any pending changes and revert the CTP to match the current grid state.
+
+The following operations do not clear pending changes:
+
+-   Column Pinning
+-   Column Resizing
+-   Column Group Expansion
 
 ## Columns Tool Panel Sections
 
