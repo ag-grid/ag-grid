@@ -220,7 +220,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
         const { field } = userColDef;
 
-        if (shouldInfer(cellDataType)) {
+        if (cellDataType == null || cellDataType === true) {
             cellDataType = this.canInferCellDataType(colDef, userColDef) ? this.inferCellDataType(field, colId) : false;
         }
 
@@ -492,7 +492,10 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
     public validateColDef(colDef: ColDef, userColDef?: ColDef, defaultColDef?: ColDef, colId?: string): void {
         if (colDef.cellDataType === 'object') {
-            const inferred = shouldInfer(userColDef?.cellDataType) && shouldInfer(defaultColDef?.cellDataType);
+            const wasInferred = (colDef?: ColDef) => {
+                return colDef?.cellDataType == null || colDef?.cellDataType === true;
+            };
+            const inferred = wasInferred(userColDef) && wasInferred(defaultColDef);
             const warning = (property: 'Formatter' | 'Parser') => _warn(48, { property, inferred, colId });
             const { object } = this.dataTypeDefinitions;
             if (colDef.valueFormatter === object.groupSafeValueFormatter && !this.hasObjectValueFormatter) {
@@ -849,10 +852,6 @@ function createGroupSafeValueFormatter(
         }
         return dataTypeDefinition.valueFormatter!(params);
     };
-}
-
-function shouldInfer(cellDataType: string | boolean | undefined) {
-    return cellDataType == null || cellDataType === true;
 }
 
 function doesColDefPropPreventInference(
