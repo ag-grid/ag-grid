@@ -1,7 +1,9 @@
 import {
     EDIT_MODES,
     GridRows,
+    asyncSetTimeout,
     createGrid,
+    createSimpleGrid,
     distributeGroupValue,
     gridsManager,
     performEdit,
@@ -252,6 +254,142 @@ describe.each(EDIT_MODES)('distributeGroupValue aggFunc strategies (%s)', (editM
             · └─┬ LEAF_GROUP id:row-group-region-Americas-country-Canada amount:120
             · · ├── LEAF id:ca-toronto region:"Americas" country:"Canada" amount:35
             · · └── LEAF id:ca-vancouver region:"Americas" country:"Canada" amount:25
+        `);
+    });
+});
+
+describe('overriding built-in aggFunc with a custom function', () => {
+    // Custom aggFunc registered under 'sum' that doubles the total
+    const customSum = (params: any) => {
+        let total = 0;
+        for (const v of params.values) {
+            total += typeof v === 'number' ? v : 0;
+        }
+        return total * 2;
+    };
+
+    const customSumRowData = () => [
+        { id: 'a1', region: 'R', country: 'C', amount: 10 },
+        { id: 'a2', region: 'R', country: 'C', amount: 20 },
+        { id: 'a3', region: 'R', country: 'C', amount: 30 },
+    ];
+
+    test('overriding sum with a custom function still uses uniform strategy (matched by name)', async () => {
+        // The distributor resolves the strategy by string name, so it still picks 'uniform'.
+        const api = await createSimpleGrid(
+            'override-sum',
+            customSumRowData(),
+            {
+                aggFunc: 'sum',
+                groupRowValueSetter: { precision: 0 },
+            },
+            undefined,
+            { aggFuncs: { sum: customSum } }
+        );
+
+        // Custom sum aggregation: leaf group = (10+20+30)*2 = 120, filler = 120*2 = 240
+        await new GridRows(api, 'before edit').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ filler id:row-group-region-R amount:240
+            · └─┬ LEAF_GROUP id:row-group-region-R-country-C amount:120
+            · · ├── LEAF id:a1 region:"R" country:"C" amount:10
+            · · ├── LEAF id:a2 region:"R" country:"C" amount:20
+            · · └── LEAF id:a3 region:"R" country:"C" amount:30
+        `);
+
+        // Edit the group to 90 — distributor sees aggFunc='sum', uses uniform: 90/3 = 30 each
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 90, 'ui');
+        await asyncSetTimeout(0);
+
+        // After re-aggregation with customSum: leaf group = (30+30+30)*2 = 180, filler = 180*2 = 360
+        await new GridRows(api, 'after uniform edit').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ filler id:row-group-region-R amount:360
+            · └─┬ LEAF_GROUP id:row-group-region-R-country-C amount:180
+            · · ├── LEAF id:a1 region:"R" country:"C" amount:30
+            · · ├── LEAF id:a2 region:"R" country:"C" amount:30
+            · · └── LEAF id:a3 region:"R" country:"C" amount:30
+        `);
+    });
+
+    test('overriding sum with custom function + explicit distribution strategy', async () => {
+        const api = await createSimpleGrid(
+            'override-sum-percentage',
+            customSumRowData(),
+            {
+                aggFunc: 'sum',
+                groupRowValueSetter: {
+                    distribution: { sum: 'percentage' },
+                    precision: 0,
+                },
+            },
+            undefined,
+            { aggFuncs: { sum: customSum } }
+        );
+
+        // Edit to 120 — percentage preserves 10:20:30 ratio → 20:40:60
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 120, 'ui');
+        await asyncSetTimeout(0);
+
+        // After re-aggregation with customSum: leaf group = (20+40+60)*2 = 240, filler = 240*2 = 480
+        await new GridRows(api, 'after percentage edit').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ filler id:row-group-region-R amount:480
+            · └─┬ LEAF_GROUP id:row-group-region-R-country-C amount:240
+            · · ├── LEAF id:a1 region:"R" country:"C" amount:20
+            · · ├── LEAF id:a2 region:"R" country:"C" amount:40
+            · · └── LEAF id:a3 region:"R" country:"C" amount:60
+        `);
+    });
+
+    test('custom function in distribution record is called for matching aggFunc', async () => {
+        // Custom inverse: divides newValue by 2 (undoing the *2 aggFunc) then distributes uniformly.
+        // This ensures the aggregate matches the edited value, unlike the default uniform strategy.
+        let inverseFnCalled = false;
+        const myCustomInverseSumFn = (params: any) => {
+            inverseFnCalled = true;
+            const target = Number(params.newValue) / 2;
+            const children = params.aggregatedChildren;
+            const share = Math.round(target / children.length);
+            let changed = false;
+            for (const child of children) {
+                if (child.setDataValue(params.column, share, 'data')) {
+                    changed = true;
+                }
+            }
+            return changed;
+        };
+
+        const api = await createSimpleGrid(
+            'override-sum-custom-fn',
+            customSumRowData(),
+            {
+                aggFunc: 'sum',
+                groupRowValueSetter: {
+                    distribution: { sum: myCustomInverseSumFn },
+                },
+            },
+            undefined,
+            { aggFuncs: { sum: customSum } }
+        );
+
+        // Edit to 180 — custom fn divides by 2 first: 180/2/3 = 30 each
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 180, 'ui');
+        await asyncSetTimeout(0);
+
+        expect(inverseFnCalled).toBe(true);
+
+        // After re-aggregation with customSum: leaf group = (30+30+30)*2 = 180, filler = 180*2 = 360
+        await new GridRows(api, 'after custom fn edit').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ filler id:row-group-region-R amount:360
+            · └─┬ LEAF_GROUP id:row-group-region-R-country-C amount:180
+            · · ├── LEAF id:a1 region:"R" country:"C" amount:30
+            · · ├── LEAF id:a2 region:"R" country:"C" amount:30
+            · · └── LEAF id:a3 region:"R" country:"C" amount:30
         `);
     });
 });
