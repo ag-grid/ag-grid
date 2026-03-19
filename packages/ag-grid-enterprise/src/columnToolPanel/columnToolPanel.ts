@@ -18,6 +18,7 @@ import { AgPrimaryCols } from './agPrimaryCols';
 import columnToolPanelCSS from './columnToolPanel.css';
 import type { ColumnToolPanelFactory } from './columnToolPanelFactory';
 import type { PivotModePanel } from './pivotModePanel';
+import { isDeferredMode } from './toolPanelDeferredUiUtils';
 
 export interface ToolPanelColumnCompParams<TData = any, TContext = any>
     extends IToolPanelParams<TData, TContext, ColumnToolPanelState>,
@@ -81,7 +82,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         const hasPivotModule = gos.isModuleRegistered('SharedPivot');
         const hasRowGroupingModule = hasPivotModule || gos.isModuleRegistered('SharedRowGrouping');
 
-        this.isDeferModeEnabled = !!mergedParams.buttons?.includes('apply');
+        this.isDeferModeEnabled = isDeferredMode(mergedParams);
         this.toggleCss(DEFERRED_TOOL_PANEL_CLASS, this.isDeferModeEnabled);
 
         if (!mergedParams.suppressPivotMode && colToolPanelFactory && hasPivotModule) {
