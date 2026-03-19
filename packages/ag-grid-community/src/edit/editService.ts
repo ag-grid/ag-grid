@@ -844,7 +844,16 @@ export class EditService extends BeanStub implements NamedBean {
             _getCellCtrl(beans, { rowNode: node, column })?.refreshCell(params);
         }
         for (const node of refreshNodes) {
-            _getCellCtrl(beans, { rowNode: node, column })?.refreshCell(params);
+            const cellCtrl = _getCellCtrl(beans, { rowNode: node, column });
+            if (cellCtrl) {
+                cellCtrl.refreshCell(params);
+                // During batch, parent/group/grand-total rows need their batch edit CSS
+                // updated even when their aggregated value hasn't changed (dataNeedsUpdating
+                // is false, so refreshCell alone won't run applyCellStyles).
+                if (!params.force && this.batch) {
+                    cellCtrl.editStyleFeature?.applyCellStyles?.();
+                }
+            }
         }
     }
 
