@@ -59,7 +59,7 @@
         line-height: 1.5;
     }
 
-    .ag-column-panel .ag-standard-button.ag-column-panel-buttons-apply-button {
+    .ag-column-panel .ag-standard-button.ag-column-panel-buttons-apply-button:not(:disabled) {
         color: var(--ag-column-panel-apply-button-color);
         background-color: var(--ag-column-panel-apply-button-background-color);
     }

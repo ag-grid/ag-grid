@@ -61,7 +61,7 @@
 }
 
 /* stylelint-disable-next-line selector-max-specificity */
-:where(.ag-column-panel) .ag-column-panel-buttons-apply-button {
+:where(.ag-column-panel) .ag-column-panel-buttons-apply-button:not(:disabled) {
     color: var(--ag-column-panel-apply-button-color);
     background-color: var(--ag-column-panel-apply-button-background-color);
 }
