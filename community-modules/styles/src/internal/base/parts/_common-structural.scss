@@ -1162,6 +1162,7 @@
     .ag-grid-pinned-bottom-rows-container,
     .ag-grid-sticky-top-rows-container,
     .ag-grid-sticky-bottom-rows-container {
+        background-color: var(--ag-data-background-color);
         position: absolute;
         width: 100%;
         white-space: nowrap;
