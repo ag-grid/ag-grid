@@ -226,8 +226,12 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     };
 
     private readonly onExternalGridChange = (): void => {
-        if (!this.isDeferModeEnabled || this.isCommitting) return;
-        if (!this.beans.columnStateUpdateStrategy.hasPendingChanges(this.isDeferModeEnabled)) return;
+        if (!this.isDeferModeEnabled || this.isCommitting) {
+            return;
+        }
+        if (!this.beans.columnStateUpdateStrategy.hasPendingChanges(this.isDeferModeEnabled)) {
+            return;
+        }
         this.beans.columnStateUpdateStrategy.reset(this.isDeferModeEnabled);
         this.deferredButtonsComp?.updateValidity(false);
         this.refreshToolPanelLayouts();
