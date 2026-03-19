@@ -191,8 +191,23 @@ export default defineConfig({
             },
         },
         optimizeDeps: {
-            // Prevent vite from importing in content/docs folder
-            exclude: ['vue', '@angular/common/http', '@angular/forms', '@angular/common', '@angular/platform-browser'],
+            // Prevent vite from importing in content/docs folder.
+            // ag-charts-community and ag-charts-enterprise are excluded so Vite serves them as
+            // raw ESM rather than pre-bundling them. When pre-bundled, each package inlines its
+            // own copy of ag-charts-core, producing two separate ModuleRegistry singletons.
+            // Serving them as raw ESM lets both packages reference the same pre-bundled
+            // ag-charts-core.js, keeping the ModuleRegistry truly singular and fixing the
+            // "No modules have been registered" sparkline error in the Finance demo.
+            exclude: [
+                'vue',
+                '@angular/common/http',
+                '@angular/forms',
+                '@angular/common',
+                '@angular/platform-browser',
+                'ag-charts-community',
+                'ag-charts-enterprise',
+            ],
+            include: ['ag-charts-core'],
         },
     },
     integrations: [
