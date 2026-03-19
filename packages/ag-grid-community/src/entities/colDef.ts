@@ -1193,7 +1193,12 @@ interface ChangedValueParams<TData, TValueOld, TValueNew, TContext = any>
     newValue: TValueNew;
 }
 export interface NewValueParams<TData = any, TValue = any, TContext = any>
-    extends ChangedValueParams<TData, TValue | null | undefined, TValue | null | undefined, TContext> {}
+    extends ChangedValueParams<TData, TValue | null | undefined, TValue | null | undefined, TContext> {
+    /** The raw value from the edit, before any value getter is applied. */
+    newRawValue: TValue | null | undefined;
+    /** The source of the value change, e.g. `'edit'`, `'paste'`, `'undo'`, `'redo'`, `'data'`. */
+    source: string | undefined;
+}
 
 export interface ValueSetterParams<TData = any, TValue = any, TContext = any>
     extends ChangedValueParams<TData, TValue | null | undefined, TValue | null | undefined, TContext> {}
