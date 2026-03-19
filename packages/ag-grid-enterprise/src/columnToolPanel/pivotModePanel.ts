@@ -1,6 +1,7 @@
 import type { ElementParams, GridCheckbox } from 'ag-grid-community';
 import { AgToggleButtonSelector, Component, RefPlaceholder } from 'ag-grid-community';
 
+import { isDeferredMode } from './toolPanelDeferredUiUtils';
 import type { ColumnStateUpdateParams } from './updates/columnStateUpdateTypes';
 
 const PivotModePanelElement: ElementParams = {
@@ -25,7 +26,7 @@ export class PivotModePanel extends Component {
     }
 
     private getCurrentPivotMode(): boolean {
-        return this.beans.columnStateUpdateStrategy.getPivotMode(!!this.params.deferApply);
+        return this.beans.columnStateUpdateStrategy.getPivotMode(isDeferredMode(this.params));
     }
 
     public syncFromGrid(): void {
@@ -47,7 +48,7 @@ export class PivotModePanel extends Component {
 
         const onBtPivotMode = () => {
             const newValue = !!cbPivotMode.getValue();
-            this.beans.columnStateUpdateStrategy.setPivotMode(!!this.params.deferApply, newValue, 'toolPanelUi');
+            this.beans.columnStateUpdateStrategy.setPivotMode(isDeferredMode(this.params), newValue, 'toolPanelUi');
             this.onPivotModeValueChanged?.();
         };
 

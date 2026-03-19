@@ -10,6 +10,7 @@ import type {
 } from 'ag-grid-community';
 import { Component, DragSourceType, KeyCode, RefPlaceholder, _createElement } from 'ag-grid-community';
 
+import { isDeferredMode } from '../../columnToolPanel/toolPanelDeferredUiUtils';
 import type { ColumnStateUpdateParams } from '../../columnToolPanel/updates/columnStateUpdateTypes';
 import { PillDragComp } from '../../widgets/pillDragComp';
 import { VirtualList } from '../../widgets/virtualList';
@@ -32,7 +33,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         private readonly updateParams?: ColumnStateUpdateParams
     ) {
         super(dragSourceDropTarget, ghost, horizontal);
-        this.deferApply = !!updateParams?.deferApply;
+        this.deferApply = isDeferredMode(updateParams);
     }
 
     public override postConstruct(): void {

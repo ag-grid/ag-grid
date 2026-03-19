@@ -1,10 +1,11 @@
 import type { AgColumn, ColumnEventType, ColumnState, IAggFunc, SortDef } from 'ag-grid-community';
 
-export type ColumnStateUpdateParams = { deferApply?: boolean };
+export type ColumnStateUpdateParams = { buttons?: Array<'apply' | 'cancel'> };
 
 export interface ColumnStateConcreteUpdateStrategy {
     applyColumnState(state: ColumnState[], eventType: ColumnEventType): void;
     commit(): void;
+    hasPendingChanges(): boolean;
     moveColumns(columns: AgColumn[], targetIndex: number, eventType: ColumnEventType): void;
     reset(): void;
     setColumnsVisible(columns: AgColumn[], visible: boolean, eventType: ColumnEventType): void;
@@ -12,6 +13,7 @@ export interface ColumnStateConcreteUpdateStrategy {
     setRowGroupColumns(columns: AgColumn[], eventType: ColumnEventType): void;
     getRowGroupColumns(): AgColumn[];
     getPrimaryColumns(): AgColumn[];
+    hasDeferredColumnOrder(): boolean;
     setValueColumns(columns: AgColumn[], eventType: ColumnEventType): void;
     getValueColumns(): AgColumn[];
     setColumnAggFunc(column: AgColumn, aggFunc: string | IAggFunc | null | undefined, eventType: ColumnEventType): void;

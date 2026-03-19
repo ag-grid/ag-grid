@@ -28,6 +28,7 @@ import type { ColumnModelItem } from './columnModelItem';
 import type { ToolPanelColumnCompParams } from './columnToolPanel';
 import { createPivotStateForToolPanel, setAllColumns, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
+import { isDeferredMode } from './toolPanelDeferredUiUtils';
 
 const ToolPanelColumnElement: ElementParams = {
     tag: 'div',
@@ -161,11 +162,7 @@ export class ToolPanelColumnComp extends Component {
             return;
         }
 
-        const contextMenu = this.createBean(
-            new ToolPanelContextMenu(column, e, this.focusWrapper, {
-                deferApply: !!this.params.deferApply,
-            })
-        );
+        const contextMenu = this.createBean(new ToolPanelContextMenu(column, e, this.focusWrapper, this.params));
         this.addDestroyFunc(() => {
             if (contextMenu.isAlive()) {
                 this.destroyBean(contextMenu);
@@ -209,9 +206,7 @@ export class ToolPanelColumnComp extends Component {
             return;
         }
 
-        setAllColumns(this.beans, [this.column], nextState, 'toolPanelUi', {
-            deferApply: !!this.params.deferApply,
-        });
+        setAllColumns(this.beans, [this.column], nextState, 'toolPanelUi', this.params);
     }
 
     private refreshAriaLabel(): void {
@@ -263,7 +258,7 @@ export class ToolPanelColumnComp extends Component {
                         visibleState: dragItem?.visibleState,
                         pivotState: dragItem?.pivotState,
                         eventType: 'toolPanelUi',
-                        deferApply: this.params.deferApply,
+                        buttons: this.params.buttons,
                     });
                 }
             },
@@ -285,7 +280,7 @@ export class ToolPanelColumnComp extends Component {
         const visibleState = { [colId]: this.column.isVisible() };
         const updateStrategy = this.beans.columnStateUpdateStrategy;
         const pivotState = {
-            [colId]: createPivotStateForToolPanel(this.column, updateStrategy, !!this.params.deferApply),
+            [colId]: createPivotStateForToolPanel(this.column, updateStrategy, isDeferredMode(this.params)),
         };
         return {
             columns: [this.column],
@@ -297,17 +292,17 @@ export class ToolPanelColumnComp extends Component {
     private onColumnStateChanged(): void {
         this.processingColumnStateChange = true;
         const updateStrategy = this.beans.columnStateUpdateStrategy;
-        const isPivotMode = updateStrategy.getPivotMode(!!this.params.deferApply);
+        const isPivotMode = updateStrategy.getPivotMode(isDeferredMode(this.params));
         if (isPivotMode) {
             // if reducing, checkbox means column is one of pivot, value or group
             const anyFunctionActive = updateStrategy.isColumnSelectedInPivotModeToolPanel(
-                !!this.params.deferApply,
+                isDeferredMode(this.params),
                 this.column
             );
             this.cbSelect.setValue(anyFunctionActive);
         } else {
             // if not reducing, the checkbox tells us if column is visible or not
-            this.cbSelect.setValue(updateStrategy.isColumnVisibleInToolPanel(!!this.params.deferApply, this.column));
+            this.cbSelect.setValue(updateStrategy.isColumnVisibleInToolPanel(isDeferredMode(this.params), this.column));
         }
 
         let canBeToggled = true;

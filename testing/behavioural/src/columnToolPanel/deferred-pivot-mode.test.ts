@@ -1,4 +1,4 @@
-import { fireEvent, getByTestId, getByText } from '@testing-library/dom';
+import { fireEvent, getByTestId } from '@testing-library/dom';
 
 import type { AgColumn, ColDef, ColGroupDef, GridApi, IColumnStateUpdateStrategy } from 'ag-grid-community';
 import { DragSourceType, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
@@ -102,7 +102,7 @@ describe('deferred column tool panel pivot mode', () => {
                         labelKey: 'columns',
                         iconKey: 'columns',
                         toolPanel: 'agColumnsToolPanel',
-                        toolPanelParams: { deferApply: true },
+                        toolPanelParams: { buttons: ['apply', 'cancel'] as const },
                     },
                 ],
                 defaultToolPanel: 'columns',
@@ -138,7 +138,7 @@ describe('deferred column tool panel pivot mode', () => {
                         labelKey: 'columns',
                         iconKey: 'columns',
                         toolPanel: 'agColumnsToolPanel',
-                        toolPanelParams: { deferApply: true },
+                        toolPanelParams: { buttons: ['apply', 'cancel'] as const },
                     },
                 ],
                 defaultToolPanel: 'columns',
@@ -273,7 +273,7 @@ describe('deferred column tool panel pivot mode', () => {
                         labelKey: 'columns',
                         iconKey: 'columns',
                         toolPanel: 'agColumnsToolPanel',
-                        toolPanelParams: { deferApply: true },
+                        toolPanelParams: { buttons: ['apply', 'cancel'] as const },
                     },
                 ],
                 defaultToolPanel: 'columns',
@@ -300,10 +300,6 @@ describe('deferred column tool panel pivot mode', () => {
         return Array.from(toolPanelGui.querySelectorAll<HTMLButtonElement>('.ag-column-panel-buttons-button')).find(
             (button) => button.textContent?.trim() === 'Cancel'
         )!;
-    }
-
-    function getDeferModeToggle(toolPanelGui: HTMLElement): HTMLInputElement {
-        return toolPanelGui.querySelector('.ag-column-panel-defer-mode-toggle input[type="checkbox"]')!;
     }
 
     function getPivotModeToggle(toolPanelGui: HTMLElement): HTMLInputElement {
@@ -470,7 +466,7 @@ describe('deferred column tool panel pivot mode', () => {
                 position: 'bottom',
                 component,
             },
-            { deferApply: true }
+            { buttons: ['apply', 'cancel'] as const }
         );
         await asyncSetTimeout(50);
     }
@@ -670,7 +666,7 @@ describe('deferred column tool panel pivot mode', () => {
                         labelKey: 'columns',
                         iconKey: 'columns',
                         toolPanel: 'agColumnsToolPanel',
-                        toolPanelParams: { deferApply: true },
+                        toolPanelParams: { buttons: ['apply', 'cancel'] as const },
                     },
                 ],
                 defaultToolPanel: 'columns',
@@ -800,46 +796,6 @@ describe('deferred column tool panel pivot mode', () => {
         await waitForNoLoadingRows(gridApi);
 
         expect(serverGetDataSpy.mock.calls.length - initialCallCount).toBe(1);
-    });
-
-    test('defer mode footer buttons hide when defer mode is turned off', async () => {
-        const { toolPanelGui } = await createDeferredNonPivotGrid();
-
-        expect(getByText(toolPanelGui, 'Apply')).toBeTruthy();
-        expect(getByText(toolPanelGui, 'Cancel')).toBeTruthy();
-
-        getDeferModeToggle(toolPanelGui).click();
-
-        expect(toolPanelGui.textContent).not.toContain('Apply');
-        expect(toolPanelGui.textContent).not.toContain('Cancel');
-    });
-
-    test('Defer mode toggle should work (toggle between deferMode and normal)', async () => {
-        const { gridApi, toolPanel, toolPanelGui } = await createDeferredNonPivotGrid();
-        const athlete = gridApi.getColumn('athlete')! as AgColumn;
-
-        getUpdateStrategy(toolPanel).moveColumns(true, [athlete], 2, 'toolPanelUi');
-        expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['athlete', 'age', 'country']);
-        commitChanges(toolPanel);
-        expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['age', 'athlete', 'country']);
-
-        getDeferModeToggle(toolPanelGui).click();
-        getUpdateStrategy(toolPanel).moveColumns(false, [athlete], 0, 'toolPanelUi');
-        expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['athlete', 'age', 'country']);
-
-        getDeferModeToggle(toolPanelGui).click();
-        getUpdateStrategy(toolPanel).moveColumns(true, [athlete], 2, 'toolPanelUi');
-        expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['athlete', 'age', 'country']);
-        commitChanges(toolPanel);
-        expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['age', 'athlete', 'country']);
-    });
-
-    test('deferred mode should show a Defer mode toggle in the column tool panel footer', async () => {
-        const { toolPanelGui } = await createDeferredNonPivotGrid();
-
-        expect(toolPanelGui.textContent).toContain('Defer mode');
-        expect(toolPanelGui.textContent).toContain('Apply');
-        expect(toolPanelGui.textContent).toContain('Cancel');
     });
 
     test('dragging an unchecked column from the column list into row groups in deferred pivot mode stages the pill and checkbox', async () => {
@@ -1450,71 +1406,6 @@ describe('deferred column tool panel pivot mode', () => {
         expect(dragItem.pivotState.sport?.rowGroup).toBe(false);
     });
 
-    test('turning defer mode back on after leaving pivot mode should keep row groups and values populated', async () => {
-        const { gridApi, toolPanel, toolPanelGui } = await createDeferredPivotModeGrid();
-
-        getDeferModeToggle(toolPanelGui).click();
-        getPivotModeToggle(toolPanelGui).click();
-        await waitForNoLoadingRows(gridApi);
-
-        expect(gridApi.isPivotMode()).toBe(false);
-        const liveRowGroupColIds = gridApi.getRowGroupColumns().map((col) => col.getColId());
-        const liveValueColIds = getValueColumnIds(gridApi);
-        expect(liveRowGroupColIds).toEqual(['country', 'sport']);
-        expect(liveValueColIds.length).toBeGreaterThan(0);
-
-        getDeferModeToggle(toolPanelGui).click();
-
-        expect(
-            getUpdateStrategy(toolPanel)
-                .getRowGroupColumns(true)
-                .map((col) => col.getColId())
-        ).toEqual(liveRowGroupColIds);
-        expect(
-            getUpdateStrategy(toolPanel)
-                .getValueColumns(true)
-                .map((col) => col.getColId())
-        ).toEqual(liveValueColIds);
-        expect(toolPanel.rowGroupDropZonePanel.getGui().textContent).toContain('Country');
-        expect(toolPanel.rowGroupDropZonePanel.getGui().textContent).toContain('Sport');
-    });
-
-    test('turning defer mode off then toggling pivot mode should remove and restore the year label immediately', async () => {
-        const { gridApi, toolPanel, toolPanelGui } = await createDeferredPivotModeGrid();
-
-        getDeferModeToggle(toolPanelGui).click();
-        getPivotModeToggle(toolPanelGui).click();
-        await waitForNoLoadingRows(gridApi);
-
-        expect(gridApi.isPivotMode()).toBe(false);
-        let hasYearHeaderGroupText = Array.from(
-            getGridElement(gridApi)!.querySelectorAll('.ag-header-group-text')
-        ).some((el) => el.textContent?.trim() === '2000');
-        expect(hasYearHeaderGroupText).toBe(false);
-
-        getPivotModeToggle(toolPanelGui).click();
-        await waitForNoLoadingRows(gridApi);
-        await asyncSetTimeout(50);
-
-        expect(gridApi.isPivotMode()).toBe(true);
-        expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['year']);
-        hasYearHeaderGroupText = Array.from(getGridElement(gridApi)!.querySelectorAll('.ag-header-group-text')).some(
-            (el) => el.textContent?.trim() === '2000'
-        );
-        expect(hasYearHeaderGroupText).toBe(true);
-        expect(toolPanel.pivotDropZonePanel.getGui().textContent).toContain('Year');
-    });
-
-    test('turning defer mode off then turning pivot mode off updates the live grid immediately', async () => {
-        const { gridApi, toolPanelGui } = await createDeferredPivotModeGrid();
-
-        getDeferModeToggle(toolPanelGui).click();
-        getPivotModeToggle(toolPanelGui).click();
-        await waitForNoLoadingRows(gridApi);
-
-        expect(gridApi.isPivotMode()).toBe(false);
-    });
-
     test('turning pivot mode back on after disabling and applying restores the previous pivot columns', async () => {
         const { gridApi, toolPanelGui } = await createDeferredPivotModeGrid();
 
@@ -1586,5 +1477,36 @@ describe('deferred column tool panel pivot mode', () => {
         getCancelButton(toolPanelGui).click();
 
         expect(toolPanel.primaryColsPanel.primaryColsListPanel.getDisplayedColsList().length).toBeGreaterThan(0);
+    });
+
+    test('apply button is disabled when there are no pending changes', async () => {
+        const { toolPanelGui } = await createDeferredNonPivotGrid();
+
+        expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+    });
+
+    test('apply button becomes enabled when pivot mode is toggled off', async () => {
+        const { toolPanelGui } = await createDeferredPivotModeGrid();
+
+        expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+
+        getPivotModeToggle(toolPanelGui).click();
+
+        expect(getApplyButton(toolPanelGui).disabled).toBe(false);
+    });
+
+    test('apply button becomes enabled when a column is toggled and disabled again when toggled back to original state', async () => {
+        const { gridApi, toolPanel, toolPanelGui } = await createDeferredNonPivotGrid();
+        const athlete = gridApi.getColumn('athlete')! as AgColumn;
+
+        getUpdateStrategy(toolPanel).setColumnsVisible(true, [athlete], false, 'toolPanelUi');
+        toolPanel.refreshDeferredUi();
+
+        expect(getApplyButton(toolPanelGui).disabled).toBe(false);
+
+        getUpdateStrategy(toolPanel).setColumnsVisible(true, [athlete], true, 'toolPanelUi');
+        toolPanel.refreshDeferredUi();
+
+        expect(getApplyButton(toolPanelGui).disabled).toBe(true);
     });
 });

@@ -88,7 +88,7 @@ const gridOptions: GridOptions<IOlympicData> = {
                 iconKey: 'columns',
                 toolPanel: 'agColumnsToolPanel',
                 toolPanelParams: {
-                    deferApply: true,
+                    buttons: ['cancel', 'apply'],
                 },
             },
         ],
