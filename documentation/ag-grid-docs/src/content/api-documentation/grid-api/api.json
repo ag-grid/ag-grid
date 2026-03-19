@@ -7,7 +7,8 @@
             "flushServerSideAsyncTransactions": "Not recommended for users to not documented",
             "dispatchEvent": "This is for internal use, purposefully undocumented",
             "sortChanged": "Bug in the undocumentedProperties check, this is not an api method",
-            "filterChanged": "Bug in the undocumentedProperties check, this is not an api method"
+            "filterChanged": "Bug in the undocumentedProperties check, this is not an api method",
+            "getColumnDef": "Duplicate, users can just use getColumnDefs."
         }
     },
     "gridOptions": {
@@ -47,7 +48,6 @@
                 "url": "./column-updating-definitions/#column-definition-retrieval"
             }
         },
-        "getColumnDef": {},
         "getColumn": {},
         "getColumns": {},
         "getAllGridColumns": {}
