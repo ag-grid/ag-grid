@@ -8,16 +8,11 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
-import {
-    ColumnStateUpdateExecutionStrategy,
-    SynchronousColumnStateUpdateStrategy,
-} from './columnStateUpdateExecutionStrategy';
-import type { ColumnStateConcreteUpdateStrategy } from './columnStateUpdateTypes';
+import { ColumnStateUpdateExecutionStrategy } from './columnStateUpdateExecutionStrategy';
 
 export class ColumnStateUpdateStrategy extends BeanStub implements IColumnStateUpdateStrategy {
     public beanName = 'columnStateUpdateStrategy' as const;
     private executionStrategy?: ColumnStateUpdateExecutionStrategy;
-    private fallbackUpdates?: ColumnStateConcreteUpdateStrategy;
 
     public applyColumnState(deferMode: boolean, state: ColumnState[], eventType: ColumnEventType): void {
         this.delegate('applyColumnState', deferMode, state, eventType);
@@ -113,23 +108,18 @@ export class ColumnStateUpdateStrategy extends BeanStub implements IColumnStateU
         return this.delegate('getSortDef', deferMode, column);
     }
 
-    private getUpdateStrategy(): IColumnStateUpdateStrategy | undefined {
+    private getUpdateStrategy(): IColumnStateUpdateStrategy {
         return (this.executionStrategy ??= this.createManagedBean(new ColumnStateUpdateExecutionStrategy()));
-    }
-
-    private getFallbackUpdates(): ColumnStateConcreteUpdateStrategy {
-        return (this.fallbackUpdates ??= new SynchronousColumnStateUpdateStrategy(this.beans));
     }
 
     private delegate<M extends keyof IColumnStateUpdateStrategy>(
         method: M,
-        deferMode: boolean,
-        ...args: Parameters<IColumnStateUpdateStrategy[M]> extends [any, ...infer Rest] ? Rest : []
+        ...args: Parameters<IColumnStateUpdateStrategy[M]>
     ): ReturnType<IColumnStateUpdateStrategy[M]> {
         const strategy = this.getUpdateStrategy();
-        if (strategy) {
-            return (strategy as any)[method](deferMode, ...args);
-        }
-        return (this.getFallbackUpdates() as any)[method](...args);
+        const fn = strategy[method].bind(strategy) as any as (
+            ...args: Parameters<IColumnStateUpdateStrategy[M]>
+        ) => ReturnType<IColumnStateUpdateStrategy[M]>;
+        return fn(...args);
     }
 }
