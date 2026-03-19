@@ -32,10 +32,10 @@ html[data-color-scheme='dark'] body {
     vertical-align: bottom;
 }
 
-.ag-grid-pinned-top-rows .ag-row-pinned.ag-row:not(.ag-header-row) {
+.ag-grid-pinned-top-rows-container .ag-row {
     background-color: #2244cc44;
 }
 
-.ag-grid-pinned-bottom-rows .ag-row-pinned.ag-row {
+.ag-grid-pinned-bottom-rows-container .ag-row {
     background-color: #2244cc44;
 }
