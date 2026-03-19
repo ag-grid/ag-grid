@@ -23,6 +23,7 @@ export class DistributorNumber {
     private readonly strategy: DistributionStrategy;
     private readonly getVal: ((params: DistributionGetValueParams) => unknown) | undefined;
     private readonly setVal: ((params: DistributionSetValueParams) => boolean) | undefined;
+    private readonly isAvg: boolean;
 
     constructor(
         private readonly params: GroupRowValueSetterParams,
@@ -33,12 +34,14 @@ export class DistributorNumber {
         const { aggregatedChildren: children, column, colDef, newValue } = params;
         const newNumber = toNumber(newValue);
         const count = children.length;
+        const isAvg = aggFunc === 'avg';
         this.children = children;
         this.column = column;
         this.count = count;
         this.newValue = newValue;
         this.strategy = resolveStrategy(aggFunc, opts?.distribution);
-        if (aggFunc === 'avg') {
+        this.isAvg = isAvg;
+        if (isAvg) {
             this.target = newNumber * count;
             this.oldTarget = toNumber(params.oldValue) * count;
         } else {
@@ -210,13 +213,29 @@ export class DistributorNumber {
     }
 
     private distributePercentage(): boolean {
-        const { count, target, precision } = this;
-
-        // Read all child values and compute total
+        const { count, target, precision, children, column, isAvg } = this;
         const values = new Array<number>(count);
         let total = 0;
+        let childCounts: number[] | null = null;
+
+        // For avg, read each child's leaf count from the raw aggregation object.
+        // Leaf rows have no { value, count } wrapper, so they default to 1.
+        if (isAvg) {
+            childCounts = new Array<number>(count);
+            for (let i = 0; i < count; ++i) {
+                const raw = children[i].getDataValue(column);
+                childCounts[i] =
+                    (raw != null && typeof raw === 'object' && (raw as { readonly count?: number }).count) || 1;
+            }
+        }
+
+        // Read child values (via custom getter or default) and compute total.
+        // For avg with sub-group children, convert to sum contributions (avg × leafCount).
         for (let i = 0; i < count; ++i) {
-            const v = this.readOne(i);
+            let v = this.readOne(i);
+            if (childCounts) {
+                v *= childCounts[i];
+            }
             values[i] = v;
             total += v;
         }
@@ -226,12 +245,24 @@ export class DistributorNumber {
             return this.distributeUniform();
         }
 
+        // For avg with sub-group children, adjust target from avg-based (newAvg * childGroupCount)
+        // to sum-based (newAvg * totalLeafCount) so proportional scaling produces correct sums.
+        let effectiveTarget = target;
+        if (childCounts) {
+            let totalLeafCount = 0;
+            for (let i = 0; i < count; i++) {
+                totalLeafCount += childCounts[i];
+            }
+            effectiveTarget = (target / count) * totalLeafCount;
+        }
+
         // No rounding — direct float proportional scaling
         if (precision === undefined) {
-            const ratio = target / total;
+            const ratio = effectiveTarget / total;
             let changed = false;
             for (let i = 0; i < count; ++i) {
-                if (this.writeOne(i, values[i] * ratio)) {
+                const v = values[i] * ratio;
+                if (this.writeOne(i, childCounts ? v / childCounts[i] : v)) {
                     changed = true;
                 }
             }
@@ -241,7 +272,7 @@ export class DistributorNumber {
         // Rounding — scaled integer proportional distribution.
         // (v / total) * intTarget avoids overflow from v * intTarget for large values.
         const scale = 10 ** precision;
-        const intTarget = Math.round(target * scale);
+        const intTarget = Math.round(effectiveTarget * scale);
         let roundedSum = 0;
         for (let i = 0; i < count; ++i) {
             const r = Math.round((values[i] / total) * intTarget);
@@ -255,7 +286,8 @@ export class DistributorNumber {
         const step = rem >= 0 ? 1 : -1;
         let changed = false;
         for (let i = 0; i < count; ++i) {
-            if (this.writeOne(i, (values[i] + (i < absRem ? step : 0)) / scale)) {
+            const intVal = values[i] + (i < absRem ? step : 0);
+            if (this.writeOne(i, childCounts ? intVal / (scale * childCounts[i]) : intVal / scale)) {
                 changed = true;
             }
         }

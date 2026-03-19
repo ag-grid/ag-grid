@@ -393,3 +393,106 @@ describe('overriding built-in aggFunc with a custom function', () => {
         `);
     });
 });
+
+describe('avg percentage distribution on non-leaf groups', () => {
+    // Norway has 2 sub-groups: 2010 (2 leaves: 23, 19) and 2002 (1 leaf: 19)
+    // avg = (23+19+19)/3 = 20.333..., sum = 61
+    const norwayRowData = () => [
+        { id: 'n1', country: 'Norway', year: '2010', total: 23 },
+        { id: 'n2', country: 'Norway', year: '2010', total: 19 },
+        { id: 'n3', country: 'Norway', year: '2002', total: 19 },
+    ];
+
+    test('editing avg on non-leaf group with percentage distribution produces correct avg', async () => {
+        const api = await gridsManager.createGridAndWait('avg-pct-nested', {
+            defaultColDef: { cellEditor: 'agTextCellEditor' },
+            groupDisplayType: 'custom',
+            columnDefs: [
+                { colId: 'group', headerName: 'Group', cellRenderer: 'agGroupCellRenderer' },
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', rowGroup: true, hide: true },
+                {
+                    colId: 'total',
+                    field: 'total',
+                    aggFunc: 'avg',
+                    editable: true,
+                    groupRowEditable: true,
+                    groupRowValueSetter: { distribution: 'percentage', precision: 0 },
+                },
+            ],
+            rowData: norwayRowData(),
+            groupDefaultExpanded: -1,
+            getRowId: (params) => params.data?.id,
+        });
+
+        const norwayNode = api.getRowNode('row-group-country-Norway')!;
+        expect(norwayNode.aggData?.total).toMatchObject({ value: expect.closeTo(20.333, 2), count: 3 });
+
+        // Edit Norway avg to 20
+        norwayNode.setDataValue('total', 20, 'ui');
+        await asyncSetTimeout(0);
+
+        // Desired sum = 20 * 3 = 60. Old sums: 2010=42, 2002=19, total=61.
+        // Percentage distributes sum proportionally: 2010 gets round(42/61*60)=41, 2002 gets round(19/61*60)=19.
+        // 2010 avg = 41/2 = 20.5, cascades to leaves: [round(23/42*41)=22, round(19/42*41)=19]
+        // 2002 avg = 19, leaf unchanged.
+        // Final: [22, 19, 19], sum=60, avg=20
+        expect(api.getRowNode('n1')?.data?.total).toBe(22);
+        expect(api.getRowNode('n2')?.data?.total).toBe(19);
+        expect(api.getRowNode('n3')?.data?.total).toBe(19);
+        expect(norwayNode.aggData?.total).toMatchObject({ value: 20, count: 3 });
+    });
+
+    test('editing avg on 3-level group hierarchy distributes correctly through all levels', async () => {
+        // Region > Country > Year, 3-level hierarchy
+        // Europe: France > 2010: [10, 20], France > 2011: [30], Germany > 2010: [40, 50]
+        // France avg = 60/3 = 20, Germany avg = 90/2 = 45, Europe avg = 150/5 = 30
+        const api = await gridsManager.createGridAndWait('avg-pct-3-level', {
+            defaultColDef: { cellEditor: 'agTextCellEditor' },
+            groupDisplayType: 'custom',
+            columnDefs: [
+                { colId: 'group', headerName: 'Group', cellRenderer: 'agGroupCellRenderer' },
+                { field: 'region', rowGroup: true, hide: true },
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', rowGroup: true, hide: true },
+                {
+                    colId: 'amount',
+                    field: 'amount',
+                    aggFunc: 'avg',
+                    editable: true,
+                    groupRowEditable: true,
+                    groupRowValueSetter: { distribution: 'percentage', precision: 0 },
+                },
+            ],
+            rowData: [
+                { id: 'f1', region: 'Europe', country: 'France', year: '2010', amount: 10 },
+                { id: 'f2', region: 'Europe', country: 'France', year: '2010', amount: 20 },
+                { id: 'f3', region: 'Europe', country: 'France', year: '2011', amount: 30 },
+                { id: 'g1', region: 'Europe', country: 'Germany', year: '2010', amount: 40 },
+                { id: 'g2', region: 'Europe', country: 'Germany', year: '2010', amount: 50 },
+            ],
+            groupDefaultExpanded: -1,
+            getRowId: (params) => params.data?.id,
+        });
+
+        const europeNode = api.getRowNode('row-group-region-Europe')!;
+        expect(europeNode.aggData?.amount).toMatchObject({ value: 30, count: 5 });
+
+        // Edit Europe avg from 30 to 20 (desired sum = 100, old sum = 150)
+        europeNode.setDataValue('amount', 20, 'ui');
+        await asyncSetTimeout(0);
+
+        // Level 1: France sum 60→40, Germany sum 90→60 (proportional by sum contributions)
+        // Level 2: France>2010 sum 30→20 (avg=10), France>2011 sum 30→20 (avg=20)
+        //          Germany>2010 sum 90→60 (avg=30)
+        // Level 3: France>2010 leaves [10,20]→[7,13], France>2011 [30]→[20]
+        //          Germany>2010 leaves [40,50]→[27,33]
+        // Final: [7, 13, 20, 27, 33], sum=100, avg=20
+        expect(api.getRowNode('f1')?.data?.amount).toBe(7);
+        expect(api.getRowNode('f2')?.data?.amount).toBe(13);
+        expect(api.getRowNode('f3')?.data?.amount).toBe(20);
+        expect(api.getRowNode('g1')?.data?.amount).toBe(27);
+        expect(api.getRowNode('g2')?.data?.amount).toBe(33);
+        expect(europeNode.aggData?.amount).toMatchObject({ value: 20, count: 5 });
+    });
+});
