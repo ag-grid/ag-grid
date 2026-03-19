@@ -318,7 +318,9 @@ describe('Set Filter Complex Objects', () => {
 
         let rowCount = 0;
         api.forEachNodeAfterFilter((node) => {
-            if (node.data) rowCount++;
+            if (node.data) {
+                rowCount++;
+            }
         });
         expect(rowCount).toBe(ROW_DATA.length);
     });

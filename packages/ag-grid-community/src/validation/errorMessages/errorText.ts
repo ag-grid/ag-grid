@@ -227,8 +227,12 @@ export const AG_GRID_ERRORS = {
         `The data type definition ${parentCellDataType} does not exist.` as const,
     46: () => 'The "baseDataType" property of a data type definition must match that of its parent.' as const,
     47: ({ cellDataType }: { cellDataType: string }) => `Missing data type definition - "${cellDataType}"` as const,
-    48: ({ property, inferred, colId }: { property: string; inferred: boolean | undefined; colId?: string }) =>
-        `Cell data type is "object"${inferred ? ' (inferred)' : ''} but no Value ${property} has been provided${colId ? ` for column "${colId}"` : ''}. Please either provide an object data type definition with a Value ${property}, or set:\n  - "colDef.value${property}"${inferred && property === 'Parser' ? '\n  - "colDef.cellDataType = \'object\'"' : ''}` as const,
+    48: ({ property, inferred, colId }: { property: string; inferred: boolean | undefined; colId?: string }) => {
+        const inferredStr = inferred ? ' (inferred)' : '';
+        const colIdStr = colId ? ` for column "${colId}"` : '';
+        const parserHint = inferred && property === 'Parser' ? '\n  - "colDef.cellDataType = \'object\'"' : '';
+        return `Cell data type is "object"${inferredStr} but no Value ${property} has been provided${colIdStr}. Please either provide an object data type definition with a Value ${property}, or set:\n  - "colDef.value${property}"${parserHint}` as const;
+    },
     49: ({ methodName }: { methodName: string }) =>
         `Framework component is missing the method ${methodName}()` as const,
     50: ({ compName }: { compName: string | undefined }) =>
