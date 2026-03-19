@@ -1430,9 +1430,9 @@ export interface _InfiniteRowModelGridApi {
      */
     purgeInfiniteCache(): void;
 
-    /** The row count defines how many rows the grid allows scrolling to. */
-
-    /** @deprecated v32.2 gridApi.getInfiniteRowCount() deprecated, please use gridApi.getDisplayedRowCount() instead. */
+    /**
+     * @deprecated v32.2 gridApi.getInfiniteRowCount() deprecated, please use gridApi.getDisplayedRowCount() instead.
+     */
     getInfiniteRowCount(): number | undefined;
 }
 
