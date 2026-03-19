@@ -404,7 +404,7 @@
             "displayName": "Row Size",
             "page": {
                 "name": "Row Resizing",
-                "url": "./row-numbers/#row-resizing/"
+                "url": "./row-numbers/#row-resizing"
             }
         },
         "rowResizeStarted": {
