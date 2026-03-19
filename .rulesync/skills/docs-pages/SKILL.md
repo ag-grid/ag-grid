@@ -6,17 +6,81 @@ description: 'Use this skill when creating, editing, reviewing, or restructuring
 
 # Documentation Pages Guide
 
-This guide covers creating and maintaining documentation pages for AG Grid — structure, writing style, tone, and quality standards. Documentation lives in `documentation/ag-grid-docs/` and uses Astro with Markdoc for content.
+This skill guides you through creating or improving AG Grid documentation pages with consistent structure, writing quality, and technical accuracy. Documentation lives in `documentation/ag-grid-docs/` and uses Astro with Markdoc for content.
+
+## When to Use This Skill
+
+-   Creating a new documentation page from scratch
+-   Improving or refactoring an existing page
+-   Adding documentation for new or changed features
+-   Ensuring a page is consistent with established patterns
+-   Reviewing a page for structure or writing quality
+
+## Prerequisites
+
+-   Access to TypeScript definitions in `packages/ag-grid-community/src/` and `packages/ag-grid-enterprise/src/`
+-   Access to API source JSON files under `documentation/ag-grid-docs/src/content/`
+-   Dev server available for visual validation (`yarn nx dev` — check if already running before starting)
+
+## Workflow
+
+### Phase 0: Prepare
+
+1. Find 2–3 similar existing pages to understand local patterns — especially section structure, which Markdoc components they use, and how they handle the API
+2. Check `nav.json` to confirm the page's placement in the nav and whether `enterprise: true` is needed
+3. Decide whether this is a new page or a revision of an existing one
+
+### Phase 1: Research
+
+1. **Find API source files** for `{% apiDocumentation %}` blocks:
+    - Grid options: `grid-options/properties.json` — use `section` to scope, `names` to filter
+    - Column properties: `column-properties/properties.json`
+    - Grid API methods: `grid-api/api.json`
+2. **Find interfaces** for `{% interfaceDocumentation %}` (renderer/component props)
+3. **Locate existing examples** in `_examples/` if the feature already has some
+
+### Phase 2: Create
+
+Follow the [Writing Style](#writing-style) and [Section Ordering](#section-ordering) guidelines. For each example you plan to include, note its purpose and key configuration before writing — it's easier to write the prose when you know what the example will show.
+
+**Example specification format:**
+
+```
+### Example: [example-name]
+- **Purpose**: What this demonstrates
+- **Key config**: Options and values used
+- **Framework compatible**: YES (required for all public docs)
+```
+
+### Phase 3: Validate
+
+1. Self-check against `references/checklist.md`
+2. Generate framework variants: `yarn nx generate-examples ag-grid-docs`
+3. Typecheck examples: `yarn nx validate-examples ag-grid-docs`
+4. Visual check in dev server — see `docs-review-testing.md` for URL patterns, iframe navigation, and console error guidance
+5. Add `nav.json` entry if creating a new page; update the parent page if adding a child
+
+---
 
 ## Page Structure
 
 ```
 documentation/ag-grid-docs/src/content/docs/
 ├── feature-category/
-│   ├── index.mdoc           # Category overview
+│   ├── index.mdoc           # Category overview (or parent page)
 │   ├── specific-feature/
 │   │   ├── index.mdoc       # Feature documentation
 │   │   └── _examples/       # Feature examples
+```
+
+**Path mappings:**
+
+```
+Docs:     documentation/ag-grid-docs/src/content/docs/[page-name]/index.mdoc
+Examples: documentation/ag-grid-docs/src/content/docs/[page-name]/_examples/[example-name]/
+
+Dev server: https://localhost:4610/javascript-data-grid/[page-name]/
+Frameworks: react-data-grid / angular-data-grid / vue-data-grid
 ```
 
 ## Creating New Pages
@@ -31,10 +95,14 @@ documentation/ag-grid-docs/src/content/docs/
 
 ```yaml
 ---
-title: Feature Name
-description: Brief description of the feature
+title: 'Feature Name'
+description: 'One sentence describing the feature for the $framework Data Grid.'
+enterprise: true   # only for enterprise-only features
 ---
 ```
+
+-   `description` uses the `$framework` placeholder, which renders as "React", "Angular", "Vue", or "JavaScript" depending on the framework variant being viewed. Write it as if `$framework` will be substituted inline.
+-   `enterprise: true` marks the page with an enterprise badge and gates its access — only set this if the entire page (not just some features) requires an enterprise licence.
 
 **Internal links in `.mdoc` files:** Always use `./page-path/` (framework-relative prefix). Do not use `../` — it's not supported by the docs URL resolver.
 
@@ -44,11 +112,71 @@ description: Brief description of the feature
 -   **API option names**: US English (e.g., "color", "behavior")
 -   **Comments and JSDocs**: UK/British English
 
+## Markdoc Components
+
+### `{% gridExampleRunner %}`
+
+Embeds a live, runnable example:
+
+```markdown
+{% gridExampleRunner title="Basic Grouping" name="basic-grouping" /%}
+{% gridExampleRunner title="Row Group Scroll" name="row-group-scroll" exampleHeight=261 /%}
+```
+
+-   `title` — display title shown above the example
+-   `name` — must exactly match the folder name under `_examples/`
+-   `exampleHeight` — optional pixel height override (use when the default height clips content)
+
+### `{% apiDocumentation %}`
+
+Renders API properties inline from a source JSON file:
+
+```markdown
+{% apiDocumentation source="grid-options/properties.json" section="rowGrouping" /%}
+{% apiDocumentation source="column-properties/properties.json" section="columns" names=["keyCreator"] /%}
+{% apiDocumentation source="grid-api/api.json" section="rowExpansion" names=["setRowNodeExpanded", "expandAll", "collapseAll"] /%}
+```
+
+-   `source` — path to the JSON file (relative to the docs content root)
+-   `section` — top-level section key within that file
+-   `names` — optional array to limit which properties are shown
+
+**Rules:** Max 2 entries in `names` per inline block — the purpose is to show users how to use the main API member based on its type and a brief description, not to provide exhaustive documentation. Pages that need to introduce many API members should use a dedicated API section at the bottom instead (as seen in other docs pages).
+
+### `{% interfaceDocumentation %}`
+
+Renders a TypeScript interface as a property table. Use for renderer/component props:
+
+```markdown
+{% interfaceDocumentation interfaceName="IGroupCellRendererParams" overrideSrc="group-cell-renderer/group-cell-renderer.json" config={ "description": "" } /%}
+```
+
+-   `interfaceName` — the TypeScript interface name
+-   `overrideSrc` — path to a JSON override file that can supplement or override auto-generated content
+-   `config={ "description": "" }` — suppresses the auto-generated interface-level description (use when the surrounding prose already provides context)
+
+### `{% note %}` and `{% warning %}`
+
+```markdown
+{% note %}
+The row grouping state can be saved and restored as part of [Grid State](./grid-state/).
+{% /note %}
+
+{% warning %}
+`groupHideParentOfSingleChild` and `groupHideOpenParents` are mutually exclusive.
+{% /warning %}
+```
+
+-   Use `{% note %}` for important information a user should know but won't cause problems if missed
+-   Use `{% warning %}` when ignoring the information could cause broken behaviour, data loss, or hard-to-debug problems
+
+---
+
 ## Writing Style
 
 ### Core Principles
 
-Content and structure decisions should follow these principles:
+Content and structure decisions:
 
 1. **Example-driven** — Illustrate concepts with live demos rather than prose alone; let examples do the heavy lifting
 2. **Progressive disclosure** — Simple concepts before complex ones; don't front-load edge cases
@@ -136,6 +264,8 @@ One-sentence subtitle describing what the feature is or does.
 
 Show only relevant code with clarifying comments. Apply `frameworkTransform=true` only when the snippet contains `gridOptions` configuration — the transform rewrites `gridOptions` object syntax into framework-idiomatic equivalents (e.g. React props, Angular bindings).
 
+Use `spaceBetweenProperties=true` when the snippet has 4 or more top-level properties — it adds blank lines between them for readability.
+
 **With `gridOptions` — requires `frameworkTransform=true`:**
 
 ````markdown
@@ -145,6 +275,23 @@ const gridOptions = {
         { field: 'country', rowGroup: true }, // enable row grouping on this column
     ],
     // ...other options
+};
+```
+````
+
+**With many properties — add `spaceBetweenProperties=true`:**
+
+````markdown
+```{% frameworkTransform=true spaceBetweenProperties=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'country', rowGroup: true, enableRowGroup: true },
+        { field: 'year', rowGroup: true, enableRowGroup: true },
+    ],
+
+    rowGroupPanelShow: 'always',
+
+    suppressDragLeaveHidesColumns: true,
 };
 ```
 ````
@@ -171,7 +318,8 @@ Not every page includes all sections; follow this order for the sections that ar
 5. Core concepts (ordered by complexity)
 6. Advanced features (power user territory)
 7. Events (lifecycle hooks)
-8. See Also — only when linking to a page in a **different nav section** that is directly relevant and not discoverable from the sidebar. Omit it for sibling or child pages — those are already visible in the nav.
+8. API reference (if a dedicated section is warranted — see [API Documentation Blocks](#api-documentation-blocks))
+9. See Also — only when linking to a page in a **different nav section** that is directly relevant and not discoverable from the sidebar. Omit it for sibling or child pages — those are already visible in the nav.
 
 Within each section, always use **show then tell** ordering — the live demo before the code snippet. The canonical pattern is:
 
@@ -203,12 +351,11 @@ Use sparingly — only when users commonly miss or confuse a closely related fea
 
 ### API Documentation Blocks
 
-Use `{% apiDocumentation %}` sparingly and inline — place it **immediately after the relevant code snippet** within the section it relates to. Do not create a standalone "API reference" section at the end of a page.
+Use `{% apiDocumentation %}` sparingly and inline — place it **immediately after the relevant code snippet** within the section it relates to.
 
-**Rules:**
+For pages with many API members to introduce, use a dedicated **API** section at the bottom of the page rather than scattering multiple blocks inline. When using inline blocks, keep `names` to 2 entries maximum — the purpose is to show users how to use the main API member based on its type and shape, not to exhaustively document every option.
 
--   **Max 2 `names` entries** per block — the purpose is to show users how to use the main API member based on its type and a brief description, not to provide exhaustive documentation. Pages that need to introduce many API members should use a dedicated API section at the bottom instead (as seen in other parts of the docs).
--   **Object/complex types only** — use `{% apiDocumentation %}` for members whose values are objects, interfaces, or callback signatures where the shape needs explaining. For members that accept only a boolean, string, or number, explain them inline in prose or code snippet comments instead.
+**Object/complex types only** — use `{% apiDocumentation %}` for members whose values are objects, interfaces, or callback signatures where the shape needs explaining. For members that accept only a boolean, string, or number, explain them inline in prose or code snippet comments instead.
 
 ### Parent / Overview Pages
 
@@ -229,3 +376,34 @@ Pages that act as nav parents (they have both a `path` and `children` in `nav.js
 -   Standalone "See [Child] for full details" sentences — the nav already exposes children
 
 A basic enabling snippet or brief illustrative example may appear on the parent page if it is removed from (or never added to) the child page — the same code must not exist in both places.
+
+---
+
+## Failure Handling
+
+### `generate-examples` fails
+
+**Cause:** Unsupported framework transformation pattern — typically nested functions, complex DOM manipulation, or `window` assignments.
+
+**Fix:** Simplify to declarative patterns — move nested functions to top level, replace DOM queries with simple `document.getElementById()`, remove external dependencies. See `examples.md` for the full list of supported patterns.
+
+### `validate-examples` TypeScript errors
+
+**Cause:** Property name mismatch, wrong type, or incorrect interface usage.
+
+**Fix:** Verify property names against the API source JSON files and the TypeScript definitions in `packages/ag-grid-community/src/` or `packages/ag-grid-enterprise/src/`. A misspelled option name often compiles but silently does nothing — check casing carefully.
+
+### Example renders blank or grid doesn't appear
+
+**Cause:** Missing required module registration, missing `getRowId`, or a required option left unconfigured.
+
+**Fix:** Check the browser console in the dev server for AG Grid errors. Enterprise features require the relevant module to be registered — check similar working examples to see which modules they import.
+
+---
+
+## Related Documentation
+
+-   **`examples.md`** — Framework compatibility patterns, validation commands, and example file structure
+-   **`docs-review-testing.md`** — Dev server URL patterns, iframe navigation tips, and console error guidance
+-   **`references/checklist.md`** — Quick validation checklist for Phase 3 (read this before finalising)
+-   **`/docs-review`** slash command — Comprehensive technical review of an existing page against the source TypeScript definitions

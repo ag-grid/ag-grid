@@ -1,8 +1,9 @@
 ---
 title: "Number Cell Editor"
+description: "Built-in cell editor for numeric values using the $framework Data Grid's HTML number input, with optional step and precision controls."
 ---
 
-Simple number editor using the standard HTML `number` input, with optional step/precision controls via the {% kbd "↑" /%} {% kbd "↓" /%} keys.
+Built-in cell editor for numeric values using the HTML `number` input, with optional step and precision controls via the {% kbd "↑" /%} {% kbd "↓" /%} keys.
 
 ## Enabling Number Cell Editor
 
@@ -29,7 +30,7 @@ columnDefs: [
 
 ### Step and Precision
 
-Configure the step and precision of the stepping behaviour that increments/decrements the cell value. Edit any cell in the grid below to see a customised stepping behaviour.
+Set the step size and decimal precision to control how the {% kbd "↑" /%} {% kbd "↓" /%} keys increment and decrement the value. Edit any cell in the grid below to see a customised stepping behaviour.
 
 {% gridExampleRunner title="Number Editor — Step and Precision" name="number-editor-step-and-precision" /%}
 
@@ -51,7 +52,7 @@ columnDefs: [
 
 ### Prevent Stepping
 
-The stepping behaviour can be disabled. Edit any cell in the grid below to see this.
+Set `preventStepping: true` to disable the stepping behaviour. Edit any cell in the grid below to see this.
 
 {% gridExampleRunner title="Number Editor — Prevent Stepping" name="number-editor-prevent-stepping" /%}
 

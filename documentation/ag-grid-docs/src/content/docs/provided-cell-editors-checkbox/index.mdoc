@@ -1,5 +1,6 @@
 ---
 title: "Checkbox Cell Editor"
+description: "Built-in boolean cell editor using the standard HTML checkbox input in the $framework Data Grid."
 ---
 
 Simple boolean editor that uses the standard HTML checkbox `input`.
@@ -10,11 +11,7 @@ Edit any cell in the grid below to see the Checkbox Cell Editor.
 
 {% gridExampleRunner title="Checkbox Editor" name="checkbox-editor" /%}
 
-{% note %}
-By default the Checkbox Cell Renderer is shown; the editor only appears when editing starts (e.g. on double-click).
-{% /note %}
-
-Enabled with `agCheckboxCellEditor` and generally used in conjunction with the [Checkbox Cell Component](./cell-data-types/#enable-cell-data-types).
+The example above uses the following configuration:
 
 ```js
 columnDefs: [
@@ -26,4 +23,8 @@ columnDefs: [
 ]
 ```
 
-The Checkbox Cell Editor has no additional configuration parameters.
+{% note %}
+By default the Checkbox Cell Renderer is shown; the editor only appears when editing starts (e.g. on double-click).
+{% /note %}
+
+Enabled with `agCheckboxCellEditor` and generally used in conjunction with the [Checkbox Cell Component](./cell-data-types/#enable-cell-data-types).

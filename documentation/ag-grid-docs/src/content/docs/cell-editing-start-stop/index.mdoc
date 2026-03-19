@@ -1,5 +1,6 @@
 ---
 title: "Start/Stop Cell Editing"
+description: "Customise when and how cell editing starts and stops in the $framework Data Grid using configuration options, keyboard shortcuts, or the Grid API."
 ---
 
 Customise when and how editing starts and stops using configuration options, keyboard shortcuts, or the Grid API.
@@ -62,9 +63,7 @@ The grid stops editing when any of the following occur:
 
 ### Stop When Grid Loses Focus
 
-By default, the grid will not stop editing the currently editing cell when the cell loses focus, unless another cell is clicked on. This means clicking on the grid header, or another part of your application, will not stop editing. This can be bad if, for example, you have a save button, and you need the grid to stop editing before you execute your save function (e.g. you want to make sure the edit is saved into the grid's state).
-
-To stop editing when focus leaves the cell or the grid, set `stopEditingWhenCellsLoseFocus=true`.
+By default, the grid only stops editing when another cell is clicked. Clicking the grid header or another part of your application leaves the cell in edit mode. To ensure edits are committed before executing actions like a save button, set `stopEditingWhenCellsLoseFocus=true`.
 
 -   Double-click to start editing 'Age', then click outside the grid (on the 'Dummy Save' button, or the dummy text field) and the grid will stop editing.
 -   Double-click to start editing 'Year', a custom popup editor appears, you can click anywhere on the popup editor, but once you click outside the editor, the popup closes.

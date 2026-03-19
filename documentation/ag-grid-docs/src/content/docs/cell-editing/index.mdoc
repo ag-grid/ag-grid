@@ -1,5 +1,6 @@
 ---
 title: "Cell Editing"
+description: "Edit cells directly in the $framework Data Grid using built-in and custom editors, with data validation and undo/redo support."
 ---
 
 Edit cells directly in the grid with built-in and custom editors, data validation, and undo/redo support.
@@ -22,10 +23,6 @@ For more control over when and how editing starts and stops, see [Start / Stop C
 
 {% gridExampleRunner title="Simple Cell Editing" name="simple-editing" /%}
 
-{% note %}
-By default, the grid uses [Cell Data Types](./cell-data-types/) to provide different editors based on the type of each column. For example, string columns will use a text input, number columns will use a numeric input.
-{% /note %}
-
 The example above uses the following configuration:
 
 ```js
@@ -37,6 +34,10 @@ columnDefs: [
     }
 ]
 ```
+
+{% note %}
+By default, the grid uses [Cell Data Types](./cell-data-types/) to provide different editors based on the type of each column. For example, string columns will use a text input, number columns will use a numeric input.
+{% /note %}
 
 ## Conditional Editing
 

@@ -1,5 +1,6 @@
 ---
 title: "Full Row Editing"
+description: "Edit all cells in a row simultaneously using full row editing mode in the $framework Data Grid."
 ---
 
 Configure the grid to enter and exit edit mode for an entire row at once.
@@ -44,6 +45,6 @@ The example below uses the API to start editing a cell and demonstrates a custom
 
 ## Full Row Edit and Popup Editors
 
-Full row editing is not compatible with popup editors. This is because a) the grid would look confusing to pop up an editor for each cell in the row at the same time and b) the complexity of navigation and popup is almost impossible to model, so the grid and your application code would be messy and very error prone. If you are using full row edit, then you are prevented from using popup editors.
+Full row editing is not compatible with popup editors. Opening a separate popup for each cell in a row simultaneously would create confusing UX and unmanageable navigation complexity.
 
-This does not mean that you cannot show a popup from your 'in cell' editor - you are free to do that - however the responsibility of showing and hiding the popup belongs with your editor. You may want to use the grid's focus events to hide the popups when the user tabs or clicks out of the cell.
+You can still show a popup from within your in-cell editor however the responsibility of showing and hiding it belongs with your editor. Use the grid's focus events to hide the popup when the user tabs or clicks out of the cell.

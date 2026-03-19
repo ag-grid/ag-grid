@@ -1,5 +1,6 @@
 ---
 title: "Parsing Values"
+description: "Convert user input from text to the correct data type after editing completes in the $framework Data Grid using value parsers."
 ---
 
 Convert user input from text to the correct data type after editing completes.
@@ -25,7 +26,7 @@ The following example demonstrates value parsers, note that:
 
 The example above uses the following configuration:
 
-```{% frameworkTransform=true spaceBetweenProperties=true %}
+```
 const gridOptions = {
     columnDefs: [
         {
@@ -52,8 +53,6 @@ The return value of a value parser should be the result of the parse, i.e. retur
 By default, the grid uses the value parser when performing other grid operations that can update values.
 
 This behaviour can be prevented by setting the column definition property `useValueParserForImport=false` (note this does not apply to editing).
-
-{% apiDocumentation source="column-properties/properties.json" section="editing" names=["useValueParserForImport"] /%}
 
 Using the value parser for import applies to the following features:
 
@@ -89,6 +88,8 @@ const gridOptions = {
     },
 }
 ```
+
+{% apiDocumentation source="column-properties/properties.json" section="editing" names=["useValueParserForImport"] /%}
 
 {% note %}
 If you provide custom handling for the following features, `useValueParserForImport` is ignored and the value will be either the original value or that set in the custom handler:

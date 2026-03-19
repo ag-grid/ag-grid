@@ -1,5 +1,6 @@
 ---
 title: "Undo / Redo Edits"
+description: "Undo and redo cell edits in the $framework Data Grid using keyboard shortcuts or the grid API."
 ---
 
 Recover from editing mistakes by undoing and redoing cell value changes.
@@ -11,9 +12,7 @@ Users can change the contents of cells through the following grid features:
 -   [Fill Handle](./cell-selection-fill-handle/)
 
 {% note %}
-This Undo / Redo feature is designed to be a recovery mechanism for user editing mistakes. Performing data updates (except for cell edits), or grid
-operations that change the row / column order, e.g. sorting, filtering and grouping, will clear the
-undo / redo stacks.
+Undo/redo is designed as a recovery mechanism for editing mistakes. Data updates (except cell edits) and operations that change row or column order — sorting, filtering, grouping — clear the undo/redo stacks.
 {% /note %}
 
 ## Enabling Undo / Redo
@@ -58,7 +57,7 @@ When there are no undo / redo operations to perform, the started and ended event
 
 If the application is doing work each time it receives a `cellValueChanged` event, you can use the `undoStarted` / `redoStarted` and `undoEnded` / `redoEnded` events to suspend the application's work and then do the work for all cells impacted by the undo / redo operation afterwards.
 
-If [Read Only Edit](./value-setters/#read-only-edit) is enabled, undo / redo will not perform any operations. The started and ended events will still fire, which means that you can implement your own undo / redo by keeping track of the `cellEditRequest` events.
+If [Read Only Edit](./value-setters/#read-only-edit) is enabled, undo/redo won't perform any operations. The started and ended events still fire, so you can implement your own undo/redo by tracking the `cellEditRequest` events.
 
 ## Example
 
@@ -77,27 +76,29 @@ To see undo / redo in action, try the following:
 
 The example above uses the following configuration:
 
-```js
-defaultColDef: {
-    // makes all cells editable
-    editable: true,
-    // enables flashing to help see cell changes
-    enableCellChangeFlash: true,
-},
+```{% frameworkTransform=true spaceBetweenProperties=true %}
+const gridOptions = {
+    defaultColDef: {
+        // makes all cells editable
+        editable: true,
+        // enables flashing to help see cell changes
+        enableCellChangeFlash: true,
+    },
 
-// allows copy / paste using cell ranges
-cellSelection: {
-    // enables the fill handle
-    handle: {
-        mode: 'fill',
-    }
-},
+    // allows copy / paste using cell ranges
+    cellSelection: {
+        // enables the fill handle
+        handle: {
+            mode: 'fill',
+        }
+    },
 
-// enables undo / redo
-undoRedoCellEditing: true,
+    // enables undo / redo
+    undoRedoCellEditing: true,
 
-// restricts the number of undo / redo steps to 5
-undoRedoCellEditingLimit: 5,
+    // restricts the number of undo / redo steps to 5
+    undoRedoCellEditingLimit: 5,
+}
 ```
 
 ## Complex Objects
@@ -108,7 +109,7 @@ For manual editing, a [Value Parser](./value-parsers/) is required to convert st
 
 If a [Value Getter](./value-getters/) is being used to create complex objects, a [Value Setter](./value-setters/) must be used to update the data. `colDef.equals` is also needed when [Comparing Values](./change-detection/#comparing-values) to determine if the cell value has changed for rendering.
 
-Complex object cell values must be immutable. If the cell values are mutated, undo / redo will not be able to restore the original values. This means that the Value Parser must return a new complex object.
+Cell values containing complex objects must be immutable. If cell values are mutated, undo/redo can't restore the original values — the Value Parser must return a new complex object each time.
 
 Using the [Cell Data Type](./cell-data-types/) `object` presets many of the grid features to allow complex objects to work without further configuration by leveraging the [Value Formatter](./value-formatters/) and Value Parser.
 
