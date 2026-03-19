@@ -1594,4 +1594,19 @@ describe('deferred column tool panel pivot mode', () => {
 
         expect(getApplyButton(toolPanelGui).disabled).toBe(true);
     });
+
+    test('apply button becomes enabled when a row group pill sort direction is changed', async () => {
+        const { toolPanel, toolPanelGui } = await createDeferredPivotModeGrid();
+
+        expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+
+        // Click the Country pill in the row group drop zone to change sort direction
+        const countryPill = Array.from(
+            toolPanel.rowGroupDropZonePanel.getGui().querySelectorAll<HTMLElement>('.ag-column-drop-cell')
+        ).find((el) => el.textContent?.includes('Country'));
+        expect(countryPill).toBeTruthy();
+        countryPill!.click();
+
+        expect(getApplyButton(toolPanelGui).disabled).toBe(false);
+    });
 });
