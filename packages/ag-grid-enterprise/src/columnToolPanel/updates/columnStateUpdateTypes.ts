@@ -1,10 +1,11 @@
 import type { AgColumn, ColumnEventType, ColumnState, IAggFunc, SortDef } from 'ag-grid-community';
 
-export type ColumnStateUpdateParams = { deferApply?: boolean };
+export type ColumnStateUpdateParams = { buttons?: Array<'apply' | 'cancel'> };
 
 export interface ColumnStateConcreteUpdateStrategy {
     applyColumnState(state: ColumnState[], eventType: ColumnEventType): void;
     commit(): void;
+    hasPendingChanges(): boolean;
     moveColumns(columns: AgColumn[], targetIndex: number, eventType: ColumnEventType): void;
     reset(): void;
     setColumnsVisible(columns: AgColumn[], visible: boolean, eventType: ColumnEventType): void;

@@ -5,14 +5,6 @@
     flex: 1 1 auto;
 }
 
-:where(.ag-column-panel.ag-column-panel-deferred),
-:where(.ag-column-panel.ag-column-panel-deferred) :where(.ag-column-panel-column-select),
-:where(.ag-column-panel.ag-column-panel-deferred) :where(.ag-column-drop-vertical),
-:where(.ag-column-panel.ag-column-panel-deferred) :where(.ag-column-panel-defer-mode-toggle),
-:where(.ag-column-panel.ag-column-panel-deferred) :where(.ag-column-panel-buttons) {
-    background-color: var(--ag-cell-batch-edit-background-color);
-}
-
 .ag-pivot-mode-panel {
     height: var(--ag-header-height);
     display: flex;
@@ -47,27 +39,29 @@
 
 .ag-column-panel-buttons {
     display: flex;
-    flex-wrap: wrap;
-    gap: var(--ag-widget-vertical-spacing) var(--ag-widget-horizontal-spacing);
     justify-content: flex-end;
     overflow: hidden;
-    padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
-    border-top: var(--ag-tool-panel-separator-border);
+    padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding) 0;
+    flex-wrap: wrap;
+    gap: var(--ag-widget-vertical-spacing) var(--ag-widget-horizontal-spacing);
+
+    :where(.ag-standard-button) {
+        transition:
+            background-color 0.25s ease-in-out,
+            color 0.25s ease-in-out;
+    }
 }
 
-.ag-column-panel-defer-mode-toggle {
-    display: flex;
-    align-items: center;
-    gap: var(--ag-widget-horizontal-spacing);
-    padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
-    border-top: var(--ag-tool-panel-separator-border);
-}
-
-.ag-column-panel-defer-mode-select {
-    display: flex;
-    align-items: center;
+.ag-column-panel-buttons:where(:last-child) {
+    padding-bottom: var(--ag-widget-container-vertical-padding);
 }
 
 .ag-column-panel-buttons-button {
     line-height: 1.5;
+}
+
+/* stylelint-disable-next-line selector-max-specificity */
+:where(.ag-column-panel) .ag-column-panel-buttons-apply-button {
+    color: var(--ag-column-panel-apply-button-color);
+    background-color: var(--ag-column-panel-apply-button-background-color);
 }

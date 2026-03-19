@@ -31,6 +31,7 @@ import {
 import type { ColumnModelItem } from './columnModelItem';
 import { createPivotStateForToolPanel, selectAllChildren, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
+import { isDeferredMode } from './toolPanelDeferredUiUtils';
 import type { ColumnStateUpdateParams } from './updates/columnStateUpdateTypes';
 
 const ToolPanelColumnGroupElement: ElementParams = {
@@ -243,7 +244,7 @@ export class ToolPanelColumnGroupComp extends Component {
                         visibleState: dragItem?.visibleState,
                         pivotState: dragItem?.pivotState,
                         eventType: this.eventType,
-                        deferApply: this.params.deferApply,
+                        buttons: this.params.buttons,
                     });
                 }
             },
@@ -271,7 +272,7 @@ export class ToolPanelColumnGroupComp extends Component {
             };
         } = {};
         const updateStrategy = this.beans.columnStateUpdateStrategy;
-        const deferApply = !!this.params.deferApply;
+        const deferApply = isDeferredMode(this.params);
         for (const col of columns) {
             const colId = col.getId();
             visibleState[colId] = col.isVisible();
@@ -369,7 +370,7 @@ export class ToolPanelColumnGroupComp extends Component {
 
     private workOutSelectedValue(): boolean | undefined {
         const updateStrategy = this.beans.columnStateUpdateStrategy;
-        const pivotMode = updateStrategy.getPivotMode(!!this.params.deferApply);
+        const pivotMode = updateStrategy.getPivotMode(isDeferredMode(this.params));
 
         const visibleLeafColumns = this.getVisibleLeafColumns();
 
@@ -394,7 +395,7 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private workOutReadOnlyValue(): boolean {
-        const pivotMode = this.beans.columnStateUpdateStrategy.getPivotMode(!!this.params.deferApply);
+        const pivotMode = this.beans.columnStateUpdateStrategy.getPivotMode(isDeferredMode(this.params));
 
         let colsThatCanAction = 0;
 
@@ -413,10 +414,10 @@ export class ToolPanelColumnGroupComp extends Component {
 
     private isColumnChecked(column: AgColumn): boolean {
         const updateStrategy = this.beans.columnStateUpdateStrategy;
-        if (updateStrategy.getPivotMode(!!this.params.deferApply)) {
-            return updateStrategy.isColumnSelectedInPivotModeToolPanel(!!this.params.deferApply, column);
+        if (updateStrategy.getPivotMode(isDeferredMode(this.params))) {
+            return updateStrategy.isColumnSelectedInPivotModeToolPanel(isDeferredMode(this.params), column);
         }
-        return updateStrategy.isColumnVisibleInToolPanel(!!this.params.deferApply, column);
+        return updateStrategy.isColumnVisibleInToolPanel(isDeferredMode(this.params), column);
     }
 
     private onExpandOrContractClicked(): void {

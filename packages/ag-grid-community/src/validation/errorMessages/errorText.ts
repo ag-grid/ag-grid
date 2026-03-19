@@ -227,8 +227,12 @@ export const AG_GRID_ERRORS = {
         `The data type definition ${parentCellDataType} does not exist.` as const,
     46: () => 'The "baseDataType" property of a data type definition must match that of its parent.' as const,
     47: ({ cellDataType }: { cellDataType: string }) => `Missing data type definition - "${cellDataType}"` as const,
-    48: ({ property }: { property: string }) =>
-        `Cell data type is "object" but no Value ${property} has been provided. Please either provide an object data type definition with a Value ${property}, or set "colDef.value${property}"` as const,
+    48: ({ property, inferred, colId }: { property: string; inferred: boolean | undefined; colId?: string }) => {
+        const inferredStr = inferred ? ' (inferred)' : '';
+        const colIdStr = colId ? ` for column "${colId}"` : '';
+        const parserHint = inferred && property === 'Parser' ? '\n  - "colDef.cellDataType = \'object\'"' : '';
+        return `Cell data type is "object"${inferredStr} but no Value ${property} has been provided${colIdStr}. Please either provide an object data type definition with a Value ${property}, or set:\n  - "colDef.value${property}"${parserHint}` as const;
+    },
     49: ({ methodName }: { methodName: string }) =>
         `Framework component is missing the method ${methodName}()` as const,
     50: ({ compName }: { compName: string | undefined }) =>
@@ -729,6 +733,8 @@ export const AG_GRID_ERRORS = {
         'Since v35, `api.hideOverlay()` does not hide the overlay when `activeOverlay` is set. Set `activeOverlay=null` instead.' as const,
     297: () =>
         '`api.hideOverlay()` does not hide the no matching rows overlay as it is only controlled by grid state. Set `suppressOverlays=["noMatchingRows"] to not show it.' as const,
+    298: () =>
+        `Columns Tool Panel 'buttons' requires 'apply' to enable deferred mode. Without it, other buttons have no effect.` as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

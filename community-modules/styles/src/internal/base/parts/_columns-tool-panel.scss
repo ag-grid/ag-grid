@@ -1,14 +1,6 @@
 @use 'ag';
 
 @mixin output {
-    :where(.ag-column-panel.ag-column-panel-deferred),
-    :where(.ag-column-panel.ag-column-panel-deferred) :where(.ag-column-panel-column-select),
-    :where(.ag-column-panel.ag-column-panel-deferred) :where(.ag-column-drop-vertical),
-    :where(.ag-column-panel.ag-column-panel-deferred) :where(.ag-column-panel-defer-mode-toggle),
-    :where(.ag-column-panel.ag-column-panel-deferred) :where(.ag-column-panel-buttons) {
-        background-color: var(--ag-cell-batch-edit-background-color);
-    }
-
     .ag-pivot-mode-panel {
         min-height: var(--ag-header-height);
         height: var(--ag-header-height);
@@ -46,29 +38,30 @@
 
     .ag-column-panel-buttons {
         display: flex;
-        flex-wrap: wrap;
-        gap: var(--ag-widget-vertical-spacing) var(--ag-widget-horizontal-spacing);
         justify-content: flex-end;
         overflow: hidden;
-        padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
-        border-top: var(--ag-borders-secondary) var(--ag-secondary-border-color);
+        padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding) 0;
+        flex-wrap: wrap;
+        gap: var(--ag-widget-vertical-spacing) var(--ag-widget-horizontal-spacing);
+
+        .ag-standard-button {
+            transition:
+                background-color 0.25s ease-in-out,
+                color 0.25s ease-in-out;
+        }
     }
 
-    .ag-column-panel-defer-mode-toggle {
-        display: flex;
-        align-items: center;
-        gap: var(--ag-widget-horizontal-spacing);
-        padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
-        border-top: var(--ag-borders-secondary) var(--ag-secondary-border-color);
-    }
-
-    .ag-column-panel-defer-mode-select {
-        display: flex;
-        align-items: center;
+    .ag-column-panel-buttons:last-child {
+        padding-bottom: var(--ag-widget-container-vertical-padding);
     }
 
     .ag-column-panel-buttons-button {
         line-height: 1.5;
+    }
+
+    .ag-column-panel .ag-standard-button.ag-column-panel-buttons-apply-button {
+        color: var(--ag-column-panel-apply-button-color);
+        background-color: var(--ag-column-panel-apply-button-background-color);
     }
 
     .ag-column-group-icons,

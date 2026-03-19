@@ -39,7 +39,7 @@ const gridOptions = {
                 iconKey: 'columns',
                 toolPanel: 'agColumnsToolPanel',
                 toolPanelParams: {
-                    deferApply: true,
+                    buttons: ['cancel', 'apply'],
                 },
             },
         ],
@@ -48,10 +48,10 @@ const gridOptions = {
 };
 ```
 
-When `deferApply=true`:
+When `buttons` includes `'apply'`:
 
 -   Changes made in the Columns Tool Panel are staged as pending changes.
--   The Columns Tool Panel shows **Apply** and **Cancel** actions.
+-   The configured buttons are displayed at the bottom of the tool panel.
 -   **Apply** commits pending changes.
 -   **Cancel** discards pending changes.
 

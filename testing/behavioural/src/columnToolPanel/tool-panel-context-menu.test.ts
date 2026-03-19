@@ -182,15 +182,12 @@ describe('Cell Editing Start', async () => {
             return panel.getGui().textContent ?? '';
         }
 
-        function createDeferredContextMenu(
-            gridApi: GridApi,
-            gridDiv: HTMLElement,
-            columnId: string,
-            params: { deferApply: boolean } = { deferApply: true }
-        ): any {
+        const DEFERRED_PARAMS = { buttons: ['apply', 'cancel'] as const };
+
+        function createDeferredContextMenu(gridApi: GridApi, gridDiv: HTMLElement, columnId: string): any {
             const column = gridApi.getColumn(columnId)! as AgColumn;
             return column.createBean(
-                new ToolPanelContextMenu(column as any, new MouseEvent('contextmenu'), gridDiv, params)
+                new ToolPanelContextMenu(column as any, new MouseEvent('contextmenu'), gridDiv, DEFERRED_PARAMS)
             );
         }
 
@@ -211,7 +208,7 @@ describe('Cell Editing Start', async () => {
                             labelKey: 'columns',
                             iconKey: 'columns',
                             toolPanel: 'agColumnsToolPanel',
-                            toolPanelParams: { deferApply: true },
+                            toolPanelParams: { buttons: ['apply', 'cancel'] as const },
                         },
                     ],
                     defaultToolPanel: 'columns',
@@ -247,7 +244,7 @@ describe('Cell Editing Start', async () => {
                             labelKey: 'columns',
                             iconKey: 'columns',
                             toolPanel: 'agColumnsToolPanel',
-                            toolPanelParams: { deferApply: true },
+                            toolPanelParams: { buttons: ['apply', 'cancel'] as const },
                         },
                     ],
                     defaultToolPanel: 'columns',
@@ -287,7 +284,7 @@ describe('Cell Editing Start', async () => {
                             labelKey: 'columns',
                             iconKey: 'columns',
                             toolPanel: 'agColumnsToolPanel',
-                            toolPanelParams: { deferApply: true },
+                            toolPanelParams: { buttons: ['apply', 'cancel'] as const },
                         },
                     ],
                     defaultToolPanel: 'columns',
@@ -323,7 +320,7 @@ describe('Cell Editing Start', async () => {
                             labelKey: 'columns',
                             iconKey: 'columns',
                             toolPanel: 'agColumnsToolPanel',
-                            toolPanelParams: { deferApply: true },
+                            toolPanelParams: { buttons: ['apply', 'cancel'] as const },
                         },
                     ],
                     defaultToolPanel: 'columns',
@@ -364,7 +361,7 @@ describe('Cell Editing Start', async () => {
                             labelKey: 'columns',
                             iconKey: 'columns',
                             toolPanel: 'agColumnsToolPanel',
-                            toolPanelParams: { deferApply: true },
+                            toolPanelParams: { buttons: ['apply', 'cancel'] as const },
                         },
                     ],
                     defaultToolPanel: 'columns',
@@ -404,7 +401,7 @@ describe('Cell Editing Start', async () => {
                             labelKey: 'columns',
                             iconKey: 'columns',
                             toolPanel: 'agColumnsToolPanel',
-                            toolPanelParams: { deferApply: true },
+                            toolPanelParams: { buttons: ['apply', 'cancel'] as const },
                         },
                     ],
                     defaultToolPanel: 'columns',

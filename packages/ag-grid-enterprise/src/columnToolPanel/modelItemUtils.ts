@@ -8,7 +8,7 @@ import type {
 } from 'ag-grid-community';
 
 import type { ColumnModelItem } from './columnModelItem';
-import { refreshDeferredToolPanelUi } from './toolPanelDeferredUiUtils';
+import { isDeferredMode, refreshDeferredToolPanelUi } from './toolPanelDeferredUiUtils';
 import type { ColumnStateUpdateParams } from './updates/columnStateUpdateTypes';
 
 export function selectAllChildren(
@@ -30,7 +30,7 @@ export function setAllColumns(
     params: ColumnStateUpdateParams
 ): void {
     const updateStrategy = beans.columnStateUpdateStrategy;
-    const isPivotMode = updateStrategy.getPivotMode(!!params.deferApply);
+    const isPivotMode = updateStrategy.getPivotMode(isDeferredMode(params));
 
     if (isPivotMode) {
         setAllPivot(beans, cols, selectAllChecked, eventType, params);
@@ -74,7 +74,7 @@ function setAllVisible(
         if (col.getColDef().lockVisible) {
             continue;
         }
-        if (updateStrategy.isColumnVisibleInToolPanel(!!params.deferApply, col) !== visible) {
+        if (updateStrategy.isColumnVisibleInToolPanel(isDeferredMode(params), col) !== visible) {
             colStateItems.push({
                 colId: col.getId(),
                 hide: !visible,
@@ -82,7 +82,7 @@ function setAllVisible(
         }
     }
 
-    updateStrategy.applyColumnState(!!params.deferApply, colStateItems, eventType);
+    updateStrategy.applyColumnState(isDeferredMode(params), colStateItems, eventType);
     refreshDeferredToolPanelUi(beans, params);
 }
 
@@ -108,7 +108,7 @@ function setAllPivotActive(
 
     const turnOnAction = (col: AgColumn) => {
         // don't change any column that's already got a function active
-        if (updateStrategy.isColumnSelectedInPivotModeToolPanel(!!params.deferApply, col)) {
+        if (updateStrategy.isColumnSelectedInPivotModeToolPanel(isDeferredMode(params), col)) {
             return;
         }
 
@@ -133,7 +133,7 @@ function setAllPivotActive(
     };
 
     const turnOffAction = (col: AgColumn) => {
-        const isActive = updateStrategy.isColumnSelectedInPivotModeToolPanel(!!params.deferApply, col);
+        const isActive = updateStrategy.isColumnSelectedInPivotModeToolPanel(isDeferredMode(params), col);
         if (isActive) {
             colStateItems.push({
                 colId: col.getId(),
@@ -148,7 +148,7 @@ function setAllPivotActive(
 
     columns.forEach(action);
 
-    updateStrategy.applyColumnState(!!params.deferApply, colStateItems, eventType);
+    updateStrategy.applyColumnState(isDeferredMode(params), colStateItems, eventType);
     refreshDeferredToolPanelUi(beans, params);
 }
 
@@ -165,12 +165,11 @@ export function updateColumns(
             };
         };
         eventType: ColumnEventType;
-        deferApply?: boolean;
-    }
+    } & ColumnStateUpdateParams
 ): void {
     const { columns, visibleState, pivotState, eventType } = params;
     const updateStrategy = beans.columnStateUpdateStrategy;
-    const isPivotMode = updateStrategy.getPivotMode(!!params.deferApply);
+    const isPivotMode = updateStrategy.getPivotMode(isDeferredMode(params));
     const state: ColumnState[] = columns.map((column) => {
         const colId = column.getColId();
         if (isPivotMode) {
@@ -188,7 +187,7 @@ export function updateColumns(
             };
         }
     });
-    updateStrategy.applyColumnState(!!params.deferApply, state, eventType);
+    updateStrategy.applyColumnState(isDeferredMode(params), state, eventType);
     refreshDeferredToolPanelUi(beans, params);
 }
 

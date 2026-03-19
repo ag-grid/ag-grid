@@ -7,6 +7,7 @@ import type { ColumnEventType } from '../events';
 export interface IColumnStateUpdateStrategy {
     applyColumnState(deferMode: boolean, state: ColumnState[], eventType: ColumnEventType): void;
     commit(deferMode: boolean): void;
+    hasPendingChanges(deferMode: boolean): boolean;
     moveColumns(deferMode: boolean, columns: AgColumn[], targetIndex: number, eventType: ColumnEventType): void;
     reset(deferMode: boolean): void;
     setColumnsVisible(deferMode: boolean, columns: AgColumn[], visible: boolean, eventType: ColumnEventType): void;

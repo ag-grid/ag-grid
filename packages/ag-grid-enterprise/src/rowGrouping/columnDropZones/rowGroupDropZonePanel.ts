@@ -1,7 +1,7 @@
 import type { AgColumn, DragAndDropIcon, FocusableContainer, GridDraggingEvent } from 'ag-grid-community';
 import { _addFocusableContainerListener, _createIconNoSpan } from 'ag-grid-community';
 
-import { refreshDeferredToolPanelUi } from '../../columnToolPanel/toolPanelDeferredUiUtils';
+import { isDeferredMode, refreshDeferredToolPanelUi } from '../../columnToolPanel/toolPanelDeferredUiUtils';
 import type { ColumnStateUpdateParams } from '../../columnToolPanel/updates/columnStateUpdateTypes';
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
@@ -43,14 +43,14 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel implements Focusabl
         }
 
         const isActive = this.beans.columnStateUpdateStrategy
-            .getRowGroupColumns(!!this.updateParams?.deferApply)
+            .getRowGroupColumns(isDeferredMode(this.updateParams))
             .includes(column);
         return column.isAllowRowGroup() && (!isActive || this.isSourceEventFromTarget(draggingEvent));
     }
 
     protected updateItems(columns: AgColumn[]) {
         this.beans.columnStateUpdateStrategy.setRowGroupColumns(
-            !!this.updateParams?.deferApply,
+            isDeferredMode(this.updateParams),
             columns,
             'toolPanelUi'
         );
@@ -62,7 +62,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel implements Focusabl
     }
 
     protected getExistingItems(): AgColumn[] {
-        return this.beans.columnStateUpdateStrategy.getRowGroupColumns(!!this.updateParams?.deferApply);
+        return this.beans.columnStateUpdateStrategy.getRowGroupColumns(isDeferredMode(this.updateParams));
     }
 
     public getFocusableContainerName(): 'rowGroupToolbar' {
