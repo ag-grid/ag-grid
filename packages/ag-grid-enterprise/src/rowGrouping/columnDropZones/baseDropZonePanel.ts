@@ -9,8 +9,6 @@ import { DropZoneColumnComp } from './dropZoneColumnComp';
 
 export type TDropZone = 'rowGroup' | 'pivot' | 'aggregation';
 
-const DEFERRED_TOOL_PANEL_CLASS = 'ag-column-panel-deferred';
-
 export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumnComp, AgColumn> {
     constructor(
         horizontal: boolean,
@@ -49,7 +47,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
             return true;
         }
 
-        return !sourceElement.closest(`.${DEFERRED_TOOL_PANEL_CLASS}`);
+        return !sourceElement.hasAttribute('data-column-tool-panel-deferred');
     }
 
     protected override minimumAllowedNewInsertIndex(): number {

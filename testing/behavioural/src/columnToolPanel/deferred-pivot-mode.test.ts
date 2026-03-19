@@ -859,7 +859,7 @@ describe('deferred column tool panel pivot mode', () => {
         parent.removeChild(pillDragHandle);
         expect(pillDragHandle.isConnected).toBe(false);
 
-        // Even when detached, should still be blocked (pill has ag-column-panel-deferred class)
+        // Even when detached, should still be blocked (pill has data-column-tool-panel-deferred attribute)
         expect(headerDropZones.rowGroupComp.isInterestedIn(DragSourceType.ToolPanel, pillDragHandle)).toBe(false);
         expect(headerDropZones.pivotComp.isInterestedIn(DragSourceType.ToolPanel, pillDragHandle)).toBe(false);
     });

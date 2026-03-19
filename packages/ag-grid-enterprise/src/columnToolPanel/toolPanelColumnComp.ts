@@ -231,6 +231,10 @@ export class ToolPanelColumnComp extends Component {
         const beans = this.beans;
         const { gos, eventSvc, dragAndDrop } = beans;
 
+        if (isDeferredMode(this.params)) {
+            eDragHandle.setAttribute('data-column-tool-panel-deferred', '');
+        }
+
         let hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');
         const dragSource: GridDragSource = {
             type: DragSourceType.ToolPanel,
