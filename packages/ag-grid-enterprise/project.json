@@ -58,7 +58,7 @@
     },
     "build:umd:watch": {
       "executor": "@nx/esbuild:esbuild",
-      "dependsOn": [],
+      "dependsOn": ["ag-grid-community:build:package:watch"],
       "inputs": ["tsDefaults", "styleOutputs"],
       "outputs": ["{projectRoot}/dist/ag-grid-enterprise*.js"],
       "options": {
@@ -161,6 +161,39 @@
           "metafile": false
         }
       }
+    },
+    "build:package:watch": {
+      "executor": "@nx/esbuild:esbuild",
+      "dependsOn": [],
+      "inputs": [
+        "{projectRoot}/package.json",
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/tsconfig.*.json",
+        "sharedGlobals",
+        "defaultExcludes",
+        {
+          "externalDependencies": ["npm:esbuild"]
+        }
+      ],
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "{projectRoot}/dist/package",
+        "deleteOutputPath": false,
+        "main": "{projectRoot}/src/main.ts",
+        "tsConfig": "{projectRoot}/tsconfig.watch.json",
+        "skipTypeCheck": true,
+        "esbuildConfig": "esbuild.config.cjs",
+        "external": ["ag-grid-community"],
+        "platform": "browser",
+        "target": "es2020",
+        "format": ["cjs", "esm"],
+        "sourcemap": true,
+        "metafile": false
+      },
+      "configurations": {
+        "watch": {}
+      },
+      "cache": true
     },
     "test:e2e": {
       "dependsOn": ["test:umd:browser", "test:umd"]

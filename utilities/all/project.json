@@ -142,6 +142,7 @@
         "startElapsedBuildTime",
         "^build:types",
         "^build:package",
+        "^build:umd",
         "generate-examples",
         "generate-doc-references"
       ],
