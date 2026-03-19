@@ -42,20 +42,32 @@ The following example demonstrates the pre-defined cell data types (most of whic
 
 ## Inferring Data Types
 
-By default, the grid will infer cell data types the first time that row data is passed into the grid.
+By default, when using the Client-Side Row Model, the grid will infer cell data types the first time that row data is passed into the grid given the following conditions:
 
-For inference to work for a column, it must contain non-null values and have the `field` property set. The resolved column definition (including the default column definition and column types) must also not have the Value Getter, Value Parser or reference data properties set, or be using [Sparklines](./sparklines-overview/). If these conditions are not met, no cell data type will be set (it will need to be defined directly on the column if desired).
+**The column must:**
+
+-   Have a `field` property set
+-   Contain at least one non-null value
+
+**The column must not:**
+
+-   Have a `valueGetter`, `valueParser`, or `refData` property set on the resolved column definition (including the default column definition and column types)
+-   Use [Sparklines](./sparklines-overview/)
+
+If any condition is not met, no cell data type will be inferred. You can still set one explicitly via `cellDataType` on the column definition.
+
+Where inference is possible but the values do not match any pre-defined type, it defaults to `'object'`.
+
+### Disabling Inference
+
+Set `cellDataType: false` on an individual column, or on the [Default Column Definition](./column-definitions/#default-column-definitions) to disable it globally.
+
+### Date vs DateTime
+
+Because `'dateTime'` values are `Date` objects — the same as `'date'` — the grid cannot distinguish between them during inference. To use the higher-precision `'dateTime'` type, set `cellDataType: 'dateTime'` explicitly on the column definition.
 
 {% note %}
-Because `'dateTime'` corresponds to cell values that are `Date` objects, there is no easy way to tell them apart from regular `'date'` columns. If you wish to enable `'dateTime'`'s higher precision fields, please explicitly specify `cellDataType: 'dateTime'` in the corresponding `columnDefs` entry.
-{% /note %}
-
-Data type inference can be disabled by setting `cellDataType = false` on an individual column, or for all columns on the [Default Column Definition](./column-definitions/#default-column-definitions).
-
-Note that where inference is possible, but it does not match any of the pre-defined cell data types, it will default to `object`.
-
-{% note %}
-Inferring cell data types only works for the Client-Side Row Model. For other row models, you will need to define cell data types for each column.
+Inference only works with the Client-Side Row Model. For other row models, define `cellDataType` explicitly on each column.
 {% /note %}
 
 ## Pre-Defined Cell Data Types
@@ -192,7 +204,7 @@ The following properties are set:
 -   `cellEditorParams.useFormatter = true` so that the cell editor uses the Value Formatter.
 -   A `comparator` is defined to allow [Custom Sorting](./row-sorting/#custom-sorting) using the Value Formatter.
 -   When the [Text Filter](./filter-text/) is used, a [Filter Value Getter](./column-properties/#reference-filtering-filterValueGetter) is used to convert the value with the Value Formatter.
--   When the [Set Filter](./filter-set) is used, `filterParams.valueFormatter` is set to format the values using the Value Formatter.
+-   When the [Set Filter](./filter-set) is used with [Complex Objects](./filter-set-filter-list/#complex-objects), `filterParams.valueFormatter` is set to format the values using the Value Formatter.
 
 ### Pre-Defined Cell Data Type Example
 
