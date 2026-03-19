@@ -1211,4 +1211,150 @@ describe('IRowNode.getAggregatedChildren()', () => {
             expect(pinnedChildren.map((n) => n.data?.id).sort()).toEqual(['2', '3']);
         });
     });
+
+    describe('recursive option', () => {
+        test('recursive returns all leaf descendants through multiple group levels', async () => {
+            const gridOptions: GridOptions = {
+                columnDefs: [
+                    { field: 'region', rowGroup: true, hide: true },
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'gold', aggFunc: 'sum' },
+                ],
+                groupDefaultExpanded: -1,
+                getRowId: ({ data }) => data.id,
+            };
+
+            const api = gridsManager.createGrid('myGrid', gridOptions);
+
+            applyTransactionChecked(api, {
+                add: [
+                    { id: '1', region: 'Europe', country: 'Ireland', gold: 10 },
+                    { id: '2', region: 'Europe', country: 'Ireland', gold: 20 },
+                    { id: '3', region: 'Europe', country: 'France', gold: 15 },
+                    { id: '4', region: 'Americas', country: 'USA', gold: 30 },
+                ],
+            });
+
+            await new GridRows(api, 'after data load').check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ filler id:row-group-region-Europe ag-Grid-AutoColumn:"Europe" gold:45
+                │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-Ireland ag-Grid-AutoColumn:"Ireland" gold:30
+                │ │ ├── LEAF id:1 region:"Europe" country:"Ireland" gold:10
+                │ │ └── LEAF id:2 region:"Europe" country:"Ireland" gold:20
+                │ └─┬ LEAF_GROUP id:row-group-region-Europe-country-France ag-Grid-AutoColumn:"France" gold:15
+                │ · └── LEAF id:3 region:"Europe" country:"France" gold:15
+                └─┬ filler id:row-group-region-Americas ag-Grid-AutoColumn:"Americas" gold:30
+                · └─┬ LEAF_GROUP id:row-group-region-Americas-country-USA ag-Grid-AutoColumn:"USA" gold:30
+                · · └── LEAF id:4 region:"Americas" country:"USA" gold:30
+            `);
+
+            const europeGroup = api.getRowNode('row-group-region-Europe')!;
+
+            // Without recursive: returns the 2 country subgroups
+            const immediateChildren = europeGroup.getAggregatedChildren('gold');
+            expect(immediateChildren.length).toBe(2);
+            expect(immediateChildren.every((n) => n.group)).toBe(true);
+
+            // With recursive: returns all 3 leaf rows
+            const allLeaves = europeGroup.getAggregatedChildren('gold', true);
+            expect(allLeaves.length).toBe(3);
+            expect(allLeaves.every((n) => !n.group)).toBe(true);
+            expect(allLeaves.map((n) => n.data?.id).sort()).toEqual(['1', '2', '3']);
+
+            // For a leaf group, recursive returns the same rows as non-recursive
+            const irelandGroup = api.getRowNode('row-group-region-Europe-country-Ireland')!;
+            const irelandImmediate = irelandGroup.getAggregatedChildren(null);
+            const irelandRecursive = irelandGroup.getAggregatedChildren(null, true);
+            expect(irelandRecursive.map((n) => n.data?.id).sort()).toEqual(
+                irelandImmediate.map((n) => n.data?.id).sort()
+            );
+        });
+
+        test('recursive respects filtering', async () => {
+            const gridOptions: GridOptions = {
+                columnDefs: [
+                    { field: 'region', rowGroup: true, hide: true },
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'sport', filter: 'agSetColumnFilter' },
+                    { field: 'gold', aggFunc: 'sum' },
+                ],
+                groupDefaultExpanded: -1,
+                getRowId: ({ data }) => data.id,
+            };
+
+            const api = gridsManager.createGrid('myGrid', gridOptions);
+
+            applyTransactionChecked(api, {
+                add: [
+                    { id: '1', region: 'Europe', country: 'Ireland', sport: 'Soccer', gold: 10 },
+                    { id: '2', region: 'Europe', country: 'Ireland', sport: 'Rugby', gold: 20 },
+                    { id: '3', region: 'Europe', country: 'France', sport: 'Soccer', gold: 15 },
+                ],
+            });
+
+            const europeGroup = api.getRowNode('row-group-region-Europe')!;
+
+            // Before filter: 3 leaves
+            let allLeaves = europeGroup.getAggregatedChildren('gold', true);
+            expect(allLeaves.length).toBe(3);
+
+            // Apply filter
+            await api.setColumnFilterModel('sport', { values: ['Soccer'] });
+            api.onFilterChanged();
+
+            // After filter: only 2 Soccer leaves
+            allLeaves = europeGroup.getAggregatedChildren('gold', true);
+            expect(allLeaves.length).toBe(2);
+            expect(allLeaves.map((n) => n.data?.id).sort()).toEqual(['1', '3']);
+        });
+
+        test('recursive returns empty array for leaf nodes', async () => {
+            const gridOptions: GridOptions = {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'gold', aggFunc: 'sum' },
+                ],
+                groupDefaultExpanded: -1,
+                getRowId: ({ data }) => data.id,
+            };
+
+            const api = gridsManager.createGrid('myGrid', gridOptions);
+
+            applyTransactionChecked(api, {
+                add: [{ id: '1', country: 'Ireland', gold: 10 }],
+            });
+
+            const leafNode = api.getRowNode('1')!;
+            expect(leafNode.getAggregatedChildren('gold', true)).toEqual([]);
+        });
+
+        test('recursive with false behaves identically to no argument', async () => {
+            const gridOptions: GridOptions = {
+                columnDefs: [
+                    { field: 'region', rowGroup: true, hide: true },
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'gold', aggFunc: 'sum' },
+                ],
+                groupDefaultExpanded: -1,
+                getRowId: ({ data }) => data.id,
+            };
+
+            const api = gridsManager.createGrid('myGrid', gridOptions);
+
+            applyTransactionChecked(api, {
+                add: [
+                    { id: '1', region: 'Europe', country: 'Ireland', gold: 10 },
+                    { id: '2', region: 'Europe', country: 'France', gold: 15 },
+                ],
+            });
+
+            const europeGroup = api.getRowNode('row-group-region-Europe')!;
+
+            const withoutArg = europeGroup.getAggregatedChildren('gold');
+            const withFalse = europeGroup.getAggregatedChildren('gold', false);
+
+            // Same array reference (no allocation)
+            expect(withFalse).toBe(withoutArg);
+        });
+    });
 });

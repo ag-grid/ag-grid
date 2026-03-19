@@ -7,13 +7,14 @@ import type { TabToNextGridContainerTarget } from '../interfaces/iCallbackParams
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import type { Component } from '../widgets/component';
-import { _isStopPropagationForAgGrid } from './gridEvent';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _addFocusableContainerListener(beans: BeanCollection, comp: Component, eGui: HTMLElement): void {
     comp.addManagedElementListeners(eGui, {
         keydown: (e: KeyboardEvent) => {
-            if (!e.defaultPrevented && !_isStopPropagationForAgGrid(e) && e.key === KeyCode.TAB) {
+            // some managed containers handle tab themselves and only need to suppress
+            // this generic fallback for the current event.
+            if (!e.defaultPrevented && !_shouldSkipFocusableContainerListener(e) && e.key === KeyCode.TAB) {
                 const backwards = e.shiftKey;
                 if (!_findNextFocusableElement(beans, eGui, false, backwards)) {
                     if (_focusNextGridCoreContainer(beans, backwards)) {
@@ -109,4 +110,18 @@ export function _runWithContainerFocusAllowed<T>(container: FocusableContainer, 
     } finally {
         container.setAllowFocus?.(false);
     }
+}
+
+const AG_GRID_SKIP_FOCUSABLE_CONTAINER = '__ag_Grid_Skip_Focusable_Container';
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _skipFocusableContainerListenerForAgGrid(event: Event): void {
+    // this is narrower than _stopPropagationForAgGrid:
+    // it only skips _addFocusableContainerListener for this event, so other ag grid
+    // keyboard handling can continue to run normally.
+    (event as any)[AG_GRID_SKIP_FOCUSABLE_CONTAINER] = true;
+}
+
+function _shouldSkipFocusableContainerListener(event: Event): boolean {
+    return (event as any)[AG_GRID_SKIP_FOCUSABLE_CONTAINER] === true;
 }

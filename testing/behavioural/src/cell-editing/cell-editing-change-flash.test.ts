@@ -4,6 +4,7 @@ import { userEvent } from '@testing-library/user-event';
 
 import {
     HighlightChangesModule,
+    NumberEditorModule,
     TextEditorModule,
     UndoRedoEditModule,
     agTestIdFor,
@@ -18,7 +19,7 @@ const FLASH_CSS_CLASS = 'ag-cell-data-changed';
 
 describe('Cell change flashing after edit', () => {
     const gridMgr = new TestGridsManager({
-        modules: [HighlightChangesModule, UndoRedoEditModule, TextEditorModule],
+        modules: [HighlightChangesModule, UndoRedoEditModule, TextEditorModule, NumberEditorModule],
     });
 
     beforeAll(() => {
@@ -64,7 +65,7 @@ describe('Cell change flashing after edit', () => {
 
 describe('Cell change flashing after undo and redo', () => {
     const gridMgr = new TestGridsManager({
-        modules: [HighlightChangesModule, UndoRedoEditModule, TextEditorModule],
+        modules: [HighlightChangesModule, UndoRedoEditModule, TextEditorModule, NumberEditorModule],
     });
 
     beforeAll(() => {
@@ -238,7 +239,7 @@ describe('Cell change flashing suppressed when value not committed', () => {
 
 describe('Cell change flashing after delete', () => {
     const gridMgr = new TestGridsManager({
-        modules: [HighlightChangesModule, TextEditorModule],
+        modules: [HighlightChangesModule, TextEditorModule, NumberEditorModule],
     });
 
     beforeAll(() => {
@@ -279,7 +280,7 @@ describe('Cell change flashing after delete', () => {
 
 describe('Cell change flashing after fill handle', () => {
     const gridMgr = new TestGridsManager({
-        modules: [HighlightChangesModule, CellSelectionModule, ClipboardModule, TextEditorModule],
+        modules: [HighlightChangesModule, CellSelectionModule, ClipboardModule, TextEditorModule, NumberEditorModule],
     });
 
     beforeAll(() => {

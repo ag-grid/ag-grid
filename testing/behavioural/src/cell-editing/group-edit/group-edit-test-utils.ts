@@ -47,19 +47,37 @@ function locateCellElements(api: GridApi, rowNode: IRowNode, colId: string) {
 }
 
 export async function editCell(api: GridApi, rowNode: IRowNode, colId: string, newValue: string) {
-    const { gridDiv, cell, rowIndex } = locateCellElements(api, rowNode, colId);
-
-    await userEvent.click(cell);
+    const { gridDiv, rowIndex } = locateCellElements(api, rowNode, colId);
 
     api.setFocusedCell(rowIndex, colId);
     api.startEditingCell({ rowIndex, rowPinned: rowNode.rowPinned, colKey: colId });
+    await asyncSetTimeout(0);
 
-    const input = await waitForInput(gridDiv, cell ?? gridDiv);
+    // Re-query the cell after startEditingCell — in jsdom, `ensureIndexVisible` can
+    // trigger a row redraw that replaces cell DOM elements, making the original reference stale.
+    const input = await waitForInput(gridDiv, gridDiv);
     await userEvent.clear(input);
     await userEvent.type(input, `${newValue}{Enter}`);
     await asyncSetTimeout(0);
+}
 
-    return cell;
+/**
+ * Performs an edit on a cell via either UI or setDataValue.
+ * Handles jsdom cell DOM replacement that occurs during `startEditingCell`.
+ */
+export async function performEdit(
+    editMode: string,
+    api: GridApi,
+    node: IRowNode,
+    colId: string,
+    value: number | string
+) {
+    if (editMode === 'ui') {
+        await editCell(api, node, colId, `${value}`);
+    } else {
+        node.setDataValue(colId, typeof value === 'string' ? Number(value) : value, 'ui');
+        await asyncSetTimeout(0);
+    }
 }
 
 export function getGroupColumnDisplayValue(rowNode: IRowNode): string | undefined {

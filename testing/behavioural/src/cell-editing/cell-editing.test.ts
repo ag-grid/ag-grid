@@ -2,7 +2,7 @@ import { getByTestId } from '@testing-library/dom';
 import '@testing-library/jest-dom';
 import { userEvent } from '@testing-library/user-event';
 
-import type { CellValueChangedEvent, ColDef } from 'ag-grid-community';
+import type { CellValueChangedEvent, ColDef, NewValueParams } from 'ag-grid-community';
 import {
     CheckboxEditorModule,
     DateEditorModule,
@@ -747,6 +747,41 @@ describe('Cell Editing Start', () => {
             oldValue: 'initial',
             newValue: 'changed',
             newRawValue: 'changed',
+        });
+    });
+
+    test('colDef onCellValueChanged receives newRawValue and source', async () => {
+        const colDefEvents: Pick<NewValueParams, 'oldValue' | 'newValue' | 'newRawValue' | 'source'>[] = [];
+
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                {
+                    field: 'a',
+                    editable: true,
+                    valueGetter: (params) => (params.data?.a != null ? `prefix_${params.data.a}` : null),
+                    valueSetter: (params) => {
+                        params.data.a = params.newValue;
+                        return true;
+                    },
+                    onCellValueChanged: ({ oldValue, newValue, newRawValue, source }) => {
+                        colDefEvents.push({ oldValue, newValue, newRawValue, source });
+                    },
+                },
+            ],
+            rowData: [{ id: '0', a: 'initial' }],
+            getRowId: (params) => params.data.id,
+        });
+
+        const rowNode = api.getDisplayedRowAtIndex(0)!;
+        rowNode.setDataValue('a', 'changed');
+        await asyncSetTimeout(1);
+
+        expect(colDefEvents).toHaveLength(1);
+        expect(colDefEvents[0]).toEqual({
+            oldValue: 'prefix_initial',
+            newValue: 'prefix_changed',
+            newRawValue: 'changed',
+            source: undefined,
         });
     });
 });

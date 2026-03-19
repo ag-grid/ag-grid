@@ -151,10 +151,10 @@ export interface TabToNextGridContainerParams<TData = any, TContext = any> exten
     /** True if the Shift key is also down. */
     backwards: boolean;
     /** The container that currently has focus. */
-    fromContainer: GridContainerName;
+    previousContainer: GridContainerName;
     /** The container the grid would normally focus next. */
-    toContainer: GridContainerName;
-    /** The target the grid would normally focus when moving to `toContainer`, or `null` if it can't be represented. */
+    nextContainer: GridContainerName;
+    /** The target the grid would normally focus when moving to `nextContainer`, or `null` if it can't be represented. */
     defaultTarget: TabToNextGridContainerTarget | null;
 }
 

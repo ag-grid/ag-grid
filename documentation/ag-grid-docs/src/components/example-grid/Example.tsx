@@ -137,7 +137,17 @@ const staticGridOptions: GridOptions = {
     ),
 };
 
-const ExampleInner = ({ darkMode, theme, isSmall }: { darkMode: boolean; theme: string; isSmall: boolean }) => {
+const ExampleInner = ({
+    darkMode,
+    theme,
+    isSmall,
+    dataSizeStr,
+}: {
+    darkMode: boolean;
+    theme: string;
+    dataSizeStr: string | undefined;
+    isSmall: boolean;
+}) => {
     const gridRef = useRef(null);
     const loadInstance = useRef(0);
     const [gridThemeStr, setGridThemeStr] = useState(theme);
@@ -288,9 +298,15 @@ const ExampleInner = ({ darkMode, theme, isSmall }: { darkMode: boolean; theme: 
             newRowsCols.push([10_000, 100], [50_000, defaultColCount], [100_000, defaultColCount]);
         }
 
-        setDataSize(createDataSizeValue(newRowsCols[1][0], newRowsCols[1][1]));
+        const defaultDataSize = dataSizeStr
+            ? newRowsCols.find(([r, c]) => createDataSizeValue(r, c) === dataSizeStr)
+                ? dataSizeStr
+                : createDataSizeValue(newRowsCols[1][0], newRowsCols[1][1])
+            : createDataSizeValue(newRowsCols[1][0], newRowsCols[1][1]);
+
+        setDataSize(defaultDataSize);
         setRowCols(newRowsCols);
-    }, [isSmall]);
+    }, [isSmall, dataSizeStr]);
 
     useEffect(() => {
         const flags: Record<string, any> = {};
@@ -429,12 +445,17 @@ const ExampleInner = ({ darkMode, theme, isSmall }: { darkMode: boolean; theme: 
 
 const Example = () => {
     const [darkMode] = useDarkmode();
-    const [gridThemeStr] = useState<string>(() => new URLSearchParams(window.location.search).get('theme') ?? 'quartz');
+    const [gridThemeStr] = useState<string>(() =>
+        IS_SSR ? 'quartz' : new URLSearchParams(window.location.search).get('theme') ?? 'quartz'
+    );
+    const [dataSizeStr] = useState<string | undefined>(() =>
+        IS_SSR ? undefined : new URLSearchParams(window.location.search).get('dataSize') ?? undefined
+    );
     const [small] = useState(() =>
         IS_SSR ? false : document.documentElement.clientHeight <= 415 || document.documentElement.clientWidth < 768
     );
 
-    return <ExampleInner darkMode={darkMode ?? false} theme={gridThemeStr} isSmall={small} />;
+    return <ExampleInner darkMode={darkMode ?? false} theme={gridThemeStr} dataSizeStr={dataSizeStr} isSmall={small} />;
 };
 
 export default memo(Example);

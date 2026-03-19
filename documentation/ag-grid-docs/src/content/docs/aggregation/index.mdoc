@@ -44,6 +44,15 @@ After the grid is initialised aggregations can be applied / retrieved / removed 
 
 {% apiDocumentation source="grid-api/api.json" section="aggregation" /%}
 
+## Editing Aggregated Values
+
+Group row cells displaying aggregated values can be made editable, allowing users to edit a group total and
+have the change distributed back down to descendant rows. The built-in distribution supports all standard
+aggregation functions and can be customised per column.
+
+See [Editing Group Rows](./grouping-edit/) for full details on `groupRowEditable`, `groupRowValueSetter`,
+and distribution strategies.
+
 ## Retrieving Aggregated Children
 
 The method `rowNode.getAggregatedChildren(colKey)` with Client Side Row Model returns the immediate children that contribute to the aggregation
@@ -54,3 +63,18 @@ of a group row. This is useful when implementing custom logic based on aggregate
     and `groupAggFiltering` settings).
 -   For pivot columns on leaf groups, returns only the children matching the column's pivot keys.
 -   Returns an empty array for leaf (non-group) rows.
+
+### Retrieving All Leaf Descendants
+
+Pass `true` as the second argument to collect all descendant leaf (data) rows recursively:
+
+```ts
+const allLeaves = groupNode.getAggregatedChildren(colKey, true);
+```
+
+This traverses the full group hierarchy and returns every non-group row that ultimately contributes to the group's aggregated value, respecting the same filtering and pivot rules as the non-recursive call.
+
+{% note %}
+Calling `getAggregatedChildren(colKey, true)` allocates a new array and visits every descendant node.
+On large or deeply nested datasets this can be expensive, so prefer the non-recursive form when only immediate children are needed.
+{% /note %}

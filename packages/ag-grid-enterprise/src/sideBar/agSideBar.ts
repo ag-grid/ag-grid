@@ -23,7 +23,7 @@ import {
     _isVisible,
     _removeFromParent,
     _setAriaControlsAndLabel,
-    _stopPropagationForAgGrid,
+    _skipFocusableContainerListenerForAgGrid,
     _warn,
 } from 'ag-grid-community';
 
@@ -103,8 +103,9 @@ class AgSideBar extends Component implements ISideBar, FocusableContainer {
                 e.preventDefault();
                 return true;
             }
-            // avoid a second core-container evaluation from the generic focusable-container listener.
-            _stopPropagationForAgGrid(e);
+            // avoid a second core-container evaluation from the generic focusable-container listener
+            // without blocking other ag grid keyboard handling for this event.
+            _skipFocusableContainerListenerForAgGrid(e);
             return false;
         }
 

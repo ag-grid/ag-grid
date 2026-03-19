@@ -46,14 +46,59 @@ function getFullJsDoc(_ts) {
     };
 }
 
-function getJsDoc(_ts) {
+// In TypeScript 5.x, JSDoc.comment can be a string or a NodeArray<JSDocComment>
+// (JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain). NodeArray contains AST nodes
+// with circular parent references that break JSON.stringify. This converts to plain text,
+// preserving {@link} tags for downstream rendering.
+function jsDocCommentToString(ts, comment) {
+    if (comment == null) {
+        return undefined;
+    }
+    if (typeof comment === 'string') {
+        return comment;
+    }
+    if (Array.isArray(comment) || typeof comment[Symbol.iterator] === 'function') {
+        const jsDocTextKind = ts.SyntaxKind.JSDocText;
+        let result = '';
+        for (const part of comment) {
+            if (typeof part === 'string') {
+                result += part;
+            } else if (part.kind === jsDocTextKind) {
+                result += part.text;
+            } else {
+                // JSDocLink / JSDocLinkCode / JSDocLinkPlain: reconstruct the inline tag
+                const tagName =
+                    part.kind === ts.SyntaxKind.JSDocLinkCode
+                        ? '@linkcode'
+                        : part.kind === ts.SyntaxKind.JSDocLinkPlain
+                          ? '@linkplain'
+                          : '@link';
+                const name = part.name
+                    ? typeof part.name.getText === 'function'
+                        ? part.name.getText()
+                        : part.name.escapedText || String(part.name)
+                    : '';
+                const textPart = part.text || '';
+                const sep = name && textPart && !textPart.startsWith(' ') ? ' ' : '';
+                result += `{${tagName} ${name}${sep}${textPart}}`;
+            }
+        }
+        return result;
+    }
+    return String(comment);
+}
+
+function getJsDoc(ts) {
     return function (node) {
         if (node.jsDoc && node.jsDoc.length === 1) {
             const j = node.jsDoc[0];
             return {
                 all: j.getFullText().replace(/\/\*\*\n\s*\*/g, '/**'),
-                comment: j.comment,
-                tags: j.tags?.map((tag) => ({ name: tag.tagName.escapedText, comment: tag.comment })),
+                comment: jsDocCommentToString(ts, j.comment),
+                tags: j.tags?.map((tag) => ({
+                    name: tag.tagName.escapedText,
+                    comment: jsDocCommentToString(ts, tag.comment),
+                })),
             };
         }
         return undefined;

@@ -52,6 +52,7 @@ import type { IFormulaDataService, IFormulaInputManagerService, IFormulaService 
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
 import type { IAggColumnNameService } from '../interfaces/iAggColumnNameService';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
+import type { IAggregatedChildrenSvc } from '../interfaces/iAggregatedChildrenSvc';
 import type { IClipboardService } from '../interfaces/iClipboardService';
 import type { IColsService } from '../interfaces/iColsService';
 import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
@@ -78,6 +79,7 @@ import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { IPivotColDefService } from '../interfaces/iPivotColDefService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
 import type { IRowChildrenService } from '../interfaces/iRowChildrenService';
+import type { IRowGroupingEditValueSvc } from '../interfaces/iRowGroupingEditValueSvc';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type {
     IRowNodeAggregationStage,
@@ -348,6 +350,7 @@ interface CoreBeanCollection
     flattenStage?: IRowNodeFlattenStage;
     groupStage?: IRowNodeGroupStage;
     aggStage?: IRowNodeAggregationStage;
+    aggChildrenSvc?: IAggregatedChildrenSvc;
     pivotStage?: IRowNodePivotStage;
     filterAggStage?: IRowNodeFilterAggregateStage;
     rowNodeSorter?: RowNodeSorter;
@@ -358,6 +361,7 @@ interface CoreBeanCollection
     rowDropHighlightSvc?: RowDropHighlightService;
     rowDragSvc?: RowDragService;
     groupEditSvc?: IGroupEditService;
+    rowGroupingEditValueSvc?: IRowGroupingEditValueSvc;
     stickyRowSvc?: IStickyRowService;
     filterValueSvc?: FilterValueService;
     cellFlashSvc?: CellFlashService;
