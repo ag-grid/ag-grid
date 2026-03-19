@@ -251,7 +251,7 @@ export class ToolPanelColumnComp extends Component {
                 });
             },
             onGridEnter: (dragItem: DragItem | null) => {
-                if (hideColumnOnExit) {
+                if (hideColumnOnExit && !isDeferredMode(this.params)) {
                     // when dragged into the grid, restore the state that was active pre-drag
                     updateColumns(beans, {
                         columns: [this.column],
@@ -263,7 +263,7 @@ export class ToolPanelColumnComp extends Component {
                 }
             },
             onGridExit: () => {
-                if (hideColumnOnExit) {
+                if (hideColumnOnExit && !isDeferredMode(this.params)) {
                     // when dragged outside of the grid, mimic what happens when checkbox is disabled
                     // this handles the behaviour for pivot which is different to just hiding a column.
                     this.onChangeCommon(false);

@@ -838,6 +838,65 @@ describe('deferred column tool panel pivot mode', () => {
         expect(headerDropZones.pivotComp.isInterestedIn(DragSourceType.ToolPanel, dragHandle)).toBe(false);
     });
 
+    test('dragging a CTP column to the header pivot panel in deferred mode should not apply changes', async () => {
+        const { gridApi, toolPanel, toolPanelGui } = await createDeferredPivotModeGrid();
+
+        // Athlete is not a pivot column initially
+        expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['year']);
+
+        // Get the header (horizontal) pivot drop zone GUI from the grid DOM
+        const gridEl = getGridElement(gridApi)!;
+        const headerPivotDropZone = gridEl.querySelector('.ag-column-drop-horizontal-pivot') as HTMLElement;
+        expect(headerPivotDropZone).toBeTruthy();
+
+        // Simulate full drag from CTP column list to header pivot panel
+        await dragRenderedPrimaryColumnToRowGroups(toolPanel, toolPanelGui, 'Athlete', headerPivotDropZone);
+
+        // Grid pivot columns should remain unchanged (no immediate apply)
+        expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['year']);
+
+        // Deferred state should also remain unchanged (drag should be fully rejected)
+        expect(
+            getUpdateStrategy(toolPanel)
+                .getPivotColumns(true)
+                .map((col) => col.getColId())
+        ).toEqual(['year']);
+    });
+
+    test('onGridExit and onGridEnter drag callbacks should be no-ops in deferred mode', async () => {
+        const { gridApi, toolPanel } = await createDeferredPivotModeGrid();
+
+        // Country is an active row group
+        expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['country', 'sport']);
+
+        // Create a Country column comp (which registers drag source with onGridExit/onGridEnter)
+        const countryComp = createPrimaryColumnComp(toolPanel, 'Country');
+        const onChangeCommonSpy = vi.spyOn(countryComp, 'onChangeCommon');
+
+        // Find the drag source via dragSourceAndParamsList
+        const dragAndDrop = countryComp.beans.dragAndDrop;
+        const entry = dragAndDrop['dragSourceAndParamsList'].find(
+            (e: any) => e.dragSource.eElement === countryComp.eDragHandle
+        );
+        expect(entry).toBeTruthy();
+        const dragSource = entry.dragSource;
+
+        // Trigger onGridExit — should not call onChangeCommon in deferred mode
+        dragSource.onGridExit(null);
+
+        expect(onChangeCommonSpy).not.toHaveBeenCalled();
+
+        // Deferred state should remain unchanged
+        expect(
+            getUpdateStrategy(toolPanel)
+                .getRowGroupColumns(true)
+                .map((col) => col.getColId())
+        ).toEqual(['country', 'sport']);
+
+        // Grid state should remain unchanged
+        expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['country', 'sport']);
+    });
+
     test('dragging from the non-deferred tool panel into external header drop zones should remain allowed', async () => {
         const { gridApi, toolPanel } = await createNonDeferredPivotModeGrid();
         const country = gridApi.getColumn('country')! as any;
