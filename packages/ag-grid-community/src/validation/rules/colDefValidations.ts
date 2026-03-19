@@ -67,11 +67,12 @@ export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGro
         return null;
     },
     groupRowEditable: ({ groupRowEditable, cellEditor }: ColDef) => {
-        if (groupRowEditable && !cellEditor) {
-            return 'TextEditor';
+        if (!groupRowEditable) {
+            return null;
         }
-        return null;
+        return cellEditor ? 'RowGroupingEdit' : ['RowGroupingEdit', 'TextEditor'];
     },
+    groupRowValueSetter: ({ groupRowValueSetter }: ColDef) => (groupRowValueSetter ? 'RowGroupingEdit' : null),
     enableCellChangeFlash: 'HighlightChanges',
     enablePivot: 'SharedPivot',
     enableRowGroup: 'SharedRowGrouping',

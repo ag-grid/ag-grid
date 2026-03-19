@@ -120,7 +120,12 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage 
             }
         };
 
-        _forEachChangedGroupDepthFirst(this.beans.rowModel.rootNode, changedPath, callback);
+        _forEachChangedGroupDepthFirst(
+            this.beans.rowModel.rootNode,
+            this.beans.rowModel.hierarchical,
+            changedPath,
+            callback
+        );
 
         // if using group hide open parents and a sort has happened, refresh the group cells as the first child
         // displays the parent grouping - it's cheaper here to refresh all cells in col rather than fire events for every potential

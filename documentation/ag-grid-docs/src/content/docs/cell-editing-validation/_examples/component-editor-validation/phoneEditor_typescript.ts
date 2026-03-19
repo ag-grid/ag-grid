@@ -32,6 +32,12 @@ export class PhoneEditor implements ICellEditorComp<string> {
     public afterGuiAttached(): void {
         this.eInput.focus();
         this.eInput.select();
+
+        const { cellStartedEdit, eventKey } = this.params;
+
+        if (cellStartedEdit && eventKey.length === 1) {
+            this.eInput.value = eventKey;
+        }
     }
 
     public getValue(): string {

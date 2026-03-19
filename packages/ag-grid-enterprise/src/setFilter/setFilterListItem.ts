@@ -57,7 +57,6 @@ export interface SetFilterListItemParams<V> {
     params: ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>;
     translate: (key: SetFilterLocaleTextKey) => string;
     valueFormatter?: (params: ValueFormatterParams) => string;
-    shouldUseFormatterFromColumn?: boolean;
     item: SetFilterModelTreeItem | string | null;
     isSelected: boolean | undefined;
     isTree?: boolean;
@@ -107,7 +106,6 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
     private readonly params: ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>;
     private readonly translate: (key: SetFilterLocaleTextKey) => string;
     private readonly valueFormatter?: (params: ValueFormatterParams) => string;
-    private readonly useFormatterFromColumn?: boolean;
     private readonly isTree?: boolean;
     private readonly depth: number;
     private readonly isGroup?: boolean;
@@ -134,7 +132,6 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         this.params = params.params;
         this.translate = params.translate;
         this.valueFormatter = params.valueFormatter;
-        this.useFormatterFromColumn = params.shouldUseFormatterFromColumn;
         this.item = params.item;
         this.isSelected = params.isSelected;
         this.isTree = params.isTree;
@@ -413,7 +410,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
     }
 
     private getFormattedValue(column: AgColumn, value: any) {
-        return this.beans.valueSvc.formatValue(column, null, value, this.valueFormatter, !!this.useFormatterFromColumn);
+        return this.beans.valueSvc.formatValue(column, null, value, this.valueFormatter, false);
     }
 
     private renderCell(): void {

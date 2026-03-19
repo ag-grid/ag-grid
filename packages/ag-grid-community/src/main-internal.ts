@@ -413,10 +413,12 @@ export type { IAdvancedFilterCtrl } from './interfaces/iAdvancedFilterCtrl';
 export type { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
 export type { IAggColumnNameService } from './interfaces/iAggColumnNameService';
 export type { IAggFuncService } from './interfaces/iAggFuncService';
+export type { IAggregatedChildrenSvc as _IAggregatedChildrenSvc } from './interfaces/iAggregatedChildrenSvc';
 export type { ICellRangeFeature } from './interfaces/iCellRangeFeature';
 export type { IClipboardService } from './interfaces/iClipboardService';
 export type { IColsService } from './interfaces/iColsService';
 export type { IColumnCollectionService } from './interfaces/iColumnCollectionService';
+export type { IColumnStateUpdateStrategy } from './interfaces/iColumnStateUpdateStrategy';
 export type { IEventService } from './interfaces/iEventService';
 export type { IExpansionService } from './interfaces/iExpansionService';
 export type { FocusableContainer } from './interfaces/iFocusableContainer';
@@ -425,6 +427,7 @@ export type { IFrameworkEventListenerService } from './interfaces/iFrameworkEven
 export type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 export type { IGroupEditService as _IGroupEditService } from './interfaces/iGroupEditService';
 export type { IGroupFilterService } from './interfaces/iGroupFilterService';
+export type { IRowGroupingEditValueSvc as _IRowGroupingEditValueSvc } from './interfaces/iRowGroupingEditValueSvc';
 export type { IGroupHierarchyColService } from './interfaces/iGroupHierarchyColService';
 export type { IMenuFactory } from './interfaces/iMenuFactory';
 export type { IMultiFilterService } from './interfaces/iMultiFilterService';
@@ -493,8 +496,8 @@ export {
 } from './theming/parts/theme/themes';
 export { _getShouldDisplayTooltip, _isShowTooltipWhenTruncated } from './tooltip/tooltipFeature';
 export type { ITooltipCtrl, ITooltipCtrlParams, TooltipFeature } from './tooltip/tooltipFeature';
-export type { ChangedPath } from './utils/changedPath';
-export { ChangedCellsPath, ChangedRowsPath, _forEachChangedGroupDepthFirst } from './utils/changedPath';
+export type { ChangedCellsPath, ChangedPath, ChangedRowsPath, IChangedPathFactory } from './utils/changedPath';
+export { _forEachChangedGroupDepthFirst } from './utils/changedPath';
 export { _createElement } from './utils/element';
 export type { ElementParams } from './utils/element';
 export { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from './utils/gridEvent';
@@ -503,6 +506,7 @@ export {
     _attemptToRestoreCellFocus,
     _focusGridInnerElement,
     _focusNextGridCoreContainer,
+    _skipFocusableContainerListenerForAgGrid,
 } from './utils/gridFocus';
 export { _createIcon, _createIconNoSpan } from './utils/icon';
 export { _consoleError, _warnOnce } from './utils/log';

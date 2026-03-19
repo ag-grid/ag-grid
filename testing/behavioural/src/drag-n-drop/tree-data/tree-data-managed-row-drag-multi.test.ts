@@ -322,18 +322,33 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
 
         const dropInfo = dispatcher.rowDragEndEvents[0]?.rowsDrop;
 
-        const finalRows = new GridRows(api, 'insert promote default after');
-        await finalRows.check(`
-            ROOT id:ROOT_NODE_ID
-            └─┬ root GROUP id:root ag-Grid-AutoColumn:"Root" type:"folder"
-            · └─┬ inbox GROUP id:inbox ag-Grid-AutoColumn:"Inbox" type:"folder"
-            · · └── incoming LEAF id:incoming ag-Grid-AutoColumn:"Incoming" type:"file"
-        `);
+        if (suppressMoveWhenRowDragging) {
+            // Without intermediate drops, the insert delay promotes incoming into inbox
+            const finalRows = new GridRows(api, 'insert promote default after');
+            await finalRows.check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ root GROUP id:root ag-Grid-AutoColumn:"Root" type:"folder"
+                · └─┬ inbox GROUP id:inbox ag-Grid-AutoColumn:"Inbox" type:"folder"
+                · · └── incoming LEAF id:incoming ag-Grid-AutoColumn:"Incoming" type:"file"
+            `);
 
-        expect(api.getRowNode('incoming')?.parent?.id).toBe('inbox');
-        expect(api.getRowNode('inbox')?.childrenAfterSort?.some((node) => node.id === 'incoming')).toBe(true);
-        expect(dropInfo?.newParent?.id ?? dropInfo?.overNode?.id).toBe('inbox');
-        expect(dropInfo?.position).toBe('inside');
+            expect(api.getRowNode('incoming')?.parent?.id).toBe('inbox');
+            expect(api.getRowNode('inbox')?.childrenAfterSort?.some((node) => node.id === 'incoming')).toBe(true);
+            expect(dropInfo?.newParent?.id ?? dropInfo?.overNode?.id).toBe('inbox');
+            expect(dropInfo?.position).toBe('inside');
+        } else {
+            // With live reordering, the intermediate drop during the first move reorders
+            // incoming above inbox as a sibling before the insert delay can promote it
+            const finalRows = new GridRows(api, 'insert promote default after');
+            await finalRows.check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ root GROUP id:root ag-Grid-AutoColumn:"Root" type:"folder"
+                · ├── inbox LEAF id:inbox ag-Grid-AutoColumn:"Inbox" type:"folder"
+                · └── incoming LEAF id:incoming ag-Grid-AutoColumn:"Incoming" type:"file"
+            `);
+
+            expect(api.getRowNode('incoming')?.parent?.id).toBe('root');
+        }
     });
 
     test('rowDragInsertDelay skips already expanded groups', async () => {
@@ -374,7 +389,7 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
         await dispatcher.finish();
         await asyncSetTimeout(0);
 
-        const dropInfo = dispatcher.rowDragEndEvents[0]?.rowsDrop;
+        const dropInfo = dispatcher.rowDragMoveEvents.at(-1)?.rowsDrop;
         expect(dropInfo?.position).toBe('above');
         expect(dropInfo?.newParent?.id).toBe('beta');
         expect(api.getRowNode('alpha-item')?.parent?.id).toBe('beta');

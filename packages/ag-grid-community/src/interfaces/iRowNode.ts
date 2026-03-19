@@ -241,6 +241,16 @@ interface GroupRowNode<TData = any> {
 
 export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<TData> {
     /**
+     * The primary (canonical) row node, resolving footer and pinned sibling relationships.
+     *
+     * - If this is a **footer** row, returns its parent group row.
+     * - If this is a **manually pinned** row, returns the source row in the main viewport.
+     * - If both (pinned footer), follows both links to the primary group row.
+     * - Otherwise, returns `this`.
+     */
+    readonly primaryRow: IRowNode<TData>;
+
+    /**
      * Select (or deselect) the node.
      * @param newValue -`true` for selection, `false` for deselection.
      * @param clearSelection - If selecting, then passing `true` selects the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact. Default: `false`
@@ -336,12 +346,10 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
      *
      * The `eventSource` parameter controls how the value is written:
      *
-     * | `eventSource` | Active Editor        | Pending Batch        | Committed Data                 |
-     * | ------------- | -------------------- | -------------------- | ------------------------------ |
-     * | (default)     | Closed               | Written              | Written if no batch            |
-     * | `'edit'`      | Written              | Written if no editor | Written if no editor, no batch |
-     * | `'batch'`     | Left open            | Written              | Written if no batch            |
-     * | `'data'`      | Left open            | —                    | Always written                 |
+     * - `(default)` — Closes the active editor, writes to the pending batch if batching, otherwise writes to committed data.
+     * - `'edit'` — Writes directly into the active editor if present (via `refresh()` or recreation); falls back to pending batch or committed data.
+     * - `'batch'` — Leaves the active editor open, writes to the pending batch if batching, otherwise writes to committed data.
+     * - `'data'` — Leaves the active editor open, skips the pending batch, always writes to committed data.
      *
      * With `'edit'`, the active editor receives the new value via `refresh()` if implemented;
      * otherwise the editor is recreated with focus preserved.
@@ -363,19 +371,16 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
      *
      * In **Pivot Mode**, pivot columns on leaf rows resolve to their underlying value column.
      *
-     * The `from` parameter controls value resolution (first non-empty source wins):
+     * The `from` parameter controls value resolution:
      *
-     * | `from`               | Active Editor (if editing) | Pending Batch (if batching) | Aggregation (if present) | Committed Data |
-     * | -------------------- | -------------------------- | --------------------------- | ------------------------ | -------------- |
-     * | `'data'` (default)   | —                          | —                           | Agg value                | Fallback       |
-     * | `'edit'`             | Used if present            | Used if no editor           | Agg value                | Fallback       |
-     * | `'batch'`            | —                          | Used if present             | Agg value                | Fallback       |
-     * | `'value'`            | —                          | —                           | Scalar (unwrapped)       | Fallback       |
-     * | `'data-raw'`         | —                          | —                           | —                        | Always used    |
-     *
-     * - **`'value'`** — same as `'data'`, but unwraps the aggregation result returned by `avg` and `count` to its scalar value.
-     * - **`'data-raw'`** — same as `'data'` but skips aggregation results (`rowNode.aggData`). For group rows the
-     *   valueGetter or field value is returned instead, which is typically `undefined` since group rows do not hold leaf data.
+     * - `'data'` (default) — Returns the aggregated value for group rows, otherwise committed data.
+     *   May return an `IAggFuncResult<TValue>` wrapper for aggregation columns; use `'value'` to unwrap.
+     * - `'edit'` — Returns the active editor's value if editing, or the pending batch value if not editing,
+     *   then falls back to aggregation and committed data.
+     * - `'batch'` — Returns the pending batch value if batching, then falls back to aggregation and committed data.
+     * - `'value'` — Same as `'data'` but unwraps `IAggFuncResult` (e.g. from `avg` or `count`) to its scalar value.
+     * - `'data-raw'` — Always returns committed data, skipping aggregation results (`rowNode.aggData`).
+     *   For group rows this is typically `undefined` since group rows do not hold leaf data.
      *
      * @param colKey The column to read (field name, `colId`, or `Column` object)
      * @param from Controls value resolution. Defaults to `'data'`.
@@ -403,17 +408,24 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
     getRoute(): string[] | undefined;
 
     /**
-     * Returns the immediate children that contribute to the aggregation of this group RowNode.
+     * Returns children that contribute to the aggregation of this group RowNode.
      *
      * - For leaf groups (groups containing data rows): returns the data rows.
      *   With pivot columns, only rows matching the pivot keys are included.
      * - For non-leaf groups (groups containing other groups): returns the child groups.
      * - For leaf (non-group) RowNodes: returns an empty array.
      *
+     * When `recursive` is `true`, traverses the full group hierarchy and returns all descendant
+     * leaf (data) rows instead of the immediate children. This creates a new array on each call.
+     * Use with care on large datasets as it visits every descendant node.
+     *
      * **Note:** Only supported with the Client-Side Row Model.
      *
      * @param colKey - The column key. Pass the pivot column to filter by pivot keys, or `null` to get all children.
-     * @returns An array of child `IRowNode` instances contributing to this group's aggregation. Warning: the returned array must not be modified.
+     * @param recursive - When `true`, returns all descendant leaf rows instead of only the immediate children.
+     *   Defaults to `false`.
+     * @returns An array of child `IRowNode` instances contributing to this group's aggregation.
+     *   When `recursive` is `false` (the default), the returned array must not be modified.
      */
-    getAggregatedChildren(colKey: ColKey<TData> | null | undefined): IRowNode<TData>[];
+    getAggregatedChildren(colKey: ColKey<TData> | null | undefined, recursive?: boolean): IRowNode<TData>[];
 }

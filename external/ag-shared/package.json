@@ -6,21 +6,21 @@
   "types": "./dist/types/src/main.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/types/src/main.d.ts",
       "import": "./dist/package/src/main.js",
       "require": "./dist/package/src/main.js",
-      "types": "./dist/types/src/main.d.ts",
       "default": "./dist/package/src/main.js"
     },
     "./plugin-utils": {
+      "types": "./dist/types/scripts/plugin-utils/index.d.ts",
       "import": "./dist/package/scripts/plugin-utils/index.js",
       "require": "./dist/package/scripts/plugin-utils/index.js",
-      "types": "./dist/types/scripts/plugin-utils/index.d.ts",
       "default": "./dist/package/scripts/plugin-utils/index.js"
     },
     "./processor": {
+      "types": "./dist/types/scripts/junit-processor/index.d.ts",
       "import": "./dist/package/scripts/junit-processor/src/processor.js",
       "require": "./dist/package/scripts/junit-processor/src/processor.js",
-      "types": "./dist/types/scripts/junit-processor/index.d.ts",
       "default": "./dist/package/scripts/junit-processor/src/processor.js"
     }
   },

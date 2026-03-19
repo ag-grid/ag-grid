@@ -10,7 +10,7 @@ describe('ServerSideExpansionService', () => {
     let rowNode: RowNode;
     beforeEach(() => {
         beans = {
-            rowRenderer: { refreshCells: vi.fn() },
+            rowRenderer: { refreshCells: vi.fn(), refreshRowByNode: vi.fn() },
             eventSvc: { dispatchEvent: vitest.fn() },
             gos: {
                 get: (key: string) => {
@@ -30,7 +30,9 @@ describe('ServerSideExpansionService', () => {
         expansionService['serverSideRowModel'] = beans.serverSideRowModel as any;
         expansionService['eventSvc'] = beans.eventSvc;
         expansionService['beans'] = beans;
+        expansionService['createBean'] = (bean: any) => bean;
         expansionService['createManagedBean'] = (bean: any) => bean;
+        expansionService['destroyBean'] = () => undefined;
         expansionService['addManagedEventListeners'] = () => [];
         expansionService['addManagedPropertyListener'] = () => () => null;
         expansionService.postConstruct();

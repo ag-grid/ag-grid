@@ -1,7 +1,7 @@
 ---
 targets: ['*']
 name: batch-plunkers
-description: 'Create a batch of Plunkers with one sub-agent per Plunker'
+description: 'Create multiple Plunkers in parallel using sub-agents — one sub-agent per Plunker. Use this skill when the user asks to create multiple plunkers, batch create plunkers, create plunkers for all examples or acceptance criteria, build several plunker demos at once, or generate a set of plunks from a JIRA ticket. Also trigger when the user provides a spec table of plunker assignments, says "create N plunkers", asks for "plunkers for each AC", or wants to batch create shareable demos or repros. Each sub-agent follows the /plunker skill workflow while the main thread orchestrates and collects results.'
 context: fork
 ---
 
@@ -51,7 +51,7 @@ Wait for user confirmation. Do NOT launch sub-agents until confirmed.
 
 ### 2a. Read the Product Guide
 
-Read all `*-guide.md` files in the sibling plunker skill directory (`../plunker/`). These contain the product-specific file templates, CDN URLs, styling requirements, and common issues. The guide content will be included in each sub-agent prompt.
+Read all `*-guide.md` files in the sibling plunker skill directory (`../plunker/`). These contain the product-specific file templates, CDN URLs, styling requirements, and common issues. Also read `.rulesync/skills/example/ag-charts/chart-construction.md` and `.rulesync/skills/example/ag-charts/enterprise-features.md` for chart construction patterns and enterprise/community feature matrix. The guide content will be included in each sub-agent prompt.
 
 ### 2b. Determine CDN and Resolve Enterprise/Community Per-Assignment
 
@@ -69,7 +69,7 @@ Launch one `general-purpose` Task sub-agent per assignment, **all in a single me
 Each sub-agent prompt **MUST** include:
 
 1. The assignment text and plunker number
-2. **The full product guide content inline** (from Step 2a) — paste the entire guide text into the prompt so the sub-agent has it immediately without needing to read files
+2. **The full product guide content AND example skill content inline** (from Step 2a) — paste the plunker guide, chart-construction.md, and enterprise-features.md text into the prompt so the sub-agent has it immediately without needing to read files
 3. The **resolved CDN URL** for this specific assignment (enterprise or community, from Step 2b)
 4. Any feature context from the JIRA ticket
 5. The exact upload command with the absolute path to `plnkr.sh`
@@ -100,6 +100,14 @@ Create a Plunker for the following assignment:
 ## Product Guide
 
 {GUIDE_CONTENT}
+
+## Chart Construction Patterns
+
+{CHART_CONSTRUCTION_CONTENT}
+
+## Enterprise Features
+
+{ENTERPRISE_FEATURES_CONTENT}
 ````
 
 Wait for **all** sub-agents to complete before proceeding to Step 3.

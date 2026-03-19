@@ -52,6 +52,8 @@ export interface IToolPanelColumnCompParams {
     contractColumnSelection: boolean;
     /** Suppress updating the layout of columns as they are rearranged in the grid */
     suppressSyncLayoutWithGrid: boolean;
+    /** Defer applying Columns Tool Panel changes until an explicit apply action */
+    deferApply?: boolean;
 }
 
 export interface IToolPanelFiltersCompParams {

@@ -74,9 +74,12 @@ export const AG_GRID_LOCALE_NL = {
 
     // Filter Buttons
     applyFilter: 'Toepassen',
+    applyColumnToolPanel: 'Toepassen',
+    deferMode: 'Defer mode',
     resetFilter: 'Resetten',
     clearFilter: 'Wissen',
     cancelFilter: 'Annuleren',
+    cancelColumnToolPanel: 'Annuleren',
 
     // Filter Titles
     textFilter: 'Tekstfilter',

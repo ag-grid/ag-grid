@@ -83,7 +83,7 @@ In the code above, the same value formatter is supplied to the Column and Filter
 
 There is not a one-to-one mapping between Filter List items and rows (as values from multiple rows may map to the same Filter List item), so the Value Formatter for the Filter List will not be passed `node` or `data` params, and should just format based on the `value`.
 
-If the data contains [Missing Values](#missing-values), the Value Formatter will need to handle how to display the blank values (e.g. return `'(Blanks)'`).
+If the data contains [Missing Values](#missing-values), the Value Formatter will need to handle how to display the blank values (e.g. return `'(Blanks)'`). If the data contains complex objects, see [Complex Objects](#complex-objects) for how to use the Value Formatter alongside a Key Creator.
 
 The following example shows how Set Filter values are formatted using a Value Formatter. Note the following:
 
@@ -310,13 +310,17 @@ If there are missing / empty values in the row data of the grid, or missing valu
 
 The Set Filter internally maintains the original type of the cell values, but always uses strings for the keys. E.g. if the cell contains a number, the Filter Model will contain those numbers converted to strings, but if you specified a value formatter, that would use the values with type number.
 
-### Complex Objects
+## Complex Objects
 
 If you are providing complex objects as values, then you need to provide both a Key Creator function and a Value Formatter function when using the Set Filter.
 
 The Key Creator generates a unique string key from the complex object (note that if the key is `null`, `undefined` or `''` it will be converted to `null`, the same as for [Missing Values](#missing-values)). This key is used within the Filter Model, and to compare objects. You can either provide a Key Creator within the filter params, which will be specific to the Set Filter, or you can provide one in the Column Definition that is shared with other features such as grouping.
 
 The Value Formatter is used to generate the label that is displayed to the user within the Filter List. You can provide the Value Formatter in the filter params.
+
+{% note %}
+See [Cell Data Types - Object](/javascript-data-grid/cell-data-types/#object) for more information on working with complex objects in AG Grid.
+{% /note %}
 
 ```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {

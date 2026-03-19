@@ -74,9 +74,12 @@ export const AG_GRID_LOCALE_NO = {
 
     // Filter Buttons
     applyFilter: 'Bruk',
+    applyColumnToolPanel: 'Bruk',
+    deferMode: 'Defer mode',
     resetFilter: 'Tilbakestill',
     clearFilter: 'Tøm',
     cancelFilter: 'Avbryt',
+    cancelColumnToolPanel: 'Avbryt',
 
     // Filter Titles
     textFilter: 'Tekstfilter',

@@ -55,6 +55,8 @@ export interface SSRMParams {
 export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSideRowModel {
     beanName = 'rowModel' as const;
 
+    public readonly hierarchical: boolean = true;
+
     private colModel: ColumnModel;
     private colNames: ColumnNameService;
     private pivotResultCols?: IPivotResultColsService;

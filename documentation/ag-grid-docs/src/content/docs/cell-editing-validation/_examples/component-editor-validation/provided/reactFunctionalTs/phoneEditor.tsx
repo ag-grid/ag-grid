@@ -3,7 +3,7 @@ import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useGridCellEditor } from 'ag-grid-react';
 import type { CustomCellEditorProps } from 'ag-grid-react';
 
-export default memo(({ value, onValueChange, validate }: CustomCellEditorProps) => {
+export default memo(({ value, onValueChange, validate, cellStartedEdit, eventKey }: CustomCellEditorProps) => {
     const inputRef = useRef<HTMLInputElement>(null);
     const [internalValue, setInternalValue] = useState(value || '');
 
@@ -26,6 +26,10 @@ export default memo(({ value, onValueChange, validate }: CustomCellEditorProps) 
     useEffect(() => {
         inputRef.current?.focus();
         inputRef.current?.select();
+
+        if (cellStartedEdit && eventKey.length === 1) {
+            setInternalValue(eventKey);
+        }
     }, []);
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {

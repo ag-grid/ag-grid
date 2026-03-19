@@ -389,7 +389,7 @@ export function _addColumnDefaultAndTypes(
     }
 
     dataTypeSvc?.postProcess(res);
-    dataTypeSvc?.validateColDef(res);
+    dataTypeSvc?.validateColDef(res, colDef, defaultColDef, colId);
 
     gos.validateColDef(res, colId, isAutoCol);
 

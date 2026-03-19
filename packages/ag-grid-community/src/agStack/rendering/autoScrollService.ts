@@ -68,19 +68,19 @@ export class AutoScrollService {
     }
 
     public check(mouseEvent: MouseEvent | Touch, forceSkipVerticalScroll: boolean = false): void {
-        const skipVerticalScroll = forceSkipVerticalScroll || this.shouldSkipVerticalScroll();
+        const skipVerticalScroll = !this.scrollVertically || forceSkipVerticalScroll || this.shouldSkipVerticalScroll();
+        const skipHorizontalScroll = !this.scrollHorizontally || this.shouldSkipHorizontalScroll();
 
-        if (skipVerticalScroll && this.shouldSkipHorizontalScroll()) {
+        if (skipVerticalScroll && skipHorizontalScroll) {
             return;
         }
 
         const rect = this.scrollContainer.getBoundingClientRect();
         const scrollTick = this.scrollByTick;
-
-        this.tickLeft = mouseEvent.clientX < rect.left + scrollTick;
-        this.tickRight = mouseEvent.clientX > rect.right - scrollTick;
-        this.tickUp = mouseEvent.clientY < rect.top + scrollTick && !skipVerticalScroll;
-        this.tickDown = mouseEvent.clientY > rect.bottom - scrollTick && !skipVerticalScroll;
+        this.tickLeft = !skipHorizontalScroll && mouseEvent.clientX < rect.left + scrollTick;
+        this.tickRight = !skipHorizontalScroll && mouseEvent.clientX > rect.right - scrollTick;
+        this.tickUp = !skipVerticalScroll && mouseEvent.clientY < rect.top + scrollTick;
+        this.tickDown = !skipVerticalScroll && mouseEvent.clientY > rect.bottom - scrollTick;
 
         if (this.tickLeft || this.tickRight || this.tickUp || this.tickDown) {
             this.ensureTickingStarted();

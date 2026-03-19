@@ -905,14 +905,20 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         const { valueSvc, editSvc } = beans;
         const batch = !!editSvc?.isBatchEditing();
 
-        this.forEachEditableCellInRanges(cellRanges, (rowNode, column) => {
-            if (restoreSourceInBatch && batch) {
-                editSvc?.batchResetToSourceValue({ rowNode, column });
-                return;
-            }
-            const deleteValue = valueSvc.getDeleteValue(column, rowNode);
-            rowNode.setDataValue(column, deleteValue, cellEventSource);
-        });
+        const { changeDetectionSvc } = beans;
+        changeDetectionSvc?.beginDeferred();
+        try {
+            this.forEachEditableCellInRanges(cellRanges, (rowNode, column) => {
+                if (restoreSourceInBatch && batch) {
+                    editSvc?.batchResetToSourceValue({ rowNode, column });
+                    return;
+                }
+                const deleteValue = valueSvc.getDeleteValue(column, rowNode);
+                rowNode.setDataValue(column, deleteValue, cellEventSource);
+            });
+        } finally {
+            changeDetectionSvc?.endDeferred();
+        }
 
         if (dispatchWrapperEvents) {
             eventSvc.dispatchEvent({

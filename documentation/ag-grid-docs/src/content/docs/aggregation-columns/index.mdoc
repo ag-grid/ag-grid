@@ -93,6 +93,15 @@ const gridOptions = {
 };
 ```
 
+## Editing Aggregated Columns
+
+Aggregated columns can be made editable at the group row level, allowing users to edit a group total and
+distribute the change to descendant rows. Set `groupRowEditable` on the column and configure a
+`groupRowValueSetter` to control how the edited value is distributed. The built-in distribution
+automatically handles all standard aggregation functions.
+
+See [Editing Group Rows](./grouping-edit/) for full details.
+
 ## Omit Function Name in Header
 
 To omit the aggregation function name from the column header, set the `suppressAggFuncInHeader` grid option to `true`.

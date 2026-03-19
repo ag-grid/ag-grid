@@ -29,6 +29,11 @@ export const inferType = (value: any): string | null => {
 export const convertMarkdown = (content: string | undefined, framework: Framework) =>
     content &&
     content
+        // {@link Target | Display} → <code>Display</code>, {@link Target} → <code>Target</code>
+        .replace(/\{@link(?:code|plain)?\s+([^}|]+?)(?:\s*\|\s*([^}]+))?\}/g, (_, target, display) => {
+            const text = (display || target).trim().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return `<code>${text}</code>`;
+        })
         .replace(/`(.*?)`/g, '<code>$1</code>')
         .replace(
             /\[([^\]]+)\]\(([^)]+)\)/g,
@@ -235,7 +240,28 @@ export function formatJsDocString(docString: string) {
         .replace('/**', '')
         .replace('*/', '')
         .replace(paramReg, '<span class="param"> `$1` $2 </span>\n')
-        .replace(returnsReg, '<strong>Returns: </strong> $2 \n')
+        .replace(returnsReg, '\n<br/><strong>Returns: </strong> $2 \n')
+        // Render @example blocks as formatted code snippets
+        .replace(/\s*\*?\s*@example\b([^\n]*)([\s\S]*?)(?=\s*\*?\s*@\w|$)/g, (_match, desc: string, body: string) => {
+            const descText = desc.replace(/^\s*\*?\s*/, '').trim();
+            const fenceMatch = body.match(/```\w*\n([\s\S]*?)```/);
+            const rawCode = fenceMatch ? fenceMatch[1] : body;
+            const code =
+                rawCode
+                    .replace(/^\s*\*\s?/gm, '')
+                    .trim()
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;') || null;
+            if (!descText && !code) {
+                return '';
+            }
+            let result = `\n\n<br/><strong>Example${descText ? `: ${descText}` : ''}</strong>`;
+            if (code) {
+                result += `\n<pre class="code"><code>${code}</code></pre>`;
+            }
+            return result;
+        })
         .replace(optionReg, '<li style="margin-left:1rem"> $1 </li>')
         .replace(newLineReg, ' ');
 

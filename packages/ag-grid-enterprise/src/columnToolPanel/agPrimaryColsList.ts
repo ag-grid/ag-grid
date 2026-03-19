@@ -24,7 +24,11 @@ import {
 import type { VirtualListModel } from '../agStack/iVirtualList';
 import type { VirtualListDragItem } from '../agStack/iVirtualListDragFeature';
 import { VirtualListDragFeature } from '../features/virtualListDragFeature';
-import { syncLayoutWithGrid, toolPanelCreateColumnTree } from '../sideBar/common/toolPanelColDefService';
+import {
+    syncLayoutWithColumns,
+    syncLayoutWithGrid,
+    toolPanelCreateColumnTree,
+} from '../sideBar/common/toolPanelColDefService';
 import { VirtualList } from '../widgets/virtualList';
 import { ExpandState } from './agPrimaryColsHeader';
 import { ColumnModelItem } from './columnModelItem';
@@ -176,7 +180,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 moveItem: (
                     currentDragValue: AgColumn | AgProvidedColumnGroup | null,
                     lastHoveredListItem: VirtualListDragItem<ToolPanelColumnGroupComp | ToolPanelColumnComp> | null
-                ) => moveItem(beans, getCurrentColumnsBeingMoved(currentDragValue), lastHoveredListItem),
+                ) => moveItem(beans, getCurrentColumnsBeingMoved(currentDragValue), lastHoveredListItem, this.params),
             })
         );
     }
@@ -207,11 +211,16 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         const nextItem = Math.min(Math.max(currentIndex + movePadding + diff, 0), this.displayedColsList.length - 1);
 
         this.skipRefocus = true;
-        moveItem(beans, currentColumns, {
-            rowIndex: nextItem,
-            position: isUp ? 'top' : 'bottom',
-            component: this.virtualList.getComponentAt(nextItem) as ToolPanelColumnComp | ToolPanelColumnGroupComp,
-        });
+        moveItem(
+            beans,
+            currentColumns,
+            {
+                rowIndex: nextItem,
+                position: isUp ? 'top' : 'bottom',
+                component: this.virtualList.getComponentAt(nextItem) as ToolPanelColumnComp | ToolPanelColumnGroupComp,
+            },
+            this.params
+        );
 
         this.focusRowIfAlive(nextItem - movePadding).then(() => {
             this.skipRefocus = false;
@@ -224,13 +233,19 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     ): ToolPanelColumnGroupComp | ToolPanelColumnComp {
         const allowDragging = this.allowDragging;
         if (item.group) {
-            const renderedGroup = new ToolPanelColumnGroupComp(item, allowDragging, this.eventType, listItemElement);
+            const renderedGroup = new ToolPanelColumnGroupComp(
+                item,
+                allowDragging,
+                this.eventType,
+                listItemElement,
+                this.params
+            );
             this.createBean(renderedGroup);
 
             return renderedGroup;
         }
 
-        const columnComp = new ToolPanelColumnComp(item, allowDragging, this.groupsExist, listItemElement);
+        const columnComp = new ToolPanelColumnComp(item, allowDragging, this.groupsExist, listItemElement, this.params);
         this.createBean(columnComp);
 
         return columnComp;
@@ -318,6 +333,14 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     }
 
     private buildTreeFromWhatGridIsDisplaying(): void {
+        const deferApply = !!this.params.deferApply;
+        const columnOrder = this.beans.columnStateUpdateStrategy.getPrimaryColumns(deferApply);
+
+        if (deferApply && columnOrder.length > 0) {
+            syncLayoutWithColumns(columnOrder, this.setColumnLayout.bind(this));
+            return;
+        }
+
         syncLayoutWithGrid(this.colModel, this.setColumnLayout.bind(this));
     }
 
@@ -549,14 +572,26 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     }
 
     public doSetSelectedAll(selectAllChecked: boolean): void {
-        selectAllChildren(this.beans, this.allColsTree, selectAllChecked, this.eventType);
+        selectAllChildren(this.beans, this.allColsTree, selectAllChecked, this.eventType, {
+            deferApply: !!this.params.deferApply,
+        });
+        this.syncVisibleSelectionState();
+        this.fireSelectionChangedEvent();
+    }
+
+    private syncVisibleSelectionState(): void {
+        for (let i = 0; i < this.displayedColsList.length; i++) {
+            const comp = this.virtualList.getComponentAt(i) as any;
+            comp?.onColumnStateChanged?.();
+        }
     }
 
     private getSelectionState(): boolean | undefined {
         let checkedCount = 0;
         let uncheckedCount = 0;
 
-        const pivotMode = this.colModel.isPivotMode();
+        const updateStrategy = this.beans.columnStateUpdateStrategy;
+        const pivotMode = updateStrategy.getPivotMode(!!this.params.deferApply);
 
         this.forEachItem((item) => {
             if (item.group) {
@@ -577,13 +612,14 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 if (noPivotModeOptionsAllowed) {
                     return;
                 }
-                checked = column.isValueActive() || column.isPivotActive() || column.isRowGroupActive();
+                checked =
+                    updateStrategy.isColumnSelectedInPivotModeToolPanel(!!this.params.deferApply, column) ?? false;
             } else {
                 if (colDef.lockVisible) {
                     return;
                 }
 
-                checked = column.isVisible();
+                checked = updateStrategy.isColumnVisibleInToolPanel(!!this.params.deferApply, column) ?? false;
             }
 
             if (checked) {

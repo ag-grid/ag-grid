@@ -53,14 +53,20 @@ Apply any repo-specific rules found (e.g., "Don't log PII", "Verify auth middlew
 ## 4. Workflow
 
 1. Determine the PR number from `$ARGUMENTS` (required in CI, optional locally).
-2. Determine if running in CI (PR refs pre-fetched) or locally (use `gh` CLI).
-3. Fetch the PR diff and metadata using the appropriate method (see sections below).
+2. Check if a **"Pre-generated PR Context"** section is appended to this prompt. If it is, use the metadata, commit messages, and diff provided directly — **do NOT run any git, gh, or shell commands**. The raw unified diff follows immediately after the context section's `---` separator.
+3. Otherwise, determine if running in CI (PR refs pre-fetched) or locally (use `gh` CLI), and fetch the PR diff and metadata using the appropriate method (see sections below).
 4. Analyse the changes and identify issues.
 5. Output the review in the format specified by the calling prompt.
 
+### Pre-supplied Diff (CI Default)
+
+In CI, the workflow pre-generates the diff and metadata and appends them to this prompt under a **"Pre-generated PR Context"** heading. The raw unified diff follows immediately after the `---` separator at the end of the context section. When this section is present:
+- Use the provided metadata, commit messages, stats, and diff directly.
+- **Do NOT execute any commands** — the sandbox does not support it. All required information is included in this prompt.
+
 ### CI Environment (Sandboxed - No Network Access)
 
-In CI, PR refs are pre-fetched by the workflow. Use git commands with these environment variables:
+Fallback when diff is not pre-supplied. In CI, PR refs are pre-fetched by the workflow. Use git commands with these environment variables:
 - `$ARGUMENTS` - PR number
 - `$BASE_REF` - Target branch (e.g., `latest`, `main`)
 - `$HEAD_REF` - Source branch name (may be empty)
@@ -153,3 +159,19 @@ To determine which method to use:
 2. **Fallback**: Check for pre-fetched refs with `git rev-parse origin/pr/$ARGUMENTS 2>/dev/null`
    - If successful: Use git diff commands
    - If fails: Use `gh` CLI commands
+
+## 10. Devil's Advocate Mode
+
+When the `--devils-advocate` flag is passed, the review skill runs a second pass using an adversarial sub-agent defined in `agents/devils-advocate.md`. This agent challenges assumptions, stress-tests edge cases, questions necessity, and probes for gaps in testing.
+
+The Devil's Advocate agent follows the same priority scheme (P0-P3), line number guidelines, and environment detection described in this file. Its findings are prefixed with `[DA]` and merged with the standard review output. See `SKILL.md` for the full workflow and merge logic.
+
+## 11. Full Review Mode
+
+When the `--full` flag is passed, the review skill runs all additional passes in parallel:
+
+1. **Devil's Advocate** (Section 10) — adversarial review, findings prefixed `[DA]`.
+2. **JIRA Completeness** — verifies associated JIRA tickets (matching `AG-\d+` or `ST-\d+` in branch name, commits, or PR metadata) are well-maintained and aligned with the PR. Agent defined in `agents/jira-completeness.md`, findings prefixed `[JIRA]`.
+3. **Code Simplification** — reviews changed files for reuse, duplication, and unnecessary complexity (mirrors the `/simplify` skill). Findings prefixed `[SIMPLIFY]`.
+
+See `SKILL.md` for extraction logic, sub-agent spawning, and merge details.

@@ -2,6 +2,33 @@
 version: v1.25.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
+    SNYK-JS-TAR-15456201:
+        - ng-packagr@18.2.1 > cacache@18.0.4 > tar@6.2.1:
+              reason: >-
+                  Downstream dependency of angular - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-16T10:08:04.520Z
+        - '@angular/cli@18.2.21 > pacote@18.0.6 > @npmcli/run-script@8.1.0 > node-gyp@10.3.1 > make-fetch-happen@13.0.1 > cacache@18.0.4 > tar@6.2.1':
+              reason: >-
+                  Downstream dependency of angular - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-16T10:08:00.294Z
+        - '@angular/cli@18.2.21 > pacote@18.0.6 > @npmcli/run-script@8.1.0 > node-gyp@10.3.1 > tar@6.2.1':
+              reason: >-
+                  Downstream dependency of angular - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-16T10:08:00.292Z
+        - '@angular/cli@18.2.21 > pacote@18.0.6 > tar@6.2.1':
+              reason: >-
+                  Downstream dependency of angular - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-16T10:08:00.290Z
+    SNYK-JS-FLATTED-15518041:
+        - karma@6.4.4 > log4js@6.9.1 > flatted@3.3.3:
+              reason: >-
+                  Test dependency - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-16T10:07:37.193Z
     SNYK-JS-TAR-15416075:
         - '@angular/cli@18.2.21 > pacote@18.0.6 > @npmcli/run-script@8.1.0 > node-gyp@10.3.1 > make-fetch-happen@13.0.1 > cacache@18.0.4 > tar@6.2.1':
               reason: >-

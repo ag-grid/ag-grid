@@ -3,6 +3,7 @@ targets: ['*']
 name: sync-ag-shared
 description: 'Sync ag-shared subrepo changes across ag-charts, ag-grid, and ag-studio repos'
 invocable: user-only
+context: fork
 ---
 
 # Sync ag-shared Subrepo Across AG Repos
@@ -23,7 +24,7 @@ If the user provides a command option of `help`:
 -   `git subrepo` must be installed (`git subrepo --version`).
 -   **Use `yarn subrepo` for push and pull** (never raw `git subrepo push`/`pull`). The wrapper handles edge cases like stale parent references. Other subrepo commands (e.g. `git subrepo status`, `git subrepo clean`) use `git subrepo` directly.
 -   **Never edit `external/ag-shared/.gitrepo` manually.** Only subrepo commands should modify this file.
--   Must be on a **feature branch** (not `latest`, `main`, or `master`).
+-   Should be on a **feature branch**. If on `latest`/`main`/`master`, the skill will offer to create one.
 -   Working tree must be **clean** (`git status --porcelain` is empty).
 -   The current repo must have `external/ag-shared/.gitrepo`.
 
@@ -54,11 +55,17 @@ SOURCE_REPO=$(basename "$SOURCE_ROOT")
 
 Validate:
 
--   `SOURCE_BRANCH` is not `latest`, `main`, or `master`.
 -   `git status --porcelain` is empty.
 -   `external/ag-shared/.gitrepo` exists.
 
-If any validation fails, report the issue and **STOP**.
+**If on `latest`, `main`, or `master`:** offer to create and switch to a `sync-ag-shared` feature branch. If the user confirms:
+
+```bash
+git checkout -b sync-ag-shared
+SOURCE_BRANCH="sync-ag-shared"
+```
+
+If the user declines or any other validation fails, report the issue and **STOP**.
 
 ### 1b. Discover Destination Repos
 
@@ -109,6 +116,18 @@ The sub-agent should produce:
     -   Script changes may need `package.json` or CI updates.
     -   Setup-prompts changes need `setup-prompts.sh` re-run in each repo.
 
+### No Changes Detected (Force Sync)
+
+If `git diff latest...HEAD` shows no changes (i.e., the branch is at the same commit as `latest` or has no ag-shared changes):
+
+1.  Inform the user that no local changes were found relative to `latest`.
+2.  Use `AskUserQuestion` to ask whether they want to proceed with a **force sync** — this will `yarn subrepo push ag-shared` to push the current `external/ag-shared/` state to the ag-shared remote, then pull it into all destination repos. This is useful when:
+    -   The ag-shared remote is out of sync with the consuming repos.
+    -   A previous sync was incomplete or failed partway through.
+    -   Changes were committed directly to `latest` and need propagating.
+3.  If the user confirms, continue to Step 3 with an empty change summary. The plan should note this is a **force sync** with no new changes on the branch.
+4.  If the user declines, **STOP**.
+
 ## STEP 3: Present Plan and Confirm
 
 Display to the user:
@@ -135,6 +154,7 @@ Display to the user:
 4. Apply companion changes in each destination
 5. Verify all repos
 6. Push branches and create cross-linked PRs (reuse existing source PR if one exists)
+7. Post-sync housekeeping (README updates, migration verification, user summary)
 ```
 
 Use `AskUserQuestion` to confirm before proceeding. The user may want to adjust the plan or skip certain destinations.
@@ -336,6 +356,42 @@ Output a summary:
 
 All repos verified. Working trees clean.
 ```
+
+## STEP 9: Post-Sync Housekeeping
+
+After all repos are synced, PRs created, and verification passed, complete these final tasks.
+
+### 9a. Update `.rulesync/README.md`
+
+Each repo's `.rulesync/README.md` is a crib-sheet of available agentic tools. Update it in every repo (source + destinations) to reflect the sync:
+
+-   Add new skills to the Skills Reference table (alphabetical, with provenance emoji).
+-   Add new skills to the relevant section tables (Everyday Development, Testing, Planning, etc.).
+-   Remove deleted agents/skills/commands from all tables.
+-   Ensure provenance emojis are correct (🔵 for shared, 🟢 for local).
+
+### 9b. Verify SYNC-LOG Migration Actions
+
+Cross-check every migration action in `external/ag-shared/docs/SYNC-LOG.md` against each destination repo:
+
+-   Verify broken symlinks are removed.
+-   Verify new skill/rule/command symlinks are created.
+-   Verify slim pointer rules replaced monolithic versions (if applicable).
+-   Run `find .rulesync/ -type l -exec test ! -e {} \; -print` to detect broken symlinks.
+-   Note: some actions may be repo-specific (🟠 Private skills) — skip those for repos that don't use them.
+
+### 9c. Write User Summary
+
+Output a concise summary of what changed for users of the agentic tooling:
+
+-   New skills/commands/capabilities added.
+-   Removed or replaced items.
+-   Performance improvements (e.g. context optimisation).
+-   Any breaking changes to existing workflows.
+
+### 9d. Commit and Push
+
+Commit the README and any other post-sync changes in each repo, then push to the existing PR branches.
 
 ## Error Handling
 

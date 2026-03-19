@@ -4,6 +4,7 @@ import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
 import { AggColumnNameService } from './aggColumnNameService';
 import { AggFuncService } from './aggFuncService';
+import { AggregatedChildrenSvc } from './aggregatedChildrenSvc';
 import { addAggFuncs, clearAggFuncs, setColumnAggFunc } from './aggregationApi';
 import { AggregationStage } from './aggregationStage';
 import { FilterAggregatesStage } from './filterAggregatesStage';
@@ -31,7 +32,7 @@ export const SharedAggregationModule: _ModuleWithApi<_AggregationGridApi<any>> =
 export const AggregationModule: _ModuleWithoutApi = {
     moduleName: 'Aggregation',
     version: VERSION,
-    beans: [AggregationStage, FilterAggregatesStage],
+    beans: [AggregationStage, FilterAggregatesStage, AggregatedChildrenSvc],
     rowModels: ['clientSide'],
     dependsOn: [SharedAggregationModule],
 };

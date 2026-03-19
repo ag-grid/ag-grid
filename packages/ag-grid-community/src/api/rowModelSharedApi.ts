@@ -22,3 +22,7 @@ export function resetRowHeights(beans: BeanCollection) {
     }
     beans.rowModel?.resetRowHeights();
 }
+
+export function resetRowGroupExpansion(beans: BeanCollection) {
+    beans.expansionSvc?.resetExpansion();
+}
