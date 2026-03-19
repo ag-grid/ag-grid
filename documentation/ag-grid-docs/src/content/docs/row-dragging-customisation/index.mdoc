@@ -88,14 +88,14 @@ const gridOptions = {
     columnDefs: [
         {
             field: 'athlete',
-            rowDrag: true
+            rowDrag: true,
+            rowDragText: (params, dragItemCount) => {
+                const suffix = dragItemCount == 1 ? 'athlete' : 'athletes';
+                return `Dragging ${dragItemCount} ${suffix}`;
+            }
         }, {
             field: 'country',
             rowDrag: true,
-            rowDragText: (params, dragItemCount) => {
-                const suffix = dragItemCount == 1 ? 'country' : 'countries';
-                return `Dragging ${dragItemCount} ${suffix}`;
-            }
         }
     ],
     rowDragText: (params, dragItemCount) => {
