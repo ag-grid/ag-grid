@@ -126,6 +126,8 @@
     > .ag-grid-pinned-right-cells,
     > .ag-grid-scrolling-cells {
         background-color: inherit;
+        background-image: linear-gradient(var(--ag-data-background-color), var(--ag-data-background-color));
+        background-blend-mode: multiply;
     }
 }
 
