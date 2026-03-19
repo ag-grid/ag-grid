@@ -365,6 +365,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
                 eText.textContent = this.getDisplayValue();
             }
             this.setupAria();
+            refreshDeferredToolPanelUi(this.beans, this.updateParams);
         };
 
         const localeTextFunc = this.getLocaleTextFunc();

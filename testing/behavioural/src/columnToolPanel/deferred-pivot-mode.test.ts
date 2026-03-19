@@ -1609,4 +1609,16 @@ describe('deferred column tool panel pivot mode', () => {
 
         expect(getApplyButton(toolPanelGui).disabled).toBe(false);
     });
+
+    test('apply button becomes enabled when a value column aggregation function is changed', async () => {
+        const { gridApi, toolPanel, toolPanelGui } = await createDeferredPivotModeGrid();
+        const silver = gridApi.getColumn('silver')! as AgColumn;
+
+        expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+
+        getUpdateStrategy(toolPanel).setColumnAggFunc(true, silver, 'avg', 'toolPanelDragAndDrop');
+        toolPanel.refreshDeferredUi();
+
+        expect(getApplyButton(toolPanelGui).disabled).toBe(false);
+    });
 });
