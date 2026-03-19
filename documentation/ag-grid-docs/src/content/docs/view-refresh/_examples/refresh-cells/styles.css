@@ -16,9 +16,9 @@
 }
 
 .ag-grid-pinned-top-rows .ag-row:not(.ag-header-row) {
-    background-color: #404650;
+    background-color: #99999944;
 }
 
 .ag-grid-pinned-bottom-rows .ag-row {
-    background-color: #404650;
+    background-color: #99999944;
 }

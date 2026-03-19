@@ -1,11 +1,11 @@
 .ag-grid-pinned-left-cells .custom-detail {
-    background-color: #4d2632;
+    background-color: #cc222244;
 }
 
 .ag-grid-pinned-right-cells .custom-detail {
-    background-color: #265538;
+    background-color: #33cc3344;
 }
 
 .ag-grid-scrolling-cells .custom-detail {
-    background-color: #1c305e;
+    background-color: #2244cc44;
 }

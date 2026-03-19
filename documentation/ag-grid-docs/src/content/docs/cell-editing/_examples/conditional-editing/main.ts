@@ -45,7 +45,7 @@ const gridOptions: GridOptions<IOlympicData> = {
             },
             cellStyle: (params: CellClassParams<IOlympicData>) => {
                 if (isCellEditable(params)) {
-                    return { backgroundColor: '#1c305e' };
+                    return { backgroundColor: '#2244cc44' };
                 }
             },
         },

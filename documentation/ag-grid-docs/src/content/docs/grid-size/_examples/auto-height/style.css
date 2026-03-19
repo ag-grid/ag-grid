@@ -33,9 +33,9 @@ html[data-color-scheme='dark'] body {
 }
 
 .ag-grid-pinned-top-rows .ag-row-pinned.ag-row:not(.ag-header-row) {
-    background-color: #1c305e;
+    background-color: #2244cc44;
 }
 
 .ag-grid-pinned-bottom-rows .ag-row-pinned.ag-row {
-    background-color: #1c305e;
+    background-color: #2244cc44;
 }
