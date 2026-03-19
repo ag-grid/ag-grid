@@ -133,34 +133,18 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
         if (this.isDeferModeEnabled) {
             const resetListener = this.onExternalGridChange;
-            const [
-                sortChangedDestroy,
-                columnVisibleDestroy,
-                columnRowGroupChangedDestroy,
-                columnValueChangedDestroy,
-                columnPivotChangedDestroy,
-                columnPivotModeChangedDestroy,
-                newColumnsLoadedDestroy,
-                columnMovedDestroy,
-            ] = this.addManagedEventListeners({
-                sortChanged: resetListener,
-                columnVisible: resetListener,
-                columnRowGroupChanged: resetListener,
-                columnValueChanged: resetListener,
-                columnPivotChanged: resetListener,
-                columnPivotModeChanged: resetListener,
-                newColumnsLoaded: resetListener,
-                ...(mergedParams.suppressSyncLayoutWithGrid ? {} : { columnMoved: resetListener }),
-            });
+
             childDestroyFuncs.push(
-                () => sortChangedDestroy(),
-                () => columnVisibleDestroy(),
-                () => columnRowGroupChangedDestroy(),
-                () => columnValueChangedDestroy(),
-                () => columnPivotChangedDestroy(),
-                () => columnPivotModeChangedDestroy(),
-                () => newColumnsLoadedDestroy(),
-                () => columnMovedDestroy?.()
+                ...this.addManagedEventListeners({
+                    sortChanged: resetListener,
+                    columnVisible: resetListener,
+                    columnRowGroupChanged: resetListener,
+                    columnValueChanged: resetListener,
+                    columnPivotChanged: resetListener,
+                    columnPivotModeChanged: resetListener,
+                    newColumnsLoaded: resetListener,
+                    ...(mergedParams.suppressSyncLayoutWithGrid ? {} : { columnMoved: resetListener }),
+                })
             );
         }
 
