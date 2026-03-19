@@ -9,6 +9,7 @@ const pipe =
 
 const ROOT_PACKAGE_JSON = '../../package.json';
 const packageDirectories = require(ROOT_PACKAGE_JSON).workspaces.packages.filter((d) => !d.startsWith('external/'));
+const SKIPPED_DEPS = new Set(['ag-grid-testing']);
 
 if (process.argv.length < 4) {
     console.log('Usage: node scripts/deployments/versionModules.js [Grid Version] [Charts Version]');
@@ -190,7 +191,7 @@ function updateDependency(fileContents, property, dependencyVersion, chartsDepen
     };
     Object.entries(dependencyContents)
         .filter(([key, value]) => gridDependency(key) || chartDependency(key))
-        .filter(([key, value]) => key !== 'ag-grid-testing')
+        .filter(([key, value]) => !SKIPPED_DEPS.has(key))
         .forEach(([key, value]) => {
             if (chartsDependencyVersion) {
                 dependencyContents[key] = chartDependency(key) ? chartsDependencyVersion : dependencyVersion;
