@@ -1265,7 +1265,7 @@ export class EditService extends BeanStub implements NamedBean {
                         sourceValue: valueSvc.getValue(column as AgColumn, rowNode, 'data'),
                     });
                 }
-                editModelSvc?.setEdit(position, { pendingValue: newValue, state: 'changed' });
+                editModelSvc?.setEdit(position, { pendingValue: newValue });
             } else {
                 // All other sources: sync through the editor model layer.
                 _syncFromEditor(beans, position, newValue, eventSource, undefined, { persist: true });
