@@ -20,7 +20,6 @@ then
 fi
 
 # Wait for workflow to complete
-RUN_ID=`gh run list | grep $BRANCH | grep "CI" | cut -f 7`
 echo $RUN_ID
 gh run watch $RUN_ID --exit-status
 
