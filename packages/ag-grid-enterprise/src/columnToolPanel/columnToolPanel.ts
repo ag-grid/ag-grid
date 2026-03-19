@@ -148,11 +148,13 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             );
         }
 
-        if (mergedParams.buttons?.length) {
+        if (mergedParams.buttons) {
             if (!mergedParams.buttons.includes('apply')) {
                 _warn(298);
             }
-            this.initDeferredButtons(mergedParams.buttons);
+            if (mergedParams.buttons.length) {
+                this.initDeferredButtons(mergedParams.buttons);
+            }
         }
 
         this.initialised = true;
