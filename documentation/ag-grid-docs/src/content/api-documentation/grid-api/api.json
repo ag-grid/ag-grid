@@ -3,13 +3,12 @@
         "codeSrc": "grid-api.AUTO.json",
         "validate": true,
         "undocumentedProperties": {
-            "sortChanged": "TODO: undocumented property, to resolve in AG-16879",
-            "flushAllAnimationFrames": "TODO: undocumented property, to resolve in AG-16879",
-            "getColumnDef": "TODO: undocumented property, to resolve in AG-16879",
-            "filterChanged": "TODO: undocumented property, to resolve in AG-16879",
-            "getInfiniteRowCount": "TODO: undocumented property, to resolve in AG-16879",
-            "flushServerSideAsyncTransactions": "TODO: undocumented property, to resolve in AG-16879",
-            "dispatchEvent": "TODO: undocumented property, to resolve in AG-16879"
+            "flushAllAnimationFrames": "Not recommended for users so not documented",
+            "flushServerSideAsyncTransactions": "Not recommended for users to not documented",
+            "dispatchEvent": "This is for internal use, purposefully undocumented",
+            "sortChanged": "Bug in the undocumentedProperties check, this is not an api method",
+            "filterChanged": "Bug in the undocumentedProperties check, this is not an api method",
+            "getColumnDef": "Duplicate, users can just use getColumnDefs."
         }
     },
     "gridOptions": {
