@@ -1,5 +1,5 @@
 import type { GridApi, GridOptions, ISetFilterParams, KeyCreatorParams, ValueFormatterParams } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, TextEditorModule } from 'ag-grid-community';
 import { SetFilterModule } from 'ag-grid-enterprise';
 import type { SetFilter } from 'ag-grid-enterprise';
 
@@ -35,7 +35,7 @@ const ROW_DATA: RowData[] = [
 
 describe('Set Filter Complex Objects', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, SetFilterModule],
+        modules: [ClientSideRowModelModule, SetFilterModule, TextEditorModule],
     });
 
     afterEach(() => gridsManager.reset());
