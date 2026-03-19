@@ -84,11 +84,12 @@ export class DistributorNumber {
             return this.writeAll(newValue);
         }
 
+        const { children } = this;
         switch (strategy) {
             case 'first':
-                return this.writeOne(0, newValue);
+                return this.writeOne(children[0], newValue);
             case 'last':
-                return this.writeOne(this.count - 1, newValue);
+                return this.writeOne(children[this.count - 1], newValue);
             case 'min':
                 return this.writeToExtremum(true);
             case 'max':
@@ -116,40 +117,43 @@ export class DistributorNumber {
         }
     }
 
-    /** Reads the raw value of a child via custom getter or getDataValue. */
-    private readRaw(index: number): unknown {
-        const { children, column, getVal } = this;
-        const child = children[index];
+    private readOne(node: IRowNode): number {
+        const { column, getVal } = this;
         if (getVal) {
             const { colDef, api, context } = this.params;
-            return getVal({ node: child, data: child.data, column, colDef, api, context, groupParams: this.params });
+            return toNumber(getVal({ node, data: node.data, column, colDef, api, context, groupParams: this.params }));
         }
-        return child.getDataValue(column);
-    }
-
-    private readOne(index: number): number {
-        return toNumber(this.readRaw(index));
+        return toNumber(node.getDataValue(column, 'value'));
     }
 
     /**
      * Reads a child's value and leaf count in a single call.
-     * If the raw value is already an avg agg object { value, count }, returns it directly.
-     * Otherwise wraps the value with the node's allLeafChildren count.
+     * For group children, reads the raw avg agg object { value, count } if available,
+     * falling back to allLeafChildren.length. For leaf children, count is always 1.
      */
-    private readValueAndCount(index: number): ValueAndCount {
-        const raw = this.readRaw(index);
-        if (raw != null && typeof raw === 'object') {
-            const { value, count } = raw as ValueAndCount;
-            if (value != null && typeof count === 'number' && count > 0) {
-                return typeof value === 'number' ? (raw as ValueAndCount) : { value: toNumber(raw), count };
-            }
+    private readValueAndCount(node: IRowNode): ValueAndCount {
+        const { column, getVal } = this;
+        let raw: unknown;
+        if (getVal) {
+            const { colDef, api, context } = this.params;
+            raw = getVal({ node, data: node.data, column, colDef, api, context, groupParams: this.params });
+        } else {
+            raw = node.getDataValue(column);
         }
-        return { value: toNumber(raw), count: this.children[index].allLeafChildren?.length || 1 };
+        if (node.group) {
+            if (raw != null && typeof raw === 'object') {
+                const { value, count } = raw as ValueAndCount;
+                if (value != null && typeof count === 'number' && count > 0) {
+                    return typeof value === 'number' ? (raw as ValueAndCount) : { value: toNumber(value), count };
+                }
+            }
+            return { value: toNumber(raw), count: node.allLeafChildren?.length || 1 };
+        }
+        return { value: toNumber(raw), count: 1 };
     }
 
-    private writeOne(index: number, value: unknown): boolean {
-        const { children, column, setVal } = this;
-        const node = children[index];
+    private writeOne(node: IRowNode, value: unknown): boolean {
+        const { column, setVal } = this;
         if (setVal) {
             const { colDef, api, context } = this.params;
             return setVal({ node, data: node.data, column, colDef, api, context, groupParams: this.params, value });
@@ -158,9 +162,10 @@ export class DistributorNumber {
     }
 
     private writeAll(value: unknown): boolean {
+        const { children, count } = this;
         let changed = false;
-        for (let i = 0; i < this.count; ++i) {
-            if (this.writeOne(i, value)) {
+        for (let i = 0; i < count; ++i) {
+            if (this.writeOne(children[i], value)) {
                 changed = true;
             }
         }
@@ -168,21 +173,22 @@ export class DistributorNumber {
     }
 
     private writeToExtremum(isMin: boolean): boolean {
-        const { count, newValue } = this;
-        let bestIdx = 0;
-        let bestVal = this.readOne(0);
+        const { children, count, newValue } = this;
+        let bestNode = children[0];
+        let bestVal = this.readOne(bestNode);
         for (let i = 1; i < count; i++) {
-            const v = this.readOne(i);
+            const node = children[i];
+            const v = this.readOne(node);
             if (isMin ? v < bestVal : v > bestVal) {
                 bestVal = v;
-                bestIdx = i;
+                bestNode = node;
             }
         }
-        return this.writeOne(bestIdx, newValue);
+        return this.writeOne(bestNode, newValue);
     }
 
     private distributeUniform(): boolean {
-        const { count, target, precision } = this;
+        const { children, count, target, precision } = this;
         if (precision === undefined) {
             return this.writeAll(target / count);
         }
@@ -194,7 +200,7 @@ export class DistributorNumber {
         const step = rem >= 0 ? 1 : -1;
         let changed = false;
         for (let i = 0; i < count; ++i) {
-            if (this.writeOne(i, (i < absRem ? base + step : base) / scale)) {
+            if (this.writeOne(children[i], (i < absRem ? base + step : base) / scale)) {
                 changed = true;
             }
         }
@@ -202,12 +208,13 @@ export class DistributorNumber {
     }
 
     private distributeIncrement(): boolean {
-        const { count, target, oldTarget, precision } = this;
+        const { children, count, target, oldTarget, precision } = this;
         if (precision === undefined) {
             const add = (target - oldTarget) / count;
             let changed = false;
             for (let i = 0; i < count; ++i) {
-                if (this.writeOne(i, this.readOne(i) + add)) {
+                const child = children[i];
+                if (this.writeOne(child, this.readOne(child) + add)) {
                     changed = true;
                 }
             }
@@ -221,8 +228,9 @@ export class DistributorNumber {
         const step = rem >= 0 ? 1 : -1;
         let changed = false;
         for (let i = 0; i < count; ++i) {
-            const cur = Math.round(this.readOne(i) * scale);
-            if (this.writeOne(i, (cur + base + (i < absRem ? step : 0)) / scale)) {
+            const child = children[i];
+            const cur = Math.round(this.readOne(child) * scale);
+            if (this.writeOne(child, (cur + base + (i < absRem ? step : 0)) / scale)) {
                 changed = true;
             }
         }
@@ -235,12 +243,12 @@ export class DistributorNumber {
      * With precision rounding, uses scaled integers and spreads the remainder across the first N children.
      */
     private distributePercentage(): boolean {
-        const { count, target, precision } = this;
+        const { children, count, target, precision } = this;
 
         const values = new Array<number>(count);
         let total = 0;
         for (let i = 0; i < count; ++i) {
-            const v = this.readOne(i);
+            const v = this.readOne(children[i]);
             values[i] = v;
             total += v;
         }
@@ -255,7 +263,7 @@ export class DistributorNumber {
             const ratio = target / total;
             let changed = false;
             for (let i = 0; i < count; ++i) {
-                if (this.writeOne(i, values[i] * ratio)) {
+                if (this.writeOne(children[i], values[i] * ratio)) {
                     changed = true;
                 }
             }
@@ -279,7 +287,7 @@ export class DistributorNumber {
         const step = rem >= 0 ? 1 : -1;
         let changed = false;
         for (let i = 0; i < count; ++i) {
-            if (this.writeOne(i, (values[i] + (i < absRem ? step : 0)) / scale)) {
+            if (this.writeOne(children[i], (values[i] + (i < absRem ? step : 0)) / scale)) {
                 changed = true;
             }
         }
@@ -300,7 +308,7 @@ export class DistributorNumber {
      * but we need effectiveTarget = newAvg × totalLeafCount for sum-space scaling.
      */
     private distributePercentageAvg(): boolean {
-        const { count, target, precision } = this;
+        const { children, count, target, precision } = this;
 
         // Read each child's avg and leaf count in one call, convert to sum contributions
         const values = new Array<number>(count);
@@ -308,11 +316,11 @@ export class DistributorNumber {
         let total = 0;
         let totalLeafCount = 0;
         for (let i = 0; i < count; ++i) {
-            const vc = this.readValueAndCount(i);
+            const vc = this.readValueAndCount(children[i]);
             const lc = vc.count;
             leafCounts[i] = lc;
             totalLeafCount += lc;
-            const v = toNumber(vc.value) * lc;
+            const v = vc.value * lc;
             values[i] = v;
             total += v;
         }
@@ -329,7 +337,7 @@ export class DistributorNumber {
             const ratio = effectiveTarget / total;
             let changed = false;
             for (let i = 0; i < count; ++i) {
-                if (this.writeOne(i, (values[i] * ratio) / leafCounts[i])) {
+                if (this.writeOne(children[i], (values[i] * ratio) / leafCounts[i])) {
                     changed = true;
                 }
             }
@@ -352,7 +360,7 @@ export class DistributorNumber {
         let changed = false;
         for (let i = 0; i < count; ++i) {
             // Convert scaled integer sum back to avg: intSum / (scale × leafCount)
-            if (this.writeOne(i, (values[i] + (i < absRem ? step : 0)) / (scale * leafCounts[i]))) {
+            if (this.writeOne(children[i], (values[i] + (i < absRem ? step : 0)) / (scale * leafCounts[i]))) {
                 changed = true;
             }
         }
