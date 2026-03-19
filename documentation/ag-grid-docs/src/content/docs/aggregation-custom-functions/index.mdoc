@@ -69,6 +69,12 @@ and a `"value"` field representing the result for this level.
 
 {% gridExampleRunner title="Multiple Group Levels" name="multi-group-levels" /%}
 
+{% note %}
+Custom aggregation functions can also be used with [Editing Group Rows](./grouping-edit/).
+When a group row is edited, the built-in distribution automatically handles `sum`, `avg`, `min`, `max`, `first`, and `last`.
+For custom aggregation functions, define a per-aggregation distribution strategy or provide a custom `groupRowValueSetter` callback.
+{% /note %}
+
 The above example demonstrates the following configuration to apply a custom `"range"` function which works with multiple
 levels of row grouping:
 

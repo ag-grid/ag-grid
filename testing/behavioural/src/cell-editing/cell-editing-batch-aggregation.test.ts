@@ -1,11 +1,26 @@
-import { ClientSideRowModelModule, PinnedRowModule, TextEditorModule } from 'ag-grid-community';
+import { getByTestId } from '@testing-library/dom';
+import '@testing-library/jest-dom';
+import { userEvent } from '@testing-library/user-event';
+
+import {
+    ClientSideRowModelModule,
+    PinnedRowModule,
+    TextEditorModule,
+    agTestIdFor,
+    getGridElement,
+    setupAgTestIds,
+} from 'ag-grid-community';
 import { BatchEditModule, PivotModule, RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager } from '../test-utils';
+import { GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
 
 describe('Cell Editing: change detection', () => {
     const gridMgr = new TestGridsManager({
         modules: [BatchEditModule, RowGroupingModule, TextEditorModule, ClientSideRowModelModule, PinnedRowModule],
+    });
+
+    beforeAll(() => {
+        setupAgTestIds();
     });
 
     afterEach(() => {
@@ -439,6 +454,91 @@ describe('Cell Editing: change detection', () => {
                 · ├── child1 LEAF id:child1 ag-Grid-AutoColumn:"child1" path:"A, child1" value:100
                 · └── child2 LEAF id:child2 ag-Grid-AutoColumn:"child2" path:"A, child2" value:200
             `);
+        });
+    });
+
+    // ─── Grand total row batch styling ────────────────────────────────────────
+
+    describe('grand total row batch styling', () => {
+        test('setDataValue during batch applies batch style to grand total row cell', async () => {
+            const api = await gridMgr.createGridAndWait('batchGrandTotalStyle', {
+                rowData: [
+                    { id: '1', value: 10 },
+                    { id: '2', value: 20 },
+                ],
+                getRowId: (p) => p.data.id,
+                columnDefs: [{ field: 'value', aggFunc: 'sum', editable: true, cellDataType: false }],
+                grandTotalRow: 'bottom',
+            });
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            await asyncSetTimeout(1);
+
+            await new GridRows(api, 'initial').check(`
+                ROOT id:ROOT_NODE_ID value:30
+                ├── LEAF id:1 value:10
+                ├── LEAF id:2 value:20
+                └─ footer id:rowGroupFooter_ROOT_NODE_ID value:30
+            `);
+
+            api.startBatchEdit();
+
+            // setDataValue on a leaf row — grand total row cell should get batch style
+            api.getRowNode('1')!.setDataValue('value', 100, 'batch');
+            await asyncSetTimeout(1);
+
+            // Leaf cell gets batch style
+            const leafCell = getByTestId(gridDiv, agTestIdFor.cell('1', 'value'));
+            expect(leafCell).toHaveClass('ag-cell-batch-edit');
+
+            // Grand total row cell should also get batch style
+            const footerCell = getByTestId(gridDiv, agTestIdFor.cell('rowGroupFooter_ROOT_NODE_ID', 'value'));
+            expect(footerCell).toHaveClass('ag-cell-batch-edit');
+
+            api.cancelBatchEdit();
+            await asyncSetTimeout(1);
+
+            // After cancel, batch styles should be removed
+            expect(getByTestId(gridDiv, agTestIdFor.cell('1', 'value'))).not.toHaveClass('ag-cell-batch-edit');
+            expect(getByTestId(gridDiv, agTestIdFor.cell('rowGroupFooter_ROOT_NODE_ID', 'value'))).not.toHaveClass(
+                'ag-cell-batch-edit'
+            );
+        });
+
+        test('UI edit during batch applies batch style to grand total row cell (baseline)', async () => {
+            const api = await gridMgr.createGridAndWait('batchGrandTotalStyleUI', {
+                rowData: [
+                    { id: '1', value: 10 },
+                    { id: '2', value: 20 },
+                ],
+                getRowId: (p) => p.data.id,
+                columnDefs: [{ field: 'value', aggFunc: 'sum', editable: true, cellDataType: false }],
+                grandTotalRow: 'bottom',
+            });
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            await asyncSetTimeout(1);
+
+            api.startBatchEdit();
+
+            // Edit via UI
+            const leafCell = getByTestId(gridDiv, agTestIdFor.cell('1', 'value'));
+            await userEvent.dblClick(leafCell);
+            await asyncSetTimeout(1);
+
+            const editor = await waitForInput(gridDiv, leafCell, { popup: false });
+            await userEvent.clear(editor);
+            await userEvent.keyboard('100{Enter}');
+            await asyncSetTimeout(1);
+
+            // Leaf cell gets batch style
+            expect(getByTestId(gridDiv, agTestIdFor.cell('1', 'value'))).toHaveClass('ag-cell-batch-edit');
+
+            // Grand total row cell should also get batch style
+            const footerCell = getByTestId(gridDiv, agTestIdFor.cell('rowGroupFooter_ROOT_NODE_ID', 'value'));
+            expect(footerCell).toHaveClass('ag-cell-batch-edit');
+
+            api.cancelBatchEdit();
         });
     });
 });

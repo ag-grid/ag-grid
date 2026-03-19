@@ -627,6 +627,23 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         }
     }
 
+    /** Returns true when a row should be skipped during paste. */
+    private shouldSkipPasteRow(row: RowNode, columns: AgColumn[], skipGroupRows: boolean): boolean {
+        if (row.detail || row.footer) {
+            return true;
+        }
+        if (skipGroupRows && row.group) {
+            // Allow the group row through if any paste column is editable for it
+            for (const col of columns) {
+                if (col.isCellEditable(row)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
     private pasteMultipleValues(
         clipboardGridData: string[][],
         currentRow: RowPosition | null,
@@ -641,35 +658,21 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         const beans = this.beans;
         const { gos } = beans;
 
-        // if doing CSRM and NOT tree data, then it means groups are aggregates, which are read only,
-        // so we should skip them when doing paste operations.
+        // If doing CSRM and NOT tree data, group rows are aggregates and read-only by default.
         const skipGroupRows = this.clientSideRowModel != null && !gos.get('enableGroupEdit') && !gos.get('treeData');
 
         const getNextGoodRowNode = () => {
-            while (true) {
-                if (!rowPointer) {
-                    return null;
-                }
+            while (rowPointer) {
                 const res = _getRowNode(beans, rowPointer);
-                // move to next row down for next set of values
                 rowPointer = _getRowBelow(beans, {
                     rowPinned: rowPointer.rowPinned,
                     rowIndex: rowPointer.rowIndex,
                 });
-
-                // if no more rows, return null
-                if (res == null) {
-                    return null;
-                }
-
-                // skip details rows and footer rows, never paste into them as they don't hold data
-                const skipRow = res.detail || res.footer || (skipGroupRows && res.group);
-
-                // skipping row means we go into the next iteration of the while loop
-                if (!skipRow) {
+                if (res != null && !this.shouldSkipPasteRow(res, columnsToPasteInto, skipGroupRows)) {
                     return res;
                 }
             }
+            return null;
         };
 
         for (const clipboardRowData of clipboardGridData) {

@@ -408,17 +408,24 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
     getRoute(): string[] | undefined;
 
     /**
-     * Returns the immediate children that contribute to the aggregation of this group RowNode.
+     * Returns children that contribute to the aggregation of this group RowNode.
      *
      * - For leaf groups (groups containing data rows): returns the data rows.
      *   With pivot columns, only rows matching the pivot keys are included.
      * - For non-leaf groups (groups containing other groups): returns the child groups.
      * - For leaf (non-group) RowNodes: returns an empty array.
      *
+     * When `recursive` is `true`, traverses the full group hierarchy and returns all descendant
+     * leaf (data) rows instead of the immediate children. This creates a new array on each call.
+     * Use with care on large datasets as it visits every descendant node.
+     *
      * **Note:** Only supported with the Client-Side Row Model.
      *
      * @param colKey - The column key. Pass the pivot column to filter by pivot keys, or `null` to get all children.
-     * @returns An array of child `IRowNode` instances contributing to this group's aggregation. Warning: the returned array must not be modified.
+     * @param recursive - When `true`, returns all descendant leaf rows instead of only the immediate children.
+     *   Defaults to `false`.
+     * @returns An array of child `IRowNode` instances contributing to this group's aggregation.
+     *   When `recursive` is `false` (the default), the returned array must not be modified.
      */
-    getAggregatedChildren(colKey: ColKey<TData> | null | undefined): IRowNode<TData>[];
+    getAggregatedChildren(colKey: ColKey<TData> | null | undefined, recursive?: boolean): IRowNode<TData>[];
 }

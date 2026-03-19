@@ -2,14 +2,14 @@ import { getByTestId } from '@testing-library/dom';
 import '@testing-library/jest-dom';
 import { userEvent } from '@testing-library/user-event';
 
-import { TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import { NumberEditorModule, TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
 
 describe('getEditRowValues returns current editor values during active editing', () => {
     const gridMgr = new TestGridsManager({
-        modules: [BatchEditModule, TextEditorModule],
+        modules: [BatchEditModule, TextEditorModule, NumberEditorModule],
     });
 
     beforeAll(() => {

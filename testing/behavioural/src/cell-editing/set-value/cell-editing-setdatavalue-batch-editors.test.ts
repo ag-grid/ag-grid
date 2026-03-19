@@ -144,6 +144,288 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
         api.cancelBatchEdit();
     });
 
+    test("'batch' source with open editor: ESC closes editor and cell shows batch pending value", async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [{ field: 'a', editable: true, cellEditor: 'agTextCellEditor' }],
+            rowData: [{ id: '0', a: 'initial' }],
+            getRowId: (params) => params.data.id,
+        });
+
+        api.startBatchEdit();
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(1);
+
+        // Open editor and type a value
+        api.startEditingCell({ rowIndex: 0, colKey: 'a' });
+        await asyncSetTimeout(1);
+
+        const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+        const editor = await waitForInput(gridDiv, cellA, { popup: false });
+        expect(editor).toBeInTheDocument();
+
+        await userEvent.clear(editor);
+        await userEvent.keyboard('typed');
+        await asyncSetTimeout(1);
+
+        expect(editor).toHaveValue('typed');
+
+        // Editor open, user typed 'typed', data still 'initial'
+        await new GridRows(api, 'editor open — user typed value').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF 🖍️ id:0 a:🖍️"typed" "initial"
+        `);
+
+        const rowNode = api.getDisplayedRowAtIndex(0)!;
+
+        // Push a different value using 'batch' source — editor stays open with 'typed'
+        rowNode.setDataValue('a', 'staged', 'batch');
+        await asyncSetTimeout(1);
+
+        // Editor is still open and still shows what the user typed
+        expect(gridDiv.querySelector<HTMLInputElement>('input')).toBe(editor);
+        expect(editor).toHaveValue('typed');
+
+        // After batch setDataValue: editor still open showing 'typed', batch pending is 'staged'
+        await new GridRows(api, 'after batch setDataValue — editor still open').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF 🖍️ id:0 a:🖍️"typed" ⏳"staged" "initial"
+        `);
+
+        // Press ESC — editor should close and cell should show the batch pending value
+        await userEvent.keyboard('{Escape}');
+        await asyncSetTimeout(1);
+
+        // Editor is closed
+        expect(api.getCellEditorInstances()).toHaveLength(0);
+
+        // Cell shows the batch pending value, not the typed value
+        await new GridRows(api, 'after ESC — pending value from batch source').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF ⏳ id:0 a:⏳"staged" "initial"
+        `);
+
+        // Data is still initial (batch not committed)
+        expect(rowNode.data.a).toBe('initial');
+
+        api.cancelBatchEdit();
+    });
+
+    test("'batch' source with open editor: Enter commits editor typed value as pending", async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [{ field: 'a', editable: true, cellEditor: 'agTextCellEditor' }],
+            rowData: [{ id: '0', a: 'initial' }],
+            getRowId: (params) => params.data.id,
+        });
+
+        api.startBatchEdit();
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(1);
+
+        // Open editor and type a value
+        api.startEditingCell({ rowIndex: 0, colKey: 'a' });
+        await asyncSetTimeout(1);
+
+        const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+        const editor = await waitForInput(gridDiv, cellA, { popup: false });
+        expect(editor).toBeInTheDocument();
+
+        await userEvent.clear(editor);
+        await userEvent.keyboard('typed');
+        await asyncSetTimeout(1);
+
+        expect(editor).toHaveValue('typed');
+
+        // Editor open, user typed 'typed', data still 'initial'
+        await new GridRows(api, 'editor open — user typed value').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF 🖍️ id:0 a:🖍️"typed" "initial"
+        `);
+
+        const rowNode = api.getDisplayedRowAtIndex(0)!;
+
+        // Push a different value using 'batch' source — editor stays open with 'typed'
+        rowNode.setDataValue('a', 'staged', 'batch');
+        await asyncSetTimeout(1);
+
+        // Editor is still open
+        expect(gridDiv.querySelector<HTMLInputElement>('input')).toBe(editor);
+        expect(editor).toHaveValue('typed');
+
+        // After batch setDataValue: editor still open showing 'typed', batch pending is 'staged'
+        await new GridRows(api, 'after batch setDataValue — editor still open').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF 🖍️ id:0 a:🖍️"typed" ⏳"staged" "initial"
+        `);
+
+        // Press Enter — editor value ('typed') should become the pending value
+        await userEvent.keyboard('{Enter}');
+        await asyncSetTimeout(1);
+
+        // Editor is closed
+        expect(api.getCellEditorInstances()).toHaveLength(0);
+
+        // Cell shows the typed value as pending (overrides the 'staged' batch value)
+        await new GridRows(api, 'after Enter — typed value becomes pending').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF ⏳ id:0 a:⏳"typed" "initial"
+        `);
+
+        // Data is still initial (batch not committed)
+        expect(rowNode.data.a).toBe('initial');
+
+        // Commit and verify the typed value is committed
+        api.commitBatchEdit();
+        await asyncSetTimeout(1);
+
+        expect(rowNode.data.a).toBe('typed');
+    });
+
+    test("'batch' source with open editor in fullRow mode: ESC closes editor and cell shows batch pending value", async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            editType: 'fullRow',
+            columnDefs: [
+                { field: 'a', editable: true, cellEditor: 'agTextCellEditor' },
+                { field: 'b', editable: true, cellEditor: 'agTextCellEditor' },
+            ],
+            rowData: [{ id: '0', a: 'A0', b: 'B0' }],
+            getRowId: (params) => params.data.id,
+        });
+
+        api.startBatchEdit();
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(1);
+
+        // Open full-row editor
+        api.startEditingCell({ rowIndex: 0, colKey: 'a' });
+        await asyncSetTimeout(1);
+
+        const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+        await waitForInput(gridDiv, cellA, { popup: false });
+
+        // Both cells should have editors in full-row mode
+        const inputs = gridDiv.querySelectorAll<HTMLInputElement>('input');
+        expect(inputs).toHaveLength(2);
+
+        // Type in the 'a' editor
+        const inputA = Array.from(inputs).find((i) => i.value === 'A0')!;
+        await userEvent.clear(inputA);
+        await userEvent.type(inputA, 'typed-a');
+        await asyncSetTimeout(1);
+
+        // Full-row editor open: user typed 'typed-a' in col a, col b still 'B0'
+        await new GridRows(api, 'full-row editor open — user typed in col a').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF 🖍️ id:0 a:🖍️"typed-a" "A0" b:"B0"
+        `);
+
+        const rowNode = api.getDisplayedRowAtIndex(0)!;
+
+        // Push a batch value to col a — editor stays open
+        rowNode.setDataValue('a', 'staged-a', 'batch');
+        await asyncSetTimeout(1);
+
+        // Editor still open with typed value
+        expect(inputA).toHaveValue('typed-a');
+
+        // After batch setDataValue: editor still open, batch pending staged
+        await new GridRows(api, 'after batch setDataValue — full-row editor still open').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF 🖍️ id:0 a:🖍️"typed-a" ⏳"staged-a" "A0" b:"B0"
+        `);
+
+        // Press ESC — editors close, cell shows batch pending value
+        await userEvent.keyboard('{Escape}');
+        await asyncSetTimeout(1);
+
+        expect(api.getCellEditorInstances()).toHaveLength(0);
+
+        await new GridRows(api, 'after ESC — pending value from batch source').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF ⏳ id:0 a:⏳"staged-a" "A0" b:"B0"
+        `);
+
+        expect(rowNode.data.a).toBe('A0');
+        expect(rowNode.data.b).toBe('B0');
+
+        api.cancelBatchEdit();
+    });
+
+    test("'batch' source with open editor in fullRow mode: Enter commits editor typed value as pending", async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            editType: 'fullRow',
+            columnDefs: [
+                { field: 'a', editable: true, cellEditor: 'agTextCellEditor' },
+                { field: 'b', editable: true, cellEditor: 'agTextCellEditor' },
+            ],
+            rowData: [{ id: '0', a: 'A0', b: 'B0' }],
+            getRowId: (params) => params.data.id,
+        });
+
+        api.startBatchEdit();
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(1);
+
+        // Open full-row editor
+        api.startEditingCell({ rowIndex: 0, colKey: 'a' });
+        await asyncSetTimeout(1);
+
+        const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+        await waitForInput(gridDiv, cellA, { popup: false });
+
+        // Both cells should have editors in full-row mode
+        const inputs = gridDiv.querySelectorAll<HTMLInputElement>('input');
+        expect(inputs).toHaveLength(2);
+
+        // Type in the 'a' editor
+        const inputA = Array.from(inputs).find((i) => i.value === 'A0')!;
+        await userEvent.clear(inputA);
+        await userEvent.type(inputA, 'typed-a');
+        await asyncSetTimeout(1);
+
+        // Full-row editor open: user typed 'typed-a' in col a
+        await new GridRows(api, 'full-row editor open — user typed in col a').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF 🖍️ id:0 a:🖍️"typed-a" "A0" b:"B0"
+        `);
+
+        const rowNode = api.getDisplayedRowAtIndex(0)!;
+
+        // Push a batch value to col a — editor stays open
+        rowNode.setDataValue('a', 'staged-a', 'batch');
+        await asyncSetTimeout(1);
+
+        // Editor still open with typed value
+        expect(inputA).toHaveValue('typed-a');
+
+        // After batch setDataValue: editor still open, batch pending staged
+        await new GridRows(api, 'after batch setDataValue — full-row editor still open').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF 🖍️ id:0 a:🖍️"typed-a" ⏳"staged-a" "A0" b:"B0"
+        `);
+
+        // Press Enter — editor typed value becomes pending
+        await userEvent.keyboard('{Enter}');
+        await asyncSetTimeout(1);
+
+        expect(api.getCellEditorInstances()).toHaveLength(0);
+
+        // Typed value overrides the batch-staged value
+        await new GridRows(api, 'after Enter — typed value becomes pending').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF ⏳ id:0 a:⏳"typed-a" "A0" b:"B0"
+        `);
+
+        expect(rowNode.data.a).toBe('A0');
+        expect(rowNode.data.b).toBe('B0');
+
+        // Commit and verify the typed value is committed
+        api.commitBatchEdit();
+        await asyncSetTimeout(1);
+
+        expect(rowNode.data.a).toBe('typed-a');
+        expect(rowNode.data.b).toBe('B0');
+    });
+
     test("'edit' updates editor value outside batch mode and preserves focus", async () => {
         const api = await gridMgr.createGridAndWait('myGrid', {
             columnDefs: [{ field: 'a', editable: true, cellEditor: 'agTextCellEditor' }],
@@ -1102,6 +1384,266 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             expect(rowNode.data.a).toBe('a-val');
             expect(rowNode.data.b).toBe('b-val');
+        });
+    });
+
+    describe("'batch' source without open editor", () => {
+        test("'batch' source on fresh cell creates a new batch edit", async () => {
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [{ field: 'a', editable: true, cellEditor: 'agTextCellEditor' }],
+                rowData: [{ id: '0', a: 'initial' }],
+                getRowId: (params) => params.data.id,
+            });
+
+            api.startBatchEdit();
+            await asyncSetTimeout(1);
+
+            await new GridRows(api, 'initial — no pending edits').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"initial"
+            `);
+
+            const rowNode = api.getDisplayedRowAtIndex(0)!;
+            rowNode.setDataValue('a', 'staged', 'batch');
+            await asyncSetTimeout(1);
+
+            // Pending batch edit created, data unchanged
+            await new GridRows(api, 'after batch setDataValue — pending created').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF ⏳ id:0 a:⏳"staged" "initial"
+            `);
+
+            expect(rowNode.data.a).toBe('initial');
+            expect(rowNode.getDataValue('a')).toBe('initial');
+            expect(api.getCellValue({ rowNode, colKey: 'a', from: 'batch' })).toBe('staged');
+            expect(api.getCellValue({ rowNode, colKey: 'a', from: 'data' })).toBe('initial');
+
+            api.commitBatchEdit();
+            await asyncSetTimeout(1);
+
+            expect(rowNode.data.a).toBe('staged');
+
+            await new GridRows(api, 'after commit').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"staged"
+            `);
+        });
+
+        test("'batch' source updates an existing pending batch edit without writing to data", async () => {
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [{ field: 'a', editable: true, cellEditor: 'agTextCellEditor' }],
+                rowData: [{ id: '0', a: 'initial' }],
+                getRowId: (params) => params.data.id,
+            });
+
+            api.startBatchEdit();
+            await asyncSetTimeout(1);
+
+            const rowNode = api.getDisplayedRowAtIndex(0)!;
+
+            // First batch write
+            rowNode.setDataValue('a', 'first', 'batch');
+            await asyncSetTimeout(1);
+
+            await new GridRows(api, 'after first batch setDataValue').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF ⏳ id:0 a:⏳"first" "initial"
+            `);
+
+            expect(api.getCellValue({ rowNode, colKey: 'a', from: 'batch' })).toBe('first');
+            expect(rowNode.data.a).toBe('initial');
+
+            // Second batch write — updates the pending value
+            rowNode.setDataValue('a', 'second', 'batch');
+            await asyncSetTimeout(1);
+
+            await new GridRows(api, 'after second batch setDataValue — pending updated').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF ⏳ id:0 a:⏳"second" "initial"
+            `);
+
+            expect(api.getCellValue({ rowNode, colKey: 'a', from: 'batch' })).toBe('second');
+            expect(rowNode.data.a).toBe('initial');
+
+            // Commit writes the latest pending value
+            api.commitBatchEdit();
+            await asyncSetTimeout(1);
+
+            expect(rowNode.data.a).toBe('second');
+        });
+
+        test("'batch' source setting pending value back to source value removes the edit", async () => {
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [{ field: 'a', editable: true, cellEditor: 'agTextCellEditor' }],
+                rowData: [{ id: '0', a: 'initial' }],
+                getRowId: (params) => params.data.id,
+            });
+
+            api.startBatchEdit();
+            await asyncSetTimeout(1);
+
+            const rowNode = api.getDisplayedRowAtIndex(0)!;
+
+            // Create a pending edit
+            rowNode.setDataValue('a', 'changed', 'batch');
+            await asyncSetTimeout(1);
+
+            await new GridRows(api, 'pending edit exists').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF ⏳ id:0 a:⏳"changed" "initial"
+            `);
+
+            // Set back to original value — should remove the pending edit
+            rowNode.setDataValue('a', 'initial', 'batch');
+            await asyncSetTimeout(1);
+
+            await new GridRows(api, 'after setting back to source — no pending').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"initial"
+            `);
+
+            expect(rowNode.data.a).toBe('initial');
+
+            // Commit — nothing to commit, data unchanged
+            api.commitBatchEdit();
+            await asyncSetTimeout(1);
+
+            expect(rowNode.data.a).toBe('initial');
+        });
+
+        test('cell already has pending batch edit, then editor opens — editor shows source value, batch pending preserved', async () => {
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [{ field: 'a', editable: true, cellEditor: 'agTextCellEditor' }],
+                rowData: [{ id: '0', a: 'initial' }],
+                getRowId: (params) => params.data.id,
+            });
+
+            api.startBatchEdit();
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            await asyncSetTimeout(1);
+
+            const rowNode = api.getDisplayedRowAtIndex(0)!;
+
+            // Stage a batch value before opening editor
+            rowNode.setDataValue('a', 'staged', 'batch');
+            await asyncSetTimeout(1);
+
+            await new GridRows(api, 'batch pending before editor opens').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF ⏳ id:0 a:⏳"staged" "initial"
+            `);
+
+            // Now open the editor on the same cell
+            api.startEditingCell({ rowIndex: 0, colKey: 'a' });
+            await asyncSetTimeout(1);
+
+            const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+            const editor = await waitForInput(gridDiv, cellA, { popup: false });
+            expect(editor).toBeInTheDocument();
+
+            // Editor shows the pending value (what the user would expect to edit)
+            await new GridRows(api, 'editor open on cell with existing batch pending').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF 🖍️ id:0 a:⏳"staged" "initial"
+            `);
+
+            // Batch pending value is still accessible
+            expect(api.getCellValue({ rowNode, colKey: 'a', from: 'batch' })).toBe('staged');
+            expect(rowNode.data.a).toBe('initial');
+
+            // Type a new value and press Enter — typed value becomes pending
+            await userEvent.clear(editor);
+            await userEvent.keyboard('typed{Enter}');
+            await asyncSetTimeout(1);
+
+            expect(api.getCellEditorInstances()).toHaveLength(0);
+
+            await new GridRows(api, 'after Enter — typed value becomes pending').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF ⏳ id:0 a:⏳"typed" "initial"
+            `);
+
+            expect(rowNode.data.a).toBe('initial');
+
+            api.commitBatchEdit();
+            await asyncSetTimeout(1);
+
+            expect(rowNode.data.a).toBe('typed');
+        });
+
+        test("cell already has pending batch edit, editor opens, then setDataValue('batch') updates pending without affecting editor", async () => {
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [{ field: 'a', editable: true, cellEditor: 'agTextCellEditor' }],
+                rowData: [{ id: '0', a: 'initial' }],
+                getRowId: (params) => params.data.id,
+            });
+
+            api.startBatchEdit();
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            await asyncSetTimeout(1);
+
+            const rowNode = api.getDisplayedRowAtIndex(0)!;
+
+            // Stage a batch value before opening editor
+            rowNode.setDataValue('a', 'first-batch', 'batch');
+            await asyncSetTimeout(1);
+
+            await new GridRows(api, 'first batch pending').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF ⏳ id:0 a:⏳"first-batch" "initial"
+            `);
+
+            // Open the editor
+            api.startEditingCell({ rowIndex: 0, colKey: 'a' });
+            await asyncSetTimeout(1);
+
+            const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+            const editor = await waitForInput(gridDiv, cellA, { popup: false });
+            expect(editor).toBeInTheDocument();
+
+            // Type in the editor
+            await userEvent.clear(editor);
+            await userEvent.keyboard('typed');
+            await asyncSetTimeout(1);
+
+            expect(editor).toHaveValue('typed');
+
+            await new GridRows(api, 'editor open with typed value, first batch pending').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF 🖍️ id:0 a:🖍️"typed" ⏳"first-batch" "initial"
+            `);
+
+            // Now call setDataValue('batch') again — should update pending, leave editor alone
+            rowNode.setDataValue('a', 'second-batch', 'batch');
+            await asyncSetTimeout(1);
+
+            // Editor is still open with typed value
+            expect(gridDiv.querySelector<HTMLInputElement>('input')).toBe(editor);
+            expect(editor).toHaveValue('typed');
+
+            await new GridRows(api, 'after second batch setDataValue — editor untouched, pending updated').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF 🖍️ id:0 a:🖍️"typed" ⏳"second-batch" "initial"
+            `);
+
+            expect(api.getCellValue({ rowNode, colKey: 'a', from: 'batch' })).toBe('second-batch');
+            expect(rowNode.data.a).toBe('initial');
+
+            // ESC — editor closes, cell shows latest batch pending value
+            await userEvent.keyboard('{Escape}');
+            await asyncSetTimeout(1);
+
+            expect(api.getCellEditorInstances()).toHaveLength(0);
+
+            await new GridRows(api, 'after ESC — latest batch pending shown').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF ⏳ id:0 a:⏳"second-batch" "initial"
+            `);
+
+            api.commitBatchEdit();
+            await asyncSetTimeout(1);
+
+            expect(rowNode.data.a).toBe('second-batch');
         });
     });
 
