@@ -71,46 +71,49 @@ const HeaderRowComp = ({
         setPinnedRightWidth(visibleCols.getRightStickyColumnContainerWidth());
     }, [gos, visibleCols]);
 
-    const setRef = useCallback((eRef: HTMLDivElement | null) => {
-        eGui.current = eRef;
-        setGuiRef?.(eRef);
-        if (!eRef || !ctrl.isAlive() || context.isDestroyed()) {
-            compBean.current = context.destroyBean(compBean.current);
-            return;
-        }
-
-        compBean.current = context.createBean(new _EmptyBean());
-
-        const updateCellCtrls = (useFlushSync: boolean) => {
-            const isPrint = gos.get('domLayout') === 'print';
-            const nextSectionSignature = getCellSectionSignature(cellCtrlsRef.current, isPrint);
-            const shouldRefreshForSectionChange = sectionSignatureRef.current !== nextSectionSignature;
-            const next = shouldRefreshForSectionChange
-                ? cellCtrlsRef.current
-                : getNextValueIfDifferent(prevCellCtrlsRef.current, cellCtrlsRef.current, domOrderRef.current)!;
-
-            if (next !== prevCellCtrlsRef.current) {
-                prevCellCtrlsRef.current = next;
-                sectionSignatureRef.current = nextSectionSignature;
-                agFlushSync(useFlushSync, () => setCellCtrls(next));
+    const setRef = useCallback(
+        (eRef: HTMLDivElement | null) => {
+            eGui.current = eRef;
+            setGuiRef?.(eRef);
+            if (!eRef || !ctrl.isAlive() || context.isDestroyed()) {
+                compBean.current = context.destroyBean(compBean.current);
+                return;
             }
-        };
 
-        const compProxy: IHeaderRowComp = {
-            setTop: (value) => setTop(value),
-            setHeight: (value) => setHeight(value),
-            setHeaderCtrls: (ctrls, forceOrder, afterScroll) => {
-                domOrderRef.current = forceOrder;
-                cellCtrlsRef.current = ctrls;
-                updateCellCtrls(afterScroll);
-            },
-            refreshPinnedCellGroupWidths: () => refreshPinnedWidths(),
-            setWidth: (value) => setWidth(value),
-            setRowIndex: (rowIndex) => setAriaRowIndex(rowIndex),
-        };
+            compBean.current = context.createBean(new _EmptyBean());
 
-        ctrl.setComp(compProxy, compBean.current);
-    }, [context, ctrl, refreshPinnedWidths, setGuiRef]);
+            const updateCellCtrls = (useFlushSync: boolean) => {
+                const isPrint = gos.get('domLayout') === 'print';
+                const nextSectionSignature = getCellSectionSignature(cellCtrlsRef.current, isPrint);
+                const shouldRefreshForSectionChange = sectionSignatureRef.current !== nextSectionSignature;
+                const next = shouldRefreshForSectionChange
+                    ? cellCtrlsRef.current
+                    : getNextValueIfDifferent(prevCellCtrlsRef.current, cellCtrlsRef.current, domOrderRef.current)!;
+
+                if (next !== prevCellCtrlsRef.current) {
+                    prevCellCtrlsRef.current = next;
+                    sectionSignatureRef.current = nextSectionSignature;
+                    agFlushSync(useFlushSync, () => setCellCtrls(next));
+                }
+            };
+
+            const compProxy: IHeaderRowComp = {
+                setTop: (value) => setTop(value),
+                setHeight: (value) => setHeight(value),
+                setHeaderCtrls: (ctrls, forceOrder, afterScroll) => {
+                    domOrderRef.current = forceOrder;
+                    cellCtrlsRef.current = ctrls;
+                    updateCellCtrls(afterScroll);
+                },
+                refreshPinnedCellGroupWidths: () => refreshPinnedWidths(),
+                setWidth: (value) => setWidth(value),
+                setRowIndex: (rowIndex) => setAriaRowIndex(rowIndex),
+            };
+
+            ctrl.setComp(compProxy, compBean.current);
+        },
+        [context, ctrl, refreshPinnedWidths, setGuiRef]
+    );
 
     // Set aria-row-index on the DOM element directly
     useEffect(() => {
