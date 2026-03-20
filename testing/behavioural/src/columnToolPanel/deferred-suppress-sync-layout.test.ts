@@ -340,6 +340,97 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
             // reset should not have been called since there were no pending changes
             expect(resetSpy).not.toHaveBeenCalled();
         });
+
+        test('external aggFunc change resets staged changes', async () => {
+            const { gridApi, toolPanel, toolPanelGui } = await createGrid({
+                suppressSyncLayoutWithGrid: true,
+                columnDefs: [
+                    { field: 'athlete' },
+                    { field: 'age', enableValue: true, aggFunc: 'sum' },
+                    { field: 'country' },
+                    { field: 'sport' },
+                    { field: 'gold' },
+                ],
+            });
+            const athlete = gridApi.getColumn('athlete')! as AgColumn;
+
+            // Stage a visibility change
+            getUpdateStrategy(toolPanel).setColumnsVisible(true, [athlete], false, 'toolPanelUi');
+            toolPanel.refreshDeferredUi();
+
+            expect(getApplyButton(toolPanelGui).disabled).toBe(false);
+
+            // External aggFunc change (value col IDs stay the same, only aggFunc changes)
+            gridApi.applyColumnState({ state: [{ colId: 'age', aggFunc: 'max' }] });
+            await asyncSetTimeout(50);
+
+            // Staged changes should be reset because the grid state changed
+            expect(getUpdateStrategy(toolPanel).hasPendingChanges(isDeferred(toolPanel))).toBe(false);
+            expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+        });
+
+        test('no reset when external event fires but grid state matches last-applied snapshot', async () => {
+            const { gridApi, toolPanel, toolPanelGui } = await createGrid({ suppressSyncLayoutWithGrid: true });
+            const athlete = gridApi.getColumn('athlete')! as AgColumn;
+
+            // Stage a visibility change
+            getUpdateStrategy(toolPanel).setColumnsVisible(true, [athlete], false, 'toolPanelUi');
+            toolPanel.refreshDeferredUi();
+
+            expect(getApplyButton(toolPanelGui).disabled).toBe(false);
+
+            // Apply to commit and capture snapshot
+            getApplyButton(toolPanelGui).click();
+            await asyncSetTimeout(50);
+
+            expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+
+            // Stage another change
+            getUpdateStrategy(toolPanel).setColumnsVisible(true, [athlete], true, 'toolPanelUi');
+            toolPanel.refreshDeferredUi();
+
+            expect(getApplyButton(toolPanelGui).disabled).toBe(false);
+
+            // Fire a sort event that resolves to the same state as the last-applied snapshot
+            // (sort was already null, setting it to null again = no real change)
+            gridApi.applyColumnState({ state: [{ colId: 'age', sort: null }] });
+            await asyncSetTimeout(50);
+
+            // Staged changes should NOT be reset because grid state matches the snapshot
+            expect(getUpdateStrategy(toolPanel).hasPendingChanges(isDeferred(toolPanel))).toBe(true);
+            expect(getApplyButton(toolPanelGui).disabled).toBe(false);
+        });
+
+        test('external aggFunc change with custom function resets staged changes', async () => {
+            const customSum = (params: any) => params.values.reduce((a: number, b: number) => a + b, 0);
+            const customMax = (params: any) => Math.max(...params.values);
+
+            const { gridApi, toolPanel, toolPanelGui } = await createGrid({
+                suppressSyncLayoutWithGrid: true,
+                columnDefs: [
+                    { field: 'athlete' },
+                    { field: 'age', enableValue: true, aggFunc: customSum },
+                    { field: 'country' },
+                    { field: 'sport' },
+                    { field: 'gold' },
+                ],
+            });
+            const athlete = gridApi.getColumn('athlete')! as AgColumn;
+
+            // Stage a visibility change
+            getUpdateStrategy(toolPanel).setColumnsVisible(true, [athlete], false, 'toolPanelUi');
+            toolPanel.refreshDeferredUi();
+
+            expect(getApplyButton(toolPanelGui).disabled).toBe(false);
+
+            // External aggFunc change: swap one custom function for another
+            gridApi.applyColumnState({ state: [{ colId: 'age', aggFunc: customMax }] });
+            await asyncSetTimeout(50);
+
+            // Staged changes should be reset — the snapshot must detect function reference change
+            expect(getUpdateStrategy(toolPanel).hasPendingChanges(isDeferred(toolPanel))).toBe(false);
+            expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+        });
     });
 
     describe('initial state and fallback', () => {
