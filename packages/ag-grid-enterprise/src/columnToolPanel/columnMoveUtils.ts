@@ -5,7 +5,7 @@ import type {
     ColumnPanelItemDragStartEvent,
     GridOptionsService,
 } from 'ag-grid-community';
-import { isColumnGroupAutoCol, isProvidedColumnGroup, isSpecialCol } from 'ag-grid-community';
+import { isProvidedColumnGroup } from 'ag-grid-community';
 
 import type { VirtualListDragItem } from '../agStack/iVirtualListDragFeature';
 import type { ToolPanelColumnComp } from './toolPanelColumnComp';
@@ -30,13 +30,8 @@ const getMoveTargetIndex = (
         return null;
     }
 
-    const allColumns = (beans.colModel.getColDefCols() ?? beans.colModel.getCols()).filter(
-        (col) => col.isPrimary() && !isColumnGroupAutoCol(col) && !isSpecialCol(col)
-    );
+    const allColumns = beans.colModel.getCols();
     const targetColumnIndex = allColumns.indexOf(lastHoveredColumn);
-    if (targetColumnIndex < 0) {
-        return null;
-    }
     const adjustedTarget = isBefore ? targetColumnIndex : targetColumnIndex + 1;
     const diff = getMoveDiff(allColumns, currentColumns, adjustedTarget);
 
