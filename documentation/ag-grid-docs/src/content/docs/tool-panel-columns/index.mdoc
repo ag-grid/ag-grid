@@ -117,9 +117,9 @@ The example below demonstrates the suppress options / methods described above. N
 -   The following sections are not present in the tool panel: Row Groups, Values, Column Labels, Pivot Mode, Side Buttons, Column Filter, Select / Unselect All, Expand / Collapse All.
 -   The date column is hidden from the tool panel using: `colDef.suppressColumnsToolPanel=true`.
 -   Clicking **Show Pivot Mode Section** invokes `setPivotModeSectionVisible(true)` on the Columns Tool Panel instance.
--   Clicking **Show Row Groups Section** invokes `showRowGroupsSection(true)` on the Columns Tool Panel instance.
--   Clicking **Show Values Section** invokes `showValuesSection(true)` on the Columns Tool Panel instance.
--   Clicking **Show Pivot Section** invokes `showPivotSection(true)` on the Columns Tool Panel instance.
+-   Clicking **Show Row Groups Section** invokes `setRowGroupsSectionVisible(true)` on the Columns Tool Panel instance.
+-   Clicking **Show Values Section** invokes `setValuesSectionVisible(true)` on the Columns Tool Panel instance.
+-   Clicking **Show Pivot Section** invokes `setPivotSectionVisible(true)` on the Columns Tool Panel instance.
 
 {% gridExampleRunner title="Section Visibility" name="section-visibility"  exampleHeight=630 /%}
 
@@ -234,7 +234,7 @@ columnsToolPanel.collapseColumnGroups();
 columnsToolPanel.expandColumnGroups(['athleteGroupId', 'competitionGroupId']);
 
 // collapses the 'Competition' column group in the Columns Tool Panel
-columnsToolPanel.collapseFilters(['age', 'sport']);
+columnsToolPanel.collapseColumnGroups(['competitionGroupId']);
 ```
 
 Notice in the snippet above that it's possible to target individual column groups by supplying `groupId`s.
