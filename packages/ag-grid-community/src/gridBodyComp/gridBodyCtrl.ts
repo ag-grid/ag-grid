@@ -16,9 +16,6 @@ import type { PopupService } from '../widgets/popupService';
 import { GridBodyScrollFeature } from './gridBodyScrollFeature';
 import type { ScrollVisibleService } from './scrollVisibleService';
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export type RowAnimationCssClasses = 'ag-row-animation' | 'ag-row-no-animation';
-
 export const CSS_CLASS_FORCE_VERTICAL_SCROLL = 'ag-force-vertical-scroll';
 
 const CSS_CLASS_CELL_SELECTABLE = 'ag-selectable';
@@ -38,7 +35,8 @@ export interface IGridBodyComp extends LayoutView {
     setStickyBottomWidth(width: string): void;
     setColumnCount(count: number): void;
     setRowCount(count: number): void;
-    setRowAnimationCssOnScrollableArea(cssClass: RowAnimationCssClasses, animate: boolean): void;
+    setRowAnimationCssOnScrollableArea(animate: boolean): void;
+    setPreventRowAnimationCssOnContainers(prevent: boolean): void;
     setAlwaysVerticalScrollClass(cssClass: string | null, on: boolean): void;
     setGridScrollableAreaWidth(width: string): void;
     setGridRole(role: 'grid' | 'treegrid'): void;
@@ -158,7 +156,7 @@ export class GridBodyCtrl extends BeanStub {
 
     private toggleRowResizeStyles(params: RowResizeStartedEvent | RowResizeEndedEvent) {
         const isResizingRow = params.type === 'rowResizeStarted';
-        this.eGridViewport.classList.toggle('ag-prevent-animation', isResizingRow);
+        this.comp.setPreventRowAnimationCssOnContainers(isResizingRow);
     }
 
     private syncAlwaysVerticalScrollClass(): void {
@@ -373,10 +371,7 @@ export class GridBodyCtrl extends BeanStub {
             // when scaling and doing row animation.
             const animateRows =
                 initialSizeMeasurementComplete && _isAnimateRows(this.gos) && !rowContainerHeight.stretching;
-            const animateRowsCssClass: RowAnimationCssClasses = animateRows
-                ? 'ag-row-animation'
-                : 'ag-row-no-animation';
-            this.comp.setRowAnimationCssOnScrollableArea(animateRowsCssClass, animateRows);
+            this.comp.setRowAnimationCssOnScrollableArea(animateRows);
         };
 
         updateAnimationClass();

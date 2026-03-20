@@ -696,7 +696,7 @@
     //  ****************************
     // */
     // for row animations.
-    .ag-row-animation .ag-row:not(.ag-header-row) {
+    .ag-row-animation .ag-row {
         transition:
             transform 0.4s,
             top 0.4s,
@@ -704,7 +704,7 @@
     }
     // for rows older than one second, we also animate the height. we don't include the height
     // initially so we are not animating auto-height rows on initial render.
-    .ag-row-animation .ag-row.ag-after-created:not(.ag-header-row) {
+    .ag-row-animation .ag-row.ag-after-created {
         transition:
             transform 0.4s,
             top 0.4s,
@@ -712,12 +712,12 @@
             opacity 0.2s;
     }
 
-    .ag-row-animation.ag-prevent-animation .ag-row:not(.ag-header-row),
-    .ag-row-animation.ag-prevent-animation .ag-row.ag-after-created:not(.ag-header-row) {
+    .ag-row-animation.ag-prevent-animation .ag-row,
+    .ag-row-animation.ag-prevent-animation .ag-row.ag-after-created {
         transition: none !important;
     }
 
-    .ag-row-no-animation .ag-row:not(.ag-header-row) {
+    .ag-row-no-animation .ag-row {
         transition: none;
     }
 
@@ -815,26 +815,6 @@
     .ag-rtl .ag-body-horizontal-scroll .ag-grid-scrolling-cells {
         // when scrollable, offset for the vertical scrollbar on the left in rtl.
         margin-left: var(--ag-pinned-left-sticky-offset, 0px);
-    }
-
-    .ag-ltr .ag-grid-pinned-right-cells::after,
-    .ag-rtl .ag-grid-pinned-left-cells::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        height: 100%;
-        pointer-events: none;
-        background-color: inherit;
-    }
-
-    .ag-ltr .ag-grid-pinned-right-cells::after {
-        right: calc(-1 * var(--ag-pinned-right-sticky-offset, 0px));
-        width: var(--ag-pinned-right-sticky-offset, 0px);
-    }
-
-    .ag-rtl .ag-grid-pinned-left-cells::after {
-        left: calc(-1 * var(--ag-pinned-left-sticky-offset, 0px));
-        width: var(--ag-pinned-left-sticky-offset, 0px);
     }
 
     .ag-row-position-absolute {

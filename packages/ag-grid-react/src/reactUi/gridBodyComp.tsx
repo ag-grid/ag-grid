@@ -34,6 +34,7 @@ const GridBodyComp = () => {
     const [stickyBottomWidth, setStickyBottomWidth] = useState<string>('100%');
     const [forceVerticalScrollClass, setForceVerticalScrollClass] = useState<string | null>(null);
     const [cellSelectableCss, setCellSelectableCss] = useState<string | null>(null);
+    const [preventRowAnimationClass, setPreventRowAnimationClass] = useState<string | null>(null);
 
     // we initialise layoutClass to 'ag-layout-normal', because if we don't, the comp will initially
     // render with no width (as ag-layout-normal sets width to 0, which is needed for flex) which
@@ -132,7 +133,10 @@ const GridBodyComp = () => {
             setAlwaysVerticalScrollClass: setForceVerticalScrollClass,
             setCellSelectableCss: (cssClass: string | null, flag: boolean) =>
                 setCellSelectableCss(flag ? cssClass : null),
-            setRowAnimationCssOnScrollableArea: setRowAnimationClass,
+            setRowAnimationCssOnScrollableArea: (animate: boolean) =>
+                setRowAnimationClass(animate ? 'ag-row-animation' : 'ag-row-no-animation'),
+            setPreventRowAnimationCssOnContainers: (prevent: boolean) =>
+                setPreventRowAnimationClass(prevent ? 'ag-prevent-animation' : null),
             setGridScrollableAreaWidth: (width: string) => {
                 if (eGridScrollableArea.current) {
                     eGridScrollableArea.current.style.width = width;
@@ -193,15 +197,18 @@ const GridBodyComp = () => {
         () =>
             classesList(
                 'ag-grid-scrollable-area',
-                rowAnimationClass,
                 !topSection.invisible ? 'ag-has-top-pinned-rows' : null,
                 !bottomSection.invisible ? 'ag-has-bottom-pinned-rows' : null
             ),
-        [bottomSection.invisible, rowAnimationClass, topSection.invisible]
+        [bottomSection.invisible, topSection.invisible]
     );
     const bottomClasses = useMemo(
         () => classesList('ag-grid-pinned-bottom-rows', bottomSectionHidden ? 'ag-hidden' : null, cellSelectableCss),
         [bottomSection.invisible, bottomSectionHidden, cellSelectableCss]
+    );
+    const rowAnimationContainerClass = useMemo(
+        () => classesList(rowAnimationClass, preventRowAnimationClass),
+        [preventRowAnimationClass, rowAnimationClass]
     );
 
     const topStyle: React.CSSProperties = useMemo(() => {
@@ -244,15 +251,27 @@ const GridBodyComp = () => {
                             <GridHeaderComp eTopSection={topElement} eGridViewport={gridViewportElement} />
                         )}
                         <div ref={eTopExtraRows} className="ag-extra-rows-container" role="presentation" />
-                        <RowContainerComp name="pinnedTop" viewportElement={gridViewportElement} />
+                        <RowContainerComp
+                            name="pinnedTop"
+                            viewportElement={gridViewportElement}
+                            extraClassName={rowAnimationContainerClass}
+                        />
                         <RowContainerComp name="stickyTop" viewportElement={gridViewportElement} />
                     </div>
                     <div className={bodyClasses} ref={eBody} role="presentation">
-                        <RowContainerComp name="scrolling" viewportElement={gridViewportElement} />
+                        <RowContainerComp
+                            name="scrolling"
+                            viewportElement={gridViewportElement}
+                            extraClassName={rowAnimationContainerClass}
+                        />
                     </div>
                     <div className={bottomClasses} ref={eBottom} role="presentation" style={bottomStyle}>
                         <RowContainerComp name="stickyBottom" viewportElement={gridViewportElement} />
-                        <RowContainerComp name="pinnedBottom" viewportElement={gridViewportElement} />
+                        <RowContainerComp
+                            name="pinnedBottom"
+                            viewportElement={gridViewportElement}
+                            extraClassName={rowAnimationContainerClass}
+                        />
                     </div>
                 </div>
             </div>

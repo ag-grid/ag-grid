@@ -204,7 +204,7 @@
   * Rows
   ****************************
   */
-:where(.ag-row-animation .ag-row:not(.ag-header-row)) {
+:where(.ag-row-animation) .ag-row {
     transition:
         transform 0.4s,
         top 0.4s,
@@ -221,7 +221,7 @@
     }
 }
 
-:where(.ag-row-animation.ag-prevent-animation .ag-row:not(.ag-header-row)) {
+:where(.ag-row-animation.ag-prevent-animation) .ag-row {
     transition: none !important;
 
     &:where(.ag-row.ag-after-created) {
@@ -229,7 +229,7 @@
     }
 }
 
-:where(.ag-row-no-animation .ag-row:not(.ag-header-row)) {
+:where(.ag-row-no-animation) .ag-row {
     transition: none;
 }
 
@@ -332,30 +332,6 @@
         /* when scrollable, offset for the vertical scrollbar on the left in rtl. */
         margin-left: var(--ag-pinned-left-sticky-offset, 0);
     }
-}
-
-.ag-grid-pinned-right-cells::after,
-.ag-grid-pinned-left-cells::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    height: 100%;
-    pointer-events: none;
-
-    /* fill the sticky-offset gutter using the pinned lane's background. */
-    background-color: inherit;
-}
-
-:where(.ag-ltr) .ag-grid-pinned-right-cells::after {
-    /* rtl:ignore */
-    right: calc(-1 * var(--ag-pinned-right-sticky-offset, 0));
-    width: var(--ag-pinned-right-sticky-offset, 0);
-}
-
-:where(.ag-rtl) .ag-grid-pinned-left-cells::after {
-    /* rtl:ignore */
-    left: calc(-1 * var(--ag-pinned-left-sticky-offset, 0));
-    width: var(--ag-pinned-left-sticky-offset, 0);
 }
 
 .ag-row-position-absolute {

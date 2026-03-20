@@ -22,9 +22,11 @@ const asCommunityRowContainerName = (name: ReactRowContainerName): CommunityRowC
 const RowContainerComp = ({
     name,
     viewportElement,
+    extraClassName,
 }: {
     name: ReactRowContainerName;
     viewportElement?: HTMLElement | null;
+    extraClassName?: string | null;
 }) => {
     const { context, gos } = useContext(BeansContext);
 
@@ -47,8 +49,13 @@ const RowContainerComp = ({
     const rowContainerCtrlRef = useRef<RowContainerCtrl>();
 
     const containerClasses = useMemo(
-        () => classesList(_getRowContainerClass(asCommunityRowContainerName(name)), hidden ? 'ag-hidden' : null),
-        [name, hidden]
+        () =>
+            classesList(
+                _getRowContainerClass(asCommunityRowContainerName(name)),
+                hidden ? 'ag-hidden' : null,
+                extraClassName
+            ),
+        [extraClassName, name, hidden]
     );
     const spanClasses = useMemo(
         () => classesList('ag-spanning-container', _getRowSpanContainerClass(asCommunityRowContainerName(name))),

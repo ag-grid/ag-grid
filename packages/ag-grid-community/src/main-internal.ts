@@ -323,7 +323,7 @@ export type { GridParams } from './grid';
 export { FakeHScrollComp } from './gridBodyComp/fakeHScrollComp';
 export { FakeVScrollComp } from './gridBodyComp/fakeVScrollComp';
 export { GridBodyCtrl } from './gridBodyComp/gridBodyCtrl';
-export type { IGridBodyComp, RowAnimationCssClasses } from './gridBodyComp/gridBodyCtrl';
+export type { IGridBodyComp } from './gridBodyComp/gridBodyCtrl';
 export { _getCellPositionForEvent, _getNormalisedMousePosition } from './gridBodyComp/mouseEventUtils';
 export {
     _getRowContainerClass,

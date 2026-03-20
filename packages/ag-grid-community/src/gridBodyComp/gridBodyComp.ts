@@ -11,8 +11,9 @@ import type { ComponentSelector } from '../widgets/component';
 import { Component } from '../widgets/component';
 import { FakeHScrollSelector } from './fakeHScrollComp';
 import { FakeVScrollSelector } from './fakeVScrollComp';
-import type { IGridBodyComp, PinnedSectionState, RowAnimationCssClasses } from './gridBodyCtrl';
+import type { IGridBodyComp, PinnedSectionState } from './gridBodyCtrl';
 import { CSS_CLASS_FORCE_VERTICAL_SCROLL, GridBodyCtrl } from './gridBodyCtrl';
+import type { RowContainerComp } from './rowContainer/rowContainerComp';
 import { RowContainerSelector } from './rowContainer/rowContainerComp';
 import type { RowContainerName } from './rowContainer/rowContainerCtrl';
 
@@ -99,6 +100,9 @@ export class GridBodyComp extends Component implements FocusableContainer {
     private readonly eTopExtraRows: HTMLElement = RefPlaceholder;
     private readonly eBottom: HTMLElement = RefPlaceholder;
     private readonly eBody: HTMLElement = RefPlaceholder;
+    private readonly eScrollingRowContainer: RowContainerComp = RefPlaceholder;
+    private readonly ePinnedTopRowContainer: RowContainerComp = RefPlaceholder;
+    private readonly ePinnedBottomRowContainer: RowContainerComp = RefPlaceholder;
 
     private ctrl: GridBodyCtrl;
     private pinnedSectionState: VerticalSectionMap<PinnedSectionState> = {
@@ -125,8 +129,13 @@ export class GridBodyComp extends Component implements FocusableContainer {
         );
 
         const compProxy: IGridBodyComp = {
-            setRowAnimationCssOnScrollableArea: (cssClass, animate) =>
-                this.setRowAnimationCssOnScrollableArea(cssClass, animate),
+            setRowAnimationCssOnScrollableArea: (animate) => {
+                this.toggleClassForContainers('ag-row-animation', !!animate);
+                this.toggleClassForContainers('ag-row-no-animation', !animate);
+            },
+            setPreventRowAnimationCssOnContainers: (prevent) => {
+                this.toggleClassForContainers('ag-prevent-animation', prevent);
+            },
             setColumnCount: (count) => _setAriaColCount(this.eGridViewport, count),
             setRowCount: (count) => _setAriaRowCount(this.eGridViewport, count),
             setPinnedSection: (section, state) => this.setPinnedSection(section, state),
@@ -181,10 +190,15 @@ export class GridBodyComp extends Component implements FocusableContainer {
         }
     }
 
-    private setRowAnimationCssOnScrollableArea(cssClass: RowAnimationCssClasses, animateRows: boolean): void {
-        const scrollableAreaClassList = this.eGridScrollableArea.classList;
-        scrollableAreaClassList.toggle('ag-row-animation' as RowAnimationCssClasses, animateRows);
-        scrollableAreaClassList.toggle('ag-row-no-animation' as RowAnimationCssClasses, !animateRows);
+    private toggleClassForContainers(cssClass: string, toggle: boolean): void {
+        for (const eContainer of [
+            this.eScrollingRowContainer,
+            this.ePinnedTopRowContainer,
+            this.ePinnedBottomRowContainer,
+        ]) {
+            const eGui = eContainer.getGui();
+            eGui.classList.toggle(cssClass, toggle);
+        }
     }
 
     private setPinnedSection(section: VerticalSection, state: PinnedSectionState): void {

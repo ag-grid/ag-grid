@@ -12,6 +12,7 @@ const GridHeaderComp = ({ eTopSection, eGridViewport }: { eTopSection: HTMLEleme
     const gridHeaderCtrlRef = useRef<GridHeaderCtrl>();
     const cssManager = useRef<CssClassManager>();
     const eGui = useRef<HTMLDivElement | null>(null);
+    const [headerElement, setHeaderElement] = useState<HTMLDivElement | null>(null);
     const [mounted, setMounted] = useState(false);
 
     if (!cssManager.current) {
@@ -25,6 +26,7 @@ const GridHeaderComp = ({ eTopSection, eGridViewport }: { eTopSection: HTMLEleme
     const setRef = useCallback(
         (eRef: HTMLDivElement | null) => {
             eGui.current = eRef;
+            setHeaderElement(eRef);
             if (!eRef || context.isDestroyed()) {
                 eTopSection.style.removeProperty('--ag-header-rows-height');
                 gridHeaderCtrlRef.current = context.destroyBean(gridHeaderCtrlRef.current);
@@ -55,8 +57,9 @@ const GridHeaderComp = ({ eTopSection, eGridViewport }: { eTopSection: HTMLEleme
 
     return (
         <div ref={setRef} className={className} role="presentation">
-            {mounted && (
+            {mounted && headerElement && (
                 <HeaderRowsComp
+                    eGui={headerElement}
                     eGridViewport={eGridViewport}
                     setHeaderRowFocusableElements={setHeaderRowFocusableElements}
                 />

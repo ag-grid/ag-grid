@@ -7,9 +7,11 @@ import { BeansContext } from '../beansContext';
 import HeaderRowComp from './headerRowComp';
 
 const HeaderRowsComp = ({
+    eGui,
     eGridViewport,
     setHeaderRowFocusableElements,
 }: {
+    eGui: HTMLElement;
     eGridViewport: HTMLElement;
     setHeaderRowFocusableElements?: (elements: HTMLElement[]) => void;
 }) => {
@@ -39,26 +41,30 @@ const HeaderRowsComp = ({
         );
     }, [headerRowCtrls, setHeaderRowFocusableElements]);
 
-    const setRef = useCallback(
-        (eRef: HTMLDivElement | null) => {
-            if (!eRef || context.isDestroyed()) {
-                headerRowsCtrlRef.current = context.destroyBean(headerRowsCtrlRef.current);
-                return;
+    useLayoutEffect(() => {
+        if (!eGui || context.isDestroyed()) {
+            headerRowsCtrlRef.current = context.destroyBean(headerRowsCtrlRef.current);
+            return;
+        }
+
+        const compProxy: IHeaderRowsComp = {
+            setCtrls: (ctrls) => setHeaderRowCtrls(ctrls),
+            setViewportScrollLeft: (_left) => {},
+        };
+
+        headerRowsCtrlRef.current = context.createBean(new HeaderRowsCtrl());
+        headerRowsCtrlRef.current.setComp(compProxy, eGui, eGridViewport);
+
+        return () => {
+            if (setHeaderRowFocusableElements) {
+                setHeaderRowFocusableElements([]);
             }
-
-            const compProxy: IHeaderRowsComp = {
-                setCtrls: (ctrls) => setHeaderRowCtrls(ctrls),
-                setViewportScrollLeft: (_left) => {},
-            };
-
-            headerRowsCtrlRef.current = context.createBean(new HeaderRowsCtrl());
-            headerRowsCtrlRef.current.setComp(compProxy, eRef, eGridViewport);
-        },
-        [context, eGridViewport]
-    );
+            headerRowsCtrlRef.current = context.destroyBean(headerRowsCtrlRef.current);
+        };
+    }, [context, eGui, eGridViewport, setHeaderRowFocusableElements]);
 
     return (
-        <div ref={setRef} role="presentation">
+        <>
             {headerRowCtrls.map((ctrl) => (
                 <HeaderRowComp
                     ctrl={ctrl}
@@ -66,7 +72,7 @@ const HeaderRowsComp = ({
                     setGuiRef={(eGui) => setRowGui(ctrl.instanceId, eGui)}
                 />
             ))}
-        </div>
+        </>
     );
 };
 
