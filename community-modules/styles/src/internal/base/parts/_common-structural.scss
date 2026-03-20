@@ -696,7 +696,7 @@
     //  ****************************
     // */
     // for row animations.
-    .ag-row-animation .ag-row {
+    .ag-row-animation .ag-row:not(.ag-header-row) {
         transition:
             transform 0.4s,
             top 0.4s,
@@ -704,7 +704,7 @@
     }
     // for rows older than one second, we also animate the height. we don't include the height
     // initially so we are not animating auto-height rows on initial render.
-    .ag-row-animation .ag-row.ag-after-created {
+    .ag-row-animation .ag-row.ag-after-created:not(.ag-header-row) {
         transition:
             transform 0.4s,
             top 0.4s,
@@ -712,12 +712,12 @@
             opacity 0.2s;
     }
 
-    .ag-row-animation.ag-prevent-animation .ag-row,
-    .ag-row-animation.ag-prevent-animation .ag-row.ag-after-created {
+    .ag-row-animation.ag-prevent-animation .ag-row:not(.ag-header-row),
+    .ag-row-animation.ag-prevent-animation .ag-row.ag-after-created:not(.ag-header-row) {
         transition: none !important;
     }
 
-    .ag-row-no-animation .ag-row {
+    .ag-row-no-animation .ag-row:not(.ag-header-row) {
         transition: none;
     }
 

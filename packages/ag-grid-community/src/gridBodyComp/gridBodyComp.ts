@@ -125,8 +125,8 @@ export class GridBodyComp extends Component implements FocusableContainer {
         );
 
         const compProxy: IGridBodyComp = {
-            setRowAnimationCssOnBodyViewport: (cssClass, animate) =>
-                this.setRowAnimationCssOnBodyViewport(cssClass, animate),
+            setRowAnimationCssOnScrollableArea: (cssClass, animate) =>
+                this.setRowAnimationCssOnScrollableArea(cssClass, animate),
             setColumnCount: (count) => _setAriaColCount(this.eGridViewport, count),
             setRowCount: (count) => _setAriaRowCount(this.eGridViewport, count),
             setPinnedSection: (section, state) => this.setPinnedSection(section, state),
@@ -181,10 +181,10 @@ export class GridBodyComp extends Component implements FocusableContainer {
         }
     }
 
-    private setRowAnimationCssOnBodyViewport(cssClass: RowAnimationCssClasses, animateRows: boolean): void {
-        const bodyViewportClassList = this.eBody.classList;
-        bodyViewportClassList.toggle('ag-row-animation' as RowAnimationCssClasses, animateRows);
-        bodyViewportClassList.toggle('ag-row-no-animation' as RowAnimationCssClasses, !animateRows);
+    private setRowAnimationCssOnScrollableArea(cssClass: RowAnimationCssClasses, animateRows: boolean): void {
+        const scrollableAreaClassList = this.eGridScrollableArea.classList;
+        scrollableAreaClassList.toggle('ag-row-animation' as RowAnimationCssClasses, animateRows);
+        scrollableAreaClassList.toggle('ag-row-no-animation' as RowAnimationCssClasses, !animateRows);
     }
 
     private setPinnedSection(section: VerticalSection, state: PinnedSectionState): void {

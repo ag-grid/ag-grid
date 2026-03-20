@@ -116,7 +116,6 @@ const GridBodyComp = () => {
         }
 
         const compProxy: IGridBodyComp = {
-            setRowAnimationCssOnBodyViewport: setRowAnimationClass,
             setColumnCount: (count: number) => {
                 if (eGridViewport.current) {
                     _setAriaColCount(eGridViewport.current, count);
@@ -133,6 +132,7 @@ const GridBodyComp = () => {
             setAlwaysVerticalScrollClass: setForceVerticalScrollClass,
             setCellSelectableCss: (cssClass: string | null, flag: boolean) =>
                 setCellSelectableCss(flag ? cssClass : null),
+            setRowAnimationCssOnScrollableArea: setRowAnimationClass,
             setGridScrollableAreaWidth: (width: string) => {
                 if (eGridScrollableArea.current) {
                     eGridScrollableArea.current.style.width = width;
@@ -177,8 +177,8 @@ const GridBodyComp = () => {
         [layoutClass, forceVerticalScrollClass]
     );
     const bodyClasses = useMemo(
-        () => classesList('ag-grid-scrolling-rows', rowAnimationClass, layoutClass, cellSelectableCss),
-        [rowAnimationClass, layoutClass, cellSelectableCss]
+        () => classesList('ag-grid-scrolling-rows', layoutClass, cellSelectableCss),
+        [layoutClass, cellSelectableCss]
     );
     const topSection = pinnedSections.top;
     const bottomSection = pinnedSections.bottom;
@@ -193,10 +193,11 @@ const GridBodyComp = () => {
         () =>
             classesList(
                 'ag-grid-scrollable-area',
+                rowAnimationClass,
                 !topSection.invisible ? 'ag-has-top-pinned-rows' : null,
                 !bottomSection.invisible ? 'ag-has-bottom-pinned-rows' : null
             ),
-        [bottomSection.invisible, topSection.invisible]
+        [bottomSection.invisible, rowAnimationClass, topSection.invisible]
     );
     const bottomClasses = useMemo(
         () => classesList('ag-grid-pinned-bottom-rows', bottomSectionHidden ? 'ag-hidden' : null, cellSelectableCss),

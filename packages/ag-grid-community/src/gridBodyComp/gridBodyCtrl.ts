@@ -38,7 +38,7 @@ export interface IGridBodyComp extends LayoutView {
     setStickyBottomWidth(width: string): void;
     setColumnCount(count: number): void;
     setRowCount(count: number): void;
-    setRowAnimationCssOnBodyViewport(cssClass: RowAnimationCssClasses, animate: boolean): void;
+    setRowAnimationCssOnScrollableArea(cssClass: RowAnimationCssClasses, animate: boolean): void;
     setAlwaysVerticalScrollClass(cssClass: string | null, on: boolean): void;
     setGridScrollableAreaWidth(width: string): void;
     setGridRole(role: 'grid' | 'treegrid'): void;
@@ -376,7 +376,7 @@ export class GridBodyCtrl extends BeanStub {
             const animateRowsCssClass: RowAnimationCssClasses = animateRows
                 ? 'ag-row-animation'
                 : 'ag-row-no-animation';
-            this.comp.setRowAnimationCssOnBodyViewport(animateRowsCssClass, animateRows);
+            this.comp.setRowAnimationCssOnScrollableArea(animateRowsCssClass, animateRows);
         };
 
         updateAnimationClass();
