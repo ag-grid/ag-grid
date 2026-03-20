@@ -83,26 +83,20 @@ the cell is treated as not editable unless the user explicitly sets a distributi
 To enable editing, set an explicit distribution in the per-aggFunc record, as a top-level strategy string,
 or use the `default` fallback option for custom aggregation functions.
 
-{% note %}
-Setting `distribution` to `false` or `null` makes the group cell not editable — even when `groupRowEditable` is `true`.
-This applies both at the top level and within per-aggregation-function records.
-For example, `{ distribution: { sum: false, avg: 'uniform' } }` prevents editing on `sum` columns
-while allowing it on `avg` columns.
-{% /note %}
+Setting `distribution` to `false` or `null` explicitly suppresses distribution and makes the group cell
+not editable — even when `groupRowEditable` is `true`. This applies both at the top level and within
+per-aggregation-function records, e.g. `{ distribution: { sum: false, avg: 'uniform' } }`.
 
-{% note %}
 For `avg` aggregation, the distributor internally adjusts the target so the average equals the edited value.
-With `'uniform'`, each child is set to `newValue` directly (since the average of identical values equals that value).
-With `'increment'`, the full delta is added to every child (since shifting all children by the same amount shifts the average by that amount).
-{% /note %}
+With `'uniform'`, each child is set to `newValue` directly. With `'increment'`, the full delta is added
+to every child.
 
 {% note %}
 The `precision` option rounds the values written to **child rows**, not the group row's displayed value.
-The group value is re-computed by the column's `aggFunc` from the rounded children. For `sum` this is always exact
-(the sum of integers is an integer). For `avg` the re-aggregated value may differ — for example, distributing
-`precision: 0` across 3 children produces integers, but their average (`10 / 3 ≈ 3.33`) is not an integer.
-To control how the re-aggregated value is displayed, use a [Value Formatter](./value-formatters/) on the column —
-for example, `valueFormatter: (params) => Number(params.value).toFixed(0)` to always display integers on the group row.
+The group value is re-computed by the column's `aggFunc` from the rounded children. For `sum` this is always exact.
+For `avg` the re-aggregated value may differ — for example, distributing `precision: 0` across 3 children
+produces integers, but their average (`10 / 3 ≈ 3.33`) is not an integer. Use a
+[Value Formatter](./value-formatters/) to control how the group row displays the re-aggregated value.
 {% /note %}
 
 ### Distribution Options
