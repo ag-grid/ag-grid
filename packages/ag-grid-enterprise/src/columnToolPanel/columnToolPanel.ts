@@ -4,6 +4,7 @@ import type {
     ColGroupDef,
     ColumnToolPanelAction,
     ColumnToolPanelState,
+    IAggFunc,
     IColumnToolPanel,
     IToolPanelColumnCompParams,
     IToolPanelComp,
@@ -40,7 +41,7 @@ interface GridStateSnapshot {
     columnOrder: string[];
     visibleColIds: string[];
     sortState: string[];
-    aggFuncState: string[];
+    aggFuncState: (string | IAggFunc | null | undefined)[];
 }
 
 const DEFERRED_TOOL_PANEL_CLASS = 'ag-column-panel-deferred';
@@ -269,10 +270,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
                 .getCols()
                 .filter((c) => c.getSort())
                 .map((c) => `${c.getColId()}:${c.getSort()}:${c.getSortIndex()}`),
-            aggFuncState: (beans.valueColsSvc?.columns ?? []).map((c) => {
-                const aggFunc = c.getAggFunc();
-                return `${c.getColId()}:${typeof aggFunc === 'string' ? aggFunc : typeof aggFunc}`;
-            }),
+            aggFuncState: (beans.valueColsSvc?.columns ?? []).map((c) => c.getAggFunc()),
         };
     }
 
