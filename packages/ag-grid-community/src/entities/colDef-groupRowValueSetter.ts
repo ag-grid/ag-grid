@@ -201,14 +201,16 @@ export type GroupRowValueSetterDistribution = 'uniform' | 'percentage' | 'increm
  */
 export type GroupRowValueSetterDistributionEntry<TData = any, TValue = any, TContext = any> =
     | GroupRowValueSetterDistribution
+    | GroupRowValueSetterDistributionOptions
+    | GroupRowValueSetterFunc<TData, TValue, TContext>
     | false
     | null
-    | undefined
-    | GroupRowValueSetterDistributionOptions
-    | GroupRowValueSetterFunc<TData, TValue, TContext>;
+    | undefined;
 
 /**
  * Maps aggregation function names (e.g. `'sum'`, `'avg'`, or a custom name) to distribution entries.
+ * Each entry can be a strategy string, an options object, a custom callback function,
+ * or `false`/`null` to suppress distribution for that aggFunc.
  * Unmatched aggFuncs fall through to {@link GroupRowValueSetterOptions.default | default},
  * then to the built-in defaults.
  *
@@ -218,6 +220,8 @@ export type GroupRowValueSetterDistributionEntry<TData = any, TValue = any, TCon
  *     distribution: {
  *         sum: 'percentage',
  *         avg: { distribution: 'increment' },
+ *         myCustomAgg: (params) => { ... },
+ *         count: false,
  *     },
  * };
  * ```
@@ -247,8 +251,9 @@ export interface GroupRowValueSetterDistributionOptions {
      * Set to `false` or `null` to suppress distribution and make the cell not editable.
      * When `undefined`, inherits from the parent options.
      *
-     * When omitted at all levels, defaults to `'uniform'` for `sum`, `'overwrite'` for `avg`,
-     * the aggFunc's own strategy for `first`/`last`, and disabled for `count`/`min`/`max`.
+     * When omitted at all levels, defaults to `'uniform'` for `sum`, `'overwrite'` for `avg`
+     * and columns without an aggFunc, the aggFunc's own strategy for `first`/`last`,
+     * and disabled for `count`/`min`/`max` and custom aggFuncs.
      */
     distribution?: GroupRowValueSetterDistribution | false | null;
 
@@ -317,11 +322,12 @@ export interface GroupRowValueSetterDistributionOptions {
  * Assign to `colDef.groupRowValueSetter` or use `true` for defaults.
  *
  * **Defaults by aggFunc:**
- * - `sum` → `'uniform'` (divides equally)
- * - `avg` → `'overwrite'` (writes the edited value to all children)
- * - `first` / `last` → writes to that child only
- * - `count` / `min` / `max` → disabled by default (cell is not editable unless an explicit distribution is set)
- * - Other aggFuncs → `'overwrite'`
+ * - No aggFunc: `'overwrite'` (writes the edited value to all children)
+ * - `sum`: `'uniform'` (divides equally)
+ * - `avg`: `'overwrite'` (writes the edited value to all children)
+ * - `first` / `last`: writes to that child only
+ * - `count` / `min` / `max`: disabled by default (cell is not editable unless an explicit distribution is set)
+ * - Custom aggFuncs: disabled by default (set a `distribution` or use `default` to enable)
  *
  * @example
  * ```ts
@@ -378,8 +384,8 @@ export interface GroupRowValueSetterOptions<TData = any, TValue = any, TContext 
      * // Single strategy
      * distribution: 'percentage'
      *
-     * // Per-aggFunc record
-     * distribution: { sum: 'percentage', avg: 'increment', count: false }
+     * // Per-aggFunc record (entries can be strings, objects, functions, or false/null)
+     * distribution: { sum: 'percentage', avg: 'increment', myAgg: (params) => { ... }, count: false }
      * ```
      */
     distribution?:
@@ -389,18 +395,29 @@ export interface GroupRowValueSetterOptions<TData = any, TValue = any, TContext 
         | GroupRowValueSetterDistributionRecord<TData, TValue, TContext>;
 
     /**
-     * Fallback handler for aggFuncs not listed in the `distribution` record.
-     * Only used when `distribution` is a record — when it is a string or omitted,
-     * the built-in defaults apply and `default` is not called.
+     * Fallback for aggFuncs that don't have a specific distribution strategy.
+     * When `distribution` is a record, applies to aggFuncs not listed in the record.
+     * When `distribution` is omitted, applies only to custom (non-built-in) aggFuncs.
+     * Ignored when `distribution` is a string (all aggFuncs use the specified strategy).
+     *
+     * Accepts the same values as record entries:
+     * - A function for full custom handling.
+     * - A strategy string (e.g. `'overwrite'`).
+     * - `false` or `null` to suppress distribution and make unmatched aggFunc cells not editable.
+     * - An options object with strategy and precision.
      *
      * @example
      * ```ts
+     * // Custom handler
      * default: (params) => {
      *     for (const child of params.aggregatedChildren) {
      *         child.setDataValue(params.column, params.newValue, 'data');
      *     }
      * }
+     *
+     * // Suppress all unmatched aggFuncs
+     * default: false
      * ```
      */
-    default?: GroupRowValueSetterFunc<TData, TValue, TContext>;
+    default?: GroupRowValueSetterDistributionEntry<TData, TValue, TContext>;
 }

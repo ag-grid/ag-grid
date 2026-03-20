@@ -1,5 +1,6 @@
 import type {
     AgColumn,
+    GroupRowValueSetterDistributionEntry,
     GroupRowValueSetterDistributionOptions,
     GroupRowValueSetterOptions,
     GroupRowValueSetterParams,
@@ -85,9 +86,30 @@ class RowGroupingEditValueSvc extends BeanStub implements NamedBean, _IRowGroupi
     }
 }
 
-/** Whether this aggFunc is disabled by default (requires explicit distribution to be editable). */
+/** Whether this aggFunc is disabled by default (requires explicit distribution to be editable).
+ * count/min/max and custom aggFuncs are disabled. null (no aggFunc), sum, avg, first, last are enabled. */
 function isDisabledByDefault(aggFunc: string | null): boolean {
-    return aggFunc === 'count' || aggFunc === 'min' || aggFunc === 'max';
+    return aggFunc !== null && aggFunc !== 'sum' && aggFunc !== 'avg' && aggFunc !== 'first' && aggFunc !== 'last';
+}
+
+/** Whether a distribution entry suppresses distribution for the given aggFunc. */
+function isEntrySuppressed(entry: GroupRowValueSetterDistributionEntry | undefined, aggFunc: string | null): boolean {
+    if (entry === false || entry === null) {
+        return true;
+    }
+    if (entry === undefined) {
+        return isDisabledByDefault(aggFunc);
+    }
+    // Function or string strategy — not suppressed
+    if (typeof entry === 'function' || typeof entry === 'string') {
+        return false;
+    }
+    // Options object — check its distribution field
+    const dist = (entry as GroupRowValueSetterDistributionOptions).distribution;
+    if (dist === false || dist === null) {
+        return true;
+    }
+    return dist === undefined && isDisabledByDefault(aggFunc);
 }
 
 /** Checks whether an options-object groupRowValueSetter would suppress distribution for the given aggFunc. */
@@ -109,9 +131,18 @@ function isDistributionSuppressed(
         return false;
     }
 
-    // No distribution specified — suppressed for count/min/max, not for others
+    // No distribution specified — check built-in defaults
     if (dist === undefined) {
-        return isDisabledByDefault(aggFuncStr);
+        // count/min/max are always disabled (opts.default does not apply to built-in aggFuncs)
+        if (aggFuncStr === 'count' || aggFuncStr === 'min' || aggFuncStr === 'max') {
+            return true;
+        }
+        // null (no aggFunc), sum, avg, first, last — always enabled
+        if (!isDisabledByDefault(aggFuncStr)) {
+            return false;
+        }
+        // Custom aggFunc — check opts.default fallback, disabled if no default
+        return isEntrySuppressed(opts.default, aggFuncStr);
     }
 
     // Per-aggFunc record — look up the current column's aggFunc
@@ -121,27 +152,12 @@ function isDistributionSuppressed(
 
     const entry = dist[aggFuncStr];
 
-    // undefined means not in the record — suppressed if disabled by default
+    // Not in record → check default fallback (isEntrySuppressed handles undefined default → isDisabledByDefault)
     if (entry === undefined) {
-        return isDisabledByDefault(aggFuncStr);
+        return isEntrySuppressed(opts.default, aggFuncStr);
     }
 
-    if (entry === false || entry === null) {
-        return true;
-    }
-
-    if (typeof entry === 'object') {
-        const entryDist = (entry as GroupRowValueSetterDistributionOptions).distribution;
-        if (entryDist === false || entryDist === null) {
-            return true;
-        }
-        // undefined distribution in options object, inherits disabled-by-default for count/min/max
-        if (entryDist === undefined) {
-            return isDisabledByDefault(aggFuncStr);
-        }
-    }
-
-    return false;
+    return isEntrySuppressed(entry, aggFuncStr);
 }
 
 /**

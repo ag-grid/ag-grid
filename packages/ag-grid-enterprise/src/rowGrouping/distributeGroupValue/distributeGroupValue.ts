@@ -1,12 +1,14 @@
 import type {
+    GroupRowValueSetterDistribution,
+    GroupRowValueSetterDistributionEntry,
     GroupRowValueSetterDistributionOptions,
-    GroupRowValueSetterFunc,
     GroupRowValueSetterOptions,
     GroupRowValueSetterParams,
 } from 'ag-grid-community';
 
 import { DistributorBigInt } from './distributorBigInt';
 import { DistributorNumber } from './distributorNumber';
+import { hasBuiltInDefault } from './valueConversion';
 
 /**
  * Built-in `groupRowValueSetter` that distributes a group-level value edit
@@ -35,55 +37,16 @@ export const distributeGroupValue = (
     }
 
     const aggFunc = typeof colDef.aggFunc === 'string' ? colDef.aggFunc : null;
+    const entry = resolveEntry(options, aggFunc);
 
-    // Resolve distribution options, handling per-aggFunc records
-    let entry: GroupRowValueSetterDistributionOptions | undefined;
-    let defaultHandler: GroupRowValueSetterFunc | undefined;
-    if (options) {
-        const dist = options.distribution;
-        defaultHandler = options.default;
+    // Suppressed
+    if (entry === false) {
+        return false;
+    }
 
-        // Explicit suppression at top level
-        if (dist === false || dist === null) {
-            return false;
-        }
-
-        if (dist === undefined || typeof dist === 'string') {
-            // Simple string or undefined distribution — pass options directly (extra properties are ignored)
-            entry = options as GroupRowValueSetterDistributionOptions;
-        } else {
-            // Per-aggFunc record — look up the entry for the current aggFunc
-            const perAgg = aggFunc != null ? dist[aggFunc] : undefined;
-
-            // Explicit suppression for this aggFunc
-            if (perAgg === false || perAgg === null) {
-                return false;
-            }
-
-            if (typeof perAgg === 'function') {
-                return perAgg(params) ?? true;
-            }
-            const { precision, getValue, setValue } = options;
-            if (typeof perAgg === 'string') {
-                entry = { distribution: perAgg, precision, getValue, setValue };
-            } else if (perAgg != null) {
-                entry = {
-                    distribution: perAgg.distribution,
-                    precision: perAgg.precision ?? precision,
-                    getValue: perAgg.getValue ?? getValue,
-                    setValue: perAgg.setValue ?? setValue,
-                };
-            } else {
-                // aggFunc not in the record (or explicitly undefined) — fall through to default handler
-                // or let the distributor resolve the default strategy for the aggFunc
-                if (defaultHandler) {
-                    return defaultHandler(params) ?? true;
-                }
-                entry = { distribution: undefined, precision, getValue, setValue };
-            }
-            // Record mode handles unmatched aggFuncs above — the distributor doesn't need defaultHandler
-            defaultHandler = undefined;
-        }
+    // Custom handler function
+    if (typeof entry === 'function') {
+        return entry(params) ?? true;
     }
 
     // Delegate to the type-appropriate distributor.
@@ -91,7 +54,81 @@ export const distributeGroupValue = (
     // This check works for both explicit and inferred types — dataTypeService writes the
     // inferred cellDataType back to colDef before the grid becomes interactive.
     if (colDef.cellDataType === 'bigint') {
-        return new DistributorBigInt(params, entry, aggFunc, defaultHandler).run();
+        return new DistributorBigInt(params, entry, aggFunc).run();
     }
-    return new DistributorNumber(params, entry, aggFunc, defaultHandler).run();
+    return new DistributorNumber(params, entry, aggFunc).run();
 };
+
+/** Resolved entry: distribution options for distributors, a custom handler function, or `false` for suppression. */
+type ResolvedEntry = GroupRowValueSetterDistributionOptions | ((...args: any[]) => any) | false | undefined;
+
+/** Resolves the distribution entry from user options, handling per-aggFunc records and default fallbacks. */
+function resolveEntry(options: GroupRowValueSetterOptions | undefined, aggFunc: string | null): ResolvedEntry {
+    if (!options) {
+        return undefined;
+    }
+
+    const { distribution: dist } = options;
+
+    // Top-level suppression
+    if (dist === false || dist === null) {
+        return false;
+    }
+
+    // No distribution or simple string strategy — use options directly
+    if (dist === undefined || typeof dist === 'string') {
+        // When no strategy is specified, check options.default for custom aggFuncs
+        // (aggFuncs with no built-in default strategy)
+        if (dist === undefined && !hasBuiltInDefault(aggFunc)) {
+            const resolved = normalizeEntry(options.default, options);
+            if (resolved !== undefined) {
+                return resolved;
+            }
+        }
+        return options as GroupRowValueSetterDistributionOptions;
+    }
+
+    // Per-aggFunc record — look up the entry for the current aggFunc
+    const aggEntry = aggFunc != null ? dist[aggFunc] : undefined;
+    if (aggEntry !== undefined) {
+        // normalizeEntry won't return undefined since aggEntry isn't undefined
+        return normalizeEntry(aggEntry, options)!;
+    }
+
+    // aggFunc not in the record — resolve options.default fallback, then inherit top-level options
+    return normalizeEntry(options.default, options) ?? inheritOptions(options);
+}
+
+/** Normalizes a distribution entry (string/function/object/false/null/undefined) into a ResolvedEntry. */
+function normalizeEntry(
+    entry: GroupRowValueSetterDistributionEntry | undefined,
+    parent: GroupRowValueSetterOptions
+): ResolvedEntry {
+    if (entry === false || entry === null) {
+        return false;
+    }
+    if (entry === undefined) {
+        return undefined;
+    }
+    if (typeof entry === 'function') {
+        return entry;
+    }
+    if (typeof entry === 'string') {
+        return inheritOptions(parent, entry);
+    }
+    // GroupRowValueSetterDistributionOptions object — inherit unset fields from parent
+    return {
+        distribution: entry.distribution,
+        precision: entry.precision ?? parent.precision,
+        getValue: entry.getValue ?? parent.getValue,
+        setValue: entry.setValue ?? parent.setValue,
+    };
+}
+
+/** Creates distribution options inheriting precision/getValue/setValue from the parent. */
+function inheritOptions(
+    parent: GroupRowValueSetterOptions,
+    distribution?: GroupRowValueSetterDistribution | false | null
+): GroupRowValueSetterDistributionOptions {
+    return { distribution, precision: parent.precision, getValue: parent.getValue, setValue: parent.setValue };
+}

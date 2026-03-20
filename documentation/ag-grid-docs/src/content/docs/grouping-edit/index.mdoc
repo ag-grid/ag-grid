@@ -68,19 +68,20 @@ whole numbers. When a child is itself a group, the cascade recurses through the 
 The `distribution` option controls how the edited value is spread across children. When omitted,
 the strategy is chosen automatically based on the column's `aggFunc`:
 
-| Strategy       | Behaviour                                                                                                                | Default for        |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------ | ------------------ |
-| `'uniform'`    | Divides the new value equally among all children.                                                                        | `sum`              |
-| `'overwrite'`  | Writes the new value directly to every child.                                                                            | `avg`, custom aggs |
-| `'percentage'` | Scales each child proportionally, preserving relative weights. Falls back to `'uniform'` when the current total is zero. | —                  |
-| `'increment'`  | Distributes only the difference (`newValue − oldValue`) among children, adding it to current values.                     | —                  |
+| Strategy       | Behaviour                                                                                                                | Default for       |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------ | ----------------- |
+| `'uniform'`    | Divides the new value equally among all children.                                                                        | `sum`             |
+| `'overwrite'`  | Writes the new value directly to every child.                                                                            | `avg`, no aggFunc |
+| `'percentage'` | Scales each child proportionally, preserving relative weights. Falls back to `'uniform'` when the current total is zero. | —                 |
+| `'increment'`  | Distributes only the difference (`newValue − oldValue`) among children, adding it to current values.                     | —                 |
 
 The `first` and `last` aggregation functions always write to the first or last child respectively,
 regardless of any `distribution` setting.
 
-The `count`, `min`, and `max` aggregation functions are **disabled by default** — the cell is treated
-as not editable unless the user explicitly sets a distribution strategy for them. To enable editing
-on these aggFuncs, set an explicit distribution in the per-aggFunc record or as a top-level strategy string.
+The `count`, `min`, and `max` aggregation functions and **custom aggregation functions** are **disabled by default** —
+the cell is treated as not editable unless the user explicitly sets a distribution strategy for them.
+To enable editing, set an explicit distribution in the per-aggFunc record, as a top-level strategy string,
+or use the `default` fallback option for custom aggregation functions.
 
 {% note %}
 Setting `distribution` to `false` or `null` makes the group cell not editable — even when `groupRowEditable` is `true`.
@@ -162,7 +163,8 @@ demonstrates a mix of built-in strategies and a custom aggregation function:
 
 When different columns use different aggregation functions but share a `groupRowValueSetter`
 (e.g. via `defaultColDef`), the `distribution` property can be set to a record mapping each
-aggregation function name to its own strategy:
+aggregation function name to a strategy string, an options object, a custom callback function,
+or `false`/`null` to suppress distribution for that aggFunc:
 
 ```{% frameworkTransform=true %}
 const myCustomAgg = (params) => {
@@ -192,10 +194,9 @@ const gridOptions = {
         groupRowValueSetter: {
             precision: 0,
             distribution: {
-                sum: 'percentage',
-                avg: { distribution: 'increment' },
-                myCustomAgg: (params) => {
-                    // Full custom logic for this aggregation function
+                sum: 'percentage',                          // strategy string
+                avg: { distribution: 'increment' },         // options object
+                myCustomAgg: (params) => {                  // custom callback function
                     for (const child of params.aggregatedChildren) {
                         child.setDataValue(params.column, params.newValue, 'data');
                     }
@@ -208,9 +209,9 @@ const gridOptions = {
 ```
 
 Aggregation functions not present in the record fall through to the `default` callback,
-then to the built-in defaults (`'uniform'` for `sum`, `'overwrite'` for `avg` and custom aggs,
-write-to-child for `first`/`last`). `count`, `min`, and `max` are disabled by default
-and require an explicit distribution to be editable.
+then to the built-in defaults (`'uniform'` for `sum`, `'overwrite'` for `avg` and columns without an aggFunc,
+write-to-child for `first`/`last`). `count`, `min`, `max`, and custom aggregation functions are disabled
+by default and require an explicit distribution or `default` fallback to be editable.
 
 ## Custom Distribution with a Callback
 

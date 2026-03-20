@@ -1,13 +1,14 @@
 import type { ColDef, GroupRowValueSetterDistribution } from 'ag-grid-community';
 
-/** Resolved distribution strategy. `null` means no strategy — use default handler or overwrite. `false` means suppressed. */
-export type DistributionStrategy = 'first' | 'last' | GroupRowValueSetterDistribution | false | null;
+/** Resolved distribution strategy. `false` means suppressed (disabled by default for count/min/max/custom aggFuncs, or explicit false/null). */
+export type DistributionStrategy = 'first' | 'last' | GroupRowValueSetterDistribution | false;
 
 /**
  * Resolves the distribution strategy from the aggFunc and explicit distribution option.
  * false and null always suppress distribution.
  * first/last aggFuncs use their own strategy unless explicitly suppressed.
- * count/min/max are disabled by default — only enabled when the user explicitly sets a distribution.
+ * count/min/max and custom aggFuncs are disabled by default — only enabled when the user explicitly sets a distribution.
+ * Columns with no aggFunc default to 'overwrite'.
  */
 export const resolveStrategy = (
     aggFunc: string | null,
@@ -29,15 +30,19 @@ export const resolveStrategy = (
     if (aggFunc === 'count' || aggFunc === 'min' || aggFunc === 'max') {
         return false;
     }
-    switch (aggFunc) {
-        case 'sum':
-            return 'uniform';
-        case 'avg':
-            return 'overwrite';
-        default:
-            return null;
-    }
+    // sum → uniform, avg/no-aggFunc → overwrite, custom aggFuncs → disabled
+    return aggFunc === 'sum' ? 'uniform' : aggFunc === 'avg' || aggFunc === null ? 'overwrite' : false;
 };
+
+/** Whether the aggFunc has a built-in default strategy (sum/avg/first/last/count/min/max). */
+export const hasBuiltInDefault = (aggFunc: string | null): boolean =>
+    aggFunc === 'sum' ||
+    aggFunc === 'avg' ||
+    aggFunc === 'first' ||
+    aggFunc === 'last' ||
+    aggFunc === 'count' ||
+    aggFunc === 'min' ||
+    aggFunc === 'max';
 
 /** Coerces an unknown value to a number. Returns 0 for non-convertible inputs. Preserves NaN, Infinity, and -Infinity for number inputs. */
 export const toNumber = (raw: unknown): number => {

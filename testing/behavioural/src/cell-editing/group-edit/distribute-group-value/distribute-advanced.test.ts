@@ -510,7 +510,7 @@ describe('percentage zero total direct path', () => {
 // --- String aggFunc that is not sum/avg/first/last with default handler ---
 
 describe('string aggFunc edge cases', () => {
-    test('unknown string aggFunc without default handler overwrites all', async () => {
+    test('unknown string aggFunc without default handler is disabled (no children modified)', async () => {
         const api = await createSimpleGrid(
             'unknown-string-agg',
             [
@@ -529,8 +529,9 @@ describe('string aggFunc edge cases', () => {
         group.setDataValue('amount', 42, 'ui');
         await asyncSetTimeout(0);
 
-        expect(api.getRowNode('a1')?.data?.amount).toBe(42);
-        expect(api.getRowNode('a2')?.data?.amount).toBe(42);
+        // Custom aggFuncs are disabled by default — children are not modified
+        expect(api.getRowNode('a1')?.data?.amount).toBe(10);
+        expect(api.getRowNode('a2')?.data?.amount).toBe(20);
     });
 
     test('unknown string aggFunc with default handler calls default', async () => {

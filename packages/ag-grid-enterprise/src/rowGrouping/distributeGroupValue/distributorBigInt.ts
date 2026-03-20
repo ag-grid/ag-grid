@@ -3,7 +3,6 @@ import type {
     DistributionGetValueParams,
     DistributionSetValueParams,
     GroupRowValueSetterDistributionOptions,
-    GroupRowValueSetterFunc,
     GroupRowValueSetterParams,
     IRowNode,
 } from 'ag-grid-community';
@@ -27,8 +26,7 @@ export class DistributorBigInt {
     constructor(
         private readonly params: GroupRowValueSetterParams,
         opts: GroupRowValueSetterDistributionOptions | undefined,
-        aggFunc: string | null,
-        private readonly defaultHandler: GroupRowValueSetterFunc | undefined
+        aggFunc: string | null
     ) {
         const { aggregatedChildren: children, column, newValue } = params;
         const newBigInt = toBigInt(newValue);
@@ -58,15 +56,6 @@ export class DistributorBigInt {
         // Explicit suppression
         if (strategy === false) {
             return false;
-        }
-
-        // Unknown aggFunc with no matching strategy — use default handler or overwrite
-        if (strategy === null) {
-            const handler = this.defaultHandler;
-            if (handler) {
-                return handler(this.params) ?? true;
-            }
-            return this.writeAll(newValue);
         }
 
         // Single-child or overwrite strategies — write the raw value

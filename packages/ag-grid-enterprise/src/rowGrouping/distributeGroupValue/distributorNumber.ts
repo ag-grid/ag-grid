@@ -3,7 +3,6 @@ import type {
     DistributionGetValueParams,
     DistributionSetValueParams,
     GroupRowValueSetterDistributionOptions,
-    GroupRowValueSetterFunc,
     GroupRowValueSetterParams,
     IRowNode,
 } from 'ag-grid-community';
@@ -33,8 +32,7 @@ export class DistributorNumber {
     constructor(
         private readonly params: GroupRowValueSetterParams,
         opts: GroupRowValueSetterDistributionOptions | undefined,
-        aggFunc: string | null,
-        private readonly defaultHandler: GroupRowValueSetterFunc | undefined
+        aggFunc: string | null
     ) {
         const { aggregatedChildren: children, column, colDef, newValue } = params;
         const newNumber = toNumber(newValue);
@@ -74,14 +72,6 @@ export class DistributorNumber {
 
         if (strategy === false) {
             return false;
-        }
-
-        if (strategy === null) {
-            const handler = this.defaultHandler;
-            if (handler) {
-                return handler(this.params) ?? true;
-            }
-            return this.writeAll(newValue);
         }
 
         const { children } = this;
