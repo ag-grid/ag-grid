@@ -338,6 +338,73 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
             expect(getApplyButton(toolPanelGui).disabled).toBe(true);
         });
 
+        test('toolPanelUi source does not reset staged changes (drag pill no-op)', async () => {
+            const { gridApi, toolPanel, toolPanelGui } = await createGrid({
+                suppressSyncLayoutWithGrid: true,
+                columnDefs: [
+                    { field: 'athlete' },
+                    { field: 'age' },
+                    { field: 'country' },
+                    { field: 'sport', rowGroup: true },
+                    { field: 'gold' },
+                ],
+            });
+            const athlete = gridApi.getColumn('athlete')! as AgColumn;
+
+            // Stage a visibility change
+            getUpdateStrategy(toolPanel).setColumnsVisible(true, [athlete], false, 'toolPanelUi');
+            toolPanel.refreshDeferredUi();
+
+            expect(getApplyButton(toolPanelGui).disabled).toBe(false);
+
+            // Simulate header Row Group panel drag: remove Sport then add it back
+            // This fires columnRowGroupChanged with source 'toolPanelUi'
+            const rowGroupSvc = toolPanel.beans.rowGroupColsSvc!;
+            const sportCol = gridApi.getColumn('sport')!;
+            rowGroupSvc.setColumns([], 'toolPanelUi');
+            await asyncSetTimeout(50);
+
+            // Staged changes should still be preserved
+            expect(getUpdateStrategy(toolPanel).hasPendingChanges(isDeferred(toolPanel))).toBe(true);
+            expect(getApplyButton(toolPanelGui).disabled).toBe(false);
+
+            // Add Sport back (completes the no-op drag)
+            rowGroupSvc.setColumns([sportCol], 'toolPanelUi');
+            await asyncSetTimeout(50);
+
+            // Staged changes should still be preserved
+            expect(getUpdateStrategy(toolPanel).hasPendingChanges(isDeferred(toolPanel))).toBe(true);
+            expect(getApplyButton(toolPanelGui).disabled).toBe(false);
+        });
+
+        test('api source row group change still resets staged changes', async () => {
+            const { gridApi, toolPanel, toolPanelGui } = await createGrid({
+                suppressSyncLayoutWithGrid: true,
+                columnDefs: [
+                    { field: 'athlete' },
+                    { field: 'age' },
+                    { field: 'country' },
+                    { field: 'sport', rowGroup: true },
+                    { field: 'gold' },
+                ],
+            });
+            const athlete = gridApi.getColumn('athlete')! as AgColumn;
+
+            // Stage a visibility change
+            getUpdateStrategy(toolPanel).setColumnsVisible(true, [athlete], false, 'toolPanelUi');
+            toolPanel.refreshDeferredUi();
+
+            expect(getApplyButton(toolPanelGui).disabled).toBe(false);
+
+            // API-driven row group change (source 'api', not 'toolPanelUi')
+            gridApi.setRowGroupColumns([]);
+            await asyncSetTimeout(50);
+
+            // Staged changes should be reset
+            expect(getUpdateStrategy(toolPanel).hasPendingChanges(isDeferred(toolPanel))).toBe(false);
+            expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+        });
+
         test('external aggFunc change with custom function resets staged changes', async () => {
             const customSum = (params: any) => params.values.reduce((a: number, b: number) => a + b, 0);
             const customMax = (params: any) => Math.max(...params.values);

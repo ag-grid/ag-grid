@@ -165,7 +165,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
                     columnRowGroupChanged: resetListener,
                     columnValueChanged: resetListener,
                     columnPivotChanged: resetListener,
-                    columnPivotModeChanged: resetListener,
+                    columnPivotModeChanged: this.onExternalGridChangeNoSource,
                     newColumnsLoaded: resetListener,
                     ...(mergedParams.suppressSyncLayoutWithGrid ? {} : { columnMoved: resetListener }),
                 })
@@ -255,16 +255,30 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         this.resetDeferredState();
     };
 
-    private readonly onExternalGridChange = (): void => {
+    private readonly onExternalGridChange = (event: { source?: string }): void => {
         if (!this.isDeferModeEnabled || this.isCommitting) {
             return;
         }
+        if (event.source === 'toolPanelUi') {
+            return;
+        }
+        this.onExternalGridChangeCore();
+    };
+
+    private readonly onExternalGridChangeNoSource = (): void => {
+        if (!this.isDeferModeEnabled || this.isCommitting) {
+            return;
+        }
+        this.onExternalGridChangeCore();
+    };
+
+    private onExternalGridChangeCore(): void {
         if (!this.beans.columnStateUpdateStrategy.hasPendingChanges(this.isDeferModeEnabled)) {
             return;
         }
         this.resetDeferredState();
         this.lastKnownGridState = this.captureGridState();
-    };
+    }
 
     private resetDeferredState(): void {
         this.beans.columnStateUpdateStrategy.reset(this.isDeferModeEnabled);
