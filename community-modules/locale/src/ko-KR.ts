@@ -75,7 +75,6 @@ export const AG_GRID_LOCALE_KR = {
     // Filter Buttons
     applyFilter: '적용',
     applyColumnToolPanel: '적용',
-    deferMode: '지연 모드',
     resetFilter: '재설정',
     clearFilter: '지우기',
     cancelFilter: '취소',

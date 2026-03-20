@@ -75,7 +75,6 @@ export const AG_GRID_LOCALE_BG = {
     // Filter Buttons
     applyFilter: 'Приложи',
     applyColumnToolPanel: 'Приложи',
-    deferMode: "Режим 'Отлагане'",
     resetFilter: 'Нулиране',
     clearFilter: 'Изчисти',
     cancelFilter: 'Отказ',

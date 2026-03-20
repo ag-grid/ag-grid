@@ -75,7 +75,6 @@ export const AG_GRID_LOCALE_SK = {
     // Filter Buttons
     applyFilter: 'Použiť',
     applyColumnToolPanel: 'Použiť',
-    deferMode: 'Režim odkladu',
     resetFilter: 'Resetovať',
     clearFilter: 'Vyčistiť',
     cancelFilter: 'Zrušiť',

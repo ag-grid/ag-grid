@@ -75,7 +75,6 @@ export const AG_GRID_LOCALE_NO = {
     // Filter Buttons
     applyFilter: 'Bruk',
     applyColumnToolPanel: 'Bruk',
-    deferMode: 'Utsett modus',
     resetFilter: 'Tilbakestill',
     clearFilter: 'Tøm',
     cancelFilter: 'Avbryt',

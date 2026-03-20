@@ -75,7 +75,6 @@ export const AG_GRID_LOCALE_HK = {
     // Filter Buttons
     applyFilter: '應用',
     applyColumnToolPanel: '應用',
-    deferMode: '延遲模式',
     resetFilter: '重置',
     clearFilter: '清除',
     cancelFilter: '取消',

@@ -75,7 +75,6 @@ export const AG_GRID_LOCALE_GR = {
     // Filter Buttons
     applyFilter: 'Εφαρμογή',
     applyColumnToolPanel: 'Εφαρμογή',
-    deferMode: 'Αναβαλλόμενη λειτουργία',
     resetFilter: 'Επαναφορά',
     clearFilter: 'Εκκαθάριση',
     cancelFilter: 'Ακύρωση',

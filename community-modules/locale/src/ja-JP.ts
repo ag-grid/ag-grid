@@ -75,7 +75,6 @@ export const AG_GRID_LOCALE_JP = {
     // Filter Buttons
     applyFilter: '適用',
     applyColumnToolPanel: '適用',
-    deferMode: '遅延モード',
     resetFilter: 'リセット',
     clearFilter: 'クリア',
     cancelFilter: 'キャンセル',

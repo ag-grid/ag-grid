@@ -75,7 +75,6 @@ export const AG_GRID_LOCALE_FI = {
     // Filter Buttons
     applyFilter: 'Käytä',
     applyColumnToolPanel: 'Käytä',
-    deferMode: 'Johtotilan',
     resetFilter: 'Nollaa',
     clearFilter: 'Tyhjennä',
     cancelFilter: 'Peruuta',

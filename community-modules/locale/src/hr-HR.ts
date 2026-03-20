@@ -75,7 +75,6 @@ export const AG_GRID_LOCALE_HR = {
     // Filter Buttons
     applyFilter: 'Primijeni',
     applyColumnToolPanel: 'Primijeni',
-    deferMode: 'Odgodi način',
     resetFilter: 'Poništi',
     clearFilter: 'Očisti',
     cancelFilter: 'Odustani',
