@@ -414,6 +414,24 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
         return stateless ? <FullWidthComp {...details.params} /> : <FullWidthComp {...details.params} ref={compRef} />;
     };
 
+    const renderCellSection = (
+        sectionClass: string,
+        sectionRef: React.Ref<HTMLDivElement>,
+        width: number,
+        children: React.ReactNode
+    ) => (
+        <div className={sectionClass} role="presentation">
+            <div
+                className="ag-grid-container-wrapper"
+                role="presentation"
+                ref={sectionRef}
+                style={{ width: width || undefined, display: width > 0 ? undefined : 'none' }}
+            >
+                {children}
+            </div>
+        </div>
+    );
+
     return (
         <div
             ref={setRef}
@@ -425,57 +443,45 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
         >
             {showCells ? (
                 <>
-                    <div
-                        className="ag-grid-pinned-left-cells"
-                        role="presentation"
-                        ref={ePinnedLeftCells}
-                        style={{ width: leftWidth || undefined, display: leftWidth > 0 ? undefined : 'none' }}
-                    >
-                        {showCellsJsx(leftCellCtrls)}
-                    </div>
-                    <div
-                        className="ag-grid-scrolling-cells"
-                        role="presentation"
-                        ref={eScrollingCells}
-                        style={{ width: centerWidth }}
-                    >
-                        {showCellsJsx(centerCellCtrls)}
-                    </div>
-                    <div
-                        className="ag-grid-pinned-right-cells"
-                        role="presentation"
-                        ref={ePinnedRightCells}
-                        style={{ width: rightWidth || undefined, display: rightWidth > 0 ? undefined : 'none' }}
-                    >
-                        {showCellsJsx(rightCellCtrls)}
-                    </div>
+                    {renderCellSection(
+                        'ag-grid-pinned-left-cells',
+                        ePinnedLeftCells,
+                        leftWidth,
+                        showCellsJsx(leftCellCtrls)
+                    )}
+                    {renderCellSection(
+                        'ag-grid-scrolling-cells',
+                        eScrollingCells,
+                        centerWidth,
+                        showCellsJsx(centerCellCtrls)
+                    )}
+                    {renderCellSection(
+                        'ag-grid-pinned-right-cells',
+                        ePinnedRightCells,
+                        rightWidth,
+                        showCellsJsx(rightCellCtrls)
+                    )}
                 </>
             ) : showEmbeddedFullWidth ? (
                 <>
-                    <div
-                        className="ag-grid-pinned-left-cells"
-                        role="presentation"
-                        ref={ePinnedLeftCells}
-                        style={{ width: leftWidth || undefined, display: leftWidth > 0 ? undefined : 'none' }}
-                    >
-                        {showEmbeddedFrameworkSection('left')}
-                    </div>
-                    <div
-                        className="ag-grid-scrolling-cells"
-                        role="presentation"
-                        ref={eScrollingCells}
-                        style={{ width: centerWidth }}
-                    >
-                        {showEmbeddedFrameworkSection('center')}
-                    </div>
-                    <div
-                        className="ag-grid-pinned-right-cells"
-                        role="presentation"
-                        ref={ePinnedRightCells}
-                        style={{ width: rightWidth || undefined, display: rightWidth > 0 ? undefined : 'none' }}
-                    >
-                        {showEmbeddedFrameworkSection('right')}
-                    </div>
+                    {renderCellSection(
+                        'ag-grid-pinned-left-cells',
+                        ePinnedLeftCells,
+                        leftWidth,
+                        showEmbeddedFrameworkSection('left')
+                    )}
+                    {renderCellSection(
+                        'ag-grid-scrolling-cells',
+                        eScrollingCells,
+                        centerWidth,
+                        showEmbeddedFrameworkSection('center')
+                    )}
+                    {renderCellSection(
+                        'ag-grid-pinned-right-cells',
+                        ePinnedRightCells,
+                        rightWidth,
+                        showEmbeddedFrameworkSection('right')
+                    )}
                 </>
             ) : showFullWidthFramework ? (
                 <div className="ag-full-width-anchor" role="presentation" ref={eFullWidthAnchor}>

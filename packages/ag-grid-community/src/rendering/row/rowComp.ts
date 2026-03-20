@@ -12,6 +12,21 @@ import type { CellCtrl, CellCtrlInstanceId } from '../cell/cellCtrl';
 import type { ICellRendererComp, ICellRendererParams } from '../cellRenderers/iCellRenderer';
 import type { IRowComp, PinnedCellGroupWidths, RowCtrl } from './rowCtrl';
 
+const createCellSection = (sectionClass: string): { container: HTMLElement; wrapper: HTMLElement } => {
+    const wrapper = _createElement({
+        tag: 'div',
+        role: 'presentation',
+        cls: 'ag-grid-container-wrapper',
+    });
+    const container = _createElement({
+        tag: 'div',
+        cls: sectionClass,
+        role: 'presentation',
+    });
+    container.appendChild(wrapper);
+    return { container, wrapper };
+};
+
 export class RowComp extends Component {
     private fullWidthCellRenderer: ICellRendererComp | null | undefined;
     private fullWidthCellRendererParams: ICellRendererParams | undefined;
@@ -41,22 +56,15 @@ export class RowComp extends Component {
 
         const rowDiv = _createElement({ tag: 'div', role: 'row', attrs: { 'comp-id': `${this.getCompId()}` } });
         if (shouldCreateCellSections) {
-            this.ePinnedLeftCells = _createElement({
-                tag: 'div',
-                cls: 'ag-grid-pinned-left-cells',
-                role: 'presentation',
-            });
-            this.eScrollingCells = _createElement({
-                tag: 'div',
-                cls: 'ag-grid-scrolling-cells',
-                role: 'presentation',
-            });
-            this.ePinnedRightCells = _createElement({
-                tag: 'div',
-                cls: 'ag-grid-pinned-right-cells',
-                role: 'presentation',
-            });
-            rowDiv.append(this.ePinnedLeftCells, this.eScrollingCells, this.ePinnedRightCells);
+            const leftSection = createCellSection('ag-grid-pinned-left-cells');
+            const centerSection = createCellSection('ag-grid-scrolling-cells');
+            const rightSection = createCellSection('ag-grid-pinned-right-cells');
+
+            this.ePinnedLeftCells = leftSection.wrapper;
+            this.eScrollingCells = centerSection.wrapper;
+            this.ePinnedRightCells = rightSection.wrapper;
+
+            rowDiv.append(leftSection.container, centerSection.container, rightSection.container);
         }
         this.setInitialStyle(rowDiv);
         this.setTemplateFromElement(rowDiv);

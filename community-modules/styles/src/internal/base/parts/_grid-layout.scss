@@ -119,11 +119,18 @@
         --ag-internal-row-overlay-image: none;
     }
 
+    .ag-row .ag-grid-container-wrapper {
+        width: 100%;
+        height: 100%;
+        background-color: inherit;
+    }
+
     .ag-row:not(.ag-header-row) {
         > .ag-grid-pinned-left-cells,
         > .ag-grid-pinned-right-cells,
         > .ag-grid-scrolling-cells {
             background-color: inherit;
+            background-image: linear-gradient(var(--ag-data-background-color), var(--ag-data-background-color));
         }
     }
 
