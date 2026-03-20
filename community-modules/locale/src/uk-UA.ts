@@ -75,7 +75,7 @@ export const AG_GRID_LOCALE_UA = {
     // Filter Buttons
     applyFilter: 'Застосувати',
     applyColumnToolPanel: 'Застосувати',
-    deferMode: 'Defer mode',
+    deferMode: 'Режим відкладення',
     resetFilter: 'Скинути',
     clearFilter: 'Очистити',
     cancelFilter: 'Скасувати',
@@ -684,7 +684,7 @@ export const AG_GRID_LOCALE_UA = {
     ariaFilterColumn: 'Натисніть CTRL ENTER для відкриття фільтру',
     ariaRowDeselect: 'Натисніть SPACE для зняття виділення з цього рядка',
     ariaHeaderSelection: 'Стовпець з вибором заголовка',
-    ariaSelectAllCells: 'Натисніть пробіл або Enter, щоб вибрати всі комірки',
+    ariaSelectAllCells: '«Натисніть пробіл або Enter, щоб вибрати всі комірки»',
     ariaSelectAllRowCells: 'Натисніть Enter, щоб вибрати всі комірки в цьому рядку',
     ariaColumnCellSelection: 'Натисніть Enter, щоб перемкнути виділення всіх видимих комірок у цьому стовпці',
     ariaColumnGroupCellSelection: 'Натисніть Enter, щоб перемкнути виділення всіх видимих комірок у цій групі стовпців',

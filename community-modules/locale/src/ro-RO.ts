@@ -75,7 +75,7 @@ export const AG_GRID_LOCALE_RO = {
     // Filter Buttons
     applyFilter: 'Aplică',
     applyColumnToolPanel: 'Aplică',
-    deferMode: 'Defer mode',
+    deferMode: 'Amână mod',
     resetFilter: 'Resetează',
     clearFilter: 'Curăță',
     cancelFilter: 'Anulează',
@@ -265,7 +265,7 @@ export const AG_GRID_LOCALE_RO = {
     formulaServiceCircularReference: 'Referinta circulara.',
     formulaServiceExpectedParsableFormula: 'Se astepta o formula care poate fi parsata.',
     formulaServiceInternalSchedulingError: 'Eroare interna de planificare.',
-    tooltipValidationErrorSeparator: '. ',
+    tooltipValidationErrorSeparator: '.',
 
     // Side Bar
     columns: 'Coloane',
@@ -685,7 +685,7 @@ export const AG_GRID_LOCALE_RO = {
     ariaFilterColumn: 'Apăsați CTRL ENTER pentru a deschide filtrul',
     ariaRowDeselect: 'Apăsați SPACE pentru a deselecta acest rând',
     ariaHeaderSelection: 'Coloană cu selecție antet',
-    ariaSelectAllCells: 'Apăsați Spațiu sau Enter pentru a selecta toate celulele',
+    ariaSelectAllCells: 'Apăsați Space sau Enter pentru a selecta toate celulele',
     ariaSelectAllRowCells: 'Apăsați Enter pentru a selecta toate celulele din acest rând',
     ariaColumnCellSelection: 'Apăsați Enter pentru a comuta selecția tuturor celulelor vizibile din această coloană',
     ariaColumnGroupCellSelection:

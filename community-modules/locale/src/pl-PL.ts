@@ -75,7 +75,7 @@ export const AG_GRID_LOCALE_PL = {
     // Filter Buttons
     applyFilter: 'Zastosuj',
     applyColumnToolPanel: 'Zastosuj',
-    deferMode: 'Defer mode',
+    deferMode: 'Tryb odroczenia',
     resetFilter: 'Resetuj',
     clearFilter: 'Wyczyść',
     cancelFilter: 'Anuluj',
