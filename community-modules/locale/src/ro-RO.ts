@@ -265,7 +265,7 @@ export const AG_GRID_LOCALE_RO = {
     formulaServiceCircularReference: 'Referinta circulara.',
     formulaServiceExpectedParsableFormula: 'Se astepta o formula care poate fi parsata.',
     formulaServiceInternalSchedulingError: 'Eroare interna de planificare.',
-    tooltipValidationErrorSeparator: '.',
+    tooltipValidationErrorSeparator: '. ',
 
     // Side Bar
     columns: 'Coloane',
