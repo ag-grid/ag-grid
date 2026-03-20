@@ -345,11 +345,11 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
                         .map((colId) => beans.colModel.getColDefCol(colId))
                         .filter((column): column is AgColumn => !!column && isPrimaryColDefColumn(column));
                     if (!beans.colModel.isPivotMode()) {
-                        const allColumns = beans.colModel.getCols();
-                        const nonPrimaryPrefix = allColumns.filter((col) => !isPrimaryColDefColumn(col)).length;
                         for (let i = 0; i < orderedColumns.length; i++) {
                             const column = orderedColumns[i];
-                            const targetIndex = nonPrimaryPrefix + i;
+                            const allColumns = beans.colModel.getCols();
+                            const nonPrimaryPrefix = allColumns.findIndex((col) => isPrimaryColDefColumn(col));
+                            const targetIndex = (nonPrimaryPrefix >= 0 ? nonPrimaryPrefix : 0) + i;
                             if (allColumns[targetIndex] !== column) {
                                 beans.colMoves?.moveColumns([column], targetIndex, operation.eventType, true);
                             }
@@ -519,11 +519,10 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
         const aggFuncs = ensureAggFuncsDraft(this.state);
         for (const col of columns) {
             if (!liveValueColIds.has(col.getColId()) && !aggFuncs.values.has(col.getColId())) {
+                const existingAggFunc = col.getAggFunc();
                 const aggFunc =
-                    typeof col.getAggFunc() === 'string'
-                        ? col.getAggFunc()
-                        : this.beans.aggFuncSvc?.getDefaultAggFunc(col);
-                if (aggFunc) {
+                    existingAggFunc != null ? existingAggFunc : this.beans.aggFuncSvc?.getDefaultAggFunc(col);
+                if (aggFunc != null) {
                     aggFuncs.values.set(col.getColId(), aggFunc);
                 }
             }
