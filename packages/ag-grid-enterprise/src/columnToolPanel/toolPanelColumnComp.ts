@@ -240,7 +240,7 @@ export class ToolPanelColumnComp extends Component {
             type: DragSourceType.ToolPanel,
             eElement: eDragHandle,
             dragItemName: this.displayName,
-            getDefaultIconName: () => (hideColumnOnExit ? 'hide' : 'notAllowed'),
+            getDefaultIconName: () => (hideColumnOnExit && !isDeferredMode(this.params) ? 'hide' : 'notAllowed'),
             getDragItem: () => this.createDragItem(),
             onDragStarted: () => {
                 hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');

@@ -433,6 +433,34 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
         });
     });
 
+    describe('drag icon feedback', () => {
+        function createColumnComp(toolPanel: any): any {
+            const listPanel = toolPanel.primaryColsPanel.primaryColsListPanel;
+            const displayedColsList = listPanel.getDisplayedColsList() as any[];
+            const firstColumnItem = displayedColsList.find((item: any) => !item.group);
+            return listPanel['createComponentFromItem'](firstColumnItem, document.createElement('div'));
+        }
+
+        function getToolPanelDragSources(toolPanel: any): any[] {
+            const dndService = toolPanel.beans.dragAndDrop;
+            return (dndService as any).dragSourceAndParamsList
+                .map((entry: any) => entry.dragSource)
+                .filter((ds: any) => ds.type === 0); // DragSourceType.ToolPanel = 0
+        }
+
+        test('drag icon is notAllowed in deferred mode even when suppressDragLeaveHidesColumns is false', async () => {
+            const { toolPanel } = await createGrid({ suppressSyncLayoutWithGrid: true });
+            createColumnComp(toolPanel);
+
+            const dragSources = getToolPanelDragSources(toolPanel);
+            expect(dragSources.length).toBeGreaterThan(0);
+
+            for (const ds of dragSources) {
+                expect(ds.getDefaultIconName()).toBe('notAllowed');
+            }
+        });
+    });
+
     describe('initial state and fallback', () => {
         test('initial render shows colDef order when suppressSyncLayoutWithGrid is true', async () => {
             const { toolPanel } = await createGrid({ suppressSyncLayoutWithGrid: true });
