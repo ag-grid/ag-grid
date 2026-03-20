@@ -32,9 +32,9 @@ applyTransactionAsync(
 
 Use Async Transactions if you have a high volume of streaming data going into the grid and don't want the grid's rendering and recalculating to be a bottleneck.
 
-## Async Transactions Applied Event
+## Async Transactions Flushed Event
 
-Each time the grid executes a batch of Async Transactions, it dispatches a `asyncTransactionsApplied` event.
+Each time the grid executes a batch of Async Transactions, it dispatches an `asyncTransactionsFlushed` event.
 
 The event contains `results` attribute, which is a list of all the results for all Transactions that got applied.
 
