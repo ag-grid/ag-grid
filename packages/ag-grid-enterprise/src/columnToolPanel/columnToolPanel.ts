@@ -39,6 +39,8 @@ interface GridStateSnapshot {
     pivotMode: boolean;
     columnOrder: string[];
     visibleColIds: string[];
+    sortState: string[];
+    aggFuncState: string[];
 }
 
 const DEFERRED_TOOL_PANEL_CLASS = 'ag-column-panel-deferred';
@@ -263,6 +265,11 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
                 .getCols()
                 .filter((c) => c.isVisible())
                 .map((c) => c.getColId()),
+            sortState: beans.colModel
+                .getCols()
+                .filter((c) => c.getSort())
+                .map((c) => `${c.getColId()}:${c.getSort()}:${c.getSortIndex()}`),
+            aggFuncState: (beans.valueColsSvc?.columns ?? []).map((c) => `${c.getColId()}:${c.getAggFunc()}`),
         };
     }
 
@@ -273,7 +280,9 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             _areEqual(a.pivotColIds, b.pivotColIds) &&
             a.pivotMode === b.pivotMode &&
             _areEqual(a.columnOrder, b.columnOrder) &&
-            _areEqual(a.visibleColIds, b.visibleColIds)
+            _areEqual(a.visibleColIds, b.visibleColIds) &&
+            _areEqual(a.sortState, b.sortState) &&
+            _areEqual(a.aggFuncState, b.aggFuncState)
         );
     }
 
