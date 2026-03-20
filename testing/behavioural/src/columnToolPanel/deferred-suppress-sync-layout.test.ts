@@ -305,20 +305,16 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
             const { gridApi, toolPanel, toolPanelGui } = await createGrid({ suppressSyncLayoutWithGrid: true });
             const athlete = gridApi.getColumn('athlete')! as AgColumn;
 
-            // Save initial state
             const savedState = gridApi.getColumnState();
 
-            // Stage a visibility change
             getUpdateStrategy(toolPanel).setColumnsVisible(true, [athlete], false, 'toolPanelUi');
             toolPanel.refreshDeferredUi();
 
             expect(getApplyButton(toolPanelGui).disabled).toBe(false);
 
-            // Set State with saved (identical) state — a no-op
             gridApi.applyColumnState({ state: savedState });
             await asyncSetTimeout(50);
 
-            // Staged changes should be cleared
             expect(getUpdateStrategy(toolPanel).hasPendingChanges(isDeferred(toolPanel))).toBe(false);
             expect(getApplyButton(toolPanelGui).disabled).toBe(true);
         });

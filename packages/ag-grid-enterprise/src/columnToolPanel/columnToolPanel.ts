@@ -4,12 +4,21 @@ import type {
     ColGroupDef,
     ColumnToolPanelAction,
     ColumnToolPanelState,
+    IAggFunc,
     IColumnToolPanel,
     IToolPanelColumnCompParams,
     IToolPanelComp,
     IToolPanelParams,
 } from 'ag-grid-community';
-import { Component, FilterButtonComp, _addGridCommonParams, _clearElement, _last, _warn } from 'ag-grid-community';
+import {
+    Component,
+    FilterButtonComp,
+    _addGridCommonParams,
+    _areEqual,
+    _clearElement,
+    _last,
+    _warn,
+} from 'ag-grid-community';
 
 import type { PivotDropZonePanel } from '../rowGrouping/columnDropZones/pivotDropZonePanel';
 import type { RowGroupDropZonePanel } from '../rowGrouping/columnDropZones/rowGroupDropZonePanel';
@@ -23,6 +32,19 @@ import { isDeferredMode } from './toolPanelDeferredUiUtils';
 export interface ToolPanelColumnCompParams<TData = any, TContext = any>
     extends IToolPanelParams<TData, TContext, ColumnToolPanelState>,
         IToolPanelColumnCompParams {}
+
+/** Captures full grid state for no-op detection (includes width to distinguish from resize). */
+interface GridStateSnapshot {
+    rowGroupColIds: string[];
+    valueColIds: string[];
+    pivotColIds: string[];
+    pivotMode: boolean;
+    columnOrder: string[];
+    visibleColIds: string[];
+    sortState: string[];
+    aggFuncState: (string | IAggFunc | null | undefined)[];
+    widthState: string[];
+}
 
 const DEFERRED_TOOL_PANEL_CLASS = 'ag-column-panel-deferred';
 
@@ -41,6 +63,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     private deferredButtonsComp?: FilterButtonComp;
     private isDeferModeEnabled = false;
     private isCommitting = false;
+    private lastKnownGridState?: GridStateSnapshot;
 
     constructor() {
         super({ tag: 'div', cls: 'ag-column-panel' });
@@ -136,7 +159,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
             childDestroyFuncs.push(
                 ...this.addManagedEventListeners({
-                    columnEverythingChanged: resetListener,
+                    columnEverythingChanged: this.onColumnEverythingChanged,
                     sortChanged: resetListener,
                     columnVisible: resetListener,
                     columnRowGroupChanged: resetListener,
@@ -195,6 +218,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             this.isCommitting = false;
         }
         this.deferredButtonsComp?.updateValidity(false);
+        this.lastKnownGridState = this.captureGridState();
     };
 
     private readonly onDeferredCancel = (): void => {
@@ -202,6 +226,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         this.deferredButtonsComp?.updateValidity(false);
         this.refreshToolPanelLayouts();
         this.pivotModePanel?.refreshEditStrategy();
+        this.lastKnownGridState = this.captureGridState();
     };
 
     private readonly onPivotModePanelValueChanged = (): void => {
@@ -212,6 +237,24 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         );
     };
 
+    /** Handles columnEverythingChanged — only resets staged changes on true no-ops. */
+    private readonly onColumnEverythingChanged = (): void => {
+        if (!this.isDeferModeEnabled || this.isCommitting) {
+            return;
+        }
+        const currentState = this.captureGridState();
+        if (!this.beans.columnStateUpdateStrategy.hasPendingChanges(this.isDeferModeEnabled)) {
+            this.lastKnownGridState = currentState;
+            return;
+        }
+        const isNoOp = this.lastKnownGridState && this.isGridStateEqual(this.lastKnownGridState, currentState);
+        this.lastKnownGridState = currentState;
+        if (!isNoOp) {
+            return;
+        }
+        this.resetDeferredState();
+    };
+
     private readonly onExternalGridChange = (): void => {
         if (!this.isDeferModeEnabled || this.isCommitting) {
             return;
@@ -219,11 +262,52 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         if (!this.beans.columnStateUpdateStrategy.hasPendingChanges(this.isDeferModeEnabled)) {
             return;
         }
+        this.resetDeferredState();
+        this.lastKnownGridState = this.captureGridState();
+    };
+
+    private resetDeferredState(): void {
         this.beans.columnStateUpdateStrategy.reset(this.isDeferModeEnabled);
         this.deferredButtonsComp?.updateValidity(false);
         this.refreshToolPanelLayouts();
         this.pivotModePanel?.refreshEditStrategy();
-    };
+    }
+
+    private captureGridState(): GridStateSnapshot {
+        const { beans } = this;
+        const getColIds = (cols: { getColId(): string }[] | undefined) => (cols ?? []).map((c) => c.getColId());
+        return {
+            rowGroupColIds: getColIds(beans.rowGroupColsSvc?.columns),
+            valueColIds: getColIds(beans.valueColsSvc?.columns),
+            pivotColIds: getColIds(beans.pivotColsSvc?.columns),
+            pivotMode: beans.colModel.isPivotMode(),
+            columnOrder: beans.colModel.getCols().map((c) => c.getColId()),
+            visibleColIds: beans.colModel
+                .getCols()
+                .filter((c) => c.isVisible())
+                .map((c) => c.getColId()),
+            sortState: beans.colModel
+                .getCols()
+                .filter((c) => c.getSort())
+                .map((c) => `${c.getColId()}:${c.getSort()}:${c.getSortIndex()}`),
+            aggFuncState: (beans.valueColsSvc?.columns ?? []).map((c) => c.getAggFunc()),
+            widthState: beans.colModel.getCols().map((c) => `${c.getColId()}:${c.getActualWidth()}`),
+        };
+    }
+
+    private isGridStateEqual(a: GridStateSnapshot, b: GridStateSnapshot): boolean {
+        return (
+            _areEqual(a.rowGroupColIds, b.rowGroupColIds) &&
+            _areEqual(a.valueColIds, b.valueColIds) &&
+            _areEqual(a.pivotColIds, b.pivotColIds) &&
+            a.pivotMode === b.pivotMode &&
+            _areEqual(a.columnOrder, b.columnOrder) &&
+            _areEqual(a.visibleColIds, b.visibleColIds) &&
+            _areEqual(a.sortState, b.sortState) &&
+            _areEqual(a.aggFuncState, b.aggFuncState) &&
+            _areEqual(a.widthState, b.widthState)
+        );
+    }
 
     public refreshDeferredUi(): void {
         this.refreshToolPanelLayouts();
