@@ -346,8 +346,10 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
                         .filter((column): column is AgColumn => !!column && isPrimaryColDefColumn(column));
                     if (!beans.colModel.isPivotMode()) {
                         const allColumns = beans.colModel.getCols();
-                        for (let targetIndex = 0; targetIndex < orderedColumns.length; targetIndex++) {
-                            const column = orderedColumns[targetIndex];
+                        const nonPrimaryPrefix = allColumns.filter((col) => !isPrimaryColDefColumn(col)).length;
+                        for (let i = 0; i < orderedColumns.length; i++) {
+                            const column = orderedColumns[i];
+                            const targetIndex = nonPrimaryPrefix + i;
                             if (allColumns[targetIndex] !== column) {
                                 beans.colMoves?.moveColumns([column], targetIndex, operation.eventType, true);
                             }
@@ -513,8 +515,23 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
 
     public setValueColumns(columns: AgColumn[], eventType: ColumnEventType): void {
         clearDeferredFunctionPatches(this.state, 'aggFunc');
+        const liveValueColIds = new Set((this.beans.valueColsSvc?.columns ?? []).map((col) => col.getColId()));
+        const aggFuncs = ensureAggFuncsDraft(this.state);
+        for (const col of columns) {
+            if (!liveValueColIds.has(col.getColId()) && !aggFuncs.values.has(col.getColId())) {
+                const aggFunc =
+                    typeof col.getAggFunc() === 'string'
+                        ? col.getAggFunc()
+                        : this.beans.aggFuncSvc?.getDefaultAggFunc(col);
+                if (aggFunc) {
+                    aggFuncs.values.set(col.getColId(), aggFunc);
+                }
+            }
+        }
         const seq = nextSeq(this.sequence);
         this.sequence = seq;
+        aggFuncs.seq = seq;
+        aggFuncs.eventType = eventType;
         this.state.aggregation = {
             colIds: columns.map((column) => column.getColId()),
             eventType,
