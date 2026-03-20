@@ -75,7 +75,6 @@ export const AG_GRID_LOCALE_HK = {
     // Filter Buttons
     applyFilter: '應用',
     applyColumnToolPanel: '應用',
-    deferMode: 'Defer mode',
     resetFilter: '重置',
     clearFilter: '清除',
     cancelFilter: '取消',
@@ -681,7 +680,7 @@ export const AG_GRID_LOCALE_HK = {
     ariaFilterColumn: '按 CTRL ENTER 打開篩選器',
     ariaRowDeselect: '按 SPACE 取消選擇此行',
     ariaHeaderSelection: '帶有標題選擇的欄',
-    ariaSelectAllCells: '按空格鍵或 Enter 鍵以選擇所有單元格',
+    ariaSelectAllCells: '按空格鍵或輸入鍵以選擇所有單元格',
     ariaSelectAllRowCells: '按 Enter 鍵以選擇此行中的所有單元格',
     ariaColumnCellSelection: '按 Enter 鍵切換此欄中所有可見單元格的選取',
     ariaColumnGroupCellSelection: '按 Enter 鍵切換此欄群組中所有可見單元格的選取',

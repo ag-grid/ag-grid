@@ -75,7 +75,6 @@ export const AG_GRID_LOCALE_VN = {
     // Filter Buttons
     applyFilter: 'Áp dụng',
     applyColumnToolPanel: 'Áp dụng',
-    deferMode: 'Defer mode',
     resetFilter: 'Đặt lại',
     clearFilter: 'Xóa',
     cancelFilter: 'Hủy',
@@ -682,7 +681,7 @@ export const AG_GRID_LOCALE_VN = {
     ariaFilterColumn: 'Nhấn CTRL ENTER để mở bộ lọc',
     ariaRowDeselect: 'Nhấn SPACE để bỏ chọn hàng này',
     ariaHeaderSelection: 'Cột với lựa chọn tiêu đề',
-    ariaSelectAllCells: 'Nhấn phím Space hoặc Enter để chọn tất cả các ô',
+    ariaSelectAllCells: 'Nhấn Space hoặc Enter để chọn tất cả các ô',
     ariaSelectAllRowCells: 'Nhấn Enter để chọn tất cả các ô trên hàng này',
     ariaColumnCellSelection: 'Nhấn Enter để chuyển đổi lựa chọn tất cả các ô hiển thị trong cột này',
     ariaColumnGroupCellSelection: 'Nhấn Enter để chuyển đổi lựa chọn tất cả các ô hiển thị trong nhóm cột này',

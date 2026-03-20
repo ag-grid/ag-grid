@@ -75,7 +75,6 @@ export const AG_GRID_LOCALE_DK = {
     // Filter Buttons
     applyFilter: 'Anvend',
     applyColumnToolPanel: 'Anvend',
-    deferMode: 'Defer mode',
     resetFilter: 'Nulstil',
     clearFilter: 'Ryd',
     cancelFilter: 'Annuller',
@@ -685,7 +684,7 @@ export const AG_GRID_LOCALE_DK = {
     ariaFilterColumn: 'Tryk på CTRL ENTER for at åbne filter',
     ariaRowDeselect: 'Tryk på MELLEMRUM for at fravælge denne række',
     ariaHeaderSelection: 'Kolonne med hovedvalg',
-    ariaSelectAllCells: 'Tryk på mellemrumstasten eller Enter for at vælge alle celler',
+    ariaSelectAllCells: 'Tryk på Mellemrum eller Enter for at vælge alle celler',
     ariaSelectAllRowCells: 'Tryk på Enter for at vælge alle celler i denne række',
     ariaColumnCellSelection: 'Tryk på Enter for at skifte markering af alle synlige celler i denne kolonne',
     ariaColumnGroupCellSelection: 'Tryk på Enter for at skifte markering af alle synlige celler i denne kolonnegruppe',

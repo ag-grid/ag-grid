@@ -1,5 +1,33 @@
 [
     {
+        "version": "35.2.0",
+        "date": "25th March 2026",
+        "landingPageHighlight": "Aggregation Editing, Row Grouping Compact Group Column, Columns Tool Panel Deferred Updates, Rich Select Editor Improvements, Accessibility Improvements",
+        "highlights": [
+            {
+                "text": "Aggregation Editing",
+                "path": "./grouping-edit/"
+            },
+            {
+                "text": "Row Grouping Compact Group Column",
+                "path": "./grouping-multiple-group-columns/#hiding-group-columns-until-expanded"
+            },
+            {
+                "text": "Columns Tool Panel Deferred Updates",
+                "path": "./tool-panel-columns/#deferred-updates"
+            },
+            {
+                "text": "Rich Select Editor Improvements",
+                "path": "./provided-cell-editors-rich-select-async/#paged-async-filtering"
+            },
+            {
+                "text": "Accessibility Improvements"
+            }
+        ],
+        "notesPath": "./upgrading-to-ag-grid-35-2",
+        "hideBlogPostLink": false
+    },
+    {
         "version": "35.1.0",
         "date": "11th February 2026",
         "landingPageHighlight": "Filtering Named Date Ranges, Formula Editor, BigInt Support, Excel Export Security, Theme Builder - Import Theme",

@@ -13,6 +13,7 @@ export interface ColumnStateConcreteUpdateStrategy {
     setRowGroupColumns(columns: AgColumn[], eventType: ColumnEventType): void;
     getRowGroupColumns(): AgColumn[];
     getPrimaryColumns(): AgColumn[];
+    hasDeferredColumnOrder(): boolean;
     setValueColumns(columns: AgColumn[], eventType: ColumnEventType): void;
     getValueColumns(): AgColumn[];
     setColumnAggFunc(column: AgColumn, aggFunc: string | IAggFunc | null | undefined, eventType: ColumnEventType): void;

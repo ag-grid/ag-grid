@@ -231,12 +231,16 @@ export class ToolPanelColumnComp extends Component {
         const beans = this.beans;
         const { gos, eventSvc, dragAndDrop } = beans;
 
+        if (isDeferredMode(this.params)) {
+            eDragHandle.setAttribute('data-column-tool-panel-deferred', '');
+        }
+
         let hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');
         const dragSource: GridDragSource = {
             type: DragSourceType.ToolPanel,
             eElement: eDragHandle,
             dragItemName: this.displayName,
-            getDefaultIconName: () => (hideColumnOnExit ? 'hide' : 'notAllowed'),
+            getDefaultIconName: () => (hideColumnOnExit && !isDeferredMode(this.params) ? 'hide' : 'notAllowed'),
             getDragItem: () => this.createDragItem(),
             onDragStarted: () => {
                 hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');
@@ -251,7 +255,7 @@ export class ToolPanelColumnComp extends Component {
                 });
             },
             onGridEnter: (dragItem: DragItem | null) => {
-                if (hideColumnOnExit) {
+                if (hideColumnOnExit && !isDeferredMode(this.params)) {
                     // when dragged into the grid, restore the state that was active pre-drag
                     updateColumns(beans, {
                         columns: [this.column],
@@ -263,8 +267,8 @@ export class ToolPanelColumnComp extends Component {
                 }
             },
             onGridExit: () => {
-                if (hideColumnOnExit) {
-                    // when dragged outside of the grid, mimic what happens when checkbox is disabled
+                if (hideColumnOnExit && !isDeferredMode(this.params)) {
+                    // when dragged outside of the grid, copy what happens when checkbox is disabled
                     // this handles the behaviour for pivot which is different to just hiding a column.
                     this.onChangeCommon(false);
                 }

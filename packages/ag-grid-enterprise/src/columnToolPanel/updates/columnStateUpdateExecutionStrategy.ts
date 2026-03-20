@@ -59,6 +59,9 @@ export class ColumnStateUpdateExecutionStrategy extends BeanStub implements ICol
     public getPrimaryColumns(deferMode: boolean): AgColumn[] {
         return this.getUpdateStrategy(deferMode).getPrimaryColumns();
     }
+    public hasDeferredColumnOrder(deferMode: boolean): boolean {
+        return this.getUpdateStrategy(deferMode).hasDeferredColumnOrder();
+    }
     public setValueColumns(deferMode: boolean, columns: AgColumn[], eventType: ColumnEventType): void {
         this.getUpdateStrategy(deferMode).setValueColumns(columns, eventType);
     }
@@ -119,6 +122,7 @@ export class SynchronousColumnStateUpdateStrategy implements ColumnStateConcrete
     public reset = noop;
     public commit = noop;
     public hasPendingChanges = () => false;
+    public hasDeferredColumnOrder = () => false;
 
     public applyColumnState(state: ColumnState[], eventType: ColumnEventType): void {
         if (state.length === 0) {
@@ -258,7 +262,7 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
                     (patch.hide !== undefined && patch.hide !== !column.isVisible()) ||
                     (patch.rowGroup !== undefined && !!patch.rowGroup !== column.isRowGroupActive()) ||
                     (patch.pivot !== undefined && !!patch.pivot !== column.isPivotActive()) ||
-                    (patch.aggFunc !== undefined && patch.aggFunc !== column.getAggFunc())
+                    (patch.aggFunc !== undefined && (patch.aggFunc ?? null) !== (column.getAggFunc() ?? null))
                 ) {
                     return true;
                 }
@@ -338,9 +342,11 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
                         .map((colId) => beans.colModel.getColDefCol(colId))
                         .filter((column): column is AgColumn => !!column && isPrimaryColDefColumn(column));
                     if (!beans.colModel.isPivotMode()) {
-                        const allColumns = beans.colModel.getCols();
-                        for (let targetIndex = 0; targetIndex < orderedColumns.length; targetIndex++) {
-                            const column = orderedColumns[targetIndex];
+                        for (let i = 0; i < orderedColumns.length; i++) {
+                            const column = orderedColumns[i];
+                            const allColumns = beans.colModel.getCols();
+                            const nonPrimaryPrefix = allColumns.findIndex((col) => isPrimaryColDefColumn(col));
+                            const targetIndex = (nonPrimaryPrefix >= 0 ? nonPrimaryPrefix : 0) + i;
                             if (allColumns[targetIndex] !== column) {
                                 beans.colMoves?.moveColumns([column], targetIndex, operation.eventType, true);
                             }
@@ -461,17 +467,15 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
 
     public moveColumns(columns: AgColumn[], targetIndex: number, eventType: ColumnEventType): void {
         const movingColIds = new Set(columns.map((column) => column.getColId()));
-        const liveOrderedColIds = getPrimaryColumnIds(this.beans);
-        const orderedColIds = this.state.columnOrder?.colIds ?? liveOrderedColIds;
+        const orderedColIds = this.state.columnOrder?.colIds ?? getPrimaryColumnIds(this.beans);
 
         const remaining = orderedColIds.filter((colId) => !movingColIds.has(colId));
         const movedIds = columns.map((column) => column.getColId());
-        const adjustedTargetIndex = getDeferredMoveTargetIndex(liveOrderedColIds, remaining, movingColIds, targetIndex);
         const seq = nextSeq(this.sequence);
         this.sequence = seq;
 
         this.state.columnOrder = {
-            colIds: [...remaining.slice(0, adjustedTargetIndex), ...movedIds, ...remaining.slice(adjustedTargetIndex)],
+            colIds: [...remaining.slice(0, targetIndex), ...movedIds, ...remaining.slice(targetIndex)],
             eventType,
             seq,
         };
@@ -503,8 +507,22 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
 
     public setValueColumns(columns: AgColumn[], eventType: ColumnEventType): void {
         clearDeferredFunctionPatches(this.state, 'aggFunc');
+        const liveValueColIds = new Set((this.beans.valueColsSvc?.columns ?? []).map((col) => col.getColId()));
+        const aggFuncs = ensureAggFuncsDraft(this.state);
+        for (const col of columns) {
+            if (!liveValueColIds.has(col.getColId()) && !aggFuncs.values.has(col.getColId())) {
+                const existingAggFunc = col.getAggFunc();
+                const aggFunc =
+                    existingAggFunc != null ? existingAggFunc : this.beans.aggFuncSvc?.getDefaultAggFunc(col);
+                if (aggFunc != null) {
+                    aggFuncs.values.set(col.getColId(), aggFunc);
+                }
+            }
+        }
         const seq = nextSeq(this.sequence);
         this.sequence = seq;
+        aggFuncs.seq = seq;
+        aggFuncs.eventType = eventType;
         this.state.aggregation = {
             colIds: columns.map((column) => column.getColId()),
             eventType,
@@ -615,6 +633,10 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
         return getDraftColumns(this.beans, this.state.columnOrder?.colIds ?? getPrimaryColumnIds(this.beans));
     }
 
+    public hasDeferredColumnOrder(): boolean {
+        return !!this.state.columnOrder;
+    }
+
     public getValueColumns(): AgColumn[] {
         return getDraftColumns(
             this.beans,
@@ -632,11 +654,16 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
             return [];
         }
 
+        const livePivotColumns = this.beans.pivotColsSvc?.columns;
+        const fallbackColumns = livePivotColumns?.length
+            ? livePivotColumns
+            : getDraftColumns(this.beans, this.lastPivotColIds);
+
         return getDraftColumns(
             this.beans,
             getDraftFunctionColumnIds(
                 this.state.pivot?.colIds,
-                this.beans.pivotColsSvc?.columns,
+                fallbackColumns,
                 this.state.columnState?.patches,
                 (patch) => (patch.pivot == null ? undefined : !!patch.pivot)
             )
@@ -779,48 +806,8 @@ function getPrimaryColumns(beans: BeanStub['beans']): AgColumn[] {
     );
 }
 
-function getDeferredMoveTargetIndex(
-    liveOrderedColIds: string[],
-    remainingDraftColIds: string[],
-    movingColIds: Set<string>,
-    targetIndex: number
-): number {
-    if (targetIndex <= 0) {
-        return 0;
-    }
-    if (targetIndex >= remainingDraftColIds.length || targetIndex >= liveOrderedColIds.length) {
-        return remainingDraftColIds.length;
-    }
-
-    for (let i = targetIndex - 1; i >= 0; i--) {
-        const colId = liveOrderedColIds[i];
-        if (movingColIds.has(colId)) {
-            continue;
-        }
-
-        const draftIndex = remainingDraftColIds.indexOf(colId);
-        if (draftIndex >= 0) {
-            return draftIndex + 1;
-        }
-    }
-
-    for (let i = targetIndex; i < liveOrderedColIds.length; i++) {
-        const colId = liveOrderedColIds[i];
-        if (movingColIds.has(colId)) {
-            continue;
-        }
-
-        const draftIndex = remainingDraftColIds.indexOf(colId);
-        if (draftIndex >= 0) {
-            return draftIndex;
-        }
-    }
-
-    return remainingDraftColIds.length;
-}
-
 function getMutablePrimaryColDefCollection(beans: BeanStub['beans']): { list: AgColumn[] } | undefined {
-    const colDefCols = (beans.colModel as any).colDefCols;
+    const colDefCols = beans.colModel.colDefCols;
     const colDefList = colDefCols?.list;
 
     if (!Array.isArray(colDefList)) {

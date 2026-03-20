@@ -256,6 +256,8 @@ const makeStyleMaterialTreeShakeable = () => {
         advancedFilterBuilderButtonBarBorder: false,
         filterPanelApplyButtonColor: { ref: 'buttonTextColor' },
         filterPanelApplyButtonBackgroundColor: { ref: 'buttonBackgroundColor' },
+        columnPanelApplyButtonColor: { ref: 'buttonTextColor' },
+        columnPanelApplyButtonBackgroundColor: { ref: 'buttonBackgroundColor' },
         colorPickerThumbSize: 13,
         colorPickerTrackSize: 11,
         colorPickerThumbBorderWidth: 2,

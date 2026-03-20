@@ -733,8 +733,7 @@ export const AG_GRID_ERRORS = {
         'Since v35, `api.hideOverlay()` does not hide the overlay when `activeOverlay` is set. Set `activeOverlay=null` instead.' as const,
     297: () =>
         '`api.hideOverlay()` does not hide the no matching rows overlay as it is only controlled by grid state. Set `suppressOverlays=["noMatchingRows"] to not show it.' as const,
-    298: () =>
-        `Columns Tool Panel 'buttons' requires 'apply' to enable deferred mode. Without it, other buttons have no effect.` as const,
+    298: () => `Columns Tool Panel 'buttons' requires 'apply' to enable Deferred Updates.` as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

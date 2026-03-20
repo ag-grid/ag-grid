@@ -65,7 +65,7 @@ const cellDefs = api.getEditingCells();
 cellDefs.forEach(cellDef => {
     console.log(cellDef.rowIndex);
     console.log(cellDef.column.getId());
-    console.log(cellDef.floating);
+    console.log(cellDef.rowPinned);
 });
 ```
 
@@ -98,7 +98,7 @@ By default pressing {% kbd "↵ Enter" /%} will start editing on a cell, or stop
 To allow consistency with Excel the grid has the following properties:
 
 -   `enterNavigatesVertically`: Set to `true` to have {% kbd "↵ Enter" /%} key move focus to the cell below if not editing. The default is {% kbd "↵ Enter" /%} key starts editing the currently focused cell.
--   `enterNavigatesVerticallyAfterEdit:` Set to `true` to have {% kbd "↵ Enter" /%} key move focus to the cell below after {% kbd "↵ Enter" /%} is pressed while editing. The default is editing will stop and focus will remain on the editing cell.
+-   `enterNavigatesVerticallyAfterEdit`: Set to `true` to have {% kbd "↵ Enter" /%} key move focus to the cell below after {% kbd "↵ Enter" /%} is pressed while editing. The default is editing will stop and focus will remain on the editing cell.
 
 The example below demonstrates the focus moving down when {% kbd "↵ Enter" /%} is pressed.
 

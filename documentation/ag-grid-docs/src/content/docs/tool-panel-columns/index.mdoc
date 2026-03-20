@@ -24,9 +24,19 @@ Selecting columns means different things depending on whether the grid is in piv
 -   **Pivot Mode Off**: When pivot mode is off, selecting a column toggles the visibility of the column. A selected column is visible and an unselected column is hidden. With `allowDragFromColumnsToolPanel=true`, you can drag a column from the tool panel onto the grid and it will become visible.
 -   **Pivot Mode On**: When pivot mode is on, selecting a column will trigger the column to be either aggregated, grouped or pivoted depending on what is allowed for that column.
 
-## Deferred Apply Mode
+## Deferred Updates
 
-You can configure the Columns Tool Panel to stage changes and require an explicit **Apply** action before they are committed.
+You can configure the Columns Tool Panel to stage changes and require an explicit **Apply** action before they are committed. This allows multiple configuration changes to be made and applied in a single update, avoiding unnecessary intermediate recomputations or requests.
+
+Deferred Updates are enabled by including the **Apply** button in `toolPanelParams.buttons`.
+
+The example below uses the Server-Side Row Model. Note that in the example below:
+
+-   Changes made in the Columns Tool Panel are staged as pending changes.
+-   **Apply** commits all pending changes in a single operation.
+-   **Cancel** discards all pending changes and restores the last applied state.
+
+{% gridExampleRunner title="Deferred Updates" name="deferred-apply-mode"  exampleHeight=830 /%}
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -48,18 +58,9 @@ const gridOptions = {
 };
 ```
 
-When `buttons` includes `'apply'`:
-
--   Changes made in the Columns Tool Panel are staged as pending changes.
--   The configured buttons are displayed at the bottom of the tool panel.
--   **Apply** commits pending changes.
--   **Cancel** discards pending changes.
-
-Changes made outside the Columns Tool Panel (for example via other grid entry points) continue to apply immediately.
-
-The example below uses the Server-Side Row Model.
-
-{% gridExampleRunner title="Deferred Apply Mode" name="deferred-apply-mode"  exampleHeight=830 /%}
+{% note %}
+Changes made outside the Columns Tool Panel — such as dragging columns into the Row Group or Pivot Panels, using the Column Menu, or calling the Grid / Column API — are applied immediately and clear any pending changes. Column pinning, resizing, and group expansion do not clear pending changes.
+{% /note %}
 
 ## Columns Tool Panel Sections
 
@@ -116,9 +117,9 @@ The example below demonstrates the suppress options / methods described above. N
 -   The following sections are not present in the tool panel: Row Groups, Values, Column Labels, Pivot Mode, Side Buttons, Column Filter, Select / Unselect All, Expand / Collapse All.
 -   The date column is hidden from the tool panel using: `colDef.suppressColumnsToolPanel=true`.
 -   Clicking **Show Pivot Mode Section** invokes `setPivotModeSectionVisible(true)` on the Columns Tool Panel instance.
--   Clicking **Show Row Groups Section** invokes `showRowGroupsSection(true)` on the Columns Tool Panel instance.
--   Clicking **Show Values Section** invokes `showValuesSection(true)` on the Columns Tool Panel instance.
--   Clicking **Show Pivot Section** invokes `showPivotSection(true)` on the Columns Tool Panel instance.
+-   Clicking **Show Row Groups Section** invokes `setRowGroupsSectionVisible(true)` on the Columns Tool Panel instance.
+-   Clicking **Show Values Section** invokes `setValuesSectionVisible(true)` on the Columns Tool Panel instance.
+-   Clicking **Show Pivot Section** invokes `setPivotSectionVisible(true)` on the Columns Tool Panel instance.
 
 {% gridExampleRunner title="Section Visibility" name="section-visibility"  exampleHeight=630 /%}
 
@@ -233,7 +234,7 @@ columnsToolPanel.collapseColumnGroups();
 columnsToolPanel.expandColumnGroups(['athleteGroupId', 'competitionGroupId']);
 
 // collapses the 'Competition' column group in the Columns Tool Panel
-columnsToolPanel.collapseFilters(['age', 'sport']);
+columnsToolPanel.collapseColumnGroups(['competitionGroupId']);
 ```
 
 Notice in the snippet above that it's possible to target individual column groups by supplying `groupId`s.

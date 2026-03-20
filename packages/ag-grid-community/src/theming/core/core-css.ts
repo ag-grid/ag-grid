@@ -154,6 +154,16 @@ export interface CoreParams extends SharedThemeParams {
     filterPanelApplyButtonBackgroundColor: ColorValue;
 
     /**
+     * Color of Columns Tool Panel apply button
+     */
+    columnPanelApplyButtonColor: ColorValue;
+
+    /**
+     * Background color of Columns Tool Panel apply button
+     */
+    columnPanelApplyButtonBackgroundColor: ColorValue;
+
+    /**
      * Color of text and UI elements that should stand out less than the default in new Filters Tool Panel
      */
     filterPanelCardSubtleColor: ColorValue;
@@ -768,6 +778,8 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     advancedFilterBuilderValuePillColor: '#85c0e4',
     filterPanelApplyButtonColor: backgroundColor,
     filterPanelApplyButtonBackgroundColor: accentColor,
+    columnPanelApplyButtonColor: backgroundColor,
+    columnPanelApplyButtonBackgroundColor: accentColor,
     filterPanelCardSubtleColor: {
         ref: 'textColor',
         mix: 0.7,

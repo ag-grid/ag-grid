@@ -39,7 +39,7 @@ Note that all the examples on this page also apply additional styling to visuall
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    theme: themeQuartz.withParts({
+    theme: themeQuartz.withParams({
         pinnedRowBorder: {
             width: 2
         },
@@ -94,7 +94,7 @@ Pinned rows can be selected just as normal rows can be selected. The selection s
 
 ## Pinning the Grand Total Row
 
-The [Grand Total Rows](./aggregation-total-rows/#enabling-a-grand-total-row) can be pinned in two ways.
+The [Grand Total Rows](./aggregation-total-rows/#enabling-a-grand-total-row) can be pinned in three ways.
 
 1. Setting the value of the `grandTotalRow` grid option to either `'pinnedTop'` or `'pinnedBottom'`.
 2. Manually pin the grand total row via the context menu when `grandTotalRow` is either `'top'` or `'bottom'`.

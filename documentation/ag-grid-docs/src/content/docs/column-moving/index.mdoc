@@ -86,8 +86,9 @@ From the example the following can be noted:
 
 -   The first column is locked into first position by setting `colDef.lockPosition='left'`. This means it cannot be moved out of place, and other columns cannot be moved around it.
 -   The first column has the user provided `locked-col` CSS class applied to it to change the background colour.
--   The sample application listens for column pinned events. If any column is pinned, then the locked columns are also pinned. This is to keep the locked columns at the first position.
-    -   Clicking **Pin Athlete** will pin the Athlete column, which will result in locked columns being pinned.
+-   The sample application listens for column pinned events. If a column is left-pinned, the locked columns are also left-pinned to keep them at the first position. Right-pinning does not affect the locked columns.
+    -   Clicking **Pin Athlete Left** will left-pin the Athlete column, which will result in locked columns being pinned.
+    -   Clicking **Pin Athlete Right** will right-pin the Athlete column, which will not affect the locked columns.
     -   Clicking **Un-Pin Athlete** will un-pin the Athlete column, which will result in locked columns being un-pinned (assuming no other columns are left pinned).
 
 {% gridExampleRunner title="Advanced Lock" name="advanced-lock" /%}

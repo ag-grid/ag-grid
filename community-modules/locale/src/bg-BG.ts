@@ -75,7 +75,6 @@ export const AG_GRID_LOCALE_BG = {
     // Filter Buttons
     applyFilter: 'Приложи',
     applyColumnToolPanel: 'Приложи',
-    deferMode: 'Defer mode',
     resetFilter: 'Нулиране',
     clearFilter: 'Изчисти',
     cancelFilter: 'Отказ',
@@ -685,7 +684,7 @@ export const AG_GRID_LOCALE_BG = {
     ariaFilterColumn: 'Натиснете CTRL + ENTER, за да отворите филтъра',
     ariaRowDeselect: 'Натиснете SPACE, за да отмаркирате този ред',
     ariaHeaderSelection: 'Колона с избор на заглавие',
-    ariaSelectAllCells: 'Натиснете интервал или Enter, за да изберете всички клетки',
+    ariaSelectAllCells: 'Натиснете Space или Enter, за да изберете всички клетки.',
     ariaSelectAllRowCells: 'Натиснете Enter, за да изберете всички клетки в този ред',
     ariaColumnCellSelection: 'Натиснете Enter, за да превключите избора на всички видими клетки в тази колона',
     ariaColumnGroupCellSelection:

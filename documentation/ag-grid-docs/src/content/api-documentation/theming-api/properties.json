@@ -446,6 +446,17 @@
         "chartMenuLabelColor": {},
         "chartMenuPanelWidth": {}
     },
+    "columnPanel": {
+        "meta": {
+            "displayName": "Column Panel",
+            "page": {
+                "name": "Columns Tool Panel",
+                "url": "./tool-panel-columns/"
+            }
+        },
+        "columnPanelApplyButtonBackgroundColor": {},
+        "columnPanelApplyButtonColor": {}
+    },
     "filterPanel": {
         "meta": {
             "displayName": "Filter Panel",

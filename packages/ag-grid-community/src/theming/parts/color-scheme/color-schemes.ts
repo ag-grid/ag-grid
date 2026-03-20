@@ -59,6 +59,7 @@ const darkParams = () =>
         advancedFilterBuilderOptionPillColor: '#5a3168',
         advancedFilterBuilderValuePillColor: '#374c86',
         filterPanelApplyButtonColor: foregroundColor,
+        columnPanelApplyButtonColor: foregroundColor,
         findMatchColor: backgroundColor,
         findActiveMatchColor: backgroundColor,
         checkboxUncheckedBorderColor: foregroundBackgroundMix(0.4),

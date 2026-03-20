@@ -75,7 +75,6 @@ export const AG_GRID_LOCALE_HU = {
     // Filter Buttons
     applyFilter: 'Alkalmaz',
     applyColumnToolPanel: 'Alkalmaz',
-    deferMode: 'Defer mode',
     resetFilter: 'Visszaállítás',
     clearFilter: 'Törlés',
     cancelFilter: 'Mégse',
@@ -687,7 +686,7 @@ export const AG_GRID_LOCALE_HU = {
     ariaFilterColumn: 'Nyomja meg a CTRL + ENTER billentyűket a szűrő megnyitásához',
     ariaRowDeselect: 'Nyomja le a SPACE billentyűt ezen sor kiválasztásának megszüntetéséhez',
     ariaHeaderSelection: 'Oszlop fejléc kiválasztásával',
-    ariaSelectAllCells: 'Nyomja meg a szóközt vagy az Entert az összes cella kiválasztásához',
+    ariaSelectAllCells: 'Nyomja meg a Space vagy az Enter gombot az összes cella kijelöléséhez',
     ariaSelectAllRowCells: 'Nyomja meg az Entert az összes cella kijelöléséhez ebben a sorban',
     ariaColumnCellSelection: 'Nyomja meg az Entert az oszlop összes látható cellájának kijelölésének váltásához',
     ariaColumnGroupCellSelection:

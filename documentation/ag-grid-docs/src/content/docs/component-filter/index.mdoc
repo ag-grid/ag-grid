@@ -27,7 +27,7 @@ If you do not enable the grid option `enableFilterHandlers`, it is still possibl
 Implementing a custom filter requires two parts:
 
 -   The custom filter component which will be displayed to the user.
--   The the logic to run the filter.
+-   The logic to run the filter.
 
 {% if isFramework("react") %}
 Custom filter components are controlled components, which receive a filter model as part of the props, and pass model updates back to the grid via the `onModelChange` callback.
@@ -117,7 +117,7 @@ const gridOptions = {
                 component: YearFilter, // custom filter component
                 doesFilterPass: (params) => {
                     // evaluate filter for row here
-                    return model === params.handlerParams.getValue(params.node);
+                    return params.model === params.handlerParams.getValue(params.node);
                 },
             },
         }
