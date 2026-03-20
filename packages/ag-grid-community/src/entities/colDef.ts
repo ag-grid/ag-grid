@@ -440,6 +440,10 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * the built-in {@link distributeGroupValue | distributeGroupValue} is used automatically.
      * Set `groupRowValueSetter: false` to disable distribution while keeping group rows editable.
      *
+     * Note: if `groupRowValueSetter` uses `distribution: false` (or `null`), the cell is
+     * treated as not editable even when `groupRowEditable` is `true`. This also applies to per-aggFunc
+     * records when the column's aggregation function maps to `false` or `null`.
+     *
      * @agModule `RowGroupingEditModule`
      *
      */
@@ -453,7 +457,8 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * - **Function**: A custom callback that receives a {@link GroupRowValueSetterParams} and pushes
      *   edits down to descendants. The grid always commits the group row value afterwards.
      * - **Options object**: Uses the built-in distribution logic with a {@link GroupRowValueSetterOptions}
-     *   configuration.
+     *   configuration. When `distribution` is set to `false` or `null`, the cell is treated
+     *   as not editable (overriding `groupRowEditable`).
      *
      * Fires for every `setDataValue` call when active, regardless of `groupRowEditable`.
      *

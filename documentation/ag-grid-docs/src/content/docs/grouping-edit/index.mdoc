@@ -50,7 +50,7 @@ const gridOptions = {
             editable: true,
             groupRowEditable: true,
             // Built-in distribution: divides the sum equally among children.
-            // precision: 0 rounds to integers and spreads the remainder.
+            // precision: 0 rounds child values to integers and spreads the remainder.
             groupRowValueSetter: { precision: 0 },
         },
     ],
@@ -60,30 +60,48 @@ const gridOptions = {
 {% gridExampleRunner title="Built-in Sum Distribution" name="distribute-group-value-sum" exampleHeight=540 /%}
 
 In this example, double-clicking on any group row's `Sales` cell opens the editor. The built-in
-distribution divides the new value equally among the group's children, rounding to whole numbers.
-When a child is itself a group, the cascade recurses through the full hierarchy.
+distribution divides the new value equally among the group's children, rounding child values to
+whole numbers. When a child is itself a group, the cascade recurses through the full hierarchy.
 
 ### Distribution Strategies
 
 The `distribution` option controls how the edited value is spread across children. When omitted,
 the strategy is chosen automatically based on the column's `aggFunc`:
 
-| Strategy       | Behaviour                                                                                                                | Default for                          |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------ |
-| `'uniform'`    | Divides the new value equally among all children.                                                                        | `sum`                                |
-| `'overwrite'`  | Writes the new value directly to every child.                                                                            | `avg`, `count`, and custom functions |
-| `'percentage'` | Scales each child proportionally, preserving relative weights. Falls back to `'uniform'` when the current total is zero. | —                                    |
-| `'increment'`  | Distributes only the difference (`newValue − oldValue`) among children, adding it to current values.                     | —                                    |
-| `'none'`       | Suppresses distribution entirely. No child values are modified. Equivalent to `false` or `null`.                         | —                                    |
+| Strategy       | Behaviour                                                                                                                | Default for        |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------ | ------------------ |
+| `'uniform'`    | Divides the new value equally among all children.                                                                        | `sum`              |
+| `'overwrite'`  | Writes the new value directly to every child.                                                                            | `avg`, custom aggs |
+| `'percentage'` | Scales each child proportionally, preserving relative weights. Falls back to `'uniform'` when the current total is zero. | —                  |
+| `'increment'`  | Distributes only the difference (`newValue − oldValue`) among children, adding it to current values.                     | —                  |
 
 The `first` and `last` aggregation functions always write to the first or last child respectively,
-regardless of any `distribution` setting. The `min` and `max` aggregation functions always write
-to the single child that currently holds the minimum or maximum value.
+regardless of any `distribution` setting.
+
+The `count`, `min`, and `max` aggregation functions are **disabled by default** — the cell is treated
+as not editable unless the user explicitly sets a distribution strategy for them. To enable editing
+on these aggFuncs, set an explicit distribution in the per-aggFunc record or as a top-level strategy string.
+
+{% note %}
+Setting `distribution` to `false` or `null` makes the group cell not editable — even when `groupRowEditable` is `true`.
+This applies both at the top level and within per-aggregation-function records.
+For example, `{ distribution: { sum: false, avg: 'uniform' } }` prevents editing on `sum` columns
+while allowing it on `avg` columns.
+{% /note %}
 
 {% note %}
 For `avg` aggregation, the distributor internally adjusts the target so the average equals the edited value.
 With `'uniform'`, each child is set to `newValue` directly (since the average of identical values equals that value).
 With `'increment'`, the full delta is added to every child (since shifting all children by the same amount shifts the average by that amount).
+{% /note %}
+
+{% note %}
+The `precision` option rounds the values written to **child rows**, not the group row's displayed value.
+The group value is re-computed by the column's `aggFunc` from the rounded children. For `sum` this is always exact
+(the sum of integers is an integer). For `avg` the re-aggregated value may differ — for example, distributing
+`precision: 0` across 3 children produces integers, but their average (`10 / 3 ≈ 3.33`) is not an integer.
+To control how the re-aggregated value is displayed, use a [Value Formatter](./value-formatters/) on the column —
+for example, `valueFormatter: (params) => Number(params.value).toFixed(0)` to always display integers on the group row.
 {% /note %}
 
 ### Distribution Options
@@ -102,7 +120,7 @@ const gridOptions = {
     defaultColDef: {
         editable: true,
         groupRowEditable: true,
-        // Default: round to integers for all columns
+        // Default: round child values to integers for all columns
         groupRowValueSetter: { precision: 0 },
     },
     columnDefs: [
@@ -129,12 +147,12 @@ as plain objects. If the column defines a callback function, it replaces the def
 
 ### All Aggregation Functions
 
-The built-in distribution handles every standard aggregation function. The following example
+The built-in distribution handles standard aggregation functions. The following example
 demonstrates a mix of built-in strategies and a custom aggregation function:
 
--   **Built-in columns** (`sum`, `avg`, `min`, `max`, `count`, `first`, `last`) use the automatic
-    defaults via `groupRowEditable: true`. The `Salary (sum)` column overrides with
-    `precision: 0` to show per-column configuration.
+-   **Built-in columns** (`sum`, `avg`, `first`, `last`) use the automatic defaults via
+    `groupRowEditable: true`. The `Salary (sum)` column overrides with `precision: 0` to
+    show per-column configuration.
 -   **Custom column** (`sumOfSquares`) uses a custom `groupRowValueSetter` callback that distributes
     by computing `√(newValue / count)` per child — the correct inverse of sum-of-squares.
 
@@ -190,7 +208,9 @@ const gridOptions = {
 ```
 
 Aggregation functions not present in the record fall through to the `default` callback,
-then to overwriting all children (or the aggFunc's own strategy for `first`/`last`/`min`/`max`).
+then to the built-in defaults (`'uniform'` for `sum`, `'overwrite'` for `avg` and custom aggs,
+write-to-child for `first`/`last`). `count`, `min`, and `max` are disabled by default
+and require an explicit distribution to be editable.
 
 ## Custom Distribution with a Callback
 
@@ -200,9 +220,9 @@ child value was changed.
 
 {% gridExampleRunner title="Custom Editable Group Totals" name="group-editable-totals-custom" exampleHeight=620 /%}
 
-In this example, a custom function distributes the edited total equally among children using
-integer rounding (largest remainder method). The function calls `setDataValue` on each child,
-which triggers aggregation to refresh parent totals automatically.
+In this example, a custom function distributes the edited total equally among children, rounding
+child values to integers (largest remainder method). The function calls `setDataValue` on each
+child, which triggers aggregation to refresh parent totals automatically.
 
 ### GroupRowValueSetterParams Reference
 
@@ -294,7 +314,7 @@ const gridOptions = {
             groupRowValueSetter: {
                 distribution: 'percentage',
                 // Read proportions from a separate 'weight' field
-                getValue: (params) => params.data?.weight ?? 0,
+                getValue: (params) => (params.data && params.data.weight) || 0,
                 // Write distributed values to the standard column
                 setValue: (params) =>
                     params.node.setDataValue(params.column, Math.max(0, Number(params.value)), 'data'),
@@ -340,7 +360,7 @@ cascades the change down to its children, just like with row grouping.
 {% gridExampleRunner title="Tree Data Editable" name="tree-data-editable" exampleHeight=500 /%}
 
 In this example, editing a folder's `Size` distributes the new total equally among its child files,
-with integer rounding. The cascade recurses through nested folders automatically.
+rounding child values to integers. The cascade recurses through nested folders automatically.
 
 ## Refreshing Groups After Editing
 

@@ -245,7 +245,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
 
         const setupListeners = () => {
             // Cell double clicked
-            const isDoubleClickEdit = column?.isCellEditable(this.displayedNode) && this.gos.get('enableGroupEdit');
+            const isDoubleClickEdit = column?.isCellEditable(this.displayedNode);
             if (!isDoubleClickEdit && !suppressDoubleClickExpand) {
                 this.addManagedListeners(eGridCell, { dblclick: this.onCellDblClicked.bind(this) });
             }

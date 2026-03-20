@@ -168,8 +168,9 @@ export interface DistributionSetValueParams<TData = any, TValue = any, TContext 
  *   For `sum`, each child receives `delta / childCount` added to its current value.
  *   For `avg`, the full delta is added to every child.
  * - **`'overwrite'`** — Writes `newValue` directly to every child.
- * - **`'none'`** — Suppresses distribution. The edit is accepted but no child values
- *   are modified. Equivalent to `false` or `null`.
+ *
+ * Use `false` or `null` to suppress distribution entirely — no child values are modified
+ * and the cell is treated as not editable (overriding `groupRowEditable`).
  *
  * @example
  * ```ts
@@ -177,12 +178,14 @@ export interface DistributionSetValueParams<TData = any, TValue = any, TContext 
  * colDef.groupRowValueSetter = { distribution: 'percentage' };
  * ```
  */
-export type GroupRowValueSetterDistribution = 'uniform' | 'percentage' | 'increment' | 'overwrite' | 'none';
+export type GroupRowValueSetterDistribution = 'uniform' | 'percentage' | 'increment' | 'overwrite';
 
 /**
  * A value in the `distribution` record. Can be:
  * - A {@link GroupRowValueSetterDistribution} strategy string (e.g. `'percentage'`).
- * - `false` or `null` — equivalent to `'none'`, suppresses distribution for this aggFunc.
+ * - `false` or `null` — suppresses distribution for this aggFunc
+ *   and makes the cell not editable when that aggFunc is active.
+ * - `undefined` — inherits from the parent options (falls through to the default for that aggFunc).
  * - A {@link GroupRowValueSetterDistributionOptions} object with strategy and per-aggFunc overrides.
  * - A custom {@link GroupRowValueSetterFunc} callback for full control.
  *
@@ -200,6 +203,7 @@ export type GroupRowValueSetterDistributionEntry<TData = any, TValue = any, TCon
     | GroupRowValueSetterDistribution
     | false
     | null
+    | undefined
     | GroupRowValueSetterDistributionOptions
     | GroupRowValueSetterFunc<TData, TValue, TContext>;
 
@@ -240,16 +244,17 @@ export type GroupRowValueSetterDistributionRecord<TData = any, TValue = any, TCo
 export interface GroupRowValueSetterDistributionOptions {
     /**
      * Distribution strategy to use. See {@link GroupRowValueSetterDistribution} for details.
-     * Set to `'none'`, `false`, or `null` to suppress distribution.
+     * Set to `false` or `null` to suppress distribution and make the cell not editable.
+     * When `undefined`, inherits from the parent options.
      *
-     * When omitted, defaults to `'uniform'` for `sum`, `'overwrite'` for `avg`/`count`,
-     * and the aggFunc's own strategy for `first`/`last`/`min`/`max`.
+     * When omitted at all levels, defaults to `'uniform'` for `sum`, `'overwrite'` for `avg`,
+     * the aggFunc's own strategy for `first`/`last`, and disabled for `count`/`min`/`max`.
      */
     distribution?: GroupRowValueSetterDistribution | false | null;
 
     /**
-     * Number of decimal places to round distributed values to.
-     * Spreads any rounding remainder across children so the total matches exactly.
+     * Number of decimal places to round values written to **child rows** during distribution.
+     * Spreads any rounding remainder across children so their total matches exactly.
      *
      * - `0` — integers (e.g. `10 / 3` → `[4, 3, 3]`)
      * - `2` — two decimals (e.g. `10 / 3` → `[3.34, 3.33, 3.33]`)
@@ -258,14 +263,19 @@ export interface GroupRowValueSetterDistributionOptions {
      *   `cellEditorParams.precision` if set, `0` if `cellEditorParams.step` is a whole number,
      *   no rounding otherwise.
      *
+     * Note: the group row's displayed value is re-computed by the `aggFunc` after distribution.
+     * For `sum`, the sum of rounded children always honours the same precision. For other
+     * aggregation functions like `avg`, the re-aggregated value may not — for example,
+     * the average of integers is not necessarily an integer.
+     *
      * Ignored for `bigint` columns — bigint values are always distributed as integers.
      *
      * @example
      * ```ts
-     * // Integer rounding
+     * // Round child values to integers
      * colDef.groupRowValueSetter = { precision: 0 };
      *
-     * // Currency rounding (2 decimal places)
+     * // Round child values to 2 decimal places (e.g. currency)
      * colDef.groupRowValueSetter = { precision: 2 };
      * ```
      */
@@ -308,9 +318,9 @@ export interface GroupRowValueSetterDistributionOptions {
  *
  * **Defaults by aggFunc:**
  * - `sum` → `'uniform'` (divides equally)
- * - `avg` / `count` → `'overwrite'` (writes the edited value to all children)
- * - `min` / `max` → writes to the child holding the extremum
+ * - `avg` → `'overwrite'` (writes the edited value to all children)
  * - `first` / `last` → writes to that child only
+ * - `count` / `min` / `max` → disabled by default (cell is not editable unless an explicit distribution is set)
  * - Other aggFuncs → `'overwrite'`
  *
  * @example
@@ -356,7 +366,8 @@ export interface GroupRowValueSetterOptions<TData = any, TValue = any, TContext 
      * Distribution strategy or per-aggregation-function strategy map.
      *
      * **As a string:** applies the chosen {@link GroupRowValueSetterDistribution} strategy
-     * to all aggregation functions. Set to `'none'`, `false`, or `null` to suppress distribution.
+     * to all aggregation functions. Set to `false` or `null` to suppress distribution
+     * and make the cell not editable (overriding `groupRowEditable`).
      *
      * **As a record:** maps aggFunc names to individual strategies, options objects,
      * or custom callbacks. Unmatched aggFuncs fall through to {@link default},

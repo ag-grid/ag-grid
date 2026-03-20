@@ -268,7 +268,7 @@ describe('distribution default handler', () => {
         expect(api.getRowNode('a2')?.data?.amount).toBe(888);
     });
 
-    test('built-in aggFunc not in record without default handler overwrites all', async () => {
+    test('built-in aggFunc not in record without default handler inherits default strategy', async () => {
         const api = await createSimpleGrid(
             'unmatched-sum-no-default',
             [
@@ -288,9 +288,9 @@ describe('distribution default handler', () => {
         group.setDataValue('amount', 42, 'ui');
         await asyncSetTimeout(0);
 
-        // sum is not in the record, no default handler → overwrites all children
-        expect(api.getRowNode('a1')?.data?.amount).toBe(42);
-        expect(api.getRowNode('a2')?.data?.amount).toBe(42);
+        // sum is not in the record, no default handler → inherits default (uniform for sum)
+        expect(api.getRowNode('a1')?.data?.amount).toBe(21);
+        expect(api.getRowNode('a2')?.data?.amount).toBe(21);
     });
 
     test('custom function entry in record is invoked directly', async () => {
@@ -721,17 +721,17 @@ describe.each(SETTER_MODES)('decimal precision via %s', (_label, makeSetter) => 
     });
 });
 
-// --- 'none' strategy ---
+// --- Suppressed distribution ---
 
-describe("'none' distribution strategy", () => {
-    test("'none' string suppresses distribution", async () => {
+describe('suppressed distribution strategy', () => {
+    test('false suppresses distribution', async () => {
         const api = await createSimpleGrid(
             'none-string',
             [
                 { id: 'a1', region: 'R', country: 'C', amount: 10 },
                 { id: 'a2', region: 'R', country: 'C', amount: 20 },
             ],
-            { groupRowValueSetter: (params) => distributeGroupValue(params, { distribution: 'none' }) }
+            { groupRowValueSetter: (params) => distributeGroupValue(params, { distribution: false }) }
         );
 
         const group = api.getRowNode('row-group-region-R-country-C')!;
@@ -779,14 +779,14 @@ describe("'none' distribution strategy", () => {
         expect(api.getRowNode('a2')?.data?.amount).toBe(20);
     });
 
-    test("'none' in per-aggFunc record suppresses for that aggFunc only", async () => {
+    test('false in per-aggFunc record suppresses for that aggFunc only', async () => {
         const api = await createSimpleGrid(
             'none-record',
             [
                 { id: 'a1', region: 'R', country: 'C', amount: 10 },
                 { id: 'a2', region: 'R', country: 'C', amount: 20 },
             ],
-            { groupRowValueSetter: (params) => distributeGroupValue(params, { distribution: { sum: 'none' } }) }
+            { groupRowValueSetter: (params) => distributeGroupValue(params, { distribution: { sum: false } }) }
         );
 
         const group = api.getRowNode('row-group-region-R-country-C')!;
@@ -797,7 +797,7 @@ describe("'none' distribution strategy", () => {
         expect(api.getRowNode('a2')?.data?.amount).toBe(20);
     });
 
-    test('false in per-aggFunc record suppresses for that aggFunc only', async () => {
+    test('null in per-aggFunc record suppresses for that aggFunc only', async () => {
         const api = await createSimpleGrid(
             'none-false-record',
             [
@@ -815,14 +815,14 @@ describe("'none' distribution strategy", () => {
         expect(api.getRowNode('a2')?.data?.amount).toBe(20);
     });
 
-    test("'none' on colDef options object suppresses distribution", async () => {
+    test('false on colDef options object suppresses distribution', async () => {
         const api = await createSimpleGrid(
             'none-coldef',
             [
                 { id: 'a1', region: 'R', country: 'C', amount: 10 },
                 { id: 'a2', region: 'R', country: 'C', amount: 20 },
             ],
-            { groupRowValueSetter: { distribution: 'none' } }
+            { groupRowValueSetter: { distribution: false } }
         );
 
         const group = api.getRowNode('row-group-region-R-country-C')!;
@@ -831,6 +831,132 @@ describe("'none' distribution strategy", () => {
 
         expect(api.getRowNode('a1')?.data?.amount).toBe(10);
         expect(api.getRowNode('a2')?.data?.amount).toBe(20);
+    });
+});
+
+// --- undefined inherits from parent ---
+
+describe('undefined in record/options inherits from parent defaults', () => {
+    test('undefined entry in per-aggFunc record inherits default for sum (uniform)', async () => {
+        const api = await createSimpleGrid(
+            'inherit-undefined-record',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 20 },
+            ],
+            {
+                groupRowValueSetter: (params) =>
+                    distributeGroupValue(params, {
+                        distribution: { sum: undefined, avg: 'percentage' },
+                    }),
+            }
+        );
+
+        // sum: undefined → falls through to default (uniform for sum)
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 60, 'ui');
+        await asyncSetTimeout(0);
+
+        expect(api.getRowNode('a1')?.data?.amount).toBe(30);
+        expect(api.getRowNode('a2')?.data?.amount).toBe(30);
+    });
+
+    test('undefined distribution in options object entry inherits default for sum', async () => {
+        const api = await createSimpleGrid(
+            'inherit-undefined-opts-entry',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 10 },
+                { id: 'a3', region: 'R', country: 'C', amount: 10 },
+            ],
+            {
+                groupRowValueSetter: (params) =>
+                    distributeGroupValue(params, {
+                        distribution: { sum: { distribution: undefined, precision: 0 } },
+                    }),
+            }
+        );
+
+        // distribution: undefined inside options object → inherits default for sum (uniform)
+        // precision: 0 still applies
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 10, 'ui');
+        await asyncSetTimeout(0);
+
+        expect(api.getRowNode('a1')?.data?.amount).toBe(4);
+        expect(api.getRowNode('a2')?.data?.amount).toBe(3);
+        expect(api.getRowNode('a3')?.data?.amount).toBe(3);
+    });
+
+    test('undefined top-level distribution inherits default for each aggFunc', async () => {
+        const api = await createSimpleGrid(
+            'inherit-undefined-top',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 20 },
+            ],
+            {
+                groupRowValueSetter: (params) => distributeGroupValue(params, { distribution: undefined }),
+            }
+        );
+
+        // undefined top-level distribution → default for sum (uniform)
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 60, 'ui');
+        await asyncSetTimeout(0);
+
+        expect(api.getRowNode('a1')?.data?.amount).toBe(30);
+        expect(api.getRowNode('a2')?.data?.amount).toBe(30);
+    });
+
+    test('undefined in record for count/min/max inherits disabled-by-default (no distribution)', async () => {
+        const api = await createSimpleGrid(
+            'inherit-undefined-count',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 20 },
+            ],
+            {
+                aggFunc: 'count',
+                groupRowValueSetter: (params) =>
+                    distributeGroupValue(params, {
+                        distribution: { count: undefined },
+                    }),
+            }
+        );
+
+        // count: undefined → inherits disabled-by-default (suppressed)
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 100, 'ui');
+        await asyncSetTimeout(0);
+
+        expect(api.getRowNode('a1')?.data?.amount).toBe(10);
+        expect(api.getRowNode('a2')?.data?.amount).toBe(20);
+    });
+
+    test('explicit strategy in record overrides disabled-by-default for count', async () => {
+        const api = await createSimpleGrid(
+            'override-count-overwrite',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 20 },
+            ],
+            {
+                aggFunc: 'count',
+                groupRowValueSetter: (params) =>
+                    distributeGroupValue(params, {
+                        distribution: { count: 'overwrite' },
+                    }),
+            }
+        );
+
+        // count: 'overwrite' → explicitly enabled
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 100, 'ui');
+        await asyncSetTimeout(0);
+
+        expect(api.getRowNode('a1')?.data?.amount).toBe(100);
+        expect(api.getRowNode('a2')?.data?.amount).toBe(100);
     });
 });
 
@@ -1068,7 +1194,7 @@ describe('avg with percentage via direct path', () => {
 // --- Record edge cases ---
 
 describe('distribution record edge cases', () => {
-    test('record with missing aggFunc key and no default uses built-in overwrite', async () => {
+    test('record with missing aggFunc key for count inherits disabled-by-default', async () => {
         const api = await createSimpleGrid(
             'record-missing-key',
             [
@@ -1084,13 +1210,13 @@ describe('distribution record edge cases', () => {
             }
         );
 
-        // count is not in record, no default → falls back to built-in writeAll
+        // count is not in record, no default → disabled by default (no distribution)
         const group = api.getRowNode('row-group-region-R-country-C')!;
         group.setDataValue('amount', 42, 'ui');
         await asyncSetTimeout(0);
 
-        expect(api.getRowNode('a1')?.data?.amount).toBe(42);
-        expect(api.getRowNode('a2')?.data?.amount).toBe(42);
+        expect(api.getRowNode('a1')?.data?.amount).toBe(10);
+        expect(api.getRowNode('a2')?.data?.amount).toBe(20);
     });
 
     test('record with custom function returning false propagates false', async () => {
@@ -1419,5 +1545,188 @@ describe('options object directly on colDef', () => {
         expect(api.getRowNode('a1')?.data?.amount).toBe(30);
         expect(api.getRowNode('a2')?.data?.amount).toBe(70);
         expect(group.aggData?.amount).toBe(100);
+    });
+});
+
+describe('precision rounds child values, not the re-aggregated group value', () => {
+    test('sum: precision 0 produces integer leaf values and integer group sum', async () => {
+        const api = await createSimpleGrid(
+            'precision-sum-int',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 20 },
+                { id: 'a3', region: 'R', country: 'C', amount: 30 },
+            ],
+            { groupRowValueSetter: { distribution: 'uniform', precision: 0 } }
+        );
+
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 100, 'ui');
+        await asyncSetTimeout(0);
+
+        // Leaf values are rounded to integers with remainder spread: [34, 33, 33]
+        const v1 = api.getRowNode('a1')!.data!.amount;
+        const v2 = api.getRowNode('a2')!.data!.amount;
+        const v3 = api.getRowNode('a3')!.data!.amount;
+        expect(Number.isInteger(v1)).toBe(true);
+        expect(Number.isInteger(v2)).toBe(true);
+        expect(Number.isInteger(v3)).toBe(true);
+        expect(v1 + v2 + v3).toBe(100);
+
+        // The sum of integers is always an integer — group value honours precision
+        expect(group.aggData?.amount).toBe(100);
+        expect(Number.isInteger(group.aggData?.amount)).toBe(true);
+    });
+
+    test('avg: precision 0 with uniform — leaf values are integers, group avg honours precision', async () => {
+        // Uniform avg sets all children to the target value → avg matches exactly.
+        const api = await createSimpleGrid(
+            'precision-avg-uniform',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 20 },
+                { id: 'a3', region: 'R', country: 'C', amount: 30 },
+            ],
+            { aggFunc: 'avg', groupRowValueSetter: { distribution: 'uniform', precision: 0 } }
+        );
+
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+
+        // Edit group avg to 10 — uniform writes 10 to each child → avg(10,10,10) = 10 ✓
+        group.setDataValue('amount', 10, 'ui');
+        await asyncSetTimeout(0);
+
+        expect(api.getRowNode('a1')!.data!.amount).toBe(10);
+        expect(api.getRowNode('a2')!.data!.amount).toBe(10);
+        expect(api.getRowNode('a3')!.data!.amount).toBe(10);
+        expect(group.aggData?.amount).toMatchObject({ value: 10 });
+    });
+
+    test('avg: precision 0 with percentage — leaf values are integers, sum is exact', async () => {
+        const api = await createSimpleGrid(
+            'precision-avg-pct',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 20 },
+                { id: 'a3', region: 'R', country: 'C', amount: 30 },
+            ],
+            { aggFunc: 'avg', groupRowValueSetter: { distribution: 'percentage', precision: 0 } }
+        );
+
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        // Old avg = 20, edit to 25
+        // Target sum = 75, old sum = 60 — distributes proportionally then rounds
+        group.setDataValue('amount', 25, 'ui');
+        await asyncSetTimeout(0);
+
+        const w1 = api.getRowNode('a1')!.data!.amount;
+        const w2 = api.getRowNode('a2')!.data!.amount;
+        const w3 = api.getRowNode('a3')!.data!.amount;
+
+        // All leaf values are integers (precision: 0)
+        expect(Number.isInteger(w1)).toBe(true);
+        expect(Number.isInteger(w2)).toBe(true);
+        expect(Number.isInteger(w3)).toBe(true);
+
+        // The sum is exact in integer space (remainder distributed)
+        expect(w1 + w2 + w3).toBe(75);
+        expect(group.aggData?.amount).toMatchObject({ value: 25 });
+    });
+
+    test('avg: precision 0 with increment — leaf values are integers, group avg matches', async () => {
+        const api = await createSimpleGrid(
+            'precision-avg-inc',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 10 },
+                { id: 'a3', region: 'R', country: 'C', amount: 10 },
+                { id: 'a4', region: 'R', country: 'C', amount: 10 },
+            ],
+            { aggFunc: 'avg', groupRowValueSetter: { distribution: 'increment', precision: 0 } }
+        );
+
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        expect(group.aggData?.amount).toMatchObject({ value: 10 });
+
+        // Edit avg from 10 to 11 → for avg+increment, full delta added to every child
+        group.setDataValue('amount', 11, 'ui');
+        await asyncSetTimeout(0);
+
+        expect(api.getRowNode('a1')!.data!.amount).toBe(11);
+        expect(api.getRowNode('a2')!.data!.amount).toBe(11);
+        expect(api.getRowNode('a3')!.data!.amount).toBe(11);
+        expect(api.getRowNode('a4')!.data!.amount).toBe(11);
+        expect(group.aggData?.amount).toMatchObject({ value: 11 });
+    });
+
+    test('sum: precision 0 with uniform on 7 children — leaf values are integers, group sum is exact', async () => {
+        // 100 / 7 = 14.285... → with precision 0: remainder-spread integers summing to 100
+        const api = await createSimpleGrid(
+            'precision-sum-7kids',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 1 },
+                { id: 'a2', region: 'R', country: 'C', amount: 1 },
+                { id: 'a3', region: 'R', country: 'C', amount: 1 },
+                { id: 'a4', region: 'R', country: 'C', amount: 1 },
+                { id: 'a5', region: 'R', country: 'C', amount: 1 },
+                { id: 'a6', region: 'R', country: 'C', amount: 1 },
+                { id: 'a7', region: 'R', country: 'C', amount: 1 },
+            ],
+            { groupRowValueSetter: { distribution: 'uniform', precision: 0 } }
+        );
+
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 100, 'ui');
+        await asyncSetTimeout(0);
+
+        const values = ['a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7'].map((id) => api.getRowNode(id)!.data!.amount);
+
+        // All leaf values are integers
+        for (const v of values) {
+            expect(Number.isInteger(v)).toBe(true);
+        }
+        // Sum is exact — for sum, the sum of integers is always an integer
+        expect(values.reduce((a, b) => a + b, 0)).toBe(100);
+        expect(group.aggData?.amount).toBe(100);
+    });
+
+    test('avg column shows non-integer aggData when all leaf values are integers', async () => {
+        // Demonstrates the precision note: precision rounds child values, not the re-aggregated
+        // group value. A sum column distributes 10 across 3 children with precision:0 → [4, 3, 3].
+        // A second avg column on the same field re-aggregates those integers: avg(4, 3, 3) ≈ 3.33,
+        // which is NOT an integer despite all leaf values being integers.
+        const api = await createSimpleGrid(
+            'precision-avg-non-int',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 1 },
+                { id: 'a2', region: 'R', country: 'C', amount: 1 },
+                { id: 'a3', region: 'R', country: 'C', amount: 1 },
+            ],
+            { groupRowValueSetter: { distribution: 'uniform', precision: 0 } },
+            [{ colId: 'amount_avg', field: 'amount', aggFunc: 'avg' }]
+        );
+
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        // Distribute 10 across 3 children with precision:0 → [4, 3, 3]
+        group.setDataValue('amount', 10, 'ui');
+        await asyncSetTimeout(0);
+
+        // All leaf values are integers
+        const v1 = api.getRowNode('a1')!.data!.amount;
+        const v2 = api.getRowNode('a2')!.data!.amount;
+        const v3 = api.getRowNode('a3')!.data!.amount;
+        expect(Number.isInteger(v1)).toBe(true);
+        expect(Number.isInteger(v2)).toBe(true);
+        expect(Number.isInteger(v3)).toBe(true);
+        expect(v1 + v2 + v3).toBe(10);
+
+        // The sum column's aggData is an integer (sum of integers is always an integer)
+        expect(group.aggData?.amount).toBe(10);
+        expect(Number.isInteger(group.aggData?.amount)).toBe(true);
+
+        // The avg column's aggData is NOT an integer: avg(4, 3, 3) = 10/3 ≈ 3.333...
+        const avgAgg = group.aggData?.amount_avg;
+        expect(avgAgg).toMatchObject({ value: expect.closeTo(10 / 3, 10) });
+        expect(Number.isInteger(avgAgg.value)).toBe(false);
     });
 });

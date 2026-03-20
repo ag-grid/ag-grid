@@ -74,11 +74,12 @@ export const distributeGroupValue = (
                     setValue: perAgg.setValue ?? setValue,
                 };
             } else {
-                // aggFunc not in the record — fall through to default handler or overwrite
+                // aggFunc not in the record (or explicitly undefined) — fall through to default handler
+                // or let the distributor resolve the default strategy for the aggFunc
                 if (defaultHandler) {
                     return defaultHandler(params) ?? true;
                 }
-                entry = { distribution: 'overwrite', precision, getValue, setValue };
+                entry = { distribution: undefined, precision, getValue, setValue };
             }
             // Record mode handles unmatched aggFuncs above — the distributor doesn't need defaultHandler
             defaultHandler = undefined;

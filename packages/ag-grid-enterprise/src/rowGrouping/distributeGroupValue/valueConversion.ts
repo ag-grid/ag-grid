@@ -1,36 +1,38 @@
 import type { ColDef, GroupRowValueSetterDistribution } from 'ag-grid-community';
 
-/** Resolved distribution strategy. `null` means no strategy — use default handler or overwrite. */
-export type DistributionStrategy = 'first' | 'last' | 'min' | 'max' | GroupRowValueSetterDistribution | null;
+/** Resolved distribution strategy. `null` means no strategy — use default handler or overwrite. `false` means suppressed. */
+export type DistributionStrategy = 'first' | 'last' | GroupRowValueSetterDistribution | false | null;
 
 /**
  * Resolves the distribution strategy from the aggFunc and explicit distribution option.
- * 'none', false, and null always suppress distribution, overriding even first/last/min/max.
- * first/last/min/max aggFuncs use their own strategy unless explicitly overridden.
+ * false and null always suppress distribution.
+ * first/last aggFuncs use their own strategy unless explicitly suppressed.
+ * count/min/max are disabled by default — only enabled when the user explicitly sets a distribution.
  */
 export const resolveStrategy = (
     aggFunc: string | null,
     distribution: GroupRowValueSetterDistribution | false | null | undefined
 ): DistributionStrategy => {
     // Explicit suppression always wins
-    if (distribution === 'none' || distribution === false || distribution === null) {
-        return 'none';
+    if (distribution === false || distribution === null) {
+        return false;
     }
-    switch (aggFunc) {
-        case 'first':
-        case 'last':
-        case 'min':
-        case 'max':
-            return aggFunc;
+    // first/last always use their own strategy (write to that child)
+    if (aggFunc === 'first' || aggFunc === 'last') {
+        return aggFunc;
     }
+    // If user explicitly set a distribution, use it for any aggFunc
     if (distribution) {
         return distribution;
+    }
+    // count/min/max are disabled by default
+    if (aggFunc === 'count' || aggFunc === 'min' || aggFunc === 'max') {
+        return false;
     }
     switch (aggFunc) {
         case 'sum':
             return 'uniform';
         case 'avg':
-        case 'count':
             return 'overwrite';
         default:
             return null;

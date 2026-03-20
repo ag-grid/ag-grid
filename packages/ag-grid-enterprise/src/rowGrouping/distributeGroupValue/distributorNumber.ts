@@ -72,7 +72,7 @@ export class DistributorNumber {
     run(): boolean {
         const { strategy, newValue } = this;
 
-        if (strategy === 'none') {
+        if (strategy === false) {
             return false;
         }
 
@@ -90,10 +90,6 @@ export class DistributorNumber {
                 return this.writeOne(children[0], newValue);
             case 'last':
                 return this.writeOne(children[this.count - 1], newValue);
-            case 'min':
-                return this.writeToExtremum(true);
-            case 'max':
-                return this.writeToExtremum(false);
             case 'overwrite':
                 return this.writeAll(newValue);
         }
@@ -170,21 +166,6 @@ export class DistributorNumber {
             }
         }
         return changed;
-    }
-
-    private writeToExtremum(isMin: boolean): boolean {
-        const { children, count, newValue } = this;
-        let bestNode = children[0];
-        let bestVal = this.readOne(bestNode);
-        for (let i = 1; i < count; i++) {
-            const node = children[i];
-            const v = this.readOne(node);
-            if (isMin ? v < bestVal : v > bestVal) {
-                bestVal = v;
-                bestNode = node;
-            }
-        }
-        return this.writeOne(bestNode, newValue);
     }
 
     private distributeUniform(): boolean {

@@ -55,8 +55,8 @@ export class DistributorBigInt {
     run(): boolean {
         const { strategy, newValue } = this;
 
-        // Explicit 'none' — suppress distribution
-        if (strategy === 'none') {
+        // Explicit suppression
+        if (strategy === false) {
             return false;
         }
 
@@ -75,10 +75,6 @@ export class DistributorBigInt {
                 return this.writeOne(0, newValue);
             case 'last':
                 return this.writeOne(this.count - 1, newValue);
-            case 'min':
-                return this.writeToExtremum(true);
-            case 'max':
-                return this.writeToExtremum(false);
             case 'overwrite':
                 return this.writeAll(newValue);
         }
@@ -137,21 +133,6 @@ export class DistributorBigInt {
             }
         }
         return changed;
-    }
-
-    /** Writes the new value to the child currently holding the min or max. */
-    private writeToExtremum(isMin: boolean): boolean {
-        const { count, newValue } = this;
-        let targetIdx = 0;
-        let targetVal = this.readOne(0);
-        for (let i = 1; i < count; i++) {
-            const v = this.readOne(i);
-            if (isMin ? v < targetVal : v > targetVal) {
-                targetVal = v;
-                targetIdx = i;
-            }
-        }
-        return this.writeOne(targetIdx, newValue);
     }
 
     /** Writes uniform values directly without array allocation. */

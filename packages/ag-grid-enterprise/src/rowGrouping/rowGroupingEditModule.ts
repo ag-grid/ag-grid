@@ -1,6 +1,9 @@
 import type {
     AgColumn,
+    GroupRowValueSetterDistributionOptions,
+    GroupRowValueSetterOptions,
     GroupRowValueSetterParams,
+    IRowNode,
     NamedBean,
     RowNode,
     _IRowGroupingEditValueSvc,
@@ -15,6 +18,24 @@ import { SharedRowGroupingModule } from './rowGroupingModule';
 
 class RowGroupingEditValueSvc extends BeanStub implements NamedBean, _IRowGroupingEditValueSvc {
     beanName = 'rowGroupingEditValueSvc' as const;
+
+    public isGroupCellEditable(rowNode: IRowNode, column: AgColumn): boolean {
+        const colDef = column.getColDef();
+
+        if (!column.isColumnFunc(rowNode, colDef.groupRowEditable!)) {
+            return false;
+        }
+
+        const raw = colDef.groupRowValueSetter;
+
+        // No value setter, true, false, or function → cell is editable
+        if (raw == null || typeof raw !== 'object') {
+            return true;
+        }
+
+        // Options object — check if distribution is suppressed (false/null) for this column's aggFunc
+        return !isDistributionSuppressed(raw, colDef.aggFunc);
+    }
 
     public setGroupDataValue(
         rowNode: RowNode,
@@ -62,6 +83,59 @@ class RowGroupingEditValueSvc extends BeanStub implements NamedBean, _IRowGroupi
         // Default to true if user forgot to return a value (possible without TypeScript).
         return result ?? true;
     }
+}
+
+/** Whether this aggFunc is disabled by default (requires explicit distribution to be editable). */
+function isDisabledByDefault(aggFunc: string | null): boolean {
+    return aggFunc === 'count' || aggFunc === 'min' || aggFunc === 'max';
+}
+
+/** Checks whether an options-object groupRowValueSetter would suppress distribution for the given aggFunc. */
+function isDistributionSuppressed(
+    opts: GroupRowValueSetterOptions,
+    aggFunc: string | ((params: any) => any) | null | undefined
+): boolean {
+    const dist = opts.distribution;
+
+    // Top-level suppression
+    if (dist === false || dist === null) {
+        return true;
+    }
+
+    const aggFuncStr = typeof aggFunc === 'string' ? aggFunc : null;
+
+    // Top-level string strategy applies to all aggFuncs — not suppressed
+    if (typeof dist === 'string') {
+        return false;
+    }
+
+    // No distribution specified — suppressed for count/min/max, not for others
+    if (dist === undefined) {
+        return isDisabledByDefault(aggFuncStr);
+    }
+
+    // Per-aggFunc record — look up the current column's aggFunc
+    if (aggFuncStr == null) {
+        return false; // Non-string aggFunc → falls through to default handler/overwrite
+    }
+
+    const entry = dist[aggFuncStr];
+
+    // undefined means not in the record — suppressed if disabled by default
+    if (entry === undefined) {
+        return isDisabledByDefault(aggFuncStr);
+    }
+
+    if (entry === false || entry === null) {
+        return true;
+    }
+
+    if (typeof entry === 'object') {
+        const entryDist = (entry as GroupRowValueSetterDistributionOptions).distribution;
+        return entryDist === false || entryDist === null;
+    }
+
+    return false;
 }
 
 /**
