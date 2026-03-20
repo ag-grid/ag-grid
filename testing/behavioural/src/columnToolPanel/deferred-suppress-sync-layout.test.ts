@@ -98,6 +98,42 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
         return toolPanel.beans.colModel.getColDefCols().map((col: any) => col.getColId());
     }
 
+    async function dragColumnBefore(toolPanel: any, movingLabel: string, targetLabel: string): Promise<void> {
+        const listPanel = toolPanel.primaryColsPanel.primaryColsListPanel;
+        const virtualList = listPanel['virtualList'];
+        const displayedColsList = listPanel.getDisplayedColsList() as any[];
+        const movingItem = displayedColsList.find((item: any) => item.displayName === movingLabel);
+        const targetIndex = displayedColsList.findIndex((item: any) => item.displayName === targetLabel);
+
+        expect(movingItem).toBeTruthy();
+        expect(targetIndex).toBeGreaterThanOrEqual(0);
+
+        virtualList.ensureIndexVisible(targetIndex);
+        await asyncSetTimeout(50);
+
+        let component = virtualList.getComponentAt(targetIndex) as any;
+        if (!component) {
+            component = listPanel['createComponentFromItem'](
+                displayedColsList[targetIndex],
+                document.createElement('div')
+            );
+        }
+
+        moveItem(
+            toolPanel.beans,
+            [movingItem.column as AgColumn],
+            {
+                rowIndex: targetIndex,
+                position: 'top',
+                component,
+            },
+            {
+                buttons: ['apply', 'cancel'] as const,
+            }
+        );
+        await asyncSetTimeout(50);
+    }
+
     async function dragColumnToEnd(toolPanel: any, label: string): Promise<void> {
         const listPanel = toolPanel.primaryColsPanel.primaryColsListPanel;
         const virtualList = listPanel['virtualList'];
@@ -128,7 +164,6 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
             },
             {
                 buttons: ['apply', 'cancel'] as const,
-                suppressSyncLayoutWithGrid: true,
             }
         );
         await asyncSetTimeout(50);
@@ -176,6 +211,24 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
 
             // After apply, colDef order should be updated
             expect(getPrimaryColumnOrder(toolPanel)).toEqual(['age', 'country', 'sport', 'gold', 'athlete']);
+        });
+
+        test('sequential drags use draft order not live order for target position', async () => {
+            // Columns initial order: athlete, age, country, sport, gold
+            const { toolPanel } = await createGrid({ suppressSyncLayoutWithGrid: true });
+
+            // Drag 1: move 'athlete' to end → draft: [age, country, sport, gold, athlete]
+            await dragColumnToEnd(toolPanel, 'Athlete');
+            expect(getDisplayedPrimaryColumnOrder(toolPanel)).toEqual(['age', 'country', 'sport', 'gold', 'athlete']);
+
+            // Grid live order is still unchanged
+            expect(getPrimaryColumnOrder(toolPanel)).toEqual(['athlete', 'age', 'country', 'sport', 'gold']);
+
+            // Drag 2: move 'age' before 'sport' in the draft order → draft: [country, sport, age, gold, athlete]
+            // This drag uses the draft order for the target index calculation.
+            // Previously (bug), it used the live order and placed 'age' in the wrong position.
+            await dragColumnBefore(toolPanel, 'Age', 'Sport');
+            expect(getDisplayedPrimaryColumnOrder(toolPanel)).toEqual(['country', 'age', 'sport', 'gold', 'athlete']);
         });
     });
 

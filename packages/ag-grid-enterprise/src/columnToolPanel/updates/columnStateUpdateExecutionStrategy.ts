@@ -471,17 +471,15 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
 
     public moveColumns(columns: AgColumn[], targetIndex: number, eventType: ColumnEventType): void {
         const movingColIds = new Set(columns.map((column) => column.getColId()));
-        const liveOrderedColIds = getPrimaryColumnIds(this.beans);
-        const orderedColIds = this.state.columnOrder?.colIds ?? liveOrderedColIds;
+        const orderedColIds = this.state.columnOrder?.colIds ?? getPrimaryColumnIds(this.beans);
 
         const remaining = orderedColIds.filter((colId) => !movingColIds.has(colId));
         const movedIds = columns.map((column) => column.getColId());
-        const adjustedTargetIndex = getDeferredMoveTargetIndex(liveOrderedColIds, remaining, movingColIds, targetIndex);
         const seq = nextSeq(this.sequence);
         this.sequence = seq;
 
         this.state.columnOrder = {
-            colIds: [...remaining.slice(0, adjustedTargetIndex), ...movedIds, ...remaining.slice(adjustedTargetIndex)],
+            colIds: [...remaining.slice(0, targetIndex), ...movedIds, ...remaining.slice(targetIndex)],
             eventType,
             seq,
         };
@@ -798,48 +796,8 @@ function getPrimaryColumns(beans: BeanStub['beans']): AgColumn[] {
     );
 }
 
-function getDeferredMoveTargetIndex(
-    liveOrderedColIds: string[],
-    remainingDraftColIds: string[],
-    movingColIds: Set<string>,
-    targetIndex: number
-): number {
-    if (targetIndex <= 0) {
-        return 0;
-    }
-    if (targetIndex >= remainingDraftColIds.length || targetIndex >= liveOrderedColIds.length) {
-        return remainingDraftColIds.length;
-    }
-
-    for (let i = targetIndex - 1; i >= 0; i--) {
-        const colId = liveOrderedColIds[i];
-        if (movingColIds.has(colId)) {
-            continue;
-        }
-
-        const draftIndex = remainingDraftColIds.indexOf(colId);
-        if (draftIndex >= 0) {
-            return draftIndex + 1;
-        }
-    }
-
-    for (let i = targetIndex; i < liveOrderedColIds.length; i++) {
-        const colId = liveOrderedColIds[i];
-        if (movingColIds.has(colId)) {
-            continue;
-        }
-
-        const draftIndex = remainingDraftColIds.indexOf(colId);
-        if (draftIndex >= 0) {
-            return draftIndex;
-        }
-    }
-
-    return remainingDraftColIds.length;
-}
-
 function getMutablePrimaryColDefCollection(beans: BeanStub['beans']): { list: AgColumn[] } | undefined {
-    const colDefCols = (beans.colModel as any).colDefCols;
+    const colDefCols = beans.colModel.colDefCols;
     const colDefList = colDefCols?.list;
 
     if (!Array.isArray(colDefList)) {
