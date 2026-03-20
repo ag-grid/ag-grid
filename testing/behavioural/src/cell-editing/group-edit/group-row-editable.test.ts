@@ -892,6 +892,110 @@ describe('groupRowEditable with distribution suppression makes cell not editable
         expect(api.getColumn('amount')!.isCellEditable(groupRowNode!)).toBe(true);
     });
 
+    test('per-aggFunc options object with distribution: undefined suppresses disabled-by-default aggFuncs', async () => {
+        const api = await gridsManager.createGridAndWait('dist-opts-undef-count', {
+            columnDefs: [
+                { field: 'category', rowGroup: true, hide: true },
+                {
+                    field: 'amount',
+                    aggFunc: 'count',
+                    editable: true,
+                    groupRowEditable: true,
+                    // count: { distribution: undefined } → inherits disabled-by-default
+                    groupRowValueSetter: { distribution: { count: { distribution: undefined, precision: 0 } } },
+                },
+            ],
+            rowData: [
+                { id: 'a-1', category: 'A', amount: 10 },
+                { id: 'a-2', category: 'A', amount: 20 },
+            ],
+            groupDefaultExpanded: -1,
+            getRowId: (params) => params.data.id,
+        });
+
+        const groupRowNode = api.getDisplayedRowAtIndex(0);
+        expect(groupRowNode?.group).toBe(true);
+        expect(api.getColumn('amount')!.isCellEditable(groupRowNode!)).toBe(false);
+    });
+
+    test('per-aggFunc options object without distribution key suppresses disabled-by-default aggFuncs', async () => {
+        const api = await gridsManager.createGridAndWait('dist-opts-no-dist-min', {
+            columnDefs: [
+                { field: 'category', rowGroup: true, hide: true },
+                {
+                    field: 'amount',
+                    aggFunc: 'min',
+                    editable: true,
+                    groupRowEditable: true,
+                    // min: { precision: 0 } (no distribution key) → inherits disabled-by-default
+                    groupRowValueSetter: { distribution: { min: { precision: 0 } } },
+                },
+            ],
+            rowData: [
+                { id: 'a-1', category: 'A', amount: 10 },
+                { id: 'a-2', category: 'A', amount: 20 },
+            ],
+            groupDefaultExpanded: -1,
+            getRowId: (params) => params.data.id,
+        });
+
+        const groupRowNode = api.getDisplayedRowAtIndex(0);
+        expect(groupRowNode?.group).toBe(true);
+        expect(api.getColumn('amount')!.isCellEditable(groupRowNode!)).toBe(false);
+    });
+
+    test('per-aggFunc options object with explicit distribution string enables disabled-by-default aggFuncs', async () => {
+        const api = await gridsManager.createGridAndWait('dist-opts-explicit-count', {
+            columnDefs: [
+                { field: 'category', rowGroup: true, hide: true },
+                {
+                    field: 'amount',
+                    aggFunc: 'count',
+                    editable: true,
+                    groupRowEditable: true,
+                    // count: { distribution: 'overwrite' } → explicitly enabled
+                    groupRowValueSetter: { distribution: { count: { distribution: 'overwrite', precision: 0 } } },
+                },
+            ],
+            rowData: [
+                { id: 'a-1', category: 'A', amount: 10 },
+                { id: 'a-2', category: 'A', amount: 20 },
+            ],
+            groupDefaultExpanded: -1,
+            getRowId: (params) => params.data.id,
+        });
+
+        const groupRowNode = api.getDisplayedRowAtIndex(0);
+        expect(groupRowNode?.group).toBe(true);
+        expect(api.getColumn('amount')!.isCellEditable(groupRowNode!)).toBe(true);
+    });
+
+    test('per-aggFunc options object with distribution: undefined does NOT suppress non-disabled aggFuncs', async () => {
+        const api = await gridsManager.createGridAndWait('dist-opts-undef-sum', {
+            columnDefs: [
+                { field: 'category', rowGroup: true, hide: true },
+                {
+                    field: 'amount',
+                    aggFunc: 'sum',
+                    editable: true,
+                    groupRowEditable: true,
+                    // sum: { distribution: undefined } → sum is not disabled by default, so editable
+                    groupRowValueSetter: { distribution: { sum: { distribution: undefined, precision: 0 } } },
+                },
+            ],
+            rowData: [
+                { id: 'a-1', category: 'A', amount: 10 },
+                { id: 'a-2', category: 'A', amount: 20 },
+            ],
+            groupDefaultExpanded: -1,
+            getRowId: (params) => params.data.id,
+        });
+
+        const groupRowNode = api.getDisplayedRowAtIndex(0);
+        expect(groupRowNode?.group).toBe(true);
+        expect(api.getColumn('amount')!.isCellEditable(groupRowNode!)).toBe(true);
+    });
+
     test('groupRowValueSetter as function does NOT suppress editability', async () => {
         const api = await gridsManager.createGridAndWait('dist-func', {
             columnDefs: [

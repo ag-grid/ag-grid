@@ -132,7 +132,13 @@ function isDistributionSuppressed(
 
     if (typeof entry === 'object') {
         const entryDist = (entry as GroupRowValueSetterDistributionOptions).distribution;
-        return entryDist === false || entryDist === null;
+        if (entryDist === false || entryDist === null) {
+            return true;
+        }
+        // undefined distribution in options object, inherits disabled-by-default for count/min/max
+        if (entryDist === undefined) {
+            return isDisabledByDefault(aggFuncStr);
+        }
     }
 
     return false;
