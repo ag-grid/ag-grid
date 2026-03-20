@@ -262,6 +262,7 @@ export const AG_GRID_LOCALE_EG = {
     formulaServiceCircularReference: 'مرجع دائري.',
     formulaServiceExpectedParsableFormula: 'كان متوقعًا صيغة قابلة للتحليل.',
     formulaServiceInternalSchedulingError: 'خطأ داخلي في الجدولة.',
+    tooltipValidationErrorSeparator: '. ',
 
     // Side Bar
     columns: 'أعمدة',
@@ -680,6 +681,7 @@ export const AG_GRID_LOCALE_EG = {
     ariaFilterColumn: 'اضغط CTRL ENTER لفتح الفلترة',
     ariaRowDeselect: 'اضغط SPACE لإلغاء تحديد هذا الصف',
     ariaHeaderSelection: 'عمود مع اختيار الرؤوس',
+    ariaSelectAllCells: 'اضغط على المسافة أو Enter لاختيار كل الخلايا',
     ariaSelectAllRowCells: 'اضغط على Enter لتحديد كل الخلايا في هذا الصف',
     ariaColumnCellSelection: 'اضغط على Enter لتبديل تحديد جميع الخلايا المرئية في هذا العمود',
     ariaColumnGroupCellSelection: 'اضغط على Enter لتبديل تحديد جميع الخلايا المرئية في مجموعة الأعمدة هذه',
