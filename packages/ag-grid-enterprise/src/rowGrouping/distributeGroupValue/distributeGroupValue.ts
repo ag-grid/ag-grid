@@ -9,7 +9,7 @@ import type {
 import { DistributorBigInt } from './distributorBigInt';
 import { DistributorNumber } from './distributorNumber';
 import type { AggFuncInput } from './valueConversion';
-import { hasBuiltInDefault, resolveStrategy } from './valueConversion';
+import { hasBuiltInDefault } from './valueConversion';
 
 /**
  * Built-in `groupRowValueSetter` that distributes a group-level value edit
@@ -38,7 +38,7 @@ export const distributeGroupValue = (
     }
 
     const aggFunc = colDef.aggFunc ?? null;
-    const entry = resolveEntry(options, aggFunc);
+    const entry = resolveDistributionEntry(options, aggFunc);
 
     if (entry === false) {
         return false;
@@ -55,20 +55,14 @@ export const distributeGroupValue = (
     return new DistributorNumber(params, entry, aggFunc).run();
 };
 
-/** Whether the given options would suppress distribution for this aggFunc (cell not editable). */
-export function isDistributionSuppressed(options: GroupRowValueSetterOptions, aggFunc: AggFuncInput): boolean {
-    const entry = resolveEntry(options, aggFunc);
-    if (typeof entry === 'function') {
-        return false;
-    }
-    return entry === false || resolveStrategy(aggFunc, entry?.distribution) === false;
-}
-
 /** Resolved entry: distribution options for distributors, a custom handler function, or `false` for suppression. */
 type ResolvedEntry = GroupRowValueSetterDistributionOptions | ((...args: any[]) => any) | false | undefined;
 
 /** Resolves the distribution entry from user options, handling per-aggFunc records and default fallbacks. */
-function resolveEntry(options: GroupRowValueSetterOptions | undefined, aggFunc: AggFuncInput): ResolvedEntry {
+export function resolveDistributionEntry(
+    options: GroupRowValueSetterOptions | undefined,
+    aggFunc: AggFuncInput
+): ResolvedEntry {
     if (!options) {
         return undefined;
     }

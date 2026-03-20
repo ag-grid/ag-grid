@@ -8,7 +8,8 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
-import { distributeGroupValue, isDistributionSuppressed } from './distributeGroupValue/distributeGroupValue';
+import { distributeGroupValue, resolveDistributionEntry } from './distributeGroupValue/distributeGroupValue';
+import { resolveStrategy } from './distributeGroupValue/valueConversion';
 
 export class RowGroupingEditValueSvc extends BeanStub implements NamedBean, _IRowGroupingEditValueSvc {
     beanName = 'rowGroupingEditValueSvc' as const;
@@ -16,19 +17,31 @@ export class RowGroupingEditValueSvc extends BeanStub implements NamedBean, _IRo
     public isGroupCellEditable(rowNode: IRowNode, column: AgColumn): boolean {
         const colDef = column.getColDef();
 
-        if (!column.isColumnFunc(rowNode, colDef.groupRowEditable!)) {
+        if (!column.isColumnFunc(rowNode, colDef.groupRowEditable)) {
             return false;
         }
 
         const setter = colDef.groupRowValueSetter;
+        const aggFunc = colDef.aggFunc ?? null;
 
-        // No value setter, true, false, or function → cell is editable
-        if (setter == null || typeof setter !== 'object') {
+        // Custom function: always editable (user handles distribution)
+        if (typeof setter === 'function') {
             return true;
         }
 
-        // Options object — check if distribution is suppressed for this column's aggFunc
-        return !isDistributionSuppressed(setter, colDef.aggFunc ?? null);
+        // Options object: resolve per-aggFunc records and defaults, then check strategy
+        if (typeof setter === 'object') {
+            const entry = resolveDistributionEntry(setter, aggFunc);
+            if (typeof entry === 'function') {
+                return true;
+            }
+            return entry !== false && resolveStrategy(aggFunc, entry?.distribution) !== false;
+        }
+
+        // No setter (implicit) or true: check if the aggFunc's default strategy is enabled.
+        // true explicitly enables all aggFuncs; undefined uses built-in defaults
+        // (count/min/max/custom are disabled by default).
+        return resolveStrategy(aggFunc, setter ?? undefined) !== false;
     }
 
     public setGroupDataValue(
