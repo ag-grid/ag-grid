@@ -259,7 +259,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         if (!this.isDeferModeEnabled || this.isCommitting) {
             return;
         }
-        if (event.source === 'toolPanelUi') {
+        if (event.source === 'toolPanelUi' || event.source === 'toolPanelDragAndDrop') {
             return;
         }
         this.onExternalGridChangeCore();

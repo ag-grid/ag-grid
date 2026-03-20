@@ -377,6 +377,35 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
             expect(getApplyButton(toolPanelGui).disabled).toBe(false);
         });
 
+        test('toolPanelDragAndDrop source does not reset staged changes', async () => {
+            const { gridApi, toolPanel, toolPanelGui } = await createGrid({
+                suppressSyncLayoutWithGrid: true,
+                columnDefs: [
+                    { field: 'athlete' },
+                    { field: 'age' },
+                    { field: 'country' },
+                    { field: 'sport', rowGroup: true },
+                    { field: 'gold' },
+                ],
+            });
+            const athlete = gridApi.getColumn('athlete')! as AgColumn;
+
+            // Stage a visibility change
+            getUpdateStrategy(toolPanel).setColumnsVisible(true, [athlete], false, 'toolPanelUi');
+            toolPanel.refreshDeferredUi();
+
+            expect(getApplyButton(toolPanelGui).disabled).toBe(false);
+
+            // Simulate drag from CTP onto grid body (source 'toolPanelDragAndDrop')
+            const rowGroupSvc = toolPanel.beans.rowGroupColsSvc!;
+            rowGroupSvc.setColumns([], 'toolPanelDragAndDrop');
+            await asyncSetTimeout(50);
+
+            // Staged changes should still be preserved
+            expect(getUpdateStrategy(toolPanel).hasPendingChanges(isDeferred(toolPanel))).toBe(true);
+            expect(getApplyButton(toolPanelGui).disabled).toBe(false);
+        });
+
         test('api source row group change still resets staged changes', async () => {
             const { gridApi, toolPanel, toolPanelGui } = await createGrid({
                 suppressSyncLayoutWithGrid: true,
