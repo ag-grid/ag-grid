@@ -2,7 +2,6 @@ import type { AgColumn, ColDef, GridApi, IColumnStateUpdateStrategy } from 'ag-g
 import { setupAgTestIds } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-import { moveItem } from '../../../../packages/ag-grid-enterprise/src/columnToolPanel/columnMoveUtils';
 import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
@@ -81,12 +80,6 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
         )!;
     }
 
-    function getCancelButton(toolPanelGui: HTMLElement): HTMLButtonElement {
-        return Array.from(toolPanelGui.querySelectorAll<HTMLButtonElement>('.ag-column-panel-buttons-button')).find(
-            (button) => button.textContent?.trim() === 'Cancel'
-        )!;
-    }
-
     function getDisplayedPrimaryColumnOrder(toolPanel: any): string[] {
         return toolPanel.primaryColsPanel.primaryColsListPanel
             .getDisplayedColsList()
@@ -94,88 +87,27 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
             .map((item: any) => item.column.getColId());
     }
 
-    function getPrimaryColumnOrder(toolPanel: any): string[] {
-        return toolPanel.beans.colModel.getColDefCols().map((col: any) => col.getColId());
-    }
-
-    async function dragColumnToEnd(toolPanel: any, label: string): Promise<void> {
-        const listPanel = toolPanel.primaryColsPanel.primaryColsListPanel;
-        const virtualList = listPanel['virtualList'];
-        const displayedColsList = listPanel.getDisplayedColsList() as any[];
-        const lastIndex = displayedColsList.length - 1;
-        const movingItem = displayedColsList.find((item: any) => item.displayName === label);
-
-        expect(movingItem).toBeTruthy();
-
-        virtualList.ensureIndexVisible(lastIndex);
-        await asyncSetTimeout(50);
-
-        let component = virtualList.getComponentAt(lastIndex) as any;
-        if (!component) {
-            component = listPanel['createComponentFromItem'](
-                displayedColsList[lastIndex],
-                document.createElement('div')
-            );
-        }
-
-        moveItem(
-            toolPanel.beans,
-            [movingItem.column as AgColumn],
-            {
-                rowIndex: lastIndex,
-                position: 'bottom',
-                component,
-            },
-            {
-                buttons: ['apply', 'cancel'] as const,
-                suppressSyncLayoutWithGrid: true,
-            }
-        );
-        await asyncSetTimeout(50);
-    }
-
     describe('column reordering', () => {
-        test('allows column reordering in CTP when suppressSyncLayoutWithGrid and deferred mode', async () => {
+        test('blocks column reordering in CTP when suppressSyncLayoutWithGrid is true in deferred mode', async () => {
             const { toolPanel } = await createGrid({ suppressSyncLayoutWithGrid: true });
 
-            const initialOrder = getDisplayedPrimaryColumnOrder(toolPanel);
-            expect(initialOrder).toEqual(['athlete', 'age', 'country', 'sport', 'gold']);
+            // No ToolPanel-type drag sources should be registered
+            const dndService = toolPanel.beans.dragAndDrop;
+            const toolPanelDragSources = (dndService as any).dragSourceAndParamsList
+                .map((entry: any) => entry.dragSource)
+                .filter((ds: any) => ds.type === 0); // DragSourceType.ToolPanel = 0
+            expect(toolPanelDragSources).toHaveLength(0);
 
-            await dragColumnToEnd(toolPanel, 'Athlete');
+            // moveItemCallback should be a no-op (order unchanged after calling it)
+            const listPanel = toolPanel.primaryColsPanel.primaryColsListPanel;
+            const virtualList = listPanel['virtualList'];
+            const displayedColsList = listPanel.getDisplayedColsList() as any[];
+            const firstItem = displayedColsList[0];
 
-            const newOrder = getDisplayedPrimaryColumnOrder(toolPanel);
-            expect(newOrder).toEqual(['age', 'country', 'sport', 'gold', 'athlete']);
-        });
+            expect(virtualList['moveItemCallback']).toBeDefined();
+            virtualList['moveItemCallback'](firstItem, false);
 
-        test('shows deferred column order after drag and reverts on cancel', async () => {
-            const { toolPanel, toolPanelGui } = await createGrid({ suppressSyncLayoutWithGrid: true });
-
-            await dragColumnToEnd(toolPanel, 'Athlete');
-
-            expect(getDisplayedPrimaryColumnOrder(toolPanel)).toEqual(['age', 'country', 'sport', 'gold', 'athlete']);
-
-            // Grid column order is unchanged
-            expect(getPrimaryColumnOrder(toolPanel)).toEqual(['athlete', 'age', 'country', 'sport', 'gold']);
-
-            getCancelButton(toolPanelGui).click();
-            await asyncSetTimeout(50);
-
-            // Reverts to colDef order
             expect(getDisplayedPrimaryColumnOrder(toolPanel)).toEqual(['athlete', 'age', 'country', 'sport', 'gold']);
-        });
-
-        test('applies deferred column order on commit', async () => {
-            const { toolPanel, toolPanelGui } = await createGrid({ suppressSyncLayoutWithGrid: true });
-
-            await dragColumnToEnd(toolPanel, 'Athlete');
-
-            expect(getDisplayedPrimaryColumnOrder(toolPanel)).toEqual(['age', 'country', 'sport', 'gold', 'athlete']);
-
-            getApplyButton(toolPanelGui).click();
-            await asyncSetTimeout(50);
-
-            // After apply, colDef order should be updated
-            expect(getPrimaryColumnOrder(toolPanel)).toEqual(['age', 'country', 'sport', 'gold', 'athlete']);
         });
     });
 
@@ -448,8 +380,15 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
                 .filter((ds: any) => ds.type === 0); // DragSourceType.ToolPanel = 0
         }
 
-        test('drag icon is notAllowed in deferred mode even when suppressDragLeaveHidesColumns is false', async () => {
+        test('no drag sources registered when suppressSyncLayoutWithGrid is true in deferred mode', async () => {
             const { toolPanel } = await createGrid({ suppressSyncLayoutWithGrid: true });
+
+            const dragSources = getToolPanelDragSources(toolPanel);
+            expect(dragSources).toHaveLength(0);
+        });
+
+        test('drag icon is notAllowed in deferred mode when suppressSyncLayoutWithGrid is false', async () => {
+            const { toolPanel } = await createGrid({ suppressSyncLayoutWithGrid: false });
             createColumnComp(toolPanel);
 
             const dragSources = getToolPanelDragSources(toolPanel);
@@ -466,31 +405,6 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
             const { toolPanel } = await createGrid({ suppressSyncLayoutWithGrid: true });
 
             expect(getDisplayedPrimaryColumnOrder(toolPanel)).toEqual(['athlete', 'age', 'country', 'sport', 'gold']);
-        });
-
-        test('after cancel, CTP reverts to colDef order', async () => {
-            const { toolPanel, toolPanelGui } = await createGrid({ suppressSyncLayoutWithGrid: true });
-
-            await dragColumnToEnd(toolPanel, 'Athlete');
-            expect(getDisplayedPrimaryColumnOrder(toolPanel)).toEqual(['age', 'country', 'sport', 'gold', 'athlete']);
-
-            getCancelButton(toolPanelGui).click();
-            await asyncSetTimeout(50);
-
-            expect(getDisplayedPrimaryColumnOrder(toolPanel)).toEqual(['athlete', 'age', 'country', 'sport', 'gold']);
-        });
-
-        test('after apply, CTP shows colDef order matching applied state', async () => {
-            const { toolPanel, toolPanelGui } = await createGrid({ suppressSyncLayoutWithGrid: true });
-
-            await dragColumnToEnd(toolPanel, 'Athlete');
-
-            getApplyButton(toolPanelGui).click();
-            await asyncSetTimeout(50);
-
-            // After apply, the colDef order was updated by commit, and the CTP shows it
-            expect(getDisplayedPrimaryColumnOrder(toolPanel)).toEqual(['age', 'country', 'sport', 'gold', 'athlete']);
-            expect(getPrimaryColumnOrder(toolPanel)).toEqual(['age', 'country', 'sport', 'gold', 'athlete']);
         });
     });
 });

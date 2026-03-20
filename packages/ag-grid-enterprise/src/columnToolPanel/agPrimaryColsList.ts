@@ -121,7 +121,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
         this.expandGroupsByDefault = !contractColumnSelection;
 
-        const isPreventMove = suppressColumnMove || (suppressSyncLayoutWithGrid && !isDeferredMode(params));
+        const isPreventMove = suppressColumnMove || suppressSyncLayoutWithGrid;
 
         const virtualList = this.createManagedBean(
             new VirtualList<ToolPanelColumnGroupComp | ToolPanelColumnComp, ColumnModelItem>({
