@@ -21,16 +21,15 @@ export const getCurrentColumnsBeingMoved = (column: AgColumn | AgProvidedColumnG
 };
 
 const getMoveTargetIndex = (
-    beans: BeanCollection,
     currentColumns: AgColumn[] | null,
     lastHoveredColumn: AgColumn,
-    isBefore: boolean
+    isBefore: boolean,
+    allColumns: AgColumn[]
 ): number | null => {
     if (!lastHoveredColumn || !currentColumns) {
         return null;
     }
 
-    const allColumns = beans.colModel.getCols();
     const targetColumnIndex = allColumns.indexOf(lastHoveredColumn);
     const adjustedTarget = isBefore ? targetColumnIndex : targetColumnIndex + 1;
     const diff = getMoveDiff(allColumns, currentColumns, adjustedTarget);
@@ -93,10 +92,14 @@ export const moveItem = (
         return;
     }
 
-    const targetIndex: number | null = getMoveTargetIndex(beans, currentColumns, lastHoveredColumn, isBefore);
+    const deferMode = isDeferredMode(params);
+    const allColumns = deferMode
+        ? beans.columnStateUpdateStrategy.getPrimaryColumns(deferMode)
+        : beans.colModel.getCols();
+    const targetIndex: number | null = getMoveTargetIndex(currentColumns, lastHoveredColumn, isBefore, allColumns);
 
     if (targetIndex != null) {
-        beans.columnStateUpdateStrategy.moveColumns(isDeferredMode(params), currentColumns, targetIndex, 'toolPanelUi');
+        beans.columnStateUpdateStrategy.moveColumns(deferMode, currentColumns, targetIndex, 'toolPanelUi');
         refreshDeferredToolPanelUi(beans, params);
     }
 };

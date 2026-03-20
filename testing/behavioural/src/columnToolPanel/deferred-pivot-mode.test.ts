@@ -1184,7 +1184,7 @@ describe('deferred column tool panel pivot mode', () => {
         const { gridApi, toolPanel } = await createDeferredNonPivotGrid();
         const athlete = gridApi.getColumn('athlete')! as AgColumn;
 
-        getUpdateStrategy(toolPanel).moveColumns(true, [athlete], 2, 'toolPanelUi');
+        getUpdateStrategy(toolPanel).moveColumns(true, [athlete], 1, 'toolPanelUi');
         cancelDeferredChanges(toolPanel);
 
         expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['athlete', 'age', 'country']);
@@ -1194,7 +1194,7 @@ describe('deferred column tool panel pivot mode', () => {
         const { toolPanel } = await createDeferredPivotModeGrid();
         const athlete = toolPanel.beans.colModel.getColDefCol('athlete') as AgColumn;
 
-        getUpdateStrategy(toolPanel).moveColumns(true, [athlete], 2, 'toolPanelUi');
+        getUpdateStrategy(toolPanel).moveColumns(true, [athlete], 1, 'toolPanelUi');
         cancelDeferredChanges(toolPanel);
 
         expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['athlete', 'age', 'country']);
@@ -1206,7 +1206,7 @@ describe('deferred column tool panel pivot mode', () => {
 
         expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['athlete', 'age', 'country']);
 
-        getUpdateStrategy(toolPanel).moveColumns(true, [athlete], 2, 'toolPanelUi');
+        getUpdateStrategy(toolPanel).moveColumns(true, [athlete], 1, 'toolPanelUi');
 
         expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['athlete', 'age', 'country']);
 
@@ -1280,7 +1280,7 @@ describe('deferred column tool panel pivot mode', () => {
 
         expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['athlete', 'age', 'country']);
 
-        getUpdateStrategy(toolPanel).moveColumns(true, [athlete], 2, 'toolPanelUi');
+        getUpdateStrategy(toolPanel).moveColumns(true, [athlete], 1, 'toolPanelUi');
 
         expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['athlete', 'age', 'country']);
 

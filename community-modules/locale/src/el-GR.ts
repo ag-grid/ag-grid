@@ -75,7 +75,6 @@ export const AG_GRID_LOCALE_GR = {
     // Filter Buttons
     applyFilter: 'Εφαρμογή',
     applyColumnToolPanel: 'Εφαρμογή',
-    deferMode: 'Defer mode',
     resetFilter: 'Επαναφορά',
     clearFilter: 'Εκκαθάριση',
     cancelFilter: 'Ακύρωση',
@@ -688,7 +687,7 @@ export const AG_GRID_LOCALE_GR = {
     ariaFilterColumn: 'Πατήστε CTRL ENTER για άνοιγμα φίλτρου',
     ariaRowDeselect: 'Πατήστε SPACE για αποεπιλογή αυτής της γραμμής',
     ariaHeaderSelection: 'Στήλη με Επιλογή Κεφαλίδων',
-    ariaSelectAllCells: 'Πατήστε Space ή Enter για επιλογή όλων των κελιών',
+    ariaSelectAllCells: 'Πατήστε το Space ή το Enter για να επιλέξετε όλα τα κελιά',
     ariaSelectAllRowCells: 'Πατήστε Enter για επιλογή όλων των κελιών σε αυτή τη γραμμή',
     ariaColumnCellSelection: 'Πατήστε Enter για εναλλαγή επιλογής όλων των ορατών κελιών σε αυτή τη στήλη',
     ariaColumnGroupCellSelection: 'Πατήστε Enter για εναλλαγή επιλογής όλων των ορατών κελιών σε αυτή την ομάδα στηλών',

@@ -75,7 +75,6 @@ export const AG_GRID_LOCALE_KR = {
     // Filter Buttons
     applyFilter: '적용',
     applyColumnToolPanel: '적용',
-    deferMode: 'Defer mode',
     resetFilter: '재설정',
     clearFilter: '지우기',
     cancelFilter: '취소',
@@ -682,7 +681,7 @@ export const AG_GRID_LOCALE_KR = {
     ariaFilterColumn: '필터를 열려면 CTRL ENTER를 누르세요',
     ariaRowDeselect: '이 행을 선택 해제하려면 SPACE를 누르세요',
     ariaHeaderSelection: '헤더 선택이 있는 열',
-    ariaSelectAllCells: '스페이스바 또는 Enter 키를 눌러 모든 셀을 선택',
+    ariaSelectAllCells: '스페이스바 또는 엔터 키를 눌러 모든 셀을 선택하십시오.',
     ariaSelectAllRowCells: '이 행의 모든 셀을 선택하려면 Enter 키를 누르세요',
     ariaColumnCellSelection: '이 열의 모든 표시 셀 선택을 전환하려면 Enter 키를 누르세요',
     ariaColumnGroupCellSelection: '이 열 그룹의 모든 표시 셀 선택을 전환하려면 Enter 키를 누르세요',

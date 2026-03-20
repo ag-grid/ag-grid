@@ -75,7 +75,6 @@ export const AG_GRID_LOCALE_IR = {
     // Filter Buttons
     applyFilter: 'اعمال',
     applyColumnToolPanel: 'اعمال',
-    deferMode: 'Defer mode',
     resetFilter: 'بازنشانی',
     clearFilter: 'پاک کردن',
     cancelFilter: 'لغو',
@@ -683,7 +682,7 @@ export const AG_GRID_LOCALE_IR = {
     ariaFilterColumn: 'CTRL+ENTER را فشار دهید تا فیلتر را باز کنید',
     ariaRowDeselect: 'SPACE را فشار دهید تا این سطر از انتخاب خارج شود',
     ariaHeaderSelection: 'ستون با انتخاب سرصفحه',
-    ariaSelectAllCells: 'برای انتخاب تمام سلول‌ها کلید فاصله یا Enter را فشار دهید',
+    ariaSelectAllCells: 'فشار دادن Space یا Enter برای انتخاب تمام سلول‌ها',
     ariaSelectAllRowCells: 'برای انتخاب تمام سلول‌های این ردیف، کلید Enter را فشار دهید',
     ariaColumnCellSelection: 'برای تغییر انتخاب همه سلول‌های قابل مشاهده در این ستون، کلید Enter را فشار دهید',
     ariaColumnGroupCellSelection:
