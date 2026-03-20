@@ -14,7 +14,7 @@ import { hasBuiltInDefault } from './valueConversion';
  * Built-in `groupRowValueSetter` that distributes a group-level value edit
  * down to descendant rows, respecting the column's aggregation function.
  *
- * Assign directly for default behaviour (uniform for sum, overwrite for avg/others):
+ * Assign directly for default behaviour (uniform for sum, overwrite for avg/no-aggFunc):
  * ```ts
  * colDef.groupRowValueSetter = distributeGroupValue;
  * ```
