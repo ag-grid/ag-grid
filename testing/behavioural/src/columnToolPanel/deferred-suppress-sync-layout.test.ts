@@ -301,7 +301,29 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
             expect(getApplyButton(toolPanelGui).disabled).toBe(true);
         });
 
-        test('no reset when external event fires but grid state matches last-applied snapshot', async () => {
+        test('no-op applyColumnState clears staged changes', async () => {
+            const { gridApi, toolPanel, toolPanelGui } = await createGrid({ suppressSyncLayoutWithGrid: true });
+            const athlete = gridApi.getColumn('athlete')! as AgColumn;
+
+            // Save initial state
+            const savedState = gridApi.getColumnState();
+
+            // Stage a visibility change
+            getUpdateStrategy(toolPanel).setColumnsVisible(true, [athlete], false, 'toolPanelUi');
+            toolPanel.refreshDeferredUi();
+
+            expect(getApplyButton(toolPanelGui).disabled).toBe(false);
+
+            // Set State with saved (identical) state — a no-op
+            gridApi.applyColumnState({ state: savedState });
+            await asyncSetTimeout(50);
+
+            // Staged changes should be cleared
+            expect(getUpdateStrategy(toolPanel).hasPendingChanges(isDeferred(toolPanel))).toBe(false);
+            expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+        });
+
+        test('no-op resetColumnState clears staged changes', async () => {
             const { gridApi, toolPanel, toolPanelGui } = await createGrid({ suppressSyncLayoutWithGrid: true });
             const athlete = gridApi.getColumn('athlete')! as AgColumn;
 
@@ -311,26 +333,13 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
 
             expect(getApplyButton(toolPanelGui).disabled).toBe(false);
 
-            // Apply to commit and capture snapshot
-            getApplyButton(toolPanelGui).click();
+            // Reset columns — no-op since staged changes haven't been applied
+            gridApi.resetColumnState();
             await asyncSetTimeout(50);
 
+            // Staged changes should be cleared
+            expect(getUpdateStrategy(toolPanel).hasPendingChanges(isDeferred(toolPanel))).toBe(false);
             expect(getApplyButton(toolPanelGui).disabled).toBe(true);
-
-            // Stage another change
-            getUpdateStrategy(toolPanel).setColumnsVisible(true, [athlete], true, 'toolPanelUi');
-            toolPanel.refreshDeferredUi();
-
-            expect(getApplyButton(toolPanelGui).disabled).toBe(false);
-
-            // Fire a sort event that resolves to the same state as the last-applied snapshot
-            // (sort was already null, setting it to null again = no real change)
-            gridApi.applyColumnState({ state: [{ colId: 'age', sort: null }] });
-            await asyncSetTimeout(50);
-
-            // Staged changes should NOT be reset because grid state matches the snapshot
-            expect(getUpdateStrategy(toolPanel).hasPendingChanges(isDeferred(toolPanel))).toBe(true);
-            expect(getApplyButton(toolPanelGui).disabled).toBe(false);
         });
 
         test('external aggFunc change with custom function resets staged changes', async () => {
