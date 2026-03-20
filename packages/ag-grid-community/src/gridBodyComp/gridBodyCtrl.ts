@@ -6,7 +6,6 @@ import type { CtrlsService } from '../ctrlsService';
 import type { RowResizeEndedEvent, RowResizeStartedEvent } from '../events';
 import type { FilterManager } from '../filter/filterManager';
 import { _isAnimateRows } from '../gridOptionsUtils';
-import { GridHeaderFeature } from '../headerRendering/gridHeaderFeature';
 import { getAriaHeaderRowCount } from '../headerRendering/headerUtils';
 import type { IColsService } from '../interfaces/iColsService';
 import type { VerticalSection } from '../interfaces/iGridSection';
@@ -94,7 +93,6 @@ export class GridBodyCtrl extends BeanStub {
         this.eTop = eTop;
         this.eTopExtraRows = eTopExtraRows;
         this.eBottom = eBottom;
-        this.createManagedBean(new GridHeaderFeature(eTop, eGridViewport));
 
         this.setCellTextSelection(this.gos.get('enableCellTextSelection'));
         this.addManagedPropertyListener('enableCellTextSelection', (props) =>

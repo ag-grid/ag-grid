@@ -15,6 +15,7 @@ import {
 } from 'ag-grid-community';
 
 import { BeansContext } from './beansContext';
+import GridHeaderComp from './header/gridHeaderComp';
 import useReactCommentEffect from './reactComment';
 import RowContainerComp from './rows/rowContainerComp';
 import { classesList } from './utils';
@@ -49,6 +50,7 @@ const GridBodyComp = () => {
     const eRoot = useRef<HTMLDivElement | null>(null);
     const [rootElement, setRootElement] = useState<HTMLDivElement | null>(null);
     const eTop = useRef<HTMLDivElement | null>(null);
+    const [topElement, setTopElement] = useState<HTMLDivElement | null>(null);
     const eGridViewport = useRef<HTMLDivElement | null>(null);
     const [gridViewportElement, setGridViewportElement] = useState<HTMLDivElement | null>(null);
     const eGridScrollableArea = useRef<HTMLDivElement | null>(null);
@@ -222,6 +224,11 @@ const GridBodyComp = () => {
         [bottomSection.height, stickyBottomHeight, stickyBottomWidth]
     );
 
+    const setTopRef = useCallback((el: HTMLDivElement | null) => {
+        eTop.current = el;
+        setTopElement(el);
+    }, []);
+
     const setGridViewportRef = useCallback((el: HTMLDivElement | null) => {
         eGridViewport.current = el;
         setGridViewportElement(el);
@@ -231,7 +238,10 @@ const GridBodyComp = () => {
         <div ref={setRootRef} className={rootClasses} role="presentation">
             <div ref={setGridViewportRef} className={gridViewportClasses} role="presentation">
                 <div ref={eGridScrollableArea} className={scrollableClasses} role="rowgroup">
-                    <div ref={eTop} className={topClasses} role="presentation" style={topStyle}>
+                    <div ref={setTopRef} className={topClasses} role="presentation" style={topStyle}>
+                        {topElement && gridViewportElement && (
+                            <GridHeaderComp eTopSection={topElement} eGridViewport={gridViewportElement} />
+                        )}
                         <div ref={eTopExtraRows} className="ag-extra-rows-container" role="presentation" />
                         <RowContainerComp name="pinnedTop" viewportElement={gridViewportElement} />
                         <RowContainerComp name="stickyTop" viewportElement={gridViewportElement} />
