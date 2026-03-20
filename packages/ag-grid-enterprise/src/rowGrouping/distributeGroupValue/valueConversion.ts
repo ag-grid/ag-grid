@@ -1,41 +1,56 @@
 import type { ColDef, GroupRowValueSetterDistribution } from 'ag-grid-community';
 
-/** Resolved distribution strategy. `null` means no strategy — use default handler or overwrite. */
-export type DistributionStrategy = 'first' | 'last' | 'min' | 'max' | GroupRowValueSetterDistribution | null;
+/** Resolved distribution strategy. `false` means suppressed (disabled by default for count/min/max/custom aggFuncs, or explicit false/null). */
+export type DistributionStrategy = 'first' | 'last' | GroupRowValueSetterDistribution | false;
+
+/** The raw aggFunc value from colDef, passed through without coercion.
+ * String = named aggFunc, function = inline custom aggFunc, null/undefined = no aggFunc. */
+export type AggFuncInput = string | ((...args: any[]) => any) | null | undefined;
 
 /**
  * Resolves the distribution strategy from the aggFunc and explicit distribution option.
- * 'none', false, and null always suppress distribution, overriding even first/last/min/max.
- * first/last/min/max aggFuncs use their own strategy unless explicitly overridden.
+ * false and null always suppress distribution.
+ * true uses the built-in default, enabling normally-disabled aggFuncs (count/min/max/custom) with 'overwrite'.
+ * first/last aggFuncs use their own strategy unless explicitly suppressed.
+ * count/min/max, custom string aggFuncs, and function aggFuncs are disabled by default.
+ * Columns with no aggFunc (null/undefined) default to 'overwrite'.
  */
 export const resolveStrategy = (
-    aggFunc: string | null,
-    distribution: GroupRowValueSetterDistribution | false | null | undefined
+    aggFunc: AggFuncInput,
+    distribution: GroupRowValueSetterDistribution | boolean | null | undefined
 ): DistributionStrategy => {
     // Explicit suppression always wins
-    if (distribution === 'none' || distribution === false || distribution === null) {
-        return 'none';
+    if (distribution === false || distribution === null) {
+        return false;
     }
-    switch (aggFunc) {
-        case 'first':
-        case 'last':
-        case 'min':
-        case 'max':
-            return aggFunc;
+    // first/last always use their own strategy (write to that child)
+    if (aggFunc === 'first' || aggFunc === 'last') {
+        return aggFunc;
     }
-    if (distribution) {
+    // Explicit strategy string — use it for any aggFunc
+    if (typeof distribution === 'string') {
         return distribution;
     }
-    switch (aggFunc) {
-        case 'sum':
-            return 'uniform';
-        case 'avg':
-        case 'count':
-            return 'overwrite';
-        default:
-            return null;
+    // Built-in defaults: sum → uniform, avg/no-aggFunc → overwrite
+    if (aggFunc === 'sum') {
+        return 'uniform';
     }
+    if (aggFunc === 'avg' || aggFunc == null) {
+        return 'overwrite';
+    }
+    // count/min/max, custom string aggFuncs, and function aggFuncs: disabled unless distribution === true
+    return distribution === true ? 'overwrite' : false;
 };
+
+/** Whether the aggFunc has a built-in default strategy (sum/avg/first/last/count/min/max). */
+export const hasBuiltInDefault = (aggFunc: AggFuncInput): boolean =>
+    aggFunc === 'sum' ||
+    aggFunc === 'avg' ||
+    aggFunc === 'first' ||
+    aggFunc === 'last' ||
+    aggFunc === 'count' ||
+    aggFunc === 'min' ||
+    aggFunc === 'max';
 
 /** Coerces an unknown value to a number. Returns 0 for non-convertible inputs. Preserves NaN, Infinity, and -Infinity for number inputs. */
 export const toNumber = (raw: unknown): number => {

@@ -128,16 +128,16 @@ describe('distributeGroupValue with custom getValue/setValue', () => {
         expect(api.getRowNode('a1')?.data?.amount).toBe(10);
     });
 
-    test('custom getValue with min/max and first strategy', async () => {
+    test('custom getValue with first strategy and explicit distribution', async () => {
         const api = await createSimpleGrid(
-            'custom-get-extremum',
+            'custom-get-first',
             [
                 { id: 'a1', region: 'R', country: 'C', amount: 5, score: 100 },
                 { id: 'a2', region: 'R', country: 'C', amount: 15, score: 50 },
                 { id: 'a3', region: 'R', country: 'C', amount: 25, score: 200 },
             ],
             {
-                aggFunc: 'min',
+                aggFunc: 'first',
                 groupRowValueSetter: (params) =>
                     distributeGroupValue(params, {
                         getValue: ({ node }) => node.data?.score ?? 0,
@@ -149,9 +149,9 @@ describe('distributeGroupValue with custom getValue/setValue', () => {
         groupNode.setDataValue('amount', 42, 'ui');
         await asyncSetTimeout(0);
 
-        // min strategy: writes to the child with the min getValue (score=50, which is a2)
-        expect(api.getRowNode('a1')?.data?.amount).toBe(5); // unchanged
-        expect(api.getRowNode('a2')?.data?.amount).toBe(42); // min holder gets new value
+        // first strategy: writes to the first child
+        expect(api.getRowNode('a1')?.data?.amount).toBe(42);
+        expect(api.getRowNode('a2')?.data?.amount).toBe(15); // unchanged
         expect(api.getRowNode('a3')?.data?.amount).toBe(25); // unchanged
     });
 

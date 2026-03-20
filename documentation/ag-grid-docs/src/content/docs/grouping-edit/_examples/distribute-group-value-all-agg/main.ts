@@ -79,15 +79,6 @@ const gridOptions: GridOptions<MetricsRecord> = {
         // avg: overwrites every child with the edited value
         { field: 'bonus', aggFunc: 'avg' },
 
-        // min: writes to the child currently holding the minimum
-        { field: 'rating', aggFunc: 'min' },
-
-        // max: writes to the child currently holding the maximum
-        { field: 'hours', aggFunc: 'max' },
-
-        // count: overwrites every child
-        { field: 'overtime', aggFunc: 'count' },
-
         // first: writes to the first child only
         { field: 'projects', aggFunc: 'first' },
 

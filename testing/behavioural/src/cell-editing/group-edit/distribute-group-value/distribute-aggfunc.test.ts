@@ -47,72 +47,26 @@ describe.each(EDIT_MODES)('distributeGroupValue aggFunc strategies (%s)', (editM
         `);
     });
 
-    test('min: writes to the child holding the minimum value', async () => {
+    test('min: suppressed by default — no children are modified', async () => {
         const api = await createGrid('distribute-min', { aggFunc: 'min', groupRowValueSetter: distributeGroupValue });
 
         const usaNode = api.getRowNode('row-group-region-Americas-country-USA')!;
-        // USA children: us-nyc=70, us-la=30. Min holder is us-la (30).
+        // min is disabled by default — edit has no effect
         await performEdit(editMode, api, usaNode, 'amount', 10);
 
-        // Only the min holder (us-la) is updated; us-nyc stays at 70
         expect(api.getRowNode('us-nyc')?.data?.amount).toBe(70);
-        expect(api.getRowNode('us-la')?.data?.amount).toBe(10);
-        expect(usaNode.aggData?.amount).toBe(10);
-
-        await new GridRows(api, 'after min edit').check(`
-            ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-region-Europe amount:30
-            │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-France amount:30
-            │ │ ├── LEAF id:fr-paris region:"Europe" country:"France" amount:30
-            │ │ └── LEAF id:fr-lyon region:"Europe" country:"France" amount:30
-            │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-Germany amount:30
-            │ │ ├── LEAF id:de-berlin region:"Europe" country:"Germany" amount:30
-            │ │ └── LEAF id:de-hamburg region:"Europe" country:"Germany" amount:30
-            │ └─┬ LEAF_GROUP id:row-group-region-Europe-country-Italy amount:30
-            │ · ├── LEAF id:it-rome region:"Europe" country:"Italy" amount:30
-            │ · └── LEAF id:it-milan region:"Europe" country:"Italy" amount:30
-            └─┬ filler id:row-group-region-Americas amount:10
-            · ├─┬ LEAF_GROUP id:row-group-region-Americas-country-USA amount:10
-            · │ ├── LEAF id:us-nyc region:"Americas" country:"USA" amount:70
-            · │ └── LEAF id:us-la region:"Americas" country:"USA" amount:10
-            · └─┬ LEAF_GROUP id:row-group-region-Americas-country-Canada amount:25
-            · · ├── LEAF id:ca-toronto region:"Americas" country:"Canada" amount:35
-            · · └── LEAF id:ca-vancouver region:"Americas" country:"Canada" amount:25
-        `);
+        expect(api.getRowNode('us-la')?.data?.amount).toBe(30);
     });
 
-    test('max: writes to the child holding the maximum value', async () => {
+    test('max: suppressed by default — no children are modified', async () => {
         const api = await createGrid('distribute-max', { aggFunc: 'max', groupRowValueSetter: distributeGroupValue });
 
         const usaNode = api.getRowNode('row-group-region-Americas-country-USA')!;
-        // USA children: us-nyc=70, us-la=30. Max holder is us-nyc (70).
+        // max is disabled by default — edit has no effect
         await performEdit(editMode, api, usaNode, 'amount', 99);
 
-        // Only the max holder (us-nyc) is updated; us-la stays at 30
-        expect(api.getRowNode('us-nyc')?.data?.amount).toBe(99);
+        expect(api.getRowNode('us-nyc')?.data?.amount).toBe(70);
         expect(api.getRowNode('us-la')?.data?.amount).toBe(30);
-        expect(usaNode.aggData?.amount).toBe(99);
-
-        await new GridRows(api, 'after max edit').check(`
-            ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-region-Europe amount:30
-            │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-France amount:30
-            │ │ ├── LEAF id:fr-paris region:"Europe" country:"France" amount:30
-            │ │ └── LEAF id:fr-lyon region:"Europe" country:"France" amount:30
-            │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-Germany amount:30
-            │ │ ├── LEAF id:de-berlin region:"Europe" country:"Germany" amount:30
-            │ │ └── LEAF id:de-hamburg region:"Europe" country:"Germany" amount:30
-            │ └─┬ LEAF_GROUP id:row-group-region-Europe-country-Italy amount:30
-            │ · ├── LEAF id:it-rome region:"Europe" country:"Italy" amount:30
-            │ · └── LEAF id:it-milan region:"Europe" country:"Italy" amount:30
-            └─┬ filler id:row-group-region-Americas amount:99
-            · ├─┬ LEAF_GROUP id:row-group-region-Americas-country-USA amount:99
-            · │ ├── LEAF id:us-nyc region:"Americas" country:"USA" amount:99
-            · │ └── LEAF id:us-la region:"Americas" country:"USA" amount:30
-            · └─┬ LEAF_GROUP id:row-group-region-Americas-country-Canada amount:35
-            · · ├── LEAF id:ca-toronto region:"Americas" country:"Canada" amount:35
-            · · └── LEAF id:ca-vancouver region:"Americas" country:"Canada" amount:25
-        `);
     });
 
     test('first: only sets the first child', async () => {
@@ -183,7 +137,7 @@ describe.each(EDIT_MODES)('distributeGroupValue aggFunc strategies (%s)', (editM
         `);
     });
 
-    test('count: overwrites all children (uses overwrite mode)', async () => {
+    test('count: suppressed by default — no children are modified', async () => {
         const api = await createGrid('distribute-count', {
             aggFunc: 'count',
             groupRowValueSetter: distributeGroupValue,
@@ -192,32 +146,38 @@ describe.each(EDIT_MODES)('distributeGroupValue aggFunc strategies (%s)', (editM
         const franceNode = api.getRowNode('row-group-region-Europe-country-France')!;
         await performEdit(editMode, api, franceNode, 'amount', 77);
 
-        expect(api.getRowNode('fr-paris')?.data?.amount).toBe(77);
-        expect(api.getRowNode('fr-lyon')?.data?.amount).toBe(77);
-
-        await new GridRows(api, 'after count edit').check(`
-            ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-region-Europe amount:{"value":6}
-            │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-France amount:{"value":2}
-            │ │ ├── LEAF id:fr-paris region:"Europe" country:"France" amount:77
-            │ │ └── LEAF id:fr-lyon region:"Europe" country:"France" amount:77
-            │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-Germany amount:{"value":2}
-            │ │ ├── LEAF id:de-berlin region:"Europe" country:"Germany" amount:30
-            │ │ └── LEAF id:de-hamburg region:"Europe" country:"Germany" amount:30
-            │ └─┬ LEAF_GROUP id:row-group-region-Europe-country-Italy amount:{"value":2}
-            │ · ├── LEAF id:it-rome region:"Europe" country:"Italy" amount:30
-            │ · └── LEAF id:it-milan region:"Europe" country:"Italy" amount:30
-            └─┬ filler id:row-group-region-Americas amount:{"value":4}
-            · ├─┬ LEAF_GROUP id:row-group-region-Americas-country-USA amount:{"value":2}
-            · │ ├── LEAF id:us-nyc region:"Americas" country:"USA" amount:70
-            · │ └── LEAF id:us-la region:"Americas" country:"USA" amount:30
-            · └─┬ LEAF_GROUP id:row-group-region-Americas-country-Canada amount:{"value":2}
-            · · ├── LEAF id:ca-toronto region:"Americas" country:"Canada" amount:35
-            · · └── LEAF id:ca-vancouver region:"Americas" country:"Canada" amount:25
-        `);
+        // count is disabled by default — children unchanged
+        expect(api.getRowNode('fr-paris')?.data?.amount).toBe(30);
+        expect(api.getRowNode('fr-lyon')?.data?.amount).toBe(30);
     });
 
-    test('custom aggFunc: defaults to overwrite', async () => {
+    test('min with explicit overwrite: writes to all children', async () => {
+        const api = await createGrid('distribute-min-overwrite', {
+            aggFunc: 'min',
+            groupRowValueSetter: { distribution: 'overwrite' },
+        });
+
+        const usaNode = api.getRowNode('row-group-region-Americas-country-USA')!;
+        await performEdit(editMode, api, usaNode, 'amount', 10);
+
+        expect(api.getRowNode('us-nyc')?.data?.amount).toBe(10);
+        expect(api.getRowNode('us-la')?.data?.amount).toBe(10);
+    });
+
+    test('max with explicit uniform: divides equally', async () => {
+        const api = await createGrid('distribute-max-uniform', {
+            aggFunc: 'max',
+            groupRowValueSetter: { distribution: 'uniform' },
+        });
+
+        const usaNode = api.getRowNode('row-group-region-Americas-country-USA')!;
+        await performEdit(editMode, api, usaNode, 'amount', 100);
+
+        expect(api.getRowNode('us-nyc')?.data?.amount).toBe(50);
+        expect(api.getRowNode('us-la')?.data?.amount).toBe(50);
+    });
+
+    test('function aggFunc: disabled by default — no children are modified', async () => {
         const api = await createGrid('distribute-custom-agg', {
             aggFunc: (params) => {
                 let total = 0;
@@ -232,15 +192,16 @@ describe.each(EDIT_MODES)('distributeGroupValue aggFunc strategies (%s)', (editM
         const franceNode = api.getRowNode('row-group-region-Europe-country-France')!;
         await performEdit(editMode, api, franceNode, 'amount', 50);
 
-        expect(api.getRowNode('fr-paris')?.data?.amount).toBe(50);
-        expect(api.getRowNode('fr-lyon')?.data?.amount).toBe(50);
+        // Function aggFuncs are disabled by default — children unchanged
+        expect(api.getRowNode('fr-paris')?.data?.amount).toBe(30);
+        expect(api.getRowNode('fr-lyon')?.data?.amount).toBe(30);
 
         await new GridRows(api, 'after custom agg edit').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-region-Europe amount:880
-            │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-France amount:200
-            │ │ ├── LEAF id:fr-paris region:"Europe" country:"France" amount:50
-            │ │ └── LEAF id:fr-lyon region:"Europe" country:"France" amount:50
+            ├─┬ filler id:row-group-region-Europe amount:720
+            │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-France amount:120
+            │ │ ├── LEAF id:fr-paris region:"Europe" country:"France" amount:30
+            │ │ └── LEAF id:fr-lyon region:"Europe" country:"France" amount:30
             │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-Germany amount:120
             │ │ ├── LEAF id:de-berlin region:"Europe" country:"Germany" amount:30
             │ │ └── LEAF id:de-hamburg region:"Europe" country:"Germany" amount:30
