@@ -1731,3 +1731,238 @@ describe('precision rounds child values, not the re-aggregated group value', () 
         expect(Number.isInteger(avgAgg.value)).toBe(false);
     });
 });
+
+// --- Regression: record-mode with default:false suppresses columns without aggFunc ---
+
+describe('record-mode default suppression', () => {
+    test('record distribution with default:false suppresses column without aggFunc', async () => {
+        const api = await createSimpleGrid(
+            'record-default-false-no-agg',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 20 },
+            ],
+            {
+                aggFunc: undefined as any,
+                groupRowValueSetter: (params: GroupRowValueSetterParams) =>
+                    distributeGroupValue(params, { distribution: { sum: 'percentage' }, default: false }),
+            }
+        );
+
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 99, 'ui');
+        await asyncSetTimeout(0);
+
+        // default:false suppresses distribution — children unchanged
+        expect(api.getRowNode('a1')?.data?.amount).toBe(10);
+        expect(api.getRowNode('a2')?.data?.amount).toBe(20);
+    });
+
+    test('record distribution with default:null suppresses column without aggFunc', async () => {
+        const api = await createSimpleGrid(
+            'record-default-null-no-agg',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 20 },
+            ],
+            {
+                aggFunc: undefined as any,
+                groupRowValueSetter: (params: GroupRowValueSetterParams) =>
+                    distributeGroupValue(params, { distribution: { sum: 'percentage' }, default: null }),
+            }
+        );
+
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 99, 'ui');
+        await asyncSetTimeout(0);
+
+        // default:null suppresses distribution — children unchanged
+        expect(api.getRowNode('a1')?.data?.amount).toBe(10);
+        expect(api.getRowNode('a2')?.data?.amount).toBe(20);
+    });
+
+    test('record distribution without default falls through to overwrite for no-aggFunc column', async () => {
+        const api = await createSimpleGrid(
+            'record-no-default-no-agg',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 20 },
+            ],
+            {
+                aggFunc: undefined as any,
+                groupRowValueSetter: (params: GroupRowValueSetterParams) =>
+                    distributeGroupValue(params, { distribution: { sum: 'percentage' } }),
+            }
+        );
+
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 99, 'ui');
+        await asyncSetTimeout(0);
+
+        // No default, no aggFunc → falls through to 'overwrite'
+        expect(api.getRowNode('a1')?.data?.amount).toBe(99);
+        expect(api.getRowNode('a2')?.data?.amount).toBe(99);
+    });
+});
+
+// --- Tests for `true` distribution entry ---
+
+describe('distribution: true', () => {
+    test('true enables custom aggFunc with overwrite (via options object)', async () => {
+        const api = await createSimpleGrid(
+            'true-custom-agg-options',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 20 },
+            ],
+            {
+                aggFunc: 'myCustomAgg',
+                groupRowValueSetter: { distribution: true },
+            },
+            undefined,
+            { aggFuncs: CUSTOM_AGG_FUNCS }
+        );
+
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 42, 'ui');
+        await asyncSetTimeout(0);
+
+        // true enables normally-disabled custom aggFuncs with 'overwrite'
+        expect(api.getRowNode('a1')?.data?.amount).toBe(42);
+        expect(api.getRowNode('a2')?.data?.amount).toBe(42);
+    });
+
+    test('true enables count aggFunc with overwrite', async () => {
+        const api = await createSimpleGrid(
+            'true-count-agg',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 20 },
+            ],
+            {
+                aggFunc: 'count',
+                groupRowValueSetter: { distribution: true },
+            }
+        );
+
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 99, 'ui');
+        await asyncSetTimeout(0);
+
+        // true enables normally-disabled count with 'overwrite'
+        expect(api.getRowNode('a1')?.data?.amount).toBe(99);
+        expect(api.getRowNode('a2')?.data?.amount).toBe(99);
+    });
+
+    test('true in per-aggFunc record enables specific aggFunc', async () => {
+        const api = await createSimpleGrid(
+            'true-record-entry',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 20 },
+            ],
+            {
+                aggFunc: 'myCustomAgg',
+                groupRowValueSetter: { distribution: { myCustomAgg: true } },
+            },
+            undefined,
+            { aggFuncs: CUSTOM_AGG_FUNCS }
+        );
+
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 50, 'ui');
+        await asyncSetTimeout(0);
+
+        // true as a record entry enables with 'overwrite'
+        expect(api.getRowNode('a1')?.data?.amount).toBe(50);
+        expect(api.getRowNode('a2')?.data?.amount).toBe(50);
+    });
+
+    test('true preserves built-in default for sum (uniform)', async () => {
+        const api = await createSimpleGrid(
+            'true-sum-default',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 20 },
+            ],
+            {
+                aggFunc: 'sum',
+                groupRowValueSetter: { distribution: true },
+            }
+        );
+
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 60, 'ui');
+        await asyncSetTimeout(0);
+
+        // true for sum still uses 'uniform' (built-in default)
+        expect(api.getRowNode('a1')?.data?.amount).toBe(30);
+        expect(api.getRowNode('a2')?.data?.amount).toBe(30);
+        expect(group.aggData?.amount).toBe(60);
+    });
+
+    test('true as default fallback enables custom aggFuncs', async () => {
+        const api = await createSimpleGrid(
+            'true-default-fallback',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 20 },
+            ],
+            {
+                aggFunc: 'myCustomAgg',
+                groupRowValueSetter: (params: GroupRowValueSetterParams) =>
+                    distributeGroupValue(params, { default: true }),
+            },
+            undefined,
+            { aggFuncs: CUSTOM_AGG_FUNCS }
+        );
+
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 42, 'ui');
+        await asyncSetTimeout(0);
+
+        // true as default fallback enables custom aggFuncs with 'overwrite'
+        expect(api.getRowNode('a1')?.data?.amount).toBe(42);
+        expect(api.getRowNode('a2')?.data?.amount).toBe(42);
+    });
+
+    test('true in record overrides false from deep-merged defaultColDef', async () => {
+        const api = gridsManager.createGridAndWait('true-override-false', {
+            defaultColDef: {
+                cellEditor: 'agTextCellEditor',
+                editable: true,
+                groupRowEditable: true,
+                groupRowValueSetter: { distribution: { count: false } },
+            },
+            groupDisplayType: 'custom',
+            columnDefs: [
+                { colId: 'group', headerName: 'Group', cellRenderer: 'agGroupCellRenderer' },
+                { field: 'region', rowGroup: true, hide: true },
+                { field: 'country', rowGroup: true, hide: true },
+                {
+                    colId: 'amount',
+                    field: 'amount',
+                    aggFunc: 'count',
+                    // Column-level true overrides defaultColDef's false after deep merge
+                    groupRowValueSetter: { distribution: { count: true } },
+                },
+            ],
+            rowData: [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 20 },
+            ],
+            groupDefaultExpanded: -1,
+            getRowId: (params: any) => params.data?.id,
+        });
+
+        await asyncSetTimeout(0);
+
+        const group = (await api).getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 77, 'ui');
+        await asyncSetTimeout(0);
+
+        // true overrides false, enabling count with 'overwrite'
+        expect((await api).getRowNode('a1')?.data?.amount).toBe(77);
+        expect((await api).getRowNode('a2')?.data?.amount).toBe(77);
+    });
+});

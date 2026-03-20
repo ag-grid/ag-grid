@@ -6,13 +6,14 @@ export type DistributionStrategy = 'first' | 'last' | GroupRowValueSetterDistrib
 /**
  * Resolves the distribution strategy from the aggFunc and explicit distribution option.
  * false and null always suppress distribution.
+ * true uses the built-in default, enabling normally-disabled aggFuncs (count/min/max/custom) with 'overwrite'.
  * first/last aggFuncs use their own strategy unless explicitly suppressed.
  * count/min/max and custom aggFuncs are disabled by default — only enabled when the user explicitly sets a distribution.
  * Columns with no aggFunc default to 'overwrite'.
  */
 export const resolveStrategy = (
     aggFunc: string | null,
-    distribution: GroupRowValueSetterDistribution | false | null | undefined
+    distribution: GroupRowValueSetterDistribution | boolean | null | undefined
 ): DistributionStrategy => {
     // Explicit suppression always wins
     if (distribution === false || distribution === null) {
@@ -22,16 +23,19 @@ export const resolveStrategy = (
     if (aggFunc === 'first' || aggFunc === 'last') {
         return aggFunc;
     }
-    // If user explicitly set a distribution, use it for any aggFunc
-    if (distribution) {
+    // Explicit strategy string — use it for any aggFunc
+    if (typeof distribution === 'string') {
         return distribution;
     }
-    // count/min/max are disabled by default
-    if (aggFunc === 'count' || aggFunc === 'min' || aggFunc === 'max') {
-        return false;
+    // Built-in defaults: sum → uniform, avg/no-aggFunc → overwrite
+    if (aggFunc === 'sum') {
+        return 'uniform';
     }
-    // sum → uniform, avg/no-aggFunc → overwrite, custom aggFuncs → disabled
-    return aggFunc === 'sum' ? 'uniform' : aggFunc === 'avg' || aggFunc === null ? 'overwrite' : false;
+    if (aggFunc === 'avg' || aggFunc === null) {
+        return 'overwrite';
+    }
+    // count/min/max and custom aggFuncs: disabled unless distribution === true
+    return distribution === true ? 'overwrite' : false;
 };
 
 /** Whether the aggFunc has a built-in default strategy (sum/avg/first/last/count/min/max). */

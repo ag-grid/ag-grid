@@ -71,8 +71,12 @@ regardless of any `distribution` setting.
 
 The `count`, `min`, and `max` aggregation functions and **custom aggregation functions** are **disabled by default** —
 the cell is treated as not editable unless the user explicitly sets a distribution strategy for them.
-To enable editing, set an explicit distribution in the per-aggFunc record, as a top-level strategy string,
-or use the `default` fallback option for custom aggregation functions.
+To enable editing, set an explicit distribution in the per-aggFunc record, set `true` to use built-in
+defaults, use a top-level strategy string, or use the `default` fallback option for custom aggregation functions.
+
+Setting `distribution` to `true` enables distribution using built-in defaults for all aggregation functions,
+including normally-disabled ones (count/min/max/custom) which get `'overwrite'`. This is useful for
+overriding `false` or `null` from `defaultColDef` in deep-merge scenarios.
 
 Setting `distribution` to `false` or `null` suppresses distribution and makes the cell not editable,
 even when `groupRowEditable` is `true`.
@@ -103,8 +107,8 @@ const gridOptions = {
     defaultColDef: {
         editable: true,
         groupRowEditable: true,
-        // Default: round child values to integers for all columns
-        groupRowValueSetter: { precision: 0 },
+        // Default: round child values to integers, disable count
+        groupRowValueSetter: { precision: 0, distribution: { count: false } },
     },
     columnDefs: [
         {
@@ -113,6 +117,12 @@ const gridOptions = {
             // Column-level override: use percentage distribution.
             // precision: 0 is inherited from defaultColDef.
             groupRowValueSetter: { distribution: 'percentage' },
+        },
+        {
+            field: 'quantity',
+            aggFunc: 'count',
+            // Override defaultColDef's false with true to enable editing for count.
+            groupRowValueSetter: { distribution: { count: true } },
         },
         {
             field: 'profit',
@@ -146,7 +156,7 @@ demonstrates a mix of built-in strategies and a custom aggregation function:
 When different columns use different aggregation functions but share a `groupRowValueSetter`
 (e.g. via `defaultColDef`), the `distribution` property can be set to a record mapping each
 aggregation function name to a strategy string, an options object, a custom callback function,
-or `false`/`null` to suppress distribution for that aggFunc:
+`true` to enable with built-in defaults, or `false`/`null` to suppress distribution for that aggFunc:
 
 ```{% frameworkTransform=true %}
 const myCustomAgg = (params) => {
@@ -197,8 +207,7 @@ explicit entry or `default` to be editable.
 ## Custom Distribution with a Callback
 
 For full control over how group-level edits cascade, assign a function to `groupRowValueSetter`.
-The callback receives a `GroupRowValueSetterParams` object and should return `true` if any
-child value was changed.
+The callback receives a `GroupRowValueSetterParams` object and should return `true` if any child value was changed.
 
 {% gridExampleRunner title="Custom Editable Group Totals" name="group-editable-totals-custom" exampleHeight=620 /%}
 

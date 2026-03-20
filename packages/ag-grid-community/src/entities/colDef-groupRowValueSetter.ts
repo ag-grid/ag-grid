@@ -183,6 +183,9 @@ export type GroupRowValueSetterDistribution = 'uniform' | 'percentage' | 'increm
 /**
  * A value in the `distribution` record. Can be:
  * - A {@link GroupRowValueSetterDistribution} strategy string (e.g. `'percentage'`).
+ * - `true` — uses the built-in default for the aggFunc, enabling normally-disabled aggFuncs
+ *   (count/min/max/custom) with `'overwrite'`. Useful for overriding `false`/`null` from a parent
+ *   in deep-merge scenarios (e.g. column overriding `defaultColDef`).
  * - `false` or `null` — suppresses distribution for this aggFunc
  *   and makes the cell not editable when that aggFunc is active.
  * - `undefined` — inherits from the parent options (falls through to the default for that aggFunc).
@@ -194,7 +197,8 @@ export type GroupRowValueSetterDistribution = 'uniform' | 'percentage' | 'increm
  * distribution: {
  *     sum: 'percentage',                                // strategy string
  *     avg: { distribution: 'increment', precision: 0 }, // options object
- *     count: false,                                     // suppress
+ *     count: true,                                      // enable with built-in default
+ *     min: false,                                       // suppress
  *     myCustomAgg: (params) => { ... },                 // custom callback
  * }
  * ```
@@ -203,7 +207,7 @@ export type GroupRowValueSetterDistributionEntry<TData = any, TValue = any, TCon
     | GroupRowValueSetterDistribution
     | GroupRowValueSetterDistributionOptions
     | GroupRowValueSetterFunc<TData, TValue, TContext>
-    | false
+    | boolean
     | null
     | undefined;
 
@@ -248,6 +252,9 @@ export type GroupRowValueSetterDistributionRecord<TData = any, TValue = any, TCo
 export interface GroupRowValueSetterDistributionOptions {
     /**
      * Distribution strategy to use. See {@link GroupRowValueSetterDistribution} for details.
+     * Set to `true` to use the built-in default, enabling normally-disabled aggFuncs
+     * (count/min/max/custom) with `'overwrite'`. Useful for overriding `false`/`null`
+     * from a parent in deep-merge scenarios.
      * Set to `false` or `null` to suppress distribution and make the cell not editable.
      * When `undefined`, inherits from the parent options.
      *
@@ -255,7 +262,7 @@ export interface GroupRowValueSetterDistributionOptions {
      * and columns without an aggFunc, the aggFunc's own strategy for `first`/`last`,
      * and disabled for `count`/`min`/`max` and custom aggFuncs.
      */
-    distribution?: GroupRowValueSetterDistribution | false | null;
+    distribution?: GroupRowValueSetterDistribution | boolean | null;
 
     /**
      * Number of decimal places to round values written to **child rows** during distribution.
@@ -372,8 +379,14 @@ export interface GroupRowValueSetterOptions<TData = any, TValue = any, TContext 
      * Distribution strategy or per-aggregation-function strategy map.
      *
      * **As a string:** applies the chosen {@link GroupRowValueSetterDistribution} strategy
-     * to all aggregation functions. Set to `false` or `null` to suppress distribution
-     * and make the cell not editable (overriding `groupRowEditable`).
+     * to all aggregation functions.
+     *
+     * **As `true`:** enables distribution using built-in defaults for all aggregation functions,
+     * including normally-disabled ones (count/min/max/custom) which get `'overwrite'`.
+     * Useful for overriding `false`/`null` from `defaultColDef` in deep-merge scenarios.
+     *
+     * **As `false` or `null`:** suppresses distribution and makes the cell not editable
+     * (overriding `groupRowEditable`).
      *
      * **As a record:** maps aggFunc names to individual strategies, options objects,
      * or custom callbacks. Unmatched aggFuncs fall through to {@link default},
@@ -384,13 +397,16 @@ export interface GroupRowValueSetterOptions<TData = any, TValue = any, TContext 
      * // Single strategy
      * distribution: 'percentage'
      *
-     * // Per-aggFunc record (entries can be strings, objects, functions, or false/null)
-     * distribution: { sum: 'percentage', avg: 'increment', myAgg: (params) => { ... }, count: false }
+     * // Enable all aggFuncs with built-in defaults
+     * distribution: true
+     *
+     * // Per-aggFunc record (entries can be strings, objects, functions, true, or false/null)
+     * distribution: { sum: 'percentage', avg: 'increment', count: true, myAgg: (params) => { ... }, min: false }
      * ```
      */
     distribution?:
         | GroupRowValueSetterDistribution
-        | false
+        | boolean
         | null
         | GroupRowValueSetterDistributionRecord<TData, TValue, TContext>;
 

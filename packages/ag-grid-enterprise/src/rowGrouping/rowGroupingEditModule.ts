@@ -1,8 +1,5 @@
 import type {
     AgColumn,
-    GroupRowValueSetterDistributionEntry,
-    GroupRowValueSetterDistributionOptions,
-    GroupRowValueSetterOptions,
     GroupRowValueSetterParams,
     IRowNode,
     NamedBean,
@@ -14,7 +11,7 @@ import { BeanStub } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
-import { distributeGroupValue } from './distributeGroupValue/distributeGroupValue';
+import { distributeGroupValue, isDistributionSuppressed } from './distributeGroupValue/distributeGroupValue';
 import { SharedRowGroupingModule } from './rowGroupingModule';
 
 class RowGroupingEditValueSvc extends BeanStub implements NamedBean, _IRowGroupingEditValueSvc {
@@ -34,8 +31,8 @@ class RowGroupingEditValueSvc extends BeanStub implements NamedBean, _IRowGroupi
             return true;
         }
 
-        // Options object — check if distribution is suppressed (false/null) for this column's aggFunc
-        return !isDistributionSuppressed(raw, colDef.aggFunc);
+        // Options object — check if distribution is suppressed for this column's aggFunc
+        return !isDistributionSuppressed(raw, typeof colDef.aggFunc === 'string' ? colDef.aggFunc : null);
     }
 
     public setGroupDataValue(
@@ -84,80 +81,6 @@ class RowGroupingEditValueSvc extends BeanStub implements NamedBean, _IRowGroupi
         // Default to true if user forgot to return a value (possible without TypeScript).
         return result ?? true;
     }
-}
-
-/** Whether this aggFunc is disabled by default (requires explicit distribution to be editable).
- * count/min/max and custom aggFuncs are disabled. null (no aggFunc), sum, avg, first, last are enabled. */
-function isDisabledByDefault(aggFunc: string | null): boolean {
-    return aggFunc !== null && aggFunc !== 'sum' && aggFunc !== 'avg' && aggFunc !== 'first' && aggFunc !== 'last';
-}
-
-/** Whether a distribution entry suppresses distribution for the given aggFunc. */
-function isEntrySuppressed(entry: GroupRowValueSetterDistributionEntry | undefined, aggFunc: string | null): boolean {
-    if (entry === false || entry === null) {
-        return true;
-    }
-    if (entry === undefined) {
-        return isDisabledByDefault(aggFunc);
-    }
-    // Function or string strategy — not suppressed
-    if (typeof entry === 'function' || typeof entry === 'string') {
-        return false;
-    }
-    // Options object — check its distribution field
-    const dist = (entry as GroupRowValueSetterDistributionOptions).distribution;
-    if (dist === false || dist === null) {
-        return true;
-    }
-    return dist === undefined && isDisabledByDefault(aggFunc);
-}
-
-/** Checks whether an options-object groupRowValueSetter would suppress distribution for the given aggFunc. */
-function isDistributionSuppressed(
-    opts: GroupRowValueSetterOptions,
-    aggFunc: string | ((params: any) => any) | null | undefined
-): boolean {
-    const dist = opts.distribution;
-
-    // Top-level suppression
-    if (dist === false || dist === null) {
-        return true;
-    }
-
-    const aggFuncStr = typeof aggFunc === 'string' ? aggFunc : null;
-
-    // Top-level string strategy applies to all aggFuncs — not suppressed
-    if (typeof dist === 'string') {
-        return false;
-    }
-
-    // No distribution specified — check built-in defaults
-    if (dist === undefined) {
-        // count/min/max are always disabled (opts.default does not apply to built-in aggFuncs)
-        if (aggFuncStr === 'count' || aggFuncStr === 'min' || aggFuncStr === 'max') {
-            return true;
-        }
-        // null (no aggFunc), sum, avg, first, last — always enabled
-        if (!isDisabledByDefault(aggFuncStr)) {
-            return false;
-        }
-        // Custom aggFunc — check opts.default fallback, disabled if no default
-        return isEntrySuppressed(opts.default, aggFuncStr);
-    }
-
-    // Per-aggFunc record — look up the current column's aggFunc
-    if (aggFuncStr == null) {
-        return false; // Non-string aggFunc → falls through to default handler/overwrite
-    }
-
-    const entry = dist[aggFuncStr];
-
-    // Not in record → check default fallback (isEntrySuppressed handles undefined default → isDisabledByDefault)
-    if (entry === undefined) {
-        return isEntrySuppressed(opts.default, aggFuncStr);
-    }
-
-    return isEntrySuppressed(entry, aggFuncStr);
 }
 
 /**
