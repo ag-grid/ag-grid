@@ -16,6 +16,19 @@ import HeaderCellComp from './headerCellComp';
 import HeaderFilterCellComp from './headerFilterCellComp';
 import HeaderGroupCellComp from './headerGroupCellComp';
 
+function getCellSectionSignature(ctrls: AbstractHeaderCellCtrl[], isPrint: boolean): string {
+    if (isPrint) {
+        return 'print';
+    }
+
+    return ctrls
+        .map((ctrl) => {
+            const pinned = ctrl.column.getPinned() ?? 'center';
+            return `${ctrl.instanceId}:${pinned}`;
+        })
+        .join('|');
+}
+
 const HeaderRowComp = ({
     ctrl,
     setGuiRef,
@@ -36,6 +49,7 @@ const HeaderRowComp = ({
     // Cell ctrls partitioned into 3 sections
     const cellCtrlsRef = useRef<AbstractHeaderCellCtrl[]>([]);
     const prevCellCtrlsRef = useRef<AbstractHeaderCellCtrl[]>([]);
+    const sectionSignatureRef = useRef<string>('');
     const domOrderRef = useRef<boolean>(false);
     const [cellCtrls, setCellCtrls] = useState<AbstractHeaderCellCtrl[]>([]);
 
@@ -68,9 +82,16 @@ const HeaderRowComp = ({
         compBean.current = context.createBean(new _EmptyBean());
 
         const updateCellCtrls = (useFlushSync: boolean) => {
-            const next = getNextValueIfDifferent(prevCellCtrlsRef.current, cellCtrlsRef.current, domOrderRef.current)!;
+            const isPrint = gos.get('domLayout') === 'print';
+            const nextSectionSignature = getCellSectionSignature(cellCtrlsRef.current, isPrint);
+            const shouldRefreshForSectionChange = sectionSignatureRef.current !== nextSectionSignature;
+            const next = shouldRefreshForSectionChange
+                ? cellCtrlsRef.current
+                : getNextValueIfDifferent(prevCellCtrlsRef.current, cellCtrlsRef.current, domOrderRef.current)!;
+
             if (next !== prevCellCtrlsRef.current) {
                 prevCellCtrlsRef.current = next;
+                sectionSignatureRef.current = nextSectionSignature;
                 agFlushSync(useFlushSync, () => setCellCtrls(next));
             }
         };
