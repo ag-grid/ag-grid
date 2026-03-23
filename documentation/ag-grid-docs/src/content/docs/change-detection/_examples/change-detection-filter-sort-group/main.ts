@@ -68,8 +68,15 @@ const gridOptions: GridOptions = {
     groupDefaultExpanded: 1,
     suppressAggFuncInHeader: true,
     allowShowChangeAfterFilter: true,
-    refreshAfterGroupEdit: true,
+    onCellValueChanged: onCellValueChanged,
 };
+
+function onCellValueChanged(params: CellValueChangedEvent) {
+    const data = params.data;
+    if (data) {
+        params.api.applyTransaction({ update: [data] });
+    }
+}
 
 function getRowData() {
     const rowData = [];
