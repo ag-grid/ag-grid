@@ -360,11 +360,13 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
                 value,
                 'toolPanelDragAndDrop'
             );
-            const eText = this.getGui().querySelector<HTMLElement>('.ag-column-drop-cell-text');
-            if (eText) {
-                eText.textContent = this.getDisplayValue();
+            if (this.column) {
+                const eText = this.getGui().querySelector<HTMLElement>('.ag-column-drop-cell-text');
+                if (eText) {
+                    eText.textContent = this.getDisplayValue();
+                }
+                this.setupAria();
             }
-            this.setupAria();
             refreshDeferredToolPanelUi(this.beans, this.updateParams);
         };
 
