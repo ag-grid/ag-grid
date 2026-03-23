@@ -132,7 +132,7 @@ const VueExample = defineComponent({
             closeDrawer();
             const popup = popupRef.value!;
             popup.classList.toggle('active', true);
-            gridApi.value!.openToolPanel(columnsToolPanel.value.id);
+            gridApi.value!.openToolPanel(columnsToolPanel.value.id, popupContentRef.value);
             addStyles(popup);
         }
         function openDrawer() {

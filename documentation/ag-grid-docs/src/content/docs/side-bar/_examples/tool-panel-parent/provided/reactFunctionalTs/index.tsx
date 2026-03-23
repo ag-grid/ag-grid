@@ -67,9 +67,8 @@ const GridExample = () => {
                 suppressValues: true,
                 suppressPivotMode: true,
             },
-            parent: popupContentRef.current,
         };
-    }, [popupRef.current, popupContentRef.current]);
+    }, []);
 
     const filtersToolPanel = useMemo(
         () => ({
@@ -94,21 +93,21 @@ const GridExample = () => {
         const drawer = popupRef.current;
         drawer.classList.toggle('active', false);
         gridRef.current.api.closeToolPanel();
-    }, [popupRef.current]);
+    }, []);
 
     const closeDrawer = useCallback(() => {
         const drawer = drawerRef.current;
         drawer.classList.toggle('active', false);
         gridRef.current.api.closeToolPanel();
-    }, [drawerRef.current]);
+    }, []);
 
     const openPopup = useCallback(() => {
         closeDrawer();
         const popup = popupRef.current;
         popup.classList.toggle('active', true);
-        gridRef.current.api.openToolPanel(columnsToolPanel.id);
+        gridRef.current.api.openToolPanel(columnsToolPanel.id, popupContentRef.current);
         addStyles(popup);
-    }, [popupRef.current, closeDrawer, columnsToolPanel]);
+    }, [closeDrawer, columnsToolPanel]);
 
     const openDrawer = useCallback(() => {
         closePopup();
@@ -116,7 +115,7 @@ const GridExample = () => {
         drawer.classList.toggle('active', true);
         gridRef.current.api.openToolPanel(filtersToolPanel.id, drawerContentRef.current);
         addStyles(drawer);
-    }, [drawerRef, closePopup, filtersToolPanel]);
+    }, [closePopup, filtersToolPanel]);
 
     return (
         <AgGridProvider modules={modules}>
