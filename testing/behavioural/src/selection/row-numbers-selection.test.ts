@@ -489,6 +489,8 @@ describe('Row Numbers Keyboard Navigation', () => {
         await asyncSetTimeout(0);
 
         assertSelectedCellRanges([{ rowStartIndex: 0, rowEndIndex: 3, columns: dataColumns }], api);
+        expect(rowNumberHeader.contains(document.activeElement)).toBe(true);
+        expect(api.getFocusedCell()).toBeNull();
     });
 
     test('Enter on row number header selects all cells', async () => {
@@ -508,6 +510,8 @@ describe('Row Numbers Keyboard Navigation', () => {
         await asyncSetTimeout(0);
 
         assertSelectedCellRanges([{ rowStartIndex: 0, rowEndIndex: 3, columns: dataColumns }], api);
+        expect(rowNumberHeader.contains(document.activeElement)).toBe(true);
+        expect(api.getFocusedCell()).toBeNull();
     });
 
     test('Space on row number cell does not select cells in that row', async () => {
