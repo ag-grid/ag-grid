@@ -496,8 +496,12 @@ export async function waitForRowAnimations(page: Page) {
             const seen = new Set<string>();
             for (const row of container.querySelectorAll('.ag-row')) {
                 const rowId = row.getAttribute('row-id');
-                if (!rowId) continue;
-                if (seen.has(rowId)) return false;
+                if (!rowId) {
+                    continue;
+                }
+                if (seen.has(rowId)) {
+                    return false;
+                }
                 seen.add(rowId);
             }
         }
