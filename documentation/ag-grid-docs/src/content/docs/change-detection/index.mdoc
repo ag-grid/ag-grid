@@ -109,7 +109,7 @@ The example below shows change detection impacting the result of groups. The gri
 
 -   Column 'Group' is marked as a [Row Group](./grouping/) and columns A to D are marked as [Aggregation](./aggregation/) columns so that their values are summed into the group level.
 
--   Column 'Total' has a valueGetter which gives a sum of all columns A to D for the rows, and a `sum` aggregation for the groups.
+-   Column 'Total' has a valueGetter which gives a sum of all columns A to D.
 
 -   Columns A to D are editable. If you edit a cells value, then the aggregate value at the group level is also updated to reflect the change. This is because the grid is recalculating the aggregations as a result of the change.
 
