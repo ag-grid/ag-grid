@@ -10,7 +10,7 @@ test.describe(`Demo Examples`, async () => {
 
     test.beforeEach(async ({ page }) => {
         errors = setupConsoleExpectations(page);
-        await page.route('**/*onetrust*', (route) => route.abort());
+        await page.route('**://cdn.cookielaw.org/**', (route) => route.abort());
     });
 
     test.afterEach(async () => {
