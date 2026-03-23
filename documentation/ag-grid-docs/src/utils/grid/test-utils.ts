@@ -460,6 +460,27 @@ export async function dragOverTo(source: Locator, target: Locator, offsetPositio
     await mouse.up();
 }
 
+/**
+ * Waits until every `.ag-row` in the grid has a unique `row-id` attribute.
+ *
+ * Row animations leave "zombie" rows in the DOM for ~400ms. When a zombie and
+ * its replacement share the same `row-id`, strict-mode locators (`getByTestId`)
+ * throw a "resolved to N elements" error. Calling this helper before making
+ * assertions ensures all animations have settled.
+ */
+export async function waitForRowAnimations(page: Page) {
+    await page.waitForFunction(() => {
+        const seen = new Set<string>();
+        for (const row of document.querySelectorAll('.ag-row')) {
+            const rowId = row.getAttribute('row-id');
+            if (!rowId) continue;
+            if (seen.has(rowId)) return false;
+            seen.add(rowId);
+        }
+        return true;
+    });
+}
+
 export async function clickAllButtons(page: Page) {
     // Click all visible buttons in the grid example
     // Don't use buttons within the ag-root-wrapper as these are not part of the example
