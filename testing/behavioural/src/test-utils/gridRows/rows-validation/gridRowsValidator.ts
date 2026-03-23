@@ -219,6 +219,7 @@ export class GridRowsValidator {
         );
 
         this.validateSibling(rowErrors, row);
+        this.validatePinnedSibling(rowErrors, row);
 
         if (csrm) {
             const childrenAfterGroupSet = this.validateChildren(state, row, 'childrenAfterGroup', null);
@@ -334,6 +335,22 @@ export class GridRowsValidator {
         );
         rowErrors.add(sibling.childrenAfterSort !== row.childrenAfterSort && 'Sibling childrenAfterSort is different');
         rowErrors.add(sibling.allLeafChildren !== row.allLeafChildren && 'Sibling allLeafChildren is different');
+    }
+
+    private validatePinnedSibling(rowErrors: GridRowErrors, row: RowNode<any>) {
+        const pinnedSibling = row.pinnedSibling;
+        if (!pinnedSibling) {
+            return;
+        }
+        rowErrors.add(pinnedSibling === row && 'Row references itself as pinnedSibling');
+        rowErrors.add(
+            pinnedSibling.pinnedSibling !== row && 'PinnedSibling does not reference back to the original row'
+        );
+        rowErrors.add(pinnedSibling.group !== row.group && 'PinnedSibling group is different');
+        rowErrors.add(pinnedSibling.hasChildren() !== row.hasChildren() && 'PinnedSibling hasChildren() is different');
+        rowErrors.add(
+            pinnedSibling.allChildrenCount !== row.allChildrenCount && 'PinnedSibling allChildrenCount is different'
+        );
     }
 
     private validateChildren(

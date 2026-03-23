@@ -27,31 +27,33 @@ export const setRowNodeGroupValue = (
     rowNode.dispatchCellChangedEvent(column, newValue, oldValue);
 };
 
-/** Invoked when demoting a group to a leaf node */
-const demoteGroup = (rowNode: RowNode, colModel: ColumnModel) => {
-    setAggData(rowNode, null, colModel);
-    rowNode.setAllChildrenCount(null);
-};
-
-export const setRowNodeGroup = (rowNode: RowNode, beans: BeanCollection, group: boolean): void => {
-    if (rowNode.group === group) {
+const doSetRowNodeGroup = (rowNode: RowNode | null | undefined, beans: BeanCollection, group: boolean): void => {
+    if (!rowNode) {
         return;
     }
-
-    // if we used to be a group, and no longer, then close the node
-    if (rowNode.group && !group) {
-        const colModel = beans.colModel;
-        demoteGroup(rowNode, beans.colModel);
-        const pinnedSibling = rowNode.pinnedSibling;
-        if (pinnedSibling) {
-            demoteGroup(pinnedSibling, colModel);
-        }
+    const oldGroup = rowNode.group;
+    if (oldGroup === group) {
+        return;
     }
 
     rowNode.group = group;
     rowNode.updateHasChildren();
+
+    // Clear stale aggData and allChildrenCount when demoting from group to leaf.
+    // These must be cleared here because downstream stages (filterAggregatesStage)
+    // won't visit this node via changedPath since it's no longer a group.
+    if (oldGroup && !group) {
+        setAggData(rowNode, null, beans.colModel);
+        rowNode.setAllChildrenCount(null);
+    }
+
     beans.selectionSvc?.updateRowSelectable(rowNode);
     rowNode.dispatchRowEvent('groupChanged');
+};
+
+export const setRowNodeGroup = (rowNode: RowNode, beans: BeanCollection, group: boolean): void => {
+    doSetRowNodeGroup(rowNode, beans, group);
+    doSetRowNodeGroup(rowNode.pinnedSibling, beans, group);
 };
 
 export const isRowGroupColLocked = (column: AgColumn | undefined | null, beans: BeanCollection): boolean => {
