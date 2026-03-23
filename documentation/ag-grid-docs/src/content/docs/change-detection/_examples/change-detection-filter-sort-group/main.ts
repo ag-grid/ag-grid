@@ -39,7 +39,6 @@ const gridOptions: GridOptions = {
         {
             headerName: 'Total',
             type: 'totalColumn',
-            aggFunc: 'sum',
             valueGetter: 'getValue("a") + getValue("b") + getValue("c") + getValue("d")',
         },
     ],
