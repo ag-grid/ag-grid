@@ -34,7 +34,7 @@ export default {
 
                 const { cellStartedEdit, eventKey } = this.params;
 
-                if (cellStartedEdit && eventKey.length === 1) {
+                if (cellStartedEdit && eventKey?.length === 1) {
                     this.$refs.input.value = eventKey;
                 }
             });
