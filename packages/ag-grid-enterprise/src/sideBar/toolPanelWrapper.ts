@@ -68,6 +68,10 @@ export class ToolPanelWrapper extends Component {
         return this.defParent;
     }
 
+    public setDefParent(parent: HTMLElement | null): void {
+        this.defParent = parent;
+    }
+
     public setToolPanelDef(toolPanelDef: ToolPanelDef, params: IToolPanelParams): boolean {
         const { id, minWidth, maxWidth, width, parent } = toolPanelDef;
 
