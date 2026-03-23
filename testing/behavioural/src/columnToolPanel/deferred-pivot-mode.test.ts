@@ -1674,6 +1674,54 @@ describe('deferred column tool panel pivot mode', () => {
         expect(getApplyButton(toolPanelGui).disabled).toBe(false);
     });
 
+    test('apply button is disabled after reverting a staged row group change', async () => {
+        const { gridApi, toolPanel, toolPanelGui } = await createDeferredNonPivotGrid([
+            { field: 'country', enableRowGroup: true, rowGroup: true },
+            { field: 'athlete' },
+            { field: 'gold' },
+        ]);
+        const country = gridApi.getColumn('country')! as AgColumn;
+
+        expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+
+        // Remove country from row groups
+        getUpdateStrategy(toolPanel).setRowGroupColumns(true, [], 'toolPanelUi');
+        toolPanel.refreshDeferredUi();
+
+        expect(getApplyButton(toolPanelGui).disabled).toBe(false);
+
+        // Add country back to row groups (revert to original state)
+        getUpdateStrategy(toolPanel).setRowGroupColumns(true, [country], 'toolPanelUi');
+        toolPanel.refreshDeferredUi();
+
+        expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+    });
+
+    test('apply button is disabled after removing then re-adding a row group column via drop zone in pivot mode', async () => {
+        const { gridApi, toolPanel, toolPanelGui } = await createDeferredPivotModeGrid();
+        const strategy = getUpdateStrategy(toolPanel);
+        const country = gridApi.getColumn('country')! as AgColumn;
+
+        expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+
+        // Remove country from row groups via the drop zone (simulates removing pill)
+        // This goes through pillDropZonePanel.removeItems → updateItems → setRowGroupColumns
+        const rowGroupPanel = toolPanel.rowGroupDropZonePanel;
+        const existingRowGroupCols = rowGroupPanel.getExistingItems();
+        const withoutCountry = existingRowGroupCols.filter((c: AgColumn) => c !== country);
+        rowGroupPanel['updateItems'](withoutCountry);
+        toolPanel.refreshDeferredUi();
+
+        expect(getApplyButton(toolPanelGui).disabled).toBe(false);
+
+        // Add country back via the drop zone (simulates dragging from columns list)
+        const currentRowGroupCols = rowGroupPanel.getExistingItems();
+        rowGroupPanel['updateItems']([...currentRowGroupCols, country]);
+        toolPanel.refreshDeferredUi();
+
+        expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+    });
+
     test('apply button becomes enabled when a value column aggregation function is changed', async () => {
         const { gridApi, toolPanel, toolPanelGui } = await createDeferredPivotModeGrid();
         const silver = gridApi.getColumn('silver')! as AgColumn;
