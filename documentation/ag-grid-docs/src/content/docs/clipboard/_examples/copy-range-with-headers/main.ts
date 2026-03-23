@@ -43,6 +43,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
 
     cellSelection: true,
+    copyHeadersToClipboard: true,
 };
 
 // setup the grid after the page has finished loading
