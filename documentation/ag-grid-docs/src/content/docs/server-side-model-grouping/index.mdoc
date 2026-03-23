@@ -215,3 +215,7 @@ In the example below, note the following:
 -   The example enables `serverSideOnlyRefreshFilteredGroups`, note that if you apply a filter to `Year` with the value `1900`, no leaf rows exist in any group.
 
 {% gridExampleRunner title="Filtering" name="filtering"  exampleHeight=590 /%}
+
+## Batching Data Requests
+
+You can stage multiple data requests by using the Columns Tool Panel (see: [Deferred Updates](./tool-panel-columns/#deferred-updates)). This allows multiple configuration changes to be applied in a single update, avoiding unnecessary intermediate recomputations or server requests.

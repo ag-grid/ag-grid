@@ -209,3 +209,7 @@ The example demonstrates the following:
 -   In addition to grouping, aggregation and pivot, the example also demonstrates filtering. The columns **Country** and **Year** have grid-provided filters. The column **Age** has an example-provided custom filter. You can use whatever filter you want, as long as your server knows what to do with it.
 
 {% gridExampleRunner title="Slice And Dice" name="slice-and-dice"  exampleHeight=605 /%}
+
+## Batching Data Requests
+
+You can stage multiple data requests by using the Columns Tool Panel (see: [Deferred Updates](./tool-panel-columns/#deferred-updates)). This allows multiple configuration changes to be applied in a single update, avoiding unnecessary intermediate recomputations or server requests.
