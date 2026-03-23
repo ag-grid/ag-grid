@@ -2,12 +2,12 @@ import type { AgColumn, BeanCollection, ColumnModel, LocaleTextFunc, RowNode } f
 
 import { setAggData } from '../aggregation/aggDataUtils';
 
-export function setRowNodeGroupValue(
+export const setRowNodeGroupValue = (
     rowNode: RowNode,
     colModel: ColumnModel,
     colKey: string | AgColumn,
     newValue: any
-): void {
+): void => {
     const column = colModel.getCol(colKey)!;
 
     let groupData = rowNode._groupData;
@@ -25,21 +25,26 @@ export function setRowNodeGroupValue(
 
     groupData[columnId] = newValue;
     rowNode.dispatchCellChangedEvent(column, newValue, oldValue);
-}
+};
 
-export function setRowNodeGroup(rowNode: RowNode, beans: BeanCollection, group: boolean): void {
+/** Invoked when demoting a group to a leaf node */
+const demoteGroup = (rowNode: RowNode, colModel: ColumnModel) => {
+    setAggData(rowNode, null, colModel);
+    rowNode.setAllChildrenCount(null);
+};
+
+export const setRowNodeGroup = (rowNode: RowNode, beans: BeanCollection, group: boolean): void => {
     if (rowNode.group === group) {
         return;
     }
 
     // if we used to be a group, and no longer, then close the node
     if (rowNode.group && !group) {
-        // Clear stale aggData when demoting from group to leaf.
         const colModel = beans.colModel;
-        setAggData(rowNode, null, colModel);
+        demoteGroup(rowNode, beans.colModel);
         const pinnedSibling = rowNode.pinnedSibling;
         if (pinnedSibling) {
-            setAggData(pinnedSibling, null, colModel);
+            demoteGroup(pinnedSibling, colModel);
         }
     }
 
@@ -47,9 +52,9 @@ export function setRowNodeGroup(rowNode: RowNode, beans: BeanCollection, group: 
     rowNode.updateHasChildren();
     beans.selectionSvc?.updateRowSelectable(rowNode);
     rowNode.dispatchRowEvent('groupChanged');
-}
+};
 
-export function isRowGroupColLocked(column: AgColumn | undefined | null, beans: BeanCollection): boolean {
+export const isRowGroupColLocked = (column: AgColumn | undefined | null, beans: BeanCollection): boolean => {
     const { gos, rowGroupColsSvc } = beans;
 
     if (!rowGroupColsSvc || !column) {
@@ -67,17 +72,17 @@ export function isRowGroupColLocked(column: AgColumn | undefined | null, beans: 
 
     const colIndex = rowGroupColsSvc.columns.findIndex((groupCol) => groupCol.getColId() === column.getColId());
     return groupLockGroupColumns > colIndex;
-}
+};
 
 /**
  * In AG-16700 the locale introduced a ${variable} and stopped concatenating the column name in the code
  * To avoid a breaking change we need to check if the variable is present and if not fallback to the old way of concatenating the column name.
  */
-export function getGroupingLocaleText(
+export const getGroupingLocaleText = (
     localeTextFunc: LocaleTextFunc,
     key: 'groupBy' | 'ungroupBy',
     displayName: string
-): string {
+): string => {
     const prefix = key === 'groupBy' ? 'Group by' : 'Un-Group by';
 
     const localStr = localeTextFunc(key, `${prefix} ${displayName}`, [displayName]);
@@ -88,4 +93,4 @@ export function getGroupingLocaleText(
     } else {
         return `${localStr} ${displayName}`;
     }
-}
+};
