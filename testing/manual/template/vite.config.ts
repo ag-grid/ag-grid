@@ -43,11 +43,8 @@ export default defineConfig(async () => {
         console.log('\x1b[33m%s\x1b[0m', 'Angular disabled. Run with ANGULAR=1 yarn dev to enable.');
     }
 
-    const postcssPlugins = require(path.join(agGridRoot, 'postcss-plugins.cjs'));
-
     return {
         plugins,
-        css: { postcss: { plugins: postcssPlugins } },
         resolve: { alias: aliases },
         build: {
             target: 'esnext',
@@ -79,10 +76,14 @@ function serveAngularDisabledPage(): Plugin {
 }
 
 // AG Grid source uses `import css from './foo.css'` (default imports of CSS
-// strings). Vite requires `?inline` after the CSS file to get this behaviour.
-// This plugin appends ?inline to all imported CSS files.
+// strings). This plugin:
+// 1. Appends ?inline so Vite returns the CSS as a string (default export)
+// 2. Runs PostCSS on the CSS content (for RTL support etc) before Vite sees it
 function cssFileDefaultImport(): Plugin {
     const agGridSrc = path.join(agGridRoot, 'packages');
+    const postcssPlugins = require(path.join(agGridRoot, 'postcss-plugins.cjs'));
+    const postcss = require('postcss');
+
     return {
         name: 'ag-grid-css-inline',
         enforce: 'pre',
@@ -92,6 +93,17 @@ function cssFileDefaultImport(): Plugin {
                 if (resolved) {
                     return resolved.id + '?inline';
                 }
+            }
+        },
+        async load(id) {
+            if (id.endsWith('.css?inline')) {
+                const realPath = id.slice(0, -'?inline'.length);
+                const raw = fs.readFileSync(realPath, 'utf-8');
+                const result = await postcss(postcssPlugins).process(raw, {
+                    from: realPath,
+                    to: realPath,
+                });
+                return result.css;
             }
         },
     };

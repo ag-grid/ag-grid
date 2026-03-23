@@ -10,21 +10,24 @@ const cssPlugin = {
     name: 'css-plugin',
     setup(build) {
         build.onLoad({ filter: /\.css$/ }, async (args) => {
-            const css = await require('fs').promises.readFile(args.path, 'utf8');
-            const result = await postcss(postcssPlugins).process(css, {
-                from: args.path,
-                to: args.path,
-            });
+            const rawCSS = await fs.readFile(args.path, 'utf8');
+            const isLegacyCSS = !args.path.includes('/src/');
+
+            // Legacy theme CSS is already processed through Sass, only source
+            // CSS (Theming API) needs PostCSS.
+            const outputCSS = isLegacyCSS
+                ? rawCSS
+                : (await postcss(postcssPlugins).process(rawCSS, { from: args.path, to: args.path })).css;
 
             // UMD builds: non-source CSS (legacy themes) gets injected as <style> tags
             const isUmd = /:(umd|umd:watch)$/.test(process.env.NX_TASK_TARGET_TARGET ?? '');
-            if (isUmd && !args.path.includes('/src/')) {
+            if (isUmd && isLegacyCSS) {
                 return {
-                    contents: `(function(){if(typeof document!=="undefined"){var s=document.createElement("style");s.setAttribute("data-ag-scope","legacy");s.textContent=${JSON.stringify(result.css)};document.head.appendChild(s);}})();`,
+                    contents: `(function(){if(typeof document!=="undefined"){var s=document.createElement("style");s.setAttribute("data-ag-scope","legacy");s.textContent=${JSON.stringify(outputCSS)};document.head.appendChild(s);}})();`,
                     loader: 'js',
                 };
             }
-            return { contents: result.css, loader: 'text' };
+            return { contents: outputCSS, loader: 'text' };
         });
     },
 };
