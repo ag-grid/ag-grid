@@ -9,8 +9,8 @@ import { SharedRowGroupingModule } from './rowGroupingModule';
  * @feature Editing -> Group Row Edit
  * Enables `groupRowEditable` and `groupRowValueSetter` on group rows.
  * When `groupRowEditable` is set but no `groupRowValueSetter` is provided,
- * the module supplies a default that distributes the edited value to
- * descendant rows using {@link import('./distributeGroupValue/distributeGroupValue').distributeGroupValue}.
+ * the module supplies the builtin that distributes the edited value to
+ * descendant rows.
  */
 export const RowGroupingEditModule: _ModuleWithoutApi = {
     moduleName: 'RowGroupingEdit',
