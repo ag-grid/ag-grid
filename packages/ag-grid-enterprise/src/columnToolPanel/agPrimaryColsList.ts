@@ -263,7 +263,10 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
         const pivotModeActive = this.colModel.isPivotMode();
         const deferApply = isDeferredMode(params);
-        const shouldSyncColumnLayoutWithGrid = (!params.suppressSyncLayoutWithGrid || deferApply) && !pivotModeActive;
+        const hasDeferredColumnOrder =
+            deferApply && this.beans.columnStateUpdateStrategy.hasDeferredColumnOrder(deferApply);
+        const shouldSyncColumnLayoutWithGrid =
+            ((!params.suppressSyncLayoutWithGrid || deferApply) && !pivotModeActive) || hasDeferredColumnOrder;
 
         if (shouldSyncColumnLayoutWithGrid) {
             this.buildTreeFromWhatGridIsDisplaying();
