@@ -7,11 +7,13 @@ The grid supports editing grouped data when using the [Client-Side Row Model](./
 This page covers making group row cells editable, distributing edited values to descendant rows,
 and refreshing the grouping hierarchy after edits.
 
-{% note %}
-`groupRowEditable` and `groupRowValueSetter` require the `RowGroupingEditModule` to be registered.
-{% /note %}
-
 ## Editing Group Row Cells
+
+In the example below, double-click any group row's `Sales` cell to edit it. The new value is
+distributed equally among the group's children, rounding to integers. When a child is itself a
+group, the cascade recurses through the full hierarchy.
+
+{% gridExampleRunner title="Built-in Sum Distribution" name="distribute-group-value-sum" exampleHeight=540 /%}
 
 Set `groupRowEditable` on any column that should accept edits on group rows.
 This property accepts either a `boolean` or a callback; the callback is only invoked for nodes
@@ -48,12 +50,6 @@ const gridOptions = {
 }
 ```
 
-{% gridExampleRunner title="Built-in Sum Distribution" name="distribute-group-value-sum" exampleHeight=540 /%}
-
-In this example, double-clicking on any group row's `Sales` cell opens the editor. The built-in
-distribution divides the new value equally among the group's children, rounding child values to
-whole numbers. When a child is itself a group, the cascade recurses through the full hierarchy.
-
 ### Distribution Strategies
 
 The `distribution` option controls how the edited value is spread across children. When omitted,
@@ -66,17 +62,42 @@ the strategy is chosen automatically based on the column's `aggFunc`:
 | `'percentage'` | Scales each child proportionally, preserving relative weights. Falls back to `'uniform'` when the current total is zero. | —                 |
 | `'increment'`  | Distributes only the difference (`newValue − oldValue`) among children, adding it to current values.                     | —                 |
 
-The `first` and `last` aggregation functions always write to the first or last child respectively,
-regardless of any `distribution` setting.
+Editing is **disabled by default** for `count`, `min`, `max`, `first`, `last`, and
+**custom aggregation functions** because there is no single correct way to split an edited value
+back into children for these functions. To enable editing, you can:
 
-The `count`, `min`, and `max` aggregation functions and **custom aggregation functions** are **disabled by default** —
-the cell is treated as not editable unless the user explicitly sets a distribution strategy for them.
-To enable editing, set an explicit distribution in the per-aggFunc record, set `true` to use built-in
-defaults, use a top-level strategy string, or use the `default` fallback option for custom aggregation functions.
+-   Set `distribution` to `'overwrite'` to write the new value directly to every child.
+-   Provide a per-aggFunc record entry with `'overwrite'`, `true`, or a custom callback function
+    that implements application-specific logic (see [Per-Aggregation Strategies](#per-aggregation-strategies)).
+-   Assign a custom [callback function](#custom-distribution-with-a-callback) to `groupRowValueSetter`
+    for full control over the distribution.
 
-Setting `distribution` to `true` enables distribution using built-in defaults for all aggregation functions,
-including normally-disabled ones (count/min/max/custom) which get `'overwrite'`. This is useful for
-overriding `false` or `null` from `defaultColDef` in deep-merge scenarios.
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'price',
+            aggFunc: 'min',
+            editable: true,
+            groupRowEditable: true,
+            // 'overwrite' writes the edited value to every child
+            groupRowValueSetter: { distribution: 'overwrite' },
+        },
+        {
+            field: 'quantity',
+            aggFunc: 'count',
+            editable: true,
+            groupRowEditable: true,
+            // Per-aggFunc record: enable only count with overwrite
+            groupRowValueSetter: { distribution: { count: 'overwrite' } },
+        },
+    ],
+}
+```
+
+Setting `distribution` to `true` uses built-in defaults for `sum`, `avg`, no-aggFunc columns,
+and custom aggregation functions. The `count`/`min`/`max`/`first`/`last` functions remain disabled
+with `true` — use `'overwrite'`, a per-aggFunc record entry, or a custom callback to enable them.
 
 Setting `distribution` to `false` or `null` suppresses distribution and makes the cell not editable,
 even when `groupRowEditable` is `true`.
@@ -143,9 +164,10 @@ as plain objects. If the column defines a callback function, it replaces the def
 The built-in distribution handles standard aggregation functions. The following example
 demonstrates a mix of built-in strategies and a custom aggregation function:
 
--   **Built-in columns** (`sum`, `avg`, `first`, `last`) use the automatic defaults via
-    `groupRowEditable: true`. The `Salary (sum)` column overrides with `precision: 0` to
-    show per-column configuration.
+-   **Distributable columns** (`sum`, `avg`) use the automatic defaults via `groupRowEditable: true`.
+    The `Salary (sum)` column overrides with `precision: 0` to show per-column configuration.
+-   **Non-distributable columns** (`first`, `last`) use explicit `distribution: 'overwrite'` at
+    the top level to enable editing, which writes the new value to all children.
 -   **Custom column** (`sumOfSquares`) uses a custom `groupRowValueSetter` callback that distributes
     by computing `√(newValue / count)` per child — the correct inverse of sum-of-squares.
 
@@ -215,7 +237,7 @@ In this example, a custom function distributes the edited total equally among ch
 child values to integers (largest remainder method). The function calls `setDataValue` on each
 child, which triggers aggregation to refresh parent totals automatically.
 
-### GroupRowValueSetterParams Reference
+### GroupRowValueSetterParams
 
 {% interfaceDocumentation interfaceName="GroupRowValueSetterParams" /%}
 
@@ -304,11 +326,8 @@ const gridOptions = {
             groupRowEditable: true,
             groupRowValueSetter: {
                 distribution: 'percentage',
-                // Read proportions from a separate 'weight' field
                 getValue: (params) => (params.data && params.data.weight) || 0,
-                // Write distributed values to the standard column
-                setValue: (params) =>
-                    params.node.setDataValue(params.column, Math.max(0, Number(params.value)), 'data'),
+                setValue: (params) => params.node.setDataValue(params.column, params.value, 'data'),
             },
         },
     ],
@@ -345,13 +364,14 @@ pivot value, making cascading edits work correctly with pivoted data.
 ## Tree Data
 
 The `groupRowEditable` and `groupRowValueSetter` features also work with [Tree Data](./tree-data/).
-In tree data mode, parent (folder) nodes act as group rows — editing a parent's aggregated value
+In tree data mode, parent nodes act as group rows — editing a parent's aggregated value
 cascades the change down to its children, just like with row grouping.
 
 {% gridExampleRunner title="Tree Data Editable" name="tree-data-editable" exampleHeight=500 /%}
 
-In this example, editing a folder's `Size` distributes the new total equally among its child files,
-rounding child values to integers. The cascade recurses through nested folders automatically.
+In this example, a company's budget is organised as a tree: departments contain teams, and teams
+contain employees. Editing a department's or team's budget distributes the new total equally among
+its members, rounding to integers. The cascade recurses through the full hierarchy automatically.
 
 ## Refreshing Groups After Editing
 

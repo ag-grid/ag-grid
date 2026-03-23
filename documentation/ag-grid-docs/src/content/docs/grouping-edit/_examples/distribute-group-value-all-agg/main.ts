@@ -79,12 +79,6 @@ const gridOptions: GridOptions<MetricsRecord> = {
         // avg: overwrites every child with the edited value
         { field: 'bonus', aggFunc: 'avg' },
 
-        // first: writes to the first child only
-        { field: 'projects', aggFunc: 'first' },
-
-        // last: writes to the last child only
-        { field: 'seniority', aggFunc: 'last' },
-
         // Custom aggregation function with a custom groupRowValueSetter
         {
             headerName: 'sumSq(score)',

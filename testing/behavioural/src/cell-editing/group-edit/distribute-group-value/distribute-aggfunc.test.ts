@@ -69,7 +69,7 @@ describe.each(EDIT_MODES)('distributeGroupValue aggFunc strategies (%s)', (editM
         expect(api.getRowNode('us-la')?.data?.amount).toBe(30);
     });
 
-    test('first: only sets the first child', async () => {
+    test('first: suppressed by default — no children are modified', async () => {
         const api = await createGrid('distribute-first', {
             aggFunc: 'first',
             groupRowValueSetter: distributeGroupValue,
@@ -78,32 +78,12 @@ describe.each(EDIT_MODES)('distributeGroupValue aggFunc strategies (%s)', (editM
         const franceNode = api.getRowNode('row-group-region-Europe-country-France')!;
         await performEdit(editMode, api, franceNode, 'amount', 999);
 
-        expect(api.getRowNode('fr-paris')?.data?.amount).toBe(999);
+        // first is disabled by default — children unchanged
+        expect(api.getRowNode('fr-paris')?.data?.amount).toBe(30);
         expect(api.getRowNode('fr-lyon')?.data?.amount).toBe(30);
-
-        await new GridRows(api, 'after first edit').check(`
-            ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-region-Europe amount:999
-            │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-France amount:999
-            │ │ ├── LEAF id:fr-paris region:"Europe" country:"France" amount:999
-            │ │ └── LEAF id:fr-lyon region:"Europe" country:"France" amount:30
-            │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-Germany amount:30
-            │ │ ├── LEAF id:de-berlin region:"Europe" country:"Germany" amount:30
-            │ │ └── LEAF id:de-hamburg region:"Europe" country:"Germany" amount:30
-            │ └─┬ LEAF_GROUP id:row-group-region-Europe-country-Italy amount:30
-            │ · ├── LEAF id:it-rome region:"Europe" country:"Italy" amount:30
-            │ · └── LEAF id:it-milan region:"Europe" country:"Italy" amount:30
-            └─┬ filler id:row-group-region-Americas amount:70
-            · ├─┬ LEAF_GROUP id:row-group-region-Americas-country-USA amount:70
-            · │ ├── LEAF id:us-nyc region:"Americas" country:"USA" amount:70
-            · │ └── LEAF id:us-la region:"Americas" country:"USA" amount:30
-            · └─┬ LEAF_GROUP id:row-group-region-Americas-country-Canada amount:35
-            · · ├── LEAF id:ca-toronto region:"Americas" country:"Canada" amount:35
-            · · └── LEAF id:ca-vancouver region:"Americas" country:"Canada" amount:25
-        `);
     });
 
-    test('last: only sets the last child', async () => {
+    test('last: suppressed by default — no children are modified', async () => {
         const api = await createGrid('distribute-last', {
             aggFunc: 'last',
             groupRowValueSetter: distributeGroupValue,
@@ -112,29 +92,35 @@ describe.each(EDIT_MODES)('distributeGroupValue aggFunc strategies (%s)', (editM
         const franceNode = api.getRowNode('row-group-region-Europe-country-France')!;
         await performEdit(editMode, api, franceNode, 'amount', 999);
 
+        // last is disabled by default — children unchanged
         expect(api.getRowNode('fr-paris')?.data?.amount).toBe(30);
-        expect(api.getRowNode('fr-lyon')?.data?.amount).toBe(999);
+        expect(api.getRowNode('fr-lyon')?.data?.amount).toBe(30);
+    });
 
-        await new GridRows(api, 'after last edit').check(`
-            ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-region-Europe amount:30
-            │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-France amount:999
-            │ │ ├── LEAF id:fr-paris region:"Europe" country:"France" amount:30
-            │ │ └── LEAF id:fr-lyon region:"Europe" country:"France" amount:999
-            │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-Germany amount:30
-            │ │ ├── LEAF id:de-berlin region:"Europe" country:"Germany" amount:30
-            │ │ └── LEAF id:de-hamburg region:"Europe" country:"Germany" amount:30
-            │ └─┬ LEAF_GROUP id:row-group-region-Europe-country-Italy amount:30
-            │ · ├── LEAF id:it-rome region:"Europe" country:"Italy" amount:30
-            │ · └── LEAF id:it-milan region:"Europe" country:"Italy" amount:30
-            └─┬ filler id:row-group-region-Americas amount:25
-            · ├─┬ LEAF_GROUP id:row-group-region-Americas-country-USA amount:30
-            · │ ├── LEAF id:us-nyc region:"Americas" country:"USA" amount:70
-            · │ └── LEAF id:us-la region:"Americas" country:"USA" amount:30
-            · └─┬ LEAF_GROUP id:row-group-region-Americas-country-Canada amount:25
-            · · ├── LEAF id:ca-toronto region:"Americas" country:"Canada" amount:35
-            · · └── LEAF id:ca-vancouver region:"Americas" country:"Canada" amount:25
-        `);
+    test('first with explicit per-aggFunc overwrite: writes to all children', async () => {
+        const api = await createGrid('distribute-first-overwrite', {
+            aggFunc: 'first',
+            groupRowValueSetter: { distribution: { first: 'overwrite' } },
+        });
+
+        const franceNode = api.getRowNode('row-group-region-Europe-country-France')!;
+        await performEdit(editMode, api, franceNode, 'amount', 999);
+
+        expect(api.getRowNode('fr-paris')?.data?.amount).toBe(999);
+        expect(api.getRowNode('fr-lyon')?.data?.amount).toBe(999);
+    });
+
+    test('last with explicit per-aggFunc true: writes to all children', async () => {
+        const api = await createGrid('distribute-last-true', {
+            aggFunc: 'last',
+            groupRowValueSetter: { distribution: { last: true } },
+        });
+
+        const franceNode = api.getRowNode('row-group-region-Europe-country-France')!;
+        await performEdit(editMode, api, franceNode, 'amount', 999);
+
+        expect(api.getRowNode('fr-paris')?.data?.amount).toBe(999);
+        expect(api.getRowNode('fr-lyon')?.data?.amount).toBe(999);
     });
 
     test('count: suppressed by default — no children are modified', async () => {
@@ -151,10 +137,10 @@ describe.each(EDIT_MODES)('distributeGroupValue aggFunc strategies (%s)', (editM
         expect(api.getRowNode('fr-lyon')?.data?.amount).toBe(30);
     });
 
-    test('min with explicit overwrite: writes to all children', async () => {
+    test('min with explicit per-aggFunc overwrite: writes to all children', async () => {
         const api = await createGrid('distribute-min-overwrite', {
             aggFunc: 'min',
-            groupRowValueSetter: { distribution: 'overwrite' },
+            groupRowValueSetter: { distribution: { min: 'overwrite' } },
         });
 
         const usaNode = api.getRowNode('row-group-region-Americas-country-USA')!;
@@ -164,17 +150,17 @@ describe.each(EDIT_MODES)('distributeGroupValue aggFunc strategies (%s)', (editM
         expect(api.getRowNode('us-la')?.data?.amount).toBe(10);
     });
 
-    test('max with explicit uniform: divides equally', async () => {
-        const api = await createGrid('distribute-max-uniform', {
+    test('max with explicit per-aggFunc overwrite: writes to all children', async () => {
+        const api = await createGrid('distribute-max-overwrite', {
             aggFunc: 'max',
-            groupRowValueSetter: { distribution: 'uniform' },
+            groupRowValueSetter: { distribution: { max: 'overwrite' } },
         });
 
         const usaNode = api.getRowNode('row-group-region-Americas-country-USA')!;
         await performEdit(editMode, api, usaNode, 'amount', 100);
 
-        expect(api.getRowNode('us-nyc')?.data?.amount).toBe(50);
-        expect(api.getRowNode('us-la')?.data?.amount).toBe(50);
+        expect(api.getRowNode('us-nyc')?.data?.amount).toBe(100);
+        expect(api.getRowNode('us-la')?.data?.amount).toBe(100);
     });
 
     test('function aggFunc: disabled by default — no children are modified', async () => {
@@ -216,6 +202,24 @@ describe.each(EDIT_MODES)('distributeGroupValue aggFunc strategies (%s)', (editM
             · · ├── LEAF id:ca-toronto region:"Americas" country:"Canada" amount:35
             · · └── LEAF id:ca-vancouver region:"Americas" country:"Canada" amount:25
         `);
+    });
+});
+
+describe('non-distributable aggFunc with invalid top-level strategy', () => {
+    test('max with top-level uniform: cell not editable and distribution suppressed', async () => {
+        const api = await createGrid('distribute-max-uniform', {
+            aggFunc: 'max',
+            groupRowValueSetter: { distribution: 'uniform' },
+        });
+
+        const usaNode = api.getRowNode('row-group-region-Americas-country-USA')!;
+        // Use setDataValue directly — the cell isn't editable in UI because isGroupCellEditable returns false
+        usaNode.setDataValue('amount', 100, 'ui');
+        await asyncSetTimeout(0);
+
+        // max is non-distributable — top-level 'uniform' doesn't enable it
+        expect(api.getRowNode('us-nyc')?.data?.amount).toBe(70);
+        expect(api.getRowNode('us-la')?.data?.amount).toBe(30);
     });
 });
 

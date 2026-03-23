@@ -1,3 +1,5 @@
+import type { GroupRowValueSetterParams } from 'ag-grid-community';
+
 import {
     GridRows,
     asyncSetTimeout,
@@ -16,20 +18,21 @@ describe('distributeGroupValue edge cases', () => {
     test('returns false for empty aggregatedChildren', () => {
         const result = distributeGroupValue({
             aggregatedChildren: [],
-            column: {} as any,
-            colDef: { aggFunc: 'sum' } as any,
+            column: {} as GroupRowValueSetterParams['column'],
+            colDef: { aggFunc: 'sum' } as GroupRowValueSetterParams['colDef'],
             newValue: 100,
             oldValue: 0,
+            data: undefined,
             eventSource: undefined,
             valueChanged: true,
-            node: {} as any,
-            api: {} as any,
+            node: {} as GroupRowValueSetterParams['node'],
+            api: {} as GroupRowValueSetterParams['api'],
             context: undefined,
         });
         expect(result).toBe(false);
     });
 
-    test('non-numeric value with first aggFunc sets only first child', async () => {
+    test('non-numeric value with first aggFunc is suppressed by default', async () => {
         const api = await gridsManager.createGridAndWait('distribute-non-numeric', {
             defaultColDef: { cellEditor: 'agTextCellEditor' },
             groupDisplayType: 'custom',
@@ -58,14 +61,15 @@ describe('distributeGroupValue edge cases', () => {
         groupNode.setDataValue('label', 'gamma', 'ui');
         await asyncSetTimeout(0);
 
-        expect(api.getRowNode('a1')?.data?.label).toBe('gamma');
+        // first is non-distributable by default — children unchanged
+        expect(api.getRowNode('a1')?.data?.label).toBe('alpha');
         expect(api.getRowNode('a2')?.data?.label).toBe('beta');
 
-        await new GridRows(api, 'after non-numeric edit').check(`
+        await new GridRows(api, 'after suppressed non-numeric edit').check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ filler id:row-group-region-R label:"gamma"
-            · └─┬ LEAF_GROUP id:row-group-region-R-country-C label:"gamma"
-            · · ├── LEAF id:a1 region:"R" country:"C" label:"gamma"
+            └─┬ filler id:row-group-region-R label:"alpha"
+            · └─┬ LEAF_GROUP id:row-group-region-R-country-C label:"alpha"
+            · · ├── LEAF id:a1 region:"R" country:"C" label:"alpha"
             · · └── LEAF id:a2 region:"R" country:"C" label:"beta"
         `);
     });

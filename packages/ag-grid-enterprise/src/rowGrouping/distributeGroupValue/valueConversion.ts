@@ -1,7 +1,7 @@
 import type { ColDef, GroupRowValueSetterDistribution } from 'ag-grid-community';
 
-/** Resolved distribution strategy. `false` means suppressed (disabled by default for count/min/max/custom aggFuncs, or explicit false/null). */
-export type DistributionStrategy = 'first' | 'last' | GroupRowValueSetterDistribution | false;
+/** Resolved distribution strategy. `false` means suppressed (disabled by default for count/min/max/first/last/custom aggFuncs, or explicit false/null). */
+export type DistributionStrategy = GroupRowValueSetterDistribution | false;
 
 /** The raw aggFunc value from colDef, passed through without coercion.
  * String = named aggFunc, function = inline custom aggFunc, null/undefined = no aggFunc. */
@@ -10,9 +10,9 @@ export type AggFuncInput = string | ((...args: any[]) => any) | null | undefined
 /**
  * Resolves the distribution strategy from the aggFunc and explicit distribution option.
  * false and null always suppress distribution.
- * true uses the built-in default, enabling normally-disabled aggFuncs (count/min/max/custom) with 'overwrite'.
- * first/last aggFuncs use their own strategy unless explicitly suppressed.
- * count/min/max, custom string aggFuncs, and function aggFuncs are disabled by default.
+ * count/min/max/first/last are non-distributable: only 'overwrite' enables them
+ * (and only via explicit per-aggFunc record entries — see resolveDistributionEntry).
+ * Custom string aggFuncs and function aggFuncs are disabled by default.
  * Columns with no aggFunc (null/undefined) default to 'overwrite'.
  */
 export const resolveStrategy = (
@@ -23,11 +23,12 @@ export const resolveStrategy = (
     if (distribution === false || distribution === null) {
         return false;
     }
-    // first/last always use their own strategy (write to that child)
-    if (aggFunc === 'first' || aggFunc === 'last') {
-        return aggFunc;
+    // Non-distributable aggFuncs: only 'overwrite' is valid.
+    // All other strategies (uniform, percentage, increment, true) are invalid → disabled.
+    if (isNonDistributable(aggFunc)) {
+        return distribution === 'overwrite' ? 'overwrite' : false;
     }
-    // Explicit strategy string — use it for any aggFunc
+    // Explicit strategy string — use it for any distributable aggFunc
     if (typeof distribution === 'string') {
         return distribution;
     }
@@ -38,19 +39,20 @@ export const resolveStrategy = (
     if (aggFunc === 'avg' || aggFunc == null) {
         return 'overwrite';
     }
-    // count/min/max, custom string aggFuncs, and function aggFuncs: disabled unless distribution === true
+    // Custom string aggFuncs and function aggFuncs: disabled unless distribution === true
     return distribution === true ? 'overwrite' : false;
 };
 
-/** Whether the aggFunc has a built-in default strategy (sum/avg/first/last/count/min/max). */
-export const hasBuiltInDefault = (aggFunc: AggFuncInput): boolean =>
-    aggFunc === 'sum' ||
-    aggFunc === 'avg' ||
-    aggFunc === 'first' ||
-    aggFunc === 'last' ||
-    aggFunc === 'count' ||
-    aggFunc === 'min' ||
-    aggFunc === 'max';
+/** Whether the aggFunc is non-distributable: count/min/max/first/last have no meaningful
+ * distribution and are disabled by default. Only explicit 'overwrite' enables them
+ * (at top level or in per-aggFunc record entries; true in per-aggFunc records also works). */
+export const isNonDistributable = (aggFunc: AggFuncInput): boolean =>
+    aggFunc === 'count' || aggFunc === 'min' || aggFunc === 'max' || aggFunc === 'first' || aggFunc === 'last';
+
+/** Whether the aggFunc is a built-in distributable aggFunc with a known default strategy.
+ * sum defaults to 'uniform', avg defaults to 'overwrite'. Custom, no-aggFunc, and
+ * non-distributable aggFuncs return false and should check the options.default handler. */
+export const isDistributableBuiltin = (aggFunc: AggFuncInput): boolean => aggFunc === 'sum' || aggFunc === 'avg';
 
 /** Coerces an unknown value to a number. Returns 0 for non-convertible inputs. Preserves NaN, Infinity, and -Infinity for number inputs. */
 export const toNumber = (raw: unknown): number => {

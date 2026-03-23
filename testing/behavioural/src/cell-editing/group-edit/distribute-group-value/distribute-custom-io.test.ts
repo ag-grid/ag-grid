@@ -128,7 +128,7 @@ describe('distributeGroupValue with custom getValue/setValue', () => {
         expect(api.getRowNode('a1')?.data?.amount).toBe(10);
     });
 
-    test('custom getValue with first strategy and explicit distribution', async () => {
+    test('custom getValue with first aggFunc is suppressed by default', async () => {
         const api = await createSimpleGrid(
             'custom-get-first',
             [
@@ -149,10 +149,10 @@ describe('distributeGroupValue with custom getValue/setValue', () => {
         groupNode.setDataValue('amount', 42, 'ui');
         await asyncSetTimeout(0);
 
-        // first strategy: writes to the first child
-        expect(api.getRowNode('a1')?.data?.amount).toBe(42);
-        expect(api.getRowNode('a2')?.data?.amount).toBe(15); // unchanged
-        expect(api.getRowNode('a3')?.data?.amount).toBe(25); // unchanged
+        // first is non-distributable by default — children unchanged even with custom getValue
+        expect(api.getRowNode('a1')?.data?.amount).toBe(5);
+        expect(api.getRowNode('a2')?.data?.amount).toBe(15);
+        expect(api.getRowNode('a3')?.data?.amount).toBe(25);
     });
 
     test('getValue/setValue receive api, context, node, colDef', async () => {

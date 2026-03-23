@@ -22,25 +22,24 @@ export class RowGroupingEditValueSvc extends BeanStub implements NamedBean, _IRo
         }
 
         const setter = colDef.groupRowValueSetter;
-        const aggFunc = colDef.aggFunc ?? null;
 
-        // Custom function: always editable (user handles distribution)
+        // Function setter: always editable (user handles distribution)
         if (typeof setter === 'function') {
             return true;
         }
 
+        const aggFunc = colDef.aggFunc ?? null;
+
         // Options object: resolve per-aggFunc records and defaults, then check strategy
         if (typeof setter === 'object') {
             const entry = resolveDistributionEntry(setter, aggFunc);
-            if (typeof entry === 'function') {
-                return true;
-            }
-            return entry !== false && resolveStrategy(aggFunc, entry?.distribution) !== false;
+            return (
+                typeof entry === 'function' ||
+                (entry !== false && resolveStrategy(aggFunc, entry?.distribution) !== false)
+            );
         }
 
-        // No setter (implicit) or true: check if the aggFunc's default strategy is enabled.
-        // true explicitly enables all aggFuncs; undefined uses built-in defaults
-        // (count/min/max/custom are disabled by default).
+        // No setter or true: check if the aggFunc's default strategy is enabled
         return resolveStrategy(aggFunc, setter ?? undefined) !== false;
     }
 
