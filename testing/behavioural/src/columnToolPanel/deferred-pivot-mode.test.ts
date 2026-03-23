@@ -1699,7 +1699,6 @@ describe('deferred column tool panel pivot mode', () => {
 
     test('apply button is disabled after removing then re-adding a row group column via drop zone in pivot mode', async () => {
         const { gridApi, toolPanel, toolPanelGui } = await createDeferredPivotModeGrid();
-        const strategy = getUpdateStrategy(toolPanel);
         const country = gridApi.getColumn('country')! as AgColumn;
 
         expect(getApplyButton(toolPanelGui).disabled).toBe(true);
