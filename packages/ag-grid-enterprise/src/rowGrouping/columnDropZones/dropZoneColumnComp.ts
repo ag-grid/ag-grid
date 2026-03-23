@@ -360,6 +360,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
                 value,
                 'toolPanelDragAndDrop'
             );
+            // In synchronous mode, setColumnAggFunc dispatches events that can destroy this component, nulling this.column
             if (this.column) {
                 const eText = this.getGui().querySelector<HTMLElement>('.ag-column-drop-cell-text');
                 if (eText) {
