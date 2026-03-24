@@ -47,7 +47,7 @@ For detailed information on specific topics, consult these guides:
 
 -   **[Testing Guide](.rulesync/rules/testing.md)** - Testing strategies, best practices, and philosophy
 -   **[Examples Guide](.rulesync/rules/examples.md)** - Working with examples, validation, and path mappings
--   **[Documentation Pages Guide](.rulesync/rules/docs-pages.md)** - Creating consistent, high-quality documentation pages
+-   **[Documentation Pages Guide](.rulesync/skills/docs-pages/SKILL.md)** - Creating consistent, high-quality documentation pages
 -   **[JIRA Guide](.rulesync/rules/jira.md)** - JIRA ticket search and creation guidelines
 -   **[Code Quality Guide](.rulesync/rules/code-quality.md)** - Code bloat avoidance, comments, and review practices
 -   **[Development Server Guide](.rulesync/rules/dev-server.md)** - Dev server setup and build watch monitoring
@@ -176,7 +176,7 @@ While this transition is in progress, changes made to Theming API should be appl
 
 -   **Documentation/content update**
 
-    1. Consult the [Documentation Pages Guide](.rulesync/rules/docs-pages.md) for structure and patterns.
+    1. Consult the [Documentation Pages Guide](.rulesync/skills/docs-pages/SKILL.md) for structure and patterns.
     2. Modify the relevant content under `documentation/ag-grid-docs/`.
     3. Create or update examples in `_examples/` folder following the [Examples Guide](.rulesync/rules/examples.md).
     4. Ensure all examples are framework-compatible.

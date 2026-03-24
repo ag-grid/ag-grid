@@ -998,23 +998,25 @@
                         },
                         {
                             "type": "item",
-                            "title": "Start / Stop Editing",
-                            "path": "cell-editing-start-stop"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Parsing Values",
-                            "path": "value-parsers"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Saving Values",
-                            "path": "value-setters"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Edit Components",
-                            "path": "cell-editors"
+                            "title": "Editing Lifecycle",
+                            "path": "cell-editing-lifecycle",
+                            "children": [
+                                {
+                                    "type": "item",
+                                    "title": "Start / Stop Editing",
+                                    "path": "cell-editing-start-stop"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Parsing Values",
+                                    "path": "value-parsers"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Saving Values",
+                                    "path": "value-setters"
+                                }
+                            ]
                         },
                         {
                             "type": "item",
@@ -1038,7 +1040,7 @@
                                 },
                                 {
                                     "type": "item",
-                                    "title": "Date Editors",
+                                    "title": "Date Editor",
                                     "path": "provided-cell-editors-date"
                                 },
                                 {
@@ -1075,13 +1077,26 @@
                         },
                         {
                             "type": "item",
-                            "title": "Undo / Redo Edits",
-                            "path": "undo-redo-edits"
+                            "title": "Custom Edit Components",
+                            "path": "cell-editors"
                         },
                         {
                             "type": "item",
-                            "title": "Full Row",
-                            "path": "cell-editing-full-row"
+                            "title": "Editing Modes",
+                            "path": "cell-editing-modes",
+                            "children": [
+                                {
+                                    "type": "item",
+                                    "title": "Full Row Editing",
+                                    "path": "cell-editing-full-row"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Batch Editing",
+                                    "path": "cell-editing-batch",
+                                    "isEnterprise": true
+                                }
+                            ]
                         },
                         {
                             "type": "item",
@@ -1090,9 +1105,8 @@
                         },
                         {
                             "type": "item",
-                            "title": "Batch Editing",
-                            "path": "cell-editing-batch",
-                            "isEnterprise": true
+                            "title": "Undo / Redo Edits",
+                            "path": "undo-redo-edits"
                         }
                     ]
                 },

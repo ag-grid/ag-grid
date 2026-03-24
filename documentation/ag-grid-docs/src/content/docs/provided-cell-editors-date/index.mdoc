@@ -1,8 +1,9 @@
 ---
-title: "Date Cell Editors"
+title: "Date Cell Editor"
+description: "Built-in cell editors for Date objects and ISO date strings in the $framework Data Grid."
 ---
 
-Two date cell editors are provided - `agDateCellEditor` for cell values provided as [Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date), and `agDateStringCellEditor` for date values provided as [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String).
+Two date editors cover different value types: `agDateCellEditor` for JavaScript [Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) objects and `agDateStringCellEditor` for ISO [date strings](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String).
 
 ## Enabling Date Cell Editor
 
@@ -10,9 +11,7 @@ Edit any of the cells in the grid below to see the Date Cell Editor.
 
 {% gridExampleRunner title="Date Editor" name="date-editor" /%}
 
-The Date Cell Editor is a simple date editor that uses the standard HTML date input and requires cell values to be of type [Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date).
-
-Enabled with `agDateCellEditor` and configured with `IDateCellEditorParams`.
+Enabled with `agDateCellEditor` (configured with `IDateCellEditorParams`); cell values must be [Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) objects.
 
 ```js
 columnDefs: [
@@ -37,11 +36,9 @@ Edit any of the cells in the grid below to see the Date as String Cell Editor.
 
 {% gridExampleRunner title="Date as String Editor" name="date-as-string-editor" /%}
 
-The Date as String Cell Editor is a simple date editor that uses the standard HTML date input. It's similar to the Date Cell Editor, but works off of cell values with type [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String).
+Enabled with `agDateStringCellEditor` (configured with `IDateStringCellEditorParams`); works with `string` cell values rather than `Date` objects.
 
 The date format is controlled via [Cell Data Types](./cell-data-types/) and the [Date as String Data Type Definition](./cell-data-types/#date-as-string). The default is `'YYYY-MM-DD'` (or `'YYYY-MM-DDTHH:mm:ss'` for `dateTimeString`).
-
-Enabled with `agDateStringCellEditor` and configured with `IDateStringCellEditorParams`.
 
 ```js
 columnDefs: [

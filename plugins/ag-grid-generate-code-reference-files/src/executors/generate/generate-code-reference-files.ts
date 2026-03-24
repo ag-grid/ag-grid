@@ -353,13 +353,30 @@ function mergeRespectingChildOverrides(parent, child, pickFields = []) {
         filteredParent = { ...parent };
     }
 
-    const merged = { ...child };
-    // We want the child properties to be list first for better doc reading experience
-    // Normal spread merge to get the correct order wipes out child overrides
-    // Hence the manual approach to the merge here.
+    // Base/parent properties are listed first, with child overrides taking precedence
+    // when the same property exists in both parent and child.
+    //
+    // Build a set of child base names so that inherited methods with different generic
+    // signatures (e.g. `init?(params: T)` vs `init?(params: ICellEditorParams<...>)`)
+    // are recognised as duplicates and the child's concrete version wins.
+    const childObj = child || {};
+    // Build a set of method base names already in the child so that inherited methods
+    // with different generic signatures (e.g. `init?(params: T)` vs
+    // `init?(params: ICellEditorParams<...>)`) are recognised as duplicates.
+    const childBaseNames = new Set<string>();
+    Object.keys(childObj).forEach((key) => {
+        const baseName = key.split('(')[0].replace(/\?$/, '');
+        childBaseNames.add(baseName);
+    });
+
+    const merged = { ...childObj };
+    // We want the child properties to be listed first for better doc reading experience.
+    // Normal spread merge to get the correct order wipes out child overrides,
+    // hence the manual approach to the merge here.
     Object.entries(filteredParent).forEach(([k, v]) => {
         const optionalKey = k.endsWith('?') ? k.slice(0, -1) : `${k}?`;
-        if (!merged[k] && !merged[optionalKey]) {
+        const baseName = k.split('(')[0].replace(/\?$/, '');
+        if (!childObj[k] && !childObj[optionalKey] && !childBaseNames.has(baseName)) {
             merged[k] = v;
         }
     });

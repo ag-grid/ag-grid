@@ -1,5 +1,6 @@
 ---
 title: "Rich Select Cell Editor - Async Values"
+description: "Load Rich Select Cell Editor values asynchronously in the $framework Data Grid, including paged loading and server-side filtering."
 enterprise: true
 ---
 
@@ -7,13 +8,11 @@ The Rich Select Cell Editor supports loading values asynchronously, including pa
 
 ## Async Values
 
-List values can be provided asynchronously to the editor as shown below:
-
-When `values` is provided as a callback function, the callback receives `params` with type `RichCellEditorValuesCallbackParams`.
-
-{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["values"] config={ "description": "" } /%}
+When `values` is provided as a callback function, the grid calls it on demand. The callback receives `params` with type `RichCellEditorValuesCallbackParams`.
 
 {% gridExampleRunner title="Rich Select Async Values" name="rich-select-async-values" /%}
+
+The example above uses the following configuration:
 
 ```js
 columnDefs: [
@@ -27,13 +26,15 @@ columnDefs: [
 ]
 ```
 
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["values"] config={ "description": "" } /%}
+
 ## Paged Async Values
 
-For large datasets, `valuesPage` avoids loading all items at once and instead loads values on demand based on user scroll and interactions. `valuesPageInitialStartRow` can be used to set the initial position. The `valuesPage` callback receives `params` with type `RichCellEditorValuesPageParams` and should return a value that conforms to the `RichCellEditorValuesPageResult` interface.
-
-{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["valuesPage", "valuesPageInitialStartRow", "valuesPageSize", "valuesPageLoadThreshold"] config={ "description": "" } /%}
+For large datasets, `valuesPage` loads values on demand as the user scrolls rather than loading all items at once. Use `valuesPageInitialStartRow` to set the initial scroll position. The callback receives `params` with type `RichCellEditorValuesPageParams` and returns a `RichCellEditorValuesPageResult`.
 
 {% gridExampleRunner title="Rich Select Paged Async Values" name="rich-select-paged-async-values" /%}
+
+The example above uses the following configuration:
 
 ```js
 columnDefs: [
@@ -54,23 +55,24 @@ columnDefs: [
 ]
 ```
 
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["valuesPage", "valuesPageInitialStartRow", "valuesPageSize", "valuesPageLoadThreshold"] config={ "description": "" } /%}
+
 ## Async Filtering
 
 For advanced filtering scenarios, combine async `values` callback, `allowTyping`, `filterList: true`, and `filterListAsync` to enable async filtering.
 The `values` callback params remain typed as `RichCellEditorValuesCallbackParams`.
+{% /note %}
 
-When `filterListAsync` is set to `true`, the cell editor behaves as follows:
+When `filterListAsync` is `true`, the editor:
 
--   It calls the `values` callback with the current search term.
--   It delays the search request by 300ms (this can be adjusted using `searchDebounceDelay`) to avoid excessive calls.
--   A loading indicator appears while the network request is in progress.
--   Once the promise resolves, the dropdown is updated with the filtered results.
-
-{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["filterListAsync", "searchDebounceDelay", "values"]  config={ "description": "" } /%}
-
-This is shown in the example below:
+-   Calls the `values` callback with the current search term.
+-   Debounces requests by 300ms (configurable via `searchDebounceDelay`) to avoid excessive calls.
+-   Shows a loading indicator while the request is in progress.
+-   Updates the dropdown once the promise resolves.
 
 {% gridExampleRunner title="Rich Select Async Filtering" name="rich-select-full-async-values" /%}
+
+The example above uses the following configuration:
 
 ```js
 columnDefs: [
@@ -91,20 +93,25 @@ columnDefs: [
 ]
 ```
 
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["filterListAsync", "searchDebounceDelay", "values"] config={ "description": "" } /%}
+
 ## Paged Async Filtering
 
 For very large, server-backed datasets, combine async filtering with `valuesPage` so filtered results are also loaded incrementally.
-`valuesPageInitialStartRow` is only used for the initial unfiltered load; once the user types, filtered paging starts from row `0`.
 
-In this mode each request includes:
+{% note %}
+`valuesPageInitialStartRow` is only used for the initial unfiltered load; once the user types, filtered paging starts from row `0`.
+{% /note %}
+
+Each request in this mode includes:
 
 -   `search` for the current filter text.
 -   `startRow` and `endRow` for range-based pagination.
 -   `cursor` (optional) for cursor-based forward pagination APIs (`undefined` on the first request, then replayed from the previous response).
 
-{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["filterListAsync", "valuesPage", "valuesPageInitialStartRow", "valuesPageSize", "valuesPageLoadThreshold"] config={ "description": "" } /%}
-
 {% gridExampleRunner title="Rich Select Paged Async Filtering" name="rich-select-paged-async-filtering" /%}
+
+The example above uses the following configuration:
 
 ```js
 columnDefs: [
@@ -128,6 +135,8 @@ columnDefs: [
 ]
 ```
 
-## API
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["filterListAsync", "valuesPage", "valuesPageInitialStartRow", "valuesPageSize", "valuesPageLoadThreshold"] config={ "description": "" } /%}
 
-{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" /%}
+## API Reference
+
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["values", "valuesPage", "valuesPageSize", "valuesPageLoadThreshold", "valuesPageInitialStartRow", "filterListAsync", "searchDebounceDelay"] /%}

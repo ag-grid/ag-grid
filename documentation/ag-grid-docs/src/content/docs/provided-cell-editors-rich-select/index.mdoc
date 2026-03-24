@@ -1,9 +1,10 @@
 ---
 title: "Rich Select Cell Editor"
+description: "Drop-down cell editor with virtualised row rendering, search and filter, and custom renderer support in the $framework Data Grid."
 enterprise: true
 ---
 
-An alternative to using the browser's `select` popup for dropdowns inside the grid. The Rich Select Cell Editor allows users to enter a cell value from a list of provided values by searching or filtering the list.
+Drop-down cell editor with DOM row virtualisation, search and filter support, and custom renderer support — as an alternative to the browser's native `select` element.
 
 ## Enabling Rich Select Cell Editor
 
@@ -25,11 +26,11 @@ columnDefs: [
 ]
 ```
 
-Benefits over browser's `select` are as follows:
+Advantages over the browser's `select`:
 
--   Uses DOM row virtualisation so very large lists can be displayed.
--   Integrates with the grid perfectly, avoiding glitches seen with the standard select.
--   Uses HTML to render the values: you can provide cell renderers to customise what each value looks like.
+-   DOM row virtualisation means very large lists render efficiently.
+-   Integrates with the grid natively, avoiding the glitches common with the standard `select`.
+-   Renders values via HTML, so you can provide cell renderers to customise each item's appearance.
 
 ## Customisation
 
@@ -51,6 +52,6 @@ The Rich Select editor can be configured to load values asynchronously. For larg
 -   [Async Filtering](./provided-cell-editors-rich-select-async/#async-filtering) - return filtered values asynchronously
 -   [Paged Async Filtering](./provided-cell-editors-rich-select-async/#paged-async-filtering) - combine paged loading with filtering
 
-## API
+## API Reference
 
-See all properties available on the [IRichCellEditorParams](./provided-cell-editors-rich-select-customisation/#api) interface.
+The complete `IRichCellEditorParams` API reference is on the [Customisation](./provided-cell-editors-rich-select-customisation/#api) page.

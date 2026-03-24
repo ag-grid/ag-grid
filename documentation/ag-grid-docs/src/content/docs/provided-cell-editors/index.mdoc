@@ -1,20 +1,21 @@
 ---
 title: "Provided Cell Editors"
+description: "Overview of the built-in cell editors provided with the $framework Data Grid for common data types."
 ---
 
-The grid comes with some cell editors provided out of the box. These cell editors are listed here.
+The grid provides several built-in cell editors for common data types. Set `cellEditor` on a column definition to use one, or let [Cell Data Types](./cell-data-types/) assign an appropriate editor automatically.
 
--   [Text Cell Editor](./provided-cell-editors-text/)
--   [Large Text Cell Editor](./provided-cell-editors-large-text/)
--   [Select Cell Editor](./provided-cell-editors-select/)
--   [Rich Select Cell Editor](./provided-cell-editors-rich-select/) {% enterpriseIcon /%}
--   [Formula Cell Editor](./formula-editor-component/) {% enterpriseIcon /%}
+-   [Text Cell Editor](./provided-cell-editors-text/) — simple single-line text input; the default editor when none is specified
+-   [Large Text Cell Editor](./provided-cell-editors-large-text/) — multi-line textarea for longer string values
+-   [Select Cell Editor](./provided-cell-editors-select/) — browser-native `select` element for picking from a fixed list
+-   [Rich Select Cell Editor](./provided-cell-editors-rich-select/) {% enterpriseIcon /%} — enhanced drop-down with search, filtering, and custom rendering
+-   [Formula Cell Editor](./formula-editor-component/) {% enterpriseIcon /%} — spreadsheet-style formula input
 
-There are also some additional cell editors that are generally used with [Cell Data Types](./cell-data-types/):
+The following cell editors are generally used with [Cell Data Types](./cell-data-types/):
 
--   [Number Cell Editor](./provided-cell-editors-number/)
--   [Date Cell Editor](./provided-cell-editors-date/)
--   [Checkbox Cell Editor](./provided-cell-editors-checkbox/)
+-   [Number Cell Editor](./provided-cell-editors-number/) — HTML `number` input with optional step and precision controls
+-   [Date Cell Editor](./provided-cell-editors-date/) — date picker for `Date` objects or ISO date strings
+-   [Checkbox Cell Editor](./provided-cell-editors-checkbox/) — boolean toggle using an HTML checkbox
 
 ## Example - Provided Cell Editors
 

@@ -1,0 +1,30 @@
+---
+title: "Editing Lifecycle"
+description: "Understand the stages of the cell editing lifecycle in the $framework Data Grid, from edit start through value parsing and saving."
+---
+
+Tracks the stages between an edit starting and the final value being written to your data.
+
+Once a column is [enabled for editing](./cell-editing/), three concepts govern the editing lifecycle:
+
+## Start / Stop Editing
+
+Editing starts when a trigger fires (keyboard, mouse, or API), the cell enters edit mode, and a stop condition (Tab, Enter, Escape, focus loss) ends it.
+
+Editing stops when the user presses {% kbd "⇥ Tab" /%} (moves to next cell), {% kbd "↵ Enter" /%} (confirms), {% kbd "⎋ Esc" /%} (cancels), clicks another cell, or calls `api.stopEditing()`. See [Start / Stop Editing](./cell-editing-start-stop/) to customise these triggers and behaviours.
+
+## Parsing Values
+
+After editing stops, the value from the editor is a string. A **[Value Parser](./value-parsers/)** converts it back into the correct data type before it is saved.
+
+Value Parsers also apply to values entered via paste, fill handle, and copy-range-down operations.
+
+## Saving Values
+
+By default, the grid writes the parsed value back to your row data using the column `field`. A **[Value Setter](./value-setters/)** lets you customise this — useful when your data structure is not a simple key/value map, or when you need to update multiple fields together.
+
+For applications that manage data state externally (e.g. Redux), use **[Read Only Edit](./value-setters/#read-only-edit)** (`readOnlyEdit: true`) to prevent the grid from writing changes — the grid fires a `cellEditRequest` event instead, and your application applies the update.
+
+{% note %}
+Cell Editing can also be performed via [Cell Editor Components](./cell-editors/).
+{% /note %}

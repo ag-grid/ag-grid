@@ -1,0 +1,16 @@
+---
+title: "Editing Modes"
+description: "Configure alternative editing modes in the $framework Data Grid: edit an entire row simultaneously with full row editing, or stage multiple edits as a batch."
+---
+
+Two alternative editing modes support specialised workflows: full row editing and batch editing.
+
+## Full Row Editing
+
+[Full Row Editing](./cell-editing-full-row/) makes all cells in a row editable simultaneously, giving users the impression that the record as a whole is being edited. It's well-suited to form-like workflows where fields are related and should be edited together. When a row is in edit mode, pressing {% kbd "⇥ Tab" /%} moves between editable cells; {% kbd "↵ Enter" /%} or clicking outside commits all changes; {% kbd "⎋ Esc" /%} discards them.
+
+## Batch Editing {% enterpriseIcon /%}
+
+[Batch Editing](./cell-editing-batch/) queues edits across multiple cells or rows without immediately writing them to your data. Changes accumulate as **pending values** and are applied in one operation when the batch is committed, or discarded entirely if cancelled.
+
+This is useful for bulk data entry workflows, spreadsheet-like experiences, and scenarios where you need to preview changes before saving to a back end. Batch Editing is available only via the API and is compatible with the Client-Side Row Model only.
