@@ -1270,10 +1270,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `RowDragModule`
      */
     @Input({ transform: booleanAttribute }) public rowDragManaged: boolean | undefined = undefined;
-    /** When `true`, managed row dragging updates grouped column values so rows can move between groups. When `false`,
-     * managed dragging only reorders rows inside their existing group.
+    /** When `true`, the grid re-evaluates the grouping hierarchy after editing a grouped column value,
+     * moving the row to the correct group instantly. Also enables managed row dragging to update
+     * grouped column values so rows can move between groups.
      * @default false
-     * @agModule `RowDragModule`
+     * @agModule `RowGroupingModule` / `TreeDataModule`
      */
     @Input({ transform: booleanAttribute }) public refreshAfterGroupEdit: boolean | undefined = undefined;
     /** Used if rowDragManaged is enabled and treeData is enabled,

@@ -63,6 +63,29 @@ const sumOfSquaresValueSetter: GroupRowValueSetterFunc<MetricsRecord> = ({ newVa
     return changed;
 };
 
+/**
+ * Cross-column groupRowValueSetter: editing the group row's "Bonus Rate (%)"
+ * sets each child's bonus to a percentage of their individual salary.
+ *
+ * For example, entering 20 on the Engineering group sets each engineer's
+ * bonus to 20% of their salary: Alice (salary 90) gets bonus 18,
+ * Dave (salary 95) gets bonus 19, etc.
+ */
+const bonusRateSetter: GroupRowValueSetterFunc<MetricsRecord> = ({ newValue, aggregatedChildren, eventSource }) => {
+    const rate = Number(newValue) / 100;
+    if (!Number.isFinite(rate) || !aggregatedChildren.length) {
+        return false;
+    }
+    let changed = false;
+    for (const child of aggregatedChildren) {
+        const salary = child.data?.salary ?? 0;
+        if (child.setDataValue('bonus', Math.round(salary * rate), eventSource)) {
+            changed = true;
+        }
+    }
+    return changed;
+};
+
 const gridOptions: GridOptions<MetricsRecord> = {
     columnDefs: [
         { field: 'department', rowGroup: true, hide: true },
@@ -78,6 +101,22 @@ const gridOptions: GridOptions<MetricsRecord> = {
 
         // avg: overwrites every child with the edited value
         { field: 'bonus', aggFunc: 'avg' },
+
+        // No aggFunc: the default strategy is 'overwrite', writing the edited
+        // value to every child. The group cell is blank (no aggregation) but
+        // still editable via groupRowEditable.
+        { field: 'projects' },
+
+        // Cross-column custom callback: editing the group row's "Bonus Rate"
+        // reads each child's salary and writes a computed bonus.
+        {
+            headerName: 'Bonus Rate (%)',
+            valueGetter: ({ data }) => (data ? Math.round((data.bonus / data.salary) * 100) : null),
+            aggFunc: 'avg',
+            editable: false,
+            groupRowEditable: true,
+            groupRowValueSetter: bonusRateSetter,
+        },
 
         // Custom aggregation function with a custom groupRowValueSetter
         {

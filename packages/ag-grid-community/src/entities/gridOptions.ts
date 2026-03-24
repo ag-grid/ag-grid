@@ -1304,10 +1304,11 @@ export interface GridOptions<TData = any> {
      */
     rowDragManaged?: boolean;
     /**
-     * When `true`, managed row dragging updates grouped column values so rows can move between groups. When `false`,
-     * managed dragging only reorders rows inside their existing group.
+     * When `true`, the grid re-evaluates the grouping hierarchy after editing a grouped column value,
+     * moving the row to the correct group instantly. Also enables managed row dragging to update
+     * grouped column values so rows can move between groups.
      * @default false
-     * @agModule `RowDragModule`
+     * @agModule `RowGroupingModule` / `TreeDataModule`
      */
     refreshAfterGroupEdit?: boolean;
     /**
