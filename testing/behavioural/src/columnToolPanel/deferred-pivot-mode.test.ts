@@ -1773,7 +1773,7 @@ describe('deferred column tool panel pivot mode', () => {
     });
 
     test('apply button becomes enabled when row group columns are rearranged', async () => {
-        const { gridApi, toolPanel, toolPanelGui } = await createDeferredPivotModeGrid();
+        const { toolPanel, toolPanelGui } = await createDeferredPivotModeGrid();
 
         expect(getApplyButton(toolPanelGui).disabled).toBe(true);
 
