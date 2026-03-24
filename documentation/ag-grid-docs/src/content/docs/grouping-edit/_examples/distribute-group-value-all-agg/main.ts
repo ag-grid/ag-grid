@@ -64,23 +64,23 @@ const sumOfSquaresValueSetter: GroupRowValueSetterFunc<MetricsRecord> = ({ newVa
 };
 
 /**
- * Cross-column groupRowValueSetter: editing the group row's "Bonus Rate"
+ * Cross-column groupRowValueSetter: editing the group row's "Rate %"
  * sets each leaf child's bonus to a percentage of their individual salary.
  *
- * Uses allLeafChildren to reach all descendant data rows directly,
- * since intermediate group rows don't have salary data.
+ * Uses getAggregatedChildren with recursive=true to reach all descendant
+ * leaf rows, since intermediate group rows don't have salary data.
  *
  * For example, entering 20 on the Engineering group sets each engineer's
  * bonus to 20% of their salary: Alice (salary 90) gets bonus 18,
  * Dave (salary 95) gets bonus 19, etc.
  */
-const bonusRateSetter: GroupRowValueSetterFunc<MetricsRecord> = ({ newValue, node }) => {
+const bonusRateSetter: GroupRowValueSetterFunc<MetricsRecord> = ({ newValue, node, column }) => {
     const rate = Number(newValue) / 100;
     if (!Number.isFinite(rate)) {
         return false;
     }
-    const leaves = node.allLeafChildren;
-    if (!leaves?.length) {
+    const leaves = node.getAggregatedChildren(column, true);
+    if (!leaves.length) {
         return false;
     }
     let changed = false;
@@ -107,7 +107,11 @@ const gridOptions: GridOptions<MetricsRecord> = {
         },
 
         // avg: default strategy is 'overwrite' — sets every child to the edited value
-        { field: 'bonus', aggFunc: 'avg' },
+        {
+            field: 'bonus',
+            aggFunc: 'avg',
+            valueFormatter: ({ value }) => (value != null ? Number(value).toFixed(2) : ''),
+        },
 
         // No aggFunc: the default strategy is 'overwrite', writing the edited
         // value to every child. The group cell is blank (no aggregation) but
@@ -118,7 +122,8 @@ const gridOptions: GridOptions<MetricsRecord> = {
         // reads each child's salary and writes a computed bonus.
         {
             headerName: 'Rate %',
-            valueGetter: ({ data }) => (data ? Math.round((data.bonus / data.salary) * 100) : null),
+            valueGetter: ({ data }) => (data ? (data.bonus / data.salary) * 100 : null),
+            valueFormatter: ({ value }) => (value != null ? Number(value).toFixed(2) : ''),
             aggFunc: 'avg',
             editable: false,
             groupRowEditable: true,
