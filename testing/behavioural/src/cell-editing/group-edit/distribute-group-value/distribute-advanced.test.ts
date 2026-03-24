@@ -995,6 +995,144 @@ describe('undefined in record/options inherits from parent defaults', () => {
     });
 });
 
+// --- Non-distributable aggFuncs with custom functions ---
+
+describe('non-distributable aggFuncs with custom functions', () => {
+    test('per-aggFunc record with function for count invokes the function', async () => {
+        const calls: number[] = [];
+        const api = await createSimpleGrid(
+            'count-custom-fn',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 20 },
+            ],
+            {
+                aggFunc: 'count',
+                groupRowValueSetter: (params) =>
+                    distributeGroupValue(params, {
+                        distribution: {
+                            count: (p) => {
+                                calls.push(Number(p.newValue));
+                                for (const child of p.aggregatedChildren) {
+                                    child.setDataValue(p.column, 777, 'data');
+                                }
+                                return true;
+                            },
+                        },
+                    }),
+            }
+        );
+
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 50, 'ui');
+        await asyncSetTimeout(0);
+
+        expect(calls).toEqual([50]);
+        expect(api.getRowNode('a1')?.data?.amount).toBe(777);
+        expect(api.getRowNode('a2')?.data?.amount).toBe(777);
+    });
+
+    test('default handler is NOT invoked for non-distributable aggFuncs not in record', async () => {
+        const defaultCalls: unknown[] = [];
+        const api = await createSimpleGrid(
+            'count-default-handler',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 20 },
+            ],
+            {
+                aggFunc: 'count',
+                groupRowValueSetter: (params) =>
+                    distributeGroupValue(params, {
+                        distribution: { sum: 'percentage' },
+                        default: (p) => {
+                            defaultCalls.push(p.newValue);
+                            for (const child of p.aggregatedChildren) {
+                                child.setDataValue(p.column, 888, 'data');
+                            }
+                        },
+                    }),
+            }
+        );
+
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 50, 'ui');
+        await asyncSetTimeout(0);
+
+        // count is non-distributable and not listed in the record → disabled, default handler NOT called
+        expect(defaultCalls).toHaveLength(0);
+        expect(api.getRowNode('a1')?.data?.amount).toBe(10);
+        expect(api.getRowNode('a2')?.data?.amount).toBe(20);
+    });
+
+    test('groupRowValueSetter as custom function with count aggFunc is always invoked', async () => {
+        const calls: number[] = [];
+        const api = await createSimpleGrid(
+            'count-setter-fn',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 20 },
+            ],
+            {
+                aggFunc: 'count',
+                groupRowValueSetter: (params) => {
+                    calls.push(Number(params.newValue));
+                    for (const child of params.aggregatedChildren) {
+                        child.setDataValue(params.column, 555, 'data');
+                    }
+                    return true;
+                },
+            }
+        );
+
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 50, 'ui');
+        await asyncSetTimeout(0);
+
+        // Function setter bypasses all distribution checks
+        expect(calls).toEqual([50]);
+        expect(api.getRowNode('a1')?.data?.amount).toBe(555);
+        expect(api.getRowNode('a2')?.data?.amount).toBe(555);
+    });
+
+    test('per-aggFunc record with options object containing custom getValue/setValue for min', async () => {
+        const api = await createSimpleGrid(
+            'min-custom-io',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10, target: 0 },
+                { id: 'a2', region: 'R', country: 'C', amount: 20, target: 0 },
+            ],
+            {
+                aggFunc: 'min',
+                groupRowValueSetter: (params) =>
+                    distributeGroupValue(params, {
+                        distribution: {
+                            min: {
+                                distribution: 'overwrite',
+                                setValue: ({ node, value }) => {
+                                    const old = node.data?.target;
+                                    node.data.target = value;
+                                    return old !== value;
+                                },
+                            },
+                        },
+                    }),
+            }
+        );
+
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 99, 'ui');
+        await asyncSetTimeout(0);
+
+        // Custom setValue writes to 'target' field, not 'amount'
+        expect(api.getRowNode('a1')?.data?.target).toBe(99);
+        expect(api.getRowNode('a2')?.data?.target).toBe(99);
+        // 'amount' field unchanged
+        expect(api.getRowNode('a1')?.data?.amount).toBe(10);
+        expect(api.getRowNode('a2')?.data?.amount).toBe(20);
+    });
+});
+
 // --- precision: 0 guarantees exact integers ---
 
 describe('precision: 0 always produces exact integers', () => {
@@ -1392,7 +1530,7 @@ describe('options object directly on colDef', () => {
         expect(api.getRowNode('a2')?.data?.amount).toBe(160);
     });
 
-    test('first aggFunc short-circuits even with distribution options present', async () => {
+    test('first aggFunc with top-level distribution options is suppressed', async () => {
         const api = await createSimpleGrid(
             'coldef-first-with-opts',
             [
@@ -1406,12 +1544,12 @@ describe('options object directly on colDef', () => {
         group.setDataValue('amount', 99, 'ui');
         await asyncSetTimeout(0);
 
-        // first always sets only the first child, distribution options are ignored
-        expect(api.getRowNode('a1')?.data?.amount).toBe(99);
+        // first is non-distributable — top-level distribution doesn't enable it
+        expect(api.getRowNode('a1')?.data?.amount).toBe(10);
         expect(api.getRowNode('a2')?.data?.amount).toBe(20);
     });
 
-    test('last aggFunc short-circuits even with distribution options present', async () => {
+    test('last aggFunc with top-level distribution options is suppressed', async () => {
         const api = await createSimpleGrid(
             'coldef-last-with-opts',
             [
@@ -1425,8 +1563,27 @@ describe('options object directly on colDef', () => {
         group.setDataValue('amount', 99, 'ui');
         await asyncSetTimeout(0);
 
-        // last always sets only the last child, distribution options are ignored
+        // last is non-distributable — top-level distribution doesn't enable it
         expect(api.getRowNode('a1')?.data?.amount).toBe(10);
+        expect(api.getRowNode('a2')?.data?.amount).toBe(20);
+    });
+
+    test('first aggFunc with per-aggFunc record entry uses overwrite', async () => {
+        const api = await createSimpleGrid(
+            'coldef-first-record',
+            [
+                { id: 'a1', region: 'R', country: 'C', amount: 10 },
+                { id: 'a2', region: 'R', country: 'C', amount: 20 },
+            ],
+            { aggFunc: 'first', groupRowValueSetter: { distribution: { first: true } } }
+        );
+
+        const group = api.getRowNode('row-group-region-R-country-C')!;
+        group.setDataValue('amount', 99, 'ui');
+        await asyncSetTimeout(0);
+
+        // per-aggFunc entry with true → overwrite all children
+        expect(api.getRowNode('a1')?.data?.amount).toBe(99);
         expect(api.getRowNode('a2')?.data?.amount).toBe(99);
     });
 
@@ -1777,7 +1934,7 @@ describe('record-mode default suppression', () => {
                 { id: 'a2', region: 'R', country: 'C', amount: 20 },
             ],
             {
-                aggFunc: undefined as any,
+                aggFunc: undefined,
                 groupRowValueSetter: (params: GroupRowValueSetterParams) =>
                     distributeGroupValue(params, { distribution: { sum: 'percentage' }, default: false }),
             }
@@ -1800,7 +1957,7 @@ describe('record-mode default suppression', () => {
                 { id: 'a2', region: 'R', country: 'C', amount: 20 },
             ],
             {
-                aggFunc: undefined as any,
+                aggFunc: undefined,
                 groupRowValueSetter: (params: GroupRowValueSetterParams) =>
                     distributeGroupValue(params, { distribution: { sum: 'percentage' }, default: null }),
             }
@@ -1823,7 +1980,7 @@ describe('record-mode default suppression', () => {
                 { id: 'a2', region: 'R', country: 'C', amount: 20 },
             ],
             {
-                aggFunc: undefined as any,
+                aggFunc: undefined,
                 groupRowValueSetter: (params: GroupRowValueSetterParams) =>
                     distributeGroupValue(params, { distribution: { sum: 'percentage' } }),
             }
@@ -1866,7 +2023,7 @@ describe('distribution: true', () => {
         expect(api.getRowNode('a2')?.data?.amount).toBe(42);
     });
 
-    test('true enables count aggFunc with overwrite', async () => {
+    test('distribution: true does NOT enable count aggFunc (same as default)', async () => {
         const api = await createSimpleGrid(
             'true-count-agg',
             [
@@ -1883,9 +2040,9 @@ describe('distribution: true', () => {
         group.setDataValue('amount', 99, 'ui');
         await asyncSetTimeout(0);
 
-        // true enables normally-disabled count with 'overwrite'
-        expect(api.getRowNode('a1')?.data?.amount).toBe(99);
-        expect(api.getRowNode('a2')?.data?.amount).toBe(99);
+        // true at top level does NOT enable non-distributable aggFuncs — children unchanged
+        expect(api.getRowNode('a1')?.data?.amount).toBe(10);
+        expect(api.getRowNode('a2')?.data?.amount).toBe(20);
     });
 
     test('true in per-aggFunc record enables specific aggFunc', async () => {

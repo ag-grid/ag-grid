@@ -434,7 +434,7 @@ export class ValueService extends BeanStub implements NamedBean {
             rowNode.data = {}; // enableGroupEdit allows editing group rows without data.
         }
 
-        if (!this.isSetValueSupported({ column, newValue, colDef })) {
+        if (!this.isSetValueSupported(column, rowNode, newValue, colDef)) {
             return false;
         }
 
@@ -568,12 +568,12 @@ export class ValueService extends BeanStub implements NamedBean {
         return true;
     }
 
-    private isSetValueSupported(params: {
-        column: AgColumn;
-        newValue: any;
-        colDef: ReturnType<AgColumn['getColDef']>;
-    }): boolean {
-        const { column, newValue, colDef } = params;
+    private isSetValueSupported(
+        column: AgColumn,
+        rowNode: IRowNode,
+        newValue: any,
+        colDef: ReturnType<AgColumn['getColDef']>
+    ): boolean {
         const { field, valueSetter } = colDef;
 
         const formulaSvc = this.beans.formula;
@@ -581,6 +581,11 @@ export class ValueService extends BeanStub implements NamedBean {
         const hasExternalFormulaData = !!this.formulaDataSvc?.hasDataSource();
 
         if (_missing(field) && _missing(valueSetter) && !(hasExternalFormulaData && isFormulaValue)) {
+            // Group rows with groupRowValueSetter or groupRowEditable don't need field or valueSetter —
+            // the groupRowValueSetter handles the edit entirely.
+            if (rowNode.group && (colDef.groupRowValueSetter || colDef.groupRowEditable)) {
+                return true;
+            }
             _warn(17);
             return false;
         }

@@ -183,9 +183,9 @@ export type GroupRowValueSetterDistribution = 'uniform' | 'percentage' | 'increm
 /**
  * A value in the `distribution` record. Can be:
  * - A {@link GroupRowValueSetterDistribution} strategy string (e.g. `'percentage'`).
- * - `true` — uses the built-in default for the aggFunc, enabling normally-disabled aggFuncs
- *   (count/min/max/custom) with `'overwrite'`. Useful for overriding `false`/`null` from a parent
- *   in deep-merge scenarios (e.g. column overriding `defaultColDef`).
+ * - `true` — uses the built-in default for the aggFunc. Enables custom aggFuncs with `'overwrite'`.
+ *   Note: `count`/`min`/`max`/`first`/`last` are only enabled via explicit per-aggFunc record entries.
+ *   Useful for overriding `false`/`null` from a parent in deep-merge scenarios.
  * - `false` or `null` — suppresses distribution for this aggFunc
  *   and makes the cell not editable when that aggFunc is active.
  * - `undefined` — inherits from the parent options (falls through to the default for that aggFunc).
@@ -252,15 +252,15 @@ export type GroupRowValueSetterDistributionRecord<TData = any, TValue = any, TCo
 export interface GroupRowValueSetterDistributionOptions {
     /**
      * Distribution strategy to use. See {@link GroupRowValueSetterDistribution} for details.
-     * Set to `true` to use the built-in default, enabling normally-disabled aggFuncs
-     * (count/min/max/custom) with `'overwrite'`. Useful for overriding `false`/`null`
-     * from a parent in deep-merge scenarios.
+     * Set to `true` to use the built-in default. Enables custom aggFuncs with `'overwrite'`.
+     * Note: `count`/`min`/`max`/`first`/`last` are only enabled via explicit per-aggFunc record entries.
+     * Useful for overriding `false`/`null` from a parent in deep-merge scenarios.
      * Set to `false` or `null` to suppress distribution and make the cell not editable.
      * When `undefined`, inherits from the parent options.
      *
      * When omitted at all levels, defaults to `'uniform'` for `sum`, `'overwrite'` for `avg`
-     * and columns without an aggFunc, the aggFunc's own strategy for `first`/`last`,
-     * and disabled for `count`/`min`/`max` and custom aggFuncs.
+     * and columns without an aggFunc,
+     * and disabled for `count`/`min`/`max`/`first`/`last` and custom aggFuncs.
      */
     distribution?: GroupRowValueSetterDistribution | boolean | null;
 
@@ -332,8 +332,8 @@ export interface GroupRowValueSetterDistributionOptions {
  * - No aggFunc: `'overwrite'` (writes the edited value to all children)
  * - `sum`: `'uniform'` (divides equally)
  * - `avg`: `'overwrite'` (writes the edited value to all children)
- * - `first` / `last`: writes to that child only
- * - `count` / `min` / `max`: disabled by default (cell is not editable unless an explicit distribution is set)
+ * - `count` / `min` / `max` / `first` / `last`: disabled by default (cell is not editable unless
+ *   explicitly enabled via a per-aggFunc record entry with `true` or `'overwrite'`)
  * - Custom aggFuncs: disabled by default (set a `distribution` or use `default` to enable)
  *
  * @example
@@ -381,8 +381,9 @@ export interface GroupRowValueSetterOptions<TData = any, TValue = any, TContext 
      * **As a string:** applies the chosen {@link GroupRowValueSetterDistribution} strategy
      * to all aggregation functions.
      *
-     * **As `true`:** enables distribution using built-in defaults for all aggregation functions,
-     * including normally-disabled ones (count/min/max/custom) which get `'overwrite'`.
+     * **As `true`:** enables distribution using built-in defaults for distributable aggregation
+     * functions and custom aggFuncs (which get `'overwrite'`).
+     * Note: `count`/`min`/`max`/`first`/`last` are only enabled via explicit per-aggFunc record entries.
      * Useful for overriding `false`/`null` from `defaultColDef` in deep-merge scenarios.
      *
      * **As `false` or `null`:** suppresses distribution and makes the cell not editable

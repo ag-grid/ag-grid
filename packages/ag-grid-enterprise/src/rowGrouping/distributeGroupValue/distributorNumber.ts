@@ -74,14 +74,8 @@ export class DistributorNumber {
             return false;
         }
 
-        const { children } = this;
-        switch (strategy) {
-            case 'first':
-                return this.writeOne(children[0], newValue);
-            case 'last':
-                return this.writeOne(children[this.count - 1], newValue);
-            case 'overwrite':
-                return this.writeAll(newValue);
+        if (strategy === 'overwrite') {
+            return this.writeAll(newValue);
         }
 
         // Non-numeric value (e.g. null, non-numeric string) — write raw value to all children

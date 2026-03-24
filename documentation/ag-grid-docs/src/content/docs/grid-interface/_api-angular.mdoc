@@ -10,7 +10,7 @@ The api can be accessed from the `AgGridAngular` component via a `@ViewChild` de
 @ViewChild('myGrid') grid!: AgGridAngular;
 
 // Access the api off the grid
-onClick() { this.grid.api.deselectRows() }
+onClick() { this.grid.api.deselectAll() }
 ```
 
 The `api` is also provided on the params for all grid events and callbacks. The first event fired is the `gridReady` event and that can be used to store a reference to the api.

@@ -460,6 +460,55 @@ export async function dragOverTo(source: Locator, target: Locator, offsetPositio
     await mouse.up();
 }
 
+/**
+ * Waits until row animations have settled — i.e. no "zombie" rows remain in the DOM.
+ *
+ * Row animations leave zombie rows in the DOM for ~400ms. A zombie and its
+ * replacement share the same `row-id`, causing strict-mode locators to throw a
+ * "resolved to N elements" error. Call this helper after any action that triggers
+ * row expansion/collapse before making strict-mode assertions.
+ *
+ * Implementation notes:
+ * - Yields one animation frame first so that any pending DOM mutations from the
+ *   preceding action are applied before polling begins (avoids a false early pass).
+ * - Checks uniqueness within each row container independently. AG Grid renders the
+ *   same logical row in multiple containers (left-pinned, center, right-pinned);
+ *   those cross-container duplicates are permanent and expected, so a global
+ *   uniqueness check would hang on grids with pinned columns.
+ */
+export async function waitForRowAnimations(page: Page) {
+    // Flush any pending microtasks / rAF callbacks so DOM mutations from the
+    // preceding action are visible before we start polling.
+    await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(resolve)));
+
+    await page.waitForFunction(() => {
+        // AG Grid renders rows across several named containers. Zombie rows only
+        // appear as duplicates *within* the same container, not across containers.
+        const centerContainerSelectors = [
+            '.ag-center-cols-container',
+            '.ag-sticky-top-container',
+            '.ag-sticky-bottom-container',
+            '.ag-floating-top-container',
+            '.ag-floating-bottom-container',
+        ].join(', ');
+
+        for (const container of document.querySelectorAll(centerContainerSelectors)) {
+            const seen = new Set<string>();
+            for (const row of container.querySelectorAll('.ag-row')) {
+                const rowId = row.getAttribute('row-id');
+                if (!rowId) {
+                    continue;
+                }
+                if (seen.has(rowId)) {
+                    return false;
+                }
+                seen.add(rowId);
+            }
+        }
+        return true;
+    });
+}
+
 export async function clickAllButtons(page: Page) {
     // Click all visible buttons in the grid example
     // Don't use buttons within the ag-root-wrapper as these are not part of the example
