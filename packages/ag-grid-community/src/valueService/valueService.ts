@@ -583,7 +583,7 @@ export class ValueService extends BeanStub implements NamedBean {
         if (_missing(field) && _missing(valueSetter) && !(hasExternalFormulaData && isFormulaValue)) {
             // Group rows with groupRowValueSetter or groupRowEditable don't need field or valueSetter —
             // the groupRowValueSetter handles the edit entirely.
-            if (rowNode.group && (colDef.groupRowValueSetter || colDef.groupRowEditable != null)) {
+            if (rowNode.group && (colDef.groupRowValueSetter || colDef.groupRowEditable)) {
                 return true;
             }
             _warn(17);
