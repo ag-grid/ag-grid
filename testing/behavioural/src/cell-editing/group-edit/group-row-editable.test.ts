@@ -894,7 +894,9 @@ describe('groupRowValueSetter on columns without field or valueSetter', () => {
                     groupRowValueSetter: (params) => {
                         groupRowValueSetterCalls.push(params);
                         const value = Number(params.newValue);
-                        if (!Number.isFinite(value)) return false;
+                        if (!Number.isFinite(value)) {
+                            return false;
+                        }
                         let changed = false;
                         for (const child of params.aggregatedChildren) {
                             if (child.setDataValue('amount', value, 'data')) {
@@ -953,7 +955,9 @@ describe('groupRowValueSetter on columns without field or valueSetter', () => {
                     groupRowValueSetter: (params) => {
                         groupRowValueSetterCalls.push(params);
                         const value = Number(params.newValue);
-                        if (!Number.isFinite(value)) return false;
+                        if (!Number.isFinite(value)) {
+                            return false;
+                        }
                         let changed = false;
                         for (const child of params.aggregatedChildren) {
                             if (child.setDataValue('amount', value, 'data')) {
@@ -1020,7 +1024,9 @@ describe('groupRowValueSetter on columns without field or valueSetter', () => {
                     groupRowValueSetter: (params) => {
                         groupRowValueSetterCalls.push(params);
                         const value = Number(params.newValue);
-                        if (!Number.isFinite(value)) return false;
+                        if (!Number.isFinite(value)) {
+                            return false;
+                        }
                         let changed = false;
                         for (const child of params.aggregatedChildren) {
                             if (child.setDataValue(params.column, value, 'data')) {
