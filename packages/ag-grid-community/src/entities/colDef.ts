@@ -433,19 +433,21 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     editable?: boolean | EditableCallback<TData, TValue>;
     /**
-     * Works like `editable`, but is evaluated only for group rows. When provided, group rows use this property instead of `editable`.
-     * Set to `true` if this column is editable, otherwise `false`. Can also be a function to have different rows editable.
+     * Works like `editable`, but is evaluated only for group rows. When provided, group rows use
+     * this property instead of `editable`. Set to `true` to make group row cells editable, or use
+     * a callback to control editability per row.
      *
      * When `groupRowEditable` is defined and no explicit `groupRowValueSetter` is provided,
      * the built-in {@link distributeGroupValue | distributeGroupValue} is used automatically.
-     * Set `groupRowValueSetter: false` to disable distribution while keeping group rows editable.
      *
-     * Note: if `groupRowValueSetter` uses `distribution: false` (or `null`), the cell is
-     * treated as not editable even when `groupRowEditable` is `true`. This also applies to per-aggFunc
-     * records when the column's aggregation function maps to `false` or `null`.
+     * Columns with `groupRowEditable` or `groupRowValueSetter` do not require `field` or
+     * `valueSetter` — the group row value setter handles the edit entirely.
+     *
+     * Note: if `groupRowValueSetter` resolves to `false` or `null` (via `distribution: false`,
+     * a per-aggFunc record entry, or `groupRowValueSetter: false`), the cell is treated as not
+     * editable even when `groupRowEditable` is `true`.
      *
      * @agModule `RowGroupingEditModule`
-     *
      */
     groupRowEditable?: boolean | GroupRowEditableCallback<TData, TValue>;
     /**
@@ -453,12 +455,14 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      *
      * - **`true`**: Uses the built-in {@link distributeGroupValue | distributeGroupValue} with default settings.
      *   Also enabled implicitly when `groupRowEditable` is defined and `groupRowValueSetter` is not set.
-     * - **`false`**: Explicitly disables group row value distribution, even if `groupRowEditable` is defined.
+     * - **`false`**: Explicitly disables group row value distribution and makes the cell not editable,
+     *   even if `groupRowEditable` is defined.
      * - **Function**: A custom callback that receives a {@link GroupRowValueSetterParams} and pushes
-     *   edits down to descendants. The grid always commits the group row value afterwards.
+     *   edits down to descendants. The column does not need `field` or `valueSetter` — the callback
+     *   handles the edit entirely.
      * - **Options object**: Uses the built-in distribution logic with a {@link GroupRowValueSetterOptions}
-     *   configuration. When `distribution` is set to `false` or `null`, the cell is treated
-     *   as not editable (overriding `groupRowEditable`).
+     *   configuration. When `distribution` resolves to `false` or `null` for the column's aggFunc,
+     *   the cell is treated as not editable (overriding `groupRowEditable`).
      *
      * Fires for every `setDataValue` call when active, regardless of `groupRowEditable`.
      *
