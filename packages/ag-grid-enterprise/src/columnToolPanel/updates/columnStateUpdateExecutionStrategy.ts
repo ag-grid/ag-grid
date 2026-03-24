@@ -275,19 +275,13 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
         if (columnOrder && !_areEqual(columnOrder.colIds, getPrimaryColumnIds(beans))) {
             return true;
         }
-        if (
-            rowGroup &&
-            !_areEqual([...rowGroup.colIds].sort(), [...getColIds(beans.rowGroupColsSvc?.columns)].sort())
-        ) {
+        if (rowGroup && !_areEqual(rowGroup.colIds, getColIds(beans.rowGroupColsSvc?.columns))) {
             return true;
         }
-        if (
-            aggregation &&
-            !_areEqual([...aggregation.colIds].sort(), [...getColIds(beans.valueColsSvc?.columns)].sort())
-        ) {
+        if (aggregation && !_areEqual(aggregation.colIds, getColIds(beans.valueColsSvc?.columns))) {
             return true;
         }
-        if (pivot && !_areEqual([...pivot.colIds].sort(), [...getColIds(beans.pivotColsSvc?.columns)].sort())) {
+        if (pivot && !_areEqual(pivot.colIds, getColIds(beans.pivotColsSvc?.columns))) {
             return true;
         }
         if (pivotMode && pivotMode.pivotMode !== beans.colModel.isPivotMode()) {
