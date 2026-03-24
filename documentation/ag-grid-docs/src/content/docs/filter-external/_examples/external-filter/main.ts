@@ -86,7 +86,7 @@ function doesExternalFilterPass(node: IRowNode<IOlympicData>): boolean {
             case 'above50':
                 return node.data.age > 50;
             case 'dateAfter2008':
-                return asDate(node.data.date) > new Date(2008, 1, 1);
+                return asDate(node.data.date) > new Date(2008, 0, 1);
             default:
                 return true;
         }

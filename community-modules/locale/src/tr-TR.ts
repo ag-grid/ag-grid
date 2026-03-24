@@ -75,7 +75,6 @@ export const AG_GRID_LOCALE_TR = {
     // Filter Buttons
     applyFilter: 'Uygula',
     applyColumnToolPanel: 'Uygula',
-    deferMode: 'Defer mode',
     resetFilter: 'Sıfırla',
     clearFilter: 'Temizle',
     cancelFilter: 'İptal',

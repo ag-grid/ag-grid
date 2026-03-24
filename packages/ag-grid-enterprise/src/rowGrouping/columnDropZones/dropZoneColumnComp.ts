@@ -10,6 +10,7 @@ import type {
 } from 'ag-grid-community';
 import { Component, DragSourceType, KeyCode, RefPlaceholder, _createElement } from 'ag-grid-community';
 
+import { isDeferredMode, refreshDeferredToolPanelUi } from '../../columnToolPanel/toolPanelDeferredUiUtils';
 import type { ColumnStateUpdateParams } from '../../columnToolPanel/updates/columnStateUpdateTypes';
 import { PillDragComp } from '../../widgets/pillDragComp';
 import { VirtualList } from '../../widgets/virtualList';
@@ -32,7 +33,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         private readonly updateParams?: ColumnStateUpdateParams
     ) {
         super(dragSourceDropTarget, ghost, horizontal);
-        this.deferApply = !!updateParams?.deferApply;
+        this.deferApply = isDeferredMode(updateParams);
     }
 
     public override postConstruct(): void {
@@ -59,6 +60,10 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         this.displayName = colNames.getDisplayNameForColumn(this.column, 'columnDrop');
 
         super.postConstruct();
+
+        if (this.deferApply) {
+            this.eDragHandle.setAttribute('data-column-tool-panel-deferred', '');
+        }
 
         if (sortSvc) {
             this.setupSort();
@@ -177,6 +182,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
                 this.beans.columnStateUpdateStrategy.progressSortFromEvent(this.deferApply, column, event);
                 eSortIndicator.refresh();
                 this.setupAria();
+                refreshDeferredToolPanelUi(this.beans, this.updateParams);
             };
 
             this.addGuiEventListener('click', performSort);
@@ -359,6 +365,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
                 eText.textContent = this.getDisplayValue();
             }
             this.setupAria();
+            refreshDeferredToolPanelUi(this.beans, this.updateParams);
         };
 
         const localeTextFunc = this.getLocaleTextFunc();

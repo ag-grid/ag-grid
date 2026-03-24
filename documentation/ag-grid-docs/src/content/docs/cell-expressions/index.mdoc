@@ -111,7 +111,7 @@ When you provide an expression to the grid, the grid converts the expression int
 colDef.valueGetter = 'data.firstName';
 
 // the grid will then compile the above to this:
-___compiledValueGetter = (node, data, colDef, column, api, context, getValue) => {
+___compiledValueGetter = (node, data, colDef, column, api, ctx, getValue) => {
     return data.firstName;
 }
 ```

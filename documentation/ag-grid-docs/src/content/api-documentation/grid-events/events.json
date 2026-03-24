@@ -3,13 +3,7 @@
         "codeSrc": "grid-options.AUTO.json",
         "validate": true,
         "onlyEvents": true,
-        "undocumentedProperties": {
-            "bulkEditingStarted": "TODO: undocumented property, to resolve in AG-16879",
-            "bulkEditingStopped": "TODO: undocumented property, to resolve in AG-16879",
-            "dragCancelled": "TODO: undocumented property, to resolve in AG-16879",
-            "rowResizeStarted": "TODO: undocumented property, to resolve in AG-16879",
-            "rowResizeEnded": "TODO: undocumented property, to resolve in AG-16879"
-        }
+        "undocumentedProperties": {}
     },
     "accessories": {
         "meta": {
@@ -227,6 +221,18 @@
                 "url": "./cell-editing-batch/#batch-editing-lifecycle"
             }
         },
+        "bulkEditingStarted": {
+            "more": {
+                "name": "Bulk Cell Edit",
+                "url": "./cell-selection/#bulk-cell-edit"
+            }
+        },
+        "bulkEditingStopped": {
+            "more": {
+                "name": "Bulk Cell Edit",
+                "url": "./cell-selection/#bulk-cell-edit"
+            }
+        },
         "undoStarted": {
             "more": {
                 "name": "Undo / Redo Events",
@@ -393,9 +399,30 @@
         "rowGroupOpened": {},
         "expandOrCollapseAll": {}
     },
-    "miscellaneous": {
+    "rowEvents": {
         "meta": {
-            "displayName": "Miscellaneous"
+            "displayName": "Row Size",
+            "page": {
+                "name": "Row Resizing",
+                "url": "./row-numbers/#row-resizing"
+            }
+        },
+        "rowResizeStarted": {
+            "more": {
+                "name": "Row Resizing",
+                "url": "./row-numbers/#row-resizing"
+            }
+        },
+        "rowResizeEnded": {
+            "more": {
+                "name": "Row Resizing",
+                "url": "./row-numbers/#row-resizing"
+            }
+        }
+    },
+    "gridLifecycle": {
+        "meta": {
+            "displayName": "Grid Lifecycle"
         },
         "gridReady": {
             "more": {
@@ -415,25 +442,36 @@
                 "url": "./grid-lifecycle/#first-data-rendered"
             }
         },
-        "gridSizeChanged": {
-            "more": {
-                "name": "Grid Layout",
-                "url": "./grid-size/"
-            }
-        },
         "modelUpdated": {},
-        "virtualRowRemoved": {},
-        "viewportChanged": {},
-        "bodyScroll": {},
-        "bodyScrollEnd": {},
-        "dragStarted": {},
-        "dragStopped": {},
         "stateUpdated": {
             "more": {
                 "name": "Grid State",
                 "url": "./grid-state/"
             }
         }
+    },
+    "viewport": {
+        "meta": {
+            "displayName": "Viewport"
+        },
+        "gridSizeChanged": {
+            "more": {
+                "name": "Grid Layout",
+                "url": "./grid-size/"
+            }
+        },
+        "virtualRowRemoved": {},
+        "viewportChanged": {},
+        "bodyScroll": {},
+        "bodyScrollEnd": {}
+    },
+    "dragAndDrop": {
+        "meta": {
+            "displayName": "Drag and Drop"
+        },
+        "dragStarted": {},
+        "dragStopped": {},
+        "dragCancelled": {}
     },
     "find": {
         "meta": {

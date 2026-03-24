@@ -75,7 +75,6 @@ export const AG_GRID_LOCALE_IL = {
     // Filter Buttons
     applyFilter: 'החל',
     applyColumnToolPanel: 'החל',
-    deferMode: 'Defer mode',
     resetFilter: 'אפס',
     clearFilter: 'נקה',
     cancelFilter: 'בטל',
@@ -681,7 +680,7 @@ export const AG_GRID_LOCALE_IL = {
     ariaFilterColumn: 'לחץ CTRL ENTER כדי לפתוח סינון',
     ariaRowDeselect: 'לחץ על SPACE כדי לבטל את בחירת שורה זו',
     ariaHeaderSelection: 'עמודה עם בחירת כותרת',
-    ariaSelectAllCells: 'לחץ על מקש רווח או Enter כדי לבחור בכל התאים',
+    ariaSelectAllCells: 'לחץ על מקש הרווח או על Enter כדי לבחור את כל התאים',
     ariaSelectAllRowCells: 'לחץ על Enter כדי לבחור את כל התאים בשורה זו',
     ariaColumnCellSelection: 'לחץ על Enter כדי להחליף את הבחירה של כל התאים הגלויים בעמודה זו',
     ariaColumnGroupCellSelection: 'לחץ על Enter כדי להחליף את הבחירה של כל התאים הגלויים בקבוצת עמודות זו',

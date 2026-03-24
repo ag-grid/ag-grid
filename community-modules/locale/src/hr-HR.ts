@@ -75,7 +75,6 @@ export const AG_GRID_LOCALE_HR = {
     // Filter Buttons
     applyFilter: 'Primijeni',
     applyColumnToolPanel: 'Primijeni',
-    deferMode: 'Defer mode',
     resetFilter: 'Poništi',
     clearFilter: 'Očisti',
     cancelFilter: 'Odustani',
@@ -684,7 +683,7 @@ export const AG_GRID_LOCALE_HR = {
     ariaFilterColumn: 'Pritisnite CTRL ENTER za otvaranje filtera',
     ariaRowDeselect: 'Pritisnite SPACE za poništavanje odabira ovog retka',
     ariaHeaderSelection: 'Stupac s odabirom zaglavlja',
-    ariaSelectAllCells: 'Pritisnite razmaknicu ili Enter za odabir svih ćelija',
+    ariaSelectAllCells: 'Pritisnite Space ili Enter za odabir svih ćelija',
     ariaSelectAllRowCells: 'Pritisnite Enter za odabir svih ćelija u ovom retku',
     ariaColumnCellSelection: 'Pritisnite Enter za prebacivanje odabira svih vidljivih ćelija u ovom stupcu',
     ariaColumnGroupCellSelection: 'Pritisnite Enter za prebacivanje odabira svih vidljivih ćelija u ovoj grupi stupaca',

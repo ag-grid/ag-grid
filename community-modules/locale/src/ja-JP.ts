@@ -75,7 +75,6 @@ export const AG_GRID_LOCALE_JP = {
     // Filter Buttons
     applyFilter: '適用',
     applyColumnToolPanel: '適用',
-    deferMode: 'Defer mode',
     resetFilter: 'リセット',
     clearFilter: 'クリア',
     cancelFilter: 'キャンセル',
@@ -262,7 +261,7 @@ export const AG_GRID_LOCALE_JP = {
     formulaServiceCircularReference: '循環参照です。',
     formulaServiceExpectedParsableFormula: '解析可能な数式が必要です。',
     formulaServiceInternalSchedulingError: '内部スケジューリングエラー。',
-    tooltipValidationErrorSeparator: '. ',
+    tooltipValidationErrorSeparator: '。 ',
 
     // Side Bar
     columns: '列',
@@ -682,7 +681,7 @@ export const AG_GRID_LOCALE_JP = {
     ariaFilterColumn: 'フィルターを開くにはCTRL+ENTERを押してください',
     ariaRowDeselect: 'この行の選択を解除するにはSPACEを押してください',
     ariaHeaderSelection: 'ヘッダー選択付きの列',
-    ariaSelectAllCells: 'すべてのセルを選択するにはスペースキーまたはEnterキーを押してください',
+    ariaSelectAllCells: 'スペースキーまたはエンターキーを押してすべてのセルを選択します',
     ariaSelectAllRowCells: 'この行のすべてのセルを選択するにはEnterキーを押してください',
     ariaColumnCellSelection: 'この列のすべての表示セルの選択を切り替えるにはEnterキーを押してください',
     ariaColumnGroupCellSelection: 'この列グループのすべての表示セルの選択を切り替えるにはEnterキーを押してください',

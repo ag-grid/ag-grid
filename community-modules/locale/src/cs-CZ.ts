@@ -75,7 +75,6 @@ export const AG_GRID_LOCALE_CZ = {
     // Filter Buttons
     applyFilter: 'Použít',
     applyColumnToolPanel: 'Použít',
-    deferMode: 'Defer mode',
     resetFilter: 'Obnovit',
     clearFilter: 'Vymazat',
     cancelFilter: 'Zrušit',
@@ -682,7 +681,7 @@ export const AG_GRID_LOCALE_CZ = {
     ariaFilterColumn: 'Stiskněte CTRL ENTER pro otevření filtru',
     ariaRowDeselect: 'Stiskněte SPACE pro zrušení výběru tohoto řádku',
     ariaHeaderSelection: 'Sloupec s výběrem záhlaví',
-    ariaSelectAllCells: 'Stiskněte mezerník nebo Enter pro výběr všech buněk',
+    ariaSelectAllCells: 'Stiskněte Mezerník nebo Enter pro výběr všech buněk',
     ariaSelectAllRowCells: 'Stiskněte Enter pro výběr všech buněk v tomto řádku',
     ariaColumnCellSelection: 'Stiskněte Enter pro přepnutí výběru všech viditelných buněk v tomto sloupci',
     ariaColumnGroupCellSelection: 'Stiskněte Enter pro přepnutí výběru všech viditelných buněk v této skupině sloupců',

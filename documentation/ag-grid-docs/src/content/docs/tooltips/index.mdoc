@@ -16,6 +16,10 @@ It's possible to configure tooltips to show only when the items hovered are trun
 
 {% gridExampleRunner title="Tooltips" name="tooltip-show-mode" /%}
 
+{% note %}
+`tooltipShowMode = 'whenTruncated'` has no effect when using Browser Tooltips, as Browser Tooltips are controlled by the browser and not the grid.
+{% /note %}
+
 ## Show and Hide Delay
 
 By default, tooltips show after 2 seconds and hide after 10 seconds. These delays can be configured in milliseconds:

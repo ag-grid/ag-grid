@@ -43,7 +43,6 @@ const columnDefs: ColDef[] = [
         field: 'year',
         enableRowGroup: true,
         enablePivot: true,
-        pivotIndex: 1,
     },
     {
         field: 'date',
@@ -75,7 +74,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     autoGroupColumnDef: {
         minWidth: 250,
     },
-    pivotMode: true,
     rowModelType: 'serverSide',
     rowGroupPanelShow: 'always',
     pivotPanelShow: 'always',
@@ -88,7 +86,7 @@ const gridOptions: GridOptions<IOlympicData> = {
                 iconKey: 'columns',
                 toolPanel: 'agColumnsToolPanel',
                 toolPanelParams: {
-                    deferApply: true,
+                    buttons: ['cancel', 'apply'],
                 },
             },
         ],

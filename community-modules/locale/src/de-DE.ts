@@ -75,7 +75,6 @@ export const AG_GRID_LOCALE_DE = {
     // Filter Buttons
     applyFilter: 'Anwenden',
     applyColumnToolPanel: 'Anwenden',
-    deferMode: 'Defer mode',
     resetFilter: 'Zurücksetzen',
     clearFilter: 'Löschen',
     cancelFilter: 'Abbrechen',
@@ -687,7 +686,7 @@ export const AG_GRID_LOCALE_DE = {
     ariaFilterColumn: 'Drücken Sie STRG EINGABETASTE, um den Filter zu öffnen',
     ariaRowDeselect: 'Drücken Sie LEERTASTE, um diese Zeile abzuwaehlen',
     ariaHeaderSelection: 'Spalte mit Header-Auswahl',
-    ariaSelectAllCells: 'Drücken Sie die Leertaste oder EINGABETASTE, um alle Zellen auszuwählen',
+    ariaSelectAllCells: 'Drücken Sie die Leertaste oder Enter, um alle Zellen auszuwählen.',
     ariaSelectAllRowCells: 'Drücken Sie EINGABETASTE, um alle Zellen in dieser Zeile auszuwählen',
     ariaColumnCellSelection:
         'Drücken Sie EINGABETASTE, um die Auswahl aller sichtbaren Zellen in dieser Spalte umzuschalten',

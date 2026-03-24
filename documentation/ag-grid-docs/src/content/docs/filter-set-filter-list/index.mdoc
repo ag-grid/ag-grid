@@ -127,7 +127,7 @@ A custom [Cell Renderer Component](./component-cell-renderer/) can also be suppl
 The following example shows how Set Filter values are rendered using a Cell Renderer. Note the following:
 
 -   **No Cell Renderer** does not have a Cell Renderer supplied to the Set Filter. The Column has a Cell Renderer supplied to the Column using `colDef.cellRenderer = countryCellRenderer`.
--   **With Cell Renderer** uses the same Cell Renderer to format the cells and filter values. The Set Filter is supplied the Value Formatter using `filterParams.cellRenderer = countryCellRenderer`.
+-   **With Cell Renderer** uses the same Cell Renderer to format the cells and filter values. The Set Filter is supplied the Cell Renderer using `filterParams.cellRenderer = countryCellRenderer`.
 -   Click **Print Filter Model** with a filter applied and note the logged filter model (dev console) has not been modified.
 
 {% gridExampleRunner title="Filter List Cell Renderers" name="filter-list-cell-renderer"  exampleHeight=745 /%}

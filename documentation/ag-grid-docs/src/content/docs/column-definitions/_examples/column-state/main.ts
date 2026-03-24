@@ -7,14 +7,11 @@ import {
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { ColumnsToolPanelModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     ColumnApiModule,
     ColumnAutoSizeModule,
     ClientSideRowModelModule,
-    ColumnsToolPanelModule,
-    RowGroupingModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 

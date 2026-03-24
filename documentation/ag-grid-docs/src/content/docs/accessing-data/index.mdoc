@@ -56,7 +56,7 @@ api.forEachNodeAfterFilterAndSort((rowNode, index) => {
 });
 
 // iterate through every leaf node in the grid
-api.forEachLeafNode((rowNode, index) => {
+api.forEachLeafNode((rowNode) => {
     console.log('node ' + rowNode.data.athlete + ' is not a group!');
 });
 ```

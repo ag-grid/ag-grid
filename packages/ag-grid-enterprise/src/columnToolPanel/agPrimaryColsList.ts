@@ -37,6 +37,7 @@ import type { ToolPanelColumnCompParams } from './columnToolPanel';
 import { selectAllChildren } from './modelItemUtils';
 import { ToolPanelColumnComp } from './toolPanelColumnComp';
 import { ToolPanelColumnGroupComp } from './toolPanelColumnGroupComp';
+import { isDeferredMode } from './toolPanelDeferredUiUtils';
 
 class UIColumnModel implements VirtualListModel {
     constructor(private readonly items: ColumnModelItem[]) {}
@@ -261,7 +262,8 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         const expandedStates = this.getExpandedStates();
 
         const pivotModeActive = this.colModel.isPivotMode();
-        const shouldSyncColumnLayoutWithGrid = !params.suppressSyncLayoutWithGrid && !pivotModeActive;
+        const deferApply = isDeferredMode(params);
+        const shouldSyncColumnLayoutWithGrid = (!params.suppressSyncLayoutWithGrid || deferApply) && !pivotModeActive;
 
         if (shouldSyncColumnLayoutWithGrid) {
             this.buildTreeFromWhatGridIsDisplaying();
@@ -333,14 +335,18 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     }
 
     private buildTreeFromWhatGridIsDisplaying(): void {
-        const deferApply = !!this.params.deferApply;
-        const columnOrder = this.beans.columnStateUpdateStrategy.getPrimaryColumns(deferApply);
-
-        if (deferApply && columnOrder.length > 0) {
-            syncLayoutWithColumns(columnOrder, this.setColumnLayout.bind(this));
+        const deferApply = isDeferredMode(this.params);
+        if (deferApply && this.beans.columnStateUpdateStrategy.hasDeferredColumnOrder(deferApply)) {
+            const columnOrder = this.beans.columnStateUpdateStrategy.getPrimaryColumns(deferApply);
+            if (columnOrder.length > 0) {
+                syncLayoutWithColumns(columnOrder, this.setColumnLayout.bind(this));
+                return;
+            }
+        }
+        if (this.params.suppressSyncLayoutWithGrid) {
+            this.buildTreeFromProvidedColumnDefs();
             return;
         }
-
         syncLayoutWithGrid(this.colModel, this.setColumnLayout.bind(this));
     }
 
@@ -572,9 +578,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     }
 
     public doSetSelectedAll(selectAllChecked: boolean): void {
-        selectAllChildren(this.beans, this.allColsTree, selectAllChecked, this.eventType, {
-            deferApply: !!this.params.deferApply,
-        });
+        selectAllChildren(this.beans, this.allColsTree, selectAllChecked, this.eventType, this.params);
         this.syncVisibleSelectionState();
         this.fireSelectionChangedEvent();
     }
@@ -591,7 +595,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         let uncheckedCount = 0;
 
         const updateStrategy = this.beans.columnStateUpdateStrategy;
-        const pivotMode = updateStrategy.getPivotMode(!!this.params.deferApply);
+        const pivotMode = updateStrategy.getPivotMode(isDeferredMode(this.params));
 
         this.forEachItem((item) => {
             if (item.group) {
@@ -613,13 +617,13 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                     return;
                 }
                 checked =
-                    updateStrategy.isColumnSelectedInPivotModeToolPanel(!!this.params.deferApply, column) ?? false;
+                    updateStrategy.isColumnSelectedInPivotModeToolPanel(isDeferredMode(this.params), column) ?? false;
             } else {
                 if (colDef.lockVisible) {
                     return;
                 }
 
-                checked = updateStrategy.isColumnVisibleInToolPanel(!!this.params.deferApply, column) ?? false;
+                checked = updateStrategy.isColumnVisibleInToolPanel(isDeferredMode(this.params), column) ?? false;
             }
 
             if (checked) {

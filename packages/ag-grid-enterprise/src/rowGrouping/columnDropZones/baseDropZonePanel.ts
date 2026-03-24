@@ -1,14 +1,13 @@
 import type { AgColumn, ColumnEventType, DragItem, DropTarget, GridDraggingEvent } from 'ag-grid-community';
 import { DragSourceType, _shouldUpdateColVisibilityAfterGroup } from 'ag-grid-community';
 
+import { isDeferredMode } from '../../columnToolPanel/toolPanelDeferredUiUtils';
 import type { ColumnStateUpdateParams } from '../../columnToolPanel/updates/columnStateUpdateTypes';
 import type { PillDropZonePanelParams } from '../../widgets/pillDropZonePanel';
 import { PillDropZonePanel } from '../../widgets/pillDropZonePanel';
 import { DropZoneColumnComp } from './dropZoneColumnComp';
 
 export type TDropZone = 'rowGroup' | 'pivot' | 'aggregation';
-
-const DEFERRED_TOOL_PANEL_CLASS = 'ag-column-panel-deferred';
 
 export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumnComp, AgColumn> {
     constructor(
@@ -48,7 +47,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
             return true;
         }
 
-        return !sourceElement.closest(`.${DEFERRED_TOOL_PANEL_CLASS}`);
+        return !sourceElement.hasAttribute('data-column-tool-panel-deferred');
     }
 
     protected override minimumAllowedNewInsertIndex(): number {
@@ -93,7 +92,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         }
         const allowedCols = columns.filter((c) => !c.getColDef().lockVisible);
         this.beans.columnStateUpdateStrategy.setColumnsVisible(
-            !!this.updateParams?.deferApply,
+            isDeferredMode(this.updateParams),
             allowedCols,
             visible,
             source

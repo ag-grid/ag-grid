@@ -75,7 +75,6 @@ export const AG_GRID_LOCALE_PK = {
     // Filter Buttons
     applyFilter: 'لاگو کریں',
     applyColumnToolPanel: 'لاگو کریں',
-    deferMode: 'Defer mode',
     resetFilter: 'ری سیٹ کریں',
     clearFilter: 'صاف کریں',
     cancelFilter: 'منسوخ کریں',
@@ -682,7 +681,7 @@ export const AG_GRID_LOCALE_PK = {
     ariaFilterColumn: 'فلٹر کھولنے کے لیے CTRL ENTER دبائیں',
     ariaRowDeselect: 'اس صف کو غیر منتخب کرنے کے لیے SPACE دبائیں',
     ariaHeaderSelection: 'ہیڈر انتخاب کے ساتھ کالم',
-    ariaSelectAllCells: 'تمام سیلز کو منتخب کرنے کے لیے اسپیس یا انٹر دبائیں',
+    ariaSelectAllCells: 'اسپیس یا انٹر دبائیں تاکہ تمام خلیوں کو منتخب کریں',
     ariaSelectAllRowCells: 'اس قطار کی تمام سیلز منتخب کرنے کے لیے Enter دبائیں',
     ariaColumnCellSelection: 'اس کالم میں تمام نظر آنے والے سیلز کا انتخاب بدلنے کے لیے Enter دبائیں',
     ariaColumnGroupCellSelection: 'اس کالم گروپ میں تمام نظر آنے والے سیلز کا انتخاب بدلنے کے لیے Enter دبائیں',

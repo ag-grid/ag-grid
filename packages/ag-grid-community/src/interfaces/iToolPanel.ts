@@ -2,6 +2,8 @@ import type { IComponent } from '../agStack/interfaces/iComponent';
 import type { AgGridCommon } from './iCommon';
 import type { FilterAction } from './iFilter';
 
+export type ColumnToolPanelAction = 'apply' | 'cancel';
+
 export interface BaseToolPanelParams<TData = any, TContext = any, TState = any> extends AgGridCommon<TData, TContext> {
     /** The tool-panel-specific initial state as provided in grid options if applicable */
     initialState?: TState;
@@ -52,8 +54,8 @@ export interface IToolPanelColumnCompParams {
     contractColumnSelection: boolean;
     /** Suppress updating the layout of columns as they are rearranged in the grid */
     suppressSyncLayoutWithGrid: boolean;
-    /** Defer applying Columns Tool Panel changes until an explicit apply action */
-    deferApply?: boolean;
+    /** Buttons to display at the bottom of the Columns Tool Panel. When 'apply' is included, changes are deferred until the apply button is clicked. */
+    buttons?: ColumnToolPanelAction[];
 }
 
 export interface IToolPanelFiltersCompParams {

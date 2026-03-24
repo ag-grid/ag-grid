@@ -4,7 +4,7 @@
 // define Cell Component to be reused
 @Component({
     selector: 'colour-cell',
-    template: `<span [style.colour]="params.color">{{params.value}}</span>`
+    template: `<span [style.color]="params.color">{{params.value}}</span>`
 })
 class ColourCellComp implements ICellRendererAngularComp {
     params!: ICellRendererParams;

@@ -3,7 +3,7 @@ import { Component, _createIconNoSpan, _focusInto, isColumn, isProvidedColumnGro
 
 import { getGroupingLocaleText, isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import { MenuList } from '../widgets/menuList';
-import { refreshDeferredToolPanelUi } from './toolPanelDeferredUiUtils';
+import { isDeferredMode, refreshDeferredToolPanelUi } from './toolPanelDeferredUiUtils';
 import type { ColumnStateUpdateParams } from './updates/columnStateUpdateTypes';
 
 type MenuItemName = 'scrollIntoView' | 'rowGroup' | 'value' | 'pivot';
@@ -78,7 +78,7 @@ export class ToolPanelContextMenu extends Component {
         }
         this.columns = columns;
 
-        const isPivotMode = updateStrategy.getPivotMode(!!this.params.deferApply);
+        const isPivotMode = updateStrategy.getPivotMode(isDeferredMode(this.params));
 
         this.allowScrollIntoView = !isPivotMode && columns.some(this.isColumnValidForScrollIntoView);
         this.allowGrouping = columns.some((col) => col.isPrimary() && col.isAllowRowGroup());
@@ -94,7 +94,7 @@ export class ToolPanelContextMenu extends Component {
         const menuItemMap = new Map<MenuItemName, MenuItemProperty>();
         this.menuItemMap = menuItemMap;
 
-        const deferMode = !!this.params.deferApply;
+        const deferMode = isDeferredMode(this.params);
         const isPivotMode = updateStrategy.getPivotMode(deferMode);
         const rowGroupColIdSet = new Set(
             updateStrategy.getRowGroupColumns(deferMode).map((col: AgColumn) => col.getColId())

@@ -78,7 +78,14 @@ const gridOptions = {
 }
 ```
 
-If the callback returns errors, the grid will show the errors in a tooltip when hovering the editor and discard the edit value before completing (depending on the [Validation Modes](#validation-modes)).
+If the callback returns errors, the Grid will show the errors in a tooltip when hovering the editor and discard the edit value before completing (depending on the [Validation Modes](#validation-modes)).
+
+This is demonstrated in the following example, note that:
+
+-   `Athlete` has to be at least `3` characters.
+-   `Age` has to be different than `18`.
+
+{% gridExampleRunner title="Cell Editor Validation Override" name="cell-editor-validation-override" /%}
 
 ## Validation Modes
 

@@ -75,7 +75,6 @@ export const AG_GRID_LOCALE_IT = {
     // Filter Buttons
     applyFilter: 'Applica',
     applyColumnToolPanel: 'Applica',
-    deferMode: 'Defer mode',
     resetFilter: 'Reimposta',
     clearFilter: 'Pulisci',
     cancelFilter: 'Annulla',
@@ -686,7 +685,7 @@ export const AG_GRID_LOCALE_IT = {
     ariaFilterColumn: 'Premi CTRL INVIO per aprire il filtro',
     ariaRowDeselect: 'Premi SPAZIO per deselezionare questa riga',
     ariaHeaderSelection: 'Colonna con selezione intestazione',
-    ariaSelectAllCells: 'Premi Spazio o Enter per selezionare tutte le celle',
+    ariaSelectAllCells: 'Premi Barra Spaziatrice o Invio per selezionare tutte le celle',
     ariaSelectAllRowCells: 'Premi Enter per selezionare tutte le celle di questa riga',
     ariaColumnCellSelection:
         'Premi Enter per attivare o disattivare la selezione di tutte le celle visibili in questa colonna',

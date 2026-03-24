@@ -10,7 +10,7 @@ const GridExample = () => {
     const columnDefs = [
         {
             field: 'value',
-            suppressKeyboardEvent={params => {
+            suppressKeyboardEvent: params => {
                 console.log('cell is editing: ' + params.editing);
                 console.log('keyboard event:', params.event);
 
@@ -29,10 +29,7 @@ const GridExample = () => {
                 width: '100%'
             }}
             className="test-grid">
-            <AgGridReact ...rest of the definition...>
-                columnDefs={columnDefs}
-                />
-            </AgGridReact>
+            <AgGridReact columnDefs={columnDefs} {/* ...rest of the definition... */} />
         </div>
     );
 };

@@ -75,7 +75,6 @@ export const AG_GRID_LOCALE_CN = {
     // Filter Buttons
     applyFilter: '应用',
     applyColumnToolPanel: '应用',
-    deferMode: 'Defer mode',
     resetFilter: '重置',
     clearFilter: '清除',
     cancelFilter: '取消',
@@ -262,7 +261,7 @@ export const AG_GRID_LOCALE_CN = {
     formulaServiceCircularReference: '循环引用。',
     formulaServiceExpectedParsableFormula: '期望可解析的公式。',
     formulaServiceInternalSchedulingError: '内部调度错误。',
-    tooltipValidationErrorSeparator: '. ',
+    tooltipValidationErrorSeparator: '。',
 
     // Side Bar
     columns: '列',
@@ -681,7 +680,7 @@ export const AG_GRID_LOCALE_CN = {
     ariaFilterColumn: '按 CTRL ENTER 打开过滤器',
     ariaRowDeselect: '按 SPACE 取消选择此行',
     ariaHeaderSelection: '具有标题选择的列',
-    ariaSelectAllCells: '按空格键或 Enter 键选择所有单元格',
+    ariaSelectAllCells: '按空格键或回车键选择所有单元格',
     ariaSelectAllRowCells: '按 Enter 键选择此行中的所有单元格',
     ariaColumnCellSelection: '按 Enter 键切换此列中所有可见单元格的选择',
     ariaColumnGroupCellSelection: '按 Enter 键切换此列组中所有可见单元格的选择',

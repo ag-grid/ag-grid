@@ -419,6 +419,7 @@ export type {
 } from './interfaces/iNewFiltersToolPanel';
 export type {
     BaseToolPanelParams,
+    ColumnToolPanelAction,
     IToolPanel,
     IToolPanelColumnCompParams,
     IToolPanelComp,

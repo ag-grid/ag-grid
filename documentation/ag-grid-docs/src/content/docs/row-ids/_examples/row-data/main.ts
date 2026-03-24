@@ -1,11 +1,5 @@
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
-import {
-    ClientSideRowModelModule,
-    GetRowIdParams,
-    ModuleRegistry,
-    ValidationModule,
-    createGrid,
-} from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
