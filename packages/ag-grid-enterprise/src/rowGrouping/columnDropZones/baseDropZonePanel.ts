@@ -90,13 +90,14 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         if (!columns) {
             return;
         }
+        // In deferred mode, skip visibility changes from drag-and-drop — they will be
+        // applied when the deferred state is committed. Creating hide patches here leaves
+        // stale state when a column is removed then re-added to row groups.
+        if (isDeferredMode(this.updateParams)) {
+            return;
+        }
         const allowedCols = columns.filter((c) => !c.getColDef().lockVisible);
-        this.beans.columnStateUpdateStrategy.setColumnsVisible(
-            isDeferredMode(this.updateParams),
-            allowedCols,
-            visible,
-            source
-        );
+        this.beans.columnStateUpdateStrategy.setColumnsVisible(false, allowedCols, visible, source);
     }
 
     private isRowGroupPanel() {

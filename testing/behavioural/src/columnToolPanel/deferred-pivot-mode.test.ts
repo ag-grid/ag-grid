@@ -1744,6 +1744,34 @@ describe('deferred column tool panel pivot mode', () => {
         expect(getApplyButton(toolPanelGui).disabled).toBe(true);
     });
 
+    test('apply button is disabled after removing row group pill via X and dragging column back from list in pivot mode', async () => {
+        const { gridApi, toolPanel, toolPanelGui } = await createDeferredPivotModeGrid();
+        const sport = gridApi.getColumn('sport')! as AgColumn;
+        const strategy = getUpdateStrategy(toolPanel);
+
+        expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+
+        // Step 1: Click X on Sport pill in CTP row group drop zone
+        const rowGroupPanel = toolPanel.rowGroupDropZonePanel;
+        const withoutSport = rowGroupPanel.getExistingItems().filter((c: AgColumn) => c !== sport);
+        rowGroupPanel['updateItems'](withoutSport);
+        rowGroupPanel.refreshGui();
+        toolPanel.refreshDeferredUi();
+
+        expect(getApplyButton(toolPanelGui).disabled).toBe(false);
+
+        // Step 2: Drag Sport from columns list into row groups drop zone
+        // handleDragEnterEnd sets column visibility to false (hide column on group)
+        rowGroupPanel.setColumnsVisible([sport], false, 'uiColumnDragged');
+        // addItem adds Sport back to row groups
+        rowGroupPanel.addItem(sport);
+        toolPanel.refreshDeferredUi();
+
+        // Deferred state should match live state — no pending changes
+        expect(strategy.hasPendingChanges(true)).toBe(false);
+        expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+    });
+
     test('apply button becomes enabled when row group columns are rearranged', async () => {
         const { gridApi, toolPanel, toolPanelGui } = await createDeferredPivotModeGrid();
 
