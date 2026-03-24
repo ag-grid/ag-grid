@@ -4,6 +4,7 @@ import type {
     GroupCellRendererParams,
     IGroupCellRenderer,
     IGroupCellRendererCtrl,
+    IRowNode,
     RowNode,
     UserCompDetails,
 } from 'ag-grid-community';
@@ -187,7 +188,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
      */
     private setupExpand(): void {
         const { colModel } = this.beans;
-        const { eGridCell, column, suppressDoubleClickExpand } = this.params;
+        const { eGridCell, suppressDoubleClickExpand } = this.params;
 
         // Inserts the expand/collapse icons into the dom
         const addIconToDom = (iconName: 'groupExpanded' | 'groupContracted', element: HTMLElement) => {
@@ -244,9 +245,8 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         };
 
         const setupListeners = () => {
-            // Cell double clicked
-            const isDoubleClickEdit = column?.isCellEditable(this.displayedNode) && this.gos.get('enableGroupEdit');
-            if (!isDoubleClickEdit && !suppressDoubleClickExpand) {
+            // Register dblclick for expand/collapse unless explicitly suppressed or the cell is group-editable
+            if (!suppressDoubleClickExpand && !this.isGroupCellEditable(this.displayedNode)) {
                 this.addManagedListeners(eGridCell, { dblclick: this.onCellDblClicked.bind(this) });
             }
             // Icons clicked
@@ -564,6 +564,16 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         this.cbComp = this.destroyBean(this.cbComp);
     }
 
+    /** Whether the group cell is editable via groupRowEditable or enableGroupEdit. */
+    private isGroupCellEditable(node: RowNode | IRowNode): boolean {
+        const column = this.params.column;
+        return (
+            !!column &&
+            (!!column.getColDef().groupRowEditable || this.gos.get('enableGroupEdit')) &&
+            column.isCellEditable(node)
+        );
+    }
+
     /**
      * Called when the expand / contract icon is clicked.
      */
@@ -588,9 +598,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             return;
         }
 
-        const cellEditable = this.params.column?.isCellEditable(this.params.node);
-
-        if (cellEditable) {
+        if (this.isGroupCellEditable(this.params.node)) {
             return;
         }
 

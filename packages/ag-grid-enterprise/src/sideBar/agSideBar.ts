@@ -323,6 +323,7 @@ class AgSideBar extends Component implements ISideBar, FocusableContainer {
         let wrapper: ToolPanelWrapper;
         if (existingToolPanelWrapper) {
             wrapper = existingToolPanelWrapper;
+            wrapper.setDefParent(def.parent ?? null);
         } else {
             wrapper = this.createBean(new ToolPanelWrapper());
 

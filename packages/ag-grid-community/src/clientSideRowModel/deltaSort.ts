@@ -62,7 +62,7 @@ export const doDeltaSort = (
     const touchedRows: RowNode[] = [];
     for (let i = 0; i < unsortedRowsLen; ++i) {
         const node = unsortedRows[i];
-        if (updates.has(node) || adds.has(node) || !changedPath || changedPath.hasRow(node)) {
+        if (updates.has(node) || adds.has(node) || changedPath?.hasRow(node)) {
             indexByNode.set(node, ~i); // Bitwise NOT for touched (negative)
             touchedRows.push(node);
         } else {

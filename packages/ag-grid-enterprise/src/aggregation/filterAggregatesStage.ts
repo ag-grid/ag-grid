@@ -61,6 +61,7 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowN
                     setAllChildrenCount(node);
                 } else {
                     node.setAllChildrenCount(null);
+                    node.pinnedSibling?.setAllChildrenCount(null);
                 }
             }
 
@@ -89,6 +90,7 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowN
                 setAllChildrenCount(node);
             } else {
                 node.setAllChildrenCount(null);
+                node.pinnedSibling?.setAllChildrenCount(null);
             }
             if (node.sibling) {
                 node.sibling.childrenAfterAggFilter = node.childrenAfterAggFilter;
@@ -114,12 +116,13 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowN
                 allChildrenCount += childrenAfterAggFilter[i].allChildrenCount ?? 0; // include children of children
             }
         }
-        rowNode.setAllChildrenCount(
+        const count =
             // Maintain the historical behaviour:
             // - allChildrenCount is 0 in the root if there are no children
             // - allChildrenCount is null in any non-root row if there are no children
-            allChildrenCount === 0 && rowNode.level >= 0 ? null : allChildrenCount
-        );
+            allChildrenCount === 0 && rowNode.level >= 0 ? null : allChildrenCount;
+        rowNode.setAllChildrenCount(count);
+        rowNode.pinnedSibling?.setAllChildrenCount(count);
     };
 
     /* for grid data, we only count the leafs */
@@ -135,5 +138,6 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowN
             }
         }
         rowNode.setAllChildrenCount(allChildrenCount);
+        rowNode.pinnedSibling?.setAllChildrenCount(allChildrenCount);
     };
 }

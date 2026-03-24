@@ -277,6 +277,11 @@ describe('Row Numbers Keyboard Navigation', () => {
         return gridDiv.querySelector('.ag-aria-description-container')?.textContent ?? '';
     }
 
+    function getFocusedHeaderColId(): string | null {
+        const activeElement = document.activeElement as HTMLElement | null;
+        return activeElement?.closest('.ag-header-cell')?.getAttribute('col-id') ?? null;
+    }
+
     beforeAll(() => {
         setupAgTestIds();
     });
@@ -489,6 +494,7 @@ describe('Row Numbers Keyboard Navigation', () => {
         await asyncSetTimeout(0);
 
         assertSelectedCellRanges([{ rowStartIndex: 0, rowEndIndex: 3, columns: dataColumns }], api);
+        expect(getFocusedHeaderColId()).toBe(ROW_NUMBERS_COLUMN_ID);
     });
 
     test('Enter on row number header selects all cells', async () => {
@@ -508,6 +514,7 @@ describe('Row Numbers Keyboard Navigation', () => {
         await asyncSetTimeout(0);
 
         assertSelectedCellRanges([{ rowStartIndex: 0, rowEndIndex: 3, columns: dataColumns }], api);
+        expect(getFocusedHeaderColId()).toBe(ROW_NUMBERS_COLUMN_ID);
     });
 
     test('Space on row number cell does not select cells in that row', async () => {

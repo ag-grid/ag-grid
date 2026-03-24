@@ -18,15 +18,11 @@ When [Cell Ranges](./cell-selection) are enabled by setting `gridOptions.cellSel
 
 Multiple cell ranges can be selected at once using {% kbd "^ Ctrl" /%} and dragging with the mouse. When copying, all ranges will be copied to the clipboard. Note that the relative positions of multiple ranges is not preserved when copying, they are stacked vertically in the clipboard.
 
-The column headers can be copied to the clipboard in addition to the cell contents by enabling the option `copyHeadersToClipboard`.
-
-{% apiDocumentation source="grid-options/properties.json" section="clipboard" names=["copyHeadersToClipboard"] /%}
-
-In the below example `copyHeadersToClipboard` has been enabled, try:
+In the below example try:
 
 -   Select a cell range with click & drag
 -   Copy with {% kbd "^ Ctrl" /%}+{% kbd "C" /%}
--   Paste into an external program / text editor, note that the column headers were also copied.
+-   Paste into an external program / text editor.
 
 {% gridExampleRunner title="Copying Cell Ranges" name="copy-range" /%}
 
@@ -53,6 +49,26 @@ You can change this behaviour by toggling the "Copy Selected Rows" checkbox to e
 -   When the "Copy Selected Rows" checkbox is toggled on, the pasted content includes all selected rows. When the "Copy Selected Rows" checkbox is toggled off, the pasted content includes only the focussed cell.
 
 {% gridExampleRunner title="Copying Rows" name="copy-row" /%}
+
+## Copying Headers
+
+The column headers can be copied to the clipboard in addition to the cell contents by enabling the option `copyHeadersToClipboard`.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    copyHeadersToClipboard: true,
+}
+```
+
+{% apiDocumentation source="grid-options/properties.json" section="clipboard" names=["copyHeadersToClipboard"] /%}
+
+In the below example try:
+
+-   Select a cell range with click & drag
+-   Copy with {% kbd "^ Ctrl" /%}+{% kbd "C" /%}
+-   Paste into an external program / text editor, note that the column headers were also copied.
+
+{% gridExampleRunner title="Copying Cell Ranges and Headers" name="copy-range-with-headers" /%}
 
 ## Custom Clipboard Interaction
 

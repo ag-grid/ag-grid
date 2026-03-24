@@ -9,7 +9,6 @@ import type {
 import {
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
-    ColumnAutoSizeModule,
     ModuleRegistry,
     RenderApiModule,
     RowApiModule,
@@ -23,7 +22,6 @@ ModuleRegistry.registerModules([
     ClientSideRowModelApiModule,
     RenderApiModule,
     RowApiModule,
-    ColumnAutoSizeModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
@@ -35,22 +33,19 @@ let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     columnDefs: [
-        { field: 'athlete', minWidth: 150 },
-        { field: 'age', minWidth: 70, maxWidth: 90 },
-        { field: 'country', minWidth: 130 },
-        { field: 'year', minWidth: 70, maxWidth: 90 },
-        { field: 'date', minWidth: 120 },
-        { field: 'sport', minWidth: 120 },
-        { field: 'gold', minWidth: 80 },
-        { field: 'silver', minWidth: 80 },
-        { field: 'bronze', minWidth: 80 },
-        { field: 'total', minWidth: 80 },
+        { field: 'athlete', width: 140 },
+        { field: 'age', width: 60 },
+        { field: 'country', width: 130 },
+        { field: 'year', width: 70 },
+        { field: 'date', width: 110 },
+        { field: 'sport', width: 110 },
+        { field: 'gold', flex: 1 },
+        { field: 'silver', flex: 1 },
+        { field: 'bronze', flex: 1 },
+        { field: 'total', flex: 1 },
     ],
 
     rowData: getData(),
-    autoSizeStrategy: {
-        type: 'fitGridWidth',
-    },
     onGridReady: (params: GridReadyEvent) => {
         minRowHeight = params.api.getSizesForCurrentTheme().rowHeight;
         currentRowHeight = minRowHeight;
