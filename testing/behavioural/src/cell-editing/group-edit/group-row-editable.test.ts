@@ -875,3 +875,189 @@ describe('suppressDoubleClickExpand with groupRowEditable', () => {
         expect(groupNode.expanded).toBe(true);
     });
 });
+
+describe('groupRowValueSetter on columns without field or valueSetter', () => {
+    test('column with valueGetter and groupRowValueSetter (no field/valueSetter) allows group editing', async () => {
+        const groupRowValueSetterCalls: any[] = [];
+
+        const api = gridsManager.createGrid('no-field-groupRowValueSetter', {
+            columnDefs: [
+                { field: 'category', rowGroup: true, hide: true },
+                { field: 'amount', aggFunc: 'sum', editable: true },
+                {
+                    colId: 'computed',
+                    headerName: 'Computed',
+                    valueGetter: ({ data }) => (data ? data.amount * 2 : null),
+                    aggFunc: 'sum',
+                    editable: false,
+                    groupRowEditable: true,
+                    groupRowValueSetter: (params) => {
+                        groupRowValueSetterCalls.push(params);
+                        const value = Number(params.newValue);
+                        if (!Number.isFinite(value)) return false;
+                        let changed = false;
+                        for (const child of params.aggregatedChildren) {
+                            if (child.setDataValue('amount', value, 'data')) {
+                                changed = true;
+                            }
+                        }
+                        return changed;
+                    },
+                },
+            ],
+            rowData: [
+                { id: '1', category: 'A', amount: 10 },
+                { id: '2', category: 'A', amount: 20 },
+            ],
+            groupDefaultExpanded: -1,
+            getRowId: (params) => params.data.id,
+        });
+        await asyncSetTimeout(0);
+
+        const groupNode = api.getDisplayedRowAtIndex(0)!;
+        expect(groupNode.group).toBe(true);
+
+        // Edit the computed column on the group row via UI
+        await editCell(api, groupNode, 'computed', '50');
+
+        // groupRowValueSetter should have been called
+        expect(groupRowValueSetterCalls).toHaveLength(1);
+        expect(groupRowValueSetterCalls[0].newValue).toBe('50');
+
+        // Children should have been updated
+        const child1 = api.getRowNode('1')!;
+        const child2 = api.getRowNode('2')!;
+        expect(child1.data.amount).toBe(50);
+        expect(child2.data.amount).toBe(50);
+    });
+
+    test('column with valueGetter, valueSetter, and groupRowValueSetter allows group editing', async () => {
+        const valueSetterCalls: any[] = [];
+        const groupRowValueSetterCalls: any[] = [];
+
+        const api = gridsManager.createGrid('valueSetter-groupRowValueSetter', {
+            columnDefs: [
+                { field: 'category', rowGroup: true, hide: true },
+                { field: 'amount', editable: true },
+                {
+                    colId: 'computed',
+                    headerName: 'Computed',
+                    valueGetter: ({ data }) => (data ? data.amount * 2 : null),
+                    valueSetter: (params) => {
+                        valueSetterCalls.push(params);
+                        return true;
+                    },
+                    aggFunc: 'sum',
+                    editable: true,
+                    groupRowEditable: true,
+                    groupRowValueSetter: (params) => {
+                        groupRowValueSetterCalls.push(params);
+                        const value = Number(params.newValue);
+                        if (!Number.isFinite(value)) return false;
+                        let changed = false;
+                        for (const child of params.aggregatedChildren) {
+                            if (child.setDataValue('amount', value, 'data')) {
+                                changed = true;
+                            }
+                        }
+                        return changed;
+                    },
+                },
+            ],
+            rowData: [
+                { id: '1', category: 'A', amount: 10 },
+                { id: '2', category: 'A', amount: 20 },
+            ],
+            groupDefaultExpanded: -1,
+            getRowId: (params) => params.data.id,
+        });
+        await asyncSetTimeout(0);
+
+        const groupNode = api.getDisplayedRowAtIndex(0)!;
+        expect(groupNode.group).toBe(true);
+
+        // Edit the computed column on the group row
+        await editCell(api, groupNode, 'computed', '50');
+
+        // groupRowValueSetter should have been called, not valueSetter (group row)
+        expect(groupRowValueSetterCalls).toHaveLength(1);
+
+        // Children should have been updated
+        const child1 = api.getRowNode('1')!;
+        const child2 = api.getRowNode('2')!;
+        expect(child1.data.amount).toBe(50);
+        expect(child2.data.amount).toBe(50);
+
+        // Now edit a leaf row — should use valueSetter
+        valueSetterCalls.length = 0;
+        groupRowValueSetterCalls.length = 0;
+        await editCell(api, child1, 'computed', '99');
+
+        expect(valueSetterCalls).toHaveLength(1);
+        expect(groupRowValueSetterCalls).toHaveLength(0);
+    });
+
+    test('group row with null data does not call valueSetter, only groupRowValueSetter', async () => {
+        const valueSetterCalls: any[] = [];
+        const groupRowValueSetterCalls: any[] = [];
+
+        const api = gridsManager.createGrid('null-data-group', {
+            columnDefs: [
+                { field: 'category', rowGroup: true, hide: true },
+                {
+                    colId: 'amount',
+                    field: 'amount',
+                    aggFunc: 'sum',
+                    editable: true,
+                    valueSetter: (params) => {
+                        valueSetterCalls.push(params);
+                        if (params.data && params.colDef.field) {
+                            (params.data as Record<string, any>)[params.colDef.field] = params.newValue;
+                        }
+                        return true;
+                    },
+                    groupRowEditable: true,
+                    groupRowValueSetter: (params) => {
+                        groupRowValueSetterCalls.push(params);
+                        const value = Number(params.newValue);
+                        if (!Number.isFinite(value)) return false;
+                        let changed = false;
+                        for (const child of params.aggregatedChildren) {
+                            if (child.setDataValue(params.column, value, 'data')) {
+                                changed = true;
+                            }
+                        }
+                        return changed;
+                    },
+                },
+            ],
+            rowData: [
+                { id: '1', category: 'A', amount: 10 },
+                { id: '2', category: 'A', amount: 20 },
+            ],
+            groupDefaultExpanded: -1,
+            getRowId: (params) => params.data.id,
+        });
+        await asyncSetTimeout(0);
+
+        const groupNode = api.getDisplayedRowAtIndex(0)!;
+        expect(groupNode.group).toBe(true);
+        expect(groupNode.data).toBeUndefined();
+
+        // Edit the group row
+        await editCell(api, groupNode, 'amount', '50');
+
+        // groupRowValueSetter called, valueSetter NOT called for the group row
+        expect(groupRowValueSetterCalls).toHaveLength(1);
+        const groupValueSetterCallNodeIds = valueSetterCalls
+            .filter((c: any) => c.node?.group)
+            .map((c: any) => c.node.id);
+        expect(groupValueSetterCallNodeIds).toHaveLength(0);
+
+        // Children should have been updated
+        const child1 = api.getRowNode('1')!;
+        const child2 = api.getRowNode('2')!;
+        expect(child1.data.amount).toBe(50);
+        expect(child2.data.amount).toBe(50);
+    });
+});
