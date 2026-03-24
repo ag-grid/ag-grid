@@ -218,6 +218,38 @@ In the example below, note the following:
 
 ## Batching Data Requests
 
-You can stage multiple data requests by using the Columns Tool Panel (see: [Deferred Updates](./tool-panel-columns/#deferred-updates)). This allows multiple configuration changes to be applied in a single update, avoiding unnecessary intermediate recomputations or server requests.
+You can configure the Columns Tool Panel to stage changes and require an explicit **Apply** action before they are committed. This allows multiple configuration changes to be made and applied in a single update, avoiding unnecessary intermediate recomputations or requests.
+
+Deferred Updates are enabled by including the **Apply** button in `toolPanelParams.buttons`.
+
+Note that in the example below:
+
+-   Changes made in the Columns Tool Panel are staged as pending changes.
+-   **Apply** commits all pending changes in a single operation.
+-   **Cancel** discards all pending changes and restores the last applied state.
 
 {% gridExampleRunner title="Deferred Updates" name="deferred-apply-mode"  exampleHeight=830 /%}
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    sideBar: {
+        toolPanels: [
+            {
+                id: 'columns',
+                labelDefault: 'Columns',
+                labelKey: 'columns',
+                iconKey: 'columns',
+                toolPanel: 'agColumnsToolPanel',
+                toolPanelParams: {
+                    buttons: ['cancel', 'apply'],
+                },
+            },
+        ],
+        defaultToolPanel: 'columns',
+    },
+};
+```
+
+{% note %}
+Changes made outside the Columns Tool Panel — such as dragging columns into the Row Group or Pivot Panels, using the Column Menu, or calling the Grid / Column API — are applied immediately and clear any pending changes. Column pinning, resizing, and group expansion do not clear pending changes.
+{% /note %}
