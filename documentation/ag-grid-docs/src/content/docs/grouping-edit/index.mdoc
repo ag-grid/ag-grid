@@ -162,17 +162,20 @@ as plain objects. If the column defines a callback function, it replaces the def
 ### Multiple Aggregation Functions
 
 The built-in distribution handles standard aggregation functions. The following example
-demonstrates a mix of built-in strategies, non-aggregated columns, and custom callbacks:
+demonstrates a mix of built-in strategies, non-aggregated columns, and custom callbacks.
+Double-click any group row cell to edit it:
 
--   **Distributable columns** (`sum`, `avg`) use the automatic defaults via `groupRowEditable: true`.
-    The `Salary (sum)` column overrides with `precision: 0` to show per-column configuration.
--   **Non-aggregated column** (`projects`) has no `aggFunc`. The default strategy for columns without
-    aggregation is `'overwrite'` — editing the group cell writes the value to all children.
--   **Cross-column callback** (`Bonus Rate`) uses a custom `groupRowValueSetter` that reads each
-    child's salary and computes their bonus as `salary × rate / 100`. This demonstrates editing
-    one column to affect values in another.
--   **Custom aggregation** (`sumOfSquares`) uses a custom `groupRowValueSetter` callback that
-    distributes by computing `√(newValue / count)` per child — the correct inverse of sum-of-squares.
+-   **Salary** (`sum`): divides the new total equally among children, rounding to integers
+    (`precision: 0`). For example, editing a group total of 300 across 3 children produces 100 each.
+-   **Bonus** (`avg`): overwrites every child with the edited value (the default for `avg`).
+    For example, editing the group average to 15 sets all children's bonus to 15.
+-   **Projects** (no `aggFunc`): overwrites every child with the edited value (the default when
+    there is no aggregation). The group cell is blank but still editable.
+-   **Rate %** (custom callback): reads each leaf child's salary and computes their bonus as
+    `salary × rate / 100`. For example, entering 20 sets each child's bonus to 20% of their
+    individual salary. Uses `allLeafChildren` to reach all descendant data rows directly.
+-   **SumSq** (custom `sumOfSquares` aggFunc): uses a custom callback that computes
+    `√(newValue / count)` per child — the correct inverse of sum-of-squares.
 
 {% gridExampleRunner title="Multiple Aggregation Functions" name="distribute-group-value-all-agg" exampleHeight=540 /%}
 
