@@ -129,6 +129,7 @@
         white-space: normal;
 
         &.ag-layout-normal {
+            content-visibility: auto;
             height: 100%;
         }
     }
