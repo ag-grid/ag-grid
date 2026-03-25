@@ -14,6 +14,7 @@ test.agExample(import.meta, () => {
 
         // Built-in dateTime formatter outputs "YYYY-MM-DDTHH:mm:ss" (local time, T separator already present)
         await filterInput.fill(cellText);
+        await filterInput.dispatchEvent('input');
 
         await cell.click();
 
@@ -32,6 +33,7 @@ test.agExample(import.meta, () => {
         await expect(filterInput).toBeVisible();
 
         await filterInput.fill(cellText);
+        await filterInput.dispatchEvent('input');
 
         await cell.click();
 
@@ -50,6 +52,7 @@ test.agExample(import.meta, () => {
         await expect(filterInput).toBeVisible();
 
         await filterInput.fill(cellText);
+        await filterInput.dispatchEvent('input');
 
         await cell.click();
 
@@ -70,6 +73,7 @@ test.agExample(import.meta, () => {
         // valueFormatter outputs "YYYY-MM-DD HH:mm:ss"; convert to datetime-local format "YYYY-MM-DDTHH:mm:ss"
         const datetimeValue = cellText.replace(' ', 'T');
         await filterInput.fill(datetimeValue);
+        await filterInput.dispatchEvent('input');
 
         const otherCell = agIdFor.cell('0', 'startDate');
         await otherCell.click();
