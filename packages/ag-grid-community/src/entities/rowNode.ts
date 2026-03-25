@@ -17,6 +17,7 @@ import type {
 } from '../interfaces/iRowNode';
 import type { DetailGridInfo } from '../interfaces/masterDetail';
 import { _error, _warn } from '../validation/logging';
+import { _resolvePivotColumnForRow } from './agColumn';
 import type { AgColumn } from './agColumn';
 import type { ColKey, IAggFuncResult } from './colDef';
 
@@ -563,16 +564,7 @@ export class RowNode<TData = any>
             return false; // column not found
         }
 
-        // For leaf (non-group) rows with pivot result columns, resolve to the underlying value column.
-        // Pivot columns don't map to real data fields on leaf rows — only the source value column does.
-        // This allows groupRowValueSetter to cascade edits using the same column reference for both
-        // group and leaf rows.
-        if (!this.group) {
-            const colDef = column.getColDef();
-            if (colDef.pivotValueColumn) {
-                column = colDef.pivotValueColumn as AgColumn;
-            }
-        }
+        column = _resolvePivotColumnForRow(column, this);
 
         const oldValue = valueSvc.getValueForDisplay({ column, node: this, from: 'data' }).value;
 

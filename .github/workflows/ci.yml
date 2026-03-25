@@ -467,10 +467,14 @@ jobs:
           git fetch origin --depth 1 tag latest-success
 
       - uses: actions/download-artifact@v4
+        if: needs.test.result == 'success' || needs.test.result == 'failure' ||
+          needs.e2e.result == 'success' || needs.e2e.result == 'failure'
         with:
           path: test-results/
 
       - name: Merge JUnit Report XMLs
+        if: needs.test.result == 'success' || needs.test.result == 'failure' ||
+          needs.e2e.result == 'success' || needs.e2e.result == 'failure'
         run: |
           YARN_REGISTRY=
           yarn global add junit-report-merger
