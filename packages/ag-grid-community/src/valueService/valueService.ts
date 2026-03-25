@@ -7,6 +7,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { EditService } from '../edit/editService';
+import { _resolvePivotColumnForRow } from '../entities/agColumn';
 import type { AgColumn } from '../entities/agColumn';
 import type {
     ColDef,
@@ -185,15 +186,7 @@ export class ValueService extends BeanStub implements NamedBean {
         const colDef = column.colDef;
         const isGroup = rowNode.group;
 
-        // For leaf (non-group) rows with pivot result columns, resolve to the underlying value column.
-        // Pivot columns don't map to real data fields on leaf rows — only the source value column does.
-        // This matches the behaviour of setDataValue which also resolves pivot columns for leaf rows.
-        if (!isGroup) {
-            const pivotValueColumn = colDef.pivotValueColumn as AgColumn | undefined;
-            if (pivotValueColumn) {
-                column = pivotValueColumn;
-            }
-        }
+        column = _resolvePivotColumnForRow(column, rowNode);
 
         // Check for edit/pending values if not requesting committed data
         const pending = this.editSvc?.getPendingEditValue(rowNode, column, from);

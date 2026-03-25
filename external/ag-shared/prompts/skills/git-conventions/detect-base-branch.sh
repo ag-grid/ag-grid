@@ -38,7 +38,7 @@ for ref in $(git branch -r --list 'origin/b[0-9]*' --sort=-version:refname \
   count=$(git rev-list --count "$mb..HEAD")
   echo "$ref $count"
 
-  if [ -n "$PREV_DIST" ] && [ "$count" -gt "$PREV_DIST" ]; then
+  if [ -n "$PREV_DIST" ] && [ "$count" -gt "$PREV_DIST" ] && [ "$PREV_DIST" -lt "$LATEST_DIST" ]; then
     PARENT="$PREV_REF"
     echo "PARENT: $PARENT (distance $PREV_DIST)"
     break

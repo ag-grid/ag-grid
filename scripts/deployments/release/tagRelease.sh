@@ -6,4 +6,4 @@ fi
 
 TAG_NAME="release-$1"
 git tag -s "$TAG_NAME" -m "Release $1"
-git push origin "$TAG_NAME"
+git push origin "$TAG_NAME" --no-verify
