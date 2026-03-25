@@ -8,14 +8,15 @@ export const IS_SSR = typeof window !== 'object' || !window?.document?.fonts?.fo
 export const FORCE_LEGACY_THEMES = false;
 
 type InjectedStyle = {
-    css: string;
+    rawCss: string;
+    injectedCss: string;
     el: HTMLStyleElement;
     priority: number;
     isParams: boolean;
 };
 
 export const _injectGlobalCSS = (
-    css: string,
+    rawCss: string,
     styleContainer: HTMLElement,
     debugId: string,
     layer: string | undefined,
@@ -27,10 +28,11 @@ export const _injectGlobalCSS = (
         return;
     }
 
+    let injectedCss = rawCss;
     if (layer) {
         // Layer names need regular ident escaping except that they may contain periods
         // https://drafts.csswg.org/css-cascade-5/#layer-names
-        css = `@layer ${CSS.escape(layer).replaceAll('\\.', '.')} { ${css} }`;
+        injectedCss = `@layer ${CSS.escape(layer).replaceAll('\\.', '.')} { ${rawCss} }`;
     }
 
     let injections = injectionState.map.get(styleContainer);
@@ -38,7 +40,7 @@ export const _injectGlobalCSS = (
         injections = [];
         injectionState.map.set(styleContainer, injections);
     }
-    if (injections.some((i) => i.css === css)) {
+    if (injections.some((i) => i.injectedCss === injectedCss)) {
         return;
     }
 
@@ -48,8 +50,8 @@ export const _injectGlobalCSS = (
     }
     el.dataset.agCss = debugId;
     el.dataset.agCssVersion = VERSION;
-    el.textContent = css;
-    const newInjection: InjectedStyle = { css, el, priority, isParams };
+    el.textContent = injectedCss;
+    const newInjection: InjectedStyle = { rawCss, injectedCss, el, priority, isParams };
 
     let insertAfter: InjectedStyle | undefined;
     for (const injection of injections) {
@@ -138,7 +140,7 @@ const removeStaleParamsCss = (styleContainer: HTMLElement, deleteAll = false) =>
 
     const injections = injectionState.map.get(styleContainer) ?? [];
     for (let i = injections.length - 1; i >= 0; i--) {
-        if (deleteAll || (injections[i].isParams && !neededCss.has(injections[i].css))) {
+        if (deleteAll || (injections[i].isParams && !neededCss.has(injections[i].rawCss))) {
             injections[i].el.remove();
             injections.splice(i, 1);
         }
