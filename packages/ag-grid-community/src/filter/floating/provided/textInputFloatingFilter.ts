@@ -46,7 +46,7 @@ export abstract class TextInputFloatingFilter<
     protected onModelUpdated(model: M): void {
         this.setLastTypeFromModel(model);
         this.setEditable(this.canWeEditAfterModelFromParentFilter(model));
-        this.inputSvc.setValue(this.filterModelFormatter.getModelAsString(model));
+        this.inputSvc.setValue(this.filterModelFormatter.getModelAsString(model), true);
     }
 
     protected override setParams(params: TParams): void {
