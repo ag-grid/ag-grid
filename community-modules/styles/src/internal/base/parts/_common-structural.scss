@@ -2093,13 +2093,12 @@
         .ag-grid-pinned-top-rows-container,
         .ag-grid-pinned-bottom-rows-container,
         .ag-grid-sticky-top-rows-container,
-        .ag-grid-sticky-bottom-rows-container,
-        .ag-body-horizontal-scroll {
+        .ag-grid-sticky-bottom-rows-container {
             flex-direction: row;
         }
 
-        .ag-row:not(.ag-full-width-row),
-        .ag-row.ag-embedded-full-width-row,
+        .ag-row:where(:not(.ag-full-width-row)),
+        .ag-row:where(.ag-embedded-full-width-row),
         .ag-header-row {
             flex-direction: row;
         }
@@ -2113,8 +2112,7 @@
         .ag-grid-pinned-top-rows-container,
         .ag-grid-pinned-bottom-rows-container,
         .ag-grid-sticky-top-rows-container,
-        .ag-grid-sticky-bottom-rows-container,
-        .ag-body-horizontal-scroll {
+        .ag-grid-sticky-bottom-rows-container {
             flex-direction: row-reverse;
         }
 
