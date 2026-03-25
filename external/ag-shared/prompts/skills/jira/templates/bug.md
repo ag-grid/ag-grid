@@ -2,7 +2,7 @@
 
 **TC1 - First test case label**
 
-1. Open and preview https://reproduction-url.
+1. Open and preview [https://reproduction-url](https://reproduction-url).
 
 2. First reproduction step.
 

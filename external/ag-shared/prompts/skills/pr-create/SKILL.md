@@ -93,16 +93,17 @@ Scan the `external/` directory for symlinked directories that resolve to separat
 
 ### STEP 3: Identify Base Branch
 
-Determine the correct base branch for the PR:
+Determine the correct base branch for the PR. Users often won't specify the base — detect it from git ancestry.
 
-1.  Check if the current branch was created from a `bX.Y.Z` release branch:
+1.  If `${ARGUMENTS}` contains `--base <branch>`, use that override and skip detection.
+2.  Otherwise, run the shared detection script:
     ```bash
-    git log --oneline --decorate --all | head -30
-    git merge-base --is-ancestor origin/latest HEAD && echo "descends from latest"
+    bash .rulesync/skills/git-conventions/detect-base-branch.sh
     ```
-2.  **Default base:** `latest` (the main branch).
-3.  **Release base:** If the branch clearly descends from a `bX.Y.Z` branch (and not `latest`), use that release branch as the base.
-4.  If ambiguous, ask the user which base branch to target.
+    This iterates all `origin/bX.Y.Z` release branches (newest version first), compares merge-base distances, and prints `BASE_BRANCH=<branch>`. If a release branch is closer than `origin/latest`, it is selected. If only one candidate exists and it is closer than `latest`, it is still selected.
+3.  **Release base:** If the nearest parent is `origin/bX.Y.Z`, use that release branch as the base (e.g., `b13.2.0`).
+4.  **Default base:** If no release branch is closer than `origin/latest`, use `latest`.
+5.  If ambiguous, ask the user which base branch to target.
 
 Store the result as `BASE_BRANCH`.
 

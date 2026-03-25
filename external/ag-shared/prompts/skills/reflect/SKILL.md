@@ -3,7 +3,6 @@ targets: ['*']
 name: reflect
 description: 'Analyse the current conversation to identify where agentic configuration (rules, skills, sub-agents, commands) caused friction, and recommend specific improvements. Use this skill when the user says "reflect", "what went wrong", "what could be better", "improve the prompts", or after a long or friction-heavy session. Also use when the user asks to review how skills or rules performed during the conversation.'
 invocable: user-only
-context: fork
 ---
 
 # Reflect — Agentic Configuration Improvement
@@ -14,8 +13,8 @@ Analyse the current conversation to find where agentic configuration caused fric
 
 Parse optional flags from the invocation:
 
-- `--focus skills|rules|agents|commands|all` — narrow analysis scope (default: `all`)
-- Free text — describe a specific pain point if the conversation doesn't make it obvious
+-   `--focus skills|rules|agents|commands|all` — narrow analysis scope (default: `all`)
+-   Free text — describe a specific pain point if the conversation doesn't make it obvious
 
 Examples: `/reflect`, `/reflect --focus skills`, `/reflect the jira skill kept loading when I was just editing code`
 
@@ -59,9 +58,17 @@ Large rules loaded that were irrelevant to the task. Skills auto-triggered when 
 
 #### Permission and Configuration Issues
 
-Tool calls denied that should have been allowed. MCP servers unavailable when needed. Hooks blocked a legitimate workflow.
+Tool calls denied that should have been allowed. MCP servers unavailable when needed. Hooks blocked a legitimate workflow. Commands that were manually approved repeatedly that could be pre-allowed.
 
 **Likely root cause**: `.claude-settings.json` gaps, MCP config issues, hook logic too strict.
+
+**Permission recommendations**: When recommending new permissions, assess the risk level:
+
+-   **Low risk** (recommend adding): Read-only commands (`gh run view`, `gh workflow list`, `ls`, `cat`), build/test commands already part of the standard workflow (`yarn nx test`, `yarn nx lint`), and commands that were approved multiple times during the conversation.
+-   **Medium risk** (recommend with caveat): Commands that modify local state but are reversible (`git checkout`, `yarn install`), or commands scoped to specific tools/patterns.
+-   **High risk** (flag but don't recommend auto-adding): Commands with broad write access (`rm`, `git push`), wildcard patterns that could match destructive operations, or commands that interact with external services beyond read access.
+
+Only recommend adding permissions that were actually used or denied during the conversation — do not speculatively suggest permissions.
 
 #### Missing Capabilities
 
@@ -94,13 +101,13 @@ Do not read all config files upfront — only the ones relevant to identified fr
 
 For each friction signal, determine:
 
-| Field | Description |
-|-------|-------------|
-| **Category** | `skill-misfire`, `rule-gap`, `rule-overload`, `agent-focus`, `context-waste`, `permission-gap`, or `missing-capability` |
-| **Severity** | `high` (blocked work or significant rework), `medium` (friction but worked around), `low` (minor annoyance) |
-| **Config file** | Exact path to the responsible file, or "N/A — new file needed" |
-| **Evidence** | Brief description of what happened in the conversation |
-| **Recommendation** | Specific change: text to add/remove/modify, glob to adjust, frontmatter to change, or new file to create |
+| Field              | Description                                                                                                             |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| **Category**       | `skill-misfire`, `rule-gap`, `rule-overload`, `agent-focus`, `context-waste`, `permission-gap`, or `missing-capability` |
+| **Severity**       | `high` (blocked work or significant rework), `medium` (friction but worked around), `low` (minor annoyance)             |
+| **Config file**    | Exact path to the responsible file, or "N/A — new file needed"                                                          |
+| **Evidence**       | Brief description of what happened in the conversation                                                                  |
+| **Recommendation** | Specific change: text to add/remove/modify, glob to adjust, frontmatter to change, or new file to create                |
 
 ---
 
@@ -132,6 +139,7 @@ Present findings using this structure:
 ## Medium Severity
 
 ### M1: {Short title}
+
 {Same structure}
 
 ---
@@ -139,16 +147,20 @@ Present findings using this structure:
 ## Low Severity
 
 ### L1: {Short title}
+
 {Same structure}
 
 ---
 
 ## Recommended Changes
 
-| # | File | Change | Severity |
-|---|------|--------|----------|
-| 1 | `.rulesync/rules/foo.md` | Add section on X | High |
-| 2 | `.rulesync/skills/bar/SKILL.md` | Narrow description trigger | Medium |
+| #   | File                            | Change                     | Severity | Risk |
+| --- | ------------------------------- | -------------------------- | -------- | ---- |
+| 1   | `.rulesync/rules/foo.md`        | Add section on X           | High     | —    |
+| 2   | `.rulesync/skills/bar/SKILL.md` | Narrow description trigger | Medium   | —    |
+| 3   | `.claude-settings.json`         | Add `Bash(gh run view:*)`  | Low      | Low  |
+
+_For permission changes, the Risk column indicates how dangerous the permission is to grant (Low/Medium/High). See Phase 1 § Permission and Configuration Issues for risk classification criteria._
 
 ## New Capabilities Needed
 
@@ -178,16 +190,16 @@ For each approved change:
 1. Read the target file
 2. Apply the modification
 3. Follow `.rulesync/` conventions:
-   - Never target `.claude/` directly — it's generated output
-   - Never modify `CLAUDE.md`, `AGENTS.md`, or `root: true` files
-   - Cross-repo reusable content → `external/ag-shared/prompts/`
-   - Product-specific content → `external/prompts/`
-   - Repo-specific content → `.rulesync/` directly
+    - Never target `.claude/` directly — it's generated output
+    - Never modify `CLAUDE.md`, `AGENTS.md`, or `root: true` files
+    - Cross-repo reusable content → `external/ag-shared/prompts/`
+    - Product-specific content → `external/prompts/`
+    - Repo-specific content → `.rulesync/` directly
 4. After all changes, regenerate and verify:
-   ```bash
-   ./external/ag-shared/scripts/setup-prompts/setup-prompts.sh
-   ./external/ag-shared/scripts/setup-prompts/verify-rulesync.sh
-   ```
+    ```bash
+    ./external/ag-shared/scripts/setup-prompts/setup-prompts.sh
+    ./external/ag-shared/scripts/setup-prompts/verify-rulesync.sh
+    ```
 
 ### Creating new skills
 
@@ -201,19 +213,19 @@ If the report identified missing capabilities and the user chose option 3:
 
 ## Anti-patterns
 
-- **Do not invent problems** — only report friction that actually occurred in the conversation or that the user described. No hypothetical issues.
-- **Do not auto-apply changes** — always present the report first and wait for explicit approval.
-- **Do not load all config files upfront** — only read files relevant to identified friction signals.
-- **Do not critique prompt writing style** — focus on functional issues (misfires, gaps, waste), not aesthetics or formatting preferences.
-- **Do not duplicate `/validate-prompts`** — that skill checks structural path hygiene. This skill checks functional effectiveness.
-- **Do not duplicate `/optimise-context`** — that command audits token budget. This skill audits conversation-level friction.
+-   **Do not invent problems** — only report friction that actually occurred in the conversation or that the user described. No hypothetical issues.
+-   **Do not auto-apply changes** — always present the report first and wait for explicit approval.
+-   **Do not load all config files upfront** — only read files relevant to identified friction signals.
+-   **Do not critique prompt writing style** — focus on functional issues (misfires, gaps, waste), not aesthetics or formatting preferences.
+-   **Do not duplicate `/validate-prompts`** — that skill checks structural path hygiene. This skill checks functional effectiveness.
+-   **Do not duplicate `/optimise-context`** — that command audits token budget. This skill audits conversation-level friction.
 
 ## Relationship to Other Skills
 
-| Skill | Boundary |
-|-------|----------|
-| `/remember` | Reflect identifies *what* to improve; Remember persists the learnings |
+| Skill               | Boundary                                                                     |
+| ------------------- | ---------------------------------------------------------------------------- |
+| `/remember`         | Reflect identifies _what_ to improve; Remember persists the learnings        |
 | `/validate-prompts` | Validates structural correctness; Reflect validates functional effectiveness |
-| `/optimise-context` | Optimises token budget; Reflect optimises guidance quality |
-| `/rulesync` | Provides the conventions Reflect follows when applying changes |
-| `/skill-creator` | Drafts new skills that Reflect identifies as missing capabilities |
+| `/optimise-context` | Optimises token budget; Reflect optimises guidance quality                   |
+| `/rulesync`         | Provides the conventions Reflect follows when applying changes               |
+| `/skill-creator`    | Drafts new skills that Reflect identifies as missing capabilities            |

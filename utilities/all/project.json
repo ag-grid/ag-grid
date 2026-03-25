@@ -17,7 +17,9 @@
     },
     "build:styles": {
       "executor": "nx:noop",
-      "dependsOn": ["^build:styles"]
+      "dependsOn": ["^build:styles"],
+      "inputs": [],
+      "outputs": []
     },
     "lint": {
       "executor": "nx:noop",
@@ -140,6 +142,7 @@
         "startElapsedBuildTime",
         "^build:types",
         "^build:package",
+        "^build:umd",
         "generate-examples",
         "generate-doc-references"
       ],

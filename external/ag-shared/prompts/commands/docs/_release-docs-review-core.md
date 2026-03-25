@@ -46,11 +46,11 @@ Perform a comprehensive documentation review for all docs pages that have been m
 
 **READ THIS FIRST - MANDATORY EXECUTION RULES:**
 
-### Rule 1: Use SlashCommand Tool for ALL Reviews
+### Rule 1: Use Skill Tool for ALL Reviews
 
 **MANDATORY:** When executing documentation reviews (Step 8), you MUST:
 
--   Use: `SlashCommand` tool with the docs review command specified in **Product** configuration
+-   Use: `Skill` tool with the docs review command specified in **Product** configuration
 -   DO NOT: Create custom review prompts for sub-agents
 -   DO NOT: Perform reviews manually
 -   DO NOT: Implement alternative review methods
@@ -112,6 +112,23 @@ export PREVIOUS_BRANCH=<previous_branch>
 export CURRENT_BRANCH=<current_branch or HEAD>
 ```
 
+### Step 1b: Pre-flight Permission Check
+
+Before spawning review sub-agents, ensure the output directories exist and file writes are permitted. Sub-agents that cannot write output files waste significant tokens reporting permission failures.
+
+```bash
+# Create output directories (substitute paths from product config)
+mkdir -p external/prompts/technical-review-plans
+mkdir -p reports/docs-review
+
+# Test write permission
+touch external/prompts/technical-review-plans/.permission-test && rm external/prompts/technical-review-plans/.permission-test
+touch reports/docs-review/.permission-test && rm reports/docs-review/.permission-test
+echo "✓ Write permissions verified"
+```
+
+If either `mkdir` or `touch` fails due to permission restrictions, resolve the permission issue before proceeding to Step 8. All review sub-agents require Write access to these directories.
+
 ### Step 2: Identify Modified Documentation Pages
 
 Find all directly modified documentation files using the **Paths** → Docs file pattern from the product configuration:
@@ -161,16 +178,12 @@ for file in $(cat modified-types.txt); do
     sort -u
 done > modified-api-names.txt
 
-# For each modified API, find docs that reference it
-> api-affected-docs.txt
-for api_name in $(cat modified-api-names.txt); do
-  grep -r "$api_name" ${DOCS_PATH}/ --include="*.mdoc" | \
-    sed "s|${DOCS_PATH}/||" | \
-    sed 's|/index\.mdoc:.*||' | \
-    sort -u >> api-affected-docs.txt
-done
-
-sort -u api-affected-docs.txt -o api-affected-docs.txt
+# Find docs that reference any modified API (single pass for performance)
+API_PATTERN=$(paste -sd'|' modified-api-names.txt)
+grep -rlE "$API_PATTERN" ${DOCS_PATH}/ --include="*.mdoc" | \
+  sed "s|${DOCS_PATH}/||" | \
+  sed 's|/index\.mdoc$||' | \
+  sort -u > api-affected-docs.txt
 echo "Found $(wc -l < api-affected-docs.txt) docs pages referencing modified APIs"
 ```
 
@@ -642,14 +655,14 @@ done
 **CRITICAL REQUIREMENTS:**
 
 1. **ONE PAGE PER SUB-AGENT - NO BATCHING**
-2. **MUST USE SlashCommand TOOL - NO CUSTOM IMPLEMENTATIONS**
+2. **MUST USE Skill TOOL - NO CUSTOM IMPLEMENTATIONS**
 
 #### Execution Pattern
 
 For each documentation page in the **filtered task list**, spawn a dedicated sub-agent that:
 
 1. **Reviews exactly ONE page** (no batching allowed)
-2. **Uses the SlashCommand tool** to invoke the docs review command from **Product** configuration
+2. **Uses the Skill tool** to invoke the docs review command from **Product** configuration
 3. **Validates the review outputs** (files specified in **Verification Paths**)
 
 #### Sub-Agent Prompt Template
@@ -661,11 +674,11 @@ You are reviewing the [PAGE_NAME] documentation page for [PRODUCT_NAME] release 
 
 STRICT REQUIREMENTS:
 
-1. MANDATORY: Use SlashCommand tool to invoke the docs review command
-   - Execute: SlashCommand with command "/docs-review [DOCS_PATH]/[PAGE_NAME]/index.mdoc"
+1. MANDATORY: Use Skill tool to invoke the docs review command
+   - Execute: Skill with command "/docs-review [DOCS_PATH]/[PAGE_NAME]/index.mdoc"
    - DO NOT create custom review implementations
    - DO NOT perform manual reviews
-   - DO NOT skip the SlashCommand tool
+   - DO NOT skip the Skill tool
 
 2. Single Page Only
    - Review ONLY: [PAGE_NAME]
@@ -679,7 +692,7 @@ STRICT REQUIREMENTS:
 4. Return Summary
    - Report review status (PASSED / ISSUES FOUND / FAILED)
    - List critical issues if any found
-   - Confirm SlashCommand was used
+   - Confirm Skill was used
 
 Execute the review now.
 ```
@@ -708,14 +721,14 @@ PAGES=$(grep "^- \[ \]" ${FILTERED_LIST} | \
 
 After all agents complete, verify:
 
-1. Each agent used SlashCommand tool (check agent outputs)
+1. Each agent used Skill tool (check agent outputs)
 2. Each page has the review files specified in **Verification Paths**
 3. No agent reviewed multiple pages (batching violation)
 
 **If validation fails:**
 
 -   Identify which pages were not properly reviewed
--   Identify which agents didn't use SlashCommand
+-   Identify which agents didn't use Skill
 -   Re-launch failed agents with corrected strict prompts
 
 #### Handling Large Page Counts
@@ -907,7 +920,7 @@ Format:
 
 -   **Always run the filtering step (Step 6)** before creating task lists - it typically saves 20-40% of review effort
 -   **ONE PAGE PER SUB-AGENT** - Never batch multiple pages into a single agent
--   **USE SlashCommand TOOL** - Always invoke the docs review command via SlashCommand, never create custom review implementations
+-   **USE Skill TOOL** - Always invoke the docs review command via Skill, never create custom review implementations
 -   **Validate outputs** - After reviews, confirm plan and report files exist at standard locations
 
 ### Performance Optimisation
@@ -919,7 +932,7 @@ Format:
 
 ### Quality Assurance
 
--   **Verify SlashCommand usage** - Check agent outputs confirm they used SlashCommand tool
+-   **Verify Skill usage** - Check agent outputs confirm they used Skill tool
 -   **Validate standard outputs** - Ensure review plan and report files are in correct locations
 -   **Check for batching violations** - Confirm no agent reviewed multiple pages
 -   **Example validation** - If Step 3 found example changes, verify examples run correctly before reviewing docs
@@ -927,7 +940,7 @@ Format:
 ### Progress Tracking
 
 -   **Provide status updates** - Report completion progress for long-running reviews (e.g., "35/77 pages reviewed")
--   **Identify failures early** - If agents don't use SlashCommand or output goes to wrong location, stop and fix
+-   **Identify failures early** - If agents don't use Skill or output goes to wrong location, stop and fix
 -   **Wave-based execution** - For 50+ pages, review in waves of 15-20 agents each
 
 ## Benefits of Filtering

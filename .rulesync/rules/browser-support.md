@@ -1,0 +1,1 @@
+../../external/ag-shared/prompts/guides/browser-support.md
