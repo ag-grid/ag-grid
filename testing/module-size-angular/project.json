@@ -4,6 +4,19 @@
   "sourceRoot": "testing/module-size-angular",
   "projectType": "application",
   "targets": {
+    "build": {
+      "executor": "nx:run-script",
+      "dependsOn": [
+        "ag-grid-community:build:types",
+        "ag-grid-community:build:package",
+        "ag-grid-enterprise:build:types",
+        "ag-grid-enterprise:build:package",
+        "ag-grid-angular:build"
+      ],
+      "options": {
+        "script": "build"
+      }
+    },
     "test:e2e": {
       "executor": "nx:run-script",
       "dependsOn": [

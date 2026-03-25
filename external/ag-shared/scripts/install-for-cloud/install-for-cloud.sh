@@ -225,7 +225,7 @@ install_dependencies() {
         fi
     else
         log_info "Installing/updating dependencies"
-        if ! yarn install --ci; then
+        if ! yarn install --ci --prefer-offline; then
             log_error "Failed to install dependencies"
             return 2
         fi

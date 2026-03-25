@@ -92,7 +92,7 @@ main() {
         exec ./external/ag-shared/scripts/install-for-cloud/install-for-cloud.sh
     else
         log_info "Running yarn install"
-        yarn install
+        yarn install --prefer-offline
     fi
 }
 

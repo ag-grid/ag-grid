@@ -3,7 +3,8 @@ targets: ['*']
 name: jira
 description: >-
   Whenever the user asks to create a JIRA ticket, file a bug, log an issue,
-  write up a ticket, estimate a ticket, size effort, analyse a JIRA issue, do
+  write up a ticket, split out a ticket, split off a feedback point, extract
+  from a ticket, estimate a ticket, size effort, analyse a JIRA issue, do
   product analysis, or link tickets — ALWAYS invoke this skill first. Also
   invoke when **planning** ticket creation — e.g., drafting a plan that includes
   a "create JIRA ticket" step, or when in plan mode discussing what ticket to
@@ -55,7 +56,7 @@ Based on user intent, read the corresponding workflow file (in the `workflows/` 
 | Intent | Keywords | Workflow |
 |--------|----------|----------|
 | **Plan** | In plan mode, drafting a plan that includes JIRA ticket creation | `workflows/plan.md` |
-| **Create** | "create a JIRA", "file a bug", "write up a ticket", "log this issue" | `workflows/create.md` |
+| **Create** | "create a JIRA", "file a bug", "write up a ticket", "log this issue", "split out", "split off", "extract from ticket" | `workflows/create.md` |
 | **Estimate** | "estimate", "size", "analyse complexity", "how long", "effort" | `workflows/estimate.md` |
 | **Analyse** | "analyse this issue", "product analysis", "UX analysis", "propose solutions" | `workflows/analyze.md` |
 
@@ -99,7 +100,8 @@ Each ticket has exactly **one** track value. Never set multiple track values on 
 - **End numbered items with periods.**
 - Bold: `**text**`.
 - Code: backticks.
-- URLs: Paste raw URLs directly (JIRA auto-links them); avoid `[text](url)` markdown links.
+- **contentFormat**: Use `"markdown"` for all JIRA API calls. This accepts standard markdown syntax and converts it to JIRA's native ADF format.
+- **URLs must use explicit markdown link syntax** — bare URLs will NOT become clickable links in JIRA. Always write `[https://example.com](https://example.com)` instead of just `https://example.com`. The URL should be visible as both the link text and the href (never hide it behind display text like `[Plunker](url)`).
 - Empty sections: Just `N/A`.
 - No comments — all info in description.
 - When creating tickets from analysis/research documents, distil to decisions and recommendations only. Do not reproduce full analysis in the description — link to the analysis document in the "Design Documents" section instead.
@@ -111,6 +113,21 @@ Each ticket has exactly **one** track value. Never set multiple track values on 
 - **Bug**: `templates/bug.md` (TC-based format)
 
 Follow the exact structure from the template. Do not use free-form markdown headers (`##`), tables, or code blocks for top-level structure.
+
+### Reading JIRA Comments
+
+To read comments on a ticket (e.g., for split-out workflows where you need to find a specific feedback point):
+
+```
+mcp__atlassian__getJiraIssue
+  cloudId: "1565837d-d6d1-4228-bcb2-4cb74df700f2"
+  issueIdOrKey: "AG-XXXXX"
+  fields: ["comment"]
+  expand: "renderedFields"
+  responseContentFormat: "markdown"
+```
+
+**Warning:** The output is large (comments contain full ADF bodies). Pipe through Python/jq to extract text content. The `fetchAtlassian` ARI tool does **not** return comments — always use `getJiraIssue` with `fields: ["comment"]`.
 
 ### Troubleshooting
 

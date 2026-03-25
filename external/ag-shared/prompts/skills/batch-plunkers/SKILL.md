@@ -126,6 +126,56 @@ Present results as a markdown table:
 
 If any failed, suggest re-running with just the failed assignments by providing the exact `/batch-plunkers` invocation or spec table.
 
+**JIRA note:** If the user asks to post results to JIRA (now or later), always use `contentFormat: "adf"` — JIRA's markdown renderer does not reliably produce clickable links. See Step 4 for the required ADF structure.
+
+## STEP 3.5: Clean Up Background Tasks
+
+After collecting all results, mark every background task as completed using `TaskUpdate` (set `status: "completed"`) for each task ID. This prevents stale pending tasks from polluting the task list in subsequent conversations.
+
+## STEP 4 (Optional): Post Results to JIRA
+
+If the input was a JIRA ticket (Mode A), offer to post the results as a comment on the source ticket.
+
+Use `contentFormat: "adf"` with `mcp__atlassian__addCommentToJiraIssue`. JIRA's markdown renderer does not reliably auto-link URLs, so you must use ADF with explicit link marks to guarantee clickable links. Never use markdown format or tables for this comment — ADF bullet lists are the only format that reliably renders clickable URLs in JIRA.
+
+Format as an ADF `bulletList` where each `listItem` contains a `paragraph` with: title text — ACs — then a clickable URL using an ADF `link` mark.
+
+**Full ADF structure:**
+
+```json
+{
+  "version": 1,
+  "type": "doc",
+  "content": [
+    {
+      "type": "paragraph",
+      "content": [
+        {"type": "text", "text": "QA Plunkers for ... (staging CDN):", "marks": [{"type": "strong"}]}
+      ]
+    },
+    {
+      "type": "bulletList",
+      "content": [
+        {
+          "type": "listItem",
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {"type": "text", "text": "#1 — AC 8.1.1: Title here — "},
+                {"type": "text", "text": "https://plnkr.co/edit/abc123", "marks": [{"type": "link", "attrs": {"href": "https://plnkr.co/edit/abc123"}}]}
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+Each URL **must** be wrapped in an ADF link mark — without it, URLs appear as plain text in JIRA and are not clickable.
+
 ## Notes
 
 - **Sub-agent autonomy**: Each sub-agent handles the full lifecycle — file creation, CSS sourcing, and API upload via `plnkr.sh`. The main thread only orchestrates and collects results.

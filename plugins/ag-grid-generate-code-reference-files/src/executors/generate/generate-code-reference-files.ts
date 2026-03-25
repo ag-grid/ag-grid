@@ -62,6 +62,32 @@ function silentFindNode(text: string, srcFile: ts.SourceFile, auxSrcFiles: AuxSr
     return typeRef;
 }
 
+/** Index of declaration names to nodes, keyed by `${kindToMatch}::${name}` */
+type DeclarationIndex = Map<string, ts.Node>;
+
+function buildDeclarationIndex(srcFiles: ts.SourceFile[]): DeclarationIndex {
+    const index: DeclarationIndex = new Map();
+    const indexKinds = new Set(['InterfaceDeclaration', 'TypeAliasDeclaration', 'EnumDeclaration', 'ClassDeclaration']);
+
+    for (const srcFile of srcFiles) {
+        const visit = (node: ts.Node) => {
+            const kind = ts.SyntaxKind[node.kind];
+            if (indexKinds.has(kind)) {
+                const name = (node as any).name?.escapedText;
+                if (name) {
+                    const key = `${kind}::${name}`;
+                    if (!index.has(key)) {
+                        index.set(key, node);
+                    }
+                }
+            }
+            ts.forEachChild(node, visit);
+        };
+        visit(srcFile);
+    }
+    return index;
+}
+
 function extractNestedTypes<T extends ts.Node>(
     node: T,
     srcFile: ts.SourceFile,
@@ -77,7 +103,7 @@ function extractNestedTypes<T extends ts.Node>(
     if (ts.isTypeReferenceNode(node)) {
         const typeRef = silentFindNode(node.typeName.getText(), srcFile, auxSrcFiles);
         if (typeRef === undefined) {
-            console.error('failed to find', node.typeName.getText());
+            // console.error('failed to find', node.typeName.getText());
             return;
         }
         visited.add(node);
@@ -226,9 +252,17 @@ function extractTypesFromNode(
     return nodeMembers;
 }
 
+const parseFileCache = new Map<string, ts.SourceFile>();
+
 function parseFile(sourceFile: string): ts.SourceFile {
+    const cached = parseFileCache.get(sourceFile);
+    if (cached) {
+        return cached;
+    }
     const src = fs.readFileSync(sourceFile, 'utf8');
-    return ts.createSourceFile('tempFile.ts', src, ts.ScriptTarget.Latest, true);
+    const result = ts.createSourceFile(sourceFile, src, ts.ScriptTarget.Latest, true);
+    parseFileCache.set(sourceFile, result);
+    return result;
 }
 
 export function getInterfaces(globs: string[]) {
@@ -610,10 +644,18 @@ function parseImportedDefinitions(
         }
     });
 
-    return Array.from(definitions.values());
+    const files = Array.from(definitions.values());
+    return files as AuxSrcFiles;
 }
 
-type AuxSrcFiles = ts.SourceFile[];
+type AuxSrcFiles = ts.SourceFile[] & { _declarationIndex?: DeclarationIndex };
+
+function getOrBuildIndex(auxSrcFiles: AuxSrcFiles): DeclarationIndex {
+    if (!auxSrcFiles._declarationIndex) {
+        auxSrcFiles._declarationIndex = buildDeclarationIndex(auxSrcFiles);
+    }
+    return auxSrcFiles._declarationIndex;
+}
 
 function findInAllTrees(
     typeName: string,
@@ -621,15 +663,23 @@ function findInAllTrees(
     auxSrcFiles: AuxSrcFiles,
     type = 'InterfaceDeclaration'
 ): ts.TypeNode | undefined {
+    // Try primary file first
     try {
         return findNode(typeName, sourceFile, type);
-    } catch (error) {
-        if (auxSrcFiles.length > 0) {
-            return findInAllTrees(typeName, auxSrcFiles[0], auxSrcFiles.slice(1), type);
-        } else {
-            throw error;
+    } catch {
+        // not found in primary
+    }
+
+    // Use declaration index for O(1) lookup instead of linear scan through all files
+    if (auxSrcFiles.length > 0) {
+        const index = getOrBuildIndex(auxSrcFiles);
+        const node = index.get(`${type}::${typeName}`);
+        if (node) {
+            return node as ts.TypeNode;
         }
     }
+
+    throw `Unable to locate ${type} ${typeName} in AST parsed.`;
 }
 
 export function getGridOptions(gridOpsFile: string) {

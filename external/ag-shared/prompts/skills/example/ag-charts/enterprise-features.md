@@ -60,3 +60,16 @@ The community bundle will **silently skip** enterprise features — no errors, j
 2. Does the example use any enterprise axis (ordinal-time, angle-*, radius-*)? → Enterprise
 3. Does the example use any enterprise plugin (zoom, navigator, annotations, etc.)? → Enterprise
 4. Otherwise → Community
+
+## Plugin Examples vs Financial Chart Preset
+
+**Enterprise plugins** (`ranges`, `zoom`, `navigator`, `annotations`, `toolbar`, `scrollbar`, etc.) work on **ordinary cartesian charts** created with `AgCharts.create()`. They are _not_ tied to the financial chart preset.
+
+Use `AgCharts.createFinancialChart()` **only** when the example specifically demonstrates the **financial chart preset** itself — i.e. candlestick/OHLC price-volume layout, the `rangeButtons` convenience flag, or the built-in financial toolbar.
+
+| Scenario | Creation method |
+|----------|----------------|
+| Demonstrating `ranges`, `zoom`, `navigator` on a line/bar/area chart | `AgCharts.create()` |
+| Demonstrating the financial price-volume preset, OHLC/candlestick series | `AgCharts.createFinancialChart()` |
+
+> **Common mistake:** The `ranges` plugin is listed under Plugins, not Presets. A "range buttons" feature on a line chart uses `AgCharts.create()` with `ranges: { ... }` in the options — not `createFinancialChart()`.
