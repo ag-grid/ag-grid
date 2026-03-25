@@ -17,7 +17,6 @@ import type {
 } from '../interfaces/iRowNode';
 import type { DetailGridInfo } from '../interfaces/masterDetail';
 import { _error, _warn } from '../validation/logging';
-import { _resolvePivotColumnForRow } from './agColumn';
 import type { AgColumn } from './agColumn';
 import type { ColKey, IAggFuncResult } from './colDef';
 
@@ -564,7 +563,11 @@ export class RowNode<TData = any>
             return false; // column not found
         }
 
-        column = _resolvePivotColumnForRow(column, this);
+        // Resolve pivot result columns to their underlying value column for non-group, non-pinned rows.
+        const pivotValueColumn = column.colDef.pivotValueColumn;
+        if (!this.group && !this.rowPinned && pivotValueColumn) {
+            column = pivotValueColumn as AgColumn;
+        }
 
         const oldValue = valueSvc.getValueForDisplay({ column, node: this, from: 'data' }).value;
 

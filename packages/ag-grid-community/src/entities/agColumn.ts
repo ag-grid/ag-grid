@@ -882,19 +882,3 @@ export function _getDisplaySortForColumn(
         direction,
     };
 }
-
-/**
- * For non-group, non-pinned rows with pivot result columns, returns the underlying value column.
- * Leaf row data is stored under the source field (e.g. 'sales'), not the composite pivot column
- * ID (e.g. 'pivot_year_2020_sales'), so value get/set must redirect to the source column.
- * Pinned rows are excluded because their data is intentionally keyed by pivot column ID.
- */
-export function _resolvePivotColumnForRow(column: AgColumn, rowNode: IRowNode): AgColumn {
-    if (!rowNode.group && !rowNode.rowPinned) {
-        const pivotValueColumn = column.colDef.pivotValueColumn as AgColumn | undefined;
-        if (pivotValueColumn) {
-            return pivotValueColumn;
-        }
-    }
-    return column;
-}

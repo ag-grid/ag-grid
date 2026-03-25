@@ -7,7 +7,6 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { EditService } from '../edit/editService';
-import { _resolvePivotColumnForRow } from '../entities/agColumn';
 import type { AgColumn } from '../entities/agColumn';
 import type {
     ColDef,
@@ -167,6 +166,8 @@ export class ValueService extends BeanStub implements NamedBean {
         };
     }
 
+    // PERFORMANCE CRITICAL — called for every cell during filtering, rendering, and export.
+    // Any change here can have a large impact. Run the getValue benchmark to verify.
     public getValue(
         column: AgColumn,
         rowNode: IRowNode | null | undefined,
@@ -186,7 +187,13 @@ export class ValueService extends BeanStub implements NamedBean {
         const colDef = column.colDef;
         const isGroup = rowNode.group;
 
-        column = _resolvePivotColumnForRow(column, rowNode);
+        // Resolve pivot result columns to their underlying value column for non-group, non-pinned rows.
+        if (!isGroup && !rowNode.rowPinned) {
+            const pivotValueColumn = colDef.pivotValueColumn;
+            if (pivotValueColumn) {
+                column = pivotValueColumn as AgColumn;
+            }
+        }
 
         // Check for edit/pending values if not requesting committed data
         const pending = this.editSvc?.getPendingEditValue(rowNode, column, from);
