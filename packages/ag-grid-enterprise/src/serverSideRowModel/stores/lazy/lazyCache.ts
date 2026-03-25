@@ -902,6 +902,17 @@ export class LazyCache extends BeanStub {
         if (wasRefreshing && finishedRefreshing) {
             this.fireRefreshFinishedEvent();
         }
+
+        // Apply client-side sort after purge reload (wasRefreshing is false for new caches)
+        if (!wasRefreshing && this.isStoreFullyLoaded()) {
+            const isClientSideSortingEnabled = this.gos.get('serverSideEnableClientSideSort');
+            if (isClientSideSortingEnabled) {
+                const didSort = this.clientSideSortRows();
+                if (didSort) {
+                    this.fireStoreUpdatedEvent();
+                }
+            }
+        }
     }
 
     public fireRefreshFinishedEvent() {
@@ -1049,12 +1060,12 @@ export class LazyCache extends BeanStub {
     /**
      * Client side sorting
      */
-    public clientSideSortRows() {
+    public clientSideSortRows(): boolean {
         const sortOptions = this.sortSvc?.getSortOptions() ?? [];
         const isAnySort = sortOptions.some((opt) => opt.sort != null);
         const rowNodeSorter = this.rowNodeSorter;
         if (!isAnySort || !rowNodeSorter) {
-            return;
+            return false;
         }
 
         // the node map does not need entirely recreated, only the indexes need updated.
@@ -1068,6 +1079,7 @@ export class LazyCache extends BeanStub {
             const node = sortedNodes[i];
             nodesMap.set({ id: node.id!, node, index: i });
         }
+        return true;
     }
 
     /**
