@@ -107,7 +107,7 @@ describe('Date Filter - Equals', () => {
             columnDefs: [{ field: 'date', filter: 'agDateColumnFilter', cellDataType: 'dateTime' }],
             rowData: [
                 { date: new Date(2024, 0, 15, 10, 30, 0) }, // Jan 15 10:30:00 — matches
-                { date: new Date(2024, 0, 15, 14, 0, 0) },  // Jan 15 14:00:00 — same date, different time
+                { date: new Date(2024, 0, 15, 14, 0, 0) }, // Jan 15 14:00:00 — same date, different time
                 { date: new Date(2024, 0, 15, 10, 30, 0) }, // Jan 15 10:30:00 — matches
                 { date: new Date(2024, 2, 20, 10, 30, 0) }, // Mar 20 10:30:00 — different date
             ],
