@@ -8,6 +8,8 @@ import { VERSION } from '../version';
 import { AutoColService } from './autoColService';
 import { ChangedPathFactory } from './changedPathImpl/changedPathFactory';
 import { ClientSideExpansionService } from './clientSideExpansionService';
+import { DeepFilterStage } from './deepFilterStage';
+import { DeepSortStage } from './deepSortStage';
 import { FlattenStage } from './flattenStage';
 import { GroupEditService } from './groupEditService';
 import { GroupStage } from './groupStage';
@@ -75,7 +77,7 @@ export const ClientSideRowModelHierarchyModule: _ModuleWithoutApi = {
     moduleName: 'ClientSideRowModelHierarchy',
     version: VERSION,
     rowModels: ['clientSide'],
-    beans: [GroupStage, FlattenStage, ClientSideExpansionService],
+    beans: [GroupStage, DeepFilterStage, DeepSortStage, FlattenStage, ClientSideExpansionService],
     dependsOn: [EnterpriseCoreModule, ChangedPathModule],
 };
 

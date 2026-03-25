@@ -439,9 +439,11 @@ export type { IRowChildrenService } from './interfaces/iRowChildrenService';
 export type {
     IRowNodeAggregationStage as _IRowNodeAggregationStage,
     IRowNodeFilterAggregateStage as _IRowNodeFilterAggregateStage,
+    IRowNodeFilterStage as _IRowNodeFilterStage,
     IRowNodeFlattenStage as _IRowNodeFlattenStage,
     IRowNodeGroupStage as _IRowNodeGroupStage,
     IRowNodePivotStage as _IRowNodePivotStage,
+    IRowNodeSortStage as _IRowNodeSortStage,
     NestedDataGetter,
 } from './interfaces/iRowNodeStage';
 export type { ISelectionService, ISetNodesSelectedParams } from './interfaces/iSelectionService';
@@ -498,6 +500,10 @@ export { _getShouldDisplayTooltip, _isShowTooltipWhenTruncated } from './tooltip
 export type { ITooltipCtrl, ITooltipCtrlParams, TooltipFeature } from './tooltip/tooltipFeature';
 export type { ChangedCellsPath, ChangedPath, ChangedRowsPath, IChangedPathFactory } from './utils/changedPath';
 export { _forEachChangedGroupDepthFirst } from './utils/changedPath';
+
+export { updateRowNodeAfterSort as _updateRowNodeAfterSort } from './clientSideRowModel/sortStage';
+export { doDeltaSort as _doDeltaSort } from './clientSideRowModel/deltaSort';
+
 export { _createElement } from './utils/element';
 export type { ElementParams } from './utils/element';
 export { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from './utils/gridEvent';

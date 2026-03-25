@@ -17,6 +17,7 @@ import {
     onGroupExpandedOrCollapsed,
     refreshClientSideRowModel,
 } from './clientSideRowModelApi';
+import { FilterStage } from './filterStage';
 import { SortStage } from './sortStage';
 
 /**
@@ -26,7 +27,7 @@ export const ClientSideRowModelModule: _ModuleWithoutApi = {
     moduleName: 'ClientSideRowModel',
     version: VERSION,
     rowModels: ['clientSide'],
-    beans: [ClientSideRowModel, SortStage],
+    beans: [ClientSideRowModel, FilterStage, SortStage],
     dependsOn: [SortModule],
 };
 
