@@ -14,11 +14,13 @@ In the following example, classes are applied to the grid container that change 
 
 By default, row height is determined by the content height plus padding. Content height is `max(iconSize, cellFontSize)`. Padding is a multiple of `spacing`. This means that your rows can change size if you change any of the icon size, font size, or spacing.
 
-The grid provides two ways of customising row height:
+The Theming API provides two ways of customising the height of grid data rows:
 
-`rowVerticalPaddingScale` and `headerVerticalPaddingScale` are plain numbers without units. The padding is multiplied by this number, so `0.75` would mean 3/4 of the usual padding. Using these scale parameters preserves the behaviour that row size adjusts when font size changes, which is useful if font size is not known in advance.
+1. **Padding scale** - `rowVerticalPaddingScale` and `headerVerticalPaddingScale` are plain numbers without units. The padding is multiplied by this number, so `0.75` would mean 3/4 of the usual padding. Using these scale parameters preserves the behaviour that row size adjusts when font size changes, which is useful if font size is not known in advance.
 
-`rowHeight` and `headerHeight` are CSS length values - numbers with units. They set the height of the row or header to a fixed value, regardless of the font size or icon size.
+1. **Fixed height** - `rowHeight` and `headerHeight` are CSS length values - numbers with units. They set the height of the row or header to a fixed value, regardless of the font size or icon size.
+
+1. You can also [customise row height in JavaScript](./row-height/).
 
 `listItemHeight` sets the height of rows in lists such as the [rich select editor](./provided-cell-editors-rich-select/) and [set filter](./filter-set/).
 
