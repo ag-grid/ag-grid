@@ -67,21 +67,28 @@ const filterFlat = (rows: RowNode[], len: number, prev: RowNode[], fm: FilterMan
         const row = rows[i];
         if (fm.doesRowPassFilter(row)) {
             if (n >= prevLen || prev[n] !== row) {
-                return filterFlatBuild(rows, i, n, prev, fm);
+                return filterFlatBuild(rows, len, i, n, prev, fm);
             }
             ++n;
         } else if (n < prevLen) {
-            return filterFlatBuild(rows, i, n, prev, fm);
+            return filterFlatBuild(rows, len, i, n, prev, fm);
         }
     }
     return n === prevLen ? prev : rows;
 };
 
 /** Cold path: result diverged at rows[i] with n rows matched so far. Build new array. */
-const filterFlatBuild = (rows: RowNode[], i: number, n: number, prev: RowNode[], fm: FilterManager): RowNode[] => {
+const filterFlatBuild = (
+    rows: RowNode[],
+    len: number,
+    i: number,
+    n: number,
+    prev: RowNode[],
+    fm: FilterManager
+): RowNode[] => {
     const result = n > 0 ? prev.slice(0, n) : [];
-    for (const len = rows.length; i < len; ++i) {
-        const row = rows[i];
+    while (i < len) {
+        const row = rows[i++];
         if (fm.doesRowPassFilter(row)) {
             result.push(row);
         }

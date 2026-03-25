@@ -63,9 +63,10 @@ const filterDeepBuild = (
     fm: FilterManager
 ): RowNode[] => {
     const result = n > 0 ? prev.slice(0, n) : [];
-    for (; i < len; ++i) {
-        if (passesFilter(rows[i], fm)) {
-            result.push(rows[i]);
+    while (i < len) {
+        const row = rows[i++];
+        if (passesFilter(row, fm)) {
+            result.push(row);
         }
     }
     return result;
@@ -125,7 +126,7 @@ export class DeepFilterStage extends BeanStub implements NamedBean, _IRowNodeFil
             if (children) {
                 for (let i = 0, len = children.length; i < len; ++i) {
                     const child = children[i];
-                    const foundInParent = alreadyFoundInParent || fm.doesRowPassFilter(child);
+                    const foundInParent = alreadyFoundInParent || !!(child.data && fm.doesRowPassFilter(child));
                     if (child.childrenAfterGroup) {
                         depthFirst(child, foundInParent);
                     } else {
