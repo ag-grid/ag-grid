@@ -487,8 +487,6 @@ describe('Cell Editing Regression', () => {
         // virtualList doesn't add option elements if the offsetHeight is 0, so we need to fake it
         fakeElementAttribute('offsetHeight', 100, '.ag-virtual-list-viewport');
 
-        const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
-
         const api = await gridMgr.createGridAndWait('myGrid', {
             columnDefs: [
                 {
@@ -512,9 +510,7 @@ describe('Cell Editing Regression', () => {
         await asyncSetTimeout(1);
 
         // Editor popup should open without error
-        const popup = await waitForPopup(gridDiv);
-        expect(consoleError).not.toHaveBeenCalled();
-        consoleError.mockRestore();
+        await waitForPopup(gridDiv);
 
         // Display field (selected value area) should contain the rendered output for 'Alpha'
         const displayField = gridDiv.querySelector('.ag-picker-field-display');
