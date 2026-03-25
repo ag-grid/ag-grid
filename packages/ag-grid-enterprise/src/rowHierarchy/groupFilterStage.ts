@@ -72,8 +72,8 @@ const filterDeepBuild = (
     return result;
 };
 
-export class DeepFilterStage extends BeanStub implements NamedBean, _IRowNodeFilterStage {
-    beanName = 'deepFilterStage' as const;
+export class GroupFilterStage extends BeanStub implements NamedBean, _IRowNodeFilterStage {
+    beanName = 'groupFilterStage' as const;
 
     public readonly step: ClientSideRowModelStage = 'filter';
     public readonly refreshProps: (keyof GridOptions<any>)[] = ['excludeChildrenWhenTreeDataFiltering'];

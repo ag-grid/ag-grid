@@ -8,10 +8,10 @@ import { VERSION } from '../version';
 import { AutoColService } from './autoColService';
 import { ChangedPathFactory } from './changedPathImpl/changedPathFactory';
 import { ClientSideExpansionService } from './clientSideExpansionService';
-import { DeepFilterStage } from './deepFilterStage';
-import { DeepSortStage } from './deepSortStage';
 import { FlattenStage } from './flattenStage';
 import { GroupEditService } from './groupEditService';
+import { GroupFilterStage } from './groupFilterStage';
+import { GroupSortStage } from './groupSortStage';
 import { GroupStage } from './groupStage';
 import { GroupCellRenderer } from './rendering/groupCellRenderer';
 import { GroupCellRendererCtrl } from './rendering/groupCellRendererCtrl';
@@ -73,12 +73,25 @@ export const ChangedPathModule: _ModuleWithoutApi = {
 /**
  * @internal
  */
-export const ClientSideRowModelHierarchyModule: _ModuleWithoutApi = {
-    moduleName: 'ClientSideRowModelHierarchy',
+export const CSRMHierarchyModule: _ModuleWithoutApi = {
+    moduleName: 'CSRMHierarchy',
     version: VERSION,
     rowModels: ['clientSide'],
-    beans: [GroupStage, DeepFilterStage, DeepSortStage, FlattenStage, ClientSideExpansionService],
-    dependsOn: [EnterpriseCoreModule, ChangedPathModule],
+    beans: [FlattenStage, ClientSideExpansionService],
+    dependsOn: [ChangedPathModule],
+};
+
+/**
+ * Hierarchical CSRM stages: grouping, deep filter/sort.
+ * Needed by RowGrouping, TreeData, and Pivot — not by MasterDetail.
+ * @internal
+ */
+export const CSRMGroupStagesModule: _ModuleWithoutApi = {
+    moduleName: 'CSRMGroupStages',
+    version: VERSION,
+    rowModels: ['clientSide'],
+    beans: [GroupStage, GroupFilterStage, GroupSortStage],
+    dependsOn: [CSRMHierarchyModule],
 };
 
 /**
@@ -97,5 +110,5 @@ export const GroupEditModule: _ModuleWithoutApi = {
     moduleName: 'GroupEdit',
     version: VERSION,
     beans: [GroupEditService],
-    dependsOn: [EnterpriseCoreModule, ClientSideRowModelHierarchyModule],
+    dependsOn: [CSRMHierarchyModule],
 };

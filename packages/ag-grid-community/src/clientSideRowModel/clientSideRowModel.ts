@@ -158,11 +158,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const orderedStages = [
             beans.groupStage,
             beans.filterStage,
-            beans.deepFilterStage,
+            beans.groupFilterStage,
             beans.pivotStage,
             beans.aggStage,
             beans.sortStage,
-            beans.deepSortStage,
+            beans.groupSortStage,
             beans.filterAggStage,
             beans.flattenStage,
         ].filter((stage) => !!stage) as IRowNodeStage[];
@@ -967,7 +967,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     private doSort(changedPath: ChangedPath | undefined, changedRowNodes: ChangedRowNodes | undefined): void {
         const beans = this.beans;
-        const stage = (this.hierarchical && beans.deepSortStage) || beans.sortStage!;
+        const stage = (this.hierarchical && beans.groupSortStage) || beans.sortStage!;
         stage.execute(changedPath, changedRowNodes);
     }
 
@@ -994,7 +994,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     private doFilter(changedPath: ChangedPath | undefined): void {
         const beans = this.beans;
-        ((this.hierarchical && beans.deepFilterStage) || beans.filterStage!).execute(changedPath);
+        ((this.hierarchical && beans.groupFilterStage) || beans.filterStage!).execute(changedPath);
         const rootNode = this.rootNode!;
         const sibling = rootNode.sibling;
         if (sibling) {

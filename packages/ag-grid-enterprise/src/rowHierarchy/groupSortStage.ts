@@ -16,8 +16,8 @@ import {
     _updateRowNodeAfterSort,
 } from 'ag-grid-community';
 
-export class DeepSortStage extends BeanStub implements NamedBean, _IRowNodeSortStage {
-    beanName = 'deepSortStage' as const;
+export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSortStage {
+    beanName = 'groupSortStage' as const;
 
     public readonly step: ClientSideRowModelStage = 'sort';
     public readonly refreshProps: (keyof GridOptions<any>)[] = ['postSortRows', 'groupDisplayType', 'accentedSort'];

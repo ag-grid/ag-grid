@@ -349,8 +349,8 @@ interface CoreBeanCollection
     advancedFilter: IAdvancedFilterService;
     filterStage?: FilterStage;
     sortStage?: SortStage;
-    deepFilterStage?: IRowNodeFilterStage;
-    deepSortStage?: IRowNodeSortStage;
+    groupFilterStage?: IRowNodeFilterStage;
+    groupSortStage?: IRowNodeSortStage;
     flattenStage?: IRowNodeFlattenStage;
     groupStage?: IRowNodeGroupStage;
     aggStage?: IRowNodeAggregationStage;

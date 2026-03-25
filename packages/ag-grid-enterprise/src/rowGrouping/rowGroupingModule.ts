@@ -6,7 +6,8 @@ import { AggregationModule, SharedAggregationModule } from '../aggregation/aggre
 import { SharedColumnStateUpdateStrategyModule } from '../columnToolPanel/updates/columnStateUpdateStrategyModule';
 import { GroupHierarchyModule } from '../groupHierarchy/groupHierarchyModule';
 import {
-    ClientSideRowModelHierarchyModule,
+    CSRMGroupStagesModule,
+    CSRMHierarchyModule,
     GroupColumnModule,
     GroupEditModule,
     StickyRowModule,
@@ -57,7 +58,13 @@ export const RowGroupingModule: _ModuleWithoutApi = {
     version: VERSION,
     dynamicBeans: { groupStrategy: GroupStrategy },
     rowModels: ['clientSide'],
-    dependsOn: [SharedRowGroupingModule, AggregationModule, ClientSideRowModelHierarchyModule, GroupEditModule],
+    dependsOn: [
+        SharedRowGroupingModule,
+        AggregationModule,
+        CSRMHierarchyModule,
+        CSRMGroupStagesModule,
+        GroupEditModule,
+    ],
 };
 
 /**
