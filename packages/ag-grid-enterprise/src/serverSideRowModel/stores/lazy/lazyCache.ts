@@ -895,15 +895,12 @@ export class LazyCache extends BeanStub {
             lazyNodesAfterStoreEnd.forEach((lazyNode) => this.destroyRowAtIndex(lazyNode.index));
         }
 
-        // Apply client-side sort when a fresh cache finishes loading all rows.
-        // !wasRefreshing is true whenever nodesToRefresh was empty at load time — this covers:
-        //   - initial grid load
-        //   - purge refresh (cache destroyed and recreated, so nodesToRefresh starts empty)
-        //   - initial child store load (group row expanded for the first time)
-        // In all three cases the non-purge refresh path (wasRefreshing && finishedRefreshing)
-        // is never reached, so clientSideSortRows() would otherwise be skipped entirely.
-        // Sort before fireStoreUpdatedEvent so the grid sees sorted data in a single update.
-        if (!wasRefreshing && this.isStoreFullyLoaded()) {
+        // Apply client-side sort once all rows are loaded. isStoreFullyLoaded() ensures
+        // nodesToRefresh is empty, all nodes are present, and none are stubs — so this
+        // fires at the right time for initial loads, purge refreshes, non-purge refreshes,
+        // and child store expansion. Sort before fireStoreUpdatedEvent so the grid sees
+        // sorted data in a single update.
+        if (this.isStoreFullyLoaded()) {
             const isClientSideSortingEnabled = this.gos.get('serverSideEnableClientSideSort');
             if (isClientSideSortingEnabled) {
                 this.clientSideSortRows();

@@ -533,4 +533,389 @@ describe('SSRM Client-Side Sorting', () => {
 
         expect(getDisplayedValues(api, 'value')).toEqual([1, 2, 3]);
     });
+
+    test('tree data: purge on child route re-sorts child rows', async () => {
+        const treeData = [
+            {
+                name: 'Alice',
+                employeeId: '1',
+                experience: 5,
+                group: true,
+                underlings: [
+                    { name: 'Charlie', employeeId: '3', experience: 3, group: false },
+                    { name: 'Dave', employeeId: '4', experience: 1, group: false },
+                    { name: 'Bob', employeeId: '5', experience: 7, group: false },
+                ],
+            },
+            { name: 'Eve', employeeId: '2', experience: 10, group: false },
+        ];
+
+        function extractRows(groupKeys: string[], data: any[]): any[] {
+            if (groupKeys.length === 0) {
+                return data.map((d) => ({
+                    group: !!d.underlings,
+                    employeeId: d.employeeId,
+                    name: d.name,
+                    experience: d.experience,
+                }));
+            }
+            const key = groupKeys[0];
+            for (const d of data) {
+                if (d.name === key) {
+                    return extractRows(groupKeys.slice(1), d.underlings ?? []);
+                }
+            }
+            return [];
+        }
+
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'employeeId', hide: true }, { field: 'name', hide: true }, { field: 'experience' }],
+            autoGroupColumnDef: { field: 'name' },
+            rowModelType: 'serverSide' as const,
+            treeData: true,
+            serverSideEnableClientSideSort: true,
+            isServerSideGroup: (dataItem: any) => dataItem.group,
+            getServerSideGroupKey: (dataItem: any) => dataItem.name,
+            serverSideDatasource: {
+                getRows: (params: any) => {
+                    const rows = extractRows(params.request.groupKeys ?? [], treeData);
+                    params.success({ rowData: [...rows], rowCount: rows.length });
+                },
+            },
+        };
+
+        const api = gridsManager.createGrid(null, gridOptions);
+        await waitForEvent('firstDataRendered', api);
+
+        const aliceNode = api.getDisplayedRowAtIndex(0)!;
+        api.setRowNodeExpanded(aliceNode, true);
+        await waitForNoLoadingRows(api);
+
+        api.applyColumnState({ state: [{ colId: 'experience', sort: 'asc' }] });
+        await waitForNoLoadingRows(api);
+
+        const getChildExperience = () => {
+            const values: number[] = [];
+            for (let i = 0; i < api.getDisplayedRowCount(); i++) {
+                const node = api.getDisplayedRowAtIndex(i);
+                if (node && !node.stub && node.level === 1 && node.data?.experience != null) {
+                    values.push(node.data.experience);
+                }
+            }
+            return values;
+        };
+        expect(getChildExperience()).toEqual([1, 3, 7]);
+
+        // Purge only the child route — destroys and recreates only Alice's child cache
+        api.refreshServerSide({ route: ['Alice'], purge: true });
+        await waitForNoLoadingRows(api);
+
+        expect(getChildExperience()).toEqual([1, 3, 7]);
+    });
+
+    test('non-purge refresh re-sorts when server returns rows in different order', async () => {
+        let callCount = 0;
+        const rowDataByCall = [
+            // First call: initial load
+            [
+                { id: '1', name: 'Charlie', value: 3 },
+                { id: '2', name: 'Alice', value: 1 },
+                { id: '3', name: 'Bob', value: 2 },
+            ],
+            // Second call: non-purge refresh returns same rows in different order
+            [
+                { id: '3', name: 'Bob', value: 2 },
+                { id: '1', name: 'Charlie', value: 3 },
+                { id: '2', name: 'Alice', value: 1 },
+            ],
+        ];
+
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'id' }, { field: 'name' }, { field: 'value' }],
+            rowModelType: 'serverSide' as const,
+            serverSideEnableClientSideSort: true,
+            getRowId: (params: any) => params.data.id,
+            serverSideDatasource: {
+                getRows: (params: any) => {
+                    const data = rowDataByCall[Math.min(callCount, rowDataByCall.length - 1)];
+                    callCount++;
+                    params.success({ rowData: [...data], rowCount: data.length });
+                },
+            },
+        };
+
+        const api = gridsManager.createGrid(null, gridOptions);
+        await waitForEvent('firstDataRendered', api);
+
+        api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+        await waitForNoLoadingRows(api);
+
+        expect(getDisplayedValues(api, 'value')).toEqual([1, 2, 3]);
+
+        // Non-purge refresh — server now returns rows in a different order
+        api.refreshServerSide({ purge: false });
+        await waitForNoLoadingRows(api);
+
+        // Should still be sorted despite server returning in different order
+        expect(getDisplayedValues(api, 'value')).toEqual([1, 2, 3]);
+    });
+
+    test('non-purge refresh re-sorts when row values change', async () => {
+        let callCount = 0;
+        const rowDataByCall = [
+            // First call: initial load
+            [
+                { id: '1', name: 'Charlie', value: 3 },
+                { id: '2', name: 'Alice', value: 1 },
+                { id: '3', name: 'Bob', value: 2 },
+            ],
+            // Second call: non-purge refresh returns same IDs but Alice's value changed
+            [
+                { id: '1', name: 'Charlie', value: 3 },
+                { id: '2', name: 'Alice', value: 5 },
+                { id: '3', name: 'Bob', value: 2 },
+            ],
+        ];
+
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'id' }, { field: 'name' }, { field: 'value' }],
+            rowModelType: 'serverSide' as const,
+            serverSideEnableClientSideSort: true,
+            getRowId: (params: any) => params.data.id,
+            serverSideDatasource: {
+                getRows: (params: any) => {
+                    const data = rowDataByCall[Math.min(callCount, rowDataByCall.length - 1)];
+                    callCount++;
+                    // Server ignores params.request.sortModel and returns unsorted data
+                    params.success({ rowData: [...data], rowCount: data.length });
+                },
+            },
+        };
+
+        const api = gridsManager.createGrid(null, gridOptions);
+        await waitForEvent('firstDataRendered', api);
+
+        api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+        await waitForNoLoadingRows(api);
+
+        expect(getDisplayedValues(api, 'value')).toEqual([1, 2, 3]);
+
+        // Non-purge refresh — server returns updated but unsorted data despite
+        // receiving sortModel (server ignores it, relying on client-side sort)
+        const refreshed = waitForEvent('storeRefreshed', api);
+        api.refreshServerSide({ purge: false });
+        await refreshed;
+
+        // Should re-sort with updated values: Bob(2), Charlie(3), Alice(5)
+        expect(getDisplayedValues(api, 'value')).toEqual([2, 3, 5]);
+    });
+
+    test('purge refresh without getRowId re-sorts rows', async () => {
+        const rowData = [
+            { name: 'Charlie', value: 3 },
+            { name: 'Alice', value: 1 },
+            { name: 'Bob', value: 2 },
+        ];
+
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'name' }, { field: 'value' }],
+            rowModelType: 'serverSide' as const,
+            serverSideEnableClientSideSort: true,
+            // No getRowId — auto-generated IDs
+            serverSideDatasource: {
+                getRows: (params: any) => {
+                    params.success({ rowData: [...rowData], rowCount: rowData.length });
+                },
+            },
+        };
+
+        const api = gridsManager.createGrid(null, gridOptions);
+        await waitForEvent('firstDataRendered', api);
+
+        api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+        await waitForNoLoadingRows(api);
+
+        expect(getDisplayedValues(api, 'value')).toEqual([1, 2, 3]);
+
+        api.refreshServerSide({ purge: true });
+        await waitForNoLoadingRows(api);
+
+        expect(getDisplayedValues(api, 'value')).toEqual([1, 2, 3]);
+    });
+
+    test('purge refresh with multi-column sort re-sorts correctly', async () => {
+        const rowData = [
+            { id: '1', name: 'Alice', category: 'B', value: 2 },
+            { id: '2', name: 'Bob', category: 'A', value: 1 },
+            { id: '3', name: 'Charlie', category: 'A', value: 3 },
+            { id: '4', name: 'Diana', category: 'B', value: 1 },
+        ];
+
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'id' }, { field: 'name' }, { field: 'category' }, { field: 'value' }],
+            rowModelType: 'serverSide' as const,
+            serverSideEnableClientSideSort: true,
+            getRowId: (params: any) => params.data.id,
+            serverSideDatasource: {
+                getRows: (params: any) => {
+                    params.success({ rowData: [...rowData], rowCount: rowData.length });
+                },
+            },
+        };
+
+        const api = gridsManager.createGrid(null, gridOptions);
+        await waitForEvent('firstDataRendered', api);
+
+        // Multi-column sort: category asc, then value asc
+        api.applyColumnState({
+            state: [
+                { colId: 'category', sort: 'asc', sortIndex: 0 },
+                { colId: 'value', sort: 'asc', sortIndex: 1 },
+            ],
+        });
+        await waitForNoLoadingRows(api);
+
+        // A(1), A(3), B(1), B(2)
+        expect(getDisplayedValues(api, 'category')).toEqual(['A', 'A', 'B', 'B']);
+        expect(getDisplayedValues(api, 'value')).toEqual([1, 3, 1, 2]);
+
+        api.refreshServerSide({ purge: true });
+        await waitForNoLoadingRows(api);
+
+        expect(getDisplayedValues(api, 'category')).toEqual(['A', 'A', 'B', 'B']);
+        expect(getDisplayedValues(api, 'value')).toEqual([1, 3, 1, 2]);
+    });
+
+    test('purge refresh with no active sort does not re-order rows', async () => {
+        const rowData = [
+            { id: '1', name: 'Charlie', value: 3 },
+            { id: '2', name: 'Alice', value: 1 },
+            { id: '3', name: 'Bob', value: 2 },
+        ];
+
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'id' }, { field: 'name' }, { field: 'value' }],
+            rowModelType: 'serverSide' as const,
+            serverSideEnableClientSideSort: true,
+            getRowId: (params: any) => params.data.id,
+            serverSideDatasource: {
+                getRows: (params: any) => {
+                    params.success({ rowData: [...rowData], rowCount: rowData.length });
+                },
+            },
+        };
+
+        const api = gridsManager.createGrid(null, gridOptions);
+        await waitForEvent('firstDataRendered', api);
+
+        // Apply a sort then clear it
+        api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+        await waitForNoLoadingRows(api);
+        api.applyColumnState({ state: [{ colId: 'value', sort: null }] });
+        await waitForNoLoadingRows(api);
+
+        api.refreshServerSide({ purge: true });
+        await waitForNoLoadingRows(api);
+
+        // No sort active — rows should be in server order
+        expect(getDisplayedValues(api, 'value')).toEqual([3, 1, 2]);
+    });
+
+    test('purge refresh with paginated loading sorts only after all blocks load', async () => {
+        const allRows = [
+            { id: '1', name: 'Charlie', value: 5 },
+            { id: '2', name: 'Alice', value: 1 },
+            { id: '3', name: 'Bob', value: 3 },
+            { id: '4', name: 'Diana', value: 2 },
+            { id: '5', name: 'Eve', value: 4 },
+        ];
+
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'id' }, { field: 'name' }, { field: 'value' }],
+            rowModelType: 'serverSide' as const,
+            serverSideEnableClientSideSort: true,
+            cacheBlockSize: 2, // Load 2 rows at a time
+            getRowId: (params: any) => params.data.id,
+            serverSideDatasource: {
+                getRows: (params: any) => {
+                    const start = params.request.startRow ?? 0;
+                    const end = params.request.endRow ?? allRows.length;
+                    const page = allRows.slice(start, end);
+                    params.success({ rowData: [...page], rowCount: allRows.length });
+                },
+            },
+        };
+
+        const api = gridsManager.createGrid(null, gridOptions);
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+
+        api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+        await waitForNoLoadingRows(api);
+
+        expect(getDisplayedValues(api, 'value')).toEqual([1, 2, 3, 4, 5]);
+
+        api.refreshServerSide({ purge: true });
+        await waitForNoLoadingRows(api);
+
+        // All blocks should have loaded and then sorted
+        expect(getDisplayedValues(api, 'value')).toEqual([1, 2, 3, 4, 5]);
+    });
+
+    test('child store with paginated loading sorts once fully loaded', async () => {
+        const rootData = [
+            { id: 'uk', country: 'United Kingdom' },
+            { id: 'fr', country: 'France' },
+        ];
+        const childRows = [
+            { id: 'uk-1', country: 'United Kingdom', value: 50 },
+            { id: 'uk-2', country: 'United Kingdom', value: 10 },
+            { id: 'uk-3', country: 'United Kingdom', value: 40 },
+            { id: 'uk-4', country: 'United Kingdom', value: 20 },
+            { id: 'uk-5', country: 'United Kingdom', value: 30 },
+        ];
+
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'value' }],
+            rowModelType: 'serverSide' as const,
+            serverSideEnableClientSideSort: true,
+            cacheBlockSize: 2, // Child store loads 2 rows at a time
+            getRowId: (params: any) => params.data.id,
+            serverSideDatasource: {
+                getRows: (params: any) => {
+                    const groupKeys = params.request.groupKeys as string[];
+                    if (groupKeys.length === 0) {
+                        params.success({ rowData: [...rootData], rowCount: rootData.length });
+                        return;
+                    }
+                    const start = params.request.startRow ?? 0;
+                    const end = params.request.endRow ?? childRows.length;
+                    const page = childRows.slice(start, end);
+                    params.success({ rowData: [...page], rowCount: childRows.length });
+                },
+            },
+        };
+
+        const api = gridsManager.createGrid(null, gridOptions);
+        await waitForEvent('firstDataRendered', api);
+
+        // Apply sort before expanding
+        api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+        await waitForNoLoadingRows(api);
+
+        // Expand UK — child store will load in multiple blocks (cacheBlockSize: 2)
+        const ukNode = api.getRowNode('uk')!;
+        api.setRowNodeExpanded(ukNode, true);
+        await waitForNoLoadingRows(api);
+
+        // After all blocks load, child rows should be sorted
+        const childValues: number[] = [];
+        for (let i = 0; i < api.getDisplayedRowCount(); i++) {
+            const node = api.getDisplayedRowAtIndex(i);
+            if (node && !node.stub && !node.group && node.data?.value != null) {
+                childValues.push(node.data.value);
+            }
+        }
+        expect(childValues).toEqual([10, 20, 30, 40, 50]);
+    });
 });
