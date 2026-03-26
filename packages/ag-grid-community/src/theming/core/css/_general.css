@@ -100,6 +100,7 @@
 
 .ag-body-vertical-scroll-viewport {
     overflow-y: scroll;
+    pointer-events: all;
 }
 
 /**
@@ -186,12 +187,26 @@
 .ag-body-vertical-scroll {
     position: absolute;
     right: 0;
+    flex-direction: column;
+    top: 0;
+    pointer-events: none;
 
     /* keep the fake vertical scrollbar above row content so its thumb remains interactive. */
     z-index: 2;
+}
 
-    &:where(.ag-scrollbar-invisible) {
-        top: 0;
+.ag-body-vertical-scroll-start-spacer {
+    border-bottom: var(--ag-header-row-border);
+    opacity: 0;
+    flex: none;
+}
+
+:where(.ag-ltr .ag-has-right-pinned-cols),
+:where(.ag-rtl .ag-has-left-pinned-cols) {
+    .ag-body-vertical-scroll-start-spacer {
+        pointer-events: all;
+        opacity: 1;
+        background-color: var(--ag-header-background-color);
     }
 }
 

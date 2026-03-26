@@ -250,6 +250,7 @@
 
     .ag-body-vertical-scroll-viewport {
         overflow-y: scroll;
+        pointer-events: all;
     }
 
     .ag-virtual-list-viewport {
@@ -343,15 +344,29 @@
         position: absolute;
         // keep the fake vertical scrollbar above row content so its thumb remains interactive.
         z-index: 2;
+        flex-direction: column;
+        top: 0;
+        pointer-events: none;
 
         @include ag.unthemed-rtl(
             (
                 right: 0,
             )
         );
+    }
 
-        &.ag-scrollbar-invisible {
-            top: 0;
+    .ag-body-vertical-scroll-start-spacer {
+        border-bottom: var(--ag-header-row-border);
+        opacity: 0;
+        flex: none;
+    }
+
+    .ag-ltr .ag-has-right-pinned-cols,
+    .ag-rtl .ag-has-left-pinned-cols {
+        .ag-body-vertical-scroll-start-spacer {
+            pointer-events: all;
+            opacity: 1;
+            background-color: var(--ag-header-background-color);
         }
     }
 

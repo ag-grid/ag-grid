@@ -131,11 +131,16 @@ export class GridBodyCtrl extends BeanStub {
         const updatePinnedColumnStickyOffsets = this.updatePinnedColumnStickyOffsets.bind(this);
         const onGridSizeChanged = this.onGridSizeChanged.bind(this);
 
+        const onPinnedWidthChanged = () => {
+            this.updateScrollableAreaWidth();
+            this.updateScrollingClasses();
+        };
+
         this.addManagedEventListeners({
             gridColumnsChanged: this.onGridColumnsChanged.bind(this),
             displayedColumnsWidthChanged: this.updateScrollableAreaWidth.bind(this),
-            leftPinnedWidthChanged: this.updateScrollableAreaWidth.bind(this),
-            rightPinnedWidthChanged: this.updateScrollableAreaWidth.bind(this),
+            leftPinnedWidthChanged: onPinnedWidthChanged,
+            rightPinnedWidthChanged: onPinnedWidthChanged,
             scrollVisibilityChanged: this.onScrollVisibilityChanged.bind(this),
             scrollbarWidthChanged: updatePinnedColumnStickyOffsets,
             scrollGapChanged: this.updateScrollingClasses.bind(this),
@@ -316,10 +321,13 @@ export class GridBodyCtrl extends BeanStub {
         const {
             eGridBody: { classList },
             scrollVisibleSvc,
+            beans: { visibleCols },
         } = this;
         classList.toggle('ag-body-vertical-content-no-gap', !scrollVisibleSvc.verticalScrollGap);
         classList.toggle('ag-body-horizontal-content-no-gap', !scrollVisibleSvc.horizontalScrollGap);
         classList.toggle('ag-body-horizontal-scroll', scrollVisibleSvc.horizontalScrollShowing);
+        classList.toggle('ag-has-left-pinned-cols', visibleCols.getLeftStickyColumnContainerWidth() > 0);
+        classList.toggle('ag-has-right-pinned-cols', visibleCols.getRightStickyColumnContainerWidth() > 0);
     }
 
     private updatePinnedColumnStickyOffsets(): void {

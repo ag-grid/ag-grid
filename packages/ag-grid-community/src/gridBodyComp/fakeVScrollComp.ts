@@ -1,3 +1,4 @@
+import { RefPlaceholder } from '../agStack/interfaces/agComponent';
 import { _isVisible, _requestAnimationFrame, _setFixedWidth } from '../agStack/utils/dom';
 import type { CtrlsService } from '../ctrlsService';
 import type { ElementParams } from '../utils/element';
@@ -11,6 +12,11 @@ const FakeVScrollElement: ElementParams = {
     children: [
         {
             tag: 'div',
+            ref: 'eSpacer',
+            cls: 'ag-body-vertical-scroll-start-spacer',
+        },
+        {
+            tag: 'div',
             ref: 'eViewport',
             cls: 'ag-body-vertical-scroll-viewport',
             children: [{ tag: 'div', ref: 'eContainer', cls: 'ag-body-vertical-scroll-container' }],
@@ -19,6 +25,7 @@ const FakeVScrollElement: ElementParams = {
 };
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class FakeVScrollComp extends AbstractFakeScrollComp {
+    private readonly eSpacer: HTMLElement = RefPlaceholder;
     private enableRtl: boolean;
 
     constructor() {
@@ -60,8 +67,8 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
 
         const eGui = this.getGui();
 
-        eGui.style.top = `${headerRowsOffset}px`;
         eGui.style.bottom = `${horizontalScrollHeight}px`;
+        this.eSpacer.style.height = `${headerRowsOffset}px`;
 
         this.toggleCss('ag-scrollbar-invisible', invisibleScrollbar);
         _setFixedWidth(eGui, adjustedScrollbarWidth);
