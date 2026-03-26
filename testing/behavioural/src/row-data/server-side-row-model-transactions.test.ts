@@ -77,6 +77,65 @@ describe('Server Side Row Model Transactions', () => {
         expect(api.getDisplayedRowAtIndex(0)?.data.id).toBe(2);
     });
 
+    test('add transaction honours supplied rowCount', async () => {
+        const totalRows = 100;
+        const rowData = Array.from({ length: totalRows }, (_, i) => ({ id: i, value: `Row ${i}` }));
+
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'id' }, { field: 'value' }],
+            rowModelType: 'serverSide' as const,
+            getRowId: (params: any) => params.data.id.toString(),
+            serverSideDatasource: {
+                getRows: (params: any) => {
+                    const rowDataS = rowData.slice(params.request.startRow, params.request.endRow);
+                    params.success({ rowData: rowDataS, rowCount: rowData.length });
+                },
+            },
+        };
+
+        const api = gridsManager.createGrid(null, gridOptions);
+
+        await waitForEvent('firstDataRendered', api);
+        expect(api.getDisplayedRowCount()).toBe(100);
+
+        api.applyServerSideTransaction({
+            add: [{ id: 200, value: 'Row 200' }],
+            rowCount: 150,
+        });
+
+        expect(api.getDisplayedRowCount()).toBe(150);
+    });
+
+    test('update transaction honours supplied rowCount', async () => {
+        const totalRows = 100;
+        const rowData = Array.from({ length: totalRows }, (_, i) => ({ id: i, value: `Row ${i}` }));
+
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'id' }, { field: 'value' }],
+            rowModelType: 'serverSide' as const,
+            getRowId: (params: any) => params.data.id.toString(),
+            serverSideDatasource: {
+                getRows: (params: any) => {
+                    const rowDataS = rowData.slice(params.request.startRow, params.request.endRow);
+                    params.success({ rowData: rowDataS, rowCount: rowData.length });
+                },
+            },
+        };
+
+        const api = gridsManager.createGrid(null, gridOptions);
+
+        await waitForEvent('firstDataRendered', api);
+        expect(api.getDisplayedRowCount()).toBe(100);
+
+        api.applyServerSideTransaction({
+            update: [{ id: 0, value: 'Updated Row 0' }],
+            rowCount: 200,
+        });
+
+        expect(api.getDisplayedRowCount()).toBe(200);
+        expect(api.getDisplayedRowAtIndex(0)?.data.value).toBe('Updated Row 0');
+    });
+
     test('removing cached and uncached rows marks non-contiguous rows for refresh', async () => {
         const totalRows = 300;
         const rowData = Array.from({ length: totalRows }, (_, i) => ({ id: i, value: `Row ${i}` }));

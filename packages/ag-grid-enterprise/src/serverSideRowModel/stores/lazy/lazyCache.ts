@@ -1073,7 +1073,7 @@ export class LazyCache extends BeanStub {
     /**
      * Transaction Support here
      */
-    public updateRowNodes(updates: any[]): RowNode[] {
+    public updateRowNodes(updates: any[], newRowCount?: number): RowNode[] {
         const updatedNodes: RowNode[] = [];
         updates.forEach((data) => {
             const id = this.getRowId(data);
@@ -1083,10 +1083,17 @@ export class LazyCache extends BeanStub {
                 updatedNodes.push(lazyNode.node);
             }
         });
+
+        const isNewRowCountValid = newRowCount != null && newRowCount >= 0;
+        if (isNewRowCountValid) {
+            this.numberOfRows = newRowCount;
+            this.isLastRowKnown = true;
+        }
+
         return updatedNodes;
     }
 
-    public insertRowNodes(inserts: any[], indexToAdd?: number): RowNode[] {
+    public insertRowNodes(inserts: any[], indexToAdd?: number, newRowCount?: number): RowNode[] {
         // adjust row count to allow for footer row
         const realRowCount = this.store.getRowCount() - (this.store.getParentNode().sibling ? 1 : 0);
 
@@ -1128,8 +1135,14 @@ export class LazyCache extends BeanStub {
             });
         });
 
-        // increase the store size to accommodate
-        this.numberOfRows += numberOfInserts;
+        const isNewRowCountValid = newRowCount != null && newRowCount >= 0;
+        if (isNewRowCountValid) {
+            this.numberOfRows = newRowCount;
+            this.isLastRowKnown = true;
+        } else {
+            // increase the store size to accommodate
+            this.numberOfRows += numberOfInserts;
+        }
 
         // finally insert the new rows
         return uniqueInserts.map((data, uniqueInsertOffset) =>
