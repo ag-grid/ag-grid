@@ -100,6 +100,7 @@ function cssFileDefaultImport(): Plugin {
         async load(id) {
             if (id.endsWith('.css?inline')) {
                 const realPath = id.slice(0, -'?inline'.length);
+                this.addWatchFile(realPath);
                 const raw = fs.readFileSync(realPath, 'utf-8');
                 const result = await postcss(postcssPlugins).process(raw, {
                     from: realPath,
