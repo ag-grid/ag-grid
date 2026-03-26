@@ -895,23 +895,20 @@ export class LazyCache extends BeanStub {
             lazyNodesAfterStoreEnd.forEach((lazyNode) => this.destroyRowAtIndex(lazyNode.index));
         }
 
+        // Apply client-side sort after purge reload (wasRefreshing is false for new caches)
+        if (!wasRefreshing && this.isStoreFullyLoaded()) {
+            const isClientSideSortingEnabled = this.gos.get('serverSideEnableClientSideSort');
+            if (isClientSideSortingEnabled) {
+                this.clientSideSortRows();
+            }
+        }
+
         this.fireStoreUpdatedEvent();
 
         // Happens after store updated, as store updating can clear our excess rows.
         const finishedRefreshing = this.nodesToRefresh.size === 0;
         if (wasRefreshing && finishedRefreshing) {
             this.fireRefreshFinishedEvent();
-        }
-
-        // Apply client-side sort after purge reload (wasRefreshing is false for new caches)
-        if (!wasRefreshing && this.isStoreFullyLoaded()) {
-            const isClientSideSortingEnabled = this.gos.get('serverSideEnableClientSideSort');
-            if (isClientSideSortingEnabled) {
-                const didSort = this.clientSideSortRows();
-                if (didSort) {
-                    this.fireStoreUpdatedEvent();
-                }
-            }
         }
     }
 
