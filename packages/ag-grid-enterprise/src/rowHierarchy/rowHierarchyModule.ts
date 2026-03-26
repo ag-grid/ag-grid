@@ -7,7 +7,7 @@ import { RowGroupColsSvc } from '../rowGrouping/rowGroupColsSvc';
 import { VERSION } from '../version';
 import { AutoColService } from './autoColService';
 import { ChangedPathFactory } from './changedPathImpl/changedPathFactory';
-import { ClientSideExpansionService } from './clientSideExpansionService';
+import { CsrmExpansionService } from './csrmExpansionService';
 import { FlattenStage } from './flattenStage';
 import { GroupEditService } from './groupEditService';
 import { GroupFilterStage } from './groupFilterStage';
@@ -73,11 +73,11 @@ export const ChangedPathModule: _ModuleWithoutApi = {
 /**
  * @internal
  */
-export const CSRMHierarchyModule: _ModuleWithoutApi = {
-    moduleName: 'CSRMHierarchy',
+export const CsrmHierarchyModule: _ModuleWithoutApi = {
+    moduleName: 'CsrmHierarchy',
     version: VERSION,
     rowModels: ['clientSide'],
-    beans: [FlattenStage, ClientSideExpansionService],
+    beans: [FlattenStage, CsrmExpansionService],
     dependsOn: [ChangedPathModule],
 };
 
@@ -86,12 +86,12 @@ export const CSRMHierarchyModule: _ModuleWithoutApi = {
  * Needed by RowGrouping, TreeData, and Pivot — not by MasterDetail.
  * @internal
  */
-export const CSRMGroupStagesModule: _ModuleWithoutApi = {
-    moduleName: 'CSRMGroupStages',
+export const CsrmGroupStagesModule: _ModuleWithoutApi = {
+    moduleName: 'CsrmGroupStages',
     version: VERSION,
     rowModels: ['clientSide'],
     beans: [GroupStage, GroupFilterStage, GroupSortStage],
-    dependsOn: [CSRMHierarchyModule],
+    dependsOn: [CsrmHierarchyModule],
 };
 
 /**
@@ -110,5 +110,5 @@ export const GroupEditModule: _ModuleWithoutApi = {
     moduleName: 'GroupEdit',
     version: VERSION,
     beans: [GroupEditService],
-    dependsOn: [CSRMHierarchyModule],
+    dependsOn: [CsrmHierarchyModule],
 };

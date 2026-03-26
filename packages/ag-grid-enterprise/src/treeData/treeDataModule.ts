@@ -3,9 +3,9 @@ import type { _ModuleWithoutApi } from 'ag-grid-community';
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { AggregationModule, SharedAggregationModule } from '../aggregation/aggregationModule';
 import {
-    CSRMGroupStagesModule,
-    CSRMHierarchyModule,
     ChangedPathModule,
+    CsrmGroupStagesModule,
+    CsrmHierarchyModule,
     GroupColumnModule,
     GroupEditModule,
     StickyRowModule,
@@ -31,5 +31,5 @@ export const TreeDataModule: _ModuleWithoutApi = {
     version: VERSION,
     dynamicBeans: { treeGroupStrategy: TreeGroupStrategy },
     rowModels: ['clientSide'],
-    dependsOn: [SharedTreeDataModule, AggregationModule, CSRMHierarchyModule, CSRMGroupStagesModule, GroupEditModule],
+    dependsOn: [SharedTreeDataModule, AggregationModule, CsrmHierarchyModule, CsrmGroupStagesModule, GroupEditModule],
 };

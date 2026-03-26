@@ -6,8 +6,8 @@ import { AggregationModule, SharedAggregationModule } from '../aggregation/aggre
 import { SharedColumnStateUpdateStrategyModule } from '../columnToolPanel/updates/columnStateUpdateStrategyModule';
 import { GroupHierarchyModule } from '../groupHierarchy/groupHierarchyModule';
 import {
-    CSRMGroupStagesModule,
-    CSRMHierarchyModule,
+    CsrmGroupStagesModule,
+    CsrmHierarchyModule,
     GroupColumnModule,
     GroupEditModule,
     StickyRowModule,
@@ -61,8 +61,8 @@ export const RowGroupingModule: _ModuleWithoutApi = {
     dependsOn: [
         SharedRowGroupingModule,
         AggregationModule,
-        CSRMHierarchyModule,
-        CSRMGroupStagesModule,
+        CsrmHierarchyModule,
+        CsrmGroupStagesModule,
         GroupEditModule,
     ],
 };

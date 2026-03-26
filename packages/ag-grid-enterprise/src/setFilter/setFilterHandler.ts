@@ -23,7 +23,7 @@ import {
     _toStringOrNull,
 } from 'ag-grid-community';
 
-import { ClientSideValuesExtractor } from './clientSideValueExtractor';
+import { CsrmValuesExtractor } from './csrmValueExtractor';
 import { SetFilterAppliedModel } from './setFilterAppliedModel';
 import { processDataPath, translateForSetFilter } from './setFilterUtils';
 import SetFilterModelValuesType, { SetValueModel } from './setValueModel';
@@ -59,9 +59,9 @@ export class SetFilterHandler<TValue = string>
         const createKey = this.createKey;
         const caseFormat = this.caseFormat.bind(this);
         const { gos, beans } = this;
-        const clientSideValuesExtractor = _isClientSideRowModel(gos, beans.rowModel)
+        const csrmValuesExtractor = _isClientSideRowModel(gos, beans.rowModel)
             ? this.createManagedBean(
-                  new ClientSideValuesExtractor<TValue>(
+                  new CsrmValuesExtractor<TValue>(
                       createKey,
                       caseFormat,
                       params.getValue,
@@ -71,7 +71,7 @@ export class SetFilterHandler<TValue = string>
               )
             : undefined;
         const valueModel = this.createManagedBean(
-            new SetValueModel(clientSideValuesExtractor, caseFormat, createKey, isTreeDataOrGrouping, {
+            new SetValueModel(csrmValuesExtractor, caseFormat, createKey, isTreeDataOrGrouping, {
                 handlerParams: params,
                 usingComplexObjects: !!(params.filterParams.keyCreator ?? params.colDef.keyCreator),
             })

@@ -23,18 +23,20 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
     public readonly refreshProps: (keyof GridOptions<any>)[] = ['postSortRows', 'groupDisplayType', 'accentedSort'];
 
     public execute(changedPath: ChangedPath | undefined, changedRowNodes: _ChangedRowNodes | undefined): void {
-        const sortOptions = this.beans.sortSvc!.getSortOptions();
+        const { gos, colModel, rowGroupColsSvc, rowModel, rowNodeSorter, rowRenderer, sortSvc, showRowGroupCols } =
+            this.beans;
+        const sortOptions = sortSvc?.getSortOptions();
 
         const useDeltaSort =
+            sortOptions &&
             sortOptions.length > 0 &&
             !!changedRowNodes &&
             // in time we can remove this check, so that delta sort is always
             // on if transactions are present. it's off for now so that we can
             // selectively turn it on and test it with some select users before
             // rolling out to everyone.
-            this.gos.get('deltaSort');
+            gos.get('deltaSort');
 
-        const { gos, colModel, rowGroupColsSvc, rowNodeSorter, rowRenderer, showRowGroupCols } = this.beans;
         const groupMaintainOrder = gos.get('groupMaintainOrder');
         const groupColumnsPresent = colModel.getCols().some((c) => c.isRowGroupActive());
         const groupCols = rowGroupColsSvc?.columns;
@@ -70,7 +72,7 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
                 if (!wasSortExplicitlyRemoved) {
                     newChildrenAfterSort = preserveGroupOrder(rowNode);
                 }
-            } else if (!sortOptions.length || skipSortingPivotLeafs) {
+            } else if (!sortOptions?.length || skipSortingPivotLeafs) {
                 // if there's no sort to make, skip this step
             } else if (useDeltaSort && changedRowNodes) {
                 newChildrenAfterSort = _doDeltaSort(rowNodeSorter!, rowNode, changedRowNodes, changedPath, sortOptions);
@@ -94,7 +96,7 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
             }
         };
 
-        _forEachChangedGroupDepthFirst(this.beans.rowModel.rootNode, true, changedPath, callback);
+        _forEachChangedGroupDepthFirst(rowModel.rootNode, true, changedPath, callback);
 
         // if using group hide open parents and a sort has happened, refresh the group cells as the first child
         // displays the parent grouping - it's cheaper here to refresh all cells in col rather than fire events for every potential
@@ -107,8 +109,8 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
         }
     }
 
-    private shouldSortContainsGroupCols(sortOptions: SortOption[]): boolean {
-        const sortOptionsLen = sortOptions.length;
+    private shouldSortContainsGroupCols(sortOptions: SortOption[] | undefined): boolean {
+        const sortOptionsLen = sortOptions?.length;
         if (!sortOptionsLen) {
             return false;
         }
